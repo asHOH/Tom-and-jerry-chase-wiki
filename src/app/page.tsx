@@ -53,9 +53,9 @@ export default function Home() {
     return (
       <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}
         <header className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-blue-600">猫和老鼠角色数据库</h1>
+          <h1 className="text-4xl font-bold text-blue-600">猫和老鼠手游wiki</h1>
           <p className="text-xl text-gray-600">
-            查询角色技能、属性和数据
+            查询角色技能和属性
           </p>
         </header>
 
@@ -88,9 +88,9 @@ export default function Home() {
         </div>
 
         <div className="mt-12 text-center">
-          <h2 className="text-2xl font-bold mb-4">数据说明</h2>
+          <h2 className="text-2xl font-bold mb-4">网站说明</h2>
           <p className="max-w-2xl mx-auto text-gray-600">
-            本网站为粉丝制作，仅供学习交流使用，并非官方网站。数据仅供参考，实际游戏数值可能因版本更新而有所变化。
+            本网站为粉丝制作，仅供学习交流使用，并非官方网站。数据仅供参考，实际数值可能因版本更新而变化。
           </p>
         </div>
       </div>

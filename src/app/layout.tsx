@@ -5,8 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: '猫和老鼠手游角色技能数据库',
-  description: '猫和老鼠手游角色技能数据库，包含所有角色的技能信息、图片和视频',
+  title: '猫和老鼠手游wiki',
+  description: '猫和老鼠手游wiki。本网站为粉丝制作，仅供学习交流使用，并非官方网站。',
 };
 
 export default function RootLayout({
