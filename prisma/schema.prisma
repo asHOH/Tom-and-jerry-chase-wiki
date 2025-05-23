@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 阵营模型
+model Faction {
+  id          String      @id @default(uuid())
+  name        String      // 阵营名称 (猫阵营/鼠阵营)
+  description String?     // 阵营描述
+  characters  Character[] // 关联的角色
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// 角色模型
+model Character {
+  id          String    @id @default(uuid())
+  name        String    // 角色名称
+  faction     Faction   @relation(fields: [factionId], references: [id])
+  factionId   String
+  description String?   // 角色描述
+  imageUrl    String?   // 角色图片URL
+  skills      Skill[]   // 角色技能
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// 技能模型
+model Skill {
+  id           String       @id @default(uuid())
+  name         String       // 技能名称
+  type         SkillType    // 技能类型 (主动/武器/被动)
+  description  String?      // 技能基本描述
+  character    Character    @relation(fields: [characterId], references: [id])
+  characterId  String
+  canMoveWhileUsing Boolean @default(false) // 能否移动释放
+  skillLevels  SkillLevel[] // 技能等级
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+// 技能等级模型
+model SkillLevel {
+  id          String   @id @default(uuid())
+  level       Int      // 技能等级 (1-3)
+  description String   // 该等级的技能描述
+  damage      Float?   // 技能伤害值
+  cooldown    Float?   // 冷却时间
+  videoUrl    String?  // 技能视频URL
+  skill       Skill    @relation(fields: [skillId], references: [id])
+  skillId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 技能类型枚举
+enum SkillType {
+  ACTIVE    // 主动技能
+  WEAPON    // 武器技能
+  PASSIVE   // 被动技能
+}

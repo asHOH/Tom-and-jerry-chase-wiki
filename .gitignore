@@ -1,0 +1,35 @@
+# Node.js dependencies
+node_modules/
+
+# Next.js build output and cache
+.next/
+out/ # If you use `next export`
+
+# Environment variables
+# IMPORTANT: Commit a .env.example or .env.template with placeholder values
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# Prisma
+prisma/dev.db
+
+# IDE & Editor specific
+.vscode/
+.history/
+
+# TypeScript declaration for Next.js environment variables (auto-generated)
+next-env.d.ts
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+npm-debug.log*
+
+# Test coverage
+# coverage/
