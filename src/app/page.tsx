@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import TabNavigation from '@/components/TabNavigation';
+import NavigationWrapper from '@/components/NavigationWrapper';
 import FactionCharacters from '@/components/FactionCharacters';
 import CharacterDetails from '@/components/CharacterDetails';
 import { factions, characters } from '@/data/mockData';
@@ -98,21 +98,15 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Always show tab navigation, now fixed at the top */}
-      <TabNavigation
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        isDetailedView={isDetailedView}
-        onToggleDetailedView={toggleDetailedView}
-        showDetailToggle={!!selectedCharacter} // Only show toggle when a character is selected
-      />
-
-      {/* Content container with padding for fixed navbar */}
-      <div className="container mx-auto px-4 py-8 pt-20">
-        {/* Render content based on state */}
-        {renderContent()}
-      </div>
-    </div>
+    <NavigationWrapper
+      activeTab={activeTab}
+      onTabChange={handleTabChange}
+      isDetailedView={isDetailedView}
+      onToggleDetailedView={toggleDetailedView}
+      showDetailToggle={!!selectedCharacter} // Only show toggle when a character is selected
+    >
+      {/* Render content based on state */}
+      {renderContent()}
+    </NavigationWrapper>
   );
 }

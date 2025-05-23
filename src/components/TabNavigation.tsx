@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import Link from 'next/link';
+import React from 'react';
 
 type Tab = {
   id: string;
@@ -28,15 +27,42 @@ export default function TabNavigation({
   showDetailToggle = false
 }: TabNavigationProps) {
   return (
-    <div className="fixed top-0 left-0 right-0 bg-white z-50 shadow-md w-full">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="flex space-x-2">
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'white',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        zIndex: 9999,
+        width: '100%',
+        padding: '10px 0'
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 16px'
+        }}
+      >
+        {/* Left-aligned navigation buttons */}
+        <div style={{ display: 'flex', gap: '12px' }}>
           <button
-            onClick={() => {
-              // Reset the active tab to null to go back to the home page
-              onTabChange('');
+            onClick={() => onTabChange('')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '6px',
+              backgroundColor: activeTab === null ? '#2563eb' : '#e5e7eb',
+              color: activeTab === null ? 'white' : '#1f2937',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
             }}
-            className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 transition-colors"
           >
             首页
           </button>
@@ -45,11 +71,18 @@ export default function TabNavigation({
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${
-                activeTab === tab.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
-              }`}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '6px',
+                backgroundColor: activeTab === tab.id ? '#2563eb' : '#e5e7eb',
+                color: activeTab === tab.id ? 'white' : '#1f2937',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
             >
               <span>{tab.emoji}</span>
               <span>{tab.name}</span>
@@ -57,15 +90,25 @@ export default function TabNavigation({
           ))}
         </div>
 
-        {/* Global detailed/simple view toggle button */}
-        {showDetailToggle && (
-          <button
-            onClick={onToggleDetailedView}
-            className="px-4 py-2 rounded-md bg-blue-100 hover:bg-blue-200 text-blue-700 transition-colors ml-auto"
-          >
-            {isDetailedView ? '简明描述' : '详细描述'}
-          </button>
-        )}
+        {/* Right-aligned detailed/simple view toggle button */}
+        <div>
+          {showDetailToggle && (
+            <button
+              onClick={onToggleDetailedView}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '6px',
+                backgroundColor: '#dbeafe',
+                color: '#1d4ed8',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+            >
+              {isDetailedView ? '简明描述' : '详细描述'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
