@@ -45,14 +45,14 @@ export default function CharacterPage({ params }: { params: { characterId: strin
             <div className="mt-4 space-y-2">
               {/* Common attributes for all characters */}
               <div className="grid grid-cols-2 gap-2">
-                {character.maxHP && (
-                  <p className="text-sm text-gray-700">健康值上限: {character.maxHP}</p>
+                {character.maxHp && (
+                  <p className="text-sm text-gray-700">Hp上限: {character.maxHp}</p>
                 )}
                 {character.attackBoost !== undefined && (
                   <p className="text-sm text-gray-700">攻击力加成: {character.attackBoost}</p>
                 )}
                 {character.hpRecovery && (
-                  <p className="text-sm text-gray-700">健康值恢复: {character.hpRecovery} / 秒</p>
+                  <p className="text-sm text-gray-700">Hp恢复: {character.hpRecovery} / 秒</p>
                 )}
                 {character.moveSpeed && (
                   <p className="text-sm text-gray-700">移动速度: {character.moveSpeed}</p>

@@ -15,9 +15,9 @@ export type Character = {
   imageUrl?: string; // We'll generate it automatically
 
   // Common attributes for all characters
-  maxHP?: number; // 健康值上限
+  maxHp?: number; // Hp上限
   attackBoost?: number; // 攻击增伤
-  hpRecovery?: number; // 健康值恢复
+  hpRecovery?: number; // Hp恢复
   moveSpeed?: number; // 移动速度
   jumpHeight?: number; // 跳跃高度
 
@@ -82,7 +82,7 @@ export const factionData: Record<FactionId, Faction> = {
   mouse: {
     id: 'mouse',
     name: '鼠阵营',
-    description: '鼠阵营需要躲避猫的攻击，推完5块奶酪并砸开墙缝',
+    description: '鼠阵营共有4名角色，需要躲避猫的攻击、推完5块奶酪并砸开墙缝',
   }
 };
 
@@ -95,7 +95,7 @@ export const characterData: Record<string, Character> = {
     description: '经典角色汤姆猫。',
 
     // Common attributes
-    maxHP: 255,
+    maxHp: 255,
     attackBoost: 0,
     hpRecovery: 3.5,
     moveSpeed: 755,
@@ -111,76 +111,81 @@ export const characterData: Record<string, Character> = {
         name: '发怒冲刺',
         type: 'ACTIVE',
         description: '解控并进入一段时间的无敌。',
-        detailedDescription: '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌结束后会有持续两秒的减速。',
+        detailedDescription: '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害（如仙女鼠的一星；但不会因此被击倒）和位移效果的影响（如尼宝的钩子）。无敌结束后会有2秒的10%减速（可以被护盾抵消）。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可通过道具键取消，但不返还CD。',
         skillLevels: [
-          { level: 1, description: '造成100点伤害，击退1米', damage: '100', cooldown: 8, videoUrl: '/videos/tom-active-1.mp4' },
-          { level: 2, description: '造成150点伤害，击退1.5米', damage: '150', cooldown: 7, videoUrl: '/videos/tom-active-2.mp4' },
-          { level: 3, description: '造成200点伤害，击退2米', damage: '200', cooldown: 6, videoUrl: '/videos/tom-active-3.mp4' },
+          { level: 1, description: '持续3.8秒', cooldown: 8, videoUrl: '/videos/tom-active-1.mp4' },
+          { level: 2, description: '持续6.8秒', cooldown: 7, videoUrl: '/videos/tom-active-2.mp4' },
+          { level: 3, description: '无敌期间减少25%爪刀CD', cooldown: 6, videoUrl: '/videos/tom-active-3.mp4' },
         ]
       },
       {
         id: 'tom-weapon',
-        name: '捕鼠陷阱',
+        name: '手型枪',
         type: 'WEAPON1',
-        description: '放置一个陷阱，踩到的老鼠会被困住一段时间',
-        detailedDescription: '汤姆猫在地面上放置一个捕鼠陷阱，陷阱在放置后3秒内激活。老鼠踩到激活的陷阱会被困住，无法移动或使用技能。陷阱持续时间30秒，最多可同时存在2个陷阱。',
+        description: '汤姆最爱的捕鼠神器。',
         canMoveWhileUsing: true,
         canUseInAir: false,
-        cancelableSkill: '可被主动技能打断',
-        cancelableAftercast: '后摇可取消',
+        cancelableSkill: '可通过道具键取消',
+        cancelableAftercast: '后摇不可取消',
         skillLevels: [
-          { level: 1, description: '困住2秒', damage: '0', cooldown: 15, videoUrl: '/videos/tom-weapon-1.mp4' },
-          { level: 2, description: '困住3秒', damage: '0', cooldown: 13, videoUrl: '/videos/tom-weapon-2.mp4' },
-          { level: 3, description: '困住4秒', damage: '0', cooldown: 10, videoUrl: '/videos/tom-weapon-3.mp4' },
+          {
+            level: 1,
+            description: '手型枪会水平飞出、原路飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。',
+            detailedDescription: '手型枪会水平飞出、原路飞回，对命中的老鼠造成15点伤害、将其抓回并眩晕2.5秒。如果拉回过程遇到障碍，额外给予65点伤害。眩晕对比例鼠和虚弱的老鼠也生效。',
+            cooldown: 12, videoUrl: '/videos/tom-weapon-1.mp4'
+          },
+          { level: 2, description: '手型枪飞行速度增加', cooldown: 12, videoUrl: '/videos/tom-weapon-2.mp4' },
+          { level: 3, description: '猫咪可以直接抓起被手型枪拉回并眩晕的老鼠', cooldown: 12, videoUrl: '/videos/tom-weapon-3.mp4' },
         ]
       },
       {
         id: 'tom-weapon2',
-        name: '猫爪飞镖',
+        name: '平底锅',
         type: 'WEAPON2',
-        description: '投掷飞镖，命中的老鼠会被减速',
-        detailedDescription: '汤姆猫投掷一枚猫爪形状的飞镖，飞行距离5米。飞镖命中老鼠后会造成少量伤害并减速目标。飞镖可以穿透障碍物，但只能命中一个目标。',
+        description: '比手型枪攻击力更高，但范围更小。',
+        detailedDescription: '比手型枪攻击力更高，但范围更小。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被主动技能打断',
+        cancelableSkill: '可通过道具键取消',
         cancelableAftercast: '后摇可取消',
         skillLevels: [
-          { level: 1, description: '减速30%，持续1.5秒', damage: '20', cooldown: 10, videoUrl: '/videos/tom-weapon2-1.mp4' },
-          { level: 2, description: '减速40%，持续2秒', damage: '30', cooldown: 9, videoUrl: '/videos/tom-weapon2-2.mp4' },
-          { level: 3, description: '减速50%，持续2.5秒', damage: '40', cooldown: 8, videoUrl: '/videos/tom-weapon2-3.mp4' },
+          {
+            level: 1,
+            description: '打晕并致盲附近的老鼠、降低命中老鼠的救援速度；也能击飞附近的道具',
+            detailedDescription: '挥锅对命中的老鼠造成15点伤害和5秒的失明，并打出煎蛋；煎蛋也会对命中的老鼠造成15点伤害和5秒的失明；被锅命中的老鼠落地后受到25点伤害，并眩晕1秒。',
+            cooldown: 18,
+            videoUrl: '/videos/tom-weapon2-1.mp4'
+          },
+          { level: 2, description: '致盲延长至7.5秒；锅命中老鼠立刻刷新爪刀CD。', cooldown: 9, videoUrl: '/videos/tom-weapon2-2.mp4' },
+          { level: 3, description: '猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠', cooldown: 8, videoUrl: '/videos/tom-weapon2-3.mp4' },
         ]
       },
       {
         id: 'tom-passive',
         name: '捕鼠专家',
         type: 'PASSIVE',
-        // No description for passive skill
         canMoveWhileUsing: true,
         canUseInAir: true,
         skillLevels: [
           {
             level: 1,
-            description: '移动速度提高10%',
-            detailedDescription: '被动提升汤姆的移动速度，使其更容易追捕老鼠。此效果始终生效，不需要激活。',
-            damage: '0',
-            cooldown: 0,
+            description: '对敌方造成伤害时回复Hp并加速',
+            detailedDescription: '对敌方造成伤害时，回复25Hp并获得2.6秒的9.5%加速；若伤害来自爪刀命中，额外回复25Hp。',
             videoUrl: null
           },
           {
             level: 2,
-            description: '移动速度提高15%',
-            detailedDescription: '被动提升汤姆的移动速度，使其更容易追捕老鼠。此效果始终生效，不需要激活。',
-            damage: '0',
-            cooldown: 0,
+            description: '手握老鼠时依然可以攻击',
+            detailedDescription: '手握老鼠时依然可以攻击，并可触发蓄势、击晕等效果，但不会改变惯性（即不能用二被进行楼梯刀加速）',
             videoUrl: null
           },
           {
             level: 3,
-            description: '移动速度提高20%',
-            detailedDescription: '被动提升汤姆的移动速度，使其更容易追捕老鼠。此效果始终生效，不需要激活。',
+            description: '对敌方造成伤害时，给予3秒沉默',
+            detailedDescription: '对敌方造成伤害时，给予3秒沉默',
             damage: '0',
             cooldown: 0,
             videoUrl: null
@@ -196,7 +201,7 @@ export const characterData: Record<string, Character> = {
     description: '布奇是一只黑色的猫，体型比汤姆猫更大，力量更强。他是汤姆猫的竞争对手，但有时也会与汤姆猫合作追捕老鼠。',
 
     // Common attributes
-    maxHP: 1200,
+    maxHp: 1200,
     attackBoost: 20,
     hpRecovery: 3,
     moveSpeed: 6.5,
@@ -216,7 +221,7 @@ export const characterData: Record<string, Character> = {
     description: '这是托普斯。',
 
     // Common attributes
-    maxHP: 950,
+    maxHp: 950,
     attackBoost: 18,
     hpRecovery: 4,
     moveSpeed: 8.0,
@@ -236,7 +241,7 @@ export const characterData: Record<string, Character> = {
     description: '经典角色杰瑞，擅长逃跑和设置陷阱。杰瑞是一只棕色的小老鼠，他机智、灵活，总能从汤姆猫的追击中逃脱。在游戏中，他拥有出色的机动性和陷阱技能。',
 
     // Common attributes
-    maxHP: 600,
+    maxHp: 600,
     attackBoost: 5,
     hpRecovery: 8,
     moveSpeed: 9.0,
@@ -322,7 +327,7 @@ export const characterData: Record<string, Character> = {
     description: '小老鼠是杰瑞的侄子，一只灰色的小老鼠。他年幼但勇敢，经常跟随杰瑞一起冒险。',
 
     // Common attributes
-    maxHP: 500,
+    maxHp: 500,
     attackBoost: 3,
     hpRecovery: 10,
     moveSpeed: 9.5,
@@ -341,7 +346,7 @@ export const characterData: Record<string, Character> = {
     description: '尼布尔斯是杰瑞的朋友，一只小灰鼠。他性格温和，喜欢吃奶酪，经常和杰瑞一起逃避汤姆猫的追捕。',
 
     // Common attributes
-    maxHP: 550,
+    maxHp: 550,
     attackBoost: 4,
     hpRecovery: 7,
     moveSpeed: 8.5,
