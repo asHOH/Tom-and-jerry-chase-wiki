@@ -59,31 +59,80 @@ export default function Home() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-          <div
-            className="card flex flex-col items-center p-8 hover:border-blue-500 hover:border-2 cursor-pointer"
-            onClick={() => handleTabChange('cat')}
-          >
-            <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-              <span className="text-6xl">🐱</span>
-            </div>
-            <h2 className="text-2xl font-bold text-center">猫阵营</h2>
-            <p className="text-gray-600 text-center mt-2">
-              查看猫阵营角色列表
-            </p>
-          </div>
+        <div className="flex flex-col items-center mt-12">
+          <h2 className="text-3xl font-bold mb-8" style={{ color: '#1f2937' }}>选择阵营</h2>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            gap: '24px',
+            width: '100%',
+            maxWidth: '700px',
+            margin: '0 auto'
+          }} className="flex-row sm:flex-row">
+            <button
+              onClick={() => handleTabChange('cat')}
+              aria-label="查看猫阵营角色列表"
+              className="faction-button"
+              style={{
+                padding: '16px 24px',
+                borderRadius: '8px',
+                backgroundColor: '#e5e7eb', // Gray background like inactive nav button
+                color: '#1f2937', // Dark text like inactive nav button
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                flex: 1,
+                minWidth: '220px',
+                position: 'relative',
+                textAlign: 'center',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '1.75rem' }}>🐱</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>猫阵营</span>
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px' }}>
+                查看猫阵营角色列表
+              </div>
+            </button>
 
-          <div
-            className="card flex flex-col items-center p-8 hover:border-blue-500 hover:border-2 cursor-pointer"
-            onClick={() => handleTabChange('mouse')}
-          >
-            <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-              <span className="text-6xl">🐭</span>
-            </div>
-            <h2 className="text-2xl font-bold text-center">鼠阵营</h2>
-            <p className="text-gray-600 text-center mt-2">
-              查看鼠阵营角色列表
-            </p>
+            <button
+              onClick={() => handleTabChange('mouse')}
+              aria-label="查看鼠阵营角色列表"
+              className="faction-button"
+              style={{
+                padding: '16px 24px',
+                borderRadius: '8px',
+                backgroundColor: '#e5e7eb', // Gray background like inactive nav button
+                color: '#1f2937', // Dark text like inactive nav button
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                flex: 1,
+                minWidth: '220px',
+                position: 'relative',
+                textAlign: 'center',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '1.75rem' }}>🐭</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>鼠阵营</span>
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px' }}>
+                查看鼠阵营角色列表
+              </div>
+            </button>
           </div>
         </div>
 

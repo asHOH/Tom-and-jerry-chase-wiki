@@ -79,6 +79,29 @@ body {
     padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
   }
+
+  /* Responsive faction buttons */
+  .faction-button {
+    flex: 1 !important;
+    min-width: 0 !important;
+    padding: 12px 16px !important;
+  }
+
+  /* Adjust font sizes for mobile */
+  .faction-button span:nth-child(1) {
+    font-size: 1.5rem !important;
+  }
+
+  .faction-button span:nth-child(2) {
+    font-size: 1.25rem !important;
+  }
+
+  /* Make sure the tooltip is properly positioned on mobile */
+  .tooltip {
+    white-space: normal !important;
+    max-width: 90vw !important;
+    text-align: center !important;
+  }
 }
 
 /* Add smooth scrolling to the whole page */
@@ -92,4 +115,65 @@ html {
   margin-top: 0 !important;
   position: relative !important;
   z-index: 1 !important;
+}
+
+/* Faction button styles */
+/* Base styles for faction buttons */
+button.faction-button {
+  position: relative;
+  overflow: visible;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* Hover styles for faction buttons */
+button.faction-button:hover {
+  background-color: #2563eb !important; /* Blue background on hover */
+  color: white !important; /* White text on hover */
+}
+
+/* Ensure all child elements also change color on hover */
+button.faction-button:hover span,
+button.faction-button:hover div {
+  color: white !important;
+}
+
+/* Add a subtle shadow effect on hover */
+button.faction-button:hover {
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Tooltip styles */
+.faction-button .tooltip {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+  transition-delay: 0s;
+}
+
+.faction-button:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 1000ms; /* 1 second delay before showing tooltip */
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+  transition-delay: 0ms;
+  transform: translate(-50%, calc(100% + 10px));
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 4px 4px 4px;
+  border-style: solid;
+  border-color: transparent transparent rgba(75, 85, 99, 0.7) transparent;
 }
