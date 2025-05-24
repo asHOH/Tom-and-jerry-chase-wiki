@@ -57,7 +57,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                   <p className="text-sm text-gray-700 px-2 py-1">Hp上限: {character.maxHp}</p>
                 )}
                 {character.attackBoost !== undefined && character.attackBoost !== 0 && (
-                  <p className="text-sm text-gray-700 px-2 py-1">攻击力加成: {character.attackBoost}</p>
+                  <p className="text-sm text-gray-700 px-2 py-1">攻击增伤: {character.attackBoost}</p>
                 )}
                 {character.hpRecovery && (
                   <p className="text-sm text-gray-700 px-2 py-1">Hp恢复: {character.hpRecovery} / 秒</p>
