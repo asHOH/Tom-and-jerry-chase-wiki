@@ -33,8 +33,8 @@ export default function NavigationWrapper({
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '16px',
-        paddingTop: '80px' // Adjust based on your navbar height
+        padding: '24px',
+        paddingTop: '90px' // Adjust based on your navbar height
       }}>
         {children}
       </div>

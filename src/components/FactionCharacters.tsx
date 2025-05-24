@@ -21,9 +21,9 @@ type FactionCharactersProps = {
 export default function FactionCharacters({ faction, onSelectCharacter }: FactionCharactersProps) {
   return (
     <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}
-      <header className="text-center space-y-4 mb-8">
-        <h1 className="text-4xl font-bold text-blue-600">{faction.name}</h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">{faction.description}</p>
+      <header className="text-center space-y-6 mb-10 px-4">
+        <h1 className="text-4xl font-bold text-blue-600 py-3">{faction.name}</h1>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto px-4 py-2">{faction.description}</p>
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8">

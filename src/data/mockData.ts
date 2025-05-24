@@ -41,8 +41,8 @@ export type Skill = {
   detailedDescription?: string; // Detailed description for advanced view
 
   // Skill usage properties
-  canMoveWhileUsing: boolean; // 移动释放
-  canUseInAir: boolean; // 空中释放
+  canMoveWhileUsing?: boolean; // 移动释放
+  canUseInAir?: boolean; // 空中释放
   cancelableSkill?: string; // 可取消释放
   cancelableAftercast?: string; // 可取消后摇
 
@@ -92,7 +92,7 @@ export const characterData: Record<string, Character> = {
     id: 'tom',
     name: '汤姆',
     factionId: 'cat',
-    description: '经典角色汤姆猫。',
+    description: '经典角色汤姆猫',
 
     // Common attributes
     maxHp: 255,
@@ -167,8 +167,6 @@ export const characterData: Record<string, Character> = {
         id: 'tom-passive',
         name: '捕鼠专家',
         type: 'PASSIVE',
-        canMoveWhileUsing: true,
-        canUseInAir: true,
         skillLevels: [
           {
             level: 1,

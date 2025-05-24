@@ -28,7 +28,7 @@ export default function CharacterCard({ id, name, imageUrl, onClick }: Character
         </div>
       </div>
       <div className="p-6 text-center">
-        <h2 className="text-xl font-bold">{name}</h2>
+        <h2 className="text-xl font-bold px-2 py-2">{name}</h2>
       </div>
     </div>
   );

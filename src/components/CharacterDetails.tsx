@@ -1,39 +1,18 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Skill, SkillLevel } from '@/data/mockData';
+import { Character } from '@/data/mockData';
 
-// Character type with faction object instead of factionId
-type Character = {
-  id: string;
-  name: string;
+// Extended Character type that includes the faction object (as used in the exported characters)
+type CharacterWithFaction = Character & {
   faction: {
     id: string;
     name: string;
   };
-  description: string;
-  imageUrl: string;
-
-  // Common attributes for all characters
-  maxHp?: number; // Hp上限
-  attackBoost?: number; // 攻击增伤
-  hpRecovery?: number; // Hp恢复
-  moveSpeed?: number; // 移动速度
-  jumpHeight?: number; // 跳跃高度
-
-  // Cat-specific attributes
-  clawKnifeCdHit?: number; // 爪刀CD (命中)
-  clawKnifeCdUnhit?: number; // 爪刀CD (未命中)
-  clawKnifeRange?: number; // 爪刀范围
-
-  // Mouse-specific attributes
-  cheesePushSpeed?: number; // 推奶酪速度
-  wallCrackDamageBoost?: number; // 墙缝增伤
-
-  skills: Skill[];
+  imageUrl: string; // Required in the component
 };
 
 type CharacterDetailsProps = {
-  character: Character;
+  character: CharacterWithFaction;
   isDetailedView?: boolean;
 };
 
@@ -63,54 +42,54 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                 />
               </div>
             </div>
-            <h1 className="text-3xl font-bold">{character.name}</h1>
+            <h1 className="text-3xl font-bold px-4 py-2">{character.name}</h1>
 
             {/* Combined faction, name and description */}
-            <p className="text-blue-600 mt-1">
-              {character.faction.name} · {character.name} · {character.description}
+            <p className="text-blue-600 mt-2 px-4 py-1">
+              {character.faction.name} · {character.description}
             </p>
 
             {/* Character attributes section */}
-            <div className="mt-4 space-y-2">
+            <div className="mt-6 space-y-3">
               {/* Common attributes for all characters */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 {character.maxHp && (
-                  <p className="text-sm text-gray-700">Hp上限: {character.maxHp}</p>
+                  <p className="text-sm text-gray-700 px-2 py-1">Hp上限: {character.maxHp}</p>
                 )}
-                {character.attackBoost !== undefined && (
-                  <p className="text-sm text-gray-700">攻击力加成: {character.attackBoost}</p>
+                {character.attackBoost !== undefined && character.attackBoost !== 0 && (
+                  <p className="text-sm text-gray-700 px-2 py-1">攻击力加成: {character.attackBoost}</p>
                 )}
                 {character.hpRecovery && (
-                  <p className="text-sm text-gray-700">Hp恢复: {character.hpRecovery} / 秒</p>
+                  <p className="text-sm text-gray-700 px-2 py-1">Hp恢复: {character.hpRecovery} / 秒</p>
                 )}
                 {character.moveSpeed && (
-                  <p className="text-sm text-gray-700">移动速度: {character.moveSpeed}</p>
+                  <p className="text-sm text-gray-700 px-2 py-1">移速: {character.moveSpeed}</p>
                 )}
                 {character.jumpHeight && (
-                  <p className="text-sm text-gray-700">跳跃高度: {character.jumpHeight}</p>
+                  <p className="text-sm text-gray-700 px-2 py-1">跳跃: {character.jumpHeight}</p>
                 )}
               </div>
 
               {/* Cat-specific attributes */}
               {character.faction.id === 'cat' && (
-                <div className="mt-2 pt-2 border-t border-gray-200">
+                <div className="mt-3 pt-3 border-t border-gray-200">
                   {character.clawKnifeCdHit && character.clawKnifeCdUnhit && (
-                    <p className="text-amber-600">爪刀CD (未命中/命中): {character.clawKnifeCdUnhit} / {character.clawKnifeCdHit} 秒</p>
+                    <p className="text-amber-600 px-2 py-1">爪刀CD (未命中/命中): {character.clawKnifeCdUnhit} / {character.clawKnifeCdHit} 秒</p>
                   )}
                   {character.clawKnifeRange && (
-                    <p className="text-amber-600">爪刀范围: {character.clawKnifeRange}</p>
+                    <p className="text-amber-600 px-2 py-1">爪刀范围: {character.clawKnifeRange}</p>
                   )}
                 </div>
               )}
 
               {/* Mouse-specific attributes */}
               {character.faction.id === 'mouse' && (
-                <div className="mt-2 pt-2 border-t border-gray-200">
+                <div className="mt-3 pt-3 border-t border-gray-200">
                   {character.cheesePushSpeed && (
-                    <p className="text-blue-600">推奶酪速度: {character.cheesePushSpeed}</p>
+                    <p className="text-blue-600 px-2 py-1">推奶酪速度: {character.cheesePushSpeed}</p>
                   )}
                   {character.wallCrackDamageBoost && (
-                    <p className="text-blue-600">墙缝增伤: {character.wallCrackDamageBoost}%</p>
+                    <p className="text-blue-600 px-2 py-1">墙缝增伤: {character.wallCrackDamageBoost}%</p>
                   )}
                 </div>
               )}
@@ -119,8 +98,8 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
         </div>
 
         <div className="md:w-2/3">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">技能</h2>
+          <div className="flex justify-between items-center mb-6 px-2">
+            <h2 className="text-2xl font-bold py-2">技能</h2>
             {/* Only show the button if we're using local state (no prop provided) */}
             {propIsDetailedView === undefined && (
               <button
@@ -134,11 +113,11 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
           <div className="space-y-6">
             {character.skills.map((skill) => {
               return (
-                <div key={skill.id} className="card">
+                <div key={skill.id} className="card p-6">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex justify-between items-center">
-                        <h3 className="text-xl font-bold">
+                        <h3 className="text-xl font-bold px-2 py-2">
                           {skill.type === 'ACTIVE' ? '主动技能 · ' :
                            skill.type === 'WEAPON1' ? '武器技能1 · ' :
                            skill.type === 'WEAPON2' ? '武器技能2 · ' : '被动技能 · '}
@@ -159,30 +138,30 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                         {skill.cancelableAftercast && <span> · {skill.cancelableAftercast}</span>}
                       </div>
 
-                      <div className="mt-2">
+                      <div className="mt-3 px-2">
                         {isDetailedView && skill.detailedDescription ? (
-                          <p className="text-gray-700">{skill.detailedDescription}</p>
+                          <p className="text-gray-700 py-2">{skill.detailedDescription}</p>
                         ) : (
-                          skill.description && <p className="text-gray-700">{skill.description}</p>
+                          skill.description && <p className="text-gray-700 py-2">{skill.description}</p>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {skill.skillLevels.map((level) => (
-                        <div key={`${skill.id}-${level.level}`} className="bg-gray-100 p-3 rounded">
-                          <p>
+                        <div key={`${skill.id}-${level.level}`} className="bg-gray-100 p-4 rounded">
+                          <p className="px-2 py-1">
                             <span className="font-bold">Lv. {level.level}:</span> {level.description}
                           </p>
                           {/* Show detailed description if available and in detailed view */}
                           {isDetailedView && level.detailedDescription && (
-                            <p className="text-sm mt-1 text-gray-600">{level.detailedDescription}</p>
+                            <p className="text-sm mt-2 text-gray-600 px-2 py-1">{level.detailedDescription}</p>
                           )}
                           {/* Video button if available */}
                           {level.videoUrl && (
-                            <button className="text-blue-600 text-sm mt-2 hover:underline">
+                            <button className="text-blue-600 text-sm mt-3 px-2 py-1 hover:underline">
                               查看技能视频
                             </button>
                           )}
