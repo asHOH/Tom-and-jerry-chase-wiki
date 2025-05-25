@@ -1,9 +1,11 @@
 // Re-export types for backward compatibility
-export type { FactionId, Faction, Character, Skill, SkillLevel } from './types';
+export type { FactionId, Faction, Character, Skill, SkillLevel, Card, CardLevel, CardRank } from './types';
 
 // Import character data from separated files
 import { catCharactersWithImages } from './catCharacters';
 import { mouseCharactersWithImages } from './mouseCharacters';
+import { catCardsWithImages } from './catCards';
+import { mouseCardsWithImages } from './mouseCards';
 import { FactionId, Faction } from './types';
 
 /* -------------------------------------------------------------------------- */
@@ -25,6 +27,12 @@ export const factionData: Record<FactionId, Faction> = {
 export const characterData = {
   ...catCharactersWithImages,
   ...mouseCharactersWithImages
+};
+
+// Combine all card data
+export const cardData = {
+  ...catCardsWithImages,
+  ...mouseCardsWithImages
 };
 
 // Generate derived data structures for the application
@@ -56,6 +64,41 @@ export const characters = Object.fromEntries(
       ...character,
       // Image URL is already generated in the character data
       imageUrl: character.imageUrl!,
+      faction: { id: faction.id, name: faction.name }
+    }];
+  })
+);
+
+// 3. Create faction cards data structures
+export const factionCards = Object.fromEntries(
+  Object.entries(factionData).map(([factionId, faction]) => {
+    // Get all cards belonging to this faction
+    const factionCardList = Object.values(cardData)
+      .filter(card => card.factionId === factionId)
+      .map(({ id, name, rank, cost, imageUrl }) => ({
+        id,
+        name,
+        rank,
+        cost,
+        // Image URL is already generated in the card data
+        imageUrl: imageUrl!
+      }));
+
+    return [factionId, { ...faction, cards: factionCardList }];
+  })
+);
+
+// 4. Create cards with faction objects
+export const cards = Object.fromEntries(
+  Object.entries(cardData).map(([cardId, card]) => {
+    // Use type assertion to ensure TypeScript knows factionId is valid
+    const factionId = card.factionId as FactionId;
+    const faction = factionData[factionId];
+
+    return [cardId, {
+      ...card,
+      // Image URL is already generated in the card data
+      imageUrl: card.imageUrl!,
       faction: { id: faction.id, name: faction.name }
     }];
   })

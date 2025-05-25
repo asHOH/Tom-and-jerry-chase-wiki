@@ -4,22 +4,33 @@ import { useState } from 'react';
 import NavigationWrapper from '@/components/NavigationWrapper';
 import FactionCharacters from '@/components/FactionCharacters';
 import CharacterDetails from '@/components/CharacterDetails';
+import CardGrid from '@/components/CardGrid';
+import CardDetails from '@/components/CardDetails';
 import { DisclaimerText } from '@/components/DisclaimerText';
-import { factions, characters } from '@/data';
+import { factions, characters, factionCards, cards } from '@/data';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
+  const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [isDetailedView, setIsDetailedView] = useState<boolean>(false);
 
   const handleTabChange = (tabId: string) => {
     // If tabId is empty string, set activeTab to null (home page)
     setActiveTab(tabId === '' ? null : tabId);
+    // Clear selected character and card when changing tabs
     setSelectedCharacter(null);
+    setSelectedCard(null);
   };
 
   const handleSelectCharacter = (characterId: string) => {
     setSelectedCharacter(characterId);
+    setSelectedCard(null); // Clear card selection when selecting character
+  };
+
+  const handleSelectCard = (cardId: string) => {
+    setSelectedCard(cardId);
+    setSelectedCharacter(null); // Clear character selection when selecting card
   };
 
   const toggleDetailedView = () => {
@@ -28,6 +39,16 @@ export default function Home() {
 
   // Render content based on state
   const renderContent = () => {
+    // If a card is selected, show card details
+    if (selectedCard && cards[selectedCard]) {
+      return (
+        <CardDetails
+          card={cards[selectedCard]}
+          isDetailedView={isDetailedView}
+        />
+      );
+    }
+
     // If a character is selected, show character details
     if (selectedCharacter && characters[selectedCharacter]) {
       // Pass the isDetailedView state to the CharacterDetails component
@@ -35,6 +56,25 @@ export default function Home() {
         <CharacterDetails
           character={characters[selectedCharacter]}
           isDetailedView={isDetailedView}
+        />
+      );
+    }
+
+    // If card tabs are active, show faction cards
+    if (activeTab === 'catCards' && factionCards['cat']) {
+      return (
+        <CardGrid
+          faction={factionCards['cat']}
+          onSelectCard={handleSelectCard}
+        />
+      );
+    }
+
+    if (activeTab === 'mouseCards' && factionCards['mouse']) {
+      return (
+        <CardGrid
+          faction={factionCards['mouse']}
+          onSelectCard={handleSelectCard}
         />
       );
     }
@@ -152,7 +192,7 @@ export default function Home() {
       onTabChange={handleTabChange}
       isDetailedView={isDetailedView}
       onToggleDetailedView={toggleDetailedView}
-      showDetailToggle={!!selectedCharacter} // Only show toggle when a character is selected
+      showDetailToggle={!!(selectedCharacter || selectedCard)} // Show toggle when a character or card is selected
     >
       {/* Render content based on state */}
       {renderContent()}

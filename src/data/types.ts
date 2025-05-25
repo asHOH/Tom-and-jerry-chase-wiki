@@ -57,3 +57,24 @@ export type SkillLevel = {
   cooldown?: number;
   videoUrl?: string | null;
 };
+
+// Card-related types
+export type CardRank = 'C' | 'B' | 'A' | 'S';
+
+export type CardLevel = {
+  level: number;
+  description: string;
+  detailedDescription?: string;
+};
+
+export type Card = {
+  id: string;
+  name: string;
+  factionId?: FactionId; // Optional in base definition, will be assigned in bulk
+  rank: CardRank;
+  cost: number;
+  description: string;
+  detailedDescription?: string;
+  imageUrl?: string; // We'll generate it automatically
+  levels: CardLevel[];
+};

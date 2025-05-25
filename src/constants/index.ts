@@ -10,7 +10,7 @@ export const CREATORS = {
     url: 'https://space.bilibili.com/443541296',
     contribution: '测试数据'
   },
-  fanshuwu: {
+  fanshuwa: {
     name: '凡叔哇',
     url: 'https://space.bilibili.com/273122087',
     contribution: '图片素材'
@@ -28,7 +28,7 @@ export const DISCLAIMER_CONTENT = {
   },
   imageAttribution: {
     prefix: '特别鸣谢b站up主',
-    creators: ['fanshuwu'] as const,
+    creators: ['fanshuwa'] as const,
     suffix: '分享的图片素材。'
   }
 };

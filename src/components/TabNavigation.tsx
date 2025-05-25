@@ -9,6 +9,8 @@ type Tab = {
 const tabs: Tab[] = [
   { id: 'cat', name: '猫阵营', emoji: '🐱' },
   { id: 'mouse', name: '鼠阵营', emoji: '🐭' },
+  { id: 'catCards', name: '猫方知识卡', emoji: '🃏' },
+  { id: 'mouseCards', name: '鼠方知识卡', emoji: '🎴' },
 ];
 
 type TabNavigationProps = {
