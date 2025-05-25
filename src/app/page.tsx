@@ -4,6 +4,7 @@ import { useState } from 'react';
 import NavigationWrapper from '@/components/NavigationWrapper';
 import FactionCharacters from '@/components/FactionCharacters';
 import CharacterDetails from '@/components/CharacterDetails';
+import { DisclaimerText } from '@/components/DisclaimerText';
 import { factions, characters } from '@/data';
 
 export default function Home() {
@@ -138,7 +139,7 @@ export default function Home() {
         <div className="mt-16 text-center px-4">
           <h2 className="text-2xl font-bold mb-6 py-2">网站说明</h2>
           <p className="max-w-2xl mx-auto text-gray-600 px-4 py-3">
-            本网站为粉丝制作，仅供学习交流使用，并非官方网站，素材版权均归网易猫和老鼠手游所有。特别感谢b站up主梦回_淦德蒸蚌、是莫莫喵提供的测试数据。
+            <DisclaimerText />
           </p>
         </div>
       </div>
