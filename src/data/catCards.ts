@@ -13,24 +13,12 @@ export const catCards: Record<string, Card> = {
     id: '乘胜追击',
     rank: 'S',
     cost: 7,
-    description: '击败老鼠后获得强力增益效果',
-    detailedDescription: '击败老鼠后，获得移动速度和攻击力大幅提升，持续一段时间',
+    description: '每当猫咪抓中老鼠或使老鼠进入虚弱状态时，将提升自己2%移动速度和2%攻击频率，效果可以叠加。猫咪进入虚弱状态移除当前一半层数。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '击败老鼠后移速提升30%，持续8秒',
-        detailedDescription: '击败老鼠后移动速度提升30%，攻击力提升15%，持续8秒'
-      },
-      {
-        level: 2,
-        description: '击败老鼠后移速提升35%，持续10秒',
-        detailedDescription: '击败老鼠后移动速度提升35%，攻击力提升20%，持续10秒'
-      },
-      {
-        level: 3,
-        description: '击败老鼠后移速提升40%，持续12秒',
-        detailedDescription: '击败老鼠后移动速度提升40%，攻击力提升25%，持续12秒'
-      }
+      { level: 1, description: '效果最多叠加5层。'},
+      { level: 2, description: '效果最多叠加6层。'},
+      { level: 3, description: '效果最多叠加7层。'}
     ]
   },
 
@@ -38,24 +26,12 @@ export const catCards: Record<string, Card> = {
     id: '乾坤一掷',
     rank: 'S',
     cost: 6,
-    description: '投掷道具造成额外伤害和控制效果',
-    detailedDescription: '投掷道具时造成范围伤害，并对命中的老鼠施加减速效果',
+    description: '保持健康值60%以上一段时间可进入乾坤一掷状态，提高移动速度和投掷物伤害，健康值低于阈值后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '投掷道具伤害提升50%，减速3秒',
-        detailedDescription: '投掷道具伤害提升50%，命中老鼠减速30%持续3秒'
-      },
-      {
-        level: 2,
-        description: '投掷道具伤害提升60%，减速4秒',
-        detailedDescription: '投掷道具伤害提升60%，命中老鼠减速35%持续4秒'
-      },
-      {
-        level: 3,
-        description: '投掷道具伤害提升70%，减速5秒',
-        detailedDescription: '投掷道具伤害提升70%，命中老鼠减速40%持续5秒'
-      }
+      { level: 1, description: '保持60%健康值以上20秒后获得乾坤一掷效果。'},
+      { level: 2, description: '保持60%健康值以上19秒后获得乾坤一掷效果。'},
+      { level: 3, description: '保持60%健康值以上18秒后获得乾坤一掷效果。'}
     ]
   },
 
@@ -63,24 +39,12 @@ export const catCards: Record<string, Card> = {
     id: '击晕',
     rank: 'S',
     cost: 7,
-    description: '攻击有概率造成眩晕效果',
-    detailedDescription: '普通攻击和技能攻击都有一定概率使老鼠眩晕',
+    description: '猫咪掌握了独特的攻击手法，能对攻击到的老鼠造成短暂的眩晕。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '攻击有15%概率眩晕1.5秒',
-        detailedDescription: '普通攻击和技能攻击有15%概率使老鼠眩晕1.5秒'
-      },
-      {
-        level: 2,
-        description: '攻击有18%概率眩晕1.8秒',
-        detailedDescription: '普通攻击和技能攻击有18%概率使老鼠眩晕1.8秒'
-      },
-      {
-        level: 3,
-        description: '攻击有20%概率眩晕2秒',
-        detailedDescription: '普通攻击和技能攻击有20%概率使老鼠眩晕2秒'
-      }
+      { level: 1, description: '击晕时间增加至0.8秒。'},
+      { level: 2, description: '击晕时间增加至0.9秒。'},
+      { level: 3, description: '击晕时间增加至1.0秒。'}
     ]
   },
 
@@ -88,24 +52,12 @@ export const catCards: Record<string, Card> = {
     id: '屈打成招',
     rank: 'S',
     cost: 6,
-    description: '携带老鼠时获得额外能力',
-    detailedDescription: '携带老鼠时移动速度不减少，并且可以使用技能',
+    description: '逼问意志不坚定的老鼠，你将得到对方队友的位置信息！手持老鼠或将老鼠绑在火箭上时，猫咪能获得其他老鼠的位置。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '携带老鼠时移速不减少',
-        detailedDescription: '携带老鼠时移动速度不减少，可以正常使用主动技能'
-      },
-      {
-        level: 2,
-        description: '携带老鼠时移速不减少，技能CD减少10%',
-        detailedDescription: '携带老鼠时移动速度不减少，可以正常使用主动技能，技能冷却时间减少10%'
-      },
-      {
-        level: 3,
-        description: '携带老鼠时移速不减少，技能CD减少15%',
-        detailedDescription: '携带老鼠时移动速度不减少，可以正常使用主动技能，技能冷却时间减少15%'
-      }
+      { level: 1, description: '可以审问出1只老鼠的行踪。'},
+      { level: 2, description: '可以审问出2只老鼠的行踪。'},
+      { level: 3, description: '可以审问出3只老鼠的行踪。'}
     ]
   },
 
@@ -113,833 +65,418 @@ export const catCards: Record<string, Card> = {
     id: '暴怒',
     rank: 'S',
     cost: 6,
-    description: '生命值较低时获得强力增益',
-    detailedDescription: '当生命值低于一定比例时，获得攻击力和移动速度大幅提升',
+    description: '墙缝即将被破开时，猫咪进入暴怒状态，攻击力增加50，但技能会增加50%的间隙。虚弱起身后台也会获得10秒的暴怒状态。', // Note: "后台" in "虚弱起身后台" might be a typo/OCR error from the image, possibly intended as "后也".
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '生命值低于40%时攻击力和移速提升25%',
-        detailedDescription: '当生命值低于40%时，攻击力和移动速度提升25%'
-      },
-      {
-        level: 2,
-        description: '生命值低于45%时攻击力和移速提升30%',
-        detailedDescription: '当生命值低于45%时，攻击力和移动速度提升30%'
-      },
-      {
-        level: 3,
-        description: '生命值低于50%时攻击力和移速提升35%',
-        detailedDescription: '当生命值低于50%时，攻击力和移动速度提升35%'
-      }
+      { level: 1, description: '墙缝被破坏30%后触发。'},
+      { level: 2, description: '墙缝被破坏25%后触发。'},
+      { level: 3, description: '墙缝被破坏20%后触发。'}
     ]
   },
 
   '猛攻': {
     id: '猛攻',
-
     rank: 'S',
     cost: 5,
-    description: '连续攻击同一目标时伤害递增',
-    detailedDescription: '连续攻击同一老鼠时，每次攻击伤害都会递增',
+    description: '猫咪的攻击使老鼠在短时间内无法使用技能、武器和道具，并掉落手中的道具。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '连续攻击同一目标，每次伤害递增10%，最多叠加3层',
-        detailedDescription: '连续攻击同一老鼠时，每次攻击伤害递增10%，最多叠加3层，持续5秒'
-      },
-      {
-        level: 2,
-        description: '连续攻击同一目标，每次伤害递增12%，最多叠加4层',
-        detailedDescription: '连续攻击同一老鼠时，每次攻击伤害递增12%，最多叠加4层，持续6秒'
-      },
-      {
-        level: 3,
-        description: '连续攻击同一目标，每次伤害递增15%，最多叠加5层',
-        detailedDescription: '连续攻击同一老鼠时，每次攻击伤害递增15%，最多叠加5层，持续7秒'
-      }
+      { level: 1, description: '被击中的老鼠，5秒内无法使用技能、武器和道具。'},
+      { level: 2, description: '被击中的老鼠，6秒内无法使用技能、武器和道具。'},
+      { level: 3, description: '被击中的老鼠，7秒内无法使用技能、武器和道具。'}
     ]
   },
 
   '知识渊博': {
     id: '知识渊博',
-
     rank: 'S',
     cost: 6,
-    description: '技能冷却时间大幅减少',
-    detailedDescription: '所有技能的冷却时间都会大幅减少，让你能更频繁地使用技能',
+    description: '知识渊博的猫咪，天生拥有更多的经验，同时自然经验增长的速度也获得提升。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '所有技能冷却时间减少20%',
-        detailedDescription: '所有主动技能和武器技能的冷却时间减少20%'
-      },
-      {
-        level: 2,
-        description: '所有技能冷却时间减少25%',
-        detailedDescription: '所有主动技能和武器技能的冷却时间减少25%'
-      },
-      {
-        level: 3,
-        description: '所有技能冷却时间减少30%',
-        detailedDescription: '所有主动技能和武器技能的冷却时间减少30%'
-      }
+      { level: 1, description: '提升初始经验，小幅提升自然经验增长速度。'},
+      { level: 2, description: '提升初始经验，中幅提升自然经验增长速度。'},
+      { level: 3, description: '提升初始经验，大幅提升自然经验增长速度。'}
     ]
   },
 
   '蓄势一击': {
     id: '蓄势一击',
-
     rank: 'S',
     cost: 6,
-    description: '长时间蓄力后的攻击造成巨额伤害',
-    detailedDescription: '蓄力一定时间后，下一次攻击将造成巨额伤害并附带特殊效果',
+    description: '每一次的潜伏，都是为了今后的爆发。如果猫咪一段时间内没有进行过普通攻击，也没有受到来自敌方的眩晕和硬直效果的影响，则下一次爪击将附带额外伤害。从虚弱状态恢复或升级后立刻刷新蓄力一击状态。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '蓄力3秒后下次攻击伤害提升100%',
-        detailedDescription: '蓄力3秒后，下一次攻击伤害提升100%并造成1秒眩晕'
-      },
-      {
-        level: 2,
-        description: '蓄力2.5秒后下次攻击伤害提升120%',
-        detailedDescription: '蓄力2.5秒后，下一次攻击伤害提升120%并造成1.2秒眩晕'
-      },
-      {
-        level: 3,
-        description: '蓄力2秒后下次攻击伤害提升150%',
-        detailedDescription: '蓄力2秒后，下一次攻击伤害提升150%并造成1.5秒眩晕'
-      }
+      { level: 1, description: '每隔14秒，会获得一次蓄力攻击的效果。'},
+      { level: 2, description: '每隔13秒，会获得一次蓄力攻击的效果。'},
+      { level: 3, description: '每隔12秒，会获得一次蓄力攻击的效果。'}
     ]
   },
 
   /* ----------------------------------- A级卡 ---------------------------------- */
   '加大火力': {
     id: '加大火力',
-
     rank: 'A',
     cost: 4,
-    description: '攻击力大幅提升',
-    detailedDescription: '永久性提升攻击力，让你的每次攻击都更有威胁',
+    description: '点燃火箭吧！猫咪将老鼠绑上火箭后，使火箭燃烧的速度变得更快！在拥有老鼠火箭附近击倒老鼠，会额外减少火箭5秒燃烧时间（20秒内不会复触发）。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '攻击力提升20%',
-        detailedDescription: '所有攻击的伤害提升20%'
-      },
-      {
-        level: 2,
-        description: '攻击力提升25%',
-        detailedDescription: '所有攻击的伤害提升25%'
-      },
-      {
-        level: 3,
-        description: '攻击力提升30%',
-        detailedDescription: '所有攻击的伤害提升30%'
-      }
+      { level: 1, description: '火箭引线燃烧速度提升12%。'},
+      { level: 2, description: '火箭引线燃烧速度提升13%。'},
+      { level: 3, description: '火箭引线燃烧速度提升14%。'}
     ]
   },
 
   '威压': {
     id: '威压',
-
     rank: 'A',
     cost: 4,
-    description: '降低附近老鼠的移动速度',
-    detailedDescription: '被动降低一定范围内老鼠的移动速度和跳跃能力',
+    description: '给附近的老鼠带来强大的压迫感，使得老鼠移动速度降低，在使用技能后一段时间内造成更强的减速效果。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '附近老鼠移速降低15%',
-        detailedDescription: '300范围内的老鼠移动速度降低15%，跳跃高度降低10%'
-      },
-      {
-        level: 2,
-        description: '附近老鼠移速降低18%',
-        detailedDescription: '350范围内的老鼠移动速度降低18%，跳跃高度降低12%'
-      },
-      {
-        level: 3,
-        description: '附近老鼠移速降低20%',
-        detailedDescription: '400范围内的老鼠移动速度降低20%，跳跃高度降低15%'
-      }
+      { level: 1, description: '附近老鼠移动速度降低6%。'},
+      { level: 2, description: '附近老鼠移动速度降低7%。'},
+      { level: 3, description: '附近老鼠移动速度降低8%。'}
     ]
   },
 
   '心灵手巧': {
     id: '心灵手巧',
-
     rank: 'A',
     cost: 4,
-    description: '使用道具的效果增强',
-    detailedDescription: '使用道具时获得额外效果，并且道具使用速度更快',
+    description: '那些笨手笨脚的老鼠！心灵手巧的猫咪在布置捕鼠夹、绑火箭、修复火箭时，交互速度得到提升。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '道具效果提升25%，使用速度提升20%',
-        detailedDescription: '道具伤害和控制效果提升25%，使用动作速度提升20%'
-      },
-      {
-        level: 2,
-        description: '道具效果提升30%，使用速度提升25%',
-        detailedDescription: '道具伤害和控制效果提升30%，使用动作速度提升25%'
-      },
-      {
-        level: 3,
-        description: '道具效果提升35%，使用速度提升30%',
-        detailedDescription: '道具伤害和控制效果提升35%，使用动作速度提升30%'
-      }
+      { level: 1, description: '交互速度提升26%。'},
+      { level: 2, description: '交互速度提升28%。'},
+      { level: 3, description: '交互速度提升30%。'}
     ]
   },
 
   '熊熊燃烧': {
     id: '熊熊燃烧',
-
     rank: 'A',
     cost: 6,
-    description: '攻击附带燃烧效果',
-    detailedDescription: '攻击命中老鼠时，会对其施加持续燃烧伤害',
+    description: '燃烧我的引信！每次将老鼠绑上火箭后，火箭引信将会立刻燃烧掉一截。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '攻击附带燃烧，每秒造成5点伤害，持续3秒',
-        detailedDescription: '攻击命中老鼠时附带燃烧效果，每秒造成5点伤害，持续3秒'
-      },
-      {
-        level: 2,
-        description: '攻击附带燃烧，每秒造成6点伤害，持续4秒',
-        detailedDescription: '攻击命中老鼠时附带燃烧效果，每秒造成6点伤害，持续4秒'
-      },
-      {
-        level: 3,
-        description: '攻击附带燃烧，每秒造成8点伤害，持续5秒',
-        detailedDescription: '攻击命中老鼠时附带燃烧效果，每秒造成8点伤害，持续5秒'
-      }
+      { level: 1, description: '每次将老鼠绑上火箭后，火箭的引信会额外缩短3秒。'},
+      { level: 2, description: '每次将老鼠绑上火箭后，火箭的引信会额外缩短4秒。'},
+      { level: 3, description: '每次将老鼠绑上火箭后，火箭的引信会额外缩短5秒。'}
     ]
   },
 
   '穷追猛打': {
     id: '穷追猛打',
-
     rank: 'A',
     cost: 4,
-    description: '对受伤老鼠造成额外伤害',
-    detailedDescription: '对生命值不满的老鼠造成额外伤害，生命值越低伤害越高',
+    description: '必胜的信念让猫都燃起来了，穷追不舍的状态下将给予猫攻击和速度强化效果，该状态会在将老鼠绑上火箭或累计击倒3次老鼠时移除。“追寻的路上不乏激情，但成功后空虚往往随之而来，火总会熄灭的，捉老鼠如此，猫生亦是如此。”',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '对受伤老鼠额外造成15%伤害',
-        detailedDescription: '对生命值低于100%的老鼠额外造成15%伤害'
-      },
-      {
-        level: 2,
-        description: '对受伤老鼠额外造成20%伤害',
-        detailedDescription: '对生命值低于100%的老鼠额外造成20%伤害'
-      },
-      {
-        level: 3,
-        description: '对受伤老鼠额外造成25%伤害',
-        detailedDescription: '对生命值低于100%的老鼠额外造成25%伤害'
-      }
+      { level: 1, description: '获得小幅度强化效果。'},
+      { level: 2, description: '获得中幅度强化效果。'},
+      { level: 3, description: '获得大幅度强化效果。'}
     ]
   },
 
   '细心': {
     id: '细心',
-
     rank: 'A',
     cost: 4,
-    description: '提升侦查能力和视野范围',
-    detailedDescription: '增加视野范围，并且能更容易发现隐藏的老鼠',
+    description: '细心的猫咪能够有效地躲避老鼠夹和碎片，但移动速度会小幅度降低。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '视野范围提升20%，侦查能力提升',
-        detailedDescription: '视野范围提升20%，能更快发现草丛中的老鼠'
-      },
-      {
-        level: 2,
-        description: '视野范围提升25%，侦查能力提升',
-        detailedDescription: '视野范围提升25%，能更快发现草丛中的老鼠，并显示老鼠足迹'
-      },
-      {
-        level: 3,
-        description: '视野范围提升30%，侦查能力提升',
-        detailedDescription: '视野范围提升30%，能更快发现草丛中的老鼠，显示老鼠足迹和方向'
-      }
+      { level: 1, description: '移动速度降低7%。'},
+      { level: 2, description: '移动速度降低6.5%。'},
+      { level: 3, description: '移动速度降低6%。'}
     ]
   },
 
   '越挫越勇': {
     id: '越挫越勇',
-
     rank: 'A',
     cost: 4,
-    description: '受到伤害后获得短暂增益',
-    detailedDescription: '每次受到伤害后，获得移动速度和攻击力的短暂提升',
+    description: '每当猫咪进入虚弱状态，健康值上限、健康值恢复速度和移动速度得到提升。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '受伤后移速和攻击力提升20%，持续3秒',
-        detailedDescription: '每次受到伤害后，移动速度和攻击力提升20%，持续3秒'
-      },
-      {
-        level: 2,
-        description: '受伤后移速和攻击力提升25%，持续4秒',
-        detailedDescription: '每次受到伤害后，移动速度和攻击力提升25%，持续4秒'
-      },
-      {
-        level: 3,
-        description: '受伤后移速和攻击力提升30%，持续5秒',
-        detailedDescription: '每次受到伤害后，移动速度和攻击力提升30%，持续5秒'
-      }
+      { level: 1, description: '效果最多叠加3层。'},
+      { level: 2, description: '效果最多叠加4层。'},
+      { level: 3, description: '效果最多叠加5层。'}
     ]
   },
 
   '铜墙': {
     id: '铜墙',
-
     rank: 'A',
     cost: 6,
-    description: '大幅提升防御能力',
-    detailedDescription: '减少受到的伤害，并且对控制效果有一定抗性',
+    description: '自从猫咪学会了给墙面打补丁，墙缝的坚固程度得到提升。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '受到伤害减少15%，控制时间减少20%',
-        detailedDescription: '受到的所有伤害减少15%，眩晕和减速等控制效果时间减少20%'
-      },
-      {
-        level: 2,
-        description: '受到伤害减少18%，控制时间减少25%',
-        detailedDescription: '受到的所有伤害减少18%，眩晕和减速等控制效果时间减少25%'
-      },
-      {
-        level: 3,
-        description: '受到伤害减少20%，控制时间减少30%',
-        detailedDescription: '受到的所有伤害减少20%，眩晕和减速等控制效果时间减少30%'
-      }
+      { level: 1, description: '墙缝出现时，场上每有一只老鼠存活，墙缝的坚固程度将提升10%。'},
+      { level: 2, description: '墙缝出现时，场上每有一只老鼠存活，墙缝的坚固程度将提升11%。'},
+      { level: 3, description: '墙缝出现时，场上每有一只老鼠存活，墙缝的坚固程度将提升12%。'}
     ]
   },
 
   '长爪': {
     id: '长爪',
-
     rank: 'A',
     cost: 4,
-    description: '增加攻击范围',
-    detailedDescription: '增加普通攻击和爪刀攻击的范围，让你更容易命中老鼠',
+    description: '攻击范围大幅增强，但普通攻击伤害固定为25点，不受任何攻击力增加影响。使用拍子时只能造成效果而不能造成伤害。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '攻击范围增加20%',
-        detailedDescription: '普通攻击和爪刀攻击的范围增加20%'
-      },
-      {
-        level: 2,
-        description: '攻击范围增加25%',
-        detailedDescription: '普通攻击和爪刀攻击的范围增加25%'
-      },
-      {
-        level: 3,
-        description: '攻击范围增加30%',
-        detailedDescription: '普通攻击和爪刀攻击的范围增加30%'
-      }
+      { level: 1, description: '攻击范围提高64%。'},
+      { level: 2, description: '攻击范围提高73%。'},
+      { level: 3, description: '攻击范围提高82%。'}
     ]
   },
 
   /* ----------------------------------- B级卡 ---------------------------------- */
   '严防死守': {
     id: '严防死守',
-
     rank: 'B',
     cost: 4,
-    description: '提升防御能力和生命值',
-    detailedDescription: '增加最大生命值并减少受到的伤害',
+    description: '猫咪在火箭旁严防死守，火箭附近老鼠越多，使得救援速度越慢。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '最大生命值提升15%，受到伤害减少8%',
-        detailedDescription: '最大生命值提升15%，受到的所有伤害减少8%'
-      },
-      {
-        level: 2,
-        description: '最大生命值提升18%，受到伤害减少10%',
-        detailedDescription: '最大生命值提升18%，受到的所有伤害减少10%'
-      },
-      {
-        level: 3,
-        description: '最大生命值提升20%，受到伤害减少12%',
-        detailedDescription: '最大生命值提升20%，受到的所有伤害减少12%'
-      }
+      { level: 1, description: '每只老鼠使救援的速度降低11%。'},
+      { level: 2, description: '每只老鼠使救援的速度降低18%。'},
+      { level: 3, description: '每只老鼠使救援的速度降低25%。'}
     ]
   },
 
   '减速警告': {
     id: '减速警告',
-
     rank: 'B',
     cost: 4,
-    description: '攻击附带减速效果',
-    detailedDescription: '攻击命中老鼠时会降低其移动速度',
+    description: '猫咪挥爪攻击使老鼠的移动速度降低，老鼠解除受伤状态时同时解除减速效果。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '攻击使老鼠减速25%，持续2秒',
-        detailedDescription: '攻击命中老鼠时使其移动速度降低25%，持续2秒'
-      },
-      {
-        level: 2,
-        description: '攻击使老鼠减速30%，持续2.5秒',
-        detailedDescription: '攻击命中老鼠时使其移动速度降低30%，持续2.5秒'
-      },
-      {
-        level: 3,
-        description: '攻击使老鼠减速35%，持续3秒',
-        detailedDescription: '攻击命中老鼠时使其移动速度降低35%，持续3秒'
-      }
+      { level: 1, description: '降低老鼠5%的移动速度。'},
+      { level: 2, description: '降低老鼠6%的移动速度。'},
+      { level: 3, description: '降低老鼠7%的移动速度。'}
     ]
   },
 
   '反侦察': {
     id: '反侦察',
-
     rank: 'B',
     cost: 3,
-    description: '降低被老鼠发现的概率',
-    detailedDescription: '减少脚步声和视觉暴露，更难被老鼠察觉',
+    description: '猫咪破坏机器鼠可以获得更多的经验',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '脚步声降低40%，视觉暴露范围减少20%',
-        detailedDescription: '脚步声音量降低40%，被老鼠发现的视觉范围减少20%'
-      },
-      {
-        level: 2,
-        description: '脚步声降低50%，视觉暴露范围减少25%',
-        detailedDescription: '脚步声音量降低50%，被老鼠发现的视觉范围减少25%'
-      },
-      {
-        level: 3,
-        description: '脚步声降低60%，视觉暴露范围减少30%',
-        detailedDescription: '脚步声音量降低60%，被老鼠发现的视觉范围减少30%'
-      }
+      { level: 1, description: '额外获得400经验。'},
+      { level: 2, description: '额外获得500经验。'},
+      { level: 3, description: '额外获得600经验。'}
     ]
   },
 
   '守株待鼠': {
     id: '守株待鼠',
-
     rank: 'B',
     cost: 3,
-    description: '静止时获得增益效果',
-    detailedDescription: '保持静止不动时获得攻击力和侦查能力提升',
+    description: '当敌方老鼠被绑在火箭上时，敌方老鼠的投掷伤害降低。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '静止3秒后攻击力提升20%，视野范围提升15%',
-        detailedDescription: '保持静止3秒后，攻击力提升20%，视野范围提升15%'
-      },
-      {
-        level: 2,
-        description: '静止2.5秒后攻击力提升25%，视野范围提升18%',
-        detailedDescription: '保持静止2.5秒后，攻击力提升25%，视野范围提升18%'
-      },
-      {
-        level: 3,
-        description: '静止2秒后攻击力提升30%，视野范围提升20%',
-        detailedDescription: '保持静止2秒后，攻击力提升30%，视野范围提升20%'
-      }
+      { level: 1, description: '敌方老鼠的投掷伤害小幅度降低。'},
+      { level: 2, description: '敌方老鼠的投掷伤害中幅度降低。'},
+      { level: 3, description: '敌方老鼠的投掷伤害大幅度降低。'}
     ]
   },
 
   '寻踪': {
     id: '寻踪',
-
     rank: 'B',
     cost: 3,
-    description: '能够追踪老鼠的足迹',
-    detailedDescription: '显示老鼠留下的足迹痕迹，持续一段时间',
+    description: '猫咪始终可以从小地图发现虚弱老鼠的位置。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '显示老鼠足迹，持续8秒',
-        detailedDescription: '显示老鼠在地面留下的足迹痕迹，持续8秒'
-      },
-      {
-        level: 2,
-        description: '显示老鼠足迹，持续10秒',
-        detailedDescription: '显示老鼠在地面留下的足迹痕迹，持续10秒'
-      },
-      {
-        level: 3,
-        description: '显示老鼠足迹，持续12秒',
-        detailedDescription: '显示老鼠在地面留下的足迹痕迹，持续12秒'
-      }
+      { level: 1, description: '最多看到2只老鼠位置。'},
+      { level: 2, description: '最多看到3只老鼠位置。'},
+      { level: 3, description: '最多看到4只老鼠位置。'}
     ]
   },
 
   '恐吓': {
     id: '恐吓',
-
     rank: 'B',
     cost: 4,
-    description: '降低附近老鼠的战斗能力',
-    detailedDescription: '被动降低附近老鼠的攻击力和移动速度',
+    description: '猫咪的攻击对老鼠造成恐吓，老鼠在一段时间内推奶酪的速度大幅下降。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '附近老鼠攻击力和移速降低12%',
-        detailedDescription: '300范围内的老鼠攻击力和移动速度降低12%'
-      },
-      {
-        level: 2,
-        description: '附近老鼠攻击力和移速降低15%',
-        detailedDescription: '350范围内的老鼠攻击力和移动速度降低15%'
-      },
-      {
-        level: 3,
-        description: '附近老鼠攻击力和移速降低18%',
-        detailedDescription: '400范围内的老鼠攻击力和移动速度降低18%'
-      }
+      { level: 1, description: '恐吓造成恐吓的时间延长至30秒。'},
+      { level: 2, description: '恐吓造成恐吓的时间延长至45秒。'},
+      { level: 3, description: '恐吓造成恐吓的时间延长至60秒。'}
     ]
   },
 
   '捕鼠夹': {
     id: '捕鼠夹',
-
     rank: 'B',
     cost: 3,
-    description: '放置陷阱捕捉老鼠',
-    detailedDescription: '在地面放置捕鼠夹，踩中的老鼠会被困住并受到伤害',
+    description: '布置更为强力的捕鼠夹，老鼠踩中捕鼠夹时会受到伤害，并且需要更长时间挣脱。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '放置捕鼠夹，困住老鼠2秒并造成中等伤害',
-        detailedDescription: '放置一个捕鼠夹，踩中的老鼠被困住2秒并受到中等伤害'
-      },
-      {
-        level: 2,
-        description: '放置捕鼠夹，困住老鼠2.5秒并造成较高伤害',
-        detailedDescription: '放置一个捕鼠夹，踩中的老鼠被困住2.5秒并受到较高伤害'
-      },
-      {
-        level: 3,
-        description: '放置捕鼠夹，困住老鼠3秒并造成高伤害',
-        detailedDescription: '放置一个捕鼠夹，踩中的老鼠被困住3秒并受到高伤害'
-      }
+      { level: 1, description: '老鼠挣脱夹子的速度降低10%。'},
+      { level: 2, description: '老鼠挣脱夹子的速度降低15%。'},
+      { level: 3, description: '老鼠挣脱夹子的速度降低20%。'}
     ]
   },
 
   '攻其不备': {
     id: '攻其不备',
-
     rank: 'B',
     cost: 3,
-    description: '背后攻击造成额外伤害',
-    detailedDescription: '从老鼠背后发起的攻击会造成额外伤害和控制效果',
+    description: '当老鼠在推奶酪且猫咪周围没有敌方角色时，猫咪试图快速接近老鼠，移动速度得到提升。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '背后攻击额外造成40%伤害',
-        detailedDescription: '从老鼠背后发起的攻击额外造成40%伤害并有30%概率造成眩晕'
-      },
-      {
-        level: 2,
-        description: '背后攻击额外造成50%伤害',
-        detailedDescription: '从老鼠背后发起的攻击额外造成50%伤害并有35%概率造成眩晕'
-      },
-      {
-        level: 3,
-        description: '背后攻击额外造成60%伤害',
-        detailedDescription: '从老鼠背后发起的攻击额外造成60%伤害并有40%概率造成眩晕'
-      }
+      { level: 1, description: '周围没有敌方角色时，移动速度提升18%。'},
+      { level: 2, description: '周围没有敌方角色时，移动速度提升19%。'},
+      { level: 3, description: '周围没有敌方角色时，移动速度提升20%。'}
     ]
   },
 
   '斗志昂扬': {
     id: '斗志昂扬',
-
     rank: 'B',
     cost: 3,
-    description: '击败老鼠后恢复生命值',
-    detailedDescription: '每次击败老鼠后恢复一定生命值并获得短暂增益',
+    description: '信心满满的猫咪，可以更快捷地挥爪攻击。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '击败老鼠后恢复25%生命值',
-        detailedDescription: '击败老鼠后恢复25%最大生命值并获得3秒移速提升'
-      },
-      {
-        level: 2,
-        description: '击败老鼠后恢复30%生命值',
-        detailedDescription: '击败老鼠后恢复30%最大生命值并获得4秒移速提升'
-      },
-      {
-        level: 3,
-        description: '击败老鼠后恢复35%生命值',
-        detailedDescription: '击败老鼠后恢复35%最大生命值并获得5秒移速提升'
-      }
+      { level: 1, description: '攻击间隔降低5%。'},
+      { level: 2, description: '攻击间隔降低6%。'},
+      { level: 3, description: '攻击间隔降低7%。'}
     ]
   },
 
   '皮糙肉厚': {
     id: '皮糙肉厚',
-
     rank: 'B',
     cost: 4,
-    description: '减少受到的控制效果',
-    detailedDescription: '对眩晕、减速等控制效果有抗性',
+    description: '老鼠虐我千百遍，我待老鼠如初恋！皮糙肉厚的猫咪受到敌方造成的伤害后，4s内防御力上升。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '控制效果时间减少30%',
-        detailedDescription: '眩晕、减速、恐惧等控制效果时间减少30%'
-      },
-      {
-        level: 2,
-        description: '控制效果时间减少35%',
-        detailedDescription: '眩晕、减速、恐惧等控制效果时间减少35%'
-      },
-      {
-        level: 3,
-        description: '控制效果时间减少40%',
-        detailedDescription: '眩晕、减速、恐惧等控制效果时间减少40%'
-      }
+      { level: 1, description: '每次受到的伤害降低20。'},
+      { level: 2, description: '每次受到的伤害降低25。'},
+      { level: 3, description: '每次受到的伤害降低30。'}
     ]
   },
 
   '观察员': {
     id: '观察员',
-
     rank: 'B',
     cost: 3,
-    description: '提升侦查和追踪能力',
-    detailedDescription: '增加视野范围并能更快发现隐藏的老鼠',
+    description: '猫咪通过监控设备得知机器鼠的动向',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '视野范围提升15%，发现隐藏老鼠速度提升30%',
-        detailedDescription: '视野范围提升15%，发现草丛中老鼠的速度提升30%'
-      },
-      {
-        level: 2,
-        description: '视野范围提升18%，发现隐藏老鼠速度提升40%',
-        detailedDescription: '视野范围提升18%，发现草丛中老鼠的速度提升40%'
-      },
-      {
-        level: 3,
-        description: '视野范围提升20%，发现隐藏老鼠速度提升50%',
-        detailedDescription: '视野范围提升20%，发现草丛中老鼠的速度提升50%'
-      }
+      { level: 1, description: '游戏开始后20秒内，猫咪可以看到所有机器鼠的位置。'},
+      { level: 2, description: '游戏开始后25秒内，猫咪可以看到所有机器鼠的位置。'},
+      { level: 3, description: '游戏开始后30秒内，猫咪可以看到所有机器鼠的位置。'}
     ]
   },
 
   /* ----------------------------------- C级卡 ---------------------------------- */
   '巡逻戒备': {
     id: '巡逻戒备',
-
     rank: 'C',
     cost: 3,
-    description: '移动时提升侦查能力',
-    detailedDescription: '移动状态下能更容易发现附近的老鼠',
+    description: '四处巡逻的猫咪，会降低附近老鼠们推奶酪的速度。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '移动时侦查范围提升20%',
-        detailedDescription: '移动状态下侦查范围提升20%，更容易发现附近老鼠'
-      },
-      {
-        level: 2,
-        description: '移动时侦查范围提升25%',
-        detailedDescription: '移动状态下侦查范围提升25%，更容易发现附近老鼠'
-      },
-      {
-        level: 3,
-        description: '移动时侦查范围提升30%',
-        detailedDescription: '移动状态下侦查范围提升30%，更容易发现附近老鼠'
-      }
+      { level: 1, description: '附近老鼠推奶酪的效率降低10%。'},
+      { level: 2, description: '附近老鼠推奶酪的效率降低20%。'},
+      { level: 3, description: '附近老鼠推奶酪的效率降低30%。'}
     ]
   },
 
   '春风得意': {
     id: '春风得意',
-
     rank: 'C',
     cost: 4,
-    description: '连续成功后获得增益',
-    detailedDescription: '连续击中老鼠后获得移动速度提升',
+    description: '终于抓住了一只小老鼠！当猫咪捉住老鼠时，自身的移动速度将得到提升，免疫老鼠夹和碎片。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '连续击中2次后移速提升15%，持续5秒',
-        detailedDescription: '连续击中老鼠2次后，移动速度提升15%，持续5秒'
-      },
-      {
-        level: 2,
-        description: '连续击中2次后移速提升18%，持续6秒',
-        detailedDescription: '连续击中老鼠2次后，移动速度提升18%，持续6秒'
-      },
-      {
-        level: 3,
-        description: '连续击中2次后移速提升20%，持续7秒',
-        detailedDescription: '连续击中老鼠2次后，移动速度提升20%，持续7秒'
-      }
+      { level: 1, description: '移动、跳跃速度提升5%。'},
+      { level: 2, description: '移动、跳跃速度提升6%。'},
+      { level: 3, description: '移动、跳跃速度提升7%。'}
     ]
   },
 
   '气势如牛': {
     id: '气势如牛',
-
     rank: 'C',
     cost: 3,
-    description: '冲刺攻击造成额外伤害',
-    detailedDescription: '冲刺状态下的攻击会造成额外伤害',
+    description: '最后的关头！墙缝出现后，愤怒的猫咪鼓起气势，移动和跳跃速度得到短暂的提升。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '冲刺攻击额外造成25%伤害',
-        detailedDescription: '冲刺状态下的攻击额外造成25%伤害'
-      },
-      {
-        level: 2,
-        description: '冲刺攻击额外造成30%伤害',
-        detailedDescription: '冲刺状态下的攻击额外造成30%伤害'
-      },
-      {
-        level: 3,
-        description: '冲刺攻击额外造成35%伤害',
-        detailedDescription: '冲刺状态下的攻击额外造成35%伤害'
-      }
+      { level: 1, description: '加速效果持续10秒。'},
+      { level: 2, description: '加速效果持续15秒。'},
+      { level: 3, description: '加速效果持续20秒。'}
     ]
   },
 
   '狡诈': {
     id: '狡诈',
-
     rank: 'C',
     cost: 2,
-    description: '技能冷却时间减少',
-    detailedDescription: '所有技能的冷却时间都会减少',
+    description: '当老鼠踩中老鼠夹后，猫咪会获得短暂的加速。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '技能冷却时间减少10%',
-        detailedDescription: '所有主动技能的冷却时间减少10%'
-      },
-      {
-        level: 2,
-        description: '技能冷却时间减少12%',
-        detailedDescription: '所有主动技能的冷却时间减少12%'
-      },
-      {
-        level: 3,
-        description: '技能冷却时间减少15%',
-        detailedDescription: '所有主动技能的冷却时间减少15%'
-      }
+      { level: 1, description: '加速效果持续6秒。'},
+      { level: 2, description: '加速效果持续7秒。'},
+      { level: 3, description: '加速效果持续8秒。'}
     ]
   },
 
   '猫是液体': {
     id: '猫是液体',
-
     rank: 'C',
     cost: 2,
-    description: '提升移动灵活性',
-    detailedDescription: '增加移动速度并减少转向时的速度损失',
+    description: '猫咪使自己身体变得更柔软，能够更敏捷、更频繁地穿过管道。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '移动速度提升8%，转向速度损失减少50%',
-        detailedDescription: '移动速度提升8%，转向时的速度损失减少50%'
-      },
-      {
-        level: 2,
-        description: '移动速度提升10%，转向速度损失减少60%',
-        detailedDescription: '移动速度提升10%，转向时的速度损失减少60%'
-      },
-      {
-        level: 3,
-        description: '移动速度提升12%，转向速度损失减少70%',
-        detailedDescription: '移动速度提升12%，转向时的速度损失减少70%'
-      }
+      { level: 1, description: '钻管道的速度提升60%。'},
+      { level: 2, description: '钻管道的速度提升65%。'},
+      { level: 3, description: '钻管道的速度提升70%。'}
     ]
   },
 
   '都是朋友': {
     id: '都是朋友',
-
     rank: 'C',
     cost: 3,
-    description: '减少对老鼠造成的恐惧效果',
-    detailedDescription: '降低自身的威胁感，老鼠更不容易察觉到危险',
+    description: '猫咪与斯派克成为塑料朋友后，不会再受到斯派克的攻击，但最近斯派克时，猫咪的移动速度会略微降低。此外，猫咪可以免疫主人的眩晕效果',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '老鼠发现你的距离减少15%',
-        detailedDescription: '老鼠发现你的距离减少15%，更容易接近老鼠'
-      },
-      {
-        level: 2,
-        description: '老鼠发现你的距离减少18%',
-        detailedDescription: '老鼠发现你的距离减少18%，更容易接近老鼠'
-      },
-      {
-        level: 3,
-        description: '老鼠发现你的距离减少20%',
-        detailedDescription: '老鼠发现你的距离减少20%，更容易接近老鼠'
-      }
+      { level: 1, description: '最近斯派克时会降低6%的移动速度。'},
+      { level: 2, description: '最近斯派克时会降低4%的移动速度。'},
+      { level: 3, description: '最近斯派克时会降低3%的移动速度。'}
     ]
   },
 
   '铁手': {
     id: '铁手',
-
     rank: 'C',
     cost: 4,
-    description: '提升抓取和携带能力',
-    detailedDescription: '抓取老鼠更容易，携带老鼠时受到的阻碍更少',
+    description: '被猫咪抓在爪中的老鼠，挣扎的速度将会减慢。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '抓取成功率提升20%，携带时移速损失减少30%',
-        detailedDescription: '抓取老鼠的成功率提升20%，携带老鼠时移速损失减少30%'
-      },
-      {
-        level: 2,
-        description: '抓取成功率提升25%，携带时移速损失减少35%',
-        detailedDescription: '抓取老鼠的成功率提升25%，携带老鼠时移速损失减少35%'
-      },
-      {
-        level: 3,
-        description: '抓取成功率提升30%，携带时移速损失减少40%',
-        detailedDescription: '抓取老鼠的成功率提升30%，携带老鼠时移速损失减少40%'
-      }
+      { level: 1, description: '老鼠挣扎速度降低4%。'},
+      { level: 2, description: '老鼠挣扎速度降低6%。'},
+      { level: 3, description: '老鼠挣扎速度降低10%。'}
     ]
   },
 
   '震慑': {
     id: '震慑',
-
     rank: 'C',
     cost: 3,
-    description: '出现时对附近老鼠造成短暂影响',
-    detailedDescription: '突然出现在老鼠附近时会造成短暂的恐惧效果',
+    description: '当猫咪将老鼠绑在火箭上时，鼠方推奶酪的速度下降。',
+    // detailedDescription: '',
     levels: [
-      {
-        level: 1,
-        description: '出现时附近老鼠移速降低20%，持续2秒',
-        detailedDescription: '突然出现在老鼠200范围内时，使其移速降低20%，持续2秒'
-      },
-      {
-        level: 2,
-        description: '出现时附近老鼠移速降低25%，持续2.5秒',
-        detailedDescription: '突然出现在老鼠250范围内时，使其移速降低25%，持续2.5秒'
-      },
-      {
-        level: 3,
-        description: '出现时附近老鼠移速降低30%，持续3秒',
-        detailedDescription: '突然出现在老鼠300范围内时，使其移速降低30%，持续3秒'
-      }
+      { level: 1, description: '老鼠推奶酪速度降低8%。'},
+      { level: 2, description: '老鼠推奶酪速度降低12%。'},
+      { level: 3, description: '老鼠推奶酪速度降低16%。'}
     ]
   }
 };
