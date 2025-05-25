@@ -8,12 +8,12 @@ const getMouseImageUrl = (characterId: string): string => {
   if (existingImages.includes(characterId)) {
     return `/images/mice/${characterId}.png`;
   } else {
-    // Use mouse-specific placeholder
     return `/images/mice/placeholder-mouse.png`;
   }
 };
 
 export const mouseCharacters: Record<string, Character> = {
+  /* ---------------------------------- jerry --------------------------------- */
   jerry: {
     id: 'jerry',
     name: '杰瑞',
@@ -152,6 +152,7 @@ export const mouseCharacters: Record<string, Character> = {
       }
     ]
   },
+  /* ---------------------------------- tuffy --------------------------------- */
   tuffy: {
     id: 'tuffy',
     name: '泰菲',
@@ -171,6 +172,7 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: []
   },
+  /* --------------------------------- nibbles -------------------------------- */
   nibbles: {
     id: 'nibbles',
     name: '尼宝',

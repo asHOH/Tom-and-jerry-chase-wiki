@@ -8,12 +8,12 @@ const getCatImageUrl = (characterId: string): string => {
   if (existingImages.includes(characterId)) {
     return `/images/cats/${characterId}.png`;
   } else {
-    // Use cat-specific placeholder
     return `/images/cats/placeholder-cat.png`;
   }
 };
 
 export const catCharacters: Record<string, Character> = {
+  /* ----------------------------------- tom ---------------------------------- */
   tom: {
     id: 'tom',
     name: '汤姆',
@@ -71,8 +71,8 @@ export const catCharacters: Record<string, Character> = {
         id: 'tom-weapon2',
         name: '平底锅',
         type: 'WEAPON2',
-        description: '比手型枪攻击力更高，但范围更小。',
-        detailedDescription: '比手型枪攻击力更高，但范围更小。',
+        description: '挥锅攻击老鼠并打出煎蛋。',
+        detailedDescription: '挥锅攻击老鼠并打出煎蛋。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键打断',
@@ -80,8 +80,8 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '打晕并致盲附近的老鼠、降低命中老鼠的救援速度；也能击飞附近的道具',
-            detailedDescription: '挥锅对命中的老鼠造成15点伤害、5秒失明和55%救援减速，并打出煎蛋；煎蛋也会对命中的老鼠造成15点伤害、5秒失明和55%救援减速；被锅命中的老鼠落地后受到25点伤害，并眩晕1秒。',
+            description: '打晕并致盲附近老鼠、降低其救援速度；也能击飞附近的道具',
+            detailedDescription: '挥锅对命中的老鼠造成15点伤害、5秒失明和55%救援减速；煎蛋也会对命中的老鼠造成15点伤害、5秒失明和55%救援减速；被锅命中的老鼠落地后受到25点伤害，并眩晕1秒。',
             cooldown: 18,
             videoUrl: '/videos/tom-weapon2-1.mp4'
           },
@@ -126,6 +126,7 @@ export const catCharacters: Record<string, Character> = {
       }
     ]
   },
+  /* ---------------------------------- butch --------------------------------- */
   butch: {
     id: 'butch',
     name: '布奇',
@@ -262,6 +263,7 @@ export const catCharacters: Record<string, Character> = {
       }
     ]
   },
+  /* ---------------------------------- topsy --------------------------------- */
   topsy: {
     id: 'topsy',
     name: '托普斯',

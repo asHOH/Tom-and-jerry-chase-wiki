@@ -190,7 +190,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                           {/* Video button if available */}
                           {level.videoUrl && (
                             <button className="text-blue-600 text-sm mt-3 px-2 py-1 hover:underline">
-                              查看技能视频
+                              查看视频
                             </button>
                           )}
                         </div>
