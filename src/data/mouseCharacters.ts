@@ -68,7 +68,7 @@ export const mouseCharacters: Record<string, Character> = {
         // detailedDescription: '近身攻击',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断（*表示需要手中有道具或【所在处有道具且技能在地面原地释放】时才能打断/取消）', //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
+        cancelableSkill: '可被道具键*打断', //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
         cancelableAftercast: '后摇不可取消',
         skillLevels: [
           {
@@ -99,7 +99,7 @@ export const mouseCharacters: Record<string, Character> = {
         detailedDescription: '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断（*表示需要手中或所在处有道具时才能打断/取消）',
+        cancelableSkill: '可被道具键*打断',
         cancelableAftercast: '可被道具键*取消后摇',
         skillLevels: [
           {

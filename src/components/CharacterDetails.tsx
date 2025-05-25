@@ -140,6 +140,63 @@ const getTooltipContent = (property: string, faction: 'cat' | 'mouse', isDetaile
          `${property}的相关信息`;
 };
 
+// Helper function to create tooltip content for item key cancellation mechanics
+const getItemKeyTooltipContent = (actionVerb: string, isDetailed: boolean): string => {
+  if (isDetailed) {
+    return `需要手中有道具或【所在处有道具且技能在地面原地释放】时才能${actionVerb}`;
+  } else {
+    return `需要手中有道具`;
+  }
+};
+
+// Component to render text with item key tooltips
+const TextWithItemKeyTooltips = ({ text, isDetailed }: { text: string; isDetailed: boolean }) => {
+  // Check if text contains "道具键*"
+  if (!text.includes('道具键*')) {
+    return <>{text}</>;
+  }
+
+  // Pattern to match "道具键*" followed by action verb
+  const itemKeyPattern = /道具键\*([^（]*)/g;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = itemKeyPattern.exec(text)) !== null) {
+    // Add text before the match
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    // Extract the action verb (e.g., "打断", "取消后摇")
+    const actionVerb = match[1].trim();
+
+    // Add the interactive tooltip part for "道具键*" only, followed by the action verb as regular text
+    parts.push(
+      <Tooltip
+        key={match.index}
+        content={getItemKeyTooltipContent(actionVerb, isDetailed)}
+      >
+        道具键*
+      </Tooltip>
+    );
+
+    // Add the action verb as regular text
+    if (actionVerb) {
+      parts.push(actionVerb);
+    }
+
+    lastIndex = itemKeyPattern.lastIndex;
+  }
+
+  // Add remaining text after the last match
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return <>{parts}</>;
+};
+
 // Extended Character type that includes the faction object (as used in the exported characters)
 type CharacterWithFaction = Character & {
   faction: {
@@ -310,11 +367,32 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                             // Add other properties
                             if (skill.canMoveWhileUsing) properties.push('移动释放');
                             if (skill.canUseInAir) properties.push('空中释放');
-                            if (skill.cancelableSkill) properties.push(skill.cancelableSkill);
-                            if (skill.cancelableAftercast) properties.push(skill.cancelableAftercast);
+                            if (skill.cancelableSkill) {
+                              properties.push(
+                                <TextWithItemKeyTooltips
+                                  key="cancelableSkill"
+                                  text={skill.cancelableSkill}
+                                  isDetailed={isDetailedView}
+                                />
+                              );
+                            }
+                            if (skill.cancelableAftercast) {
+                              properties.push(
+                                <TextWithItemKeyTooltips
+                                  key="cancelableAftercast"
+                                  text={skill.cancelableAftercast}
+                                  isDetailed={isDetailedView}
+                                />
+                              );
+                            }
 
                             // Join all properties with ' · ' separator
-                            return properties.join(' · ');
+                            return properties.map((prop, index) => (
+                              <React.Fragment key={index}>
+                                {index > 0 && ' · '}
+                                {prop}
+                              </React.Fragment>
+                            ));
                           })()}
                         </div>
                       )}
