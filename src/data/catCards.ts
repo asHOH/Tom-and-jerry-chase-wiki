@@ -1,17 +1,16 @@
 import { Card } from './types';
 
-// Generate image URL based on card rank and name for cat faction
-const getCatCardImageUrl = (rank: string, name: string): string => {
-  return `/images/catCards/${rank}-${name}.png`;
+// Generate image URL based on card rank and id for cat faction
+const getCatCardImageUrl = (rank: string, id: string): string => {
+  return `/images/catCards/${rank}-${id}.png`;
 };
 
 // Extract card data from image filenames
 // Based on the existing images in public/images/catCards/
 export const catCards: Record<string, Card> = {
   /* ----------------------------------- S级卡 ---------------------------------- */
-  'S-乘胜追击': {
-    id: 'S-乘胜追击',
-    name: '乘胜追击',
+  '乘胜追击': {
+    id: '乘胜追击',
     rank: 'S',
     cost: 7,
     description: '击败老鼠后获得强力增益效果',
@@ -35,9 +34,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'S-乾坤一掷': {
-    id: 'S-乾坤一掷',
-    name: '乾坤一掷',
+  '乾坤一掷': {
+    id: '乾坤一掷',
     rank: 'S',
     cost: 6,
     description: '投掷道具造成额外伤害和控制效果',
@@ -61,9 +59,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'S-击晕': {
-    id: 'S-击晕',
-    name: '击晕',
+  '击晕': {
+    id: '击晕',
     rank: 'S',
     cost: 7,
     description: '攻击有概率造成眩晕效果',
@@ -87,9 +84,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'S-屈打成招': {
-    id: 'S-屈打成招',
-    name: '屈打成招',
+  '屈打成招': {
+    id: '屈打成招',
     rank: 'S',
     cost: 6,
     description: '携带老鼠时获得额外能力',
@@ -113,9 +109,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'S-暴怒': {
-    id: 'S-暴怒',
-    name: '暴怒',
+  '暴怒': {
+    id: '暴怒',
     rank: 'S',
     cost: 6,
     description: '生命值较低时获得强力增益',
@@ -139,9 +134,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'S-猛攻': {
-    id: 'S-猛攻',
-    name: '猛攻',
+  '猛攻': {
+    id: '猛攻',
 
     rank: 'S',
     cost: 5,
@@ -166,9 +160,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'S-知识渊博': {
-    id: 'S-知识渊博',
-    name: '知识渊博',
+  '知识渊博': {
+    id: '知识渊博',
 
     rank: 'S',
     cost: 6,
@@ -193,9 +186,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'S-蓄势一击': {
-    id: 'S-蓄势一击',
-    name: '蓄势一击',
+  '蓄势一击': {
+    id: '蓄势一击',
 
     rank: 'S',
     cost: 6,
@@ -221,9 +213,8 @@ export const catCards: Record<string, Card> = {
   },
 
   /* ----------------------------------- A级卡 ---------------------------------- */
-  'A-加大火力': {
-    id: 'A-加大火力',
-    name: '加大火力',
+  '加大火力': {
+    id: '加大火力',
 
     rank: 'A',
     cost: 4,
@@ -248,9 +239,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'A-威压': {
-    id: 'A-威压',
-    name: '威压',
+  '威压': {
+    id: '威压',
 
     rank: 'A',
     cost: 4,
@@ -275,9 +265,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'A-心灵手巧': {
-    id: 'A-心灵手巧',
-    name: '心灵手巧',
+  '心灵手巧': {
+    id: '心灵手巧',
 
     rank: 'A',
     cost: 4,
@@ -302,9 +291,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'A-熊熊燃烧': {
-    id: 'A-熊熊燃烧',
-    name: '熊熊燃烧',
+  '熊熊燃烧': {
+    id: '熊熊燃烧',
 
     rank: 'A',
     cost: 6,
@@ -329,9 +317,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'A-穷追猛打': {
-    id: 'A-穷追猛打',
-    name: '穷追猛打',
+  '穷追猛打': {
+    id: '穷追猛打',
 
     rank: 'A',
     cost: 4,
@@ -356,9 +343,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'A-细心': {
-    id: 'A-细心',
-    name: '细心',
+  '细心': {
+    id: '细心',
 
     rank: 'A',
     cost: 4,
@@ -383,9 +369,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'A-越挫越勇': {
-    id: 'A-越挫越勇',
-    name: '越挫越勇',
+  '越挫越勇': {
+    id: '越挫越勇',
 
     rank: 'A',
     cost: 4,
@@ -410,9 +395,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'A-铜墙': {
-    id: 'A-铜墙',
-    name: '铜墙',
+  '铜墙': {
+    id: '铜墙',
 
     rank: 'A',
     cost: 6,
@@ -437,9 +421,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'A-长爪': {
-    id: 'A-长爪',
-    name: '长爪',
+  '长爪': {
+    id: '长爪',
 
     rank: 'A',
     cost: 4,
@@ -465,9 +448,8 @@ export const catCards: Record<string, Card> = {
   },
 
   /* ----------------------------------- B级卡 ---------------------------------- */
-  'B-严防死守': {
-    id: 'B-严防死守',
-    name: '严防死守',
+  '严防死守': {
+    id: '严防死守',
 
     rank: 'B',
     cost: 4,
@@ -492,9 +474,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-减速警告': {
-    id: 'B-减速警告',
-    name: '减速警告',
+  '减速警告': {
+    id: '减速警告',
 
     rank: 'B',
     cost: 4,
@@ -519,9 +500,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-反侦察': {
-    id: 'B-反侦察',
-    name: '反侦察',
+  '反侦察': {
+    id: '反侦察',
 
     rank: 'B',
     cost: 3,
@@ -546,9 +526,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-守株待鼠': {
-    id: 'B-守株待鼠',
-    name: '守株待鼠',
+  '守株待鼠': {
+    id: '守株待鼠',
 
     rank: 'B',
     cost: 3,
@@ -573,9 +552,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-寻踪': {
-    id: 'B-寻踪',
-    name: '寻踪',
+  '寻踪': {
+    id: '寻踪',
 
     rank: 'B',
     cost: 3,
@@ -600,9 +578,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-恐吓': {
-    id: 'B-恐吓',
-    name: '恐吓',
+  '恐吓': {
+    id: '恐吓',
 
     rank: 'B',
     cost: 4,
@@ -627,9 +604,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-捕鼠夹': {
-    id: 'B-捕鼠夹',
-    name: '捕鼠夹',
+  '捕鼠夹': {
+    id: '捕鼠夹',
 
     rank: 'B',
     cost: 3,
@@ -654,9 +630,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-攻其不备': {
-    id: 'B-攻其不备',
-    name: '攻其不备',
+  '攻其不备': {
+    id: '攻其不备',
 
     rank: 'B',
     cost: 3,
@@ -681,9 +656,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-斗志昂扬': {
-    id: 'B-斗志昂扬',
-    name: '斗志昂扬',
+  '斗志昂扬': {
+    id: '斗志昂扬',
 
     rank: 'B',
     cost: 3,
@@ -708,9 +682,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-皮糙肉厚': {
-    id: 'B-皮糙肉厚',
-    name: '皮糙肉厚',
+  '皮糙肉厚': {
+    id: '皮糙肉厚',
 
     rank: 'B',
     cost: 4,
@@ -735,9 +708,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'B-观察员': {
-    id: 'B-观察员',
-    name: '观察员',
+  '观察员': {
+    id: '观察员',
 
     rank: 'B',
     cost: 3,
@@ -763,9 +735,8 @@ export const catCards: Record<string, Card> = {
   },
 
   /* ----------------------------------- C级卡 ---------------------------------- */
-  'C-巡逻戒备': {
-    id: 'C-巡逻戒备',
-    name: '巡逻戒备',
+  '巡逻戒备': {
+    id: '巡逻戒备',
 
     rank: 'C',
     cost: 3,
@@ -790,9 +761,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'C-春风得意': {
-    id: 'C-春风得意',
-    name: '春风得意',
+  '春风得意': {
+    id: '春风得意',
 
     rank: 'C',
     cost: 4,
@@ -817,9 +787,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'C-气势如牛': {
-    id: 'C-气势如牛',
-    name: '气势如牛',
+  '气势如牛': {
+    id: '气势如牛',
 
     rank: 'C',
     cost: 3,
@@ -844,9 +813,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'C-狡诈': {
-    id: 'C-狡诈',
-    name: '狡诈',
+  '狡诈': {
+    id: '狡诈',
 
     rank: 'C',
     cost: 2,
@@ -871,9 +839,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'C-猫是液体': {
-    id: 'C-猫是液体',
-    name: '猫是液体',
+  '猫是液体': {
+    id: '猫是液体',
 
     rank: 'C',
     cost: 2,
@@ -898,9 +865,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'C-都是朋友': {
-    id: 'C-都是朋友',
-    name: '都是朋友',
+  '都是朋友': {
+    id: '都是朋友',
 
     rank: 'C',
     cost: 3,
@@ -925,9 +891,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'C-铁手': {
-    id: 'C-铁手',
-    name: '铁手',
+  '铁手': {
+    id: '铁手',
 
     rank: 'C',
     cost: 4,
@@ -952,9 +917,8 @@ export const catCards: Record<string, Card> = {
     ]
   },
 
-  'C-震慑': {
-    id: 'C-震慑',
-    name: '震慑',
+  '震慑': {
+    id: '震慑',
 
     rank: 'C',
     cost: 3,
@@ -987,7 +951,7 @@ export const catCardsWithImages = Object.fromEntries(
     {
       ...card,
       factionId: 'cat' as const, // Apply faction ID in bulk
-      imageUrl: getCatCardImageUrl(card.rank, card.name)
+      imageUrl: getCatCardImageUrl(card.rank, card.id)
     }
   ])
 );

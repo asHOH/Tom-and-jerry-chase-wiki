@@ -37,7 +37,7 @@ export default function CardDetails({ card, isDetailedView: propIsDetailedView }
               <div className="flex items-center justify-center h-full">
                 <Image
                   src={card.imageUrl}
-                  alt={card.name}
+                  alt={card.id}
                   width={220}
                   height={220}
                   unoptimized
@@ -47,7 +47,7 @@ export default function CardDetails({ card, isDetailedView: propIsDetailedView }
             </div>
 
             <h1 className="text-3xl font-bold py-2">
-              {card.name} <span className="text-xl font-normal text-gray-400">({card.faction.name})</span>
+              {card.id} <span className="text-xl font-normal text-gray-400">({card.faction.name})</span>
             </h1>
 
             {/* Card attributes section */}

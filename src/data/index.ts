@@ -42,9 +42,9 @@ export const factions = Object.fromEntries(
     // Get all characters belonging to this faction
     const factionCharacters = Object.values(characterData)
       .filter(character => character.factionId === factionId)
-      .map(({ id, name, imageUrl }) => ({
+      .map(({ id, imageUrl }) => ({
         id,
-        name,
+        name: id, // Use id as name since they're now the same
         // Image URL is already generated in the character data
         imageUrl: imageUrl!
       }));
@@ -75,9 +75,9 @@ export const factionCards = Object.fromEntries(
     // Get all cards belonging to this faction
     const factionCardList = Object.values(cardData)
       .filter(card => card.factionId === factionId)
-      .map(({ id, name, rank, cost, imageUrl }) => ({
+      .map(({ id, rank, cost, imageUrl }) => ({
         id,
-        name,
+        name: id, // Use id as name since they're now the same
         rank,
         cost,
         // Image URL is already generated in the card data

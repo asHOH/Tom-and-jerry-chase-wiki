@@ -8,8 +8,7 @@ export type Faction = {
 };
 
 export type Character = {
-  id: string;
-  name: string;
+  id: string; // Now contains the Chinese name (e.g., '汤姆')
   factionId: FactionId;
   description: string;
   imageUrl?: string; // We'll generate it automatically
@@ -68,8 +67,7 @@ export type CardLevel = {
 };
 
 export type Card = {
-  id: string;
-  name: string;
+  id: string; // Now contains the Chinese name without rank prefix (e.g., '乘胜追击')
   factionId?: FactionId; // Optional in base definition, will be assigned in bulk
   rank: CardRank;
   cost: number;

@@ -3,7 +3,7 @@ import { Character } from './types';
 // Generate image URL based on character ID for cat faction
 const getCatImageUrl = (characterId: string): string => {
   // Check if the image exists, otherwise use a placeholder
-  const existingImages = ['tom', 'butch', 'topsy'];
+  const existingImages = ['汤姆', '布奇', '托普斯'];
 
   if (existingImages.includes(characterId)) {
     return `/images/cats/${characterId}.png`;
@@ -14,9 +14,8 @@ const getCatImageUrl = (characterId: string): string => {
 
 export const catCharacters: Record<string, Character> = {
   /* ----------------------------------- tom ---------------------------------- */
-  tom: {
-    id: 'tom',
-    name: '汤姆',
+  '汤姆': {
+    id: '汤姆',
     factionId: 'cat',
     description: '全能男神汤姆，除了抓老鼠以外什么都会，杰瑞的欢喜冤家',
 
@@ -127,9 +126,8 @@ export const catCharacters: Record<string, Character> = {
     ]
   },
   /* ---------------------------------- butch --------------------------------- */
-  butch: {
-    id: 'butch',
-    name: '布奇',
+  '布奇': {
+    id: '布奇',
     factionId: 'cat',
     description: '"流浪猫铁三角"中的老大，从街头流浪逆袭为亿万富豪',
 
@@ -264,9 +262,8 @@ export const catCharacters: Record<string, Character> = {
     ]
   },
   /* ---------------------------------- topsy --------------------------------- */
-  topsy: {
-    id: 'topsy',
-    name: '托普斯',
+  '托普斯': {
+    id: '托普斯',
     factionId: 'cat',
     description: '"流浪猫铁三角"的一员，呆萌小灰猫，爱和小老鼠交朋友',
 

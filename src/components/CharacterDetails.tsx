@@ -231,7 +231,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
               <div className="flex items-center justify-center h-full">
                 <Image
                   src={character.imageUrl}
-                  alt={character.name}
+                  alt={character.id}
                   width={200}
                   height={200}
                   unoptimized
@@ -240,7 +240,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
               </div>
             </div>
             <h1 className="text-3xl font-bold py-2">
-              {character.name} <span className="text-xl font-normal text-gray-400">({character.faction.name})</span>
+              {character.id} <span className="text-xl font-normal text-gray-400">({character.faction.name})</span>
             </h1>
 
             {/* Character description */}

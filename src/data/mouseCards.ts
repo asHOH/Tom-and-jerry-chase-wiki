@@ -9,9 +9,8 @@ const getMouseCardImageUrl = (rank: string, name: string): string => {
 // Based on the existing images in public/images/mouseCards/
 export const mouseCards: Record<string, Card> = {
   /* ----------------------------------- S级卡 ---------------------------------- */
-  'S-回家': {
-    id: 'S-回家',
-    name: '回家',
+  '回家': {
+    id: '回家',
     rank: 'S',
     cost: 6,
     description: '瞬间传送到安全区域',
@@ -35,9 +34,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'S-护佑': {
-    id: 'S-护佑',
-    name: '护佑',
+  '护佑': {
+    id: '护佑',
     rank: 'S',
     cost: 6,
     description: '为队友提供强力保护',
@@ -61,9 +59,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'S-无畏': {
-    id: 'S-无畏',
-    name: '无畏',
+  '无畏': {
+    id: '无畏',
 
     rank: 'S',
     cost: 6,
@@ -88,9 +85,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'S-有难同当': {
-    id: 'S-有难同当',
-    name: '有难同当',
+  '有难同当': {
+    id: '有难同当',
 
     rank: 'S',
     cost: 5,
@@ -115,9 +111,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'S-缴械': {
-    id: 'S-缴械',
-    name: '缴械',
+  '缴械': {
+    id: '缴械',
 
     rank: 'S',
     cost: 6,
@@ -142,9 +137,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'S-舍己': {
-    id: 'S-舍己',
-    name: '舍己',
+  '舍己': {
+    id: '舍己',
 
     rank: 'S',
     cost: 5,
@@ -169,9 +163,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'S-铁血': {
-    id: 'S-铁血',
-    name: '铁血',
+  '铁血': {
+    id: '铁血',
 
     rank: 'S',
     cost: 6,
@@ -197,9 +190,8 @@ export const mouseCards: Record<string, Card> = {
   },
 
   /* ----------------------------------- A级卡 ---------------------------------- */
-  'A-冲冠一怒': {
-    id: 'A-冲冠一怒',
-    name: '冲冠一怒',
+  '冲冠一怒': {
+    id: '冲冠一怒',
 
     rank: 'A',
     cost: 4,
@@ -224,9 +216,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'A-团队领袖': {
-    id: 'A-团队领袖',
-    name: '团队领袖',
+  '团队领袖': {
+    id: '团队领袖',
 
     rank: 'A',
     cost: 5,
@@ -251,9 +242,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'A-投手': {
-    id: 'A-投手',
-    name: '投手',
+  '投手': {
+    id: '投手',
 
     rank: 'A',
     cost: 4,
@@ -278,9 +268,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'A-泡泡浴': {
-    id: 'A-泡泡浴',
-    name: '泡泡浴',
+  '泡泡浴': {
+    id: '泡泡浴',
 
     rank: 'A',
     cost: 4,
@@ -305,9 +294,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'A-祝愿': {
-    id: 'A-祝愿',
-    name: '祝愿',
+  '祝愿': {
+    id: '祝愿',
 
     rank: 'A',
     cost: 4,
@@ -332,9 +320,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'A-翩若惊鸿': {
-    id: 'A-翩若惊鸿',
-    name: '翩若惊鸿',
+  '翩若惊鸿': {
+    id: '翩若惊鸿',
 
     rank: 'A',
     cost: 4,
@@ -359,9 +346,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'A-逃窜': {
-    id: 'A-逃窜',
-    name: '逃窜',
+  '逃窜': {
+    id: '逃窜',
 
     rank: 'A',
     cost: 4,
@@ -386,9 +372,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'A-闭门羹': {
-    id: 'A-闭门羹',
-    name: '闭门羹',
+  '闭门羹': {
+    id: '闭门羹',
 
     rank: 'A',
     cost: 4,
@@ -414,9 +399,8 @@ export const mouseCards: Record<string, Card> = {
   },
 
   /* ----------------------------------- B级卡 ---------------------------------- */
-  'B-夹不住我': {
-    id: 'B-夹不住我',
-    name: '夹不住我',
+  '夹不住我': {
+    id: '夹不住我',
 
     rank: 'B',
     cost: 3,
@@ -441,9 +425,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-孤军奋战': {
-    id: 'B-孤军奋战',
-    name: '孤军奋战',
+  '孤军奋战': {
+    id: '孤军奋战',
 
     rank: 'B',
     cost: 3,
@@ -468,9 +451,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-幸运': {
-    id: 'B-幸运',
-    name: '幸运',
+  '幸运': {
+    id: '幸运',
 
     rank: 'B',
     cost: 5,
@@ -495,9 +477,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-应激反应': {
-    id: 'B-应激反应',
-    name: '应激反应',
+  '应激反应': {
+    id: '应激反应',
 
     rank: 'B',
     cost: 4,
@@ -522,9 +503,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-求生欲': {
-    id: 'B-求生欲',
-    name: '求生欲',
+  '求生欲': {
+    id: '求生欲',
 
     rank: 'B',
     cost: 4,
@@ -549,9 +529,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-破墙': {
-    id: 'B-破墙',
-    name: '破墙',
+  '破墙': {
+    id: '破墙',
 
     rank: 'B',
     cost: 5,
@@ -576,9 +555,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-精准投射': {
-    id: 'B-精准投射',
-    name: '精准投射',
+  '精准投射': {
+    id: '精准投射',
 
     rank: 'B',
     cost: 4,
@@ -603,9 +581,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-绝地反击': {
-    id: 'B-绝地反击',
-    name: '绝地反击',
+  '绝地反击': {
+    id: '绝地反击',
 
     rank: 'B',
     cost: 3,
@@ -630,9 +607,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-追风': {
-    id: 'B-追风',
-    name: '追风',
+  '追风': {
+    id: '追风',
 
     rank: 'B',
     cost: 4,
@@ -657,9 +633,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-逃之夭夭': {
-    id: 'B-逃之夭夭',
-    name: '逃之夭夭',
+  '逃之夭夭': {
+    id: '逃之夭夭',
 
     rank: 'B',
     cost: 4,
@@ -684,9 +659,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-速推': {
-    id: 'B-速推',
-    name: '速推',
+  '速推': {
+    id: '速推',
 
     rank: 'B',
     cost: 5,
@@ -711,9 +685,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-飞跃': {
-    id: 'B-飞跃',
-    name: '飞跃',
+  '飞跃': {
+    id: '飞跃',
 
     rank: 'B',
     cost: 4,
@@ -738,9 +711,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'B-食物力量': {
-    id: 'B-食物力量',
-    name: '食物力量',
+  '食物力量': {
+    id: '食物力量',
 
     rank: 'B',
     cost: 3,
@@ -766,9 +738,8 @@ export const mouseCards: Record<string, Card> = {
   },
 
   /* ----------------------------------- C级卡 ---------------------------------- */
-  'C-不屈': {
-    id: 'C-不屈',
-    name: '不屈',
+  '不屈': {
+    id: '不屈',
 
     rank: 'C',
     cost: 3,
@@ -793,9 +764,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'C-吃货': {
-    id: 'C-吃货',
-    name: '吃货',
+  '吃货': {
+    id: '吃货',
 
     rank: 'C',
     cost: 3,
@@ -820,9 +790,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'C-强健': {
-    id: 'C-强健',
-    name: '强健',
+  '强健': {
+    id: '强健',
 
     rank: 'C',
     cost: 4,
@@ -847,9 +816,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'C-救救我': {
-    id: 'C-救救我',
-    name: '救救我',
+  '救救我': {
+    id: '救救我',
 
     rank: 'C',
     cost: 3,
@@ -874,9 +842,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'C-相助': {
-    id: 'C-相助',
-    name: '相助',
+  '相助': {
+    id: '相助',
 
     rank: 'C',
     cost: 4,
@@ -901,9 +868,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'C-美食家': {
-    id: 'C-美食家',
-    name: '美食家',
+  '美食家': {
+    id: '美食家',
 
     rank: 'C',
     cost: 3,
@@ -928,9 +894,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'C-脱身': {
-    id: 'C-脱身',
-    name: '脱身',
+  '脱身': {
+    id: '脱身',
 
     rank: 'C',
     cost: 3,
@@ -955,9 +920,8 @@ export const mouseCards: Record<string, Card> = {
     ]
   },
 
-  'C-门卫': {
-    id: 'C-门卫',
-    name: '门卫',
+  '门卫': {
+    id: '门卫',
 
     rank: 'C',
     cost: 3,
@@ -990,7 +954,7 @@ export const mouseCardsWithImages = Object.fromEntries(
     {
       ...card,
       factionId: 'mouse' as const, // Apply faction ID in bulk
-      imageUrl: getMouseCardImageUrl(card.rank, card.name)
+      imageUrl: getMouseCardImageUrl(card.rank, card.id)
     }
   ])
 );
