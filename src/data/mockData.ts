@@ -38,7 +38,7 @@ export type Skill = {
   name: string;
   type: 'ACTIVE' | 'WEAPON1' | 'WEAPON2' | 'PASSIVE';
   description?: string; // Basic description (optional, especially for passive skills)
-  detailedDescription?: string; // Detailed description for advanced view
+  detailedDescription?: string; // Detailed description for detailed view
 
   // Skill usage properties
   canMoveWhileUsing?: boolean; // 移动释放
@@ -113,7 +113,7 @@ export const characterData: Record<string, Character> = {
         detailedDescription: '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害（如仙女鼠的一星；但不会因此被击倒）和位移效果的影响（如尼宝的钩子）。无敌结束后会有2秒的10%减速（可以被护盾抵消）。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键打断，但不返还CD。',
+        cancelableSkill: '可被道具键打断，但不返还CD',
         cancelableAftercast: '无后摇',
         skillLevels: [
           { level: 1, description: '持续3.8秒', cooldown: 20, videoUrl: '/videos/tom-active-1.mp4' },
