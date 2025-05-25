@@ -1,42 +1,36 @@
-import { CREATORS } from '@/constants';
+import { CREATORS, DISCLAIMER_CONTENT } from '@/constants';
 
 export const DisclaimerText = () => {
+  // Helper function to render creator links
+  const renderCreatorLinks = (creatorIds: readonly string[]) => {
+    return creatorIds.map((creatorId, index) => (
+      <span key={creatorId}>
+        {index > 0 && '、'}
+        <a
+          href={CREATORS[creatorId as keyof typeof CREATORS].url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline mx-1"
+        >
+          {CREATORS[creatorId as keyof typeof CREATORS].name}
+        </a>
+      </span>
+    ));
+  };
+
   return (
     <>
-      本网站为粉丝制作，仅供学习交流使用，并非官方网站。
+      {DISCLAIMER_CONTENT.intro}
       <br />
-      素材版权均归网易猫和老鼠手游所有。
+      {DISCLAIMER_CONTENT.copyright}
       <br />
-      特别鸣谢b站up主
-      <a 
-        href={CREATORS.dreamback.url}
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="text-blue-600 hover:text-blue-800 underline mx-1"
-      >
-        {CREATORS.dreamback.name}
-      </a>
-      、
-      <a 
-        href={CREATORS.momo.url}
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="text-blue-600 hover:text-blue-800 underline mx-1"
-      >
-        {CREATORS.momo.name}
-      </a>
-      提供的{CREATORS.dreamback.contribution}。
+      {DISCLAIMER_CONTENT.testDataAttribution.prefix}
+      {renderCreatorLinks(DISCLAIMER_CONTENT.testDataAttribution.creators)}
+      {DISCLAIMER_CONTENT.testDataAttribution.suffix}
       <br />
-      特别鸣谢b站up主
-      <a 
-        href={CREATORS.fanshuwu.url}
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="text-blue-600 hover:text-blue-800 underline mx-1"
-      >
-        {CREATORS.fanshuwu.name}
-      </a>
-      分享的{CREATORS.fanshuwu.contribution}。
+      {DISCLAIMER_CONTENT.imageAttribution.prefix}
+      {renderCreatorLinks(DISCLAIMER_CONTENT.imageAttribution.creators)}
+      {DISCLAIMER_CONTENT.imageAttribution.suffix}
     </>
   );
 };
