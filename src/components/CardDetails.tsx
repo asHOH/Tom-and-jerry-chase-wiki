@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Card } from '@/data';
+import { getRankColor, getCostColor } from '@/lib/cardUtils';
 
 // Extended Card type that includes the faction object (as used in the exported cards)
 type CardWithFaction = Card & {
@@ -24,24 +25,7 @@ export default function CardDetails({ card, isDetailedView: propIsDetailedView }
   // Use prop value if provided, otherwise use local state
   const isDetailedView = propIsDetailedView !== undefined ? propIsDetailedView : localIsDetailedView;
 
-  // Get rank color based on rank
-  const getRankColor = (rank: string) => {
-    switch (rank) {
-      case 'S': return 'text-orange-600 bg-orange-100 border-orange-300';
-      case 'A': return 'text-purple-600 bg-purple-100 border-purple-300';
-      case 'B': return 'text-blue-600 bg-blue-100 border-blue-300';
-      case 'C': return 'text-green-600 bg-green-100 border-green-300';
-      default: return 'text-gray-600 bg-gray-100 border-gray-300';
-    }
-  };
 
-  // Get cost color based on cost
-  const getCostColor = (cost: number) => {
-    if (cost >= 6) return 'text-red-600 bg-red-100 border-red-300';
-    if (cost >= 4) return 'text-orange-600 bg-orange-100 border-orange-300';
-    if (cost >= 3) return 'text-yellow-600 bg-yellow-100 border-yellow-300';
-    return 'text-green-600 bg-green-100 border-green-300';
-  };
 
   return (
     <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}
@@ -70,12 +54,12 @@ export default function CardDetails({ card, isDetailedView: propIsDetailedView }
             <div className="mt-6 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <p className="text-sm text-gray-700 py-1">
-                  <span className={`px-2 py-1 rounded border ${getRankColor(card.rank)}`}>
+                  <span className={`px-2 py-1 rounded border ${getRankColor(card.rank, true)}`}>
                     等级: {card.rank}
                   </span>
                 </p>
                 <p className="text-sm text-gray-700 py-1">
-                  <span className={`px-2 py-1 rounded border ${getCostColor(card.cost)}`}>
+                  <span className={`px-2 py-1 rounded border ${getCostColor(card.cost, true)}`}>
                     费用: {card.cost}
                   </span>
                 </p>
