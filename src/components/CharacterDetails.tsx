@@ -71,7 +71,7 @@ const Tooltip = ({ children, content }: { children: React.ReactNode; content: st
 };
 
 // Property label mappings for tooltips
-const propertyTooltips: Record<string, string> = {
+const propertyTooltipsFallback: Record<string, string> = {
   'Hp上限': '健康值上限，俗称“血条”',
   'Hp恢复': '每秒恢复的健康值',
   '移速': '移动速度（经典之家客厅长度为4680）',
@@ -81,6 +81,63 @@ const propertyTooltips: Record<string, string> = {
   '爪刀范围': '爪刀攻击范围',
   '推奶酪速度': '推奶酪速度，单位为 %/秒',
   '墙缝增伤': '对墙缝的伤害加成（墙缝基础血量为100）',
+};
+
+// Property tooltips organized by faction and description mode
+const propertyTooltips = {
+  cat: {
+    normal: {
+      'Hp上限': '健康值上限，俗称"血条"',
+      'Hp恢复': '每秒恢复的健康值',
+      '移速': '移动速度',
+      '跳跃': '跳跃高度',
+      '攻击增伤': '对敌方的伤害加成',
+      '爪刀CD': '爪刀冷却时间（未命中/命中）',
+      '爪刀范围': '爪刀攻击范围',
+    },
+    detailed: {
+      'Hp上限': '健康值上限，俗称"血条"（盘子的伤害是50）',
+      'Hp恢复': '健康状态下每秒恢复的健康值',
+      '移速': '移动速度（汤姆为755；经典之家客厅长度为4680）',
+      '跳跃': '跳跃高度（猫均为420）',
+      '攻击增伤': '对敌方的固定伤害加成',
+      '爪刀CD': '爪刀冷却时间（未命中/命中）（单位：秒）',
+      '爪刀范围': '爪刀攻击范围（汤姆为300）',
+    }
+  },
+  mouse: {
+    normal: {
+      'Hp上限': '健康值上限，俗称"血条"',
+      'Hp恢复': '每秒恢复的健康值',
+      '移速': '移动速度',
+      '跳跃': '跳跃高度',
+      '推奶酪速度': '推奶酪速度',
+      '墙缝增伤': '对墙缝的伤害加成',
+    },
+    detailed: {
+      'Hp上限': '健康值上限，俗称"血条"（盘子的伤害是50）',
+      'Hp恢复': '健康状态下每秒恢复的健康值',
+      '移速': '移动速度（杰瑞为650；经典之家客厅长度为4680）',
+      '跳跃': '跳跃高度（杰瑞为400；猫均为420）',
+      '推奶酪速度': '推奶酪速度（单位： %/秒）',
+      '墙缝增伤': '对墙缝的伤害加成（墙缝基础血量为100）',
+    }
+  }
+};
+
+// Helper function to get tooltip content with fallback logic
+const getTooltipContent = (property: string, faction: 'cat' | 'mouse', isDetailed: boolean): string => {
+  const factionTooltips = propertyTooltips[faction];
+
+  // Try to get detailed tooltip first if in detailed mode
+  if (isDetailed && factionTooltips.detailed[property as keyof typeof factionTooltips.detailed]) {
+    return factionTooltips.detailed[property as keyof typeof factionTooltips.detailed];
+  }
+
+  // Fallback to normal tooltip
+  return factionTooltips.normal[property as keyof typeof factionTooltips.normal] ||
+         propertyTooltipsFallback[property as keyof typeof propertyTooltipsFallback] ||
+         `${property}的相关信息`;
 };
 
 // Extended Character type that includes the faction object (as used in the exported characters)
@@ -138,23 +195,23 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
               <div className="grid grid-cols-2 gap-3">
                 {character.maxHp && (
                   <p className="text-sm text-gray-700 py-1">
-                    <Tooltip content={propertyTooltips['Hp上限']}>Hp上限</Tooltip>: {character.maxHp}
+                    <Tooltip content={getTooltipContent('Hp上限', character.faction.id as 'cat' | 'mouse', isDetailedView)}>Hp上限</Tooltip>: {character.maxHp}
                   </p>
                 )}
 
                 {character.hpRecovery && (
                   <p className="text-sm text-gray-700 py-1">
-                    <Tooltip content={propertyTooltips['Hp恢复']}>Hp恢复</Tooltip>: {character.hpRecovery}
+                    <Tooltip content={getTooltipContent('Hp恢复', character.faction.id as 'cat' | 'mouse', isDetailedView)}>Hp恢复</Tooltip>: {character.hpRecovery}
                   </p>
                 )}
                 {character.moveSpeed && (
                   <p className="text-sm text-gray-700 py-1">
-                    <Tooltip content={propertyTooltips['移速']}>移速</Tooltip>: {character.moveSpeed}
+                    <Tooltip content={getTooltipContent('移速', character.faction.id as 'cat' | 'mouse', isDetailedView)}>移速</Tooltip>: {character.moveSpeed}
                   </p>
                 )}
                 {character.jumpHeight && character.faction.id === 'mouse' && (
                   <p className="text-sm text-gray-700 py-1">
-                    <Tooltip content={propertyTooltips['跳跃']}>跳跃</Tooltip>: {character.jumpHeight}
+                    <Tooltip content={getTooltipContent('跳跃', character.faction.id as 'cat' | 'mouse', isDetailedView)}>跳跃</Tooltip>: {character.jumpHeight}
                   </p>
                 )}
               </div>
@@ -164,17 +221,17 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                 <div className="mt-3 pt-3 border-t border-gray-200">
                   {character.attackBoost !== undefined && character.attackBoost !== 0 && (
                     <p className="text-amber-600 py-1">
-                      <Tooltip content={propertyTooltips['攻击增伤']}>攻击增伤</Tooltip>: {character.attackBoost}
+                      <Tooltip content={getTooltipContent('攻击增伤', 'cat', isDetailedView)}>攻击增伤</Tooltip>: {character.attackBoost}
                     </p>
                   )}
                   {character.clawKnifeCdHit && character.clawKnifeCdUnhit && (
                     <p className="text-amber-600 py-1">
-                      <Tooltip content={propertyTooltips['爪刀CD']}>爪刀CD</Tooltip>: {character.clawKnifeCdUnhit} / {character.clawKnifeCdHit} 秒
+                      <Tooltip content={getTooltipContent('爪刀CD', 'cat', isDetailedView)}>爪刀CD</Tooltip>: {character.clawKnifeCdUnhit} / {character.clawKnifeCdHit} 秒
                     </p>
                   )}
                   {character.clawKnifeRange && (
                     <p className="text-amber-600 py-1">
-                      <Tooltip content={propertyTooltips['爪刀范围']}>爪刀范围</Tooltip>: {character.clawKnifeRange}
+                      <Tooltip content={getTooltipContent('爪刀范围', 'cat', isDetailedView)}>爪刀范围</Tooltip>: {character.clawKnifeRange}
                     </p>
                   )}
                 </div>
@@ -185,12 +242,12 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                 <div className="mt-3 pt-3 border-t border-gray-200">
                   {character.cheesePushSpeed && (
                     <p className="text-blue-600 py-1">
-                      <Tooltip content={propertyTooltips['推奶酪速度']}>推奶酪速度</Tooltip>: {character.cheesePushSpeed}
+                      <Tooltip content={getTooltipContent('推奶酪速度', 'mouse', isDetailedView)}>推奶酪速度</Tooltip>: {character.cheesePushSpeed}
                     </p>
                   )}
                   {character.wallCrackDamageBoost && (
                     <p className="text-blue-600 py-1">
-                      <Tooltip content={propertyTooltips['墙缝增伤']}>墙缝增伤</Tooltip>: {character.wallCrackDamageBoost}%
+                      <Tooltip content={getTooltipContent('墙缝增伤', 'mouse', isDetailedView)}>墙缝增伤</Tooltip>: {character.wallCrackDamageBoost}%
                     </p>
                   )}
                 </div>
