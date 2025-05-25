@@ -2,6 +2,87 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Character } from '@/data';
 
+// Tooltip component for property labels
+const Tooltip = ({ children, content }: { children: React.ReactNode; content: string }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const tooltipWidth = 200; // Estimated tooltip width
+    const tooltipHeight = 40; // Estimated tooltip height
+
+    // Calculate position to avoid going off-screen
+    let x = rect.left + rect.width / 2;
+    let y = rect.top - tooltipHeight - 8; // 8px gap above the element
+
+    // Adjust horizontal position if tooltip would go off-screen
+    if (x + tooltipWidth / 2 > window.innerWidth) {
+      x = window.innerWidth - tooltipWidth / 2 - 10;
+    } else if (x - tooltipWidth / 2 < 0) {
+      x = tooltipWidth / 2 + 10;
+    }
+
+    // If tooltip would go above viewport, show it below instead
+    if (y < 0) {
+      y = rect.bottom + 8;
+    }
+
+    setPosition({ x, y });
+    setIsVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsVisible(false);
+  };
+
+  return (
+    <>
+      <span
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="cursor-help border-b border-dotted border-gray-400 hover:border-gray-600 transition-colors"
+      >
+        {children}
+      </span>
+      {isVisible && (
+        <div
+          className="fixed z-50 px-3 py-2 text-sm text-white bg-gray-800 rounded-md shadow-lg pointer-events-none transition-opacity duration-200 ease-in-out"
+          style={{
+            left: position.x,
+            top: position.y,
+            transform: 'translateX(-50%)',
+            opacity: isVisible ? 1 : 0,
+          }}
+        >
+          {content}
+          <div
+            className="absolute w-2 h-2 bg-gray-800 transform rotate-45"
+            style={{
+              left: '50%',
+              bottom: '-4px',
+              transform: 'translateX(-50%) rotate(45deg)',
+            }}
+          />
+        </div>
+      )}
+    </>
+  );
+};
+
+// Property label mappings for tooltips
+const propertyTooltips: Record<string, string> = {
+  'Hp上限': '健康值上限，俗称“血条”',
+  'Hp恢复': '每秒恢复的健康值',
+  '移速': '移动速度（经典之家客厅长度为4680）',
+  '跳跃': '跳跃高度（猫的跳跃高度为420）',
+  '攻击增伤': '对敌方的伤害加成',
+  '爪刀CD': '爪刀冷却时间 (未命中/命中)',
+  '爪刀范围': '爪刀攻击范围',
+  '推奶酪速度': '推奶酪速度，单位为 %/秒',
+  '墙缝增伤': '对墙缝的伤害加成（墙缝基础血量为100）',
+};
+
 // Extended Character type that includes the faction object (as used in the exported characters)
 type CharacterWithFaction = Character & {
   faction: {
@@ -56,17 +137,25 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
               {/* Common attributes for all characters */}
               <div className="grid grid-cols-2 gap-3">
                 {character.maxHp && (
-                  <p className="text-sm text-gray-700 py-1">Hp上限: {character.maxHp}</p>
+                  <p className="text-sm text-gray-700 py-1">
+                    <Tooltip content={propertyTooltips['Hp上限']}>Hp上限</Tooltip>: {character.maxHp}
+                  </p>
                 )}
 
                 {character.hpRecovery && (
-                  <p className="text-sm text-gray-700 py-1">Hp恢复: {character.hpRecovery}</p>
+                  <p className="text-sm text-gray-700 py-1">
+                    <Tooltip content={propertyTooltips['Hp恢复']}>Hp恢复</Tooltip>: {character.hpRecovery}
+                  </p>
                 )}
                 {character.moveSpeed && (
-                  <p className="text-sm text-gray-700 py-1">移速: {character.moveSpeed}</p>
+                  <p className="text-sm text-gray-700 py-1">
+                    <Tooltip content={propertyTooltips['移速']}>移速</Tooltip>: {character.moveSpeed}
+                  </p>
                 )}
-                {character.jumpHeight && (
-                  <p className="text-sm text-gray-700 py-1">跳跃: {character.jumpHeight}</p>
+                {character.jumpHeight && character.faction.id === 'mouse' && (
+                  <p className="text-sm text-gray-700 py-1">
+                    <Tooltip content={propertyTooltips['跳跃']}>跳跃</Tooltip>: {character.jumpHeight}
+                  </p>
                 )}
               </div>
 
@@ -74,13 +163,19 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
               {character.faction.id === 'cat' && (
                 <div className="mt-3 pt-3 border-t border-gray-200">
                   {character.attackBoost !== undefined && character.attackBoost !== 0 && (
-                    <p className="text-amber-600 py-1">攻击增伤: {character.attackBoost}</p>
+                    <p className="text-amber-600 py-1">
+                      <Tooltip content={propertyTooltips['攻击增伤']}>攻击增伤</Tooltip>: {character.attackBoost}
+                    </p>
                   )}
                   {character.clawKnifeCdHit && character.clawKnifeCdUnhit && (
-                    <p className="text-amber-600 py-1">爪刀CD (未命中/命中): {character.clawKnifeCdUnhit} / {character.clawKnifeCdHit} 秒</p>
+                    <p className="text-amber-600 py-1">
+                      <Tooltip content={propertyTooltips['爪刀CD']}>爪刀CD</Tooltip>: {character.clawKnifeCdUnhit} / {character.clawKnifeCdHit} 秒
+                    </p>
                   )}
                   {character.clawKnifeRange && (
-                    <p className="text-amber-600 py-1">爪刀范围: {character.clawKnifeRange}</p>
+                    <p className="text-amber-600 py-1">
+                      <Tooltip content={propertyTooltips['爪刀范围']}>爪刀范围</Tooltip>: {character.clawKnifeRange}
+                    </p>
                   )}
                 </div>
               )}
@@ -89,10 +184,14 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
               {character.faction.id === 'mouse' && (
                 <div className="mt-3 pt-3 border-t border-gray-200">
                   {character.cheesePushSpeed && (
-                    <p className="text-blue-600 py-1">推奶酪速度: {character.cheesePushSpeed}</p>
+                    <p className="text-blue-600 py-1">
+                      <Tooltip content={propertyTooltips['推奶酪速度']}>推奶酪速度</Tooltip>: {character.cheesePushSpeed}
+                    </p>
                   )}
                   {character.wallCrackDamageBoost && (
-                    <p className="text-blue-600 py-1">墙缝增伤: {character.wallCrackDamageBoost}%</p>
+                    <p className="text-blue-600 py-1">
+                      <Tooltip content={propertyTooltips['墙缝增伤']}>墙缝增伤</Tooltip>: {character.wallCrackDamageBoost}%
+                    </p>
                   )}
                 </div>
               )}
