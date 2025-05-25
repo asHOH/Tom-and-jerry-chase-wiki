@@ -52,7 +52,7 @@ export type Skill = {
 export type SkillLevel = {
   level: number;
   description: string;
-  detailedDescription?: string; // Detailed description for this specific level
+  detailedDescription?: string;
   damage?: string;
   cooldown?: number;
   videoUrl?: string | null;

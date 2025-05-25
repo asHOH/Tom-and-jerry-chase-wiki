@@ -42,11 +42,13 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                 />
               </div>
             </div>
-            <h1 className="text-3xl font-bold py-2">{character.name}</h1>
+            <h1 className="text-3xl font-bold py-2">
+              {character.name} <span className="text-xl font-normal text-gray-400">({character.faction.name})</span>
+            </h1>
 
-            {/* Combined faction, name and description */}
+            {/* Character description */}
             <p className="text-blue-600 mt-2 py-1">
-              {character.faction.name} · {character.description}
+              {character.description}
             </p>
 
             {/* Character attributes section */}
@@ -58,7 +60,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                 )}
 
                 {character.hpRecovery && (
-                  <p className="text-sm text-gray-700 py-1">Hp恢复: {character.hpRecovery} / 秒</p>
+                  <p className="text-sm text-gray-700 py-1">Hp恢复: {character.hpRecovery}</p>
                 )}
                 {character.moveSpeed && (
                   <p className="text-sm text-gray-700 py-1">移速: {character.moveSpeed}</p>
@@ -132,26 +134,32 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                         skill.canUseInAir ||
                         skill.cancelableSkill ||
                         skill.cancelableAftercast) && (
-                        <div className="text-sm text-gray-500 mt-1 flex flex-wrap gap-2 px-2">
-                          {/* Display CD information if any level has a cooldown */}
-                          {skill.skillLevels.some(level => level.cooldown) && (
-                            <span>
-                              CD: {(() => {
-                                const cooldowns = skill.skillLevels.map(level => level.cooldown || '-');
-                                const uniqueCooldowns = Array.from(new Set(cooldowns));
-                                // If all cooldowns are the same (and not '-'), display as single value
-                                if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== '-') {
-                                  return uniqueCooldowns[0];
-                                }
+                        <div className="text-sm text-gray-500 mt-1 px-2">
+                          {(() => {
+                            const properties = [];
+
+                            // Add CD information if any level has a cooldown
+                            if (skill.skillLevels.some(level => level.cooldown)) {
+                              const cooldowns = skill.skillLevels.map(level => level.cooldown || '-');
+                              const uniqueCooldowns = Array.from(new Set(cooldowns));
+                              // If all cooldowns are the same (and not '-'), display as single value
+                              if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== '-') {
+                                properties.push(`CD: ${uniqueCooldowns[0]} 秒`);
+                              } else {
                                 // Otherwise display all values separated by ' / '
-                                return cooldowns.join(' / ');
-                              })()} 秒
-                            </span>
-                          )}
-                          {skill.canMoveWhileUsing && <span> · 移动释放</span>}
-                          {skill.canUseInAir && <span> · 空中释放</span>}
-                          {skill.cancelableSkill && <span> · {skill.cancelableSkill}</span>}
-                          {skill.cancelableAftercast && <span> · {skill.cancelableAftercast}</span>}
+                                properties.push(`CD: ${cooldowns.join(' / ')} 秒`);
+                              }
+                            }
+
+                            // Add other properties
+                            if (skill.canMoveWhileUsing) properties.push('移动释放');
+                            if (skill.canUseInAir) properties.push('空中释放');
+                            if (skill.cancelableSkill) properties.push(skill.cancelableSkill);
+                            if (skill.cancelableAftercast) properties.push(skill.cancelableAftercast);
+
+                            // Join all properties with ' · ' separator
+                            return properties.join(' · ');
+                          })()}
                         </div>
                       )}
 
