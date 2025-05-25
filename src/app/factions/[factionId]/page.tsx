@@ -1,34 +1,18 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import { factions, factionData } from '@/data';
 
-// This would be replaced with actual data fetching from the database
-const getFactionData = (factionId: string) => {
-  if (factionId === 'cat') {
-    return {
-      id: 'cat',
-      name: '猫阵营',
-      description: 'placeholder',
-      characters: [
-        { id: 'tom', name: '汤姆猫', imageUrl: '/images/tom.jpg' },
-      ]
-    };
-  } else if (factionId === 'mouse') {
-    return {
-      id: 'mouse',
-      name: '鼠阵营',
-      description: 'placeholder',
-      characters: [
-        { id: 'jerry', name: '杰瑞', imageUrl: '/images/jerry.jpg' },
-      ]
-    };
-  }
-  return null;
-};
+// Generate static params for all factions
+export function generateStaticParams() {
+  return Object.keys(factionData).map((factionId) => ({
+    factionId,
+  }));
+}
 
-export default function FactionPage({ params }: { params: { factionId: string } }) {
-  const faction = getFactionData(params.factionId);
-  
+export default async function FactionPage({ params }: { params: Promise<{ factionId: string }> }) {
+  const resolvedParams = await params;
+  const faction = factions[resolvedParams.factionId];
+
   if (!faction) {
     notFound();
   }
@@ -48,15 +32,15 @@ export default function FactionPage({ params }: { params: { factionId: string } 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
         {faction.characters.map((character) => (
-          <Link 
-            key={character.id} 
-            href={`/characters/${character.id}`} 
+          <Link
+            key={character.id}
+            href={`/characters/${character.id}`}
             className="card flex flex-col items-center hover:border-blue-500 hover:border-2"
           >
             <div className="w-full h-48 bg-gray-200 rounded-t-lg relative overflow-hidden">
               {/* This would be replaced with actual images */}
               <div className="absolute inset-0 flex items-center justify-center text-4xl">
-                {params.factionId === 'cat' ? '🐱' : '🐭'}
+                {resolvedParams.factionId === 'cat' ? '🐱' : '🐭'}
               </div>
             </div>
             <div className="p-4 text-center">

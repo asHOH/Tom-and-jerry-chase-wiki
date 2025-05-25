@@ -4,7 +4,7 @@ import { useState } from 'react';
 import NavigationWrapper from '@/components/NavigationWrapper';
 import FactionCharacters from '@/components/FactionCharacters';
 import CharacterDetails from '@/components/CharacterDetails';
-import { factions, characters } from '@/data/mockData';
+import { factions, characters } from '@/data';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<string | null>(null);

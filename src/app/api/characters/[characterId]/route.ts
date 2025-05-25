@@ -3,12 +3,13 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: Request,
-  { params }: { params: { characterId: string } }
+  { params }: { params: Promise<{ characterId: string }> }
 ) {
+  const resolvedParams = await params;
   try {
     const character = await prisma.character.findUnique({
       where: {
-        id: params.characterId,
+        id: resolvedParams.characterId,
       },
       include: {
         faction: true,
@@ -19,17 +20,17 @@ export async function GET(
         },
       },
     });
-    
+
     if (!character) {
       return NextResponse.json(
         { error: 'Character not found' },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json(character);
   } catch (error) {
-    console.error(`Error fetching character ${params.characterId}:`, error);
+    console.error(`Error fetching character ${resolvedParams.characterId}:`, error);
     return NextResponse.json(
       { error: 'Failed to fetch character' },
       { status: 500 }

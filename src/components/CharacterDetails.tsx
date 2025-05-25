@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Character } from '@/data/mockData';
+import { Character } from '@/data';
 
 // Extended Character type that includes the faction object (as used in the exported characters)
 type CharacterWithFaction = Character & {

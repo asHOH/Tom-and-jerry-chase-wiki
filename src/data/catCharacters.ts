@@ -1,93 +1,19 @@
-// Define types for better type safety
-export type FactionId = 'cat' | 'mouse';
+import { Character } from './types';
 
-export type Faction = {
-  id: FactionId;
-  name: string;
-  description: string;
-};
-
-export type Character = {
-  id: string;
-  name: string;
-  factionId: FactionId;
-  description: string;
-  imageUrl?: string; // We'll generate it automatically
-
-  // Common attributes for all characters
-  maxHp?: number; // Hp上限
-  attackBoost?: number; // 攻击增伤
-  hpRecovery?: number; // Hp恢复
-  moveSpeed?: number; // 移速
-  jumpHeight?: number; // 跳跃
-
-  // Cat-specific attributes
-  clawKnifeCdHit?: number; // 爪刀CD (命中)
-  clawKnifeCdUnhit?: number; // 爪刀CD (未命中)
-  clawKnifeRange?: number; // 爪刀范围
-
-  // Mouse-specific attributes
-  cheesePushSpeed?: number; // 推奶酪速度
-  wallCrackDamageBoost?: number; // 墙缝增伤
-
-  skills: Skill[];
-};
-
-export type Skill = {
-  id: string;
-  name: string;
-  type: 'ACTIVE' | 'WEAPON1' | 'WEAPON2' | 'PASSIVE';
-  description?: string; // Basic description (optional, especially for passive skills)
-  detailedDescription?: string; // Detailed description for detailed view
-
-  // Skill usage properties
-  canMoveWhileUsing?: boolean; // 移动释放
-  canUseInAir?: boolean; // 空中释放
-  cancelableSkill?: string; // 可取消释放
-  cancelableAftercast?: string; // 可取消后摇
-
-  skillLevels: SkillLevel[];
-};
-
-export type SkillLevel = {
-  level: number;
-  description: string;
-  detailedDescription?: string;
-  damage?: string;
-  cooldown?: number;
-  videoUrl?: string | null;
-};
-
-// Generate image URL based on character ID
-const getImageUrl = (characterId: string, factionId?: FactionId): string => {
+// Generate image URL based on character ID for cat faction
+const getCatImageUrl = (characterId: string): string => {
   // Check if the image exists, otherwise use a placeholder
-  // In a real app, you would check if the file exists on the server
-  const existingImages = ['tom', 'jerry', 'tuffy', 'nibbles', 'butch', 'topsy'];
+  const existingImages = ['tom', 'butch', 'topsy'];
 
   if (existingImages.includes(characterId)) {
-    return `/images/${characterId}.png`;
+    return `/images/cats/${characterId}.png`;
   } else {
-    // Use faction-specific placeholder based on the faction ID
-    return `/images/placeholder-${factionId === 'cat' ? 'cat' : 'mouse'}.png`;
+    // Use cat-specific placeholder
+    return `/images/cats/placeholder-cat.png`;
   }
 };
 
-/* -------------------------------------------------------------------------- */
-export const factionData: Record<FactionId, Faction> = {
-  cat: {
-    id: 'cat',
-    name: '猫阵营',
-    description: '猫阵营需要阻止鼠阵营推奶酪，并将他们绑上火箭放飞',
-  },
-  mouse: {
-    id: 'mouse',
-    name: '鼠阵营',
-    description: '鼠阵营共有4名角色，需要躲避猫的攻击、推完5块奶酪并砸开墙缝',
-  }
-};
-
-/* -------------------------------------------------------------------------- */
-export const characterData: Record<string, Character> = {
+export const catCharacters: Record<string, Character> = {
   tom: {
     id: 'tom',
     name: '汤姆',
@@ -204,7 +130,7 @@ export const characterData: Record<string, Character> = {
     id: 'butch',
     name: '布奇',
     factionId: 'cat',
-    description: '“流浪猫铁三角”中的老大，从街头流浪逆袭为亿万富豪',
+    description: '"流浪猫铁三角"中的老大，从街头流浪逆袭为亿万富豪',
 
     // Common attributes
     maxHp: 220,
@@ -340,7 +266,7 @@ export const characterData: Record<string, Character> = {
     id: 'topsy',
     name: '托普斯',
     factionId: 'cat',
-    description: '“流浪猫铁三角”的一员，呆萌小灰猫，爱和小老鼠交朋友',
+    description: '"流浪猫铁三角"的一员，呆萌小灰猫，爱和小老鼠交朋友',
 
     // Common attributes
     maxHp: 200,
@@ -476,214 +402,15 @@ export const characterData: Record<string, Character> = {
       }
     ]
   },
-  jerry: {
-    id: 'jerry',
-    name: '杰瑞',
-    factionId: 'mouse',
-    description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家',
-
-    // Common attributes
-    maxHp: 100, // 原则上是99，但还是说100更方便
-    attackBoost: 15,
-    hpRecovery: 2,
-    moveSpeed: 650,
-    jumpHeight: 400,
-
-    // Mouse-specific attributes
-    cheesePushSpeed: 4,
-    wallCrackDamageBoost: 1,
-    skills: [
-      {
-        id: 'jerry-active',
-        name: '鼓舞',
-        type: 'ACTIVE',
-        description: '短暂增加自己和附近队友的移速和跳跃高度',
-        detailedDescription: '增加自己和附近队友15%移速和45%跳跃高度，持续5秒',
-        canMoveWhileUsing: true,
-        canUseInAir: true,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '后摇不可取消',
-        skillLevels: [
-          {
-            level: 1,
-            description: '',
-            cooldown: 18,
-            videoUrl: '/videos/jerry-active-1.mp4'
-          },
-          { level: 2,
-            description: '鼓舞额外回复25Hp',
-            cooldown: 18,
-            videoUrl: '/videos/jerry-active-2.mp4'
-          },
-          { level: 3,
-            description: '鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间',
-            cooldown: 18,
-            videoUrl: '/videos/jerry-active-3.mp4'
-          },
-        ]
-      },
-      {
-        id: 'jerry-weapon1',
-        name: '大铁锤',
-        type: 'WEAPON1',
-        description: '近身攻击',
-        // detailedDescription: '近身攻击',
-        canMoveWhileUsing: true,
-        canUseInAir: true,
-        cancelableSkill: '可被道具键*打断（*表示需要手中有道具或【所在处有道具且技能在地面原地释放】时才能打断/取消）', //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
-        cancelableAftercast: '后摇不可取消',
-        skillLevels: [
-          {
-            level: 1,
-            description: '硬控敌方3秒',
-            cooldown: 20,
-            videoUrl: '/videos/jerry-weapon-1.mp4'
-          },
-          {
-            level: 2,
-            description: '额外造成65伤害；每次命中永久增加10%推速，最多叠五层',
-            cooldown: 16,
-            videoUrl: '/videos/jerry-weapon-2.mp4'
-          },
-          {
-            level: 3,
-            description: '控制时间延长至4秒',
-            cooldown: 12,
-            videoUrl: '/videos/jerry-weapon-3.mp4'
-          },
-        ]
-      },
-      {
-        id: 'jerry-weapon2',
-        name: '鸟哨',
-        type: 'WEAPON2',
-        description: '召唤投掷炸弹的金丝雀',
-        detailedDescription: '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。',
-        canMoveWhileUsing: false,
-        canUseInAir: true,
-        cancelableSkill: '可被道具键*打断（*表示需要手中或所在处有道具时才能打断/取消）',
-        cancelableAftercast: '可被道具键*取消后摇',
-        skillLevels: [
-          {
-            level: 1,
-            description: '炸弹造成55伤害和2秒眩晕',
-            detailedDescription: '炸弹造成55伤害和2秒眩晕；总共释放约15个炸弹；敌方被金丝雀的炸弹命中后将对其短暂免疫。',
-            cooldown: 30,
-            videoUrl: '/videos/jerry-weapon-1.mp4'
-          },
-          {
-            level: 2,
-            description: '提高金丝雀投掷炸弹的频率',
-            detailedDescription: '提高金丝雀投掷炸弹的频率，炸弹数量提升到约17个',
-            cooldown: 30,
-            videoUrl: '/videos/jerry-weapon-2.mp4'
-          },
-          {
-            level: 3,
-            description: '减少CD；进一步提高金丝雀投掷炸弹的频率',
-            detailedDescription: '减少CD；进一步提高金丝雀投掷炸弹的频率，炸弹数量提升到约20个',
-            cooldown: 24,
-            videoUrl: '/videos/jerry-weapon-3.mp4'
-          },
-        ]
-      },
-      {
-        id: 'jerry-passive',
-        name: '奶酪好手',
-        type: 'PASSIVE',
-        skillLevels: [
-          {
-            level: 1,
-            description: '增加推奶酪速度',
-            // detailedDescription: '增加推奶酪速度',
-            videoUrl: null
-          },
-          {
-            level: 2,
-            description: '搬起奶酪时，移速增加52%、跳跃高度增加25%',
-            // detailedDescription: '搬起奶酪时，移速增加52%、跳跃高度增加25%',
-            videoUrl: null
-          },
-          {
-            level: 3,
-            description: '奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤状态，回复20Hp，并获得短暂加速',
-            detailedDescription: '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤状态，回复20Hp，并获得2.7秒的13%加速',
-            videoUrl: null
-          },
-        ]
-      }
-    ]
-  },
-  tuffy: {
-    id: 'tuffy',
-    name: '泰菲',
-    factionId: 'mouse',
-    description: '杰瑞的侄子，总将自己吃得圆滚滚的',
-
-    // Common attributes
-    maxHp: 75,
-    attackBoost: 5,
-    hpRecovery: 2.5,
-    moveSpeed: 630,
-    jumpHeight: 380,
-
-    // Mouse-specific attributes
-    cheesePushSpeed: 3.85,
-    wallCrackDamageBoost: 0.5,
-
-    skills: []
-  },
-  nibbles: {
-    id: 'nibbles',
-    name: '尼宝',
-    factionId: 'mouse',
-    description: '爱捣蛋、爱运动的机灵鬼',
-
-    // Common attributes
-    maxHp: 100,
-    attackBoost: 10,
-    hpRecovery: 2,
-    moveSpeed: 640,
-    jumpHeight: 400,
-
-    // Mouse-specific attributes
-    cheesePushSpeed: 2.85,
-    wallCrackDamageBoost: 1,
-
-    skills: []
-  }
 };
 
-// Generate derived data structures for the application
-// 1. Create factions with their characters
-export const factions = Object.fromEntries(
-  Object.entries(factionData).map(([factionId, faction]) => {
-    // Get all characters belonging to this faction
-    const factionCharacters = Object.values(characterData)
-      .filter(character => character.factionId === factionId)
-      .map(({ id, name, imageUrl }) => ({
-        id,
-        name,
-        // Use the character's ID to generate the image URL if not provided
-        imageUrl: imageUrl || getImageUrl(id, factionId as FactionId)
-      }));
-
-    return [factionId, { ...faction, characters: factionCharacters }];
-  })
-);
-
-// 2. Create characters with faction objects
-export const characters = Object.fromEntries(
-  Object.entries(characterData).map(([characterId, character]) => {
-    // Use type assertion to ensure TypeScript knows factionId is valid
-    const factionId = character.factionId as FactionId;
-    const faction = factionData[factionId];
-
-    return [characterId, {
+// Generate characters with image URLs
+export const catCharactersWithImages = Object.fromEntries(
+  Object.entries(catCharacters).map(([characterId, character]) => [
+    characterId,
+    {
       ...character,
-      // Use the character's ID to generate the image URL if not provided
-      imageUrl: character.imageUrl || getImageUrl(characterId, factionId),
-      faction: { id: faction.id, name: faction.name }
-    }];
-  })
+      imageUrl: getCatImageUrl(characterId)
+    }
+  ])
 );
