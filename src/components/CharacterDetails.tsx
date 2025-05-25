@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { Character } from '@/data';
 
@@ -45,7 +46,7 @@ const Tooltip = ({ children, content }: { children: React.ReactNode; content: st
       >
         {children}
       </span>
-      {isVisible && (
+      {isVisible && typeof document !== 'undefined' && createPortal(
         <div
           className="fixed z-50 px-3 py-2 text-sm text-white bg-gray-800 rounded-md shadow-lg pointer-events-none transition-opacity duration-200 ease-in-out"
           style={{
@@ -64,7 +65,8 @@ const Tooltip = ({ children, content }: { children: React.ReactNode; content: st
               transform: 'translateX(-50%) rotate(45deg)',
             }}
           />
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
