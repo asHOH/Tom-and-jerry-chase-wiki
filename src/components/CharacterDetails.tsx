@@ -119,7 +119,7 @@ const propertyTooltips = {
       'Hp恢复': '健康状态下每秒恢复的健康值',
       '移速': '移动速度（杰瑞为650；经典之家客厅长度为4680）',
       '跳跃': '跳跃高度（杰瑞为400；猫均为420）',
-      '推奶酪速度': '推奶酪速度（单位： %/秒）',
+      '推奶酪速度': '推奶酪速度',
       '墙缝增伤': '对墙缝的伤害加成（墙缝基础血量为100）',
     }
   }
@@ -299,12 +299,12 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                 <div className="mt-3 pt-3 border-t border-gray-200">
                   {character.cheesePushSpeed && (
                     <p className="text-blue-600 py-1">
-                      <Tooltip content={getTooltipContent('推奶酪速度', 'mouse', isDetailedView)}>推奶酪速度</Tooltip>: {character.cheesePushSpeed}
+                      <Tooltip content={getTooltipContent('推奶酪速度', 'mouse', isDetailedView)}>推奶酪速度</Tooltip>: {character.cheesePushSpeed} %/秒
                     </p>
                   )}
                   {character.wallCrackDamageBoost && (
                     <p className="text-blue-600 py-1">
-                      <Tooltip content={getTooltipContent('墙缝增伤', 'mouse', isDetailedView)}>墙缝增伤</Tooltip>: {character.wallCrackDamageBoost}%
+                      <Tooltip content={getTooltipContent('墙缝增伤', 'mouse', isDetailedView)}>墙缝增伤</Tooltip>: {character.wallCrackDamageBoost}
                     </p>
                   )}
                 </div>
