@@ -14,7 +14,7 @@ export default function CardItem({ id, name, rank, cost, imageUrl, onClick }: Ca
 
   return (
     <div
-      className="card cursor-pointer hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+      className="bg-white rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 relative overflow-hidden p-0"
       onClick={() => onClick(id)}
     >
       {/* Card image */}
