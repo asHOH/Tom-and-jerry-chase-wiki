@@ -1,5 +1,8 @@
 /**
  * Utility functions for card styling and color management
+ *
+ * Note: All color classes used in these functions are included in the Tailwind safelist
+ * in tailwind.config.js to ensure they are not purged during the build process.
  */
 
 /**
@@ -9,18 +12,17 @@
  * @returns CSS class string for rank styling
  */
 export const getRankColor = (rank: string, includeBorder: boolean = false): string => {
-  const borderSuffix = includeBorder ? ' border-orange-300' : '';
-  const borderSuffixPurple = includeBorder ? ' border-purple-300' : '';
-  const borderSuffixBlue = includeBorder ? ' border-blue-300' : '';
-  const borderSuffixGreen = includeBorder ? ' border-green-300' : '';
-  const borderSuffixGray = includeBorder ? ' border-gray-300' : '';
-
   switch (rank) {
-    case 'S': return `text-orange-600 bg-orange-100${borderSuffix}`;
-    case 'A': return `text-purple-600 bg-purple-100${borderSuffixPurple}`;
-    case 'B': return `text-blue-600 bg-blue-100${borderSuffixBlue}`;
-    case 'C': return `text-green-600 bg-green-100${borderSuffixGreen}`;
-    default: return `text-gray-600 bg-gray-100${borderSuffixGray}`;
+    case 'S':
+      return `text-orange-600 bg-orange-100${includeBorder ? ' border-orange-300' : ''}`;
+    case 'A':
+      return `text-purple-600 bg-purple-100${includeBorder ? ' border-purple-300' : ''}`;
+    case 'B':
+      return `text-blue-600 bg-blue-100${includeBorder ? ' border-blue-300' : ''}`;
+    case 'C':
+      return `text-green-600 bg-green-100${includeBorder ? ' border-green-300' : ''}`;
+    default:
+      return `text-gray-600 bg-gray-100${includeBorder ? ' border-gray-300' : ''}`;
   }
 };
 
@@ -31,13 +33,8 @@ export const getRankColor = (rank: string, includeBorder: boolean = false): stri
  * @returns CSS class string for cost styling
  */
 export const getCostColor = (cost: number, includeBorder: boolean = false): string => {
-  const borderSuffixRed = includeBorder ? ' border-red-300' : '';
-  const borderSuffixOrange = includeBorder ? ' border-orange-300' : '';
-  const borderSuffixYellow = includeBorder ? ' border-yellow-300' : '';
-  const borderSuffixGreen = includeBorder ? ' border-green-300' : '';
-
-  if (cost >= 6) return `text-red-600 bg-red-100${borderSuffixRed}`;
-  if (cost >= 4) return `text-orange-600 bg-orange-100${borderSuffixOrange}`;
-  if (cost >= 3) return `text-yellow-600 bg-yellow-100${borderSuffixYellow}`;
-  return `text-green-600 bg-green-100${borderSuffixGreen}`;
+  if (cost >= 6) return `text-red-600 bg-red-100${includeBorder ? ' border-red-300' : ''}`;
+  if (cost >= 4) return `text-orange-600 bg-orange-100${includeBorder ? ' border-orange-300' : ''}`;
+  if (cost >= 3) return `text-yellow-600 bg-yellow-100${includeBorder ? ' border-yellow-300' : ''}`;
+  return `text-green-600 bg-green-100${includeBorder ? ' border-green-300' : ''}`;
 };
