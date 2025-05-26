@@ -34,26 +34,27 @@ export const mouseCharacters: Record<string, Character> = {
         id: 'jerry-active',
         name: '鼓舞',
         type: 'ACTIVE',
-        description: '短暂增加自己和附近队友的移速和跳跃高度',
-        detailedDescription: '增加自己和附近队友15%移速和45%跳跃高度，持续5秒',
+        description: '短暂为自己和附近队友提供增益。',
+        // detailedDescription: '短暂为自己和附近队友提供增益。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '后摇不可取消',
+        cancelableAftercast: '不可取消后摇',
         skillLevels: [
           {
             level: 1,
-            description: '',
+            description: '鼓舞增加移速和跳跃高度。',
+            detailedDescription: '鼓舞增加15%移速和45%跳跃高度，持续5秒。',
             cooldown: 18,
             videoUrl: '/videos/jerry-active-1.mp4'
           },
           { level: 2,
-            description: '鼓舞额外回复25Hp',
+            description: '鼓舞额外回复25Hp。',
             cooldown: 18,
             videoUrl: '/videos/jerry-active-2.mp4'
           },
           { level: 3,
-            description: '鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间',
+            description: '鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间。',
             cooldown: 18,
             videoUrl: '/videos/jerry-active-3.mp4'
           },
@@ -63,28 +64,28 @@ export const mouseCharacters: Record<string, Character> = {
         id: 'jerry-weapon1',
         name: '大铁锤',
         type: 'WEAPON1',
-        description: '近身攻击',
-        // detailedDescription: '近身攻击',
+        description: '举起大铁锤近身攻击。',
+        // detailedDescription: '举起大铁锤近身攻击。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断', //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
-        cancelableAftercast: '后摇不可取消',
+        cancelableAftercast: '不可取消后摇',
         skillLevels: [
           {
             level: 1,
-            description: '硬控敌方3秒',
+            description: '眩晕敌方3秒。',
             cooldown: 20,
             videoUrl: '/videos/jerry-weapon-1.mp4'
           },
           {
             level: 2,
-            description: '额外造成65伤害；每次命中永久增加10%推速，最多叠五层',
+            description: '额外造成65伤害；每次命中永久增加10%推速，最多叠五层。',
             cooldown: 16,
             videoUrl: '/videos/jerry-weapon-2.mp4'
           },
           {
             level: 3,
-            description: '控制时间延长至4秒',
+            description: '眩晕时间延长至4秒。',
             cooldown: 12,
             videoUrl: '/videos/jerry-weapon-3.mp4'
           },
@@ -94,8 +95,8 @@ export const mouseCharacters: Record<string, Character> = {
         id: 'jerry-weapon2',
         name: '鸟哨',
         type: 'WEAPON2',
-        description: '召唤投掷炸弹的金丝雀',
-        detailedDescription: '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。',
+        description: '召唤投掷炸弹的金丝雀。',
+        detailedDescription: '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。敌方被金丝雀的炸弹命中后将对其短暂免疫。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断',
@@ -103,22 +104,22 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '炸弹造成55伤害和2秒眩晕',
-            detailedDescription: '炸弹造成55伤害和2秒眩晕；总共释放约15个炸弹；敌方被金丝雀的炸弹命中后将对其短暂免疫。',
+            description: '炸弹造成55伤害和2秒眩晕。',
+            detailedDescription: '炸弹造成55伤害和2秒眩晕；总共释放约15个炸弹。',
             cooldown: 30,
             videoUrl: '/videos/jerry-weapon-1.mp4'
           },
           {
             level: 2,
-            description: '提高金丝雀投掷炸弹的频率',
-            detailedDescription: '提高金丝雀投掷炸弹的频率，炸弹数量提升到约17个',
+            description: '提高金丝雀投掷炸弹的频率。',
+            detailedDescription: '提高金丝雀投掷炸弹的频率，炸弹数量提升到约17个。',
             cooldown: 30,
             videoUrl: '/videos/jerry-weapon-2.mp4'
           },
           {
             level: 3,
-            description: '减少CD；进一步提高金丝雀投掷炸弹的频率',
-            detailedDescription: '减少CD；进一步提高金丝雀投掷炸弹的频率，炸弹数量提升到约20个',
+            description: '减少CD；进一步提高金丝雀投掷炸弹的频率。',
+            detailedDescription: '减少CD；进一步提高金丝雀投掷炸弹的频率，炸弹数量提升到约20个。',
             cooldown: 24,
             videoUrl: '/videos/jerry-weapon-3.mp4'
           },
@@ -131,20 +132,20 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '增加推速',
+            description: '增加推速。',
             // detailedDescription: '增加推速',
             videoUrl: null
           },
           {
             level: 2,
-            description: '搬起奶酪时，移速增加52%、跳跃高度增加25%',
-            // detailedDescription: '搬起奶酪时，移速增加52%、跳跃高度增加25%',
+            description: '搬奶酪时，增加移速和跳跃高度。',
+            detailedDescription: '搬奶酪时，移速增加52%、跳跃高度增加25%。',
             videoUrl: null
           },
           {
             level: 3,
-            description: '奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤状态，回复20Hp，并获得短暂加速',
-            detailedDescription: '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤状态，回复20Hp，并获得2.7秒的13%加速',
+            description: '奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。',
+            detailedDescription: '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、并获得2.7秒的13%加速。',
             videoUrl: null
           },
         ]

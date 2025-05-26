@@ -41,9 +41,25 @@ export const catCharacters: Record<string, Character> = {
         cancelableSkill: '可被道具键打断，但不返还CD',
         cancelableAftercast: '无后摇',
         skillLevels: [
-          { level: 1, description: '持续3.8秒', cooldown: 20, videoUrl: '/videos/tom-active-1.mp4' },
-          { level: 2, description: '持续6.8秒', cooldown: 20, videoUrl: '/videos/tom-active-2.mp4' },
-          { level: 3, description: '无敌期间减少25%爪刀CD', cooldown: 20, videoUrl: '/videos/tom-active-3.mp4' },
+          {
+            level: 1,
+            description: '无敌持续3.8秒。',
+            cooldown: 20,
+            videoUrl: '/videos/tom-active-1.mp4'
+          },
+          {
+            level: 2,
+            description: '无敌持续6.8秒。',
+            cooldown: 20,
+            videoUrl: '/videos/tom-active-2.mp4'
+          },
+          {
+            level: 3,
+            description: '无敌期间减少爪刀CD。',
+            detailedDescription: '无敌期间减少25%爪刀CD。',
+            cooldown: 20,
+            videoUrl: '/videos/tom-active-3.mp4'
+          },
         ]
       },
       {
@@ -51,19 +67,29 @@ export const catCharacters: Record<string, Character> = {
         name: '手型枪',
         type: 'WEAPON1',
         description: '汤姆最爱的捕鼠神器。',
-        canMoveWhileUsing: true,
-        canUseInAir: false,
+        canMoveWhileUsing: false,
+        canUseInAir: true,
         cancelableSkill: '可被跳跃键打断',
         cancelableAftercast: '可被跳跃键取消后摇',
         skillLevels: [
           {
             level: 1,
-            description: '手型枪会水平飞出、原路飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。',
-            detailedDescription: '手型枪会水平飞出、原路飞回，对命中的老鼠造成15点伤害、将其抓回并眩晕2.5秒。如果拉回过程遇到障碍，额外给予65点伤害。眩晕对比例鼠和虚弱的老鼠也生效。',
+            description: '手型枪水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。',
+            detailedDescription: '手型枪水平飞出、原路飞回，对命中的老鼠造成15点伤害、将其抓回并眩晕2.5秒。如果拉回过程遇到障碍，额外给予65点伤害。眩晕对比例鼠和虚弱的老鼠也生效。',
             cooldown: 12, videoUrl: '/videos/tom-weapon1-1.mp4'
           },
-          { level: 2, description: '手型枪飞行速度增加', cooldown: 12, videoUrl: '/videos/tom-weapon1-2.mp4' },
-          { level: 3, description: '猫咪可以直接抓起被手型枪拉回并眩晕的老鼠', cooldown: 12, videoUrl: '/videos/tom-weapon1-3.mp4' },
+          {
+            level: 2,
+            description: '手型枪飞行速度增加。',
+            cooldown: 12,
+            videoUrl: '/videos/tom-weapon1-2.mp4'
+          },
+          {
+            level: 3,
+            description: '猫咪可以直接抓起被手型枪拉回并眩晕的老鼠。',
+            cooldown: 12,
+            videoUrl: '/videos/tom-weapon1-3.mp4'
+          },
         ]
       },
       {
@@ -71,7 +97,7 @@ export const catCharacters: Record<string, Character> = {
         name: '平底锅',
         type: 'WEAPON2',
         description: '挥锅攻击老鼠并打出煎蛋。',
-        detailedDescription: '挥锅攻击老鼠并打出煎蛋。',
+        // detailedDescription: '挥锅攻击老鼠并打出煎蛋。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键打断',
@@ -79,20 +105,20 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '打晕并致盲附近老鼠、降低其救援速度；也能击飞附近的道具',
+            description: '打晕并致盲附近老鼠、降低其救援速度；也能击飞道具。',
             detailedDescription: '挥锅对命中的老鼠造成15点伤害、5秒失明和55%救援减速；煎蛋也会对命中的老鼠造成15点伤害、5秒失明和55%救援减速；被锅命中的老鼠落地后受到25点伤害，并眩晕1秒。',
             cooldown: 18,
             videoUrl: '/videos/tom-weapon2-1.mp4'
           },
           {
             level: 2,
-            description: '致盲延长至7.5秒；锅命中老鼠立刻刷新爪刀CD。',
+            description: '失明延长至7.5秒；锅命中老鼠刷新爪刀CD。',
             cooldown: 18,
             videoUrl: '/videos/tom-weapon2-2.mp4'
           },
           {
             level: 3,
-            description: '猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠',
+            description: '猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠。',
             cooldown: 18,
             videoUrl: '/videos/tom-weapon2-3.mp4'
           },
@@ -105,20 +131,20 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '对敌方造成伤害时回复Hp并加速',
-            detailedDescription: '对敌方造成伤害时，回复25Hp并获得2.6秒的9.5%加速；若伤害来自爪刀命中，额外回复25Hp。',
+            description: '对老鼠造成伤害时回复Hp并加速。',
+            detailedDescription: '对老鼠造成伤害时，回复25Hp并获得2.6秒的9.5%加速；若伤害来自爪刀，额外回复25Hp。',
             videoUrl: null
           },
           {
             level: 2,
             description: '手握老鼠时依然可以攻击',
-            detailedDescription: '手握老鼠时依然可以攻击，并可触发蓄势、击晕等效果，但不会改变惯性（即不能用二被进行楼梯刀加速）',
+            detailedDescription: '手握老鼠时依然可以攻击，并可触发蓄势、击晕、三被等效果，但不会改变惯性（即不能用二被进行楼梯刀加速）',
             videoUrl: null
           },
           {
             level: 3,
-            description: '对敌方造成伤害时，给予3秒沉默',
-            detailedDescription: '对敌方造成伤害时，给予3秒沉默',
+            description: '对老鼠造成伤害时，给予3秒沉默。',
+            // detailedDescription: '对老鼠造成伤害时，给予3秒沉默。',
             videoUrl: null
           },
         ]
@@ -148,8 +174,8 @@ export const catCharacters: Record<string, Character> = {
         id: 'butch-active',
         name: '横冲直撞',
         type: 'ACTIVE',
-        description: '猛冲一段距离，击飞道具并对老鼠造成伤害和晕眩。可通过方向键改变方向。',
-        detailedDescription: '猛冲一段距离，击飞道具并对老鼠造成伤害和晕眩。可通过方向键改变方向。',
+        description: '猛冲一段距离，击飞道具并对老鼠造成伤害和晕眩。冲刺中可通过方向键改变方向。',
+        // detailedDescription: '猛冲一段距离，击飞道具并对老鼠造成伤害和晕眩。冲刺中可通过方向键改变方向。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可打断',
@@ -157,19 +183,19 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '对老鼠造成25点伤害和短暂眩晕',
+            description: '对老鼠造成25点伤害和短暂眩晕。',
             cooldown: 20,
             videoUrl: '/videos/butch-active-1.mp4'
           },
           {
             level: 2,
-            description: '减少前摇、冲刺更迅速',
+            description: '略微减少前摇、冲刺更迅速。',
             cooldown: 20,
             videoUrl: '/videos/butch-active-2.mp4'
           },
           {
             level: 3,
-            description: '冲刺更迅速、大幅提高造成的眩晕时间；命中时提升移速',
+            description: '冲刺更迅速、大幅提高造成的眩晕时间；命中时提升移速。',
             cooldown: 20,
             videoUrl: '/videos/butch-active-3.mp4'
           },
@@ -187,19 +213,19 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '伤害并眩晕附近老鼠',
+            description: '伤害并眩晕附近老鼠。',
             cooldown: 18,
             videoUrl: '/videos/butch-weapon1-1.mp4'
           },
           {
             level: 2,
-            description: '增加眩晕时间、被命中的老鼠攻击力短暂降低；震碎附近的易碎道具',
+            description: '增加眩晕时间、被命中的老鼠攻击力短暂降低；震碎附近的易碎道具。',
             cooldown: 18,
             videoUrl: '/videos/butch-weapon1-2.mp4'
           },
           {
             level: 3,
-            description: '被命中的老鼠救援速度短暂降低',
+            description: '被命中的老鼠救援速度短暂降低。',
             cooldown: 18,
             videoUrl: '/videos/butch-weapon1-3.mp4'
           },
@@ -218,19 +244,19 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '伤害并眩晕命中的老鼠；自己捡到桶盖会获得6秒减伤',
+            description: '伤害并眩晕命中的老鼠；自己捡到桶盖会获得6秒减伤。',
             cooldown: 20,
             videoUrl: '/videos/tom-weapon2-1.mp4'
           },
           {
             level: 2,
-            description: '减少CD',
+            description: '减少CD。',
             cooldown: 12,
             videoUrl: '/videos/tom-weapon2-2.mp4'
           },
           {
             level: 3,
-            description: '增加桶盖飞行速度；自己捡到桶盖会额外获得强霸体',
+            description: '增加桶盖飞行速度；自己捡到桶盖会额外获得强霸体。',
             cooldown: 12,
             videoUrl: '/videos/tom-weapon2-3.mp4'
           },
@@ -243,18 +269,18 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '虚弱后更快起身、无敌时间更长',
+            description: '虚弱后更快起身、无敌时间更长。',
             // detailedDescription: '虚弱后更快起身、无敌时间更长',
             videoUrl: null
           },
           {
             level: 2,
-            description: '投掷道具造成额外伤害',
+            description: '投掷道具造成额外伤害。',
             videoUrl: null
           },
           {
             level: 3,
-            description: '爪刀有30%概率直接造成虚弱；技能和道具造成的控制时间增加1秒',
+            description: '爪刀有30%概率直接造成虚弱；技能和道具造成的控制时间增加1秒。',
             videoUrl: null
           },
         ]
@@ -283,8 +309,8 @@ export const catCharacters: Record<string, Character> = {
         id: 'topsy-active',
         name: '双重猫格',
         type: 'ACTIVE',
-        description: '释放分身。分身继承知识卡、无视碎片和老鼠夹、爪刀冷却减少、提供小地图视野，但被攻击时会受到固定额外伤害。被额外技能按钮可指挥分身出击或跟随。再次使用技能可与分身换位。',
-        detailedDescription: '释放分身。分身继承知识卡、无视碎片和老鼠夹、爪刀冷却减少、提供小地图视野（包括隐身的老鼠），但被攻击时会受到固定额外伤害。被额外技能按钮可指挥分身出击或跟随（CD为5秒）。再次使用技能可与分身换位。本体获得部分增益时，分身也会获得。',
+        description: '释放分身。分身继承知识卡、无视碎片和老鼠夹、提供小地图视野，但被攻击时受到固定额外伤害。额外技能按钮可指挥分身出击或跟随。再次使用技能可与分身换位。',
+        detailedDescription: '释放分身。分身继承知识卡、无视碎片和老鼠夹、爪刀CD减少、提供小地图视野（包括隐身的老鼠），但被攻击时受到固定额外伤害。额外技能按钮可指挥分身出击或跟随（CD为5秒）。再次使用技能可与分身换位。本体获得部分增益时，分身也会获得。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可取消',
@@ -292,13 +318,13 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '换位CD为15秒；分身在一段时间或被击倒后消失',
+            description: '换位CD为15秒；分身在一段时间或被击倒后消失。',
             cooldown: 36,
             videoUrl: '/videos/topsy-active-1.mp4'
           },
           {
             level: 2,
-            description: '减少CD；换位CD缩短至10秒；换位时回复Hp并获得短暂加速和交互速度提升',
+            description: '减少CD；换位CD缩短至10秒；换位时回复Hp并获得短暂加速和交互速度提升。',
             cooldown: 24,
             videoUrl: '/videos/topsy-active-2.mp4'
           },
@@ -324,20 +350,20 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '吹出一个泡泡',
+            description: '吹出一个泡泡。',
             detailedDescription: '吹出一个泡泡，直接释放则泡泡会留在原地，拖动释放则泡泡会缓慢向该方向漂移。',
             cooldown: 20,
             videoUrl: '/videos/topsy-weapon1-1.mp4'
           },
           {
             level: 2,
-            description: '减少CD',
+            description: '减少CD。',
             cooldown: 12,
             videoUrl: '/videos/topsy-weapon1-2.mp4'
           },
           {
             level: 3,
-            description: '一次吹出两个泡泡',
+            description: '每次吹出两个泡泡。',
             cooldown: 12,
             videoUrl: '/videos/topsy-weapon1-3.mp4'
           },
@@ -356,21 +382,21 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '',
-            // detailedDescription: '',
+            description: '网住一只老鼠。',
+            // detailedDescription: '网住一只老鼠。',
             cooldown: 15,
             videoUrl: '/videos/tom-weapon2-1.mp4'
           },
           {
             level: 2,
-            description: '扔出老鼠时也会对其造成伤害，并且老鼠在网中的持续时间越长，该伤害越大',
-            detailedDescription: '扔出老鼠时也会对其造成伤害，并且老鼠在网中的持续时间越长，该伤害越大',
+            description: '扔出老鼠时也会对其造成伤害，并且老鼠在网中的持续时间越长，该伤害越大。',
+            detailedDescription: '扔出老鼠时也会对其造成伤害，并且老鼠在网中的持续时间越长，该伤害越大。',
             cooldown: 15,
             videoUrl: '/videos/tom-weapon2-2.mp4'
           },
           {
             level: 3,
-            description: '减少CD',
+            description: '减少CD。',
             cooldown: 10,
             videoUrl: '/videos/tom-weapon2-3.mp4'
           },
@@ -383,18 +409,17 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '爪刀命中后大幅减少爪刀CD',
+            description: '大幅减少爪刀命中时的爪刀CD。',
             videoUrl: null
           },
           {
             level: 2,
-            description: '手中的老鼠挣扎速度降低30%',
+            description: '手中的老鼠挣扎速度降低30%。',
             videoUrl: null
           },
           {
             level: 3,
-            description: '击中老鼠时，移除其大部分增益',
-            // detailedDescription: '爪刀有30%概率直接造成虚弱；技能和道具造成的控制时间增加1秒',
+            description: '击中老鼠时，移除其大部分增益。',
             videoUrl: null
           },
         ]
