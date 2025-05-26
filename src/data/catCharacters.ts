@@ -309,8 +309,8 @@ export const catCharacters: Record<string, Character> = {
         id: 'topsy-active',
         name: '双重猫格',
         type: 'ACTIVE',
-        description: '释放分身。分身继承知识卡、无视碎片和老鼠夹、提供小地图视野，但被攻击时受到固定额外伤害。额外技能按钮可指挥分身出击或跟随。再次使用技能可与分身换位。',
-        detailedDescription: '释放分身。分身继承知识卡、无视碎片和老鼠夹、爪刀CD减少、提供小地图视野（包括隐身的老鼠），但被攻击时受到固定额外伤害。额外技能按钮可指挥分身出击或跟随（CD为5秒）。再次使用技能可与分身换位。本体获得部分增益时，分身也会获得。',
+        description: '释放分身。分身继承知识卡、免疫碎片和捕鼠夹、提供小地图视野，但被攻击时受到固定额外伤害。额外技能按钮可指挥分身出击或跟随。再次使用技能可与分身换位。',
+        detailedDescription: '释放分身。分身继承知识卡、免疫碎片和捕鼠夹、爪刀CD减少、提供小地图视野（包括隐身的老鼠），但被攻击时受到固定额外伤害。额外技能按钮可指挥分身出击或跟随（CD为5秒）。再次使用技能可与分身换位。本体获得部分增益时，分身也会获得。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可取消',
@@ -331,7 +331,7 @@ export const catCharacters: Record<string, Character> = {
           {
             level: 3,
             description: '减少CD；换位CD缩短至5秒；分身不会自行消失；如果分身在本体附近，本体受到的大部分控制和受到的一半伤害会转移给分身。',
-            detailedDescription: '减少CD；换位CD缩短至5秒；分身不会自行消失；如果分身在本体附近，本体受到的大部分控制（不包括狗哥抓取、老鼠夹、虚弱、仙女鼠8星、尼宝钩子等）和受到的一半伤害会转移给分身。',
+            detailedDescription: '减少CD；换位CD缩短至5秒；分身不会自行消失；如果分身在本体附近，本体受到的大部分控制（不包括狗哥抓取、捕鼠夹、虚弱、仙女鼠8星、尼宝钩子等）和受到的一半伤害会转移给分身。',
             cooldown: 20,
             videoUrl: '/videos/topsy-active-3.mp4'
           },
