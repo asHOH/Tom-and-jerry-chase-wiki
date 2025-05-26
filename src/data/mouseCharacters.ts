@@ -131,8 +131,8 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '增加推奶酪速度',
-            // detailedDescription: '增加推奶酪速度',
+            description: '增加推速',
+            // detailedDescription: '增加推速',
             videoUrl: null
           },
           {

@@ -26,7 +26,7 @@ export type Character = {
   clawKnifeRange?: number; // 爪刀范围
 
   // Mouse-specific attributes
-  cheesePushSpeed?: number; // 推奶酪速度
+  cheesePushSpeed?: number; // 推速
   wallCrackDamageBoost?: number; // 墙缝增伤
 
   skills: Skill[];
