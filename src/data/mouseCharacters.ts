@@ -18,14 +18,12 @@ export const mouseCharacters: Record<string, Character> = {
     id: '杰瑞',
     description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家',
 
-    // Common attributes
     maxHp: 100, // 原则上是99，但还是说100更方便
     attackBoost: 15,
     hpRecovery: 2,
     moveSpeed: 650,
     jumpHeight: 400,
 
-    // Mouse-specific attributes
     cheesePushSpeed: 4,
     wallCrackDamageBoost: 1,
 
@@ -158,14 +156,12 @@ export const mouseCharacters: Record<string, Character> = {
     id: '泰菲',
     description: '杰瑞的侄子，总将自己吃得圆滚滚的',
 
-    // Common attributes
     maxHp: 75,
     attackBoost: 5,
     hpRecovery: 2.5,
     moveSpeed: 630,
     jumpHeight: 380,
 
-    // Mouse-specific attributes
     cheesePushSpeed: 3.85,
     wallCrackDamageBoost: 0.5,
 
@@ -177,14 +173,12 @@ export const mouseCharacters: Record<string, Character> = {
     id: '尼宝',
     description: '爱捣蛋、爱运动的机灵鬼',
 
-    // Common attributes
     maxHp: 100,
     attackBoost: 10,
     hpRecovery: 2,
     moveSpeed: 640,
     jumpHeight: 400,
 
-    // Mouse-specific attributes
     cheesePushSpeed: 2.85,
     wallCrackDamageBoost: 1,
 

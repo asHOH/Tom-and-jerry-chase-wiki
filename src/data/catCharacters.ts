@@ -18,13 +18,11 @@ export const catCharacters: Record<string, Character> = {
     id: '汤姆',
     description: '全能男神汤姆，除了抓老鼠以外什么都会，杰瑞的欢喜冤家',
 
-    // Common attributes
     maxHp: 255,
     hpRecovery: 3.5,
     moveSpeed: 755,
     jumpHeight: 420,
 
-    // Cat-specific attributes
     clawKnifeCdHit: 4.5,
     clawKnifeCdUnhit: 2.3,
     clawKnifeRange: 300,
@@ -157,14 +155,12 @@ export const catCharacters: Record<string, Character> = {
     id: '布奇',
     description: '"流浪猫铁三角"中的老大，从街头流浪逆袭为亿万富豪',
 
-    // Common attributes
     maxHp: 220,
     attackBoost: 25,
     hpRecovery: 2,
     moveSpeed: 745,
     jumpHeight: 420,
 
-    // Cat-specific attributes
     clawKnifeCdHit: 6,
     clawKnifeCdUnhit: 4.8,
     clawKnifeRange: 280,
@@ -292,13 +288,11 @@ export const catCharacters: Record<string, Character> = {
     id: '托普斯',
     description: '"流浪猫铁三角"的一员，呆萌小灰猫，爱和小老鼠交朋友',
 
-    // Common attributes
     maxHp: 200,
     hpRecovery: 2.5,
     moveSpeed: 780,
     jumpHeight: 420,
 
-    // Cat-specific attributes
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.6,
     clawKnifeRange: 220,
