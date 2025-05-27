@@ -341,12 +341,6 @@ export const catCharacters: Record<string, Character> = {
         detailedDescription: '分身提供额外的视野和极强的机动性。'
       },
       {
-        tagName: '进攻',
-        isMinor: true,
-        description: '一被和捕虫网分别提供快速的击倒老鼠的能力。',
-        detailedDescription: '一被和捕虫网分别提供快速的击倒老鼠的能力，后者同时拥有上火箭能力。'
-      },
-      {
         tagName: '防守',
         isMinor: true,
         description: '分身提供反隐和霸体，配合一被和击晕，可以高效守火箭或奶酪。',
@@ -355,12 +349,12 @@ export const catCharacters: Record<string, Character> = {
       {
         tagName: '打架',
         isMinor: true,
-        description: '通过换位和分身提供的霸体反制老鼠的控制。',
-        detailedDescription: '通过换位和分身提供的霸体反制老鼠的控制，但难以应对爆发输出。'
+        description: '通过换位和三级分身提供的霸体反制老鼠的控制。',
+        detailedDescription: '通过换位和三级分身提供的霸体反制老鼠的控制，但难以应对爆发输出。'
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        isMinor: false,
         description: '捕虫网的直接抓取提供了一定的翻盘手段。',
         detailedDescription: '捕虫网的直接抓取提供了一定的翻盘手段。'
       },

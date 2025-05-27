@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { Character } from '@/data';
+import { getPositioningTagColor } from '@/lib/cardUtils';
 
 // Tooltip component for property labels
 const Tooltip = ({ children, content }: { children: React.ReactNode; content: string }) => {
@@ -354,11 +355,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                     {character.positioningTags.map((tag, index) => (
                       <div key={index} className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-3">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                            tag.isMinor
-                              ? 'bg-gray-100 text-gray-600 border border-gray-300'
-                              : 'bg-orange-100 text-orange-700 border border-orange-300'
-                          }`}>
+                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getPositioningTagColor(tag.tagName, tag.isMinor, true)}`}>
                             <Tooltip content={getPositioningTagTooltipContent(tag.tagName, isDetailedView)}>
                               {tag.tagName}
                             </Tooltip>

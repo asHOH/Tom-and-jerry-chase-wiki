@@ -62,6 +62,10 @@ export const getPositioningTagColor = (tagName: string, isMinor: boolean = false
       return `text-green-600 bg-green-100${includeBorder ? ' border-green-300' : ''}`;
     case '打架':
       return `text-purple-600 bg-purple-100${includeBorder ? ' border-purple-300' : ''}`;
+    case '翻盘':
+      return `text-yellow-600 bg-yellow-100${includeBorder ? ' border-yellow-300' : ''}`;
+    case '后期':
+      return `text-indigo-600 bg-indigo-100${includeBorder ? ' border-indigo-300' : ''}`;
     default:
       return `text-gray-600 bg-gray-100${includeBorder ? ' border-gray-300' : ''}`;
   }
