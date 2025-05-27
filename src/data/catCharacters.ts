@@ -1,6 +1,6 @@
 import { Character } from './types';
 
-// Generate image URL based on character ID for cat faction
+// Generate image URL based on character ID
 const getCatImageUrl = (characterId: string): string => {
   // Check if the image exists, otherwise use a placeholder
   const existingImages = ['汤姆', '布奇', '托普斯'];
@@ -13,7 +13,7 @@ const getCatImageUrl = (characterId: string): string => {
 };
 
 export const catCharacters: Record<string, Character> = {
-  /* ----------------------------------- tom ---------------------------------- */
+  /* ----------------------------------- 汤姆 ----------------------------------- */
   '汤姆': {
     id: '汤姆',
     factionId: 'cat',
@@ -29,6 +29,7 @@ export const catCharacters: Record<string, Character> = {
     clawKnifeCdHit: 4.5,
     clawKnifeCdUnhit: 2.3,
     clawKnifeRange: 300,
+
     skills: [
       {
         id: 'tom-active',
@@ -151,7 +152,8 @@ export const catCharacters: Record<string, Character> = {
       }
     ]
   },
-  /* ---------------------------------- butch --------------------------------- */
+
+  /* ----------------------------------- 布奇 ----------------------------------- */
   '布奇': {
     id: '布奇',
     factionId: 'cat',
@@ -270,7 +272,6 @@ export const catCharacters: Record<string, Character> = {
           {
             level: 1,
             description: '虚弱后更快起身、无敌时间更长。',
-            // detailedDescription: '虚弱后更快起身、无敌时间更长',
             videoUrl: null
           },
           {
@@ -287,7 +288,8 @@ export const catCharacters: Record<string, Character> = {
       }
     ]
   },
-  /* ---------------------------------- topsy --------------------------------- */
+
+  /* ----------------------------------- 托普斯 ---------------------------------- */
   '托普斯': {
     id: '托普斯',
     factionId: 'cat',

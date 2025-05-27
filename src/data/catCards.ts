@@ -5,8 +5,6 @@ const getCatCardImageUrl = (rank: string, id: string): string => {
   return `/images/catCards/${rank}-${id}.png`;
 };
 
-// Extract card data from image filenames
-// Based on the existing images in public/images/catCards/
 export const catCards: Record<string, Card> = {
   /* ----------------------------------- S级卡 ---------------------------------- */
   '乘胜追击': {

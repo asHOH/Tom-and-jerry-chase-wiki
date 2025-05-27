@@ -1,6 +1,6 @@
 import { Character } from './types';
 
-// Generate image URL based on character ID for mouse faction
+// Generate image URL based on character ID
 const getMouseImageUrl = (characterId: string): string => {
   // Check if the image exists, otherwise use a placeholder
   const existingImages = ['杰瑞', '泰菲', '尼宝'];
@@ -13,7 +13,7 @@ const getMouseImageUrl = (characterId: string): string => {
 };
 
 export const mouseCharacters: Record<string, Character> = {
-  /* ---------------------------------- jerry --------------------------------- */
+  /* ----------------------------------- 杰瑞 ----------------------------------- */
   '杰瑞': {
     id: '杰瑞',
     factionId: 'mouse',
@@ -29,6 +29,7 @@ export const mouseCharacters: Record<string, Character> = {
     // Mouse-specific attributes
     cheesePushSpeed: 4,
     wallCrackDamageBoost: 1,
+
     skills: [
       {
         id: 'jerry-active',
@@ -152,7 +153,8 @@ export const mouseCharacters: Record<string, Character> = {
       }
     ]
   },
-  /* ---------------------------------- tuffy --------------------------------- */
+
+  /* ----------------------------------- 泰菲 ----------------------------------- */
   '泰菲': {
     id: '泰菲',
     factionId: 'mouse',
@@ -171,7 +173,8 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: []
   },
-  /* --------------------------------- nibbles -------------------------------- */
+
+  /* ----------------------------------- 尼宝 ----------------------------------- */
   '尼宝': {
     id: '尼宝',
     factionId: 'mouse',

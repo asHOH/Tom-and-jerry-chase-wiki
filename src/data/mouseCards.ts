@@ -5,8 +5,6 @@ const getMouseCardImageUrl = (rank: string, name: string): string => {
   return `/images/mouseCards/${rank}-${name}.png`;
 };
 
-// Extract card data from image filenames
-// Based on the existing images in public/images/mouseCards/
 export const mouseCards: Record<string, Card> = {
   /* ----------------------------------- S级卡 ---------------------------------- */
   '回家': {
