@@ -127,6 +127,24 @@ const propertyTooltips = {
   }
 };
 
+// Positioning tag tooltips - consistent across all characters
+const positioningTagTooltips = {
+  normal: {
+    '进攻': '擅长主动出击，追击和击倒老鼠',
+    '防守': '擅长守护重要区域，阻止老鼠推进',
+    '追击': '擅长追赶逃跑的老鼠，机动性强',
+    '速通': '擅长快速清理老鼠，提高游戏节奏',
+    '打架': '擅长与老鼠正面对抗，战斗能力强'
+  },
+  detailed: {
+    '进攻': '擅长主动出击，追击和击倒老鼠。这类角色通常具备强力的位移技能和控制能力，能够有效地对老鼠发起攻势。',
+    '防守': '擅长守护重要区域，阻止老鼠推进。这类角色通常具备范围控制技能和持续输出能力，适合守护奶酪点和关键通道。',
+    '追击': '擅长追赶逃跑的老鼠，机动性强。这类角色通常具备高移速、位移技能或加速效果，能够快速缩短与老鼠的距离。',
+    '速通': '擅长快速清理老鼠，提高游戏节奏。这类角色通常具备高爆发伤害或快速击倒能力，能够在短时间内解决战斗。',
+    '打架': '擅长与老鼠正面对抗，战斗能力强。这类角色通常具备强力的单体技能和持续战斗能力，在直接交锋中占据优势。'
+  }
+};
+
 // Helper function to get tooltip content with fallback logic
 const getTooltipContent = (property: string, faction: 'cat' | 'mouse', isDetailed: boolean): string => {
   const factionTooltips = propertyTooltips[faction];
@@ -140,6 +158,18 @@ const getTooltipContent = (property: string, faction: 'cat' | 'mouse', isDetaile
   return factionTooltips.normal[property as keyof typeof factionTooltips.normal] ||
          propertyTooltipsFallback[property as keyof typeof propertyTooltipsFallback] ||
          `${property}的相关信息`;
+};
+
+// Helper function to get positioning tag tooltip content
+const getPositioningTagTooltipContent = (tagName: string, isDetailed: boolean): string => {
+  // Try to get detailed tooltip first if in detailed mode
+  if (isDetailed && positioningTagTooltips.detailed[tagName as keyof typeof positioningTagTooltips.detailed]) {
+    return positioningTagTooltips.detailed[tagName as keyof typeof positioningTagTooltips.detailed];
+  }
+
+  // Fallback to normal tooltip
+  return positioningTagTooltips.normal[tagName as keyof typeof positioningTagTooltips.normal] ||
+         `${tagName}定位的相关信息`;
 };
 
 // Helper function to create tooltip content for item key cancellation mechanics
@@ -325,7 +355,9 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                               ? 'bg-gray-100 text-gray-600 border border-gray-300'
                               : 'bg-orange-100 text-orange-700 border border-orange-300'
                           }`}>
-                            {tag.tagName}
+                            <Tooltip content={getPositioningTagTooltipContent(tag.tagName, isDetailedView)}>
+                              {tag.tagName}
+                            </Tooltip>
                           </span>
                           {tag.isMinor && (
                             <span className="text-xs text-gray-500">(次要)</span>
