@@ -7,6 +7,16 @@ export type Faction = {
   description: string;
 };
 
+// Positioning tag types for cat characters
+export type PositioningTagName = '进攻' | '防守' | '追击' | '速通' | '打架';
+
+export type PositioningTag = {
+  tagName: PositioningTagName;
+  isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
+  description: string; // Brief explanation of why this character has this specific positioning
+  detailedDescription: string; // Extended description for detailed view mode
+};
+
 export type Character = {
   id: string; // Chinese name (e.g., '汤姆')
   factionId?: FactionId; // Optional in base definition, will be assigned in bulk
@@ -28,6 +38,9 @@ export type Character = {
   // Mouse-specific attributes
   cheesePushSpeed?: number; // 推速
   wallCrackDamageBoost?: number; // 墙缝增伤
+
+  // Positioning tags (cat characters only)
+  positioningTags?: PositioningTag[]; // Optional, will be assigned in bulk for cat characters
 
   skills: Skill[];
 };

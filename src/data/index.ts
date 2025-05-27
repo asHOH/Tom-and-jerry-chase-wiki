@@ -1,5 +1,5 @@
 // Re-export types for backward compatibility
-export type { FactionId, Faction, Character, Skill, SkillLevel, Card, CardLevel, CardRank } from './types';
+export type { FactionId, Faction, Character, Skill, SkillLevel, Card, CardLevel, CardRank, PositioningTag, PositioningTagName } from './types';
 
 // Import character data from separated files
 import { catCharactersWithImages } from './catCharacters';
@@ -42,10 +42,11 @@ export const factions = Object.fromEntries(
     // Get all characters belonging to this faction
     const factionCharacters = Object.values(characterData)
       .filter(character => character.factionId === factionId)
-      .map(({ id, imageUrl }) => ({
+      .map(({ id, imageUrl, positioningTags }) => ({
         id,
         name: id, // Use id as name since they're now the same
-        imageUrl: imageUrl!
+        imageUrl: imageUrl!,
+        positioningTags: positioningTags || [] // Include positioning tags for cat characters
       }));
 
     return [factionId, { ...faction, characters: factionCharacters }];

@@ -311,6 +311,39 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                   )}
                 </div>
               )}
+
+              {/* Positioning tags for cat characters */}
+              {character.faction.id === 'cat' && character.positioningTags && character.positioningTags.length > 0 && (
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">定位</h3>
+                  <div className="space-y-3">
+                    {character.positioningTags.map((tag, index) => (
+                      <div key={index} className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                            tag.isMinor
+                              ? 'bg-gray-100 text-gray-600 border border-gray-300'
+                              : 'bg-orange-100 text-orange-700 border border-orange-300'
+                          }`}>
+                            {tag.tagName}
+                          </span>
+                          {tag.isMinor && (
+                            <span className="text-xs text-gray-500">(次要)</span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-700 mb-1">
+                          {tag.description}
+                        </p>
+                        {isDetailedView && tag.detailedDescription && (
+                          <p className="text-sm text-gray-600 mt-2 pl-3 border-l-2 border-orange-200">
+                            {tag.detailedDescription}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

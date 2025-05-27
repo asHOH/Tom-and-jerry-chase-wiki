@@ -1,9 +1,11 @@
 import CharacterCard from './CharacterCard';
+import { PositioningTag } from '@/data';
 
 type Character = {
   id: string;
   name: string;
   imageUrl: string;
+  positioningTags: PositioningTag[];
 };
 
 type Faction = {
@@ -33,6 +35,8 @@ export default function FactionCharacters({ faction, onSelectCharacter }: Factio
               id={character.id}
               name={character.name}
               imageUrl={character.imageUrl}
+              positioningTags={character.positioningTags}
+              factionId={faction.id}
               onClick={onSelectCharacter}
             />
           </div>

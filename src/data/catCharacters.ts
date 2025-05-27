@@ -1,4 +1,4 @@
-import { Character } from './types';
+import { Character, PositioningTag } from './types';
 
 // Generate image URL based on character ID
 const getCatImageUrl = (characterId: string): string => {
@@ -421,14 +421,67 @@ export const catCharacters: Record<string, Character> = {
   },
 };
 
-// Generate characters with faction ID and image URLs applied in bulk
+// Positioning tags data for cat characters
+const catCharacterPositioningTags: Record<string, PositioningTag[]> = {
+  '汤姆': [
+    {
+      tagName: '进攻',
+      isMinor: false,
+      description: '全能型猫咪，具备强大的进攻能力',
+      detailedDescription: '汤姆作为全能型角色，拥有优秀的基础属性和强力的发怒冲刺技能，能够在各种情况下对老鼠发起有效进攻。其高移速和合理的爪刀CD使其在追击和击倒老鼠方面表现出色。'
+    },
+    {
+      tagName: '追击',
+      isMinor: false,
+      description: '发怒冲刺提供优秀的追击能力',
+      detailedDescription: '发怒冲刺技能不仅提供无敌状态，还能获得加速效果，使汤姆在追击逃跑的老鼠时具有显著优势。技能的解控效果也让汤姆能够摆脱老鼠的控制技能继续追击。'
+    }
+  ],
+  '布奇': [
+    {
+      tagName: '打架',
+      isMinor: false,
+      description: '专精于与老鼠正面对抗',
+      detailedDescription: '布奇的技能设计使其在与老鼠的直接对抗中表现突出，无论是控制技能还是伤害输出都针对正面交锋进行了优化。'
+    },
+    {
+      tagName: '进攻',
+      isMinor: true,
+      description: '具备一定的进攻能力，但更偏向于正面对抗',
+      detailedDescription: '虽然布奇具备进攻能力，但其技能更多地体现在与老鼠的直接交锋上，而非传统意义上的追击和击倒。'
+    }
+  ],
+  '托普斯': [
+    {
+      tagName: '进攻',
+      isMinor: false,
+      description: '双重猫格提供独特的进攻策略',
+      detailedDescription: '托普斯的分身技能为其提供了独特的进攻方式，能够通过分身和本体的配合实现多角度的进攻，大大增加了击倒老鼠的成功率。'
+    },
+    {
+      tagName: '追击',
+      isMinor: false,
+      description: '分身配合提供强大的追击能力',
+      detailedDescription: '通过分身的配合和换位技能，托普斯能够实现快速的位置转换和持续的追击压力，让老鼠难以摆脱。分身提供的视野优势也有助于追击过程。'
+    },
+    {
+      tagName: '速通',
+      isMinor: true,
+      description: '换位技能在特定情况下有助于快速移动',
+      detailedDescription: '虽然托普斯的换位技能主要用于战术配合，但在某些情况下也能帮助快速到达关键位置，对速通策略有一定帮助。'
+    }
+  ]
+};
+
+// Generate characters with faction ID, image URLs, and positioning tags applied in bulk
 export const catCharactersWithImages = Object.fromEntries(
   Object.entries(catCharacters).map(([characterId, character]) => [
     characterId,
     {
       ...character,
       factionId: 'cat' as const,
-      imageUrl: getCatImageUrl(characterId)
+      imageUrl: getCatImageUrl(characterId),
+      positioningTags: catCharacterPositioningTags[characterId] || []
     }
   ])
 );
