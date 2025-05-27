@@ -8,7 +8,7 @@ export type Faction = {
 };
 
 // Positioning tag types for cat characters
-export type PositioningTagName = '进攻' | '防守' | '追击' | '速通' | '打架';
+export type PositioningTagName = '进攻' | '防守' | '追击' | '打架' | '速通' | '后期' | '翻盘';
 
 export type PositioningTag = {
   tagName: PositioningTagName;
