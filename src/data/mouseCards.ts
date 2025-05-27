@@ -485,7 +485,7 @@ export const mouseCardsWithImages = Object.fromEntries(
     cardId,
     {
       ...card,
-      factionId: 'mouse' as const, // Apply faction ID in bulk
+      factionId: 'mouse' as const,
       imageUrl: getMouseCardImageUrl(card.rank, card.id)
     }
   ])

@@ -9,7 +9,7 @@ export type Faction = {
 
 export type Character = {
   id: string; // Now contains the Chinese name (e.g., '汤姆')
-  factionId: FactionId;
+  factionId?: FactionId; // Optional in base definition, will be assigned in bulk
   description: string;
   imageUrl?: string; // We'll generate it automatically
 

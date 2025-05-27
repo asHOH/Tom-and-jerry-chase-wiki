@@ -16,7 +16,6 @@ export const mouseCharacters: Record<string, Character> = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
   '杰瑞': {
     id: '杰瑞',
-    factionId: 'mouse',
     description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家',
 
     // Common attributes
@@ -157,7 +156,6 @@ export const mouseCharacters: Record<string, Character> = {
   /* ----------------------------------- 泰菲 ----------------------------------- */
   '泰菲': {
     id: '泰菲',
-    factionId: 'mouse',
     description: '杰瑞的侄子，总将自己吃得圆滚滚的',
 
     // Common attributes
@@ -177,7 +175,6 @@ export const mouseCharacters: Record<string, Character> = {
   /* ----------------------------------- 尼宝 ----------------------------------- */
   '尼宝': {
     id: '尼宝',
-    factionId: 'mouse',
     description: '爱捣蛋、爱运动的机灵鬼',
 
     // Common attributes
@@ -195,12 +192,13 @@ export const mouseCharacters: Record<string, Character> = {
   }
 };
 
-// Generate characters with image URLs
+// Generate characters with faction ID and image URLs applied in bulk
 export const mouseCharactersWithImages = Object.fromEntries(
   Object.entries(mouseCharacters).map(([characterId, character]) => [
     characterId,
     {
       ...character,
+      factionId: 'mouse' as const,
       imageUrl: getMouseImageUrl(characterId)
     }
   ])

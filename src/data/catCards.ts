@@ -485,7 +485,7 @@ export const catCardsWithImages = Object.fromEntries(
     cardId,
     {
       ...card,
-      factionId: 'cat' as const, // Apply faction ID in bulk
+      factionId: 'cat' as const,
       imageUrl: getCatCardImageUrl(card.rank, card.id)
     }
   ])

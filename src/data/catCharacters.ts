@@ -16,7 +16,6 @@ export const catCharacters: Record<string, Character> = {
   /* ----------------------------------- 汤姆 ----------------------------------- */
   '汤姆': {
     id: '汤姆',
-    factionId: 'cat',
     description: '全能男神汤姆，除了抓老鼠以外什么都会，杰瑞的欢喜冤家',
 
     // Common attributes
@@ -156,7 +155,6 @@ export const catCharacters: Record<string, Character> = {
   /* ----------------------------------- 布奇 ----------------------------------- */
   '布奇': {
     id: '布奇',
-    factionId: 'cat',
     description: '"流浪猫铁三角"中的老大，从街头流浪逆袭为亿万富豪',
 
     // Common attributes
@@ -292,7 +290,6 @@ export const catCharacters: Record<string, Character> = {
   /* ----------------------------------- 托普斯 ---------------------------------- */
   '托普斯': {
     id: '托普斯',
-    factionId: 'cat',
     description: '"流浪猫铁三角"的一员，呆萌小灰猫，爱和小老鼠交朋友',
 
     // Common attributes
@@ -430,12 +427,13 @@ export const catCharacters: Record<string, Character> = {
   },
 };
 
-// Generate characters with image URLs
+// Generate characters with faction ID and image URLs applied in bulk
 export const catCharactersWithImages = Object.fromEntries(
   Object.entries(catCharacters).map(([characterId, character]) => [
     characterId,
     {
       ...character,
+      factionId: 'cat' as const,
       imageUrl: getCatImageUrl(characterId)
     }
   ])
