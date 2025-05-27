@@ -13,12 +13,12 @@ export const factionData: Record<FactionId, Faction> = {
   cat: {
     id: 'cat',
     name: '猫阵营',
-    description: '猫阵营需要阻止鼠阵营推奶酪，并将他们绑上火箭放飞',
+    description: '猫阵营需要阻止老鼠推奶酪，并将老鼠绑上火箭放飞',
   },
   mouse: {
     id: 'mouse',
     name: '鼠阵营',
-    description: '鼠阵营共有4名角色，需要躲避猫的攻击、推完5块奶酪并砸开墙缝',
+    description: '鼠阵营共四名角色，需要合作躲避猫的攻击、推完5块奶酪并砸开墙缝',
   }
 };
 
@@ -45,7 +45,6 @@ export const factions = Object.fromEntries(
       .map(({ id, imageUrl }) => ({
         id,
         name: id, // Use id as name since they're now the same
-        // Image URL is already generated in the character data
         imageUrl: imageUrl!
       }));
 
@@ -62,7 +61,6 @@ export const characters = Object.fromEntries(
 
     return [characterId, {
       ...character,
-      // Image URL is already generated in the character data
       imageUrl: character.imageUrl!,
       faction: { id: faction.id, name: faction.name }
     }];
@@ -80,7 +78,6 @@ export const factionCards = Object.fromEntries(
         name: id, // Use id as name since they're now the same
         rank,
         cost,
-        // Image URL is already generated in the card data
         imageUrl: imageUrl!
       }));
 
@@ -91,13 +88,11 @@ export const factionCards = Object.fromEntries(
 // 4. Create cards with faction objects
 export const cards = Object.fromEntries(
   Object.entries(cardData).map(([cardId, card]) => {
-    // Use type assertion to ensure TypeScript knows factionId is valid
     const factionId = card.factionId as FactionId;
     const faction = factionData[factionId];
 
     return [cardId, {
       ...card,
-      // Image URL is already generated in the card data
       imageUrl: card.imageUrl!,
       faction: { id: faction.id, name: faction.name }
     }];

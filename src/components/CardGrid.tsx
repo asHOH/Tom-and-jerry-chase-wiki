@@ -59,7 +59,7 @@ export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
       <header className="text-center space-y-6 mb-10 px-4">
         <h1 className="text-4xl font-bold text-blue-600 py-3">{faction.name === '猫阵营' ? '猫方知识卡' : '鼠方知识卡'}</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto px-4 py-2">
-          {faction.name === '猫阵营' ? '增强猫击倒和放飞老鼠的能力' : '提升老鼠的生存、救援和推奶酪能力'}
+          {faction.name === '猫阵营' ? '提升猫击倒和放飞老鼠的能力' : '提升老鼠的生存、救援和推奶酪能力'}
         </p>
 
         {/* Rank Filter Controls */}
