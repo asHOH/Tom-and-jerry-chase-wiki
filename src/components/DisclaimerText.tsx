@@ -24,6 +24,8 @@ export const DisclaimerText = () => {
       <br />
       {DISCLAIMER_CONTENT.copyright}
       <br />
+      {DISCLAIMER_CONTENT.takedownPolicy}
+      <br />
       {DISCLAIMER_CONTENT.testDataAttribution.prefix}
       {renderCreatorLinks(DISCLAIMER_CONTENT.testDataAttribution.creators)}
       {DISCLAIMER_CONTENT.testDataAttribution.suffix}

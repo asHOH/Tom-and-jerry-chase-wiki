@@ -19,8 +19,9 @@ export const CREATORS = {
 
 // Structured disclaimer content - single source of truth
 export const DISCLAIMER_CONTENT = {
-  intro: '本网站为粉丝制作，仅供学习交流使用，并非官方网站。',
-  copyright: '素材版权均归网易猫和老鼠手游所有。',
+  intro: '本网站为非营利粉丝项目，基于合理使用原则提供游戏资讯，仅供学习交流使用。',
+  copyright: '猫和老鼠（Tom and Jerry）角色版权归华纳兄弟娱乐公司（Warner Bros. Entertainment Inc.）所有。游戏素材版权归网易猫和老鼠手游所有。',
+  takedownPolicy: '如有版权方要求移除相关内容，我们将立即配合处理。请通过Github Issues联系我们。',
   testDataAttribution: {
     prefix: '特别鸣谢b站up主',
     creators: ['dreamback', 'momo'] as const,
@@ -37,6 +38,7 @@ export const DISCLAIMER_CONTENT = {
 export const DISCLAIMER_TEXT = [
   DISCLAIMER_CONTENT.intro,
   DISCLAIMER_CONTENT.copyright,
+  DISCLAIMER_CONTENT.takedownPolicy,
   `${DISCLAIMER_CONTENT.testDataAttribution.prefix}${DISCLAIMER_CONTENT.testDataAttribution.creators.map(id => CREATORS[id].name).join('、')}${DISCLAIMER_CONTENT.testDataAttribution.suffix}`,
   `${DISCLAIMER_CONTENT.imageAttribution.prefix}${DISCLAIMER_CONTENT.imageAttribution.creators.map(id => CREATORS[id].name).join('、')}${DISCLAIMER_CONTENT.imageAttribution.suffix}`
 ].join('\n');
