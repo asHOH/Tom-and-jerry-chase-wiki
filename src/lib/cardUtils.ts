@@ -44,14 +44,16 @@ export const getCostColor = (cost: number, includeBorder: boolean = false): stri
  * @param tagName - The positioning tag name
  * @param isMinor - Whether this is a minor tag
  * @param includeBorder - Whether to include border classes (default: false)
+ * @param faction - The faction ('cat' or 'mouse') for tags that exist in both factions
  * @returns CSS class string for positioning tag styling
  */
-export const getPositioningTagColor = (tagName: string, isMinor: boolean = false, includeBorder: boolean = false): string => {
+export const getPositioningTagColor = (tagName: string, isMinor: boolean = false, includeBorder: boolean = false, faction?: 'cat' | 'mouse'): string => {
   if (isMinor) {
     return `text-gray-600 bg-gray-100${includeBorder ? ' border-gray-300' : ''}`;
   }
 
   switch (tagName) {
+    // Cat positioning tags
     case '进攻':
       return `text-red-600 bg-red-100${includeBorder ? ' border-red-300' : ''}`;
     case '防守':
@@ -61,11 +63,27 @@ export const getPositioningTagColor = (tagName: string, isMinor: boolean = false
     case '速通':
       return `text-green-600 bg-green-100${includeBorder ? ' border-green-300' : ''}`;
     case '打架':
-      return `text-purple-600 bg-purple-100${includeBorder ? ' border-purple-300' : ''}`;
+      return `text-purple-600 bg-purple-100${includeBorder ? ' border-purple-300' : ''}`;    case '后期':
+      // Handle the shared tag based on faction
+      if (faction === 'mouse') {
+        return `text-teal-600 bg-teal-100${includeBorder ? ' border-teal-300' : ''}`;
+      }
+      // Default to cat color
+      return `text-indigo-600 bg-indigo-100${includeBorder ? ' border-indigo-300' : ''}`;
     case '翻盘':
       return `text-yellow-600 bg-yellow-100${includeBorder ? ' border-yellow-300' : ''}`;
-    case '后期':
-      return `text-indigo-600 bg-indigo-100${includeBorder ? ' border-indigo-300' : ''}`;
+    // Mouse positioning tags
+    case '奶酪':
+      return `text-amber-600 bg-amber-100${includeBorder ? ' border-amber-300' : ''}`;
+    case '干扰':
+      return `text-pink-600 bg-pink-100${includeBorder ? ' border-pink-300' : ''}`;
+    case '辅助':
+      return `text-cyan-600 bg-cyan-100${includeBorder ? ' border-cyan-300' : ''}`;
+    case '救援':
+      return `text-emerald-600 bg-emerald-100${includeBorder ? ' border-emerald-300' : ''}`;    case '破局':
+      return `text-violet-600 bg-violet-100${includeBorder ? ' border-violet-300' : ''}`;
+    case '砸墙':
+      return `text-stone-600 bg-stone-100${includeBorder ? ' border-stone-300' : ''}`;
     default:
       return `text-gray-600 bg-gray-100${includeBorder ? ' border-gray-300' : ''}`;
   }

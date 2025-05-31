@@ -21,13 +21,11 @@ export const catCharacters: Record<string, Character> = {
     maxHp: 255,
     hpRecovery: 3.5,
     moveSpeed: 755,
-    jumpHeight: 420,
-
-    clawKnifeCdHit: 4.5,
+    jumpHeight: 420,    clawKnifeCdHit: 4.5,
     clawKnifeCdUnhit: 2.3,
     clawKnifeRange: 300,
 
-    positioningTags: [
+    catPositioningTags: [
       {
         tagName: '进攻',
         isMinor: false,
@@ -180,13 +178,11 @@ export const catCharacters: Record<string, Character> = {
     attackBoost: 25,
     hpRecovery: 2,
     moveSpeed: 745,
-    jumpHeight: 420,
-
-    clawKnifeCdHit: 6,
+    jumpHeight: 420,    clawKnifeCdHit: 6,
     clawKnifeCdUnhit: 4.8,
     clawKnifeRange: 280,
 
-    positioningTags: [
+    catPositioningTags: [
       {
         tagName: '防守',
         isMinor: false,
@@ -327,13 +323,11 @@ export const catCharacters: Record<string, Character> = {
     maxHp: 200,
     hpRecovery: 2.5,
     moveSpeed: 780,
-    jumpHeight: 420,
-
-    clawKnifeCdHit: 5,
+    jumpHeight: 420,    clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.6,
     clawKnifeRange: 220,
 
-    positioningTags: [
+    catPositioningTags: [
       {
         tagName: '追击',
         isMinor: false,

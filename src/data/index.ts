@@ -42,12 +42,19 @@ export const factions = Object.fromEntries(
     // Get all characters belonging to this faction
     const factionCharacters = Object.values(characterData)
       .filter(character => character.factionId === factionId)
-      .map(({ id, imageUrl, positioningTags }) => ({
-        id,
-        name: id, // Use id as name since they're now the same
-        imageUrl: imageUrl!,
-        positioningTags: positioningTags || [] // Include positioning tags for cat characters
-      }));
+      .map((character) => {
+        // Get positioning tags based on faction
+        const positioningTags = factionId === 'cat' 
+          ? character.catPositioningTags || []
+          : character.mousePositioningTags || [];
+        
+        return {
+          id: character.id,
+          name: character.id, // Use id as name since they're now the same
+          imageUrl: character.imageUrl!,
+          positioningTags: positioningTags // Include positioning tags for both cat and mouse characters
+        };
+      });
 
     return [factionId, { ...faction, characters: factionCharacters }];
   })

@@ -22,10 +22,29 @@ export const mouseCharacters: Record<string, Character> = {
     attackBoost: 15,
     hpRecovery: 2,
     moveSpeed: 650,
-    jumpHeight: 400,
-
-    cheesePushSpeed: 4,
+    jumpHeight: 400,    cheesePushSpeed: 4,
     wallCrackDamageBoost: 1,
+
+    mousePositioningTags: [
+      {
+        tagName: '奶酪',
+        isMinor: false,
+        description: '被动技能提供推速加成，搬奶酪时获得额外增益。',
+        detailedDescription: '被动技能提供推速加成，搬奶酪时获得额外增益，奶酪推完时还能回复生命值和解除负面状态。'
+      },
+      {
+        tagName: '辅助',
+        isMinor: false,
+        description: '主动技能可以为队友提供移速和跳跃增益。',
+        detailedDescription: '主动技能可以为队友提供移速和跳跃增益，满级时还能解除受伤状态并延长火箭燃烧时间。'
+      },
+      {
+        tagName: '干扰',
+        isMinor: true,
+        description: '武器技能的眩晕效果可以干扰猫的行动。',
+        detailedDescription: '武器技能的眩晕效果可以干扰猫的行动，满级时眩晕时间长达4秒。'
+      },
+    ],
 
     skills: [
       {
@@ -160,10 +179,23 @@ export const mouseCharacters: Record<string, Character> = {
     attackBoost: 5,
     hpRecovery: 2.5,
     moveSpeed: 630,
-    jumpHeight: 380,
-
-    cheesePushSpeed: 3.85,
+    jumpHeight: 380,    cheesePushSpeed: 3.85,
     wallCrackDamageBoost: 0.5,
+
+    mousePositioningTags: [
+      {
+        tagName: '救援',
+        isMinor: false,
+        description: '擅长救援被抓的队友。',
+        detailedDescription: '擅长救援被抓的队友，通常拥有位移或解控技能。'
+      },
+      {
+        tagName: '破局',
+        isMinor: true,
+        description: '在困难局面中能寻找突破口。',
+        detailedDescription: '在困难局面中能寻找突破口，通常拥有特殊的逃脱或反制机制。'
+      },
+    ],
 
     skills: []
   },
@@ -177,10 +209,23 @@ export const mouseCharacters: Record<string, Character> = {
     attackBoost: 10,
     hpRecovery: 2,
     moveSpeed: 640,
-    jumpHeight: 400,
-
-    cheesePushSpeed: 2.85,
+    jumpHeight: 400,    cheesePushSpeed: 2.85,
     wallCrackDamageBoost: 1,
+
+    mousePositioningTags: [
+      {
+        tagName: '砸墙',
+        isMinor: false,
+        description: '擅长破坏墙缝和相关操作。',
+        detailedDescription: '擅长破坏墙缝和相关操作，拥有较高的墙缝增伤。'
+      },
+      {
+        tagName: '破局',
+        isMinor: true,
+        description: '在关键时刻能够扭转局势。',
+        detailedDescription: '在关键时刻能够扭转局势，通常有技能刷新或特殊机制。'
+      },
+    ],
 
     skills: []
   }

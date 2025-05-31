@@ -15,6 +15,16 @@ module.exports = {
     // Cost colors - text and background
     'text-red-600', 'bg-red-100', 'border-red-300',
     'text-yellow-600', 'bg-yellow-100', 'border-yellow-300',
+    // Cat positioning tag colors
+    'text-indigo-600', 'bg-indigo-100', 'border-indigo-300',
+    // Mouse positioning tag colors
+    'text-amber-600', 'bg-amber-100', 'border-amber-300',
+    'text-pink-600', 'bg-pink-100', 'border-pink-300',
+    'text-cyan-600', 'bg-cyan-100', 'border-cyan-300',
+    'text-emerald-600', 'bg-emerald-100', 'border-emerald-300',
+    'text-violet-600', 'bg-violet-100', 'border-violet-300',
+    'text-stone-600', 'bg-stone-100', 'border-stone-300',
+    'text-teal-600', 'bg-teal-100', 'border-teal-300',
     // Additional utility classes that might be dynamically generated
     'border-current',
   ],

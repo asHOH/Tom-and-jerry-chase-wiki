@@ -128,8 +128,8 @@ const propertyTooltips = {
   }
 };
 
-// Positioning tag tooltips - consistent across all characters
-const positioningTagTooltips = {
+// Cat positioning tag tooltips
+const catPositioningTagTooltips = {
   normal: {
     '进攻': '擅长击倒和放飞老鼠',
     '防守': '擅长守奶酪/火箭/墙缝',
@@ -150,6 +150,28 @@ const positioningTagTooltips = {
   }
 };
 
+// Mouse positioning tag tooltips
+const mousePositioningTagTooltips = {
+  normal: {
+    '奶酪': '擅长推奶酪和奶酪相关操作',
+    '干扰': '擅长干扰猫的行动和节奏',
+    '辅助': '擅长为队友提供支援和增益',
+    '救援': '擅长救援被抓的队友',
+    '破局': '擅长在困难局面中寻找突破口',
+    '砸墙': '擅长破坏墙缝和相关操作',
+    '后期': '需要时间发育，后期能力强劲',
+  },
+  detailed: {
+    '奶酪': '擅长推奶酪和奶酪相关操作，通常拥有较高的推速或奶酪相关技能',
+    '干扰': '擅长干扰猫的行动和节奏，通常拥有控制技能或机动性',
+    '辅助': '擅长为队友提供支援和增益，通常拥有团队增益技能',
+    '救援': '擅长救援被抓的队友，通常拥有位移或解控技能',
+    '破局': '擅长在困难局面中寻找突破口，通常拥有特殊的逃脱或反制机制',
+    '砸墙': '擅长破坏墙缝和相关操作，通常拥有较高的墙缝增伤或相关技能',
+    '后期': '需要时间发育和准备，在游戏后期能够发挥强大的作用，通常拥有成长型技能或大后期能力',
+  }
+};
+
 // Helper function to get tooltip content with fallback logic
 const getTooltipContent = (property: string, faction: 'cat' | 'mouse', isDetailed: boolean): string => {
   const factionTooltips = propertyTooltips[faction];
@@ -166,14 +188,17 @@ const getTooltipContent = (property: string, faction: 'cat' | 'mouse', isDetaile
 };
 
 // Helper function to get positioning tag tooltip content
-const getPositioningTagTooltipContent = (tagName: string, isDetailed: boolean): string => {
+const getPositioningTagTooltipContent = (tagName: string, faction: 'cat' | 'mouse', isDetailed: boolean): string => {
+  // Select the appropriate tooltip set based on faction
+  const tooltips = faction === 'cat' ? catPositioningTagTooltips : mousePositioningTagTooltips;
+  
   // Try to get detailed tooltip first if in detailed mode
-  if (isDetailed && positioningTagTooltips.detailed[tagName as keyof typeof positioningTagTooltips.detailed]) {
-    return positioningTagTooltips.detailed[tagName as keyof typeof positioningTagTooltips.detailed];
+  if (isDetailed && tooltips.detailed[tagName as keyof typeof tooltips.detailed]) {
+    return tooltips.detailed[tagName as keyof typeof tooltips.detailed];
   }
 
   // Fallback to normal tooltip
-  return positioningTagTooltips.normal[tagName as keyof typeof positioningTagTooltips.normal] ||
+  return tooltips.normal[tagName as keyof typeof tooltips.normal] ||
          `${tagName}定位的相关信息`;
 };
 
@@ -345,18 +370,15 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                     </p>
                   )}
                 </div>
-              )}
-
-              {/* Positioning tags for cat characters */}
-              {character.faction.id === 'cat' && character.positioningTags && character.positioningTags.length > 0 && (
+              )}              {/* Positioning tags for cat characters */}
+              {character.faction.id === 'cat' && character.catPositioningTags && character.catPositioningTags.length > 0 && (
                 <div className="mt-6 pt-4 border-t border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">定位</h3>
                   <div className="space-y-3">
-                    {character.positioningTags.map((tag, index) => (
-                      <div key={index} className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getPositioningTagColor(tag.tagName, tag.isMinor, true)}`}>
-                            <Tooltip content={getPositioningTagTooltipContent(tag.tagName, isDetailedView)}>
+                    {character.catPositioningTags.map((tag, index) => (
+                      <div key={index} className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-3">                        <div className="flex items-center gap-2 mb-2">
+                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getPositioningTagColor(tag.tagName, tag.isMinor, true, 'cat')}`}>
+                            <Tooltip content={getPositioningTagTooltipContent(tag.tagName, 'cat', isDetailedView)}>
                               {tag.tagName}
                             </Tooltip>
                           </span>
@@ -369,6 +391,36 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                         </p>
                         {isDetailedView && tag.detailedDescription && (
                           <p className="text-sm text-gray-600 mt-2 pl-3 border-l-2 border-orange-200">
+                            {tag.detailedDescription}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Positioning tags for mouse characters */}
+              {character.faction.id === 'mouse' && character.mousePositioningTags && character.mousePositioningTags.length > 0 && (
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">定位</h3>
+                  <div className="space-y-3">
+                    {character.mousePositioningTags.map((tag, index) => (
+                      <div key={index} className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-3">                        <div className="flex items-center gap-2 mb-2">
+                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getPositioningTagColor(tag.tagName, tag.isMinor, true, 'mouse')}`}>
+                            <Tooltip content={getPositioningTagTooltipContent(tag.tagName, 'mouse', isDetailedView)}>
+                              {tag.tagName}
+                            </Tooltip>
+                          </span>
+                          {tag.isMinor && (
+                            <span className="text-xs text-gray-500">(次要)</span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-700 mb-1">
+                          {tag.description}
+                        </p>
+                        {isDetailedView && tag.detailedDescription && (
+                          <p className="text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200">
                             {tag.detailedDescription}
                           </p>
                         )}

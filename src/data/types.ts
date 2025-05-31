@@ -7,15 +7,27 @@ export type Faction = {
   description: string;
 };
 
-// Positioning tag types for cat characters
-export type PositioningTagName = '进攻' | '防守' | '追击' | '打架' | '速通' | '后期' | '翻盘';
+// Positioning tag types separated by faction
+export type CatPositioningTagName = '进攻' | '防守' | '追击' | '打架' | '速通' | '后期' | '翻盘';
+export type MousePositioningTagName = '奶酪' | '干扰' | '辅助' | '救援' | '破局' | '砸墙' | '后期';
 
-export type PositioningTag = {
-  tagName: PositioningTagName;
+export type CatPositioningTag = {
+  tagName: CatPositioningTagName;
   isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
   description: string; // Brief explanation of why this character has this specific positioning
   detailedDescription: string; // Extended description for detailed view mode
 };
+
+export type MousePositioningTag = {
+  tagName: MousePositioningTagName;
+  isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
+  description: string; // Brief explanation of why this character has this specific positioning
+  detailedDescription: string; // Extended description for detailed view mode
+};
+
+// Union type for backward compatibility
+export type PositioningTagName = CatPositioningTagName | MousePositioningTagName;
+export type PositioningTag = CatPositioningTag | MousePositioningTag;
 
 export type Character = {
   id: string; // Chinese name (e.g., '汤姆')
@@ -39,8 +51,9 @@ export type Character = {
   cheesePushSpeed?: number; // 推速
   wallCrackDamageBoost?: number; // 墙缝增伤
 
-  // Positioning tags (cat characters only)
-  positioningTags?: PositioningTag[]; // Optional, will be assigned in bulk for cat characters
+  // Positioning tags (faction-specific)
+  catPositioningTags?: CatPositioningTag[]; // For cat characters
+  mousePositioningTags?: MousePositioningTag[]; // For mouse characters
 
   skills: Skill[];
 };

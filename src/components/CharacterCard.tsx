@@ -34,13 +34,13 @@ export default function CharacterCard({ id, name, imageUrl, positioningTags, fac
       <div className="p-6 text-center">
         <h2 className="text-xl font-bold px-2 py-2 mb-2">{name}</h2>
 
-        {/* Positioning tags for cat characters */}
-        {factionId === 'cat' && positioningTags && positioningTags.length > 0 && (
+        {/* Positioning tags for both cat and mouse characters */}
+        {positioningTags && positioningTags.length > 0 && (
           <div className="flex flex-wrap justify-center gap-1 mt-2">
             {positioningTags.map((tag, index) => (
               <span
                 key={index}
-                className={`px-2 py-1 rounded text-xs font-medium ${getPositioningTagColor(tag.tagName, tag.isMinor)}`}
+                className={`px-2 py-1 rounded text-xs font-medium ${getPositioningTagColor(tag.tagName, tag.isMinor, false, factionId as 'cat' | 'mouse')}`}
               >
                 {tag.tagName}
               </span>
