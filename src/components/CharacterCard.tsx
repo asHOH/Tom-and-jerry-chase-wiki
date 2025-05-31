@@ -1,17 +1,9 @@
 import { PositioningTag } from '@/data';
 import { getPositioningTagColor } from '@/lib/cardUtils';
+import { CharacterCardProps } from '@/lib/types';
 import GameImage from './ui/GameImage';
 import Tag from './ui/Tag';
 import BaseCard from './ui/BaseCard';
-
-type CharacterCardProps = {
-  id: string;
-  name: string;
-  imageUrl: string;
-  positioningTags: PositioningTag[];
-  factionId: string;
-  onClick: (characterId: string) => void;
-};
 
 export default function CharacterCard({ id, name, imageUrl, positioningTags, factionId, onClick }: CharacterCardProps) {
   return (

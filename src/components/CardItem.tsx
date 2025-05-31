@@ -1,16 +1,8 @@
 import { getRankColor, getCostColor } from '@/lib/cardUtils';
+import { CardItemProps } from '@/lib/types';
 import GameImage from './ui/GameImage';
 import Tag from './ui/Tag';
 import BaseCard from './ui/BaseCard';
-
-type CardItemProps = {
-  id: string;
-  name: string;
-  rank: string;
-  cost: number;
-  imageUrl: string;
-  onClick: (cardId: string) => void;
-};
 
 export default function CardItem({ id, name, rank, cost, imageUrl, onClick }: CardItemProps) {
   return (

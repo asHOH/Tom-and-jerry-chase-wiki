@@ -7,6 +7,7 @@ import {
   getPositioningTagTooltipContent, 
   getItemKeyTooltipContent
 } from '@/lib/tooltipUtils';
+import { CharacterWithFaction, CharacterDetailsProps } from '@/lib/types';
 import Tooltip from './ui/Tooltip';
 
 // Component to render text with item key tooltips
@@ -53,22 +54,7 @@ const TextWithItemKeyTooltips = ({ text, isDetailed }: { text: string; isDetaile
   if (lastIndex < text.length) {
     parts.push(text.slice(lastIndex));
   }
-
   return <>{parts}</>;
-};
-
-// Extended Character type that includes the faction object (as used in the exported characters)
-type CharacterWithFaction = Character & {
-  faction: {
-    id: string;
-    name: string;
-  };
-  imageUrl: string; // Required in the component
-};
-
-type CharacterDetailsProps = {
-  character: CharacterWithFaction;
-  isDetailedView?: boolean;
 };
 
 export default function CharacterDetails({ character, isDetailedView: propIsDetailedView }: CharacterDetailsProps) {

@@ -1,24 +1,5 @@
 import CharacterCard from './CharacterCard';
-import { PositioningTag } from '@/data';
-
-type Character = {
-  id: string;
-  name: string;
-  imageUrl: string;
-  positioningTags: PositioningTag[];
-};
-
-type Faction = {
-  id: string;
-  name: string;
-  description: string;
-  characters: Character[];
-};
-
-type FactionCharactersProps = {
-  faction: Faction;
-  onSelectCharacter: (characterId: string) => void;
-};
+import { FactionWithCharacters, FactionCharactersProps } from '@/lib/types';
 
 export default function FactionCharacters({ faction, onSelectCharacter }: FactionCharactersProps) {
   return (

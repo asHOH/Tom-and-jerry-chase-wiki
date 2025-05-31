@@ -2,23 +2,10 @@ import React, { useState } from 'react';
 import { Card } from '@/data';
 import { getRankColor, getCostColor } from '@/lib/cardUtils';
 import { renderTextWithHighlights } from '@/lib/textUtils';
+import { CardWithFaction, CardDetailsProps } from '@/lib/types';
 import GameImage from './ui/GameImage';
 import Tag from './ui/Tag';
 import BaseCard from './ui/BaseCard';
-
-// Extended Card type that includes the faction object (as used in the exported cards)
-type CardWithFaction = Card & {
-  faction: {
-    id: string;
-    name: string;
-  };
-  imageUrl: string; // Required in the component
-};
-
-type CardDetailsProps = {
-  card: CardWithFaction;
-  isDetailedView?: boolean;
-};
 
 export default function CardDetails({ card, isDetailedView: propIsDetailedView }: CardDetailsProps) {
   // State to track if showing detailed descriptions

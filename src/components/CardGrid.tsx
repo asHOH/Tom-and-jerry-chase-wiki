@@ -3,26 +3,7 @@ import CardItem from './CardItem';
 import { getRankColor } from '@/lib/cardUtils';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useFilterState, filterByRank, RANK_OPTIONS } from '@/lib/filterUtils';
-
-type Card = {
-  id: string;
-  name: string;
-  rank: string;
-  cost: number;
-  imageUrl: string;
-};
-
-type Faction = {
-  id: string;
-  name: string;
-  description: string;
-  cards: Card[];
-};
-
-type CardGridProps = {
-  faction: Faction;
-  onSelectCard: (cardId: string) => void;
-};
+import { FactionWithCards, CardGridProps } from '@/lib/types';
 
 export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
   // Use centralized filter state management
