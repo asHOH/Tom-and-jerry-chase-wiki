@@ -88,3 +88,54 @@ export const getPositioningTagColor = (tagName: string, isMinor: boolean = false
       return `text-gray-600 bg-gray-100${includeBorder ? ' border-gray-300' : ''}`;
   }
 };
+
+/**
+ * Get background color classes for positioning tag containers
+ * @param tagName - The positioning tag name
+ * @param isMinor - Whether this is a minor tag
+ * @param faction - The faction ('cat' or 'mouse') for tags that exist in both factions
+ * @returns CSS class string for container background styling
+ */
+export const getPositioningTagContainerColor = (tagName: string, isMinor: boolean = false, faction?: 'cat' | 'mouse'): string => {
+  if (isMinor) {
+    return 'bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200';
+  }
+
+  switch (tagName) {
+    // Cat positioning tags
+    case '进攻':
+      return 'bg-gradient-to-r from-red-50 to-red-100 border border-red-200';
+    case '防守':
+      return 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200';
+    case '追击':
+      return 'bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200';
+    case '速通':
+      return 'bg-gradient-to-r from-green-50 to-green-100 border border-green-200';
+    case '打架':
+      return 'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200';
+    case '后期':
+      // Handle the shared tag based on faction
+      if (faction === 'mouse') {
+        return 'bg-gradient-to-r from-teal-50 to-teal-100 border border-teal-200';
+      }
+      // Default to cat color
+      return 'bg-gradient-to-r from-indigo-50 to-indigo-100 border border-indigo-200';
+    case '翻盘':
+      return 'bg-gradient-to-r from-yellow-50 to-yellow-100 border border-yellow-200';
+    // Mouse positioning tags
+    case '奶酪':
+      return 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200';
+    case '干扰':
+      return 'bg-gradient-to-r from-pink-50 to-pink-100 border border-pink-200';
+    case '辅助':
+      return 'bg-gradient-to-r from-cyan-50 to-cyan-100 border border-cyan-200';
+    case '救援':
+      return 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200';
+    case '破局':
+      return 'bg-gradient-to-r from-violet-50 to-violet-100 border border-violet-200';
+    case '砸墙':
+      return 'bg-gradient-to-r from-stone-50 to-stone-100 border border-stone-200';
+    default:
+      return 'bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200';
+  }
+};

@@ -335,6 +335,12 @@ export const catCharacters: Record<string, Character> = {
         detailedDescription: ''
       },
       {
+        tagName: '翻盘',
+        isMinor: false,
+        description: '捕虫网的直接抓取提供了一定的翻盘手段。',
+        detailedDescription: ''
+      },
+      {
         tagName: '防守',
         isMinor: true,
         description: '分身提供反隐和霸体，配合一被和击晕，可以高效守火箭或奶酪。',
@@ -345,12 +351,6 @@ export const catCharacters: Record<string, Character> = {
         isMinor: true,
         description: '通过换位和三级分身提供的霸体反制老鼠的控制。',
         detailedDescription: '但难以应对爆发输出。'
-      },
-      {
-        tagName: '翻盘',
-        isMinor: false,
-        description: '捕虫网的直接抓取提供了一定的翻盘手段。',
-        detailedDescription: ''
       },
     ],
 

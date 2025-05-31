@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { Character } from '@/data';
-import { getPositioningTagColor } from '@/lib/cardUtils';
+import { getPositioningTagColor, getPositioningTagContainerColor } from '@/lib/cardUtils';
 
 // Tooltip component for property labels
 const Tooltip = ({ children, content }: { children: React.ReactNode; content: string }) => {
@@ -376,7 +376,8 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">定位</h3>
                   <div className="space-y-3">
                     {character.catPositioningTags.map((tag, index) => (
-                      <div key={index} className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-3">                        <div className="flex items-center gap-2 mb-2">
+                      <div key={index} className={`rounded-lg p-3 ${getPositioningTagContainerColor(tag.tagName, tag.isMinor, 'cat')}`}>
+                        <div className="flex items-center gap-2 mb-2">
                           <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getPositioningTagColor(tag.tagName, tag.isMinor, true, 'cat')}`}>
                             <Tooltip content={getPositioningTagTooltipContent(tag.tagName, 'cat', isDetailedView)}>
                               {tag.tagName}
@@ -398,15 +399,14 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                     ))}
                   </div>
                 </div>
-              )}
-
-              {/* Positioning tags for mouse characters */}
+              )}              {/* Positioning tags for mouse characters */}
               {character.faction.id === 'mouse' && character.mousePositioningTags && character.mousePositioningTags.length > 0 && (
                 <div className="mt-6 pt-4 border-t border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">定位</h3>
                   <div className="space-y-3">
                     {character.mousePositioningTags.map((tag, index) => (
-                      <div key={index} className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-3">                        <div className="flex items-center gap-2 mb-2">
+                      <div key={index} className={`rounded-lg p-3 ${getPositioningTagContainerColor(tag.tagName, tag.isMinor, 'mouse')}`}>
+                        <div className="flex items-center gap-2 mb-2">
                           <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getPositioningTagColor(tag.tagName, tag.isMinor, true, 'mouse')}`}>
                             <Tooltip content={getPositioningTagTooltipContent(tag.tagName, 'mouse', isDetailedView)}>
                               {tag.tagName}
