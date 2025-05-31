@@ -17,6 +17,13 @@ export const CREATORS = {
   }
 };
 
+// Project information
+export const PROJECT_INFO = {
+  name: '项目开源地址',
+  url: 'https://github.com/asHOH/Tom-and-jerry-chase-wiki',
+  description: '本项目已在GitHub开源，欢迎贡献代码和建议！'
+};
+
 // Structured disclaimer content - single source of truth
 export const DISCLAIMER_CONTENT = {
   intro: '本网站为非营利粉丝项目，基于合理使用原则提供游戏资讯，仅供学习交流使用。',
