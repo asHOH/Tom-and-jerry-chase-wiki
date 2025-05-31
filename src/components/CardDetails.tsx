@@ -3,6 +3,35 @@ import Image from 'next/image';
 import { Card } from '@/data';
 import { getRankColor, getCostColor } from '@/lib/cardUtils';
 
+// Function to parse and render text with highlighted parts
+const renderDescriptionWithHighlights = (text: string) => {
+  const parts = [];
+  let lastIndex = 0;
+  const highlightPattern = /\*\*(.*?)\*\*/g;
+  let match;
+
+  while ((match = highlightPattern.exec(text)) !== null) {
+    // Add text before the match
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }    // Add the underlined text with styling
+    parts.push(
+      <span key={match.index} className="underline decoration-2 underline-offset-2">
+        {match[1]}
+      </span>
+    );
+
+    lastIndex = highlightPattern.lastIndex;
+  }
+
+  // Add remaining text after the last match
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return <>{parts}</>;
+};
+
 // Extended Card type that includes the faction object (as used in the exported cards)
 type CardWithFaction = Card & {
   faction: {
@@ -82,24 +111,24 @@ export default function CardDetails({ card, isDetailedView: propIsDetailedView }
             )}
           </div>
 
-          <div className="space-y-6">
-            <div className="card p-6">
+          <div className="space-y-6">            <div className="card p-6">
               {/* Card description */}
               <div className="mb-6">
-                <p className="text-blue-600 text-lg py-2">
-                  {isDetailedView && card.detailedDescription ? card.detailedDescription : card.description}
+                <p className="text-black text-lg py-2">
+                  {renderDescriptionWithHighlights(
+                    isDetailedView && card.detailedDescription ? card.detailedDescription : card.description
+                  )}
                 </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              </div>              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {card.levels.map((level) => (
                   <div key={`${card.id}-${level.level}`} className="bg-gray-100 p-4 rounded">
-                    <p className="px-2 py-1">
+                    <p className="px-2 py-1 text-black">
                       <span className="font-bold">Lv. {level.level}:</span>{' '}
-                      {isDetailedView && level.detailedDescription ?
-                        level.detailedDescription :
-                        level.description
-                      }
+                      {renderDescriptionWithHighlights(
+                        isDetailedView && level.detailedDescription ?
+                          level.detailedDescription :
+                          level.description
+                      )}
                     </p>
                   </div>
                 ))}

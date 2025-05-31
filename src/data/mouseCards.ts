@@ -24,8 +24,8 @@ export const mouseCards: Record<string, Card> = {
     id: '护佑',
     rank: 'S',
     cost: 6,
-    description: '出洞时获得特殊护盾。该护盾生效时，免疫碎片、烫伤、烟雾和香水。',
-    detailedDescription: '得到仙女鼠护佑的老鼠，出洞进入房间时获得特殊护盾。该护盾生效时，免疫碎片、烫伤、烟雾和香水。',
+    description: '出洞时获得特殊护盾，持续**较长**时间。该护盾生效时，免疫碎片、烫伤、烟雾和香水。',
+    detailedDescription: '得到仙女鼠护佑的老鼠，出洞进入房间时获得特殊护盾，持续**较长**时间。该护盾生效时，免疫碎片、烫伤、烟雾和香水。',
     levels: [
       { level: 1, description: '护佑持续240秒。'},
       { level: 2, description: '护佑持续270秒。'},
@@ -37,7 +37,7 @@ export const mouseCards: Record<string, Card> = {
     id: '无畏',
     rank: 'S',
     cost: 6,
-    description: '从火箭上救下队友后，彼此同时获得短暂的无敌并固定增加推速，但此期间无法使用技能和道具；效果结束后陷入短暂的眩晕。(CD: 60秒)',
+    description: '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速，但此期间无法使用技能和道具；效果结束后陷入短暂的眩晕。(CD: 60秒)',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '无畏持续6秒。'},
@@ -63,8 +63,8 @@ export const mouseCards: Record<string, Card> = {
     id: '缴械',
     rank: 'S',
     cost: 6,
-    description: '投掷道具命中猫咪后，使猫咪一段时间内无法使用爪刀。',
-    detailedDescription: '投掷道具命中猫咪后，使猫咪一段时间内无法使用爪刀。猫咪被缴械后，30秒内不会再次被缴械。',
+    description: '投掷道具命中猫咪后，使猫咪**一段时间**内无法使用爪刀。',
+    detailedDescription: '投掷道具命中猫咪后，使猫咪**一段时间**内无法使用爪刀。猫咪被缴械后，30秒内不会再次被缴械。',
     levels: [
       { level: 1, description: '缴械3.5秒。'},
       { level: 2, description: '缴械4秒。'},
@@ -76,7 +76,7 @@ export const mouseCards: Record<string, Card> = {
     id: '舍己',
     rank: 'S',
     cost: 5,
-    description: '从火箭上救下队友后，与队友互换Hp，并使队友获得短暂的无敌。(CD: 50秒)',
+    description: '从火箭上救下队友后，与队友互换Hp，并使队友获得**短暂**的无敌。(CD: 50秒)',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '无敌持续4秒。'},
@@ -129,8 +129,8 @@ export const mouseCards: Record<string, Card> = {
     id: '投手',
     rank: 'A',
     cost: 4,
-    description: '投掷道具额外对猫咪造成减速。',
-    detailedDescription: '投掷道具额外对猫咪造成减速，最多叠加2层。',
+    description: '投掷道具额外对猫咪造成**减速**。',
+    detailedDescription: '投掷道具额外对猫咪造成**减速**，最多叠加2层。',
     levels: [
       { level: 1, description: '减速6%。'},
       { level: 2, description: '减速8%。'},
