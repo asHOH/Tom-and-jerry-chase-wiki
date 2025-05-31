@@ -427,7 +427,7 @@ export const mouseCharacters: Record<string, Character> = {
           },
           {
             level: 2,
-            description: '持续横向移动一段时间后，获得短暂的减伤、攻击提升和墙缝增伤',
+            description: '持续横向移动一段时间后，获得短暂的减伤、攻击提升和墙缝增伤。',
             detailedDescription: '持续横向移动6.7秒后，获得10点固定减伤、攻击提升30、墙缝增伤3，持续4.9秒。横向移动的转向可以通过翻滚，也可以通过在改变移动方向前极短暂地松开移动键（需要精准把控时间）',
             videoUrl: null
           },

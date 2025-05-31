@@ -16,15 +16,14 @@ export default function CardItem({ id, name, rank, cost, imageUrl, onClick }: Ca
     <div
       className="bg-white rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 relative overflow-hidden p-0"
       onClick={() => onClick(id)}
-    >
-      {/* Card image */}
+    >      {/* Card image */}
       <div className="w-full h-48 bg-gray-200 rounded-t-lg relative overflow-hidden">
         <div className="flex items-center justify-center h-full">
           <Image
             src={imageUrl}
             alt={name}
-            width={180}
-            height={180}
+            width={140}
+            height={140}
             unoptimized
             style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
             className="transition-transform duration-300 hover:scale-105"
