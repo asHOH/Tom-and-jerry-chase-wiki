@@ -29,20 +29,14 @@ export const mouseCharacters: Record<string, Character> = {
       {
         tagName: '奶酪',
         isMinor: false,
-        description: '被动技能提供推速加成，搬奶酪时获得额外增益。',
-        detailedDescription: '被动技能提供推速加成，搬奶酪时获得额外增益，奶酪推完时还能回复生命值和解除负面状态。'
+        description: '推速快。',
+        detailedDescription: '推速快；被动提供推速加成和搬奶酪速度。'
       },
       {
         tagName: '辅助',
-        isMinor: false,
-        description: '主动技能可以为队友提供移速和跳跃增益。',
-        detailedDescription: '主动技能可以为队友提供移速和跳跃增益，满级时还能解除受伤状态并延长火箭燃烧时间。'
-      },
-      {
-        tagName: '干扰',
         isMinor: true,
-        description: '武器技能的眩晕效果可以干扰猫的行动。',
-        detailedDescription: '武器技能的眩晕效果可以干扰猫的行动，满级时眩晕时间长达4秒。'
+        description: '鼓舞为队友提供增益、处理二手火箭；鸟哨限制猫的走位。',
+        detailedDescription: '鼓舞为队友提供增益、处理二手火箭；鸟哨限制猫的走位。'
       },
     ],
 
@@ -184,16 +178,22 @@ export const mouseCharacters: Record<string, Character> = {
 
     mousePositioningTags: [
       {
-        tagName: '救援',
+        tagName: '奶酪',
         isMinor: false,
-        description: '擅长救援被抓的队友。',
-        detailedDescription: '擅长救援被抓的队友，通常拥有位移或解控技能。'
+        description: '推速较快。',
+        detailedDescription: ''
       },
       {
         tagName: '破局',
         isMinor: true,
-        description: '在困难局面中能寻找突破口。',
-        detailedDescription: '在困难局面中能寻找突破口，通常拥有特殊的逃脱或反制机制。'
+        description: '火箭筒能炸开夹子和叉子。',
+        detailedDescription: '缺点是CD太长，并且需要把控角度。'
+      },
+      {
+        tagName: '砸墙',
+        isMinor: true,
+        description: '武器技能可以提供可观的砸墙伤害；三被能免疫鞭炮和泡泡。',
+        detailedDescription: ''
       },
     ],
 
@@ -214,16 +214,16 @@ export const mouseCharacters: Record<string, Character> = {
 
     mousePositioningTags: [
       {
-        tagName: '砸墙',
+        tagName: '救援',
         isMinor: false,
-        description: '擅长破坏墙缝和相关操作。',
-        detailedDescription: '擅长破坏墙缝和相关操作，拥有较高的墙缝增伤。'
+        description: '二级翻滚免控免死。',
+        detailedDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。'
       },
       {
-        tagName: '破局',
+        tagName: '砸墙',
         isMinor: true,
-        description: '在关键时刻能够扭转局势。',
-        detailedDescription: '在关键时刻能够扭转局势，通常有技能刷新或特殊机制。'
+        description: '二被+果盘，墙缝蒸发一半',
+        detailedDescription: '触发条件较为苛刻，且需要与队友有一定沟通。'
       },
     ],
 
