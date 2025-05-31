@@ -30,19 +30,19 @@ export const catCharacters: Record<string, Character> = {
         tagName: '进攻',
         isMinor: false,
         description: '主动技能的无敌有很强的上火箭能力。',
-        detailedDescription: '主动技能的无敌有很强的上火箭能力，二被+锅 或者 枪+蓄力重击 也能对守火箭的老鼠产生极大威胁。'
+        detailedDescription: '二被+锅 或者 枪+蓄力重击 也能对守火箭的老鼠产生极大威胁。'
       },
       {
         tagName: '打架',
         isMinor: false,
         description: '无敌提供解控，一被提供续航。',
-        detailedDescription: '无敌提供解控，一被提供续航，对打架阵容有反制能力。'
+        detailedDescription: '对打架阵容有很强的反制能力。'
       },
       {
         tagName: '翻盘',
         isMinor: true,
         description: '武器技能的直接抓取提供了一定的翻盘能力',
-        detailedDescription: '武器技能的直接抓取提供了一定的翻盘能力。'
+        detailedDescription: ''
       },
     ],
 
@@ -187,13 +187,13 @@ export const catCharacters: Record<string, Character> = {
         tagName: '防守',
         isMinor: false,
         description: '主动技能可以将奶酪推离洞口；旋转桶盖可以有效守火箭或奶酪。',
-        detailedDescription: '主动技能可以将奶酪推离洞口；旋转桶盖可以有效守火箭或奶酪。'
+        detailedDescription: ''
       },
       {
         tagName: '打架',
         isMinor: false,
         description: '一被快速起身和三级旋转桶盖的霸体提供了较强的打架能力。',
-        detailedDescription: '一被快速起身和三级旋转桶盖的霸体提供了较强的打架能力。某种程度上，血量低反而成为了优点。'
+        detailedDescription: '某种程度上，血量低反而成为了优点。'
       }
     ],
 
@@ -332,25 +332,25 @@ export const catCharacters: Record<string, Character> = {
         tagName: '追击',
         isMinor: false,
         description: '分身提供额外的视野和极强的机动性。',
-        detailedDescription: '分身提供额外的视野和极强的机动性。'
+        detailedDescription: ''
       },
       {
         tagName: '防守',
         isMinor: true,
         description: '分身提供反隐和霸体，配合一被和击晕，可以高效守火箭或奶酪。',
-        detailedDescription: '分身提供反隐和霸体，配合一被和击晕，可以高效守火箭或奶酪。'
+        detailedDescription: ''
       },
       {
         tagName: '打架',
         isMinor: true,
         description: '通过换位和三级分身提供的霸体反制老鼠的控制。',
-        detailedDescription: '通过换位和三级分身提供的霸体反制老鼠的控制，但难以应对爆发输出。'
+        detailedDescription: '但难以应对爆发输出。'
       },
       {
         tagName: '翻盘',
         isMinor: false,
         description: '捕虫网的直接抓取提供了一定的翻盘手段。',
-        detailedDescription: '捕虫网的直接抓取提供了一定的翻盘手段。'
+        detailedDescription: ''
       },
     ],
 
