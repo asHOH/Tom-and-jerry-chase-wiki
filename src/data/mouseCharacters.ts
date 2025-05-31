@@ -86,19 +86,19 @@ export const mouseCharacters: Record<string, Character> = {
             level: 1,
             description: '眩晕敌方3秒。',
             cooldown: 20,
-            videoUrl: '/videos/jerry-weapon-1.mp4'
+            videoUrl: '/videos/jerry-weapon1-1.mp4'
           },
           {
             level: 2,
             description: '额外造成65伤害；每次命中永久增加10%推速，最多叠五层。',
             cooldown: 16,
-            videoUrl: '/videos/jerry-weapon-2.mp4'
+            videoUrl: '/videos/jerry-weapon1-2.mp4'
           },
           {
             level: 3,
             description: '眩晕时间延长至4秒。',
             cooldown: 12,
-            videoUrl: '/videos/jerry-weapon-3.mp4'
+            videoUrl: '/videos/jerry-weapon1-3.mp4'
           },
         ]
       },
@@ -118,21 +118,21 @@ export const mouseCharacters: Record<string, Character> = {
             description: '炸弹造成55伤害和2秒眩晕。',
             detailedDescription: '炸弹造成55伤害和2秒眩晕；总共释放约15个炸弹。',
             cooldown: 30,
-            videoUrl: '/videos/jerry-weapon-1.mp4'
+            videoUrl: '/videos/jerry-weapon2-1.mp4'
           },
           {
             level: 2,
             description: '提高金丝雀投掷炸弹的频率。',
             detailedDescription: '提高金丝雀投掷炸弹的频率，炸弹数量提升到约17个。',
             cooldown: 30,
-            videoUrl: '/videos/jerry-weapon-2.mp4'
+            videoUrl: '/videos/jerry-weapon2-2.mp4'
           },
           {
             level: 3,
             description: '减少CD；进一步提高金丝雀投掷炸弹的频率。',
             detailedDescription: '减少CD；进一步提高金丝雀投掷炸弹的频率，炸弹数量提升到约20个。',
             cooldown: 24,
-            videoUrl: '/videos/jerry-weapon-3.mp4'
+            videoUrl: '/videos/jerry-weapon2-3.mp4'
           },
         ]
       },
@@ -197,7 +197,129 @@ export const mouseCharacters: Record<string, Character> = {
       },
     ],
 
-    skills: []
+    skills: [
+      {
+        id: 'tuffy-active',
+        name: '圆滚滚',
+        type: 'ACTIVE',
+        description: '向前翻滚一段距离。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '向前翻滚1.1秒；期间速度提升70%。',
+            cooldown: 12,
+            videoUrl: '/videos/tuffy-active-1.mp4'
+          },
+          { level: 2,
+            description: '滚动时处于无敌状态；滚动结束后短暂提升跳跃高度。',
+            detailedDescription: '滚动时处于无敌状态；滚动结束后极短暂地提升跳跃高度。',
+            cooldown: 12,
+            videoUrl: '/videos/tuffy-active-2.mp4'
+          },
+          { level: 3,
+            description: '滚得更快更远。',
+            detailedDescription: '翻滚时间提升至1.4秒；期间速度提升增加至105%。',
+            cooldown: 12,
+            videoUrl: '/videos/tuffy-active-3.mp4'
+          },
+        ]
+      },
+      {
+        id: 'tuffy-weapon1',
+        name: '火箭筒',
+        type: 'WEAPON1',
+        description: '发射一枚弹头。',
+        // detailedDescription: '发射一枚弹头。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可被打断',
+        cancelableAftercast: '不可取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '眩晕敌方1.5秒。',
+            detailedDescription: '造成两段伤害（碰撞50+爆炸15），两段伤害都继承绝地反击等角色状态；眩晕敌方1.5秒。',
+            cooldown: 30,
+            videoUrl: '/videos/tuffy-weapon1-1.mp4'
+          },
+          {
+            level: 2,
+            description: '增加伤害；眩晕时间提升至2.1秒。',
+            detailedDescription: '第二段爆炸伤害提升至30；眩晕时间提升至2.1秒。',
+            cooldown: 30,
+            videoUrl: '/videos/tuffy-weapon1-2.mp4'
+          },
+          {
+            level: 3,
+            description: '可以储存两发弹头。',
+            cooldown: 30,
+            videoUrl: '/videos/tuffy-weapon1-3.mp4'
+          },
+        ]
+      },
+      {
+        id: 'tuffy-weapon2',
+        name: '隐形感应雷',
+        type: 'WEAPON2',
+        description: '放下隐形感应雷。感应雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成伤害和控制。',
+        detailedDescription: '放下隐形感应雷。雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成50伤害、1.9秒控制和击退（对墙缝伤害为10）。爆炸也会弹飞老鼠，但不造成伤害。隐身状态的猫咪不会触发雷。雷被道具攻击后会在一段时间后原地爆炸。雷会在30秒后自然消失。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '可被道具键*打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 22,
+            videoUrl: '/videos/tuffy-weapon2-1.mp4'
+          },
+          {
+            level: 2,
+            description: '可以存储两发感应雷；雷使猫掉落手中的老鼠和道具。',
+            // detailedDescription: '可以存储两发感应雷；雷使猫掉落手中的老鼠和道具。',
+            cooldown: 22,
+            videoUrl: '/videos/tuffy-weapon2-2.mp4'
+          },
+          {
+            level: 3,
+            description: '提高雷对猫咪和墙缝的伤害。',
+            detailedDescription: '雷对猫咪的伤害提高至80；对墙缝的伤害提高至15。',
+            cooldown: 22,
+            videoUrl: '/videos/tuffy-weapon2-3.mp4'
+          },
+        ]
+      },
+      {
+        id: 'tuffy-passive',
+        name: '茁壮成长',
+        type: 'PASSIVE',
+        skillLevels: [
+          {
+            level: 1,
+            description: '牛奶加速生效期间，暂时提升25点Hp上限。',
+            videoUrl: null
+          },
+          {
+            level: 2,
+            description: 'Hp恢复提升（受伤状态也触发）；吃食物更快。',
+            detailedDescription: 'Hp恢复提升2.5（受伤状态也触发）；吃食物速度提升20%。',
+            videoUrl: null
+          },
+          {
+            level: 3,
+            description: '免疫爆炸；Hp恢复进一步提升；吃食物进一步更快。',
+            detailedDescription: '免疫鞭炮、泡泡等爆炸；Hp恢复提升增加至5；吃食物速度提升增加至45%。',
+            videoUrl: null
+          },
+        ]
+      }
+    ]
   },
 
   /* ----------------------------------- 尼宝 ----------------------------------- */
@@ -227,7 +349,97 @@ export const mouseCharacters: Record<string, Character> = {
       },
     ],
 
-    skills: []
+    skills: [
+      {
+        id: 'nibbles-active',
+        name: '灵活跳跃',
+        type: 'ACTIVE',
+        description: '快速向后翻滚。',
+        canMoveWhileUsing: false,
+        canUseInAir: true, // 可以下落中释放，不能跳跃中释放
+        cancelableSkill: '无前摇',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '翻滚过程中免疫道具。',
+            detailedDescription: '翻滚过程中免疫道具（鞭炮除外）。',
+            cooldown: 18,
+            videoUrl: '/videos/nibbles-active-1.mp4'
+          },
+          { level: 2,
+            description: '翻滚后获得短暂减伤和强霸体；首次翻滚后3秒内可再次翻滚。',
+            detailedDescription: '翻滚开始后1.9秒获得20固定减伤和强霸体；首次翻滚结束后3秒内可再次翻滚。（如果使用道具/交互键、受到控制或进入虚弱，则无法再次翻滚）',
+            cooldown: 18,
+            videoUrl: '/videos/nibbles-active-2.mp4'
+          },
+          { level: 3,
+            description: '第一次翻滚后缓慢恢复Hp，第二次翻滚后短暂隐身。',
+            detailedDescription: '第一次翻滚结束后获得5点Hp恢复，持续5秒；第二次翻滚结束后隐身2秒。',
+            cooldown: 18,
+            videoUrl: '/videos/nibbles-active-3.mp4'
+          },
+        ]
+      },
+      {
+        id: 'nibbles-weapon1',
+        name: '尼宝的朋友',
+        type: 'WEAPON1',
+        description: '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。',
+        detailedDescription: '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。朋友在30秒后自然消失。朋友扔出鱼钩过程中再次点击技能会使朋友将鱼钩收回（有前摇）。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '可被道具键*打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '鱼钩碰到道具会携带之；碰到角色会将其勾回，并使猫咪掉落手中的老鼠。',
+            detailedDescription: '鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并使猫咪掉落手中的老鼠。',
+            cooldown: 16,
+            videoUrl: '/videos/nibbles-weapon1-1.mp4'
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 10,
+            videoUrl: '/videos/nibbles-weapon1-2.mp4'
+          },
+          {
+            level: 3,
+            description: '鱼钩携带的道具碰撞猫咪时造成额外的伤害和眩晕。',
+            detailedDescription: '鱼钩携带的道具碰撞猫咪时额外造成50伤害和2.5秒眩晕。',
+            cooldown: 10,
+            videoUrl: '/videos/nibbles-weapon1-3.mp4'
+          },
+        ]
+      },
+      {
+        id: 'nibbles-passive',
+        name: '古灵精怪',
+        type: 'PASSIVE',
+        skillLevels: [
+          {
+            level: 1,
+            description: '四次跳跃后，一段时间内大幅提升跳跃高度。',
+            detailedDescription: '四次跳跃后，5秒内提升200跳跃高度，然后重新计数。',
+            videoUrl: null
+          },
+          {
+            level: 2,
+            description: '持续横向移动一段时间后，获得短暂的减伤、攻击提升和墙缝增伤',
+            detailedDescription: '持续横向移动6.7秒后，获得10点固定减伤、攻击提升30、墙缝增伤3，持续4.9秒。横向移动的转向可以通过翻滚，也可以通过在改变移动方向前极短暂地松开移动键（需要精准把控时间）',
+            videoUrl: null
+          },
+          {
+            level: 3,
+            description: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(CD：9秒)',
+            // detailedDescription: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(CD：9秒)',
+            videoUrl: null
+          },
+        ]
+      }
+    ]
   }
 };
 
