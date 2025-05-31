@@ -23,8 +23,8 @@ type CardGridProps = {
 };
 
 export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
-  // State for rank filters - all ranks selected by default
-  const [selectedRanks, setSelectedRanks] = useState<Set<string>>(new Set(['S', 'A', 'B', 'C']));
+  // State for rank filters - no filters selected by default (show all cards)
+  const [selectedRanks, setSelectedRanks] = useState<Set<string>>(new Set());
 
   // Toggle rank filter
   const toggleRankFilter = (rank: string) => {
@@ -39,7 +39,7 @@ export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
 
   // Filter and sort cards
   const filteredAndSortedCards = [...faction.cards]
-    .filter(card => selectedRanks.has(card.rank))
+    .filter(card => selectedRanks.size === 0 || selectedRanks.has(card.rank))
     .sort((a, b) => {
       const rankOrder = { 'S': 4, 'A': 3, 'B': 2, 'C': 1 };
       const rankA = rankOrder[a.rank as keyof typeof rankOrder] || 0;
