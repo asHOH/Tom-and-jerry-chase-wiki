@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import CardItem from './CardItem';
 import { getRankColor } from '@/lib/cardUtils';
+import { sortCardsByRank } from '@/lib/sortingUtils';
+import { useFilterState, filterByRank, RANK_OPTIONS } from '@/lib/filterUtils';
 
 type Card = {
   id: string;
@@ -23,36 +25,11 @@ type CardGridProps = {
 };
 
 export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
-  // State for rank filters - no filters selected by default (show all cards)
-  const [selectedRanks, setSelectedRanks] = useState<Set<string>>(new Set());
+  // Use centralized filter state management
+  const { selectedFilters: selectedRanks, toggleFilter: toggleRankFilter, hasFilter } = useFilterState<string>();
 
-  // Toggle rank filter
-  const toggleRankFilter = (rank: string) => {
-    const newSelectedRanks = new Set(selectedRanks);
-    if (newSelectedRanks.has(rank)) {
-      newSelectedRanks.delete(rank);
-    } else {
-      newSelectedRanks.add(rank);
-    }
-    setSelectedRanks(newSelectedRanks);
-  };
-
-  // Filter and sort cards
-  const filteredAndSortedCards = [...faction.cards]
-    .filter(card => selectedRanks.size === 0 || selectedRanks.has(card.rank))
-    .sort((a, b) => {
-      const rankOrder = { 'S': 4, 'A': 3, 'B': 2, 'C': 1 };
-      const rankA = rankOrder[a.rank as keyof typeof rankOrder] || 0;
-      const rankB = rankOrder[b.rank as keyof typeof rankOrder] || 0;
-
-      // Primary sort: by rank (S > A > B > C)
-      if (rankA !== rankB) {
-        return rankB - rankA; // Higher rank first
-      }
-
-      // Secondary sort: by cost in descending order (highest cost first)
-      return b.cost - a.cost;
-    });
+  // Filter and sort cards using centralized utilities
+  const filteredAndSortedCards = sortCardsByRank(filterByRank(faction.cards, selectedRanks));
 
   return (
     <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}
@@ -65,13 +42,12 @@ export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
         {/* Rank Filter Controls */}
         <div className="flex justify-center items-center gap-4 mt-8">
           <span className="text-lg font-medium text-gray-700">等级筛选:</span>
-          <div className="flex gap-2">
-            {['S', 'A', 'B', 'C'].map((rank) => (
+          <div className="flex gap-2">            {RANK_OPTIONS.map((rank) => (
               <button
                 key={rank}
                 onClick={() => toggleRankFilter(rank)}
                 className={`px-3 py-2 rounded-lg border-2 transition-all duration-200 font-medium ${
-                  selectedRanks.has(rank)
+                  hasFilter(rank)
                     ? `${getRankColor(rank, true)} border-current`
                     : 'bg-gray-100 text-gray-400 border-gray-300 hover:bg-gray-200'
                 }`}
