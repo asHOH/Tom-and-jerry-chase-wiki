@@ -49,3 +49,41 @@ export const DISCLAIMER_TEXT = [
   `${DISCLAIMER_CONTENT.testDataAttribution.prefix}${DISCLAIMER_CONTENT.testDataAttribution.creators.map(id => CREATORS[id].name).join('、')}${DISCLAIMER_CONTENT.testDataAttribution.suffix}`,
   `${DISCLAIMER_CONTENT.imageAttribution.prefix}${DISCLAIMER_CONTENT.imageAttribution.creators.map(id => CREATORS[id].name).join('、')}${DISCLAIMER_CONTENT.imageAttribution.suffix}`
 ].join('\n');
+
+// UI Constants for component consistency
+export const UI_CONSTANTS = {
+  // Image dimensions for different contexts
+  IMAGE_SIZES: {
+    CHARACTER_CARD: { width: 120, height: 120 },
+    CARD_ITEM: { width: 140, height: 140 },
+    CARD_DETAILS: { width: 220, height: 220 }
+  },
+  
+  // Container heights
+  CONTAINER_HEIGHTS: {
+    IMAGE: 'h-48', // 192px
+    CARD: 'h-64'   // 256px
+  },
+  
+  // Common spacing
+  SPACING: {
+    CARD_PADDING: 'p-4',
+    SECTION_PADDING: 'p-6',
+    TAG_PADDING: 'px-2 py-1',
+    GRID_GAP: 'gap-4'
+  },
+  
+  // Transitions and animations
+  TRANSITIONS: {
+    HOVER_SCALE: 'hover:scale-105 transition-all duration-200',
+    CARD_HOVER: 'hover:scale-105 transition-all duration-300',
+    SMOOTH: 'transition-transform duration-300'
+  },
+  
+  // Border radius
+  RADIUS: {
+    CARD: 'rounded-lg',
+    CARD_TOP: 'rounded-t-lg',
+    TAG: 'rounded'
+  }
+} as const;

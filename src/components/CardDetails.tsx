@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { Card } from '@/data';
 import { getRankColor, getCostColor } from '@/lib/cardUtils';
+import GameImage from './ui/GameImage';
+import Tag from './ui/Tag';
+import BaseCard from './ui/BaseCard';
 
 // Function to parse and render text with highlighted parts
 const renderDescriptionWithHighlights = (text: string) => {
@@ -57,44 +59,29 @@ export default function CardDetails({ card, isDetailedView: propIsDetailedView }
 
 
   return (
-    <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}
-      <div className="flex flex-col md:flex-row gap-8">
+    <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}      <div className="flex flex-col md:flex-row gap-8">
         <div className="md:w-1/3">
-          <div className="card h-full">
-            <div className="w-full h-64 bg-gray-200 rounded-lg relative overflow-hidden mb-4">
-              {/* Card image */}
-              <div className="flex items-center justify-center h-full">
-                <Image
-                  src={card.imageUrl}
-                  alt={card.id}
-                  width={220}
-                  height={220}
-                  unoptimized
-                  style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
-                />
-              </div>
-            </div>
+          <BaseCard variant="details">
+            <GameImage src={card.imageUrl} alt={card.id} size="CARD_DETAILS" />
 
             <h1 className="text-3xl font-bold py-2">
               {card.id} <span className="text-xl font-normal text-gray-400">({card.faction.name})</span>
             </h1>
 
-            {/* Card attributes section */}
-            <div className="mt-6 space-y-3">
+            {/* Card attributes section */}            <div className="mt-6 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <p className="text-sm text-gray-700 py-1">
-                  <span className={`px-2 py-1 rounded border ${getRankColor(card.rank, true)}`}>
+                  <Tag colorClasses={`${getRankColor(card.rank, true)} border`}>
                     等级: {card.rank}
-                  </span>
+                  </Tag>
                 </p>
                 <p className="text-sm text-gray-700 py-1">
-                  <span className={`px-2 py-1 rounded border ${getCostColor(card.cost, true)}`}>
+                  <Tag colorClasses={`${getCostColor(card.cost, true)} border`}>
                     费用: {card.cost}
-                  </span>
+                  </Tag>
                 </p>
-              </div>
-            </div>
-          </div>
+              </div>            </div>
+          </BaseCard>
         </div>
 
         <div className="md:w-2/3">

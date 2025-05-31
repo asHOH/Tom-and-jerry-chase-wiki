@@ -1,5 +1,7 @@
-import Image from 'next/image';
 import { getRankColor, getCostColor } from '@/lib/cardUtils';
+import GameImage from './ui/GameImage';
+import Tag from './ui/Tag';
+import BaseCard from './ui/BaseCard';
 
 type CardItemProps = {
   id: string;
@@ -11,38 +13,22 @@ type CardItemProps = {
 };
 
 export default function CardItem({ id, name, rank, cost, imageUrl, onClick }: CardItemProps) {
-
   return (
-    <div
-      className="bg-white rounded-lg cursor-pointer hover:scale-105 transition-all duration-300 relative overflow-hidden p-0"
-      onClick={() => onClick(id)}
-    >      {/* Card image */}
-      <div className="w-full h-48 bg-gray-200 rounded-t-lg relative overflow-hidden">
-        <div className="flex items-center justify-center h-full">
-          <Image
-            src={imageUrl}
-            alt={name}
-            width={140}
-            height={140}
-            unoptimized
-            style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
-            className="transition-transform duration-300 hover:scale-105"
-          />
-        </div>
-      </div>
-
+    <BaseCard variant="item" onClick={() => onClick(id)}>
+      <GameImage src={imageUrl} alt={name} size="CARD_ITEM" className="hover:scale-105" />
+      
       {/* Card info */}
       <div className="p-4 text-center">
         <h3 className="text-lg font-bold text-gray-800 mb-1">{name}</h3>
         <div className="flex justify-center items-center gap-2 text-sm text-gray-600">
-          <span className={`px-2 py-1 rounded ${getRankColor(rank)}`}>
+          <Tag colorClasses={getRankColor(rank)}>
             {rank}级
-          </span>
-          <span className={`px-2 py-1 rounded ${getCostColor(cost)}`}>
+          </Tag>
+          <Tag colorClasses={getCostColor(cost)}>
             {cost}费
-          </span>
+          </Tag>
         </div>
       </div>
-    </div>
+    </BaseCard>
   );
 }
