@@ -239,18 +239,19 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
           <div className="space-y-6">
             {character.skills.map((skill) => {              return (
                 <div key={skill.id} className="card p-6">
-                  <div className="flex justify-between items-start">
-                    {/* Skill Image */}
+                  <div className="flex justify-between items-start">                    {/* Skill Image */}
                     {skill.imageUrl && (
-                      <div className="flex-shrink-0 mr-4">
-                        <img
-                          src={skill.imageUrl}
-                          alt={skill.name}
-                          className="w-16 h-16 object-cover rounded-lg border-2 border-gray-200"
-                        />
+                      <div className="flex-shrink-0 mr-6">
+                        <div className="relative w-16 h-16 rounded-full border-2 border-gray-200 overflow-hidden">
+                          <img
+                            src={skill.imageUrl}
+                            alt={skill.name}
+                            className="w-full h-full object-cover scale-75" // 缩小图像内容
+                          />
+                        </div>
                       </div>
                     )}
-                    
+
                     <div className="flex-1">
                       <div className="flex justify-between items-center">
                         <h3 className="text-xl font-bold px-2 py-2">
