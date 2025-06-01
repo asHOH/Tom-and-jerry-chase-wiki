@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import KnowledgeCardItem from './KnowledgeCardItem';
+import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 import { getCardRankColors } from '@/lib/design-tokens';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useFilterState, filterByRank, RANK_OPTIONS } from '@/lib/filterUtils';
@@ -63,10 +63,9 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
             })}
           </div>
         </div>
-      </header>      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8">
-        {filteredAndSortedCards.map((card) => (
+      </header>      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8">        {filteredAndSortedCards.map((card) => (
           <div key={card.id} className="transform transition-transform hover:-translate-y-1">
-            <KnowledgeCardItem
+            <KnowledgeCardDisplay
               id={card.id}
               name={card.name}
               rank={card.rank}

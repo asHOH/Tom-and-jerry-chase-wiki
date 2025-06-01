@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import NavigationWrapper from '@/components/NavigationWrapper';
-import FactionCharacters from '@/components/FactionCharacters';
-import CharacterDetails from '@/components/CharacterDetails';
-import KnowledgeCardGrid from '@/components/knowledge-cards/KnowledgeCardGrid';
-import KnowledgeCardDetails from '@/components/knowledge-cards/KnowledgeCardDetails';
+import CharacterGrid from '@/components/displays/characters/CharacterGrid';
+import CharacterDetails from '@/components/displays/characters/CharacterDetails';
+import KnowledgeCardGrid from '@/components/displays/knowledge-cards/KnowledgeCardGrid';
+import KnowledgeCardDetails from '@/components/displays/knowledge-cards/KnowledgeCardDetails';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
@@ -80,8 +80,7 @@ export default function Home() {
 
     // If a faction tab is active, show faction characters
     if (activeTab && factions[activeTab]) {
-      return (
-        <FactionCharacters
+      return (        <CharacterGrid
           faction={factions[activeTab]}
           onSelectCharacter={handleSelectCharacter}
         />

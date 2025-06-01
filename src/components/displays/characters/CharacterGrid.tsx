@@ -1,7 +1,7 @@
-import CharacterDisplay from './displays/CharacterDisplay';
+import CharacterDisplay from './CharacterDisplay';
 import { FactionWithCharacters, FactionCharactersProps } from '@/lib/types';
 
-export default function FactionCharacters({ faction, onSelectCharacter }: FactionCharactersProps) {
+export default function CharacterGrid({ faction, onSelectCharacter }: FactionCharactersProps) {
   return (
     <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}
       <header className="text-center space-y-6 mb-10 px-4">

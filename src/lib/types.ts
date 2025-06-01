@@ -23,7 +23,7 @@ export type KnowledgeCardWithFaction = Card & {
 };
 
 // Component prop types
-export type KnowledgeCardItemProps = {
+export type KnowledgeCardDisplayProps = {
   id: string;
   name: string;
   rank: string;
