@@ -1,4 +1,5 @@
 import { Character } from './types';
+import { addSkillImageUrls } from '../lib/skillUtils';
 
 // Generate image URL based on character ID
 const getMouseImageUrl = (characterId: string): string => {
@@ -450,7 +451,8 @@ export const mouseCharactersWithImages = Object.fromEntries(
     {
       ...character,
       factionId: 'mouse' as const,
-      imageUrl: getMouseImageUrl(characterId)
+      imageUrl: getMouseImageUrl(characterId),
+      skills: addSkillImageUrls(characterId, character.skills, 'mouse')
     }
   ])
 );

@@ -64,6 +64,7 @@ export type Skill = {
   type: 'ACTIVE' | 'WEAPON1' | 'WEAPON2' | 'PASSIVE';
   description?: string; // Basic description (optional, especially for passive skills)
   detailedDescription?: string; // Detailed description for detailed view
+  imageUrl?: string; // Skill icon image URL
 
   // Skill usage properties
   canMoveWhileUsing?: boolean; // 移动释放

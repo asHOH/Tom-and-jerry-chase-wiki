@@ -1,4 +1,5 @@
 import { Character } from './types';
+import { addSkillImageUrls } from '../lib/skillUtils';
 
 // Generate image URL based on character ID
 const getCatImageUrl = (characterId: string): string => {
@@ -485,7 +486,8 @@ export const catCharactersWithImages = Object.fromEntries(
     {
       ...character,
       factionId: 'cat' as const,
-      imageUrl: getCatImageUrl(characterId)
+      imageUrl: getCatImageUrl(characterId),
+      skills: addSkillImageUrls(characterId, character.skills, 'cat')
     }
   ])
 );
