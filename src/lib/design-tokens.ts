@@ -1,10 +1,4 @@
-/**
- * Design Tokens - Centralized design system for Tom and Jerry Chase Wiki
- * This file provides the foundation for consistent styling across components
- */
-
 export const designTokens = {
-  // Spacing system aligned with Tailwind
   spacing: {
     xs: '8px',    // 2 units
     sm: '12px',   // 3 units  
@@ -13,7 +7,6 @@ export const designTokens = {
     xl: '32px'    // 8 units
   },
 
-  // Color system for factions and UI elements
   colors: {
     faction: {
       // Base faction button colors
@@ -25,7 +18,6 @@ export const designTokens = {
       border: 'transparent'
     },
     
-    // Semantic colors
     primary: {
       50: '#eff6ff',
       100: '#dbeafe', 
@@ -44,7 +36,6 @@ export const designTokens = {
     }
   },
 
-  // Typography system
   typography: {
     fontSize: {
       xs: '0.75rem',     // 12px
@@ -64,7 +55,6 @@ export const designTokens = {
     }
   },
 
-  // Shadow system
   shadows: {
     card: '0 2px 6px rgba(0, 0, 0, 0.05)',
     cardHover: '0 4px 12px rgba(37, 99, 235, 0.2)',
@@ -72,7 +62,6 @@ export const designTokens = {
     navigation: '0 2px 4px rgba(0, 0, 0, 0.1)'
   },
 
-  // Border radius system
   radius: {
     none: '0',
     sm: '4px',
@@ -82,7 +71,6 @@ export const designTokens = {
     full: '9999px'
   },
 
-  // Z-index system
   zIndex: {
     base: 1,
     dropdown: 10,
@@ -91,13 +79,10 @@ export const designTokens = {
     navigation: 9999
   },
 
-  // Transition system
   transitions: {
     fast: '150ms ease',
     normal: '200ms ease',
     slow: '300ms ease',
-    
-    // Common transition combinations
     colors: 'background-color 200ms ease, color 200ms ease',
     transform: 'transform 200ms ease',
     all: 'all 200ms ease',
@@ -105,10 +90,8 @@ export const designTokens = {
   }
 } as const;
 
-// Component-specific design tokens
 export const componentTokens = {
   factionButton: {
-    // Base styles
     base: {
       padding: '16px 24px',
       borderRadius: designTokens.radius.md,
@@ -118,26 +101,19 @@ export const componentTokens = {
       cursor: 'pointer',
       border: 'none',
       outline: 'none',
-      
-      // Layout
       display: 'flex',
       flexDirection: 'column' as const,
       alignItems: 'center',
       justifyContent: 'center',
       gap: designTokens.spacing.xs,
       textAlign: 'center' as const,
-      
-      // Sizing
       flex: 1,
       minWidth: '220px',
-      
-      // Visual
       backgroundColor: designTokens.colors.faction.background,
       color: designTokens.colors.faction.text,
       boxShadow: designTokens.shadows.card
     },
     
-    // Content styles
     content: {
       display: 'flex',
       alignItems: 'center',
@@ -145,21 +121,20 @@ export const componentTokens = {
     },
     
     emoji: {
-      fontSize: designTokens.typography.fontSize['2xl'] // 1.75rem -> 1.5rem for better proportion
+      fontSize: designTokens.typography.fontSize['2xl']
     },
     
     title: {
-      fontSize: designTokens.typography.fontSize['2xl'], // 1.5rem
+      fontSize: designTokens.typography.fontSize['2xl'],
       fontWeight: designTokens.typography.fontWeight.bold
     },
     
     description: {
-      fontSize: designTokens.typography.fontSize.sm, // 0.875rem
+      fontSize: designTokens.typography.fontSize.sm,
       color: designTokens.colors.faction.textSecondary,
       marginTop: '4px'
     },
     
-    // Hover states (handled by CSS in globals.css)
     hover: {
       backgroundColor: designTokens.colors.faction.hover,
       color: designTokens.colors.faction.hoverText,
@@ -168,7 +143,6 @@ export const componentTokens = {
     }
   },
   
-  // Container styles for faction button groups
   factionButtonContainer: {
     display: 'flex',
     flexDirection: 'row' as const,
@@ -180,15 +154,12 @@ export const componentTokens = {
   }
 } as const;
 
-// Utility function for converting design tokens to CSS-in-JS style objects
 export const createStyleFromTokens = (tokenPath: any): React.CSSProperties => {
   if (typeof tokenPath === 'object' && tokenPath !== null) {
     const styles: React.CSSProperties = {};
     
     for (const [key, value] of Object.entries(tokenPath)) {
       if (typeof value === 'string' || typeof value === 'number') {
-        // Convert camelCase to kebab-case for CSS properties
-        const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
         (styles as any)[key] = value;
       }
     }
