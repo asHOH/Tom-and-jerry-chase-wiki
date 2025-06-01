@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { characters } from '@/data';
-import CharacterDetailsClient from './CharacterDetailsClient';
+import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
 
 // Generate static params for all characters
 export function generateStaticParams() {

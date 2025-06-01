@@ -470,63 +470,6 @@ export const getPositioningTagContainerColor = (tagName: string, isMinor: boolea
     '破局': 'breakthrough',
     '砸墙': 'wallBreak'
   };
-
   const tagKey = tagMapping[tagName];
   return tagKey ? designTokens.colors.positioningTags[tagKey].container : designTokens.colors.positioningTags.minor.container;
-};
-
-// Legacy compatibility functions (generate Tailwind classes for gradual migration)
-export const getRankColor = (rank: string, includeBorder: boolean = false): string => {
-  console.warn('getRankColor is deprecated. Use getCardRankColors from design-tokens.ts instead.');
-  
-  switch (rank) {
-    case 'S':
-      return `text-orange-600 bg-orange-100${includeBorder ? ' border-orange-300' : ''}`;
-    case 'A':
-      return `text-purple-600 bg-purple-100${includeBorder ? ' border-purple-300' : ''}`;
-    case 'B':
-      return `text-blue-600 bg-blue-100${includeBorder ? ' border-blue-300' : ''}`;
-    case 'C':
-      return `text-green-600 bg-green-100${includeBorder ? ' border-green-300' : ''}`;
-    default:
-      return `text-gray-600 bg-gray-100${includeBorder ? ' border-gray-300' : ''}`;
-  }
-};
-
-export const getCostColor = (cost: number, includeBorder: boolean = false): string => {
-  console.warn('getCostColor is deprecated. Use getCardCostColors from design-tokens.ts instead.');
-    if (cost >= 6) return `text-red-600 bg-red-100${includeBorder ? ' border-red-300' : ''}`;
-  if (cost >= 4) return `text-orange-600 bg-orange-100${includeBorder ? ' border-orange-300' : ''}`;
-  if (cost >= 3) return `text-yellow-600 bg-yellow-100${includeBorder ? ' border-yellow-300' : ''}`;
-  return `text-green-600 bg-green-100${includeBorder ? ' border-green-300' : ''}`;
-};
-
-// Legacy compatibility function for positioning tags (generates Tailwind classes)
-export const getPositioningTagColor = (tagName: string, isMinor: boolean = false, includeBorder: boolean = false, faction?: 'cat' | 'mouse'): string => {
-  console.warn('getPositioningTagColor is deprecated. Use getPositioningTagColors from design-tokens.ts instead.');
-  
-  if (isMinor) {
-    return `text-gray-600 bg-gray-100${includeBorder ? ' border-gray-300' : ''}`;
-  }
-
-  // Map Chinese tag names to Tailwind classes
-  const tagClassMapping: Record<string, string> = {
-    '进攻': `text-red-600 bg-red-100${includeBorder ? ' border-red-300' : ''}`,
-    '防守': `text-blue-600 bg-blue-100${includeBorder ? ' border-blue-300' : ''}`,
-    '追击': `text-orange-600 bg-orange-100${includeBorder ? ' border-orange-300' : ''}`,
-    '速通': `text-green-600 bg-green-100${includeBorder ? ' border-green-300' : ''}`,
-    '打架': `text-purple-600 bg-purple-100${includeBorder ? ' border-purple-300' : ''}`,
-    '后期': faction === 'mouse' 
-      ? `text-teal-600 bg-teal-100${includeBorder ? ' border-teal-300' : ''}`
-      : `text-indigo-600 bg-indigo-100${includeBorder ? ' border-indigo-300' : ''}`,
-    '翻盘': `text-yellow-600 bg-yellow-100${includeBorder ? ' border-yellow-300' : ''}`,
-    '奶酪': `text-amber-600 bg-amber-100${includeBorder ? ' border-amber-300' : ''}`,
-    '干扰': `text-pink-600 bg-pink-100${includeBorder ? ' border-pink-300' : ''}`,
-    '辅助': `text-cyan-600 bg-cyan-100${includeBorder ? ' border-cyan-300' : ''}`,
-    '救援': `text-emerald-600 bg-emerald-100${includeBorder ? ' border-emerald-300' : ''}`,
-    '破局': `text-violet-600 bg-violet-100${includeBorder ? ' border-violet-300' : ''}`,
-    '砸墙': `text-stone-600 bg-stone-100${includeBorder ? ' border-stone-300' : ''}`
-  };
-
-  return tagClassMapping[tagName] || `text-gray-600 bg-gray-100${includeBorder ? ' border-gray-300' : ''}`;
 };

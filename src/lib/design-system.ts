@@ -3,11 +3,12 @@
  * 
  * This module provides a comprehensive design system that consolidates:
  * - Design tokens (spacing, colors, typography, etc.)
- * - Component tokens (specific component styling)
+ * - Component tokens (specific component styling)  
  * - Utility functions for styling
- * - Legacy compatibility functions
+ * - Component creation helpers
  * 
- * This replaces the fragmented approach of UI_CONSTANTS and cardUtils
+ * This replaces the fragmented approach of UI_CONSTANTS and legacy utility files.
+ * All legacy compatibility functions have been removed as of June 1, 2025.
  */
 
 import { designTokens, componentTokens, createStyleFromTokens } from './design-tokens';
@@ -20,11 +21,7 @@ export {
   getCardRankColors,
   getCardCostColors,
   getPositioningTagColors,
-  getPositioningTagContainerColor,
-  // Legacy compatibility functions (deprecated)
-  getRankColor,
-  getCostColor,
-  getPositioningTagColor
+  getPositioningTagContainerColor
 } from './design-tokens';
 
 /**
