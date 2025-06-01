@@ -4,8 +4,8 @@ import { useState } from 'react';
 import NavigationWrapper from '@/components/NavigationWrapper';
 import FactionCharacters from '@/components/FactionCharacters';
 import CharacterDetails from '@/components/CharacterDetails';
-import CardGrid from '@/components/CardGrid';
-import CardDetails from '@/components/CardDetails';
+import KnowledgeCardGrid from '@/components/knowledge-cards/KnowledgeCardGrid';
+import KnowledgeCardDetails from '@/components/knowledge-cards/KnowledgeCardDetails';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
@@ -40,11 +40,10 @@ export default function Home() {
   };
 
   // Render content based on state
-  const renderContent = () => {
-    // If a card is selected, show card details
+  const renderContent = () => {    // If a card is selected, show card details
     if (selectedCard && cards[selectedCard]) {
       return (
-        <CardDetails
+        <KnowledgeCardDetails
           card={cards[selectedCard]}
           isDetailedView={isDetailedView}
         />
@@ -60,12 +59,10 @@ export default function Home() {
           isDetailedView={isDetailedView}
         />
       );
-    }
-
-    // If card tabs are active, show faction cards
+    }    // If card tabs are active, show faction cards
     if (activeTab === 'catCards' && factionCards['cat']) {
       return (
-        <CardGrid
+        <KnowledgeCardGrid
           faction={factionCards['cat']}
           onSelectCard={handleSelectCard}
         />
@@ -74,7 +71,7 @@ export default function Home() {
 
     if (activeTab === 'mouseCards' && factionCards['mouse']) {
       return (
-        <CardGrid
+        <KnowledgeCardGrid
           faction={factionCards['mouse']}
           onSelectCard={handleSelectCard}
         />

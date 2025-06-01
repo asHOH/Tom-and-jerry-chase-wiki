@@ -4,8 +4,8 @@ export type { FactionId, Faction, Character, Skill, SkillLevel, Card, CardLevel,
 // Import character data from separated files
 import { catCharactersWithImages } from './catCharacters';
 import { mouseCharactersWithImages } from './mouseCharacters';
-import { catCardsWithImages } from './catCards';
-import { mouseCardsWithImages } from './mouseCards';
+import { catCardsWithImages } from './catKnowledgeCards';
+import { mouseCardsWithImages } from './mouseKnowledgeCards';
 import { FactionId, Faction } from './types';
 
 /* -------------------------------------------------------------------------- */

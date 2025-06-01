@@ -5,7 +5,7 @@ const getCatCardImageUrl = (rank: string, id: string): string => {
   return `/images/catCards/${rank}-${id}.png`;
 };
 
-export const catCards: Record<string, Card> = {
+export const catKnowledgeCards: Record<string, Card> = {
   /* ----------------------------------- S级卡 ---------------------------------- */
   '乘胜追击': {
     id: '乘胜追击',
@@ -476,7 +476,7 @@ export const catCards: Record<string, Card> = {
 
 // Generate cards with faction ID and image URLs applied in bulk
 export const catCardsWithImages = Object.fromEntries(
-  Object.entries(catCards).map(([cardId, card]) => [
+  Object.entries(catKnowledgeCards).map(([cardId, card]) => [
     cardId,
     {
       ...card,

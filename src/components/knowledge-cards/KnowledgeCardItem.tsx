@@ -1,10 +1,10 @@
 import { getCardRankColors, getCardCostColors } from '@/lib/design-tokens';
-import { CardItemProps } from '@/lib/types';
-import GameImage from './ui/GameImage';
-import Tag from './ui/Tag';
-import BaseCard from './ui/BaseCard';
+import { KnowledgeCardItemProps } from '@/lib/types';
+import GameImage from '../ui/GameImage';
+import Tag from '../ui/Tag';
+import BaseCard from '../ui/BaseCard';
 
-export default function CardItem({ id, name, rank, cost, imageUrl, onClick }: CardItemProps) {
+export default function KnowledgeCardItem({ id, name, rank, cost, imageUrl, onClick }: KnowledgeCardItemProps) {
   const rankColors = getCardRankColors(rank);
   const costColors = getCardCostColors(cost);
   

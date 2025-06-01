@@ -14,7 +14,7 @@ export type CharacterWithFaction = Character & {
   imageUrl: string; // Required in components
 };
 
-export type CardWithFaction = Card & {
+export type KnowledgeCardWithFaction = Card & {
   faction: {
     id: string;
     name: string;
@@ -23,7 +23,7 @@ export type CardWithFaction = Card & {
 };
 
 // Component prop types
-export type CardItemProps = {
+export type KnowledgeCardItemProps = {
   id: string;
   name: string;
   rank: string;
@@ -32,7 +32,7 @@ export type CardItemProps = {
   onClick: (cardId: string) => void;
 };
 
-export type CharacterCardProps = {
+export type CharacterDisplayProps = {
   id: string;
   name: string;
   imageUrl: string;
@@ -41,8 +41,8 @@ export type CharacterCardProps = {
   onClick: (characterId: string) => void;
 };
 
-export type CardDetailsProps = {
-  card: CardWithFaction;
+export type KnowledgeCardDetailsProps = {
+  card: KnowledgeCardWithFaction;
   isDetailedView?: boolean;
 };
 
@@ -52,7 +52,7 @@ export type CharacterDetailsProps = {
 };
 
 // Faction types for grid displays
-export type FactionWithCards = {
+export type FactionWithKnowledgeCards = {
   id: string;
   name: string;
   description: string;
@@ -82,17 +82,17 @@ export type FactionCharactersProps = {
   onSelectCharacter: (characterId: string) => void;
 };
 
-export type CardGridProps = {
-  faction: FactionWithCards;
+export type KnowledgeCardGridProps = {
+  faction: FactionWithKnowledgeCards;
   onSelectCard: (cardId: string) => void;
 };
 
 // Generic callback types
 export type CharacterSelectionHandler = (characterId: string) => void;
-export type CardSelectionHandler = (cardId: string) => void;
+export type KnowledgeCardSelectionHandler = (cardId: string) => void;
 
 // Base card types for filtering/sorting
-export type BaseCard = {
+export type BaseKnowledgeCard = {
   id: string;
   name: string;
   rank: string;

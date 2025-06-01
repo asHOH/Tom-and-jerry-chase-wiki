@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import CardItem from './CardItem';
+import KnowledgeCardItem from './KnowledgeCardItem';
 import { getCardRankColors } from '@/lib/design-tokens';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useFilterState, filterByRank, RANK_OPTIONS } from '@/lib/filterUtils';
-import { FactionWithCards, CardGridProps } from '@/lib/types';
+import { FactionWithKnowledgeCards, KnowledgeCardGridProps } from '@/lib/types';
 
-export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
+export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCardGridProps) {
   // Use centralized filter state management
   const { selectedFilters: selectedRanks, toggleFilter: toggleRankFilter, hasFilter } = useFilterState<string>();
 
@@ -63,12 +63,10 @@ export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
             })}
           </div>
         </div>
-      </header>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8">
+      </header>      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8">
         {filteredAndSortedCards.map((card) => (
           <div key={card.id} className="transform transition-transform hover:-translate-y-1">
-            <CardItem
+            <KnowledgeCardItem
               id={card.id}
               name={card.name}
               rank={card.rank}

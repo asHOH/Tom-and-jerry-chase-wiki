@@ -1,4 +1,4 @@
-import CharacterCard from './CharacterCard';
+import CharacterDisplay from './displays/CharacterDisplay';
 import { FactionWithCharacters, FactionCharactersProps } from '@/lib/types';
 
 export default function FactionCharacters({ faction, onSelectCharacter }: FactionCharactersProps) {
@@ -7,12 +7,10 @@ export default function FactionCharacters({ faction, onSelectCharacter }: Factio
       <header className="text-center space-y-6 mb-10 px-4">
         <h1 className="text-4xl font-bold text-blue-600 py-3">{faction.name}</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto px-4 py-2">{faction.description}</p>
-      </header>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8">
+      </header>      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8">
         {faction.characters.map((character) => (
           <div key={character.id} className="transform transition-transform hover:-translate-y-1">
-            <CharacterCard
+            <CharacterDisplay
               id={character.id}
               name={character.name}
               imageUrl={character.imageUrl}

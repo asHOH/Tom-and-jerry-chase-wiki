@@ -1,11 +1,11 @@
 import { PositioningTag } from '@/data';
 import { getPositioningTagColors } from '@/lib/design-tokens';
-import { CharacterCardProps } from '@/lib/types';
-import GameImage from './ui/GameImage';
-import Tag from './ui/Tag';
-import BaseCard from './ui/BaseCard';
+import { CharacterDisplayProps } from '@/lib/types';
+import GameImage from '../ui/GameImage';
+import Tag from '../ui/Tag';
+import BaseCard from '../ui/BaseCard';
 
-export default function CharacterCard({ id, name, imageUrl, positioningTags, factionId, onClick }: CharacterCardProps) {
+export default function CharacterDisplay({ id, name, imageUrl, positioningTags, factionId, onClick }: CharacterDisplayProps) {
   return (
     <BaseCard variant="character" onClick={() => onClick(id)}>
       <GameImage src={imageUrl} alt={name} size="CHARACTER_CARD" />
