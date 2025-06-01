@@ -8,8 +8,8 @@ export default function CharacterDisplay({ id, name, imageUrl, positioningTags, 
   return (
     <BaseCard variant="character" onClick={() => onClick(id)}>
       <GameImage src={imageUrl} alt={name} size="CHARACTER_CARD" />
-      <div className="p-6 text-center">
-        <h2 className="text-xl font-bold px-2 py-2 mb-2">{name}</h2>
+      <div className="px-6 pt-1 pb-6 text-center">
+        <h2 className="text-xl font-bold mb-2">{name}</h2>
         {positioningTags && positioningTags.length > 0 && (
           <div className="flex flex-wrap justify-center gap-1 mt-2">
             {positioningTags.map((tag, index) => (
