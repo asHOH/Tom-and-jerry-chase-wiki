@@ -14,7 +14,6 @@ export default function Tag({ children, colorClasses, colorStyles, size = 'md', 
     console.warn('Tag: colorClasses prop is deprecated. Use colorStyles from design tokens instead.');
   }
   
-  const sizeClasses = size === 'xs' ? 'text-xs' : size === 'sm' ? 'text-xs' : 'text-sm';
   const baseTagStyle = createStyleFromTokens(
     variant === 'compact' ? componentTokens.tag.compact : componentTokens.tag.base
   );

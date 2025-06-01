@@ -1,4 +1,3 @@
-import { PositioningTag } from '@/data';
 import { getPositioningTagColors } from '@/lib/design-tokens';
 import { CharacterDisplayProps } from '@/lib/types';
 import GameImage from '../../ui/GameImage';

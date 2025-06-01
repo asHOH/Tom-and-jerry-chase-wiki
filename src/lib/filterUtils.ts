@@ -106,7 +106,7 @@ export function filterByFaction<T extends { factionId: string }>(
  * @param searchFields - Fields to search in
  * @returns Filtered items
  */
-export function filterByTextSearch<T extends Record<string, any>>(
+export function filterByTextSearch<T extends Record<string, unknown>>(
   items: T[],
   searchText: string,
   searchFields: (keyof T)[]

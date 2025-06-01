@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Character } from '@/data';
-import { getPositioningTagColors, getPositioningTagContainerColor, getPositioningTagColor } from '@/lib/design-tokens';
+import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design-tokens';
 import { 
   getTooltipContent, 
   getPositioningTagTooltipContent, 
   getItemKeyTooltipContent
 } from '@/lib/tooltipUtils';
-import { CharacterWithFaction, CharacterDetailsProps } from '@/lib/types';
+import { CharacterDetailsProps } from '@/lib/types';
 import Tooltip from '../../ui/Tooltip';
 import Tag from '../../ui/Tag';
 

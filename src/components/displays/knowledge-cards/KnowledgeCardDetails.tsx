@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Card } from '@/data';
 import { getCardRankColors, getCardCostColors } from '@/lib/design-tokens';
 import { renderTextWithHighlights } from '@/lib/textUtils';
-import { KnowledgeCardWithFaction, KnowledgeCardDetailsProps } from '@/lib/types';
+import { KnowledgeCardDetailsProps } from '@/lib/types';
 import GameImage from '../../ui/GameImage';
 import Tag from '../../ui/Tag';
 import BaseCard from '../../ui/BaseCard';

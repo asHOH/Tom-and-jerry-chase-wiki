@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 import { getCardRankColors } from '@/lib/design-tokens';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useFilterState, filterByRank, RANK_OPTIONS } from '@/lib/filterUtils';
-import { FactionWithKnowledgeCards, KnowledgeCardGridProps } from '@/lib/types';
+import { KnowledgeCardGridProps } from '@/lib/types';
 
 export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCardGridProps) {
   // Use centralized filter state management

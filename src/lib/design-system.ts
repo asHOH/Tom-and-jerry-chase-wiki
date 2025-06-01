@@ -188,7 +188,7 @@ export type DesignTokenPath = {
 export const getToken = <T extends keyof DesignTokenPath>(
   category: T,
   key: DesignTokenPath[T]
-): any => {
+): string | number | undefined => {
   switch (category) {
     case 'spacing':
       return designTokens.spacing[key as keyof typeof designTokens.spacing];

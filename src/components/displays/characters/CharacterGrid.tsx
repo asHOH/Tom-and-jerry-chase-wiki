@@ -1,5 +1,5 @@
 import CharacterDisplay from './CharacterDisplay';
-import { FactionWithCharacters, FactionCharactersProps } from '@/lib/types';
+import { FactionCharactersProps } from '@/lib/types';
 
 export default function CharacterGrid({ faction, onSelectCharacter }: FactionCharactersProps) {
   return (

@@ -364,13 +364,13 @@ export const componentTokens = {
   }
 } as const;
 
-export const createStyleFromTokens = (tokenPath: any): React.CSSProperties => {
+export const createStyleFromTokens = (tokenPath: Record<string, unknown>): React.CSSProperties => {
   if (typeof tokenPath === 'object' && tokenPath !== null) {
     const styles: React.CSSProperties = {};
     
     for (const [key, value] of Object.entries(tokenPath)) {
       if (typeof value === 'string' || typeof value === 'number') {
-        (styles as any)[key] = value;
+        (styles as Record<string, string | number>)[key] = value;
       }
     }
     

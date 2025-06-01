@@ -3,7 +3,7 @@ node_modules/
 
 # Next.js build output and cache
 .next/
-out/ # If you use `next export`
+out/
 
 # Environment variables
 # IMPORTANT: Commit a .env.example or .env.template with placeholder values
