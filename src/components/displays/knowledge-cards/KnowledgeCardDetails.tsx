@@ -22,11 +22,9 @@ export default function KnowledgeCardDetails({ card, isDetailedView: propIsDetai
         <div className="md:w-1/3">
           <BaseCard variant="details">
             <GameImage src={card.imageUrl} alt={card.id} size="CARD_DETAILS" />
-
-            {/* Content area with proper padding for white background */}
             <div style={{ padding: designTokens.spacing.md }}>
               <h1 className="text-3xl font-bold" style={{ paddingBottom: designTokens.spacing.sm }}>
-                {card.id} <span className="text-xl font-normal text-gray-400">({card.faction.name})</span>
+                {card.id} <span className="text-xl font-normal text-gray-400">({card.faction.id === 'cat' ? '猫方知识卡' : '鼠方知识卡'})</span>
               </h1>
 
               {/* Card attributes section */}
