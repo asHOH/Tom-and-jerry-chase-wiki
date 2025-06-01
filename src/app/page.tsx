@@ -7,6 +7,8 @@ import CharacterDetails from '@/components/CharacterDetails';
 import CardGrid from '@/components/CardGrid';
 import CardDetails from '@/components/CardDetails';
 import { DisclaimerText } from '@/components/DisclaimerText';
+import FactionButton from '@/components/ui/FactionButton';
+import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
 import { factions, characters, factionCards, cards } from '@/data';
 
 export default function Home() {
@@ -97,160 +99,42 @@ export default function Home() {
           <p className="text-xl text-gray-600 px-4 py-2">
             查询角色技能和属性
           </p>
-        </header>
-
-        <div className="flex flex-col items-center mt-16 px-4">
-          <h2 className="text-3xl font-bold mb-10 py-3" style={{ color: '#1f2937' }}>角色</h2>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            gap: '24px',
-            width: '100%',
-            maxWidth: '700px',
-            margin: '0 auto'
-          }} className="flex-row sm:flex-row">
-            <button
+        </header>        <div className="flex flex-col items-center mt-16 px-4">
+          <h2 className="text-3xl font-bold mb-10 py-3 text-gray-800">角色</h2>
+          <FactionButtonGroup>
+            <FactionButton
+              emoji="🐱"
+              title="猫阵营"
+              description="查看猫阵营角色列表"
               onClick={() => handleTabChange('cat')}
-              aria-label="查看猫阵营角色列表"
-              className="faction-button"
-              style={{
-                padding: '16px 24px',
-                borderRadius: '8px',
-                backgroundColor: '#e5e7eb', // Gray background like inactive nav button
-                color: '#1f2937', // Dark text like inactive nav button
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                flex: 1,
-                minWidth: '220px',
-                position: 'relative',
-                textAlign: 'center',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '1.75rem' }}>🐱</span>
-                <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>猫阵营</span>
-              </div>
-              <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px' }}>
-                查看猫阵营角色列表
-              </div>
-            </button>
-
-            <button
+              ariaLabel="查看猫阵营角色列表"
+            />
+            <FactionButton
+              emoji="🐭"
+              title="鼠阵营"
+              description="查看鼠阵营角色列表"
               onClick={() => handleTabChange('mouse')}
-              aria-label="查看鼠阵营角色列表"
-              className="faction-button"
-              style={{
-                padding: '16px 24px',
-                borderRadius: '8px',
-                backgroundColor: '#e5e7eb', // Gray background like inactive nav button
-                color: '#1f2937', // Dark text like inactive nav button
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                flex: 1,
-                minWidth: '220px',
-                position: 'relative',
-                textAlign: 'center',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '1.75rem' }}>🐭</span>
-                <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>鼠阵营</span>
-              </div>
-              <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px' }}>
-                查看鼠阵营角色列表
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center mt-16 px-4">
-          <h2 className="text-3xl font-bold mb-10 py-3" style={{ color: '#1f2937' }}>知识卡</h2>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            gap: '24px',
-            width: '100%',
-            maxWidth: '700px',
-            margin: '0 auto'
-          }} className="flex-row sm:flex-row">
-            <button
+              ariaLabel="查看鼠阵营角色列表"
+            />
+          </FactionButtonGroup>
+        </div>        <div className="flex flex-col items-center mt-16 px-4">
+          <h2 className="text-3xl font-bold mb-10 py-3 text-gray-800">知识卡</h2>
+          <FactionButtonGroup>
+            <FactionButton
+              emoji="🃏"
+              title="猫方知识卡"
+              description="查看猫方知识卡列表"
               onClick={() => handleTabChange('catCards')}
-              aria-label="查看猫方知识卡列表"
-              className="faction-button"
-              style={{
-                padding: '16px 24px',
-                borderRadius: '8px',
-                backgroundColor: '#e5e7eb', // Gray background like inactive nav button
-                color: '#1f2937', // Dark text like inactive nav button
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                flex: 1,
-                minWidth: '220px',
-                position: 'relative',
-                textAlign: 'center',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '1.75rem' }}>🃏</span>
-                <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>猫方知识卡</span>
-              </div>
-              <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px' }}>
-                查看猫方知识卡列表
-              </div>
-            </button>
-
-            <button
+              ariaLabel="查看猫方知识卡列表"
+            />
+            <FactionButton
+              emoji="🎴"
+              title="鼠方知识卡"
+              description="查看鼠方知识卡列表"
               onClick={() => handleTabChange('mouseCards')}
-              aria-label="查看鼠方知识卡列表"
-              className="faction-button"
-              style={{
-                padding: '16px 24px',
-                borderRadius: '8px',
-                backgroundColor: '#e5e7eb', // Gray background like inactive nav button
-                color: '#1f2937', // Dark text like inactive nav button
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                flex: 1,
-                minWidth: '220px',
-                position: 'relative',
-                textAlign: 'center',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '1.75rem' }}>🎴</span>
-                <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>鼠方知识卡</span>
-              </div>
-              <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px' }}>
-                查看鼠方知识卡列表
-              </div>
-            </button>
-          </div>
+              ariaLabel="查看鼠方知识卡列表"
+            />
+          </FactionButtonGroup>
         </div>
 
         {/* Division line before 网站说明 */}
