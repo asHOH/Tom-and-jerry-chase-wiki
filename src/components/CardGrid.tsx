@@ -21,16 +21,16 @@ export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
         </p>        {/* Rank Filter Controls */}
         <div className="flex justify-center items-center gap-4 mt-8">
           <span className="text-lg font-medium text-gray-700">等级筛选:</span>
-          <div className="flex gap-2">
-            {RANK_OPTIONS.map((rank) => {
+          <div className="flex gap-2">            {RANK_OPTIONS.map((rank) => {
               const rankColors = getCardRankColors(rank, true);
               const isActive = hasFilter(rank);
-              
+
               const buttonStyle = isActive ? {
                 ...rankColors,
                 padding: '8px 12px',
                 borderRadius: '8px',
-                border: 'none',
+                borderWidth: '1px',
+                borderStyle: 'solid',
                 cursor: 'pointer',
                 fontWeight: '500',
                 transition: 'all 0.2s ease',
