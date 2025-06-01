@@ -1,10 +1,13 @@
 export const designTokens = {
   spacing: {
     xs: '8px',    // 2 units
-    sm: '12px',   // 3 units  
+    sm: '12px',   // 3 units
     md: '16px',   // 4 units
     lg: '24px',   // 6 units
-    xl: '32px'    // 8 units
+    xl: '32px',   // 8 units
+    // Compact spacing for tags
+    xxs: '4px',   // 1 unit - for very compact padding
+    compact: '6px' // 1.5 units - for compact tag spacing
   },
   colors: {
     faction: {
@@ -16,17 +19,16 @@ export const designTokens = {
       hoverText: '#ffffff',       // white
       border: 'transparent'
     },
-    
-    // Card rank colors
+      // Card rank colors
     rank: {
       S: {
         text: '#ea580c',      // orange-600
-        background: '#fed7aa', // orange-100
+        background: '#fef3e2', // orange-75 (between orange-50 and orange-100)
         border: '#fdba74'      // orange-300
       },
       A: {
         text: '#9333ea',      // purple-600
-        background: '#e9d5ff', // purple-100
+        background: '#ede9fe', // purple-90 (lighter than purple-100)
         border: '#c4b5fd'      // purple-300
       },
       B: {
@@ -52,10 +54,9 @@ export const designTokens = {
         text: '#dc2626',      // red-600
         background: '#fee2e2', // red-100
         border: '#fca5a5'      // red-300
-      },
-      medium: {
+      },      medium: {
         text: '#ea580c',      // orange-600
-        background: '#fed7aa', // orange-100
+        background: '#fef3e2', // orange-75 (between orange-50 and orange-100)
         border: '#fdba74'      // orange-300
       },
       low: {
@@ -213,14 +214,16 @@ export const designTokens = {
     button: '0 1px 3px rgba(0, 0, 0, 0.1)',
     navigation: '0 2px 4px rgba(0, 0, 0, 0.1)'
   },
-
   radius: {
     none: '0',
     sm: '4px',
     md: '8px',
     lg: '12px',
     xl: '16px',
-    full: '9999px'
+    full: '9999px',
+    // Compact radius for tags
+    xs: '3px',    // Extra small for compact tags
+    compact: '6px' // Between sm and md for modern look
   },
 
   zIndex: {
@@ -318,14 +321,21 @@ export const componentTokens = {
       height: '16rem' // h-64 (256px)
     }
   },
-
   // Tag component tokens  
   tag: {
     base: {
-      padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`, // px-2 py-1
-      borderRadius: designTokens.radius.sm,
+      padding: `${designTokens.spacing.compact} ${designTokens.spacing.xs}`, // More compact: 6px 8px instead of 8px 12px
+      borderRadius: designTokens.radius.compact, // More rounded: 6px instead of 4px
       fontWeight: designTokens.typography.fontWeight.medium,
-      display: 'inline-block'
+      display: 'inline-block',
+      border: '1px solid transparent' // Add subtle border for better definition
+    },
+    compact: {
+      padding: `${designTokens.spacing.xxs} ${designTokens.spacing.compact}`, // Very compact: 4px 6px
+      borderRadius: designTokens.radius.xs, // Smaller radius for tiny tags
+      fontWeight: designTokens.typography.fontWeight.medium,
+      display: 'inline-block',
+      border: '1px solid transparent'
     }
   },
 

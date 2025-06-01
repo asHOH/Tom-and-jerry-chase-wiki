@@ -9,6 +9,7 @@ import {
 } from '@/lib/tooltipUtils';
 import { CharacterWithFaction, CharacterDetailsProps } from '@/lib/types';
 import Tooltip from './ui/Tooltip';
+import Tag from './ui/Tag';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text, isDetailed }: { text: string; isDetailed: boolean }) => {
@@ -159,14 +160,17 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                 <div className="mt-6 pt-4 border-t border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">定位</h3>
                   <div className="space-y-3">
-                    {character.catPositioningTags.map((tag, index) => (
-                      <div key={index} className={`rounded-lg p-3 ${getPositioningTagContainerColor(tag.tagName, tag.isMinor, 'cat')}`}>
+                    {character.catPositioningTags.map((tag, index) => (                      <div key={index} className={`rounded-lg p-3 ${getPositioningTagContainerColor(tag.tagName, tag.isMinor, 'cat')}`}>
                         <div className="flex items-center gap-2 mb-2">
-                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getPositioningTagColor(tag.tagName, tag.isMinor, true, 'cat')}`}>
+                          <Tag
+                            colorStyles={getPositioningTagColors(tag.tagName, tag.isMinor, true, 'cat')}
+                            size="sm"
+                            variant="compact"
+                          >
                             <Tooltip content={getPositioningTagTooltipContent(tag.tagName, 'cat', isDetailedView)}>
                               {tag.tagName}
                             </Tooltip>
-                          </span>
+                          </Tag>
                           {tag.isMinor && (
                             <span className="text-xs text-gray-500">(次要)</span>
                           )}
@@ -188,14 +192,17 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                 <div className="mt-6 pt-4 border-t border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">定位</h3>
                   <div className="space-y-3">
-                    {character.mousePositioningTags.map((tag, index) => (
-                      <div key={index} className={`rounded-lg p-3 ${getPositioningTagContainerColor(tag.tagName, tag.isMinor, 'mouse')}`}>
+                    {character.mousePositioningTags.map((tag, index) => (                      <div key={index} className={`rounded-lg p-3 ${getPositioningTagContainerColor(tag.tagName, tag.isMinor, 'mouse')}`}>
                         <div className="flex items-center gap-2 mb-2">
-                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getPositioningTagColor(tag.tagName, tag.isMinor, true, 'mouse')}`}>
+                          <Tag
+                            colorStyles={getPositioningTagColors(tag.tagName, tag.isMinor, true, 'mouse')}
+                            size="sm"
+                            variant="compact"
+                          >
                             <Tooltip content={getPositioningTagTooltipContent(tag.tagName, 'mouse', isDetailedView)}>
                               {tag.tagName}
                             </Tooltip>
-                          </span>
+                          </Tag>
                           {tag.isMinor && (
                             <span className="text-xs text-gray-500">(次要)</span>
                           )}

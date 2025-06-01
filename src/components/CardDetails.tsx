@@ -26,20 +26,29 @@ export default function CardDetails({ card, isDetailedView: propIsDetailedView }
 
             <h1 className="text-3xl font-bold py-2">
               {card.id} <span className="text-xl font-normal text-gray-400">({card.faction.name})</span>
-            </h1>
-
-            {/* Card attributes section */}            <div className="mt-6 space-y-3">              <div className="grid grid-cols-2 gap-3">
+            </h1>            {/* Card attributes section */}
+            <div className="mt-6 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
                 <p className="text-sm text-gray-700 py-1">
-                  <Tag colorStyles={rankColors}>
+                  <Tag 
+                    colorStyles={rankColors}
+                    size="xs"
+                    variant="compact"
+                  >
                     等级: {card.rank}
                   </Tag>
                 </p>
                 <p className="text-sm text-gray-700 py-1">
-                  <Tag colorStyles={costColors}>
+                  <Tag 
+                    colorStyles={costColors}
+                    size="xs"
+                    variant="compact"
+                  >
                     费用: {card.cost}
                   </Tag>
                 </p>
-              </div>            </div>
+              </div>
+            </div>
           </BaseCard>
         </div>
 
