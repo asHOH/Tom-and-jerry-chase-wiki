@@ -8,8 +8,8 @@ import {
   getItemKeyTooltipContent
 } from '@/lib/tooltipUtils';
 import { CharacterWithFaction, CharacterDetailsProps } from '@/lib/types';
-import Tooltip from './ui/Tooltip';
-import Tag from './ui/Tag';
+import Tooltip from '../../ui/Tooltip';
+import Tag from '../../ui/Tag';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text, isDetailed }: { text: string; isDetailed: boolean }) => {

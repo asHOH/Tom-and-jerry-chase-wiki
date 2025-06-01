@@ -15,13 +15,17 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
   return (
     <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}
       <header className="text-center space-y-6 mb-10 px-4">
-        <h1 className="text-4xl font-bold text-blue-600 py-3">{faction.name === '猫阵营' ? '猫方知识卡' : '鼠方知识卡'}</h1>
+        <h1 className="text-4xl font-bold text-blue-600 py-3">
+          {faction.name === '猫阵营' ? '猫方知识卡' : '鼠方知识卡'}
+        </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto px-4 py-2">
           {faction.name === '猫阵营' ? '提升猫击倒和放飞老鼠的能力' : '提升老鼠的生存、救援和推奶酪能力'}
-        </p>        {/* Rank Filter Controls */}
+        </p>
+        {/* Rank Filter Controls */}
         <div className="flex justify-center items-center gap-4 mt-8">
           <span className="text-lg font-medium text-gray-700">等级筛选:</span>
-          <div className="flex gap-2">            {RANK_OPTIONS.map((rank) => {
+          <div className="flex gap-2">
+            {RANK_OPTIONS.map((rank) => {
               const rankColors = getCardRankColors(rank, true);
               const isActive = hasFilter(rank);
 

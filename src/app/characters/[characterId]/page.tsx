@@ -2,7 +2,7 @@
 
 import { notFound } from 'next/navigation';
 import { characters } from '@/data';
-import CharacterDetails from '@/components/CharacterDetails';
+import CharacterDetails from '@/components/displays/characters/CharacterDetails';
 import { use } from 'react';
 
 // This page uses the CharacterDetails component to avoid code duplication

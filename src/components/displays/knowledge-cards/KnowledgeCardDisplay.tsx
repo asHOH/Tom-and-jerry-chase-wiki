@@ -14,7 +14,8 @@ export default function KnowledgeCardDisplay({ id, name, rank, cost, imageUrl, o
       
       {/* Card info */}
       <div className="p-4 text-center">
-        <h3 className="text-lg font-bold text-gray-800 mb-1">{name}</h3>        <div className="flex justify-center items-center gap-1.5 text-sm text-gray-600">
+        <h3 className="text-lg font-bold text-gray-800 mb-1">{name}</h3>
+        <div className="flex justify-center items-center gap-1.5 text-sm text-gray-600">
           <Tag 
             colorStyles={rankColors}
             size="xs"
