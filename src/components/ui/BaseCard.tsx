@@ -18,10 +18,10 @@ export default function BaseCard({
   const getVariantStyles = () => {
     const baseCardStyle = createStyleFromTokens(componentTokens.card.base);
     
-    switch (variant) {
-      case 'character':
+    switch (variant) {      case 'character':
         return {
           ...baseCardStyle,
+          backgroundColor: '#ffffff',
           display: 'flex',
           flexDirection: 'column' as const,
           alignItems: 'center',
