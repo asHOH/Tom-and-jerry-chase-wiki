@@ -51,18 +51,26 @@ export const DISCLAIMER_TEXT = [
 ].join('\n');
 
 // UI Constants for component consistency
-// ⚠️  DEPRECATED: This will be removed in a future version
-// Please migrate to the design system in @/lib/design-tokens.ts
+// ⚠️  DEPRECATED: This entire section will be removed in a future version
+// Please migrate to the centralized design system in @/lib/design-system.ts
 // 
 // Migration Guide:
-// - IMAGE_SIZES → componentTokens.image.dimensions  
+// - IMAGE_SIZES → componentTokens.image.dimensions from design-system.ts
 // - CONTAINER_HEIGHTS → componentTokens.card.content.height / componentTokens.image.container.height
-// - SPACING → designTokens.spacing
-// - TRANSITIONS → designTokens.transitions  
-// - RADIUS → designTokens.radius
+// - SPACING → designTokens.spacing from design-system.ts
+// - TRANSITIONS → designTokens.transitions from design-system.ts
+// - RADIUS → designTokens.radius from design-system.ts
+//
+// Example Migration:
+// OLD: import { UI_CONSTANTS } from '@/constants';
+//      className={UI_CONSTANTS.SPACING.CARD_PADDING}
+// NEW: import { designTokens } from '@/lib/design-system';
+//      style={{ padding: designTokens.spacing.md }}
+//
+// For more details, see DESIGN_SYSTEM_MIGRATION.md
 export const UI_CONSTANTS = {
   // Image dimensions for different contexts
-  // ⚠️  DEPRECATED: Use componentTokens.image.dimensions from design-tokens.ts
+  // ⚠️  DEPRECATED: Use componentTokens.image.dimensions from design-system.ts
   IMAGE_SIZES: {
     CHARACTER_CARD: { width: 120, height: 120 },
     CARD_ITEM: { width: 140, height: 140 },
@@ -77,7 +85,7 @@ export const UI_CONSTANTS = {
   },
   
   // Common spacing
-  // ⚠️  DEPRECATED: Use designTokens.spacing from design-tokens.ts
+  // ⚠️  DEPRECATED: Use designTokens.spacing from design-system.ts
   SPACING: {
     CARD_PADDING: 'p-4',      // Use designTokens.spacing.md
     SECTION_PADDING: 'p-6',   // Use designTokens.spacing.lg  
@@ -86,7 +94,7 @@ export const UI_CONSTANTS = {
   },
   
   // Transitions and animations
-  // ⚠️  DEPRECATED: Use designTokens.transitions from design-tokens.ts
+  // ⚠️  DEPRECATED: Use designTokens.transitions from design-system.ts
   TRANSITIONS: {
     HOVER_SCALE: 'hover:scale-105 transition-all duration-200',  // Use designTokens.transitions.hover
     CARD_HOVER: 'hover:scale-105 transition-all duration-300',   // Use designTokens.transitions.hover
@@ -94,7 +102,7 @@ export const UI_CONSTANTS = {
   },
   
   // Border radius
-  // ⚠️  DEPRECATED: Use designTokens.radius from design-tokens.ts  
+  // ⚠️  DEPRECATED: Use designTokens.radius from design-system.ts  
   RADIUS: {
     CARD: 'rounded-lg',     // Use designTokens.radius.lg
     CARD_TOP: 'rounded-t-lg', // Use componentTokens.image.container.borderRadius
