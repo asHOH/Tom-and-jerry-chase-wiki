@@ -1,17 +1,28 @@
 /**
  * Utility functions for card styling and color management
  *
+ * ⚠️  DEPRECATION NOTICE: Many functions in this file are deprecated
+ * Please migrate to the design system in @/lib/design-tokens.ts
+ * 
+ * Migration Guide:
+ * - getRankColor() → getCardRankColors() from design-tokens.ts
+ * - getCostColor() → getCardCostColors() from design-tokens.ts  
+ * - Use design token objects instead of Tailwind classes for better consistency
+ *
  * Note: All color classes used in these functions are included in the Tailwind safelist
  * in tailwind.config.js to ensure they are not purged during the build process.
  */
 
 /**
  * Get rank color classes based on rank
+ * ⚠️  DEPRECATED: Use getCardRankColors() from @/lib/design-tokens.ts instead
  * @param rank - The rank (S, A, B, C)
  * @param includeBorder - Whether to include border classes (default: false)
  * @returns CSS class string for rank styling
  */
 export const getRankColor = (rank: string, includeBorder: boolean = false): string => {
+  console.warn('getRankColor is deprecated. Use getCardRankColors from @/lib/design-tokens.ts instead.');
+  
   switch (rank) {
     case 'S':
       return `text-orange-600 bg-orange-100${includeBorder ? ' border-orange-300' : ''}`;
@@ -28,11 +39,14 @@ export const getRankColor = (rank: string, includeBorder: boolean = false): stri
 
 /**
  * Get cost color classes based on cost value
+ * ⚠️  DEPRECATED: Use getCardCostColors() from @/lib/design-tokens.ts instead
  * @param cost - The cost value
  * @param includeBorder - Whether to include border classes (default: false)
  * @returns CSS class string for cost styling
  */
 export const getCostColor = (cost: number, includeBorder: boolean = false): string => {
+  console.warn('getCostColor is deprecated. Use getCardCostColors from @/lib/design-tokens.ts instead.');
+  
   if (cost >= 6) return `text-red-600 bg-red-100${includeBorder ? ' border-red-300' : ''}`;
   if (cost >= 4) return `text-orange-600 bg-orange-100${includeBorder ? ' border-orange-300' : ''}`;
   if (cost >= 3) return `text-yellow-600 bg-yellow-100${includeBorder ? ' border-yellow-300' : ''}`;

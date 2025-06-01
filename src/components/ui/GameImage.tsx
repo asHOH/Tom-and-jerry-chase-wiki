@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import { UI_CONSTANTS } from '@/constants';
+import { designTokens, componentTokens } from '@/lib/design-tokens';
 
-type ImageSize = keyof typeof UI_CONSTANTS.IMAGE_SIZES;
+type ImageSize = keyof typeof componentTokens.image.dimensions;
 
 type GameImageProps = {
   src: string;
@@ -11,13 +11,19 @@ type GameImageProps = {
 };
 
 export default function GameImage({ src, alt, size, className = '' }: GameImageProps) {
-  const { width, height } = UI_CONSTANTS.IMAGE_SIZES[size];
+  const { width, height } = componentTokens.image.dimensions[size];
   
-  // Use CARD height for details view, IMAGE height for others
-  const containerHeight = size === 'CARD_DETAILS' ? UI_CONSTANTS.CONTAINER_HEIGHTS.CARD : UI_CONSTANTS.CONTAINER_HEIGHTS.IMAGE;
+  // Use card height for details view, image height for others
+  const containerHeight = size === 'CARD_DETAILS' ? componentTokens.card.content.height : componentTokens.image.container.height;
   
   return (
-    <div className={`w-full ${containerHeight} bg-gray-200 ${UI_CONSTANTS.RADIUS.CARD_TOP} relative overflow-hidden mb-4`}>
+    <div 
+      className="w-full bg-gray-200 relative overflow-hidden mb-4"
+      style={{
+        height: containerHeight,
+        borderRadius: componentTokens.image.container.borderRadius
+      }}
+    >
       <div className="flex items-center justify-center h-full">
         <Image
           src={src}
@@ -25,8 +31,13 @@ export default function GameImage({ src, alt, size, className = '' }: GameImageP
           width={width}
           height={height}
           unoptimized
-          style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
-          className={`${UI_CONSTANTS.TRANSITIONS.SMOOTH} ${className}`}
+          style={{ 
+            objectFit: 'contain', 
+            maxHeight: '100%', 
+            maxWidth: '100%',
+            transition: designTokens.transitions.normal
+          }}
+          className={className}
         />
       </div>
     </div>

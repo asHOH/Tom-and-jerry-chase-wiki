@@ -19,6 +19,7 @@ prisma/dev.db
 # IDE & Editor specific
 .vscode/
 .history/
+.github/
 
 # TypeScript declaration for Next.js environment variables (auto-generated)
 next-env.d.ts

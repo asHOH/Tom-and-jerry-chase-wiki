@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import CardItem from './CardItem';
-import { getRankColor } from '@/lib/cardUtils';
+import { getCardRankColors } from '@/lib/design-tokens';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useFilterState, filterByRank, RANK_OPTIONS } from '@/lib/filterUtils';
 import { FactionWithCards, CardGridProps } from '@/lib/types';
@@ -18,24 +18,49 @@ export default function CardGrid({ faction, onSelectCard }: CardGridProps) {
         <h1 className="text-4xl font-bold text-blue-600 py-3">{faction.name === '猫阵营' ? '猫方知识卡' : '鼠方知识卡'}</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto px-4 py-2">
           {faction.name === '猫阵营' ? '提升猫击倒和放飞老鼠的能力' : '提升老鼠的生存、救援和推奶酪能力'}
-        </p>
-
-        {/* Rank Filter Controls */}
+        </p>        {/* Rank Filter Controls */}
         <div className="flex justify-center items-center gap-4 mt-8">
           <span className="text-lg font-medium text-gray-700">等级筛选:</span>
-          <div className="flex gap-2">            {RANK_OPTIONS.map((rank) => (
-              <button
-                key={rank}
-                onClick={() => toggleRankFilter(rank)}
-                className={`px-3 py-2 rounded-lg border-2 transition-all duration-200 font-medium ${
-                  hasFilter(rank)
-                    ? `${getRankColor(rank, true)} border-current`
-                    : 'bg-gray-100 text-gray-400 border-gray-300 hover:bg-gray-200'
-                }`}
-              >
-                {rank}级
-              </button>
-            ))}
+          <div className="flex gap-2">
+            {RANK_OPTIONS.map((rank) => {
+              const rankColors = getCardRankColors(rank, true);
+              const isActive = hasFilter(rank);
+              
+              const buttonStyle = isActive ? {
+                ...rankColors,
+                padding: '8px 12px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: '500',
+                transition: 'all 0.2s ease',
+                fontSize: '14px'
+              } : {
+                padding: '8px 12px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: '500',
+                transition: 'all 0.2s ease',
+                fontSize: '14px',
+                backgroundColor: '#f3f4f6',
+                color: '#9ca3af',
+                ':hover': {
+                  backgroundColor: '#e5e7eb'
+                }
+              };
+              
+              return (
+                <button
+                  key={rank}
+                  onClick={() => toggleRankFilter(rank)}
+                  style={buttonStyle}
+                  className={!isActive ? 'hover:bg-gray-200' : ''}
+                >
+                  {rank}级
+                </button>
+              );
+            })}
           </div>
         </div>
       </header>

@@ -1,4 +1,4 @@
-import { UI_CONSTANTS } from '@/constants';
+import { designTokens, componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 
 type BaseCardProps = {
   children: React.ReactNode;
@@ -15,22 +15,49 @@ export default function BaseCard({
 }: BaseCardProps) {
   const isClickable = !!onClick;
   
-  const variantClasses = {
-    character: `card flex flex-col items-center ${UI_CONSTANTS.TRANSITIONS.HOVER_SCALE} cursor-pointer character-card-container p-0 overflow-hidden`,
-    item: `bg-white ${UI_CONSTANTS.RADIUS.CARD} cursor-pointer ${UI_CONSTANTS.TRANSITIONS.CARD_HOVER} relative overflow-hidden p-0`,
-    details: `card h-full`
+  const getVariantStyles = () => {
+    const baseCardStyle = createStyleFromTokens(componentTokens.card.base);
+    
+    switch (variant) {
+      case 'character':
+        return {
+          ...baseCardStyle,
+          display: 'flex',
+          flexDirection: 'column' as const,
+          alignItems: 'center',
+          padding: 0,
+          overflow: 'hidden',
+          transition: designTokens.transitions.hover,
+          transform: 'translateZ(0)'
+        };
+      case 'item':
+        return {
+          ...baseCardStyle,
+          backgroundColor: '#ffffff',
+          position: 'relative' as const,
+          overflow: 'hidden',
+          padding: 0
+        };
+      case 'details':
+        return {
+          ...baseCardStyle,
+          height: '100%'
+        };
+      default:
+        return baseCardStyle;
+    }
   };
   
-  const baseClasses = variantClasses[variant];
-  const finalClasses = `${baseClasses} ${className}`;
+  const cardStyle = getVariantStyles();
   
   const cardProps = isClickable ? {
     onClick,
-    style: variant === 'character' ? { transform: 'translateZ(0)' } : undefined
-  } : {};
-  
-  return (
-    <div className={finalClasses} {...cardProps}>
+    style: cardStyle
+  } : {
+    style: cardStyle
+  };
+    return (
+    <div className={className} {...cardProps}>
       {children}
     </div>
   );

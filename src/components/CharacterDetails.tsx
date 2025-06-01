@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Character } from '@/data';
-import { getPositioningTagColor, getPositioningTagContainerColor } from '@/lib/cardUtils';
+import { getPositioningTagColors, getPositioningTagContainerColor, getPositioningTagColor } from '@/lib/design-tokens';
 import { 
   getTooltipContent, 
   getPositioningTagTooltipContent, 

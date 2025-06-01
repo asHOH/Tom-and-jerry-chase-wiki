@@ -51,8 +51,18 @@ export const DISCLAIMER_TEXT = [
 ].join('\n');
 
 // UI Constants for component consistency
+// ⚠️  DEPRECATED: This will be removed in a future version
+// Please migrate to the design system in @/lib/design-tokens.ts
+// 
+// Migration Guide:
+// - IMAGE_SIZES → componentTokens.image.dimensions  
+// - CONTAINER_HEIGHTS → componentTokens.card.content.height / componentTokens.image.container.height
+// - SPACING → designTokens.spacing
+// - TRANSITIONS → designTokens.transitions  
+// - RADIUS → designTokens.radius
 export const UI_CONSTANTS = {
   // Image dimensions for different contexts
+  // ⚠️  DEPRECATED: Use componentTokens.image.dimensions from design-tokens.ts
   IMAGE_SIZES: {
     CHARACTER_CARD: { width: 120, height: 120 },
     CARD_ITEM: { width: 140, height: 140 },
@@ -60,30 +70,34 @@ export const UI_CONSTANTS = {
   },
   
   // Container heights
+  // ⚠️  DEPRECATED: Use componentTokens.card.content.height or componentTokens.image.container.height
   CONTAINER_HEIGHTS: {
-    IMAGE: 'h-48', // 192px
-    CARD: 'h-64'   // 256px
+    IMAGE: 'h-48', // 192px - Use componentTokens.image.container.height
+    CARD: 'h-64'   // 256px - Use componentTokens.card.content.height
   },
   
   // Common spacing
+  // ⚠️  DEPRECATED: Use designTokens.spacing from design-tokens.ts
   SPACING: {
-    CARD_PADDING: 'p-4',
-    SECTION_PADDING: 'p-6',
-    TAG_PADDING: 'px-2 py-1',
-    GRID_GAP: 'gap-4'
+    CARD_PADDING: 'p-4',      // Use designTokens.spacing.md
+    SECTION_PADDING: 'p-6',   // Use designTokens.spacing.lg  
+    TAG_PADDING: 'px-2 py-1', // Use componentTokens.tag.base.padding
+    GRID_GAP: 'gap-4'         // Use componentTokens.grid.gap
   },
   
   // Transitions and animations
+  // ⚠️  DEPRECATED: Use designTokens.transitions from design-tokens.ts
   TRANSITIONS: {
-    HOVER_SCALE: 'hover:scale-105 transition-all duration-200',
-    CARD_HOVER: 'hover:scale-105 transition-all duration-300',
-    SMOOTH: 'transition-transform duration-300'
+    HOVER_SCALE: 'hover:scale-105 transition-all duration-200',  // Use designTokens.transitions.hover
+    CARD_HOVER: 'hover:scale-105 transition-all duration-300',   // Use designTokens.transitions.hover
+    SMOOTH: 'transition-transform duration-300'                  // Use designTokens.transitions.normal
   },
   
   // Border radius
+  // ⚠️  DEPRECATED: Use designTokens.radius from design-tokens.ts  
   RADIUS: {
-    CARD: 'rounded-lg',
-    CARD_TOP: 'rounded-t-lg',
-    TAG: 'rounded'
+    CARD: 'rounded-lg',     // Use designTokens.radius.lg
+    CARD_TOP: 'rounded-t-lg', // Use componentTokens.image.container.borderRadius
+    TAG: 'rounded'          // Use designTokens.radius.sm
   }
 } as const;

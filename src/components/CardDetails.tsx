@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card } from '@/data';
-import { getRankColor, getCostColor } from '@/lib/cardUtils';
+import { getCardRankColors, getCardCostColors } from '@/lib/design-tokens';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { CardWithFaction, CardDetailsProps } from '@/lib/types';
 import GameImage from './ui/GameImage';
@@ -15,7 +15,8 @@ export default function CardDetails({ card, isDetailedView: propIsDetailedView }
   // Use prop value if provided, otherwise use local state
   const isDetailedView = propIsDetailedView !== undefined ? propIsDetailedView : localIsDetailedView;
 
-
+  const rankColors = getCardRankColors(card.rank, true);
+  const costColors = getCardCostColors(card.cost, true);
 
   return (
     <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}      <div className="flex flex-col md:flex-row gap-8">
@@ -27,15 +28,14 @@ export default function CardDetails({ card, isDetailedView: propIsDetailedView }
               {card.id} <span className="text-xl font-normal text-gray-400">({card.faction.name})</span>
             </h1>
 
-            {/* Card attributes section */}            <div className="mt-6 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+            {/* Card attributes section */}            <div className="mt-6 space-y-3">              <div className="grid grid-cols-2 gap-3">
                 <p className="text-sm text-gray-700 py-1">
-                  <Tag colorClasses={`${getRankColor(card.rank, true)} border`}>
+                  <Tag colorStyles={rankColors}>
                     等级: {card.rank}
                   </Tag>
                 </p>
                 <p className="text-sm text-gray-700 py-1">
-                  <Tag colorClasses={`${getCostColor(card.cost, true)} border`}>
+                  <Tag colorStyles={costColors}>
                     费用: {card.cost}
                   </Tag>
                 </p>

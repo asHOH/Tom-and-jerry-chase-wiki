@@ -1,5 +1,5 @@
 import { PositioningTag } from '@/data';
-import { getPositioningTagColor } from '@/lib/cardUtils';
+import { getPositioningTagColors } from '@/lib/design-tokens';
 import { CharacterCardProps } from '@/lib/types';
 import GameImage from './ui/GameImage';
 import Tag from './ui/Tag';
@@ -14,11 +14,10 @@ export default function CharacterCard({ id, name, imageUrl, positioningTags, fac
 
         {/* Positioning tags for both cat and mouse characters */}
         {positioningTags && positioningTags.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-1 mt-2">
-            {positioningTags.map((tag, index) => (
+          <div className="flex flex-wrap justify-center gap-1 mt-2">            {positioningTags.map((tag, index) => (
               <Tag
                 key={index}
-                colorClasses={getPositioningTagColor(tag.tagName, tag.isMinor, false, factionId as 'cat' | 'mouse')}
+                colorStyles={getPositioningTagColors(tag.tagName, tag.isMinor, false, factionId as 'cat' | 'mouse')}
                 size="sm"
               >
                 {tag.tagName}
