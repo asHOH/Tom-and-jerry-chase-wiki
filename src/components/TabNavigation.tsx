@@ -1,16 +1,18 @@
 import React from 'react';
+import Image from 'next/image';
 
 type Tab = {
   id: string;
   name: string;
-  emoji: string;
+  imageSrc: string;
+  imageAlt: string;
 };
 
 const tabs: Tab[] = [
-  { id: 'cat', name: '猫阵营', emoji: '🐱' },
-  { id: 'mouse', name: '鼠阵营', emoji: '🐭' },
-  { id: 'catCards', name: '猫方知识卡', emoji: '🃏' },
-  { id: 'mouseCards', name: '鼠方知识卡', emoji: '🎴' },
+  { id: 'cat', name: '猫阵营', imageSrc: '/images/icons/cat faction.png', imageAlt: '猫阵营图标' },
+  { id: 'mouse', name: '鼠阵营', imageSrc: '/images/icons/mouse faction.png', imageAlt: '鼠阵营图标' },
+  { id: 'catCards', name: '猫方知识卡', imageSrc: '/images/icons/cat knowledge card.png', imageAlt: '猫方知识卡图标' },
+  { id: 'mouseCards', name: '鼠方知识卡', imageSrc: '/images/icons/mouse knowledge card.png', imageAlt: '鼠方知识卡图标' },
 ];
 
 type TabNavigationProps = {
@@ -67,9 +69,7 @@ export default function TabNavigation({
             }}
           >
             首页
-          </button>
-
-          {tabs.map((tab) => (
+          </button>          {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
@@ -86,7 +86,13 @@ export default function TabNavigation({
                 gap: '8px'
               }}
             >
-              <span>{tab.emoji}</span>
+              <Image
+                src={tab.imageSrc}
+                alt={tab.imageAlt}
+                width={20}
+                height={20}
+                className="object-contain"
+              />
               <span>{tab.name}</span>
             </button>
           ))}
