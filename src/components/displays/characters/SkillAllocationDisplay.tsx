@@ -42,86 +42,95 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
 
   return (
     <div className="space-y-3">
-      {/* Skill allocation pattern display */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        {parsedLevels.map((level, index) => {
-          const skill = skillTypeToSkill[level.skillType];
-          const imageUrl = skill?.imageUrl || getSkillAllocationImageUrl(
-            characterName, 
-            level.skillType, 
-            factionId,
-            skill?.name
-          );
-          
-          return (
-            <div key={index} className="relative flex flex-col items-center">
-              {/* Skill level number */}
-              <span className="text-xs text-gray-500 mb-1">Lv.{index + 2}</span>
+      {/* Title and skill allocation pattern display */}
+      <div className="flex gap-4">
+        {/* Title section - takes ~1/6 horizontal space */}
+        <div className="w-1/6 flex-shrink-0">
+          <h4 className="font-bold text-gray-800 text-lg leading-tight">{allocation.id}</h4>
+        </div>
+        
+        {/* Skill allocation pattern display - takes remaining space */}
+        <div className="flex-1">
+          <div className="flex flex-wrap gap-2">
+            {parsedLevels.map((level, index) => {
+              const skill = skillTypeToSkill[level.skillType];
+              const imageUrl = skill?.imageUrl || getSkillAllocationImageUrl(
+                characterName, 
+                level.skillType, 
+                factionId,
+                skill?.name
+              );
               
-              {/* Skill icon container */}
-              <div className="relative">
-                {/* Main skill icon with appropriate tooltip */}
-                {level.isDelayed ? (
-                  <Tooltip content="留加点：加点瞬间有额外收益，需把握时机">
-                    <div className="relative w-10 h-10 border-2 border-orange-400 bg-orange-50 overflow-hidden">
-                      <Image
-                        src={imageUrl}
-                        alt={skill?.name || `技能${level.skillType}`}
-                        width={40}
-                        height={40}
-                        className="w-full h-full object-cover scale-75"
-                        unoptimized
-                      />
-                    </div>
-                  </Tooltip>
-                ) : level.hasNegativeEffect ? (
-                  <Tooltip content="负面效果：此技能升级会带来负面效果">
-                    <div className="relative w-10 h-10 border-2 rounded-full border-gray-300 bg-white overflow-hidden">
-                      <Image
-                        src={imageUrl}
-                        alt={skill?.name || `技能${level.skillType}`}
-                        width={40}
-                        height={40}
-                        className="w-full h-full object-cover scale-75"
-                        unoptimized
-                      />
-                    </div>
-                  </Tooltip>
-                ) : (
-                  <div className="relative w-10 h-10 border-2 rounded-full border-gray-300 bg-white overflow-hidden">
-                    <Image
-                      src={imageUrl}
-                      alt={skill?.name || `技能${level.skillType}`}
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover scale-75"
-                      unoptimized
-                    />
+              return (
+                <div key={index} className="relative flex flex-col items-center">
+                  {/* Skill level number */}
+                  <span className="text-xs text-gray-500 mb-1">Lv.{index + 2}</span>
+                  
+                  {/* Skill icon container */}
+                  <div className="relative">
+                    {/* Main skill icon with appropriate tooltip */}
+                    {level.isDelayed ? (
+                      <Tooltip content="留加点：加点瞬间有额外收益，需把握时机">
+                        <div className="relative w-10 h-10 border-2 border-orange-400 bg-orange-50 overflow-hidden">
+                          <Image
+                            src={imageUrl}
+                            alt={skill?.name || `技能${level.skillType}`}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover scale-75"
+                            unoptimized
+                          />
+                        </div>
+                      </Tooltip>
+                    ) : level.hasNegativeEffect ? (
+                      <Tooltip content="负面效果：此技能升级会带来负面效果">
+                        <div className="relative w-10 h-10 border-2 rounded-full border-gray-300 bg-white overflow-hidden">
+                          <Image
+                            src={imageUrl}
+                            alt={skill?.name || `技能${level.skillType}`}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover scale-75"
+                            unoptimized
+                          />
+                        </div>
+                      </Tooltip>
+                    ) : (
+                      <div className="relative w-10 h-10 border-2 rounded-full border-gray-300 bg-white overflow-hidden">
+                        <Image
+                          src={imageUrl}
+                          alt={skill?.name || `技能${level.skillType}`}
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-cover scale-75"
+                          unoptimized
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Negative effect overlay (visual indicator only) */}
+                    {level.hasNegativeEffect && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 pointer-events-none">
+                        <Image
+                          src="/images/misc/禁止.png"
+                          alt="负面效果"
+                          width={16}
+                          height={16}
+                          className="w-full h-full"
+                          unoptimized
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
-                
-                {/* Negative effect overlay (visual indicator only) */}
-                {level.hasNegativeEffect && (
-                  <div className="absolute -top-1 -right-1 w-4 h-4 pointer-events-none">
-                    <Image
-                      src="/images/misc/禁止.png"
-                      alt="负面效果"
-                      width={16}
-                      height={16}
-                      className="w-full h-full"
-                      unoptimized
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Allocation description */}
       <div className="bg-gray-50 p-3 rounded-lg">
-        <h4 className="font-semibold text-gray-800 mb-1">{allocation.id}</h4>
         <p className="text-sm text-gray-700">
           <TextWithItemKeyTooltips text={allocation.description} isDetailed={isDetailed} />
         </p>
