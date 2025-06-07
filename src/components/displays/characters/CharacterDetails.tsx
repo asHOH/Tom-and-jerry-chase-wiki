@@ -259,10 +259,16 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
             </div>
           )}
 
+          {/* Skills Section */}
+          <div className="mb-6">
+            <h3 className="text-xl font-bold px-2 py-3">技能描述</h3>
+          </div>
+
           <div className="space-y-6">
             {character.skills.map((skill) => {              return (
                 <div key={skill.id} className="card p-6">
-                  <div className="flex justify-between items-start">                    {/* Skill Image */}
+                <div className="flex justify-between items-start">
+                  {/* Skill Image */}
                     {skill.imageUrl && (
                       <div className="flex-shrink-0 mr-6">
                         <div className="relative w-16 h-16 rounded-full border-2 border-gray-200 overflow-hidden">
