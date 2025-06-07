@@ -52,12 +52,14 @@ export const catCharacters: Record<string, Character> = {
       {
         id: '手型枪',
         pattern: '121220001',
+        weaponType: 'weapon1',
         description: '二级无敌和三级手型枪非常强。',
         detailedDescription: ''
       },
       {
         id: '平底锅',
         pattern: '131330001',
+        weaponType: 'weapon2',
         description: '二级无敌和三级平底锅非常强。',
         detailedDescription: '顺风时也可以先点二被再点二、三级锅'
       }

@@ -33,6 +33,7 @@ export type PositioningTag = CatPositioningTag | MousePositioningTag;
 export type SkillAllocation = {
   id: string;
   pattern: string; // Format: "021112200" or "013(0)3301-1"
+  weaponType: 'weapon1' | 'weapon2'; // Which weapon this allocation uses
   description: string;
   detailedDescription?: string;
 };

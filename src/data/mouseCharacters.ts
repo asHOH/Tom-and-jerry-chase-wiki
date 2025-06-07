@@ -46,12 +46,14 @@ export const mouseCharacters: Record<string, Character> = {
       {
         id: '大铁锤',
         pattern: '0(2)111220-0',
+        weaponType: 'weapon1',
         description: '加点灵活，如果需要自保就优先一级鼓舞；需要搬奶酪则优先二被。',
         detailedDescription: ''
       },
       {
         id: '鸟哨',
         pattern: '031113300',
+        weaponType: 'weapon2',
         description: '加点灵活，如果需要自保就优先一级鼓舞；需要搬奶酪则优先二被。',
         detailedDescription: ''
       }
