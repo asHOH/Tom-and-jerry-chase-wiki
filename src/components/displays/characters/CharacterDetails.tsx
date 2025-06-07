@@ -118,44 +118,45 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                     <Tooltip content={getTooltipContent('跳跃', character.faction.id as 'cat' | 'mouse', isDetailedView)}>跳跃</Tooltip>: {character.jumpHeight}
                   </p>
                 )}
+                
+                {/* Cat faction */}
+                {character.faction.id === 'cat' && character.clawKnifeRange && (
+                  <p className="text-sm text-gray-700 py-1">
+                    <Tooltip content={getTooltipContent('爪刀范围', 'cat', isDetailedView)}>爪刀范围</Tooltip>: {character.clawKnifeRange}
+                  </p>
+                )}
+                {character.faction.id === 'cat' && character.clawKnifeCdHit && character.clawKnifeCdUnhit && (
+                  <p className="text-sm text-gray-700 py-1">
+                    <Tooltip content={getTooltipContent('爪刀CD', 'cat', isDetailedView)}>爪刀CD</Tooltip>: {character.clawKnifeCdUnhit} / {character.clawKnifeCdHit} 秒
+                  </p>
+                )}
+                
+                {/* Mouse faction */}
+                {character.faction.id === 'mouse' && character.attackBoost !== undefined && character.attackBoost !== 0 && (
+                  <p className="text-sm text-gray-700 py-1">
+                    <Tooltip content={getTooltipContent('攻击增伤', 'mouse', isDetailedView)}>攻击增伤</Tooltip>: {character.attackBoost}
+                  </p>
+                )}
+                {character.faction.id === 'mouse' && character.cheesePushSpeed && (
+                  <p className="text-sm text-gray-700 py-1">
+                    <Tooltip content={getTooltipContent('推速', 'mouse', isDetailedView)}>推速</Tooltip>: {character.cheesePushSpeed} %/秒
+                  </p>
+                )}
+                {character.faction.id === 'mouse' && character.wallCrackDamageBoost && (
+                  <p className="text-sm text-gray-700 py-1">
+                    <Tooltip content={getTooltipContent('墙缝增伤', 'mouse', isDetailedView)}>墙缝增伤</Tooltip>: {character.wallCrackDamageBoost}
+                  </p>
+                )}
               </div>
 
-              {/* Cat-specific attributes */}
-              {character.faction.id === 'cat' && (
-                <div className="mt-3 pt-3 border-t border-gray-200">
-                  {character.attackBoost !== undefined && character.attackBoost !== 0 && (
-                    <p className="text-amber-600 py-1">
-                      <Tooltip content={getTooltipContent('攻击增伤', 'cat', isDetailedView)}>攻击增伤</Tooltip>: {character.attackBoost}
-                    </p>
-                  )}
-                  {character.clawKnifeCdHit && character.clawKnifeCdUnhit && (
-                    <p className="text-amber-600 py-1">
-                      <Tooltip content={getTooltipContent('爪刀CD', 'cat', isDetailedView)}>爪刀CD</Tooltip>: {character.clawKnifeCdUnhit} / {character.clawKnifeCdHit} 秒
-                    </p>
-                  )}
-                  {character.clawKnifeRange && (
-                    <p className="text-amber-600 py-1">
-                      <Tooltip content={getTooltipContent('爪刀范围', 'cat', isDetailedView)}>爪刀范围</Tooltip>: {character.clawKnifeRange}
-                    </p>
-                  )}
-                </div>
+              {/* Cat attackBoost if it exists */}
+              {character.faction.id === 'cat' && character.attackBoost !== undefined && character.attackBoost !== 0 && (
+                <p className="text-amber-600 py-1">
+                  <Tooltip content={getTooltipContent('攻击增伤', 'cat', isDetailedView)}>攻击增伤</Tooltip>: {character.attackBoost}
+                </p>
               )}
 
-              {/* Mouse-specific attributes */}
-              {character.faction.id === 'mouse' && (
-                <div className="mt-3 pt-3 border-t border-gray-200">
-                  {character.cheesePushSpeed && (
-                    <p className="text-blue-600 py-1">
-                      <Tooltip content={getTooltipContent('推速', 'mouse', isDetailedView)}>推速</Tooltip>: {character.cheesePushSpeed} %/秒
-                    </p>
-                  )}
-                  {character.wallCrackDamageBoost && (
-                    <p className="text-blue-600 py-1">
-                      <Tooltip content={getTooltipContent('墙缝增伤', 'mouse', isDetailedView)}>墙缝增伤</Tooltip>: {character.wallCrackDamageBoost}
-                    </p>
-                  )}
-                </div>
-              )}              {/* Positioning tags for cat characters */}
+              {/* Positioning tags for cat characters */}
               {character.faction.id === 'cat' && character.catPositioningTags && character.catPositioningTags.length > 0 && (
                 <div className="mt-6 pt-4 border-t border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">定位</h3>
