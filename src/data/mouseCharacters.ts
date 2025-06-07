@@ -31,14 +31,30 @@ export const mouseCharacters: Record<string, Character> = {
         tagName: '奶酪',
         isMinor: false,
         description: '推速快。',
-        detailedDescription: '推速快；被动提供推速加成和搬奶酪速度。'
+        detailedDescription: '此外还有被动提供推速加成和搬奶酪速度。'
       },
       {
         tagName: '辅助',
         isMinor: true,
         description: '鼓舞为队友提供增益、处理二手火箭；鸟哨限制猫的走位。',
-        detailedDescription: '鼓舞为队友提供增益、处理二手火箭；鸟哨限制猫的走位。'
+        detailedDescription: ''
       },
+    ],
+
+    // Skill allocations
+    skillAllocations: [
+      {
+        id: '大铁锤',
+        pattern: '0(2)111220-0',
+        description: '加点灵活，如果需要自保就优先一级鼓舞；需要搬奶酪则优先二被。',
+        detailedDescription: ''
+      },
+      {
+        id: '鸟哨',
+        pattern: '031113300',
+        description: '加点灵活，如果需要自保就优先一级鼓舞；需要搬奶酪则优先二被。',
+        detailedDescription: ''
+      }
     ],
 
     skills: [

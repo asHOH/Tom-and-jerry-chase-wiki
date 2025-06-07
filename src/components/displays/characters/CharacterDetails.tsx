@@ -9,6 +9,7 @@ import {
 import { CharacterDetailsProps } from '@/lib/types';
 import Tooltip from '../../ui/Tooltip';
 import Tag from '../../ui/Tag';
+import SkillAllocationDisplay from './SkillAllocationDisplay';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text, isDetailed }: { text: string; isDetailed: boolean }) => {
@@ -236,6 +237,27 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
               </button>
             )}
           </div>
+
+          {/* Skill Allocations Section */}
+          {character.skillAllocations && character.skillAllocations.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold px-2 py-3 mb-4">加点</h3>
+              <div className="space-y-6">
+                {character.skillAllocations.map((allocation, index) => (
+                  <div key={allocation.id} className="card p-6">
+                    <SkillAllocationDisplay
+                      allocation={allocation}
+                      characterName={character.id}
+                      factionId={character.faction.id as 'cat' | 'mouse'}
+                      characterSkills={character.skills}
+                      isDetailed={isDetailedView}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="space-y-6">
             {character.skills.map((skill) => {              return (
                 <div key={skill.id} className="card p-6">

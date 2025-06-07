@@ -29,6 +29,14 @@ export type MousePositioningTag = {
 export type PositioningTagName = CatPositioningTagName | MousePositioningTagName;
 export type PositioningTag = CatPositioningTag | MousePositioningTag;
 
+// Skill allocation types
+export type SkillAllocation = {
+  id: string;
+  pattern: string; // Format: "021112200" or "013(0)3301-1"
+  description: string;
+  detailedDescription?: string;
+};
+
 export type Character = {
   id: string; // Chinese name (e.g., '汤姆')
   factionId?: FactionId; // Optional in base definition, will be assigned in bulk
@@ -54,6 +62,9 @@ export type Character = {
   // Positioning tags (faction-specific)
   catPositioningTags?: CatPositioningTag[]; // For cat characters
   mousePositioningTags?: MousePositioningTag[]; // For mouse characters
+
+  // Skill allocations
+  skillAllocations?: SkillAllocation[];
 
   skills: Skill[];
 };
