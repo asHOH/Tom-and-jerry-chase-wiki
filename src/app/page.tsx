@@ -99,14 +99,16 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-10 py-3 text-gray-800">角色</h2>
           <FactionButtonGroup>
             <FactionButton
-              emoji="🐱"
+              imageSrc="/images/icons/cat faction.png"
+              imageAlt="猫阵营图标"
               title="猫阵营"
               description="查看猫阵营角色列表"
               onClick={() => handleTabChange('cat')}
               ariaLabel="查看猫阵营角色列表"
             />
             <FactionButton
-              emoji="🐭"
+              imageSrc="/images/icons/mouse faction.png"
+              imageAlt="鼠阵营图标"
               title="鼠阵营"
               description="查看鼠阵营角色列表"
               onClick={() => handleTabChange('mouse')}
@@ -117,14 +119,16 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-10 py-3 text-gray-800">知识卡</h2>
           <FactionButtonGroup>
             <FactionButton
-              emoji="🃏"
+              imageSrc="/images/icons/cat knowledge card.png"
+              imageAlt="猫方知识卡图标"
               title="猫方知识卡"
               description="查看猫方知识卡列表"
               onClick={() => handleTabChange('catCards')}
               ariaLabel="查看猫方知识卡列表"
             />
             <FactionButton
-              emoji="🎴"
+              imageSrc="/images/icons/mouse knowledge card.png"
+              imageAlt="鼠方知识卡图标"
               title="鼠方知识卡"
               description="查看鼠方知识卡列表"
               onClick={() => handleTabChange('mouseCards')}

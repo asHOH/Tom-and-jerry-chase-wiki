@@ -1,8 +1,11 @@
 import React from 'react';
+import Image from 'next/image';
 import { componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 
 export interface FactionButtonProps {
-  emoji: string;
+  emoji?: string;
+  imageSrc?: string;
+  imageAlt?: string;
   title: string;
   description: string;
   onClick: () => void;
@@ -11,7 +14,9 @@ export interface FactionButtonProps {
 }
 
 export function FactionButton({ 
-  emoji, 
+  emoji,
+  imageSrc,
+  imageAlt,
   title, 
   description, 
   onClick, 
@@ -32,7 +37,19 @@ export function FactionButton({
       style={baseStyle}
     >
       <div style={contentStyle}>
-        <span style={emojiStyle}>{emoji}</span>
+        {imageSrc ? (
+          <div style={emojiStyle}>
+            <Image
+              src={imageSrc}
+              alt={imageAlt || title}
+              width={48}
+              height={48}
+              className="object-contain"
+            />
+          </div>
+        ) : (
+          <span style={emojiStyle}>{emoji}</span>
+        )}
         <span style={titleStyle}>{title}</span>
       </div>
       <div style={descriptionStyle}>
