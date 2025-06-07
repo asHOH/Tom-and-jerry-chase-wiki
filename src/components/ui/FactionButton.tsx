@@ -42,7 +42,7 @@ export function FactionButton({
             <Image
               src={imageSrc}
               alt={imageAlt || title}
-              width={48}
+              width={64}
               height={48}
               className="object-contain"
             />

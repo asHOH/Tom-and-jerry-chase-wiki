@@ -89,8 +89,8 @@ export default function TabNavigation({
               <Image
                 src={tab.imageSrc}
                 alt={tab.imageAlt}
-                width={20}
-                height={20}
+                width={35}
+                height={28}
                 className="object-contain"
               />
               <span>{tab.name}</span>
