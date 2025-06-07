@@ -319,15 +319,17 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                       )}
 
                       {/* Only render the description section if there's content to display */}
-                      {((isDetailedView && skill.detailedDescription) || (!isDetailedView && skill.description)) && (
-                        <div className="mt-3 px-2">
-                          {isDetailedView && skill.detailedDescription ? (
-                            <p className="text-gray-700 py-2">{skill.detailedDescription}</p>
-                          ) : (
-                            skill.description && <p className="text-gray-700 py-2">{skill.description}</p>
-                          )}
-                        </div>
-                      )}
+                      {(() => {
+                        const descriptionText = isDetailedView && skill.detailedDescription && skill.detailedDescription.trim() !== '' 
+                          ? skill.detailedDescription 
+                          : skill.description;
+                        
+                        return descriptionText ? (
+                          <div className="mt-3 px-2">
+                            <p className="text-gray-700 py-2">{descriptionText}</p>
+                          </div>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
 
@@ -337,7 +339,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                         <div key={`${skill.id}-${level.level}`} className="bg-gray-100 p-4 rounded">
                           <p className="px-2 py-1">
                             <span className="font-bold">Lv. {level.level}:</span>{' '}
-                            {isDetailedView && level.detailedDescription ?
+                            {isDetailedView && level.detailedDescription && level.detailedDescription.trim() !== '' ?
                               level.detailedDescription :
                               level.description
                             }
