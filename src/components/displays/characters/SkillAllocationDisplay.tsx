@@ -95,7 +95,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           unoptimized
         />
         {hasNegativeEffect && (
-          <div className="absolute -top-1 -right-1 w-4 h-4 pointer-events-none z-10">
+          <div className="absolute -top-[5px] -right-[5px] w-4 h-4 pointer-events-none z-10">
             <Image
               src="/images/misc/禁止.png"
               alt="负面效果"
@@ -204,14 +204,14 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                 return (
                   <div key={groupIndex} className="relative flex flex-col items-center" style={{ width: `${totalWidth}px` }}>
                     {/* Character level number range */}
-                    <span className="text-xs text-gray-500 mb-1">{levelText}</span>
+                    <span className="text-xs text-gray-500 mb-2">{levelText}</span>
                     
                     {/* Parallel skill icons container with increased height and proper spacing */}
                     <div className="relative h-12 flex gap-1 justify-center">
                       {group.levels.map((level, levelIndex) => (
                         <div key={levelIndex} className="relative w-10 flex flex-col justify-center">
                           {/* First option (top) */}
-                          <div className="absolute" style={{ top: '-6px' }}>
+                          <div className="absolute" style={{ top: '-7px' }}>
                             {renderSkillIcon(
                               level.parallelOptions![0], 
                               (level as any).actualLevel, 
@@ -221,7 +221,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                           </div>
                           
                           {/* Second option (bottom) */}
-                          <div className="absolute" style={{ top: '18px' }}>
+                          <div className="absolute" style={{ top: '19px' }}>
                             {renderSkillIcon(
                               level.parallelOptions![1], 
                               (level as any).parallelActualLevel, 
@@ -240,7 +240,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                 return (
                   <div key={groupIndex} className="relative flex flex-col items-center">
                     {/* Character level number */}
-                    <span className="text-xs text-gray-500 mb-1">Lv.{group.characterLevel}</span>
+                    <span className="text-xs text-gray-500 mb-2">Lv.{group.characterLevel}</span>
                     
                     {/* Skill icon container with consistent height */}
                     <div className="relative">
