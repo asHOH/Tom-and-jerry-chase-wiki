@@ -4,11 +4,13 @@ export type ParsedSkillLevel = {
   skillType: '0' | '1' | '2' | '3'; // 0=被动, 1=主动, 2=武器1, 3=武器2
   isDelayed: boolean; // In parentheses - 留加点
   hasNegativeEffect: boolean; // After "-" - negative effects
+  isParallel?: boolean; // In brackets - parallel skills
+  parallelOptions?: Array<'0' | '1' | '2' | '3'>; // Options for parallel skills
 };
 
 /**
  * Parse skill allocation pattern string into individual skill levels
- * Format: "021112200" or "013(0)3301-1"
+ * Format: "021112200" or "013(0)3301-1" or "011[12]20-0"
  */
 export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[] => {
   const result: ParsedSkillLevel[] = [];
@@ -33,9 +35,49 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
     let skillType: '0' | '1' | '2' | '3';
     let isDelayed = false;
     let hasNegativeEffect = false;
+    let isParallel = false;
+    let parallelOptions: Array<'0' | '1' | '2' | '3'> = [];
 
+    // Check if this level is parallel (in brackets)
+    if (char === '[') {
+      isParallel = true;
+      i++; // Skip opening bracket
+      
+      // Extract content inside brackets
+      let bracketContent = '';
+      while (i < pattern.length && pattern[i] !== ']') {
+        bracketContent += pattern[i];
+        i++;
+      }
+      i++; // Skip closing bracket
+      
+      // Validate bracket content must be even length
+      if (bracketContent.length % 2 !== 0) {
+        throw new Error(`Parallel skill content must have even length: ${bracketContent}`);
+      }
+      
+      // Split into first half and second half
+      const halfLength = bracketContent.length / 2;
+      const firstHalf = bracketContent.slice(0, halfLength);
+      const secondHalf = bracketContent.slice(halfLength);
+      
+      // Add each pair as separate parallel entries
+      for (let j = 0; j < halfLength; j++) {
+        const firstOption = firstHalf[j] as '0' | '1' | '2' | '3';
+        const secondOption = secondHalf[j] as '0' | '1' | '2' | '3';
+        
+        result.push({
+          skillType: firstOption, // Use first option as primary
+          isDelayed: false,
+          hasNegativeEffect: hasNegativeMarker && i > negativeMarkerIndex,
+          isParallel: true,
+          parallelOptions: [firstOption, secondOption]
+        });
+      }
+      continue;
+    }
     // Check if this level is delayed (in parentheses)
-    if (char === '(') {
+    else if (char === '(') {
       i++; // Skip opening parenthesis
       skillType = pattern[i] as '0' | '1' | '2' | '3';
       isDelayed = true;
@@ -58,7 +100,9 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
     result.push({
       skillType,
       isDelayed,
-      hasNegativeEffect
+      hasNegativeEffect,
+      isParallel,
+      parallelOptions: parallelOptions.length > 0 ? parallelOptions : undefined
     });
   }
 
@@ -71,40 +115,53 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
  * 1. Must have exactly 9 skill levels
  * 2. Each number (0,1,2 or 0,1,3) must appear exactly 3 times
  * 3. Cannot have both 2 and 3 in the same pattern
+ * 4. Parallel skills (in brackets) must have even length content
  */
 export const validateSkillAllocationPattern = (pattern: string): boolean => {
-  const parsed = parseSkillAllocationPattern(pattern);
-  
-  // Must have exactly 9 levels
-  if (parsed.length !== 9) {
+  try {
+    const parsed = parseSkillAllocationPattern(pattern);
+    
+    // Must have exactly 9 levels
+    if (parsed.length !== 9) {
+      return false;
+    }
+
+    // Count occurrences of each skill type (including parallel options)
+    const counts = { '0': 0, '1': 0, '2': 0, '3': 0 };
+    
+    for (const level of parsed) {
+      if (level.isParallel && level.parallelOptions) {
+        // For parallel skills, count all options
+        for (const option of level.parallelOptions) {
+          counts[option]++;
+        }
+      } else {
+        counts[level.skillType]++;
+      }
+    }
+
+    // Each number must appear exactly 3 times
+    if (counts['0'] !== 3 || counts['1'] !== 3) {
+      return false;
+    }
+
+    // Must have either 3x'2' or 3x'3', but not both
+    const hasWeapon1 = counts['2'] === 3;
+    const hasWeapon2 = counts['3'] === 3;
+    
+    if (hasWeapon1 && hasWeapon2) {
+      return false; // Cannot have both weapon types
+    }
+    
+    if (!hasWeapon1 && !hasWeapon2) {
+      return false; // Must have one weapon type
+    }
+
+    return true;
+  } catch (error) {
+    // If parsing fails (e.g., invalid bracket content), return false
     return false;
   }
-
-  // Count occurrences of each skill type
-  const counts = { '0': 0, '1': 0, '2': 0, '3': 0 };
-  
-  for (const level of parsed) {
-    counts[level.skillType]++;
-  }
-
-  // Each number must appear exactly 3 times
-  if (counts['0'] !== 3 || counts['1'] !== 3) {
-    return false;
-  }
-
-  // Must have either 3x'2' or 3x'3', but not both
-  const hasWeapon1 = counts['2'] === 3;
-  const hasWeapon2 = counts['3'] === 3;
-  
-  if (hasWeapon1 && hasWeapon2) {
-    return false; // Cannot have both weapon types
-  }
-  
-  if (!hasWeapon1 && !hasWeapon2) {
-    return false; // Must have one weapon type
-  }
-
-  return true;
 };
 
 /**
