@@ -136,6 +136,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     endCharacterLevel?: number;
     levels: typeof actualLevels;
     isParallelGroup: boolean;
+    columnLevels?: number[][]; // For parallel groups, store levels for each column
   }> = [];
 
   let i = 0;
@@ -154,6 +155,16 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       // Group all parallel skills together
       const parallelLevels = actualLevels.slice(i, i + parallelCount);
       
+      // Calculate column levels for parallel skills
+      // Each column gets alternating levels: first column gets odd levels, second gets even levels
+      const firstColumnLevels: number[] = [];
+      const secondColumnLevels: number[] = [];
+      
+      for (let k = 0; k < parallelCount; k++) {
+        firstColumnLevels.push(characterLevel + k);
+        secondColumnLevels.push(characterLevel + k + parallelCount);
+      }
+      
       // For parallel skills, each skill pair takes 2 character levels
       const totalSkillsInGroup = parallelCount * 2;
       
@@ -161,7 +172,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         characterLevel,
         endCharacterLevel: characterLevel + totalSkillsInGroup - 1,
         levels: parallelLevels,
-        isParallelGroup: true
+        isParallelGroup: true,
+        columnLevels: [firstColumnLevels, secondColumnLevels]
       });
       
       characterLevel += totalSkillsInGroup;
@@ -193,18 +205,26 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           <div className="flex flex-wrap gap-2">
             {levelGroups.map((group, groupIndex) => {
               if (group.isParallelGroup) {
-                // Display character level range for parallel skills
-                const levelText = group.endCharacterLevel 
-                  ? `Lv.${group.characterLevel}~${group.endCharacterLevel}`
-                  : `Lv.${group.characterLevel}`;
-
-                // Calculate total width needed for all parallel skills
+                // For parallel skills, calculate individual column levels
+                // Each column represents a different skill ordering choice
                 const totalWidth = group.levels.length * 44; // 40px + 4px gap per skill
 
                 return (
                   <div key={groupIndex} className="relative flex flex-col items-center" style={{ width: `${totalWidth}px` }}>
-                    {/* Character level number range */}
-                    <span className="text-xs text-gray-500 mb-2">{levelText}</span>
+                    {/* Individual column level labels */}
+                    <div className="flex gap-1 justify-center mb-2">
+                      {group.levels.map((level, levelIndex) => {
+                        // Calculate levels for each column (first and second skill options)
+                        const firstSkillLevel = group.characterLevel + levelIndex;
+                        const secondSkillLevel = group.characterLevel + levelIndex + group.levels.length;
+                        
+                        return (
+                          <div key={levelIndex} className="w-10 flex flex-col items-center">
+                            <span className="text-xs text-gray-500">Lv.{firstSkillLevel}/{secondSkillLevel}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                     
                     {/* Parallel skill icons container with increased height and proper spacing */}
                     <div className="relative h-12 flex gap-1 justify-center">
