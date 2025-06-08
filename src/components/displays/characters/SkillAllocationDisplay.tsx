@@ -31,7 +31,31 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   characterSkills,
   isDetailed
 }) => {
-  const parsedLevels = parseSkillAllocationPattern(allocation.pattern);
+  // Preprocess pattern to auto-parallel first two skills if needed
+  const preprocessPattern = (pattern: string): string => {
+    // Check if first two characters are regular skills (not delayed, not already parallel)
+    if (pattern.length >= 2) {
+      const firstChar = pattern[0];
+      const secondChar = pattern[1];
+      
+      // Check if first two are regular numbers and not already in brackets or parentheses
+      const isFirstRegular = ['0', '1', '2', '3'].includes(firstChar);
+      const isSecondRegular = ['0', '1', '2', '3'].includes(secondChar);
+      const isFirstDelayed = pattern.startsWith('(');
+      const isSecondDelayed = pattern.charAt(1) === '(' || (pattern.charAt(0) === '(' && pattern.charAt(3) === '(');
+      const isAlreadyParallel = pattern.startsWith('[');
+      
+      if (isFirstRegular && isSecondRegular && !isFirstDelayed && !isSecondDelayed && !isAlreadyParallel) {
+        // Wrap first two characters in brackets
+        return `[${firstChar}${secondChar}]${pattern.slice(2)}`;
+      }
+    }
+    
+    return pattern;
+  };
+  
+  const processedPattern = preprocessPattern(allocation.pattern);
+  const parsedLevels = parseSkillAllocationPattern(processedPattern);
   // Calculate actual skill levels at each position
   const skillLevels = { '0': 0, '1': 0, '2': 0, '3': 0 };
   
