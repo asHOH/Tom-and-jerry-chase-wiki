@@ -32,24 +32,22 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   isDetailed
 }) => {
   const parsedLevels = parseSkillAllocationPattern(allocation.pattern);
-
-  // Calculate actual skill levels at each position for both primary and parallel options
+  // Calculate actual skill levels at each position
   const skillLevels = { '0': 0, '1': 0, '2': 0, '3': 0 };
-  const parallelSkillLevels = { '0': 0, '1': 0, '2': 0, '3': 0 };
   
   const actualLevels = parsedLevels.map((level) => {
     if (level.isParallel && level.parallelOptions) {
-      // For parallel skills, track both options separately
+      // For parallel skills, both options get the same level increment
       const firstOption = level.parallelOptions[0];
       const secondOption = level.parallelOptions[1];
       
       skillLevels[firstOption]++;
-      parallelSkillLevels[secondOption]++;
+      skillLevels[secondOption]++;
       
       return {
         ...level,
         actualLevel: skillLevels[firstOption],
-        parallelActualLevel: parallelSkillLevels[secondOption]
+        parallelActualLevel: skillLevels[secondOption]
       };
     } else {
       skillLevels[level.skillType]++;
