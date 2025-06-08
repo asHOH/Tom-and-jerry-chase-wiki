@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { SkillAllocation } from '@/data/types';
 import { parseSkillAllocationPattern, getSkillAllocationImageUrl } from '@/lib/skillAllocationUtils';
+import { getSkillLevelColors } from '@/lib/design-tokens';
 import Tooltip from '../../ui/Tooltip';
 
 // Component to render text with item key tooltips
@@ -32,6 +33,16 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
 }) => {
   const parsedLevels = parseSkillAllocationPattern(allocation.pattern);
 
+  // Calculate actual skill levels at each position
+  const skillLevels = { '0': 0, '1': 0, '2': 0, '3': 0 }; // All skills start at level 1
+  const actualLevels = parsedLevels.map((level) => {
+    skillLevels[level.skillType]++; // Increment the level for this skill type
+    return {
+      ...level,
+      actualLevel: skillLevels[level.skillType] // Store the new level
+    };
+  });
+
   // Create a mapping of skill types to actual skill data
   const skillTypeToSkill = {
     '0': characterSkills.find(s => s.type === 'PASSIVE'),
@@ -52,7 +63,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         {/* Skill allocation pattern display - takes remaining space */}
         <div className="flex-1">
           <div className="flex flex-wrap gap-2">
-            {parsedLevels.map((level, index) => {
+            {actualLevels.map((level, index) => {
               const skill = skillTypeToSkill[level.skillType];
               const imageUrl = skill?.imageUrl || getSkillAllocationImageUrl(
                 characterName, 
@@ -60,7 +71,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                 factionId,
                 skill?.name
               );
-              
+
               return (
                 <div key={index} className="relative flex flex-col items-center">
                   {/* Skill level number */}
@@ -84,7 +95,14 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                       </Tooltip>
                     ) : level.hasNegativeEffect ? (
                       <Tooltip content="负面效果：此技能升级会带来负面效果">
-                        <div className="relative w-10 h-10 border-2 rounded-full border-gray-300 bg-white overflow-hidden">
+                        <div 
+                          className="relative w-10 h-10 border-2 rounded-full overflow-hidden"
+                          style={{
+                            ...getSkillLevelColors(level.actualLevel, true),
+                            borderWidth: '2px',
+                            borderStyle: 'solid'
+                          }}
+                        >
                           <Image
                             src={imageUrl}
                             alt={skill?.name || `技能${level.skillType}`}
@@ -96,7 +114,14 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                         </div>
                       </Tooltip>
                     ) : (
-                      <div className="relative w-10 h-10 border-2 rounded-full border-gray-300 bg-white overflow-hidden">
+                      <div 
+                        className="relative w-10 h-10 border-2 rounded-full overflow-hidden"
+                        style={{
+                          ...getSkillLevelColors(level.actualLevel, true),
+                          borderWidth: '2px',
+                          borderStyle: 'solid'
+                        }}
+                      >
                         <Image
                           src={imageUrl}
                           alt={skill?.name || `技能${level.skillType}`}

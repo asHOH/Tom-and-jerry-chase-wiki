@@ -19,7 +19,58 @@ export const designTokens = {
       hoverText: '#ffffff',       // white
       border: 'transparent'
     },
-      // Card rank colors
+    
+    // Skill type colors
+    skillTypes: {
+      passive: {
+        text: '#4b5563',      // gray-600
+        background: '#f9fafb', // gray-50
+        border: '#9ca3af',     // gray-400
+        container: 'bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-300'
+      },
+      active: {
+        text: '#2563eb',      // blue-600
+        background: '#eff6ff', // blue-50
+        border: '#3b82f6',     // blue-500
+        container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-300'
+      },
+      weapon1: {
+        text: '#059669',      // emerald-600
+        background: '#ecfdf5', // emerald-50
+        border: '#10b981',     // emerald-500
+        container: 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-300'
+      },
+      weapon2: {
+        text: '#7c3aed',      // violet-600
+        background: '#f5f3ff', // violet-50
+        border: '#8b5cf6',     // violet-500
+        container: 'bg-gradient-to-r from-violet-50 to-violet-100 border border-violet-300'
+      }
+    },
+    
+    // Skill level colors
+    skillLevels: {
+      level1: {
+        text: '#2563eb',      // blue-600
+        background: '#eff6ff', // blue-50
+        border: '#3b82f6',     // blue-500
+        container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-300'
+      },
+      level2: {
+        text: '#d97706',      // amber-600
+        background: '#fffbeb', // amber-50
+        border: '#f59e0b',     // amber-500
+        container: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-300'
+      },
+      level3: {
+        text: '#dc2626',      // red-600
+        background: '#fef2f2', // red-50
+        border: '#ef4444',     // red-500
+        container: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-300'
+      }
+    },
+    
+    // Card rank colors
     rank: {
       S: {
         text: '#ea580c',      // orange-600
@@ -448,6 +499,81 @@ export const getPositioningTagColors = (tagName: string, isMinor: boolean = fals
     backgroundColor: colorScheme.background,
     ...(includeBorder && { borderColor: colorScheme.border })
   };
+};
+
+// Skill type utility functions
+export const getSkillTypeColors = (skillType: '0' | '1' | '2' | '3' | 'PASSIVE' | 'ACTIVE' | 'WEAPON1' | 'WEAPON2', includeBorder: boolean = false) => {
+  // Map skill types to design token keys
+  const skillTypeMapping: Record<string, keyof typeof designTokens.colors.skillTypes> = {
+    '0': 'passive',
+    'PASSIVE': 'passive',
+    '1': 'active', 
+    'ACTIVE': 'active',
+    '2': 'weapon1',
+    'WEAPON1': 'weapon1',
+    '3': 'weapon2',
+    'WEAPON2': 'weapon2'
+  };
+
+  const skillKey = skillTypeMapping[skillType];
+  const colorScheme = skillKey ? designTokens.colors.skillTypes[skillKey] : designTokens.colors.skillTypes.passive;
+  
+  return {
+    color: colorScheme.text,
+    backgroundColor: colorScheme.background,
+    ...(includeBorder && { borderColor: colorScheme.border })
+  };
+};
+
+export const getSkillTypeContainerColor = (skillType: '0' | '1' | '2' | '3' | 'PASSIVE' | 'ACTIVE' | 'WEAPON1' | 'WEAPON2'): string => {
+  const skillTypeMapping: Record<string, keyof typeof designTokens.colors.skillTypes> = {
+    '0': 'passive',
+    'PASSIVE': 'passive',
+    '1': 'active',
+    'ACTIVE': 'active', 
+    '2': 'weapon1',
+    'WEAPON1': 'weapon1',
+    '3': 'weapon2',
+    'WEAPON2': 'weapon2'
+  };
+
+  const skillKey = skillTypeMapping[skillType];
+  return skillKey ? designTokens.colors.skillTypes[skillKey].container : designTokens.colors.skillTypes.passive.container;
+};
+
+// Skill level utility functions
+export const getSkillLevelColors = (level: number, includeBorder: boolean = false) => {
+  let colorScheme;
+  
+  if (level === 1) {
+    colorScheme = designTokens.colors.skillLevels.level1;
+  } else if (level === 2) {
+    colorScheme = designTokens.colors.skillLevels.level2;
+  } else if (level === 3) {
+    colorScheme = designTokens.colors.skillLevels.level3;
+  } else {
+    // Default to level 1 colors for any other level
+    colorScheme = designTokens.colors.skillLevels.level1;
+  }
+  
+  return {
+    color: colorScheme.text,
+    backgroundColor: colorScheme.background,
+    ...(includeBorder && { borderColor: colorScheme.border })
+  };
+};
+
+export const getSkillLevelContainerColor = (level: number): string => {
+  if (level === 1) {
+    return designTokens.colors.skillLevels.level1.container;
+  } else if (level === 2) {
+    return designTokens.colors.skillLevels.level2.container;
+  } else if (level === 3) {
+    return designTokens.colors.skillLevels.level3.container;
+  } else {
+    // Default to level 1 colors for any other level
+    return designTokens.colors.skillLevels.level1.container;
+  }
 };
 
 export const getPositioningTagContainerColor = (tagName: string, isMinor: boolean = false, faction?: 'cat' | 'mouse'): string => {

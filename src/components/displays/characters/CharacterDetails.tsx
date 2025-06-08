@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design-tokens';
+import { getPositioningTagColors, getPositioningTagContainerColor, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import { 
   getTooltipContent, 
   getPositioningTagTooltipContent, 
@@ -266,12 +266,20 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
 
           <div className="space-y-6">
             {character.skills.map((skill) => {              return (
-                <div key={skill.id} className="card p-6">
+                <div 
+                  key={skill.id} 
+                  className="card p-6"
+                >
                 <div className="flex justify-between items-start">
                   {/* Skill Image */}
                     {skill.imageUrl && (
                       <div className="flex-shrink-0 mr-6">
-                        <div className="relative w-16 h-16 rounded-full border-2 border-gray-200 overflow-hidden">
+                        <div 
+                          className="relative w-16 h-16 rounded-full border-2 overflow-hidden border-gray-300"
+                          style={{
+                            backgroundColor: '#ffffff'
+                          }}
+                        >
                           <img
                             src={skill.imageUrl}
                             alt={skill.name}
@@ -360,14 +368,19 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                         ) : null;
                       })()}
                     </div>
-                  </div>
+                </div>
 
-                  <div className="mt-6">
+                <div className="mt-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {skill.skillLevels.map((level) => (
-                        <div key={`${skill.id}-${level.level}`} className="bg-gray-100 p-4 rounded">
+                    {skill.skillLevels.map((level) => (
+                        <div key={`${skill.id}-${level.level}`} className={`p-4 rounded ${getSkillLevelContainerColor(level.level)}`}>
                           <p className="px-2 py-1">
-                            <span className="font-bold">Lv. {level.level}:</span>{' '}
+                            <span 
+                              className="font-bold" 
+                              style={{ color: getSkillLevelColors(level.level).color }}
+                            >
+                              Lv. {level.level}:
+                            </span>{' '}
                             {isDetailedView && level.detailedDescription && level.detailedDescription.trim() !== '' ?
                               level.detailedDescription :
                               level.description
