@@ -136,7 +136,6 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     endCharacterLevel?: number;
     levels: typeof actualLevels;
     isParallelGroup: boolean;
-    columnLevels?: number[][]; // For parallel groups, store levels for each column
   }> = [];
 
   let i = 0;
@@ -155,16 +154,6 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       // Group all parallel skills together
       const parallelLevels = actualLevels.slice(i, i + parallelCount);
       
-      // Calculate column levels for parallel skills
-      // Each column gets alternating levels: first column gets odd levels, second gets even levels
-      const firstColumnLevels: number[] = [];
-      const secondColumnLevels: number[] = [];
-      
-      for (let k = 0; k < parallelCount; k++) {
-        firstColumnLevels.push(characterLevel + k);
-        secondColumnLevels.push(characterLevel + k + parallelCount);
-      }
-      
       // For parallel skills, each skill pair takes 2 character levels
       const totalSkillsInGroup = parallelCount * 2;
       
@@ -172,8 +161,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         characterLevel,
         endCharacterLevel: characterLevel + totalSkillsInGroup - 1,
         levels: parallelLevels,
-        isParallelGroup: true,
-        columnLevels: [firstColumnLevels, secondColumnLevels]
+        isParallelGroup: true
       });
       
       characterLevel += totalSkillsInGroup;

@@ -15,13 +15,10 @@ export type ParsedSkillLevel = {
 export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[] => {
   const result: ParsedSkillLevel[] = [];
   let i = 0;
-  let hasNegativeMarker = false;
-
+  
   // Check if pattern contains negative marker "-"
   const negativeMarkerIndex = pattern.indexOf('-');
-  if (negativeMarkerIndex !== -1) {
-    hasNegativeMarker = true;
-  }
+  const hasNegativeMarker = negativeMarkerIndex !== -1;
 
   while (i < pattern.length) {
     const char = pattern[i];
@@ -36,7 +33,6 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
     let isDelayed = false;
     let hasNegativeEffect = false;
     let isParallel = false;
-    let parallelOptions: Array<'0' | '1' | '2' | '3'> = [];
 
     // Check if this level is parallel (in brackets)
     if (char === '[') {
@@ -102,7 +98,7 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
       isDelayed,
       hasNegativeEffect,
       isParallel,
-      parallelOptions: parallelOptions.length > 0 ? parallelOptions : undefined
+      parallelOptions: undefined
     });
   }
 
@@ -194,12 +190,7 @@ export const getSkillAllocationImageUrl = (
   }
 
   // For other skills, use character name + skill number + skill name
-  if (skillName) {
-    const skillNumber = skillType === '1' ? '1' : skillType === '2' ? '2' : '3';
-    return `/images/${factionId}Skills/${characterName}${skillNumber}-${skillName}.png`;
-  }
-
-  // Fallback for when skill name is not provided
   const skillNumber = skillType === '1' ? '1' : skillType === '2' ? '2' : '3';
-  return `/images/${factionId}Skills/${characterName}${skillNumber}-placeholder.png`;
+  const suffix = skillName || 'placeholder';
+  return `/images/${factionId}Skills/${characterName}${skillNumber}-${suffix}.png`;
 };
