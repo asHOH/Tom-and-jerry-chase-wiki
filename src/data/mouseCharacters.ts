@@ -45,25 +45,18 @@ export const mouseCharacters: Record<string, Character> = {
     skillAllocations: [
       {
         id: '大铁锤',
-        pattern: '0(2)11[12]20-0',
+        pattern: '0[12]112200',
         weaponType: 'weapon1',
-        description: '加点灵活，如果需要自保就优先一级鼓舞；需要搬奶酪则优先二被。',
+        description: '加点灵活，如需自保就优先一级鼓舞；需要搬奶酪则优先二被。',
         detailedDescription: ''
       },
       {
         id: '鸟哨',
-        pattern: '031113300',
+        pattern: '0[13]113300',
         weaponType: 'weapon2',
-        description: '加点灵活，如果需要自保就优先一级鼓舞；需要搬奶酪则优先二被。',
+        description: '加点灵活，如需自保就优先一级鼓舞；需要搬奶酪则优先二被。',
         detailedDescription: ''
       },
-      {
-        id: '大铁锤复合',
-        pattern: '0[1122]1200',
-        weaponType: 'weapon1',
-        description: '复合加点示例，[1122]表示可以选择1122顺序或2211顺序。',
-        detailedDescription: '第2-5级可以根据局面选择不同的技能升级顺序。'
-      }
     ],
 
     skills: [
