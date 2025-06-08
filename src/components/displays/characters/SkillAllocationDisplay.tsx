@@ -131,7 +131,6 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       return iconElement;
     }
   };
-
   // Calculate character levels and group parallel skills
   let characterLevel = 2; // Character starts at level 2
   const levelGroups: Array<{
@@ -146,7 +145,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     const level = actualLevels[i];
     
     if (level.isParallel && level.parallelOptions) {
-      // Find how many consecutive parallel skills we have
+      // Find consecutive parallel skills that should be grouped together
       let parallelCount = 0;
       let j = i;
       while (j < actualLevels.length && actualLevels[j].isParallel) {
@@ -156,14 +155,18 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       
       // Group all parallel skills together
       const parallelLevels = actualLevels.slice(i, i + parallelCount);
+      
+      // For parallel skills, each skill pair takes 2 character levels
+      const totalSkillsInGroup = parallelCount * 2;
+      
       levelGroups.push({
         characterLevel,
-        endCharacterLevel: characterLevel + parallelCount - 1,
+        endCharacterLevel: characterLevel + totalSkillsInGroup - 1,
         levels: parallelLevels,
         isParallelGroup: true
       });
       
-      characterLevel += parallelCount;
+      characterLevel += totalSkillsInGroup;
       i += parallelCount;
     } else {
       // Single skill
@@ -197,33 +200,40 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                   ? `Lv.${group.characterLevel}~${group.endCharacterLevel}`
                   : `Lv.${group.characterLevel}`;
 
+                // Calculate total width needed for all parallel skills
+                const totalWidth = group.levels.length * 44; // 40px + 4px gap per skill
+
                 return (
-                  <div key={groupIndex} className="relative flex flex-col items-center">
+                  <div key={groupIndex} className="relative flex flex-col items-center" style={{ width: `${totalWidth}px` }}>
                     {/* Character level number range */}
                     <span className="text-xs text-gray-500 mb-1">{levelText}</span>
                     
                     {/* Parallel skill icons container with increased height and proper spacing */}
-                    <div className="relative h-12 w-10 flex flex-col justify-center">
-                      {/* First option (top) */}
-                      <div className="absolute left-0" style={{ top: '-6px' }}>
-                        {renderSkillIcon(
-                          group.levels[0].parallelOptions![0], 
-                          (group.levels[0] as any).actualLevel, 
-                          group.levels[0].isDelayed, 
-                          group.levels[0].hasNegativeEffect
-                        )}
-                      </div>
-                      
-                      {/* Second option (bottom) */}
-                      <div className="absolute left-0" style={{ top: '18px' }}>
-                        {renderSkillIcon(
-                          group.levels[0].parallelOptions![1], 
-                          (group.levels[0] as any).parallelActualLevel, 
-                          group.levels[0].isDelayed, 
-                          group.levels[0].hasNegativeEffect, 
-                          true
-                        )}
-                      </div>
+                    <div className="relative h-12 flex gap-1 justify-center">
+                      {group.levels.map((level, levelIndex) => (
+                        <div key={levelIndex} className="relative w-10 flex flex-col justify-center">
+                          {/* First option (top) */}
+                          <div className="absolute" style={{ top: '-6px' }}>
+                            {renderSkillIcon(
+                              level.parallelOptions![0], 
+                              (level as any).actualLevel, 
+                              level.isDelayed, 
+                              level.hasNegativeEffect
+                            )}
+                          </div>
+                          
+                          {/* Second option (bottom) */}
+                          <div className="absolute" style={{ top: '18px' }}>
+                            {renderSkillIcon(
+                              level.parallelOptions![1], 
+                              (level as any).parallelActualLevel, 
+                              level.isDelayed, 
+                              level.hasNegativeEffect, 
+                              true
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 );
