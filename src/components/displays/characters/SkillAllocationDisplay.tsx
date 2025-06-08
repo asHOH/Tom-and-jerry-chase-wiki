@@ -82,7 +82,13 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                     {/* Main skill icon with appropriate tooltip */}
                     {level.isDelayed ? (
                       <Tooltip content="留加点：加点瞬间有额外收益，需把握时机">
-                        <div className="relative w-10 h-10 border-2 border-orange-400 bg-orange-50 overflow-hidden">
+                        <div className="relative w-10 h-10 border-2 overflow-hidden"
+                          style={{
+                            ...getSkillLevelColors(level.actualLevel, true),
+                            borderWidth: '2px',
+                            borderStyle: 'solid'
+                          }}
+                        >
                           <Image
                             src={imageUrl}
                             alt={skill?.name || `技能${level.skillType}`}
