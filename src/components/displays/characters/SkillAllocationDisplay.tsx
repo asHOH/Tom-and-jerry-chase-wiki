@@ -12,10 +12,10 @@ const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }
   return <>{text}</>;
 };
 
-// Type for processed skill levels with actual level information
+// Type for processed skill levels with current level information
 type ProcessedSkillLevel = ParsedSkillLevel & {
-  actualLevel: number;
-  parallelActualLevel?: number; // Only present for parallel skills
+  currentLevel: number;
+  parallelCurrentLevel?: number; // Only present for parallel skills
 };
 
 interface SkillAllocationDisplayProps {
@@ -65,7 +65,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   
   const skillLevels = { '0': 0, '1': 0, '2': 0, '3': 0 };
   
-  const actualLevels: ProcessedSkillLevel[] = parsedLevels.map((level) => {
+  const currentLevels: ProcessedSkillLevel[] = parsedLevels.map((level) => {
     if (level.isParallel && level.parallelOptions) {
       // For parallel skills, both options get the same level increment
       const firstOption = level.parallelOptions[0];
@@ -76,28 +76,28 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       
       return {
         ...level,
-        actualLevel: skillLevels[firstOption],
-        parallelActualLevel: skillLevels[secondOption]
+        currentLevel: skillLevels[firstOption],
+        parallelCurrentLevel: skillLevels[secondOption]
       };
     } else {
       skillLevels[level.skillType]++;
       return {
         ...level,
-        actualLevel: skillLevels[level.skillType]
+        currentLevel: skillLevels[level.skillType]
       };
     }
   });
 
-  // Create a mapping of skill types to actual skill data
-  const skillTypeToSkill = {
+  // Create a mapping of skill types to current skill data
+  const skillTypeMap = {
     '0': characterSkills.find(s => s.type === 'PASSIVE'),
     '1': characterSkills.find(s => s.type === 'ACTIVE'),
     '2': characterSkills.find(s => s.type === 'WEAPON1'),
     '3': characterSkills.find(s => s.type === 'WEAPON2'),
   };
 
-  const renderSkillIcon = (skillType: '0' | '1' | '2' | '3', actualLevel: number, isDelayed: boolean, hasNegativeEffect: boolean, _isSecondaryParallel = false) => {
-    const skill = skillTypeToSkill[skillType];
+  const renderSkillIcon = (skillType: '0' | '1' | '2' | '3', currentLevel: number, isDelayed: boolean, hasNegativeEffect: boolean, _isSecondaryParallel = false) => {
+    const skill = skillTypeMap[skillType];
     const imageUrl = skill?.imageUrl || getSkillAllocationImageUrl(
       characterName,
       skillType,
@@ -106,7 +106,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     );
 
     const baseStyle = {
-      ...getSkillLevelColors(actualLevel, true),
+      ...getSkillLevelColors(currentLevel, true),
       borderWidth: '2px',
       borderStyle: 'solid'
     };
@@ -164,25 +164,25 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   const levelGroups: Array<{
     characterLevel: number;
     endCharacterLevel?: number;
-    levels: typeof actualLevels;
+    levels: typeof currentLevels;
     isParallelGroup: boolean;
   }> = [];
 
   let i = 0;
-  while (i < actualLevels.length) {
-    const level = actualLevels[i];
+  while (i < currentLevels.length) {
+    const level = currentLevels[i];
     
     if (level.isParallel && level.parallelOptions) {
       // Find consecutive parallel skills that should be grouped together
       let parallelCount = 0;
       let j = i;
-      while (j < actualLevels.length && actualLevels[j].isParallel) {
+      while (j < currentLevels.length && currentLevels[j].isParallel) {
         parallelCount++;
         j++;
       }
       
       // Group all parallel skills together
-      const parallelLevels = actualLevels.slice(i, i + parallelCount);
+      const parallelLevels = currentLevels.slice(i, i + parallelCount);
       
       // For parallel skills, each skill pair takes 2 character levels
       const totalSkillsInGroup = parallelCount * 2;
@@ -257,7 +257,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                           <div className="absolute" style={{ top: '-7px' }}>
                             {renderSkillIcon(
                               level.parallelOptions![0],
-                              level.actualLevel,
+                              level.currentLevel,
                               level.isDelayed,
                               level.hasNegativeEffect
                             )}
@@ -267,7 +267,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                           <div className="absolute" style={{ top: '19px' }}>
                             {renderSkillIcon(
                               level.parallelOptions![1],
-                              level.parallelActualLevel!,
+                              level.parallelCurrentLevel!,
                               level.isDelayed,
                               level.hasNegativeEffect,
                               true
@@ -287,7 +287,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                     
                     {/* Skill icon container with consistent height */}
                     <div className="relative">
-                      {renderSkillIcon(level.skillType, level.actualLevel, level.isDelayed, level.hasNegativeEffect)}
+                      {renderSkillIcon(level.skillType, level.currentLevel, level.isDelayed, level.hasNegativeEffect)}
                     </div>
                   </div>
                 );
