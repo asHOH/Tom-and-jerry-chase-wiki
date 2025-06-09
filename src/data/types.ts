@@ -77,6 +77,7 @@ export type Skill = {
   description?: string; // Basic description (optional, especially for passive skills)
   detailedDescription?: string; // Detailed description for detailed view
   imageUrl?: string; // Skill icon image URL
+  videoUrl?: string; // Skill video URL (external link preferred)
 
   // Skill usage properties
   canMoveWhileUsing?: boolean; // 移动释放
@@ -93,7 +94,6 @@ export type SkillLevel = {
   detailedDescription?: string;
   damage?: string;
   cooldown?: number;
-  videoUrl?: string | null;
 };
 
 // Card-related types

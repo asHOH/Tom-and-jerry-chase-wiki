@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { getPositioningTagColors, getPositioningTagContainerColor, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
-import { 
-  getTooltipContent, 
-  getPositioningTagTooltipContent, 
-  getItemKeyTooltipContent
-} from '@/lib/tooltipUtils';
+import { getTooltipContent, getPositioningTagTooltipContent, getItemKeyTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterDetailsProps } from '@/lib/types';
 import Tooltip from '../../ui/Tooltip';
 import Tag from '../../ui/Tag';
@@ -13,7 +9,6 @@ import SkillAllocationDisplay from './SkillAllocationDisplay';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text, isDetailed }: { text: string; isDetailed: boolean }) => {
-  // Check if text contains "道具键*"
   if (!text.includes('道具键*')) {
     return <>{text}</>;
   }
@@ -67,12 +62,11 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
   const isDetailedView = propIsDetailedView !== undefined ? propIsDetailedView : localIsDetailedView;
 
   return (
-    <div className="space-y-8"> {/* Padding for navbar is now handled at the page level */}
+    <div className="space-y-8">
       <div className="flex flex-col md:flex-row gap-8">
         <div className="md:w-1/3">
           <div className="card h-full">
             <div className="w-full h-64 bg-gray-200 rounded-lg relative overflow-hidden mb-4">
-              {/* Always show the image, whether it's a real image or a placeholder */}
               <div className="flex items-center justify-center h-full">
                 <Image
                   src={character.imageUrl}
@@ -266,15 +260,15 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
 
           <div className="space-y-6">
             {character.skills.map((skill) => {              return (
-                <div 
-                  key={skill.id} 
+                <div
+                  key={skill.id}
                   className="card p-6"
                 >
                 <div className="flex justify-between items-start">
                   {/* Skill Image */}
                     {skill.imageUrl && (
                       <div className="flex-shrink-0 mr-6">
-                        <div 
+                        <div
                           className="relative w-16 h-16 rounded-full border-2 overflow-hidden border-gray-300"
                           style={{
                             backgroundColor: '#ffffff'
@@ -283,9 +277,21 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                           <img
                             src={skill.imageUrl}
                             alt={skill.name}
-                            className="w-full h-full object-cover scale-75" // 缩小图像内容
+                            className="w-full h-full object-cover scale-75"
                           />
                         </div>
+                        
+                        {/* Video button below skill icon */}
+                        {skill.videoUrl && (
+                          <div className="mt-2">
+                            <button 
+                              onClick={() => window.open(skill.videoUrl, '_blank', 'noopener,noreferrer')}
+                              className="text-blue-600 text-xs px-2 py-1 hover:underline bg-blue-50 rounded-md hover:bg-blue-100 transition-colors block w-full text-center"
+                            >
+                              查看视频
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -357,8 +363,8 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
 
                       {/* Only render the description section if there's content to display */}
                       {(() => {
-                        const descriptionText = isDetailedView && skill.detailedDescription && skill.detailedDescription.trim() !== '' 
-                          ? skill.detailedDescription 
+                        const descriptionText = isDetailedView && skill.detailedDescription && skill.detailedDescription.trim() !== ''
+                          ? skill.detailedDescription
                           : skill.description;
                         
                         return descriptionText ? (
@@ -375,8 +381,8 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                     {skill.skillLevels.map((level) => (
                         <div key={`${skill.id}-${level.level}`} className={`p-4 rounded ${getSkillLevelContainerColor(level.level)}`}>
                           <p className="px-2 py-1">
-                            <span 
-                              className="font-bold" 
+                            <span
+                              className="font-bold"
                               style={{ color: getSkillLevelColors(level.level).color }}
                             >
                               Lv. {level.level}:
@@ -386,12 +392,6 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                               level.description
                             }
                           </p>
-                          {/* Video button if available */}
-                          {level.videoUrl && (
-                            <button className="text-blue-600 text-sm mt-3 px-2 py-1 hover:underline">
-                              查看视频
-                            </button>
-                          )}
                         </div>
                       ))}
                     </div>

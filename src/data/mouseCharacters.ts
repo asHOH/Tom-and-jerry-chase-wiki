@@ -70,23 +70,21 @@ export const mouseCharacters: Record<string, Character> = {
         canUseInAir: true,
         cancelableSkill: '不可被打断',
         cancelableAftercast: '不可取消后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5',
         skillLevels: [
           {
             level: 1,
             description: '鼓舞增加移速和跳跃高度。',
             detailedDescription: '鼓舞增加15%移速和45%跳跃高度，持续5秒。',
-            cooldown: 18,
-            videoUrl: '/videos/jerry-active-1.mp4'
+            cooldown: 18
           },
           { level: 2,
             description: '鼓舞额外回复25Hp。',
-            cooldown: 18,
-            videoUrl: '/videos/jerry-active-2.mp4'
+            cooldown: 18
           },
           { level: 3,
             description: '鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间。',
-            cooldown: 18,
-            videoUrl: '/videos/jerry-active-3.mp4'
+            cooldown: 18
           },
         ]
       },
@@ -100,24 +98,22 @@ export const mouseCharacters: Record<string, Character> = {
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断', //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
         cancelableAftercast: '不可取消后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=104.4',
         skillLevels: [
           {
             level: 1,
             description: '眩晕敌方3秒。',
-            cooldown: 20,
-            videoUrl: '/videos/jerry-weapon1-1.mp4'
+            cooldown: 20
           },
           {
             level: 2,
             description: '额外造成65伤害；每次命中永久增加10%推速，最多叠五层。',
-            cooldown: 16,
-            videoUrl: '/videos/jerry-weapon1-2.mp4'
+            cooldown: 16
           },
           {
             level: 3,
             description: '眩晕时间延长至4秒。',
-            cooldown: 12,
-            videoUrl: '/videos/jerry-weapon1-3.mp4'
+            cooldown: 12
           },
         ]
       },
@@ -131,27 +127,25 @@ export const mouseCharacters: Record<string, Character> = {
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断',
         cancelableAftercast: '可被道具键*取消后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=125.5',
         skillLevels: [
           {
             level: 1,
             description: '炸弹造成55伤害和2秒眩晕。',
             detailedDescription: '炸弹造成55伤害和2秒眩晕；总共释放约15个炸弹。',
-            cooldown: 30,
-            videoUrl: '/videos/jerry-weapon2-1.mp4'
+            cooldown: 30
           },
           {
             level: 2,
             description: '提高金丝雀投掷炸弹的频率。',
             detailedDescription: '提高金丝雀投掷炸弹的频率，炸弹数量提升到约17个。',
-            cooldown: 30,
-            videoUrl: '/videos/jerry-weapon2-2.mp4'
+            cooldown: 30
           },
           {
             level: 3,
             description: '减少CD；进一步提高金丝雀投掷炸弹的频率。',
             detailedDescription: '减少CD；进一步提高金丝雀投掷炸弹的频率，炸弹数量提升到约20个。',
-            cooldown: 24,
-            videoUrl: '/videos/jerry-weapon2-3.mp4'
+            cooldown: 24
           },
         ]
       },
@@ -159,24 +153,22 @@ export const mouseCharacters: Record<string, Character> = {
         id: 'jerry-passive',
         name: '奶酪好手',
         type: 'PASSIVE',
+        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=36',
         skillLevels: [
           {
             level: 1,
             description: '增加推速。',
-            // detailedDescription: '增加推速',
-            videoUrl: null
+            // detailedDescription: '增加推速'
           },
           {
             level: 2,
             description: '搬奶酪时，增加移速和跳跃高度。',
-            detailedDescription: '搬奶酪时，移速增加52%、跳跃高度增加25%。',
-            videoUrl: null
+            detailedDescription: '搬奶酪时，移速增加52%、跳跃高度增加25%。'
           },
           {
             level: 3,
             description: '奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。',
-            detailedDescription: '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、并获得2.7秒的13%加速。',
-            videoUrl: null
+            detailedDescription: '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、并获得2.7秒的13%加速。'
           },
         ]
       }
@@ -200,13 +192,13 @@ export const mouseCharacters: Record<string, Character> = {
         tagName: '奶酪',
         isMinor: false,
         description: '推速较快。',
-        additionalDescription: ''
+        additionalDescription: '有点矮子里面拔高个的意味，毕竟两个技能都跟奶酪没关系。'
       },
       {
         tagName: '破局',
         isMinor: true,
         description: '火箭筒能炸开夹子和叉子。',
-        additionalDescription: '缺点是CD太长，并且需要把控角度。'
+        additionalDescription: '缺点是CD长，并且需要把控角度。'
       },
       {
         tagName: '砸墙',
@@ -226,25 +218,23 @@ export const mouseCharacters: Record<string, Character> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=11.15',
         skillLevels: [
           {
             level: 1,
             description: '',
             detailedDescription: '向前翻滚1.1秒；期间速度提升70%。',
-            cooldown: 12,
-            videoUrl: '/videos/tuffy-active-1.mp4'
+            cooldown: 12
           },
           { level: 2,
             description: '滚动时处于无敌状态；滚动结束后短暂提升跳跃高度。',
             detailedDescription: '滚动时处于无敌状态；滚动结束后极短暂地提升跳跃高度。',
-            cooldown: 12,
-            videoUrl: '/videos/tuffy-active-2.mp4'
+            cooldown: 12
           },
           { level: 3,
             description: '滚得更快更远。',
             detailedDescription: '翻滚时间提升至1.4秒；期间速度提升增加至105%。',
-            cooldown: 12,
-            videoUrl: '/videos/tuffy-active-3.mp4'
+            cooldown: 12
           },
         ]
       },
@@ -258,26 +248,24 @@ export const mouseCharacters: Record<string, Character> = {
         canUseInAir: true,
         cancelableSkill: '不可被打断',
         cancelableAftercast: '不可取消后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=46.4',
         skillLevels: [
           {
             level: 1,
             description: '眩晕敌方1.5秒。',
             detailedDescription: '造成两段伤害（碰撞50+爆炸15），两段伤害都继承绝地反击等角色状态；眩晕敌方1.5秒。',
-            cooldown: 30,
-            videoUrl: '/videos/tuffy-weapon1-1.mp4'
+            cooldown: 30
           },
           {
             level: 2,
             description: '增加伤害；眩晕时间提升至2.1秒。',
             detailedDescription: '第二段爆炸伤害提升至30；眩晕时间提升至2.1秒。',
-            cooldown: 30,
-            videoUrl: '/videos/tuffy-weapon1-2.mp4'
+            cooldown: 30
           },
           {
             level: 3,
             description: '可以储存两发弹头。',
-            cooldown: 30,
-            videoUrl: '/videos/tuffy-weapon1-3.mp4'
+            cooldown: 30
           },
         ]
       },
@@ -291,26 +279,24 @@ export const mouseCharacters: Record<string, Character> = {
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断',
         cancelableAftercast: '无后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=73.05',
         skillLevels: [
           {
             level: 1,
             description: '',
-            cooldown: 22,
-            videoUrl: '/videos/tuffy-weapon2-1.mp4'
+            cooldown: 22
           },
           {
             level: 2,
             description: '可以存储两发感应雷；雷使猫掉落手中的老鼠和道具。',
             // detailedDescription: '可以存储两发感应雷；雷使猫掉落手中的老鼠和道具。',
-            cooldown: 22,
-            videoUrl: '/videos/tuffy-weapon2-2.mp4'
+            cooldown: 22
           },
           {
             level: 3,
             description: '提高雷对猫咪和墙缝的伤害。',
             detailedDescription: '雷对猫咪的伤害提高至80；对墙缝的伤害提高至15。',
-            cooldown: 22,
-            videoUrl: '/videos/tuffy-weapon2-3.mp4'
+            cooldown: 22
           },
         ]
       },
@@ -318,23 +304,21 @@ export const mouseCharacters: Record<string, Character> = {
         id: 'tuffy-passive',
         name: '茁壮成长',
         type: 'PASSIVE',
+        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=25.85',
         skillLevels: [
           {
             level: 1,
-            description: '牛奶加速生效期间，暂时提升25点Hp上限。',
-            videoUrl: null
+            description: '牛奶加速生效期间，暂时提升25点Hp上限。'
           },
           {
             level: 2,
             description: 'Hp恢复提升（受伤状态也触发）；吃食物更快。',
-            detailedDescription: 'Hp恢复提升2.5（受伤状态也触发）；吃食物速度提升20%。',
-            videoUrl: null
+            detailedDescription: 'Hp恢复提升2.5（受伤状态也触发）；吃食物速度提升20%。'
           },
           {
             level: 3,
             description: '免疫爆炸；Hp恢复进一步提升；吃食物进一步更快。',
-            detailedDescription: '免疫鞭炮、泡泡等爆炸；Hp恢复提升增加至5；吃食物速度提升增加至45%。',
-            videoUrl: null
+            detailedDescription: '免疫鞭炮、泡泡等爆炸；Hp恢复提升增加至5；吃食物速度提升增加至45%。'
           },
         ]
       }
@@ -374,29 +358,28 @@ export const mouseCharacters: Record<string, Character> = {
         name: '灵活跳跃',
         type: 'ACTIVE',
         description: '快速向后翻滚。',
+        detailedDescription: '快速向后翻滚。（不能在跳跃中释放）',
         canMoveWhileUsing: false,
         canUseInAir: true, // 可以下落中释放，不能跳跃中释放
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=10.6',
         skillLevels: [
           {
             level: 1,
             description: '翻滚过程中免疫道具。',
             detailedDescription: '翻滚过程中免疫道具（鞭炮除外）。',
             cooldown: 18,
-            videoUrl: '/videos/nibbles-active-1.mp4'
           },
           { level: 2,
             description: '翻滚后获得短暂减伤和强霸体；首次翻滚后3秒内可再次翻滚。',
             detailedDescription: '翻滚开始后1.9秒获得20固定减伤和强霸体；首次翻滚结束后3秒内可再次翻滚。（如果使用道具/交互键、受到控制或进入虚弱，则无法再次翻滚）',
             cooldown: 18,
-            videoUrl: '/videos/nibbles-active-2.mp4'
           },
           { level: 3,
             description: '第一次翻滚后缓慢恢复Hp，第二次翻滚后短暂隐身。',
             detailedDescription: '第一次翻滚结束后获得5点Hp恢复，持续5秒；第二次翻滚结束后隐身2秒。',
             cooldown: 18,
-            videoUrl: '/videos/nibbles-active-3.mp4'
           },
         ]
       },
@@ -410,26 +393,24 @@ export const mouseCharacters: Record<string, Character> = {
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断',
         cancelableAftercast: '无后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=50.7',
         skillLevels: [
           {
             level: 1,
             description: '鱼钩碰到道具会携带之；碰到角色会将其勾回，并使猫咪掉落手中的老鼠。',
             detailedDescription: '鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并使猫咪掉落手中的老鼠。',
             cooldown: 16,
-            videoUrl: '/videos/nibbles-weapon1-1.mp4'
           },
           {
             level: 2,
             description: '减少CD。',
             cooldown: 10,
-            videoUrl: '/videos/nibbles-weapon1-2.mp4'
           },
           {
             level: 3,
             description: '鱼钩携带的道具碰撞猫咪时造成额外的伤害和眩晕。',
             detailedDescription: '鱼钩携带的道具碰撞猫咪时额外造成50伤害和2.5秒眩晕。',
             cooldown: 10,
-            videoUrl: '/videos/nibbles-weapon1-3.mp4'
           },
         ]
       },
@@ -437,24 +418,22 @@ export const mouseCharacters: Record<string, Character> = {
         id: 'nibbles-passive',
         name: '古灵精怪',
         type: 'PASSIVE',
+        videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=36.3',
         skillLevels: [
           {
             level: 1,
             description: '四次跳跃后，一段时间内大幅提升跳跃高度。',
             detailedDescription: '四次跳跃后，5秒内提升200跳跃高度，然后重新计数。',
-            videoUrl: null
           },
           {
             level: 2,
             description: '持续横向移动一段时间后，获得短暂的减伤、攻击提升和墙缝增伤。',
             detailedDescription: '持续横向移动6.7秒后，获得10点固定减伤、攻击提升30、墙缝增伤3，持续4.9秒。横向移动的转向可以通过翻滚，也可以通过在改变移动方向前极短暂地松开移动键（需要精准把控时间）',
-            videoUrl: null
           },
           {
             level: 3,
             description: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(CD：9秒)',
             // detailedDescription: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(CD：9秒)',
-            videoUrl: null
           },
         ]
       }
