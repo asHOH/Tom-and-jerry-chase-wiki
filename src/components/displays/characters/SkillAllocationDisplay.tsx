@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { SkillAllocation } from '@/data/types';
-import { parseSkillAllocationPattern, getSkillAllocationImageUrl } from '@/lib/skillAllocationUtils';
+import { parseSkillAllocationPattern, getSkillAllocationImageUrl, ParsedSkillLevel } from '@/lib/skillAllocationUtils';
 import { getSkillLevelColors } from '@/lib/design-tokens';
 import Tooltip from '../../ui/Tooltip';
 
@@ -10,6 +10,12 @@ const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }
   // For now, just return the text as-is
   // This can be enhanced later to handle item key tooltips
   return <>{text}</>;
+};
+
+// Type for processed skill levels with actual level information
+type ProcessedSkillLevel = ParsedSkillLevel & {
+  actualLevel: number;
+  parallelActualLevel?: number; // Only present for parallel skills
 };
 
 interface SkillAllocationDisplayProps {
@@ -56,10 +62,10 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   
   const processedPattern = preprocessPattern(allocation.pattern);
   const parsedLevels = parseSkillAllocationPattern(processedPattern);
-  // Calculate actual skill levels at each position
+  
   const skillLevels = { '0': 0, '1': 0, '2': 0, '3': 0 };
   
-  const actualLevels = parsedLevels.map((level) => {
+  const actualLevels: ProcessedSkillLevel[] = parsedLevels.map((level) => {
     if (level.isParallel && level.parallelOptions) {
       // For parallel skills, both options get the same level increment
       const firstOption = level.parallelOptions[0];
@@ -251,7 +257,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                           <div className="absolute" style={{ top: '-7px' }}>
                             {renderSkillIcon(
                               level.parallelOptions![0],
-                              (level as any).actualLevel,
+                              level.actualLevel,
                               level.isDelayed,
                               level.hasNegativeEffect
                             )}
@@ -261,7 +267,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                           <div className="absolute" style={{ top: '19px' }}>
                             {renderSkillIcon(
                               level.parallelOptions![1],
-                              (level as any).parallelActualLevel,
+                              level.parallelActualLevel!,
                               level.isDelayed,
                               level.hasNegativeEffect,
                               true
@@ -281,7 +287,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                     
                     {/* Skill icon container with consistent height */}
                     <div className="relative">
-                      {renderSkillIcon(level.skillType, (level as any).actualLevel, level.isDelayed, level.hasNegativeEffect)}
+                      {renderSkillIcon(level.skillType, level.actualLevel, level.isDelayed, level.hasNegativeEffect)}
                     </div>
                   </div>
                 );
