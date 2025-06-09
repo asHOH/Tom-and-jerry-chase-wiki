@@ -6,7 +6,7 @@ import { getSkillLevelColors } from '@/lib/design-tokens';
 import Tooltip from '../../ui/Tooltip';
 
 // Component to render text with item key tooltips
-const TextWithItemKeyTooltips = ({ text, isDetailed }: { text: string; isDetailed: boolean }) => {
+const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }) => {
   // For now, just return the text as-is
   // This can be enhanced later to handle item key tooltips
   return <>{text}</>;
@@ -90,7 +90,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     '3': characterSkills.find(s => s.type === 'WEAPON2'),
   };
 
-  const renderSkillIcon = (skillType: '0' | '1' | '2' | '3', actualLevel: number, isDelayed: boolean, hasNegativeEffect: boolean, isSecondaryParallel = false) => {
+  const renderSkillIcon = (skillType: '0' | '1' | '2' | '3', actualLevel: number, isDelayed: boolean, hasNegativeEffect: boolean, _isSecondaryParallel = false) => {
     const skill = skillTypeToSkill[skillType];
     const imageUrl = skill?.imageUrl || getSkillAllocationImageUrl(
       characterName,
@@ -230,7 +230,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                   <div key={groupIndex} className="relative flex flex-col items-center" style={{ width: `${totalWidth}px` }}>
                     {/* Individual column level labels */}
                     <div className="flex gap-1 justify-center mb-3">
-                      {group.levels.map((level, levelIndex) => {
+                      {group.levels.map((_level, levelIndex) => {
                         // Calculate levels for each column (first and second skill options)
                         const firstSkillLevel = group.characterLevel + levelIndex;
                         const secondSkillLevel = group.characterLevel + levelIndex + group.levels.length;
