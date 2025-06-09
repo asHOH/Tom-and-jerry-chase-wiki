@@ -96,7 +96,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     '3': characterSkills.find(s => s.type === 'WEAPON2'),
   };
 
-  const renderSkillIcon = (skillType: '0' | '1' | '2' | '3', currentLevel: number, isDelayed: boolean, hasNegativeEffect: boolean, _isSecondaryParallel = false) => {
+  const renderSkillIcon = (skillType: '0' | '1' | '2' | '3', currentLevel: number, isDelayed: boolean, hasNegativeEffect: boolean) => {
     const skill = skillTypeMap[skillType];
     const imageUrl = skill?.imageUrl || getSkillAllocationImageUrl(
       characterName,
@@ -269,8 +269,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                               level.parallelOptions![1],
                               level.parallelCurrentLevel!,
                               level.isDelayed,
-                              level.hasNegativeEffect,
-                              true
+                              level.hasNegativeEffect
                             )}
                           </div>
                         </div>
