@@ -276,10 +276,12 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                             backgroundColor: '#ffffff'
                           }}
                         >
-                          <img
+                          <Image
                             src={skill.imageUrl}
                             alt={skill.name}
-                            className="w-full h-full object-cover scale-75"
+                            fill
+                            sizes="64px"
+                            className="object-cover scale-75"
                           />
                         </div>
                         
