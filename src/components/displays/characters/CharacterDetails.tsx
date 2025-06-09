@@ -239,7 +239,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
             <div className="mb-8">
               <h3 className="text-xl font-bold px-2 py-3 mb-4">加点</h3>
               <div className="space-y-3">
-                {character.skillAllocations.map((allocation, index) => (
+                {character.skillAllocations.map((allocation) => (
                   <div key={allocation.id} className="card p-4">
                     <SkillAllocationDisplay
                       allocation={allocation}
