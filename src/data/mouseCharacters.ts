@@ -31,13 +31,13 @@ export const mouseCharacters: Record<string, Character> = {
         tagName: '奶酪',
         isMinor: false,
         description: '推速快。',
-        detailedDescription: '此外还有被动提供推速加成和搬奶酪速度。'
+        additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。'
       },
       {
         tagName: '辅助',
         isMinor: true,
         description: '鼓舞为队友提供增益、处理二手火箭；鸟哨限制猫的走位。',
-        detailedDescription: ''
+        additionalDescription: ''
       },
     ],
 
@@ -48,14 +48,14 @@ export const mouseCharacters: Record<string, Character> = {
         pattern: '0[12]112200',
         weaponType: 'weapon1',
         description: '加点灵活，如需自保就优先一级鼓舞；需要搬奶酪则优先二被。',
-        detailedDescription: ''
+        additionaldescription: ''
       },
       {
         id: '鸟哨',
         pattern: '0[13]113300',
         weaponType: 'weapon2',
         description: '加点灵活，如需自保就优先一级鼓舞；需要搬奶酪则优先二被。',
-        detailedDescription: ''
+        additionaldescription: ''
       },
     ],
 
@@ -200,19 +200,19 @@ export const mouseCharacters: Record<string, Character> = {
         tagName: '奶酪',
         isMinor: false,
         description: '推速较快。',
-        detailedDescription: ''
+        additionalDescription: ''
       },
       {
         tagName: '破局',
         isMinor: true,
         description: '火箭筒能炸开夹子和叉子。',
-        detailedDescription: '缺点是CD太长，并且需要把控角度。'
+        additionalDescription: '缺点是CD太长，并且需要把控角度。'
       },
       {
         tagName: '砸墙',
         isMinor: true,
         description: '武器技能可以提供可观的砸墙伤害；三被能免疫鞭炮和泡泡。',
-        detailedDescription: ''
+        additionalDescription: ''
       },
     ],
 
@@ -358,13 +358,13 @@ export const mouseCharacters: Record<string, Character> = {
         tagName: '救援',
         isMinor: false,
         description: '二级翻滚免控免死。',
-        detailedDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。'
+        additionalDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。'
       },
       {
         tagName: '砸墙',
         isMinor: true,
         description: '二被+果盘，墙缝蒸发一半',
-        detailedDescription: '触发条件较为苛刻，且需要与队友有一定沟通。'
+        additionalDescription: '触发条件较为苛刻，且需要与队友有一定沟通。'
       },
     ],
 

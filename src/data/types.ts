@@ -15,14 +15,14 @@ export type CatPositioningTag = {
   tagName: CatPositioningTagName;
   isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
   description: string; // Brief explanation of why this character has this specific positioning
-  detailedDescription: string; // Extended description for detailed view mode
+  additionalDescription: string; // Extended description for detailed view mode
 };
 
 export type MousePositioningTag = {
   tagName: MousePositioningTagName;
   isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
   description: string; // Brief explanation of why this character has this specific positioning
-  detailedDescription: string; // Extended description for detailed view mode
+  additionalDescription: string; // Extended description for detailed view mode
 };
 
 // Union type for backward compatibility
@@ -35,7 +35,7 @@ export type SkillAllocation = {
   pattern: string; // Format: "021112200" or "013(0)3301-1"
   weaponType: 'weapon1' | 'weapon2'; // Which weapon this allocation uses
   description: string;
-  detailedDescription?: string;
+  additionaldescription?: string;
 };
 
 export type Character = {

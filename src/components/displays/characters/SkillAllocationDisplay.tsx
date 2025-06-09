@@ -291,9 +291,9 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         <p className="text-sm text-gray-700">
           <TextWithItemKeyTooltips text={allocation.description} isDetailed={isDetailed} />
         </p>
-        {isDetailed && allocation.detailedDescription && (
+        {isDetailed && allocation.additionaldescription && (
           <p className="text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200">
-            <TextWithItemKeyTooltips text={allocation.detailedDescription} isDetailed={isDetailed} />
+            <TextWithItemKeyTooltips text={allocation.additionaldescription} isDetailed={isDetailed} />
           </p>
         )}
       </div>

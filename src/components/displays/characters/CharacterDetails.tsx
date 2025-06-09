@@ -179,9 +179,9 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                         <p className="text-sm text-gray-700 mb-1">
                           {tag.description}
                         </p>
-                        {isDetailedView && tag.detailedDescription && (
+                        {isDetailedView && tag.additionalDescription && (
                           <p className="text-sm text-gray-600 mt-2 pl-3 border-l-2 border-orange-200">
-                            {tag.detailedDescription}
+                            {tag.additionalDescription}
                           </p>
                         )}
                       </div>
@@ -211,9 +211,9 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                         <p className="text-sm text-gray-700 mb-1">
                           {tag.description}
                         </p>
-                        {isDetailedView && tag.detailedDescription && (
+                        {isDetailedView && tag.additionalDescription && (
                           <p className="text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200">
-                            {tag.detailedDescription}
+                            {tag.additionalDescription}
                           </p>
                         )}
                       </div>
