@@ -3,7 +3,7 @@
 export type ParsedSkillLevel = {
   skillType: '0' | '1' | '2' | '3'; // 0=被动, 1=主动, 2=武器1, 3=武器2
   isDelayed: boolean; // In parentheses - 留加点
-  hasNegativeEffect: boolean; // After "-" - negative effects
+  hasNegativeEffect: boolean; // After "-" - 负面效果
   isParallel?: boolean; // In brackets - parallel skills
   parallelOptions?: Array<'0' | '1' | '2' | '3'>; // Options for parallel skills
 };
@@ -160,9 +160,7 @@ export const validateSkillAllocationPattern = (pattern: string): boolean => {
   }
 };
 
-/**
- * Get skill type display name
- */
+/* Get skill type display name */
 export const getSkillTypeDisplayName = (skillType: '0' | '1' | '2' | '3'): string => {
   switch (skillType) {
     case '0': return '被动';
@@ -173,10 +171,7 @@ export const getSkillTypeDisplayName = (skillType: '0' | '1' | '2' | '3'): strin
   }
 };
 
-/**
- * Get skill image URL for allocation display
- * This function will get the correct image URL from the skill data
- */
+/* Get skill image URL from the skill data */
 export const getSkillAllocationImageUrl = (
   characterName: string,
   skillType: '0' | '1' | '2' | '3',

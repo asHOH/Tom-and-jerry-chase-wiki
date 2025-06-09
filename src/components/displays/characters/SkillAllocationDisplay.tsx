@@ -93,8 +93,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   const renderSkillIcon = (skillType: '0' | '1' | '2' | '3', actualLevel: number, isDelayed: boolean, hasNegativeEffect: boolean, isSecondaryParallel = false) => {
     const skill = skillTypeToSkill[skillType];
     const imageUrl = skill?.imageUrl || getSkillAllocationImageUrl(
-      characterName, 
-      skillType, 
+      characterName,
+      skillType,
       factionId,
       skill?.name
     );
@@ -250,9 +250,9 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                           {/* First option (top) */}
                           <div className="absolute" style={{ top: '-7px' }}>
                             {renderSkillIcon(
-                              level.parallelOptions![0], 
-                              (level as any).actualLevel, 
-                              level.isDelayed, 
+                              level.parallelOptions![0],
+                              (level as any).actualLevel,
+                              level.isDelayed,
                               level.hasNegativeEffect
                             )}
                           </div>
@@ -260,10 +260,10 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                           {/* Second option (bottom) */}
                           <div className="absolute" style={{ top: '19px' }}>
                             {renderSkillIcon(
-                              level.parallelOptions![1], 
-                              (level as any).parallelActualLevel, 
-                              level.isDelayed, 
-                              level.hasNegativeEffect, 
+                              level.parallelOptions![1],
+                              (level as any).parallelActualLevel,
+                              level.isDelayed,
+                              level.hasNegativeEffect,
                               true
                             )}
                           </div>

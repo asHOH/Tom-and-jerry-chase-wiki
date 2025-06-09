@@ -182,7 +182,8 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
                     ))}
                   </div>
                 </div>
-              )}              {/* Positioning tags for mouse characters */}
+              )}
+              {/* Positioning tags for mouse characters */}
               {character.faction.id === 'mouse' && character.mousePositioningTags && character.mousePositioningTags.length > 0 && (
                 <div className="mt-6 pt-4 border-t border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">定位</h3>
@@ -259,7 +260,8 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
           </div>
 
           <div className="space-y-6">
-            {character.skills.map((skill) => {              return (
+            {character.skills.map((skill) => {
+              return (
                 <div
                   key={skill.id}
                   className="card p-6"
