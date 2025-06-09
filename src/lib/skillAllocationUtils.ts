@@ -154,7 +154,7 @@ export const validateSkillAllocationPattern = (pattern: string): boolean => {
     }
 
     return true;
-  } catch (error) {
+  } catch {
     // If parsing fails (e.g., invalid bracket content), return false
     return false;
   }
