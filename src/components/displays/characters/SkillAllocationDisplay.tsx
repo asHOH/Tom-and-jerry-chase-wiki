@@ -219,7 +219,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         
         {/* Skill allocation pattern display - takes remaining space */}
         <div className="flex-1">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mb-2">
             {levelGroups.map((group, groupIndex) => {
               if (group.isParallelGroup) {
                 // For parallel skills, calculate individual column levels
@@ -229,7 +229,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                 return (
                   <div key={groupIndex} className="relative flex flex-col items-center" style={{ width: `${totalWidth}px` }}>
                     {/* Individual column level labels */}
-                    <div className="flex gap-1 justify-center mb-2">
+                    <div className="flex gap-1 justify-center mb-3">
                       {group.levels.map((level, levelIndex) => {
                         // Calculate levels for each column (first and second skill options)
                         const firstSkillLevel = group.characterLevel + levelIndex;
@@ -277,7 +277,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                 return (
                   <div key={groupIndex} className="relative flex flex-col items-center">
                     {/* Character level number */}
-                    <span className="text-xs text-gray-500 mb-2">Lv.{group.characterLevel}</span>
+                    <span className="text-xs text-gray-500 mb-4">Lv.{group.characterLevel}</span>
                     
                     {/* Skill icon container with consistent height */}
                     <div className="relative">
