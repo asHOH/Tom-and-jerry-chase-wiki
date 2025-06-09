@@ -60,7 +60,7 @@ export const catCharacters: Record<string, Character> = {
         id: '平底锅',
         pattern: '131[3300]01',
         weaponType: 'weapon2',
-        description: '非常顺风的时候可以考虑先点被动再点锅',
+        description: '非常顺风的时候可以考虑先点被动再点锅。',
         additionaldescription: '如果血量告急，也可以考虑先点一被回血。'
       }
     ],

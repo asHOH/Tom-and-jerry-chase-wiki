@@ -203,6 +203,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     }
   }
 
+  // Check if we have any description content to display
+  const hasDescription = allocation.description && allocation.description.trim() !== '';
+  const hasAdditionalDescription = isDetailed && allocation.additionaldescription && allocation.additionaldescription.trim() !== '';
+  const shouldShowDescriptionBlock = hasDescription || hasAdditionalDescription;
+
   return (
     <div className="space-y-3">
       {/* Title and skill allocation pattern display */}
@@ -286,17 +291,21 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         </div>
       </div>
 
-      {/* Allocation description */}
-      <div className="bg-gray-50 p-3 rounded-lg">
-        <p className="text-sm text-gray-700">
-          <TextWithItemKeyTooltips text={allocation.description} isDetailed={isDetailed} />
-        </p>
-        {isDetailed && allocation.additionaldescription && (
-          <p className="text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200">
-            <TextWithItemKeyTooltips text={allocation.additionaldescription} isDetailed={isDetailed} />
-          </p>
-        )}
-      </div>
+      {/* Allocation description - only render if we have content */}
+      {shouldShowDescriptionBlock && (
+        <div className="bg-gray-50 p-3 rounded-lg">
+          {hasDescription && (
+            <p className="text-sm text-gray-700">
+              <TextWithItemKeyTooltips text={allocation.description} isDetailed={isDetailed} />
+            </p>
+          )}
+          {hasAdditionalDescription && (
+            <p className="text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200">
+              <TextWithItemKeyTooltips text={allocation.additionaldescription!} isDetailed={isDetailed} />
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 };
