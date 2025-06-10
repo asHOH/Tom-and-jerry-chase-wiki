@@ -69,7 +69,8 @@ export default function TabNavigation({
             }}
           >
             首页
-          </button>          {tabs.map((tab) => (
+          </button>
+            {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
@@ -106,8 +107,8 @@ export default function TabNavigation({
               style={{
                 padding: '8px 16px',
                 borderRadius: '6px',
-                backgroundColor: '#dbeafe',
-                color: '#1d4ed8',
+                backgroundColor: isDetailedView ? '#dbeafe' : '#fef3e2',
+                color: isDetailedView ? '#1d4ed8' : '#ea580c',
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'background-color 0.2s'
