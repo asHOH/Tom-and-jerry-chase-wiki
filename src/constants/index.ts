@@ -26,10 +26,10 @@ export const PROJECT_INFO = {
 
 // Structured disclaimer content - single source of truth
 export const DISCLAIMER_CONTENT = {
-  intro: '本网站为非营利粉丝项目，基于合理使用原则提供游戏资讯，仅供学习交流使用。',
+  intro: '本网站为非营利粉丝项目，仅供学习交流。',
   copyright:
     '猫和老鼠（Tom and Jerry）角色版权归华纳兄弟娱乐公司（Warner Bros. Entertainment Inc.）所有。游戏素材版权归网易猫和老鼠手游所有。',
-  takedownPolicy: '如版权方要求移除相关内容，我们将立即配合处理。请通过Github Issues联系我们。',
+  takedownPolicy: '若版权方提出要求，我们将立即配合调整相关内容。反馈渠道：Github Issues。',
   testDataAttribution: {
     prefix: '特别鸣谢b站up主',
     creators: ['dreamback', 'momo'] as const,
