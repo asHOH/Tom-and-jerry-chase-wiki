@@ -227,10 +227,10 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         // Single to parallel -> diverge
         return (
           // The top-[7px] value centers the divergence point vertically with the single 40px icon.
-          <div className='absolute left-10 top-[7px] w-4 h-7'>
+          <div className='absolute left-8 top-[7px] w-4 h-7 [transform:scaleX(-1)]'>
             <svg className='w-full h-full' viewBox='0 0 16 28'>
-              <path d='M0 14 Q8 14 16 0' fill='none' stroke='#d1d5db' strokeWidth='1' />
-              <path d='M0 14 Q8 14 16 28' fill='none' stroke='#d1d5db' strokeWidth='1' />
+              <path d='M0 1 Q8 1 16 14' fill='none' stroke='#d1d5db' strokeWidth='1' />
+              <path d='M0 28 Q8 28 16 14' fill='none' stroke='#d1d5db' strokeWidth='1' />
             </svg>
           </div>
         );
