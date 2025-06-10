@@ -165,8 +165,43 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     const isLastLevelInGroup = levelIndex === group.levels.length - 1;
     const nextGroup = !isLastGroup ? levelGroups[groupIndex + 1] : null;
     
-    // Don't render lines for skills with negative effects (usually last skill)
+    // Don't render lines FROM skills with negative effects
     if (group.levels[levelIndex]?.hasNegativeEffect) {
+      return null;
+    }
+    
+    // Don't render lines TO skills with negative effects
+    const hasNegativeTarget = () => {
+      if (isParallel) {
+        if (isLastLevelInGroup && nextGroup) {
+          // Check if next group has negative effects
+          if (nextGroup.isParallelGroup) {
+            // Next is parallel - check if any skill in next parallel group has negative effects
+            return nextGroup.levels.some(level => level.hasNegativeEffect);
+          } else {
+            // Next is single - check if the single skill has negative effects
+            return nextGroup.levels[0]?.hasNegativeEffect;
+          }
+        } else if (!isLastLevelInGroup) {
+          // Within parallel group - check next parallel level
+          return group.levels[levelIndex + 1]?.hasNegativeEffect;
+        }
+      } else {
+        // Single skill - check next group
+        if (nextGroup) {
+          if (nextGroup.isParallelGroup) {
+            // Next is parallel - check if any skill in parallel group has negative effects
+            return nextGroup.levels.some(level => level.hasNegativeEffect);
+          } else {
+            // Next is single - check if the single skill has negative effects
+            return nextGroup.levels[0]?.hasNegativeEffect;
+          }
+        }
+      }
+      return false;
+    };
+    
+    if (hasNegativeTarget()) {
       return null;
     }
     
