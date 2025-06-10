@@ -215,13 +215,15 @@ export const mouseCharacters: Record<string, Character> = {
         pattern: '121220001',
         weaponType: 'weapon1',
         description: '',
-        additionaldescription: '如果七级就进入墙缝战的话，可以考虑直接点出三级圆滚滚，毕竟一被和二被几乎没用。',
+        additionaldescription:
+          '如果七级就进入墙缝战的话，可以考虑直接点出三级圆滚滚，毕竟一被和二被几乎没用。',
       },
       {
         id: '隐形感应雷',
         pattern: '131330001',
         weaponType: 'weapon2',
-        description: '如果七级就进入墙缝战的话，可以考虑直接点出三级圆滚滚，毕竟一被和二被几乎没用。',
+        description:
+          '如果七级就进入墙缝战的话，可以考虑直接点出三级圆滚滚，毕竟一被和二被几乎没用。',
         additionaldescription: '',
       },
     ],
