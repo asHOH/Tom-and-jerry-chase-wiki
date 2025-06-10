@@ -159,6 +159,93 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       return iconElement;
     }
   };
+  // Helper function to render connection lines
+  const renderConnectionLine = (groupIndex: number, levelIndex: number, group: typeof levelGroups[0], isParallel: boolean) => {
+    const isLastGroup = groupIndex === levelGroups.length - 1;
+    const isLastLevelInGroup = levelIndex === group.levels.length - 1;
+    const nextGroup = !isLastGroup ? levelGroups[groupIndex + 1] : null;
+    
+    // Don't render lines for skills with negative effects (usually last skill)
+    if (group.levels[levelIndex]?.hasNegativeEffect) {
+      return null;
+    }
+    
+    if (isParallel) {
+      // For parallel skills
+      if (isLastLevelInGroup && nextGroup) {
+        if (nextGroup.isParallelGroup) {
+          // Parallel to parallel - straight lines
+          return (
+            <div className="absolute left-10 top-5 w-4 h-1">
+              <div className="w-full h-px bg-gray-300"></div>
+              <div className="w-full h-px bg-gray-300 mt-6"></div>
+            </div>
+          );
+        } else {
+          // Parallel to single - converge
+          return (
+            <div className="absolute left-10 top-3 w-4 h-7">
+              <svg className="w-full h-full" viewBox="0 0 16 28">
+                <path
+                  d="M0 0 Q8 0 16 14 Q8 28 16 28"
+                  fill="none"
+                  stroke="#d1d5db"
+                  strokeWidth="1"
+                />
+                <path
+                  d="M0 24 Q8 24 16 14"
+                  fill="none"
+                  stroke="#d1d5db"
+                  strokeWidth="1"
+                />
+              </svg>
+            </div>
+          );
+        }
+      } else if (!isLastLevelInGroup) {
+        // Within parallel group - straight lines
+        return (
+          <div className="absolute left-10 top-5 w-4 h-1">
+            <div className="w-full h-px bg-gray-300"></div>
+            <div className="w-full h-px bg-gray-300 mt-6"></div>
+          </div>
+        );
+      }
+    } else {
+      // For single skills
+      if (nextGroup) {
+        if (nextGroup.isParallelGroup) {
+          // Single to parallel - diverge
+          return (
+            <div className="absolute left-10 top-2 w-4 h-7">
+              <svg className="w-full h-full" viewBox="0 0 16 28">
+                <path
+                  d="M0 14 Q8 14 16 0"
+                  fill="none"
+                  stroke="#d1d5db"
+                  strokeWidth="1"
+                />
+                <path
+                  d="M0 14 Q8 14 16 28"
+                  fill="none"
+                  stroke="#d1d5db"
+                  strokeWidth="1"
+                />
+              </svg>
+            </div>
+          );
+        } else {
+          // Single to single - straight line
+          return (
+            <div className="absolute left-10 top-5 w-4 h-px bg-gray-300"></div>
+          );
+        }
+      }
+    }
+    
+    return null;
+  };
+
   // Calculate character levels and group parallel skills
   let characterLevel = 2; // Character starts at level 2
   const levelGroups: Array<{
@@ -253,6 +340,9 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                     <div className="relative h-12 flex gap-1 justify-center">
                       {group.levels.map((level, levelIndex) => (
                         <div key={levelIndex} className="relative w-10 flex flex-col justify-center">
+                          {/* Connection lines for parallel skills */}
+                          {renderConnectionLine(groupIndex, levelIndex, group, true)}
+                          
                           {/* First option (top) */}
                           <div className="absolute" style={{ top: '-7px' }}>
                             {renderSkillIcon(
@@ -286,6 +376,9 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                     
                     {/* Skill icon container with consistent height */}
                     <div className="relative">
+                      {/* Connection lines for single skills */}
+                      {renderConnectionLine(groupIndex, 0, group, false)}
+                      
                       {renderSkillIcon(level.skillType, level.currentLevel, level.isDelayed, level.hasNegativeEffect)}
                     </div>
                   </div>
