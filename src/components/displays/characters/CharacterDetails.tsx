@@ -216,14 +216,11 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
         </div>
 
         <div className="md:w-2/3">
-          <div className="flex justify-between items-center mb-6 px-2">
-            <h2 className="text-2xl font-bold py-2">技能</h2>
-          </div>
 
           {/* Skill Allocations Section */}
           {character.skillAllocations && character.skillAllocations.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-xl font-bold px-2 py-3 mb-4">加点</h3>
+              <h3 className="text-2xl font-bold px-2 py-3 mb-4">技能加点</h3>
               <div className="space-y-3">
                 {character.skillAllocations.map((allocation) => (
                   <div key={allocation.id} className="card p-4">
@@ -242,7 +239,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
 
           {/* Skills Section */}
           <div className="mb-6">
-            <h3 className="text-xl font-bold px-2 py-3">技能描述</h3>
+            <h3 className="text-2xl font-bold px-2 py-3">技能描述</h3>
           </div>
 
           <div className="space-y-6">
