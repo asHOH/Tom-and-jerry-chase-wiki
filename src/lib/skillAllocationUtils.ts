@@ -16,30 +16,24 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
   const result: ParsedSkillLevel[] = [];
   let i = 0;
   
-  // Check if pattern contains negative marker "-"
   const negativeMarkerIndex = pattern.indexOf('-');
   const hasNegativeMarker = negativeMarkerIndex !== -1;
 
   while (i < pattern.length) {
     const char = pattern[i];
     
-    // Skip the negative marker
     if (char === '-') {
       i++;
       continue;
     }
 
-    let skillType: '0' | '1' | '2' | '3';
-    let isDelayed = false;
-    let hasNegativeEffect = false;
-    let isParallel = false;
+    // Determine if the current position is after the negative marker once.
+    const isNegative = hasNegativeMarker && i > negativeMarkerIndex;
 
-    // Check if this level is parallel (in brackets)
+    // Check for parallel skills (in brackets)
     if (char === '[') {
-      isParallel = true;
       i++; // Skip opening bracket
       
-      // Extract content inside brackets
       let bracketContent = '';
       while (i < pattern.length && pattern[i] !== ']') {
         bracketContent += pattern[i];
@@ -47,118 +41,59 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
       }
       i++; // Skip closing bracket
       
-      // Validate bracket content must be even length
       if (bracketContent.length % 2 !== 0) {
         throw new Error(`Parallel skill content must have even length: ${bracketContent}`);
       }
       
-      // Split into first half and second half
       const halfLength = bracketContent.length / 2;
       const firstHalf = bracketContent.slice(0, halfLength);
       const secondHalf = bracketContent.slice(halfLength);
       
-      // Add each pair as separate parallel entries
       for (let j = 0; j < halfLength; j++) {
         const firstOption = firstHalf[j] as '0' | '1' | '2' | '3';
         const secondOption = secondHalf[j] as '0' | '1' | '2' | '3';
         
         result.push({
-          skillType: firstOption, // Use first option as primary
+          skillType: firstOption,
           isDelayed: false,
-          hasNegativeEffect: hasNegativeMarker && i > negativeMarkerIndex,
+          hasNegativeEffect: isNegative, // Use the pre-calculated variable
           isParallel: true,
           parallelOptions: [firstOption, secondOption]
         });
       }
       continue;
     }
-    // Check if this level is delayed (in parentheses)
-    else if (char === '(') {
+    
+    let skillType: '0' | '1' | '2' | '3' | undefined;
+    let isDelayed = false;
+
+    // Check for delayed skills (in parentheses)
+    if (char === '(') {
       i++; // Skip opening parenthesis
       skillType = pattern[i] as '0' | '1' | '2' | '3';
       isDelayed = true;
-      i++; // Skip the number
-      i++; // Skip closing parenthesis
+      i += 2; // Skip the number and closing parenthesis
     } else if (['0', '1', '2', '3'].includes(char)) {
       skillType = char as '0' | '1' | '2' | '3';
-      
-      // Check if this skill is after the negative marker
-      if (hasNegativeMarker && i > negativeMarkerIndex) {
-        hasNegativeEffect = true;
-      }
-      
       i++;
     } else {
       i++;
       continue;
     }
 
-    result.push({
-      skillType,
-      isDelayed,
-      hasNegativeEffect,
-      isParallel,
-      parallelOptions: undefined
-    });
+    if (skillType) {
+      result.push({
+        skillType,
+        isDelayed,
+        hasNegativeEffect: isNegative, // Use the pre-calculated variable
+        isParallel: false,
+      });
+    }
   }
 
   return result;
 };
 
-/**
- * Validate skill allocation pattern
- * Rules:
- * 1. Must have exactly 9 skill levels
- * 2. Each number (0,1,2 or 0,1,3) must appear exactly 3 times
- * 3. Cannot have both 2 and 3 in the same pattern
- * 4. Parallel skills (in brackets) must have even length content
- */
-export const validateSkillAllocationPattern = (pattern: string): boolean => {
-  try {
-    const parsed = parseSkillAllocationPattern(pattern);
-    
-    // Must have exactly 9 levels
-    if (parsed.length !== 9) {
-      return false;
-    }
-
-    // Count occurrences of each skill type (including parallel options)
-    const counts = { '0': 0, '1': 0, '2': 0, '3': 0 };
-    
-    for (const level of parsed) {
-      if (level.isParallel && level.parallelOptions) {
-        // For parallel skills, count all options
-        for (const option of level.parallelOptions) {
-          counts[option]++;
-        }
-      } else {
-        counts[level.skillType]++;
-      }
-    }
-
-    // Each number must appear exactly 3 times
-    if (counts['0'] !== 3 || counts['1'] !== 3) {
-      return false;
-    }
-
-    // Must have either 3x'2' or 3x'3', but not both
-    const hasWeapon1 = counts['2'] === 3;
-    const hasWeapon2 = counts['3'] === 3;
-    
-    if (hasWeapon1 && hasWeapon2) {
-      return false; // Cannot have both weapon types
-    }
-    
-    if (!hasWeapon1 && !hasWeapon2) {
-      return false; // Must have one weapon type
-    }
-
-    return true;
-  } catch {
-    // If parsing fails (e.g., invalid bracket content), return false
-    return false;
-  }
-};
 
 /* Get skill type display name */
 export const getSkillTypeDisplayName = (skillType: '0' | '1' | '2' | '3'): string => {
@@ -179,12 +114,10 @@ export const getSkillAllocationImageUrl = (
   skillName?: string
 ): string => {
   if (skillType === '0') {
-    // Passive skills use faction-based naming
     const factionName = factionId === 'cat' ? '猫' : '鼠';
     return `/images/${factionId}Skills/被动-${factionName}.png`;
   }
 
-  // For other skills, use character name + skill number + skill name
   const skillNumber = skillType === '1' ? '1' : skillType === '2' ? '2' : '3';
   const suffix = skillName || 'placeholder';
   return `/images/${factionId}Skills/${characterName}${skillNumber}-${suffix}.png`;
