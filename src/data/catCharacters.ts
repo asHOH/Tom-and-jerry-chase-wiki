@@ -48,7 +48,6 @@ export const catCharacters: Record<string, Character> = {
       },
     ],
 
-    // Skill allocations
     skillAllocations: [
       {
         id: '手型枪',
@@ -216,6 +215,23 @@ export const catCharacters: Record<string, Character> = {
       },
     ],
 
+    skillAllocations: [
+      {
+        id: '垃圾盖',
+        pattern: '120001122',
+        weaponType: 'weapon1',
+        description: '欢迎指正',
+        additionaldescription: '',
+      },
+      {
+        id: '旋转桶盖',
+        pattern: '1[30]30011',
+        weaponType: 'weapon2',
+        description: '三级时如果血量告急则先点一被',
+        additionaldescription: '',
+      },
+    ],
+
     skills: [
       {
         id: 'butch-active',
@@ -370,6 +386,23 @@ export const catCharacters: Record<string, Character> = {
         isMinor: true,
         description: '通过换位和三级分身提供的霸体反制老鼠的控制。',
         additionalDescription: '但难以应对爆发输出。',
+      },
+    ],
+
+    skillAllocations: [
+      {
+        id: '泡泡棒',
+        pattern: '011212200',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+      {
+        id: '捕虫网',
+        pattern: '011310033',
+        weaponType: 'weapon2',
+        description: '',
+        additionaldescription: '',
       },
     ],
 

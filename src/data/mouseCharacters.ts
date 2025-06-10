@@ -42,20 +42,19 @@ export const mouseCharacters: Record<string, Character> = {
       },
     ],
 
-    // Skill allocations
     skillAllocations: [
       {
         id: '大铁锤',
         pattern: '0[12]112200',
         weaponType: 'weapon1',
-        description: '加点灵活，如需自保就优先一级鼓舞；需要搬奶酪则优先二被。',
+        description: '加点灵活，如需自保则开局优先一级鼓舞；需要搬奶酪则四级优先二被。',
         additionaldescription: '',
       },
       {
         id: '鸟哨',
         pattern: '0[13]113300',
         weaponType: 'weapon2',
-        description: '加点灵活，如需自保就优先一级鼓舞；需要搬奶酪则优先二被。',
+        description: '加点灵活，如需自保则开局优先一级鼓舞；需要搬奶酪则四级优先二被。',
         additionaldescription: '',
       },
     ],
@@ -210,6 +209,23 @@ export const mouseCharacters: Record<string, Character> = {
       },
     ],
 
+    skillAllocations: [
+      {
+        id: '火箭筒',
+        pattern: '121220001',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '如果七级就进入墙缝战的话，可以考虑直接点出三级圆滚滚，毕竟一被和二被几乎没用。',
+      },
+      {
+        id: '隐形感应雷',
+        pattern: '131330001',
+        weaponType: 'weapon2',
+        description: '如果七级就进入墙缝战的话，可以考虑直接点出三级圆滚滚，毕竟一被和二被几乎没用。',
+        additionaldescription: '',
+      },
+    ],
+
     skills: [
       {
         id: 'tuffy-active',
@@ -358,6 +374,16 @@ export const mouseCharacters: Record<string, Character> = {
         isMinor: true,
         description: '二被+果盘，墙缝蒸发一半',
         additionalDescription: '触发条件较为苛刻，且需要与队友有一定沟通。',
+      },
+    ],
+
+    skillAllocations: [
+      {
+        id: '',
+        pattern: '121000122',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
       },
     ],
 
