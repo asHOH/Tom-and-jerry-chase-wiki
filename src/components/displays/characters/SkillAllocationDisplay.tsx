@@ -210,7 +210,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         if (nextGroup.isParallelGroup) {
           // Single to parallel - diverge
           return (
-            <div className="absolute left-10 top-2 w-4 h-7">
+            <div className="absolute left-10 top-[7px] w-4 h-7">
               <svg className="w-full h-full" viewBox="0 0 16 28">
                 <path
                   d="M0 14 Q8 14 16 0"
