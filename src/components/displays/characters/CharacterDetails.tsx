@@ -83,7 +83,7 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
             </h1>
 
             {/* Character description */}
-            <p className="text-blue-600 mt-2 py-1">
+            <p className="text-gray-700 mt-2 py-1">
               {character.description}
             </p>
 
