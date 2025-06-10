@@ -207,8 +207,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         // Parallel to parallel OR within parallel group -> straight lines
         return (
           <div className='absolute left-10 top-3 w-4 h-auto'>
-            <div className='w-full h-px bg-gray-300'></div>
-            <div className='w-full h-px bg-gray-300 mt-7'></div>
+            <div className='w-full h-px bg-gray-400'></div>
+            <div className='w-full h-px bg-gray-400 mt-7'></div>
           </div>
         );
       } else if (isLastLevelInGroup && nextGroup) {
@@ -216,8 +216,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         return (
           <div className='absolute left-10 top-3 w-4 h-7'>
             <svg className='w-full h-full' viewBox='0 0 16 28'>
-              <path d='M0 0 Q8 0 16 14' fill='none' stroke='#d1d5db' strokeWidth='1' />
-              <path d='M0 28 Q8 28 16 14' fill='none' stroke='#d1d5db' strokeWidth='1' />
+              <path d='M0 0 Q8 0 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path d='M0 28 Q8 28 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
             </svg>
           </div>
         );
@@ -229,14 +229,14 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           // The top-[7px] value centers the divergence point vertically with the single 40px icon.
           <div className='absolute left-8 top-[7px] w-4 h-7 [transform:scaleX(-1)]'>
             <svg className='w-full h-full' viewBox='0 0 16 28'>
-              <path d='M0 1 Q8 1 16 14' fill='none' stroke='#d1d5db' strokeWidth='1' />
-              <path d='M0 28 Q8 28 16 14' fill='none' stroke='#d1d5db' strokeWidth='1' />
+              <path d='M0 1 Q8 1 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path d='M0 28 Q8 28 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
             </svg>
           </div>
         );
       } else {
         // Single to single -> straight line
-        return <div className='absolute left-10 top-5 w-4 h-px bg-gray-300'></div>;
+        return <div className='absolute left-10 top-5 w-4 h-px bg-gray-400'></div>;
       }
     }
     return null;
