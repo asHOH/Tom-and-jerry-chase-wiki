@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { getCardRankColors, getCardCostColors, designTokens } from '@/lib/design-tokens';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
@@ -7,12 +7,7 @@ import Tag from '../../ui/Tag';
 import BaseCard from '../../ui/BaseCard';
 
 export default function KnowledgeCardDetails({ card, isDetailedView: propIsDetailedView }: KnowledgeCardDetailsProps) {
-  // State to track if showing detailed descriptions
-  // Use the prop value if provided, otherwise use local state
-  const [localIsDetailedView, setLocalIsDetailedView] = useState<boolean>(false);
-
-  // Use prop value if provided, otherwise use local state
-  const isDetailedView = propIsDetailedView !== undefined ? propIsDetailedView : localIsDetailedView;
+  const isDetailedView = propIsDetailedView || false;
 
   const rankColors = getCardRankColors(card.rank, true);
   const costColors = getCardCostColors(card.cost, true);
@@ -55,15 +50,6 @@ export default function KnowledgeCardDetails({ card, isDetailedView: propIsDetai
         </div>        <div className="md:w-2/3">
           <div className="flex justify-between items-center" style={{ marginBottom: designTokens.spacing.lg, paddingLeft: designTokens.spacing.sm, paddingRight: designTokens.spacing.sm }}>
             <h2 className="text-2xl font-bold" style={{ paddingTop: designTokens.spacing.sm, paddingBottom: designTokens.spacing.sm }}>知识卡效果</h2>
-            {/* Only show the button if we're using local state (no prop provided) */}
-            {propIsDetailedView === undefined && (
-              <button
-                onClick={() => setLocalIsDetailedView(!localIsDetailedView)}
-                className="px-4 py-2 rounded-md bg-blue-100 hover:bg-blue-200 text-blue-700 transition-colors"
-              >
-                {isDetailedView ? '简明描述' : '详细描述'}
-              </button>
-            )}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.lg }}>

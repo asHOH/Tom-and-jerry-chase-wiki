@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { getPositioningTagColors, getPositioningTagContainerColor, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import { getTooltipContent, getPositioningTagTooltipContent, getItemKeyTooltipContent } from '@/lib/tooltipUtils';
@@ -54,12 +54,7 @@ const TextWithItemKeyTooltips = ({ text, isDetailed }: { text: string; isDetaile
 };
 
 export default function CharacterDetails({ character, isDetailedView: propIsDetailedView }: CharacterDetailsProps) {
-  // State to track if all skills are showing detailed descriptions
-  // Use the prop value if provided, otherwise use local state
-  const [localIsDetailedView, setLocalIsDetailedView] = useState<boolean>(false);
-
-  // Use prop value if provided, otherwise use local state
-  const isDetailedView = propIsDetailedView !== undefined ? propIsDetailedView : localIsDetailedView;
+  const isDetailedView = propIsDetailedView || false;
 
   return (
     <div className="space-y-8">
@@ -223,15 +218,6 @@ export default function CharacterDetails({ character, isDetailedView: propIsDeta
         <div className="md:w-2/3">
           <div className="flex justify-between items-center mb-6 px-2">
             <h2 className="text-2xl font-bold py-2">技能</h2>
-            {/* Only show the button if we're using local state (no prop provided) */}
-            {propIsDetailedView === undefined && (
-              <button
-                onClick={() => setLocalIsDetailedView(!localIsDetailedView)}
-                className="px-4 py-2 rounded-md bg-blue-100 hover:bg-blue-200 text-blue-700 transition-colors"
-              >
-                {isDetailedView ? '简明描述' : '详细描述'}
-              </button>
-            )}
           </div>
 
           {/* Skill Allocations Section */}
