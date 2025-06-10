@@ -10,17 +10,11 @@ export const metadata: Metadata = {
   description: `猫和老鼠手游wiki。${DISCLAIMER_TEXT}`,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh">
+    <html lang='zh'>
       <body className={inter.className}>
-        <main className="min-h-screen bg-gray-100 relative">
-          {children}
-        </main>
+        <main className='min-h-screen bg-gray-100 relative'>{children}</main>
       </body>
     </html>
   );

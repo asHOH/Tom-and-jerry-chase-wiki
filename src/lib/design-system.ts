@@ -1,12 +1,12 @@
 /**
  * Centralized Design System
- * 
+ *
  * This module provides a comprehensive design system that consolidates:
  * - Design tokens (spacing, colors, typography, etc.)
- * - Component tokens (specific component styling)  
+ * - Component tokens (specific component styling)
  * - Utility functions for styling
  * - Component creation helpers
- * 
+ *
  * This replaces the fragmented approach of UI_CONSTANTS and legacy utility files.
  * All legacy compatibility functions have been removed as of June 1, 2025.
  */
@@ -21,7 +21,7 @@ export {
   getCardRankColors,
   getCardCostColors,
   getPositioningTagColors,
-  getPositioningTagContainerColor
+  getPositioningTagContainerColor,
 } from './design-tokens';
 
 /**
@@ -39,8 +39,8 @@ export const createHoverStyles = (baseStyles: React.CSSProperties) => ({
     backgroundColor: designTokens.colors.faction.hover,
     color: designTokens.colors.faction.hoverText,
     boxShadow: designTokens.shadows.cardHover,
-    transform: 'translateY(-2px)'
-  }
+    transform: 'translateY(-2px)',
+  },
 });
 
 /**
@@ -51,25 +51,28 @@ export const createGridStyles = (columns: number = 4) => ({
   gridTemplateColumns: `repeat(${Math.min(columns, componentTokens.grid.columns.mobile)}, minmax(0, 1fr))`,
   gap: componentTokens.grid.gap,
   '@media (min-width: 768px)': {
-    gridTemplateColumns: `repeat(${Math.min(columns, componentTokens.grid.columns.tablet)}, minmax(0, 1fr))`
+    gridTemplateColumns: `repeat(${Math.min(columns, componentTokens.grid.columns.tablet)}, minmax(0, 1fr))`,
   },
   '@media (min-width: 1024px)': {
-    gridTemplateColumns: `repeat(${Math.min(columns, componentTokens.grid.columns.desktop)}, minmax(0, 1fr))`
+    gridTemplateColumns: `repeat(${Math.min(columns, componentTokens.grid.columns.desktop)}, minmax(0, 1fr))`,
   },
   '@media (min-width: 1280px)': {
-    gridTemplateColumns: `repeat(${Math.min(columns, componentTokens.grid.columns.large)}, minmax(0, 1fr))`
+    gridTemplateColumns: `repeat(${Math.min(columns, componentTokens.grid.columns.large)}, minmax(0, 1fr))`,
   },
   '@media (min-width: 1536px)': {
-    gridTemplateColumns: `repeat(${Math.min(columns, componentTokens.grid.columns.extraLarge)}, minmax(0, 1fr))`
-  }
+    gridTemplateColumns: `repeat(${Math.min(columns, componentTokens.grid.columns.extraLarge)}, minmax(0, 1fr))`,
+  },
 });
 
 /**
  * Create card styles with variants
  */
-export const createCardStyles = (variant: 'character' | 'item' | 'details' = 'character', interactive: boolean = false) => {
+export const createCardStyles = (
+  variant: 'character' | 'item' | 'details' = 'character',
+  interactive: boolean = false
+) => {
   const baseCardStyle = createStyleFromTokens(componentTokens.card.base);
-  
+
   const variantStyles = {
     character: {
       ...baseCardStyle,
@@ -79,19 +82,19 @@ export const createCardStyles = (variant: 'character' | 'item' | 'details' = 'ch
       padding: 0,
       overflow: 'hidden',
       transition: designTokens.transitions.hover,
-      transform: 'translateZ(0)'
+      transform: 'translateZ(0)',
     },
     item: {
       ...baseCardStyle,
       backgroundColor: '#ffffff',
       position: 'relative' as const,
       overflow: 'hidden',
-      padding: 0
+      padding: 0,
     },
     details: {
       ...baseCardStyle,
-      height: '100%'
-    }
+      height: '100%',
+    },
   };
 
   const baseStyle = variantStyles[variant];
@@ -102,10 +105,9 @@ export const createCardStyles = (variant: 'character' | 'item' | 'details' = 'ch
       hover: {
         ...baseStyle,
         boxShadow: designTokens.shadows.cardHover,
-        transform: baseStyle.transform === 'translateZ(0)' 
-          ? 'translateZ(0) scale(1.02)' 
-          : 'scale(1.02)'
-      }
+        transform:
+          baseStyle.transform === 'translateZ(0)' ? 'translateZ(0) scale(1.02)' : 'scale(1.02)',
+      },
     };
   }
 
@@ -128,7 +130,7 @@ export const createButtonStyles = (variant: 'faction' | 'primary' | 'secondary' 
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: designTokens.spacing.sm
+    gap: designTokens.spacing.sm,
   };
 
   switch (variant) {
@@ -139,14 +141,14 @@ export const createButtonStyles = (variant: 'faction' | 'primary' | 'secondary' 
         ...baseButtonStyle,
         backgroundColor: designTokens.colors.primary[500],
         color: '#ffffff',
-        boxShadow: designTokens.shadows.button
+        boxShadow: designTokens.shadows.button,
       };
     case 'secondary':
       return {
         ...baseButtonStyle,
         backgroundColor: designTokens.colors.gray[200],
         color: designTokens.colors.gray[800],
-        boxShadow: designTokens.shadows.button
+        boxShadow: designTokens.shadows.button,
       };
     default:
       return baseButtonStyle;
@@ -157,15 +159,21 @@ export const createButtonStyles = (variant: 'faction' | 'primary' | 'secondary' 
  * Generate CSS classes from design tokens for Tailwind compatibility
  */
 export const generateTailwindClasses = {
-  spacing: Object.entries(designTokens.spacing).reduce((acc, [key, value]) => {
-    acc[key] = `p-[${value}]`;
-    return acc;
-  }, {} as Record<string, string>),
-  
-  radius: Object.entries(designTokens.radius).reduce((acc, [key, value]) => {
-    acc[key] = `rounded-[${value}]`;
-    return acc;
-  }, {} as Record<string, string>)
+  spacing: Object.entries(designTokens.spacing).reduce(
+    (acc, [key, value]) => {
+      acc[key] = `p-[${value}]`;
+      return acc;
+    },
+    {} as Record<string, string>
+  ),
+
+  radius: Object.entries(designTokens.radius).reduce(
+    (acc, [key, value]) => {
+      acc[key] = `rounded-[${value}]`;
+      return acc;
+    },
+    {} as Record<string, string>
+  ),
 };
 
 /**
@@ -194,7 +202,9 @@ export const getToken = <T extends keyof DesignTokenPath>(
     case 'fontSize':
       return designTokens.typography.fontSize[key as keyof typeof designTokens.typography.fontSize];
     case 'fontWeight':
-      return designTokens.typography.fontWeight[key as keyof typeof designTokens.typography.fontWeight];
+      return designTokens.typography.fontWeight[
+        key as keyof typeof designTokens.typography.fontWeight
+      ];
     default:
       return undefined;
   }
@@ -209,12 +219,14 @@ export const designSystemMeta = {
   tokens: {
     spacing: Object.keys(designTokens.spacing).length,
     colors: Object.keys(designTokens.colors).length,
-    typography: Object.keys(designTokens.typography.fontSize).length + Object.keys(designTokens.typography.fontWeight).length,
+    typography:
+      Object.keys(designTokens.typography.fontSize).length +
+      Object.keys(designTokens.typography.fontWeight).length,
     shadows: Object.keys(designTokens.shadows).length,
     radius: Object.keys(designTokens.radius).length,
-    transitions: Object.keys(designTokens.transitions).length
+    transitions: Object.keys(designTokens.transitions).length,
   },
-  components: Object.keys(componentTokens)
+  components: Object.keys(componentTokens),
 };
 
 // Default export for the entire design system
@@ -227,9 +239,9 @@ const designSystem = {
     createGridStyles,
     createCardStyles,
     createButtonStyles,
-    getToken
+    getToken,
   },
-  meta: designSystemMeta
+  meta: designSystemMeta,
 } as const;
 
 export default designSystem;

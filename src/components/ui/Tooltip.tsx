@@ -53,28 +53,30 @@ export default function Tooltip({ children, content, className = '' }: TooltipPr
       >
         {children}
       </span>
-      {isVisible && typeof document !== 'undefined' && createPortal(
-        <div
-          className="fixed z-50 px-3 py-2 text-sm text-white bg-gray-800 rounded-md shadow-lg pointer-events-none transition-opacity duration-200 ease-in-out"
-          style={{
-            left: position.x,
-            top: position.y,
-            transform: 'translateX(-50%)',
-            opacity: isVisible ? 1 : 0,
-          }}
-        >
-          {content}
+      {isVisible &&
+        typeof document !== 'undefined' &&
+        createPortal(
           <div
-            className="absolute w-2 h-2 bg-gray-800 transform rotate-45"
+            className='fixed z-50 px-3 py-2 text-sm text-white bg-gray-800 rounded-md shadow-lg pointer-events-none transition-opacity duration-200 ease-in-out'
             style={{
-              left: '50%',
-              bottom: '-4px',
-              transform: 'translateX(-50%) rotate(45deg)',
+              left: position.x,
+              top: position.y,
+              transform: 'translateX(-50%)',
+              opacity: isVisible ? 1 : 0,
             }}
-          />
-        </div>,
-        document.body
-      )}
+          >
+            {content}
+            <div
+              className='absolute w-2 h-2 bg-gray-800 transform rotate-45'
+              style={{
+                left: '50%',
+                bottom: '-4px',
+                transform: 'translateX(-50%) rotate(45deg)',
+              }}
+            />
+          </div>,
+          document.body
+        )}
     </>
   );
 }

@@ -8,12 +8,9 @@ export interface FactionButtonGroupProps {
 
 export function FactionButtonGroup({ children, className = '' }: FactionButtonGroupProps) {
   const containerStyle = createStyleFromTokens(componentTokens.factionButtonContainer);
-  
+
   return (
-    <div 
-      style={containerStyle}
-      className={`flex-row sm:flex-row ${className}`}
-    >
+    <div style={containerStyle} className={`flex-row sm:flex-row ${className}`}>
       {children}
     </div>
   );

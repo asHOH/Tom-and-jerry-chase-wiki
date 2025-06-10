@@ -10,9 +10,24 @@ type Tab = {
 
 const tabs: Tab[] = [
   { id: 'cat', name: '猫阵营', imageSrc: '/images/icons/cat faction.png', imageAlt: '猫阵营图标' },
-  { id: 'mouse', name: '鼠阵营', imageSrc: '/images/icons/mouse faction.png', imageAlt: '鼠阵营图标' },
-  { id: 'catCards', name: '猫方知识卡', imageSrc: '/images/icons/cat knowledge card.png', imageAlt: '猫方知识卡图标' },
-  { id: 'mouseCards', name: '鼠方知识卡', imageSrc: '/images/icons/mouse knowledge card.png', imageAlt: '鼠方知识卡图标' },
+  {
+    id: 'mouse',
+    name: '鼠阵营',
+    imageSrc: '/images/icons/mouse faction.png',
+    imageAlt: '鼠阵营图标',
+  },
+  {
+    id: 'catCards',
+    name: '猫方知识卡',
+    imageSrc: '/images/icons/cat knowledge card.png',
+    imageAlt: '猫方知识卡图标',
+  },
+  {
+    id: 'mouseCards',
+    name: '鼠方知识卡',
+    imageSrc: '/images/icons/mouse knowledge card.png',
+    imageAlt: '鼠方知识卡图标',
+  },
 ];
 
 type TabNavigationProps = {
@@ -28,7 +43,7 @@ export default function TabNavigation({
   onTabChange,
   isDetailedView = false,
   onToggleDetailedView = () => {},
-  showDetailToggle = false
+  showDetailToggle = false,
 }: TabNavigationProps) {
   return (
     <div
@@ -41,7 +56,7 @@ export default function TabNavigation({
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         zIndex: 9999,
         width: '100%',
-        padding: '10px 0'
+        padding: '10px 0',
       }}
     >
       <div
@@ -51,7 +66,7 @@ export default function TabNavigation({
           alignItems: 'center',
           maxWidth: '1200px',
           margin: '0 auto',
-          padding: '0 16px'
+          padding: '0 16px',
         }}
       >
         {/* Left-aligned navigation buttons */}
@@ -65,12 +80,12 @@ export default function TabNavigation({
               color: activeTab === null ? 'white' : '#1f2937',
               border: 'none',
               cursor: 'pointer',
-              transition: 'background-color 0.2s'
+              transition: 'background-color 0.2s',
             }}
           >
             首页
           </button>
-            {tabs.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
@@ -84,7 +99,7 @@ export default function TabNavigation({
                 transition: 'background-color 0.2s',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '8px',
               }}
             >
               <Image
@@ -92,7 +107,7 @@ export default function TabNavigation({
                 alt={tab.imageAlt}
                 width={35}
                 height={28}
-                className="object-contain"
+                className='object-contain'
               />
               <span>{tab.name}</span>
             </button>
@@ -111,7 +126,7 @@ export default function TabNavigation({
                 color: isDetailedView ? '#1d4ed8' : '#ea580c',
                 border: 'none',
                 cursor: 'pointer',
-                transition: 'background-color 0.2s'
+                transition: 'background-color 0.2s',
               }}
             >
               {isDetailedView ? '简明描述' : '详细描述'}

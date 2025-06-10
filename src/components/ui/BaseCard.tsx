@@ -11,14 +11,15 @@ export default function BaseCard({
   children,
   onClick,
   className = '',
-  variant = 'character'
+  variant = 'character',
 }: BaseCardProps) {
   const isClickable = !!onClick;
 
   const getVariantStyles = () => {
     const baseCardStyle = createStyleFromTokens(componentTokens.card.base);
 
-    switch (variant) {      case 'character':
+    switch (variant) {
+      case 'character':
         return {
           ...baseCardStyle,
           backgroundColor: '#ffffff',
@@ -28,7 +29,7 @@ export default function BaseCard({
           padding: 0,
           overflow: 'hidden',
           transition: designTokens.transitions.hover,
-          transform: 'translateZ(0)'
+          transform: 'translateZ(0)',
         };
       case 'item':
         return {
@@ -36,13 +37,14 @@ export default function BaseCard({
           backgroundColor: '#ffffff',
           position: 'relative' as const,
           overflow: 'hidden',
-          padding: 0
-        };      case 'details':
+          padding: 0,
+        };
+      case 'details':
         return {
           ...baseCardStyle,
           backgroundColor: '#ffffff',
           height: '100%',
-          overflow: 'hidden'
+          overflow: 'hidden',
         };
       default:
         return baseCardStyle;
@@ -51,13 +53,15 @@ export default function BaseCard({
 
   const cardStyle = getVariantStyles();
 
-  const cardProps = isClickable ? {
-    onClick,
-    style: cardStyle
-  } : {
-    style: cardStyle
-  };
-    return (
+  const cardProps = isClickable
+    ? {
+        onClick,
+        style: cardStyle,
+      }
+    : {
+        style: cardStyle,
+      };
+  return (
     <div className={className} {...cardProps}>
       {children}
     </div>

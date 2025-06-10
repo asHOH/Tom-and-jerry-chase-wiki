@@ -47,8 +47,8 @@ export const addSkillImageUrls = (
   skills: Skill[],
   factionId: FactionId
 ): Skill[] => {
-  return skills.map(skill => ({
+  return skills.map((skill) => ({
     ...skill,
-    imageUrl: getSkillImageUrl(characterName, skill, factionId)
+    imageUrl: getSkillImageUrl(characterName, skill, factionId),
   }));
 };

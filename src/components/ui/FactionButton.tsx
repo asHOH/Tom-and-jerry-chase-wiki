@@ -13,15 +13,15 @@ export interface FactionButtonProps {
   className?: string;
 }
 
-export function FactionButton({ 
+export function FactionButton({
   emoji,
   imageSrc,
   imageAlt,
-  title, 
-  description, 
-  onClick, 
-  ariaLabel, 
-  className = '' 
+  title,
+  description,
+  onClick,
+  ariaLabel,
+  className = '',
 }: FactionButtonProps) {
   const baseStyle = createStyleFromTokens(componentTokens.factionButton.base);
   const contentStyle = createStyleFromTokens(componentTokens.factionButton.content);
@@ -44,7 +44,7 @@ export function FactionButton({
               alt={imageAlt || title}
               width={64}
               height={48}
-              className="object-contain"
+              className='object-contain'
             />
           </div>
         ) : (
@@ -52,9 +52,7 @@ export function FactionButton({
         )}
         <span style={titleStyle}>{title}</span>
       </div>
-      <div style={descriptionStyle}>
-        {description}
-      </div>
+      <div style={descriptionStyle}>{description}</div>
     </button>
   );
 }

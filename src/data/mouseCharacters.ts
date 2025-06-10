@@ -15,7 +15,7 @@ const getMouseImageUrl = (characterId: string): string => {
 
 export const mouseCharacters: Record<string, Character> = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
-  '杰瑞': {
+  杰瑞: {
     id: '杰瑞',
     description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家',
 
@@ -23,7 +23,8 @@ export const mouseCharacters: Record<string, Character> = {
     attackBoost: 15,
     hpRecovery: 2,
     moveSpeed: 650,
-    jumpHeight: 400,    cheesePushSpeed: 4,
+    jumpHeight: 400,
+    cheesePushSpeed: 4,
     wallCrackDamageBoost: 1,
 
     mousePositioningTags: [
@@ -31,13 +32,13 @@ export const mouseCharacters: Record<string, Character> = {
         tagName: '奶酪',
         isMinor: false,
         description: '推速快。',
-        additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。'
+        additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。',
       },
       {
         tagName: '辅助',
         isMinor: true,
         description: '鼓舞为队友提供增益、处理二手火箭；鸟哨限制猫的走位。',
-        additionalDescription: ''
+        additionalDescription: '',
       },
     ],
 
@@ -48,14 +49,14 @@ export const mouseCharacters: Record<string, Character> = {
         pattern: '0[12]112200',
         weaponType: 'weapon1',
         description: '加点灵活，如需自保就优先一级鼓舞；需要搬奶酪则优先二被。',
-        additionaldescription: ''
+        additionaldescription: '',
       },
       {
         id: '鸟哨',
         pattern: '0[13]113300',
         weaponType: 'weapon2',
         description: '加点灵活，如需自保就优先一级鼓舞；需要搬奶酪则优先二被。',
-        additionaldescription: ''
+        additionaldescription: '',
       },
     ],
 
@@ -76,17 +77,15 @@ export const mouseCharacters: Record<string, Character> = {
             level: 1,
             description: '鼓舞增加移速和跳跃高度。',
             detailedDescription: '鼓舞增加15%移速和45%跳跃高度，持续5秒。',
-            cooldown: 18
+            cooldown: 18,
           },
-          { level: 2,
-            description: '鼓舞额外回复25Hp。',
-            cooldown: 18
-          },
-          { level: 3,
+          { level: 2, description: '鼓舞额外回复25Hp。', cooldown: 18 },
+          {
+            level: 3,
             description: '鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间。',
-            cooldown: 18
+            cooldown: 18,
           },
-        ]
+        ],
       },
       {
         id: 'jerry-weapon1',
@@ -103,26 +102,27 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 1,
             description: '眩晕敌方3秒。',
-            cooldown: 20
+            cooldown: 20,
           },
           {
             level: 2,
             description: '额外造成65伤害；每次命中永久增加10%推速，最多叠五层。',
-            cooldown: 16
+            cooldown: 16,
           },
           {
             level: 3,
             description: '眩晕时间延长至4秒。',
-            cooldown: 12
+            cooldown: 12,
           },
-        ]
+        ],
       },
       {
         id: 'jerry-weapon2',
         name: '鸟哨',
         type: 'WEAPON2',
         description: '召唤投掷炸弹的金丝雀。',
-        detailedDescription: '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。敌方被金丝雀的炸弹命中后将对其短暂免疫。',
+        detailedDescription:
+          '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。敌方被金丝雀的炸弹命中后将对其短暂免疫。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断',
@@ -133,21 +133,21 @@ export const mouseCharacters: Record<string, Character> = {
             level: 1,
             description: '炸弹造成55伤害和2秒眩晕。',
             detailedDescription: '炸弹造成55伤害和2秒眩晕；总共释放约15个炸弹。',
-            cooldown: 30
+            cooldown: 30,
           },
           {
             level: 2,
             description: '提高金丝雀投掷炸弹的频率。',
             detailedDescription: '提高金丝雀投掷炸弹的频率，炸弹数量提升到约17个。',
-            cooldown: 30
+            cooldown: 30,
           },
           {
             level: 3,
             description: '减少CD；进一步提高金丝雀投掷炸弹的频率。',
             detailedDescription: '减少CD；进一步提高金丝雀投掷炸弹的频率，炸弹数量提升到约20个。',
-            cooldown: 24
+            cooldown: 24,
           },
-        ]
+        ],
       },
       {
         id: 'jerry-passive',
@@ -163,20 +163,21 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 2,
             description: '搬奶酪时，增加移速和跳跃高度。',
-            detailedDescription: '搬奶酪时，移速增加52%、跳跃高度增加25%。'
+            detailedDescription: '搬奶酪时，移速增加52%、跳跃高度增加25%。',
           },
           {
             level: 3,
             description: '奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。',
-            detailedDescription: '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、并获得2.7秒的13%加速。'
+            detailedDescription:
+              '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、并获得2.7秒的13%加速。',
           },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
 
   /* ----------------------------------- 泰菲 ----------------------------------- */
-  '泰菲': {
+  泰菲: {
     id: '泰菲',
     description: '杰瑞的侄子，总将自己吃得圆滚滚的',
 
@@ -184,7 +185,8 @@ export const mouseCharacters: Record<string, Character> = {
     attackBoost: 5,
     hpRecovery: 2.5,
     moveSpeed: 630,
-    jumpHeight: 380,    cheesePushSpeed: 3.85,
+    jumpHeight: 380,
+    cheesePushSpeed: 3.85,
     wallCrackDamageBoost: 0.5,
 
     mousePositioningTags: [
@@ -192,19 +194,19 @@ export const mouseCharacters: Record<string, Character> = {
         tagName: '奶酪',
         isMinor: false,
         description: '推速较快。',
-        additionalDescription: '有点矮子里面拔高个的意味，毕竟两个技能都跟奶酪没关系。'
+        additionalDescription: '有点矮子里面拔高个的意味，毕竟两个技能都跟奶酪没关系。',
       },
       {
         tagName: '破局',
         isMinor: true,
         description: '火箭筒能炸开夹子和叉子。',
-        additionalDescription: '缺点是CD长，并且需要把控角度。'
+        additionalDescription: '缺点是CD长，并且需要把控角度。',
       },
       {
         tagName: '砸墙',
         isMinor: true,
         description: '武器技能可以提供可观的砸墙伤害；三被能免疫鞭炮和泡泡。',
-        additionalDescription: ''
+        additionalDescription: '',
       },
     ],
 
@@ -224,19 +226,21 @@ export const mouseCharacters: Record<string, Character> = {
             level: 1,
             description: '',
             detailedDescription: '向前翻滚1.1秒；期间速度提升70%。',
-            cooldown: 12
+            cooldown: 12,
           },
-          { level: 2,
+          {
+            level: 2,
             description: '滚动时处于无敌状态；滚动结束后短暂提升跳跃高度。',
             detailedDescription: '滚动时处于无敌状态；滚动结束后极短暂地提升跳跃高度。',
-            cooldown: 12
+            cooldown: 12,
           },
-          { level: 3,
+          {
+            level: 3,
             description: '滚得更快更远。',
             detailedDescription: '翻滚时间提升至1.4秒；期间速度提升增加至105%。',
-            cooldown: 12
+            cooldown: 12,
           },
-        ]
+        ],
       },
       {
         id: 'tuffy-weapon1',
@@ -253,28 +257,31 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 1,
             description: '眩晕敌方1.5秒。',
-            detailedDescription: '造成两段伤害（碰撞50+爆炸15），两段伤害都继承绝地反击等角色状态；眩晕敌方1.5秒。',
-            cooldown: 30
+            detailedDescription:
+              '造成两段伤害（碰撞50+爆炸15），两段伤害都继承绝地反击等角色状态；眩晕敌方1.5秒。',
+            cooldown: 30,
           },
           {
             level: 2,
             description: '增加伤害；眩晕时间提升至2.1秒。',
             detailedDescription: '第二段爆炸伤害提升至30；眩晕时间提升至2.1秒。',
-            cooldown: 30
+            cooldown: 30,
           },
           {
             level: 3,
             description: '可以储存两发弹头。',
-            cooldown: 30
+            cooldown: 30,
           },
-        ]
+        ],
       },
       {
         id: 'tuffy-weapon2',
         name: '隐形感应雷',
         type: 'WEAPON2',
-        description: '放下隐形感应雷。感应雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成伤害和控制。',
-        detailedDescription: '放下隐形感应雷。雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成50伤害、1.9秒控制和击退（对墙缝伤害为10）。爆炸也会弹飞老鼠，但不造成伤害。隐身状态的猫咪不会触发雷。雷被道具攻击后会在一段时间后原地爆炸。雷会在30秒后自然消失。',
+        description:
+          '放下隐形感应雷。感应雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成伤害和控制。',
+        detailedDescription:
+          '放下隐形感应雷。雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成50伤害、1.9秒控制和击退（对墙缝伤害为10）。爆炸也会弹飞老鼠，但不造成伤害。隐身状态的猫咪不会触发雷。雷被道具攻击后会在一段时间后原地爆炸。雷会在30秒后自然消失。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断',
@@ -284,21 +291,21 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 1,
             description: '',
-            cooldown: 22
+            cooldown: 22,
           },
           {
             level: 2,
             description: '可以存储两发感应雷；雷使猫掉落手中的老鼠和道具。',
             // detailedDescription: '可以存储两发感应雷；雷使猫掉落手中的老鼠和道具。',
-            cooldown: 22
+            cooldown: 22,
           },
           {
             level: 3,
             description: '提高雷对猫咪和墙缝的伤害。',
             detailedDescription: '雷对猫咪的伤害提高至80；对墙缝的伤害提高至15。',
-            cooldown: 22
+            cooldown: 22,
           },
-        ]
+        ],
       },
       {
         id: 'tuffy-passive',
@@ -308,25 +315,26 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '牛奶加速生效期间，暂时提升25点Hp上限。'
+            description: '牛奶加速生效期间，暂时提升25点Hp上限。',
           },
           {
             level: 2,
             description: 'Hp恢复提升（受伤状态也触发）；吃食物更快。',
-            detailedDescription: 'Hp恢复提升2.5（受伤状态也触发）；吃食物速度提升20%。'
+            detailedDescription: 'Hp恢复提升2.5（受伤状态也触发）；吃食物速度提升20%。',
           },
           {
             level: 3,
             description: '免疫爆炸；Hp恢复进一步提升；吃食物进一步更快。',
-            detailedDescription: '免疫鞭炮、泡泡等爆炸；Hp恢复提升增加至5；吃食物速度提升增加至45%。'
+            detailedDescription:
+              '免疫鞭炮、泡泡等爆炸；Hp恢复提升增加至5；吃食物速度提升增加至45%。',
           },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
 
   /* ----------------------------------- 尼宝 ----------------------------------- */
-  '尼宝': {
+  尼宝: {
     id: '尼宝',
     description: '爱捣蛋、爱运动的机灵鬼',
 
@@ -334,7 +342,8 @@ export const mouseCharacters: Record<string, Character> = {
     attackBoost: 10,
     hpRecovery: 2,
     moveSpeed: 640,
-    jumpHeight: 400,    cheesePushSpeed: 2.85,
+    jumpHeight: 400,
+    cheesePushSpeed: 2.85,
     wallCrackDamageBoost: 1,
 
     mousePositioningTags: [
@@ -342,13 +351,13 @@ export const mouseCharacters: Record<string, Character> = {
         tagName: '救援',
         isMinor: false,
         description: '二级翻滚免控免死。',
-        additionalDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。'
+        additionalDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。',
       },
       {
         tagName: '砸墙',
         isMinor: true,
         description: '二被+果盘，墙缝蒸发一半',
-        additionalDescription: '触发条件较为苛刻，且需要与队友有一定沟通。'
+        additionalDescription: '触发条件较为苛刻，且需要与队友有一定沟通。',
       },
     ],
 
@@ -371,24 +380,30 @@ export const mouseCharacters: Record<string, Character> = {
             detailedDescription: '翻滚过程中免疫道具（鞭炮除外）。',
             cooldown: 18,
           },
-          { level: 2,
+          {
+            level: 2,
             description: '翻滚后获得短暂减伤和强霸体；首次翻滚后3秒内可再次翻滚。',
-            detailedDescription: '翻滚开始后1.9秒获得20固定减伤和强霸体；首次翻滚结束后3秒内可再次翻滚。（如果使用道具/交互键、受到控制或进入虚弱，则无法再次翻滚）',
+            detailedDescription:
+              '翻滚开始后1.9秒获得20固定减伤和强霸体；首次翻滚结束后3秒内可再次翻滚。（如果使用道具/交互键、受到控制或进入虚弱，则无法再次翻滚）',
             cooldown: 18,
           },
-          { level: 3,
+          {
+            level: 3,
             description: '第一次翻滚后缓慢恢复Hp，第二次翻滚后短暂隐身。',
-            detailedDescription: '第一次翻滚结束后获得5点Hp恢复，持续5秒；第二次翻滚结束后隐身2秒。',
+            detailedDescription:
+              '第一次翻滚结束后获得5点Hp恢复，持续5秒；第二次翻滚结束后隐身2秒。',
             cooldown: 18,
           },
-        ]
+        ],
       },
       {
         id: 'nibbles-weapon1',
         name: '尼宝的朋友',
         type: 'WEAPON1',
-        description: '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。',
-        detailedDescription: '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。朋友在30秒后自然消失。朋友扔出鱼钩过程中再次点击技能会使朋友将鱼钩收回（有前摇）。',
+        description:
+          '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。',
+        detailedDescription:
+          '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。朋友在30秒后自然消失。朋友扔出鱼钩过程中再次点击技能会使朋友将鱼钩收回（有前摇）。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断',
@@ -398,7 +413,8 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 1,
             description: '鱼钩碰到道具会携带之；碰到角色会将其勾回，并使猫咪掉落手中的老鼠。',
-            detailedDescription: '鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并使猫咪掉落手中的老鼠。',
+            detailedDescription:
+              '鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并使猫咪掉落手中的老鼠。',
             cooldown: 16,
           },
           {
@@ -412,7 +428,7 @@ export const mouseCharacters: Record<string, Character> = {
             detailedDescription: '鱼钩携带的道具碰撞猫咪时额外造成50伤害和2.5秒眩晕。',
             cooldown: 10,
           },
-        ]
+        ],
       },
       {
         id: 'nibbles-passive',
@@ -428,17 +444,18 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 2,
             description: '持续横向移动一段时间后，获得短暂的减伤、攻击提升和墙缝增伤。',
-            detailedDescription: '持续横向移动6.7秒后，获得10点固定减伤、攻击提升30、墙缝增伤3，持续4.9秒。横向移动的转向可以通过翻滚，也可以通过在改变移动方向前极短暂地松开移动键（需要精准把控时间）',
+            detailedDescription:
+              '持续横向移动6.7秒后，获得10点固定减伤、攻击提升30、墙缝增伤3，持续4.9秒。横向移动的转向可以通过翻滚，也可以通过在改变移动方向前极短暂地松开移动键（需要精准把控时间）',
           },
           {
             level: 3,
             description: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(CD：9秒)',
             // detailedDescription: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(CD：9秒)',
           },
-        ]
-      }
-    ]
-  }
+        ],
+      },
+    ],
+  },
 };
 
 // Generate characters with faction ID and image URLs applied in bulk
@@ -449,7 +466,7 @@ export const mouseCharactersWithImages = Object.fromEntries(
       ...character,
       factionId: 'mouse' as const,
       imageUrl: getMouseImageUrl(characterId),
-      skills: addSkillImageUrls(characterId, character.skills, 'mouse')
-    }
+      skills: addSkillImageUrls(characterId, character.skills, 'mouse'),
+    },
   ])
 );

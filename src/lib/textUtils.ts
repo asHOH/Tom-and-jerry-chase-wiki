@@ -25,10 +25,14 @@ export const renderTextWithHighlights = (text: string): (string | React.ReactEle
 
     // Add the underlined text with styling
     parts.push(
-      React.createElement('span', {
-        key: match.index,
-        className: 'underline decoration-2 underline-offset-2'
-      }, match[1])
+      React.createElement(
+        'span',
+        {
+          key: match.index,
+          className: 'underline decoration-2 underline-offset-2',
+        },
+        match[1]
+      )
     );
 
     lastIndex = highlightPattern.lastIndex;
@@ -63,18 +67,26 @@ export const formatTextWithEnhancedMarkdown = (text: string): React.ReactElement
     if (match[1]) {
       // Bold text pattern **text**
       parts.push(
-        React.createElement('span', {
-          key: match.index,
-          className: 'underline decoration-2 underline-offset-2'
-        }, match[2])
+        React.createElement(
+          'span',
+          {
+            key: match.index,
+            className: 'underline decoration-2 underline-offset-2',
+          },
+          match[2]
+        )
       );
     } else if (match[3]) {
       // Numerical pattern
       parts.push(
-        React.createElement('span', {
-          key: match.index,
-          className: 'underline decoration-2 underline-offset-2'
-        }, match[3])
+        React.createElement(
+          'span',
+          {
+            key: match.index,
+            className: 'underline decoration-2 underline-offset-2',
+          },
+          match[3]
+        )
       );
     }
 
@@ -95,7 +107,10 @@ export const formatTextWithEnhancedMarkdown = (text: string): React.ReactElement
  * @param pattern - Pattern to look for ('markdown', 'highlights', 'itemkey')
  * @returns boolean indicating if pattern exists
  */
-export const hasTextPattern = (text: string, pattern: 'markdown' | 'highlights' | 'itemkey'): boolean => {
+export const hasTextPattern = (
+  text: string,
+  pattern: 'markdown' | 'highlights' | 'itemkey'
+): boolean => {
   switch (pattern) {
     case 'markdown':
     case 'highlights':

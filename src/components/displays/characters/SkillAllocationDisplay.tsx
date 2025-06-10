@@ -1,7 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
 import { SkillAllocation } from '@/data/types';
-import { parseSkillAllocationPattern, getSkillAllocationImageUrl, ParsedSkillLevel } from '@/lib/skillAllocationUtils';
+import {
+  parseSkillAllocationPattern,
+  getSkillAllocationImageUrl,
+  ParsedSkillLevel,
+} from '@/lib/skillAllocationUtils';
 import { getSkillLevelColors } from '@/lib/design-tokens';
 import Tooltip from '../../ui/Tooltip';
 
@@ -34,37 +38,41 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   characterName,
   factionId,
   characterSkills,
-  isDetailed
+  isDetailed,
 }) => {
   // Preprocess pattern to auto-parallel first two skills if needed
   const preprocessPattern = (pattern: string): string => {
     if (pattern.length >= 2) {
       const firstChar = pattern[0];
       const secondChar = pattern[1];
-      
+
       const isFirstRegular = ['0', '1', '2', '3'].includes(firstChar);
       const isSecondRegular = ['0', '1', '2', '3'].includes(secondChar);
       const isAlreadyParallel = pattern.startsWith('[');
-      
+
       if (isFirstRegular && isSecondRegular && !isAlreadyParallel) {
         return `[${firstChar}${secondChar}]${pattern.slice(2)}`;
       }
     }
     return pattern;
   };
-  
+
   const processedPattern = preprocessPattern(allocation.pattern);
   const parsedLevels = parseSkillAllocationPattern(processedPattern);
-  
+
   const skillLevels = { '0': 0, '1': 0, '2': 0, '3': 0 };
-  
+
   const currentLevels: ProcessedSkillLevel[] = parsedLevels.map((level) => {
     if (level.isParallel && level.parallelOptions) {
       const firstOption = level.parallelOptions[0];
       const secondOption = level.parallelOptions[1];
       skillLevels[firstOption]++;
       skillLevels[secondOption]++;
-      return { ...level, currentLevel: skillLevels[firstOption], parallelCurrentLevel: skillLevels[secondOption] };
+      return {
+        ...level,
+        currentLevel: skillLevels[firstOption],
+        parallelCurrentLevel: skillLevels[secondOption],
+      };
     } else {
       skillLevels[level.skillType]++;
       return { ...level, currentLevel: skillLevels[level.skillType] };
@@ -72,36 +80,79 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   });
 
   const skillTypeMap = {
-    '0': characterSkills.find(s => s.type === 'PASSIVE'),
-    '1': characterSkills.find(s => s.type === 'ACTIVE'),
-    '2': characterSkills.find(s => s.type === 'WEAPON1'),
-    '3': characterSkills.find(s => s.type === 'WEAPON2'),
+    '0': characterSkills.find((s) => s.type === 'PASSIVE'),
+    '1': characterSkills.find((s) => s.type === 'ACTIVE'),
+    '2': characterSkills.find((s) => s.type === 'WEAPON1'),
+    '3': characterSkills.find((s) => s.type === 'WEAPON2'),
   };
 
-  const renderSkillIcon = (skillType: '0' | '1' | '2' | '3', currentLevel: number, isDelayed: boolean, hasNegativeEffect: boolean) => {
+  const renderSkillIcon = (
+    skillType: '0' | '1' | '2' | '3',
+    currentLevel: number,
+    isDelayed: boolean,
+    hasNegativeEffect: boolean
+  ) => {
     const skill = skillTypeMap[skillType];
-    const imageUrl = skill?.imageUrl || getSkillAllocationImageUrl(characterName, skillType, factionId, skill?.name);
-    const baseStyle = { ...getSkillLevelColors(currentLevel, true), borderWidth: '2px', borderStyle: 'solid' };
+    const imageUrl =
+      skill?.imageUrl ||
+      getSkillAllocationImageUrl(characterName, skillType, factionId, skill?.name);
+    const baseStyle = {
+      ...getSkillLevelColors(currentLevel, true),
+      borderWidth: '2px',
+      borderStyle: 'solid',
+    };
 
     const iconElement = (
-      <div className={`relative w-10 h-10 border-2 ${isDelayed ? '' : 'rounded-full'}`} style={baseStyle}>
-        <Image src={imageUrl} alt={skill?.name || `技能${skillType}`} width={40} height={40} className="w-full h-full object-cover scale-75" unoptimized />
+      <div
+        className={`relative w-10 h-10 border-2 ${isDelayed ? '' : 'rounded-full'}`}
+        style={baseStyle}
+      >
+        <Image
+          src={imageUrl}
+          alt={skill?.name || `技能${skillType}`}
+          width={40}
+          height={40}
+          className='w-full h-full object-cover scale-75'
+          unoptimized
+        />
         {hasNegativeEffect && (
-          <div className="absolute -top-[5px] -right-[5px] w-4 h-4 pointer-events-none z-10">
-            <Image src="/images/misc/禁止.png" alt="负面效果" width={16} height={16} className="w-full h-full object-contain" unoptimized />
+          <div className='absolute -top-[5px] -right-[5px] w-4 h-4 pointer-events-none z-10'>
+            <Image
+              src='/images/misc/禁止.png'
+              alt='负面效果'
+              width={16}
+              height={16}
+              className='w-full h-full object-contain'
+              unoptimized
+            />
           </div>
         )}
       </div>
     );
 
-    if (isDelayed) return <span className="inline-block"><Tooltip content="留加点：加点瞬间有额外收益，需把握时机">{iconElement}</Tooltip></span>;
-    if (hasNegativeEffect) return <span className="inline-block"><Tooltip content="负面效果：此技能升级会带来负面效果">{iconElement}</Tooltip></span>;
+    if (isDelayed)
+      return (
+        <span className='inline-block'>
+          <Tooltip content='留加点：加点瞬间有额外收益，需把握时机'>{iconElement}</Tooltip>
+        </span>
+      );
+    if (hasNegativeEffect)
+      return (
+        <span className='inline-block'>
+          <Tooltip content='负面效果：此技能升级会带来负面效果'>{iconElement}</Tooltip>
+        </span>
+      );
     return iconElement;
   };
 
   // Calculate character levels and group parallel skills
   let characterLevel = 2;
-  const levelGroups: Array<{ characterLevel: number; endCharacterLevel?: number; levels: typeof currentLevels; isParallelGroup: boolean; }> = [];
+  const levelGroups: Array<{
+    characterLevel: number;
+    endCharacterLevel?: number;
+    levels: typeof currentLevels;
+    isParallelGroup: boolean;
+  }> = [];
   let i = 0;
   while (i < currentLevels.length) {
     const level = currentLevels[i];
@@ -109,7 +160,12 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       let j = i;
       while (j < currentLevels.length && currentLevels[j].isParallel) j++;
       const parallelLevels = currentLevels.slice(i, j);
-      levelGroups.push({ characterLevel, endCharacterLevel: characterLevel + parallelLevels.length * 2 - 1, levels: parallelLevels, isParallelGroup: true });
+      levelGroups.push({
+        characterLevel,
+        endCharacterLevel: characterLevel + parallelLevels.length * 2 - 1,
+        levels: parallelLevels,
+        isParallelGroup: true,
+      });
       characterLevel += parallelLevels.length * 2;
       i = j;
     } else {
@@ -120,7 +176,12 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   }
 
   // Helper function to render connection lines
-  const renderConnectionLine = (groupIndex: number, levelIndex: number, group: typeof levelGroups[0], isParallel: boolean) => {
+  const renderConnectionLine = (
+    groupIndex: number,
+    levelIndex: number,
+    group: (typeof levelGroups)[0],
+    isParallel: boolean
+  ) => {
     const isLastLevelInGroup = levelIndex === group.levels.length - 1;
     const nextGroup = groupIndex < levelGroups.length - 1 ? levelGroups[groupIndex + 1] : null;
 
@@ -128,7 +189,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
 
     const checkNextForNegative = (next: typeof nextGroup | null) => {
       if (!next) return false;
-      if (next.isParallelGroup) return next.levels.some(l => l.hasNegativeEffect);
+      if (next.isParallelGroup) return next.levels.some((l) => l.hasNegativeEffect);
       return next.levels[0]?.hasNegativeEffect;
     };
 
@@ -140,21 +201,24 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     };
 
     if (hasNegativeTarget()) return null;
-    
+
     if (isParallel) {
       if (!isLastLevelInGroup || (isLastLevelInGroup && nextGroup?.isParallelGroup)) {
         // Parallel to parallel OR within parallel group -> straight lines
         return (
-          <div className="absolute left-10 top-3 w-4 h-auto">
-            <div className="w-full h-px bg-gray-300"></div>
-            <div className="w-full h-px bg-gray-300 mt-7"></div>
+          <div className='absolute left-10 top-3 w-4 h-auto'>
+            <div className='w-full h-px bg-gray-300'></div>
+            <div className='w-full h-px bg-gray-300 mt-7'></div>
           </div>
         );
       } else if (isLastLevelInGroup && nextGroup) {
         // Parallel to single -> converge
         return (
-          <div className="absolute left-10 top-3 w-4 h-7">
-            <svg className="w-full h-full" viewBox="0 0 16 28"><path d="M0 0 Q8 0 16 14" fill="none" stroke="#d1d5db" strokeWidth="1" /><path d="M0 28 Q8 28 16 14" fill="none" stroke="#d1d5db" strokeWidth="1" /></svg>
+          <div className='absolute left-10 top-3 w-4 h-7'>
+            <svg className='w-full h-full' viewBox='0 0 16 28'>
+              <path d='M0 0 Q8 0 16 14' fill='none' stroke='#d1d5db' strokeWidth='1' />
+              <path d='M0 28 Q8 28 16 14' fill='none' stroke='#d1d5db' strokeWidth='1' />
+            </svg>
           </div>
         );
       }
@@ -163,13 +227,16 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         // Single to parallel -> diverge
         return (
           // The top-[7px] value centers the divergence point vertically with the single 40px icon.
-          <div className="absolute left-10 top-[7px] w-4 h-7">
-            <svg className="w-full h-full" viewBox="0 0 16 28"><path d="M0 14 Q8 14 16 0" fill="none" stroke="#d1d5db" strokeWidth="1" /><path d="M0 14 Q8 14 16 28" fill="none" stroke="#d1d5db" strokeWidth="1" /></svg>
+          <div className='absolute left-10 top-[7px] w-4 h-7'>
+            <svg className='w-full h-full' viewBox='0 0 16 28'>
+              <path d='M0 14 Q8 14 16 0' fill='none' stroke='#d1d5db' strokeWidth='1' />
+              <path d='M0 14 Q8 14 16 28' fill='none' stroke='#d1d5db' strokeWidth='1' />
+            </svg>
           </div>
         );
       } else {
         // Single to single -> straight line
-        return <div className="absolute left-10 top-5 w-4 h-px bg-gray-300"></div>;
+        return <div className='absolute left-10 top-5 w-4 h-px bg-gray-300'></div>;
       }
     }
     return null;
@@ -180,40 +247,67 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   const shouldShowDescriptionBlock = hasDescription || hasAdditionalDescription;
 
   return (
-    <div className="space-y-3">
-      <div className="flex gap-4">
-        <div className="w-1/6 flex-shrink-0">
-          <h4 className="font-bold text-gray-800 text-lg leading-tight">{allocation.id}</h4>
+    <div className='space-y-3'>
+      <div className='flex gap-4'>
+        <div className='w-1/6 flex-shrink-0'>
+          <h4 className='font-bold text-gray-800 text-lg leading-tight'>{allocation.id}</h4>
         </div>
-        <div className="flex-1">
-          <div className="flex flex-wrap items-start gap-2 mb-2">
+        <div className='flex-1'>
+          <div className='flex flex-wrap items-start gap-2 mb-2'>
             {levelGroups.map((group, groupIndex) => (
-              <div key={groupIndex} className="relative flex flex-col items-center">
+              <div key={groupIndex} className='relative flex flex-col items-center'>
                 {group.isParallelGroup ? (
                   <>
-                    <div className="flex gap-1 justify-center mb-3 h-4">
+                    <div className='flex gap-1 justify-center mb-3 h-4'>
                       {group.levels.map((_, levelIndex) => (
-                        <div key={levelIndex} className="w-10 flex flex-col items-center">
-                          <span className="text-xs text-gray-500">Lv.{group.characterLevel + levelIndex}/{group.characterLevel + levelIndex + group.levels.length}</span>
+                        <div key={levelIndex} className='w-10 flex flex-col items-center'>
+                          <span className='text-xs text-gray-500'>
+                            Lv.{group.characterLevel + levelIndex}/
+                            {group.characterLevel + levelIndex + group.levels.length}
+                          </span>
                         </div>
                       ))}
                     </div>
-                    <div className="relative h-12 flex gap-1 justify-center">
+                    <div className='relative h-12 flex gap-1 justify-center'>
                       {group.levels.map((level, levelIndex) => (
-                        <div key={levelIndex} className="relative w-10 flex flex-col justify-center">
+                        <div
+                          key={levelIndex}
+                          className='relative w-10 flex flex-col justify-center'
+                        >
                           {renderConnectionLine(groupIndex, levelIndex, group, true)}
-                          <div className="absolute" style={{ top: '-7px' }}>{renderSkillIcon(level.parallelOptions![0], level.currentLevel, level.isDelayed, level.hasNegativeEffect)}</div>
-                          <div className="absolute" style={{ top: '19px' }}>{renderSkillIcon(level.parallelOptions![1], level.parallelCurrentLevel!, level.isDelayed, level.hasNegativeEffect)}</div>
+                          <div className='absolute' style={{ top: '-7px' }}>
+                            {renderSkillIcon(
+                              level.parallelOptions![0],
+                              level.currentLevel,
+                              level.isDelayed,
+                              level.hasNegativeEffect
+                            )}
+                          </div>
+                          <div className='absolute' style={{ top: '19px' }}>
+                            {renderSkillIcon(
+                              level.parallelOptions![1],
+                              level.parallelCurrentLevel!,
+                              level.isDelayed,
+                              level.hasNegativeEffect
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
                   </>
                 ) : (
                   <>
-                    <span className="text-xs text-gray-500 mb-4 h-4">Lv.{group.characterLevel}</span>
-                    <div className="relative">
+                    <span className='text-xs text-gray-500 mb-4 h-4'>
+                      Lv.{group.characterLevel}
+                    </span>
+                    <div className='relative'>
                       {renderConnectionLine(groupIndex, 0, group, false)}
-                      {renderSkillIcon(group.levels[0].skillType, group.levels[0].currentLevel, group.levels[0].isDelayed, group.levels[0].hasNegativeEffect)}
+                      {renderSkillIcon(
+                        group.levels[0].skillType,
+                        group.levels[0].currentLevel,
+                        group.levels[0].isDelayed,
+                        group.levels[0].hasNegativeEffect
+                      )}
                     </div>
                   </>
                 )}
@@ -223,9 +317,20 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         </div>
       </div>
       {shouldShowDescriptionBlock && (
-        <div className="bg-gray-50 p-3 rounded-lg">
-          {hasDescription && <p className="text-sm text-gray-700"><TextWithItemKeyTooltips text={allocation.description!} isDetailed={isDetailed} /></p>}
-          {hasAdditionalDescription && <p className="text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200"><TextWithItemKeyTooltips text={allocation.additionaldescription!} isDetailed={isDetailed} /></p>}
+        <div className='bg-gray-50 p-3 rounded-lg'>
+          {hasDescription && (
+            <p className='text-sm text-gray-700'>
+              <TextWithItemKeyTooltips text={allocation.description!} isDetailed={isDetailed} />
+            </p>
+          )}
+          {hasAdditionalDescription && (
+            <p className='text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200'>
+              <TextWithItemKeyTooltips
+                text={allocation.additionaldescription!}
+                isDetailed={isDetailed}
+              />
+            </p>
+          )}
         </div>
       )}
     </div>

@@ -27,23 +27,27 @@
 ### 安装步骤
 
 1. 克隆仓库
+
    ```
    git clone https://github.com/yourusername/tom-and-jerry-chase-data.git
    cd tom-and-jerry-chase-data
    ```
 
 2. 安装依赖
+
    ```
    npm install
    ```
 
 3. 设置环境变量
    创建 `.env` 文件（已存在），确保包含以下内容：
+
    ```
    DATABASE_URL="file:./dev.db"
    ```
 
 4. 初始化数据库
+
    ```
    npm run prisma:generate
    npm run prisma:migrate
@@ -51,6 +55,7 @@
    ```
 
 5. 启动开发服务器
+
    ```
    npm run dev
    ```
@@ -95,6 +100,7 @@ tom-and-jerry-chase-data/
 ## 部署到 GitHub Pages
 
 1. 构建项目
+
    ```
    npm run build
    ```

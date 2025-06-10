@@ -1,5 +1,16 @@
 // Re-export types for backward compatibility
-export type { FactionId, Faction, Character, Skill, SkillLevel, Card, CardLevel, CardRank, PositioningTag, PositioningTagName } from './types';
+export type {
+  FactionId,
+  Faction,
+  Character,
+  Skill,
+  SkillLevel,
+  Card,
+  CardLevel,
+  CardRank,
+  PositioningTag,
+  PositioningTagName,
+} from './types';
 
 // Import character data from separated files
 import { catCharactersWithImages } from './catCharacters';
@@ -19,20 +30,20 @@ export const factionData: Record<FactionId, Faction> = {
     id: 'mouse',
     name: '鼠阵营',
     description: '鼠阵营共四名角色，需要合作躲避猫的攻击、推完5块奶酪并砸开墙缝',
-  }
+  },
 };
 
 /* -------------------------------------------------------------------------- */
 // Combine all character data
 export const characterData = {
   ...catCharactersWithImages,
-  ...mouseCharactersWithImages
+  ...mouseCharactersWithImages,
 };
 
 // Combine all card data
 export const cardData = {
   ...catCardsWithImages,
-  ...mouseCardsWithImages
+  ...mouseCardsWithImages,
 };
 
 // Generate derived data structures for the application
@@ -41,18 +52,19 @@ export const factions = Object.fromEntries(
   Object.entries(factionData).map(([factionId, faction]) => {
     // Get all characters belonging to this faction
     const factionCharacters = Object.values(characterData)
-      .filter(character => character.factionId === factionId)
+      .filter((character) => character.factionId === factionId)
       .map((character) => {
         // Get positioning tags based on faction
-        const positioningTags = factionId === 'cat' 
-          ? character.catPositioningTags || []
-          : character.mousePositioningTags || [];
-        
+        const positioningTags =
+          factionId === 'cat'
+            ? character.catPositioningTags || []
+            : character.mousePositioningTags || [];
+
         return {
           id: character.id,
           name: character.id, // Use id as name since they're now the same
           imageUrl: character.imageUrl!,
-          positioningTags: positioningTags // Include positioning tags for both cat and mouse characters
+          positioningTags: positioningTags, // Include positioning tags for both cat and mouse characters
         };
       });
 
@@ -67,11 +79,14 @@ export const characters = Object.fromEntries(
     const factionId = character.factionId as FactionId;
     const faction = factionData[factionId];
 
-    return [characterId, {
-      ...character,
-      imageUrl: character.imageUrl!,
-      faction: { id: faction.id, name: faction.name }
-    }];
+    return [
+      characterId,
+      {
+        ...character,
+        imageUrl: character.imageUrl!,
+        faction: { id: faction.id, name: faction.name },
+      },
+    ];
   })
 );
 
@@ -80,13 +95,13 @@ export const factionCards = Object.fromEntries(
   Object.entries(factionData).map(([factionId, faction]) => {
     // Get all cards belonging to this faction
     const factionCardList = Object.values(cardData)
-      .filter(card => card.factionId === factionId)
+      .filter((card) => card.factionId === factionId)
       .map(({ id, rank, cost, imageUrl }) => ({
         id,
         name: id, // Use id as name since they're now the same
         rank,
         cost,
-        imageUrl: imageUrl!
+        imageUrl: imageUrl!,
       }));
 
     return [factionId, { ...faction, cards: factionCardList }];
@@ -99,10 +114,13 @@ export const cards = Object.fromEntries(
     const factionId = card.factionId as FactionId;
     const faction = factionData[factionId];
 
-    return [cardId, {
-      ...card,
-      imageUrl: card.imageUrl!,
-      faction: { id: faction.id, name: faction.name }
-    }];
+    return [
+      cardId,
+      {
+        ...card,
+        imageUrl: card.imageUrl!,
+        faction: { id: faction.id, name: faction.name },
+      },
+    ];
   })
 );

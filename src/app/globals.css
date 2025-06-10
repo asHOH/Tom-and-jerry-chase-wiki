@@ -122,7 +122,11 @@ html {
 button.faction-button {
   position: relative;
   overflow: visible;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease !important;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease !important;
 }
 
 /* Hover styles for faction buttons */
@@ -147,7 +151,10 @@ button.faction-button:hover {
 .faction-button .tooltip {
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s,
+    transform 0.3s;
   transition-delay: 0s;
 }
 
@@ -162,7 +169,10 @@ button.faction-button:hover {
   z-index: 10;
   white-space: nowrap;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s,
+    transform 0.3s;
   transition-delay: 0ms;
   transform: translate(-50%, calc(100% + 10px));
 }

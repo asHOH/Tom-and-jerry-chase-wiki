@@ -15,13 +15,13 @@ export type ParsedSkillLevel = {
 export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[] => {
   const result: ParsedSkillLevel[] = [];
   let i = 0;
-  
+
   const negativeMarkerIndex = pattern.indexOf('-');
   const hasNegativeMarker = negativeMarkerIndex !== -1;
 
   while (i < pattern.length) {
     const char = pattern[i];
-    
+
     if (char === '-') {
       i++;
       continue;
@@ -33,37 +33,37 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
     // Check for parallel skills (in brackets)
     if (char === '[') {
       i++; // Skip opening bracket
-      
+
       let bracketContent = '';
       while (i < pattern.length && pattern[i] !== ']') {
         bracketContent += pattern[i];
         i++;
       }
       i++; // Skip closing bracket
-      
+
       if (bracketContent.length % 2 !== 0) {
         throw new Error(`Parallel skill content must have even length: ${bracketContent}`);
       }
-      
+
       const halfLength = bracketContent.length / 2;
       const firstHalf = bracketContent.slice(0, halfLength);
       const secondHalf = bracketContent.slice(halfLength);
-      
+
       for (let j = 0; j < halfLength; j++) {
         const firstOption = firstHalf[j] as '0' | '1' | '2' | '3';
         const secondOption = secondHalf[j] as '0' | '1' | '2' | '3';
-        
+
         result.push({
           skillType: firstOption,
           isDelayed: false,
           hasNegativeEffect: isNegative, // Use the pre-calculated variable
           isParallel: true,
-          parallelOptions: [firstOption, secondOption]
+          parallelOptions: [firstOption, secondOption],
         });
       }
       continue;
     }
-    
+
     let skillType: '0' | '1' | '2' | '3' | undefined;
     let isDelayed = false;
 
@@ -94,15 +94,19 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
   return result;
 };
 
-
 /* Get skill type display name */
 export const getSkillTypeDisplayName = (skillType: '0' | '1' | '2' | '3'): string => {
   switch (skillType) {
-    case '0': return '被动';
-    case '1': return '主动';
-    case '2': return '武器1';
-    case '3': return '武器2';
-    default: return '';
+    case '0':
+      return '被动';
+    case '1':
+      return '主动';
+    case '2':
+      return '武器1';
+    case '3':
+      return '武器2';
+    default:
+      return '';
   }
 };
 

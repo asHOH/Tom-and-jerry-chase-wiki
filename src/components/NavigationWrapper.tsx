@@ -16,7 +16,7 @@ export default function NavigationWrapper({
   onTabChange,
   isDetailedView = false,
   onToggleDetailedView = () => {},
-  showDetailToggle = false
+  showDetailToggle = false,
 }: NavigationWrapperProps) {
   return (
     <div style={{ minHeight: '100vh' }}>
@@ -30,12 +30,14 @@ export default function NavigationWrapper({
       />
 
       {/* Content with padding for the fixed navbar */}
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '24px',
-        paddingTop: '90px' // Adjust based on your navbar height
-      }}>
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '24px',
+          paddingTop: '90px', // Adjust based on your navbar height
+        }}
+      >
         {children}
       </div>
     </div>

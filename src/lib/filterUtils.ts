@@ -10,13 +10,11 @@ import { useState, useCallback } from 'react';
  * @param initialFilters - Initial set of selected filters
  * @returns Filter state and management functions
  */
-export function useFilterState<T extends string>(
-  initialFilters: Set<T> = new Set()
-) {
+export function useFilterState<T extends string>(initialFilters: Set<T> = new Set()) {
   const [selectedFilters, setSelectedFilters] = useState<Set<T>>(initialFilters);
 
   const toggleFilter = useCallback((filter: T) => {
-    setSelectedFilters(prev => {
+    setSelectedFilters((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(filter)) {
         newSet.delete(filter);
@@ -35,9 +33,12 @@ export function useFilterState<T extends string>(
     setSelectedFilters(new Set(filters));
   }, []);
 
-  const hasFilter = useCallback((filter: T) => {
-    return selectedFilters.has(filter);
-  }, [selectedFilters]);
+  const hasFilter = useCallback(
+    (filter: T) => {
+      return selectedFilters.has(filter);
+    },
+    [selectedFilters]
+  );
 
   const hasAnyFilters = selectedFilters.size > 0;
 
@@ -47,7 +48,7 @@ export function useFilterState<T extends string>(
     clearFilters,
     setFilters,
     hasFilter,
-    hasAnyFilters
+    hasAnyFilters,
   };
 }
 
@@ -64,7 +65,7 @@ export function filterByRank<T extends { rank: string }>(
   if (selectedRanks.size === 0) {
     return items; // No filters selected = show all
   }
-  return items.filter(item => selectedRanks.has(item.rank));
+  return items.filter((item) => selectedRanks.has(item.rank));
 }
 
 /**
@@ -79,7 +80,7 @@ export function filterByCostRange<T extends { cost: number }>(
   minCost?: number,
   maxCost?: number
 ): T[] {
-  return items.filter(item => {
+  return items.filter((item) => {
     if (minCost !== undefined && item.cost < minCost) return false;
     if (maxCost !== undefined && item.cost > maxCost) return false;
     return true;
@@ -96,7 +97,7 @@ export function filterByFaction<T extends { factionId: string }>(
   items: T[],
   factionId: string
 ): T[] {
-  return items.filter(item => item.factionId === factionId);
+  return items.filter((item) => item.factionId === factionId);
 }
 
 /**
@@ -116,8 +117,8 @@ export function filterByTextSearch<T extends Record<string, unknown>>(
   }
 
   const normalizedSearch = searchText.toLowerCase().trim();
-  return items.filter(item =>
-    searchFields.some(field => {
+  return items.filter((item) =>
+    searchFields.some((field) => {
       const value = item[field];
       if (typeof value === 'string') {
         return value.toLowerCase().includes(normalizedSearch);
@@ -133,11 +134,8 @@ export function filterByTextSearch<T extends Record<string, unknown>>(
  * @param filters - Array of filter functions
  * @returns Items that pass all filters
  */
-export function applyMultipleFilters<T>(
-  items: T[],
-  filters: Array<(item: T) => boolean>
-): T[] {
-  return items.filter(item => filters.every(filter => filter(item)));
+export function applyMultipleFilters<T>(items: T[], filters: Array<(item: T) => boolean>): T[] {
+  return items.filter((item) => filters.every((filter) => filter(item)));
 }
 
 /**
@@ -145,7 +143,8 @@ export function applyMultipleFilters<T>(
  * @param selectedRanks - Set of selected ranks
  * @returns Filter function
  */
-export const createRankFilter = (selectedRanks: Set<string>) => 
+export const createRankFilter =
+  (selectedRanks: Set<string>) =>
   <T extends { rank: string }>(item: T): boolean => {
     return selectedRanks.size === 0 || selectedRanks.has(item.rank);
   };
@@ -156,7 +155,8 @@ export const createRankFilter = (selectedRanks: Set<string>) =>
  * @param maxCost - Maximum cost
  * @returns Filter function
  */
-export const createCostFilter = (minCost?: number, maxCost?: number) => 
+export const createCostFilter =
+  (minCost?: number, maxCost?: number) =>
   <T extends { cost: number }>(item: T): boolean => {
     if (minCost !== undefined && item.cost < minCost) return false;
     if (maxCost !== undefined && item.cost > maxCost) return false;
@@ -175,5 +175,5 @@ export const COST_RANGES = [
   { label: '低费 (1-2)', min: 1, max: 2 },
   { label: '中费 (3-4)', min: 3, max: 4 },
   { label: '高费 (5-6)', min: 5, max: 6 },
-  { label: '超高费 (7+)', min: 7, max: Infinity }
+  { label: '超高费 (7+)', min: 7, max: Infinity },
 ] as const;

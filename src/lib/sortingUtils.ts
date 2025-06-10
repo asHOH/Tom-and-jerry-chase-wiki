@@ -6,7 +6,7 @@
 /**
  * Rank order mapping for consistent sorting
  */
-export const RANK_ORDER = { 'S': 4, 'A': 3, 'B': 2, 'C': 1 } as const;
+export const RANK_ORDER = { S: 4, A: 3, B: 2, C: 1 } as const;
 
 /**
  * Sort cards by rank and cost
@@ -76,7 +76,8 @@ export function sortByMultipleCriteria<T>(
  * Create a comparator for rank-based sorting
  * @returns Comparator function for rank sorting
  */
-export const createRankComparator = <T extends { rank: string }>() => 
+export const createRankComparator =
+  <T extends { rank: string }>() =>
   (a: T, b: T): number => {
     const rankA = RANK_ORDER[a.rank as keyof typeof RANK_ORDER] || 0;
     const rankB = RANK_ORDER[b.rank as keyof typeof RANK_ORDER] || 0;
@@ -88,7 +89,8 @@ export const createRankComparator = <T extends { rank: string }>() =>
  * @param ascending - Whether to sort in ascending order (default: false for descending)
  * @returns Comparator function for cost sorting
  */
-export const createCostComparator = <T extends { cost: number }>(ascending: boolean = false) => 
+export const createCostComparator =
+  <T extends { cost: number }>(ascending: boolean = false) =>
   (a: T, b: T): number => {
     return ascending ? a.cost - b.cost : b.cost - a.cost;
   };
@@ -98,7 +100,8 @@ export const createCostComparator = <T extends { cost: number }>(ascending: bool
  * @param ascending - Whether to sort in ascending order (default: true)
  * @returns Comparator function for name sorting
  */
-export const createNameComparator = <T extends { name: string }>(ascending: boolean = true) => 
+export const createNameComparator =
+  <T extends { name: string }>(ascending: boolean = true) =>
   (a: T, b: T): number => {
     return ascending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
   };

@@ -13,7 +13,11 @@ export function generateStaticParams() {
 // This page uses the CharacterDetails component to avoid code duplication
 // The component handles both SPA navigation and direct URL access
 
-export default async function CharacterPage({ params }: { params: Promise<{ characterId: string }> }) {
+export default async function CharacterPage({
+  params,
+}: {
+  params: Promise<{ characterId: string }>;
+}) {
   // Use the characters data from the data files
   const resolvedParams = await params;
   const character = characters[resolvedParams.characterId];
