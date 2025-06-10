@@ -172,42 +172,35 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     
     if (isParallel) {
       // For parallel skills
-      if (isLastLevelInGroup && nextGroup) {
-        if (nextGroup.isParallelGroup) {
-          // Parallel to parallel - straight lines
-          return (
-            <div className="absolute left-10 top-5 w-4 h-1">
-              <div className="w-full h-px bg-gray-300"></div>
-              <div className="w-full h-px bg-gray-300 mt-6"></div>
-            </div>
-          );
-        } else {
-          // Parallel to single - converge
-          return (
-            <div className="absolute left-10 top-3 w-4 h-7">
-              <svg className="w-full h-full" viewBox="0 0 16 28">
-                <path
-                  d="M0 0 Q8 0 16 14 Q8 28 16 28"
-                  fill="none"
-                  stroke="#d1d5db"
-                  strokeWidth="1"
-                />
-                <path
-                  d="M0 24 Q8 24 16 14"
-                  fill="none"
-                  stroke="#d1d5db"
-                  strokeWidth="1"
-                />
-              </svg>
-            </div>
-          );
-        }
-      } else if (!isLastLevelInGroup) {
-        // Within parallel group - straight lines
+      const isConnectingToParallel = isLastLevelInGroup && nextGroup && nextGroup.isParallelGroup;
+      const isConnectingWithinParallel = !isLastLevelInGroup;
+
+      if (isConnectingToParallel || isConnectingWithinParallel) {
+        // Parallel to parallel OR within parallel group - straight lines
         return (
-          <div className="absolute left-10 top-5 w-4 h-1">
+          <div className="absolute left-10 top-3 w-4 h-auto">
             <div className="w-full h-px bg-gray-300"></div>
-            <div className="w-full h-px bg-gray-300 mt-6"></div>
+            <div className="w-full h-px bg-gray-300 mt-7"></div>
+          </div>
+        );
+      } else if (isLastLevelInGroup && nextGroup) {
+        // Parallel to single - converge
+        return (
+          <div className="absolute left-10 top-3 w-4 h-7">
+            <svg className="w-full h-full" viewBox="0 0 16 28">
+              <path
+                d="M0 0 Q8 0 16 14"
+                fill="none"
+                stroke="#d1d5db"
+                strokeWidth="1"
+              />
+              <path
+                d="M0 28 Q8 28 16 14"
+                fill="none"
+                stroke="#d1d5db"
+                strokeWidth="1"
+              />
+            </svg>
           </div>
         );
       }
