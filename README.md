@@ -67,7 +67,7 @@ npm run dev
 
 **方式一：✅ GitHub 老手**
 
-1. Fork 仓库 → 补充数据 → 发起 Pull Request
+1. Fork 仓库 → 补充数据 → 进行[提交前检查](#-提交前检查) → 发起 Pull Request
 2. 简要说明新增内容和数据来源
 
 **方式二：🌱 GitHub 新手**
@@ -99,8 +99,23 @@ npm run dev
 **开发流程:**
 
 1. Fork 仓库并创建功能分支：`git checkout -b feature/你的功能名`
-2. 完成开发后推送分支：`git push origin feature/你的功能名`
-3. 发起 Pull Request
+2. 进行[提交前检查](#-提交前检查)
+3. 完成开发后推送分支：`git push origin feature/你的功能名`
+4. 发起 Pull Request
+
+### 🧪 提交前检查
+
+在提交PR前，请运行以下命令检查代码：
+
+```powershell
+# 自动检查所有项目要求
+.\test-github-workflows.ps1
+
+# 如果检查失败，可用以下命令修复：
+npm run prettier:fix    # 修复代码格式
+npm run lint            # 检查代码规范
+npm run build           # 确保项目能正常构建
+```
 
 ## 📁 项目结构
 
