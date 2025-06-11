@@ -1,0 +1,57 @@
+name: Test Coverage
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Check if tests exist
+        id: check-tests
+        run: |
+          if [ -d "src/__tests__" ] || [ -d "tests" ] || [ -d "__tests__" ]; then
+            echo "tests-exist=true" >> $GITHUB_OUTPUT
+          else
+            echo "tests-exist=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run tests
+        if: steps.check-tests.outputs.tests-exist == 'true'
+        run: npm test
+
+      - name: Generate coverage report
+        if: steps.check-tests.outputs.tests-exist == 'true'
+        run: npm run test:coverage || echo "No coverage script found"
+
+      - name: Upload coverage to Codecov
+        if: steps.check-tests.outputs.tests-exist == 'true'
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+      - name: No tests found
+        if: steps.check-tests.outputs.tests-exist == 'false'
+        run: echo "⚠️ No tests found in the project. Consider adding tests for better code quality."

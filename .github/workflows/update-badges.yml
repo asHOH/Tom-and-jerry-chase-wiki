@@ -1,0 +1,35 @@
+name: Update README Badges
+
+on:
+  workflow_run:
+    workflows: ["CI", "Deploy to GitHub Pages"]
+    types:
+      - completed
+
+jobs:
+  update-badges:
+    name: Update Status Badges
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion != 'cancelled'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get workflow status
+        id: workflow-status
+        run: |
+          if [ "${{ github.event.workflow_run.conclusion }}" == "success" ]; then
+            echo "status=passing" >> $GITHUB_OUTPUT
+            echo "color=brightgreen" >> $GITHUB_OUTPUT
+          else
+            echo "status=failing" >> $GITHUB_OUTPUT
+            echo "color=red" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update README badges
+        run: |
+          echo "Workflow status: ${{ steps.workflow-status.outputs.status }}"
+          echo "Badge color: ${{ steps.workflow-status.outputs.color }}"

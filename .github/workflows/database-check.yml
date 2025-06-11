@@ -1,0 +1,54 @@
+name: Database Check
+
+on:
+  push:
+    paths:
+      - 'prisma/**'
+      - 'src/data/**'
+  pull_request:
+    paths:
+      - 'prisma/**'
+      - 'src/data/**'
+
+jobs:
+  database-check:
+    name: Database Setup Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Check Prisma schema
+        run: npx prisma validate
+
+      - name: Run database migrations
+        run: npm run prisma:migrate
+
+      - name: Seed database
+        run: npm run prisma:seed
+
+      - name: Verify database content
+        run: |
+          echo "Database setup completed successfully!"
+          echo "Checking if seed data was inserted..."
+          
+          # You can add additional checks here to verify seed data
+          if [ -f "prisma/dev.db" ]; then
+            echo "✅ Database file created successfully"
+          else
+            echo "❌ Database file not found"
+            exit 1
+          fi

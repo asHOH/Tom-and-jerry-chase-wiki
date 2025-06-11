@@ -1,0 +1,101 @@
+name: Maintenance
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  maintenance:
+    name: Maintenance Check
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for outdated packages
+        id: outdated
+        run: |
+          echo "Checking for outdated packages..."
+          npm outdated --json > outdated.json || true
+          if [ -s outdated.json ]; then
+            echo "outdated=true" >> $GITHUB_OUTPUT
+            echo "Found outdated packages"
+          else
+            echo "outdated=false" >> $GITHUB_OUTPUT
+            echo "All packages are up to date"
+          fi
+
+      - name: Check for security vulnerabilities
+        id: audit
+        run: |
+          echo "Running security audit..."
+          npm audit --json > audit.json || true
+          if [ -s audit.json ] && [ "$(jq '.vulnerabilities | length' audit.json)" -gt 0 ]; then
+            echo "vulnerabilities=true" >> $GITHUB_OUTPUT
+            echo "Security vulnerabilities found"
+          else
+            echo "vulnerabilities=false" >> $GITHUB_OUTPUT
+            echo "No security vulnerabilities found"
+          fi
+
+      - name: Create maintenance issue
+        if: steps.outdated.outputs.outdated == 'true' || steps.audit.outputs.vulnerabilities == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let issueBody = '## 🔧 Weekly Maintenance Report\n\n';
+            
+            if ('${{ steps.outdated.outputs.outdated }}' === 'true') {
+              issueBody += '### 📦 Outdated Packages\n\n';
+              issueBody += 'The following packages have updates available:\n\n';
+              issueBody += '```bash\nnpm outdated\n```\n\n';
+              issueBody += 'Consider updating these packages to their latest versions.\n\n';
+            }
+            
+            if ('${{ steps.audit.outputs.vulnerabilities }}' === 'true') {
+              issueBody += '### 🔒 Security Vulnerabilities\n\n';
+              issueBody += 'Security vulnerabilities were found in dependencies:\n\n';
+              issueBody += '```bash\nnpm audit\n```\n\n';
+              issueBody += '**Please address these security issues as soon as possible.**\n\n';
+            }
+            
+            issueBody += '### 🚀 Recommended Actions\n\n';
+            issueBody += '1. Review the outdated packages and update them if safe\n';
+            issueBody += '2. Run `npm audit fix` to automatically fix security issues\n';
+            issueBody += '3. Test the application after updates\n';
+            issueBody += '4. Close this issue once maintenance is complete\n\n';
+            issueBody += '*This issue was automatically created by the maintenance workflow.*';
+            
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['maintenance'],
+              state: 'open'
+            });
+            
+            if (issues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🔧 Weekly Maintenance - ${new Date().toISOString().split('T')[0]}`,
+                body: issueBody,
+                labels: ['maintenance', 'dependencies']
+              });
+            }
