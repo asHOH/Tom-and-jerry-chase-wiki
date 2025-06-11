@@ -23,7 +23,7 @@
 
 ### 在线体验
 
-访问链接：[项目链接](#) _(待部署)_
+访问链接：[tom-and-jerry-chase-wiki.space](https://tom-and-jerry-chase-wiki.space)
 
 ### 本地部署
 

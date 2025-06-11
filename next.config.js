@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     unoptimized: true, // Disable image optimization for static export
-    domains: ['localhost'],
+    domains: ['localhost', 'tom-and-jerry-chase-wiki.space'],
   },
   output: 'export', // For GitHub Pages static export
 };
