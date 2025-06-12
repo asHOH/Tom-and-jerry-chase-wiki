@@ -30,8 +30,41 @@ function Test-Component {
 # 1. Code Quality Checks (CI Workflow)
 Write-Host "`n[SECTION] Code Quality Checks (CI Workflow)" -ForegroundColor Magenta
 
-Test-Component "Prettier Formatting" {
+# Enhanced Prettier check with fix option
+Write-Host "`n[TESTING] Prettier Formatting" -ForegroundColor Yellow
+try {
     npm run prettier:check
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "[PASS] Prettier Formatting - PASSED" -ForegroundColor Green
+    } else {
+        Write-Host "[FAIL] Prettier Formatting - FAILED (Formatting issues found)" -ForegroundColor Red
+        Write-Host "`n[SUGGESTION] Run 'npm run prettier:fix' to automatically fix formatting issues" -ForegroundColor Yellow
+        
+        $response = Read-Host "`nWould you like to run prettier:fix now? (y/N)"
+        if ($response -eq 'y' -or $response -eq 'Y') {
+            Write-Host "`n[FIXING] Running prettier:fix..." -ForegroundColor Cyan
+            npm run prettier:fix
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "[FIXED] Prettier formatting issues have been fixed" -ForegroundColor Green
+                Write-Host "[INFO] Re-checking formatting..." -ForegroundColor Gray
+                npm run prettier:check
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "[PASS] Prettier Formatting - NOW PASSED" -ForegroundColor Green
+                } else {
+                    Write-Host "[FAIL] Prettier Formatting - Still has issues after fix" -ForegroundColor Red
+                    $script:ErrorCount++
+                }
+            } else {
+                Write-Host "[FAIL] prettier:fix failed" -ForegroundColor Red
+                $script:ErrorCount++
+            }
+        } else {
+            $script:ErrorCount++
+        }
+    }
+} catch {
+    Write-Host "[FAIL] Prettier Formatting - FAILED (Exception: $($_.Exception.Message))" -ForegroundColor Red
+    $script:ErrorCount++
 }
 
 Test-Component "ESLint Linting" {
