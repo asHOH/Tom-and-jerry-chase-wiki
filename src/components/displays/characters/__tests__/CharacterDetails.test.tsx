@@ -29,35 +29,35 @@ jest.mock('../../../../lib/design-tokens', () => ({
 
 // Mock Next.js Image component
 jest.mock('next/image', () => {
-  return function MockImage({ 
-    src, 
-    alt, 
-    width, 
-    height, 
-    ...props 
-  }: { 
-    src: string; 
-    alt: string; 
-    width?: number; 
-    height?: number; 
+  return function MockImage({
+    src,
+    alt,
+    width,
+    height,
+    ...props
+  }: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
     [key: string]: unknown;
   }) {
     // Filter out Next.js specific props that shouldn't be passed to DOM
-    const { 
-      unoptimized, 
-      priority, 
-      loading, 
-      quality, 
-      sizes, 
-      fill, 
-      placeholder, 
+    const {
+      unoptimized,
+      priority,
+      loading,
+      quality,
+      sizes,
+      fill,
+      placeholder,
       blurDataURL,
       onLoad,
       onLoadingComplete,
       onError,
-      ...domProps 
+      ...domProps
     } = props;
-    
+
     // Consume the filtered props to avoid unused variable warnings
     void unoptimized;
     void priority;
@@ -70,23 +70,23 @@ jest.mock('next/image', () => {
     void onLoad;
     void onLoadingComplete;
     void onError;
-    
+
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img 
-        src={src} 
-        alt={alt} 
-        width={width}
-        height={height}
-        {...domProps}
-      />
+      <img src={src} alt={alt} width={width} height={height} {...domProps} />
     );
   };
 });
 
 // Mock the Tooltip component
 jest.mock('../../../ui/Tooltip', () => {
-  return function MockTooltip({ children, content }: { children: React.ReactNode; content: string }) {
+  return function MockTooltip({
+    children,
+    content,
+  }: {
+    children: React.ReactNode;
+    content: string;
+  }) {
     // Use span instead of div to avoid nesting issues in p elements
     return <span data-tooltip={content}>{children}</span>;
   };
@@ -95,14 +95,14 @@ jest.mock('../../../ui/Tooltip', () => {
 // Mock the Tag component
 jest.mock('../../../ui/Tag', () => {
   return function MockTag({ children }: { children: React.ReactNode }) {
-    return <span className="tag">{children}</span>;
+    return <span className='tag'>{children}</span>;
   };
 });
 
 // Mock the SkillAllocationDisplay component
 jest.mock('../SkillAllocationDisplay', () => {
   return function MockSkillAllocationDisplay({ allocation }: { allocation: { id: string } }) {
-    return <div data-testid="skill-allocation">{allocation.id}</div>;
+    return <div data-testid='skill-allocation'>{allocation.id}</div>;
   };
 });
 
