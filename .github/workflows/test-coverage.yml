@@ -24,9 +24,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate Prisma client
-        run: npm run prisma:generate
-
       - name: Check if tests exist
         id: check-tests
         run: |

@@ -24,37 +24,31 @@ This directory contains automated workflows for the project.
 - **Purpose**: Automatically fixes code formatting issues
 - **Actions**: Runs Prettier and ESLint with auto-fix
 
-### 4. **Database Check (database-check.yml)**
-
-- **Triggers**: Changes to Prisma schema or data files
-- **Purpose**: Validates database setup and migrations
-- **Features**: Tests Prisma migrations and seeding
-
-### 5. **Dependency Check (dependency-check.yml)**
+### 4. **Dependency Check (dependency-check.yml)**
 
 - **Triggers**: Package.json changes, weekly schedule
 - **Purpose**: Security audit and dependency monitoring
 - **Features**: Checks for vulnerabilities and outdated packages
 
-### 6. **Deploy (deploy.yml)**
+### 5. **Deploy (deploy.yml)**
 
 - **Triggers**: Push to main branch
 - **Purpose**: Automated deployment to GitHub Pages
 - **Process**: Build → Upload → Deploy
 
-### 7. **Test Coverage (test-coverage.yml)**
+### 6. **Test Coverage (test-coverage.yml)**
 
 - **Triggers**: Push/PR to main/develop
 - **Purpose**: Run tests and generate coverage reports
 - **Note**: Currently checks if tests exist before running
 
-### 8. **Maintenance (maintenance.yml)**
+### 7. **Maintenance (maintenance.yml)**
 
 - **Triggers**: Weekly schedule (Mondays 9 AM UTC)
 - **Purpose**: Automated maintenance checks
 - **Features**: Creates issues for outdated packages and security vulnerabilities
 
-### 9. **Update Badges (update-badges.yml)**
+### 8. **Update Badges (update-badges.yml)**
 
 - **Triggers**: After CI or Deploy workflows complete
 - **Purpose**: Updates README status badges
@@ -68,7 +62,6 @@ All workflows ensure:
 - ✅ Linting (ESLint)
 - ✅ Type checking (TypeScript)
 - ✅ Build success
-- ✅ Database integrity
 - ✅ Security compliance
 
 ## 📋 Workflow Dependencies
@@ -88,7 +81,6 @@ Maintenance ── Creates Issues (weekly)
 - **Node.js Version**: 18
 - **Package Manager**: npm
 - **Build Tool**: Next.js
-- **Database**: SQLite with Prisma
 - **Deployment**: GitHub Pages (static export)
 
 ## 📊 Status Badges

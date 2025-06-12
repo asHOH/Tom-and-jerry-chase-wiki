@@ -37,11 +37,6 @@ cd tom-and-jerry-chase-wiki
 # 安装依赖
 npm install
 
-# 初始化数据库
-npm run prisma:generate
-npm run prisma:migrate
-npm run prisma:seed
-
 # 启动开发服务器
 npm run dev
 ```
@@ -123,14 +118,12 @@ npm run build           # 确保项目能正常构建
 ├── src/data/           # 游戏数据文件
 ├── public/images/      # 角色图片和图标
 ├── src/app/            # 页面组件
-├── src/components/     # 可复用组件
-└── prisma/             # 数据库配置
+└── src/components/     # 可复用组件
 ```
 
 ## 🛠 技术栈
 
 - **前端**: Next.js + React + TailwindCSS
-- **数据库**: SQLite + Prisma ORM
 - **部署**: GitHub Pages
 
 ## 📄 版权说明

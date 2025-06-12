@@ -45,30 +45,11 @@ Test-Component "TypeScript Compilation" {
 # 2. Build Process (CI & Deploy Workflows)
 Write-Host "`n[SECTION] Build Process" -ForegroundColor Magenta
 
-Test-Component "Prisma Client Generation" {
-    npm run prisma:generate
-}
-
 Test-Component "Project Build" {
     npm run build
 }
 
-# 3. Database Operations (Database-Check Workflow)
-Write-Host "`n[SECTION] Database Operations" -ForegroundColor Magenta
-
-Test-Component "Prisma Schema Validation" {
-    npx prisma validate
-}
-
-Test-Component "Database Migration" {
-    npm run prisma:migrate
-}
-
-Test-Component "Database Seeding" {
-    npm run prisma:seed
-}
-
-# 4. Security Checks (Dependency-Check Workflow)
+# 3. Security Checks (Dependency-Check Workflow)
 Write-Host "`n[SECTION] Security Checks" -ForegroundColor Magenta
 
 Test-Component "Dependency Audit" {
@@ -79,7 +60,7 @@ Test-Component "Outdated Packages Check" {
     npm outdated; $global:LASTEXITCODE = 0  # npm outdated always exits with 1 if packages are outdated
 }
 
-# 5. Build Output Verification
+# 4. Build Output Verification
 Write-Host "`n[SECTION] Build Output Verification" -ForegroundColor Magenta
 
 Test-Component "Build Directory Check" {

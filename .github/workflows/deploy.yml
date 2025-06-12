@@ -36,15 +36,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate Prisma client
-        run: npm run prisma:generate
-
-      - name: Run database migrations
-        run: npm run prisma:migrate
-
-      - name: Seed database
-        run: npm run prisma:seed
-
       - name: Build with Next.js
         run: npm run build
 
