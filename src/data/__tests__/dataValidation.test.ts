@@ -1,5 +1,5 @@
 import { characters, cardData, factions } from '../../data';
-import { Character, Card, FactionId } from '../../data/types';
+import { Character, Card } from '../../data/types';
 
 describe('Data Validation', () => {
   describe('Characters Data', () => {
@@ -10,9 +10,9 @@ describe('Data Validation', () => {
     });
 
     it('should have characters for both factions', () => {
-      const catCharacters = characterArray.filter(c => c.faction.id === 'cat');
-      const mouseCharacters = characterArray.filter(c => c.faction.id === 'mouse');
-      
+      const catCharacters = characterArray.filter((c) => c.faction.id === 'cat');
+      const mouseCharacters = characterArray.filter((c) => c.faction.id === 'mouse');
+
       expect(catCharacters.length).toBeGreaterThan(0);
       expect(mouseCharacters.length).toBeGreaterThan(0);
     });
@@ -40,15 +40,15 @@ describe('Data Validation', () => {
     it('should have valid positioning tags', () => {
       characterArray.forEach((character: Character) => {
         if (character.factionId === 'cat' && character.catPositioningTags) {
-          character.catPositioningTags.forEach(tag => {
+          character.catPositioningTags.forEach((tag) => {
             expect(tag.tagName).toBeDefined();
             expect(typeof tag.isMinor).toBe('boolean');
             expect(tag.description).toBeDefined();
           });
         }
-        
+
         if (character.factionId === 'mouse' && character.mousePositioningTags) {
-          character.mousePositioningTags.forEach(tag => {
+          character.mousePositioningTags.forEach((tag) => {
             expect(tag.tagName).toBeDefined();
             expect(typeof tag.isMinor).toBe('boolean');
             expect(tag.description).toBeDefined();
@@ -60,8 +60,8 @@ describe('Data Validation', () => {
     it('should have valid skills for all characters', () => {
       characterArray.forEach((character: Character) => {
         expect(character.skills.length).toBeGreaterThan(0);
-        
-        character.skills.forEach(skill => {
+
+        character.skills.forEach((skill) => {
           expect(skill.id).toBeDefined();
           expect(skill.name).toBeDefined();
           expect(skill.type).toMatch(/^(ACTIVE|WEAPON1|WEAPON2|PASSIVE)$/);
@@ -107,7 +107,7 @@ describe('Data Validation', () => {
       cardsArray.forEach((card: Card) => {
         expect(card.levels.length).toBeGreaterThan(0);
         expect(card.levels.length).toBeLessThanOrEqual(3);
-        
+
         card.levels.forEach((level, index) => {
           expect(level.level).toBe(index + 1);
           expect(level.description).toBeDefined();
@@ -123,7 +123,7 @@ describe('Data Validation', () => {
     });
 
     it('should have valid faction structure', () => {
-      Object.values(factions).forEach(faction => {
+      Object.values(factions).forEach((faction) => {
         expect(faction.id).toMatch(/^(cat|mouse)$/);
         expect(faction.name).toBeDefined();
         expect(faction.description).toBeDefined();
@@ -141,22 +141,22 @@ describe('Data Validation', () => {
     it('should have consistent character IDs between characters and factions', () => {
       const characterIds = Object.keys(characters);
       const factionCharacterIds = [
-        ...factions.cat.characters.map(c => c.id),
-        ...factions.mouse.characters.map(c => c.id)
+        ...factions.cat.characters.map((c) => c.id),
+        ...factions.mouse.characters.map((c) => c.id),
       ];
-      
+
       expect(characterIds.sort()).toEqual(factionCharacterIds.sort());
     });
 
     it('should have unique character IDs', () => {
       const characterIds = Object.keys(characters);
-      const uniqueIds = [...new Set(characterIds)];
+      const uniqueIds = Array.from(new Set(characterIds));
       expect(characterIds.length).toBe(uniqueIds.length);
     });
 
     it('should have unique card IDs', () => {
       const cardIds = Object.keys(cardData);
-      const uniqueIds = [...new Set(cardIds)];
+      const uniqueIds = Array.from(new Set(cardIds));
       expect(cardIds.length).toBe(uniqueIds.length);
     });
   });

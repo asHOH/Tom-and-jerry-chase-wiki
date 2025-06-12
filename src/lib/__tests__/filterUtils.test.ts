@@ -76,13 +76,13 @@ describe('filterUtils', () => {
     it('should filter by single rank', () => {
       const result = filterByRank(mockItems, new Set(['S']));
       expect(result).toHaveLength(2);
-      expect(result.every(item => item.rank === 'S')).toBe(true);
+      expect(result.every((item) => item.rank === 'S')).toBe(true);
     });
 
     it('should filter by multiple ranks', () => {
       const result = filterByRank(mockItems, new Set(['S', 'A']));
       expect(result).toHaveLength(3);
-      expect(result.every(item => ['S', 'A'].includes(item.rank))).toBe(true);
+      expect(result.every((item) => ['S', 'A'].includes(item.rank))).toBe(true);
     });
   });
 
@@ -102,19 +102,19 @@ describe('filterUtils', () => {
     it('should filter by minimum cost', () => {
       const result = filterByCostRange(mockItems, 3);
       expect(result).toHaveLength(3);
-      expect(result.every(item => item.cost >= 3)).toBe(true);
+      expect(result.every((item) => item.cost >= 3)).toBe(true);
     });
 
     it('should filter by maximum cost', () => {
       const result = filterByCostRange(mockItems, undefined, 5);
       expect(result).toHaveLength(3);
-      expect(result.every(item => item.cost <= 5)).toBe(true);
+      expect(result.every((item) => item.cost <= 5)).toBe(true);
     });
 
     it('should filter by cost range', () => {
       const result = filterByCostRange(mockItems, 3, 5);
       expect(result).toHaveLength(2);
-      expect(result.every(item => item.cost >= 3 && item.cost <= 5)).toBe(true);
+      expect(result.every((item) => item.cost >= 3 && item.cost <= 5)).toBe(true);
     });
   });
 
@@ -128,7 +128,7 @@ describe('filterUtils', () => {
     it('should filter by faction', () => {
       const result = filterByFaction(mockItems, 'cat');
       expect(result).toHaveLength(2);
-      expect(result.every(item => item.factionId === 'cat')).toBe(true);
+      expect(result.every((item) => item.factionId === 'cat')).toBe(true);
     });
   });
 
@@ -172,8 +172,8 @@ describe('filterUtils', () => {
 
     it('should apply multiple filters', () => {
       const filters = [
-        (item: typeof mockItems[0]) => item.rank === 'S',
-        (item: typeof mockItems[0]) => item.cost >= 3,
+        (item: (typeof mockItems)[0]) => item.rank === 'S',
+        (item: (typeof mockItems)[0]) => item.cost >= 3,
       ];
 
       const result = applyMultipleFilters(mockItems, filters);

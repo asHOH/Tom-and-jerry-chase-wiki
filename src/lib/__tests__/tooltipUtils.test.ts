@@ -74,8 +74,11 @@ describe('tooltipUtils', () => {
     it('should extract single action from item key pattern', () => {
       const result = extractItemKeyActions('道具键*打断技能释放');
       expect(result).toEqual(['打断技能释放']);
-    });    it('should extract multiple actions', () => {
-      const result = extractItemKeyActions('道具键*打断（需要道具） or 道具键*取消后摇（需要道具）');
+    });
+    it('should extract multiple actions', () => {
+      const result = extractItemKeyActions(
+        '道具键*打断（需要道具） or 道具键*取消后摇（需要道具）'
+      );
       expect(result).toEqual(['打断', '取消后摇']);
     });
 

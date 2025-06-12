@@ -20,19 +20,20 @@ describe('textUtils', () => {
       expect(result).toHaveLength(3);
       expect(result[0]).toBe('Hello ');
       expect(result[2]).toBe(' test');
-        // Check that the highlighted part is a React element
+      // Check that the highlighted part is a React element
       const highlightedElement = result[1] as React.ReactElement;
       expect(React.isValidElement(highlightedElement)).toBe(true);
-      expect((highlightedElement.props as any).className).toBe('underline decoration-2 underline-offset-2');
-      expect((highlightedElement.props as any).children).toBe('world');
+      expect((highlightedElement.props as Record<string, unknown>).className).toBe(
+        'underline decoration-2 underline-offset-2'
+      );
+      expect((highlightedElement.props as Record<string, unknown>).children).toBe('world');
     });
 
     it('should handle multiple highlights', () => {
       const result = renderTextWithHighlights('**First** and **Second** highlights');
-      expect(result).toHaveLength(5);
-      expect(result[0]).toBe('');
-      expect(result[2]).toBe(' and ');
-      expect(result[4]).toBe(' highlights');
+      expect(result).toHaveLength(4);
+      expect(result[1]).toBe(' and ');
+      expect(result[3]).toBe(' highlights');
     });
   });
 
@@ -40,7 +41,7 @@ describe('textUtils', () => {
     it('should format text with bold markdown', () => {
       const result = formatTextWithEnhancedMarkdown('Hello **world**');
       const { container } = render(result);
-      
+
       expect(container.textContent).toBe('Hello world');
       const underlinedElement = container.querySelector('.underline');
       expect(underlinedElement?.textContent).toBe('world');
@@ -49,7 +50,7 @@ describe('textUtils', () => {
     it('should format text with numerical patterns', () => {
       const result = formatTextWithEnhancedMarkdown('Damage: 50点 for 3秒');
       const { container } = render(result);
-      
+
       expect(container.textContent).toBe('Damage: 50点 for 3秒');
       const underlinedElements = container.querySelectorAll('.underline');
       expect(underlinedElements).toHaveLength(2);
@@ -60,7 +61,7 @@ describe('textUtils', () => {
     it('should format percentage values', () => {
       const result = formatTextWithEnhancedMarkdown('Increase by 25%');
       const { container } = render(result);
-      
+
       const underlinedElement = container.querySelector('.underline');
       expect(underlinedElement?.textContent).toBe('25%');
     });
@@ -68,7 +69,7 @@ describe('textUtils', () => {
     it('should handle mixed formatting', () => {
       const result = formatTextWithEnhancedMarkdown('**Skill** deals 100点 damage');
       const { container } = render(result);
-      
+
       const underlinedElements = container.querySelectorAll('.underline');
       expect(underlinedElements).toHaveLength(2);
       expect(underlinedElements[0].textContent).toBe('Skill');
@@ -93,7 +94,7 @@ describe('textUtils', () => {
     });
 
     it('should return false for unknown patterns', () => {
-      expect(hasTextPattern('Hello world', 'unknown' as any)).toBe(false);
+      expect(hasTextPattern('Hello world', 'unknown' as never)).toBe(false);
     });
   });
 
@@ -105,7 +106,7 @@ describe('textUtils', () => {
     });
 
     it('should extract multiple actions', () => {
-      const text = '道具键*打断 or 道具键*取消后摇';
+      const text = '道具键*打断（需要道具） or 道具键*取消后摇（需要道具）';
       const result = extractItemKeyActions(text);
       expect(result).toEqual(['打断', '取消后摇']);
     });

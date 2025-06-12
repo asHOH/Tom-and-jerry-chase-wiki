@@ -39,7 +39,7 @@ describe('sortingUtils', () => {
 
     it('should sort by cost within same rank (highest first)', () => {
       const result = sortCardsByRank(mockCards);
-      const sRankCards = result.filter(card => card.rank === 'S');
+      const sRankCards = result.filter((card) => card.rank === 'S');
       expect(sRankCards[0].cost).toBe(5);
       expect(sRankCards[1].cost).toBe(3);
     });
@@ -61,7 +61,7 @@ describe('sortingUtils', () => {
 
     it('should sort by cost in descending order', () => {
       const result = sortCardsByCost(mockCards);
-      expect(result.map(card => card.cost)).toEqual([5, 3, 2, 1]);
+      expect(result.map((card) => card.cost)).toEqual([5, 3, 2, 1]);
     });
 
     it('should not mutate original array', () => {
@@ -72,14 +72,10 @@ describe('sortingUtils', () => {
   });
 
   describe('sortCharactersByName', () => {
-    const mockCharacters = [
-      { name: '汤姆' },
-      { name: '杰瑞' },
-      { name: '布奇' },
-      { name: '泰菲' },
-    ];    it('should sort characters alphabetically by name', () => {
+    const mockCharacters = [{ name: '汤姆' }, { name: '杰瑞' }, { name: '布奇' }, { name: '泰菲' }];
+    it('should sort characters alphabetically by name', () => {
       const result = sortCharactersByName(mockCharacters);
-      const names = result.map(char => char.name);
+      const names = result.map((char) => char.name);
       expect(names).toEqual(['布奇', '杰瑞', '泰菲', '汤姆']);
     });
 
@@ -100,12 +96,12 @@ describe('sortingUtils', () => {
 
     it('should apply multiple comparators in order', () => {
       const comparators = [
-        createRankComparator<typeof mockItems[0]>(),
-        createCostComparator<typeof mockItems[0]>(false), // descending
+        createRankComparator<(typeof mockItems)[0]>(),
+        createCostComparator<(typeof mockItems)[0]>(false), // descending
       ];
-      
+
       const result = sortByMultipleCriteria(mockItems, comparators);
-      
+
       // Should be sorted by rank first (S > A), then by cost (higher first)
       expect(result[0]).toEqual({ rank: 'S', cost: 2, name: 'Item S2' });
       expect(result[1]).toEqual({ rank: 'S', cost: 2, name: 'Item S2b' });
@@ -122,9 +118,9 @@ describe('sortingUtils', () => {
     ];
 
     it('should create rank comparator function', () => {
-      const comparator = createRankComparator<typeof mockItems[0]>();
+      const comparator = createRankComparator<(typeof mockItems)[0]>();
       const result = [...mockItems].sort(comparator);
-      expect(result.map(item => item.rank)).toEqual(['S', 'A', 'B']);
+      expect(result.map((item) => item.rank)).toEqual(['S', 'A', 'B']);
     });
   });
 
@@ -136,35 +132,31 @@ describe('sortingUtils', () => {
     ];
 
     it('should create descending cost comparator by default', () => {
-      const comparator = createCostComparator<typeof mockItems[0]>();
+      const comparator = createCostComparator<(typeof mockItems)[0]>();
       const result = [...mockItems].sort(comparator);
-      expect(result.map(item => item.cost)).toEqual([5, 3, 1]);
+      expect(result.map((item) => item.cost)).toEqual([5, 3, 1]);
     });
 
     it('should create ascending cost comparator when specified', () => {
-      const comparator = createCostComparator<typeof mockItems[0]>(true);
+      const comparator = createCostComparator<(typeof mockItems)[0]>(true);
       const result = [...mockItems].sort(comparator);
-      expect(result.map(item => item.cost)).toEqual([1, 3, 5]);
+      expect(result.map((item) => item.cost)).toEqual([1, 3, 5]);
     });
   });
 
   describe('createNameComparator', () => {
-    const mockItems = [
-      { name: '汤姆' },
-      { name: '杰瑞' },
-      { name: '布奇' },
-    ];
+    const mockItems = [{ name: '汤姆' }, { name: '杰瑞' }, { name: '布奇' }];
 
     it('should create ascending name comparator by default', () => {
-      const comparator = createNameComparator<typeof mockItems[0]>();
+      const comparator = createNameComparator<(typeof mockItems)[0]>();
       const result = [...mockItems].sort(comparator);
-      expect(result.map(item => item.name)).toEqual(['布奇', '杰瑞', '汤姆']);
+      expect(result.map((item) => item.name)).toEqual(['布奇', '杰瑞', '汤姆']);
     });
 
     it('should create descending name comparator when specified', () => {
-      const comparator = createNameComparator<typeof mockItems[0]>(false);
+      const comparator = createNameComparator<(typeof mockItems)[0]>(false);
       const result = [...mockItems].sort(comparator);
-      expect(result.map(item => item.name)).toEqual(['汤姆', '杰瑞', '布奇']);
+      expect(result.map((item) => item.name)).toEqual(['汤姆', '杰瑞', '布奇']);
     });
   });
 });

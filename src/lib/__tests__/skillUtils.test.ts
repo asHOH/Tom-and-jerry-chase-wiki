@@ -1,8 +1,5 @@
-import {
-  getSkillImageUrl,
-  addSkillImageUrls,
-} from '../skillUtils';
-import type { Skill, FactionId } from '../../data/types';
+import { getSkillImageUrl, addSkillImageUrls } from '../skillUtils';
+import type { Skill } from '../../data/types';
 
 describe('skillUtils', () => {
   const mockSkill: Skill = {
@@ -10,9 +7,7 @@ describe('skillUtils', () => {
     name: '发怒冲刺',
     type: 'ACTIVE',
     description: 'Tom charges forward',
-    skillLevels: [
-      { level: 1, description: 'Level 1 effect' }
-    ],
+    skillLevels: [{ level: 1, description: 'Level 1 effect' }],
   };
 
   const mockPassiveSkill: Skill = {
@@ -20,9 +15,7 @@ describe('skillUtils', () => {
     name: '被动技能',
     type: 'PASSIVE',
     description: 'Passive ability',
-    skillLevels: [
-      { level: 1, description: 'Always active' }
-    ],
+    skillLevels: [{ level: 1, description: 'Always active' }],
   };
 
   const mockWeapon1Skill: Skill = {
@@ -30,9 +23,7 @@ describe('skillUtils', () => {
     name: '手型枪',
     type: 'WEAPON1',
     description: 'Weapon 1 skill',
-    skillLevels: [
-      { level: 1, description: 'Ranged attack' }
-    ],
+    skillLevels: [{ level: 1, description: 'Ranged attack' }],
   };
 
   const mockWeapon2Skill: Skill = {
@@ -40,9 +31,7 @@ describe('skillUtils', () => {
     name: '平底锅',
     type: 'WEAPON2',
     description: 'Weapon 2 skill',
-    skillLevels: [
-      { level: 1, description: 'Melee attack' }
-    ],
+    skillLevels: [{ level: 1, description: 'Melee attack' }],
   };
 
   describe('getSkillImageUrl', () => {
@@ -78,15 +67,11 @@ describe('skillUtils', () => {
   });
 
   describe('addSkillImageUrls', () => {
-    const mockSkills: Skill[] = [
-      mockSkill,
-      mockWeapon1Skill,
-      mockPassiveSkill,
-    ];
+    const mockSkills: Skill[] = [mockSkill, mockWeapon1Skill, mockPassiveSkill];
 
     it('should add imageUrl to all skills', () => {
       const result = addSkillImageUrls('汤姆', mockSkills, 'cat');
-      
+
       expect(result).toHaveLength(3);
       expect(result[0]).toEqual({
         ...mockSkill,
