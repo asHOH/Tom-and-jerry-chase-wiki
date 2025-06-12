@@ -5,12 +5,12 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
-专为《猫和老鼠手游》玩家打造的数据查询网站，由玩家社区共同维护。
+专为《猫和老鼠手游》玩家打造的数据查询网站。
 
 ## 📱 功能简介
 
-- **角色技能查询**: 查看角色的属性、技能
-- **技能推荐加点**: 秒懂技能加点，快速上手
+- **角色查询**: 查看角色属性、技能
+- **技能加点**: 秒懂技能加点，快速上手
 - **知识卡查询**: 查看知识卡及其效果
 
 ## 🌟 亮点
@@ -43,7 +43,7 @@ npm run dev
 
 启动后，在浏览器访问 http://localhost:3000 即可。
 
-## 🤝 一起完善这个项目
+## 🤝 一起完善这个项目吧
 
 ### 补充数据
 
@@ -60,12 +60,12 @@ npm run dev
 
 **提交方式:**
 
-**方式一：✅ GitHub 老手**
+**方法一：✅ GitHub 老手**
 
 1. Fork 仓库 → 补充数据 → 进行[提交前检查](#-提交前检查) → 发起 Pull Request
 2. 简要说明新增内容和数据来源
 
-**方式二：🌱 GitHub 新手**
+**方法二：🌱 GitHub 新手**
 
 1. 点击仓库页面的 [Issues](../../issues) 标签
 2. 创建新 Issue
@@ -73,7 +73,7 @@ npm run dev
 
 ### 开发功能
 
-项目计划（按优先级）：
+项目计划：
 
 #### 🚀 急
 
@@ -100,13 +100,16 @@ npm run dev
 
 ### 🧪 提交前检查
 
-在提交PR前，请运行以下命令检查代码：
+发起 Pull Request 前，请运行以下命令检查代码：
 
 ```powershell
 # 自动检查所有项目要求
 .\test-github-workflows.ps1
+```
 
-# 如果检查失败，可用以下命令修复：
+如果检查失败，可用以下命令修复：
+
+```powershell
 npm run prettier:fix    # 修复代码格式
 npm run lint            # 检查代码规范
 npm test                # 运行测试套件
@@ -131,7 +134,7 @@ npm run test:coverage   # 生成测试覆盖率报告
 
 ### 代码许可证：GPL-3.0
 
-- **范围**: 所有代码文件 (`.ts`, `.tsx`, `.js`, `.css` 等)
+- **范围**: 所有代码文件 (`.ts`, `.tsx`, `.js` 等)
 - **要求**: 二次开发必须开源并使用相同许可证
 - 详见 [LICENSE-GPL](./LICENSE-GPL) 文件
 
@@ -150,7 +153,7 @@ npm run test:coverage   # 生成测试覆盖率报告
 - **来源**: [Tom and Jerry Chase Wiki](https://github.com/asHOH/Tom-and-jerry-chase-wiki)
 - **遵守对应许可证**
 
-**注意**: 此许可证不涉及《猫和老鼠》游戏素材的版权。相关版权请参见免责声明。
+**注意**: 许可证不涉及《猫和老鼠手游》素材的版权。相关版权见免责声明。
 
 ## ⚠️ 免责声明
 
