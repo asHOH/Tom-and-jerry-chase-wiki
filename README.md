@@ -62,7 +62,7 @@ npm run dev
 
 **方法一：✅ GitHub 老手**
 
-1. Fork 仓库 → 补充数据 → 进行[提交前检查](#-提交前检查) → 发起 Pull Request
+1. Fork 仓库 → 切换到 develop 分支 → 补充数据 → 进行[提交前检查](#-提交前检查) → 发起 Pull Request (目标分支: develop)
 2. 简要说明新增内容和数据来源
 
 **方法二：🌱 GitHub 新手**
@@ -93,10 +93,13 @@ npm run dev
 
 **开发流程:**
 
-1. Fork 仓库并创建功能分支：`git checkout -b feature/你的功能名`
-2. 进行[提交前检查](#-提交前检查)
-3. 完成开发后推送分支：`git push origin feature/你的功能名`
-4. 发起 Pull Request
+1. Fork 仓库并切换到 develop 分支：`git checkout develop`
+2. 创建功能分支：`git checkout -b feature/你的功能名`
+3. 进行[提交前检查](#-提交前检查)
+4. 完成开发后推送分支：`git push origin feature/你的功能名`
+5. 发起 Pull Request，目标分支选择 `develop`
+
+**注意**: 所有功能开发都应基于 `develop` 分支，PR 也应提交到 `develop` 分支。`main` 分支仅用于稳定版本发布。
 
 ### 🧪 提交前检查
 
