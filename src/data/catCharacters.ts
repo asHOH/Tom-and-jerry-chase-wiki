@@ -21,7 +21,7 @@ export const catCharacters: Record<string, Character> = {
 
     maxHp: 255,
     hpRecovery: 3.5,
-    moveSpeed: 755,
+    moveSpeed: 760,
     jumpHeight: 420,
     clawKnifeCdHit: 4.5,
     clawKnifeCdUnhit: 2.3,
@@ -194,7 +194,7 @@ export const catCharacters: Record<string, Character> = {
     maxHp: 220,
     attackBoost: 25,
     hpRecovery: 2,
-    moveSpeed: 745,
+    moveSpeed: 750,
     jumpHeight: 420,
     clawKnifeCdHit: 6,
     clawKnifeCdUnhit: 4.8,
