@@ -47,16 +47,14 @@ npm run dev
 
 ### 补充数据
 
-1. 数据文件位于 `src/data/` 目录下：
+**📋 快速开始 - 使用模板**
 
-- [`catCharacters.ts`](./src/data/catCharacters.ts) - 猫阵营角色数据
-- [`mouseCharacters.ts`](./src/data/mouseCharacters.ts) - 鼠阵营角色数据
+我们提供了简单易用的角色数据模板：
 
-2. 参考现有格式添加新角色数据。
-3. （可选）补充角色及技能图片：
-
-- 角色图片：[`public/images/cats/`](./public/images/cats/) 或 [`public/images/mice/`](./public/images/mice/)
-- 技能图片：[`public/images/catSkills/`](./public/images/catSkills/) 或 [`public/images/mouseSkills/`](./public/images/mouseSkills/)
+- 访问 [templates 文件夹](./templates/)
+- 查看模板使用说明和示例文件
+- 下载对应的猫/鼠角色模板
+- 参考汤姆/杰瑞完整示例填写数据
 
 **提交方式:**
 
@@ -64,12 +62,20 @@ npm run dev
 
 1. Fork 仓库 → 切换到 develop 分支 → 补充数据 → 进行[提交前检查](#-提交前检查) → 发起 Pull Request (目标分支: develop)
 2. 简要说明新增内容和数据来源
+3. （可选）同时补充角色及技能图片：
+
+- 角色图片：[`public/images/cats/`](./public/images/cats/) 或 [`public/images/mice/`](./public/images/mice/)
+- 技能图片：[`public/images/catSkills/`](./public/images/catSkills/) 或 [`public/images/mouseSkills/`](./public/images/mouseSkills/)
 
 **方法二：🌱 GitHub 新手**
 
-1. 点击仓库页面的 [Issues](../../issues) 标签
-2. 创建新 Issue
-3. 标题写角色名，内容贴角色数据
+1. 下载 [templates 文件夹](./templates/)
+2. 参考汤姆/杰瑞示例文件，在猫/鼠模板填写新角色数据
+   - 📖 示例文件：[汤姆示例](./templates/tom-example.jsonc) | [杰瑞示例](./templates/jerry-example.jsonc)
+   - 📝 模板文件：[猫模板](./templates/cat-template.json) | [鼠模板](./templates/mouse-template.json)
+3. 点击仓库页面的 [Issues](../../issues) 标签
+4. 创建新 Issue，标题写角色名
+5. 将填写好的 JSON 数据粘贴到 Issue 内容中
 
 ### 开发功能
 

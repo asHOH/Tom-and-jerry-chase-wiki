@@ -1,0 +1,161 @@
+{
+  // 角色名
+  "汤姆": {
+    "id": "汤姆", // 角色名
+    "description": "全能男神汤姆，除了抓老鼠以外什么都会，杰瑞的欢喜冤家", // 角色描述，可参考游戏中的描述
+    "maxHp": 255, // 健康值上限
+    "attackBoost": 0, // 攻击增伤，没有则填0
+    "hpRecovery": 3.5, // 健康值回复速度
+    "moveSpeed": 760, // 移速
+    "jumpHeight": 420, // 跳跃高度（猫为420，鼠参差不齐）
+    "clawKnifeCdHit": 4.5, // 爪刀命中时的冷却时间（猫咪专用）
+    "clawKnifeCdUnhit": 2.3, // 爪刀未命中时的冷却时间（猫咪专用）
+    "clawKnifeRange": 300, // 爪刀攻击范围（猫咪专用）
+    "catPositioningTags": [
+      // 定位标签
+      {
+        "tagName": "进攻", // 定位标签名
+        "isMinor": false, // 是否为次要定位
+        "description": "主动技能的无敌有很强的上火箭能力。", // 定位描述
+        "additionalDescription": "二被+锅 或者 枪+蓄力重击 也能对守火箭的老鼠产生极大威胁。", // 补充描述
+      },
+      {
+        "tagName": "打架",
+        "isMinor": false,
+        "description": "无敌提供解控，一被提供续航。",
+        "additionalDescription": "对打架阵容有很强的反制能力。",
+      },
+      {
+        "tagName": "翻盘",
+        "isMinor": true, // 次要定位，所以设为true
+        "description": "武器技能的直接抓取提供了一定的翻盘能力",
+        "additionalDescription": "", // 空字符串表示无额外描述
+      },
+    ],
+    "skillAllocations": [
+      // 技能加点方案
+      {
+        "id": "手型枪", // 武器名称
+        "pattern": "121220001", // 加点序列
+        "weaponType": "weapon1", // 武器类型：weapon1或weapon2
+        "description": "", // 加点说明
+        "additionaldescription": "", // 额外说明
+      },
+      {
+        "id": "平底锅",
+        "pattern": "131[3300]01", // 中括号表示平行加点，需要根据实际情况抉择加点顺序是3300还是0033；小括号表示需要留加点（莉莉、罗菲二被）、减号表示一般不升这级（苏蕊三级跳舞），示例：01(0)1[10]22-2
+        "weaponType": "weapon2",
+        "description": "非常顺风的时候可以考虑先点被动再点锅。",
+        "additionaldescription": "如果血量告急，也可以考虑先点一被回血。",
+      },
+    ],
+    "skills": [
+      // 技能列表
+      {
+        "id": "tom-active", // 技能ID
+        "name": "发怒冲刺", // 技能名称
+        "type": "ACTIVE", // 技能类型：ACTIVE/WEAPON1/WEAPON2/PASSIVE
+        "description": "解控并进入一段时间的无敌。", // 技能描述
+        "canMoveWhileUsing": true, // 释放时是否可移动
+        "canUseInAir": true, // 是否可在空中释放
+        "cancelableSkill": "可被道具键打断，但不返还CD", // 技能是否可打断
+        "cancelableAftercast": "无后摇", // 后摇是否可取消
+        "videoUrl": "https://www.bilibili.com/video/BV1KcwbeXEHL?t=127.35", // 技能演示视频，t=表示视频开始播放的时间，精确到0.1秒即可
+        "skillLevels": [
+          // 技能等级效果
+          {
+            "level": 1, // 技能等级
+            "description": "无敌持续3.8秒。", // 该等级效果描述
+            "cooldown": 20, // 冷却时间（秒）
+          },
+          {
+            "level": 2,
+            "description": "无敌持续6.8秒。",
+            "cooldown": 20,
+          },
+          {
+            "level": 3,
+            "description": "无敌期间减少爪刀CD。",
+            "cooldown": 20,
+          },
+        ],
+      },
+      {
+        "id": "tom-weapon1",
+        "name": "手型枪",
+        "type": "WEAPON1", // 一武技能
+        "description": "汤姆最爱的捕鼠神器。",
+        "canMoveWhileUsing": false, // 释放时不可移动
+        "canUseInAir": true,
+        "cancelableSkill": "可被跳跃键打断",
+        "cancelableAftercast": "可被跳跃键取消后摇",
+        "videoUrl": "https://www.bilibili.com/video/BV1KcwbeXEHL?t=16",
+        "skillLevels": [
+          {
+            "level": 1,
+            "description": "手型枪水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。",
+            "cooldown": 12,
+          },
+          {
+            "level": 2,
+            "description": "手型枪飞行速度增加。",
+            "cooldown": 12,
+          },
+          {
+            "level": 3,
+            "description": "猫咪可以直接抓起被手型枪拉回并眩晕的老鼠。",
+            "cooldown": 12,
+          },
+        ],
+      },
+      {
+        "id": "tom-weapon2",
+        "name": "平底锅",
+        "type": "WEAPON2", // 二武技能
+        "description": "挥锅攻击老鼠并打出煎蛋。",
+        "canMoveWhileUsing": true,
+        "canUseInAir": true,
+        "cancelableSkill": "可被道具键打断",
+        "cancelableAftercast": "可被道具键取消后摇",
+        "videoUrl": "https://www.bilibili.com/video/BV1KcwbeXEHL?t=172.85",
+        "skillLevels": [
+          {
+            "level": 1,
+            "description": "打晕并致盲附近老鼠、降低其救援速度；也能击飞道具。",
+            "cooldown": 18,
+          },
+          {
+            "level": 2,
+            "description": "失明延长至7.5秒；锅命中老鼠刷新爪刀CD。",
+            "cooldown": 18,
+          },
+          {
+            "level": 3,
+            "description": "猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠。",
+            "cooldown": 18,
+          },
+        ],
+      },
+      {
+        "id": "tom-passive",
+        "name": "捕鼠专家",
+        "type": "PASSIVE", // 被动技能（无冷却时间）
+        "skillLevels": [
+          {
+            "level": 1,
+            "description": "对老鼠造成伤害时回复Hp并加速。",
+            // 被动技能没有cooldown字段，如有CD则写在描述里
+          },
+          {
+            "level": 2,
+            "description": "手握老鼠时依然可以攻击",
+          },
+          {
+            "level": 3,
+            "description": "对老鼠造成伤害时，给予3秒沉默。",
+          },
+        ],
+      },
+    ],
+  },
+}

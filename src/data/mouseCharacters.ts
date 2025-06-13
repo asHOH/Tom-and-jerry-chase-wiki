@@ -81,7 +81,7 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 2,
             description: '鼓舞额外回复25Hp。',
-            cooldown: 18
+            cooldown: 18,
           },
           {
             level: 3,
