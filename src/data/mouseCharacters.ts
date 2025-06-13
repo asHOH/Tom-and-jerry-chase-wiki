@@ -61,7 +61,7 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: 'jerry-active',
+        id: '杰瑞-active',
         name: '鼓舞',
         type: 'ACTIVE',
         description: '短暂为自己和附近队友提供增益。',
@@ -91,7 +91,7 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'jerry-weapon1',
+        id: '杰瑞-weapon1',
         name: '大铁锤',
         type: 'WEAPON1',
         description: '举起大铁锤近身攻击。',
@@ -120,7 +120,7 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'jerry-weapon2',
+        id: '杰瑞-weapon2',
         name: '鸟哨',
         type: 'WEAPON2',
         description: '召唤投掷炸弹的金丝雀。',
@@ -153,7 +153,7 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'jerry-passive',
+        id: '杰瑞-passive',
         name: '奶酪好手',
         type: 'PASSIVE',
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=36',
@@ -234,7 +234,7 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: 'tuffy-active',
+        id: '泰菲-active',
         name: '圆滚滚',
         type: 'ACTIVE',
         description: '向前翻滚一段距离。',
@@ -265,7 +265,7 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'tuffy-weapon1',
+        id: '泰菲-weapon1',
         name: '火箭筒',
         type: 'WEAPON1',
         description: '发射一枚弹头。',
@@ -297,7 +297,7 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'tuffy-weapon2',
+        id: '泰菲-weapon2',
         name: '隐形感应雷',
         type: 'WEAPON2',
         description:
@@ -330,7 +330,7 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'tuffy-passive',
+        id: '泰菲-passive',
         name: '茁壮成长',
         type: 'PASSIVE',
         videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=25.85',
@@ -395,7 +395,7 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: 'nibbles-active',
+        id: '尼宝-active',
         name: '灵活跳跃',
         type: 'ACTIVE',
         description: '快速向后翻滚。',
@@ -429,7 +429,7 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'nibbles-weapon1',
+        id: '尼宝-weapon1',
         name: '尼宝的朋友',
         type: 'WEAPON1',
         description:
@@ -463,7 +463,7 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'nibbles-passive',
+        id: '尼宝-passive',
         name: '古灵精怪',
         type: 'PASSIVE',
         videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=36.3',

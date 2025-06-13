@@ -67,7 +67,7 @@ export const catCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: 'tom-active',
+        id: '汤姆-active',
         name: '发怒冲刺',
         type: 'ACTIVE',
         description: '解控并进入一段时间的无敌。',
@@ -98,7 +98,7 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'tom-weapon1',
+        id: '汤姆-weapon1',
         name: '手型枪',
         type: 'WEAPON1',
         description: '汤姆最爱的捕鼠神器。',
@@ -128,7 +128,7 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'tom-weapon2',
+        id: '汤姆-weapon2',
         name: '平底锅',
         type: 'WEAPON2',
         description: '挥锅攻击老鼠并打出煎蛋。',
@@ -159,7 +159,7 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'tom-passive',
+        id: '汤姆-passive',
         name: '捕鼠专家',
         type: 'PASSIVE',
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=102.4',
@@ -234,7 +234,7 @@ export const catCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: 'butch-active',
+        id: '布奇-active',
         name: '横冲直撞',
         type: 'ACTIVE',
         description: '猛冲一段距离，冲飞道具并对老鼠造成伤害和眩晕。冲刺中可通过方向键改变方向。',
@@ -263,7 +263,7 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'butch-weapon1',
+        id: '布奇-weapon1',
         name: '垃圾盖',
         type: 'WEAPON1',
         description: '小范围AOE。',
@@ -295,7 +295,7 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'butch-weapon2',
+        id: '布奇-weapon2',
         name: '旋转桶盖',
         type: 'WEAPON2',
         description: '原地释放或扔出几何桶盖。',
@@ -326,7 +326,7 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'butch-passive',
+        id: '布奇-passive',
         name: '力大无穷',
         type: 'PASSIVE',
         videoUrl: 'https://www.bilibili.com/video/BV1Eg41147Eo?t=83.5',
@@ -408,7 +408,7 @@ export const catCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: 'topsy-active',
+        id: '托普斯-active',
         name: '双重猫格',
         type: 'ACTIVE',
         description:
@@ -442,7 +442,7 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'topsy-weapon1',
+        id: '托普斯-weapon1',
         name: '泡泡棒',
         type: 'WEAPON1',
         description: '吹出泡泡来困住老鼠。',
@@ -473,7 +473,7 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'topsy-weapon2',
+        id: '托普斯-weapon2',
         name: '捕虫网',
         type: 'WEAPON2',
         description:
@@ -506,7 +506,7 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: 'topsy-passive',
+        id: '托普斯-passive',
         name: '元气满满',
         type: 'PASSIVE',
         skillLevels: [
