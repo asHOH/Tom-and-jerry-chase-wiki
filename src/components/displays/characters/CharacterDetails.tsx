@@ -313,7 +313,7 @@ export default function CharacterDetails({
           {/* Skill Allocations Section */}
           {character.skillAllocations && character.skillAllocations.length > 0 && (
             <div className='mb-8'>
-              <h3 className='text-2xl font-bold px-2 py-3 mb-4'>技能加点</h3>
+              <h3 className='text-2xl font-bold px-2 py-3 mb-4'>推荐加点</h3>
               <div className='space-y-3'>
                 {character.skillAllocations.map((allocation) => (
                   <div key={allocation.id} className='card p-4'>
