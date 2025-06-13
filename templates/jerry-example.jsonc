@@ -16,14 +16,14 @@
         "tagName": "奶酪", // 定位标签名
         "isMinor": false, // 是否为次要定位
         "description": "推速快。", // 定位描述
-        "additionalDescription": "此外还有被动提供推速加成和搬奶酪速度。", // 补充描述
+        "additionalDescription": "此外还有被动提供推速加成和搬奶酪速度。" // 补充描述
       },
       {
         "tagName": "辅助",
         "isMinor": true, // 次要定位，所以设为true
         "description": "鼓舞为队友提供增益、处理二手火箭；鸟哨限制猫的走位。",
-        "additionalDescription": "", // 空字符串表示无额外描述
-      },
+        "additionalDescription": "" // 空字符串表示无额外描述
+      }
     ],
     "skillAllocations": [
       // 技能加点方案
@@ -32,15 +32,15 @@
         "pattern": "0[12]112200", // 加点序列，中括号表示平行加点；小括号表示需要留加点；减号表示一般不升这级
         "weaponType": "weapon1", // 武器类型：weapon1或weapon2
         "description": "加点灵活，如需自保则开局优先一级鼓舞；需要搬奶酪则四级优先二被。", // 加点说明
-        "additionaldescription": "", // 额外说明
+        "additionaldescription": "" // 额外说明
       },
       {
         "id": "鸟哨",
         "pattern": "0[13]113300",
         "weaponType": "weapon2",
         "description": "加点灵活，如需自保则开局优先一级鼓舞；需要搬奶酪则四级优先二被。",
-        "additionaldescription": "",
-      },
+        "additionaldescription": ""
+      }
     ],
     "skills": [
       // 技能列表
@@ -59,19 +59,19 @@
           {
             "level": 1, // 技能等级
             "description": "鼓舞增加移速和跳跃高度。", // 该等级效果描述
-            "cooldown": 18, // 冷却时间（秒）
+            "cooldown": 18 // 冷却时间（秒）
           },
           {
             "level": 2,
             "description": "鼓舞额外回复25Hp。",
-            "cooldown": 18,
+            "cooldown": 18
           },
           {
             "level": 3,
             "description": "鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间。",
-            "cooldown": 18,
-          },
-        ],
+            "cooldown": 18
+          }
+        ]
       },
       {
         "id": "jerry-weapon1",
@@ -87,19 +87,19 @@
           {
             "level": 1,
             "description": "眩晕猫咪3秒。",
-            "cooldown": 20,
+            "cooldown": 20
           },
           {
             "level": 2,
             "description": "额外造成65伤害；每次命中永久增加10%推速，最多叠五层。",
-            "cooldown": 16,
+            "cooldown": 16
           },
           {
             "level": 3,
             "description": "眩晕时间延长至4秒。",
-            "cooldown": 12,
-          },
-        ],
+            "cooldown": 12
+          }
+        ]
       },
       {
         "id": "jerry-weapon2",
@@ -115,19 +115,19 @@
           {
             "level": 1,
             "description": "炸弹造成55伤害和2秒眩晕。",
-            "cooldown": 30,
+            "cooldown": 30
           },
           {
             "level": 2,
             "description": "提高金丝雀投掷炸弹的频率。",
-            "cooldown": 30,
+            "cooldown": 30
           },
           {
             "level": 3,
             "description": "减少CD；进一步提高金丝雀投掷炸弹的频率。",
-            "cooldown": 24,
-          },
-        ],
+            "cooldown": 24
+          }
+        ]
       },
       {
         "id": "jerry-passive",
@@ -136,19 +136,19 @@
         "skillLevels": [
           {
             "level": 1,
-            "description": "增加推速。",
+            "description": "增加推速。"
             // 被动技能没有cooldown字段，如有CD则写在描述里
           },
           {
             "level": 2,
-            "description": "搬奶酪时，增加移速和跳跃高度。",
+            "description": "搬奶酪时，增加移速和跳跃高度。"
           },
           {
             "level": 3,
-            "description": "奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。",
-          },
-        ],
-      },
-    ],
-  },
+            "description": "奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。"
+          }
+        ]
+      }
+    ]
+  }
 }

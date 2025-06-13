@@ -5,5 +5,14 @@
   "printWidth": 100,
   "tabWidth": 2,
   "jsxSingleQuote": true,
-  "bracketSameLine": false
+  "bracketSameLine": false,
+  "overrides": [
+    {
+      "files": "*.jsonc",
+      "options": {
+        "parser": "json",
+        "trailingComma": "none"
+      }
+    }
+  ]
 }

@@ -17,20 +17,20 @@
         "tagName": "进攻", // 定位标签名
         "isMinor": false, // 是否为次要定位
         "description": "主动技能的无敌有很强的上火箭能力。", // 定位描述
-        "additionalDescription": "二被+锅 或者 枪+蓄力重击 也能对守火箭的老鼠产生极大威胁。", // 补充描述
+        "additionalDescription": "二被+锅 或者 枪+蓄力重击 也能对守火箭的老鼠产生极大威胁。" // 补充描述
       },
       {
         "tagName": "打架",
         "isMinor": false,
         "description": "无敌提供解控，一被提供续航。",
-        "additionalDescription": "对打架阵容有很强的反制能力。",
+        "additionalDescription": "对打架阵容有很强的反制能力。"
       },
       {
         "tagName": "翻盘",
         "isMinor": true, // 次要定位，所以设为true
         "description": "武器技能的直接抓取提供了一定的翻盘能力",
-        "additionalDescription": "", // 空字符串表示无额外描述
-      },
+        "additionalDescription": "" // 空字符串表示无额外描述
+      }
     ],
     "skillAllocations": [
       // 技能加点方案
@@ -39,15 +39,15 @@
         "pattern": "121220001", // 加点序列
         "weaponType": "weapon1", // 武器类型：weapon1或weapon2
         "description": "", // 加点说明
-        "additionaldescription": "", // 额外说明
+        "additionaldescription": "" // 额外说明
       },
       {
         "id": "平底锅",
         "pattern": "131[3300]01", // 中括号表示平行加点，需要根据实际情况抉择加点顺序是3300还是0033；小括号表示需要留加点（莉莉、罗菲二被）、减号表示一般不升这级（苏蕊三级跳舞），示例：01(0)1[10]22-2
         "weaponType": "weapon2",
         "description": "非常顺风的时候可以考虑先点被动再点锅。",
-        "additionaldescription": "如果血量告急，也可以考虑先点一被回血。",
-      },
+        "additionaldescription": "如果血量告急，也可以考虑先点一被回血。"
+      }
     ],
     "skills": [
       // 技能列表
@@ -66,19 +66,19 @@
           {
             "level": 1, // 技能等级
             "description": "无敌持续3.8秒。", // 该等级效果描述
-            "cooldown": 20, // 冷却时间（秒）
+            "cooldown": 20 // 冷却时间（秒）
           },
           {
             "level": 2,
             "description": "无敌持续6.8秒。",
-            "cooldown": 20,
+            "cooldown": 20
           },
           {
             "level": 3,
             "description": "无敌期间减少爪刀CD。",
-            "cooldown": 20,
-          },
-        ],
+            "cooldown": 20
+          }
+        ]
       },
       {
         "id": "tom-weapon1",
@@ -94,19 +94,19 @@
           {
             "level": 1,
             "description": "手型枪水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。",
-            "cooldown": 12,
+            "cooldown": 12
           },
           {
             "level": 2,
             "description": "手型枪飞行速度增加。",
-            "cooldown": 12,
+            "cooldown": 12
           },
           {
             "level": 3,
             "description": "猫咪可以直接抓起被手型枪拉回并眩晕的老鼠。",
-            "cooldown": 12,
-          },
-        ],
+            "cooldown": 12
+          }
+        ]
       },
       {
         "id": "tom-weapon2",
@@ -122,19 +122,19 @@
           {
             "level": 1,
             "description": "打晕并致盲附近老鼠、降低其救援速度；也能击飞道具。",
-            "cooldown": 18,
+            "cooldown": 18
           },
           {
             "level": 2,
             "description": "失明延长至7.5秒；锅命中老鼠刷新爪刀CD。",
-            "cooldown": 18,
+            "cooldown": 18
           },
           {
             "level": 3,
             "description": "猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠。",
-            "cooldown": 18,
-          },
-        ],
+            "cooldown": 18
+          }
+        ]
       },
       {
         "id": "tom-passive",
@@ -143,19 +143,19 @@
         "skillLevels": [
           {
             "level": 1,
-            "description": "对老鼠造成伤害时回复Hp并加速。",
+            "description": "对老鼠造成伤害时回复Hp并加速。"
             // 被动技能没有cooldown字段，如有CD则写在描述里
           },
           {
             "level": 2,
-            "description": "手握老鼠时依然可以攻击",
+            "description": "手握老鼠时依然可以攻击"
           },
           {
             "level": 3,
-            "description": "对老鼠造成伤害时，给予3秒沉默。",
-          },
-        ],
-      },
-    ],
-  },
+            "description": "对老鼠造成伤害时，给予3秒沉默。"
+          }
+        ]
+      }
+    ]
+  }
 }
