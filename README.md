@@ -47,25 +47,16 @@ npm run dev
 
 ### 补充数据
 
-**📋 快速开始 - 使用模板**
-
-我们提供了简单易用的角色数据模板：
-
-- 访问 [templates 文件夹](./templates/)
-- 查看模板使用说明和示例文件
-- 下载对应的猫/鼠角色模板
-- 参考汤姆/杰瑞完整示例填写数据
-
-**提交方式:**
-
 **方法一：✅ GitHub 老手**
 
 1. Fork 仓库 → 切换到 develop 分支 → 补充数据 → 进行[提交前检查](#-提交前检查) → 发起 Pull Request (目标分支: develop)
 2. 简要说明新增内容和数据来源
-3. （可选）同时补充角色及技能图片：
-
-- 角色图片：[`public/images/cats/`](./public/images/cats/) 或 [`public/images/mice/`](./public/images/mice/)
-- 技能图片：[`public/images/catSkills/`](./public/images/catSkills/) 或 [`public/images/mouseSkills/`](./public/images/mouseSkills/)
+3. 数据文件位置：
+   - 猫咪角色：[`src/data/catCharacters.ts`](./src/data/catCharacters.ts)
+   - 老鼠角色：[`src/data/mouseCharacters.ts`](./src/data/mouseCharacters.ts)
+4. （可选）同时补充角色及技能图片：
+   - 角色图片：[`public/images/cats/`](./public/images/cats/) 或 [`public/images/mice/`](./public/images/mice/)
+   - 技能图片：[`public/images/catSkills/`](./public/images/catSkills/) 或 [`public/images/mouseSkills/`](./public/images/mouseSkills/)
 
 **方法二：🌱 GitHub 新手**
 
