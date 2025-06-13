@@ -365,9 +365,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '皮糙肉厚',
     rank: 'B',
     cost: 4,
-    description: '猫咪受到老鼠造成的伤害后，4秒内获得**固定减伤**。',
+    description: '猫咪受到老鼠造成的伤害后，4秒内获得**固定减伤**，但至少仍会受到15%伤害。',
     detailedDescription:
-      '老鼠虐我千百遍，我待老鼠如初恋！皮糙肉厚的猫咪受到老鼠造成的伤害后，4秒内获得**固定减伤**。',
+      '老鼠虐我千百遍，我待老鼠如初恋！皮糙肉厚的猫咪受到老鼠造成的伤害后，4秒内获得**固定减伤**，但至少仍会受到15%伤害。',
     levels: [
       { level: 1, description: '获得**20**固定减伤。' },
       { level: 2, description: '获得**25**固定减伤。' },

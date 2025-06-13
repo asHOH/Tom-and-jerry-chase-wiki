@@ -244,8 +244,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '幸运',
     rank: 'B',
     cost: 5,
-    description: '上火箭后可以从火箭上挣扎下来（每局限1次）。',
-    detailedDescription: '幸运的老鼠，上火箭后可以从火箭上挣扎下来（每局限1次）。',
+    description: '上火箭后可以从火箭上挣扎下来（每局限1次；墙缝期不可触发）。',
+    detailedDescription: '幸运的老鼠，上火箭后可以从火箭上挣扎下来（每局限1次；墙缝期不可触发）。',
     levels: [
       { level: 1, description: '首次挣扎速度提升**10%**。' },
       { level: 2, description: '首次挣扎速度提升**20%**。' },
