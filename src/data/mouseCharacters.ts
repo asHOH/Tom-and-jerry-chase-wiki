@@ -100,7 +100,7 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '眩晕敌方3秒。',
+            description: '眩晕猫咪3秒。',
             cooldown: 20,
           },
           {
@@ -121,7 +121,7 @@ export const mouseCharacters: Record<string, Character> = {
         type: 'WEAPON2',
         description: '召唤投掷炸弹的金丝雀。',
         detailedDescription:
-          '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。敌方被金丝雀的炸弹命中后将对其短暂免疫。',
+          '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。猫咪被金丝雀的炸弹命中后将对其短暂免疫。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断',
@@ -274,9 +274,9 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '眩晕敌方1.5秒。',
+            description: '眩晕猫咪1.5秒。',
             detailedDescription:
-              '造成两段伤害（碰撞50+爆炸15），两段伤害都继承绝地反击等角色状态；眩晕敌方1.5秒。',
+              '造成两段伤害（碰撞50+爆炸15），两段伤害都继承绝地反击等角色状态；眩晕猫咪1.5秒。',
             cooldown: 30,
           },
           {

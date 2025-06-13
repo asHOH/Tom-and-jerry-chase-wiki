@@ -53,9 +53,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '有难同当',
     rank: 'S',
     cost: 5,
-    description: 'Hp在50%以上时，牺牲自己的Hp为附近队友减伤；牺牲不会致死。有内置**CD**。',
+    description: 'Hp在一半以上时，牺牲自己的Hp为附近队友减伤；牺牲不会致死。有内置**CD**。',
     detailedDescription:
-      '当自身Hp在50%以上、附近队友受到敌方伤害时，牺牲自己大量Hp来减少部分队友所受伤害，被“牺牲”Hp的一部分会在10秒内缓慢恢复，牺牲者会至少保留一定健康值。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
+      '当自身Hp在一半以上、附近队友受到猫咪伤害时，牺牲自己大量Hp来减少部分队友所受伤害，被“牺牲”Hp的一部分会在10秒内缓慢恢复，牺牲者会至少保留一定健康值。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
     levels: [
       { level: 1, description: 'CD：**40秒**。' },
       { level: 2, description: 'CD：**35秒**。' },
