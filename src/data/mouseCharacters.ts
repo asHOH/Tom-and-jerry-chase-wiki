@@ -19,7 +19,7 @@ export const mouseCharacters: Record<string, Character> = {
     id: '杰瑞',
     description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家',
 
-    maxHp: 100, // 原则上是99，但还是说100更方便
+    maxHp: 99,
     attackBoost: 15,
     hpRecovery: 2,
     moveSpeed: 650,
@@ -78,7 +78,11 @@ export const mouseCharacters: Record<string, Character> = {
             detailedDescription: '鼓舞增加15%移速和45%跳跃高度，持续5秒。',
             cooldown: 18,
           },
-          { level: 2, description: '鼓舞额外回复25Hp。', cooldown: 18 },
+          {
+            level: 2,
+            description: '鼓舞额外回复25Hp。',
+            cooldown: 18
+          },
           {
             level: 3,
             description: '鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间。',
@@ -180,7 +184,7 @@ export const mouseCharacters: Record<string, Character> = {
     id: '泰菲',
     description: '杰瑞的侄子，总将自己吃得圆滚滚的',
 
-    maxHp: 75,
+    maxHp: 74,
     attackBoost: 5,
     hpRecovery: 2.5,
     moveSpeed: 630,
@@ -356,7 +360,7 @@ export const mouseCharacters: Record<string, Character> = {
     id: '尼宝',
     description: '爱捣蛋、爱运动的机灵鬼',
 
-    maxHp: 100,
+    maxHp: 99,
     attackBoost: 10,
     hpRecovery: 2,
     moveSpeed: 640,
