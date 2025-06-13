@@ -7,9 +7,12 @@
 *.js text eol=lf
 *.jsx text eol=lf
 *.json text eol=lf
+*.jsonc text eol=lf
 *.md text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
+*.css text eol=lf
+*.html text eol=lf
 
 # Ensure certain files keep their line endings
 *.bat text eol=crlf
