@@ -99,20 +99,20 @@ Write-Host "`n[SECTION] Build Output Verification" -ForegroundColor Magenta
 Test-Component "Build Directory Check" {
     if (Test-Path ".next") {
         Write-Host "Build directory (.next) exists" -ForegroundColor Gray
-        exit 0
+        return 0
     } else {
         Write-Host "Build directory (.next) not found" -ForegroundColor Red
-        exit 1
+        return 1
     }
 }
 
 Test-Component "Static Export Check" {
     if (Test-Path "out") {
         Write-Host "Export directory (out) exists" -ForegroundColor Gray
-        exit 0
+        return 0
     } else {
         Write-Host "Export directory (out) not found - this is expected for dev builds" -ForegroundColor Yellow
-        exit 0
+        return 0
     }
 }
 
@@ -125,15 +125,8 @@ if ($ErrorCount -eq 0) {
     Write-Host "`n[READY] Ready for:" -ForegroundColor Green
     Write-Host "  * Push to main/develop branches (triggers CI)" -ForegroundColor Gray
     Write-Host "  * Creating pull requests (triggers PR checks)" -ForegroundColor Gray
-    Write-Host "  * Manual workflow dispatch" -ForegroundColor Gray
 } else {
     Write-Host "[WARNING] $ErrorCount component(s) failed. Please fix before pushing." -ForegroundColor Red
 }
-
-Write-Host "`n[NEXT] Next Steps:" -ForegroundColor Cyan
-Write-Host "  1. Fix any failed components above" -ForegroundColor Gray
-Write-Host "  2. Commit and push to trigger workflows" -ForegroundColor Gray
-Write-Host "  3. Check GitHub Actions tab for live results" -ForegroundColor Gray
-Write-Host "  4. Use 'workflow_dispatch' for manual testing" -ForegroundColor Gray
 
 exit $ErrorCount
