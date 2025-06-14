@@ -13,11 +13,16 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 6,
     description: '墙缝出现后立刻解除虚弱和受伤，恢复全部Hp，并额外获得**增益**。',
     detailedDescription:
-      '为所有爱执着的痛，再痛我也要回家！墙缝出现后立刻解除虚弱和受伤，恢复全部Hp，并额外获得**增益**。',
+      '为所有爱执着的痛，再痛我也要回家！墙缝出现后立刻解除虚弱和受伤，回复200点Hp，并额外获得**增益**。',
     levels: [
       { level: 1, description: '**提升移速和跳跃高度**。' },
       { level: 2, description: '额外**提升Hp恢复**。' },
       { level: 3, description: '额外**获得2层护盾**。' },
+    ],
+    detailedLevels: [
+      { level: 1, description: '移动速度提升3.5%。' },
+      { level: 2, description: 'Hp恢复速度提升2.5点/s。' },
+      { level: 3, description: '额外**获得2层护盾**，护盾会被碎片消耗。' },
     ],
   },
 
@@ -41,7 +46,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 6,
     description:
       '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速，但此期间无法使用技能和道具；效果结束后陷入短暂的眩晕。(CD: 60秒)',
-    // detailedDescription: '',
+    detailedDescription: '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速2.5%/s，但此期间无法使用技能和道具；效果结束后眩晕1.2s。(CD: 60秒)',
     levels: [
       { level: 1, description: '无畏持续**6秒**。' },
       { level: 2, description: '无畏持续**6.5秒**。' },
@@ -184,6 +189,11 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '获得**中幅**加速。' },
       { level: 3, description: '获得**大幅**加速。' },
     ],
+    detailedLevels: [
+      { level: 1, description: '移动速度提升10%。' },
+      { level: 2, description: '移动速度提升15%。' },
+      { level: 3, description: '移动速度提升20%。' },
+    ],
   },
 
   逃窜: {
@@ -191,7 +201,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '受到猫咪的攻击后，**短暂**提升移动、跳跃速度和Hp恢复速度。(CD：35秒)',
-    // detailedDescription: '',
+    detailedDescription: '受到猫咪的攻击后，**短暂**移动速度提升20%，Hp恢复速度提升2点/s。(CD：35秒)',
     levels: [
       { level: 1, description: '效果持续**8秒**。' },
       { level: 2, description: '效果持续**9秒**。' },

@@ -314,6 +314,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 4,
     description: '猫咪的爪刀对老鼠造成恐吓，使老鼠在**一段时间**内推速大幅下降。',
+    detailedDescription: '猫咪的爪刀对老鼠造成恐吓，使老鼠在**一段时间**内推速大幅下降60%。',
     levels: [
       { level: 1, description: '恐吓持续**30秒**。' },
       { level: 2, description: '恐吓持续**45秒**。' },
@@ -449,7 +450,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     cost: 2,
     description: '猫咪能够**更快**、更频繁地穿过管道，并且不用“排队”。',
     detailedDescription:
-      '猫咪使自己身体变得更柔软，能够**更快**、更频繁地穿过管道，并且不用“排队”。',
+      '猫咪使自己身体变得更柔软，能够**更快**、更频繁地穿过管道，并且不用“排队”，不会显示“管道使用中”。',
     levels: [
       { level: 1, description: '钻管道速度提升**60%**。' },
       { level: 2, description: '钻管道速度提升**65%**。' },

@@ -114,4 +114,5 @@ export type Card = {
   detailedDescription?: string;
   imageUrl?: string; // We'll generate it automatically
   levels: CardLevel[];
+  detailedLevels?: CardLevel[];
 };

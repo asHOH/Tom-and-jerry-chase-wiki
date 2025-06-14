@@ -47,3 +47,4 @@ dist/
 .cache/
 .tmp/
 .temp/
+pnpm-lock.yaml

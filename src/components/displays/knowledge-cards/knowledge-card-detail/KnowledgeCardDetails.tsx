@@ -108,7 +108,11 @@ export default function KnowledgeCardDetails({
                 className='grid grid-cols-1 md:grid-cols-3'
                 style={{ gap: designTokens.spacing.md }}
               >
-                {card.levels.map((level) => (
+                {(
+                  isDetailedView && card.detailedLevels
+                    ? card.detailedLevels
+                    : card.levels
+                ).map((level) => (
                   <div
                     key={`${card.id}-${level.level}`}
                     className='bg-gray-100 rounded'
