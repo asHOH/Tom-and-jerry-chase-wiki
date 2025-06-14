@@ -108,30 +108,32 @@ export default function KnowledgeCardDetails({
                 className='grid grid-cols-1 md:grid-cols-3'
                 style={{ gap: designTokens.spacing.md }}
               >
-                {card.levels.map((level) => (
-                  <div
-                    key={`${card.id}-${level.level}`}
-                    className='bg-gray-100 rounded'
-                    style={{ padding: designTokens.spacing.md }}
-                  >
-                    <p
-                      className='text-black'
-                      style={{
-                        paddingLeft: designTokens.spacing.sm,
-                        paddingRight: designTokens.spacing.sm,
-                        paddingTop: designTokens.spacing.xxs,
-                        paddingBottom: designTokens.spacing.xxs,
-                      }}
+                {(isDetailedView && card.detailedLevels ? card.detailedLevels : card.levels).map(
+                  (level) => (
+                    <div
+                      key={`${card.id}-${level.level}`}
+                      className='bg-gray-100 rounded'
+                      style={{ padding: designTokens.spacing.md }}
                     >
-                      <span className='font-bold'>Lv. {level.level}:</span>{' '}
-                      {renderTextWithHighlights(
-                        isDetailedView && level.detailedDescription
-                          ? level.detailedDescription
-                          : level.description
-                      )}
-                    </p>
-                  </div>
-                ))}
+                      <p
+                        className='text-black'
+                        style={{
+                          paddingLeft: designTokens.spacing.sm,
+                          paddingRight: designTokens.spacing.sm,
+                          paddingTop: designTokens.spacing.xxs,
+                          paddingBottom: designTokens.spacing.xxs,
+                        }}
+                      >
+                        <span className='font-bold'>Lv. {level.level}:</span>{' '}
+                        {renderTextWithHighlights(
+                          isDetailedView && level.detailedDescription
+                            ? level.detailedDescription
+                            : level.description
+                        )}
+                      </p>
+                    </div>
+                  )
+                )}
               </div>
             </div>
           </div>

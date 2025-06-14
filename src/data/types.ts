@@ -68,6 +68,9 @@ export type Character = {
   skillAllocations?: SkillAllocation[];
 
   skills: Skill[];
+
+  // Knowledge card suggestions
+  knowledgeCardGroups: string[][];
 };
 
 export type Skill = {
@@ -114,4 +117,5 @@ export type Card = {
   detailedDescription?: string;
   imageUrl?: string; // We'll generate it automatically
   levels: CardLevel[];
+  detailedLevels?: CardLevel[];
 };
