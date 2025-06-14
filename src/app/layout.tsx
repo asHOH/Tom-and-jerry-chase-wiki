@@ -2,12 +2,41 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { DISCLAIMER_TEXT } from '@/constants';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://tom-and-jerry-chase-wiki.space'),
   title: '猫和老鼠手游wiki',
-  description: `猫和老鼠手游wiki。${DISCLAIMER_TEXT}`,
+  description: `猫和老鼠手游wiki - 角色技能加点和知识卡效果查询网站。${DISCLAIMER_TEXT}`,
+  keywords: '猫和老鼠手游,wiki,攻略,角色,技能,知识卡,Tom and Jerry Chase',
+  authors: [{ name: '猫和老鼠手游wiki' }],
+  creator: '猫和老鼠手游wiki',
+  publisher: '猫和老鼠手游wiki',
+  robots: 'index, follow',
+  openGraph: {
+    type: 'website',
+    locale: 'zh_CN',
+    url: 'https://tom-and-jerry-chase-wiki.space',
+    title: '猫和老鼠手游wiki',
+    description: '角色技能加点和知识卡效果查询网站',
+    siteName: '猫和老鼠手游wiki',
+    images: [
+      {
+        url: '/icon.png',
+        width: 512,
+        height: 512,
+        alt: '猫和老鼠手游wiki',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary',
+    title: '猫和老鼠手游wiki',
+    description: '角色技能加点和知识卡效果查询网站',
+    images: ['/icon.png'],
+  },
   icons: {
     icon: '/icon.png',
     shortcut: '/favicon.ico',
@@ -19,7 +48,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='zh'>
       <body className={inter.className}>
-        <main className='min-h-screen bg-gray-100 relative'>{children}</main>
+        <ErrorBoundary>
+          <main className='min-h-screen bg-gray-100 relative'>{children}</main>
+        </ErrorBoundary>
       </body>
     </html>
   );
