@@ -6,6 +6,7 @@
   "tabWidth": 2,
   "jsxSingleQuote": true,
   "bracketSameLine": false,
+  "endOfLine": "lf",
   "overrides": [
     {
       "files": "*.jsonc",
