@@ -1,19 +1,46 @@
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 import { getCardRankColors } from '@/lib/design-tokens';
 import { sortCardsByRank } from '@/lib/sortingUtils';
-import { useFilterState, filterByRank, RANK_OPTIONS } from '@/lib/filterUtils';
+import {
+  useFilterState,
+  filterByRank,
+  createCostFilter,
+  createRankFilter,
+  RANK_OPTIONS,
+  COST_RANGES,
+} from '@/lib/filterUtils';
 import { KnowledgeCardGridProps } from '@/lib/types';
 
 export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCardGridProps) {
-  // Use centralized filter state management
+  // Use centralized filter state management for ranks
   const {
     selectedFilters: selectedRanks,
     toggleFilter: toggleRankFilter,
-    hasFilter,
+    hasFilter: hasRankFilter,
+  } = useFilterState<string>();
+
+  // Use centralized filter state management for costs
+  const {
+    selectedFilters: selectedCostRanges,
+    toggleFilter: toggleCostRangeFilter,
+    hasFilter: hasCostRangeFilter,
   } = useFilterState<string>();
 
   // Filter and sort cards using centralized utilities
-  const filteredAndSortedCards = sortCardsByRank(filterByRank(faction.cards, selectedRanks));
+  const filteredAndSortedCards = sortCardsByRank(
+    faction.cards
+      .filter(createRankFilter(selectedRanks))
+      .filter((card) => {
+        if (selectedCostRanges.size === 0) return true;
+        // Apply cost filter if any cost range is selected
+        // Convert Set to array for iteration compatible with ES5 target
+        const costFilterPassed = Array.from(selectedCostRanges).some((rangeLabel) => {
+          const range = COST_RANGES.find((r) => r.label === rangeLabel);
+          return range && createCostFilter(range.min, range.max)(card);
+        });
+        return costFilterPassed;
+      })
+  );
 
   return (
     <div className='space-y-8'>
@@ -34,7 +61,7 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
           <div className='flex gap-2'>
             {RANK_OPTIONS.map((rank) => {
               const rankColors = getCardRankColors(rank, true);
-              const isActive = hasFilter(rank);
+              const isActive = hasRankFilter(rank);
 
               const buttonStyle = isActive
                 ? {
@@ -71,6 +98,54 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
                   className={!isActive ? 'hover:bg-gray-200' : ''}
                 >
                   {rank}级
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        {/* Cost Filter Controls */}
+        <div className='flex justify-center items-center gap-4 mt-4'>
+          <span className='text-lg font-medium text-gray-700'>费用筛选:</span>
+          <div className='flex gap-2'>
+            {COST_RANGES.map((range) => {
+              const isActive = hasCostRangeFilter(range.label);
+              const buttonStyle = isActive
+                ? {
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                    cursor: 'pointer',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    fontSize: '14px',
+                    backgroundColor: '#3b82f6', // blue-500
+                    color: '#ffffff', // white
+                    borderColor: '#2563eb', // blue-600
+                  }
+                : {
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    fontSize: '14px',
+                    backgroundColor: '#f3f4f6',
+                    color: '#9ca3af',
+                    ':hover': {
+                      backgroundColor: '#e5e7eb',
+                    },
+                  };
+
+              return (
+                <button
+                  key={range.label}
+                  onClick={() => toggleCostRangeFilter(range.label)}
+                  style={buttonStyle}
+                  className={!isActive ? 'hover:bg-gray-200' : ''}
+                >
+                  {range.label}
                 </button>
               );
             })}
