@@ -4,7 +4,7 @@ export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://tom-and-jerry-chase-wiki.space';
-  
+
   return [
     {
       url: baseUrl,
