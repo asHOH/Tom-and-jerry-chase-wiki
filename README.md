@@ -41,7 +41,7 @@ npm install
 npm run dev
 ```
 
-启动后，在浏览器访问 http://localhost:3000 即可。
+此后，在浏览器访问 http://localhost:3000 即可。
 
 ## 🤝 一起完善这个项目吧
 
@@ -50,7 +50,7 @@ npm run dev
 **方法一：✅ GitHub 老手**
 
 1. Fork 仓库 → 切换到 develop 分支 → 补充数据 → 进行[提交前检查](#-提交前检查) → 发起 Pull Request (目标分支: develop)
-2. 简要说明新增内容和数据来源
+2. 简要说明数据来源
 3. 数据文件位置：
    - 猫咪角色：[`src/data/catCharacters.ts`](./src/data/catCharacters.ts)
    - 老鼠角色：[`src/data/mouseCharacters.ts`](./src/data/mouseCharacters.ts)
@@ -61,12 +61,11 @@ npm run dev
 **方法二：🌱 GitHub 新手**
 
 1. 下载 [templates 文件夹](./templates/)
-2. 参考汤姆/杰瑞示例文件，在猫/鼠模板填写新角色数据
+2. 参考示例文件，在模板中填写新角色数据
    - 📖 示例文件：[汤姆示例](./templates/tom-example.jsonc) | [杰瑞示例](./templates/jerry-example.jsonc)
    - 📝 模板文件：[猫模板](./templates/cat-template.json) | [鼠模板](./templates/mouse-template.json)
 3. 点击仓库页面的 [Issues](../../issues) 标签
-4. 创建新 Issue，标题写角色名
-5. 将填写好的 JSON 数据粘贴到 Issue 内容中
+4. 创建新 Issue，标题写角色名，将填写好的 JSON 数据粘贴到 Issue 内容中
 
 ### 开发功能
 
@@ -103,16 +102,12 @@ npm run dev
 发起 Pull Request 前，请运行以下命令检查代码：
 
 ```powershell
-# 自动检查所有项目要求 (Windows PowerShell)
+# 自动检查所有项目要求，如代码格式、规范、编译和构建
+# 如果发现 Prettier 格式问题，会提示是否自动修复
 .\test-github-workflows.ps1
 ```
 
 > **系统要求**: 此脚本需要 Windows PowerShell。macOS/Linux 用户请运行下方的单个命令进行检查。
-
-**脚本功能**：
-
-- 自动检查代码格式、规范、编译和构建
-- 如果发现 Prettier 格式问题，会提示是否自动修复
 
 如果检查失败，也可手动运行以下命令排查：
 
@@ -154,7 +149,6 @@ npm audit               # 检查依赖安全性
 
 - **范围**: 文档、数据等内容
 - **要求**: 使用时署名原作者
-- **允许**: 商用、修改、分发
 - 详见 [LICENSE-CC-BY](./LICENSE-CC-BY) 文件
 
 ### 署名要求
@@ -163,7 +157,6 @@ npm audit               # 检查依赖安全性
 
 - **原作者**: asHOH (GitHub: [@asHOH](https://github.com/asHOH))
 - **来源**: [Tom and Jerry Chase Wiki](https://github.com/asHOH/Tom-and-jerry-chase-wiki)
-- **遵守对应许可证**
 
 **注意**: 许可证不涉及《猫和老鼠手游》素材的版权。相关版权见免责声明。
 
@@ -173,17 +166,13 @@ npm audit               # 检查依赖安全性
 
 猫和老鼠（Tom and Jerry）角色版权归华纳兄弟娱乐公司（Warner Bros. Entertainment Inc.）所有。游戏素材版权归网易猫和老鼠手游所有。
 
-若版权方提出要求，我们将立即配合调整相关内容。反馈渠道：Github Issues。
+若版权方提出要求，我们将立即配合调整。反馈渠道：Github Issues。
 
-**🔒 隐私承诺**
+**🔒 隐私承诺：** 本网站承诺永不收集或分析任何用户数据。
 
-本网站承诺永远不会收集、存储或分析任何用户数据。
+**💰 免费承诺：** 本网站承诺所有功能永久免费。
 
-**💰 免费承诺**
-
-本网站承诺所有功能永久免费。
-
-⚠️ **反诈提醒：如有任何网站声称是本项目但要求付费，请捂紧钱包并举报！**
+**⚠️ 反诈提醒：** 如有任何网站声称是本项目但要求付费，请捂紧钱包并举报！
 
 **特别鸣谢:**
 
