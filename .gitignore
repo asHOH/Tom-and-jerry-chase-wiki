@@ -1,34 +1,35 @@
-# 依赖
+# Dependencies
 /node_modules/
 /.pnp
 .pnp.js
 
-# 测试
+# Testing
 /coverage/
 
-# 生产
+# Production
 /.next/
 /out/
 /build/
 
-# 数据库
+# Database
 /prisma/*.db
 /prisma/*.db-journal
 
-# 环境变量
+# Environment variables
 .env
 .env.local
 .env*.local
 
-# 日志
+# Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# 系统文件
+# System files
 .DS_Store
+Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
@@ -36,6 +37,9 @@ next-env.d.ts
 
 # Next.js
 .next/cache/
+
+# Turbo
+.turbo/
 
 # IDE
 .idea/
@@ -46,7 +50,11 @@ next-env.d.ts
 # Vercel
 .vercel
 
-# 其他
+# Package files
+*.tgz
+*.tar.gz
+
+# Other
 dist/
 .cache/
 .tmp/

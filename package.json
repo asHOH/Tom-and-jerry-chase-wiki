@@ -2,6 +2,17 @@
   "name": "tom-and-jerry-chase-data",
   "version": "0.1.0",
   "private": true,
+  "description": "专为《猫和老鼠手游》玩家打造的数据查询网站",
+  "homepage": "https://tom-and-jerry-chase-wiki.space",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asHOH/Tom-and-jerry-chase-wiki.git"
+  },
+  "bugs": {
+    "url": "https://github.com/asHOH/Tom-and-jerry-chase-wiki/issues"
+  },
+  "author": "asHOH",
+  "keywords": ["tom-and-jerry", "mobile-game", "wiki", "nextjs", "react"],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
