@@ -30,18 +30,18 @@ describe('sortingUtils', () => {
 
     it('should sort by rank first (S > A > B > C)', () => {
       const result = sortCardsByRank(mockCards);
-      expect(result[0].rank).toBe('S');
-      expect(result[1].rank).toBe('S');
-      expect(result[2].rank).toBe('A');
-      expect(result[3].rank).toBe('B');
-      expect(result[4].rank).toBe('C');
+      expect(result[0]!.rank).toBe('S');
+      expect(result[1]!.rank).toBe('S');
+      expect(result[2]!.rank).toBe('A');
+      expect(result[3]!.rank).toBe('B');
+      expect(result[4]!.rank).toBe('C');
     });
 
     it('should sort by cost within same rank (highest first)', () => {
       const result = sortCardsByRank(mockCards);
       const sRankCards = result.filter((card) => card.rank === 'S');
-      expect(sRankCards[0].cost).toBe(5);
-      expect(sRankCards[1].cost).toBe(3);
+      expect(sRankCards[0]!.cost).toBe(5);
+      expect(sRankCards[1]!.cost).toBe(3);
     });
 
     it('should not mutate original array', () => {

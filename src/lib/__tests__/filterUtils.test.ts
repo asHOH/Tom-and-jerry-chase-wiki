@@ -147,19 +147,25 @@ describe('filterUtils', () => {
     it('should filter by name field', () => {
       const result = filterByTextSearch(mockItems, 'Tom', ['name']);
       expect(result).toHaveLength(1);
-      expect(result[0].name).toBe('Tom Cat');
+      expect(result[0]!.name).toBe('Tom Cat');
     });
 
     it('should filter by multiple fields', () => {
       const result = filterByTextSearch(mockItems, 'cat', ['name', 'description']);
       expect(result).toHaveLength(1);
-      expect(result[0].name).toBe('Tom Cat');
+      expect(result[0]!.name).toBe('Tom Cat');
     });
 
     it('should be case insensitive', () => {
       const result = filterByTextSearch(mockItems, 'MOUSE', ['name']);
       expect(result).toHaveLength(1);
-      expect(result[0].name).toBe('Jerry Mouse');
+      expect(result[0]!.name).toBe('Jerry Mouse');
+    });
+
+    it('should filter by text field', () => {
+      const result = filterByTextSearch(mockItems, 'Tom', ['name']);
+      expect(result).toHaveLength(1);
+      expect(result[0]!.name).toBe('Tom Cat');
     });
   });
 
@@ -178,7 +184,7 @@ describe('filterUtils', () => {
 
       const result = applyMultipleFilters(mockItems, filters);
       expect(result).toHaveLength(1);
-      expect(result[0].name).toBe('Item 1');
+      expect(result[0]!.name).toBe('Item 1');
     });
   });
 
@@ -192,7 +198,7 @@ describe('filterUtils', () => {
       const filter = createRankFilter(new Set(['S']));
       const result = mockItems.filter(filter);
       expect(result).toHaveLength(1);
-      expect(result[0].rank).toBe('S');
+      expect(result[0]!.rank).toBe('S');
     });
   });
 
@@ -206,7 +212,7 @@ describe('filterUtils', () => {
       const filter = createCostFilter(3, 6);
       const result = mockItems.filter(filter);
       expect(result).toHaveLength(1);
-      expect(result[0].cost).toBe(5);
+      expect(result[0]!.cost).toBe(5);
     });
   });
 

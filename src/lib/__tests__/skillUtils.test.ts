@@ -100,7 +100,7 @@ describe('skillUtils', () => {
 
     it('should work with mouse faction', () => {
       const result = addSkillImageUrls('杰瑞', [mockSkill], 'mouse');
-      expect(result[0].imageUrl).toBe('/images/mouseSkills/杰瑞1-发怒冲刺.png');
+      expect(result[0]!.imageUrl).toBe('/images/mouseSkills/杰瑞1-发怒冲刺.png');
     });
   });
 });

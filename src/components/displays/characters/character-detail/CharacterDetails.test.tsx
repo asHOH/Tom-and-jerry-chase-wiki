@@ -266,10 +266,6 @@ describe('CharacterDetails', () => {
           additionalDescription: '推奶酪能力很强',
         },
       ],
-      catPositioningTags: undefined,
-      clawKnifeCdHit: undefined,
-      clawKnifeCdUnhit: undefined,
-      clawKnifeRange: undefined,
     };
 
     render(<CharacterDetails character={mouseCharacter} />);
@@ -278,7 +274,7 @@ describe('CharacterDetails', () => {
     expect(screen.getByText('(鼠阵营)')).toBeTruthy();
     expect(screen.getByText(/推速/)).toBeTruthy();
     expect(
-      screen.getByText((content, element) => {
+      screen.getByText((_content, element) => {
         // Look for the specific p element that contains push speed with unit
         const isTargetElement =
           element?.tagName === 'P' &&
