@@ -37,7 +37,9 @@ jobs:
         run: npm ci
 
       - name: Build with Next.js
-        run: npm run build
+        run: |
+          export NEXT_PUBLIC_BUILD_TIME=$(TZ='Asia/Shanghai' date '+%m月%d日 %H:%M')
+          npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

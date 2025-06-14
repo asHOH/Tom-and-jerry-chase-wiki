@@ -133,6 +133,11 @@ export default function Home() {
           <p className='max-w-2xl mx-auto text-gray-600 px-4 py-3'>
             <DisclaimerText />
           </p>
+          {process.env.NEXT_PUBLIC_BUILD_TIME && (
+            <p className='text-sm text-gray-500 mt-4'>
+              最近更新：{process.env.NEXT_PUBLIC_BUILD_TIME}
+            </p>
+          )}
         </div>
       </div>
     );
