@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { measurePageLoad } from '@/lib/performance';
-import './globals.css';
-import { DISCLAIMER_TEXT } from '@/constants';
+import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { DISCLAIMER_TEXT } from '@/constants';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='zh'>
+    <html lang='zh-CN'>
       <head>
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-Frame-Options' content='DENY' />
@@ -76,17 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ErrorBoundary>
           <main className='min-h-screen bg-gray-100 relative'>{children}</main>
         </ErrorBoundary>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if (typeof window !== 'undefined' && window.requestIdleCallback) {
-                window.requestIdleCallback(() => {
-                  (${measurePageLoad.toString()})();
-                });
-              }
-            `,
-          }}
-        />
+        <PerformanceMonitor />
       </body>
     </html>
   );
