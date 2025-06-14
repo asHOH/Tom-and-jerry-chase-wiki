@@ -1,1 +1,2 @@
-npm run prettier:fix && npm run lint
+#!/bin/sh
+npx lint-staged

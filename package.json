@@ -12,7 +12,13 @@
     "url": "https://github.com/asHOH/Tom-and-jerry-chase-wiki/issues"
   },
   "author": "asHOH",
-  "keywords": ["tom-and-jerry", "mobile-game", "wiki", "nextjs", "react"],
+  "keywords": [
+    "tom-and-jerry",
+    "mobile-game",
+    "wiki",
+    "nextjs",
+    "react"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -57,10 +63,21 @@
     "husky": "^9.1.7",
     "jest": "^30.0.0",
     "jest-environment-jsdom": "^30.0.0",
+    "lint-staged": "^16.1.1",
     "postcss": "^8.5.5",
     "prettier": "^3.5.3",
     "tailwindcss": "^4.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }

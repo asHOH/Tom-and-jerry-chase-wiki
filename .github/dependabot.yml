@@ -1,27 +1,27 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     open-pull-requests-limit: 5
     reviewers:
-      - "asHOH"
+      - 'asHOH'
     commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
+      prefix: 'chore(deps)'
+      include: 'scope'
     groups:
       testing:
         patterns:
-          - "@testing-library/*"
-          - "jest*"
+          - '@testing-library/*'
+          - 'jest*'
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
       types:
         patterns:
-          - "@types/*"
+          - '@types/*'
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
