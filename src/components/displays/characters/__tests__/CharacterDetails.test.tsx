@@ -219,7 +219,7 @@ describe('CharacterDetails', () => {
   it('should render skill allocations', () => {
     render(<CharacterDetails character={mockCharacter} />);
 
-    expect(screen.getByText('技能加点')).toBeTruthy();
+    expect(screen.getByText('推荐加点')).toBeTruthy();
     expect(screen.getByTestId('skill-allocation')).toBeTruthy();
     expect(screen.getByText('测试加点')).toBeTruthy();
   });

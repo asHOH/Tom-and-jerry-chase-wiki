@@ -12,7 +12,7 @@ describe('tooltipUtils', () => {
   describe('getTooltipContent', () => {
     it('should return detailed tooltip when available and requested', () => {
       const result = getTooltipContent('Hp上限', 'cat', true);
-      expect(result).toBe('健康值上限，俗称"血条"（盘子的伤害是50）');
+      expect(result).toBe('健康值上限（盘子的伤害是50；Hp<0时虚弱）');
     });
 
     it('should return normal tooltip when detailed not available', () => {
