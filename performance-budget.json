@@ -1,0 +1,35 @@
+{
+  "budgets": [
+    {
+      "type": "bundle",
+      "name": "client",
+      "baseline": "101KB",
+      "budget": "120KB",
+      "warning": "110KB"
+    },
+    {
+      "type": "initial",
+      "maximum": "150KB",
+      "warning": "130KB"
+    },
+    {
+      "type": "allScript",
+      "maximum": "200KB",
+      "warning": "180KB"
+    }
+  ],
+  "analytics": {
+    "enabled": false,
+    "note": "Performance monitoring available in production via /lib/performance.ts"
+  },
+  "optimizations": {
+    "images": {
+      "formats": ["webp", "png"],
+      "nextImageOptimization": true
+    },
+    "bundling": {
+      "codesplitting": "automatic",
+      "treeShaking": "enabled"
+    }
+  }
+}

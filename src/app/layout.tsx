@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { measurePageLoad } from '@/lib/performance';
 import './globals.css';
 import { DISCLAIMER_TEXT } from '@/constants';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -52,11 +53,40 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta httpEquiv='X-Frame-Options' content='DENY' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
         <meta name='referrer' content='strict-origin-when-cross-origin' />
+        {/* Preload critical resources */}
+        <link rel='preload' href='/icon.png' as='image' type='image/png' />
+        <link rel='preload' href='/images/icons/cat faction.png' as='image' type='image/png' />
+        <link rel='preload' href='/images/icons/mouse faction.png' as='image' type='image/png' />
+        <link
+          rel='preload'
+          href='/images/icons/cat knowledge card.png'
+          as='image'
+          type='image/png'
+        />
+        <link
+          rel='preload'
+          href='/images/icons/mouse knowledge card.png'
+          as='image'
+          type='image/png'
+        />
+        <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+        <link rel='preconnect' href='//fonts.gstatic.com' crossOrigin='anonymous' />
       </head>
       <body className={inter.className}>
         <ErrorBoundary>
           <main className='min-h-screen bg-gray-100 relative'>{children}</main>
         </ErrorBoundary>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined' && window.requestIdleCallback) {
+                window.requestIdleCallback(() => {
+                  (${measurePageLoad.toString()})();
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
