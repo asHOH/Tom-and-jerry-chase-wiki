@@ -73,7 +73,7 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
       skillType = pattern[i] as '0' | '1' | '2' | '3';
       isDelayed = true;
       i += 2; // Skip the number and closing parenthesis
-    } else if (['0', '1', '2', '3'].includes(char)) {
+    } else if (['0', '1', '2', '3'].includes(char!)) {
       skillType = char as '0' | '1' | '2' | '3';
       i++;
     } else {

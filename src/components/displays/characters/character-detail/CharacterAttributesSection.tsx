@@ -91,7 +91,7 @@ export default function CharacterAttributesSection({
           value={attr.value}
           factionId={factionId}
           isDetailed={isDetailed}
-          className={attr.className}
+          {...(attr.className && { className: attr.className })}
         />
       ))}
 
