@@ -76,19 +76,23 @@ export default function TabNavigation({
 
   const tooltipStyle = {
     position: 'absolute' as const,
-    bottom: '-35px',
+    bottom: isMobile ? '-40px' : '-35px',
     left: '50%',
     transform: 'translateX(-50%)',
     backgroundColor: '#1f2937',
     color: 'white',
-    padding: '4px 8px',
+    padding: '6px 10px',
     borderRadius: '4px',
     fontSize: '12px',
     whiteSpace: 'nowrap' as const,
-    zIndex: 10000,
+    zIndex: 50000,
     opacity: 0,
     pointerEvents: 'none' as const,
     transition: 'opacity 0.2s',
+    minWidth: 'max-content',
+    maxWidth: '200px',
+    textAlign: 'center' as const,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
   };
 
   return (
@@ -124,20 +128,33 @@ export default function TabNavigation({
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
+            overflowY: 'visible',
+            position: 'relative',
           }}
         >
           <button
             onClick={() => onTabChange('')}
             style={buttonStyle(activeTab === null)}
             title={isMobile ? '首页' : undefined}
-            onMouseEnter={(e) => {
+            onTouchStart={(e) => {
               if (isMobile) {
+                const tooltip = e.currentTarget.querySelector('.tooltip');
+                if (tooltip) {
+                  (tooltip as HTMLElement).style.opacity = '1';
+                  setTimeout(() => {
+                    (tooltip as HTMLElement).style.opacity = '0';
+                  }, 2000);
+                }
+              }
+            }}
+            onMouseEnter={(e) => {
+              if (!isMobile) {
                 const tooltip = e.currentTarget.querySelector('.tooltip');
                 if (tooltip) (tooltip as HTMLElement).style.opacity = '1';
               }
             }}
             onMouseLeave={(e) => {
-              if (isMobile) {
+              if (!isMobile) {
                 const tooltip = e.currentTarget.querySelector('.tooltip');
                 if (tooltip) (tooltip as HTMLElement).style.opacity = '0';
               }
@@ -159,14 +176,25 @@ export default function TabNavigation({
               onClick={() => onTabChange(tab.id)}
               style={buttonStyle(activeTab === tab.id)}
               title={isMobile ? tab.name : undefined}
-              onMouseEnter={(e) => {
+              onTouchStart={(e) => {
                 if (isMobile) {
+                  const tooltip = e.currentTarget.querySelector('.tooltip');
+                  if (tooltip) {
+                    (tooltip as HTMLElement).style.opacity = '1';
+                    setTimeout(() => {
+                      (tooltip as HTMLElement).style.opacity = '0';
+                    }, 2000);
+                  }
+                }
+              }}
+              onMouseEnter={(e) => {
+                if (!isMobile) {
                   const tooltip = e.currentTarget.querySelector('.tooltip');
                   if (tooltip) (tooltip as HTMLElement).style.opacity = '1';
                 }
               }}
               onMouseLeave={(e) => {
-                if (isMobile) {
+                if (!isMobile) {
                   const tooltip = e.currentTarget.querySelector('.tooltip');
                   if (tooltip) (tooltip as HTMLElement).style.opacity = '0';
                 }
@@ -175,8 +203,8 @@ export default function TabNavigation({
               <Image
                 src={tab.imageSrc}
                 alt={tab.imageAlt}
-                width={isMobile ? 24 : 35}
-                height={isMobile ? 19 : 28}
+                width={isMobile ? 25 : 35}
+                height={isMobile ? 20 : 28}
                 className='object-contain'
               />
               {!isMobile && <span>{tab.name}</span>}
