@@ -33,8 +33,8 @@ export function FactionButton({
     <button
       onClick={onClick}
       aria-label={ariaLabel}
-      className={`faction-button ${className}`}
-      style={baseStyle}
+      className={`faction-button ${className} sm:px-6 sm:py-4 px-4 py-3`}
+      style={{...baseStyle, padding: undefined}}
     >
       <div style={contentStyle}>
         {imageSrc ? (
@@ -44,7 +44,7 @@ export function FactionButton({
               alt={imageAlt || title}
               width={64}
               height={48}
-              className='object-contain'
+              className='object-contain flex-shrink-0'
             />
           </div>
         ) : (

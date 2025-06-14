@@ -316,10 +316,14 @@ export const componentTokens = {
       gap: designTokens.spacing.xs,
       textAlign: 'center' as const,
       flex: 1,
-      minWidth: '220px',
+      minWidth: '180px',
       backgroundColor: designTokens.colors.faction.background,
       color: designTokens.colors.faction.text,
       boxShadow: designTokens.shadows.card,
+    },
+
+    mobile: {
+      padding: '12px 16px',
     },
 
     content: {
@@ -335,6 +339,7 @@ export const componentTokens = {
     title: {
       fontSize: designTokens.typography.fontSize['2xl'],
       fontWeight: designTokens.typography.fontWeight.bold,
+      whiteSpace: 'nowrap',
     },
 
     description: {
