@@ -12,6 +12,18 @@ body {
   position: relative;
 }
 
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default focus outline when focus-visible is available */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
 @layer components {
   .card {
     @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4;

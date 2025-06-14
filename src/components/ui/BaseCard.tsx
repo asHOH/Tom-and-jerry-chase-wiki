@@ -5,6 +5,11 @@ type BaseCardProps = {
   onClick?: () => void;
   className?: string;
   variant?: 'character' | 'item' | 'details';
+  // Accessibility props
+  role?: string;
+  tabIndex?: number;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
+  'aria-label'?: string;
 };
 
 export default function BaseCard({
@@ -12,6 +17,10 @@ export default function BaseCard({
   onClick,
   className = '',
   variant = 'character',
+  role,
+  tabIndex,
+  onKeyDown,
+  'aria-label': ariaLabel,
 }: BaseCardProps) {
   const isClickable = !!onClick;
 
@@ -56,6 +65,10 @@ export default function BaseCard({
   const cardProps = isClickable
     ? {
         onClick,
+        onKeyDown,
+        role,
+        tabIndex,
+        'aria-label': ariaLabel,
         style: cardStyle,
       }
     : {

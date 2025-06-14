@@ -13,12 +13,28 @@ export default function CharacterDisplay({
   onClick,
 }: CharacterDisplayProps) {
   return (
-    <BaseCard variant='character' onClick={() => onClick(id)}>
-      <GameImage src={imageUrl} alt={name} size='CHARACTER_CARD' />
+    <BaseCard
+      variant='character'
+      onClick={() => onClick(id)}
+      role='button'
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick(id);
+        }
+      }}
+      aria-label={`查看${name}角色详情`}
+    >
+      <GameImage src={imageUrl} alt={`${name}角色头像`} size='CHARACTER_CARD' />
       <div className='px-6 pt-1 pb-6 text-center'>
         <h2 className='text-xl font-bold mb-2'>{name}</h2>
         {positioningTags && positioningTags.length > 0 && (
-          <div className='flex flex-wrap justify-center gap-1 mt-2'>
+          <div
+            className='flex flex-wrap justify-center gap-1 mt-2'
+            role='list'
+            aria-label='角色定位标签'
+          >
             {positioningTags.map((tag, index) => (
               <Tag
                 key={index}
@@ -30,6 +46,7 @@ export default function CharacterDisplay({
                 )}
                 size='xs'
                 variant='compact'
+                role='listitem'
               >
                 {tag.tagName}
               </Tag>

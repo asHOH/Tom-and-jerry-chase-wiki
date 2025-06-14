@@ -1,4 +1,4 @@
-import { designTokens, componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
+import { componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 
 type TagProps = {
   children: React.ReactNode;
@@ -6,6 +6,7 @@ type TagProps = {
   colorStyles?: React.CSSProperties; // New design token approach
   size?: 'xs' | 'sm' | 'md';
   variant?: 'default' | 'compact';
+  role?: string; // Accessibility
 };
 
 export default function Tag({
@@ -14,9 +15,10 @@ export default function Tag({
   colorStyles,
   size = 'md',
   variant = 'default',
+  role,
 }: TagProps) {
-  // Issue deprecation warning for colorClasses
-  if (colorClasses && !colorStyles) {
+  // Issue deprecation warning for colorClasses (only in development)
+  if (colorClasses && !colorStyles && process.env.NODE_ENV === 'development') {
     console.warn(
       'Tag: colorClasses prop is deprecated. Use colorStyles from design tokens instead.'
     );
@@ -28,14 +30,10 @@ export default function Tag({
 
   // Use new colorStyles if provided, otherwise fall back to legacy colorClasses
   if (colorStyles) {
-    const fontSize =
-      size === 'xs'
-        ? designTokens.typography.fontSize.xs
-        : size === 'sm'
-          ? designTokens.typography.fontSize.xs
-          : designTokens.typography.fontSize.sm;
+    // Size-based font sizing
+    const fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '0.875rem' : '1rem';
 
-    const tagStyle = {
+    const tagStyle: React.CSSProperties = {
       ...baseTagStyle,
       fontSize,
       ...colorStyles,
@@ -43,7 +41,11 @@ export default function Tag({
       borderColor: colorStyles.backgroundColor ? `${colorStyles.backgroundColor}66` : 'transparent',
     };
 
-    return <span style={tagStyle}>{children}</span>;
+    return (
+      <span style={tagStyle} role={role}>
+        {children}
+      </span>
+    );
   }
 
   // Legacy fallback - will be removed in future version
@@ -51,7 +53,10 @@ export default function Tag({
   const legacyRadius = variant === 'compact' ? 'rounded' : 'rounded-md';
 
   return (
-    <span className={`${legacyPadding} ${legacyRadius} text-sm font-medium border ${colorClasses}`}>
+    <span
+      className={`${legacyPadding} ${legacyRadius} text-sm font-medium border ${colorClasses}`}
+      role={role}
+    >
       {children}
     </span>
   );
