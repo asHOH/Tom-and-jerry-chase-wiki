@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import NavigationWrapper from '@/components/NavigationWrapper';
 import { CharacterGrid, CharacterDetails } from '@/components/displays/characters';
-import KnowledgeCardGrid from '@/components/displays/knowledge-cards/KnowledgeCardGrid';
-import KnowledgeCardDetails from '@/components/displays/knowledge-cards/KnowledgeCardDetails';
+import { KnowledgeCardGrid, KnowledgeCardDetails } from '@/components/displays/knowledge-cards';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';

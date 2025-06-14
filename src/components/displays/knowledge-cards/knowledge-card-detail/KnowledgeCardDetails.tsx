@@ -2,9 +2,9 @@ import React from 'react';
 import { getCardRankColors, getCardCostColors, designTokens } from '@/lib/design-tokens';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
-import GameImage from '../../ui/GameImage';
-import Tag from '../../ui/Tag';
-import BaseCard from '../../ui/BaseCard';
+import GameImage from '../../../ui/GameImage';
+import Tag from '../../../ui/Tag';
+import BaseCard from '../../../ui/BaseCard';
 
 export default function KnowledgeCardDetails({
   card,
