@@ -17,7 +17,8 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --watchAll=false",
     "clean": "rimraf .next out coverage",
-    "analyze": "cross-env ANALYZE=true npm run build"
+    "analyze": "cross-env ANALYZE=true npm run build",
+    "prepare": "husky"
   },
   "dependencies": {
     "next": "^15.3.2",
@@ -38,6 +39,7 @@
     "autoprefixer": "^10.4.14",
     "eslint": "^9.27.0",
     "eslint-config-next": "^15.3.2",
+    "husky": "^9.1.7",
     "jest": "^30.0.0",
     "jest-environment-jsdom": "^30.0.0",
     "postcss": "^8.5.5",
@@ -45,10 +47,5 @@
     "tailwindcss": "^4.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run prettier:fix && npm run lint"
-    }
   }
 }
