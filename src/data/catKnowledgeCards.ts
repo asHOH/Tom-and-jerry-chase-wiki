@@ -28,7 +28,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     description:
       '保持60% Hp以上**一段时间**进入乾坤一掷状态，提高移速和投掷物伤害，Hp低于60%后移除该状态。',
     detailedDescription:
-      '保持60% Hp以上**一段时间**进入乾坤一掷状态，提高移速和投掷物伤害，Hp低于60%后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
+      '保持60% Hp以上**一段时间**进入乾坤一掷状态，投掷物伤害增加30点，移动速度增加10%，Hp低于60%后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
     levels: [
       { level: 1, description: '保持60% Hp以上**20秒**后进入乾坤一掷。' },
       { level: 2, description: '保持60% Hp以上**19秒**后进入乾坤一掷。' },
@@ -81,7 +81,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '猛攻',
     rank: 'S',
     cost: 5,
-    description: '猫咪的爪刀使老鼠**短暂**地禁用技能和道具，并掉落手中的道具。',
+    description: '猫咪的拍子和爪刀使老鼠**短暂**地禁用技能和道具，并掉落手中的道具。',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '禁用技能和道具持续**5秒**。' },
@@ -108,9 +108,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'S',
     cost: 6,
     description:
-      '每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带50点额外伤害。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。',
+      '每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带与普通爪刀伤害相等的额外伤害。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。',
     detailedDescription:
-      '每一次的潜伏，都是为了今后的爆发。每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带50点额外伤害。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。',
+      '每一次的潜伏，都是为了今后的爆发。每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带与普通爪刀伤害相等的额外伤害。大部分猫在蓄势一击状态下的额外伤害为50点，天使汤姆为65点，苏蕊舞动亮相为50点。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。',
     levels: [
       { level: 1, description: '每隔**14秒**，获得蓄势一击状态。' },
       { level: 2, description: '每隔**13秒**，获得蓄势一击状态。' },
@@ -208,7 +208,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '每次猫咪进入虚弱状态，永久提升Hp上限、Hp恢复速度和移速。',
-    // detailedDescription: '',
+    detailedDescription: '每次猫咪进入虚弱状态，Hp上限提高25点，Hp恢复速度提升1.5点/s，移动速度提升1.5%。',
     levels: [
       { level: 1, description: '最多叠加**3层**。' },
       { level: 2, description: '最多叠加**4层**。' },
