@@ -70,7 +70,7 @@ export type Character = {
   skills: Skill[];
 
   // Knowledge card suggestions
-  knowledgeCardGroups?: string[][];
+  knowledgeCardGroups: string[][];
 };
 
 export type Skill = {

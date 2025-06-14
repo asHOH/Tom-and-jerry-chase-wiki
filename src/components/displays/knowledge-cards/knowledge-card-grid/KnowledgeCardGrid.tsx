@@ -3,7 +3,6 @@ import { getCardRankColors } from '@/lib/design-tokens';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import {
   useFilterState,
-  filterByRank,
   createCostFilter,
   createRankFilter,
   RANK_OPTIONS,
@@ -28,18 +27,16 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
 
   // Filter and sort cards using centralized utilities
   const filteredAndSortedCards = sortCardsByRank(
-    faction.cards
-      .filter(createRankFilter(selectedRanks))
-      .filter((card) => {
-        if (selectedCostRanges.size === 0) return true;
-        // Apply cost filter if any cost range is selected
-        // Convert Set to array for iteration compatible with ES5 target
-        const costFilterPassed = Array.from(selectedCostRanges).some((rangeLabel) => {
-          const range = COST_RANGES.find((r) => r.label === rangeLabel);
-          return range && createCostFilter(range.min, range.max)(card);
-        });
-        return costFilterPassed;
-      })
+    faction.cards.filter(createRankFilter(selectedRanks)).filter((card) => {
+      if (selectedCostRanges.size === 0) return true;
+      // Apply cost filter if any cost range is selected
+      // Convert Set to array for iteration compatible with ES5 target
+      const costFilterPassed = Array.from(selectedCostRanges).some((rangeLabel) => {
+        const range = COST_RANGES.find((r) => r.label === rangeLabel);
+        return range && createCostFilter(range.min, range.max)(card);
+      });
+      return costFilterPassed;
+    })
   );
 
   return (

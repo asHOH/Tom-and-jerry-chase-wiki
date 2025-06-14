@@ -46,7 +46,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 6,
     description:
       '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速，但此期间无法使用技能和道具；效果结束后陷入短暂的眩晕。(CD: 60秒)',
-    detailedDescription: '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速2.5%/s，但此期间无法使用技能和道具；效果结束后眩晕1.2s。(CD: 60秒)',
+    detailedDescription:
+      '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速2.5%/s，但此期间无法使用技能和道具；效果结束后眩晕1.2s。(CD: 60秒)',
     levels: [
       { level: 1, description: '无畏持续**6秒**。' },
       { level: 2, description: '无畏持续**6.5秒**。' },
@@ -201,7 +202,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '受到猫咪的攻击后，**短暂**提升移动、跳跃速度和Hp恢复速度。(CD：35秒)',
-    detailedDescription: '受到猫咪的攻击后，**短暂**移动速度提升20%，Hp恢复速度提升2点/s。(CD：35秒)',
+    detailedDescription:
+      '受到猫咪的攻击后，**短暂**移动速度提升20%，Hp恢复速度提升2点/s。(CD：35秒)',
     levels: [
       { level: 1, description: '效果持续**8秒**。' },
       { level: 2, description: '效果持续**9秒**。' },
@@ -214,7 +216,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '关门后获得**短暂**加速，并将门附近的猫咪弹开。(CD: 5s)',
-    detailedDescription: '用力地关上门，关门后移动速度**短暂**提升50%，对门附近的敌人造成1.5s眩晕。(CD: 5s)',
+    detailedDescription:
+      '用力地关上门，关门后移动速度**短暂**提升50%，对门附近的敌人造成1.5s眩晕。(CD: 5s)',
     levels: [
       { level: 1, description: '加速持续**4.5秒**。' },
       { level: 2, description: '加速持续**5秒**。' },

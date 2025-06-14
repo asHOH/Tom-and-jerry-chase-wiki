@@ -208,7 +208,8 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '每次猫咪进入虚弱状态，永久提升Hp上限、Hp恢复速度和移速。',
-    detailedDescription: '每次猫咪进入虚弱状态，Hp上限提高25点，Hp恢复速度提升1.5点/s，移动速度提升1.5%。',
+    detailedDescription:
+      '每次猫咪进入虚弱状态，Hp上限提高25点，Hp恢复速度提升1.5点/s，移动速度提升1.5%。',
     levels: [
       { level: 1, description: '最多叠加**3层**。' },
       { level: 2, description: '最多叠加**4层**。' },
