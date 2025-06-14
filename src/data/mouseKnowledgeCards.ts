@@ -29,9 +29,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '得到仙女鼠护佑的老鼠，出洞进入房间时获得特殊护盾，持续**较长**时间。该护盾生效时，免疫碎片、烫伤、烟雾和香水。',
     levels: [
-      { level: 1, description: '护佑持续**240秒**。' },
-      { level: 2, description: '护佑持续**270秒**。' },
-      { level: 3, description: '护佑持续**300秒**。' },
+      { level: 1, description: '护佑持续**240**秒。' },
+      { level: 2, description: '护佑持续**270**秒。' },
+      { level: 3, description: '护佑持续**300**秒。' },
     ],
   },
 
@@ -43,9 +43,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速，但此期间无法使用技能和道具；效果结束后陷入短暂的眩晕。(CD: 60秒)',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '无畏持续**6秒**。' },
-      { level: 2, description: '无畏持续**6.5秒**。' },
-      { level: 3, description: '无畏持续**7秒**。' },
+      { level: 1, description: '无畏持续**6**秒。' },
+      { level: 2, description: '无畏持续**6.5**秒。' },
+      { level: 3, description: '无畏持续**7**秒。' },
     ],
   },
 
@@ -57,9 +57,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '当自身Hp在一半以上、附近队友受到猫咪伤害时，牺牲自己大量Hp来减少部分队友所受伤害，被“牺牲”Hp的一部分会在10秒内缓慢恢复，牺牲者会至少保留一定健康值。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
     levels: [
-      { level: 1, description: 'CD：**40秒**。' },
-      { level: 2, description: 'CD：**35秒**。' },
-      { level: 3, description: 'CD：**30秒**。' },
+      { level: 1, description: 'CD：**40**秒。' },
+      { level: 2, description: 'CD：**35**秒。' },
+      { level: 3, description: 'CD：**30**秒。' },
     ],
   },
 
@@ -71,9 +71,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '投掷道具命中猫咪后，使猫咪**一段时间**内无法使用爪刀。猫咪被缴械后，30秒内不会再次被缴械。',
     levels: [
-      { level: 1, description: '缴械**3.5秒**。' },
-      { level: 2, description: '缴械**4秒**。' },
-      { level: 3, description: '缴械**4.5秒**。' },
+      { level: 1, description: '缴械**3.5**秒。' },
+      { level: 2, description: '缴械**4**秒。' },
+      { level: 3, description: '缴械**4.5**秒。' },
     ],
   },
 
@@ -84,9 +84,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     description: '从火箭上救下队友后，与队友互换Hp，并使队友获得**短暂**的无敌。(CD: 50秒)',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '无敌持续**4秒**。' },
-      { level: 2, description: '无敌持续**4.5秒**。' },
-      { level: 3, description: '无敌持续**5秒**。' },
+      { level: 1, description: '无敌持续**4**秒。' },
+      { level: 2, description: '无敌持续**4.5**秒。' },
+      { level: 3, description: '无敌持续**5**秒。' },
     ],
   },
 
@@ -98,9 +98,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '即将虚弱时，可以继续行动**一段时间**，但无法使用技能和道具，也无法获得护盾和无敌，随后再进入虚弱。(CD: 60秒)',
     levels: [
-      { level: 1, description: '铁血持续**4秒**。' },
-      { level: 2, description: '铁血持续**4.5秒**。' },
-      { level: 3, description: '铁血持续**5秒**。' },
+      { level: 1, description: '铁血持续**4**秒。' },
+      { level: 2, description: '铁血持续**4.5**秒。' },
+      { level: 3, description: '铁血持续**5**秒。' },
     ],
   },
 
@@ -152,9 +152,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     description: '每隔**一段时间**解除受伤、反向、失明。',
     detailedDescription: '我爱洗澡，皮肤好好！每隔**一段时间**解除受伤、反向、失明。',
     levels: [
-      { level: 1, description: '每隔**60秒**触发。' },
-      { level: 2, description: '每隔**55秒**触发。' },
-      { level: 3, description: '每隔**45秒**触发。' },
+      { level: 1, description: '每隔**60**秒触发。' },
+      { level: 2, description: '每隔**55**秒触发。' },
+      { level: 3, description: '每隔**45**秒触发。' },
     ],
   },
 
@@ -166,9 +166,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '这是心的呼唤，这是爱的奉献！自己被放飞时，全体队友回复部分Hp、获得经验，并**短暂**提升移动和跳跃速度。',
     levels: [
-      { level: 1, description: '队友移动和跳跃速度提升持续**10秒**。' },
-      { level: 2, description: '队友移动和跳跃速度提升持续**11秒**。' },
-      { level: 3, description: '队友移动和跳跃速度提升持续**12秒**。' },
+      { level: 1, description: '队友移动和跳跃速度提升持续**10**秒。' },
+      { level: 2, description: '队友移动和跳跃速度提升持续**11**秒。' },
+      { level: 3, description: '队友移动和跳跃速度提升持续**12**秒。' },
     ],
   },
 
@@ -193,9 +193,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     description: '受到猫咪的攻击后，**短暂**提升移动、跳跃速度和Hp恢复速度。(CD：35秒)',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '效果持续**8秒**。' },
-      { level: 2, description: '效果持续**9秒**。' },
-      { level: 3, description: '效果持续**10秒**。' },
+      { level: 1, description: '效果持续**8**秒。' },
+      { level: 2, description: '效果持续**9**秒。' },
+      { level: 3, description: '效果持续**10**秒。' },
     ],
   },
 
@@ -206,9 +206,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     description: '关门后获得**短暂**加速，并将门附近的猫咪弹开。(CD: 5s)',
     detailedDescription: '用力地关上门，关门后获得**短暂**加速，并将门附近的猫咪弹开。(CD: 5s)',
     levels: [
-      { level: 1, description: '加速持续**4.5秒**。' },
-      { level: 2, description: '加速持续**5秒**。' },
-      { level: 3, description: '加速持续**5.5秒**。' },
+      { level: 1, description: '加速持续**4.5**秒。' },
+      { level: 2, description: '加速持续**5**秒。' },
+      { level: 3, description: '加速持续**5.5**秒。' },
     ],
   },
 
@@ -300,9 +300,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     description: '投掷道具击中猫咪后，**降低**自身技能CD。(CD：5秒)',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '降低**2秒**技能CD。' },
-      { level: 2, description: '降低**3秒**技能CD。' },
-      { level: 3, description: '降低**4秒**技能CD。' },
+      { level: 1, description: '降低**2**秒技能CD。' },
+      { level: 2, description: '降低**3**秒技能CD。' },
+      { level: 3, description: '降低**4**秒技能CD。' },
     ],
   },
 
@@ -339,9 +339,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     description: '从火箭上救下队友后，自己和队友获得**短暂**加速。',
     detailedDescription: '老鼠从火箭上救下队友后连忙逃走，自己和队友获得**短暂**加速。',
     levels: [
-      { level: 1, description: '加速持续**5秒**。' },
-      { level: 2, description: '加速持续**6秒**。' },
-      { level: 3, description: '加速持续**7秒**。' },
+      { level: 1, description: '加速持续**5**秒。' },
+      { level: 2, description: '加速持续**6**秒。' },
+      { level: 3, description: '加速持续**7**秒。' },
     ],
   },
 
