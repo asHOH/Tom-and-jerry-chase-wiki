@@ -78,7 +78,7 @@ export default function Home() {
         {/* Padding for navbar is now handled at the page level */}
         <header className='text-center space-y-6 px-4'>
           <h1 className='text-4xl font-bold text-blue-600 py-3'>猫和老鼠手游wiki</h1>
-          <p className='text-xl text-gray-600 px-4 py-2'>查询角色技能和属性</p>
+          <p className='text-xl text-gray-600 px-4 py-2'>查询角色技能和知识卡效果</p>
         </header>{' '}
         <div className='flex flex-col items-center mt-16 px-4'>
           <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800'>角色</h2>
@@ -87,17 +87,17 @@ export default function Home() {
               imageSrc='/images/icons/cat faction.png'
               imageAlt='猫阵营图标'
               title='猫阵营'
-              description='查看猫阵营角色列表'
+              description='猫阵营角色列表'
               onClick={() => handleTabChange('cat')}
-              ariaLabel='查看猫阵营角色列表'
+              ariaLabel='猫阵营角色列表'
             />
             <FactionButton
               imageSrc='/images/icons/mouse faction.png'
               imageAlt='鼠阵营图标'
               title='鼠阵营'
-              description='查看鼠阵营角色列表'
+              description='鼠阵营角色列表'
               onClick={() => handleTabChange('mouse')}
-              ariaLabel='查看鼠阵营角色列表'
+              ariaLabel='鼠阵营角色列表'
             />
           </FactionButtonGroup>
         </div>{' '}
@@ -108,17 +108,17 @@ export default function Home() {
               imageSrc='/images/icons/cat knowledge card.png'
               imageAlt='猫方知识卡图标'
               title='猫方知识卡'
-              description='查看猫方知识卡列表'
+              description='猫方知识卡列表'
               onClick={() => handleTabChange('catCards')}
-              ariaLabel='查看猫方知识卡列表'
+              ariaLabel='猫方知识卡列表'
             />
             <FactionButton
               imageSrc='/images/icons/mouse knowledge card.png'
               imageAlt='鼠方知识卡图标'
               title='鼠方知识卡'
-              description='查看鼠方知识卡列表'
+              description='鼠方知识卡列表'
               onClick={() => handleTabChange('mouseCards')}
-              ariaLabel='查看鼠方知识卡列表'
+              ariaLabel='鼠方知识卡列表'
             />
           </FactionButtonGroup>
         </div>
