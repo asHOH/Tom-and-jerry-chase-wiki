@@ -72,10 +72,10 @@ export const catCharacters: Record<string, Character> = {
         type: 'ACTIVE',
         description: '解控并进入一段时间的无敌。',
         detailedDescription:
-          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害（如仙女鼠的一星；但不会因此被击倒）和位移效果的影响（如尼宝的钩子）。无敌结束后会有2秒的10%减速（可以被护盾抵消）。',
+          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害（如仙女鼠的一星；但不会因此被击倒）和位移效果的影响（如尼宝的钩子），若在莱恩蓝图内受到真实伤害，不免疫变线条猫，交互（如绑火箭）会被仙女鼠八星打断。无敌结束后会有2秒的10%减速（可以被护盾抵消）。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键打断，但不返还CD',
+        cancelableSkill: '可被道具键打断，保留前摇时的弱霸体，但不返还CD',
         cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=127.35',
         skillLevels: [
@@ -414,7 +414,7 @@ export const catCharacters: Record<string, Character> = {
         description:
           '释放分身。分身继承知识卡、免疫碎片和捕鼠夹、提供小地图视野，但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随。再次使用技能可与分身换位。',
         detailedDescription:
-          '释放分身。分身继承知识卡、免疫碎片和捕鼠夹、爪刀CD减少、提供小地图视野（包括隐身的老鼠），但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随（CD：5秒）。再次使用技能可与分身换位。本体获得部分增益时，分身也会获得。',
+          '释放分身。分身爪刀伤害提升、继承知识卡、免疫碎片和捕鼠夹、爪刀CD减少、提供小地图视野（包括隐身的老鼠），但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随（CD：5秒）。再次使用技能可与分身换位。本体获得部分增益时，分身也会获得。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可取消',
@@ -479,7 +479,7 @@ export const catCharacters: Record<string, Character> = {
         description:
           '将面前的一只老鼠抓到网中；再次使用技能将老鼠扔出，造成伤害和眩晕。扔出的老鼠会被直接绑上途经的火箭。',
         detailedDescription:
-          '将面前的一只老鼠抓到网中，期间老鼠可挣扎挣脱（若有多个老鼠在网的范围内，则会网住编号最小的）；再次使用技能将老鼠扔出，扔出的老鼠落地后眩晕并再次受到伤害，同时伤害周围的老鼠。扔出的老鼠会被直接绑上途经的火箭。',
+          '将面前的一只老鼠抓到网中，期间老鼠可挣扎挣脱（若有多个老鼠在网的范围内，则会网住编号最小的）；再次使用技能将老鼠扔出，扔出的老鼠落地后眩晕并再次受到伤害，同时伤害周围的老鼠。扔出的老鼠会被直接绑上途经的火箭。捕虫网可以网住霸体老鼠（如尼宝的灵活跳跃、表演者·杰瑞的梦幻舞步），但无法网住无敌老鼠（如剑客泰菲的头盔、罗宾汉杰瑞的降落伞），若老鼠有护盾，则使用捕虫网将会消除一层护盾。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '可被道具键打断',
@@ -512,7 +512,7 @@ export const catCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '大幅减少爪刀命中时的爪刀CD。',
+            description: '大幅减少爪刀命中时的爪刀CD至1.6秒。',
           },
           {
             level: 2,
@@ -520,7 +520,7 @@ export const catCharacters: Record<string, Character> = {
           },
           {
             level: 3,
-            description: '击中老鼠时，移除其大部分增益。',
+            description: '击中老鼠时，移除其隐身远视等大部分增益。',
           },
         ],
       },

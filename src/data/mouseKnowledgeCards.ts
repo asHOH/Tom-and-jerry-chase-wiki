@@ -214,7 +214,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '关门后获得**短暂**加速，并将门附近的猫咪弹开。(CD: 5s)',
-    detailedDescription: '用力地关上门，关门后获得**短暂**加速，并将门附近的猫咪弹开。(CD: 5s)',
+    detailedDescription: '用力地关上门，关门后移动速度**短暂**提升50%，对门附近的敌人造成1.5s眩晕。(CD: 5s)',
     levels: [
       { level: 1, description: '加速持续**4.5秒**。' },
       { level: 2, description: '加速持续**5秒**。' },
@@ -400,7 +400,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 3,
     description: '每被放飞一名队友，自己的Hp上限、推速、**移速**得到提高。',
-    detailedDescription: '每被放飞一名队友，自己的Hp上限提高15，推速提高10%，**移速**提高。',
+    detailedDescription: '每被放飞一名队友，自己的Hp上限提高12点，推速提高10%，**移速**提高。',
     levels: [
       { level: 1, description: '移速提高**5%**。' },
       { level: 2, description: '移速提高**6%**。' },
