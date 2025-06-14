@@ -1,8 +1,8 @@
 import { getPositioningTagColors } from '@/lib/design-tokens';
 import { CharacterDisplayProps } from '@/lib/types';
-import GameImage from '../../ui/GameImage';
-import Tag from '../../ui/Tag';
-import BaseCard from '../../ui/BaseCard';
+import GameImage from '../../../ui/GameImage';
+import Tag from '../../../ui/Tag';
+import BaseCard from '../../../ui/BaseCard';
 
 export default function CharacterDisplay({
   id,

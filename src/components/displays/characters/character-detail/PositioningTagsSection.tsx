@@ -1,6 +1,6 @@
 import React from 'react';
-import Tooltip from '../../ui/Tooltip';
-import Tag from '../../ui/Tag';
+import Tooltip from '../../../ui/Tooltip';
+import Tag from '../../../ui/Tag';
 import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design-tokens';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 

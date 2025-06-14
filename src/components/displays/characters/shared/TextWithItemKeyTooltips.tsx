@@ -1,5 +1,5 @@
 import React from 'react';
-import Tooltip from '../../ui/Tooltip';
+import Tooltip from '../../../ui/Tooltip';
 import { getItemKeyTooltipContent } from '@/lib/tooltipUtils';
 
 interface TextWithItemKeyTooltipsProps {

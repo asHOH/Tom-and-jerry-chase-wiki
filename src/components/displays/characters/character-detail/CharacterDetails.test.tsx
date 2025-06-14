@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CharacterDetails from '../CharacterDetails';
-import type { CharacterWithFaction } from '../../../../lib/types';
-import type { Skill } from '../../../../data/types';
+import CharacterDetails from './CharacterDetails';
+import type { CharacterWithFaction } from '@/lib/types';
+import type { Skill } from '@/data/types';
 
 // Mock the external dependencies
 jest.mock('../../../../lib/tooltipUtils', () => ({
@@ -100,7 +100,7 @@ jest.mock('../../../ui/Tag', () => {
 });
 
 // Mock the SkillAllocationDisplay component
-jest.mock('../SkillAllocationDisplay', () => {
+jest.mock('./SkillAllocationDisplay', () => {
   return function MockSkillAllocationDisplay({ allocation }: { allocation: { id: string } }) {
     return <div data-testid='skill-allocation'>{allocation.id}</div>;
   };

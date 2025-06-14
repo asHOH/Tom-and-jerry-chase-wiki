@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import NavigationWrapper from '@/components/NavigationWrapper';
-import CharacterGrid from '@/components/displays/characters/CharacterGrid';
-import CharacterDetails from '@/components/displays/characters/CharacterDetails';
+import { CharacterGrid, CharacterDetails } from '@/components/displays/characters';
 import KnowledgeCardGrid from '@/components/displays/knowledge-cards/KnowledgeCardGrid';
 import KnowledgeCardDetails from '@/components/displays/knowledge-cards/KnowledgeCardDetails';
 import { DisclaimerText } from '@/components/DisclaimerText';

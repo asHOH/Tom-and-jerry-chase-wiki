@@ -1,5 +1,5 @@
 import React from 'react';
-import Tooltip from '../../ui/Tooltip';
+import Tooltip from '../../../ui/Tooltip';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 
 interface AttributeDisplayProps {

@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
-import TextWithItemKeyTooltips from './TextWithItemKeyTooltips';
+import { TextWithItemKeyTooltips } from '../shared';
 import { Skill, SkillLevel } from '@/data/types';
 
 interface SkillCardProps {

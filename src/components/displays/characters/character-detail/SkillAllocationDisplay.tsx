@@ -7,7 +7,7 @@ import {
   ParsedSkillLevel,
 } from '@/lib/skillAllocationUtils';
 import { getSkillLevelColors } from '@/lib/design-tokens';
-import Tooltip from '../../ui/Tooltip';
+import Tooltip from '../../../ui/Tooltip';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }) => {
