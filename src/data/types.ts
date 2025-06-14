@@ -68,6 +68,9 @@ export type Character = {
   skillAllocations?: SkillAllocation[];
 
   skills: Skill[];
+
+  // Knowledge card suggestions
+  knowledgeCardGroups?: string[][];
 };
 
 export type Skill = {

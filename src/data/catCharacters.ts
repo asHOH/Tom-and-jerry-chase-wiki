@@ -184,6 +184,10 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
     ],
+    knowledgeCardGroups: [
+      ["S-乘胜追击", "S-击晕", "A-熊熊燃烧"],
+      ["S-乘胜追击", "A-熊熊燃烧", "A-穷追猛打", "A-心灵手巧"],
+    ],
   },
 
   /* ----------------------------------- 布奇 ----------------------------------- */
@@ -346,6 +350,10 @@ export const catCharacters: Record<string, Character> = {
           },
         ],
       },
+    ],
+    knowledgeCardGroups: [
+      ["S-乘胜追击", "S-击晕", "A-熊熊燃烧"],
+      ["S-乘胜追击", "A-熊熊燃烧", "A-穷追猛打", "B-皮糙肉厚"],
     ],
   },
 
@@ -524,6 +532,10 @@ export const catCharacters: Record<string, Character> = {
           },
         ],
       },
+    ],
+    knowledgeCardGroups: [
+      ["S-击晕", "A-熊熊燃烧", "A-穷追猛打", "B-皮糙肉厚"],
+      ["S-击晕", "A-熊熊燃烧", "A-长爪", "B-皮糙肉厚"],
     ],
   },
 };

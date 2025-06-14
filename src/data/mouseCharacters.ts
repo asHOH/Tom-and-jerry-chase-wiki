@@ -177,6 +177,9 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
     ],
+    knowledgeCardGroups: [
+      ["S-铁血", "S-护佑", "S-回家", "C-救救我"],
+    ],
   },
 
   /* ----------------------------------- 泰菲 ----------------------------------- */
@@ -353,6 +356,10 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
     ],
+    knowledgeCardGroups: [
+      ["S-铁血", "S-舍己", "B-精准投射", "B-绝地反击", "C-救救我"],
+      ["S-铁血", "S-舍己", "S-护佑", "C-救救我"],
+    ],
   },
 
   /* ----------------------------------- 尼宝 ----------------------------------- */
@@ -486,6 +493,10 @@ export const mouseCharacters: Record<string, Character> = {
           },
         ],
       },
+    ],
+    knowledgeCardGroups: [
+      ["S-铁血", "S-舍己", "B-逃之夭夭", "C-不屈", "C-救救我"],
+      ["S-铁血", "S-舍己", "B-幸运", "C-脱身"],
     ],
   },
 };
