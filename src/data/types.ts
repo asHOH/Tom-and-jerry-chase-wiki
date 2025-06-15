@@ -68,6 +68,9 @@ export type Character = {
   skillAllocations?: SkillAllocation[];
 
   skills: Skill[];
+
+  // Knowledge card suggestions
+  knowledgeCardGroups: string[][];
 };
 
 export type Skill = {
@@ -92,8 +95,11 @@ export type SkillLevel = {
   level: number;
   description: string;
   detailedDescription?: string;
+  /**
+   * @deprecated
+   */
   damage?: string;
-  cooldown?: number;
+  cooldown?: number; // FIXME: is this really deprecated?
 };
 
 // Card-related types
@@ -114,4 +120,5 @@ export type Card = {
   detailedDescription?: string;
   imageUrl?: string; // We'll generate it automatically
   levels: CardLevel[];
+  detailedLevels?: CardLevel[];
 };

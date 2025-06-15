@@ -28,7 +28,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     description:
       '保持60% Hp以上**一段时间**进入乾坤一掷状态，提高移速和投掷物伤害，Hp低于60%后移除该状态。',
     detailedDescription:
-      '保持60% Hp以上**一段时间**进入乾坤一掷状态，提高移速和投掷物伤害，Hp低于60%后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
+      '保持60% Hp以上**一段时间**进入乾坤一掷状态，投掷物伤害增加30点，移速增加10%，Hp低于60%后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
     levels: [
       { level: 1, description: '保持60% Hp以上**20**秒后进入乾坤一掷。' },
       { level: 2, description: '保持60% Hp以上**19**秒后进入乾坤一掷。' },
@@ -81,7 +81,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '猛攻',
     rank: 'S',
     cost: 5,
-    description: '猫咪的爪刀使老鼠**短暂**地禁用技能和道具，并掉落手中的道具。',
+    description: '猫咪的拍子和爪刀使老鼠**短暂**地禁用技能和道具，并掉落手中的道具。',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '禁用技能和道具持续**5**秒。' },
@@ -108,9 +108,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'S',
     cost: 6,
     description:
-      '每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带50点额外伤害。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。',
+      '每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带与普通爪刀伤害相等的额外伤害。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。',
     detailedDescription:
-      '每一次的潜伏，都是为了今后的爆发。每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带50点额外伤害。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。',
+      '每一次的潜伏，都是为了今后的爆发。每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带与普通爪刀伤害相等的额外伤害。大部分猫在蓄势一击状态下的额外伤害为50点，天使汤姆为65点，苏蕊舞动亮相为50点。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。', //FIXME: 黑鼠也是75点吗
     levels: [
       { level: 1, description: '每隔**14**秒，获得蓄势一击状态。' },
       { level: 2, description: '每隔**13**秒，获得蓄势一击状态。' },
@@ -208,7 +208,8 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '每次猫咪进入虚弱状态，永久提升Hp上限、Hp恢复速度和移速。',
-    // detailedDescription: '',
+    detailedDescription:
+      '每次猫咪进入虚弱状态，Hp上限提高25点，Hp恢复速度提升1.5点/s，移动速度提升1.5%。',
     levels: [
       { level: 1, description: '最多叠加**3**层。' },
       { level: 2, description: '最多叠加**4**层。' },
@@ -314,6 +315,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 4,
     description: '猫咪的爪刀对老鼠造成恐吓，使老鼠在**一段时间**内推速大幅下降。',
+    detailedDescription: '猫咪的爪刀对老鼠造成恐吓，使老鼠在**一段时间**内推速下降60%。',
     levels: [
       { level: 1, description: '恐吓持续**30**秒。' },
       { level: 2, description: '恐吓持续**45**秒。' },
@@ -449,7 +451,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     cost: 2,
     description: '猫咪能够**更快**、更频繁地穿过管道，并且不用“排队”。',
     detailedDescription:
-      '猫咪使自己身体变得更柔软，能够**更快**、更频繁地穿过管道，并且不用“排队”。',
+      '猫咪使自己身体变得更柔软，能够**更快**、更频繁地穿过管道，并且不用“排队”，不会显示“管道使用中”。',
     levels: [
       { level: 1, description: '钻管道速度提升**60%**。' },
       { level: 2, description: '钻管道速度提升**65%**。' },

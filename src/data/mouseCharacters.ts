@@ -4,7 +4,7 @@ import { addSkillImageUrls } from '../lib/skillUtils';
 // Generate image URL based on character ID
 const getMouseImageUrl = (characterId: string): string => {
   // Check if the image exists, otherwise use a placeholder
-  const existingImages = ['杰瑞', '泰菲', '尼宝'];
+  const existingImages = ['杰瑞', '泰菲', '尼宝', '航海士杰瑞'];
 
   if (existingImages.includes(characterId)) {
     return `/images/mice/${characterId}.png`;
@@ -176,6 +176,10 @@ export const mouseCharacters: Record<string, Character> = {
           },
         ],
       },
+    ],
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
     ],
   },
 
@@ -353,6 +357,10 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
     ],
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'S-护佑', 'C-救救我'],
+    ],
   },
 
   /* ----------------------------------- 尼宝 ----------------------------------- */
@@ -486,6 +494,195 @@ export const mouseCharacters: Record<string, Character> = {
           },
         ],
       },
+    ],
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-舍己', 'B-逃之夭夭', 'C-不屈', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
+    ],
+  },
+
+  /* ----------------------------------- 航海士杰瑞 ----------------------------------- */
+  航海士杰瑞: {
+    id: '航海士杰瑞',
+    description:
+      '公海上向往自由的航海士杰瑞，是最强大的航海家，他浑身充满野性，常年与火炮打交道的他，善于破坏火箭。',
+
+    maxHp: 99,
+    attackBoost: 20,
+    hpRecovery: 1.67,
+    moveSpeed: 640,
+    jumpHeight: 380,
+    cheesePushSpeed: 3.25,
+    wallCrackDamageBoost: 1.5,
+
+    mousePositioningTags: [
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '金币和火药桶能有效拦截猫咪上火箭、抓队友。',
+        additionalDescription: '火炮也能连控猫咪，一被的减速配合知识卡投手可以让很多猫追不上老鼠。',
+      },
+      {
+        tagName: '砸墙',
+        isMinor: false,
+        description: '拥有高额的基础破墙数值，三被进一步增强破墙能力。',
+        additionalDescription: '火药桶也能对墙缝造成巨大破坏。',
+      },
+      {
+        tagName: '救援',
+        isMinor: true,
+        description: '使用金币砸晕猫咪或用火药桶炸毁火箭后即可救下。',
+        additionalDescription: '怕霸体猫、怕拦截，依赖药水。',
+      },
+    ],
+
+    skillAllocations: [
+      {
+        id: '火药桶',
+        pattern: '121221000',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+      {
+        id: '舰艇火炮',
+        pattern: '133131000',
+        weaponType: 'weapon2',
+        description: '',
+        additionaldescription: '',
+      },
+    ],
+
+    skills: [
+      {
+        id: '航海士杰瑞-active',
+        name: '飞翔金币',
+        type: 'ACTIVE',
+        description: '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台。',
+        detailedDescription:
+          '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台，对猫造成2秒眩晕以及35点伤害（包括航海士杰瑞自身的增伤则为55点伤害）。金币击中后会使猫咪短暂进入“金币免疫”状态，金币无法对此状态下的猫咪造成效果。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '可被跳跃键打断',
+        cancelableAftercast: '无后摇',
+        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=10.6',
+        skillLevels: [
+          {
+            level: 1,
+            description: '富有的航海士杰瑞扔出一枚黄金钱币把猫咪砸飞。',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '技能的冷却间隔减短。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description: '金币可以对猫咪造成2次伤害和控制效果。',
+            detailedDescription:
+              '金币可以对猫咪造成2次伤害和控制效果，一共造成99点伤害，但最多破一层盾。',
+            cooldown: 15,
+          },
+        ],
+      },
+      {
+        id: '航海士杰瑞-weapon1',
+        name: '火药桶',
+        type: 'WEAPON1',
+        description:
+          '放置一个能破坏火箭、墙缝的火药桶，火药桶爆炸后会破坏附近的火箭。猫咪在绑被破坏的火箭前需要先修复火箭。火药桶可以被鞭炮炸飞。',
+        detailedDescription:
+          '放置一个能破坏火箭、墙缝的火药桶，火药桶爆炸后会破坏附近的火箭，猫咪可以拆除火药桶，耗时1秒，老鼠可以推动火药桶。火药桶被打击后会引线时长会降低5秒。猫咪在绑被破坏的火箭前需要先修复火箭。航海士杰瑞破坏绑有队友的火箭后则会救下队友（能触发无畏、舍己）。火药桶可以被鞭炮炸飞，在火药桶左侧的鞭炮会使火药桶呈抛物线飞出，右侧的鞭炮会使火药桶水平滑行。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '可被跳跃键打断',
+        cancelableAftercast: '无后摇',
+        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=50.7',
+        skillLevels: [
+          {
+            level: 1,
+            description: '放置一个火药桶，火箭在被破坏一段时间后自动修复。',
+            detailedDescription:
+              '放置一个火药桶，引线时长为8秒，爆炸时破坏火箭，对墙缝造成20+1.5伤害，对附近的猫和老鼠造成21点伤害与1.4秒眩晕，火箭在被破坏65秒后自动恢复。',
+            cooldown: 45,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            detailedDescription: '减少CD，对附近猫和老鼠的伤害提升至45点。',
+            cooldown: 30,
+          },
+          {
+            level: 3,
+            description: '火药桶引线减短，破坏的火箭无法自动恢复，威力增强。',
+            detailedDescription:
+              '火药桶引线时长减短至3秒，破坏的火箭无法自动恢复，对附近猫和老鼠的伤害提升至70点。',
+            cooldown: 30,
+          },
+        ],
+      },
+      {
+        id: '航海士杰瑞-weapon2',
+        name: '舰艇火炮',
+        type: 'WEAPON2',
+        description:
+          '放置一个舰艇火炮，老鼠可以进入火炮，控制方向发射并对碰到的猫咪造成伤害与眩晕，火炮内免疫投掷物。',
+        detailedDescription:
+          '放置一个舰艇火炮，老鼠可以进入火炮，控制方向发射并对碰到的猫咪造成50点伤害与1.5秒眩晕，火炮内免疫投掷物。火炮内老鼠进入虚弱后火炮会提前消失。同一房间最多出现两个火炮。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可被打断', // FIXME: not sure
+        cancelableAftercast: '不可取消后摇', // FIXME: not sure
+        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=50.7',
+        skillLevels: [
+          {
+            level: 1,
+            description: '放置一个舰艇火炮。',
+            detailedDescription: '放置一个舰艇火炮，火炮持续15秒。',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '火炮的持续时间延长。',
+            detailedDescription: '火炮的持续时间延长至25秒。',
+            cooldown: 25,
+          },
+          {
+            level: 3,
+            description: '减少火炮的CD。',
+            cooldown: 15,
+          },
+        ],
+      },
+      {
+        id: '航海士杰瑞-passive',
+        name: '无坚不摧',
+        type: 'PASSIVE',
+        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=36.3',
+        skillLevels: [
+          {
+            level: 1,
+            description: '使用道具击中猫后，使猫咪受到短暂的减速。',
+            detailedDescription: '使用道具击中猫后，使猫咪受到20%减速，持续3.5秒。',
+          },
+          {
+            level: 2,
+            description: '在猫手中挣扎的速度变快，挣脱后获得短暂的护盾和加速效果。',
+            detailedDescription:
+              '挣扎速度提升50%，挣扎时间变为13.33秒，挣脱后获得4.75秒的护盾，护盾期间移速增加15%。',
+          },
+          {
+            level: 3,
+            description: '破坏墙缝的能力得到提升。',
+            detailedDescription: '每次攻击对墙缝的伤害增加1.3点，即总伤害提升至2.8点。',
+          },
+        ],
+      },
+    ],
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
     ],
   },
 };
