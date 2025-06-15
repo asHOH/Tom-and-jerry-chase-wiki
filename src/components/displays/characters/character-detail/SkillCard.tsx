@@ -7,10 +7,14 @@ import { Skill, SkillLevel } from '@/data/types';
 interface SkillCardProps {
   skill: Skill;
   isDetailed: boolean;
+  isSingleWeapon?: boolean;
 }
 
-export default function SkillCard({ skill, isDetailed }: SkillCardProps) {
+export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCardProps) {
   const getSkillTypeLabel = (type: string) => {
+    if (isSingleWeapon && type === 'WEAPON1') {
+      return '武器';
+    }
     const typeMap = {
       ACTIVE: '主动',
       WEAPON1: '武器1',
