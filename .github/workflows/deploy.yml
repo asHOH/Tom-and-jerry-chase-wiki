@@ -36,10 +36,70 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Clean and prepare build
+        run: |
+          echo "Cleaning previous builds..."
+          npm run clean
+          echo "Current directory structure before build:"
+          ls -la
+
       - name: Build with Next.js
         run: |
           export NEXT_PUBLIC_BUILD_TIME=$(TZ='Asia/Shanghai' date '+%m月%d日 %H:%M')
+          echo "Starting Next.js build..."
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Next.js version: $(npx next --version)"
+          
+          # Try build without bundle analyzer first
+          echo "Building without bundle analyzer..."
           npm run build
+          
+          # If build succeeds, check if out directory exists
+          if [ ! -d "./out" ]; then
+            echo "out directory not found, trying alternative build method..."
+            # Try with explicit next build and export
+            npx next build
+            if [ ! -d "./out" ]; then
+              echo "Still no out directory, checking .next/out..."
+              if [ -d "./.next/out" ]; then
+                echo "Found output in .next/out, moving to ./out"
+                mv ./.next/out ./out
+              else
+                echo "No output directory found anywhere"
+                exit 1
+              fi
+            fi
+          fi
+          
+          echo "Build completed successfully"
+
+      - name: Verify build output
+        run: |
+          echo "Checking if out directory exists..."
+          if [ -d "./out" ]; then
+            echo "✅ out directory exists"
+            echo "Contents of out directory:"
+            ls -la ./out
+            echo "Size of out directory:"
+            du -sh ./out
+          else
+            echo "❌ out directory does not exist"
+            echo "Current directory contents:"
+            ls -la
+            echo "Checking .next directory:"
+            if [ -d "./.next" ]; then
+              echo ".next directory exists:"
+              ls -la .next
+            else
+              echo ".next directory does not exist"
+            fi
+            echo "Checking package.json scripts:"
+            cat package.json | grep -A 5 -B 5 '"build"'
+            echo "Checking next.config.mjs:"
+            cat next.config.mjs
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
