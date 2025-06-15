@@ -13,11 +13,16 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 6,
     description: '墙缝出现后立刻解除虚弱和受伤，恢复全部Hp，并额外获得**增益**。',
     detailedDescription:
-      '为所有爱执着的痛，再痛我也要回家！墙缝出现后立刻解除虚弱和受伤，恢复全部Hp，并额外获得**增益**。',
+      '为所有爱执着的痛，再痛我也要回家！墙缝出现后立刻解除虚弱和受伤，回复200点Hp，并额外获得**增益**。',
     levels: [
       { level: 1, description: '**提升移速和跳跃高度**。' },
       { level: 2, description: '额外**提升Hp恢复**。' },
       { level: 3, description: '额外**获得2层护盾**。' },
+    ],
+    detailedLevels: [
+      { level: 1, description: '移动速度提升3.5%。' },
+      { level: 2, description: 'Hp恢复速度提升2.5点/s。' },
+      { level: 3, description: '额外**获得2层护盾**，护盾会被碎片消耗。' },
     ],
   },
 
@@ -41,7 +46,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 6,
     description:
       '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速，但此期间无法使用技能和道具；效果结束后陷入短暂的眩晕。(CD: 60秒)',
-    // detailedDescription: '',
+    detailedDescription:
+      '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速2.5%/s，但此期间无法使用技能和道具；效果结束后眩晕1.2s。(CD: 60秒)',
     levels: [
       { level: 1, description: '无畏持续**6**秒。' },
       { level: 2, description: '无畏持续**6.5**秒。' },
@@ -184,6 +190,11 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '获得**中幅**加速。' },
       { level: 3, description: '获得**大幅**加速。' },
     ],
+    detailedLevels: [
+      { level: 1, description: '移动速度提升10%。' },
+      { level: 2, description: '移动速度提升15%。' },
+      { level: 3, description: '移动速度提升20%。' },
+    ],
   },
 
   逃窜: {
@@ -191,7 +202,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '受到猫咪的攻击后，**短暂**提升移动、跳跃速度和Hp恢复速度。(CD：35秒)',
-    // detailedDescription: '',
+    detailedDescription: '受到猫咪的攻击后，**短暂**移速提升20%，Hp恢复速度提升2点/s。(CD：35秒)',
     levels: [
       { level: 1, description: '效果持续**8**秒。' },
       { level: 2, description: '效果持续**9**秒。' },
@@ -204,7 +215,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '关门后获得**短暂**加速，并将门附近的猫咪弹开。(CD: 5s)',
-    detailedDescription: '用力地关上门，关门后获得**短暂**加速，并将门附近的猫咪弹开。(CD: 5s)',
+    detailedDescription:
+      '用力地关上门，关门后移速**短暂**提升50%，对门附近的猫咪造成1.5s眩晕。(CD: 5s)',
     levels: [
       { level: 1, description: '加速持续**4.5**秒。' },
       { level: 2, description: '加速持续**5**秒。' },
@@ -390,7 +402,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 3,
     description: '每被放飞一名队友，自己的Hp上限、推速、**移速**得到提高。',
-    detailedDescription: '每被放飞一名队友，自己的Hp上限提高15，推速提高10%，**移速**提高。',
+    detailedDescription: '每被放飞一名队友，自己的Hp上限提高12点，推速提高10%，**移速**提高。',
     levels: [
       { level: 1, description: '移速提高**5%**。' },
       { level: 2, description: '移速提高**6%**。' },

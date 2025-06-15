@@ -173,6 +173,10 @@ describe('CharacterDetails', () => {
       },
     ],
     skills: mockSkills,
+    knowledgeCardGroups: [
+      ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+      ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
+    ],
   };
   it('should render character basic information', () => {
     render(<CharacterDetails character={mockCharacter} />);
@@ -247,6 +251,46 @@ describe('CharacterDetails', () => {
     expect(screen.getByText('详细主动技能描述')).toBeTruthy();
   });
 
+  it('should render knowledge card groups', () => {
+    render(<CharacterDetails character={mockCharacter} />);
+
+    expect(screen.getByText('推荐知识卡组')).toBeTruthy();
+    expect(screen.getByText('1')).toBeTruthy(); // First group number
+    expect(screen.getByText('2')).toBeTruthy(); // Second group number
+
+    // Check for specific cards in the first group
+    expect(screen.getByAltText('S-击晕')).toBeTruthy();
+    expect(screen.getByAltText('A-熊熊燃烧')).toBeTruthy();
+    expect(screen.getByAltText('A-穷追猛打')).toBeTruthy();
+    expect(screen.getByAltText('B-皮糙肉厚')).toBeTruthy();
+
+    // Check for specific cards in the second group
+    expect(screen.getByAltText('A-长爪')).toBeTruthy();
+
+    // Verify image sources
+    expect(screen.getByAltText('S-击晕')).toHaveProperty('src', '/images/catCards/S-击晕.png');
+    expect(screen.getByAltText('A-熊熊燃烧')).toHaveProperty(
+      'src',
+      '/images/catCards/A-熊熊燃烧.png'
+    );
+  });
+
+  it('should render knowledge card tooltips with correct content', () => {
+    render(<CharacterDetails character={mockCharacter} />);
+
+    expect(screen.getByAltText('S-击晕').closest('span')).toHaveProperty('data-tooltip', '击晕');
+    expect(screen.getByAltText('A-熊熊燃烧').closest('span')).toHaveProperty(
+      'data-tooltip',
+      '熊熊燃烧'
+    );
+  });
+
+  it('should not render knowledge card groups section if knowledgeCardGroups is empty', () => {
+    const characterWithoutKnowledgeCards = { ...mockCharacter, knowledgeCardGroups: [] };
+    render(<CharacterDetails character={characterWithoutKnowledgeCards} />);
+    expect(screen.queryByText('推荐知识卡组')).toBeNull();
+  });
+
   it('should render mouse character correctly', () => {
     const mouseCharacter: CharacterWithFaction = {
       ...mockCharacter,
@@ -266,6 +310,7 @@ describe('CharacterDetails', () => {
           additionalDescription: '推奶酪能力很强',
         },
       ],
+      knowledgeCardGroups: [['A-冲冠一怒', 'A-团队领袖']],
     };
 
     render(<CharacterDetails character={mouseCharacter} />);
@@ -286,5 +331,17 @@ describe('CharacterDetails', () => {
     expect(screen.getByText(/墙缝增伤/)).toBeTruthy();
     expect(screen.getByText(/1.5/)).toBeTruthy();
     expect(screen.getByText('奶酪')).toBeTruthy();
+
+    // Check mouse knowledge cards
+    expect(screen.getByText('推荐知识卡组')).toBeTruthy();
+    expect(screen.getByAltText('A-冲冠一怒')).toBeTruthy();
+    expect(screen.getByAltText('A-冲冠一怒')).toHaveProperty(
+      'src',
+      '/images/mouseCards/A-冲冠一怒.png'
+    );
+    expect(screen.getByAltText('A-冲冠一怒').closest('span')).toHaveProperty(
+      'data-tooltip',
+      '冲冠一怒'
+    );
   });
 });
