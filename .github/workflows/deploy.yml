@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Setup Pages
@@ -36,10 +36,43 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Clean and prepare build
+        run: |
+          echo "Cleaning previous builds and checking config files..."
+          rm -rf .next out
+          # Remove any duplicate next.config.js if it exists (we only want next.config.mjs)
+          if [ -f "next.config.js" ]; then
+            echo "Removing duplicate next.config.js file"
+            rm next.config.js
+          fi
+          echo "Config files present:"
+          ls -la next.config.*
+          echo "Build environment prepared"
+
       - name: Build with Next.js
         run: |
           export NEXT_PUBLIC_BUILD_TIME=$(TZ='Asia/Shanghai' date '+%m月%d日 %H:%M')
+          echo "Starting Next.js build..."
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Next.js version: $(npx next --version)"
           npm run build
+          echo "Build completed successfully"
+
+      - name: Verify build output
+        run: |
+          echo "Verifying build output..."
+          if [ -d "./out" ]; then
+            echo "✅ Static export successful"
+            echo "Files in out directory:"
+            ls -la ./out
+            echo "Total size: $(du -sh ./out | cut -f1)"
+          else
+            echo "❌ Build failed - no output directory found"
+            echo "Current directory contents:"
+            ls -la
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -1,6 +1,9 @@
 # Set default line ending behavior
 * text=auto
 
+# Prettier configuration files
+.prettierrc text eol=lf
+
 # Ensure all TypeScript, JavaScript, and JSON files use LF
 *.ts text eol=lf
 *.tsx text eol=lf

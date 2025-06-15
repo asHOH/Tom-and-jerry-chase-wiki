@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { factions, factionData } from '@/data';
 
+export const dynamic = 'force-static';
+
 // Generate static params for all factions
 export function generateStaticParams() {
   return Object.keys(factionData).map((factionId) => ({
