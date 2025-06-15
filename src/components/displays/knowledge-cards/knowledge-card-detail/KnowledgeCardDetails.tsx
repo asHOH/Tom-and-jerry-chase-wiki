@@ -45,7 +45,7 @@ export default function KnowledgeCardDetails({
                       paddingBottom: designTokens.spacing.xxs,
                     }}
                   >
-                    <Tag colorStyles={rankColors} size='md' variant='compact'>
+                    <Tag colorStyles={rankColors} size='md'>
                       等级: {card.rank}
                     </Tag>
                   </p>
@@ -56,7 +56,7 @@ export default function KnowledgeCardDetails({
                       paddingBottom: designTokens.spacing.xxs,
                     }}
                   >
-                    <Tag colorStyles={costColors} size='md' variant='compact'>
+                    <Tag colorStyles={costColors} size='md'>
                       费用: {card.cost}
                     </Tag>
                   </p>

@@ -37,7 +37,6 @@ export default function PositioningTagsSection({
               <Tag
                 colorStyles={getPositioningTagColors(tag.tagName, tag.isMinor, true, factionId)}
                 size='sm'
-                variant='compact'
               >
                 <Tooltip
                   content={getPositioningTagTooltipContent(tag.tagName, factionId, isDetailed)}
