@@ -95,6 +95,9 @@ export type SkillLevel = {
   level: number;
   description: string;
   detailedDescription?: string;
+  /**
+   * @deprecated
+   */
   damage?: string;
   cooldown?: number;
 };

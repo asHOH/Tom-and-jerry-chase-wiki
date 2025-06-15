@@ -4,7 +4,7 @@ import { addSkillImageUrls } from '../lib/skillUtils';
 // Generate image URL based on character ID
 const getCatImageUrl = (characterId: string): string => {
   // Check if the image exists, otherwise use a placeholder
-  const existingImages = ['汤姆', '布奇', '托普斯'];
+  const existingImages = ['汤姆', '布奇', '托普斯', '苏蕊'];
 
   if (existingImages.includes(characterId)) {
     return `/images/cats/${characterId}.png`;
@@ -536,6 +536,143 @@ export const catCharacters: Record<string, Character> = {
     knowledgeCardGroups: [
       ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
       ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
+    ],
+  },
+  /* ----------------------------------- 苏蕊 ---------------------------------- */
+  苏蕊: {
+    id: '苏蕊',
+    description: '苏蕊是最受欢迎的啦啦队队长，充满活力的她，脸上时时刻刻都洋溢着灿烂的笑容。她热爱生活，享受美食，认识她的猫和老鼠都会被她吸引。',
+
+    maxHp: 200,
+    hpRecovery: 2.5,
+    moveSpeed: 755,
+    jumpHeight: 420,
+    clawKnifeCdHit: 7,
+    clawKnifeCdUnhit: 5,
+    clawKnifeRange: 280,
+
+    catPositioningTags: [
+      {
+        tagName: '进攻',
+        isMinor: false,
+        description: '律动时间的增伤为击倒高Hp老鼠提供了可能，瑜伽球提供了攻击手段。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '速通',
+        isMinor: false,
+        description: '律动时间使多个老鼠跟随提供了在前期杀穿老鼠的可能。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '翻盘',
+        isMinor: true,
+        description: '律动时间使多个老鼠跟随提供了一定的翻盘手段。',
+        additionalDescription: '',
+      },
+    ],
+
+    skillAllocations: [
+      {
+        id: '瑜伽球',
+        pattern: '120001221',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+    ],
+
+    skills: [
+      {
+        id: '苏蕊-active',
+        name: '律动时间',
+        type: 'ACTIVE',
+        description:
+          '苏蕊随着音乐舞动。舞动开始将恢复一定Hp，免疫部分眩晕效果，爪击将替换为以苏蕊为中心周边更大范围的舞动亮相，冷却时间比爪击更久，舞动时将每隔一段时间在中心出现爱心提示，在爱心提示出现时点击技能按钮将恢复Hp，并获得移动速度和攻击力提升，在舞动过程中与敌方虚弱老鼠接触时，将会使其自主跟随苏蕊，跟随将持续30秒，期间遇到火箭会立刻绑上，舞动会持续较长时间。',
+        detailedDescription:
+          '苏蕊随着音乐舞动。舞动开始将恢复50点Hp，过程中免疫部分眩晕效果（免疫控制道具等大部分老鼠的控制手段，不免疫大部分npc的控制以及老鼠地形类的控制），移动跳跃不会中断，爪击将替换为以苏蕊为中心周边更大范围的舞动亮相，舞动亮相的冷却时间为6秒（未命中老鼠）和12秒（命中老鼠），伤害为70点，舞动时将每隔13秒在中心出现爱心提示，在爱心提示出现时点击技能按钮将恢复30点Hp，移动速度提升10%，攻击力提升15点，在舞动过程中与敌方不在老鼠夹上的虚弱老鼠接触时（老鼠触发知识卡铁血前会极短暂地进入虚弱状态，因此也包括在内），将会使其自主跟随苏蕊（老鼠无法主动对角色进行使用技能、移动等操作，此状态下若老鼠距苏蕊距离较远，则每隔一段时间会传送到苏蕊附近，若距离极远，则会接触跟随状态），跟随将持续30秒，期间遇到火箭会立刻绑上，舞动会持续40秒。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可取消',
+        cancelableAftercast: '无后摇',
+        // 没找到好的技能教学视频
+        skillLevels: [
+          {
+            level: 1,
+            description: '进入舞动状态，若手中有老鼠则会放下老鼠并使其自主跟随。',
+            cooldown: 40,
+          },
+          {
+            level: 2,
+            description: '舞动时受到的伤害减少。',
+            detailedDescription: '舞动中固定减伤10点。',
+            cooldown: 40,
+          },
+          {
+            level: 3,
+            description:
+              '每次爱心提示出现后成功点击技能按钮将延长舞动时间5秒，总舞动时间变为60秒。',
+            cooldown: 40,
+          },
+        ],
+      },
+      {
+        id: '苏蕊-weapon1',
+        name: '瑜伽球',
+        type: 'WEAPON1',
+        description: '投掷出瑜伽球并控制它膨胀，膨胀时使老鼠眩晕并弹飞。',
+        detailedDescription:
+          '苏蕊投掷出瑜伽球，在瑜伽球飞行过程中苏蕊可再次点击技能键使瑜伽球膨胀，当膨胀时接触到敌方老鼠，则会造成30点伤害、1.5秒眩晕并弹飞，瑜伽球可积累2次使用机会。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '扔出一个瑜伽球。',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description: '瑜伽球造成的眩晕时间提升。',
+            detailedDescription: '瑜伽球造成的眩晕时间提升至2.5秒。',
+            cooldown: 15,
+          },
+        ],
+      },
+      {
+        id: '苏蕊-passive',
+        name: '少女心',
+        type: 'PASSIVE',
+        skillLevels: [
+          {
+            level: 1,
+            description: '爪击和舞动亮相命中敌方时将重置瑜伽球的冷却时间。',
+            detailedDescription: '爪击和舞动亮相命中敌方时将重置瑜伽球的冷却时间，击中多个敌方将重置多个CD。',
+          },
+          {
+            level: 2,
+            description: '虚弱时间减少5秒。',
+            detailedDescription: '虚弱时间减少至2秒，起身时只有一半Hp（即100点）。',
+          },
+          {
+            level: 3,
+            description: '易碎的投掷道具击中敌方时将重置律动时间的冷却时间。',
+            detailedDescription: '易碎的投掷道具击中敌方（含虚弱老鼠）时将重置律动时间的冷却时间。',
+          },
+        ],
+      },
+    ],
+    knowledgeCardGroups: [
+      ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
+      ['S-蓄势一击', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
+      ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-攻其不备', "C-猫是液体"],
     ],
   },
 };
