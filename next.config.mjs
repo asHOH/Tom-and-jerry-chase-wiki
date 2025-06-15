@@ -19,7 +19,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  distDir: 'out',
 };
 
 export default withBundleAnalyzer(nextConfig);
