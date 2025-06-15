@@ -612,6 +612,41 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
+        id: '航海士杰瑞-weapon2',
+        name: '舰艇火炮',
+        type: 'WEAPON2',
+        description:
+          '放置一个舰艇火炮，老鼠可以进入火炮，控制方向发射并对碰到的猫咪造成伤害与眩晕，火炮内免疫投掷物。',
+        detailedDescription:
+          '放置一个舰艇火炮，老鼠可以进入火炮，控制方向发射并对碰到的猫咪造成50点伤害与1.5秒眩晕，火炮内免疫投掷物。火炮内老鼠进入虚弱后火炮会提前消失。同一房间最多出现两个火炮。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可被打断', // FIXME: not sure
+        cancelableAftercast: '不可取消后摇', // FIXME: not sure
+        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=50.7',
+        skillLevels: [
+          {
+            level: 1,
+            description: '放置一个舰艇火炮。',
+            detailedDescription:
+              '放置一个舰艇火炮，火炮持续15秒。',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '火炮的持续时间延长。',
+            detailedDescription:
+              '火炮的持续时间延长至25秒。',
+            cooldown: 25,
+          },
+          {
+            level: 3,
+            description: '减少火炮的CD。',
+            cooldown: 15,
+          },
+        ],
+      },
+      {
         id: '航海士杰瑞-passive',
         name: '无坚不摧',
         type: 'PASSIVE',
