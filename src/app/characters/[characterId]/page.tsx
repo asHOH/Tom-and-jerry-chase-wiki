@@ -6,7 +6,7 @@ import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDeta
 // Generate static params for all characters
 export function generateStaticParams() {
   return Object.keys(characters).map((characterId) => ({
-    characterId,
+    characterId: encodeURIComponent(characterId),
   }));
 }
 
@@ -20,7 +20,8 @@ export default async function CharacterPage({
 }) {
   // Use the characters data from the data files
   const resolvedParams = await params;
-  const character = characters[resolvedParams.characterId];
+  const decodedCharacterId = decodeURIComponent(resolvedParams.characterId);
+  const character = characters[decodedCharacterId];
 
   if (!character) {
     notFound();
