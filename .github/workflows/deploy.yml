@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Setup Pages
@@ -36,11 +36,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Clean previous builds
+      - name: Clean and prepare build
         run: |
-          echo "Cleaning previous builds..."
+          echo "Cleaning previous builds and checking config files..."
           rm -rf .next out
-          echo "Build environment cleaned"
+          # Remove any duplicate next.config.js if it exists (we only want next.config.mjs)
+          if [ -f "next.config.js" ]; then
+            echo "Removing duplicate next.config.js file"
+            rm next.config.js
+          fi
+          echo "Config files present:"
+          ls -la next.config.*
+          echo "Build environment prepared"
 
       - name: Build with Next.js
         run: |
