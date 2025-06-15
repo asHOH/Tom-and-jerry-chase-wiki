@@ -544,7 +544,7 @@ export const mouseCharacters: Record<string, Character> = {
       {
         id: '舰艇火炮',
         pattern: '133131000',
-        weaponType: 'weapon1',
+        weaponType: 'weapon2',
         description: '',
         additionaldescription: '',
       },
@@ -672,7 +672,7 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 3,
             description: '破坏墙缝的能力得到提升。',
-            detailedDescription: '每次攻击对墙缝的伤害增加1.3，即破坏增加至2.8。',
+            detailedDescription: '每次攻击对墙缝的伤害增加1.3点，即总伤害提升至2.8点。',
           },
         ],
       },
