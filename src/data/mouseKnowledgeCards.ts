@@ -15,13 +15,13 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '为所有爱执着的痛，再痛我也要回家！墙缝出现后立刻解除虚弱和受伤，回复200点Hp，并额外获得**增益**。',
     levels: [
-      { level: 1, description: '**提升移速和跳跃高度**。' },
+      { level: 1, description: '**提升移速**。' },
       { level: 2, description: '额外**提升Hp恢复**。' },
       { level: 3, description: '额外**获得2层护盾**。' },
     ],
     detailedLevels: [
-      { level: 1, description: '移动速度提升3.5%。' },
-      { level: 2, description: 'Hp恢复速度提升2.5点/s。' },
+      { level: 1, description: '**移速提升3.5%**。' },
+      { level: 2, description: '额外**提升Hp恢复2.5点/s**。' },
       { level: 3, description: '额外**获得2层护盾**，护盾会被碎片消耗。' },
     ],
   },
