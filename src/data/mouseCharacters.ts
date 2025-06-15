@@ -501,7 +501,8 @@ export const mouseCharacters: Record<string, Character> = {
   /* ----------------------------------- 航海士杰瑞 ----------------------------------- */
   航海士杰瑞: {
     id: '航海士杰瑞',
-    description: '公海上向往自由的航海士杰瑞，是最强大的航海家，他浑身充满野性，常年与火炮打交道的他，善于破坏火箭。',
+    description:
+      '公海上向往自由的航海士杰瑞，是最强大的航海家，他浑身充满野性，常年与火炮打交道的他，善于破坏火箭。',
 
     maxHp: 99,
     attackBoost: 20,
@@ -533,10 +534,16 @@ export const mouseCharacters: Record<string, Character> = {
     ],
 
     skillAllocations: [
-      // TODO: complete it
       {
-        id: '',
+        id: '火药桶',
         pattern: '121221000',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+      {
+        id: '舰艇火炮',
+        pattern: '133131000',
         weaponType: 'weapon1',
         description: '',
         additionaldescription: '',
@@ -549,7 +556,8 @@ export const mouseCharacters: Record<string, Character> = {
         name: '飞翔金币',
         type: 'ACTIVE',
         description: '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台。',
-        detailedDescription: '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台，对猫造成2秒眩晕以及35点伤害（包括航海士杰瑞自身的增伤则为55点伤害）。金币击中后会使猫咪短暂进入“金币免疫”状态，金币无法对此状态下的猫咪造成效果。',
+        detailedDescription:
+          '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台，对猫造成2秒眩晕以及35点伤害（包括航海士杰瑞自身的增伤则为55点伤害）。金币击中后会使猫咪短暂进入“金币免疫”状态，金币无法对此状态下的猫咪造成效果。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被跳跃键打断',
@@ -599,14 +607,14 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 2,
             description: '减少CD。',
-            detailedDescription:
-              '减少CD，对附近猫和老鼠的伤害提升至45点。',
+            detailedDescription: '减少CD，对附近猫和老鼠的伤害提升至45点。',
             cooldown: 30,
           },
           {
             level: 3,
             description: '火药桶引线减短，破坏的火箭无法自动恢复，威力增强。',
-            detailedDescription: '火药桶引线时长减短至3秒，破坏的火箭无法自动恢复，对附近猫和老鼠的伤害提升至70点。',
+            detailedDescription:
+              '火药桶引线时长减短至3秒，破坏的火箭无法自动恢复，对附近猫和老鼠的伤害提升至70点。',
             cooldown: 30,
           },
         ],
@@ -628,15 +636,13 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 1,
             description: '放置一个舰艇火炮。',
-            detailedDescription:
-              '放置一个舰艇火炮，火炮持续15秒。',
+            detailedDescription: '放置一个舰艇火炮，火炮持续15秒。',
             cooldown: 25,
           },
           {
             level: 2,
             description: '火炮的持续时间延长。',
-            detailedDescription:
-              '火炮的持续时间延长至25秒。',
+            detailedDescription: '火炮的持续时间延长至25秒。',
             cooldown: 25,
           },
           {
@@ -672,8 +678,8 @@ export const mouseCharacters: Record<string, Character> = {
       },
     ],
     knowledgeCardGroups: [
-      ['S-铁血', 'S-舍己', 'A-投手', 'B-绝地反击', 'C-救救我'],
-      ['S-铁血', 'S-舍己', 'S-护佑', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
     ],
   },
 };

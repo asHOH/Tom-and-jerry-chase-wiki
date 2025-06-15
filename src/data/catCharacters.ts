@@ -541,11 +541,12 @@ export const catCharacters: Record<string, Character> = {
   /* ----------------------------------- 苏蕊 ---------------------------------- */
   苏蕊: {
     id: '苏蕊',
-    description: '苏蕊是最受欢迎的啦啦队队长，充满活力的她，脸上时时刻刻都洋溢着灿烂的笑容。她热爱生活，享受美食，认识她的猫和老鼠都会被她吸引。',
+    description:
+      '苏蕊是最受欢迎的啦啦队队长，充满活力的她，脸上时时刻刻都洋溢着灿烂的笑容。她热爱生活，享受美食，认识她的猫和老鼠都会被她吸引。',
 
     maxHp: 200,
     hpRecovery: 2.5,
-    moveSpeed: 755,
+    moveSpeed: 770,
     jumpHeight: 420,
     clawKnifeCdHit: 7,
     clawKnifeCdUnhit: 5,
@@ -654,7 +655,8 @@ export const catCharacters: Record<string, Character> = {
           {
             level: 1,
             description: '爪击和舞动亮相命中敌方时将重置瑜伽球的冷却时间。',
-            detailedDescription: '爪击和舞动亮相命中敌方时将重置瑜伽球的冷却时间，击中多个敌方将重置多个CD。',
+            detailedDescription:
+              '爪击和舞动亮相命中敌方时将重置瑜伽球的冷却时间，击中多个敌方将重置多个CD。',
           },
           {
             level: 2,
@@ -672,7 +674,7 @@ export const catCharacters: Record<string, Character> = {
     knowledgeCardGroups: [
       ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
       ['S-蓄势一击', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
-      ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-攻其不备', "C-猫是液体"],
+      ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-攻其不备', 'C-猫是液体'],
     ],
   },
 };

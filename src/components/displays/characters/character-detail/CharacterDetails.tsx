@@ -31,7 +31,7 @@ export default function CharacterDetails({
         </div>
         <div className='flex flex-wrap gap-2'>
           {group.map((cardId) => (
-            <Tooltip key={cardId} content={cardId.split('-')[1]}>
+            <Tooltip key={cardId} content={cardId.split('-')[1]!}>
               <div className='relative w-24 h-24 flex-shrink-0'>
                 {/* TODO: add link to knowledge card */}
                 <Image

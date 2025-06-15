@@ -84,14 +84,14 @@ echo -e "\n${COLOR_MAGENTA}[SECTION] Security Checks${COLOR_RESET}"
 
 Test-Component "Dependency Audit" "npm audit --audit-level=moderate"
 
-Test-Component "Outdated Packages Check" "npm outdated; exit 0" # npm outdated always exits with 1 if packages are outdated
+Test-Component "Outdated Packages Check" "npm outdated" # npm outdated always exits with 1 if packages are outdated
 
 # 4. Build Output Verification
 echo -e "\n${COLOR_MAGENTA}[SECTION] Build Output Verification${COLOR_RESET}"
 
-Test-Component "Build Directory Check" "if [ -d \".next\" ]; then echo -e \"${COLOR_GRAY}Build directory (.next) exists${COLOR_RESET}\"; exit 0; else echo -e \"${COLOR_RED}Build directory (.next) not found${COLOR_RESET}\"; exit 1; fi"
+Test-Component "Build Directory Check" "if [ -d \".next\" ]; then echo -e \"${COLOR_GRAY}Build directory (.next) exists${COLOR_RESET}\"; true; else echo -e \"${COLOR_RED}Build directory (.next) not found${COLOR_RESET}\"; false; fi"
 
-Test-Component "Static Export Check" "if [ -d \"out\" ]; then echo -e \"${COLOR_GRAY}Export directory (out) exists${COLOR_RESET}\"; exit 0; else echo -e \"${COLOR_YELLOW}Export directory (out) not found - this is expected for dev builds${COLOR_RESET}\"; exit 0; fi"
+Test-Component "Static Export Check" "if [ -d \"out\" ]; then echo -e \"${COLOR_GRAY}Export directory (out) exists${COLOR_RESET}\"; else echo -e \"${COLOR_YELLOW}Export directory (out) not found - this is expected for dev builds${COLOR_RESET}\"; fi"
 
 # Summary
 echo -e "\n${COLOR_CYAN}[SUMMARY] Test Summary${COLOR_RESET}"
