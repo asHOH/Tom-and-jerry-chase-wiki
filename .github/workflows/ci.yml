@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -31,7 +31,7 @@ jobs:
         run: npm run lint
 
       - name: TypeScript type check
-        run: npx tsc --noEmit
+        run: npm run type-check
 
   build:
     name: Build Check
@@ -44,19 +44,28 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Clean previous builds
+        run: |
+          rm -rf .next out
+          if [ -f "next.config.js" ]; then
+            rm next.config.js
+          fi
 
       - name: Build project
         run: npm run build
 
       - name: Check build output
         run: |
-          if [ ! -d ".next" ]; then
-            echo "Build failed: .next directory not found"
+          if [ ! -d "out" ]; then
+            echo "Build failed: out directory not found"
+            echo "Available directories:"
+            ls -la
             exit 1
           fi
-          echo "Build successful: .next directory exists"
+          echo "Build successful: out directory exists with $(ls out | wc -l) files"
