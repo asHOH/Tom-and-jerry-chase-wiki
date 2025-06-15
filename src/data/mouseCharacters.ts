@@ -560,7 +560,7 @@ export const mouseCharacters: Record<string, Character> = {
         type: 'ACTIVE',
         description: '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台。',
         detailedDescription:
-          '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台，对猫造成2秒眩晕以及35点伤害（包括航海士杰瑞自身的增伤则为55点伤害）。金币击中后会使猫咪短暂进入“金币免疫”状态，金币无法对此状态下的猫咪造成效果。',
+          '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台，对猫造成2秒眩晕。金币击中后会使猫咪短暂进入“金币免疫”状态，金币无法对此状态下的猫咪造成效果。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被跳跃键打断',
@@ -569,19 +569,20 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '富有的航海士杰瑞扔出一枚黄金钱币把猫咪砸飞。',
+            description: '',
             cooldown: 25,
           },
           {
             level: 2,
-            description: '技能的冷却间隔减短。',
+            description: '金币额外造成伤害；减少CD。',
+            detailedDescription: '金币额外造成55点伤害（增伤后）；减少CD。',
             cooldown: 15,
           },
           {
             level: 3,
-            description: '金币可以对猫咪造成2次伤害和控制效果。',
+            description: '金币对猫咪造成2次伤害和控制效果。',
             detailedDescription:
-              '金币可以对猫咪造成2次伤害和控制效果，一共造成99点伤害，但最多破一层盾。',
+              '金币对猫咪造成2次伤害和控制效果，一共造成99点伤害，但最多破一层盾。',
             cooldown: 15,
           },
         ],
@@ -591,9 +592,9 @@ export const mouseCharacters: Record<string, Character> = {
         name: '火药桶',
         type: 'WEAPON1',
         description:
-          '放置一个能破坏火箭、墙缝的火药桶，火药桶爆炸后会破坏附近的火箭。猫咪在绑被破坏的火箭前需要先修复火箭。火药桶可以被鞭炮炸飞。',
+          '放置一个能破坏火箭、墙缝的火药桶，火药桶爆炸后会破坏附近的火箭，并对周围角色造成伤害和眩晕。猫咪在绑老鼠前需要先修复火箭。火药桶可以被鞭炮炸飞。',
         detailedDescription:
-          '放置一个能破坏火箭、墙缝的火药桶，火药桶爆炸后会破坏附近的火箭，猫咪可以拆除火药桶，耗时1秒，老鼠可以推动火药桶。火药桶被打击后会引线时长会降低5秒。猫咪在绑被破坏的火箭前需要先修复火箭。航海士杰瑞破坏绑有队友的火箭后则会救下队友（能触发无畏、舍己）。火药桶可以被鞭炮炸飞，在火药桶左侧的鞭炮会使火药桶呈抛物线飞出，右侧的鞭炮会使火药桶水平滑行。',
+          '放置一个能破坏火箭、墙缝的火药桶，火药桶爆炸后会破坏附近的火箭，并对周围角色造成伤害和眩晕。猫咪可以拆除火药桶，耗时1秒；老鼠可以推动火药桶。火药桶被打击后会引线时长会减少5秒。猫咪在绑老鼠前需要先修复火箭。航海士杰瑞破坏绑有队友的火箭后会救下队友（能触发无畏、舍己）。火药桶可以被鞭炮炸飞，在火药桶左侧的鞭炮会使火药桶呈抛物线飞出，右侧的鞭炮会使火药桶水平滑行。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '可被跳跃键打断',
@@ -609,15 +610,15 @@ export const mouseCharacters: Record<string, Character> = {
           },
           {
             level: 2,
-            description: '减少CD。',
-            detailedDescription: '减少CD，对附近猫和老鼠的伤害提升至45点。',
+            description: '提升伤害和爆炸范围；减少CD。',
+            detailedDescription: '提升爆炸范围；伤害提升至45点；减少CD。',
             cooldown: 30,
           },
           {
             level: 3,
             description: '火药桶引线减短，破坏的火箭无法自动恢复，威力增强。',
             detailedDescription:
-              '火药桶引线时长减短至3秒，破坏的火箭无法自动恢复，对附近猫和老鼠的伤害提升至70点。',
+              '火药桶引线时长减短至3秒，破坏的火箭无法自动恢复，伤害提升至70点。',
             cooldown: 30,
           },
         ],
@@ -638,19 +639,19 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '放置一个舰艇火炮。',
-            detailedDescription: '放置一个舰艇火炮，火炮持续15秒。',
+            description: '放置一个火炮。',
+            detailedDescription: '放置一个火炮，火炮持续15秒。',
             cooldown: 25,
           },
           {
             level: 2,
-            description: '火炮的持续时间延长。',
-            detailedDescription: '火炮的持续时间延长至25秒。',
+            description: '火炮持续时间延长。',
+            detailedDescription: '火炮持续时间延长至25秒。',
             cooldown: 25,
           },
           {
             level: 3,
-            description: '减少火炮的CD。',
+            description: '减少CD。',
             cooldown: 15,
           },
         ],
@@ -663,19 +664,19 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '使用道具击中猫后，使猫咪受到短暂的减速。',
-            detailedDescription: '使用道具击中猫后，使猫咪受到20%减速，持续3.5秒。',
+            description: '道具击中猫咪后，使猫咪受到短暂的减速。',
+            detailedDescription: '道具击中猫咪后，使猫咪受到20%减速，持续3.5秒。',
           },
           {
             level: 2,
-            description: '在猫手中挣扎的速度变快，挣脱后获得短暂的护盾和加速效果。',
+            description: '挣扎速度变快，挣脱后获得短暂的护盾和加速效果。',
             detailedDescription:
-              '挣扎速度提升50%，挣扎时间变为13.33秒，挣脱后获得4.75秒的护盾，护盾期间移速增加15%。',
+              '挣扎速度提升50%，挣扎时间变为13.33秒；挣脱后获得4.75秒的护盾，护盾期间移速增加15%。',
           },
           {
             level: 3,
-            description: '破坏墙缝的能力得到提升。',
-            detailedDescription: '每次攻击对墙缝的伤害增加1.3点，即总伤害提升至2.8点。',
+            description: '提高墙缝增伤。',
+            detailedDescription: '提高墙缝增伤1.3，即墙缝增伤变为2.8。',
           },
         ],
       },
