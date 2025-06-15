@@ -44,7 +44,7 @@
         "canUseInAir": "是否可空中释放(true/false)",
         "cancelableSkill": "是否可打断",
         "cancelableAftercast": "后摇是否可取消",
-        "videoUrl": "技能视频链接",
+        "videoUrl": "技能视频链接（如果没有则将本行删除）",
         "skillLevels": [
           {
             "level": 1,
@@ -72,7 +72,7 @@
         "canUseInAir": "是否可空中释放(true/false)",
         "cancelableSkill": "是否可打断",
         "cancelableAftercast": "后摇是否可取消",
-        "videoUrl": "技能视频链接",
+        "videoUrl": "技能视频链接（如果没有则将本行删除）",
         "skillLevels": [
           {
             "level": 1,
@@ -100,7 +100,7 @@
         "canUseInAir": "是否可空中释放(true/false)",
         "cancelableSkill": "是否可打断",
         "cancelableAftercast": "后摇是否可取消",
-        "videoUrl": "技能视频链接",
+        "videoUrl": "技能视频链接（如果没有则将本行删除）",
         "skillLevels": [
           {
             "level": 1,

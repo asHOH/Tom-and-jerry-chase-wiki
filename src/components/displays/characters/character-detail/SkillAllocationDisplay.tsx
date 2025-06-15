@@ -46,6 +46,10 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       const firstChar = pattern[0];
       const secondChar = pattern[1];
 
+      if (!firstChar || !secondChar) {
+        return pattern;
+      }
+
       const isFirstRegular = ['0', '1', '2', '3'].includes(firstChar);
       const isSecondRegular = ['0', '1', '2', '3'].includes(secondChar);
       const isAlreadyParallel = pattern.startsWith('[');
@@ -66,6 +70,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     if (level.isParallel && level.parallelOptions) {
       const firstOption = level.parallelOptions[0];
       const secondOption = level.parallelOptions[1];
+
+      if (!firstOption || !secondOption) {
+        throw new Error('Invalid parallel options');
+      }
+
       skillLevels[firstOption]++;
       skillLevels[secondOption]++;
       return {
@@ -155,10 +164,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   }> = [];
   let i = 0;
   while (i < currentLevels.length) {
-    const level = currentLevels[i];
+    const level = currentLevels[i]!;
+
     if (level.isParallel && level.parallelOptions) {
       let j = i;
-      while (j < currentLevels.length && currentLevels[j].isParallel) j++;
+      while (j < currentLevels.length && currentLevels[j]?.isParallel) j++;
       const parallelLevels = currentLevels.slice(i, j);
       levelGroups.push({
         characterLevel,
@@ -276,20 +286,22 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                         >
                           {renderConnectionLine(groupIndex, levelIndex, group, true)}
                           <div className='absolute' style={{ top: '-7px' }}>
-                            {renderSkillIcon(
-                              level.parallelOptions![0],
-                              level.currentLevel,
-                              level.isDelayed,
-                              level.hasNegativeEffect
-                            )}
+                            {level.parallelOptions?.[0] &&
+                              renderSkillIcon(
+                                level.parallelOptions[0],
+                                level.currentLevel,
+                                level.isDelayed,
+                                level.hasNegativeEffect
+                              )}
                           </div>
                           <div className='absolute' style={{ top: '19px' }}>
-                            {renderSkillIcon(
-                              level.parallelOptions![1],
-                              level.parallelCurrentLevel!,
-                              level.isDelayed,
-                              level.hasNegativeEffect
-                            )}
+                            {level.parallelOptions?.[1] &&
+                              renderSkillIcon(
+                                level.parallelOptions[1],
+                                level.parallelCurrentLevel!,
+                                level.isDelayed,
+                                level.hasNegativeEffect
+                              )}
                           </div>
                         </div>
                       ))}
@@ -303,10 +315,10 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                     <div className='relative'>
                       {renderConnectionLine(groupIndex, 0, group, false)}
                       {renderSkillIcon(
-                        group.levels[0].skillType,
-                        group.levels[0].currentLevel,
-                        group.levels[0].isDelayed,
-                        group.levels[0].hasNegativeEffect
+                        group.levels[0]!.skillType,
+                        group.levels[0]!.currentLevel,
+                        group.levels[0]!.isDelayed,
+                        group.levels[0]!.hasNegativeEffect
                       )}
                     </div>
                   </>

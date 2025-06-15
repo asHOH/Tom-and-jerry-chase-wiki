@@ -16,11 +16,32 @@ export default function KnowledgeCardDisplay({
   const costColors = getCardCostColors(cost);
 
   return (
-    <BaseCard variant='item' onClick={() => onClick(id)}>
-      <GameImage src={imageUrl} alt={name} size='CARD_ITEM' className='hover:scale-105' />
+    <BaseCard
+      variant='item'
+      onClick={() => onClick(id)}
+      role='button'
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick(id);
+        }
+      }}
+      aria-label={`查看${name}知识卡详情，${rank}级，${cost}费`}
+    >
+      <GameImage
+        src={imageUrl}
+        alt={`${name}知识卡图标`}
+        size='CARD_ITEM'
+        className='hover:scale-105'
+      />
       <div className='px-4 pt-1 pb-4 text-center'>
         <h3 className='text-lg font-bold text-gray-800 mb-1'>{name}</h3>
-        <div className='flex justify-center items-center gap-1.5 text-sm text-gray-600'>
+        <div
+          className='flex justify-center items-center gap-1.5 text-sm text-gray-600'
+          role='group'
+          aria-label='卡片属性'
+        >
           <Tag colorStyles={rankColors} size='xs' variant='compact'>
             {rank}级
           </Tag>

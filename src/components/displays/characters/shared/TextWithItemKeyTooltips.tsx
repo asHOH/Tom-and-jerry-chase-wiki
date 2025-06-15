@@ -25,7 +25,7 @@ export default function TextWithItemKeyTooltips({
       parts.push(text.slice(lastIndex, match.index));
     }
 
-    const actionVerb = match[1].trim();
+    const actionVerb = match[1]?.trim() || '';
 
     parts.push(
       <Tooltip key={match.index} content={getItemKeyTooltipContent(actionVerb, isDetailed)}>

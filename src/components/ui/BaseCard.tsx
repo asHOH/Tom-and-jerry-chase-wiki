@@ -5,6 +5,11 @@ type BaseCardProps = {
   onClick?: () => void;
   className?: string;
   variant?: 'character' | 'item' | 'details';
+  // Accessibility props
+  role?: string;
+  tabIndex?: number;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
+  'aria-label'?: string;
 };
 
 export default function BaseCard({
@@ -12,16 +17,24 @@ export default function BaseCard({
   onClick,
   className = '',
   variant = 'character',
+  role,
+  tabIndex,
+  onKeyDown,
+  'aria-label': ariaLabel,
 }: BaseCardProps) {
   const isClickable = !!onClick;
 
   const getVariantStyles = () => {
     const baseCardStyle = createStyleFromTokens(componentTokens.card.base);
+    const finalBaseStyle = {
+      ...baseCardStyle,
+      ...(isClickable && { cursor: 'pointer' }),
+    };
 
     switch (variant) {
       case 'character':
         return {
-          ...baseCardStyle,
+          ...finalBaseStyle,
           backgroundColor: '#ffffff',
           display: 'flex',
           flexDirection: 'column' as const,
@@ -33,7 +46,7 @@ export default function BaseCard({
         };
       case 'item':
         return {
-          ...baseCardStyle,
+          ...finalBaseStyle,
           backgroundColor: '#ffffff',
           position: 'relative' as const,
           overflow: 'hidden',
@@ -41,13 +54,13 @@ export default function BaseCard({
         };
       case 'details':
         return {
-          ...baseCardStyle,
+          ...finalBaseStyle,
           backgroundColor: '#ffffff',
           height: '100%',
           overflow: 'hidden',
         };
       default:
-        return baseCardStyle;
+        return finalBaseStyle;
     }
   };
 
@@ -56,6 +69,10 @@ export default function BaseCard({
   const cardProps = isClickable
     ? {
         onClick,
+        onKeyDown,
+        role,
+        tabIndex,
+        'aria-label': ariaLabel,
         style: cardStyle,
       }
     : {

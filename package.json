@@ -2,16 +2,44 @@
   "name": "tom-and-jerry-chase-data",
   "version": "0.1.0",
   "private": true,
+  "description": "专为《猫和老鼠手游》玩家打造的数据查询网站",
+  "homepage": "https://tom-and-jerry-chase-wiki.space",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asHOH/Tom-and-jerry-chase-wiki.git"
+  },
+  "bugs": {
+    "url": "https://github.com/asHOH/Tom-and-jerry-chase-wiki/issues"
+  },
+  "author": "asHOH",
+  "keywords": [
+    "tom-and-jerry",
+    "mobile-game",
+    "wiki",
+    "nextjs",
+    "react"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
+    "format": "npm run prettier:fix && npm run lint:fix",
+    "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "clean": "rimraf .next out coverage",
+    "analyze": "cross-env ANALYZE=true npm run build",
+    "prepare": "husky"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "dependencies": {
     "next": "^15.3.2",
@@ -19,29 +47,37 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@next/bundle-analyzer": "^15.3.3",
     "@tailwindcss/postcss": "^4.1.10",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^24.0.1",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.5",
     "autoprefixer": "^10.4.14",
+    "cross-env": "^7.0.3",
     "eslint": "^9.27.0",
     "eslint-config-next": "^15.3.2",
+    "husky": "^9.1.7",
     "jest": "^30.0.0",
     "jest-environment-jsdom": "^30.0.0",
+    "lint-staged": "^16.1.1",
     "postcss": "^8.5.5",
     "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^4.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run prettier:fix && npm run lint"
-    }
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md}": [
+      "prettier --write"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ]
   }
 }

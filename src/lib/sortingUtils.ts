@@ -14,7 +14,7 @@ export const RANK_ORDER = { S: 4, A: 3, B: 2, C: 1 } as const;
  * @param cards - Array of cards to sort
  * @returns Sorted array of cards (S > A > B > C, then by cost descending)
  */
-export function sortCardsByRank<T extends { rank: string; cost?: number }>(cards: T[]): T[] {
+export function sortCardsByRank<T extends { rank: string; cost: number }>(cards: T[]): T[] {
   return [...cards].sort((a, b) => {
     const rankA = RANK_ORDER[a.rank as keyof typeof RANK_ORDER] || 0;
     const rankB = RANK_ORDER[b.rank as keyof typeof RANK_ORDER] || 0;
@@ -25,11 +25,7 @@ export function sortCardsByRank<T extends { rank: string; cost?: number }>(cards
     }
 
     // Secondary sort: by cost in descending order (highest cost first)
-    if (a.cost !== undefined && b.cost !== undefined) {
-      return b.cost - a.cost;
-    }
-
-    return 0;
+    return b.cost - a.cost;
   });
 }
 

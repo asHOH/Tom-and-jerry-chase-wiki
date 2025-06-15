@@ -371,7 +371,6 @@ export const componentTokens = {
       borderRadius: designTokens.radius.lg,
       boxShadow: designTokens.shadows.card,
       transition: designTokens.transitions.hover,
-      cursor: 'pointer',
       border: 'none',
       outline: 'none',
     },

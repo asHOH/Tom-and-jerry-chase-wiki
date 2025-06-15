@@ -132,8 +132,8 @@ describe('Data Validation', () => {
     });
 
     it('should have characters in each faction', () => {
-      expect(factions.cat.characters.length).toBeGreaterThan(0);
-      expect(factions.mouse.characters.length).toBeGreaterThan(0);
+      expect(factions.cat!.characters.length).toBeGreaterThan(0);
+      expect(factions.mouse!.characters.length).toBeGreaterThan(0);
     });
   });
 
@@ -141,8 +141,8 @@ describe('Data Validation', () => {
     it('should have consistent character IDs between characters and factions', () => {
       const characterIds = Object.keys(characters);
       const factionCharacterIds = [
-        ...factions.cat.characters.map((c) => c.id),
-        ...factions.mouse.characters.map((c) => c.id),
+        ...factions.cat!.characters.map((c) => c.id),
+        ...factions.mouse!.characters.map((c) => c.id),
       ];
 
       expect(characterIds.sort()).toEqual(factionCharacterIds.sort());

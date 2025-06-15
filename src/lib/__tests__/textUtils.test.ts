@@ -54,8 +54,8 @@ describe('textUtils', () => {
       expect(container.textContent).toBe('Damage: 50点 for 3秒');
       const underlinedElements = container.querySelectorAll('.underline');
       expect(underlinedElements).toHaveLength(2);
-      expect(underlinedElements[0].textContent).toBe('50点');
-      expect(underlinedElements[1].textContent).toBe('3秒');
+      expect(underlinedElements[0]!.textContent).toBe('50点');
+      expect(underlinedElements[1]!.textContent).toBe('3秒');
     });
 
     it('should format percentage values', () => {
@@ -72,8 +72,8 @@ describe('textUtils', () => {
 
       const underlinedElements = container.querySelectorAll('.underline');
       expect(underlinedElements).toHaveLength(2);
-      expect(underlinedElements[0].textContent).toBe('Skill');
-      expect(underlinedElements[1].textContent).toBe('100点');
+      expect(underlinedElements[0]!.textContent).toBe('Skill');
+      expect(underlinedElements[1]!.textContent).toBe('100点');
     });
   });
 

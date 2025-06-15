@@ -134,7 +134,7 @@ export const extractItemKeyActions = (text: string): string[] => {
   let match;
 
   while ((match = itemKeyPattern.exec(text)) !== null) {
-    const actionVerb = match[1].trim();
+    const actionVerb = match[1]?.trim();
     if (actionVerb) {
       actions.push(actionVerb);
     }
