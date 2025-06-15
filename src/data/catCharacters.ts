@@ -72,10 +72,10 @@ export const catCharacters: Record<string, Character> = {
         type: 'ACTIVE',
         description: '解控并进入一段时间的无敌。',
         detailedDescription:
-          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害（如仙女鼠的一星；但不会因此被击倒）和位移效果的影响（如尼宝的钩子），若在莱恩蓝图内受到真实伤害，不免疫变线条猫，交互（如绑火箭）会被仙女鼠八星打断。无敌结束后会有2秒的10%减速（可以被护盾抵消）。',
+          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害（如仙女鼠的一星；但不会因此被击倒）和位移效果的影响（如尼宝的钩子）。若在莱恩蓝图内受到真实伤害，不免疫变线条猫。交互（如绑火箭）会被仙女鼠八星打断。无敌结束后会有2秒的10%减速（可以被护盾抵消）。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键打断，保留前摇时的弱霸体，但不返还CD',
+        cancelableSkill: '可被道具键打断，但不返还CD',
         cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=127.35',
         skillLevels: [
@@ -187,6 +187,7 @@ export const catCharacters: Record<string, Character> = {
     knowledgeCardGroups: [
       ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
       ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-心灵手巧'],
+      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
     ],
   },
 
@@ -354,6 +355,7 @@ export const catCharacters: Record<string, Character> = {
     knowledgeCardGroups: [
       ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
       ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
     ],
   },
 
@@ -536,6 +538,7 @@ export const catCharacters: Record<string, Character> = {
     knowledgeCardGroups: [
       ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
       ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
+      ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
     ],
   },
   /* ----------------------------------- 苏蕊 ---------------------------------- */

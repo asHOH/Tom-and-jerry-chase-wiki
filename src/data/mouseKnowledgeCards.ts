@@ -202,8 +202,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '受到猫咪的攻击后，**短暂**提升移动、跳跃速度和Hp恢复速度。(CD：35秒)',
-    detailedDescription:
-      '受到猫咪的攻击后，**短暂**移动速度提升20%，Hp恢复速度提升2点/s。(CD：35秒)',
+    detailedDescription: '受到猫咪的攻击后，**短暂**移速提升20%，Hp恢复速度提升2点/s。(CD：35秒)',
     levels: [
       { level: 1, description: '效果持续**8**秒。' },
       { level: 2, description: '效果持续**9**秒。' },
@@ -217,7 +216,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '关门后获得**短暂**加速，并将门附近的猫咪弹开。(CD: 5s)',
     detailedDescription:
-      '用力地关上门，关门后移动速度**短暂**提升50%，对门附近的敌人造成1.5s眩晕。(CD: 5s)',
+      '用力地关上门，关门后移速**短暂**提升50%，对门附近的猫咪造成1.5s眩晕。(CD: 5s)',
     levels: [
       { level: 1, description: '加速持续**4.5**秒。' },
       { level: 2, description: '加速持续**5**秒。' },

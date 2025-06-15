@@ -99,7 +99,7 @@ export type SkillLevel = {
    * @deprecated
    */
   damage?: string;
-  cooldown?: number;
+  cooldown?: number; // FIXME: is this really deprecated?
 };
 
 // Card-related types

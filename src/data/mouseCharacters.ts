@@ -177,7 +177,10 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
     ],
-    knowledgeCardGroups: [['S-铁血', 'S-护佑', 'S-回家', 'C-救救我']],
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+    ],
   },
 
   /* ----------------------------------- 泰菲 ----------------------------------- */
