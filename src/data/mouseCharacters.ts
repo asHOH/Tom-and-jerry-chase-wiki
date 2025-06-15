@@ -4,7 +4,7 @@ import { addSkillImageUrls } from '../lib/skillUtils';
 // Generate image URL based on character ID
 const getMouseImageUrl = (characterId: string): string => {
   // Check if the image exists, otherwise use a placeholder
-  const existingImages = ['杰瑞', '泰菲', '尼宝', '航海士杰瑞'];
+  const existingImages = ['杰瑞', '侦探杰瑞', '泰菲', '尼宝', '航海士杰瑞'];
 
   if (existingImages.includes(characterId)) {
     return `/images/mice/${characterId}.png`;
@@ -24,6 +24,7 @@ export const mouseCharacters: Record<string, Character> = {
     hpRecovery: 2,
     moveSpeed: 650,
     jumpHeight: 400,
+    // FIXME: according to the data, it shall be 5
     cheesePushSpeed: 4,
     wallCrackDamageBoost: 1,
 
@@ -173,6 +174,183 @@ export const mouseCharacters: Record<string, Character> = {
             description: '奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。',
             detailedDescription:
               '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、并获得2.7秒的13%加速。',
+          },
+        ],
+      },
+    ],
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+    ],
+  },
+
+  /* ----------------------------------- 侦探杰瑞 ----------------------------------- */
+  侦探杰瑞: {
+    id: '侦探杰瑞',
+    description:
+      '谨慎机警的侦探杰瑞，来自19世纪末的英国，为了更快地抓到凶手，他极善于隐藏自己的踪迹。',
+
+    maxHp: 99,
+    attackBoost: 10,
+    hpRecovery: 1.67,
+    moveSpeed: 640,
+    jumpHeight: 380,
+    cheesePushSpeed: 5.75,
+    wallCrackDamageBoost: 0.5,
+
+    mousePositioningTags: [
+      {
+        tagName: '奶酪',
+        isMinor: false,
+        description: '侦探杰瑞有着全鼠方最高的基础推速。',
+        additionalDescription: '烟雾弹能进一步提高推速。',
+      },
+      {
+        tagName: '破局',
+        isMinor: false,
+        description: '侦探杰瑞的烟雾弹能快速推完第五块奶酪，是部分守第五块奶酪的猫咪的克星。',
+        additionalDescription:
+          '在第五块奶酪和墙缝期时，烟雾弹也有着很强的干扰能力，猫咪在三级烟雾弹中会被破盾且禁用技能。',
+      },
+    ],
+
+    skillAllocations: [
+      {
+        id: '烟雾弹',
+        pattern: '12212100-0',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+      {
+        id: '视觉干扰器',
+        pattern: '[13]131300-0',
+        weaponType: 'weapon2',
+        description: '',
+        additionaldescription: '',
+      },
+    ],
+
+    skills: [
+      {
+        id: '侦探杰瑞-active',
+        name: '隐身',
+        type: 'ACTIVE',
+        description: '进入隐身状态，隐身状态中移动速度会得到提升。',
+        detailedDescription: '进入隐身状态，隐身状态中移动速度会提升15%。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '进入隐身状态，隐身状态下使用道具和进行交互会使自己显形。',
+            detailedDescription:
+              '进入隐身状态，隐身状态持续6秒，隐身状态下使用道具和进行交互会使自己显形。',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '隐身状态持续更久，隐身状态下使用道具和进行交互不会显形。',
+            detailedDescription: '隐身状态持续12秒，隐身状态下使用道具和进行交互不会显形。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: '隐身状态持续更久，当自己处于隐身状态时可以持续地恢复Hp。',
+            detailedDescription:
+              '隐身状态持续15秒，当自己处于隐身状态时可以额外以3.33/s的速度恢复Hp。',
+            cooldown: 20,
+          },
+        ],
+      },
+      {
+        id: '侦探杰瑞-weapon1',
+        name: '烟雾弹',
+        type: 'WEAPON1',
+        description: '引爆烟雾弹遮挡猫的视野。在烟雾中猫无法查看小地图。',
+        detailedDescription:
+          '引爆烟雾弹遮挡猫的视野。在烟雾中猫无法查看小地图，此效果可以被一层护盾抵消。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可打断',
+        cancelableAftercast: '不可取消',
+        skillLevels: [
+          {
+            level: 1,
+            description: '引爆烟雾弹。',
+            detailedDescription: '引爆烟雾弹，烟雾持续5秒。', // FIXME: this data is from really old video
+            cooldown: 35,
+          },
+          {
+            level: 2,
+            description: '老鼠在烟雾范围内会提升移动速度、跳跃能力和推奶酪速度。',
+            detailedDescription:
+              '老鼠在烟雾范围内移动速度提升20%，跳跃能力提升50%，推奶酪速度提升5.75%/s。',
+            cooldown: 35,
+          },
+          {
+            level: 3,
+            description:
+              '烟雾在地面存在的时间增加，猫在烟雾范围内会降低移动速度、跳跃能力和攻击频率，且无法使用技能和道具。',
+            detailedDescription:
+              '烟雾在地面存在的时间增加至7.5秒，猫在烟雾范围内移动速度降低20%、跳跃能力降低20%且爪刀CD延长50%，且无法使用技能和道具。',
+            cooldown: 35,
+          },
+        ],
+      },
+      {
+        id: '侦探杰瑞-weapon2',
+        name: '视觉干扰器',
+        type: 'WEAPON2',
+        description: '使用技能投掷出干扰器，落地后对范围内的友方施加短暂的隐身效果。',
+        detailedDescription: '使用技能投掷出干扰器，落地后对范围内的友方施加3.5秒隐身效果。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '可被打断', // FIXME: not sure
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '投掷干扰器，除移动和跳跃外的交互行为将移除该隐身效果。',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description:
+              '交互行为不会取消隐身效果，持续期间解除并免疫道具香水效果、图多盖洛香水效果、胡椒粉烟雾效果。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: '持续时间内大幅提高移动速度。',
+            detailedDescription: '持续时间内移动速度提高20%。',
+            cooldown: 20,
+          },
+        ],
+      },
+      {
+        id: '侦探杰瑞-passive',
+        name: '胆小如鼠',
+        type: 'PASSIVE',
+        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=36.3',
+        skillLevels: [
+          {
+            level: 1,
+            description: '每隔一段时间，可以在小地图上感知猫的位置。',
+            detailedDescription: '每隔45秒，可以在小地图上感知猫的位置，持续3秒。',
+          },
+          {
+            level: 2,
+            description: '在自己搬运奶酪时，不会被猫咪在小地图上察觉。',
+          },
+          {
+            level: 3,
+            description:
+              '附近有猫咪时，侦探杰瑞只顾着逃命而无心推奶酪，移动和跳跃能力得到提升，但推奶酪能力下降。',
+            detailedDescription:
+              '附近有猫咪时，侦探杰瑞只顾着逃命而无心推奶酪，移动速度和跳跃高度提升10%，但推奶酪速度下降30%。',
           },
         ],
       },
