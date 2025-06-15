@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { characters } from '@/data';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
 
+export const dynamic = 'force-static';
+
 // Generate static params for all characters
 export function generateStaticParams() {
   return Object.keys(characters).map((characterId) => ({

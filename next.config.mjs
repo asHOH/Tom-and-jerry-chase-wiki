@@ -13,6 +13,13 @@ const nextConfig = {
   },
   poweredByHeader: false,
   compress: true,
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  distDir: 'out',
 };
 
 export default withBundleAnalyzer(nextConfig);
