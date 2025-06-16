@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -18,6 +22,7 @@ jobs:
   build:
     name: Build for Production
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,15 +47,32 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Clean previous builds
+      - name: Try to download CI build artifacts
+        if: github.event_name == 'workflow_run'
+        id: download-ci-build
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output-${{ github.sha }}
+          path: out/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Next.js cache from CI
+        if: github.event_name == 'workflow_run' && steps.download-ci-build.outcome == 'success'
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: nextjs-cache-${{ github.sha }}
+          path: .next/cache/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clean and build (if no CI artifacts)
+        if: steps.download-ci-build.outcome != 'success'
         run: |
           rm -rf .next out
           if [ -f "next.config.js" ]; then
             rm next.config.js
           fi
-
-      - name: Build for production
-        run: |
           export NEXT_PUBLIC_BUILD_TIME=$(TZ='Asia/Shanghai' date '+%m月%d日 %H:%M')
           npm run build
 
@@ -84,3 +106,6 @@ jobs:
           echo "## 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
           echo "✅ Site successfully deployed to: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
           echo "📅 Deployed at: $(date '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event_name }}" == "workflow_run" ]; then
+            echo "🔄 Triggered by successful CI workflow" >> $GITHUB_STEP_SUMMARY
+          fi
