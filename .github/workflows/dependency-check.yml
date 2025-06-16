@@ -25,14 +25,61 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run security audit
-        run: npm audit --audit-level=moderate
+        id: audit
+        run: |
+          echo "Running npm audit..."
+          if npm audit --audit-level=moderate --json > audit.json; then
+            echo "audit-passed=true" >> $GITHUB_OUTPUT
+            echo "✅ No security vulnerabilities found"
+          else
+            echo "audit-passed=false" >> $GITHUB_OUTPUT
+            echo "❌ Security vulnerabilities detected"
+            echo "## Security Audit Results" >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+            npm audit --audit-level=moderate >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Check for outdated packages
-        run: npm outdated || true
+        id: outdated
+        run: |
+          echo "Checking for outdated packages..."
+          if npm outdated --json > outdated.json 2>/dev/null; then
+            if [ "$(jq 'keys | length' outdated.json)" -gt 0 ]; then
+              echo "outdated-found=true" >> $GITHUB_OUTPUT
+              echo "📦 Outdated packages detected"
+              echo "## Outdated Packages" >> $GITHUB_STEP_SUMMARY
+              echo "```" >> $GITHUB_STEP_SUMMARY
+              npm outdated >> $GITHUB_STEP_SUMMARY
+              echo "```" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "outdated-found=false" >> $GITHUB_OUTPUT
+              echo "✅ All packages are up to date"
+            fi
+          else
+            echo "outdated-found=false" >> $GITHUB_OUTPUT
+            echo "✅ All packages are up to date"
+          fi
+
+      - name: Fail on critical security issues
+        if: steps.audit.outputs.audit-passed == 'false'
+        run: |
+          echo "Critical security vulnerabilities found!"
+          echo "Please run 'npm audit fix' to resolve security issues."
+          exit 1
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Dependency Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Security Audit | ${{ steps.audit.outputs.audit-passed == 'true' && '✅ Pass' || '❌ Fail' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Package Updates | ${{ steps.outdated.outputs.outdated-found == 'false' && '✅ Up to date' || '📦 Updates available' }} |" >> $GITHUB_STEP_SUMMARY
