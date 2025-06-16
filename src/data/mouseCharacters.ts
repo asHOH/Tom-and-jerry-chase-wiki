@@ -24,8 +24,7 @@ export const mouseCharacters: Record<string, Character> = {
     hpRecovery: 2,
     moveSpeed: 650,
     jumpHeight: 400,
-    // FIXME: according to the data, it shall be 5
-    cheesePushSpeed: 4,
+    cheesePushSpeed: 5,
     wallCrackDamageBoost: 1,
 
     mousePositioningTags: [
@@ -208,9 +207,8 @@ export const mouseCharacters: Record<string, Character> = {
       {
         tagName: '破局',
         isMinor: false,
-        description: '侦探杰瑞的烟雾弹能快速推完第五块奶酪，是部分守第五块奶酪的猫咪的克星。',
-        additionalDescription:
-          '在第五块奶酪和墙缝期时，烟雾弹也有着很强的干扰能力，猫咪在三级烟雾弹中会被破盾且禁用技能。',
+        description: '侦探杰瑞的烟雾弹能使鼠方快速推完最后一块奶酪，克制大多数守奶酪的猫咪。',
+        additionalDescription: '墙缝期时，烟雾弹也有着很强的干扰能力，尤其是阻止猫咪修墙。',
       },
     ],
 
@@ -224,7 +222,7 @@ export const mouseCharacters: Record<string, Character> = {
       },
       {
         id: '视觉干扰器',
-        pattern: '[13]131300-0',
+        pattern: '13131300-0',
         weaponType: 'weapon2',
         description: '',
         additionaldescription: '',
@@ -236,8 +234,8 @@ export const mouseCharacters: Record<string, Character> = {
         id: '侦探杰瑞-active',
         name: '隐身',
         type: 'ACTIVE',
-        description: '进入隐身状态，隐身状态中移动速度会得到提升。',
-        detailedDescription: '进入隐身状态，隐身状态中移动速度会提升15%。',
+        description: '进入隐身状态；隐身状态中移速提升。',
+        detailedDescription: '进入隐身状态；隐身状态中移速提升15%。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可打断',
@@ -245,22 +243,20 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '进入隐身状态，隐身状态下使用道具和进行交互会使自己显形。',
-            detailedDescription:
-              '进入隐身状态，隐身状态持续6秒，隐身状态下使用道具和进行交互会使自己显形。',
+            description: '隐身状态中使用道具或交互会显形。',
+            detailedDescription: '隐身持续6秒；隐身状态中使用道具或交互会显形。',
             cooldown: 20,
           },
           {
             level: 2,
-            description: '隐身状态持续更久，隐身状态下使用道具和进行交互不会显形。',
-            detailedDescription: '隐身状态持续12秒，隐身状态下使用道具和进行交互不会显形。',
+            description: '隐身持续更久；隐身状态中使用道具和交互不会显形。',
+            detailedDescription: '隐身持续12秒；隐身状态中使用道具和交互不会显形。',
             cooldown: 20,
           },
           {
             level: 3,
-            description: '隐身状态持续更久，当自己处于隐身状态时可以持续地恢复Hp。',
-            detailedDescription:
-              '隐身状态持续15秒，当自己处于隐身状态时可以额外以3.33/s的速度恢复Hp。',
+            description: '隐身持续更久；隐身状态中持续恢复Hp。',
+            detailedDescription: '隐身持续15秒；隐身状态中持续以3.33/s恢复Hp。',
             cooldown: 20,
           },
         ],
@@ -280,22 +276,22 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 1,
             description: '引爆烟雾弹。',
-            detailedDescription: '引爆烟雾弹，烟雾持续5秒。', // FIXME: this data is from really old video
+            detailedDescription: '引爆烟雾弹，烟雾持续4秒。', // FIXME: not sure about the duration
             cooldown: 35,
           },
           {
             level: 2,
-            description: '老鼠在烟雾范围内会提升移动速度、跳跃能力和推奶酪速度。',
+            description: '老鼠在烟雾范围内会提升移速、跳跃高度和推速。',
             detailedDescription:
-              '老鼠在烟雾范围内移动速度提升20%，跳跃能力提升50%，推奶酪速度提升5.75%/s。',
+              '老鼠在烟雾范围内移速提升20%，跳跃高度提升50%，推速固定提升5.75%/s。',
             cooldown: 35,
           },
           {
             level: 3,
             description:
-              '烟雾在地面存在的时间增加，猫在烟雾范围内会降低移动速度、跳跃能力和攻击频率，且无法使用技能和道具。',
+              '烟雾持续时间增加，猫在烟雾范围内会降低移速、跳跃高度和攻击频率，且无法使用技能和道具。',
             detailedDescription:
-              '烟雾在地面存在的时间增加至7.5秒，猫在烟雾范围内移动速度降低20%、跳跃能力降低20%且爪刀CD延长50%，且无法使用技能和道具。',
+              '烟雾持续时间增加至6.5秒，猫在烟雾范围内移速降低20%、跳跃高度降低20%且爪刀CD延长50%，且无法使用技能和道具。',
             cooldown: 35,
           },
         ],
@@ -304,8 +300,8 @@ export const mouseCharacters: Record<string, Character> = {
         id: '侦探杰瑞-weapon2',
         name: '视觉干扰器',
         type: 'WEAPON2',
-        description: '使用技能投掷出干扰器，落地后对范围内的友方施加短暂的隐身效果。',
-        detailedDescription: '使用技能投掷出干扰器，落地后对范围内的友方施加3.5秒隐身效果。',
+        description: '投掷干扰器，落地后对范围内的友方施加短暂的隐身效果。',
+        detailedDescription: '投掷干扰器，落地后对范围内的友方施加3.5秒隐身效果。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被打断', // FIXME: not sure
@@ -324,8 +320,8 @@ export const mouseCharacters: Record<string, Character> = {
           },
           {
             level: 3,
-            description: '持续时间内大幅提高移动速度。',
-            detailedDescription: '持续时间内移动速度提高20%。',
+            description: '持续时间内大幅提高移速。',
+            detailedDescription: '持续时间内移速提高20%。',
             cooldown: 20,
           },
         ],
@@ -338,19 +334,18 @@ export const mouseCharacters: Record<string, Character> = {
         skillLevels: [
           {
             level: 1,
-            description: '每隔一段时间，可以在小地图上感知猫的位置。',
-            detailedDescription: '每隔45秒，可以在小地图上感知猫的位置，持续3秒。',
+            description: '每隔一段时间，在小地图上感知猫的位置。',
+            detailedDescription: '每隔45秒，在小地图上感知猫的位置，持续3秒。',
           },
           {
             level: 2,
-            description: '在自己搬运奶酪时，不会被猫咪在小地图上察觉。',
+            description: '搬运奶酪时，不会被猫咪在小地图上察觉。',
           },
           {
             level: 3,
-            description:
-              '附近有猫咪时，侦探杰瑞只顾着逃命而无心推奶酪，移动和跳跃能力得到提升，但推奶酪能力下降。',
+            description: '附近有猫咪时，移速和跳跃高度提升，但推速下降。',
             detailedDescription:
-              '附近有猫咪时，侦探杰瑞只顾着逃命而无心推奶酪，移动速度和跳跃高度提升10%，但推奶酪速度下降30%。',
+              '附近有猫咪时，侦探杰瑞只顾着逃命而无心推奶酪，移速和跳跃高度提升10%，但推速下降30%。',
           },
         ],
       },
