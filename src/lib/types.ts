@@ -3,7 +3,7 @@
  * Eliminates duplication of type definitions across components
  */
 
-import { Character, Card, PositioningTag } from '@/data';
+import { Character, Card, PositioningTag, PositioningTagName } from '@/data';
 
 // Extended types with faction information (used in components)
 export type CharacterWithFaction = Character & {
@@ -105,4 +105,13 @@ export type BaseCharacter = {
   name: string;
   imageUrl: string;
   positioningTags: PositioningTag[];
+};
+
+// Filter types
+export type CharacterFilterOptions = {
+  positioningTags: PositioningTagName[];
+};
+
+export type CharacterFilterState = {
+  selectedPositioningTags: PositioningTagName[];
 };

@@ -5,6 +5,7 @@ export type Faction = {
   id: FactionId;
   name: string;
   description: string;
+  detailedDescription?: string;
 };
 
 // Positioning tag types separated by faction
@@ -120,5 +121,4 @@ export type Card = {
   detailedDescription?: string;
   imageUrl?: string; // We'll generate it automatically
   levels: CardLevel[];
-  detailedLevels?: CardLevel[];
 };

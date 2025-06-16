@@ -125,9 +125,21 @@ export default function CharacterDetails({
           </div>
 
           <div className='space-y-6'>
-            {character.skills.map((skill) => (
-              <SkillCard key={skill.id} skill={skill} isDetailed={isDetailedView} />
-            ))}
+            {(() => {
+              const weaponSkills = character.skills.filter(
+                (skill) => skill.type === 'WEAPON1' || skill.type === 'WEAPON2'
+              );
+              const isSingleWeapon = weaponSkills.length === 1;
+
+              return character.skills.map((skill) => (
+                <SkillCard
+                  key={skill.id}
+                  skill={skill}
+                  isDetailed={isDetailedView}
+                  isSingleWeapon={isSingleWeapon && skill.type === 'WEAPON1'}
+                />
+              ));
+            })()}
           </div>
         </div>
       </div>
