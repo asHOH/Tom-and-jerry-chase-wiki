@@ -1,9 +1,14 @@
 name: Auto Fix Code Style
 
 on:
-  push:
-    branches: [ main, develop ]
+  pull_request:
+    types: [opened, synchronize]
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run auto-fix on'
+        required: true
+        default: 'develop'
 
 jobs:
   auto-fix:
@@ -11,12 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -38,15 +45,36 @@ jobs:
         run: |
           if [ -n "$(git status --porcelain)" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Files were modified by auto-fix"
           else
             echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No files needed formatting changes"
           fi
 
-      - name: Commit changes
-        if: steps.verify-changed-files.outputs.changed == 'true'
+      - name: Commit changes (PR only)
+        if: steps.verify-changed-files.outputs.changed == 'true' && github.event_name == 'pull_request'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
           git commit -m "style: auto-fix code formatting [skip ci]"
           git push
+
+      - name: Commit changes (Manual dispatch)
+        if: steps.verify-changed-files.outputs.changed == 'true' && github.event_name == 'workflow_dispatch'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout ${{ github.event.inputs.branch }}
+          git add .
+          git commit -m "style: auto-fix code formatting [skip ci]"
+          git push origin ${{ github.event.inputs.branch }}
+
+      - name: Summary
+        run: |
+          echo "## Auto-Fix Results" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.verify-changed-files.outputs.changed }}" == "true" ]; then
+            echo "✅ Code formatting issues were automatically fixed and committed." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No formatting issues found - code is already properly formatted." >> $GITHUB_STEP_SUMMARY
+          fi
