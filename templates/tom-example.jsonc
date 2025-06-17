@@ -56,6 +56,7 @@
         "name": "发怒冲刺", // 技能名称
         "type": "ACTIVE", // 技能类型：ACTIVE/WEAPON1/WEAPON2/PASSIVE
         "description": "解控并进入一段时间的无敌。", // 技能描述
+        "detailedDescription": "解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害和位移效果的影响。", // 详细技能描述（可选）
         "canMoveWhileUsing": true, // 释放时是否可移动
         "canUseInAir": true, // 是否可在空中释放
         "cancelableSkill": "可被道具键打断，但不返还CD", // 技能是否可打断
@@ -66,16 +67,19 @@
           {
             "level": 1, // 技能等级
             "description": "无敌持续3.8秒。", // 该等级效果描述。一级如果没东西写的话可以留空。
+            "detailedDescription": "无敌持续3.8秒，前摇期间为弱霸体。", // 详细效果描述（可选）
             "cooldown": 20 // 冷却时间（秒）
           },
           {
             "level": 2,
             "description": "无敌持续6.8秒。",
+            "detailedDescription": "无敌持续6.8秒，大幅提升生存和上火箭能力。", // 详细效果描述（可选）
             "cooldown": 20
           },
           {
             "level": 3,
             "description": "无敌期间减少爪刀CD。",
+            "detailedDescription": "无敌期间减少25%爪刀CD，提升输出频率。", // 详细效果描述（可选）
             "cooldown": 20
           }
         ]
@@ -85,6 +89,7 @@
         "name": "手型枪",
         "type": "WEAPON1", // 一武技能
         "description": "汤姆最爱的捕鼠神器。",
+        "detailedDescription": "发射手型枪水平飞出并飞回，可以抓取和眩晕老鼠。", // 详细技能描述（可选）
         "canMoveWhileUsing": false, // 释放时不可移动
         "canUseInAir": true,
         "cancelableSkill": "可被跳跃键打断",
@@ -94,16 +99,19 @@
           {
             "level": 1,
             "description": "手型枪水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。",
+            "detailedDescription": "手型枪水平飞出、原路飞回，对命中的老鼠造成15点伤害、将其抓回并眩晕2.5秒。", // 详细效果描述（可选）
             "cooldown": 12
           },
           {
             "level": 2,
             "description": "手型枪飞行速度增加。",
+            "detailedDescription": "手型枪飞行速度大幅增加，更容易命中目标。", // 详细效果描述（可选）
             "cooldown": 12
           },
           {
             "level": 3,
             "description": "猫咪可以直接抓起被手型枪拉回并眩晕的老鼠。",
+            "detailedDescription": "猫咪可以直接抓起被手型枪拉回并眩晕的老鼠，省略平A步骤。", // 详细效果描述（可选）
             "cooldown": 12
           }
         ]
@@ -113,6 +121,7 @@
         "name": "平底锅",
         "type": "WEAPON2", // 二武技能
         "description": "挥锅攻击老鼠并打出煎蛋。",
+        "detailedDescription": "挥锅攻击附近的老鼠，造成伤害、失明和眩晕效果。", // 详细技能描述（可选）
         "canMoveWhileUsing": true,
         "canUseInAir": true,
         "cancelableSkill": "可被道具键打断",
@@ -122,16 +131,19 @@
           {
             "level": 1,
             "description": "打晕并致盲附近老鼠、降低其救援速度；也能击飞道具。",
+            "detailedDescription": "挥锅对命中的老鼠造成15点伤害、5秒失明和55%救援减速；煎蛋也会造成相同效果。", // 详细效果描述（可选）
             "cooldown": 18
           },
           {
             "level": 2,
             "description": "失明延长至7.5秒；锅命中老鼠刷新爪刀CD。",
+            "detailedDescription": "失明延长至7.5秒，锅命中老鼠时刷新爪刀冷却时间。", // 详细效果描述（可选）
             "cooldown": 18
           },
           {
             "level": 3,
             "description": "猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠。",
+            "detailedDescription": "猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠，省略平A步骤。", // 详细效果描述（可选）
             "cooldown": 18
           }
         ]
@@ -143,16 +155,19 @@
         "skillLevels": [
           {
             "level": 1,
-            "description": "对老鼠造成伤害时回复Hp并加速。"
+            "description": "对老鼠造成伤害时回复Hp并加速。",
+            "detailedDescription": "对老鼠造成伤害时，回复25Hp并获得2.6秒的9.5%加速；若伤害来自爪刀，额外回复25Hp。" // 详细效果描述（可选）
             // 被动技能没有cooldown字段，如有CD则写在描述里
           },
           {
             "level": 2,
-            "description": "手握老鼠时依然可以攻击"
+            "description": "手握老鼠时依然可以攻击",
+            "detailedDescription": "手握老鼠时依然可以攻击，并可触发蓄势、击晕等效果。" // 详细效果描述（可选）
           },
           {
             "level": 3,
-            "description": "对老鼠造成伤害时，给予3秒沉默。"
+            "description": "对老鼠造成伤害时，给予3秒沉默。",
+            "detailedDescription": "对老鼠造成伤害时，给予3秒沉默，阻止其使用技能。" // 详细效果描述（可选）
           }
         ]
       }

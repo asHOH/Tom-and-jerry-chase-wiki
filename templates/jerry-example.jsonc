@@ -49,6 +49,7 @@
         "name": "鼓舞", // 技能名称
         "type": "ACTIVE", // 技能类型：ACTIVE/WEAPON1/WEAPON2/PASSIVE
         "description": "短暂为自己和附近队友提供增益。", // 技能描述
+        "detailedDescription": "短暂为自己和附近队友提供移速和跳跃高度增益，高等级还能回血和解状态。", // 详细技能描述（可选）
         "canMoveWhileUsing": true, // 释放时是否可移动
         "canUseInAir": true, // 是否可在空中释放
         "cancelableSkill": "不可被打断", // 技能是否可打断
@@ -59,16 +60,19 @@
           {
             "level": 1, // 技能等级
             "description": "鼓舞增加移速和跳跃高度。", // 该等级效果描述。一级如果没东西写的话可以留空。
+            "detailedDescription": "鼓舞增加15%移速和45%跳跃高度，持续5秒。", // 详细效果描述（可选）
             "cooldown": 18 // 冷却时间（秒）
           },
           {
             "level": 2,
             "description": "鼓舞额外回复25Hp。",
+            "detailedDescription": "鼓舞额外回复25Hp，提升续航能力。", // 详细效果描述（可选）
             "cooldown": 18
           },
           {
             "level": 3,
             "description": "鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间。",
+            "detailedDescription": "鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间，大幅提升团队生存能力。", // 详细效果描述（可选）
             "cooldown": 18
           }
         ]
@@ -78,6 +82,7 @@
         "name": "大铁锤",
         "type": "WEAPON1", // 一武技能
         "description": "举起大铁锤近身攻击。",
+        "detailedDescription": "举起大铁锤进行近身攻击，可以眩晕猫咪并叠加推速效果。", // 详细技能描述（可选）
         "canMoveWhileUsing": true, // 释放时可移动
         "canUseInAir": true,
         "cancelableSkill": "可被道具键*打断", // 星号*表示需要手里有道具才能取消后摇
@@ -87,16 +92,19 @@
           {
             "level": 1,
             "description": "眩晕猫咪3秒。",
+            "detailedDescription": "眩晕猫咪3秒，为团队创造逃脱机会。", // 详细效果描述（可选）
             "cooldown": 20
           },
           {
             "level": 2,
             "description": "额外造成65伤害；每次命中永久增加10%推速，最多叠五层。",
+            "detailedDescription": "额外造成65伤害；每次命中永久增加10%推速，最多叠五层，大幅提升推奶酪效率。", // 详细效果描述（可选）
             "cooldown": 16
           },
           {
             "level": 3,
             "description": "眩晕时间延长至4秒。",
+            "detailedDescription": "眩晕时间延长至4秒，进一步增强控制效果。", // 详细效果描述（可选）
             "cooldown": 12
           }
         ]
@@ -106,6 +114,7 @@
         "name": "鸟哨",
         "type": "WEAPON2", // 二武技能
         "description": "召唤投掷炸弹的金丝雀。",
+        "detailedDescription": "召唤投掷炸弹的金丝雀，可以对猫咪造成伤害和眩晕。", // 详细技能描述（可选）
         "canMoveWhileUsing": false, // 释放时不可移动
         "canUseInAir": true,
         "cancelableSkill": "可被道具键*打断",
@@ -115,16 +124,19 @@
           {
             "level": 1,
             "description": "炸弹造成55伤害和2秒眩晕。",
+            "detailedDescription": "金丝雀投掷的炸弹造成55伤害和2秒眩晕，有效阻止猫咪追击。", // 详细效果描述（可选）
             "cooldown": 30
           },
           {
             "level": 2,
             "description": "提高金丝雀投掷炸弹的频率。",
+            "detailedDescription": "大幅提高金丝雀投掷炸弹的频率，增强压制能力。", // 详细效果描述（可选）
             "cooldown": 30
           },
           {
             "level": 3,
             "description": "减少CD；进一步提高金丝雀投掷炸弹的频率。",
+            "detailedDescription": "减少CD至24秒；进一步提高金丝雀投掷炸弹的频率，持续压制效果更强。", // 详细效果描述（可选）
             "cooldown": 24
           }
         ]
@@ -136,16 +148,19 @@
         "skillLevels": [
           {
             "level": 1,
-            "description": "增加推速。"
+            "description": "增加推速。",
+            "detailedDescription": "增加推奶酪速度，提升团队推进效率。" // 详细效果描述（可选）
             // 被动技能没有cooldown字段，如有CD则写在描述里
           },
           {
             "level": 2,
-            "description": "搬奶酪时，增加移速和跳跃高度。"
+            "description": "搬奶酪时，增加移速和跳跃高度。",
+            "detailedDescription": "搬奶酪时，增加移速和跳跃高度，大幅提升搬运效率和灵活性。" // 详细效果描述（可选）
           },
           {
             "level": 3,
-            "description": "奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。"
+            "description": "奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。",
+            "detailedDescription": "奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤状态，并回复少量Hp，提升续航能力。" // 详细效果描述（可选）
           }
         ]
       }
