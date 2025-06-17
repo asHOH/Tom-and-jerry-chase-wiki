@@ -9,8 +9,8 @@
 # Comment edit rules
 
 - Only add comments that is extremely necessary and informative. Otherwise, do not add any comment.
-- Write features with as few net code increase as possible, elegantly.
+- Write features with least net code increase, elegantly. You should examine whether your implementation complies with conceived best practices before and after the change.
 
 # File Editing Tool Preference
 
-- ❌ NEVER use `replace_string_in_file`, `patch_edit`, `text_edit`, or any model-specific editing tool.
+- NEVER use `replace_string_in_file`, `patch_edit`, `text_edit`, or any model-specific editing tool.
