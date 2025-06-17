@@ -1,13 +1,53 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import NavigationWrapper from '@/components/NavigationWrapper';
-import { CharacterGrid, CharacterDetails } from '@/components/displays/characters';
-import { KnowledgeCardGrid, KnowledgeCardDetails } from '@/components/displays/knowledge-cards';
+// Static imports for smaller components
 import { DisclaimerText } from '@/components/DisclaimerText';
 import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
 import { factions, characters, factionCards, cards } from '@/data';
+
+// Dynamic imports for large components - code splitting
+const CharacterGrid = dynamic(
+  () => import('@/components/displays/characters').then((mod) => ({ default: mod.CharacterGrid })),
+  {
+    loading: () => <div className='animate-pulse bg-gray-200 rounded-lg h-32 w-full'></div>,
+    ssr: false,
+  }
+);
+
+const CharacterDetails = dynamic(
+  () =>
+    import('@/components/displays/characters').then((mod) => ({ default: mod.CharacterDetails })),
+  {
+    loading: () => <div className='animate-pulse bg-gray-200 rounded-lg h-64 w-full'></div>,
+    ssr: false,
+  }
+);
+
+const KnowledgeCardGrid = dynamic(
+  () =>
+    import('@/components/displays/knowledge-cards').then((mod) => ({
+      default: mod.KnowledgeCardGrid,
+    })),
+  {
+    loading: () => <div className='animate-pulse bg-gray-200 rounded-lg h-32 w-full'></div>,
+    ssr: false,
+  }
+);
+
+const KnowledgeCardDetails = dynamic(
+  () =>
+    import('@/components/displays/knowledge-cards').then((mod) => ({
+      default: mod.KnowledgeCardDetails,
+    })),
+  {
+    loading: () => <div className='animate-pulse bg-gray-200 rounded-lg h-64 w-full'></div>,
+    ssr: false,
+  }
+);
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<string | null>(null);
