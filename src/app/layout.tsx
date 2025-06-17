@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   creator: '猫和老鼠手游wiki',
   publisher: '猫和老鼠手游wiki',
   robots: 'index, follow',
+  alternates: {
+    canonical: 'https://tom-and-jerry-chase-wiki.space',
+  },
   openGraph: {
     type: 'website',
     locale: 'zh_CN',
