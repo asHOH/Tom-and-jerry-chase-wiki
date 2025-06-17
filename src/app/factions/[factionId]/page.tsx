@@ -24,9 +24,31 @@ export async function generateMetadata({
     return {};
   }
 
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${faction.name} - 猫和老鼠手游wiki`,
+    description: faction.description,
+    url: `https://tom-and-jerry-chase-wiki.space/factions/${resolvedParams.factionId}`,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: faction.characters.length,
+      itemListElement: faction.characters.map((character, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: character.id,
+        url: `https://tom-and-jerry-chase-wiki.space/characters/${character.id}`,
+      })),
+    },
+    inLanguage: 'zh-CN',
+  };
+
   return {
     alternates: {
       canonical: `https://tom-and-jerry-chase-wiki.space/factions/${resolvedParams.factionId}`,
+    },
+    other: {
+      'application/ld+json': JSON.stringify(structuredData),
     },
   };
 }

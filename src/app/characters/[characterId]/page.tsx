@@ -26,9 +26,34 @@ export async function generateMetadata({
     return {};
   }
 
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${character.id} - 猫和老鼠手游wiki`,
+    description: `${character.id}详细信息 - 属性、技能、加点、知识卡推荐`,
+    author: {
+      '@type': 'Organization',
+      name: '猫和老鼠手游wiki',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: '猫和老鼠手游wiki',
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(
+        decodedCharacterId
+      )}`,
+    },
+    inLanguage: 'zh-CN',
+  };
+
   return {
     alternates: {
       canonical: `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(decodedCharacterId)}`,
+    },
+    other: {
+      'application/ld+json': JSON.stringify(structuredData),
     },
   };
 }
@@ -41,7 +66,6 @@ export default async function CharacterPage({
 }: {
   params: Promise<{ characterId: string }>;
 }) {
-  // Use the characters data from the data files
   const resolvedParams = await params;
   const decodedCharacterId = decodeURIComponent(resolvedParams.characterId);
   const character = characters[decodedCharacterId];
@@ -50,12 +74,5 @@ export default async function CharacterPage({
     notFound();
   }
 
-  // Use the CharacterDetails component without the detailed view toggle
-  // (the toggle is only shown in SPA mode when propIsDetailedView is undefined)
-  return (
-    <CharacterDetailsClient
-      character={character}
-      isDetailedView={false} // Static page shows simple view by default
-    />
-  );
+  return <CharacterDetailsClient character={character} isDetailedView={false} />;
 }

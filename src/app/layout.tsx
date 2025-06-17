@@ -19,6 +19,23 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://tom-and-jerry-chase-wiki.space',
   },
+  other: {
+    'application/ld+json': JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: '猫和老鼠手游wiki',
+      alternateName: '猫鼠wiki',
+      description: '猫和老鼠手游wiki - 角色技能加点和知识卡效果查询网站',
+      url: 'https://tom-and-jerry-chase-wiki.space',
+      inLanguage: 'zh-CN',
+      // TODO: Implement search functionality before enabling this
+      // potentialAction: {
+      //   '@type': 'SearchAction',
+      //   target: 'https://tom-and-jerry-chase-wiki.space?search={search_term_string}',
+      //   'query-input': 'required name=search_term_string',
+      // },
+    }),
+  },
   openGraph: {
     type: 'website',
     locale: 'zh_CN',
