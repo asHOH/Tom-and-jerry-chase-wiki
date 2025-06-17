@@ -15,7 +15,7 @@ const nextConfig = {
   compress: true,
   // Performance optimizations
   experimental: {
-    optimizePackageImports: ['@/components', '@/lib', '@/data']
+    optimizePackageImports: ['@/components', '@/lib', '@/data'],
   },
   // Ensure service worker is included in static export
   webpack: (config, { isServer }) => {
@@ -26,7 +26,7 @@ const nextConfig = {
         net: false,
         tls: false,
       };
-      
+
       // Optimize chunk splitting
       config.optimization = {
         ...config.optimization,
@@ -42,9 +42,9 @@ const nextConfig = {
               name: 'common',
               minChunks: 2,
               chunks: 'all',
-            }
-          }
-        }
+            },
+          },
+        },
       };
     }
     return config;

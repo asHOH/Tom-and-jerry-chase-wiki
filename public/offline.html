@@ -1,107 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>离线 - 猫和老鼠手游wiki</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f3f4f6;
-            color: #1f2937;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .container {
-            text-align: center;
-            padding: 2rem;
-            max-width: 400px;
-        }
-        .icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            background: #3b82f6;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-        }
-        h1 {
-            margin: 0 0 1rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        p {
-            margin: 0 0 1.5rem;
-            color: #6b7280;
-            line-height: 1.6;
-        }
-        .retry-btn {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .retry-btn:hover {
-            background: #2563eb;
-        }
-        .features {
-            margin-top: 2rem;
-            text-align: left;
-        }
-        .feature {
-            display: flex;
-            align-items: center;
-            margin: 0.5rem 0;
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-        .feature::before {
-            content: "✓";
-            color: #10b981;
-            font-weight: bold;
-            margin-right: 0.5rem;
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f3f4f6;
+        color: #1f2937;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .container {
+        text-align: center;
+        padding: 2rem;
+        max-width: 400px;
+      }
+      .icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: #3b82f6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+      }
+      h1 {
+        margin: 0 0 1rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      p {
+        margin: 0 0 1.5rem;
+        color: #6b7280;
+        line-height: 1.6;
+      }
+      .retry-btn {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .retry-btn:hover {
+        background: #2563eb;
+      }
+      .features {
+        margin-top: 2rem;
+        text-align: left;
+      }
+      .feature {
+        display: flex;
+        align-items: center;
+        margin: 0.5rem 0;
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
+      .feature::before {
+        content: '✓';
+        color: #10b981;
+        font-weight: bold;
+        margin-right: 0.5rem;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="icon">📱</div>
-        <h1>您正在离线浏览</h1>
-        <p>无法连接到互联网，但您仍可以访问已缓存的页面和数据。</p>
-        
-        <button class="retry-btn" onclick="location.reload()">重试连接</button>
-        
-        <div class="features">
-            <div class="feature">已缓存的角色数据可离线查看</div>
-            <div class="feature">知识卡信息本地存储</div>
-            <div class="feature">基本功能正常使用</div>
-        </div>
+      <div class="icon">📱</div>
+      <h1>您正在离线浏览</h1>
+      <p>无法连接到互联网，但您仍可以访问已缓存的页面和数据。</p>
+
+      <button class="retry-btn" onclick="location.reload()">重试连接</button>
+
+      <div class="features">
+        <div class="feature">已缓存的角色数据可离线查看</div>
+        <div class="feature">知识卡信息本地存储</div>
+        <div class="feature">基本功能正常使用</div>
+      </div>
     </div>
 
     <script>
-        // Auto-retry connection after 30 seconds
-        setTimeout(() => {
-            if (navigator.onLine) {
-                location.reload();
-            }
-        }, 30000);
+      // Auto-retry connection after 30 seconds
+      setTimeout(() => {
+        if (navigator.onLine) {
+          location.reload();
+        }
+      }, 30000);
 
-        // Listen for online event
-        window.addEventListener('online', () => {
-            location.reload();
-        });
+      // Listen for online event
+      window.addEventListener('online', () => {
+        location.reload();
+      });
     </script>
-</body>
+  </body>
 </html>
