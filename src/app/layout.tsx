@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
+import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { DISCLAIMER_TEXT } from '@/constants';
 import './globals.css';
@@ -97,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className='min-h-screen bg-gray-100 relative'>{children}</main>
         </ErrorBoundary>
         <PerformanceMonitor />
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );
