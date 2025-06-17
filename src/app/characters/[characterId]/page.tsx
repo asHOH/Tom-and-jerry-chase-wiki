@@ -1,5 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import { characters } from '@/data';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
 
@@ -10,6 +11,26 @@ export function generateStaticParams() {
   return Object.keys(characters).map((characterId) => ({
     characterId: encodeURIComponent(characterId),
   }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ characterId: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const decodedCharacterId = decodeURIComponent(resolvedParams.characterId);
+  const character = characters[decodedCharacterId];
+
+  if (!character) {
+    return {};
+  }
+
+  return {
+    alternates: {
+      canonical: `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(decodedCharacterId)}`,
+    },
+  };
 }
 
 // This page uses the CharacterDetails component to avoid code duplication

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import { factions, factionData } from '@/data';
 
 export const dynamic = 'force-static';
@@ -9,6 +10,25 @@ export function generateStaticParams() {
   return Object.keys(factionData).map((factionId) => ({
     factionId,
   }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ factionId: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const faction = factions[resolvedParams.factionId];
+
+  if (!faction) {
+    return {};
+  }
+
+  return {
+    alternates: {
+      canonical: `https://tom-and-jerry-chase-wiki.space/factions/${resolvedParams.factionId}`,
+    },
+  };
 }
 
 export default async function FactionPage({ params }: { params: Promise<{ factionId: string }> }) {
