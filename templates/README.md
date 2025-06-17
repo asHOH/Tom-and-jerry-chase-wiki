@@ -15,6 +15,7 @@
 ### 示例文件
 
 [tom-example.jsonc](./tom-example.jsonc) - 汤姆角色完整示例
+
 [jerry-example.jsonc](./jerry-example.jsonc) - 杰瑞角色完整示例
 
 ## 填写说明
@@ -43,6 +44,7 @@
 ## 定位
 
 **老鼠**：奶酪、干扰、辅助、救援、破局、砸墙、后期
+
 **猫咪**：进攻、防守、追击、打架、速通、后期、翻盘
 
 ## 猫移速
