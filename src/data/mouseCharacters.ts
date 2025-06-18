@@ -201,28 +201,30 @@ export const mouseCharacters: Record<string, Character> = {
       {
         tagName: '奶酪',
         isMinor: false,
-        description: '侦探杰瑞有着全鼠方最高的基础推速。',
+        description: '拥有鼠方全角色第一的基础推速。',
         additionalDescription: '烟雾弹能进一步提高推速。',
       },
       {
         tagName: '破局',
-        isMinor: false,
-        description: '侦探杰瑞的烟雾弹能使鼠方快速推完最后一块奶酪，克制大多数守奶酪的猫咪。',
-        additionalDescription: '墙缝期时，烟雾弹也有着很强的干扰能力，尤其是阻止猫咪修墙。',
+        isMinor: true,
+        description:
+          '烟雾弹的沉默和巨额推速加成能使鼠方快速推完最后一块奶酪，克制大多数守奶酪的猫咪。',
+        additionalDescription:
+          '墙缝期时，烟雾弹也有着很强的干扰能力，尤其是阻止猫咪修墙。长时间的隐身也为烟雾弹的释放提供了保障。',
       },
     ],
 
     skillAllocations: [
       {
         id: '烟雾弹',
-        pattern: '12212100-0',
+        pattern: '12[12]21000',
         weaponType: 'weapon1',
-        description: '',
+        description: '四级一般点二级隐身；如果需要团推且猫不在附近，可以先点二级烟雾弹。',
         additionaldescription: '',
       },
       {
         id: '视觉干扰器',
-        pattern: '13131300-0',
+        pattern: '131313000',
         weaponType: 'weapon2',
         description: '',
         additionaldescription: '',
@@ -234,29 +236,29 @@ export const mouseCharacters: Record<string, Character> = {
         id: '侦探杰瑞-active',
         name: '隐身',
         type: 'ACTIVE',
-        description: '进入隐身状态；隐身状态中移速提升。',
-        detailedDescription: '进入隐身状态；隐身状态中移速提升15%。',
+        description: '进入隐身状态，期间移速提升。',
+        detailedDescription: '进入隐身状态，期间移速提升15%。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可打断',
+        cancelableSkill: '不可打断', // 前摇1.9s
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
             level: 1,
             description: '隐身状态中使用道具或交互会显形。',
-            detailedDescription: '隐身持续6秒；隐身状态中使用道具或交互会显形。',
+            detailedDescription: '隐身持续6秒；期间使用道具或交互会显形。',
             cooldown: 20,
           },
           {
             level: 2,
-            description: '隐身持续更久；隐身状态中使用道具和交互不会显形。',
-            detailedDescription: '隐身持续12秒；隐身状态中使用道具和交互不会显形。',
+            description: '隐身持续更久；期间使用道具和交互不会显形。',
+            detailedDescription: '隐身持续12秒；期间使用道具和交互不会显形。',
             cooldown: 20,
           },
           {
             level: 3,
-            description: '隐身持续更久；隐身状态中持续恢复Hp。',
-            detailedDescription: '隐身持续15秒；隐身状态中持续以3.33/s恢复Hp。',
+            description: '隐身持续更久；期间持续恢复Hp。',
+            detailedDescription: '隐身持续15秒；期间额外以1.67/s恢复Hp。', //FIXME: not sure about the recovery rate
             cooldown: 20,
           },
         ],
@@ -265,23 +267,23 @@ export const mouseCharacters: Record<string, Character> = {
         id: '侦探杰瑞-weapon1',
         name: '烟雾弹',
         type: 'WEAPON1',
-        description: '引爆烟雾弹遮挡猫的视野。在烟雾中猫无法查看小地图。',
+        description: '引爆烟雾弹遮挡猫的视野。在烟雾中猫咪无法查看小地图。',
         detailedDescription:
-          '引爆烟雾弹遮挡猫的视野。在烟雾中猫无法查看小地图，此效果可以被一层护盾抵消。',
+          '引爆烟雾弹遮挡猫的视野。在烟雾中猫咪无法查看小地图，此效果可以被一层护盾抵消。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可打断',
+        cancelableSkill: '不可打断', // 前摇0.5s，后摇1.5s，引爆的前0.7s技能贴图由完全不透明淡化至半透明状态。烟雾弹持续4.8s，随后播放0.5s的消失动画
         cancelableAftercast: '不可取消',
         skillLevels: [
           {
             level: 1,
-            description: '引爆烟雾弹。',
-            detailedDescription: '引爆烟雾弹，烟雾持续4秒。', // FIXME: not sure about the duration
+            description: '',
+            detailedDescription: '烟雾持续4.8秒。', // FIXME: not sure about the duration
             cooldown: 35,
           },
           {
             level: 2,
-            description: '老鼠在烟雾范围内会提升移速、跳跃高度和推速。',
+            description: '老鼠在烟雾范围内提升移速、跳跃高度和推速。',
             detailedDescription:
               '老鼠在烟雾范围内移速提升20%，跳跃高度提升50%，推速固定提升5.75%/s。',
             cooldown: 35,
@@ -301,15 +303,18 @@ export const mouseCharacters: Record<string, Character> = {
         name: '视觉干扰器',
         type: 'WEAPON2',
         description: '投掷干扰器，落地后对范围内的友方施加短暂的隐身效果。',
-        detailedDescription: '投掷干扰器，落地后对范围内的友方施加3.5秒隐身效果。',
+        detailedDescription:
+          '以道具形式投掷干扰器，落地或碰到墙壁后对范围内的友方施加3.5秒隐身效果。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被打断', // FIXME: not sure
+        cancelableSkill: '可被打断', // FIXME: supplement this 投掷前摇0.3s；技能触发后持续存在1s。
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
             level: 1,
-            description: '投掷干扰器，除移动和跳跃外的交互行为将移除该隐身效果。',
+            description: '除移动和跳跃外的交互行为将移除该隐身效果。',
+            detailedDescription:
+              '除移动和跳跃外的交互行为将移除该隐身效果。干扰器在技能触发后会持续存在1秒。',
             cooldown: 20,
           },
           {
@@ -335,7 +340,8 @@ export const mouseCharacters: Record<string, Character> = {
           {
             level: 1,
             description: '每隔一段时间，在小地图上感知猫的位置。',
-            detailedDescription: '每隔45秒，在小地图上感知猫的位置，持续3秒。',
+            detailedDescription:
+              '每隔45秒，在小地图上感知猫的位置，持续3秒。升级该技能时直接进入冷却，不触发效果。',
           },
           {
             level: 2,
