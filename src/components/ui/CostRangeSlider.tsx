@@ -9,6 +9,8 @@ interface CostRangeSliderProps {
   className?: string;
 }
 
+type DraggedHandle = 'min' | 'max' | null;
+
 export default function CostRangeSlider({
   min,
   max,
@@ -17,9 +19,9 @@ export default function CostRangeSlider({
   className = '',
 }: CostRangeSliderProps) {
   const [minValue, maxValue] = value;
-  const [isDragging, setIsDragging] = useState<'min' | 'max' | null>(null);
-  const [lastMouseX, setLastMouseX] = useState<number>(0);
+  const [draggedHandle, setDraggedHandle] = useState<DraggedHandle>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
+
   const getColorForCost = useCallback((cost: number) => {
     const colors = getCardCostColors(cost);
     return colors.backgroundColor;
@@ -39,62 +41,33 @@ export default function CostRangeSlider({
 
   const updateValueFromMouseEvent = useCallback(
     (e: MouseEvent) => {
-      if (!sliderRef.current || !isDragging) return;
+      if (!sliderRef.current || draggedHandle === null) return;
 
       const rect = sliderRef.current.getBoundingClientRect();
       const percentage = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
       const newValue = Math.round(min + percentage * (max - min));
 
-      // Track mouse movement direction
-      const isMovingRight = e.clientX > lastMouseX;
-      setLastMouseX(e.clientX);
-
-      // Handle overlap logic - when handles overlap, choose based on drag direction
-      if (minValue === maxValue && isDragging === 'min') {
-        // When dragging from overlapped position, choose handle based on direction
-        if (isMovingRight) {
-          // Moving right - switch to max handle to increase range
-          setIsDragging('max');
-          const newMax = Math.max(newValue, minValue);
-          onChange([minValue, newMax]);
-        } else {
-          // Moving left - keep min handle to decrease lower bound
-          const newMin = Math.min(newValue, maxValue);
-          onChange([newMin, maxValue]);
-        }
-      } else if (minValue === maxValue && isDragging === 'max') {
-        // When dragging from overlapped position, choose handle based on direction
-        if (isMovingRight) {
-          // Moving right - keep max handle to increase upper bound
-          const newMax = Math.max(newValue, minValue);
-          onChange([minValue, newMax]);
-        } else {
-          // Moving left - switch to min handle to decrease range
-          setIsDragging('min');
-          const newMin = Math.min(newValue, maxValue);
-          onChange([newMin, maxValue]);
-        }
-      } else {
-        // Normal case - no overlap
-        if (isDragging === 'min') {
-          const newMin = Math.min(newValue, maxValue);
-          onChange([newMin, maxValue]);
-        } else {
-          const newMax = Math.max(newValue, minValue);
-          onChange([minValue, newMax]);
-        }
+      // Update only the dragged handle, keep the other handle fixed
+      if (draggedHandle === 'min') {
+        // Dragging the min handle: update min, keep max fixed, ensure min ≤ max
+        const newMin = Math.min(newValue, maxValue);
+        onChange([newMin, maxValue]);
+      } else if (draggedHandle === 'max') {
+        // Dragging the max handle: update max, keep min fixed, ensure min ≤ max
+        const newMax = Math.max(newValue, minValue);
+        onChange([minValue, newMax]);
       }
     },
-    [isDragging, min, max, minValue, maxValue, onChange, lastMouseX]
+    [draggedHandle, min, max, minValue, maxValue, onChange]
   );
-  const handleMouseDown = useCallback((handle: 'min' | 'max', e: React.MouseEvent) => {
-    setIsDragging(handle);
-    setLastMouseX(e.clientX);
+
+  const handleMouseDown = useCallback((handle: DraggedHandle) => {
+    setDraggedHandle(handle);
   }, []);
 
   // Handle document-level mouse events when dragging
   useEffect(() => {
-    if (!isDragging) return;
+    if (draggedHandle === null) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       e.preventDefault();
@@ -102,7 +75,7 @@ export default function CostRangeSlider({
     };
 
     const handleMouseUpGlobal = () => {
-      setIsDragging(null);
+      setDraggedHandle(null);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -116,9 +89,10 @@ export default function CostRangeSlider({
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
     };
-  }, [isDragging, updateValueFromMouseEvent]);
+  }, [draggedHandle, updateValueFromMouseEvent]);
 
   const getPositionPercentage = (cost: number) => ((cost - min) / (max - min)) * 100;
+
   return (
     <div className={`relative w-full ${className}`}>
       <div ref={sliderRef} className='relative w-full h-8'>
@@ -135,7 +109,8 @@ export default function CostRangeSlider({
               />
             );
           })}
-        </div>{' '}
+        </div>
+
         {/* Min handle */}
         <div
           className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10'
@@ -144,12 +119,13 @@ export default function CostRangeSlider({
             backgroundColor: getCardCostColors(minValue).backgroundColor,
             borderColor: getCardCostColors(minValue).color,
           }}
-          onMouseDown={(e) => handleMouseDown('min', e)}
+          onMouseDown={() => handleMouseDown('min')}
         >
           <div className='absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap'>
             {minValue}费
           </div>
-        </div>{' '}
+        </div>
+
         {/* Max handle */}
         <div
           className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10'
@@ -158,7 +134,7 @@ export default function CostRangeSlider({
             backgroundColor: getCardCostColors(maxValue).backgroundColor,
             borderColor: getCardCostColors(maxValue).color,
           }}
-          onMouseDown={(e) => handleMouseDown('max', e)}
+          onMouseDown={() => handleMouseDown('max')}
         >
           <div className='absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap'>
             {maxValue}费
