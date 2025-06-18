@@ -39,7 +39,8 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
         </p>
         {/* Rank Filter Controls */}
         <div className='flex justify-center items-center gap-4 mt-8'>
-          <span className='text-lg font-medium text-gray-700'>等级筛选:</span>
+          <span className='text-lg font-medium text-gray-700 hidden sm:inline'>等级筛选:</span>
+          <span className='text-lg font-medium text-gray-700 sm:hidden'>筛选:</span>
           <div className='flex gap-2'>
             {RANK_OPTIONS.map((rank) => {
               const rankColors = getCardRankColors(rank, false);
@@ -85,8 +86,8 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
           </div>
         </div>
         {/* Cost Filter Controls */}
-        <div className='flex flex-col items-center gap-4 mt-4'>
-          <span className='text-lg font-medium text-gray-700'>费用筛选:</span>
+        <div className='flex flex-col sm:flex-row sm:justify-center items-center gap-4 mt-4'>
+          <span className='text-lg font-medium text-gray-700 hidden sm:inline'>费用筛选:</span>
           <div className='w-full max-w-md'>
             <CostRangeSlider
               min={2}
