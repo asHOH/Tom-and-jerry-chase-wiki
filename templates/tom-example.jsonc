@@ -49,10 +49,16 @@
         "additionaldescription": "如果血量告急，也可以考虑先点一被回血。"
       }
     ],
+    "knowledgeCardGroups": [
+      // 知识卡组合推荐
+      ["S-乘胜追击", "S-击晕", "A-熊熊燃烧"],
+      ["S-乘胜追击", "A-熊熊燃烧", "A-穷追猛打", "A-心灵手巧"],
+      ["S-乘胜追击", "A-熊熊燃烧", "A-穷追猛打", "C-猫是液体", "C-狡诈"]
+    ],
     "skills": [
       // 技能列表
       {
-        "id": "tom-active", // 技能ID
+        "id": "汤姆-active", // 技能ID
         "name": "发怒冲刺", // 技能名称
         "type": "ACTIVE", // 技能类型：ACTIVE/WEAPON1/WEAPON2/PASSIVE
         "description": "解控并进入一段时间的无敌。", // 技能描述
@@ -85,7 +91,7 @@
         ]
       },
       {
-        "id": "tom-weapon1",
+        "id": "汤姆-weapon1",
         "name": "手型枪",
         "type": "WEAPON1", // 一武技能
         "description": "汤姆最爱的捕鼠神器。",
@@ -117,7 +123,7 @@
         ]
       },
       {
-        "id": "tom-weapon2",
+        "id": "汤姆-weapon2",
         "name": "平底锅",
         "type": "WEAPON2", // 二武技能
         "description": "挥锅攻击老鼠并打出煎蛋。",
@@ -149,7 +155,7 @@
         ]
       },
       {
-        "id": "tom-passive",
+        "id": "汤姆-passive",
         "name": "捕鼠专家",
         "type": "PASSIVE", // 被动技能（无冷却时间）
         "skillLevels": [

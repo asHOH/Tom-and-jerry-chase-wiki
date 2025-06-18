@@ -42,10 +42,15 @@
         "additionaldescription": ""
       }
     ],
+    "knowledgeCardGroups": [
+      // 知识卡组合推荐
+      ["S-铁血", "S-护佑", "S-回家", "C-救救我"],
+      ["S-铁血", "S-舍己", "A-逃窜", "C-不屈", "C-救救我"]
+    ],
     "skills": [
       // 技能列表
       {
-        "id": "jerry-active", // 技能ID
+        "id": "杰瑞-active", // 技能ID
         "name": "鼓舞", // 技能名称
         "type": "ACTIVE", // 技能类型：ACTIVE/WEAPON1/WEAPON2/PASSIVE
         "description": "短暂为自己和附近队友提供增益。", // 技能描述
@@ -78,7 +83,7 @@
         ]
       },
       {
-        "id": "jerry-weapon1",
+        "id": "杰瑞-weapon1",
         "name": "大铁锤",
         "type": "WEAPON1", // 一武技能
         "description": "举起大铁锤近身攻击。",
@@ -110,7 +115,7 @@
         ]
       },
       {
-        "id": "jerry-weapon2",
+        "id": "杰瑞-weapon2",
         "name": "鸟哨",
         "type": "WEAPON2", // 二武技能
         "description": "召唤投掷炸弹的金丝雀。",
@@ -142,7 +147,7 @@
         ]
       },
       {
-        "id": "jerry-passive",
+        "id": "杰瑞-passive",
         "name": "奶酪好手",
         "type": "PASSIVE", // 被动技能（无冷却时间）
         "skillLevels": [
