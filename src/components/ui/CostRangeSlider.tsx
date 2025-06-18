@@ -29,10 +29,9 @@ export default function CostRangeSlider({
 
   const getSegmentStyle = useCallback(
     (segmentStart: number, segmentEnd: number) => {
-      // Use the color of the middle point of the segment
-      const midCost = Math.round((segmentStart + segmentEnd) / 2);
+      // Use the color of the start point of the segment (n for segment n to n+1)
       return {
-        backgroundColor: getColorForCost(midCost),
+        backgroundColor: getColorForCost(segmentStart),
         opacity: segmentStart >= minValue && segmentEnd <= maxValue ? 1 : 0.3,
       };
     },
@@ -91,13 +90,13 @@ export default function CostRangeSlider({
     };
   }, [draggedHandle, updateValueFromMouseEvent]);
 
-  const getPositionPercentage = (cost: number) => ((cost - min) / (max - min)) * 100;
+  const getPositionPercentage = (cost: number) => 8.5 + ((cost - min) / (max - min)) * 83;
 
   return (
     <div className={`relative w-full ${className}`}>
       <div ref={sliderRef} className='relative w-full h-8'>
         {/* Track segments with cost colors */}
-        <div className='absolute top-1/2 transform -translate-y-1/2 w-full h-2 rounded-full overflow-hidden flex'>
+        <div className='absolute top-1/2 transform -translate-y-1/2 w-[83%] left-[8.5%] h-2 rounded-full overflow-hidden flex'>
           {Array.from({ length: max - min }, (_, i) => {
             const segmentStart = min + i;
             const segmentEnd = min + i + 1;
