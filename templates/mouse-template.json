@@ -20,7 +20,7 @@
     "skillAllocations": [
       {
         "id": "武器名称",
-        "pattern": "加点序列",
+        "pattern": "加点序列（格式：012[12]3(0)-1，[]表示平行加点，()表示留加点，-表示不推荐）",
         "weaponType": "weapon1",
         "description": "加点说明",
         "additionaldescription": "额外说明"
@@ -33,35 +33,39 @@
         "additionaldescription": "额外说明"
       }
     ],
+    "knowledgeCardGroups": [
+      ["知识卡组合1卡牌1", "知识卡组合1卡牌2"],
+      ["知识卡组合2卡牌1", "知识卡组合2卡牌2", "知识卡组合2卡牌3"]
+    ],
     "skills": [
       {
         "id": "角色名-active",
         "name": "技能名称",
         "type": "ACTIVE",
         "description": "技能描述",
-        "detailedDescription": "详细技能描述（可选，如果没有则将本行删除）",
+        "detailedDescription": "详细技能描述（可选，没有则删除此行）",
         "canMoveWhileUsing": "是否可移动(true/false)",
         "canUseInAir": "是否可空中释放(true/false)",
         "cancelableSkill": "是否可打断",
         "cancelableAftercast": "后摇是否可取消",
-        "videoUrl": "技能视频链接（可选，如果没有则将本行删除）",
+        "videoUrl": "技能视频链接（可选，没有则删除此行）",
         "skillLevels": [
           {
             "level": 1,
             "description": "1级效果",
-            "detailedDescription": "1级详细效果描述（可选，如果没有则将本行删除）",
+            "detailedDescription": "1级详细效果描述（可选，没有则删除此行）",
             "cooldown": "冷却时间"
           },
           {
             "level": 2,
             "description": "2级效果",
-            "detailedDescription": "2级详细效果描述（可选，如果没有则将本行删除）",
+            "detailedDescription": "2级详细效果描述（可选，没有则删除此行）",
             "cooldown": "冷却时间"
           },
           {
             "level": 3,
             "description": "3级效果",
-            "detailedDescription": "3级详细效果描述（可选，如果没有则将本行删除）",
+            "detailedDescription": "3级详细效果描述（可选，没有则删除此行）",
             "cooldown": "冷却时间"
           }
         ]
@@ -71,29 +75,29 @@
         "name": "技能名称",
         "type": "WEAPON1",
         "description": "技能描述",
-        "detailedDescription": "详细技能描述（可选，如果没有则将本行删除）",
+        "detailedDescription": "详细技能描述（可选，没有则删除此行）",
         "canMoveWhileUsing": "是否可移动(true/false)",
         "canUseInAir": "是否可空中释放(true/false)",
         "cancelableSkill": "是否可打断",
         "cancelableAftercast": "后摇是否可取消",
-        "videoUrl": "技能视频链接（可选，如果没有则将本行删除）",
+        "videoUrl": "技能视频链接（可选，没有则删除此行）",
         "skillLevels": [
           {
             "level": 1,
             "description": "1级效果",
-            "detailedDescription": "1级详细效果描述（可选，如果没有则将本行删除）",
+            "detailedDescription": "1级详细效果描述（可选，没有则删除此行）",
             "cooldown": "冷却时间"
           },
           {
             "level": 2,
             "description": "2级效果",
-            "detailedDescription": "2级详细效果描述（可选，如果没有则将本行删除）",
+            "detailedDescription": "2级详细效果描述（可选，没有则删除此行）",
             "cooldown": "冷却时间"
           },
           {
             "level": 3,
             "description": "3级效果",
-            "detailedDescription": "3级详细效果描述（可选，如果没有则将本行删除）",
+            "detailedDescription": "3级详细效果描述（可选，没有则删除此行）",
             "cooldown": "冷却时间"
           }
         ]
@@ -103,29 +107,29 @@
         "name": "技能名称",
         "type": "WEAPON2",
         "description": "技能描述",
-        "detailedDescription": "详细技能描述（可选，如果没有则将本行删除）",
+        "detailedDescription": "详细技能描述（可选，没有则删除此行）",
         "canMoveWhileUsing": "是否可移动(true/false)",
         "canUseInAir": "是否可空中释放(true/false)",
         "cancelableSkill": "是否可打断",
         "cancelableAftercast": "后摇是否可取消",
-        "videoUrl": "技能视频链接（可选，如果没有则将本行删除）",
+        "videoUrl": "技能视频链接（可选，没有则删除此行）",
         "skillLevels": [
           {
             "level": 1,
             "description": "1级效果",
-            "detailedDescription": "1级详细效果描述（可选，如果没有则将本行删除）",
+            "detailedDescription": "1级详细效果描述（可选，没有则删除此行）",
             "cooldown": "冷却时间"
           },
           {
             "level": 2,
             "description": "2级效果",
-            "detailedDescription": "2级详细效果描述（可选，如果没有则将本行删除）",
+            "detailedDescription": "2级详细效果描述（可选，没有则删除此行）",
             "cooldown": "冷却时间"
           },
           {
             "level": 3,
             "description": "3级效果",
-            "detailedDescription": "3级详细效果描述（可选，如果没有则将本行删除）",
+            "detailedDescription": "3级详细效果描述（可选，没有则删除此行）",
             "cooldown": "冷却时间"
           }
         ]
@@ -134,22 +138,22 @@
         "id": "角色名-passive",
         "name": "技能名称",
         "type": "PASSIVE",
-        "videoUrl": "技能视频链接（可选，如果没有则将本行删除）",
+        "videoUrl": "技能视频链接（可选，没有则删除此行）",
         "skillLevels": [
           {
             "level": 1,
             "description": "1级效果",
-            "detailedDescription": "1级详细效果描述（可选，如果没有则将本行删除）"
+            "detailedDescription": "1级详细效果描述（可选，没有则删除此行）"
           },
           {
             "level": 2,
             "description": "2级效果",
-            "detailedDescription": "2级详细效果描述（可选，如果没有则将本行删除）"
+            "detailedDescription": "2级详细效果描述（可选，没有则删除此行）"
           },
           {
             "level": 3,
             "description": "3级效果",
-            "detailedDescription": "3级详细效果描述（可选，如果没有则将本行删除）"
+            "detailedDescription": "3级详细效果描述（可选，没有则删除此行）"
           }
         ]
       }
