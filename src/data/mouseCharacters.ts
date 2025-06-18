@@ -747,15 +747,14 @@ export const mouseCharacters: Record<string, Character> = {
           },
           {
             level: 2,
-            description: '金币额外造成伤害；减少CD。',
-            detailedDescription: '金币额外造成55点伤害（增伤后）；减少CD。',
+            description: '减少CD。',
             cooldown: 15,
           },
           {
             level: 3,
             description: '金币对猫咪造成2次伤害和控制效果。',
             detailedDescription:
-              '金币对猫咪造成2次伤害和控制效果，一共造成99点伤害，但最多破一层盾。',
+              '金币对猫咪造成2次伤害和控制效果，每次效果55点伤害（增伤后），实际总共99点伤害；但最多破一层盾。',
             cooldown: 15,
           },
         ],
