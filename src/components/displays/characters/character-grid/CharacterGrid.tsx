@@ -3,6 +3,7 @@ import CharacterDisplay from './CharacterDisplay';
 import { FactionCharactersProps } from '@/lib/types';
 import { PositioningTagName } from '@/data';
 import { useFilterState } from '@/lib/filterUtils';
+import { getPositioningTagColors } from '@/lib/design-tokens';
 
 export default function CharacterGrid({ faction, onSelectCharacter }: FactionCharactersProps) {
   const {
@@ -45,20 +46,24 @@ export default function CharacterGrid({ faction, onSelectCharacter }: FactionCha
         <span className='text-lg font-medium text-gray-700'>定位筛选:</span>
         <div className='flex gap-2'>
           {uniquePositioningTags.map((tag) => {
+            const tagColors = getPositioningTagColors(
+              tag,
+              false,
+              false,
+              faction.id as 'cat' | 'mouse'
+            );
             const isActive = hasPositioningTagFilter(tag);
+
             const buttonStyle = isActive
               ? {
+                  ...tagColors,
                   padding: '8px 12px',
                   borderRadius: '8px',
-                  borderWidth: '1px',
-                  borderStyle: 'solid',
+                  border: 'none',
                   cursor: 'pointer',
                   fontWeight: '500',
                   transition: 'all 0.2s ease',
                   fontSize: '14px',
-                  backgroundColor: '#3b82f6', // blue-500
-                  color: '#ffffff', // white
-                  borderColor: '#2563eb', // blue-600
                 }
               : {
                   padding: '8px 12px',

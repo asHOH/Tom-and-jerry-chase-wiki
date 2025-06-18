@@ -57,7 +57,7 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
           <span className='text-lg font-medium text-gray-700'>等级筛选:</span>
           <div className='flex gap-2'>
             {RANK_OPTIONS.map((rank) => {
-              const rankColors = getCardRankColors(rank, true);
+              const rankColors = getCardRankColors(rank, false);
               const isActive = hasRankFilter(rank);
 
               const buttonStyle = isActive
@@ -65,8 +65,7 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
                     ...rankColors,
                     padding: '8px 12px',
                     borderRadius: '8px',
-                    borderWidth: '1px',
-                    borderStyle: 'solid',
+                    border: 'none',
                     cursor: 'pointer',
                     fontWeight: '500',
                     transition: 'all 0.2s ease',
@@ -110,15 +109,13 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
                 ? {
                     padding: '8px 12px',
                     borderRadius: '8px',
-                    borderWidth: '1px',
-                    borderStyle: 'solid',
+                    border: 'none',
                     cursor: 'pointer',
                     fontWeight: '500',
                     transition: 'all 0.2s ease',
                     fontSize: '14px',
                     backgroundColor: '#3b82f6', // blue-500
                     color: '#ffffff', // white
-                    borderColor: '#2563eb', // blue-600
                   }
                 : {
                     padding: '8px 12px',
