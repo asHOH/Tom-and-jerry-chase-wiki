@@ -108,7 +108,7 @@ export const designTokens = {
       },
       medium: {
         text: '#ea580c', // orange-600
-        background: '#fef3e2', // orange-75 (between orange-50 and orange-100)
+        background: '#fee8d3', // orange-85
         border: '#fdba74', // orange-300
       },
       low: {
