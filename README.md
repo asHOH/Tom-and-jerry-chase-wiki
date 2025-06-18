@@ -117,8 +117,6 @@ npm run dev
 **macOS/Linux (Bash):**
 
 ```bash
-# 自动检查所有项目要求，如代码格式、规范、编译和构建
-# 如果发现 Prettier 格式问题，会提示是否自动修复
 ./test-github-workflows.bash
 ```
 
