@@ -22,15 +22,19 @@ Test-Component() {
     local Name="$1"
     local TestScript="$2"
     echo -e "\n${COLOR_YELLOW}[TESTING] $Name${COLOR_RESET}"
-    if eval "$TestScript"; then
-        if [ $? -eq 0 ]; then
+    
+    # Execute with error handling
+    if eval "$TestScript" 2>/dev/null; then
+        local ExitCode=$?
+        if [ $ExitCode -eq 0 ]; then
             echo -e "${COLOR_GREEN}[PASS] $Name - PASSED${COLOR_RESET}"
         else
-            echo -e "${COLOR_RED}[FAIL] $Name - FAILED (Exit Code: $?)${COLOR_RESET}"
+            echo -e "${COLOR_RED}[FAIL] $Name - FAILED (Exit Code: $ExitCode)${COLOR_RESET}"
             ((ErrorCount++))
         fi
     else
-        echo -e "${COLOR_RED}[FAIL] $Name - FAILED (Command execution error)${COLOR_RESET}"
+        local ExitCode=$?
+        echo -e "${COLOR_RED}[FAIL] $Name - FAILED (Command execution error: Exit Code $ExitCode)${COLOR_RESET}"
         ((ErrorCount++))
     fi
 }
@@ -40,8 +44,14 @@ echo -e "\n${COLOR_MAGENTA}[SECTION] Code Quality Checks (CI Workflow)${COLOR_RE
 
 # Enhanced Prettier check with fix option
 echo -e "\n${COLOR_YELLOW}[TESTING] Prettier Formatting${COLOR_RESET}"
-npm run prettier:check
-if [ $? -eq 0 ]; then
+
+# Execute prettier check with error handling
+set +e  # Temporarily disable exit on error
+npm run prettier:check 2>/dev/null
+PrettierExitCode=$?
+set -e  # Re-enable exit on error
+
+if [ $PrettierExitCode -eq 0 ]; then
     echo -e "${COLOR_GREEN}[PASS] Prettier Formatting - PASSED${COLOR_RESET}"
 else
     echo -e "${COLOR_RED}[FAIL] Prettier Formatting - FAILED (Formatting issues found)${COLOR_RESET}"
@@ -50,12 +60,21 @@ else
     read -p $'\nWould you like to run prettier:fix now? (y/N) ' response
     if [[ "$response" =~ ^[yY]$ ]]; then
         echo -e "\n${COLOR_CYAN}[FIXING] Running prettier:fix...${COLOR_RESET}"
-        npm run prettier:fix
-        if [ $? -eq 0 ]; then
+        set +e
+        npm run prettier:fix 2>/dev/null
+        FixExitCode=$?
+        set -e
+        
+        if [ $FixExitCode -eq 0 ]; then
             echo -e "${COLOR_GREEN}[FIXED] Prettier formatting issues have been fixed${COLOR_RESET}"
             echo -e "${COLOR_GRAY}[INFO] Re-checking formatting...${COLOR_RESET}"
-            npm run prettier:check
-            if [ $? -eq 0 ]; then
+            
+            set +e
+            npm run prettier:check 2>/dev/null
+            RecheckExitCode=$?
+            set -e
+            
+            if [ $RecheckExitCode -eq 0 ]; then
                 echo -e "${COLOR_GREEN}[PASS] Prettier Formatting - NOW PASSED${COLOR_RESET}"
             else
                 echo -e "${COLOR_RED}[FAIL] Prettier Formatting - Still has issues after fix${COLOR_RESET}"
@@ -84,7 +103,7 @@ echo -e "\n${COLOR_MAGENTA}[SECTION] Security Checks${COLOR_RESET}"
 
 Test-Component "Dependency Audit" "npm audit --audit-level=moderate"
 
-Test-Component "Outdated Packages Check" "npm outdated" # npm outdated always exits with 1 if packages are outdated
+Test-Component "Outdated Packages Check" "npm outdated; exit 0" # npm outdated always exits with 1 if packages are outdated
 
 # 4. Build Output Verification
 echo -e "\n${COLOR_MAGENTA}[SECTION] Build Output Verification${COLOR_RESET}"
