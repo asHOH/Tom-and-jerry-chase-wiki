@@ -76,7 +76,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
         <meta name='referrer' content='strict-origin-when-cross-origin' />
         {/* Preload critical resources */}
-        <link rel='preload' href='/icon.png' as='image' type='image/png' />
         <link rel='preload' href='/images/icons/cat faction.png' as='image' type='image/png' />
         <link rel='preload' href='/images/icons/mouse faction.png' as='image' type='image/png' />
         <link
