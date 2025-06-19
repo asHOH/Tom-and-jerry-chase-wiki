@@ -214,6 +214,16 @@ button.faction-button:hover {
 }
 
 /* Offline indicator styles */
+.offline-banner {
+  top: 60px; /* Position below navigation bar */
+}
+
+@media (max-width: 640px) {
+  .offline-banner {
+    top: 60px; /* Same positioning on mobile */
+  }
+}
+
 body.offline-banner-visible main {
   padding-top: 5.5rem; /* Account for nav bar (60px) + offline banner (2.5rem) */
 }

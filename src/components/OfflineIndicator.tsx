@@ -75,12 +75,9 @@ export const OfflineIndicator: React.FC = () => {
       {' '}
       {/* Persistent offline indicator - positioned below navigation bar */}
       {!isOnline && (
-        <div
-          className='fixed left-0 right-0 bg-orange-500 text-white px-4 py-2 text-sm font-medium z-[9998]'
-          style={{ top: '60px' }}
-        >
+        <div className='fixed left-0 right-0 bg-gray-600 text-gray-100 px-4 py-2 text-sm font-medium z-[9998] offline-banner'>
           <div className='flex items-center justify-center space-x-2'>
-            <div className='w-2 h-2 bg-white rounded-full animate-pulse'></div>
+            <div className='w-2 h-2 bg-gray-300 rounded-full animate-pulse'></div>
             <span>您正在离线浏览 - 仅显示已缓存的内容</span>
           </div>
         </div>
@@ -89,12 +86,12 @@ export const OfflineIndicator: React.FC = () => {
       {showNotification && (
         <div
           className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-[10000] transform transition-all duration-300 max-w-sm ${
-            isOnline ? 'bg-green-500 text-white' : 'bg-orange-500 text-white'
+            isOnline ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-100'
           }`}
         >
           <div className='flex items-center space-x-2'>
             <div
-              className={`w-2 h-2 rounded-full ${isOnline ? 'bg-white' : 'bg-white animate-pulse'}`}
+              className={`w-2 h-2 rounded-full ${isOnline ? 'bg-white' : 'bg-gray-300 animate-pulse'}`}
             ></div>
             <span className='font-medium text-sm'>
               {isOnline ? '已重新连接到网络' : '已断开网络连接'}
