@@ -42,7 +42,6 @@ export default function BaseCard({
           padding: 0,
           overflow: 'hidden',
           transition: designTokens.transitions.hover,
-          transform: 'translateZ(0)',
         };
       case 'item':
         return {

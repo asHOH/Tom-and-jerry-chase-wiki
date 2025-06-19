@@ -26,7 +26,12 @@ export default function CharacterDisplay({
       }}
       aria-label={`查看${name}角色详情`}
     >
-      <GameImage src={imageUrl} alt={`${name}角色头像`} size='CHARACTER_CARD' />
+      <GameImage
+        src={imageUrl}
+        alt={`${name}角色头像`}
+        size='CHARACTER_CARD'
+        className='hover:scale-105'
+      />
       <div className='px-6 pt-1 pb-6 text-center'>
         <h2 className='text-xl font-bold mb-2'>{name}</h2>
         {positioningTags && positioningTags.length > 0 && (
