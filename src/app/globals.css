@@ -112,6 +112,16 @@ body {
     max-width: 90vw !important;
     text-align: center !important;
   }
+
+  /* Offline banner styles */
+  .offline-banner {
+    @apply fixed top-0 left-0 right-0 bg-red-600 text-white p-4 text-center;
+    z-index: 9998;
+  }
+
+  .offline-banner.hidden {
+    @apply hidden;
+  }
 }
 
 /* Add smooth scrolling to the whole page */
@@ -121,10 +131,15 @@ html {
 
 /* Styles for content to account for fixed navbar */
 .content-container {
-  padding-top: 70px !important; /* Adjust based on your navbar height */
+  padding-top: 70px !important; /* Account for navbar height */
   margin-top: 0 !important;
   position: relative !important;
   z-index: 1 !important;
+}
+
+/* When offline banner is visible, add extra padding */
+body.offline-banner-visible .content-container {
+  padding-top: 110px !important; /* navbar (70px) + offline banner (40px) */
 }
 
 /* Faction button styles */
@@ -196,4 +211,15 @@ button.faction-button:hover {
   border-width: 0 4px 4px 4px;
   border-style: solid;
   border-color: transparent transparent rgba(75, 85, 99, 0.7) transparent;
+}
+
+/* Offline indicator styles */
+body.offline-banner-visible main {
+  padding-top: 5.5rem; /* Account for nav bar (60px) + offline banner (2.5rem) */
+}
+
+@media (max-width: 640px) {
+  body.offline-banner-visible main {
+    padding-top: 6rem; /* Slightly more padding on mobile */
+  }
 }

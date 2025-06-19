@@ -4,6 +4,7 @@ import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 import { CacheDebugPanel } from '@/components/CacheDebugPanel';
 import { VersionChecker } from '@/components/VersionChecker';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { DISCLAIMER_TEXT } from '@/constants';
 import './globals.css';
@@ -95,7 +96,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={inter.className}>
         <ErrorBoundary>
-          <main className='min-h-screen bg-gray-100 relative'>{children}</main>
+          <OfflineIndicator />
+          <main className='min-h-screen bg-gray-100 relative pt-0'>{children}</main>
         </ErrorBoundary>
         <PerformanceMonitor />
         <ServiceWorkerRegistration />
