@@ -19,6 +19,10 @@ export default function GameImage({ src, alt, size, className = '' }: GameImageP
       ? componentTokens.card.content.height
       : componentTokens.image.container.height;
 
+  // Detect if this is a cat character image for larger display
+  const isCatCharacter = src.includes('/images/cats/');
+  const maxHeight = isCatCharacter ? '90%' : '80%';
+
   return (
     <div
       className='w-full bg-gray-200 relative overflow-hidden mb-4'
@@ -36,7 +40,7 @@ export default function GameImage({ src, alt, size, className = '' }: GameImageP
           unoptimized
           style={{
             objectFit: 'contain',
-            maxHeight: '80%',
+            maxHeight: maxHeight,
             maxWidth: '100%',
             width: 'auto',
             transition: designTokens.transitions.normal,
