@@ -1,7 +1,6 @@
 {
   // 角色名
   "汤姆": {
-    "id": "汤姆", // 角色名
     "description": "全能男神汤姆，除了抓老鼠以外什么都会，杰瑞的欢喜冤家", // 角色描述，可参考游戏中的描述
     "maxHp": 255, // 健康值上限
     "attackBoost": 0, // 攻击增伤，没有则填0
@@ -58,7 +57,6 @@
     "skills": [
       // 技能列表
       {
-        "id": "汤姆-active", // 技能ID
         "name": "发怒冲刺", // 技能名称
         "type": "active", // 技能类型：active/weapon1/weapon2/passive
         "description": "解控并进入一段时间的无敌。", // 技能描述
@@ -79,23 +77,19 @@
           {
             "level": 2,
             "description": "无敌持续6.8秒。",
-            "detailedDescription": "无敌持续6.8秒，大幅提升生存和上火箭能力。", // 详细效果描述（可选）
             "cooldown": 20
           },
           {
             "level": 3,
             "description": "无敌期间减少爪刀CD。",
-            "detailedDescription": "无敌期间减少25%爪刀CD，提升输出频率。", // 详细效果描述（可选）
             "cooldown": 20
           }
         ]
       },
       {
-        "id": "汤姆-weapon1",
         "name": "手型枪",
         "type": "weapon1", // 一武技能
         "description": "汤姆最爱的捕鼠神器。",
-        "detailedDescription": "发射手型枪水平飞出并飞回，可以抓取和眩晕老鼠。", // 详细技能描述（可选）
         "canMoveWhileUsing": false, // 释放时不可移动
         "canUseInAir": true,
         "cancelableSkill": "可被跳跃键打断",
@@ -111,19 +105,16 @@
           {
             "level": 2,
             "description": "手型枪飞行速度增加。",
-            "detailedDescription": "手型枪飞行速度大幅增加，更容易命中目标。", // 详细效果描述（可选）
             "cooldown": 12
           },
           {
             "level": 3,
             "description": "猫咪可以直接抓起被手型枪拉回并眩晕的老鼠。",
-            "detailedDescription": "猫咪可以直接抓起被手型枪拉回并眩晕的老鼠，省略平A步骤。", // 详细效果描述（可选）
             "cooldown": 12
           }
         ]
       },
       {
-        "id": "汤姆-weapon2",
         "name": "平底锅",
         "type": "weapon2", // 二武技能
         "description": "挥锅攻击老鼠并打出煎蛋。",
@@ -149,13 +140,11 @@
           {
             "level": 3,
             "description": "猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠。",
-            "detailedDescription": "猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠，省略平A步骤。", // 详细效果描述（可选）
             "cooldown": 18
           }
         ]
       },
       {
-        "id": "汤姆-passive",
         "name": "捕鼠专家",
         "type": "passive", // 被动技能（无冷却时间）
         "skillLevels": [
@@ -172,8 +161,7 @@
           },
           {
             "level": 3,
-            "description": "对老鼠造成伤害时，给予3秒沉默。",
-            "detailedDescription": "对老鼠造成伤害时，给予3秒沉默，阻止其使用技能。" // 详细效果描述（可选）
+            "description": "对老鼠造成伤害时，给予3秒沉默。"
           }
         ]
       }

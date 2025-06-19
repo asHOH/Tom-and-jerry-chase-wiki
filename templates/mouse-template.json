@@ -1,6 +1,5 @@
 {
   "角色名": {
-    "id": "角色名",
     "description": "角色描述",
     "maxHp": "血量上限",
     "attackBoost": "攻击增伤",
@@ -39,7 +38,6 @@
     ],
     "skills": [
       {
-        "id": "角色名-active",
         "name": "技能名称",
         "type": "active",
         "description": "技能描述",
@@ -71,7 +69,6 @@
         ]
       },
       {
-        "id": "角色名-weapon1",
         "name": "技能名称",
         "type": "weapon1",
         "description": "技能描述",
@@ -103,7 +100,6 @@
         ]
       },
       {
-        "id": "角色名-weapon2",
         "name": "技能名称",
         "type": "weapon2",
         "description": "技能描述",
@@ -135,7 +131,6 @@
         ]
       },
       {
-        "id": "角色名-passive",
         "name": "技能名称",
         "type": "passive",
         "videoUrl": "技能视频链接（可选，没有则删除此行）",
