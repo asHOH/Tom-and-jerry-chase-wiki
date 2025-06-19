@@ -86,8 +86,10 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
           </div>
         </div>
         {/* Cost Filter Controls */}
-        <div className='flex flex-col sm:flex-row sm:justify-center items-center gap-4 mt-4'>
-          <span className='text-lg font-medium text-gray-700 hidden sm:inline'>费用筛选:</span>
+        <div className='flex flex-col sm:flex-row sm:justify-center items-start gap-4'>
+          <span className='text-lg font-medium text-gray-700 hidden sm:inline sm:mt-2'>
+            费用筛选:
+          </span>
           <div className='w-full max-w-md'>
             <CostRangeSlider
               min={2}

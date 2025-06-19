@@ -119,11 +119,7 @@ export default function CostRangeSlider({
             borderColor: getCardCostColors(minValue).color,
           }}
           onMouseDown={() => handleMouseDown('min')}
-        >
-          <div className='absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap'>
-            {minValue}费
-          </div>
-        </div>
+        />
 
         {/* Max handle */}
         <div
@@ -134,15 +130,11 @@ export default function CostRangeSlider({
             borderColor: getCardCostColors(maxValue).color,
           }}
           onMouseDown={() => handleMouseDown('max')}
-        >
-          <div className='absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap'>
-            {maxValue}费
-          </div>
-        </div>
+        />
       </div>
 
       {/* Cost labels */}
-      <div className='flex justify-between mt-2 text-xs text-gray-500'>
+      <div className='flex justify-between mt-1 text-xs text-gray-500'>
         {Array.from({ length: max - min + 1 }, (_, i) => {
           const cost = min + i;
           return (
