@@ -60,3 +60,6 @@ dist/
 .tmp/
 .temp/
 pnpm-lock.yaml
+
+# Personal git workflow helpers
+/git-helpers/

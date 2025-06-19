@@ -1,0 +1,22 @@
+#!/bin/sh
+# Post-merge hook to automatically switch back to develop branch
+# after merging develop into main
+# Only runs if user has enabled it via: git config --local hooks.autoSwitchToDevelop true
+
+# Check if auto-switch is enabled for this user
+auto_switch=$(git config --local --get hooks.autoSwitchToDevelop 2>/dev/null)
+
+if [ "$auto_switch" = "true" ]; then
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    
+    if [ "$current_branch" = "main" ]; then
+        echo "🔄 Auto-switching back to develop branch..."
+        if git checkout develop 2>/dev/null; then
+            echo "✅ Now on develop branch"
+        else
+            echo "⚠️  Could not switch to develop branch"
+        fi
+    fi
+else
+    echo "💡 Tip: Enable auto-switch with: git config --local hooks.autoSwitchToDevelop true"
+fi
