@@ -1,5 +1,6 @@
-import { Character } from './types';
 import { addSkillImageUrls } from '../lib/skillUtils';
+import { processCharacters } from '../lib/skillIdUtils';
+import type { CharacterDefinition } from './types';
 
 // Generate image URL based on character ID
 const getCatImageUrl = (characterId: string): string => {
@@ -13,10 +14,9 @@ const getCatImageUrl = (characterId: string): string => {
   }
 };
 
-export const catCharacters: Record<string, Character> = {
+const catCharacterDefinitions: Record<string, CharacterDefinition> = {
   /* ----------------------------------- 汤姆 ----------------------------------- */
   汤姆: {
-    id: '汤姆',
     description: '全能男神汤姆，除了抓老鼠以外什么都会，杰瑞的欢喜冤家',
 
     maxHp: 255,
@@ -67,9 +67,8 @@ export const catCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: '汤姆-active',
         name: '发怒冲刺',
-        type: 'ACTIVE',
+        type: 'active',
         description: '解控并进入一段时间的无敌。',
         detailedDescription:
           '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害（如仙女鼠的一星；但不会因此被击倒）和位移效果的影响（如尼宝的钩子）。若在莱恩蓝图内受到真实伤害，不免疫变线条猫。交互（如绑火箭）会被仙女鼠八星打断。无敌结束后会有2秒的10%减速（可以被护盾抵消）。',
@@ -98,9 +97,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '汤姆-weapon1',
         name: '手型枪',
-        type: 'WEAPON1',
+        type: 'weapon1',
         description: '汤姆最爱的捕鼠神器。',
         canMoveWhileUsing: false,
         canUseInAir: true,
@@ -128,15 +126,14 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '汤姆-weapon2',
         name: '平底锅',
-        type: 'WEAPON2',
+        type: 'weapon2',
         description: '挥锅攻击老鼠并打出煎蛋。',
         // detailedDescription: '挥锅攻击老鼠并打出煎蛋。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键打断',
-        cancelableAftercast: '可被道具键取消后摇',
+        cancelableAftercast: '可被道具键取消后摽',
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=172.85',
         skillLevels: [
           {
@@ -159,9 +156,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '汤姆-passive',
         name: '捕鼠专家',
-        type: 'PASSIVE',
+        type: 'passive',
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=102.4',
         skillLevels: [
           {
@@ -193,7 +189,6 @@ export const catCharacters: Record<string, Character> = {
 
   /* ----------------------------------- 布奇 ----------------------------------- */
   布奇: {
-    id: '布奇',
     description: '"流浪猫铁三角"中的老大，从街头流浪逆袭为亿万富豪',
 
     maxHp: 220,
@@ -239,9 +234,8 @@ export const catCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: '布奇-active',
         name: '横冲直撞',
-        type: 'ACTIVE',
+        type: 'active',
         description: '猛冲一段距离，冲飞道具并对老鼠造成伤害和眩晕。冲刺中可通过方向键改变方向。',
         canMoveWhileUsing: true,
         canUseInAir: true,
@@ -268,9 +262,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '布奇-weapon1',
         name: '垃圾盖',
-        type: 'WEAPON1',
+        type: 'weapon1',
         description: '小范围AOE。',
         canMoveWhileUsing: true,
         canUseInAir: true,
@@ -300,9 +293,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '布奇-weapon2',
         name: '旋转桶盖',
-        type: 'WEAPON2',
+        type: 'weapon2',
         description: '原地释放或扔出几何桶盖。',
         detailedDescription: '原地释放或扔出几何桶盖，轨迹十分独特。',
         canMoveWhileUsing: false,
@@ -331,9 +323,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '布奇-passive',
         name: '力大无穷',
-        type: 'PASSIVE',
+        type: 'passive',
         videoUrl: 'https://www.bilibili.com/video/BV1Eg41147Eo?t=83.5',
         skillLevels: [
           {
@@ -361,7 +352,6 @@ export const catCharacters: Record<string, Character> = {
 
   /* ----------------------------------- 托普斯 ---------------------------------- */
   托普斯: {
-    id: '托普斯',
     description: '"流浪猫铁三角"的一员，呆萌小灰猫，爱和小老鼠交朋友',
 
     maxHp: 200,
@@ -418,9 +408,8 @@ export const catCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: '托普斯-active',
         name: '双重猫格',
-        type: 'ACTIVE',
+        type: 'active',
         description:
           '释放分身。分身继承知识卡、免疫碎片和捕鼠夹、提供小地图视野，但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随。再次使用技能可与分身换位。',
         detailedDescription:
@@ -452,9 +441,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '托普斯-weapon1',
         name: '泡泡棒',
-        type: 'WEAPON1',
+        type: 'weapon1',
         description: '吹出泡泡来困住老鼠。',
         detailedDescription:
           '吹出泡泡来困住老鼠。泡泡可以被道具砸破，也会因困住的老鼠挣扎而破裂。泡泡破裂时会伤害和眩晕周围老鼠；20秒后自然消失。',
@@ -483,9 +471,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '托普斯-weapon2',
         name: '捕虫网',
-        type: 'WEAPON2',
+        type: 'weapon2',
         description:
           '将面前的一只老鼠抓到网中；再次使用技能将老鼠扔出，造成伤害和眩晕。扔出的老鼠会被直接绑上途经的火箭。',
         detailedDescription:
@@ -516,9 +503,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '托普斯-passive',
         name: '元气满满',
-        type: 'PASSIVE',
+        type: 'passive',
         skillLevels: [
           {
             level: 1,
@@ -543,7 +529,6 @@ export const catCharacters: Record<string, Character> = {
   },
   /* ----------------------------------- 苏蕊 ---------------------------------- */
   苏蕊: {
-    id: '苏蕊',
     description:
       '苏蕊是最受欢迎的啦啦队队长，充满活力的她，脸上时时刻刻都洋溢着灿烂的笑容。她热爱生活，享受美食，认识她的猫和老鼠都会被她吸引。',
 
@@ -588,9 +573,8 @@ export const catCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: '苏蕊-active',
         name: '律动时间',
-        type: 'ACTIVE',
+        type: 'active',
         description:
           '苏蕊随着音乐舞动。舞动开始将恢复一定Hp，免疫部分眩晕效果，爪击将替换为以苏蕊为中心周边更大范围的舞动亮相，冷却时间比爪击更久，舞动时将每隔一段时间在中心出现爱心提示，在爱心提示出现时点击技能按钮将恢复Hp，并获得移动速度和攻击力提升，在舞动过程中与敌方虚弱老鼠接触时，将会使其自主跟随苏蕊，跟随将持续30秒，期间遇到火箭会立刻绑上，舞动会持续较长时间。',
         detailedDescription:
@@ -622,9 +606,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '苏蕊-weapon1',
         name: '瑜伽球',
-        type: 'WEAPON1',
+        type: 'weapon1',
         description: '投掷出瑜伽球并控制它膨胀，膨胀时使老鼠眩晕并弹飞。',
         detailedDescription:
           '苏蕊投掷出瑜伽球，在瑜伽球飞行过程中苏蕊可再次点击技能键使瑜伽球膨胀，当膨胀时接触到敌方老鼠，则会造成30点伤害、1.5秒眩晕并弹飞，瑜伽球可积累2次使用机会。',
@@ -652,9 +635,8 @@ export const catCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '苏蕊-passive',
         name: '少女心',
-        type: 'PASSIVE',
+        type: 'passive',
         skillLevels: [
           {
             level: 1,
@@ -682,6 +664,9 @@ export const catCharacters: Record<string, Character> = {
     ],
   },
 };
+
+// Process character definitions to assign IDs and process skills
+export const catCharacters = processCharacters(catCharacterDefinitions);
 
 // Generate characters with faction ID and image URLs applied in bulk
 export const catCharactersWithImages = Object.fromEntries(

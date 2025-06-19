@@ -115,7 +115,7 @@ describe('CharacterDetails', () => {
     {
       id: 'test-active',
       name: '测试主动技能',
-      type: 'ACTIVE',
+      type: 'active',
       description: '主动技能描述',
       detailedDescription: '详细主动技能描述',
       skillLevels: [
@@ -134,7 +134,7 @@ describe('CharacterDetails', () => {
     {
       id: 'test-passive',
       name: '测试被动技能',
-      type: 'PASSIVE',
+      type: 'passive',
       skillLevels: [
         {
           level: 1,

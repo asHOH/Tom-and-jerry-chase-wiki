@@ -1,5 +1,6 @@
-import { Character } from './types';
 import { addSkillImageUrls } from '../lib/skillUtils';
+import { processCharacters } from '../lib/skillIdUtils';
+import type { CharacterDefinition } from './types';
 
 // Generate image URL based on character ID
 const getMouseImageUrl = (characterId: string): string => {
@@ -13,10 +14,9 @@ const getMouseImageUrl = (characterId: string): string => {
   }
 };
 
-export const mouseCharacters: Record<string, Character> = {
+const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
   杰瑞: {
-    id: '杰瑞',
     description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家',
 
     maxHp: 99,
@@ -61,9 +61,8 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: '杰瑞-active',
         name: '鼓舞',
-        type: 'ACTIVE',
+        type: 'active',
         description: '短暂为自己和附近队友提供增益。',
         // detailedDescription: '短暂为自己和附近队友提供增益。',
         canMoveWhileUsing: true,
@@ -91,9 +90,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '杰瑞-weapon1',
         name: '大铁锤',
-        type: 'WEAPON1',
+        type: 'weapon1',
         description: '举起大铁锤近身攻击。',
         // detailedDescription: '举起大铁锤近身攻击。',
         canMoveWhileUsing: true,
@@ -120,9 +118,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '杰瑞-weapon2',
         name: '鸟哨',
-        type: 'WEAPON2',
+        type: 'weapon2',
         description: '召唤投掷炸弹的金丝雀。',
         detailedDescription:
           '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。猫咪被金丝雀的炸弹命中后将对其短暂免疫。',
@@ -153,9 +150,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '杰瑞-passive',
         name: '奶酪好手',
-        type: 'PASSIVE',
+        type: 'passive',
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=36',
         skillLevels: [
           {
@@ -185,7 +181,6 @@ export const mouseCharacters: Record<string, Character> = {
 
   /* ----------------------------------- 侦探杰瑞 ----------------------------------- */
   侦探杰瑞: {
-    id: '侦探杰瑞',
     description:
       '谨慎机警的侦探杰瑞，来自19世纪末的英国，为了更快地抓到凶手，他极善于隐藏自己的踪迹。',
 
@@ -233,9 +228,8 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: '侦探杰瑞-active',
         name: '隐身',
-        type: 'ACTIVE',
+        type: 'active',
         description: '进入隐身状态，期间移速提升。',
         detailedDescription: '进入隐身状态，期间移速提升15%。',
         canMoveWhileUsing: false,
@@ -264,9 +258,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '侦探杰瑞-weapon1',
         name: '烟雾弹',
-        type: 'WEAPON1',
+        type: 'weapon1',
         description: '引爆烟雾弹遮挡猫的视野。在烟雾中猫咪无法查看小地图。',
         detailedDescription:
           '引爆烟雾弹遮挡猫的视野。在烟雾中猫咪无法查看小地图，此效果可以被一层护盾抵消。',
@@ -299,9 +292,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '侦探杰瑞-weapon2',
         name: '视觉干扰器',
-        type: 'WEAPON2',
+        type: 'weapon2',
         description: '投掷干扰器，落地后对范围内的友方施加短暂的隐身效果。',
         detailedDescription:
           '以道具形式投掷干扰器，落地或碰到墙壁后对范围内的友方施加3.5秒隐身效果。',
@@ -332,9 +324,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '侦探杰瑞-passive',
         name: '胆小如鼠',
-        type: 'PASSIVE',
+        type: 'passive',
         // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=36.3',
         skillLevels: [
           {
@@ -364,7 +355,6 @@ export const mouseCharacters: Record<string, Character> = {
 
   /* ----------------------------------- 泰菲 ----------------------------------- */
   泰菲: {
-    id: '泰菲',
     description: '杰瑞的侄子，总将自己吃得圆滚滚的',
 
     maxHp: 74,
@@ -417,9 +407,8 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: '泰菲-active',
         name: '圆滚滚',
-        type: 'ACTIVE',
+        type: 'active',
         description: '向前翻滚一段距离。',
         canMoveWhileUsing: true,
         canUseInAir: true,
@@ -448,9 +437,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '泰菲-weapon1',
         name: '火箭筒',
-        type: 'WEAPON1',
+        type: 'weapon1',
         description: '发射一枚弹头，造成伤害和眩晕。',
         // detailedDescription: '发射一枚弹头。',
         canMoveWhileUsing: true,
@@ -480,9 +468,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '泰菲-weapon2',
         name: '隐形感应雷',
-        type: 'WEAPON2',
+        type: 'weapon2',
         description:
           '放下隐形感应雷。感应雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成伤害和控制。',
         detailedDescription:
@@ -513,9 +500,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '泰菲-passive',
         name: '茁壮成长',
-        type: 'PASSIVE',
+        type: 'passive',
         videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=25.85',
         skillLevels: [
           {
@@ -544,7 +530,6 @@ export const mouseCharacters: Record<string, Character> = {
 
   /* ----------------------------------- 尼宝 ----------------------------------- */
   尼宝: {
-    id: '尼宝',
     description: '爱捣蛋、爱运动的机灵鬼',
 
     maxHp: 99,
@@ -582,9 +567,8 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: '尼宝-active',
         name: '灵活跳跃',
-        type: 'ACTIVE',
+        type: 'active',
         description: '快速向后翻滚。',
         detailedDescription: '快速向后翻滚。（不能在跳跃中释放）',
         canMoveWhileUsing: false,
@@ -616,9 +600,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '尼宝-weapon1',
         name: '尼宝的朋友',
-        type: 'WEAPON1',
+        type: 'weapon1',
         description:
           '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。',
         detailedDescription:
@@ -650,9 +633,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '尼宝-passive',
         name: '古灵精怪',
-        type: 'PASSIVE',
+        type: 'passive',
         videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=36.3',
         skillLevels: [
           {
@@ -682,7 +664,6 @@ export const mouseCharacters: Record<string, Character> = {
 
   /* ----------------------------------- 航海士杰瑞 ----------------------------------- */
   航海士杰瑞: {
-    id: '航海士杰瑞',
     description:
       '公海上向往自由的航海士杰瑞，是最强大的航海家，他浑身充满野性，常年与火炮打交道的他，善于破坏火箭。',
 
@@ -734,9 +715,8 @@ export const mouseCharacters: Record<string, Character> = {
 
     skills: [
       {
-        id: '航海士杰瑞-active',
         name: '飞翔金币',
-        type: 'ACTIVE',
+        type: 'active',
         description: '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台。',
         detailedDescription:
           '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台，对猫造成2秒眩晕。金币击中后会使猫咪短暂进入“金币免疫”状态，金币无法对此状态下的猫咪造成效果。',
@@ -766,9 +746,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '航海士杰瑞-weapon1',
         name: '火药桶',
-        type: 'WEAPON1',
+        type: 'weapon1',
         description:
           '放置一个能破坏火箭、墙缝的火药桶，火药桶爆炸后会破坏附近的火箭，并对周围角色造成伤害和眩晕。猫咪在绑老鼠前需要先修复火箭。火药桶可以被鞭炮炸飞。',
         detailedDescription:
@@ -802,9 +781,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '航海士杰瑞-weapon2',
         name: '舰艇火炮',
-        type: 'WEAPON2',
+        type: 'weapon2',
         description:
           '放置一个舰艇火炮，老鼠可以进入火炮，控制方向发射并对碰到的猫咪造成伤害与眩晕，火炮内免疫投掷物。',
         detailedDescription:
@@ -835,9 +813,8 @@ export const mouseCharacters: Record<string, Character> = {
         ],
       },
       {
-        id: '航海士杰瑞-passive',
         name: '无坚不摧',
-        type: 'PASSIVE',
+        type: 'passive',
         // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=36.3',
         skillLevels: [
           {
@@ -865,6 +842,9 @@ export const mouseCharacters: Record<string, Character> = {
     ],
   },
 };
+
+// Process character definitions to assign IDs and process skills
+export const mouseCharacters = processCharacters(mouseCharacterDefinitions);
 
 // Generate characters with faction ID and image URLs applied in bulk
 export const mouseCharactersWithImages = Object.fromEntries(

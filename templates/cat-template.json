@@ -42,7 +42,7 @@
       {
         "id": "角色名-active",
         "name": "技能名称",
-        "type": "ACTIVE",
+        "type": "active",
         "description": "技能描述",
         "detailedDescription": "详细技能描述（可选，没有则删除此行）",
         "canMoveWhileUsing": "是否可移动(true/false)",
@@ -74,7 +74,7 @@
       {
         "id": "角色名-weapon1",
         "name": "技能名称",
-        "type": "WEAPON1",
+        "type": "weapon1",
         "description": "技能描述",
         "detailedDescription": "详细技能描述（可选，没有则删除此行）",
         "canMoveWhileUsing": "是否可移动(true/false)",
@@ -106,7 +106,7 @@
       {
         "id": "角色名-weapon2",
         "name": "技能名称",
-        "type": "WEAPON2",
+        "type": "weapon2",
         "description": "技能描述",
         "detailedDescription": "详细技能描述（可选，没有则删除此行）",
         "canMoveWhileUsing": "是否可移动(true/false)",
@@ -138,7 +138,7 @@
       {
         "id": "角色名-passive",
         "name": "技能名称",
-        "type": "PASSIVE",
+        "type": "passive",
         "videoUrl": "技能视频链接（可选，没有则删除此行）",
         "skillLevels": [
           {

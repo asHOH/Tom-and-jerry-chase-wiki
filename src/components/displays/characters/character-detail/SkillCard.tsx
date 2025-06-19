@@ -12,14 +12,14 @@ interface SkillCardProps {
 
 export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCardProps) {
   const getSkillTypeLabel = (type: string) => {
-    if (isSingleWeapon && type === 'WEAPON1') {
+    if (isSingleWeapon && type === 'weapon1') {
       return '武器';
     }
     const typeMap = {
-      ACTIVE: '主动',
-      WEAPON1: '武器1',
-      WEAPON2: '武器2',
-      PASSIVE: '被动',
+      active: '主动',
+      weapon1: '武器1',
+      weapon2: '武器2',
+      passive: '被动',
     };
     return typeMap[type as keyof typeof typeMap] || '被动';
   };

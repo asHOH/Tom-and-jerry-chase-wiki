@@ -18,7 +18,3 @@
 - Write features with least net code increase
 - Ensure that your implementation complies with best practices before and after the change
 - When doing a task with multiple steps, stop and write a recommended commit message with `prefix(scope): description` after each step
-
-# File Editing Tool Preference
-
-- Avoid `replace_string_in_file`, `patch_edit`, `text_edit`, or any model-specific editing tool.

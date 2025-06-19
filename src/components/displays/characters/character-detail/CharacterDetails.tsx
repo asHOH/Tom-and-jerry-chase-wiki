@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { CharacterDetailsProps } from '@/lib/types';
+import { Skill } from '@/data/types';
 import SkillAllocationDisplay from './SkillAllocationDisplay';
 import PositioningTagsSection from './PositioningTagsSection';
 import CharacterAttributesSection from './CharacterAttributesSection';
@@ -89,16 +90,16 @@ export default function CharacterDetails({
           <div className='space-y-6'>
             {(() => {
               const weaponSkills = character.skills.filter(
-                (skill) => skill.type === 'WEAPON1' || skill.type === 'WEAPON2'
+                (skill) => skill.type === 'weapon1' || skill.type === 'weapon2'
               );
               const isSingleWeapon = weaponSkills.length === 1;
 
               return character.skills.map((skill) => (
                 <SkillCard
-                  key={skill.id}
-                  skill={skill}
+                  key={(skill as Skill).id}
+                  skill={skill as Skill}
                   isDetailed={isDetailedView}
-                  isSingleWeapon={isSingleWeapon && skill.type === 'WEAPON1'}
+                  isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
                 />
               ));
             })()}

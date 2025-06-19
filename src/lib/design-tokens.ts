@@ -517,19 +517,19 @@ export const getPositioningTagColors = (
 
 // Skill type utility functions
 export const getSkillTypeColors = (
-  skillType: '0' | '1' | '2' | '3' | 'PASSIVE' | 'ACTIVE' | 'WEAPON1' | 'WEAPON2',
+  skillType: '0' | '1' | '2' | '3' | 'passive' | 'active' | 'weapon1' | 'weapon2',
   includeBorder: boolean = false
 ) => {
   // Map skill types to design token keys
   const skillTypeMapping: Record<string, keyof typeof designTokens.colors.skillTypes> = {
     '0': 'passive',
-    PASSIVE: 'passive',
+    passive: 'passive',
     '1': 'active',
-    ACTIVE: 'active',
+    active: 'active',
     '2': 'weapon1',
-    WEAPON1: 'weapon1',
+    weapon1: 'weapon1',
     '3': 'weapon2',
-    WEAPON2: 'weapon2',
+    weapon2: 'weapon2',
   };
 
   const skillKey = skillTypeMapping[skillType];
@@ -545,17 +545,17 @@ export const getSkillTypeColors = (
 };
 
 export const getSkillTypeContainerColor = (
-  skillType: '0' | '1' | '2' | '3' | 'PASSIVE' | 'ACTIVE' | 'WEAPON1' | 'WEAPON2'
+  skillType: '0' | '1' | '2' | '3' | 'passive' | 'active' | 'weapon1' | 'weapon2'
 ): string => {
   const skillTypeMapping: Record<string, keyof typeof designTokens.colors.skillTypes> = {
     '0': 'passive',
-    PASSIVE: 'passive',
+    passive: 'passive',
     '1': 'active',
-    ACTIVE: 'active',
+    active: 'active',
     '2': 'weapon1',
-    WEAPON1: 'weapon1',
+    weapon1: 'weapon1',
     '3': 'weapon2',
-    WEAPON2: 'weapon2',
+    weapon2: 'weapon2',
   };
 
   const skillKey = skillTypeMapping[skillType];

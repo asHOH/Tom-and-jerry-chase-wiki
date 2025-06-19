@@ -38,10 +38,10 @@ describe('SkillAllocationDisplay Error Handling', () => {
   };
 
   const mockCharacterSkills = [
-    { type: 'PASSIVE' as const, name: '被动技能', imageUrl: '/passive.png' },
-    { type: 'ACTIVE' as const, name: '主动技能', imageUrl: '/active.png' },
-    { type: 'WEAPON1' as const, name: '武器1', imageUrl: '/weapon1.png' },
-    { type: 'WEAPON2' as const, name: '武器2', imageUrl: '/weapon2.png' },
+    { type: 'passive' as const, name: '被动技能', imageUrl: '/passive.png' },
+    { type: 'active' as const, name: '主动技能', imageUrl: '/active.png' },
+    { type: 'weapon1' as const, name: '武器1', imageUrl: '/weapon1.png' },
+    { type: 'weapon2' as const, name: '武器2', imageUrl: '/weapon2.png' },
   ];
 
   const defaultProps = {
@@ -127,7 +127,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
       const propsWithoutSkillImages = {
         ...defaultProps,
         characterSkills: [
-          { type: 'ACTIVE' as const, name: '主动技能' }, // No imageUrl
+          { type: 'active' as const, name: '主动技能' }, // No imageUrl
         ],
       };
 

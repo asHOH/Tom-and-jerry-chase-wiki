@@ -26,7 +26,7 @@ interface SkillAllocationDisplayProps {
   characterName: string;
   factionId: 'cat' | 'mouse';
   characterSkills: Array<{
-    type: 'ACTIVE' | 'WEAPON1' | 'WEAPON2' | 'PASSIVE';
+    type: 'active' | 'weapon1' | 'weapon2' | 'passive';
     name: string;
     imageUrl?: string;
   }>;
@@ -89,10 +89,10 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   });
 
   const skillTypeMap = {
-    '0': characterSkills.find((s) => s.type === 'PASSIVE'),
-    '1': characterSkills.find((s) => s.type === 'ACTIVE'),
-    '2': characterSkills.find((s) => s.type === 'WEAPON1'),
-    '3': characterSkills.find((s) => s.type === 'WEAPON2'),
+    '0': characterSkills.find((s) => s.type === 'passive'),
+    '1': characterSkills.find((s) => s.type === 'active'),
+    '2': characterSkills.find((s) => s.type === 'weapon1'),
+    '3': characterSkills.find((s) => s.type === 'weapon2'),
   };
 
   const renderSkillIcon = (

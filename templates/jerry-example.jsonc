@@ -52,7 +52,7 @@
       {
         "id": "杰瑞-active", // 技能ID
         "name": "鼓舞", // 技能名称
-        "type": "ACTIVE", // 技能类型：ACTIVE/WEAPON1/WEAPON2/PASSIVE
+        "type": "active", // 技能类型：active/weapon1/weapon2/passive
         "description": "短暂为自己和附近队友提供增益。", // 技能描述
         "detailedDescription": "短暂为自己和附近队友提供移速和跳跃高度增益，高等级还能回血和解状态。", // 详细技能描述（可选）
         "canMoveWhileUsing": true, // 释放时是否可移动
@@ -85,7 +85,7 @@
       {
         "id": "杰瑞-weapon1",
         "name": "大铁锤",
-        "type": "WEAPON1", // 一武技能
+        "type": "weapon1", // 一武技能
         "description": "举起大铁锤近身攻击。",
         "detailedDescription": "举起大铁锤进行近身攻击，可以眩晕猫咪并叠加推速效果。", // 详细技能描述（可选）
         "canMoveWhileUsing": true, // 释放时可移动
@@ -117,7 +117,7 @@
       {
         "id": "杰瑞-weapon2",
         "name": "鸟哨",
-        "type": "WEAPON2", // 二武技能
+        "type": "weapon2", // 二武技能
         "description": "召唤投掷炸弹的金丝雀。",
         "detailedDescription": "召唤投掷炸弹的金丝雀，可以对猫咪造成伤害和眩晕。", // 详细技能描述（可选）
         "canMoveWhileUsing": false, // 释放时不可移动
@@ -149,7 +149,7 @@
       {
         "id": "杰瑞-passive",
         "name": "奶酪好手",
-        "type": "PASSIVE", // 被动技能（无冷却时间）
+        "type": "passive", // 被动技能（无冷却时间）
         "skillLevels": [
           {
             "level": 1,

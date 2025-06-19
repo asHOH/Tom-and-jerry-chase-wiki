@@ -1,5 +1,5 @@
 import { characters, cardData, factions } from '../../data';
-import { Character, Card } from '../../data/types';
+import { Character, Card, Skill } from '../../data/types';
 
 describe('Data Validation', () => {
   describe('Characters Data', () => {
@@ -62,9 +62,9 @@ describe('Data Validation', () => {
         expect(character.skills.length).toBeGreaterThan(0);
 
         character.skills.forEach((skill) => {
-          expect(skill.id).toBeDefined();
+          expect((skill as Skill).id).toBeDefined();
           expect(skill.name).toBeDefined();
-          expect(skill.type).toMatch(/^(ACTIVE|WEAPON1|WEAPON2|PASSIVE)$/);
+          expect(skill.type).toMatch(/^(active|weapon1|weapon2|passive)$/);
           expect(Array.isArray(skill.skillLevels)).toBe(true);
           expect(skill.skillLevels.length).toBeGreaterThan(0);
         });

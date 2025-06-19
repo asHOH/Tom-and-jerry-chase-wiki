@@ -39,9 +39,45 @@ export type SkillAllocation = {
   additionaldescription?: string;
 };
 
-export type Character = {
-  id: string; // Chinese name (e.g., '汤姆')
-  factionId?: FactionId; // Optional in base definition, will be assigned in bulk
+// Skill types - both for definitions and final processed skills
+export type SkillType = 'active' | 'weapon1' | 'weapon2' | 'passive';
+
+export type SkillLevel = {
+  level: number;
+  description: string;
+  detailedDescription?: string;
+  /**
+   * @deprecated
+   */
+  damage?: string;
+  cooldown?: number; // FIXME: is this really deprecated?
+};
+
+// Raw skill definition (without ID, for character definitions)
+export type SkillDefinition = {
+  name: string;
+  type: SkillType;
+  description?: string; // Basic description (optional, especially for passive skills)
+  detailedDescription?: string; // Detailed description for detailed view
+  imageUrl?: string; // Skill icon image URL
+  videoUrl?: string; // Skill video URL (external link preferred)
+
+  // Skill usage properties
+  canMoveWhileUsing?: boolean; // 移动释放
+  canUseInAir?: boolean; // 空中释放
+  cancelableSkill?: string; // 可取消释放
+  cancelableAftercast?: string; // 可取消后摇
+
+  skillLevels: SkillLevel[];
+};
+
+// Final processed skill (with ID assigned)
+export type Skill = SkillDefinition & {
+  id: string;
+};
+
+// Character definition type (without id, for raw definitions)
+export type CharacterDefinition = {
   description: string;
   imageUrl?: string; // We'll generate it automatically
 
@@ -68,39 +104,17 @@ export type Character = {
   // Skill allocations
   skillAllocations?: SkillAllocation[];
 
-  skills: Skill[];
+  skills: SkillDefinition[];
 
   // Knowledge card suggestions
   knowledgeCardGroups: string[][];
 };
 
-export type Skill = {
-  id: string;
-  name: string;
-  type: 'ACTIVE' | 'WEAPON1' | 'WEAPON2' | 'PASSIVE';
-  description?: string; // Basic description (optional, especially for passive skills)
-  detailedDescription?: string; // Detailed description for detailed view
-  imageUrl?: string; // Skill icon image URL
-  videoUrl?: string; // Skill video URL (external link preferred)
-
-  // Skill usage properties
-  canMoveWhileUsing?: boolean; // 移动释放
-  canUseInAir?: boolean; // 空中释放
-  cancelableSkill?: string; // 可取消释放
-  cancelableAftercast?: string; // 可取消后摇
-
-  skillLevels: SkillLevel[];
-};
-
-export type SkillLevel = {
-  level: number;
-  description: string;
-  detailedDescription?: string;
-  /**
-   * @deprecated
-   */
-  damage?: string;
-  cooldown?: number; // FIXME: is this really deprecated?
+// Final processed character (with ID and processed skills)
+export type Character = CharacterDefinition & {
+  id: string; // Chinese name (e.g., '汤姆')
+  factionId?: FactionId; // Optional in base definition, will be assigned in bulk
+  skills: Skill[]; // Processed skills with IDs
 };
 
 // Card-related types

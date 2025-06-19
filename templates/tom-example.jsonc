@@ -60,7 +60,7 @@
       {
         "id": "汤姆-active", // 技能ID
         "name": "发怒冲刺", // 技能名称
-        "type": "ACTIVE", // 技能类型：ACTIVE/WEAPON1/WEAPON2/PASSIVE
+        "type": "active", // 技能类型：active/weapon1/weapon2/passive
         "description": "解控并进入一段时间的无敌。", // 技能描述
         "detailedDescription": "解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害和位移效果的影响。", // 详细技能描述（可选）
         "canMoveWhileUsing": true, // 释放时是否可移动
@@ -93,7 +93,7 @@
       {
         "id": "汤姆-weapon1",
         "name": "手型枪",
-        "type": "WEAPON1", // 一武技能
+        "type": "weapon1", // 一武技能
         "description": "汤姆最爱的捕鼠神器。",
         "detailedDescription": "发射手型枪水平飞出并飞回，可以抓取和眩晕老鼠。", // 详细技能描述（可选）
         "canMoveWhileUsing": false, // 释放时不可移动
@@ -125,7 +125,7 @@
       {
         "id": "汤姆-weapon2",
         "name": "平底锅",
-        "type": "WEAPON2", // 二武技能
+        "type": "weapon2", // 二武技能
         "description": "挥锅攻击老鼠并打出煎蛋。",
         "detailedDescription": "挥锅攻击附近的老鼠，造成伤害、失明和眩晕效果。", // 详细技能描述（可选）
         "canMoveWhileUsing": true,
@@ -157,7 +157,7 @@
       {
         "id": "汤姆-passive",
         "name": "捕鼠专家",
-        "type": "PASSIVE", // 被动技能（无冷却时间）
+        "type": "passive", // 被动技能（无冷却时间）
         "skillLevels": [
           {
             "level": 1,

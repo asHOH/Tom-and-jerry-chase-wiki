@@ -5,7 +5,7 @@ describe('skillUtils', () => {
   const mockSkill: Skill = {
     id: 'tom-active',
     name: '发怒冲刺',
-    type: 'ACTIVE',
+    type: 'active',
     description: 'Tom charges forward',
     skillLevels: [{ level: 1, description: 'Level 1 effect' }],
   };
@@ -13,7 +13,7 @@ describe('skillUtils', () => {
   const mockPassiveSkill: Skill = {
     id: 'tom-passive',
     name: '被动技能',
-    type: 'PASSIVE',
+    type: 'passive',
     description: 'Passive ability',
     skillLevels: [{ level: 1, description: 'Always active' }],
   };
@@ -21,7 +21,7 @@ describe('skillUtils', () => {
   const mockWeapon1Skill: Skill = {
     id: 'tom-weapon1',
     name: '手型枪',
-    type: 'WEAPON1',
+    type: 'weapon1',
     description: 'Weapon 1 skill',
     skillLevels: [{ level: 1, description: 'Ranged attack' }],
   };
@@ -29,7 +29,7 @@ describe('skillUtils', () => {
   const mockWeapon2Skill: Skill = {
     id: 'tom-weapon2',
     name: '平底锅',
-    type: 'WEAPON2',
+    type: 'weapon2',
     description: 'Weapon 2 skill',
     skillLevels: [{ level: 1, description: 'Melee attack' }],
   };

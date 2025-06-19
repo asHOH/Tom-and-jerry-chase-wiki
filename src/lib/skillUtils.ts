@@ -10,7 +10,7 @@ export const getSkillImageUrl = (
   skill: Skill,
   factionId: FactionId
 ): string => {
-  if (skill.type === 'PASSIVE') {
+  if (skill.type === 'passive') {
     // Passive skills use faction-based naming: 被动-猫.png or 被动-鼠.png
     const factionName = factionId === 'cat' ? '猫' : '鼠';
     return `/images/${factionId}Skills/被动-${factionName}.png`;
@@ -24,15 +24,15 @@ export const getSkillImageUrl = (
 /**
  * Get skill number based on skill type
  */
-const getSkillNumber = (skillType: 'ACTIVE' | 'WEAPON1' | 'WEAPON2' | 'PASSIVE'): string => {
+const getSkillNumber = (skillType: 'active' | 'weapon1' | 'weapon2' | 'passive'): string => {
   switch (skillType) {
-    case 'ACTIVE':
+    case 'active':
       return '1';
-    case 'WEAPON1':
+    case 'weapon1':
       return '2';
-    case 'WEAPON2':
+    case 'weapon2':
       return '3';
-    case 'PASSIVE':
+    case 'passive':
       return '';
     default:
       return '';
