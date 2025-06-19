@@ -74,10 +74,8 @@ jobs:
             rm next.config.js
           fi
           export NEXT_PUBLIC_BUILD_TIME=$(TZ='Asia/Shanghai' date '+%m月%d日 %H:%M')
-          # Update service worker cache version with commit hash and date
-          CACHE_VERSION="v$(date '+%Y%m%d')-${GITHUB_SHA:0:8}"
-          sed -i "s/const CACHE_VERSION = '[^']*'/const CACHE_VERSION = '$CACHE_VERSION'/" public/sw.js
-          echo "Updated service worker cache version to: $CACHE_VERSION"
+          node update-sw-version.js
+          echo "Service worker cache version updated successfully"
           npm run build
 
       - name: Verify build output

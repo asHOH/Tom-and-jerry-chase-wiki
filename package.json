@@ -38,6 +38,7 @@
     "audit": "npm audit --audit-level=moderate",
     "outdated": "npm outdated",
     "size": "bundlesize",
+    "update-sw": "node update-sw-version.js",
     "prepare": "husky"
   },
   "engines": {

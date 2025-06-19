@@ -1,6 +1,6 @@
-const CACHE_VERSION = 'v2025-0619'; // Update this with each deployment
+// Cache version will be automatically replaced during build
+const CACHE_VERSION = 'v20250619-092719';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
-const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
 
 // Static assets to cache immediately
 const STATIC_ASSETS = [
@@ -14,12 +14,6 @@ const STATIC_ASSETS = [
   '/manifest.webmanifest',
   '/offline.html',
 ];
-
-// Function to add cache-busting to URLs
-const addCacheBust = (url) => {
-  const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}_cb=${CACHE_VERSION}`;
-};
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
@@ -56,7 +50,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - for static site, use network-first strategy
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -66,62 +60,30 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Handle navigation requests - network first with cache busting
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(addCacheBust(request.url))
-        .then((fetchResponse) => {
-          if (fetchResponse.status === 200) {
-            const responseClone = fetchResponse.clone();
-            caches.open(DYNAMIC_CACHE).then((cache) => cache.put(request, responseClone));
-          }
-          return fetchResponse;
-        })
-        .catch(() => {
-          // Fallback to cache if network fails
-          return caches.match(request).then((response) => {
-            return response || caches.match('/offline.html');
-          });
-        })
-    );
-    return;
-  }
-
-  // Handle static assets
-  if (
-    request.destination === 'image' ||
-    request.destination === 'script' ||
-    request.destination === 'style'
-  ) {
-    event.respondWith(
-      caches.match(request).then((response) => {
-        if (response) {
-          return response;
-        }
-        return fetch(request).then((fetchResponse) => {
-          if (fetchResponse.status === 200) {
-            const responseClone = fetchResponse.clone();
-            caches.open(STATIC_CACHE).then((cache) => cache.put(request, responseClone));
-          }
-          return fetchResponse;
-        });
-      })
-    );
-    return;
-  }
-
-  // Handle API and other requests
+  // For all requests: try network first, fall back to cache
   event.respondWith(
     fetch(request)
-      .then((response) => {
-        if (response.status === 200 && request.method === 'GET') {
-          const responseClone = response.clone();
-          caches.open(DYNAMIC_CACHE).then((cache) => cache.put(request, responseClone));
+      .then((fetchResponse) => {
+        // If successful, update cache with new content
+        if (fetchResponse.status === 200) {
+          const responseClone = fetchResponse.clone();
+          caches.open(STATIC_CACHE).then((cache) => cache.put(request, responseClone));
         }
-        return response;
+        return fetchResponse;
       })
       .catch(() => {
-        return caches.match(request);
+        // Network failed - try cache, with offline fallback for navigation
+        return caches.match(request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // For navigation requests, return offline page if no cache
+          if (request.mode === 'navigate') {
+            return caches.match('/offline.html');
+          }
+          // For other requests, let it fail
+          throw new Error('Network and cache both failed');
+        });
       })
   );
 });

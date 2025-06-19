@@ -78,6 +78,12 @@ Test-Component "TypeScript Compilation" {
 # 2. Build Process (CI & Deploy Workflows)
 Write-Host "`n[SECTION] Build Process" -ForegroundColor Magenta
 
+# Service Worker Cache Version Update Test
+Test-Component "Service Worker Cache Version Update" {
+    # Test the cross-platform SW version update script
+    node update-sw-version.js --dev
+}
+
 Test-Component "Project Build" {
     npm run build
 }
