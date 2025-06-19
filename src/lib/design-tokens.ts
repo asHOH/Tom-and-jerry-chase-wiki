@@ -200,10 +200,10 @@ export const designTokens = {
         container: 'bg-gradient-to-r from-violet-50 to-violet-100 border border-violet-200',
       },
       wallBreak: {
-        text: '#78716c', // stone-600
-        background: '#f5f5f4', // stone-100
-        border: '#d6d3d1', // stone-300
-        container: 'bg-gradient-to-r from-stone-50 to-stone-100 border border-stone-200',
+        text: '#9a3412', // orange-800 (deeper reddish brown)
+        background: '#fee5d3', // orange-175 equivalent (lighter background)
+        border: '#ea580c', // orange-600 (reddish brown border)
+        container: 'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300',
       },
       // Shared tags (mouse variant)
       lateGameMouse: {
