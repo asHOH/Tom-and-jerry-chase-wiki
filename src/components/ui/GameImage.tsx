@@ -31,7 +31,7 @@ export default function GameImage({ src, alt, size, className = '' }: GameImageP
         borderRadius: componentTokens.image.container.borderRadius,
       }}
     >
-      <div className='flex items-center justify-center h-full'>
+      <div className='flex items-center justify-center h-full p-2'>
         <Image
           src={src}
           alt={alt}
@@ -43,6 +43,7 @@ export default function GameImage({ src, alt, size, className = '' }: GameImageP
             maxHeight: maxHeight,
             maxWidth: '100%',
             width: 'auto',
+            height: 'auto',
             transition: designTokens.transitions.normal,
           }}
           className={className}

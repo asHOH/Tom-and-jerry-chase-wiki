@@ -23,15 +23,21 @@ export default function CharacterDetails({
       <div className='flex flex-col md:flex-row gap-8'>
         <div className='md:w-1/3'>
           <div className='card h-full'>
-            <div className='w-full h-64 bg-gray-200 rounded-lg relative overflow-hidden mb-4'>
-              <div className='flex items-center justify-center h-full'>
+            <div className='w-full h-64 bg-gray-200 rounded-lg relative overflow-hidden mb-4 image-container'>
+              <div className='flex items-center justify-center h-full p-3'>
                 <Image
                   src={character.imageUrl}
                   alt={character.id}
                   width={200}
                   height={200}
                   unoptimized
-                  style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }}
+                  style={{
+                    objectFit: 'contain',
+                    maxHeight: '100%',
+                    maxWidth: '100%',
+                    width: 'auto',
+                    height: 'auto',
+                  }}
                 />
               </div>
             </div>

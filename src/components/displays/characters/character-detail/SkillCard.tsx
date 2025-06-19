@@ -79,7 +79,8 @@ export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCa
                 alt={skill.name}
                 fill
                 sizes='64px'
-                className='object-cover scale-75'
+                className='object-contain'
+                style={{ padding: '8px' }}
               />
             </div>
 

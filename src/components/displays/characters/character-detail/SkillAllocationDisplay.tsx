@@ -121,7 +121,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           alt={skill?.name || `技能${skillType}`}
           width={40}
           height={40}
-          className='w-full h-full object-cover scale-75'
+          className='w-full h-full object-contain'
+          style={{ padding: '4px' }}
           unoptimized
         />
         {hasNegativeEffect && (

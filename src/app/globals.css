@@ -24,6 +24,18 @@ body {
   outline: none;
 }
 
+/* Prevent images from becoming too large */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Image container constraints */
+.image-container img {
+  object-fit: contain !important;
+  max-height: 85% !important;
+}
+
 @layer components {
   .card {
     @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4;
@@ -39,6 +51,27 @@ body {
 
   .btn-secondary {
     @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+  }
+
+  /* Responsive image constraints */
+  .responsive-image {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+
+  /* Skill icon containers */
+  .skill-icon {
+    width: 40px !important;
+    height: 40px !important;
+    overflow: hidden !important;
+  }
+
+  .skill-icon img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    padding: 4px !important;
   }
 }
 
