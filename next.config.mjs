@@ -13,11 +13,7 @@ const nextConfig = {
   },
   poweredByHeader: false,
   compress: true,
-  // Performance optimizations
-  experimental: {
-    optimizePackageImports: ['@/components', '@/lib', '@/data'],
-  },
-  // Ensure service worker is included in static export
+  // Safe webpack configuration
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -25,26 +21,6 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
-      };
-
-      // Optimize chunk splitting
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          chunks: 'all',
-          cacheGroups: {
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-            },
-            common: {
-              name: 'common',
-              minChunks: 2,
-              chunks: 'all',
-            },
-          },
-        },
       };
     }
     return config;
