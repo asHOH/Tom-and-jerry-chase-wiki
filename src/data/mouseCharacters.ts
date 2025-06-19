@@ -451,7 +451,7 @@ export const mouseCharacters: Record<string, Character> = {
         id: '泰菲-weapon1',
         name: '火箭筒',
         type: 'WEAPON1',
-        description: '发射一枚弹头。',
+        description: '发射一枚弹头，造成伤害和眩晕。',
         // detailedDescription: '发射一枚弹头。',
         canMoveWhileUsing: true,
         canUseInAir: true,
