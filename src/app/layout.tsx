@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
+import { CacheDebugPanel } from '@/components/CacheDebugPanel';
+import { VersionChecker } from '@/components/VersionChecker';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { DISCLAIMER_TEXT } from '@/constants';
 import './globals.css';
@@ -99,6 +101,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ErrorBoundary>
         <PerformanceMonitor />
         <ServiceWorkerRegistration />
+        <CacheDebugPanel />
+        <VersionChecker />
       </body>
     </html>
   );

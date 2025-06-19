@@ -14,6 +14,7 @@ export const ServiceWorkerRegistration: React.FC = () => {
         try {
           const registration = await navigator.serviceWorker.register('/sw.js', {
             scope: '/',
+            updateViaCache: 'none', // Always check for SW updates
           });
 
           console.log('Service Worker registered successfully:', registration.scope);
@@ -23,15 +24,27 @@ export const ServiceWorkerRegistration: React.FC = () => {
             const newWorker = registration.installing;
             if (newWorker) {
               newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New content available, prompt user to refresh
-                  if (confirm('发现新版本，是否刷新页面？')) {
+                if (newWorker.state === 'installed') {
+                  if (navigator.serviceWorker.controller) {
+                    // New content available, automatically refresh
+                    console.log('New version detected, refreshing page...');
                     window.location.reload();
+                  } else {
+                    // First time installation
+                    console.log('Content cached for offline use');
                   }
                 }
               });
             }
           });
+
+          // Force immediate update check
+          registration.update();
+
+          // Check for updates more frequently
+          setInterval(() => {
+            registration.update();
+          }, 30000); // Every 30 seconds
         } catch (error) {
           console.error('Service Worker registration failed:', error);
         }
