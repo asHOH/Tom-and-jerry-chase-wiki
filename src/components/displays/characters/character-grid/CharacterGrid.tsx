@@ -36,7 +36,7 @@ export default function CharacterGrid({ faction, onSelectCharacter }: FactionCha
 
   return (
     <div className='space-y-8'>
-      <header className='text-center space-y-6 mb-10 px-4'>
+      <header className='text-center space-y-4 mb-8 px-4'>
         <h1 className='text-4xl font-bold text-blue-600 py-3'>{faction.name}</h1>
         <p className='text-xl text-gray-600 max-w-3xl mx-auto px-4 py-2'>{faction.description}</p>
       </header>

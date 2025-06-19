@@ -28,7 +28,7 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
     <div className='space-y-8'>
       {' '}
       {/* Padding for navbar is now handled at the page level */}
-      <header className='text-center space-y-6 mb-10 px-4'>
+      <header className='text-center space-y-4 mb-8 px-4'>
         <h1 className='text-4xl font-bold text-blue-600 py-3'>
           {faction.name === '猫阵营' ? '猫方知识卡' : '鼠方知识卡'}
         </h1>
