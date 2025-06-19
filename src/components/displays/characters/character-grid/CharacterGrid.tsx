@@ -43,7 +43,8 @@ export default function CharacterGrid({ faction, onSelectCharacter }: FactionCha
 
       {/* Filter Section */}
       <div className='flex justify-center items-center gap-4 mt-4'>
-        <span className='text-lg font-medium text-gray-700'>定位筛选:</span>
+        <span className='text-lg font-medium text-gray-700 hidden sm:inline'>定位筛选:</span>
+        <span className='text-lg font-medium text-gray-700 sm:hidden'>筛选:</span>
         <div className='flex gap-2'>
           {uniquePositioningTags.map((tag) => {
             const tagColors = getPositioningTagColors(
