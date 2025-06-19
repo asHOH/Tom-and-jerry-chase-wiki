@@ -73,7 +73,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='zh-CN'>
       <head>
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
-        <meta httpEquiv='X-Frame-Options' content='DENY' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
         <meta name='referrer' content='strict-origin-when-cross-origin' />
         {/* Preload critical resources */}
