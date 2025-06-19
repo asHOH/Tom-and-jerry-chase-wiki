@@ -36,8 +36,9 @@ export default function GameImage({ src, alt, size, className = '' }: GameImageP
           unoptimized
           style={{
             objectFit: 'contain',
-            maxHeight: '100%',
+            maxHeight: '80%',
             maxWidth: '100%',
+            width: 'auto',
             transition: designTokens.transitions.normal,
           }}
           className={className}

@@ -203,9 +203,10 @@ export default function TabNavigation({
               <Image
                 src={tab.imageSrc}
                 alt={tab.imageAlt}
-                width={isMobile ? 25 : 35}
-                height={isMobile ? 20 : 28}
+                width={isMobile ? 30 : 35}
+                height={isMobile ? 24 : 28}
                 className='object-contain'
+                style={{ width: 'auto', height: isMobile ? '24px' : '28px' }}
               />
               {!isMobile && <span>{tab.name}</span>}
               {isMobile && (
