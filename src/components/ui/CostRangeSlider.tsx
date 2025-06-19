@@ -38,12 +38,12 @@ export default function CostRangeSlider({
     [minValue, maxValue, getColorForCost]
   );
 
-  const updateValueFromMouseEvent = useCallback(
-    (e: MouseEvent) => {
+  const updateValueFromEvent = useCallback(
+    (clientX: number) => {
       if (!sliderRef.current || draggedHandle === null) return;
 
       const rect = sliderRef.current.getBoundingClientRect();
-      const percentage = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
       const newValue = Math.round(min + percentage * (max - min));
 
       // Update only the dragged handle, keep the other handle fixed
@@ -60,35 +60,50 @@ export default function CostRangeSlider({
     [draggedHandle, min, max, minValue, maxValue, onChange]
   );
 
-  const handleMouseDown = useCallback((handle: DraggedHandle) => {
+  const handleStart = useCallback((handle: DraggedHandle, e?: React.TouchEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     setDraggedHandle(handle);
   }, []);
 
-  // Handle document-level mouse events when dragging
+  // Handle document-level events when dragging
   useEffect(() => {
     if (draggedHandle === null) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       e.preventDefault();
-      updateValueFromMouseEvent(e);
+      updateValueFromEvent(e.clientX);
     };
 
-    const handleMouseUpGlobal = () => {
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      if (touch) {
+        updateValueFromEvent(touch.clientX);
+      }
+    };
+
+    const handleEnd = () => {
       setDraggedHandle(null);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUpGlobal);
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleEnd);
     document.body.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUpGlobal);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleEnd);
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
     };
-  }, [draggedHandle, updateValueFromMouseEvent]);
+  }, [draggedHandle, updateValueFromEvent]);
 
   const getPositionPercentage = (cost: number) => 8.5 + ((cost - min) / (max - min)) * 83;
 
@@ -112,24 +127,26 @@ export default function CostRangeSlider({
 
         {/* Min handle */}
         <div
-          className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10'
+          className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10 touch-none'
           style={{
             left: `${getPositionPercentage(minValue)}%`,
             backgroundColor: getCardCostColors(minValue).backgroundColor,
             borderColor: getCardCostColors(minValue).color,
           }}
-          onMouseDown={() => handleMouseDown('min')}
+          onMouseDown={() => handleStart('min')}
+          onTouchStart={(e) => handleStart('min', e)}
         />
 
         {/* Max handle */}
         <div
-          className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10'
+          className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10 touch-none'
           style={{
             left: `${getPositionPercentage(maxValue)}%`,
             backgroundColor: getCardCostColors(maxValue).backgroundColor,
             borderColor: getCardCostColors(maxValue).color,
           }}
-          onMouseDown={() => handleMouseDown('max')}
+          onMouseDown={() => handleStart('max')}
+          onTouchStart={(e) => handleStart('max', e)}
         />
       </div>
 
