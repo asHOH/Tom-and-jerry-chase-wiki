@@ -1,5 +1,5 @@
 // Cache version will be automatically replaced during build
-const CACHE_VERSION = 'v20250619-174017';
+const CACHE_VERSION = 'dev-20250619-200855';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 
 // Static assets to cache immediately
@@ -64,8 +64,8 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(request)
       .then((fetchResponse) => {
-        // If successful, update cache with new content
-        if (fetchResponse.status === 200) {
+        // If successful, update cache with new content (but not for HEAD requests)
+        if (fetchResponse.status === 200 && request.method === 'GET') {
           const responseClone = fetchResponse.clone();
           caches.open(STATIC_CACHE).then((cache) => cache.put(request, responseClone));
         }
