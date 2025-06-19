@@ -111,10 +111,10 @@ export default function Home() {
 
     // Default: show home page content
     return (
-      <div className='space-y-10'>
+      <div className='space-y-8'>
         {' '}
         {/* Padding for navbar is now handled at the page level */}
-        <header className='text-center space-y-6 px-4'>
+        <header className='text-center space-y-4 px-4'>
           <h1 className='text-4xl font-bold text-blue-600 py-3'>猫和老鼠手游wiki</h1>
           <p className='text-xl text-gray-600 px-4 py-2'>查询角色技能和知识卡效果</p>
         </header>{' '}
