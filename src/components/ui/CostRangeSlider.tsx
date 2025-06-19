@@ -9,7 +9,7 @@ interface CostRangeSliderProps {
   className?: string;
 }
 
-type DraggedHandle = 'min' | 'max' | null;
+type DraggedHandle = 0 | 1 | null;
 
 export default function CostRangeSlider({
   min,
@@ -18,9 +18,24 @@ export default function CostRangeSlider({
   onChange,
   className = '',
 }: CostRangeSliderProps) {
-  const [minValue, maxValue] = value;
+  // Maintain the physical handle positions independently
+  const [handlePositions, setHandlePositions] = useState<[number, number]>(() => {
+    // Initialize with the provided values
+    return [value[0], value[1]];
+  });
   const [draggedHandle, setDraggedHandle] = useState<DraggedHandle>(null);
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  // Update handle positions when value prop changes (but not during drag)
+  useEffect(() => {
+    if (draggedHandle === null) {
+      setHandlePositions([value[0], value[1]]);
+    }
+  }, [value, draggedHandle]);
+
+  // Calculate the actual min/max from the handle positions
+  const minValue = Math.min(handlePositions[0], handlePositions[1]);
+  const maxValue = Math.max(handlePositions[0], handlePositions[1]);
 
   const getColorForCost = useCallback((cost: number) => {
     const colors = getCardCostColors(cost);
@@ -46,18 +61,19 @@ export default function CostRangeSlider({
       const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
       const newValue = Math.round(min + percentage * (max - min));
 
-      // Update only the dragged handle, keep the other handle fixed
-      if (draggedHandle === 'min') {
-        // Dragging the min handle: update min, keep max fixed, ensure min ≤ max
-        const newMin = Math.min(newValue, maxValue);
-        onChange([newMin, maxValue]);
-      } else if (draggedHandle === 'max') {
-        // Dragging the max handle: update max, keep min fixed, ensure min ≤ max
-        const newMax = Math.max(newValue, minValue);
-        onChange([minValue, newMax]);
-      }
+      // Update the dragged handle position
+      const newPositions: [number, number] = [...handlePositions];
+      newPositions[draggedHandle] = newValue;
+      setHandlePositions(newPositions);
+
+      // Always send values in sorted order (min, max) to parent
+      const sortedValues: [number, number] = [
+        Math.min(newPositions[0], newPositions[1]),
+        Math.max(newPositions[0], newPositions[1]),
+      ];
+      onChange(sortedValues);
     },
-    [draggedHandle, min, max, minValue, maxValue, onChange]
+    [draggedHandle, min, max, handlePositions, onChange]
   );
 
   const handleStart = useCallback((handle: DraggedHandle, e?: React.TouchEvent) => {
@@ -125,28 +141,28 @@ export default function CostRangeSlider({
           })}
         </div>
 
-        {/* Min handle */}
+        {/* Handle 1 */}
         <div
           className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10 touch-none'
           style={{
-            left: `${getPositionPercentage(minValue)}%`,
-            backgroundColor: getCardCostColors(minValue).backgroundColor,
-            borderColor: getCardCostColors(minValue).color,
+            left: `${getPositionPercentage(handlePositions[0])}%`,
+            backgroundColor: getCardCostColors(handlePositions[0]).backgroundColor,
+            borderColor: getCardCostColors(handlePositions[0]).color,
           }}
-          onMouseDown={() => handleStart('min')}
-          onTouchStart={(e) => handleStart('min', e)}
+          onMouseDown={() => handleStart(0)}
+          onTouchStart={(e) => handleStart(0, e)}
         />
 
-        {/* Max handle */}
+        {/* Handle 2 */}
         <div
           className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10 touch-none'
           style={{
-            left: `${getPositionPercentage(maxValue)}%`,
-            backgroundColor: getCardCostColors(maxValue).backgroundColor,
-            borderColor: getCardCostColors(maxValue).color,
+            left: `${getPositionPercentage(handlePositions[1])}%`,
+            backgroundColor: getCardCostColors(handlePositions[1]).backgroundColor,
+            borderColor: getCardCostColors(handlePositions[1]).color,
           }}
-          onMouseDown={() => handleStart('max')}
-          onTouchStart={(e) => handleStart('max', e)}
+          onMouseDown={() => handleStart(1)}
+          onTouchStart={(e) => handleStart(1, e)}
         />
       </div>
 
