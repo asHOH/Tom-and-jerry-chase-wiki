@@ -38,6 +38,7 @@ console.log(
 
 const isDev = process.env.NODE_ENV === 'development' || process.argv.includes('--dev');
 const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+const isTest = process.argv.includes('--test');
 
 let CACHE_VERSION;
 if (isCI && process.env.GITHUB_SHA) {
@@ -55,12 +56,14 @@ if (isCI && process.env.GITHUB_SHA) {
 
 console.log(`📝 Generated cache version: ${CACHE_VERSION}`);
 
-// Path to service worker file
-const swPath = path.join(__dirname, 'public', 'sw.js');
+// Path to service worker file (allow override for testing)
+const swPath = process.env.SW_PATH || path.join(process.cwd(), 'public', 'sw.js');
 
 // Check if service worker file exists
 if (!fs.existsSync(swPath)) {
-  console.error('❌ Error: public/sw.js not found!');
+  console.error(`❌ Error: Service worker not found at ${swPath}`);
+  console.error(`Current working directory: ${process.cwd()}`);
+  console.error(`Looking for file at: ${path.resolve(swPath)}`);
   process.exit(1);
 }
 
@@ -90,8 +93,13 @@ try {
   // Write back with UTF-8 encoding
   fs.writeFileSync(swPath, content, 'utf8');
 
-  console.log(`✅ Service worker updated with cache version: ${CACHE_VERSION}`);
-  console.log('🎉 Done! You can now run your build or dev server');
+  if (isTest) {
+    console.log(`✅ Service worker test file updated with cache version: ${CACHE_VERSION}`);
+    console.log('🧪 Test mode - changes made to temporary file only');
+  } else {
+    console.log(`✅ Service worker updated with cache version: ${CACHE_VERSION}`);
+    console.log('🎉 Done! You can now run your build or dev server');
+  }
 } catch (error) {
   console.error('❌ Error updating service worker:', error.message);
   process.exit(1);
