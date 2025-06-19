@@ -35,6 +35,9 @@
     "test:ci": "jest --ci --coverage --watchAll=false",
     "clean": "rimraf .next out coverage",
     "analyze": "cross-env ANALYZE=true npm run build",
+    "audit": "npm audit --audit-level=moderate",
+    "outdated": "npm outdated",
+    "size": "bundlesize",
     "prepare": "husky"
   },
   "engines": {

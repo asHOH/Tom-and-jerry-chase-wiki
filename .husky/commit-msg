@@ -1,7 +1,5 @@
 #!/bin/sh
-# Commit message format validation (optional)
-# Uncomment to enforce conventional commits
-
+# Commit message format validation
 commit_regex='^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?: .{1,80}'
 
 if ! grep -qE "$commit_regex" "$1"; then
