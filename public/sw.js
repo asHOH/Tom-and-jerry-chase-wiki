@@ -1,5 +1,5 @@
 // Cache version will be automatically replaced during build
-const CACHE_VERSION = 'v20250619-092719';
+const CACHE_VERSION = 'v20250619-174017';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 
 // Static assets to cache immediately

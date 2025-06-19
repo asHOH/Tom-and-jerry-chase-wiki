@@ -14,8 +14,27 @@ const path = require('path');
 console.log('🔄 Updating service worker cache version...');
 
 // Generate cache version based on environment
+// Use Asia/Shanghai timezone consistently (same as deploy workflow)
 const now = new Date();
-const timestamp = now.toISOString().replace(/[^\d]/g, '').slice(0, 14); // YYYYMMDDHHMMSS
+
+// Get Shanghai time using proper timezone offset
+const shanghaiOffset = 8; // UTC+8
+const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+const shanghaiTime = new Date(utc + shanghaiOffset * 3600000);
+
+// Format as YYYYMMDDHHMMSS
+const year = shanghaiTime.getFullYear();
+const month = String(shanghaiTime.getMonth() + 1).padStart(2, '0');
+const day = String(shanghaiTime.getDate()).padStart(2, '0');
+const hour = String(shanghaiTime.getHours()).padStart(2, '0');
+const minute = String(shanghaiTime.getMinutes()).padStart(2, '0');
+const second = String(shanghaiTime.getSeconds()).padStart(2, '0');
+const timestamp = `${year}${month}${day}${hour}${minute}${second}`;
+
+// Log timezone info for debugging
+console.log(
+  `🕐 Using Shanghai time: ${shanghaiTime.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}`
+);
 
 const isDev = process.env.NODE_ENV === 'development' || process.argv.includes('--dev');
 const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
