@@ -1,9 +1,9 @@
 /* eslint-disable */
 // @ts-nocheck
 // 模板文件 - 用于贡献者填写角色数据，不需要类型检查
-// 如果编辑器提示类型错误，可以忽略，这是正常的
+// 如果编辑器提示类型错误，可以忽略
 
-// 定义角色数据类型（仅用于模板说明）
+//（别动）
 interface CharacterDefinition {
   [key: string]: any;
 }
@@ -175,5 +175,5 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   },
 };
 
-// 导出供参考（模板使用）
+//（别动）
 export default mouseCharacterDefinitions;
