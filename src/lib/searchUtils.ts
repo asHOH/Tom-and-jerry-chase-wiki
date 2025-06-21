@@ -1,16 +1,23 @@
 import { characters, cards } from '@/data';
 import { Character, Card } from '@/data/types';
+import { convertToPinyin } from './pinyinUtils'; // Import the pinyin utility
 
 // Define a union type for search results
 export type SearchResult =
-  | ({ type: 'character'; matchContext: string; priority: number } & Pick<
+  | ({ type: 'character'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
       Character,
       'id' | 'imageUrl'
     >)
-  | ({ type: 'card'; matchContext: string; priority: number } & Pick<Card, 'id' | 'imageUrl'>);
+  | ({ type: 'card'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
+      Card,
+      'id' | 'imageUrl'
+    >);
 
 export const performSearch = async function* (query: string): AsyncGenerator<SearchResult> {
   const lowerCaseQuery = query.toLowerCase().trim(); // Trim whitespace
+  // Remove apostrophes from the query before converting to pinyin, as they are not part of pinyin for search
+  const cleanedQuery = lowerCaseQuery.replace(/'/g, '');
+  const pinyinQuery = convertToPinyin(cleanedQuery); // Convert query to pinyin
 
   if (!lowerCaseQuery) {
     // If query is empty or only whitespace, yield no results
@@ -22,10 +29,12 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     for (const text of texts) {
       if (text) {
         const lowerCaseText = text.toLowerCase();
-        const matchIndex = lowerCaseText.indexOf(lowerCaseQuery);
+        const pinyinText = convertToPinyin(text);
 
-        if (matchIndex !== -1) {
+        // Check for direct match
+        if (lowerCaseText.includes(lowerCaseQuery)) {
           let startIndex = 0;
+          const matchIndex = lowerCaseText.indexOf(lowerCaseQuery);
 
           // 1. Find sentence start (., !, ?) before the match
           for (let i = matchIndex - 1; i >= 0; i--) {
@@ -44,8 +53,14 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
               break;
             }
           }
-
           return text.substring(startIndex).trim();
+        }
+
+        // Check for pinyin match
+        if (pinyinText.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          // For pinyin matches, return the full text for context,
+          // as highlighting pinyin within Chinese text is complex.
+          return text.trim();
         }
       }
     }
@@ -56,42 +71,90 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
   for (const character of Object.values(characters)) {
     let matchContext: string | undefined;
     let priority: number = 0;
+    let isPinyinMatch: boolean = false;
 
-    // Check character ID
-    if (character.id.toLowerCase().includes(lowerCaseQuery)) {
+    const characterIdLowerCase = character.id.toLowerCase();
+    const characterIdPinyin = convertToPinyin(character.id);
+
+    // Check character ID (direct match)
+    if (characterIdLowerCase.includes(lowerCaseQuery)) {
       matchContext = character.id;
       priority = 1.0;
+      isPinyinMatch = false;
+    }
+    // Check character ID (pinyin match)
+    else if (characterIdPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+      matchContext = character.id;
+      priority = 0.95; // Slightly lower priority for pinyin ID match
+      isPinyinMatch = true;
     }
     // Check character skills name
     else if (character.skills) {
       for (const skill of character.skills) {
-        if (skill.name.toLowerCase().includes(lowerCaseQuery)) {
+        const skillNameLowerCase = skill.name.toLowerCase();
+        const skillNamePinyin = convertToPinyin(skill.name);
+
+        if (skillNameLowerCase.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([skill.name]);
           priority = 0.9;
+          isPinyinMatch = false;
+          break;
+        } else if (skillNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([skill.name]);
+          priority = 0.85;
+          isPinyinMatch = true;
           break;
         }
       }
     }
     // Check character description
-    if (!matchContext && character.description.toLowerCase().includes(lowerCaseQuery)) {
-      matchContext = character.description;
-      priority = 0.8;
+    if (!matchContext) {
+      const descriptionLowerCase = character.description.toLowerCase();
+      const descriptionPinyin = convertToPinyin(character.description);
+
+      if (descriptionLowerCase.includes(lowerCaseQuery)) {
+        matchContext = character.description;
+        priority = 0.8;
+        isPinyinMatch = false;
+      } else if (descriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+        matchContext = character.description;
+        priority = 0.75;
+        isPinyinMatch = true;
+      }
     }
     // Check character positioning tags name
     if (!matchContext && character.catPositioningTags) {
       for (const tag of character.catPositioningTags) {
-        if (tag.tagName.toLowerCase().includes(lowerCaseQuery)) {
+        const tagNameLowerCase = tag.tagName.toLowerCase();
+        const tagNamePinyin = convertToPinyin(tag.tagName);
+
+        if (tagNameLowerCase.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([tag.tagName]);
           priority = 0.7;
+          isPinyinMatch = false;
+          break;
+        } else if (tagNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([tag.tagName]);
+          priority = 0.65;
+          isPinyinMatch = true;
           break;
         }
       }
     }
     if (!matchContext && character.mousePositioningTags) {
       for (const tag of character.mousePositioningTags) {
-        if (tag.tagName.toLowerCase().includes(lowerCaseQuery)) {
+        const tagNameLowerCase = tag.tagName.toLowerCase();
+        const tagNamePinyin = convertToPinyin(tag.tagName);
+
+        if (tagNameLowerCase.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([tag.tagName]);
           priority = 0.7;
+          isPinyinMatch = false;
+          break;
+        } else if (tagNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([tag.tagName]);
+          priority = 0.65;
+          isPinyinMatch = true;
           break;
         }
       }
@@ -99,18 +162,36 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     // Check character positioning tags description
     if (!matchContext && character.catPositioningTags) {
       for (const tag of character.catPositioningTags) {
-        if (tag.description.toLowerCase().includes(lowerCaseQuery)) {
+        const tagDescriptionLowerCase = tag.description.toLowerCase();
+        const tagDescriptionPinyin = convertToPinyin(tag.description);
+
+        if (tagDescriptionLowerCase.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([tag.description]);
           priority = 0.6;
+          isPinyinMatch = false;
+          break;
+        } else if (tagDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([tag.description]);
+          priority = 0.55;
+          isPinyinMatch = true;
           break;
         }
       }
     }
     if (!matchContext && character.mousePositioningTags) {
       for (const tag of character.mousePositioningTags) {
-        if (tag.description.toLowerCase().includes(lowerCaseQuery)) {
+        const tagDescriptionLowerCase = tag.description.toLowerCase();
+        const tagDescriptionPinyin = convertToPinyin(tag.description);
+
+        if (tagDescriptionLowerCase.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([tag.description]);
           priority = 0.6;
+          isPinyinMatch = false;
+          break;
+        } else if (tagDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([tag.description]);
+          priority = 0.55;
+          isPinyinMatch = true;
           break;
         }
       }
@@ -118,18 +199,36 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     // Check character positioning tags additionalDescription
     if (!matchContext && character.catPositioningTags) {
       for (const tag of character.catPositioningTags) {
-        if (tag.additionalDescription?.toLowerCase().includes(lowerCaseQuery)) {
+        const additionalDescriptionLowerCase = tag.additionalDescription?.toLowerCase();
+        const additionalDescriptionPinyin = convertToPinyin(tag.additionalDescription);
+
+        if (additionalDescriptionLowerCase?.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([tag.additionalDescription]);
           priority = 0.5;
+          isPinyinMatch = false;
+          break;
+        } else if (additionalDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([tag.additionalDescription]);
+          priority = 0.45;
+          isPinyinMatch = true;
           break;
         }
       }
     }
     if (!matchContext && character.mousePositioningTags) {
       for (const tag of character.mousePositioningTags) {
-        if (tag.additionalDescription?.toLowerCase().includes(lowerCaseQuery)) {
+        const additionalDescriptionLowerCase = tag.additionalDescription?.toLowerCase();
+        const additionalDescriptionPinyin = convertToPinyin(tag.additionalDescription);
+
+        if (additionalDescriptionLowerCase?.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([tag.additionalDescription]);
           priority = 0.5;
+          isPinyinMatch = false;
+          break;
+        } else if (additionalDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([tag.additionalDescription]);
+          priority = 0.45;
+          isPinyinMatch = true;
           break;
         }
       }
@@ -137,9 +236,18 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     // Check character skill description
     if (!matchContext && character.skills) {
       for (const skill of character.skills) {
-        if (skill.description && skill.description.toLowerCase().includes(lowerCaseQuery)) {
+        const skillDescriptionLowerCase = skill.description?.toLowerCase();
+        const skillDescriptionPinyin = convertToPinyin(skill.description);
+
+        if (skill.description && skillDescriptionLowerCase?.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([skill.description]);
           priority = 0.4;
+          isPinyinMatch = false;
+          break;
+        } else if (skillDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([skill.description]);
+          priority = 0.35;
+          isPinyinMatch = true;
           break;
         }
       }
@@ -147,12 +255,18 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     // Check character skill detailedDescription
     if (!matchContext && character.skills) {
       for (const skill of character.skills) {
-        if (
-          skill.detailedDescription &&
-          skill.detailedDescription.toLowerCase().includes(lowerCaseQuery)
-        ) {
+        const detailedDescriptionLowerCase = skill.detailedDescription?.toLowerCase();
+        const detailedDescriptionPinyin = convertToPinyin(skill.detailedDescription);
+
+        if (skill.detailedDescription && detailedDescriptionLowerCase?.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([skill.detailedDescription]);
           priority = 0.3;
+          isPinyinMatch = false;
+          break;
+        } else if (detailedDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([skill.detailedDescription]);
+          priority = 0.25;
+          isPinyinMatch = true;
           break;
         }
       }
@@ -166,6 +280,7 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
         imageUrl: character.imageUrl!,
         matchContext: matchContext,
         priority: priority,
+        isPinyinMatch: isPinyinMatch,
       };
     }
   }
@@ -174,28 +289,61 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
   for (const card of Object.values(cards)) {
     let matchContext: string | undefined;
     let priority: number = 0;
+    let isPinyinMatch: boolean = false;
 
-    // Check card ID
-    if (card.id.toLowerCase().includes(lowerCaseQuery)) {
+    const cardIdLowerCase = card.id.toLowerCase();
+    const cardIdPinyin = convertToPinyin(card.id);
+
+    // Check card ID (direct match)
+    if (cardIdLowerCase.includes(lowerCaseQuery)) {
       matchContext = card.id;
       priority = 0.2;
+      isPinyinMatch = false;
+    }
+    // Check card ID (pinyin match)
+    else if (cardIdPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+      matchContext = card.id;
+      priority = 0.19;
+      isPinyinMatch = true;
     }
     // Check card description
     else if (card.description.toLowerCase().includes(lowerCaseQuery)) {
       matchContext = card.description;
       priority = 0.18;
+      isPinyinMatch = false;
+    } else if (convertToPinyin(card.description).includes(pinyinQuery) && pinyinQuery.length > 0) {
+      matchContext = card.description;
+      priority = 0.17;
+      isPinyinMatch = true;
     }
     // Check detailed description
     else if (card.detailedDescription?.toLowerCase().includes(lowerCaseQuery)) {
       matchContext = card.detailedDescription;
       priority = 0.16;
+      isPinyinMatch = false;
+    } else if (
+      convertToPinyin(card.detailedDescription).includes(pinyinQuery) &&
+      pinyinQuery.length > 0
+    ) {
+      matchContext = card.detailedDescription;
+      priority = 0.15;
+      isPinyinMatch = true;
     }
     // Check levels description
     else if (card.levels) {
       for (const level of card.levels) {
-        if (level.description.toLowerCase().includes(lowerCaseQuery)) {
+        const levelDescriptionLowerCase = level.description.toLowerCase();
+        const levelDescriptionPinyin = convertToPinyin(level.description);
+
+        if (levelDescriptionLowerCase.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([level.description]);
           priority = 0.14;
+          isPinyinMatch = false;
+          break;
+        } else if (levelDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([level.description]);
+          priority = 0.13;
+          isPinyinMatch = true;
           break;
         }
       }
@@ -203,9 +351,18 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     // Check levels detailedDescription
     if (!matchContext && card.levels) {
       for (const level of card.levels) {
-        if (level.detailedDescription?.toLowerCase().includes(lowerCaseQuery)) {
+        const levelDetailedDescriptionLowerCase = level.detailedDescription?.toLowerCase();
+        const levelDetailedDescriptionPinyin = convertToPinyin(level.detailedDescription);
+
+        if (levelDetailedDescriptionLowerCase?.includes(lowerCaseQuery)) {
           matchContext = findMatchContext([level.detailedDescription]);
           priority = 0.12;
+          isPinyinMatch = false;
+          break;
+        } else if (levelDetailedDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = findMatchContext([level.detailedDescription]);
+          priority = 0.11;
+          isPinyinMatch = true;
           break;
         }
       }
@@ -219,6 +376,7 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
         imageUrl: card.imageUrl!,
         matchContext: matchContext,
         priority: priority,
+        isPinyinMatch: isPinyinMatch,
       };
     }
   }

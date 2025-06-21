@@ -9,7 +9,11 @@ type SearchDialogProps = {
   isMobile: boolean; // Add isMobile prop
 };
 
-const highlightMatch = (text: string, query: string) => {
+const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => {
+  if (isPinyinMatch) {
+    return <>{text}</>; // Do not highlight if it's a pinyin match
+  }
+
   let processedText = text;
   let processedLowerCaseText = text.toLowerCase();
   const lowerCaseQuery = query.toLowerCase();
@@ -85,6 +89,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
         setSearchResults([]); // Clear previous results
         const searchGenerator = performSearch(searchQuery);
         let newResults: SearchResult[] = [];
+        console.log({ searchQuery });
 
         for await (const result of searchGenerator) {
           // Only update if this is still the latest search query
@@ -92,6 +97,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
             newResults = [...newResults, result];
             // Sort results by priority in descending order
             newResults.sort((a, b) => b.priority - a.priority);
+            console.log({ result });
             setSearchResults([...newResults]); // Update results incrementally
           } else {
             break; // A new search has started, stop processing old results
@@ -214,7 +220,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
                   </span>
                   {result.matchContext && (
                     <span className='ml-2 text-gray-500 dark:text-gray-400 text-sm truncate'>
-                      {highlightMatch(result.matchContext, searchQuery)}
+                      {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
                     </span>
                   )}
                 </button>
