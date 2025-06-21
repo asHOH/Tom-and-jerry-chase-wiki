@@ -15,7 +15,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
     description: '全能男神汤姆，除了抓老鼠以外什么都会，杰瑞的欢喜冤家', // 角色描述，可参考游戏中的描述
 
     maxHp: 255, // 健康值上限
-    attackBoost: 0, // （可选）攻击增伤，没有则填0或删除这行
+    attackBoost: 0, // （可选）攻击增伤，没有则填0或删除这行（目前只有黑猫和天汤有增伤）
     hpRecovery: 3.5, // 健康值回复速度
     moveSpeed: 760, // 移速，参考 我在猫鼠学物理1.0
     jumpHeight: 420, // 跳跃高度（猫均为420，不用动）

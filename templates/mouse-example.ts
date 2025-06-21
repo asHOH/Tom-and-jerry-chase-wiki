@@ -15,12 +15,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家', // 角色描述，可参考游戏中的描述
 
     maxHp: 99, // 健康值上限（这些属性可参考鼠数值.xlsx）
-    attackBoost: 15, // 攻击增伤
+    attackBoost: 15, // 对其他角色的攻击增伤
     hpRecovery: 2, // 健康值回复速度
     moveSpeed: 650, // 移速
     jumpHeight: 400, // 跳跃高度（380~420）
     cheesePushSpeed: 4, // 推奶酪速度（前三分钟的数值，即基础推速×0.8）
-    wallCrackDamageBoost: 1, // 墙缝增伤
+    wallCrackDamageBoost: 1, // 对墙缝的增伤
     mousePositioningTags: [
       // 定位
       {
