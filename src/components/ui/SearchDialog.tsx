@@ -80,6 +80,20 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
   const searchIdRef = useRef(0); // To keep track of the latest search request
 
   useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [onClose]); // Depend on onClose to ensure the latest function is used
+
+  useEffect(() => {
     searchIdRef.current = Date.now(); // Assign a new ID for each new search effect run
     const currentId = searchIdRef.current;
 

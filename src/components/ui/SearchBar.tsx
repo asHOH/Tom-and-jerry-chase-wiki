@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchDialog from './SearchDialog'; // Import the new SearchDialog component
 
 type SearchBarProps = {
@@ -9,6 +9,26 @@ type SearchBarProps = {
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSelectCharacter, onSelectCard, isMobile }) => {
   const [showSearchDialog, setShowSearchDialog] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if the key is '/' and if the event target is not an input or textarea
+      if (
+        event.key === '/' &&
+        !(event.target instanceof HTMLInputElement) &&
+        !(event.target instanceof HTMLTextAreaElement)
+      ) {
+        event.preventDefault(); // Prevent the '/' character from being typed
+        setShowSearchDialog(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const handleOpenSearch = () => {
     setShowSearchDialog(true);
