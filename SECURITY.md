@@ -22,6 +22,7 @@
 - ✅ **X-XSS-Protection**: 1; mode=block (legacy XSS protection)
 - ✅ **Referrer-Policy**: strict-origin-when-cross-origin (limits referrer information)
 - ✅ **Permissions-Policy**: Disabled camera, microphone, geolocation
+- ✅ **Content-Security-Policy**: Strict policy implemented via meta tag
 
 **Note**: Security headers are configured via HTTP headers (see `public/_headers` for Netlify or `public/.htaccess` for Apache) rather than meta tags, as per web standards.
 

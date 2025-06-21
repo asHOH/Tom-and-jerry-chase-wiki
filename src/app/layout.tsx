@@ -76,6 +76,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
         <meta name='referrer' content='strict-origin-when-cross-origin' />
+        <meta
+          httpEquiv='Content-Security-Policy'
+          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; media-src 'self'; object-src 'none'; child-src 'none'; frame-ancestors 'none'; form-action 'self'; base-uri 'self';"
+        />
         {/* Preload critical resources */}
         <link rel='preload' href='/images/icons/cat faction.png' as='image' type='image/png' />
         <link rel='preload' href='/images/icons/mouse faction.png' as='image' type='image/png' />
