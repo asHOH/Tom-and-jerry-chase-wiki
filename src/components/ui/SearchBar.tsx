@@ -4,9 +4,10 @@ import SearchDialog from './SearchDialog'; // Import the new SearchDialog compon
 type SearchBarProps = {
   onSelectCharacter: (characterId: string) => void;
   onSelectCard: (cardId: string) => void;
+  isMobile: boolean; // Add isMobile prop
 };
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSelectCharacter, onSelectCard }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSelectCharacter, onSelectCard, isMobile }) => {
   const [showSearchDialog, setShowSearchDialog] = useState(false);
 
   const handleOpenSearch = () => {
@@ -44,6 +45,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelectCharacter, onSelectCard }
           onClose={handleCloseSearch}
           onSelectCharacter={onSelectCharacter}
           onSelectCard={onSelectCard}
+          isMobile={isMobile} // Pass isMobile prop
         />
       )}
     </div>

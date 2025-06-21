@@ -225,7 +225,11 @@ export default function TabNavigation({
 
         {/* Right-aligned detailed/simple view toggle button and SearchBar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <SearchBar onSelectCharacter={onSelectCharacter} onSelectCard={onSelectCard} />{' '}
+          <SearchBar
+            onSelectCharacter={onSelectCharacter}
+            onSelectCard={onSelectCard}
+            isMobile={isMobile} // Pass isMobile prop
+          />{' '}
           {/* Add SearchBar here */}
           {showDetailToggle && (
             <button

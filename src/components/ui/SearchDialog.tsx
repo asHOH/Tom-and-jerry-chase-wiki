@@ -6,34 +6,58 @@ type SearchDialogProps = {
   onClose: () => void;
   onSelectCharacter: (characterId: string) => void;
   onSelectCard: (cardId: string) => void;
+  isMobile: boolean; // Add isMobile prop
 };
 
 const highlightMatch = (text: string, query: string) => {
-  console.log({ text, query });
-  const lowerCaseText = text.toLowerCase();
+  let processedText = text;
+  let processedLowerCaseText = text.toLowerCase();
   const lowerCaseQuery = query.toLowerCase();
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
 
-  let matchIndex = lowerCaseText.indexOf(lowerCaseQuery);
+  let firstMatchIndex = processedLowerCaseText.indexOf(lowerCaseQuery);
+
+  if (firstMatchIndex !== -1) {
+    let lastCommaIndex = -1;
+    // Search for the last comma (English or Chinese) before the first match
+    for (let i = firstMatchIndex - 1; i >= 0; i--) {
+      const char = processedText.charAt(i);
+      if (char === ',' || char === '，') {
+        lastCommaIndex = i;
+        break;
+      }
+    }
+
+    if (lastCommaIndex !== -1) {
+      // Truncate the text to start after the last comma
+      processedText = processedText.substring(lastCommaIndex + 1).trim();
+      processedLowerCaseText = processedText.toLowerCase();
+      // Recalculate firstMatchIndex relative to the new processedText
+      firstMatchIndex = processedLowerCaseText.indexOf(lowerCaseQuery);
+    }
+  }
+
+  let matchIndex = firstMatchIndex; // Start the loop with the (potentially new) firstMatchIndex
+
   while (matchIndex !== -1) {
     if (matchIndex > lastIndex) {
-      parts.push(text.substring(lastIndex, matchIndex));
+      parts.push(processedText.substring(lastIndex, matchIndex));
     }
     parts.push(
       <span
-        key={matchIndex}
+        key={matchIndex} // Using matchIndex as key, assuming it's unique enough for this context
         className='bg-yellow-300 dark:bg-yellow-600 text-black dark:text-white rounded px-0.5'
       >
-        {text.substring(matchIndex, matchIndex + query.length)}
+        {processedText.substring(matchIndex, matchIndex + query.length)}
       </span>
     );
     lastIndex = matchIndex + query.length;
-    matchIndex = lowerCaseText.indexOf(lowerCaseQuery, lastIndex);
+    matchIndex = processedLowerCaseText.indexOf(lowerCaseQuery, lastIndex);
   }
 
-  if (lastIndex < text.length) {
-    parts.push(text.substring(lastIndex));
+  if (lastIndex < processedText.length) {
+    parts.push(processedText.substring(lastIndex));
   }
 
   return <>{parts}</>;
@@ -43,6 +67,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
   onClose,
   onSelectCharacter,
   onSelectCard,
+  isMobile, // Destructure isMobile prop
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -111,10 +136,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
   };
 
   return (
-    <div className='fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center z-50'>
+    <div
+      className={`fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center z-50 ${isMobile ? 'p-0' : ''}`}
+    >
       <div
         ref={dialogRef}
-        className='bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 w-full max-w-md mx-auto relative'
+        className={`bg-white dark:bg-gray-800 shadow-xl p-4 relative ${isMobile ? 'w-full h-full rounded-none' : 'rounded-lg w-full max-w-md mx-auto'}`}
       >
         <button
           onClick={onClose}
@@ -177,15 +204,15 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
                       alt={result.id}
                       width={32}
                       height={32}
-                      className='w-8 h-8 object-cover rounded-full mr-3'
+                      className='w-8 h-8 object-cover mr-3'
                     />
                   )}
-                  <span className='text-gray-900 dark:text-white'>
+                  <span className='text-gray-900 dark:text-white whitespace-nowrap'>
                     {result.id} {/* ({result.type === 'character' ? '角色' : '知识卡'}) */}
                   </span>
                   {result.matchContext && (
                     <span className='ml-2 text-gray-500 dark:text-gray-400 text-sm truncate'>
-                      - {highlightMatch(result.matchContext, searchQuery)}
+                      {highlightMatch(result.matchContext, searchQuery)}
                     </span>
                   )}
                 </button>
