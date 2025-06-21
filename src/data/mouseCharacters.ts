@@ -59,6 +59,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
     ],
 
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+    ],
+
     skills: [
       {
         name: '鼓舞',
@@ -157,7 +162,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description: '增加推速。',
-            // detailedDescription: '增加推速'
+            detailedDescription: '增加20%推速',
           },
           {
             level: 2,
@@ -172,10 +177,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
       },
-    ],
-    knowledgeCardGroups: [
-      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
-      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
     ],
   },
 
@@ -224,6 +225,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '',
         additionaldescription: '',
       },
+    ],
+
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
     ],
 
     skills: [
@@ -347,10 +353,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
-    knowledgeCardGroups: [
-      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
-      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
-    ],
   },
 
   /* ----------------------------------- 泰菲 ----------------------------------- */
@@ -403,6 +405,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '如果七级就进入墙缝战的话，可以考虑直接点出三级圆滚滚，毕竟一被和二被几乎没用。',
         additionaldescription: '',
       },
+    ],
+
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'S-护佑', 'C-救救我'],
     ],
 
     skills: [
@@ -522,10 +529,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
-    knowledgeCardGroups: [
-      ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
-      ['S-铁血', 'S-舍己', 'S-护佑', 'C-救救我'],
-    ],
   },
 
   /* ----------------------------------- 尼宝 ----------------------------------- */
@@ -563,6 +566,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '',
         additionaldescription: '',
       },
+    ],
+
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-舍己', 'B-逃之夭夭', 'C-不屈', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
     ],
 
     skills: [
@@ -656,10 +664,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
-    knowledgeCardGroups: [
-      ['S-铁血', 'S-舍己', 'B-逃之夭夭', 'C-不屈', 'C-救救我'],
-      ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
-    ],
   },
 
   /* ----------------------------------- 航海士杰瑞 ----------------------------------- */
@@ -711,6 +715,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '',
         additionaldescription: '',
       },
+    ],
+
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
     ],
 
     skills: [
@@ -835,10 +844,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
       },
-    ],
-    knowledgeCardGroups: [
-      ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
-      ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
     ],
   },
 };

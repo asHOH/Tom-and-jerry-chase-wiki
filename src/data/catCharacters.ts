@@ -64,6 +64,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         additionaldescription: '如果血量告急，也可以考虑先点一被回血。',
       },
     ],
+    knowledgeCardGroups: [
+      ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
+      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-心灵手巧'],
+      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
+    ],
 
     skills: [
       {
@@ -180,11 +185,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
-    knowledgeCardGroups: [
-      ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
-      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-心灵手巧'],
-      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-    ],
   },
 
   /* ----------------------------------- 布奇 ----------------------------------- */
@@ -230,6 +230,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '三级时如果血量告急则先点一被',
         additionaldescription: '',
       },
+    ],
+    knowledgeCardGroups: [
+      ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
+      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
     ],
 
     skills: [
@@ -343,11 +348,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
-    knowledgeCardGroups: [
-      ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
-      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-    ],
   },
 
   /* ----------------------------------- 托普斯 ---------------------------------- */
@@ -404,6 +404,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '',
         additionaldescription: '',
       },
+    ],
+    knowledgeCardGroups: [
+      ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+      ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
+      ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
     ],
 
     skills: [
@@ -521,11 +526,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
-    knowledgeCardGroups: [
-      ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-      ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
-      ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-    ],
   },
   /* ----------------------------------- 苏蕊 ---------------------------------- */
   苏蕊: {
@@ -569,6 +569,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '',
         additionaldescription: '',
       },
+    ],
+    knowledgeCardGroups: [
+      ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
+      ['S-蓄势一击', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
+      ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-攻其不备', 'C-猫是液体'],
     ],
 
     skills: [
@@ -656,11 +661,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
       },
-    ],
-    knowledgeCardGroups: [
-      ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
-      ['S-蓄势一击', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
-      ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-攻其不备', 'C-猫是液体'],
     ],
   },
 };
