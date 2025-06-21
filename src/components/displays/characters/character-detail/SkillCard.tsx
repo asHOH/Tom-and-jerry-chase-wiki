@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import { TextWithItemKeyTooltips } from '../shared';
 import { Skill, SkillLevel } from '@/data/types';
+import { renderTextWithHoverTooltips } from '@/lib/textUtils';
 
 interface SkillCardProps {
   skill: Skill;
@@ -115,7 +116,7 @@ export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCa
 
           {descriptionText && (
             <div className='mt-3 px-2'>
-              <p className='text-gray-700 py-2'>{descriptionText}</p>
+              <p className='text-gray-700 py-2'>{renderTextWithHoverTooltips(descriptionText)}</p>
             </div>
           )}
         </div>
@@ -135,9 +136,11 @@ export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCa
                 >
                   Lv. {level.level}:
                 </span>{' '}
-                {isDetailed && level.detailedDescription?.trim()
-                  ? level.detailedDescription
-                  : level.description}
+                {renderTextWithHoverTooltips(
+                  isDetailed && level.detailedDescription?.trim()
+                    ? level.detailedDescription
+                    : level.description
+                )}
               </p>
             </div>
           ))}

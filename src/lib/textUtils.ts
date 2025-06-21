@@ -102,14 +102,55 @@ export const formatTextWithEnhancedMarkdown = (text: string): React.ReactElement
 };
 
 /**
+ * Parse and render text with hover tooltips using the [text](tooltip) grammar.
+ * @param text - Text to parse and render.
+ * @returns JSX elements with hover tooltips.
+ */
+export const renderTextWithHoverTooltips = (text: string): (string | React.ReactElement)[] => {
+  const parts: (string | React.ReactElement)[] = [];
+  let lastIndex = 0;
+  const tooltipPattern = /\[([^\]]+?)\]\(([^)]+?)\)/g;
+  let match;
+
+  while ((match = tooltipPattern.exec(text)) !== null) {
+    // Add text before the match
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    // Add the text with a tooltip
+    parts.push(
+      React.createElement(
+        'span',
+        {
+          key: match.index,
+          className: 'underline decoration-dotted cursor-help', // Add styling for visual cue
+          title: match[2], // The tooltip content
+        },
+        match[1] // The visible text
+      )
+    );
+
+    lastIndex = tooltipPattern.lastIndex;
+  }
+
+  // Add remaining text after the last match
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts;
+};
+
+/**
  * Check if text contains specific patterns
  * @param text - Text to check
- * @param pattern - Pattern to look for ('markdown', 'highlights', 'itemkey')
+ * @param pattern - Pattern to look for ('markdown', 'highlights', 'itemkey', 'hoverTooltip')
  * @returns boolean indicating if pattern exists
  */
 export const hasTextPattern = (
   text: string,
-  pattern: 'markdown' | 'highlights' | 'itemkey'
+  pattern: 'markdown' | 'highlights' | 'itemkey' | 'hoverTooltip'
 ): boolean => {
   switch (pattern) {
     case 'markdown':
@@ -117,6 +158,8 @@ export const hasTextPattern = (
       return /\*\*(.*?)\*\*/.test(text);
     case 'itemkey':
       return text.includes('道具键*');
+    case 'hoverTooltip':
+      return /\[([^\]]+?)\]\(([^)]+?)\)/.test(text);
     default:
       return false;
   }
