@@ -1,6 +1,6 @@
 import { addSkillImageUrls } from '../lib/skillUtils';
 import { processCharacters } from '../lib/skillIdUtils';
-import type { CharacterDefinition } from './types';
+import type { CharacterDefinition, PartialCharacterDefinition } from './types';
 
 // Generate image URL based on character ID
 const getCatImageUrl = (characterId: string): string => {
@@ -14,7 +14,7 @@ const getCatImageUrl = (characterId: string): string => {
   }
 };
 
-const catCharacterDefinitions: Record<string, CharacterDefinition> = {
+const catCharacterDefinitions: Record<string, CharacterDefinition | PartialCharacterDefinition> = {
   /* ----------------------------------- 汤姆 ----------------------------------- */
   汤姆: {
     description: '全能男神汤姆，除了抓老鼠以外什么都会，杰瑞的欢喜冤家',
