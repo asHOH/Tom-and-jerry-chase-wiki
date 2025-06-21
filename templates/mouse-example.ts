@@ -19,7 +19,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     hpRecovery: 2, // 健康值回复速度
     moveSpeed: 650, // 移速
     jumpHeight: 400, // 跳跃高度（380~420）
-    cheesePushSpeed: 5, // 推奶酪速度（前三分钟的数值，即基础推速×0.8）
+    cheesePushSpeed: 4, // 推奶酪速度（前三分钟的数值，即基础推速×0.8）
     wallCrackDamageBoost: 1, // 墙缝增伤
     mousePositioningTags: [
       // 定位

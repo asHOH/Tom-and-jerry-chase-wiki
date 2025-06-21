@@ -24,7 +24,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     hpRecovery: 2,
     moveSpeed: 650,
     jumpHeight: 400,
-    cheesePushSpeed: 5,
+    cheesePushSpeed: 4,
     wallCrackDamageBoost: 1,
 
     mousePositioningTags: [
@@ -190,7 +190,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     hpRecovery: 1.67,
     moveSpeed: 640,
     jumpHeight: 380,
-    cheesePushSpeed: 5.75,
+    cheesePushSpeed: 4.6,
     wallCrackDamageBoost: 0.5,
 
     mousePositioningTags: [
@@ -364,7 +364,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     hpRecovery: 2.5,
     moveSpeed: 630,
     jumpHeight: 380,
-    cheesePushSpeed: 3.85,
+    cheesePushSpeed: 3.8,
     wallCrackDamageBoost: 0.5,
 
     mousePositioningTags: [
@@ -540,7 +540,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     hpRecovery: 2,
     moveSpeed: 640,
     jumpHeight: 400,
-    cheesePushSpeed: 2.85,
+    cheesePushSpeed: 2.8,
     wallCrackDamageBoost: 1,
 
     mousePositioningTags: [
@@ -676,7 +676,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     hpRecovery: 1.67,
     moveSpeed: 640,
     jumpHeight: 380,
-    cheesePushSpeed: 3.25,
+    cheesePushSpeed: 2.6,
     wallCrackDamageBoost: 1.5,
 
     mousePositioningTags: [
