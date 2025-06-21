@@ -167,13 +167,3 @@ export const createCostFilter =
  * Predefined rank options for UI components
  */
 export const RANK_OPTIONS = ['S', 'A', 'B', 'C'] as const;
-
-/**
- * Predefined cost ranges for filtering
- */
-export const COST_RANGES = [
-  { label: '低费 (1-2)', min: 1, max: 2 },
-  { label: '中费 (3-4)', min: 3, max: 4 },
-  { label: '高费 (5-6)', min: 5, max: 6 },
-  { label: '超高费 (7+)', min: 7, max: Infinity },
-] as const;

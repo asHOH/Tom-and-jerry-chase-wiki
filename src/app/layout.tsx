@@ -95,8 +95,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           as='image'
           type='image/png'
         />
-        <link rel='dns-prefetch' href='//fonts.googleapis.com' />
-        <link rel='preconnect' href='//fonts.gstatic.com' crossOrigin='anonymous' />
+        {/* Actually the source of font is not Google Font */}
+        {/* <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+        <link rel='preconnect' href='//fonts.gstatic.com' crossOrigin='anonymous' /> */}
       </head>
       <body className={inter.className}>
         <ErrorBoundary>
