@@ -8,6 +8,37 @@ type SearchDialogProps = {
   onSelectCard: (cardId: string) => void;
 };
 
+const highlightMatch = (text: string, query: string) => {
+  console.log({ text, query });
+  const lowerCaseText = text.toLowerCase();
+  const lowerCaseQuery = query.toLowerCase();
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+
+  let matchIndex = lowerCaseText.indexOf(lowerCaseQuery);
+  while (matchIndex !== -1) {
+    if (matchIndex > lastIndex) {
+      parts.push(text.substring(lastIndex, matchIndex));
+    }
+    parts.push(
+      <span
+        key={matchIndex}
+        className='bg-yellow-300 dark:bg-yellow-600 text-black dark:text-white rounded px-0.5'
+      >
+        {text.substring(matchIndex, matchIndex + query.length)}
+      </span>
+    );
+    lastIndex = matchIndex + query.length;
+    matchIndex = lowerCaseText.indexOf(lowerCaseQuery, lastIndex);
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+
+  return <>{parts}</>;
+};
+
 const SearchDialog: React.FC<SearchDialogProps> = ({
   onClose,
   onSelectCharacter,
@@ -17,14 +48,31 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const searchIdRef = useRef(0); // To keep track of the latest search request
 
   useEffect(() => {
-    const handler = setTimeout(() => {
+    searchIdRef.current = Date.now(); // Assign a new ID for each new search effect run
+    const currentId = searchIdRef.current;
+
+    const handler = setTimeout(async () => {
       if (searchQuery.length > 0) {
         setIsSearching(true);
-        const results = performSearch(searchQuery);
-        setSearchResults(results);
-        setIsSearching(false);
+        setSearchResults([]); // Clear previous results
+        const searchGenerator = performSearch(searchQuery);
+        let newResults: SearchResult[] = [];
+
+        for await (const result of searchGenerator) {
+          // Only update if this is still the latest search query
+          if (searchIdRef.current === currentId) {
+            newResults = [...newResults, result];
+            setSearchResults([...newResults]); // Update results incrementally
+          } else {
+            break; // A new search has started, stop processing old results
+          }
+        }
+        if (searchIdRef.current === currentId) {
+          setIsSearching(false);
+        }
       } else {
         setSearchResults([]);
         setIsSearching(false);
@@ -33,6 +81,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
 
     return () => {
       clearTimeout(handler);
+      // On cleanup, ensure any ongoing search for this effect run is marked as stale
+      // This is implicitly handled by `searchIdRef.current = Date.now()` in the next effect run
     };
   }, [searchQuery]);
 
@@ -61,7 +111,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
   };
 
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+    <div className='fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center z-50'>
       <div
         ref={dialogRef}
         className='bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 w-full max-w-md mx-auto relative'
@@ -110,7 +160,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
           <div className='p-2 text-gray-500 dark:text-gray-400'>搜索中...</div>
         )}
 
-        {searchResults.length > 0 && !isSearching && (
+        {searchQuery.length > 0 && searchResults.length > 0 && !isSearching && (
           <ul className='max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md'>
             {searchResults.map((result) => (
               <li
@@ -131,8 +181,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
                     />
                   )}
                   <span className='text-gray-900 dark:text-white'>
-                    {result.id} ({result.type === 'character' ? '角色' : '知识卡'})
+                    {result.id} {/* ({result.type === 'character' ? '角色' : '知识卡'}) */}
                   </span>
+                  {result.matchContext && (
+                    <span className='ml-2 text-gray-500 dark:text-gray-400 text-sm truncate'>
+                      - {highlightMatch(result.matchContext, searchQuery)}
+                    </span>
+                  )}
                 </button>
               </li>
             ))}
