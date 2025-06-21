@@ -90,6 +90,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
           // Only update if this is still the latest search query
           if (searchIdRef.current === currentId) {
             newResults = [...newResults, result];
+            // Sort results by priority in descending order
+            newResults.sort((a, b) => b.priority - a.priority);
             setSearchResults([...newResults]); // Update results incrementally
           } else {
             break; // A new search has started, stop processing old results
