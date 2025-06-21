@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import SearchBar from './ui/SearchBar'; // Import SearchBar
 
 type Tab = {
   id: string;
@@ -36,6 +37,8 @@ type TabNavigationProps = {
   isDetailedView?: boolean;
   onToggleDetailedView?: () => void;
   showDetailToggle?: boolean;
+  onSelectCharacter: (characterId: string) => void;
+  onSelectCard: (cardId: string) => void;
 };
 
 export default function TabNavigation({
@@ -44,6 +47,8 @@ export default function TabNavigation({
   isDetailedView = false,
   onToggleDetailedView = () => {},
   showDetailToggle = false,
+  onSelectCharacter,
+  onSelectCard,
 }: TabNavigationProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -218,11 +223,18 @@ export default function TabNavigation({
           ))}
         </div>
 
-        {/* Right-aligned detailed/simple view toggle button */}
-        <div>
+        {/* Right-aligned detailed/simple view toggle button and SearchBar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <SearchBar
+            onSelectCharacter={onSelectCharacter}
+            onSelectCard={onSelectCard}
+            isMobile={isMobile} // Pass isMobile prop
+          />{' '}
+          {/* Add SearchBar here */}
           {showDetailToggle && (
             <button
               onClick={onToggleDetailedView}
+              className='whitespace-nowrap'
               style={{
                 padding: isMobile ? '8px' : '8px 16px',
                 borderRadius: '6px',

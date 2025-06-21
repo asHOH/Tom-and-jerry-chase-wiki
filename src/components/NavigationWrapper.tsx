@@ -8,6 +8,8 @@ type NavigationWrapperProps = {
   isDetailedView?: boolean;
   onToggleDetailedView?: () => void;
   showDetailToggle?: boolean;
+  onSelectCharacter: (characterId: string) => void;
+  onSelectCard: (cardId: string) => void;
 };
 
 export default function NavigationWrapper({
@@ -17,6 +19,8 @@ export default function NavigationWrapper({
   isDetailedView = false,
   onToggleDetailedView = () => {},
   showDetailToggle = false,
+  onSelectCharacter,
+  onSelectCard,
 }: NavigationWrapperProps) {
   return (
     <div style={{ minHeight: '100vh' }}>
@@ -27,6 +31,8 @@ export default function NavigationWrapper({
         isDetailedView={isDetailedView}
         onToggleDetailedView={onToggleDetailedView}
         showDetailToggle={showDetailToggle}
+        onSelectCharacter={onSelectCharacter}
+        onSelectCard={onSelectCard}
       />
 
       {/* Content with padding for the fixed navbar */}

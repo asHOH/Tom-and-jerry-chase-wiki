@@ -110,6 +110,8 @@ export type CharacterDefinition = {
   knowledgeCardGroups: string[][];
 };
 
+export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDefinition>;
+
 // Final processed character (with ID and processed skills)
 export type Character = CharacterDefinition & {
   id: string; // Chinese name (e.g., '汤姆')

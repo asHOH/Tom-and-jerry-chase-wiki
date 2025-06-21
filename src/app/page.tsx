@@ -188,6 +188,8 @@ export default function Home() {
       isDetailedView={isDetailedView}
       onToggleDetailedView={toggleDetailedView}
       showDetailToggle={!!(selectedCharacter || selectedCard)} // Show toggle when a character or card is selected
+      onSelectCharacter={handleSelectCharacter}
+      onSelectCard={handleSelectCard}
     >
       {/* Render content based on state */}
       {renderContent()}

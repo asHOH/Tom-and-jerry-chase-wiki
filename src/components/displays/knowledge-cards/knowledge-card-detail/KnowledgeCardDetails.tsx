@@ -3,6 +3,7 @@ import { getCardRankColors, getCardCostColors, designTokens } from '@/lib/design
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import GameImage from '../../../ui/GameImage';
+import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import Tag from '../../../ui/Tag';
 import BaseCard from '../../../ui/BaseCard';
 
@@ -96,11 +97,13 @@ export default function KnowledgeCardDetails({
                     paddingBottom: designTokens.spacing.sm,
                   }}
                 >
-                  {renderTextWithHighlights(
-                    isDetailedView && card.detailedDescription
-                      ? card.detailedDescription
-                      : card.description
-                  )}
+                  <TextWithHoverTooltips
+                    text={
+                      isDetailedView && card.detailedDescription
+                        ? card.detailedDescription
+                        : card.description
+                    }
+                  />
                 </p>
               </div>
 
