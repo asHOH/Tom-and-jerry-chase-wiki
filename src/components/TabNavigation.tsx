@@ -230,6 +230,7 @@ export default function TabNavigation({
           {showDetailToggle && (
             <button
               onClick={onToggleDetailedView}
+              className='whitespace-nowrap'
               style={{
                 padding: isMobile ? '8px' : '8px 16px',
                 borderRadius: '6px',
