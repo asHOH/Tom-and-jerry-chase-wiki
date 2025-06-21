@@ -49,7 +49,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
       // 技能加点方案
       {
         id: '手型枪', // 武器名称，没有二武可以留白
-        pattern: '121220001', // 加点序列
+        pattern: '121220001', // 加点序列，0123分别表示被动、主动、一武、二武。
         weaponType: 'weapon1', // 武器类型：weapon1或weapon2
         description: '', // 加点说明
         additionaldescription: '', // 补充描述
