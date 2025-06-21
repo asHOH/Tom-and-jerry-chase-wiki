@@ -56,7 +56,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
 
     knowledgeCardGroups: [
-      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
+      // 知识卡组合推荐
+      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'], // 虽然网站目前还没有解释知识卡组的功能，但是可以把对卡组的说明先放在注释里，把功能做完以后会展示。比如可以说说这个卡组适合打什么猫咪/局内思路/适合传奇局、百分皇局还是千分皇局。
       ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
     ],
 
