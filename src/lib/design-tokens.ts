@@ -455,9 +455,9 @@ export const getCardCostColors = (cost: number, includeBorder: boolean = false) 
 
   if (cost >= 6) {
     colorScheme = designTokens.colors.cost.high;
-  } else if (cost >= 4) {
+  } else if (cost >= 5) {
     colorScheme = designTokens.colors.cost.medium;
-  } else if (cost >= 3) {
+  } else if (cost >= 4) {
     colorScheme = designTokens.colors.cost.low;
   } else {
     colorScheme = designTokens.colors.cost.veryLow;
