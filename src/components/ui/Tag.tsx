@@ -42,7 +42,7 @@ export default function Tag({
     };
 
     return (
-      <span style={tagStyle} role={role}>
+      <span style={tagStyle} {...(role ? { role } : {})}>
         {children}
       </span>
     );
@@ -55,7 +55,7 @@ export default function Tag({
   return (
     <span
       className={`${legacyPadding} ${legacyRadius} text-sm font-medium border ${colorClasses}`}
-      role={role}
+      {...(role ? { role } : {})}
     >
       {children}
     </span>
