@@ -17,7 +17,8 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
   const lowerCaseQuery = query.toLowerCase().trim(); // Trim whitespace
   // Remove apostrophes from the query before converting to pinyin, as they are not part of pinyin for search
   const cleanedQuery = lowerCaseQuery.replace(/'/g, '');
-  const pinyinQuery = convertToPinyin(cleanedQuery); // Convert query to pinyin
+  // const pinyinQuery = convertToPinyin(cleanedQuery); // Convert query to pinyin
+  const pinyinQuery = cleanedQuery;
 
   if (!lowerCaseQuery) {
     // If query is empty or only whitespace, yield no results
