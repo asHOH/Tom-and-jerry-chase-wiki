@@ -26,7 +26,7 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
 
         finalParts.push(
           <Tooltip key={`${index}-${match.index}`} content={tooltipContent}>
-            <span className='underline decoration-dotted cursor-help'>{visibleText}</span>
+            <span className='cursor-help'>{visibleText}</span>
           </Tooltip>
         );
 
