@@ -79,12 +79,10 @@ export type FactionWithCharacters = {
 
 export type FactionCharactersProps = {
   faction: FactionWithCharacters;
-  onSelectCharacter: (characterId: string) => void;
 };
 
 export type KnowledgeCardGridProps = {
   faction: FactionWithKnowledgeCards;
-  onSelectCard: (cardId: string) => void;
 };
 
 // Generic callback types

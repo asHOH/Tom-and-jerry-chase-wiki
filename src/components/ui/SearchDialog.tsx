@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
+import { useAppContext } from '@/context/AppContext';
 
 type SearchDialogProps = {
   onClose: () => void;
-  onSelectCharacter: (characterId: string) => void;
-  onSelectCard: (cardId: string) => void;
   isMobile: boolean; // Add isMobile prop
 };
 
@@ -67,17 +66,13 @@ const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => 
   return <>{parts}</>;
 };
 
-const SearchDialog: React.FC<SearchDialogProps> = ({
-  onClose,
-  onSelectCharacter,
-  onSelectCard,
-  isMobile, // Destructure isMobile prop
-}) => {
+const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const searchIdRef = useRef(0); // To keep track of the latest search request
+  const { handleSelectCard, handleSelectCharacter } = useAppContext();
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -148,9 +143,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
 
   const handleResultClick = (result: SearchResult) => {
     if (result.type === 'character') {
-      onSelectCharacter(result.id);
+      handleSelectCharacter(result.id);
     } else {
-      onSelectCard(result.id);
+      handleSelectCard(result.id);
     }
     setSearchQuery(''); // Clear search query
     setSearchResults([]); // Clear search results
