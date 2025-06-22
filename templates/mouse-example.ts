@@ -59,11 +59,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       // 知识卡组合推荐
       {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'], // 推荐知识卡组，用列表列举知识卡名
-        description: '有救援卡，逃窜适合打侍卫等角色', // 对知识卡组的介绍，适合打什么阵容/地图/局内思路/适合段位
+        description: '有救援卡，逃窜适合打击晕猫', // 对知识卡组的介绍，适合打什么阵容/地图/局内思路/适合段位
       },
       {
         cards: ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
-        description: '无救援卡，需要即时与队友沟通，避免无救援卡救援。',
+        description: '无救援卡，需要及时与队友沟通，避免无救援卡救援。',
       },
     ],
 
