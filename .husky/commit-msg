@@ -1,8 +1,16 @@
 #!/bin/sh
 # Commit message format validation
+commit_msg=$(cat "$1")
+
+# Allow merge commits and revert commits
+if echo "$commit_msg" | grep -qE "^(Merge|Revert)"; then
+    exit 0
+fi
+
+# Regular commit message validation
 commit_regex='^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?: .{1,80}'
 
-if ! grep -qE "$commit_regex" "$1"; then
+if ! echo "$commit_msg" | grep -qE "$commit_regex"; then
     echo "❌ Invalid commit message format!"
     echo "Format: type(scope): description"
     echo "Example: feat(auth): add login validation"

@@ -15,12 +15,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家', // 角色描述，可参考游戏中的描述
 
     maxHp: 99, // 健康值上限（这些属性可参考鼠数值.xlsx）
-    attackBoost: 15, // 攻击增伤
+    attackBoost: 15, // 对其他角色的攻击增伤
     hpRecovery: 2, // 健康值回复速度
     moveSpeed: 650, // 移速
     jumpHeight: 400, // 跳跃高度（380~420）
     cheesePushSpeed: 4, // 推奶酪速度（前三分钟的数值，即基础推速×0.8）
-    wallCrackDamageBoost: 1, // 墙缝增伤
+    wallCrackDamageBoost: 1, // 对墙缝的增伤
     mousePositioningTags: [
       // 定位
       {
@@ -56,10 +56,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
 
     knowledgeCardGroups: [
-      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'], // 推荐知识卡组，用列表列举知识卡名
+      // 知识卡组合推荐
       {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'], // 推荐知识卡组，用列表列举知识卡名
-        description: '有救援卡，逃窜适合打侍卫等角色', // 对这套知识卡组的介绍
+        description: '有救援卡，逃窜适合打侍卫等角色', // 对知识卡组的介绍，适合打什么阵容/地图/局内思路/适合段位
+      },
+      {
+        cards: ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
+        description: '无救援卡，需要即时与队友沟通，避免无救援卡救援。',
       },
     ],
 
@@ -73,7 +77,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true, // 是否能在空中使用技能
         cancelableSkill: '不可被打断', // 技能前摇时是否可被打断，填写“无前摇”，“不可被打断”或“可被...打断”
         cancelableAftercast: '不可取消后摇', // 技能后摇是否可取消，填写“无后摇”，“不可被打断”或“可被...打断”
-        canHitInPipe: false, // 可击中管道中的角色
+        canHitInPipe: false, //（可选）技能是否对管道中的角色生效，默认为false
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5', // （可选）视频链接，后面的?t=...表示视频开始播放的时间点，单位为秒，例如此处对应1分6.5秒
         skillLevels: [
           {

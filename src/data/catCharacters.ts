@@ -67,10 +67,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     knowledgeCardGroups: [
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
-        description: '平底锅专属，爪刀接二级锅接爪刀轻松打死124血老鼠',
+        description: '平底锅，爪刀接二级锅接爪刀轻松打死124血老鼠',
       },
-      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-心灵手巧'],
-      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
+        description: '手型枪，适合打无管道图。',
+      },
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
+        description: '手型枪，适合打管道图。',
+      },
     ],
 
     skills: [

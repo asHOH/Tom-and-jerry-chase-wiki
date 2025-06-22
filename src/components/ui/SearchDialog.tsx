@@ -161,8 +161,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         className={`bg-white dark:bg-gray-800 shadow-xl p-4 relative ${isMobile ? 'w-full h-full rounded-none flex flex-col' : 'rounded-lg w-full max-w-md mx-auto'}`}
       >
         <button
+          type='button'
           onClick={onClose}
           className='absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          aria-label='关闭搜索对话框'
         >
           <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
             <path
@@ -189,6 +191,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
               fill='none'
               viewBox='0 0 24 24'
               stroke='currentColor'
+              aria-label='搜索图标'
             >
               <path
                 strokeLinecap='round'
@@ -214,6 +217,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                 className='border-b border-gray-200 dark:border-gray-700 last:border-b-0'
               >
                 <button
+                  type='button'
                   onClick={() => handleResultClick(result)}
                   className='flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left'
                 >
