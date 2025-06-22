@@ -77,10 +77,12 @@ export type Skill = SkillDefinition & {
   id: string;
 };
 
-export type KnowledgeCardGroup = string[] | {
-  cards: string[];
-  description?: string;
-};
+export type KnowledgeCardGroup =
+  | string[]
+  | {
+      cards: string[];
+      description?: string;
+    };
 
 // Character definition type (without id, for raw definitions)
 export type CharacterDefinition = {

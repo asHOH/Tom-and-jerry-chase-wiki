@@ -56,8 +56,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
 
     knowledgeCardGroups: [
-      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
-      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'], // 推荐知识卡组，用列表列举知识卡名
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'], // 推荐知识卡组，用列表列举知识卡名
+        description: '有救援卡，逃窜适合打侍卫等角色', // 对这套知识卡组的介绍
+      },
     ],
 
     skills: [
