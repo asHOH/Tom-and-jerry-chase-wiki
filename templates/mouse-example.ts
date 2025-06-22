@@ -56,10 +56,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
 
     knowledgeCardGroups: [
-      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'], // 推荐知识卡组，用列表列举知识卡名
+      // 知识卡组合推荐
       {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'], // 推荐知识卡组，用列表列举知识卡名
-        description: '有救援卡，逃窜适合打侍卫等角色', // 对这套知识卡组的介绍
+        description: '有救援卡，逃窜适合打侍卫等角色', // 对知识卡组的介绍，适合打什么阵容/地图/局内思路/适合段位
+      },
+      {
+        cards: ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
+        description: '无救援卡，需要即时与队友沟通，避免无救援卡救援。',
       },
     ],
 
@@ -73,7 +77,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true, // 是否能在空中使用技能
         cancelableSkill: '不可被打断', // 技能前摇时是否可被打断，填写“无前摇”，“不可被打断”或“可被...打断”
         cancelableAftercast: '不可取消后摇', // 技能后摇是否可取消，填写“无后摇”，“不可被打断”或“可被...打断”
-        canHitInPipe: false, // 可击中管道中的角色
+        canHitInPipe: false, //（可选）技能是否对管道中的角色生效，默认为false
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5', // （可选）视频链接，后面的?t=...表示视频开始播放的时间点，单位为秒，例如此处对应1分6.5秒
         skillLevels: [
           {

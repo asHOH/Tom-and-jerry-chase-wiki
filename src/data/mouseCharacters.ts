@@ -60,8 +60,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
 
     knowledgeCardGroups: [
-      ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
-      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description: '有救援卡，逃窜适合打侍卫等角色',
+      },
+      {
+        cards: ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
+        description: '无救援卡，需要即时与队友沟通，避免无救援卡救援。',
+      },
     ],
 
     skills: [
