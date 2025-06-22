@@ -51,7 +51,7 @@ export default function KnowledgeCardSection({
           </div>
         </div>
         {description && (
-          <div className='bg-gray-50 p-3 rounded-lg w-full ml-14'>
+          <div className='bg-gray-50 p-3 rounded-lg ml-14'>
             {' '}
             {/* ml-14 to align with cards, 10 (index width) + 4 (space-x-4) */}
             <p className='text-sm text-gray-700'>{description}</p>
