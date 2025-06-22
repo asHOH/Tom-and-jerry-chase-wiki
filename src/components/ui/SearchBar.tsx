@@ -39,10 +39,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelectCharacter, onSelectCard, 
   };
 
   return (
-    <div className='relative w-full max-w-md mx-auto'>
+    <div>
       <button
         onClick={handleOpenSearch}
-        className='p-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white flex items-center justify-center w-11 h-11 border-none'
+        className={`
+          ${isMobile ? 'p-2 min-w-[44px]' : 'py-2 px-4'}
+          rounded-md bg-gray-200 text-gray-900
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+          dark:bg-gray-700 dark:text-white
+          flex items-center justify-center border-none cursor-pointer transition-colors
+        `}
       >
         {/* Search icon */}
         <svg
