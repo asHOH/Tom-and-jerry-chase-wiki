@@ -104,12 +104,12 @@ export const formatTextWithEnhancedMarkdown = (text: string): React.ReactElement
 /**
  * Check if text contains specific patterns
  * @param text - Text to check
- * @param pattern - Pattern to look for ('markdown', 'highlights', 'itemkey')
+ * @param pattern - Pattern to look for ('markdown', 'highlights', 'itemkey', 'hoverTooltip')
  * @returns boolean indicating if pattern exists
  */
 export const hasTextPattern = (
   text: string,
-  pattern: 'markdown' | 'highlights' | 'itemkey'
+  pattern: 'markdown' | 'highlights' | 'itemkey' | 'hoverTooltip'
 ): boolean => {
   switch (pattern) {
     case 'markdown':
@@ -117,6 +117,8 @@ export const hasTextPattern = (
       return /\*\*(.*?)\*\*/.test(text);
     case 'itemkey':
       return text.includes('道具键*');
+    case 'hoverTooltip':
+      return /\[([^\]]+?)\]\(([^)]+?)\)/.test(text);
     default:
       return false;
   }

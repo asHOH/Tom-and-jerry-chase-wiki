@@ -65,6 +65,7 @@ export type SkillDefinition = {
   // Skill usage properties
   canMoveWhileUsing?: boolean; // 移动释放
   canUseInAir?: boolean; // 空中释放
+  canHitInPipe?: boolean; // 可击中管道中的角色
   cancelableSkill?: string; // 可取消释放
   cancelableAftercast?: string; // 可取消后摇
 
@@ -75,6 +76,13 @@ export type SkillDefinition = {
 export type Skill = SkillDefinition & {
   id: string;
 };
+
+export type KnowledgeCardGroup =
+  | string[]
+  | {
+      cards: string[];
+      description?: string;
+    };
 
 // Character definition type (without id, for raw definitions)
 export type CharacterDefinition = {
@@ -107,8 +115,10 @@ export type CharacterDefinition = {
   skills: SkillDefinition[];
 
   // Knowledge card suggestions
-  knowledgeCardGroups: string[][];
+  knowledgeCardGroups: KnowledgeCardGroup[];
 };
+
+export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDefinition>;
 
 // Final processed character (with ID and processed skills)
 export type Character = CharacterDefinition & {

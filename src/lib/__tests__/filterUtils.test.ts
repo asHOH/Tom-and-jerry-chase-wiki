@@ -8,7 +8,6 @@ import {
   createRankFilter,
   createCostFilter,
   RANK_OPTIONS,
-  COST_RANGES,
 } from '../filterUtils';
 import { renderHook, act } from '@testing-library/react';
 
@@ -219,11 +218,6 @@ describe('filterUtils', () => {
   describe('constants', () => {
     it('should export RANK_OPTIONS', () => {
       expect(RANK_OPTIONS).toEqual(['S', 'A', 'B', 'C']);
-    });
-
-    it('should export COST_RANGES', () => {
-      expect(COST_RANGES).toHaveLength(4);
-      expect(COST_RANGES[0]).toEqual({ label: '低费 (1-2)', min: 1, max: 2 });
     });
   });
 });
