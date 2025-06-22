@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import SearchBar from './ui/SearchBar'; // Import SearchBar
+import { useAppContext } from '@/context/AppContext';
 
 type Tab = {
   id: string;
@@ -32,25 +33,12 @@ const tabs: Tab[] = [
 ];
 
 type TabNavigationProps = {
-  activeTab: string | null;
-  onTabChange: (tabId: string) => void;
-  isDetailedView?: boolean;
-  onToggleDetailedView?: () => void;
   showDetailToggle?: boolean;
-  onSelectCharacter: (characterId: string) => void;
-  onSelectCard: (cardId: string) => void;
 };
 
-export default function TabNavigation({
-  activeTab,
-  onTabChange,
-  isDetailedView = false,
-  onToggleDetailedView = () => {},
-  showDetailToggle = false,
-  onSelectCharacter,
-  onSelectCard,
-}: TabNavigationProps) {
+export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const { activeTab, handleTabChange, isDetailedView, toggleDetailedView } = useAppContext();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -138,7 +126,7 @@ export default function TabNavigation({
           }}
         >
           <button
-            onClick={() => onTabChange('')}
+            onClick={() => handleTabChange('')}
             style={buttonStyle(activeTab === null)}
             title={isMobile ? '首页' : undefined}
             onTouchStart={(e) => {
@@ -178,7 +166,7 @@ export default function TabNavigation({
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               style={buttonStyle(activeTab === tab.id)}
               title={isMobile ? tab.name : undefined}
               onTouchStart={(e) => {
@@ -225,15 +213,10 @@ export default function TabNavigation({
 
         {/* Right-aligned detailed/simple view toggle button and SearchBar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <SearchBar
-            onSelectCharacter={onSelectCharacter}
-            onSelectCard={onSelectCard}
-            isMobile={isMobile} // Pass isMobile prop
-          />{' '}
-          {/* Add SearchBar here */}
+          <SearchBar isMobile={isMobile} /> {/* Add SearchBar here */}
           {showDetailToggle && (
             <button
-              onClick={onToggleDetailedView}
+              onClick={toggleDetailedView}
               className='whitespace-nowrap'
               style={{
                 padding: isMobile ? '8px' : '8px 16px',

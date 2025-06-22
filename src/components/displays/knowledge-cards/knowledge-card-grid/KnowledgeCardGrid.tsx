@@ -5,8 +5,9 @@ import { useFilterState, createRankFilter, RANK_OPTIONS } from '@/lib/filterUtil
 import { KnowledgeCardGridProps } from '@/lib/types';
 import CostRangeSlider from '../../../ui/CostRangeSlider';
 import { useState } from 'react';
+import { useAppContext } from '@/context/AppContext';
 
-export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCardGridProps) {
+export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
   // Use centralized filter state management for ranks
   const {
     selectedFilters: selectedRanks,
@@ -16,6 +17,7 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
 
   // Cost range filter state
   const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
+  const { handleSelectCard } = useAppContext();
 
   // Filter and sort cards using centralized utilities
   const filteredAndSortedCards = sortCardsByRank(
@@ -111,7 +113,7 @@ export default function KnowledgeCardGrid({ faction, onSelectCard }: KnowledgeCa
               rank={card.rank}
               cost={card.cost}
               imageUrl={card.imageUrl}
-              onClick={onSelectCard}
+              onClick={handleSelectCard}
             />
           </div>
         ))}

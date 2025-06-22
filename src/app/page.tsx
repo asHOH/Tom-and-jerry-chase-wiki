@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import NavigationWrapper from '@/components/NavigationWrapper';
 // Static imports for smaller components
@@ -8,6 +7,7 @@ import { DisclaimerText } from '@/components/DisclaimerText';
 import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
 import { factions, characters, factionCards, cards } from '@/data';
+import { AppProvider, useAppContext } from '@/context/AppContext';
 
 // Dynamic imports for large components - code splitting
 const CharacterGrid = dynamic(
@@ -50,32 +50,16 @@ const KnowledgeCardDetails = dynamic(
 );
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<string | null>(null);
-  const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [isDetailedView, setIsDetailedView] = useState<boolean>(false);
+  return (
+    <AppProvider>
+      <HomeContent />
+    </AppProvider>
+  );
+}
 
-  const handleTabChange = (tabId: string) => {
-    // If tabId is empty string, set activeTab to null (home page)
-    setActiveTab(tabId === '' ? null : tabId);
-    // Clear selected character and card when changing tabs
-    setSelectedCharacter(null);
-    setSelectedCard(null);
-  };
-
-  const handleSelectCharacter = (characterId: string) => {
-    setSelectedCharacter(characterId);
-    setSelectedCard(null); // Clear card selection when selecting character
-  };
-
-  const handleSelectCard = (cardId: string) => {
-    setSelectedCard(cardId);
-    setSelectedCharacter(null); // Clear character selection when selecting card
-  };
-
-  const toggleDetailedView = () => {
-    setIsDetailedView(!isDetailedView);
-  };
+function HomeContent() {
+  const { activeTab, selectedCharacter, selectedCard, isDetailedView, handleTabChange } =
+    useAppContext();
 
   // Render content based on state
   const renderContent = () => {
@@ -95,18 +79,16 @@ export default function Home() {
       );
     } // If card tabs are active, show faction cards
     if (activeTab === 'catCards' && factionCards['cat']) {
-      return <KnowledgeCardGrid faction={factionCards['cat']} onSelectCard={handleSelectCard} />;
+      return <KnowledgeCardGrid faction={factionCards['cat']} />;
     }
 
     if (activeTab === 'mouseCards' && factionCards['mouse']) {
-      return <KnowledgeCardGrid faction={factionCards['mouse']} onSelectCard={handleSelectCard} />;
+      return <KnowledgeCardGrid faction={factionCards['mouse']} />;
     }
 
     // If a faction tab is active, show faction characters
     if (activeTab && factions[activeTab]) {
-      return (
-        <CharacterGrid faction={factions[activeTab]} onSelectCharacter={handleSelectCharacter} />
-      );
+      return <CharacterGrid faction={factions[activeTab]} />;
     }
 
     // Default: show home page content
@@ -183,13 +165,7 @@ export default function Home() {
 
   return (
     <NavigationWrapper
-      activeTab={activeTab}
-      onTabChange={handleTabChange}
-      isDetailedView={isDetailedView}
-      onToggleDetailedView={toggleDetailedView}
       showDetailToggle={!!(selectedCharacter || selectedCard)} // Show toggle when a character or card is selected
-      onSelectCharacter={handleSelectCharacter}
-      onSelectCard={handleSelectCard}
     >
       {/* Render content based on state */}
       {renderContent()}
