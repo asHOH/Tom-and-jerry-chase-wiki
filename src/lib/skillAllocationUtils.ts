@@ -6,6 +6,7 @@ export type ParsedSkillLevel = {
   hasNegativeEffect: boolean; // After "-" - 负面效果
   isParallel?: boolean; // In brackets - parallel skills
   parallelOptions?: Array<'0' | '1' | '2' | '3'>; // Options for parallel skills
+  bracketGroupId?: number; // Unique ID for each bracket group
 };
 
 /**
@@ -15,6 +16,7 @@ export type ParsedSkillLevel = {
 export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[] => {
   const result: ParsedSkillLevel[] = [];
   let i = 0;
+  let bracketGroupCounter = 0;
 
   const negativeMarkerIndex = pattern.indexOf('-');
   const hasNegativeMarker = negativeMarkerIndex !== -1;
@@ -32,6 +34,7 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
 
     // Check for parallel skills (in brackets)
     if (char === '[') {
+      const currentBracketGroupId = bracketGroupCounter++;
       i++; // Skip opening bracket
 
       let bracketContent = '';
@@ -59,6 +62,7 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
           hasNegativeEffect: isNegative, // Use the pre-calculated variable
           isParallel: true,
           parallelOptions: [firstOption, secondOption],
+          bracketGroupId: currentBracketGroupId,
         });
       }
       continue;

@@ -168,8 +168,16 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     const level = currentLevels[i]!;
 
     if (level.isParallel && level.parallelOptions) {
+      // Group consecutive parallel levels with the same bracketGroupId
+      const currentBracketGroupId = level.bracketGroupId;
       let j = i;
-      while (j < currentLevels.length && currentLevels[j]?.isParallel) j++;
+      while (
+        j < currentLevels.length &&
+        currentLevels[j]?.isParallel &&
+        currentLevels[j]?.bracketGroupId === currentBracketGroupId
+      ) {
+        j++;
+      }
       const parallelLevels = currentLevels.slice(i, j);
       levelGroups.push({
         characterLevel,
@@ -214,12 +222,22 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     if (hasNegativeTarget()) return null;
 
     if (isParallel) {
-      if (!isLastLevelInGroup || (isLastLevelInGroup && nextGroup?.isParallelGroup)) {
-        // Parallel to parallel OR within parallel group -> straight lines
+      if (!isLastLevelInGroup) {
+        // Within parallel group -> straight lines
         return (
           <div className='absolute left-10 top-3 w-4 h-auto'>
             <div className='w-full h-px bg-gray-400'></div>
             <div className='w-full h-px bg-gray-400 mt-7'></div>
+          </div>
+        );
+      } else if (isLastLevelInGroup && nextGroup?.isParallelGroup) {
+        // Parallel to parallel (different groups) -> converge then diverge
+        return (
+          <div className='absolute left-10 top-3 w-4 h-7'>
+            <svg className='w-full h-full' viewBox='0 0 16 28'>
+              <path d='M0 0 Q8 0 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path d='M0 28 Q8 28 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
+            </svg>
           </div>
         );
       } else if (isLastLevelInGroup && nextGroup) {
