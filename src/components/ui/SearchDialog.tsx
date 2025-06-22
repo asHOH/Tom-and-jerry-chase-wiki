@@ -163,7 +163,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
     >
       <div
         ref={dialogRef}
-        className={`bg-white dark:bg-gray-800 shadow-xl p-4 relative ${isMobile ? 'w-full h-full rounded-none' : 'rounded-lg w-full max-w-md mx-auto'}`}
+        className={`bg-white dark:bg-gray-800 shadow-xl p-4 relative ${isMobile ? 'w-full h-full rounded-none flex flex-col' : 'rounded-lg w-full max-w-md mx-auto'}`}
       >
         <button
           onClick={onClose}
@@ -210,7 +210,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({
         )}
 
         {searchQuery.length > 0 && searchResults.length > 0 && !isSearching && (
-          <ul className='max-h-60 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md'>
+          <ul
+            className={`${isMobile ? 'flex-1' : 'max-h-60'} overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md`}
+          >
             {searchResults.map((result) => (
               <li
                 key={`${result.type}-${result.id}`}
