@@ -60,6 +60,8 @@ export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCa
       );
     }
 
+    if (skill.canHitInPipe) properties.push('可击中管道中的角色');
+
     return properties;
   };
 

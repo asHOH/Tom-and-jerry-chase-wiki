@@ -65,6 +65,7 @@ export type SkillDefinition = {
   // Skill usage properties
   canMoveWhileUsing?: boolean; // 移动释放
   canUseInAir?: boolean; // 空中释放
+  canHitInPipe?: boolean; // 可击中管道中的角色
   cancelableSkill?: string; // 可取消释放
   cancelableAftercast?: string; // 可取消后摇
 

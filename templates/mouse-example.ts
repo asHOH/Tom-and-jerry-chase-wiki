@@ -70,6 +70,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true, // 是否能在空中使用技能
         cancelableSkill: '不可被打断', // 技能前摇时是否可被打断，填写“无前摇”，“不可被打断”或“可被...打断”
         cancelableAftercast: '不可取消后摇', // 技能后摇是否可取消，填写“无后摇”，“不可被打断”或“可被...打断”
+        canHitInPipe: false, // 可击中管道中的角色
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5', // （可选）视频链接，后面的?t=...表示视频开始播放的时间点，单位为秒，例如此处对应1分6.5秒
         skillLevels: [
           {
@@ -98,6 +99,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '可被道具键*打断', //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
         cancelableAftercast: '不可取消后摇',
+        canHitInPipe: true,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=104.4',
         skillLevels: [
           {
