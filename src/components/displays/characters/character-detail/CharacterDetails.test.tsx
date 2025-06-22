@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import CharacterDetails from './CharacterDetails';
+import { AppProvider } from '@/context/AppContext';
 import type { CharacterWithFaction } from '@/lib/types';
 import type { Skill } from '@/data/types';
 
@@ -182,8 +183,14 @@ describe('CharacterDetails', () => {
       ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
     ],
   };
+
+  // Helper function to render with AppProvider
+  const renderWithProvider = (component: React.ReactNode) => {
+    return render(<AppProvider>{component}</AppProvider>);
+  };
+
   it('should render character basic information', () => {
-    render(<CharacterDetails character={mockCharacter} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     expect(screen.getByText('测试角色')).toBeTruthy();
     expect(screen.getByText('(猫阵营)')).toBeTruthy();
@@ -191,7 +198,7 @@ describe('CharacterDetails', () => {
   });
 
   it('should render character attributes', () => {
-    render(<CharacterDetails character={mockCharacter} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     expect(screen.getByText(/Hp上限/)).toBeTruthy();
     expect(screen.getByText(/200/)).toBeTruthy();
@@ -202,7 +209,7 @@ describe('CharacterDetails', () => {
   });
 
   it('should render cat-specific attributes', () => {
-    render(<CharacterDetails character={mockCharacter} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     expect(screen.getByText(/爪刀CD/)).toBeTruthy();
     expect(screen.getByText(/2.3 \/ 4.5 秒/)).toBeTruthy();
@@ -211,7 +218,7 @@ describe('CharacterDetails', () => {
   });
 
   it('should render positioning tags', () => {
-    render(<CharacterDetails character={mockCharacter} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     expect(screen.getByText('定位')).toBeTruthy();
     expect(screen.getByText('进攻')).toBeTruthy();
@@ -219,13 +226,13 @@ describe('CharacterDetails', () => {
   });
 
   it('should render additional description in detailed view', () => {
-    render(<CharacterDetails character={mockCharacter} isDetailedView={true} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} isDetailedView={true} />);
 
     expect(screen.getByText('进攻能力很强')).toBeTruthy();
   });
 
   it('should render skill allocations', () => {
-    render(<CharacterDetails character={mockCharacter} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     expect(screen.getByText('推荐加点')).toBeTruthy();
     expect(screen.getByTestId('skill-allocation')).toBeTruthy();
@@ -233,7 +240,7 @@ describe('CharacterDetails', () => {
   });
 
   it('should render skills section', () => {
-    render(<CharacterDetails character={mockCharacter} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     expect(screen.getByText('技能描述')).toBeTruthy();
     expect(screen.getByText(/主动 · 测试主动技能/)).toBeTruthy();
@@ -241,7 +248,7 @@ describe('CharacterDetails', () => {
   });
 
   it('should render skill levels', () => {
-    render(<CharacterDetails character={mockCharacter} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     expect(screen.getAllByText(/Lv\. 1:/).length).toBeGreaterThan(0);
     expect(screen.getByText('一级效果')).toBeTruthy();
@@ -250,13 +257,13 @@ describe('CharacterDetails', () => {
   });
 
   it('should use detailed descriptions in detailed view', () => {
-    render(<CharacterDetails character={mockCharacter} isDetailedView={true} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} isDetailedView={true} />);
 
     expect(screen.getByText('详细主动技能描述')).toBeTruthy();
   });
 
   it('should render knowledge card groups', () => {
-    render(<CharacterDetails character={mockCharacter} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     expect(screen.getByText('推荐知识卡组')).toBeTruthy();
     expect(screen.getByText('1')).toBeTruthy(); // First group number
@@ -286,7 +293,7 @@ describe('CharacterDetails', () => {
   });
 
   it('should render knowledge card tooltips with correct content', () => {
-    render(<CharacterDetails character={mockCharacter} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     const strikingCards = screen.getAllByAltText('S-击晕');
     const strikingSpan = strikingCards[0]?.closest('span');
@@ -299,7 +306,7 @@ describe('CharacterDetails', () => {
 
   it('should not render knowledge card groups section if knowledgeCardGroups is empty', () => {
     const characterWithoutKnowledgeCards = { ...mockCharacter, knowledgeCardGroups: [] };
-    render(<CharacterDetails character={characterWithoutKnowledgeCards} />);
+    renderWithProvider(<CharacterDetails character={characterWithoutKnowledgeCards} />);
     expect(screen.queryByText('推荐知识卡组')).toBeNull();
   });
 
@@ -325,7 +332,7 @@ describe('CharacterDetails', () => {
       knowledgeCardGroups: [['A-冲冠一怒', 'A-团队领袖']],
     };
 
-    render(<CharacterDetails character={mouseCharacter} />);
+    renderWithProvider(<CharacterDetails character={mouseCharacter} />);
 
     expect(screen.getByText('测试老鼠')).toBeTruthy();
     expect(screen.getByText('(鼠阵营)')).toBeTruthy();

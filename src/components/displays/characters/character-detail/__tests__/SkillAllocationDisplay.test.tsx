@@ -23,9 +23,54 @@ jest.mock('../../../../../lib/design-tokens', () => ({
 
 // Mock Next.js Image component
 jest.mock('next/image', () => {
-  return function MockImage({ alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) {
+  return function MockImage({
+    src,
+    alt,
+    width,
+    height,
+    ...props
+  }: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    [key: string]: unknown;
+  }) {
+    // Filter out Next.js specific props that shouldn't be passed to DOM
+    const {
+      unoptimized,
+      priority,
+      loading,
+      quality,
+      sizes,
+      fill,
+      placeholder,
+      blurDataURL,
+      onLoad,
+      onLoadingComplete,
+      onError,
+      layout,
+      objectFit,
+      ...domProps
+    } = props;
+
+    // Consume the filtered props to avoid unused variable warnings
+    void unoptimized;
+    void priority;
+    void loading;
+    void quality;
+    void sizes;
+    void fill;
+    void placeholder;
+    void blurDataURL;
+    void onLoad;
+    void onLoadingComplete;
+    void onError;
+    void layout;
+    void objectFit;
+
     // eslint-disable-next-line @next/next/no-img-element
-    return <img alt={alt} {...props} />;
+    return <img src={src} alt={alt} width={width} height={height} {...domProps} />;
   };
 });
 
