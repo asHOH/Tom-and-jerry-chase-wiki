@@ -65,8 +65,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
 
     knowledgeCardGroups: [
       // 知识卡组合推荐
-      ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
-      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-心灵手巧'],
+      {
+        cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'], // 推荐知识卡组，用列表列举知识卡名
+        description: '平底锅专属，爪刀接二级锅接爪刀轻松打死124血老鼠', // 对这套知识卡组的介绍
+      },
+      ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-心灵手巧'], // 推荐知识卡组，用列表列举知识卡名
       ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
     ],
 
@@ -82,6 +85,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true, // 是否能在空中使用技能
         cancelableSkill: '可被道具键打断，但不返还CD', // 技能前摇时是否可被打断，填写“无前摇”，“不可被打断”或“可被...打断”
         cancelableAftercast: '无后摇', // 技能后摇是否可取消，填写“无后摇”，“不可被打断”或“可被...打断”
+        canHitInPipe: false, // （可选）攻击技能是否可击中管道中的角色，默认为false
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=127.35', // （可选）视频链接，后面的?t=...表示视频开始播放的时间点，单位为秒，例如此处对应2分7.35秒
         skillLevels: [
           {
@@ -110,6 +114,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '可被跳跃键打断',
         cancelableAftercast: '可被跳跃键取消后摇',
+        canHitInPipe: false,
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=16',
         skillLevels: [
           {
@@ -139,6 +144,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '可被道具键打断',
         cancelableAftercast: '可被道具键取消后摽',
+        canHitInPipe: false,
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=172.85',
         skillLevels: [
           {

@@ -1,9 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
 import Tooltip from '@/components/ui/Tooltip';
+import type { KnowledgeCardGroup } from '@/data/types';
 
 interface KnowledgeCardSectionProps {
-  knowledgeCardGroups: string[][];
+  knowledgeCardGroups: KnowledgeCardGroup[];
   factionId: 'cat' | 'mouse';
 }
 
@@ -13,32 +14,41 @@ export default function KnowledgeCardSection({
 }: KnowledgeCardSectionProps) {
   const imageBasePath = factionId === 'cat' ? '/images/catCards/' : '/images/mouseCards/';
 
-  const renderKnowledgeCardGroup = (group: string[], index: number) => {
+  const renderKnowledgeCardGroup = (group: string[], index: number, description?: string) => {
     if (group.length === 0) {
       return null;
     }
 
     return (
-      <div key={index} className='flex items-center space-x-4'>
-        <div className='flex-shrink-0 w-10 h-10 rounded-full border-2 border-gray-300 text-gray-700 flex items-center justify-center text-lg font-bold'>
-          {index + 1}
+      <div key={index} className='flex flex-col space-y-2'>
+        <div className='flex items-center space-x-4'>
+          <div className='flex-shrink-0 w-10 h-10 rounded-full border-2 border-gray-300 text-gray-700 flex items-center justify-center text-lg font-bold'>
+            {index + 1}
+          </div>
+          <div className='flex flex-wrap gap-2'>
+            {group.map((cardId) => (
+              <Tooltip key={cardId} content={cardId.split('-')[1]!} className='border-none'>
+                <div className='relative w-24 h-24 flex-shrink-0'>
+                  {/* TODO: add link to knowledge card */}
+                  <Image
+                    src={`${imageBasePath}${cardId}.png`}
+                    alt={cardId}
+                    layout='fill'
+                    objectFit='contain'
+                    unoptimized
+                  />
+                </div>
+              </Tooltip>
+            ))}
+          </div>
         </div>
-        <div className='flex flex-wrap gap-2'>
-          {group.map((cardId) => (
-            <Tooltip key={cardId} content={cardId.split('-')[1]!} className='border-none'>
-              <div className='relative w-24 h-24 flex-shrink-0'>
-                {/* TODO: add link to knowledge card */}
-                <Image
-                  src={`${imageBasePath}${cardId}.png`}
-                  alt={cardId}
-                  layout='fill'
-                  objectFit='contain'
-                  unoptimized
-                />
-              </div>
-            </Tooltip>
-          ))}
-        </div>
+        {description && (
+          <div className='bg-gray-50 p-3 rounded-lg w-full ml-14'>
+            {' '}
+            {/* ml-14 to align with cards, 10 (index width) + 4 (space-x-4) */}
+            <p className='text-sm text-gray-700'>{description}</p>
+          </div>
+        )}
       </div>
     );
   };
@@ -51,7 +61,11 @@ export default function KnowledgeCardSection({
     <div className='mb-8'>
       <h3 className='text-2xl font-bold mb-4'>推荐知识卡组</h3>
       <div className='card p-4 space-y-3'>
-        {knowledgeCardGroups.map((group, index) => renderKnowledgeCardGroup(group, index))}
+        {knowledgeCardGroups.map((group, index) =>
+          Array.isArray(group)
+            ? renderKnowledgeCardGroup(group, index)
+            : renderKnowledgeCardGroup(group.cards, index, group.description)
+        )}
       </div>
     </div>
   );

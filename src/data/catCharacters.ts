@@ -1,6 +1,6 @@
 import { addSkillImageUrls } from '../lib/skillUtils';
 import { processCharacters } from '../lib/skillIdUtils';
-import type { CharacterDefinition } from './types';
+import type { CharacterDefinition, PartialCharacterDefinition } from './types';
 
 // Generate image URL based on character ID
 const getCatImageUrl = (characterId: string): string => {
@@ -14,7 +14,7 @@ const getCatImageUrl = (characterId: string): string => {
   }
 };
 
-const catCharacterDefinitions: Record<string, CharacterDefinition> = {
+const catCharacterDefinitions: Record<string, CharacterDefinition | PartialCharacterDefinition> = {
   /* ----------------------------------- 汤姆 ----------------------------------- */
   汤姆: {
     description: '全能男神汤姆，除了抓老鼠以外什么都会，杰瑞的欢喜冤家',
@@ -65,7 +65,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
     ],
     knowledgeCardGroups: [
-      ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
+      {
+        cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
+        description: '平底锅专属，爪刀接二级锅接爪刀轻松打死124血老鼠',
+      },
       ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-心灵手巧'],
       ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
     ],
@@ -76,7 +79,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         type: 'active',
         description: '解控并进入一段时间的无敌。',
         detailedDescription:
-          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到真实伤害（如仙女鼠的一星；但不会因此被击倒）和位移效果的影响（如尼宝的钩子）。若在莱恩蓝图内受到真实伤害，不免疫变线条猫。交互（如绑火箭）会被仙女鼠八星打断。无敌结束后会有2秒的10%减速（可以被护盾抵消）。',
+          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到[真实伤害](如仙女鼠的一星；但不会因此被击倒)和[位移效果的影响](如尼宝的钩子)。若在莱恩蓝图内受到真实伤害，不免疫变线条猫。绑火箭等交互会被仙女鼠八星打断。无敌结束后会有2秒的10%减速，减速可以被护盾抵消。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键打断，但不返还CD',
@@ -440,7 +443,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
             description:
               '减少CD；换位CD减少至5秒；分身不会自行消失；如果分身在本体附近，本体受到的大部分控制和受到的一半伤害会转移给分身。',
             detailedDescription:
-              '减少CD；换位CD减少至5秒；分身不会自行消失；如果分身在本体附近，本体受到的大部分控制（不包括斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等）和受到的一半伤害会转移给分身。',
+              '减少CD；换位CD减少至5秒；分身不会自行消失；如果分身在本体附近，本体受到的大部分[控制](不包括斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
             cooldown: 20,
           },
         ],
@@ -481,7 +484,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '将面前的一只老鼠抓到网中；再次使用技能将老鼠扔出，造成伤害和眩晕。扔出的老鼠会被直接绑上途经的火箭。',
         detailedDescription:
-          '将面前的一只老鼠抓到网中，期间老鼠可挣扎挣脱（若有多个老鼠在网的范围内，则会网住编号最小的）；再次使用技能将老鼠扔出，扔出的老鼠落地后眩晕并再次受到伤害，同时伤害周围的老鼠。扔出的老鼠会被直接绑上途经的火箭。捕虫网可以网住霸体老鼠（如尼宝的灵活跳跃、表演者·杰瑞的梦幻舞步），但无法网住无敌老鼠（如剑客泰菲的头盔、罗宾汉杰瑞的降落伞），若老鼠有护盾，则使用捕虫网将会消除一层护盾。',
+          '将面前的一只老鼠抓到网中，期间老鼠可挣扎挣脱（若有多个老鼠在网的范围内，则会网住编号最小的）；再次使用技能将老鼠扔出，扔出的老鼠落地后眩晕并再次受到伤害，同时伤害周围的老鼠。扔出的老鼠会被直接绑上途经的火箭。捕虫网可以网住[霸体老鼠](如尼宝的灵活跳跃、表演者·杰瑞的梦幻舞步)，但无法网住[无敌老鼠](如剑客泰菲的头盔、罗宾汉杰瑞的降落伞)，若老鼠有护盾，则使用捕虫网将会消除一层护盾。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '可被道具键打断',
@@ -583,7 +586,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '苏蕊随着音乐舞动。舞动开始将恢复一定Hp，免疫部分眩晕效果，爪击将替换为以苏蕊为中心周边更大范围的舞动亮相，冷却时间比爪击更久，舞动时将每隔一段时间在中心出现爱心提示，在爱心提示出现时点击技能按钮将恢复Hp，并获得移动速度和攻击力提升，在舞动过程中与敌方虚弱老鼠接触时，将会使其自主跟随苏蕊，跟随将持续30秒，期间遇到火箭会立刻绑上，舞动会持续较长时间。',
         detailedDescription:
-          '舞动开始时将恢复50点生命值。过程中免疫部分眩晕效果（包括控制道具等大部分老鼠的控制手段，但不免疫大部分NPC的控制）。移动和跳跃不会中断此技能。爪击将替换为以苏蕊为中心、范围更大的舞动亮相，其冷却时间为6秒（未命中老鼠）和12秒（命中老鼠），伤害为70点。舞动时每隔13秒会在中心出现爱心提示，此时点击技能按钮将恢复30点生命值，并提升10%移动速度和15点攻击力。在舞动过程中，若接触到不在老鼠夹上的虚弱老鼠（包括触发知识卡“铁血”的老鼠），该老鼠将自主跟随苏蕊。在此状态下，老鼠无法主动使用技能、移动等操作。若老鼠与苏蕊距离较远（如钻管道后），则老鼠会解除跟随状态。跟随效果持续30秒，期间老鼠遇到火箭会被立刻绑上。舞动总持续时间为40秒。',
+          '舞动开始时将恢复50点生命值。过程中[免疫部分眩晕效果](包括控制道具等大部分老鼠的控制手段，但不免疫大部分NPC的控制)。移动和跳跃不会中断此技能。爪击将替换为以苏蕊为中心、范围更大的[舞动亮相](冷却时间为6秒（未命中老鼠）和12秒（命中老鼠），伤害为70点)。舞动时每隔13秒会在中心出现爱心提示，此时点击技能按钮将恢复30点生命值，并提升10%移动速度和15点攻击力。在舞动过程中，若接触到不在老鼠夹上的[虚弱老鼠](包括触发知识卡“铁血”的老鼠)，该老鼠将自主跟随苏蕊。在此状态下，老鼠无法主动使用技能、移动等操作。若老鼠与苏蕊距离较远（如钻管道后），则老鼠会解除跟随状态。跟随效果持续30秒，期间老鼠遇到火箭会被立刻绑上。舞动总持续时间为40秒。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可取消',
@@ -652,12 +655,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description: '虚弱时间减少5秒。',
-            detailedDescription: '虚弱时间减少至2秒，起身时只有一半Hp（即100点）。',
+            detailedDescription: '虚弱时间减少至2秒，起身时只有[一半Hp](即100点)。',
           },
           {
             level: 3,
             description: '易碎的投掷道具击中敌方时将重置律动时间的冷却时间。',
-            detailedDescription: '易碎的投掷道具击中敌方（含虚弱老鼠）时将重置律动时间的冷却时间。',
+            detailedDescription: '易碎的投掷道具击中[敌方](含虚弱老鼠)时将重置律动时间的冷却时间。',
           },
         ],
       },
