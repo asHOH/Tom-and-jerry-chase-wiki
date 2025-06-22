@@ -26,6 +26,7 @@ describe('skillAllocationUtils', () => {
         hasNegativeEffect: false,
         isParallel: true,
         parallelOptions: ['0', '1'],
+        bracketGroupId: 0,
       });
     });
 
@@ -58,6 +59,7 @@ describe('skillAllocationUtils', () => {
       // Parallel skills
       expect(result[0]!.isParallel).toBe(true);
       expect(result[0]!.parallelOptions).toEqual(['0', '1']);
+      expect(result[0]!.bracketGroupId).toBe(0);
 
       // Normal skill
       expect(result[1]!.skillType).toBe('2');
@@ -70,6 +72,25 @@ describe('skillAllocationUtils', () => {
       // Negative effect skill
       expect(result[3]!.skillType).toBe('1');
       expect(result[3]!.hasNegativeEffect).toBe(true);
+    });
+
+    it('should assign different bracketGroupIds to consecutive parallel groups', () => {
+      const result = parseSkillAllocationPattern('[01][23]1');
+      expect(result).toHaveLength(3);
+
+      // First parallel group
+      expect(result[0]!.isParallel).toBe(true);
+      expect(result[0]!.parallelOptions).toEqual(['0', '1']);
+      expect(result[0]!.bracketGroupId).toBe(0);
+
+      // Second parallel group
+      expect(result[1]!.isParallel).toBe(true);
+      expect(result[1]!.parallelOptions).toEqual(['2', '3']);
+      expect(result[1]!.bracketGroupId).toBe(1);
+
+      // Regular skill
+      expect(result[2]!.isParallel).toBe(false);
+      expect(result[2]!.skillType).toBe('1');
     });
 
     describe('error handling', () => {
