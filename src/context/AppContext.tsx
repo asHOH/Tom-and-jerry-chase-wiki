@@ -2,12 +2,14 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+export type TabName = 'cat' | 'mouse' | 'catCards' | 'mouseCards';
+
 interface AppContextType {
-  activeTab: string | null;
+  activeTab: 'cat' | 'mouse' | 'catCards' | 'mouseCards' | null;
   selectedCharacter: string | null;
   selectedCard: string | null;
   isDetailedView: boolean;
-  handleTabChange: (tabId: string) => void;
+  handleTabChange: (tabId: TabName | '') => void;
   handleSelectCharacter: (characterId: string) => void;
   handleSelectCard: (cardId: string) => void;
   toggleDetailedView: () => void;
@@ -16,12 +18,12 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<TabName | null>(null);
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [isDetailedView, setIsDetailedView] = useState<boolean>(false);
 
-  const handleTabChange = (tabId: string) => {
+  const handleTabChange = (tabId: TabName | '') => {
     setActiveTab(tabId === '' ? null : tabId);
     setSelectedCharacter(null);
     setSelectedCard(null);

@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Tooltip from '@/components/ui/Tooltip';
 import type { KnowledgeCardGroup } from '@/data/types';
+import { useAppContext } from '../../../../context/AppContext';
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: KnowledgeCardGroup[];
@@ -12,6 +13,7 @@ export default function KnowledgeCardSection({
   knowledgeCardGroups,
   factionId,
 }: KnowledgeCardSectionProps) {
+  const { handleSelectCard, handleTabChange } = useAppContext();
   const imageBasePath = factionId === 'cat' ? '/images/catCards/' : '/images/mouseCards/';
 
   const renderKnowledgeCardGroup = (group: string[], index: number, description?: string) => {
@@ -28,8 +30,14 @@ export default function KnowledgeCardSection({
           <div className='flex flex-wrap gap-2'>
             {group.map((cardId) => (
               <Tooltip key={cardId} content={cardId.split('-')[1]!} className='border-none'>
-                <div className='relative w-24 h-24 flex-shrink-0'>
-                  {/* TODO: add link to knowledge card */}
+                <div
+                  className='relative w-24 h-24 flex-shrink-0 cursor-pointer'
+                  onClick={() => {
+                    handleTabChange(factionId === 'cat' ? 'catCards' : 'mouseCards');
+                    handleSelectCard(cardId.split('-')[1]!);
+                    console.log(cardId.split('-')[1]!);
+                  }}
+                >
                   <Image
                     src={`${imageBasePath}${cardId}.png`}
                     alt={cardId}

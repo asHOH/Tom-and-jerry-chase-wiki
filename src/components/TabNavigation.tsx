@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import SearchBar from './ui/SearchBar'; // Import SearchBar
-import { useAppContext } from '@/context/AppContext';
+import { TabName, useAppContext } from '@/context/AppContext';
 
 type Tab = {
-  id: string;
+  id: TabName;
   name: string;
   imageSrc: string;
   imageAlt: string;
