@@ -236,11 +236,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           <div className='absolute left-7 top-3 w-10 h-7'>
             <svg className='w-full h-full overflow-visible' viewBox='0 0 40 28'>
               {/* Converging lines from current group */}
-              <path d='M0 0 Q18 12 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
-              <path d='M0 28 Q18 16 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path d='M11 0 Q16.5 12 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path d='M11 28 Q16.5 16 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
               {/* Diverging lines to next group - more visible curves */}
-              <path d='M16 14 Q14 12 32 0' fill='none' stroke='#9ca3af' strokeWidth='1' />
-              <path d='M16 14 Q14 16 32 28' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path d='M16 14 Q15.5 12 21 0' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path d='M16 14 Q15.5 16 21 28' fill='none' stroke='#9ca3af' strokeWidth='1' />
             </svg>
           </div>
         );
