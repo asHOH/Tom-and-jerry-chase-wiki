@@ -77,6 +77,11 @@ export type Skill = SkillDefinition & {
   id: string;
 };
 
+export type KnowledgeCardGroup = string[] | {
+  cards: string[];
+  description?: string;
+};
+
 // Character definition type (without id, for raw definitions)
 export type CharacterDefinition = {
   description: string;
@@ -108,7 +113,7 @@ export type CharacterDefinition = {
   skills: SkillDefinition[];
 
   // Knowledge card suggestions
-  knowledgeCardGroups: string[][];
+  knowledgeCardGroups: KnowledgeCardGroup[];
 };
 
 export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDefinition>;
