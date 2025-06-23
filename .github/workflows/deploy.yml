@@ -1,13 +1,12 @@
-name: Deploy to GitHub Pages
+# DEPRECATED: GitHub Pages deployment
+# This workflow has been replaced by Vercel deployment
+# File kept for reference, will be removed after successful Vercel migration
+
+name: Deploy to GitHub Pages (DEPRECATED)
 
 on:
-  push:
-    branches: [ main ]
+  # Disabled - use Vercel instead
   workflow_dispatch:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: [ main ]
 
 permissions:
   contents: read
