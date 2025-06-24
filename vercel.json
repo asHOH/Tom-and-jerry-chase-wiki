@@ -1,14 +1,9 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "out",
-  "framework": "nextjs",
+  "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,
-  "functions": {
-    "app/**/*.{js,ts}": {
-      "maxDuration": 10
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
