@@ -13,6 +13,7 @@ const nextConfig = {
   },
   poweredByHeader: false,
   compress: true,
+  distDir: 'out',
   // Safe webpack configuration
   webpack: (config, { isServer }) => {
     if (!isServer) {
