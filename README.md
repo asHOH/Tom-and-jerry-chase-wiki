@@ -4,6 +4,7 @@
 [![Deploy](https://github.com/asHOH/Tom-and-jerry-chase-wiki/actions/workflows/deploy.yml/badge.svg)](https://github.com/asHOH/Tom-and-jerry-chase-wiki/actions/workflows/deploy.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![QQ群](https://img.shields.io/badge/QQ群-615882730-brightgreen?logo=tencentqq&logoColor=white)](https://qun.qq.com/universal-share/share?ac=1&authKey=%2BgPPblp3JfnQP2o3BI5PO1NmwvsNciCCaVCtSI9T6RAbv6yV2QHzzjz6gwY%2Bva9U&busi_data=eyJncm91cENvZGUiOiI2MTU4ODI3MzAiLCJ0b2tlbiI6Ijg3Ym9kMk9HTUVFTnJSU25GU2JCdWJoNEwxNGNOUlhWMGgvK3lMTWRGdy80Z0FnaUd4Yy9LYkZsYUJ5ZStTbUgiLCJ1aW4iOiIyOTAxODMzMjI1In0%3D&data=0yzCZAnaW0ZOxf01YibLkPBLkN17DRX2fS1NGi5Nndx2Qq2DMFDdWr1pxH3J8F9RefUGjWh_Zel5Rfjy-dPZ2A&svctype=4&tempid=h5_group_info)
 
 专为《猫和老鼠手游》玩家打造的数据查询网站。
 
@@ -43,6 +44,10 @@ npm run dev
 
 此后，在浏览器访问 http://localhost:3000 即可。
 
+## 💬 社区交流
+
+- **QQ交流群**: [615882730](https://qun.qq.com/universal-share/share?ac=1&authKey=%2BgPPblp3JfnQP2o3BI5PO1NmwvsNciCCaVCtSI9T6RAbv6yV2QHzzjz6gwY%2Bva9U&busi_data=eyJncm91cENvZGUiOiI2MTU4ODI3MzAiLCJ0b2tlbiI6Ijg3Ym9kMk9HTUVFTnJSU25GU2JCdWJoNEwxNGNOUlhWMGgvK3lMTWRGdy80Z0FnaUd4Yy9LYkZsYUJ5ZStTbUgiLCJ1aW4iOiIyOTAxODMzMjI1In0%3D&data=0yzCZAnaW0ZOxf01YibLkPBLkN17DRX2fS1NGi5Nndx2Qq2DMFDdWr1pxH3J8F9RefUGjWh_Zel5Rfjy-dPZ2A&svctype=4&tempid=h5_group_info) (了解项目进展、提供建议、贡献内容、技术交流)
+
 ## 🤝 一起完善这个项目吧
 
 ### 补充数据
@@ -61,11 +66,11 @@ npm run dev
 **方法二：🌱 GitHub 新手**
 
 1. 下载 [templates 文件夹](./templates/)
-2. 参考示例文件，在模板中填写新角色数据
-   - 📖 示例文件：[汤姆示例](./templates/tom-example.jsonc) | [杰瑞示例](./templates/jerry-example.jsonc)
-   - 📝 模板文件：[猫模板](./templates/cat-template.json) | [鼠模板](./templates/mouse-template.json)
+2. 在模板中填写新角色数据
+   - 模板文件：[猫示例](./templates/cat-example.ts) | [鼠示例](./templates/mouse-example.ts) （可用记事本打开）
+   - 填写指南：[templates/README.md](./templates/README.md)
 3. 点击仓库页面的 [Issues](../../issues) 标签
-4. 创建新 Issue，标题写角色名，将填写好的 JSON 数据粘贴到 Issue 内容中
+4. 创建新 Issue，标题写角色名，将填写好的数据粘贴到 Issue 内容中
 
 ### 开发功能
 
@@ -73,16 +78,23 @@ npm run dev
 
 #### 🚀 急
 
-- **增强筛选** - 按外观筛选角色、按费用筛选知识卡
-- **内容搜索** - 直接搜索特定角色或知识卡
 - **贡献者名单** - 创建并维护项目贡献者名单
+- **返回按钮** - 为知识卡推荐的链接增加快速返回原角色的按钮
+- **角色攻略** - 操作、意识等等
+- **同一伤害写法** - 统一为基础(+增伤)的形式
+- **增强筛选** - 按外观筛选角色
 
 #### 📋 不急
 
+- **折叠** - 角色信息页面各种区域支持折叠，如加点、知识卡推荐等
+- **萌新专区** - 类似博客的形式
 - **角色关系** - 展示角色间的克制和配合关系
-- **地图** - 展示地图，以及点位信息（墙缝、库博传送、几何桶等）
-- **年鉴** - 历代更新和角色调整记录
+- **统一用词** - 硬直/眩晕，等等
 - **特技** - 猫、鼠双方的特技
+- **药水** - 五种药水的功能
+- **年鉴** - 历代更新和角色调整记录
+- **画廊** - 各种猫鼠二创
+- **地图** - 展示地图，以及点位信息（墙缝、库博传送、几何桶等）
 
 #### 🎨 技术改进
 
@@ -157,13 +169,13 @@ npm audit               # 检查依赖安全性
 ## 🛠 技术栈
 
 - **前端**: Next.js + React + TailwindCSS
-- **部署**: GitHub Pages
+- **部署**: Vercel
 
 ## 📄 版权说明
 
 ### 代码许可证：GPL-3.0
 
-- **范围**: 所有代码文件 (`.ts`, `.tsx`, `.js` 等)
+- **范围**: 代码文件 (`.ts`, `.tsx`, `.js` 等)
 - **要求**: 二次开发必须开源并使用相同许可证
 - 详见 [LICENSE-GPL](./LICENSE-GPL) 文件
 
@@ -203,4 +215,4 @@ npm audit               # 检查依赖安全性
 
 ---
 
-**再次感谢所有为项目贡献数据和代码的玩家和开发者！** 🎮
+**再次感谢所有为项目作出贡献的玩家和开发者！** 🎮
