@@ -222,7 +222,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '烟雾弹',
         pattern: '12[12]21000',
         weaponType: 'weapon1',
-        description: '四级一般点二级隐身；如果需要团推且猫不在附近，可以先点二级烟雾弹。',
+        description: '四级一般点二级隐身；如果需要团推且猫不在附近，可先点二级烟雾弹。',
         additionaldescription: '',
       },
       {
