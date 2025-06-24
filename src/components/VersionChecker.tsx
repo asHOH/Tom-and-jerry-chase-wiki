@@ -2,20 +2,79 @@
 
 import { useEffect, useState } from 'react';
 
+interface VersionInfo {
+  version: string;
+  commitSha: string;
+  buildTime: string;
+  timestamp: string;
+  environment: 'vercel' | 'ci' | 'development';
+  generatedAt: string;
+}
+
 export const VersionChecker: React.FC = () => {
   const [showUpdateNotice, setShowUpdateNotice] = useState(false);
+  const [currentVersion, setCurrentVersion] = useState<string | null>(null);
 
   useEffect(() => {
+    // Load initial version info
+    const loadInitialVersion = async () => {
+      try {
+        const response = await fetch('/version.json', { cache: 'no-cache' });
+        if (response.ok) {
+          const versionInfo: VersionInfo = await response.json();
+          setCurrentVersion(versionInfo.version);
+          console.log('Initial version loaded:', versionInfo.version);
+        }
+      } catch (error) {
+        console.log('Failed to load initial version:', error);
+      }
+    };
+
+    loadInitialVersion();
+  }, []);
+
+  useEffect(() => {
+    if (!currentVersion) return;
+
     // Check for updates every 2 minutes
     const checkForUpdates = async () => {
       try {
-        const response = await fetch('/?_t=' + Date.now(), {
+        // Check version.json for updates
+        const response = await fetch('/version.json?_t=' + Date.now(), {
+          cache: 'no-cache',
+        });
+
+        if (response.ok) {
+          const versionInfo: VersionInfo = await response.json();
+
+          if (versionInfo.version !== currentVersion) {
+            console.log(`Version update detected: ${currentVersion} → ${versionInfo.version}`);
+            setShowUpdateNotice(true);
+
+            // Update service worker if available
+            if ('serviceWorker' in navigator) {
+              const registration = await navigator.serviceWorker.getRegistration();
+              if (registration) {
+                registration.update();
+              }
+            }
+
+            // Auto-reload after showing notice for 3 seconds
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+
+            return;
+          }
+        }
+
+        // Fallback: Original HEAD request method
+        const headResponse = await fetch('/?_t=' + Date.now(), {
           method: 'HEAD',
           cache: 'no-cache',
         });
 
-        if (response.ok && 'serviceWorker' in navigator) {
-          // Force service worker to check for updates
+        if (headResponse.ok && 'serviceWorker' in navigator) {
           const registration = await navigator.serviceWorker.getRegistration();
           if (registration) {
             registration.update();
@@ -36,19 +95,30 @@ export const VersionChecker: React.FC = () => {
       clearTimeout(initialTimer);
       clearInterval(interval);
     };
-  }, []);
+  }, [currentVersion]);
 
-  // Listen for service worker updates
+  // Listen for service worker updates (fallback method)
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        setShowUpdateNotice(true);
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      });
+      const handleControllerChange = () => {
+        if (!showUpdateNotice) {
+          setShowUpdateNotice(true);
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        }
+      };
+
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+
+      return () => {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      };
     }
-  }, []);
+
+    // Return empty cleanup function if service worker not available
+    return () => {};
+  }, [showUpdateNotice]);
 
   if (!showUpdateNotice) return null;
 

@@ -41,7 +41,8 @@
     "size": "bundlesize",
     "update-sw": "node update-sw-version.js",
     "update-sw:dev": "node update-sw-version.js --dev",
-    "prebuild": "npm run update-sw",
+    "generate-version": "node generate-version-info.cjs",
+    "prebuild": "npm run update-sw && npm run generate-version",
     "prepare": "husky"
   },
   "engines": {

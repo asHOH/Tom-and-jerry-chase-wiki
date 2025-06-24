@@ -14,6 +14,19 @@ const eslintConfig = [
   {
     ignores: ['templates/**/*'],
   },
+  {
+    files: ['*.cjs'],
+    env: {
+      node: true,
+    },
+    parserOptions: {
+      sourceType: 'script',
+    },
+    rules: {
+      '@typescript-eslint/no-var-requires': 'off',
+      'import/no-commonjs': 'off',
+    },
+  },
 ];
 
 export default eslintConfig;

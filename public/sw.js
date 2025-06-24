@@ -15,6 +15,9 @@ const STATIC_ASSETS = [
   '/offline.html',
 ];
 
+// Assets that should never be cached
+const NO_CACHE_ASSETS = ['/version.json', '/sw.js'];
+
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -60,7 +63,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For all requests: try network first, fall back to cache
+  // Never cache version.json and sw.js to ensure they're always fresh
+  if (NO_CACHE_ASSETS.some((asset) => url.pathname === asset)) {
+    event.respondWith(
+      fetch(request, { cache: 'no-cache' }).catch(() => {
+        // If network fails for critical assets, try cache as last resort
+        return caches.match(request);
+      })
+    );
+    return;
+  }
+
+  // For all other requests: try network first, fall back to cache
   event.respondWith(
     fetch(request)
       .then((fetchResponse) => {
