@@ -14,12 +14,6 @@ const nextConfig = {
   },
   poweredByHeader: false,
   compress: true,
-  // 添加静态导出特定配置
-  exportPathMap: async function (defaultPathMap) {
-    return {
-      ...defaultPathMap,
-    };
-  },
   // Safe webpack configuration
   webpack: (config, { isServer }) => {
     if (!isServer) {
