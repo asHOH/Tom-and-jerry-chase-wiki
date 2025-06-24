@@ -14,11 +14,6 @@ const nextConfig = {
   },
   poweredByHeader: false,
   compress: true,
-  // 针对静态导出优化
-  experimental: {
-    // 确保所有路由都被静态化
-    isrMemoryCacheSize: 0,
-  },
   // Safe webpack configuration
   webpack: (config, { isServer }) => {
     if (!isServer) {
