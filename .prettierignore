@@ -1,7 +1,12 @@
 node_modules
 .next
 out
+coverage
 *.log
 .github/workflows/*.yml
 prisma/dev.db
 prisma/migrations/
+.git
+.husky/_
+tsconfig.tsbuildinfo
+package-lock.json

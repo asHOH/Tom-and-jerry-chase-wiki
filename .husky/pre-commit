@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Update service worker cache version before commit (ensure development state)
-if [ -f "public/sw.js" ] && ! grep -q "__CACHE_VERSION__" public/sw.js; then
+# Only reset SW if it was actually modified and contains real version
+if git diff --cached --name-only | grep -q "public/sw.js" && [ -f "public/sw.js" ] && ! grep -q "__CACHE_VERSION__" public/sw.js; then
   echo "🔄 Resetting service worker to placeholder for development..."
   node -e "
     const fs = require('fs');

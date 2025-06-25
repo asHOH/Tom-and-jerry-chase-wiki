@@ -26,8 +26,10 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
+    "lint:staged": "next lint --fix --max-warnings=0",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
+    "prettier:staged": "prettier --write --ignore-unknown",
     "format": "npm run prettier:fix && npm run lint:fix",
     "type-check": "tsc --noEmit",
     "test": "jest",
@@ -82,11 +84,12 @@
     "typescript": "^5.8.3"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,md}": [
-      "prettier --write"
-    ],
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix"
+      "prettier --write --ignore-unknown",
+      "eslint --fix --max-warnings=0 --cache"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write --ignore-unknown"
     ]
   }
 }

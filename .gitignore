@@ -35,6 +35,9 @@ Thumbs.db
 *.tsbuildinfo
 next-env.d.ts
 
+# ESLint cache
+.eslintcache
+
 # Next.js
 .next/cache/
 
