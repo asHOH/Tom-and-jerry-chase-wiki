@@ -1,23 +1,50 @@
 #!/bin/sh
 
-echo "🔍 Running pre-push checks..."
+# Detect current branch
+CURRENT_BRANCH=$(git branch --show-current)
+MAIN_BRANCHES="main|master|production|prod"
 
-# Quick lint check on staged/committed files first (fail fast)
+# Check if we're on a main branch or force full mode
+if [ "$FORCE_FULL_PREPUSH" = "true" ] || echo "$CURRENT_BRANCH" | grep -qE "^($MAIN_BRANCHES)$"; then
+  if [ "$FORCE_FULL_PREPUSH" = "true" ]; then
+    echo "🔍 Running FULL pre-push checks (forced via FORCE_FULL_PREPUSH)..."
+  else
+    echo "🔍 Running FULL pre-push checks (on $CURRENT_BRANCH branch)..."
+  fi
+  RUN_MODE="full"
+else
+  echo "🚀 Running FAST pre-push checks (on $CURRENT_BRANCH branch)..."
+  echo "💡 Full checks will run when pushing to main/master"
+  RUN_MODE="fast"
+fi
+
+# Quick lint check first (fail fast for both modes)
 echo "⚡ Quick lint check..."
 if ! npx eslint --cache --max-warnings=0 "src/**/*.{js,jsx,ts,tsx}" > /dev/null 2>&1; then
   echo "❌ ESLint errors found. Fix them before pushing."
   exit 1
 fi
 
-# Run type-check and tests in parallel for faster execution
-echo "🏃‍♂️ Running type-check and tests in parallel..."
-
-# Start both processes in background
-npm run type-check &
-TYPE_CHECK_PID=$!
-
-npm run test:ci &
-TEST_PID=$!
+# Run type-check and tests in parallel
+if [ "$RUN_MODE" = "full" ]; then
+  echo "🏃‍♂️ Running type-check and ALL tests in parallel..."
+  
+  # Start both processes in background
+  npm run type-check &
+  TYPE_CHECK_PID=$!
+  
+  npm run test:ci &
+  TEST_PID=$!
+else
+  echo "🏃‍♂️ Running type-check and tests on CHANGED files..."
+  
+  # Start both processes in background
+  npm run type-check &
+  TYPE_CHECK_PID=$!
+  
+  npm run test:changed &
+  TEST_PID=$!
+fi
 
 # Wait for both to complete and capture exit codes
 wait $TYPE_CHECK_PID
@@ -37,4 +64,9 @@ if [ $TEST_EXIT -ne 0 ]; then
   exit 1
 fi
 
-echo "✅ All pre-push checks passed!"
+if [ "$RUN_MODE" = "full" ]; then
+  echo "✅ All pre-push checks passed! Ready for $CURRENT_BRANCH"
+else
+  echo "✅ Fast pre-push checks passed! ($CURRENT_BRANCH branch)"
+  echo "💡 Use 'git push --no-verify' to skip all checks"
+fi

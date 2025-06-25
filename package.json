@@ -47,8 +47,8 @@
     "update-sw:dev": "node update-sw-version.js --dev",
     "generate-version": "node generate-version-info.cjs",
     "prebuild": "npm run update-sw && npm run generate-version",
-    "pre-push:fast": ".husky/pre-push-fast",
-    "pre-push:full": ".husky/pre-push",
+    "pre-push:force-fast": ".husky/pre-push-fast",
+    "pre-push:force-full": "cross-env FORCE_FULL_PREPUSH=true .husky/pre-push",
     "prepare": "husky"
   },
   "engines": {
