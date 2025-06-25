@@ -14,6 +14,7 @@ interface VersionInfo {
 export const VersionChecker: React.FC = () => {
   const [showUpdateNotice, setShowUpdateNotice] = useState(false);
   const [currentVersion, setCurrentVersion] = useState<string | null>(null);
+  const [showDebugPanel, setShowDebugPanel] = useState(true);
   const [debugInfo, setDebugInfo] = useState<{
     status: 'loading' | 'ready' | 'error';
     lastCheck: string | null;
@@ -26,6 +27,7 @@ export const VersionChecker: React.FC = () => {
       try {
         setDebugInfo((prev) => ({ ...prev, status: 'loading' }));
         const response = await fetch('/version.json', { cache: 'no-cache' });
+
         if (response.ok) {
           const versionInfo: VersionInfo = await response.json();
           setCurrentVersion(versionInfo.version);
@@ -34,7 +36,6 @@ export const VersionChecker: React.FC = () => {
             lastCheck: new Date().toLocaleTimeString(),
             error: null,
           });
-          console.log('Initial version loaded:', versionInfo.version);
         } else {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -45,7 +46,6 @@ export const VersionChecker: React.FC = () => {
           lastCheck: new Date().toLocaleTimeString(),
           error: errorMessage,
         });
-        console.error('Failed to load initial version:', error);
       }
     };
 
@@ -149,6 +149,52 @@ export const VersionChecker: React.FC = () => {
 
   return (
     <>
+      {/* Version Info Display - Always visible at bottom */}
+      {debugInfo.status === 'ready' && currentVersion && (
+        <div className='fixed bottom-0 left-0 right-0 bg-gray-800 text-gray-300 px-4 py-2 text-xs text-center z-30'>
+          <div className='flex justify-center items-center space-x-4'>
+            <span>版本: {currentVersion}</span>
+            <span>•</span>
+            <span>最后检查: {debugInfo.lastCheck}</span>
+            <span>•</span>
+            <span>环境: {process.env.NODE_ENV}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Debug Panel - Only in development */}
+      {process.env.NODE_ENV === 'development' && showDebugPanel && (
+        <div className='fixed top-20 right-4 bg-gray-800 text-white px-3 py-2 rounded text-xs font-mono z-40 max-w-xs shadow-lg border border-gray-600'>
+          <div className='flex justify-between items-center mb-2'>
+            <div className='text-sm font-bold'>版本检查器</div>
+            <button
+              onClick={() => setShowDebugPanel(false)}
+              className='text-gray-400 hover:text-white text-lg leading-none'
+              title='关闭调试面板'
+            >
+              ×
+            </button>
+          </div>
+          <div className='space-y-1'>
+            <div>状态: {debugInfo.status}</div>
+            <div>版本: {currentVersion || '加载中...'}</div>
+            <div>最后检查: {debugInfo.lastCheck || '从未'}</div>
+            {debugInfo.error && <div className='text-red-300'>错误: {debugInfo.error}</div>}
+          </div>
+        </div>
+      )}
+
+      {/* Debug Panel Toggle - Only in development when panel is hidden */}
+      {process.env.NODE_ENV === 'development' && !showDebugPanel && (
+        <button
+          onClick={() => setShowDebugPanel(true)}
+          className='fixed top-20 right-4 bg-gray-800 text-white px-2 py-1 rounded text-xs font-mono z-40 hover:bg-gray-700'
+          title='显示调试面板'
+        >
+          调试
+        </button>
+      )}
+
       {/* Update Notice */}
       {showUpdateNotice && (
         <div className='fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50'>
@@ -156,16 +202,6 @@ export const VersionChecker: React.FC = () => {
             <div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent'></div>
             <span>正在更新到最新版本...</span>
           </div>
-        </div>
-      )}
-
-      {/* Debug Info (only in development) */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className='fixed bottom-4 left-4 bg-gray-800 text-white px-3 py-2 rounded text-xs font-mono z-40 max-w-xs'>
-          <div>Status: {debugInfo.status}</div>
-          <div>Version: {currentVersion || 'Loading...'}</div>
-          <div>Last Check: {debugInfo.lastCheck || 'Never'}</div>
-          {debugInfo.error && <div className='text-red-300'>Error: {debugInfo.error}</div>}
         </div>
       )}
     </>
