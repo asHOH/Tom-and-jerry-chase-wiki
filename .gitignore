@@ -33,10 +33,14 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+.tsbuildinfo
 next-env.d.ts
 
 # ESLint cache
 .eslintcache
+
+# Jest cache
+.jest-cache
 
 # Next.js
 .next/cache/

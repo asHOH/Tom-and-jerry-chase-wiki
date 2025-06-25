@@ -32,10 +32,12 @@
     "prettier:staged": "prettier --write --ignore-unknown",
     "format": "npm run prettier:fix && npm run lint:fix",
     "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:ci": "jest --ci --coverage --watchAll=false --maxWorkers=50%",
+    "test:changed": "jest --onlyChanged --passWithNoTests",
     "clean": "rimraf .next out coverage",
     "analyze": "cross-env ANALYZE=true npm run build",
     "audit": "npm audit --audit-level=moderate",
@@ -45,6 +47,8 @@
     "update-sw:dev": "node update-sw-version.js --dev",
     "generate-version": "node generate-version-info.cjs",
     "prebuild": "npm run update-sw && npm run generate-version",
+    "pre-push:fast": ".husky/pre-push-fast",
+    "pre-push:full": ".husky/pre-push",
     "prepare": "husky"
   },
   "engines": {

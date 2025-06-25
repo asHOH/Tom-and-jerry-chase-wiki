@@ -1,22 +1,22 @@
 #!/bin/sh
 
-echo "🔍 Running pre-push checks..."
+echo "🚀 Running fast pre-push checks (development mode)..."
 
-# Quick lint check on staged/committed files first (fail fast)
+# Quick lint check first (fail fast)
 echo "⚡ Quick lint check..."
 if ! npx eslint --cache --max-warnings=0 "src/**/*.{js,jsx,ts,tsx}" > /dev/null 2>&1; then
   echo "❌ ESLint errors found. Fix them before pushing."
   exit 1
 fi
 
-# Run type-check and tests in parallel for faster execution
-echo "🏃‍♂️ Running type-check and tests in parallel..."
+# Run type-check and changed tests in parallel
+echo "🏃‍♂️ Running type-check and tests on changed files..."
 
 # Start both processes in background
 npm run type-check &
 TYPE_CHECK_PID=$!
 
-npm run test:ci &
+npm run test:changed &
 TEST_PID=$!
 
 # Wait for both to complete and capture exit codes
@@ -37,4 +37,4 @@ if [ $TEST_EXIT -ne 0 ]; then
   exit 1
 fi
 
-echo "✅ All pre-push checks passed!"
+echo "✅ Fast pre-push checks passed!"
