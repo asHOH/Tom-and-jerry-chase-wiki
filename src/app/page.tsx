@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import NavigationWrapper from '@/components/NavigationWrapper';
 // Static imports for smaller components
 import { DisclaimerText } from '@/components/DisclaimerText';
+import { VersionDisplay } from '@/components/VersionDisplay';
 import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
 import { factions, characters, factionCards, cards } from '@/data';
@@ -158,6 +159,7 @@ function HomeContent() {
               最近更新：{process.env.NEXT_PUBLIC_BUILD_TIME}
             </p>
           )}
+          <VersionDisplay />
         </div>
       </div>
     );

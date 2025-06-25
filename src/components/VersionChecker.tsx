@@ -149,19 +149,6 @@ export const VersionChecker: React.FC = () => {
 
   return (
     <>
-      {/* Version Info Display - Always visible at bottom */}
-      {debugInfo.status === 'ready' && currentVersion && (
-        <div className='fixed bottom-0 left-0 right-0 bg-gray-800 text-gray-300 px-4 py-2 text-xs text-center z-30'>
-          <div className='flex justify-center items-center space-x-4'>
-            <span>版本: {currentVersion}</span>
-            <span>•</span>
-            <span>最后检查: {debugInfo.lastCheck}</span>
-            <span>•</span>
-            <span>环境: {process.env.NODE_ENV}</span>
-          </div>
-        </div>
-      )}
-
       {/* Debug Panel - Only in development */}
       {process.env.NODE_ENV === 'development' && showDebugPanel && (
         <div className='fixed top-20 right-4 bg-gray-800 text-white px-3 py-2 rounded text-xs font-mono z-40 max-w-xs shadow-lg border border-gray-600'>
