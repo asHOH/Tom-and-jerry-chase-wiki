@@ -70,3 +70,6 @@ pnpm-lock.yaml
 
 # Personal git workflow helpers
 /git-helpers/
+
+# Generated build artifacts
+public/version.json

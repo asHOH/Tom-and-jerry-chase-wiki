@@ -31,8 +31,9 @@ export const VersionDisplay: React.FC = () => {
   }, []);
 
   if (!versionInfo) return null;
+
   // Format the version to show date and time in Chinese format
-  const formatVersion = (version: string) => {
+  const formatVersion = (version: string, environment: string) => {
     // Extract timestamp from version (e.g., "dev-20250624174942" or "v20250625-abcd1234")
     const timestampMatch = version.match(/(\d{8,14})/);
     if (timestampMatch && timestampMatch[1]) {
@@ -41,15 +42,25 @@ export const VersionDisplay: React.FC = () => {
       // Parse timestamp: YYYYMMDDHHMMSS or YYYYMMDD
       const month = timestamp.slice(4, 6);
       const day = timestamp.slice(6, 8);
-      const hour = timestamp.slice(8, 10) || '00';
-      const minute = timestamp.slice(10, 12) || '00';
 
-      return `${parseInt(month)}月${parseInt(day)}日 ${hour}:${minute}`;
+      // Only show time in development environment when full timestamp is available
+      if (environment === 'development' && timestamp.length >= 12) {
+        const hour = timestamp.slice(8, 10);
+        const minute = timestamp.slice(10, 12);
+        return `${parseInt(month)}月${parseInt(day)}日 ${hour}:${minute}`;
+      } else {
+        // Production environments or no time info - show date only
+        return `${parseInt(month)}月${parseInt(day)}日`;
+      }
     }
 
     // Fallback to showing the version as-is
     return version;
   };
 
-  return <p className='text-sm text-gray-500 mt-2'>版本：{formatVersion(versionInfo.version)}</p>;
+  return (
+    <p className='text-sm text-gray-500 mt-2'>
+      版本：{formatVersion(versionInfo.version, versionInfo.environment)}
+    </p>
+  );
 };
