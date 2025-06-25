@@ -16,14 +16,19 @@ const eslintConfig = [
   },
   {
     files: ['*.cjs'],
-    env: {
-      node: true,
-    },
-    parserOptions: {
+    languageOptions: {
+      globals: {
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        process: 'readonly',
+      },
       sourceType: 'script',
     },
     rules: {
       '@typescript-eslint/no-var-requires': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
       'import/no-commonjs': 'off',
     },
   },
