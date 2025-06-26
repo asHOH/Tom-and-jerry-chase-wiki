@@ -1,4 +1,6 @@
 import React from 'react';
+import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { getCardRankColors, getCardCostColors, designTokens } from '@/lib/design-tokens';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
@@ -6,15 +8,23 @@ import GameImage from '../../../ui/GameImage';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import Tag from '../../../ui/Tag';
 import BaseCard from '../../../ui/BaseCard';
+import { useAppContext } from '@/context/AppContext';
+import { characters } from '@/data'; // Import characters data
 
 export default function KnowledgeCardDetails({
   card,
   isDetailedView: propIsDetailedView,
 }: KnowledgeCardDetailsProps) {
   const isDetailedView = propIsDetailedView || false;
+  const searchParams = useSearchParams();
+  const fromCharacterId = searchParams ? searchParams.get('from') : null; // Add null check
+  const { handleSelectCharacter } = useAppContext();
 
   const rankColors = getCardRankColors(card.rank, true);
   const costColors = getCardCostColors(card.cost, true);
+
+  const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: designTokens.spacing.xl }}>
@@ -84,6 +94,23 @@ export default function KnowledgeCardDetails({
             >
               知识卡效果
             </h2>
+            {fromCharacter && (
+              <button
+                onClick={() => handleSelectCharacter(fromCharacterId!)}
+                className='flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg text-sm border border-gray-200 shadow-sm transition-colors duration-200'
+              >
+                {fromCharacter.imageUrl && (
+                  <Image
+                    src={fromCharacter.imageUrl}
+                    alt={fromCharacter.id}
+                    width={24}
+                    height={24}
+                    className='rounded-full object-cover'
+                  />
+                )}
+                ⬅️ 返回 {fromCharacter.id}
+              </button>
+            )}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.lg }}>

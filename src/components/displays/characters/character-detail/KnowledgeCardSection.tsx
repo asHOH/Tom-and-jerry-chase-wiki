@@ -7,11 +7,13 @@ import { useAppContext } from '../../../../context/AppContext';
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: KnowledgeCardGroup[];
   factionId: 'cat' | 'mouse';
+  characterId: string;
 }
 
 export default function KnowledgeCardSection({
   knowledgeCardGroups,
   factionId,
+  characterId,
 }: KnowledgeCardSectionProps) {
   const { handleSelectCard, handleTabChange } = useAppContext();
   const imageBasePath = factionId === 'cat' ? '/images/catCards/' : '/images/mouseCards/';
@@ -34,7 +36,7 @@ export default function KnowledgeCardSection({
                   className='relative w-24 h-24 flex-shrink-0 cursor-pointer'
                   onClick={() => {
                     handleTabChange(factionId === 'cat' ? 'catCards' : 'mouseCards');
-                    handleSelectCard(cardId.split('-')[1]!);
+                    handleSelectCard(cardId.split('-')[1]!, characterId);
                     console.log(cardId.split('-')[1]!);
                   }}
                 >

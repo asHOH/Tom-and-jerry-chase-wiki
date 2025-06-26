@@ -11,7 +11,7 @@ interface AppContextType {
   isDetailedView: boolean;
   handleTabChange: (tabId: TabName | '') => void;
   handleSelectCharacter: (characterId: string) => void;
-  handleSelectCard: (cardId: string) => void;
+  handleSelectCard: (cardId: string, fromCharacterId?: string) => void;
   toggleDetailedView: () => void;
 }
 
@@ -34,9 +34,21 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setSelectedCard(null);
   };
 
-  const handleSelectCard = (cardId: string) => {
+  const handleSelectCard = (cardId: string, fromCharacterId?: string) => {
     setSelectedCard(cardId);
     setSelectedCharacter(null);
+
+    // Update URL to include fromCharacterId if provided
+    if (fromCharacterId) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('from', fromCharacterId);
+      window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
+    } else {
+      // If no fromCharacterId, remove the 'from' parameter
+      const params = new URLSearchParams(window.location.search);
+      params.delete('from');
+      window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
+    }
   };
 
   const toggleDetailedView = () => {

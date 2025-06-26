@@ -87,6 +87,7 @@ export default function CharacterDetails({
           <KnowledgeCardSection
             knowledgeCardGroups={character.knowledgeCardGroups}
             factionId={factionId}
+            characterId={character.id}
           />
 
           <div className='mb-6'>
