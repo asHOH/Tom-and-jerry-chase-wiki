@@ -10,9 +10,9 @@
 
 ## 📱 功能简介
 
-- **角色查询**: 查看角色属性、技能
-- **技能加点**: 秒懂技能加点，快速上手
+- **角色查询**: 查看角色属性、技能、推荐加点和知识卡等
 - **知识卡查询**: 查看知识卡及其效果
+- **筛选与搜索**: 快速找到目标角色或知识卡。
 
 ## 🌟 亮点
 
@@ -20,57 +20,89 @@
 - 简洁的技能描述
 - 直观的技能加点
 
-## 🚀 快速开始
+## 🚀 快速访问
 
-### 在线体验
-
-访问链接：[tom-and-jerry-chase-wiki.space](https://tom-and-jerry-chase-wiki.space)
-
-### 本地部署
-
-环境要求：Node.js 20+
-
-```powershell
-# 克隆项目
-git clone https://github.com/asHOH/tom-and-jerry-chase-wiki.git
-cd tom-and-jerry-chase-wiki
-
-# 安装依赖
-npm install
-
-# 启动开发服务器
-npm run dev
-```
-
-此后，在浏览器访问 http://localhost:3000 即可。
+- **在线网站**: [tom-and-jerry-chase-wiki.space](https://tom-and-jerry-chase-wiki.space)
+- **开发预览**: [develop 分支预览](https://dev.tom-and-jerry-chase-wiki.space)
 
 ## 💬 社区交流
 
 - **QQ交流群**: [615882730](https://qun.qq.com/universal-share/share?ac=1&authKey=%2BgPPblp3JfnQP2o3BI5PO1NmwvsNciCCaVCtSI9T6RAbv6yV2QHzzjz6gwY%2Bva9U&busi_data=eyJncm91cENvZGUiOiI2MTU4ODI3MzAiLCJ0b2tlbiI6Ijg3Ym9kMk9HTUVFTnJSU25GU2JCdWJoNEwxNGNOUlhWMGgvK3lMTWRGdy80Z0FnaUd4Yy9LYkZsYUJ5ZStTbUgiLCJ1aW4iOiIyOTAxODMzMjI1In0%3D&data=0yzCZAnaW0ZOxf01YibLkPBLkN17DRX2fS1NGi5Nndx2Qq2DMFDdWr1pxH3J8F9RefUGjWh_Zel5Rfjy-dPZ2A&svctype=4&tempid=h5_group_info) (了解项目进展、提供建议、贡献内容、技术交流)
 
+## 🛠️ 技术栈
+
+- **框架**: [Next.js 14](https://nextjs.org/) (App Router)
+- **语言**: [TypeScript](https://www.typescriptlang.org/)
+- **样式**: [Tailwind CSS](https://tailwindcss.com/)
+- **测试**: [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/)
+- **部署**: [Vercel](httpss://vercel.com/) (静态导出 `next export`)
+- **代码规范**: [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
+
+## 💻 本地开发
+
+### 环境要求
+
+- **Node.js**: `^20.0.0`
+- **npm**: `^10.0.0`
+
+### 开发步骤
+
+1.  **克隆仓库**:
+
+    ```bash
+    git clone https://github.com/asHOH/Tom-and-jerry-chase-wiki.git
+    cd Tom-and-jerry-chase-wiki
+    ```
+
+2.  **安装依赖**:
+
+    ```bash
+    npm install
+    ```
+
+3.  **启动开发服务器**:
+    ```bash
+    npm run dev
+    ```
+    之后，在浏览器中打开 `http://localhost:3000` 即可。
+
+### 主要 NPM 命令
+
+- `npm run dev`: 启动开发模式
+- `npm run build`: 构建生产版本
+- `npm test`: 运行单元测试
+- `npm run lint`: 检查代码规范
+- `npm run format`: 格式化所有代码
+
 ## 🤝 一起完善这个项目吧
 
-### 补充数据
+### 贡献流程
 
 **方法一：✅ GitHub 老手**
 
-1. Fork 仓库 → 切换到 develop 分支 → 补充数据 → 进行[提交前检查](#-提交前检查) → 发起 Pull Request (目标分支: develop)
-2. 简要说明数据来源
-3. 数据文件位置：
-   - 猫咪角色：[`src/data/catCharacters.ts`](./src/data/catCharacters.ts)
-   - 老鼠角色：[`src/data/mouseCharacters.ts`](./src/data/mouseCharacters.ts)
-4. （可选）同时补充角色及技能图片：
-   - 角色图片：[`public/images/cats/`](./public/images/cats/) 或 [`public/images/mice/`](./public/images/mice/)
-   - 技能图片：[`public/images/catSkills/`](./public/images/catSkills/) 或 [`public/images/mouseSkills/`](./public/images/mouseSkills/)
+1.  **Fork** 本仓库。
+2.  基于 `develop` 分支创建新的功能分支:
+    ```bash
+    git checkout develop
+    git checkout -b feature/your-feature-name
+    ```
+3.  进行代码开发或数据修改。
+4.  提交代码前，运行本地检查以确保代码质量：
+    - **Windows (PowerShell)**: `.\test-github-workflows.ps1`
+    - **macOS/Linux**: `.\test-github-workflows.bash`
+5.  提交 Pull Request 到 `develop` 分支。
 
 **方法二：🌱 GitHub 新手**
 
-1. 下载 [templates 文件夹](./templates/)
-2. 在模板中填写新角色数据
-   - 模板文件：[猫示例](./templates/cat-example.ts) | [鼠示例](./templates/mouse-example.ts) （可用记事本打开）
-   - 填写指南：[templates/README.md](./templates/README.md)
-3. 点击仓库页面的 [Issues](../../issues) 标签
-4. 创建新 Issue，标题写角色名，将填写好的数据粘贴到 Issue 内容中
+加入我们的[QQ群](#-社区交流)吧~
+
+### 数据文件结构
+
+- **猫角色数据**: [`src/data/catCharacters.ts`](src/data/catCharacters.ts)
+- **鼠角色数据**: [`src/data/mouseCharacters.ts`](src/data/mouseCharacters.ts)
+- **猫知识卡**: [`src/data/catKnowledgeCards.ts`](src/data/catKnowledgeCards.ts)
+- **鼠知识卡**: [`src/data/mouseKnowledgeCards.ts`](src/data/mouseKnowledgeCards.ts)
+- **图片资源**: [`public/images/`](public/images)
 
 ### 开发功能
 
@@ -100,101 +132,33 @@ npm run dev
 
 #### 🎨 技术改进
 
-- 代码重构
 - UI美化
 - 移动端适配改进
-
-**开发流程:**
-
-1. Fork 仓库并切换到 develop 分支：`git checkout develop`
-2. 创建功能分支：`git checkout -b feature/你的功能名`
-3. 进行[提交前检查](#-提交前检查)
-4. 完成开发后推送分支：`git push origin feature/你的功能名`
-5. 发起 Pull Request，目标分支选择 `develop`
-
-**注意**: 所有功能开发都应基于 `develop` 分支，PR 也应提交到 `develop` 分支。`main` 分支仅用于稳定版本发布。
-
-**自动化工具**: 项目已配置 Pre-commit hooks，提交代码时会自动运行 Prettier 格式化和 ESLint 检查，确保代码质量。依赖更新由 Dependabot 自动管理。
-
-### 🧪 提交前检查
-
-发起 Pull Request 前，请运行以下命令检查代码：
-
-**Windows (PowerShell):**
-
-```powershell
-# 自动检查所有项目要求，如代码格式、规范、编译和构建
-# 如果发现 Prettier 格式问题，会提示是否自动修复
-.\test-github-workflows.ps1
-```
-
-**macOS/Linux (Bash):**
-
-```bash
-./test-github-workflows.bash
-```
-
-如果检查失败，也可手动运行以下命令排查：
-
-```powershell
-npm run prettier:fix    # 修复代码格式
-npm run lint            # 检查代码规范
-npm run lint -- --fix   # 自动修复ESLint问题
-npm test                # 运行测试套件
-npm run test:watch      # 监视模式运行测试
-npm run test:coverage   # 生成测试覆盖率报告
-npm run build           # 构建项目
-npm run type-check      # TypeScript类型检查
-npm run analyze         # 生成打包体积分析报告
-npm audit               # 检查依赖安全性
-```
 
 ## 📁 项目结构
 
 ```
+.
+├── .github/            # GitHub Actions 工作流与模板
+├── public/             # 静态资源 (图片, PWA manifest)
 ├── src/
-│   ├── app/            # Next.js App Router 页面
-│   ├── components/     # 可复用组件
-│   ├── constants/      # 常量定义
-│   ├── data/           # 游戏数据文件
-│   └── lib/            # 工具函数库
-├── public/
-│   ├── images/         # 角色图片和图标
-│   ├── favicon.ico     # 网站图标
-│   ├── sw.js           # Service Worker
-│   └── ...             # 其他静态资源
-├── templates/          # 数据模板文件
-├── .github/            # GitHub Actions 工作流
-└── test-github-workflows.*  # 本地测试脚本
+│   ├── app/            # Next.js 页面与路由
+│   ├── components/     # 可复用 React 组件
+│   ├── constants/      # 全局常量
+│   ├── context/        # React Context
+│   ├── data/           # 核心游戏数据
+│   └── lib/            # 工具函数与辅助模块
+├── templates/          # 数据贡献模板
+├── README.md           # 项目说明
+└── package.json        # 项目依赖与脚本
 ```
 
-## 🛠 技术栈
+## 📄 版权与许可
 
-- **前端**: Next.js + React + TailwindCSS
-- **部署**: Vercel
+- **代码**: [GPL-3.0](./LICENSE-GPL) 许可。二次开发须以相同的许可证开源。
+- **数据和文档内容**: [CC BY 4.0](./LICENSE-CC-BY) 许可。使用时请署名原作者 **asHOH** 并链接到本仓库。
 
-## 📄 版权说明
-
-### 代码许可证：GPL-3.0
-
-- **范围**: 代码文件 (`.ts`, `.tsx`, `.js` 等)
-- **要求**: 二次开发必须开源并使用相同许可证
-- 详见 [LICENSE-GPL](./LICENSE-GPL) 文件
-
-### 内容许可证：CC BY 4.0
-
-- **范围**: 文档、数据等内容
-- **要求**: 使用时署名原作者
-- 详见 [LICENSE-CC-BY](./LICENSE-CC-BY) 文件
-
-### 署名要求
-
-使用本项目内容时请标注：
-
-- **原作者**: asHOH (GitHub: [@asHOH](https://github.com/asHOH))
-- **来源**: [Tom and Jerry Chase Wiki](https://github.com/asHOH/Tom-and-jerry-chase-wiki)
-
-**注意**: 许可证不涉及《猫和老鼠手游》素材的版权。相关版权见免责声明。
+**注意**: 许可不涉及《猫和老鼠手游》素材的版权。相关版权见[免责声明](#️-免责声明)。
 
 ## ⚠️ 免责声明
 

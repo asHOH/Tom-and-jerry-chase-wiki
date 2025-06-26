@@ -1,45 +1,46 @@
-# Security Audit Checklist ✅
+# 安全策略
 
-## Vulnerability Scanning
+作为纯静态网站，我们已极力减少潜在的攻击可能性。
 
-- ✅ **npm audit**: 0 vulnerabilities found
-- ✅ **Dependencies**: All up to date
+## 核心安全原则
 
-## Sensitive Data Protection
+- **最小权限**: 项目仅包含运行网站所必需的代码和依赖，无服务端逻辑。
+- **无用户数据**: 本网站不收集、不存储任何用户个人信息。
+- **依赖管理**: 定期审查和更新第三方依赖，修复漏洞。
 
-- ✅ **No hardcoded secrets**: No API keys, passwords, or tokens in code
-- ✅ **Environment variables**: Only safe usage of NODE_ENV and NEXT_PUBLIC_BUILD_TIME
-- ✅ **No .env files**: No environment files present in repository
+## 安全措施
 
-## XSS Prevention
+### 漏洞扫描
 
-- ✅ **Type safety**: TypeScript strict mode prevents injection vulnerabilities
+- **自动化依赖检查**: 我们使用 `npm audit` 和 Dependabot 来持续监控 `node_modules` 中的漏洞，并及时更新。
 
-## Security Headers
+### 内容安全策略 (CSP)
 
-- ✅ **X-Content-Type-Options**: nosniff (prevents MIME type sniffing)
-- ✅ **X-Frame-Options**: DENY (prevents clickjacking) - Set via HTTP headers
-- ✅ **X-XSS-Protection**: 1; mode=block (legacy XSS protection)
-- ✅ **Referrer-Policy**: strict-origin-when-cross-origin (limits referrer information)
-- ✅ **Permissions-Policy**: Disabled camera, microphone, geolocation
-- ✅ **Content-Security-Policy**: Strict policy implemented via meta tag
+本项目通过 Vercel 部署，并配置了严格的 **Content-Security-Policy (CSP)** 头，以防止跨站脚本（XSS）和其他代码注入攻击。策略包括：
 
-**Note**: Security headers are configured via HTTP headers (see `public/_headers` for Netlify or `public/.htaccess` for Apache) rather than meta tags, as per web standards.
+- `default-src 'self'`: 限制资源的加载源为本站域名。
+- `style-src 'self' 'unsafe-inline'`: 允许加载本站的样式文件以及内联样式（Tailwind CSS 所需）。
+- `img-src 'self' data:`: 允许加载本站图片以及 Base64 编码的图片数据。
 
-## Content Security
+### 其他安全头
 
-- ✅ **Static site**: Export-only build reduces server-side attack vectors
-- ✅ **No server-side code**: Pure static deployment
-- ✅ **Resource preloading**: Only preloading known, safe resources
+我们还启用了以下 HTTP 安全头来增强防护：
 
-## Performance & Security
+- `X-Content-Type-Options: nosniff`: 防止浏览器进行 MIME 类型嗅探。
+- `X-Frame-Options: DENY`: 防止网站被嵌入到 `<iframe>` 中，避免点击劫持攻击。
+- `Referrer-Policy: strict-origin-when-cross-origin`: 控制 `Referer` 头信息的发送范围。
+- `Permissions-Policy`: 限制摄像头、麦克风等敏感 API 的使用权限。
 
-- ✅ **Bundle analysis**: No suspicious dependencies
-- ✅ **Client-side monitoring**: Safe performance tracking without eval()
-- ✅ **Image optimization**: WebP/AVIF support with proper sizing
+### 开发安全
 
-## Best Practices
+- **无硬编码密钥**: 代码库中不含任何 API 密钥、密码或其他敏感凭证。
+- **TypeScript 严格模式**: 启用 `strict` 模式，从源头上避免了许多常见的类型相关漏洞。
+- **静态导出**: 项目采用 `output: 'export'` 模式，生成纯静态 HTML/CSS/JS 文件，不依赖 Node.js 服务器环境，从而消除了所有服务器端攻击向量。
 
-- ✅ **TypeScript strict mode**: Prevents common security issues
-- ✅ **ESLint rules**: Code quality checks prevent vulnerabilities
-- ✅ **Error boundaries**: Graceful error handling prevents information leakage
+## 报告安全问题
+
+如果您发现了任何安全漏洞，请通过以下方式联系我们：
+
+- **GitHub Issues**: [创建新 Issue](https://github.com/asHOH/Tom-and-jerry-chase-wiki/issues/new)
+
+我们会对所有报告进行处理。
