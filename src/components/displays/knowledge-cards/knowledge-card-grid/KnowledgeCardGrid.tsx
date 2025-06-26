@@ -76,6 +76,7 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
 
               return (
                 <button
+                  type='button'
                   key={rank}
                   onClick={() => toggleRankFilter(rank)}
                   style={buttonStyle}

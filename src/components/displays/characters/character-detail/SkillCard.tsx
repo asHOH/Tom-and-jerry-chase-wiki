@@ -90,6 +90,7 @@ export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCa
             {skill.videoUrl && (
               <div className='mt-2'>
                 <button
+                  type='button'
                   onClick={() => window.open(skill.videoUrl, '_blank', 'noopener,noreferrer')}
                   className='text-blue-600 text-xs px-2 py-1 hover:underline bg-blue-50 rounded-md hover:bg-blue-100 transition-colors block w-full text-center'
                 >

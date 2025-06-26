@@ -31,6 +31,7 @@ export function FactionButton({
 
   return (
     <button
+      type='button'
       onClick={onClick}
       aria-label={ariaLabel}
       className={`faction-button ${className} sm:px-6 sm:py-4 px-4 py-3`}

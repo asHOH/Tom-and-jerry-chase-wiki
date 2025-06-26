@@ -41,6 +41,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ isMobile }) => {
     <div>
       <Tooltip content='搜索 (快捷键：/ )' className='border-none' delay={800}>
         <button
+          type='button'
           onClick={handleOpenSearch}
           className={`
             ${isMobile ? 'p-2 w-[40px] h-[40px]' : 'p-2 w-11 h-11'}

@@ -86,6 +86,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
 
             return (
               <button
+                type='button'
                 key={tag}
                 onClick={() => togglePositioningTagFilter(tag)}
                 style={buttonStyle}

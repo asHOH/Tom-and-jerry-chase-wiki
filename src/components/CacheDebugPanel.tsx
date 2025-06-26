@@ -49,7 +49,11 @@ export const CacheDebugPanel: React.FC = () => {
     <div className='fixed top-4 right-4 bg-black bg-opacity-90 text-white p-4 rounded-lg z-50 max-w-sm'>
       <div className='flex justify-between items-center mb-2'>
         <h3 className='font-bold'>Cache Debug Panel</h3>
-        <button onClick={() => setIsVisible(false)} className='text-white hover:text-gray-300'>
+        <button
+          type='button'
+          onClick={() => setIsVisible(false)}
+          className='text-white hover:text-gray-300'
+        >
           ✕
         </button>
       </div>
@@ -68,18 +72,21 @@ export const CacheDebugPanel: React.FC = () => {
         </div>
         <div className='space-y-1'>
           <button
+            type='button'
             onClick={clearAllCaches}
             className='w-full bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-xs'
           >
             Clear All Caches
           </button>
           <button
+            type='button'
             onClick={forceReload}
             className='w-full bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-xs'
           >
             Force Reload
           </button>
           <button
+            type='button'
             onClick={getCacheInfo}
             className='w-full bg-gray-600 hover:bg-gray-700 px-2 py-1 rounded text-xs'
           >

@@ -34,6 +34,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <h2 className='text-2xl font-bold text-red-600 mb-4'>出错了</h2>
             <p className='text-gray-600 mb-4'>页面遇到了一些问题，请刷新页面重试。</p>
             <button
+              type='button'
               onClick={() => window.location.reload()}
               className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors'
             >

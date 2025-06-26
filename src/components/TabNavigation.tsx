@@ -106,7 +106,11 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           }}
         >
           <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>
-            <button onClick={() => handleTabChange('')} style={buttonStyle(activeTab === null)}>
+            <button
+              type='button'
+              onClick={() => handleTabChange('')}
+              style={buttonStyle(activeTab === null)}
+            >
               {!isMobile && '首页'}
               {isMobile && '🏠'}
             </button>
@@ -120,6 +124,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               delay={800}
             >
               <button
+                type='button'
                 onClick={() => handleTabChange(tab.id)}
                 style={buttonStyle(activeTab === tab.id)}
               >
@@ -148,6 +153,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               delay={800}
             >
               <button
+                type='button'
                 onClick={toggleDetailedView}
                 className='whitespace-nowrap'
                 style={{

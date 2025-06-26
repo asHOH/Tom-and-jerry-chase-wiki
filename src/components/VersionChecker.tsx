@@ -155,6 +155,7 @@ export const VersionChecker: React.FC = () => {
           <div className='flex justify-between items-center mb-2'>
             <div className='text-sm font-bold'>版本检查器</div>
             <button
+              type='button'
               onClick={() => setShowDebugPanel(false)}
               className='text-gray-400 hover:text-white text-lg leading-none'
               title='关闭调试面板'
@@ -174,6 +175,7 @@ export const VersionChecker: React.FC = () => {
       {/* Debug Panel Toggle - Only in development when panel is hidden */}
       {process.env.NODE_ENV === 'development' && !showDebugPanel && (
         <button
+          type='button'
           onClick={() => setShowDebugPanel(true)}
           className='fixed top-20 right-4 bg-gray-800 text-white px-2 py-1 rounded text-xs font-mono z-40 hover:bg-gray-700'
           title='显示调试面板'
