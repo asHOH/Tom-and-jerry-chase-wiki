@@ -23,6 +23,10 @@
           "value": "strict-origin-when-cross-origin"
         },
         {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'none'"
+        },
+        {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
         }
