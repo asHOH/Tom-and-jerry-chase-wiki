@@ -99,7 +99,7 @@ export default function KnowledgeCardDetails({
                 type='button'
                 aria-label={`返回 ${fromCharacter.id}`}
                 onClick={() => handleSelectCharacter(fromCharacterId!)}
-                className='flex items-center gap-2 font-bold py-2.5 pl-4 pr-2 rounded-full rounded-r-lg text-sm border shadow-sm transition-all duration-200
+                className='flex items-center gap-2 font-bold py-1.5 pl-4 pr-2 rounded-full rounded-r-lg text-md border shadow-sm transition-all duration-200
                            bg-blue-50 text-blue-700 border-blue-200
                            hover:bg-blue-500 hover:text-white hover:border-blue-500 hover:translate-x-[-5px]'
               >
@@ -111,7 +111,7 @@ export default function KnowledgeCardDetails({
                     width={0}
                     height={0}
                     className='rounded-full object-cover'
-                    style={{ height: '36px', width: 'auto' }}
+                    style={{ height: '40px', width: 'auto' }}
                   />
                 )}
               </button>
