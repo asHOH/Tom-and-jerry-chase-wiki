@@ -41,8 +41,8 @@ export default function KnowledgeCardSection({
                   <Image
                     src={`${imageBasePath}${cardId}.png`}
                     alt={cardId}
-                    layout='fill'
-                    objectFit='contain'
+                    fill
+                    className='object-contain'
                     unoptimized
                   />
                 </div>
