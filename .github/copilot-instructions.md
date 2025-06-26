@@ -29,4 +29,4 @@
 - Avoid inline scripts/styles and use build-time bundling for CSP compliance (although not required for this project)
 - Ensure your implementation plan complies with best practices before and after editing
 - Optimize for static delivery and client-side hydration
-- When doing a multiple-step task, stop and write a recommended commit message after each step with `commit_regex='^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?: .{1,80}'`
+- Write a recommended commit message after each step with `commit_regex='^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?: .{1,80}'`
