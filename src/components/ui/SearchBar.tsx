@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SearchDialog from './SearchDialog'; // Import the new SearchDialog component
+import Tooltip from './Tooltip';
 
 type SearchBarProps = {
   isMobile: boolean; // Add isMobile prop
@@ -38,32 +39,33 @@ const SearchBar: React.FC<SearchBarProps> = ({ isMobile }) => {
 
   return (
     <div>
-      <button
-        onClick={handleOpenSearch}
-        title='搜索'
-        className={`
-          ${isMobile ? 'p-2 w-[44px] h-[44px]' : 'p-2 w-11 h-11'}
-          rounded-md bg-gray-200 text-gray-900
-          focus:outline-none focus:ring-2 focus:ring-blue-500
-          dark:bg-gray-700 dark:text-white
-          flex items-center justify-center border-none cursor-pointer transition-colors
-        `}
-      >
-        {/* Search icon */}
-        <svg
-          className='h-6 w-6 text-gray-900 dark:text-white'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke='currentColor'
+      <Tooltip content='搜索 (快捷键：/ )' className='border-none'>
+        <button
+          onClick={handleOpenSearch}
+          className={`
+            ${isMobile ? 'p-2 w-[44px] h-[44px]' : 'p-2 w-11 h-11'}
+            rounded-md bg-gray-200 text-gray-900
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+            dark:bg-gray-700 dark:text-white
+            flex items-center justify-center border-none cursor-pointer transition-colors
+          `}
         >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth='2'
-            d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-          />
-        </svg>
-      </button>
+          {/* Search icon */}
+          <svg
+            className='h-6 w-6 text-gray-900 dark:text-white'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+              d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+            />
+          </svg>
+        </button>
+      </Tooltip>
 
       {showSearchDialog && (
         <SearchDialog

@@ -1,21 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 interface TooltipProps {
   children: React.ReactNode;
   content: string;
   className?: string;
+  disabled?: boolean;
+  delay?: number;
 }
 
 /**
  * Reusable Tooltip component for displaying contextual help
  * Consolidates tooltip logic previously duplicated across components
  */
-export default function Tooltip({ children, content, className = '' }: TooltipProps) {
+export default function Tooltip({
+  children,
+  content,
+  className = '',
+  disabled = false,
+  delay = 800,
+}: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = (e: React.MouseEvent) => {
+    if (disabled) return;
+
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     const rect = e.currentTarget.getBoundingClientRect();
     const tooltipWidth = 200; // Estimated tooltip width
     const tooltipHeight = 40; // Estimated tooltip height
@@ -37,12 +53,30 @@ export default function Tooltip({ children, content, className = '' }: TooltipPr
     }
 
     setPosition({ x, y });
-    setIsVisible(true);
+
+    // Set tooltip to show after delay
+    timeoutRef.current = setTimeout(() => {
+      setIsVisible(true);
+    }, delay);
   };
 
   const handleMouseLeave = () => {
+    // Clear timeout and hide tooltip
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     setIsVisible(false);
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>

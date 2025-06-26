@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import SearchBar from './ui/SearchBar'; // Import SearchBar
+import Tooltip from './ui/Tooltip'; // Import Tooltip
 import { TabName, useAppContext } from '@/context/AppContext';
 
 type Tab = {
@@ -67,27 +68,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     justifyContent: 'center',
   });
 
-  const tooltipStyle = {
-    position: 'absolute' as const,
-    bottom: isMobile ? '-40px' : '-35px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    backgroundColor: '#1f2937',
-    color: 'white',
-    padding: '6px 10px',
-    borderRadius: '4px',
-    fontSize: '12px',
-    whiteSpace: 'nowrap' as const,
-    zIndex: 50000,
-    opacity: 0,
-    pointerEvents: 'none' as const,
-    transition: 'opacity 0.2s',
-    minWidth: 'max-content',
-    maxWidth: '200px',
-    textAlign: 'center' as const,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-  };
-
   return (
     <div
       style={{
@@ -125,89 +105,29 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             position: 'relative',
           }}
         >
-          <button
-            onClick={() => handleTabChange('')}
-            style={buttonStyle(activeTab === null)}
-            title={isMobile ? '首页' : undefined}
-            onTouchStart={(e) => {
-              if (isMobile) {
-                const tooltip = e.currentTarget.querySelector('.tooltip');
-                if (tooltip) {
-                  (tooltip as HTMLElement).style.opacity = '1';
-                  setTimeout(() => {
-                    (tooltip as HTMLElement).style.opacity = '0';
-                  }, 2000);
-                }
-              }
-            }}
-            onMouseEnter={(e) => {
-              if (!isMobile) {
-                const tooltip = e.currentTarget.querySelector('.tooltip');
-                if (tooltip) (tooltip as HTMLElement).style.opacity = '1';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isMobile) {
-                const tooltip = e.currentTarget.querySelector('.tooltip');
-                if (tooltip) (tooltip as HTMLElement).style.opacity = '0';
-              }
-            }}
-          >
-            {!isMobile && '首页'}
-            {isMobile && (
-              <>
-                🏠
-                <div className='tooltip' style={tooltipStyle}>
-                  首页
-                </div>
-              </>
-            )}
-          </button>
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => handleTabChange(tab.id)}
-              style={buttonStyle(activeTab === tab.id)}
-              title={isMobile ? tab.name : undefined}
-              onTouchStart={(e) => {
-                if (isMobile) {
-                  const tooltip = e.currentTarget.querySelector('.tooltip');
-                  if (tooltip) {
-                    (tooltip as HTMLElement).style.opacity = '1';
-                    setTimeout(() => {
-                      (tooltip as HTMLElement).style.opacity = '0';
-                    }, 2000);
-                  }
-                }
-              }}
-              onMouseEnter={(e) => {
-                if (!isMobile) {
-                  const tooltip = e.currentTarget.querySelector('.tooltip');
-                  if (tooltip) (tooltip as HTMLElement).style.opacity = '1';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isMobile) {
-                  const tooltip = e.currentTarget.querySelector('.tooltip');
-                  if (tooltip) (tooltip as HTMLElement).style.opacity = '0';
-                }
-              }}
-            >
-              <Image
-                src={tab.imageSrc}
-                alt={tab.imageAlt}
-                width={0}
-                height={0}
-                className='object-contain'
-                style={{ height: isMobile ? '24px' : '28px', width: 'auto' }}
-              />
-              {!isMobile && <span>{tab.name}</span>}
-              {isMobile && (
-                <div className='tooltip' style={tooltipStyle}>
-                  {tab.name}
-                </div>
-              )}
+          <Tooltip content='首页' className='border-none' disabled={!isMobile}>
+            <button onClick={() => handleTabChange('')} style={buttonStyle(activeTab === null)}>
+              {!isMobile && '首页'}
+              {isMobile && '🏠'}
             </button>
+          </Tooltip>
+          {tabs.map((tab) => (
+            <Tooltip key={tab.id} content={tab.name} className='border-none' disabled={!isMobile}>
+              <button
+                onClick={() => handleTabChange(tab.id)}
+                style={buttonStyle(activeTab === tab.id)}
+              >
+                <Image
+                  src={tab.imageSrc}
+                  alt={tab.imageAlt}
+                  width={0}
+                  height={0}
+                  className='object-contain'
+                  style={{ height: isMobile ? '24px' : '28px', width: 'auto' }}
+                />
+                {!isMobile && <span>{tab.name}</span>}
+              </button>
+            </Tooltip>
           ))}
         </div>
 
@@ -215,27 +135,38 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <SearchBar isMobile={isMobile} /> {/* Add SearchBar here */}
           {showDetailToggle && (
-            <button
-              onClick={toggleDetailedView}
-              className='whitespace-nowrap'
-              style={{
-                padding: isMobile ? '8px' : '10px 16px',
-                borderRadius: '6px',
-                backgroundColor: isDetailedView ? '#dbeafe' : '#fef3e2',
-                color: isDetailedView ? '#1d4ed8' : '#ea580c',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s',
-                fontSize: isMobile ? '14px' : '16px',
-                minWidth: isMobile ? '44px' : 'auto',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              title={isMobile ? (isDetailedView ? '简明描述' : '详细描述') : undefined}
+            <Tooltip
+              content={isDetailedView ? '简明描述' : '详细描述'}
+              className='border-none'
+              disabled={!isMobile}
             >
-              {isMobile ? (isDetailedView ? '简' : '详') : isDetailedView ? '简明描述' : '详细描述'}
-            </button>
+              <button
+                onClick={toggleDetailedView}
+                className='whitespace-nowrap'
+                style={{
+                  padding: isMobile ? '8px' : '10px 16px',
+                  borderRadius: '6px',
+                  backgroundColor: isDetailedView ? '#dbeafe' : '#fef3e2',
+                  color: isDetailedView ? '#1d4ed8' : '#ea580c',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s',
+                  fontSize: isMobile ? '14px' : '16px',
+                  minWidth: isMobile ? '44px' : 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {isMobile
+                  ? isDetailedView
+                    ? '简'
+                    : '详'
+                  : isDetailedView
+                    ? '简明描述'
+                    : '详细描述'}
+              </button>
+            </Tooltip>
           )}
         </div>
       </div>
