@@ -88,7 +88,7 @@
     "typescript": "^5.8.3"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
+    "!(templates|.next|out|coverage)/**/*.{js,jsx,ts,tsx}": [
       "prettier --write --ignore-unknown",
       "eslint --fix --max-warnings=0 --cache"
     ],
