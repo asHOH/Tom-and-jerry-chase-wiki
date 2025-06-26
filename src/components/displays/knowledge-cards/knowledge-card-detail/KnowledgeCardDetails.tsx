@@ -96,19 +96,22 @@ export default function KnowledgeCardDetails({
             </h2>
             {fromCharacter && (
               <button
+                type='button'
+                aria-label={`返回 ${fromCharacter.id}`}
                 onClick={() => handleSelectCharacter(fromCharacterId!)}
-                className='flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-lg text-sm border border-gray-200 shadow-sm transition-colors duration-200'
+                className='flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg text-lg border border-gray-200 shadow-sm transition-colors duration-200'
               >
+                ← 返回 {fromCharacter.id}
                 {fromCharacter.imageUrl && (
                   <Image
                     src={fromCharacter.imageUrl}
                     alt={fromCharacter.id}
-                    width={24}
-                    height={24}
+                    width={0}
+                    height={0}
                     className='rounded-full object-cover'
+                    style={{ height: '36px', width: 'auto' }}
                   />
                 )}
-                ⬅️ 返回 {fromCharacter.id}
               </button>
             )}
           </div>
