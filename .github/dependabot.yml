@@ -10,7 +10,6 @@ updates:
       - 'asHOH'
     commit-message:
       prefix: 'chore(deps)'
-      include: 'scope'
     groups:
       testing:
         patterns:

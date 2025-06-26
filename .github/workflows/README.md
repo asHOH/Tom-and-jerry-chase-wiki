@@ -42,11 +42,16 @@ This directory contains automated workflows for the project.
 - **Purpose**: Run tests and generate coverage reports
 - **Note**: Currently checks if tests exist before running
 
-### 7. **Maintenance (maintenance.yml)**
+### 7. **Project Health Check (maintenance.yml)**
 
-- **Triggers**: Weekly schedule (Mondays 9 AM UTC)
-- **Purpose**: Automated maintenance checks
-- **Features**: Creates issues for outdated packages and security vulnerabilities
+- **Triggers**: Monthly schedule (First Monday 9 AM UTC), manual dispatch
+- **Purpose**: Comprehensive project health analysis
+- **Features**:
+  - Test coverage analysis (warns if < 80%)
+  - Unused dependency detection
+  - Project complexity assessment
+  - Creates issues only when attention is needed
+- **Note**: Replaces generic maintenance checks with actionable insights
 
 ### 8. **Update Badges (update-badges.yml)**
 

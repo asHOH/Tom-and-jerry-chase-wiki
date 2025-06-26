@@ -1,22 +1,25 @@
-name: Maintenance
+name: Project Health Check
 
 on:
   schedule:
-    # Run every Monday at 9 AM UTC
-    - cron: '0 9 * * 1'
+    # Run monthly on the first Monday at 9 AM UTC
+    - cron: '0 9 1-7 * 1'
   workflow_dispatch:
 
 jobs:
-  maintenance:
-    name: Maintenance Check
+  health-check:
+    name: Project Health Analysis
     runs-on: ubuntu-latest
     permissions:
       issues: write
       contents: read
+      pull-requests: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,75 +30,130 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check for outdated packages
-        id: outdated
+      - name: Analyze bundle size
+        id: bundle
         run: |
-          echo "Checking for outdated packages..."
-          npm outdated --json > outdated.json || true
-          if [ -s outdated.json ] && [ "$(jq 'keys | length' outdated.json)" -gt 0 ]; then
-            echo "outdated=true" >> $GITHUB_OUTPUT
-            echo "Found outdated packages"
+          echo "Analyzing bundle size..."
+          npm run build 2>&1 | tee build.log || true
+          if grep -q "Bundle size" build.log; then
+            echo "bundle-check=completed" >> $GITHUB_OUTPUT
           else
-            echo "outdated=false" >> $GITHUB_OUTPUT
-            echo "All packages are up to date"
+            echo "bundle-check=failed" >> $GITHUB_OUTPUT
           fi
 
-      - name: Check for security vulnerabilities
-        id: audit
+      - name: Check test coverage
+        id: coverage
         run: |
-          echo "Running security audit..."
-          npm audit --json > audit.json || true
-          if [ -s audit.json ] && [ "$(jq '.vulnerabilities | length' audit.json)" -gt 0 ]; then
-            echo "vulnerabilities=true" >> $GITHUB_OUTPUT
-            echo "Security vulnerabilities found"
+          echo "Checking test coverage..."
+          npm run test:coverage 2>&1 | tee coverage.log || true
+          if [ -f coverage/lcov.info ]; then
+            coverage_percent=$(grep -oP 'Lines\s*:\s*\K[0-9.]+(?=%)' coverage.log | tail -1)
+            echo "coverage-percent=${coverage_percent:-0}" >> $GITHUB_OUTPUT
+            echo "coverage-available=true" >> $GITHUB_OUTPUT
           else
-            echo "vulnerabilities=false" >> $GITHUB_OUTPUT
-            echo "No security vulnerabilities found"
+            echo "coverage-available=false" >> $GITHUB_OUTPUT
+            echo "coverage-percent=0" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create maintenance issue
-        if: steps.outdated.outputs.outdated == 'true' || steps.audit.outputs.vulnerabilities == 'true'
+      - name: Check unused dependencies
+        id: unused-deps
+        run: |
+          echo "Checking for unused dependencies..."
+          npx depcheck --json > depcheck.json || true
+          unused_count=$(jq '.dependencies | length' depcheck.json 2>/dev/null || echo "0")
+          echo "unused-count=$unused_count" >> $GITHUB_OUTPUT
+          if [ "$unused_count" -gt 0 ]; then
+            echo "unused-deps=true" >> $GITHUB_OUTPUT
+          else
+            echo "unused-deps=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Analyze code complexity
+        id: complexity
+        run: |
+          echo "Analyzing code complexity..."
+          find src -name "*.ts" -o -name "*.tsx" | wc -l > line_count.txt
+          total_files=$(cat line_count.txt)
+          echo "total-files=$total_files" >> $GITHUB_OUTPUT
+
+      - name: Create health check report
+        if: >
+          (steps.coverage.outputs.coverage-available == 'true' && steps.coverage.outputs.coverage-percent < '80') ||
+          steps.unused-deps.outputs.unused-deps == 'true' ||
+          steps.complexity.outputs.total-files > '200'
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
+            const coverage = parseFloat('${{ steps.coverage.outputs.coverage-percent }}') || 0;
+            const unusedCount = parseInt('${{ steps.unused-deps.outputs.unused-count }}') || 0;
+            const totalFiles = parseInt('${{ steps.complexity.outputs.total-files }}') || 0;
             
-            let issueBody = '## 🔧 Weekly Maintenance Report\n\n';
+            let issueBody = '## 🏥 Monthly Project Health Report\n\n';
+            let needsAttention = false;
             
-            if ('${{ steps.outdated.outputs.outdated }}' === 'true') {
-              issueBody += '### 📦 Outdated Packages\n\n';
-              issueBody += 'The following packages have updates available:\n\n';
-              issueBody += '```bash\nnpm outdated\n```\n\n';
-              issueBody += 'Consider updating these packages to their latest versions.\n\n';
+            // Coverage analysis
+            issueBody += '### � Test Coverage\n\n';
+            if (coverage < 80) {
+              issueBody += `⚠️ **Test coverage is ${coverage}%** (below recommended 80%)\n\n`;
+              needsAttention = true;
+            } else {
+              issueBody += `✅ Test coverage: ${coverage}%\n\n`;
             }
             
-            if ('${{ steps.audit.outputs.vulnerabilities }}' === 'true') {
-              issueBody += '### 🔒 Security Vulnerabilities\n\n';
-              issueBody += 'Security vulnerabilities were found in dependencies:\n\n';
-              issueBody += '```bash\nnpm audit\n```\n\n';
-              issueBody += '**Please address these security issues as soon as possible.**\n\n';
+            // Unused dependencies
+            issueBody += '### 📦 Dependency Health\n\n';
+            if (unusedCount > 0) {
+              issueBody += `⚠️ **${unusedCount} unused dependencies found**\n\n`;
+              issueBody += 'Run `npx depcheck` for details\n\n';
+              needsAttention = true;
+            } else {
+              issueBody += '✅ No unused dependencies detected\n\n';
             }
             
-            issueBody += '### 🚀 Recommended Actions\n\n';
-            issueBody += '1. Review the outdated packages and update them if safe\n';
-            issueBody += '2. Run `npm audit fix` to automatically fix security issues\n';
-            issueBody += '3. Test the application after updates\n';
-            issueBody += '4. Close this issue once maintenance is complete\n\n';
-            issueBody += '*This issue was automatically created by the maintenance workflow.*';
+            // Project complexity
+            issueBody += '### 🏗️ Project Complexity\n\n';
+            issueBody += `📁 Total TypeScript files: ${totalFiles}\n\n`;
+            if (totalFiles > 200) {
+              issueBody += '⚠️ Project is growing large - consider modularization\n\n';
+              needsAttention = true;
+            }
             
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: ['maintenance'],
-              state: 'open'
-            });
+            // Recommendations
+            if (needsAttention) {
+              issueBody += '### 🚀 Recommended Actions\n\n';
+              if (coverage < 80) {
+                issueBody += '1. 📈 **Improve test coverage** - Add tests for uncovered code\n';
+              }
+              if (unusedCount > 0) {
+                issueBody += '2. 🧹 **Remove unused dependencies** - Run `npm uninstall <package>`\n';
+              }
+              if (totalFiles > 200) {
+                issueBody += '3. 🏗️ **Consider refactoring** - Break down large components\n';
+              }
+              issueBody += '4. ✅ Close this issue once improvements are made\n\n';
+            } else {
+              issueBody += '### 🎉 Status\n\n';
+              issueBody += '✅ Project health looks good! No immediate action required.\n\n';
+            }
             
-            if (issues.length === 0) {
-              await github.rest.issues.create({
+            issueBody += '*This report was automatically generated by the health check workflow.*';
+            
+            // Only create issue if there are actual concerns
+            if (needsAttention) {
+              const { data: issues } = await github.rest.issues.listForRepo({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: `🔧 Weekly Maintenance - ${new Date().toISOString().split('T')[0]}`,
-                body: issueBody,
-                labels: ['maintenance', 'dependencies']
+                labels: ['health-check'],
+                state: 'open'
               });
+              
+              if (issues.length === 0) {
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: `🏥 Project Health Check - ${new Date().toISOString().split('T')[0]}`,
+                  body: issueBody,
+                  labels: ['health-check', 'maintenance']
+                });
+              }
             }
