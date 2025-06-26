@@ -20,7 +20,6 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/icon.png',
         sizes: '512x512',
         type: 'image/png',
-        label: '应用截图',
       },
     ],
     icons: [
