@@ -196,10 +196,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <Image
                 src={tab.imageSrc}
                 alt={tab.imageAlt}
-                width={isMobile ? 30 : 35}
-                height={isMobile ? 24 : 28}
+                width={0}
+                height={0}
                 className='object-contain'
-                style={{ width: 'auto', height: isMobile ? '24px' : '28px' }}
+                style={{ height: isMobile ? '24px' : '28px', width: 'auto' }}
               />
               {!isMobile && <span>{tab.name}</span>}
               {isMobile && (

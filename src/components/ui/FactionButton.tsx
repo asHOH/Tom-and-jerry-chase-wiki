@@ -42,8 +42,9 @@ export function FactionButton({
             <Image
               src={imageSrc}
               alt={imageAlt || title}
-              width={64}
-              height={48}
+              width={0}
+              height={0}
+              style={{ height: '40px', width: 'auto' }}
               className='object-contain flex-shrink-0'
             />
           </div>
