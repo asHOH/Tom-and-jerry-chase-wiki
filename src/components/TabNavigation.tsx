@@ -105,14 +105,20 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             position: 'relative',
           }}
         >
-          <Tooltip content='首页' className='border-none' disabled={!isMobile}>
+          <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>
             <button onClick={() => handleTabChange('')} style={buttonStyle(activeTab === null)}>
               {!isMobile && '首页'}
               {isMobile && '🏠'}
             </button>
           </Tooltip>
           {tabs.map((tab) => (
-            <Tooltip key={tab.id} content={tab.name} className='border-none' disabled={!isMobile}>
+            <Tooltip
+              key={tab.id}
+              content={tab.name}
+              className='border-none'
+              disabled={!isMobile}
+              delay={800}
+            >
               <button
                 onClick={() => handleTabChange(tab.id)}
                 style={buttonStyle(activeTab === tab.id)}
@@ -133,18 +139,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
         {/* Right-aligned detailed/simple view toggle button and SearchBar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <SearchBar isMobile={isMobile} /> {/* Add SearchBar here */}
+          <SearchBar isMobile={isMobile} />
           {showDetailToggle && (
             <Tooltip
               content={isDetailedView ? '简明描述' : '详细描述'}
               className='border-none'
               disabled={!isMobile}
+              delay={800}
             >
               <button
                 onClick={toggleDetailedView}
                 className='whitespace-nowrap'
                 style={{
-                  padding: isMobile ? '8px' : '10px 16px',
+                  padding: isMobile ? '10px' : '10px 16px',
                   borderRadius: '6px',
                   backgroundColor: isDetailedView ? '#dbeafe' : '#fef3e2',
                   color: isDetailedView ? '#1d4ed8' : '#ea580c',

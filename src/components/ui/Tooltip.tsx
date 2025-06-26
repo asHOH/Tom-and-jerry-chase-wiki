@@ -18,7 +18,7 @@ export default function Tooltip({
   content,
   className = '',
   disabled = false,
-  delay = 800,
+  delay = 0,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
