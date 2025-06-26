@@ -92,7 +92,7 @@ jobs:
             let needsAttention = false;
             
             // Coverage analysis
-            issueBody += '### � Test Coverage\n\n';
+            issueBody += '### 📊 Test Coverage\n\n';
             if (coverage < 80) {
               issueBody += `⚠️ **Test coverage is ${coverage}%** (below recommended 80%)\n\n`;
               needsAttention = true;
