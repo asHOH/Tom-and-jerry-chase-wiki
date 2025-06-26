@@ -40,8 +40,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ isMobile }) => {
     <div>
       <button
         onClick={handleOpenSearch}
+        title='搜索'
         className={`
-          ${isMobile ? 'p-2 min-w-[44px]' : 'py-2 px-4'}
+          ${isMobile ? 'p-2 w-[44px] h-[44px]' : 'p-2 w-11 h-11'}
           rounded-md bg-gray-200 text-gray-900
           focus:outline-none focus:ring-2 focus:ring-blue-500
           dark:bg-gray-700 dark:text-white

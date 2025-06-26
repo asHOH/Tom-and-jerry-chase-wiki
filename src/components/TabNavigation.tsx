@@ -219,7 +219,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               onClick={toggleDetailedView}
               className='whitespace-nowrap'
               style={{
-                padding: isMobile ? '8px' : '8px 16px',
+                padding: isMobile ? '8px' : '10px 16px',
                 borderRadius: '6px',
                 backgroundColor: isDetailedView ? '#dbeafe' : '#fef3e2',
                 color: isDetailedView ? '#1d4ed8' : '#ea580c',
