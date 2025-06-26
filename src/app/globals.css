@@ -278,3 +278,18 @@ body.offline-banner-visible main {
   -ms-user-select: text !important;
   user-select: text !important;
 }
+
+/* Fix for development tools CSS property ordering and Safari support */
+.dev-tools-indicator-item {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Global override for any user-select properties missing vendor prefixes */
+*[style*='user-select'] {
+  -webkit-user-select: inherit !important;
+  -moz-user-select: inherit !important;
+  -ms-user-select: inherit !important;
+}
