@@ -96,7 +96,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1, // 技能等级
-            description: '无敌持续3.8秒。', // 该等级的技能描述。一级技能的描述可以留空
+            description: '无敌持续3.8秒。', // 该等级的技能描述。一级技能的描述可以留空。可以用[文字](注释)的方式来添加注释，如：[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。注意用英文括号[]和()。
             cooldown: 20, // 冷却时间
           },
           {

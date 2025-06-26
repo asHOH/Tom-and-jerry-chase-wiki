@@ -82,7 +82,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1, // 技能等级
-            description: '鼓舞增加移速和跳跃高度。', // 该等级的技能描述。一级技能的描述可以留空
+            description: '鼓舞增加移速和跳跃高度。', // 该等级的技能描述。一级技能的描述可以留空。可以用[文字](注释)的方式来添加注释，如：[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。注意用英文括号[]和()。
             detailedDescription: '鼓舞增加15%移速和45%跳跃高度，持续5秒。', // 详细描述，没有可以删除或设为与技能描述相同，但不要留白
             cooldown: 18, // 冷却时间
           },
