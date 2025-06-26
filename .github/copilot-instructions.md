@@ -17,11 +17,12 @@
 
 # Comment edit rules
 
+- Use meaningful variable/function names over comments
 - Add comments only for: complex logic, non-obvious algorithms, or public APIs
 
 # Code Standards
 
-- Use meaningful variable/function names over comments
+- use context7 to check lastest documentation
 - Follow project's existing patterns
 - Ensure TypeScript strict mode compliance
 - Write features with least net code increase

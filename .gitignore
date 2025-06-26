@@ -67,6 +67,8 @@ dist/
 .tmp/
 .temp/
 pnpm-lock.yaml
+.gemini/
+GEMINI.md
 
 # Personal git workflow helpers
 /git-helpers/
