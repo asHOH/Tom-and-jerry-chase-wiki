@@ -235,12 +235,13 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description:
-      '攻击范围**大幅**提升，但普通攻击伤害固定为25点，不受任何攻击力加成影响。使用拍子时只能造成效果而不能造成伤害。',
-    // detailedDescription: '',
+      '爪刀范围**大幅**提高，但爪刀伤害固定为25点，不受任何攻击力加成。使用拍子只造成控制而不造成伤害。',
+    detailedDescription:
+      '爪刀范围**大幅**提高，但爪刀伤害固定为25点，不受任何攻击力加成。使用拍子只造成控制而不造成伤害。爪刀范围不受任何[其他加成](拍子、变身药水、技能等)影响。',
     levels: [
-      { level: 1, description: '攻击范围提高**64%**。' },
-      { level: 2, description: '攻击范围提高**73%**。' },
-      { level: 3, description: '攻击范围提高**82%**。' },
+      { level: 1, description: '爪刀范围提高**64%**。' },
+      { level: 2, description: '爪刀范围提高**73%**。' },
+      { level: 3, description: '爪刀范围提高**82%**。' },
     ],
   },
 
