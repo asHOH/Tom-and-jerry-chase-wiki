@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef, ReactNode, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useEditMode } from '../../context/EditModeContext';
+import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 
 interface EditableFieldProps<T extends string | number> {
   tag: keyof HTMLElementTagNameMap;
   path: string; // e.g., 'character.id', 'character.description'
   initialValue: T;
-  className?: string;
-  children?: ReactNode;
+  className?: string | undefined;
 }
 
 function getNestedProperty<T extends string | number>(obj: Record<string, unknown>, path: string) {
@@ -24,18 +24,15 @@ function getNestedProperty<T extends string | number>(obj: Record<string, unknow
     ) as unknown as T;
 }
 
-function EditableField<T extends string | number>({
+function EditableFieldImplementation<T extends string | number>({
   tag: Tag,
   path,
   initialValue,
   className,
-  children,
 }: EditableFieldProps<T>) {
   const { isEditMode } = useEditMode();
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
-
-  // Function to get nested property from an object based on a path string
 
   // Function to set nested property on an object based on a path string
   const setNestedProperty = (obj: Record<string, unknown>, path: string, value: T): void => {
@@ -182,7 +179,30 @@ function EditableField<T extends string | number>({
       onBlur: handleBlur,
       ref: contentRef,
     },
-    children || content
+    content.toString()
+  );
+}
+
+function EditableField<T extends string | number>({
+  tag: Tag,
+  path,
+  initialValue,
+  className,
+}: EditableFieldProps<T>) {
+  const { isEditMode } = useEditMode();
+  return isEditMode ? (
+    <EditableFieldImplementation
+      tag={Tag}
+      path={path}
+      initialValue={initialValue}
+      className={className}
+    />
+  ) : (
+    React.createElement(
+      Tag,
+      { className },
+      <TextWithHoverTooltips text={initialValue.toString()} />
+    )
   );
 }
 

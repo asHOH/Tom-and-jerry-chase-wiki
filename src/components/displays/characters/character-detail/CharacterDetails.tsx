@@ -112,12 +112,14 @@ export default function CharacterDetails({
               );
               const isSingleWeapon = weaponSkills.length === 1;
 
-              return character.skills.map((skill) => (
+              return character.skills.map((skill, index) => (
                 <SkillCard
                   key={(skill as Skill).id}
                   skill={skill as Skill}
                   isDetailed={isDetailedView}
                   isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
+                  characterId={character.id}
+                  skillIndex={index}
                 />
               ));
             })()}
