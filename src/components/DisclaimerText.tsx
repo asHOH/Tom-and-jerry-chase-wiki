@@ -75,13 +75,14 @@ export const DisclaimerText = () => {
 
       {/* Acknowledgments */}
       <span className='block'>
-        {DISCLAIMER_CONTENT.testDataAttribution.prefix}
-        {renderCreatorLinks(DISCLAIMER_CONTENT.testDataAttribution.creators)}
-        {DISCLAIMER_CONTENT.testDataAttribution.suffix}
-        <br />
-        {DISCLAIMER_CONTENT.imageAttribution.prefix}
-        {renderCreatorLinks(DISCLAIMER_CONTENT.imageAttribution.creators)}
-        {DISCLAIMER_CONTENT.imageAttribution.suffix}
+        {Object.values(DISCLAIMER_CONTENT.acknowledgements).map((ack, index) => (
+          <span key={index}>
+            {index > 0 && <br />}
+            {ack.prefix}
+            {renderCreatorLinks(ack.creators)}
+            {ack.suffix}
+          </span>
+        ))}
       </span>
     </>
   );
