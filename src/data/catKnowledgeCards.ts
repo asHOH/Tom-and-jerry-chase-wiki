@@ -288,12 +288,12 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '守株待鼠',
     rank: 'B',
     cost: 3,
-    description: '当老鼠被绑在火箭上时，其他老鼠的投掷伤害**降低**。',
+    description: '当老鼠被绑在火箭上时，其他老鼠的投掷伤害**降低**固定值。',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '老鼠的投掷伤害**小幅**降低。' },
-      { level: 2, description: '老鼠的投掷伤害**中幅**降低。' },
-      { level: 3, description: '老鼠的投掷伤害**大幅**降低。' },
+      { level: 1, description: '老鼠的投掷伤害降低**10**。' },
+      { level: 2, description: '老鼠的投掷伤害降低**15**。' },
+      { level: 3, description: '老鼠的投掷伤害降低**20**。' },
     ],
   },
 
