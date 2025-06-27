@@ -2,7 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
-import TextWithHoverTooltips from '../shared/TextWithHoverTooltips';
 import { Skill, SkillLevel } from '@/data/types';
 import EditableField from '@/components/ui/EditableField';
 
@@ -134,7 +133,11 @@ export default function SkillCard({
           {descriptionText && (
             <div className='mt-3 px-2'>
               <p className='text-gray-700 py-2'>
-                <TextWithHoverTooltips text={descriptionText} />
+                <EditableField
+                  initialValue={descriptionText}
+                  path={`${characterId}.skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
+                  tag='span'
+                />
               </p>
             </div>
           )}
@@ -155,12 +158,14 @@ export default function SkillCard({
                 >
                   Lv. {level.level}:
                 </span>{' '}
-                <TextWithHoverTooltips
-                  text={
+                <EditableField
+                  initialValue={
                     isDetailed && level.detailedDescription?.trim()
                       ? level.detailedDescription
                       : level.description
                   }
+                  tag='span'
+                  path={`${characterId}.skills.${skillIndex}.skillLevels.${level.level - 1}.${isDetailed ? 'detailedDescription' : 'description'}`}
                 />
               </p>
             </div>
