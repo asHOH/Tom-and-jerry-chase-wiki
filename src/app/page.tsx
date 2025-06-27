@@ -9,6 +9,7 @@ import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
 import { factions, characters, factionCards, cards } from '@/data';
 import { AppProvider, useAppContext } from '@/context/AppContext';
+import { EditModeProvider, useEditMode } from '@/context/EditModeContext';
 
 // Dynamic imports for large components - code splitting
 const CharacterGrid = dynamic(
@@ -53,7 +54,9 @@ const KnowledgeCardDetails = dynamic(
 export default function Home() {
   return (
     <AppProvider>
-      <HomeContent />
+      <EditModeProvider>
+        <HomeContent />
+      </EditModeProvider>
     </AppProvider>
   );
 }
@@ -61,6 +64,7 @@ export default function Home() {
 function HomeContent() {
   const { activeTab, selectedCharacter, selectedCard, isDetailedView, handleTabChange } =
     useAppContext();
+  const { toggleEditMode, isEditMode } = useEditMode();
 
   // Render content based on state
   const renderContent = () => {
@@ -149,7 +153,18 @@ function HomeContent() {
             <div className='h-px bg-gray-300 w-full'></div>
           </div>
         </div>
-        <div className='mt-8 text-center px-4'>
+        <div
+          className='mt-8 text-center px-4'
+          onDoubleClick={() => {
+            if (isEditMode) {
+              // TODO: use a component instead
+              alert('成功退出编辑模式');
+            } else {
+              alert('成功进入编辑模式');
+            }
+            toggleEditMode();
+          }}
+        >
           <h2 className='text-3xl font-bold mb-6 py-2'>网站说明</h2>
           <p className='max-w-2xl mx-auto text-gray-600 px-4 py-3'>
             <DisclaimerText />

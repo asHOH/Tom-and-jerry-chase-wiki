@@ -12,9 +12,9 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     // Initialize from localStorage, default to true
     if (typeof window !== 'undefined') {
       const storedEditMode = localStorage.getItem('isEditMode');
-      return storedEditMode ? JSON.parse(storedEditMode) : true;
+      return storedEditMode ? JSON.parse(storedEditMode) : false;
     }
-    return true;
+    return false;
   });
 
   useEffect(() => {
@@ -25,6 +25,9 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   }, [isEditMode]);
 
   const toggleEditMode = () => {
+    if (isEditMode) {
+      localStorage.removeItem('editableFields');
+    }
     setIsEditMode((prevMode) => !prevMode);
   };
 
