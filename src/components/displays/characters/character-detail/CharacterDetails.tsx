@@ -7,11 +7,17 @@ import PositioningTagsSection from './PositioningTagsSection';
 import CharacterAttributesSection from './CharacterAttributesSection';
 import SkillCard from './SkillCard';
 import KnowledgeCardSection from './KnowledgeCardSection';
+import { useState } from 'react';
+import EditableField from '@/components/ui/EditableField';
+import CharacterSection from './CharacterSection';
+import { useEditMode } from '@/context/EditModeContext';
 
 export default function CharacterDetails({
   character,
   isDetailedView: propIsDetailedView,
 }: CharacterDetailsProps) {
+  const { isEditMode } = useEditMode();
+  const [copyMessage, setCopyMessage] = useState('');
   const isDetailedView = propIsDetailedView || false;
   const factionId = character.faction.id as 'cat' | 'mouse';
 
@@ -41,12 +47,52 @@ export default function CharacterDetails({
                 />
               </div>
             </div>
-            <h1 className='text-3xl font-bold py-2'>
-              {character.id}{' '}
-              <span className='text-xl font-normal text-gray-400'>({character.faction.name})</span>
+            <h1 className='text-3xl font-bold py-2 flex items-center justify-between'>
+              <div>
+                <EditableField
+                  tag='span'
+                  path={`${character.id}.id`}
+                  initialValue={character.id}
+                  className='inline'
+                />{' '}
+                <span className='text-xl font-normal text-gray-400'>
+                  ({character.faction.name})
+                </span>
+              </div>
+              {isEditMode && (
+                <button
+                  onClick={async () => {
+                    const data = localStorage.getItem('editableFields');
+                    if (data) {
+                      try {
+                        await navigator.clipboard.writeText(
+                          JSON.stringify({ [character.id]: JSON.parse(data)[character.id] })
+                        );
+                        setCopyMessage('已复制！');
+                        setTimeout(() => setCopyMessage(''), 2000);
+                      } catch (err) {
+                        console.error('Failed to copy: ', err);
+                        setCopyMessage('复制失败');
+                        setTimeout(() => setCopyMessage(''), 2000);
+                      }
+                    } else {
+                      setCopyMessage('无数据可导出');
+                      setTimeout(() => setCopyMessage(''), 2000);
+                    }
+                  }}
+                  className='ml-4 px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50'
+                >
+                  {copyMessage || '导出数据'}
+                </button>
+              )}
             </h1>
 
-            <p className='text-gray-700 mt-2 py-1'>{character.description}</p>
+            <EditableField
+              tag='p'
+              path={`${character.id}.description`}
+              initialValue={character.description}
+              className='text-gray-700 mt-2 py-1'
+            />
 
             <div className='mt-6 space-y-3'>
               <CharacterAttributesSection
@@ -67,20 +113,21 @@ export default function CharacterDetails({
         <div className='md:w-2/3'>
           {character.skillAllocations && character.skillAllocations.length > 0 && (
             <div className='mb-8'>
-              <h3 className='text-2xl font-bold px-2 py-3 mb-4'>推荐加点</h3>
-              <div className='space-y-3'>
-                {character.skillAllocations.map((allocation) => (
-                  <div key={allocation.id} className='card p-4'>
-                    <SkillAllocationDisplay
-                      allocation={allocation}
-                      characterName={character.id}
-                      factionId={factionId}
-                      characterSkills={character.skills}
-                      isDetailed={isDetailedView}
-                    />
-                  </div>
-                ))}
-              </div>
+              <CharacterSection title='推荐加点'>
+                <div className='space-y-3'>
+                  {character.skillAllocations.map((allocation) => (
+                    <div key={allocation.id} className='card p-4'>
+                      <SkillAllocationDisplay
+                        allocation={allocation}
+                        characterName={character.id}
+                        factionId={factionId}
+                        characterSkills={character.skills}
+                        isDetailed={isDetailedView}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CharacterSection>
             </div>
           )}
 
@@ -90,27 +137,27 @@ export default function CharacterDetails({
             characterId={character.id}
           />
 
-          <div className='mb-6'>
-            <h3 className='text-2xl font-bold px-2 py-3'>技能描述</h3>
-          </div>
+          <CharacterSection title='技能描述'>
+            <div className='space-y-6'>
+              {(() => {
+                const weaponSkills = character.skills.filter(
+                  (skill) => skill.type === 'weapon1' || skill.type === 'weapon2'
+                );
+                const isSingleWeapon = weaponSkills.length === 1;
 
-          <div className='space-y-6'>
-            {(() => {
-              const weaponSkills = character.skills.filter(
-                (skill) => skill.type === 'weapon1' || skill.type === 'weapon2'
-              );
-              const isSingleWeapon = weaponSkills.length === 1;
-
-              return character.skills.map((skill) => (
-                <SkillCard
-                  key={(skill as Skill).id}
-                  skill={skill as Skill}
-                  isDetailed={isDetailedView}
-                  isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
-                />
-              ));
-            })()}
-          </div>
+                return character.skills.map((skill, index) => (
+                  <SkillCard
+                    key={(skill as Skill).id}
+                    skill={skill as Skill}
+                    isDetailed={isDetailedView}
+                    isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
+                    characterId={character.id}
+                    skillIndex={index}
+                  />
+                ));
+              })()}
+            </div>
+          </CharacterSection>
         </div>
       </div>
     </div>

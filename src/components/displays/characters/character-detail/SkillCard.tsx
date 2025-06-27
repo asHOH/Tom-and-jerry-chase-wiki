@@ -2,16 +2,24 @@ import React from 'react';
 import Image from 'next/image';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
-import TextWithHoverTooltips from '../shared/TextWithHoverTooltips';
 import { Skill, SkillLevel } from '@/data/types';
+import EditableField from '@/components/ui/EditableField';
 
 interface SkillCardProps {
   skill: Skill;
   isDetailed: boolean;
   isSingleWeapon?: boolean;
+  characterId: string;
+  skillIndex: number;
 }
 
-export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCardProps) {
+export default function SkillCard({
+  skill,
+  isDetailed,
+  isSingleWeapon,
+  characterId,
+  skillIndex,
+}: SkillCardProps) {
   const getSkillTypeLabel = (type: string) => {
     if (isSingleWeapon && type === 'weapon1') {
       return '武器';
@@ -103,7 +111,12 @@ export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCa
 
         <div className='flex-1'>
           <h3 className='text-xl font-bold px-2 py-2'>
-            {getSkillTypeLabel(skill.type)} · {skill.name}
+            {getSkillTypeLabel(skill.type)} ·{' '}
+            <EditableField
+              tag='span'
+              path={`${characterId}.skills.${skillIndex}.name`}
+              initialValue={skill.name}
+            />
           </h3>
 
           {hasProperties && (
@@ -120,7 +133,11 @@ export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCa
           {descriptionText && (
             <div className='mt-3 px-2'>
               <p className='text-gray-700 py-2'>
-                <TextWithHoverTooltips text={descriptionText} />
+                <EditableField
+                  initialValue={descriptionText}
+                  path={`${characterId}.skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
+                  tag='span'
+                />
               </p>
             </div>
           )}
@@ -141,12 +158,14 @@ export default function SkillCard({ skill, isDetailed, isSingleWeapon }: SkillCa
                 >
                   Lv. {level.level}:
                 </span>{' '}
-                <TextWithHoverTooltips
-                  text={
+                <EditableField
+                  initialValue={
                     isDetailed && level.detailedDescription?.trim()
                       ? level.detailedDescription
                       : level.description
                   }
+                  tag='span'
+                  path={`${characterId}.skills.${skillIndex}.skillLevels.${level.level - 1}.${isDetailed ? 'detailedDescription' : 'description'}`}
                 />
               </p>
             </div>

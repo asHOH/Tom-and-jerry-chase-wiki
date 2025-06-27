@@ -7,6 +7,8 @@ interface CharacterAttribute {
   value: string | number;
   condition: boolean;
   className?: string;
+  path?: string;
+  suffix?: string;
 }
 
 interface CharacterAttributesSectionProps {
@@ -25,16 +27,19 @@ export default function CharacterAttributesSection({
       label: 'Hp上限',
       value: character.maxHp || 0,
       condition: !!character.maxHp,
+      path: `${character.id}.maxHp`,
     },
     {
       label: 'Hp恢复',
       value: character.hpRecovery || 0,
       condition: !!character.hpRecovery,
+      path: `${character.id}.hpRecovery`,
     },
     {
       label: '移速',
       value: character.moveSpeed || 0,
       condition: !!character.moveSpeed,
+      path: `${character.id}.moveSpeed`,
     },
   ];
 
@@ -43,22 +48,27 @@ export default function CharacterAttributesSection({
       label: '跳跃',
       value: character.jumpHeight || 0,
       condition: !!character.jumpHeight && factionId === 'mouse',
+      path: `${character.id}.jumpHeight`,
     },
     {
       label: '攻击增伤',
       value: character.attackBoost || 0,
       condition:
         factionId === 'mouse' && character.attackBoost !== undefined && character.attackBoost !== 0,
+      path: `${character.id}.attackBoost`,
     },
     {
       label: '推速',
-      value: `${character.cheesePushSpeed || 0} %/秒`,
+      value: character.cheesePushSpeed || 0,
       condition: factionId === 'mouse' && !!character.cheesePushSpeed,
+      path: `${character.id}.cheesePushSpeed`,
+      suffix: '%/秒',
     },
     {
       label: '墙缝增伤',
       value: character.wallCrackDamageBoost || 0,
       condition: factionId === 'mouse' && !!character.wallCrackDamageBoost,
+      path: `${character.id}.wallCrackDamageBoost`,
     },
   ];
 
@@ -91,6 +101,8 @@ export default function CharacterAttributesSection({
           value={attr.value}
           factionId={factionId}
           isDetailed={isDetailed}
+          path={attr.path ?? ''}
+          suffix={attr.suffix ?? ''}
           {...(attr.className && { className: attr.className })}
         />
       ))}

@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Tooltip from '@/components/ui/Tooltip';
+import CharacterSection from './CharacterSection';
 import type { KnowledgeCardGroup } from '@/data/types';
 import { useAppContext } from '../../../../context/AppContext';
 import { catKnowledgeCards } from '@/data/catKnowledgeCards';
@@ -107,19 +108,20 @@ export default function KnowledgeCardSection({
 
   return (
     <div className='mb-8'>
-      <h3 className='text-2xl font-bold mb-4'>推荐知识卡组</h3>
-      <div className='card p-4 space-y-3'>
-        {knowledgeCardGroups.map((group, index) => (
-          <React.Fragment key={index}>
-            {Array.isArray(group)
-              ? renderKnowledgeCardGroup(group, index)
-              : renderKnowledgeCardGroup(group.cards, index, group.description)}
-            {index < knowledgeCardGroups.length - 1 && (
-              <div className='border-t border-gray-200 my-4'></div>
-            )}
-          </React.Fragment>
-        ))}
-      </div>
+      <CharacterSection title='推荐知识卡组'>
+        <div className='card p-4 space-y-3'>
+          {knowledgeCardGroups.map((group, index) => (
+            <React.Fragment key={index}>
+              {Array.isArray(group)
+                ? renderKnowledgeCardGroup(group, index)
+                : renderKnowledgeCardGroup(group.cards, index, group.description)}
+              {index < knowledgeCardGroups.length - 1 && (
+                <div className='border-t border-gray-200 my-4'></div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </CharacterSection>
     </div>
   );
 }
