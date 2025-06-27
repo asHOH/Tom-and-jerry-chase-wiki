@@ -3,6 +3,8 @@ import Image from 'next/image';
 import Tooltip from '@/components/ui/Tooltip';
 import type { KnowledgeCardGroup } from '@/data/types';
 import { useAppContext } from '../../../../context/AppContext';
+import { catKnowledgeCards } from '@/data/catKnowledgeCards';
+import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: KnowledgeCardGroup[];
@@ -18,17 +20,55 @@ export default function KnowledgeCardSection({
   const { handleSelectCard, handleTabChange } = useAppContext();
   const imageBasePath = factionId === 'cat' ? '/images/catCards/' : '/images/mouseCards/';
 
+  const getCardCost = (cardId: string) => {
+    const cardName = cardId.split('-')[1];
+    if (!cardName) return 0;
+
+    const cardData =
+      factionId === 'cat' ? catKnowledgeCards[cardName] : mouseKnowledgeCards[cardName];
+    return cardData?.cost ?? 0;
+  };
+
+  const getCostStyles = (totalCost: number) => {
+    if (totalCost >= 22) {
+      // 22+ is not allowed - error state
+      return {
+        containerClass: 'border-red-500 bg-red-100 text-red-700',
+        tooltipContent: `知识量：${totalCost}点 (超出游戏限制)`,
+      };
+    } else if (totalCost === 21) {
+      // 21 requires special enablement - warning state
+      return {
+        containerClass: 'border-amber-500 bg-amber-100 text-amber-700',
+        tooltipContent: `知识量：${totalCost}点 (需开启+1知识量上限)`,
+      };
+    } else {
+      // 20 and below - normal state
+      return {
+        containerClass: 'border-blue-400 bg-blue-50 text-blue-700',
+        tooltipContent: `知识量：${totalCost}点`,
+      };
+    }
+  };
+
   const renderKnowledgeCardGroup = (group: string[], index: number, description?: string) => {
     if (group.length === 0) {
       return null;
     }
 
+    const totalCost = group.reduce((sum, cardId) => sum + getCardCost(cardId), 0);
+    const { containerClass, tooltipContent } = getCostStyles(totalCost);
+
     return (
       <div key={index} className='flex flex-col space-y-2'>
         <div className='flex items-center space-x-4'>
-          <div className='flex-shrink-0 w-10 h-10 rounded-full border-2 border-gray-300 text-gray-700 flex items-center justify-center text-lg font-bold'>
-            {index + 1}
-          </div>
+          <Tooltip content={tooltipContent} className='border-none'>
+            <div
+              className={`flex-shrink-0 w-10 h-10 rounded-full border-2 ${containerClass} flex items-center justify-center text-sm font-bold`}
+            >
+              {totalCost}
+            </div>
+          </Tooltip>
           <div className='flex flex-wrap gap-2'>
             {group.map((cardId) => (
               <Tooltip key={cardId} content={cardId.split('-')[1]!} className='border-none'>
