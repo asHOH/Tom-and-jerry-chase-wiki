@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useEditMode } from '../../context/EditModeContext';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
+import { characters } from '@/data';
 
 interface EditableFieldProps<T extends string | number> {
   tag: keyof HTMLElementTagNameMap;
@@ -30,7 +31,6 @@ function EditableFieldImplementation<T extends string | number>({
   initialValue,
   className,
 }: EditableFieldProps<T>) {
-  const { isEditMode } = useEditMode();
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
 
@@ -58,67 +58,24 @@ function EditableFieldImplementation<T extends string | number>({
   };
 
   useEffect(() => {
-    if (isEditMode) {
-      const storedData = localStorage.getItem('editableFields');
-      if (storedData) {
-        try {
-          const parsedData = JSON.parse(storedData);
-          const storedValue = getNestedProperty<T>(parsedData, path);
-          if (typeof storedValue === 'string' || typeof storedValue === 'number') {
-            setContent(storedValue);
-          } else {
-            setContent(initialValue);
-          }
-        } catch (e) {
-          console.error('Failed to parse localStorage data', e);
+    const storedData = localStorage.getItem('editableFields');
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        const storedValue = getNestedProperty<T>(parsedData, path);
+        if (typeof storedValue === 'string' || typeof storedValue === 'number') {
+          setContent(storedValue);
+        } else {
           setContent(initialValue);
         }
-      } else {
+      } catch (e) {
+        console.error('Failed to parse localStorage data', e);
         setContent(initialValue);
       }
     } else {
-      // If edit mode is off, revert to initial value and clear local storage for this path
       setContent(initialValue);
-      const storedData = localStorage.getItem('editableFields');
-      if (storedData) {
-        try {
-          const parsedData = JSON.parse(storedData);
-          const newParsedData: Record<string, unknown> = { ...parsedData };
-          // Simple way to remove the property, might need more robust deep removal for complex paths
-          const parts = path.split('.');
-          if (parts.length === 1) {
-            const keyToDelete = parts[0];
-            if (typeof keyToDelete === 'string') {
-              delete newParsedData[keyToDelete];
-            }
-          } else {
-            let current: Record<string, unknown> | null = newParsedData;
-            for (let i = 0; i < parts.length - 1; i++) {
-              const part = parts[i];
-              if (
-                typeof current !== 'object' ||
-                current === null ||
-                typeof part !== 'string' ||
-                !(part in current)
-              ) {
-                current = null; // Path not found or invalid, nothing to delete
-                break;
-              }
-              current = current[part] as Record<string, unknown>;
-            }
-            const lastPart = parts[parts.length - 1];
-            if (current && typeof current === 'object' && typeof lastPart === 'string') {
-              delete current[lastPart];
-            }
-          }
-
-          localStorage.setItem('editableFields', JSON.stringify(newParsedData));
-        } catch (e) {
-          console.error('Failed to parse localStorage data on edit mode off', e);
-        }
-      }
     }
-  }, [isEditMode, path, initialValue]);
+  }, [path, initialValue]);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -129,7 +86,7 @@ function EditableFieldImplementation<T extends string | number>({
   const handleBlurRef = useRef<() => void>(() => {});
 
   handleBlurRef.current = () => {
-    if (isEditMode && contentRef.current) {
+    if (contentRef.current) {
       const newContentStr = contentRef.current.textContent || '';
 
       if (typeof initialValue === 'number') {
@@ -163,6 +120,7 @@ function EditableFieldImplementation<T extends string | number>({
         finalValue = newContentStr as T;
       }
       setNestedProperty(newData, path, finalValue);
+      setNestedProperty(characters, path, finalValue);
       localStorage.setItem('editableFields', JSON.stringify(newData));
     }
   };
@@ -173,7 +131,7 @@ function EditableFieldImplementation<T extends string | number>({
     Tag,
     {
       className: className,
-      contentEditable: isEditMode ? 'plaintext-only' : false,
+      contentEditable: 'plaintext-only',
       suppressContentEditableWarning: true,
       onBlur: handleBlur,
       ref: contentRef,
