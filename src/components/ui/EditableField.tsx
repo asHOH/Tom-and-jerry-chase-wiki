@@ -1,43 +1,44 @@
-import React, { useState, useEffect, useRef, ReactNode } from 'react';
+import React, { useState, useEffect, useRef, ReactNode, useCallback } from 'react';
 import { useEditMode } from '../../context/EditModeContext';
 
-interface EditableFieldProps {
+interface EditableFieldProps<T extends string | number> {
   tag: keyof HTMLElementTagNameMap;
   path: string; // e.g., 'character.id', 'character.description'
-  initialValue: string;
+  initialValue: T;
   className?: string;
   children?: ReactNode;
 }
 
-const EditableField: React.FC<EditableFieldProps> = ({
+function getNestedProperty<T extends string | number>(obj: Record<string, unknown>, path: string) {
+  return path
+    .split('.')
+    .reduce(
+      (acc: unknown, part: string) =>
+        acc &&
+        typeof acc === 'object' &&
+        typeof part === 'string' &&
+        part in (acc as Record<string, unknown>)
+          ? (acc as Record<string, unknown>)[part]
+          : undefined,
+      obj
+    ) as unknown as T;
+}
+
+function EditableField<T extends string | number>({
   tag: Tag,
   path,
   initialValue,
   className,
   children,
-}) => {
+}: EditableFieldProps<T>) {
   const { isEditMode } = useEditMode();
-  const [content, setContent] = useState<string>(initialValue);
+  const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
 
   // Function to get nested property from an object based on a path string
-  const getNestedProperty = (obj: Record<string, unknown>, path: string): unknown => {
-    return path
-      .split('.')
-      .reduce(
-        (acc: unknown, part: string) =>
-          acc &&
-          typeof acc === 'object' &&
-          typeof part === 'string' &&
-          part in (acc as Record<string, unknown>)
-            ? (acc as Record<string, unknown>)[part]
-            : undefined,
-        obj
-      );
-  };
 
   // Function to set nested property on an object based on a path string
-  const setNestedProperty = (obj: Record<string, unknown>, path: string, value: unknown): void => {
+  const setNestedProperty = (obj: Record<string, unknown>, path: string, value: T): void => {
     const parts = path.split('.');
     let current: Record<string, unknown> = obj;
     for (let i = 0; i < parts.length - 1; i++) {
@@ -65,8 +66,8 @@ const EditableField: React.FC<EditableFieldProps> = ({
       if (storedData) {
         try {
           const parsedData = JSON.parse(storedData);
-          const storedValue = getNestedProperty(parsedData, path);
-          if (typeof storedValue === 'string') {
+          const storedValue = getNestedProperty<T>(parsedData, path);
+          if (typeof storedValue === 'string' || typeof storedValue === 'number') {
             setContent(storedValue);
           } else {
             setContent(initialValue);
@@ -124,14 +125,29 @@ const EditableField: React.FC<EditableFieldProps> = ({
 
   useEffect(() => {
     if (contentRef.current) {
-      contentRef.current.textContent = content;
+      contentRef.current.textContent = content.toString();
     }
   }, [content]);
 
-  const handleBlur = () => {
+  const handleBlurRef = useRef<() => void>(() => {});
+
+  handleBlurRef.current = () => {
+    console.log({ initialValue, contentRef });
     if (isEditMode && contentRef.current) {
-      const newContent = contentRef.current.textContent || '';
-      setContent(newContent);
+      const newContentStr = contentRef.current.textContent || '';
+
+      if (typeof initialValue === 'number') {
+        const parsedFloat = parseFloat(newContentStr);
+        if (isNaN(parsedFloat)) {
+          // Revert to the last valid content if input is not a number
+          contentRef.current.textContent = content.toString();
+          return;
+        }
+      }
+
+      setContent(
+        (typeof initialValue === 'string' ? newContentStr : parseFloat(newContentStr)) as T
+      );
 
       const storedData = localStorage.getItem('editableFields');
       let parsedData: Record<string, unknown> = {};
@@ -144,10 +160,18 @@ const EditableField: React.FC<EditableFieldProps> = ({
       }
 
       const newData: Record<string, unknown> = { ...parsedData };
-      setNestedProperty(newData, path, newContent);
+      let finalValue: T;
+      if (typeof initialValue === 'number') {
+        finalValue = parseFloat(newContentStr) as T;
+      } else {
+        finalValue = newContentStr as T;
+      }
+      setNestedProperty(newData, path, finalValue);
       localStorage.setItem('editableFields', JSON.stringify(newData));
     }
   };
+
+  const handleBlur = useCallback(() => handleBlurRef.current(), []);
 
   return React.createElement(
     Tag,
@@ -160,6 +184,6 @@ const EditableField: React.FC<EditableFieldProps> = ({
     },
     children || content
   );
-};
+}
 
 export default EditableField;
