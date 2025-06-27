@@ -23,6 +23,12 @@ const generateAcknowledgements = () => {
 
   (Object.keys(RoleType) as Array<keyof typeof RoleType>).forEach((roleKey) => {
     const roleType = RoleType[roleKey];
+
+    // Skip ProjectMaintainer role from acknowledgments to avoid awkward self-thanks
+    if (roleType === RoleType.ProjectMaintainer) {
+      return;
+    }
+
     const creators = getContributorsByRole(roleType);
     if (creators.length > 0) {
       const key = roleType.toLowerCase().replace(/\s+/g, '');

@@ -31,6 +31,13 @@ async function updateReadmeAcknowledgments() {
       );
     };
 
+    // Filter out project maintainers from acknowledgments to avoid awkward self-thanks
+    const filterOutProjectMaintainers = (contributors) => {
+      return contributors.filter(
+        (contributor) => !contributor.roles.some((role) => role.type === '项目维护者')
+      );
+    };
+
     const formatContributors = (contributors) => {
       return contributors
         .map((contributor) =>
@@ -43,37 +50,37 @@ async function updateReadmeAcknowledgments() {
     const acknowledgmentLines = [];
 
     // Data testers (提供测试数据)
-    const dataTesters = getContributorsByRole('提供测试数据');
+    const dataTesters = filterOutProjectMaintainers(getContributorsByRole('提供测试数据'));
     if (dataTesters.length > 0) {
       acknowledgmentLines.push(`- ${formatContributors(dataTesters)} 提供测试数据`);
     }
 
     // Art providers (分享图片素材)
-    const artProviders = getContributorsByRole('分享图片素材');
+    const artProviders = filterOutProjectMaintainers(getContributorsByRole('分享图片素材'));
     if (artProviders.length > 0) {
       acknowledgmentLines.push(`- ${formatContributors(artProviders)} 分享图片素材`);
     }
 
     // Developers (进行项目开发)
-    const developers = getContributorsByRole('进行项目开发');
+    const developers = filterOutProjectMaintainers(getContributorsByRole('进行项目开发'));
     if (developers.length > 0) {
       acknowledgmentLines.push(`- ${formatContributors(developers)} 进行项目开发`);
     }
 
     // Content writers (撰写角色文案)
-    const contentWriters = getContributorsByRole('撰写角色文案');
+    const contentWriters = filterOutProjectMaintainers(getContributorsByRole('撰写角色文案'));
     if (contentWriters.length > 0) {
       acknowledgmentLines.push(`- ${formatContributors(contentWriters)} 撰写角色文案`);
     }
 
     // Content proofreaders (进行文案校对)
-    const proofreaders = getContributorsByRole('进行文案校对');
+    const proofreaders = filterOutProjectMaintainers(getContributorsByRole('进行文案校对'));
     if (proofreaders.length > 0) {
       acknowledgmentLines.push(`- ${formatContributors(proofreaders)} 进行文案校对`);
     }
 
     // Video creators (制作教学视频)
-    const videoCreators = getContributorsByRole('制作教学视频');
+    const videoCreators = filterOutProjectMaintainers(getContributorsByRole('制作教学视频'));
     if (videoCreators.length > 0) {
       acknowledgmentLines.push(`- ${formatContributors(videoCreators)} 制作教学视频`);
     }

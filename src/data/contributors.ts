@@ -15,6 +15,7 @@ export interface Role {
 
 // Enum for the different types of roles
 export enum RoleType {
+  ProjectMaintainer = '项目维护者', // Special role for project maintainers - excluded from acknowledgments
   ArtProvider = '分享图片素材',
   DataTester = '提供测试数据',
   ContentWriter = '撰写角色文案',
@@ -30,6 +31,7 @@ export const contributors: Contributor[] = [
     name: '小曙光',
     url: 'https://github.com/asHOH',
     roles: [
+      { type: RoleType.ProjectMaintainer },
       {
         type: RoleType.ContentWriter,
         characters: ['杰瑞', '泰菲', '尼宝', '汤姆', '布奇', '托普斯'],
