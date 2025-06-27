@@ -92,6 +92,11 @@ Test-Component "TypeScript Compilation" {
 # 2. Build Process (CI & Deploy Workflows)
 Write-Host "`n[SECTION] Build Process" -ForegroundColor Magenta
 
+# README Acknowledgments Update Test
+Test-Component "README Acknowledgments Update" {
+    npm run update-readme
+}
+
 # Service Worker Cache Version Update Test
 Test-Component "Service Worker Cache Version Update" {
     # Create a temporary copy of the service worker for testing

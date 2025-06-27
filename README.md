@@ -175,8 +175,11 @@
 
 **特别鸣谢:**
 
-- B站UP主 [梦回\_淦德蒸蚌](https://space.bilibili.com/1193776217)、[是莫莫喵](https://space.bilibili.com/443541296) 提供的测试数据
-- B站UP主 [凡叔哇](https://space.bilibili.com/273122087) 分享的图片素材
+- [梦回\_淦德蒸蚌](https://space.bilibili.com/1193776217)、[是莫莫喵](https://space.bilibili.com/443541296) 提供测试数据
+- [凡叔哇](https://space.bilibili.com/273122087) 分享图片素材
+- [小曙光](https://github.com/asHOH)、[海阔天空](https://github.com/3swordman) 进行项目开发
+- [小曙光](https://github.com/asHOH)、[海阔天空](https://github.com/3swordman)、[追风汤姆](https://space.bilibili.com/3493135485241940)、音乐家杰瑞 撰写角色文案
+- [小曙光](https://github.com/asHOH) 进行文案校对
 
 ---
 

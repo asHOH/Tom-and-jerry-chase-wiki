@@ -96,6 +96,8 @@ Test-Component "TypeScript Compilation" "npx tsc --noEmit"
 # 2. Build Process (CI & Deploy Workflows)
 echo -e "\n${COLOR_MAGENTA}[SECTION] Build Process${COLOR_RESET}"
 
+Test-Component "README Acknowledgments Update" "npm run update-readme"
+
 Test-Component "Project Build" "npm run build"
 
 # 3. Security Checks (Dependency-Check Workflow)
