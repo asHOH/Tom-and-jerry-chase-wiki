@@ -129,7 +129,6 @@ function EditableFieldImplementation<T extends string | number>({
   const handleBlurRef = useRef<() => void>(() => {});
 
   handleBlurRef.current = () => {
-    console.log({ initialValue, contentRef });
     if (isEditMode && contentRef.current) {
       const newContentStr = contentRef.current.textContent || '';
 
