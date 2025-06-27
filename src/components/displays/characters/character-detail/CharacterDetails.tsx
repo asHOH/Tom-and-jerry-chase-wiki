@@ -7,6 +7,7 @@ import PositioningTagsSection from './PositioningTagsSection';
 import CharacterAttributesSection from './CharacterAttributesSection';
 import SkillCard from './SkillCard';
 import KnowledgeCardSection from './KnowledgeCardSection';
+import EditableField from '@/components/ui/EditableField';
 
 export default function CharacterDetails({
   character,
@@ -42,11 +43,21 @@ export default function CharacterDetails({
               </div>
             </div>
             <h1 className='text-3xl font-bold py-2'>
-              {character.id}{' '}
+              <EditableField
+                tag='span'
+                path={`${character.id}.id`}
+                initialValue={character.id}
+                className='inline'
+              />{' '}
               <span className='text-xl font-normal text-gray-400'>({character.faction.name})</span>
             </h1>
 
-            <p className='text-gray-700 mt-2 py-1'>{character.description}</p>
+            <EditableField
+              tag='p'
+              path={`${character.id}.description`}
+              initialValue={character.description}
+              className='text-gray-700 mt-2 py-1'
+            />
 
             <div className='mt-6 space-y-3'>
               <CharacterAttributesSection

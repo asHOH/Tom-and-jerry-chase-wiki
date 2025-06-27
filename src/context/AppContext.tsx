@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { EditModeProvider } from './EditModeContext';
 
 export type TabName = 'cat' | 'mouse' | 'catCards' | 'mouseCards';
 
@@ -56,20 +57,22 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AppContext.Provider
-      value={{
-        activeTab,
-        selectedCharacter,
-        selectedCard,
-        isDetailedView,
-        handleTabChange,
-        handleSelectCharacter,
-        handleSelectCard,
-        toggleDetailedView,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+    <EditModeProvider>
+      <AppContext.Provider
+        value={{
+          activeTab,
+          selectedCharacter,
+          selectedCard,
+          isDetailedView,
+          handleTabChange,
+          handleSelectCharacter,
+          handleSelectCard,
+          toggleDetailedView,
+        }}
+      >
+        {children}
+      </AppContext.Provider>
+    </EditModeProvider>
   );
 };
 
