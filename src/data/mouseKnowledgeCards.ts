@@ -189,9 +189,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '老鼠掌握更酷的技巧，经过冰面或冰块命中后获得短暂**加速**。“身轻若健燕，潇洒若游龙，翩若惊鸿，婉若游龙。',
     levels: [
-      { level: 1, description: '获得**小幅**加速。', detailedDescription: '移动速度提升10%。' },
-      { level: 2, description: '获得**中幅**加速。', detailedDescription: '移动速度提升15%。' },
-      { level: 3, description: '获得**大幅**加速。', detailedDescription: '移动速度提升20%。' },
+      { level: 1, description: '获得**小幅**加速。', detailedDescription: '移速提升10%。' },
+      { level: 2, description: '获得**中幅**加速。', detailedDescription: '移速提升15%。' },
+      { level: 3, description: '获得**大幅**加速。', detailedDescription: '移速提升20%。' },
     ],
   },
 

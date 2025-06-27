@@ -1020,7 +1020,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '每格士气值额外提供移动速度和Hp恢复速度；士气自然增长速度提升。',
+            description: '每格士气值额外提供移速和Hp恢复速度；士气自然增长速度提升。',
             detailedDescription:
               '每格士气值额外提供2%的移速和0.2/s的Hp恢复速度；士气自然增长速度提高到0.15格/s。',
           },
