@@ -15,9 +15,9 @@ export const catKnowledgeCards: Record<string, Card> = {
       '爪刀命中老鼠或使老鼠进入虚弱时，提升2.5%移速和2%爪刀频率，可以**叠加**。猫咪进入虚弱状态移除当前一半层数。',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '效果最多叠加**5**层。' },
-      { level: 2, description: '效果最多叠加**6**层。' },
-      { level: 3, description: '效果最多叠加**7**层。' },
+      { level: 1, description: '最多叠加**5**层。' },
+      { level: 2, description: '最多叠加**6**层。' },
+      { level: 3, description: '最多叠加**7**层。' },
     ],
   },
 
@@ -28,11 +28,11 @@ export const catKnowledgeCards: Record<string, Card> = {
     description:
       '保持60% Hp以上**一段时间**进入乾坤一掷状态，提高移速和投掷物伤害，Hp低于60%后移除该状态。',
     detailedDescription:
-      '保持60% Hp以上**一段时间**进入乾坤一掷状态，投掷物伤害增加30点，移速增加10%，Hp低于60%后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
+      '保持60% Hp以上**一段时间**进入乾坤一掷状态，移速增加10%，投掷物伤害增加30点，Hp低于60%后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
     levels: [
-      { level: 1, description: '保持60% Hp以上**20**秒后进入乾坤一掷。' },
-      { level: 2, description: '保持60% Hp以上**19**秒后进入乾坤一掷。' },
-      { level: 3, description: '保持60% Hp以上**18**秒后进入乾坤一掷。' },
+      { level: 1, description: '保持**20**秒后进入乾坤一掷。' },
+      { level: 2, description: '保持**19**秒后进入乾坤一掷。' },
+      { level: 3, description: '保持**18**秒后进入乾坤一掷。' },
     ],
   },
 
@@ -57,9 +57,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '逼问意志不坚定的老鼠，你将得到对方队友的位置信息！手持老鼠或将老鼠绑在火箭上时，能在小地图上获得**其他老鼠**的位置。',
     levels: [
-      { level: 1, description: '可以审问出**1只老鼠**的行踪。' },
-      { level: 2, description: '可以审问出**2只老鼠**的行踪。' },
-      { level: 3, description: '可以审问出**3只老鼠**的行踪。' },
+      { level: 1, description: '获得**1只**老鼠的行踪。' },
+      { level: 2, description: '获得**2只**老鼠的行踪。' },
+      { level: 3, description: '获得**3只**老鼠的行踪。' },
     ],
   },
 
@@ -68,7 +68,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'S',
     cost: 6,
     description:
-      '墙缝**即将**被破开时，猫咪进入暴怒状态，攻击力增加50，但技能CD会延长50%。虚弱起身后也会获得10秒暴怒状态。',
+      '墙缝**即将**被破开时，猫咪进入暴怒状态，攻击力增加50，但技能CD延长50%。虚弱起身后也会获得10秒暴怒状态。',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '墙缝被破坏**30%**后触发。' },
@@ -81,12 +81,12 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '猛攻',
     rank: 'S',
     cost: 5,
-    description: '猫咪的拍子和爪刀使老鼠**短暂**地禁用技能和道具，并掉落手中的道具。',
+    description: '猫咪的拍子和爪刀使老鼠**短暂**禁用技能和道具，并掉落手中的道具。',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '禁用技能和道具持续**5**秒。' },
-      { level: 2, description: '禁用技能和道具持续**6**秒。' },
-      { level: 3, description: '禁用技能和道具持续**7**秒。' },
+      { level: 1, description: '猛攻效果持续**5**秒。' },
+      { level: 2, description: '猛攻效果持续**6**秒。' },
+      { level: 3, description: '猛攻效果持续**7**秒。' },
     ],
   },
 
@@ -108,9 +108,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'S',
     cost: 6,
     description:
-      '每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带与普通爪刀伤害相等的额外伤害。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。',
+      '每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带额外伤害。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或角色升级后立刻获得蓄势一击状态。',
     detailedDescription:
-      '每一次的潜伏，都是为了今后的爆发。每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带与普通爪刀伤害相等的额外伤害。大部分猫在蓄势一击状态下的额外伤害为50点，天使汤姆为65点，苏蕊舞动亮相为50点。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或升级后立刻获得蓄势一击状态。', //FIXME: 黑鼠也是75点吗
+      '每一次的潜伏，都是为了今后的爆发。每隔**一段时间**，获得蓄势一击状态，下次爪刀将附带[与普通爪刀伤害相等](苏蕊舞动亮相的蓄势仍为50点增伤)的额外伤害。受到来自老鼠的眩晕和硬直效果会移除该状态。虚弱起身或角色升级后立刻获得蓄势一击状态。',
     levels: [
       { level: 1, description: '每隔**14**秒，获得蓄势一击状态。' },
       { level: 2, description: '每隔**13**秒，获得蓄势一击状态。' },
@@ -124,9 +124,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description:
-      '将老鼠绑上火箭后，火箭燃烧速度变得**更快**！在绑有老鼠的火箭附近击倒老鼠，会额外减少火箭5秒燃烧时间。(CD：20秒)',
+      '火箭燃烧速度变得**更快**！在绑有老鼠的火箭附近击倒老鼠，会额外减少火箭5秒燃烧时间。(CD：20秒)',
     detailedDescription:
-      '点燃火箭吧！将老鼠绑上火箭后，火箭燃烧速度变得**更快**！在绑有老鼠的火箭附近击倒老鼠，会额外减少火箭5秒燃烧时间。(CD：20秒)',
+      '点燃火箭吧！火箭燃烧速度变得**更快**！在绑有老鼠的火箭附近击倒老鼠，会额外减少火箭5秒燃烧时间。(CD：20秒)',
     levels: [
       { level: 1, description: '火箭燃烧速度提升**12%**。' },
       { level: 2, description: '火箭燃烧速度提升**13%**。' },
@@ -152,13 +152,13 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '心灵手巧',
     rank: 'A',
     cost: 4,
-    description: '布置捕鼠夹、绑火箭、修复火箭时，交互速度得到**提升**。',
+    description: '布置捕鼠夹、绑火箭、修复火箭时，**提升**交互速度。',
     detailedDescription:
-      '那些笨手笨脚的老鼠！心灵手巧的猫咪在布置捕鼠夹、绑火箭、修复火箭时，交互速度得到**提升**。',
+      '那些笨手笨脚的老鼠！心灵手巧的猫咪在布置捕鼠夹、绑火箭、修复火箭时，**提升**交互速度。',
     levels: [
-      { level: 1, description: '交互速度提升**26%**。' },
-      { level: 2, description: '交互速度提升**28%**。' },
-      { level: 3, description: '交互速度提升**30%**。' },
+      { level: 1, description: '提升**26%**。' },
+      { level: 2, description: '提升**28%**。' },
+      { level: 3, description: '提升**30%**。' },
     ],
   },
 
@@ -166,8 +166,8 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '熊熊燃烧',
     rank: 'A',
     cost: 6,
-    description: '每次将老鼠绑上火箭后，火箭引信会立刻燃烧掉**一截**。',
-    detailedDescription: '燃烧我的引信！每次将老鼠绑上火箭后，火箭引信会立刻燃烧掉**一截**。',
+    description: '每次将老鼠绑上火箭后，火箭引信会立刻额外燃烧掉**一截**。',
+    detailedDescription: '燃烧我的引信！每次将老鼠绑上火箭后，火箭引信会立刻额外燃烧掉**一截**。',
     levels: [
       { level: 1, description: '引信额外减少**3**秒。' },
       { level: 2, description: '引信额外减少**4**秒。' },
@@ -194,12 +194,13 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '细心',
     rank: 'A',
     cost: 4,
-    description: '免疫捕鼠夹和碎片，但**小幅**降低移速。',
-    detailedDescription: '细心的猫咪能够有效地躲避捕鼠夹和碎片，但**小幅**降低移速。',
+    description: '免疫捕鼠夹和碎片，但**小幅**减速。',
+    detailedDescription:
+      '细心的猫咪能够有效地躲避捕鼠夹和碎片（踩到碎片仍然会导致碎片消失），但**小幅**减速。',
     levels: [
-      { level: 1, description: '移速降低**7%**。' },
-      { level: 2, description: '移速降低**6.5%**。' },
-      { level: 3, description: '移速降低**6%**。' },
+      { level: 1, description: '减速**7%**。' },
+      { level: 2, description: '减速**6.5%**。' },
+      { level: 3, description: '减速**6%**。' },
     ],
   },
 
@@ -209,7 +210,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '每次猫咪进入虚弱状态，永久提升Hp上限、Hp恢复速度和移速。',
     detailedDescription:
-      '每次猫咪进入虚弱状态，Hp上限提高25点，Hp恢复速度提升1.5点/s，移动速度提升1.5%。',
+      '每次猫咪进入虚弱状态，Hp上限永久提升25点，Hp恢复速度提升1.5点/s，移速提升1.5%。',
     levels: [
       { level: 1, description: '最多叠加**3**层。' },
       { level: 2, description: '最多叠加**4**层。' },
@@ -263,12 +264,12 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '减速警告',
     rank: 'B',
     cost: 4,
-    description: '猫咪的爪刀使老鼠的移速**降低**。',
-    detailedDescription: '猫咪的爪刀使老鼠的移速**降低**，老鼠解除受伤时将同时解除减速效果。',
+    description: '猫咪的爪刀使老鼠**减速**。',
+    detailedDescription: '猫咪的爪刀使老鼠**减速**，老鼠解除受伤时将同时解除减速效果。',
     levels: [
-      { level: 1, description: '降低老鼠**5%**移速。' },
-      { level: 2, description: '降低老鼠**6%**移速。' },
-      { level: 3, description: '降低老鼠**7%**移速。' },
+      { level: 1, description: '减速**5%**。' },
+      { level: 2, description: '减速**6%**。' },
+      { level: 3, description: '减速**7%**。' },
     ],
   },
 
@@ -292,9 +293,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     description: '当老鼠被绑在火箭上时，其他老鼠的投掷伤害**降低**固定值。',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '老鼠的投掷伤害降低**10**。' },
-      { level: 2, description: '老鼠的投掷伤害降低**15**。' },
-      { level: 3, description: '老鼠的投掷伤害降低**20**。' },
+      { level: 1, description: '投掷伤害降低**10**。' },
+      { level: 2, description: '投掷伤害降低**15**。' },
+      { level: 3, description: '投掷伤害降低**20**。' },
     ],
   },
 
@@ -315,7 +316,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '恐吓',
     rank: 'B',
     cost: 4,
-    description: '猫咪的爪刀对老鼠造成恐吓，使老鼠在**一段时间**内推速大幅下降。',
+    description: '猫咪的爪刀使老鼠在**一段时间**内推速大幅下降。',
     detailedDescription: '猫咪的爪刀对老鼠造成恐吓，使老鼠在**一段时间**内推速下降60%。',
     levels: [
       { level: 1, description: '恐吓持续**30**秒。' },
@@ -328,7 +329,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '捕鼠夹',
     rank: 'B',
     cost: 3,
-    description: '布置更为强力的捕鼠夹，老鼠踩中捕鼠夹时会受到伤害，并且需要**更长时间**挣脱。',
+    description: '布置更强力的捕鼠夹，老鼠踩中捕鼠夹时会受到伤害，且**更难**挣脱。',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '老鼠挣脱夹子的速度降低**10%**。' },
@@ -341,13 +342,12 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '攻其不备',
     rank: 'B',
     cost: 3,
-    description: '当老鼠在推奶酪且猫咪周围没有老鼠时，**提升**猫咪移速。',
-    detailedDescription:
-      '当老鼠在推奶酪且猫咪周围没有老鼠时，猫咪试图快速接近老鼠，移速得到**提升**。',
+    description: '当老鼠在推奶酪且猫咪附近没有老鼠时，**提升**移速。',
+    detailedDescription: '当老鼠在推奶酪且猫咪附近没有老鼠时，猫咪试图快速接近老鼠，**提升**移速。',
     levels: [
-      { level: 1, description: '移速提升**18%**。' },
-      { level: 2, description: '移速提升**19%**。' },
-      { level: 3, description: '移速提升**20%**。' },
+      { level: 1, description: '提升**18%**。' },
+      { level: 2, description: '提升**19%**。' },
+      { level: 3, description: '提升**20%**。' },
     ],
   },
 
@@ -386,9 +386,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '猫咪通过监控设备得知机器鼠的动向。游戏开始后**一段时间**内，猫咪可以看到所有机器鼠的位置。',
     levels: [
-      { level: 1, description: '效果持续到游戏开始后**20**秒。' },
-      { level: 2, description: '效果持续到游戏开始后**25**秒。' },
-      { level: 3, description: '效果持续到游戏开始后**30**秒。' },
+      { level: 1, description: '持续到游戏开始后**20**秒。' },
+      { level: 2, description: '持续到游戏开始后**25**秒。' },
+      { level: 3, description: '持续到游戏开始后**30**秒。' },
     ],
   },
 
@@ -397,12 +397,12 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '巡逻戒备',
     rank: 'C',
     cost: 3,
-    description: '**降低**附近老鼠推奶酪的速度。',
+    description: '**降低**附近老鼠推速。',
     detailedDescription: '四处巡逻的猫咪，会**降低**附近老鼠推速。',
     levels: [
-      { level: 1, description: '附近老鼠推速降低**10%**。' },
-      { level: 2, description: '附近老鼠推速降低**20%**。' },
-      { level: 3, description: '附近老鼠推速降低**30%**。' },
+      { level: 1, description: '降低**10%**。' },
+      { level: 2, description: '降低**20%**。' },
+      { level: 3, description: '降低**30%**。' },
     ],
   },
 
@@ -410,9 +410,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '春风得意',
     rank: 'C',
     cost: 4,
-    description: '手握老鼠时，**提高**移动、跳跃速度，并免疫捕鼠夹和碎片。',
+    description: '手握老鼠时，**提升**移动、跳跃速度，并免疫捕鼠夹和碎片。',
     detailedDescription:
-      '终于抓住了一只小老鼠！手握老鼠时，**提高**移动、跳跃速度，并免疫捕鼠夹和碎片。',
+      '终于抓住了一只小老鼠！手握老鼠时，**提升**移动、跳跃速度，并免疫捕鼠夹和碎片。',
     levels: [
       { level: 1, description: '移动、跳跃速度提升**5%**。' },
       { level: 2, description: '移动、跳跃速度提升**6%**。' },
@@ -450,9 +450,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '猫是液体',
     rank: 'C',
     cost: 2,
-    description: '猫咪能够**更快**、更频繁地穿过管道，并且不用“排队”。',
+    description: '猫咪能够**更快**、更频繁地穿过管道，并且[不用“排队”](不会显示“管道使用中”)。',
     detailedDescription:
-      '猫咪使自己身体变得更柔软，能够**更快**、更频繁地穿过管道，并且不用“排队”，不会显示“管道使用中”。',
+      '猫咪使自己身体变得更柔软，能够**更快**、更频繁地穿过管道，并且[不用“排队”](不会显示“管道使用中”)。',
     levels: [
       { level: 1, description: '钻管道速度提升**60%**。' },
       { level: 2, description: '钻管道速度提升**65%**。' },
@@ -465,13 +465,13 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 3,
     description:
-      '猫咪不会再受到斯派克的攻击，但靠近斯派克时，移速**略微**降低。此外，免疫女主人的眩晕效果',
+      '猫咪不会再受到斯派克的攻击，但靠近斯派克时，**略微**减速。此外，免疫女主人的眩晕效果',
     detailedDescription:
-      '猫咪与斯派克成为塑料朋友后，不会再受到斯派克的攻击，但靠近斯派克时，移速**略微**降低。此外，免疫女主人的眩晕效果',
+      '猫咪与斯派克成为塑料朋友后，不会再受到斯派克的攻击，但靠近斯派克时，**略微**减速。此外，免疫女主人的眩晕效果',
     levels: [
-      { level: 1, description: '靠近斯派克时降低**5%**移速。' },
-      { level: 2, description: '靠近斯派克时降低**4%**移速。' },
-      { level: 3, description: '靠近斯派克时降低**3%**移速。' },
+      { level: 1, description: '靠近斯派克时减速**5%**。' },
+      { level: 2, description: '靠近斯派克时减速**4%**。' },
+      { level: 3, description: '靠近斯派克时减速**3%**。' },
     ],
   },
 
@@ -482,9 +482,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     description: '**降低**猫咪手中老鼠的挣扎的速度。',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '老鼠挣扎速度降低**4%**。' },
-      { level: 2, description: '老鼠挣扎速度降低**6%**。' },
-      { level: 3, description: '老鼠挣扎速度降低**10%**。' },
+      { level: 1, description: '降低**4%**。' },
+      { level: 2, description: '降低**6%**。' },
+      { level: 3, description: '降低**10%**。' },
     ],
   },
 
@@ -492,12 +492,12 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '震慑',
     rank: 'C',
     cost: 3,
-    description: '猫咪将老鼠绑在火箭上时，鼠方推速**下降**。',
+    description: '猫咪将老鼠绑在火箭上时，鼠方推速**降低**。',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '老鼠推速降低**8%**。' },
-      { level: 2, description: '老鼠推速降低**12%**。' },
-      { level: 3, description: '老鼠推速降低**16%**。' },
+      { level: 1, description: '降低**8%**。' },
+      { level: 2, description: '降低**12%**。' },
+      { level: 3, description: '降低**16%**。' },
     ],
   },
 };

@@ -52,20 +52,33 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  const buttonStyle = (isActive: boolean) => ({
-    padding: isMobile ? '8px' : '8px 16px',
+  const baseButtonStyle = {
     borderRadius: '6px',
-    backgroundColor: isActive ? '#2563eb' : '#e5e7eb',
-    color: isActive ? 'white' : '#1f2937',
     border: 'none',
     cursor: 'pointer',
     transition: 'background-color 0.2s',
     display: 'flex',
     alignItems: 'center',
-    gap: isMobile ? '0' : '8px',
-    position: 'relative' as const,
-    minWidth: isMobile ? '44px' : 'auto',
     justifyContent: 'center',
+    minHeight: isMobile ? '40px' : '44px',
+    minWidth: isMobile ? '40px' : 'auto',
+    position: 'relative' as const,
+    gap: isMobile ? '0' : '8px',
+    fontSize: isMobile ? '14px' : '16px',
+  };
+
+  const tabButtonStyle = (isActive: boolean) => ({
+    ...baseButtonStyle,
+    padding: isMobile ? '8px' : '8px 16px',
+    backgroundColor: isActive ? '#2563eb' : '#e5e7eb',
+    color: isActive ? 'white' : '#1f2937',
+  });
+
+  const toggleButtonStyle = (isDetailedView: boolean) => ({
+    ...baseButtonStyle,
+    padding: isMobile ? '10px' : '10px 16px',
+    backgroundColor: isDetailedView ? '#dbeafe' : '#fef3e2',
+    color: isDetailedView ? '#1d4ed8' : '#ea580c',
   });
 
   return (
@@ -96,7 +109,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         <div
           style={{
             display: 'flex',
-            gap: isMobile ? '8px' : '12px',
+            gap: isMobile ? '10px' : '12px',
             overflowX: isMobile ? 'auto' : 'visible',
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
@@ -109,7 +122,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             <button
               type='button'
               onClick={() => handleTabChange('')}
-              style={buttonStyle(activeTab === null)}
+              style={tabButtonStyle(activeTab === null)}
             >
               {!isMobile && '首页'}
               {isMobile && '🏠'}
@@ -126,7 +139,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <button
                 type='button'
                 onClick={() => handleTabChange(tab.id)}
-                style={buttonStyle(activeTab === tab.id)}
+                style={tabButtonStyle(activeTab === tab.id)}
               >
                 <Image
                   src={tab.imageSrc}
@@ -143,7 +156,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         </div>
 
         {/* Right-aligned detailed/simple view toggle button and SearchBar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '12px' }}>
           <SearchBar isMobile={isMobile} />
           {showDetailToggle && (
             <Tooltip
@@ -156,28 +169,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 type='button'
                 onClick={toggleDetailedView}
                 className='whitespace-nowrap'
-                style={{
-                  padding: isMobile ? '10px' : '10px 16px',
-                  borderRadius: '6px',
-                  backgroundColor: isDetailedView ? '#dbeafe' : '#fef3e2',
-                  color: isDetailedView ? '#1d4ed8' : '#ea580c',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s',
-                  fontSize: isMobile ? '14px' : '16px',
-                  minWidth: isMobile ? '44px' : 'auto',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                style={toggleButtonStyle(isDetailedView)}
               >
-                {isMobile
-                  ? isDetailedView
-                    ? '简'
-                    : '详'
-                  : isDetailedView
-                    ? '简明描述'
-                    : '详细描述'}
+                {isMobile ? (isDetailedView ? '简' : '详') : isDetailedView ? '简明' : '详细'}
               </button>
             </Tooltip>
           )}

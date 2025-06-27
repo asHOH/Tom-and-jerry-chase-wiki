@@ -11,7 +11,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '回家',
     rank: 'S',
     cost: 6,
-    description: '墙缝出现后立刻解除虚弱和受伤，恢复全部Hp，并额外获得**增益**。',
+    description: '墙缝出现后立刻解除虚弱和受伤，回复全部Hp，并额外获得**增益**。',
     detailedDescription:
       '为所有爱执着的痛，再痛我也要回家！墙缝出现后立刻解除虚弱和受伤，回复200点Hp，并额外获得**增益**。',
     levels: [
@@ -64,7 +64,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 5,
     description: 'Hp在一半以上时，牺牲自己的Hp为附近队友减伤；牺牲不会致死。有内置**CD**。',
     detailedDescription:
-      '当自身Hp在一半以上、附近队友受到猫咪伤害时，牺牲自己大量Hp来减少部分队友所受伤害，被“牺牲”Hp的一部分会在10秒内缓慢恢复，牺牲者会至少保留一定健康值。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
+      '当自身Hp在一半以上、附近队友受到猫咪伤害时，牺牲自己大量Hp来减少部分队友所受伤害，被“牺牲”的Hp一部分会在10秒内缓慢恢复，牺牲者会至少保留一定Hp。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
     levels: [
       { level: 1, description: 'CD：**40**秒。' },
       { level: 2, description: 'CD：**35**秒。' },
@@ -80,9 +80,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '投掷道具命中猫咪后，使猫咪**一段时间**内无法使用爪刀。猫咪被缴械后，30秒内不会再次被缴械。',
     levels: [
-      { level: 1, description: '缴械**3.5**秒。' },
-      { level: 2, description: '缴械**4**秒。' },
-      { level: 3, description: '缴械**4.5**秒。' },
+      { level: 1, description: '缴械持续**3.5**秒。' },
+      { level: 2, description: '缴械持续**4**秒。' },
+      { level: 3, description: '缴械持续**4.5**秒。' },
     ],
   },
 
@@ -90,7 +90,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '舍己',
     rank: 'S',
     cost: 5,
-    description: '从火箭上救下队友后，与队友互换Hp，并使队友获得**短暂**的无敌。(CD: 50秒)',
+    description: '从火箭上救下队友后，与队友互换Hp，并给予队友**短暂**的无敌。(CD: 50秒)',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '无敌持续**4**秒。' },
@@ -118,9 +118,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '冲冠一怒',
     rank: 'A',
     cost: 4,
-    description: '当同伴被猫咪抓住时，攻击力提升；如果猫咪不在附近，额外**提升**移动和跳跃速度。',
+    description: '当队友被猫咪抓住时，攻击力提升；如果猫咪不在附近，额外**提升**移动和跳跃速度。',
     detailedDescription:
-      '冲冠一怒！当同伴被猫咪抓住时，攻击力提升15%；如果猫咪不在附近，额外**提升**移动和跳跃速度。',
+      '冲冠一怒！当队友被猫咪抓住时，攻击力提升15%；如果猫咪不在附近，额外**提升**移动和跳跃速度。',
     levels: [
       { level: 1, description: '移动和跳跃速度提升**18%**。' },
       { level: 2, description: '移动和跳跃速度提升**19%**。' },
@@ -132,8 +132,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '团队领袖',
     rank: 'A',
     cost: 5,
-    description: '处于健康状态时，自己和附近同伴推速**提升**。',
-    detailedDescription: '处于健康状态时，自己和附近同伴推速**提升**（效果不可叠加）。',
+    description: '处于健康状态时，自己和附近队友推速**提升**。',
+    detailedDescription: '处于健康状态时，自己和附近队友推速**提升**（效果不可叠加）。',
     levels: [
       { level: 1, description: '推速提升**3%**。' },
       { level: 2, description: '推速提升**4%**。' },
@@ -187,11 +187,11 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '经过冰面或冰块命中后获得短暂**加速**。',
     detailedDescription:
-      '老鼠掌握更酷的技巧，经过冰面或冰块命中后获得短暂**加速**。“身轻若健燕，潇洒若游龙，翩若惊鸿，婉若游龙。',
+      '老鼠掌握更酷的技巧，经过冰面或冰块命中后获得短暂**加速**。“身轻若健燕，潇洒若游龙，翩若惊鸿，婉若游龙。”',
     levels: [
-      { level: 1, description: '获得**小幅**加速。', detailedDescription: '移动速度提升10%。' },
-      { level: 2, description: '获得**中幅**加速。', detailedDescription: '移动速度提升15%。' },
-      { level: 3, description: '获得**大幅**加速。', detailedDescription: '移动速度提升20%。' },
+      { level: 1, description: '获得**小幅**加速。', detailedDescription: '移速提升10%。' },
+      { level: 2, description: '获得**中幅**加速。', detailedDescription: '移速提升15%。' },
+      { level: 3, description: '获得**大幅**加速。', detailedDescription: '移速提升20%。' },
     ],
   },
 
@@ -200,7 +200,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '受到猫咪的攻击后，**短暂**提升移动、跳跃速度和Hp恢复速度。(CD：35秒)',
-    detailedDescription: '受到猫咪的攻击后，**短暂**移速提升20%，Hp恢复速度提升2点/s。(CD：35秒)',
+    detailedDescription:
+      '受到猫咪的攻击后，**短暂**提升移动、跳跃速度20%，Hp恢复速度提升2点/s。(CD：35秒)',
     levels: [
       { level: 1, description: '效果持续**8**秒。' },
       { level: 2, description: '效果持续**9**秒。' },
@@ -212,7 +213,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '闭门羹',
     rank: 'A',
     cost: 4,
-    description: '关门后获得**短暂**加速，并将门附近的猫咪弹开。(CD: 5s)',
+    description: '关门后获得**短暂**加速，并眩晕门附近的猫咪。(CD: 5s)',
     detailedDescription:
       '用力地关上门，关门后移速**短暂**提升50%，对门附近的猫咪造成1.5s眩晕。(CD: 5s)',
     levels: [
@@ -267,12 +268,12 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '应激反应',
     rank: 'B',
     cost: 4,
-    description: '处于受伤状态时，移速和跳跃高度得到**提升**。',
+    description: '受伤状态下，**提升**移速和跳跃高度。',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '移速和跳跃高度提升**7%**。' },
-      { level: 2, description: '移速和跳跃高度提升**8%**。' },
-      { level: 3, description: '移速和跳跃高度提升**9%**。' },
+      { level: 1, description: '提升**7%**。' },
+      { level: 2, description: '提升**8%**。' },
+      { level: 3, description: '提升**9%**。' },
     ],
   },
 
@@ -295,7 +296,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 5,
     description: '对墙缝造成的伤害**增加**。',
-    detailedDescription: '破坏力惊人的老鼠，对墙缝造成的伤害**增加**。（墙缝基础坚固值为100）',
+    detailedDescription:
+      '破坏力惊人的老鼠，对墙缝造成的伤害**增加**。（墙缝基础坚固值为100；果盘只触发第一颗）',
     levels: [
       { level: 1, description: '增伤**0.6**。' },
       { level: 2, description: '增伤**0.8**。' },
@@ -399,12 +401,12 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '不屈',
     rank: 'C',
     cost: 3,
-    description: '每被放飞一名队友，自己的Hp上限、推速、**移速**得到提高。',
-    detailedDescription: '每被放飞一名队友，自己的Hp上限提高12点，推速提高10%，**移速**提高。',
+    description: '每被放飞一名队友，自己的Hp上限、推速、**移速**得到提升。',
+    detailedDescription: '每被放飞一名队友，自己的Hp上限提高12点，推速提升10%，**移速**提升。',
     levels: [
-      { level: 1, description: '移速提高**5%**。' },
-      { level: 2, description: '移速提高**6%**。' },
-      { level: 3, description: '移速提高**7%**。' },
+      { level: 1, description: '移速提升**5%**。' },
+      { level: 2, description: '移速提升**6%**。' },
+      { level: 3, description: '移速提升**7%**。' },
     ],
   },
 
@@ -428,9 +430,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     description: '**减少**虚弱的持续时间。',
     detailedDescription: '年轻鼠恢复的速度就是快！**减少**虚弱的持续时间。',
     levels: [
-      { level: 1, description: '持续时间减少**20%**。' },
-      { level: 2, description: '持续时间减少**25%**。' },
-      { level: 3, description: '持续时间减少**30%**。' },
+      { level: 1, description: '减少**20%**。' },
+      { level: 2, description: '减少**25%**。' },
+      { level: 3, description: '减少**30%**。' },
     ],
   },
 
@@ -441,9 +443,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     description: '当自己被绑在火箭上时，队友推速下降，但救援速度得到**提升**。',
     // detailedDescription: '',
     levels: [
-      { level: 1, description: '队友救援速度提升**30%**。' },
-      { level: 2, description: '队友救援速度提升**35%**。' },
-      { level: 3, description: '队友救援速度提升**40%**。' },
+      { level: 1, description: '提升**30%**。' },
+      { level: 2, description: '提升**35%**。' },
+      { level: 3, description: '提升**40%**。' },
     ],
   },
 
@@ -452,11 +454,11 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 4,
     description: '**提高**自己和附近队友的治疗、救援速度。',
-    detailedDescription: '守望相助的老鼠们，**提高**自己和附近队友的治疗、救援速度。',
+    detailedDescription: '守望相助的老鼠们，**提升**自己和附近队友的治疗、救援速度。',
     levels: [
-      { level: 1, description: '治疗、救援速度提高**8%**。' },
-      { level: 2, description: '治疗、救援速度提高**12%**。' },
-      { level: 3, description: '治疗、救援速度提高**16%**。' },
+      { level: 1, description: '提升**8%**。' },
+      { level: 2, description: '提升**12%**。' },
+      { level: 3, description: '提升**16%**。' },
     ],
   },
 
@@ -464,8 +466,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '美食家',
     rank: 'C',
     cost: 3,
-    description: '每局**前几次**打开箱子时，必然获得牛奶或蛋糕。',
-    detailedDescription: '孤独的美食家每局**前几次**打开箱子时，必然获得牛奶或蛋糕。',
+    description: '每局**前几次**打开箱子时，必然开出牛奶或蛋糕。',
+    detailedDescription: '孤独的美食家每局**前几次**打开箱子时，必然开出牛奶或蛋糕。',
     levels: [
       { level: 1, description: '每局**前2次**打开箱子时触发。' },
       { level: 2, description: '每局**前3次**打开箱子时触发。' },
