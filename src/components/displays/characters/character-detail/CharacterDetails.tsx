@@ -8,6 +8,7 @@ import CharacterAttributesSection from './CharacterAttributesSection';
 import SkillCard from './SkillCard';
 import KnowledgeCardSection from './KnowledgeCardSection';
 import EditableField from '@/components/ui/EditableField';
+import CharacterSection from './CharacterSection';
 
 export default function CharacterDetails({
   character,
@@ -78,20 +79,21 @@ export default function CharacterDetails({
         <div className='md:w-2/3'>
           {character.skillAllocations && character.skillAllocations.length > 0 && (
             <div className='mb-8'>
-              <h3 className='text-2xl font-bold px-2 py-3 mb-4'>推荐加点</h3>
-              <div className='space-y-3'>
-                {character.skillAllocations.map((allocation) => (
-                  <div key={allocation.id} className='card p-4'>
-                    <SkillAllocationDisplay
-                      allocation={allocation}
-                      characterName={character.id}
-                      factionId={factionId}
-                      characterSkills={character.skills}
-                      isDetailed={isDetailedView}
-                    />
-                  </div>
-                ))}
-              </div>
+              <CharacterSection title='推荐加点'>
+                <div className='space-y-3'>
+                  {character.skillAllocations.map((allocation) => (
+                    <div key={allocation.id} className='card p-4'>
+                      <SkillAllocationDisplay
+                        allocation={allocation}
+                        characterName={character.id}
+                        factionId={factionId}
+                        characterSkills={character.skills}
+                        isDetailed={isDetailedView}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CharacterSection>
             </div>
           )}
 
@@ -101,29 +103,27 @@ export default function CharacterDetails({
             characterId={character.id}
           />
 
-          <div className='mb-6'>
-            <h3 className='text-2xl font-bold px-2 py-3'>技能描述</h3>
-          </div>
+          <CharacterSection title='技能描述'>
+            <div className='space-y-6'>
+              {(() => {
+                const weaponSkills = character.skills.filter(
+                  (skill) => skill.type === 'weapon1' || skill.type === 'weapon2'
+                );
+                const isSingleWeapon = weaponSkills.length === 1;
 
-          <div className='space-y-6'>
-            {(() => {
-              const weaponSkills = character.skills.filter(
-                (skill) => skill.type === 'weapon1' || skill.type === 'weapon2'
-              );
-              const isSingleWeapon = weaponSkills.length === 1;
-
-              return character.skills.map((skill, index) => (
-                <SkillCard
-                  key={(skill as Skill).id}
-                  skill={skill as Skill}
-                  isDetailed={isDetailedView}
-                  isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
-                  characterId={character.id}
-                  skillIndex={index}
-                />
-              ));
-            })()}
-          </div>
+                return character.skills.map((skill, index) => (
+                  <SkillCard
+                    key={(skill as Skill).id}
+                    skill={skill as Skill}
+                    isDetailed={isDetailedView}
+                    isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
+                    characterId={character.id}
+                    skillIndex={index}
+                  />
+                ));
+              })()}
+            </div>
+          </CharacterSection>
         </div>
       </div>
     </div>
