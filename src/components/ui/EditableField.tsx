@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useEditMode } from '../../context/EditModeContext';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
-import { characters } from '@/data';
+import { Character, characters, factions } from '@/data';
+import { useAppContext } from '@/context/AppContext';
+import { getCatImageUrl } from '@/data/catCharacters';
+import { getMouseImageUrl } from '@/data/mouseCharacters';
 
 interface EditableFieldProps<T extends string | number> {
   tag: keyof HTMLElementTagNameMap;
@@ -33,6 +36,7 @@ function EditableFieldImplementation<T extends string | number>({
 }: EditableFieldProps<T>) {
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
+  const { handleSelectCharacter, activeTab } = useAppContext();
 
   // Function to set nested property on an object based on a path string
   const setNestedProperty = (obj: Record<string, unknown>, path: string, value: T): void => {
@@ -86,7 +90,7 @@ function EditableFieldImplementation<T extends string | number>({
   const handleBlurRef = useRef<() => void>(() => {});
 
   handleBlurRef.current = () => {
-    if (contentRef.current) {
+    if (contentRef.current && contentRef.current.textContent != content) {
       const newContentStr = contentRef.current.textContent || '';
 
       if (typeof initialValue === 'number') {
@@ -122,6 +126,36 @@ function EditableFieldImplementation<T extends string | number>({
       setNestedProperty(newData, path, finalValue);
       setNestedProperty(characters, path, finalValue);
       localStorage.setItem('editableFields', JSON.stringify(newData));
+      if (path && path.split('.')?.[1] == 'id') {
+        // FIXME: This code may lead to uncertain damage as other code do not handle the situation where the id changes
+        // characters is not managed by react, so we need to trigger the update manually
+        // use of activeTab forces
+        // TODO: save and load faction and character changes from localStorage
+        const oldId = path.split('.')[0];
+        characters[newContentStr] = characters[oldId!]!;
+        characters[newContentStr].imageUrl = (
+          activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl
+        )(newContentStr);
+        delete characters[oldId!];
+        handleSelectCharacter(newContentStr);
+        localStorage.setItem(
+          'editableFields',
+          JSON.stringify(
+            ((obj: Record<string, Character>) => {
+              obj[newContentStr] = characters[oldId!]!;
+              delete obj[oldId!];
+              return obj;
+            })(JSON.parse(localStorage.getItem('editableFields')!))
+          )
+        );
+        const faction = factions[activeTab!]?.characters.find(({ id }) => id == oldId);
+        if (faction) {
+          faction.id = faction.name = newContentStr;
+          faction.imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(
+            newContentStr
+          );
+        }
+      }
     }
   };
 

@@ -4,11 +4,8 @@ import { FactionCharactersProps } from '@/lib/types';
 import { PositioningTagName } from '@/data';
 import { useFilterState } from '@/lib/filterUtils';
 import { getPositioningTagColors } from '@/lib/design-tokens';
-import { useAppContext } from '@/context/AppContext';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
-  const { handleSelectCharacter } = useAppContext();
-
   const {
     selectedFilters: selectedPositioningTags,
     toggleFilter: togglePositioningTagFilter,
@@ -108,7 +105,6 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
               imageUrl={character.imageUrl}
               positioningTags={character.positioningTags}
               factionId={faction.id}
-              onClick={handleSelectCharacter}
             />
           </div>
         ))}

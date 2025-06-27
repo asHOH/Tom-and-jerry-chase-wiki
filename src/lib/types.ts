@@ -38,7 +38,6 @@ export type CharacterDisplayProps = {
   imageUrl: string;
   positioningTags: PositioningTag[];
   factionId: string;
-  onClick: (characterId: string) => void;
 };
 
 export type KnowledgeCardDetailsProps = {

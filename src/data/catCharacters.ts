@@ -3,15 +3,9 @@ import { processCharacters } from '../lib/skillIdUtils';
 import type { CharacterDefinition, PartialCharacterDefinition } from './types';
 
 // Generate image URL based on character ID
-const getCatImageUrl = (characterId: string): string => {
-  // Check if the image exists, otherwise use a placeholder
-  const existingImages = ['汤姆', '布奇', '托普斯', '苏蕊'];
-
-  if (existingImages.includes(characterId)) {
-    return `/images/cats/${characterId}.png`;
-  } else {
-    return `/images/cats/placeholder-cat.png`;
-  }
+export const getCatImageUrl = (characterId: string): string => {
+  // support character name editing disallow hard coding existing characters
+  return `/images/cats/${characterId}.png`;
 };
 
 const catCharacterDefinitions: Record<string, CharacterDefinition | PartialCharacterDefinition> = {

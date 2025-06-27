@@ -98,7 +98,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         setSearchResults([]); // Clear previous results
         const searchGenerator = performSearch(searchQuery);
         let newResults: SearchResult[] = [];
-        console.log({ searchQuery });
 
         for await (const result of searchGenerator) {
           // Only update if this is still the latest search query
@@ -106,7 +105,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             newResults = [...newResults, result];
             // Sort results by priority in descending order
             newResults.sort((a, b) => b.priority - a.priority);
-            console.log({ result });
             setSearchResults([...newResults]); // Update results incrementally
           } else {
             break; // A new search has started, stop processing old results

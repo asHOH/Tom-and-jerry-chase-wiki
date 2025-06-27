@@ -3,15 +3,9 @@ import { processCharacters } from '../lib/skillIdUtils';
 import type { CharacterDefinition } from './types';
 
 // Generate image URL based on character ID
-const getMouseImageUrl = (characterId: string): string => {
-  // Check if the image exists, otherwise use a placeholder
-  const existingImages = ['杰瑞', '侦探杰瑞', '航海士杰瑞', '泰菲', '罗宾汉泰菲', '蒙金奇', '尼宝'];
-
-  if (existingImages.includes(characterId)) {
-    return `/images/mice/${characterId}.png`;
-  } else {
-    return `/images/mice/placeholder-mouse.png`;
-  }
+export const getMouseImageUrl = (characterId: string): string => {
+  // support character name editing disallow hard coding existing characters
+  return `/images/mice/${characterId}.png`;
 };
 
 const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {

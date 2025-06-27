@@ -3,6 +3,7 @@ import { CharacterDisplayProps } from '@/lib/types';
 import GameImage from '../../../ui/GameImage';
 import Tag from '../../../ui/Tag';
 import BaseCard from '../../../ui/BaseCard';
+import { useAppContext } from '@/context/AppContext';
 
 export default function CharacterDisplay({
   id,
@@ -10,18 +11,18 @@ export default function CharacterDisplay({
   imageUrl,
   positioningTags,
   factionId,
-  onClick,
 }: CharacterDisplayProps) {
+  const { handleSelectCharacter } = useAppContext();
   return (
     <BaseCard
       variant='character'
-      onClick={() => onClick(id)}
+      onClick={() => handleSelectCharacter(id)}
       role='button'
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          onClick(id);
+          handleSelectCharacter(id);
         }
       }}
       aria-label={`查看${name}角色详情`}
