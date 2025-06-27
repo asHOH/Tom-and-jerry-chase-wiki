@@ -5,7 +5,7 @@ import type { CharacterDefinition } from './types';
 // Generate image URL based on character ID
 const getMouseImageUrl = (characterId: string): string => {
   // Check if the image exists, otherwise use a placeholder
-  const existingImages = ['杰瑞', '侦探杰瑞', '航海士杰瑞', '泰菲', '罗宾汉泰菲', '尼宝'];
+  const existingImages = ['杰瑞', '侦探杰瑞', '航海士杰瑞', '泰菲', '罗宾汉泰菲', '蒙金奇', '尼宝'];
 
   if (existingImages.includes(characterId)) {
     return `/images/mice/${characterId}.png`;
@@ -896,6 +896,133 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             description: '增加Hp恢复；Lv.2的护盾触发时将解除受伤状态；加点时立刻获得护盾。',
             detailedDescription:
               '永久获得2/s的Hp恢复；Lv.2的护盾触发时将解除受伤状态；加点时立刻获得护盾并重置护盾CD。',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ----------------------------------- 蒙金奇 ---------------------------------- */
+  蒙金奇: {
+    description: '军团指挥官蒙金奇。',
+    maxHp: 99,
+    attackBoost: 25,
+    hpRecovery: 0.5,
+    moveSpeed: 640,
+    jumpHeight: 380,
+    cheesePushSpeed: 3,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '破局',
+        isMinor: false,
+        description: '战车自带霸体，冲撞可撞开[绝大多数猫的布局](夹子、兔八哥萝卜、图多香水等)',
+        additionalDescription: '',
+      },
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '战矛与冲撞配合，能安全地对猫咪进行较长时间的控制。',
+        additionalDescription:
+          '战矛配合干扰投掷与部分知识卡（如投手）可以进一步提高控制成功率；冲撞也能救下队友。',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '军团战车',
+        pattern: '12002[20]11',
+        weaponType: 'weapon1',
+        description:
+          '对于冲撞难以造成效果的猫（如图多，苏蕊，追风），六级优先三被；墙缝期优先点车。',
+        additionaldescription: '如果猫携带了猛攻知识卡，可以考虑优先二级车。，',
+      },
+    ],
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
+    ],
+    skills: [
+      {
+        name: '勇往直前',
+        type: 'active',
+        description:
+          '向前冲撞，期间获得霸体和减伤，推开道具并对猫造成少量伤害和击退。消耗士气值可以增强技能效果。',
+        detailedDescription:
+          '向前冲撞，期间获得霸体和30%减伤，持续1秒，推开道具并对猫造成10点伤害和击退。施放时可以消耗3格士气值造成25点伤害和更强的击退效果，并击落猫咪手中的道具与老鼠。驾驶战车时也可以施放，且无论士气值如何，均造成强化后的效果。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可被打断', //前摇0.3秒
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 30,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: '首次冲撞后，5秒内可再次冲撞。',
+            cooldown: 20,
+          },
+        ],
+      },
+      {
+        name: '军团战车',
+        type: 'weapon1',
+        description:
+          '消耗全部士气值，召唤拥有独立Hp的战车，每格士气值提升战车3秒持续时间。期间免疫控制，获得额外的战矛投掷技能和选择提前脱离战车的临时技能，但无法使用道具、交互或回复Hp。当战车Hp耗尽、持续时间结束、蒙金奇主动脱离时，战车进入自毁倒计时。战车爆炸，对范围内所有单位造成伤害。',
+        detailedDescription:
+          '消耗全部士气值，召唤拥有独立Hp的战车，每格士气值提升战车3秒持续时间，最多持续20秒。期间免疫控制，获得额外的[战矛投掷技能](前摇0.2秒，对猫咪造成30点伤害，CD为2秒)和选择提前脱离战车的临时技能，但无法使用道具、交互或[回复Hp](例外：国王的守护战旗)。当战车Hp耗尽、持续时间结束、蒙金奇主动脱离时，战车进入5秒自毁倒计时。战车爆炸，对范围内所有单位造成75点爆炸伤害和2秒眩晕、对未脱离战车的蒙金奇造成自身血量100%的伤害。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可被打断', // 前摇0.7秒
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '战车Hp为100点。',
+            cooldown: 35,
+          },
+          {
+            level: 2,
+            description: '战车Hp提高到125点。',
+            cooldown: 35,
+          },
+          {
+            level: 3,
+            description: '减少CD。',
+            cooldown: 28,
+          },
+        ],
+      },
+      {
+        name: '我，即是军团。',
+        type: 'passive',
+
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '自然增长士气值，上限为3格。对猫咪造成伤害会提升士气值。虛弱时士气值清空。每格士气值提升减伤能力。',
+            detailedDescription:
+              '以0.077格/s的速度自然增长士气值，上限为3格。每对猫咪造成一次伤害提高10点士气值。虛弱时士气值清空。每格士气值给予5%的减伤能力。',
+          },
+          {
+            level: 2,
+            description: '士气值上限提升到5格。友方对附近猫咪造成伤害时也会获得士气值。',
+            detailedDescription:
+              '士气值上限提升到5格。友方对自身一定范围内猫咪造成伤害时，蒙金奇也会获得半格士气值。',
+          },
+          {
+            level: 3,
+            description: '每格士气值额外提供移动速度和Hp恢复速度；士气自然增长速度提升。',
+            detailedDescription:
+              '每格士气值额外提供2%的移速和0.2/s的Hp恢复速度；士气自然增长速度提高到0.15格/s。',
           },
         ],
       },
