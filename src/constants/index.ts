@@ -16,47 +16,20 @@ const getContributorsByRole = (roleType: RoleType): string[] => {
     .map((contributor) => contributor.id);
 };
 
-// Dynamic acknowledgements configuration
-const ACKNOWLEDGEMENT_CONFIG = {
-  [RoleType.DataTester]: {
-    prefix: '感谢',
-    suffix: '提供测试数据。',
-  },
-  [RoleType.ArtProvider]: {
-    prefix: '感谢',
-    suffix: '分享图片素材。',
-  },
-  [RoleType.ContentWriter]: {
-    prefix: '感谢',
-    suffix: '撰写网页内容。',
-  },
-  [RoleType.Developer]: {
-    prefix: '感谢',
-    suffix: '进行项目开发。',
-  },
-  [RoleType.ContentProofreader]: {
-    prefix: '感谢',
-    suffix: '进行内容校对。',
-  },
-  [RoleType.VideoCreator]: {
-    prefix: '感谢',
-    suffix: '制作教学视频。',
-  },
-} as const;
-
 // Generate acknowledgements dynamically
 const generateAcknowledgements = () => {
   const acknowledgements: Record<string, { prefix: string; creators: string[]; suffix: string }> =
     {};
 
-  Object.entries(ACKNOWLEDGEMENT_CONFIG).forEach(([roleType, config]) => {
-    const creators = getContributorsByRole(roleType as RoleType);
+  (Object.keys(RoleType) as Array<keyof typeof RoleType>).forEach((roleKey) => {
+    const roleType = RoleType[roleKey];
+    const creators = getContributorsByRole(roleType);
     if (creators.length > 0) {
       const key = roleType.toLowerCase().replace(/\s+/g, '');
       acknowledgements[key] = {
-        prefix: config.prefix,
+        prefix: '感谢',
         creators,
-        suffix: config.suffix,
+        suffix: `${roleType}。`,
       };
     }
   });

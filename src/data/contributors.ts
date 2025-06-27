@@ -15,12 +15,12 @@ export interface Role {
 
 // Enum for the different types of roles
 export enum RoleType {
-  ArtProvider = '美术素材提供',
-  DataTester = '数据测试',
-  ContentWriter = '文案撰写',
-  ContentProofreader = '文案校对',
-  Developer = '代码开发',
-  VideoCreator = '教学视频制作',
+  ArtProvider = '分享图片素材',
+  DataTester = '提供测试数据',
+  ContentWriter = '撰写角色文案',
+  ContentProofreader = '进行文案校对',
+  Developer = '进行项目开发',
+  VideoCreator = '制作教学视频',
 }
 
 // The list of all contributors
