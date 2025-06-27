@@ -930,7 +930,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skillAllocations: [
       {
         id: '军团战车',
-        pattern: '12002[20]11',
+        pattern: '120022011',
         weaponType: 'weapon1',
         description:
           '对于冲撞难以造成效果的猫（如图多，苏蕊，追风），六级优先三被；墙缝期优先点车。',
