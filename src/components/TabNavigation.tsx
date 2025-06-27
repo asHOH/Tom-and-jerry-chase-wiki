@@ -60,9 +60,11 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: isMobile ? '40px' : '44px', // Consistent height for all buttons
-    minWidth: isMobile ? '44px' : 'auto',
+    minHeight: isMobile ? '40px' : '44px',
+    minWidth: isMobile ? '40px' : 'auto',
     position: 'relative' as const,
+    gap: isMobile ? '0' : '8px',
+    fontSize: isMobile ? '14px' : '16px',
   };
 
   const tabButtonStyle = (isActive: boolean) => ({
@@ -70,7 +72,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     padding: isMobile ? '8px' : '8px 16px',
     backgroundColor: isActive ? '#2563eb' : '#e5e7eb',
     color: isActive ? 'white' : '#1f2937',
-    gap: isMobile ? '0' : '8px',
   });
 
   const toggleButtonStyle = (isDetailedView: boolean) => ({
@@ -78,7 +79,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     padding: isMobile ? '10px' : '10px 16px',
     backgroundColor: isDetailedView ? '#dbeafe' : '#fef3e2',
     color: isDetailedView ? '#1d4ed8' : '#ea580c',
-    fontSize: isMobile ? '14px' : '16px',
   });
 
   return (
@@ -109,7 +109,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         <div
           style={{
             display: 'flex',
-            gap: isMobile ? '8px' : '12px',
+            gap: isMobile ? '10px' : '12px',
             overflowX: isMobile ? 'auto' : 'visible',
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
@@ -156,7 +156,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         </div>
 
         {/* Right-aligned detailed/simple view toggle button and SearchBar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '12px' }}>
           <SearchBar isMobile={isMobile} />
           {showDetailToggle && (
             <Tooltip
