@@ -14,4 +14,14 @@ if git diff --cached --name-only | grep -q "public/sw.js" && [ -f "public/sw.js"
   "
 fi
 
+# Auto-update README when contributors data changes
+# This ensures the acknowledgments section stays in sync with src/data/contributors.ts
+if git diff --cached --name-only | grep -q "src/data/contributors.ts"; then
+  echo "🔄 Contributors data changed, updating README acknowledgments..."
+  npm run update-readme
+  # Add the updated README to the commit
+  git add README.md
+  echo "✅ README acknowledgments updated and staged"
+fi
+
 npx lint-staged

@@ -47,7 +47,7 @@
     "update-sw:dev": "node update-sw-version.js --dev",
     "generate-version": "node generate-version-info.cjs",
     "update-readme": "npm run compile-contributors && node scripts/update-readme-acknowledgments.mjs && npm run cleanup-temp",
-    "compile-contributors": "tsc src/data/contributors.ts --outDir scripts/temp --module esnext --target es2020 --moduleResolution bundler --skipLibCheck",
+    "compile-contributors": "node -e \"const fs=require('fs'); fs.mkdirSync('scripts/temp', {recursive:true}); fs.writeFileSync('scripts/temp/package.json', '{\\\"type\\\":\\\"module\\\"}');\" && tsc src/data/contributors.ts --outDir scripts/temp --module esnext --target es2020 --moduleResolution bundler --skipLibCheck",
     "cleanup-temp": "rimraf scripts/temp",
     "prebuild": "npm run update-sw && npm run generate-version",
     "pre-push:force-fast": ".husky/pre-push-fast",

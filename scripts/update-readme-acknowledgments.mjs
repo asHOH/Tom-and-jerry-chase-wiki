@@ -9,14 +9,20 @@ const projectRoot = join(__dirname, '..');
 
 // Function to dynamically import contributors from compiled TypeScript
 async function importContributorsFromTS() {
-  // Import from the compiled JS file
-  const contributorsModule = await import('./temp/contributors.js');
-  const { contributors } = contributorsModule;
+  try {
+    // Import from the compiled JS file
+    const contributorsModule = await import('./temp/contributors.js');
+    const { contributors } = contributorsModule;
 
-  console.log(
-    `✅ Successfully imported ${contributors.length} contributors from compiled TypeScript`
-  );
-  return contributors;
+    console.log(
+      `✅ Successfully imported ${contributors.length} contributors from compiled TypeScript`
+    );
+    return contributors;
+  } catch (error) {
+    console.error('❌ Failed to import contributors from compiled TypeScript:', error.message);
+    console.error('Make sure to run "npm run compile-contributors" first');
+    process.exit(1);
+  }
 }
 
 async function updateReadmeAcknowledgments() {
