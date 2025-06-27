@@ -28,6 +28,24 @@ jest.mock('../../../../lib/design-tokens', () => ({
   getSkillLevelContainerColor: jest.fn(() => 'bg-gray-100'),
 }));
 
+// Mock knowledge cards data
+jest.mock('../../../../data/catKnowledgeCards', () => ({
+  catKnowledgeCards: {
+    击晕: { id: '击晕', rank: 'S', cost: 7 },
+    熊熊燃烧: { id: '熊熊燃烧', rank: 'A', cost: 6 },
+    穷追猛打: { id: '穷追猛打', rank: 'A', cost: 4 },
+    皮糙肉厚: { id: '皮糙肉厚', rank: 'B', cost: 4 },
+    长爪: { id: '长爪', rank: 'A', cost: 4 },
+  },
+}));
+
+jest.mock('../../../../data/mouseKnowledgeCards', () => ({
+  mouseKnowledgeCards: {
+    冲冠一怒: { id: '冲冠一怒', rank: 'A', cost: 4 },
+    团队领袖: { id: '团队领袖', rank: 'A', cost: 4 },
+  },
+}));
+
 // Mock Next.js Image component
 jest.mock('next/image', () => {
   return function MockImage({
@@ -266,8 +284,10 @@ describe('CharacterDetails', () => {
     renderWithProvider(<CharacterDetails character={mockCharacter} />);
 
     expect(screen.getByText('推荐知识卡组')).toBeTruthy();
-    expect(screen.getByText('1')).toBeTruthy(); // First group number
-    expect(screen.getByText('2')).toBeTruthy(); // Second group number
+
+    // Check for cost display (both groups have 21-point cost)
+    const costDisplays = screen.getAllByText('21');
+    expect(costDisplays.length).toBe(2); // Both groups show 21 points
 
     // Check for specific cards in the first group
     const strikingCards = screen.getAllByAltText('S-击晕');
@@ -353,6 +373,9 @@ describe('CharacterDetails', () => {
 
     // Check mouse knowledge cards
     expect(screen.getByText('推荐知识卡组')).toBeTruthy();
+
+    // Check for cost display (A-冲冠一怒 + A-团队领袖 = 4 + 4 = 8 points)
+    expect(screen.getByText('8')).toBeTruthy();
 
     const angerCard = screen.getByAltText('A-冲冠一怒') as HTMLImageElement;
     expect(angerCard).toBeTruthy();
