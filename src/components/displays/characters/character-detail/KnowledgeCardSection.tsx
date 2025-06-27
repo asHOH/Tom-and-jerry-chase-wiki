@@ -61,7 +61,7 @@ export default function KnowledgeCardSection({
 
     return (
       <div key={index} className='flex flex-col space-y-2'>
-        <div className='flex items-center space-x-4'>
+        <div className='flex items-start gap-0.5 sm:gap-1 md:gap-2 lg:gap-4'>
           <Tooltip content={tooltipContent} className='border-none'>
             <div
               className={`flex-shrink-0 w-10 h-10 rounded-full border-2 ${containerClass} flex items-center justify-center text-sm font-bold`}
@@ -69,11 +69,11 @@ export default function KnowledgeCardSection({
               {totalCost}
             </div>
           </Tooltip>
-          <div className='flex flex-wrap gap-2'>
+          <div className='flex flex-wrap gap-0 sm:gap-0.5 md:gap-1 lg:gap-2 flex-1 min-w-0'>
             {group.map((cardId) => (
               <Tooltip key={cardId} content={cardId.split('-')[1]!} className='border-none'>
                 <div
-                  className='relative w-24 h-24 flex-shrink-0 cursor-pointer'
+                  className='relative w-20 h-20 sm:w-24 sm:h-24 cursor-pointer'
                   onClick={() => {
                     handleTabChange(factionId === 'cat' ? 'catCards' : 'mouseCards');
                     handleSelectCard(cardId.split('-')[1]!, characterId);
@@ -93,9 +93,7 @@ export default function KnowledgeCardSection({
           </div>
         </div>
         {description && (
-          <div className='bg-gray-50 p-3 rounded-lg ml-14'>
-            {' '}
-            {/* ml-14 to align with cards, 10 (index width) + 4 (space-x-4) */}
+          <div className='bg-gray-50 p-2 sm:p-3 rounded-lg ml-10 sm:ml-11 md:ml-12 lg:ml-14'>
             <p className='text-sm text-gray-700'>{description}</p>
           </div>
         )}
