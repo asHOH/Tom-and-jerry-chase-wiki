@@ -1,21 +1,13 @@
-// Creator information for building links
-export const CREATORS = {
-  dreamback: {
-    name: '梦回_淦德蒸蚌',
-    url: 'https://space.bilibili.com/1193776217',
-    contribution: '测试数据',
+import { contributors } from '@/data/contributors';
+
+// Create a map of contributors for easy lookup
+export const CREATORS = contributors.reduce(
+  (acc, contributor) => {
+    acc[contributor.id] = contributor;
+    return acc;
   },
-  momo: {
-    name: '是莫莫喵',
-    url: 'https://space.bilibili.com/443541296',
-    contribution: '测试数据',
-  },
-  fanshuwa: {
-    name: '凡叔哇',
-    url: 'https://space.bilibili.com/273122087',
-    contribution: '图片素材',
-  },
-};
+  {} as Record<string, (typeof contributors)[number]>
+);
 
 // Project information
 export const PROJECT_INFO = {
@@ -53,6 +45,6 @@ export const DISCLAIMER_TEXT = [
   DISCLAIMER_CONTENT.privacyPolicy,
   DISCLAIMER_CONTENT.freePolicy,
   DISCLAIMER_CONTENT.fraudWarning,
-  `${DISCLAIMER_CONTENT.testDataAttribution.prefix}${DISCLAIMER_CONTENT.testDataAttribution.creators.map((id) => CREATORS[id].name).join('、')}${DISCLAIMER_CONTENT.testDataAttribution.suffix}`,
-  `${DISCLAIMER_CONTENT.imageAttribution.prefix}${DISCLAIMER_CONTENT.imageAttribution.creators.map((id) => CREATORS[id].name).join('、')}${DISCLAIMER_CONTENT.imageAttribution.suffix}`,
+  `${DISCLAIMER_CONTENT.testDataAttribution.prefix}${DISCLAIMER_CONTENT.testDataAttribution.creators.map((id) => CREATORS[id]?.name ?? id).join('、')}${DISCLAIMER_CONTENT.testDataAttribution.suffix}`,
+  `${DISCLAIMER_CONTENT.imageAttribution.prefix}${DISCLAIMER_CONTENT.imageAttribution.creators.map((id) => CREATORS[id]?.name ?? id).join('、')}${DISCLAIMER_CONTENT.imageAttribution.suffix}`,
 ].join('\n');

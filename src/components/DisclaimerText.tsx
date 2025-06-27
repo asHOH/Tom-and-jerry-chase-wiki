@@ -7,12 +7,12 @@ export const DisclaimerText = () => {
       <span key={creatorId}>
         {index > 0 && '、'}
         <a
-          href={CREATORS[creatorId as keyof typeof CREATORS].url}
+          href={CREATORS[creatorId]?.url ?? '#'}
           target='_blank'
           rel='noopener noreferrer'
           className='text-blue-600 hover:text-blue-800 underline mx-1'
         >
-          {CREATORS[creatorId as keyof typeof CREATORS].name}
+          {CREATORS[creatorId]?.name ?? creatorId}
         </a>
       </span>
     ));
