@@ -95,6 +95,10 @@ describe('SkillAllocationDisplay Error Handling', () => {
     factionId: 'cat' as const,
     characterSkills: mockCharacterSkills,
     isDetailed: false,
+    onSavePattern: jest.fn(),
+    onSaveName: jest.fn(),
+    onSaveDescription: jest.fn(),
+    onSaveAdditionalDescription: jest.fn(),
   };
 
   const mockedParseSkillAllocationPattern = jest.mocked(

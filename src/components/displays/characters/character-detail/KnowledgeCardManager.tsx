@@ -13,10 +13,7 @@ interface KnowledgeCardManagerProps {
   character: Character;
 }
 
-export default function KnowledgeCardManager({
-  factionId,
-  character,
-}: KnowledgeCardManagerProps) {
+export default function KnowledgeCardManager({ factionId, character }: KnowledgeCardManagerProps) {
   const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<KnowledgeCardGroup[]>([]);
   const [key, rerender] = useReducer((x) => x + 1, 0);
 

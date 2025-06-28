@@ -4,8 +4,9 @@ import CharacterSection from './CharacterSection';
 import { useEditMode } from '@/context/EditModeContext';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useCallback } from 'react';
-import { updateEditableField } from '@/lib/editUtils';
+import { saveFactionsAndCharacters, setNestedProperty, updateEditableField } from '@/lib/editUtils';
 import { SkillAllocation } from '@/data/types';
+import { characters } from '@/data';
 
 interface UseSkillAllocationManagementProps {
   localCharacter: CharacterDetailsProps['character'];
@@ -22,7 +23,13 @@ export const useSkillAllocationManagement = ({
         const updatedSkillAllocations = prevChar.skillAllocations!.map((alloc) =>
           alloc.id === allocationId ? { ...alloc, pattern: newPattern } : alloc
         );
+        setNestedProperty(
+          characters,
+          `${localCharacter.id}.skillAllocations`,
+          updatedSkillAllocations
+        );
         updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
+        saveFactionsAndCharacters();
         return { ...prevChar, skillAllocations: updatedSkillAllocations };
       });
     },
@@ -35,7 +42,13 @@ export const useSkillAllocationManagement = ({
         const updatedSkillAllocations = prevChar.skillAllocations!.map((alloc) =>
           alloc.id === allocationId ? { ...alloc, id: newName } : alloc
         );
+        setNestedProperty(
+          characters,
+          `${localCharacter.id}.skillAllocations`,
+          updatedSkillAllocations
+        );
         updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
+        saveFactionsAndCharacters();
         return { ...prevChar, skillAllocations: updatedSkillAllocations };
       });
     },
@@ -48,7 +61,13 @@ export const useSkillAllocationManagement = ({
         const updatedSkillAllocations = prevChar.skillAllocations!.map((alloc) =>
           alloc.id === allocationId ? { ...alloc, description: newDescription } : alloc
         );
+        setNestedProperty(
+          characters,
+          `${localCharacter.id}.skillAllocations`,
+          updatedSkillAllocations
+        );
         updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
+        saveFactionsAndCharacters();
         return { ...prevChar, skillAllocations: updatedSkillAllocations };
       });
     },
@@ -63,7 +82,13 @@ export const useSkillAllocationManagement = ({
             ? { ...alloc, additionaldescription: newAdditionalDescription }
             : alloc
         );
+        setNestedProperty(
+          characters,
+          `${localCharacter.id}.skillAllocations`,
+          updatedSkillAllocations
+        );
         updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
+        saveFactionsAndCharacters();
         return { ...prevChar, skillAllocations: updatedSkillAllocations };
       });
     },
@@ -83,6 +108,15 @@ export const useSkillAllocationManagement = ({
         ...prevChar.skillAllocations!,
         newAllocation,
       ]);
+      setNestedProperty(characters, `${localCharacter.id}.skillAllocations`, [
+        ...prevChar.skillAllocations!,
+        newAllocation,
+      ]);
+      updateEditableField(`${localCharacter.id}.skillAllocations`, [
+        ...prevChar.skillAllocations!,
+        newAllocation,
+      ]);
+      saveFactionsAndCharacters();
       return {
         ...prevChar,
         skillAllocations: [...prevChar.skillAllocations!, newAllocation],
