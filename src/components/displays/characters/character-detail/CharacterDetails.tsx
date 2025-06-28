@@ -115,6 +115,8 @@ export default function CharacterDetails({
                 factionId={factionId}
                 isDetailed={isDetailedView}
                 characterId={localCharacter.id}
+                localCharacter={localCharacter}
+                setLocalCharacter={setLocalCharacter}
               />
             </div>
           </div>
