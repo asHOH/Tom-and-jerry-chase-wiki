@@ -25,6 +25,7 @@ interface EditableFieldProps<T> {
   path: string; // e.g., 'character.id', 'character.description'
   initialValue: T;
   className?: string | undefined;
+  onSave?: ((newValue: string) => void) | undefined;
 }
 
 function EditableFieldImplementation<T>({
@@ -32,6 +33,7 @@ function EditableFieldImplementation<T>({
   path,
   initialValue,
   className,
+  onSave,
 }: EditableFieldProps<T>) {
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
@@ -66,7 +68,7 @@ function EditableFieldImplementation<T>({
   const handleBlurRef = useRef<() => void>(() => {});
 
   handleBlurRef.current = () => {
-    if (contentRef.current && contentRef.current.textContent != content) {
+    if (contentRef.current && contentRef.current.textContent !== String(content)) {
       const newContentStr = contentRef.current.textContent || '';
 
       if (typeof initialValue === 'number') {
@@ -84,13 +86,17 @@ function EditableFieldImplementation<T>({
         setContent(parseFloat(newContentStr) as T);
       }
 
-      handleChange(
-        initialValue,
-        newContentStr,
-        path,
-        activeTab || undefined,
-        handleSelectCharacter
-      );
+      if (onSave) {
+        onSave(newContentStr);
+      } else {
+        handleChange(
+          initialValue,
+          newContentStr,
+          path,
+          activeTab || undefined,
+          handleSelectCharacter
+        );
+      }
     }
   };
 
@@ -109,7 +115,13 @@ function EditableFieldImplementation<T>({
   );
 }
 
-function EditableField<T>({ tag: Tag, path, initialValue, className }: EditableFieldProps<T>) {
+function EditableField<T>({
+  tag: Tag,
+  path,
+  initialValue,
+  className,
+  onSave,
+}: EditableFieldProps<T>) {
   const { isEditMode } = useEditMode();
   return isEditMode ? (
     <EditableFieldImplementation
@@ -117,6 +129,7 @@ function EditableField<T>({ tag: Tag, path, initialValue, className }: EditableF
       path={path}
       initialValue={initialValue}
       className={className}
+      onSave={onSave}
     />
   ) : (
     React.createElement(Tag, { className }, <TextWithHoverTooltips text={String(initialValue)} />)

@@ -8,6 +8,7 @@ import { catKnowledgeCards } from '@/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
 import { useEditMode } from '@/context/EditModeContext';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
+import EditableField from '@/components/ui/EditableField';
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: KnowledgeCardGroup[];
@@ -64,6 +65,24 @@ export default function KnowledgeCardSection({
   const handleEditClick = (index: number) => {
     setCurrentGroupIndex(index);
     setPickerOpen(true);
+  };
+
+  const handleDescriptionSave = (newDescription: string, index: number) => {
+    const updatedGroups = [...knowledgeCardGroups];
+    const currentGroup = updatedGroups[index];
+
+    if (Array.isArray(currentGroup)) {
+      // Convert to object form if it's just an array of cards
+      updatedGroups[index] = {
+        cards: currentGroup,
+        description: newDescription,
+      };
+    } else if (currentGroup) {
+      // Update description if it's already an object
+      (currentGroup as { description: string }).description = newDescription;
+    }
+
+    onSaveChanges(updatedGroups);
   };
 
   const handlePickerSave = (newCards: string[]) => {
@@ -165,11 +184,15 @@ export default function KnowledgeCardSection({
             </div>
           )}
         </div>
-        {description && (
-          <div className='bg-gray-50 p-2 sm:p-3 rounded-lg ml-10 sm:ml-11 md:ml-12 lg:ml-14'>
-            <p className='text-sm text-gray-700'>{description}</p>
-          </div>
-        )}
+        <div className='bg-gray-50 p-2 sm:p-3 rounded-lg ml-10 sm:ml-11 md:ml-12 lg:ml-14'>
+          <EditableField
+            tag='p'
+            path={`${characterId}.knowledgeCardGroups[${index}].description`}
+            initialValue={description || ''}
+            onSave={(newDescription) => handleDescriptionSave(newDescription, index)}
+            className='text-sm text-gray-700'
+          />
+        </div>
       </div>
     );
   };
