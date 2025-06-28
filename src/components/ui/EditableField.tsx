@@ -20,14 +20,14 @@ import { getNestedProperty, handleChange } from '@/lib/editUtils';
  * @param {T} initialValue The initial value of the field. Can be a string or a number.
  * @param {string} [className] Optional CSS classes to apply to the element.
  */
-interface EditableFieldProps<T extends string | number> {
+interface EditableFieldProps<T> {
   tag: keyof HTMLElementTagNameMap;
   path: string; // e.g., 'character.id', 'character.description'
   initialValue: T;
   className?: string | undefined;
 }
 
-function EditableFieldImplementation<T extends string | number>({
+function EditableFieldImplementation<T>({
   tag: Tag,
   path,
   initialValue,
@@ -59,7 +59,7 @@ function EditableFieldImplementation<T extends string | number>({
 
   useEffect(() => {
     if (contentRef.current) {
-      contentRef.current.textContent = content.toString();
+      contentRef.current.textContent = String(content);
     }
   }, [content]);
 
@@ -73,7 +73,7 @@ function EditableFieldImplementation<T extends string | number>({
         const parsedFloat = parseFloat(newContentStr);
         if (isNaN(parsedFloat)) {
           // Revert to the last valid content if input is not a number
-          contentRef.current.textContent = content.toString();
+          contentRef.current.textContent = String(content);
           return;
         }
       }
@@ -105,16 +105,11 @@ function EditableFieldImplementation<T extends string | number>({
       onBlur: handleBlur,
       ref: contentRef,
     },
-    content.toString()
+    String(content)
   );
 }
 
-function EditableField<T extends string | number>({
-  tag: Tag,
-  path,
-  initialValue,
-  className,
-}: EditableFieldProps<T>) {
+function EditableField<T>({ tag: Tag, path, initialValue, className }: EditableFieldProps<T>) {
   const { isEditMode } = useEditMode();
   return isEditMode ? (
     <EditableFieldImplementation
@@ -124,11 +119,7 @@ function EditableField<T extends string | number>({
       className={className}
     />
   ) : (
-    React.createElement(
-      Tag,
-      { className },
-      <TextWithHoverTooltips text={initialValue.toString()} />
-    )
+    React.createElement(Tag, { className }, <TextWithHoverTooltips text={String(initialValue)} />)
   );
 }
 

@@ -1,4 +1,5 @@
-import { Character, characters, FactionId, factions, Skill } from '@/data';
+import { characters, FactionId, factions, Skill } from '@/data';
+import type { KnowledgeCardGroup } from '@/data/types';
 import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { getSkillImageUrl } from './skillUtils';
@@ -57,11 +58,7 @@ export function getNestedProperty<T>(obj: Record<string, unknown>, path: string)
     ) as unknown as T;
 }
 
-export function setNestedProperty<T extends string | number>(
-  obj: Record<string, unknown>,
-  path: string,
-  value: T
-): void {
+export function setNestedProperty<T>(obj: Record<string, unknown>, path: string, value: T): void {
   const parts = path.split('.');
   let current: Record<string, unknown> = obj;
   for (let i = 0; i < parts.length - 1; i++) {
@@ -83,6 +80,13 @@ export function setNestedProperty<T extends string | number>(
   }
 }
 
+function updateEditableFieldsForCharacterIdChange(oldId: string, newId: string) {
+  const editableFields = JSON.parse(localStorage.getItem('editableFields')!);
+  editableFields[newId] = characters[newId];
+  delete editableFields[oldId];
+  localStorage.setItem('editableFields', JSON.stringify(editableFields));
+}
+
 function handleCharacterIdChange(
   path: string,
   newId: string,
@@ -98,16 +102,7 @@ function handleCharacterIdChange(
   characters[newId].imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   delete characters[oldId!];
   handleSelectCharacter(newId);
-  localStorage.setItem(
-    'editableFields',
-    JSON.stringify(
-      ((obj: Record<string, Character>) => {
-        obj[newId] = characters[oldId!]!;
-        delete obj[oldId!];
-        return obj;
-      })(JSON.parse(localStorage.getItem('editableFields')!))
-    )
-  );
+  updateEditableFieldsForCharacterIdChange(oldId, newId);
   const faction = factions[activeTab!]?.characters.find(({ id }) => id == oldId);
   if (faction) {
     faction.id = faction.name = newId;
@@ -151,33 +146,44 @@ export function loadFactionsAndCharacters() {
   Object.assign(factions, JSON.parse(localStorage.getItem('factions') ?? originalFactions));
 }
 
-export function handleChange<T extends string | number>(
-  initialValue: T,
-  newContentStr: string,
-  path: string,
-  activeTab: string | undefined,
-  handleSelectCharacter: (id: string) => void
-) {
+export function updateEditableField<T>(path: string, value: T) {
   const storedData = localStorage.getItem('editableFields');
   let parsedData: Record<string, unknown> = {};
   if (storedData) {
     try {
       parsedData = JSON.parse(storedData);
     } catch (e) {
-      console.error('Failed to parse localStorage data on blur', e);
+      console.error('Failed to parse localStorage data on update', e);
     }
   }
 
   const newData: Record<string, unknown> = { ...parsedData };
+  setNestedProperty(newData, path, value);
+  localStorage.setItem('editableFields', JSON.stringify(newData));
+}
+
+export function updateKnowledgeCardGroupsInEditableFields(
+  characterId: string,
+  knowledgeCardGroups: KnowledgeCardGroup[]
+) {
+  updateEditableField(`${characterId}.knowledgeCardGroups`, knowledgeCardGroups);
+}
+
+export function handleChange<T>(
+  initialValue: T,
+  newContentStr: string,
+  path: string,
+  activeTab: string | undefined,
+  handleSelectCharacter: (id: string) => void
+) {
   let finalValue: T;
   if (typeof initialValue === 'number') {
     finalValue = parseFloat(newContentStr) as T;
   } else {
     finalValue = newContentStr as T;
   }
-  setNestedProperty(newData, path, finalValue);
+  updateEditableField(path, finalValue);
   setNestedProperty(characters, path, finalValue);
-  localStorage.setItem('editableFields', JSON.stringify(newData));
   if (path && path.split('.')?.[1] == 'id') {
     if (activeTab) {
       handleCharacterIdChange(path, newContentStr, activeTab, handleSelectCharacter);

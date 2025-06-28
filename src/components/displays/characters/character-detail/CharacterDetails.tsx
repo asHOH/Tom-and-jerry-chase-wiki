@@ -6,7 +6,7 @@ import SkillAllocationDisplay from './SkillAllocationDisplay';
 import PositioningTagsSection from './PositioningTagsSection';
 import CharacterAttributesSection from './CharacterAttributesSection';
 import SkillCard from './SkillCard';
-import KnowledgeCardSection from './KnowledgeCardSection';
+import KnowledgeCardManager from './KnowledgeCardManager';
 import { useState } from 'react';
 import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
@@ -132,8 +132,7 @@ export default function CharacterDetails({
             </div>
           )}
 
-          <KnowledgeCardSection
-            knowledgeCardGroups={character.knowledgeCardGroups}
+          <KnowledgeCardManager
             factionId={factionId}
             characterId={character.id}
           />
