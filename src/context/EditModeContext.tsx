@@ -1,3 +1,4 @@
+import { loadFactionsAndCharacters, saveFactionsAndCharacters } from '@/lib/editUtils';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface EditModeContextType {
@@ -24,11 +25,21 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isEditMode]);
 
+  useEffect(() => {
+    if (isEditMode) {
+      loadFactionsAndCharacters();
+    }
+  }, [isEditMode]);
+
   const toggleEditMode = () => {
+    setIsEditMode((prevMode) => !prevMode);
     if (isEditMode) {
       localStorage.removeItem('editableFields');
+      localStorage.removeItem('characters');
+      localStorage.removeItem('factions');
+    } else {
+      saveFactionsAndCharacters();
     }
-    setIsEditMode((prevMode) => !prevMode);
   };
 
   return (

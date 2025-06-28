@@ -85,7 +85,7 @@ export function setNestedProperty<T extends string | number>(
 
 function handleCharacterIdChange(
   path: string,
-  newContentStr: string,
+  newId: string,
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void
 ) {
@@ -94,17 +94,16 @@ function handleCharacterIdChange(
   // use of activeTab forces
   // TODO: save and load faction and character changes from localStorage
   const oldId = path.split('.')[0]!;
-  characters[newContentStr] = characters[oldId!]!;
-  characters[newContentStr].imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(
-    newContentStr
-  );
+  characters[newId] = characters[oldId!]!;
+  characters[newId].id = newId;
+  characters[newId].imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   delete characters[oldId!];
-  handleSelectCharacter(newContentStr);
+  handleSelectCharacter(newId);
   localStorage.setItem(
     'editableFields',
     JSON.stringify(
       ((obj: Record<string, Character>) => {
-        obj[newContentStr] = characters[oldId!]!;
+        obj[newId] = characters[oldId!]!;
         delete obj[oldId!];
         return obj;
       })(JSON.parse(localStorage.getItem('editableFields')!))
@@ -112,9 +111,29 @@ function handleCharacterIdChange(
   );
   const faction = factions[activeTab!]?.characters.find(({ id }) => id == oldId);
   if (faction) {
-    faction.id = faction.name = newContentStr;
-    faction.imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newContentStr);
+    faction.id = faction.name = newId;
+    faction.imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   }
+}
+
+export function saveFactionsAndCharacters() {
+  localStorage.setItem('factions', JSON.stringify(factions));
+  localStorage.setItem('characters', JSON.stringify(characters));
+}
+
+export function loadFactionsAndCharacters() {
+  // 1. clear original data
+  const originalCharacters = JSON.stringify(characters);
+  const originalFactions = JSON.stringify(factions);
+  for (const prop of Object.getOwnPropertyNames(factions)) {
+    delete factions[prop];
+  }
+  for (const prop of Object.getOwnPropertyNames(characters)) {
+    delete characters[prop];
+  }
+  // 2. load localstorage data
+  Object.assign(characters, JSON.parse(localStorage.getItem('characters') ?? originalCharacters));
+  Object.assign(factions, JSON.parse(localStorage.getItem('factions') ?? originalFactions));
 }
 
 export function handleChange<T extends string | number>(
@@ -149,4 +168,5 @@ export function handleChange<T extends string | number>(
       handleCharacterIdChange(path, newContentStr, activeTab, handleSelectCharacter);
     }
   }
+  saveFactionsAndCharacters();
 }

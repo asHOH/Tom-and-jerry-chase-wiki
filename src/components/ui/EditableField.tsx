@@ -4,6 +4,22 @@ import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTo
 import { useAppContext } from '@/context/AppContext';
 import { getNestedProperty, handleChange } from '@/lib/editUtils';
 
+/**
+ * A component that displays a field that can be edited when in "edit mode".
+ *
+ * In normal mode, it renders the provided text within the specified HTML tag,
+ * with hover tooltips enabled.
+ *
+ * In edit mode, it renders a `contentEditable` element. When the user clicks
+ * away (on blur), the new content is saved to `localStorage` under the
+ * 'editableFields' key, using the `path` to structure the data. It also
+ * updates the application's state.
+ *
+ * @param {keyof HTMLElementTagNameMap} tag The HTML tag to use for the element (e.g., 'span', 'p', 'h1').
+ * @param {string} path A dot-separated string representing the nested path to the value being edited (e.g., 'characterId.description'). This is used as a key for storing the edited value.
+ * @param {T} initialValue The initial value of the field. Can be a string or a number.
+ * @param {string} [className] Optional CSS classes to apply to the element.
+ */
 interface EditableFieldProps<T extends string | number> {
   tag: keyof HTMLElementTagNameMap;
   path: string; // e.g., 'character.id', 'character.description'

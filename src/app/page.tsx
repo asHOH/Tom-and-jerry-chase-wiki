@@ -160,7 +160,7 @@ function HomeContent() {
               // TODO: use a component instead
               alert('成功退出编辑模式');
             } else {
-              alert('成功进入编辑模式');
+              alert('成功进入编辑模式，编辑模式将停止页面与服务器在线更新间的同步');
             }
             toggleEditMode();
           }}
