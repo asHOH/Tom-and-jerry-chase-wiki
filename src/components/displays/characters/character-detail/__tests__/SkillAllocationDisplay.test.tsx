@@ -99,6 +99,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
     onSaveName: jest.fn(),
     onSaveDescription: jest.fn(),
     onSaveAdditionalDescription: jest.fn(),
+    onRemove: jest.fn(), // Add the missing onRemove prop
   };
 
   const mockedParseSkillAllocationPattern = jest.mocked(

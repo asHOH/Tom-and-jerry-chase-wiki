@@ -4,6 +4,7 @@ import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-t
 import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
 import { Skill, SkillLevel } from '@/data/types';
 import EditableField from '@/components/ui/EditableField';
+import { useEditMode } from '@/context/EditModeContext';
 
 interface SkillCardProps {
   skill: Skill;
@@ -20,6 +21,8 @@ export default function SkillCard({
   characterId,
   skillIndex,
 }: SkillCardProps) {
+  const { isEditMode } = useEditMode();
+
   const getSkillTypeLabel = (type: string) => {
     if (isSingleWeapon && type === 'weapon1') {
       return '武器';
@@ -34,16 +37,29 @@ export default function SkillCard({
   };
 
   const getSkillProperties = () => {
-    const properties: (string | React.ReactElement)[] = [];
+    const properties: React.ReactNode[] = [];
 
     if (skill.skillLevels.some((level: SkillLevel) => level.cooldown)) {
       const cooldowns = skill.skillLevels.map((level: SkillLevel) => level.cooldown || '-');
       const uniqueCooldowns = Array.from(new Set(cooldowns));
 
-      if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== '-') {
+      if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== '-' && !isEditMode) {
         properties.push(`CD: ${uniqueCooldowns[0]} 秒`);
       } else {
-        properties.push(`CD: ${cooldowns.join(' / ')} 秒`);
+        properties.push([
+          'CD: ',
+          cooldowns.map((i, index) => (
+            <React.Fragment key={index}>
+              {index != 0 ? '/' : ''}
+              <EditableField
+                tag='span'
+                path={`${characterId}.skills.${skillIndex}.skillLevels.${index}.cooldown`}
+                initialValue={i}
+              />
+            </React.Fragment>
+          )),
+          ' 秒',
+        ]);
       }
     }
 
