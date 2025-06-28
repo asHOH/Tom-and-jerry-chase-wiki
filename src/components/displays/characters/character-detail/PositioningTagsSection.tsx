@@ -89,7 +89,18 @@ function usePositioningTags({
     },
     [setLocalCharacter, updateTags]
   );
-  return { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags };
+  const toggleIsMinor = useCallback(
+    (tagIndex: number) => {
+      setLocalCharacter((prevChar) => {
+        const updatedTags = getTags(prevChar).map((tag, index) =>
+          index == tagIndex ? { ...tag, isMinor: !tag.isMinor } : tag
+        );
+        return updateTags(prevChar, updatedTags);
+      });
+    },
+    [setLocalCharacter, updateTags]
+  );
+  return { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags, toggleIsMinor };
 }
 
 export default function PositioningTagsSection({
@@ -105,7 +116,7 @@ export default function PositioningTagsSection({
   const borderColor = factionId === 'cat' ? 'border-orange-200' : 'border-blue-200';
   const tagsKey = factionId === 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
 
-  const { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags } =
+  const { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags, toggleIsMinor } =
     usePositioningTags({ localCharacter, setLocalCharacter, factionId });
 
   if ((!tags || tags.length === 0) && !isEditMode) return null;
@@ -143,7 +154,16 @@ export default function PositioningTagsSection({
                   </Tooltip>
                 )}
               </Tag>
-              {tag.isMinor && <span className='text-xs text-gray-500'>(次要)</span>}
+              {isEditMode ? (
+                <span
+                  className='text-xs text-gray-500 cursor-pointer'
+                  onClick={() => toggleIsMinor(index)}
+                >
+                  {tag.isMinor ? '(次要)' : '(主要)'}
+                </span>
+              ) : (
+                tag.isMinor && <span className='text-xs text-gray-500'>(次要)</span>
+              )}
               {isEditMode && (
                 <button
                   onClick={() => handleRemovePositioningTags(index)}
