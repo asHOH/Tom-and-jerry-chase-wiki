@@ -89,7 +89,7 @@
 3.  进行代码开发或数据修改。
 4.  提交代码前，运行本地检查以确保代码质量：
     - **Windows (PowerShell)**: `.\test-github-workflows.ps1`
-    - **macOS/Linux**: `.\test-github-workflows.bash`
+    - **macOS/Linux**: `./test-github-workflows.bash`
 5.  提交 Pull Request 到 `develop` 分支。
 
 **方法二：🌱 GitHub 新手**

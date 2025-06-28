@@ -1,10 +1,6 @@
 import React, { useState, useReducer, useEffect } from 'react';
 import { characters, Character } from '@/data'; // Import Character type
-import {
-  setNestedProperty,
-  saveFactionsAndCharacters,
-  updateKnowledgeCardGroupsInEditableFields,
-} from '@/lib/editUtils';
+import { setNestedProperty, saveFactionsAndCharacters } from '@/lib/editUtils';
 import type { KnowledgeCardGroup } from '@/data/types';
 import KnowledgeCardSection from './KnowledgeCardSection';
 
@@ -27,7 +23,6 @@ export default function KnowledgeCardManager({ factionId, character }: Knowledge
   const handleSaveChanges = (updatedGroups: KnowledgeCardGroup[]) => {
     const path = `${character.id}.knowledgeCardGroups`;
     setNestedProperty(characters, path, updatedGroups);
-    updateKnowledgeCardGroupsInEditableFields(character.id, updatedGroups);
     saveFactionsAndCharacters();
     rerender();
   };

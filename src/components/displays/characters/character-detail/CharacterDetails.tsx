@@ -69,7 +69,7 @@ export default function CharacterDetails({
               {isEditMode && (
                 <button
                   onClick={async () => {
-                    const data = localStorage.getItem('editableFields');
+                    const data = localStorage.getItem('characters');
                     if (data) {
                       try {
                         await navigator.clipboard.writeText(

@@ -6,7 +6,7 @@ import Tooltip from '@/components/ui/Tooltip';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditMode } from '@/context/EditModeContext';
 import { CharacterDetailsProps } from '@/lib/types';
-import { saveFactionsAndCharacters, setNestedProperty, updateEditableField } from '@/lib/editUtils';
+import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
 import { characters } from '@/data';
 
 interface PositioningTagsSectionProps {
@@ -47,7 +47,6 @@ function usePositioningTags({
       }[]
     ) => {
       setNestedProperty(characters, `${localCharacter.id}.${key}`, updatedTags);
-      updateEditableField(`${localCharacter.id}.${key}`, updatedTags);
       saveFactionsAndCharacters();
       return { ...prevChar, [key]: updatedTags };
     },
@@ -72,7 +71,6 @@ function usePositioningTags({
     setLocalCharacter((prevChar) => {
       const updatedTags = getTags(prevChar).concat({
         tagName: factionId == 'mouse' ? '奶酪' : ('进攻' as const),
-        // TODO: support toggling isMinor
         isMinor: false,
         description: '新增标签介绍',
         additionalDescription: '新增标签介绍',

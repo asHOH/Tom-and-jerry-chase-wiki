@@ -34,7 +34,6 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const toggleEditMode = () => {
     setIsEditMode((prevMode) => !prevMode);
     if (isEditMode) {
-      localStorage.removeItem('editableFields');
       localStorage.removeItem('characters');
       localStorage.removeItem('factions');
     } else {

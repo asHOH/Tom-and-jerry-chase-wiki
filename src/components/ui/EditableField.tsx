@@ -12,13 +12,14 @@ import { getNestedProperty, handleChange } from '@/lib/editUtils';
  *
  * In edit mode, it renders a `contentEditable` element. When the user clicks
  * away (on blur), the new content is saved to `localStorage` under the
- * 'editableFields' key, using the `path` to structure the data. It also
+ * 'characters' key, using the `path` to structure the data. It also
  * updates the application's state.
  *
  * @param {keyof HTMLElementTagNameMap} tag The HTML tag to use for the element (e.g., 'span', 'p', 'h1').
  * @param {string} path A dot-separated string representing the nested path to the value being edited (e.g., 'characterId.description'). This is used as a key for storing the edited value.
  * @param {T} initialValue The initial value of the field. Can be a string or a number.
  * @param {string} [className] Optional CSS classes to apply to the element.
+ * @param {((newValue: string) => void) | undefined} [onSave] Optional function to invoke to replace default behavior.
  */
 interface EditableFieldProps<T> {
   tag: keyof HTMLElementTagNameMap;
@@ -40,7 +41,7 @@ function EditableFieldImplementation<T>({
   const { handleSelectCharacter, activeTab } = useAppContext();
 
   useEffect(() => {
-    const storedData = localStorage.getItem('editableFields');
+    const storedData = localStorage.getItem('characters');
     if (storedData) {
       try {
         const parsedData = JSON.parse(storedData);

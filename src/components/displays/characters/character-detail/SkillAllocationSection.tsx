@@ -4,7 +4,7 @@ import CharacterSection from './CharacterSection';
 import { useEditMode } from '@/context/EditModeContext';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useCallback } from 'react';
-import { saveFactionsAndCharacters, setNestedProperty, updateEditableField } from '@/lib/editUtils';
+import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
 import { SkillAllocation } from '@/data/types';
 import { characters } from '@/data';
 
@@ -28,7 +28,6 @@ export const useSkillAllocationManagement = ({
           `${localCharacter.id}.skillAllocations`,
           updatedSkillAllocations
         );
-        updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
         saveFactionsAndCharacters();
         return { ...prevChar, skillAllocations: updatedSkillAllocations };
       });
@@ -47,7 +46,6 @@ export const useSkillAllocationManagement = ({
           `${localCharacter.id}.skillAllocations`,
           updatedSkillAllocations
         );
-        updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
         saveFactionsAndCharacters();
         return { ...prevChar, skillAllocations: updatedSkillAllocations };
       });
@@ -66,7 +64,6 @@ export const useSkillAllocationManagement = ({
           `${localCharacter.id}.skillAllocations`,
           updatedSkillAllocations
         );
-        updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
         saveFactionsAndCharacters();
         return { ...prevChar, skillAllocations: updatedSkillAllocations };
       });
@@ -87,7 +84,6 @@ export const useSkillAllocationManagement = ({
           `${localCharacter.id}.skillAllocations`,
           updatedSkillAllocations
         );
-        updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
         saveFactionsAndCharacters();
         return { ...prevChar, skillAllocations: updatedSkillAllocations };
       });
@@ -105,10 +101,6 @@ export const useSkillAllocationManagement = ({
         weaponType: 'weapon1', // Default weapon type
         description: '新增加点方案描述',
       };
-      updateEditableField(`${localCharacter.id}.skillAllocations`, [
-        ...prevChar.skillAllocations!,
-        newAllocation,
-      ]);
       setNestedProperty(characters, `${localCharacter.id}.skillAllocations`, [
         ...prevChar.skillAllocations!,
         newAllocation,
@@ -132,7 +124,6 @@ export const useSkillAllocationManagement = ({
           `${localCharacter.id}.skillAllocations`,
           updatedSkillAllocations
         );
-        updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
         saveFactionsAndCharacters();
         return { ...prevChar, skillAllocations: updatedSkillAllocations };
       });
