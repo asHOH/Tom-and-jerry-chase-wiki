@@ -132,10 +132,7 @@ export default function CharacterDetails({
             </div>
           )}
 
-          <KnowledgeCardManager
-            factionId={factionId}
-            characterId={character.id}
-          />
+          <KnowledgeCardManager factionId={factionId} characterId={character.id} />
 
           <CharacterSection title='技能描述'>
             <div className='space-y-6'>

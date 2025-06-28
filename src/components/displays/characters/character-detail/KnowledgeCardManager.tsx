@@ -1,6 +1,10 @@
 import React, { useState, useReducer, useEffect } from 'react';
 import { characters, Character } from '@/data'; // Import Character type
-import { setNestedProperty, saveFactionsAndCharacters, updateKnowledgeCardGroupsInEditableFields } from '@/lib/editUtils';
+import {
+  setNestedProperty,
+  saveFactionsAndCharacters,
+  updateKnowledgeCardGroupsInEditableFields,
+} from '@/lib/editUtils';
 import type { KnowledgeCardGroup } from '@/data/types';
 import KnowledgeCardSection from './KnowledgeCardSection';
 
