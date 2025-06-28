@@ -13,6 +13,7 @@ interface KnowledgeCardManagerProps {
   character: Character;
 }
 
+// TODO: use local character to refactor
 export default function KnowledgeCardManager({ factionId, character }: KnowledgeCardManagerProps) {
   const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<KnowledgeCardGroup[]>([]);
   const [key, rerender] = useReducer((x) => x + 1, 0);

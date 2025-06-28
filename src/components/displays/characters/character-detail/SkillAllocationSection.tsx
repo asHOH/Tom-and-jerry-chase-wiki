@@ -96,7 +96,8 @@ export const useSkillAllocationManagement = ({
   );
 
   const handleAddSkillAllocation = useCallback(() => {
-    setLocalCharacter((prevChar) => {
+    setLocalCharacter((char) => {
+      const prevChar = structuredClone(char);
       const newAllocationId = `加点方案 ${prevChar.skillAllocations!.length + 1}`;
       const newAllocation: SkillAllocation = {
         id: newAllocationId,
@@ -112,10 +113,6 @@ export const useSkillAllocationManagement = ({
         ...prevChar.skillAllocations!,
         newAllocation,
       ]);
-      updateEditableField(`${localCharacter.id}.skillAllocations`, [
-        ...prevChar.skillAllocations!,
-        newAllocation,
-      ]);
       saveFactionsAndCharacters();
       return {
         ...prevChar,
@@ -124,12 +121,32 @@ export const useSkillAllocationManagement = ({
     });
   }, [localCharacter.id, setLocalCharacter]);
 
+  const handleRemoveSkillAllocation = useCallback(
+    (allocationId: string) => {
+      setLocalCharacter((prevChar) => {
+        const updatedSkillAllocations = prevChar.skillAllocations!.filter(
+          (alloc) => alloc.id !== allocationId
+        );
+        setNestedProperty(
+          characters,
+          `${localCharacter.id}.skillAllocations`,
+          updatedSkillAllocations
+        );
+        updateEditableField(`${localCharacter.id}.skillAllocations`, updatedSkillAllocations);
+        saveFactionsAndCharacters();
+        return { ...prevChar, skillAllocations: updatedSkillAllocations };
+      });
+    },
+    [localCharacter.id, setLocalCharacter]
+  );
+
   return {
     handleSavePattern,
     handleSaveName,
     handleSaveDescription,
     handleSaveAdditionalDescription,
     handleAddSkillAllocation,
+    handleRemoveSkillAllocation,
   };
 };
 
@@ -153,6 +170,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({
     handleSaveDescription,
     handleSaveAdditionalDescription,
     handleAddSkillAllocation,
+    handleRemoveSkillAllocation,
   } = useSkillAllocationManagement({ localCharacter, setLocalCharacter });
 
   return (
@@ -172,6 +190,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({
                     onSaveName={handleSaveName}
                     onSaveDescription={handleSaveDescription}
                     onSaveAdditionalDescription={handleSaveAdditionalDescription}
+                    onRemove={handleRemoveSkillAllocation}
                   />
                 </div>
               ))
@@ -181,22 +200,23 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({
                 </div>
               )}
           {isEditMode && (
-            <button
-              onClick={handleAddSkillAllocation}
-              className='mt-4 w-full flex items-center justify-center bg-blue-500 text-white rounded-md py-2 text-sm hover:bg-blue-600'
-            >
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth='2'
-                stroke='currentColor'
-                className='w-5 h-5 mr-2'
+            <div className='mt-4'>
+              <button
+                onClick={handleAddSkillAllocation}
+                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
               >
-                <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-              </svg>
-              添加新加点
-            </button>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth='2'
+                  stroke='currentColor'
+                  className='w-4 h-4'
+                >
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
+                </svg>
+              </button>
+            </div>
           )}
         </div>
       </CharacterSection>
