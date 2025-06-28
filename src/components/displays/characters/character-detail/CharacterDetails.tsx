@@ -105,6 +105,7 @@ export default function CharacterDetails({
                 tags={positioningTags}
                 factionId={factionId}
                 isDetailed={isDetailedView}
+                characterId={character.id}
               />
             </div>
           </div>
