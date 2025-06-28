@@ -1,0 +1,152 @@
+import { Character, characters, factions } from '@/data';
+import { getCatImageUrl } from '@/data/catCharacters';
+import { getMouseImageUrl } from '@/data/mouseCharacters';
+
+/**
+ * Deeply assigns the values of source object to the target object.
+ *
+ * @param target The object to which values will be assigned.
+ * @param source The object from which values will be assigned.
+ * @returns A new object with the merged properties.
+ */
+export function deepAssign<T extends object, U extends object>(target: T, source: U): T & U {
+  const output = { ...target } as T & U;
+
+  for (const key in source) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      const sourceValue = source[key];
+      const targetValue = (output as Record<string, unknown>)[key];
+
+      if (isObject(sourceValue) && isObject(targetValue)) {
+        (output as Record<string, unknown>)[key] = deepAssign(targetValue, sourceValue);
+      } else {
+        (output as Record<string, unknown>)[key] = sourceValue;
+      }
+    }
+  }
+
+  return output;
+}
+
+/**
+ * Checks if an item is a non-array object.
+ *
+ * @param item The item to check.
+ * @returns True if the item is a non-array object, false otherwise.
+ */
+function isObject(item: unknown): item is object {
+  return item !== null && typeof item === 'object' && !Array.isArray(item);
+}
+
+export function getNestedProperty<T>(obj: Record<string, unknown>, path: string) {
+  console.log({ obj, path });
+  if (!path) {
+    return obj as unknown as T;
+  }
+  return path
+    .split('.')
+    .reduce(
+      (acc: unknown, part: string) =>
+        acc &&
+        typeof acc === 'object' &&
+        typeof part === 'string' &&
+        part in (acc as Record<string, unknown>)
+          ? (acc as Record<string, unknown>)[part]
+          : undefined,
+      obj
+    ) as unknown as T;
+}
+
+export function setNestedProperty<T extends string | number>(
+  obj: Record<string, unknown>,
+  path: string,
+  value: T
+): void {
+  const parts = path.split('.');
+  let current: Record<string, unknown> = obj;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const part = parts[i];
+    if (typeof current !== 'object' || current === null) {
+      return;
+    }
+    if (typeof part !== 'string') {
+      return;
+    }
+    if (!(part in current) || typeof current[part] !== 'object' || current[part] === null) {
+      current[part] = {};
+    }
+    current = current[part] as Record<string, unknown>;
+  }
+  const lastPart = parts[parts.length - 1];
+  if (typeof current === 'object' && current !== null && typeof lastPart === 'string') {
+    current[lastPart] = value;
+  }
+}
+
+function handleCharacterIdChange(
+  path: string,
+  newContentStr: string,
+  activeTab: string | undefined,
+  handleSelectCharacter: (id: string) => void
+) {
+  // FIXME: This code may lead to uncertain damage as other code do not handle the situation where the id changes
+  // characters is not managed by react, so we need to trigger the update manually
+  // use of activeTab forces
+  // TODO: save and load faction and character changes from localStorage
+  const oldId = path.split('.')[0]!;
+  characters[newContentStr] = characters[oldId!]!;
+  characters[newContentStr].imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(
+    newContentStr
+  );
+  delete characters[oldId!];
+  handleSelectCharacter(newContentStr);
+  localStorage.setItem(
+    'editableFields',
+    JSON.stringify(
+      ((obj: Record<string, Character>) => {
+        obj[newContentStr] = characters[oldId!]!;
+        delete obj[oldId!];
+        return obj;
+      })(JSON.parse(localStorage.getItem('editableFields')!))
+    )
+  );
+  const faction = factions[activeTab!]?.characters.find(({ id }) => id == oldId);
+  if (faction) {
+    faction.id = faction.name = newContentStr;
+    faction.imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newContentStr);
+  }
+}
+
+export function handleChange<T extends string | number>(
+  initialValue: T,
+  newContentStr: string,
+  path: string,
+  activeTab: string | undefined,
+  handleSelectCharacter: (id: string) => void
+) {
+  const storedData = localStorage.getItem('editableFields');
+  let parsedData: Record<string, unknown> = {};
+  if (storedData) {
+    try {
+      parsedData = JSON.parse(storedData);
+    } catch (e) {
+      console.error('Failed to parse localStorage data on blur', e);
+    }
+  }
+
+  const newData: Record<string, unknown> = { ...parsedData };
+  let finalValue: T;
+  if (typeof initialValue === 'number') {
+    finalValue = parseFloat(newContentStr) as T;
+  } else {
+    finalValue = newContentStr as T;
+  }
+  setNestedProperty(newData, path, finalValue);
+  setNestedProperty(characters, path, finalValue);
+  localStorage.setItem('editableFields', JSON.stringify(newData));
+  if (path && path.split('.')?.[1] == 'id') {
+    if (activeTab) {
+      handleCharacterIdChange(path, newContentStr, activeTab, handleSelectCharacter);
+    }
+  }
+}
