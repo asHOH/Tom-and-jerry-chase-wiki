@@ -1,12 +1,13 @@
 import React from 'react';
 import SkillAllocationDisplay from './SkillAllocationDisplay';
 import CharacterSection from './CharacterSection';
-import { useEditMode } from '@/context/EditModeContext';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useCallback } from 'react';
 import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
 import { SkillAllocation } from '@/data/types';
 import { characters } from '@/data';
+import { useAppContext } from '@/context/AppContext';
 
 interface UseSkillAllocationManagementProps {
   localCharacter: CharacterDetailsProps['character'];
@@ -142,19 +143,13 @@ export const useSkillAllocationManagement = ({
 };
 
 interface SkillAllocationSectionProps {
-  localCharacter: CharacterDetailsProps['character'];
-  setLocalCharacter: React.Dispatch<React.SetStateAction<CharacterDetailsProps['character']>>;
-  isDetailedView: boolean;
   factionId: 'cat' | 'mouse';
 }
 
-const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({
-  localCharacter,
-  setLocalCharacter,
-  isDetailedView,
-  factionId,
-}) => {
+const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ factionId }) => {
   const { isEditMode } = useEditMode();
+  const { isDetailedView } = useAppContext();
+  const { localCharacter, setLocalCharacter } = useLocalCharacter();
   const {
     handleSavePattern,
     handleSaveName,

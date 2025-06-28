@@ -5,10 +5,10 @@ import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
 import { Skill, SkillLevel } from '@/data/types';
 import EditableField from '@/components/ui/EditableField';
 import { useEditMode } from '@/context/EditModeContext';
+import { useAppContext } from '@/context/AppContext';
 
 interface SkillCardProps {
   skill: Skill;
-  isDetailed: boolean;
   isSingleWeapon?: boolean;
   characterId: string;
   skillIndex: number;
@@ -16,12 +16,12 @@ interface SkillCardProps {
 
 export default function SkillCard({
   skill,
-  isDetailed,
   isSingleWeapon,
   characterId,
   skillIndex,
 }: SkillCardProps) {
   const { isEditMode } = useEditMode();
+  const { isDetailedView: isDetailed } = useAppContext();
 
   const getSkillTypeLabel = (type: string) => {
     if (isSingleWeapon && type === 'weapon1') {

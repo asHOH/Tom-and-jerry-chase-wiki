@@ -1,12 +1,28 @@
 import { loadFactionsAndCharacters, saveFactionsAndCharacters } from '@/lib/editUtils';
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { CharacterDetailsProps } from '@/lib/types';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  SetStateAction,
+} from 'react';
 
 interface EditModeContextType {
   isEditMode: boolean;
   toggleEditMode: () => void;
 }
 
+interface LocalCharacterContextType {
+  localCharacter: CharacterDetailsProps['character'];
+  setLocalCharacter: React.Dispatch<SetStateAction<CharacterDetailsProps['character']>>;
+}
+
 const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
+export const LocalCharacterContext = createContext<LocalCharacterContextType | undefined>(
+  undefined
+);
 
 export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(() => {
@@ -48,8 +64,37 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+export const LocalCharacterProvider = ({
+  character,
+  children,
+}: {
+  character: CharacterDetailsProps['character'];
+  children: ReactNode;
+}) => {
+  const [localCharacter, setLocalCharacter] =
+    useState<CharacterDetailsProps['character']>(character);
+
+  useEffect(() => {
+    setLocalCharacter(character);
+  }, [character]);
+
+  return (
+    <LocalCharacterContext.Provider value={{ localCharacter, setLocalCharacter }}>
+      {children}
+    </LocalCharacterContext.Provider>
+  );
+};
+
 export const useEditMode = () => {
   const context = useContext(EditModeContext);
+  if (context === undefined) {
+    throw new Error('useEditMode must be used within an EditModeProvider');
+  }
+  return context;
+};
+
+export const useLocalCharacter = () => {
+  const context = useContext(LocalCharacterContext);
   if (context === undefined) {
     throw new Error('useEditMode must be used within an EditModeProvider');
   }

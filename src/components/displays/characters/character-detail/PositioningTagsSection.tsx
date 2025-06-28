@@ -4,10 +4,11 @@ import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/
 import EditableField from '@/components/ui/EditableField';
 import Tooltip from '@/components/ui/Tooltip';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
-import { useEditMode } from '@/context/EditModeContext';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { CharacterDetailsProps } from '@/lib/types';
 import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
 import { characters } from '@/data';
+import { useAppContext } from '@/context/AppContext';
 
 interface PositioningTagsSectionProps {
   tags: Array<{
@@ -17,21 +18,11 @@ interface PositioningTagsSectionProps {
     additionalDescription?: string;
   }>;
   factionId: 'cat' | 'mouse';
-  isDetailed: boolean;
   characterId: string;
-  localCharacter: CharacterDetailsProps['character'];
-  setLocalCharacter: React.Dispatch<React.SetStateAction<CharacterDetailsProps['character']>>;
 }
 
-function usePositioningTags({
-  localCharacter,
-  setLocalCharacter,
-  factionId,
-}: {
-  localCharacter: CharacterDetailsProps['character'];
-  setLocalCharacter: React.Dispatch<React.SetStateAction<CharacterDetailsProps['character']>>;
-  factionId: 'cat' | 'mouse';
-}) {
+function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
+  const { localCharacter, setLocalCharacter } = useLocalCharacter();
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
   function getTags(char: CharacterDetailsProps['character']) {
     return char.mousePositioningTags ?? char.catPositioningTags ?? [];
@@ -104,18 +95,16 @@ function usePositioningTags({
 export default function PositioningTagsSection({
   tags,
   factionId,
-  isDetailed,
   characterId,
-  localCharacter,
-  setLocalCharacter,
 }: PositioningTagsSectionProps) {
   const { isEditMode } = useEditMode();
+  const { isDetailedView: isDetailed } = useAppContext();
 
   const borderColor = factionId === 'cat' ? 'border-orange-200' : 'border-blue-200';
   const tagsKey = factionId === 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
 
   const { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags, toggleIsMinor } =
-    usePositioningTags({ localCharacter, setLocalCharacter, factionId });
+    usePositioningTags({ factionId });
 
   if ((!tags || tags.length === 0) && !isEditMode) return null;
 

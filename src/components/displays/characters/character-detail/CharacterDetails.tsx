@@ -9,16 +9,12 @@ import KnowledgeCardManager from './KnowledgeCardManager';
 import { useState, useEffect } from 'react';
 import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
-import { useEditMode } from '@/context/EditModeContext';
+import { LocalCharacterProvider, useEditMode } from '@/context/EditModeContext';
 import SkillAllocationSection from './SkillAllocationSection';
 
-export default function CharacterDetails({
-  character,
-  isDetailedView: propIsDetailedView,
-}: CharacterDetailsProps) {
+function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
   const [copyMessage, setCopyMessage] = useState('');
-  const isDetailedView = propIsDetailedView || false;
   const [localCharacter, setLocalCharacter] = useState(character);
   const factionId = localCharacter.faction.id as 'cat' | 'mouse';
 
@@ -104,31 +100,19 @@ export default function CharacterDetails({
             />
 
             <div className='mt-6 space-y-3'>
-              <CharacterAttributesSection
-                character={localCharacter}
-                factionId={factionId}
-                isDetailed={isDetailedView}
-              />
+              <CharacterAttributesSection character={localCharacter} factionId={factionId} />
 
               <PositioningTagsSection
                 tags={positioningTags}
                 factionId={factionId}
-                isDetailed={isDetailedView}
                 characterId={localCharacter.id}
-                localCharacter={localCharacter}
-                setLocalCharacter={setLocalCharacter}
               />
             </div>
           </div>
         </div>
 
         <div className='md:w-2/3'>
-          <SkillAllocationSection
-            localCharacter={localCharacter}
-            setLocalCharacter={setLocalCharacter}
-            isDetailedView={isDetailedView}
-            factionId={factionId}
-          />
+          <SkillAllocationSection factionId={factionId} />
 
           <KnowledgeCardManager factionId={factionId} character={localCharacter} />
 
@@ -144,7 +128,6 @@ export default function CharacterDetails({
                   <SkillCard
                     key={(skill as Skill).id}
                     skill={skill as Skill}
-                    isDetailed={isDetailedView}
                     isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
                     characterId={localCharacter.id}
                     skillIndex={index}
@@ -156,5 +139,13 @@ export default function CharacterDetails({
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CharacterDetails({ character }: CharacterDetailsProps) {
+  return (
+    <LocalCharacterProvider character={character}>
+      <CharacterDetailsImplementation character={character} />
+    </LocalCharacterProvider>
   );
 }

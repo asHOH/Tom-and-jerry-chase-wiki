@@ -1,6 +1,7 @@
 import React from 'react';
 import AttributeDisplay from './AttributeDisplay';
 import { Character, FactionId } from '@/data/types';
+import { useAppContext } from '@/context/AppContext';
 
 interface CharacterAttribute {
   label: string;
@@ -14,14 +15,13 @@ interface CharacterAttribute {
 interface CharacterAttributesSectionProps {
   character: Character;
   factionId: FactionId;
-  isDetailed: boolean;
 }
 
 export default function CharacterAttributesSection({
   character,
   factionId,
-  isDetailed,
 }: CharacterAttributesSectionProps) {
+  const { isDetailedView: isDetailed } = useAppContext();
   const commonAttributes: CharacterAttribute[] = [
     {
       label: 'Hp上限',
@@ -77,6 +77,7 @@ export default function CharacterAttributesSection({
       label: '爪刀范围',
       value: character.clawKnifeRange || 0,
       condition: factionId === 'cat' && !!character.clawKnifeRange,
+      path: `${character.id}.clawKnifeRange`,
     },
     {
       label: '爪刀CD',

@@ -74,5 +74,5 @@ export default async function CharacterPage({
     notFound();
   }
 
-  return <CharacterDetailsClient character={character} isDetailedView={false} />;
+  return <CharacterDetailsClient character={character} />;
 }

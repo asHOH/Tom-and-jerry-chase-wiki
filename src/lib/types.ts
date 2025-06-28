@@ -47,7 +47,6 @@ export type KnowledgeCardDetailsProps = {
 
 export type CharacterDetailsProps = {
   character: CharacterWithFaction;
-  isDetailedView?: boolean;
 };
 
 // Faction types for grid displays

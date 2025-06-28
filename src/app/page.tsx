@@ -76,12 +76,7 @@ function HomeContent() {
     // If a character is selected, show character details
     if (selectedCharacter && characters[selectedCharacter]) {
       // Pass the isDetailedView state to the CharacterDetails component
-      return (
-        <CharacterDetails
-          character={characters[selectedCharacter]}
-          isDetailedView={isDetailedView}
-        />
-      );
+      return <CharacterDetails character={characters[selectedCharacter]} />;
     } // If card tabs are active, show faction cards
     if (activeTab === 'catCards' && factionCards['cat']) {
       return <KnowledgeCardGrid faction={factionCards['cat']} />;

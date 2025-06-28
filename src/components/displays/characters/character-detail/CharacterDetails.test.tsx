@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import CharacterDetails from './CharacterDetails';
-import { AppProvider } from '@/context/AppContext';
+import { AppProvider, useAppContext } from '@/context/AppContext';
 import type { CharacterWithFaction } from '@/lib/types';
 import type { Skill } from '@/data/types';
 
@@ -9,6 +9,12 @@ import type { Skill } from '@/data/types';
 jest.mock('../../../../lib/tooltipUtils', () => ({
   getTooltipContent: jest.fn((property: string) => `${property} tooltip`),
   getPositioningTagTooltipContent: jest.fn((tagName: string) => `${tagName} positioning tooltip`),
+}));
+
+// Mock useAppContext
+jest.mock('@/context/AppContext', () => ({
+  ...jest.requireActual('@/context/AppContext'),
+  useAppContext: jest.fn(),
 }));
 
 jest.mock('../../../../lib/design-tokens', () => ({
@@ -203,7 +209,8 @@ describe('CharacterDetails', () => {
   };
 
   // Helper function to render with AppProvider
-  const renderWithProvider = (component: React.ReactNode) => {
+  const renderWithProvider = (component: React.ReactNode, isDetailedViewMock: boolean = false) => {
+    (useAppContext as jest.Mock).mockReturnValue({ isDetailedView: isDetailedViewMock });
     return render(<AppProvider>{component}</AppProvider>);
   };
 
@@ -244,7 +251,7 @@ describe('CharacterDetails', () => {
   });
 
   it('should render additional description in detailed view', () => {
-    renderWithProvider(<CharacterDetails character={mockCharacter} isDetailedView={true} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />, true);
 
     expect(screen.getByText('进攻能力很强')).toBeTruthy();
   });
@@ -275,7 +282,7 @@ describe('CharacterDetails', () => {
   });
 
   it('should use detailed descriptions in detailed view', () => {
-    renderWithProvider(<CharacterDetails character={mockCharacter} isDetailedView={true} />);
+    renderWithProvider(<CharacterDetails character={mockCharacter} />, true);
 
     expect(screen.getByText('详细主动技能描述')).toBeTruthy();
   });
