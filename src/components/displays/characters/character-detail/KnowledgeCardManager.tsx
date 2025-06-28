@@ -10,32 +10,26 @@ import KnowledgeCardSection from './KnowledgeCardSection';
 
 interface KnowledgeCardManagerProps {
   factionId: 'cat' | 'mouse';
-  characterId: string;
+  character: Character;
 }
 
 export default function KnowledgeCardManager({
   factionId,
-  characterId,
+  character,
 }: KnowledgeCardManagerProps) {
   const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<KnowledgeCardGroup[]>([]);
   const [key, rerender] = useReducer((x) => x + 1, 0);
 
   useEffect(() => {
-    // Ensure characterId is a valid key for the characters object
-    const characterData: Character | undefined = characters[characterId];
-    if (
-      characterData &&
-      characterData.factionId === factionId && // Corrected to use factionId
-      characterData.knowledgeCardGroups
-    ) {
-      setKnowledgeCardGroups(characterData.knowledgeCardGroups);
+    if (character && character.knowledgeCardGroups) {
+      setKnowledgeCardGroups(character.knowledgeCardGroups);
     }
-  }, [characterId, factionId, key]);
+  }, [character, key]);
 
   const handleSaveChanges = (updatedGroups: KnowledgeCardGroup[]) => {
-    const path = `${characterId}.knowledgeCardGroups`;
+    const path = `${character.id}.knowledgeCardGroups`;
     setNestedProperty(characters, path, updatedGroups);
-    updateKnowledgeCardGroupsInEditableFields(characterId, updatedGroups);
+    updateKnowledgeCardGroupsInEditableFields(character.id, updatedGroups);
     saveFactionsAndCharacters();
     rerender();
   };
@@ -55,7 +49,7 @@ export default function KnowledgeCardManager({
     <KnowledgeCardSection
       knowledgeCardGroups={knowledgeCardGroups}
       factionId={factionId}
-      characterId={characterId}
+      characterId={character.id}
       onSaveChanges={handleSaveChanges}
       onCreateGroup={handleCreateGroup}
       onRemoveGroup={handleRemoveGroup}

@@ -8,6 +8,8 @@ import {
 } from '@/lib/skillAllocationUtils';
 import { getSkillLevelColors } from '@/lib/design-tokens';
 import Tooltip from '../../../ui/Tooltip';
+import { useEditMode } from '@/context/EditModeContext';
+import EditableField from '@/components/ui/EditableField';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }) => {
@@ -31,6 +33,7 @@ interface SkillAllocationDisplayProps {
     imageUrl?: string;
   }>;
   isDetailed: boolean;
+  onSavePattern: (newPattern: string) => void;
 }
 
 const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
@@ -39,7 +42,9 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   factionId,
   characterSkills,
   isDetailed,
+  onSavePattern,
 }) => {
+  const { isEditMode } = useEditMode();
   // Preprocess pattern to auto-parallel first two skills if needed
   const preprocessPattern = (pattern: string): string => {
     if (pattern.length >= 2) {
@@ -282,8 +287,17 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   return (
     <div className='space-y-3'>
       <div className='flex gap-4'>
-        <div className='w-1/6 flex-shrink-0'>
+        <div className='w-1/6 flex-shrink-0 flex flex-col'>
           <h4 className='font-bold text-gray-800 text-lg leading-tight'>{allocation.id}</h4>
+          {isEditMode && (
+            <EditableField
+              tag='h4'
+              path={`skillAllocations.${allocation.id}.pattern`}
+              initialValue={allocation.pattern}
+              onSave={onSavePattern}
+              className='font-bold text-gray-800 text-lg leading-tight'
+            />
+          )}
         </div>
         <div className='flex-1'>
           <div className='flex flex-wrap items-start gap-2 mb-2'>
