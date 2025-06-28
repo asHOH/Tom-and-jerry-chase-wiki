@@ -1,6 +1,7 @@
-import { Character, characters, factions } from '@/data';
+import { Character, characters, FactionId, factions, Skill } from '@/data';
 import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
+import { getSkillImageUrl } from './skillUtils';
 
 /**
  * Deeply assigns the values of source object to the target object.
@@ -39,7 +40,6 @@ function isObject(item: unknown): item is object {
 }
 
 export function getNestedProperty<T>(obj: Record<string, unknown>, path: string) {
-  console.log({ obj, path });
   if (!path) {
     return obj as unknown as T;
   }
@@ -92,7 +92,6 @@ function handleCharacterIdChange(
   // FIXME: This code may lead to uncertain damage as other code do not handle the situation where the id changes
   // characters is not managed by react, so we need to trigger the update manually
   // use of activeTab forces
-  // TODO: save and load faction and character changes from localStorage
   const oldId = path.split('.')[0]!;
   characters[newId] = characters[oldId!]!;
   characters[newId].id = newId;
@@ -114,6 +113,22 @@ function handleCharacterIdChange(
     faction.id = faction.name = newId;
     faction.imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   }
+  for (const i of characters[newId].skills) {
+    i.id = `${newId}-${i.id.split('-')[1]}`;
+    i.imageUrl = getSkillImageUrl(newId, i, activeTab as unknown as FactionId);
+  }
+}
+
+export function handleCharacterSkillIdChange(path: string, newName: string, activeTab: string) {
+  // TODO: force rerender using useReducer
+  console.log({ path, newId: newName });
+  const skill = getNestedProperty(
+    characters,
+    [...path.split('.').slice(0, 3)].join('.')
+  ) as unknown as Skill;
+  skill.name = newName;
+  skill.imageUrl = getSkillImageUrl(skill.id.split('-')[0]!, skill, activeTab as FactionId);
+  console.log([...path.split('.').slice(0, 3)], { skill });
 }
 
 export function saveFactionsAndCharacters() {
@@ -167,6 +182,9 @@ export function handleChange<T extends string | number>(
     if (activeTab) {
       handleCharacterIdChange(path, newContentStr, activeTab, handleSelectCharacter);
     }
+  }
+  if (path && path.split('.')?.[1] == 'skills' && path.split('.')?.[3] == 'name') {
+    handleCharacterSkillIdChange(path, newContentStr, activeTab!);
   }
   saveFactionsAndCharacters();
 }
