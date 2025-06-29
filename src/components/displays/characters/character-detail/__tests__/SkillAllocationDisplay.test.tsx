@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SkillAllocationDisplay from '../SkillAllocationDisplay';
+import { EditModeProvider, LocalCharacterContext } from '../../../../../context/EditModeContext';
 import type { SkillAllocation } from '../../../../../data/types';
 import * as skillAllocationUtils from '../../../../../lib/skillAllocationUtils';
 
@@ -74,6 +75,41 @@ jest.mock('next/image', () => {
   };
 });
 
+// Import AppProvider
+import { AppProvider } from '../../../../../context/AppContext';
+
+// Test wrapper component with EditModeProvider, LocalCharacterContext, and AppProvider
+const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const mockLocalCharacterValue = {
+    localCharacter: {
+      id: 'test-character',
+      name: '测试角色',
+      description: '测试角色描述',
+      imageUrl: '/test-image.png',
+      faction: {
+        id: 'cat',
+        name: '猫阵营',
+      },
+      skills: [],
+      attributes: {},
+      additionalDescription: '',
+      skillAllocations: [],
+      knowledgeCardGroups: [],
+    },
+    setLocalCharacter: jest.fn(),
+  };
+
+  return (
+    <AppProvider>
+      <EditModeProvider>
+        <LocalCharacterContext.Provider value={mockLocalCharacterValue}>
+          {children}
+        </LocalCharacterContext.Provider>
+      </EditModeProvider>
+    </AppProvider>
+  );
+};
+
 describe('SkillAllocationDisplay Error Handling', () => {
   const mockAllocation: SkillAllocation = {
     id: 'test-allocation',
@@ -126,7 +162,11 @@ describe('SkillAllocationDisplay Error Handling', () => {
 
       // This should throw an error due to invalid parallel options
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
+        render(
+          <TestWrapper>
+            <SkillAllocationDisplay {...defaultProps} index={0} />
+          </TestWrapper>
+        );
       }).toThrow('Invalid parallel options');
     });
 
@@ -142,7 +182,11 @@ describe('SkillAllocationDisplay Error Handling', () => {
       ]);
 
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
+        render(
+          <TestWrapper>
+            <SkillAllocationDisplay {...defaultProps} index={0} />
+          </TestWrapper>
+        );
       }).toThrow('Invalid parallel options');
     });
 
@@ -158,7 +202,11 @@ describe('SkillAllocationDisplay Error Handling', () => {
       ]);
 
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
+        render(
+          <TestWrapper>
+            <SkillAllocationDisplay {...defaultProps} index={0} />
+          </TestWrapper>
+        );
       }).toThrow('Invalid parallel options');
     });
   });
@@ -182,7 +230,11 @@ describe('SkillAllocationDisplay Error Handling', () => {
       };
 
       expect(() => {
-        render(<SkillAllocationDisplay {...propsWithoutSkillImages} index={0} />);
+        render(
+          <TestWrapper>
+            <SkillAllocationDisplay {...propsWithoutSkillImages} index={0} />
+          </TestWrapper>
+        );
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();
@@ -205,7 +257,11 @@ describe('SkillAllocationDisplay Error Handling', () => {
       };
 
       expect(() => {
-        render(<SkillAllocationDisplay {...propsWithoutSkillName} index={0} />);
+        render(
+          <TestWrapper>
+            <SkillAllocationDisplay {...propsWithoutSkillName} index={0} />
+          </TestWrapper>
+        );
       }).not.toThrow();
     });
 
@@ -218,7 +274,11 @@ describe('SkillAllocationDisplay Error Handling', () => {
       };
 
       expect(() => {
-        render(<SkillAllocationDisplay {...propsWithEmptyPattern} index={0} />);
+        render(
+          <TestWrapper>
+            <SkillAllocationDisplay {...propsWithEmptyPattern} index={0} />
+          </TestWrapper>
+        );
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();
@@ -245,7 +305,11 @@ describe('SkillAllocationDisplay Error Handling', () => {
       };
 
       expect(() => {
-        render(<SkillAllocationDisplay {...propsWithoutDescription} index={0} />);
+        render(
+          <TestWrapper>
+            <SkillAllocationDisplay {...propsWithoutDescription} index={0} />
+          </TestWrapper>
+        );
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();
@@ -265,7 +329,11 @@ describe('SkillAllocationDisplay Error Handling', () => {
       ]);
 
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
+        render(
+          <TestWrapper>
+            <SkillAllocationDisplay {...defaultProps} index={0} />
+          </TestWrapper>
+        );
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();
@@ -289,7 +357,11 @@ describe('SkillAllocationDisplay Error Handling', () => {
       ]);
 
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
+        render(
+          <TestWrapper>
+            <SkillAllocationDisplay {...defaultProps} index={0} />
+          </TestWrapper>
+        );
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();
