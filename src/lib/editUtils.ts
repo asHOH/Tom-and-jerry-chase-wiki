@@ -74,7 +74,6 @@ export function setNestedProperty<T>(obj: Record<string, unknown>, path: string,
     if (typeof part !== 'string') {
       return;
     }
-    console.log({ part, current });
     if (!(part in current) || typeof current[part] !== 'object' || current[part] === null) {
       if (Number.isNaN(parseInt(part, 10))) current[part] = {};
       else current[part] = [];

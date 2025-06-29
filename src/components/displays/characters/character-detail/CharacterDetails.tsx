@@ -11,12 +11,36 @@ import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
 import { LocalCharacterProvider, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import SkillAllocationSection from './SkillAllocationSection';
+import { saveFactionsAndCharacters } from '@/lib/editUtils';
+import { characters } from '@/data';
+import { getSkillImageUrl } from '@/lib/skillUtils';
+import { produce } from 'immer';
 
 function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
   const [copyMessage, setCopyMessage] = useState('');
-  const { localCharacter } = useLocalCharacter();
+  const { localCharacter, setLocalCharacter } = useLocalCharacter();
   const factionId = localCharacter.faction.id as 'cat' | 'mouse';
+
+  function addSecondWeapon() {
+    const firstWeapon = character.skills.find((char: Skill) => char.type == 'weapon1')!;
+    const secondWeapon = {
+      ...firstWeapon,
+      type: 'weapon2' as const,
+      imageUrl: getSkillImageUrl(localCharacter.id, firstWeapon, factionId),
+      id: firstWeapon.id.slice(0, -1) + '2',
+    };
+    function modifySkillObject(character: CharacterDetailsProps['character']) {
+      character.skills = [...character.skills, secondWeapon];
+    }
+    modifySkillObject(characters[localCharacter.id]!);
+    setLocalCharacter(
+      produce(localCharacter, (localCharacter) => {
+        modifySkillObject(localCharacter);
+      })
+    );
+    saveFactionsAndCharacters();
+  }
 
   const positioningTags =
     factionId === 'cat'
@@ -120,15 +144,40 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                 );
                 const isSingleWeapon = weaponSkills.length === 1;
 
-                return localCharacter.skills.map((skill, index) => (
-                  <SkillCard
-                    key={(skill as Skill).id}
-                    skill={skill as Skill}
-                    isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
-                    characterId={localCharacter.id}
-                    skillIndex={index}
-                  />
-                ));
+                return localCharacter.skills
+                  .map<React.ReactNode>((skill, index) => (
+                    <SkillCard
+                      key={(skill as Skill).id}
+                      skill={skill as Skill}
+                      isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
+                      characterId={localCharacter.id}
+                      skillIndex={index}
+                    />
+                  ))
+                  .concat(
+                    isSingleWeapon && isEditMode ? (
+                      <button
+                        onClick={addSecondWeapon}
+                        className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+                        key='new-weapon-button'
+                      >
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          strokeWidth='2'
+                          stroke='currentColor'
+                          className='w-4 h-4'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            d='M12 4.5v15m7.5-7.5h-15'
+                          />
+                        </svg>
+                      </button>
+                    ) : null
+                  );
               })()}
             </div>
           </CharacterSection>

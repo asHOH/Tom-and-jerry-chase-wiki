@@ -74,9 +74,12 @@ export const LocalCharacterProvider = ({
   const [localCharacter, setLocalCharacter] =
     useState<CharacterDetailsProps['character']>(character);
 
+  const { isEditMode } = useEditMode();
+
   useEffect(() => {
-    setLocalCharacter(character);
-  }, [character]);
+    // avoid changing local character lead to the change of characters
+    setLocalCharacter(structuredClone(character));
+  }, [character, isEditMode]);
 
   return (
     <LocalCharacterContext.Provider value={{ localCharacter, setLocalCharacter }}>

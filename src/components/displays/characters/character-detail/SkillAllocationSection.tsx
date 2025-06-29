@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import SkillAllocationDisplay from './SkillAllocationDisplay';
 import CharacterSection from './CharacterSection';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
@@ -56,10 +56,6 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
   const { isEditMode } = useEditMode();
   const { localCharacter } = useLocalCharacter();
   const { handleAddSkillAllocation, handleRemoveSkillAllocation } = useSkillAllocationManagement();
-
-  useEffect(() => {
-    console.log(localCharacter.skillAllocations, characters[localCharacter.id]!.skillAllocations);
-  }, [localCharacter.id, localCharacter.skillAllocations]);
   return (
     <div className='mb-8'>
       <CharacterSection title='推荐加点'>
