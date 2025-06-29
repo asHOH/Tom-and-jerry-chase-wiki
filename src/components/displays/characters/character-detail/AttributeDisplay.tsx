@@ -2,6 +2,7 @@ import React from 'react';
 import Tooltip from '../../../ui/Tooltip';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import EditableField from '@/components/ui/EditableField';
+import { useLocalCharacter } from '@/context/EditModeContext';
 
 interface AttributeDisplayProps {
   label: string;
@@ -22,6 +23,7 @@ export default function AttributeDisplay({
   path,
   suffix,
 }: AttributeDisplayProps) {
+  const { localCharacter } = useLocalCharacter();
   return (
     <p className={className}>
       <Tooltip content={getTooltipContent(label, factionId, isDetailed)}>{label}</Tooltip>:
@@ -29,6 +31,25 @@ export default function AttributeDisplay({
         <>
           {' '}
           <EditableField tag='span' path={path} initialValue={value} className='inline' />
+          {suffix && ` ${suffix}`}
+        </>
+      ) : label == '爪刀CD' ? (
+        <>
+          {' '}
+          <EditableField
+            tag='span'
+            path={`${localCharacter.id}.clawKnifeCdUnhit`}
+            initialValue={localCharacter.clawKnifeCdUnhit || 0}
+            className='inline'
+          />
+          {' / '}
+          <EditableField
+            tag='span'
+            path={`${localCharacter.id}.clawKnifeCdHit`}
+            initialValue={localCharacter.clawKnifeCdHit || 0}
+            className='inline'
+          />
+          {' 秒'}
           {suffix && ` ${suffix}`}
         </>
       ) : (

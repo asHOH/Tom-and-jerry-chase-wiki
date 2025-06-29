@@ -2,6 +2,7 @@ import React from 'react';
 import AttributeDisplay from './AttributeDisplay';
 import { Character, FactionId } from '@/data/types';
 import { useAppContext } from '@/context/AppContext';
+import { useEditMode } from '@/context/EditModeContext';
 
 interface CharacterAttribute {
   label: string;
@@ -22,6 +23,7 @@ export default function CharacterAttributesSection({
   factionId,
 }: CharacterAttributesSectionProps) {
   const { isDetailedView: isDetailed } = useAppContext();
+  const { isEditMode } = useEditMode();
   const commonAttributes: CharacterAttribute[] = [
     {
       label: 'Hp上限',
@@ -109,13 +111,13 @@ export default function CharacterAttributesSection({
       ))}
 
       {factionId === 'cat' &&
-        character.attackBoost !== undefined &&
-        character.attackBoost !== 0 && (
+        ((character.attackBoost !== undefined && character.attackBoost !== 0) || isEditMode) && (
           <AttributeDisplay
             label='攻击增伤'
-            value={character.attackBoost}
+            value={character.attackBoost ?? 0}
             factionId={factionId}
             isDetailed={isDetailed}
+            path={`${character.id}.attackBoost`}
             className='text-amber-600 py-1'
           />
         )}
