@@ -251,8 +251,17 @@ button.faction-button:hover {
   top: 60px; /* Position below navigation bar */
 }
 
+/* Edit mode indicator styles */
+.edit-mode-banner {
+  top: 60px; /* Position below navigation bar */
+}
+
 @media (max-width: 640px) {
   .offline-banner {
+    top: 60px; /* Same positioning on mobile */
+  }
+
+  .edit-mode-banner {
     top: 60px; /* Same positioning on mobile */
   }
 }
@@ -261,8 +270,16 @@ body.offline-banner-visible main {
   padding-top: 5.5rem; /* Account for nav bar (60px) + offline banner (2.5rem) */
 }
 
+body.edit-mode-banner-visible main {
+  padding-top: 5.5rem; /* Account for nav bar (60px) + edit mode banner (2.5rem) */
+}
+
 @media (max-width: 640px) {
   body.offline-banner-visible main {
+    padding-top: 6rem; /* Slightly more padding on mobile */
+  }
+
+  body.edit-mode-banner-visible main {
     padding-top: 6rem; /* Slightly more padding on mobile */
   }
 }

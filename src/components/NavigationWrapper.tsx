@@ -1,5 +1,6 @@
 import React from 'react';
 import TabNavigation from './TabNavigation';
+import { EditModeIndicator } from './EditModeIndicator';
 
 type NavigationWrapperProps = {
   children: React.ReactNode;
@@ -12,6 +13,9 @@ export default function NavigationWrapper({
 }: NavigationWrapperProps) {
   return (
     <div style={{ minHeight: '100vh' }}>
+      {/* Edit mode indicator */}
+      <EditModeIndicator />
+
       {/* Fixed navigation bar */}
       <TabNavigation showDetailToggle={showDetailToggle} />
 
