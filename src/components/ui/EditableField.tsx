@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useEditMode } from '../../context/EditModeContext';
+import { useEditMode, useLocalCharacter } from '../../context/EditModeContext';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 import { useAppContext } from '@/context/AppContext';
 import { getNestedProperty, handleChange } from '@/lib/editUtils';
@@ -66,6 +66,8 @@ function EditableFieldImplementation<T>({
     }
   }, [content]);
 
+  const { localCharacter, setLocalCharacter } = useLocalCharacter();
+
   const handleBlurRef = useRef<() => void>(() => {});
 
   handleBlurRef.current = () => {
@@ -95,7 +97,9 @@ function EditableFieldImplementation<T>({
           newContentStr,
           path,
           activeTab || undefined,
-          handleSelectCharacter
+          handleSelectCharacter,
+          localCharacter,
+          setLocalCharacter
         );
       }
     }

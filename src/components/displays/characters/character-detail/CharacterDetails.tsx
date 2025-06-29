@@ -6,26 +6,22 @@ import PositioningTagsSection from './PositioningTagsSection';
 import CharacterAttributesSection from './CharacterAttributesSection';
 import SkillCard from './SkillCard';
 import KnowledgeCardManager from './KnowledgeCardManager';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
-import { LocalCharacterProvider, useEditMode } from '@/context/EditModeContext';
+import { LocalCharacterProvider, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import SkillAllocationSection from './SkillAllocationSection';
 
 function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
   const [copyMessage, setCopyMessage] = useState('');
-  const [localCharacter, setLocalCharacter] = useState(character);
+  const { localCharacter } = useLocalCharacter();
   const factionId = localCharacter.faction.id as 'cat' | 'mouse';
 
   const positioningTags =
     factionId === 'cat'
       ? localCharacter.catPositioningTags || []
       : localCharacter.mousePositioningTags || [];
-
-  useEffect(() => {
-    setLocalCharacter(character);
-  }, [character]);
 
   return (
     <div className='space-y-8'>
@@ -114,7 +110,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
         <div className='md:w-2/3'>
           <SkillAllocationSection factionId={factionId} />
 
-          <KnowledgeCardManager factionId={factionId} character={localCharacter} />
+          <KnowledgeCardManager factionId={factionId} />
 
           <CharacterSection title='技能描述'>
             <div className='space-y-6'>

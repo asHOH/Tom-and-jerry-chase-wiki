@@ -1,30 +1,30 @@
-import React, { useState, useReducer, useEffect } from 'react';
-import { characters, Character } from '@/data'; // Import Character type
+import React, { useState, useEffect } from 'react';
+import { characters } from '@/data'; // Import Character type
 import { setNestedProperty, saveFactionsAndCharacters } from '@/lib/editUtils';
 import type { KnowledgeCardGroup } from '@/data/types';
 import KnowledgeCardSection from './KnowledgeCardSection';
+import { useLocalCharacter } from '@/context/EditModeContext';
 
 interface KnowledgeCardManagerProps {
   factionId: 'cat' | 'mouse';
-  character: Character;
 }
 
 // TODO: use local character to refactor
-export default function KnowledgeCardManager({ factionId, character }: KnowledgeCardManagerProps) {
+export default function KnowledgeCardManager({ factionId }: KnowledgeCardManagerProps) {
   const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<KnowledgeCardGroup[]>([]);
-  const [key, rerender] = useReducer((x) => x + 1, 0);
+  const { localCharacter: character, setLocalCharacter } = useLocalCharacter();
 
   useEffect(() => {
     if (character && character.knowledgeCardGroups) {
       setKnowledgeCardGroups(character.knowledgeCardGroups);
     }
-  }, [character, key]);
+  }, [character]);
 
   const handleSaveChanges = (updatedGroups: KnowledgeCardGroup[]) => {
     const path = `${character.id}.knowledgeCardGroups`;
     setNestedProperty(characters, path, updatedGroups);
+    setLocalCharacter({ ...character, knowledgeCardGroups: updatedGroups });
     saveFactionsAndCharacters();
-    rerender();
   };
 
   const handleCreateGroup = () => {

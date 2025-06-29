@@ -2,6 +2,12 @@ import { characters, FactionId, factions, Skill } from '@/data';
 import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { getSkillImageUrl } from './skillUtils';
+import { CharacterDetailsProps } from './types';
+import { Dispatch, SetStateAction } from 'react';
+import { produce } from 'immer';
+import { setAutoFreeze } from 'immer';
+
+setAutoFreeze(false);
 
 /**
  * Deeply assigns the values of source object to the target object.
@@ -68,8 +74,8 @@ export function setNestedProperty<T>(obj: Record<string, unknown>, path: string,
     if (typeof part !== 'string') {
       return;
     }
+    console.log({ part, current });
     if (!(part in current) || typeof current[part] !== 'object' || current[part] === null) {
-      console.log({ current, part });
       if (Number.isNaN(parseInt(part, 10))) current[part] = {};
       else current[part] = [];
     }
@@ -85,17 +91,20 @@ function handleCharacterIdChange(
   path: string,
   newId: string,
   activeTab: string | undefined,
-  handleSelectCharacter: (id: string) => void
+  handleSelectCharacter: (id: string) => void,
+  _localCharacter: CharacterDetailsProps['character'],
+  setLocalCharacter: Dispatch<CharacterDetailsProps['character']>
 ) {
   // FIXME: This code may lead to uncertain damage as other code do not handle the situation where the id changes
   // characters is not managed by react, so we need to trigger the update manually
-  // use of activeTab forces
+  // use localCharacter to force update
   const oldId = path.split('.')[0]!;
-  characters[newId] = characters[oldId!]!;
+  characters[newId] = { ...characters[oldId!]! };
   characters[newId].id = newId;
   characters[newId].imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   delete characters[oldId!];
   handleSelectCharacter(newId);
+  setLocalCharacter(characters[newId]);
   const faction = factions[activeTab!]?.characters.find(({ id }) => id == oldId);
   if (faction) {
     faction.id = faction.name = newId;
@@ -107,16 +116,25 @@ function handleCharacterIdChange(
   }
 }
 
-export function handleCharacterSkillIdChange(path: string, newName: string, activeTab: string) {
-  // TODO: force rerender using useReducer
-  console.log({ path, newId: newName });
+export function handleCharacterSkillIdChange(
+  path: string,
+  newName: string,
+  activeTab: string,
+  localCharacter: CharacterDetailsProps['character'],
+  setLocalCharacter: Dispatch<SetStateAction<CharacterDetailsProps['character']>>
+) {
   const skill = getNestedProperty(
     characters,
     [...path.split('.').slice(0, 3)].join('.')
   ) as unknown as Skill;
   skill.name = newName;
   skill.imageUrl = getSkillImageUrl(skill.id.split('-')[0]!, skill, activeTab as FactionId);
-  console.log([...path.split('.').slice(0, 3)], { skill });
+  setLocalCharacter({
+    ...localCharacter,
+    skills: localCharacter.skills.map((i: Skill, index) =>
+      index.toString() == path.split('.')[2] ? skill : i
+    ),
+  });
 }
 
 export function saveFactionsAndCharacters() {
@@ -144,7 +162,9 @@ export function handleChange<T>(
   newContentStr: string,
   path: string,
   activeTab: string | undefined,
-  handleSelectCharacter: (id: string) => void
+  handleSelectCharacter: (id: string) => void,
+  localCharacter: CharacterDetailsProps['character'],
+  setLocalCharacter: Dispatch<SetStateAction<CharacterDetailsProps['character']>>
 ) {
   let finalValue: T;
   if (typeof initialValue === 'number') {
@@ -152,14 +172,33 @@ export function handleChange<T>(
   } else {
     finalValue = newContentStr as T;
   }
+  console.log(localCharacter, path.split('.').slice(1).join('.'));
+  setLocalCharacter(
+    produce(localCharacter, (localCharacter) =>
+      setNestedProperty(localCharacter, path.split('.').slice(1).join('.'), finalValue)
+    )
+  );
   setNestedProperty(characters, path, finalValue);
   if (path && path.split('.')?.[1] == 'id') {
     if (activeTab) {
-      handleCharacterIdChange(path, newContentStr, activeTab, handleSelectCharacter);
+      handleCharacterIdChange(
+        path,
+        newContentStr,
+        activeTab,
+        handleSelectCharacter,
+        localCharacter,
+        setLocalCharacter
+      );
     }
   }
   if (path && path.split('.')?.[1] == 'skills' && path.split('.')?.[3] == 'name') {
-    handleCharacterSkillIdChange(path, newContentStr, activeTab!);
+    handleCharacterSkillIdChange(
+      path,
+      newContentStr,
+      activeTab!,
+      localCharacter,
+      setLocalCharacter
+    );
   }
   saveFactionsAndCharacters();
 }

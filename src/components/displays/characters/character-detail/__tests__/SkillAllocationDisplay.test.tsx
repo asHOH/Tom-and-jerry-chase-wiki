@@ -126,7 +126,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
 
       // This should throw an error due to invalid parallel options
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} />);
+        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
       }).toThrow('Invalid parallel options');
     });
 
@@ -142,7 +142,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
       ]);
 
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} />);
+        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
       }).toThrow('Invalid parallel options');
     });
 
@@ -158,7 +158,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
       ]);
 
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} />);
+        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
       }).toThrow('Invalid parallel options');
     });
   });
@@ -182,7 +182,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
       };
 
       expect(() => {
-        render(<SkillAllocationDisplay {...propsWithoutSkillImages} />);
+        render(<SkillAllocationDisplay {...propsWithoutSkillImages} index={0} />);
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();
@@ -205,7 +205,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
       };
 
       expect(() => {
-        render(<SkillAllocationDisplay {...propsWithoutSkillName} />);
+        render(<SkillAllocationDisplay {...propsWithoutSkillName} index={0} />);
       }).not.toThrow();
     });
 
@@ -218,7 +218,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
       };
 
       expect(() => {
-        render(<SkillAllocationDisplay {...propsWithEmptyPattern} />);
+        render(<SkillAllocationDisplay {...propsWithEmptyPattern} index={0} />);
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();
@@ -245,7 +245,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
       };
 
       expect(() => {
-        render(<SkillAllocationDisplay {...propsWithoutDescription} />);
+        render(<SkillAllocationDisplay {...propsWithoutDescription} index={0} />);
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();
@@ -265,7 +265,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
       ]);
 
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} />);
+        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();
@@ -289,7 +289,7 @@ describe('SkillAllocationDisplay Error Handling', () => {
       ]);
 
       expect(() => {
-        render(<SkillAllocationDisplay {...defaultProps} />);
+        render(<SkillAllocationDisplay {...defaultProps} index={0} />);
       }).not.toThrow();
 
       expect(screen.getByText('test-allocation')).toBeInTheDocument();

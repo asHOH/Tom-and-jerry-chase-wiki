@@ -8,8 +8,9 @@ import {
 } from '@/lib/skillAllocationUtils';
 import { getSkillLevelColors } from '@/lib/design-tokens';
 import Tooltip from '../../../ui/Tooltip';
-import { useEditMode } from '@/context/EditModeContext';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import EditableField from '@/components/ui/EditableField';
+import { useAppContext } from '@/context/AppContext';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }) => {
@@ -25,32 +26,16 @@ type ProcessedSkillLevel = ParsedSkillLevel & {
 
 interface SkillAllocationDisplayProps {
   allocation: SkillAllocation;
-  characterName: string;
   factionId: 'cat' | 'mouse';
-  characterSkills: Array<{
-    type: 'active' | 'weapon1' | 'weapon2' | 'passive';
-    name: string;
-    imageUrl?: string;
-  }>;
-  isDetailed: boolean;
-  onSavePattern: (allocationId: string, newPattern: string) => void;
-  onSaveName: (allocationId: string, newName: string) => void;
-  onSaveDescription: (allocationId: string, newDescription: string) => void;
-  onSaveAdditionalDescription: (allocationId: string, newAdditionalDescription: string) => void;
   onRemove: (allocationId: string) => void;
+  index: number;
 }
 
 const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   allocation,
-  characterName,
   factionId,
-  characterSkills,
-  isDetailed,
-  onSavePattern,
-  onSaveName,
-  onSaveDescription,
-  onSaveAdditionalDescription,
   onRemove,
+  index,
 }) => {
   const { isEditMode } = useEditMode();
   // Preprocess pattern to auto-parallel first two skills if needed
@@ -100,6 +85,10 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       return { ...level, currentLevel: skillLevels[level.skillType] };
     }
   });
+
+  const {
+    localCharacter: { skills: characterSkills, id: characterName },
+  } = useLocalCharacter();
 
   const skillTypeMap = {
     '0': characterSkills.find((s) => s.type === 'passive'),
@@ -288,6 +277,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     return null;
   };
 
+  const { isDetailedView: isDetailed } = useAppContext();
+
   const hasDescription = allocation.description?.trim();
   const hasAdditionalDescription = isDetailed && allocation.additionaldescription?.trim();
   const shouldShowDescriptionBlock = hasDescription || hasAdditionalDescription;
@@ -299,9 +290,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           {isEditMode ? (
             <EditableField
               tag='h4'
-              path={`skillAllocations.${allocation.id}.id`}
+              path={`${characterName}.skillAllocations.${index}.id`}
               initialValue={allocation.id}
-              onSave={(newName) => onSaveName(allocation.id, newName)}
               className='font-bold text-gray-800 text-lg leading-tight'
             />
           ) : (
@@ -310,9 +300,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           {isEditMode && (
             <EditableField
               tag='p'
-              path={`skillAllocations.${allocation.id}.pattern`}
+              path={`${characterName}.skillAllocations.${index}.pattern`}
               initialValue={allocation.pattern}
-              onSave={(newPattern) => onSavePattern(allocation.id, newPattern)}
               className='text-gray-500 text-sm'
             />
           )}
@@ -411,9 +400,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           {isEditMode ? (
             <EditableField
               tag='p'
-              path={`skillAllocations.${allocation.id}.description`}
+              path={`${characterName}.skillAllocations.${index}.description`}
               initialValue={allocation.description!}
-              onSave={(newDescription) => onSaveDescription(allocation.id, newDescription)}
               className='text-sm text-gray-700'
             />
           ) : (
@@ -426,11 +414,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           {hasAdditionalDescription && (
             <EditableField
               tag='p'
-              path={`skillAllocations.${allocation.id}.additionaldescription`}
+              path={`${characterName}.skillAllocations.${index}.additionaldescription`}
               initialValue={allocation.additionaldescription!}
-              onSave={(newAdditionalDescription) =>
-                onSaveAdditionalDescription(allocation.id, newAdditionalDescription)
-              }
               className='text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200'
             />
           )}
