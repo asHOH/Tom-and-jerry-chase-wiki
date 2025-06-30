@@ -144,6 +144,8 @@ export default function KnowledgeCardSection({
           {isEditMode && (
             <div className='flex flex-col gap-2'>
               <button
+                type='button'
+                aria-label='编辑知识卡组'
                 onClick={() => handleEditClick(index)}
                 className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
               >
@@ -163,6 +165,8 @@ export default function KnowledgeCardSection({
                 </svg>
               </button>
               <button
+                type='button'
+                aria-label='移除知识卡组'
                 onClick={() => onRemoveGroup(index)}
                 className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
               >
@@ -206,6 +210,8 @@ export default function KnowledgeCardSection({
           <CharacterSection title='推荐知识卡组'>
             <div className='card p-4 space-y-3'>
               <button
+                type='button'
+                aria-label='添加知识卡组'
                 onClick={onCreateGroup}
                 className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
               >
@@ -251,6 +257,8 @@ export default function KnowledgeCardSection({
           {isEditMode && (
             <div className='mt-4'>
               <button
+                type='button'
+                aria-label='添加知识卡组'
                 onClick={onCreateGroup}
                 className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
               >

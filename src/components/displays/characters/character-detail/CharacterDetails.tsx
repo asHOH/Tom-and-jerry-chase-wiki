@@ -157,6 +157,8 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                   .concat(
                     isSingleWeapon && isEditMode ? (
                       <button
+                        type='button'
+                        aria-label='添加第二武器'
                         onClick={addSecondWeapon}
                         className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
                         key='new-weapon-button'

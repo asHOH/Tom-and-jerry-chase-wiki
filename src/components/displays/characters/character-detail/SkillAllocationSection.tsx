@@ -79,6 +79,8 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
           {isEditMode && (
             <div className='mt-4'>
               <button
+                type='button'
+                aria-label='添加技能加点'
                 onClick={handleAddSkillAllocation}
                 className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
               >

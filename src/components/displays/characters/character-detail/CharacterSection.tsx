@@ -16,9 +16,10 @@ export default function CharacterSection({
   return (
     <div className='mb-6'>
       <button
+        type='button'
+        aria-label={isOpen ? `折叠${title}` : `展开${title}`}
         className='flex items-center justify-between w-full text-2xl font-bold px-2 py-3 mb-4 focus:outline-none cursor-pointer'
         onClick={toggleOpen}
-        aria-expanded={isOpen}
       >
         <h3>{title}</h3>
         <svg

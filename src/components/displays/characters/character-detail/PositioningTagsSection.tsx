@@ -153,6 +153,8 @@ export default function PositioningTagsSection({
               )}
               {isEditMode && (
                 <button
+                  type='button'
+                  aria-label='移除定位标签'
                   onClick={() => handleRemovePositioningTags(index)}
                   className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600'
                 >
@@ -194,6 +196,8 @@ export default function PositioningTagsSection({
         {isEditMode && (
           <div className='mt-4'>
             <button
+              type='button'
+              aria-label='添加定位标签'
               onClick={handleAddPositioningTags}
               className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
             >

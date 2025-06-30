@@ -374,6 +374,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         {isEditMode && (
           <div className='flex flex-col gap-2'>
             <button
+              type='button'
+              aria-label='移除技能加点'
               onClick={() => onRemove(allocation.id)}
               className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600'
             >
