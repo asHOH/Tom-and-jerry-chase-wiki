@@ -179,7 +179,7 @@ export default function PositioningTagsSection({
               tag='p'
               path={`${characterId}.${tagsKey}.${index}.description`}
               initialValue={tag.description}
-              className='text-sm text-gray-700 mb-1'
+              className='text-sm text-gray-700 mb-1 whitespace-pre-wrap'
               onSave={(newValue) => handleUpdate(index, newValue, 'description')}
             />
             {isDetailed && tag.additionalDescription && (
@@ -187,7 +187,7 @@ export default function PositioningTagsSection({
                 tag='p'
                 path={`${characterId}.${tagsKey}.${index}.additionalDescription`}
                 initialValue={tag.additionalDescription}
-                className={`text-sm text-gray-600 mt-2 pl-3 border-l-2 ${borderColor}`}
+                className={`text-sm text-gray-600 mt-2 pl-3 border-l-2 whitespace-pre-wrap ${borderColor}`}
                 onSave={(newValue) => handleUpdate(index, newValue, 'additionalDescription')}
               />
             )}

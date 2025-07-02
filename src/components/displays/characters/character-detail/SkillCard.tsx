@@ -280,7 +280,7 @@ export default function SkillCard({
 
           {descriptionText && (
             <div className='mt-3 px-2'>
-              <p className='text-gray-700 py-2'>
+              <p className='text-gray-700 py-2 whitespace-pre-wrap'>
                 <EditableField
                   initialValue={descriptionText}
                   path={`${characterId}.skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
@@ -299,7 +299,7 @@ export default function SkillCard({
               key={`${skill.id}-${level.level}`}
               className={`p-4 rounded ${getSkillLevelContainerColor(level.level)}`}
             >
-              <p className='px-2 py-1'>
+              <p className='px-2 py-1 whitespace-pre-wrap'>
                 <span
                   className='font-bold'
                   style={{ color: getSkillLevelColors(level.level).color }}

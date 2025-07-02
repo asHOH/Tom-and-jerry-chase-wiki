@@ -116,7 +116,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
               tag='p'
               path={`${localCharacter.id}.description`}
               initialValue={localCharacter.description}
-              className='text-gray-700 mt-2 py-1'
+              className='text-gray-700 mt-2 py-1 whitespace-pre-wrap'
             />
 
             <div className='mt-6 space-y-3'>

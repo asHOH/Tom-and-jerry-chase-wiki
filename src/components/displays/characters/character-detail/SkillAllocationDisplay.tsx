@@ -404,11 +404,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               tag='p'
               path={`${characterName}.skillAllocations.${index}.description`}
               initialValue={allocation.description!}
-              className='text-sm text-gray-700'
+              className='text-sm text-gray-700 whitespace-pre-wrap'
             />
           ) : (
             hasDescription && (
-              <p className='text-sm text-gray-700'>
+              <p className='text-sm text-gray-700 whitespace-pre-wrap'>
                 <TextWithItemKeyTooltips text={allocation.description!} isDetailed={isDetailed} />
               </p>
             )
@@ -418,7 +418,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               tag='p'
               path={`${characterName}.skillAllocations.${index}.additionaldescription`}
               initialValue={allocation.additionaldescription!}
-              className='text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200'
+              className='text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200 whitespace-pre-wrap'
             />
           )}
         </div>
