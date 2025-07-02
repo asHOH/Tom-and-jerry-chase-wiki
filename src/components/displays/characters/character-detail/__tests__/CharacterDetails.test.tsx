@@ -1,18 +1,18 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import CharacterDetails from './CharacterDetails';
+import CharacterDetails from '../CharacterDetails';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import type { CharacterWithFaction } from '@/lib/types';
 
 // Mock external dependencies
-jest.mock('../../../../lib/tooltipUtils', () => ({
+jest.mock('../../../../../lib/tooltipUtils', () => ({
   getTooltipContent: jest.fn((property: string) => `${property} tooltip`),
   getPositioningTagTooltipContent: jest.fn((tagName: string) => `${tagName} positioning tooltip`),
 }));
 
-jest.mock('../../../../lib/design-tokens', () => ({
+jest.mock('../../../../../lib/design-tokens', () => ({
   getPositioningTagColors: jest.fn(() => ({
     color: '#000000',
     backgroundColor: '#ffffff',
