@@ -15,6 +15,7 @@ import { saveFactionsAndCharacters } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { getSkillImageUrl } from '@/lib/skillUtils';
 import { produce } from 'immer';
+import json5 from 'json5';
 
 function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
@@ -85,23 +86,32 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
               {isEditMode && (
                 <button
                   onClick={async () => {
-                    const data = localStorage.getItem('characters');
-                    if (data) {
-                      try {
-                        await navigator.clipboard.writeText(
-                          JSON.stringify({
-                            [localCharacter.id]: JSON.parse(data)[localCharacter.id],
+                    try {
+                      await navigator.clipboard.writeText(
+                        localCharacter.id +
+                          ': ' +
+                          json5.stringify(localCharacter, {
+                            quote: '',
+                            space: 2,
+                            replacer(key, value) {
+                              if (
+                                key == 'imageUrl' ||
+                                key == 'faction' ||
+                                key == 'factionId' ||
+                                (key == 'id' && value != localCharacter.id)
+                              ) {
+                                return undefined;
+                              } else {
+                                return value;
+                              }
+                            },
                           })
-                        );
-                        setCopyMessage('已复制！');
-                        setTimeout(() => setCopyMessage(''), 2000);
-                      } catch (err) {
-                        console.error('Failed to copy: ', err);
-                        setCopyMessage('复制失败');
-                        setTimeout(() => setCopyMessage(''), 2000);
-                      }
-                    } else {
-                      setCopyMessage('无数据可导出');
+                      );
+                      setCopyMessage('已复制！');
+                      setTimeout(() => setCopyMessage(''), 2000);
+                    } catch (err) {
+                      console.error('Failed to copy: ', err);
+                      setCopyMessage('复制失败');
                       setTimeout(() => setCopyMessage(''), 2000);
                     }
                   }}
