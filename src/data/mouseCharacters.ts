@@ -712,6 +712,133 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ---------------------------------- 剑客莉莉 ---------------------------------- */
+  剑客莉莉: {
+    description:
+      '来自法国第一女剑客莉莉，她的剑招低调不失气势，华丽而不失潇洒，她是坏人们最害怕的敌人。',
+    maxHp: 124,
+    attackBoost: 20,
+    hpRecovery: 1,
+    moveSpeed: 645,
+    jumpHeight: 380,
+    cheesePushSpeed: 2.6,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '救援',
+        isMinor: false,
+        description: '二级被动无敌，配合剑气无伤救援。',
+        additionalDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。',
+      },
+      {
+        tagName: '干扰',
+        isMinor: true,
+        description: '风墙关键时刻可以救队友，剑气高减速。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '',
+        pattern: '02(0)111022',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-舍己', 'B-逃之夭夭', 'C-不屈', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
+    ],
+    skills: [
+      {
+        name: '御风剑舞',
+        type: 'active',
+        description: '创造一道风墙，短暂阻挡敌方。',
+        detailedDescription:
+          '创造一道风墙阻挡敌方，前摇0.5s。风墙大小500*500，持续3s。风墙对所有角色造成判定干扰，如猫的爪刀、拍子无法穿过风墙，风墙卡位时老鼠不能推奶酪。小跳风可将正在绑火箭的猫挤出火箭从而强行阻止猫绑火箭。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableAftercast: '无后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=10.6',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '屏障内的老鼠虚弱时间减少。',
+            detailedDescription: '在风墙中心半径850范围内老鼠虚弱时间减少5s。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: '风墙持续时间增加，屏障内猫咪将无法使用技能和道具。',
+            detailedDescription: '风墙持续时间增加至4.5s，屏障内猫咪将无法使用技能和道具。',
+            cooldown: 20,
+          },
+        ],
+        cancelableSkill: '可被打断',
+      },
+      {
+        name: '幻影剑气',
+        type: 'weapon1',
+        description:
+          '挥出一道剑气。剑气击中敌方将造成伤害和减速；击中友方将给予移速、救援及跳跃高度提升，且其在此期间可用交互键瞬移至附近幻影处。剑气击中平台则形成幻影，再次点击技能按钮可瞬移至幻影处。',
+        detailedDescription:
+          '挥出一道剑气，前摇0.45s，飞行速度1750，持续5s。剑气击中角色可反弹一次，再次击中角色剑气消失。剑气击中敌方将造成10伤害（可继承状态），并降低其40%移速、跳跃高度，持续5s；击中友方将提升其25%移速、救援速度及跳跃高度，持续5s，且其在此期间可用交互键瞬移至附近幻影处。剑气击中平台则形成幻影，再次点击技能按钮可瞬移至幻影处。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '可被打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 10,
+            detailedDescription: '减少CD至10s。',
+          },
+          {
+            level: 3,
+            description: '被剑气击中的友方攻击提升。',
+            detailedDescription: '被剑气击中的友方攻击提升50点，持续5s。',
+            cooldown: 10,
+          },
+        ],
+      },
+      {
+        name: '攻无不克',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: 'Hp满时，获得减伤。',
+            detailedDescription: '当Hp高于[Hp上限的99%](122)时，获得40%减伤。',
+          },
+          {
+            level: 2,
+            description: '当道具命中敌方时，获得4秒无敌。（CD：45s）',
+          },
+          {
+            level: 3,
+            description:
+              '当道具命中困在风墙内或被剑气打中的敌方时，额外造成眩晕效果（可使手中的老鼠掉落），敌方在45秒内不会重复受到此效果。',
+            detailedDescription:
+              '当道具命中困在风墙内或被剑气打中的敌方时，额外造成2.5秒眩晕效果（可使手中的老鼠掉落），敌方在45秒内不会重复受到此效果。',
+          },
+        ],
+      },
+    ],
+  },
+
   罗宾汉泰菲: {
     description:
       '来自12世纪英国的侠盗罗宾汉泰菲，他身形灵敏，擅长利用草丛隐蔽自己，是罗宾汉杰瑞的好帮手', // 角色描述
