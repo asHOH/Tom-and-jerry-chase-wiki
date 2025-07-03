@@ -11,11 +11,10 @@ import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
 import { LocalCharacterProvider, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import SkillAllocationSection from './SkillAllocationSection';
-import { saveFactionsAndCharacters } from '@/lib/editUtils';
+import { generateTypescriptCodeFromCharacter, saveFactionsAndCharacters } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { getSkillImageUrl } from '@/lib/skillUtils';
 import { produce } from 'immer';
-import json5 from 'json5';
 
 function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
@@ -87,26 +86,20 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                 <button
                   onClick={async () => {
                     try {
-                      await navigator.clipboard.writeText(
-                        localCharacter.id +
-                          ': ' +
-                          json5.stringify(localCharacter, {
-                            quote: '',
-                            space: 2,
-                            replacer(key, value) {
-                              if (
-                                key == 'imageUrl' ||
-                                key == 'faction' ||
-                                key == 'factionId' ||
-                                (key == 'id' && value != localCharacter.id)
-                              ) {
-                                return undefined;
-                              } else {
-                                return value;
-                              }
-                            },
-                          })
-                      );
+                      const code = generateTypescriptCodeFromCharacter(localCharacter);
+                      await navigator.clipboard.writeText(code);
+                      const element = document.createElement('a');
+                      const fileName = `${localCharacter.id}.txt`;
+                      const url = URL.createObjectURL(new File([code], fileName));
+                      element.href = url;
+                      element.download = fileName;
+                      element.style.cssText = 'visibility: hidden;';
+                      document.body.appendChild(element);
+                      element.click();
+                      setTimeout(() => {
+                        URL.revokeObjectURL(url);
+                        element.remove();
+                      }, 0);
                       setCopyMessage('已复制！');
                       setTimeout(() => setCopyMessage(''), 2000);
                     } catch (err) {
