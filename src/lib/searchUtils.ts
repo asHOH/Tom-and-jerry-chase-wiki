@@ -26,11 +26,11 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
   }
 
   // Helper function to find the first matching string and return its sentence context
-  const findMatchContext = (texts: (string | undefined)[]): string | undefined => {
+  const findMatchContext = async (texts: (string | undefined)[]): Promise<string | undefined> => {
     for (const text of texts) {
       if (text) {
         const lowerCaseText = text.toLowerCase();
-        const pinyinText = convertToPinyin(text);
+        const pinyinText = await convertToPinyin(text);
 
         // Check for direct match
         if (lowerCaseText.includes(lowerCaseQuery)) {
@@ -75,7 +75,7 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     let isPinyinMatch: boolean = false;
 
     const characterIdLowerCase = character.id.toLowerCase();
-    const characterIdPinyin = convertToPinyin(character.id);
+    const characterIdPinyin = await convertToPinyin(character.id);
 
     // Check character ID (direct match)
     if (characterIdLowerCase.includes(lowerCaseQuery)) {
@@ -93,15 +93,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     else if (character.skills) {
       for (const skill of character.skills) {
         const skillNameLowerCase = skill.name.toLowerCase();
-        const skillNamePinyin = convertToPinyin(skill.name);
+        const skillNamePinyin = await convertToPinyin(skill.name);
 
         if (skillNameLowerCase.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([skill.name]);
+          matchContext = await findMatchContext([skill.name]);
           priority = 0.9;
           isPinyinMatch = false;
           break;
         } else if (skillNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([skill.name]);
+          matchContext = await findMatchContext([skill.name]);
           priority = 0.85;
           isPinyinMatch = true;
           break;
@@ -111,7 +111,7 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     // Check character description
     if (!matchContext) {
       const descriptionLowerCase = character.description.toLowerCase();
-      const descriptionPinyin = convertToPinyin(character.description);
+      const descriptionPinyin = await convertToPinyin(character.description);
 
       if (descriptionLowerCase.includes(lowerCaseQuery)) {
         matchContext = character.description;
@@ -127,15 +127,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     if (!matchContext && character.catPositioningTags) {
       for (const tag of character.catPositioningTags) {
         const tagNameLowerCase = tag.tagName.toLowerCase();
-        const tagNamePinyin = convertToPinyin(tag.tagName);
+        const tagNamePinyin = await convertToPinyin(tag.tagName);
 
         if (tagNameLowerCase.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([tag.tagName]);
+          matchContext = await findMatchContext([tag.tagName]);
           priority = 0.7;
           isPinyinMatch = false;
           break;
         } else if (tagNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([tag.tagName]);
+          matchContext = await findMatchContext([tag.tagName]);
           priority = 0.65;
           isPinyinMatch = true;
           break;
@@ -145,15 +145,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     if (!matchContext && character.mousePositioningTags) {
       for (const tag of character.mousePositioningTags) {
         const tagNameLowerCase = tag.tagName.toLowerCase();
-        const tagNamePinyin = convertToPinyin(tag.tagName);
+        const tagNamePinyin = await convertToPinyin(tag.tagName);
 
         if (tagNameLowerCase.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([tag.tagName]);
+          matchContext = await findMatchContext([tag.tagName]);
           priority = 0.7;
           isPinyinMatch = false;
           break;
         } else if (tagNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([tag.tagName]);
+          matchContext = await findMatchContext([tag.tagName]);
           priority = 0.65;
           isPinyinMatch = true;
           break;
@@ -164,15 +164,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     if (!matchContext && character.catPositioningTags) {
       for (const tag of character.catPositioningTags) {
         const tagDescriptionLowerCase = tag.description.toLowerCase();
-        const tagDescriptionPinyin = convertToPinyin(tag.description);
+        const tagDescriptionPinyin = await convertToPinyin(tag.description);
 
         if (tagDescriptionLowerCase.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([tag.description]);
+          matchContext = await findMatchContext([tag.description]);
           priority = 0.6;
           isPinyinMatch = false;
           break;
         } else if (tagDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([tag.description]);
+          matchContext = await findMatchContext([tag.description]);
           priority = 0.55;
           isPinyinMatch = true;
           break;
@@ -182,15 +182,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     if (!matchContext && character.mousePositioningTags) {
       for (const tag of character.mousePositioningTags) {
         const tagDescriptionLowerCase = tag.description.toLowerCase();
-        const tagDescriptionPinyin = convertToPinyin(tag.description);
+        const tagDescriptionPinyin = await convertToPinyin(tag.description);
 
         if (tagDescriptionLowerCase.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([tag.description]);
+          matchContext = await findMatchContext([tag.description]);
           priority = 0.6;
           isPinyinMatch = false;
           break;
         } else if (tagDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([tag.description]);
+          matchContext = await findMatchContext([tag.description]);
           priority = 0.55;
           isPinyinMatch = true;
           break;
@@ -201,15 +201,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     if (!matchContext && character.catPositioningTags) {
       for (const tag of character.catPositioningTags) {
         const additionalDescriptionLowerCase = tag.additionalDescription?.toLowerCase();
-        const additionalDescriptionPinyin = convertToPinyin(tag.additionalDescription);
+        const additionalDescriptionPinyin = await convertToPinyin(tag.additionalDescription);
 
         if (additionalDescriptionLowerCase?.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([tag.additionalDescription]);
+          matchContext = await findMatchContext([tag.additionalDescription]);
           priority = 0.5;
           isPinyinMatch = false;
           break;
         } else if (additionalDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([tag.additionalDescription]);
+          matchContext = await findMatchContext([tag.additionalDescription]);
           priority = 0.45;
           isPinyinMatch = true;
           break;
@@ -219,15 +219,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     if (!matchContext && character.mousePositioningTags) {
       for (const tag of character.mousePositioningTags) {
         const additionalDescriptionLowerCase = tag.additionalDescription?.toLowerCase();
-        const additionalDescriptionPinyin = convertToPinyin(tag.additionalDescription);
+        const additionalDescriptionPinyin = await convertToPinyin(tag.additionalDescription);
 
         if (additionalDescriptionLowerCase?.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([tag.additionalDescription]);
+          matchContext = await findMatchContext([tag.additionalDescription]);
           priority = 0.5;
           isPinyinMatch = false;
           break;
         } else if (additionalDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([tag.additionalDescription]);
+          matchContext = await findMatchContext([tag.additionalDescription]);
           priority = 0.45;
           isPinyinMatch = true;
           break;
@@ -238,15 +238,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     if (!matchContext && character.skills) {
       for (const skill of character.skills) {
         const skillDescriptionLowerCase = skill.description?.toLowerCase();
-        const skillDescriptionPinyin = convertToPinyin(skill.description);
+        const skillDescriptionPinyin = await convertToPinyin(skill.description);
 
         if (skill.description && skillDescriptionLowerCase?.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([skill.description]);
+          matchContext = await findMatchContext([skill.description]);
           priority = 0.4;
           isPinyinMatch = false;
           break;
         } else if (skillDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([skill.description]);
+          matchContext = await findMatchContext([skill.description]);
           priority = 0.35;
           isPinyinMatch = true;
           break;
@@ -257,15 +257,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     if (!matchContext && character.skills) {
       for (const skill of character.skills) {
         const detailedDescriptionLowerCase = skill.detailedDescription?.toLowerCase();
-        const detailedDescriptionPinyin = convertToPinyin(skill.detailedDescription);
+        const detailedDescriptionPinyin = await convertToPinyin(skill.detailedDescription);
 
         if (skill.detailedDescription && detailedDescriptionLowerCase?.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([skill.detailedDescription]);
+          matchContext = await findMatchContext([skill.detailedDescription]);
           priority = 0.3;
           isPinyinMatch = false;
           break;
         } else if (detailedDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([skill.detailedDescription]);
+          matchContext = await findMatchContext([skill.detailedDescription]);
           priority = 0.25;
           isPinyinMatch = true;
           break;
@@ -293,7 +293,7 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     let isPinyinMatch: boolean = false;
 
     const cardIdLowerCase = card.id.toLowerCase();
-    const cardIdPinyin = convertToPinyin(card.id);
+    const cardIdPinyin = await convertToPinyin(card.id);
 
     // Check card ID (direct match)
     if (cardIdLowerCase.includes(lowerCaseQuery)) {
@@ -312,7 +312,10 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
       matchContext = card.description;
       priority = 0.18;
       isPinyinMatch = false;
-    } else if (convertToPinyin(card.description).includes(pinyinQuery) && pinyinQuery.length > 0) {
+    } else if (
+      (await convertToPinyin(card.description)).includes(pinyinQuery) &&
+      pinyinQuery.length > 0
+    ) {
       matchContext = card.description;
       priority = 0.17;
       isPinyinMatch = true;
@@ -323,7 +326,7 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
       priority = 0.16;
       isPinyinMatch = false;
     } else if (
-      convertToPinyin(card.detailedDescription).includes(pinyinQuery) &&
+      (await convertToPinyin(card.detailedDescription)).includes(pinyinQuery) &&
       pinyinQuery.length > 0
     ) {
       matchContext = card.detailedDescription;
@@ -334,15 +337,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     else if (card.levels) {
       for (const level of card.levels) {
         const levelDescriptionLowerCase = level.description.toLowerCase();
-        const levelDescriptionPinyin = convertToPinyin(level.description);
+        const levelDescriptionPinyin = await convertToPinyin(level.description);
 
         if (levelDescriptionLowerCase.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([level.description]);
+          matchContext = await findMatchContext([level.description]);
           priority = 0.14;
           isPinyinMatch = false;
           break;
         } else if (levelDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([level.description]);
+          matchContext = await findMatchContext([level.description]);
           priority = 0.13;
           isPinyinMatch = true;
           break;
@@ -353,15 +356,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     if (!matchContext && card.levels) {
       for (const level of card.levels) {
         const levelDetailedDescriptionLowerCase = level.detailedDescription?.toLowerCase();
-        const levelDetailedDescriptionPinyin = convertToPinyin(level.detailedDescription);
+        const levelDetailedDescriptionPinyin = await convertToPinyin(level.detailedDescription);
 
         if (levelDetailedDescriptionLowerCase?.includes(lowerCaseQuery)) {
-          matchContext = findMatchContext([level.detailedDescription]);
+          matchContext = await findMatchContext([level.detailedDescription]);
           priority = 0.12;
           isPinyinMatch = false;
           break;
         } else if (levelDetailedDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = findMatchContext([level.detailedDescription]);
+          matchContext = await findMatchContext([level.detailedDescription]);
           priority = 0.11;
           isPinyinMatch = true;
           break;
