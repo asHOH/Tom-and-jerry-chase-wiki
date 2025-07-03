@@ -6,6 +6,11 @@ import { useEditMode } from '@/context/EditModeContext';
 export const EditModeIndicator: React.FC = () => {
   const { isEditMode } = useEditMode();
   const [isHidden, setIsHidden] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Apply body class when in edit mode
   useEffect(() => {
@@ -25,8 +30,7 @@ export const EditModeIndicator: React.FC = () => {
     }
   }, [isEditMode]);
 
-  // Don't render anything if not in edit mode or if hidden
-  if (!isEditMode || isHidden) return null;
+  if (!isEditMode || isHidden || !mounted) return null;
 
   return (
     <div className='fixed left-0 right-0 bg-amber-600 text-white px-4 py-2 text-sm font-medium z-[9999] edit-mode-banner'>
