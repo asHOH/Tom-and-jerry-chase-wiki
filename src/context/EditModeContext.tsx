@@ -78,7 +78,9 @@ export const LocalCharacterProvider = ({
 
   useEffect(() => {
     // avoid changing local character lead to the change of characters
-    setLocalCharacter(structuredClone(character));
+    if (isEditMode) {
+      setLocalCharacter(JSON.parse(JSON.stringify(character)));
+    }
   }, [character, isEditMode]);
 
   return (

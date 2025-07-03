@@ -11,7 +11,7 @@ import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
 import { LocalCharacterProvider, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import SkillAllocationSection from './SkillAllocationSection';
-import { saveFactionsAndCharacters } from '@/lib/editUtils';
+import { generateTypescriptCodeFromCharacter, saveFactionsAndCharacters } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { getSkillImageUrl } from '@/lib/skillUtils';
 import { produce } from 'immer';
@@ -85,23 +85,26 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
               {isEditMode && (
                 <button
                   onClick={async () => {
-                    const data = localStorage.getItem('characters');
-                    if (data) {
-                      try {
-                        await navigator.clipboard.writeText(
-                          JSON.stringify({
-                            [localCharacter.id]: JSON.parse(data)[localCharacter.id],
-                          })
-                        );
-                        setCopyMessage('已复制！');
-                        setTimeout(() => setCopyMessage(''), 2000);
-                      } catch (err) {
-                        console.error('Failed to copy: ', err);
-                        setCopyMessage('复制失败');
-                        setTimeout(() => setCopyMessage(''), 2000);
-                      }
-                    } else {
-                      setCopyMessage('无数据可导出');
+                    try {
+                      const code = generateTypescriptCodeFromCharacter(localCharacter);
+                      await navigator.clipboard.writeText(code);
+                      const element = document.createElement('a');
+                      const fileName = `${localCharacter.id}.txt`;
+                      const url = URL.createObjectURL(new File([code], fileName));
+                      element.href = url;
+                      element.download = fileName;
+                      element.style.cssText = 'visibility: hidden;';
+                      document.body.appendChild(element);
+                      element.click();
+                      setTimeout(() => {
+                        URL.revokeObjectURL(url);
+                        element.remove();
+                      }, 0);
+                      setCopyMessage('已复制！');
+                      setTimeout(() => setCopyMessage(''), 2000);
+                    } catch (err) {
+                      console.error('Failed to copy: ', err);
+                      setCopyMessage('复制失败');
                       setTimeout(() => setCopyMessage(''), 2000);
                     }
                   }}

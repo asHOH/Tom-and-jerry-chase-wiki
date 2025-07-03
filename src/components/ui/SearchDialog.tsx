@@ -225,7 +225,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                       alt={result.id}
                       width={32}
                       height={32}
-                      className='w-8 h-8 object-cover mr-3'
+                      className='object-cover mr-3'
                     />
                   )}
                   <span className='text-gray-900 dark:text-white whitespace-nowrap'>

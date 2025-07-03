@@ -6,6 +6,7 @@ import { CharacterDetailsProps } from './types';
 import { Dispatch, SetStateAction } from 'react';
 import { produce } from 'immer';
 import { setAutoFreeze } from 'immer';
+import json5 from 'json5';
 
 setAutoFreeze(false);
 
@@ -103,7 +104,7 @@ function handleCharacterIdChange(
   characters[newId].imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   delete characters[oldId!];
   handleSelectCharacter(newId);
-  setLocalCharacter(characters[newId]);
+  setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
   const faction = factions[activeTab!]?.characters.find(({ id }) => id == oldId);
   if (faction) {
     faction.id = faction.name = newId;
@@ -200,4 +201,28 @@ export function handleChange<T>(
     );
   }
   saveFactionsAndCharacters();
+}
+
+export function generateTypescriptCodeFromCharacter(character: CharacterDetailsProps['character']) {
+  return (
+    `/* ----------------------------------- ${character.id} ----------------------------------- */\n` +
+    character.id +
+    ': ' +
+    json5.stringify(character, {
+      quote: '',
+      space: 2,
+      replacer(key, value) {
+        if (
+          key == 'imageUrl' ||
+          key == 'faction' ||
+          key == 'factionId' ||
+          (key == 'id' && value != character.id)
+        ) {
+          return undefined;
+        } else {
+          return value;
+        }
+      },
+    })
+  );
 }

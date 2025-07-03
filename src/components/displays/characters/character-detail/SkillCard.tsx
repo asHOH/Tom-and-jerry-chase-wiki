@@ -76,7 +76,7 @@ export default function SkillCard({
         ]);
       }
     }
-    if (isEditMode) {
+    if (isEditMode && skill.type != 'passive') {
       properties.push(
         <span
           className='cursor-pointer'
