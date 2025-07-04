@@ -536,6 +536,167 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  国王杰瑞: {
+    description:
+      '国王杰瑞是玩具国的王，他胸怀天下，对自己的子民良善，但对破坏国家安定的野猫毫不留情。',
+    maxHp: 99,
+    attackBoost: 10,
+    hpRecovery: 1.67,
+    moveSpeed: 600,
+    jumpHeight: 380,
+    cheesePushSpeed: 3.75,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '救援',
+        isMinor: false,
+        description: '主动技能是救援的强力手段。',
+        additionalDescription:
+          '护盾瞬发、权杖无敌、战旗秒救，开局就拥有一定救援能力，成型后更难被拦截。',
+      },
+      {
+        tagName: '辅助',
+        isMinor: false,
+        description: '一武团队无敌，二武多种团队增益',
+        additionalDescription:
+          '权杖可以给范围内的队友施加群体无敌，是接应与抗伤的好手段；战旗集视野、输出、破局、自保等多种强效团队增益于一体，拥有极高的上限，是当之无愧的第一辅助。',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '国王权杖',
+        pattern: '121212000',
+        weaponType: 'weapon1',
+        description: '如果作为副救或是需要补推，可以四级先点被动。',
+        additionaldescription: '',
+      },
+      {
+        id: '国王战旗',
+        pattern: '313131000',
+        weaponType: 'weapon2',
+        description: '情况紧急时，可以六级先点三级小盾，但尽量保证墙缝期能出三级战旗。',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
+      ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+    ],
+    skills: [
+      {
+        name: '威严光盾',
+        type: 'active',
+        description: '',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: '无后摇',
+        // videoUrl: 'https://b23.tv/HbGlOytt=5',
+        skillLevels: [
+          {
+            level: 1,
+            description: '短暂获得一层护盾。',
+            detailedDescription: '获得一层护盾，持续4.9秒。',
+            cooldown: 30,
+          },
+          {
+            level: 2,
+            description: '护盾持续期间获得加速；减少CD。',
+            detailedDescription: '护盾持续期间获得18.5%的加速；减少CD。',
+            cooldown: 25,
+          },
+          {
+            level: 3,
+            description: '改为获得两层护盾；减少CD。',
+            cooldown: 18,
+          },
+        ],
+      },
+      {
+        name: '国王权杖',
+        type: 'weapon1',
+        description: '给予附近友方短暂的无敌。',
+        detailedDescription: '给予附近友方短暂的无敌。前摇0.9秒，后摇1秒。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可被打断',
+        cancelableAftercast: '不可取消后摇',
+        // videoUrl: 'https://b23.tv/HbGlOytt=82',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '给予半径480范围内的友方2.5秒的无敌。',
+            cooldown: 45,
+          },
+          {
+            level: 2,
+            description: '扩大技能生效范围。',
+            detailedDescription: '技能生效半径扩大到[960](即扩大一倍)。',
+            cooldown: 45,
+          },
+          {
+            level: 3,
+            description: '增加无敌的持续时间。',
+            detailedDescription: '无敌的持续时间增加到3.5秒。',
+            cooldown: 45,
+          },
+        ],
+      },
+      {
+        name: '国王战旗',
+        type: 'weapon2',
+        description:
+          '召唤战旗，为碰触的友方提供增益。战旗被碰触若干次后将获得强化。\n攻击战旗：提高攻击力（强化：同时获得墙缝增伤、免疫受伤）。\n救援战旗：大幅提高救援速度。（强化：[获得瞬息救援能力](碰触火箭直接救援成功)）。\n防御战旗：解除虚弱；Hp较低时将缓慢恢复Hp并加速（强化：直接获得1层护盾）。\n感知战旗：对猫隐藏自己的小地图位置（强化：额外显示猫的位置）。\n灵巧战旗：提高跳跃高度（强化：获得2段跳）。',
+        detailedDescription:
+          '在身前略高于地面的位置召唤战旗，为碰触的友方老鼠提供增益，前摇0.9秒，后摇0.5秒，战旗存在15秒。战旗被碰触若干次后获得强化，提供强化版增益。战旗具有重力，无碰撞体积，会因受力而移动。同一时间只能存在一种战旗，获得战旗效果后的15秒内无法再次获得同等级的效果。机械鼠不会继承战旗的增益效果。\n攻击战旗：增加35点攻击力，持续10秒（强化：期间额外增加2点墙缝增伤，免疫受伤）。\n救援战旗：提高100%的救援速度，持续5秒。\n救援战旗（强化：[获得瞬息救援能力](碰触火箭直接救援成功)，持续5秒。以该方式救下队友不计入赛后的数据统计。\n防御战旗：解除虚弱；Hp低于30%时，以7.5/s的速度恢复Hp，加速25%，并解除反向、失明、受伤等异常状态，持续2秒（强化：直接获得一层护盾，持续4秒。）\n感知战旗：对猫隐藏自己的小地图位置，持续10秒（强化：额外显示5秒猫的位置）。\n灵巧战旗：提高50%的跳跃高度，持续5秒（强化：期间额外获得二段跳）。', // 感知战旗可以感知所有敌方单位
+        canMoveWhileUsing: true,
+        canUseInAir: false,
+        cancelableSkill: '可被打断',
+        cancelableAftercast: '不可取消后摇',
+        // videoUrl: 'https://www.bilibili.com/video/HbGlOyt',
+        skillLevels: [
+          {
+            level: 1,
+            description: '战旗被碰触两次后获得强化。',
+            cooldown: 18,
+          },
+          {
+            level: 2,
+            description: '强化所需的碰触次数减少一次；减少CD。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description: '战旗被召唤时即为强化状态。',
+            cooldown: 15,
+          },
+        ],
+      },
+      {
+        name: '闪电救援',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '如果存活的队友都处于健康状态，则自己的推速提升。',
+            detailedDescription: '如果存活的队友都处于健康状态，则自己的推速提升30%。',
+          },
+          {
+            level: 2,
+            description: '提升救援速度。',
+            detailedDescription: '救援速度提升40%。',
+          },
+          {
+            level: 3,
+            description: '从火箭上将队友救下后，彼此移速短暂提升。',
+            detailedDescription: '从火箭上将队友救下后，彼此移速各提高15%，持续3秒。',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ----------------------------------- 泰菲 ----------------------------------- */
   泰菲: {
     description: '杰瑞的侄子，总将自己吃得圆滚滚的',
