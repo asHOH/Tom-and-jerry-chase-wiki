@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
@@ -27,6 +27,27 @@ export default function SkillCard({
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const { localCharacter, setLocalCharacter } = useLocalCharacter();
+  const [showVideoAddress, setShowVideoAddress] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile layout (below md breakpoint: 768px)
+  useEffect(() => {
+    const checkMobile = () => {
+      if (typeof window !== 'undefined') {
+        setIsMobile(window.innerWidth < 768);
+      }
+    };
+
+    checkMobile();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', checkMobile);
+      return () => window.removeEventListener('resize', checkMobile);
+    }
+
+    return () => {}; // Empty cleanup function for SSR
+  }, []);
+
   const handleSaveChanges = (updatedSkill: Skill) => {
     setNestedProperty(characters, `${localCharacter.id}.skills.${skillIndex}`, updatedSkill);
     saveFactionsAndCharacters();
@@ -211,8 +232,6 @@ export default function SkillCard({
   const properties = getSkillProperties();
   const hasProperties = properties.length > 0;
 
-  const [showVideoAddress, setShowVideoAddress] = useState(false);
-
   return (
     <div className='card p-6'>
       <div className='flex justify-between items-start'>
@@ -334,30 +353,42 @@ export default function SkillCard({
 
       <div className='mt-6'>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-          {skill.skillLevels.map((level: SkillLevel) => (
-            <div
-              key={`${skill.id}-${level.level}`}
-              className={`p-4 rounded ${getSkillLevelContainerColor(level.level)}`}
-            >
-              <p className='px-2 py-1 whitespace-pre-wrap'>
-                <span
-                  className='font-bold'
-                  style={{ color: getSkillLevelColors(level.level).color }}
-                >
-                  Lv. {level.level}:
-                </span>{' '}
-                <EditableField
-                  initialValue={
-                    isDetailed && level.detailedDescription?.trim()
-                      ? level.detailedDescription
-                      : level.description
-                  }
-                  tag='span'
-                  path={`${characterId}.skills.${skillIndex}.skillLevels.${level.level - 1}.${isDetailed ? 'detailedDescription' : 'description'}`}
-                />
-              </p>
-            </div>
-          ))}
+          {skill.skillLevels
+            .filter((level: SkillLevel) => {
+              // Hide Lv.1 if: 1) mobile layout, 2) edit mode off, 3) description is empty for current detailed mode
+              if (level.level === 1 && isMobile && !isEditMode) {
+                const levelDescription =
+                  isDetailed && level.detailedDescription?.trim()
+                    ? level.detailedDescription
+                    : level.description;
+                return levelDescription?.trim() !== '';
+              }
+              return true;
+            })
+            .map((level: SkillLevel) => (
+              <div
+                key={`${skill.id}-${level.level}`}
+                className={`p-4 rounded ${getSkillLevelContainerColor(level.level)}`}
+              >
+                <p className='px-2 py-1 whitespace-pre-wrap'>
+                  <span
+                    className='font-bold'
+                    style={{ color: getSkillLevelColors(level.level).color }}
+                  >
+                    Lv. {level.level}:
+                  </span>{' '}
+                  <EditableField
+                    initialValue={
+                      isDetailed && level.detailedDescription?.trim()
+                        ? level.detailedDescription
+                        : level.description
+                    }
+                    tag='span'
+                    path={`${characterId}.skills.${skillIndex}.skillLevels.${level.level - 1}.${isDetailed ? 'detailedDescription' : 'description'}`}
+                  />
+                </p>
+              </div>
+            ))}
         </div>
       </div>
     </div>
