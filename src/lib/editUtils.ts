@@ -215,7 +215,7 @@ export function generateTypescriptCodeFromCharacter(character: CharacterWithFact
           key == 'imageUrl' ||
           key == 'faction' ||
           key == 'factionId' ||
-          (key == 'id' && value != character.id)
+          (key == 'id' && value != character.id && value.includes(character.id))
         ) {
           return undefined;
         } else {
