@@ -24,12 +24,12 @@ interface PositioningTagsSectionProps {
 function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
   const { localCharacter, setLocalCharacter } = useLocalCharacter();
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
-  function getTags(char: CharacterDetailsProps['character']) {
+  function getTags(char: CharacterWithFaction) {
     return char.mousePositioningTags ?? char.catPositioningTags ?? [];
   }
   const updateTags = useCallback(
     (
-      prevChar: CharacterDetailsProps['character'],
+      prevChar: CharacterWithFaction,
       updatedTags: {
         tagName: string;
         isMinor: boolean;

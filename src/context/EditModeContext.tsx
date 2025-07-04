@@ -1,5 +1,5 @@
 import { loadFactionsAndCharacters, saveFactionsAndCharacters } from '@/lib/editUtils';
-import { CharacterDetailsProps } from '@/lib/types';
+import { CharacterWithFaction } from '@/lib/types';
 import React, {
   createContext,
   useContext,
@@ -15,8 +15,8 @@ interface EditModeContextType {
 }
 
 interface LocalCharacterContextType {
-  localCharacter: CharacterDetailsProps['character'];
-  setLocalCharacter: React.Dispatch<SetStateAction<CharacterDetailsProps['character']>>;
+  localCharacter: CharacterWithFaction;
+  setLocalCharacter: React.Dispatch<SetStateAction<CharacterWithFaction>>;
 }
 
 const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
@@ -68,11 +68,10 @@ export const LocalCharacterProvider = ({
   character,
   children,
 }: {
-  character: CharacterDetailsProps['character'];
+  character: CharacterWithFaction;
   children: ReactNode;
 }) => {
-  const [localCharacter, setLocalCharacter] =
-    useState<CharacterDetailsProps['character']>(character);
+  const [localCharacter, setLocalCharacter] = useState<CharacterWithFaction>(character);
 
   const { isEditMode } = useEditMode();
 

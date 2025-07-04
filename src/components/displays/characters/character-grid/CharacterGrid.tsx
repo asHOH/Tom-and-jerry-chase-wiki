@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import CharacterDisplay from './CharacterDisplay';
+import CharacterImport from './CharacterImport';
 import { FactionCharactersProps } from '@/lib/types';
 import { PositioningTagName } from '@/data';
 import { useFilterState } from '@/lib/filterUtils';
@@ -108,6 +109,9 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
             />
           </div>
         ))}
+        <div className='transform transition-transform hover:-translate-y-1'>
+          <CharacterImport />
+        </div>
       </div>
     </div>
   );

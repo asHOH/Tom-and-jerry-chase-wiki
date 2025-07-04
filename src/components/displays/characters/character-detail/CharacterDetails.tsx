@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { CharacterDetailsProps } from '@/lib/types';
+import { CharacterDetailsProps, CharacterWithFaction } from '@/lib/types';
 import { Skill } from '@/data/types';
 import PositioningTagsSection from './PositioningTagsSection';
 import CharacterAttributesSection from './CharacterAttributesSection';
@@ -30,7 +30,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
       imageUrl: getSkillImageUrl(localCharacter.id, firstWeapon, factionId),
       id: firstWeapon.id.slice(0, -1) + '2',
     };
-    function modifySkillObject(character: CharacterDetailsProps['character']) {
+    function modifySkillObject(character: CharacterWithFaction) {
       character.skills = [...character.skills, secondWeapon];
     }
     modifySkillObject(characters[localCharacter.id]!);

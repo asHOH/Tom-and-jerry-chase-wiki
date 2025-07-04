@@ -88,7 +88,9 @@ export default function SkillCard({
             );
           }}
         >
-          {skill.canMoveWhileUsing ? '移动释放' : '不可移动释放'}
+          <span className='select-none'>
+            {skill.canMoveWhileUsing ? '移动释放' : '不可移动释放'}
+          </span>
         </span>,
         <span
           className='cursor-pointer'
@@ -100,7 +102,7 @@ export default function SkillCard({
             );
           }}
         >
-          {skill.canUseInAir ? '空中释放' : '不可空中释放'}
+          <span className='select-none'>{skill.canUseInAir ? '空中释放' : '不可空中释放'}</span>
         </span>,
         <span
           className='cursor-pointer'
@@ -130,7 +132,7 @@ export default function SkillCard({
             );
           }}
         >
-          {skill.cancelableSkill ?? '不确定是否可取消'}
+          <span className='select-none'>{skill.cancelableSkill ?? '不确定是否可取消'}</span>
         </span>,
         <span
           className='cursor-pointer'
@@ -157,7 +159,7 @@ export default function SkillCard({
             );
           }}
         >
-          {skill.cancelableAftercast ?? '不确定是否可取消后摇'}
+          <span className='select-none'>{skill.cancelableAftercast ?? '不确定是否可取消后摇'}</span>
         </span>,
         <span
           className='cursor-pointer'
@@ -169,7 +171,9 @@ export default function SkillCard({
             );
           }}
         >
-          {skill.canHitInPipe ? '可击中管道中的角色' : '不可击中管道中的角色'}
+          <span className='select-none'>
+            {skill.canHitInPipe ? '可击中管道中的角色' : '不可击中管道中的角色'}
+          </span>
         </span>
       );
     } else {
