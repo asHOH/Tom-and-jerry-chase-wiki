@@ -530,6 +530,178 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
+
+  /* ----------------------------------- 莱特宁 ---------------------------------- */
+  莱特宁: {
+    description:
+      '“流浪猫铁三角”中的一员。莱特宁是一只橙红色的猫，喜欢与汤姆争夺女主人的宠爱，他移动速度快如闪电，没有任何老鼠能逃脱他的追击。',
+    maxHp: 260,
+    hpRecovery: 3,
+    moveSpeed: 775,
+    jumpHeight: 420,
+    clawKnifeCdHit: 6.5,
+    clawKnifeCdUnhit: 4.5,
+    clawKnifeRange: 300,
+    catPositioningTags: [
+      {
+        tagName: '追击',
+        isMinor: false,
+        description: '主动技能闪现老鼠。',
+        additionalDescription: '被动还可以减速老鼠并标记视野',
+      },
+      {
+        tagName: '防守',
+        isMinor: false,
+        description: '垃圾桶可阻止老鼠推奶酪，且能无缝衔接。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '翻盘',
+        isMinor: true,
+        description: '主动技能的直接抓取有一定翻盘能力。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '',
+        pattern: '101212020',
+        weaponType: 'weapon1',
+        description: '待补充',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '待补充',
+      },
+    ],
+    skills: [
+      {
+        name: '瞬移闪击',
+        type: 'active',
+        description: '向前移动一段距离。如果附近有老鼠，可以瞬移到老鼠身后。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        canHitInPipe: false,
+        cancelableAftercast: '无后摇',
+        cancelableSkill: '不可被打断',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 8,
+          },
+          {
+            level: 2,
+            description: '瞬移后获得8秒“疾如风”状态，提升移速和攻击频率。',
+            cooldown: 8,
+            detailedDescription: '瞬移后获得8秒“疾如风”状态，加速10%、爪刀CD减半。',
+          },
+          {
+            level: 3,
+            description:
+              '提高瞬移范围；瞬移到[交互中](包括推奶酪、救队友、在捕鼠夹上挣扎、吃蛋糕，喝牛奶，喝饮料、开纸箱、技能前摇、开关门、推车、推斧头、摇钟、调药水、开监控、采花、摇三角铁、进机器鼠、自起特技)的老鼠身后时，对其造成[眩晕](可被霸体或消耗一层护盾抵挡)，期间可直接抓起。',
+            detailedDescription:
+              '提高瞬移范围；瞬移到[交互中](包括推奶酪、救队友、在捕鼠夹上挣扎、吃蛋糕，喝牛奶，喝饮料、开纸箱、技能前摇、开关门、推车、推斧头、摇钟、调药水、开监控、采花、摇三角铁、进机器鼠、自起特技)的老鼠身后时，对其造成2秒[眩晕](可被霸体或消耗一层护盾抵挡)，期间可直接抓起。',
+            cooldown: 8,
+          },
+        ],
+      },
+      {
+        name: '垃圾桶',
+        type: 'weapon1',
+        description:
+          '放置垃圾桶阻挡老鼠的道路。垃圾桶的异味会使老鼠受到减速和伤害。由此造成伤害时会减少爪刀CD。',
+        detailedDescription:
+          '放置垃圾桶阻挡老鼠的道路。垃圾桶的异味会使老鼠受到减速和伤害。每造成1次伤害会降低0.6秒爪刀CD，每秒只生效一次。垃圾桶不会对倒地的老鼠造成伤害并降低爪刀CD，在垃圾桶范围内倒地并起身的老鼠不会受到垃圾桶的伤害，但重新进入垃圾桶范围仍会受到伤害。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '可被跳跃键打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '垃圾桶持续12秒。',
+            detailedDescription:
+              '垃圾桶持续12秒，老鼠[进入垃圾桶范围瞬间](包括放置时在范围内和老鼠进入)会受到10伤害，并以5/s持续降低Hp。',
+            cooldown: 18,
+          },
+          {
+            level: 2,
+            description: '垃圾桶持续时间提高至18秒；提高伤害。',
+            cooldown: 18,
+            detailedDescription:
+              '垃圾桶持续时间提高至18秒；老鼠进入垃圾桶范围瞬间伤害提高至15，持续性伤害提高至8/s。',
+          },
+          {
+            level: 3,
+            description: '提高减速效果和伤害。',
+            cooldown: 18,
+            detailedDescription:
+              '提高减速效果；老鼠进入垃圾桶范围瞬间伤害提高至25，持续性伤害提高至12/s。',
+          },
+        ],
+      },
+      {
+        name: '咸鱼',
+        type: 'weapon2',
+        description:
+          '从垃圾桶中倒出咸鱼，鼠方踩到后会受到小幅全属性减益。爪刀命中[带有咸鱼效果的敌方](包括虚弱老鼠)时，将重置瞬移闪击CD、减少爪刀CD，并回复Hp。闪电瞬移将优先追踪带有咸鱼效果的敌方，并大幅提高追踪范围。',
+        detailedDescription:
+          '从垃圾桶中倒出咸鱼并标记在小地图上，咸鱼持续一分钟，鼠方踩到后会受咸鱼影响，持续20秒，期间推速降低40%，救援、治疗速度降低33%，移速降低10%，跳跃高度降低（未测），同时暴露小地图位置。可通过吃蛋糕、喝牛奶、喝饮料、特技-治疗、牛仔弹琴来解除。爪刀命中[带有咸鱼效果的敌方](包括虚弱老鼠)时，将重置瞬移闪击CD，爪刀CD减少至1.9s，并以50/s恢复Hp，持续1s。闪电瞬移将优先追踪带有咸鱼效果的敌方，并大幅提高追踪范围。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '可被跳跃键打断',
+        cancelableAftercast: '无后摇',
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 8,
+          },
+          {
+            level: 2,
+            description:
+              '受咸鱼影响的老鼠无法对莱特宁造成眩晕。手中抓有老鼠时，闪电瞬移优先追踪最近的咸鱼。',
+            cooldown: 8,
+            detailedDescription:
+              '受咸鱼影响的老鼠无法对莱特宁造成眩晕、且无法自然恢复Hp。手中抓有老鼠时，闪电瞬移优先追踪最近的咸鱼。',
+          },
+          {
+            level: 3,
+            description: '提高咸鱼腥味的持续时间。',
+            cooldown: 8,
+            detailedDescription: '咸鱼腥味的持续时间提高至30秒。',
+          },
+        ],
+      },
+      {
+        name: '穷追不舍',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '对伤害到的老鼠进行标记，使其减速并暴露小地图位置。莱特宁对被标记的老鼠造成额外伤害；击倒时获得额外经验。',
+            detailedDescription:
+              '对伤害到的老鼠进行标记，使其减速20%并暴露小地图位置，持续15秒。莱特宁对被标记的老鼠造成伤害时，额外造成[15伤害](可被减伤影响)。击倒被标记的老鼠可获得额外经验。',
+          },
+          {
+            level: 2,
+            description: '提高基础移动和跳跃速度。',
+            detailedDescription: '基础移速提升10%；跳跃速度提升（未测）。',
+          },
+          {
+            level: 3,
+            description: '即使受到减速，移动和跳跃速度也不会低于基础值。',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ----------------------------------- 苏蕊 ---------------------------------- */
   苏蕊: {
     description:
@@ -648,9 +820,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '爪击和舞动亮相命中敌方时将重置瑜伽球的冷却时间。',
+            description: '爪刀和舞动亮相命中敌方时将重置瑜伽球的冷却时间。',
             detailedDescription:
-              '爪击和舞动亮相命中敌方时将重置瑜伽球的冷却时间，击中多个敌方将重置多个CD。',
+              '爪刀和舞动亮相命中敌方时将重置瑜伽球的冷却时间，击中多个敌方将重置多个CD。',
           },
           {
             level: 2,
