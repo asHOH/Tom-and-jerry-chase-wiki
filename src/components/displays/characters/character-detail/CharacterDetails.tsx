@@ -31,7 +31,8 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
       id: firstWeapon.id.slice(0, -1) + '2',
     };
     function modifySkillObject(character: CharacterWithFaction) {
-      character.skills = [...character.skills, secondWeapon];
+      const index = character.skills.findIndex(({ type }) => type == 'weapon1');
+      character.skills.splice(index + 1, 0, secondWeapon);
     }
     modifySkillObject(characters[localCharacter.id]!);
     setLocalCharacter(
@@ -148,10 +149,10 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                 const isSingleWeapon = weaponSkills.length === 1;
 
                 return localCharacter.skills
-                  .map<React.ReactNode>((skill, index) => (
+                  .map<React.ReactNode>((skill: Skill, index) => (
                     <SkillCard
-                      key={(skill as Skill).id}
-                      skill={skill as Skill}
+                      key={skill.id}
+                      skill={skill}
                       isSingleWeapon={isSingleWeapon && skill.type === 'weapon1'}
                       characterId={localCharacter.id}
                       skillIndex={index}

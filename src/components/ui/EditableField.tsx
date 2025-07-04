@@ -38,14 +38,15 @@ function EditableFieldImplementation<T>({
 }: EditableFieldProps<T>) {
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
+  const { localCharacter, setLocalCharacter } = useLocalCharacter();
   const { handleSelectCharacter, activeTab } = useAppContext();
 
   useEffect(() => {
     const storedData = localStorage.getItem('characters');
     if (storedData) {
       try {
-        const parsedData = JSON.parse(storedData);
-        const storedValue = getNestedProperty<T>(parsedData, path);
+        const parsedData = localCharacter;
+        const storedValue = getNestedProperty<T>(parsedData, path.split('.').slice(1).join('.'));
         if (typeof storedValue === 'string' || typeof storedValue === 'number') {
           setContent(storedValue);
         } else {
@@ -58,15 +59,13 @@ function EditableFieldImplementation<T>({
     } else {
       setContent(initialValue);
     }
-  }, [path, initialValue, setContent]);
+  }, [path, initialValue, setContent, localCharacter]);
 
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.textContent = String(content) || '<无内容>';
     }
   }, [content]);
-
-  const { localCharacter, setLocalCharacter } = useLocalCharacter();
 
   const handleBlurRef = useRef<() => void>(() => {});
 

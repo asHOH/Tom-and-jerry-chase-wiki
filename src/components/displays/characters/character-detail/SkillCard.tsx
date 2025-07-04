@@ -9,6 +9,7 @@ import { useAppContext } from '@/context/AppContext';
 import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { produce } from 'immer';
+import { CharacterWithFaction } from '@/lib/types';
 
 interface SkillCardProps {
   skill: Skill;
@@ -262,14 +263,49 @@ export default function SkillCard({
         )}
 
         <div className='flex-1'>
-          <h3 className='text-xl font-bold px-2 py-2'>
-            {getSkillTypeLabel(skill.type)} ·{' '}
-            <EditableField
-              tag='span'
-              path={`${characterId}.skills.${skillIndex}.name`}
-              initialValue={skill.name}
-            />
-          </h3>
+          <div className='flex justify-between items-center'>
+            <h3 className='text-xl font-bold px-2 py-2'>
+              {getSkillTypeLabel(skill.type)} ·{' '}
+              <EditableField
+                tag='span'
+                path={`${characterId}.skills.${skillIndex}.name`}
+                initialValue={skill.name}
+              />
+            </h3>
+            {isEditMode && skill.type == 'weapon2' && (
+              <button
+                type='button'
+                aria-label='移除技能'
+                onClick={() => {
+                  function removeSkill(localCharacter: CharacterWithFaction) {
+                    localCharacter.skills = localCharacter.skills.filter(
+                      ({ type }: Skill) => type != 'weapon2'
+                    );
+                  }
+                  setLocalCharacter((localCharacter) => produce(localCharacter, removeSkill));
+                  removeSkill(characters[characterId]!);
+                  saveFactionsAndCharacters();
+                  console.log(characters[localCharacter.id]);
+                }}
+                className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600'
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth='2'
+                  stroke='currentColor'
+                  className='w-4 h-4'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
 
           {hasProperties && (
             <div className='text-sm text-gray-500 mt-1 px-2'>
