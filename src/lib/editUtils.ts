@@ -2,7 +2,7 @@ import { characters, FactionId, factions, Skill } from '@/data';
 import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { getSkillImageUrl } from './skillUtils';
-import { CharacterDetailsProps } from './types';
+import { CharacterWithFaction } from './types';
 import { Dispatch, SetStateAction } from 'react';
 import { produce } from 'immer';
 import { setAutoFreeze } from 'immer';
@@ -92,8 +92,8 @@ function handleCharacterIdChange(
   newId: string,
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
-  _localCharacter: CharacterDetailsProps['character'],
-  setLocalCharacter: Dispatch<CharacterDetailsProps['character']>
+  _localCharacter: CharacterWithFaction,
+  setLocalCharacter: Dispatch<CharacterWithFaction>
 ) {
   // FIXME: This code may lead to uncertain damage as other code do not handle the situation where the id changes
   // characters is not managed by react, so we need to trigger the update manually
@@ -120,8 +120,8 @@ export function handleCharacterSkillIdChange(
   path: string,
   newName: string,
   activeTab: string,
-  localCharacter: CharacterDetailsProps['character'],
-  setLocalCharacter: Dispatch<SetStateAction<CharacterDetailsProps['character']>>
+  localCharacter: CharacterWithFaction,
+  setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
 ) {
   const skill = getNestedProperty(
     characters,
@@ -163,8 +163,8 @@ export function handleChange<T>(
   path: string,
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
-  localCharacter: CharacterDetailsProps['character'],
-  setLocalCharacter: Dispatch<SetStateAction<CharacterDetailsProps['character']>>
+  localCharacter: CharacterWithFaction,
+  setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
 ) {
   let finalValue: T;
   if (typeof initialValue === 'number') {
@@ -172,7 +172,6 @@ export function handleChange<T>(
   } else {
     finalValue = newContentStr as T;
   }
-  console.log(localCharacter, path.split('.').slice(1).join('.'));
   setLocalCharacter(
     produce(localCharacter, (localCharacter) =>
       setNestedProperty(localCharacter, path.split('.').slice(1).join('.'), finalValue)
@@ -203,7 +202,7 @@ export function handleChange<T>(
   saveFactionsAndCharacters();
 }
 
-export function generateTypescriptCodeFromCharacter(character: CharacterDetailsProps['character']) {
+export function generateTypescriptCodeFromCharacter(character: CharacterWithFaction) {
   return (
     `/* ----------------------------------- ${character.id} ----------------------------------- */\n` +
     character.id +
@@ -216,7 +215,7 @@ export function generateTypescriptCodeFromCharacter(character: CharacterDetailsP
           key == 'imageUrl' ||
           key == 'faction' ||
           key == 'factionId' ||
-          (key == 'id' && value != character.id)
+          (key == 'id' && value != character.id && value.includes(character.id))
         ) {
           return undefined;
         } else {

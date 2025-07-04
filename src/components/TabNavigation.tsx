@@ -122,6 +122,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             <button
               type='button'
               onClick={() => handleTabChange('')}
+              className='whitespace-nowrap'
               style={tabButtonStyle(activeTab === null)}
             >
               {!isMobile && '首页'}
@@ -139,6 +140,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <button
                 type='button'
                 onClick={() => handleTabChange(tab.id)}
+                className='whitespace-nowrap'
                 style={tabButtonStyle(activeTab === tab.id)}
               >
                 <Image

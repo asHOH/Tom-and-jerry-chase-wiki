@@ -5,10 +5,10 @@ import EditableField from '@/components/ui/EditableField';
 import Tooltip from '@/components/ui/Tooltip';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { CharacterDetailsProps } from '@/lib/types';
 import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { useAppContext } from '@/context/AppContext';
+import { CharacterWithFaction } from '@/lib/types';
 
 interface PositioningTagsSectionProps {
   tags: Array<{
@@ -24,12 +24,12 @@ interface PositioningTagsSectionProps {
 function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
   const { localCharacter, setLocalCharacter } = useLocalCharacter();
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
-  function getTags(char: CharacterDetailsProps['character']) {
+  function getTags(char: CharacterWithFaction) {
     return char.mousePositioningTags ?? char.catPositioningTags ?? [];
   }
   const updateTags = useCallback(
     (
-      prevChar: CharacterDetailsProps['character'],
+      prevChar: CharacterWithFaction,
       updatedTags: {
         tagName: string;
         isMinor: boolean;

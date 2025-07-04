@@ -47,13 +47,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ isMobile }) => {
             ${isMobile ? 'p-2 w-[40px] h-[40px]' : 'p-2 w-11 h-11'}
             rounded-md bg-gray-200 text-gray-900
             focus:outline-none focus:ring-2 focus:ring-blue-500
-            dark:bg-gray-700 dark:text-white
             flex items-center justify-center border-none cursor-pointer transition-colors
           `}
         >
           {/* Search icon */}
           <svg
-            className='h-6 w-6 text-gray-900 dark:text-white'
+            className='h-6 w-6 text-gray-900'
             fill='none'
             viewBox='0 0 24 24'
             stroke='currentColor'
