@@ -282,7 +282,7 @@ export default function SkillCard({
             </div>
           )}
 
-          {descriptionText && (
+          {descriptionText !== undefined && (
             <div className='mt-3 px-2'>
               <p className='text-gray-700 py-2 whitespace-pre-wrap'>
                 <EditableField

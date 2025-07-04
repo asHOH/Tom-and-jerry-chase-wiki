@@ -58,11 +58,11 @@ function EditableFieldImplementation<T>({
     } else {
       setContent(initialValue);
     }
-  }, [path, initialValue]);
+  }, [path, initialValue, setContent]);
 
   useEffect(() => {
     if (contentRef.current) {
-      contentRef.current.textContent = String(content);
+      contentRef.current.textContent = String(content) || '<无内容>';
     }
   }, [content]);
 
@@ -71,6 +71,10 @@ function EditableFieldImplementation<T>({
   const handleBlurRef = useRef<() => void>(() => {});
 
   handleBlurRef.current = () => {
+    if (contentRef.current && content === '') {
+      contentRef.current!.textContent = '<无内容>';
+    }
+
     if (contentRef.current && contentRef.current.textContent !== String(content)) {
       const newContentStr = contentRef.current.textContent || '';
 
@@ -78,7 +82,7 @@ function EditableFieldImplementation<T>({
         const parsedFloat = parseFloat(newContentStr);
         if (isNaN(parsedFloat)) {
           // Revert to the last valid content if input is not a number
-          contentRef.current.textContent = String(content);
+          contentRef.current.textContent = String(content) || '<无内容>';
           return;
         }
       }
@@ -110,13 +114,13 @@ function EditableFieldImplementation<T>({
   return React.createElement(
     Tag,
     {
-      className: className,
+      className: className + ' whitespace-pre-wrap',
       contentEditable: 'plaintext-only',
       suppressContentEditableWarning: true,
       onBlur: handleBlur,
       ref: contentRef,
     },
-    String(content)
+    String(content) || '<无内容>'
   );
 }
 
