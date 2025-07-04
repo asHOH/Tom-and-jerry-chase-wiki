@@ -4,17 +4,64 @@ import BaseCard from '../../../ui/BaseCard';
 import { componentTokens, designTokens } from '@/lib/design-tokens';
 import json5 from 'json5';
 import { CharacterWithFaction } from '@/lib/types';
+import { characters, FactionId, factions } from '@/data';
+import { addSkillImageUrls } from '@/lib/skillUtils';
+import { useAppContext } from '@/context/AppContext';
+import { getCatImageUrl } from '@/data/catCharacters';
+import { getMouseImageUrl } from '@/data/mouseCharacters';
+import { saveFactionsAndCharacters } from '@/lib/editUtils';
+import { processCharacters } from '@/lib/skillIdUtils';
 
-function handleUploadedData(data: string) {
-  console.log(data);
-  let parsedData: Record<string, CharacterWithFaction>;
+function handleUploadedData(data: string, factionId: FactionId) {
+  let newCharacters: Record<string, CharacterWithFaction>;
   try {
-    parsedData = json5.parse(data);
+    newCharacters = json5.parse(data);
   } catch (e) {
     void e;
-    parsedData = json5.parse(`{${data}}`);
+    newCharacters = json5.parse(`{${data}}`);
   }
-  void parsedData;
+  // TODO: add faction modification
+  for (const character of Object.values(newCharacters)) {
+    character.skills = addSkillImageUrls(character.id, character.skills, factionId);
+    character.imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(character.id);
+    character.factionId = factionId;
+    character.faction = {
+      id: factionId,
+      name: factionId == 'cat' ? '猫阵营' : '鼠阵营',
+    };
+  }
+
+  newCharacters = processCharacters(newCharacters) as Record<string, CharacterWithFaction>;
+
+  console.log({ newCharacters });
+
+  Object.assign(characters, newCharacters);
+  console.log({ characters });
+
+  let needReload = false;
+
+  for (const character of Object.values(newCharacters)) {
+    const faction = factions[factionId]!.characters.find(({ id }) => id == character.id);
+    if (faction) {
+      faction.positioningTags =
+        character.catPositioningTags ?? character.mousePositioningTags ?? faction.positioningTags;
+    } else {
+      factions[factionId]!.characters.push({
+        id: character.id,
+        name: character.id,
+        imageUrl: (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(character.id),
+        positioningTags: character.catPositioningTags ?? character.mousePositioningTags ?? [],
+      });
+      needReload = true;
+    }
+  }
+
+  saveFactionsAndCharacters();
+
+  // since characters and factions is out of reactivity system, force reload to load data
+  if (needReload) {
+    location.reload();
+  }
 }
 
 interface PasteInputModalProps {
@@ -91,6 +138,7 @@ export default function CharacterImport() {
   const [showImportOptions, setShowImportOptions] = useState(false);
   const [showPasteInput, setShowPasteInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const factionId = useAppContext().activeTab as FactionId;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -99,7 +147,7 @@ export default function CharacterImport() {
       reader.onload = (e) => {
         const content = e.target?.result;
         if (typeof content === 'string') {
-          handleUploadedData(content);
+          handleUploadedData(content, factionId);
           setShowImportOptions(false);
         }
       };
@@ -115,7 +163,7 @@ export default function CharacterImport() {
         const clipboardContent = await navigator.clipboard.readText();
         console.log(2);
         if (!clipboardContent.includes('Error: Clipboard read operation is not allowed.')) {
-          handleUploadedData(clipboardContent);
+          handleUploadedData(clipboardContent, factionId);
           setShowImportOptions(false);
         } else {
           setShowImportOptions(false);
@@ -134,7 +182,7 @@ export default function CharacterImport() {
   };
 
   const handlePasteModalContent = (content: string) => {
-    handleUploadedData(content);
+    handleUploadedData(content, factionId);
     setShowPasteInput(false);
   };
 
