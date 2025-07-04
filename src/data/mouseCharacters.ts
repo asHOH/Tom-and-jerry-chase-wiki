@@ -558,7 +558,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '破局',
         isMinor: true,
-        description: '火箭筒能炸开夹子和叉子。',
+        description: '火箭筒能炸开捕鼠夹和叉子。',
         additionalDescription: '缺点是CD长，并且需要把控角度。',
       },
       {
@@ -1036,7 +1036,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '破局',
         isMinor: false,
-        description: '战车自带霸体，冲撞可撞开[绝大多数猫的布局](夹子、兔八哥萝卜、图多香水等)',
+        description: '战车自带霸体，冲撞可撞开[绝大多数猫的布局](捕鼠夹、兔八哥萝卜、图多香水等)',
         additionalDescription: '',
       },
       {
