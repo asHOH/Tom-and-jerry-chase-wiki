@@ -11,8 +11,17 @@ export const CREATORS = contributors.reduce(
 
 // Helper function to get contributors by role type
 const getContributorsByRole = (roleType: RoleType): string[] => {
+  // Get the ID of the project maintainer to exclude them from other acknowledgments
+  const projectMaintainerId = contributors.find((contributor) =>
+    contributor.roles.some((role) => role.type === RoleType.ProjectMaintainer)
+  )?.id;
+
   return contributors
-    .filter((contributor) => contributor.roles.some((role) => role.type === roleType))
+    .filter(
+      (contributor) =>
+        contributor.id !== projectMaintainerId && // Exclude the project maintainer
+        contributor.roles.some((role) => role.type === roleType)
+    )
     .map((contributor) => contributor.id);
 };
 
