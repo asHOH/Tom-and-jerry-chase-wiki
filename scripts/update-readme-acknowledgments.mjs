@@ -44,10 +44,17 @@ async function updateReadmeAcknowledgments() {
       );
     };
 
+    const escapeMarkdown = (text) => {
+      // Escape underscores in markdown to prevent italic formatting
+      return text.replace(/_/g, '\\_');
+    };
+
     const formatContributors = (contributors) => {
       return contributors
         .map((contributor) =>
-          contributor.url ? `[${contributor.name}](${contributor.url})` : contributor.name
+          contributor.url
+            ? `[${escapeMarkdown(contributor.name)}](${contributor.url})`
+            : escapeMarkdown(contributor.name)
         )
         .join('、');
     };
