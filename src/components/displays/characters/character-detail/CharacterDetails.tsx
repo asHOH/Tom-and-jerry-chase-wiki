@@ -75,7 +75,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
               <div>
                 <EditableField
                   tag='span'
-                  path={`${localCharacter.id}.id`}
+                  path='id'
                   initialValue={localCharacter.id}
                   className='inline'
                 />{' '}
@@ -118,7 +118,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
 
             <EditableField
               tag='p'
-              path={`${localCharacter.id}.description`}
+              path='description'
               initialValue={localCharacter.description}
               className='text-gray-700 mt-2 py-1 whitespace-pre-wrap'
             />
@@ -126,11 +126,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
             <div className='mt-6 space-y-3'>
               <CharacterAttributesSection character={localCharacter} factionId={factionId} />
 
-              <PositioningTagsSection
-                tags={positioningTags}
-                factionId={factionId}
-                characterId={localCharacter.id}
-              />
+              <PositioningTagsSection tags={positioningTags} factionId={factionId} />
             </div>
           </div>
         </div>

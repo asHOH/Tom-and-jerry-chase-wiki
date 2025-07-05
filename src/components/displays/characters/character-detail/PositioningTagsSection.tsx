@@ -18,7 +18,6 @@ interface PositioningTagsSectionProps {
     additionalDescription?: string;
   }>;
   factionId: 'cat' | 'mouse';
-  characterId: string;
 }
 
 function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
@@ -92,11 +91,7 @@ function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
   return { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags, toggleIsMinor };
 }
 
-export default function PositioningTagsSection({
-  tags,
-  factionId,
-  characterId,
-}: PositioningTagsSectionProps) {
+export default function PositioningTagsSection({ tags, factionId }: PositioningTagsSectionProps) {
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
 
@@ -129,7 +124,7 @@ export default function PositioningTagsSection({
                 {isEditMode ? (
                   <EditableField
                     tag='span'
-                    path={`${characterId}.${tagsKey}.${index}.tagName`}
+                    path={`${tagsKey}.${index}.tagName`}
                     initialValue={tag.tagName}
                     onSave={(newValue) => handleUpdate(index, newValue, 'tagName')}
                   />
@@ -177,7 +172,7 @@ export default function PositioningTagsSection({
             </div>
             <EditableField
               tag='p'
-              path={`${characterId}.${tagsKey}.${index}.description`}
+              path={`${tagsKey}.${index}.description`}
               initialValue={tag.description}
               className='text-sm text-gray-700 mb-1 whitespace-pre-wrap'
               onSave={(newValue) => handleUpdate(index, newValue, 'description')}
@@ -185,7 +180,7 @@ export default function PositioningTagsSection({
             {isDetailed && tag.additionalDescription && (
               <EditableField
                 tag='p'
-                path={`${characterId}.${tagsKey}.${index}.additionalDescription`}
+                path={`${tagsKey}.${index}.additionalDescription`}
                 initialValue={tag.additionalDescription}
                 className={`text-sm text-gray-600 mt-2 pl-3 border-l-2 whitespace-pre-wrap ${borderColor}`}
                 onSave={(newValue) => handleUpdate(index, newValue, 'additionalDescription')}

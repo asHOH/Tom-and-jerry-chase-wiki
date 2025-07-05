@@ -46,7 +46,7 @@ function EditableFieldImplementation<T>({
     if (storedData) {
       try {
         const parsedData = localCharacter;
-        const storedValue = getNestedProperty<T>(parsedData, path.split('.').slice(1).join('.'));
+        const storedValue = getNestedProperty<T>(parsedData, path);
         if (typeof storedValue === 'string' || typeof storedValue === 'number') {
           setContent(storedValue);
         } else {
@@ -98,7 +98,7 @@ function EditableFieldImplementation<T>({
         handleChange(
           initialValue,
           newContentStr,
-          path,
+          `${localCharacter.id}.${path}`,
           activeTab || undefined,
           handleSelectCharacter,
           localCharacter,

@@ -29,19 +29,19 @@ export default function CharacterAttributesSection({
       label: 'Hp上限',
       value: character.maxHp || 0,
       condition: !!character.maxHp,
-      path: `${character.id}.maxHp`,
+      path: `maxHp`,
     },
     {
       label: 'Hp恢复',
       value: character.hpRecovery || 0,
       condition: !!character.hpRecovery,
-      path: `${character.id}.hpRecovery`,
+      path: `hpRecovery`,
     },
     {
       label: '移速',
       value: character.moveSpeed || 0,
       condition: !!character.moveSpeed,
-      path: `${character.id}.moveSpeed`,
+      path: `moveSpeed`,
     },
   ];
 
@@ -50,27 +50,27 @@ export default function CharacterAttributesSection({
       label: '跳跃',
       value: character.jumpHeight || 0,
       condition: !!character.jumpHeight && factionId === 'mouse',
-      path: `${character.id}.jumpHeight`,
+      path: `jumpHeight`,
     },
     {
       label: '攻击增伤',
       value: character.attackBoost || 0,
       condition:
         factionId === 'mouse' && character.attackBoost !== undefined && character.attackBoost !== 0,
-      path: `${character.id}.attackBoost`,
+      path: `attackBoost`,
     },
     {
       label: '推速',
       value: character.cheesePushSpeed || 0,
       condition: factionId === 'mouse' && !!character.cheesePushSpeed,
-      path: `${character.id}.cheesePushSpeed`,
+      path: `cheesePushSpeed`,
       suffix: '%/秒',
     },
     {
       label: '墙缝增伤',
       value: character.wallCrackDamageBoost || 0,
       condition: factionId === 'mouse' && !!character.wallCrackDamageBoost,
-      path: `${character.id}.wallCrackDamageBoost`,
+      path: `wallCrackDamageBoost`,
     },
   ];
 
@@ -79,7 +79,7 @@ export default function CharacterAttributesSection({
       label: '爪刀范围',
       value: character.clawKnifeRange || 0,
       condition: factionId === 'cat' && !!character.clawKnifeRange,
-      path: `${character.id}.clawKnifeRange`,
+      path: `clawKnifeRange`,
     },
     {
       label: '爪刀CD',
@@ -117,7 +117,7 @@ export default function CharacterAttributesSection({
             value={character.attackBoost ?? 0}
             factionId={factionId}
             isDetailed={isDetailed}
-            path={`${character.id}.attackBoost`}
+            path='attackBoost'
             className='text-amber-600 py-1'
           />
         )}

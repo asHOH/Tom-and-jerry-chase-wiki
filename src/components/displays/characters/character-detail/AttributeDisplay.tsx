@@ -38,14 +38,14 @@ export default function AttributeDisplay({
           {' '}
           <EditableField
             tag='span'
-            path={`${localCharacter.id}.clawKnifeCdUnhit`}
+            path='clawKnifeCdUnhit'
             initialValue={localCharacter.clawKnifeCdUnhit || 0}
             className='inline'
           />
           {' / '}
           <EditableField
             tag='span'
-            path={`${localCharacter.id}.clawKnifeCdHit`}
+            path='clawKnifeCdHit'
             initialValue={localCharacter.clawKnifeCdHit || 0}
             className='inline'
           />

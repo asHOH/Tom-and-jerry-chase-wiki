@@ -192,8 +192,8 @@ export default function KnowledgeCardSection({
           <div className='bg-gray-50 p-2 sm:p-3 rounded-lg ml-10 sm:ml-11 md:ml-12 lg:ml-14'>
             <EditableField
               tag='p'
-              path={`${characterId}.knowledgeCardGroups[${index}].description`}
-              initialValue={description || ''}
+              path={`knowledgeCardGroups.${index}.description`}
+              initialValue={description ?? ''}
               onSave={(newDescription) => handleDescriptionSave(newDescription, index)}
               className='text-sm text-gray-700'
             />

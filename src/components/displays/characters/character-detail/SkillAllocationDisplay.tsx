@@ -290,7 +290,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           {isEditMode ? (
             <EditableField
               tag='h4'
-              path={`${characterName}.skillAllocations.${index}.id`}
+              path={`skillAllocations.${index}.id`}
               initialValue={allocation.id}
               className='font-bold text-gray-800 text-lg leading-tight'
             />
@@ -300,7 +300,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           {isEditMode && (
             <EditableField
               tag='p'
-              path={`${characterName}.skillAllocations.${index}.pattern`}
+              path={`skillAllocations.${index}.pattern`}
               initialValue={allocation.pattern}
               className='text-gray-500 text-sm'
             />
@@ -402,7 +402,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           {isEditMode ? (
             <EditableField
               tag='p'
-              path={`${characterName}.skillAllocations.${index}.description`}
+              path={`skillAllocations.${index}.description`}
               initialValue={allocation.description!}
               className='text-sm text-gray-700 whitespace-pre-wrap'
             />
@@ -416,7 +416,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           {hasAdditionalDescription && (
             <EditableField
               tag='p'
-              path={`${characterName}.skillAllocations.${index}.additionaldescription`}
+              path={`skillAllocations.${index}.additionaldescription`}
               initialValue={allocation.additionaldescription!}
               className='text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200 whitespace-pre-wrap'
             />

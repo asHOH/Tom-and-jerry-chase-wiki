@@ -89,7 +89,7 @@ export default function SkillCard({
               {index != 0 ? '/' : ''}
               <EditableField
                 tag='span'
-                path={`${characterId}.skills.${skillIndex}.skillLevels.${index}.cooldown`}
+                path={`skills.${skillIndex}.skillLevels.${index}.cooldown`}
                 initialValue={i}
               />
             </React.Fragment>
@@ -260,7 +260,7 @@ export default function SkillCard({
                   <EditableField
                     tag='span'
                     className='text-blue-600 text-xs px-2 py-1 hover:underline bg-blue-50 rounded-md hover:bg-blue-100 transition-colors block w-full text-center wrap-anywhere mt-2'
-                    path={`${characterId}.skills.${skillIndex}.videoUrl`}
+                    path={`skills.${skillIndex}.videoUrl`}
                     initialValue={skill.videoUrl ?? ''}
                   />
                 )}
@@ -341,7 +341,7 @@ export default function SkillCard({
               <p className='text-gray-700 py-2 whitespace-pre-wrap'>
                 <EditableField
                   initialValue={descriptionText}
-                  path={`${characterId}.skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
+                  path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
                   tag='span'
                 />
               </p>
@@ -383,7 +383,7 @@ export default function SkillCard({
                         : level.description
                     }
                     tag='span'
-                    path={`${characterId}.skills.${skillIndex}.skillLevels.${level.level - 1}.${isDetailed ? 'detailedDescription' : 'description'}`}
+                    path={`skills.${skillIndex}.skillLevels.${level.level - 1}.${isDetailed ? 'detailedDescription' : 'description'}`}
                   />
                 </p>
               </div>
