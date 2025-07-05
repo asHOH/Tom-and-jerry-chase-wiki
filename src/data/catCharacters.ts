@@ -722,7 +722,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '进攻',
         isMinor: false,
-        description: '律动时间的增伤为击倒高Hp老鼠提供了可能，瑜伽球提供了攻击手段。',
+        description: '律动时间提供增伤和更大的爪刀范围，瑜伽球提供了强力的控制。',
         additionalDescription: '',
       },
       {
@@ -759,29 +759,29 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '律动时间',
         type: 'active',
         description:
-          '随着音乐舞动，持续40秒。舞动开始时恢复Hp。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将恢复Hp、提升移速和攻击力。舞动时接触虚弱老鼠将使其自主跟随苏蕊30秒，期间遇到火箭会立刻绑上。',
+          '回复Hp，并随着音乐舞动，持续40秒。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复Hp、提升移速和攻击力。舞动时接触虚弱老鼠将使其自主跟随苏蕊30秒，期间遇到火箭立刻绑上。',
         detailedDescription:
-          '随着音乐舞动，持续40秒。舞动开始时恢复50Hp。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。移动和跳跃不会中断此技能。舞动时每隔13秒出现爱心提示，此时点击技能按钮将恢复30Hp、提升10%移速和15点攻击力。舞动时接触不在捕鼠夹上的[虚弱老鼠](包括触发知识卡“铁血”的老鼠)将使其自主跟随苏蕊30秒，期间遇到火箭会立刻绑上。在此状态下，老鼠无法主动使用技能、移动等操作。若老鼠与苏蕊距离较远（如钻管道后），则老鼠会解除跟随状态。',
+          '回复50Hp，随着音乐舞动，持续40秒。若手中有老鼠，则放下老鼠并使其自主跟随。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复30Hp、提升10%移速和15点攻击力。舞动时接触不在捕鼠夹上的虚弱老鼠或刚被击倒的老鼠，将使其自主跟随苏蕊30秒。在此状态下，老鼠无法主动使用技能、移动等操作，但仍能受到伤害和控制，且遇到火箭会立刻绑上。若老鼠与苏蕊距离较远（如钻管道后），则老鼠会解除跟随。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不可取消',
+        cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
         // 没找到好的技能教学视频
         skillLevels: [
           {
             level: 1,
-            description: '进入舞动状态，若手中有老鼠则会放下老鼠并使其自主跟随。',
+            description: '',
             cooldown: 40,
           },
           {
             level: 2,
             description: '舞动时受到的伤害减少。',
-            detailedDescription: '舞动中固定减伤10点。',
+            detailedDescription: '舞动时固定减伤10点。',
             cooldown: 40,
           },
           {
             level: 3,
-            description: '每次爱心提示出现后成功点击技能按钮将延长舞动时间。',
+            description: '每次成功点击爱心将延长舞动时间。',
             detailedDescription:
               '每次爱心提示出现后成功点击技能按钮将延长舞动时间5秒，总舞动时间变为60秒。',
             cooldown: 40,
@@ -791,9 +791,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '瑜伽球',
         type: 'weapon1',
-        description: '投掷出瑜伽球并控制它膨胀，膨胀时使老鼠眩晕并弹飞。',
+        description: '扔出瑜伽球并控制它膨胀，膨胀时使老鼠眩晕并弹飞。',
         detailedDescription:
-          '苏蕊投掷出瑜伽球，在瑜伽球飞行过程中苏蕊可再次点击技能键使瑜伽球膨胀，当膨胀时接触到敌方老鼠，则会造成30点伤害、1.5秒眩晕并弹飞，瑜伽球可积累2次使用机会。',
+          '扔出瑜伽球。在瑜伽球飞行过程中苏蕊可再次点击技能键使瑜伽球膨胀，当膨胀时接触到敌方老鼠，则会造成30点伤害、1.5秒眩晕并弹飞，瑜伽球可积累2次使用机会。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可打断',
@@ -801,7 +801,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '扔出一个瑜伽球。',
+            description: '',
             cooldown: 20,
           },
           {
@@ -823,19 +823,19 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '爪刀和舞动亮相命中敌方时将重置瑜伽球的冷却时间。',
+            description: '爪刀和舞动亮相命中敌方时将重置瑜伽球的CD。',
             detailedDescription:
-              '爪刀和舞动亮相命中敌方时将重置瑜伽球的冷却时间，击中多个敌方将重置多个CD。',
+              '爪刀和舞动亮相命中敌方时将重置瑜伽球的CD，击中多个敌方将重置多个CD。',
           },
           {
             level: 2,
-            description: '虚弱时间减少5秒。',
-            detailedDescription: '虚弱时间减少至2秒，起身时只有[一半Hp](即100点)。',
+            description: '虚弱时间减少至2秒。',
+            detailedDescription: '虚弱时间减少至2秒，起身时只有100Hp。',
           },
           {
             level: 3,
-            description: '易碎的投掷道具击中敌方时将重置律动时间的冷却时间。',
-            detailedDescription: '易碎的投掷道具击中[敌方](含虚弱老鼠)时将重置律动时间的冷却时间。',
+            description: '易碎道具击中[敌方](含虚弱老鼠)时将重置律动时间的CD。',
+            detailedDescription: '易碎道具击中[敌方](含虚弱老鼠)时将重置律动时间的CD。',
           },
         ],
       },
