@@ -193,6 +193,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   /* ----------------------------------- 布奇 ----------------------------------- */
   布奇: {
     description: '"流浪猫铁三角"中的老大，从街头流浪逆袭为亿万富豪',
+    aliases: ['黑猫', '黑鼠'],
 
     maxHp: 220,
     attackBoost: 25,
@@ -355,6 +356,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
 
   /* ----------------------------------- 托普斯 ---------------------------------- */
   托普斯: {
+    aliases: ['托斯'],
     description: '"流浪猫铁三角"的一员，呆萌小灰猫，爱和小老鼠交朋友',
 
     maxHp: 200,
@@ -533,6 +535,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
 
   /* ----------------------------------- 莱特宁 ---------------------------------- */
   莱特宁: {
+    aliases: ['橘猫'],
     description:
       '“流浪猫铁三角”中的一员。莱特宁是一只橙红色的猫，喜欢与汤姆争夺女主人的宠爱，他移动速度快如闪电，没有任何老鼠能逃脱他的追击。',
     maxHp: 260,

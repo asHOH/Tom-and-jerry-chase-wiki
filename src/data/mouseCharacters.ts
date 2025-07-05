@@ -182,6 +182,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
   /* ----------------------------------- 侦探杰瑞 ----------------------------------- */
   侦探杰瑞: {
+    aliases: ['侦杰'],
     description:
       '谨慎机警的侦探杰瑞，来自19世纪末的英国，为了更快地抓到凶手，他极善于隐藏自己的踪迹。',
 
@@ -357,6 +358,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
   /* ----------------------------------- 航海士杰瑞 ----------------------------------- */
   航海士杰瑞: {
+    aliases: ['海盗杰瑞'],
     description:
       '公海上向往自由的航海士杰瑞，是最强大的航海家，他浑身充满野性，常年与火炮打交道的他，善于破坏火箭。',
 
@@ -1001,6 +1003,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   },
 
   罗宾汉泰菲: {
+    aliases: ['罗菲'],
     description:
       '来自12世纪英国的侠盗罗宾汉泰菲，他身形灵敏，擅长利用草丛隐蔽自己，是罗宾汉杰瑞的好帮手', // 角色描述
 
@@ -1446,8 +1449,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   },
 
   /* ----------------------------------- 魔术师 ----------------------------------- */
-  // 角色名
   魔术师: {
+    aliases: ['二表哥'],
     description:
       '魔术师是杰瑞的表哥之一，他出身高贵，动作优雅，是一位不折不扣的绅士，他拥有强大的魔法能力，能够将猫玩弄于股掌之间。',
 

@@ -88,6 +88,7 @@ export type KnowledgeCardGroup =
 export type CharacterDefinition = {
   description: string;
   imageUrl?: string; // We'll generate it automatically
+  aliases?: string[]; // Alternative names for search
 
   // Common attributes for all characters
   maxHp?: number; // Hp上限

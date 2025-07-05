@@ -89,6 +89,25 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
       priority = 0.95; // Slightly lower priority for pinyin ID match
       isPinyinMatch = true;
     }
+    // Check character aliases (direct match)
+    if (!matchContext && character.aliases) {
+      for (const alias of character.aliases) {
+        const aliasLowerCase = alias.toLowerCase();
+        const aliasPinyin = await convertToPinyin(alias);
+
+        if (aliasLowerCase.includes(lowerCaseQuery)) {
+          matchContext = `${character.id} (${alias})`;
+          priority = 0.98; // High priority for alias match
+          isPinyinMatch = false;
+          break;
+        } else if (aliasPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+          matchContext = `${character.id} (${alias})`;
+          priority = 0.97; // High priority for alias pinyin match
+          isPinyinMatch = true;
+          break;
+        }
+      }
+    }
     // Check character skills name
     else if (character.skills) {
       for (const skill of character.skills) {
