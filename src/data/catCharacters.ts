@@ -707,6 +707,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
 
   /* ----------------------------------- 图茨 ---------------------------------- */
   图茨: {
+    aliases: ['小黄'],
     description:
       '图茨拥有娇小的身材和靓丽的脸庞，因为被富养，她性格可爱温柔，图茨是汤姆的女朋友之一，广受所有猫和老鼠的喜爱。',
     maxHp: 255,
