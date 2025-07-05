@@ -59,14 +59,30 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['侦探杰瑞', '蒙金奇'],
+        characters: ['侦探杰瑞', '蒙金奇', '国王杰瑞'],
+      },
+    ],
+  },
+  {
+    id: 'gebilaomiLM',
+    name: '隔壁老米LM',
+    url: 'https://space.bilibili.com/3493090618771682',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['莱特宁', '剑客莉莉'],
       },
     ],
   },
   {
     id: 'musicianJerry',
     name: '音乐家杰瑞',
-    roles: [{ type: RoleType.ContentWriter, characters: ['罗宾汉泰菲'] }],
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['罗宾汉泰菲', '魔术师'],
+      },
+    ],
   },
   {
     id: 'dreamback',
