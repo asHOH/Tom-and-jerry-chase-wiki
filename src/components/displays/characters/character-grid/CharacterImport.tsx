@@ -33,10 +33,7 @@ function handleUploadedData(data: string, factionId: FactionId) {
 
   newCharacters = processCharacters(newCharacters) as Record<string, CharacterWithFaction>;
 
-  console.log({ newCharacters });
-
   Object.assign(characters, newCharacters);
-  console.log({ characters });
 
   let needReload = false;
 
@@ -159,9 +156,7 @@ export default function CharacterImport() {
     e.stopPropagation();
     if (navigator.clipboard && navigator.clipboard.readText) {
       try {
-        console.log(1);
         const clipboardContent = await navigator.clipboard.readText();
-        console.log(2);
         if (!clipboardContent.includes('Error: Clipboard read operation is not allowed.')) {
           handleUploadedData(clipboardContent, factionId);
           setShowImportOptions(false);

@@ -304,7 +304,6 @@ export default function SkillCard({
                   setLocalCharacter((localCharacter) => produce(localCharacter, removeSkill));
                   removeSkill(characters[characterId]!);
                   saveFactionsAndCharacters();
-                  console.log(characters[localCharacter.id]);
                 }}
                 className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600'
               >
