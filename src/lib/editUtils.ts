@@ -7,6 +7,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { produce } from 'immer';
 import { setAutoFreeze } from 'immer';
 import json5 from 'json5';
+import stats from '@/data/mouseCharactersStats'; // Import stats
 
 setAutoFreeze(false);
 
@@ -104,7 +105,6 @@ function handleCharacterIdChange(
   characters[newId].imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   delete characters[oldId!];
   handleSelectCharacter(newId);
-  setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
   const faction = factions[activeTab!]?.characters.find(({ id }) => id == oldId);
   if (faction) {
     faction.id = faction.name = newId;
@@ -114,6 +114,10 @@ function handleCharacterIdChange(
     i.id = `${newId}-${i.id.split('-')[1]}`;
     i.imageUrl = getSkillImageUrl(newId, i, activeTab as unknown as FactionId);
   }
+  if (activeTab === 'mouse' && stats[newId]) {
+    Object.assign(characters[newId], stats[newId]);
+  }
+  setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
 }
 
 export function handleCharacterSkillIdChange(

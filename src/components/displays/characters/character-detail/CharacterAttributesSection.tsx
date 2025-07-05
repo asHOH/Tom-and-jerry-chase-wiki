@@ -52,6 +52,7 @@ export default function CharacterAttributesSection({
       condition: !!character.jumpHeight && factionId === 'mouse',
       path: `jumpHeight`,
     },
+    // FIXME: should this really be hidden?
     {
       label: '攻击增伤',
       value: character.attackBoost || 0,
