@@ -5,22 +5,58 @@ updates:
     schedule:
       interval: 'weekly'
       day: 'monday'
-    open-pull-requests-limit: 5
+      time: '09:00'
+      timezone: 'Asia/Shanghai'
+    target-branch: 'develop'
+    open-pull-requests-limit: 3
     reviewers:
       - 'asHOH'
     commit-message:
       prefix: 'chore(deps)'
     groups:
-      testing:
+      # Group all development dependencies together
+      dev-dependencies:
         patterns:
           - '@testing-library/*'
+          - '@types/*'
           - 'jest*'
+          - 'eslint*'
+          - 'prettier*'
+          - 'husky*'
+          - 'typescript*'
+          - 'tailwindcss*'
+          - 'postcss*'
+          - 'autoprefixer*'
         update-types:
           - 'minor'
           - 'patch'
-      types:
+      # Group Next.js related dependencies
+      nextjs-ecosystem:
         patterns:
+          - 'next*'
+          - 'react*'
+          - '@next/*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      # Group all other production dependencies
+      production-dependencies:
+        patterns:
+          - '*'
+        exclude-patterns:
+          - '@testing-library/*'
           - '@types/*'
+          - 'jest*'
+          - 'eslint*'
+          - 'prettier*'
+          - 'husky*'
+          - 'typescript*'
+          - 'tailwindcss*'
+          - 'postcss*'
+          - 'autoprefixer*'
+          - 'next*'
+          - 'react*'
+          - '@next/*'
         update-types:
           - 'minor'
           - 'patch'
