@@ -70,7 +70,10 @@ export const DisclaimerText = () => {
           </a>
         </span>
         <br />
-        {PROJECT_INFO.description}
+        <span>
+          本项目由{renderCreatorLinks([PROJECT_INFO.maintainerId])}维护，
+          {PROJECT_INFO.description.slice(3)}
+        </span>
       </span>
 
       {/* Acknowledgments */}

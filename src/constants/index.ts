@@ -56,7 +56,8 @@ const generateAcknowledgements = () => {
 export const PROJECT_INFO = {
   name: '项目开源地址',
   url: 'https://github.com/asHOH/Tom-and-jerry-chase-wiki',
-  description: '本项目已在GitHub开源，欢迎贡献数据、代码和建议！觉得有帮助也欢迎点star⭐！',
+  description: '本项目已在GitHub开源，欢迎参与建设、给出建议或点star⭐！',
+  maintainerId: 'asHOH',
 };
 
 // Structured disclaimer content - single source of truth
