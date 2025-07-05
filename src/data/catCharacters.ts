@@ -705,6 +705,199 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
   },
 
+  /* ----------------------------------- 图茨 ---------------------------------- */
+  图茨: {
+    description:
+      '图茨拥有娇小的身材和靓丽的脸庞，因为被富养，她性格可爱温柔，图茨是汤姆的女朋友之一，广受所有猫和老鼠的喜爱。',
+    maxHp: 255,
+    hpRecovery: 3.5,
+    moveSpeed: 76,
+    jumpHeight: 420,
+    clawKnifeCdHit: 4.5,
+    clawKnifeCdUnhit: 2.3,
+    clawKnifeRange: 300,
+    catPositioningTags: [
+      {
+        tagName: '防守',
+        isMinor: false,
+        description:
+          '武器技能汽水罐，放在火箭上可以妨碍救援；主动技能喵喵叫大范围伤害搭配汽水可以防守最后一块奶酪',
+        additionalDescription: '对打架阵容有很强的反制能力。',
+      },
+      {
+        tagName: '进攻',
+        isMinor: false,
+        description: '喵喵叫的大范围伤害和控制是有力的进攻手段。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '打架',
+        isMinor: true,
+        description: '喵喵叫的大范围群体伤害和控制在打团时有一定发挥。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '翻盘',
+        isMinor: true,
+        description: '鼠方一旦失误，喵喵叫的大范围群体伤害和控制可以对鼠方造成重创。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '常规加点',
+        pattern: '131313000',
+        weaponType: 'weapon2',
+        description: '',
+        additionaldescription: '',
+      },
+      {
+        id: '汽水爪刀流',
+        pattern: '131010033',
+        weaponType: 'weapon1',
+        description: '如果节奏突然断了，5级可以先点被动而不点汽水罐，尝试找节奏。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-细心', 'A-穷追猛打'],
+        description:
+          '通用卡组，适合碎片多和夹子比较多的大地图，如雪夜古堡全系列，太空堡垒1、2，游轮3等。不推荐用于布局收益不高的地图，如经典之家全系列，游乐场，天宫，酒店，熊猫馆。萌新可以无脑用这套。',
+      },
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description:
+          '通用卡组，但是没有细心，比较吃手法，萌新不推荐。适合夹子少、碎片少、布局收益不大的大地图，如经典之家全系列，游乐场，熊猫馆，酒店，天宫。',
+      },
+      {
+        cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'A-心灵手巧', 'B-捕鼠夹'],
+        description:
+          '适合夹子多的图，很克舍己，特定地图很强，如游轮1、2，太空堡垒2、也可以考虑太空堡垒3使用。注意，如果有破局老鼠，要斟酌使用，可改用第一套。',
+      },
+      {
+        cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'A-心灵手巧', 'C-猫是液体'],
+        description:
+          '适合管道多的图，如太空堡垒3、森林牧场。注意太空堡垒3开局建议优先布局，森林牧场开局如果对面不给节奏也尽量布局。如果有大表哥或没有在天宫、游乐场可以斟酌使用。',
+      },
+      {
+        cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'A-加大火力', 'B-捕鼠夹'],
+        description:
+          '这套针对没有奶酪位的阵容。前期快速击倒一个老鼠，快速布夹子在火箭下，发挥防守优势。如果老鼠救不下来就速飞一个；由于带了捕鼠夹，老鼠舍己救下也大概率被夹死，一般也能速飞一个。注意，若求稳则不建议使用。',
+      },
+    ],
+    skills: [
+      {
+        name: '喵喵叫',
+        type: 'active',
+        description:
+          '按住技能键持续喵喵叫，附近敌方不断叠加减速层数，每到五层时造成60点伤害和眩晕。被打断或取消会按比例返还CD。',
+        detailedDescription:
+          '按住技能键持续喵喵叫，在此期间可以移动并使用爪刀和特技霸体，附近敌方不断叠加减速层数，并暴露视野。每到五层时造成60点伤害和眩晕。被打断或取消会按比例返还CD。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        canHitInPipe: true,
+        cancelableAftercast: '无后摇',
+        cancelableSkill: '可被打断',
+        skillLevels: [
+          {
+            level: 1,
+            description: '叠层数频率为[0.5秒](最高叠加5层)。',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '叠层数频率提升至[0.4秒](最高可叠6层)；减少CD',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description: '叠层数频率提升至[0.3秒](最高可叠11层)。',
+            cooldown: 15,
+          },
+        ],
+      },
+      {
+        name: '防狼锤',
+        type: 'weapon1',
+        description: '挥动防狼锤，命中敌方时造成少量伤害和一层减速。',
+        detailedDescription:
+          '锤子范围较小，使用时会因为身体的惯性继续向前移动一小段距离，命中敌方造成少量伤害和一层减速，血量清空时将不能使用锤子。（欢迎纠正和补充）',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '可被道具键打断',
+        cancelableAftercast: '可被道具键取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 0.5,
+          },
+          {
+            level: 2,
+            description: '命中敌方额外造成8秒沉默。（时长尚未精确测试）',
+            cooldown: 0.5,
+          },
+          {
+            level: 3,
+            description: '减少CD。',
+            cooldown: 0.1,
+          },
+        ],
+        canHitInPipe: false,
+      },
+      {
+        name: '汽水罐',
+        type: 'weapon2',
+        description:
+          '向任意方向扔出汽水，若未命中，达到终点后开始旋转，持续20秒。命中造成少量伤害和两层减速，冰冻小范围内所有敌人3秒。（欢迎纠正和补充）',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '可被道具键打断',
+        cancelableAftercast: '可被道具键取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 12,
+          },
+          {
+            level: 2,
+            description:
+              '汽水罐自然消失或相撞会形成特殊冰面。鼠滑到会进入层脆弱状态，降低推速和救援速度，并暴露小地图位置。图茨滑到则会获得3秒爆发性加速。',
+            cooldown: 12,
+          },
+          {
+            level: 3,
+            description: '减少CD。',
+            cooldown: 8,
+          },
+        ],
+      },
+      {
+        name: '愤怒的少女',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '小地图不会显示图茨的位置；开关门不会有声音、不会使老鼠胆怯。（欢迎纠正和补充）',
+            detailedDescription:
+              '小地图不会显示图茨的位置，但是老鼠喝远视或图茨手握老鼠时还是会出现在小地图上；开关门不会有声音；不会使老鼠胆怯。（欢迎纠正和补充）',
+          },
+          {
+            level: 2,
+            description: '图茨血量不满时，可连续挥爪三次，并提高爪刀频率',
+            detailedDescription: '图茨血量不满时，可连续挥爪三次，并提高爪刀频率',
+          },
+          {
+            level: 3,
+            description: '血量不满时，减少技能CD，喵喵叫从15秒变成10秒。',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ----------------------------------- 苏蕊 ---------------------------------- */
   苏蕊: {
     description:
