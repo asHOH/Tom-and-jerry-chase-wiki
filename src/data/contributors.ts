@@ -85,6 +85,17 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'yulangaoao',
+    name: '雨狼嗷嗷',
+    url: 'https://space.bilibili.com/3546721078479411',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['图茨'],
+      },
+    ],
+  },
+  {
     id: 'dreamback',
     name: '梦回_淦德蒸蚌',
     url: 'https://space.bilibili.com/1193776217',
