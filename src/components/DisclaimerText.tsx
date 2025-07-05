@@ -28,7 +28,6 @@ export const DisclaimerText = () => {
         <br />
         {DISCLAIMER_CONTENT.freePolicy}
         <br />
-        <span className='text-orange-600 font-medium'>{DISCLAIMER_CONTENT.fraudWarning}</span>
       </span>
 
       {/* Copyright information */}
