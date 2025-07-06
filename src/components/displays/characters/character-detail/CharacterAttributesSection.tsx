@@ -56,8 +56,7 @@ export default function CharacterAttributesSection({
     {
       label: '攻击增伤',
       value: character.attackBoost || 0,
-      condition:
-        factionId === 'mouse' && character.attackBoost !== undefined && character.attackBoost !== 0,
+      condition: factionId === 'mouse',
       path: `attackBoost`,
     },
     {
@@ -70,7 +69,7 @@ export default function CharacterAttributesSection({
     {
       label: '墙缝增伤',
       value: character.wallCrackDamageBoost || 0,
-      condition: factionId === 'mouse' && !!character.wallCrackDamageBoost,
+      condition: factionId === 'mouse',
       path: `wallCrackDamageBoost`,
     },
   ];
