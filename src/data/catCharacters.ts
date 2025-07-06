@@ -61,7 +61,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     knowledgeCardGroups: [
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
-        description: '平底锅，爪刀接二级锅接爪刀轻松打死124血老鼠',
+        description: '平底锅，爪刀接二级锅接爪刀轻松打死124血老鼠。',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
@@ -107,7 +107,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '手型枪',
         type: 'weapon1',
-        description: '汤姆最爱的捕鼠神器。',
+        description: '手型枪水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。',
+        detailedDescription:
+          '手型枪水平飞出、飞回，对命中的老鼠造成15点伤害、将其抓回并眩晕2.5秒。如果拉回过程遇到障碍，额外给予65点伤害。眩晕对比例鼠和虚弱的老鼠也生效。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '可被跳跃键打断',
@@ -116,9 +118,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '手型枪水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。',
-            detailedDescription:
-              '手型枪水平飞出、原路飞回，对命中的老鼠造成15点伤害、将其抓回并眩晕2.5秒。如果拉回过程遇到障碍，额外给予65点伤害。眩晕对比例鼠和虚弱的老鼠也生效。',
+            description: '',
             cooldown: 12,
           },
           {
@@ -128,7 +128,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '猫咪可以直接抓起被手型枪拉回并眩晕的老鼠。',
+            description: '汤姆可以直接抓起被手型枪拉回并眩晕的老鼠。',
             cooldown: 12,
           },
         ],
@@ -136,17 +136,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '平底锅',
         type: 'weapon2',
-        description: '挥锅攻击老鼠并打出煎蛋。',
-        // detailedDescription: '挥锅攻击老鼠并打出煎蛋。',
+        description: '挥锅攻击老鼠并打出煎蛋，打晕并致盲附近老鼠、降低其救援速度；也能击飞道具。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键打断',
-        cancelableAftercast: '可被道具键取消后摽',
+        cancelableAftercast: '可被道具键取消后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=172.85',
         skillLevels: [
           {
             level: 1,
-            description: '打晕并致盲附近老鼠、降低其救援速度；也能击飞道具。',
+            description: '',
             detailedDescription:
               '挥锅对命中的老鼠造成15点伤害、5秒失明和55%救援减速；煎蛋也会对命中的老鼠造成15点伤害、5秒失明和55%救援减速；被锅命中的老鼠落地后受到25点伤害，并眩晕1秒。',
             cooldown: 18,
@@ -158,7 +157,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '猫咪可以直接抓起被平底锅命中、落地后眩晕的老鼠。',
+            description: '汤姆可以直接抓起被平底锅命中、落地后眩晕的老鼠。',
             cooldown: 18,
           },
         ],
@@ -170,20 +169,19 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '对老鼠造成伤害时回复Hp并加速。',
+            description: '对老鼠造成伤害时，回复Hp并加速。',
             detailedDescription:
               '对老鼠造成伤害时，回复25Hp并获得2.6秒的9.5%加速；若伤害来自爪刀，额外回复25Hp。',
           },
           {
             level: 2,
-            description: '手握老鼠时依然可以攻击',
+            description: '手握老鼠时依然可以使用爪刀。',
             detailedDescription:
-              '手握老鼠时依然可以攻击，并可触发蓄势、击晕、三被等效果，但不会改变惯性（即不能用二被进行楼梯刀加速）',
+              '手握老鼠时依然可以使用爪刀，并可触发蓄势、击晕、三级被动等效果，但[不会改变惯性](即不会因为使用爪刀而进入下落状态)。',
           },
           {
             level: 3,
             description: '对老鼠造成伤害时，给予3秒沉默。',
-            // detailedDescription: '对老鼠造成伤害时，给予3秒沉默。'
           },
         ],
       },
@@ -192,7 +190,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
 
   /* ----------------------------------- 布奇 ----------------------------------- */
   布奇: {
-    description: '"流浪猫铁三角"中的老大，从街头流浪逆袭为亿万富豪',
+    description: '"流浪猫铁三角"中的老大，从街头流浪逆袭为亿万富豪。',
     aliases: ['黑猫', '黑鼠'],
 
     maxHp: 220,
@@ -224,14 +222,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '垃圾盖',
         pattern: '120001122',
         weaponType: 'weapon1',
-        description: '欢迎指正',
+        description: '欢迎指正。',
         additionaldescription: '',
       },
       {
         id: '旋转桶盖',
         pattern: '1[30]330011',
         weaponType: 'weapon2',
-        description: '三级时如果血量告急则先点一被',
+        description: '三级时如果血量告急则先点一被。',
         additionaldescription: '',
       },
     ],
@@ -245,7 +243,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '横冲直撞',
         type: 'active',
-        description: '猛冲一段距离，冲飞道具并对老鼠造成伤害和眩晕。冲刺中可通过方向键改变方向。',
+        description: '冲刺一段距离，冲飞道具并对老鼠造成伤害和眩晕。冲刺中可通过方向键控制方向。',
+        detailedDescription:
+          '冲刺一段距离，冲飞道具并对老鼠造成26点伤害和0.4秒眩晕。冲刺中可通过方向键控制方向。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可打断',
@@ -254,7 +254,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '对老鼠造成26点伤害和0.4秒眩晕。',
+            description: '',
             cooldown: 20,
           },
           {
@@ -265,7 +265,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description: '冲刺更迅速、眩晕延长至1秒；命中老鼠或奶酪时获得短暂加速。',
-            detailedDescription: '冲刺更迅速、眩晕延长至1秒；命中老鼠或奶酪时提升30%移速5秒。',
+            detailedDescription: '冲刺更迅速、眩晕延长至1秒；命中老鼠或奶酪时获得5秒30%加速。',
             cooldown: 20,
           },
         ],
@@ -273,7 +273,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '垃圾盖',
         type: 'weapon1',
-        description: '小范围AOE。',
+        description: '伤害并眩晕附近老鼠。',
+        detailedDescription: '对附近老鼠造成26伤害并眩晕1.3秒。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键取消',
@@ -282,15 +283,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '伤害并眩晕附近老鼠。',
-            detailedDescription: '对附近老鼠造成26伤害并眩晕1.3秒',
+            description: '',
             cooldown: 18,
           },
           {
             level: 2,
             description: '增加眩晕时间、命中的老鼠攻击力短暂降低；震碎附近的易碎道具。',
             detailedDescription:
-              '眩晕延长至2.4秒、命中的老鼠10秒内攻击力降低100；震碎附近的易碎道具。',
+              '眩晕延长至2.4秒、命中的老鼠10秒内攻击力短暂降低固定值100；震碎附近的易碎道具。',
             cooldown: 18,
           },
           {
@@ -304,8 +304,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '旋转桶盖',
         type: 'weapon2',
-        description: '原地释放或扔出几何桶盖。',
-        detailedDescription: '原地释放或扔出几何桶盖，轨迹十分独特。',
+        description: '原地释放或扔出旋转桶盖，伤害并眩晕命中的老鼠；自己捡到桶盖会获得6秒减伤。',
+        detailedDescription:
+          '原地释放或扔出旋转桶盖，对命中的老鼠造成55伤害并眩晕1.5秒；自己捡到桶盖会获得6秒固定减伤30。桶盖拥有较大的惯性。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '可被跳跃/道具键打断',
@@ -314,9 +315,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '伤害并眩晕命中的老鼠；自己捡到桶盖会获得6秒减伤。',
-            detailedDescription:
-              '对命中的老鼠造成55伤害并眩晕1.5秒；自己捡到桶盖会获得6秒固定减伤30。',
+            description: '',
             cooldown: 20,
           },
           {
@@ -326,7 +325,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '增加桶盖飞行速度；自己捡到桶盖会额外获得强霸体。',
+            description: '增加桶盖飞行速度；自己捡到桶盖额外获得强霸体。',
             cooldown: 12,
           },
         ],
@@ -343,7 +342,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description: '投掷道具造成额外伤害。',
-            detailedDescription: '投掷道具造成25额外伤害。',
+            detailedDescription: '投掷道具造成25点额外伤害。',
           },
           {
             level: 3,
@@ -357,7 +356,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   /* ----------------------------------- 托普斯 ---------------------------------- */
   托普斯: {
     aliases: ['托斯'],
-    description: '"流浪猫铁三角"的一员，呆萌小灰猫，爱和小老鼠交朋友',
+    description: '"流浪猫铁三角"的一员，呆萌小灰猫，爱和小老鼠交朋友。',
 
     maxHp: 200,
     hpRecovery: 2.5,
@@ -421,9 +420,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '双重猫格',
         type: 'active',
         description:
-          '释放分身。分身继承知识卡、免疫碎片和捕鼠夹、提供小地图视野，但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随。再次使用技能可与分身换位。',
+          '释放分身。分身继承知识卡、免疫碎片和捕鼠夹、提供[小地图视野](包括隐身的老鼠)，但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随。再次使用技能可与分身换位。',
         detailedDescription:
-          '释放分身。分身爪刀伤害提升、继承知识卡、免疫碎片和捕鼠夹、爪刀CD减少、提供小地图视野（包括隐身的老鼠），但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随（CD：5秒）。再次使用技能可与分身换位。本体获得部分增益时，分身也会获得。',
+          '释放分身。分身爪刀伤害提升、继承知识卡、免疫碎片和捕鼠夹、爪刀CD减少、提供[小地图视野](包括隐身的老鼠)，但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随（CD：5秒）。再次使用技能可与分身换位。本体获得部分增益时，分身也会获得。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可取消',
@@ -443,8 +442,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '减少CD；换位CD减少至5秒；分身不会自行消失；如果分身在本体附近，本体受到的大部分控制和受到的一半伤害会转移给分身。',
-            detailedDescription:
               '减少CD；换位CD减少至5秒；分身不会自行消失；如果分身在本体附近，本体受到的大部分[控制](不包括斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
             cooldown: 20,
           },
@@ -453,9 +450,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '泡泡棒',
         type: 'weapon1',
-        description: '吹出泡泡来困住老鼠。',
+        description: '吹出泡泡来困住老鼠。泡泡可以被道具砸破。',
         detailedDescription:
-          '吹出泡泡来困住老鼠。泡泡可以被道具砸破，也会因困住的老鼠挣扎而破裂。泡泡破裂时会伤害和眩晕周围老鼠；20秒后自然消失。',
+          '吹出泡泡来困住老鼠。泡泡可以被道具砸破，也会因困住的老鼠挣扎而破裂。泡泡破裂时会伤害和眩晕周围老鼠；20秒后自然消失。直接释放则泡泡会留在原地，拖动释放则泡泡会缓慢向该方向漂移。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可打断',
@@ -463,9 +460,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '吹出一个泡泡。',
-            detailedDescription:
-              '吹出一个泡泡，直接释放则泡泡会留在原地，拖动释放则泡泡会缓慢向该方向漂移。',
+            description: '',
             cooldown: 20,
           },
           {
@@ -484,9 +479,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '捕虫网',
         type: 'weapon2',
         description:
-          '将面前的一只老鼠抓到网中；再次使用技能将老鼠扔出，造成伤害和眩晕。扔出的老鼠会被直接绑上途经的火箭。',
+          '将面前的[一只老鼠](若有多个老鼠在网的范围内，则会网住编号最小的)抓到网中；再次使用技能将老鼠扔出，造成伤害和眩晕。扔出的老鼠若途经火箭则被直接绑上。',
         detailedDescription:
-          '将面前的一只老鼠抓到网中，期间老鼠可挣扎挣脱（若有多个老鼠在网的范围内，则会网住编号最小的）；再次使用技能将老鼠扔出，扔出的老鼠落地后眩晕并再次受到伤害，同时伤害周围的老鼠。扔出的老鼠会被直接绑上途经的火箭。捕虫网可以网住[霸体老鼠](如尼宝的灵活跳跃、表演者·杰瑞的梦幻舞步)，但无法网住[无敌老鼠](如剑客泰菲的头盔、罗宾汉杰瑞的降落伞)，若老鼠有护盾，则使用捕虫网将会消除一层护盾。',
+          '将面前的[一只老鼠](若有多个老鼠在网的范围内，则会网住编号最小的)抓到网中，期间老鼠可挣扎挣脱；再次使用技能将老鼠扔出，扔出的老鼠落地后眩晕并再次受到伤害，同时伤害周围的老鼠。扔出的老鼠若途经火箭则被直接绑上。捕虫网可以网住[霸体老鼠](如尼宝的灵活跳跃、表演者·杰瑞的梦幻舞步)，但无法网住[无敌老鼠](如剑客泰菲的头盔、罗宾汉杰瑞的降落伞)。可被一层护盾抵消。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '可被道具键打断',
@@ -518,7 +513,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '大幅减少爪刀命中时的爪刀CD至1.6秒。',
+            description: '减少爪刀命中时的爪刀CD至1.6秒。',
           },
           {
             level: 2,
@@ -526,7 +521,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '击中老鼠时，移除其隐身远视等大部分增益。',
+            description: '击中老鼠时，移除其隐身、远视等大部分增益。',
           },
         ],
       },
@@ -535,9 +530,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
 
   /* ----------------------------------- 莱特宁 ---------------------------------- */
   莱特宁: {
-    aliases: ['橘猫'],
+    aliases: ['橘猫', '橘鼠'],
     description:
-      '“流浪猫铁三角”中的一员。莱特宁是一只橙红色的猫，喜欢与汤姆争夺女主人的宠爱，他移动速度快如闪电，没有任何老鼠能逃脱他的追击。',
+      '"流浪猫铁三角"中的一员。莱特宁是一只橙红色的猫，喜欢与汤姆争夺女主人的宠爱，他移动速度快如闪电，没有任何老鼠能逃脱他的追击。',
     maxHp: 260,
     hpRecovery: 3,
     moveSpeed: 775,
