@@ -65,7 +65,7 @@ export default function CharacterAttributesSection({
       value: character.cheesePushSpeed || 0,
       condition: factionId === 'mouse' && !!character.cheesePushSpeed,
       path: `cheesePushSpeed`,
-      suffix: '%/秒',
+      suffix: '%/s',
     },
     {
       label: '墙缝增伤',
