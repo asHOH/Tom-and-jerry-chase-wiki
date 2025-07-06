@@ -567,16 +567,34 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     skillAllocations: [
       {
-        id: '',
+        id: '垃圾桶',
         pattern: '101212020',
         weaponType: 'weapon1',
-        description: '待补充',
+        description: '可攻可防。',
+      },
+      {
+        id: '咸鱼',
+        pattern: '100311330',
+        weaponType: 'weapon2',
+        description: '需要很强的意识和思路。',
       },
     ],
     knowledgeCardGroups: [
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-        description: '待补充',
+        description: '打架队用。',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-心灵手巧', 'A-穷追猛打'],
+        description: '无管道用。',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
+        description: '管道用，若没21知识点可以去掉狡诈。',
+      },
+      {
+        cards: ['S-猛攻', 'A-细心', 'A-穷追猛打', 'B-恐吓', 'B-皮糙肉厚'],
+        description: '防守流。',
       },
     ],
     skills: [
@@ -778,7 +796,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'A-心灵手巧', 'C-猫是液体'],
         description:
-          '适合管道多的图，如太空堡垒3、森林牧场。注意太空堡垒3开局建议优先布局，森林牧场开局如果对面不给节奏也尽量布局。如果有大表哥或没有在天宫、游乐场可以斟酌使用。',
+          '适合管道多的图，如太空堡垒3、森林牧场。注意太空堡垒3开局建议优先布局，森林牧场开局如果对面不给节奏也尽量布局。如果有大表哥在天宫、游乐场可以斟酌使用。',
       },
       {
         cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'A-加大火力', 'B-捕鼠夹'],
