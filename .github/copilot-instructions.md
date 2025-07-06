@@ -1,6 +1,6 @@
 # reply style
 
-- concise and informative
+- Be concise. Eliminate filler words.
 
 # Project Information
 
@@ -13,7 +13,7 @@
 
 # Command line syntax
 
-- Use PowerShell syntax: semicolons (`;`) instead of `&&`, `$env:VAR` for environment variables
+- Use PowerShell syntax: `;` instead of `&&`, etc.
 
 # Comment edit rules
 
@@ -22,11 +22,10 @@
 
 # Code Standards
 
-- use context7 to check lastest documentation
 - Follow project's existing patterns
 - Ensure TypeScript strict mode compliance
 - Write features with least net code increase
-- Avoid inline scripts/styles and use build-time bundling for CSP compliance (although not required for this project)
+- Avoid inline scripts/styles and use build-time bundling for CSP compliance (though not required)
 - Ensure your implementation plan complies with best practices before and after editing
 - Optimize for static delivery and client-side hydration
-- Write a recommended commit message after each step with `commit_regex='^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?: .{1,80}'`
+- Write a draft commit message after each step with `feat|fix|docs|style|refactor|perf|test|chore(scope): ...` as a reference.
