@@ -12,7 +12,7 @@ export const dynamic = 'force-static';
 // Generate static params for all cards
 export function generateStaticParams() {
   return Object.keys(cards).map((cardId) => ({
-    cardId: encodeURIComponent(cardId), // Encode for static export
+    cardId: cardId, // Don't encode here - Next.js will handle it
   }));
 }
 

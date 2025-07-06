@@ -12,7 +12,7 @@ export const dynamic = 'force-static';
 // Generate static params for all characters
 export function generateStaticParams() {
   return Object.keys(characters).map((characterId) => ({
-    characterId: encodeURIComponent(characterId), // Encode for static export
+    characterId: characterId, // Don't encode here - Next.js will handle it
   }));
 }
 
