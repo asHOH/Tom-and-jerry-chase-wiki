@@ -917,6 +917,149 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
   },
 
+  /* ----------------------------------- 米特
+ ----------------------------------- */
+  米特: {
+    description:
+      '米特是一只流浪猫，他的尾巴曾在一场流浪猫战争中受过伤，但它十分勇猛，从不会向敌人认输。',
+    maxHp: 325,
+    hpRecovery: 1,
+    moveSpeed: 750,
+    jumpHeight: 420,
+    clawKnifeCdHit: 5.4, // FIXME: unsure about CD and range
+    clawKnifeCdUnhit: 3.2,
+    clawKnifeRange: 300,
+    catPositioningTags: [
+      {
+        tagName: '防守',
+        isMinor: false,
+        description: '胡椒粉和罐头都可用于防守火箭或奶酪，尤其克制舍己救援。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '进攻',
+        isMinor: true,
+        description: '由于胡椒粉和绑火箭霸体的存在，老鼠一旦被抓住很难全身而退。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '',
+        pattern: '10100[12]22',
+        weaponType: 'weapon1',
+        description:
+          '正常7级点三级主动，但如果已经到了最后一块奶酪，可以考虑点饭盒防守。有表哥的阵容建议五级点饭盒。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-击晕', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
+        description: '打表哥和幸运车。',
+      },
+      {
+        cards: ['S-击晕', 'S-知识渊博', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '打极端打架队。',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-加大火力', 'B-皮糙肉厚'],
+        description: '传统双烧。',
+      },
+      {
+        cards: ['S-击晕', 'S-乘胜追击', 'B-皮糙肉厚', 'C-猫是液体'],
+        description: '打减速队。',
+      },
+    ],
+    skills: [
+      {
+        name: '胡椒粉罐头',
+        type: 'active',
+        description:
+          '掏出胡椒粉罐头，持续对自身造成轻微伤害，米特因此受到“刺激”，增加移速和跳跃速度。再次便用技能将投掷罐头造成伤害。破碎后形成胡椒粉烟雾，持续对范围内角色造成伤害，猫咪在烟雾中会获得“刺激”效果。胡椒粉的效果在停止接触后会残留3秒。胡椒粉罐头在掏出后立刻开始进入CD。',
+        detailedDescription:
+          '掏出胡椒粉罐头，持续对自身造成轻微伤害，米特因此受到“刺激”，增加移速和跳跃速度。再次便用技能将投掷罐头造成伤害。破碎后形成胡椒粉烟雾，持续对范围内角色造成伤害，猫咪在烟雾中会获得“刺激”效果。胡椒粉的效果在停止接触后会残留3秒。胡椒粉罐头在掏出后立刻开始进入CD。（CD结束后，若未投掷出胡椒粉罐头，可双击技能，胡椒粉会原地向下扔）\n',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableAftercast: '无后摇',
+        cancelableSkill: '可被跳跃键打断',
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 12,
+          },
+          {
+            level: 2,
+            description: '可以在手持老鼠时使用，老鼠会掉落并眩晕2秒。',
+            cooldown: 12,
+          },
+          {
+            level: 3,
+            description: '持续伤害频率更高。猫咪在“刺激”状态下获得减伤并略微提高绑火箭速度。',
+            cooldown: 12,
+          },
+        ],
+      },
+      {
+        name: '饭盒陷阱',
+        type: 'weapon1',
+        description:
+          '放下装有食物的饭盒，老鼠踩中或被砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速。放置捕鼠夹时，会将其替换成饭盒。可存储两次',
+        detailedDescription:
+          '放下装有食物的饭盒，老鼠踩中或被投掷物砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速，持续10秒。放置捕鼠夹时，会将其替换成饭盒。可存储两次。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableAftercast: '无后摇',
+        cancelableSkill: '不可被打断',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description:
+              '增加饭盒伤害。爆炸后留下食物，米特触碰后会获得持续Hp恢复效果。大幅提高放置捕鼠夹的效率。',
+            cooldown: 20,
+            detailedDescription:
+              '增加饭盒伤害。爆炸后留下食物，米特触碰后会获得持续Hp恢复效果。大幅提高放置捕鼠夹的效率。\n', // （连招：击晕接捕鼠夹）
+          },
+          {
+            level: 3,
+            description: '饭盒可存储三次。',
+            cooldown: 20,
+          },
+        ],
+      },
+      {
+        name: '野性迸发',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '每次受到伤害获得1层“野性”状态，最多叠加10层。每层野性略微提升米特Hp恢复。攻击时消耗全部野性，根据层数造成额外伤害。在10层野性下绑火箭时会进入6秒迸发状态，免疫控制和虚弱。',
+            detailedDescription:
+              '每次受到伤害获得1层“野性”状态，持续10秒，最多叠加10层。每层野性略微提升米特Hp恢复。攻击时消耗全部野性，根据层数造成额外伤害。在10层野性下绑火箭时会进入6秒迸发状态，免疫控制和虚弱，该效果20秒内不会重复触发。',
+          },
+          {
+            level: 2,
+            description:
+              '野性的额外伤害使老鼠20秒内无法回复生命。此期间被绑上火箭时，需要更多时间才能救下。',
+          },
+          {
+            level: 3,
+            description: '',
+            detailedDescription:
+              '爪刀命中时，回复伤害等量的生命值，且每消耗一层野性，减少0.3秒爪刀CD。',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ----------------------------------- 苏蕊 ---------------------------------- */
   苏蕊: {
     description:
