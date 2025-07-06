@@ -106,6 +106,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'bingmeishi',
+    name: '冰美式',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['米特'],
+      },
+    ],
+  },
+  {
     id: 'dreamback',
     name: '梦回_淦德蒸蚌',
     url: 'https://space.bilibili.com/1193776217',
