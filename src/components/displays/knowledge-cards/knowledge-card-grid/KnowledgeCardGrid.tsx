@@ -1,3 +1,5 @@
+'use client';
+
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 import { getCardRankColors } from '@/lib/design-tokens';
 import { sortCardsByRank } from '@/lib/sortingUtils';
