@@ -15,8 +15,13 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
     hasFilter: hasRankFilter,
   } = useFilterState<string>();
 
-  // Cost range filter state
-  const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
+  const isCatFaction = faction.name === '猫阵营';
+
+  // Cost range state with faction-specific initial values
+  const [costRange, setCostRange] = useState<[number, number]>(() =>
+    isCatFaction ? [2, 7] : [3, 6]
+  );
+
   const { handleSelectCard } = useAppContext();
 
   // Filter and sort cards using centralized utilities
@@ -95,8 +100,8 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
           </span>
           <div className='w-full max-w-md'>
             <CostRangeSlider
-              min={2}
-              max={7}
+              min={isCatFaction ? 2 : 3}
+              max={isCatFaction ? 7 : 6}
               value={costRange}
               onChange={setCostRange}
               className='px-4'

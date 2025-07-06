@@ -79,11 +79,11 @@ function HomeContent() {
       return <CharacterDetails character={characters[selectedCharacter]} />;
     } // If card tabs are active, show faction cards
     if (activeTab === 'catCards' && factionCards['cat']) {
-      return <KnowledgeCardGrid faction={factionCards['cat']} />;
+      return <KnowledgeCardGrid key='cat-cards' faction={factionCards['cat']} />;
     }
 
     if (activeTab === 'mouseCards' && factionCards['mouse']) {
-      return <KnowledgeCardGrid faction={factionCards['mouse']} />;
+      return <KnowledgeCardGrid key='mouse-cards' faction={factionCards['mouse']} />;
     }
 
     // If a faction tab is active, show faction characters
