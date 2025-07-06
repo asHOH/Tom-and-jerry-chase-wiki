@@ -1,35 +1,48 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter, usePathname } from 'next/navigation';
 import SearchBar from './ui/SearchBar'; // Import SearchBar
 import Tooltip from './ui/Tooltip'; // Import Tooltip
-import { TabName, useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/AppContext';
 
 type Tab = {
-  id: TabName;
+  id: string;
   name: string;
   imageSrc: string;
   imageAlt: string;
+  path: string;
 };
 
 const tabs: Tab[] = [
-  { id: 'cat', name: '猫阵营', imageSrc: '/images/icons/cat faction.png', imageAlt: '猫阵营图标' },
+  {
+    id: 'cat',
+    name: '猫阵营',
+    imageSrc: '/images/icons/cat faction.png',
+    imageAlt: '猫阵营图标',
+    path: '/factions/cat',
+  },
   {
     id: 'mouse',
     name: '鼠阵营',
     imageSrc: '/images/icons/mouse faction.png',
     imageAlt: '鼠阵营图标',
+    path: '/factions/mouse',
   },
   {
     id: 'catCards',
     name: '猫方知识卡',
     imageSrc: '/images/icons/cat knowledge card.png',
     imageAlt: '猫方知识卡图标',
+    path: '/cards/cat',
   },
   {
     id: 'mouseCards',
     name: '鼠方知识卡',
     imageSrc: '/images/icons/mouse knowledge card.png',
     imageAlt: '鼠方知识卡图标',
+    path: '/cards/mouse',
   },
 ];
 
@@ -39,7 +52,28 @@ type TabNavigationProps = {
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [isMobile, setIsMobile] = useState(false);
-  const { activeTab, handleTabChange, isDetailedView, toggleDetailedView } = useAppContext();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { isDetailedView, toggleDetailedView } = useAppContext();
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  const isTabActive = (tabPath: string) => {
+    return pathname?.startsWith(tabPath) || false;
+  };
+
+  const isHomeActive = () => {
+    return pathname === '/';
+  };
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -121,9 +155,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>
             <button
               type='button'
-              onClick={() => handleTabChange('')}
+              onClick={() => router.push('/')}
               className='whitespace-nowrap'
-              style={tabButtonStyle(activeTab === null)}
+              style={tabButtonStyle(isHomeActive())}
             >
               {!isMobile && '首页'}
               {isMobile && '🏠'}
@@ -139,9 +173,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             >
               <button
                 type='button'
-                onClick={() => handleTabChange(tab.id)}
+                onClick={() => router.push(tab.path)}
                 className='whitespace-nowrap'
-                style={tabButtonStyle(activeTab === tab.id)}
+                style={tabButtonStyle(isTabActive(tab.path))}
               >
                 <Image
                   src={tab.imageSrc}

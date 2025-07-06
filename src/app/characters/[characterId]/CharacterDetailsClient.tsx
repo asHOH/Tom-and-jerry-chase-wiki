@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { CharacterDetailsProps } from '@/lib/types';
-import { AppProvider } from '@/context/AppContext';
 
 // Dynamic import for CharacterDetails component
 const CharacterDetails = dynamic(
@@ -26,9 +25,5 @@ const CharacterDetails = dynamic(
 );
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
-  return (
-    <AppProvider>
-      <CharacterDetails {...props} />
-    </AppProvider>
-  );
+  return <CharacterDetails {...props} />;
 }

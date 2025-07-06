@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo } from 'react';
 import CharacterDisplay from './CharacterDisplay';
 import CharacterImport from './CharacterImport';

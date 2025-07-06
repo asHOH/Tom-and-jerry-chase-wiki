@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { characters } from '@/data';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
+import NavigationWrapper from '@/components/NavigationWrapper';
+import { AppProvider } from '@/context/AppContext';
+import { EditModeProvider } from '@/context/EditModeContext';
 
 export const dynamic = 'force-static';
 
@@ -74,5 +77,13 @@ export default async function CharacterPage({
     notFound();
   }
 
-  return <CharacterDetailsClient character={character} />;
+  return (
+    <AppProvider>
+      <EditModeProvider>
+        <NavigationWrapper showDetailToggle={true}>
+          <CharacterDetailsClient character={character} />
+        </NavigationWrapper>
+      </EditModeProvider>
+    </AppProvider>
+  );
 }

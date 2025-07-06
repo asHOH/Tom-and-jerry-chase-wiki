@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { catKnowledgeCards } from '@/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';

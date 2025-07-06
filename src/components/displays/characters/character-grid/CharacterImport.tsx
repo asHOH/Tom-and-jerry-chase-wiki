@@ -1,3 +1,5 @@
+'use client';
+
 import { useEditMode } from '@/context/EditModeContext';
 import React, { useState, useRef, useEffect } from 'react';
 import BaseCard from '../../../ui/BaseCard';
@@ -267,6 +269,7 @@ export default function CharacterImport() {
             onChange={handleFileChange}
             style={{ display: 'none' }}
             accept='.ts,.txt' // Specify accepted file types if needed
+            aria-label='上传角色数据文件'
           />
         </div>
       ) : (

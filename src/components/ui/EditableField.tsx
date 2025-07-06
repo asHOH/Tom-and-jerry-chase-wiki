@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useEditMode, useLocalCharacter } from '../../context/EditModeContext';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';

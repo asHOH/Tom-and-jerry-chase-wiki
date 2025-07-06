@@ -1,3 +1,5 @@
+'use client';
+
 import { loadFactionsAndCharacters, saveFactionsAndCharacters } from '@/lib/editUtils';
 import { CharacterWithFaction } from '@/lib/types';
 import React, {

@@ -1,6 +1,9 @@
 import { Metadata } from 'next';
 import { factionCards } from '@/data';
 import CatCardsClient from './CatCardsClient';
+import NavigationWrapper from '@/components/NavigationWrapper';
+import { AppProvider } from '@/context/AppContext';
+import { EditModeProvider } from '@/context/EditModeContext';
 
 export const dynamic = 'force-static';
 
@@ -22,5 +25,13 @@ export default function CatCardsPage() {
     return <div>Loading...</div>;
   }
 
-  return <CatCardsClient faction={faction} />;
+  return (
+    <AppProvider>
+      <EditModeProvider>
+        <NavigationWrapper showDetailToggle={false}>
+          <CatCardsClient faction={faction} />
+        </NavigationWrapper>
+      </EditModeProvider>
+    </AppProvider>
+  );
 }

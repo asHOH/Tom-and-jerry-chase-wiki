@@ -1,3 +1,5 @@
+'use client';
+
 import { getPositioningTagColors } from '@/lib/design-tokens';
 import { CharacterDisplayProps } from '@/lib/types';
 import GameImage from '../../../ui/GameImage';
@@ -37,20 +39,20 @@ export default function CharacterDisplay({
             aria-label='角色定位标签'
           >
             {positioningTags.map((tag, index) => (
-              <Tag
-                key={index}
-                colorStyles={getPositioningTagColors(
-                  tag.tagName,
-                  tag.isMinor,
-                  false,
-                  factionId as 'cat' | 'mouse'
-                )}
-                size='xs'
-                variant='compact'
-                role='listitem'
-              >
-                {tag.tagName}
-              </Tag>
+              <div key={index} role='listitem'>
+                <Tag
+                  colorStyles={getPositioningTagColors(
+                    tag.tagName,
+                    tag.isMinor,
+                    false,
+                    factionId as 'cat' | 'mouse'
+                  )}
+                  size='xs'
+                  variant='compact'
+                >
+                  {tag.tagName}
+                </Tag>
+              </div>
             ))}
           </div>
         )}

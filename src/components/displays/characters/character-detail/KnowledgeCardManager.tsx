@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { characters } from '@/data'; // Import Character type
 import { setNestedProperty, saveFactionsAndCharacters } from '@/lib/editUtils';

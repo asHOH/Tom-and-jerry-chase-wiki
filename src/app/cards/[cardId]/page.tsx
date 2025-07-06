@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { cards } from '@/data';
 import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
+import NavigationWrapper from '@/components/NavigationWrapper';
+import { AppProvider } from '@/context/AppContext';
+import { EditModeProvider } from '@/context/EditModeContext';
 
 export const dynamic = 'force-static';
 
@@ -67,5 +70,13 @@ export default async function CardPage({ params }: { params: Promise<{ cardId: s
     notFound();
   }
 
-  return <KnowledgeCardDetailsClient card={card} />;
+  return (
+    <AppProvider>
+      <EditModeProvider>
+        <NavigationWrapper showDetailToggle={true}>
+          <KnowledgeCardDetailsClient card={card} />
+        </NavigationWrapper>
+      </EditModeProvider>
+    </AppProvider>
+  );
 }

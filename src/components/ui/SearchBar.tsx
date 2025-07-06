@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import SearchDialog from './SearchDialog'; // Import the new SearchDialog component
 import Tooltip from './Tooltip';

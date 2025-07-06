@@ -1,6 +1,9 @@
 import { Metadata } from 'next';
 import { factionCards } from '@/data';
 import MouseCardsClient from './MouseCardsClient';
+import NavigationWrapper from '@/components/NavigationWrapper';
+import { AppProvider } from '@/context/AppContext';
+import { EditModeProvider } from '@/context/EditModeContext';
 
 export const dynamic = 'force-static';
 
@@ -22,5 +25,13 @@ export default function MouseCardsPage() {
     return <div>Loading...</div>;
   }
 
-  return <MouseCardsClient faction={faction} />;
+  return (
+    <AppProvider>
+      <EditModeProvider>
+        <NavigationWrapper showDetailToggle={false}>
+          <MouseCardsClient faction={faction} />
+        </NavigationWrapper>
+      </EditModeProvider>
+    </AppProvider>
+  );
 }
