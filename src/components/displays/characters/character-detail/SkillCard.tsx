@@ -376,7 +376,7 @@ export default function SkillCard({
                     className='font-bold'
                     style={{ color: getSkillLevelColors(level.level).color }}
                   >
-                    Lv. {level.level}:
+                    Lv.{level.level}:
                   </span>{' '}
                   <EditableField
                     initialValue={

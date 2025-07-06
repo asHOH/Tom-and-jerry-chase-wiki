@@ -160,7 +160,7 @@ export default function KnowledgeCardDetails({
                         paddingBottom: designTokens.spacing.xxs,
                       }}
                     >
-                      <span className='font-bold'>Lv. {level.level}:</span>{' '}
+                      <span className='font-bold'>Lv.{level.level}:</span>{' '}
                       {renderTextWithHighlights(
                         isDetailedView && level.detailedDescription
                           ? level.detailedDescription
