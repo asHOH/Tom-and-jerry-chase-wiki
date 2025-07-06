@@ -96,6 +96,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'nixiaoruidadi',
+    name: '你小睿大帝',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['玛丽'],
+      },
+    ],
+  },
+  {
     id: 'dreamback',
     name: '梦回_淦德蒸蚌',
     url: 'https://space.bilibili.com/1193776217',

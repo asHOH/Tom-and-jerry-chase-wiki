@@ -838,8 +838,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '可以存储两发感应雷；雷使猫掉落手中的老鼠和道具。',
-            // detailedDescription: '可以存储两发感应雷；雷使猫掉落手中的老鼠和道具。',
+            description: '可以存储两发感应雷；雷可击落猫手中的老鼠和道具。',
             cooldown: 22,
           },
           {
@@ -993,9 +992,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description:
-              '当道具命中困在风墙内或被剑气打中的敌方时，额外造成眩晕效果（可使手中的老鼠掉落），敌方在45秒内不会重复受到此效果。',
+              '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成眩晕效果（可救下其手中的老鼠），敌方在45秒内不会重复受到此效果。',
             detailedDescription:
-              '当道具命中困在风墙内或被剑气打中的敌方时，额外造成2.5秒眩晕效果（可使手中的老鼠掉落），敌方在45秒内不会重复受到此效果。',
+              '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成2.5秒眩晕效果（可救下其手中的老鼠），敌方在45秒内不会重复受到此效果。',
           },
         ],
       },
@@ -1119,9 +1118,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description:
-              '弹射造成的眩晕将击落猫咪手中的老鼠；提高对墙缝的伤害。取消猫咪受到该技能效果的内置CD。',
+              '弹射造成的眩晕可救下猫咪手中的老鼠；提高对墙缝的伤害。取消猫咪受到该技能效果的内置CD。',
             detailedDescription:
-              '弹射造成的眩晕将使猫咪手中的老鼠掉落；提高对墙缝的伤害至15（+0.5）。取消猫咪受到该技能效果的内置CD。',
+              '弹射造成的眩晕可救下猫咪手中的老鼠；提高对墙缝的伤害至15（+0.5）。取消猫咪受到该技能效果的内置CD。',
             cooldown: 7,
           },
         ],
@@ -1180,6 +1179,147 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             description: '增加Hp恢复；Lv.2的护盾触发时将解除受伤状态；加点时立刻获得护盾。',
             detailedDescription:
               '永久获得2/s的Hp恢复；Lv.2的护盾触发时将解除受伤状态；加点时立刻获得护盾并重置护盾CD。',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ----------------------------------- 玛丽 ----------------------------------- */
+  玛丽: {
+    description:
+      '高贵优雅的贵族成熟女性，头戴星光闪耀的王冠，她的真实身份其实是公主，肩负责任的她有自己的原则和处事方式。',
+    maxHp: 124,
+    attackBoost: 0,
+    hpRecovery: 2.5,
+    moveSpeed: 635,
+    jumpHeight: 380,
+    cheesePushSpeed: 4.25,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '辅助',
+        isMinor: false,
+        description: '2级扇子可以解除队友的虚弱状态并回血。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '破局',
+        isMinor: false,
+        description: '三级扇子可以吹飞夹子、图多盖洛的香水等。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '自身的推速较快、2级扇子有推速加成。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '干扰',
+        isMinor: true,
+        description: '后期三级礼仪可干扰猫绑火箭。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '救援',
+        isMinor: true,
+        description: '2级扇子扇走捕鼠夹，配合被动，有一定的救援能力。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '香风折扇',
+        pattern: '121212000',
+        weaponType: 'weapon1',
+        description:
+          '加点较为灵活，可不按照推荐加点来加。作为全能位，需要看玛丽在一整局中的定位和局内情况来加点，在前期需保留被动加点，死后配合铁血使用。(也要看附近有没有队友，不然浪费加点)',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-无畏', 'C-救救我', 'B-应激反应'],
+        description: '适合在钻石及以下的对局，或应对防守型猫咪。',
+      },
+      {
+        cards: ['S-铁血', 'S-护佑', 'S-舍己', 'C-救救我'],
+        description: '适合在钻石以上的对局。',
+      },
+    ],
+    skills: [
+      {
+        name: '贵族礼仪',
+        type: 'active',
+        description: '玛丽优雅行礼，范围内敌人受其高贵气质感染，无法做出失礼举动。',
+        detailedDescription: '',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '可被打断',
+        skillLevels: [
+          {
+            level: 1,
+            description: '使猫在5秒内无法使用爪刀，并[解除其隐身效果](有盾也可)。',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description:
+              '使猫在5秒内无法使用技能和爪刀，并对其造成短暂眩晕（可救下猫手中的队友）。',
+            cooldown: 15,
+          },
+        ],
+        canHitInPipe: true,
+      },
+      {
+        name: '香风折扇',
+        type: 'weapon1',
+        description: '手持折扇向目标方向扇风，对命中的猫咪造成少量伤害，反向和失明效果，可破盾。',
+        // 2级折扇因为有对自身的加速效果所以可以搭配翻滚特技和应激反应来使用，能够在被猫攻击后快速逃脱，如果技能打中猫可直接断掉猫的节奏。墙缝战的时候如果点了3级折扇，可以卡在炸药包0秒时使用对墙缝造成大量伤害，达到破墙的效果(难度较高)\n注意1:不要对朵朵使用2级折扇\n注意2:折扇的基础效果对斯飞没用。
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '可被道具键*打断',
+        cancelableAftercast: '可被跳跃键取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '可解除队友的虚弱状态并回复自身和队友的少量Hp，短暂提升推速和移速。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description:
+              '可吹飞部分道具。吹飞的投掷道具击中猫会对其造成相应效果。还可吹飞夹子，图多盖洛的香水等。',
+            cooldown: 20,
+          },
+        ],
+        canHitInPipe: false,
+      },
+      {
+        name: '优雅从容',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '队友在附近时可免除一次虚弱状态。(CD：50秒)',
+          },
+          {
+            level: 2,
+            description: 'Hp上限增加[25](从99变为124)。',
+          },
+          {
+            level: 3,
+            description: '虚弱下减速附近猫咪；附近有队友时，提高自己和附近队友的虚弱状态移速。',
           },
         ],
       },
@@ -1404,9 +1544,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '鱼钩碰到道具会携带之；碰到角色会将其勾回，并使猫咪掉落手中的老鼠。',
+            description: '鱼钩碰到道具会携带之；碰到角色会将其勾回，并救下猫咪手中的老鼠。',
             detailedDescription:
-              '鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并使猫咪掉落手中的老鼠。',
+              '鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并救下猫咪手中的老鼠。',
             cooldown: 16,
           },
           {
