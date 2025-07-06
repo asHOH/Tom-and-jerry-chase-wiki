@@ -15,6 +15,7 @@ import { generateTypescriptCodeFromCharacter, saveFactionsAndCharacters } from '
 import { characters } from '@/data';
 import { getSkillImageUrl } from '@/lib/skillUtils';
 import { produce } from 'immer';
+import ContentWriterDisplay from './ContentWriterDisplay';
 
 function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
@@ -115,6 +116,8 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                 </button>
               )}
             </h1>
+
+            <ContentWriterDisplay characterId={localCharacter.id} />
 
             <EditableField
               tag='p'

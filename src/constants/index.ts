@@ -83,3 +83,14 @@ export const DISCLAIMER_TEXT = [
       `${ack.prefix}${ack.creators.map((id) => CREATORS[id]?.name ?? id).join('、')}${ack.suffix}`
   ),
 ].join('\n');
+
+// Helper function to get ContentWriter contributors for a specific character
+export const getContentWritersByCharacter = (characterId: string): string[] => {
+  return contributors
+    .filter((contributor) =>
+      contributor.roles.some(
+        (role) => role.type === RoleType.ContentWriter && role.characters?.includes(characterId)
+      )
+    )
+    .map((contributor) => contributor.name);
+};
