@@ -36,6 +36,7 @@ export default function CharacterAttributesSection({
       value: character.hpRecovery || 0,
       condition: !!character.hpRecovery,
       path: `hpRecovery`,
+      suffix: ' /s',
     },
     {
       label: '移速',
@@ -52,7 +53,6 @@ export default function CharacterAttributesSection({
       condition: !!character.jumpHeight && factionId === 'mouse',
       path: `jumpHeight`,
     },
-    // FIXME: should this really be hidden?
     {
       label: '攻击增伤',
       value: character.attackBoost || 0,
@@ -96,20 +96,36 @@ export default function CharacterAttributesSection({
 
   const visibleAttributes = allAttributes.filter((attr) => attr.condition);
 
+  // Check if we should make 爪刀CD span both columns (cat with exactly 5 attributes)
+  const shouldSpanClawKnifeCD =
+    factionId === 'cat' &&
+    visibleAttributes.length === 5 &&
+    !((character.attackBoost !== undefined && character.attackBoost !== 0) || isEditMode);
+
   return (
     <div className='grid grid-cols-2 gap-3'>
-      {visibleAttributes.map((attr) => (
-        <AttributeDisplay
-          key={attr.label}
-          label={attr.label}
-          value={attr.value}
-          factionId={factionId}
-          isDetailed={isDetailed}
-          path={attr.path ?? ''}
-          suffix={attr.suffix ?? ''}
-          {...(attr.className && { className: attr.className })}
-        />
-      ))}
+      {visibleAttributes.map((attr, index) => {
+        const isLastClawKnifeCD =
+          shouldSpanClawKnifeCD &&
+          index === visibleAttributes.length - 1 &&
+          attr.label === '爪刀CD';
+
+        return (
+          <AttributeDisplay
+            key={attr.label}
+            label={attr.label}
+            value={attr.value}
+            factionId={factionId}
+            isDetailed={isDetailed}
+            path={attr.path ?? ''}
+            suffix={attr.suffix ?? ''}
+            {...(attr.className && { className: attr.className })}
+            {...(isLastClawKnifeCD && {
+              className: `${attr.className || 'text-sm text-gray-700 py-1'} col-span-2`,
+            })}
+          />
+        );
+      })}
 
       {factionId === 'cat' &&
         ((character.attackBoost !== undefined && character.attackBoost !== 0) || isEditMode) && (
@@ -119,7 +135,7 @@ export default function CharacterAttributesSection({
             factionId={factionId}
             isDetailed={isDetailed}
             path='attackBoost'
-            className='text-amber-600 py-1'
+            className='text-sm text-amber-600 py-1'
           />
         )}
     </div>

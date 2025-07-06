@@ -14,6 +14,10 @@ interface AttributeDisplayProps {
   suffix?: string;
 }
 
+const GrayUnit = ({ children }: { children: React.ReactNode }) => (
+  <span className='text-gray-400 text-xs'>{children}</span>
+);
+
 export default function AttributeDisplay({
   label,
   value,
@@ -31,7 +35,7 @@ export default function AttributeDisplay({
         <>
           {' '}
           <EditableField tag='span' path={path} initialValue={value} className='inline' />
-          {suffix && ` ${suffix}`}
+          {suffix && <GrayUnit>{suffix}</GrayUnit>}
         </>
       ) : label == '爪刀CD' ? (
         <>
@@ -42,18 +46,22 @@ export default function AttributeDisplay({
             initialValue={localCharacter.clawKnifeCdUnhit || 0}
             className='inline'
           />
-          {' / '}
+          <GrayUnit> / </GrayUnit>
           <EditableField
             tag='span'
             path='clawKnifeCdHit'
             initialValue={localCharacter.clawKnifeCdHit || 0}
             className='inline'
           />
-          {' 秒'}
-          {suffix && ` ${suffix}`}
+          <GrayUnit> 秒</GrayUnit>
+          {suffix && <GrayUnit>{suffix}</GrayUnit>}
         </>
       ) : (
-        ` ${value}${suffix ? ` ${suffix}` : ''}`
+        <>
+          {' '}
+          <span>{value}</span>
+          {suffix && <GrayUnit>{suffix}</GrayUnit>}
+        </>
       )}
     </p>
   );
