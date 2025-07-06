@@ -12,7 +12,7 @@ export const dynamic = 'force-static';
 // Generate static params for all characters
 export function generateStaticParams() {
   return Object.keys(characters).map((characterId) => ({
-    characterId: encodeURIComponent(characterId),
+    characterId: characterId, // Don't encode here, Next.js will handle it
   }));
 }
 
@@ -22,8 +22,8 @@ export async function generateMetadata({
   params: Promise<{ characterId: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const decodedCharacterId = decodeURIComponent(resolvedParams.characterId);
-  const character = characters[decodedCharacterId];
+  const characterId = resolvedParams.characterId; // No need to decode anymore
+  const character = characters[characterId];
 
   if (!character) {
     return {};
@@ -44,16 +44,14 @@ export async function generateMetadata({
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(
-        decodedCharacterId
-      )}`,
+      '@id': `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(characterId)}`,
     },
     inLanguage: 'zh-CN',
   };
 
   return {
     alternates: {
-      canonical: `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(decodedCharacterId)}`,
+      canonical: `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(characterId)}`,
     },
     other: {
       'application/ld+json': JSON.stringify(structuredData),
@@ -70,8 +68,8 @@ export default async function CharacterPage({
   params: Promise<{ characterId: string }>;
 }) {
   const resolvedParams = await params;
-  const decodedCharacterId = decodeURIComponent(resolvedParams.characterId);
-  const character = characters[decodedCharacterId];
+  const characterId = resolvedParams.characterId; // No need to decode anymore
+  const character = characters[characterId];
 
   if (!character) {
     notFound();

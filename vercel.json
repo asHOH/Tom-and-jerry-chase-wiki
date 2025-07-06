@@ -1,7 +1,7 @@
 {
   "framework": null,
   "cleanUrls": true,
-  "trailingSlash": false,
+  "trailingSlash": true,
   "headers": [
     {
       "source": "/(.*)",
@@ -67,6 +67,16 @@
           "value": "public, max-age=2592000"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/characters/:path*",
+      "destination": "/characters/:path*"
+    },
+    {
+      "source": "/cards/:path*",
+      "destination": "/cards/:path*"
     }
   ],
   "redirects": [

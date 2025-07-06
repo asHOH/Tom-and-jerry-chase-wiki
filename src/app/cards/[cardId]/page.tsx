@@ -12,7 +12,7 @@ export const dynamic = 'force-static';
 // Generate static params for all cards
 export function generateStaticParams() {
   return Object.keys(cards).map((cardId) => ({
-    cardId: encodeURIComponent(cardId),
+    cardId: cardId, // Don't encode here, Next.js will handle it
   }));
 }
 
@@ -22,8 +22,8 @@ export async function generateMetadata({
   params: Promise<{ cardId: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const decodedCardId = decodeURIComponent(resolvedParams.cardId);
-  const card = cards[decodedCardId];
+  const cardId = resolvedParams.cardId; // No need to decode anymore
+  const card = cards[cardId];
 
   if (!card) {
     return {};
@@ -63,8 +63,8 @@ export async function generateMetadata({
 
 export default async function CardPage({ params }: { params: Promise<{ cardId: string }> }) {
   const resolvedParams = await params;
-  const decodedCardId = decodeURIComponent(resolvedParams.cardId);
-  const card = cards[decodedCardId];
+  const cardId = resolvedParams.cardId; // No need to decode anymore
+  const card = cards[cardId];
 
   if (!card) {
     notFound();
