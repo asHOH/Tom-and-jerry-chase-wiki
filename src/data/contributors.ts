@@ -117,6 +117,29 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'ruomeng',
+    name: '若梦',
+    url: 'https://space.bilibili.com/3537122405386648',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['音乐家杰瑞'],
+      },
+    ],
+  },
+  {
+    id: 'leshanhaoshi',
+    name: '乐善好施陈阿姨',
+    url: 'https://space.bilibili.com/418408689',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['音乐家杰瑞'],
+        isMinor: true, // knowledge card & skill allocation only
+      },
+    ],
+  },
+  {
     id: 'dreamback',
     name: '梦回_淦德蒸蚌',
     url: 'https://space.bilibili.com/1193776217',

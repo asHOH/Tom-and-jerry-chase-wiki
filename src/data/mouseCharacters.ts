@@ -1326,6 +1326,173 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 音乐家杰瑞 ----------------------------------- */
+  音乐家杰瑞: {
+    description:
+      '他是艺术的宠儿，音乐家杰瑞拥有优雅帅气的外表，他精湛的技艺能够指挥乐队演绎世界上最华丽的乐章，那些或舒缓、或激昂的音乐不断撩动观众的心弦，激起人们内心深处的灵魂共鸣。',
+    maxHp: 99,
+    attackBoost: 10,
+    hpRecovery: 1,
+    moveSpeed: 600,
+    jumpHeight: 400,
+    cheesePushSpeed: 3.5,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '救援',
+        isMinor: false,
+        description: '可利用二级被动快速将老鼠救下火箭。',
+        additionalDescription: '但在此期间容易吃到控制导致礼服被断。',
+      },
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '利用一级被动可以造成大量伤害和拦截猫上火箭。',
+        additionalDescription: '被知识卡-皮糙肉厚大大克制。',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description: '主动技能可以带来不错的团队收益。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '砸墙',
+        isMinor: true,
+        description: '利用三级被动可快速破墙。',
+        additionalDescription: '若4只老鼠均在墙缝附近可以技能全交做到秒破。',
+      },
+    ],
+
+    skillAllocations: [
+      {
+        id: '',
+        pattern: '0210(2)2011',
+        weaponType: 'weapon1',
+        description:
+          '加点灵活。五级时若奶酪位被放飞可先点二级协奏补推。二级礼服增加拆火箭难度，应将加点留到七级，直接升到三级礼服。',
+        additionaldescription:
+          '若进入墙缝战时未满8级或猫咪破盾能力强，可舍弃三级礼服点三级被动及二级协奏。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'B-夹不住我', 'C-救救我'],
+        description:
+          '利用精准投射快速刷新礼服CD，速炸火箭，让猫短时间内绑不上火箭，夹不住我可配合2级协奏音符速破夹子。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-绝地反击', 'C-救救我', 'C-不屈'],
+        description:
+          '知识量不足可带本套卡组。绝地反击可配合共鸣冲击波快速打出高额伤害，不屈增加自保，可换成夹不住我。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
+        description: '进一步增强救援能力。队中没有尼宝且沟通得当时，可将救救我换为绝地反击。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
+        description: '幸运流通用卡组。',
+      },
+      {
+        cards: ['S-铁血', 'S-无畏', 'A-投手', 'C-救救我'],
+        description: '斯飞专用卡组，特技可以带干扰投掷。',
+      },
+    ],
+
+    skills: [
+      {
+        name: '风格骤变',
+        type: 'active',
+        description: '根据演奏风格给予周围友方增益效果。使用技能可切换风格。',
+        detailedDescription:
+          '根据演奏风格给予周围友方增益效果。使用技能可切换风格，切换时音乐家杰瑞会同时保持上一种风格8秒。点出该技能时风格为协奏。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '可被打断', // FIXME
+        cancelableAftercast: '可通过道具键*或跳跃键取消后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=408.2',
+        skillLevels: [
+          {
+            level: 1,
+            description: '狂想：提升攻击力。\n协奏：获得Hp恢复和加速。',
+            detailedDescription: '狂想：提升15点攻击力。\n协奏：获得2.5/s的Hp恢复和12%加速。',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description: '狂想：额外给予击中敌方时回复Hp的效果。\n协奏：额外提升推速和交互速度。',
+            detailedDescription:
+              '狂想：额外给予击中敌方时回复10Hp的效果。\n协奏：额外提升30%推速和18%交互速度。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description:
+              '狂想：额外降低[技能CD](特技与机器鼠技能不生效)。\n协奏：额外降低周围火箭燃烧速度。',
+            detailedDescription:
+              '狂想：额外降低18%[技能CD](特技与机器鼠技能不生效)。\n协奏：额外降低50%周围火箭燃烧速度，不可叠加。',
+            cooldown: 15,
+          },
+        ],
+      },
+      {
+        name: '幻风礼服',
+        type: 'weapon1',
+        description:
+          '进行一场忘我演奏，期间获得20点减伤、可通过移动键来进行3次位移。不可交互，可丢道具。',
+        detailedDescription:
+          '进行一场忘我演奏，期间获得20点减伤、可通过移动键来进行最多3次快速位移。不可交互，可丢道具。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '可被道具键*打断', // FIXME
+        cancelableAftercast: '无后摇', //FIXME
+        videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=286.4',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 18,
+          },
+          {
+            level: 2,
+            description: '位移距离和速度提升。提高了拆火箭的难度，故一般与三级礼服一起加点。',
+            cooldown: 18,
+          },
+          {
+            level: 3,
+            description: '使用技能时获得2层护盾，持续7秒。',
+            cooldown: 18,
+          },
+        ],
+      },
+      {
+        name: '共鸣',
+        type: 'passive',
+        videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=543.5',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '使用技能会触发共鸣冲击波，共鸣范围内可对敌方造成伤害并减速。共鸣叠加3层时对敌方造成僵直（可救下猫咪手中的老鼠）。',
+            detailedDescription:
+              '使用技能会触发共鸣冲击波(音乐家杰瑞自身2层，范围内队友1层)，共鸣范围内可对敌方造成10点伤害并减速3秒。共鸣叠加3层时对敌方造成1秒僵直（可救下猫咪手中的老鼠；内置CD：10秒），僵直期间猫咪不会受到任何伤害及控制。',
+          },
+          {
+            level: 2,
+            description: '5秒内对火箭造成5次共鸣后会摧毁火箭。',
+            detailedDescription: '5秒内对火箭造成5次共鸣后会摧毁火箭。被摧毁的火箭60秒后恢复。',
+          },
+          {
+            level: 3,
+            description: '共鸣对墙缝造成伤害。',
+            detailedDescription: '共鸣对墙缝造成2.9%伤害，但不对泡泡造成伤害。',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ----------------------------------- 蒙金奇 ---------------------------------- */
   蒙金奇: {
     description: '军团指挥官蒙金奇。',
