@@ -12,7 +12,7 @@ export const dynamic = 'force-static';
 // Generate static params for all characters
 export function generateStaticParams() {
   return Object.keys(characters).map((characterId) => ({
-    characterId: characterId, // Don't encode here, Next.js will handle it
+    characterId: encodeURIComponent(characterId), // Encode for static export
   }));
 }
 
@@ -22,7 +22,7 @@ export async function generateMetadata({
   params: Promise<{ characterId: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const characterId = resolvedParams.characterId; // No need to decode anymore
+  const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
   const character = characters[characterId];
 
   if (!character) {
@@ -68,7 +68,7 @@ export default async function CharacterPage({
   params: Promise<{ characterId: string }>;
 }) {
   const resolvedParams = await params;
-  const characterId = resolvedParams.characterId; // No need to decode anymore
+  const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
   const character = characters[characterId];
 
   if (!character) {
