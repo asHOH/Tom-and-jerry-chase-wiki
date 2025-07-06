@@ -108,6 +108,7 @@ export const contributors: Contributor[] = [
   {
     id: 'bingmeishi',
     name: '冰美式',
+    url: 'https://space.bilibili.com/439320147',
     roles: [
       {
         type: RoleType.ContentWriter,
