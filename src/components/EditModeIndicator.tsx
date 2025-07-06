@@ -36,7 +36,9 @@ export const EditModeIndicator: React.FC = () => {
     <div className='fixed left-0 right-0 bg-amber-600 text-white px-4 py-2 text-sm font-medium z-[9999] edit-mode-banner'>
       <div className='flex items-center justify-center space-x-2 relative'>
         <div className='w-2 h-2 bg-amber-200 rounded-full animate-pulse'></div>
-        <span>编辑模式已开启 - 双击主页&ldquo;网站说明&rdquo;标题可退出编辑模式</span>
+        <span>
+          编辑模式已开启 - 编辑全部在本地进行 - 双击主页&ldquo;网站说明&rdquo;标题可退出编辑模式
+        </span>
         <button
           type='button'
           onClick={() => setIsHidden(true)}

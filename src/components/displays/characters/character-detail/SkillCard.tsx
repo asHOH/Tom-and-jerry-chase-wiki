@@ -289,7 +289,7 @@ export default function SkillCard({
               {getSkillTypeLabel(skill.type)} ·{' '}
               <EditableField
                 tag='span'
-                path={`${characterId}.skills.${skillIndex}.name`}
+                path={`skills.${skillIndex}.name`}
                 initialValue={skill.name}
               />
             </h3>
