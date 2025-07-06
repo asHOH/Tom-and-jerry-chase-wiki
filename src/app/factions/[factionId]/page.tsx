@@ -4,7 +4,7 @@ import { factions, factionData } from '@/data';
 import NavigationWrapper from '@/components/NavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
-import { CharacterGrid } from '@/components/displays/characters';
+import CharacterGridClient from './CharacterGridClient';
 
 export const dynamic = 'force-static';
 
@@ -68,7 +68,7 @@ export default async function FactionPage({ params }: { params: Promise<{ factio
     <AppProvider>
       <EditModeProvider>
         <NavigationWrapper showDetailToggle={false}>
-          <CharacterGrid faction={faction} />
+          <CharacterGridClient faction={faction} />
         </NavigationWrapper>
       </EditModeProvider>
     </AppProvider>
