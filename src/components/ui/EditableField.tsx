@@ -29,6 +29,7 @@ interface EditableFieldProps<T> {
   initialValue: T;
   className?: string | undefined;
   onSave?: ((newValue: string) => void) | undefined;
+  factionId?: string | undefined; // Optional faction ID for edit operations
 }
 
 function EditableFieldImplementation<T>({
@@ -37,11 +38,12 @@ function EditableFieldImplementation<T>({
   initialValue,
   className,
   onSave,
+  factionId,
 }: EditableFieldProps<T>) {
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
   const { localCharacter, setLocalCharacter } = useLocalCharacter();
-  const { handleSelectCharacter, activeTab } = useAppContext();
+  const { handleSelectCharacter } = useAppContext();
 
   useEffect(() => {
     const storedData = localStorage.getItem('characters');
@@ -101,7 +103,7 @@ function EditableFieldImplementation<T>({
           initialValue,
           newContentStr,
           `${localCharacter.id}.${path}`,
-          activeTab || undefined,
+          factionId || localCharacter.factionId || undefined,
           handleSelectCharacter,
           localCharacter,
           setLocalCharacter
@@ -131,6 +133,7 @@ function EditableField<T>({
   initialValue,
   className,
   onSave,
+  factionId,
 }: EditableFieldProps<T>) {
   const { isEditMode } = useEditMode();
   return isEditMode ? (
@@ -140,6 +143,7 @@ function EditableField<T>({
       initialValue={initialValue}
       className={className}
       onSave={onSave}
+      factionId={factionId}
     />
   ) : (
     React.createElement(Tag, { className }, <TextWithHoverTooltips text={String(initialValue)} />)

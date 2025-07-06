@@ -8,7 +8,7 @@ import json5 from 'json5';
 import { CharacterWithFaction } from '@/lib/types';
 import { characters, FactionId, factions } from '@/data';
 import { addSkillImageUrls } from '@/lib/skillUtils';
-import { useAppContext } from '@/context/AppContext';
+import { useParams } from 'next/navigation';
 import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { saveFactionsAndCharacters } from '@/lib/editUtils';
@@ -137,7 +137,8 @@ export default function CharacterImport() {
   const [showImportOptions, setShowImportOptions] = useState(false);
   const [showPasteInput, setShowPasteInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const factionId = useAppContext().activeTab as FactionId;
+  const params = useParams();
+  const factionId = params?.factionId as FactionId;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

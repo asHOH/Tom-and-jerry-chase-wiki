@@ -100,21 +100,31 @@ function handleCharacterIdChange(
   // characters is not managed by react, so we need to trigger the update manually
   // use localCharacter to force update
   const oldId = path.split('.')[0]!;
-  characters[newId] = { ...characters[oldId!]! };
+  const character = characters[oldId!];
+
+  // Derive faction from character data if not provided
+  const factionId = activeTab || character?.factionId;
+
+  if (!factionId) {
+    console.warn('Could not determine faction for character', oldId);
+    return;
+  }
+
+  characters[newId] = { ...character! };
   characters[newId].id = newId;
-  characters[newId].imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
+  characters[newId].imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   delete characters[oldId!];
   handleSelectCharacter(newId);
-  const faction = factions[activeTab!]?.characters.find(({ id }) => id == oldId);
+  const faction = factions[factionId]?.characters.find(({ id }) => id == oldId);
   if (faction) {
     faction.id = faction.name = newId;
-    faction.imageUrl = (activeTab == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
+    faction.imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   }
   for (const i of characters[newId].skills) {
     i.id = `${newId}-${i.id.split('-')[1]}`;
-    i.imageUrl = getSkillImageUrl(newId, i, activeTab as unknown as FactionId);
+    i.imageUrl = getSkillImageUrl(newId, i, factionId as unknown as FactionId);
   }
-  if (activeTab === 'mouse' && stats[newId]) {
+  if (factionId === 'mouse' && stats[newId]) {
     Object.assign(characters[newId], stats[newId]);
   }
   setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
@@ -131,8 +141,17 @@ export function handleCharacterSkillIdChange(
     characters,
     [...path.split('.').slice(0, 3)].join('.')
   ) as unknown as Skill;
+
+  // Derive faction from character data if not provided
+  const factionId = activeTab || localCharacter.factionId;
+
+  if (!factionId) {
+    console.warn('Could not determine faction for character', localCharacter.id);
+    return;
+  }
+
   skill.name = newName;
-  skill.imageUrl = getSkillImageUrl(skill.id.split('-')[0]!, skill, activeTab as FactionId);
+  skill.imageUrl = getSkillImageUrl(skill.id.split('-')[0]!, skill, factionId as FactionId);
   setLocalCharacter({
     ...localCharacter,
     skills: localCharacter.skills.map((i: Skill, index) =>
@@ -183,25 +202,26 @@ export function handleChange<T>(
   );
   setNestedProperty(characters, path, finalValue);
   if (path && path.split('.')?.[1] == 'id') {
-    if (activeTab) {
-      handleCharacterIdChange(
+    handleCharacterIdChange(
+      path,
+      newContentStr,
+      activeTab,
+      handleSelectCharacter,
+      localCharacter,
+      setLocalCharacter
+    );
+  }
+  if (path && path.split('.')?.[1] == 'skills' && path.split('.')?.[3] == 'name') {
+    const factionId = activeTab || localCharacter.factionId;
+    if (factionId) {
+      handleCharacterSkillIdChange(
         path,
         newContentStr,
-        activeTab,
-        handleSelectCharacter,
+        factionId,
         localCharacter,
         setLocalCharacter
       );
     }
-  }
-  if (path && path.split('.')?.[1] == 'skills' && path.split('.')?.[3] == 'name') {
-    handleCharacterSkillIdChange(
-      path,
-      newContentStr,
-      activeTab!,
-      localCharacter,
-      setLocalCharacter
-    );
   }
   saveFactionsAndCharacters();
 }

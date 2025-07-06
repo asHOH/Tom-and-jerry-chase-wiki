@@ -29,7 +29,7 @@ export default function KnowledgeCardSection({
   onCreateGroup,
   onRemoveGroup,
 }: KnowledgeCardSectionProps) {
-  const { handleSelectCard, handleTabChange } = useAppContext();
+  const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [currentGroupIndex, setCurrentGroupIndex] = useState<number | null>(null);
@@ -128,7 +128,6 @@ export default function KnowledgeCardSection({
                   className='relative w-20 h-20 sm:w-24 sm:h-24 cursor-pointer'
                   onClick={() => {
                     if (isEditMode) return;
-                    handleTabChange(factionId === 'cat' ? 'catCards' : 'mouseCards');
                     handleSelectCard(cardId.split('-')[1]!, characterId);
                   }}
                 >
