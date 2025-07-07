@@ -35,7 +35,7 @@ export default function BaseCard({
       case 'character':
         return {
           ...finalBaseStyle,
-          backgroundColor: '#ffffff',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
           display: 'flex',
           flexDirection: 'column' as const,
           alignItems: 'center',
@@ -46,7 +46,7 @@ export default function BaseCard({
       case 'item':
         return {
           ...finalBaseStyle,
-          backgroundColor: '#ffffff',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
           position: 'relative' as const,
           overflow: 'hidden',
           padding: 0,
@@ -54,7 +54,7 @@ export default function BaseCard({
       case 'details':
         return {
           ...finalBaseStyle,
-          backgroundColor: '#ffffff',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
           height: '100%',
           overflow: 'hidden',
         };
