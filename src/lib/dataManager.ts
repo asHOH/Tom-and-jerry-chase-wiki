@@ -28,15 +28,32 @@ const rawFactionData: Record<FactionId, Faction> = {
   },
 };
 
+// Simple memoization utility for functions with no arguments
+function memoize<T>(fn: () => T): () => T {
+  let cache: T | undefined;
+  let hasBeenCalled = false;
+
+  return () => {
+    if (hasBeenCalled) {
+      return cache!;
+    }
+    cache = fn();
+    hasBeenCalled = true;
+    return cache!;
+  };
+}
+
 /**
  * Data Manager - Handles all data transformations
  * Provides a clean interface for accessing processed game data
  */
 export class GameDataManager {
-  /**
-   * Get factions with their associated characters
-   */
-  static getFactions() {
+  private static _memoizedFactions = memoize(GameDataManager.getFactionsInternal);
+  private static _memoizedCharacters = memoize(GameDataManager.getCharactersInternal);
+  private static _memoizedFactionCards = memoize(GameDataManager.getFactionCardsInternal);
+  private static _memoizedCards = memoize(GameDataManager.getCardsInternal);
+
+  private static getFactionsInternal() {
     return Object.fromEntries(
       Object.entries(rawFactionData).map(([factionId, faction]) => {
         const factionCharacters = Object.values(rawCharacterData)
@@ -60,10 +77,7 @@ export class GameDataManager {
     );
   }
 
-  /**
-   * Get characters with faction references
-   */
-  static getCharacters() {
+  private static getCharactersInternal() {
     return Object.fromEntries(
       Object.entries(rawCharacterData).map(([characterId, character]) => {
         const factionId = character.factionId as FactionId;
@@ -81,10 +95,7 @@ export class GameDataManager {
     );
   }
 
-  /**
-   * Get faction cards with their associated cards
-   */
-  static getFactionCards() {
+  private static getFactionCardsInternal() {
     return Object.fromEntries(
       Object.entries(rawFactionData).map(([factionId, faction]) => {
         const factionCardList = Object.values(rawCardData)
@@ -102,10 +113,7 @@ export class GameDataManager {
     );
   }
 
-  /**
-   * Get cards with faction references
-   */
-  static getCards() {
+  private static getCardsInternal() {
     return Object.fromEntries(
       Object.entries(rawCardData).map(([cardId, card]) => {
         const factionId = card.factionId as FactionId;
@@ -121,6 +129,22 @@ export class GameDataManager {
         ];
       })
     );
+  }
+
+  static getFactions() {
+    return GameDataManager._memoizedFactions();
+  }
+
+  static getCharacters() {
+    return GameDataManager._memoizedCharacters();
+  }
+
+  static getFactionCards() {
+    return GameDataManager._memoizedFactionCards();
+  }
+
+  static getCards() {
+    return GameDataManager._memoizedCards();
   }
 
   /**
