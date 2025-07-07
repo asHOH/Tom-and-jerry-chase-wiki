@@ -41,7 +41,13 @@ export default function CharacterSection({
           ></path>
         </svg>
       </button>
-      {isOpen && children}
+      <div
+        className={`transition-all duration-300 ease-in-out ${
+          isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        {children}
+      </div>
     </div>
   );
 }
