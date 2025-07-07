@@ -95,6 +95,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         name: '大铁锤',
+        aliases: ['锤子'],
         type: 'weapon1',
         description: '举起大铁锤近身攻击。',
         // detailedDescription: '举起大铁锤近身攻击。',
@@ -587,13 +588,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skills: [
       {
         name: '威严光盾',
+        aliases: ['小盾'],
         type: 'active',
         description: '',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
-        // videoUrl: 'https://b23.tv/HbGlOytt=5',
+        // videoUrl: 'https://b23.tv/HbGlOyt?t=5',
         skillLevels: [
           {
             level: 1,
@@ -616,6 +618,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         name: '国王权杖',
+        aliases: ['大盾'],
         type: 'weapon1',
         description: '给予附近友方短暂的无敌。',
         detailedDescription: '给予附近友方短暂的无敌。前摇0.9秒，后摇1秒。',
@@ -820,6 +823,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         name: '隐形感应雷',
+        aliases: ['地雷'],
         type: 'weapon2',
         description:
           '放下隐形感应雷。感应雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成伤害和控制。',
@@ -1088,6 +1092,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skills: [
       {
         name: '弹力圆球',
+        aliases: ['弹球'],
         type: 'active',
         description:
           '蓄力弹射，碰撞猫咪或墙缝时造成伤害。弹射期间再次点击技能将垂直下坠并结束弹射。',
@@ -1127,6 +1132,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         name: '藤蔓',
+        aliases: ['树'],
         type: 'weapon1',
         description:
           '生成可攀爬的藤蔓，持续一段时间，并在顶端生成一个箱子，老鼠在攀爬时将大幅提高攀爬速度。',
@@ -1278,6 +1284,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         name: '香风折扇',
+        aliases: ['扇子'],
         type: 'weapon1',
         description: '手持折扇向目标方向扇风，对命中的猫咪造成少量伤害，反向和失明效果，可破盾。',
         // 2级折扇因为有对自身的加速效果所以可以搭配翻滚特技和应激反应来使用，能够在被猫攻击后快速逃脱，如果技能打中猫可直接断掉猫的节奏。墙缝战的时候如果点了3级折扇，可以卡在炸药包0秒时使用对墙缝造成大量伤害，达到破墙的效果(难度较高)\n注意1:不要对朵朵使用2级折扇\n注意2:折扇的基础效果对斯飞没用。
@@ -1328,6 +1335,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
   /* ----------------------------------- 音乐家杰瑞 ----------------------------------- */
   音乐家杰瑞: {
+    aliases: ['音杰'],
     description:
       '他是艺术的宠儿，音乐家杰瑞拥有优雅帅气的外表，他精湛的技艺能够指挥乐队演绎世界上最华丽的乐章，那些或舒缓、或激昂的音乐不断撩动观众的心弦，激起人们内心深处的灵魂共鸣。',
     maxHp: 99,
@@ -1535,6 +1543,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skills: [
       {
         name: '勇往直前',
+        aliases: ['冲撞'],
         type: 'active',
         description:
           '向前冲撞，期间获得霸体和减伤，推开道具并对猫造成少量伤害和击退。消耗士气值可以增强技能效果。',
@@ -1665,6 +1674,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skills: [
       {
         name: '灵活跳跃',
+        aliases: ['翻滚'],
         type: 'active',
         description: '快速向后翻滚。',
         detailedDescription: '快速向后翻滚。（不能在跳跃中释放）',
@@ -1748,7 +1758,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(CD：9秒)',
-            // detailedDescription: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(CD：9秒)',
           },
         ],
       },

@@ -77,6 +77,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '发怒冲刺',
         type: 'active',
+        aliases: ['无敌'],
         description: '解控并进入一段时间的无敌。',
         detailedDescription:
           '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到[真实伤害](如仙女鼠的一星；但不会因此被击倒)和[位移效果的影响](如尼宝的钩子)。若在莱恩蓝图内受到真实伤害，不免疫变线条猫。绑火箭等交互会被仙女鼠八星打断。无敌结束后会有2秒的10%减速，减速可以被护盾抵消。',
@@ -243,6 +244,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '横冲直撞',
         type: 'active',
+        aliases: ['冲刺', '冲撞'],
         description: '冲刺一段距离，冲飞道具并对老鼠造成伤害和眩晕。冲刺中可通过方向键控制方向。',
         detailedDescription:
           '冲刺一段距离，冲飞道具并对老鼠造成26点伤害和0.4秒眩晕。冲刺中可通过方向键控制方向。',
@@ -419,6 +421,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '双重猫格',
         type: 'active',
+        aliases: ['分身'],
         description:
           '释放分身。分身继承知识卡、免疫碎片和捕鼠夹、提供[小地图视野](包括隐身的老鼠)，但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随。再次使用技能可与分身换位。',
         detailedDescription:
@@ -596,6 +599,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '瞬移闪击',
         type: 'active',
+        aliases: ['闪现'],
         description: '向前移动一段距离。如果附近有老鼠，可以瞬移到老鼠身后。',
         canMoveWhileUsing: true,
         canUseInAir: true,
@@ -833,6 +837,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '防狼锤',
         type: 'weapon1',
+        aliases: ['锤子'],
         description: '挥动防狼锤，命中敌方时造成少量伤害和一层减速。',
         detailedDescription:
           '锤子范围较小，使用时会因为身体的惯性继续向前移动一小段距离，命中敌方造成少量伤害和一层减速，血量清空时将不能使用锤子。（欢迎纠正和补充）',
@@ -1105,6 +1110,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '律动时间',
         type: 'active',
+        aliases: ['跳舞'],
         description:
           '回复Hp，并随着音乐舞动，持续40秒。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复Hp、提升移速和攻击力。舞动时接触虚弱老鼠将使其自主跟随苏蕊30秒，期间遇到火箭立刻绑上。',
         detailedDescription:
