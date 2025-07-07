@@ -11,7 +11,12 @@
  * All legacy compatibility functions have been removed as of June 1, 2025.
  */
 
-import { designTokens, componentTokens, createStyleFromTokens } from './design-tokens';
+import {
+  designTokens,
+  componentTokens,
+  createStyleFromTokens,
+  getPositioningTagColors,
+} from './design-tokens';
 
 // Re-export design tokens for easy access
 export { designTokens, componentTokens, createStyleFromTokens };
@@ -22,6 +27,10 @@ export {
   getCardCostColors,
   getPositioningTagColors,
   getPositioningTagContainerColor,
+  getSkillTypeColors,
+  getSkillTypeContainerColor,
+  getSkillLevelColors,
+  getSkillLevelContainerColor,
 } from './design-tokens';
 
 /**
@@ -211,6 +220,21 @@ export const getToken = <T extends keyof DesignTokenPath>(
 };
 
 /**
+ * Create diagonal gradient styles for minor positioning tags
+ * Creates a 45-degree gradient from original color (top-left) to grey (bottom-right)
+ * Note: This function is now primarily for compatibility. The same effect is available
+ * directly through getPositioningTagColors with isMinor=true.
+ */
+export const createMinorTagGradient = (
+  tagName: string,
+  faction?: 'cat' | 'mouse'
+): React.CSSProperties => {
+  // Use the same logic as getPositioningTagColors for consistency
+  const colors = getPositioningTagColors(tagName, true, true, faction);
+  return colors;
+};
+
+/**
  * Design system configuration and metadata
  */
 export const getDesignSystemMeta = () => ({
@@ -239,6 +263,7 @@ const designSystem = {
     createGridStyles,
     createCardStyles,
     createButtonStyles,
+    createMinorTagGradient,
     getToken,
   },
   meta: getDesignSystemMeta,

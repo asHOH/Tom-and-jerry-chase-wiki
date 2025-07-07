@@ -477,15 +477,6 @@ export const getPositioningTagColors = (
   includeBorder: boolean = false,
   faction?: 'cat' | 'mouse'
 ) => {
-  if (isMinor) {
-    const colorScheme = designTokens.colors.positioningTags.minor;
-    return {
-      color: colorScheme.text,
-      backgroundColor: colorScheme.background,
-      ...(includeBorder && { borderColor: colorScheme.border }),
-    };
-  }
-
   // Map Chinese tag names to design token keys
   const tagMapping: Record<string, keyof typeof designTokens.colors.positioningTags> = {
     进攻: 'attack',
@@ -507,6 +498,28 @@ export const getPositioningTagColors = (
   const colorScheme = tagKey
     ? designTokens.colors.positioningTags[tagKey]
     : designTokens.colors.positioningTags.minor;
+
+  if (isMinor && tagKey) {
+    // For minor tags, create diagonal gradient background
+    const originalColorScheme = designTokens.colors.positioningTags[tagKey];
+    const greyColorScheme = designTokens.colors.positioningTags.minor;
+
+    return {
+      color: originalColorScheme.text,
+      background: `linear-gradient(135deg, ${originalColorScheme.background} 45%, ${originalColorScheme.background} 50%, ${greyColorScheme.background} 55%)`,
+      ...(includeBorder && { borderColor: greyColorScheme.border }),
+    };
+  }
+
+  if (isMinor) {
+    // Fallback for minor tags without recognized tag name
+    const greyColorScheme = designTokens.colors.positioningTags.minor;
+    return {
+      color: greyColorScheme.text,
+      backgroundColor: greyColorScheme.background,
+      ...(includeBorder && { borderColor: greyColorScheme.border }),
+    };
+  }
 
   return {
     color: colorScheme.text,
@@ -604,10 +617,7 @@ export const getPositioningTagContainerColor = (
   isMinor: boolean = false,
   faction?: 'cat' | 'mouse'
 ): string => {
-  if (isMinor) {
-    return designTokens.colors.positioningTags.minor.container;
-  }
-
+  // Map Chinese tag names to design token keys
   const tagMapping: Record<string, keyof typeof designTokens.colors.positioningTags> = {
     进攻: 'attack',
     防守: 'defense',
@@ -623,7 +633,15 @@ export const getPositioningTagContainerColor = (
     破局: 'breakthrough',
     砸墙: 'wallBreak',
   };
+
   const tagKey = tagMapping[tagName];
+
+  if (isMinor) {
+    // For minor tags, use a more neutral background since the Tag component itself has the diagonal gradient
+    // Use a very light grey background that won't conflict with the tag's gradient
+    return 'bg-gray-50 border border-gray-100';
+  }
+
   return tagKey
     ? designTokens.colors.positioningTags[tagKey].container
     : designTokens.colors.positioningTags.minor.container;
