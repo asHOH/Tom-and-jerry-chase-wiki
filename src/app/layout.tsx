@@ -6,6 +6,7 @@ import { CacheDebugPanel } from '@/components/CacheDebugPanel';
 import { VersionChecker } from '@/components/VersionChecker';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 import { DISCLAIMER_TEXT } from '@/constants';
 import './globals.css';
 
@@ -78,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name='referrer' content='strict-origin-when-cross-origin' />
         <meta
           httpEquiv='Content-Security-Policy'
-          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; object-src 'none'; child-src 'none'; form-action 'self'; base-uri 'self'; worker-src 'self';"
+          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://vitals.vercel-insights.com; media-src 'self'; object-src 'none'; child-src 'none'; form-action 'self'; base-uri 'self'; worker-src 'self';"
         />
         <meta name='format-detection' content='telephone=no, date=no, email=no, address=no' />
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
@@ -92,6 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ServiceWorkerRegistration />
         <CacheDebugPanel />
         <VersionChecker />
+        <SpeedInsightsComponent />
       </body>
     </html>
   );
