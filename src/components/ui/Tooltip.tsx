@@ -35,8 +35,29 @@ export default function Tooltip({
     const triggerCenterX = rect.left + rect.width / 2;
     const navBarHeight = 84;
     const tooltipGap = 8;
-    const viewportPadding = 10;
-    const tooltipHeight = 40; // Estimated tooltip height
+    const viewportPadding = 8;
+    const tooltipHeight = 40;
+
+    // Create a temporary tooltip element to measure actual width
+    const tempTooltip = document.createElement('div');
+    tempTooltip.style.cssText = `
+      position: fixed;
+      top: -9999px;
+      left: -9999px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      max-width: 20rem;
+      word-break: break-words;
+      white-space: pre-wrap;
+      visibility: hidden;
+      pointer-events: none;
+    `;
+    tempTooltip.textContent = content;
+    document.body.appendChild(tempTooltip);
+
+    const actualWidth = tempTooltip.offsetWidth;
+    document.body.removeChild(tempTooltip);
 
     let x = triggerCenterX;
     let y: number;
@@ -49,11 +70,10 @@ export default function Tooltip({
       y = rect.top - tooltipHeight - tooltipGap;
     }
 
-    if (x < viewportPadding) {
-      x = viewportPadding;
-    } else if (x > window.innerWidth - viewportPadding) {
-      x = window.innerWidth - viewportPadding;
-    }
+    x = Math.max(
+      viewportPadding + actualWidth / 2,
+      Math.min(x, window.innerWidth - viewportPadding - actualWidth / 2)
+    );
 
     setPosition({ x, y });
     setIsBelow(showBelow);
