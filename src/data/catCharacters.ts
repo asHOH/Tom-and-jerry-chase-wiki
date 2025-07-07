@@ -838,9 +838,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '防狼锤',
         type: 'weapon1',
         aliases: ['锤子'],
-        description: '挥动防狼锤，命中敌方时造成少量伤害和一层减速。',
+        description: '挥动防狼锤，造成少量伤害和一层减速。',
         detailedDescription:
-          '锤子范围较小，使用时会因为身体的惯性继续向前移动一小段距离，命中敌方造成少量伤害和一层减速，血量清空时将不能使用锤子。（欢迎纠正和补充）',
+          '锤子范围较小，使用时会因惯性继续向前移动一小段距离，自身受到极少量伤害；命中敌方造成少量伤害和一层减速。血量不足时不能使用锤子。（欢迎纠正和补充）',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '可被道具键打断',
