@@ -117,7 +117,9 @@ export default function SkillCard({
               }}
               className='w-3 h-3'
             />
-            <span>{skill.canMoveWhileUsing ? '可移动释放' : '不可移动释放'}</span>
+            <span className='font-bold'>
+              {skill.canMoveWhileUsing ? '可移动释放' : '不可移动释放'}
+            </span>
           </label>
         </div>,
         <div className='flex items-center gap-1 text-xs'>
@@ -135,7 +137,7 @@ export default function SkillCard({
               }}
               className='w-3 h-3'
             />
-            <span>{skill.canUseInAir ? '可空中释放' : '不可空中释放'}</span>
+            <span className='font-bold'>{skill.canUseInAir ? '可空中释放' : '不可空中释放'}</span>
           </label>
         </div>,
         <div className='flex flex-wrap gap-1 items-center'>
@@ -158,8 +160,40 @@ export default function SkillCard({
             );
 
             const displayText = () => {
-              if (currentMethods.length === 0) return '不确定是否可取消';
-              return currentMethods.join('或');
+              if (currentMethods.length === 0)
+                return <span className='font-bold'>不确定是否可被打断</span>;
+
+              // Extract methods that start with "可被" and end with "打断"
+              const cancelableMethods = currentMethods.filter(
+                (method) => method.startsWith('可被') && method.endsWith('打断')
+              );
+              const otherMethods = currentMethods.filter(
+                (method) => !method.startsWith('可被') || !method.endsWith('打断')
+              );
+
+              const result = [];
+
+              // Handle other methods (like "无前摇", "不可被打断")
+              if (otherMethods.length > 0) {
+                result.push(otherMethods.join('或'));
+              }
+
+              // Handle cancelable methods with optimized format
+              if (cancelableMethods.length > 0) {
+                const keys = cancelableMethods.map((method) =>
+                  method.replace(/^可被/, '').replace(/打断$/, '')
+                );
+                if (keys.length === 1) {
+                  result.push(`可被${keys[0]}打断`);
+                } else if (keys.length === 2) {
+                  result.push(`可被${keys[0]}或${keys[1]}打断`);
+                } else {
+                  const lastKey = keys.pop();
+                  result.push(`可被${keys.join('、')}或${lastKey}打断`);
+                }
+              }
+
+              return result.join('或');
             };
 
             return (
@@ -191,7 +225,9 @@ export default function SkillCard({
                         }}
                         className='w-3 h-3'
                       />
-                      <span>{option}</span>
+                      <span className={currentMethods.includes(option) ? 'font-bold' : ''}>
+                        {option}
+                      </span>
                     </label>
                   ))}
                 </div>
@@ -235,7 +271,9 @@ export default function SkillCard({
                         }}
                         className='w-3 h-3'
                       />
-                      <span>{option}</span>
+                      <span className={activeCancelableOptions.includes(option) ? 'font-bold' : ''}>
+                        {option}
+                      </span>
                     </label>
                   ))}
                   <span className='text-gray-600'>打断</span>
@@ -266,8 +304,40 @@ export default function SkillCard({
             );
 
             const displayText = () => {
-              if (currentMethods.length === 0) return '不确定是否可取消后摇';
-              return currentMethods.join('或');
+              if (currentMethods.length === 0)
+                return <span className='font-bold'>不确定是否可取消后摇</span>;
+
+              // Extract methods that start with "可被" and end with "打断"
+              const cancelableMethods = currentMethods.filter(
+                (method) => method.startsWith('可被') && method.endsWith('打断')
+              );
+              const otherMethods = currentMethods.filter(
+                (method) => !method.startsWith('可被') || !method.endsWith('打断')
+              );
+
+              const result = [];
+
+              // Handle other methods (like "无后摇", "不可取消后摇")
+              if (otherMethods.length > 0) {
+                result.push(otherMethods.join('或'));
+              }
+
+              // Handle cancelable methods with optimized format
+              if (cancelableMethods.length > 0) {
+                const keys = cancelableMethods.map((method) =>
+                  method.replace(/^可被/, '').replace(/打断$/, '')
+                );
+                if (keys.length === 1) {
+                  result.push(`可被${keys[0]}打断`);
+                } else if (keys.length === 2) {
+                  result.push(`可被${keys[0]}或${keys[1]}打断`);
+                } else {
+                  const lastKey = keys.pop();
+                  result.push(`可被${keys.join('、')}或${lastKey}打断`);
+                }
+              }
+
+              return result.join('或');
             };
 
             return (
@@ -299,7 +369,9 @@ export default function SkillCard({
                         }}
                         className='w-3 h-3'
                       />
-                      <span>{option}</span>
+                      <span className={currentMethods.includes(option) ? 'font-bold' : ''}>
+                        {option}
+                      </span>
                     </label>
                   ))}
                 </div>
@@ -343,7 +415,9 @@ export default function SkillCard({
                         }}
                         className='w-3 h-3'
                       />
-                      <span>{option}</span>
+                      <span className={activeCancelableOptions.includes(option) ? 'font-bold' : ''}>
+                        {option}
+                      </span>
                     </label>
                   ))}
                   <span className='text-gray-600'>取消后摇</span>
@@ -367,7 +441,9 @@ export default function SkillCard({
               }}
               className='w-3 h-3'
             />
-            <span>{skill.canHitInPipe ? '可击中管道中的角色' : '不可击中管道中的角色'}</span>
+            <span className='font-bold'>
+              {skill.canHitInPipe ? '可击中管道中的角色' : '不可击中管道中的角色'}
+            </span>
           </label>
         </div>,
         <div className='flex items-center gap-1 text-xs'>
@@ -393,7 +469,7 @@ export default function SkillCard({
                       }}
                       className='w-3 h-3'
                     />
-                    <span>{option}</span>
+                    <span className={currentTiming === option ? 'font-bold' : ''}>{option}</span>
                   </label>
                 ))}
               </div>
