@@ -8,8 +8,12 @@ import { PositioningTagName } from '@/data';
 import { useFilterState } from '@/lib/filterUtils';
 import { getPositioningTagColors } from '@/lib/design-tokens';
 import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
+import Tooltip from '@/components/ui/Tooltip';
+import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { useAppContext } from '@/context/AppContext';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
+  const { isDetailedView: isDetailed } = useAppContext();
   const {
     selectedFilters: selectedPositioningTags,
     toggleFilter: togglePositioningTagFilter,
@@ -86,15 +90,25 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                 };
 
             return (
-              <button
-                type='button'
+              <Tooltip
                 key={tag}
-                onClick={() => togglePositioningTagFilter(tag as PositioningTagName)}
-                style={buttonStyle}
-                className={!isActive ? 'hover:bg-gray-200' : ''}
+                content={getPositioningTagTooltipContent(
+                  tag,
+                  faction.id as 'cat' | 'mouse',
+                  isDetailed
+                )}
+                delay={800}
+                className='border-none cursor-pointer'
               >
-                {tag}
-              </button>
+                <button
+                  type='button'
+                  onClick={() => togglePositioningTagFilter(tag as PositioningTagName)}
+                  style={buttonStyle}
+                  className={!isActive ? 'hover:bg-gray-200' : ''}
+                >
+                  {tag}
+                </button>
+              </Tooltip>
             );
           })}
         </div>
