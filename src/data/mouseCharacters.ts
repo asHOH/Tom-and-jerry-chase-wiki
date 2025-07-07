@@ -560,9 +560,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '辅助',
         isMinor: false,
-        description: '一武团队无敌，二武多种团队增益',
+        description: '一武团队无敌，二武多种团队增益。',
         additionalDescription:
           '权杖可以给范围内的队友施加群体无敌，是接应与抗伤的好手段；战旗集视野、输出、破局、自保等多种强效团队增益于一体，拥有极高的上限，是当之无愧的第一辅助。',
+      },
+      {
+        tagName: '砸墙',
+        isMinor: false,
+        description: '攻击战旗可以提供强大的团队破墙能力。',
+        additionalDescription: '',
       },
     ],
     skillAllocations: [
@@ -1225,12 +1231,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         tagName: '干扰',
         isMinor: true,
         description: '后期三级礼仪可干扰猫绑火箭。',
-        additionalDescription: '',
-      },
-      {
-        tagName: '救援',
-        isMinor: true,
-        description: '2级扇子扇走捕鼠夹，配合被动，有一定的救援能力。',
         additionalDescription: '',
       },
     ],
