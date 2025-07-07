@@ -100,7 +100,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8'>
-        {filteredCharacters.map((character) => (
+        {filteredCharacters.map((character, index) => (
           <div key={character.id} className='transform transition-transform hover:-translate-y-1'>
             <CharacterDisplay
               id={character.id}
@@ -108,6 +108,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
               imageUrl={character.imageUrl}
               positioningTags={character.positioningTags}
               factionId={faction.id}
+              priority={index < 4}
             />
           </div>
         ))}

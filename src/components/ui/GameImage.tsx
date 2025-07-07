@@ -8,9 +8,16 @@ type GameImageProps = {
   alt: string;
   size: ImageSize;
   className?: string;
+  priority?: boolean;
 };
 
-export default function GameImage({ src, alt, size, className = '' }: GameImageProps) {
+export default function GameImage({
+  src,
+  alt,
+  size,
+  className = '',
+  priority = false,
+}: GameImageProps) {
   const { width, height } = componentTokens.image.dimensions[size];
 
   // Use card height for details view, image height for others
@@ -37,6 +44,7 @@ export default function GameImage({ src, alt, size, className = '' }: GameImageP
           alt={alt}
           width={width}
           height={height}
+          priority={priority}
           unoptimized
           style={{
             objectFit: 'contain',
