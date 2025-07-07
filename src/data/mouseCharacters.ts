@@ -1201,7 +1201,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   玛丽: {
     description:
       '高贵优雅的贵族成熟女性，头戴星光闪耀的王冠，她的真实身份其实是公主，肩负责任的她有自己的原则和处事方式。',
-    maxHp: 124,
+    maxHp: 99,
     attackBoost: 0,
     hpRecovery: 2.5,
     moveSpeed: 635,
@@ -1236,11 +1236,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     skillAllocations: [
       {
-        id: '香风折扇',
-        pattern: '121212000',
+        id: '',
+        pattern: '2(0)2121100',
         weaponType: 'weapon1',
         description:
-          '加点较为灵活，可不按照推荐加点来加。作为全能位，需要看玛丽在一整局中的定位和局内情况来加点，在前期需保留被动加点，死后配合铁血使用。(也要看附近有没有队友，不然浪费加点)',
+          '加点较为灵活，可不按照推荐加点来加。作为全能位，需要看玛丽在一整局中的定位和局内情况来加点。游戏开始时需保留被动加点，死后配合铁血使用。(也要看附近有没有队友，不然浪费加点)',
       },
     ],
     knowledgeCardGroups: [
