@@ -151,11 +151,7 @@ export default function SkillCard({
               '其他技能键',
             ];
 
-            const currentMethods = skill.cancelableSkill
-              ? skill.cancelableSkill
-                  .split('或')
-                  .map((method) => method.replace(/，但不返还CD$/, ''))
-              : [];
+            const currentMethods = skill.cancelableSkill ? skill.cancelableSkill.split('或') : [];
 
             const activeCancelableOptions = cancelableOptions.filter((opt) =>
               currentMethods.some((method) => method.includes(opt))
@@ -375,32 +371,32 @@ export default function SkillCard({
           </label>
         </div>,
         <div className='flex items-center gap-1 text-xs'>
-          <span className='text-gray-600'>CD返还:</span>
+          <span className='text-gray-600'>CD时机:</span>
           {(() => {
-            const hasNoCDReturn = skill.cancelableSkill?.includes('，但不返还CD');
+            const cooldownOptions = ['前摇前', '释放时', '释放后'];
+            const currentTiming = skill.cooldownTiming ?? '释放时';
+
             return (
-              <label className='flex items-center gap-1 cursor-pointer'>
-                <input
-                  type='checkbox'
-                  checked={skill.returnsCooldown ?? !hasNoCDReturn}
-                  onChange={(e) => {
-                    handleSaveChanges(
-                      produce(skill, (skill) => {
-                        skill.returnsCooldown = e.target.checked;
-                        // Clean up old format from cancelableSkill
-                        if (skill.cancelableSkill) {
-                          skill.cancelableSkill = skill.cancelableSkill.replace(
-                            /，但不返还CD/g,
-                            ''
-                          );
-                        }
-                      })
-                    );
-                  }}
-                  className='w-3 h-3'
-                />
-                <span>{(skill.returnsCooldown ?? !hasNoCDReturn) ? '返还CD' : '不返还CD'}</span>
-              </label>
+              <div className='flex flex-wrap gap-1'>
+                {cooldownOptions.map((option) => (
+                  <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                    <input
+                      type='radio'
+                      name={`cooldownTiming-${skillIndex}`}
+                      checked={currentTiming === option}
+                      onChange={() => {
+                        handleSaveChanges(
+                          produce(skill, (skill) => {
+                            skill.cooldownTiming = option as '前摇前' | '释放时' | '释放后';
+                          })
+                        );
+                      }}
+                      className='w-3 h-3'
+                    />
+                    <span>{option}</span>
+                  </label>
+                ))}
+              </div>
             );
           })()}
         </div>
@@ -428,7 +424,9 @@ export default function SkillCard({
       }
 
       if (skill.canHitInPipe) properties.push('可击中管道中的角色');
-      if (skill.returnsCooldown === false) properties.push('不返还CD');
+      if (skill.cooldownTiming && skill.cooldownTiming !== '释放时') {
+        properties.push(`CD时机: ${skill.cooldownTiming}`);
+      }
     }
 
     return properties;

@@ -69,7 +69,7 @@ export type SkillDefinition = {
   canHitInPipe?: boolean; // 可击中管道中的角色
   cancelableSkill?: string; // 可取消释放
   cancelableAftercast?: string; // 可取消后摇
-  returnsCooldown?: boolean; // 是否返还CD
+  cooldownTiming?: '前摇前' | '释放时' | '释放后'; // 进入CD时机
 
   skillLevels: SkillLevel[];
 };
