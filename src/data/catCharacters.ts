@@ -1016,10 +1016,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description:
-              '增加饭盒伤害。爆炸后留下食物，米特触碰后会获得持续Hp恢复效果。大幅提高放置捕鼠夹的效率。',
+              '增加饭盒伤害。爆炸后留下食物，米特触碰后会获得持续Hp恢复效果。大幅提高放置捕鼠夹的效率。', // （连招：击晕接捕鼠夹）
             cooldown: 20,
-            detailedDescription:
-              '增加饭盒伤害。爆炸后留下食物，米特触碰后会获得持续Hp恢复效果。大幅提高放置捕鼠夹的效率。\n', // （连招：击晕接捕鼠夹）
           },
           {
             level: 3,
@@ -1035,9 +1033,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description:
-              '每次受到伤害获得1层“野性”状态，最多叠加10层。每层野性略微提升米特Hp恢复。攻击时消耗全部野性，根据层数造成额外伤害。在10层野性下绑火箭时会进入6秒迸发状态，免疫控制和虚弱。',
+              '每次受到伤害获得1层“野性”状态，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在10层野性下绑火箭时会进入6秒强霸体。',
             detailedDescription:
-              '每次受到伤害获得1层“野性”状态，持续10秒，最多叠加10层。每层野性略微提升米特Hp恢复。攻击时消耗全部野性，根据层数造成额外伤害。在10层野性下绑火箭时会进入6秒迸发状态，免疫控制和虚弱，该效果20秒内不会重复触发。',
+              '每次受到伤害获得1层“野性”状态，持续10秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在10层野性下绑火箭时会进入6秒强霸体（内置CD：20秒）。',
           },
           {
             level: 2,
@@ -1046,9 +1044,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '',
-            detailedDescription:
-              '爪刀命中时，回复伤害等量的生命值，且每消耗一层野性，减少0.3秒爪刀CD。',
+            description:
+              '爪刀命中时，回复伤害等量的生命值；不论是否命中，每消耗一层野性，减少0.3秒爪刀CD。',
           },
         ],
       },
