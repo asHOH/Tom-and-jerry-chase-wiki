@@ -229,8 +229,7 @@ export const createMinorTagGradient = (
   tagName: string,
   faction?: 'cat' | 'mouse'
 ): React.CSSProperties => {
-  // Use the same logic as getPositioningTagColors for consistency
-  const colors = getPositioningTagColors(tagName, true, true, faction);
+  const colors = getPositioningTagColors(tagName, true, false, faction);
   return colors;
 };
 

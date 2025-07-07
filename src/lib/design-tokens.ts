@@ -506,8 +506,7 @@ export const getPositioningTagColors = (
 
     return {
       color: originalColorScheme.text,
-      background: `linear-gradient(135deg, ${originalColorScheme.background} 45%, ${originalColorScheme.background} 50%, ${greyColorScheme.background} 55%)`,
-      ...(includeBorder && { borderColor: greyColorScheme.border }),
+      background: `linear-gradient(135deg, ${originalColorScheme.background} 20%, ${greyColorScheme.background} 40%)`,
     };
   }
 
@@ -637,8 +636,6 @@ export const getPositioningTagContainerColor = (
   const tagKey = tagMapping[tagName];
 
   if (isMinor) {
-    // For minor tags, use a more neutral background since the Tag component itself has the diagonal gradient
-    // Use a very light grey background that won't conflict with the tag's gradient
     return 'bg-gray-50 border border-gray-100';
   }
 

@@ -33,12 +33,40 @@ export default function Tag({
     // Size-based font sizing
     const fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '0.875rem' : '1rem';
 
+    // Detect positioning tags by checking for positioning tag colors
+    const isPositioningTag =
+      colorStyles.color &&
+      (colorStyles.color === '#dc2626' || // attack red
+        colorStyles.color === '#2563eb' || // defense/support blue
+        colorStyles.color === '#9a3412' || // chase/wallBreak orange-brown
+        colorStyles.color === '#16a34a' || // speedrun green
+        colorStyles.color === '#9333ea' || // fight purple
+        colorStyles.color === '#4338ca' || // lateGame indigo
+        colorStyles.color === '#ca8a04' || // comeback yellow
+        colorStyles.color === '#d97706' || // cheese amber
+        colorStyles.color === '#059669' || // rescue emerald
+        colorStyles.color === '#7c3aed' || // breakthrough violet
+        colorStyles.color === '#0d9488' || // lateGameMouse teal
+        colorStyles.color === '#4b5563'); // minor gray
+
     const tagStyle: React.CSSProperties = {
       ...baseTagStyle,
       fontSize,
       ...colorStyles,
-      // Add subtle border using the background color with reduced opacity for better definition
-      borderColor: colorStyles.backgroundColor ? `${colorStyles.backgroundColor}66` : 'transparent',
+      // Remove borders from all positioning tags and compensate with extra padding
+      ...(isPositioningTag
+        ? {
+            border: 'none',
+            padding:
+              variant === 'compact'
+                ? '5px 7px' // +1px each side from original 4px 6px
+                : '6px 8px',
+          }
+        : {
+            borderColor: colorStyles.backgroundColor
+              ? `${colorStyles.backgroundColor}66`
+              : 'transparent',
+          }),
     };
 
     return (
