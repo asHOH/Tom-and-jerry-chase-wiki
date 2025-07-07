@@ -41,6 +41,7 @@ function HomeContent() {
               description='猫阵营角色列表'
               onClick={() => router.push('/factions/cat')}
               ariaLabel='猫阵营角色列表'
+              unoptimized
               priority
             />
             <FactionButton
@@ -50,6 +51,7 @@ function HomeContent() {
               description='鼠阵营角色列表'
               onClick={() => router.push('/factions/mouse')}
               ariaLabel='鼠阵营角色列表'
+              unoptimized
               priority
             />
           </FactionButtonGroup>
@@ -65,6 +67,7 @@ function HomeContent() {
               description='猫方知识卡列表'
               onClick={() => router.push('/cards/cat')}
               ariaLabel='猫方知识卡列表'
+              unoptimized
               priority
             />
             <FactionButton
@@ -74,6 +77,7 @@ function HomeContent() {
               description='鼠方知识卡列表'
               onClick={() => router.push('/cards/mouse')}
               ariaLabel='鼠方知识卡列表'
+              unoptimized
               priority
             />
           </FactionButtonGroup>
