@@ -79,6 +79,7 @@
     "@types/react-dom": "^19.1.5",
     "autoprefixer": "^10.4.14",
     "cross-env": "^7.0.3",
+    "depcheck": "^1.4.7",
     "eslint": "^9.30.1",
     "eslint-config-next": "^15.3.5",
     "husky": "^9.1.7",
@@ -99,6 +100,22 @@
     ],
     "*.{json,css,md}": [
       "prettier --write --ignore-unknown"
+    ]
+  },
+  "depcheck": {
+    "ignores": [
+      "@tailwindcss/postcss",
+      "@types/jest",
+      "@types/node",
+      "autoprefixer",
+      "depcheck",
+      "eslint",
+      "eslint-config-next",
+      "jest-environment-jsdom",
+      "postcss",
+      "rimraf",
+      "tailwindcss",
+      "ts-node"
     ]
   }
 }
