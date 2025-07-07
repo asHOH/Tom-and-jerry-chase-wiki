@@ -264,7 +264,7 @@ export default function KnowledgeCardSection({
   if (!knowledgeCardGroups || knowledgeCardGroups.length === 0) {
     if (isEditMode) {
       return (
-        <div className='mb-8'>
+        <div>
           <CharacterSection title='推荐知识卡组'>
             <div className='card p-4 space-y-3'>
               <div className='flex justify-between items-center mb-4'>
@@ -329,7 +329,7 @@ export default function KnowledgeCardSection({
     : (currentGroup?.cards ?? []);
 
   return (
-    <div className='mb-8'>
+    <div>
       <CharacterSection title='推荐知识卡组'>
         <div className='card p-4 space-y-3'>
           {/* Toggle button for squeezed view */}

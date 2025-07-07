@@ -59,7 +59,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
   const { localCharacter } = useLocalCharacter();
   const { handleAddSkillAllocation, handleRemoveSkillAllocation } = useSkillAllocationManagement();
   return (
-    <div className='mb-8'>
+    <div>
       <CharacterSection title='推荐加点'>
         <div className='space-y-3'>
           {localCharacter.skillAllocations && localCharacter.skillAllocations.length > 0

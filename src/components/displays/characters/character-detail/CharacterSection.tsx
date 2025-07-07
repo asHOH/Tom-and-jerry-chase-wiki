@@ -16,7 +16,9 @@ export default function CharacterSection({
   };
 
   return (
-    <div className='mb-6'>
+    <div
+      className={`transition-all ${isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in'} ${isOpen ? 'mb-8' : 'mb-0'}`}
+    >
       <button
         type='button'
         aria-label={isOpen ? `折叠${title}` : `展开${title}`}
@@ -25,7 +27,7 @@ export default function CharacterSection({
       >
         <h3>{title}</h3>
         <svg
-          className={`w-6 h-6 transform transition-transform duration-200 ${
+          className={`w-6 h-6 transform transition-transform duration-200 ease-out ${
             isOpen ? 'rotate-0' : '-rotate-90'
           }`}
           fill='none'
@@ -42,7 +44,7 @@ export default function CharacterSection({
         </svg>
       </button>
       <div
-        className={`transition-all duration-300 ease-in-out ${
+        className={`transition-all ease-out ${isOpen ? 'duration-300' : 'duration-200'} ${
           isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
