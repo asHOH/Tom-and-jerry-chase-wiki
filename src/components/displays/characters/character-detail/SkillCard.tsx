@@ -134,16 +134,16 @@ export default function SkillCard({
             handleSaveChanges(
               produce(skill, (skill) => {
                 const possibleCancelableSkills = [
-                  '不可被打断',
-                  '可被道具键*打断',
-                  '不可打断',
-                  '可被打断',
-                  '可被跳跃键打断',
                   '无前摇',
-                  '不可被打断*',
-                  '可被道具键打断，但不返还CD',
+                  '不可被打断',
                   '可被道具键打断',
-                  '不可取消',
+                  '可被道具键打断，但不返还CD',
+                  '可被道具键*打断',
+                  '可被跳跃键打断',
+                  '可被移动键打断',
+                  '可被药水键打断',
+                  '可被本技能键打断',
+                  '可被其他技能键打断',
                 ];
                 const index = possibleCancelableSkills.indexOf(skill.cancelableSkill!);
                 const newText = possibleCancelableSkills[index + 1];
@@ -164,13 +164,15 @@ export default function SkillCard({
             handleSaveChanges(
               produce(skill, (skill) => {
                 const possibleCancelableAftercasts = [
-                  '不可取消后摇',
-                  '可被道具键*取消后摇',
                   '无后摇',
-                  '不可取消',
-                  '可被道具键打断',
+                  '不可取消后摇',
+                  '可被道具键取消后摇',
+                  '可被道具键*取消后摇',
                   '可被跳跃键取消后摇',
-                  '可被道具键取消后摽',
+                  '可被移动键取消后摇',
+                  '可被药水键取消后摇',
+                  '可被本技能键取消后摇',
+                  '可被其他技能键取消后摇',
                 ];
                 const index = possibleCancelableAftercasts.indexOf(skill.cancelableAftercast!);
                 const newText = possibleCancelableAftercasts[index + 1];
