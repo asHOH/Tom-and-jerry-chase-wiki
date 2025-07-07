@@ -75,17 +75,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     return pathname === '/';
   };
 
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-
   const baseButtonStyle = {
     borderRadius: '6px',
     border: 'none',
