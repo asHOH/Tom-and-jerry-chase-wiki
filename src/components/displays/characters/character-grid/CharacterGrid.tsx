@@ -7,6 +7,7 @@ import { FactionCharactersProps } from '@/lib/types';
 import { PositioningTagName } from '@/data';
 import { useFilterState } from '@/lib/filterUtils';
 import { getPositioningTagColors } from '@/lib/design-tokens';
+import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const {
@@ -22,8 +23,8 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         tags.add(tag.tagName);
       });
     });
-    return Array.from(tags).sort();
-  }, [faction.characters]);
+    return sortPositioningTagNames(Array.from(tags), faction.id as 'cat' | 'mouse');
+  }, [faction.characters, faction.id]);
 
   const filteredCharacters = useMemo(() => {
     if (selectedPositioningTags.size === 0) {
@@ -56,7 +57,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
               false,
               faction.id as 'cat' | 'mouse'
             );
-            const isActive = hasPositioningTagFilter(tag);
+            const isActive = hasPositioningTagFilter(tag as PositioningTagName);
 
             const buttonStyle = isActive
               ? {
@@ -88,7 +89,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
               <button
                 type='button'
                 key={tag}
-                onClick={() => togglePositioningTagFilter(tag)}
+                onClick={() => togglePositioningTagFilter(tag as PositioningTagName)}
                 style={buttonStyle}
                 className={!isActive ? 'hover:bg-gray-200' : ''}
               >
