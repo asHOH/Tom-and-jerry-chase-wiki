@@ -139,10 +139,10 @@ export const designTokens = {
         container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200',
       },
       chase: {
-        text: '#ea580c', // orange-600
-        background: '#fed7aa', // orange-100
-        border: '#fdba74', // orange-300
-        container: 'bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200',
+        text: '#9a3412', // orange-800 (deeper reddish brown)
+        background: '#fee5d3', // orange-175 equivalent (lighter background)
+        border: '#ea580c', // orange-600 (reddish brown border)
+        container: 'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300',
       },
       speedrun: {
         text: '#16a34a', // green-600
@@ -176,16 +176,16 @@ export const designTokens = {
         container: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200',
       },
       disrupt: {
-        text: '#ec4899', // pink-600
-        background: '#fce7f3', // pink-100
-        border: '#f9a8d4', // pink-300
-        container: 'bg-gradient-to-r from-pink-50 to-pink-100 border border-pink-200',
+        text: '#dc2626', // red-600
+        background: '#fee2e2', // red-100
+        border: '#fca5a5', // red-300
+        container: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-200',
       },
       support: {
-        text: '#0891b2', // cyan-600
-        background: '#cffafe', // cyan-100
-        border: '#67e8f9', // cyan-300
-        container: 'bg-gradient-to-r from-cyan-50 to-cyan-100 border border-cyan-200',
+        text: '#2563eb', // blue-600
+        background: '#dbeafe', // blue-100
+        border: '#93c5fd', // blue-300
+        container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200',
       },
       rescue: {
         text: '#059669', // emerald-600
