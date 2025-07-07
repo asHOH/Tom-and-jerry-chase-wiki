@@ -88,6 +88,8 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
               </div>
               {isEditMode && (
                 <button
+                  type='button'
+                  aria-label='导出角色数据'
                   onClick={async () => {
                     try {
                       const code = generateTypescriptCodeFromCharacter(localCharacter);

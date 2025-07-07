@@ -235,16 +235,8 @@ export function generateTypescriptCodeFromCharacter(character: CharacterWithFact
       quote: '',
       space: 2,
       replacer(key, value) {
-        if (
-          key == 'imageUrl' ||
-          key == 'faction' ||
-          key == 'factionId' ||
-          (key == 'id' && value != character.id && value.includes(character.id))
-        ) {
-          return undefined;
-        } else {
-          return value;
-        }
+        if (['imageUrl', 'faction', 'factionId', 'id'].includes(key)) return undefined;
+        return value;
       },
     })
   );
