@@ -5,7 +5,6 @@
  * Creates a JSON file that VersionChecker can poll for updates
  */
 
-/* eslint-disable */
 // This file is a Node.js utility script, not part of the Next.js app
 
 const fs = require('fs');

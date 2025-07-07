@@ -39,6 +39,7 @@ console.log(
 const isDev = process.env.NODE_ENV === 'development' || process.argv.includes('--dev');
 const isCI = process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
 const isTest = process.argv.includes('--test');
+const skipUpdate = process.env.SKIP_SW_UPDATE === 'true' || process.argv.includes('--skip');
 
 let CACHE_VERSION;
 if (isCI && process.env.GITHUB_SHA) {
@@ -55,6 +56,13 @@ if (isCI && process.env.GITHUB_SHA) {
 }
 
 console.log(`📝 Generated cache version: ${CACHE_VERSION}`);
+
+// Check if we should skip the update
+if (skipUpdate) {
+  console.log('⏭️  Skipping service worker update (SKIP_SW_UPDATE=true)');
+  console.log('🎉 Done! Service worker left unchanged');
+  process.exit(0);
+}
 
 // Path to service worker file (allow override for testing)
 const swPath = process.env.SW_PATH || path.join(process.cwd(), 'public', 'sw.js');
@@ -78,7 +86,18 @@ try {
 
     // Try to find and replace existing version pattern
     const versionRegex = /const CACHE_VERSION = ['"`]([^'"`]+)['"`];/;
-    if (versionRegex.test(content)) {
+    const match = content.match(versionRegex);
+    
+    if (match) {
+      const currentVersion = match[1];
+      
+      // Skip update if version is already current (unless forced)
+      if (currentVersion === CACHE_VERSION && !process.env.FORCE_SW_UPDATE) {
+        console.log('✅ Service worker already has current version, skipping update');
+        console.log('🎉 Done! No changes needed');
+        process.exit(0);
+      }
+      
       content = content.replace(versionRegex, `const CACHE_VERSION = '${CACHE_VERSION}';`);
       console.log('📝 Updated existing cache version pattern');
     } else {
