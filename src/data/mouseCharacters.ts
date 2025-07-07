@@ -1396,16 +1396,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '知识量不足可带本套卡组。绝地反击可配合共鸣冲击波快速打出高额伤害，不屈增加自保，可换成夹不住我。',
       },
       {
-        cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
-        description: '进一步增强救援能力。队中没有尼宝且沟通得当时，可将救救我换为绝地反击。',
-      },
-      {
-        cards: ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
-        description: '幸运流通用卡组。',
-      },
-      {
         cards: ['S-铁血', 'S-无畏', 'A-投手', 'C-救救我'],
-        description: '斯飞专用卡组，特技可以带干扰投掷。',
+        description: '米特专用卡组。',
       },
     ],
 
