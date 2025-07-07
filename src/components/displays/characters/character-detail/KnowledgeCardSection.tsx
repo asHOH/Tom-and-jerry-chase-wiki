@@ -11,6 +11,8 @@ import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
 import { useEditMode } from '@/context/EditModeContext';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
 import EditableField from '@/components/ui/EditableField';
+import { getCardRankColors } from '@/lib/design-tokens';
+import KnowledgeCardTooltip from '@/components/ui/KnowledgeCardTooltip';
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: KnowledgeCardGroup[];
@@ -33,6 +35,7 @@ export default function KnowledgeCardSection({
   const { isEditMode } = useEditMode();
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [currentGroupIndex, setCurrentGroupIndex] = useState<number | null>(null);
+  const [isSqueezedView, setIsSqueezedView] = useState(false);
 
   const imageBasePath = factionId === 'cat' ? '/images/catCards/' : '/images/mouseCards/';
 
@@ -43,6 +46,15 @@ export default function KnowledgeCardSection({
     const cardData =
       factionId === 'cat' ? catKnowledgeCards[cardName] : mouseKnowledgeCards[cardName];
     return cardData?.cost ?? 0;
+  };
+
+  const getCardRank = (cardId: string) => {
+    const cardName = cardId.split('-')[1];
+    if (!cardName) return 'C';
+
+    const cardData =
+      factionId === 'cat' ? catKnowledgeCards[cardName] : mouseKnowledgeCards[cardName];
+    return cardData?.rank ?? 'C';
   };
 
   const getCostStyles = (totalCost: number) => {
@@ -121,26 +133,61 @@ export default function KnowledgeCardSection({
               {totalCost}
             </div>
           </Tooltip>
-          <div className='flex flex-wrap gap-0 sm:gap-0.5 md:gap-1 lg:gap-2 flex-1 min-w-0'>
-            {group.map((cardId) => (
-              <Tooltip key={cardId} content={cardId.split('-')[1]!} className='border-none'>
-                <div
-                  className='relative w-20 h-20 sm:w-24 sm:h-24 cursor-pointer'
-                  onClick={() => {
-                    if (isEditMode) return;
-                    handleSelectCard(cardId.split('-')[1]!, characterId);
-                  }}
-                >
-                  <Image
-                    src={`${imageBasePath}${cardId}.png`}
-                    alt={cardId}
-                    fill
-                    className='object-contain'
-                    unoptimized
-                  />
-                </div>
-              </Tooltip>
-            ))}
+          <div
+            className={`flex flex-1 min-w-0 transition-all duration-300 ease-in-out ${
+              isSqueezedView ? 'flex-wrap gap-1' : 'flex-wrap gap-0 sm:gap-0.5 md:gap-1 lg:gap-2'
+            }`}
+          >
+            {group.map((cardId) => {
+              const cardName = cardId.split('-')[1]!;
+              const cardRank = getCardRank(cardId);
+              const rankColors = getCardRankColors(cardRank);
+
+              if (isSqueezedView) {
+                return (
+                  <KnowledgeCardTooltip
+                    key={cardId}
+                    cardName={cardName}
+                    imageUrl={`${imageBasePath}${cardId}.png`}
+                  >
+                    <span
+                      className={`px-2 py-1 rounded-md text-xs font-medium cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm`}
+                      style={{
+                        backgroundColor: rankColors.backgroundColor,
+                        color: rankColors.color,
+                        border: `1px solid ${rankColors.color}20`,
+                      }}
+                      onClick={() => {
+                        if (isEditMode) return;
+                        handleSelectCard(cardName, characterId);
+                      }}
+                    >
+                      {cardName}
+                    </span>
+                  </KnowledgeCardTooltip>
+                );
+              } else {
+                return (
+                  <Tooltip key={cardId} content={cardName} className='border-none'>
+                    <div
+                      className='relative w-20 h-20 sm:w-24 sm:h-24 cursor-pointer transition-transform duration-200 hover:scale-105'
+                      onClick={() => {
+                        if (isEditMode) return;
+                        handleSelectCard(cardName, characterId);
+                      }}
+                    >
+                      <Image
+                        src={`${imageBasePath}${cardId}.png`}
+                        alt={cardId}
+                        fill
+                        className='object-contain'
+                        unoptimized
+                      />
+                    </div>
+                  </Tooltip>
+                );
+              }
+            })}
           </div>
           {isEditMode && (
             <div className='flex flex-col gap-2'>
@@ -210,23 +257,53 @@ export default function KnowledgeCardSection({
         <div className='mb-8'>
           <CharacterSection title='推荐知识卡组'>
             <div className='card p-4 space-y-3'>
-              <button
-                type='button'
-                aria-label='添加知识卡组'
-                onClick={onCreateGroup}
-                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='2'
-                  stroke='currentColor'
-                  className='w-4 h-4'
+              <div className='flex justify-between items-center mb-4'>
+                <button
+                  type='button'
+                  onClick={() => setIsSqueezedView(!isSqueezedView)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                    isSqueezedView
+                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  aria-label={isSqueezedView ? '切换到普通视图' : '切换到紧凑视图'}
                 >
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-                </svg>
-              </button>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth='2'
+                    stroke='currentColor'
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isSqueezedView ? 'rotate-180' : ''
+                    }`}
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M8.25 13.75L12 10L15.75 13.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                    />
+                  </svg>
+                  {isSqueezedView ? '紧凑视图' : '普通视图'}
+                </button>
+                <button
+                  type='button'
+                  aria-label='添加知识卡组'
+                  onClick={onCreateGroup}
+                  className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+                >
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth='2'
+                    stroke='currentColor'
+                    className='w-4 h-4'
+                  >
+                    <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
+                  </svg>
+                </button>
+              </div>
             </div>
           </CharacterSection>
         </div>
@@ -245,6 +322,57 @@ export default function KnowledgeCardSection({
     <div className='mb-8'>
       <CharacterSection title='推荐知识卡组'>
         <div className='card p-4 space-y-3'>
+          {/* Toggle button for squeezed view */}
+          <div className='flex justify-between items-center mb-4'>
+            <button
+              type='button'
+              onClick={() => setIsSqueezedView(!isSqueezedView)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                isSqueezedView
+                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+              aria-label={isSqueezedView ? '切换到普通视图' : '切换到紧凑视图'}
+            >
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth='2'
+                stroke='currentColor'
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isSqueezedView ? 'rotate-180' : ''
+                }`}
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M8.25 13.75L12 10L15.75 13.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                />
+              </svg>
+              {isSqueezedView ? '紧凑视图' : '普通视图'}
+            </button>
+            {isEditMode && (
+              <button
+                type='button'
+                aria-label='添加知识卡组'
+                onClick={onCreateGroup}
+                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth='2'
+                  stroke='currentColor'
+                  className='w-4 h-4'
+                >
+                  <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
+                </svg>
+              </button>
+            )}
+          </div>
+
           {knowledgeCardGroups.map((group, index) => (
             <React.Fragment key={index}>
               {Array.isArray(group)
@@ -255,8 +383,8 @@ export default function KnowledgeCardSection({
               )}
             </React.Fragment>
           ))}
-          {isEditMode && (
-            <div className='mt-4'>
+          {isEditMode && !isSqueezedView && (
+            <div className='mt-4 flex justify-center'>
               <button
                 type='button'
                 aria-label='添加知识卡组'
