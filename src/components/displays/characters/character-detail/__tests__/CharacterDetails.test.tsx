@@ -24,6 +24,11 @@ jest.mock('../../../../../lib/design-tokens', () => ({
     borderColor: '#cccccc',
   })),
   getSkillLevelContainerColor: jest.fn(() => 'bg-gray-100'),
+  getCardRankColors: jest.fn(() => ({
+    color: '#000000',
+    backgroundColor: '#ffffff',
+    borderColor: '#cccccc',
+  })),
 }));
 
 jest.mock('next/image', () => {

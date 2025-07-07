@@ -158,7 +158,7 @@ export const createButtonStyles = (variant: 'faction' | 'primary' | 'secondary' 
 /**
  * Generate CSS classes from design tokens for Tailwind compatibility
  */
-export const generateTailwindClasses = {
+export const generateTailwindClasses = () => ({
   spacing: Object.entries(designTokens.spacing).reduce(
     (acc, [key, value]) => {
       acc[key] = `p-[${value}]`;
@@ -174,7 +174,7 @@ export const generateTailwindClasses = {
     },
     {} as Record<string, string>
   ),
-};
+});
 
 /**
  * Type-safe design token selectors
@@ -213,7 +213,7 @@ export const getToken = <T extends keyof DesignTokenPath>(
 /**
  * Design system configuration and metadata
  */
-export const designSystemMeta = {
+export const getDesignSystemMeta = () => ({
   version: '2.0.0',
   description: 'Tom and Jerry Chase Wiki Design System',
   tokens: {
@@ -227,7 +227,7 @@ export const designSystemMeta = {
     transitions: Object.keys(designTokens.transitions).length,
   },
   components: Object.keys(componentTokens),
-};
+});
 
 // Default export for the entire design system
 const designSystem = {
@@ -241,7 +241,7 @@ const designSystem = {
     createButtonStyles,
     getToken,
   },
-  meta: designSystemMeta,
+  meta: getDesignSystemMeta,
 } as const;
 
 export default designSystem;
