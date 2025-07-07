@@ -124,7 +124,10 @@ export default function KnowledgeCardSection({
     const { containerClass, tooltipContent } = getCostStyles(totalCost);
 
     return (
-      <div key={index} className={`flex flex-col ${isSqueezedView ? 'space-y-1' : 'space-y-2'}`}>
+      <div
+        key={index}
+        className={`flex flex-col transition-all duration-300 ease-in-out ${isSqueezedView ? 'space-y-1' : 'space-y-2'}`}
+      >
         <div
           className={`flex ${isSqueezedView ? 'items-center' : 'items-start'} gap-0.5 sm:gap-1 md:gap-2 lg:gap-4`}
         >
@@ -136,7 +139,7 @@ export default function KnowledgeCardSection({
             </div>
           </Tooltip>
           <div
-            className={`flex flex-1 min-w-0 transition-all duration-300 ease-in-out ${
+            className={`flex flex-1 min-w-0 ${
               isSqueezedView ? 'flex-wrap gap-1' : 'flex-wrap gap-0 sm:gap-0.5 md:gap-1 lg:gap-2'
             }`}
           >
@@ -282,7 +285,7 @@ export default function KnowledgeCardSection({
                     strokeWidth='2'
                     stroke='currentColor'
                     className={`w-4 h-4 transition-transform duration-200 ${
-                      isSqueezedView ? 'rotate-180' : ''
+                      isSqueezedView ? 'rotate-90' : 'rotate-180'
                     }`}
                   >
                     <path
@@ -348,7 +351,7 @@ export default function KnowledgeCardSection({
                 strokeWidth='2'
                 stroke='currentColor'
                 className={`w-4 h-4 transition-transform duration-200 ${
-                  isSqueezedView ? 'rotate-180' : ''
+                  isSqueezedView ? 'rotate-90' : 'rotate-180'
                 }`}
               >
                 <path
