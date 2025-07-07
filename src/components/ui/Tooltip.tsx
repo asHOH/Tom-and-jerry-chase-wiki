@@ -24,6 +24,7 @@ export default function Tooltip({
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isBelow, setIsBelow] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = (e: React.MouseEvent) => {
@@ -40,7 +41,16 @@ export default function Tooltip({
 
     // Calculate position to avoid going off-screen
     let x = rect.left + rect.width / 2;
-    let y = rect.top - tooltipHeight - 8; // 8px gap above the element
+    let y;
+    let showBelow = false;
+
+    // Determine vertical position - try above first, then below if needed
+    if (rect.top - tooltipHeight - 8 < 0) {
+      y = rect.bottom + 8;
+      showBelow = true;
+    } else {
+      y = rect.top - tooltipHeight - 8;
+    }
 
     // Adjust horizontal position if tooltip would go off-screen
     if (x + tooltipWidth / 2 > window.innerWidth) {
@@ -49,12 +59,8 @@ export default function Tooltip({
       x = tooltipWidth / 2 + 10;
     }
 
-    // If tooltip would go above viewport, show it below instead
-    if (y < 0) {
-      y = rect.bottom + 8;
-    }
-
     setPosition({ x, y });
+    setIsBelow(showBelow);
 
     // Set tooltip to show after delay
     timeoutRef.current = setTimeout(() => {
@@ -103,11 +109,11 @@ export default function Tooltip({
           >
             {content}
             <div
-              className='absolute w-2 h-2 bg-gray-800 transform rotate-45'
+              className='absolute w-1 h-1 bg-gray-800'
               style={{
                 left: '50%',
-                bottom: '-4px',
-                transform: 'translateX(-50%) rotate(45deg)',
+                [isBelow ? 'top' : 'bottom']: '-2px',
+                transform: `translateX(-50%) rotate(45deg)`,
               }}
             />
           </div>,
