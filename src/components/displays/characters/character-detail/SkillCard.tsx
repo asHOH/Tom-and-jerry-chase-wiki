@@ -102,105 +102,308 @@ export default function SkillCard({
     }
     if (isEditMode && skill.type != 'passive') {
       properties.push(
-        <span
-          className='cursor-pointer'
-          onClick={() => {
-            handleSaveChanges(
-              produce(skill, (skill) => {
-                skill.canMoveWhileUsing = !skill.canMoveWhileUsing;
-              })
+        <div className='flex items-center gap-1 text-xs'>
+          <span className='text-gray-600'>移动释放:</span>
+          <label className='flex items-center gap-1 cursor-pointer'>
+            <input
+              type='checkbox'
+              checked={skill.canMoveWhileUsing ?? false}
+              onChange={(e) => {
+                handleSaveChanges(
+                  produce(skill, (skill) => {
+                    skill.canMoveWhileUsing = e.target.checked;
+                  })
+                );
+              }}
+              className='w-3 h-3'
+            />
+            <span>{skill.canMoveWhileUsing ? '可移动释放' : '不可移动释放'}</span>
+          </label>
+        </div>,
+        <div className='flex items-center gap-1 text-xs'>
+          <span className='text-gray-600'>空中释放:</span>
+          <label className='flex items-center gap-1 cursor-pointer'>
+            <input
+              type='checkbox'
+              checked={skill.canUseInAir ?? false}
+              onChange={(e) => {
+                handleSaveChanges(
+                  produce(skill, (skill) => {
+                    skill.canUseInAir = e.target.checked;
+                  })
+                );
+              }}
+              className='w-3 h-3'
+            />
+            <span>{skill.canUseInAir ? '可空中释放' : '不可空中释放'}</span>
+          </label>
+        </div>,
+        <div className='flex flex-wrap gap-1 items-center'>
+          {(() => {
+            const specialOptions = ['无前摇', '不可被打断'];
+            const cancelableOptions = [
+              '道具键',
+              '道具键*',
+              '跳跃键',
+              '移动键',
+              '药水键',
+              '本技能键',
+              '其他技能键',
+            ];
+
+            const currentMethods = skill.cancelableSkill
+              ? skill.cancelableSkill
+                  .split('或')
+                  .map((method) => method.replace(/，但不返还CD$/, ''))
+              : [];
+
+            const activeCancelableOptions = cancelableOptions.filter((opt) =>
+              currentMethods.some((method) => method.includes(opt))
             );
-          }}
-        >
-          <span className='select-none'>
-            {skill.canMoveWhileUsing ? '移动释放' : '不可移动释放'}
-          </span>
-        </span>,
-        <span
-          className='cursor-pointer'
-          onClick={() => {
-            handleSaveChanges(
-              produce(skill, (skill) => {
-                skill.canUseInAir = !skill.canUseInAir;
-              })
+
+            const displayText = () => {
+              if (currentMethods.length === 0) return '不确定是否可取消';
+              return currentMethods.join('或');
+            };
+
+            return (
+              <div className='space-y-1'>
+                <div className='text-xs'>{displayText()}</div>
+                <div className='flex flex-wrap gap-1 text-xs'>
+                  {specialOptions.map((option) => (
+                    <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                      <input
+                        type='checkbox'
+                        checked={currentMethods.includes(option)}
+                        onChange={(e) => {
+                          let newMethods = [...currentMethods];
+                          if (e.target.checked) {
+                            newMethods = newMethods.filter((m) => !specialOptions.includes(m));
+                            newMethods.push(option);
+                          } else {
+                            newMethods = newMethods.filter((m) => m !== option);
+                          }
+                          handleSaveChanges(
+                            produce(skill, (skill) => {
+                              if (newMethods.length === 0) {
+                                delete skill.cancelableSkill;
+                              } else {
+                                skill.cancelableSkill = newMethods.join('或');
+                              }
+                            })
+                          );
+                        }}
+                        className='w-3 h-3'
+                      />
+                      <span>{option}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className='flex flex-wrap gap-1 text-xs'>
+                  <span className='text-gray-600'>可被</span>
+                  {cancelableOptions.map((option) => (
+                    <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                      <input
+                        type='checkbox'
+                        checked={activeCancelableOptions.includes(option)}
+                        onChange={(e) => {
+                          let newMethods = currentMethods.filter(
+                            (m) => !specialOptions.includes(m)
+                          );
+                          newMethods = newMethods.filter(
+                            (m) =>
+                              !m.includes('可被') ||
+                              !cancelableOptions.some((opt) => m.includes(opt))
+                          );
+
+                          if (e.target.checked) {
+                            newMethods.push(`可被${option}打断`);
+                          }
+
+                          // Keep other cancelable options that are still selected
+                          cancelableOptions.forEach((opt) => {
+                            if (opt !== option && activeCancelableOptions.includes(opt)) {
+                              newMethods.push(`可被${opt}打断`);
+                            }
+                          });
+
+                          handleSaveChanges(
+                            produce(skill, (skill) => {
+                              if (newMethods.length === 0) {
+                                delete skill.cancelableSkill;
+                              } else {
+                                skill.cancelableSkill = newMethods.join('或');
+                              }
+                            })
+                          );
+                        }}
+                        className='w-3 h-3'
+                      />
+                      <span>{option}</span>
+                    </label>
+                  ))}
+                  <span className='text-gray-600'>打断</span>
+                </div>
+              </div>
             );
-          }}
-        >
-          <span className='select-none'>{skill.canUseInAir ? '空中释放' : '不可空中释放'}</span>
-        </span>,
-        <span
-          className='cursor-pointer'
-          onClick={() => {
-            handleSaveChanges(
-              produce(skill, (skill) => {
-                const possibleCancelableSkills = [
-                  '无前摇',
-                  '不可被打断',
-                  '可被道具键打断',
-                  '可被道具键打断，但不返还CD',
-                  '可被道具键*打断',
-                  '可被跳跃键打断',
-                  '可被移动键打断',
-                  '可被药水键打断',
-                  '可被本技能键打断',
-                  '可被其他技能键打断',
-                ];
-                const index = possibleCancelableSkills.indexOf(skill.cancelableSkill!);
-                const newText = possibleCancelableSkills[index + 1];
-                if (newText == undefined) {
-                  delete skill.cancelableSkill;
-                } else {
-                  skill.cancelableSkill = newText;
-                }
-              })
+          })()}
+        </div>,
+        <div className='flex flex-wrap gap-1 items-center'>
+          {(() => {
+            const specialOptions = ['无后摇', '不可取消后摇'];
+            const cancelableOptions = [
+              '道具键',
+              '道具键*',
+              '跳跃键',
+              '移动键',
+              '药水键',
+              '本技能键',
+              '其他技能键',
+            ];
+
+            const currentMethods = skill.cancelableAftercast
+              ? skill.cancelableAftercast.split('或')
+              : [];
+
+            const activeCancelableOptions = cancelableOptions.filter((opt) =>
+              currentMethods.some((method) => method.includes(opt))
             );
-          }}
-        >
-          <span className='select-none'>{skill.cancelableSkill ?? '不确定是否可取消'}</span>
-        </span>,
-        <span
-          className='cursor-pointer'
-          onClick={() => {
-            handleSaveChanges(
-              produce(skill, (skill) => {
-                const possibleCancelableAftercasts = [
-                  '无后摇',
-                  '不可取消后摇',
-                  '可被道具键取消后摇',
-                  '可被道具键*取消后摇',
-                  '可被跳跃键取消后摇',
-                  '可被移动键取消后摇',
-                  '可被药水键取消后摇',
-                  '可被本技能键取消后摇',
-                  '可被其他技能键取消后摇',
-                ];
-                const index = possibleCancelableAftercasts.indexOf(skill.cancelableAftercast!);
-                const newText = possibleCancelableAftercasts[index + 1];
-                if (newText == undefined) {
-                  delete skill.cancelableAftercast;
-                } else {
-                  skill.cancelableAftercast = newText;
-                }
-              })
+
+            const displayText = () => {
+              if (currentMethods.length === 0) return '不确定是否可取消后摇';
+              return currentMethods.join('或');
+            };
+
+            return (
+              <div className='space-y-1'>
+                <div className='text-xs'>{displayText()}</div>
+                <div className='flex flex-wrap gap-1 text-xs'>
+                  {specialOptions.map((option) => (
+                    <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                      <input
+                        type='checkbox'
+                        checked={currentMethods.includes(option)}
+                        onChange={(e) => {
+                          let newMethods = [...currentMethods];
+                          if (e.target.checked) {
+                            newMethods = newMethods.filter((m) => !specialOptions.includes(m));
+                            newMethods.push(option);
+                          } else {
+                            newMethods = newMethods.filter((m) => m !== option);
+                          }
+                          handleSaveChanges(
+                            produce(skill, (skill) => {
+                              if (newMethods.length === 0) {
+                                delete skill.cancelableAftercast;
+                              } else {
+                                skill.cancelableAftercast = newMethods.join('或');
+                              }
+                            })
+                          );
+                        }}
+                        className='w-3 h-3'
+                      />
+                      <span>{option}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className='flex flex-wrap gap-1 text-xs'>
+                  <span className='text-gray-600'>可被</span>
+                  {cancelableOptions.map((option) => (
+                    <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                      <input
+                        type='checkbox'
+                        checked={activeCancelableOptions.includes(option)}
+                        onChange={(e) => {
+                          let newMethods = currentMethods.filter(
+                            (m) => !specialOptions.includes(m)
+                          );
+                          newMethods = newMethods.filter(
+                            (m) =>
+                              !m.includes('可被') ||
+                              !cancelableOptions.some((opt) => m.includes(opt))
+                          );
+
+                          if (e.target.checked) {
+                            newMethods.push(`可被${option}取消后摇`);
+                          }
+
+                          // Keep other cancelable options that are still selected
+                          cancelableOptions.forEach((opt) => {
+                            if (opt !== option && activeCancelableOptions.includes(opt)) {
+                              newMethods.push(`可被${opt}取消后摇`);
+                            }
+                          });
+
+                          handleSaveChanges(
+                            produce(skill, (skill) => {
+                              if (newMethods.length === 0) {
+                                delete skill.cancelableAftercast;
+                              } else {
+                                skill.cancelableAftercast = newMethods.join('或');
+                              }
+                            })
+                          );
+                        }}
+                        className='w-3 h-3'
+                      />
+                      <span>{option}</span>
+                    </label>
+                  ))}
+                  <span className='text-gray-600'>取消后摇</span>
+                </div>
+              </div>
             );
-          }}
-        >
-          <span className='select-none'>{skill.cancelableAftercast ?? '不确定是否可取消后摇'}</span>
-        </span>,
-        <span
-          className='cursor-pointer'
-          onClick={() => {
-            handleSaveChanges(
-              produce(skill, (skill) => {
-                skill.canHitInPipe = !skill.canHitInPipe;
-              })
+          })()}
+        </div>,
+        <div className='flex items-center gap-1 text-xs'>
+          <span className='text-gray-600'>管道攻击:</span>
+          <label className='flex items-center gap-1 cursor-pointer'>
+            <input
+              type='checkbox'
+              checked={skill.canHitInPipe ?? false}
+              onChange={(e) => {
+                handleSaveChanges(
+                  produce(skill, (skill) => {
+                    skill.canHitInPipe = e.target.checked;
+                  })
+                );
+              }}
+              className='w-3 h-3'
+            />
+            <span>{skill.canHitInPipe ? '可击中管道中的角色' : '不可击中管道中的角色'}</span>
+          </label>
+        </div>,
+        <div className='flex items-center gap-1 text-xs'>
+          <span className='text-gray-600'>CD返还:</span>
+          {(() => {
+            const hasNoCDReturn = skill.cancelableSkill?.includes('，但不返还CD');
+            return (
+              <label className='flex items-center gap-1 cursor-pointer'>
+                <input
+                  type='checkbox'
+                  checked={skill.returnsCooldown ?? !hasNoCDReturn}
+                  onChange={(e) => {
+                    handleSaveChanges(
+                      produce(skill, (skill) => {
+                        skill.returnsCooldown = e.target.checked;
+                        // Clean up old format from cancelableSkill
+                        if (skill.cancelableSkill) {
+                          skill.cancelableSkill = skill.cancelableSkill.replace(
+                            /，但不返还CD/g,
+                            ''
+                          );
+                        }
+                      })
+                    );
+                  }}
+                  className='w-3 h-3'
+                />
+                <span>{(skill.returnsCooldown ?? !hasNoCDReturn) ? '返还CD' : '不返还CD'}</span>
+              </label>
             );
-          }}
-        >
-          <span className='select-none'>
-            {skill.canHitInPipe ? '可击中管道中的角色' : '不可击中管道中的角色'}
-          </span>
-        </span>
+          })()}
+        </div>
       );
     } else {
       if (skill.canMoveWhileUsing) properties.push('移动释放');
@@ -225,6 +428,7 @@ export default function SkillCard({
       }
 
       if (skill.canHitInPipe) properties.push('可击中管道中的角色');
+      if (skill.returnsCooldown === false) properties.push('不返还CD');
     }
 
     return properties;
