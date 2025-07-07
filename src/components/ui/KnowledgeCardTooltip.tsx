@@ -106,11 +106,14 @@ export default function KnowledgeCardTooltip({
             </div>
             <div className='text-center mt-1 text-xs text-gray-600 font-medium'>{cardName}</div>
             <div
-              className='absolute w-2 h-2 bg-white border-l border-b border-gray-200 transform rotate-45'
+              className='absolute w-2 h-2 bg-white transform rotate-45'
               style={{
                 left: '50%',
-                bottom: '-4px',
-                transform: 'translateX(-50%) rotate(45deg)',
+                bottom: '-8px',
+                transform: 'translateX(-50%)',
+                border: '1px solid #e5e7eb',
+                borderTop: 'none',
+                borderLeft: 'none',
               }}
             />
           </div>,
