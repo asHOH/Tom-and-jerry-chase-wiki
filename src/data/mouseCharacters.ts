@@ -1449,13 +1449,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '幻风礼服',
         type: 'weapon1',
         description:
-          '进行一场忘我演奏，期间获得20点减伤、可通过移动键来进行3次位移。不可交互，可丢道具。',
+          '进行一场忘我演奏，期间获得减伤、可通过移动键进行最多3次快速位移。[再次按下技能键可取消技能](使用技能后的1秒/进行位移后的0.6秒内无法取消技能)。不可交互，可丢道具。',
         detailedDescription:
-          '进行一场忘我演奏，期间获得20点减伤、可通过移动键来进行最多3次快速位移。不可交互，可丢道具。',
+          '进行一场忘我演奏，期间获得20点减伤、可通过移动键进行最多3次快速位移。[再次按下技能键可取消技能](使用技能后的1秒/进行位移后的0.6秒内无法取消技能)。不可交互，可丢道具。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断', // FIXME
-        cancelableAftercast: '无后摇', //FIXME
+        cancelableSkill: '无前摇',
+        cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=286.4',
         skillLevels: [
           {
