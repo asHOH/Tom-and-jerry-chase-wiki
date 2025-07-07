@@ -247,6 +247,7 @@ export default function SkillCard({
                 sizes='64px'
                 className='object-contain'
                 style={{ padding: '8px' }}
+                unoptimized
               />
             </div>
             {isEditMode && (
