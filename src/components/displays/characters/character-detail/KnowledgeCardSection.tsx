@@ -124,8 +124,10 @@ export default function KnowledgeCardSection({
     const { containerClass, tooltipContent } = getCostStyles(totalCost);
 
     return (
-      <div key={index} className='flex flex-col space-y-2'>
-        <div className='flex items-start gap-0.5 sm:gap-1 md:gap-2 lg:gap-4'>
+      <div key={index} className={`flex flex-col ${isSqueezedView ? 'space-y-1' : 'space-y-2'}`}>
+        <div
+          className={`flex ${isSqueezedView ? 'items-center' : 'items-start'} gap-0.5 sm:gap-1 md:gap-2 lg:gap-4`}
+        >
           <Tooltip content={tooltipContent} className='border-none'>
             <div
               className={`flex-shrink-0 w-10 h-10 rounded-full border-2 ${containerClass} flex items-center justify-center text-sm font-bold`}
@@ -151,11 +153,10 @@ export default function KnowledgeCardSection({
                     imageUrl={`${imageBasePath}${cardId}.png`}
                   >
                     <span
-                      className={`px-2 py-1 rounded-md text-xs font-medium cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm`}
+                      className={`px-2 py-1 rounded-md text-sm font-medium cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm`}
                       style={{
                         backgroundColor: rankColors.backgroundColor,
                         color: rankColors.color,
-                        border: `1px solid ${rankColors.color}20`,
                       }}
                       onClick={() => {
                         if (isEditMode) return;
@@ -237,7 +238,13 @@ export default function KnowledgeCardSection({
           )}
         </div>
         {(!!description || isEditMode) && (
-          <div className='bg-gray-50 p-2 sm:p-3 rounded-lg ml-10 sm:ml-11 md:ml-12 lg:ml-14'>
+          <div
+            className={`bg-gray-50 p-2 sm:p-3 rounded-lg ${
+              isSqueezedView
+                ? 'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
+                : 'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
+            }`}
+          >
             <EditableField
               tag='p'
               path={`knowledgeCardGroups.${index}.description`}
