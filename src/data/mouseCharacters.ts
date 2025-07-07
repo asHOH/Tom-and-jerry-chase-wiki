@@ -595,7 +595,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
-        // videoUrl: 'https://b23.tv/HbGlOyt?t=5',
+        videoUrl: 'https://www.bilibili.com/video/BV12P4y1e7rg?t=5.2',
         skillLevels: [
           {
             level: 1,
@@ -606,7 +606,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description: '护盾持续期间获得加速；减少CD。',
-            detailedDescription: '护盾持续期间获得18.5%的加速；减少CD。',
+            detailedDescription: '护盾持续期间获得18.5%加速；减少CD。',
             cooldown: 25,
           },
           {
@@ -626,7 +626,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: false,
         cancelableSkill: '不可被打断',
         cancelableAftercast: '不可取消后摇',
-        // videoUrl: 'https://b23.tv/HbGlOytt=82',
+        videoUrl: 'https://www.bilibili.com/video/BV12P4y1e7rg?t=81.9',
         skillLevels: [
           {
             level: 1,
@@ -657,9 +657,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '在身前略高于地面的位置召唤战旗，为碰触的友方老鼠提供增益，前摇0.9秒，后摇0.5秒，战旗存在15秒。战旗被碰触若干次后获得强化，提供强化版增益。战旗具有重力，无碰撞体积，会因受力而移动。同一时间只能存在一种战旗，获得战旗效果后的15秒内无法再次获得同等级的效果。机械鼠不会继承战旗的增益效果\n攻击战旗：增加35点攻击力，持续10秒（强化：期间额外增加2点墙缝增伤，免疫受伤）\n救援战旗：提高100%的救援速度，持续5秒（强化：[获得瞬息救援能力](碰触火箭直接救援成功)，持续5秒。以该方式救下队友不计入赛后的数据统计）\n防御战旗：解除虚弱；Hp低于30%时，以7.5/s的速度恢复Hp，加速25%，并解除反向、失明、受伤等异常状态，持续2秒（强化：直接获得一层护盾，持续4秒。）\n感知战旗：对猫隐藏自己的小地图位置，持续10秒（强化：额外显示5秒猫的位置）\n灵巧战旗：提高50%的跳跃高度，持续5秒（强化：期间额外获得二段跳）。', // 感知战旗可以感知所有敌方单位
         canMoveWhileUsing: true,
         canUseInAir: false,
-        cancelableSkill: '可被打断',
+        cancelableSkill: '不可被打断',
         cancelableAftercast: '不可取消后摇',
-        // videoUrl: 'https://www.bilibili.com/video/HbGlOyt',
+        videoUrl: 'https://www.bilibili.com/video/BV12P4y1e7rg?t=100.25',
         skillLevels: [
           {
             level: 1,
@@ -925,6 +925,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '创造一道风墙阻挡敌方，前摇0.5s。风墙大小500*500，持续3s。风墙对所有角色造成判定干扰，如猫的爪刀、拍子无法穿过风墙，风墙卡位时老鼠不能推奶酪。小跳风可将正在绑火箭的猫挤出火箭从而强行阻止猫绑火箭。',
         canMoveWhileUsing: false,
         canUseInAir: false,
+        cancelableSkill: '可被打断', // FIXME
         cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=10.6',
         skillLevels: [
@@ -947,7 +948,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 20,
           },
         ],
-        cancelableSkill: '可被打断',
       },
       {
         name: '幻影剑气',
@@ -958,7 +958,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '挥出一道剑气，前摇0.45s，飞行速度1750，持续5s。剑气击中角色可反弹一次，再次击中角色剑气消失。剑气击中敌方将造成10伤害（可继承状态），并降低其40%移速、跳跃高度，持续5s；击中友方将提升其25%移速、救援速度及跳跃高度，持续5s，且其在此期间可用交互键瞬移至附近幻影处。剑气击中平台则形成幻影，再次点击技能按钮可瞬移至幻影处。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被打断',
+        cancelableSkill: '可被打断', // FIXME
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -1261,7 +1261,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         detailedDescription: '',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被打断',
+        cancelableSkill: '可被打断', // FIXME
+        cancelableAftercast: '不可取消后摇', // FIXME
+        canHitInPipe: true,
         skillLevels: [
           {
             level: 1,
@@ -1280,7 +1282,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 15,
           },
         ],
-        canHitInPipe: true,
       },
       {
         name: '香风折扇',
