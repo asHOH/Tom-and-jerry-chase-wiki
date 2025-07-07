@@ -25,6 +25,7 @@ export default function Tooltip({
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isBelow, setIsBelow] = useState(false);
+  const [arrowOffset, setArrowOffset] = useState(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = (e: React.MouseEvent) => {
@@ -36,8 +37,10 @@ export default function Tooltip({
     }
 
     const rect = e.currentTarget.getBoundingClientRect();
-    const tooltipWidth = 200; // Estimated tooltip width
+    // More accurate width estimation based on content length
+    const tooltipWidth = Math.max(120, Math.min(300, content.length * 8 + 40));
     const tooltipHeight = 40; // Estimated tooltip height
+    const navBarHeight = 84; // Navigation bar height (adjust based on actual height)
 
     // Calculate position to avoid going off-screen
     let x = rect.left + rect.width / 2;
@@ -45,22 +48,47 @@ export default function Tooltip({
     let showBelow = false;
 
     // Determine vertical position - try above first, then below if needed
-    if (rect.top - tooltipHeight - 8 < 0) {
+    // Also check if tooltip would be hidden by navigation bar
+    if (rect.top - tooltipHeight - 8 < navBarHeight) {
       y = rect.bottom + 8;
       showBelow = true;
     } else {
       y = rect.top - tooltipHeight - 8;
     }
 
+    // Store original x position for arrow calculation
+    const originalX = x;
+
     // Adjust horizontal position if tooltip would go off-screen
-    if (x + tooltipWidth / 2 > window.innerWidth) {
-      x = window.innerWidth - tooltipWidth / 2 - 10;
-    } else if (x - tooltipWidth / 2 < 0) {
-      x = tooltipWidth / 2 + 10;
+    // Priority: Keep tooltip connected to arrow, then handle viewport constraints
+    const tooltipLeft = x - tooltipWidth / 2;
+    const tooltipRight = x + tooltipWidth / 2;
+    const padding = 10;
+
+    if (tooltipRight > window.innerWidth - padding) {
+      // Right edge collision - shift left minimally
+      const overflow = tooltipRight - (window.innerWidth - padding);
+      x = x - overflow;
+    } else if (tooltipLeft < padding) {
+      // Left edge collision - shift right minimally
+      const overflow = padding - tooltipLeft;
+      x = x + overflow;
     }
+
+    // Calculate arrow offset based on how much we shifted the tooltip
+    const arrowOffsetValue = originalX - x;
+
+    // Don't clamp arrow offset - let it move to maintain connection
+    // Only ensure it doesn't go completely outside tooltip bounds
+    const maxArrowOffset = tooltipWidth / 2 - 10; // Allow arrow to be close to edge
+    const clampedArrowOffset = Math.max(
+      -maxArrowOffset,
+      Math.min(maxArrowOffset, arrowOffsetValue)
+    );
 
     setPosition({ x, y });
     setIsBelow(showBelow);
+    setArrowOffset(clampedArrowOffset);
 
     // Set tooltip to show after delay
     timeoutRef.current = setTimeout(() => {
@@ -99,19 +127,20 @@ export default function Tooltip({
         typeof document !== 'undefined' &&
         createPortal(
           <div
-            className='fixed z-50 px-3 py-2 text-sm text-white bg-gray-800 rounded-md shadow-lg pointer-events-none transition-opacity duration-200 ease-in-out'
+            className='fixed px-3 py-2 text-sm text-white bg-gray-800 rounded-md shadow-lg pointer-events-none transition-opacity duration-200 ease-in-out'
             style={{
               left: position.x,
               top: position.y,
               transform: 'translateX(-50%)',
               opacity: isVisible ? 1 : 0,
+              zIndex: 10000, // Higher than navigation bar (9999)
             }}
           >
             {content}
             <div
               className='absolute w-1 h-1 bg-gray-800'
               style={{
-                left: '50%',
+                left: `calc(50% + ${arrowOffset}px)`,
                 [isBelow ? 'top' : 'bottom']: '-2px',
                 transform: `translateX(-50%) rotate(45deg)`,
               }}
