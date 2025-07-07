@@ -87,17 +87,17 @@ try {
     // Try to find and replace existing version pattern
     const versionRegex = /const CACHE_VERSION = ['"`]([^'"`]+)['"`];/;
     const match = content.match(versionRegex);
-    
+
     if (match) {
       const currentVersion = match[1];
-      
+
       // Skip update if version is already current (unless forced)
       if (currentVersion === CACHE_VERSION && !process.env.FORCE_SW_UPDATE) {
         console.log('✅ Service worker already has current version, skipping update');
         console.log('🎉 Done! No changes needed');
         process.exit(0);
       }
-      
+
       content = content.replace(versionRegex, `const CACHE_VERSION = '${CACHE_VERSION}';`);
       console.log('📝 Updated existing cache version pattern');
     } else {
