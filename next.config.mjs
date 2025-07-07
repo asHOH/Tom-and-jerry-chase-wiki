@@ -11,7 +11,7 @@ const nextConfig = {
   trailingSlash: true,
   distDir: 'out',
   images: {
-    unoptimized: true,
+    unoptimized: false,
   },
   poweredByHeader: false,
   compress: true,

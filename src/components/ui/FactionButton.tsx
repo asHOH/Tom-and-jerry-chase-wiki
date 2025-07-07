@@ -11,6 +11,7 @@ export interface FactionButtonProps {
   onClick: () => void;
   ariaLabel: string;
   className?: string;
+  unoptimized?: boolean;
 }
 
 export function FactionButton({
@@ -22,6 +23,7 @@ export function FactionButton({
   onClick,
   ariaLabel,
   className = '',
+  unoptimized = false,
 }: FactionButtonProps) {
   const baseStyle = createStyleFromTokens(componentTokens.factionButton.base);
   const contentStyle = createStyleFromTokens(componentTokens.factionButton.content);
@@ -47,6 +49,7 @@ export function FactionButton({
               height={0}
               style={{ height: '40px', width: 'auto' }}
               className='object-contain flex-shrink-0'
+              unoptimized={unoptimized}
             />
           </div>
         ) : (
