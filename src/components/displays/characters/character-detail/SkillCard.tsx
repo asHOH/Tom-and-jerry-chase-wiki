@@ -239,25 +239,39 @@ export default function SkillCard({
                         type='checkbox'
                         checked={activeCancelableOptions.includes(option)}
                         onChange={(e) => {
-                          let newMethods = currentMethods.filter(
-                            (m) => !specialOptions.includes(m)
-                          );
-                          newMethods = newMethods.filter(
-                            (m) =>
-                              !m.includes('可被') ||
-                              !cancelableOptions.some((opt) => m.includes(opt))
+                          // Keep special options (like "无前摇", "不可被打断")
+                          const newMethods = currentMethods.filter((m) =>
+                            specialOptions.includes(m)
                           );
 
+                          // Collect selected cancelable options
+                          const selectedCancelableOptions = [];
                           if (e.target.checked) {
-                            newMethods.push(`可被${option}打断`);
+                            selectedCancelableOptions.push(option);
                           }
 
-                          // Keep other cancelable options that are still selected
+                          // Add other currently selected cancelable options
                           cancelableOptions.forEach((opt) => {
                             if (opt !== option && activeCancelableOptions.includes(opt)) {
-                              newMethods.push(`可被${opt}打断`);
+                              selectedCancelableOptions.push(opt);
                             }
                           });
+
+                          // Format cancelable options as a single optimized string
+                          if (selectedCancelableOptions.length > 0) {
+                            if (selectedCancelableOptions.length === 1) {
+                              newMethods.push(`可被${selectedCancelableOptions[0]}打断`);
+                            } else if (selectedCancelableOptions.length === 2) {
+                              newMethods.push(
+                                `可被${selectedCancelableOptions[0]}或${selectedCancelableOptions[1]}打断`
+                              );
+                            } else {
+                              const lastOption = selectedCancelableOptions.pop();
+                              newMethods.push(
+                                `可被${selectedCancelableOptions.join('、')}或${lastOption}打断`
+                              );
+                            }
+                          }
 
                           handleSaveChanges(
                             produce(skill, (skill) => {
@@ -383,25 +397,39 @@ export default function SkillCard({
                         type='checkbox'
                         checked={activeCancelableOptions.includes(option)}
                         onChange={(e) => {
-                          let newMethods = currentMethods.filter(
-                            (m) => !specialOptions.includes(m)
-                          );
-                          newMethods = newMethods.filter(
-                            (m) =>
-                              !m.includes('可被') ||
-                              !cancelableOptions.some((opt) => m.includes(opt))
+                          // Keep special options (like "无后摇", "不可取消后摇")
+                          const newMethods = currentMethods.filter((m) =>
+                            specialOptions.includes(m)
                           );
 
+                          // Collect selected cancelable options
+                          const selectedCancelableOptions = [];
                           if (e.target.checked) {
-                            newMethods.push(`可被${option}取消后摇`);
+                            selectedCancelableOptions.push(option);
                           }
 
-                          // Keep other cancelable options that are still selected
+                          // Add other currently selected cancelable options
                           cancelableOptions.forEach((opt) => {
                             if (opt !== option && activeCancelableOptions.includes(opt)) {
-                              newMethods.push(`可被${opt}取消后摇`);
+                              selectedCancelableOptions.push(opt);
                             }
                           });
+
+                          // Format cancelable options as a single optimized string
+                          if (selectedCancelableOptions.length > 0) {
+                            if (selectedCancelableOptions.length === 1) {
+                              newMethods.push(`可被${selectedCancelableOptions[0]}取消后摇`);
+                            } else if (selectedCancelableOptions.length === 2) {
+                              newMethods.push(
+                                `可被${selectedCancelableOptions[0]}或${selectedCancelableOptions[1]}取消后摇`
+                              );
+                            } else {
+                              const lastOption = selectedCancelableOptions.pop();
+                              newMethods.push(
+                                `可被${selectedCancelableOptions.join('、')}或${lastOption}取消后摇`
+                              );
+                            }
+                          }
 
                           handleSaveChanges(
                             produce(skill, (skill) => {
