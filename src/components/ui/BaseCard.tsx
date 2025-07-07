@@ -78,7 +78,7 @@ export default function BaseCard({
         style: cardStyle,
       };
   return (
-    <div className={className} {...cardProps}>
+    <div className={`[&_img]:select-none ${className}`} {...cardProps}>
       {children}
     </div>
   );
