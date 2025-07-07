@@ -163,10 +163,10 @@ export const designTokens = {
         container: 'bg-gradient-to-r from-indigo-50 to-indigo-100 border border-indigo-200',
       },
       comeback: {
-        text: '#ca8a04', // yellow-600
-        background: '#fef3c7', // yellow-100
-        border: '#fde047', // yellow-300
-        container: 'bg-gradient-to-r from-yellow-50 to-yellow-100 border border-yellow-200',
+        text: '#d97706', // amber-600
+        background: '#fef3c7', // amber-100
+        border: '#fcd34d', // amber-300
+        container: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200',
       },
       // Mouse tags
       cheese: {
@@ -194,10 +194,10 @@ export const designTokens = {
         container: 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200',
       },
       breakthrough: {
-        text: '#7c3aed', // violet-600
-        background: '#ede9fe', // violet-100
-        border: '#c4b5fd', // violet-300
-        container: 'bg-gradient-to-r from-violet-50 to-violet-100 border border-violet-200',
+        text: '#9333ea', // purple-600
+        background: '#e9d5ff', // purple-100
+        border: '#c4b5fd', // purple-300
+        container: 'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200',
       },
       wallBreak: {
         text: '#9a3412', // orange-800 (deeper reddish brown)
