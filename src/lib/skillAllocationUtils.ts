@@ -17,20 +17,20 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
   const result: ParsedSkillLevel[] = [];
   let i = 0;
   let bracketGroupCounter = 0;
-
-  const negativeMarkerIndex = pattern.indexOf('-');
-  const hasNegativeMarker = negativeMarkerIndex !== -1;
+  let nextSkillIsNegative = false;
 
   while (i < pattern.length) {
     const char = pattern[i];
 
     if (char === '-') {
+      nextSkillIsNegative = true;
       i++;
       continue;
     }
 
-    // Determine if the current position is after the negative marker once.
-    const isNegative = hasNegativeMarker && i > negativeMarkerIndex;
+    // Current skill inherits the negative flag and resets it
+    const isNegative = nextSkillIsNegative;
+    nextSkillIsNegative = false;
 
     // Check for parallel skills (in brackets)
     if (char === '[') {

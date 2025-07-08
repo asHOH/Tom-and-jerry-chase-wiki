@@ -313,11 +313,14 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                 {group.isParallelGroup ? (
                   <>
                     <div className='flex gap-1 justify-center mb-3 h-4'>
-                      {group.levels.map((_, levelIndex) => (
+                      {group.levels.map((level, levelIndex) => (
                         <div key={levelIndex} className='w-10 flex flex-col items-center'>
                           <span className='text-xs text-gray-500'>
-                            Lv.{group.characterLevel + levelIndex}/
-                            {group.characterLevel + levelIndex + group.levels.length}
+                            {
+                              !level.hasNegativeEffect
+                                ? `Lv.${group.characterLevel + levelIndex}/${group.characterLevel + levelIndex + group.levels.length}`
+                                : '\u00A0' // Non-breaking space for alignment
+                            }
                           </span>
                         </div>
                       ))}
@@ -354,7 +357,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                 ) : (
                   <>
                     <span className='text-xs text-gray-500 mb-4 h-4'>
-                      Lv.{group.characterLevel}
+                      {
+                        !group.levels[0]!.hasNegativeEffect
+                          ? `Lv.${group.characterLevel}`
+                          : '\u00A0' // Non-breaking space for alignment
+                      }
                     </span>
                     <div className='relative'>
                       {renderConnectionLine(groupIndex, 0, group, false)}

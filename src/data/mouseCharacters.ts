@@ -1405,7 +1405,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skillAllocations: [
       {
         id: '',
-        pattern: '0210(2)2011',
+        pattern: '0210-22011',
         weaponType: 'weapon1',
         description:
           '加点灵活。五级时若奶酪位被放飞可先点二级协奏补推。二级礼服增加拆火箭难度，应将加点留到七级，直接升到三级礼服。',
