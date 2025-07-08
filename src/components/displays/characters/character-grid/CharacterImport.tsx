@@ -22,8 +22,15 @@ function handleUploadedData(data: string, factionId: FactionId) {
     void e;
     newCharacters = json5.parse(`{${data}}`);
   }
-  // TODO: add faction modification
-  for (const character of Object.values(newCharacters)) {
+
+  // Enhance each character with complete data structure
+  for (const [characterId, character] of Object.entries(newCharacters)) {
+    // Ensure character has id field
+    if (!character.id) {
+      character.id = characterId;
+    }
+
+    // Add skill image URLs
     character.skills = addSkillImageUrls(character.id, character.skills, factionId);
     character.imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(character.id);
     character.factionId = factionId;
@@ -31,10 +38,13 @@ function handleUploadedData(data: string, factionId: FactionId) {
       id: factionId,
       name: factionId == 'cat' ? '猫阵营' : '鼠阵营',
     };
+
+    console.log(`Enhanced imported character ${character.id} with complete data structure`);
   }
 
   newCharacters = processCharacters(newCharacters) as Record<string, CharacterWithFaction>;
 
+  // Update the global characters object
   Object.assign(characters, newCharacters);
 
   let needReload = false;
