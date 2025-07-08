@@ -46,11 +46,20 @@ jobs:
         run: |
           echo "Checking test coverage..."
           npm run test:coverage 2>&1 | tee coverage.log || true
+          
+          echo "=== Coverage Debug Info ==="
+          echo "Coverage log content:"
+          cat coverage.log | grep -E "(All files|Lines|Statements|Branches|Functions)" || echo "No coverage summary found"
+          
           if [ -f coverage/lcov.info ]; then
-            coverage_percent=$(grep -oP 'Lines\s*:\s*\K[0-9.]+(?=%)' coverage.log | tail -1)
+            echo "lcov.info file exists"
+            # Parse Jest's text output for coverage percentage
+            coverage_percent=$(grep -E "(All files|Lines)" coverage.log | grep -oE "[0-9]+\.?[0-9]*%" | sed 's/%//' | tail -1)
+            echo "Coverage found: ${coverage_percent:-0}%"
             echo "coverage-percent=${coverage_percent:-0}" >> $GITHUB_OUTPUT
             echo "coverage-available=true" >> $GITHUB_OUTPUT
           else
+            echo "No coverage file found"
             echo "coverage-available=false" >> $GITHUB_OUTPUT
             echo "coverage-percent=0" >> $GITHUB_OUTPUT
           fi
@@ -78,9 +87,9 @@ jobs:
 
       - name: Create health check report
         if: >
-          (steps.coverage.outputs.coverage-available == 'true' && steps.coverage.outputs.coverage-percent < '80') ||
           steps.unused-deps.outputs.unused-deps == 'true' ||
-          steps.complexity.outputs.total-files > '200'
+          steps.complexity.outputs.total-files > '200' ||
+          (steps.coverage.outputs.coverage-available == 'true' && steps.coverage.outputs.coverage-percent != '' && steps.coverage.outputs.coverage-percent < '80')
         uses: actions/github-script@v7
         with:
           script: |
@@ -93,11 +102,16 @@ jobs:
             
             // Coverage analysis
             issueBody += '### 📊 Test Coverage\n\n';
-            if (coverage < 80) {
-              issueBody += `⚠️ **Test coverage is ${coverage}%** (below recommended 80%)\n\n`;
-              needsAttention = true;
+            if ('${{ steps.coverage.outputs.coverage-available }}' === 'true') {
+              if (coverage < 80) {
+                issueBody += `⚠️ **Test coverage is ${coverage}%** (below recommended 80%)\n\n`;
+                needsAttention = true;
+              } else {
+                issueBody += `✅ Test coverage: ${coverage}%\n\n`;
+              }
             } else {
-              issueBody += `✅ Test coverage: ${coverage}%\n\n`;
+              issueBody += '⚠️ **Test coverage could not be determined** - Please check test configuration\n\n';
+              needsAttention = true;
             }
             
             // Unused dependencies
@@ -121,7 +135,9 @@ jobs:
             // Recommendations
             if (needsAttention) {
               issueBody += '### 🚀 Recommended Actions\n\n';
-              if (coverage < 80) {
+              if ('${{ steps.coverage.outputs.coverage-available }}' === 'false') {
+                issueBody += '1. 🔧 **Fix test coverage detection** - Check Jest configuration and test scripts\n';
+              } else if (coverage < 80) {
                 issueBody += '1. 📈 **Improve test coverage** - Add tests for uncovered code\n';
               }
               if (unusedCount > 0) {
