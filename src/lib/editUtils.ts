@@ -95,8 +95,7 @@ function handleCharacterIdChange(
   handleSelectCharacter: (id: string) => void,
   _localCharacter: CharacterWithFaction,
   setLocalCharacter: Dispatch<CharacterWithFaction>,
-  shouldNavigate: boolean = false,
-  updateCharacterUrl?: (characterId: string) => void
+  shouldNavigate: boolean = false
 ) {
   // FIXME: This code may lead to uncertain damage as other code do not handle the situation where the id changes
   // characters is not managed by react, so we need to trigger the update manually
@@ -116,12 +115,11 @@ function handleCharacterIdChange(
   characters[newId].id = newId;
   characters[newId].imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   delete characters[oldId!];
-  // Update URL to match new character ID without navigation
+  // Only navigate if explicitly requested (not during edit mode ID changes)
   if (shouldNavigate) {
     handleSelectCharacter(newId);
-  } else if (updateCharacterUrl) {
-    updateCharacterUrl(newId);
   }
+  // Note: We don't update URL in edit mode to avoid 404 for non-existing character pages
   const faction = factions[factionId]?.characters.find(({ id }) => id == oldId);
   if (faction) {
     faction.id = faction.name = newId;
@@ -194,8 +192,7 @@ export function handleChange<T>(
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
   localCharacter: CharacterWithFaction,
-  setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>,
-  updateCharacterUrl?: (characterId: string) => void
+  setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
 ) {
   let finalValue: T;
   if (typeof initialValue === 'number') {
@@ -217,8 +214,7 @@ export function handleChange<T>(
       handleSelectCharacter,
       localCharacter,
       setLocalCharacter,
-      false, // Don't navigate during edit mode ID changes
-      updateCharacterUrl // Update URL to match new character ID
+      false // Don't navigate during edit mode ID changes
     );
   }
   if (path && path.split('.')?.[1] == 'skills' && path.split('.')?.[3] == 'name') {

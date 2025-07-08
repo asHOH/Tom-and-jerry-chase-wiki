@@ -43,7 +43,7 @@ function EditableFieldImplementation<T>({
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
   const { localCharacter, setLocalCharacter } = useLocalCharacter();
-  const { handleSelectCharacter, updateCharacterUrl } = useAppContext();
+  const { handleSelectCharacter } = useAppContext();
 
   useEffect(() => {
     const storedData = localStorage.getItem('characters');
@@ -106,8 +106,7 @@ function EditableFieldImplementation<T>({
           factionId || localCharacter.factionId || undefined,
           handleSelectCharacter,
           localCharacter,
-          setLocalCharacter,
-          updateCharacterUrl
+          setLocalCharacter
         );
       }
     }
