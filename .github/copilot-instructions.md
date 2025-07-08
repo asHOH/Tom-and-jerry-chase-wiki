@@ -4,12 +4,12 @@
 
 # Project Information
 
-- **Type**: Static site (SSG) using Next.js with static export
+- **Type**: Next.js Application
 - **Framework**: Next.js 14+ with TypeScript
-- **Deployment**: Vercel with static hosting
+- **Deployment**: Vercel
 - **Language**: Chinese (zh-CN)
-- **Architecture**: Client-side only, no server-side rendering
-- **Security**: Strict CSP for static content, no dynamic script loading
+- **Architecture**: Client-side and Server-side (Next.js)
+- **Security**: Standard Next.js security practices
 
 # Command line syntax
 

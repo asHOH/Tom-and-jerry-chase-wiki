@@ -35,7 +35,7 @@
 - **语言**: [TypeScript](https://www.typescriptlang.org/)
 - **样式**: [Tailwind CSS](https://tailwindcss.com/)
 - **测试**: [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/)
-- **部署**: [Vercel](httpss://vercel.com/) (静态导出 `next export`)
+- **部署**: [Vercel](httpss://vercel.com/)
 - **代码规范**: [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
 
 ## 💻 本地开发

@@ -86,7 +86,7 @@ Maintenance ── Creates Issues (weekly)
 - **Node.js Version**: 18
 - **Package Manager**: npm
 - **Build Tool**: Next.js
-- **Deployment**: GitHub Pages (static export)
+- **Deployment**: Vercel
 
 ## 📊 Status Badges
 
