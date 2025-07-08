@@ -92,7 +92,7 @@ function handleCharacterIdChange(
   path: string,
   newId: string,
   activeTab: string | undefined,
-  _handleSelectCharacter: (id: string) => void,
+  handleSelectCharacter: (id: string) => void,
   _localCharacter: CharacterWithFaction,
   setLocalCharacter: Dispatch<CharacterWithFaction>
 ) {
@@ -114,8 +114,7 @@ function handleCharacterIdChange(
   characters[newId].id = newId;
   characters[newId].imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   delete characters[oldId!];
-  // Skip navigation during ID change to prevent 404
-  // handleSelectCharacter(newId);
+  handleSelectCharacter(newId);
   const faction = factions[factionId]?.characters.find(({ id }) => id == oldId);
   if (faction) {
     faction.id = faction.name = newId;
