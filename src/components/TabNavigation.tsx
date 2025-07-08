@@ -169,8 +169,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 <Image
                   src={tab.imageSrc}
                   alt={tab.imageAlt}
-                  width={0}
-                  height={0}
+                  width={64}
+                  height={64}
                   className='object-contain'
                   style={{ height: isMobile ? '24px' : '28px', width: 'auto' }}
                 />
