@@ -11,9 +11,11 @@ import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
 import Tooltip from '@/components/ui/Tooltip';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
+import { useEditMode } from '@/context/EditModeContext';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const { isDetailedView: isDetailed } = useAppContext();
+  const { isEditMode } = useEditMode();
   const {
     selectedFilters: selectedPositioningTags,
     toggleFilter: togglePositioningTagFilter,
@@ -115,6 +117,11 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8'>
+        {isEditMode && (
+          <div className='transform transition-transform hover:-translate-y-1'>
+            <CharacterImport />
+          </div>
+        )}
         {filteredCharacters.map((character, index) => (
           <div key={character.id} className='transform transition-transform hover:-translate-y-1'>
             <CharacterDisplay
@@ -127,9 +134,6 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
             />
           </div>
         ))}
-        <div className='transform transition-transform hover:-translate-y-1'>
-          <CharacterImport />
-        </div>
       </div>
     </div>
   );
