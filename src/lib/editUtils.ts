@@ -173,6 +173,16 @@ function handleCharacterIdChange(
   newCharacter.id = newId;
   newCharacter.imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
 
+  // Clear video URLs when creating user-created character from existing one
+  if (!isOriginalCharacter(newId) && newCharacter.skills && Array.isArray(newCharacter.skills)) {
+    newCharacter.skills.forEach((skill: Skill) => {
+      if (skill.videoUrl) {
+        delete skill.videoUrl;
+      }
+    });
+    console.log(`Cleared video URLs for user-created character ${newId}`);
+  }
+
   // Ensure all required fields are present
   try {
     const enhanced = validateAndEnhanceCharacter(newCharacter, newId);

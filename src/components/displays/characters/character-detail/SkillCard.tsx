@@ -562,16 +562,38 @@ export default function SkillCard({
                 <button
                   type='button'
                   onClick={() => setShowVideoAddress(!showVideoAddress)}
-                  className='text-blue-600 text-xs px-2 py-1 hover:underline bg-blue-50 rounded-md hover:bg-blue-100 transition-colors block w-full text-center'
+                  className={`text-xs px-2 py-1 rounded-md block w-full text-center transition-colors ${
+                    skill.videoUrl
+                      ? 'text-blue-600 hover:underline bg-blue-50 hover:bg-blue-100'
+                      : 'text-red-600 bg-red-50 hover:bg-red-100'
+                  }`}
                 >
-                  {showVideoAddress ? '隐藏视频地址' : '查看视频'}
+                  {showVideoAddress ? '隐藏视频地址' : skill.videoUrl ? '查看视频' : '无视频'}
                 </button>
                 {showVideoAddress && (
                   <EditableField
-                    tag='span'
+                    tag='div'
                     className='text-blue-600 text-xs px-2 py-1 hover:underline bg-blue-50 rounded-md hover:bg-blue-100 transition-colors block w-full text-center wrap-anywhere mt-2'
                     path={`skills.${skillIndex}.videoUrl`}
-                    initialValue={skill.videoUrl ?? ''}
+                    initialValue={skill.videoUrl ?? '输入视频网址'}
+                    onSave={(newValue) => {
+                      // Don't save if the value is the default placeholder text
+                      if (newValue.trim() === '输入视频网址' || newValue.trim() === '') {
+                        // Clear the video URL
+                        handleSaveChanges(
+                          produce(skill, (skill) => {
+                            delete skill.videoUrl;
+                          })
+                        );
+                      } else {
+                        // Save the actual URL
+                        handleSaveChanges(
+                          produce(skill, (skill) => {
+                            skill.videoUrl = newValue.trim();
+                          })
+                        );
+                      }
+                    }}
                   />
                 )}
               </div>
