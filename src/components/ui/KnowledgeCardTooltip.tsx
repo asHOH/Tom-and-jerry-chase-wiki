@@ -102,7 +102,7 @@ export default function KnowledgeCardTooltip({
             }}
           >
             <div className='relative w-24 h-24'>
-              <Image src={imageUrl} alt={cardName} fill className='object-contain' unoptimized />
+              <Image src={imageUrl} alt={cardName} fill className='object-contain' />
             </div>
             <div className='text-center mt-1 text-xs text-gray-600 font-medium'>{cardName}</div>
             <div

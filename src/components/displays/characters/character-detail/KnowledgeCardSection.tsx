@@ -185,7 +185,6 @@ export default function KnowledgeCardSection({
                         alt={cardId}
                         fill
                         className='object-contain'
-                        unoptimized
                       />
                     </div>
                   </Tooltip>

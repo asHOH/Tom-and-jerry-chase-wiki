@@ -63,7 +63,6 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                   alt={character.id}
                   width={200}
                   height={200}
-                  unoptimized
                   style={{
                     objectFit: 'contain',
                     maxHeight: '100%',

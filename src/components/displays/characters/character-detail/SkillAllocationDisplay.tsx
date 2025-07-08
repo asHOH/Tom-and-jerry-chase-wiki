@@ -127,7 +127,6 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           height={40}
           className='w-full h-full object-contain'
           style={{ padding: '4px' }}
-          unoptimized
         />
         {hasNegativeEffect && (
           <div className='absolute -top-[5px] -right-[5px] w-4 h-4 pointer-events-none z-10'>
@@ -137,7 +136,6 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               width={16}
               height={16}
               className='w-full h-full object-contain'
-              unoptimized
             />
           </div>
         )}

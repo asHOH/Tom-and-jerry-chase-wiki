@@ -45,7 +45,6 @@ export default function GameImage({
           width={width}
           height={height}
           priority={priority}
-          unoptimized
           style={{
             objectFit: 'contain',
             maxHeight: maxHeight,

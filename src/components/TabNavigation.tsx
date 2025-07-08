@@ -173,7 +173,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   height={0}
                   className='object-contain'
                   style={{ height: isMobile ? '24px' : '28px', width: 'auto' }}
-                  unoptimized
                 />
                 {!isMobile && <span>{tab.name}</span>}
               </button>

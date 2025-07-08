@@ -90,7 +90,6 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
                       alt={cardIdWithRank}
                       fill
                       className='object-contain'
-                      unoptimized
                     />
                     {isSelected && (
                       <div className='absolute top-0 right-0 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-lg font-bold'>
