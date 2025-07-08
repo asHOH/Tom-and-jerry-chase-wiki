@@ -506,7 +506,16 @@ export function generateTypescriptCodeFromCharacter(character: CharacterWithFact
       quote: '',
       space: 2,
       replacer(key, value) {
-        if (['imageUrl', 'faction', 'factionId', 'id'].includes(key)) return undefined;
+        // Always remove these character-level properties
+        if (key === 'imageUrl' || key === 'faction' || key === 'factionId') return undefined;
+
+        // Remove id from character level and skills, but keep it in skillAllocations
+        if (key === 'id') {
+          if (this === character) return undefined; // Remove character-level id
+          if (this.name && this.type) return undefined; // Remove id from skills (they have name and type)
+          // Keep id in skillAllocations (they have pattern and weaponType)
+        }
+
         return value;
       },
     })
