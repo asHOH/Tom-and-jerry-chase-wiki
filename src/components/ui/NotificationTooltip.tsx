@@ -29,8 +29,12 @@ const NotificationTooltip: React.FC<NotificationTooltipProps> = ({
   useEffect(() => {
     if (show) {
       setShouldRender(true);
-      // Small delay to ensure the element is rendered before showing
-      setTimeout(() => setIsVisible(true), 10);
+      // Use requestAnimationFrame to ensure element is rendered before animation
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsVisible(true);
+        });
+      });
 
       const timer = setTimeout(() => {
         setIsVisible(false);
@@ -145,8 +149,8 @@ const NotificationTooltip: React.FC<NotificationTooltipProps> = ({
 
   return createPortal(
     <div
-      className={`fixed bottom-4 right-4 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-opacity duration-300 ${getTypeStyles()} ${
-        isVisible ? 'opacity-100' : 'opacity-0'
+      className={`fixed bottom-4 right-4 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 ease-out ${getTypeStyles()} ${
+        isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
       }`}
       style={{ position: 'fixed' }}
     >
