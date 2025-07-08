@@ -180,6 +180,14 @@ export function handleCharacterSkillIdChange(
 }
 
 export function saveFactionsAndCharacters() {
+  // Ensure all characters have id fields before saving
+  Object.keys(characters).forEach((characterId) => {
+    const character = characters[characterId];
+    if (character && !character.id) {
+      character.id = characterId;
+    }
+  });
+
   localStorage.setItem('factions', JSON.stringify(factions));
   localStorage.setItem('characters', JSON.stringify(characters));
 }
@@ -207,7 +215,18 @@ export function getCurrentCharacterId(originalId: string): string {
 // Get character by original ID, resolving to current ID if it was renamed
 export function getCharacterByOriginalId(originalId: string): CharacterWithFaction | undefined {
   const currentId = getCurrentCharacterId(originalId);
-  return characters[currentId];
+  const character = characters[currentId];
+
+  if (!character) {
+    return undefined;
+  }
+
+  try {
+    return validateCharacterStructure(character, currentId);
+  } catch (error) {
+    console.error(`Failed to validate character structure for ${currentId}:`, error);
+    return undefined;
+  }
 }
 
 // Get the list of original character IDs (before any edits)
@@ -237,6 +256,34 @@ export function isOriginalCharacter(characterId: string): boolean {
   return getOriginalCharacterIds().includes(characterId);
 }
 
+// Ensure character object has proper structure with all required fields
+export function validateCharacterStructure(
+  character: unknown,
+  characterId: string
+): CharacterWithFaction {
+  if (!character || typeof character !== 'object') {
+    throw new Error(`Character ${characterId} not found or invalid`);
+  }
+
+  const charObj = character as Record<string, unknown>;
+
+  // Ensure id field exists
+  if (!charObj.id) {
+    charObj.id = characterId;
+  }
+
+  // Ensure other required fields exist
+  if (!charObj.faction) {
+    charObj.faction = charObj.factionId ? { id: charObj.factionId } : { id: 'unknown' };
+  }
+
+  if (!charObj.skills) {
+    charObj.skills = [];
+  }
+
+  return charObj as CharacterWithFaction;
+}
+
 export function loadFactionsAndCharacters() {
   // 1. Save original data if not already saved
   if (typeof window !== 'undefined' && !localStorage.getItem('originalCharacters')) {
@@ -254,8 +301,18 @@ export function loadFactionsAndCharacters() {
     delete characters[prop];
   }
   // 3. load localstorage data
-  Object.assign(characters, JSON.parse(localStorage.getItem('characters') ?? originalCharacters));
-  Object.assign(factions, JSON.parse(localStorage.getItem('factions') ?? originalFactions));
+  const loadedCharacters = JSON.parse(localStorage.getItem('characters') ?? originalCharacters);
+  const loadedFactions = JSON.parse(localStorage.getItem('factions') ?? originalFactions);
+
+  // 4. Ensure all characters have id fields - fix missing id issue
+  Object.keys(loadedCharacters).forEach((characterId) => {
+    if (!loadedCharacters[characterId].id) {
+      loadedCharacters[characterId].id = characterId;
+    }
+  });
+
+  Object.assign(characters, loadedCharacters);
+  Object.assign(factions, loadedFactions);
 }
 
 export function handleChange<T>(
