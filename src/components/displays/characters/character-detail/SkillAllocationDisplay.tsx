@@ -307,7 +307,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           )}
         </div>
         <div className='flex-1'>
-          <div className='flex flex-wrap items-start gap-2 mb-2'>
+          <div className='flex flex-wrap items-start gap-2 gap-y-6 md:gap-y-4 mb-2'>
             {levelGroups.map((group, groupIndex) => (
               <div key={groupIndex} className='relative flex flex-col items-center'>
                 {group.isParallelGroup ? (
