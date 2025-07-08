@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useAppContext } from '@/context/AppContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
+import NotificationTooltip from './NotificationTooltip';
 
 type SearchDialogProps = {
   onClose: () => void;
@@ -72,7 +73,10 @@ const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => 
 const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const { handleSelectCard, handleSelectCharacter } = useAppContext();
@@ -97,7 +101,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
 
     const handler = setTimeout(async () => {
       if (searchQuery.length > 0) {
-        setIsSearching(true);
         setSearchResults([]); // Clear previous results
         const searchGenerator = performSearch(searchQuery);
         let newResults: SearchResult[] = [];
@@ -113,12 +116,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             break; // A new search has started, stop processing old results
           }
         }
-        if (searchIdRef.current === currentId) {
-          setIsSearching(false);
-        }
       } else {
         setSearchResults([]);
-        setIsSearching(false);
       }
     }, 300); // Debounce for 300ms
 
@@ -148,9 +147,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
       if (isOriginalCharacter(result.id)) {
         handleSelectCharacter(result.id);
       } else {
-        // For non-original characters, find the original character that was renamed to this ID
-        // For now, we'll just show an alert - in the future we could implement a fallback
-        alert(`角色 "${result.id}" 是用户创建的角色，没有对应的静态页面。请通过编辑模式访问。`);
+        // For non-original characters, show notification instead of alert
+        setNotificationMessage(
+          `角色 "${result.id}" 是用户创建的角色，没有对应的静态页面。请通过编辑模式访问。`
+        );
+        setShowNotification(true);
         return;
       }
     } else {
@@ -193,6 +194,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             autoFocus
+            ref={searchInputRef}
           />
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
             <svg
@@ -212,15 +214,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           </div>
         </div>
 
-        {isSearching && searchQuery.length > 0 && (
-          <div className='p-2 text-gray-500 dark:text-gray-400'>搜索中...</div>
-        )}
-
-        {searchQuery.length > 0 && searchResults.length > 0 && !isSearching && (
+        {searchQuery.length > 0 && searchResults.length > 0 && (
           <ul
             className={`${isMobile ? 'flex-1' : 'max-h-60'} overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md`}
           >
-            {searchResults.map((result) => (
+            {searchResults.map((result, index) => (
               <li
                 key={`${result.type}-${result.id}`}
                 className='border-b border-gray-200 dark:border-gray-700 last:border-b-0'
@@ -228,7 +226,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                 <button
                   type='button'
                   onClick={() => handleResultClick(result)}
-                  className='flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left'
+                  className={`flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left ${highlightedIndex === index ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
+                  onMouseEnter={() => setHighlightedIndex(index)}
                 >
                   {result.imageUrl && (
                     <Image
@@ -253,9 +252,16 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           </ul>
         )}
 
-        {searchQuery.length > 0 && searchResults.length === 0 && !isSearching && (
+        {searchQuery.length > 0 && searchResults.length === 0 && (
           <div className='p-2 text-gray-500 dark:text-gray-400'>无结果</div>
         )}
+
+        <NotificationTooltip
+          show={showNotification}
+          message={notificationMessage}
+          onHide={() => setShowNotification(false)}
+          type='warning'
+        />
       </div>
     </div>
   );

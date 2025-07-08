@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import NotificationTooltip from './ui/NotificationTooltip';
 
 export const OfflineIndicator: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean | null>(null); // null for SSR
@@ -82,26 +83,14 @@ export const OfflineIndicator: React.FC = () => {
           </div>
         </div>
       )}
-      {/* Notification toast */}
-      {showNotification && (
-        <div
-          className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-[10000] transform transition-all duration-300 max-w-sm ${
-            isOnline ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-100'
-          }`}
-        >
-          <div className='flex items-center space-x-2'>
-            <div
-              className={`w-2 h-2 rounded-full ${isOnline ? 'bg-white' : 'bg-gray-300 animate-pulse'}`}
-            ></div>
-            <span className='font-medium text-sm'>
-              {isOnline ? '已重新连接到网络' : '已断开网络连接'}
-            </span>
-          </div>
-          {!isOnline && (
-            <div className='text-xs mt-1 opacity-90'>您仍可以浏览已缓存的页面和数据</div>
-          )}
-        </div>
-      )}
+      {/* Notification using unified NotificationTooltip */}
+      <NotificationTooltip
+        show={showNotification}
+        message={isOnline ? '已重新连接到网络' : '已断开网络连接 - 您仍可以浏览已缓存的页面和数据'}
+        type={isOnline ? 'success' : 'warning'}
+        onHide={() => setShowNotification(false)}
+        duration={4000}
+      />
     </>
   );
 };
