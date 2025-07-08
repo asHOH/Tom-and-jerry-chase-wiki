@@ -200,7 +200,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         tagName: '奶酪',
         isMinor: false,
         description: '拥有鼠方全角色第一的基础推速。',
-        additionalDescription: '烟雾弹能进一步提高推速。',
+        additionalDescription: '烟雾弹能进一步提高团队推速。',
       },
       {
         tagName: '破局',
@@ -244,11 +244,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '隐身',
         type: 'active',
-        description: '进入隐身状态，期间移速提升。',
-        detailedDescription: '进入隐身状态，期间移速提升15%。',
+        description: '进入隐身状态，期间获得加速。',
+        detailedDescription: '前摇1.9秒，进入隐身状态，期间加速15%。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可打断', // 前摇1.9s
+        cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -276,10 +276,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         type: 'weapon1',
         description: '引爆烟雾弹遮挡猫的视野。在烟雾中猫咪无法查看小地图。',
         detailedDescription:
-          '引爆烟雾弹遮挡猫的视野。在烟雾中猫咪无法查看小地图，此效果可以被一层护盾抵消。',
+          '引爆烟雾弹遮挡猫的视野。前摇0.5秒，后摇1.5秒。在烟雾中猫咪无法查看小地图，此效果可以被一层护盾抵消。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可打断', // 前摇0.5s，后摇1.5s，引爆的前0.7s技能贴图由完全不透明淡化至半透明状态。烟雾弹持续4.8s，随后播放0.5s的消失动画
+        cancelableSkill: '不可被打断',
         cancelableAftercast: '不可取消',
         skillLevels: [
           {
@@ -291,8 +291,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description: '老鼠在烟雾范围内提升移速、跳跃高度和推速。',
-            detailedDescription:
-              '老鼠在烟雾范围内移速提升20%，跳跃高度提升50%，推速固定提升5.75%/s。',
+            detailedDescription: '老鼠在烟雾范围内加速20%，跳跃高度提升50%，推速固定提升5.75%/s。',
             cooldown: 35,
           },
           {
@@ -300,7 +299,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             description:
               '烟雾持续时间增加，猫在烟雾范围内会降低移速、跳跃高度和攻击频率，且无法使用技能和道具。',
             detailedDescription:
-              '烟雾持续时间增加至6.5秒，猫在烟雾范围内移速降低20%、跳跃高度降低20%且爪刀CD延长50%，且无法使用技能和道具。',
+              '烟雾持续时间增加至6.5秒，猫在烟雾范围内减速20%、跳跃高度降低20%且爪刀CD延长50%，且无法使用技能和道具。',
             cooldown: 35,
           },
         ],
@@ -310,10 +309,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         type: 'weapon2',
         description: '投掷干扰器，落地后对范围内的老鼠施加短暂的隐身效果。',
         detailedDescription:
-          '以道具形式投掷干扰器，落地或碰到墙壁后对范围内的老鼠施加3.5秒隐身效果。',
+          '以道具形式投掷干扰器，投掷前摇0.3s，落地或碰到墙壁后对范围内的老鼠施加3.5秒隐身效果。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被打断', // FIXME: supplement this 投掷前摇0.3s；技能触发后持续存在1s。
+        cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -340,7 +339,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '胆小如鼠',
         type: 'passive',
-        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=36.3',
         skillLevels: [
           {
             level: 1,
@@ -437,7 +435,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '可被跳跃键打断',
         cancelableAftercast: '无后摇',
-        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=10.6',
         skillLevels: [
           {
             level: 1,
@@ -469,7 +466,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: false,
         cancelableSkill: '可被跳跃键打断',
         cancelableAftercast: '无后摇',
-        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=50.7',
         skillLevels: [
           {
             level: 1,
@@ -502,9 +498,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '放置一个舰艇火炮，老鼠可以进入火炮，控制方向发射并对碰到的猫咪造成50点伤害与1.5秒眩晕，火炮内免疫投掷物。火炮内老鼠进入虚弱后火炮会提前消失。同一房间最多出现两个火炮。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断', // FIXME: not sure
-        cancelableAftercast: '不可取消后摇', // FIXME: not sure
-        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=50.7',
+        cancelableSkill: '不确定是否可被打断', // FIXME
+        cancelableAftercast: '不确定是否可取消后摇', // FIXME
         skillLevels: [
           {
             level: 1,
@@ -528,7 +523,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '无坚不摧',
         type: 'passive',
-        // videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=36.3',
         skillLevels: [
           {
             level: 1,
@@ -961,7 +955,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '创造一道风墙阻挡敌方，前摇0.5s。风墙大小500*500，持续3s。风墙对所有角色造成判定干扰，如猫的爪刀、拍子无法穿过风墙，风墙卡位时老鼠不能推奶酪。小跳风可将正在绑火箭的猫挤出火箭从而强行阻止猫绑火箭。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '可被打断', // FIXME
+        cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=10.6',
         skillLevels: [
@@ -994,7 +988,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '挥出一道剑气，前摇0.45s，飞行速度1750，持续5s。剑气击中角色可反弹一次，再次击中角色剑气消失。剑气击中敌方将造成10伤害（可继承状态），并降低其40%移速、跳跃高度，持续5s；击中友方将提升其25%移速、救援速度及跳跃高度，持续5s，且其在此期间可用交互键瞬移至附近幻影处。剑气击中平台则形成幻影，再次点击技能按钮可瞬移至幻影处。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被打断', // FIXME
+        cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -1266,11 +1260,17 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     skillAllocations: [
       {
-        id: '',
+        id: '折扇破局',
         pattern: '2(0)2121100',
         weaponType: 'weapon1',
         description:
-          '加点较为灵活，可不按照推荐加点来加。作为全能位，需要看玛丽在一整局中的定位和局内情况来加点。游戏开始时需保留被动加点，死后配合铁血使用。(也要看附近有没有队友，不然浪费加点)',
+          '加点灵活，可随机应变。游戏开始时需保留一级被动加点，铁血且附近有队友再加点。适用于需要破局的情况。',
+      },
+      {
+        id: '后期礼仪控场',
+        pattern: '2(0)2111200',
+        weaponType: 'weapon1',
+        description: '适用于不需要破局的情况，更早点出三级礼仪控场。',
       },
     ],
     knowledgeCardGroups: [
@@ -1291,8 +1291,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         detailedDescription: '',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被打断', // FIXME
-        cancelableAftercast: '不可取消后摇', // FIXME
+        cancelableSkill: '不确定是否可被打断', // FIXME
+        cancelableAftercast: '可被跳跃键取消后摇', // FIXME
         canHitInPipe: true,
         skillLevels: [
           {
@@ -1307,8 +1307,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description:
-              '使猫在5秒内无法使用技能和爪刀，并对其造成短暂眩晕（可救下猫手中的队友）。',
+            description: '额外造成短暂眩晕（可救下猫手中的队友）。',
             cooldown: 15,
           },
         ],
@@ -1317,12 +1316,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '香风折扇',
         aliases: ['扇子'],
         type: 'weapon1',
-        description: '手持折扇向目标方向扇风，对命中的猫咪造成少量伤害，反向和失明效果，可破盾。',
+        description: '手持折扇向目标方向扇风，对命中的猫咪造成少量伤害、反向和失明效果，可破盾。',
         // 2级折扇因为有对自身的加速效果所以可以搭配翻滚特技和应激反应来使用，能够在被猫攻击后快速逃脱，如果技能打中猫可直接断掉猫的节奏。墙缝战的时候如果点了3级折扇，可以卡在炸药包0秒时使用对墙缝造成大量伤害，达到破墙的效果(难度较高)\n注意1:不要对朵朵使用2级折扇\n注意2:折扇的基础效果对斯飞没用。
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断',
-        cancelableAftercast: '可被跳跃键取消后摇',
+        cancelableSkill: '可被道具键*打断', // FIXME
+        cancelableAftercast: '可被跳跃键或道具键*取消后摇', // FIXME
         skillLevels: [
           {
             level: 1,
@@ -1440,7 +1439,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '根据演奏风格给予周围友方增益效果。使用技能可切换风格，切换时音乐家杰瑞会同时保持上一种风格8秒。点出该技能时风格为协奏。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被打断', // FIXME
+        cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '可通过道具键*或跳跃键取消后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=408.2',
         skillLevels: [
