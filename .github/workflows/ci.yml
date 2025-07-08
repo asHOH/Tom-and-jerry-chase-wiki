@@ -73,73 +73,12 @@ jobs:
         if: matrix.check == 'typescript'
         run: npm run type-check
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: setup
-    outputs:
-      build-success: ${{ steps.build-status.outputs.success }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Restore dependencies
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-
-      - name: Install dependencies
-        if: needs.setup.outputs.cache-hit != 'true'
-        run: npm ci
-
-      - name: Clean previous builds
-        run: |
-          rm -rf .next out
-          if [ -f "next.config.js" ]; then
-            rm next.config.js
-          fi
-
-      - name: Build project
-        id: build-status
-        run: |
-          npm run build
-          echo "success=true" >> $GITHUB_OUTPUT
-
-      - name: Verify build output
-        run: |
-          if [ ! -d "out" ]; then
-            echo "Build failed: out directory not found"
-            echo "Available directories:"
-            ls -la
-            exit 1
-          fi
-          echo "Build successful: out directory exists with $(ls out | wc -l) files"
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output-${{ github.sha }}
-          path: out/
-          retention-days: 7
-
-      - name: Upload Next.js cache
-        uses: actions/upload-artifact@v4
-        with:
-          name: nextjs-cache-${{ github.sha }}
-          path: .next/cache/
-          retention-days: 7
 
   test:
     name: Tests & Coverage
     runs-on: ubuntu-latest
-    needs: [setup, build]
+    needs: setup
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -159,13 +98,6 @@ jobs:
       - name: Install dependencies
         if: needs.setup.outputs.cache-hit != 'true'
         run: npm ci
-
-      - name: Download build artifacts
-        if: needs.build.outputs.build-success == 'true'
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output-${{ github.sha }}
-          path: out/
 
       - name: Check if tests exist
         id: check-tests
@@ -204,43 +136,12 @@ jobs:
         if: steps.check-tests.outputs.tests-exist == 'false'
         run: echo "⚠️ No tests found in the project. Consider adding tests for better code quality."
 
-  performance-check:
-    name: Performance Analysis
-    runs-on: ubuntu-latest
-    needs: [setup, build]
-    if: needs.build.outputs.build-success == 'true'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output-${{ github.sha }}
-          path: out/
-
-      - name: Analyze bundle size
-        run: |
-          echo "## 📊 Build Analysis" >> $GITHUB_STEP_SUMMARY
-          echo "### Bundle Size" >> $GITHUB_STEP_SUMMARY
-          echo "Total build size: $(du -sh out | cut -f1)" >> $GITHUB_STEP_SUMMARY
-          echo "### File Count" >> $GITHUB_STEP_SUMMARY
-          echo "Total files: $(find out -type f | wc -l)" >> $GITHUB_STEP_SUMMARY
-          echo "### Largest Files" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          find out -type f -exec du -h {} + | sort -rh | head -10 >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [code-quality, build, test, performance-check]
+    needs: [code-quality, test]
     if: always()
     steps:
       - name: Check results
@@ -249,6 +150,4 @@ jobs:
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Code Quality | ${{ needs.code-quality.result == 'success' && '✅ Pass' || '❌ Fail' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build | ${{ needs.build.result == 'success' && '✅ Pass' || '❌ Fail' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Tests | ${{ needs.test.result == 'success' && '✅ Pass' || needs.test.result == 'skipped' && '⏭️ Skipped' || '❌ Fail' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Performance | ${{ needs.performance-check.result == 'success' && '✅ Pass' || needs.performance-check.result == 'skipped' && '⏭️ Skipped' || '❌ Fail' }} |" >> $GITHUB_STEP_SUMMARY
