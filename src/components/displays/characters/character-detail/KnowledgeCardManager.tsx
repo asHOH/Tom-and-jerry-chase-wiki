@@ -30,7 +30,10 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
   };
 
   const handleCreateGroup = () => {
-    const newGroup: KnowledgeCardGroup = [];
+    const newGroup: KnowledgeCardGroup = {
+      cards: [],
+      description: '待补充',
+    };
     const updatedGroups = [...knowledgeCardGroups, newGroup];
     handleSaveChanges(updatedGroups);
   };

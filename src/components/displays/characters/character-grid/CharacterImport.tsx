@@ -39,6 +39,26 @@ function handleUploadedData(data: string, factionId: FactionId) {
       name: factionId == 'cat' ? '猫阵营' : '鼠阵营',
     };
 
+    // Convert legacy knowledgeCardGroups format to improved format
+    if (character.knowledgeCardGroups && Array.isArray(character.knowledgeCardGroups)) {
+      character.knowledgeCardGroups = character.knowledgeCardGroups.map(
+        (group: string[] | { cards: string[]; description?: string }) => {
+          // If it's a simple array (legacy format), convert to object format
+          if (Array.isArray(group)) {
+            return {
+              cards: group,
+              description: '待补充', // Default description for imported legacy format
+            };
+          }
+          // If it's already an object, ensure it has the required structure
+          return {
+            cards: group.cards || [],
+            description: group.description || '待补充',
+          };
+        }
+      );
+    }
+
     console.log(`Enhanced imported character ${character.id} with complete data structure`);
   }
 

@@ -85,15 +85,9 @@ export default function KnowledgeCardSection({
     const updatedGroups = [...knowledgeCardGroups];
     const currentGroup = updatedGroups[index];
 
-    if (Array.isArray(currentGroup)) {
-      // Convert to object form if it's just an array of cards
-      updatedGroups[index] = {
-        cards: currentGroup,
-        description: newDescription,
-      };
-    } else if (currentGroup) {
-      // Update description if it's already an object
-      (currentGroup as { description: string }).description = newDescription;
+    if (currentGroup) {
+      // Update description - all groups are now objects
+      currentGroup.description = newDescription;
     }
 
     onSaveChanges(updatedGroups);
@@ -105,10 +99,9 @@ export default function KnowledgeCardSection({
     const updatedGroups = [...knowledgeCardGroups];
     const currentGroup = updatedGroups[currentGroupIndex];
 
-    if (Array.isArray(currentGroup)) {
-      updatedGroups[currentGroupIndex] = newCards;
-    } else if (currentGroup) {
-      (currentGroup as { cards: string[] }).cards = newCards;
+    if (currentGroup) {
+      // Update cards - all groups are now objects
+      currentGroup.cards = newCards;
     }
 
     onSaveChanges(updatedGroups);
@@ -323,9 +316,7 @@ export default function KnowledgeCardSection({
 
   const currentGroup =
     currentGroupIndex !== null ? knowledgeCardGroups[currentGroupIndex] : undefined;
-  const initialSelectedCards = Array.isArray(currentGroup)
-    ? currentGroup
-    : (currentGroup?.cards ?? []);
+  const initialSelectedCards = currentGroup?.cards ?? [];
 
   return (
     <div>
@@ -384,9 +375,7 @@ export default function KnowledgeCardSection({
 
           {knowledgeCardGroups.map((group, index) => (
             <React.Fragment key={index}>
-              {Array.isArray(group)
-                ? renderKnowledgeCardGroup(group, index)
-                : renderKnowledgeCardGroup(group.cards, index, group.description)}
+              {renderKnowledgeCardGroup(group.cards, index, group.description)}
               {index < knowledgeCardGroups.length - 1 && (
                 <div className='border-t border-gray-200 my-4'></div>
               )}
