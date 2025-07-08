@@ -111,6 +111,20 @@ function handleCharacterIdChange(
     return;
   }
 
+  // Check if the new ID already exists - if so, load that character instead
+  if (characters[newId] && newId !== oldId) {
+    console.log(`Character ${newId} already exists, loading existing data`);
+    setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
+    return;
+  }
+
+  // Save mapping from original ID to new ID
+  const mapping = JSON.parse(localStorage.getItem('characterIdMapping') ?? '{}');
+  // Find the original ID that maps to oldId, or use oldId if it's original
+  const originalId = Object.keys(mapping).find((key) => mapping[key] === oldId) ?? oldId;
+  mapping[originalId] = newId;
+  localStorage.setItem('characterIdMapping', JSON.stringify(mapping));
+
   characters[newId] = { ...character! };
   characters[newId].id = newId;
   characters[newId].imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
@@ -170,8 +184,67 @@ export function saveFactionsAndCharacters() {
   localStorage.setItem('characters', JSON.stringify(characters));
 }
 
+// Save mapping of original character IDs to current IDs
+export function saveCharacterIdMapping() {
+  const mapping: Record<string, string> = {};
+  // Create reverse mapping from current characters back to their original IDs
+  Object.keys(characters).forEach((currentId) => {
+    // For now, we'll use a simple approach - if the character exists in localStorage
+    // but not in the original data, we assume it's a renamed character
+    mapping[currentId] = currentId; // Default to self-mapping
+  });
+  localStorage.setItem('characterIdMapping', JSON.stringify(mapping));
+}
+
+// Get the current character ID for a given original ID
+export function getCurrentCharacterId(originalId: string): string {
+  if (typeof window === 'undefined') return originalId;
+
+  const mapping = JSON.parse(localStorage.getItem('characterIdMapping') ?? '{}');
+  return mapping[originalId] ?? originalId;
+}
+
+// Get character by original ID, resolving to current ID if it was renamed
+export function getCharacterByOriginalId(originalId: string): CharacterWithFaction | undefined {
+  const currentId = getCurrentCharacterId(originalId);
+  return characters[currentId];
+}
+
+// Get the list of original character IDs (before any edits)
+export function getOriginalCharacterIds(): string[] {
+  if (typeof window === 'undefined') {
+    // On server side, return all current character IDs
+    return Object.keys(characters);
+  }
+
+  // Try to get original characters from initial data or fallback to current
+  const originalCharactersStr = localStorage.getItem('originalCharacters');
+  if (originalCharactersStr) {
+    try {
+      const originalCharacters = JSON.parse(originalCharactersStr);
+      return Object.keys(originalCharacters);
+    } catch (e) {
+      console.error('Failed to parse original characters', e);
+    }
+  }
+
+  // Fallback: return current character IDs
+  return Object.keys(characters);
+}
+
+// Check if a character ID corresponds to an original (static) character
+export function isOriginalCharacter(characterId: string): boolean {
+  return getOriginalCharacterIds().includes(characterId);
+}
+
 export function loadFactionsAndCharacters() {
-  // 1. clear original data
+  // 1. Save original data if not already saved
+  if (typeof window !== 'undefined' && !localStorage.getItem('originalCharacters')) {
+    localStorage.setItem('originalCharacters', JSON.stringify(characters));
+    localStorage.setItem('originalFactions', JSON.stringify(factions));
+  }
+
+  // 2. clear original data
   const originalCharacters = JSON.stringify(characters);
   const originalFactions = JSON.stringify(factions);
   for (const prop of Object.getOwnPropertyNames(factions)) {
@@ -180,7 +253,7 @@ export function loadFactionsAndCharacters() {
   for (const prop of Object.getOwnPropertyNames(characters)) {
     delete characters[prop];
   }
-  // 2. load localstorage data
+  // 3. load localstorage data
   Object.assign(characters, JSON.parse(localStorage.getItem('characters') ?? originalCharacters));
   Object.assign(factions, JSON.parse(localStorage.getItem('factions') ?? originalFactions));
 }

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useAppContext } from '@/context/AppContext';
+import { isOriginalCharacter } from '@/lib/editUtils';
 
 type SearchDialogProps = {
   onClose: () => void;
@@ -143,7 +144,15 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
 
   const handleResultClick = (result: SearchResult) => {
     if (result.type === 'character') {
-      handleSelectCharacter(result.id);
+      // Check if this is an original character that has a static page
+      if (isOriginalCharacter(result.id)) {
+        handleSelectCharacter(result.id);
+      } else {
+        // For non-original characters, find the original character that was renamed to this ID
+        // For now, we'll just show an alert - in the future we could implement a fallback
+        alert(`角色 "${result.id}" 是用户创建的角色，没有对应的静态页面。请通过编辑模式访问。`);
+        return;
+      }
     } else {
       handleSelectCard(result.id);
     }

@@ -1,6 +1,10 @@
 'use client';
 
-import { loadFactionsAndCharacters, saveFactionsAndCharacters } from '@/lib/editUtils';
+import {
+  loadFactionsAndCharacters,
+  saveFactionsAndCharacters,
+  getCharacterByOriginalId,
+} from '@/lib/editUtils';
 import { CharacterWithFaction } from '@/lib/types';
 import React, {
   createContext,
@@ -78,9 +82,17 @@ export const LocalCharacterProvider = ({
   const { isEditMode } = useEditMode();
 
   useEffect(() => {
-    // avoid changing local character lead to the change of characters
     if (isEditMode) {
-      setLocalCharacter(JSON.parse(JSON.stringify(character)));
+      // In edit mode, try to resolve the character using the mapping system
+      // This handles cases where character IDs have been changed
+      const resolvedCharacter = getCharacterByOriginalId(character.id);
+      if (resolvedCharacter) {
+        setLocalCharacter(JSON.parse(JSON.stringify(resolvedCharacter)));
+      } else {
+        setLocalCharacter(JSON.parse(JSON.stringify(character)));
+      }
+    } else {
+      setLocalCharacter(character);
     }
   }, [character, isEditMode]);
 
