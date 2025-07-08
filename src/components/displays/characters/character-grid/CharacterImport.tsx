@@ -2,6 +2,7 @@
 
 import { useEditMode } from '@/context/EditModeContext';
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import BaseCard from '../../../ui/BaseCard';
 import { componentTokens, designTokens } from '@/lib/design-tokens';
 import json5 from 'json5';
@@ -14,7 +15,11 @@ import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { saveFactionsAndCharacters } from '@/lib/editUtils';
 import { processCharacters } from '@/lib/skillIdUtils';
 
-function handleUploadedData(data: string, factionId: FactionId) {
+function handleUploadedData(
+  data: string,
+  factionId: FactionId,
+  onImportSuccess: (names: string[]) => void
+) {
   let newCharacters: Record<string, CharacterWithFaction>;
   try {
     newCharacters = json5.parse(data);
@@ -23,12 +28,16 @@ function handleUploadedData(data: string, factionId: FactionId) {
     newCharacters = json5.parse(`{${data}}`);
   }
 
+  const importedNames: string[] = [];
+
   // Enhance each character with complete data structure
   for (const [characterId, character] of Object.entries(newCharacters)) {
     // Ensure character has id field
     if (!character.id) {
       character.id = characterId;
     }
+
+    importedNames.push(character.id);
 
     // Add skill image URLs
     character.skills = addSkillImageUrls(character.id, character.skills, factionId);
@@ -67,8 +76,6 @@ function handleUploadedData(data: string, factionId: FactionId) {
   // Update the global characters object
   Object.assign(characters, newCharacters);
 
-  let needReload = false;
-
   for (const character of Object.values(newCharacters)) {
     const faction = factions[factionId]!.characters.find(({ id }) => id == character.id);
     if (faction) {
@@ -81,16 +88,13 @@ function handleUploadedData(data: string, factionId: FactionId) {
         imageUrl: (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(character.id),
         positioningTags: character.catPositioningTags ?? character.mousePositioningTags ?? [],
       });
-      needReload = true;
     }
   }
 
   saveFactionsAndCharacters();
 
-  // since characters and factions is out of reactivity system, force reload to load data
-  if (needReload) {
-    location.reload();
-  }
+  // Trigger success callback - no reload needed, let's see if UI updates automatically
+  onImportSuccess(importedNames);
 }
 
 interface PasteInputModalProps {
@@ -166,9 +170,26 @@ export default function CharacterImport() {
   const { isEditMode } = useEditMode();
   const [showImportOptions, setShowImportOptions] = useState(false);
   const [showPasteInput, setShowPasteInput] = useState(false);
+  const [showImportTooltip, setShowImportTooltip] = useState(false);
+  const [importedCharacterNames, setImportedCharacterNames] = useState<string[]>([]);
+  const [mounted, setMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const params = useParams();
   const factionId = params?.factionId as FactionId;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleImportSuccess = (names: string[]) => {
+    setImportedCharacterNames(names);
+    setShowImportTooltip(true);
+
+    // Auto-hide tooltip after 6 seconds
+    setTimeout(() => {
+      setShowImportTooltip(false);
+    }, 6000);
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -177,7 +198,7 @@ export default function CharacterImport() {
       reader.onload = (e) => {
         const content = e.target?.result;
         if (typeof content === 'string') {
-          handleUploadedData(content, factionId);
+          handleUploadedData(content, factionId, handleImportSuccess);
           setShowImportOptions(false);
         }
       };
@@ -191,7 +212,7 @@ export default function CharacterImport() {
       try {
         const clipboardContent = await navigator.clipboard.readText();
         if (!clipboardContent.includes('Error: Clipboard read operation is not allowed.')) {
-          handleUploadedData(clipboardContent, factionId);
+          handleUploadedData(clipboardContent, factionId, handleImportSuccess);
           setShowImportOptions(false);
         } else {
           setShowImportOptions(false);
@@ -210,7 +231,7 @@ export default function CharacterImport() {
   };
 
   const handlePasteModalContent = (content: string) => {
-    handleUploadedData(content, factionId);
+    handleUploadedData(content, factionId, handleImportSuccess);
     setShowPasteInput(false);
   };
 
@@ -219,97 +240,154 @@ export default function CharacterImport() {
   }
 
   return (
-    <BaseCard
-      variant='character'
-      onClick={!showImportOptions && !showPasteInput ? () => setShowImportOptions(true) : () => {}}
-      role='button'
-      tabIndex={!showImportOptions && !showPasteInput ? 0 : -1} // Make it unfocusable when options or paste input are shown
-      onKeyDown={
-        !showImportOptions && !showPasteInput
-          ? (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setShowImportOptions(true);
+    <>
+      <BaseCard
+        variant='character'
+        onClick={
+          !showImportOptions && !showPasteInput ? () => setShowImportOptions(true) : () => {}
+        }
+        role='button'
+        tabIndex={!showImportOptions && !showPasteInput ? 0 : -1} // Make it unfocusable when options or paste input are shown
+        onKeyDown={
+          !showImportOptions && !showPasteInput
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setShowImportOptions(true);
+                }
               }
-            }
-          : () => {}
-      }
-      aria-label='导入新角色'
-    >
-      {!showImportOptions && !showPasteInput ? (
-        <>
+            : () => {}
+        }
+        aria-label='导入新角色'
+      >
+        {!showImportOptions && !showPasteInput ? (
+          <>
+            <div
+              className='w-full bg-gray-200 relative overflow-hidden mb-4'
+              style={{
+                height: containerHeight,
+                borderRadius: componentTokens.image.container.borderRadius,
+              }}
+            >
+              <div className='flex items-center justify-center h-full p-2'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='size-6 text-gray-500 hover:scale-105'
+                  style={{
+                    width: width,
+                    height: height,
+                    objectFit: 'contain',
+                    maxHeight: '50%',
+                    maxWidth: '70%',
+                    transition: designTokens.transitions.normal,
+                  }}
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5'
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className='px-6 pt-1 pb-6 text-center'>
+              <h2 className='text-xl font-bold mb-2'>导入角色</h2>
+            </div>
+          </>
+        ) : showImportOptions ? (
           <div
-            className='w-full bg-gray-200 relative overflow-hidden mb-4'
-            style={{
-              height: containerHeight,
-              borderRadius: componentTokens.image.container.borderRadius,
-            }}
+            className='flex flex-col items-stretch justify-center w-full'
+            style={{ height: containerHeight }}
           >
-            <div className='flex items-center justify-center h-full p-2'>
+            <button
+              type='button'
+              aria-label='从文件上传角色数据'
+              className='bg-white hover:bg-gray-100 text-black font-bold flex-grow w-full flex items-center justify-center border-b border-gray-400 cursor-pointer text-xl'
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
+              }}
+            >
+              从文件上传
+            </button>
+            <button
+              type='button'
+              aria-label='从剪贴板上传角色数据'
+              className='bg-white hover:bg-gray-100 text-black font-bold flex-grow w-full flex items-center justify-center cursor-pointer text-xl'
+              onClick={handlePasteClick}
+            >
+              从剪贴板上传
+            </button>
+            <input
+              type='file'
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              accept='.ts,.txt' // Specify accepted file types if needed
+              aria-label='上传角色数据文件'
+            />
+          </div>
+        ) : (
+          <PasteInputModal
+            onPaste={handlePasteModalContent}
+            onCancel={() => setShowPasteInput(false)}
+            containerHeight={containerHeight}
+          />
+        )}
+      </BaseCard>
+
+      {/* Import Success Tooltip - Rendered via portal to document body */}
+      {mounted &&
+        showImportTooltip &&
+        createPortal(
+          <div
+            className='fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50'
+            style={{ position: 'fixed' }}
+          >
+            <div className='flex items-center space-x-2'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'
                 strokeWidth={1.5}
                 stroke='currentColor'
-                className='size-6 text-gray-500 hover:scale-105'
-                style={{
-                  width: width,
-                  height: height,
-                  objectFit: 'contain',
-                  maxHeight: '50%',
-                  maxWidth: '70%',
-                  transition: designTokens.transitions.normal,
-                }}
+                className='w-4 h-4'
               >
                 <path
                   strokeLinecap='round'
                   strokeLinejoin='round'
-                  d='M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5'
+                  d='M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
                 />
               </svg>
+              <span>
+                成功导入
+                {importedCharacterNames.map((name, index) => (
+                  <span key={name}>
+                    {index > 0 && '、'}
+                    <strong>{name}</strong>
+                  </span>
+                ))}
+                ，打开任意角色并将id改为
+                {importedCharacterNames.length === 1 ? (
+                  <strong>{importedCharacterNames[0]}</strong>
+                ) : (
+                  importedCharacterNames.map((name, index) => (
+                    <span key={name}>
+                      {index > 0 && '、'}
+                      <strong>{name}</strong>
+                    </span>
+                  ))
+                )}
+                即可开始编辑
+              </span>
             </div>
-          </div>
-          <div className='px-6 pt-1 pb-6 text-center'>
-            <h2 className='text-xl font-bold mb-2'>导入角色</h2>
-          </div>
-        </>
-      ) : showImportOptions ? (
-        <div
-          className='flex flex-col items-stretch justify-center w-full'
-          style={{ height: containerHeight }}
-        >
-          <button
-            className='bg-white hover:bg-gray-100 text-black font-bold flex-grow w-full flex items-center justify-center border-b border-gray-400 cursor-pointer text-xl'
-            onClick={(e) => {
-              e.stopPropagation();
-              fileInputRef.current?.click();
-            }}
-          >
-            从文件上传
-          </button>
-          <button
-            className='bg-white hover:bg-gray-100 text-black font-bold flex-grow w-full flex items-center justify-center cursor-pointer text-xl'
-            onClick={handlePasteClick}
-          >
-            从剪贴板上传
-          </button>
-          <input
-            type='file'
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            style={{ display: 'none' }}
-            accept='.ts,.txt' // Specify accepted file types if needed
-            aria-label='上传角色数据文件'
-          />
-        </div>
-      ) : (
-        <PasteInputModal
-          onPaste={handlePasteModalContent}
-          onCancel={() => setShowPasteInput(false)}
-          containerHeight={containerHeight}
-        />
-      )}
-    </BaseCard>
+          </div>,
+          document.body
+        )}
+    </>
   );
 }
