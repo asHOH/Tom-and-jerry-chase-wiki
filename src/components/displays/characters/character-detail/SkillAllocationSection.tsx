@@ -64,7 +64,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
         <div className='space-y-3'>
           {localCharacter.skillAllocations && localCharacter.skillAllocations.length > 0
             ? localCharacter.skillAllocations.map((allocation, index) => (
-                <div key={allocation.id} className='card p-4'>
+                <div key={allocation.id || `allocation-${index}`} className='card p-4'>
                   <SkillAllocationDisplay
                     allocation={allocation}
                     factionId={factionId}

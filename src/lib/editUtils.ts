@@ -112,22 +112,58 @@ function handleCharacterIdChange(
   }
 
   // Check if the new ID already exists - if so, load that character instead
+  // BUT: allow user-created characters to be renamed even if target ID exists
   if (characters[newId] && newId !== oldId) {
-    console.log(`Character ${newId} already exists, loading existing data`);
-    try {
-      const existingCharacter = validateAndEnhanceCharacter(characters[newId], newId);
-      setLocalCharacter(JSON.parse(JSON.stringify(existingCharacter)));
-    } catch (error) {
-      console.error(`Failed to load existing character ${newId}:`, error);
-      setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
+    const isOriginalOldCharacter = isOriginalCharacter(oldId);
+    const isOriginalNewCharacter = isOriginalCharacter(newId);
+
+    // If trying to rename TO an original character, prevent it to avoid data loss
+    if (isOriginalNewCharacter) {
+      console.warn(`Cannot rename to original character ${newId}, loading existing data instead`);
+      try {
+        const existingCharacter = validateAndEnhanceCharacter(characters[newId], newId);
+        setLocalCharacter(JSON.parse(JSON.stringify(existingCharacter)));
+      } catch (error) {
+        console.error(`Failed to load existing character ${newId}:`, error);
+        setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
+      }
+      return;
     }
-    return;
+
+    // If both are user-created characters, allow overwriting with warning
+    if (!isOriginalOldCharacter) {
+      console.warn(`Overwriting existing user-created character ${newId} with ${oldId}`);
+      // Continue with the rename process - this will overwrite the existing character
+    } else {
+      // Original character trying to overwrite user-created character - load existing instead
+      console.log(`Character ${newId} already exists, loading existing data`);
+      try {
+        const existingCharacter = validateAndEnhanceCharacter(characters[newId], newId);
+        setLocalCharacter(JSON.parse(JSON.stringify(existingCharacter)));
+      } catch (error) {
+        console.error(`Failed to load existing character ${newId}:`, error);
+        setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
+      }
+      return;
+    }
   }
 
   // Save mapping from original ID to new ID
   const mapping = JSON.parse(localStorage.getItem('characterIdMapping') ?? '{}');
   // Find the original ID that maps to oldId, or use oldId if it's original
   const originalId = Object.keys(mapping).find((key) => mapping[key] === oldId) ?? oldId;
+
+  // If the newId is being overwritten, we need to clean up any existing mappings to it
+  // to prevent conflicts when loading characters
+  if (characters[newId] && newId !== oldId) {
+    // Remove any existing mappings that point to the newId
+    const existingMappings = Object.keys(mapping).filter((key) => mapping[key] === newId);
+    existingMappings.forEach((key) => {
+      console.log(`Removing conflicting mapping: ${key} -> ${newId}`);
+      delete mapping[key];
+    });
+  }
+
   mapping[originalId] = newId;
   localStorage.setItem('characterIdMapping', JSON.stringify(mapping));
   console.log(`Updated character mapping: ${originalId} -> ${newId}`);
@@ -260,11 +296,45 @@ export function getCharacterByOriginalId(originalId: string): CharacterWithFacti
 
   if (!character) {
     console.log(`Character not found for originalId: ${originalId}, currentId: ${currentId}`);
+
+    // If the mapped character doesn't exist, try to clean up the mapping
+    // and fall back to the original character
+    if (currentId !== originalId) {
+      console.log(
+        `Mapped character ${currentId} doesn't exist, cleaning up mapping and falling back to original`
+      );
+      const mapping = JSON.parse(localStorage.getItem('characterIdMapping') ?? '{}');
+      delete mapping[originalId];
+      localStorage.setItem('characterIdMapping', JSON.stringify(mapping));
+
+      // Try to load the original character
+      const originalCharacter = characters[originalId];
+      if (originalCharacter) {
+        try {
+          return validateAndEnhanceCharacter(originalCharacter, originalId);
+        } catch (error) {
+          console.error(`Failed to validate original character ${originalId}:`, error);
+        }
+      }
+    }
+
     return undefined;
   }
 
   try {
-    return validateAndEnhanceCharacter(character, currentId);
+    const validatedCharacter = validateAndEnhanceCharacter(character, currentId);
+
+    // Additional check: ensure the character data is consistent
+    // If the current ID doesn't match the character's internal ID, there might be data corruption
+    if (validatedCharacter.id !== currentId) {
+      console.warn(
+        `Character data inconsistency detected: character.id=${validatedCharacter.id}, currentId=${currentId}`
+      );
+      // Fix the inconsistency by updating the character's internal ID
+      validatedCharacter.id = currentId;
+    }
+
+    return validatedCharacter;
   } catch (error) {
     console.error(`Failed to validate character structure for ${currentId}:`, error);
     // Return the character as-is if validation fails, but ensure it has an id
@@ -520,4 +590,25 @@ export function generateTypescriptCodeFromCharacter(character: CharacterWithFact
       },
     })
   );
+}
+
+// Get the current character name for a given original character ID
+export function getCharacterCurrentName(originalId: string): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+
+  const mapping = JSON.parse(localStorage.getItem('characterIdMapping') ?? '{}');
+  const currentId = mapping[originalId];
+
+  // Only return the mapped name if it's different from the original
+  if (currentId && currentId !== originalId) {
+    return currentId;
+  }
+
+  return undefined;
+}
+
+// Check if a character has been renamed
+export function isCharacterRenamed(originalId: string): boolean {
+  const currentName = getCharacterCurrentName(originalId);
+  return currentName !== undefined;
 }
