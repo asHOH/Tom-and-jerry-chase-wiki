@@ -2,8 +2,8 @@
 
 import { useEditMode } from '@/context/EditModeContext';
 import React, { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import BaseCard from '../../../ui/BaseCard';
+import NotificationTooltip from '../../../ui/NotificationTooltip';
 import { componentTokens, designTokens } from '@/lib/design-tokens';
 import json5 from 'json5';
 import { CharacterWithFaction } from '@/lib/types';
@@ -170,25 +170,17 @@ export default function CharacterImport() {
   const { isEditMode } = useEditMode();
   const [showImportOptions, setShowImportOptions] = useState(false);
   const [showPasteInput, setShowPasteInput] = useState(false);
-  const [showImportTooltip, setShowImportTooltip] = useState(false);
-  const [importedCharacterNames, setImportedCharacterNames] = useState<string[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const params = useParams();
   const factionId = params?.factionId as FactionId;
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const handleImportSuccess = (names: string[]) => {
-    setImportedCharacterNames(names);
-    setShowImportTooltip(true);
-
-    // Auto-hide tooltip after 6 seconds
-    setTimeout(() => {
-      setShowImportTooltip(false);
-    }, 6000);
+    // Create the notification message
+    const message = `成功导入${names.map((name, index) => `${index > 0 ? '、' : ''}${name}`).join('')}，打开任意角色并将id改为${names.length === 1 ? names[0] : names.map((name, index) => `${index > 0 ? '、' : ''}${name}`).join('')}即可开始编辑`;
+    setNotificationMessage(message);
+    setShowNotification(true);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -340,54 +332,14 @@ export default function CharacterImport() {
         )}
       </BaseCard>
 
-      {/* Import Success Tooltip - Rendered via portal to document body */}
-      {mounted &&
-        showImportTooltip &&
-        createPortal(
-          <div
-            className='fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50'
-            style={{ position: 'fixed' }}
-          >
-            <div className='flex items-center space-x-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='w-4 h-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                />
-              </svg>
-              <span>
-                成功导入
-                {importedCharacterNames.map((name, index) => (
-                  <span key={name}>
-                    {index > 0 && '、'}
-                    <strong>{name}</strong>
-                  </span>
-                ))}
-                ，打开任意角色并将id改为
-                {importedCharacterNames.length === 1 ? (
-                  <strong>{importedCharacterNames[0]}</strong>
-                ) : (
-                  importedCharacterNames.map((name, index) => (
-                    <span key={name}>
-                      {index > 0 && '、'}
-                      <strong>{name}</strong>
-                    </span>
-                  ))
-                )}
-                即可开始编辑
-              </span>
-            </div>
-          </div>,
-          document.body
-        )}
+      {/* Import Success Notification */}
+      <NotificationTooltip
+        message={notificationMessage}
+        show={showNotification}
+        onHide={() => setShowNotification(false)}
+        duration={6000}
+        type='success'
+      />
     </>
   );
 }

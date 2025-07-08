@@ -1,11 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import NavigationWrapper from '@/components/NavigationWrapper';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import { VersionDisplay } from '@/components/VersionDisplay';
 import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
+import NotificationTooltip from '@/components/ui/NotificationTooltip';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider, useEditMode } from '@/context/EditModeContext';
 
@@ -22,6 +24,18 @@ export default function Home() {
 function HomeContent() {
   const router = useRouter();
   const { toggleEditMode, isEditMode } = useEditMode();
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+
+  const handleEditModeToggle = () => {
+    if (isEditMode) {
+      setNotificationMessage('成功退出编辑模式');
+    } else {
+      setNotificationMessage('成功进入编辑模式，编辑模式下，修改只在本地保存');
+    }
+    setShowNotification(true);
+    toggleEditMode();
+  };
 
   return (
     <NavigationWrapper showDetailToggle={false}>
@@ -86,18 +100,7 @@ function HomeContent() {
           </div>
         </div>
 
-        <div
-          className='mt-8 text-center px-4'
-          onDoubleClick={() => {
-            if (isEditMode) {
-              // TODO: use a component instead
-              alert('成功退出编辑模式');
-            } else {
-              alert('成功进入编辑模式，编辑模式下，修改只在本地保存，网站的在线更新将会停止');
-            }
-            toggleEditMode();
-          }}
-        >
+        <div className='mt-8 text-center px-4' onDoubleClick={handleEditModeToggle}>
           <h2 className='text-3xl font-bold mb-6 py-2'>网站说明</h2>
           <p className='max-w-2xl mx-auto text-gray-600 px-4 py-3'>
             <DisclaimerText />
@@ -110,6 +113,14 @@ function HomeContent() {
           <VersionDisplay />
         </div>
       </div>
+
+      <NotificationTooltip
+        message={notificationMessage}
+        show={showNotification}
+        onHide={() => setShowNotification(false)}
+        type={isEditMode ? 'success' : 'info'}
+        duration={isEditMode ? 3000 : 4000}
+      />
     </NavigationWrapper>
   );
 }
