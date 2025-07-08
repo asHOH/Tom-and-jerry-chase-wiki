@@ -114,6 +114,49 @@ function EditableFieldImplementation<T>({
 
   const handleBlur = useCallback(() => handleBlurRef.current(), []);
 
+  // 检查是否为单行字段
+  const isSingleLineField = useCallback((path: string): boolean => {
+    // 角色ID
+    if (path === 'id') return true;
+
+    // 技能名称
+    if (path.includes('.name') && path.includes('skills.')) return true;
+
+    // 技能加点方案ID
+    if (path.includes('.id') && path.includes('skillAllocations.')) return true;
+
+    // 技能加点方案模式
+    if (path.includes('.pattern') && path.includes('skillAllocations.')) return true;
+
+    // 定位标签名称
+    if (path.includes('.tagName') && (path.includes('PositioningTags') || path.includes('Tags')))
+      return true;
+
+    // 技能等级冷却时间
+    if (path.includes('.cooldown') && path.includes('skillLevels.')) return true;
+
+    return false;
+  }, []);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key === 'Escape') {
+        // Esc键：所有可编辑字段失去焦点
+        e.preventDefault();
+        if (contentRef.current) {
+          contentRef.current.blur();
+        }
+      } else if (e.key === 'Enter' && isSingleLineField(path)) {
+        // Enter键：单行字段失去焦点
+        e.preventDefault();
+        if (contentRef.current) {
+          contentRef.current.blur();
+        }
+      }
+    },
+    [path, isSingleLineField]
+  );
+
   return React.createElement(
     Tag,
     {
@@ -121,6 +164,7 @@ function EditableFieldImplementation<T>({
       contentEditable: 'plaintext-only',
       suppressContentEditableWarning: true,
       onBlur: handleBlur,
+      onKeyDown: handleKeyDown,
       ref: contentRef,
     },
     String(content) || '<无内容>'
