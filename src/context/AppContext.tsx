@@ -9,6 +9,7 @@ interface AppContextType {
   handleSelectCharacter: (characterId: string) => void;
   handleSelectCard: (cardId: string, fromCharacterId?: string) => void;
   toggleDetailedView: () => void;
+  updateCharacterUrl: (characterId: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -19,6 +20,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const handleSelectCharacter = (characterId: string) => {
     router.push(`/characters/${encodeURIComponent(characterId)}`);
+  };
+
+  const updateCharacterUrl = (characterId: string) => {
+    router.replace(`/characters/${encodeURIComponent(characterId)}`);
   };
 
   const handleSelectCard = (cardId: string, fromCharacterId?: string) => {
@@ -42,6 +47,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           handleSelectCharacter,
           handleSelectCard,
           toggleDetailedView,
+          updateCharacterUrl,
         }}
       >
         {children}
