@@ -94,7 +94,8 @@ function handleCharacterIdChange(
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
   _localCharacter: CharacterWithFaction,
-  setLocalCharacter: Dispatch<CharacterWithFaction>
+  setLocalCharacter: Dispatch<CharacterWithFaction>,
+  shouldNavigate: boolean = false
 ) {
   // FIXME: This code may lead to uncertain damage as other code do not handle the situation where the id changes
   // characters is not managed by react, so we need to trigger the update manually
@@ -114,7 +115,10 @@ function handleCharacterIdChange(
   characters[newId].id = newId;
   characters[newId].imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   delete characters[oldId!];
-  handleSelectCharacter(newId);
+  // Only navigate if explicitly requested (not during edit mode ID changes)
+  if (shouldNavigate) {
+    handleSelectCharacter(newId);
+  }
   const faction = factions[factionId]?.characters.find(({ id }) => id == oldId);
   if (faction) {
     faction.id = faction.name = newId;
@@ -208,7 +212,8 @@ export function handleChange<T>(
       activeTab,
       handleSelectCharacter,
       localCharacter,
-      setLocalCharacter
+      setLocalCharacter,
+      false // Don't navigate during edit mode ID changes
     );
   }
   if (path && path.split('.')?.[1] == 'skills' && path.split('.')?.[3] == 'name') {
