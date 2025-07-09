@@ -902,6 +902,182 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 恶魔泰菲 ----------------------------------- */
+  恶魔泰菲: {
+    description: '待补充',
+    maxHp: 74,
+    attackBoost: 15,
+    hpRecovery: 2.5,
+    moveSpeed: 645,
+    jumpHeight: 400,
+    cheesePushSpeed: 3.6,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '奶酪',
+        isMinor: false,
+        description: '本身推速不慢，且在经典之家、古堡一二、天宫有很强的搬奶酪能力。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '砸墙',
+        isMinor: false,
+        description: '一武复制果盘道具，二武三级直接砸墙，主动也能吸附道具快速砸墙。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '二武蓝恶魔减速猫咪、红恶魔与猫咪拉开距离，拥有很强的干扰能力。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '方案1',
+        pattern: '01020[12][12]2',
+        weaponType: 'weapon1',
+        description: '一武加点。',
+      },
+      {
+        id: '方案2',
+        pattern: '03030[13]11',
+        weaponType: 'weapon2',
+        description: '二武常见加点。',
+      },
+      {
+        id: '方案3',
+        pattern: '013003311',
+        weaponType: 'weapon2',
+        description: '二武天宫需要搬奶酪这么加点。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'S-回家', 'C-救救我'],
+        description: '有三级回家的一武恶菲。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'A-投手', 'B-夹不住我'],
+        description: '二武恶菲推荐卡组。投手提高牵制能力，绿色小恶魔可以快速叠夹不住我层数',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
+        description: '没21点知识量时的推荐。',
+      },
+    ],
+    skills: [
+      {
+        name: '意念控制',
+        type: 'active',
+        description: '吸附附近道具或场景物。每吸附一个会获得额外加速。',
+        detailedDescription:
+          '吸附半径300范围内、除鞭炮堆以外的鼠方可用道具和场景物。每吸附一个道具或场景物加速8.9%。优先吸附左侧的道具。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可被打断',
+        cancelableAftercast: '不可取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '可吸附一个道具或场景物。',
+            cooldown: 9,
+          },
+          {
+            level: 2,
+            description: '可吸附两个道具或场景物。',
+            cooldown: 7,
+          },
+          {
+            level: 3,
+            description: '可吸附三个道具或场景物。',
+            cooldown: 5,
+          },
+        ],
+      },
+      {
+        name: '恶魔之角',
+        type: 'weapon1',
+        description: '将附近的道具复制一份。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '可被道具键*打断',
+        cancelableAftercast: '不可取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 35,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 25,
+          },
+          {
+            level: 3,
+            description: '额外复制一个道具。',
+            cooldown: 25,
+          },
+        ],
+      },
+      {
+        name: '小淘气',
+        type: 'weapon2',
+        description:
+          '将附近道具变成小恶魔。\n易碎道具变成蓝色小恶魔：造成伤害和减速，自动索敌；\n控制道具变成红色小恶魔：对敌方造成向右击退；\n高尔夫球变成绿色小恶魔：比高尔夫更有的弹性，可影响捕鼠夹和奶酪；捕鼠夹受影响会立刻打开；奶酪受影响后变轻、拾取后加速、并可投掷进洞。\n所有小恶魔猫鼠双方均可使用。',
+        detailedDescription:
+          '将附近道具变成小恶魔。\n易碎道具变成蓝色小恶魔：基础伤害为20，造成减速，且放置原地自动索敌；\n控制道具变成红色小恶魔：对敌方造成向右击退；\n高尔夫球变成绿色小恶魔：比高尔夫更有的弹性，可影响捕鼠夹和奶酪；捕鼠夹受影响会立刻打开；奶酪受影响后变轻、拾取后加速、并可投掷进洞。\n所有小恶魔猫鼠双方均可使用。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '可被道具键*打断',
+        cancelableAftercast: '可被道具键*取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 10,
+          },
+          {
+            level: 3,
+            description:
+              '绿色小恶魔可直接砸墙，持续减少墙缝耐久，并使墙缝在受到攻击后额外减少耐久。',
+            cooldown: 10,
+          },
+        ],
+      },
+      {
+        name: '黑暗印记',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '自然增长黑暗印记；被攻击时获得一层印记；投掷命中敌方时移除一层。一层印记时，移速和跳跃高度提升。',
+            detailedDescription:
+              '每20秒自然增长一层黑暗印记；被爪刀、技能、投掷攻击时获得一层印记；投掷命中敌方时移除一层。一层印记时，移速和跳跃高度提升。',
+          },
+          {
+            level: 2,
+            description: '最多叠加两层印记；两层印记时，持续恢复Hp。',
+            detailedDescription: '最多叠加两层印记；两层印记时，以5/s恢复Hp。',
+          },
+          {
+            level: 3,
+            description: '最多叠三层印记；三层印记时，攻击力增强。',
+            detailedDescription:
+              '最多叠三层印记；三层印记时，攻击力增强：盘子165；碗、杯子、高尔夫140；二武蓝恶魔135；二武绿恶魔125。',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ---------------------------------- 剑客莉莉 ---------------------------------- */
   剑客莉莉: {
     description:

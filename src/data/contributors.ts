@@ -128,6 +128,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'shengjianbao',
+    name: '生煎包勇闯猫鼠',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['恶魔泰菲'],
+      },
+    ],
+  },
+  {
     id: 'leshanhaoshi',
     name: '乐善好施陈阿姨',
     url: 'https://space.bilibili.com/418408689',
