@@ -7,8 +7,8 @@ import NavigationWrapper from '@/components/NavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 
-// Allow dynamic rendering for new character IDs created in edit mode
-export const dynamic = 'force-dynamic';
+// Force static generation for better performance and CDN caching
+export const dynamic = 'force-static';
 
 // Generate static params for all characters
 export function generateStaticParams() {

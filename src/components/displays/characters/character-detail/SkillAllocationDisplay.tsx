@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { SkillAllocation } from '@/data/types';
 import {
@@ -40,161 +40,182 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   index,
 }) => {
   const { isEditMode } = useEditMode();
-  // Preprocess pattern to auto-parallel first two skills if needed
-  const preprocessPattern = (pattern: string): string => {
-    if (pattern.length >= 2) {
-      const firstChar = pattern[0];
-      const secondChar = pattern[1];
 
-      if (!firstChar || !secondChar) {
-        return pattern;
+  // Memoize pattern preprocessing to avoid recalculation
+  const processedPattern = useMemo(() => {
+    const preprocessPattern = (pattern: string): string => {
+      if (pattern.length >= 2) {
+        const firstChar = pattern[0];
+        const secondChar = pattern[1];
+
+        if (!firstChar || !secondChar) {
+          return pattern;
+        }
+
+        const isFirstRegular = ['0', '1', '2', '3'].includes(firstChar);
+        const isSecondRegular = ['0', '1', '2', '3'].includes(secondChar);
+        const isAlreadyParallel = pattern.startsWith('[');
+
+        if (isFirstRegular && isSecondRegular && !isAlreadyParallel) {
+          return `[${firstChar}${secondChar}]${pattern.slice(2)}`;
+        }
       }
+      return pattern;
+    };
 
-      const isFirstRegular = ['0', '1', '2', '3'].includes(firstChar);
-      const isSecondRegular = ['0', '1', '2', '3'].includes(secondChar);
-      const isAlreadyParallel = pattern.startsWith('[');
+    return preprocessPattern(allocation.pattern);
+  }, [allocation.pattern]);
 
-      if (isFirstRegular && isSecondRegular && !isAlreadyParallel) {
-        return `[${firstChar}${secondChar}]${pattern.slice(2)}`;
+  // Memoize parsed levels to avoid recalculation
+  const parsedLevels = useMemo(() => {
+    return parseSkillAllocationPattern(processedPattern);
+  }, [processedPattern]);
+
+  // Memoize current levels calculation for performance
+  const currentLevels: ProcessedSkillLevel[] = useMemo(() => {
+    const skillLevels = { '0': 0, '1': 0, '2': 0, '3': 0 };
+
+    return parsedLevels.map((level) => {
+      if (level.isParallel && level.parallelOptions) {
+        const firstOption = level.parallelOptions[0];
+        const secondOption = level.parallelOptions[1];
+
+        if (!firstOption || !secondOption) {
+          throw new Error('Invalid parallel options');
+        }
+
+        skillLevels[firstOption]++;
+        skillLevels[secondOption]++;
+        return {
+          ...level,
+          currentLevel: skillLevels[firstOption],
+          parallelCurrentLevel: skillLevels[secondOption],
+        };
+      } else {
+        skillLevels[level.skillType]++;
+        return { ...level, currentLevel: skillLevels[level.skillType] };
       }
-    }
-    return pattern;
-  };
-
-  const processedPattern = preprocessPattern(allocation.pattern);
-  const parsedLevels = parseSkillAllocationPattern(processedPattern);
-
-  const skillLevels = { '0': 0, '1': 0, '2': 0, '3': 0 };
-
-  const currentLevels: ProcessedSkillLevel[] = parsedLevels.map((level) => {
-    if (level.isParallel && level.parallelOptions) {
-      const firstOption = level.parallelOptions[0];
-      const secondOption = level.parallelOptions[1];
-
-      if (!firstOption || !secondOption) {
-        throw new Error('Invalid parallel options');
-      }
-
-      skillLevels[firstOption]++;
-      skillLevels[secondOption]++;
-      return {
-        ...level,
-        currentLevel: skillLevels[firstOption],
-        parallelCurrentLevel: skillLevels[secondOption],
-      };
-    } else {
-      skillLevels[level.skillType]++;
-      return { ...level, currentLevel: skillLevels[level.skillType] };
-    }
-  });
+    });
+  }, [parsedLevels]);
 
   const {
     localCharacter: { skills: characterSkills, id: characterName },
   } = useLocalCharacter();
 
-  const skillTypeMap = {
-    '0': characterSkills.find((s) => s.type === 'passive'),
-    '1': characterSkills.find((s) => s.type === 'active'),
-    '2': characterSkills.find((s) => s.type === 'weapon1'),
-    '3': characterSkills.find((s) => s.type === 'weapon2'),
-  };
+  // Memoize skill type mapping for performance
+  const skillTypeMap = useMemo(
+    () => ({
+      '0': characterSkills.find((s) => s.type === 'passive'),
+      '1': characterSkills.find((s) => s.type === 'active'),
+      '2': characterSkills.find((s) => s.type === 'weapon1'),
+      '3': characterSkills.find((s) => s.type === 'weapon2'),
+    }),
+    [characterSkills]
+  ); // Memoize skill icon renderer for performance
+  const renderSkillIcon = useCallback(
+    (
+      skillType: '0' | '1' | '2' | '3',
+      currentLevel: number,
+      isDelayed: boolean,
+      hasNegativeEffect: boolean
+    ) => {
+      const skill = skillTypeMap[skillType];
+      const imageUrl =
+        skill?.imageUrl ||
+        getSkillAllocationImageUrl(characterName, skillType, factionId, skill?.name);
+      const baseStyle = {
+        ...getSkillLevelColors(currentLevel, true),
+        borderWidth: '2px',
+        borderStyle: 'solid',
+      };
 
-  const renderSkillIcon = (
-    skillType: '0' | '1' | '2' | '3',
-    currentLevel: number,
-    isDelayed: boolean,
-    hasNegativeEffect: boolean
-  ) => {
-    const skill = skillTypeMap[skillType];
-    const imageUrl =
-      skill?.imageUrl ||
-      getSkillAllocationImageUrl(characterName, skillType, factionId, skill?.name);
-    const baseStyle = {
-      ...getSkillLevelColors(currentLevel, true),
-      borderWidth: '2px',
-      borderStyle: 'solid',
-    };
-
-    const iconElement = (
-      <div
-        className={`relative w-10 h-10 border-2 ${isDelayed ? '' : 'rounded-full'}`}
-        style={baseStyle}
-      >
-        <Image
-          src={imageUrl}
-          alt={skill?.name || `技能${skillType}`}
-          width={40}
-          height={40}
-          className='w-full h-full object-contain'
-          style={{ padding: '4px' }}
-        />
-        {hasNegativeEffect && (
-          <div className='absolute -top-[5px] -right-[5px] w-4 h-4 pointer-events-none z-10'>
-            <Image
-              src='/images/misc/禁止.png'
-              alt='负面效果'
-              width={16}
-              height={16}
-              className='w-full h-full object-contain'
-            />
-          </div>
-        )}
-      </div>
-    );
-
-    if (isDelayed)
-      return (
-        <span className='inline-block'>
-          <Tooltip content='留加点：加点瞬间有额外收益，需把握时机'>{iconElement}</Tooltip>
-        </span>
+      const iconElement = (
+        <div
+          className={`relative w-10 h-10 border-2 ${isDelayed ? '' : 'rounded-full'}`}
+          style={baseStyle}
+        >
+          <Image
+            src={imageUrl}
+            alt={skill?.name || `技能${skillType}`}
+            width={40}
+            height={40}
+            className='w-full h-full object-contain'
+            style={{ padding: '4px' }}
+          />
+          {hasNegativeEffect && (
+            <div className='absolute -top-[5px] -right-[5px] w-4 h-4 pointer-events-none z-10'>
+              <Image
+                src='/images/misc/禁止.png'
+                alt='负面效果'
+                width={16}
+                height={16}
+                className='w-full h-full object-contain'
+                priority={false} // Lower priority for overlay icons
+              />
+            </div>
+          )}
+        </div>
       );
-    if (hasNegativeEffect)
-      return (
-        <span className='inline-block'>
-          <Tooltip content='负面效果：此技能升级会带来负面效果'>{iconElement}</Tooltip>
-        </span>
-      );
-    return iconElement;
-  };
 
-  // Calculate character levels and group parallel skills
-  let characterLevel = 2;
-  const levelGroups: Array<{
-    characterLevel: number;
-    endCharacterLevel?: number;
-    levels: typeof currentLevels;
-    isParallelGroup: boolean;
-  }> = [];
-  let i = 0;
-  while (i < currentLevels.length) {
-    const level = currentLevels[i]!;
+      if (isDelayed)
+        return (
+          <span className='inline-block'>
+            <Tooltip content='留加点：加点瞬间有额外收益，需把握时机'>{iconElement}</Tooltip>
+          </span>
+        );
+      if (hasNegativeEffect)
+        return (
+          <span className='inline-block'>
+            <Tooltip content='负面效果：此技能升级会带来负面效果'>{iconElement}</Tooltip>
+          </span>
+        );
+      return iconElement;
+    },
+    [skillTypeMap, characterName, factionId]
+  );
 
-    if (level.isParallel && level.parallelOptions) {
-      // Group consecutive parallel levels with the same bracketGroupId
-      const currentBracketGroupId = level.bracketGroupId;
-      let j = i;
-      while (
-        j < currentLevels.length &&
-        currentLevels[j]?.isParallel &&
-        currentLevels[j]?.bracketGroupId === currentBracketGroupId
-      ) {
-        j++;
+  // Memoize level groups calculation for performance
+  const levelGroups = useMemo(() => {
+    // Calculate character levels and group parallel skills
+    let characterLevel = 2;
+    const groups: Array<{
+      characterLevel: number;
+      endCharacterLevel?: number;
+      levels: typeof currentLevels;
+      isParallelGroup: boolean;
+    }> = [];
+    let i = 0;
+    while (i < currentLevels.length) {
+      const level = currentLevels[i]!;
+
+      if (level.isParallel && level.parallelOptions) {
+        // Group consecutive parallel levels with the same bracketGroupId
+        const currentBracketGroupId = level.bracketGroupId;
+        let j = i;
+        while (
+          j < currentLevels.length &&
+          currentLevels[j]?.isParallel &&
+          currentLevels[j]?.bracketGroupId === currentBracketGroupId
+        ) {
+          j++;
+        }
+        const parallelLevels = currentLevels.slice(i, j);
+        groups.push({
+          characterLevel,
+          endCharacterLevel: characterLevel + parallelLevels.length * 2 - 1,
+          levels: parallelLevels,
+          isParallelGroup: true,
+        });
+        characterLevel += parallelLevels.length * 2;
+        i = j;
+      } else {
+        groups.push({ characterLevel, levels: [level], isParallelGroup: false });
+        characterLevel++;
+        i++;
       }
-      const parallelLevels = currentLevels.slice(i, j);
-      levelGroups.push({
-        characterLevel,
-        endCharacterLevel: characterLevel + parallelLevels.length * 2 - 1,
-        levels: parallelLevels,
-        isParallelGroup: true,
-      });
-      characterLevel += parallelLevels.length * 2;
-      i = j;
-    } else {
-      levelGroups.push({ characterLevel, levels: [level], isParallelGroup: false });
-      characterLevel++;
-      i++;
     }
-  }
+    return groups;
+  }, [currentLevels]);
 
   // Helper function to render connection lines
   const renderConnectionLine = (
