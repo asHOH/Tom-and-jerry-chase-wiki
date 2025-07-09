@@ -9,7 +9,7 @@ export type Faction = {
 };
 
 // Positioning tag types separated by faction
-export type CatPositioningTagName = '进攻' | '防守' | '追击' | '打架' | '速通' | '后期' | '翻盘';
+export type CatPositioningTagName = '进攻' | '防守' | '追击' | '打架' | '速通' | '翻盘' | '后期';
 export type MousePositioningTagName = '奶酪' | '干扰' | '辅助' | '救援' | '破局' | '砸墙' | '后期';
 
 export type CatPositioningTag = {
@@ -46,11 +46,7 @@ export type SkillLevel = {
   level: number;
   description: string;
   detailedDescription?: string;
-  /**
-   * @deprecated
-   */
-  damage?: string;
-  cooldown?: number; // FIXME: is this really deprecated?
+  cooldown?: number;
 };
 
 // Raw skill definition (without ID, for character definitions)
@@ -66,9 +62,9 @@ export type SkillDefinition = {
   // Skill usage properties
   canMoveWhileUsing?: boolean; // 移动释放
   canUseInAir?: boolean; // 空中释放
-  canHitInPipe?: boolean; // 可击中管道中的角色
   cancelableSkill?: string; // 可取消释放
   cancelableAftercast?: string; // 可取消后摇
+  canHitInPipe?: boolean; // 可击中管道中的角色
   cooldownTiming?: '前摇前' | '释放时' | '释放后'; // 进入CD时机
 
   skillLevels: SkillLevel[];
