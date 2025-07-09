@@ -35,16 +35,24 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
 
   const uniquePositioningTags = useMemo(() => {
     const tags = new Set<PositioningTagName>();
-    faction.characters.forEach((character) => {
-      character.positioningTags.forEach((tag) => {
-        tags.add(tag.tagName);
-      });
+    Object.values(allCharacters).forEach((character) => {
+      if (character.factionId === faction.id) {
+        const tagsToAdd =
+          (character.factionId === 'cat'
+            ? character.catPositioningTags
+            : character.mousePositioningTags) || [];
+        tagsToAdd.forEach((tag) => {
+          tags.add(tag.tagName);
+        });
+      }
     });
     return sortPositioningTagNames(Array.from(tags), faction.id as 'cat' | 'mouse');
-  }, [faction.characters, faction.id]);
+  }, [faction.id]);
 
   const filteredCharacters = useMemo(() => {
-    let charactersToFilter = faction.characters;
+    let charactersToFilter = Object.values(allCharacters).filter(
+      (char) => char.factionId === faction.id
+    );
 
     // In edit mode, exclude original characters from the main list
     if (isEditMode) {
@@ -58,11 +66,15 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
     }
 
     return charactersToFilter.filter((character) =>
-      Array.from(selectedPositioningTags).every((selectedTag) =>
-        character.positioningTags.some((charTag) => charTag.tagName === selectedTag)
-      )
+      Array.from(selectedPositioningTags).every((selectedTag) => {
+        const tags =
+          (character.factionId === 'cat'
+            ? character.catPositioningTags
+            : character.mousePositioningTags) || [];
+        return tags.some((charTag) => charTag.tagName === selectedTag);
+      })
     );
-  }, [faction.characters, selectedPositioningTags, isEditMode, originalCharacterIds]);
+  }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds]);
 
   return (
     <div className='space-y-8'>
@@ -164,9 +176,13 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
           <div key={character.id} className='transform transition-transform hover:-translate-y-1'>
             <CharacterDisplay
               id={character.id}
-              name={character.name}
+              name={character.id} // Use id as name for consistency
               imageUrl={character.imageUrl}
-              positioningTags={character.positioningTags}
+              positioningTags={
+                (character.factionId === 'cat'
+                  ? character.catPositioningTags
+                  : character.mousePositioningTags) || []
+              }
               factionId={faction.id}
               priority={index < 4}
             />

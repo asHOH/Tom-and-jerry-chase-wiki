@@ -165,25 +165,41 @@ function handleCharacterIdChange(
   }
 
   // Ensure all required fields are present
+  let enhancedCharacter: CharacterWithFaction;
   try {
-    const enhanced = validateAndEnhanceCharacter(newCharacter, newId);
-    Object.assign(characters, { [newId]: enhanced });
+    enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId);
+    Object.assign(characters, { [newId]: enhancedCharacter });
   } catch (error) {
     console.error(`Failed to enhance new character ${newId}:`, error);
-    Object.assign(characters, { [newId]: newCharacter });
+    enhancedCharacter = newCharacter as CharacterWithFaction;
+    Object.assign(characters, { [newId]: enhancedCharacter });
   }
 
-  delete characters[oldId!];
+  // Do NOT delete the original character.
+  // Instead, add the new character to the correct faction list to make it appear in the grid.
+  const faction = factions[factionId];
+  if (faction) {
+    // Add the new character if it's not already in the list
+    if (!faction.characters.some((c) => c.id === newId)) {
+      // Create a new character object that matches the expected type for the grid
+      const gridCharacter = {
+        id: enhancedCharacter.id,
+        name: enhancedCharacter.id, // Name is derived from id
+        imageUrl: enhancedCharacter.imageUrl,
+        positioningTags:
+          (enhancedCharacter.factionId === 'cat'
+            ? enhancedCharacter.catPositioningTags
+            : enhancedCharacter.mousePositioningTags) || [],
+      };
+      faction.characters.push(gridCharacter);
+    }
+  } else {
+    console.error(`Faction ${factionId} not found when trying to add new character ${newId}`);
+  }
 
   // Only navigate if explicitly requested
   if (shouldNavigate) {
     handleSelectCharacter(newId);
-  }
-  // Note: We don't update URL in edit mode to avoid 404 for non-existing character pages
-  const faction = factions[factionId]?.characters.find(({ id }) => id == oldId);
-  if (faction) {
-    faction.id = faction.name = newId;
-    faction.imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
   }
 
   const updatedCharacter = characters[newId];
