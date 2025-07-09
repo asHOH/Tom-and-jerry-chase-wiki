@@ -148,26 +148,6 @@ function handleCharacterIdChange(
     }
   }
 
-  // Save mapping from original ID to new ID
-  const mapping = JSON.parse(localStorage.getItem('characterIdMapping') ?? '{}');
-  // Find the original ID that maps to oldId, or use oldId if it's original
-  const originalId = Object.keys(mapping).find((key) => mapping[key] === oldId) ?? oldId;
-
-  // If the newId is being overwritten, we need to clean up any existing mappings to it
-  // to prevent conflicts when loading characters
-  if (characters[newId] && newId !== oldId) {
-    // Remove any existing mappings that point to the newId
-    const existingMappings = Object.keys(mapping).filter((key) => mapping[key] === newId);
-    existingMappings.forEach((key) => {
-      console.log(`Removing conflicting mapping: ${key} -> ${newId}`);
-      delete mapping[key];
-    });
-  }
-
-  mapping[originalId] = newId;
-  localStorage.setItem('characterIdMapping', JSON.stringify(mapping));
-  console.log(`Updated character mapping: ${originalId} -> ${newId}`);
-
   // Create new character with enhanced data structure
   const newCharacter = { ...character! };
   newCharacter.id = newId;
@@ -284,84 +264,6 @@ export function saveFactionsAndCharacters() {
   console.log(
     `Saved ${Object.keys(characters).length} characters and ${Object.keys(factions).length} factions to localStorage`
   );
-}
-
-// Save mapping of original character IDs to current IDs
-export function saveCharacterIdMapping() {
-  const mapping: Record<string, string> = {};
-  // Create reverse mapping from current characters back to their original IDs
-  Object.keys(characters).forEach((currentId) => {
-    // For now, we'll use a simple approach - if the character exists in localStorage
-    // but not in the original data, we assume it's a renamed character
-    mapping[currentId] = currentId; // Default to self-mapping
-  });
-  localStorage.setItem('characterIdMapping', JSON.stringify(mapping));
-}
-
-// Get the current character ID for a given original ID
-export function getCurrentCharacterId(originalId: string): string {
-  if (typeof window === 'undefined') return originalId;
-
-  const mapping = JSON.parse(localStorage.getItem('characterIdMapping') ?? '{}');
-  return mapping[originalId] ?? originalId;
-}
-
-// Get character by original ID, resolving to current ID if it was renamed
-export function getCharacterByOriginalId(originalId: string): CharacterWithFaction | undefined {
-  const currentId = getCurrentCharacterId(originalId);
-  const character = characters[currentId];
-
-  if (!character) {
-    console.log(`Character not found for originalId: ${originalId}, currentId: ${currentId}`);
-
-    // If the mapped character doesn't exist, try to clean up the mapping
-    // and fall back to the original character
-    if (currentId !== originalId) {
-      console.log(
-        `Mapped character ${currentId} doesn't exist, cleaning up mapping and falling back to original`
-      );
-      const mapping = JSON.parse(localStorage.getItem('characterIdMapping') ?? '{}');
-      delete mapping[originalId];
-      localStorage.setItem('characterIdMapping', JSON.stringify(mapping));
-
-      // Try to load the original character
-      const originalCharacter = characters[originalId];
-      if (originalCharacter) {
-        try {
-          return validateAndEnhanceCharacter(originalCharacter, originalId);
-        } catch (error) {
-          console.error(`Failed to validate original character ${originalId}:`, error);
-        }
-      }
-    }
-
-    return undefined;
-  }
-
-  try {
-    const validatedCharacter = validateAndEnhanceCharacter(character, currentId);
-
-    // Additional check: ensure the character data is consistent
-    // If the current ID doesn't match the character's internal ID, there might be data corruption
-    if (validatedCharacter.id !== currentId) {
-      console.warn(
-        `Character data inconsistency detected: character.id=${validatedCharacter.id}, currentId=${currentId}`
-      );
-      // Fix the inconsistency by updating the character's internal ID
-      validatedCharacter.id = currentId;
-    }
-
-    return validatedCharacter;
-  } catch (error) {
-    console.error(`Failed to validate character structure for ${currentId}:`, error);
-    // Return the character as-is if validation fails, but ensure it has an id
-    if (typeof character === 'object' && character) {
-      const charWithId = character as Record<string, unknown>;
-      charWithId.id = character.id || currentId;
-      return charWithId as CharacterWithFaction;
-    }
-    return undefined;
-  }
 }
 
 // Get the list of original character IDs (before any edits)
@@ -542,7 +444,7 @@ export function handleChange<T>(
   newContentStr: string,
   path: string,
   activeTab: string | undefined,
-  handleSelectCharacter: (id: string) => void,
+  handleCharacterNavigation: (id: string) => void, // Use the new navigation function
   localCharacter: CharacterWithFaction,
   setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
 ) {
@@ -563,7 +465,7 @@ export function handleChange<T>(
       path,
       newContentStr,
       activeTab,
-      handleSelectCharacter, // Pass the navigation handler
+      handleCharacterNavigation, // Pass the new navigation handler
       localCharacter,
       setLocalCharacter,
       true // ALWAYS navigate when the ID changes now
@@ -607,25 +509,4 @@ export function generateTypescriptCodeFromCharacter(character: CharacterWithFact
       },
     })
   );
-}
-
-// Get the current character name for a given original character ID
-export function getCharacterCurrentName(originalId: string): string | undefined {
-  if (typeof window === 'undefined') return undefined;
-
-  const mapping = JSON.parse(localStorage.getItem('characterIdMapping') ?? '{}');
-  const currentId = mapping[originalId];
-
-  // Only return the mapped name if it's different from the original
-  if (currentId && currentId !== originalId) {
-    return currentId;
-  }
-
-  return undefined;
-}
-
-// Check if a character has been renamed
-export function isCharacterRenamed(originalId: string): boolean {
-  const currentName = getCharacterCurrentName(originalId);
-  return currentName !== undefined;
 }

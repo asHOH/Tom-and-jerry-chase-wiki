@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  loadFactionsAndCharacters,
-  saveFactionsAndCharacters,
-  getCharacterByOriginalId,
-} from '@/lib/editUtils';
+import { loadFactionsAndCharacters, saveFactionsAndCharacters } from '@/lib/editUtils';
 import { CharacterWithFaction } from '@/lib/types';
 import React, {
   createContext,
@@ -79,22 +75,11 @@ export const LocalCharacterProvider = ({
 }) => {
   const [localCharacter, setLocalCharacter] = useState<CharacterWithFaction>(character);
 
-  const { isEditMode } = useEditMode();
-
   useEffect(() => {
-    if (isEditMode) {
-      // In edit mode, try to resolve the character using the mapping system
-      // This handles cases where character IDs have been changed
-      const resolvedCharacter = getCharacterByOriginalId(character.id);
-      if (resolvedCharacter) {
-        setLocalCharacter(JSON.parse(JSON.stringify(resolvedCharacter)));
-      } else {
-        setLocalCharacter(JSON.parse(JSON.stringify(character)));
-      }
-    } else {
-      setLocalCharacter(character);
-    }
-  }, [character, isEditMode]);
+    // The character prop is now always the correct one, whether from static data or the user route.
+    // This effect ensures the local state is updated if the user navigates between character pages.
+    setLocalCharacter(character);
+  }, [character]);
 
   return (
     <LocalCharacterContext.Provider value={{ localCharacter, setLocalCharacter }}>
