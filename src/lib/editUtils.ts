@@ -195,9 +195,15 @@ function handleCharacterIdChange(
 
   delete characters[oldId!];
 
-  // Only navigate if explicitly requested (not during edit mode ID changes)
+  // Only navigate if explicitly requested
   if (shouldNavigate) {
-    handleSelectCharacter(newId);
+    const isOriginal = isOriginalCharacter(newId);
+    const targetPath = isOriginal ? `/characters/${newId}` : `/characters/user/${newId}`;
+
+    // Use a different function to handle the navigation to avoid circular dependencies
+    // This assumes you have a separate navigation utility or can pass the router instance
+    // For now, we'll call handleSelectCharacter which should be bound to the router.
+    handleSelectCharacter(targetPath);
   }
   // Note: We don't update URL in edit mode to avoid 404 for non-existing character pages
   const faction = factions[factionId]?.characters.find(({ id }) => id == oldId);
@@ -557,10 +563,10 @@ export function handleChange<T>(
       path,
       newContentStr,
       activeTab,
-      handleSelectCharacter,
+      handleSelectCharacter, // Pass the navigation handler
       localCharacter,
       setLocalCharacter,
-      false // Don't navigate during edit mode ID changes
+      true // ALWAYS navigate when the ID changes now
     );
   }
   if (path && path.split('.')?.[1] == 'skills' && path.split('.')?.[3] == 'name') {
