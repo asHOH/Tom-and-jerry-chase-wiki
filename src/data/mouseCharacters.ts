@@ -1080,6 +1080,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
   /* ----------------------------------- 侦探泰菲 ----------------------------------- */
   侦探泰菲: {
+    aliases: ['侦菲'],
     description:
       '侦探泰菲最擅长分析各类疑难问题和数据测算，在日常的探案中，侦探泰菲是侦探杰瑞最有力的助手!',
     maxHp: 74,
