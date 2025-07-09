@@ -70,7 +70,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['莱特宁', '剑客莉莉'],
+        characters: ['莱特宁', '剑客莉莉', '侦探泰菲'],
       },
     ],
   },
