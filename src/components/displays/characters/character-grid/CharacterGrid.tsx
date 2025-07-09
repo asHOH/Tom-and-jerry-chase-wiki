@@ -12,10 +12,21 @@ import Tooltip from '@/components/ui/Tooltip';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { getOriginalCharacterIds } from '@/lib/editUtils';
+import { characters as allCharacters } from '@/data';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
+  const originalCharacterIds = getOriginalCharacterIds();
+
+  const originalCharacters = useMemo(() => {
+    return originalCharacterIds
+      .map((id) => allCharacters[id])
+      .filter((char): char is NonNullable<typeof char> => Boolean(char))
+      .filter((char) => char.factionId === faction.id);
+  }, [originalCharacterIds, faction.id]);
+
   const {
     selectedFilters: selectedPositioningTags,
     toggleFilter: togglePositioningTagFilter,
@@ -33,16 +44,25 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
   }, [faction.characters, faction.id]);
 
   const filteredCharacters = useMemo(() => {
-    if (selectedPositioningTags.size === 0) {
-      return faction.characters;
+    let charactersToFilter = faction.characters;
+
+    // In edit mode, exclude original characters from the main list
+    if (isEditMode) {
+      charactersToFilter = charactersToFilter.filter(
+        (char) => !originalCharacterIds.includes(char.id)
+      );
     }
 
-    return faction.characters.filter((character) =>
+    if (selectedPositioningTags.size === 0) {
+      return charactersToFilter;
+    }
+
+    return charactersToFilter.filter((character) =>
       Array.from(selectedPositioningTags).every((selectedTag) =>
         character.positioningTags.some((charTag) => charTag.tagName === selectedTag)
       )
     );
-  }, [faction.characters, selectedPositioningTags]);
+  }, [faction.characters, selectedPositioningTags, isEditMode, originalCharacterIds]);
 
   return (
     <div className='space-y-8'>
@@ -122,6 +142,24 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
             <CharacterImport />
           </div>
         )}
+        {isEditMode &&
+          originalCharacters.map((character) => (
+            <div
+              key={`${character.id}-entry`}
+              className='transform transition-transform hover:-translate-y-1'
+            >
+              <CharacterDisplay
+                id={character.id}
+                name={character.id}
+                imageUrl={character.imageUrl}
+                positioningTags={
+                  character.catPositioningTags || character.mousePositioningTags || []
+                }
+                factionId={faction.id}
+                isEntryCard // This will be used for styling
+              />
+            </div>
+          ))}
         {filteredCharacters.map((character, index) => (
           <div key={character.id} className='transform transition-transform hover:-translate-y-1'>
             <CharacterDisplay

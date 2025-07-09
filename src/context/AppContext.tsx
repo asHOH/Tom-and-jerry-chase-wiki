@@ -8,7 +8,6 @@ import { isOriginalCharacter } from '@/lib/editUtils';
 interface AppContextType {
   isDetailedView: boolean;
   handleSelectCharacter: (characterId: string) => void;
-  handleCharacterNavigation: (characterId: string) => void; // New navigation function
   handleSelectCard: (cardId: string, fromCharacterId?: string) => void;
   toggleDetailedView: () => void;
 }
@@ -20,11 +19,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isDetailedView, setIsDetailedView] = useState<boolean>(false);
 
   const handleSelectCharacter = (characterId: string) => {
-    router.push(`/characters/${encodeURIComponent(characterId)}`);
-  };
-
-  // New smart navigation function
-  const handleCharacterNavigation = (characterId: string) => {
     const isOriginal = isOriginalCharacter(characterId);
     const targetPath = isOriginal
       ? `/characters/${encodeURIComponent(characterId)}`
@@ -51,7 +45,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         value={{
           isDetailedView,
           handleSelectCharacter,
-          handleCharacterNavigation, // Provide the new function
           handleSelectCard,
           toggleDetailedView,
         }}

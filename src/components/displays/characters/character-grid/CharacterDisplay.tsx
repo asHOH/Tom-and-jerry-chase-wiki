@@ -16,7 +16,8 @@ export default function CharacterDisplay({
   positioningTags,
   factionId,
   priority = false,
-}: CharacterDisplayProps & { priority?: boolean }) {
+  isEntryCard = false, // Add the new prop
+}: CharacterDisplayProps & { priority?: boolean; isEntryCard?: boolean }) {
   const { handleSelectCharacter } = useAppContext();
 
   // Sort positioning tags according to sequence (main tags first, then by sequence)
@@ -24,6 +25,10 @@ export default function CharacterDisplay({
     if (!positioningTags || positioningTags.length === 0) return [];
     return sortPositioningTags(positioningTags, factionId as 'cat' | 'mouse');
   }, [positioningTags, factionId]);
+
+  const entryCardClass = isEntryCard
+    ? 'opacity-60 border-2 border-dashed border-slate-300 bg-slate-50'
+    : '';
 
   return (
     <BaseCard
@@ -38,6 +43,7 @@ export default function CharacterDisplay({
         }
       }}
       aria-label={`查看${name}角色详情`}
+      className={entryCardClass}
     >
       <GameImage
         src={imageUrl}

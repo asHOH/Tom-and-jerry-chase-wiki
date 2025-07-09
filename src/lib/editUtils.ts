@@ -177,13 +177,7 @@ function handleCharacterIdChange(
 
   // Only navigate if explicitly requested
   if (shouldNavigate) {
-    const isOriginal = isOriginalCharacter(newId);
-    const targetPath = isOriginal ? `/characters/${newId}` : `/characters/user/${newId}`;
-
-    // Use a different function to handle the navigation to avoid circular dependencies
-    // This assumes you have a separate navigation utility or can pass the router instance
-    // For now, we'll call handleSelectCharacter which should be bound to the router.
-    handleSelectCharacter(targetPath);
+    handleSelectCharacter(newId);
   }
   // Note: We don't update URL in edit mode to avoid 404 for non-existing character pages
   const faction = factions[factionId]?.characters.find(({ id }) => id == oldId);
@@ -444,7 +438,7 @@ export function handleChange<T>(
   newContentStr: string,
   path: string,
   activeTab: string | undefined,
-  handleCharacterNavigation: (id: string) => void, // Use the new navigation function
+  handleSelectCharacter: (id: string) => void, // Use the consolidated navigation function
   localCharacter: CharacterWithFaction,
   setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
 ) {
@@ -465,7 +459,7 @@ export function handleChange<T>(
       path,
       newContentStr,
       activeTab,
-      handleCharacterNavigation, // Pass the new navigation handler
+      handleSelectCharacter, // Pass the consolidated navigation handler
       localCharacter,
       setLocalCharacter,
       true // ALWAYS navigate when the ID changes now
