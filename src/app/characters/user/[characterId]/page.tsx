@@ -6,36 +6,37 @@ import { characters } from '@/data';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
 import NavigationWrapper from '@/components/NavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
-import { EditModeProvider } from '@/context/EditModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { CharacterWithFaction } from '@/lib/types';
 
-// This is a fully client-rendered page for user-created or renamed characters
-
-export default function UserCharacterPage() {
+/**
+ * This is the client component that contains the actual page logic.
+ * It can safely use hooks that depend on the contexts provided by its parent.
+ */
+function UserCharacterPageClient() {
   const pathname = usePathname();
-  const { isLoading } = useEditMode(); // Use the new loading state
+  const { isLoading } = useEditMode();
   const [character, setCharacter] = useState<CharacterWithFaction | null>(null);
+  const [isCharacterLoading, setIsCharacterLoading] = useState(true);
 
   useEffect(() => {
-    if (isLoading) return; // Wait for data to be loaded
+    // Wait for the EditModeContext to finish loading the data from localStorage
+    if (isLoading) return;
 
-    // Extract characterId from the URL, e.g., '/characters/user/MyNewCat' -> 'MyNewCat'
     const characterId = decodeURIComponent(pathname.split('/').pop() || '');
-
-    // Data is loaded from the global characters object, which is populated from localStorage in edit mode
     const charData = characters[characterId];
 
     if (charData) {
       setCharacter(charData);
     } else {
-      // If no character data is found on the client, it's a true 404
       setCharacter(null);
     }
-  }, [pathname, isLoading]); // Rerun when data is loaded
+    setIsCharacterLoading(false);
+  }, [pathname, isLoading]);
 
-  if (isLoading) {
-    return <div>Loading...</div>; // Or a proper loading spinner
+  // Show a loading state while the context or the character data is loading
+  if (isLoading || isCharacterLoading) {
+    return <div>Loading...</div>;
   }
 
   if (!character) {
@@ -43,12 +44,19 @@ export default function UserCharacterPage() {
   }
 
   return (
+    <NavigationWrapper showDetailToggle={true}>
+      <CharacterDetailsClient character={character} />
+    </NavigationWrapper>
+  );
+}
+
+/**
+ * This is the main page component, responsible for setting up the context providers.
+ */
+export default function UserCharacterPage() {
+  return (
     <AppProvider>
-      <EditModeProvider>
-        <NavigationWrapper showDetailToggle={true}>
-          <CharacterDetailsClient character={character} />
-        </NavigationWrapper>
-      </EditModeProvider>
+      <UserCharacterPageClient />
     </AppProvider>
   );
 }

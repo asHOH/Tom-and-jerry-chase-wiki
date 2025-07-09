@@ -7,7 +7,6 @@ import { Dispatch, SetStateAction } from 'react';
 import { produce } from 'immer';
 import { setAutoFreeze } from 'immer';
 import json5 from 'json5';
-import stats from '@/data/mouseCharactersStats'; // Import stats
 
 setAutoFreeze(false);
 
@@ -94,106 +93,51 @@ function handleCharacterIdChange(
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
   _localCharacter: CharacterWithFaction,
-  setLocalCharacter: Dispatch<CharacterWithFaction>,
+  setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>,
   shouldNavigate: boolean = false
 ) {
-  // FIXME: This code may lead to uncertain damage as other code do not handle the situation where the id changes
-  // characters is not managed by react, so we need to trigger the update manually
-  // use localCharacter to force update
   const oldId = path.split('.')[0]!;
   const character = characters[oldId!];
-
-  // Derive faction from character data if not provided
-  const factionId = activeTab || character?.factionId;
+  const factionId = (activeTab || character?.factionId) as FactionId;
 
   if (!factionId) {
     console.warn('Could not determine faction for character', oldId);
     return;
   }
 
-  // Check if the new ID already exists - if so, load that character instead
-  // BUT: allow user-created characters to be renamed even if target ID exists
-  if (characters[newId] && newId !== oldId) {
-    const isOriginalOldCharacter = isOriginalCharacter(oldId);
-    const isOriginalNewCharacter = isOriginalCharacter(newId);
-
-    // If trying to rename TO an original character, prevent it to avoid data loss
-    if (isOriginalNewCharacter) {
-      console.warn(`Cannot rename to original character ${newId}, loading existing data instead`);
-      try {
-        const existingCharacter = validateAndEnhanceCharacter(characters[newId], newId);
-        setLocalCharacter(JSON.parse(JSON.stringify(existingCharacter)));
-      } catch (error) {
-        console.error(`Failed to load existing character ${newId}:`, error);
-        setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
-      }
-      return;
-    }
-
-    // If both are user-created characters, allow overwriting with warning
-    if (!isOriginalOldCharacter) {
-      console.warn(`Overwriting existing user-created character ${newId} with ${oldId}`);
-      // Continue with the rename process - this will overwrite the existing character
-    } else {
-      // Original character trying to overwrite user-created character - load existing instead
-      console.log(`Character ${newId} already exists, loading existing data`);
-      try {
-        const existingCharacter = validateAndEnhanceCharacter(characters[newId], newId);
-        setLocalCharacter(JSON.parse(JSON.stringify(existingCharacter)));
-      } catch (error) {
-        console.error(`Failed to load existing character ${newId}:`, error);
-        setLocalCharacter(JSON.parse(JSON.stringify(characters[newId])));
-      }
-      return;
-    }
-  }
-
-  // Create new character with enhanced data structure
-  const newCharacter = { ...character! };
+  // Create a new character object as a copy.
+  const newCharacter = { ...character! } as CharacterWithFaction;
   newCharacter.id = newId;
-  newCharacter.imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
-  setLocalCharacter(JSON.parse(JSON.stringify(newCharacter)));
+  newCharacter.imageUrl = (factionId === 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
+  newCharacter.faction = { id: factionId, name: factionId === 'cat' ? '猫' : '鼠' };
 
-  // Clear video URLs when creating user-created character from existing one
-  if (!isOriginalCharacter(newId) && newCharacter.skills && Array.isArray(newCharacter.skills)) {
-    newCharacter.skills.forEach((skill: Skill) => {
-      if (skill.videoUrl) {
-        delete skill.videoUrl;
-      }
-    });
-    console.log(`Cleared video URLs for user-created character ${newId}`);
+  // Enhance the new character with all necessary properties.
+  const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId);
+
+  // Add the new character to the global characters object.
+  characters[newId] = enhancedCharacter;
+
+  // Add the new character to the correct faction list to make it appear in the grid.
+  const faction = factions[factionId];
+  if (faction && !faction.characters.some((c) => c.id === newId)) {
+    const gridCharacter = {
+      id: enhancedCharacter.id,
+      name: enhancedCharacter.id, // Or a more appropriate name field
+      imageUrl: enhancedCharacter.imageUrl,
+      positioningTags:
+        (enhancedCharacter.factionId === 'cat'
+          ? enhancedCharacter.catPositioningTags
+          : enhancedCharacter.mousePositioningTags) || [],
+    };
+    faction.characters.push(gridCharacter);
   }
 
-  // Ensure all required fields are present
-  let enhancedCharacter: CharacterWithFaction;
-  try {
-    enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId);
-    Object.assign(characters, { [newId]: enhancedCharacter });
-  } catch (error) {
-    console.error(`Failed to enhance new character ${newId}:`, error);
-    enhancedCharacter = newCharacter as CharacterWithFaction;
-    Object.assign(characters, { [newId]: enhancedCharacter });
-  }
+  // Update the local state to reflect the new character.
+  setLocalCharacter(enhancedCharacter);
 
-  // Only navigate if explicitly requested
+  // Navigate to the new character's page.
   if (shouldNavigate) {
     handleSelectCharacter(newId);
-  }
-
-  const updatedCharacter = characters[newId];
-  if (updatedCharacter?.skills) {
-    for (const i of updatedCharacter.skills) {
-      i.id = `${newId}-${i.id.split('-')[1]}`;
-      i.imageUrl = getSkillImageUrl(newId, i, factionId as unknown as FactionId);
-    }
-  }
-
-  if (factionId === 'mouse' && stats[newId] && updatedCharacter) {
-    Object.assign(updatedCharacter, stats[newId]);
-  }
-
-  if (updatedCharacter) {
-    setLocalCharacter(JSON.parse(JSON.stringify(updatedCharacter)));
   }
 }
 
@@ -434,45 +378,33 @@ export function handleChange<T>(
   newContentStr: string,
   path: string,
   activeTab: string | undefined,
-  handleSelectCharacter: (id: string) => void, // Use the consolidated navigation function
+  handleSelectCharacter: (id: string) => void,
   localCharacter: CharacterWithFaction,
   setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
 ) {
-  let finalValue: T;
-  if (typeof initialValue === 'number') {
-    finalValue = parseFloat(newContentStr) as T;
-  } else {
-    finalValue = newContentStr as T;
-  }
-  setLocalCharacter(
-    produce(localCharacter, (localCharacter) =>
-      setNestedProperty(localCharacter, path.split('.').slice(1).join('.'), finalValue)
-    )
-  );
-  setNestedProperty(characters, path, finalValue);
-  if (path && path.split('.')?.[1] == 'id') {
+  // If the ID is being changed, handle it as a special case to prevent data corruption.
+  if (path && path.split('.')?.[1] === 'id') {
     handleCharacterIdChange(
       path,
       newContentStr,
       activeTab,
-      handleSelectCharacter, // Pass the consolidated navigation handler
+      handleSelectCharacter,
       localCharacter,
       setLocalCharacter,
       true // ALWAYS navigate when the ID changes now
     );
+  } else {
+    // For any other field, update the property directly.
+    const finalValue = typeof initialValue === 'number' ? parseFloat(newContentStr) : newContentStr;
+    setLocalCharacter(
+      produce(localCharacter, (draft) => {
+        setNestedProperty(draft, path.split('.').slice(1).join('.'), finalValue);
+      })
+    );
+    setNestedProperty(characters, path, finalValue);
   }
-  if (path && path.split('.')?.[1] == 'skills' && path.split('.')?.[3] == 'name') {
-    const factionId = activeTab || localCharacter.factionId;
-    if (factionId) {
-      handleCharacterSkillIdChange(
-        path,
-        newContentStr,
-        factionId,
-        localCharacter,
-        setLocalCharacter
-      );
-    }
-  }
+
+  // Save changes after every modification.
   saveFactionsAndCharacters();
 }
 
