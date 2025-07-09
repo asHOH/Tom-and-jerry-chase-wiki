@@ -7,16 +7,20 @@ import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDeta
 import NavigationWrapper from '@/components/NavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { CharacterWithFaction } from '@/lib/types';
 
 // This is a fully client-rendered page for user-created or renamed characters
 
 export default function UserCharacterPage() {
   const pathname = usePathname();
+  const { isDataLoaded } = useEditMode(); // Use the new loading state
   const [character, setCharacter] = useState<CharacterWithFaction | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!isDataLoaded) return; // Wait for data to be loaded
+
     // Extract characterId from the URL, e.g., '/characters/user/MyNewCat' -> 'MyNewCat'
     const characterId = decodeURIComponent(pathname.split('/').pop() || '');
 
@@ -30,9 +34,9 @@ export default function UserCharacterPage() {
       setCharacter(null);
     }
     setIsLoading(false);
-  }, [pathname]);
+  }, [pathname, isDataLoaded]); // Rerun when data is loaded
 
-  if (isLoading) {
+  if (isLoading || !isDataLoaded) {
     return <div>Loading...</div>; // Or a proper loading spinner
   }
 

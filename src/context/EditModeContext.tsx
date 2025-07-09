@@ -13,6 +13,7 @@ import React, {
 
 interface EditModeContextType {
   isEditMode: boolean;
+  isDataLoaded: boolean; // New loading state
   toggleEditMode: () => void;
 }
 
@@ -28,16 +29,15 @@ export const LocalCharacterContext = createContext<LocalCharacterContextType | u
 
 export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(() => {
-    // Initialize from localStorage, default to true
     if (typeof window !== 'undefined') {
       const storedEditMode = localStorage.getItem('isEditMode');
       return storedEditMode ? JSON.parse(storedEditMode) : false;
     }
     return false;
   });
+  const [isDataLoaded, setIsDataLoaded] = useState<boolean>(false); // New state
 
   useEffect(() => {
-    // Save to localStorage whenever isEditMode changes
     if (typeof window !== 'undefined') {
       localStorage.setItem('isEditMode', JSON.stringify(isEditMode));
     }
@@ -46,6 +46,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isEditMode) {
       loadFactionsAndCharacters();
+      setIsDataLoaded(true); // Set data as loaded
     }
   }, [isEditMode]);
 
@@ -60,7 +61,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <EditModeContext.Provider value={{ isEditMode, toggleEditMode }}>
+    <EditModeContext.Provider value={{ isEditMode, isDataLoaded, toggleEditMode }}>
       {children}
     </EditModeContext.Provider>
   );
