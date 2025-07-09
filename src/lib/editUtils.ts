@@ -175,28 +175,6 @@ function handleCharacterIdChange(
     Object.assign(characters, { [newId]: enhancedCharacter });
   }
 
-  // Do NOT delete the original character.
-  // Instead, add the new character to the correct faction list to make it appear in the grid.
-  const faction = factions[factionId];
-  if (faction) {
-    // Add the new character if it's not already in the list
-    if (!faction.characters.some((c) => c.id === newId)) {
-      // Create a new character object that matches the expected type for the grid
-      const gridCharacter = {
-        id: enhancedCharacter.id,
-        name: enhancedCharacter.id, // Name is derived from id
-        imageUrl: enhancedCharacter.imageUrl,
-        positioningTags:
-          (enhancedCharacter.factionId === 'cat'
-            ? enhancedCharacter.catPositioningTags
-            : enhancedCharacter.mousePositioningTags) || [],
-      };
-      faction.characters.push(gridCharacter);
-    }
-  } else {
-    console.error(`Faction ${factionId} not found when trying to add new character ${newId}`);
-  }
-
   // Only navigate if explicitly requested
   if (shouldNavigate) {
     handleSelectCharacter(newId);
@@ -339,45 +317,47 @@ export function loadFactionsAndCharacters() {
     console.log('Saved original character and faction data to localStorage');
   }
 
-  // 2. clear original data
-  const originalCharacters = JSON.stringify(characters);
-  const originalFactions = JSON.stringify(factions);
-  for (const prop of Object.getOwnPropertyNames(factions)) {
-    delete factions[prop];
-  }
+  // 2. Start with a pristine copy of the original data
+  const originalCharacters = JSON.parse(localStorage.getItem('originalCharacters') || '{}');
+  const originalFactions = JSON.parse(localStorage.getItem('originalFactions') || '{}');
+
+  // 3. Load user's saved characters from localStorage
+  const savedCharacters = JSON.parse(localStorage.getItem('characters') || '{}');
+
+  // 4. Intelligently merge the data
+  const finalCharacters = { ...originalCharacters, ...savedCharacters };
+
+  // 5. Clear the current in-memory objects to prevent duplicates
   for (const prop of Object.getOwnPropertyNames(characters)) {
     delete characters[prop];
   }
+  for (const prop of Object.getOwnPropertyNames(factions)) {
+    delete factions[prop];
+  }
 
-  // 3. load localstorage data
-  const loadedCharacters = JSON.parse(localStorage.getItem('characters') ?? originalCharacters);
-  const loadedFactions = JSON.parse(localStorage.getItem('factions') ?? originalFactions);
+  // 6. Assign the newly merged character data
+  Object.assign(characters, finalCharacters);
+  Object.assign(factions, originalFactions);
 
-  // 4. Ensure all characters have complete data structure
-  const enhancedCharacters: Record<string, CharacterWithFaction> = {};
-
-  Object.keys(loadedCharacters).forEach((characterId) => {
-    const character = loadedCharacters[characterId];
-
-    try {
-      // Validate and enhance character structure
-      const enhancedCharacter = validateAndEnhanceCharacter(character, characterId);
-      enhancedCharacters[characterId] = enhancedCharacter;
-      console.log(`Successfully enhanced character ${characterId}`);
-    } catch (error) {
-      console.error(`Failed to enhance character ${characterId}:`, error);
-      // Try to salvage what we can
-      if (character && typeof character === 'object') {
-        character.id = character.id || characterId;
-        enhancedCharacters[characterId] = character as CharacterWithFaction;
-      }
-    }
+  // 7. CRITICAL: Rebuild the characters array for each faction from the definitive finalCharacters object
+  Object.values(factions).forEach((faction) => {
+    faction.characters = Object.values(finalCharacters)
+      .filter(
+        (char): char is CharacterWithFaction =>
+          !!char && typeof char === 'object' && 'factionId' in char
+      )
+      .filter((char) => char.factionId === faction.id)
+      .map((char) => ({
+        // Map to the correct type
+        id: char.id,
+        name: char.id, // Or char.name if it exists
+        imageUrl: char.imageUrl,
+        positioningTags:
+          (char.factionId === 'cat' ? char.catPositioningTags : char.mousePositioningTags) || [],
+      }));
   });
 
-  Object.assign(characters, enhancedCharacters);
-  Object.assign(factions, loadedFactions);
-
-  console.log(`Loaded ${Object.keys(enhancedCharacters).length} characters from localStorage`);
+  console.log(`Loaded ${Object.keys(characters).length} characters from merged data`);
 }
 
 // Helper function to validate and enhance character structure

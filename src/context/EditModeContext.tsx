@@ -13,7 +13,7 @@ import React, {
 
 interface EditModeContextType {
   isEditMode: boolean;
-  isDataLoaded: boolean; // New loading state
+  isLoading: boolean; // New loading state
   toggleEditMode: () => void;
 }
 
@@ -35,7 +35,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     }
     return false;
   });
-  const [isDataLoaded, setIsDataLoaded] = useState<boolean>(false); // New state
+  const [isLoading, setIsLoading] = useState<boolean>(true); // New loading state
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -46,7 +46,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isEditMode) {
       loadFactionsAndCharacters();
-      setIsDataLoaded(true); // Set data as loaded
+      setIsLoading(false); // Set loading to false after data is loaded
     }
   }, [isEditMode]);
 
@@ -61,7 +61,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <EditModeContext.Provider value={{ isEditMode, isDataLoaded, toggleEditMode }}>
+    <EditModeContext.Provider value={{ isEditMode, isLoading, toggleEditMode }}>
       {children}
     </EditModeContext.Provider>
   );

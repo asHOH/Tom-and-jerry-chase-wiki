@@ -14,12 +14,11 @@ import { CharacterWithFaction } from '@/lib/types';
 
 export default function UserCharacterPage() {
   const pathname = usePathname();
-  const { isDataLoaded } = useEditMode(); // Use the new loading state
+  const { isLoading } = useEditMode(); // Use the new loading state
   const [character, setCharacter] = useState<CharacterWithFaction | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isDataLoaded) return; // Wait for data to be loaded
+    if (isLoading) return; // Wait for data to be loaded
 
     // Extract characterId from the URL, e.g., '/characters/user/MyNewCat' -> 'MyNewCat'
     const characterId = decodeURIComponent(pathname.split('/').pop() || '');
@@ -33,10 +32,9 @@ export default function UserCharacterPage() {
       // If no character data is found on the client, it's a true 404
       setCharacter(null);
     }
-    setIsLoading(false);
-  }, [pathname, isDataLoaded]); // Rerun when data is loaded
+  }, [pathname, isLoading]); // Rerun when data is loaded
 
-  if (isLoading || !isDataLoaded) {
+  if (isLoading) {
     return <div>Loading...</div>; // Or a proper loading spinner
   }
 
