@@ -8,7 +8,6 @@ import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 
 // Force static generation for better performance and CDN caching
-export const dynamic = 'force-static';
 
 // Generate static params for all characters
 export function generateStaticParams() {

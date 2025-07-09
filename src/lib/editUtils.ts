@@ -172,6 +172,7 @@ function handleCharacterIdChange(
   const newCharacter = { ...character! };
   newCharacter.id = newId;
   newCharacter.imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
+  setLocalCharacter(JSON.parse(JSON.stringify(newCharacter)));
 
   // Clear video URLs when creating user-created character from existing one
   if (!isOriginalCharacter(newId) && newCharacter.skills && Array.isArray(newCharacter.skills)) {
