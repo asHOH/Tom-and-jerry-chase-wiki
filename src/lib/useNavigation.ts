@@ -18,5 +18,5 @@ export const useNavigation = () => {
     [router]
   );
 
-  return { navigateWithOfflineCheck: navigate };
+  return { navigate };
 };

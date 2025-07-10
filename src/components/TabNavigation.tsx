@@ -56,7 +56,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
-  const { navigateWithOfflineCheck } = useNavigation();
+  const { navigate } = useNavigation();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -82,7 +82,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const handleNavigation = async (targetPath: string) => {
     setNavigatingTo(targetPath);
     try {
-      const navigationSucceeded = await navigateWithOfflineCheck(targetPath);
+      const navigationSucceeded = await navigate(targetPath);
       // If navigation failed (blocked), reset the navigating state
       if (!navigationSucceeded) {
         setNavigatingTo(null);
