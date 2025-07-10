@@ -74,43 +74,46 @@ self.addEventListener('fetch', (event) => {
 
   // Handle Next.js App Router internal requests
   if (url.pathname.startsWith('/_next/') || url.search.includes('__nextjs')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cache successful Next.js internal responses
-          if (response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(STATIC_CACHE).then((cache) => cache.put(request, responseClone));
-          }
-          return response;
-        })
-        .catch(() => {
-          // For failed Next.js requests, try cache first
-          return caches.match(request).then((cachedResponse) => {
-            if (cachedResponse) {
-              return cachedResponse;
+    // But only handle actual Next.js static files, not API routes
+    if (url.pathname.startsWith('/_next/static/') || url.pathname.startsWith('/_next/image')) {
+      event.respondWith(
+        fetch(request)
+          .then((response) => {
+            // Cache successful Next.js internal responses
+            if (response.status === 200) {
+              const responseClone = response.clone();
+              caches.open(STATIC_CACHE).then((cache) => cache.put(request, responseClone));
             }
-            // If no cached Next.js resource, check if truly offline before notifying
-            fetch('/favicon.ico', { method: 'HEAD', cache: 'no-cache' })
-              .then(() => {
-                // Network is working, this was likely a server/routing issue
-                // Don't show offline notification for server errors
-              })
-              .catch(() => {
-                // Network is truly down, show offline notification
-                self.clients.matchAll().then((clients) => {
-                  clients.forEach((client) => {
-                    client.postMessage({
-                      type: 'OFFLINE_RESOURCE_NOT_CACHED',
-                      url: request.url,
+            return response;
+          })
+          .catch(() => {
+            // For failed Next.js requests, try cache first
+            return caches.match(request).then((cachedResponse) => {
+              if (cachedResponse) {
+                return cachedResponse;
+              }
+              // For critical JavaScript chunks, show notification but let them fail
+              if (url.pathname.includes('/chunks/') && url.pathname.endsWith('.js')) {
+                fetch('/favicon.ico', { method: 'HEAD', cache: 'no-cache' }).catch(() => {
+                  // Network is truly down, show offline notification for JS chunks
+                  self.clients.matchAll().then((clients) => {
+                    clients.forEach((client) => {
+                      client.postMessage({
+                        type: 'OFFLINE_RESOURCE_NOT_CACHED',
+                        url: request.url,
+                      });
                     });
                   });
                 });
-              });
-            return caches.match('/');
-          });
-        })
-    );
+              }
+              // Never serve HTML for JS/CSS/other resources - preserve MIME types
+              throw new Error('Next.js resource not cached and network failed');
+            });
+          })
+      );
+      return;
+    }
+    // For other _next/ paths (like API routes), let them pass through normally
     return;
   }
 
