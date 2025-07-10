@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { factions, factionData } from '@/data';
-import NavigationWrapper from '@/components/NavigationWrapper';
+import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import CharacterGridClient from './CharacterGridClient';
@@ -67,9 +67,9 @@ export default async function FactionPage({ params }: { params: Promise<{ factio
   return (
     <AppProvider>
       <EditModeProvider>
-        <NavigationWrapper showDetailToggle={false}>
+        <TabNavigationWrapper showDetailToggle={false}>
           <CharacterGridClient faction={faction} />
-        </NavigationWrapper>
+        </TabNavigationWrapper>
       </EditModeProvider>
     </AppProvider>
   );

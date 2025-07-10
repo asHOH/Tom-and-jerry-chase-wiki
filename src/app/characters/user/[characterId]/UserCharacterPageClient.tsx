@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { notFound, usePathname } from 'next/navigation';
 import { characters } from '@/data';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
-import NavigationWrapper from '@/components/NavigationWrapper';
+import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { useEditMode } from '@/context/EditModeContext';
 import { CharacterWithFaction } from '@/lib/types';
 
@@ -40,8 +40,8 @@ export default function UserCharacterPageClient() {
   }
 
   return (
-    <NavigationWrapper showDetailToggle={true}>
+    <TabNavigationWrapper showDetailToggle={true}>
       <CharacterDetailsClient character={character} />
-    </NavigationWrapper>
+    </TabNavigationWrapper>
   );
 }

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { characters } from '@/data';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
-import NavigationWrapper from '@/components/NavigationWrapper';
+import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 
@@ -80,9 +80,9 @@ export default async function CharacterPage({
     return (
       <AppProvider>
         <EditModeProvider>
-          <NavigationWrapper showDetailToggle={true}>
+          <TabNavigationWrapper showDetailToggle={true}>
             <CharacterDetailsClient character={character} />
-          </NavigationWrapper>
+          </TabNavigationWrapper>
         </EditModeProvider>
       </AppProvider>
     );

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { factionCards } from '@/data';
 import MouseCardsClient from './MouseCardsClient';
-import NavigationWrapper from '@/components/NavigationWrapper';
+import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 
@@ -28,9 +28,9 @@ export default function MouseCardsPage() {
   return (
     <AppProvider>
       <EditModeProvider>
-        <NavigationWrapper showDetailToggle={false}>
+        <TabNavigationWrapper showDetailToggle={false}>
           <MouseCardsClient faction={faction} />
-        </NavigationWrapper>
+        </TabNavigationWrapper>
       </EditModeProvider>
     </AppProvider>
   );

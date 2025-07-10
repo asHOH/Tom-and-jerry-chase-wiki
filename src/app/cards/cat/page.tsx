@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { factionCards } from '@/data';
 import CatCardsClient from './CatCardsClient';
-import NavigationWrapper from '@/components/NavigationWrapper';
+import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 
@@ -28,9 +28,9 @@ export default function CatCardsPage() {
   return (
     <AppProvider>
       <EditModeProvider>
-        <NavigationWrapper showDetailToggle={false}>
+        <TabNavigationWrapper showDetailToggle={false}>
           <CatCardsClient faction={faction} />
-        </NavigationWrapper>
+        </TabNavigationWrapper>
       </EditModeProvider>
     </AppProvider>
   );

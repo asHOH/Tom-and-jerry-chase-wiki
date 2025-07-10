@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import NavigationWrapper from '@/components/NavigationWrapper';
+import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import { VersionDisplay } from '@/components/VersionDisplay';
 import FactionButton from '@/components/ui/FactionButton';
@@ -38,7 +38,7 @@ function HomeContent() {
   };
 
   return (
-    <NavigationWrapper showDetailToggle={false}>
+    <TabNavigationWrapper showDetailToggle={false}>
       <div className='space-y-8'>
         <header className='text-center space-y-4 px-4'>
           <h1 className='text-4xl font-bold text-blue-600 py-3'>猫和老鼠手游wiki</h1>
@@ -121,6 +121,6 @@ function HomeContent() {
         type={isEditMode ? 'success' : 'info'}
         duration={isEditMode ? 3000 : 4000}
       />
-    </NavigationWrapper>
+    </TabNavigationWrapper>
   );
 }

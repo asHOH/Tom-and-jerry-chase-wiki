@@ -7,7 +7,7 @@ type NavigationWrapperProps = {
   showDetailToggle?: boolean;
 };
 
-export default function NavigationWrapper({
+export default function TabNavigationWrapper({
   children,
   showDetailToggle = false,
 }: NavigationWrapperProps) {

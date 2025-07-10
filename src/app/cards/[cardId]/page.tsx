@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { cards } from '@/data';
 import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
-import NavigationWrapper from '@/components/NavigationWrapper';
+import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 
@@ -73,9 +73,9 @@ export default async function CardPage({ params }: { params: Promise<{ cardId: s
   return (
     <AppProvider>
       <EditModeProvider>
-        <NavigationWrapper showDetailToggle={true}>
+        <TabNavigationWrapper showDetailToggle={true}>
           <KnowledgeCardDetailsClient card={card} />
-        </NavigationWrapper>
+        </TabNavigationWrapper>
       </EditModeProvider>
     </AppProvider>
   );
