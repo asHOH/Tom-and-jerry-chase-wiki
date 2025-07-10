@@ -14,6 +14,7 @@ import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { saveFactionsAndCharacters } from '@/lib/editUtils';
 import { processCharacters } from '@/lib/skillIdUtils';
+import { useAppContext } from '@/context/AppContext';
 
 function handleUploadedData(
   data: string,
@@ -147,12 +148,16 @@ const PasteInputModal: React.FC<PasteInputModalProps> = ({
         {' '}
         {/* Container for buttons */}
         <button
+          type='button'
+          aria-label='确认上传角色数据'
           className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2'
           onClick={handleSubmit}
         >
           确认上传
         </button>
         <button
+          type='button'
+          aria-label='取消上传角色数据'
           className='bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded'
           onClick={onCancel}
         >
@@ -168,6 +173,7 @@ export default function CharacterImport() {
   const containerHeight = componentTokens.image.container.height;
 
   const { isEditMode } = useEditMode();
+  const { handleSelectCharacter } = useAppContext();
   const [showImportOptions, setShowImportOptions] = useState(false);
   const [showPasteInput, setShowPasteInput] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
@@ -178,9 +184,19 @@ export default function CharacterImport() {
 
   const handleImportSuccess = (names: string[]) => {
     // Create the notification message
-    const message = `成功导入${names.map((name, index) => `${index > 0 ? '、' : ''}${name}`).join('')}，打开任意角色并将id改为${names.length === 1 ? names[0] : names.map((name, index) => `${index > 0 ? '、' : ''}${name}`).join('')}即可开始编辑`;
+    const message = `成功导入${names.map((name, index) => `${index > 0 ? '、' : ''}${name}`).join('')}，即将打开页面开始编辑...`;
     setNotificationMessage(message);
     setShowNotification(true);
+
+    // Navigate to the first imported character after a short delay to show the notification
+    if (names.length > 0) {
+      setTimeout(() => {
+        const firstCharacterName = names[0];
+        if (firstCharacterName) {
+          handleSelectCharacter(firstCharacterName);
+        }
+      }, 2000); // 2 second delay to allow user to see the notification
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
