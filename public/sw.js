@@ -90,7 +90,15 @@ self.addEventListener('fetch', (event) => {
             if (cachedResponse) {
               return cachedResponse;
             }
-            // If no cached Next.js resource, serve app shell to let client-side routing handle it
+            // If no cached Next.js resource, notify client and serve app shell
+            self.clients.matchAll().then((clients) => {
+              clients.forEach((client) => {
+                client.postMessage({
+                  type: 'OFFLINE_RESOURCE_NOT_CACHED',
+                  url: request.url,
+                });
+              });
+            });
             return caches.match('/');
           });
         })
@@ -115,10 +123,20 @@ self.addEventListener('fetch', (event) => {
           if (cachedResponse) {
             return cachedResponse;
           }
-          // For navigation requests, try to serve the main app shell
+          // For navigation requests, check if it's a route navigation
           if (request.mode === 'navigate') {
+            // Check if we have the app shell to stay on current page
             return caches.match('/').then((indexResponse) => {
               if (indexResponse) {
+                // Send message to client about uncached page
+                self.clients.matchAll().then((clients) => {
+                  clients.forEach((client) => {
+                    client.postMessage({
+                      type: 'OFFLINE_PAGE_NOT_CACHED',
+                      url: request.url,
+                    });
+                  });
+                });
                 return indexResponse;
               }
               // Only fall back to offline page if no app shell available

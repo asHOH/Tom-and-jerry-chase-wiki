@@ -1,15 +1,44 @@
 // Client-side service worker registration
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import NotificationTooltip from './ui/NotificationTooltip';
 
 export const ServiceWorkerRegistration: React.FC = () => {
+  const [notification, setNotification] = useState<{
+    show: boolean;
+    message: string;
+    type: 'success' | 'info' | 'warning' | 'error';
+  }>({
+    show: false,
+    message: '',
+    type: 'info',
+  });
+
   useEffect(() => {
     if (
       typeof window !== 'undefined' &&
       'serviceWorker' in navigator &&
       process.env.NODE_ENV === 'production'
     ) {
+      // Listen for service worker messages
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data?.type === 'OFFLINE_PAGE_NOT_CACHED') {
+          const url = new URL(event.data.url);
+          setNotification({
+            show: true,
+            message: `页面 "${url.pathname}" 未缓存，请在联网时访问`,
+            type: 'warning',
+          });
+        } else if (event.data?.type === 'OFFLINE_RESOURCE_NOT_CACHED') {
+          setNotification({
+            show: true,
+            message: '部分内容未缓存，可能无法正常显示',
+            type: 'warning',
+          });
+        }
+      });
+
       window.addEventListener('load', async () => {
         try {
           const registration = await navigator.serviceWorker.register('/sw.js', {
@@ -66,5 +95,13 @@ export const ServiceWorkerRegistration: React.FC = () => {
     }
   }, []);
 
-  return null;
+  return (
+    <NotificationTooltip
+      message={notification.message}
+      show={notification.show}
+      onHide={() => setNotification({ ...notification, show: false })}
+      type={notification.type}
+      duration={5000}
+    />
+  );
 };
