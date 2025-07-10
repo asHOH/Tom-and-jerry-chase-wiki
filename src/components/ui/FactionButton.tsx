@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import clsx from 'clsx';
 import { componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 
 export interface FactionButtonProps {
@@ -23,7 +24,7 @@ export function FactionButton({
   description,
   onClick,
   ariaLabel,
-  className = '',
+  className,
 
   priority = false,
 }: FactionButtonProps) {
@@ -38,7 +39,7 @@ export function FactionButton({
       type='button'
       onClick={onClick}
       aria-label={ariaLabel}
-      className={`faction-button ${className} sm:px-6 sm:py-4 px-4 py-3`}
+      className={clsx('faction-button', 'sm:px-6', 'sm:py-4', 'px-4', 'py-3', className)}
       style={{ ...baseStyle, padding: undefined }}
     >
       <div style={contentStyle}>
