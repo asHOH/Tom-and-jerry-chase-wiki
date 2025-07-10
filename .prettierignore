@@ -10,3 +10,7 @@ prisma/migrations/
 .husky/_
 tsconfig.tsbuildinfo
 package-lock.json
+
+# Storybook
+.storybook
+storybook-static

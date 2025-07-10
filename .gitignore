@@ -59,6 +59,11 @@ next-env.d.ts
 # Vercel
 .vercel
 
+# Storybook
+.storybook
+storybook-static
+src/stories
+
 # Package files
 *.tgz
 *.tar.gz
@@ -92,3 +97,6 @@ public/sw.js
 public/workbox-*.js
 public/fallback-*.js
 public/version.json
+
+*storybook.log
+storybook-static
