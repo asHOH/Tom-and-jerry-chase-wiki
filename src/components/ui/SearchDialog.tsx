@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useAppContext } from '@/context/AppContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
-import NotificationTooltip from './NotificationTooltip';
+import { useEditMode } from '@/context/EditModeContext';
 
 type SearchDialogProps = {
   onClose: () => void;
@@ -74,12 +74,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const { handleSelectCard, handleSelectCharacter } = useAppContext();
+  const { isEditMode, toggleEditMode } = useEditMode();
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -147,12 +146,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
       if (isOriginalCharacter(result.id)) {
         handleSelectCharacter(result.id);
       } else {
-        // For non-original characters, show notification instead of alert
-        setNotificationMessage(
-          `角色 "${result.id}" 是用户创建的角色，没有对应的静态页面。请通过编辑模式访问。`
-        );
-        setShowNotification(true);
-        return;
+        // For non-original characters, enable edit mode if not already enabled and navigate to edit page
+        if (!isEditMode) {
+          toggleEditMode();
+        }
+        // Navigate to the user character edit page
+        handleSelectCharacter(result.id);
       }
     } else {
       handleSelectCard(result.id);
@@ -255,13 +254,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         {searchQuery.length > 0 && searchResults.length === 0 && (
           <div className='p-2 text-gray-500 dark:text-gray-400'>无结果</div>
         )}
-
-        <NotificationTooltip
-          show={showNotification}
-          message={notificationMessage}
-          onHide={() => setShowNotification(false)}
-          type='warning'
-        />
       </div>
     </div>
   );
