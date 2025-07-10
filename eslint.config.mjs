@@ -1,6 +1,9 @@
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { FlatCompat } from '@eslint/eslintrc';
+import jestDom from 'eslint-plugin-jest-dom';
+import testingLibrary from 'eslint-plugin-testing-library';
+import storybook from 'eslint-plugin-storybook';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -8,9 +11,6 @@ const __dirname = dirname(__filename);
 const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
-
-"""import jestDom from 'eslint-plugin-jest-dom';
-import testingLibrary from 'eslint-plugin-testing-library';
 
 const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
@@ -22,11 +22,19 @@ const eslintConfig = [
       'src/**/__tests__/**/*.{js,jsx,ts,tsx}',
       'src/**/*.(test|spec).{js,jsx,ts,tsx}',
     ],
-    ...testingLibrary.configs.react,
-    ...jestDom.configs['flat/recommended'],
+    plugins: { 'testing-library': testingLibrary, 'jest-dom': jestDom },
+    rules: {
+      ...testingLibrary.configs.react.rules,
+      ...jestDom.configs['flat/recommended'].rules,
+    },
   },
   {
-    files: ['*.cjs'],""
+    files: ['*.stories.@(ts|tsx|js|jsx|mjs|cjs)'],
+    plugins: { storybook },
+    rules: storybook.configs.recommended.rules,
+  },
+  {
+    files: ['*.cjs'],
     languageOptions: {
       globals: {
         require: 'readonly',
