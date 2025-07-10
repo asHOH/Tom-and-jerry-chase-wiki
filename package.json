@@ -22,9 +22,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:test": "cross-env SKIP_SW_UPDATE=true npm run generate-version && next build",
-    "build:prod": "npm run update-sw && npm run generate-version && next build",
-    "build:force-sw": "npm run update-sw:force && npm run generate-version && next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

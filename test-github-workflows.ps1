@@ -27,20 +27,6 @@ function Test-Component {
     }
 }
 
-# Function to reset service worker to original state
-function Reset-ServiceWorker {
-    $swPath = "public/sw.js"
-    $content = Get-Content $swPath -Raw
-    
-    # Reset to placeholder version for development
-    $resetContent = $content -replace "const CACHE_VERSION = '[^']+';", "const CACHE_VERSION = '__CACHE_VERSION__';"
-    
-    if ($content -ne $resetContent) {
-        Set-Content $swPath -Value $resetContent -NoNewline
-        Write-Host "[RESET] Service worker cache version reset to placeholder" -ForegroundColor Gray
-    }
-}
-
 # 1. Code Quality Checks (CI Workflow)
 Write-Host "`n[SECTION] Code Quality Checks (CI Workflow)" -ForegroundColor Magenta
 
@@ -97,33 +83,6 @@ Test-Component "README Acknowledgments Update" {
     npm run update-readme
 }
 
-# Service Worker Cache Version Update Test
-Test-Component "Service Worker Cache Version Update" {
-    # Create a temporary copy of the service worker for testing
-    $tempSw = "public/sw-test.js"
-    Copy-Item "public/sw.js" $tempSw -Force
-    
-    # Test the cross-platform SW version update script on temp file
-    $env:SW_PATH = $tempSw
-    node update-sw-version.js --dev --test
-    
-    # Verify the temp file was updated correctly
-    $content = Get-Content $tempSw -Raw
-    if ($content -match "const CACHE_VERSION = 'dev-\d{8}-\d{6}';") {
-        Write-Host "Cache version pattern correctly updated" -ForegroundColor Gray
-        $exitCode = 0
-    } else {
-        Write-Host "Cache version pattern not found or incorrect" -ForegroundColor Red
-        $exitCode = 1
-    }
-    
-    # Clean up temp file and environment variable
-    Remove-Item $tempSw -Force -ErrorAction SilentlyContinue
-    $env:SW_PATH = $null
-    
-    return $exitCode
-}
-
 Test-Component "Project Build" {
     npm run build
 }
@@ -165,9 +124,6 @@ Test-Component "Static Export Check" {
 # Summary
 Write-Host "`n[SUMMARY] Test Summary" -ForegroundColor Cyan
 Write-Host "========================" -ForegroundColor Cyan
-
-# Reset service worker to original state
-Reset-ServiceWorker
 
 if ($ErrorCount -eq 0) {
     Write-Host "[SUCCESS] All workflow components passed! Your workflows should work correctly." -ForegroundColor Green
