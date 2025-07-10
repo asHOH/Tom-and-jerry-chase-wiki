@@ -23,7 +23,12 @@ function UserCharacterPageClient() {
     // Wait for the EditModeContext to finish loading the data from localStorage
     if (isLoading) return;
 
-    const characterId = decodeURIComponent(pathname.split('/').pop() || '');
+    console.log('Current pathname:', pathname);
+    const pathParts = pathname.split('/');
+    console.log('Path parts:', pathParts);
+    const characterId = decodeURIComponent(pathParts.pop() || '');
+    console.log('Attempting to load character with ID:', characterId);
+    console.log('Current characters object:', characters);
     const charData = characters[characterId];
 
     if (charData) {

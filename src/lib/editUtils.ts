@@ -301,7 +301,10 @@ export function loadFactionsAndCharacters() {
       }));
   });
 
-  console.log(`Loaded ${Object.keys(characters).length} characters from merged data`);
+  console.log(
+    `Loaded ${Object.keys(characters).length} characters from merged data. Keys:`,
+    Object.keys(characters)
+  );
 }
 
 // Helper function to validate and enhance character structure
