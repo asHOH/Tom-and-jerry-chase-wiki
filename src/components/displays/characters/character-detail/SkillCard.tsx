@@ -12,6 +12,7 @@ import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { produce } from 'immer';
 import { CharacterWithFaction } from '@/lib/types';
+import { getSkillImageUrl } from '@/lib/skillUtils';
 
 interface SkillCardProps {
   skill: Skill;
@@ -621,6 +622,19 @@ export default function SkillCard({
                 tag='span'
                 path={`skills.${skillIndex}.name`}
                 initialValue={skill.name}
+                onSave={(newName) => {
+                  // Update skill with new name and regenerate image URL
+                  const factionId = localCharacter.faction.id as 'cat' | 'mouse';
+                  const updatedSkill = produce(skill, (draft) => {
+                    draft.name = newName;
+                    draft.imageUrl = getSkillImageUrl(
+                      localCharacter.id,
+                      { ...draft, name: newName },
+                      factionId
+                    );
+                  });
+                  handleSaveChanges(updatedSkill);
+                }}
               />
             </h3>
             {isEditMode && skill.type == 'weapon2' && (

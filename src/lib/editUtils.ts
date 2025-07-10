@@ -366,9 +366,8 @@ function validateAndEnhanceCharacter(
   // Ensure skills have proper imageUrls
   if (Array.isArray(charObj.skills)) {
     charObj.skills.forEach((skill: Skill) => {
-      if (!skill.imageUrl) {
-        skill.imageUrl = getSkillImageUrl(characterId, skill, validFactionId);
-      }
+      // Always regenerate skill image URLs to ensure they match the current character ID
+      skill.imageUrl = getSkillImageUrl(characterId, skill, validFactionId);
     });
     console.log(`Enhanced character ${characterId} skills with imageUrls`);
   }
