@@ -178,6 +178,7 @@ export default function CharacterImport() {
   const [showPasteInput, setShowPasteInput] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [importedCharacterNames, setImportedCharacterNames] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const params = useParams();
   const factionId = params?.factionId as FactionId;
@@ -186,17 +187,21 @@ export default function CharacterImport() {
     // Create the notification message
     const message = `成功导入${names.map((name, index) => `${index > 0 ? '、' : ''}${name}`).join('')}，即将打开页面开始编辑...`;
     setNotificationMessage(message);
+    setImportedCharacterNames(names);
     setShowNotification(true);
+  };
 
-    // Navigate to the first imported character after a short delay to show the notification
-    if (names.length > 0) {
-      setTimeout(() => {
-        const firstCharacterName = names[0];
-        if (firstCharacterName) {
-          handleSelectCharacter(firstCharacterName);
-        }
-      }, 2000); // 2 second delay to allow user to see the notification
+  const handleNotificationHide = () => {
+    setShowNotification(false);
+    // Navigate to the first imported character when notification hides
+    if (importedCharacterNames.length > 0) {
+      const firstCharacterName = importedCharacterNames[0];
+      if (firstCharacterName) {
+        handleSelectCharacter(firstCharacterName);
+      }
     }
+    // Clear the imported names after navigation
+    setImportedCharacterNames([]);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -352,8 +357,8 @@ export default function CharacterImport() {
       <NotificationTooltip
         message={notificationMessage}
         show={showNotification}
-        onHide={() => setShowNotification(false)}
-        duration={6000}
+        onHide={handleNotificationHide}
+        duration={1500}
         type='success'
       />
     </>
