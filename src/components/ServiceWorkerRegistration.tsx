@@ -26,6 +26,12 @@ export const ServiceWorkerRegistration: React.FC = () => {
         if (event.data?.type === 'OFFLINE_PAGE_NOT_CACHED') {
           const url = new URL(event.data.url);
           const decodedPath = decodeURIComponent(url.pathname);
+
+          // If navigation prevention is requested, go back to previous page
+          if (event.data.preventNavigation && window.history.length > 1) {
+            window.history.back();
+          }
+
           // Check if actually offline to provide accurate message
           if (navigator.onLine) {
             setNotification({

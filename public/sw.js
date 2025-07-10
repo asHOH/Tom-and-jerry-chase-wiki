@@ -150,6 +150,7 @@ self.addEventListener('fetch', (event) => {
                         client.postMessage({
                           type: 'OFFLINE_PAGE_NOT_CACHED',
                           url: request.url,
+                          preventNavigation: true, // Signal to prevent navigation
                         });
                       });
                     });
