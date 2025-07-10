@@ -1209,9 +1209,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description:
-              '连续2秒保持静止将进入隐身状态，期间获得减伤。附近的猫咪时可以[感知](状态栏显示【警觉】：附近似乎有躲起来的侦探泰菲)到自己在该状态隐身。 ',
+              '保持静止2秒后将进入隐身状态，并获得减伤。附近的猫咪时可以[感知](状态栏显示【警觉】：附近似乎有躲起来的侦探泰菲)到自己在该状态隐身。',
             detailedDescription:
-              '连续2秒保持静止将进入隐身状态，期间获得50%减伤。一旦移动、跳跃、使用道具键、进行交互、被眩晕则会脱离此状态，强制位移、被击倒不会。当猫咪在附近时，可以[感知](状态栏显示【警觉】：附近似乎有躲起来的侦探泰菲)到自己在该状态隐身。',
+              '保持静止2秒后将进入隐身状态，并获得50%减伤。一旦移动、跳跃、使用道具键、进行交互、被眩晕则会脱离此状态，强制位移、被击倒不会。半径1000范围内的猫咪可以[感知](状态栏显示【警觉】：附近似乎有躲起来的侦探泰菲)到自己在该状态隐身。',
           },
         ],
       },
@@ -1607,8 +1607,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         detailedDescription: '',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '不确定是否可被打断', // FIXME
-        cancelableAftercast: '可被跳跃键取消后摇', // FIXME
+        cancelableSkill: '可被道具键*或跳跃键打断',
+        cancelableAftercast: '可被道具键*或跳跃键取消后摇',
         canHitInPipe: true,
         skillLevels: [
           {
@@ -1636,8 +1636,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         // 2级折扇因为有对自身的加速效果所以可以搭配翻滚特技和应激反应来使用，能够在被猫攻击后快速逃脱，如果技能打中猫可直接断掉猫的节奏。墙缝战的时候如果点了3级折扇，可以卡在炸药包0秒时使用对墙缝造成大量伤害，达到破墙的效果(难度较高)\n注意1:不要对朵朵使用2级折扇\n注意2:折扇的基础效果对斯飞没用。
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断', // FIXME
-        cancelableAftercast: '可被跳跃键或道具键*取消后摇', // FIXME
+        cancelableSkill: '可被道具键*或跳跃键打断',
+        cancelableAftercast: '可被道具键*或跳跃键取消后摇',
         skillLevels: [
           {
             level: 1,
