@@ -5,6 +5,10 @@ const STATIC_CACHE = `static-${CACHE_VERSION}`;
 // Static assets to cache immediately
 const STATIC_ASSETS = [
   '/',
+  '/factions/cat/',
+  '/factions/mouse/',
+  '/cards/cat/',
+  '/cards/mouse/',
   '/icon.png',
   '/favicon.ico',
   '/images/icons/cat faction.png',
@@ -20,11 +24,22 @@ const NO_CACHE_ASSETS = ['/version.json', '/sw.js'];
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
+  console.log('Service Worker installing with version:', CACHE_VERSION);
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
-      .then((cache) => cache.addAll(STATIC_ASSETS))
-      .then(() => self.skipWaiting())
+      .then((cache) => {
+        console.log('Caching static assets:', STATIC_ASSETS);
+        return cache.addAll(STATIC_ASSETS);
+      })
+      .then(() => {
+        console.log('Static assets cached successfully');
+        return self.skipWaiting();
+      })
+      .catch((error) => {
+        console.error('Failed to cache static assets:', error);
+        throw error;
+      })
   );
 });
 
@@ -53,7 +68,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - for static site, use network-first strategy
+// Fetch event - for Next.js App Router, handle internal requests and navigation
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -74,6 +89,32 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Handle Next.js App Router internal requests
+  if (url.pathname.startsWith('/_next/') || url.search.includes('__nextjs')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Cache successful Next.js internal responses
+          if (response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(STATIC_CACHE).then((cache) => cache.put(request, responseClone));
+          }
+          return response;
+        })
+        .catch(() => {
+          // For failed Next.js requests, try cache first
+          return caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            // If no cached Next.js resource, serve app shell to let client-side routing handle it
+            return caches.match('/');
+          });
+        })
+    );
+    return;
+  }
+
   // For all other requests: try network first, fall back to cache
   event.respondWith(
     fetch(request)
@@ -86,16 +127,27 @@ self.addEventListener('fetch', (event) => {
         return fetchResponse;
       })
       .catch(() => {
-        // Network failed - try cache, with offline fallback for navigation
+        console.log('Network failed for:', request.url, 'trying cache...');
+        // Network failed - try cache first
         return caches.match(request).then((cachedResponse) => {
           if (cachedResponse) {
+            console.log('Serving from cache:', request.url);
             return cachedResponse;
           }
-          // For navigation requests, return offline page if no cache
+          // For navigation requests, try to serve the main app shell
           if (request.mode === 'navigate') {
-            return caches.match('/offline.html');
+            console.log('Navigation request failed, serving app shell for:', request.url);
+            return caches.match('/').then((indexResponse) => {
+              if (indexResponse) {
+                return indexResponse;
+              }
+              // Only fall back to offline page if no app shell available
+              console.log('No app shell found, serving offline page');
+              return caches.match('/offline.html');
+            });
           }
           // For other requests, let it fail
+          console.log('No cache found for:', request.url);
           throw new Error('Network and cache both failed');
         });
       })
