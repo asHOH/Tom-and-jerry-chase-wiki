@@ -22,10 +22,10 @@ function handleUploadedData(
 ) {
   let newCharacters: Record<string, CharacterWithFaction>;
   try {
-    newCharacters = json5.parse(data);
-  } catch (e) {
-    void e;
     newCharacters = json5.parse(`{${data}}`);
+  } catch (e) {
+    console.error('Failed to parse uploaded character data in Character Import:', e);
+    newCharacters = json5.parse(data);
   }
 
   const importedNames: string[] = [];
