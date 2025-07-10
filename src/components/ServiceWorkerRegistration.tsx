@@ -21,27 +21,16 @@ export const ServiceWorkerRegistration: React.FC = () => {
 
           // Pre-cache the main app shell and navigation routes for offline browsing
           if ('caches' in window) {
-            const cacheName = `static-dev-20250710-212745`;
-            console.log('Pre-caching routes with cache name:', cacheName);
-            caches
-              .open(cacheName)
-              .then((cache) => {
-                const routes = [
-                  '/',
-                  '/factions/cat/',
-                  '/factions/mouse/',
-                  '/cards/cat/',
-                  '/cards/mouse/',
-                ];
-                console.log('Pre-caching routes:', routes);
-                return cache.addAll(routes);
-              })
-              .then(() => {
-                console.log('Routes pre-cached successfully');
-              })
-              .catch((error) => {
-                console.error('Failed to pre-cache routes:', error);
-              });
+            // Note: This will be updated by the service worker anyway, but helps with initial load
+            caches.open('app-routes').then((cache) => {
+              cache.addAll([
+                '/',
+                '/factions/cat/',
+                '/factions/mouse/',
+                '/cards/cat/',
+                '/cards/mouse/',
+              ]);
+            });
           }
 
           // Handle updates

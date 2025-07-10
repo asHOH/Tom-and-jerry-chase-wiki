@@ -24,22 +24,11 @@ const NO_CACHE_ASSETS = ['/version.json', '/sw.js'];
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installing with version:', CACHE_VERSION);
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
-      .then((cache) => {
-        console.log('Caching static assets:', STATIC_ASSETS);
-        return cache.addAll(STATIC_ASSETS);
-      })
-      .then(() => {
-        console.log('Static assets cached successfully');
-        return self.skipWaiting();
-      })
-      .catch((error) => {
-        console.error('Failed to cache static assets:', error);
-        throw error;
-      })
+      .then((cache) => cache.addAll(STATIC_ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -55,16 +44,10 @@ self.addEventListener('activate', (event) => {
               // Delete all caches that don't match current version
               return !cacheName.includes(CACHE_VERSION);
             })
-            .map((cacheName) => {
-              console.log('Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            })
+            .map((cacheName) => caches.delete(cacheName))
         );
       })
-      .then(() => {
-        console.log('Service worker activated with version:', CACHE_VERSION);
-        return self.clients.claim();
-      })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -127,27 +110,22 @@ self.addEventListener('fetch', (event) => {
         return fetchResponse;
       })
       .catch(() => {
-        console.log('Network failed for:', request.url, 'trying cache...');
         // Network failed - try cache first
         return caches.match(request).then((cachedResponse) => {
           if (cachedResponse) {
-            console.log('Serving from cache:', request.url);
             return cachedResponse;
           }
           // For navigation requests, try to serve the main app shell
           if (request.mode === 'navigate') {
-            console.log('Navigation request failed, serving app shell for:', request.url);
             return caches.match('/').then((indexResponse) => {
               if (indexResponse) {
                 return indexResponse;
               }
               // Only fall back to offline page if no app shell available
-              console.log('No app shell found, serving offline page');
               return caches.match('/offline.html');
             });
           }
           // For other requests, let it fail
-          console.log('No cache found for:', request.url);
           throw new Error('Network and cache both failed');
         });
       })
