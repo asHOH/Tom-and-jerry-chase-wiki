@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import SearchBar from './ui/SearchBar'; // Import SearchBar
 import Tooltip from './ui/Tooltip'; // Import Tooltip
 import { useAppContext } from '@/context/AppContext';
+import { useNavigation } from '@/lib/useNavigation';
 
 type Tab = {
   id: string;
@@ -52,9 +53,9 @@ type TabNavigationProps = {
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [isMobile, setIsMobile] = useState(false);
-  const router = useRouter();
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
+  const { navigateWithOfflineCheck } = useNavigation();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -144,7 +145,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>
             <button
               type='button'
-              onClick={() => router.push('/')}
+              onClick={() => navigateWithOfflineCheck('/')}
               className='whitespace-nowrap'
               style={tabButtonStyle(isHomeActive())}
             >
@@ -162,7 +163,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             >
               <button
                 type='button'
-                onClick={() => router.push(tab.path)}
+                onClick={() => navigateWithOfflineCheck(tab.path)}
                 className='whitespace-nowrap'
                 style={tabButtonStyle(isTabActive(tab.path))}
               >

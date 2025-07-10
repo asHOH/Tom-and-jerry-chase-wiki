@@ -16,32 +16,39 @@ export const ServiceWorkerRegistration: React.FC = () => {
   });
 
   useEffect(() => {
+    // Cleanup function
+    let cleanup: (() => void) | undefined;
+
     if (
       typeof window !== 'undefined' &&
       'serviceWorker' in navigator &&
       process.env.NODE_ENV === 'production'
     ) {
-      // Listen for service worker messages
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data?.type === 'OFFLINE_PAGE_NOT_CACHED') {
-          const url = new URL(event.data.url);
-          const decodedPath = decodeURIComponent(url.pathname);
+      // Listen for blocked navigation events
+      const handleBlockedNavigation = (event: CustomEvent) => {
+        const { message } = event.detail;
+        setNotification({
+          show: true,
+          message,
+          type: 'warning',
+        });
+      };
 
-          // Check if actually offline to provide accurate message
-          if (navigator.onLine) {
-            setNotification({
-              show: true,
-              message: `页面 "${decodedPath}" 暂时无法访问`,
-              type: 'warning',
-            });
-          } else {
-            setNotification({
-              show: true,
-              message: `页面 "${decodedPath}" 未缓存，请在联网时访问`,
-              type: 'warning',
-            });
-          }
-        } else if (event.data?.type === 'OFFLINE_RESOURCE_NOT_CACHED') {
+      window.addEventListener(
+        'offline-navigation-blocked',
+        handleBlockedNavigation as EventListener
+      );
+
+      cleanup = () => {
+        window.removeEventListener(
+          'offline-navigation-blocked',
+          handleBlockedNavigation as EventListener
+        );
+      };
+
+      // Listen for service worker messages (for resource failures)
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data?.type === 'OFFLINE_RESOURCE_NOT_CACHED') {
           if (navigator.onLine) {
             setNotification({
               show: true,
@@ -111,7 +118,15 @@ export const ServiceWorkerRegistration: React.FC = () => {
           console.error('Service Worker registration failed:', error);
         }
       });
+
+      // Cleanup event listener
+      return () => {
+        if (cleanup) cleanup();
+      };
     }
+
+    // Return empty cleanup function if not in production
+    return () => {};
   }, []);
 
   return (
