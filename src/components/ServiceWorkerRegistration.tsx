@@ -62,6 +62,14 @@ export const ServiceWorkerRegistration: React.FC = () => {
               type: 'warning',
             });
           }
+        } else if (event.data?.type === 'NAVIGATION_TO_UNCACHED_ROUTE') {
+          // Handle navigation to uncached route - this helps prevent stuck loading
+          const pathname = event.data.pathname;
+          setNotification({
+            show: true,
+            message: `页面 "${pathname}" 未缓存，请在联网时访问`,
+            type: 'warning',
+          });
         }
       });
 

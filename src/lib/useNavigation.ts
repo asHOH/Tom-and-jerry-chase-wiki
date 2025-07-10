@@ -11,12 +11,12 @@ import { navigate as navigateUtil } from './navigationUtils';
 export const useNavigation = () => {
   const router = useRouter();
 
-  const navigateWithOfflineCheck = useCallback(
-    async (targetPath: string) => {
-      await navigateUtil(targetPath, (path) => router.push(path));
+  const navigate = useCallback(
+    async (targetPath: string): Promise<boolean> => {
+      return await navigateUtil(targetPath, (path) => router.push(path));
     },
     [router]
   );
 
-  return { navigateWithOfflineCheck };
+  return { navigateWithOfflineCheck: navigate };
 };

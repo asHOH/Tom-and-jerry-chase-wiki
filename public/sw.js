@@ -134,14 +134,45 @@ self.addEventListener('fetch', (event) => {
           if (cachedResponse) {
             return cachedResponse;
           }
-          // For navigation requests, check if it's a route navigation
           if (request.mode === 'navigate') {
-            // Check if we have the app shell to stay on current page
+            // Don't serve app shell for uncached routes when offline
+            // Instead, let the navigation be handled by client-side logic
+            // This prevents the stuck loading state
+            const pathname = url.pathname;
+
+            // Check if this is a known route that should be cached
+            const knownRoutes = [
+              '/',
+              '/factions/cat/',
+              '/factions/mouse/',
+              '/cards/cat/',
+              '/cards/mouse/',
+            ];
+
+            // If it's a known route that should be cached, check if we have it
+            if (knownRoutes.includes(pathname)) {
+              return caches.match('/').then((indexResponse) => {
+                if (indexResponse) {
+                  // Notify client that this route isn't cached
+                  self.clients.matchAll().then((clients) => {
+                    clients.forEach((client) => {
+                      client.postMessage({
+                        type: 'NAVIGATION_TO_UNCACHED_ROUTE',
+                        pathname: pathname,
+                      });
+                    });
+                  });
+                  return indexResponse;
+                }
+                return caches.match('/offline.html');
+              });
+            }
+
+            // For unknown routes, serve app shell or offline page
             return caches.match('/').then((indexResponse) => {
               if (indexResponse) {
                 return indexResponse;
               }
-              // Only fall back to offline page if no app shell available
               return caches.match('/offline.html');
             });
           }

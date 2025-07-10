@@ -53,6 +53,7 @@ type TabNavigationProps = {
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const { navigateWithOfflineCheck } = useNavigation();
@@ -67,6 +68,33 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  // Reset navigation state when pathname changes
+  useEffect(() => {
+    if (navigatingTo && pathname) {
+      // Check if the current pathname matches where we were navigating to
+      if (pathname === navigatingTo || pathname.startsWith(navigatingTo)) {
+        setNavigatingTo(null);
+      }
+    }
+  }, [pathname, navigatingTo]);
+
+  const handleNavigation = async (targetPath: string) => {
+    setNavigatingTo(targetPath);
+    try {
+      const navigationSucceeded = await navigateWithOfflineCheck(targetPath);
+      // If navigation failed (blocked), reset the navigating state
+      if (!navigationSucceeded) {
+        setNavigatingTo(null);
+      } else {
+        // Reset after a short delay to allow navigation to complete
+        setTimeout(() => setNavigatingTo(null), 2000);
+      }
+    } catch (error) {
+      console.error('Navigation error:', error);
+      setNavigatingTo(null);
+    }
+  };
 
   const isTabActive = (tabPath: string) => {
     return pathname?.startsWith(tabPath) || false;
@@ -91,11 +119,13 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     fontSize: isMobile ? '14px' : '16px',
   };
 
-  const tabButtonStyle = (isActive: boolean) => ({
+  const tabButtonStyle = (isActive: boolean, isNavigating: boolean = false) => ({
     ...baseButtonStyle,
     padding: isMobile ? '8px' : '8px 16px',
-    backgroundColor: isActive ? '#2563eb' : '#e5e7eb',
-    color: isActive ? 'white' : '#1f2937',
+    backgroundColor: isNavigating ? '#9ca3af' : isActive ? '#2563eb' : '#e5e7eb',
+    color: isNavigating ? '#ffffff' : isActive ? 'white' : '#1f2937',
+    opacity: isNavigating ? 0.8 : 1,
+    cursor: isNavigating ? 'not-allowed' : 'pointer',
   });
 
   const toggleButtonStyle = (isDetailedView: boolean) => ({
@@ -145,9 +175,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>
             <button
               type='button'
-              onClick={() => navigateWithOfflineCheck('/')}
+              onClick={() => handleNavigation('/')}
               className='whitespace-nowrap'
-              style={tabButtonStyle(isHomeActive())}
+              style={tabButtonStyle(isHomeActive(), navigatingTo === '/')}
+              disabled={navigatingTo !== null}
             >
               {!isMobile && '首页'}
               {isMobile && '🏠'}
@@ -163,9 +194,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             >
               <button
                 type='button'
-                onClick={() => navigateWithOfflineCheck(tab.path)}
+                onClick={() => handleNavigation(tab.path)}
                 className='whitespace-nowrap'
-                style={tabButtonStyle(isTabActive(tab.path))}
+                style={tabButtonStyle(isTabActive(tab.path), navigatingTo === tab.path)}
+                disabled={navigatingTo !== null}
               >
                 <Image
                   src={tab.imageSrc}
