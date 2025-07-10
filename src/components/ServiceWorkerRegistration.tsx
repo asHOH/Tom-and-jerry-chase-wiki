@@ -25,17 +25,34 @@ export const ServiceWorkerRegistration: React.FC = () => {
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data?.type === 'OFFLINE_PAGE_NOT_CACHED') {
           const url = new URL(event.data.url);
-          setNotification({
-            show: true,
-            message: `页面 "${url.pathname}" 未缓存，请在联网时访问`,
-            type: 'warning',
-          });
+          // Check if actually offline to provide accurate message
+          if (navigator.onLine) {
+            setNotification({
+              show: true,
+              message: `页面 "${url.pathname}" 暂时无法访问`,
+              type: 'warning',
+            });
+          } else {
+            setNotification({
+              show: true,
+              message: `页面 "${url.pathname}" 未缓存，请在联网时访问`,
+              type: 'warning',
+            });
+          }
         } else if (event.data?.type === 'OFFLINE_RESOURCE_NOT_CACHED') {
-          setNotification({
-            show: true,
-            message: '部分内容未缓存，可能无法正常显示',
-            type: 'warning',
-          });
+          if (navigator.onLine) {
+            setNotification({
+              show: true,
+              message: '部分内容暂时无法加载',
+              type: 'warning',
+            });
+          } else {
+            setNotification({
+              show: true,
+              message: '部分内容未缓存，可能无法正常显示',
+              type: 'warning',
+            });
+          }
         }
       });
 

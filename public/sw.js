@@ -90,15 +90,23 @@ self.addEventListener('fetch', (event) => {
             if (cachedResponse) {
               return cachedResponse;
             }
-            // If no cached Next.js resource, notify client and serve app shell
-            self.clients.matchAll().then((clients) => {
-              clients.forEach((client) => {
-                client.postMessage({
-                  type: 'OFFLINE_RESOURCE_NOT_CACHED',
-                  url: request.url,
+            // If no cached Next.js resource, check if truly offline before notifying
+            fetch('/favicon.ico', { method: 'HEAD', cache: 'no-cache' })
+              .then(() => {
+                // Network is working, this was likely a server/routing issue
+                // Don't show offline notification for server errors
+              })
+              .catch(() => {
+                // Network is truly down, show offline notification
+                self.clients.matchAll().then((clients) => {
+                  clients.forEach((client) => {
+                    client.postMessage({
+                      type: 'OFFLINE_RESOURCE_NOT_CACHED',
+                      url: request.url,
+                    });
+                  });
                 });
               });
-            });
             return caches.match('/');
           });
         })
@@ -128,15 +136,24 @@ self.addEventListener('fetch', (event) => {
             // Check if we have the app shell to stay on current page
             return caches.match('/').then((indexResponse) => {
               if (indexResponse) {
-                // Send message to client about uncached page
-                self.clients.matchAll().then((clients) => {
-                  clients.forEach((client) => {
-                    client.postMessage({
-                      type: 'OFFLINE_PAGE_NOT_CACHED',
-                      url: request.url,
+                // Only send offline message if likely actually offline
+                // Check if this might be a server error vs true offline
+                fetch('/favicon.ico', { method: 'HEAD', cache: 'no-cache' })
+                  .then(() => {
+                    // Network is working, this was likely a server/routing issue
+                    // Don't show offline notification for server errors
+                  })
+                  .catch(() => {
+                    // Network is truly down, show offline notification
+                    self.clients.matchAll().then((clients) => {
+                      clients.forEach((client) => {
+                        client.postMessage({
+                          type: 'OFFLINE_PAGE_NOT_CACHED',
+                          url: request.url,
+                        });
+                      });
                     });
                   });
-                });
                 return indexResponse;
               }
               // Only fall back to offline page if no app shell available
