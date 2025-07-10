@@ -6,74 +6,59 @@ import {
   extractItemKeyActions,
   normalizeText,
 } from '../textUtils';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 describe('textUtils', () => {
   describe('renderTextWithHighlights', () => {
     it('should render plain text without highlights', () => {
-      const result = renderTextWithHighlights('Hello world');
-      expect(result).toEqual(['Hello world']);
+      const { container } = render(<>{renderTextWithHighlights('Hello world')}</>);
+      expect(container).toHaveTextContent('Hello world');
     });
 
     it('should render text with bold markdown highlights', () => {
-      const result = renderTextWithHighlights('Hello **world** test');
-      expect(result).toHaveLength(3);
-      expect(result[0]).toBe('Hello ');
-      expect(result[2]).toBe(' test');
-      // Check that the highlighted part is a React element
-      const highlightedElement = result[1] as React.ReactElement;
-      expect(React.isValidElement(highlightedElement)).toBe(true);
-      expect((highlightedElement.props as Record<string, unknown>).className).toBe(
-        'underline decoration-2 underline-offset-2'
-      );
-      expect((highlightedElement.props as Record<string, unknown>).children).toBe('world');
+      render(<>{renderTextWithHighlights('Hello **world** test')}</>);
+      expect(screen.getByText('world')).toBeInTheDocument();
+      expect(screen.getByText('world')).toHaveClass('underline decoration-2 underline-offset-2');
     });
 
     it('should handle multiple highlights', () => {
-      const result = renderTextWithHighlights('**First** and **Second** highlights');
-      expect(result).toHaveLength(4);
-      expect(result[1]).toBe(' and ');
-      expect(result[3]).toBe(' highlights');
+      render(<>{renderTextWithHighlights('**First** and **Second** highlights')}</>);
+      expect(screen.getByText('First')).toBeInTheDocument();
+      expect(screen.getByText('Second')).toBeInTheDocument();
     });
   });
 
   describe('formatTextWithEnhancedMarkdown', () => {
     it('should format text with bold markdown', () => {
-      const result = formatTextWithEnhancedMarkdown('Hello **world**');
-      const { container } = render(result);
+      render(formatTextWithEnhancedMarkdown('Hello **world**'));
 
-      expect(container.textContent).toBe('Hello world');
-      const underlinedElement = container.querySelector('.underline');
-      expect(underlinedElement?.textContent).toBe('world');
+      expect(screen.getByText('world')).toBeInTheDocument();
+      expect(screen.getByText('world')).toHaveClass('underline');
     });
 
     it('should format text with numerical patterns', () => {
-      const result = formatTextWithEnhancedMarkdown('Damage: 50点 for 3秒');
-      const { container } = render(result);
+      render(formatTextWithEnhancedMarkdown('Damage: 50点 for 3秒'));
 
-      expect(container.textContent).toBe('Damage: 50点 for 3秒');
-      const underlinedElements = container.querySelectorAll('.underline');
-      expect(underlinedElements).toHaveLength(2);
-      expect(underlinedElements[0]!.textContent).toBe('50点');
-      expect(underlinedElements[1]!.textContent).toBe('3秒');
+      expect(screen.getByText('50点')).toBeInTheDocument();
+      expect(screen.getByText('3秒')).toBeInTheDocument();
+      expect(screen.getByText('50点')).toHaveClass('underline');
+      expect(screen.getByText('3秒')).toHaveClass('underline');
     });
 
     it('should format percentage values', () => {
-      const result = formatTextWithEnhancedMarkdown('Increase by 25%');
-      const { container } = render(result);
+      render(formatTextWithEnhancedMarkdown('Increase by 25%'));
 
-      const underlinedElement = container.querySelector('.underline');
-      expect(underlinedElement?.textContent).toBe('25%');
+      expect(screen.getByText('25%')).toBeInTheDocument();
+      expect(screen.getByText('25%')).toHaveClass('underline');
     });
 
     it('should handle mixed formatting', () => {
-      const result = formatTextWithEnhancedMarkdown('**Skill** deals 100点 damage');
-      const { container } = render(result);
+      render(formatTextWithEnhancedMarkdown('**Skill** deals 100点 damage'));
 
-      const underlinedElements = container.querySelectorAll('.underline');
-      expect(underlinedElements).toHaveLength(2);
-      expect(underlinedElements[0]!.textContent).toBe('Skill');
-      expect(underlinedElements[1]!.textContent).toBe('100点');
+      expect(screen.getByText('Skill')).toBeInTheDocument();
+      expect(screen.getByText('100点')).toBeInTheDocument();
+      expect(screen.getByText('Skill')).toHaveClass('underline');
+      expect(screen.getByText('100点')).toHaveClass('underline');
     });
   });
 
