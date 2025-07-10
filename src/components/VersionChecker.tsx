@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import NotificationTooltip from './ui/NotificationTooltip';
 
 interface VersionInfo {
   version: string;
@@ -20,6 +21,7 @@ export const VersionChecker: React.FC = () => {
     lastCheck: string | null;
     error: string | null;
   }>({ status: 'loading', lastCheck: null, error: null });
+  const [notificationMessage, setNotificationMessage] = useState('');
 
   useEffect(() => {
     // Load initial version info
@@ -70,6 +72,7 @@ export const VersionChecker: React.FC = () => {
 
           if (versionInfo.version !== currentVersion) {
             console.log(`Version update detected: ${currentVersion} → ${versionInfo.version}`);
+            setNotificationMessage(`正在更新到最新版本 ${versionInfo.version}...`);
             setShowUpdateNotice(true);
 
             // Update service worker if available
@@ -129,6 +132,7 @@ export const VersionChecker: React.FC = () => {
     if ('serviceWorker' in navigator) {
       const handleControllerChange = () => {
         if (!showUpdateNotice) {
+          setNotificationMessage('检测到新版本，正在更新...');
           setShowUpdateNotice(true);
           setTimeout(() => {
             window.location.reload();
@@ -185,14 +189,13 @@ export const VersionChecker: React.FC = () => {
       )}
 
       {/* Update Notice */}
-      {showUpdateNotice && (
-        <div className='fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50'>
-          <div className='flex items-center space-x-2'>
-            <div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent'></div>
-            <span>正在更新到最新版本...</span>
-          </div>
-        </div>
-      )}
+      <NotificationTooltip
+        message={notificationMessage}
+        show={showUpdateNotice}
+        onHide={() => setShowUpdateNotice(false)}
+        duration={3000}
+        type='info'
+      />
     </>
   );
 };
