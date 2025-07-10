@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { DisclaimerText } from '@/components/DisclaimerText';
@@ -10,6 +9,7 @@ import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
 import NotificationTooltip from '@/components/ui/NotificationTooltip';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider, useEditMode } from '@/context/EditModeContext';
+import { useNavigation } from '@/lib/useNavigation';
 
 export default function Home() {
   return (
@@ -22,7 +22,7 @@ export default function Home() {
 }
 
 function HomeContent() {
-  const router = useRouter();
+  const { navigate } = useNavigation();
   const { toggleEditMode, isEditMode } = useEditMode();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
@@ -53,7 +53,7 @@ function HomeContent() {
               imageAlt='猫阵营图标'
               title='猫阵营'
               description='猫阵营角色列表'
-              onClick={() => router.push('/factions/cat')}
+              onClick={() => navigate('/factions/cat')}
               ariaLabel='猫阵营角色列表'
               priority
             />
@@ -62,7 +62,7 @@ function HomeContent() {
               imageAlt='鼠阵营图标'
               title='鼠阵营'
               description='鼠阵营角色列表'
-              onClick={() => router.push('/factions/mouse')}
+              onClick={() => navigate('/factions/mouse')}
               ariaLabel='鼠阵营角色列表'
               priority
             />
@@ -77,7 +77,7 @@ function HomeContent() {
               imageAlt='猫方知识卡图标'
               title='猫方知识卡'
               description='猫方知识卡列表'
-              onClick={() => router.push('/cards/cat')}
+              onClick={() => navigate('/cards/cat')}
               ariaLabel='猫方知识卡列表'
               priority
             />
@@ -86,7 +86,7 @@ function HomeContent() {
               imageAlt='鼠方知识卡图标'
               title='鼠方知识卡'
               description='鼠方知识卡列表'
-              onClick={() => router.push('/cards/mouse')}
+              onClick={() => navigate('/cards/mouse')}
               ariaLabel='鼠方知识卡列表'
               priority
             />
