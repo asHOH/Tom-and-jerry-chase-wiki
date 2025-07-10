@@ -22,13 +22,10 @@ function UserCharacterPageClient() {
   useEffect(() => {
     // Wait for the EditModeContext to finish loading the data from localStorage
     if (isLoading) return;
-
-    console.log('Current pathname:', pathname);
     const pathParts = pathname.split('/');
-    console.log('Path parts:', pathParts);
-    const characterId = decodeURIComponent(pathParts.pop() || '');
-    console.log('Attempting to load character with ID:', characterId);
-    console.log('Current characters object:', characters);
+    const characterId = decodeURIComponent(
+      decodeURIComponent(pathParts[pathParts.length - 2] || '')
+    ); // very strange - it seems that the last part of the path is always empty due to trailing slashes, so we need to take the second last part
     const charData = characters[characterId];
 
     if (charData) {
