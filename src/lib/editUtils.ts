@@ -114,7 +114,14 @@ function handleCharacterIdChange(
   // Enhance the new character with all necessary properties.
   const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId);
 
-  // Add the new character to the global characters object.
+  if (characters[newId]) {
+    // do not save, and navigate to the existing character
+    setLocalCharacter(enhancedCharacter);
+    if (shouldNavigate) {
+      handleSelectCharacter(newId);
+    }
+    return;
+  }
   characters[newId] = enhancedCharacter;
 
   // Add the new character to the correct faction list to make it appear in the grid.
@@ -256,6 +263,7 @@ export function validateCharacterStructure(
 export function loadFactionsAndCharacters() {
   // 1. Save original data if not already saved
   if (typeof window !== 'undefined' && !localStorage.getItem('originalCharacters')) {
+    console.log('Saving original character and faction data to localStorage');
     localStorage.setItem('originalCharacters', JSON.stringify(characters));
     localStorage.setItem('originalFactions', JSON.stringify(factions));
     console.log('Saved original character and faction data to localStorage');
@@ -384,6 +392,10 @@ export function handleChange<T>(
   localCharacter: CharacterWithFaction,
   setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
 ) {
+  console.log(`Handling change for path: ${path}`);
+  console.log(`Initial value: ${initialValue}, new content: ${newContentStr}`);
+  console.log(`Active tab: ${activeTab}`);
+  console.log(`Local character before change:`, localCharacter);
   // If the ID is being changed, handle it as a special case to prevent data corruption.
   if (path && path.split('.')?.[1] === 'id') {
     handleCharacterIdChange(
@@ -411,6 +423,7 @@ export function handleChange<T>(
 }
 
 export function generateTypescriptCodeFromCharacter(character: CharacterWithFaction) {
+  console.log('Generating TypeScript code for character:', character.id);
   return (
     `/* ----------------------------------- ${character.id} ----------------------------------- */\n` +
     character.id +
