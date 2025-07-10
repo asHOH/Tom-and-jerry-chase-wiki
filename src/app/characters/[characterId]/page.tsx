@@ -7,13 +7,14 @@ import NavigationWrapper from '@/components/NavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 
-// Force static generation for better performance and CDN caching
+// Force dynamic rendering to avoid prerender issues
+export const dynamic = 'force-dynamic';
 
-// Generate static params for all characters
+// Generate static params for all characters - temporarily disabled due to build issues
 export function generateStaticParams() {
-  return Object.keys(characters).map((characterId) => ({
-    characterId: characterId, // Don't encode here - Next.js will handle it
-  }));
+  // Return empty array to force dynamic rendering for all characters
+  // This avoids the webpack runtime error during static generation
+  return [];
 }
 
 export async function generateMetadata({
@@ -67,21 +68,26 @@ export default async function CharacterPage({
 }: {
   params: Promise<{ characterId: string }>;
 }) {
-  const resolvedParams = await params;
-  const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
-  const character = characters[characterId];
+  try {
+    const resolvedParams = await params;
+    const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
+    const character = characters[characterId];
 
-  if (!character) {
+    if (!character) {
+      notFound();
+    }
+
+    return (
+      <AppProvider>
+        <EditModeProvider>
+          <NavigationWrapper showDetailToggle={true}>
+            <CharacterDetailsClient character={character} />
+          </NavigationWrapper>
+        </EditModeProvider>
+      </AppProvider>
+    );
+  } catch (error) {
+    console.error('Error rendering character page:', error);
     notFound();
   }
-
-  return (
-    <AppProvider>
-      <EditModeProvider>
-        <NavigationWrapper showDetailToggle={true}>
-          <CharacterDetailsClient character={character} />
-        </NavigationWrapper>
-      </EditModeProvider>
-    </AppProvider>
-  );
 }

@@ -5,6 +5,8 @@
 
 # Testing
 /coverage/
+.nyc_output/
+*.lcov
 
 # Production
 /.next/
@@ -73,5 +75,20 @@ GEMINI.md
 # Personal git workflow helpers
 /git-helpers/
 
-# Generated build artifacts
+# Test artifacts and coverage reports
+.nyc_output/
+coverage/
+*.lcov
+
+# Build analysis files
+.next/analyze/
+bundle-analyzer-report.html
+
+# Performance monitoring
+.lighthouseci/
+
+# PWA generated files
+public/sw.js
+public/workbox-*.js
+public/fallback-*.js
 public/version.json

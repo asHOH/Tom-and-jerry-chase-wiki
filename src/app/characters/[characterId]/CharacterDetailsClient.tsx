@@ -1,6 +1,6 @@
 'use client';
 
-import { CharacterDetails } from '@/components/displays/characters';
+import { CharacterDetails } from '@/components/displays/characters/character-detail';
 import { CharacterDetailsProps } from '@/lib/types';
 import { characters } from '@/data';
 import { useEffect, useState } from 'react';
@@ -11,12 +11,17 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const characterId = decodeURIComponent(pathname.split('/').pop() || '');
-    const newCharacter = characters[characterId];
-    if (newCharacter) {
-      setCharacter(newCharacter);
+    try {
+      const pathParts = pathname.split('/');
+      const characterId = decodeURIComponent(pathParts[pathParts.length - 1] || '');
+      const newCharacter = characters[characterId];
+      if (newCharacter && newCharacter.id !== character.id) {
+        setCharacter(newCharacter);
+      }
+    } catch (error) {
+      console.error('Error updating character from URL:', error);
     }
-  }, [pathname]);
+  }, [pathname, character.id]);
 
   return <CharacterDetails character={character} />;
 }
