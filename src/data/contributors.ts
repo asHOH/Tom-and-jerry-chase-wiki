@@ -117,6 +117,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'gangge',
+    name: '港鸽',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['米特'],
+      },
+    ],
+  },
+  {
     id: 'ruomeng',
     name: '若梦',
     url: 'https://space.bilibili.com/3537122405386648',
