@@ -15,7 +15,7 @@ interface AttributeDisplayProps {
 }
 
 const GrayUnit = ({ children }: { children: React.ReactNode }) => (
-  <span className='text-gray-400 text-xs'>{children}</span>
+  <span className='text-gray-400 dark:text-gray-500 text-xs'>{children}</span>
 );
 
 export default function AttributeDisplay({
@@ -23,7 +23,7 @@ export default function AttributeDisplay({
   value,
   factionId,
   isDetailed,
-  className = 'text-sm text-gray-700 py-1',
+  className = 'text-sm text-gray-700 dark:text-gray-300 py-1',
   path,
   suffix,
 }: AttributeDisplayProps) {

@@ -55,8 +55,8 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
     <div className='space-y-8'>
       <div className='flex flex-col md:flex-row gap-8'>
         <div className='md:w-1/3'>
-          <div className='card h-full'>
-            <div className='w-full h-64 bg-gray-200 rounded-lg relative overflow-hidden mb-4 image-container'>
+          <div className='card h-full dark:bg-slate-800 dark:border-slate-700'>
+            <div className='w-full h-64 bg-gray-200 dark:bg-slate-700 rounded-lg relative overflow-hidden mb-4 image-container'>
               <div className='flex items-center justify-center h-full p-3'>
                 <Image
                   src={localCharacter.imageUrl}
@@ -73,7 +73,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                 />
               </div>
             </div>
-            <h1 className='text-3xl font-bold py-2 flex items-center justify-between'>
+            <h1 className='text-3xl font-bold py-2 flex items-center justify-between dark:text-white'>
               <div>
                 <EditableField
                   tag='span'
@@ -81,7 +81,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                   initialValue={localCharacter.id}
                   className='inline'
                 />{' '}
-                <span className='text-xl font-normal text-gray-400'>
+                <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
                   ({localCharacter.faction.name})
                 </span>
               </div>
@@ -113,7 +113,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                       setTimeout(() => setCopyMessage(''), 2000);
                     }
                   }}
-                  className='ml-4 px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50'
+                  className='ml-4 px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400'
                 >
                   {copyMessage || '导出数据'}
                 </button>
@@ -126,7 +126,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
               tag='p'
               path='description'
               initialValue={localCharacter.description}
-              className='text-gray-700 mt-2 py-1 whitespace-pre-wrap'
+              className='text-gray-700 dark:text-gray-300 mt-2 py-1 whitespace-pre-wrap'
             />
 
             <div className='mt-6 space-y-3'>
@@ -166,7 +166,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                         type='button'
                         aria-label='添加第二武器'
                         onClick={addSecondWeapon}
-                        className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+                        className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
                         key='new-weapon-button'
                       >
                         <svg

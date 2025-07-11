@@ -18,6 +18,14 @@ export const designTokens = {
       hover: '#2563eb', // blue-600
       hoverText: '#ffffff', // white
       border: 'transparent',
+      dark: {
+        background: '#000000', // black
+        text: '#e5e7eb', // gray-200
+        textSecondary: '#9ca3af', // gray-400
+        hover: '#1f2937', // gray-800
+        hoverText: '#ffffff', // white
+        border: 'transparent',
+      },
     },
 
     // Skill type colors
@@ -27,24 +35,48 @@ export const designTokens = {
         background: '#f9fafb', // gray-50
         border: '#9ca3af', // gray-400
         container: 'bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-300',
+        dark: {
+          text: '#9ca3af', // gray-400
+          background: '#1f2937', // gray-800
+          border: '#4b5563', // gray-600
+          container: 'bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700',
+        },
       },
       active: {
         text: '#2563eb', // blue-600
         background: '#eff6ff', // blue-50
         border: '#3b82f6', // blue-500
         container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-300',
+        dark: {
+          text: '#60a5fa', // blue-400
+          background: '#1e3a8a', // blue-900
+          border: '#3b82f6', // blue-500
+          container: 'bg-gradient-to-r from-blue-900 to-blue-950 border border-blue-800',
+        },
       },
       weapon1: {
         text: '#059669', // emerald-600
         background: '#ecfdf5', // emerald-50
         border: '#10b981', // emerald-500
         container: 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-300',
+        dark: {
+          text: '#34d399', // emerald-400
+          background: '#064e3b', // emerald-900
+          border: '#059669', // emerald-600
+          container: 'bg-gradient-to-r from-emerald-900 to-emerald-950 border border-emerald-800',
+        },
       },
       weapon2: {
         text: '#7c3aed', // violet-600
         background: '#f5f3ff', // violet-50
         border: '#8b5cf6', // violet-500
         container: 'bg-gradient-to-r from-violet-50 to-violet-100 border border-violet-300',
+        dark: {
+          text: '#a78bfa', // violet-400
+          background: '#4c1d95', // violet-900
+          border: '#7c3aed', // violet-600
+          container: 'bg-gradient-to-r from-violet-900 to-violet-950 border border-violet-800',
+        },
       },
     },
 
@@ -55,18 +87,36 @@ export const designTokens = {
         background: '#eff6ff', // blue-50
         border: '#3b82f6', // blue-500
         container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-300',
+        dark: {
+          text: '#60a5fa', // blue-400
+          background: '#1e3a8a', // blue-900
+          border: '#3b82f6', // blue-500
+          container: 'bg-gradient-to-r from-blue-900 to-blue-950 border border-blue-800',
+        },
       },
       level2: {
         text: '#d97706', // amber-600
         background: '#fffbeb', // amber-50
         border: '#f59e0b', // amber-500
         container: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-300',
+        dark: {
+          text: '#fbbf24', // amber-400
+          background: '#78350f', // amber-900
+          border: '#d97706', // amber-600
+          container: 'bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800',
+        },
       },
       level3: {
         text: '#dc2626', // red-600
         background: '#fef2f2', // red-50
         border: '#ef4444', // red-500
         container: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-300',
+        dark: {
+          text: '#f87171', // red-400
+          background: '#7f1d1d', // red-900
+          border: '#dc2626', // red-600
+          container: 'bg-gradient-to-r from-red-900 to-red-950 border border-red-800',
+        },
       },
     },
 
@@ -76,26 +126,51 @@ export const designTokens = {
         text: '#ea580c', // orange-600
         background: '#fef3e2', // orange-75 (between orange-50 and orange-100)
         border: '#fdba74', // orange-300
+        dark: {
+          text: '#fdba74', // orange-300
+          background: '#7c2d12', // orange-900
+          border: '#ea580c', // orange-600
+        },
       },
       A: {
         text: '#9333ea', // purple-600
         background: '#ede9fe', // purple-90 (lighter than purple-100)
         border: '#c4b5fd', // purple-300
+        dark: {
+          text: '#c4b5fd', // purple-300
+          background: '#581c87', // purple-900
+          border: '#9333ea', // purple-600
+        },
       },
       B: {
         text: '#2563eb', // blue-600
         background: '#dbeafe', // blue-100
         border: '#93c5fd', // blue-300
+        dark: {
+          text: '#93c5fd', // blue-300
+          background: '#1e3a8a', // blue-900
+          border: '#2563eb', // blue-600
+        },
       },
       C: {
         text: '#16a34a', // green-600
         background: '#dcfce7', // green-100
         border: '#86efac', // green-300
+        dark: {
+          text: '#86efac', // green-300
+          background: '#065f46', // green-900
+          border: '#16a34a', // green-600
+        },
       },
       default: {
         text: '#4b5563', // gray-600
         background: '#f3f4f6', // gray-100
         border: '#d1d5db', // gray-300
+        dark: {
+          text: '#9ca3af', // gray-400
+          background: '#1f2937', // gray-800
+          border: '#4b5563', // gray-600
+        },
       },
     },
 
@@ -105,21 +180,41 @@ export const designTokens = {
         text: '#dc2626', // red-600
         background: '#fee2e2', // red-100
         border: '#fca5a5', // red-300
+        dark: {
+          text: '#f87171', // red-400
+          background: '#7f1d1d', // red-900
+          border: '#dc2626', // red-600
+        },
       },
       medium: {
         text: '#ea580c', // orange-600
-        background: '#fee8d3', // orange-85
+        background: '#fee5d3', // orange-85
         border: '#fdba74', // orange-300
+        dark: {
+          text: '#fdba74', // orange-300
+          background: '#7c2d12', // orange-900
+          border: '#ea580c', // orange-600
+        },
       },
       low: {
         text: '#ca8a04', // yellow-600
         background: '#fef3c7', // yellow-100
         border: '#fde047', // yellow-300
+        dark: {
+          text: '#fde047', // yellow-300
+          background: '#78350f', // yellow-900
+          border: '#ca8a04', // yellow-600
+        },
       },
       veryLow: {
         text: '#16a34a', // green-600
         background: '#dcfce7', // green-100
         border: '#86efac', // green-300
+        dark: {
+          text: '#86efac', // green-300
+          background: '#065f46', // green-900
+          border: '#16a34a', // green-600
+        },
       },
     },
 
@@ -131,42 +226,84 @@ export const designTokens = {
         background: '#fee2e2', // red-100
         border: '#fca5a5', // red-300
         container: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-200',
+        dark: {
+          text: '#f87171', // red-400
+          background: '#7f1d1d', // red-900
+          border: '#dc2626', // red-600
+          container: 'bg-gradient-to-r from-red-900 to-red-950 border border-red-800',
+        },
       },
       defense: {
         text: '#2563eb', // blue-600
         background: '#dbeafe', // blue-100
         border: '#93c5fd', // blue-300
         container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200',
+        dark: {
+          text: '#60a5fa', // blue-400
+          background: '#1e3a8a', // blue-900
+          border: '#2563eb', // blue-600
+          container: 'bg-gradient-to-r from-blue-900 to-blue-950 border border-blue-800',
+        },
       },
       chase: {
         text: '#9a3412', // orange-800 (deeper reddish brown)
         background: '#fee5d3', // orange-175 equivalent (lighter background)
         border: '#ea580c', // orange-600 (reddish brown border)
         container: 'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300',
+        dark: {
+          text: '#fdbf74', // orange-300
+          background: '#7c2d12', // orange-900
+          border: '#ea580c', // orange-600
+          container: 'bg-gradient-to-r from-orange-900 to-orange-950 border border-orange-800',
+        },
       },
       speedrun: {
         text: '#16a34a', // green-600
         background: '#dcfce7', // green-100
         border: '#86efac', // green-300
         container: 'bg-gradient-to-r from-green-50 to-green-100 border border-green-200',
+        dark: {
+          text: '#86efac', // green-300
+          background: '#065f46', // green-900
+          border: '#16a34a', // green-600
+          container: 'bg-gradient-to-r from-green-900 to-green-950 border border-green-800',
+        },
       },
       fight: {
         text: '#9333ea', // purple-600
         background: '#e9d5ff', // purple-100
         border: '#c4b5fd', // purple-300
         container: 'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200',
+        dark: {
+          text: '#c4b5fd', // purple-300
+          background: '#581c87', // purple-900
+          border: '#9333ea', // purple-600
+          container: 'bg-gradient-to-r from-purple-900 to-purple-950 border border-purple-800',
+        },
       },
       lateGame: {
         text: '#4338ca', // indigo-600
         background: '#e0e7ff', // indigo-100
         border: '#a5b4fc', // indigo-300
         container: 'bg-gradient-to-r from-indigo-50 to-indigo-100 border border-indigo-200',
+        dark: {
+          text: '#a5b4fc', // indigo-300
+          background: '#3730a3', // indigo-900
+          border: '#4338ca', // indigo-600
+          container: 'bg-gradient-to-r from-indigo-900 to-indigo-950 border border-indigo-800',
+        },
       },
       comeback: {
         text: '#d97706', // amber-600
         background: '#fef3c7', // amber-100
         border: '#fcd34d', // amber-300
         container: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200',
+        dark: {
+          text: '#fcd34d', // amber-300
+          background: '#78350f', // amber-900
+          border: '#d97706', // amber-600
+          container: 'bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800',
+        },
       },
       // Mouse tags
       cheese: {
@@ -174,36 +311,72 @@ export const designTokens = {
         background: '#fef3c7', // amber-100
         border: '#fcd34d', // amber-300
         container: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200',
+        dark: {
+          text: '#fcd34d', // amber-300
+          background: '#78350f', // amber-900
+          border: '#d97706', // amber-600
+          container: 'bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800',
+        },
       },
       disrupt: {
         text: '#dc2626', // red-600
         background: '#fee2e2', // red-100
         border: '#fca5a5', // red-300
         container: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-200',
+        dark: {
+          text: '#f87171', // red-400
+          background: '#7f1d1d', // red-900
+          border: '#dc2626', // red-600
+          container: 'bg-gradient-to-r from-red-900 to-red-950 border border-red-800',
+        },
       },
       support: {
         text: '#2563eb', // blue-600
         background: '#dbeafe', // blue-100
         border: '#93c5fd', // blue-300
         container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200',
+        dark: {
+          text: '#60a5fa', // blue-400
+          background: '#1e3a8a', // blue-900
+          border: '#2563eb', // blue-600
+          container: 'bg-gradient-to-r from-blue-900 to-blue-950 border border-blue-800',
+        },
       },
       rescue: {
         text: '#059669', // emerald-600
         background: '#d1fae5', // emerald-100
         border: '#6ee7b7', // emerald-300
         container: 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200',
+        dark: {
+          text: '#34d399', // emerald-400
+          background: '#064e3b', // emerald-900
+          border: '#059669', // emerald-600
+          container: 'bg-gradient-to-r from-emerald-900 to-emerald-950 border border-emerald-800',
+        },
       },
       breakthrough: {
         text: '#9333ea', // purple-600
         background: '#e9d5ff', // purple-100
         border: '#c4b5fd', // purple-300
         container: 'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200',
+        dark: {
+          text: '#c4b5fd', // purple-300
+          background: '#581c87', // purple-900
+          border: '#9333ea', // purple-600
+          container: 'bg-gradient-to-r from-purple-900 to-purple-950 border border-purple-800',
+        },
       },
       wallBreak: {
         text: '#9a3412', // orange-800 (deeper reddish brown)
         background: '#fee5d3', // orange-175 equivalent (lighter background)
         border: '#ea580c', // orange-600 (reddish brown border)
         container: 'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300',
+        dark: {
+          text: '#fdbf74', // orange-300
+          background: '#7c2d12', // orange-900
+          border: '#ea580c', // orange-600
+          container: 'bg-gradient-to-r from-orange-900 to-orange-950 border border-orange-800',
+        },
       },
       // Shared tags (mouse variant)
       lateGameMouse: {
@@ -211,6 +384,12 @@ export const designTokens = {
         background: '#ccfbf1', // teal-100
         border: '#5eead4', // teal-300
         container: 'bg-gradient-to-r from-teal-50 to-teal-100 border border-teal-200',
+        dark: {
+          text: '#5eead4', // teal-300
+          background: '#0f766e', // teal-900
+          border: '#0d9488', // teal-600
+          container: 'bg-gradient-to-r from-teal-900 to-teal-950 border border-teal-800',
+        },
       },
       // Minor tags
       minor: {
@@ -218,6 +397,12 @@ export const designTokens = {
         background: '#f3f4f6', // gray-100
         border: '#d1d5db', // gray-300
         container: 'bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200',
+        dark: {
+          text: '#9ca3af', // gray-400
+          background: '#1f2937', // gray-800
+          border: '#4b5563', // gray-600
+          container: 'bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700',
+        },
       },
     },
 
@@ -227,6 +412,13 @@ export const designTokens = {
       500: '#3b82f6',
       600: '#2563eb',
       700: '#1d4ed8',
+      dark: {
+        50: '#1e3a8a',
+        100: '#1d4ed8',
+        500: '#3b82f6',
+        600: '#2563eb',
+        700: '#1d4ed8',
+      },
     },
 
     gray: {
@@ -238,6 +430,16 @@ export const designTokens = {
       600: '#4b5563',
       800: '#1f2937',
       900: '#111827',
+      dark: {
+        50: '#111827',
+        100: '#1f2937',
+        200: '#374151',
+        300: '#4b5563',
+        500: '#6b7280',
+        600: '#9ca3af',
+        800: '#e5e7eb',
+        900: '#f9fafb',
+      },
     },
   },
 
@@ -265,6 +467,12 @@ export const designTokens = {
     cardHover: '0 4px 12px rgba(37, 99, 235, 0.2)',
     button: '0 1px 3px rgba(0, 0, 0, 0.1)',
     navigation: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    dark: {
+      card: '0 2px 6px rgba(0, 0, 0, 0.2)',
+      cardHover: '0 4px 12px rgba(37, 99, 235, 0.4)',
+      button: '0 1px 3px rgba(0, 0, 0, 0.2)',
+      navigation: '0 2px 4px rgba(0, 0, 0, 0.2)',
+    },
   },
   radius: {
     none: '0',
@@ -440,17 +648,22 @@ export const createStyleFromTokens = (tokenPath: Record<string, unknown>): React
 
 // Card utility functions using design tokens
 export const getCardRankColors = (rank: string, includeBorder: boolean = false) => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const rankKey = rank as keyof typeof designTokens.colors.rank;
   const colorScheme = designTokens.colors.rank[rankKey] || designTokens.colors.rank.default;
 
   return {
-    color: colorScheme.text,
-    backgroundColor: colorScheme.background,
-    ...(includeBorder && { borderColor: colorScheme.border }),
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    ...(includeBorder && {
+      borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+    }),
   };
 };
 
 export const getCardCostColors = (cost: number, includeBorder: boolean = false) => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   let colorScheme;
 
   if (cost >= 6) {
@@ -464,9 +677,12 @@ export const getCardCostColors = (cost: number, includeBorder: boolean = false) 
   }
 
   return {
-    color: colorScheme.text,
-    backgroundColor: colorScheme.background,
-    ...(includeBorder && { borderColor: colorScheme.border }),
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    ...(includeBorder && {
+      borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+    }),
   };
 };
 
@@ -477,6 +693,7 @@ export const getPositioningTagColors = (
   includeBorder: boolean = false,
   faction?: 'cat' | 'mouse'
 ) => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   // Map Chinese tag names to design token keys
   const tagMapping: Record<string, keyof typeof designTokens.colors.positioningTags> = {
     进攻: 'attack',
@@ -505,8 +722,19 @@ export const getPositioningTagColors = (
     const greyColorScheme = designTokens.colors.positioningTags.minor;
 
     return {
-      color: originalColorScheme.text,
-      background: `linear-gradient(135deg, ${originalColorScheme.background} 20%, ${greyColorScheme.background} 40%)`,
+      color:
+        isDarkMode && originalColorScheme.dark
+          ? originalColorScheme.dark.text
+          : originalColorScheme.text,
+      background: `linear-gradient(135deg, ${
+        isDarkMode && originalColorScheme.dark
+          ? originalColorScheme.dark.background
+          : originalColorScheme.background
+      } 20%, ${
+        isDarkMode && greyColorScheme.dark
+          ? greyColorScheme.dark.background
+          : greyColorScheme.background
+      } 40%)`,
     };
   }
 
@@ -514,16 +742,25 @@ export const getPositioningTagColors = (
     // Fallback for minor tags without recognized tag name
     const greyColorScheme = designTokens.colors.positioningTags.minor;
     return {
-      color: greyColorScheme.text,
-      backgroundColor: greyColorScheme.background,
-      ...(includeBorder && { borderColor: greyColorScheme.border }),
+      color: isDarkMode && greyColorScheme.dark ? greyColorScheme.dark.text : greyColorScheme.text,
+      backgroundColor:
+        isDarkMode && greyColorScheme.dark
+          ? greyColorScheme.dark.background
+          : greyColorScheme.background,
+      ...(includeBorder && {
+        borderColor:
+          isDarkMode && greyColorScheme.dark ? greyColorScheme.dark.border : greyColorScheme.border,
+      }),
     };
   }
 
   return {
-    color: colorScheme.text,
-    backgroundColor: colorScheme.background,
-    ...(includeBorder && { borderColor: colorScheme.border }),
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    ...(includeBorder && {
+      borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+    }),
   };
 };
 
@@ -532,6 +769,7 @@ export const getSkillTypeColors = (
   skillType: '0' | '1' | '2' | '3' | 'passive' | 'active' | 'weapon1' | 'weapon2',
   includeBorder: boolean = false
 ) => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   // Map skill types to design token keys
   const skillTypeMapping: Record<string, keyof typeof designTokens.colors.skillTypes> = {
     '0': 'passive',
@@ -550,15 +788,19 @@ export const getSkillTypeColors = (
     : designTokens.colors.skillTypes.passive;
 
   return {
-    color: colorScheme.text,
-    backgroundColor: colorScheme.background,
-    ...(includeBorder && { borderColor: colorScheme.border }),
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    ...(includeBorder && {
+      borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+    }),
   };
 };
 
 export const getSkillTypeContainerColor = (
   skillType: '0' | '1' | '2' | '3' | 'passive' | 'active' | 'weapon1' | 'weapon2'
 ): string => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const skillTypeMapping: Record<string, keyof typeof designTokens.colors.skillTypes> = {
     '0': 'passive',
     passive: 'passive',
@@ -571,13 +813,16 @@ export const getSkillTypeContainerColor = (
   };
 
   const skillKey = skillTypeMapping[skillType];
-  return skillKey
-    ? designTokens.colors.skillTypes[skillKey].container
-    : designTokens.colors.skillTypes.passive.container;
+  const colorScheme = skillKey
+    ? designTokens.colors.skillTypes[skillKey]
+    : designTokens.colors.skillTypes.passive;
+
+  return isDarkMode && colorScheme.dark ? colorScheme.dark.container : colorScheme.container;
 };
 
 // Skill level utility functions
 export const getSkillLevelColors = (level: number, includeBorder: boolean = false) => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   let colorScheme;
 
   if (level === 1) {
@@ -592,23 +837,31 @@ export const getSkillLevelColors = (level: number, includeBorder: boolean = fals
   }
 
   return {
-    color: colorScheme.text,
-    backgroundColor: colorScheme.background,
-    ...(includeBorder && { borderColor: colorScheme.border }),
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    ...(includeBorder && {
+      borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+    }),
   };
 };
 
 export const getSkillLevelContainerColor = (level: number): string => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let colorScheme;
+
   if (level === 1) {
-    return designTokens.colors.skillLevels.level1.container;
+    colorScheme = designTokens.colors.skillLevels.level1;
   } else if (level === 2) {
-    return designTokens.colors.skillLevels.level2.container;
+    colorScheme = designTokens.colors.skillLevels.level2;
   } else if (level === 3) {
-    return designTokens.colors.skillLevels.level3.container;
+    colorScheme = designTokens.colors.skillLevels.level3;
   } else {
     // Default to level 1 colors for any other level
-    return designTokens.colors.skillLevels.level1.container;
+    colorScheme = designTokens.colors.skillLevels.level1;
   }
+
+  return isDarkMode && colorScheme.dark ? colorScheme.dark.container : colorScheme.container;
 };
 
 export const getPositioningTagContainerColor = (
@@ -616,6 +869,7 @@ export const getPositioningTagContainerColor = (
   isMinor: boolean = false,
   faction?: 'cat' | 'mouse'
 ): string => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   // Map Chinese tag names to design token keys
   const tagMapping: Record<string, keyof typeof designTokens.colors.positioningTags> = {
     进攻: 'attack',
@@ -634,12 +888,15 @@ export const getPositioningTagContainerColor = (
   };
 
   const tagKey = tagMapping[tagName];
+  const colorScheme = tagKey
+    ? designTokens.colors.positioningTags[tagKey]
+    : designTokens.colors.positioningTags.minor;
 
   if (isMinor) {
-    return 'bg-gray-50 border border-gray-100';
+    return isDarkMode
+      ? 'bg-slate-800/50 border border-slate-700'
+      : 'bg-gray-50 border border-gray-100';
   }
 
-  return tagKey
-    ? designTokens.colors.positioningTags[tagKey].container
-    : designTokens.colors.positioningTags.minor.container;
+  return isDarkMode && colorScheme.dark ? colorScheme.dark.container : colorScheme.container;
 };

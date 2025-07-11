@@ -60,17 +60,20 @@ export default function KnowledgeCardSection({
   const getCostStyles = (totalCost: number) => {
     if (totalCost >= 22) {
       return {
-        containerClass: 'border-red-500 bg-red-100 text-red-700',
+        containerClass:
+          'border-red-500 bg-red-100 text-red-700 dark:bg-red-900/50 dark:border-red-500/80 dark:text-red-400',
         tooltipContent: `知识量：${totalCost}点 (超出游戏限制)`,
       };
     } else if (totalCost === 21) {
       return {
-        containerClass: 'border-amber-500 bg-amber-100 text-amber-700',
+        containerClass:
+          'border-amber-500 bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:border-amber-500/80 dark:text-amber-400',
         tooltipContent: `知识量：${totalCost}点 (需开启+1知识量上限)`,
       };
     } else {
       return {
-        containerClass: 'border-blue-400 bg-blue-50 text-blue-700',
+        containerClass:
+          'border-blue-400 bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:border-blue-400/80 dark:text-blue-300',
         tooltipContent: `知识量：${totalCost}点`,
       };
     }
@@ -119,10 +122,14 @@ export default function KnowledgeCardSection({
     return (
       <div
         key={index}
-        className={`flex flex-col transition-all duration-300 ease-in-out ${isSqueezedView ? 'space-y-1' : 'space-y-2'}`}
+        className={`flex flex-col transition-all duration-300 ease-in-out ${
+          isSqueezedView ? 'space-y-1' : 'space-y-2'
+        }`}
       >
         <div
-          className={`flex ${isSqueezedView ? 'items-center' : 'items-start'} gap-0.5 sm:gap-1 md:gap-2 lg:gap-4`}
+          className={`flex ${
+            isSqueezedView ? 'items-center' : 'items-start'
+          } gap-0.5 sm:gap-1 md:gap-2 lg:gap-4`}
         >
           <Tooltip content={tooltipContent} className='border-none'>
             <div
@@ -191,7 +198,7 @@ export default function KnowledgeCardSection({
                 type='button'
                 aria-label='编辑知识卡组'
                 onClick={() => handleEditClick(index)}
-                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -212,7 +219,7 @@ export default function KnowledgeCardSection({
                 type='button'
                 aria-label='移除知识卡组'
                 onClick={() => onRemoveGroup(index)}
-                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+                className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -234,7 +241,7 @@ export default function KnowledgeCardSection({
         </div>
         {(!!description || isEditMode) && (
           <div
-            className={`bg-gray-50 p-2 sm:p-3 rounded-lg ${
+            className={`bg-gray-50 dark:bg-slate-800/50 p-2 sm:p-3 rounded-lg ${
               isSqueezedView
                 ? 'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
                 : 'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
@@ -245,7 +252,7 @@ export default function KnowledgeCardSection({
               path={`knowledgeCardGroups.${index}.description`}
               initialValue={description ?? ''}
               onSave={(newDescription) => handleDescriptionSave(newDescription, index)}
-              className='text-sm text-gray-700'
+              className='text-sm text-gray-700 dark:text-gray-300'
             />
           </div>
         )}
@@ -258,15 +265,15 @@ export default function KnowledgeCardSection({
       return (
         <div>
           <CharacterSection title='推荐知识卡组'>
-            <div className='card p-4 space-y-3'>
+            <div className='card dark:bg-slate-800 dark:border-slate-700 p-4 space-y-3'>
               <div className='flex justify-between items-center mb-4'>
                 <button
                   type='button'
                   onClick={() => setIsSqueezedView(!isSqueezedView)}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
                     isSqueezedView
-                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
                   }`}
                   aria-label={isSqueezedView ? '切换到普通视图' : '切换到紧凑视图'}
                 >
@@ -292,7 +299,7 @@ export default function KnowledgeCardSection({
                   type='button'
                   aria-label='添加知识卡组'
                   onClick={onCreateGroup}
-                  className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+                  className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
                 >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -321,7 +328,7 @@ export default function KnowledgeCardSection({
   return (
     <div>
       <CharacterSection title='推荐知识卡组'>
-        <div className='card p-4 space-y-3'>
+        <div className='card dark:bg-slate-800 dark:border-slate-700 p-4 space-y-3'>
           {/* Toggle button for squeezed view */}
           <div className='flex justify-between items-center mb-4'>
             <button
@@ -329,8 +336,8 @@ export default function KnowledgeCardSection({
               onClick={() => setIsSqueezedView(!isSqueezedView)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
                 isSqueezedView
-                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
               }`}
               aria-label={isSqueezedView ? '切换到普通视图' : '切换到紧凑视图'}
             >
@@ -357,7 +364,7 @@ export default function KnowledgeCardSection({
                 type='button'
                 aria-label='添加知识卡组'
                 onClick={onCreateGroup}
-                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -377,7 +384,7 @@ export default function KnowledgeCardSection({
             <React.Fragment key={index}>
               {renderKnowledgeCardGroup(group.cards, index, group.description)}
               {index < knowledgeCardGroups.length - 1 && (
-                <div className='border-t border-gray-200 my-4'></div>
+                <div className='border-t border-gray-200 dark:border-slate-700 my-4'></div>
               )}
             </React.Fragment>
           ))}
@@ -387,7 +394,7 @@ export default function KnowledgeCardSection({
                 type='button'
                 aria-label='添加知识卡组'
                 onClick={onCreateGroup}
-                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'

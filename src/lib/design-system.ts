@@ -41,16 +41,24 @@ export {
 /**
  * Create hover styles for interactive elements
  */
-export const createHoverStyles = (baseStyles: React.CSSProperties) => ({
-  base: baseStyles,
-  hover: {
-    ...baseStyles,
-    backgroundColor: designTokens.colors.faction.hover,
-    color: designTokens.colors.faction.hoverText,
-    boxShadow: designTokens.shadows.cardHover,
-    transform: 'translateY(-2px)',
-  },
-});
+export const createHoverStyles = (baseStyles: React.CSSProperties) => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const factionColors = designTokens.colors.faction;
+  const hoverBg = isDarkMode ? factionColors.dark.hover : factionColors.hover;
+  const hoverText = isDarkMode ? factionColors.dark.hoverText : factionColors.hoverText;
+  const cardHoverShadow = isDarkMode ? designTokens.shadows.dark.cardHover : designTokens.shadows.cardHover;
+
+  return {
+    base: baseStyles,
+    hover: {
+      ...baseStyles,
+      backgroundColor: hoverBg,
+      color: hoverText,
+      boxShadow: cardHoverShadow,
+      transform: 'translateY(-2px)',
+    },
+  };
+};
 
 /**
  * Create responsive grid styles
@@ -127,6 +135,7 @@ export const createCardStyles = (
  * Create button styles using design tokens
  */
 export const createButtonStyles = (variant: 'faction' | 'primary' | 'secondary' = 'primary') => {
+  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const baseButtonStyle = {
     padding: designTokens.spacing.md,
     borderRadius: designTokens.radius.md,
@@ -144,20 +153,28 @@ export const createButtonStyles = (variant: 'faction' | 'primary' | 'secondary' 
 
   switch (variant) {
     case 'faction':
-      return createStyleFromTokens(componentTokens.factionButton.base);
+      const factionColors = designTokens.colors.faction;
+      return {
+        ...createStyleFromTokens(componentTokens.factionButton.base),
+        backgroundColor: isDarkMode ? factionColors.dark.background : factionColors.background,
+        color: isDarkMode ? factionColors.dark.text : factionColors.text,
+        boxShadow: isDarkMode ? designTokens.shadows.dark.card : designTokens.shadows.card,
+      };
     case 'primary':
+      const primaryColors = designTokens.colors.primary;
       return {
         ...baseButtonStyle,
-        backgroundColor: designTokens.colors.primary[500],
+        backgroundColor: isDarkMode ? primaryColors.dark[500] : primaryColors[500],
         color: '#ffffff',
-        boxShadow: designTokens.shadows.button,
+        boxShadow: isDarkMode ? designTokens.shadows.dark.button : designTokens.shadows.button,
       };
     case 'secondary':
+      const grayColors = designTokens.colors.gray;
       return {
         ...baseButtonStyle,
-        backgroundColor: designTokens.colors.gray[200],
-        color: designTokens.colors.gray[800],
-        boxShadow: designTokens.shadows.button,
+        backgroundColor: isDarkMode ? grayColors.dark[200] : grayColors[200],
+        color: isDarkMode ? grayColors.dark[800] : grayColors[800],
+        boxShadow: isDarkMode ? designTokens.shadows.dark.button : designTokens.shadows.button,
       };
     default:
       return baseButtonStyle;

@@ -249,8 +249,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         // Within parallel group -> straight lines
         return (
           <div className='absolute left-10 top-3 w-4 h-auto'>
-            <div className='w-full h-px bg-gray-400'></div>
-            <div className='w-full h-px bg-gray-400 mt-7'></div>
+            <div className='w-full h-px bg-gray-400 dark:bg-gray-600'></div>
+            <div className='w-full h-px bg-gray-400 dark:bg-gray-600 mt-7'></div>
           </div>
         );
       } else if (isLastLevelInGroup && nextGroup?.isParallelGroup) {
@@ -259,11 +259,35 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           <div className='absolute left-7 top-3 w-10 h-7'>
             <svg className='w-full h-full overflow-visible' viewBox='0 0 40 28'>
               {/* Converging lines from current group */}
-              <path d='M11 0 Q16.5 4 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
-              <path d='M11 28 Q16.5 24 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path
+                d='M11 0 Q16.5 4 16 14'
+                fill='none'
+                stroke='#9ca3af'
+                strokeWidth='1'
+                className='dark:stroke-gray-600'
+              />
+              <path
+                d='M11 28 Q16.5 24 16 14'
+                fill='none'
+                stroke='#9ca3af'
+                strokeWidth='1'
+                className='dark:stroke-gray-600'
+              />
               {/* Diverging lines to next group - more visible curves */}
-              <path d='M16 14 Q15.5 4 21 0' fill='none' stroke='#9ca3af' strokeWidth='1' />
-              <path d='M16 14 Q15.5 24 21 28' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path
+                d='M16 14 Q15.5 4 21 0'
+                fill='none'
+                stroke='#9ca3af'
+                strokeWidth='1'
+                className='dark:stroke-gray-600'
+              />
+              <path
+                d='M16 14 Q15.5 24 21 28'
+                fill='none'
+                stroke='#9ca3af'
+                strokeWidth='1'
+                className='dark:stroke-gray-600'
+              />
             </svg>
           </div>
         );
@@ -272,8 +296,20 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         return (
           <div className='absolute left-10 top-3 w-4 h-7'>
             <svg className='w-full h-full' viewBox='0 0 16 28'>
-              <path d='M0 0 Q8 0 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
-              <path d='M0 28 Q8 28 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path
+                d='M0 0 Q8 0 16 14'
+                fill='none'
+                stroke='#9ca3af'
+                strokeWidth='1'
+                className='dark:stroke-gray-600'
+              />
+              <path
+                d='M0 28 Q8 28 16 14'
+                fill='none'
+                stroke='#9ca3af'
+                strokeWidth='1'
+                className='dark:stroke-gray-600'
+              />
             </svg>
           </div>
         );
@@ -285,14 +321,26 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           // The top-[7px] value centers the divergence point vertically with the single 40px icon.
           <div className='absolute left-8 top-[7px] w-4 h-7 [transform:scaleX(-1)]'>
             <svg className='w-full h-full' viewBox='0 0 16 28'>
-              <path d='M0 1 Q8 1 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
-              <path d='M0 28 Q8 28 16 14' fill='none' stroke='#9ca3af' strokeWidth='1' />
+              <path
+                d='M0 1 Q8 1 16 14'
+                fill='none'
+                stroke='#9ca3af'
+                strokeWidth='1'
+                className='dark:stroke-gray-600'
+              />
+              <path
+                d='M0 28 Q8 28 16 14'
+                fill='none'
+                stroke='#9ca3af'
+                strokeWidth='1'
+                className='dark:stroke-gray-600'
+              />
             </svg>
           </div>
         );
       } else {
         // Single to single -> straight line
-        return <div className='absolute left-10 top-5 w-4 h-px bg-gray-400'></div>;
+        return <div className='absolute left-10 top-5 w-4 h-px bg-gray-400 dark:bg-gray-600'></div>;
       }
     }
     return null;
@@ -313,17 +361,19 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               tag='h4'
               path={`skillAllocations.${index}.id`}
               initialValue={allocation.id}
-              className='font-bold text-gray-800 text-lg leading-tight'
+              className='font-bold text-gray-800 dark:text-gray-200 text-lg leading-tight'
             />
           ) : (
-            <h4 className='font-bold text-gray-800 text-lg leading-tight'>{allocation.id}</h4>
+            <h4 className='font-bold text-gray-800 dark:text-gray-200 text-lg leading-tight'>
+              {allocation.id}
+            </h4>
           )}
           {isEditMode && (
             <EditableField
               tag='p'
               path={`skillAllocations.${index}.pattern`}
               initialValue={allocation.pattern}
-              className='text-gray-500 text-sm'
+              className='text-gray-500 dark:text-gray-400 text-sm'
             />
           )}
         </div>
@@ -336,7 +386,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                     <div className='flex gap-1 justify-center mb-3 h-4'>
                       {group.levels.map((level, levelIndex) => (
                         <div key={levelIndex} className='w-10 flex flex-col items-center'>
-                          <span className='text-xs text-gray-500'>
+                          <span className='text-xs text-gray-500 dark:text-gray-400'>
                             {
                               !level.hasNegativeEffect
                                 ? `Lv.${group.characterLevel + levelIndex}/${group.characterLevel + levelIndex + group.levels.length}`
@@ -377,7 +427,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                   </>
                 ) : (
                   <>
-                    <span className='text-xs text-gray-500 mb-4 h-4'>
+                    <span className='text-xs text-gray-500 dark:text-gray-400 mb-4 h-4'>
                       {
                         !group.levels[0]!.hasNegativeEffect
                           ? `Lv.${group.characterLevel}`
@@ -405,7 +455,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               type='button'
               aria-label='移除技能加点'
               onClick={() => onRemove(allocation.id)}
-              className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600'
+              className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -426,17 +476,17 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         )}
       </div>
       {shouldShowDescriptionBlock && (
-        <div className='bg-gray-50 p-3 rounded-lg'>
+        <div className='bg-gray-50 dark:bg-slate-800/50 p-3 rounded-lg'>
           {isEditMode ? (
             <EditableField
               tag='p'
               path={`skillAllocations.${index}.description`}
               initialValue={allocation.description!}
-              className='text-sm text-gray-700 whitespace-pre-wrap'
+              className='text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap'
             />
           ) : (
             hasDescription && (
-              <p className='text-sm text-gray-700 whitespace-pre-wrap'>
+              <p className='text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap'>
                 <TextWithItemKeyTooltips text={allocation.description!} isDetailed={isDetailed} />
               </p>
             )
@@ -446,7 +496,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               tag='p'
               path={`skillAllocations.${index}.additionaldescription`}
               initialValue={allocation.additionaldescription!}
-              className='text-sm text-gray-600 mt-2 pl-3 border-l-2 border-blue-200 whitespace-pre-wrap'
+              className='text-sm text-gray-600 dark:text-gray-400 mt-2 pl-3 border-l-2 border-blue-200 dark:border-blue-700 whitespace-pre-wrap'
             />
           )}
         </div>

@@ -34,9 +34,9 @@ export default function KnowledgeCardDetails({
           <BaseCard variant='details'>
             <GameImage src={card.imageUrl} alt={card.id} size='CARD_DETAILS' />
             <div style={{ padding: designTokens.spacing.md }}>
-              <h1 className='text-3xl font-bold' style={{ paddingBottom: designTokens.spacing.sm }}>
+              <h1 className='text-3xl font-bold dark:text-white' style={{ paddingBottom: designTokens.spacing.sm }}>
                 {card.id}{' '}
-                <span className='text-xl font-normal text-gray-400'>
+                <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
                   ({card.faction.id === 'cat' ? '猫方知识卡' : '鼠方知识卡'})
                 </span>
               </h1>
@@ -52,7 +52,7 @@ export default function KnowledgeCardDetails({
               >
                 <div className='grid grid-cols-2' style={{ gap: designTokens.spacing.sm }}>
                   <p
-                    className='text-base text-gray-700'
+                    className='text-base text-gray-700 dark:text-gray-300'
                     style={{
                       paddingTop: designTokens.spacing.xxs,
                       paddingBottom: designTokens.spacing.xxs,
@@ -63,7 +63,7 @@ export default function KnowledgeCardDetails({
                     </Tag>
                   </p>
                   <p
-                    className='text-base text-gray-700'
+                    className='text-base text-gray-700 dark:text-gray-300'
                     style={{
                       paddingTop: designTokens.spacing.xxs,
                       paddingBottom: designTokens.spacing.xxs,
@@ -88,7 +88,7 @@ export default function KnowledgeCardDetails({
             }}
           >
             <h2
-              className='text-2xl font-bold'
+              className='text-2xl font-bold dark:text-white'
               style={{
                 paddingTop: designTokens.spacing.sm,
                 paddingBottom: designTokens.spacing.sm,
@@ -103,7 +103,9 @@ export default function KnowledgeCardDetails({
                 onClick={() => handleSelectCharacter(fromCharacterId!)}
                 className='flex items-center gap-2 font-bold py-1.5 pl-4 pr-2 rounded-full rounded-r-lg text-md border shadow-sm transition-all duration-200
                            bg-blue-50 text-blue-700 border-blue-200
-                           hover:bg-blue-500 hover:text-white hover:border-blue-500 hover:translate-x-[-5px]'
+                           hover:bg-blue-500 hover:text-white hover:border-blue-500 hover:translate-x-[-5px]
+                           dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700
+                           dark:hover:bg-blue-600 dark:hover:text-white dark:hover:border-blue-600'
               >
                 ← 返回 {fromCharacter.id}
                 {fromCharacter.imageUrl && (
@@ -121,11 +123,11 @@ export default function KnowledgeCardDetails({
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.lg }}>
-            <div className='card' style={{ padding: designTokens.spacing.lg }}>
+            <div className='card dark:bg-slate-800 dark:border-slate-700' style={{ padding: designTokens.spacing.lg }}>
               {/* Card description */}
               <div style={{ marginBottom: designTokens.spacing.lg }}>
                 <p
-                  className='text-black text-lg'
+                  className='text-black dark:text-gray-200 text-lg'
                   style={{
                     paddingTop: designTokens.spacing.sm,
                     paddingBottom: designTokens.spacing.sm,
@@ -148,11 +150,11 @@ export default function KnowledgeCardDetails({
                 {card.levels.map((level) => (
                   <div
                     key={`${card.id}-${level.level}`}
-                    className='bg-gray-100 rounded'
+                    className='bg-gray-100 dark:bg-slate-700 rounded'
                     style={{ padding: designTokens.spacing.md }}
                   >
                     <p
-                      className='text-black'
+                      className='text-black dark:text-gray-200'
                       style={{
                         paddingLeft: designTokens.spacing.sm,
                         paddingRight: designTokens.spacing.sm,

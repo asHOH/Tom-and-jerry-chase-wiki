@@ -1,5 +1,4 @@
 import React from 'react';
-import { componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 
 export interface FactionButtonGroupProps {
   children: React.ReactNode;
@@ -7,10 +6,8 @@ export interface FactionButtonGroupProps {
 }
 
 export function FactionButtonGroup({ children, className = '' }: FactionButtonGroupProps) {
-  const containerStyle = createStyleFromTokens(componentTokens.factionButtonContainer);
-
   return (
-    <div style={containerStyle} className={`flex-row sm:flex-row ${className}`}>
+    <div className={`flex flex-row sm:flex-row justify-center gap-4 w-full max-w-[700px] mx-auto ${className}`}>
       {children}
     </div>
   );

@@ -96,7 +96,10 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
 
-  const borderColor = factionId === 'cat' ? 'border-orange-200' : 'border-blue-200';
+  const borderColor =
+    factionId === 'cat'
+      ? 'border-orange-200 dark:border-orange-700'
+      : 'border-blue-200 dark:border-blue-700';
   const tagsKey = factionId === 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
 
   const { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags, toggleIsMinor } =
@@ -111,8 +114,8 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   if ((!tags || tags.length === 0) && !isEditMode) return null;
 
   return (
-    <div className='mt-6 pt-4 border-t border-gray-200'>
-      <h3 className='text-lg font-semibold text-gray-800 mb-3'>定位</h3>
+    <div className='mt-6 pt-4 border-t border-gray-200 dark:border-gray-700'>
+      <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3'>定位</h3>
       <div className='space-y-3'>
         {sortedTags.map((tag, index) => {
           // Find the original index in the unsorted array for edit operations
@@ -154,20 +157,20 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                 </Tag>
                 {isEditMode ? (
                   <span
-                    className='text-xs text-gray-500 cursor-pointer'
+                    className='text-xs text-gray-500 dark:text-gray-400 cursor-pointer'
                     onClick={() => toggleIsMinor(originalIndex)}
                   >
                     {tag.isMinor ? '(次要)' : '(主要)'}
                   </span>
                 ) : (
-                  tag.isMinor && <span className='text-xs text-gray-500'>(次要)</span>
+                  tag.isMinor && <span className='text-xs text-gray-500 dark:text-gray-400'>(次要)</span>
                 )}
                 {isEditMode && (
                   <button
                     type='button'
                     aria-label='移除定位标签'
                     onClick={() => handleRemovePositioningTags(originalIndex)}
-                    className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600'
+                    className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
                   >
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
@@ -190,7 +193,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                 tag='p'
                 path={`${tagsKey}.${originalIndex}.description`}
                 initialValue={tag.description}
-                className='text-sm text-gray-700 mb-1 whitespace-pre-wrap'
+                className='text-sm text-gray-700 dark:text-gray-300 mb-1 whitespace-pre-wrap'
                 onSave={(newValue) => handleUpdate(originalIndex, newValue, 'description')}
               />
               {isDetailed && tag.additionalDescription && (
@@ -198,7 +201,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   tag='p'
                   path={`${tagsKey}.${originalIndex}.additionalDescription`}
                   initialValue={tag.additionalDescription}
-                  className={`text-sm text-gray-600 mt-2 pl-3 border-l-2 whitespace-pre-wrap ${borderColor}`}
+                  className={`text-sm text-gray-600 dark:text-gray-400 mt-2 pl-3 border-l-2 whitespace-pre-wrap ${borderColor}`}
                   onSave={(newValue) =>
                     handleUpdate(originalIndex, newValue, 'additionalDescription')
                   }
@@ -213,7 +216,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
               type='button'
               aria-label='添加定位标签'
               onClick={handleAddPositioningTags}
-              className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+              className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'

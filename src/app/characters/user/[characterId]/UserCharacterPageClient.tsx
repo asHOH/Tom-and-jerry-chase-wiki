@@ -32,7 +32,7 @@ export default function UserCharacterPageClient() {
   }, [pathname]);
 
   if (isLoading || isCharacterLoading) {
-    return <div>加载中...</div>;
+    return <div className='dark:text-white'>加载中...</div>;
   }
 
   if (!character) {

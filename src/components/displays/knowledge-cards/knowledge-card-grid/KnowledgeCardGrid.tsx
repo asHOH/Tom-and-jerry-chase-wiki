@@ -8,6 +8,7 @@ import { KnowledgeCardGridProps } from '@/lib/types';
 import CostRangeSlider from '../../../ui/CostRangeSlider';
 import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
+import clsx from 'clsx';
 
 export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
   // Use centralized filter state management for ranks
@@ -34,60 +35,42 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
   );
 
   return (
-    <div className='space-y-8'>
+    <div className='space-y-8 dark:text-slate-200'>
       {' '}
       {/* Padding for navbar is now handled at the page level */}
       <header className='text-center space-y-4 mb-8 px-4'>
-        <h1 className='text-4xl font-bold text-blue-600 py-3'>
+        <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>
           {faction.name === '猫阵营' ? '猫方知识卡' : '鼠方知识卡'}
         </h1>
-        <p className='text-xl text-gray-600 max-w-3xl mx-auto px-4 py-2'>
+        <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
           {faction.name === '猫阵营'
             ? '提升猫击倒和放飞老鼠的能力'
             : '提升老鼠的生存、救援和推奶酪能力'}
         </p>
         {/* Rank Filter Controls */}
         <div className='flex justify-center items-center gap-4 mt-8'>
-          <span className='text-lg font-medium text-gray-700 hidden sm:inline'>等级筛选:</span>
-          <span className='text-lg font-medium text-gray-700 sm:hidden'>筛选:</span>
+          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 hidden sm:inline'>
+            等级筛选:
+          </span>
+          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 sm:hidden'>
+            筛选:
+          </span>
           <div className='flex gap-2'>
             {RANK_OPTIONS.map((rank) => {
               const rankColors = getCardRankColors(rank, false);
               const isActive = hasRankFilter(rank);
-
-              const buttonStyle = isActive
-                ? {
-                    ...rankColors,
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    fontSize: '14px',
-                  }
-                : {
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    fontSize: '14px',
-                    backgroundColor: '#f3f4f6',
-                    color: '#9ca3af',
-                    ':hover': {
-                      backgroundColor: '#e5e7eb',
-                    },
-                  };
 
               return (
                 <button
                   type='button'
                   key={rank}
                   onClick={() => toggleRankFilter(rank)}
-                  style={buttonStyle}
-                  className={!isActive ? 'hover:bg-gray-200' : ''}
+                  className={clsx(
+                    'px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
+                    isActive
+                      ? `bg-[${rankColors.backgroundColor}] text-[${rankColors.color}]`
+                      : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
+                  )}
                 >
                   {rank}级
                 </button>
@@ -97,7 +80,7 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
         </div>
         {/* Cost Filter Controls */}
         <div className='flex flex-col sm:flex-row sm:justify-center items-start gap-4'>
-          <span className='text-lg font-medium text-gray-700 hidden sm:inline sm:mt-2'>
+          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 hidden sm:inline sm:mt-2'>
             费用筛选:
           </span>
           <div className='w-full max-w-md'>

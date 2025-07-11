@@ -41,12 +41,12 @@ function HomeContent() {
     <TabNavigationWrapper showDetailToggle={false}>
       <div className='space-y-8'>
         <header className='text-center space-y-4 px-4'>
-          <h1 className='text-4xl font-bold text-blue-600 py-3'>猫和老鼠手游wiki</h1>
-          <p className='text-xl text-gray-600 px-4 py-2'>查询角色技能和知识卡效果</p>
+          <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>猫和老鼠手游wiki</h1>
+          <p className='text-xl text-gray-600 dark:text-gray-300 px-4 py-2'>查询角色技能和知识卡效果</p>
         </header>
 
         <div className='flex flex-col items-center mt-16 px-4'>
-          <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800'>角色</h2>
+          <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800 dark:text-white'>角色</h2>
           <FactionButtonGroup>
             <FactionButton
               imageSrc='/images/icons/cat faction.png'
@@ -70,7 +70,7 @@ function HomeContent() {
         </div>
 
         <div className='flex flex-col items-center mt-16 px-4'>
-          <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800'>知识卡</h2>
+          <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800 dark:text-white'>知识卡</h2>
           <FactionButtonGroup>
             <FactionButton
               imageSrc='/images/icons/cat knowledge card.png'
@@ -96,17 +96,17 @@ function HomeContent() {
         {/* Division line before 网站说明 */}
         <div className='mt-24 mb-8 px-4'>
           <div className='max-w-4xl mx-auto'>
-            <div className='h-px bg-gray-300 w-full'></div>
+            <div className='h-px bg-gray-300 dark:bg-gray-700 w-full'></div>
           </div>
         </div>
 
         <div className='mt-8 text-center px-4' onDoubleClick={handleEditModeToggle}>
-          <h2 className='text-3xl font-bold mb-6 py-2'>网站说明</h2>
-          <p className='max-w-2xl mx-auto text-gray-600 px-4 py-3'>
+          <h2 className='text-3xl font-bold mb-6 py-2 dark:text-white'>网站说明</h2>
+          <p className='max-w-2xl mx-auto text-gray-600 dark:text-gray-300 px-4 py-3'>
             <DisclaimerText />
           </p>
           {process.env.NEXT_PUBLIC_BUILD_TIME && (
-            <p className='text-sm text-gray-500 mt-4'>
+            <p className='text-sm text-gray-500 dark:text-gray-400 mt-4'>
               最近更新：{process.env.NEXT_PUBLIC_BUILD_TIME}
             </p>
           )}

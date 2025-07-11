@@ -85,10 +85,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name='format-detection' content='telephone=no, date=no, email=no, address=no' />
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} dark`}>
         <ErrorBoundary>
           <OfflineIndicator />
-          <main className='min-h-screen bg-gray-100 relative pt-0'>{children}</main>
+          <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>{children}</main>
         </ErrorBoundary>
         <PerformanceMonitor />
         <ServiceWorkerRegistration />

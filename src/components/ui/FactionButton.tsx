@@ -1,7 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
-import { componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 
 export interface FactionButtonProps {
   emoji?: string;
@@ -28,12 +27,6 @@ export function FactionButton({
 
   priority = false,
 }: FactionButtonProps) {
-  const baseStyle = createStyleFromTokens(componentTokens.factionButton.base);
-  const contentStyle = createStyleFromTokens(componentTokens.factionButton.content);
-  const emojiStyle = createStyleFromTokens(componentTokens.factionButton.emoji);
-  const titleStyle = createStyleFromTokens(componentTokens.factionButton.title);
-  const descriptionStyle = createStyleFromTokens(componentTokens.factionButton.description);
-
   return (
     <button
       type='button'
@@ -45,14 +38,15 @@ export function FactionButton({
         'sm:py-4',
         'px-4',
         'py-3',
-        'dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-600',
+        'flex flex-col items-center justify-center gap-2 text-center flex-1 min-w-[180px]',
+        'bg-gray-200 text-gray-800 shadow-md rounded-md border-none focus:outline-none',
+        'dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900 dark:border-gray-700',
         className
       )}
-      style={{ ...baseStyle, padding: undefined }}
     >
-      <div style={contentStyle}>
+      <div className='flex items-center gap-3'>
         {imageSrc ? (
-          <div style={emojiStyle}>
+          <div className='text-2xl'>
             <Image
               src={imageSrc}
               alt={imageAlt || title}
@@ -64,11 +58,11 @@ export function FactionButton({
             />
           </div>
         ) : (
-          <span style={emojiStyle}>{emoji}</span>
+          <span className='text-2xl'>{emoji}</span>
         )}
-        <span style={titleStyle}>{title}</span>
+        <span className='text-2xl font-bold whitespace-nowrap'>{title}</span>
       </div>
-      <div style={descriptionStyle}>{description}</div>
+      <div className='text-sm text-gray-500 mt-1 dark:text-gray-400'>{description}</div>
     </button>
   );
 }

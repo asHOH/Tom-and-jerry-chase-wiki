@@ -27,7 +27,7 @@ export default function CharacterDisplay({
   }, [positioningTags, factionId]);
 
   const entryCardClass = isEntryCard
-    ? 'opacity-60 border-2 border-dashed border-slate-300 bg-slate-50'
+    ? 'opacity-60 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50'
     : '';
 
   return (
@@ -53,7 +53,7 @@ export default function CharacterDisplay({
         priority={priority}
       />
       <div className='px-6 pt-1 pb-6 text-center'>
-        <h2 className='text-xl font-bold mb-2'>{name}</h2>
+        <h2 className='text-xl font-bold mb-2 dark:text-white'>{name}</h2>
 
         {sortedPositioningTags && sortedPositioningTags.length > 0 && (
           <div

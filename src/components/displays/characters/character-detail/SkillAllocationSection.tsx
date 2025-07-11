@@ -64,7 +64,10 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
         <div className='space-y-3'>
           {localCharacter.skillAllocations && localCharacter.skillAllocations.length > 0
             ? localCharacter.skillAllocations.map((allocation, index) => (
-                <div key={allocation.id || `allocation-${index}`} className='card p-4'>
+                <div
+                  key={allocation.id || `allocation-${index}`}
+                  className='card dark:bg-slate-800 dark:border-slate-700 p-4'
+                >
                   <SkillAllocationDisplay
                     allocation={allocation}
                     factionId={factionId}
@@ -74,7 +77,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
                 </div>
               ))
             : isEditMode && (
-                <div className='card p-4 text-center text-gray-500'>
+                <div className='card dark:bg-slate-800 dark:border-slate-700 p-4 text-center text-gray-500 dark:text-gray-400'>
                   暂无推荐加点。点击下方按钮添加。
                 </div>
               )}
@@ -84,7 +87,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
                 type='button'
                 aria-label='添加技能加点'
                 onClick={handleAddSkillAllocation}
-                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600'
+                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'

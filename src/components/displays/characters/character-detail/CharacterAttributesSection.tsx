@@ -120,7 +120,9 @@ export default function CharacterAttributesSection({
             suffix={attr.suffix ?? ''}
             {...(attr.className && { className: attr.className })}
             {...(isLastClawKnifeCD && {
-              className: `${attr.className || 'text-sm text-gray-700 py-1'} col-span-2`,
+              className: `${
+                attr.className || 'text-sm text-gray-700 dark:text-gray-300 py-1'
+              } col-span-2`,
             })}
           />
         );
@@ -134,7 +136,7 @@ export default function CharacterAttributesSection({
             factionId={factionId}
             isDetailed={isDetailed}
             path='attackBoost'
-            className='text-sm text-amber-600 py-1'
+            className='text-sm text-amber-600 dark:text-amber-400 py-1'
           />
         )}
     </div>

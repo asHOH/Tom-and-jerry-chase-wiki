@@ -7,6 +7,7 @@ import SearchBar from './ui/SearchBar'; // Import SearchBar
 import Tooltip from './ui/Tooltip'; // Import Tooltip
 import { useAppContext } from '@/context/AppContext';
 import { useNavigation } from '@/lib/useNavigation';
+import clsx from 'clsx';
 
 type Tab = {
   id: string;
@@ -104,80 +105,34 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     return pathname === '/';
   };
 
-  const baseButtonStyle = {
-    borderRadius: '6px',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: isMobile ? '40px' : '44px',
-    minWidth: isMobile ? '40px' : 'auto',
-    position: 'relative' as const,
-    gap: isMobile ? '0' : '8px',
-    fontSize: isMobile ? '14px' : '16px',
-  };
-
-  const tabButtonStyle = (isActive: boolean, isNavigating: boolean = false) => ({
-    ...baseButtonStyle,
-    padding: isMobile ? '8px' : '8px 16px',
-    backgroundColor: isNavigating ? '#9ca3af' : isActive ? '#2563eb' : '#e5e7eb',
-    color: isNavigating ? '#ffffff' : isActive ? 'white' : '#1f2937',
-    opacity: isNavigating ? 0.8 : 1,
-    cursor: isNavigating ? 'not-allowed' : 'pointer',
-  });
-
-  const toggleButtonStyle = (isDetailedView: boolean) => ({
-    ...baseButtonStyle,
-    padding: isMobile ? '10px' : '10px 16px',
-    backgroundColor: isDetailedView ? '#dbeafe' : '#fef3e2',
-    color: isDetailedView ? '#1d4ed8' : '#ea580c',
-  });
-
   return (
     <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: 'white',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        zIndex: 9999,
-        width: '100%',
-        padding: '10px 0',
-      }}
+      className='fixed top-0 left-0 right-0 bg-white shadow-md z-50 w-full py-2 dark:bg-slate-900 dark:shadow-lg'
     >
       <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '0 16px',
-        }}
+        className='flex justify-between items-center max-w-screen-xl mx-auto px-4'
       >
         {/* Left-aligned navigation buttons */}
         <div
-          style={{
-            display: 'flex',
-            gap: isMobile ? '10px' : '12px',
-            overflowX: isMobile ? 'auto' : 'visible',
-            WebkitOverflowScrolling: 'touch',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            overflowY: 'visible',
-            position: 'relative',
-          }}
+          className={clsx(
+            'flex',
+            isMobile ? 'gap-2 overflow-x-auto' : 'gap-3',
+            '[scrollbar-width:none] [-ms-overflow-style:\'none\'] [overflow-y:visible] relative'
+          )}
         >
           <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>
             <button
               type='button'
               onClick={() => handleNavigation('/')}
-              className='whitespace-nowrap'
-              style={tabButtonStyle(isHomeActive(), navigatingTo === '/')}
+              className={clsx(
+                'whitespace-nowrap rounded-md border-none cursor-pointer transition-colors flex items-center justify-center',
+                isMobile ? 'min-h-[40px] min-w-[40px] p-2 text-sm' : 'min-h-[44px] px-4 text-base',
+                navigatingTo === '/'
+                  ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
+                  : isHomeActive()
+                    ? 'bg-blue-600 text-white dark:bg-blue-700'
+                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
+              )}
               disabled={navigatingTo !== null}
             >
               {!isMobile && '首页'}
@@ -195,8 +150,15 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <button
                 type='button'
                 onClick={() => handleNavigation(tab.path)}
-                className='whitespace-nowrap'
-                style={tabButtonStyle(isTabActive(tab.path), navigatingTo === tab.path)}
+                className={clsx(
+                  'whitespace-nowrap rounded-md border-none cursor-pointer transition-colors flex items-center justify-center',
+                  isMobile ? 'min-h-[40px] p-2 text-sm gap-0' : 'min-h-[44px] px-4 text-base gap-2',
+                  navigatingTo === tab.path
+                    ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
+                    : isTabActive(tab.path)
+                      ? 'bg-blue-600 text-white dark:bg-blue-700'
+                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
+                )}
                 disabled={navigatingTo !== null}
               >
                 <Image
@@ -214,7 +176,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         </div>
 
         {/* Right-aligned detailed/simple view toggle button and SearchBar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '12px' }}>
+        <div className={clsx('flex items-center', isMobile ? 'gap-2' : 'gap-3')}>
           <SearchBar isMobile={isMobile} />
           {showDetailToggle && (
             <Tooltip
@@ -226,8 +188,13 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <button
                 type='button'
                 onClick={toggleDetailedView}
-                className='whitespace-nowrap'
-                style={toggleButtonStyle(isDetailedView)}
+                className={clsx(
+                  'whitespace-nowrap rounded-md border-none cursor-pointer transition-colors',
+                  isMobile ? 'min-h-[40px] p-2 text-sm' : 'min-h-[44px] px-4 text-base',
+                  isDetailedView
+                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'
+                    : 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300'
+                )}
               >
                 {isMobile ? (isDetailedView ? '简' : '详') : isDetailedView ? '简明' : '详细'}
               </button>

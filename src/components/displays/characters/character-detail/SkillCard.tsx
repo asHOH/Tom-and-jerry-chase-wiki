@@ -544,11 +544,11 @@ export default function SkillCard({
   const hasProperties = properties.length > 0;
 
   return (
-    <div className='card p-6'>
+    <div className='card p-6 dark:bg-slate-800 dark:border-slate-700'>
       <div className='flex justify-between items-start'>
         {skill.imageUrl && (
           <div className='flex-shrink-0 mr-6'>
-            <div className='relative w-16 h-16 rounded-full border-2 overflow-hidden border-gray-300 bg-white'>
+            <div className='relative w-16 h-16 rounded-full border-2 overflow-hidden border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700'>
               <Image
                 src={skill.imageUrl}
                 alt={skill.name}
@@ -565,8 +565,8 @@ export default function SkillCard({
                   onClick={() => setShowVideoAddress(!showVideoAddress)}
                   className={`text-xs px-2 py-1 rounded-md block w-full text-center transition-colors ${
                     skill.videoUrl
-                      ? 'text-blue-600 hover:underline bg-blue-50 hover:bg-blue-100'
-                      : 'text-red-600 bg-red-50 hover:bg-red-100'
+                      ? 'text-blue-600 hover:underline bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+                      : 'text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900'
                   }`}
                 >
                   {showVideoAddress ? '隐藏视频地址' : skill.videoUrl ? '查看视频' : '无视频'}
@@ -574,7 +574,7 @@ export default function SkillCard({
                 {showVideoAddress && (
                   <EditableField
                     tag='div'
-                    className='text-blue-600 text-xs px-2 py-1 hover:underline bg-blue-50 rounded-md hover:bg-blue-100 transition-colors block w-full text-center wrap-anywhere mt-2'
+                    className='text-blue-600 dark:text-blue-300 text-xs px-2 py-1 hover:underline bg-blue-50 dark:bg-blue-900/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors block w-full text-center wrap-anywhere mt-2'
                     path={`skills.${skillIndex}.videoUrl`}
                     initialValue={skill.videoUrl ?? '输入视频网址'}
                     onSave={(newValue) => {
@@ -605,7 +605,7 @@ export default function SkillCard({
                 <button
                   type='button'
                   onClick={() => window.open(skill.videoUrl, '_blank', 'noopener,noreferrer')}
-                  className='text-blue-600 text-xs px-2 py-1 hover:underline bg-blue-50 rounded-md hover:bg-blue-100 transition-colors block w-full text-center'
+                  className='text-blue-600 dark:text-blue-300 text-xs px-2 py-1 hover:underline bg-blue-50 dark:bg-blue-900/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors block w-full text-center'
                 >
                   查看视频
                 </button>
@@ -616,7 +616,7 @@ export default function SkillCard({
 
         <div className='flex-1'>
           <div className='flex justify-between items-center'>
-            <h3 className='text-xl font-bold px-2 py-2'>
+            <h3 className='text-xl font-bold px-2 py-2 dark:text-white'>
               {getSkillTypeLabel(skill.type)} ·{' '}
               <EditableField
                 tag='span'
@@ -651,7 +651,7 @@ export default function SkillCard({
                   removeSkill(characters[characterId]!);
                   saveFactionsAndCharacters();
                 }}
-                className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600'
+                className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -672,7 +672,7 @@ export default function SkillCard({
           </div>
 
           {hasProperties && (
-            <div className='text-sm text-gray-500 mt-1 px-2'>
+            <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2'>
               {properties.map((prop, index) => (
                 <React.Fragment key={index}>
                   {index > 0 && ' · '}
@@ -684,9 +684,13 @@ export default function SkillCard({
 
           {descriptionText !== undefined && (
             <div className='mt-3 px-2'>
-              <p className='text-gray-700 py-2 whitespace-pre-wrap'>
+              <p className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
                 <EditableField
-                  initialValue={descriptionText}
+                  initialValue={
+                    isDetailed && skill.detailedDescription?.trim()
+                      ? skill.detailedDescription
+                      : skill.description
+                  }
                   path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
                   tag='span'
                 />

@@ -22,7 +22,7 @@ export default function CharacterSection({
       <button
         type='button'
         aria-label={isOpen ? `折叠${title}` : `展开${title}`}
-        className='flex items-center justify-between w-full text-2xl font-bold px-2 py-3 mb-1 focus:outline-none cursor-pointer'
+        className='flex items-center justify-between w-full text-2xl font-bold px-2 py-3 mb-1 focus:outline-none cursor-pointer dark:text-white'
         onClick={toggleOpen}
       >
         <h3>{title}</h3>

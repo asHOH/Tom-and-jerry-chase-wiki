@@ -132,13 +132,13 @@ const PasteInputModal: React.FC<PasteInputModalProps> = ({
 
   return (
     <div
-      className='flex flex-col items-stretch justify-center w-full p-4'
+      className='flex flex-col items-stretch justify-center w-full p-4 dark:text-gray-200'
       style={{ height: containerHeight }}
     >
       <p className='text-center mb-4'>请将内容粘贴到下方文本框:</p>
       <textarea
         ref={pasteInputRef}
-        className='flex-grow w-full border border-gray-400 p-2 resize-none'
+        className='flex-grow w-full border border-gray-400 dark:border-gray-600 p-2 resize-none dark:bg-slate-700 dark:text-gray-200'
         placeholder='在此处粘贴内容...'
         value={textareaContent} // Bind value to state
         onChange={handleTextareaChange} // Use onChange for controlled component
@@ -150,7 +150,7 @@ const PasteInputModal: React.FC<PasteInputModalProps> = ({
         <button
           type='button'
           aria-label='确认上传角色数据'
-          className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2'
+          className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2 dark:bg-blue-600 dark:hover:bg-blue-700'
           onClick={handleSubmit}
         >
           确认上传
@@ -158,7 +158,7 @@ const PasteInputModal: React.FC<PasteInputModalProps> = ({
         <button
           type='button'
           aria-label='取消上传角色数据'
-          className='bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded'
+          className='bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded dark:bg-slate-600 dark:hover:bg-slate-500 dark:text-gray-200'
           onClick={onCancel}
         >
           取消
@@ -319,7 +319,7 @@ export default function CharacterImport() {
             <button
               type='button'
               aria-label='从文件上传角色数据'
-              className='bg-white hover:bg-gray-100 text-black font-bold flex-grow w-full flex items-center justify-center border-b border-gray-400 cursor-pointer text-xl'
+              className='bg-white dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 text-black dark:text-gray-200 font-bold flex-grow w-full flex items-center justify-center border-b border-gray-400 dark:border-gray-600 cursor-pointer text-xl'
               onClick={(e) => {
                 e.stopPropagation();
                 fileInputRef.current?.click();
@@ -330,7 +330,7 @@ export default function CharacterImport() {
             <button
               type='button'
               aria-label='从剪贴板上传角色数据'
-              className='bg-white hover:bg-gray-100 text-black font-bold flex-grow w-full flex items-center justify-center cursor-pointer text-xl'
+              className='bg-white dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 text-black dark:text-gray-200 font-bold flex-grow w-full flex items-center justify-center cursor-pointer text-xl'
               onClick={handlePasteClick}
             >
               从剪贴板上传
