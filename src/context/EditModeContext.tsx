@@ -38,7 +38,6 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     if (isEditMode) {
       localStorage.removeItem('characters');
       localStorage.removeItem('factions');
-    } else {
     }
   };
 
@@ -57,10 +56,6 @@ export const useEditMode = () => {
   return context;
 };
 
-/**
- * @deprecated directly use characters from the data module instead.
- * do NOT change this unless the user has explicitly requested to change the function and has confirmed that it will not break the app.
- */
 export const useLocalCharacter = () => {
   const path = usePathname();
   const pathParts = path?.split('/') || [];
