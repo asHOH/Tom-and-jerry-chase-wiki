@@ -17,6 +17,7 @@ import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { getSkillImageUrl } from '@/lib/skillUtils';
 import ContentWriterDisplay from './ContentWriterDisplay';
+import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
@@ -123,7 +124,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
             />
 
             <div className='mt-6 space-y-3'>
-              <CharacterAttributesSection character={localCharacter} factionId={factionId} />
+              <CharacterAttributesSection factionId={factionId} />
 
               <PositioningTagsSection tags={positioningTags} factionId={factionId} />
             </div>
@@ -144,7 +145,7 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
                 const isSingleWeapon = weaponSkills.length === 1;
 
                 return localCharacter.skills
-                  .map<React.ReactNode>((skill: Skill, index) => (
+                  .map<React.ReactNode>((skill: DeepReadonly<Skill>, index) => (
                     <SkillCard
                       key={skill.id}
                       skill={skill}

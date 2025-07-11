@@ -10,9 +10,9 @@ import Tooltip from './Tooltip';
 interface KnowledgeCardPickerProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (newCards: string[]) => void;
+  onSave: (newCards: readonly string[]) => void;
   factionId: 'cat' | 'mouse';
-  initialSelectedCards: string[];
+  initialSelectedCards: readonly string[];
 }
 
 // TODO: allow to change card descriptions
@@ -23,7 +23,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
   factionId,
   initialSelectedCards,
 }) => {
-  const [selectedCards, setSelectedCards] = useState<string[]>(initialSelectedCards);
+  const [selectedCards, setSelectedCards] = useState<readonly string[]>(initialSelectedCards);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {

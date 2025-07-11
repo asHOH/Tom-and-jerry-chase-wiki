@@ -8,9 +8,7 @@ import { Skill, SkillLevel } from '@/data/types';
 import EditableField from '@/components/ui/EditableField';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { useAppContext } from '@/context/AppContext';
-import { setNestedProperty } from '@/lib/editUtils';
 import { characters } from '@/data';
-import { produce } from 'immer';
 import { CharacterWithFaction } from '@/lib/types';
 import { getSkillImageUrl } from '@/lib/skillUtils';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
@@ -51,11 +49,6 @@ export default function SkillCard({
 
     return () => {}; // Empty cleanup function for SSR
   }, []);
-
-  const handleSaveChanges = (updatedSkill: Skill) => {
-    setNestedProperty(characters, `${localCharacter.id}.skills.${skillIndex}`, updatedSkill);
-    // Removed setLocalCharacter call due to missing function.
-  };
 
   const getSkillTypeLabel = (type: string) => {
     if (isSingleWeapon && type === 'weapon1') {
@@ -105,11 +98,7 @@ export default function SkillCard({
               type='checkbox'
               checked={skill.canMoveWhileUsing ?? false}
               onChange={(e) => {
-                handleSaveChanges(
-                  produce(skill, (skill) => {
-                    skill.canMoveWhileUsing = e.target.checked;
-                  })
-                );
+                characters[characterId]!.skills[skillIndex]!.canMoveWhileUsing = e.target.checked;
               }}
               className='w-3 h-3'
             />
@@ -125,12 +114,7 @@ export default function SkillCard({
               type='checkbox'
               checked={skill.canUseInAir ?? false}
               onChange={(e) => {
-                skill.canUseInAir = e.target.checked;
-                handleSaveChanges(
-                  produce(skill, (skill) => {
-                    skill.canUseInAir = e.target.checked;
-                  })
-                );
+                characters[characterId]!.skills[skillIndex]!.canUseInAir = e.target.checked;
               }}
               className='w-3 h-3'
             />
@@ -210,15 +194,12 @@ export default function SkillCard({
                           } else {
                             newMethods = newMethods.filter((m) => m !== option);
                           }
-                          handleSaveChanges(
-                            produce(skill, (skill) => {
-                              if (newMethods.length === 0) {
-                                delete skill.cancelableSkill;
-                              } else {
-                                skill.cancelableSkill = newMethods.join('或');
-                              }
-                            })
-                          );
+                          const skill = characters[characterId]!.skills[skillIndex]!;
+                          if (newMethods.length === 0) {
+                            delete skill.cancelableSkill;
+                          } else {
+                            skill.cancelableSkill = newMethods.join('或');
+                          }
                         }}
                         className='w-3 h-3'
                       />
@@ -269,16 +250,12 @@ export default function SkillCard({
                               );
                             }
                           }
-
-                          handleSaveChanges(
-                            produce(skill, (skill) => {
-                              if (newMethods.length === 0) {
-                                delete skill.cancelableSkill;
-                              } else {
-                                skill.cancelableSkill = newMethods.join('或');
-                              }
-                            })
-                          );
+                          const skill = characters[characterId]!.skills[skillIndex]!;
+                          if (newMethods.length === 0) {
+                            delete skill.cancelableSkill;
+                          } else {
+                            skill.cancelableSkill = newMethods.join('或');
+                          }
                         }}
                         className='w-3 h-3'
                       />
@@ -368,15 +345,12 @@ export default function SkillCard({
                           } else {
                             newMethods = newMethods.filter((m) => m !== option);
                           }
-                          handleSaveChanges(
-                            produce(skill, (skill) => {
-                              if (newMethods.length === 0) {
-                                delete skill.cancelableAftercast;
-                              } else {
-                                skill.cancelableAftercast = newMethods.join('或');
-                              }
-                            })
-                          );
+                          const skill = characters[characterId]!.skills[skillIndex]!;
+                          if (newMethods.length === 0) {
+                            delete skill.cancelableAftercast;
+                          } else {
+                            skill.cancelableAftercast = newMethods.join('或');
+                          }
                         }}
                         className='w-3 h-3'
                       />
@@ -428,15 +402,12 @@ export default function SkillCard({
                             }
                           }
 
-                          handleSaveChanges(
-                            produce(skill, (skill) => {
-                              if (newMethods.length === 0) {
-                                delete skill.cancelableAftercast;
-                              } else {
-                                skill.cancelableAftercast = newMethods.join('或');
-                              }
-                            })
-                          );
+                          const skill = characters[characterId]!.skills[skillIndex]!;
+                          if (newMethods.length === 0) {
+                            delete skill.cancelableAftercast;
+                          } else {
+                            skill.cancelableAftercast = newMethods.join('或');
+                          }
                         }}
                         className='w-3 h-3'
                       />
@@ -482,11 +453,8 @@ export default function SkillCard({
                       name={`cooldownTiming-${skillIndex}`}
                       checked={currentTiming === option}
                       onChange={() => {
-                        handleSaveChanges(
-                          produce(skill, (skill) => {
-                            skill.cooldownTiming = option as '前摇前' | '释放时' | '释放后';
-                          })
-                        );
+                        const skill = characters[characterId]!.skills[skillIndex]!;
+                        skill.cooldownTiming = option as '前摇前' | '释放时' | '释放后';
                       }}
                       className='w-3 h-3'
                     />
@@ -570,21 +538,14 @@ export default function SkillCard({
                     path={`skills.${skillIndex}.videoUrl`}
                     initialValue={skill.videoUrl ?? '输入视频网址'}
                     onSave={(newValue) => {
+                      const skill = characters[characterId]!.skills[skillIndex]!;
                       // Don't save if the value is the default placeholder text
                       if (newValue.trim() === '输入视频网址' || newValue.trim() === '') {
                         // Clear the video URL
-                        handleSaveChanges(
-                          produce(skill, (skill) => {
-                            delete skill.videoUrl;
-                          })
-                        );
+                        delete skill.videoUrl;
                       } else {
                         // Save the actual URL
-                        handleSaveChanges(
-                          produce(skill, (skill) => {
-                            skill.videoUrl = newValue.trim();
-                          })
-                        );
+                        skill.videoUrl = newValue.trim();
                       }
                     }}
                   />
@@ -617,15 +578,14 @@ export default function SkillCard({
                 onSave={(newName) => {
                   // Update skill with new name and regenerate image URL
                   const factionId = localCharacter.faction.id as 'cat' | 'mouse';
-                  const updatedSkill = produce(skill, (draft) => {
-                    draft.name = newName;
-                    draft.imageUrl = getSkillImageUrl(
-                      localCharacter.id,
-                      { ...draft, name: newName },
-                      factionId
-                    );
-                  });
-                  handleSaveChanges(updatedSkill);
+
+                  const skill = characters[characterId]!.skills[skillIndex]!;
+                  skill.name = newName;
+                  skill.imageUrl = getSkillImageUrl(
+                    localCharacter.id,
+                    { ...skill, name: newName },
+                    factionId
+                  );
                 }}
               />
             </h3>

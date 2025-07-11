@@ -13,12 +13,13 @@ import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
 import EditableField from '@/components/ui/EditableField';
 import { getCardRankColors } from '@/lib/design-tokens';
 import KnowledgeCardTooltip from '@/components/ui/KnowledgeCardTooltip';
+import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import { characters } from '@/data';
 
 interface KnowledgeCardSectionProps {
-  knowledgeCardGroups: KnowledgeCardGroup[];
+  knowledgeCardGroups: DeepReadonly<KnowledgeCardGroup[]>;
   factionId: 'cat' | 'mouse';
   characterId: string;
-  onSaveChanges: (updatedGroups: KnowledgeCardGroup[]) => void;
   onCreateGroup: () => void;
   onRemoveGroup: (index: number) => void;
 }
@@ -27,7 +28,6 @@ export default function KnowledgeCardSection({
   knowledgeCardGroups,
   factionId,
   characterId,
-  onSaveChanges,
   onCreateGroup,
   onRemoveGroup,
 }: KnowledgeCardSectionProps) {
@@ -90,13 +90,11 @@ export default function KnowledgeCardSection({
 
     if (currentGroup) {
       // Update description - all groups are now objects
-      currentGroup.description = newDescription;
+      characters[characterId]!.knowledgeCardGroups[index]!.description = newDescription;
     }
-
-    onSaveChanges(updatedGroups);
   };
 
-  const handlePickerSave = (newCards: string[]) => {
+  const handlePickerSave = (newCards: readonly string[]) => {
     if (currentGroupIndex === null) return;
 
     const updatedGroups = [...knowledgeCardGroups];
@@ -104,14 +102,17 @@ export default function KnowledgeCardSection({
 
     if (currentGroup) {
       // Update cards - all groups are now objects
-      currentGroup.cards = newCards;
+      characters[characterId]!.knowledgeCardGroups[currentGroupIndex]!.cards = Array.from(newCards);
     }
 
-    onSaveChanges(updatedGroups);
     setPickerOpen(false);
   };
 
-  const renderKnowledgeCardGroup = (group: string[], index: number, description?: string) => {
+  const renderKnowledgeCardGroup = (
+    group: readonly string[],
+    index: number,
+    description?: string
+  ) => {
     if (group.length === 0 && !isEditMode) {
       return null;
     }

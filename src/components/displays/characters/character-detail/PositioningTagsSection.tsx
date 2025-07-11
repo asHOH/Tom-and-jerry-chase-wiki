@@ -13,11 +13,11 @@ import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 interface PositioningTagsSectionProps {
-  tags: Array<{
-    tagName: string;
-    isMinor: boolean;
-    description: string;
-    additionalDescription?: string;
+  tags: ReadonlyArray<{
+    readonly tagName: string;
+    readonly isMinor: boolean;
+    readonly description: string;
+    readonly additionalDescription?: string;
   }>;
   factionId: 'cat' | 'mouse';
 }

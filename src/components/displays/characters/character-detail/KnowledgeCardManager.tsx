@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { characters } from '@/data'; // Import Character type
-import { setNestedProperty } from '@/lib/editUtils';
 import type { KnowledgeCardGroup } from '@/data/types';
 import KnowledgeCardSection from './KnowledgeCardSection';
 import { useLocalCharacter } from '@/context/EditModeContext';
@@ -25,23 +24,18 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
     }
   }, [character.knowledgeCardGroups]);
 
-  const handleSaveChanges = (updatedGroups: DeepReadonly<KnowledgeCardGroup[]>) => {
-    const path = `${character.id}.knowledgeCardGroups`;
-    setNestedProperty(characters, path, updatedGroups);
-  };
-
   const handleCreateGroup = () => {
     const newGroup: KnowledgeCardGroup = {
       cards: [],
       description: '待补充',
     };
-    const updatedGroups = [...knowledgeCardGroups, newGroup];
-    handleSaveChanges(updatedGroups);
+    characters[character.id]!.knowledgeCardGroups.push(newGroup);
   };
 
   const handleRemoveGroup = (index: number) => {
-    const updatedGroups = knowledgeCardGroups.filter((_, i) => i !== index);
-    handleSaveChanges(updatedGroups);
+    characters[character.id]!.knowledgeCardGroups = characters[
+      character.id
+    ]!.knowledgeCardGroups.filter((_, i) => i !== index);
   };
 
   return (
@@ -49,7 +43,6 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
       knowledgeCardGroups={knowledgeCardGroups}
       factionId={factionId}
       characterId={character.id}
-      onSaveChanges={handleSaveChanges}
       onCreateGroup={handleCreateGroup}
       onRemoveGroup={handleRemoveGroup}
     />

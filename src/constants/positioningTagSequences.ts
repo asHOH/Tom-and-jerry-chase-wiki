@@ -38,10 +38,9 @@ export function getPositioningTagSequence(tagName: string, factionId: 'cat' | 'm
  * Sort positioning tags according to their display sequence
  * Main tags are sorted by sequence, then minor tags are sorted by sequence
  */
-export function sortPositioningTags<T extends { tagName: string; isMinor: boolean }>(
-  tags: T[],
-  factionId: 'cat' | 'mouse'
-): T[] {
+export function sortPositioningTags<
+  T extends { readonly tagName: string; readonly isMinor: boolean },
+>(tags: readonly T[], factionId: 'cat' | 'mouse'): T[] {
   return Array.from(tags).sort((a, b) => {
     // Main tags always come before minor tags
     if (a.isMinor !== b.isMinor) {

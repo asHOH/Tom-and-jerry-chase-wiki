@@ -1,8 +1,8 @@
 import React from 'react';
 import AttributeDisplay from './AttributeDisplay';
-import { Character, FactionId } from '@/data/types';
+import { FactionId } from '@/data/types';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 
 interface CharacterAttribute {
   label: string;
@@ -14,14 +14,11 @@ interface CharacterAttribute {
 }
 
 interface CharacterAttributesSectionProps {
-  character: Character;
   factionId: FactionId;
 }
 
-export default function CharacterAttributesSection({
-  character,
-  factionId,
-}: CharacterAttributesSectionProps) {
+export default function CharacterAttributesSection({ factionId }: CharacterAttributesSectionProps) {
+  const { localCharacter: character } = useLocalCharacter();
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
   const commonAttributes: CharacterAttribute[] = [

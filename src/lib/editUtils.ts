@@ -382,7 +382,7 @@ export function handleChange<T>(
   saveFactionsAndCharacters();
 }
 
-export function generateTypescriptCodeFromCharacter(character: CharacterWithFaction) {
+export function generateTypescriptCodeFromCharacter(character: DeepReadonly<CharacterWithFaction>) {
   return (
     `/* ----------------------------------- ${character.id} ----------------------------------- */\n` +
     character.id +
