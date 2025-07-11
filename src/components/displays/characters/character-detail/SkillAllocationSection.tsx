@@ -8,16 +8,20 @@ import { useCallback } from 'react';
 import { setNestedProperty } from '@/lib/editUtils';
 import { SkillAllocation } from '@/data/types';
 import { characters } from '@/data';
+import { useSnapshot } from 'valtio';
 
 export const useSkillAllocationManagement = () => {
-  const { localCharacter } = useLocalCharacter();
+  const { characterId } = useLocalCharacter();
+  const localCharacter = useSnapshot(characters[characterId]!);
   const handleSaveChanges = useCallback(
     (updatedSkillAllocations: SkillAllocation[]) => {
+      if (!localCharacter) return;
       setNestedProperty(
         characters,
         `${localCharacter.id}.skillAllocations`,
         updatedSkillAllocations
       );
+      characters[localCharacter.id]!.skillAllocations = updatedSkillAllocations;
 
       // Removed setLocalCharacter call due to missing function.
     },
@@ -25,23 +29,25 @@ export const useSkillAllocationManagement = () => {
   );
 
   const handleAddSkillAllocation = useCallback(() => {
-    const newAllocationId = `加点方案 ${localCharacter.skillAllocations!.length + 1}`;
+    if (!localCharacter.skillAllocations) return;
+    const newAllocationId = `加点方案 ${localCharacter.skillAllocations.length + 1}`;
     const newAllocation: SkillAllocation = {
       id: newAllocationId,
       pattern: '121212000', // Default pattern
       weaponType: 'weapon1', // Default weapon type
       description: '新增加点方案描述',
     };
-    handleSaveChanges([...localCharacter.skillAllocations!, newAllocation]);
-  }, [handleSaveChanges, localCharacter.skillAllocations]);
+    handleSaveChanges([...localCharacter.skillAllocations, newAllocation]);
+  }, [handleSaveChanges, localCharacter?.skillAllocations]);
 
   const handleRemoveSkillAllocation = useCallback(
     (allocationId: string) => {
+      if (!localCharacter.skillAllocations) return;
       handleSaveChanges(
-        localCharacter.skillAllocations!.filter((alloc) => alloc.id !== allocationId)
+        localCharacter.skillAllocations.filter((alloc) => alloc.id !== allocationId)
       );
     },
-    [handleSaveChanges, localCharacter.skillAllocations]
+    [handleSaveChanges, localCharacter?.skillAllocations]
   );
 
   return {
@@ -56,14 +62,15 @@ interface SkillAllocationSectionProps {
 
 const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ factionId }) => {
   const { isEditMode } = useEditMode();
-  const { localCharacter } = useLocalCharacter();
+  const { characterId } = useLocalCharacter();
+  const skillAllocations = useSnapshot(characters[characterId]?.skillAllocations ?? []);
   const { handleAddSkillAllocation, handleRemoveSkillAllocation } = useSkillAllocationManagement();
   return (
     <div>
       <CharacterSection title='推荐加点'>
         <div className='space-y-3'>
-          {localCharacter.skillAllocations && localCharacter.skillAllocations.length > 0
-            ? localCharacter.skillAllocations.map((allocation, index) => (
+          {skillAllocations && skillAllocations.length > 0
+            ? skillAllocations.map((allocation, index) => (
                 <div
                   key={allocation.id || `allocation-${index}`}
                   className='card dark:bg-slate-800 dark:border-slate-700 p-4'

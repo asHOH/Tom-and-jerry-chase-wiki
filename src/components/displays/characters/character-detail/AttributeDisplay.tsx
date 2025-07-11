@@ -3,6 +3,8 @@ import Tooltip from '../../../ui/Tooltip';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import EditableField from '@/components/ui/EditableField';
 import { useLocalCharacter } from '@/context/EditModeContext';
+import { useSnapshot } from 'valtio';
+import { characters } from '@/data';
 
 interface AttributeDisplayProps {
   label: string;
@@ -27,7 +29,8 @@ export default function AttributeDisplay({
   path,
   suffix,
 }: AttributeDisplayProps) {
-  const { localCharacter } = useLocalCharacter();
+  const { characterId } = useLocalCharacter();
+  const localCharacter = useSnapshot(characters[characterId]!);
   return (
     <p className={className}>
       <Tooltip content={getTooltipContent(label, factionId, isDetailed)}>{label}</Tooltip>:

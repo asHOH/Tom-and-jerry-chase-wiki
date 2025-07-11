@@ -5,6 +5,7 @@ import { characters } from '@/data'; // Import Character type
 import type { KnowledgeCardGroup } from '@/data/types';
 import KnowledgeCardSection from './KnowledgeCardSection';
 import { useLocalCharacter } from '@/context/EditModeContext';
+import { useSnapshot } from 'valtio';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 interface KnowledgeCardManagerProps {
@@ -16,7 +17,8 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
   const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<
     DeepReadonly<KnowledgeCardGroup[]>
   >([]);
-  const { localCharacter: character } = useLocalCharacter();
+  const { characterId } = useLocalCharacter();
+  const character = useSnapshot(characters[characterId]!);
 
   useEffect(() => {
     if (character?.knowledgeCardGroups) {

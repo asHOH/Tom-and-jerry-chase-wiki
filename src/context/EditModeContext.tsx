@@ -1,12 +1,7 @@
 'use client';
 
-import { characters } from '@/data';
-import { loadFactionsAndCharacters } from '@/lib/editUtils';
-import { CharacterWithFaction } from '@/lib/types';
-import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { usePathname } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useSnapshot } from 'valtio';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -14,14 +9,7 @@ interface EditModeContextType {
   toggleEditMode: () => void;
 }
 
-interface LocalCharacterContextType {
-  localCharacter: DeepReadonly<CharacterWithFaction>;
-}
-
 const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
-export const LocalCharacterContext = createContext<LocalCharacterContextType | undefined>(
-  undefined
-);
 
 export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(() => {
@@ -41,7 +29,6 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (isEditMode) {
-      loadFactionsAndCharacters();
       setIsLoading(false); // Set loading to false after data is loaded
     }
   }, [isEditMode]);
@@ -62,34 +49,6 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const LocalCharacterProvider = ({
-  character,
-  children,
-}: {
-  character: CharacterWithFaction;
-  children: ReactNode;
-}) => {
-  const path = usePathname();
-  const pathParts = path?.split('/') || [];
-  const characterId = pathParts[pathParts.length - 2]; // Get characterId from path
-
-  const foundCharacter = React.useMemo(() => {
-    if (characterId) {
-      const decodedCharacterId = decodeURIComponent(characterId);
-      return characters[decodedCharacterId]!;
-    }
-    return character;
-  }, [characterId, character]);
-
-  const localCharacter = useSnapshot(foundCharacter);
-
-  return (
-    <LocalCharacterContext.Provider value={{ localCharacter }}>
-      {children}
-    </LocalCharacterContext.Provider>
-  );
-};
-
 export const useEditMode = () => {
   const context = useContext(EditModeContext);
   if (context === undefined) {
@@ -103,9 +62,9 @@ export const useEditMode = () => {
  * do NOT change this unless the user has explicitly requested to change the function and has confirmed that it will not break the app.
  */
 export const useLocalCharacter = () => {
-  const context = useContext(LocalCharacterContext);
-  if (context === undefined) {
-    throw new Error('useEditMode must be used within an EditModeProvider');
-  }
+  const path = usePathname();
+  const pathParts = path?.split('/') || [];
+  const characterId = pathParts[pathParts.length - 2]; // Get characterId from path
+  const context = { characterId: decodeURIComponent(characterId!) };
   return context;
 };

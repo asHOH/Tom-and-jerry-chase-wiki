@@ -3,6 +3,8 @@ import AttributeDisplay from './AttributeDisplay';
 import { FactionId } from '@/data/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useSnapshot } from 'valtio';
+import { characters } from '@/data';
 
 interface CharacterAttribute {
   label: string;
@@ -18,7 +20,8 @@ interface CharacterAttributesSectionProps {
 }
 
 export default function CharacterAttributesSection({ factionId }: CharacterAttributesSectionProps) {
-  const { localCharacter: character } = useLocalCharacter();
+  const { characterId } = useLocalCharacter();
+  const character = useSnapshot(characters[characterId]!);
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
   const commonAttributes: CharacterAttribute[] = [

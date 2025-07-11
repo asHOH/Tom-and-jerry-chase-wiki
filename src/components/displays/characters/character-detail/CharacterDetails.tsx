@@ -11,7 +11,8 @@ import KnowledgeCardManager from './KnowledgeCardManager';
 import { useState } from 'react';
 import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
-import { LocalCharacterProvider, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useSnapshot } from 'valtio';
 import SkillAllocationSection from './SkillAllocationSection';
 import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import { characters } from '@/data';
@@ -19,10 +20,11 @@ import { getSkillImageUrl } from '@/lib/skillUtils';
 import ContentWriterDisplay from './ContentWriterDisplay';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
-function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
+export default function CharacterDetails({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
   const [copyMessage, setCopyMessage] = useState('');
-  const { localCharacter } = useLocalCharacter();
+  const { characterId } = useLocalCharacter();
+  const localCharacter = useSnapshot(characters[characterId]!);
   const factionId = localCharacter.faction.id as 'cat' | 'mouse';
 
   function addSecondWeapon() {
@@ -186,13 +188,5 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function CharacterDetails({ character }: CharacterDetailsProps) {
-  return (
-    <LocalCharacterProvider character={character}>
-      <CharacterDetailsImplementation character={character} />
-    </LocalCharacterProvider>
   );
 }

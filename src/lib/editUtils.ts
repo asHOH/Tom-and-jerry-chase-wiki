@@ -162,33 +162,6 @@ export function handleCharacterSkillIdChange(
   // Removed setLocalCharacter call due to missing function.
 }
 
-/**
- * @deprecated update characters directly :-)
- */
-export function saveFactionsAndCharacters() {
-  // Ensure all characters have complete data structure before saving
-  Object.keys(characters).forEach((characterId) => {
-    const character = characters[characterId];
-    if (character) {
-      try {
-        // Validate and enhance character before saving
-        const enhanced = validateAndEnhanceCharacter(character, characterId);
-        // Use Object.assign to preserve the original object reference
-        Object.assign(character, enhanced);
-      } catch (error) {
-        console.error(`Failed to validate character ${characterId} before saving:`, error);
-        // Ensure at least basic id field exists
-        if (!character.id) {
-          character.id = characterId;
-        }
-      }
-    }
-  });
-
-  localStorage.setItem('factions', JSON.stringify(factions));
-  localStorage.setItem('characters', JSON.stringify(characters));
-}
-
 // Get the list of original character IDs (before any edits)
 export function getOriginalCharacterIds(): string[] {
   if (typeof window === 'undefined') {
@@ -245,6 +218,7 @@ export function validateCharacterStructure(
 }
 
 export function loadFactionsAndCharacters() {
+  return;
   // 1. Save original data if not already saved
   if (typeof window !== 'undefined' && !localStorage.getItem('originalCharacters')) {
     localStorage.setItem('originalCharacters', JSON.stringify(characters));
@@ -377,9 +351,6 @@ export function handleChange<T>(
     // Removed setLocalCharacter call due to missing function.
     setNestedProperty(characters, path, finalValue);
   }
-
-  // Save changes after every modification.
-  saveFactionsAndCharacters();
 }
 
 export function generateTypescriptCodeFromCharacter(character: DeepReadonly<CharacterWithFaction>) {

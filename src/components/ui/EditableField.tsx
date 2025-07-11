@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useEditMode, useLocalCharacter } from '../../context/EditModeContext';
+import { characters } from '@/data/index';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 import { useAppContext } from '@/context/AppContext';
 import { getNestedProperty, handleChange } from '@/lib/editUtils';
@@ -42,25 +43,25 @@ function EditableFieldImplementation<T>({
 }: EditableFieldProps<T>) {
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
-  const { localCharacter } = useLocalCharacter();
+  const { characterId } = useLocalCharacter();
+  const localCharacter = characters[characterId];
   const { handleSelectCharacter } = useAppContext();
 
   useEffect(() => {
-    const storedData = localStorage.getItem('characters');
-    if (storedData) {
-      try {
-        const parsedData = localCharacter;
-        const storedValue = getNestedProperty<T>(parsedData, path);
-        if (typeof storedValue === 'string' || typeof storedValue === 'number') {
-          setContent(storedValue);
-        } else {
-          setContent(initialValue);
-        }
-      } catch (e) {
-        console.error('Failed to parse localStorage data', e);
+    try {
+      if (!localCharacter) {
+        setContent(initialValue);
+        return;
+      }
+      const parsedData = localCharacter;
+      const storedValue = getNestedProperty<T>(parsedData, path);
+      if (typeof storedValue === 'string' || typeof storedValue === 'number') {
+        setContent(storedValue);
+      } else {
         setContent(initialValue);
       }
-    } else {
+    } catch (e) {
+      console.error('Failed to parse localStorage data', e);
       setContent(initialValue);
     }
   }, [path, initialValue, setContent, localCharacter]);
@@ -99,14 +100,16 @@ function EditableFieldImplementation<T>({
       if (onSave) {
         onSave(newContentStr);
       } else {
-        handleChange(
-          initialValue,
-          newContentStr,
-          `${localCharacter.id}.${path}`,
-          factionId || localCharacter.factionId || undefined,
-          handleSelectCharacter,
-          localCharacter
-        );
+        if (localCharacter) {
+          handleChange(
+            initialValue,
+            newContentStr,
+            `${localCharacter.id}.${path}`,
+            factionId || localCharacter.factionId || undefined,
+            handleSelectCharacter,
+            localCharacter
+          );
+        }
       }
     }
   };

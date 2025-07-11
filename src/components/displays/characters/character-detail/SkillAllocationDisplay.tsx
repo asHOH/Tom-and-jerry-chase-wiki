@@ -13,6 +13,8 @@ import Tooltip from '../../../ui/Tooltip';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import EditableField from '@/components/ui/EditableField';
 import { useAppContext } from '@/context/AppContext';
+import { useSnapshot } from 'valtio';
+import { characters } from '@/data';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }) => {
@@ -98,9 +100,9 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     });
   }, [parsedLevels]);
 
-  const {
-    localCharacter: { skills: characterSkills, id: characterName },
-  } = useLocalCharacter();
+  const { characterId } = useLocalCharacter();
+  const characterSkills = useSnapshot(characters[characterId]!.skills);
+  const characterName = useSnapshot(characters[characterId]!).id;
 
   // Memoize skill type mapping for performance
   const skillTypeMap = useMemo(

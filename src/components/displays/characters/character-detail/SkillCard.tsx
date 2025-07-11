@@ -6,7 +6,8 @@ import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-t
 import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
 import { Skill, SkillLevel } from '@/data/types';
 import EditableField from '@/components/ui/EditableField';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeContext';
+import { useSnapshot } from 'valtio';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data';
 import { CharacterWithFaction } from '@/lib/types';
@@ -28,7 +29,7 @@ export default function SkillCard({
 }: SkillCardProps) {
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
-  const { localCharacter } = useLocalCharacter();
+  const localCharacter = useSnapshot(characters[characterId]!) as CharacterWithFaction;
   const [showVideoAddress, setShowVideoAddress] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -577,12 +578,12 @@ export default function SkillCard({
                 initialValue={skill.name}
                 onSave={(newName) => {
                   // Update skill with new name and regenerate image URL
-                  const factionId = localCharacter.faction.id as 'cat' | 'mouse';
+                  const factionId = localCharacter?.faction?.id as 'cat' | 'mouse';
 
                   const skill = characters[characterId]!.skills[skillIndex]!;
                   skill.name = newName;
                   skill.imageUrl = getSkillImageUrl(
-                    localCharacter.id,
+                    localCharacter?.id,
                     { ...skill, name: newName },
                     factionId
                   );

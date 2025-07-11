@@ -5,6 +5,7 @@ import EditableField from '@/components/ui/EditableField';
 import Tooltip from '@/components/ui/Tooltip';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useSnapshot } from 'valtio';
 import { setNestedProperty } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { useAppContext } from '@/context/AppContext';
@@ -23,7 +24,8 @@ interface PositioningTagsSectionProps {
 }
 
 function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
-  const { localCharacter } = useLocalCharacter();
+  const { characterId } = useLocalCharacter();
+  const localCharacter = useSnapshot(characters[characterId]!);
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
   function getTags(char: DeepReadonly<CharacterWithFaction>) {
     return char.mousePositioningTags ?? char.catPositioningTags ?? [];
