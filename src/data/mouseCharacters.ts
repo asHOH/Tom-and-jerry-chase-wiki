@@ -1078,6 +1078,158 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 佩克斯 ----------------------------------- */
+  佩克斯: {
+    aliases: ['舅舅'],
+    description:
+      '头戴黑色牛仔帽，穿着亮闪闪高皮靴的佩克斯，踏着精准的乐点，手持玫瑰木吉他，在属于他的舞台上舞动、歌唱、奔跑，让人无限怀念那属于西部的浪漫与自由。',
+    maxHp: 124,
+    attackBoost: 10,
+    hpRecovery: 2.5,
+    moveSpeed: 650,
+    jumpHeight: 380,
+    cheesePushSpeed: 2.8,
+    wallCrackDamageBoost: 0.5,
+    mousePositioningTags: [
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '魔音有眩晕远击退高伤害。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '破局',
+        isMinor: false,
+        description:
+          '魔音可弹开[绝大多数猫的布局](捕鼠夹、兔八哥萝卜、图多香水等)，琴可为队友加推速。',
+        additionalDescription: '三级琴可比肩烟雾弹。',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description: '二被动和琴可为队友加推速和回复Hp。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '干扰',
+        pattern: '0110(0)1222',
+        weaponType: 'weapon1',
+        description:
+          '6级后留加点升三被，铁血期间可点出三被，三级魔音眩晕时间长但击退少，根据需要自己加点。',
+        additionaldescription:
+          '若进入墙缝战时未满8级或猫咪破盾能力强，可舍弃三级礼服点三级被动及二级协奏。',
+      },
+      {
+        id: '打架队',
+        pattern: '02202(0)111',
+        weaponType: 'weapon1',
+        description: '队友干扰能力较强但推速较慢时，可以考虑做辅助位主点琴加推速。（注意配合）',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-冲冠一怒', 'B-绝地反击', 'C-救救我'],
+        description: '常用。',
+      },
+      {
+        cards: ['S-护佑', 'S-铁血', 'A-逃窜', 'C-救救我'],
+        description: '强自保。',
+      },
+    ],
+    skills: [
+      {
+        name: '魔音贯耳',
+        type: 'active',
+        description: '发出声波，击退琴头方向的猫咪。前摇期间可以移动和跳跃。',
+        detailedDescription:
+          '发出声波，击退琴头方向的猫咪1700距离。前摇0.75秒，期间可以移动和跳跃。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableAftercast: '可被道具键、道具键*或跳跃键取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description: '额外造成大量伤害、可以击落猫手中道具和老鼠。',
+            detailedDescription: '额外造成90伤害并使敌方眩晕0.4秒、可以击落猫手中道具和老鼠。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description: '减少击退距离，使敌方眩晕2.5秒。',
+            detailedDescription: '击退距离减为500，使敌方眩晕2.5秒。',
+            cooldown: 15,
+          },
+        ],
+        canHitInPipe: false,
+        cancelableSkill: '可被道具键*、药水键、本技能键或其他技能键打断',
+        cooldownTiming: '释放后',
+      },
+      {
+        name: '最佳表演',
+        type: 'weapon1',
+        description: '持续演奏吉他，范围内的友方持续恢复Hp、猫咪被减速并受到少量伤害。',
+        detailedDescription:
+          '前摇0.35秒，持续演奏吉他2.6秒，弹奏范围为半径750的圆，友方进入范围后0.35、0.75、1.15、1.55、1.95、2.35秒回复10Hp。猫咪减速22%，并在进入范围后0.35、0.75、1.15、1.55秒叠加一次（覆盖原有效果），此后不再叠加；在进入范围1.95、2.35秒后再施加一次[4级减速效果](减速77%)。减速效果持续0.8秒，猫咪进入范围后1.4秒、2.4秒将分别受到10伤害。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableAftercast: '无后摇',
+        cancelableSkill: '可被道具键*、道具键或跳跃键打断',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 22,
+            detailedDescription: '',
+          },
+          {
+            level: 2,
+            description: '演奏使友方恢复Hp更多、额外提高推速。',
+            cooldown: 22,
+            detailedDescription: '每次回复量从10Hp提升至15Hp，额外固定增加7%/s推速。',
+          },
+          {
+            level: 3,
+            description: '[完整听完演奏的老鼠](包括自己)在7秒内免疫虚弱。',
+            cooldown: 22,
+            detailedDescription:
+              '推速增益将在进入范围后0.35、0.75、1.15、1.55、1.95、2.35秒叠加一次（会覆盖原有效果），持续0.8秒。队友和自身停留在范围内2.4秒后，将在7秒内免疫虚弱。获得该效果时将清除推速增益。',
+          },
+        ],
+      },
+      {
+        name: '老牛仔',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '每分钟鼠方全体获得佩克斯赠与的额外经验值，每次获得的经验值逐渐提升。',
+          },
+          {
+            level: 2,
+            description: '附近有队友时，提升周围[所有队友](包括自己)的移速、跳跃高度和推速。',
+            detailedDescription:
+              '以自身为半径2350范围内有队友时，周围[所有队友](包括自己)的移速提高3%、跳跃高度提高5%、推速提高2.6%。',
+          },
+          {
+            level: 3,
+            description:
+              '进入虚弱状态时，直接回满Hp，同时获得短暂的无敌效果（每局限1次）；佩克斯从火箭上救下队友可以刷新此效果（每局限1次）。',
+            detailedDescription:
+              '进入虚弱状态时，立即解除虚弱并回复200Hp，同时获得短暂的无敌效果（CD：15分钟），佩克斯从火箭上救下队友可以刷新此效果（每局限1次）。',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ----------------------------------- 侦探泰菲 ----------------------------------- */
   侦探泰菲: {
     aliases: ['侦菲'],
@@ -2108,6 +2260,122 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(CD：9秒)',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ----------------------------------- 表演者•杰瑞 ----------------------------------- */
+  '表演者•杰瑞': {
+    description: '来自另一个平行时空的表演者，立志成为最好的表演家',
+    maxHp: 124,
+    attackBoost: 5,
+    hpRecovery: 2.5,
+    moveSpeed: 650,
+    jumpHeight: 380,
+    cheesePushSpeed: 3.25,
+    wallCrackDamageBoost: 0.5,
+    mousePositioningTags: [
+      {
+        tagName: '救援',
+        isMinor: false,
+        description: '可以铁血换人。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description: '可以提升队友的推速。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [],
+    knowledgeCardGroups: [],
+    skills: [
+      {
+        name: '梦幻舞步',
+        type: 'active',
+        description:
+          '跳舞并获得霸体，持续20秒，期间[给予附近老鼠推速加成、增加附近猫咪爪刀CD](跳舞10秒后效果增强)、并使隐身的猫咪显形。每次受到伤害，持续时间减少6秒。',
+        detailedDescription:
+          '跳舞并获得霸体，分为两段，每段10秒。第一段给予附近老鼠50%推速加成，附近猫咪爪刀CD增加20%；第二段改为100%推速加成、爪刀CD增加40%。跳舞可使附近隐身的猫咪显形。每次受到伤害，持续时间减少6秒。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 35,
+          },
+          {
+            level: 2,
+            description: '跳舞期间免疫虚弱。',
+            cooldown: 35,
+          },
+          {
+            level: 3,
+            description: '减少CD。',
+            cooldown: 25,
+          },
+        ],
+      },
+      {
+        name: '柠檬旋风',
+        type: 'weapon1',
+        description: '',
+        canMoveWhileUsing: true,
+        canUseInAir: false,
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '对附近的猫咪叠加酸涩效果减少移动速度交互速度并造成伤害，最多叠加5层，当叠满时会猫被控制并造成伤害。可进行5次额外表演，随后可以移动并对碰到的敌方单位叠加3成酸涩。',
+            cooldown: 30,
+            detailedDescription:
+              '释放柠檬旋风，对附近猫咪叠加酸涩效果，每层减少2.5%移速和交互速度、造成15伤害，最多叠加5层。叠满时会猫被控制2秒并受到35伤害。可进行5次额外表演，随后可以移动并对碰到的敌方单位叠加3层酸涩。',
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: '使用技能期间快速恢复Hp。',
+            cooldown: 20,
+            detailedDescription: '使用技能期间以20/s恢复Hp。',
+          },
+        ],
+        cooldownTiming: '释放后',
+        cancelableAftercast: '无后摇',
+        cancelableSkill: '可被跳跃键打断',
+      },
+      {
+        name: '喜剧之王',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '被击倒后可以继续行动5秒。',
+            detailedDescription: '被击倒后可以继续行动5秒，但期间不能使用技能或道具。',
+          },
+          {
+            level: 2,
+            description:
+              '被绑在火箭上时，可爬下火箭并在一段距离内左右移动。其他老鼠在表演者•杰瑞和火箭处均可救援。',
+            detailedDescription:
+              '被绑在火箭上时，可爬下火箭并在一段距离内左右移动。其他老鼠在表演者•杰瑞和火箭处均可救援。',
+          },
+          {
+            level: 3,
+            description:
+              '被绑上火箭后，火箭引线不会低于15秒。被放飞后以“局外人”返场，Hp上限为624，且Hp以2/s降低，无法进行大部分交互；血量清空立即放飞，可以用道具键投掷，造成2.5伤害和持续2.5秒的10%减速。',
+            detailedDescription:
+              '被绑上火箭后，火箭引线不会低于15秒。被放飞后以“局外人”返场，Hp上限为624，且Hp以2/s降低，无法进行大部分交互；血量清空立即放飞，可以用道具键投掷，造成2.5伤害和持续2.5秒的10%减速。',
           },
         ],
       },

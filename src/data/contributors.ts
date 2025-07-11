@@ -70,7 +70,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['莱特宁', '剑客莉莉', '侦探泰菲'],
+        characters: ['莱特宁', '剑客莉莉', '侦探泰菲', '佩克斯'],
       },
     ],
   },
@@ -92,6 +92,16 @@ export const contributors: Contributor[] = [
       {
         type: RoleType.ContentWriter,
         characters: ['图茨'],
+      },
+    ],
+  },
+  {
+    id: 'yigeqiujun',
+    name: '一个气球君',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['表演者•杰瑞'],
       },
     ],
   },

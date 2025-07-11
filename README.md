@@ -177,7 +177,7 @@
 - [梦回\_淦德蒸蚌](https://space.bilibili.com/1193776217)、[是莫莫喵](https://space.bilibili.com/443541296) 提供测试数据
 - [凡叔哇](https://space.bilibili.com/273122087) 分享图片素材
 - [海阔天空](https://github.com/3swordman) 进行项目开发
-- [海阔天空](https://github.com/3swordman)、[追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、音乐家杰瑞、[雨狼嗷嗷](https://space.bilibili.com/3546721078479411)、你小睿大帝、[冰美式](https://space.bilibili.com/439320147)、港鸽、[若梦](https://space.bilibili.com/3537122405386648)、生煎包勇闯猫鼠、[乐善好施陈阿姨](https://space.bilibili.com/418408689) 撰写角色文案
+- [海阔天空](https://github.com/3swordman)、[追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、音乐家杰瑞、[雨狼嗷嗷](https://space.bilibili.com/3546721078479411)、一个气球君、你小睿大帝、[冰美式](https://space.bilibili.com/439320147)、港鸽、[若梦](https://space.bilibili.com/3537122405386648)、生煎包勇闯猫鼠、[乐善好施陈阿姨](https://space.bilibili.com/418408689) 撰写角色文案
 
 ---
 
