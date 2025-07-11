@@ -1,7 +1,10 @@
 'use client';
 
+import { characters } from '@/data';
 import { loadFactionsAndCharacters, saveFactionsAndCharacters } from '@/lib/editUtils';
 import { CharacterWithFaction } from '@/lib/types';
+import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import { usePathname } from 'next/navigation';
 import React, {
   createContext,
   useContext,
@@ -10,6 +13,7 @@ import React, {
   ReactNode,
   SetStateAction,
 } from 'react';
+import { useSnapshot } from 'valtio';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -18,7 +22,7 @@ interface EditModeContextType {
 }
 
 interface LocalCharacterContextType {
-  localCharacter: CharacterWithFaction;
+  localCharacter: DeepReadonly<CharacterWithFaction>;
   setLocalCharacter: React.Dispatch<SetStateAction<CharacterWithFaction>>;
 }
 
@@ -74,16 +78,22 @@ export const LocalCharacterProvider = ({
   character: CharacterWithFaction;
   children: ReactNode;
 }) => {
-  const [localCharacter, setLocalCharacter] = useState<CharacterWithFaction>(character);
+  const path = usePathname();
+  const pathParts = path?.split('/') || [];
+  const characterId = pathParts[pathParts.length - 2]; // Get characterId from path
 
-  useEffect(() => {
-    // The character prop is now always the correct one, whether from static data or the user route.
-    // This effect ensures the local state is updated if the user navigates between character pages.
-    setLocalCharacter(character);
-  }, [character]);
+  const foundCharacter = React.useMemo(() => {
+    if (characterId) {
+      const decodedCharacterId = decodeURIComponent(characterId);
+      return characters[decodedCharacterId]!;
+    }
+    return character;
+  }, [characterId, character]);
+
+  const localCharacter = useSnapshot(foundCharacter);
 
   return (
-    <LocalCharacterContext.Provider value={{ localCharacter, setLocalCharacter }}>
+    <LocalCharacterContext.Provider value={{ localCharacter, setLocalCharacter: () => {} }}>
       {children}
     </LocalCharacterContext.Provider>
   );
@@ -97,6 +107,10 @@ export const useEditMode = () => {
   return context;
 };
 
+/**
+ * @deprecated directly use characters from the data module instead.
+ * do NOT change this unless the user has explicitly requested to change the function and has confirmed that it will not break the app.
+ */
 export const useLocalCharacter = () => {
   const context = useContext(LocalCharacterContext);
   if (context === undefined) {

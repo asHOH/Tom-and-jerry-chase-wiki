@@ -67,7 +67,8 @@
     "pinyin-pro": "^3.26.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "swr": "^2.3.4"
+    "swr": "^2.3.4",
+    "valtio": "^2.1.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

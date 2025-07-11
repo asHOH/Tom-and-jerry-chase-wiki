@@ -42,7 +42,7 @@ export function sortPositioningTags<T extends { tagName: string; isMinor: boolea
   tags: T[],
   factionId: 'cat' | 'mouse'
 ): T[] {
-  return tags.sort((a, b) => {
+  return Array.from(tags).sort((a, b) => {
     // Main tags always come before minor tags
     if (a.isMinor !== b.isMinor) {
       return a.isMinor ? 1 : -1;

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { notFound, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { characters } from '@/data';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
@@ -35,13 +35,14 @@ export default function UserCharacterPageClient() {
     return <div className='dark:text-white'>加载中...</div>;
   }
 
-  if (!character) {
-    notFound();
-  }
+  // FIXME: i want to move the logic to another file
+  // if (!character) {
+  //   notFound();
+  // }
 
   return (
     <TabNavigationWrapper showDetailToggle={true}>
-      <CharacterDetailsClient character={character} />
+      <CharacterDetailsClient character={character!} />
     </TabNavigationWrapper>
   );
 }

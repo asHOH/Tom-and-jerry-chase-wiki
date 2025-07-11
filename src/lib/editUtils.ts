@@ -7,6 +7,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { produce } from 'immer';
 import { setAutoFreeze } from 'immer';
 import json5 from 'json5';
+import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 setAutoFreeze(false);
 
@@ -92,7 +93,7 @@ function handleCharacterIdChange(
   newId: string,
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
-  localCharacter: CharacterWithFaction,
+  _localCharacter: DeepReadonly<CharacterWithFaction>,
   setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>,
   shouldNavigate: boolean = false
 ) {
@@ -195,9 +196,6 @@ export function saveFactionsAndCharacters() {
 
   localStorage.setItem('factions', JSON.stringify(factions));
   localStorage.setItem('characters', JSON.stringify(characters));
-  console.log(
-    `Saved ${Object.keys(characters).length} characters and ${Object.keys(factions).length} factions to localStorage`
-  );
 }
 
 // Get the list of original character IDs (before any edits)
@@ -258,10 +256,8 @@ export function validateCharacterStructure(
 export function loadFactionsAndCharacters() {
   // 1. Save original data if not already saved
   if (typeof window !== 'undefined' && !localStorage.getItem('originalCharacters')) {
-    console.log('Saving original character and faction data to localStorage');
     localStorage.setItem('originalCharacters', JSON.stringify(characters));
     localStorage.setItem('originalFactions', JSON.stringify(factions));
-    console.log('Saved original character and faction data to localStorage');
   }
 
   // 2. Start with a pristine copy of the original data
@@ -303,11 +299,6 @@ export function loadFactionsAndCharacters() {
           (char.factionId === 'cat' ? char.catPositioningTags : char.mousePositioningTags) || [],
       }));
   });
-
-  console.log(
-    `Loaded ${Object.keys(characters).length} characters from merged data. Keys:`,
-    Object.keys(characters)
-  );
 }
 
 // Helper function to validate and enhance character structure
@@ -324,14 +315,12 @@ function validateAndEnhanceCharacter(
   // Ensure id field exists
   if (!charObj.id) {
     charObj.id = characterId;
-    console.log(`Added missing id field to character ${characterId}`);
   }
 
   // Determine faction if missing
   if (!charObj.factionId) {
     // Try to guess faction from character data or use 'mouse' as default
     charObj.factionId = 'mouse' as FactionId; // Default fallback
-    console.log(`Added missing factionId to character ${characterId}, defaulted to mouse`);
   }
 
   // Ensure faction ID is valid
@@ -342,13 +331,11 @@ function validateAndEnhanceCharacter(
 
   if (charObj.factionId !== validFactionId) {
     charObj.factionId = validFactionId;
-    console.log(`Corrected invalid factionId for character ${characterId} to ${validFactionId}`);
   }
 
   // Ensure character has proper imageUrl
   if (!charObj.imageUrl) {
     charObj.imageUrl = (validFactionId === 'cat' ? getCatImageUrl : getMouseImageUrl)(characterId);
-    console.log(`Enhanced character ${characterId} with imageUrl: ${charObj.imageUrl}`);
   }
 
   // Ensure character has proper faction structure
@@ -357,13 +344,11 @@ function validateAndEnhanceCharacter(
       id: validFactionId,
       name: validFactionId === 'cat' ? '猫阵营' : '鼠阵营',
     };
-    console.log(`Enhanced character ${characterId} with faction structure`);
   }
 
   // Ensure skills array exists
   if (!charObj.skills || !Array.isArray(charObj.skills)) {
     charObj.skills = [];
-    console.log(`Added missing skills array to character ${characterId}`);
   }
 
   // Ensure skills have proper imageUrls
@@ -372,7 +357,6 @@ function validateAndEnhanceCharacter(
       // Always regenerate skill image URLs to ensure they match the current character ID
       skill.imageUrl = getSkillImageUrl(characterId, skill, validFactionId);
     });
-    console.log(`Enhanced character ${characterId} skills with imageUrls`);
   }
 
   return charObj as CharacterWithFaction;
@@ -384,13 +368,9 @@ export function handleChange<T>(
   path: string,
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
-  localCharacter: CharacterWithFaction,
+  localCharacter: DeepReadonly<CharacterWithFaction>,
   setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
 ) {
-  console.log(`Handling change for path: ${path}`);
-  console.log(`Initial value: ${initialValue}, new content: ${newContentStr}`);
-  console.log(`Active tab: ${activeTab}`);
-  console.log(`Local character before change:`, localCharacter);
   // If the ID is being changed, handle it as a special case to prevent data corruption.
   if (path && path.split('.')?.[1] === 'id') {
     handleCharacterIdChange(
@@ -418,7 +398,6 @@ export function handleChange<T>(
 }
 
 export function generateTypescriptCodeFromCharacter(character: CharacterWithFaction) {
-  console.log('Generating TypeScript code for character:', character.id);
   return (
     `/* ----------------------------------- ${character.id} ----------------------------------- */\n` +
     character.id +
