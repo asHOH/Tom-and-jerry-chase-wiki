@@ -668,7 +668,7 @@ export default function SkillCard({
             .map((level: SkillLevel) => (
               <div
                 key={`${skill.id}-${level.level}`}
-                className={`p-4 rounded ${getSkillLevelContainerColor(level.level)} text-gray-300`}
+                className={`p-4 rounded ${getSkillLevelContainerColor(level.level)} dark:text-gray-300`}
               >
                 <p className='px-2 py-1 whitespace-pre-wrap'>
                   <span

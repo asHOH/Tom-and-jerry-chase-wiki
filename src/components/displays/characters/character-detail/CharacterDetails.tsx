@@ -162,7 +162,7 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
                         type='button'
                         aria-label='添加第二武器'
                         onClick={addSecondWeapon}
-                        className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
+                        className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
                         key='new-weapon-button'
                       >
                         <svg

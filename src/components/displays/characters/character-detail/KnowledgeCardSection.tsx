@@ -300,7 +300,7 @@ export default function KnowledgeCardSection({
                   type='button'
                   aria-label='添加知识卡组'
                   onClick={onCreateGroup}
-                  className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
+                  className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
                 >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -365,7 +365,7 @@ export default function KnowledgeCardSection({
                 type='button'
                 aria-label='添加知识卡组'
                 onClick={onCreateGroup}
-                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
+                className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -389,27 +389,6 @@ export default function KnowledgeCardSection({
               )}
             </React.Fragment>
           ))}
-          {isEditMode && !isSqueezedView && (
-            <div className='mt-4 flex justify-center'>
-              <button
-                type='button'
-                aria-label='添加知识卡组'
-                onClick={onCreateGroup}
-                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='2'
-                  stroke='currentColor'
-                  className='w-4 h-4'
-                >
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-                </svg>
-              </button>
-            </div>
-          )}
         </div>
       </CharacterSection>
       <KnowledgeCardPicker
