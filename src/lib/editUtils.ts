@@ -217,55 +217,6 @@ export function validateCharacterStructure(
   return charObj as CharacterWithFaction;
 }
 
-export function loadFactionsAndCharacters() {
-  return;
-  // 1. Save original data if not already saved
-  if (typeof window !== 'undefined' && !localStorage.getItem('originalCharacters')) {
-    localStorage.setItem('originalCharacters', JSON.stringify(characters));
-    localStorage.setItem('originalFactions', JSON.stringify(factions));
-  }
-
-  // 2. Start with a pristine copy of the original data
-  const originalCharacters = JSON.parse(localStorage.getItem('originalCharacters') || '{}');
-  const originalFactions = JSON.parse(localStorage.getItem('originalFactions') || '{}');
-
-  // 3. Load user's saved characters from localStorage
-  const savedCharacters = JSON.parse(localStorage.getItem('characters') || '{}');
-
-  // 4. Intelligently merge the data
-  const finalCharacters = { ...originalCharacters, ...savedCharacters };
-
-  // 5. Clear the current in-memory objects to prevent duplicates
-  for (const prop of Object.getOwnPropertyNames(characters)) {
-    delete characters[prop];
-  }
-  for (const prop of Object.getOwnPropertyNames(factions)) {
-    delete factions[prop];
-  }
-
-  // 6. Assign the newly merged character data
-  Object.assign(characters, finalCharacters);
-  Object.assign(factions, originalFactions);
-
-  // 7. CRITICAL: Rebuild the characters array for each faction from the definitive finalCharacters object
-  Object.values(factions).forEach((faction) => {
-    faction.characters = Object.values(finalCharacters)
-      .filter(
-        (char): char is CharacterWithFaction =>
-          !!char && typeof char === 'object' && 'factionId' in char
-      )
-      .filter((char) => char.factionId === faction.id)
-      .map((char) => ({
-        // Map to the correct type
-        id: char.id,
-        name: char.id, // Or char.name if it exists
-        imageUrl: char.imageUrl,
-        positioningTags:
-          (char.factionId === 'cat' ? char.catPositioningTags : char.mousePositioningTags) || [],
-      }));
-  });
-}
-
 // Helper function to validate and enhance character structure
 function validateAndEnhanceCharacter(
   character: unknown,

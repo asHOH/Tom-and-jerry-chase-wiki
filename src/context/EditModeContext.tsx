@@ -58,8 +58,8 @@ export const useEditMode = () => {
 
 export const useLocalCharacter = () => {
   const path = usePathname();
-  const pathParts = path?.split('/') || [];
-  const characterId = pathParts[pathParts.length - 2]; // Get characterId from path
-  const context = { characterId: decodeURIComponent(characterId!) };
+  const pathParts = path.split('/');
+  const characterId = decodeURIComponent(pathParts[pathParts.length - 1] || '');
+  const context = { characterId };
   return context;
 };
