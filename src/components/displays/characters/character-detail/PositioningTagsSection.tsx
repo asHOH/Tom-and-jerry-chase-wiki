@@ -5,11 +5,12 @@ import EditableField from '@/components/ui/EditableField';
 import Tooltip from '@/components/ui/Tooltip';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
+import { setNestedProperty } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { useAppContext } from '@/context/AppContext';
 import { CharacterWithFaction } from '@/lib/types';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
+import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 interface PositioningTagsSectionProps {
   tags: Array<{
@@ -24,12 +25,12 @@ interface PositioningTagsSectionProps {
 function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
   const { localCharacter } = useLocalCharacter();
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
-  function getTags(char: CharacterWithFaction) {
+  function getTags(char: DeepReadonly<CharacterWithFaction>) {
     return char.mousePositioningTags ?? char.catPositioningTags ?? [];
   }
   const updateTags = useCallback(
     (
-      prevChar: CharacterWithFaction,
+      prevChar: DeepReadonly<CharacterWithFaction>,
       updatedTags: {
         tagName: string;
         isMinor: boolean;
@@ -38,7 +39,6 @@ function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
       }[]
     ) => {
       setNestedProperty(characters, `${localCharacter.id}.${key}`, updatedTags);
-      saveFactionsAndCharacters();
       return { ...prevChar, [key]: updatedTags };
     },
     [key, localCharacter.id]
@@ -55,7 +55,7 @@ function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
       );
       updateTags(localCharacter, updatedTags);
     },
-    [setLocalCharacter, updateTags]
+    [localCharacter, updateTags]
   );
   const handleAddPositioningTags = useCallback(() => {
     // Removed setLocalCharacter call due to missing function.
@@ -66,14 +66,14 @@ function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
       additionalDescription: '新增标签介绍',
     });
     updateTags(localCharacter, updatedTags);
-  }, [factionId, setLocalCharacter, updateTags]);
+  }, [factionId, localCharacter, updateTags]);
   const handleRemovePositioningTags = useCallback(
     (tagIndex: number) => {
       // Removed setLocalCharacter call due to missing function.
       const updatedTags = getTags(localCharacter).filter((_, index) => index != tagIndex);
       updateTags(localCharacter, updatedTags);
     },
-    [setLocalCharacter, updateTags]
+    [localCharacter, updateTags]
   );
   const toggleIsMinor = useCallback(
     (tagIndex: number) => {
@@ -83,7 +83,7 @@ function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
       );
       updateTags(localCharacter, updatedTags);
     },
-    [setLocalCharacter, updateTags]
+    [localCharacter, updateTags]
   );
   return { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags, toggleIsMinor };
 }

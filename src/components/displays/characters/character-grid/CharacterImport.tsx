@@ -12,7 +12,6 @@ import { addSkillImageUrls } from '@/lib/skillUtils';
 import { useParams } from 'next/navigation';
 import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
-import { saveFactionsAndCharacters } from '@/lib/editUtils';
 import { processCharacters } from '@/lib/skillIdUtils';
 import { useAppContext } from '@/context/AppContext';
 
@@ -91,8 +90,6 @@ function handleUploadedData(
       });
     }
   }
-
-  saveFactionsAndCharacters();
 
   // Trigger success callback - no reload needed, let's see if UI updates automatically
   onImportSuccess(importedNames);

@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { characters } from '@/data'; // Import Character type
-import { setNestedProperty, saveFactionsAndCharacters } from '@/lib/editUtils';
+import { setNestedProperty } from '@/lib/editUtils';
 import type { KnowledgeCardGroup } from '@/data/types';
 import KnowledgeCardSection from './KnowledgeCardSection';
 import { useLocalCharacter } from '@/context/EditModeContext';
+import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 interface KnowledgeCardManagerProps {
   factionId: 'cat' | 'mouse';
@@ -13,19 +14,20 @@ interface KnowledgeCardManagerProps {
 
 // TODO: use local character to refactor
 export default function KnowledgeCardManager({ factionId }: KnowledgeCardManagerProps) {
-  const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<KnowledgeCardGroup[]>([]);
+  const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<
+    DeepReadonly<KnowledgeCardGroup[]>
+  >([]);
   const { localCharacter: character } = useLocalCharacter();
 
   useEffect(() => {
-    if (character && character.knowledgeCardGroups) {
+    if (character?.knowledgeCardGroups) {
       setKnowledgeCardGroups(character.knowledgeCardGroups);
     }
-  }, [character]);
+  }, [character.knowledgeCardGroups]);
 
-  const handleSaveChanges = (updatedGroups: KnowledgeCardGroup[]) => {
+  const handleSaveChanges = (updatedGroups: DeepReadonly<KnowledgeCardGroup[]>) => {
     const path = `${character.id}.knowledgeCardGroups`;
     setNestedProperty(characters, path, updatedGroups);
-    saveFactionsAndCharacters();
   };
 
   const handleCreateGroup = () => {

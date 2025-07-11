@@ -3,7 +3,6 @@ import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { getSkillImageUrl } from './skillUtils';
 import { CharacterWithFaction } from './types';
-import { produce } from 'immer';
 import { setAutoFreeze } from 'immer';
 import json5 from 'json5';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
@@ -163,6 +162,9 @@ export function handleCharacterSkillIdChange(
   // Removed setLocalCharacter call due to missing function.
 }
 
+/**
+ * @deprecated update characters directly :-)
+ */
 export function saveFactionsAndCharacters() {
   // Ensure all characters have complete data structure before saving
   Object.keys(characters).forEach((characterId) => {

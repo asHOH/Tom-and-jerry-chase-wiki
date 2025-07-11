@@ -5,7 +5,7 @@ import SkillAllocationDisplay from './SkillAllocationDisplay';
 import CharacterSection from './CharacterSection';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { useCallback } from 'react';
-import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
+import { setNestedProperty } from '@/lib/editUtils';
 import { SkillAllocation } from '@/data/types';
 import { characters } from '@/data';
 
@@ -18,7 +18,7 @@ export const useSkillAllocationManagement = () => {
         `${localCharacter.id}.skillAllocations`,
         updatedSkillAllocations
       );
-      saveFactionsAndCharacters();
+
       // Removed setLocalCharacter call due to missing function.
     },
     [localCharacter]

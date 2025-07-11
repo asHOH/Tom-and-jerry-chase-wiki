@@ -8,14 +8,15 @@ import { Skill, SkillLevel } from '@/data/types';
 import EditableField from '@/components/ui/EditableField';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { useAppContext } from '@/context/AppContext';
-import { saveFactionsAndCharacters, setNestedProperty } from '@/lib/editUtils';
+import { setNestedProperty } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { produce } from 'immer';
 import { CharacterWithFaction } from '@/lib/types';
 import { getSkillImageUrl } from '@/lib/skillUtils';
+import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 interface SkillCardProps {
-  skill: Skill;
+  skill: DeepReadonly<Skill>;
   isSingleWeapon?: boolean;
   characterId: string;
   skillIndex: number;
@@ -53,7 +54,6 @@ export default function SkillCard({
 
   const handleSaveChanges = (updatedSkill: Skill) => {
     setNestedProperty(characters, `${localCharacter.id}.skills.${skillIndex}`, updatedSkill);
-    saveFactionsAndCharacters();
     // Removed setLocalCharacter call due to missing function.
   };
 
@@ -125,6 +125,7 @@ export default function SkillCard({
               type='checkbox'
               checked={skill.canUseInAir ?? false}
               onChange={(e) => {
+                skill.canUseInAir = e.target.checked;
                 handleSaveChanges(
                   produce(skill, (skill) => {
                     skill.canUseInAir = e.target.checked;
@@ -457,11 +458,7 @@ export default function SkillCard({
               type='checkbox'
               checked={skill.canHitInPipe ?? false}
               onChange={(e) => {
-                handleSaveChanges(
-                  produce(skill, (skill) => {
-                    skill.canHitInPipe = e.target.checked;
-                  })
-                );
+                characters[characterId]!.skills[skillIndex]!.canHitInPipe = e.target.checked;
               }}
               className='w-3 h-3'
             />
@@ -643,7 +640,6 @@ export default function SkillCard({
                     );
                   }
                   removeSkill(characters[characterId]!);
-                  saveFactionsAndCharacters();
                 }}
                 className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
               >

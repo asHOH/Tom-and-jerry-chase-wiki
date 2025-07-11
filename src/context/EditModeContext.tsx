@@ -1,18 +1,11 @@
 'use client';
 
 import { characters } from '@/data';
-import { loadFactionsAndCharacters, saveFactionsAndCharacters } from '@/lib/editUtils';
+import { loadFactionsAndCharacters } from '@/lib/editUtils';
 import { CharacterWithFaction } from '@/lib/types';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { usePathname } from 'next/navigation';
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-  SetStateAction,
-} from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useSnapshot } from 'valtio';
 
 interface EditModeContextType {
@@ -59,7 +52,6 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem('characters');
       localStorage.removeItem('factions');
     } else {
-      saveFactionsAndCharacters();
     }
   };
 

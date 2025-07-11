@@ -13,7 +13,7 @@ import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
 import { LocalCharacterProvider, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import SkillAllocationSection from './SkillAllocationSection';
-import { generateTypescriptCodeFromCharacter, saveFactionsAndCharacters } from '@/lib/editUtils';
+import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { getSkillImageUrl } from '@/lib/skillUtils';
 import ContentWriterDisplay from './ContentWriterDisplay';
@@ -37,7 +37,6 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
       character.skills.splice(index + 1, 0, secondWeapon);
     }
     modifySkillObject(characters[localCharacter.id]!);
-    saveFactionsAndCharacters();
   }
 
   const positioningTags =
