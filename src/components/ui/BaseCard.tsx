@@ -30,12 +30,13 @@ export default function BaseCard({
       ...baseCardStyle,
       ...(isClickable && { cursor: 'pointer' }),
     };
+    // The background is removed from here and will be handled by Tailwind classes.
+    delete (finalBaseStyle as { background?: string }).background;
 
     switch (variant) {
       case 'character':
         return {
           ...finalBaseStyle,
-          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
           display: 'flex',
           flexDirection: 'column' as const,
           alignItems: 'center',
@@ -46,7 +47,6 @@ export default function BaseCard({
       case 'item':
         return {
           ...finalBaseStyle,
-          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
           position: 'relative' as const,
           overflow: 'hidden',
           padding: 0,
@@ -54,7 +54,6 @@ export default function BaseCard({
       case 'details':
         return {
           ...finalBaseStyle,
-          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
           height: '100%',
           overflow: 'hidden',
         };
@@ -78,7 +77,10 @@ export default function BaseCard({
         style: cardStyle,
       };
   return (
-    <div className={`[&_img]:select-none ${className}`} {...cardProps}>
+    <div
+      className={`bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none ${className}`}
+      {...cardProps}
+    >
       {children}
     </div>
   );

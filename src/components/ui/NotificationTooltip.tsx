@@ -60,15 +60,15 @@ const NotificationTooltip: React.FC<NotificationTooltipProps> = ({
   const getTypeStyles = () => {
     switch (type) {
       case 'success':
-        return 'bg-green-600';
+        return 'bg-green-600 dark:bg-green-700';
       case 'info':
-        return 'bg-blue-600';
+        return 'bg-blue-600 dark:bg-blue-700';
       case 'warning':
-        return 'bg-yellow-600';
+        return 'bg-yellow-600 dark:bg-yellow-700';
       case 'error':
-        return 'bg-red-600';
+        return 'bg-red-600 dark:bg-red-700';
       default:
-        return 'bg-green-600';
+        return 'bg-green-600 dark:bg-green-700';
     }
   };
 

@@ -24,9 +24,13 @@ export default function LoadingSpinner({
   return (
     <div className={`flex items-center justify-center space-x-3 ${className}`}>
       <div
-        className={`animate-spin rounded-full border-b-2 border-blue-600 ${sizeClasses[size]}`}
+        className={`animate-spin rounded-full border-b-2 border-blue-600 dark:border-blue-500 ${sizeClasses[size]}`}
       />
-      {message && <span className={`text-gray-600 ${textSizeClasses[size]}`}>{message}</span>}
+      {message && (
+        <span className={`text-gray-600 dark:text-gray-300 ${textSizeClasses[size]}`}>
+          {message}
+        </span>
+      )}
     </div>
   );
 }

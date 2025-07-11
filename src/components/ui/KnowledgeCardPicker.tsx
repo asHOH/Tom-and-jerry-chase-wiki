@@ -70,8 +70,8 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
-      <div className={`bg-white p-6 shadow-xl flex flex-col ${pickerClasses}`}>
-        <h2 className='text-2xl font-bold mb-4'>选择知识卡</h2>
+      <div className={`bg-white dark:bg-slate-800 p-6 shadow-xl flex flex-col ${pickerClasses}`}>
+        <h2 className='text-2xl font-bold mb-4 text-gray-900 dark:text-white'>选择知识卡</h2>
         <div className='flex-grow overflow-y-auto'>
           <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4'>
             {Object.values(allCards).map((card: Card) => {
@@ -82,7 +82,9 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
                   <div
                     onClick={() => handleCardClick(cardIdWithRank)}
                     className={`relative w-full aspect-square cursor-pointer border-4 rounded-lg transition-all duration-200 ${
-                      isSelected ? 'border-blue-500 scale-105' : 'border-transparent'
+                      isSelected
+                        ? 'border-blue-500 dark:border-blue-400 scale-105'
+                        : 'border-transparent'
                     }`}
                   >
                     <Image
@@ -102,22 +104,26 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
             })}
           </div>
         </div>
-        <div className='mt-4 pt-4 border-t flex flex-col sm:flex-row justify-between items-center gap-4'>
-          <div className='text-center sm:text-left'>
+        <div className='mt-4 pt-4 border-t border-gray-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4'>
+          <div className='text-center sm:text-left text-gray-800 dark:text-gray-200'>
             <span className='font-bold'>总知识量: {totalCost}</span>
-            {totalCost > 21 && <span className='text-red-500 ml-2'>(超出限制!)</span>}
-            {totalCost === 21 && <span className='text-amber-500 ml-2'>(需开启+1上限)</span>}
+            {totalCost > 21 && (
+              <span className='text-red-500 dark:text-red-400 ml-2'>(超出限制!)</span>
+            )}
+            {totalCost === 21 && (
+              <span className='text-amber-500 dark:text-amber-400 ml-2'>(需开启+1上限)</span>
+            )}
           </div>
           <div className='flex w-full sm:w-auto'>
             <button
               onClick={onClose}
-              className='flex-1 sm:flex-none px-4 py-2 mr-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400'
+              className='flex-1 sm:flex-none px-4 py-2 mr-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 dark:bg-slate-600 dark:text-gray-200 dark:hover:bg-slate-500'
             >
               取消
             </button>
             <button
               onClick={handleSave}
-              className='flex-1 sm:flex-none px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
+              className='flex-1 sm:flex-none px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
             >
               保存
             </button>

@@ -39,7 +39,15 @@ export function FactionButton({
       type='button'
       onClick={onClick}
       aria-label={ariaLabel}
-      className={clsx('faction-button', 'sm:px-6', 'sm:py-4', 'px-4', 'py-3', className)}
+      className={clsx(
+        'faction-button',
+        'sm:px-6',
+        'sm:py-4',
+        'px-4',
+        'py-3',
+        'dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-600',
+        className
+      )}
       style={{ ...baseStyle, padding: undefined }}
     >
       <div style={contentStyle}>

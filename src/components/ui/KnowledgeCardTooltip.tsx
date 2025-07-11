@@ -93,7 +93,7 @@ export default function KnowledgeCardTooltip({
         typeof document !== 'undefined' &&
         createPortal(
           <div
-            className='fixed z-50 p-2 bg-white rounded-lg shadow-xl border border-gray-200 pointer-events-none transition-opacity duration-200 ease-in-out'
+            className='fixed z-50 p-2 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-gray-200 dark:border-slate-700 pointer-events-none transition-opacity duration-200 ease-in-out'
             style={{
               left: position.x,
               top: position.y,
@@ -104,16 +104,15 @@ export default function KnowledgeCardTooltip({
             <div className='relative w-24 h-24'>
               <Image src={imageUrl} alt={cardName} fill className='object-contain' />
             </div>
-            <div className='text-center mt-1 text-xs text-gray-600 font-medium'>{cardName}</div>
+            <div className='text-center mt-1 text-xs text-gray-600 dark:text-gray-300 font-medium'>
+              {cardName}
+            </div>
             <div
-              className='absolute w-2 h-2 bg-white transform rotate-45'
+              className='absolute w-2 h-2 bg-white dark:bg-slate-800 transform rotate-45 border-r border-b border-gray-200 dark:border-slate-700'
               style={{
                 left: '50%',
-                bottom: '-8px',
+                bottom: '-5px',
                 transform: 'translateX(-50%)',
-                border: '1px solid #e5e7eb',
-                borderTop: 'none',
-                borderLeft: 'none',
               }}
             />
           </div>,

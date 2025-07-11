@@ -92,18 +92,13 @@ function handleCharacterIdChange(
   newId: string,
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
-  _localCharacter: CharacterWithFaction,
+  localCharacter: CharacterWithFaction,
   setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>,
   shouldNavigate: boolean = false
 ) {
   const oldId = path.split('.')[0]!;
   const character = characters[oldId!];
   const factionId = (activeTab || character?.factionId) as FactionId;
-
-  if (!factionId) {
-    console.warn('Could not determine faction for character', oldId);
-    return;
-  }
 
   // Create a new character object as a copy.
   const newCharacter = { ...character! } as CharacterWithFaction;

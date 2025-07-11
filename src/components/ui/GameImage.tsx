@@ -32,7 +32,7 @@ export default function GameImage({
 
   return (
     <div
-      className='w-full bg-gray-200 relative overflow-hidden mb-4'
+      className='w-full bg-gray-200 dark:bg-slate-700 relative overflow-hidden mb-4'
       style={{
         height: containerHeight,
         borderRadius: componentTokens.image.container.borderRadius,

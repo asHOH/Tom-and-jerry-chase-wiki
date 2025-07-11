@@ -105,7 +105,7 @@ export default function Tooltip({
       <span
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`cursor-help border-b border-dotted border-gray-400 hover:border-gray-600 transition-colors ${className}`}
+        className={`cursor-help border-b border-dotted border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-400 transition-colors ${className}`}
       >
         {children}
       </span>
@@ -113,7 +113,7 @@ export default function Tooltip({
         typeof document !== 'undefined' &&
         createPortal(
           <div
-            className='fixed px-3 py-2 text-sm text-white bg-gray-800 rounded-md shadow-lg pointer-events-none transition-opacity duration-200 ease-in-out max-w-xs break-words'
+            className='fixed px-3 py-2 text-sm text-white bg-gray-800 dark:bg-black dark:text-gray-200 rounded-md shadow-lg pointer-events-none transition-opacity duration-200 ease-in-out max-w-xs break-words'
             style={{
               left: position.x,
               top: position.y,
@@ -124,7 +124,7 @@ export default function Tooltip({
           >
             {content}
             <div
-              className='absolute w-1 h-1 bg-gray-800'
+              className='absolute w-1 h-1 bg-gray-800 dark:bg-black'
               style={{
                 left: `calc(50% + ${triggerCenter - position.x}px)`,
                 [isBelow ? 'top' : 'bottom']: '-2px',

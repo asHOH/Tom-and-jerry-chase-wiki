@@ -189,7 +189,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           <input
             type='text'
             placeholder='搜索角色或知识卡...'
-            className='w-full p-2 pl-10 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
+            className='w-full p-2 pl-10 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             autoFocus
@@ -197,7 +197,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           />
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
             <svg
-              className='h-5 w-5 text-gray-400'
+              className='h-5 w-5 text-gray-400 dark:text-gray-500'
               fill='none'
               viewBox='0 0 24 24'
               stroke='currentColor'
