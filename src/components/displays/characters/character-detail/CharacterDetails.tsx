@@ -16,13 +16,12 @@ import SkillAllocationSection from './SkillAllocationSection';
 import { generateTypescriptCodeFromCharacter, saveFactionsAndCharacters } from '@/lib/editUtils';
 import { characters } from '@/data';
 import { getSkillImageUrl } from '@/lib/skillUtils';
-import { produce } from 'immer';
 import ContentWriterDisplay from './ContentWriterDisplay';
 
 function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
   const [copyMessage, setCopyMessage] = useState('');
-  const { localCharacter, setLocalCharacter } = useLocalCharacter();
+  const { localCharacter } = useLocalCharacter();
   const factionId = localCharacter.faction.id as 'cat' | 'mouse';
 
   function addSecondWeapon() {
@@ -38,11 +37,6 @@ function CharacterDetailsImplementation({ character }: CharacterDetailsProps) {
       character.skills.splice(index + 1, 0, secondWeapon);
     }
     modifySkillObject(characters[localCharacter.id]!);
-    setLocalCharacter(
-      produce(localCharacter, (localCharacter) => {
-        modifySkillObject(localCharacter);
-      })
-    );
     saveFactionsAndCharacters();
   }
 

@@ -42,7 +42,7 @@ function EditableFieldImplementation<T>({
 }: EditableFieldProps<T>) {
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
-  const { localCharacter, setLocalCharacter } = useLocalCharacter();
+  const { localCharacter } = useLocalCharacter();
   const { handleSelectCharacter } = useAppContext();
 
   useEffect(() => {
@@ -105,8 +105,7 @@ function EditableFieldImplementation<T>({
           `${localCharacter.id}.${path}`,
           factionId || localCharacter.factionId || undefined,
           handleSelectCharacter,
-          localCharacter,
-          setLocalCharacter
+          localCharacter
         );
       }
     }

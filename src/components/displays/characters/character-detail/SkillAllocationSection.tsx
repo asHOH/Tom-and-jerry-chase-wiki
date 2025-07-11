@@ -10,7 +10,7 @@ import { SkillAllocation } from '@/data/types';
 import { characters } from '@/data';
 
 export const useSkillAllocationManagement = () => {
-  const { localCharacter, setLocalCharacter } = useLocalCharacter();
+  const { localCharacter } = useLocalCharacter();
   const handleSaveChanges = useCallback(
     (updatedSkillAllocations: SkillAllocation[]) => {
       setNestedProperty(
@@ -19,9 +19,9 @@ export const useSkillAllocationManagement = () => {
         updatedSkillAllocations
       );
       saveFactionsAndCharacters();
-      setLocalCharacter({ ...localCharacter, skillAllocations: updatedSkillAllocations });
+      // Removed setLocalCharacter call due to missing function.
     },
-    [localCharacter, setLocalCharacter]
+    [localCharacter]
   );
 
   const handleAddSkillAllocation = useCallback(() => {

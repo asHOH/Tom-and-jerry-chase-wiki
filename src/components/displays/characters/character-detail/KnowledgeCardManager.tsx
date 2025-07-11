@@ -14,7 +14,7 @@ interface KnowledgeCardManagerProps {
 // TODO: use local character to refactor
 export default function KnowledgeCardManager({ factionId }: KnowledgeCardManagerProps) {
   const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<KnowledgeCardGroup[]>([]);
-  const { localCharacter: character, setLocalCharacter } = useLocalCharacter();
+  const { localCharacter: character } = useLocalCharacter();
 
   useEffect(() => {
     if (character && character.knowledgeCardGroups) {
@@ -25,7 +25,6 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
   const handleSaveChanges = (updatedGroups: KnowledgeCardGroup[]) => {
     const path = `${character.id}.knowledgeCardGroups`;
     setNestedProperty(characters, path, updatedGroups);
-    setLocalCharacter({ ...character, knowledgeCardGroups: updatedGroups });
     saveFactionsAndCharacters();
   };
 

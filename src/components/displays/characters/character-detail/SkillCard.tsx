@@ -29,7 +29,7 @@ export default function SkillCard({
 }: SkillCardProps) {
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
-  const { localCharacter, setLocalCharacter } = useLocalCharacter();
+  const { localCharacter } = useLocalCharacter();
   const [showVideoAddress, setShowVideoAddress] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -54,12 +54,7 @@ export default function SkillCard({
   const handleSaveChanges = (updatedSkill: Skill) => {
     setNestedProperty(characters, `${localCharacter.id}.skills.${skillIndex}`, updatedSkill);
     saveFactionsAndCharacters();
-    setLocalCharacter({
-      ...localCharacter,
-      skills: localCharacter.skills.map((originalSkill: Skill, i) =>
-        i == skillIndex ? updatedSkill : originalSkill
-      ),
-    });
+    // Removed setLocalCharacter call due to missing function.
   };
 
   const getSkillTypeLabel = (type: string) => {
@@ -647,7 +642,6 @@ export default function SkillCard({
                       ({ type }: Skill) => type != 'weapon2'
                     );
                   }
-                  setLocalCharacter((localCharacter) => produce(localCharacter, removeSkill));
                   removeSkill(characters[characterId]!);
                   saveFactionsAndCharacters();
                 }}

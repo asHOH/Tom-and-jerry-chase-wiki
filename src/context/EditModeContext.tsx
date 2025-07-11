@@ -23,7 +23,6 @@ interface EditModeContextType {
 
 interface LocalCharacterContextType {
   localCharacter: DeepReadonly<CharacterWithFaction>;
-  setLocalCharacter: React.Dispatch<SetStateAction<CharacterWithFaction>>;
 }
 
 const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
@@ -93,7 +92,7 @@ export const LocalCharacterProvider = ({
   const localCharacter = useSnapshot(foundCharacter);
 
   return (
-    <LocalCharacterContext.Provider value={{ localCharacter, setLocalCharacter: () => {} }}>
+    <LocalCharacterContext.Provider value={{ localCharacter }}>
       {children}
     </LocalCharacterContext.Provider>
   );

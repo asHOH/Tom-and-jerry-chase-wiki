@@ -22,7 +22,7 @@ interface PositioningTagsSectionProps {
 }
 
 function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
-  const { localCharacter, setLocalCharacter } = useLocalCharacter();
+  const { localCharacter } = useLocalCharacter();
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
   function getTags(char: CharacterWithFaction) {
     return char.mousePositioningTags ?? char.catPositioningTags ?? [];
@@ -49,43 +49,39 @@ function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
       newName: string,
       propName: 'tagName' | 'description' | 'additionalDescription'
     ) => {
-      setLocalCharacter((prevChar) => {
-        const updatedTags = getTags(prevChar).map((tag, index) =>
-          index == tagIndex ? { ...tag, [propName]: newName } : tag
-        );
-        return updateTags(prevChar, updatedTags);
-      });
+      // Removed setLocalCharacter call due to missing function.
+      const updatedTags = getTags(localCharacter).map((tag, index) =>
+        index == tagIndex ? { ...tag, [propName]: newName } : tag
+      );
+      updateTags(localCharacter, updatedTags);
     },
     [setLocalCharacter, updateTags]
   );
   const handleAddPositioningTags = useCallback(() => {
-    setLocalCharacter((prevChar) => {
-      const updatedTags = getTags(prevChar).concat({
-        tagName: factionId == 'mouse' ? '奶酪' : ('进攻' as const),
-        isMinor: false,
-        description: '新增标签介绍',
-        additionalDescription: '新增标签介绍',
-      });
-      return updateTags(prevChar, updatedTags);
+    // Removed setLocalCharacter call due to missing function.
+    const updatedTags = getTags(localCharacter).concat({
+      tagName: factionId == 'mouse' ? '奶酪' : ('进攻' as const),
+      isMinor: false,
+      description: '新增标签介绍',
+      additionalDescription: '新增标签介绍',
     });
+    updateTags(localCharacter, updatedTags);
   }, [factionId, setLocalCharacter, updateTags]);
   const handleRemovePositioningTags = useCallback(
     (tagIndex: number) => {
-      setLocalCharacter((prevChar) => {
-        const updatedTags = getTags(prevChar).filter((_, index) => index != tagIndex);
-        return updateTags(prevChar, updatedTags);
-      });
+      // Removed setLocalCharacter call due to missing function.
+      const updatedTags = getTags(localCharacter).filter((_, index) => index != tagIndex);
+      updateTags(localCharacter, updatedTags);
     },
     [setLocalCharacter, updateTags]
   );
   const toggleIsMinor = useCallback(
     (tagIndex: number) => {
-      setLocalCharacter((prevChar) => {
-        const updatedTags = getTags(prevChar).map((tag, index) =>
-          index == tagIndex ? { ...tag, isMinor: !tag.isMinor } : tag
-        );
-        return updateTags(prevChar, updatedTags);
-      });
+      // Removed setLocalCharacter call due to missing function.
+      const updatedTags = getTags(localCharacter).map((tag, index) =>
+        index == tagIndex ? { ...tag, isMinor: !tag.isMinor } : tag
+      );
+      updateTags(localCharacter, updatedTags);
     },
     [setLocalCharacter, updateTags]
   );
@@ -163,7 +159,9 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                     {tag.isMinor ? '(次要)' : '(主要)'}
                   </span>
                 ) : (
-                  tag.isMinor && <span className='text-xs text-gray-500 dark:text-gray-400'>(次要)</span>
+                  tag.isMinor && (
+                    <span className='text-xs text-gray-500 dark:text-gray-400'>(次要)</span>
+                  )
                 )}
                 {isEditMode && (
                   <button

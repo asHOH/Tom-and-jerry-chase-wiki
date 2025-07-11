@@ -3,7 +3,6 @@ import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { getSkillImageUrl } from './skillUtils';
 import { CharacterWithFaction } from './types';
-import { Dispatch, SetStateAction } from 'react';
 import { produce } from 'immer';
 import { setAutoFreeze } from 'immer';
 import json5 from 'json5';
@@ -94,7 +93,6 @@ function handleCharacterIdChange(
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
   _localCharacter: DeepReadonly<CharacterWithFaction>,
-  setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>,
   shouldNavigate: boolean = false
 ) {
   const oldId = path.split('.')[0]!;
@@ -112,7 +110,6 @@ function handleCharacterIdChange(
 
   if (characters[newId]) {
     // do not save, and navigate to the existing character
-    setLocalCharacter(enhancedCharacter);
     if (shouldNavigate) {
       handleSelectCharacter(newId);
     }
@@ -136,8 +133,6 @@ function handleCharacterIdChange(
   }
 
   // Update the local state to reflect the new character.
-  setLocalCharacter(enhancedCharacter);
-
   // Navigate to the new character's page.
   if (shouldNavigate) {
     handleSelectCharacter(newId);
@@ -148,8 +143,7 @@ export function handleCharacterSkillIdChange(
   path: string,
   newName: string,
   activeTab: string,
-  localCharacter: CharacterWithFaction,
-  setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
+  localCharacter: CharacterWithFaction
 ) {
   const skill = getNestedProperty(
     characters,
@@ -166,12 +160,7 @@ export function handleCharacterSkillIdChange(
 
   skill.name = newName;
   skill.imageUrl = getSkillImageUrl(skill.id.split('-')[0]!, skill, factionId as FactionId);
-  setLocalCharacter({
-    ...localCharacter,
-    skills: localCharacter.skills.map((i: Skill, index) =>
-      index.toString() == path.split('.')[2] ? skill : i
-    ),
-  });
+  // Removed setLocalCharacter call due to missing function.
 }
 
 export function saveFactionsAndCharacters() {
@@ -368,8 +357,7 @@ export function handleChange<T>(
   path: string,
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
-  localCharacter: DeepReadonly<CharacterWithFaction>,
-  setLocalCharacter: Dispatch<SetStateAction<CharacterWithFaction>>
+  localCharacter: DeepReadonly<CharacterWithFaction>
 ) {
   // If the ID is being changed, handle it as a special case to prevent data corruption.
   if (path && path.split('.')?.[1] === 'id') {
@@ -379,17 +367,12 @@ export function handleChange<T>(
       activeTab,
       handleSelectCharacter,
       localCharacter,
-      setLocalCharacter,
       true // ALWAYS navigate when the ID changes now
     );
   } else {
     // For any other field, update the property directly.
     const finalValue = typeof initialValue === 'number' ? parseFloat(newContentStr) : newContentStr;
-    setLocalCharacter(
-      produce(localCharacter, (draft) => {
-        setNestedProperty(draft, path.split('.').slice(1).join('.'), finalValue);
-      })
-    );
+    // Removed setLocalCharacter call due to missing function.
     setNestedProperty(characters, path, finalValue);
   }
 
