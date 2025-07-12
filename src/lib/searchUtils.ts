@@ -127,6 +127,29 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
         }
       }
     }
+    // Check character skills aliases
+    if (!matchContext) {
+      for (const skill of character.skills) {
+        if (skill.aliases) {
+          for (const alias of skill.aliases) {
+            const aliasLowerCase = alias.toLowerCase();
+            const aliasPinyin = await convertToPinyin(alias);
+
+            if (aliasLowerCase.includes(lowerCaseQuery)) {
+              matchContext = `${skill.name} (${alias})`;
+              priority = 0.84;
+              isPinyinMatch = false;
+              break;
+            } else if (aliasPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+              matchContext = `${skill.name} (${alias})`;
+              priority = 0.83;
+              isPinyinMatch = true;
+              break;
+            }
+          }
+        }
+      }
+    }
     // Check character description
     if (!matchContext) {
       const descriptionLowerCase = character.description.toLowerCase();
