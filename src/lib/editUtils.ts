@@ -3,11 +3,8 @@ import { getCatImageUrl } from '@/data/catCharacters';
 import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { getSkillImageUrl } from './skillUtils';
 import { CharacterWithFaction } from './types';
-import { setAutoFreeze } from 'immer';
 import json5 from 'json5';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
-
-setAutoFreeze(false);
 
 /**
  * Deeply assigns the values of source object to the target object.

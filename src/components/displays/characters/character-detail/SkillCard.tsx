@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import Image from 'next/image';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
@@ -89,6 +89,58 @@ export default function SkillCard({
           ' 秒',
         ]);
       }
+    }
+    if (isEditMode && skill.aliases && skill.aliases.length > 0) {
+      properties.push(
+        <div className='text-gray-600 text-xs flex'>
+          别名：
+          {skill.aliases.map((alias, index) => (
+            <Fragment key={alias}>
+              <EditableField
+                tag='span'
+                className='alias-item'
+                initialValue={alias}
+                path={`skills.${skillIndex}.aliases.${index}`}
+                onSave={(newValue) => {
+                  const skill = characters[characterId]!.skills[skillIndex]!;
+                  if (newValue.trim() === '') {
+                    // Remove empty alias
+                    skill.aliases = skill.aliases!.filter((_, i) => i !== index);
+                  } else {
+                    // Update alias
+                    skill.aliases![index] = newValue.trim();
+                  }
+                }}
+              />
+              {index < skill.aliases!.length - 1 && <span className='text-gray-400'>、</span>}
+            </Fragment>
+          ))}
+          <button
+            type='button'
+            aria-label='添加第二武器'
+            onClick={() => {
+              const skill = characters[characterId]!.skills[skillIndex]!;
+              if (!skill.aliases) {
+                skill.aliases = [];
+              }
+              skill.aliases.push('新别名');
+            }}
+            className='w-4 h-4 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700 ml-2'
+            key='new-weapon-button'
+          >
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth='2'
+              stroke='currentColor'
+              className='w-3 h-3'
+            >
+              <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
+            </svg>
+          </button>
+        </div>
+      );
     }
     if (isEditMode && skill.type != 'passive') {
       properties.push(
@@ -626,7 +678,7 @@ export default function SkillCard({
             <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2'>
               {properties.map((prop, index) => (
                 <React.Fragment key={index}>
-                  {index > 0 && ' · '}
+                  {index > 0 && !isEditMode && ' · '}
                   {prop}
                 </React.Fragment>
               ))}
