@@ -2,7 +2,7 @@ import type { CharacterDefinition } from './types';
 
 // Exported from 鼠数值.xlsx
 // Thanks to 追风汤姆 for his contribution to the character data
-const stats: Record<string, Partial<CharacterDefinition>> = {
+const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
   杰瑞: {
     attackBoost: 15,
     wallCrackDamageBoost: 1,
@@ -301,4 +301,4 @@ const stats: Record<string, Partial<CharacterDefinition>> = {
     cheesePushSpeed: 3.4,
   },
 };
-export default stats;
+export default mouseCharactersStats;

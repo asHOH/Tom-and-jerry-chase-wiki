@@ -5,6 +5,7 @@ import { getSkillImageUrl } from './skillUtils';
 import { CharacterWithFaction } from './types';
 import json5 from 'json5';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import mouseCharactersStats from '@/data/mouseCharactersStats';
 
 /**
  * Deeply assigns the values of source object to the target object.
@@ -103,6 +104,11 @@ function handleCharacterIdChange(
 
   // Enhance the new character with all necessary properties.
   const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId);
+
+  if (activeTab == 'mouse') {
+    Object.assign(enhancedCharacter, mouseCharactersStats[newId]);
+    console.log({ enhancedCharacter, mouseCharactersStats });
+  }
 
   if (characters[newId]) {
     // do not save, and navigate to the existing character
