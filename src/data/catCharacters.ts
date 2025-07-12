@@ -1120,16 +1120,23 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
-        description: '待补充',
-      },
-      {
-        cards: ['S-蓄势一击', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
-        description: '待补充',
-      },
-      {
-        cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-攻其不备', 'C-猫是液体'],
-        description: '待补充',
+        id: '蓄势一击',
+        description: '蓄势一击使苏蕊通过爪刀接球可以轻松打死125血老鼠。',
+        groups: [
+          {
+            cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
+            description: '待补充',
+          },
+          {
+            cards: ['S-蓄势一击', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
+            description: '待补充',
+          },
+          {
+            cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-攻其不备', 'C-猫是液体'],
+            description: '待补充',
+          },
+        ],
+        defaultFolded: false,
       },
     ],
 

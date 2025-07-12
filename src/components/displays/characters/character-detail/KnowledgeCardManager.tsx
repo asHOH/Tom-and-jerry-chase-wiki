@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { characters } from '@/data'; // Import Character type
-import type { KnowledgeCardGroup } from '@/data/types';
+import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import KnowledgeCardSection from './KnowledgeCardSection';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import { useSnapshot } from 'valtio';
@@ -15,7 +15,7 @@ interface KnowledgeCardManagerProps {
 // TODO: use local character to refactor
 export default function KnowledgeCardManager({ factionId }: KnowledgeCardManagerProps) {
   const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<
-    DeepReadonly<KnowledgeCardGroup[]>
+    DeepReadonly<(KnowledgeCardGroup | KnowledgeCardGroupSet)[]>
   >([]);
   const { characterId } = useLocalCharacter();
   const character = useSnapshot(characters[characterId]!);

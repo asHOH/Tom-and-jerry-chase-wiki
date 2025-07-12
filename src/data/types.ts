@@ -80,6 +80,14 @@ export type KnowledgeCardGroup = {
   description?: string;
 };
 
+export type KnowledgeCardGroupSet = {
+  id: string;
+  description: string;
+  detailedDescription?: string;
+  groups: KnowledgeCardGroup[];
+  defaultFolded: boolean;
+};
+
 // Character definition type (without id, for raw definitions)
 export type CharacterDefinition = {
   description: string;
@@ -112,7 +120,7 @@ export type CharacterDefinition = {
   skills: SkillDefinition[];
 
   // Knowledge card suggestions
-  knowledgeCardGroups: KnowledgeCardGroup[];
+  knowledgeCardGroups: (KnowledgeCardGroup | KnowledgeCardGroupSet)[];
 };
 
 export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDefinition>;
