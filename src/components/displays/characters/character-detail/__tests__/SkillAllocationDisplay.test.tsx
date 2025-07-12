@@ -2,10 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SkillAllocationDisplay from '../SkillAllocationDisplay';
-import { EditModeProvider, LocalCharacterContext } from '../../../../../context/EditModeContext';
+import { EditModeProvider } from '../../../../../context/EditModeContext';
 import { AppProvider } from '../../../../../context/AppContext';
 import type { SkillAllocation } from '../../../../../data/types';
-import type { CharacterWithFaction } from '../../../../../lib/types';
 import * as skillAllocationUtils from '../../../../../lib/skillAllocationUtils';
 
 // Mock the skillAllocationUtils module
@@ -38,29 +37,9 @@ const mockedParseSkillAllocationPattern = jest.mocked(
 
 // Simplified test wrapper
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const mockLocalCharacterValue = {
-    localCharacter: {
-      id: 'test-character',
-      name: '测试角色',
-      description: 'Test character description',
-      skills: [],
-      knowledgeCardGroups: [],
-      faction: {
-        id: 'cat',
-        name: '猫咪',
-      },
-      imageUrl: '/test-character.png',
-    } as CharacterWithFaction,
-    setLocalCharacter: jest.fn(),
-  };
-
   return (
     <AppProvider>
-      <EditModeProvider>
-        <LocalCharacterContext.Provider value={mockLocalCharacterValue}>
-          {children}
-        </LocalCharacterContext.Provider>
-      </EditModeProvider>
+      <EditModeProvider>{children}</EditModeProvider>
     </AppProvider>
   );
 };

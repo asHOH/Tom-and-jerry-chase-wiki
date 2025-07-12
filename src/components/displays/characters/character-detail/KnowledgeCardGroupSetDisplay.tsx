@@ -50,7 +50,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
         className='flex items-center justify-between w-full text-2xl font-bold py-3 mb-1 focus:outline-none cursor-pointer dark:text-white'
         onClick={toggleOpen}
       >
-        <h3 className='pl-2 text-lg'>{groupSet.id}</h3>
+        <h3 className='pl-1 text-lg'>{groupSet.id}</h3>
         <svg
           className={`w-6 h-6 transform transition-transform duration-200 ease-out ${
             isOpen ? 'rotate-0' : '-rotate-90'
