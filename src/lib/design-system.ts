@@ -42,11 +42,14 @@ export {
  * Create hover styles for interactive elements
  */
 export const createHoverStyles = (baseStyles: React.CSSProperties) => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const factionColors = designTokens.colors.faction;
   const hoverBg = isDarkMode ? factionColors.dark.hover : factionColors.hover;
   const hoverText = isDarkMode ? factionColors.dark.hoverText : factionColors.hoverText;
-  const cardHoverShadow = isDarkMode ? designTokens.shadows.dark.cardHover : designTokens.shadows.cardHover;
+  const cardHoverShadow = isDarkMode
+    ? designTokens.shadows.dark.cardHover
+    : designTokens.shadows.cardHover;
 
   return {
     base: baseStyles,
@@ -135,7 +138,8 @@ export const createCardStyles = (
  * Create button styles using design tokens
  */
 export const createButtonStyles = (variant: 'faction' | 'primary' | 'secondary' = 'primary') => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const baseButtonStyle = {
     padding: designTokens.spacing.md,
     borderRadius: designTokens.radius.md,

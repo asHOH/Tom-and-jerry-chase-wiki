@@ -88,7 +88,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} dark`}>
         <ErrorBoundary>
           <OfflineIndicator />
-          <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>{children}</main>
+          <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
+            {children}
+          </main>
         </ErrorBoundary>
         <PerformanceMonitor />
         <ServiceWorkerRegistration />

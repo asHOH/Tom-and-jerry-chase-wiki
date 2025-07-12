@@ -648,7 +648,8 @@ export const createStyleFromTokens = (tokenPath: Record<string, unknown>): React
 
 // Card utility functions using design tokens
 export const getCardRankColors = (rank: string, includeBorder: boolean = false) => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const rankKey = rank as keyof typeof designTokens.colors.rank;
   const colorScheme = designTokens.colors.rank[rankKey] || designTokens.colors.rank.default;
 
@@ -663,7 +664,8 @@ export const getCardRankColors = (rank: string, includeBorder: boolean = false) 
 };
 
 export const getCardCostColors = (cost: number, includeBorder: boolean = false) => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   let colorScheme;
 
   if (cost >= 6) {
@@ -693,7 +695,8 @@ export const getPositioningTagColors = (
   includeBorder: boolean = false,
   faction?: 'cat' | 'mouse'
 ) => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   // Map Chinese tag names to design token keys
   const tagMapping: Record<string, keyof typeof designTokens.colors.positioningTags> = {
     进攻: 'attack',
@@ -769,7 +772,8 @@ export const getSkillTypeColors = (
   skillType: '0' | '1' | '2' | '3' | 'passive' | 'active' | 'weapon1' | 'weapon2',
   includeBorder: boolean = false
 ) => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   // Map skill types to design token keys
   const skillTypeMapping: Record<string, keyof typeof designTokens.colors.skillTypes> = {
     '0': 'passive',
@@ -800,7 +804,8 @@ export const getSkillTypeColors = (
 export const getSkillTypeContainerColor = (
   skillType: '0' | '1' | '2' | '3' | 'passive' | 'active' | 'weapon1' | 'weapon2'
 ): string => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const skillTypeMapping: Record<string, keyof typeof designTokens.colors.skillTypes> = {
     '0': 'passive',
     passive: 'passive',
@@ -822,7 +827,8 @@ export const getSkillTypeContainerColor = (
 
 // Skill level utility functions
 export const getSkillLevelColors = (level: number, includeBorder: boolean = false) => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   let colorScheme;
 
   if (level === 1) {
@@ -847,7 +853,8 @@ export const getSkillLevelColors = (level: number, includeBorder: boolean = fals
 };
 
 export const getSkillLevelContainerColor = (level: number): string => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   let colorScheme;
 
   if (level === 1) {
@@ -869,7 +876,8 @@ export const getPositioningTagContainerColor = (
   isMinor: boolean = false,
   faction?: 'cat' | 'mouse'
 ): string => {
-  const isDarkMode = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
   // Map Chinese tag names to design token keys
   const tagMapping: Record<string, keyof typeof designTokens.colors.positioningTags> = {
     进攻: 'attack',

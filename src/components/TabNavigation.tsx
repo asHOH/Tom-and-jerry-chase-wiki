@@ -106,18 +106,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   };
 
   return (
-    <div
-      className='fixed top-0 left-0 right-0 bg-white shadow-md z-50 w-full py-2 dark:bg-slate-900 dark:shadow-lg'
-    >
-      <div
-        className='flex justify-between items-center max-w-screen-xl mx-auto px-4'
-      >
+    <div className='fixed top-0 left-0 right-0 bg-white shadow-md z-50 w-full py-2 dark:bg-slate-900 dark:shadow-lg'>
+      <div className='flex justify-between items-center max-w-screen-xl mx-auto px-4'>
         {/* Left-aligned navigation buttons */}
         <div
           className={clsx(
             'flex',
             isMobile ? 'gap-2 overflow-x-auto' : 'gap-3',
-            '[scrollbar-width:none] [-ms-overflow-style:\'none\'] [overflow-y:visible] relative'
+            "[scrollbar-width:none] [-ms-overflow-style:'none'] [overflow-y:visible] relative"
           )}
         >
           <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>

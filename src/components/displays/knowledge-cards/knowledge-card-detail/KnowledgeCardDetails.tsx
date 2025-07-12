@@ -34,7 +34,10 @@ export default function KnowledgeCardDetails({
           <BaseCard variant='details'>
             <GameImage src={card.imageUrl} alt={card.id} size='CARD_DETAILS' />
             <div style={{ padding: designTokens.spacing.md }}>
-              <h1 className='text-3xl font-bold dark:text-white' style={{ paddingBottom: designTokens.spacing.sm }}>
+              <h1
+                className='text-3xl font-bold dark:text-white'
+                style={{ paddingBottom: designTokens.spacing.sm }}
+              >
                 {card.id}{' '}
                 <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
                   ({card.faction.id === 'cat' ? '猫方知识卡' : '鼠方知识卡'})
@@ -123,7 +126,10 @@ export default function KnowledgeCardDetails({
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.lg }}>
-            <div className='card dark:bg-slate-800 dark:border-slate-700' style={{ padding: designTokens.spacing.lg }}>
+            <div
+              className='card dark:bg-slate-800 dark:border-slate-700'
+              style={{ padding: designTokens.spacing.lg }}
+            >
               {/* Card description */}
               <div style={{ marginBottom: designTokens.spacing.lg }}>
                 <p

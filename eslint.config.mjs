@@ -18,10 +18,7 @@ const eslintConfig = [
     ignores: ['templates/**/*', '.next/**/*', 'out/**/*', 'coverage/**/*'],
   },
   {
-    files: [
-      'src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-      'src/**/*.(test|spec).{js,jsx,ts,tsx}',
-    ],
+    files: ['src/**/__tests__/**/*.{js,jsx,ts,tsx}', 'src/**/*.(test|spec).{js,jsx,ts,tsx}'],
     plugins: { 'testing-library': testingLibrary, 'jest-dom': jestDom },
     rules: {
       ...testingLibrary.configs.react.rules,
