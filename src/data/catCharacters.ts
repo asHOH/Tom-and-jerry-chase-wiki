@@ -1132,11 +1132,38 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description: '待补充',
           },
           {
+            cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+            description: '待补充',
+          },
+          {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-攻其不备', 'C-猫是液体'],
             description: '待补充',
           },
         ],
         defaultFolded: false,
+      },
+      {
+        id: '击晕',
+        description: '击晕卡组比较适合新手。',
+        groups: [
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
+            description: '待补充',
+          },
+          {
+            cards: ['S-击晕', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
+            description: '待补充',
+          },
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+            description: '待补充',
+          },
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'C-狡诈', 'C-猫是液体'],
+            description: '待补充',
+          },
+        ],
+        defaultFolded: true,
       },
     ],
 
