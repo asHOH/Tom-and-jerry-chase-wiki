@@ -98,7 +98,6 @@ export default function SkillCard({
             <Fragment key={alias}>
               <EditableField
                 tag='span'
-                className='alias-item'
                 initialValue={alias}
                 path={`skills.${skillIndex}.aliases.${index}`}
                 onSave={(newValue) => {
@@ -117,13 +116,15 @@ export default function SkillCard({
           ))}
           <button
             type='button'
-            aria-label='添加第二武器'
+            aria-label='添加别名'
             onClick={() => {
               const skill = characters[characterId]!.skills[skillIndex]!;
               if (!skill.aliases) {
                 skill.aliases = [];
               }
-              skill.aliases.push('新别名');
+              if (skill.aliases.indexOf('新别名') === -1) {
+                skill.aliases.push('新别名');
+              }
             }}
             className='w-4 h-4 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700 ml-2'
             key='new-weapon-button'

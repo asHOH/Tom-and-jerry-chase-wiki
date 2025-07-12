@@ -26,6 +26,11 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
   const { isEditMode } = useEditMode();
   const commonAttributes: CharacterAttribute[] = [
     {
+      label: '别名',
+      value: 0,
+      condition: isEditMode,
+    },
+    {
       label: 'Hp上限',
       value: character.maxHp || 0,
       condition: !!character.maxHp,
