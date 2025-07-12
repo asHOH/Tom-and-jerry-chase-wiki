@@ -935,8 +935,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
   },
 
-  /* ----------------------------------- 米特
- ----------------------------------- */
+  /* ----------------------------------- 米特 ----------------------------------- */
   米特: {
     description:
       '米特是一只流浪猫，他的尾巴曾在一场流浪猫战争中受过伤，但它十分勇猛，从不会向敌人认输。',
@@ -944,7 +943,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     hpRecovery: 1,
     moveSpeed: 750,
     jumpHeight: 420,
-    clawKnifeCdHit: 5.4, // FIXME: unsure about CD and range
+    clawKnifeCdHit: 5.4,
     clawKnifeCdUnhit: 3.2,
     clawKnifeRange: 300,
     catPositioningTags: [
@@ -987,6 +986,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         cards: ['S-击晕', 'S-乘胜追击', 'B-皮糙肉厚', 'C-猫是液体'],
         description: '打减速队。',
       },
+      {
+        cards: ['A-穷追猛打', 'B-皮糙肉厚', 'A-加大火力', 'C-猫是液体', 'B-恐吓', 'B-反侦察'],
+        description: '死守奶酪。',
+      },
     ],
     skills: [
       {
@@ -1014,7 +1017,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '持续伤害频率更高。猫咪在“刺激”状态下获得减伤并略微提高绑火箭速度。',
+            description: '持续伤害频率更高。猫咪在“刺激”状态下获得减伤50%并提高绑火箭速度50%。',
             cooldown: 12,
           },
         ],
@@ -1029,7 +1032,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: '无后摇',
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '可被跳跃键打断',
         skillLevels: [
           {
             level: 1,
@@ -1056,14 +1059,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description:
-              '每次受到伤害获得1层“野性”状态，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在10层野性下绑火箭时会进入6秒强霸体。',
+              '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在7层野性下绑火箭时会进入6秒强霸体（内置CD：17秒）。',
             detailedDescription:
               '每次受到伤害获得1层“野性”状态，持续10秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在10层野性下绑火箭时会进入6秒强霸体（内置CD：20秒）。',
           },
           {
             level: 2,
             description:
-              '野性的额外伤害使老鼠20秒内无法回复生命。此期间被绑上火箭时，需要更多时间才能救下。',
+              '被爪刀命中的老鼠20秒内无法回复生命。此期间被绑上火箭时，需要更多时间才能救下。',
           },
           {
             level: 3,

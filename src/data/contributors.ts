@@ -70,7 +70,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['莱特宁', '剑客莉莉', '侦探泰菲'],
+        characters: ['莱特宁', '剑客莉莉', '侦探泰菲', '佩克斯'],
       },
     ],
   },
@@ -96,6 +96,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'yigeqiujun',
+    name: '一个气球君',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['表演者•杰瑞'],
+      },
+    ],
+  },
+  {
     id: 'nixiaoruidadi',
     name: '你小睿大帝',
     roles: [
@@ -109,6 +119,16 @@ export const contributors: Contributor[] = [
     id: 'bingmeishi',
     name: '冰美式',
     url: 'https://space.bilibili.com/439320147',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['米特'],
+      },
+    ],
+  },
+  {
+    id: 'gangge',
+    name: '港鸽',
     roles: [
       {
         type: RoleType.ContentWriter,
