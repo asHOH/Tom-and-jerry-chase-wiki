@@ -3,7 +3,6 @@ import type { KnowledgeCardGroupSet } from '@/data/types';
 import { KnowledgeCardGroup } from './KnowledgeCardSection';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext'; // Added import
 
 interface KnowledgeCardGroupSetDisplayProps {
   groupSet: DeepReadonly<KnowledgeCardGroupSet>;
@@ -33,7 +32,6 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
   handleDescriptionSave,
 }) => {
   const { isDetailedView } = useAppContext();
-  const { isEditMode } = useEditMode();
   const [isOpen, setIsOpen] = useState(!groupSet.defaultFolded);
 
   const toggleOpen = () => {
@@ -92,7 +90,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
                   group={group.cards}
                   index={index}
                   description={group.description}
-                  isEditMode={isEditMode}
+                  isEditMode={false}
                   isSqueezedView={isSqueezedView}
                   handleSelectCard={handleSelectCard}
                   characterId={characterId}

@@ -180,9 +180,10 @@ function EditableField<T>({
   className,
   onSave,
   factionId,
-}: EditableFieldProps<T>) {
+  enableEdit = true,
+}: EditableFieldProps<T> & { enableEdit?: boolean }) {
   const { isEditMode } = useEditMode();
-  return isEditMode ? (
+  return isEditMode && enableEdit ? (
     <EditableFieldImplementation
       tag={Tag}
       path={path}

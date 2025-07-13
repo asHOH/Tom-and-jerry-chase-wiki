@@ -194,6 +194,7 @@ export function KnowledgeCardGroup({
             initialValue={description ?? ''}
             onSave={(newDescription) => handleDescriptionSave(newDescription, index)}
             className='text-sm text-gray-700 dark:text-gray-300'
+            enableEdit={isEditMode}
           />
         </div>
       )}
