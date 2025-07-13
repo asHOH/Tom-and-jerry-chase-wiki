@@ -216,7 +216,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
               type='button'
               aria-label='添加定位标签'
               onClick={handleAddPositioningTags}
-              className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
+              className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
