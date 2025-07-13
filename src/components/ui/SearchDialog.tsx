@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion'; // Import motion
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useAppContext } from '@/context/AppContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
@@ -79,6 +80,20 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const { handleSelectCard, handleSelectCharacter } = useAppContext();
   const { isEditMode, toggleEditMode } = useEditMode();
+
+  // Animation variants for the dialog
+  const dialogVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 0.95 },
+  };
+
+  // Animation variants for the backdrop
+  const backdropVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 },
+  };
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -162,12 +177,19 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   };
 
   return (
-    <div
+    <motion.div
       className={`fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center z-50 ${isMobile ? 'p-0' : ''}`}
+      initial='hidden'
+      animate='visible'
+      exit='exit'
+      variants={backdropVariants} // Apply backdrop animation
+      transition={{ duration: 0.2 }}
     >
-      <div
+      <motion.div
         ref={dialogRef}
         className={`bg-white dark:bg-gray-800 shadow-xl p-4 relative ${isMobile ? 'w-full h-full rounded-none flex flex-col' : 'rounded-lg w-full max-w-md mx-auto'}`}
+        variants={dialogVariants} // Apply dialog animation
+        transition={{ duration: 0.2 }}
       >
         <button
           type='button'
@@ -214,13 +236,27 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         </div>
 
         {searchQuery.length > 0 && searchResults.length > 0 && (
-          <ul
+          <motion.ul
             className={`${isMobile ? 'flex-1' : 'max-h-60'} overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md`}
+            initial='hidden'
+            animate='visible'
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.05, // Stagger animation for children
+                },
+              },
+            }}
           >
             {searchResults.map((result, index) => (
-              <li
+              <motion.li
                 key={`${result.type}-${result.id}`}
                 className='border-b border-gray-200 dark:border-gray-700 last:border-b-0'
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                transition={{ duration: 0.2 }}
               >
                 <button
                   type='button'
@@ -246,16 +282,16 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                     </span>
                   )}
                 </button>
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         )}
 
         {searchQuery.length > 0 && searchResults.length === 0 && (
           <div className='p-2 text-gray-500 dark:text-gray-400'>无结果</div>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
