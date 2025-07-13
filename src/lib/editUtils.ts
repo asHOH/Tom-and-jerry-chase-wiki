@@ -6,6 +6,7 @@ import { CharacterWithFaction } from './types';
 import json5 from 'json5';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import mouseCharactersStats from '@/data/mouseCharactersStats';
+import { GameDataManager } from './dataManager';
 
 /**
  * Deeply assigns the values of source object to the target object.
@@ -171,20 +172,7 @@ export function getOriginalCharacterIds(): string[] {
     // On server side, return all current character IDs
     return Object.keys(characters);
   }
-
-  // Try to get original characters from initial data or fallback to current
-  const originalCharactersStr = localStorage.getItem('originalCharacters');
-  if (originalCharactersStr) {
-    try {
-      const originalCharacters = JSON.parse(originalCharactersStr);
-      return Object.keys(originalCharacters);
-    } catch (e) {
-      console.error('Failed to parse original characters', e);
-    }
-  }
-
-  // Fallback: return current character IDs
-  return Object.keys(characters);
+  return Object.keys(GameDataManager.getCharacters());
 }
 
 // Check if a character ID corresponds to an original (static) character
