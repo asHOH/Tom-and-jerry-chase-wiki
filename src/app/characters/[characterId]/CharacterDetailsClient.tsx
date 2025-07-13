@@ -3,8 +3,11 @@
 import { CharacterDetails } from '@/components/displays/characters/character-detail';
 import { CharacterDetailsProps } from '@/lib/types';
 import { characters } from '@/data';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
+import OnboardingTutorial from '@/components/OnboardingTutorial';
+import { hasUserSeenCharacterDetailsTutorial } from '@/lib/tutorialUtils';
+import { useEditMode } from '@/context/EditModeContext';
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const [character, setCharacter] = useState(props.character);
@@ -23,5 +26,26 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     }
   }, [pathname, character.id]);
 
-  return <CharacterDetails character={character} />;
+  const { isEditMode } = useEditMode();
+
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    if (isEditMode && !hasUserSeenCharacterDetailsTutorial()) {
+      setShowTutorial(true);
+    } else {
+      setShowTutorial(false);
+    }
+  }, [isEditMode]);
+
+  const handleTutorialClose = useCallback(() => {
+    setShowTutorial(false);
+  }, []);
+
+  return (
+    <>
+      <CharacterDetails character={character} />
+      {showTutorial && <OnboardingTutorial onClose={handleTutorialClose} isEnabled={isEditMode} />}
+    </>
+  );
 }
