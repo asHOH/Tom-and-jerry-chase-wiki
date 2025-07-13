@@ -2290,8 +2290,20 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         additionalDescription: '',
       },
     ],
-    skillAllocations: [],
-    knowledgeCardGroups: [],
+    skillAllocations: [
+      {
+        id: '',
+        pattern: '101002221',
+        weaponType: 'weapon1',
+        description: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
+        description: '待补充',
+      },
+    ],
     skills: [
       {
         name: '梦幻舞步',
