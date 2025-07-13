@@ -42,6 +42,7 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
       const targetElement = document.querySelector(currentStep.targetSelector);
       if (targetElement) {
         setTargetRect(targetElement.getBoundingClientRect());
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
         setTargetRect(null);
       }
@@ -85,10 +86,12 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
     return null; // Should not happen if TUTORIAL_STEPS is properly defined and index is managed
   }
 
-  // Calculate spotlight position and size
-  const spotlightSize = Math.max(targetRect.width, targetRect.height) + 20; // Add padding
-  const spotlightX = targetRect.left + targetRect.width / 2 - spotlightSize / 2;
-  const spotlightY = targetRect.top + targetRect.height / 2 - spotlightSize / 2;
+  // Calculate spotlight position and size for a rounded square
+  const spotlightPadding = 10; // Padding around the target element
+  const spotlightWidth = targetRect.width + spotlightPadding * 2;
+  const spotlightHeight = targetRect.height + spotlightPadding * 2;
+  const spotlightX = targetRect.left - spotlightPadding;
+  const spotlightY = targetRect.top - spotlightPadding;
 
   // Calculate tooltip/message position
   let tooltipX = 0;
@@ -140,10 +143,10 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-            className='absolute rounded-full border-4 border-blue-400 pointer-events-none'
+            className='absolute rounded-lg border-4 border-blue-400 pointer-events-none'
             style={{
-              width: spotlightSize,
-              height: spotlightSize,
+              width: spotlightWidth,
+              height: spotlightHeight,
               left: spotlightX,
               top: spotlightY,
             }}

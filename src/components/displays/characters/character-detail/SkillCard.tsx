@@ -585,6 +585,7 @@ export default function SkillCard({
                   }
                   path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
                   tag='span'
+                  data-tutorial-id='skill-description-edit'
                 />
               </p>
             </div>

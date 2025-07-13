@@ -111,6 +111,7 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
                     }
                   }}
                   className='ml-4 px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400'
+                  data-tutorial-id='character-export'
                 >
                   {copyMessage || '导出数据'}
                 </button>

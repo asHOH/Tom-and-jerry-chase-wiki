@@ -6,28 +6,31 @@ export interface TutorialStep {
 }
 
 export const TUTORIAL_STEPS: TutorialStep[] = [
-  // {
-  //   id: 'edit-button',
-  //   targetSelector: '[data-tutorial-id="edit-button"]',
-  //   message: 'Click this button to enter edit mode and modify character details.',
-  //   position: 'bottom',
-  // },
-  // {
-  //   id: 'save-button',
-  //   targetSelector: '[data-tutorial-id="save-button"]',
-  //   message: 'After making changes, click here to save them.',
-  //   position: 'bottom',
-  // },
-  // {
-  //   id: 'cancel-button',
-  //   targetSelector: '[data-tutorial-id="cancel-button"]',
-  //   message: 'Discard your changes by clicking this button.',
-  //   position: 'bottom',
-  // },
   {
     id: 'character-name-edit',
     targetSelector: '[data-tutorial-id="character-name-edit"]',
-    message: '若要创建新角色，请将此处的角色名更改为新的。',
+    message: '角色名称，若要创建新角色，请将此处的角色名更改为新的。',
+    position: 'bottom',
+  },
+  {
+    id: 'skill-allocation-edit',
+    targetSelector: '[data-tutorial-id="skill-allocation-edit"]',
+    message:
+      '加点序列，0123分别表示被动、主动、一武、二武。中括号表示平行加点，需要根据实际情况抉择加点顺序是12还是21；小括号表示需要留加点（莉莉、罗菲二被）；减号表示一般不升这级（苏蕊三级跳舞），示例：01(0)1[10]22-2。',
+    position: 'bottom',
+  },
+  {
+    id: 'skill-description-edit',
+    targetSelector: '[data-tutorial-id="skill-description-edit"]',
+    message:
+      '技能描述，可以使用[]()来标记注释。方括号内的内容会在技能卡片中直接显示，圆括号内的内容会在鼠标悬停或点击时显示为提示；在描述技能的非固定伤害时，请按照基础伤害（+角色增伤）的格式来描述。',
+    position: 'bottom',
+  },
+  {
+    id: 'character-export',
+    targetSelector: '[data-tutorial-id="character-export"]',
+    message:
+      '保存按钮，点击后会将角色的数据复制到剪切板中并下载成文件，由于网站存储角色数据不稳定，请多多保存。',
     position: 'bottom',
   },
 ];

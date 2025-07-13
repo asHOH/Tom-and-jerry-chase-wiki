@@ -376,6 +376,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               path={`skillAllocations.${index}.pattern`}
               initialValue={allocation.pattern}
               className='text-gray-500 dark:text-gray-400 text-sm'
+              data-tutorial-id='skill-allocation-edit'
             />
           )}
         </div>
