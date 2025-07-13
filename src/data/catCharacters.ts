@@ -730,7 +730,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description: '提高基础移动和跳跃速度。',
-            detailedDescription: '基础移速提升10%；跳跃速度提升（未测）。',
+            detailedDescription: '基础移速提升20%；跳跃速度提升（未测）。',
           },
           {
             level: 3,
