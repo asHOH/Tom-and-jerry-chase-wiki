@@ -1,5 +1,7 @@
 'use client';
 
+import { characters, factions } from '@/data';
+import { GameDataManager } from '@/lib/dataManager';
 import { usePathname } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
@@ -38,6 +40,24 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     if (isEditMode) {
       localStorage.removeItem('characters');
       localStorage.removeItem('factions');
+      const originalCharacters = GameDataManager.getCharacters();
+      const originalFactions = GameDataManager.getFactions();
+      for (const [key, value] of Object.entries(originalCharacters)) {
+        characters[key] = value;
+      }
+      for (const key of Object.keys(characters)) {
+        if (!originalCharacters[key]) {
+          delete characters[key];
+        }
+      }
+      for (const [key, value] of Object.entries(originalFactions)) {
+        factions[key] = value;
+      }
+      for (const key of Object.keys(factions)) {
+        if (!originalFactions[key]) {
+          delete factions[key];
+        }
+      }
     }
   };
 
