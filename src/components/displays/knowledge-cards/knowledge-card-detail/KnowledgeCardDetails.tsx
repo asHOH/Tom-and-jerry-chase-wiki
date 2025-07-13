@@ -13,11 +13,8 @@ import BaseCard from '../../../ui/BaseCard';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data'; // Import characters data
 
-export default function KnowledgeCardDetails({
-  card,
-  isDetailedView: propIsDetailedView,
-}: KnowledgeCardDetailsProps) {
-  const isDetailedView = propIsDetailedView || false;
+export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps) {
+  const { isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null; // Add null check
   const { handleSelectCharacter } = useAppContext();

@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
-import { AppProvider } from '@/context/AppContext';
 
 // Dynamic import for KnowledgeCardDetails component
 const KnowledgeCardDetails = dynamic(
@@ -28,9 +27,5 @@ const KnowledgeCardDetails = dynamic(
 );
 
 export default function KnowledgeCardDetailsClient(props: KnowledgeCardDetailsProps) {
-  return (
-    <AppProvider>
-      <KnowledgeCardDetails {...props} />
-    </AppProvider>
-  );
+  return <KnowledgeCardDetails {...props} />;
 }
