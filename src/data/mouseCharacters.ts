@@ -101,7 +101,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         // detailedDescription: '举起大铁锤近身攻击。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断', //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
+        cancelableSkill: ['道具键*'], //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
         cancelableAftercast: '不可取消后摇',
         canHitInPipe: true,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=104.4',
@@ -131,8 +131,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。猫咪被金丝雀的炸弹命中后将对其短暂免疫。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断',
-        cancelableAftercast: '可被道具键*取消后摇',
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: ['道具键*'],
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=125.5',
         skillLevels: [
           {
@@ -280,7 +280,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消',
+        cancelableAftercast: '不可取消后摇',
         skillLevels: [
           {
             level: 1,
@@ -312,7 +312,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '以道具形式投掷干扰器，投掷前摇0.3s，落地或碰到墙壁后对范围内的老鼠施加3.5秒隐身效果。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不确定是否可被打断', // FIXME
+        // cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -433,7 +433,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '拿出一枚能对猫咪造成眩晕的金币，金币能穿过大部分平台，对猫造成2秒眩晕。金币击中后会使猫咪短暂进入“金币免疫”状态，金币无法对此状态下的猫咪造成效果。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被跳跃键打断',
+        cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -464,7 +464,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '放置一个能破坏火箭、墙缝的火药桶，火药桶爆炸后会破坏附近的火箭，并对周围角色造成伤害和眩晕。猫咪可以拆除火药桶，耗时1秒；老鼠可以推动火药桶。火药桶被打击后会引线时长会减少5秒。猫咪在绑老鼠前需要先修复火箭。航海士杰瑞破坏绑有队友的火箭后会救下队友（能触发无畏、舍己）。火药桶可以被鞭炮炸飞，在火药桶左侧的鞭炮会使火药桶呈抛物线飞出，右侧的鞭炮会使火药桶水平滑行。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '可被跳跃键打断',
+        cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -498,8 +498,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '放置一个舰艇火炮，老鼠可以进入火炮，控制方向发射并对碰到的猫咪造成50点伤害与1.5秒眩晕，火炮内免疫投掷物。火炮内老鼠进入虚弱后火炮会提前消失。同一房间最多出现两个火炮。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不确定是否可被打断', // FIXME
-        cancelableAftercast: '不确定是否可取消后摇', // FIXME
+        // cancelableSkill: '不确定是否可被打断', // FIXME
+        // cancelableAftercast: '不确定是否可取消后摇', // FIXME
         skillLevels: [
           {
             level: 1,
@@ -855,7 +855,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '放下隐形感应雷。雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成50伤害、1.9秒控制和击退（对墙缝伤害为10）。爆炸也会弹飞老鼠，但不造成伤害。隐身状态的猫咪不会触发雷。雷被道具攻击后会在一段时间后原地爆炸。雷会在30秒后自然消失。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断',
+        cancelableSkill: ['道具键*'],
         cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=73.05',
         skillLevels: [
@@ -1001,7 +1001,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '将附近的道具复制一份。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断',
+        cancelableSkill: ['道具键*'],
         cancelableAftercast: '不可取消后摇',
         skillLevels: [
           {
@@ -1030,8 +1030,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '将附近道具变成小恶魔。\n易碎道具变成蓝色小恶魔：基础伤害为20，造成减速，且放置原地自动索敌；\n控制道具变成红色小恶魔：对敌方造成向右击退；\n高尔夫球变成绿色小恶魔：比高尔夫更有的弹性，可影响捕鼠夹和奶酪；捕鼠夹受影响会立刻打开；奶酪受影响后变轻、拾取后加速、并可投掷进洞。\n所有小恶魔猫鼠双方均可使用。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断',
-        cancelableAftercast: '可被道具键*取消后摇',
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: ['道具键*'],
         skillLevels: [
           {
             level: 1,
@@ -1147,7 +1147,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '发出声波，击退琴头方向的猫咪1700距离。前摇0.75秒，期间可以移动和跳跃。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: '可被道具键、道具键*或跳跃键取消后摇',
+        cancelableAftercast: ['道具键', '道具键*', '跳跃键'],
         skillLevels: [
           {
             level: 1,
@@ -1169,7 +1169,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         canHitInPipe: false,
-        cancelableSkill: '可被道具键*、药水键、本技能键或其他技能键打断',
+        cancelableSkill: ['道具键*', '药水键', '本技能键', '其他技能键'],
         cooldownTiming: '释放后',
       },
       {
@@ -1181,7 +1181,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableAftercast: '无后摇',
-        cancelableSkill: '可被道具键*、道具键或跳跃键打断',
+        cancelableSkill: ['道具键*', '道具键', '跳跃键'],
         skillLevels: [
           {
             level: 1,
@@ -1285,7 +1285,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '召唤1个迷惑猫咪的分身，存在6.9秒；同时自己进入隐身状态，持续4.8秒。除喝药水和移动跳跃外任何动作都将导致显形。分身被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。\n分身大师分身特性：Hp上限为25并[按比例继承本体Hp](如本体血量为24，分身血量将为8.33)、继承角色Hp恢复速度、不继承本体状态和知识卡、免疫捕鼠夹；Hp归零或持续时间结束时将原地消失；会在地图内四处走动，但不会钻管道；若半径800范围内出现猫咪，分身会尝试远离之。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不确定是否可被打断或无前摇',
+        cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -1320,7 +1320,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '前摇1.3秒。拿出饮料杯朝地上倾倒，留下特殊印记，持续25秒。一旦印记与猫咪处在同一个房间，印记会召唤1个自己或队友的分身，持续9.9秒。分身被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。当场上存在[任何分身](不包括其他侦探泰菲召唤的分身)时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。同一房间同时召唤的分身越多，分身存在时间越短。\n饮料分身特性：Hp上限为角色Hp上限减49并[按比例继承本体Hp](如124血的剑杰Hp为24，召唤出的分身Hp将为15)，若同房间内出现出现猫咪将跑向最近的道具/果盘/冰桶处，若半径800范围内出现猫咪将使用相应道具进行攻击。', // FIXME: 玩具枪也会用吗？“被击倒”是Hp归零还是要小于0？
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '可被道具键或跳跃键打断',
+        cancelableSkill: ['道具键', '跳跃键'],
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -1423,7 +1423,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '创造一道风墙阻挡敌方，前摇0.5s。风墙大小500*500，持续3s。风墙对所有角色造成判定干扰，如猫的爪刀、拍子无法穿过风墙，风墙卡位时老鼠不能推奶酪。小跳风可将正在绑火箭的猫挤出火箭从而强行阻止猫绑火箭。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不确定是否可被打断', // FIXME
+        // cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=10.6',
         skillLevels: [
@@ -1456,7 +1456,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '挥出一道剑气，前摇0.45s，飞行速度1750，持续5s。剑气击中角色可反弹一次，再次击中角色剑气消失。剑气击中敌方将造成10伤害（可继承状态），并降低其40%移速、跳跃高度，持续5s；击中友方将提升其25%移速、救援速度及跳跃高度，持续5s，且其在此期间可用交互键瞬移至附近幻影处。剑气击中平台则形成幻影，再次点击技能按钮可瞬移至幻影处。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '不确定是否可被打断', // FIXME
+        // cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -1598,8 +1598,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '长按技能键，0.5秒后开始蓄力，蓄力期间无法进行其他操作；松开技能键进行弹射，弹射时间随蓄力时间增加而增加，最短为1秒，最长为4.7秒；蓄力2.5秒以上时，蓄力条充满，弹射时间达到最大。弹射基础速度1570。弹射过程中将放大体型，碰撞敌方或墙缝时造成伤害并被反弹，对碰触的敌方造成50（+5）点伤害；对碰触的墙缝造成10（+0.5）点伤害。碰撞其它墙壁或小黄鸭时也会被反弹。弹射期间再次点击技能将垂直下坠1.5秒，期间接触地面则进入0.3秒不可取消的后摇。取消蓄力将返还50%CD，在未进入蓄力动作时取消技能不进入冷却。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '不可被打断*', // 该技能为短前摇+蓄力的技能，前摇不可被除主动取消技能以外的方式打断
-        cancelableAftercast: '可被道具键打断',
+        // cancelableSkill: '不可被打断*', // 该技能为短前摇+蓄力的技能，前摇不可被除主动取消技能以外的方式打断
+        cancelableAftercast: ['道具键'],
         videoUrl: 'https://www.bilibili.com/video/BV1by4y1f7md/?t=10', //使用了梦回的数值介绍，技能数据也有参考，特此注明
 
         skillLevels: [
@@ -1638,7 +1638,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '释放技能0.7秒后，在自身前方150处生成高为1100、宽为250的矩形可攀爬区域，友方攀爬时速度提高到原先的400%；并于1.2秒后在顶端生成宽为350的平台和特殊的大纸盒。若生成可攀爬区域时有硬性墙体阻挡，其生成位置会尝试向罗宾汉泰菲进行移动，最低与自身距离为25。特殊大纸盒中只会开出以下7种道具：玻璃杯，碗，盘子，圆盘子，灰色花瓶，高尔夫球，奶酪。（携带“美食家”知识卡时，特殊大纸盒改为开出牛奶或蛋糕，与普通纸盒共计生效次数）', //此处攀爬速度提高的数值采用了梦回的数据，经再次次测试，结果相近。距离数值已以50为基础取整（“最低与自身距离”已以25取整）
         canMoveWhileUsing: true,
         canUseInAir: false,
-        cancelableSkill: '可被道具键*打断', //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
+        cancelableSkill: ['道具键*'], //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
         cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1by4y1f7md/?t=60', //使用了梦回的数值介绍，技能数据也有参考，特此注明
         skillLevels: [
@@ -1759,8 +1759,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         detailedDescription: '',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*或跳跃键打断',
-        cancelableAftercast: '可被道具键*或跳跃键取消后摇',
+        cancelableSkill: ['道具键*', '跳跃键'],
+        cancelableAftercast: ['道具键*', '跳跃键'],
         canHitInPipe: true,
         skillLevels: [
           {
@@ -1788,8 +1788,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         // 2级折扇因为有对自身的加速效果所以可以搭配翻滚特技和应激反应来使用，能够在被猫攻击后快速逃脱，如果技能打中猫可直接断掉猫的节奏。墙缝战的时候如果点了3级折扇，可以卡在炸药包0秒时使用对墙缝造成大量伤害，达到破墙的效果(难度较高)\n注意1:不要对朵朵使用2级折扇\n注意2:折扇的基础效果对斯飞没用。
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*或跳跃键打断',
-        cancelableAftercast: '可被道具键*或跳跃键取消后摇',
+        cancelableSkill: ['道具键*', '跳跃键'],
+        cancelableAftercast: ['道具键*', '跳跃键'],
         skillLevels: [
           {
             level: 1,
@@ -1907,8 +1907,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '根据演奏风格给予周围友方增益效果。使用技能可切换风格，切换时音乐家杰瑞会同时保持上一种风格8秒。点出该技能时风格为协奏。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '不确定是否可被打断', // FIXME
-        cancelableAftercast: '可通过道具键*或跳跃键取消后摇',
+        // cancelableSkill: '不确定是否可被打断', // FIXME
+        cancelableAftercast: ['道具键*', '跳跃键'],
         videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=408.2',
         skillLevels: [
           {
@@ -2217,7 +2217,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。朋友在30秒后自然消失。朋友扔出鱼钩过程中再次点击技能会使朋友将鱼钩收回（有前摇）。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键*打断',
+        cancelableSkill: ['道具键*'],
         cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=50.7',
         skillLevels: [
@@ -2352,7 +2352,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
         cooldownTiming: '释放后',
         cancelableAftercast: '无后摇',
-        cancelableSkill: '可被跳跃键打断',
+        cancelableSkill: ['跳跃键'],
       },
       {
         name: '喜剧之王',
@@ -2466,7 +2466,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '点击技能后进入1.5秒前摇，随后魔术师手中获得一张随机颜色卡牌，技能同步进入5秒读条，期间每0.5秒按红-黄-蓝的顺序切换卡色（若切换时魔术师正在交互中，则不会切换）；再次点击技能/用道具键投出卡牌/5秒读条结束后，将固定卡色，技能进入CD。\n卡牌属于投掷物，投掷时初速度为2000，穿越所有墙体，命中猫咪时可以触发部分以投掷命中为触发条件的效果（如知识卡-缴械，特技-干扰投掷等）。卡牌也会命中兔子大表哥/森林牧场大鸭子，但不会触发卡牌效果或投掷命中触发的效果。猫咪受卡牌效果影响期间，不会受到新的卡牌效果。魔术师虚弱时，卡牌不会从手中掉落。卡牌被丢弃时，将直接被移除。\n卡牌效果如下：\n通用：使目标向卡牌飞行方向传送80距离，并改变角色朝向。\n红牌：立刻受到65（+0）点伤害并掉落手中道具，6秒内禁用技能且减速18.5%。\n黄牌：每2秒获得[1.5秒的反向和150%加速](斯飞受黄牌效果期间不会受到反向和加速)，持续7秒。\n蓝牌：获得8秒失重状态。该状态下可在空中进行跳跃。', //红牌减速和黄牌加速数值采用了梦回的数据
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被跳跃键或道具键打断',
+        cancelableSkill: ['跳跃键', '道具键'],
         cancelableAftercast: '无后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1Qd4y1W7fg/?t=8',
         skillLevels: [
@@ -2499,7 +2499,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '在1.9秒前摇后召唤“兔子先生”；其在场时，技能按键变为释放指令（无CD，可移动释放但不可取消前摇）。\n释放指令：在0.9秒前摇后，选取以魔术师为中心，半径1150范围内的一个目标释放指令。优先选择优先级高的目标；优先级相同时，选择与魔术师最近的目标。指令按优先级从高到低如下：\n1.火箭救援-对被绑上火箭的己方老鼠下达指令：兔子前往救援。\n2.搬奶酪-对奶酪下达指令：[兔子将立刻放下道具并搬起该奶酪](如兔子手里已经有奶酪，则什么都不做)。\n3.推奶酪-对已放入奶酪的洞口，或在兔子手持奶酪时对空洞口下达指令：兔子手中有奶酪时，他会朝该洞口投掷奶酪；该洞口有未推入的奶酪时，他会与其交互并开始推奶酪。\n4.治疗-对虚弱且可治疗的老鼠下达指令：该老鼠虚弱时，兔子将尝试对其治疗。\n5.投掷-兔子手中有[道具](奶酪除外)时，对猫咪/墙缝/小黄鸭下达指令：兔子手持道具时，他将连续对其投掷/使用道具（即：兔子开始投掷时，如果所在位置有其他道具，会一并拾取并立刻投掷/使用，直到没有道具可被拾取）。\n6.拾取-对部分可拾取的投掷道具下达指令：兔子手持该道具以外的道具时，他将放下道具；手中没有道具时，他会拾取该道具。\n7.跟随-无其他目标时下达指令：无效果。\n兔子先生的属性：Hp上限110，Hp恢复4.5（常态）或2（受伤时），移速820，跳跃550，攻击增伤20，推速1.6%/s，墙缝增伤2。\n兔子先生的特性：\n1.常态：免疫碎片、捕鼠夹和直接抓起。搬奶酪时不会减速，且可正常交互。当自身Hp为0/魔术师被抓起或被淘汰时，自身退场并使技能进入CD。在场时会继承魔术师的[“无畏”知识卡](但改为被救者和魔术师获得无畏效果)和[由常规道具获得的牛奶、隐身和护盾效果](不包括卡牌、药水舱等)。其它判断逻辑[接近己方老鼠](如：猫咪攻击时可正常获得经验，会受推速加成)。\n2.指令执行逻辑：指令下达后将一直生效，直到下一条指令被下达。当魔术师对新目标下达指令或兔子退场时，兔子将立刻传送到魔术师的身边；当魔术师对相同目标下达指令时，指令将失效。当兔子当前指令行为执行完毕/跟随魔术师时与其距离超过360/一段时间内未进行交互和移动时，他将向魔术师移动。\n注：以下道具无法触发兔子的拾取指令，但可以在执行投掷指令时被拾取和使用：冰块，小鞭炮，鞭炮束，玩具枪，遥控器，电风扇，冰桶，鞭炮堆。兔子可以被动拾取药水，但不会使用，而是在一小段时间后放下；兔子可以以2000的初速度投掷电风扇。', //兔子基础属性采用了梦回的数据
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被跳跃键或道具键打断',
+        cancelableSkill: ['跳跃键', '道具键'],
         cancelableAftercast: '无后摇',
         cooldownTiming: '释放后',
         videoUrl: 'https://www.bilibili.com/video/BV1Qd4y1W7fg/?t=88',

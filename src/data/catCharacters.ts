@@ -83,8 +83,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到[真实伤害](如仙女鼠的一星；但不会因此被击倒)和[位移效果的影响](如尼宝的钩子)。若在莱恩蓝图内受到真实伤害，不免疫变线条猫。绑火箭等交互会被仙女鼠八星打断。无敌结束后会有2秒的10%减速，减速可以被护盾抵消。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键打断，但不返还CD',
+        cancelableSkill: ['道具键'],
         cancelableAftercast: '无后摇',
+        cooldownTiming: '前摇前',
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=127.35',
         skillLevels: [
           {
@@ -113,8 +114,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '手型枪水平飞出、飞回，对命中的老鼠造成15点伤害、将其抓回并眩晕2.5秒。如果拉回过程遇到障碍，额外给予65点伤害。眩晕对比例鼠和虚弱的老鼠也生效。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被跳跃键打断',
-        cancelableAftercast: '可被跳跃键取消后摇',
+        cancelableSkill: ['跳跃键'],
+        cancelableAftercast: ['跳跃键'],
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=16',
         skillLevels: [
           {
@@ -140,8 +141,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '挥锅攻击老鼠并打出煎蛋，打晕并致盲附近老鼠、降低其救援速度；也能击飞道具。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键打断',
-        cancelableAftercast: '可被道具键取消后摇',
+        cancelableSkill: ['道具键'],
+        cancelableAftercast: ['道具键'],
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=172.85',
         skillLevels: [
           {
@@ -259,7 +260,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '冲刺一段距离，冲飞道具并对老鼠造成26点伤害和0.4秒眩晕。冲刺中可通过方向键控制方向。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不可打断',
+        cancelableSkill: '不可被打断',
         cancelableAftercast: '不可取消后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1Eg41147Eo?t=4.8',
         skillLevels: [
@@ -288,7 +289,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         detailedDescription: '对附近老鼠造成26伤害并眩晕1.3秒。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键取消',
+        cancelableSkill: ['道具键'],
         cancelableAftercast: '不可取消后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1Eg41147Eo?t=47.5',
         skillLevels: [
@@ -320,8 +321,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '原地释放或扔出旋转桶盖，对命中的老鼠造成55伤害并眩晕1.5秒；自己捡到桶盖会获得6秒固定减伤30。桶盖拥有较大的惯性。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被跳跃/道具键打断',
-        cancelableAftercast: '可被跳跃/道具键取消后摇',
+        cancelableSkill: ['跳跃键', '道具键'],
+        cancelableAftercast: ['跳跃键', '道具键'],
         videoUrl: 'https://www.bilibili.com/video/BV1Eg41147Eo?t=71.45',
         skillLevels: [
           {
@@ -446,7 +447,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '释放分身。分身爪刀伤害提升、继承知识卡、免疫碎片和捕鼠夹、爪刀CD减少、提供[小地图视野](包括隐身的老鼠)，但被攻击时受到固定增伤。额外技能按钮可指挥分身出击或跟随（CD：5秒）。再次使用技能可与分身换位。本体获得部分增益时，分身也会获得。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可取消',
+        cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
         // 没找到好的技能教学视频
         skillLevels: [
@@ -476,7 +477,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '吹出泡泡来困住老鼠。泡泡可以被道具砸破，也会因困住的老鼠挣扎而破裂。泡泡破裂时会伤害和眩晕周围老鼠；20秒后自然消失。直接释放则泡泡会留在原地，拖动释放则泡泡会缓慢向该方向漂移。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可打断',
+        cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -505,8 +506,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '将面前的[一只老鼠](若有多个老鼠在网的范围内，则会网住编号最小的)抓到网中，期间老鼠可挣扎挣脱；再次使用技能将老鼠扔出，扔出的老鼠落地后眩晕并再次受到伤害，同时伤害周围的老鼠。扔出的老鼠若途经火箭则被直接绑上。捕虫网可以网住[霸体老鼠](如尼宝的灵活跳跃、表演者·杰瑞的梦幻舞步)，但无法网住[无敌老鼠](如剑客泰菲的头盔、罗宾汉杰瑞的降落伞)。可被一层护盾抵消。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被道具键打断',
-        cancelableAftercast: '可被道具键取消后摇',
+        cancelableSkill: ['道具键'],
+        cancelableAftercast: ['道具键'],
         skillLevels: [
           {
             level: 1,
@@ -655,7 +656,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '放置垃圾桶阻挡老鼠的道路。垃圾桶的异味会使老鼠受到减速和伤害。每造成1次伤害会降低0.6秒爪刀CD，每秒只生效一次。垃圾桶不会对倒地的老鼠造成伤害并降低爪刀CD，在垃圾桶范围内倒地并起身的老鼠不会受到垃圾桶的伤害，但重新进入垃圾桶范围仍会受到伤害。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '可被跳跃键打断',
+        cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
@@ -690,7 +691,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '从垃圾桶中倒出咸鱼并标记在小地图上，咸鱼持续一分钟，鼠方踩到后会受咸鱼影响，持续20秒，期间推速降低40%，救援、治疗速度降低33%，移速降低10%，跳跃高度降低（未测），同时暴露小地图位置。可通过吃蛋糕、喝牛奶、喝饮料、特技-治疗、牛仔弹琴来解除。爪刀命中[带有咸鱼效果的敌方](包括虚弱老鼠)时，将重置瞬移闪击CD，爪刀CD减少至1.9s，并以50/s恢复Hp，持续1s。闪电瞬移将优先追踪带有咸鱼效果的敌方，并大幅提高追踪范围。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '可被跳跃键打断',
+        cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
         canHitInPipe: false,
         skillLevels: [
@@ -833,7 +834,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canUseInAir: true,
         canHitInPipe: true,
         cancelableAftercast: '无后摇',
-        cancelableSkill: '可被打断',
+        cancelableSkill: '不可被打断',
         skillLevels: [
           {
             level: 1,
@@ -861,8 +862,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '锤子范围较小，使用时会因惯性继续向前移动一小段距离，自身受到极少量伤害；命中敌方造成少量伤害和一层减速。血量不足时不能使用锤子。（欢迎纠正和补充）',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键打断',
-        cancelableAftercast: '可被道具键取消后摇',
+        cancelableSkill: ['道具键'],
+        cancelableAftercast: ['道具键'],
         skillLevels: [
           {
             level: 1,
@@ -889,8 +890,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '向任意方向扔出汽水，若未命中，达到终点后开始旋转，持续20秒。命中造成少量伤害和两层减速，冰冻小范围内所有敌人3秒。（欢迎纠正和补充）',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '可被道具键打断',
-        cancelableAftercast: '可被道具键取消后摇',
+        cancelableSkill: ['道具键'],
+        cancelableAftercast: ['道具键'],
         skillLevels: [
           {
             level: 1,
@@ -1002,7 +1003,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: '无后摇',
-        cancelableSkill: '可被跳跃键打断',
+        cancelableSkill: ['跳跃键'],
         canHitInPipe: false,
         skillLevels: [
           {
@@ -1032,7 +1033,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: '无后摇',
-        cancelableSkill: '可被跳跃键打断',
+        cancelableSkill: ['跳跃键'],
         skillLevels: [
           {
             level: 1,
@@ -1213,7 +1214,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '扔出瑜伽球。在瑜伽球飞行过程中苏蕊可再次点击技能键使瑜伽球膨胀，当膨胀时接触到敌方老鼠，则会造成30点伤害、1.5秒眩晕并弹飞，瑜伽球可积累2次使用机会。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不可打断',
+        cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
         skillLevels: [
           {

@@ -14,7 +14,7 @@ export type {
 
 import { GameDataManager } from '@/lib/dataManager';
 import { CharacterWithFaction, FactionWithCharacters } from '@/lib/types';
-import { proxy, snapshot, subscribe } from 'valtio';
+import { proxy, subscribe } from 'valtio';
 
 export const { factionData, characterData, cardData } = GameDataManager.getRawData();
 
@@ -33,12 +33,10 @@ export const factions: Record<string, FactionWithCharacters> = proxy(
 
 subscribe(characters, () => {
   localStorage.setItem('characters', JSON.stringify(characters));
-  console.log(snapshot(characters));
 });
 
 subscribe(factions, () => {
   localStorage.setItem('factions', JSON.stringify(factions));
-  console.log(snapshot(factions));
 });
 
 export const factionCards = GameDataManager.getFactionCards();

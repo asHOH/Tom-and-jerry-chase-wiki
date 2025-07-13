@@ -41,6 +41,17 @@ export type SkillAllocation = {
 
 // Skill types - both for definitions and final processed skills
 export type SkillType = 'active' | 'weapon1' | 'weapon2' | 'passive';
+export type CancellableKeyType =
+  | '道具键'
+  | '道具键*'
+  | '跳跃键'
+  | '移动键'
+  | '药水键'
+  | '本技能键'
+  | '其他技能键';
+
+export type CancelableSkillType = CancellableKeyType[] | '无前摇' | '不可被打断';
+export type CancelableAftercastType = CancellableKeyType[] | '无后摇' | '不可取消后摇';
 
 export type SkillLevel = {
   level: number;
@@ -62,8 +73,8 @@ export type SkillDefinition = {
   // Skill usage properties
   canMoveWhileUsing?: boolean; // 移动释放
   canUseInAir?: boolean; // 空中释放
-  cancelableSkill?: string; // 可取消释放
-  cancelableAftercast?: string; // 可取消后摇
+  cancelableSkill?: CancelableSkillType; // 可取消释放
+  cancelableAftercast?: CancelableAftercastType; // 可取消后摇
   canHitInPipe?: boolean; // 可击中管道中的角色
   cooldownTiming?: '前摇前' | '释放时' | '释放后'; // 进入CD时机
 

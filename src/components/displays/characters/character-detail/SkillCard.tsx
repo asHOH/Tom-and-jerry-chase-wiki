@@ -11,7 +11,11 @@ import { useSnapshot } from 'valtio';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data';
 import { CharacterWithFaction } from '@/lib/types';
-import { getSkillImageUrl } from '@/lib/skillUtils';
+import {
+  convertCancelableAftercastToDisplayText,
+  convertCancelableSkillToDisplayText,
+  getSkillImageUrl,
+} from '@/lib/skillUtils';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 interface SkillCardProps {
@@ -177,7 +181,7 @@ export default function SkillCard({
         </div>,
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
-            const specialOptions = ['无前摇', '不可被打断'];
+            const specialOptions = ['无前摇', '不可被打断'] as const;
             const cancelableOptions = [
               '道具键',
               '道具键*',
@@ -186,49 +190,14 @@ export default function SkillCard({
               '药水键',
               '本技能键',
               '其他技能键',
-            ];
+            ] as const;
 
-            const currentMethods = skill.cancelableSkill ? skill.cancelableSkill.split('或') : [];
-
-            const activeCancelableOptions = cancelableOptions.filter((opt) =>
-              currentMethods.some((method) => method.includes(opt))
-            );
+            const activeCancelableOptions = Array.isArray(skill.cancelableSkill)
+              ? skill.cancelableSkill
+              : [];
 
             const displayText = () => {
-              if (currentMethods.length === 0)
-                return <span className='font-bold'>不确定是否可被打断</span>;
-
-              // Extract methods that start with "可被" and end with "打断"
-              const cancelableMethods = currentMethods.filter(
-                (method) => method.startsWith('可被') && method.endsWith('打断')
-              );
-              const otherMethods = currentMethods.filter(
-                (method) => !method.startsWith('可被') || !method.endsWith('打断')
-              );
-
-              const result = [];
-
-              // Handle other methods (like "无前摇", "不可被打断")
-              if (otherMethods.length > 0) {
-                result.push(otherMethods.join('或'));
-              }
-
-              // Handle cancelable methods with optimized format
-              if (cancelableMethods.length > 0) {
-                const keys = cancelableMethods.map((method) =>
-                  method.replace(/^可被/, '').replace(/打断$/, '')
-                );
-                if (keys.length === 1) {
-                  result.push(`可被${keys[0]}打断`);
-                } else if (keys.length === 2) {
-                  result.push(`可被${keys[0]}或${keys[1]}打断`);
-                } else {
-                  const lastKey = keys.pop();
-                  result.push(`可被${keys.join('、')}或${lastKey}打断`);
-                }
-              }
-
-              return result.join('或');
+              return convertCancelableSkillToDisplayText(skill.cancelableSkill);
             };
 
             return (
@@ -239,25 +208,18 @@ export default function SkillCard({
                     <label key={option} className='flex items-center gap-1 cursor-pointer'>
                       <input
                         type='checkbox'
-                        checked={currentMethods.includes(option)}
+                        checked={skill.cancelableSkill == option}
                         onChange={(e) => {
-                          let newMethods = [...currentMethods];
-                          if (e.target.checked) {
-                            newMethods = newMethods.filter((m) => !specialOptions.includes(m));
-                            newMethods.push(option);
-                          } else {
-                            newMethods = newMethods.filter((m) => m !== option);
-                          }
                           const skill = characters[characterId]!.skills[skillIndex]!;
-                          if (newMethods.length === 0) {
-                            delete skill.cancelableSkill;
+                          if (e.target.checked) {
+                            skill.cancelableSkill = option;
                           } else {
-                            skill.cancelableSkill = newMethods.join('或');
+                            delete skill.cancelableSkill;
                           }
                         }}
                         className='w-3 h-3'
                       />
-                      <span className={currentMethods.includes(option) ? 'font-bold' : ''}>
+                      <span className={skill.cancelableSkill == option ? 'font-bold' : ''}>
                         {option}
                       </span>
                     </label>
@@ -271,44 +233,22 @@ export default function SkillCard({
                         type='checkbox'
                         checked={activeCancelableOptions.includes(option)}
                         onChange={(e) => {
-                          // Keep special options (like "无前摇", "不可被打断")
-                          const newMethods = currentMethods.filter((m) =>
-                            specialOptions.includes(m)
-                          );
-
-                          // Collect selected cancelable options
-                          const selectedCancelableOptions = [];
-                          if (e.target.checked) {
-                            selectedCancelableOptions.push(option);
-                          }
-
-                          // Add other currently selected cancelable options
-                          cancelableOptions.forEach((opt) => {
-                            if (opt !== option && activeCancelableOptions.includes(opt)) {
-                              selectedCancelableOptions.push(opt);
-                            }
-                          });
-
-                          // Format cancelable options as a single optimized string
-                          if (selectedCancelableOptions.length > 0) {
-                            if (selectedCancelableOptions.length === 1) {
-                              newMethods.push(`可被${selectedCancelableOptions[0]}打断`);
-                            } else if (selectedCancelableOptions.length === 2) {
-                              newMethods.push(
-                                `可被${selectedCancelableOptions[0]}或${selectedCancelableOptions[1]}打断`
-                              );
-                            } else {
-                              const lastOption = selectedCancelableOptions.pop();
-                              newMethods.push(
-                                `可被${selectedCancelableOptions.join('、')}或${lastOption}打断`
-                              );
-                            }
-                          }
                           const skill = characters[characterId]!.skills[skillIndex]!;
-                          if (newMethods.length === 0) {
-                            delete skill.cancelableSkill;
+                          if (e.target.checked) {
+                            if (!Array.isArray(skill.cancelableSkill)) {
+                              skill.cancelableSkill = [];
+                            }
+                            if (!activeCancelableOptions.includes(option)) {
+                              skill.cancelableSkill.push(option);
+                            }
                           } else {
-                            skill.cancelableSkill = newMethods.join('或');
+                            if (!Array.isArray(skill.cancelableSkill)) {
+                              return;
+                            }
+                            const index = activeCancelableOptions.indexOf(option);
+                            if (index > -1) {
+                              skill.cancelableSkill.splice(index, 1);
+                            }
                           }
                         }}
                         className='w-3 h-3'
@@ -326,7 +266,7 @@ export default function SkillCard({
         </div>,
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
-            const specialOptions = ['无后摇', '不可取消后摇'];
+            const specialOptions = ['无后摇', '不可取消后摇'] as const;
             const cancelableOptions = [
               '道具键',
               '道具键*',
@@ -335,51 +275,14 @@ export default function SkillCard({
               '药水键',
               '本技能键',
               '其他技能键',
-            ];
+            ] as const;
 
-            const currentMethods = skill.cancelableAftercast
-              ? skill.cancelableAftercast.split('或')
+            const activeCancelableOptions = Array.isArray(skill.cancelableAftercast)
+              ? skill.cancelableAftercast
               : [];
 
-            const activeCancelableOptions = cancelableOptions.filter((opt) =>
-              currentMethods.some((method) => method.includes(opt))
-            );
-
             const displayText = () => {
-              if (currentMethods.length === 0)
-                return <span className='font-bold'>不确定是否可取消后摇</span>;
-
-              // Extract methods that start with "可被" and end with "打断"
-              const cancelableMethods = currentMethods.filter(
-                (method) => method.startsWith('可被') && method.endsWith('打断')
-              );
-              const otherMethods = currentMethods.filter(
-                (method) => !method.startsWith('可被') || !method.endsWith('打断')
-              );
-
-              const result = [];
-
-              // Handle other methods (like "无后摇", "不可取消后摇")
-              if (otherMethods.length > 0) {
-                result.push(otherMethods.join('或'));
-              }
-
-              // Handle cancelable methods with optimized format
-              if (cancelableMethods.length > 0) {
-                const keys = cancelableMethods.map((method) =>
-                  method.replace(/^可被/, '').replace(/打断$/, '')
-                );
-                if (keys.length === 1) {
-                  result.push(`可被${keys[0]}打断`);
-                } else if (keys.length === 2) {
-                  result.push(`可被${keys[0]}或${keys[1]}打断`);
-                } else {
-                  const lastKey = keys.pop();
-                  result.push(`可被${keys.join('、')}或${lastKey}打断`);
-                }
-              }
-
-              return result.join('或');
+              return convertCancelableAftercastToDisplayText(skill.cancelableAftercast);
             };
 
             return (
@@ -390,25 +293,18 @@ export default function SkillCard({
                     <label key={option} className='flex items-center gap-1 cursor-pointer'>
                       <input
                         type='checkbox'
-                        checked={currentMethods.includes(option)}
+                        checked={skill.cancelableAftercast == option}
                         onChange={(e) => {
-                          let newMethods = [...currentMethods];
-                          if (e.target.checked) {
-                            newMethods = newMethods.filter((m) => !specialOptions.includes(m));
-                            newMethods.push(option);
-                          } else {
-                            newMethods = newMethods.filter((m) => m !== option);
-                          }
                           const skill = characters[characterId]!.skills[skillIndex]!;
-                          if (newMethods.length === 0) {
-                            delete skill.cancelableAftercast;
+                          if (e.target.checked) {
+                            skill.cancelableAftercast = option;
                           } else {
-                            skill.cancelableAftercast = newMethods.join('或');
+                            delete skill.cancelableAftercast;
                           }
                         }}
                         className='w-3 h-3'
                       />
-                      <span className={currentMethods.includes(option) ? 'font-bold' : ''}>
+                      <span className={skill.cancelableAftercast == option ? 'font-bold' : ''}>
                         {option}
                       </span>
                     </label>
@@ -422,45 +318,37 @@ export default function SkillCard({
                         type='checkbox'
                         checked={activeCancelableOptions.includes(option)}
                         onChange={(e) => {
-                          // Keep special options (like "无后摇", "不可取消后摇")
-                          const newMethods = currentMethods.filter((m) =>
-                            specialOptions.includes(m)
-                          );
-
-                          // Collect selected cancelable options
-                          const selectedCancelableOptions = [];
-                          if (e.target.checked) {
-                            selectedCancelableOptions.push(option);
-                          }
-
-                          // Add other currently selected cancelable options
-                          cancelableOptions.forEach((opt) => {
-                            if (opt !== option && activeCancelableOptions.includes(opt)) {
-                              selectedCancelableOptions.push(opt);
-                            }
-                          });
-
-                          // Format cancelable options as a single optimized string
-                          if (selectedCancelableOptions.length > 0) {
-                            if (selectedCancelableOptions.length === 1) {
-                              newMethods.push(`可被${selectedCancelableOptions[0]}取消后摇`);
-                            } else if (selectedCancelableOptions.length === 2) {
-                              newMethods.push(
-                                `可被${selectedCancelableOptions[0]}或${selectedCancelableOptions[1]}取消后摇`
-                              );
-                            } else {
-                              const lastOption = selectedCancelableOptions.pop();
-                              newMethods.push(
-                                `可被${selectedCancelableOptions.join('、')}或${lastOption}取消后摇`
-                              );
-                            }
-                          }
-
                           const skill = characters[characterId]!.skills[skillIndex]!;
-                          if (newMethods.length === 0) {
-                            delete skill.cancelableAftercast;
+                          if (e.target.checked) {
+                            // If currently a string (special option), convert to array and add new option
+                            if (typeof skill.cancelableAftercast === 'string') {
+                              skill.cancelableAftercast = [option];
+                            } else if (Array.isArray(skill.cancelableAftercast)) {
+                              // If already an array, add if not present
+                              if (!skill.cancelableAftercast.includes(option)) {
+                                skill.cancelableAftercast.push(option);
+                              }
+                            } else {
+                              // If undefined, initialize as array with new option
+                              skill.cancelableAftercast = [option];
+                            }
                           } else {
-                            skill.cancelableAftercast = newMethods.join('或');
+                            // If unchecking
+                            if (Array.isArray(skill.cancelableAftercast)) {
+                              // Remove option from array
+                              const index = skill.cancelableAftercast.indexOf(option);
+                              if (index > -1) {
+                                skill.cancelableAftercast.splice(index, 1);
+                              }
+                              // If array becomes empty, delete the property
+                              if (skill.cancelableAftercast.length === 0) {
+                                delete skill.cancelableAftercast;
+                              }
+                            } else if (typeof skill.cancelableAftercast === 'string') {
+                              // If it was a special string and now unchecked, delete it
+                              delete skill.cancelableAftercast;
+                            }
+                            // If it was already undefined, do nothing
                           }
                         }}
                         className='w-3 h-3'
@@ -527,7 +415,7 @@ export default function SkillCard({
         properties.push(
           <TextWithItemKeyTooltips
             key='cancelableSkill'
-            text={skill.cancelableSkill}
+            text={convertCancelableSkillToDisplayText(skill.cancelableSkill)}
             isDetailed={isDetailed}
           />
         );
@@ -536,7 +424,7 @@ export default function SkillCard({
         properties.push(
           <TextWithItemKeyTooltips
             key='cancelableAftercast'
-            text={skill.cancelableAftercast}
+            text={convertCancelableAftercastToDisplayText(skill.cancelableAftercast)}
             isDetailed={isDetailed}
           />
         );
