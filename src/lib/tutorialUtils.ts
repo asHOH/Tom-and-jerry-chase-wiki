@@ -23,7 +23,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     id: 'skill-description-edit',
     targetSelector: '[data-tutorial-id="skill-description-edit"]',
     message:
-      '技能描述，可以使用[]()来标记注释。方括号内的内容会在技能卡片中直接显示，圆括号内的内容会在鼠标悬停或点击时显示为提示；在描述技能的非固定伤害时，请按照基础伤害（+角色增伤）的格式来描述。',
+      '技能描述，可以使用[]()来标记注释。方括号内的内容会在技能卡片中直接显示，圆括号内的内容会在鼠标悬停或点击时显示为提示；可以使用{}来表示非固定伤害，花括号里的数字作为总伤害会在技能卡片中直接显示，具体伤害组成会在鼠标悬停或点击时显示为提示。',
     position: 'bottom',
   },
   {

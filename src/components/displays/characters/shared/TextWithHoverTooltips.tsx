@@ -1,6 +1,9 @@
 import React from 'react';
 import Tooltip from '../../../ui/Tooltip';
 import { renderTextWithHighlights } from '../../../../lib/textUtils';
+import { useLocalCharacter } from '@/context/EditModeContext';
+import { characters } from '@/data';
+import { useSnapshot } from 'valtio';
 
 /**
  * Parse and render text with tooltips for patterns like {visible text}
@@ -8,7 +11,10 @@ import { renderTextWithHighlights } from '../../../../lib/textUtils';
  * @param text - Text to parse and add tooltips to
  * @returns JSX elements with tooltip-enabled portions
  */
-export const renderTextWithTooltips = (text: string): (string | React.ReactElement)[] => {
+export const renderTextWithTooltips = (
+  text: string,
+  attackBoost: number
+): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
   let lastIndex = 0;
   const tooltipPattern = /\{([^}]+?)\}/g;
@@ -20,7 +26,8 @@ export const renderTextWithTooltips = (text: string): (string | React.ReactEleme
     }
 
     const visibleText = match[1] || '';
-    const tooltipContent = match[1] || ''; // Tooltip content is the same as visible text
+    const totalAttack = parseFloat(visibleText);
+    const tooltipContent = `基础伤害${totalAttack - attackBoost}+角色增伤${attackBoost}`;
 
     parts.push(
       <Tooltip key={match.index} content={tooltipContent}>
@@ -45,6 +52,7 @@ interface TextWithHoverTooltipsProps {
 export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsProps) {
   const highlightedParts = renderTextWithHighlights(text); // Handles **bold**
   const intermediateParts: (string | React.ReactElement)[] = [];
+  const localCharacter = useSnapshot(characters[useLocalCharacter().characterId]!);
 
   // First pass: Handle [visible text](tooltip content)
   highlightedParts.forEach((part, index) => {
@@ -81,13 +89,18 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
   const finalParts: (string | React.ReactElement)[] = [];
 
   // Second pass: Handle {visible text} using the moved renderTextWithTooltips
-  intermediateParts.forEach((part) => {
-    if (typeof part === 'string') {
-      finalParts.push(...renderTextWithTooltips(part));
-    } else {
-      finalParts.push(part);
-    }
-  });
+  if (localCharacter.attackBoost) {
+    intermediateParts.forEach((part) => {
+      if (typeof part === 'string') {
+        finalParts.push(...renderTextWithTooltips(part, localCharacter.attackBoost!));
+      } else {
+        finalParts.push(part);
+      }
+    });
+  } else {
+    // If no attack boost, just return the intermediate parts
+    finalParts.push(...intermediateParts);
+  }
 
   return <>{finalParts}</>;
 }
