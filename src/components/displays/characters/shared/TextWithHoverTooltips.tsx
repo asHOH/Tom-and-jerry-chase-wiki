@@ -3,7 +3,7 @@ import Tooltip from '../../../ui/Tooltip';
 import { renderTextWithHighlights } from '../../../../lib/textUtils';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import { characters } from '@/data';
-import { useSnapshot } from 'valtio';
+import { proxy, useSnapshot } from 'valtio';
 
 /**
  * Parse and render text with tooltips for patterns like {visible text}
@@ -49,10 +49,13 @@ interface TextWithHoverTooltipsProps {
   text: string;
 }
 
+const emptyObject = proxy({ attackBoost: 0 });
+
 export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsProps) {
   const highlightedParts = renderTextWithHighlights(text); // Handles **bold**
   const intermediateParts: (string | React.ReactElement)[] = [];
-  const localCharacter = useSnapshot(characters[useLocalCharacter().characterId]!);
+  const rawLocalCharacter = characters[useLocalCharacter().characterId];
+  const localCharacter = useSnapshot(rawLocalCharacter ?? emptyObject);
 
   // First pass: Handle [visible text](tooltip content)
   highlightedParts.forEach((part, index) => {
