@@ -6,22 +6,28 @@ export interface TutorialStep {
 }
 
 export const TUTORIAL_STEPS: TutorialStep[] = [
+  // {
+  //   id: 'edit-button',
+  //   targetSelector: '[data-tutorial-id="edit-button"]',
+  //   message: 'Click this button to enter edit mode and modify character details.',
+  //   position: 'bottom',
+  // },
+  // {
+  //   id: 'save-button',
+  //   targetSelector: '[data-tutorial-id="save-button"]',
+  //   message: 'After making changes, click here to save them.',
+  //   position: 'bottom',
+  // },
+  // {
+  //   id: 'cancel-button',
+  //   targetSelector: '[data-tutorial-id="cancel-button"]',
+  //   message: 'Discard your changes by clicking this button.',
+  //   position: 'bottom',
+  // },
   {
-    id: 'edit-button',
-    targetSelector: '[data-tutorial-id="edit-button"]',
-    message: 'Click this button to enter edit mode and modify character details.',
-    position: 'bottom',
-  },
-  {
-    id: 'save-button',
-    targetSelector: '[data-tutorial-id="save-button"]',
-    message: 'After making changes, click here to save them.',
-    position: 'bottom',
-  },
-  {
-    id: 'cancel-button',
-    targetSelector: '[data-tutorial-id="cancel-button"]',
-    message: 'Discard your changes by clicking this button.',
+    id: 'character-name-edit',
+    targetSelector: '[data-tutorial-id="character-name-edit"]',
+    message: '若要创建新角色，请将此处的角色名更改为新的。',
     position: 'bottom',
   },
 ];

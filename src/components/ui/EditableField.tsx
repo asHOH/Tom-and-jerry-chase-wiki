@@ -24,23 +24,23 @@ import { getNestedProperty, handleChange } from '@/lib/editUtils';
  * @param {string} [className] Optional CSS classes to apply to the element.
  * @param {((newValue: string) => void) | undefined} [onSave] Optional function to invoke to replace default behavior.
  */
-interface EditableFieldProps<T> {
-  tag: keyof HTMLElementTagNameMap;
+interface EditableFieldProps<T, TagName extends keyof HTMLElementTagNameMap>
+  extends React.HTMLAttributes<HTMLElementTagNameMap[TagName]> {
+  tag: TagName;
   path: string; // e.g., 'character.id', 'character.description'
   initialValue: T;
-  className?: string | undefined;
   onSave?: ((newValue: string) => void) | undefined;
   factionId?: string | undefined; // Optional faction ID for edit operations
 }
 
-function EditableFieldImplementation<T>({
+function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagNameMap>({
   tag: Tag,
   path,
   initialValue,
-  className,
   onSave,
   factionId,
-}: EditableFieldProps<T>) {
+  ...rest // Capture all other props
+}: EditableFieldProps<T, TagName>) {
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
   const { characterId } = useLocalCharacter();
@@ -162,38 +162,42 @@ function EditableFieldImplementation<T>({
   return React.createElement(
     Tag,
     {
-      className: className + ' whitespace-pre-wrap',
       contentEditable: 'plaintext-only',
       suppressContentEditableWarning: true,
       onBlur: handleBlur,
       onKeyDown: handleKeyDown,
       ref: contentRef,
+      ...rest, // Spread the rest of the props here
     },
     String(content) || '<无内容>'
   );
 }
 
-function EditableField<T>({
+function EditableField<T, TagName extends keyof HTMLElementTagNameMap>({
   tag: Tag,
   path,
   initialValue,
-  className,
   onSave,
   factionId,
   enableEdit = true,
-}: EditableFieldProps<T> & { enableEdit?: boolean }) {
+  ...rest // Capture all other props
+}: EditableFieldProps<T, TagName> & { enableEdit?: boolean }) {
   const { isEditMode } = useEditMode();
   return isEditMode && enableEdit ? (
     <EditableFieldImplementation
       tag={Tag}
       path={path}
       initialValue={initialValue}
-      className={className}
       onSave={onSave}
       factionId={factionId}
+      {...rest} // Pass them down
     />
   ) : (
-    React.createElement(Tag, { className }, <TextWithHoverTooltips text={String(initialValue)} />)
+    React.createElement(
+      Tag,
+      rest, // Pass them here too
+      <TextWithHoverTooltips text={String(initialValue)} />
+    )
   );
 }
 

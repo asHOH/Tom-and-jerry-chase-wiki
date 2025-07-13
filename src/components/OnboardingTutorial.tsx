@@ -132,7 +132,7 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className='fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center'
+          className='fixed inset-0 z-50 bg-black/25 flex items-center justify-center'
         >
           {/* Spotlight Circle */}
           <motion.div
@@ -168,13 +168,13 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
                 onClick={handleSkip}
                 className='px-3 py-1 text-sm rounded-md bg-gray-200 hover:bg-gray-300'
               >
-                Skip
+                跳过
               </button>
               <button
                 onClick={handleNext}
                 className='px-3 py-1 text-sm rounded-md bg-blue-500 text-white hover:bg-blue-600'
               >
-                {currentStepIndex === TUTORIAL_STEPS.length - 1 ? 'Finish' : 'Next'}
+                {currentStepIndex === TUTORIAL_STEPS.length - 1 ? '完成' : '下一步'}
               </button>
             </div>
             {/* Arrow */}
