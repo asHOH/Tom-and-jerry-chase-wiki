@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { AppProvider } from '@/context/AppContext';
 import { FactionCharactersProps } from '@/lib/types';
 
 // Dynamic import for CharacterGrid component
@@ -53,9 +52,5 @@ const CharacterGrid = dynamic(
 );
 
 export default function CharacterGridClient(props: FactionCharactersProps) {
-  return (
-    <AppProvider>
-      <CharacterGrid {...props} />
-    </AppProvider>
-  );
+  return <CharacterGrid {...props} />;
 }

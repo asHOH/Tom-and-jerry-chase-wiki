@@ -13,6 +13,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { getOriginalCharacterIds } from '@/lib/editUtils';
 import { characters as allCharacters } from '@/data';
+import CharacterCreate from './CharacterCreate';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const { isDetailedView: isDetailed } = useAppContext();
@@ -132,6 +133,11 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         {isEditMode && (
           <div className='transform transition-transform hover:-translate-y-1'>
             <CharacterImport />
+          </div>
+        )}
+        {isEditMode && (
+          <div className='transform transition-transform hover:-translate-y-1'>
+            <CharacterCreate />
           </div>
         )}
         {isEditMode &&
