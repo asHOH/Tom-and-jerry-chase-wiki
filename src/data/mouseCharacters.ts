@@ -450,7 +450,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             level: 3,
             description: '金币对猫咪造成2次伤害和控制效果。',
             detailedDescription:
-              '金币对猫咪造成2次伤害和控制效果，每次效果{55}点伤害（增伤后），实际总共99点伤害；但最多破一层盾。',
+              '金币对猫咪造成2次伤害和控制效果，每次效果{55}点伤害（增伤后）；由于金币免疫，第二次伤害和控制效果会被免疫，总伤害{55}点。',
             cooldown: 15,
           },
         ],
