@@ -106,8 +106,7 @@ function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagName
             newContentStr,
             `${localCharacter.id}.${path}`,
             factionId || localCharacter.factionId || undefined,
-            handleSelectCharacter,
-            localCharacter
+            handleSelectCharacter
           );
         }
       }

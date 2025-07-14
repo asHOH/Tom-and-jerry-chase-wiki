@@ -4,16 +4,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useEditMode } from '@/context/EditModeContext';
 import BaseCard from '../../../ui/BaseCard';
 import { componentTokens, designTokens } from '@/lib/design-tokens';
-
-// Placeholder function - to be implemented later
-function createCharacter(name: string) {
-  console.log('Creating character with name:', name);
-  // TODO: Implement character creation logic
-}
+import { handleCharacterIdChange } from '@/lib/editUtils';
+import { usePathname } from 'next/navigation';
+import { FactionId } from '@/data';
+import { useAppContext } from '@/context/AppContext';
 
 export default function CharacterCreate() {
   const { width, height } = componentTokens.image.dimensions.CHARACTER_CARD;
   const containerHeight = componentTokens.image.container.height;
+  const factionId = usePathname().split('/').filter(Boolean).at(-1)! as FactionId;
+  const { handleSelectCharacter } = useAppContext();
 
   const { isEditMode } = useEditMode();
   const [showInput, setShowInput] = useState(false);
@@ -29,7 +29,13 @@ export default function CharacterCreate() {
 
   const handleSubmit = () => {
     if (characterName.trim()) {
-      createCharacter(characterName.trim());
+      handleCharacterIdChange(
+        factionId == 'cat' ? '汤姆' : '杰瑞',
+        characterName.trim(),
+        factionId,
+        handleSelectCharacter,
+        true
+      );
       setCharacterName('');
       setShowInput(false);
     }

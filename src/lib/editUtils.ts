@@ -85,12 +85,11 @@ export function setNestedProperty<T>(obj: Record<string, unknown>, path: string,
   }
 }
 
-function handleCharacterIdChange(
+export function handleCharacterIdChange(
   path: string,
   newId: string,
   activeTab: string | undefined,
   handleSelectCharacter: (id: string) => void,
-  _localCharacter: DeepReadonly<CharacterWithFaction>,
   shouldNavigate: boolean = false
 ) {
   const oldId = path.split('.')[0]!;
@@ -263,6 +262,7 @@ function validateAndEnhanceCharacter(
     charObj.skills.forEach((skill: Skill) => {
       // Always regenerate skill image URLs to ensure they match the current character ID
       skill.imageUrl = getSkillImageUrl(characterId, skill, validFactionId);
+      skill.id = `${characterId}-${skill.type}`;
     });
   }
 
@@ -274,8 +274,7 @@ export function handleChange<T>(
   newContentStr: string,
   path: string,
   activeTab: string | undefined,
-  handleSelectCharacter: (id: string) => void,
-  localCharacter: DeepReadonly<CharacterWithFaction>
+  handleSelectCharacter: (id: string) => void
 ) {
   // If the ID is being changed, handle it as a special case to prevent data corruption.
   if (path && path.split('.')?.[1] === 'id') {
@@ -284,7 +283,6 @@ export function handleChange<T>(
       newContentStr,
       activeTab,
       handleSelectCharacter,
-      localCharacter,
       true // ALWAYS navigate when the ID changes now
     );
   } else {
