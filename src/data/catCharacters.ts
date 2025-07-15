@@ -367,7 +367,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
 
   /* ----------------------------------- 托普斯 ---------------------------------- */
   托普斯: {
-    aliases: ['托斯'],
+    aliases: ['托斯', '奶猫'],
     description: '"流浪猫铁三角"的一员，呆萌小灰猫，爱和小老鼠交朋友。',
 
     maxHp: 200,
@@ -1062,7 +1062,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description:
               '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在7层野性下绑火箭时会进入6秒强霸体（内置CD：17秒）。',
             detailedDescription:
-              '每次受到伤害获得1层“野性”状态，持续10秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在10层野性下绑火箭时会进入6秒强霸体（内置CD：20秒）。',
+              '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在7层野性下绑火箭时会进入6秒强霸体（内置CD：17秒）。',
           },
           {
             level: 2,
@@ -1164,6 +1164,30 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'C-狡诈', 'C-猫是液体'],
+            description: '待补充',
+          },
+        ],
+        defaultFolded: true,
+      },
+      // refer to Tom's livestream replay.
+      {
+        id: '乘胜追击',
+        description: '乘胜卡组有着较高的门槛，但不怕拉扯。',
+        groups: [
+          {
+            cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+            description: '待补充',
+          },
+          {
+            cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-越挫越勇'],
+            description: '待补充',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-蓄势一击', 'A-熊熊燃烧', 'C-猫是液体'],
+            description: '待补充',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-蓄势一击', 'A-加大火力', 'B-皮糙肉厚'],
             description: '待补充',
           },
         ],
