@@ -9,6 +9,7 @@ import CostRangeSlider from '../../../ui/CostRangeSlider';
 import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import clsx from 'clsx';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
   // Use centralized filter state management for ranks
@@ -17,6 +18,7 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
     toggleFilter: toggleRankFilter,
     hasFilter: hasRankFilter,
   } = useFilterState<string>();
+  const [isDarkMode] = useDarkMode();
 
   const isCatFaction = faction.name === '猫阵营';
 
@@ -57,7 +59,7 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
           </span>
           <div className='flex gap-2'>
             {RANK_OPTIONS.map((rank) => {
-              const rankColors = getCardRankColors(rank, false);
+              const rankColors = getCardRankColors(rank, false, isDarkMode);
               const isActive = hasRankFilter(rank);
 
               return (

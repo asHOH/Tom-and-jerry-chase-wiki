@@ -17,6 +17,7 @@ import {
   getSkillImageUrl,
 } from '@/lib/skillUtils';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 interface SkillCardProps {
   skill: DeepReadonly<Skill>;
@@ -36,6 +37,7 @@ export default function SkillCard({
   const localCharacter = useSnapshot(characters[characterId]!) as CharacterWithFaction;
   const [showVideoAddress, setShowVideoAddress] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isDarkMode] = useDarkMode();
 
   // Detect mobile layout (below md breakpoint: 768px)
   useEffect(() => {
@@ -610,12 +612,12 @@ export default function SkillCard({
             .map((level: SkillLevel) => (
               <div
                 key={`${skill.id}-${level.level}`}
-                className={`p-4 rounded ${getSkillLevelContainerColor(level.level)} dark:text-gray-300`}
+                className={`p-4 rounded ${getSkillLevelContainerColor(level.level, isDarkMode)} dark:text-gray-300`}
               >
                 <p className='px-2 py-1 whitespace-pre-wrap'>
                   <span
                     className='font-bold'
-                    style={{ color: getSkillLevelColors(level.level).color }}
+                    style={{ color: getSkillLevelColors(level.level, false, isDarkMode).color }}
                   >
                     Lv.{level.level}:
                   </span>{' '}

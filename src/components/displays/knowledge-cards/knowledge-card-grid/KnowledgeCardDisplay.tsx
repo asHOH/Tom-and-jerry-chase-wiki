@@ -3,6 +3,7 @@ import { KnowledgeCardDisplayProps } from '@/lib/types';
 import GameImage from '../../../ui/GameImage';
 import Tag from '../../../ui/Tag';
 import BaseCard from '../../../ui/BaseCard';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 export default function KnowledgeCardDisplay({
   id,
@@ -12,8 +13,9 @@ export default function KnowledgeCardDisplay({
   imageUrl,
   onClick,
 }: KnowledgeCardDisplayProps) {
-  const rankColors = getCardRankColors(rank);
-  const costColors = getCardCostColors(cost);
+  const [isDarkMode] = useDarkMode();
+  const rankColors = getCardRankColors(rank, false, isDarkMode);
+  const costColors = getCardCostColors(cost, false, isDarkMode);
 
   return (
     <BaseCard

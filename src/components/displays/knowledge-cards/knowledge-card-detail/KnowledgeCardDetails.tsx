@@ -12,15 +12,17 @@ import Tag from '../../../ui/Tag';
 import BaseCard from '../../../ui/BaseCard';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data'; // Import characters data
+import { useDarkMode } from '@/context/DarkModeContext';
 
 export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps) {
   const { isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null; // Add null check
   const { handleSelectCharacter } = useAppContext();
+  const [isDarkMode] = useDarkMode();
 
-  const rankColors = getCardRankColors(card.rank, true);
-  const costColors = getCardCostColors(card.cost, true);
+  const rankColors = getCardRankColors(card.rank, true, isDarkMode);
+  const costColors = getCardCostColors(card.cost, true, isDarkMode);
 
   const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
 

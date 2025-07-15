@@ -8,6 +8,7 @@ import Tag from '../../../ui/Tag';
 import BaseCard from '../../../ui/BaseCard';
 import { useAppContext } from '@/context/AppContext';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 export default function CharacterDisplay({
   id,
@@ -19,6 +20,7 @@ export default function CharacterDisplay({
   isEntryCard = false, // Add the new prop
 }: CharacterDisplayProps & { priority?: boolean; isEntryCard?: boolean }) {
   const { handleSelectCharacter } = useAppContext();
+  const [isDarkMode] = useDarkMode();
 
   // Sort positioning tags according to sequence (main tags first, then by sequence)
   const sortedPositioningTags = useMemo(() => {
@@ -68,7 +70,8 @@ export default function CharacterDisplay({
                     tag.tagName,
                     tag.isMinor,
                     false,
-                    factionId as 'cat' | 'mouse'
+                    factionId as 'cat' | 'mouse',
+                    isDarkMode
                   )}
                   size='xs'
                   variant='compact'

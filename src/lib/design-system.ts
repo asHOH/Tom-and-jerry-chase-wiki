@@ -41,9 +41,7 @@ export {
 /**
  * Create hover styles for interactive elements
  */
-export const createHoverStyles = (baseStyles: React.CSSProperties) => {
-  const isDarkMode =
-    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+export const createHoverStyles = (baseStyles: React.CSSProperties, isDarkMode: boolean) => {
   const factionColors = designTokens.colors.faction;
   const hoverBg = isDarkMode ? factionColors.dark.hover : factionColors.hover;
   const hoverText = isDarkMode ? factionColors.dark.hoverText : factionColors.hoverText;
@@ -137,9 +135,10 @@ export const createCardStyles = (
 /**
  * Create button styles using design tokens
  */
-export const createButtonStyles = (variant: 'faction' | 'primary' | 'secondary' = 'primary') => {
-  const isDarkMode =
-    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+export const createButtonStyles = (
+  variant: 'faction' | 'primary' | 'secondary',
+  isDarkMode: boolean
+) => {
   const baseButtonStyle = {
     padding: designTokens.spacing.md,
     borderRadius: designTokens.radius.md,
@@ -248,9 +247,10 @@ export const getToken = <T extends keyof DesignTokenPath>(
  */
 export const createMinorTagGradient = (
   tagName: string,
-  faction?: 'cat' | 'mouse'
+  faction: 'cat' | 'mouse',
+  isDarkMode: boolean
 ): React.CSSProperties => {
-  const colors = getPositioningTagColors(tagName, true, false, faction);
+  const colors = getPositioningTagColors(tagName, true, false, faction, isDarkMode);
   return colors;
 };
 

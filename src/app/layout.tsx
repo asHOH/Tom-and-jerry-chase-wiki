@@ -10,6 +10,7 @@ import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 import { DISCLAIMER_TEXT } from '@/constants';
 import './globals.css';
+import { DarkModeProvider } from '@/context/DarkModeContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -85,11 +86,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name='format-detection' content='telephone=no, date=no, email=no, address=no' />
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
-      <body className={`${inter.className} dark`}>
+      <body className={inter.className}>
         <ErrorBoundary>
           <OfflineIndicator />
           <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
-            {children}
+            <DarkModeProvider>{children}</DarkModeProvider>
           </main>
         </ErrorBoundary>
         <PerformanceMonitor />

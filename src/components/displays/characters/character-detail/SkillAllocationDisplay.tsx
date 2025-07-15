@@ -15,6 +15,7 @@ import EditableField from '@/components/ui/EditableField';
 import { useAppContext } from '@/context/AppContext';
 import { useSnapshot } from 'valtio';
 import { characters } from '@/data';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }) => {
@@ -103,6 +104,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   const { characterId } = useLocalCharacter();
   const characterSkills = useSnapshot(characters[characterId]!.skills);
   const characterName = useSnapshot(characters[characterId]!).id;
+  const [isDarkMode] = useDarkMode();
 
   // Memoize skill type mapping for performance
   const skillTypeMap = useMemo(
@@ -126,7 +128,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         skill?.imageUrl ||
         getSkillAllocationImageUrl(characterName, skillType, factionId, skill?.name);
       const baseStyle = {
-        ...getSkillLevelColors(currentLevel, true),
+        ...getSkillLevelColors(currentLevel, true, isDarkMode),
         borderWidth: '2px',
         borderStyle: 'solid',
       };
@@ -173,7 +175,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         );
       return iconElement;
     },
-    [skillTypeMap, characterName, factionId]
+    [skillTypeMap, characterName, factionId, isDarkMode]
   );
 
   // Memoize level groups calculation for performance

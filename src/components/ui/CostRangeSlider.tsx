@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { getCardCostColors } from '@/lib/design-tokens';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 interface CostRangeSliderProps {
   min: number;
@@ -39,10 +40,15 @@ export default function CostRangeSlider({
   const minValue = Math.min(handlePositions[0], handlePositions[1]);
   const maxValue = Math.max(handlePositions[0], handlePositions[1]);
 
-  const getColorForCost = useCallback((cost: number) => {
-    const colors = getCardCostColors(cost);
-    return colors.backgroundColor;
-  }, []);
+  const [isDarkMode] = useDarkMode();
+
+  const getColorForCost = useCallback(
+    (cost: number) => {
+      const colors = getCardCostColors(cost, false, isDarkMode);
+      return colors.backgroundColor;
+    },
+    [isDarkMode]
+  );
 
   const getSegmentStyle = useCallback(
     (segmentStart: number, segmentEnd: number) => {
@@ -196,8 +202,9 @@ export default function CostRangeSlider({
           className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10'
           style={{
             left: `${getPositionPercentage(handlePositions[0])}%`,
-            backgroundColor: getCardCostColors(handlePositions[0]).backgroundColor,
-            borderColor: getCardCostColors(handlePositions[0]).color,
+            backgroundColor: getCardCostColors(handlePositions[0], false, isDarkMode)
+              .backgroundColor,
+            borderColor: getCardCostColors(handlePositions[0], false, isDarkMode).color,
           }}
           onMouseDown={(e) => {
             e.stopPropagation(); // Prevent track click when handle is dragged
@@ -214,8 +221,9 @@ export default function CostRangeSlider({
           className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10'
           style={{
             left: `${getPositionPercentage(handlePositions[1])}%`,
-            backgroundColor: getCardCostColors(handlePositions[1]).backgroundColor,
-            borderColor: getCardCostColors(handlePositions[1]).color,
+            backgroundColor: getCardCostColors(handlePositions[1], false, isDarkMode)
+              .backgroundColor,
+            borderColor: getCardCostColors(handlePositions[1], false, isDarkMode).color,
           }}
           onMouseDown={(e) => {
             e.stopPropagation(); // Prevent track click when handle is dragged

@@ -16,6 +16,7 @@ import KnowledgeCardTooltip from '@/components/ui/KnowledgeCardTooltip';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { characters } from '@/data';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: DeepReadonly<(KnowledgeCardGroup | KnowledgeCardGroupSet)[]>;
@@ -56,6 +57,7 @@ export function KnowledgeCardGroup({
   imageBasePath: string;
   handleDescriptionSave: (newDescription: string, index: number) => void;
 }) {
+  const [isDarkMode] = useDarkMode();
   if (group.length === 0 && !isEditMode) {
     return null;
   }
@@ -89,7 +91,7 @@ export function KnowledgeCardGroup({
           {group.map((cardId) => {
             const cardName = cardId.split('-')[1]!;
             const cardRank = getCardRank(cardId);
-            const rankColors = getCardRankColors(cardRank);
+            const rankColors = getCardRankColors(cardRank, false, isDarkMode);
 
             if (isSqueezedView) {
               return (

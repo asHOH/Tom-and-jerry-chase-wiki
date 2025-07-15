@@ -12,6 +12,7 @@ import { useAppContext } from '@/context/AppContext';
 import { CharacterWithFaction } from '@/lib/types';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 interface PositioningTagsSectionProps {
   tags: ReadonlyArray<{
@@ -102,6 +103,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
 
   const { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags, toggleIsMinor } =
     usePositioningTags({ factionId });
+  const [isDarkMode] = useDarkMode();
 
   // Sort tags according to sequence (main tags first, then by sequence)
   const sortedTags = React.useMemo(() => {
@@ -130,12 +132,19 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
               className={`rounded-lg p-3 ${getPositioningTagContainerColor(
                 tag.tagName,
                 tag.isMinor,
-                factionId
+                factionId,
+                isDarkMode
               )}`}
             >
               <div className='flex items-center gap-2 mb-2'>
                 <Tag
-                  colorStyles={getPositioningTagColors(tag.tagName, tag.isMinor, true, factionId)}
+                  colorStyles={getPositioningTagColors(
+                    tag.tagName,
+                    tag.isMinor,
+                    true,
+                    factionId,
+                    isDarkMode
+                  )}
                   size='sm'
                 >
                   {isEditMode ? (
