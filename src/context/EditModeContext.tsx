@@ -32,6 +32,10 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isEditMode) {
       setIsLoading(false); // Set loading to false after data is loaded
+      if (typeof localStorage !== 'undefined') {
+        Object.assign(characters, JSON.parse(localStorage.getItem('characters') ?? '{}'));
+        Object.assign(factions, JSON.parse(localStorage.getItem('factions') ?? '{}'));
+      }
     }
   }, [isEditMode]);
 
