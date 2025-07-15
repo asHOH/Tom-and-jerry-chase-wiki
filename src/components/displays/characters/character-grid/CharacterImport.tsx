@@ -253,7 +253,7 @@ export default function CharacterImport() {
         {!showImportOptions && !showPasteInput ? (
           <>
             <div
-              className='w-full bg-gray-200 relative overflow-hidden mb-4'
+              className='w-full bg-gray-200 dark:bg-slate-700 relative overflow-hidden mb-4'
               style={{
                 height: containerHeight,
                 borderRadius: componentTokens.image.container.borderRadius,
@@ -266,7 +266,7 @@ export default function CharacterImport() {
                   viewBox='0 0 24 24'
                   strokeWidth={1.5}
                   stroke='currentColor'
-                  className='size-6 text-gray-500 hover:scale-105'
+                  className='size-6 text-gray-500 dark:text-gray-400 hover:scale-105'
                   style={{
                     width: width,
                     height: height,
@@ -285,7 +285,7 @@ export default function CharacterImport() {
               </div>
             </div>
             <div className='px-6 pt-1 pb-6 text-center'>
-              <h2 className='text-xl font-bold mb-2'>导入角色</h2>
+              <h2 className='text-xl font-bold mb-2 dark:text-white'>导入角色</h2>
             </div>
           </>
         ) : showImportOptions ? (
