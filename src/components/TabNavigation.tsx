@@ -8,6 +8,7 @@ import Tooltip from './ui/Tooltip'; // Import Tooltip
 import { useAppContext } from '@/context/AppContext';
 import { useNavigation } from '@/lib/useNavigation';
 import clsx from 'clsx';
+import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 
 type Tab = {
   id: string;
@@ -173,7 +174,11 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
         {/* Right-aligned detailed/simple view toggle button and SearchBar */}
         <div className={clsx('flex items-center', isMobile ? 'gap-2' : 'gap-3')}>
-          <SearchBar isMobile={isMobile} />
+          {pathname === '/' || pathname === '' ? (
+            <DarkModeToggleButton />
+          ) : (
+            <SearchBar isMobile={isMobile} />
+          )}
           {showDetailToggle && (
             <Tooltip
               content={isDetailedView ? '简明描述' : '详细描述'}
