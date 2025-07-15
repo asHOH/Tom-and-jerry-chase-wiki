@@ -34,14 +34,14 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   }, [isEditMode, hasInitialized]);
 
   useEffect(() => {
-    if (isEditMode) {
+    if (isEditMode && hasInitialized) {
       setIsLoading(false); // Set loading to false after data is loaded
       if (typeof localStorage !== 'undefined') {
         Object.assign(characters, JSON.parse(localStorage.getItem('characters') ?? '{}'));
         Object.assign(factions, JSON.parse(localStorage.getItem('factions') ?? '{}'));
       }
     }
-  }, [isEditMode]);
+  }, [isEditMode, hasInitialized]);
 
   const toggleEditMode = () => {
     setIsEditMode((prevMode) => !prevMode);
