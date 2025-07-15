@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import CharacterDisplay from './CharacterDisplay';
 import CharacterImport from './CharacterImport';
 import { FactionCharactersProps } from '@/lib/types';
-import { PositioningTagName } from '@/data';
+import { FactionId, PositioningTagName } from '@/data';
 import { useFilterState } from '@/lib/filterUtils';
 import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
 import Tooltip from '@/components/ui/Tooltip';
@@ -14,10 +14,13 @@ import { useEditMode } from '@/context/EditModeContext';
 import { getOriginalCharacterIds } from '@/lib/editUtils';
 import { characters as allCharacters } from '@/data';
 import CharacterCreate from './CharacterCreate';
+import { getPositioningTagColors } from '@/lib/design-tokens';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
+  const [isDarkMode] = useDarkMode();
   const originalCharacterIds = getOriginalCharacterIds();
 
   const originalCharacters = useMemo(() => {
@@ -96,14 +99,55 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         <div className='flex gap-2'>
           {uniquePositioningTags.map((tag) => {
             const isActive = hasPositioningTagFilter(tag as PositioningTagName);
+            const tagColors = getPositioningTagColors(
+              tag as PositioningTagName,
+              false,
+              false,
+              faction.id as FactionId,
+              isDarkMode
+            );
 
             // Tailwind classes for button styling and dark mode support
-            const baseClasses =
-              'px-3 py-2 rounded-lg border-none cursor-pointer font-medium transition-all duration-200 text-sm';
-            const activeClasses =
-              'bg-blue-600 text-white dark:bg-blue-400 dark:text-gray-900 shadow';
-            const inactiveClasses =
-              'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300';
+            const buttonStyle = isActive
+              ? {
+                  ...tagColors,
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease',
+                  fontSize: '14px',
+                }
+              : isDarkMode
+                ? {
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    fontSize: '14px',
+                    backgroundColor: '#23272f',
+                    color: '#6b7280',
+                    ':hover': {
+                      backgroundColor: '#2d323b',
+                    },
+                  }
+                : {
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    fontSize: '14px',
+                    backgroundColor: '#f3f4f6',
+                    color: '#9ca3af',
+                    ':hover': {
+                      backgroundColor: '#e5e7eb',
+                    },
+                  };
 
             return (
               <Tooltip
@@ -119,7 +163,8 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                 <button
                   type='button'
                   onClick={() => togglePositioningTagFilter(tag as PositioningTagName)}
-                  className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
+                  style={buttonStyle}
+                  className={!isActive ? 'hover:bg-gray-200' : ''}
                 >
                   {tag}
                 </button>
