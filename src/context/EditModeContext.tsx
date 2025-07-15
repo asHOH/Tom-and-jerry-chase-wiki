@@ -14,20 +14,24 @@ interface EditModeContextType {
 const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
 
 export const EditModeProvider = ({ children }: { children: ReactNode }) => {
-  const [isEditMode, setIsEditMode] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const storedEditMode = localStorage.getItem('isEditMode');
-      return storedEditMode ? JSON.parse(storedEditMode) : false;
-    }
-    return false;
-  });
-  const [isLoading, setIsLoading] = useState<boolean>(true); // New loading state
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const storedEditMode = localStorage.getItem('isEditMode');
+      setIsEditMode(storedEditMode ? JSON.parse(storedEditMode) : false);
+      setHasInitialized(true);
+    }
+  }, []);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true); // New loading state
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && hasInitialized) {
       localStorage.setItem('isEditMode', JSON.stringify(isEditMode));
     }
-  }, [isEditMode]);
+  }, [isEditMode, hasInitialized]);
 
   useEffect(() => {
     if (isEditMode) {
