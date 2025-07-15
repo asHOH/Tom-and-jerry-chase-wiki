@@ -435,6 +435,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '待补充',
       },
     ],
+    counters: [
+      {
+        id: '尼宝',
+        description: '托普斯的捕虫网可以直接抓取灵活跳跃后霸体的尼宝，使尼宝很难救人。',
+      },
+    ],
 
     skills: [
       {
@@ -1125,7 +1131,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     knowledgeCardGroups: [
       {
         id: '蓄势一击',
-        description: '蓄势一击使苏蕊通过爪刀接球可以轻松打死125血老鼠。',
+        description: '蓄势一击使苏蕊通过球接爪刀可以轻松打死125血老鼠。',
         groups: [
           {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],

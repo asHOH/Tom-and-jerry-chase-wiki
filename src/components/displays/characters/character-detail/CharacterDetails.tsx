@@ -19,6 +19,7 @@ import { characters } from '@/data';
 import { getSkillImageUrl } from '@/lib/skillUtils';
 import ContentWriterDisplay from './ContentWriterDisplay';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import CharacterRestraintDisplay from './CharacterRestraintDisplay';
 
 export default function CharacterDetails({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
@@ -186,6 +187,9 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
                   );
               })()}
             </div>
+          </CharacterSection>
+          <CharacterSection title='角色克制关系'>
+            <CharacterRestraintDisplay id={localCharacter.id} factionId={factionId} />
           </CharacterSection>
         </div>
       </div>
