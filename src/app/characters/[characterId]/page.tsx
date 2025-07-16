@@ -6,6 +6,7 @@ import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDeta
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
+import { generatePageMetadata, ArticleStructuredData } from '@/lib/metadataUtils';
 
 // Force dynamic rendering to avoid prerender issues
 export const dynamic = 'force-dynamic';
@@ -30,7 +31,7 @@ export async function generateMetadata({
     return {};
   }
 
-  const structuredData = {
+  const structuredData: ArticleStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: `${character.id} - 猫鼠wiki`,
@@ -50,22 +51,13 @@ export async function generateMetadata({
     inLanguage: 'zh-CN',
   };
 
-  return {
+  return generatePageMetadata({
     title: `${character.id} - 猫鼠wiki`,
     description: `${character.id}详细信息 - 属性、技能、加点、知识卡推荐`,
     keywords: [character.id, '猫和老鼠', '手游', '攻略'],
-    openGraph: {
-      title: `${character.id} - 猫鼠wiki`,
-      description: `${character.id}详细信息 - 属性、技能、加点、知识卡推荐`,
-      type: 'website',
-    },
-    alternates: {
-      canonical: `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
-    },
-    other: {
-      'application/ld+json': JSON.stringify(structuredData),
-    },
-  };
+    canonicalUrl: `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
+    structuredData,
+  });
 }
 
 // This page uses the CharacterDetails component to avoid code duplication

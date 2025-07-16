@@ -27,7 +27,7 @@ const KnowledgeCardGrid = dynamic(
   }
 );
 
-export default function CatCardsClient(props: KnowledgeCardGridProps) {
+export default function KnowledgeCardClient(props: KnowledgeCardGridProps) {
   return (
     <AppProvider>
       <KnowledgeCardGrid {...props} />
