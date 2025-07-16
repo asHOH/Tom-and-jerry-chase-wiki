@@ -4,7 +4,8 @@ import React, { useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { SkillAllocation } from '@/data/types';
 import {
-  parseSkillAllocationPattern,
+  safeParseSkillAllocationPattern,
+  validateSkillAllocationPattern,
   getSkillAllocationImageUrl,
   ParsedSkillLevel,
 } from '@/lib/skillAllocationUtils';
@@ -69,10 +70,18 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     return preprocessPattern(allocation.pattern);
   }, [allocation.pattern]);
 
+  // Memoize pattern validation and parsing
+  const patternValidation = useMemo(() => {
+    return validateSkillAllocationPattern(processedPattern);
+  }, [processedPattern]);
+
   // Memoize parsed levels to avoid recalculation
   const parsedLevels = useMemo(() => {
-    return parseSkillAllocationPattern(processedPattern);
-  }, [processedPattern]);
+    if (!patternValidation.isValid) {
+      return [];
+    }
+    return safeParseSkillAllocationPattern(processedPattern) || [];
+  }, [processedPattern, patternValidation.isValid]);
 
   // Memoize current levels calculation for performance
   const currentLevels: ProcessedSkillLevel[] = useMemo(() => {
@@ -383,76 +392,126 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           )}
         </div>
         <div className='flex-1'>
-          <div className='flex flex-wrap items-start gap-2 gap-y-6 md:gap-y-4 mb-2'>
-            {levelGroups.map((group, groupIndex) => (
-              <div key={groupIndex} className='relative flex flex-col items-center'>
-                {group.isParallelGroup ? (
-                  <>
-                    <div className='flex gap-1 justify-center mb-3 h-4'>
-                      {group.levels.map((level, levelIndex) => (
-                        <div key={levelIndex} className='w-10 flex flex-col items-center'>
-                          <span className='text-xs text-gray-500 dark:text-gray-400'>
-                            {
-                              !level.hasNegativeEffect
-                                ? `Lv.${group.characterLevel + levelIndex}/${group.characterLevel + levelIndex + group.levels.length}`
-                                : '\u00A0' // Non-breaking space for alignment
-                            }
-                          </span>
-                        </div>
+          {/* Show validation errors if pattern is invalid */}
+          {!patternValidation.isValid && (
+            <div className='mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg'>
+              <div className='flex items-start gap-2'>
+                <div className='flex-shrink-0 w-5 h-5 mt-0.5'>
+                  <svg
+                    className='w-5 h-5 text-red-500 dark:text-red-400'
+                    fill='currentColor'
+                    viewBox='0 0 20 20'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                </div>
+                <div className='flex-1'>
+                  <h4 className='text-sm font-medium text-red-800 dark:text-red-200 mb-1'>
+                    加点方案格式错误
+                  </h4>
+                  <div className='text-sm text-red-700 dark:text-red-300 space-y-1'>
+                    {patternValidation.errors.map((error, errorIndex) => (
+                      <div key={errorIndex}>{error.message}</div>
+                    ))}
+                  </div>
+                  {patternValidation.warnings.length > 0 && (
+                    <div className='mt-2 text-sm text-yellow-700 dark:text-yellow-300 space-y-1'>
+                      {patternValidation.warnings.map((warning, warningIndex) => (
+                        <div key={warningIndex}>⚠️ {warning.message}</div>
                       ))}
                     </div>
-                    <div className='relative h-12 flex gap-1 justify-center'>
-                      {group.levels.map((level, levelIndex) => (
-                        <div
-                          key={levelIndex}
-                          className='relative w-10 flex flex-col justify-center'
-                        >
-                          {renderConnectionLine(groupIndex, levelIndex, group, true)}
-                          <div className='absolute' style={{ top: '-7px' }}>
-                            {level.parallelOptions?.[0] &&
-                              renderSkillIcon(
-                                level.parallelOptions[0],
-                                level.currentLevel,
-                                level.isDelayed,
-                                level.hasNegativeEffect
-                              )}
-                          </div>
-                          <div className='absolute' style={{ top: '19px' }}>
-                            {level.parallelOptions?.[1] &&
-                              renderSkillIcon(
-                                level.parallelOptions[1],
-                                level.parallelCurrentLevel!,
-                                level.isDelayed,
-                                level.hasNegativeEffect
-                              )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <span className='text-xs text-gray-500 dark:text-gray-400 mb-4 h-4'>
-                      {
-                        !group.levels[0]!.hasNegativeEffect
-                          ? `Lv.${group.characterLevel}`
-                          : '\u00A0' // Non-breaking space for alignment
-                      }
-                    </span>
-                    <div className='relative'>
-                      {renderConnectionLine(groupIndex, 0, group, false)}
-                      {renderSkillIcon(
-                        group.levels[0]!.skillType,
-                        group.levels[0]!.currentLevel,
-                        group.levels[0]!.isDelayed,
-                        group.levels[0]!.hasNegativeEffect
-                      )}
-                    </div>
-                  </>
-                )}
+                  )}
+                  <div className='mt-2 text-xs text-red-600 dark:text-red-400'>
+                    格式说明：0=被动，1=主动，2=武器1，3=武器2，[12]=并行加点，(0)=留加点，-1=负面效果
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
+
+          {/* Show parsed skill allocation or fallback message */}
+          {patternValidation.isValid && levelGroups.length > 0 ? (
+            <div className='flex flex-wrap items-start gap-2 gap-y-6 md:gap-y-4 mb-2'>
+              {levelGroups.map((group, groupIndex) => (
+                <div key={groupIndex} className='relative flex flex-col items-center'>
+                  {group.isParallelGroup ? (
+                    <>
+                      <div className='flex gap-1 justify-center mb-3 h-4'>
+                        {group.levels.map((level, levelIndex) => (
+                          <div key={levelIndex} className='w-10 flex flex-col items-center'>
+                            <span className='text-xs text-gray-500 dark:text-gray-400'>
+                              {
+                                !level.hasNegativeEffect
+                                  ? `Lv.${group.characterLevel + levelIndex}/${group.characterLevel + levelIndex + group.levels.length}`
+                                  : '\u00A0' // Non-breaking space for alignment
+                              }
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className='relative h-12 flex gap-1 justify-center'>
+                        {group.levels.map((level, levelIndex) => (
+                          <div
+                            key={levelIndex}
+                            className='relative w-10 flex flex-col justify-center'
+                          >
+                            {renderConnectionLine(groupIndex, levelIndex, group, true)}
+                            <div className='absolute' style={{ top: '-7px' }}>
+                              {level.parallelOptions?.[0] &&
+                                renderSkillIcon(
+                                  level.parallelOptions[0],
+                                  level.currentLevel,
+                                  level.isDelayed,
+                                  level.hasNegativeEffect
+                                )}
+                            </div>
+                            <div className='absolute' style={{ top: '19px' }}>
+                              {level.parallelOptions?.[1] &&
+                                renderSkillIcon(
+                                  level.parallelOptions[1],
+                                  level.parallelCurrentLevel!,
+                                  level.isDelayed,
+                                  level.hasNegativeEffect
+                                )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <span className='text-xs text-gray-500 dark:text-gray-400 mb-4 h-4'>
+                        {
+                          !group.levels[0]!.hasNegativeEffect
+                            ? `Lv.${group.characterLevel}`
+                            : '\u00A0' // Non-breaking space for alignment
+                        }
+                      </span>
+                      <div className='relative'>
+                        {renderConnectionLine(groupIndex, 0, group, false)}
+                        {renderSkillIcon(
+                          group.levels[0]!.skillType,
+                          group.levels[0]!.currentLevel,
+                          group.levels[0]!.isDelayed,
+                          group.levels[0]!.hasNegativeEffect
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            !patternValidation.isValid && (
+              <div className='text-center text-gray-500 dark:text-gray-400 py-4'>
+                无法显示加点方案，请检查格式
+              </div>
+            )
+          )}
         </div>
         {isEditMode && (
           <div className='flex flex-col gap-2'>
