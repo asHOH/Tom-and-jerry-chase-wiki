@@ -300,4 +300,5 @@ body.edit-mode-banner-visible main {
   -webkit-user-select: inherit !important;
   -moz-user-select: inherit !important;
   -ms-user-select: inherit !important;
+  user-select: inherit !important;
 }
