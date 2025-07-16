@@ -30,7 +30,7 @@ export async function generateMetadata({
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: `${faction.name} - 猫和老鼠手游wiki`,
+    name: `${faction.name} - 猫鼠wiki`,
     description: faction.description,
     url: `https://tom-and-jerry-chase-wiki.space/factions/${resolvedParams.factionId}`,
     mainEntity: {
