@@ -603,6 +603,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '待补充',
       },
     ],
+    collaborators: [
+      { id: '音乐家杰瑞', description: '国王杰瑞的进攻战旗可以为音乐家杰瑞提供高额增伤。' },
+    ],
     skills: [
       {
         name: '威严光盾',

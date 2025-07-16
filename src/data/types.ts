@@ -99,9 +99,10 @@ export type KnowledgeCardGroupSet = {
   defaultFolded: boolean;
 };
 
-export type CharacterRestraintItem = {
+export type CharacterRelationItem = {
   id: string;
   description?: string;
+  isMinor?: boolean;
 };
 
 // Character definition type (without id, for raw definitions)
@@ -139,13 +140,15 @@ export type CharacterDefinition = {
   knowledgeCardGroups: (KnowledgeCardGroup | KnowledgeCardGroupSet)[];
 
   // character restraint information
-  counters?: CharacterRestraintItem[];
-  counteredBy?: CharacterRestraintItem[];
+  counters?: CharacterRelationItem[];
+  counteredBy?: CharacterRelationItem[];
+  collaborators?: CharacterRelationItem[];
 };
 
-export type CharacterRestraint = {
-  counters: CharacterRestraintItem[];
-  counteredBy: CharacterRestraintItem[];
+export type CharacterRelation = {
+  counters: CharacterRelationItem[];
+  counteredBy: CharacterRelationItem[];
+  collaborators: CharacterRelationItem[];
 };
 
 export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDefinition>;
