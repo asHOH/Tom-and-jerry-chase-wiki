@@ -129,7 +129,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   role='button'
                   tabIndex={0}
                   aria-label={`选择角色 ${c.id}`}
-                  className='flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95'
+                  className={`flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95 ${
+                    c.isMinor ? 'opacity-60' : ''
+                  }`}
                   onClick={() => {
                     handleSelectCharacter(c.id);
                   }}
@@ -148,8 +150,15 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                       className='w-8 h-8 rounded-full object-cover'
                     />
                   </div>
-                  <div className='flex flex-col'>
-                    <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
+                  <div className='flex flex-col flex-1'>
+                    <div className='flex items-center gap-1'>
+                      <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
+                      {c.isMinor && (
+                        <span className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full'>
+                          次要
+                        </span>
+                      )}
+                    </div>
                     {c.description && (
                       <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
                         {c.description}
@@ -192,7 +201,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   role='button'
                   tabIndex={0}
                   aria-label={`选择角色 ${c.id}`}
-                  className='flex flex-row items-center gap-3 p-2 rounded-lg bg-red-50 dark:bg-red-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95'
+                  className={`flex flex-row items-center gap-3 p-2 rounded-lg bg-red-50 dark:bg-red-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95 ${
+                    c.isMinor ? 'opacity-60' : ''
+                  }`}
                   onClick={() => {
                     handleSelectCharacter(c.id);
                   }}
@@ -211,8 +222,15 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                       className='w-8 h-8 rounded-full object-cover'
                     />
                   </div>
-                  <div className='flex flex-col'>
-                    <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
+                  <div className='flex flex-col flex-1'>
+                    <div className='flex items-center gap-1'>
+                      <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
+                      {c.isMinor && (
+                        <span className='text-[10px] px-1 py-0.5 bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200 rounded-full'>
+                          次要
+                        </span>
+                      )}
+                    </div>
                     <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
                       {c.description}
                     </span>
@@ -251,7 +269,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                     role='button'
                     tabIndex={0}
                     aria-label={`选择角色 ${c.id}`}
-                    className='flex flex-row items-center gap-3 p-2 rounded-lg bg-green-50 dark:bg-green-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800/40 focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95'
+                    className={`flex flex-row items-center gap-3 p-2 rounded-lg bg-green-50 dark:bg-green-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800/40 focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95 ${
+                      c.isMinor ? 'opacity-60' : ''
+                    }`}
                     onClick={() => {
                       handleSelectCharacter(c.id);
                     }}
@@ -270,8 +290,15 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         className='w-8 h-8 rounded-full object-cover'
                       />
                     </div>
-                    <div className='flex flex-col'>
-                      <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
+                    <div className='flex flex-col flex-1'>
+                      <div className='flex items-center gap-1'>
+                        <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
+                        {c.isMinor && (
+                          <span className='text-[10px] px-1 py-0.5 bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-200 rounded-full'>
+                            次要
+                          </span>
+                        )}
+                      </div>
                       {c.description && (
                         <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
                           {c.description}

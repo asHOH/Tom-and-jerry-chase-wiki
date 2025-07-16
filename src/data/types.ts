@@ -102,7 +102,7 @@ export type KnowledgeCardGroupSet = {
 export type CharacterRelationItem = {
   id: string;
   description?: string;
-  isMinor?: boolean;
+  isMinor: boolean;
 };
 
 // Character definition type (without id, for raw definitions)

@@ -439,6 +439,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '尼宝',
         description: '托普斯的捕虫网可以直接抓取灵活跳跃后霸体的尼宝，使尼宝很难救人。',
+        isMinor: false,
       },
     ],
 

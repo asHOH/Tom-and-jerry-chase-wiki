@@ -604,7 +604,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
     ],
     collaborators: [
-      { id: '音乐家杰瑞', description: '国王杰瑞的进攻战旗可以为音乐家杰瑞提供高额增伤。' },
+      {
+        id: '音乐家杰瑞',
+        description: '国王杰瑞的进攻战旗可以为音乐家杰瑞提供高额增伤。',
+        isMinor: false,
+      },
     ],
     skills: [
       {
