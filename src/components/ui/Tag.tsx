@@ -1,4 +1,5 @@
-import { componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
+import { componentTokens, createStyleFromTokens, designTokens } from '@/lib/design-tokens';
+import { useMemo } from 'react';
 
 type TagProps = {
   children: React.ReactNode;
@@ -22,21 +23,21 @@ export default function Tag({
   // Size-based font sizing
   const fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '0.875rem' : '1rem';
 
-  // Detect positioning tags by checking for positioning tag colors
+  // Memoize the set of positioning tag colors for efficient lookups
+  const positioningTagColors = useMemo(() => {
+    const colors = new Set<string>();
+    for (const tag of Object.values(designTokens.colors.positioningTags)) {
+      colors.add(tag.text);
+      if (tag.dark) {
+        colors.add(tag.dark.text);
+      }
+    }
+    return colors;
+  }, []);
+
+  // Detect positioning tags by checking if the current color exists in the generated set
   const isPositioningTag =
-    colorStyles.color &&
-    (colorStyles.color === '#dc2626' || // attack red
-      colorStyles.color === '#2563eb' || // defense/support blue
-      colorStyles.color === '#9a3412' || // chase/wallBreak orange-brown
-      colorStyles.color === '#16a34a' || // speedrun green
-      colorStyles.color === '#9333ea' || // fight purple
-      colorStyles.color === '#4338ca' || // lateGame indigo
-      colorStyles.color === '#ca8a04' || // comeback yellow
-      colorStyles.color === '#d97706' || // cheese amber
-      colorStyles.color === '#059669' || // rescue emerald
-      colorStyles.color === '#7c3aed' || // breakthrough violet
-      colorStyles.color === '#0d9488' || // lateGameMouse teal
-      colorStyles.color === '#4b5563'); // minor gray
+    colorStyles.color && positioningTagColors.has(colorStyles.color as string);
 
   const tagStyle: React.CSSProperties = {
     ...baseTagStyle,

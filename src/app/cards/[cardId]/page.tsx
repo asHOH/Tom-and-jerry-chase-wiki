@@ -32,17 +32,17 @@ export async function generateMetadata({
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    name: `${card.id} - 猫和老鼠手游wiki`,
+    name: `${card.id} - 猫鼠wiki`,
     description: card.description,
     image: card.imageUrl,
   };
 
   return {
-    title: `${card.id} - 猫和老鼠手游wiki`,
+    title: `${card.id} - 猫鼠wiki`,
     description: card.description,
     keywords: [card.id, '知识卡', '猫和老鼠', '手游', '攻略'],
     openGraph: {
-      title: `${card.id} - 猫和老鼠手游wiki`,
+      title: `${card.id} - 猫鼠wiki`,
       description: card.description,
       images: [
         {

@@ -15,7 +15,7 @@ import { DarkModeProvider } from '@/context/DarkModeContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://tom-and-jerry-chase-wiki.space'),
+  metadataBase: new URL('https://tjwiki.com'),
   title: '猫和老鼠手游wiki',
   description: `猫和老鼠手游wiki - 角色技能加点和知识卡效果查询网站。${DISCLAIMER_TEXT}`,
   keywords: '猫和老鼠手游,wiki,攻略,角色,技能,知识卡,Tom and Jerry Chase',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   publisher: '猫和老鼠手游wiki',
   robots: 'index, follow',
   alternates: {
-    canonical: 'https://tom-and-jerry-chase-wiki.space',
+    canonical: 'https://tjwiki.com',
   },
   other: {
     'application/ld+json': JSON.stringify({
@@ -33,12 +33,12 @@ export const metadata: Metadata = {
       name: '猫和老鼠手游wiki',
       alternateName: '猫鼠wiki',
       description: '猫和老鼠手游wiki - 角色技能加点和知识卡效果查询网站',
-      url: 'https://tom-and-jerry-chase-wiki.space',
+      url: 'https://tjwiki.com',
       inLanguage: 'zh-CN',
       // TODO: Implement search functionality before enabling this
       // potentialAction: {
       //   '@type': 'SearchAction',
-      //   target: 'https://tom-and-jerry-chase-wiki.space?search={search_term_string}',
+      //   target: 'https://tjwiki.com?search={search_term_string}',
       //   'query-input': 'required name=search_term_string',
       // },
     }),
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'zh_CN',
-    url: 'https://tom-and-jerry-chase-wiki.space',
+    url: 'https://tjwiki.com',
     title: '猫和老鼠手游wiki',
     description: '角色技能加点和知识卡效果查询网站',
     siteName: '猫和老鼠手游wiki',

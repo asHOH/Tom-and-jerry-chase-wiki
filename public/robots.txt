@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tom-and-jerry-chase-wiki.space/sitemap.xml
+Sitemap: https://tjwiki.com/sitemap.xml

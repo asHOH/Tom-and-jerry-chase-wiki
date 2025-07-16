@@ -33,7 +33,7 @@ export async function generateMetadata({
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${character.id} - 猫和老鼠手游wiki`,
+    headline: `${character.id} - 猫鼠wiki`,
     description: `${character.id}详细信息 - 属性、技能、加点、知识卡推荐`,
     author: {
       '@type': 'Organization',
@@ -45,14 +45,14 @@ export async function generateMetadata({
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(characterId)}`,
+      '@id': `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
     },
     inLanguage: 'zh-CN',
   };
 
   return {
     alternates: {
-      canonical: `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(characterId)}`,
+      canonical: `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
     },
     other: {
       'application/ld+json': JSON.stringify(structuredData),

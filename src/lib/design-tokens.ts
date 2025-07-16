@@ -181,7 +181,7 @@ export const designTokens = {
         background: '#fee2e2', // red-100
         border: '#fca5a5', // red-300
         dark: {
-          text: '#f87171', // red-400
+          text: '#fca5a5', // red-300
           background: '#7f1d1d', // red-900
           border: '#dc2626', // red-600
         },
@@ -191,8 +191,8 @@ export const designTokens = {
         background: '#fee5d3', // orange-85
         border: '#fdba74', // orange-300
         dark: {
-          text: '#fdba74', // orange-300
-          background: '#7c2d12', // orange-900
+          text: '#fcd34d', // amber-300
+          background: '#92400e', // amber-800
           border: '#ea580c', // orange-600
         },
       },
@@ -202,7 +202,7 @@ export const designTokens = {
         border: '#fde047', // yellow-300
         dark: {
           text: '#fde047', // yellow-300
-          background: '#78350f', // yellow-900
+          background: '#854d0e', // yellow-800
           border: '#ca8a04', // yellow-600
         },
       },
