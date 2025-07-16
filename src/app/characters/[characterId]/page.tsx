@@ -45,14 +45,14 @@ export async function generateMetadata({
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(characterId)}`,
+      '@id': `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
     },
     inLanguage: 'zh-CN',
   };
 
   return {
     alternates: {
-      canonical: `https://tom-and-jerry-chase-wiki.space/characters/${encodeURIComponent(characterId)}`,
+      canonical: `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
     },
     other: {
       'application/ld+json': JSON.stringify(structuredData),

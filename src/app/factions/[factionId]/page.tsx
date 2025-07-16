@@ -32,7 +32,7 @@ export async function generateMetadata({
     '@type': 'CollectionPage',
     name: `${faction.name} - 猫鼠wiki`,
     description: faction.description,
-    url: `https://tom-and-jerry-chase-wiki.space/factions/${resolvedParams.factionId}`,
+    url: `https://tjwiki.com/factions/${resolvedParams.factionId}`,
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: faction.characters.length,
@@ -40,7 +40,7 @@ export async function generateMetadata({
         '@type': 'ListItem',
         position: index + 1,
         name: character.id,
-        url: `https://tom-and-jerry-chase-wiki.space/characters/${character.id}`,
+        url: `https://tjwiki.com/characters/${character.id}`,
       })),
     },
     inLanguage: 'zh-CN',
@@ -48,7 +48,7 @@ export async function generateMetadata({
 
   return {
     alternates: {
-      canonical: `https://tom-and-jerry-chase-wiki.space/factions/${resolvedParams.factionId}`,
+      canonical: `https://tjwiki.com/factions/${resolvedParams.factionId}`,
     },
     other: {
       'application/ld+json': JSON.stringify(structuredData),
