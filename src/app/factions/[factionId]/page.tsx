@@ -47,6 +47,14 @@ export async function generateMetadata({
   };
 
   return {
+    title: `${faction.name} - 猫鼠wiki`,
+    description: faction.description,
+    keywords: [faction.name, '猫和老鼠', '手游', '攻略'],
+    openGraph: {
+      title: `${faction.name} - 猫鼠wiki`,
+      description: faction.description,
+      type: 'website',
+    },
     alternates: {
       canonical: `https://tjwiki.com/factions/${resolvedParams.factionId}`,
     },

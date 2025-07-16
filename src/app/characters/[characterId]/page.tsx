@@ -51,6 +51,14 @@ export async function generateMetadata({
   };
 
   return {
+    title: `${character.id} - 猫鼠wiki`,
+    description: `${character.id}详细信息 - 属性、技能、加点、知识卡推荐`,
+    keywords: [character.id, '猫和老鼠', '手游', '攻略'],
+    openGraph: {
+      title: `${character.id} - 猫鼠wiki`,
+      description: `${character.id}详细信息 - 属性、技能、加点、知识卡推荐`,
+      type: 'website',
+    },
     alternates: {
       canonical: `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
     },
