@@ -1462,7 +1462,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: false,
         // cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
-        videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=10.6',
         skillLevels: [
           {
             level: 1,
@@ -1657,10 +1656,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description:
-              '弹射造成的眩晕可救下猫咪手中的老鼠；提高对墙缝的伤害。取消猫咪受到该技能效果的内置CD。',
+            description: '弹射造成的眩晕可救下猫咪手中的老鼠；提高对墙缝的伤害。',
             detailedDescription:
-              '弹射造成的眩晕可救下猫咪手中的老鼠；提高对墙缝的伤害至15（+0.5）。取消猫咪受到该技能效果的内置CD。',
+              '弹射造成的眩晕可救下猫咪手中的老鼠；提高对墙缝的伤害至15（+0.5）。',
             cooldown: 7,
           },
         ],
