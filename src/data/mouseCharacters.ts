@@ -1048,7 +1048,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description:
-              '蓄力投掷长枪。蓄力时间越长，投掷的速度越快、距离越长。长枪对触碰的敌方造成伤害和控制效果。在投掷后的一定时间内，可再次点击技能瞬移到长枪尾部跟随飞行。长枪碰到队友后，可携带1名友方进行飞行，期间剑客泰菲和友方均可通过跳跃、投掷离开。若飞行中碰触到易碎道具和打开的老鼠夹，也会挂着该道具飞行。长枪在碰到墙壁、地面、平台时将消失。',
+              '蓄力投掷长枪。蓄力时间越长，投掷的速度越快、距离越长。长枪对触碰的敌方造成伤害和控制效果。在投掷后的一定时间内，可再次点击技能瞬移到长枪尾部跟随飞行。长枪碰到队友后，可携带1名友方进行飞行，期间剑客泰菲和友方均可通过跳跃、投掷离开。若飞行中碰触到易碎道具和打开的捕鼠夹，也会挂着该道具飞行。长枪在碰到墙壁、地面、平台时将消失。',
             cooldown: 8,
           },
           {
@@ -1997,6 +1997,148 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description: '虚弱下减速附近猫咪；附近有队友时，提高自己和附近队友的虚弱状态移速。',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ----------------------------------- 米雪儿 ----------------------------------- */
+  米雪儿: {
+    description:
+      '米雪儿和图多盖洛居住在一个富有的家庭中，是一名富有的千金小姐。她喜欢吃甜品，但她不喜欢火炮类的东西，热爱自然的花草树木，尤其喜爱花朵类的装饰品。',
+    maxHp: 99,
+    attackBoost: 10,
+    hpRecovery: 2,
+    moveSpeed: 650,
+    jumpHeight: 400,
+    cheesePushSpeed: 3,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '辅助',
+        isMinor: false,
+        description: '队友铁血可用主动技能救活队友（建议车队配合）。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '砸墙',
+        isMinor: false,
+        description: '后期15秒一个变大；三级武器对墙缝的增伤也很可观。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '干扰',
+        isMinor: true,
+        description: '可变成道具偷袭猫。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '',
+        pattern: '212020011',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
+        description: '常用',
+      },
+    ],
+    skills: [
+      {
+        name: '小情绪',
+        aliases: [],
+        type: 'active',
+        description:
+          '技能平时禁用，在米雪儿或附近队友队友受到猫攻击后激活。点击技能将原地大哭诉说委屈，期间将获得1层护盾。友方老鼠进入范围后可对米雪儿进行安抚，期间获得护盾，安抚结束后友方将变成攻击力强大的愤怒大老鼠。',
+        detailedDescription:
+          '技能平时禁用，在以米雪儿为中心半径1500内的自己和队友受到猫攻击后激活30秒。点击技能将原地大哭诉说委屈，持续3.9秒，并获得1层持续7.9秒的护盾。哭泣750*750的矩形范围内将下起伤心的雨，对敌方造成25%减速。友方老鼠进入范围后可通过交互对米雪儿进行安抚，安抚前摇0.6秒，前摇前获得1层持续7.8秒的护盾。安抚结束后友方将变成攻击力强大的巨型比例鼠，持续9.9秒（爪刀前摇0.5秒，后摇0.5秒，爪刀范围[300](与汤姆相同)，对敌方造成110的基础伤害，并造成20%减速，持续1.9秒；对墙伤害为1.5）。哭时使用道具键*取消后摇或安抚成功后，将清除米雪儿的护盾；队友未安抚不会清除米雪儿的护盾；若在队友安抚的途中取消后摇不会清除队友的护盾）',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableAftercast: ['道具键*'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '安抚成功后，获得短暂加速。',
+            detailedDescription: '安抚成功后，获得15%加速，持续4.9秒。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: '减少CD。',
+            detailedDescription: '减少CD至15秒。',
+            cooldown: 15,
+          },
+        ],
+        cancelableSkill: '无前摇',
+      },
+      {
+        name: '超级变！变！变！',
+        type: 'weapon1',
+        description:
+          '点击技能时米雪儿记录面前[最近的道具](被记录的道具将变成粉色)，再次点击技能将变成该[道具](可被使用)。变形后依然可以进行交互，同时提高视野范围。可储存2次记录的道具。受到伤害或点击技能键可变回；变回后道具消失。',
+        detailedDescription:
+          '点击技能时米雪儿记录自身周围半径100范围内[最近的道具](被记录的道具将变成粉色；若没有道具将直接进入技能CD)，记录前摇1.5秒，再次点击技能将变成该[道具](可被使用)，变身前摇0.5秒，持续60秒。变形后依然可以进行交互，同时提高视野范围至1.8倍。可储存2次记录的道具。受到伤害、所变道具损坏、再次点击技能键、达到最大持续时间后将变回，变回后技能进入5秒CD、道具消失。\n可以变形的道具为几乎所有投掷物（包括技能投掷物；例外：剑客泰菲的长枪、魔术师的卡牌、恶魔泰菲的红恶魔）、手枪、子弹、果盘、水果、番茄、鞭炮堆、冰桶、牛奶、蛋糕、纸箱、拳头盒子、拍子、关闭的捕鼠夹、[部分地图场景物](经典之家：推车、水桶、木桶；夏日游轮：消防栓、锅；森林牧场：三角铁、浆果、除七色花外的所有花及其被采后留下的叶子；熊猫谷：胡萝卜、竹笋、收纳箱；御门酒店：礼盒、除七色花外的所有花及其被采后留下的花瓶)。不能变形机器鼠遥控、风扇。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: '无后摇',
+        cooldownTiming: '释放后',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '受到[纯控制效果](碎片、管道等)不会取消变身。',
+            cooldown: 5,
+          },
+          {
+            level: 2,
+            description:
+              '变身时将免疫1次伤害和控制；提高Hp恢复速度；提高被投掷命中时造成的伤害和控制时间。',
+            cooldown: 5,
+            detailedDescription:
+              '变身时将免疫1次伤害和控制但受到[纯控制效果](碎片、管道等)将会取消变身。Hp恢复速度提升2.5/s；被投掷命中时造成的伤害提高50，控制时间增加0.6秒。',
+          },
+          {
+            level: 3,
+            description:
+              '增加变形的持续时间和存储次数，同时提高变身状态下的攻击力和救援速度，并在变身结束后短暂保持。',
+            cooldown: 5,
+            detailedDescription:
+              '变形的持续时间提高至90秒，存储的次数增加1次，变身期间攻击力提高15、对墙伤害提升3、救援速度提升60%，并在变身结束后保持3秒。',
+          },
+        ],
+      },
+      {
+        name: '坚强的米雪儿',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '米雪儿受到伤害后，附近队友将大幅提高移速和救援速度。',
+            detailedDescription:
+              '米雪儿受到伤害后，自身半径900范围内的队友移动度提高15%、救援速度提高50%，持续7.9秒。',
+          },
+          {
+            level: 2,
+            description: 'Hp大于一半时，提高Hp上限，Hp低于一半时， 推速提升。',
+            detailedDescription: 'Hp大于一半时，提高Hp上限25，Hp低于一半时， 推速提升30%。',
+          },
+          {
+            level: 3,
+            description: '虚弱时间减少30%；倒地后爬行速度短暂提升。',
+            detailedDescription:
+              '[虚弱时间减少30%](若在虚弱状态加点，将立即减少虚弱时间)，倒地后爬行速度提升为500，持续4秒。',
           },
         ],
       },
