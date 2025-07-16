@@ -929,6 +929,162 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 剑客泰菲 ----------------------------------- */
+  剑客泰菲: {
+    aliases: ['剑菲'],
+    description: '剑客泰菲虽然平时惹祸不断，但在学剑之余，他勤加练习掌握了操控盔甲人的技巧。',
+    maxHp: 99,
+    attackBoost: 10,
+    hpRecovery: 1,
+    moveSpeed: 600,
+    jumpHeight: 380,
+    cheesePushSpeed: 2.4,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '救援',
+        isMinor: false,
+        description: '头盔的长轴防御使得剑客泰菲具有十分优秀的救援能力。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '携带剑客长枪的剑客泰菲具有较强的机动性和干扰能力。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '头盔',
+        pattern: '212020011',
+        weaponType: 'weapon1',
+        description: '',
+      },
+      {
+        id: '剑客长枪',
+        pattern: '313030011',
+        weaponType: 'weapon1',
+        description: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'B-飞跃', 'C-吃货'],
+        description: '适合头盔的机动性卡组。飞跃提升机动性，吃货延长牛奶buff。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'B-飞跃', 'B-绝地反击'],
+        description: '适合长枪的高伤卡组。对低血量猫对策卡。',
+      },
+    ],
+    skills: [
+      {
+        name: '勇气冲刺',
+        type: 'active',
+        description: '剑向前猛烈一刺，对猫咪造成伤害，并恢复少量勇气。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableAftercast: '不可取消后摇',
+        cooldownTiming: '释放后',
+        cancelableSkill: '不可被打断',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '剑客泰菲鼓起勇气向前猛烈一刺并恢复少量勇气，对击中的猫咪造成伤害，但消耗一定的勇气。',
+            detailedDescription: '',
+            cooldown: 1.5,
+          },
+          {
+            level: 2,
+            description: '勇气冲刺在短时间内击中猫咪5次后，使猫咪眩晕并受到额外的伤害。',
+            cooldown: 1.5,
+          },
+          {
+            level: 3,
+            description: '勇气冲刺在短时间内击中猫咪3次后，使猫咪眩晕并受到额外的伤害。',
+            cooldown: 1.5,
+          },
+        ],
+      },
+      {
+        name: '头盔',
+        type: 'weapon1',
+        description:
+          '举起头盔保护自己和队友，躲在头盔后的队友不能使用技能。在头盔内受到攻击或成功火箭救援后会减少剩余的持续时间。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        canHitInPipe: true,
+        cancelableAftercast: '不可取消后摇',
+        cancelableSkill: '不可被打断',
+        cooldownTiming: '释放时',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description: '延长头盔的持续时间。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description: '举起头盔时可以更灵活地移动。',
+            cooldown: 15,
+          },
+        ],
+      },
+      {
+        name: '剑客长枪',
+        type: 'weapon2',
+        description: '',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '蓄力投掷长枪。蓄力时间越长，投掷的速度越快、距离越长。长枪对触碰的敌方造成伤害和控制效果。在投掷后的一定时间内，可再次点击技能瞬移到长枪尾部跟随飞行。长枪碰到队友后，可携带1名友方进行飞行，期间剑客泰菲和友方均可通过跳跃、投掷离开。若飞行中碰触到易碎道具和打开的老鼠夹，也会挂着该道具飞行。长枪在碰到墙壁、地面、平台时将消失。',
+            cooldown: 8,
+          },
+          {
+            level: 2,
+            description:
+              '长枪速度大幅提高。在勇气释放过程中，长枪命中敌人时将使其无法使用技能、带飞友方时将解除其受伤和虚弱。',
+            cooldown: 8,
+          },
+          {
+            level: 3,
+            description: '在勇气释放过程中，本技能CD减少至4秒。',
+            cooldown: 8,
+          },
+        ],
+      },
+      {
+        name: '勇者无惧',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '勇气值积累的速度提升50%。',
+          },
+          {
+            level: 2,
+            description: '勇气值消耗的速度降低20%。',
+          },
+          {
+            level: 3,
+            description: '每当勇气值达到最高时，解除自身受伤状态，并获得一个临时的护盾。',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ----------------------------------- 恶魔泰菲 ----------------------------------- */
   恶魔泰菲: {
     aliases: ['恶菲'],
