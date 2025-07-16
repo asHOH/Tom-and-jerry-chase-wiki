@@ -445,6 +445,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '托普斯的捕虫网可以直接抓取灵活跳跃后霸体的尼宝，使尼宝很难救人。',
         isMinor: false,
       },
+      {
+        id: '表演者•杰瑞',
+        description: '托普斯的捕虫网可以直接抓取梦幻舞步状态下的表演者•杰瑞。',
+        isMinor: false,
+      },
     ],
 
     skills: [
@@ -833,6 +838,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '这套针对没有奶酪位的阵容。前期快速击倒一个老鼠，快速布夹子在火箭下，发挥防守优势。如果老鼠救不下来就速飞一个；由于带了捕鼠夹，老鼠舍己救下也大概率被夹死，一般也能速飞一个。注意，若求稳则不建议使用。',
       },
     ],
+    counters: [
+      {
+        id: '国王杰瑞',
+        description: '图茨的能快速破盾，使国王杰瑞很难单独救人。',
+        isMinor: false,
+      },
+    ],
     skills: [
       {
         name: '喵喵叫',
@@ -1001,6 +1013,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['A-穷追猛打', 'B-皮糙肉厚', 'A-加大火力', 'C-猫是液体', 'B-恐吓', 'B-反侦察'],
         description: '死守奶酪。',
+      },
+    ],
+    counters: [
+      {
+        id: '国王杰瑞',
+        description: '米特的胡椒粉罐头能快速破盾，使国王杰瑞很难单独救人。',
+        isMinor: false,
       },
     ],
     skills: [
@@ -1205,7 +1224,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         defaultFolded: true,
       },
     ],
-
+    counters: [
+      {
+        id: '航海士杰瑞',
+        description: '苏蕊在律动时间中免疫航海士杰瑞各个技能的控制效果。',
+        isMinor: false,
+      },
+    ],
     skills: [
       {
         name: '律动时间',

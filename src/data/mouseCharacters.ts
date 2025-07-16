@@ -609,6 +609,26 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '国王杰瑞的进攻战旗可以为音乐家杰瑞提供高额增伤。',
         isMinor: false,
       },
+      {
+        id: '蒙金奇',
+        description: '国王杰瑞的强化救援战旗配合蒙金奇的战车可以实现稳救。',
+        isMinor: false,
+      },
+      {
+        id: '表演者•杰瑞',
+        description: '国王杰瑞的强化救援战旗配合表演者•杰瑞的梦幻舞步可以实现稳救。',
+        isMinor: false,
+      },
+      {
+        id: '尼宝',
+        description: '国王杰瑞的强化救援战旗可以大幅降低尼宝使用灵活跳跃的救援难度。',
+        isMinor: true,
+      },
+      {
+        id: '泰菲',
+        description: '国王杰瑞的强化救援战旗配合泰菲的圆滚滚可以实现稳救。',
+        isMinor: true,
+      },
     ],
     skills: [
       {
@@ -676,6 +696,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '国王战旗',
         type: 'weapon2',
+        // FIXME: official description uses 守护战旗 instead of 防御战旗
         description:
           '召唤战旗，为碰触的友方提供增益。战旗被碰触若干次后将获得强化。\n攻击战旗：提高攻击力（强化：同时获得墙缝增伤、免疫受伤）\n救援战旗：大幅提高救援速度。（强化：[获得瞬息救援能力](碰触火箭直接救援成功)）\n防御战旗：解除虚弱；Hp较低时将缓慢恢复Hp并加速（强化：直接获得1层护盾）\n感知战旗：对猫隐藏自己的小地图位置（强化：额外显示猫的位置）\n灵巧战旗：提高跳跃高度（强化：获得2段跳）。',
         detailedDescription:
@@ -972,6 +993,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
         description: '没21点知识量时的推荐。',
+      },
+    ],
+    collaborators: [
+      {
+        id: '剑客莉莉',
+        description: '恶魔泰菲的蓝色小恶魔可以显著降低剑客莉莉利用二级被动的救援难度。',
+        isMinor: true,
       },
     ],
     skills: [
