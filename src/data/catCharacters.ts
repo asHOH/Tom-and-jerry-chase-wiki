@@ -319,7 +319,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '原地释放或扔出旋转桶盖，伤害并眩晕命中的老鼠；自己捡到桶盖会获得6秒减伤。',
         detailedDescription:
           '原地释放或扔出旋转桶盖，对命中的老鼠造成55伤害并眩晕1.5秒；自己捡到桶盖会获得6秒固定减伤30。桶盖拥有较大的惯性。',
-        canMoveWhileUsing: false,
+        canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键'],
         cancelableAftercast: ['跳跃键', '道具键'],
@@ -350,11 +350,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description: '虚弱后更快起身、无敌时间更长。',
+            detailedDescription: '虚弱后更快起身、无敌时间更长。',
           },
           {
             level: 2,
-            description: '投掷道具造成额外伤害。',
-            detailedDescription: '投掷道具造成25点额外伤害。',
+            // TODO: add how much hp will be recovered
+            description:
+              '投掷道具造成额外伤害，造成伤害后将恢复生命值，同时提高移动速度，持续5秒。',
+            detailedDescription:
+              '投掷道具造成25点额外伤害，造成伤害后将恢复生命值，同时提高移动速度，持续5秒。',
           },
           {
             level: 3,
@@ -626,7 +630,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '瞬移闪击',
         type: 'active',
         aliases: ['闪现'],
-        description: '向前移动一段距离。如果附近有老鼠，可以瞬移到老鼠身后。',
+        description: '向前移动一段距离。如果附近有老鼠，可以瞬移到老鼠身后，范围在小地图显示。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         canHitInPipe: false,
@@ -658,9 +662,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '垃圾桶',
         type: 'weapon1',
         description:
-          '放置垃圾桶阻挡老鼠的道路。垃圾桶的异味会使老鼠受到减速和伤害。由此造成伤害时会减少爪刀CD。',
+          '放置垃圾桶阻挡老鼠的道路，垃圾桶在受到4次攻击后会摧毁。垃圾桶的异味会使老鼠受到减速和伤害。由此造成伤害时会减少爪刀CD。',
         detailedDescription:
-          '放置垃圾桶阻挡老鼠的道路。垃圾桶的异味会使老鼠受到减速和伤害。每造成1次伤害会降低0.6秒爪刀CD，每秒只生效一次。垃圾桶不会对倒地的老鼠造成伤害并降低爪刀CD，在垃圾桶范围内倒地并起身的老鼠不会受到垃圾桶的伤害，但重新进入垃圾桶范围仍会受到伤害。',
+          '放置垃圾桶阻挡老鼠的道路，垃圾桶在受到4次攻击后会摧毁。垃圾桶的异味会使老鼠受到减速和伤害。每造成1次伤害会降低0.6秒爪刀CD，每秒只生效一次。垃圾桶不会对倒地的老鼠造成伤害并降低爪刀CD，在垃圾桶范围内倒地并起身的老鼠不会受到垃圾桶的伤害，但重新进入垃圾桶范围仍会受到伤害。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['跳跃键'],
