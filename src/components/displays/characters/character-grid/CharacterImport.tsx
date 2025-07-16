@@ -184,6 +184,11 @@ export default function CharacterImport() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      const suffix = file.name.split('.').pop()?.toLowerCase();
+      if (suffix !== 'ts' && suffix !== 'txt') {
+        console.error('Unsupported file type. Please upload a .ts or .txt file.');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target?.result;
