@@ -2,9 +2,11 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import CharacterDetails from '../CharacterDetails';
-import { AppProvider } from '@/context/AppContext';
-import { EditModeProvider } from '@/context/EditModeContext';
-import type { CharacterWithFaction } from '@/lib/types';
+import { AppProvider } from '../../../../../context/AppContext';
+import { EditModeProvider } from '../../../../../context/EditModeContext';
+import type { CharacterWithFaction } from '../../../../../lib/types';
+import { proxy } from 'valtio';
+import { characters } from '../../../../../data';
 
 // Mock external dependencies
 jest.mock('../../../../../lib/tooltipUtils', () => ({
@@ -38,6 +40,52 @@ jest.mock('next/image', () => {
   };
 });
 
+jest.mock('../../../../../context/EditModeContext', () => ({
+  __esModule: true,
+  EditModeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useEditMode: () => ({ isEditMode: false }),
+  useLocalCharacter: () => ({ characterId: '汤姆' }),
+}));
+
+// Mock valtio store
+const mockCharacter: CharacterWithFaction = {
+  id: '汤姆',
+  description: '经典的猫咪角色',
+  imageUrl: '/images/cats/汤姆.png',
+  factionId: 'cat',
+  faction: { id: 'cat', name: '猫阵营' },
+  maxHp: 150,
+  attackBoost: 30,
+  skills: [
+    {
+      id: 'tom-active',
+      name: '发怒冲刺',
+      type: 'active',
+      description: '向前冲刺',
+      skillLevels: [{ level: 1, description: 'Level 1 effect' }],
+    },
+  ],
+  skillAllocations: [
+    {
+      id: '手型枪',
+      pattern: '123001',
+      weaponType: 'weapon1',
+      description: '平衡加点',
+    },
+  ],
+  knowledgeCardGroups: [
+    {
+      cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
+      description: '通用卡组',
+    },
+  ],
+};
+
+jest.mock('../../../../../data', () => ({
+  __esModule: true,
+  characters: {},
+}));
+
 // Simplified test wrapper
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <AppProvider>
@@ -46,39 +94,9 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 describe('CharacterDetails', () => {
-  const mockCharacter: CharacterWithFaction = {
-    id: '汤姆',
-    description: '经典的猫咪角色',
-    imageUrl: '/images/cats/汤姆.png',
-    factionId: 'cat',
-    faction: { id: 'cat', name: '猫阵营' },
-    maxHp: 150,
-    attackBoost: 30,
-    skills: [
-      {
-        id: 'tom-active',
-        name: '发怒冲刺',
-        type: 'active',
-        description: '向前冲刺',
-        skillLevels: [{ level: 1, description: 'Level 1 effect' }],
-      },
-    ],
-    skillAllocations: [
-      {
-        id: '手型枪',
-        pattern: '123001',
-        weaponType: 'weapon1',
-        description: '平衡加点',
-      },
-    ],
-    knowledgeCardGroups: [
-      {
-        cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
-        description: '通用卡组',
-      },
-    ],
-  };
-
+  beforeEach(() => {
+    characters['汤姆'] = proxy(mockCharacter);
+  });
   it('should render character basic information', () => {
     render(
       <TestWrapper>
@@ -109,7 +127,7 @@ describe('CharacterDetails', () => {
       </TestWrapper>
     );
 
-    expect(screen.getByText('发怒冲刺')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /发怒冲刺/i })).toBeInTheDocument();
     expect(screen.getByText('向前冲刺')).toBeInTheDocument();
   });
 

@@ -5,13 +5,25 @@ import SkillAllocationDisplay from '../SkillAllocationDisplay';
 import { EditModeProvider } from '../../../../../context/EditModeContext';
 import { AppProvider } from '../../../../../context/AppContext';
 import type { SkillAllocation } from '../../../../../data/types';
+import type { CharacterWithFaction } from '../../../../../lib/types';
 import * as skillAllocationUtils from '../../../../../lib/skillAllocationUtils';
+import { characters } from '../../../../../data';
+import { proxy } from 'valtio';
 
 // Mock the skillAllocationUtils module
 jest.mock('../../../../../lib/skillAllocationUtils', () => ({
   parseSkillAllocationPattern: jest.fn(),
+  safeParseSkillAllocationPattern: jest.fn(),
+  validateSkillAllocationPattern: jest.fn(() => ({ isValid: true, errors: [], warnings: [] })),
   getSkillAllocationImageUrl: jest.fn(() => '/mock-image.png'),
   getSkillTypeDisplayName: jest.fn(),
+}));
+
+jest.mock('../../../../../context/EditModeContext', () => ({
+  __esModule: true,
+  EditModeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useEditMode: () => ({ isEditMode: false }),
+  useLocalCharacter: () => ({ characterId: '汤姆' }),
 }));
 
 // Mock the design-tokens module
@@ -58,6 +70,17 @@ describe('SkillAllocationDisplay', () => {
     onRemove: jest.fn(),
     index: 0,
   };
+
+  beforeAll(() => {
+    characters['汤姆'] = proxy<CharacterWithFaction>({
+      id: '汤姆',
+      description: 'A test character',
+      skills: [],
+      knowledgeCardGroups: [],
+      faction: { id: 'cat', name: '猫阵营' },
+      imageUrl: '/images/cats/汤姆.png',
+    });
+  });
 
   beforeEach(() => {
     mockedParseSkillAllocationPattern.mockReturnValue([

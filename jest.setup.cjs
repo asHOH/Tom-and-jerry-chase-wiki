@@ -19,3 +19,11 @@ if (!global.structuredClone) {
     return JSON.parse(JSON.stringify(obj));
   };
 }
+
+const intersectionObserverMock = () => ({
+  observe: () => null,
+  unobserve: () => null,
+  disconnect: () => null,
+});
+
+global.IntersectionObserver = jest.fn().mockImplementation(intersectionObserverMock);

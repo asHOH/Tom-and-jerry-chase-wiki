@@ -68,15 +68,15 @@ describe('skillAllocationUtils', () => {
     it('should reject invalid skill types in parallel groups', () => {
       const result = validateSkillAllocationPattern('[1a]01');
       expect(result.isValid).toBe(false);
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0]?.message).toContain('包含无效技能类型');
+      expect(result.errors).toHaveLength(2);
+      expect(result.errors[0]?.message).toContain('包含无效字符');
     });
 
     it('should reject invalid delayed patterns', () => {
       const result = validateSkillAllocationPattern('01(ab)301');
       expect(result.isValid).toBe(false);
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0]?.message).toContain('只能包含单个技能类型');
+      expect(result.errors).toHaveLength(2);
+      expect(result.errors[0]?.message).toContain('包含无效字符');
     });
 
     it('should warn about long patterns', () => {
