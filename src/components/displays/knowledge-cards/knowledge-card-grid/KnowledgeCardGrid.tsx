@@ -69,10 +69,14 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
                   onClick={() => toggleRankFilter(rank)}
                   className={clsx(
                     'px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-                    isActive
-                      ? `bg-[${rankColors.backgroundColor}] text-[${rankColors.color}]`
-                      : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
+                    !isActive &&
+                      'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
                   )}
+                  style={
+                    isActive
+                      ? { backgroundColor: rankColors.backgroundColor, color: rankColors.color }
+                      : {}
+                  }
                 >
                   {rank}级
                 </button>
