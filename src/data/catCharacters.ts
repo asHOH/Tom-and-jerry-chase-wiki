@@ -841,7 +841,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counters: [
       {
         id: '国王杰瑞',
-        description: '图茨的能快速破盾，使国王杰瑞很难单独救人。',
+        description: '图茨的喵喵叫能快速破盾，使国王杰瑞很难单独救人。',
         isMinor: false,
       },
     ],

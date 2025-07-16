@@ -42,7 +42,7 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
       const targetElement = document.querySelector(currentStep.targetSelector);
       if (targetElement) {
         setTargetRect(targetElement.getBoundingClientRect());
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetElement.scrollIntoView({ behavior: 'instant', block: 'center' });
       } else {
         setTargetRect(null);
       }
