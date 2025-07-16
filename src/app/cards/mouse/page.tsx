@@ -1,22 +1,19 @@
 import { Metadata } from 'next';
 import { factionCards } from '@/data';
-import MouseCardsClient from './MouseCardsClient';
+import KnowledgeCardClient from '../KnowledgeCardClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
+import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = generatePageMetadata({
   title: '鼠方知识卡 - 猫鼠wiki',
   description: '鼠方知识卡列表，提升老鼠的生存、救援和推奶酪能力',
   keywords: ['鼠方知识卡', '猫和老鼠', '手游', '攻略'],
-  openGraph: {
-    title: '鼠方知识卡 - 猫鼠wiki',
-    description: '鼠方知识卡列表，提升老鼠的生存、救援和推奶酪能力',
-    type: 'website',
-  },
-};
+  canonicalUrl: 'https://tjwiki.com/cards/mouse',
+});
 
 export default function MouseCardsPage() {
   const faction = factionCards['mouse'];
@@ -29,7 +26,7 @@ export default function MouseCardsPage() {
     <AppProvider>
       <EditModeProvider>
         <TabNavigationWrapper showDetailToggle={false}>
-          <MouseCardsClient faction={faction} />
+          <KnowledgeCardClient faction={faction} />
         </TabNavigationWrapper>
       </EditModeProvider>
     </AppProvider>

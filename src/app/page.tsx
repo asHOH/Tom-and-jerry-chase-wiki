@@ -4,12 +4,10 @@ import { useState } from 'react';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import { VersionDisplay } from '@/components/VersionDisplay';
-import FactionButton from '@/components/ui/FactionButton';
-import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
 import NotificationTooltip from '@/components/ui/NotificationTooltip';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider, useEditMode } from '@/context/EditModeContext';
-import { useNavigation } from '@/lib/useNavigation';
+import HomePageSection from '@/components/ui/HomePageSection';
 
 export default function Home() {
   return (
@@ -22,7 +20,6 @@ export default function Home() {
 }
 
 function HomeContent() {
-  const { navigate } = useNavigation();
   const { toggleEditMode, isEditMode } = useEditMode();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
@@ -37,6 +34,44 @@ function HomeContent() {
     toggleEditMode();
   };
 
+  const characterButtons = [
+    {
+      imageSrc: '/images/icons/cat faction.png',
+      imageAlt: '猫阵营图标',
+      title: '猫阵营',
+      description: '猫阵营角色列表',
+      href: '/factions/cat',
+      ariaLabel: '猫阵营角色列表',
+    },
+    {
+      imageSrc: '/images/icons/mouse faction.png',
+      imageAlt: '鼠阵营图标',
+      title: '鼠阵营',
+      description: '鼠阵营角色列表',
+      href: '/factions/mouse',
+      ariaLabel: '鼠阵营角色列表',
+    },
+  ];
+
+  const cardButtons = [
+    {
+      imageSrc: '/images/icons/cat knowledge card.png',
+      imageAlt: '猫方知识卡图标',
+      title: '猫方知识卡',
+      description: '猫方知识卡列表',
+      href: '/cards/cat',
+      ariaLabel: '猫方知识卡列表',
+    },
+    {
+      imageSrc: '/images/icons/mouse knowledge card.png',
+      imageAlt: '鼠方知识卡图标',
+      title: '鼠方知识卡',
+      description: '鼠方知识卡列表',
+      href: '/cards/mouse',
+      ariaLabel: '鼠方知识卡列表',
+    },
+  ];
+
   return (
     <TabNavigationWrapper showDetailToggle={false}>
       <div className='space-y-8'>
@@ -49,53 +84,8 @@ function HomeContent() {
           </p>
         </header>
 
-        <div className='flex flex-col items-center mt-16 px-4'>
-          <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800 dark:text-white'>角色</h2>
-          <FactionButtonGroup>
-            <FactionButton
-              imageSrc='/images/icons/cat faction.png'
-              imageAlt='猫阵营图标'
-              title='猫阵营'
-              description='猫阵营角色列表'
-              onClick={() => navigate('/factions/cat')}
-              ariaLabel='猫阵营角色列表'
-              priority
-            />
-            <FactionButton
-              imageSrc='/images/icons/mouse faction.png'
-              imageAlt='鼠阵营图标'
-              title='鼠阵营'
-              description='鼠阵营角色列表'
-              onClick={() => navigate('/factions/mouse')}
-              ariaLabel='鼠阵营角色列表'
-              priority
-            />
-          </FactionButtonGroup>
-        </div>
-
-        <div className='flex flex-col items-center mt-16 px-4'>
-          <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800 dark:text-white'>知识卡</h2>
-          <FactionButtonGroup>
-            <FactionButton
-              imageSrc='/images/icons/cat knowledge card.png'
-              imageAlt='猫方知识卡图标'
-              title='猫方知识卡'
-              description='猫方知识卡列表'
-              onClick={() => navigate('/cards/cat')}
-              ariaLabel='猫方知识卡列表'
-              priority
-            />
-            <FactionButton
-              imageSrc='/images/icons/mouse knowledge card.png'
-              imageAlt='鼠方知识卡图标'
-              title='鼠方知识卡'
-              description='鼠方知识卡列表'
-              onClick={() => navigate('/cards/mouse')}
-              ariaLabel='鼠方知识卡列表'
-              priority
-            />
-          </FactionButtonGroup>
-        </div>
+        <HomePageSection title='角色' buttons={characterButtons} />
+        <HomePageSection title='知识卡' buttons={cardButtons} />
 
         {/* Division line before 网站说明 */}
         <div className='mt-24 mb-8 px-4'>

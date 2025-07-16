@@ -5,6 +5,7 @@ import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import CharacterGridClient from './CharacterGridClient';
+import { generatePageMetadata, CollectionPageStructuredData } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
@@ -27,7 +28,7 @@ export async function generateMetadata({
     return {};
   }
 
-  const structuredData = {
+  const structuredData: CollectionPageStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: `${faction.name} - 猫鼠wiki`,
@@ -46,14 +47,13 @@ export async function generateMetadata({
     inLanguage: 'zh-CN',
   };
 
-  return {
-    alternates: {
-      canonical: `https://tjwiki.com/factions/${resolvedParams.factionId}`,
-    },
-    other: {
-      'application/ld+json': JSON.stringify(structuredData),
-    },
-  };
+  return generatePageMetadata({
+    title: `${faction.name} - 猫鼠wiki`,
+    description: faction.description,
+    keywords: [faction.name, '猫和老鼠', '手游', '攻略'],
+    canonicalUrl: `https://tjwiki.com/factions/${resolvedParams.factionId}`,
+    structuredData,
+  });
 }
 
 export default async function FactionPage({ params }: { params: Promise<{ factionId: string }> }) {
