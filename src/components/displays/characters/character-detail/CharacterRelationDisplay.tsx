@@ -255,7 +255,13 @@ function CharacterSelector({
               className='w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2'
             >
               <Image
-                src={factionId === 'cat' ? getMouseImageUrl(char.id) : getCatImageUrl(char.id)}
+                src={
+                  relationType === 'collaborators'
+                    ? getMouseImageUrl(char.id)
+                    : factionId === 'cat'
+                      ? getMouseImageUrl(char.id)
+                      : getCatImageUrl(char.id)
+                }
                 alt={char.id}
                 width={20}
                 height={20}
