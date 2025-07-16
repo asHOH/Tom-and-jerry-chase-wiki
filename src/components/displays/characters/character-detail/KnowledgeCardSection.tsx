@@ -186,7 +186,7 @@ export function KnowledgeCardGroup({
       </div>
       {(!!description || isEditMode) && (
         <div
-          className={`bg-gray-50 dark:bg-slate-800/50 p-2 sm:p-3 rounded-lg ${
+          className={`bg-gray-50 dark:bg-slate-700/50 p-2 sm:p-3 rounded-lg ${
             isSqueezedView ? 'ml-11 sm:ml-12 md:ml-13 lg:ml-14' : 'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
           }`}
         >
