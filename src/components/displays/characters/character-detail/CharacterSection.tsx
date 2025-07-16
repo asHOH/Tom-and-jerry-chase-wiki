@@ -18,6 +18,7 @@ export default function CharacterSection({
   return (
     <div
       className={`transition-all ${isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in'} ${isOpen ? 'mb-8' : 'mb-0'}`}
+      id={`Section:${title}`}
     >
       <button
         type='button'

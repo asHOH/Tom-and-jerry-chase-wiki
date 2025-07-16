@@ -74,7 +74,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='zh-CN'>
+    <html lang='zh-CN' className='bg-gray-100 dark:bg-slate-900'>
       <head>
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />

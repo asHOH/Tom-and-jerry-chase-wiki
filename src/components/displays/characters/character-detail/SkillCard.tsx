@@ -517,6 +517,7 @@ export default function SkillCard({
               {getSkillTypeLabel(skill.type)} ·{' '}
               <EditableField
                 tag='span'
+                id={`Skill:${skill.name}`}
                 path={`skills.${skillIndex}.name`}
                 initialValue={skill.name}
                 onSave={(newName) => {

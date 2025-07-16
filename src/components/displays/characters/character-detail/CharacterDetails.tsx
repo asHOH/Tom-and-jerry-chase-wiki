@@ -20,6 +20,7 @@ import { getSkillImageUrl } from '@/lib/skillUtils';
 import ContentWriterDisplay from './ContentWriterDisplay';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import CharacterRelationDisplay from './CharacterRelationDisplay';
+import CharacterSectionIndex from './CharacterSectionIndex';
 
 export default function CharacterDetails({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
@@ -132,6 +133,8 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
               <CharacterAttributesSection factionId={factionId} />
 
               <PositioningTagsSection tags={positioningTags} factionId={factionId} />
+
+              <CharacterSectionIndex />
             </div>
           </div>
         </div>
