@@ -22,21 +22,33 @@ export default function Tag({
   // Size-based font sizing
   const fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '0.875rem' : '1rem';
 
-  // Detect positioning tags by checking for positioning tag colors
+  // Detect positioning tags by checking for positioning tag colors, including dark mode variants
   const isPositioningTag =
     colorStyles.color &&
-    (colorStyles.color === '#dc2626' || // attack red
-      colorStyles.color === '#2563eb' || // defense/support blue
-      colorStyles.color === '#9a3412' || // chase/wallBreak orange-brown
-      colorStyles.color === '#16a34a' || // speedrun green
-      colorStyles.color === '#9333ea' || // fight purple
-      colorStyles.color === '#4338ca' || // lateGame indigo
-      colorStyles.color === '#ca8a04' || // comeback yellow
-      colorStyles.color === '#d97706' || // cheese amber
-      colorStyles.color === '#059669' || // rescue emerald
-      colorStyles.color === '#7c3aed' || // breakthrough violet
-      colorStyles.color === '#0d9488' || // lateGameMouse teal
-      colorStyles.color === '#4b5563'); // minor gray
+    [
+      // Light mode colors
+      '#dc2626', // attack red
+      '#2563eb', // defense/support blue
+      '#9a3412', // chase/wallBreak orange-brown
+      '#16a34a', // speedrun green
+      '#9333ea', // fight purple
+      '#4338ca', // lateGame indigo
+      '#d97706', // comeback/cheese amber
+      '#059669', // rescue emerald
+      '#0d9488', // lateGameMouse teal
+      '#4b5563', // minor gray
+      // Dark mode colors
+      '#f87171', // attack red
+      '#60a5fa', // defense/support blue
+      '#fdbf74', // chase/wallBreak orange
+      '#86efac', // speedrun green
+      '#c4b5fd', // fight/breakthrough purple
+      '#a5b4fc', // lateGame indigo
+      '#fcd34d', // comeback/cheese amber
+      '#34d399', // rescue emerald
+      '#5eead4', // lateGameMouse teal
+      '#9ca3af', // minor gray
+    ].includes(colorStyles.color as string);
 
   const tagStyle: React.CSSProperties = {
     ...baseTagStyle,
