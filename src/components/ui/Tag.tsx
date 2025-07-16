@@ -1,4 +1,5 @@
-import { componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
+import { componentTokens, createStyleFromTokens, designTokens } from '@/lib/design-tokens';
+import { useMemo } from 'react';
 
 type TagProps = {
   children: React.ReactNode;
@@ -22,33 +23,21 @@ export default function Tag({
   // Size-based font sizing
   const fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '0.875rem' : '1rem';
 
-  // Detect positioning tags by checking for positioning tag colors, including dark mode variants
+  // Memoize the set of positioning tag colors for efficient lookups
+  const positioningTagColors = useMemo(() => {
+    const colors = new Set<string>();
+    for (const tag of Object.values(designTokens.colors.positioningTags)) {
+      colors.add(tag.text);
+      if (tag.dark) {
+        colors.add(tag.dark.text);
+      }
+    }
+    return colors;
+  }, []);
+
+  // Detect positioning tags by checking if the current color exists in the generated set
   const isPositioningTag =
-    colorStyles.color &&
-    [
-      // Light mode colors
-      '#dc2626', // attack red
-      '#2563eb', // defense/support blue
-      '#9a3412', // chase/wallBreak orange-brown
-      '#16a34a', // speedrun green
-      '#9333ea', // fight purple
-      '#4338ca', // lateGame indigo
-      '#d97706', // comeback/cheese amber
-      '#059669', // rescue emerald
-      '#0d9488', // lateGameMouse teal
-      '#4b5563', // minor gray
-      // Dark mode colors
-      '#f87171', // attack red
-      '#60a5fa', // defense/support blue
-      '#fdbf74', // chase/wallBreak orange
-      '#86efac', // speedrun green
-      '#c4b5fd', // fight/breakthrough purple
-      '#a5b4fc', // lateGame indigo
-      '#fcd34d', // comeback/cheese amber
-      '#34d399', // rescue emerald
-      '#5eead4', // lateGameMouse teal
-      '#9ca3af', // minor gray
-    ].includes(colorStyles.color as string);
+    colorStyles.color && positioningTagColors.has(colorStyles.color as string);
 
   const tagStyle: React.CSSProperties = {
     ...baseTagStyle,
