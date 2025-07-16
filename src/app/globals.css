@@ -146,16 +146,6 @@ img {
     max-width: 90vw !important;
     text-align: center !important;
   }
-
-  /* Offline banner styles */
-  .offline-banner {
-    @apply fixed top-0 left-0 right-0 bg-red-600 text-white p-4 text-center;
-    z-index: 9998;
-  }
-
-  .offline-banner.hidden {
-    @apply hidden;
-  }
 }
 
 /* Add smooth scrolling to the whole page */
