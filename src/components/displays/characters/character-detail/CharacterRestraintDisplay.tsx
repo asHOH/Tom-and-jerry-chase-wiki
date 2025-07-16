@@ -1,4 +1,4 @@
-// 'use client';
+'use client';
 
 import React from 'react';
 import Image from 'next/image';
@@ -12,6 +12,7 @@ type Props = {
 };
 
 import { characters } from '@/data';
+import { useAppContext } from '@/context/AppContext';
 
 function getCharacterRestraint(id: string): CharacterRestraint {
   // If the character is in the other characters' counters or counteredBy, it should be included
@@ -64,6 +65,7 @@ function getCharacterRestraint(id: string): CharacterRestraint {
 const CharacterRestraintDisplay: React.FC<Props> = ({ id, factionId }) => {
   const getImageUrl = factionId == 'cat' ? getMouseImageUrl : getCatImageUrl;
   const char = getCharacterRestraint(id);
+  const { handleSelectCharacter } = useAppContext();
   return (
     <div className='flex gap-6 items-start bg-gray-50 dark:bg-slate-800/50 p-4 rounded-lg shadow'>
       {/* Relationships */}
@@ -88,7 +90,7 @@ const CharacterRestraintDisplay: React.FC<Props> = ({ id, factionId }) => {
                 <rect x='1.5' y='13.5' width='3' height='1' rx='0.5' fill='#2563eb' />
               </svg>
             </span>
-            克制对象
+            被{id}克制的角色
           </span>
           <div className='grid grid-cols-1 gap-y-3 mt-2'>
             {char.counters.length === 0 ? (
@@ -97,7 +99,18 @@ const CharacterRestraintDisplay: React.FC<Props> = ({ id, factionId }) => {
               char.counters.map((c) => (
                 <div
                   key={c.id}
-                  className='flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30'
+                  role='button'
+                  tabIndex={0}
+                  aria-label={`选择角色 ${c.id}`}
+                  className='flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95'
+                  onClick={() => {
+                    handleSelectCharacter(c.id);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleSelectCharacter(c.id);
+                    }
+                  }}
                 >
                   <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-300 dark:border-blue-700'>
                     <Image
@@ -140,7 +153,7 @@ const CharacterRestraintDisplay: React.FC<Props> = ({ id, factionId }) => {
                 />
               </svg>
             </span>
-            被克制对象
+            克制{id}的角色
           </span>
           <div className='grid grid-cols-1 gap-y-3 mt-2'>
             {char.counteredBy.length === 0 ? (
@@ -149,7 +162,18 @@ const CharacterRestraintDisplay: React.FC<Props> = ({ id, factionId }) => {
               char.counteredBy.map((c) => (
                 <div
                   key={c.id}
-                  className='flex flex-row items-center gap-3 p-2 rounded-lg bg-red-50 dark:bg-red-900/30'
+                  role='button'
+                  tabIndex={0}
+                  aria-label={`选择角色 ${c.id}`}
+                  className='flex flex-row items-center gap-3 p-2 rounded-lg bg-red-50 dark:bg-red-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95'
+                  onClick={() => {
+                    handleSelectCharacter(c.id);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleSelectCharacter(c.id);
+                    }
+                  }}
                 >
                   <div className='w-10 h-10 rounded-full bg-red-100 flex items-center justify-center border border-red-300 dark:border-red-700'>
                     <Image
