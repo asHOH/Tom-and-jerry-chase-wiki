@@ -127,6 +127,18 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'shuiyixia',
+    name: '睡亿夏',
+    url: 'https://space.bilibili.com/1350743315',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['仙女鼠'],
+        isMinor: true, // knowledge card & skill allocation + brief skill descriptions
+      },
+    ],
+  },
+  {
     id: 'gangge',
     name: '港鸽',
     roles: [

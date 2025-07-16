@@ -2302,6 +2302,140 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 仙女鼠 ----------------------------------- */
+  仙女鼠: {
+    aliases: ['大表姐'],
+    description:
+      '仙女鼠来自于神秘的地方，优雅又充满智慧的她，对小老鼠们充满了怜悯。在杰瑞遇到困难的时候，她悄然出现，好像灰姑娘的教母，满足杰瑞的愿望，帮助杰瑞战胜强敌。',
+    maxHp: 99,
+    attackBoost: 10,
+    hpRecovery: 2,
+    moveSpeed: 585,
+    jumpHeight: 400,
+    cheesePushSpeed: 2.8,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '一星造成伤害、八星造成干扰；三级被动击中猫咪强制反向。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description: '四星帮队友回血；六星将队友变星星。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '魔镜',
+        pattern: '122020011',
+        weaponType: 'weapon1',
+        description: '开局位置不好救援，可先点传送救人或被猫追捕快速跑路',
+      },
+      {
+        id: '被动',
+        pattern: '202002111',
+        weaponType: 'weapon1',
+        description: '先点三级被动反向，队友救援，旁边干扰',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'C-不屈', 'C-救救我', 'B-绝地反击'],
+        description: '辅助救援，触发绝反可远距离预判1星',
+      },
+      {
+        cards: ['S-铁血', 'C-救救我', 'S-舍己', 'S-护佑'],
+        description: '开局远距离可快速传送护佑救人',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'C-救救我', 'B-绝地反击', 'C-不屈'],
+        description: '辅助救人',
+      },
+    ],
+    skills: [
+      {
+        name: '魔镜召唤咒',
+        type: 'active',
+        description: '召唤魔镜。魔镜处可消耗三星获得道具、消耗六星传送至任意房间（猫咪也可用）。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['道具键*', '跳跃键'],
+        canHitInPipe: false,
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 60,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 40,
+          },
+          {
+            level: 3,
+            description: '许愿内容随着许愿次数有概率提高质量。',
+            cooldown: 40,
+          },
+        ],
+      },
+      {
+        name: '仙女棒',
+        type: 'weapon1',
+        description:
+          '自身每7秒获得1颗星星。队友攻击猫咪可获得星星；敌方攻击队友夺取星星。可消耗一定数量的星星来投掷星星（可穿墙），并对命中者施加对应的效果：\n1星：队友隐身；减少猫咪Hp和移速\n2星：队友二段跳；猫咪同1星\n4星：队友缓慢恢复Hp；猫咪同1星\n6星：队友变小星星，免疫虚弱和眩晕；猫咪同1星\n8星：猫咪变为大星星、手上的老鼠掉落',
+        detailedDescription:
+          '自身每7秒获得1颗星星。队友攻击猫咪可获得星星；敌方攻击队友夺取星星。拖拽技能可消耗一定数量的星星来投掷星星（可穿墙），并对命中者施加对应的效果：\n1星：队友隐身；减少猫咪Hp和移速\n2星：队友二段跳；猫咪同1星\n4星：队友缓慢恢复Hp；猫咪同1星\n6星：队友变小星星，免疫虚弱和眩晕；猫咪同1星\n8星：对队友无效；猫咪变为大星星、手上的老鼠掉落', // 队友别挡我的8星
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['移动键', '跳跃键'],
+        cancelableAftercast: '无后摇',
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 8,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 2,
+          },
+          {
+            level: 3,
+            description: '提高自身星星增长速度至每5秒1颗。',
+            cooldown: 2,
+          },
+        ],
+      },
+      {
+        name: '魔咒强身',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '不动时获得减伤。受到控制效果时失去减伤。',
+          },
+          {
+            level: 2,
+            description: '受到攻击后进入短暂的隐身。',
+          },
+          {
+            level: 3,
+            description: '对猫咪造成伤害时，额外造成反向，持续较短时间。',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ----------------------------------- 表演者•杰瑞 ----------------------------------- */
   '表演者•杰瑞': {
     description: '来自另一个平行时空的表演者，立志成为最好的表演家',
