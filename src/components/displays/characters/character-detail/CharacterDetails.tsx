@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { CharacterDetailsProps, CharacterWithFaction } from '@/lib/types';
+import { CharacterDetailsProps } from '@/lib/types';
 import { Skill } from '@/data/types';
 import PositioningTagsSection from './PositioningTagsSection';
 import CharacterAttributesSection from './CharacterAttributesSection';
@@ -11,38 +11,24 @@ import KnowledgeCardManager from './KnowledgeCardManager';
 import { useState } from 'react';
 import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { useSnapshot } from 'valtio';
+import { useEditMode } from '@/context/EditModeContext';
 import SkillAllocationSection from './SkillAllocationSection';
-import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
-import { characters } from '@/data';
-import { getSkillImageUrl } from '@/lib/skillUtils';
+import { useCharacterActions } from './useCharacterActions';
 import ContentWriterDisplay from './ContentWriterDisplay';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import CharacterRelationDisplay from './CharacterRelationDisplay';
 import CharacterSectionIndex from './CharacterSectionIndex';
+import { useSnapshot } from 'valtio';
+import { characters } from '@/data';
+import { useLocalCharacter } from '@/context/EditModeContext';
 
 export default function CharacterDetails({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
+  const { addSecondWeapon, exportCharacter } = useCharacterActions();
   const [copyMessage, setCopyMessage] = useState('');
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
   const factionId = localCharacter.faction.id as 'cat' | 'mouse';
-
-  function addSecondWeapon() {
-    const firstWeapon = character.skills.find((char: Skill) => char.type == 'weapon1')!;
-    const secondWeapon = {
-      ...firstWeapon,
-      type: 'weapon2' as const,
-      imageUrl: getSkillImageUrl(localCharacter.id, firstWeapon, factionId),
-      id: firstWeapon.id.slice(0, -1) + '2',
-    };
-    function modifySkillObject(character: CharacterWithFaction) {
-      const index = character.skills.findIndex(({ type }) => type == 'weapon1');
-      character.skills.splice(index + 1, 0, secondWeapon);
-    }
-    modifySkillObject(characters[localCharacter.id]!);
-  }
 
   const positioningTags =
     factionId === 'cat'
@@ -90,20 +76,7 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
                   aria-label='导出角色数据'
                   onClick={async () => {
                     try {
-                      const code = generateTypescriptCodeFromCharacter(localCharacter);
-                      await navigator.clipboard.writeText(code);
-                      const element = document.createElement('a');
-                      const fileName = `${localCharacter.id}.txt`;
-                      const url = URL.createObjectURL(new File([code], fileName));
-                      element.href = url;
-                      element.download = fileName;
-                      element.style.cssText = 'visibility: hidden;';
-                      document.body.appendChild(element);
-                      element.click();
-                      setTimeout(() => {
-                        URL.revokeObjectURL(url);
-                        element.remove();
-                      }, 0);
+                      await exportCharacter();
                       setCopyMessage('已复制！');
                       setTimeout(() => setCopyMessage(''), 2000);
                     } catch (err) {
