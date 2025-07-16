@@ -14,6 +14,42 @@ import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useDarkMode } from '@/context/DarkModeContext';
 
+// Helper function to get available tag names based on faction
+function getAvailableTagNames(factionId: 'cat' | 'mouse'): string[] {
+  if (factionId === 'cat') {
+    return ['进攻', '防守', '追击', '打架', '速通', '翻盘', '后期'];
+  } else {
+    return ['奶酪', '干扰', '辅助', '救援', '破局', '砸墙', '后期'];
+  }
+}
+
+// Dropdown component for tag name selection
+function TagNameDropdown({
+  currentValue,
+  factionId,
+  onSelect,
+}: {
+  currentValue: string;
+  factionId: 'cat' | 'mouse';
+  onSelect: (value: string) => void;
+}) {
+  const availableTags = getAvailableTagNames(factionId);
+
+  return (
+    <select
+      value={currentValue}
+      onChange={(e) => onSelect(e.target.value)}
+      className='bg-transparent border-none outline-none text-inherit font-inherit cursor-pointer'
+    >
+      {availableTags.map((tagName) => (
+        <option key={tagName} value={tagName}>
+          {tagName}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 interface PositioningTagsSectionProps {
   tags: ReadonlyArray<{
     readonly tagName: string;
@@ -148,11 +184,10 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   size='sm'
                 >
                   {isEditMode ? (
-                    <EditableField
-                      tag='span'
-                      path={`${tagsKey}.${originalIndex}.tagName`}
-                      initialValue={tag.tagName}
-                      onSave={(newValue) => handleUpdate(originalIndex, newValue, 'tagName')}
+                    <TagNameDropdown
+                      currentValue={tag.tagName}
+                      factionId={factionId}
+                      onSelect={(newValue) => handleUpdate(originalIndex, newValue, 'tagName')}
                     />
                   ) : (
                     <Tooltip
