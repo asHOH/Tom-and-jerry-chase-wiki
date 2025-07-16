@@ -134,7 +134,9 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
 
               <PositioningTagsSection tags={positioningTags} factionId={factionId} />
 
-              <CharacterSectionIndex />
+              <div className='hidden'>
+                <CharacterSectionIndex />
+              </div>
             </div>
           </div>
         </div>

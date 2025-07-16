@@ -74,7 +74,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
         {...(!isOpen && { 'aria-hidden': true })}
       >
         <div className='mb-6 rounded-lg p-4'>
-          <div className='mb-2 text-gray-700'>
+          <div className='mb-2 text-gray-700 dark:text-gray-300'>
             {isDetailedView && groupSet.detailedDescription
               ? groupSet.detailedDescription
               : groupSet.description}
