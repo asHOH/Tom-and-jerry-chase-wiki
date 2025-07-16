@@ -1,4 +1,6 @@
-@import 'tailwindcss';
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/preflight.css';
+@import 'tailwindcss/utilities.css';
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
@@ -37,43 +39,41 @@ img {
   max-height: 85% !important;
 }
 
-@layer components {
-  .card {
-    @apply bg-white dark:bg-slate-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4;
-  }
+.card {
+  @apply bg-white dark:bg-slate-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4;
+}
 
-  .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-colors;
-  }
+.btn {
+  @apply px-4 py-2 rounded-md font-medium transition-colors;
+}
 
-  .btn-primary {
-    @apply bg-blue-600 text-white hover:bg-blue-700;
-  }
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
+}
 
-  .btn-secondary {
-    @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
-  }
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+}
 
-  /* Responsive image constraints */
-  .responsive-image {
-    max-width: 100% !important;
-    height: auto !important;
-    object-fit: contain !important;
-  }
+/* Responsive image constraints */
+.responsive-image {
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
 
-  /* Skill icon containers */
-  .skill-icon {
-    width: 40px !important;
-    height: 40px !important;
-    overflow: hidden !important;
-  }
+/* Skill icon containers */
+.skill-icon {
+  width: 40px !important;
+  height: 40px !important;
+  overflow: hidden !important;
+}
 
-  .skill-icon img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    padding: 4px !important;
-  }
+.skill-icon img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  padding: 4px !important;
 }
 
 /* Custom hover effects */
