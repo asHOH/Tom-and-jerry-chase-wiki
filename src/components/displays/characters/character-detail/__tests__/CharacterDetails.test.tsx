@@ -53,7 +53,6 @@ const mockCharacter: CharacterWithFaction = {
   description: '经典的猫咪角色',
   imageUrl: '/images/cats/汤姆.png',
   factionId: 'cat',
-  faction: { id: 'cat', name: '猫阵营' },
   maxHp: 150,
   attackBoost: 30,
   skills: [

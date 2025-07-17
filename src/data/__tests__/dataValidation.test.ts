@@ -10,8 +10,8 @@ describe('Data Validation', () => {
     });
 
     it('should have characters for both factions', () => {
-      const catCharacters = characterArray.filter((c) => c.faction.id === 'cat');
-      const mouseCharacters = characterArray.filter((c) => c.faction.id === 'mouse');
+      const catCharacters = characterArray.filter((c) => c.factionId === 'cat');
+      const mouseCharacters = characterArray.filter((c) => c.factionId === 'mouse');
 
       expect(catCharacters.length).toBeGreaterThan(0);
       expect(mouseCharacters.length).toBeGreaterThan(0);

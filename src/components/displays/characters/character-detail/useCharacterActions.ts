@@ -9,7 +9,7 @@ import type { Skill } from '@/data/types';
 export function useCharacterActions() {
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
-  const factionId = localCharacter.faction.id as 'cat' | 'mouse';
+  const factionId = localCharacter.factionId!;
 
   function addSecondWeapon() {
     const firstWeapon = localCharacter.skills.find((char) => char.type == 'weapon1') as Skill;

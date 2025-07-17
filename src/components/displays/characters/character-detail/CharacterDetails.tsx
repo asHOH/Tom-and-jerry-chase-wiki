@@ -28,7 +28,7 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
   const [copyMessage, setCopyMessage] = useState('');
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
-  const factionId = localCharacter.faction.id as 'cat' | 'mouse';
+  const factionId = localCharacter.factionId!;
 
   const positioningTags =
     factionId === 'cat'
@@ -67,7 +67,7 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
                   data-tutorial-id='character-name-edit'
                 />{' '}
                 <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                  ({localCharacter.faction.name})
+                  ({localCharacter.factionId == 'cat' ? '猫' : '鼠'}阵营)
                 </span>
               </div>
               {isEditMode && (

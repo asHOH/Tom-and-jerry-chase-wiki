@@ -39,7 +39,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
               >
                 {card.id}{' '}
                 <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                  ({card.faction.id === 'cat' ? '猫方知识卡' : '鼠方知识卡'})
+                  ({card.factionId === 'cat' ? '猫方知识卡' : '鼠方知识卡'})
                 </span>
               </h1>
 

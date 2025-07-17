@@ -77,7 +77,6 @@ describe('SkillAllocationDisplay', () => {
       description: 'A test character',
       skills: [],
       knowledgeCardGroups: [],
-      faction: { id: 'cat', name: '猫阵营' },
       imageUrl: '/images/cats/汤姆.png',
     });
   });

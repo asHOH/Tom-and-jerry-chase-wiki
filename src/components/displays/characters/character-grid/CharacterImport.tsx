@@ -43,10 +43,6 @@ function handleUploadedData(
     character.skills = addSkillImageUrls(character.id, character.skills, factionId);
     character.imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(character.id);
     character.factionId = factionId;
-    character.faction = {
-      id: factionId,
-      name: factionId == 'cat' ? '猫阵营' : '鼠阵营',
-    };
 
     console.log(`Enhanced imported character ${character.id} with complete data structure`);
   }

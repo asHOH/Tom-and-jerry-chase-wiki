@@ -100,7 +100,6 @@ export function handleCharacterIdChange(
   const newCharacter = { ...character! } as CharacterWithFaction;
   newCharacter.id = newId;
   newCharacter.imageUrl = (factionId === 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
-  newCharacter.faction = { id: factionId, name: factionId === 'cat' ? '猫' : '鼠' };
 
   // Enhance the new character with all necessary properties.
   const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId);

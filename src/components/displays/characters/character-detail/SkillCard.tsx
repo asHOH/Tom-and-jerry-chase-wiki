@@ -549,7 +549,7 @@ export default function SkillCard({
                 initialValue={skill.name}
                 onSave={(newName) => {
                   // Update skill with new name and regenerate image URL
-                  const factionId = localCharacter?.faction?.id as 'cat' | 'mouse';
+                  const factionId = localCharacter.factionId!;
 
                   const skill = characters[characterId]!.skills[skillIndex]!;
                   skill.name = newName;
