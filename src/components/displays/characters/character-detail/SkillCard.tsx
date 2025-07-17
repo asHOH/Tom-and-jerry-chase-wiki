@@ -96,7 +96,7 @@ export default function SkillCard({
         ]);
       }
     }
-    if (isEditMode) {
+    if (isEditMode && skill.type !== 'passive') {
       properties.push(
         <div className='text-gray-600 text-xs flex'>
           别名：
@@ -469,9 +469,6 @@ export default function SkillCard({
     return properties;
   };
 
-  const descriptionText =
-    isDetailed && skill.detailedDescription?.trim() ? skill.detailedDescription : skill.description;
-
   const properties = getSkillProperties();
   const hasProperties = properties.length > 0;
 
@@ -605,22 +602,20 @@ export default function SkillCard({
             </div>
           )}
 
-          {descriptionText !== undefined && (
-            <div className='mt-3 px-2'>
-              <p className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
-                <EditableField
-                  initialValue={
-                    isDetailed && skill.detailedDescription?.trim()
-                      ? skill.detailedDescription
-                      : skill.description
-                  }
-                  path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
-                  tag='span'
-                  data-tutorial-id='skill-description-edit'
-                />
-              </p>
-            </div>
-          )}
+          <div className='mt-3 px-2'>
+            <p className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
+              <EditableField
+                initialValue={
+                  (isDetailed && skill.detailedDescription?.trim()
+                    ? skill.detailedDescription
+                    : skill.description) ?? '<无内容>'
+                }
+                path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
+                tag='span'
+                data-tutorial-id='skill-description-edit'
+              />
+            </p>
+          </div>
         </div>
       </div>
 
