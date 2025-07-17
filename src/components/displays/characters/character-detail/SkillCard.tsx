@@ -243,6 +243,17 @@ export default function SkillCard({
                             if (!activeCancelableOptions.includes(option)) {
                               skill.cancelableSkill.push(option);
                             }
+                            // Mutual exclusion for 道具键 and 道具键*
+                            if (option === '道具键' && skill.cancelableSkill.includes('道具键*')) {
+                              const index = skill.cancelableSkill.indexOf('道具键*');
+                              skill.cancelableSkill.splice(index, 1);
+                            } else if (
+                              option === '道具键*' &&
+                              skill.cancelableSkill.includes('道具键')
+                            ) {
+                              const index = skill.cancelableSkill.indexOf('道具键');
+                              skill.cancelableSkill.splice(index, 1);
+                            }
                           } else {
                             if (!Array.isArray(skill.cancelableSkill)) {
                               return;
@@ -333,6 +344,22 @@ export default function SkillCard({
                             } else {
                               // If undefined, initialize as array with new option
                               skill.cancelableAftercast = [option];
+                            }
+                            // Mutual exclusion for 道具键 and 道具键*
+                            if (Array.isArray(skill.cancelableAftercast)) {
+                              if (
+                                option === '道具键' &&
+                                skill.cancelableAftercast.includes('道具键*')
+                              ) {
+                                const index = skill.cancelableAftercast.indexOf('道具键*');
+                                skill.cancelableAftercast.splice(index, 1);
+                              } else if (
+                                option === '道具键*' &&
+                                skill.cancelableAftercast.includes('道具键')
+                              ) {
+                                const index = skill.cancelableAftercast.indexOf('道具键');
+                                skill.cancelableAftercast.splice(index, 1);
+                              }
                             }
                           } else {
                             // If unchecking
