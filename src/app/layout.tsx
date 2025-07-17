@@ -11,6 +11,7 @@ import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 import { DISCLAIMER_TEXT } from '@/constants';
 import './globals.css';
 import { DarkModeProvider } from '@/context/DarkModeContext';
+import { getDarkModeFromCookie } from '@/lib/darkModeActions';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -72,9 +73,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='zh-CN' className='bg-gray-100 dark:bg-slate-900'>
+    <html
+      lang='zh-CN'
+      className={`bg-gray-100 dark:bg-slate-900 ${(await getDarkModeFromCookie()) ? 'dark' : ''}`}
+    >
       <head>
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
@@ -90,7 +94,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ErrorBoundary>
           <OfflineIndicator />
           <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
-            <DarkModeProvider>{children}</DarkModeProvider>
+            <DarkModeProvider initialValue={await getDarkModeFromCookie()}>
+              {children}
+            </DarkModeProvider>
           </main>
         </ErrorBoundary>
         <PerformanceMonitor />
