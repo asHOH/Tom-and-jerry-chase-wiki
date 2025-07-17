@@ -715,12 +715,6 @@ export const getPositioningTagColors = (
     : designTokens.colors.positioningTags.minor;
 
   // Base style object with consistent properties
-  const baseStyle = {
-    color: '',
-    backgroundColor: '',
-    background: '',
-    borderColor: includeBorder ? '' : 'transparent',
-  };
 
   if (isMinor && tagKey) {
     // For minor tags, create diagonal gradient background
@@ -728,12 +722,11 @@ export const getPositioningTagColors = (
     const greyColorScheme = designTokens.colors.positioningTags.minor;
 
     return {
-      ...baseStyle,
       color:
         isDarkMode && originalColorScheme.dark
           ? originalColorScheme.dark.text
           : originalColorScheme.text,
-      background: `linear-gradient(135deg, ${
+      backgroundColor: `linear-gradient(135deg, ${
         isDarkMode && originalColorScheme.dark
           ? originalColorScheme.dark.background
           : originalColorScheme.background
@@ -742,7 +735,6 @@ export const getPositioningTagColors = (
           ? greyColorScheme.dark.background
           : greyColorScheme.background
       } 40%)`,
-      backgroundColor: '', // Clear backgroundColor when using background gradient
       borderColor: includeBorder
         ? isDarkMode && greyColorScheme.dark
           ? greyColorScheme.dark.border
@@ -755,13 +747,11 @@ export const getPositioningTagColors = (
     // Fallback for minor tags without recognized tag name
     const greyColorScheme = designTokens.colors.positioningTags.minor;
     return {
-      ...baseStyle,
       color: isDarkMode && greyColorScheme.dark ? greyColorScheme.dark.text : greyColorScheme.text,
       backgroundColor:
         isDarkMode && greyColorScheme.dark
           ? greyColorScheme.dark.background
           : greyColorScheme.background,
-      background: '', // Clear background when using backgroundColor
       borderColor: includeBorder
         ? isDarkMode && greyColorScheme.dark
           ? greyColorScheme.dark.border
@@ -771,11 +761,9 @@ export const getPositioningTagColors = (
   }
 
   return {
-    ...baseStyle,
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
     backgroundColor:
       isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
-    background: '', // Clear background when using backgroundColor
     borderColor: includeBorder
       ? isDarkMode && colorScheme.dark
         ? colorScheme.dark.border
