@@ -9,6 +9,8 @@ import BaseCard from '../../../ui/BaseCard';
 import { useAppContext } from '@/context/AppContext';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
+import Image from 'next/image';
 
 export default function CharacterDisplay({
   id,
@@ -63,23 +65,40 @@ export default function CharacterDisplay({
             role='list'
             aria-label='角色定位标签'
           >
-            {sortedPositioningTags.map((tag, index) => (
-              <div key={index} role='listitem'>
-                <Tag
-                  colorStyles={getPositioningTagColors(
-                    tag.tagName,
-                    tag.isMinor,
-                    false,
-                    factionId as 'cat' | 'mouse',
-                    isDarkMode
+            {sortedPositioningTags.map((tag, index) => {
+              const weaponImageUrl = tag.weapon
+                ? getWeaponSkillImageUrl(id, tag.weapon, factionId as 'cat' | 'mouse')
+                : null;
+
+              return (
+                <div key={index} role='listitem' className='relative'>
+                  <Tag
+                    colorStyles={getPositioningTagColors(
+                      tag.tagName,
+                      tag.isMinor,
+                      false,
+                      factionId as 'cat' | 'mouse',
+                      isDarkMode
+                    )}
+                    size='xs'
+                    variant='compact'
+                  >
+                    {tag.tagName}
+                  </Tag>
+                  {weaponImageUrl && (
+                    <div className='absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 flex items-center justify-center'>
+                      <Image
+                        src={weaponImageUrl}
+                        alt={`武器${tag.weapon}`}
+                        width={12}
+                        height={12}
+                        className='rounded-sm'
+                      />
+                    </div>
                   )}
-                  size='xs'
-                  variant='compact'
-                >
-                  {tag.tagName}
-                </Tag>
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

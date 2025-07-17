@@ -14,6 +14,7 @@ export type MousePositioningTagName = '奶酪' | '干扰' | '辅助' | '救援' 
 
 export type CatPositioningTag = {
   tagName: CatPositioningTagName;
+  weapon?: 1 | 2;
   isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
   description: string; // Brief explanation of why this character has this specific positioning
   additionalDescription: string; // Extended description for detailed view mode
@@ -21,6 +22,7 @@ export type CatPositioningTag = {
 
 export type MousePositioningTag = {
   tagName: MousePositioningTagName;
+  weapon?: 1 | 2;
   isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
   description: string; // Brief explanation of why this character has this specific positioning
   additionalDescription: string; // Extended description for detailed view mode

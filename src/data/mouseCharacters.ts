@@ -943,12 +943,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     mousePositioningTags: [
       {
         tagName: '救援',
+        weapon: 1,
         isMinor: false,
         description: '头盔的长轴防御使得剑客泰菲具有十分优秀的救援能力。',
         additionalDescription: '',
       },
       {
         tagName: '干扰',
+        weapon: 2,
         isMinor: false,
         description: '携带剑客长枪的剑客泰菲具有较强的机动性和干扰能力。',
         additionalDescription: '',
