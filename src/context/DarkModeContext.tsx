@@ -17,8 +17,9 @@ const setCookie = (name: string, value: string) => {
   const hostname = window.location.hostname;
   const rootDomain = hostname.split('.').slice(-2).join('.');
 
-  // Set cookie without expiration (permanent) on root domain
-  document.cookie = `${name}=${value}; path=/; domain=.${rootDomain}; SameSite=Lax`;
+  // Set cookie with 1 year expiration (permanent) on root domain
+  const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${value}; path=/; domain=.${rootDomain}; SameSite=Lax; expires=${expires}; max-age=31536000`;
 };
 
 const getCookie = (name: string): string | null => {
