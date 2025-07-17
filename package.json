@@ -101,6 +101,7 @@
     "jest-environment-jsdom": "^30.0.4",
     "lint-staged": "^16.1.2",
     "postcss": "^8.5.6",
+    "postcss-preset-env": "^10.2.4",
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "storybook": "^9.0.16",
