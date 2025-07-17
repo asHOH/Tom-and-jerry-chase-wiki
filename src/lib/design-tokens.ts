@@ -726,7 +726,7 @@ export const getPositioningTagColors = (
         isDarkMode && originalColorScheme.dark
           ? originalColorScheme.dark.text
           : originalColorScheme.text,
-      backgroundColor: `linear-gradient(135deg, ${
+      background: `linear-gradient(135deg, ${
         isDarkMode && originalColorScheme.dark
           ? originalColorScheme.dark.background
           : originalColorScheme.background
