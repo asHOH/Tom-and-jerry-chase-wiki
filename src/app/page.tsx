@@ -56,19 +56,11 @@ function HomeContent() {
   const cardButtons = [
     {
       imageSrc: '/images/icons/cat knowledge card.png',
-      imageAlt: '猫方知识卡图标',
-      title: '猫方知识卡',
-      description: '猫方知识卡列表',
-      href: '/cards/cat',
-      ariaLabel: '猫方知识卡列表',
-    },
-    {
-      imageSrc: '/images/icons/mouse knowledge card.png',
-      imageAlt: '鼠方知识卡图标',
-      title: '鼠方知识卡',
-      description: '鼠方知识卡列表',
-      href: '/cards/mouse',
-      ariaLabel: '鼠方知识卡列表',
+      imageAlt: '知识卡图标',
+      title: '知识卡',
+      description: '知识卡列表',
+      href: '/cards',
+      ariaLabel: '知识卡列表',
     },
   ];
 
