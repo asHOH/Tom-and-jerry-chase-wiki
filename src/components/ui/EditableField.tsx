@@ -25,7 +25,7 @@ import { getNestedProperty, handleChange } from '@/lib/editUtils';
  * @param {((newValue: string) => void) | undefined} [onSave] Optional function to invoke to replace default behavior.
  */
 interface EditableFieldProps<T, TagName extends keyof HTMLElementTagNameMap>
-  extends React.HTMLAttributes<HTMLElementTagNameMap[TagName]> {
+  extends Omit<React.HTMLAttributes<HTMLElementTagNameMap[TagName]>, 'children'> {
   tag: TagName;
   path: string; // e.g., 'character.id', 'character.description'
   initialValue: T;

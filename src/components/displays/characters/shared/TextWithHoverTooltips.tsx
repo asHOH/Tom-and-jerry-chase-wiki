@@ -92,7 +92,7 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
   const finalParts: (string | React.ReactElement)[] = [];
 
   // Second pass: Handle {visible text} using the moved renderTextWithTooltips
-  if (localCharacter.attackBoost) {
+  if (typeof localCharacter.attackBoost == 'number') {
     intermediateParts.forEach((part) => {
       if (typeof part === 'string') {
         finalParts.push(...renderTextWithTooltips(part, localCharacter.attackBoost!));
