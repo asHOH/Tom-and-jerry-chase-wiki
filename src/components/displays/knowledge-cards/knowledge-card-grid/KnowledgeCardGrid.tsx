@@ -4,14 +4,14 @@ import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 import { getCardRankColors } from '@/lib/design-tokens';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useFilterState, createRankFilter, RANK_OPTIONS } from '@/lib/filterUtils';
-import { KnowledgeCardGridProps } from '@/lib/types';
 import CostRangeSlider from '../../../ui/CostRangeSlider';
 import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import clsx from 'clsx';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { cards } from '@/data';
 
-export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
+export default function KnowledgeCardGrid() {
   // Use centralized filter state management for ranks
   const {
     selectedFilters: selectedRanks,
@@ -20,18 +20,14 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
   } = useFilterState<string>();
   const [isDarkMode] = useDarkMode();
 
-  const isCatFaction = faction.name === '猫阵营';
-
   // Cost range state with faction-specific initial values
-  const [costRange, setCostRange] = useState<[number, number]>(() =>
-    isCatFaction ? [2, 7] : [3, 6]
-  );
+  const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
 
   const { handleSelectCard } = useAppContext();
 
   // Filter and sort cards using centralized utilities
   const filteredAndSortedCards = sortCardsByRank(
-    faction.cards
+    Object.values(cards)
       .filter(createRankFilter(selectedRanks))
       .filter((card) => card.cost >= costRange[0] && card.cost <= costRange[1])
   );
@@ -41,13 +37,9 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
       {' '}
       {/* Padding for navbar is now handled at the page level */}
       <header className='text-center space-y-4 mb-8 px-4'>
-        <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>
-          {faction.name === '猫阵营' ? '猫方知识卡' : '鼠方知识卡'}
-        </h1>
+        <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>知识卡</h1>
         <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
-          {faction.name === '猫阵营'
-            ? '提升猫击倒和放飞老鼠的能力'
-            : '提升老鼠的生存、救援和推奶酪能力'}
+          提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力
         </p>
         {/* Rank Filter Controls */}
         <div className='flex justify-center items-center gap-4 mt-8'>
@@ -91,8 +83,8 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
           </span>
           <div className='w-full max-w-md'>
             <CostRangeSlider
-              min={isCatFaction ? 2 : 3}
-              max={isCatFaction ? 7 : 6}
+              min={2}
+              max={7}
               value={costRange}
               onChange={setCostRange}
               className='px-4'
@@ -106,7 +98,7 @@ export default function KnowledgeCardGrid({ faction }: KnowledgeCardGridProps) {
           <div key={card.id} className='transform transition-transform hover:-translate-y-1'>
             <KnowledgeCardDisplay
               id={card.id}
-              name={card.name}
+              name={card.id}
               rank={card.rank}
               cost={card.cost}
               imageUrl={card.imageUrl}

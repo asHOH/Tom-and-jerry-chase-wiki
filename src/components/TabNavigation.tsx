@@ -34,18 +34,11 @@ const tabs: Tab[] = [
     path: '/factions/mouse',
   },
   {
-    id: 'catCards',
-    name: '猫方知识卡',
+    id: 'cards',
+    name: '知识卡',
     imageSrc: '/images/icons/cat knowledge card.png',
-    imageAlt: '猫方知识卡图标',
-    path: '/cards/cat',
-  },
-  {
-    id: 'mouseCards',
-    name: '鼠方知识卡',
-    imageSrc: '/images/icons/mouse knowledge card.png',
-    imageAlt: '鼠方知识卡图标',
-    path: '/cards/mouse',
+    imageAlt: '知识卡图标',
+    path: '/cards',
   },
 ];
 

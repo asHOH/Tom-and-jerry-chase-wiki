@@ -71,10 +71,6 @@ export type FactionCharactersProps = {
   faction: FactionWithCharacters;
 };
 
-export type KnowledgeCardGridProps = {
-  faction: FactionWithKnowledgeCards;
-};
-
 // Generic callback types
 export type CharacterSelectionHandler = (characterId: string) => void;
 export type KnowledgeCardSelectionHandler = (cardId: string) => void;
