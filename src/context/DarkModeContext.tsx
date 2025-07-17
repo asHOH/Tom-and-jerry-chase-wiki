@@ -1,5 +1,13 @@
 'use client';
-import { useState, useCallback, createContext, ReactNode, useMemo, useContext } from 'react';
+import {
+  useState,
+  useCallback,
+  createContext,
+  ReactNode,
+  useMemo,
+  useContext,
+  useLayoutEffect,
+} from 'react';
 
 // Cookie helper functions
 const setCookie = (name: string, value: string) => {
@@ -13,6 +21,15 @@ const setCookie = (name: string, value: string) => {
   document.cookie = `${name}=${value}; path=/; domain=.${rootDomain}; SameSite=Lax`;
 };
 
+const getCookie = (name: string): string | null => {
+  if (typeof document === 'undefined') return null;
+
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+};
+
 const DarkModeContext = createContext<readonly [boolean, () => void]>([false, () => {}]);
 
 export function DarkModeProvider({
@@ -23,6 +40,20 @@ export function DarkModeProvider({
   children: ReactNode;
 }) {
   const [isDarkMode, setIsDarkMode] = useState(initialValue);
+
+  useLayoutEffect(() => {
+    if (typeof document === 'undefined') return;
+    const savedDarkMode = getCookie('darkMode');
+    if (savedDarkMode !== null) {
+      const isDark = savedDarkMode === 'true';
+      setIsDarkMode(isDark);
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, []);
 
   const toggleDarkMode = useCallback(() => {
     setIsDarkMode((prev) => {
