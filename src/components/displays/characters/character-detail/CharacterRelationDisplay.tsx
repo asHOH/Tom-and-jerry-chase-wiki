@@ -246,7 +246,7 @@ function CharacterSelector({
       </button>
 
       {isOpen && (
-        <div className='absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto'>
+        <div className='absolute top-full right-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto'>
           {availableCharacters.map((char) => (
             <button
               key={char.id}
