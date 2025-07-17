@@ -200,7 +200,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                       </Tooltip>
                     )}
                   </Tag>
-                  {'weapon' in tag && tag.weapon && (
+                  {'weapon' in tag && !isEditMode && !!tag.weapon && (
                     <div className='absolute -top-1 -right-1 w-5 h-5 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 flex items-center justify-center'>
                       {(() => {
                         const weaponImageUrl = getWeaponSkillImageUrl(
