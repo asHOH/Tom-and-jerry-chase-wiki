@@ -96,30 +96,31 @@ export default function SkillCard({
         ]);
       }
     }
-    if (isEditMode && skill.aliases && skill.aliases.length > 0) {
+    if (isEditMode) {
       properties.push(
         <div className='text-gray-600 text-xs flex'>
           别名：
-          {skill.aliases.map((alias, index) => (
-            <Fragment key={alias}>
-              <EditableField
-                tag='span'
-                initialValue={alias}
-                path={`skills.${skillIndex}.aliases.${index}`}
-                onSave={(newValue) => {
-                  const skill = characters[characterId]!.skills[skillIndex]!;
-                  if (newValue.trim() === '') {
-                    // Remove empty alias
-                    skill.aliases = skill.aliases!.filter((_, i) => i !== index);
-                  } else {
-                    // Update alias
-                    skill.aliases![index] = newValue.trim();
-                  }
-                }}
-              />
-              {index < skill.aliases!.length - 1 && <span className='text-gray-400'>、</span>}
-            </Fragment>
-          ))}
+          {skill.aliases &&
+            skill.aliases.map((alias, index) => (
+              <Fragment key={alias}>
+                <EditableField
+                  tag='span'
+                  initialValue={alias}
+                  path={`skills.${skillIndex}.aliases.${index}`}
+                  onSave={(newValue) => {
+                    const skill = characters[characterId]!.skills[skillIndex]!;
+                    if (newValue.trim() === '') {
+                      // Remove empty alias
+                      skill.aliases = skill.aliases!.filter((_, i) => i !== index);
+                    } else {
+                      // Update alias
+                      skill.aliases![index] = newValue.trim();
+                    }
+                  }}
+                />
+                {index < skill.aliases!.length - 1 && <span className='text-gray-400'>、</span>}
+              </Fragment>
+            ))}
           <button
             type='button'
             aria-label='添加别名'
