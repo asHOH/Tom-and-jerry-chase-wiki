@@ -7,12 +7,14 @@ import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { useSnapshot } from 'valtio';
 import { setNestedProperty } from '@/lib/editUtils';
-import { characters } from '@/data';
+import { characters, PositioningTag } from '@/data';
 import { useAppContext } from '@/context/AppContext';
 import { CharacterWithFaction } from '@/lib/types';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
+import Image from 'next/image';
 
 // Helper function to get available tag names based on faction
 function getAvailableTagNames(factionId: 'cat' | 'mouse'): string[] {
@@ -51,12 +53,7 @@ function TagNameDropdown({
 }
 
 interface PositioningTagsSectionProps {
-  tags: ReadonlyArray<{
-    readonly tagName: string;
-    readonly isMinor: boolean;
-    readonly description: string;
-    readonly additionalDescription?: string;
-  }>;
+  tags: DeepReadonly<PositioningTag[]>;
   factionId: 'cat' | 'mouse';
 }
 
@@ -130,6 +127,7 @@ function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
 export default function PositioningTagsSection({ tags, factionId }: PositioningTagsSectionProps) {
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
+  const { characterId } = useLocalCharacter();
 
   const borderColor =
     factionId === 'cat'
@@ -173,30 +171,56 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
               )}`}
             >
               <div className='flex items-center gap-2 mb-2'>
-                <Tag
-                  colorStyles={getPositioningTagColors(
-                    tag.tagName,
-                    tag.isMinor,
-                    true,
-                    factionId,
-                    isDarkMode
+                <div className='relative'>
+                  <Tag
+                    colorStyles={getPositioningTagColors(
+                      tag.tagName,
+                      tag.isMinor,
+                      true,
+                      factionId,
+                      isDarkMode
+                    )}
+                    size='sm'
+                  >
+                    {isEditMode ? (
+                      <TagNameDropdown
+                        currentValue={tag.tagName}
+                        factionId={factionId}
+                        onSelect={(newValue) => handleUpdate(originalIndex, newValue, 'tagName')}
+                      />
+                    ) : (
+                      <Tooltip
+                        content={getPositioningTagTooltipContent(
+                          tag.tagName,
+                          factionId,
+                          isDetailed
+                        )}
+                      >
+                        {tag.tagName}
+                      </Tooltip>
+                    )}
+                  </Tag>
+                  {'weapon' in tag && tag.weapon && (
+                    <div className='absolute -top-1 -right-1 w-5 h-5 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 flex items-center justify-center'>
+                      {(() => {
+                        const weaponImageUrl = getWeaponSkillImageUrl(
+                          characterId,
+                          tag.weapon,
+                          factionId
+                        );
+                        return weaponImageUrl ? (
+                          <Image
+                            src={weaponImageUrl}
+                            alt={`武器${tag.weapon}`}
+                            width={14}
+                            height={14}
+                            className='rounded-sm'
+                          />
+                        ) : null;
+                      })()}
+                    </div>
                   )}
-                  size='sm'
-                >
-                  {isEditMode ? (
-                    <TagNameDropdown
-                      currentValue={tag.tagName}
-                      factionId={factionId}
-                      onSelect={(newValue) => handleUpdate(originalIndex, newValue, 'tagName')}
-                    />
-                  ) : (
-                    <Tooltip
-                      content={getPositioningTagTooltipContent(tag.tagName, factionId, isDetailed)}
-                    >
-                      {tag.tagName}
-                    </Tooltip>
-                  )}
-                </Tag>
+                </div>
                 {isEditMode ? (
                   <span
                     className='text-xs text-gray-500 dark:text-gray-400 cursor-pointer'
