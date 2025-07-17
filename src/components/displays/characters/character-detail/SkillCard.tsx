@@ -476,7 +476,7 @@ export default function SkillCard({
   const hasProperties = properties.length > 0;
 
   return (
-    <div className='card p-6 dark:bg-slate-800 dark:border-slate-700'>
+    <div className='card p-6! dark:bg-slate-800 dark:border-slate-700'>
       <div className='flex justify-between items-start'>
         {skill.imageUrl && (
           <div className='flex-shrink-0 mr-6'>
