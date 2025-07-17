@@ -24,6 +24,7 @@ import { useLocalCharacter } from '@/context/EditModeContext';
 
 export default function CharacterDetails({ character }: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
+  const [isLocalEditMode, setIsLocalEditMode] = useState(true);
   const { addSecondWeapon, exportCharacter } = useCharacterActions();
   const [copyMessage, setCopyMessage] = useState('');
   const { characterId } = useLocalCharacter();
@@ -36,7 +37,13 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
       : localCharacter.mousePositioningTags || [];
 
   return (
-    <EditModeContext value={{ isEditMode, isLoading: false, toggleEditMode: () => {} }}>
+    <EditModeContext
+      value={{
+        isEditMode: isEditMode && isLocalEditMode,
+        isLoading: false,
+        toggleEditMode: () => {},
+      }}
+    >
       <div className='space-y-8'>
         <div className='flex flex-col md:flex-row gap-8'>
           <div className='md:w-1/3'>
@@ -72,100 +79,124 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
                   </span>
                 </div>
                 {isEditMode && (
-                  <button
-                    type='button'
-                    aria-label='导出角色数据'
-                    onClick={async () => {
-                      setCopyMessage('saving');
-                      try {
-                        await exportCharacter();
-                        setCopyMessage('success');
-                        setTimeout(() => setCopyMessage(''), 2000);
-                      } catch (err) {
-                        console.error('Failed to copy: ', err);
-                        setCopyMessage('error');
-                        setTimeout(() => setCopyMessage(''), 2000);
-                      }
-                    }}
-                    className='ml-4 w-8 h-8 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400 flex items-center justify-center'
-                    data-tutorial-id='character-export'
-                  >
-                    {copyMessage === 'saving' && (
-                      // Save icon
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        className='w-4 h-4 animate-spin'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        stroke='currentColor'
-                      >
-                        <circle
-                          className='opacity-25'
-                          cx='12'
-                          cy='12'
-                          r='10'
-                          stroke='currentColor'
-                          strokeWidth='4'
-                        ></circle>
-                        <path
-                          className='opacity-75'
-                          fill='currentColor'
-                          d='M4 12a8 8 0 018-8v8z'
-                        ></path>
-                      </svg>
-                    )}
-                    {copyMessage === 'success' && (
-                      // Success icon
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        className='w-4 h-4 text-green-400'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        stroke='currentColor'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          strokeWidth='3'
-                          d='M5 13l4 4L19 7'
-                        />
-                      </svg>
-                    )}
-                    {copyMessage === 'error' && (
-                      // Error icon
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        className='w-4 h-4 text-red-500'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        stroke='currentColor'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          strokeWidth='3'
-                          d='M6 18L18 6M6 6l12 12'
-                        />
-                      </svg>
-                    )}
-                    {!copyMessage && (
-                      // Download icon
+                  <div className='flex rounded-md overflow-hidden border border-gray-300 dark:border-gray-600'>
+                    <button
+                      type='button'
+                      aria-label='预览'
+                      onClick={() => setIsLocalEditMode(!isLocalEditMode)}
+                      className='w-8 h-8 bg-purple-500 text-white hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:bg-purple-700 dark:hover:bg-purple-800 dark:focus:ring-purple-400 flex items-center justify-center rounded-l-md'
+                      data-tutorial-id='character-preview'
+                    >
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
                         fill='none'
                         viewBox='0 0 24 24'
                         strokeWidth={1.5}
                         stroke='currentColor'
-                        className='w-4 h-4'
+                        className='size-5'
                       >
                         <path
                           strokeLinecap='round'
                           strokeLinejoin='round'
-                          d='M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3'
+                          d='m21 7.5-2.25-1.313M21 7.5v2.25m0-2.25-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3 2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75 2.25-1.313M12 21.75V19.5m0 2.25-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25'
                         />
                       </svg>
-                    )}
-                  </button>
+                    </button>
+                    <button
+                      type='button'
+                      aria-label='导出角色数据'
+                      onClick={async () => {
+                        setCopyMessage('saving');
+                        try {
+                          await exportCharacter();
+                          setCopyMessage('success');
+                          setTimeout(() => setCopyMessage(''), 2000);
+                        } catch (err) {
+                          console.error('Failed to copy: ', err);
+                          setCopyMessage('error');
+                          setTimeout(() => setCopyMessage(''), 2000);
+                        }
+                      }}
+                      className='w-8 h-8 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400 flex items-center justify-center rounded-r-md'
+                      data-tutorial-id='character-export'
+                    >
+                      {copyMessage === 'saving' && (
+                        // Save icon
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          className='w-5 h-5 animate-spin'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          <circle
+                            className='opacity-25'
+                            cx='12'
+                            cy='12'
+                            r='10'
+                            stroke='currentColor'
+                            strokeWidth='4'
+                          ></circle>
+                          <path
+                            className='opacity-75'
+                            fill='currentColor'
+                            d='M4 12a8 8 0 018-8v8z'
+                          ></path>
+                        </svg>
+                      )}
+                      {copyMessage === 'success' && (
+                        // Success icon
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          className='w-5 h-5 text-green-400'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='3'
+                            d='M5 13l4 4L19 7'
+                          />
+                        </svg>
+                      )}
+                      {copyMessage === 'error' && (
+                        // Error icon
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          className='w-5 h-5 text-red-500'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='3'
+                            d='M6 18L18 6M6 6l12 12'
+                          />
+                        </svg>
+                      )}
+                      {!copyMessage && (
+                        // Download icon
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          strokeWidth={1.5}
+                          stroke='currentColor'
+                          className='w-4 h-4'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            d='M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3'
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 )}
               </h1>
 
@@ -214,7 +245,7 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
                       />
                     ))
                     .concat(
-                      isSingleWeapon && isEditMode ? (
+                      isSingleWeapon && isLocalEditMode && isEditMode ? (
                         <button
                           type='button'
                           aria-label='添加第二武器'
