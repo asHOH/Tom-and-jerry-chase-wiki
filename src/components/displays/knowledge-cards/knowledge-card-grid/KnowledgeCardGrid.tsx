@@ -2,6 +2,22 @@
 
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 import { getCardRankColors } from '@/lib/design-tokens';
+
+// Faction button color utility
+function getFactionButtonColors(
+  faction: 'cat' | 'mouse',
+  isDarkMode: boolean
+): { backgroundColor: string; color: string } {
+  if (faction === 'cat') {
+    return isDarkMode
+      ? { backgroundColor: '#fbbf24', color: '#000000' } // dark: bright yellow-400 bg, black text
+      : { backgroundColor: '#fef9c3', color: '#b45309' }; // light: yellow-100 bg, yellow-800 text
+  } else {
+    return isDarkMode
+      ? { backgroundColor: '#38bdf8', color: '#000000' } // dark: bright sky-400 bg, black text
+      : { backgroundColor: '#e0f2fe', color: '#0369a1' }; // light: sky-100 bg, sky-800 text
+  }
+}
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useFilterState, createRankFilter, RANK_OPTIONS } from '@/lib/filterUtils';
 import CostRangeSlider from '../../../ui/CostRangeSlider';
@@ -22,6 +38,7 @@ export default function KnowledgeCardGrid() {
 
   // Cost range state with faction-specific initial values
   const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
+  const [selectedFaction, setSelectedFaction] = useState<'cat' | 'mouse' | null>(null);
 
   const { handleSelectCard } = useAppContext();
 
@@ -30,6 +47,7 @@ export default function KnowledgeCardGrid() {
     Object.values(cards)
       .filter(createRankFilter(selectedRanks))
       .filter((card) => card.cost >= costRange[0] && card.cost <= costRange[1])
+      .filter((card) => !selectedFaction || card.factionId === selectedFaction)
   );
 
   return (
@@ -41,6 +59,47 @@ export default function KnowledgeCardGrid() {
         <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
           提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力
         </p>
+        {/* Faction Filter Controls */}
+        <div className='flex justify-center items-center gap-4 mt-8'>
+          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 hidden sm:inline'>
+            阵营筛选:
+          </span>
+          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 sm:hidden'>
+            筛选:
+          </span>
+          <div className='flex gap-2'>
+            {(['cat', 'mouse'] as const).map((factionName) => {
+              const factionColor = getFactionButtonColors(factionName, isDarkMode);
+              const isActive = factionName == selectedFaction;
+
+              return (
+                <button
+                  type='button'
+                  key={factionName}
+                  onClick={() => {
+                    if (isActive) {
+                      setSelectedFaction(null); // Clear selection if already active
+                    } else {
+                      setSelectedFaction(factionName);
+                    }
+                  }}
+                  className={clsx(
+                    'px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
+                    !isActive &&
+                      'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
+                  )}
+                  style={
+                    isActive
+                      ? { backgroundColor: factionColor.backgroundColor, color: factionColor.color }
+                      : {}
+                  }
+                >
+                  {factionName == 'cat' ? '猫阵营' : '鼠阵营'}
+                </button>
+              );
+            })}
+          </div>
+        </div>
         {/* Rank Filter Controls */}
         <div className='flex justify-center items-center gap-4 mt-8'>
           <span className='text-lg font-medium text-gray-700 dark:text-gray-300 hidden sm:inline'>
