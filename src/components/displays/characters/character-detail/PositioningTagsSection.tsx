@@ -52,6 +52,52 @@ function TagNameDropdown({
   );
 }
 
+// Dropdown component for weapon selection
+function WeaponDropdown({
+  currentValue,
+  characterId,
+  onSelect,
+}: {
+  currentValue: 1 | 2 | null | undefined;
+  characterId: string;
+  onSelect: (value: 1 | 2 | null) => void;
+}) {
+  const character = useSnapshot(characters[characterId]!);
+
+  // Get weapon names from character skills
+  const getWeaponName = (weaponNumber: 1 | 2): string => {
+    if (!character?.skills) return `武器${weaponNumber}`;
+
+    const weaponSkill = character.skills.find(
+      (skill) => skill.type === (`weapon${weaponNumber}` as 'weapon1' | 'weapon2')
+    );
+
+    return weaponSkill?.name || `武器${weaponNumber}`;
+  };
+
+  const weapon1Name = getWeaponName(1);
+  const weapon2Name = getWeaponName(2);
+
+  return (
+    <select
+      value={currentValue || ''}
+      onChange={(e) => {
+        const value = e.target.value;
+        if (value === '') {
+          onSelect(null);
+        } else {
+          onSelect(parseInt(value) as 1 | 2);
+        }
+      }}
+      className='bg-transparent border-none outline-none text-inherit font-inherit cursor-pointer text-xs'
+    >
+      <option value=''>无武器</option>
+      <option value='1'>{weapon1Name}</option>
+      <option value='2'>{weapon2Name}</option>
+    </select>
+  );
+}
+
 interface PositioningTagsSectionProps {
   tags: DeepReadonly<PositioningTag[]>;
   factionId: 'cat' | 'mouse';
@@ -93,6 +139,24 @@ function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
     },
     [localCharacter, updateTags]
   );
+  const handleWeaponUpdate = useCallback(
+    (tagIndex: number, newWeapon: 1 | 2 | null) => {
+      const updatedTags = getTags(localCharacter).map((tag, index) => {
+        if (index == tagIndex) {
+          const updatedTag = { ...tag };
+          if (newWeapon === null) {
+            delete updatedTag.weapon;
+          } else {
+            updatedTag.weapon = newWeapon;
+          }
+          return updatedTag;
+        }
+        return tag;
+      });
+      updateTags(localCharacter, updatedTags);
+    },
+    [localCharacter, updateTags]
+  );
   const handleAddPositioningTags = useCallback(() => {
     // Removed setLocalCharacter call due to missing function.
     const updatedTags = getTags(localCharacter).concat({
@@ -121,7 +185,13 @@ function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
     },
     [localCharacter, updateTags]
   );
-  return { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags, toggleIsMinor };
+  return {
+    handleUpdate,
+    handleWeaponUpdate,
+    handleAddPositioningTags,
+    handleRemovePositioningTags,
+    toggleIsMinor,
+  };
 }
 
 export default function PositioningTagsSection({ tags, factionId }: PositioningTagsSectionProps) {
@@ -135,8 +205,13 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
       : 'border-blue-200 dark:border-blue-700';
   const tagsKey = factionId === 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
 
-  const { handleUpdate, handleAddPositioningTags, handleRemovePositioningTags, toggleIsMinor } =
-    usePositioningTags({ factionId });
+  const {
+    handleUpdate,
+    handleWeaponUpdate,
+    handleAddPositioningTags,
+    handleRemovePositioningTags,
+    toggleIsMinor,
+  } = usePositioningTags({ factionId });
   const [isDarkMode] = useDarkMode();
 
   // Sort tags according to sequence (main tags first, then by sequence)
@@ -222,12 +297,21 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   )}
                 </div>
                 {isEditMode ? (
-                  <span
-                    className='text-xs text-gray-500 dark:text-gray-400 cursor-pointer'
-                    onClick={() => toggleIsMinor(originalIndex)}
-                  >
-                    {tag.isMinor ? '(次要)' : '(主要)'}
-                  </span>
+                  <>
+                    <span
+                      className='text-xs text-gray-500 dark:text-gray-400 cursor-pointer'
+                      onClick={() => toggleIsMinor(originalIndex)}
+                    >
+                      {tag.isMinor ? '(次要)' : '(主要)'}
+                    </span>
+                    <div className='text-xs text-gray-500 dark:text-gray-400'>
+                      <WeaponDropdown
+                        currentValue={tag.weapon}
+                        characterId={characterId}
+                        onSelect={(newWeapon) => handleWeaponUpdate(originalIndex, newWeapon)}
+                      />
+                    </div>
+                  </>
                 ) : (
                   tag.isMinor && (
                     <span className='text-xs text-gray-500 dark:text-gray-400'>(次要)</span>
