@@ -11,7 +11,7 @@ interface EditModeContextType {
   toggleEditMode: () => void;
 }
 
-const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
+export const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
 
 export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const [hasInitialized, setHasInitialized] = useState(false);
