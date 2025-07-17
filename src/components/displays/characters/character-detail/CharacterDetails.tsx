@@ -8,7 +8,8 @@ import PositioningTagsSection from './PositioningTagsSection';
 import CharacterAttributesSection from './CharacterAttributesSection';
 import SkillCard from './SkillCard';
 import KnowledgeCardManager from './KnowledgeCardManager';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
@@ -30,6 +31,18 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
   const factionId = localCharacter.factionId!;
+
+  // Go to Top button state
+  const [showGoTop, setShowGoTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowGoTop(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const positioningTags =
     factionId === 'cat'
@@ -279,6 +292,32 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
           </div>
         </div>
       </div>
+      {/* Go to Top Button */}
+      <AnimatePresence>
+        {showGoTop && (
+          <motion.button
+            aria-label='返回顶部'
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className='fixed z-50 bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg p-3 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400'
+            style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+          >
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='w-6 h-6'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+              strokeWidth={2}
+            >
+              <path strokeLinecap='round' strokeLinejoin='round' d='M5 15l7-7 7 7' />
+            </svg>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </EditModeContext>
   );
 }
