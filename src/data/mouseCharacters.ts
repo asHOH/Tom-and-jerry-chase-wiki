@@ -205,6 +205,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '破局',
         isMinor: true,
+        weapon: 1,
         description:
           '烟雾弹的沉默和巨额推速加成能使鼠方快速推完最后一块奶酪，克制大多数守奶酪的猫咪。',
         additionalDescription:
@@ -573,6 +574,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '砸墙',
         isMinor: false,
+        weapon: 2,
         description: '攻击战旗可以提供强大的团队破墙能力。',
         additionalDescription: '',
       },
@@ -769,6 +771,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '破局',
         isMinor: true,
+        weapon: 1,
         description: '火箭筒能炸开捕鼠夹和叉子。',
         additionalDescription: '缺点是CD长，并且需要把控角度。',
       },
@@ -1114,6 +1117,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '干扰',
         isMinor: false,
+        weapon: 2,
         description: '二武蓝恶魔减速猫咪、红恶魔与猫咪拉开距离，拥有很强的干扰能力。',
         additionalDescription: '',
       },

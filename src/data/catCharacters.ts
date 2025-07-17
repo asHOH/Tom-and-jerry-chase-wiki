@@ -392,6 +392,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '翻盘',
         isMinor: false,
+        weapon: 2,
         description: '捕虫网的直接抓取提供了一定的翻盘手段。',
         additionalDescription: '',
       },
@@ -588,6 +589,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '防守',
         isMinor: false,
+        weapon: 1,
         description: '垃圾桶可阻止老鼠推奶酪，且能无缝衔接。',
         additionalDescription: '',
       },
