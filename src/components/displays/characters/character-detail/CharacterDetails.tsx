@@ -23,7 +23,14 @@ import { useSnapshot } from 'valtio';
 import { characters } from '@/data';
 import { useLocalCharacter } from '@/context/EditModeContext';
 
-export default function CharacterDetails({ character }: CharacterDetailsProps) {
+interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
+  onTutorialTrigger?: () => void;
+}
+
+export default function CharacterDetails({
+  character,
+  onTutorialTrigger,
+}: CharacterDetailsWithTutorialProps) {
   const { isEditMode } = useEditMode();
   const [isLocalEditMode, setIsLocalEditMode] = useState(true);
   const { addSecondWeapon, exportCharacter } = useCharacterActions();
@@ -95,9 +102,36 @@ export default function CharacterDetails({ character }: CharacterDetailsProps) {
                   <div className='flex rounded-md overflow-hidden border border-gray-300 dark:border-gray-600'>
                     <button
                       type='button'
+                      aria-label='教程'
+                      onClick={onTutorialTrigger}
+                      className='w-8 h-8 bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-400 flex items-center justify-center'
+                      style={{ borderRight: '1px solid #d1d5db' }}
+                      data-tutorial-id='character-tutorial'
+                    >
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        strokeWidth={1.5}
+                        stroke='currentColor'
+                        className='w-5 h-5'
+                      >
+                        <path strokeLinecap='round' strokeLinejoin='round' d='M12 6v6l4 2' />
+                        <circle
+                          cx='12'
+                          cy='12'
+                          r='9'
+                          stroke='currentColor'
+                          strokeWidth='1.5'
+                          fill='none'
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      type='button'
                       aria-label='预览'
                       onClick={() => setIsLocalEditMode(!isLocalEditMode)}
-                      className='w-8 h-8 bg-purple-500 text-white hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:bg-purple-700 dark:hover:bg-purple-800 dark:focus:ring-purple-400 flex items-center justify-center rounded-l-md'
+                      className='w-8 h-8 bg-purple-500 text-white hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:bg-purple-700 dark:hover:bg-purple-800 dark:focus:ring-purple-400 flex items-center justify-center'
                       data-tutorial-id='character-preview'
                     >
                       <svg

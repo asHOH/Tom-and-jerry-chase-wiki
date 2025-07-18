@@ -6,7 +6,10 @@ import { characters } from '@/data';
 import { useEffect, useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
-import { hasUserSeenCharacterDetailsTutorial } from '@/lib/tutorialUtils';
+import {
+  hasUserSeenCharacterDetailsTutorial,
+  resetCharacterDetailsTutorial,
+} from '@/lib/tutorialUtils';
 import { useEditMode } from '@/context/EditModeContext';
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
@@ -42,9 +45,14 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     setShowTutorial(false);
   }, []);
 
+  const handleTutorialTrigger = useCallback(() => {
+    resetCharacterDetailsTutorial();
+    setShowTutorial(true);
+  }, []);
+
   return (
     <>
-      <CharacterDetails character={character} />
+      <CharacterDetails character={character} onTutorialTrigger={handleTutorialTrigger} />
       {showTutorial && <OnboardingTutorial onClose={handleTutorialClose} isEnabled={isEditMode} />}
     </>
   );

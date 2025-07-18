@@ -49,3 +49,9 @@ export const markCharacterDetailsTutorialAsSeen = (): void => {
     localStorage.setItem(TUTORIAL_SEEN_KEY, 'true');
   }
 };
+
+export const resetCharacterDetailsTutorial = (): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(TUTORIAL_SEEN_KEY);
+  }
+};
