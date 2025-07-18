@@ -1111,6 +1111,207 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
   },
 
+  /* ----------------------------------- 剑客汤姆 ----------------------------------- */
+  剑客汤姆: {
+    description: '拥有超群剑术的大师剑客汤姆，是法国万千少女心中的偶像。',
+    aliases: ['剑汤'],
+    maxHp: 270,
+    attackBoost: 0,
+    hpRecovery: 1.5,
+    moveSpeed: 770,
+    jumpHeight: 420,
+    clawKnifeCdHit: 7.9,
+    clawKnifeCdUnhit: 2.5,
+    clawKnifeRange: 300,
+    catPositioningTags: [
+      {
+        tagName: '进攻',
+        isMinor: false,
+        description: '主动技能以及三被可打出高额伤害。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '防守',
+        isMinor: false,
+        description: '[武器技能](尤其是二武)拥有极强的守火箭能力。',
+        additionalDescription: '二武连无敌也能卷走，克制大多数救人位。',
+      },
+      {
+        tagName: '速通',
+        isMinor: false,
+        description: '猫方第一的放飞速度。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '翻盘',
+        isMinor: true,
+        description: '后期三被刷新主动技能拥有极高的上限，可能成为翻盘的点。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '剑盾',
+        pattern: '101001222',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+      {
+        id: '剑舞',
+        pattern: '101300133',
+        weaponType: 'weapon2',
+        description: '',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
+        description: '老776，管道不重要时用',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '常用',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
+        description: '管道重要时用',
+      },
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '无击晕，新手勿用',
+      },
+    ],
+    skills: [
+      {
+        name: '骑士连斩',
+        type: 'active',
+        aliases: ['冲刺'],
+        description:
+          '向前进行冲刺，若命中敌方将造成少量伤害，短时间内大幅降低移动速度和跳跃高度，且可在短时间内使用技能施放挑飞。使用挑飞命中脚下的敌人，敌人将会飞起，若挑飞老鼠可再次点击技能可追踪到敌人位置进行连斩，连斩会使敌人减少Hp且无法移动，但可以使用技能。快速点击可加速连斩。连斩后会使敌人受到威慑效果（不会消失），将受到威慑的敌人绑上火箭，火箭燃烧时间将大幅减少。（挑飞无视护盾和部分无敌效果，连斩无视护盾、霸体和无敌效果）',
+        detailedDescription:
+          '向前进行冲刺2s，期间获得无敌效果，移速提升75%，若命中敌方将造成10伤害，移速降低25%，跳跃高度降低50%，持续3s。冲刺时遇到虚弱、护盾、霸体和部分无敌效果（包括罗宾汉降落伞、剑杰格挡、剑菲冲刺、尼宝翻滚、冰冻保鲜特技、变大）均可解锁挑飞，未命中敌方或遇到除上文提到的其他无敌效果将直接进入CD。解锁挑飞后可在6s内使用技能施放挑飞（前摇0.25s，可用道具键、其他技能键取消释放），使用挑飞命中脚下的敌人，前摇0.35s，对敌人造成1.9s眩晕并击飞1s，若挑飞老鼠可在6s内再次点击技能可追踪到敌人位置（以2000速度飞向敌方，飞行最大时间0.6s，若超过最大飞行时间、被打断、被墙体阻挡（包括拳头盒子、嫦娥）、老鼠在自己下方（泰菲家族由于模型小，若与剑汤在同一平面无法连斩）将不会释放后续斩击）进行连斩（连斩时剑汤无视大多数攻击（除天菲反伤、朵朵被动放电），连斩持续3.1秒，会使范围内的敌人浮空4.2秒，每0.55秒对范围内的敌人造成10点伤害，连斩期间无法移动），但可以使用技能，快速点击可加速连斩（每次点击技能键会使连斩持续时间减少0.5s，同时老鼠浮空时间减少0.5s，每轮连斩造成70伤害），连斩后摇0.8s，可用道具键取消，连斩造成两次伤害后会使敌人受到威慑效果（绑上火箭前不会消失，绑上火箭后消失），将受到威慑的敌人绑上火箭，火箭燃烧时间将额外减少10s。（挑飞和连斩在空中释放（不是跳斩）将直接进入CD；挑飞将无视护盾、虚弱和部分无敌效果（除罗宾汉杰瑞的降落伞，剑菲的冲刺、变大外其他无敌效果均可挑飞），不能挑飞除苏蕊跳舞霸体外的任何霸体，连斩将无视护盾、霸体和无敌效果）',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 28,
+          },
+          {
+            level: 2,
+            description:
+              '大幅减少CD；成功对敌方施加威慑效果后，极大的提高将老鼠绑上火箭的效率，持续一段时间。',
+            cooldown: 18,
+            detailedDescription:
+              '减少CD至18s；成功对敌方施加威慑效果后，绑火箭的效率提升500%（只需0.29s绑火箭），持续20s。',
+          },
+          {
+            level: 3,
+            description: '增加连续攻击的伤害。',
+            detailedDescription: '每段连斩伤害增加至13点（总伤害提高至101）。',
+            cooldown: 18,
+          },
+        ],
+        cancelableAftercast: ['道具键*', '道具键', '其他技能键'],
+        cooldownTiming: '释放后',
+      },
+      {
+        name: '剑盾防御',
+        type: 'weapon1',
+        description:
+          '剑客汤姆举起剑，短时间内扩大视野并阻挡面朝方向的道具攻击。再次点击技能，可将飞行中的道具反弹回去。在防御状态时可进行移动，但移速降低，跳跃和落下将取消防御状态，若防御期间没有阻挡或反弹任何道具，则在取消时返还一半CD。',
+        detailedDescription:
+          '剑客汤姆举起剑，7.9s内[视野扩大至原来的2倍](但会移除其他远视效果)，阻挡面朝方向的道具攻击。再次点击技能，可将前方250~750范围内飞行中的道具反弹回去，反弹无前摇，后摇0.9s，可用道具键取消。在防御状态时可进行移动，但移速降低30%，跳跃和落下将取消防御状态。若防御期间没有阻挡或反弹任何道具，则在取消时[返还一半CD](实际为CD降低至10s/6s)。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: ['道具键*', '道具键'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '大幅降低CD；剑盾防御移动时将不再减少移动速度。',
+            detailedDescription: '降低CD至12s；剑盾防御移动时将不再减少移动速度。',
+            cooldown: 12,
+          },
+          {
+            level: 3,
+            description: '剑盾防御解除时间限制。',
+            detailedDescription: '剑盾防御解除时间限制。（实际为剑盾持续时间延长至16m30s）',
+            cooldown: 12,
+          },
+        ],
+        cooldownTiming: '释放后',
+      },
+      {
+        name: '旋刃剑舞',
+        type: 'weapon2',
+        description:
+          '连续点击技能，可释放三段的招数，一段旋刃突击，旋转着向前突进，并带走碰到的敌方，二段剑刃重击，对附近的敌方造成短暂眩晕，三段剑舞劈砍，对劈砍位置周围的敌方造成伤害和短暂击退，命中时将减少骑士连斩的CD，旋刃剑舞可与骑士连斩衔接释放。',
+        detailedDescription:
+          '连续点击技能，可释放三段的招数，一段旋刃突击，前摇0.3s，旋转着向前突进，并带走碰到的敌方（无视敌方任何状态都可带走），6s内可释放第二段剑刃重击（无视敌方任何状态都可触发连斩），前摇0.1s，后摇0.6s，可用道具键取消，对附近的敌方造成眩晕0.5s，6s内可释放第三段剑舞劈砍，对劈砍位置周围（范围较小）的敌方造成50伤害和短暂击退（劈砍时若没在平台或地面将不会造成伤害和击退），命中时将减少骑士连斩的CD8s，旋刃剑舞可与骑士连斩衔接释放。（技能前摇和释放期间无霸体，若被打断（包括碎片、夹子、眩晕、其他技能键、道具、特技、爪刀等）将直接进入技能CD）。\n连招：任意技能第一段命中可触发两个技能第二段，任意技能第二段命中可触发两个技能第三段，连招最后使用的技能将进入CD。', // 推荐连招：剑舞1-剑舞2-连斩、冲刺-剑舞2-连斩。\n
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableAftercast: ['道具键', '其他技能键'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '一段和三段攻击将造成短暂的减速效果，持续一段时间，提高二段造成的眩晕时间',
+            cooldown: 20,
+            detailedDescription:
+              '一段和三段攻击将使敌方减速20%，持续3.8s，二段造成的眩晕时间提高至0.8s。',
+          },
+          {
+            level: 3,
+            description: '减少CD，同时释放第三段将提高移速一段时间。',
+            cooldown: 12,
+            detailedDescription: '减少CD至12s，同时释放第三段将提高移速12%，持续3.4s。',
+          },
+        ],
+        cancelableSkill: ['其他技能键', '道具键'],
+        cooldownTiming: '释放后',
+      },
+      {
+        name: '骑士之剑',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '增加剑客汤姆的剑的攻击范围，且攻击带有剑气，剑气内命中的敌方将受到短暂眩晕效果并减少少量健康值，剑气命中老鼠不会增加爪刀CD。',
+            detailedDescription:
+              '增加剑客汤姆的剑的攻击范围，且攻击带有剑气（剑气的范围为360~485，实战打出破盾刀的原因），剑气内命中的敌方将受到眩晕1.4s并造成30伤害，剑气命中老鼠不会增加爪刀CD。',
+          },
+          {
+            level: 2,
+            description:
+              '剑气命中敌人时，将免疫碎片，同时大幅提高移速并且不会被减速，持续一段时间。',
+            detailedDescription:
+              '剑气命中敌人时，将免疫碎片，同时移速提高20%并且不会被减速，持续9.9s。',
+          },
+          {
+            level: 3,
+            description: '剑气命中敌方时将重置主动技能的CD。',
+            detailedDescription: '剑气命中敌方时将重置主动技能的CD。（实际为主动技能CD减少30s）',
+          },
+        ],
+      },
+    ],
+  },
+
   /* ----------------------------------- 苏蕊 ---------------------------------- */
   苏蕊: {
     description:
