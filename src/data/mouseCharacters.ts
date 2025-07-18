@@ -1288,10 +1288,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description:
-              '长枪速度大幅提高，蓄力超过2/3时会对敌方造成额外控制效果。在勇气释放过程中，长枪命中敌人时将使其无法使用技能并掉落手中道具、带飞友方时解除其受伤和虚弱。',
+              '长枪速度大幅提高，蓄力超过2/3时会对敌方造成额外控制效果。在勇气释放过程中，长枪命中猫咪时将使其无法使用技能并掉落手中道具、带飞友方时解除其受伤和虚弱。',
             cooldown: 8,
             detailedDescription:
-              '长枪速度大幅提高，蓄力超过2/3但未到最大值时，命中敌方效果改为[造成2.8s眩晕](不会减速)；蓄力达到最大值时改为[造成2s眩晕](不会减速)。在勇气释放过程中，长枪命中敌人时将使其无法使用技能4.8s并掉落手中道具，带飞友方时解除其受伤和虚弱。',
+              '长枪速度大幅提高，蓄力超过2/3但未到最大值时，命中敌方效果改为[造成2.8s眩晕](不会减速)；蓄力达到最大值时改为[造成2s眩晕](不会减速)。在勇气释放过程中，长枪命中猫咪时将使其无法使用技能4.8s并掉落手中道具，带飞友方时解除其受伤和虚弱。',
           },
           {
             level: 3,
@@ -2959,6 +2959,210 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             description: '对猫咪造成伤害时，额外造成反向，持续较短时间。',
           },
         ],
+      },
+    ],
+  },
+
+  /* ----------------------------------- 米可 ----------------------------------- */
+  米可: {
+    description:
+      '米可是米雪儿的哥哥，出身良好的他立志成为一个优秀的新闻人。以优异成绩毕业后，米可投身新闻事业，总是第一时间出现在新闻现场，向观众提供专业权威的新闻报道。',
+    maxHp: 99,
+    attackBoost: 10,
+    hpRecovery: 2.5,
+    moveSpeed: 640,
+    jumpHeight: 0,
+    cheesePushSpeed: 2.6,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '主动技能可以对猫造成减速、伤害、控制效果。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description: '主动技能以及二、三级被动可以减少猫造成的伤害。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '救援',
+        isMinor: false,
+        description: '米可救援可以在远处先使用武器技能拍照，舍己救人后通过二段回溯逃离并回溯血量。',
+        additionalDescription: '',
+        weapon: 1,
+      },
+      {
+        tagName: '后期',
+        isMinor: true,
+        description: '米可后期三级主动加三级被动很难被击倒。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '相机',
+        pattern: '12[10]10022',
+        weaponType: 'weapon1',
+        description: '主流加点，开局先点出相机以便之后救援',
+      },
+      {
+        id: '采访',
+        pattern: '101010222',
+        weaponType: 'weapon1',
+        description: '通过优先点出采访和被动增强干扰能力',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description: '米可主流卡组',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'C-救救我', 'S-缴械'],
+        description: '没有21点时带',
+      },
+    ],
+    skills: [
+      {
+        name: '说出你的故事',
+        type: 'active',
+        description:
+          '开始采访，期间免控，范围内的猫咪因紧张而降低移速和伤害能力。猫咪在镜头内使用爪刀、投掷道具、[使用技能](当猫在米可采访范围内时，牛仔汤姆弹弓每射出一个仙人掌都会提供一层素材；凯特的被动每层都会额外提供一层素材；图多盖洛的吻痕每造成一点伤害将提供一层素材)都会被记录为素材，最多叠加5层。采访时或终止采访后均可通过二段技能进行报道，拥有“素材”的猫咪会因被曝光而难堪，受到层数相关的伤害和眩晕效果；3层以上会掉落道具和老鼠。',
+        detailedDescription:
+          '开始采访，持续12.5秒，期间免控、不会被减速，范围内的猫咪因紧张而降低移速和伤害能力。猫咪在镜头内使用爪刀、投掷道具、[使用技能](当猫在米可采访范围内时，牛仔汤姆弹弓每射出一个仙人掌都会提供一层素材；凯特的被动每层都会额外提供一层素材；图多盖洛的吻痕每造成一点伤害将提供一层素材)都会被记录为素材，最多叠加5层。到达时限或点击额外技能键可终止采访。采访时或终止采访后均可通过二段技能进行报道，拥有“素材”的猫咪会因被曝光而难堪，受到层数相关的伤害和眩晕效果；3层以上会掉落道具和老鼠。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键', '道具键*'],
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '采访期间每隔5秒额外为猫咪叠加一层“素材”。',
+            cooldown: 35,
+          },
+          {
+            level: 2,
+            description: '减少CD；采访期间获得加速、加快Hp恢复速度。',
+            cooldown: 25,
+          },
+          {
+            level: 3,
+            description: '采访期间改为每隔2.5秒额外为猫咪叠加一层“素材”。',
+            cooldown: 25,
+          },
+        ],
+        canHitInPipe: true,
+        cooldownTiming: '释放后',
+      },
+      {
+        name: '记录美好瞬间',
+        aliases: ['相机'],
+        type: 'weapon1',
+        description:
+          '用魔法相机为面向镜头的所有猫咪和老鼠[生成一张合照](可被虚弱、霸体等状态抵挡，但不能被无敌抵挡)，12秒内可再次使用技能将所有照片中的角色以照片生成时的状态[回溯](可被其虚弱、霸体、护盾、无敌等状态抵挡)',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        canHitInPipe: true,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 30,
+          },
+          {
+            level: 2,
+            description: '拍摄到的猫咪额外受到60点伤害和失明。',
+            cooldown: 30,
+          },
+          {
+            level: 3,
+            description: '减少CD。',
+            cooldown: 20,
+          },
+        ],
+        cooldownTiming: '释放后',
+        cancelableSkill: ['道具键*', '跳跃键'],
+        cancelableAftercast: ['跳跃键'],
+        detailedDescription: '米可拿出魔法相机进行自拍',
+      },
+      {
+        name: '必备专业素养',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '视野范围提升。',
+          },
+          {
+            level: 2,
+            description: '给予附近的猫咪“审视”状态，在5秒内暴露小地图位置和降低攻击力。',
+          },
+          {
+            level: 3,
+            description: '被攻击后10秒内减少受到的伤害、加速并大幅度提高救援速度。',
+          },
+        ],
+      },
+    ],
+    aliases: ['记者'],
+    counters: [
+      {
+        id: '米特',
+        description:
+          '米可的减伤使胡椒粉难以造成伤害；照相机回溯可以舍己救人后不会因为胡椒粉而虚弱。',
+        isMinor: false,
+      },
+      {
+        id: '剑客汤姆',
+        description: '米可主动技能霸体、被动减伤，克制骑士连斩。',
+        isMinor: false,
+      },
+      {
+        id: '莱特宁',
+        description: '莱特宁攻击手段有限，米可的高减伤配上逃窜和特技治疗很难被莱特宁击倒。',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '罗宾汉泰菲',
+        description: '二级藤蔓可以在米可采访时帮米可回血，提高续航。',
+        isMinor: false,
+      },
+      {
+        id: '杰瑞',
+        description: '二级鼓舞可以在米可采访时帮米可回血和加速，提高续航。',
+        isMinor: true,
+      },
+      {
+        id: '音乐家杰瑞',
+        description: '主动技能协奏曲可以在米可采访时给米可回血和加速，提高续航。',
+        isMinor: false,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '托普斯',
+        description: '捕虫网可以网住正在采访的米可。',
+        isMinor: false,
+      },
+      {
+        id: '汤姆',
+        description: '无敌可以让米可叠不上素材。',
+        isMinor: false,
+      },
+      {
+        id: '布奇',
+        description: '高伤害，容易击倒米可；虚弱起身无敌时间长，三级桶盖还有霸体。',
+        isMinor: false,
+      },
+      {
+        id: '苏蕊',
+        description: '苏蕊的霸体和高伤能有效克制米可。',
+        isMinor: false,
       },
     ],
   },

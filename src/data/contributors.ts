@@ -96,6 +96,17 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'wujinchiyu',
+    name: '-无尽炽羽-',
+    url: 'https://space.bilibili.com/3493104889891012',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['米可'],
+      },
+    ],
+  },
+  {
     id: 'yigeqiujun',
     name: '一个气球君',
     roles: [
