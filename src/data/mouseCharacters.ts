@@ -483,9 +483,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '火药桶引线减短，破坏的火箭无法自动恢复，威力增强。',
+            description: '火药桶引线减短；破坏的火箭无法自动恢复；伤害提升。',
             detailedDescription:
-              '火药桶引线时长减短至3秒，破坏的火箭无法自动恢复，伤害提升至70点。',
+              '火药桶引线时长减短至3秒；破坏的火箭无法自动恢复；伤害提升至70点。',
             cooldown: 30,
           },
         ],
@@ -494,9 +494,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '舰艇火炮',
         type: 'weapon2',
         description:
-          '放置一个舰艇火炮，老鼠可以进入火炮，控制方向发射并对碰到的猫咪造成伤害与眩晕，火炮内免疫投掷物。',
+          '放置一个舰艇火炮，老鼠可以进入。火炮内免疫投掷物，可以控制方向发射并对碰到的猫咪造成伤害与眩晕、碰到绑在火箭上的队友自动救援。',
         detailedDescription:
-          '放置一个舰艇火炮，老鼠可以进入火炮，控制方向发射并对碰到的猫咪造成50点伤害与1.5秒眩晕，火炮内免疫投掷物。火炮内老鼠进入虚弱后火炮会提前消失。同一房间最多出现两个火炮。',
+          '放置一个舰艇火炮，老鼠可以进入。火炮内免疫投掷物，可以控制方向发射并对碰到的猫咪造成50点伤害与1.5秒眩晕、碰到绑在火箭上的队友自动救援。火炮内老鼠进入虚弱后火炮会提前消失。同一房间最多出现两个火炮。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         // cancelableSkill: '不确定是否可被打断', // FIXME
@@ -704,7 +704,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '在身前略高于地面的位置召唤战旗，为碰触的友方老鼠提供增益，前摇0.9秒，后摇0.5秒，战旗存在15秒。战旗被碰触若干次后获得强化，提供强化版增益。战旗具有重力，无碰撞体积，会因受力而移动。同一时间只能存在一种战旗，获得战旗效果后的15秒内无法再次获得同等级的效果。机械鼠不会继承战旗的增益效果\n攻击战旗：增加35点攻击力，持续10秒（强化：期间额外增加2点墙缝增伤，免疫受伤）\n救援战旗：提高100%的救援速度，持续5秒（强化：[获得瞬息救援能力](碰触火箭直接救援成功)，持续5秒。以该方式救下队友不计入赛后的数据统计）\n守护战旗：解除虚弱；Hp低于30%时，以7.5/s的速度恢复Hp，加速25%，并解除反向、失明、受伤等异常状态，持续2秒（强化：直接获得一层护盾，持续4秒。）\n感知战旗：对猫隐藏自己的小地图位置，持续10秒（强化：额外显示5秒猫的位置）\n灵巧战旗：提高50%的跳跃高度，持续5秒（强化：期间额外获得二段跳）。', // 感知战旗可以感知所有敌方单位
         canMoveWhileUsing: true,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: ['跳跃键'],
         cancelableAftercast: '不可取消后摇',
         videoUrl: 'https://www.bilibili.com/video/BV12P4y1e7rg?t=100.25',
         skillLevels: [
@@ -2168,7 +2168,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '额外造成短暂眩晕（可救下猫手中的队友）。',
+            description: '额外造成短暂眩晕（可救下猫手中的队友），并禁用猫的技能。',
             cooldown: 15,
           },
         ],
@@ -2528,6 +2528,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
   /* ----------------------------------- 蒙金奇 ---------------------------------- */
   蒙金奇: {
+    aliases: ['马嘉祺'],
     description: '军团指挥官蒙金奇。',
     maxHp: 99,
     attackBoost: 25,
@@ -2939,6 +2940,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
   /* ----------------------------------- 表演者•杰瑞 ----------------------------------- */
   '表演者•杰瑞': {
+    aliases: ['表演者杰瑞', '柠檬杰瑞'],
     description: '来自另一个平行时空的表演者，立志成为最好的表演家',
     maxHp: 124,
     attackBoost: 5,
