@@ -1158,7 +1158,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         tagName: '救援',
         weapon: 1,
         isMinor: false,
-        description: '头盔的长轴防御使得剑客泰菲具有十分优秀的救援能力。',
+        description: '头盔的长时间防御使得剑客泰菲具有十分优秀的救援能力。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '破局',
+        weapon: 1,
+        isMinor: false,
+        description: '头盔的全体无敌可支持强推，后期也能用无敌砸墙。',
         additionalDescription: '',
       },
       {
@@ -1186,22 +1193,20 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'C-救救我', 'B-飞跃', 'B-绝地反击'],
-        description: '适合头盔的机动性卡组。飞跃提升机动性，救下来触发绝反高伤害。',
+        description:
+          '适合头盔的机动性卡组。飞跃提升机动性，绝反在救下人后极大提高容错率，绝反可换逃之夭夭。新手未解锁21知识点可舍弃绝反。',
       },
       {
-        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'B-精准投射', 'B-绝地反击'],
-        description: '适合长枪的高伤卡组，精准投射刷新技能CD，释放技能更频繁。',
-      },
-      {
-        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'A-投手', 'C-不屈'],
-        description: '打斯飞专用。',
+        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'B-绝地反击', 'B-精准投射'],
+        description:
+          '适合长枪的高伤卡组。对低血量猫对策卡，精准投射可连控。新手未解锁21知识点可舍弃绝反。',
       },
     ],
     skills: [
       {
         name: '勇气冲刺',
         type: 'active',
-        description: '剑向前猛烈一刺，对猫咪造成伤害，并恢复少量勇气。',
+        description: '剑向前猛烈一刺，并恢复少量勇气。会对猫咪造成伤害，但会消耗一定的勇气。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: '不可取消后摇',
@@ -1210,48 +1215,56 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description:
-              '剑客泰菲鼓起勇气向前猛烈一刺并恢复少量勇气，对击中的猫咪造成伤害，但消耗一定的勇气。',
+            description: '',
             detailedDescription: '',
             cooldown: 1.5,
           },
           {
             level: 2,
-            description: '勇气冲刺在短时间内击中猫咪5次后，使猫咪眩晕并受到额外的伤害。',
+            description: '冲刺将造成减速；在短时间内击中猫咪5次后，使猫咪眩晕并受到额外的伤害。',
             cooldown: 1.5,
+            detailedDescription:
+              '冲刺将造成减速，持续4.8s，在减速期间再次命中将[叠加](覆盖原有减速效果)：第一层4.5%，第二层9%，第三层13.5%，第四层18%。该减速期间内击中猫咪5次后，使猫咪眩晕2.8s并受到额外的{39}伤害，同时清除减速效果。',
           },
           {
             level: 3,
-            description: '勇气冲刺在短时间内击中猫咪3次后，使猫咪眩晕并受到额外的伤害。',
+            description: '眩晕条件减少到3次。',
             cooldown: 1.5,
+            detailedDescription:
+              '冲刺将造成减速，持续4.8s，在减速期间再次命中将[叠加](覆盖原有减速效果)：第一层4.5%，第二层9%。该减速期间内击中猫咪3次后，使猫咪眩晕2.8s并受到额外的{39}伤害，同时清除减速效果。',
           },
         ],
+        detailedDescription:
+          '剑向前猛烈一刺，前摇0.2s，并恢复少量勇气，会对猫咪造成{40}伤害，但会消耗一定的勇气。',
       },
       {
         name: '头盔',
         type: 'weapon1',
         description:
-          '举起头盔保护自己和队友，躲在头盔后的队友不能使用技能。在头盔内受到攻击或成功火箭救援后会减少剩余的持续时间。',
+          '举起头盔保护自己和队友，期间附近队友和自己获得无敌效果，躲在头盔后的队友不能使用技能。头盔受到爪刀和道具的攻击会减少0.5s；救下队友后头盔剩余持续时间减半。头盔较重，具有较大惯性，不能灵活运动。',
+        detailedDescription:
+          '前摇1.5s，举起头盔保护自己和队友，期间附近队友和自己获得无敌效果，躲在头盔后的队友不能使用技能。头盔受到爪刀和道具的攻击会减少0.5s；救下队友后头盔剩余持续时间减半。头盔较重，具有较大惯性，且移速降低3.5%，跳跃速度降低15%。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        canHitInPipe: true,
-        cancelableAftercast: '不可取消后摇',
+        canHitInPipe: false,
+        cancelableAftercast: '无后摇',
         cancelableSkill: '不可被打断',
         cooldownTiming: '释放时',
         skillLevels: [
           {
             level: 1,
-            description: '',
+            description: '头盔持续7.8s。',
             cooldown: 15,
           },
           {
             level: 2,
             description: '延长头盔的持续时间。',
             cooldown: 15,
+            detailedDescription: '延长头盔的持续时间至12.8s。',
           },
           {
             level: 3,
-            description: '举起头盔时可以更灵活地移动。',
+            description: '举起头盔时可以更灵活地移动。（不受惯性影响，不会降低移速和跳跃速度）',
             cooldown: 15,
           },
         ],
@@ -1259,22 +1272,26 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '剑客长枪',
         type: 'weapon2',
-        description: '',
+        description:
+          '蓄力投掷长枪。蓄力期间获得远视。蓄力时间越长，投掷速度越快、距离越长。长枪对触碰的敌方造成伤害和减速。投掷后，短时间内可再次点击技能瞬移到长枪尾部跟随飞行。长枪碰到队友后，可携带1名友方进行飞行。期间剑客泰菲和友方均可通过跳跃键、道具键、药水键离开。飞行中碰到易碎道具和打开的捕鼠夹，也会挂着该道具飞行。长枪在碰到墙壁、地面、向下碰到平台时将消失。',
+        detailedDescription:
+          '前摇0.15s，蓄力投掷长枪。蓄力期间视野扩大到原来的2倍，同时清除原有的视野提升效果。蓄力时间越长，投掷速度越快、距离越长。蓄力至最大值需0.8s。长枪对触碰的敌方造成{60}伤害和20%减速，持续2.4s。在投掷后的1.8s内，可再次点击技能瞬移到长枪尾部跟随飞行。长枪碰到队友后，可携带1名友方进行飞行，期间剑客泰菲和友方均可通过跳跃键、道具键、药水键离开，受到眩晕或虚弱会强制离开。飞行中碰到易碎道具和打开的捕鼠夹，也会挂着该道具飞行。长枪最大存在时间为9.9s，在碰到墙壁、地面、向下碰到平台时将消失。长枪消失或剑菲上长枪后技能进入CD。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableAftercast: '无后摇',
         skillLevels: [
           {
             level: 1,
-            description:
-              '蓄力投掷长枪。蓄力时间越长，投掷的速度越快、距离越长。长枪对触碰的敌方造成伤害和控制效果。在投掷后的一定时间内，可再次点击技能瞬移到长枪尾部跟随飞行。长枪碰到队友后，可携带1名友方进行飞行，期间剑客泰菲和友方均可通过跳跃、投掷离开。若飞行中碰触到易碎道具和打开的捕鼠夹，也会挂着该道具飞行。长枪在碰到墙壁、地面、平台时将消失。',
+            description: '',
             cooldown: 8,
           },
           {
             level: 2,
             description:
-              '长枪速度大幅提高。在勇气释放过程中，长枪命中敌人时将使其无法使用技能、带飞友方时将解除其受伤和虚弱。',
+              '长枪速度大幅提高，蓄力超过2/3时会对敌方造成额外控制效果。在勇气释放过程中，长枪命中敌人时将使其无法使用技能并掉落手中道具、带飞友方时解除其受伤和虚弱。',
             cooldown: 8,
+            detailedDescription:
+              '长枪速度大幅提高，蓄力超过2/3但未到最大值时，命中敌方效果改为[造成2.8s眩晕](不会减速)；蓄力达到最大值时改为[造成2s眩晕](不会减速)。在勇气释放过程中，长枪命中敌人时将使其无法使用技能4.8s并掉落手中道具，带飞友方时解除其受伤和虚弱。',
           },
           {
             level: 3,
@@ -1282,10 +1299,16 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 8,
           },
         ],
+        cooldownTiming: '释放后',
+        cancelableSkill: '不可被打断',
       },
       {
         name: '勇者无惧',
         type: 'passive',
+        description:
+          '勇气值机制：\n没有勇气期间不会被狗抓、禁用冲刺和头盔、勇气值自然增加；\n有勇气期间会被狗抓、解锁冲刺和头盔、攻击增加、勇气值自然消耗。大多数交互行为都能增加勇气值。',
+        detailedDescription:
+          '勇气值机制：没有勇气期间不会被狗抓、禁用冲刺和头盔、勇气值自然增加，充满需26.9s；有勇气期间会被狗抓，解锁冲刺和头盔，攻击增加15点，勇气值自然消耗，耗完需49.9s。大多数交互行为都能增加勇气值。',
         skillLevels: [
           {
             level: 1,
@@ -1298,6 +1321,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description: '每当勇气值达到最高时，解除自身受伤状态，并获得一个临时的护盾。',
+            detailedDescription:
+              '每当勇气值达到最高时，解除自身受伤状态，并获得一个持续9.8s的护盾。（无内置CD）',
           },
         ],
       },
