@@ -74,11 +74,9 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const isDarkMode = await getDarkModeFromCookie();
   return (
-    <html
-      lang='zh-CN'
-      className={`bg-gray-100 dark:bg-slate-900 ${(await getDarkModeFromCookie()) ? 'dark' : ''}`}
-    >
+    <html lang='zh-CN' className={`bg-gray-100 dark:bg-slate-900 ${isDarkMode ? 'dark' : ''}`}>
       <head>
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
@@ -94,9 +92,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ErrorBoundary>
           <OfflineIndicator />
           <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
-            <DarkModeProvider initialValue={await getDarkModeFromCookie()}>
-              {children}
-            </DarkModeProvider>
+            <DarkModeProvider initialValue={isDarkMode}>{children}</DarkModeProvider>
           </main>
         </ErrorBoundary>
         <PerformanceMonitor />
