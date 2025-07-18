@@ -1,4 +1,5 @@
 'use client';
+import { usePathname } from 'next/navigation';
 import {
   useState,
   useCallback,
@@ -41,6 +42,7 @@ export function DarkModeProvider({
   children: ReactNode;
 }) {
   const [isDarkMode, setIsDarkMode] = useState(initialValue);
+  const pathname = usePathname();
 
   useLayoutEffect(() => {
     if (typeof document === 'undefined') return;
@@ -54,7 +56,7 @@ export function DarkModeProvider({
         document.documentElement.classList.remove('dark');
       }
     }
-  }, []);
+  }, [pathname]);
 
   const toggleDarkMode = useCallback(() => {
     setIsDarkMode((prev) => {

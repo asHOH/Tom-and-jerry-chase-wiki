@@ -2,6 +2,8 @@ import React from 'react';
 import { AppProvider } from '@/context/AppContext';
 import UserCharacterPageClient from './UserCharacterPageClient';
 
+export const dynamic = 'force-dynamic';
+
 // Generate static params for user character pages
 // Since this is for user-generated content, we return empty array
 // to indicate this should be handled dynamically
