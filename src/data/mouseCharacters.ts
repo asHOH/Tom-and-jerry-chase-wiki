@@ -969,18 +969,22 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '剑客长枪',
         pattern: '313030011',
-        weaponType: 'weapon1',
+        weaponType: 'weapon2',
         description: '',
       },
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'B-飞跃', 'C-吃货'],
-        description: '适合头盔的机动性卡组。飞跃提升机动性，吃货延长牛奶buff。',
+        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'B-飞跃', 'B-绝地反击'],
+        description: '适合头盔的机动性卡组。飞跃提升机动性，救下来触发绝反高伤害。',
       },
       {
-        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'B-飞跃', 'B-绝地反击'],
-        description: '适合长枪的高伤卡组。对低血量猫对策卡。',
+        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'B-精准投射', 'B-绝地反击'],
+        description: '适合长枪的高伤卡组，精准投射刷新技能CD，释放技能更频繁。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'A-投手', 'C-不屈'],
+        description: '打斯飞专用。',
       },
     ],
     skills: [
