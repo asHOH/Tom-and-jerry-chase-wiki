@@ -749,6 +749,216 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 剑客杰瑞 ----------------------------------- */
+  剑客杰瑞: {
+    description:
+      '来自法国的剑客杰瑞，是顶级的剑术大师，他常常冲锋陷阵在最前，是所有老鼠敬仰的英雄。',
+    maxHp: 124,
+    attackBoost: 25,
+    hpRecovery: 0,
+    moveSpeed: 640,
+    jumpHeight: 380,
+    cheesePushSpeed: 2.4,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '拥有极高的输出和武器的控制，技能提供续航。',
+        additionalDescription:
+          '高等级剑杰可在打出大量伤害的同时控制猫数秒，双武器均可与干扰投掷配合。',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '剑舞华尔兹',
+        pattern: '20212[1100]',
+        weaponType: 'weapon1',
+        description: '对于难以命中或是难以有效输出干扰的猫，出于自保可八级点出三级被动。',
+        additionaldescription: '',
+      },
+      {
+        id: '格挡之剑',
+        pattern: '303131100',
+        weaponType: 'weapon2',
+        description: '常规加点。对于不怕灌伤的猫，可以十级再点三级格挡。',
+        additionaldescription: '',
+      },
+      {
+        id: '格挡之剑',
+        pattern: '303100113',
+        weaponType: 'weapon1',
+        description: '用于打缺乏伤害的猫，偏自保，建议配合卡组3使用。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-投手', 'B-绝地反击', 'C-救救我'],
+        description: '双武器通用卡组，投手可换应激，有效输出的同时保证自保。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
+        description: '二武常用卡组，配合控制与干扰投射，随时拥有反杀能力，上限极高。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description: '用于干扰收益不大的猫，偏自保，逃窜可换应激。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-绝地反击', 'C-不屈', 'C-救救我'],
+        description: '第一套卡的下位替代，兼具自保和输出。',
+      },
+    ],
+    skills: [
+      {
+        name: '剑与苹果',
+        type: 'active',
+        description: '使用华丽的剑法切碎苹果并吃掉它，解除不良状态，减少武器技能CD并获得额外增益。',
+        detailedDescription:
+          '使用华丽的剑法切碎苹果并吃掉它，前摇1.9秒。技能释放完成后解除失明、反向等不良效果，减少武器技能CD并获得额外增益。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可被打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '武器技能CD减少20秒；逐渐恢复Hp。',
+            detailedDescription: '武器技能CD减少20秒；给予10/s的Hp恢复效果，持续5秒。',
+            cooldown: 10,
+          },
+          {
+            level: 2,
+            description: '武器技能CD减少30秒；逐渐恢复改为立刻回复50Hp。',
+            cooldown: 10,
+          },
+          {
+            level: 3,
+            description: '立刻刷新武器技能CD；额外短暂提升攻击力。',
+            detailedDescription: '立刻刷新武器技能CD；额外提升15点攻击力，持续14.9秒。',
+            cooldown: 10,
+          },
+        ],
+        cooldownTiming: '释放后',
+        canHitInPipe: false,
+      },
+      {
+        name: '剑舞华尔兹',
+        aliases: [],
+        type: 'weapon1',
+        description: '使用三段剑舞近身攻击，造成伤害；前两段额外造成减速，第三段额外造成眩晕。',
+        detailedDescription:
+          '使用三段剑舞近身攻击。\n第一段，前摇0.45秒，对前方200、后方50范围内的敌方造成{30}点伤害，并减速30%，持续1.9秒；\n第二段，前摇0.45秒，对前方200、后方50范围内的敌方造成{30}点伤害，并减速50%，持续2.4秒；\n第三段，前摇0.75秒，后摇0.4秒，对前方200、后方70范围内的敌方造成{30}点伤害，并眩晕3秒。\n开始释放技能后的9.9秒内可以再次点击技能释放下一段，否则进入CD。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可被打断',
+        cancelableAftercast: '无后摇',
+        canHitInPipe: true,
+        cooldownTiming: '释放后',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 40,
+          },
+          {
+            level: 2,
+            description: '挥剑时免疫控制效果；挥剑后获得短暂加速。',
+            cooldown: 40,
+            detailedDescription:
+              '技能前摇时获得霸体效果（后摇无），施放完成后获得短暂的加速。\n第一段，移速增加10%，跳跃高度增加10%，持续3秒；\n第二段，移速增加15%，跳跃高度增加20%，持续4秒；\n第三段，移速增加20%，跳跃高度增加30%，持续5秒。',
+          },
+          {
+            level: 3,
+            description: '第一段剑舞额外造成短暂眩晕。',
+            cooldown: 40,
+            detailedDescription: '第一段剑舞额外造成2秒眩晕。',
+          },
+        ],
+      },
+      {
+        name: '格挡之剑',
+        type: 'weapon2',
+        description:
+          '举剑格挡，受爪刀攻击后反击，也可以主动反击，造成伤害和眩晕。反击后，技能键短暂替换为翻滚。',
+        detailedDescription:
+          '原地进入1.4秒的格挡状态，该阶段下自身无敌，免疫绝大多数正负面效果、使撞到的牛仔汤姆的牛消失。受到爪刀攻击时进入反击阶段，0.4秒前摇后对猫造成{40}点伤害和2.5秒眩晕。反击也可通过再次点击技能键主动释放，对前方375、后方50范围内的敌方造成同等效果。\n反击释放后，1.2秒内技能键被替换为翻滚。翻滚阶段下，向前以1000的速度滚动0.9秒。翻滚开始或1.2秒未翻滚后，技能进入cd。被动触发的格挡反击[无视距离且必定命中](包括管道中的猫咪)、触发后自身回复25Hp并减少7秒技能CD。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: ['道具键*', '跳跃键'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description: '大幅减少CD。',
+            detailedDescription: '减少CD至7秒。',
+            cooldown: 7,
+          },
+          {
+            level: 3,
+            description: '增加反击伤害。',
+            detailedDescription: '反击伤害增加至{55}点。',
+            cooldown: 7,
+          },
+        ],
+        canHitInPipe: false,
+      },
+      {
+        name: '越战越勇',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '攻击力提升。',
+            detailedDescription: '攻击力提升10点。',
+          },
+          {
+            level: 2,
+            description: '减少虚弱时间。',
+            detailedDescription: '减少40%虚弱时间。',
+          },
+          {
+            level: 3,
+            description: '提升Hp上限。',
+            detailedDescription: '提升50点Hp上限。',
+          },
+        ],
+      },
+    ],
+    aliases: ['剑杰', '剑客杰猫'],
+    counters: [
+      {
+        id: '托普斯',
+        description: '二武和高伤都可以迅速消灭分身，需要注意二武不能主动戳到分身。',
+        isMinor: false,
+      },
+      {
+        id: '莱特宁',
+        description: '有效牵制习惯闪现接爪刀的莱特宁玩家。',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '汤姆',
+        description: '会被平底锅拍飞，主动无敌无视一切输出。',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '国王杰瑞',
+        description: '战旗的增益能使剑杰的输出能力进一步提升。',
+        isMinor: true,
+      },
+    ],
+  },
+
   /* ----------------------------------- 泰菲 ----------------------------------- */
   泰菲: {
     description: '杰瑞的侄子，总将自己吃得圆滚滚的',
@@ -2807,7 +3017,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description:
-              '对附近的猫咪叠加酸涩效果减少移动速度交互速度并造成伤害，最多叠加5层，当叠满时会猫被控制并造成伤害。可进行5次额外表演，随后可以移动并对碰到的敌方单位叠加3成酸涩。',
+              '对附近的猫咪叠加酸涩效果，减少移速、交互速度并造成伤害，最多叠加5层，当叠满时会猫被控制并受到伤害。可进行5次额外表演，随后可以移动并对碰到的敌方单位叠加3成酸涩。',
             cooldown: 30,
             detailedDescription:
               '释放柠檬旋风，对附近猫咪叠加酸涩效果，每层减少2.5%移速和交互速度、造成15伤害，最多叠加5层。叠满时会猫被控制2秒并受到35伤害。可进行5次额外表演，随后可以移动并对碰到的敌方单位叠加3层酸涩。',
