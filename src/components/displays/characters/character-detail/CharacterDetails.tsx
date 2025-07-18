@@ -9,7 +9,7 @@ import CharacterAttributesSection from './CharacterAttributesSection';
 import SkillCard from './SkillCard';
 import KnowledgeCardManager from './KnowledgeCardManager';
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react'; // smaller bundle size than framer-motion
 import EditableField from '@/components/ui/EditableField';
 import CharacterSection from './CharacterSection';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
