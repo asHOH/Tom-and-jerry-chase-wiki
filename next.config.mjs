@@ -10,10 +10,6 @@ const withPwa = withPWA({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-  workboxOptions: {
-    buildId: 'app-build-manifest',
-    additionalManifestEntries: ['_next/app-build-manifest.json'],
-  },
 });
 
 /** @type {import('next').NextConfig} */
