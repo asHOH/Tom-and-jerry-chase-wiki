@@ -97,7 +97,7 @@ export function handleCharacterIdChange(
   const factionId = (activeTab || character?.factionId) as FactionId;
 
   // Create a new character object as a copy.
-  const newCharacter = { ...character! } as CharacterWithFaction;
+  const newCharacter = JSON.parse(JSON.stringify(character)) as CharacterWithFaction;
   newCharacter.id = newId;
   newCharacter.imageUrl = (factionId === 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
 
