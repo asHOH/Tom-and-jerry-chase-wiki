@@ -105,7 +105,6 @@ export default function CharacterDetails({
                       aria-label='教程'
                       onClick={onTutorialTrigger}
                       className='w-8 h-8 bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-400 flex items-center justify-center'
-                      style={{ borderRight: '1px solid #d1d5db' }}
                       data-tutorial-id='character-tutorial'
                     >
                       <svg
@@ -131,7 +130,7 @@ export default function CharacterDetails({
                       type='button'
                       aria-label='预览'
                       onClick={() => setIsLocalEditMode(!isLocalEditMode)}
-                      className='w-8 h-8 bg-purple-500 text-white hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:bg-purple-700 dark:hover:bg-purple-800 dark:focus:ring-purple-400 flex items-center justify-center'
+                      className='w-8 h-8 bg-purple-500 text-white hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:bg-purple-700 dark:hover:bg-purple-800 dark:focus:ring-purple-400 flex items-center justify-center border-l border-gray-300 dark:border-gray-600'
                       data-tutorial-id='character-preview'
                     >
                       <svg

@@ -27,10 +27,22 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     position: 'bottom',
   },
   {
+    id: 'character-preview',
+    targetSelector: '[data-tutorial-id="character-preview"]',
+    message: '预览按钮，点击后可以预览非编辑模式下该角色信息显示的效果。',
+    position: 'bottom',
+  },
+  {
     id: 'character-export',
     targetSelector: '[data-tutorial-id="character-export"]',
     message:
       '保存按钮，点击后会将角色的数据复制到剪切板中并下载成文件，由于网站存储角色数据不稳定，请多多保存。',
+    position: 'bottom',
+  },
+  {
+    id: 'character-tutorial',
+    targetSelector: '[data-tutorial-id="character-tutorial"]',
+    message: '教程按钮，点击此按钮可重新查看角色页面的功能指引。',
     position: 'bottom',
   },
 ];
