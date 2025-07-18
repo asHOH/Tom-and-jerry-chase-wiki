@@ -602,20 +602,22 @@ export default function SkillCard({
             </div>
           )}
 
-          <div className='mt-3 px-2'>
-            <p className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
-              <EditableField
-                initialValue={
-                  (isDetailed && skill.detailedDescription?.trim()
-                    ? skill.detailedDescription
-                    : skill.description) ?? '<无内容>'
-                }
-                path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
-                tag='span'
-                data-tutorial-id='skill-description-edit'
-              />
-            </p>
-          </div>
+          {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
+            <div className='mt-3 px-2'>
+              <p className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
+                <EditableField
+                  initialValue={
+                    (isDetailed && skill.detailedDescription?.trim()
+                      ? skill.detailedDescription
+                      : skill.description) ?? '<无内容>'
+                  }
+                  path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
+                  tag='span'
+                  data-tutorial-id='skill-description-edit'
+                />
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
