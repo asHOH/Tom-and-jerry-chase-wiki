@@ -32,5 +32,4 @@ subscribe(factions, () => {
   localStorage.setItem('factions', JSON.stringify(factions));
 });
 
-export const factionCards = GameDataManager.getFactionCards();
 export const cards = GameDataManager.getCards();

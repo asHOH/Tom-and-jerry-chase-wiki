@@ -76,24 +76,6 @@ export class GameDataManager {
     );
   }
 
-  static getFactionCards() {
-    return Object.fromEntries(
-      Object.entries(rawFactionData).map(([factionId, faction]) => {
-        const factionCardList = Object.values(rawCardData)
-          .filter((card) => card.factionId === factionId)
-          .map(({ id, rank, cost, imageUrl }) => ({
-            id,
-            name: id,
-            rank,
-            cost,
-            imageUrl: imageUrl!,
-          }));
-
-        return [factionId, { ...faction, cards: factionCardList }];
-      })
-    );
-  }
-
   static getCards() {
     return Object.fromEntries(
       Object.entries(rawCardData).map(([cardId, card]) => {

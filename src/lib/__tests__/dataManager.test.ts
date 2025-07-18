@@ -51,22 +51,6 @@ describe('GameDataManager', () => {
     });
   });
 
-  describe('getFactionCards', () => {
-    it('should return faction cards with card lists', () => {
-      const factionCards = GameDataManager.getFactionCards();
-
-      expect(factionCards).toBeDefined();
-      expect(Object.keys(factionCards)).toContain('cat');
-      expect(Object.keys(factionCards)).toContain('mouse');
-
-      // Check that faction cards have card lists
-      const catFactionCards = factionCards['cat'];
-      expect(catFactionCards).toBeDefined();
-      expect(catFactionCards?.cards).toBeDefined();
-      expect(Array.isArray(catFactionCards?.cards)).toBe(true);
-    });
-  });
-
   describe('getCards', () => {
     it('should return cards with faction references', () => {
       const cards = GameDataManager.getCards();
