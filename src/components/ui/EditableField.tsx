@@ -98,12 +98,12 @@ function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagName
       }
 
       if (onSave) {
-        onSave(newContentStr);
+        onSave(newContentStr.trim());
       } else {
         if (localCharacter) {
           handleChange(
             initialValue,
-            newContentStr,
+            newContentStr.trim(),
             `${localCharacter.id}.${path}`,
             factionId || localCharacter.factionId || undefined,
             handleSelectCharacter
