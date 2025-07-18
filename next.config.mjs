@@ -18,6 +18,14 @@ const withPwa = withPWA({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/version.json',
+        destination: '/api/version',
+      },
+    ];
+  },
   trailingSlash: true,
   images: {
     unoptimized: false,
