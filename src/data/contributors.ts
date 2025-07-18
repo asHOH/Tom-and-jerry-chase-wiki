@@ -129,7 +129,7 @@ export const contributors: Contributor[] = [
   {
     id: 'yinshuisiyuan',
     name: '饮泉思源',
-    url: 'https://space.bilibili.com/439320147',
+    url: 'https://zh.moegirl.org.cn/User:Yqsychzs',
     roles: [
       {
         type: RoleType.ContentWriter,
