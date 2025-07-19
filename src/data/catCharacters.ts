@@ -964,13 +964,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     aliases: ['小黄'],
     description:
       '图茨拥有娇小的身材和靓丽的脸庞，因为被富养，她性格可爱温柔，图茨是汤姆的女朋友之一，广受所有猫和老鼠的喜爱。',
-    maxHp: 255,
-    hpRecovery: 3.5,
-    moveSpeed: 76,
-    jumpHeight: 420,
-    clawKnifeCdHit: 4.5,
-    clawKnifeCdUnhit: 2.3,
-    clawKnifeRange: 300,
+    maxHp: 225,
+    hpRecovery: 4.5,
+    moveSpeed: 740,
+    jumpHeight: 420, // FIXME: 梦回说跟托普斯一样是467.6、其他猫是481.7，但靠谱吗？
+    clawKnifeCdHit: 2.5,
+    clawKnifeCdUnhit: 2,
+    clawKnifeRange: 200,
     catPositioningTags: [
       {
         tagName: '防守',
