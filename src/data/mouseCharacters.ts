@@ -2027,7 +2027,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             level: 1,
             description: '碰撞猫咪造成伤害和2秒减速。碰撞墙缝造成少量伤害。',
             detailedDescription:
-              '碰撞猫咪造成{55}点伤害和20%减速，持续2秒，对猫咪有2秒的内置CD。碰撞墙缝造成{10.5}点伤害。', // 严格来讲，是对同一猫咪有2秒内置CD，下同
+              '碰撞猫咪造成{55}点伤害和20%减速，持续2秒，对猫咪有2秒的内置CD。碰撞墙缝造成{_10.5}点伤害。', // 严格来讲，是对同一猫咪有2秒内置CD，下同
             cooldown: 7,
           },
           {
@@ -2041,7 +2041,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description: '对猫咪造成的眩晕可击落老鼠。提高对墙缝的伤害。',
-            detailedDescription: '对猫咪造成的眩晕可击落老鼠。对墙缝的伤害提高至{15.5}。',
+            detailedDescription: '对猫咪造成的眩晕可击落老鼠。对墙缝的伤害提高至{_15.5}。',
             cooldown: 7,
           },
         ],

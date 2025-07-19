@@ -13,7 +13,8 @@ import { proxy, useSnapshot } from 'valtio';
  */
 export const renderTextWithTooltips = (
   text: string,
-  attackBoost: number
+  attackBoost: number,
+  wallCrackDamageBoost?: number
 ): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
   let lastIndex = 0;
@@ -25,9 +26,26 @@ export const renderTextWithTooltips = (
       parts.push(text.slice(lastIndex, match.index));
     }
 
-    const visibleText = match[1] || '';
-    const totalAttack = parseFloat(visibleText);
-    const tooltipContent = `基础伤害${totalAttack - attackBoost}+角色增伤${attackBoost}`;
+    const content = match[1] || '';
+    let visibleText: string;
+    let tooltipContent: string;
+
+    if (content.startsWith('_')) {
+      visibleText = content.substring(1);
+      if (wallCrackDamageBoost !== undefined) {
+        const totalWallCrackDamage = parseFloat(visibleText);
+        const baseWallCrackDamage =
+          Math.round((totalWallCrackDamage - wallCrackDamageBoost) * 10) / 10;
+        tooltipContent = `基础墙缝伤害${baseWallCrackDamage}+角色墙缝增伤${wallCrackDamageBoost}`;
+      } else {
+        tooltipContent = `墙缝伤害${visibleText}`;
+      }
+    } else {
+      visibleText = content;
+      const totalAttack = parseFloat(visibleText);
+      const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
+      tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}`;
+    }
 
     parts.push(
       <Tooltip key={match.index} content={tooltipContent}>
@@ -95,7 +113,15 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
   if (typeof localCharacter.attackBoost == 'number') {
     intermediateParts.forEach((part) => {
       if (typeof part === 'string') {
-        finalParts.push(...renderTextWithTooltips(part, localCharacter.attackBoost!));
+        finalParts.push(
+          ...renderTextWithTooltips(
+            part,
+            localCharacter.attackBoost!,
+            'wallCrackDamageBoost' in localCharacter
+              ? localCharacter.wallCrackDamageBoost
+              : undefined
+          )
+        );
       } else {
         finalParts.push(part);
       }
