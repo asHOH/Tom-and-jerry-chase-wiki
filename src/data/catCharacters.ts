@@ -758,6 +758,206 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
+  // 这些注释都可以删掉
+  侍卫汤姆: {
+    description: '侍卫汤姆始终守护在皇宫内，负责保护国王的安全。',
+
+    maxHp: 270,
+    hpRecovery: 1.6,
+    moveSpeed: 750,
+    jumpHeight: 420,
+    clawKnifeCdHit: 5.5,
+    clawKnifeCdUnhit: 2.2, // FIXME: 音杰和1322视频的数据都是2.1？
+    clawKnifeRange: 300,
+
+    catPositioningTags: [
+      // TODO: 移除一些标签 (但是可以上线后再说了)
+      {
+        tagName: '进攻',
+        isMinor: false,
+        description:
+          '一被动有加速，二被动有增伤，主动可以清鼠的药水增益效果以及显示老鼠位置，武器有伤害以及控制。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '翻盘',
+        isMinor: false,
+        description: '三被动减控免死，三级炮有一定强度，有一定的翻盘能力',
+        additionalDescription: '',
+      },
+      {
+        tagName: '追击',
+        isMinor: false,
+        description: '一被动加速，炮打中后加速，警戒能看到老鼠位置。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '防守',
+        isMinor: false,
+        description: '三级炮，三级被动让侍卫在后期有一定的强度。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '打架',
+        isMinor: true,
+        // FIXME: 原介绍提到“（手动测量，可能有误差）”，不过后面这个数据又变2秒了？？？
+        description: '架炮后有1.9秒的两层盾，三级被可以免死减控。',
+        additionalDescription: '对打架阵容有一定的反制能力。',
+      },
+      {
+        tagName: '后期',
+        isMinor: true,
+        description: '三级炮，三级被动让侍卫在后期有一定的强度。',
+        additionalDescription: '',
+      },
+    ],
+
+    skillAllocations: [
+      {
+        id: '皇家火炮',
+        pattern: '122020011',
+        // pattern: '122002011',
+        // pattern: '120220011',
+        // pattern: '120022011',
+        weaponType: 'weapon1',
+        description:
+          '用炮给的盾强上火箭，有3级炮的侍卫在防守奶酪/墙缝/火箭时候比无3级炮有2被的侍卫优势大很多',
+        additionaldescription: '先点三级炮还是先点被动取决于炮的准度，老鼠的血量上限以及局势',
+      },
+    ],
+
+    knowledgeCardGroups: [
+      {
+        id: '蓄势一击',
+        groups: [
+          // 介绍都是按视频介绍。
+          {
+            cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-心灵手巧', 'A-穷追猛打'],
+            description: '适合新手入门。',
+          },
+          {
+            cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-心灵手巧', 'A-加大火力'],
+            description: '常用卡组。',
+          },
+          {
+            cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-心灵手巧', 'B-皮糙肉厚'],
+            description: '打高伤阵容，如剑杰、朵朵。',
+          },
+        ],
+        description: '蓄势一击配合侍卫二级被动可以打死125血血厚老鼠',
+        defaultFolded: false,
+      },
+      {
+        cards: ['A-熊熊燃烧', 'A-心灵手巧', 'A-细心', 'A-加大火力', 'C-猫是液体'],
+        description: '打管道图',
+      },
+      {
+        // 这是去重后的击晕卡组，都是原文件里的
+        id: '击晕',
+        description: '待补充',
+        groups: [
+          { cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'], description: '' },
+          { cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'C-猫是液体', 'C-狡诈'], description: '' },
+          { cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'A-心灵手巧'], description: '' },
+        ],
+        defaultFolded: true,
+      },
+    ],
+
+    skills: [
+      {
+        name: '警戒',
+        type: 'active',
+        // 补充了 1322 的视频
+        videoUrl: 'https://www.bilibili.com/video/BV1JquQzHEyJ?t=61.8',
+        aliases: ['瞪', '远视'],
+        description:
+          '侍卫汤姆大幅提高自己的视野范围，被警戒到的老鼠减50%推速，清除老鼠的部分增益效果，并标记到侍卫汤姆的小地图上。若警戒到老鼠，获得加速效果，否则返还部分冷却。',
+        detailedDescription:
+          '释放技能（前摇1.3132秒）后，侍卫汤姆大幅提高自己的视野范围，被警戒到的老鼠减50%推速，清除老鼠的[部分增益效果](1. 所有的药水；\n2. 侦探杰瑞、侦探泰菲的隐身；\n3. 大部分护盾效果，包括知识卡、角色技能的护盾以及部分无敌效果，如无畏、舍己、国王护盾、莉莉二被；\n4. 米雪儿哭的变大；\n5. 仙女鼠星星与二被的隐身；\n6. 红花；\n7. 太空药水仓的跳跃提升、变大和隐身，熊猫谷“火”的兴奋，天宫香炉给的兴奋。)，并标记到侍卫汤姆的小地图上。若警戒到老鼠，增加19.995%移速，否则返还15s冷却。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: ['道具键'],
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 30,
+          },
+          {
+            level: 2,
+            description: '冷却降低10秒。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description:
+              '当警戒看到两只老鼠时，增加攻击范围17.5；看到三只时，攻击频率加快50%；看到四只时Hp上限增加100点。',
+            cooldown: 20,
+          },
+        ],
+      },
+      {
+        name: '皇家火炮',
+        type: 'weapon1',
+        videoUrl: 'https://www.bilibili.com/video/BV1JquQzHEyJ?t=129.6',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键'],
+        cancelableAftercast: '无后摇',
+        // TODO: 加上火炮击中能清除的效果
+        description:
+          '释放后，在原地出现皇家火炮，对身边的敌人造成短暂的眩晕，侍卫汤姆获得短暂的护盾效果。在皇家火炮存在期间，侍卫汤姆可以自由活动，拖动技能键远程操纵火炮发射。当火炮命中老鼠时，对老鼠造成控制眩晕以及伤害，侍卫汤姆加速并获得护盾。',
+        // FIXME: 视频数据是49.23%
+        detailedDescription:
+          '释放技能（前摇0.6844秒）后，在原地出现皇家火炮，对身边的敌人造成眩晕以及10点伤害，侍卫汤姆获得两层护盾，持续2秒。在皇家火炮存在期间，侍卫汤姆可以自由活动，拖动技能键远程操纵火炮发射。当火炮命中老鼠时，对老鼠造成控制眩晕以及50点伤害，侍卫汤姆增加45%移速并获得两层护盾，效果持续3秒。',
+        skillLevels: [
+          {
+            level: 1,
+            description: '火炮一共能射击三次。',
+            cooldown: 45,
+          },
+          {
+            level: 2,
+            description: '冷却降低20秒。',
+            cooldown: 25,
+          },
+          {
+            level: 3,
+            // TODO: 补充减速效果及时间的数据
+            description: '可以开七炮且对老鼠有减速，命中老鼠禁2秒技能。',
+            cooldown: 25,
+          },
+        ],
+      },
+      {
+        name: '随机应变',
+        type: 'passive',
+        videoUrl: 'https://www.bilibili.com/video/BV1JquQzHEyJ?t=23.8',
+        skillLevels: [
+          {
+            level: 1,
+            // TODO: 补充跳跃高度的数据
+            description: '附近有老鼠时加速。',
+            // FIXME: 视频里是15.07%
+            detailedDescription: '附近有老鼠时加速17.5%。',
+          },
+          {
+            level: 2,
+            // TODO: 补充攻击频率的数据
+            description: '当附近老鼠数量为1或2只时，增加攻击伤害与攻击频率',
+            detailedDescription: '当附近老鼠数量为1或2只时，增加25点伤害',
+          },
+          {
+            level: 3,
+            // FIXME: 官方介绍没说减爪刀cd，这个情况存疑，如果是真的，最好补充数据；补充健康值回复速度的数据
+            description: '附近大于两只老鼠时减50%控制时间并免死减爪刀cd。',
+          },
+        ],
+      },
+    ],
+  },
 
   /* ----------------------------------- 图茨 ---------------------------------- */
   图茨: {

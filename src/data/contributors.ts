@@ -193,6 +193,27 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: '1322',
+    name: '_1322_',
+    url: 'https://space.bilibili.com/508985250',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['侍卫汤姆'],
+      },
+    ],
+  },
+  {
+    id: 'dream',
+    name: 'dream',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['侍卫汤姆'],
+      },
+    ],
+  },
+  {
     id: 'leshanhaoshi',
     name: '乐善好施陈阿姨',
     url: 'https://space.bilibili.com/418408689',
