@@ -2,7 +2,7 @@ import { catCharactersWithImages } from '@/data/catCharacters';
 import { mouseCharactersWithImages } from '@/data/mouseCharacters';
 import { catCardsWithImages } from '@/data/catKnowledgeCards';
 import { mouseCardsWithImages } from '@/data/mouseKnowledgeCards';
-import { FactionId, Faction } from '@/data/types';
+import { FactionId, Faction, Character } from '@/data/types';
 
 // Raw data aggregation
 const rawCharacterData = {
@@ -34,10 +34,10 @@ const rawFactionData: Record<FactionId, Faction> = {
  * Provides a clean interface for accessing processed game data
  */
 export class GameDataManager {
-  static getFactions() {
+  static getFactionsWithCharacters(characters: Record<string, Character>) {
     return Object.fromEntries(
       Object.entries(rawFactionData).map(([factionId, faction]) => {
-        const factionCharacters = Object.values(rawCharacterData)
+        const factionCharacters = Object.values(characters)
           .filter((character) => character.factionId === factionId)
           .map((character) => {
             const positioningTags =
@@ -56,6 +56,10 @@ export class GameDataManager {
         return [factionId, { ...faction, characters: factionCharacters }];
       })
     );
+  }
+
+  static getFactions() {
+    return this.getFactionsWithCharacters(rawCharacterData);
   }
 
   static getCharacters() {
