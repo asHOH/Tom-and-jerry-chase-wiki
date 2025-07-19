@@ -30,7 +30,16 @@ export const renderTextWithTooltips = (
     let visibleText: string;
     let tooltipContent: string;
 
-    if (content.startsWith('_')) {
+    if (content.includes('+')) {
+      const [base, boost] = content.split('+').map((s) => parseFloat(s));
+      if (base && boost) {
+        visibleText = String(base + boost);
+        tooltipContent = `基础伤害${base}+角色增伤${boost}`;
+      } else {
+        visibleText = content;
+        tooltipContent = content;
+      }
+    } else if (content.startsWith('_')) {
       visibleText = content.substring(1);
       if (wallCrackDamageBoost !== undefined) {
         const totalWallCrackDamage = parseFloat(visibleText);
