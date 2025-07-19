@@ -1582,7 +1582,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '发出声波，击退琴头方向的猫咪1700距离。前摇0.75秒，期间可以移动和跳跃。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: ['道具键', '道具键*', '跳跃键'],
+        cancelableAftercast: ['道具键*', '跳跃键'],
         skillLevels: [
           {
             level: 1,
@@ -1616,7 +1616,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableAftercast: '无后摇',
-        cancelableSkill: ['道具键*', '道具键', '跳跃键'],
+        cancelableSkill: ['道具键*', '跳跃键'],
         skillLevels: [
           {
             level: 1,
@@ -1681,7 +1681,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '奶酪',
         isMinor: false,
-        description: '和侦探杰瑞并列第一的鼠方推速。',
+        description: '和侦探杰瑞并列第一的鼠方基础推速。',
         additionalDescription: '',
       },
       {
@@ -1715,10 +1715,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         aliases: ['隐身'],
         name: '分身大师',
         type: 'active',
-        description:
-          '召唤1个迷惑猫咪的分身，同时自己进入隐身状态，除喝药水和移动跳跃外的任何动作都将导致显形。分身被击倒时使敌方短暂失明。', // FIXME: 被友方击倒呢？
+        description: '召唤1个迷惑猫咪的分身，同时自己进入隐身状态。分身被击倒时使敌方短暂失明。', // FIXME: 被友方击倒呢？
         detailedDescription:
-          '召唤1个迷惑猫咪的分身，存在6.9秒；同时自己进入隐身状态，持续4.8秒。除喝药水和移动跳跃外任何动作都将导致显形。分身被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。\n分身大师分身特性：Hp上限为25并[按比例继承本体Hp](如本体血量为24，分身血量将为8.33)、继承角色Hp恢复速度、不继承本体状态和知识卡、免疫捕鼠夹；Hp归零或持续时间结束时将原地消失；会在地图内四处走动，但不会钻管道；若半径800范围内出现猫咪，分身会尝试远离之。',
+          '召唤1个迷惑猫咪的分身，存在6.9秒；同时自己进入隐身状态，持续4.8秒。分身被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。\n分身大师分身特性：Hp上限为25并[按比例继承本体Hp](如本体血量为24，分身血量将为8.33)、继承角色Hp恢复速度、不继承本体状态和知识卡、免疫捕鼠夹；Hp归零或持续时间结束时将原地消失；会在地图内四处走动，但不会钻管道；若半径800范围内出现猫咪，分身会尝试远离之。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -1726,7 +1725,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '',
+            description: '隐身状态下除喝药水和移动跳跃外的任何动作都将导致显形。',
             cooldown: 15,
           },
           {
@@ -2174,7 +2173,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '贵族礼仪',
         type: 'active',
         description: '玛丽优雅行礼，范围内猫咪受其高贵气质感染，无法做出失礼举动。',
-        detailedDescription: '',
+        detailedDescription:
+          '玛丽优雅行礼，范围内猫咪受其高贵气质感染，无法做出失礼举动。(20秒内无法重复触发）',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键*', '跳跃键'],
@@ -2775,9 +2775,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         aliases: ['钩子'],
         type: 'weapon1',
         description:
-          '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。',
+          '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。鱼钩碰到道具会携带之；碰到角色会将其勾回，并救下猫咪手中的老鼠。',
         detailedDescription:
-          '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。朋友在30秒后自然消失。朋友扔出鱼钩过程中再次点击技能会使朋友将鱼钩收回（有前摇）。',
+          '在面前召唤朋友（技能不会进入CD）；在距离朋友较近时，使附近的朋友向尼宝扔出鱼钩。朋友在30秒后自然消失。朋友扔出鱼钩过程中再次点击技能会使朋友将鱼钩收回（有前摇）。鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并救下[猫咪](含霸体状态下的猫咪)手中的老鼠。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -2786,9 +2786,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '鱼钩碰到道具会携带之；碰到角色会将其勾回，并救下猫咪手中的老鼠。',
-            detailedDescription:
-              '鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并救下猫咪手中的老鼠。',
+            description: '',
+            detailedDescription: '',
             cooldown: 16,
           },
           {
@@ -3240,18 +3239,19 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '柠檬旋风',
         type: 'weapon1',
-        description: '',
+        description:
+          '对附近的猫咪叠加酸涩效果，减少移速、交互速度并造成伤害，最多叠加5层，当叠满时会猫被控制并受到伤害。可进行5次额外表演，随后可以移动并对碰到的敌方单位叠加3成酸涩。',
+        detailedDescription:
+          '释放柠檬旋风，对附近猫咪叠加酸涩效果，每层减少2.5%移速和交互速度、造成15伤害，最多叠加5层。叠满时会猫被控制2秒并受到35伤害。可进行5次额外表演，随后可以移动并对碰到的敌方单位叠加3层酸涩。',
         canMoveWhileUsing: true,
         canUseInAir: false,
         canHitInPipe: false,
         skillLevels: [
           {
             level: 1,
-            description:
-              '对附近的猫咪叠加酸涩效果，减少移速、交互速度并造成伤害，最多叠加5层，当叠满时会猫被控制并受到伤害。可进行5次额外表演，随后可以移动并对碰到的敌方单位叠加3成酸涩。',
+            description: '',
             cooldown: 30,
-            detailedDescription:
-              '释放柠檬旋风，对附近猫咪叠加酸涩效果，每层减少2.5%移速和交互速度、造成15伤害，最多叠加5层。叠满时会猫被控制2秒并受到35伤害。可进行5次额外表演，随后可以移动并对碰到的敌方单位叠加3层酸涩。',
+            detailedDescription: '',
           },
           {
             level: 2,

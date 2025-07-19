@@ -433,7 +433,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
-        description: '待补充',
+        description: '这个卡组更偏向娱乐。',
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
