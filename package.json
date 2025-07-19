@@ -56,6 +56,9 @@
     "npm": ">=10.0.0"
   },
   "dependencies": {
+    "@mdx-js/loader": "^3.1.0",
+    "@mdx-js/react": "^3.1.0",
+    "@next/mdx": "^15.4.2",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "classnames": "^2.5.1",
@@ -79,6 +82,7 @@
     "@storybook/addon-onboarding": "^9.0.16",
     "@storybook/nextjs": "^9.0.16",
     "@tailwindcss/postcss": "^4.1.10",
+    "@tailwindcss/typography": "^0.5.16",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",

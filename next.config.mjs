@@ -1,4 +1,5 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
+import createMDX from '@next/mdx';
 import withPWA from 'next-pwa';
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -12,8 +13,11 @@ const withPwa = withPWA({
   disable: process.env.NODE_ENV === 'development',
 });
 
+const withMDX = createMDX({});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   async rewrites() {
     return [
       {
@@ -42,4 +46,4 @@ const nextConfig = {
   },
 };
 
-export default withBundleAnalyzer(withPwa(nextConfig));
+export default withBundleAnalyzer(withPwa(withMDX(nextConfig)));
