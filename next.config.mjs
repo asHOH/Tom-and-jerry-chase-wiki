@@ -1,6 +1,7 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import withPWA from 'next-pwa';
+import remarkGfm from 'remark-gfm';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -13,7 +14,11 @@ const withPwa = withPWA({
   disable: process.env.NODE_ENV === 'development',
 });
 
-const withMDX = createMDX({});
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [remarkGfm],
+  },
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
