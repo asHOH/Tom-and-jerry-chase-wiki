@@ -17,7 +17,7 @@ export const VersionDisplay: React.FC = () => {
   useEffect(() => {
     const loadVersionInfo = async () => {
       try {
-        const response = await fetch('/version.json', { cache: 'no-cache' });
+        const response = await fetch('/api/version', { cache: 'no-cache' });
         if (response.ok) {
           const info: VersionInfo = await response.json();
           setVersionInfo(info);

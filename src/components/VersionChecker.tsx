@@ -28,7 +28,7 @@ export const VersionChecker: React.FC = () => {
     const loadInitialVersion = async () => {
       try {
         setDebugInfo((prev) => ({ ...prev, status: 'loading' }));
-        const response = await fetch('/version.json', { cache: 'no-cache' });
+        const response = await fetch('/api/version', { cache: 'no-cache' });
 
         if (response.ok) {
           const versionInfo: VersionInfo = await response.json();
@@ -63,7 +63,7 @@ export const VersionChecker: React.FC = () => {
         setDebugInfo((prev) => ({ ...prev, lastCheck: new Date().toLocaleTimeString() }));
 
         // Check version.json for updates
-        const response = await fetch('/version.json?_t=' + Date.now(), {
+        const response = await fetch('/api/version?_t=' + Date.now(), {
           cache: 'no-cache',
         });
 
