@@ -217,6 +217,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'qifengpanmuoshanghuakai',
+    name: '祈风盼陌上花开',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['恶魔泰菲'],
+      },
+    ],
+  },
+  {
     id: '1322',
     name: '_1322_',
     url: 'https://space.bilibili.com/508985250',
