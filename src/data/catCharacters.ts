@@ -1108,7 +1108,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '汽水罐',
         type: 'weapon2',
         description:
-          '向任意方向扔出汽水，若未命中，达到终点后开始旋转，持续20秒。命中造成少量伤害和两层减速，冰冻小范围内所有老鼠3秒。（欢迎纠正和补充）',
+          '向任意方向扔出汽水，若未命中，达到终点后开始旋转，持续20秒。喵喵叫范围内的汽水罐将会提高运动速度和半径。命中造成少量伤害和两层减速，冰冻小范围内所有老鼠3秒。（欢迎纠正和补充）',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
@@ -1303,6 +1303,155 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '爪刀命中时，回复伤害等量的生命值；不论是否命中，每消耗一层野性，减少0.3秒爪刀CD。',
           },
         ],
+      },
+    ],
+  },
+
+  /* ----------------------------------- 塔拉 ----------------------------------- */
+  塔拉: {
+    description: '塔拉是西部最美丽的牛仔母猫，她拥有俏丽的脸庞和苗条的身姿，吸引了无数人的目光。',
+    maxHp: 250,
+    hpRecovery: 2.5,
+    moveSpeed: 760,
+    jumpHeight: 420,
+    clawKnifeCdHit: 5,
+    clawKnifeCdUnhit: 4,
+    clawKnifeRange: 0, //FIXME
+    catPositioningTags: [
+      {
+        tagName: '速通',
+        isMinor: false,
+        description: '武器技能可甩火箭',
+        additionalDescription: '配合熊熊燃烧，7秒火箭可直接甩',
+        weapon: 1,
+      },
+      {
+        tagName: '追击',
+        isMinor: false,
+        description: '要移速有移速，要视野有视野，要霸体有霸体',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '',
+        pattern: '02201112',
+        weaponType: 'weapon1',
+        description:
+          '开局搜刮远视药水，利用远视药水可以不急点二被，优先点出来2级绳索。抓到老鼠尽可能手绑火箭。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['A-熊熊燃烧', 'S-蓄势一击', 'A-细心', 'B-皮糙肉厚'],
+        description: '传统蓄势流，细心可换穷追or加大。现版本压力较大建议击晕流。',
+      },
+      {
+        cards: ['A-熊熊燃烧', 'S-击晕', 'B-皮糙肉厚', 'A-加大火力'],
+        description: '击晕流：现版本主流卡组。加大可换穷追，根据角色地图决定。',
+      },
+      {
+        cards: ['C-猫是液体', 'S-击晕', 'B-皮糙肉厚', 'A-熊熊燃烧', 'C-狡诈'],
+        description: '猫液卡组。',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
+        description: '建议地图：游乐场，御门酒店。注意没皮糙容易倒地，造成乘胜层数减少。',
+      },
+    ],
+    skills: [
+      {
+        name: '西部情谊',
+        type: 'active',
+        aliases: ['情谊'],
+        description: '向前施放爱意，造成少量伤害。对男性角色及背对塔拉的角色有更强的效果。',
+        detailedDescription:
+          '向前施放爱意，造成少量伤害。根据性别和相对塔拉的朝向而产生不同的效果:\n男性背对：增加本技能伤害，并使其一段时间内每隔3秒受到僵直\n男性面对或女性背对：额外给予其短暂减速。\n女性面对：额外给予其短暂加速。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键'],
+        cancelableAftercast: '无后摇',
+        cooldownTiming: '释放后',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 10,
+          },
+          {
+            level: 3,
+            description: '大幅增加有效范围。',
+            cooldown: 10,
+          },
+        ],
+        canHitInPipe: true,
+        videoUrl: 'https://nie.v.netease.com/nie/2021/0128/a9211df79cfb9d8e230ad83a90b97a0f.mp4',
+      },
+      {
+        name: '牛仔鞭索',
+        type: 'weapon1',
+        description:
+          '拖动技能，在面前135度的范围内甩出套索，对老鼠造成伤害和减速；再次点击按钮，塔拉将冲向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为扔出老鼠，老鼠碰到火箭直接绑上，但[不减少引线时间](二级被动和知识卡不受影响)。',
+        detailedDescription:
+          '拖动技能，在面前135度的范围内甩出套索，对老鼠造成伤害和减速；再次点击按钮，塔拉将冲向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为扔出老鼠，老鼠碰到火箭直接绑上，但[不减少引线时间](二级被动和知识卡不受影响)；绳索可以套中机械鼠、护盾，但无伤害。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键'],
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 12,
+          },
+          {
+            level: 2,
+            description: '套索命中附加眩晕并提升塔拉的移速。',
+            cooldown: 12,
+          },
+          {
+            level: 3,
+            description: '减少CD；将老鼠投掷到火箭上时将回复Hp并获得短暂加速。',
+            cooldown: 8,
+          },
+        ],
+        canHitInPipe: false,
+        cooldownTiming: '释放后',
+        videoUrl: 'https://nie.v.netease.com/nie/2021/0128/e7bb5707361018eab342fdf2b832f510.mp4',
+      },
+      {
+        name: '心思缜密',
+        type: 'passive',
+        videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=102.4',
+        skillLevels: [
+          {
+            level: 1,
+            description: '根据场上男性角色的数量提升移速和Hp上限。',
+            detailedDescription: '',
+          },
+          {
+            level: 2,
+            description: '永久[扩大视野范围](覆盖其他远视效果)；绑或扔火箭额外减少2秒引线时间。',
+            detailedDescription: '',
+          },
+          {
+            level: 3,
+            description: '攻击男性角色使自己获得短暂的霸体，期间缓慢恢复Hp。',
+          },
+        ],
+        description: '',
+      },
+    ],
+    counteredBy: [
+      {
+        id: '牛仔杰瑞',
+        description: '牛仔一被减控，很克制塔拉，移速高不好抓；必ban角色。',
+        isMinor: false,
       },
     ],
   },

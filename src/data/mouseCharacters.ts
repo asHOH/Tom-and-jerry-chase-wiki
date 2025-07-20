@@ -1327,6 +1327,210 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    collaborators: [
+      {
+        id: '音乐家杰瑞',
+        description: '仅限长枪。长枪上的音乐家杰瑞释放礼服可让长枪强制位移，对猫造成极高爆发伤害。',
+        isMinor: true,
+      },
+    ],
+  },
+
+  /* ----------------------------------- 天使杰瑞 ----------------------------------- */
+  天使杰瑞: {
+    description: '拥有一颗善良之心的天使，总会在汤姆遇上危险的时候，对他施以援手。',
+    maxHp: 99,
+    attackBoost: 5,
+    hpRecovery: 5,
+    moveSpeed: 665,
+    jumpHeight: 420,
+    cheesePushSpeed: 3.6,
+    wallCrackDamageBoost: 0.5,
+    mousePositioningTags: [
+      {
+        tagName: '辅助',
+        isMinor: false,
+        description: '独一无二的复活机制，会给猫很大的压力。',
+        additionalDescription:
+          '虽然复活体尽量不会再去参与救人但是仍然可以保证奶酪进度，还能废掉一个秒飞，有不错的辅助能力。',
+      },
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '推速较高，有一定自保。',
+        additionalDescription: '本身牵制、救人能力不突出，无秒飞火箭时一般当奶酪位。',
+      },
+      {
+        tagName: '破局',
+        isMinor: false,
+        description: '雷云的减伤和控制可以用于强推最后一块奶酪。',
+        additionalDescription: '',
+        weapon: 2,
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '丘比特之箭',
+        pattern: '1(0)2110022',
+        weaponType: 'weapon1',
+        description:
+          '一般建议留加点，如一级被动可以等猫拍你的时候点，能救一命，打部分[技能输出猫](如牛仔汤姆)可以优先点出三被。',
+        additionaldescription: '',
+      },
+      {
+        id: '止戈雷云',
+        pattern: '3(0)[13]30011',
+        weaponType: 'weapon2',
+        description:
+          '加点灵活，开局队友暴毙、刷二手火箭则优先祝福，否则被动。后期打部分[技能输出猫](如牛仔汤姆)可以优先点出三被。',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-舍己', 'A-逃窜', 'C-救救我', 'C-不屈', 'S-铁血'],
+        description:
+          '适合新手游玩的卡组，不屈是天使的核心（队友被放飞时就产生增益，而不是被淘汰时），逃窜增加续航能力。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-祝愿', 'C-救救我', 'C-不屈'],
+        description:
+          '日常使用，需要注意高端局猫可能会优先送走天使，因此带了祝愿，卖自己也能有稳定的收益。',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'B-绝地反击', 'C-救救我', 'C-不屈'],
+        description: '防守类猫对策卡组。',
+      },
+      {
+        cards: ['C-不屈', 'C-救救我', 'A-逃窜', 'A-泡泡浴', 'B-夹不住我', 'A-祝愿'],
+        description: '四排车队可用不死流卡组（务必保证队友提前知道且不用你操心救人；单排慎用）',
+      },
+    ],
+    skills: [
+      {
+        name: '天使祝福',
+        type: 'active',
+        description:
+          '开始吟唱，给予周围范围内火箭上或猫手上的队友[祝福状态](头上出现光圈)，持续30秒。该状态的队友被放飞不会立刻淘汰而是在[固定位置](只与地图有关，每个地图都有固定点位)以复活体的形式返回游戏。复活体会持续暴露小地图位置，且一旦Hp到达[0](即老鼠倒地起身时的血量。这意味着尼宝翻滚、佩克斯三级主动等“免疫虚弱”的效果并不能防止其被淘汰)或被抓起就会被淘汰。',
+        detailedDescription:
+          '开始吟唱，约1.1秒后给予周围范围内火箭上或[猫手上](不包括托普斯捕虫网中、泰克抓取、跟随苏蕊跳舞、被塔拉或追风汤姆扔向火箭且正在飞行中)的队友[祝福状态](头上出现光圈)，持续30秒。老鼠从猫手中以绑火箭外的任何形式脱离，[将失去祝福状态](但塔拉或追风汤姆仍火箭时，如果被提前在猫手上祝福过，则可以正常生效)。祝福状态的老鼠从火箭上被救下将返还40秒CD。祝福状态的队友被放飞不会立刻淘汰而是在[固定位置](只与地图有关，每个地图都有固定点位)以复活体的形式返回游戏。复活体一旦Hp到达[0](即老鼠倒地起身时的血量。这意味着尼宝翻滚、佩克斯三级主动等“免疫虚弱”的效果并不能防止其被淘汰)或被抓起就会被淘汰。复活体会持续暴露小地图位置，但可通过进机器鼠，拿白色花等方式暂时隐藏。如果老鼠在铁血期间被放飞，则重生时为铁血状态、铁血结束直接被淘汰；如果在铁血结束后十秒内被放飞，重生时将是虚弱状态，被猫抓取会直接被淘汰。如果受到流血类伤害钻进机器鼠，且在机器鼠内死亡，则会留下一个机器鼠空壳。\n与其他角色之间的互动：表演者•杰瑞被放飞会优先判定三级被动的复活。如果复活体被托普斯捕虫网抓扔上火箭，则会正常读秒计时，此时再受到祝福会显示图标但无法生效、复活体在火箭被放飞时淘汰。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '不可被打断',
+        cancelableAftercast: '不可取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 60,
+          },
+          {
+            level: 2,
+            description: '祝福期间获得护盾，[护盾存在时持续恢复大量Hp](护盾被打破则恢复效果消失)。',
+            cooldown: 60,
+            detailedDescription:
+              '祝福期间获得护盾，[护盾存在时持续恢复Hp](护盾被打破则恢复效果消失)，共计回复99点生命。',
+          },
+          {
+            level: 3,
+            description: '扩大祝福范围。',
+            cooldown: 60,
+          },
+        ],
+        aliases: ['复活'],
+        canHitInPipe: true,
+        cooldownTiming: '前摇前',
+      },
+      {
+        name: '丘比特之箭',
+        aliases: ['弓箭'],
+        type: 'weapon1',
+        description:
+          '点按技能射出一发弓箭，射中队友为其回复一定生命；射中猫造成伤害。长按技能开始蓄力，蓄力满射出一发大弓箭，射中队友为其回复更多Hp，射中猫造成更高伤害和眩晕。中途可以取消释放，会返还一半CD。',
+        detailedDescription:
+          '点按技能射出一发弓箭，射中队友为其回复25Hp并提供1.6秒的10%加速；射中猫造成30伤害。长按技能开始蓄力，蓄力至少1.83秒后可以射出一发大弓箭，射中队友为其回复50Hp和1.6秒的5%加速；射中猫造成55伤害和1.4秒[眩晕](无视苏蕊的跳舞，但不打断跳舞或队友的跟随；无视天使汤姆二级被动的霸体，且可救下队友)。点按可以在空中射出，但蓄力弓箭无法在空中射出。射箭时天使可以调整[出射角度](约上下15度)。射出后的弓箭飞行[无视地形](平台，地板，天花板均不会影响；经典之家的厨房挡板除外)，直到击中其他角色或森林牧场大鸭子。弓箭射出方向为出射时所按的方向键，若未按则为拉弓时角色朝向。弓箭受到重力，但[速度大小不变，只改变方向](不受外力时，箭的竖直速度逐渐增大而水平速度逐渐减小，并非严格的抛物线)。弓箭可被鞭炮影响而改变飞行轨迹。中途可以取消释放，会返还一半CD。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['本技能键'],
+        cancelableAftercast: ['道具键*'],
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 22,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 12,
+          },
+          {
+            level: 3,
+            description: '治疗、伤害效果增强；蓄力箭命中虚弱队友会解除其虚弱状态。',
+            cooldown: 12,
+            detailedDescription:
+              '普通弓箭伤害提高为55，蓄力箭提高为105；普通弓箭对队友治疗效果提高为50，蓄力箭提高为99。蓄力箭命中虚弱队友会解除其虚弱状态。',
+          },
+        ],
+      },
+      {
+        name: '止戈雷云',
+        type: 'weapon2',
+        description:
+          '在左右召唤两朵雷云，持续15秒。雷云内猫移速和伤害降低。如果猫在雷云中做出[攻击行为](爪刀、道具、技能)则会被雷劈（有一定延迟），受到少量伤害。',
+        detailedDescription:
+          '在左右各召唤一朵雷云，前摇0.65s，持续15秒。猫在雷云中对老鼠的伤害固定减少10点、受到35%减速。如果猫在雷云中有[攻击行为](如爪刀，道具，技能)则会[被雷云锁定](头顶出现感叹号标志)，锁定1.5秒后判定猫0.5秒前所在位置并在0.08秒内向该位置连续两次落雷，形成雷区，猫被雷直接击中或踏入雷区会受到35电击伤害。[极短时间内](如果同时有三道雷，会中两道)猫只能被一次雷击中。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可被打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 30,
+          },
+          {
+            level: 2,
+            description: '雷击附带眩晕。',
+            detailedDescription: '雷击会附带0.7秒眩晕。1秒内猫不会重复受到雷电眩晕效果。',
+            cooldown: 30,
+          },
+          {
+            level: 3,
+            description: '雷云会主动攻击猫。无论雷云是否存在，猫伤害天使杰瑞都会遭到雷击。',
+            detailedDescription:
+              '猫在雷云内每5秒自动被锁定降下雷击，离开雷云5秒会重置计时。无论雷云是否存在，猫伤害天使杰瑞都会立刻被标记，随后遭到雷击。',
+            cooldown: 30,
+          },
+        ],
+        cooldownTiming: '释放后',
+      },
+      {
+        name: '神之惩戒',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '被猫以任意方式伤害时，短暂禁用其爪刀。',
+            detailedDescription: '被猫以任意方式伤害时禁用其爪刀5秒。（CD：10秒）',
+          },
+          {
+            level: 2,
+            description: '[附近](范围与一级复活相近)猫的爪刀和技能CD增加。',
+            detailedDescription:
+              '[附近](范围与一级复活相近)猫的爪刀和技能CD增加10%（特技不受影响）',
+          },
+          {
+            level: 3,
+            description: '被猫以任意方式伤害时，短暂禁用其技能。',
+            detailedDescription:
+              '被猫以任意方式伤害时禁用其技能4秒。（[CD：10秒](和Lv.1效果不共享冷却)）',
+          },
+        ],
+      },
+    ],
   },
 
   /* ----------------------------------- 恶魔泰菲 ----------------------------------- */
@@ -2991,7 +3195,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: false,
         description: '米可救援可以在远处先使用武器技能拍照，舍己救人后通过二段回溯逃离并回溯血量。',
         additionalDescription: '',
-        weapon: 1,
       },
       {
         tagName: '后期',
