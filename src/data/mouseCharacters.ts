@@ -2146,7 +2146,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   罗宾汉泰菲: {
     aliases: ['罗菲'],
     description:
-      '来自12世纪英国的侠盗罗宾汉泰菲，他身形灵敏，擅长利用草丛隐蔽自己，是罗宾汉杰瑞的好帮手',
+      '来自12世纪英国的侠盗罗宾汉泰菲，他身形灵敏，擅长利用草丛隐蔽自己，是罗宾汉杰瑞的好帮手。',
     maxHp: 74,
     attackBoost: 5,
     hpRecovery: 2.5,
@@ -2185,7 +2185,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '藤蔓',
         pattern: '12[12]10(0)(0)2',
         weaponType: 'weapon1',
-        description: '本套为通用加点，适合大部分场合。',
+        description: '本套为通用加点，适合大部分场合。如果不需要Lv.3弹球，可以将被动的加点提前。',
         additionaldescription:
           '主动技能Lv.2提供控制，武器技能Lv.2提供恢复和储存，需根据实际情况抉择。被动升至Lv.2/Lv.3时会立即刷新护盾，推荐在需要时才进行加点。',
       },
@@ -2249,6 +2249,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 7,
           },
         ],
+        cueRange: '本房间可见',
       },
       {
         name: '藤蔓',
@@ -2283,6 +2284,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 15,
           },
         ],
+        cueRange: '本房间可见',
       },
       {
         name: '野生体格',
@@ -2291,7 +2293,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description:
-              '[吃食物](包括牛奶、蛋糕和天宫凌霄殿仙丹)后永久增加跳跃速度，最多叠加5次。', //跳跃提升数值采用了梦回的数据，
+              '[吃食物](包括牛奶、蛋糕和天宫凌霄殿仙丹)后永久增加跳跃速度，最多叠加5次。',
           },
           {
             level: 2,
@@ -2306,6 +2308,101 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
               '[获得2/s的Hp恢复状态](在受伤期间也生效)；Lv.2的护盾触发时解除[受伤](被猫咪攻击时附加的状态，效果为停止自然Hp恢复且减速5%)；加点时立刻获得护盾并重置护盾CD。',
           },
         ],
+      },
+    ],
+    collaborators: [
+      {
+        id: '航海士杰瑞',
+        description:
+          '航海士杰瑞与罗菲的控制能互相弥补真空期，罗菲还能提供航海士杰瑞急需的恢复能力。',
+        isMinor: false,
+      },
+      {
+        id: '剑客杰瑞',
+        description:
+          '剑客杰瑞的高伤害和罗菲的高频控制可以互相弥补短板，快速击倒猫咪。罗菲还能提供恢复，提高容错。',
+        isMinor: false,
+      },
+      {
+        id: '剑客莉莉',
+        description: '剑客莉莉与罗菲的控制能互相弥补真空期，罗菲还能提供剑客莉莉急需的恢复能力。',
+        isMinor: false,
+      },
+      {
+        id: '米可',
+        description:
+          '米可与罗菲的控制能互相弥补真空期，罗菲还能提供米可相对匮乏的恢复能力。不过，米可的技能CD较长，配合时需注意。',
+        isMinor: false,
+      },
+      {
+        id: '国王杰瑞',
+        description:
+          '罗菲的控制和藤蔓能掩护国王杰瑞进行救援，或是让其安全撤离。不过，国王杰瑞难以弥补罗菲的控制真空期。',
+        isMinor: true,
+      },
+      {
+        id: '剑客泰菲',
+        description:
+          '罗菲的控制和藤蔓能掩护剑客泰菲进行救援，或是让其安全撤离。不过，剑客泰菲难以弥补罗菲的控制真空期。',
+        isMinor: true,
+      },
+      {
+        id: '天使杰瑞',
+        description:
+          '罗菲能为天使杰瑞提供恢复，帮助其多次触发被动。不过，天使杰瑞的控制难以及时为罗菲提供支援，复活态罗菲的干扰能力也相对较差。',
+        isMinor: true,
+      },
+      {
+        id: '尼宝',
+        description:
+          '罗菲的控制和藤蔓能掩护尼宝进行救援，或是让其安全撤离。不过，尼宝难以弥补罗菲的控制真空期。',
+        isMinor: true,
+      },
+    ],
+    counters: [
+      {
+        id: '托普斯',
+        description:
+          '托普斯没有分身时缺乏霸体能力，很容易被罗菲连续控制；分身Hp不高，可以被罗菲快速击倒。不过，托普斯有时会用捕虫网直接网住翻滚中的罗菲，或是利用换位躲过攻击。',
+        isMinor: false,
+      },
+      {
+        id: '莱特宁',
+        description:
+          '莱特宁缺乏霸体能力，很容易被罗菲连续控制。不过，莱特宁如果通过走位躲过一波攻击，那就可以在罗菲主动技能的真空期快速击倒罗菲。',
+        isMinor: false,
+      },
+      {
+        id: '图茨',
+        description:
+          '图茨缺乏霸体能力，并且机动性较差，很容易被罗菲连续控制或拉扯。不过，图茨如果通过走位躲过一波攻击，那就可以在罗菲主动技能的真空期快速击倒罗菲。',
+        isMinor: false,
+      },
+      {
+        id: '米特',
+        description:
+          '米特缺乏霸体能力，并且机动性较差，很容易被罗菲连续控制或拉扯。罗菲能用控制效果击落米特手中的胡椒瓶，还能为全队提供恢复，因此十分克制该技能。不过，米特的禁疗和高额爪刀伤害还是能给罗菲较大压力。',
+        isMinor: false,
+      },
+      {
+        id: '剑客汤姆',
+        description:
+          '剑客汤姆缺乏霸体能力，很容易被罗菲连续控制。不过，剑客汤姆有时会利用冲刺躲过攻击，然后进行反击。',
+        isMinor: false,
+      },
+      {
+        id: '侍卫汤姆',
+        description:
+          '侍卫汤姆的霸体间隔过大，减控则需要较高等级，因此很容易被罗菲连续控制。火炮的远程消耗可以被藤蔓的恢复轻易化解。不过，他的二被动可以一击击倒罗菲，超大的视野范围也能一定程度上防范罗菲的偷袭。在没有其他干扰位支援的情况下，罗菲干扰侍卫汤姆有一定风险。',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '汤姆',
+        description:
+          '汤姆拥有霸体和直接抓起的能力，能反制罗菲的控制和恢复。不过，罗菲仍能利用他的高机动性进行拉扯。',
+        isMinor: false,
       },
     ],
   },
