@@ -44,8 +44,15 @@ const tabs: Tab[] = [
     id: 'special-skills',
     name: '特技',
     imageSrc: '/images/mouseSpecialSkills/%E5%BA%94%E6%80%A5%E6%B2%BB%E7%96%97.png',
-    imageAlt: '知识卡图标',
+    imageAlt: '特技图标',
     path: '/special-skills',
+  },
+  {
+    id: 'items',
+    name: '道具',
+    imageSrc: '/images/items/%E9%81%93%E5%85%B7-%E7%9B%98%E5%AD%90.png',
+    imageAlt: '道具图标',
+    path: '/items',
   },
 ];
 
