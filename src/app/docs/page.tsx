@@ -7,10 +7,9 @@ export default async function DocsIndexPage() {
   return (
     <div className='space-y-8'>
       <div className='text-center space-y-4'>
-        <h1 className='text-4xl font-bold text-gray-900 dark:text-gray-100'>Documentation</h1>
+        <h1 className='text-4xl font-bold text-gray-900 dark:text-gray-100'>文档</h1>
         <p className='text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
-          Welcome to the Tom and Jerry Chase Wiki documentation. Browse through our guides and
-          resources below.
+          欢迎来到猫和老鼠手游维基文档。浏览下面的指南和资源。
         </p>
       </div>
 
@@ -44,7 +43,7 @@ export default async function DocsIndexPage() {
                   /{page.slug}
                 </div>
                 <div className='flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors'>
-                  Read more
+                  阅读更多
                   <svg
                     className='w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform'
                     fill='none'
@@ -81,33 +80,11 @@ export default async function DocsIndexPage() {
                 d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
               />
             </svg>
-            <p className='text-lg'>No documentation pages found</p>
-            <p className='text-sm'>Add MDX files to the docs directory to see them listed here.</p>
+            <p className='text-lg'>未找到文档页面</p>
+            <p className='text-sm'>将 MDX 文件添加到 docs 目录以在此处列出它们。</p>
           </div>
         </div>
       )}
-
-      <div className='border-t border-gray-200 dark:border-slate-700 pt-8'>
-        <div className='bg-blue-50 dark:bg-slate-800/50 rounded-lg p-6'>
-          <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3'>
-            Contributing to Documentation
-          </h3>
-          <p className='text-gray-600 dark:text-gray-400 mb-4'>
-            Want to add or improve documentation? Create a new folder in the docs directory with a{' '}
-            <code className='bg-gray-200 dark:bg-slate-700 px-2 py-1 rounded text-sm'>
-              page.mdx
-            </code>{' '}
-            file.
-          </p>
-          <div className='text-sm text-gray-500 dark:text-gray-400 space-y-1'>
-            <p>
-              • Each page should export a <code>title</code> constant
-            </p>
-            <p>• Use MDX format for rich content with React components</p>
-            <p>• Pages are automatically indexed and linked here</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

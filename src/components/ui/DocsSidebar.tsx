@@ -72,12 +72,8 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
           <div className='p-6 border-b border-gray-200 dark:border-slate-700 relative'>
             {!isCollapsed && (
               <>
-                <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
-                  Documentation
-                </h2>
-                <p className='text-sm text-gray-600 dark:text-gray-400 mt-1'>
-                  Browse our guides and resources
-                </p>
+                <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>文档</h2>
+                <p className='text-sm text-gray-600 dark:text-gray-400 mt-1'>这里是wiki的指南</p>
               </>
             )}
 
@@ -146,7 +142,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                     d='M8 5a2 2 0 012-2h2a2 2 0 012 2v0H8v0z'
                   />
                 </svg>
-                {!isCollapsed && <span>Overview</span>}
+                {!isCollapsed && <span>首页</span>}
               </Link>
 
               {/* Doc pages */}
@@ -207,9 +203,9 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                   <svg className='w-3 h-3 mr-1' fill='currentColor' viewBox='0 0 20 20'>
                     <path d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' />
                   </svg>
-                  {docPages.length} page{docPages.length !== 1 ? 's' : ''}
+                  {docPages.length}个页面
                 </p>
-                <p>Auto-generated from MDX files</p>
+                <p>页面由文档自动生成。</p>
               </div>
             </div>
           )}
