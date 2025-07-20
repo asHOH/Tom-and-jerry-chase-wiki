@@ -102,6 +102,11 @@ export type KnowledgeCardGroupSet = {
   defaultFolded: boolean;
 };
 
+export type SuggestedSpecialSkillItem = {
+  name: string;
+  description: string;
+};
+
 export type CharacterRelationItem = {
   id: string;
   description?: string;
@@ -141,6 +146,9 @@ export type CharacterDefinition = {
 
   // Knowledge card suggestions
   knowledgeCardGroups: (KnowledgeCardGroup | KnowledgeCardGroupSet)[];
+
+  // special skill suggestions
+  specialSkills?: SuggestedSpecialSkillItem[];
 
   // character restraint information
   counters?: CharacterRelationItem[];

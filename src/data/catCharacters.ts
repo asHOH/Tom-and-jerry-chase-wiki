@@ -72,7 +72,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '手型枪，适合打管道图。',
       },
     ],
-
+    specialSkills: [
+      {
+        name: '蓄力重击',
+        description: '适合枪汤，可以补伤害',
+      },
+    ],
     skills: [
       {
         name: '发怒冲刺',

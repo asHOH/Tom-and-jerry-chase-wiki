@@ -19,6 +19,7 @@ import ContentWriterDisplay from './ContentWriterDisplay';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import CharacterRelationDisplay from './CharacterRelationDisplay';
 import CharacterSectionIndex from './CharacterSectionIndex';
+import SpecialSkillsSection from './SpecialSkillsSection';
 import { useSnapshot } from 'valtio';
 import { characters } from '@/data';
 import { useLocalCharacter } from '@/context/EditModeContext';
@@ -260,6 +261,8 @@ export default function CharacterDetails({
                 <CharacterAttributesSection factionId={factionId} />
 
                 <PositioningTagsSection tags={positioningTags} factionId={factionId} />
+
+                <SpecialSkillsSection />
 
                 <div className='hidden'>
                   <CharacterSectionIndex />
