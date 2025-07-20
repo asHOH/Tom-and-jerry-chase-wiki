@@ -8,6 +8,7 @@ import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import { generatePageMetadata, ArticleStructuredData } from '@/lib/metadataUtils';
 import CharacterDocs from './CharacterDocs';
+import { getTutorialPage } from '@/lib/docUtils';
 
 // Force dynamic rendering to avoid prerender issues
 export const dynamic = 'force-dynamic';
@@ -73,6 +74,7 @@ export default async function CharacterPage({
     const resolvedParams = await params;
     const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
     const character = characters[characterId];
+    const docPage = await getTutorialPage(characterId);
 
     if (!character) {
       notFound();
@@ -83,7 +85,7 @@ export default async function CharacterPage({
         <EditModeProvider>
           <TabNavigationWrapper showDetailToggle={true}>
             <CharacterDetailsClient character={character}>
-              <CharacterDocs id={characterId}></CharacterDocs>
+              {!!docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
             </CharacterDetailsClient>
           </TabNavigationWrapper>
         </EditModeProvider>
