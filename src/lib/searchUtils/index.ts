@@ -59,10 +59,18 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     return undefined;
   };
 
-  yield* searchCharacters(findMatchContext, lowerCaseQuery, pinyinQuery);
-  yield* searchCards(findMatchContext, lowerCaseQuery, pinyinQuery);
-  yield* searchSpecialSkills(findMatchContext, lowerCaseQuery, pinyinQuery);
-  yield* searchItems(findMatchContext, lowerCaseQuery, pinyinQuery);
+  const allSearchResults = await Promise.all([
+    Array.fromAsync(searchCharacters(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    Array.fromAsync(searchCards(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    Array.fromAsync(searchSpecialSkills(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    Array.fromAsync(searchItems(findMatchContext, lowerCaseQuery, pinyinQuery)),
+  ]);
+
+  for (const results of allSearchResults) {
+    for (const result of results) {
+      yield result;
+    }
+  }
 };
 
 export type { SearchResult };

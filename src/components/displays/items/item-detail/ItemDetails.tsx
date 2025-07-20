@@ -36,7 +36,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                 {item.name}
               </h1>
               <div
-                className='flex items-center flex-wrap'
+                className='flex items-center flex-wrap p-2'
                 style={{
                   marginTop: designTokens.spacing.lg,
                   gap: designTokens.spacing.sm,
@@ -64,7 +64,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     道具类型: {item.factionId === 'cat' ? '猫' : '鼠'}道具
                   </Tag>
                 )}
-                {!!item.aliases && (
+                {(item.aliases ?? []).map((alias) => (
                   <Tag
                     colorStyles={
                       isDarkMode
@@ -72,10 +72,11 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                         : { background: '#e0e7ef', color: '#1e293b' }
                     }
                     size='md'
+                    key={alias}
                   >
-                    别名: {item.aliases.join('、')}
+                    别名: {alias}
                   </Tag>
-                )}
+                ))}
               </div>
             </div>
           </BaseCard>
