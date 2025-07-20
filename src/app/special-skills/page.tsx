@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import SpecialSkillClient from './SpecialSkillClient';
+import SpecialSkillClient from './SpecialSkillGridClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
