@@ -1,1 +1,1 @@
-export { default as SpecialSkillDetail } from './SpecialSkillDetail';
+export { default as SpecialSkillDetail } from './SpecialSkillDetails';

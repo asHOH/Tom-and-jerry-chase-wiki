@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import ItemClient from './ItemClient';
+import ItemClient from './ItemGridClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';

@@ -2,7 +2,7 @@
 import dynamic from 'next/dynamic';
 
 const SpecialSkillDetailClient = dynamic(
-  () => import('@/components/displays/special-skills/special-skill-detail/SpecialSkillDetail'),
+  () => import('@/components/displays/special-skills/special-skill-detail/SpecialSkillDetails'),
   {
     loading: () => (
       <div className='flex flex-col gap-8 p-8 max-w-3xl mx-auto min-h-[300px]'>
