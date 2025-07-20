@@ -1,6 +1,8 @@
 import { convertToPinyin } from '../pinyinUtils';
 import { searchCards } from './cards';
 import { searchCharacters } from './character';
+import { searchSpecialSkills } from './specialSkills';
+import { searchItems } from './items';
 import { SearchResult } from './types';
 
 export const performSearch = async function* (query: string): AsyncGenerator<SearchResult> {
@@ -59,6 +61,8 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
 
   yield* searchCharacters(findMatchContext, lowerCaseQuery, pinyinQuery);
   yield* searchCards(findMatchContext, lowerCaseQuery, pinyinQuery);
+  yield* searchSpecialSkills(findMatchContext, lowerCaseQuery, pinyinQuery);
+  yield* searchItems(findMatchContext, lowerCaseQuery, pinyinQuery);
 };
 
 export type { SearchResult };
