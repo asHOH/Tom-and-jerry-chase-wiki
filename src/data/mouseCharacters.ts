@@ -2991,7 +2991,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: false,
         description: '米可救援可以在远处先使用武器技能拍照，舍己救人后通过二段回溯逃离并回溯血量。',
         additionalDescription: '',
-        weapon: 1,
       },
       {
         tagName: '后期',

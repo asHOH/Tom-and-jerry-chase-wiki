@@ -118,6 +118,18 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'beique',
+    name: '北雀',
+    url: 'https://space.bilibili.com/510324311',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['塔拉'],
+        isMinor: true, // knowledge card & skill allocation, brief skill descriptions
+      },
+    ],
+  },
+  {
     id: 'yigeqiujun',
     name: '一个气球君',
     roles: [
@@ -175,6 +187,7 @@ export const contributors: Contributor[] = [
   {
     id: 'gangge',
     name: '港鸽',
+    url: 'https://space.bilibili.com/431678062',
     roles: [
       {
         type: RoleType.ContentWriter,
