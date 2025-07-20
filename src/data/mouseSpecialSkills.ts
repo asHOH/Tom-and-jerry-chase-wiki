@@ -4,7 +4,6 @@ export const getMouseSpecialSkillImageUrl = (name: string): string => {
   return `/images/mouseSpecialSkills/${encodeURIComponent(name)}.png`;
 };
 
-// TODO: Add actual mouse special skills definitions
 const mouseSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
   应急治疗: {
     name: '应急治疗',

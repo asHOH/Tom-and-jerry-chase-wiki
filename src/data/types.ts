@@ -191,5 +191,14 @@ export type SpecialSkillDefinition = {
   detailedDescription?: string;
 };
 
-// TODO: add image url
 export type SpecialSkill = SpecialSkillDefinition & { factionId: FactionId; imageUrl: string };
+
+export type ItemDefinition = {
+  damage: number;
+  factionId?: FactionId;
+  aliases?: string[]; // Alternative names for search
+  description?: string; // Basic description (optional, especially for passive skills)
+  detailedDescription?: string;
+};
+
+export type Item = ItemDefinition & { name: string; imageUrl: string };
