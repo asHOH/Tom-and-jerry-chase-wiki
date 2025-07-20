@@ -26,7 +26,7 @@ export async function getDocPages(): Promise<DocPage[]> {
           const content = await fs.readFile(pagePath, 'utf-8');
 
           // Extract title from the MDX file
-          const titleMatch = content.match(/export\s+const\s+title\s*=\s*["']([^"']+)["']/);
+          const titleMatch = content.match(/^#\s+(.*)\n/);
           const title =
             titleMatch?.[1] ??
             item.name.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
@@ -53,5 +53,5 @@ export async function getDocPages(): Promise<DocPage[]> {
 
 export async function getTutorialPage(id: string): Promise<DocPage | null> {
   const docPages = await getDocPages();
-  return docPages.find((page) => page.title == `${id}玩法指导`) ?? null;
+  return docPages.find((page) => page.title == `${id}操作技巧`) ?? null;
 }

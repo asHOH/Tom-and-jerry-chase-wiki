@@ -39,12 +39,12 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     description: '击中敌人时造成减速以及25点伤害。',
   },
   灰花瓶: {
-    aliases: ['灰色花瓶', '灰罐子'],
+    aliases: ['灰色花瓶', '灰罐子', '灰色大花瓶'],
     damage: 50,
     description: '击中敌人时造成2.8秒眩晕以及50点伤害。',
   },
   蓝花瓶: {
-    aliases: ['蓝白花瓶', '蓝罐子'],
+    aliases: ['蓝白花瓶', '蓝罐子', '蓝白大花瓶'],
     damage: 50,
     description: '击中敌人时造成2.8秒眩晕以及50点伤害。',
   },

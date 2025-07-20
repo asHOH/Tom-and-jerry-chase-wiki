@@ -11,7 +11,7 @@ export default async function CharacterDocs({ docPage }: { docPage: DocPage }) {
   const { default: Component } = await import(`@/app/docs/${docPage.slug}/page.mdx`);
 
   return (
-    <CharacterSection title='玩法指导' to={`/docs/${encodeURIComponent(docPage.slug)}`}>
+    <CharacterSection title='操作技巧' to={`/docs/${encodeURIComponent(docPage.slug)}`}>
       <StyledMDX>
         <Component components={{ h1: EmptyH1 }}></Component>
       </StyledMDX>
