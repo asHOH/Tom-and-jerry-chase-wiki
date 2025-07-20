@@ -7,6 +7,7 @@ import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useAppContext } from '@/context/AppContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { useEditMode } from '@/context/EditModeContext';
+import { useNavigation } from '@/lib/useNavigation';
 
 type SearchDialogProps = {
   onClose: () => void;
@@ -80,6 +81,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const { handleSelectCard, handleSelectCharacter } = useAppContext();
   const { isEditMode, toggleEditMode } = useEditMode();
+  const { navigate } = useNavigation();
 
   // Animation variants for the dialog
   const dialogVariants = {
@@ -156,20 +158,29 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   }, [onClose]);
 
   const handleResultClick = (result: SearchResult) => {
-    if (result.type === 'character') {
-      // Check if this is an original character that has a static page
-      if (isOriginalCharacter(result.id)) {
-        handleSelectCharacter(result.id);
-      } else {
-        // For non-original characters, enable edit mode if not already enabled and navigate to edit page
-        if (!isEditMode) {
-          toggleEditMode();
+    switch (result.type) {
+      case 'character':
+        // Check if this is an original character that has a static page
+        if (isOriginalCharacter(result.id)) {
+          handleSelectCharacter(result.id);
+        } else {
+          // For non-original characters, enable edit mode if not already enabled and navigate to edit page
+          if (!isEditMode) {
+            toggleEditMode();
+          }
+          // Navigate to the user character edit page
+          handleSelectCharacter(result.id);
         }
-        // Navigate to the user character edit page
-        handleSelectCharacter(result.id);
-      }
-    } else {
-      handleSelectCard(result.id);
+        break;
+      case 'card':
+        handleSelectCard(result.id);
+        break;
+      case 'item':
+        navigate(`/items/${result.name}`);
+        break;
+      case 'specialSkill':
+        navigate(`/special-skills/${result.factionId}/${result.name}`);
+        break;
     }
     setSearchQuery(''); // Clear search query
     setSearchResults([]); // Clear search results
@@ -250,7 +261,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           >
             {searchResults.map((result, index) => (
               <motion.li
-                key={`${result.type}-${result.id}`}
+                // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
+                key={`${result.type}-${result.id}-${result.name}-${result.factionId}`}
                 className='border-b border-gray-200 dark:border-gray-700 last:border-b-0'
                 variants={{
                   hidden: { opacity: 0, y: 10 },
@@ -267,14 +279,16 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                   {result.imageUrl && (
                     <Image
                       src={result.imageUrl}
-                      alt={result.id}
+                      // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
+                      alt={result.id ?? result.name ?? ''}
                       width={32}
                       height={32}
                       className='object-cover mr-3'
                     />
                   )}
                   <span className='text-gray-900 dark:text-white whitespace-nowrap'>
-                    {result.id} {/* ({result.type === 'character' ? '角色' : '知识卡'}) */}
+                    {'id' in result ? result.id : 'name' in result ? result.name : ''}{' '}
+                    {/* ({result.type === 'character' ? '角色' : '知识卡'}) */}
                   </span>
                   {result.matchContext && (
                     <span className='ml-2 text-gray-500 dark:text-gray-400 text-sm truncate'>
