@@ -86,13 +86,14 @@ export async function generateMetadata({
   };
 }
 
-export default function SpecialSkillDetailPage({
+export default async function SpecialSkillDetailPage({
   params,
 }: {
-  params: { factionId: string; skillId: string };
+  params: Promise<{ factionId: string; skillId: string }>;
 }) {
-  const skillId = decodeURIComponent(params.skillId);
-  const factionIdRaw = decodeURIComponent(params.factionId);
+  const result = await params;
+  const skillId = decodeURIComponent(result.skillId);
+  const factionIdRaw = decodeURIComponent(result.factionId);
   if (factionIdRaw !== 'cat' && factionIdRaw !== 'mouse') {
     notFound();
   }
