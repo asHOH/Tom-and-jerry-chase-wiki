@@ -758,10 +758,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
+
   /* ----------------------------------- 侍卫汤姆 ----------------------------------- */
   侍卫汤姆: {
     description: '侍卫汤姆始终守护在皇宫内，负责保护国王的安全。',
-
     maxHp: 270,
     hpRecovery: 1.67,
     moveSpeed: 745,
@@ -769,7 +769,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     clawKnifeCdHit: 5.5,
     clawKnifeCdUnhit: 2.2,
     clawKnifeRange: 300,
-
     catPositioningTags: [
       {
         tagName: '翻盘',
@@ -801,9 +800,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '皇家火炮',
         pattern: '122020011',
-        // pattern: '122002011',
-        // pattern: '120220011',
-        // pattern: '120022011',
         weaponType: 'weapon1',
         description:
           '用炮给的盾强上火箭，有3级炮的侍卫在防守奶酪/墙缝/火箭时候比无3级炮有2被的侍卫优势大很多',
@@ -814,7 +810,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '蓄势一击',
         groups: [
-          // 介绍都是按视频介绍。
           {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-心灵手巧', 'A-穷追猛打'],
             description: '适合新手入门。',
@@ -862,9 +857,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         videoUrl: 'https://www.bilibili.com/video/BV1JquQzHEyJ?t=61.8',
         aliases: ['瞪', '望', '远视'],
         description:
-          '大幅提高视野范围，被警戒到的老鼠减少50%推速、清除部分增益效果，并暴露小地图视野。若警戒到老鼠，获得加速效果；否则返还部分冷却。',
+          '大幅提高视野范围，并警戒房间内所有老鼠。被警戒的老鼠推速下降50%、暴露小地图视野，并清除部分增益。若警戒到老鼠，额外获得加速；若未警戒到，则返还15s冷却。',
         detailedDescription:
-          '释放技能（前摇1.31秒）后，大幅提高视野范围，被警戒到的老鼠减少50%推速，清除老鼠的[部分增益](所有药水；侦探杰瑞、侦探泰菲的隐身；大部分护盾效果，如知识卡、角色技能的护盾；部分无敌效果，如无畏、舍己、国王护盾、莉莉二被；米雪儿小情绪的变大；仙女鼠星星与二被的隐身；红花；太空药水仓的跳跃提升、变大和隐身；熊猫谷“火”的兴奋；天宫香炉的兴奋)，并暴露小地图视野。若警戒到老鼠，获得20%加速；否则返还15s冷却。使用降落伞中的罗宾汉无法被警戒到。',
+          '前摇1.31秒，大幅提高视野范围，并警戒房间内[所有老鼠](距离极远的除外)。被警戒到的老鼠推速下降50%，暴露小地图视野，并清除[部分增益](所有药水；侦探杰瑞、侦探泰菲的隐身；大部分护盾效果，如知识卡、角色技能的护盾（罗菲2被与恶魔传送门的盾不会被消除）；部分无敌效果，如无畏、舍己、国王护盾、莉莉二被；米雪儿小情绪的变大；仙女鼠星星与二被的隐身；红花；太空药水仓的跳跃提升、变大和隐身；熊猫谷药水仓的兴奋；天宫香炉的远视)。若警戒到老鼠，额外获得20%加速；若未警戒到，则返还15s冷却。使用降落伞中的罗宾汉不会被警戒到。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键', '跳跃键'],
@@ -886,7 +881,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '警戒到至少两只老鼠时，额外增加爪刀范围\n警戒到至少三只时，额外减少爪刀CD\n警戒到四只时，Hp上限额外增加。',
             cooldown: 20,
             detailedDescription:
-              '警戒到至少两只老鼠时，额外增加爪刀范围18.7%\n警戒到至少三只时，额外减少53%爪刀CD\n警戒到四只时，Hp上限额外增加100点',
+              '警戒到至少两只老鼠时，额外增加爪刀范围18.7%\n警戒到至少三只时，额外减少50%爪刀CD\n警戒到四只时，Hp上限额外增加100点',
           },
         ],
         canHitInPipe: true,
@@ -897,11 +892,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         videoUrl: 'https://www.bilibili.com/video/BV1JquQzHEyJ?t=129.6',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableAftercast: ['道具键', '跳跃键'],
+        cancelableAftercast: '无后摇',
         description:
-          '原地召唤皇家火炮，对附近老鼠造成短暂眩晕和少量伤害，侍卫汤姆获得两层短暂护盾。火炮存在期间，可以拖动技能键操纵火炮发射，对命中的老鼠造成眩晕和伤害，同时侍卫汤姆获得加速和护盾。',
+          '原地召唤皇家火炮，对附近老鼠造成短暂眩晕和少量伤害，侍卫汤姆获得短暂的两层护盾。火炮存在期间，可以拖动技能键操纵火炮发射，命中时对老鼠造成眩晕和伤害，同时侍卫汤姆获得大幅加速和护盾。',
         detailedDescription:
-          '前摇0.684秒，原地召唤皇家火炮，对附近老鼠造成眩晕及10点伤害，侍卫汤姆获得两层护盾，持续1.95秒。火炮存在期间，侍卫汤姆可以自由活动，拖动技能键操纵火炮发射，对命中的老鼠造成0.56秒眩晕及50点伤害，同时移除老鼠身上的[部分增益](隐身、兴奋、远视；天宫图香炉的远视；除了尼宝3级翻滚和魔术师三级卡牌以外的技能与被动隐身)；同时侍卫汤姆加速49.2%并获得两层护盾，效果持续2.96秒',
+          '前摇0.684秒，原地召唤皇家火炮，对附近老鼠造成0.93秒眩晕及10点伤害，侍卫汤姆获得两层护盾，持续1.95秒。火炮存在期间，侍卫汤姆可以自由活动，拖动技能键操纵火炮发射，命中时对老鼠造成0.56秒眩晕和50点伤害、移除其[部分增益](隐身、兴奋、远视；天宫图香炉的远视；除了尼宝三级翻滚和魔术师三级卡牌以外的技能与被动隐身)；同时侍卫汤姆加速49%并获得两层护盾，效果持续2.96秒',
         skillLevels: [
           {
             level: 1,
@@ -915,7 +910,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            // TODO: 补充减速效果及时间的数据
             description: '火炮能射击七次。且对命中的老鼠额外施加短暂减速、禁用技能和道具键。',
             cooldown: 25,
             detailedDescription:
@@ -931,21 +925,21 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '[附近](半径范围1240内)有老鼠时获得加速',
-            detailedDescription: '[附近](半径范围1240内)有老鼠时加速15%',
+            description: '[附近](半径范围2481内)有老鼠时获得加速。',
+            detailedDescription: '[附近](半径范围2481内)有老鼠时加速15%。',
           },
           {
             level: 2,
-            description: '当[附近](半径范围879内)老鼠数量为1或2只时，增加攻击力与爪刀频率',
+            description: '当[附近](半径范围1757内)老鼠数量为1或2只时，增加攻击力与爪刀频率。',
             detailedDescription:
-              '当[附近](半径范围879内)老鼠数量为1或2只时，增加25点攻击力，爪刀CD减少22%。',
+              '当[附近](半径范围1757内)老鼠数量为1或2只时，增加25点攻击力，爪刀CD减少25%。',
           },
           {
             level: 3,
             description:
-              '[附近](半径范围1029内)大于2只老鼠时，Hp回复速度增加，减少50%受控时间并免死。',
+              '[附近](半径范围2057内)大于2只老鼠时，Hp回复速度增加，减少50%受控时间并免死',
             detailedDescription:
-              '[附近](半径范围1029内)大于2只老鼠时，Hp回复速度提升至10/s，减少50%受控时间并免死。', // FIXME: dream的版本提到了减爪刀CD，但官方介绍没说减爪刀cd，这个情况存疑，如果是真的，最好补充数据
+              '[附近](半径范围2057内)大于2只老鼠时，Hp回复速度提升至10/s，减少50%受控时间并免死。',
           },
         ],
       },
