@@ -29,7 +29,7 @@ export default function SpecialSkillClient() {
                   alt={skill.name}
                   fill
                   sizes='64px'
-                  className='object-contain rounded-full bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600'
+                  className='object-contain'
                 />
               </div>
               <div className='text-center'>

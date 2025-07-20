@@ -20,13 +20,11 @@ export default function SpecialSkillDetailPage({
 
   return (
     <AppProvider>
-      <AppProvider>
-        <EditModeProvider>
-          <TabNavigationWrapper showDetailToggle={true}>
-            <SpecialSkillDetailClient skill={skill} />
-          </TabNavigationWrapper>
-        </EditModeProvider>
-      </AppProvider>
+      <EditModeProvider>
+        <TabNavigationWrapper showDetailToggle={true}>
+          <SpecialSkillDetailClient skill={skill} />
+        </TabNavigationWrapper>
+      </EditModeProvider>
     </AppProvider>
   );
 }
