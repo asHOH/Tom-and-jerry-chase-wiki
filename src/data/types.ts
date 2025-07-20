@@ -182,3 +182,14 @@ export type Card = {
   imageUrl?: string; // We'll generate it automatically
   levels: CardLevel[];
 };
+
+export type SpecialSkillDefinition = {
+  name: string;
+  cooldown: number;
+  aliases?: string[]; // Alternative names for search
+  description?: string; // Basic description (optional, especially for passive skills)
+  detailedDescription?: string;
+};
+
+// TODO: add image url
+export type SpecialSkill = SpecialSkillDefinition & { factionId: FactionId; imageUrl: string };
