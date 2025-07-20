@@ -41,7 +41,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
                 {skill.name}
               </h1>
               <div
-                className='flex flex-col items-center'
+                className='flex items-center'
                 style={{
                   marginTop: designTokens.spacing.lg,
                   gap: designTokens.spacing.sm,
@@ -56,6 +56,16 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
                   size='md'
                 >
                   冷却时间: {skill.cooldown}s
+                </Tag>
+                <Tag
+                  colorStyles={
+                    isDarkMode
+                      ? { background: '#334155', color: '#e0e7ef' }
+                      : { background: '#e0e7ef', color: '#1e293b' }
+                  }
+                  size='md'
+                >
+                  阵营: {skill.factionId === 'cat' ? '猫' : '鼠'}
                 </Tag>
               </div>
             </div>
