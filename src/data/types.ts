@@ -192,14 +192,17 @@ export type Card = {
 };
 
 export type SpecialSkillDefinition = {
-  name: string;
   cooldown: number;
   aliases?: string[]; // Alternative names for search
   description?: string; // Basic description (optional, especially for passive skills)
   detailedDescription?: string;
 };
 
-export type SpecialSkill = SpecialSkillDefinition & { factionId: FactionId; imageUrl: string };
+export type SpecialSkill = SpecialSkillDefinition & {
+  name: string;
+  factionId: FactionId;
+  imageUrl: string;
+};
 
 export type ItemDefinition = {
   damage: number;
