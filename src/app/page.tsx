@@ -62,6 +62,14 @@ function HomeContent() {
       href: '/cards',
       ariaLabel: '知识卡列表',
     },
+    {
+      imageSrc: '/images/mouseSpecialSkills/%E5%BA%94%E6%80%A5%E6%B2%BB%E7%96%97.png',
+      imageAlt: '特技图标',
+      title: '特技',
+      description: '特技列表',
+      href: '/special-skills',
+      ariaLabel: '特技列表',
+    },
   ];
 
   return (
@@ -77,7 +85,7 @@ function HomeContent() {
         </header>
 
         <HomePageSection title='角色' buttons={characterButtons} />
-        <HomePageSection title='知识卡' buttons={cardButtons} />
+        <HomePageSection title='更多内容' buttons={cardButtons} />
 
         {/* Division line before 网站说明 */}
         <div className='mt-24 mb-8 px-4'>

@@ -40,6 +40,13 @@ const tabs: Tab[] = [
     imageAlt: '知识卡图标',
     path: '/cards',
   },
+  {
+    id: 'special-skills',
+    name: '特技',
+    imageSrc: '/images/mouseSpecialSkills/%E5%BA%94%E6%80%A5%E6%B2%BB%E7%96%97.png',
+    imageAlt: '知识卡图标',
+    path: '/special-skills',
+  },
 ];
 
 type TabNavigationProps = {

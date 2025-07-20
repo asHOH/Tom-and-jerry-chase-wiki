@@ -20,6 +20,7 @@ export default function SpecialSkillClient() {
       <header className='text-center space-y-4 mb-8 px-4'>
         <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>特技</h1>
         <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
+          {/* TODO: refine the description */}
           特殊技能一览，点击技能可查看详细说明与效果。
         </p>
         {/* Faction Filter Controls */}
