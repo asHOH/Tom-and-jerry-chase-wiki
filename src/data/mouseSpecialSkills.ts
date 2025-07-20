@@ -1,7 +1,7 @@
 import { SpecialSkillDefinition } from './types';
 
 export const getMouseSpecialSkillImageUrl = (name: string): string => {
-  return `/images/mouseSpecialSkills/${name}.png`;
+  return `/images/mouseSpecialSkills/${encodeURIComponent(name)}.png`;
 };
 
 // TODO: Add actual mouse special skills definitions

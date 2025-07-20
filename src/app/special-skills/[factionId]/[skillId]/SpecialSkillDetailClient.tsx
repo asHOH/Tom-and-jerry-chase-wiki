@@ -1,15 +1,23 @@
-import { notFound } from 'next/navigation';
-import catSpecialSkills from '@/data/catSpecialSkills';
-// import mouseSpecialSkills from '@/data/mouseSpecialSkills';
+'use client';
+
+import { useAppContext } from '@/context/AppContext';
 import Image from 'next/image';
 
-export default function SpecialSkillDetailPage({ params }: { params: { skillId: string } }) {
-  const skillId = decodeURIComponent(params.skillId);
-  const skill = catSpecialSkills[skillId];
-  // || mouseSpecialSkills[skillId]
-  if (!skill) {
-    notFound();
-  }
+interface SpecialSkillDetailClientProps {
+  skill: {
+    name: string;
+    imageUrl: string;
+    cooldown?: number;
+    aliases?: string[] | string;
+    description?: string;
+    detailedDescription?: string;
+  };
+}
+
+export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailClientProps) {
+  const { isDetailedView } = useAppContext();
+
+  if (!skill) return null;
 
   return (
     <div className='max-w-2xl mx-auto p-6'>
@@ -24,7 +32,7 @@ export default function SpecialSkillDetailPage({ params }: { params: { skillId: 
           />
         </div>
         <div>
-          <h1 className='text-3xl font-bold mb-2'>{skill.name}</h1>
+          <h1 className='text-3xl font-bold mb-2 dark:text-slate-100'>{skill.name}</h1>
           {skill.cooldown && (
             <div className='text-gray-500 dark:text-gray-400 mb-1'>CD: {skill.cooldown}s</div>
           )}
@@ -35,8 +43,12 @@ export default function SpecialSkillDetailPage({ params }: { params: { skillId: 
           )}
         </div>
       </div>
-      <div className='prose dark:prose-invert'>
-        <p>{skill.detailedDescription || skill.description}</p>
+      <div className='prose prose-slate dark:prose-invert dark:prose-slate dark:text-slate-100'>
+        <p>
+          {isDetailedView && skill.detailedDescription
+            ? skill.detailedDescription
+            : skill.description}
+        </p>
       </div>
     </div>
   );

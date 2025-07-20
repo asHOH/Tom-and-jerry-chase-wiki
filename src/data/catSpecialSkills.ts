@@ -1,7 +1,7 @@
 import { SpecialSkillDefinition } from './types';
 
 export const getCatSpecialSkillImageUrl = (name: string): string => {
-  return `/images/catSpecialSkills/${name}.png`;
+  return `/images/catSpecialSkills/${encodeURIComponent(name)}.png`;
 };
 
 const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
