@@ -642,6 +642,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canHitInPipe: false,
         cancelableAftercast: '无后摇',
         cancelableSkill: '不可被打断',
+        cueRange: '全图可见',
         skillLevels: [
           {
             level: 1,

@@ -436,6 +436,33 @@ export default function SkillCard({
               </div>
             );
           })()}
+        </div>,
+        <div className='flex items-center gap-1 text-xs'>
+          <span className='text-gray-600'>技能音效:</span>
+          {(() => {
+            const cueRangeOptions = ['全图可见', '本房间可见', '无音效'] as const;
+            const currentCueRange = skill.cueRange ?? '无音效';
+
+            return (
+              <div className='flex flex-wrap gap-1'>
+                {cueRangeOptions.map((option) => (
+                  <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                    <input
+                      type='radio'
+                      name={`cueRange-${skillIndex}`}
+                      checked={currentCueRange === option}
+                      onChange={() => {
+                        const skill = characters[characterId]!.skills[skillIndex]!;
+                        skill.cueRange = option;
+                      }}
+                      className='w-3 h-3'
+                    />
+                    <span className={currentCueRange === option ? 'font-bold' : ''}>{option}</span>
+                  </label>
+                ))}
+              </div>
+            );
+          })()}
         </div>
       );
     } else {
@@ -463,6 +490,9 @@ export default function SkillCard({
       if (skill.canHitInPipe) properties.push('可击中管道中的角色');
       if (skill.cooldownTiming && skill.cooldownTiming !== '释放时') {
         properties.push(`CD时机: ${skill.cooldownTiming}`);
+      }
+      if (skill.cueRange && skill.cueRange !== '无音效') {
+        properties.push(`技能音效: ${skill.cueRange}`);
       }
     }
 
