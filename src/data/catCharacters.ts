@@ -945,8 +945,65 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
     aliases: [],
-    counters: [],
-    counteredBy: [],
+    counters: [
+      {
+        id: '泰菲',
+        description: '',
+        isMinor: false,
+      },
+      {
+        id: '米雪儿',
+        description: '',
+        isMinor: false,
+      },
+      {
+        id: '侦探杰瑞',
+        description: '',
+        isMinor: false,
+      },
+      {
+        id: '杰瑞',
+        description: '',
+        isMinor: false,
+      },
+      {
+        id: '恶魔泰菲',
+        description: '',
+        isMinor: false,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '剑客泰菲',
+        description: '',
+        isMinor: false,
+      },
+      {
+        id: '罗宾汉泰菲',
+        description: '',
+        isMinor: false,
+      },
+      {
+        id: '尼宝',
+        description: '',
+        isMinor: false,
+      },
+      {
+        id: '魔术师',
+        description: '',
+        isMinor: false,
+      },
+      {
+        id: '航海士杰瑞',
+        description: '',
+        isMinor: false,
+      },
+      {
+        id: '米可',
+        description: '',
+        isMinor: false,
+      },
+    ],
   },
 
   /* ----------------------------------- 图茨 ---------------------------------- */
