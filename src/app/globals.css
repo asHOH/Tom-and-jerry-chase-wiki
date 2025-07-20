@@ -1,6 +1,7 @@
 @import 'tailwindcss/theme.css';
 @import 'tailwindcss/preflight.css';
 @import 'tailwindcss/utilities.css';
+@plugin "@tailwindcss/typography";
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
