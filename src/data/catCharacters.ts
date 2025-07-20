@@ -787,7 +787,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
         description: '3级炮成型后，侍卫的强度才开始体现',
         additionalDescription: '',
-        weapon: 1,
       },
       {
         tagName: '防守',
@@ -1374,7 +1373,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
         description: '武器技能可甩火箭',
         additionalDescription: '配合熊熊燃烧，7秒火箭可直接甩',
-        weapon: 1,
       },
       {
         tagName: '追击',
