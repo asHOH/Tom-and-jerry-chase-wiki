@@ -4,6 +4,7 @@
  */
 
 import { Character, Card, PositioningTag, PositioningTagName } from '@/data';
+import { ReactNode } from 'react';
 
 // Extended types with faction information (used in components)
 export type CharacterWithFaction = Character & {
@@ -39,6 +40,7 @@ export type KnowledgeCardDetailsProps = {
 
 export type CharacterDetailsProps = {
   character: CharacterWithFaction;
+  children?: ReactNode;
 };
 
 // Faction types for grid displays

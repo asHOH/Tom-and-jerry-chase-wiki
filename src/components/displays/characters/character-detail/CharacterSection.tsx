@@ -1,18 +1,26 @@
 'use client';
 
+import { useNavigation } from '@/lib/useNavigation';
 import React, { ReactNode, useState } from 'react';
 
 export default function CharacterSection({
   title,
   children,
+  to,
 }: {
   title: string;
   children: ReactNode;
+  to?: string;
 }) {
   const [isOpen, setIsOpen] = useState(true);
+  const { navigate } = useNavigation();
 
   const toggleOpen = () => {
-    setIsOpen(!isOpen);
+    if (to) {
+      navigate(to);
+    } else {
+      setIsOpen(!isOpen);
+    }
   };
 
   return (
@@ -27,22 +35,39 @@ export default function CharacterSection({
         onClick={toggleOpen}
       >
         <h3>{title}</h3>
-        <svg
-          className={`w-6 h-6 transform transition-transform duration-200 ease-out ${
-            isOpen ? 'rotate-0' : '-rotate-90'
-          }`}
-          fill='none'
-          stroke='currentColor'
-          viewBox='0 0 24 24'
-          xmlns='http://www.w3.org/2000/svg'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth='2'
-            d='M19 9l-7 7-7-7'
-          ></path>
-        </svg>
+        {to ? (
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth={1.5}
+            stroke='currentColor'
+            className='size-6'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='m7.49 12-3.75 3.75m0 0 3.75 3.75m-3.75-3.75h16.5V4.499'
+            />
+          </svg>
+        ) : (
+          <svg
+            className={`w-6 h-6 transform transition-transform duration-200 ease-out ${
+              isOpen ? 'rotate-0' : '-rotate-90'
+            }`}
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+              d='M19 9l-7 7-7-7'
+            ></path>
+          </svg>
+        )}
       </button>
       <div
         className={`transition-all ease-out ${isOpen ? 'duration-300' : 'duration-200'} ${
