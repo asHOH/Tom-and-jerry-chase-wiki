@@ -11,25 +11,42 @@ const damage50Object = {
 
 // TODO: Complete it
 const itemDefinitions: Record<string, ItemDefinition> = {
-  盘子: damage50Object,
-  扁盘: damage50Object,
-  玻璃杯: damage50Object,
+  盘子: Object.assign(
+    {
+      aliases: ['圆盘子'],
+    },
+    damage50Object
+  ),
+  扁盘: Object.assign(
+    {
+      aliases: ['盘子'],
+    },
+    damage50Object
+  ),
+  玻璃杯: Object.assign(
+    {
+      aliases: ['杯子'],
+    },
+    damage50Object
+  ),
   碗: damage50Object,
   冰块: {
     damage: 25,
-    description: '击中敌人时造成3秒眩晕以及25点伤害，。',
+    description: '击中敌人时造成2.4秒眩晕以及25点伤害。',
   },
   高尔夫球: {
     damage: 25,
     description: '击中敌人时造成减速以及25点伤害。',
   },
   灰花瓶: {
+    aliases: ['灰色花瓶', '灰罐子'],
     damage: 50,
-    description: '击中敌人时造成3秒眩晕以及50点伤害。',
+    description: '击中敌人时造成2.8秒眩晕以及50点伤害。',
   },
   蓝花瓶: {
+    aliases: ['蓝白花瓶', '蓝罐子'],
     damage: 50,
-    description: '击中敌人时造成3秒眩晕以及50点伤害。',
+    description: '击中敌人时造成2.8秒眩晕以及50点伤害。',
   },
 };
 

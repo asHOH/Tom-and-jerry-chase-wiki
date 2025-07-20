@@ -36,7 +36,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                 {item.name}
               </h1>
               <div
-                className='flex items-center'
+                className='flex items-center flex-wrap'
                 style={{
                   marginTop: designTokens.spacing.lg,
                   gap: designTokens.spacing.sm,
@@ -62,6 +62,18 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     size='md'
                   >
                     道具类型: {item.factionId === 'cat' ? '猫' : '鼠'}道具
+                  </Tag>
+                )}
+                {!!item.aliases && (
+                  <Tag
+                    colorStyles={
+                      isDarkMode
+                        ? { background: '#334155', color: '#e0e7ef' }
+                        : { background: '#e0e7ef', color: '#1e293b' }
+                    }
+                    size='md'
+                  >
+                    别名: {item.aliases.join('、')}
                   </Tag>
                 )}
               </div>
