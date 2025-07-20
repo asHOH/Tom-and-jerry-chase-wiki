@@ -74,8 +74,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     specialSkills: [
       {
+        name: '绝地反击',
+        description: '',
+      },
+      {
         name: '蓄力重击',
-        description: '适合枪汤，可以补伤害',
+        description: '',
       },
     ],
     skills: [
@@ -252,6 +256,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
         description: '待补充',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '',
+      },
+      {
+        name: '全垒打',
+        description: '',
       },
     ],
 
@@ -456,6 +470,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
     ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '',
+      },
+      {
+        name: '我生气了！',
+        description: '',
+      },
+    ],
 
     skills: [
       {
@@ -634,6 +658,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-猛攻', 'A-细心', 'A-穷追猛打', 'B-恐吓', 'B-皮糙肉厚'],
         description: '防守流。',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '蓄力重击',
+        description: '',
       },
     ],
     skills: [
@@ -852,6 +882,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
         ],
         defaultFolded: true,
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '',
       },
     ],
     skills: [
@@ -1098,6 +1134,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
     ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '',
+      },
+    ],
     skills: [
       {
         name: '喵喵叫',
@@ -1275,6 +1317,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
     ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '',
+      },
+      {
+        name: '应急治疗',
+        description: '',
+      },
+    ],
     skills: [
       {
         name: '胡椒粉罐头',
@@ -1411,6 +1463,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
         description: '建议地图：游乐场，御门酒店。注意没皮糙容易倒地，造成乘胜层数减少。',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '蓄力重击',
+        description: '',
+      },
+      {
+        name: '绝地反击',
+        description: '',
       },
     ],
     skills: [
@@ -1579,6 +1641,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
         description: '无击晕，新手勿用',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '',
       },
     ],
     skills: [
@@ -1760,6 +1828,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         cards: ['S-击晕', 'A-细心', 'A-穷追猛打', 'B-恐吓'],
         description:
           '对缺少奶酪和破局能力的阵容有一定对策性的卡组。利用穷追猛打或是击晕+蓄力重击强行击倒老鼠，然后利用恐吓+细心对奶酪进行防守，尝试拖到天堂火箭放飞。该卡组使用难度不高，但上限也不高。',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '',
       },
     ],
     skills: [
@@ -2001,6 +2075,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
     ],
+    specialSkills: [
+      {
+        name: '急速翻滚',
+        description: '',
+      },
+    ],
     skills: [
       {
         name: '律动时间',
@@ -2171,6 +2251,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '航海士杰瑞',
         description: '金币难以命中飞行状态下的追风，且无法对其造成控制，炸药桶可用风推走',
         isMinor: false,
+      },
+    ],
+    specialSkills: [
+      {
+        // TODO: complete the special skill section
+        name: '应急治疗',
+        description: '',
       },
     ],
     skills: [

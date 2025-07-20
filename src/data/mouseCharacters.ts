@@ -769,6 +769,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '高等级剑杰可在打出大量伤害的同时控制猫数秒，双武器均可与干扰投掷配合。',
       },
     ],
+    specialSkills: [
+      {
+        name: '干扰投掷',
+        description: '',
+      },
+    ],
     skillAllocations: [
       {
         id: '剑舞华尔兹',
@@ -3009,6 +3015,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '米特专用卡组。',
       },
     ],
+    specialSkills: [
+      {
+        name: '急速翻滚',
+        description: '',
+      },
+    ],
 
     skills: [
       {
@@ -3147,6 +3159,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
         description: '待补充',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '干扰投掷',
+        description: '',
       },
     ],
     skills: [
@@ -3754,6 +3772,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         cards: ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
         description: '待补充',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝处逢生',
+        description: '',
       },
     ],
     skills: [
