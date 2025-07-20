@@ -8,9 +8,9 @@ export default function ItemClient() {
   return (
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
-        <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>道具一览</h1>
+        <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>道具</h1>
         <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
-          游戏内所有道具列表，点击道具可查看详细信息与效果。
+          游戏内所有道具列表，包括所有商店道具和部分其它道具，点击道具可查看详细信息与效果。
         </p>
       </header>
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8'>
