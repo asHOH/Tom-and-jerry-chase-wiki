@@ -1327,6 +1327,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    collaborators: [
+      {
+        id: '音乐家杰瑞',
+        description: '仅限长枪。长枪上的音乐家杰瑞释放礼服可让长枪强制位移，对猫造成极高爆发伤害。',
+        isMinor: true,
+      },
+    ],
   },
 
   /* ----------------------------------- 恶魔泰菲 ----------------------------------- */

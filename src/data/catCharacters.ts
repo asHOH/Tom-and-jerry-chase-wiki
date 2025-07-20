@@ -1108,7 +1108,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '汽水罐',
         type: 'weapon2',
         description:
-          '向任意方向扔出汽水，若未命中，达到终点后开始旋转，持续20秒。命中造成少量伤害和两层减速，冰冻小范围内所有老鼠3秒。（欢迎纠正和补充）',
+          '向任意方向扔出汽水，若未命中，达到终点后开始旋转，持续20秒。喵喵叫范围内的汽水罐将会提高运动速度和半径。命中造成少量伤害和两层减速，冰冻小范围内所有老鼠3秒。（欢迎纠正和补充）',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
