@@ -52,7 +52,9 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
 
   return (
     <>
-      <CharacterDetails character={character} onTutorialTrigger={handleTutorialTrigger} />
+      <CharacterDetails character={character} onTutorialTrigger={handleTutorialTrigger}>
+        {props.children}
+      </CharacterDetails>
       {showTutorial && <OnboardingTutorial onClose={handleTutorialClose} isEnabled={isEditMode} />}
     </>
   );

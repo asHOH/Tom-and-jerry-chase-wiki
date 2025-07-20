@@ -30,6 +30,7 @@ interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
 export default function CharacterDetails({
   character,
   onTutorialTrigger,
+  children,
 }: CharacterDetailsWithTutorialProps) {
   const { isEditMode } = useEditMode();
   const [isLocalEditMode, setIsLocalEditMode] = useState(true);
@@ -322,6 +323,7 @@ export default function CharacterDetails({
             <CharacterSection title={factionId == 'cat' ? '角色克制关系' : '角色关系'}>
               <CharacterRelationDisplay id={localCharacter.id} factionId={factionId} />
             </CharacterSection>
+            {!!children && <CharacterSection title='玩法指导'>{children}</CharacterSection>}
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import { generatePageMetadata, ArticleStructuredData } from '@/lib/metadataUtils';
+import CharacterDocs from './CharacterDocs';
 
 // Force dynamic rendering to avoid prerender issues
 export const dynamic = 'force-dynamic';
@@ -81,7 +82,9 @@ export default async function CharacterPage({
       <AppProvider>
         <EditModeProvider>
           <TabNavigationWrapper showDetailToggle={true}>
-            <CharacterDetailsClient character={character} />
+            <CharacterDetailsClient character={character}>
+              <CharacterDocs id={characterId}></CharacterDocs>
+            </CharacterDetailsClient>
           </TabNavigationWrapper>
         </EditModeProvider>
       </AppProvider>

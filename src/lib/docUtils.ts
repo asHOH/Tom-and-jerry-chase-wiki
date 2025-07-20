@@ -47,3 +47,8 @@ export async function getDocPages(): Promise<DocPage[]> {
 
   return docPages.sort((a, b) => a.title.localeCompare(b.title));
 }
+
+export async function getDocPageContent(slug: string) {
+  const pagePath = path.join(process.cwd(), 'src/app/docs', slug, 'page.mdx');
+  return fs.readFileSync(pagePath);
+}
