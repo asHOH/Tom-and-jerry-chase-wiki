@@ -73,7 +73,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
             {!isCollapsed && (
               <>
                 <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>文档</h2>
-                <p className='text-sm text-gray-600 dark:text-gray-400 mt-1'>这里是wiki的指南</p>
+                {/* <p className='text-sm text-gray-600 dark:text-gray-400 mt-1'>这里是杂项文档</p> */}
               </>
             )}
 
