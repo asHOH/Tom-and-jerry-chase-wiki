@@ -15,6 +15,8 @@ export type {
 import { GameDataManager } from '@/lib/dataManager';
 import { CharacterWithFaction, FactionWithCharacters } from '@/lib/types';
 import { proxy, subscribe } from 'valtio';
+import catSpecialSkillsWithImages from './catSpecialSkills';
+import mouseSpecialSkillsWithImages from './mouseSpecialSkills';
 
 export const { factionData, characterData, cardData } = GameDataManager.getRawData();
 
@@ -33,3 +35,8 @@ subscribe(factions, () => {
 });
 
 export const cards = GameDataManager.getCards();
+
+export const specialSkills = {
+  cat: catSpecialSkillsWithImages,
+  mouse: mouseSpecialSkillsWithImages,
+};
