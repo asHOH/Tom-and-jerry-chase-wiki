@@ -40,3 +40,5 @@ export const specialSkills = {
   cat: catSpecialSkillsWithImages,
   mouse: mouseSpecialSkillsWithImages,
 };
+
+export { default as items } from './items';
