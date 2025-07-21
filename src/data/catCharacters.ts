@@ -1046,7 +1046,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
   },
 
-  /* ----------------------------------- 图茨 ---------------------------------- */
+  /* ----------------------------------- 图茨 ----------------------------------- */
   图茨: {
     aliases: ['小黄'],
     description:
@@ -1147,7 +1147,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '按住技能键持续喵喵叫，附近敌方不断叠加减速层数，每到五层时造成60点伤害和眩晕。被打断或取消会按比例返还CD。',
         detailedDescription:
-          '按住技能键持续喵喵叫，在此期间可以移动并使用爪刀和特技霸体，附近敌方不断叠加减速层数，并暴露视野。每到五层时造成60点伤害和眩晕。被打断或取消会按比例返还CD。',
+          '前摇0.6s，按住技能键持续喵喵叫，在此期间可以移动并使用爪刀和特技霸体，周围半径1000范围内敌方不断叠加减速层数，每层减速效果将使敌方移动速度和跳跃速度降低8%，并暴露视野（被减速时）。每到五层时造成60点伤害并眩晕2s。被打断或取消会按比例返还CD。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         canHitInPipe: true,
@@ -1156,20 +1156,22 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '叠层数频率为[0.5秒](最高叠加5层)。',
+            description: '叠层数频率为[0.5s](最高叠加5层)。',
             cooldown: 25,
           },
           {
             level: 2,
-            description: '叠层数频率提升至[0.4秒](最高可叠6层)；减少CD',
+            description: '减少CD；叠层数频率提升至[0.4s](最高可叠6层)。',
             cooldown: 15,
+            detailedDescription: '减少CD至15s；叠层数频率提升至[0.4秒](最高可叠6层)。',
           },
           {
             level: 3,
-            description: '叠层数频率提升至[0.3秒](最高可叠11层)。',
+            description: '叠层数频率提升至[0.3s](最高可叠11层)。',
             cooldown: 15,
           },
         ],
+        cooldownTiming: '释放后',
       },
       {
         name: '防狼锤',
@@ -1177,7 +1179,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         aliases: ['锤子'],
         description: '挥动防狼锤，造成少量伤害和一层减速。',
         detailedDescription:
-          '锤子范围较小，使用时会因惯性继续向前移动一小段距离，自身受到极少量伤害；命中敌方造成少量伤害和一层减速。血量不足时不能使用锤子。（欢迎纠正和补充）',
+          '前摇0.3s，后摇0.4s，挥动防狼锤，对前方范围300内的敌人造成5伤害和一层减速，移动和跳跃速度降低30%（最多降低90%），减速叠至五层时造成60点伤害并眩晕2s。使用时会因惯性向前移动一小段距离，自身受到10伤害。血量低于10时不能使用防狼锤。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
@@ -1190,13 +1192,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '命中敌方额外造成8秒沉默。（时长尚未精确测试）',
+            description: '命中额外造成长时间沉默。',
             cooldown: 0.5,
+            detailedDescription: '命中额外造成6.9s沉默。',
           },
           {
             level: 3,
             description: '减少CD。',
             cooldown: 0.1,
+            detailedDescription: '减少CD至0.1s。',
           },
         ],
         canHitInPipe: false,
@@ -1205,10 +1209,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '汽水罐',
         type: 'weapon2',
         description:
-          '向任意方向扔出汽水，若未命中，达到终点后开始旋转，持续20秒。喵喵叫范围内的汽水罐将会提高运动速度和半径。命中造成少量伤害和两层减速，冰冻小范围内所有老鼠3秒。（欢迎纠正和补充）',
+          '向任意方向扔出汽水罐。若未命中，达到终点后开始旋转，持续20秒。汽水罐听到喵喵叫将会提高运动速度和半径。命中老鼠或另一个汽水罐时，对小范围内所有老鼠造成少量伤害和冰冻。',
+        detailedDescription:
+          '前摇0.5s，向任意方向扔出汽水罐，飞行速度1500。若未命中，飞行1.2s后开始旋转，盘旋路线半径250，飞行速度1000，持续20s。喵喵叫范围内盘旋的汽水罐运动速度每秒提升50，半径每秒增加200，喵喵叫结束后速度和半径将逐渐恢复正常。命中造成15伤害和[两层喵喵叫减速](无法被护盾、霸体、无敌抵挡)，冰冻小范围内[所有老鼠](包括火箭上的老鼠)3s。两个汽水罐相撞时将产生更大范围的冰爆，对半径350范围内所有老鼠造成造成30伤害和[四层喵喵叫减速](无法被护盾、霸体、无敌抵挡)，冰冻小范围内[所有老鼠](包括火箭上的老鼠)3s。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: ['道具键'],
+        cancelableSkill: ['道具键', '其他技能键'],
         cancelableAftercast: ['道具键'],
         skillLevels: [
           {
@@ -1219,13 +1225,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description:
-              '汽水罐自然消失或相撞会形成特殊冰面。鼠滑到会进入层脆弱状态，降低推速和救援速度，并暴露小地图位置。图茨滑到则会获得3秒爆发性加速。',
+              '汽水罐自然消失或相撞会形成特殊冰面，鼠滑到会进入[脆弱状态](放下道具，推速降低33%，救援速度降低73%，并暴露小地图位置，持续8s)，图茨滑到则会获得爆发性加速。',
             cooldown: 12,
+            detailedDescription:
+              '汽水罐自然消失或相撞会形成特殊冰面(最多存在60s，被踩踏3次或持续时间结束后消失)。鼠滑到会进入[脆弱状态](放下道具，推速降低33%，救援速度降低73%，并暴露小地图位置，持续8s)，图茨滑到会获得100%加速，持续3s。',
           },
           {
             level: 3,
             description: '减少CD。',
             cooldown: 8,
+            detailedDescription: '减少CD至8s。',
           },
         ],
       },
@@ -1236,18 +1245,19 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description:
-              '小地图不会显示图茨的位置；开关门不会有声音、不会使老鼠胆怯。（欢迎纠正和补充）',
+              '小地图不会显示图茨的位置；开关门不会有声音；处于同一房间时，不会使老鼠胆怯。',
             detailedDescription:
-              '小地图不会显示图茨的位置，但是老鼠喝远视或图茨手握老鼠时还是会出现在小地图上；开关门不会有声音；不会使老鼠胆怯。（欢迎纠正和补充）',
+              '小地图不会显示图茨的位置，但是老鼠喝远视或图茨手握老鼠时还是会出现在小地图上；开关门不会有声音；处于同一房间时，不会使老鼠胆怯。',
           },
           {
             level: 2,
-            description: '图茨血量不满时，可连续挥爪三次，并提高爪刀频率',
-            detailedDescription: '图茨血量不满时，可连续挥爪三次，并提高爪刀频率',
+            description: '血量不满时，可连续挥爪三次，并提高爪刀频率。',
+            detailedDescription: '血量不满时，可连续挥爪三次，空刀、实刀CD降低40%。',
           },
           {
             level: 3,
-            description: '血量不满时，减少技能CD，喵喵叫从15秒变成10秒。',
+            description: '血量不满时，减少技能CD。',
+            detailedDescription: '血量不满时，技能CD减少40%。',
           },
         ],
       },
