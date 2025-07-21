@@ -26,6 +26,13 @@ export const VersionChecker: React.FC = () => {
     typeof navigator !== 'undefined' ? navigator.onLine : true
   );
 
+  // Request deduplication state
+  const [isCheckingVersion, setIsCheckingVersion] = useState(false);
+  const [lastVersionResponse, setLastVersionResponse] = useState<{
+    data: VersionInfo | null;
+    timestamp: number;
+  }>({ data: null, timestamp: 0 });
+
   useEffect(() => {
     // Load initial version info
     const loadInitialVersion = async () => {
@@ -92,7 +99,46 @@ export const VersionChecker: React.FC = () => {
         return;
       }
 
+      // Request deduplication: Skip if already checking
+      if (isCheckingVersion) {
+        setDebugInfo((prev) => ({
+          ...prev,
+          lastCheck: new Date().toLocaleTimeString(),
+          error: '检查进行中，跳过重复请求',
+        }));
+        return;
+      }
+
+      // Use cached response if it's fresh (less than 30 seconds old)
+      const now = Date.now();
+      const cacheAge = now - lastVersionResponse.timestamp;
+      if (lastVersionResponse.data && cacheAge < 30000) {
+        const versionInfo = lastVersionResponse.data;
+        if (versionInfo.version !== currentVersion) {
+          console.log(
+            `Version update detected (cached): ${currentVersion} → ${versionInfo.version}`
+          );
+          setNotificationMessage(`正在更新到最新版本 ${versionInfo.version}...`);
+          setShowUpdateNotice(true);
+
+          // Update service worker if available
+          if ('serviceWorker' in navigator) {
+            const registration = await navigator.serviceWorker.getRegistration();
+            if (registration) {
+              registration.update();
+            }
+          }
+
+          // Auto-reload after showing notice for 3 seconds
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+        }
+        return;
+      }
+
       try {
+        setIsCheckingVersion(true);
         setDebugInfo((prev) => ({ ...prev, lastCheck: new Date().toLocaleTimeString() }));
 
         // Check version.json for updates
@@ -102,6 +148,12 @@ export const VersionChecker: React.FC = () => {
 
         if (response.ok) {
           const versionInfo: VersionInfo = await response.json();
+
+          // Cache the response
+          setLastVersionResponse({
+            data: versionInfo,
+            timestamp: now,
+          });
 
           if (versionInfo.version !== currentVersion) {
             console.log(`Version update detected: ${currentVersion} → ${versionInfo.version}`);
@@ -146,6 +198,8 @@ export const VersionChecker: React.FC = () => {
           retryCount: prev.retryCount + 1,
         }));
         console.log('Update check failed:', error);
+      } finally {
+        setIsCheckingVersion(false);
       }
     };
 
@@ -177,7 +231,14 @@ export const VersionChecker: React.FC = () => {
       clearTimeout(scheduleTimer);
       if (interval) clearTimeout(interval);
     };
-  }, [currentVersion, debugInfo.retryCount, isOnline]);
+  }, [
+    currentVersion,
+    debugInfo.retryCount,
+    isCheckingVersion,
+    isOnline,
+    lastVersionResponse.data,
+    lastVersionResponse.timestamp,
+  ]);
 
   // Listen for service worker updates (fallback method)
   useEffect(() => {
