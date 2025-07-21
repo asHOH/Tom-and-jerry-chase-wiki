@@ -13,6 +13,8 @@
 *.json text eol=lf
 *.jsonc text eol=lf
 *.md text eol=lf
+*.mdx text eol=lf
+*.cjs text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
 *.css text eol=lf
