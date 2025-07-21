@@ -12,6 +12,21 @@ const withPwa = withPWA({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
+  buildExcludes: [/middleware-manifest\.json$/],
+  runtimeCaching: [
+    {
+      urlPattern: /^https?.*/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'offlineCache',
+        expiration: {
+          maxEntries: 200,
+        },
+      },
+    },
+  ],
+  // Exclude problematic files from precaching
+  publicExcludes: ['!version.json'],
 });
 
 const withMDX = createMDX({
