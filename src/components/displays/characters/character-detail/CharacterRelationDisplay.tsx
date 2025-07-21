@@ -233,6 +233,7 @@ function CharacterSelector({
         type='button'
         onClick={() => setIsOpen(!isOpen)}
         className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+        aria-label={`添加${relationType}关系`}
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -254,6 +255,7 @@ function CharacterSelector({
               type='button'
               onClick={() => handleSelect(char.id)}
               className='w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2'
+              aria-label={`选择${char.id}`}
             >
               <Image
                 src={
@@ -416,7 +418,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                     )}
                     role={!isEditMode ? 'button' : undefined}
                     tabIndex={!isEditMode ? 0 : undefined}
-                    aria-label={!isEditMode ? `选择角色 ${c.id}` : undefined}
+                    aria-label={!isEditMode ? `选择角色 ${c.id}` : `克制 ${c.id} 的关系`}
                     onClick={() => {
                       if (!isEditMode) {
                         handleSelectCharacter(c.id);
@@ -445,6 +447,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             type='button'
                             onClick={() => countersHook.toggleIsMinor(originalIndex)}
                             className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer'
+                            aria-label={`切换${c.id}的克制关系为${c.isMinor ? '主要' : '次要'}`}
                           >
                             {c.isMinor ? '次要' : '主要'}
                           </button>
@@ -481,6 +484,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         type='button'
                         onClick={() => countersHook.handleRemove(originalIndex)}
                         className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                        aria-label={`移除${c.id}的克制关系`}
                       >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
@@ -558,7 +562,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                     )}
                     role={!isEditMode ? 'button' : undefined}
                     tabIndex={!isEditMode ? 0 : undefined}
-                    aria-label={!isEditMode ? `选择角色 ${c.id}` : undefined}
+                    aria-label={!isEditMode ? `选择角色 ${c.id}` : `被 ${c.id} 克制的关系`}
                     onClick={() => {
                       if (!isEditMode) {
                         handleSelectCharacter(c.id);
@@ -587,6 +591,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             type='button'
                             onClick={() => counteredByHook.toggleIsMinor(originalIndex)}
                             className='text-[10px] px-1 py-0.5 bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200 rounded-full hover:bg-red-300 dark:hover:bg-red-600 cursor-pointer'
+                            aria-label={`切换${c.id}的被克制关系为${c.isMinor ? '主要' : '次要'}`}
                           >
                             {c.isMinor ? '次要' : '主要'}
                           </button>
@@ -623,6 +628,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         type='button'
                         onClick={() => counteredByHook.handleRemove(originalIndex)}
                         className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                        aria-label={`移除${c.id}的被克制关系`}
                       >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
@@ -700,7 +706,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                       )}
                       role={!isEditMode ? 'button' : undefined}
                       tabIndex={!isEditMode ? 0 : undefined}
-                      aria-label={!isEditMode ? `选择角色 ${c.id}` : undefined}
+                      aria-label={!isEditMode ? `选择角色 ${c.id}` : `与 ${c.id} 的协作关系`}
                       onClick={() => {
                         if (!isEditMode) {
                           handleSelectCharacter(c.id);
@@ -729,6 +735,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                               type='button'
                               onClick={() => collaboratorsHook.toggleIsMinor(originalIndex)}
                               className='text-[10px] px-1 py-0.5 bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-200 rounded-full hover:bg-green-300 dark:hover:bg-green-600 cursor-pointer'
+                              aria-label={`切换${c.id}的协作关系为${c.isMinor ? '主要' : '次要'}`}
                             >
                               {c.isMinor ? '次要' : '主要'}
                             </button>
@@ -765,6 +772,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           type='button'
                           onClick={() => collaboratorsHook.handleRemove(originalIndex)}
                           className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                          aria-label={`移除${c.id}的协作关系`}
                         >
                           <svg
                             xmlns='http://www.w3.org/2000/svg'

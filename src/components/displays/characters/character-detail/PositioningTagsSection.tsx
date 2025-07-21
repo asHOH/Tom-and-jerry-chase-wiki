@@ -43,6 +43,7 @@ function TagNameDropdown({
       value={currentValue}
       onChange={(e) => onSelect(e.target.value)}
       className='bg-transparent border-none outline-none text-inherit font-inherit cursor-pointer'
+      aria-label='选择标签名称'
     >
       {availableTags.map((tagName) => (
         <option key={tagName} value={tagName}>
@@ -91,6 +92,7 @@ function WeaponDropdown({
         }
       }}
       className='bg-transparent border-none outline-none text-inherit font-inherit cursor-pointer text-xs'
+      aria-label='选择武器'
     >
       <option value=''>无武器</option>
       <option value='1'>{weapon1Name}</option>
@@ -297,12 +299,14 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                 </div>
                 {isEditMode ? (
                   <>
-                    <span
+                    <button
+                      type='button'
                       className='text-xs text-gray-500 dark:text-gray-400 cursor-pointer'
                       onClick={() => toggleIsMinor(originalIndex)}
+                      aria-label={`切换为${tag.isMinor ? '主要' : '次要'}标签`}
                     >
                       {tag.isMinor ? '(次要)' : '(主要)'}
-                    </span>
+                    </button>
                     <div className='text-xs text-gray-500 dark:text-gray-400'>
                       <WeaponDropdown
                         currentValue={tag.weapon}
