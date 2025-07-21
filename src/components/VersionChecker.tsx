@@ -22,6 +22,9 @@ export const VersionChecker: React.FC = () => {
     retryCount: number;
   }>({ status: 'loading', lastCheck: null, error: null, retryCount: 0 });
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  );
 
   useEffect(() => {
     // Load initial version info
@@ -56,11 +59,39 @@ export const VersionChecker: React.FC = () => {
     loadInitialVersion();
   }, []);
 
+  // Monitor network status
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      // Reset retry count when network recovers
+      setDebugInfo((prev) => ({ ...prev, retryCount: 0, error: null }));
+    };
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   useEffect(() => {
     if (!currentVersion) return;
 
     // Check for updates every 2 minutes
     const checkForUpdates = async () => {
+      // Skip if offline
+      if (!isOnline) {
+        setDebugInfo((prev) => ({
+          ...prev,
+          lastCheck: new Date().toLocaleTimeString(),
+          error: '离线状态，跳过检查',
+        }));
+        return;
+      }
+
       try {
         setDebugInfo((prev) => ({ ...prev, lastCheck: new Date().toLocaleTimeString() }));
 
@@ -118,17 +149,35 @@ export const VersionChecker: React.FC = () => {
       }
     };
 
+    // Calculate retry interval based on failure count (exponential backoff)
+    const getRetryInterval = (retryCount: number) => {
+      const baseInterval = 120000; // 2 minutes
+      const maxInterval = 600000; // 10 minutes max
+      const backoffInterval = Math.min(baseInterval * Math.pow(2, retryCount), maxInterval);
+      return backoffInterval;
+    };
+
     // Initial check after 30 seconds
     const initialTimer = setTimeout(checkForUpdates, 30000);
 
-    // Then check every 2 minutes
-    const interval = setInterval(checkForUpdates, 120000);
+    // Set up interval with exponential backoff
+    let interval: NodeJS.Timeout;
+    const scheduleNextCheck = () => {
+      const retryInterval = getRetryInterval(debugInfo.retryCount);
+      interval = setTimeout(() => {
+        checkForUpdates().finally(() => scheduleNextCheck());
+      }, retryInterval);
+    };
+
+    // Start the scheduling after initial check
+    const scheduleTimer = setTimeout(scheduleNextCheck, 30000);
 
     return () => {
       clearTimeout(initialTimer);
-      clearInterval(interval);
+      clearTimeout(scheduleTimer);
+      if (interval) clearTimeout(interval);
     };
-  }, [currentVersion]);
+  }, [currentVersion, debugInfo.retryCount, isOnline]);
 
   // Listen for service worker updates (fallback method)
   useEffect(() => {
