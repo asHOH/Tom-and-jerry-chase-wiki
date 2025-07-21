@@ -46,5 +46,11 @@ export default async function GotoPage({
   if (mouseSkill) {
     redirect(`/special-skills/mouse/${encodeURIComponent(mouseSkill.name)}`);
   }
+  const skill = Object.values(characters)
+    .flatMap((c) => c.skills)
+    .find((skill) => skill.name === name || skill.aliases?.includes(name));
+  if (skill) {
+    redirect(`/characters/${skill.id.split('-')[0]}#Skill:${encodeURIComponent(skill.name)}`);
+  }
   notFound();
 }

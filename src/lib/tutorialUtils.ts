@@ -7,12 +7,6 @@ export interface TutorialStep {
 
 export const TUTORIAL_STEPS: TutorialStep[] = [
   {
-    id: 'character-name-edit',
-    targetSelector: '[data-tutorial-id="character-name-edit"]',
-    message: '角色名称。若要创建新角色，请更改此处的角色名。',
-    position: 'bottom',
-  },
-  {
     id: 'skill-allocation-edit',
     targetSelector: '[data-tutorial-id="skill-allocation-edit"]',
     message:
@@ -23,7 +17,14 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     id: 'skill-description-edit',
     targetSelector: '[data-tutorial-id="skill-description-edit"]',
     message:
-      '技能描述。可使用[文字](注释)来标记注释；可使用{总伤害}来表示非固定伤害，网站会将其自动拆分为基础伤害和角色增伤；类似地，可使用{_总墙缝伤害}来表示对墙缝的伤害。',
+      '技能描述。可使用[文字](注释)来标记注释；可使用{总伤害}来表示非固定伤害，网站会将其自动拆分为基础伤害和角色增伤；类似地，可使用{_总墙缝伤害}来表示对墙缝的伤害；',
+    position: 'bottom',
+  },
+  {
+    id: 'skill-description-edit-continue',
+    targetSelector: '[data-tutorial-id="skill-description-edit"]',
+    message:
+      '此外，可使用{名称/别名}来引用其他角色、角色技能、知识卡、特技、道具或文档，如{剑客泰菲}、{剑菲}将生成指向剑客泰菲页面的链接。',
     position: 'bottom',
   },
   {
