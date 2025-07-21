@@ -12,21 +12,68 @@ const withPwa = withPWA({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-  buildExcludes: [/middleware-manifest\.json$/],
+  // Exclude problematic build files from precaching
+  buildExcludes: [
+    /middleware-manifest\.json$/,
+    /app-build-manifest\.json$/,
+    /server\/.*\.js$/,
+    /static\/chunks\/.*\.js\.map$/,
+  ],
+  // More conservative runtime caching
   runtimeCaching: [
+    {
+      urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'images',
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        },
+      },
+    },
+    {
+      urlPattern: /^https?.*\.(js|css)$/,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'static-resources',
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 24 * 60 * 60, // 1 day
+        },
+      },
+    },
+    {
+      urlPattern: /^https?.*\/api\/.*$/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'api-cache',
+        networkTimeoutSeconds: 3,
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 5 * 60, // 5 minutes
+        },
+      },
+    },
     {
       urlPattern: /^https?.*/,
       handler: 'NetworkFirst',
       options: {
-        cacheName: 'offlineCache',
+        cacheName: 'pages',
+        networkTimeoutSeconds: 3,
         expiration: {
-          maxEntries: 200,
+          maxEntries: 50,
+          maxAgeSeconds: 24 * 60 * 60, // 1 day
         },
       },
     },
   ],
-  // Exclude problematic files from precaching
-  publicExcludes: ['!version.json'],
+  // Exclude files that might cause 404 errors
+  publicExcludes: ['!version.json', '!noprecache/**/*', '!sw.js', '!workbox-*.js'],
+  // Fallback for offline pages
+  fallbacks: {
+    document: '/offline/',
+  },
 });
 
 const withMDX = createMDX({
@@ -43,6 +90,44 @@ const nextConfig = {
       {
         source: '/version.json',
         destination: '/api/version',
+      },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+        ],
+      },
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization',
+          },
+        ],
       },
     ];
   },
