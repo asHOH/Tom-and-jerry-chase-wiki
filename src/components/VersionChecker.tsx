@@ -7,9 +7,8 @@ interface VersionInfo {
   version: string;
   commitSha: string;
   buildTime: string;
-  timestamp: string;
-  environment: 'vercel' | 'ci' | 'development';
-  generatedAt: string;
+  environment: string;
+  packageVersion: string;
 }
 
 export const VersionChecker: React.FC = () => {
@@ -20,7 +19,8 @@ export const VersionChecker: React.FC = () => {
     status: 'loading' | 'ready' | 'error';
     lastCheck: string | null;
     error: string | null;
-  }>({ status: 'loading', lastCheck: null, error: null });
+    retryCount: number;
+  }>({ status: 'loading', lastCheck: null, error: null, retryCount: 0 });
   const [notificationMessage, setNotificationMessage] = useState('');
 
   useEffect(() => {
@@ -37,17 +37,19 @@ export const VersionChecker: React.FC = () => {
             status: 'ready',
             lastCheck: new Date().toLocaleTimeString(),
             error: null,
+            retryCount: 0,
           });
         } else {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        setDebugInfo({
+        setDebugInfo((prev) => ({
           status: 'error',
           lastCheck: new Date().toLocaleTimeString(),
           error: errorMessage,
-        });
+          retryCount: prev.retryCount + 1,
+        }));
       }
     };
 
@@ -110,6 +112,7 @@ export const VersionChecker: React.FC = () => {
           ...prev,
           error: errorMessage,
           lastCheck: new Date().toLocaleTimeString(),
+          retryCount: prev.retryCount + 1,
         }));
         console.log('Update check failed:', error);
       }
