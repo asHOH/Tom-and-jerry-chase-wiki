@@ -61,6 +61,11 @@ export const contributors: Contributor[] = [
         type: RoleType.ContentWriter,
         characters: ['侦探杰瑞', '蒙金奇', '国王杰瑞', '剑客杰瑞'],
       },
+      {
+        type: RoleType.ContentWriter,
+        characters: ['图茨'],
+        isMinor: true,
+      },
     ],
   },
   {
@@ -70,7 +75,23 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['莱特宁', '剑客莉莉', '侦探泰菲', '佩克斯', '米雪儿', '剑客汤姆', '剑客泰菲'],
+        characters: [
+          '莱特宁',
+          '剑客莉莉',
+          '侦探泰菲',
+          '佩克斯',
+          '米雪儿',
+          '剑客汤姆',
+          '剑客泰菲',
+          '图茨',
+        ],
+      },
+      {
+        type: RoleType.DataTester,
+      },
+      {
+        type: RoleType.ArtProvider,
+        isMinor: true,
       },
     ],
   },
@@ -81,6 +102,9 @@ export const contributors: Contributor[] = [
       {
         type: RoleType.ContentWriter,
         characters: ['罗宾汉泰菲', '魔术师', '库博'],
+      },
+      {
+        type: RoleType.DataTester,
       },
     ],
   },
@@ -273,6 +297,7 @@ export const contributors: Contributor[] = [
       {
         type: RoleType.DataTester,
         characters: ['杰瑞'],
+        isMinor: true,
       },
     ],
   },
