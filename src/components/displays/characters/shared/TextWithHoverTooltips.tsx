@@ -4,6 +4,7 @@ import { renderTextWithHighlights } from '../../../../lib/textUtils';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import { characters } from '@/data';
 import { proxy, useSnapshot } from 'valtio';
+import Link from 'next/link';
 
 /**
  * Parse and render text with tooltips for patterns like {visible text}
@@ -13,7 +14,7 @@ import { proxy, useSnapshot } from 'valtio';
  */
 export const renderTextWithTooltips = (
   text: string,
-  attackBoost: number,
+  attackBoost: number | null,
   wallCrackDamageBoost?: number
 ): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
@@ -52,6 +53,19 @@ export const renderTextWithTooltips = (
     } else {
       visibleText = content;
       const totalAttack = parseFloat(visibleText);
+      if (Number.isNaN(totalAttack) || attackBoost == null) {
+        parts.push(
+          <Link
+            href={`/goto/${encodeURIComponent(content)}`}
+            className='underline'
+            key={`${content}-${tooltipPattern.lastIndex}`}
+          >
+            {content}
+          </Link>
+        );
+        lastIndex = tooltipPattern.lastIndex;
+        continue;
+      }
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
       tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}`;
     }
@@ -119,26 +133,19 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
   const finalParts: (string | React.ReactElement)[] = [];
 
   // Second pass: Handle {visible text} using the moved renderTextWithTooltips
-  if (typeof localCharacter.attackBoost == 'number') {
-    intermediateParts.forEach((part) => {
-      if (typeof part === 'string') {
-        finalParts.push(
-          ...renderTextWithTooltips(
-            part,
-            localCharacter.attackBoost!,
-            'wallCrackDamageBoost' in localCharacter
-              ? localCharacter.wallCrackDamageBoost
-              : undefined
-          )
-        );
-      } else {
-        finalParts.push(part);
-      }
-    });
-  } else {
-    // If no attack boost, just return the intermediate parts
-    finalParts.push(...intermediateParts);
-  }
+  intermediateParts.forEach((part) => {
+    if (typeof part === 'string') {
+      finalParts.push(
+        ...renderTextWithTooltips(
+          part,
+          localCharacter.attackBoost ?? null,
+          'wallCrackDamageBoost' in localCharacter ? localCharacter.wallCrackDamageBoost : undefined
+        )
+      );
+    } else {
+      finalParts.push(part);
+    }
+  });
 
   return <>{finalParts}</>;
 }
