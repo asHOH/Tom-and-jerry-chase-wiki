@@ -10,11 +10,22 @@ export async function GET() {
     process.env.COMMIT_SHA ||
     'unknown';
 
+  // Generate a build-time based version for update detection
+  const buildId = process.env.BUILD_ID || 'dev';
+  const timestamp = process.env.BUILD_TIMESTAMP || Date.now().toString();
+
+  // Create a version that changes with each deployment
+  const version =
+    commitSha !== 'unknown'
+      ? `v${timestamp.slice(-8)}-${commitSha.slice(0, 8)}`
+      : `${packageJson.version}-${buildId}`;
+
   const versionInfo = {
-    version: packageJson.version,
+    version,
     commitSha: commitSha.slice(0, 8), // Use short SHA
     buildTime: new Date().toISOString(), // request time
     environment: process.env.NODE_ENV || 'development',
+    packageVersion: packageJson.version,
   };
 
   return NextResponse.json(versionInfo, {
