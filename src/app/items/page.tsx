@@ -9,8 +9,7 @@ export const dynamic = 'force-static';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '道具 - 猫鼠wiki',
-  // TODO: refine the description
-  description: '道具列表，提升猫击倒、放飞老鼠的能力与老鼠生存、救援的能力',
+  description: '游戏内所有道具列表，包括所有商店道具和部分其它道具。',
   keywords: ['道具', '猫和老鼠', '手游', '攻略'],
   canonicalUrl: 'https://tjwiki.com/items',
 });

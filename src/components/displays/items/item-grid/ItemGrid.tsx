@@ -10,7 +10,7 @@ export default function ItemClient() {
       <header className='text-center space-y-4 mb-8 px-4'>
         <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>道具</h1>
         <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
-          游戏内所有道具列表，包括所有商店道具和部分其它道具，点击道具可查看详细信息与效果。
+          拾取并投掷可对敌方造成伤害等效果。猫鼠相互对抗的关键机制。
         </p>
       </header>
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8'>
