@@ -1,37 +1,25 @@
 import { NextResponse } from 'next/server';
-import { execSync } from 'child_process';
 import packageJson from '@/../package.json';
 
-// Dynamically generate version info
+// Generate version info without shell commands
 export async function GET() {
-  try {
-    // Get the latest git commit SHA
-    const commitSha = execSync('git rev-parse HEAD').toString().trim();
+  // Use environment variables that are available at build time
+  const commitSha =
+    process.env.VERCEL_GIT_COMMIT_SHA ||
+    process.env.GITHUB_SHA ||
+    process.env.COMMIT_SHA ||
+    'unknown';
 
-    const versionInfo = {
-      version: packageJson.version,
-      commitSha,
-      buildTime: new Date().toISOString(), // This is now request time
-    };
+  const versionInfo = {
+    version: packageJson.version,
+    commitSha: commitSha.slice(0, 8), // Use short SHA
+    buildTime: new Date().toISOString(), // request time
+    environment: process.env.NODE_ENV || 'development',
+  };
 
-    return NextResponse.json(versionInfo, {
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-      },
-    });
-  } catch (error) {
-    console.error('Failed to generate version info:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-    // Return a fallback response if git command fails
-    const fallbackInfo = {
-      version: packageJson.version,
-      commitSha: 'unknown',
-      buildTime: new Date().toISOString(),
-      error: 'Failed to retrieve git commit SHA',
-      details: errorMessage,
-    };
-
-    return NextResponse.json(fallbackInfo, { status: 500 });
-  }
+  return NextResponse.json(versionInfo, {
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+    },
+  });
 }
