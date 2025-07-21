@@ -3,6 +3,7 @@ import type { KnowledgeCardGroupSet } from '@/data/types';
 import { KnowledgeCardGroup } from './KnowledgeCardSection';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useAppContext } from '@/context/AppContext';
+import clsx from 'clsx';
 
 interface KnowledgeCardGroupSetDisplayProps {
   groupSet: DeepReadonly<KnowledgeCardGroupSet>;
@@ -40,7 +41,11 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
 
   return (
     <div
-      className={`transition-all ${isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in'} ${isOpen ? 'mb-2' : 'mb-0'}`}
+      className={clsx(
+        'transition-all',
+        isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in',
+        isOpen ? 'mb-2' : 'mb-0'
+      )}
     >
       <button
         type='button'
@@ -50,9 +55,10 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
       >
         <h3 className='pl-1 text-lg'>{groupSet.id}</h3>
         <svg
-          className={`w-6 h-6 transform transition-transform duration-200 ease-out ${
+          className={clsx(
+            'w-6 h-6 transform transition-transform duration-200 ease-out',
             isOpen ? 'rotate-0' : '-rotate-90'
-          }`}
+          )}
           fill='none'
           stroke='currentColor'
           viewBox='0 0 24 24'
@@ -67,9 +73,11 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
         </svg>
       </button>
       <div
-        className={`transition-all ease-out ${isOpen ? 'duration-300' : 'duration-200'} ${
+        className={clsx(
+          'transition-all ease-out',
+          isOpen ? 'duration-300' : 'duration-200',
           isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        )}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
         {...(!isOpen && { 'aria-hidden': true })}
       >

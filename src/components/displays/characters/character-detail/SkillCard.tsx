@@ -18,6 +18,7 @@ import {
 } from '@/lib/skillUtils';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useDarkMode } from '@/context/DarkModeContext';
+import clsx from 'clsx';
 
 interface SkillCardProps {
   skill: DeepReadonly<Skill>;
@@ -222,7 +223,7 @@ export default function SkillCard({
                         }}
                         className='w-3 h-3'
                       />
-                      <span className={skill.cancelableSkill == option ? 'font-bold' : ''}>
+                      <span className={clsx(skill.cancelableSkill == option ? 'font-bold' : '')}>
                         {option}
                       </span>
                     </label>
@@ -267,7 +268,9 @@ export default function SkillCard({
                         }}
                         className='w-3 h-3'
                       />
-                      <span className={activeCancelableOptions.includes(option) ? 'font-bold' : ''}>
+                      <span
+                        className={clsx({ 'font-bold': activeCancelableOptions.includes(option) })}
+                      >
                         {option}
                       </span>
                     </label>
@@ -318,7 +321,7 @@ export default function SkillCard({
                         }}
                         className='w-3 h-3'
                       />
-                      <span className={skill.cancelableAftercast == option ? 'font-bold' : ''}>
+                      <span className={clsx({ 'font-bold': skill.cancelableAftercast == option })}>
                         {option}
                       </span>
                     </label>
@@ -383,7 +386,11 @@ export default function SkillCard({
                         }}
                         className='w-3 h-3'
                       />
-                      <span className={activeCancelableOptions.includes(option) ? 'font-bold' : ''}>
+                      <span
+                        className={clsx({
+                          'font-bold': activeCancelableOptions.includes(option),
+                        })}
+                      >
                         {option}
                       </span>
                     </label>
@@ -430,7 +437,9 @@ export default function SkillCard({
                       }}
                       className='w-3 h-3'
                     />
-                    <span className={currentTiming === option ? 'font-bold' : ''}>{option}</span>
+                    <span className={clsx({ 'font-bold': currentTiming === option })}>
+                      {option}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -457,7 +466,9 @@ export default function SkillCard({
                       }}
                       className='w-3 h-3'
                     />
-                    <span className={currentCueRange === option ? 'font-bold' : ''}>{option}</span>
+                    <span className={clsx({ 'font-bold': currentCueRange === option })}>
+                      {option}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -522,11 +533,12 @@ export default function SkillCard({
                 <button
                   type='button'
                   onClick={() => setShowVideoAddress(!showVideoAddress)}
-                  className={`text-xs px-2 py-1 rounded-md block w-full text-center transition-colors ${
+                  className={clsx(
+                    'text-xs px-2 py-1 rounded-md block w-full text-center transition-colors',
                     skill.videoUrl
                       ? 'text-blue-600 hover:underline bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
                       : 'text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900'
-                  }`}
+                  )}
                   data-tutorial-id='skill-video-url-edit'
                 >
                   {showVideoAddress ? '隐藏视频地址' : skill.videoUrl ? '查看视频' : '无视频'}
@@ -669,7 +681,10 @@ export default function SkillCard({
             .map((level: SkillLevel) => (
               <div
                 key={`${skill.id}-${level.level}`}
-                className={`p-4 rounded ${getSkillLevelContainerColor(level.level, isDarkMode)} dark:text-gray-300`}
+                className={clsx(
+                  'p-4 rounded dark:text-gray-300',
+                  getSkillLevelContainerColor(level.level, isDarkMode)
+                )}
               >
                 <p className='px-2 py-1 whitespace-pre-wrap'>
                   <span

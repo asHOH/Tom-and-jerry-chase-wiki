@@ -12,6 +12,7 @@ import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { useSnapshot } from 'valtio';
 import { setNestedProperty } from '@/lib/editUtils';
 import EditableField from '@/components/ui/EditableField';
+import clsx from 'clsx';
 
 type Props = {
   id: string;
@@ -407,11 +408,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                 return (
                   <div
                     key={c.id}
-                    className={`flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 ${
-                      !isEditMode
-                        ? 'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95'
-                        : ''
-                    } ${c.isMinor ? 'opacity-60' : ''}`}
+                    className={clsx(
+                      'flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30',
+                      !isEditMode &&
+                        'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95',
+                      c.isMinor && 'opacity-60'
+                    )}
                     role={!isEditMode ? 'button' : undefined}
                     tabIndex={!isEditMode ? 0 : undefined}
                     aria-label={!isEditMode ? `选择角色 ${c.id}` : undefined}
@@ -548,11 +550,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                 return (
                   <div
                     key={c.id}
-                    className={`flex flex-row items-center gap-3 p-2 rounded-lg bg-red-50 dark:bg-red-900/30 ${
-                      !isEditMode
-                        ? 'cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95'
-                        : ''
-                    } ${c.isMinor ? 'opacity-60' : ''}`}
+                    className={clsx(
+                      'flex flex-row items-center gap-3 p-2 rounded-lg bg-red-50 dark:bg-red-900/30',
+                      !isEditMode &&
+                        'cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95',
+                      c.isMinor && 'opacity-60'
+                    )}
                     role={!isEditMode ? 'button' : undefined}
                     tabIndex={!isEditMode ? 0 : undefined}
                     aria-label={!isEditMode ? `选择角色 ${c.id}` : undefined}
@@ -689,11 +692,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   return (
                     <div
                       key={c.id}
-                      className={`flex flex-row items-center gap-3 p-2 rounded-lg bg-green-50 dark:bg-green-900/30 ${
-                        !isEditMode
-                          ? 'cursor-pointer transition-shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800/40 focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95'
-                          : ''
-                      } ${c.isMinor ? 'opacity-60' : ''}`}
+                      className={clsx(
+                        'flex flex-row items-center gap-3 p-2 rounded-lg bg-green-50 dark:bg-green-900/30',
+                        !isEditMode &&
+                          'cursor-pointer transition-shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800/40 focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95',
+                        c.isMinor && 'opacity-60'
+                      )}
                       role={!isEditMode ? 'button' : undefined}
                       tabIndex={!isEditMode ? 0 : undefined}
                       aria-label={!isEditMode ? `选择角色 ${c.id}` : undefined}

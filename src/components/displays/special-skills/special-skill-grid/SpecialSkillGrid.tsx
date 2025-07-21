@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { specialSkills } from '@/data';
 import { useState } from 'react';
+import clsx from 'clsx';
 
 const allSkills = [...Object.values(specialSkills.cat), ...Object.values(specialSkills.mouse)];
 
@@ -39,14 +40,17 @@ export default function SpecialSkillClient() {
                   type='button'
                   key={factionName}
                   onClick={() => setSelectedFaction(isActive ? null : factionName)}
-                  className={`px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none
-                    ${
-                      isActive
-                        ? factionName === 'cat'
-                          ? 'bg-yellow-200 text-yellow-800 dark:bg-yellow-400 dark:text-black'
-                          : 'bg-sky-200 text-sky-800 dark:bg-sky-400 dark:text-black'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                    }`}
+                  className={clsx(
+                    'px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
+                    {
+                      'bg-yellow-200 text-yellow-800 dark:bg-yellow-400 dark:text-black':
+                        isActive && factionName === 'cat',
+                      'bg-sky-200 text-sky-800 dark:bg-sky-400 dark:text-black':
+                        isActive && factionName === 'mouse',
+                      'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300':
+                        !isActive,
+                    }
+                  )}
                 >
                   {factionName === 'cat' ? '猫阵营' : '鼠阵营'}
                 </button>

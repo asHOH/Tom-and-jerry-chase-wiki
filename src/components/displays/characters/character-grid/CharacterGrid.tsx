@@ -16,6 +16,7 @@ import { characters as allCharacters } from '@/data';
 import CharacterCreate from './CharacterCreate';
 import { getPositioningTagColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
+import clsx from 'clsx';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const { isDetailedView: isDetailed } = useAppContext();
@@ -164,7 +165,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                   type='button'
                   onClick={() => togglePositioningTagFilter(tag as PositioningTagName)}
                   style={buttonStyle}
-                  className={!isActive ? 'hover:bg-gray-200' : ''}
+                  className={clsx(!isActive && 'hover:bg-gray-200')}
                 >
                   {tag}
                 </button>

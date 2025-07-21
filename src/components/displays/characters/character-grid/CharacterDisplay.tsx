@@ -11,6 +11,7 @@ import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
 import Image from 'next/image';
+import clsx from 'clsx';
 
 export default function CharacterDisplay({
   id,
@@ -30,10 +31,6 @@ export default function CharacterDisplay({
     return sortPositioningTags(positioningTags, factionId as 'cat' | 'mouse');
   }, [positioningTags, factionId]);
 
-  const entryCardClass = isEntryCard
-    ? 'opacity-60 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50'
-    : '';
-
   return (
     <BaseCard
       variant='character'
@@ -47,7 +44,10 @@ export default function CharacterDisplay({
         }
       }}
       aria-label={`查看${name}角色详情`}
-      className={entryCardClass}
+      className={clsx(
+        isEntryCard &&
+          'opacity-60 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50'
+      )}
     >
       <GameImage
         src={imageUrl}

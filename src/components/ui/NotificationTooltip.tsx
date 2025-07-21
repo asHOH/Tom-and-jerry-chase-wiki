@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import clsx from 'clsx';
 
 interface NotificationTooltipProps {
   message: string;
@@ -149,9 +150,11 @@ const NotificationTooltip: React.FC<NotificationTooltipProps> = ({
 
   return createPortal(
     <div
-      className={`fixed bottom-4 right-4 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 ease-out ${getTypeStyles()} ${
+      className={clsx(
+        'fixed bottom-4 right-4 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 ease-out',
+        getTypeStyles(),
         isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
-      }`}
+      )}
       style={{ position: 'fixed' }}
     >
       <div className='flex items-center space-x-2'>

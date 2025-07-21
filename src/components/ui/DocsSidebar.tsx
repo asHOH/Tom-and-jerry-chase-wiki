@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { DocPage } from '@/lib/docUtils';
+import clsx from 'clsx';
 
 interface DocsSidebarProps {
   docPages: DocPage[];
@@ -59,13 +60,12 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`
-          fixed lg:static inset-y-0 left-0 z-40 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700
-          transform transition-all duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          ${isCollapsed ? 'lg:w-16' : 'w-full sm:w-80 lg:w-64'}
-          lg:block
-        `}
+        className={clsx(
+          'fixed lg:static inset-y-0 left-0 z-40 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700',
+          'transform transition-all duration-300 ease-in-out lg:block',
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+          isCollapsed ? 'lg:w-16' : 'w-full sm:w-80 lg:w-64'
+        )}
       >
         <div className='flex flex-col h-full'>
           {/* Header */}
@@ -80,9 +80,10 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
             {/* Desktop collapse button */}
             <button
               onClick={toggleCollapse}
-              className={`hidden lg:flex absolute top-6 right-4 p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors ${
-                isCollapsed ? 'left-4 right-auto' : ''
-              }`}
+              className={clsx(
+                'hidden lg:flex absolute top-6 right-4 p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors',
+                isCollapsed && 'left-4 right-auto'
+              )}
               aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -111,20 +112,18 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
               {/* Home link */}
               <Link
                 href='/docs'
-                className={`
-                  flex items-center rounded-md text-sm font-medium transition-colors
-                  ${isCollapsed ? 'px-2 py-2 justify-center' : 'px-3 py-2'}
-                  ${
-                    pathname === '/docs'
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-l-4 border-blue-500'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
-                  }
-                `}
+                className={clsx(
+                  'flex items-center rounded-md text-sm font-medium transition-colors',
+                  isCollapsed ? 'px-2 py-2 justify-center' : 'px-3 py-2',
+                  pathname === '/docs'
+                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-l-4 border-blue-500'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
+                )}
                 onClick={() => setIsOpen(false)}
                 title={isCollapsed ? 'Overview' : undefined}
               >
                 <svg
-                  className={`w-4 h-4 flex-shrink-0 ${isCollapsed ? '' : 'mr-3'}`}
+                  className={clsx('w-4 h-4 flex-shrink-0', !isCollapsed && 'mr-3')}
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
@@ -160,20 +159,18 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                         <Link
                           key={page.slug}
                           href={page.path}
-                          className={`
-                            flex items-center rounded-md text-sm font-medium transition-colors
-                            ${isCollapsed ? 'px-2 py-2 justify-center' : 'px-3 py-2'}
-                            ${
-                              isActive
-                                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-l-4 border-blue-500'
-                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
-                            }
-                          `}
+                          className={clsx(
+                            'flex items-center rounded-md text-sm font-medium transition-colors',
+                            isCollapsed ? 'px-2 py-2 justify-center' : 'px-3 py-2',
+                            isActive
+                              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-l-4 border-blue-500'
+                              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
+                          )}
                           onClick={() => setIsOpen(false)}
                           title={isCollapsed ? page.title : undefined}
                         >
                           <svg
-                            className={`w-4 h-4 flex-shrink-0 ${isCollapsed ? '' : 'mr-3'}`}
+                            className={clsx('w-4 h-4 flex-shrink-0', !isCollapsed && 'mr-3')}
                             fill='none'
                             stroke='currentColor'
                             viewBox='0 0 24 24'

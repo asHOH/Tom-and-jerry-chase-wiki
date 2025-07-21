@@ -5,6 +5,7 @@ import { useState, useMemo } from 'react';
 import type { Skill } from '@/data/types';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useScrollSpy } from '@/lib/useScrollSpy';
+import clsx from 'clsx';
 
 function CharacterSectionIndexItem({
   name,
@@ -18,11 +19,12 @@ function CharacterSectionIndexItem({
   return (
     <li>
       <a
-        className={`flex items-center gap-0.5 px-1 py-0.5 rounded transition-colors text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600 ${
+        className={clsx(
+          'flex items-center gap-0.5 px-1 py-0.5 rounded transition-colors text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600',
           isActive
             ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 font-medium'
             : 'text-gray-700 dark:text-gray-200'
-        }`}
+        )}
         href={`#${type}:${name}`}
         aria-label={name}
       >
@@ -80,16 +82,20 @@ export default function CharacterSectionIndex() {
           <button
             type='button'
             aria-label={skillsOpen ? '折叠技能描述' : '展开技能描述'}
-            className={`flex items-center justify-between w-full text-sm font-bold px-1 py-1 mb-1 focus:outline-none cursor-pointer transition-colors ${
+            className={clsx(
+              'flex items-center justify-between w-full text-sm font-bold px-1 py-1 mb-1 focus:outline-none cursor-pointer transition-colors',
               activeSection === 'Section:技能描述' || isSkillActive
                 ? 'text-blue-800 dark:text-blue-200'
                 : 'dark:text-white'
-            }`}
+            )}
             onClick={() => setSkillsOpen((open) => !open)}
           >
             <span>技能描述</span>
             <svg
-              className={`w-4 h-4 transform transition-transform duration-200 ease-out ${shouldExpandSkills ? 'rotate-0' : '-rotate-90'}`}
+              className={clsx(
+                'w-4 h-4 transform transition-transform duration-200 ease-out',
+                shouldExpandSkills ? 'rotate-0' : '-rotate-90'
+              )}
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -104,7 +110,11 @@ export default function CharacterSectionIndex() {
             </svg>
           </button>
           <div
-            className={`transition-all ease-out ${shouldExpandSkills ? 'duration-300' : 'duration-200'} ${shouldExpandSkills ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
+            className={clsx(
+              'transition-all ease-out',
+              shouldExpandSkills ? 'duration-300' : 'duration-200',
+              shouldExpandSkills ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+            )}
             style={{ pointerEvents: shouldExpandSkills ? 'auto' : 'none' }}
             {...(!shouldExpandSkills && { 'aria-hidden': true })}
           >

@@ -17,6 +17,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useSnapshot } from 'valtio';
 import { characters } from '@/data';
 import { useDarkMode } from '@/context/DarkModeContext';
+import clsx from 'clsx';
 
 // Component to render text with item key tooltips
 const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }) => {
@@ -144,7 +145,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
 
       const iconElement = (
         <div
-          className={`relative w-10 h-10 border-2 ${isDelayed ? '' : 'rounded-full'}`}
+          className={clsx('relative w-10 h-10 border-2', !isDelayed && 'rounded-full')}
           style={baseStyle}
         >
           <Image

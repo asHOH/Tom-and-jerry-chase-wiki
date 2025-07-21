@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import clsx from 'clsx';
 
 interface TooltipProps {
   children: React.ReactNode;
@@ -105,7 +106,10 @@ export default function Tooltip({
       <span
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`cursor-help border-b border-dotted border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-400 transition-colors ${className}`}
+        className={clsx(
+          'cursor-help border-b border-dotted border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-400 transition-colors',
+          className
+        )}
       >
         {children}
       </span>

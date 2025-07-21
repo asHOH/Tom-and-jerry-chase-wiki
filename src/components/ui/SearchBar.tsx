@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion'; // Import AnimatePresence
 import SearchDialog from './SearchDialog'; // Import the new SearchDialog component
 import Tooltip from './Tooltip';
+import clsx from 'clsx';
 
 type SearchBarProps = {
   isMobile: boolean; // Add isMobile prop
@@ -46,13 +47,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ isMobile }) => {
         <button
           type='button'
           onClick={handleOpenSearch}
-          className={`
-            ${isMobile ? 'p-2 w-[40px] h-[40px]' : 'p-2 w-11 h-11'}
-            rounded-md bg-gray-200 text-gray-900
-            dark:bg-slate-700 dark:text-gray-200
-            focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
-            flex items-center justify-center border-none cursor-pointer transition-colors
-          `}
+          className={clsx(
+            'rounded-md bg-gray-200 text-gray-900',
+            'dark:bg-slate-700 dark:text-gray-200',
+            'focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400',
+            'flex items-center justify-center border-none cursor-pointer transition-colors',
+            isMobile ? 'p-2 w-[40px] h-[40px]' : 'p-2 w-11 h-11'
+          )}
         >
           {/* Search icon */}
           <svg

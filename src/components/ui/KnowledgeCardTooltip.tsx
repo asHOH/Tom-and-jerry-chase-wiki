@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
+import clsx from 'clsx';
 
 interface KnowledgeCardTooltipProps {
   children: React.ReactNode;
@@ -85,7 +86,7 @@ export default function KnowledgeCardTooltip({
       <span
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`cursor-pointer transition-colors ${className}`}
+        className={clsx('cursor-pointer transition-colors', className)}
       >
         {children}
       </span>

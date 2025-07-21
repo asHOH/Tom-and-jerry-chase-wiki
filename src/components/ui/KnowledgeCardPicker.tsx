@@ -6,6 +6,7 @@ import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
 import { Card } from '@/data/types';
 import Image from 'next/image';
 import Tooltip from './Tooltip';
+import clsx from 'clsx';
 
 interface KnowledgeCardPickerProps {
   isOpen: boolean;
@@ -70,7 +71,9 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
-      <div className={`bg-white dark:bg-slate-800 p-6 shadow-xl flex flex-col ${pickerClasses}`}>
+      <div
+        className={clsx('bg-white dark:bg-slate-800 p-6 shadow-xl flex flex-col', pickerClasses)}
+      >
         <h2 className='text-2xl font-bold mb-4 text-gray-900 dark:text-white'>选择知识卡</h2>
         <div className='flex-grow overflow-y-auto'>
           <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4'>
@@ -81,11 +84,12 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
                 <Tooltip key={card.id} content={`${card.id} (${card.cost}费)`}>
                   <div
                     onClick={() => handleCardClick(cardIdWithRank)}
-                    className={`relative w-full aspect-square cursor-pointer border-4 rounded-lg transition-all duration-200 ${
+                    className={clsx(
+                      'relative w-full aspect-square cursor-pointer border-4 rounded-lg transition-all duration-200',
                       isSelected
                         ? 'border-blue-500 dark:border-blue-400 scale-105'
                         : 'border-transparent'
-                    }`}
+                    )}
                   >
                     <Image
                       src={`${imageBasePath}${cardIdWithRank}.png`}

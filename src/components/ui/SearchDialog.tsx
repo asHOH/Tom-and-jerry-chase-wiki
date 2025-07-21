@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion'; // Import motion
+import clsx from 'clsx';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useAppContext } from '@/context/AppContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
@@ -189,7 +190,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
 
   return (
     <motion.div
-      className={`fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center z-50 ${isMobile ? 'p-0' : ''}`}
+      className={clsx(
+        'fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center z-50',
+        isMobile && 'p-0'
+      )}
       initial='hidden'
       animate='visible'
       exit='exit'
@@ -198,7 +202,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
     >
       <motion.div
         ref={dialogRef}
-        className={`bg-white dark:bg-gray-800 shadow-xl p-4 relative ${isMobile ? 'w-full h-full rounded-none flex flex-col' : 'rounded-lg w-full max-w-md mx-auto'}`}
+        className={clsx(
+          'bg-white dark:bg-gray-800 shadow-xl p-4 relative',
+          isMobile
+            ? 'w-full h-full rounded-none flex flex-col'
+            : 'rounded-lg w-full max-w-md mx-auto'
+        )}
         variants={dialogVariants} // Apply dialog animation
         transition={{ duration: 0.2 }}
       >
@@ -248,7 +257,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
 
         {searchQuery.length > 0 && searchResults.length > 0 && (
           <motion.ul
-            className={`${isMobile ? 'flex-1' : 'max-h-60'} overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md`}
+            className={clsx(
+              'overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md',
+              isMobile ? 'flex-1' : 'max-h-60'
+            )}
             initial='hidden'
             animate='visible'
             variants={{
@@ -273,7 +285,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                 <button
                   type='button'
                   onClick={() => handleResultClick(result)}
-                  className={`flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left ${highlightedIndex === index ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
+                  className={clsx(
+                    'flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left',
+                    highlightedIndex === index && 'bg-gray-100 dark:bg-gray-700'
+                  )}
                   onMouseEnter={() => setHighlightedIndex(index)}
                 >
                   {result.imageUrl && (

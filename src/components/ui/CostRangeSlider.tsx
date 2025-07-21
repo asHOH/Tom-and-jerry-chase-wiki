@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { getCardCostColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
+import clsx from 'clsx';
 
 interface CostRangeSliderProps {
   min: number;
@@ -174,7 +175,7 @@ export default function CostRangeSlider({
   );
 
   return (
-    <div className={`relative w-full ${className}`}>
+    <div className={clsx('relative w-full', className)}>
       <div
         ref={sliderRef}
         className='relative w-full h-8'
@@ -244,11 +245,12 @@ export default function CostRangeSlider({
           return (
             <span
               key={cost}
-              className={`flex-1 text-center transition-all duration-150 cursor-default ${
+              className={clsx(
+                'flex-1 text-center transition-all duration-150 cursor-default',
                 isInRange
                   ? 'text-gray-700 dark:text-gray-300 text-xs font-medium'
                   : 'text-gray-400 dark:text-gray-500 text-[10px] font-normal'
-              }`}
+              )}
             >
               {cost}
             </span>

@@ -2,6 +2,7 @@
 
 import { useNavigation } from '@/lib/useNavigation';
 import React, { ReactNode, useState } from 'react';
+import clsx from 'clsx';
 
 export default function CharacterSection({
   title,
@@ -25,7 +26,11 @@ export default function CharacterSection({
 
   return (
     <div
-      className={`transition-all ${isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in'} ${isOpen ? 'mb-8' : 'mb-0'}`}
+      className={clsx(
+        'transition-all',
+        isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in',
+        isOpen ? 'mb-8' : 'mb-0'
+      )}
       id={`Section:${title}`}
     >
       <button
@@ -52,9 +57,10 @@ export default function CharacterSection({
           </svg>
         ) : (
           <svg
-            className={`w-6 h-6 transform transition-transform duration-200 ease-out ${
+            className={clsx(
+              'w-6 h-6 transform transition-transform duration-200 ease-out',
               isOpen ? 'rotate-0' : '-rotate-90'
-            }`}
+            )}
             fill='none'
             stroke='currentColor'
             viewBox='0 0 24 24'
@@ -70,9 +76,11 @@ export default function CharacterSection({
         )}
       </button>
       <div
-        className={`transition-all ease-out ${isOpen ? 'duration-300' : 'duration-200'} ${
+        className={clsx(
+          'transition-all ease-out',
+          isOpen ? 'duration-300' : 'duration-200',
           isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        )}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
         {...(!isOpen && { 'aria-hidden': true })}
       >

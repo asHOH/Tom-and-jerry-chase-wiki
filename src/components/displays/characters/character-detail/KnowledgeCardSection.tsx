@@ -17,6 +17,7 @@ import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { characters } from '@/data';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
 import { useDarkMode } from '@/context/DarkModeContext';
+import clsx from 'clsx';
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: DeepReadonly<(KnowledgeCardGroup | KnowledgeCardGroupSet)[]>;
@@ -67,26 +68,32 @@ export function KnowledgeCardGroup({
 
   return (
     <div
-      className={`flex flex-col transition-all duration-300 ease-in-out ${
+      className={clsx(
+        'flex flex-col transition-all duration-300 ease-in-out',
         isSqueezedView ? 'space-y-1' : 'space-y-2'
-      }`}
+      )}
     >
       <div
-        className={`flex ${
+        className={clsx(
+          'flex gap-0.5 sm:gap-1 md:gap-2 lg:gap-4',
           isSqueezedView ? 'items-center' : 'items-start'
-        } gap-0.5 sm:gap-1 md:gap-2 lg:gap-4`}
+        )}
       >
         <Tooltip content={tooltipContent} className='border-none'>
           <div
-            className={`flex-shrink-0 w-10 h-10 rounded-full border-2 ${containerClass} flex items-center justify-center text-sm font-bold`}
+            className={clsx(
+              'flex-shrink-0 w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold',
+              containerClass
+            )}
           >
             {totalCost}
           </div>
         </Tooltip>
         <div
-          className={`flex flex-1 min-w-0 ${
+          className={clsx(
+            'flex flex-1 min-w-0',
             isSqueezedView ? 'flex-wrap gap-1' : 'flex-wrap gap-0 sm:gap-0.5 md:gap-1 lg:gap-2'
-          }`}
+          )}
         >
           {group.map((cardId) => {
             const cardName = cardId.split('-')[1]!;
@@ -101,7 +108,9 @@ export function KnowledgeCardGroup({
                   imageUrl={`${imageBasePath}${cardId}.png`}
                 >
                   <span
-                    className={`px-2 py-1 rounded-md text-sm font-medium cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm`}
+                    className={clsx(
+                      'px-2 py-1 rounded-md text-sm font-medium cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm'
+                    )}
                     style={{
                       backgroundColor: rankColors.backgroundColor,
                       color: rankColors.color,
@@ -186,9 +195,10 @@ export function KnowledgeCardGroup({
       </div>
       {(!!description || isEditMode) && (
         <div
-          className={`bg-gray-50 dark:bg-slate-700/50 p-2 sm:p-3 rounded-lg ${
+          className={clsx(
+            'bg-gray-50 dark:bg-slate-700/50 p-2 sm:p-3 rounded-lg',
             isSqueezedView ? 'ml-11 sm:ml-12 md:ml-13 lg:ml-14' : 'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
-          }`}
+          )}
         >
           <EditableField
             tag='p'
@@ -304,11 +314,12 @@ export default function KnowledgeCardSection({
                 <button
                   type='button'
                   onClick={() => setIsSqueezedView(!isSqueezedView)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={clsx(
+                    'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200',
                     isSqueezedView
                       ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
-                  }`}
+                  )}
                   aria-label={isSqueezedView ? '切换到普通视图' : '切换到紧凑视图'}
                 >
                   <svg
@@ -317,9 +328,10 @@ export default function KnowledgeCardSection({
                     viewBox='0 0 24 24'
                     strokeWidth='2'
                     stroke='currentColor'
-                    className={`w-4 h-4 transition-transform duration-200 ${
+                    className={clsx(
+                      'w-4 h-4 transition-transform duration-200',
                       isSqueezedView ? 'rotate-90' : 'rotate-180'
-                    }`}
+                    )}
                   >
                     <path
                       strokeLinecap='round'
@@ -364,11 +376,12 @@ export default function KnowledgeCardSection({
             <button
               type='button'
               onClick={() => setIsSqueezedView(!isSqueezedView)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+              className={clsx(
+                'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200',
                 isSqueezedView
                   ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
-              }`}
+              )}
               aria-label={isSqueezedView ? '切换到普通视图' : '切换到紧凑视图'}
             >
               <svg
@@ -377,9 +390,10 @@ export default function KnowledgeCardSection({
                 viewBox='0 0 24 24'
                 strokeWidth='2'
                 stroke='currentColor'
-                className={`w-4 h-4 transition-transform duration-200 ${
+                className={clsx(
+                  'w-4 h-4 transition-transform duration-200',
                   isSqueezedView ? 'rotate-90' : 'rotate-180'
-                }`}
+                )}
               >
                 <path
                   strokeLinecap='round'

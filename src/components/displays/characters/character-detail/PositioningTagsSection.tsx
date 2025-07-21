@@ -15,6 +15,7 @@ import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
 import Image from 'next/image';
+import clsx from 'clsx';
 
 // Helper function to get available tag names based on faction
 function getAvailableTagNames(factionId: 'cat' | 'mouse'): string[] {
@@ -238,12 +239,10 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
           return (
             <div
               key={index}
-              className={`rounded-lg p-3 ${getPositioningTagContainerColor(
-                tag.tagName,
-                tag.isMinor,
-                factionId,
-                isDarkMode
-              )}`}
+              className={clsx(
+                'rounded-lg p-3',
+                getPositioningTagContainerColor(tag.tagName, tag.isMinor, factionId, isDarkMode)
+              )}
             >
               <div className='flex items-center gap-2 mb-2'>
                 <div className='relative'>
@@ -353,7 +352,10 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   tag='p'
                   path={`${tagsKey}.${originalIndex}.additionalDescription`}
                   initialValue={tag.additionalDescription}
-                  className={`text-sm text-gray-600 dark:text-gray-400 mt-2 pl-3 border-l-2 whitespace-pre-wrap ${borderColor}`}
+                  className={clsx(
+                    'text-sm text-gray-600 dark:text-gray-400 mt-2 pl-3 border-l-2 whitespace-pre-wrap',
+                    borderColor
+                  )}
                   onSave={(newValue) =>
                     handleUpdate(originalIndex, newValue, 'additionalDescription')
                   }

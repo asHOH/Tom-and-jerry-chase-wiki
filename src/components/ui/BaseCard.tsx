@@ -1,4 +1,5 @@
 import { designTokens, componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
+import clsx from 'clsx';
 
 type BaseCardProps = {
   children: React.ReactNode;
@@ -78,7 +79,10 @@ export default function BaseCard({
       };
   return (
     <div
-      className={`bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none ${className}`}
+      className={clsx(
+        'bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none',
+        className
+      )}
       {...cardProps}
     >
       {children}
