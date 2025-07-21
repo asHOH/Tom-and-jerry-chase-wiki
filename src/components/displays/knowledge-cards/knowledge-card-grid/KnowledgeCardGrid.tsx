@@ -26,6 +26,9 @@ import { useAppContext } from '@/context/AppContext';
 import clsx from 'clsx';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { cards } from '@/data';
+import PageTitle from '@/components/ui/PageTitle';
+import PageDescription from '@/components/ui/PageDescription';
+import FilterLabel from '@/components/ui/FilterLabel';
 
 export default function KnowledgeCardGrid() {
   // Use centralized filter state management for ranks
@@ -55,18 +58,12 @@ export default function KnowledgeCardGrid() {
       {' '}
       {/* Padding for navbar is now handled at the page level */}
       <header className='text-center space-y-4 mb-8 px-4'>
-        <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>知识卡</h1>
-        <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
-          提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力
-        </p>
+        <PageTitle>知识卡</PageTitle>
+        <PageDescription>提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力</PageDescription>
         {/* Faction Filter Controls */}
         <div className='flex justify-center items-center gap-4 mt-8'>
-          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 hidden sm:inline'>
-            阵营筛选:
-          </span>
-          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 sm:hidden'>
-            筛选:
-          </span>
+          <FilterLabel displayMode='inline'>阵营筛选:</FilterLabel>
+          <FilterLabel displayMode='block'>筛选:</FilterLabel>
           <div className='flex gap-2'>
             {(['cat', 'mouse'] as const).map((factionName) => {
               const factionColor = getFactionButtonColors(factionName, isDarkMode);
@@ -102,12 +99,8 @@ export default function KnowledgeCardGrid() {
         </div>
         {/* Rank Filter Controls */}
         <div className='flex justify-center items-center gap-4 mt-8'>
-          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 hidden sm:inline'>
-            等级筛选:
-          </span>
-          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 sm:hidden'>
-            筛选:
-          </span>
+          <FilterLabel displayMode='inline'>等级筛选:</FilterLabel>
+          <FilterLabel displayMode='block'>筛选:</FilterLabel>
           <div className='flex gap-2'>
             {RANK_OPTIONS.map((rank) => {
               const rankColors = getCardRankColors(rank, false, isDarkMode);
@@ -137,9 +130,7 @@ export default function KnowledgeCardGrid() {
         </div>
         {/* Cost Filter Controls */}
         <div className='flex flex-col sm:flex-row sm:justify-center items-start gap-4'>
-          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 hidden sm:inline sm:mt-2'>
-            费用筛选:
-          </span>
+          <FilterLabel displayMode='inline'>费用筛选:</FilterLabel>
           <div className='w-full max-w-md'>
             <CostRangeSlider
               min={2}
@@ -150,7 +141,7 @@ export default function KnowledgeCardGrid() {
             />
           </div>
         </div>
-      </header>{' '}
+      </header>
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8'>
         {' '}
         {filteredAndSortedCards.map((card) => (

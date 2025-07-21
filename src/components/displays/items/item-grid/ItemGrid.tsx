@@ -3,15 +3,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { items } from '@/data';
+import PageTitle from '@/components/ui/PageTitle';
+import PageDescription from '@/components/ui/PageDescription';
 
 export default function ItemClient() {
   return (
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
-        <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>道具</h1>
-        <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
-          拾取并投掷可对敌方造成伤害等效果。猫鼠相互对抗的关键机制。
-        </p>
+        <PageTitle>道具</PageTitle>
+        <PageDescription>拾取并投掷可对敌方造成伤害等效果——猫鼠相互对抗的关键机制</PageDescription>
       </header>
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8'>
         {Object.values(items).map(({ name, imageUrl }) => (

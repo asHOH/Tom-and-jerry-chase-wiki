@@ -5,6 +5,9 @@ import Image from 'next/image';
 import { specialSkills } from '@/data';
 import { useState } from 'react';
 import clsx from 'clsx';
+import PageTitle from '@/components/ui/PageTitle';
+import PageDescription from '@/components/ui/PageDescription';
+import FilterLabel from '@/components/ui/FilterLabel';
 
 const allSkills = [...Object.values(specialSkills.cat), ...Object.values(specialSkills.mouse)];
 
@@ -19,18 +22,12 @@ export default function SpecialSkillClient() {
   return (
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
-        <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>特技</h1>
-        <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
-          角色可配备的额外技能，合理使用将大幅提高角色能力。
-        </p>
+        <PageTitle>特技</PageTitle>
+        <PageDescription>角色可配备的额外技能，合理使用将大幅提高角色能力</PageDescription>
         {/* Faction Filter Controls */}
         <div className='flex justify-center items-center gap-4 mt-8'>
-          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 hidden sm:inline'>
-            阵营筛选:
-          </span>
-          <span className='text-lg font-medium text-gray-700 dark:text-gray-300 sm:hidden'>
-            筛选:
-          </span>
+          <FilterLabel displayMode='inline'>阵营筛选:</FilterLabel>
+          <FilterLabel displayMode='block'>筛选:</FilterLabel>
           <div className='flex gap-2'>
             {(['cat', 'mouse'] as const).map((factionName) => {
               const isActive = factionName === selectedFaction;

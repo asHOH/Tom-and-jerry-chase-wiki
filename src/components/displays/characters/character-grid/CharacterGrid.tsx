@@ -17,6 +17,9 @@ import CharacterCreate from './CharacterCreate';
 import { getPositioningTagColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
+import PageTitle from '@/components/ui/PageTitle';
+import PageDescription from '@/components/ui/PageDescription';
+import FilterLabel from '@/components/ui/FilterLabel';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const { isDetailedView: isDetailed } = useAppContext();
@@ -83,20 +86,14 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
   return (
     <div className='space-y-8'>
       <header className='text-center space-y-4 mb-8 px-4'>
-        <h1 className='text-4xl font-bold text-blue-600 dark:text-blue-400 py-3'>{faction.name}</h1>
-        <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4 py-2'>
-          {faction.description}
-        </p>
+        <PageTitle>{faction.name}</PageTitle>
+        <PageDescription>{faction.description}</PageDescription>
       </header>
 
       {/* Filter Section */}
       <div className='flex justify-center items-center gap-4 mt-4'>
-        <span className='text-lg font-medium text-gray-700 dark:text-gray-300 hidden sm:inline'>
-          定位筛选:
-        </span>
-        <span className='text-lg font-medium text-gray-700 dark:text-gray-300 sm:hidden'>
-          筛选:
-        </span>
+        <FilterLabel displayMode='inline'>定位筛选:</FilterLabel>
+        <FilterLabel displayMode='block'>筛选:</FilterLabel>
         <div className='flex gap-2'>
           {uniquePositioningTags.map((tag) => {
             const isActive = hasPositioningTagFilter(tag as PositioningTagName);
