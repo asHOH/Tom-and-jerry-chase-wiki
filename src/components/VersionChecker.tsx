@@ -109,30 +109,35 @@ export const VersionChecker: React.FC = () => {
         return;
       }
 
+      // Helper function to handle version updates
+      const handleVersionUpdate = async (versionInfo: VersionInfo, source: string) => {
+        console.log(
+          `Version update detected (${source}): ${currentVersion} → ${versionInfo.version}`
+        );
+        setNotificationMessage(`正在更新到最新版本 ${versionInfo.version}...`);
+        setShowUpdateNotice(true);
+
+        // Update service worker if available
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration) {
+            registration.update();
+          }
+        }
+
+        // Auto-reload after showing notice for 3 seconds
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      };
+
       // Use cached response if it's fresh (less than 30 seconds old)
       const now = Date.now();
       const cacheAge = now - lastVersionResponse.timestamp;
       if (lastVersionResponse.data && cacheAge < 30000) {
         const versionInfo = lastVersionResponse.data;
         if (versionInfo.version !== currentVersion) {
-          console.log(
-            `Version update detected (cached): ${currentVersion} → ${versionInfo.version}`
-          );
-          setNotificationMessage(`正在更新到最新版本 ${versionInfo.version}...`);
-          setShowUpdateNotice(true);
-
-          // Update service worker if available
-          if ('serviceWorker' in navigator) {
-            const registration = await navigator.serviceWorker.getRegistration();
-            if (registration) {
-              registration.update();
-            }
-          }
-
-          // Auto-reload after showing notice for 3 seconds
-          setTimeout(() => {
-            window.location.reload();
-          }, 3000);
+          await handleVersionUpdate(versionInfo, 'cached');
         }
         return;
       }
@@ -156,39 +161,13 @@ export const VersionChecker: React.FC = () => {
           });
 
           if (versionInfo.version !== currentVersion) {
-            console.log(`Version update detected: ${currentVersion} → ${versionInfo.version}`);
-            setNotificationMessage(`正在更新到最新版本 ${versionInfo.version}...`);
-            setShowUpdateNotice(true);
-
-            // Update service worker if available
-            if ('serviceWorker' in navigator) {
-              const registration = await navigator.serviceWorker.getRegistration();
-              if (registration) {
-                registration.update();
-              }
-            }
-
-            // Auto-reload after showing notice for 3 seconds
-            setTimeout(() => {
-              window.location.reload();
-            }, 3000);
-
+            await handleVersionUpdate(versionInfo, 'fresh');
             return;
           }
         }
 
-        // Fallback: Original HEAD request method
-        const headResponse = await fetch('/?_t=' + Date.now(), {
-          method: 'HEAD',
-          cache: 'no-cache',
-        });
-
-        if (headResponse.ok && 'serviceWorker' in navigator) {
-          const registration = await navigator.serviceWorker.getRegistration();
-          if (registration) {
-            registration.update();
-          }
-        }
+        // Reset retry count on successful check
+        setDebugInfo((prev) => ({ ...prev, retryCount: 0, error: null }));
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         setDebugInfo((prev) => ({
@@ -203,33 +182,12 @@ export const VersionChecker: React.FC = () => {
       }
     };
 
-    // Calculate retry interval based on failure count (exponential backoff)
-    const getRetryInterval = (retryCount: number) => {
-      const baseInterval = 120000; // 2 minutes
-      const maxInterval = 600000; // 10 minutes max
-      const backoffInterval = Math.min(baseInterval * Math.pow(2, retryCount), maxInterval);
-      return backoffInterval;
-    };
-
-    // Initial check after 30 seconds
     const initialTimer = setTimeout(checkForUpdates, 30000);
-
-    // Set up interval with exponential backoff
-    let interval: NodeJS.Timeout;
-    const scheduleNextCheck = () => {
-      const retryInterval = getRetryInterval(debugInfo.retryCount);
-      interval = setTimeout(() => {
-        checkForUpdates().finally(() => scheduleNextCheck());
-      }, retryInterval);
-    };
-
-    // Start the scheduling after initial check
-    const scheduleTimer = setTimeout(scheduleNextCheck, 30000);
+    const interval = setInterval(checkForUpdates, 120000); // 2 minutes
 
     return () => {
       clearTimeout(initialTimer);
-      clearTimeout(scheduleTimer);
-      if (interval) clearTimeout(interval);
+      clearInterval(interval);
     };
   }, [
     currentVersion,
