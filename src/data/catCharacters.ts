@@ -1932,7 +1932,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description: '移速、绑火箭速度和攻击增伤提高。',
-            detailedDescription: '移速提高20%，绑火箭速度提高80%，额外获得10攻击增伤。',
+            detailedDescription: '移速提高20%，绑火箭速度提高80%，额外获得15攻击增伤。',
           },
           {
             level: 3,
