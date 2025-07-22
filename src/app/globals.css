@@ -316,12 +316,12 @@ body.edit-mode-banner-visible main {
 
 @keyframes typing {
   0%,
-  60%,
+  80%,
   100% {
     transform: translateY(0);
     opacity: 0.4;
   }
-  30% {
+  40% {
     transform: translateY(-10px);
     opacity: 1;
   }
@@ -367,10 +367,10 @@ body.edit-mode-banner-visible main {
     rgba(255, 255, 255, 0) 0%,
     rgba(255, 255, 255, 0.2) 20%,
     rgba(255, 255, 255, 0.5) 60%,
-    rgba(255, 255, 255, 0)
+    rgba(255, 255, 255, 0) 100%
   );
   background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+  animation: shimmer 2s infinite linear;
 }
 
 .dark .skeleton-shimmer {
@@ -379,7 +379,7 @@ body.edit-mode-banner-visible main {
     rgba(255, 255, 255, 0) 0%,
     rgba(255, 255, 255, 0.05) 20%,
     rgba(255, 255, 255, 0.1) 60%,
-    rgba(255, 255, 255, 0)
+    rgba(255, 255, 255, 0) 100%
   );
 }
 

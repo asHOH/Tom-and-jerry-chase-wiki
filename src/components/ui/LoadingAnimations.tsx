@@ -118,21 +118,21 @@ export function WaveAnimation({ size = 'md', className = '' }: LoadingAnimationP
     <div className={clsx('flex items-end justify-center space-x-1', className)}>
       <div
         className={clsx(barClass, '[animation-delay:-0.4s]')}
-        style={{ animationDuration: '1.2s' }}
+        style={{ animationDuration: '1.4s' }}
       ></div>
       <div
         className={clsx(barClass, '[animation-delay:-0.3s]')}
-        style={{ animationDuration: '1.0s' }}
+        style={{ animationDuration: '1.2s' }}
       ></div>
       <div
         className={clsx(barClass, '[animation-delay:-0.2s]')}
-        style={{ animationDuration: '0.8s' }}
+        style={{ animationDuration: '1.0s' }}
       ></div>
       <div
         className={clsx(barClass, '[animation-delay:-0.1s]')}
-        style={{ animationDuration: '1.0s' }}
+        style={{ animationDuration: '1.2s' }}
       ></div>
-      <div className={barClass} style={{ animationDuration: '1.2s' }}></div>
+      <div className={barClass} style={{ animationDuration: '1.4s' }}></div>
     </div>
   );
 }
