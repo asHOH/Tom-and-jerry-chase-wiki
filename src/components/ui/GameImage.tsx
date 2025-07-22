@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useState } from 'react';
 import { designTokens, componentTokens } from '@/lib/design-tokens';
 
 type ImageSize = keyof typeof componentTokens.image.dimensions;
@@ -9,21 +10,9 @@ type GameImageProps = {
   size: ImageSize;
   className?: string;
   priority?: boolean;
-  placeholder?: 'blur' | 'empty';
-  blurDataURL?: string;
   sizes?: string;
   onLoad?: () => void;
   onError?: () => void;
-};
-
-// Generate a simple blur placeholder for better loading experience
-const generateBlurDataURL = (width: number, height: number): string => {
-  return `data:image/svg+xml;base64,${Buffer.from(
-    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#f3f4f6"/>
-      <rect width="60%" height="60%" x="20%" y="20%" fill="#e5e7eb" rx="8"/>
-    </svg>`
-  ).toString('base64')}`;
 };
 
 export default function GameImage({
@@ -32,12 +21,11 @@ export default function GameImage({
   size,
   className = '',
   priority = false,
-  placeholder = 'blur',
-  blurDataURL,
   sizes,
   onLoad,
   onError,
 }: GameImageProps) {
+  const [isLoaded, setIsLoaded] = useState(false);
   const { width, height } = componentTokens.image.dimensions[size];
 
   // Use card height for details view, image height for others
@@ -49,9 +37,6 @@ export default function GameImage({
   // Detect if this is a cat character image for larger display
   const isCatCharacter = src.includes('/images/cats/');
   const maxHeight = isCatCharacter ? '90%' : '80%';
-
-  // Generate default blur placeholder if not provided
-  const defaultBlurDataURL = blurDataURL || generateBlurDataURL(width, height);
 
   // Optimize sizes attribute based on image size and usage
   const optimizedSizes =
@@ -69,6 +54,11 @@ export default function GameImage({
       }
     })();
 
+  const handleImageLoad = () => {
+    setIsLoaded(true);
+    onLoad?.();
+  };
+
   return (
     <div
       className='w-full bg-gray-200 dark:bg-slate-700 relative overflow-hidden mb-4'
@@ -84,11 +74,10 @@ export default function GameImage({
           width={width}
           height={height}
           priority={priority}
-          placeholder={placeholder}
-          blurDataURL={defaultBlurDataURL}
+          placeholder='empty'
           sizes={optimizedSizes}
           loading={priority ? 'eager' : 'lazy'}
-          onLoad={onLoad}
+          onLoad={handleImageLoad}
           onError={onError}
           style={{
             objectFit: 'contain',
@@ -97,6 +86,7 @@ export default function GameImage({
             width: 'auto',
             height: 'auto',
             transition: designTokens.transitions.normal,
+            opacity: isLoaded ? 1 : 0,
           }}
           className={className}
         />
