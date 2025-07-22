@@ -22,13 +22,13 @@ const withPwa = withPWA({
   // More conservative runtime caching
   runtimeCaching: [
     {
-      urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp)$/,
+      urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
       handler: 'CacheFirst',
       options: {
         cacheName: 'images',
         expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+          maxEntries: 150,
+          maxAgeSeconds: 31536000, // 1 year for optimized images
         },
       },
     },
@@ -134,6 +134,12 @@ const nextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: false,
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000, // 1 year
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   poweredByHeader: false,
   compress: true,

@@ -144,7 +144,7 @@ export default function KnowledgeCardGrid() {
       </header>
       <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8'>
         {' '}
-        {filteredAndSortedCards.map((card) => (
+        {filteredAndSortedCards.map((card, index) => (
           <div key={card.id} className='transform transition-transform hover:-translate-y-1'>
             <KnowledgeCardDisplay
               id={card.id}
@@ -153,6 +153,7 @@ export default function KnowledgeCardGrid() {
               cost={card.cost}
               imageUrl={card.imageUrl}
               onClick={handleSelectCard}
+              priority={index < 6}
             />
           </div>
         ))}

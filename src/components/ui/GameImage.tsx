@@ -9,6 +9,21 @@ type GameImageProps = {
   size: ImageSize;
   className?: string;
   priority?: boolean;
+  placeholder?: 'blur' | 'empty';
+  blurDataURL?: string;
+  sizes?: string;
+  onLoad?: () => void;
+  onError?: () => void;
+};
+
+// Generate a simple blur placeholder for better loading experience
+const generateBlurDataURL = (width: number, height: number): string => {
+  return `data:image/svg+xml;base64,${Buffer.from(
+    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="#f3f4f6"/>
+      <rect width="60%" height="60%" x="20%" y="20%" fill="#e5e7eb" rx="8"/>
+    </svg>`
+  ).toString('base64')}`;
 };
 
 export default function GameImage({
@@ -17,6 +32,11 @@ export default function GameImage({
   size,
   className = '',
   priority = false,
+  placeholder = 'blur',
+  blurDataURL,
+  sizes,
+  onLoad,
+  onError,
 }: GameImageProps) {
   const { width, height } = componentTokens.image.dimensions[size];
 
@@ -29,6 +49,25 @@ export default function GameImage({
   // Detect if this is a cat character image for larger display
   const isCatCharacter = src.includes('/images/cats/');
   const maxHeight = isCatCharacter ? '90%' : '80%';
+
+  // Generate default blur placeholder if not provided
+  const defaultBlurDataURL = blurDataURL || generateBlurDataURL(width, height);
+
+  // Optimize sizes attribute based on image size and usage
+  const optimizedSizes =
+    sizes ||
+    (() => {
+      switch (size) {
+        case 'CARD_DETAILS':
+          return '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
+        case 'CHARACTER_CARD':
+          return '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw';
+        case 'CARD_ITEM':
+          return '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw';
+        default:
+          return '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
+      }
+    })();
 
   return (
     <div
@@ -45,6 +84,12 @@ export default function GameImage({
           width={width}
           height={height}
           priority={priority}
+          placeholder={placeholder}
+          blurDataURL={defaultBlurDataURL}
+          sizes={optimizedSizes}
+          loading={priority ? 'eager' : 'lazy'}
+          onLoad={onLoad}
+          onError={onError}
           style={{
             objectFit: 'contain',
             maxHeight: maxHeight,

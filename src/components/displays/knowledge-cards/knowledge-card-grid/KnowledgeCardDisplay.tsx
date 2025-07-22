@@ -12,7 +12,8 @@ export default function KnowledgeCardDisplay({
   cost,
   imageUrl,
   onClick,
-}: KnowledgeCardDisplayProps) {
+  priority = false,
+}: KnowledgeCardDisplayProps & { priority?: boolean }) {
   const [isDarkMode] = useDarkMode();
   const rankColors = getCardRankColors(rank, false, isDarkMode);
   const costColors = getCardCostColors(cost, false, isDarkMode);
@@ -36,6 +37,7 @@ export default function KnowledgeCardDisplay({
         alt={`${name}知识卡图标`}
         size='CARD_ITEM'
         className='hover:scale-105'
+        priority={priority}
       />
       <div className='px-4 pt-1 pb-4 text-center'>
         <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-1'>{name}</h3>
