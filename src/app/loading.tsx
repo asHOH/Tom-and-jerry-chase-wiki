@@ -1,3 +1,6 @@
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { Skeleton } from '@/components/ui/Skeleton';
+
 export default function Loading() {
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900'>
@@ -5,13 +8,13 @@ export default function Loading() {
         <div className='text-center space-y-4'>
           {/* Logo/Title skeleton */}
           <div className='animate-pulse space-y-2'>
-            <div className='h-8 bg-gray-200 dark:bg-gray-700 rounded w-48 mx-auto'></div>
-            <div className='h-4 bg-gray-200 dark:bg-gray-700 rounded w-32 mx-auto'></div>
+            <Skeleton className='h-8 w-48 mx-auto' />
+            <Skeleton className='h-4 w-32 mx-auto' />
           </div>
 
           {/* Loading spinner */}
           <div className='py-8'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-500 mx-auto'></div>
+            <LoadingSpinner size='lg' message='' />
           </div>
 
           {/* Loading text */}
