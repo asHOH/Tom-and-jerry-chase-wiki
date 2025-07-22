@@ -25,13 +25,15 @@ export function Skeleton({
   return (
     <div
       className={clsx(
-        'bg-gray-200 dark:bg-gray-700',
+        'bg-gray-200 dark:bg-gray-700 relative overflow-hidden',
         rounded && 'rounded',
         animate && 'animate-pulse',
         className
       )}
       style={style}
-    />
+    >
+      {animate && <div className='absolute inset-0 skeleton-shimmer'></div>}
+    </div>
   );
 }
 
