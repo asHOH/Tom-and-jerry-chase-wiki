@@ -325,8 +325,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '绝地反击',
     rank: 'B',
     cost: 3,
-    description: 'Hp**较低**时，提升攻击力。', // TODO：提升多少
-    // detailedDescription: '',
+    description: 'Hp**较低**时，提升攻击力。',
+    detailedDescription: 'Hp**较低**时，攻击力提升25点。',
     levels: [
       { level: 1, description: 'Hp不高于**25%**时触发。' },
       { level: 2, description: 'Hp不高于**30%**时触发。' },
