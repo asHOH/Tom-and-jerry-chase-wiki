@@ -6,18 +6,28 @@ _Tom and Jerry Chase Wiki - Comprehensive Enhancement Strategy_
 
 ### 🚀 High Impact, Low Effort
 
-#### 🔄 3. Data Loading Optimization
+#### ✅ 3. Data Loading Optimization
 
-**Status: IN PROGRESS** 🔄  
+**Status: COMPLETED** ✅  
 **Current:** All character data loaded at once  
 **Improvement:** Implement data chunking and lazy loading
 
 ```typescript
-// Dynamic data loading
-const useCharacterData = (factionId: string) => {
+// Dynamic data loading - IMPLEMENTED
+import { useCharacterData } from '@/lib/useCharacterData';
+
+const useCharacterData = (factionId: FactionId) => {
   return useSWR(
-    `/api/characters/${factionId}`,
-    () => import(`@/data/${factionId}Characters`).then((m) => m.default),
+    `characters-${factionId}`,
+    async () => {
+      if (factionId === 'cat') {
+        const { catCharactersWithImages } = await import('@/data/catCharacters');
+        return catCharactersWithImages;
+      } else {
+        const { mouseCharactersWithImages } = await import('@/data/mouseCharacters');
+        return mouseCharactersWithImages;
+      }
+    },
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -25,6 +35,14 @@ const useCharacterData = (factionId: string) => {
   );
 };
 ```
+
+**✅ Implementation Details:**
+
+- **Data Chunking**: Character data split by faction using dynamic imports
+- **Lazy Loading**: Data loaded only when requested via `useCharacterData` hook
+- **Caching**: SWR provides automatic caching and deduplication
+- **Backward Compatibility**: Existing code continues to work unchanged
+- **Bundle Optimization**: Webpack will create separate chunks for each faction's data
 
 ### 🎯 Medium Impact, Medium Effort
 
