@@ -23,12 +23,21 @@ const withPwa = withPWA({
   runtimeCaching: [
     {
       urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
-      handler: 'CacheFirst',
+      handler: 'StaleWhileRevalidate',
       options: {
         cacheName: 'images',
         expiration: {
           maxEntries: 150,
-          maxAgeSeconds: 31536000, // 1 year for optimized images
+          maxAgeSeconds: 2592000, // 30 days (shorter than before)
+        },
+        cacheKeyWillBeUsed: async ({ request }) => {
+          // Include timestamp in cache key for Next.js optimized images
+          const url = new URL(request.url);
+          if (url.pathname.startsWith('/_next/image')) {
+            // Next.js adds ?url= parameter, preserve it for cache busting
+            return request.url;
+          }
+          return request.url;
         },
       },
     },
