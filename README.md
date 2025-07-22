@@ -31,11 +31,12 @@
 
 ## 🛠️ 技术栈
 
-- **框架**: [Next.js 14](https://nextjs.org/) (App Router)
+- **框架**: [Next.js 15](https://nextjs.org/) (App Router)
 - **语言**: [TypeScript](https://www.typescriptlang.org/)
-- **样式**: [Tailwind CSS](https://tailwindcss.com/)
+- **样式**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **状态管理**: [Valtio](https://valtio.pmnd.rs/) & [SWR](https://swr.vercel.app/)
 - **测试**: [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/)
-- **部署**: [Vercel](httpss://vercel.com/)
+- **部署**: [Vercel](https://vercel.com/)
 - **代码规范**: [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
 
 ## 💻 本地开发
