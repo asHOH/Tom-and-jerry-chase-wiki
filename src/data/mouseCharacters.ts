@@ -163,7 +163,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description: '增加推速。',
-            detailedDescription: '增加20%推速',
+            detailedDescription: '增加30%推速',
           },
           {
             level: 2,
@@ -266,8 +266,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '隐身持续更久；期间持续恢复Hp。',
-            detailedDescription: '隐身持续15秒；期间额外以1.67/s恢复Hp。', //FIXME: not sure about the recovery rate
+            description: '隐身持续更久；隐身状态下持续恢复Hp。',
+            detailedDescription: '隐身持续15秒；隐身状态下额外以1.67/s恢复Hp。', //FIXME: not sure about the recovery rate
             cooldown: 20,
           },
         ],
@@ -2270,7 +2270,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   剑客莉莉: {
     aliases: ['剑莉'],
     description:
-      '来自法国第一女剑客莉莉，她的剑招低调不失气势，华丽而不失潇洒，她是坏人们最害怕的猫咪。',
+      '来自法国第一女剑客莉莉，她的剑招低调不失气势，华丽而不失潇洒，她是坏人们最害怕的敌人。',
     maxHp: 124,
     attackBoost: 20,
     hpRecovery: 1,
