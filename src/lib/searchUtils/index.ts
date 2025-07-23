@@ -5,6 +5,10 @@ import { searchSpecialSkills } from './specialSkills';
 import { searchItems } from './items';
 import { SearchResult } from './types';
 
+// Search configuration constants
+const MAX_RESULTS_PER_TYPE = 5;
+const MAX_TOTAL_RESULTS = 20;
+
 export const performSearch = async function* (query: string): AsyncGenerator<SearchResult> {
   const lowerCaseQuery = query.toLowerCase().trim(); // Trim whitespace
   // Remove apostrophes from the query before converting to pinyin, as they are not part of pinyin for search
@@ -66,10 +70,22 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     Array.fromAsync(searchItems(findMatchContext, lowerCaseQuery, pinyinQuery)),
   ]);
 
+  // Limit results per type and sort by priority
+  const limitedResults: SearchResult[] = [];
+
   for (const results of allSearchResults) {
-    for (const result of results) {
-      yield result;
-    }
+    const sortedResults = results.sort((a, b) => b.priority - a.priority);
+    const limitedTypeResults = sortedResults.slice(0, MAX_RESULTS_PER_TYPE);
+    limitedResults.push(...limitedTypeResults);
+  }
+
+  // Sort all results by priority and apply total limit
+  const finalResults = limitedResults
+    .sort((a, b) => b.priority - a.priority)
+    .slice(0, MAX_TOTAL_RESULTS);
+
+  for (const result of finalResults) {
+    yield result;
   }
 };
 
