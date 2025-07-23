@@ -80,6 +80,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const searchIdRef = useRef(0); // To keep track of the latest search request
+  const resultsListRef = useRef<HTMLUListElement>(null);
   const { handleSelectCard, handleSelectCharacter } = useAppContext();
   const { isEditMode, toggleEditMode } = useEditMode();
   const { navigate } = useNavigation();
@@ -172,6 +173,19 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
     };
   }, [onClose, highlightedIndex, searchResults, handleResultClick]); // Updated dependencies
 
+  // Scroll highlighted item into view
+  useEffect(() => {
+    if (highlightedIndex >= 0 && resultsListRef.current) {
+      const highlightedElement = resultsListRef.current.children[highlightedIndex] as HTMLElement;
+      if (highlightedElement) {
+        highlightedElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+      }
+    }
+  }, [highlightedIndex]);
+
   useEffect(() => {
     searchIdRef.current = Date.now(); // Assign a new ID for each new search effect run
     const currentId = searchIdRef.current;
@@ -187,12 +201,17 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           if (searchIdRef.current === currentId) {
             newResults = [...newResults, result];
             setSearchResults([...newResults]); // Store all results (already sorted by searchUtils)
+            // Initialize highlighted index to first result if not set
+            if (newResults.length === 1) {
+              setHighlightedIndex(0);
+            }
           } else {
             break; // A new search has started, stop processing old results
           }
         }
       } else {
         setSearchResults([]);
+        setHighlightedIndex(-1);
       }
     }, 300); // Debounce for 300ms
 
@@ -292,6 +311,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
 
         {searchQuery.length > 0 && searchResults.length > 0 && (
           <motion.ul
+            ref={resultsListRef}
             className={clsx(
               'overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md',
               isMobile ? 'flex-1' : 'max-h-60'
