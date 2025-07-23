@@ -139,30 +139,31 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         return;
       }
 
-      // Only handle navigation keys if search input is not focused
-      if (document.activeElement !== searchInputRef.current) {
-        switch (event.key) {
-          case 'ArrowDown':
-            event.preventDefault();
-            setHighlightedIndex((prev) => {
-              const newIndex = prev + 1;
-              return newIndex >= searchResults.length ? 0 : newIndex; // Wrap to top
-            });
-            break;
-          case 'ArrowUp':
-            event.preventDefault();
-            setHighlightedIndex((prev) => {
-              const newIndex = prev - 1;
-              return newIndex < 0 ? searchResults.length - 1 : newIndex; // Wrap to bottom
-            });
-            break;
-          case 'Enter':
+      // Handle navigation keys
+      switch (event.key) {
+        case 'ArrowDown':
+          event.preventDefault();
+          setHighlightedIndex((prev) => {
+            const newIndex = prev + 1;
+            return newIndex >= searchResults.length ? 0 : newIndex; // Wrap to top
+          });
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          setHighlightedIndex((prev) => {
+            const newIndex = prev - 1;
+            return newIndex < 0 ? searchResults.length - 1 : newIndex; // Wrap to bottom
+          });
+          break;
+        case 'Enter':
+          // Only handle Enter if search input is not focused or if we have a highlighted result
+          if (document.activeElement !== searchInputRef.current || highlightedIndex >= 0) {
             event.preventDefault();
             if (highlightedIndex >= 0 && searchResults[highlightedIndex]) {
               handleResultClick(searchResults[highlightedIndex]);
             }
-            break;
-        }
+          }
+          break;
       }
     };
 
