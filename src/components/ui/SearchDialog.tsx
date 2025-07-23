@@ -143,11 +143,17 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         switch (event.key) {
           case 'ArrowDown':
             event.preventDefault();
-            setHighlightedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
+            setHighlightedIndex((prev) => {
+              const newIndex = prev + 1;
+              return newIndex >= searchResults.length ? 0 : newIndex; // Wrap to top
+            });
             break;
           case 'ArrowUp':
             event.preventDefault();
-            setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+            setHighlightedIndex((prev) => {
+              const newIndex = prev - 1;
+              return newIndex < 0 ? searchResults.length - 1 : newIndex; // Wrap to bottom
+            });
             break;
           case 'Enter':
             event.preventDefault();
