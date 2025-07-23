@@ -8,6 +8,7 @@ import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
+import PreloadingProvider from '@/components/PreloadingProvider';
 import { DISCLAIMER_TEXT } from '@/constants';
 import './globals.css';
 import { DarkModeProvider } from '@/context/DarkModeContext';
@@ -91,10 +92,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className={inter.className}>
         <ErrorBoundary>
-          <OfflineIndicator />
-          <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
-            <DarkModeProvider initialValue={isDarkMode}>{children}</DarkModeProvider>
-          </main>
+          <PreloadingProvider>
+            <OfflineIndicator />
+            <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
+              <DarkModeProvider initialValue={isDarkMode}>{children}</DarkModeProvider>
+            </main>
+          </PreloadingProvider>
         </ErrorBoundary>
         <PerformanceMonitor />
         <ServiceWorkerRegistration />
