@@ -172,12 +172,17 @@ html {
 .character-card {
   /* CSS containment for individual cards */
   contain: layout style paint;
-  /* Force hardware acceleration */
-  transform: translateZ(0);
   /* Prevent layout thrashing */
   backface-visibility: hidden;
-  /* Optimize for hover animations */
+}
+
+/* Only optimize when actually hovering/interacting */
+.character-card:hover {
   will-change: transform, box-shadow;
+}
+
+.character-card:not(:hover) {
+  will-change: auto;
 }
 
 /* Mobile-specific optimizations */
@@ -220,14 +225,6 @@ html {
   will-change: contents;
 }
 
-/* Optimize GameImage components for performance */
-.character-card .w-full.bg-gray-200 {
-  /* Optimize image rendering */
-  will-change: transform;
-  /* Hardware acceleration for smooth hover effects */
-  transform: translateZ(0);
-}
-
 /* Filter section performance */
 .filter-section {
   /* Contain filter interactions */
@@ -241,10 +238,17 @@ html {
 .character-card button {
   /* Optimize button interactions */
   contain: layout style paint;
-  /* Hardware acceleration for smooth interactions */
-  transform: translateZ(0);
-  /* Optimize for color/transform changes */
-  will-change: background-color, transform, color;
+}
+
+/* Only optimize buttons when hovering */
+.filter-button:hover,
+.character-card button:hover {
+  will-change: background-color, color;
+}
+
+.filter-button:not(:hover),
+.character-card button:not(:hover) {
+  will-change: auto;
 }
 
 /* Reduce motion for users who prefer it */
