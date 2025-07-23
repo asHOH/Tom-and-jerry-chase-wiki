@@ -498,15 +498,26 @@ body.edit-mode-banner-visible main {
 
 /* Staggered animation delays for grid items */
 .animate-fadeInUp {
+  /* Start in the initial state to prevent flashing */
+  opacity: 0;
+  transform: translateY(20px);
   animation: fadeInUp 0.6s ease-out forwards;
+  /* Ensure animation respects delay */
+  animation-fill-mode: both;
 }
 
 .animate-slideInLeft {
+  opacity: 0;
+  transform: translateX(-20px);
   animation: slideInLeft 0.6s ease-out forwards;
+  animation-fill-mode: both;
 }
 
 .animate-slideInRight {
+  opacity: 0;
+  transform: translateX(20px);
   animation: slideInRight 0.6s ease-out forwards;
+  animation-fill-mode: both;
 }
 
 /* Staggered delays for grid items */

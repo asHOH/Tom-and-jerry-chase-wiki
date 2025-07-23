@@ -146,7 +146,10 @@ export default function KnowledgeCardGrid() {
         {filteredAndSortedCards.map((card, index) => (
           <div
             key={card.id}
-            className='character-card transform transition-transform hover:-translate-y-1'
+            className='character-card transform transition-transform hover:-translate-y-1 animate-fadeInUp'
+            style={{
+              animationDelay: `${Math.min(index * 50, 1000)}ms`, // Stagger animation, max 1s delay
+            }}
           >
             <KnowledgeCardDisplay
               id={card.id}
@@ -155,7 +158,7 @@ export default function KnowledgeCardGrid() {
               cost={card.cost}
               imageUrl={card.imageUrl}
               onClick={handleSelectCard}
-              priority={index < 6}
+              priority={index < 12} // Increase priority loading for first 12 items
             />
           </div>
         ))}

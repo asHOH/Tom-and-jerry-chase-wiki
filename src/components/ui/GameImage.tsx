@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
-import { designTokens, componentTokens } from '@/lib/design-tokens';
+import { componentTokens } from '@/lib/design-tokens';
 
 type ImageSize = keyof typeof componentTokens.image.dimensions;
 
@@ -26,6 +26,7 @@ export default function GameImage({
   onError,
 }: GameImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const { width, height } = componentTokens.image.dimensions[size];
 
   // Use card height for details view, image height for others
@@ -59,6 +60,11 @@ export default function GameImage({
     onLoad?.();
   };
 
+  const handleImageError = () => {
+    setHasError(true);
+    onError?.();
+  };
+
   return (
     <div
       className='w-full bg-gray-200 dark:bg-slate-700 relative overflow-hidden mb-4'
@@ -67,6 +73,23 @@ export default function GameImage({
         borderRadius: componentTokens.image.container.borderRadius,
       }}
     >
+      {/* Loading skeleton */}
+      {!isLoaded && !hasError && (
+        <div className='absolute inset-0 flex items-center justify-center'>
+          <div className='animate-pulse bg-gray-300 dark:bg-slate-600 rounded w-16 h-16'></div>
+        </div>
+      )}
+
+      {/* Error state */}
+      {hasError && (
+        <div className='absolute inset-0 flex items-center justify-center text-gray-400 dark:text-slate-500'>
+          <div className='text-center'>
+            <div className='text-2xl mb-1'>📷</div>
+            <div className='text-xs'>加载失败</div>
+          </div>
+        </div>
+      )}
+
       <div className='flex items-center justify-center h-full p-2'>
         <Image
           src={src}
@@ -76,17 +99,17 @@ export default function GameImage({
           priority={priority}
           placeholder='empty'
           sizes={optimizedSizes}
-          loading={priority ? 'eager' : 'lazy'}
+          loading='eager' // Load all images eagerly for better UX
           onLoad={handleImageLoad}
-          onError={onError}
+          onError={handleImageError}
           style={{
             objectFit: 'contain',
             maxHeight: maxHeight,
             maxWidth: '100%',
             width: 'auto',
             height: 'auto',
-            transition: designTokens.transitions.normal,
-            opacity: isLoaded ? 1 : 0,
+            transition: 'opacity 0.3s ease-in-out',
+            opacity: isLoaded ? 1 : 0, // Smooth fade-in when loaded
           }}
           className={className}
         />

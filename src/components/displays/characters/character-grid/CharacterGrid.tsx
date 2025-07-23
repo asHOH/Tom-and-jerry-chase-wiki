@@ -204,7 +204,10 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         {filteredCharacters.map((character, index) => (
           <div
             key={character.id}
-            className='character-card transform transition-transform hover:-translate-y-1'
+            className='character-card transform transition-transform hover:-translate-y-1 animate-fadeInUp'
+            style={{
+              animationDelay: `${Math.min(index * 100, 1000)}ms`, // Stagger animation
+            }}
           >
             <CharacterDisplay
               id={character.id}
@@ -216,7 +219,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                   : character.mousePositioningTags) || []
               }
               factionId={faction.id}
-              priority={index < 4}
+              priority={index < 8} // Increase priority loading
             />
           </div>
         ))}
