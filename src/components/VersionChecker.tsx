@@ -146,8 +146,9 @@ export const VersionChecker: React.FC = () => {
         setIsCheckingVersion(true);
         setDebugInfo((prev) => ({ ...prev, lastCheck: new Date().toLocaleTimeString() }));
 
-        // Check version.json for updates
-        const response = await fetch('/api/version?_t=' + Date.now(), {
+        // Check version.json for updates (reduce cache busting frequency)
+        const cacheParam = Math.floor(Date.now() / 60000); // Change every minute instead of every request
+        const response = await fetch(`/api/version?_t=${cacheParam}`, {
           cache: 'no-cache',
         });
 

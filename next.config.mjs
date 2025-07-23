@@ -50,6 +50,15 @@ const withPwa = withPWA({
           maxEntries: 100,
           maxAgeSeconds: 24 * 60 * 60, // 1 day
         },
+        cacheKeyWillBeUsed: async ({ request }) => {
+          // Remove version parameters from CSS cache keys to prevent preload conflicts
+          const url = new URL(request.url);
+          if (url.pathname.includes('.css')) {
+            url.searchParams.delete('v');
+            return url.toString();
+          }
+          return request.url;
+        },
       },
     },
     {
