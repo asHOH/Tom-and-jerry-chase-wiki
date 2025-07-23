@@ -61,7 +61,7 @@ export default function KnowledgeCardGrid() {
         <PageTitle>知识卡</PageTitle>
         <PageDescription>提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力</PageDescription>
         {/* Faction Filter Controls */}
-        <div className='flex justify-center items-center gap-4 mt-8'>
+        <div className='filter-section flex justify-center items-center gap-4 mt-8'>
           <FilterLabel displayMode='inline'>阵营筛选:</FilterLabel>
           <FilterLabel displayMode='block'>筛选:</FilterLabel>
           <div className='flex gap-2'>
@@ -81,7 +81,7 @@ export default function KnowledgeCardGrid() {
                     }
                   }}
                   className={clsx(
-                    'px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
+                    'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
                     !isActive &&
                       'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
                   )}
@@ -98,7 +98,7 @@ export default function KnowledgeCardGrid() {
           </div>
         </div>
         {/* Rank Filter Controls */}
-        <div className='flex justify-center items-center gap-4 mt-8'>
+        <div className='filter-section flex justify-center items-center gap-4 mt-8'>
           <FilterLabel displayMode='inline'>等级筛选:</FilterLabel>
           <FilterLabel displayMode='block'>筛选:</FilterLabel>
           <div className='flex gap-2'>
@@ -112,7 +112,7 @@ export default function KnowledgeCardGrid() {
                   key={rank}
                   onClick={() => toggleRankFilter(rank)}
                   className={clsx(
-                    'px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
+                    'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
                     !isActive &&
                       'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
                   )}
@@ -142,10 +142,12 @@ export default function KnowledgeCardGrid() {
           </div>
         </div>
       </header>
-      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8'>
-        {' '}
+      <div className='character-grid grid-container grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8'>
         {filteredAndSortedCards.map((card, index) => (
-          <div key={card.id} className='transform transition-transform hover:-translate-y-1'>
+          <div
+            key={card.id}
+            className='character-card transform transition-transform hover:-translate-y-1'
+          >
             <KnowledgeCardDisplay
               id={card.id}
               name={card.id}

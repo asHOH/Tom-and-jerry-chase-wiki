@@ -91,7 +91,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       </header>
 
       {/* Filter Section */}
-      <div className='flex justify-center items-center gap-4 mt-4'>
+      <div className='filter-section flex justify-center items-center gap-4 mt-4'>
         <FilterLabel displayMode='inline'>定位筛选:</FilterLabel>
         <FilterLabel displayMode='block'>筛选:</FilterLabel>
         <div className='flex gap-2'>
@@ -162,7 +162,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                   type='button'
                   onClick={() => togglePositioningTagFilter(tag as PositioningTagName)}
                   style={buttonStyle}
-                  className={clsx(!isActive && 'hover:bg-gray-200')}
+                  className={clsx('filter-button', !isActive && 'hover:bg-gray-200')}
                 >
                   {tag}
                 </button>
@@ -172,14 +172,14 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         </div>
       </div>
 
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8'>
+      <div className='character-grid grid-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8'>
         {isEditMode && (
-          <div className='transform transition-transform hover:-translate-y-1'>
+          <div className='character-card transform transition-transform hover:-translate-y-1'>
             <CharacterImport />
           </div>
         )}
         {isEditMode && (
-          <div className='transform transition-transform hover:-translate-y-1'>
+          <div className='character-card transform transition-transform hover:-translate-y-1'>
             <CharacterCreate />
           </div>
         )}
@@ -187,7 +187,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
           originalCharacters.map((character) => (
             <div
               key={`${character.id}-entry`}
-              className='transform transition-transform hover:-translate-y-1'
+              className='character-card transform transition-transform hover:-translate-y-1'
             >
               <CharacterDisplay
                 id={character.id}
@@ -202,7 +202,10 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
             </div>
           ))}
         {filteredCharacters.map((character, index) => (
-          <div key={character.id} className='transform transition-transform hover:-translate-y-1'>
+          <div
+            key={character.id}
+            className='character-card transform transition-transform hover:-translate-y-1'
+          >
             <CharacterDisplay
               id={character.id}
               name={character.id} // Use id as name for consistency

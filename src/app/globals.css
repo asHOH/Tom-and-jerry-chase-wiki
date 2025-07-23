@@ -154,6 +154,115 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* Character Grid Performance Optimizations */
+.character-grid {
+  /* CSS containment for better performance */
+  contain: layout style paint;
+  /* Optimize for transform animations */
+  will-change: transform;
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  /* Prevent layout thrashing during scroll */
+  overscroll-behavior: contain;
+}
+
+/* Character Card Performance Optimizations */
+.character-card {
+  /* CSS containment for individual cards */
+  contain: layout style paint;
+  /* Force hardware acceleration */
+  transform: translateZ(0);
+  /* Prevent layout thrashing */
+  backface-visibility: hidden;
+  /* Optimize for hover animations */
+  will-change: transform, box-shadow;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  .character-grid {
+    /* Single column layout optimization */
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    /* Enhanced mobile scrolling */
+    overscroll-behavior: contain;
+    /* Reduce repaints during scroll without strict containment */
+    contain: layout style paint;
+  }
+
+  .character-card {
+    /* Optimize mobile touch interactions */
+    touch-action: manipulation;
+    /* Reduce mobile hover effects */
+    will-change: auto;
+  }
+
+  /* Disable hover effects on mobile to improve performance */
+  .character-card:hover {
+    transform: none;
+  }
+
+  /* Re-enable transform only for active/focus states on mobile */
+  .character-card:active,
+  .character-card:focus {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Grid container optimizations */
+.grid-container {
+  /* Optimize grid rendering */
+  contain: layout style;
+  /* Smooth grid animations */
+  will-change: contents;
+}
+
+/* Optimize GameImage components for performance */
+.character-card .w-full.bg-gray-200 {
+  /* Optimize image rendering */
+  will-change: transform;
+  /* Hardware acceleration for smooth hover effects */
+  transform: translateZ(0);
+}
+
+/* Filter section performance */
+.filter-section {
+  /* Contain filter interactions */
+  contain: layout style;
+  /* Sticky positioning optimization */
+  will-change: transform;
+}
+
+/* Button performance optimizations */
+.filter-button,
+.character-card button {
+  /* Optimize button interactions */
+  contain: layout style paint;
+  /* Hardware acceleration for smooth interactions */
+  transform: translateZ(0);
+  /* Optimize for color/transform changes */
+  will-change: background-color, transform, color;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .character-grid,
+  .character-card,
+  .filter-button {
+    will-change: auto;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* Styles for content to account for fixed navbar */
 .content-container {
   padding-top: 70px !important; /* Account for navbar height */
