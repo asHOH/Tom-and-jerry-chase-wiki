@@ -1267,7 +1267,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   /* ----------------------------------- 米特 ----------------------------------- */
   米特: {
     description:
-      '米特是一只流浪猫，他的尾巴曾在一场流浪猫战争中受过伤，但它十分勇猛，从不会向敌人认输。',
+      '米特是一只流浪猫，他的尾巴曾在一场流浪猫战争中受过伤，但他十分勇猛，从不会向敌人认输。',
     maxHp: 325,
     hpRecovery: 1,
     moveSpeed: 750,
