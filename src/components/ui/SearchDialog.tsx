@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion'; // Import motion
 import clsx from 'clsx';
@@ -84,6 +84,39 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const { isEditMode, toggleEditMode } = useEditMode();
   const { navigate } = useNavigation();
 
+  const handleResultClick = useCallback(
+    (result: SearchResult) => {
+      switch (result.type) {
+        case 'character':
+          // Check if this is an original character that has a static page
+          if (isOriginalCharacter(result.id)) {
+            handleSelectCharacter(result.id);
+          } else {
+            // For non-original characters, enable edit mode if not already enabled and navigate to edit page
+            if (!isEditMode) {
+              toggleEditMode();
+            }
+            // Navigate to the user character edit page
+            handleSelectCharacter(result.id);
+          }
+          break;
+        case 'card':
+          handleSelectCard(result.id);
+          break;
+        case 'item':
+          navigate(`/items/${result.name}`);
+          break;
+        case 'specialSkill':
+          navigate(`/special-skills/${result.factionId}/${result.name}`);
+          break;
+      }
+      setSearchQuery(''); // Clear search query
+      setSearchResults([]); // Clear search results
+      onClose(); // Close dialog after selection
+    },
+    [handleSelectCharacter, handleSelectCard, navigate, isEditMode, toggleEditMode, onClose]
+  );
+
   // Animation variants for the dialog
   const dialogVariants = {
     hidden: { opacity: 0, scale: 0.95 },
@@ -99,18 +132,39 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   };
 
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
+        return;
+      }
+
+      // Only handle navigation keys if search input is not focused
+      if (document.activeElement !== searchInputRef.current) {
+        switch (event.key) {
+          case 'ArrowDown':
+            event.preventDefault();
+            setHighlightedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
+            break;
+          case 'ArrowUp':
+            event.preventDefault();
+            setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+            break;
+          case 'Enter':
+            event.preventDefault();
+            if (highlightedIndex >= 0 && searchResults[highlightedIndex]) {
+              handleResultClick(searchResults[highlightedIndex]);
+            }
+            break;
+        }
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onClose]); // Depend on onClose to ensure the latest function is used
+  }, [onClose, highlightedIndex, searchResults, handleResultClick]); // Updated dependencies
 
   useEffect(() => {
     searchIdRef.current = Date.now(); // Assign a new ID for each new search effect run
@@ -126,9 +180,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           // Only update if this is still the latest search query
           if (searchIdRef.current === currentId) {
             newResults = [...newResults, result];
-            // Sort results by priority in descending order
-            newResults.sort((a, b) => b.priority - a.priority);
-            setSearchResults([...newResults]); // Update results incrementally
+            setSearchResults([...newResults]); // Store all results (already sorted by searchUtils)
           } else {
             break; // A new search has started, stop processing old results
           }
@@ -157,36 +209,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [onClose]);
-
-  const handleResultClick = (result: SearchResult) => {
-    switch (result.type) {
-      case 'character':
-        // Check if this is an original character that has a static page
-        if (isOriginalCharacter(result.id)) {
-          handleSelectCharacter(result.id);
-        } else {
-          // For non-original characters, enable edit mode if not already enabled and navigate to edit page
-          if (!isEditMode) {
-            toggleEditMode();
-          }
-          // Navigate to the user character edit page
-          handleSelectCharacter(result.id);
-        }
-        break;
-      case 'card':
-        handleSelectCard(result.id);
-        break;
-      case 'item':
-        navigate(`/items/${result.name}`);
-        break;
-      case 'specialSkill':
-        navigate(`/special-skills/${result.factionId}/${result.name}`);
-        break;
-    }
-    setSearchQuery(''); // Clear search query
-    setSearchResults([]); // Clear search results
-    onClose(); // Close dialog after selection
-  };
 
   return (
     <motion.div
@@ -226,7 +248,14 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             />
           </svg>
         </button>
-        <h2 className='text-xl font-bold mb-4 text-gray-900 dark:text-white'>搜索</h2>
+        <div className='mb-4 pr-8'>
+          <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-1'>搜索</h2>
+          {searchResults.length > 0 && (
+            <span className='text-sm text-gray-500 dark:text-gray-400'>
+              {searchResults.length} 个结果
+            </span>
+          )}
+        </div>
         <div className='relative mb-4'>
           <input
             type='text'
@@ -317,7 +346,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         )}
 
         {searchQuery.length > 0 && searchResults.length === 0 && (
-          <div className='p-2 text-gray-500 dark:text-gray-400'>无结果</div>
+          <div className='p-2 text-gray-500 dark:text-gray-400 pr-8'>无结果</div>
         )}
       </motion.div>
     </motion.div>
