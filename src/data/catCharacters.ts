@@ -197,6 +197,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         ],
       },
     ],
+    counters: [
+      {
+        id: '尼宝',
+        description: '汤姆的平底锅可以把尼宝拍飞，打断其救援',
+        isMinor: false,
+      },
+    ],
   },
 
   /* ----------------------------------- 布奇 ----------------------------------- */
@@ -998,7 +1005,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '侦探杰瑞',
-        description: '',
+        description: '侍卫汤姆的警戒会导致侦探杰瑞的隐身失效，且降低推速',
         isMinor: false,
       },
       {
