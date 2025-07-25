@@ -23,12 +23,12 @@ const withPwa = withPWA({
   runtimeCaching: [
     {
       urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
-      handler: 'CacheFirst',
+      handler: 'StaleWhileRevalidate',
       options: {
         cacheName: 'images',
         expiration: {
           maxEntries: 150,
-          maxAgeSeconds: 31536000, // 1 year for optimized images
+          maxAgeSeconds: 2592000, // 30 days (shorter than before)
         },
       },
     },
