@@ -30,15 +30,6 @@ const withPwa = withPWA({
           maxEntries: 150,
           maxAgeSeconds: 2592000, // 30 days (shorter than before)
         },
-        cacheKeyWillBeUsed: async ({ request }) => {
-          // Include timestamp in cache key for Next.js optimized images
-          const url = new URL(request.url);
-          if (url.pathname.startsWith('/_next/image')) {
-            // Next.js adds ?url= parameter, preserve it for cache busting
-            return request.url;
-          }
-          return request.url;
-        },
       },
     },
     {
