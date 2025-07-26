@@ -2270,7 +2270,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         tagName: '防守',
         isMinor: false,
         description:
-          '守火箭时，风的大范围、击退和极短CD等特点使追风能轻易拦下前来救援的老鼠，飞行时的碰撞体积可以断老鼠跳救从而使其踩夹，因此守火箭能力很强；风可以吹飞果盘，因此也有一定守墙缝能力',
+          '守火箭能力强，风的大范围、击退和极短CD等特点能轻易拦下前来救援的老鼠，飞行时的碰撞体积可以打断老鼠跳救使其踩夹；风可以吹飞果盘，有一定守墙缝能力',
         additionalDescription: '',
       },
       {
@@ -2318,7 +2318,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-加大火力', 'A-心灵手巧'],
-        description: '对策卡组。很推荐在对面选出双拆(火箭)或多拆阵容时带。缺点同上',
+        description: '对策卡组。推荐在对面选出双拆(火箭)或多拆阵容时带。缺点同上',
       },
       {
         cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
