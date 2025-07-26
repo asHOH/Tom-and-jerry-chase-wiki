@@ -1340,9 +1340,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '莱恩',
-        description: '米特在六层野性后能够一刀秒莱恩，而且米特被变线条猫后，不会掉胡椒粉，还能减少爪刀CD。然而莱恩也是为数不多可以破胡椒粉守火箭的干扰型角色。',
+        description:
+          '米特在六层野性后能够一刀秒莱恩，而且米特被变线条猫后，不会掉落胡椒粉，还能减少爪刀CD。然而莱恩也是为数不多可以破胡椒粉守火箭的干扰型角色。',
         isMinor: true,
-      }
+      },
     ],
     specialSkills: [
       {
@@ -1376,7 +1377,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description: '可以在手持老鼠时使用，老鼠会掉落并眩晕2秒。',
-            detailedDescription: '可以在手持老鼠时使用，老鼠会掉落并眩晕2秒。掉落2秒后老鼠会被禁用技能，且附带高额减速。',
+            detailedDescription:
+              '可以在手持老鼠时使用，老鼠会掉落并眩晕2秒。掉落2秒后老鼠会被禁用技能并大幅减速。',
             cooldown: 12,
           },
           {
@@ -1831,37 +1833,75 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '库博能利用天堂强制放飞老鼠，或是快速位移将老鼠绑到难以救援的角落，挽回不利局势。',
         additionalDescription: '',
       },
+      {
+        tagName: '速通',
+        isMinor: true,
+        description: '在大图，库博能利用天堂将老鼠绑得非常远，让鼠方疲于奔命。',
+        additionalDescription: '',
+      },
     ],
     skillAllocations: [
       {
         id: '白日梦',
-        pattern: '100102221',
+        pattern: '1001[01]222',
         weaponType: 'weapon1',
         description:
-          'Lv.1天堂和Lv.2被动是库博机动性的核心组成部分；Lv.3被动的高额恢复能极大提高库博的生存能力。',
+          'Lv.1天堂和Lv.2被动是库博机动性的核心组成部分；Lv.3被动的高额恢复与Lv.3天堂的减伤均能极大提高库博的生存能力。残血时先点Lv.3被动；满血先点Lv.3天堂。',
         additionaldescription: '',
       },
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-乘胜追击', 'S-蓄势一击', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-        description:
-          '强化机动性，依赖天堂进行暗杀和放飞的卡组。猫是液体可以让库博把天梯放在意想不到的位置（如彩蛋房）。该卡组对熟练度和爪刀精准度有一定要求。可视情况更换掉猫是液体和狡诈（如换成皮糙肉厚/捕鼠夹等）。',
+        id: '乘胜+蓄势',
+        description: '以乘胜+蓄势为核心，机动性高，通常以天堂火箭为主要淘汰手段。',
+        groups: [
+          {
+            cards: ['S-乘胜追击', 'S-蓄势一击', 'S-知识渊博', 'C-猫是液体'],
+            description:
+              '以乘胜蓄势为核心，利用提供的高移速和高攻击力快速击倒老鼠，绑上天堂火箭巩固优势。不需要猫液时可换为狡诈。',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-蓄势一击', 'A-穷追猛打', 'B-皮糙肉厚'],
+            description: '穷追猛打便于快速展开第一波节奏，皮糙肉厚用于提高自身的身板。',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-蓄势一击', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
+            description: '携带猫液时的变种。',
+          },
+        ],
+        defaultFolded: false,
       },
       {
-        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-        description: '各项能力都很综合的卡组。绑地面。',
-      },
-      {
-        cards: ['S-击晕', 'A-细心', 'A-穷追猛打', 'B-恐吓'],
-        description:
-          '对缺少奶酪和破局能力的阵容有一定对策性的卡组。利用穷追猛打或是击晕+蓄力重击强行击倒老鼠，然后利用恐吓+细心对奶酪进行防守，尝试拖到天堂火箭放飞。该卡组使用难度不高，但上限也不高。',
+        id: '击晕',
+        description: '以击晕为核心，灵活性强，通常以地面火箭为主要淘汰手段。',
+        groups: [
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
+            description:
+              '以击晕为核心，击倒老鼠后利用天堂将老鼠绑到难以救援的地方，让鼠方疲于奔命。',
+          },
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+            description:
+              '将细心换为皮糙的变种。如果地图和敌方阵容合适，也可以舍弃穷追猛打换回细心。通常来说，知识卡的优先级为穷追>细心>皮糙肉厚。',
+          },
+          {
+            cards: ['S-击晕', 'A-加大火力', 'A-穷追猛打', 'A-细心', 'C-猫是液体'],
+            description:
+              '携带猫液时的变种。也可以在此基础上按先前的原则酌情将穷追猛打/细心替换为皮糙肉厚。',
+          },
+        ],
+        defaultFolded: false,
       },
     ],
     specialSkills: [
       {
         name: '绝地反击',
-        description: '',
+        description: '泛用性较高的特技，用于防范敌方的干扰。',
+      },
+      {
+        name: '蓄力重击',
+        description: '搭配击晕或捕鼠夹使用，补充伤害，快速击倒老鼠。',
       },
     ],
     skills: [
@@ -1963,7 +2003,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counteredBy: [
       {
         id: '侦探杰瑞',
-        description: '侦探杰瑞的推奶酪和破局能力十分强大，能让库博的天堂火箭来不及放飞。',
+        description:
+          '侦探杰瑞的推奶酪能力十分强大，能让库博的天堂火箭来不及放飞。另外侦探杰瑞的自保强，难以被针对。',
         isMinor: false,
       },
       {
