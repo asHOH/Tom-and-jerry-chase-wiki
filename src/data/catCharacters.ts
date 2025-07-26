@@ -380,16 +380,37 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            // TODO: add how much hp will be recovered
-            description: '投掷道具造成额外伤害，造成伤害后将恢复生命值，同时提高移速，持续5秒。',
+            description: '投掷道具造成额外伤害，造成伤害后将回复Hp，同时提高移速，持续5秒。',
             detailedDescription:
-              '投掷道具造成25点额外伤害，造成伤害后将恢复生命值，同时提高移速，持续5秒。',
+              '投掷道具造成25点额外伤害，造成伤害后将回复Hp，同时提高移速，持续5秒。',
           },
           {
             level: 3,
             description: '爪刀有30%概率直接造成虚弱；技能和道具造成的控制时间增加1秒。',
           },
         ],
+      },
+    ],
+    counters: [
+      {
+        id: '泰菲',
+        description: '布奇的爪刀可以秒泰菲。',
+        isMinor: false,
+      },
+      {
+        id: '侦探泰菲',
+        description: '布奇的爪刀可以秒侦探泰菲。',
+        isMinor: false,
+      },
+      {
+        id: '恶魔泰菲',
+        description: '布奇的爪刀可以秒恶魔泰菲。',
+        isMinor: false,
+      },
+      {
+        id: '罗宾汉泰菲',
+        description: '布奇的爪刀可以秒罗宾汉泰菲。',
+        isMinor: false,
       },
     ],
   },
