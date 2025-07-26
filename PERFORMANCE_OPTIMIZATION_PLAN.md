@@ -173,7 +173,7 @@ const useKeyboardNavigation = (currentCharacterId: string, disabled = false) => 
 3. 📋 Enhanced caching strategies
 4. 📋 Preloading critical resources
 
-### Phase 3: Advanced Features (3-4 weeks) 📋 IN PNROGRESS
+### Phase 3: Advanced Features (3-4 weeks) 📋 IN PROGRESS
 
 1. 📋 Service worker enhancements
 2. 📋 Advanced search with previews

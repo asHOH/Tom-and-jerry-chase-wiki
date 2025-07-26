@@ -416,8 +416,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95',
                       c.isMinor && 'opacity-60'
                     )}
-                    role={!isEditMode ? 'button' : undefined}
-                    tabIndex={!isEditMode ? 0 : undefined}
+                    {...(!isEditMode && { role: 'button', tabIndex: 0 })}
                     aria-label={!isEditMode ? `选择角色 ${c.id}` : `克制 ${c.id} 的关系`}
                     onClick={() => {
                       if (!isEditMode) {
@@ -560,8 +559,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         'cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95',
                       c.isMinor && 'opacity-60'
                     )}
-                    role={!isEditMode ? 'button' : undefined}
-                    tabIndex={!isEditMode ? 0 : undefined}
+                    {...(!isEditMode && { role: 'button', tabIndex: 0 })}
                     aria-label={!isEditMode ? `选择角色 ${c.id}` : `被 ${c.id} 克制的关系`}
                     onClick={() => {
                       if (!isEditMode) {
@@ -704,8 +702,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           'cursor-pointer transition-shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800/40 focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95',
                         c.isMinor && 'opacity-60'
                       )}
-                      role={!isEditMode ? 'button' : undefined}
-                      tabIndex={!isEditMode ? 0 : undefined}
+                      {...(!isEditMode && { role: 'button', tabIndex: 0 })}
                       aria-label={!isEditMode ? `选择角色 ${c.id}` : `与 ${c.id} 的协作关系`}
                       onClick={() => {
                         if (!isEditMode) {
