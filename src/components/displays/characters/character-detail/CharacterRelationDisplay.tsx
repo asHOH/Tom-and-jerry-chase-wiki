@@ -3,8 +3,7 @@
 import React, { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { FactionId } from '@/data';
-import { getCatImageUrl } from '@/data/catCharacters';
-import { getMouseImageUrl } from '@/data/mouseCharacters';
+import { AssetManager } from '@/lib/assetManager';
 import { CharacterRelation, CharacterRelationItem } from '@/data/types';
 import { characters } from '@/data';
 import { useAppContext } from '@/context/AppContext';
@@ -260,10 +259,10 @@ function CharacterSelector({
               <Image
                 src={
                   relationType === 'collaborators'
-                    ? getMouseImageUrl(char.id)
+                    ? AssetManager.getCharacterImageUrl(char.id, 'mouse')
                     : factionId === 'cat'
-                      ? getMouseImageUrl(char.id)
-                      : getCatImageUrl(char.id)
+                      ? AssetManager.getCharacterImageUrl(char.id, 'mouse')
+                      : AssetManager.getCharacterImageUrl(char.id, 'cat')
                 }
                 alt={char.id}
                 width={20}
@@ -350,7 +349,8 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
-  const getImageUrl = factionId == 'cat' ? getMouseImageUrl : getCatImageUrl;
+  const getImageUrl = (id: string) =>
+    AssetManager.getCharacterImageUrl(id, factionId == 'cat' ? 'mouse' : 'cat');
   const char = getCharacterRelation(id);
   const { handleSelectCharacter } = useAppContext();
 
@@ -720,7 +720,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                     >
                       <div className='w-10 h-10 rounded-full bg-green-100 flex items-center justify-center border border-green-300 dark:border-green-700'>
                         <Image
-                          src={getMouseImageUrl(c.id)}
+                          src={AssetManager.getCharacterImageUrl(c.id, 'mouse')}
                           alt={c.id}
                           width={32}
                           height={32}

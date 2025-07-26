@@ -8,10 +8,8 @@ import { componentTokens, designTokens } from '@/lib/design-tokens';
 import json5 from 'json5';
 import { CharacterWithFaction } from '@/lib/types';
 import { characters, FactionId, factions } from '@/data';
-import { addSkillImageUrls } from '@/lib/skillUtils';
+import { AssetManager } from '@/lib/assetManager';
 import { useParams } from 'next/navigation';
-import { getCatImageUrl } from '@/data/catCharacters';
-import { getMouseImageUrl } from '@/data/mouseCharacters';
 import { processCharacters } from '@/lib/skillIdUtils';
 import { useAppContext } from '@/context/AppContext';
 
@@ -40,8 +38,8 @@ function handleUploadedData(
     importedNames.push(character.id);
 
     // Add skill image URLs
-    character.skills = addSkillImageUrls(character.id, character.skills, factionId);
-    character.imageUrl = (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(character.id);
+    character.skills = AssetManager.addSkillImageUrls(character.id, character.skills, factionId);
+    character.imageUrl = AssetManager.getCharacterImageUrl(character.id, factionId);
     character.factionId = factionId;
 
     console.log(`Enhanced imported character ${character.id} with complete data structure`);
@@ -61,7 +59,7 @@ function handleUploadedData(
       factions[factionId]!.characters.push({
         id: character.id,
         name: character.id,
-        imageUrl: (factionId == 'cat' ? getCatImageUrl : getMouseImageUrl)(character.id),
+        imageUrl: AssetManager.getCharacterImageUrl(character.id, factionId),
         positioningTags: character.catPositioningTags ?? character.mousePositioningTags ?? [],
       });
     }

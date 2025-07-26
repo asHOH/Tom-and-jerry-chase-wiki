@@ -1,5 +1,5 @@
 import { characters } from '@/data';
-import { getSkillImageUrl } from './skillUtils';
+import { AssetManager } from './assetManager';
 import type { FactionId, Skill } from '@/data/types';
 
 /**
@@ -25,5 +25,5 @@ export const getWeaponSkillImageUrl = (
 
   // Use existing utility to generate the image URL
   // The skill should have an id property when it comes from the processed characters
-  return getSkillImageUrl(characterId, weaponSkill as Skill, factionId);
+  return AssetManager.getSkillImageUrl(characterId, weaponSkill as Skill, factionId);
 };

@@ -14,8 +14,8 @@ import { CharacterWithFaction } from '@/lib/types';
 import {
   convertCancelableAftercastToDisplayText,
   convertCancelableSkillToDisplayText,
-  getSkillImageUrl,
 } from '@/lib/skillUtils';
+import { AssetManager } from '@/lib/assetManager';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
@@ -594,7 +594,7 @@ export default function SkillCard({
 
                   const skill = characters[characterId]!.skills[skillIndex]!;
                   skill.name = newName;
-                  skill.imageUrl = getSkillImageUrl(
+                  skill.imageUrl = AssetManager.getSkillImageUrl(
                     localCharacter?.id,
                     { ...skill, name: newName },
                     factionId

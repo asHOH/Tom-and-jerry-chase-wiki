@@ -1,6 +1,6 @@
 import { useSnapshot } from 'valtio';
 import { characters } from '@/data';
-import { getSkillImageUrl } from '@/lib/skillUtils';
+import { AssetManager } from '@/lib/assetManager';
 import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import type { CharacterWithFaction } from '@/lib/types';
@@ -16,7 +16,7 @@ export function useCharacterActions() {
     const secondWeapon = {
       ...firstWeapon,
       type: 'weapon2' as const,
-      imageUrl: getSkillImageUrl(localCharacter.id, firstWeapon, factionId),
+      imageUrl: AssetManager.getSkillImageUrl(localCharacter.id, firstWeapon, factionId),
       id: firstWeapon.id.slice(0, -1) + '2',
     };
     function modifySkillObject(character: CharacterWithFaction) {

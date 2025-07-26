@@ -1,12 +1,6 @@
-import { addSkillImageUrls } from '../lib/skillUtils';
+import { AssetManager } from '../lib/assetManager';
 import { processCharacters } from '../lib/skillIdUtils';
 import type { CharacterDefinition, PartialCharacterDefinition } from './types';
-
-// Generate image URL based on character ID
-export const getCatImageUrl = (characterId: string): string => {
-  // support character name editing disallow hard coding existing characters
-  return `/images/cats/${characterId}.png`;
-};
 
 const catCharacterDefinitions: Record<string, CharacterDefinition | PartialCharacterDefinition> = {
   /* ----------------------------------- 汤姆 ----------------------------------- */
@@ -2490,8 +2484,8 @@ export const catCharactersWithImages = Object.fromEntries(
     {
       ...character,
       factionId: 'cat' as const,
-      imageUrl: getCatImageUrl(characterId),
-      skills: addSkillImageUrls(characterId, character.skills, 'cat'),
+      imageUrl: AssetManager.getCharacterImageUrl(characterId, 'cat'),
+      skills: AssetManager.addSkillImageUrls(characterId, character.skills, 'cat'),
     },
   ])
 );

@@ -1,11 +1,6 @@
-import { addSkillImageUrls } from '../lib/skillUtils';
+import { AssetManager } from '../lib/assetManager';
 import { processCharacters } from '../lib/skillIdUtils';
 import type { CharacterDefinition } from './types';
-
-// Generate image URL based on character ID
-export const getMouseImageUrl = (characterId: string): string => {
-  return `/images/mice/${characterId}.png`;
-};
 
 const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
@@ -4153,8 +4148,8 @@ export const mouseCharactersWithImages = Object.fromEntries(
     {
       ...character,
       factionId: 'mouse' as const,
-      imageUrl: getMouseImageUrl(characterId),
-      skills: addSkillImageUrls(characterId, character.skills, 'mouse'),
+      imageUrl: AssetManager.getCharacterImageUrl(characterId, 'mouse'),
+      skills: AssetManager.addSkillImageUrls(characterId, character.skills, 'mouse'),
     },
   ])
 );

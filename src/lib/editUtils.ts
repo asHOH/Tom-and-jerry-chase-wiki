@@ -1,7 +1,5 @@
 import { characters, FactionId, factions, Skill } from '@/data';
-import { getCatImageUrl } from '@/data/catCharacters';
-import { getMouseImageUrl } from '@/data/mouseCharacters';
-import { getSkillImageUrl } from './skillUtils';
+import { AssetManager } from './assetManager';
 import { CharacterWithFaction } from './types';
 import json5 from 'json5';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
@@ -99,7 +97,7 @@ export function handleCharacterIdChange(
   // Create a new character object as a copy.
   const newCharacter = JSON.parse(JSON.stringify(character)) as CharacterWithFaction;
   newCharacter.id = newId;
-  newCharacter.imageUrl = (factionId === 'cat' ? getCatImageUrl : getMouseImageUrl)(newId);
+  newCharacter.imageUrl = AssetManager.getCharacterImageUrl(newId, factionId);
 
   // Enhance the new character with all necessary properties.
   const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId);
@@ -160,7 +158,11 @@ export function handleCharacterSkillIdChange(
   }
 
   skill.name = newName;
-  skill.imageUrl = getSkillImageUrl(skill.id.split('-')[0]!, skill, factionId as FactionId);
+  skill.imageUrl = AssetManager.getSkillImageUrl(
+    skill.id.split('-')[0]!,
+    skill,
+    factionId as FactionId
+  );
   // Removed setLocalCharacter call due to missing function.
 }
 
@@ -240,7 +242,7 @@ function validateAndEnhanceCharacter(
 
   // Ensure character has proper imageUrl
   if (!charObj.imageUrl) {
-    charObj.imageUrl = (validFactionId === 'cat' ? getCatImageUrl : getMouseImageUrl)(characterId);
+    charObj.imageUrl = AssetManager.getCharacterImageUrl(characterId, validFactionId);
   }
 
   // Ensure character has proper faction structure
@@ -260,7 +262,7 @@ function validateAndEnhanceCharacter(
   if (Array.isArray(charObj.skills)) {
     charObj.skills.forEach((skill: Skill) => {
       // Always regenerate skill image URLs to ensure they match the current character ID
-      skill.imageUrl = getSkillImageUrl(characterId, skill, validFactionId);
+      skill.imageUrl = AssetManager.getSkillImageUrl(characterId, skill, validFactionId);
       skill.id = `${characterId}-${skill.type}`;
     });
   }
