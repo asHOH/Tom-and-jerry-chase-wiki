@@ -1,7 +1,7 @@
 // Utility functions for skill allocation parsing and validation
 
 export type ParsedSkillLevel = {
-  skillType: '0' | '1' | '2' | '3'; // 0=被动, 1=主动, 2=武器1, 3=武器2
+  skillTypeNum: '0' | '1' | '2' | '3'; // 0=被动, 1=主动, 2=武器1, 3=武器2
   isDelayed: boolean; // In parentheses - 留加点
   hasNegativeEffect: boolean; // After "-" - 负面效果
   isParallel?: boolean; // In brackets - parallel skills
@@ -197,7 +197,7 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
         const secondOption = secondHalf[j] as '0' | '1' | '2' | '3';
 
         result.push({
-          skillType: firstOption,
+          skillTypeNum: firstOption,
           isDelayed: false,
           hasNegativeEffect: isNegative, // Use the pre-calculated variable
           isParallel: true,
@@ -208,26 +208,26 @@ export const parseSkillAllocationPattern = (pattern: string): ParsedSkillLevel[]
       continue;
     }
 
-    let skillType: '0' | '1' | '2' | '3' | undefined;
+    let skillTypeNum: '0' | '1' | '2' | '3' | undefined;
     let isDelayed = false;
 
     // Check for delayed skills (in parentheses)
     if (char === '(') {
       i++; // Skip opening parenthesis
-      skillType = pattern[i] as '0' | '1' | '2' | '3';
+      skillTypeNum = pattern[i] as '0' | '1' | '2' | '3';
       isDelayed = true;
       i += 2; // Skip the number and closing parenthesis
     } else if (['0', '1', '2', '3'].includes(char!)) {
-      skillType = char as '0' | '1' | '2' | '3';
+      skillTypeNum = char as '0' | '1' | '2' | '3';
       i++;
     } else {
       i++;
       continue;
     }
 
-    if (skillType) {
+    if (skillTypeNum) {
       result.push({
-        skillType,
+        skillTypeNum: skillTypeNum,
         isDelayed,
         hasNegativeEffect: isNegative, // Use the pre-calculated variable
         isParallel: false,
@@ -251,8 +251,8 @@ export const safeParseSkillAllocationPattern = (pattern: string): ParsedSkillLev
 };
 
 /* Get skill type display name */
-export const getSkillTypeDisplayName = (skillType: '0' | '1' | '2' | '3'): string => {
-  switch (skillType) {
+export const getSkillTypeDisplayName = (skillTypeNum: '0' | '1' | '2' | '3'): string => {
+  switch (skillTypeNum) {
     case '0':
       return '被动';
     case '1':
@@ -269,16 +269,16 @@ export const getSkillTypeDisplayName = (skillType: '0' | '1' | '2' | '3'): strin
 /* Get skill image URL from the skill data */
 export const getSkillAllocationImageUrl = (
   characterName: string,
-  skillType: '0' | '1' | '2' | '3',
+  skillTypeNum: '0' | '1' | '2' | '3',
   factionId: 'cat' | 'mouse',
   skillName?: string
 ): string => {
-  if (skillType === '0') {
+  if (skillTypeNum === '0') {
     const factionName = factionId === 'cat' ? '猫' : '鼠';
     return `/images/${factionId}Skills/被动-${factionName}.png`;
   }
 
-  const skillNumber = skillType === '1' ? '1' : skillType === '2' ? '2' : '3';
+  const skillNumber = skillTypeNum === '1' ? '1' : skillTypeNum === '2' ? '2' : '3';
   const suffix = skillName || 'placeholder';
   return `/images/${factionId}Skills/${characterName}${skillNumber}-${suffix}.png`;
 };

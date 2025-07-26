@@ -83,10 +83,10 @@ describe('SkillAllocationDisplay', () => {
 
   beforeEach(() => {
     mockedParseSkillAllocationPattern.mockReturnValue([
-      { skillType: '0', isParallel: false, isDelayed: false, hasNegativeEffect: false },
-      { skillType: '1', isParallel: false, isDelayed: false, hasNegativeEffect: false },
-      { skillType: '2', isParallel: false, isDelayed: false, hasNegativeEffect: false },
-      { skillType: '3', isParallel: false, isDelayed: false, hasNegativeEffect: false },
+      { skillTypeNum: '0', isParallel: false, isDelayed: false, hasNegativeEffect: false },
+      { skillTypeNum: '1', isParallel: false, isDelayed: false, hasNegativeEffect: false },
+      { skillTypeNum: '2', isParallel: false, isDelayed: false, hasNegativeEffect: false },
+      { skillTypeNum: '3', isParallel: false, isDelayed: false, hasNegativeEffect: false },
     ]);
   });
 
@@ -104,7 +104,7 @@ describe('SkillAllocationDisplay', () => {
   it('should handle parallel skills correctly', () => {
     mockedParseSkillAllocationPattern.mockReturnValue([
       {
-        skillType: '0',
+        skillTypeNum: '0',
         isParallel: true,
         parallelOptions: ['0', '1'] as ['0', '1'],
         isDelayed: false,

@@ -105,8 +105,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           parallelCurrentLevel: skillLevels[secondOption],
         };
       } else {
-        skillLevels[level.skillType]++;
-        return { ...level, currentLevel: skillLevels[level.skillType] };
+        skillLevels[level.skillTypeNum]++;
+        return { ...level, currentLevel: skillLevels[level.skillTypeNum] };
       }
     });
   }, [parsedLevels]);
@@ -495,7 +495,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                       <div className='relative'>
                         {renderConnectionLine(groupIndex, 0, group, false)}
                         {renderSkillIcon(
-                          group.levels[0]!.skillType,
+                          group.levels[0]!.skillTypeNum,
                           group.levels[0]!.currentLevel,
                           group.levels[0]!.isDelayed,
                           group.levels[0]!.hasNegativeEffect

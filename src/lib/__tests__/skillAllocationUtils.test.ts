@@ -99,7 +99,7 @@ describe('skillAllocationUtils', () => {
       const result = parseSkillAllocationPattern('012');
       expect(result).toHaveLength(3);
       expect(result[0]).toEqual({
-        skillType: '0',
+        skillTypeNum: '0',
         isDelayed: false,
         hasNegativeEffect: false,
         isParallel: false,
@@ -110,7 +110,7 @@ describe('skillAllocationUtils', () => {
       const result = parseSkillAllocationPattern('[12]');
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
-        skillType: '1',
+        skillTypeNum: '1',
         isDelayed: false,
         hasNegativeEffect: false,
         isParallel: true,
@@ -123,7 +123,7 @@ describe('skillAllocationUtils', () => {
       const result = parseSkillAllocationPattern('(1)');
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
-        skillType: '1',
+        skillTypeNum: '1',
         isDelayed: true,
         hasNegativeEffect: false,
         isParallel: false,
@@ -134,7 +134,7 @@ describe('skillAllocationUtils', () => {
       const result = parseSkillAllocationPattern('-1');
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
-        skillType: '1',
+        skillTypeNum: '1',
         isDelayed: false,
         hasNegativeEffect: true,
         isParallel: false,
