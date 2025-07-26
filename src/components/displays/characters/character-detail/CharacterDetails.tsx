@@ -23,6 +23,7 @@ import SpecialSkillsSection from './SpecialSkillsSection';
 import { useSnapshot } from 'valtio';
 import { characters } from '@/data';
 import { useLocalCharacter } from '@/context/EditModeContext';
+import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;
@@ -266,6 +267,11 @@ export default function CharacterDetails({
 
                 <div className='hidden'>
                   <CharacterSectionIndex />
+                </div>
+
+                {/* Character Navigation */}
+                <div className='pt-4 border-t border-gray-200 dark:border-gray-700'>
+                  <CharacterNavigationButtons currentCharacterId={localCharacter.id} />
                 </div>
               </div>
             </div>
