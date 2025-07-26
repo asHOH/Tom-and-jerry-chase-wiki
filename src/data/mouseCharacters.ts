@@ -1725,6 +1725,207 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 雪梨 ----------------------------------- */
+  雪梨: {
+    description: '雪梨是温柔可爱的女孩子，喜欢一切美好的东西。',
+    maxHp: 99,
+    attackBoost: 0,
+    hpRecovery: 2,
+    moveSpeed: 680,
+    jumpHeight: 380,
+    cheesePushSpeed: 3.8,
+    wallCrackDamageBoost: 0.5,
+    mousePositioningTags: [
+      {
+        tagName: '辅助',
+        isMinor: false,
+        description: '为队友回复Hp、远程治疗',
+        additionalDescription: '',
+      },
+      {
+        tagName: '砸墙',
+        isMinor: false,
+        description: '花洒配合高尔夫快速破墙',
+        additionalDescription: '',
+        weapon: 1,
+      },
+      {
+        tagName: '救援',
+        isMinor: true,
+        description: '花洒搭配精准投掷可以无限浇灭火箭；花束+舍己，救下队友后双方均有较高Hp',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '花洒辅助救援',
+        pattern: '2(0)1010212',
+        weaponType: 'weapon1',
+        description: '可保留加点，被追时点被动回血',
+        additionaldescription: '',
+      },
+      {
+        id: '花束',
+        pattern: '3(0)13[10]013',
+        weaponType: 'weapon2',
+        description: '灵活加点',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'C-不屈', 'C-救救我', 'B-精准投射'],
+        description: '花洒卡组，精准投射可刷新花洒CD，持续浇灭火箭',
+      },
+      {
+        cards: ['S-铁血', 'C-救救我', 'S-舍己', 'C-相助', 'C-不屈'],
+        description: '花洒花束皆可',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'C-救救我', 'C-不屈', 'B-绝地反击'],
+        description: '辅助救人',
+      },
+    ],
+    skills: [
+      {
+        name: '爱心之吻',
+        type: 'active',
+        description:
+          '附近有队友时可使用技能。吻出一个爱心飘向最近的队友，队友被爱心触碰后与雪梨建立友好关系，持续恢复Hp；友好关系持续20s后，同伴额外获得全面的强化效果，同时免疫反向和失明，直到友好关系中断。友好关系期间，雪梨可通过特殊技能按键[远程治疗同伴](每次建立关系只可使用一次，可被打断。CD：5s。)，且若雪梨喝隐身，则双方都隐身。',
+        detailedDescription:
+          '自身半径范围1800内有队友时可使用技能。前摇1s，后摇0.5s，原地吻出一个爱心，存在[20秒](超时后自爆)，会以650的速度追踪周围半径1500内的[队友](包括火箭上的队友)。队友被爱心触碰0.2s后，与雪梨的距离在2400之内则建立友好关系。与雪梨建立友好关系的队友将额外提高2.5/s的Hp恢复；友好关系持续20s后，同伴额外获得全面的强化效果：攻击力提高15，移速、跳跃速度提高10%，推速提高30%，Hp上限提高25，同时免疫反向和失明，直到友好关系中断。友好关系期间，雪梨可通过特殊技能按键[远程治疗同伴](每次建立关系只可使用一次，可被打断。享受被动增益。CD：5s。)，且若雪梨喝隐身，则双方都隐身。\n解除友好关系的方式：1、再次使用主动技能；2、使用花束被其他队友接到；3、其中一方被猫咪或斯派克抓住；4、双方距离超过2400。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 18,
+          },
+          {
+            level: 2,
+            description:
+              '减少CD；友好关系期间，同伴的Hp恢复效果提升，并在Hp大于一半时免疫直接抓取效果。',
+            cooldown: 14,
+            detailedDescription:
+              '减少CD至14s；建立友好关系时，同伴立即恢复25Hp，并解除受伤；友好关系期间，同伴的Hp恢复效果提升至5/s，并在Hp大于一半时免疫直接抓取效果。',
+          },
+          {
+            level: 3,
+            description:
+              '减少CD；强化效果所需时间降低至10s，进入强化状态后同伴额外回复Hp、提高Hp上限。',
+            cooldown: 10,
+            detailedDescription:
+              '减少CD至10s；强化效果所需时间降低至10s，进入强化状态后同伴额外回复20Hp、提高50点Hp上限。',
+          },
+        ],
+        cancelableSkill: ['道具键*'],
+        canHitInPipe: false,
+        cancelableAftercast: ['道具键*'],
+        cueRange: '本房间可见',
+      },
+      {
+        name: '爱之花洒',
+        aliases: [],
+        type: 'weapon1',
+        description:
+          '在地面放置花洒，范围内的队友持续恢复Hp并解除反向和失明。花洒还能减速猫咪、浇灭鞭炮、熄灭火箭。',
+        detailedDescription:
+          '前摇0.5s，在地面放置花洒，持续5s。花洒每个方向水流范围为175，初始方向为双向，可通过交互[改变水流方向](前摇1s，顺序为双向→右→左)，花洒范围内的队友以10/s持续恢复Hp、解除反向和失明；对雪梨自身效果提高至15/s。花洒可浇灭鞭炮、熄灭火箭。花洒水流带有受力效果(双头花洒、右花洒的力向右，左花洒的力向左；猫受力的移速为25；道具受力较大)，并使范围内猫咪减速25%。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: '无后摇',
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 12,
+          },
+          {
+            level: 2,
+            description: '花洒持续时间增加。',
+            cooldown: 12,
+            detailedDescription: '花洒持续时间增加至7.6s。',
+          },
+          {
+            level: 3,
+            description: '单向水流范围变大。',
+            cooldown: 12,
+            detailedDescription: '单向水流范围提升至500。',
+          },
+        ],
+        cueRange: '本房间可见',
+      },
+      {
+        name: '爱心花束',
+        type: 'weapon2',
+        description:
+          '投掷爱心花束，为命中的队友回复Hp，并弹向最近的另一个队友。若首先命中的队友已建立友好关系，则双方额外回复Hp，且双方各获得一个[传送技能](点击技能后立刻以1750速度飞向同伴，传送期间获得无法被任何道具、技能命中)。若已建立友好关系，但花束首先命中的不是友好关系的队友，则与之建立友好关系并获得传送技能、之前的友好关系消失。',
+        detailedDescription:
+          '前摇0.3s，投掷爱心花束，飞行速度650，无视平台，但会被地板墙壁阻挡。花束为命中的队友回复50Hp，若附近半径1250内还有其他队友，将以2000的速度弹向最近的队友，最多弹射3次、最多存在5s。若首先命中的队友已建立友好关系，则双方额外回复50Hp，且双方各获得一个[传送技能](点击技能后立刻以1750速度飞向同伴，传送期间获得无法被任何道具、技能命中)。若已建立友好关系，但花束首先命中的不是友好关系的队友，则与之建立友好关系并获得传送技能、之前的友好关系消失。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 10,
+          },
+          {
+            level: 2,
+            description:
+              '爱心花束命中队友额外减少其主动技能CD；若与之有友好关系，则雪梨也会减少主动技能CD；传送技能额外减少双方武器技能CD并回复雪梨的Hp。',
+            detailedDescription:
+              '爱心花束命中队友额外减少其主动技能剩余CD的30%；若与之有友好关系，则雪梨减少主动技能剩余CD的30%、队友改为减少主动技能剩余CD的51%；传送技能额外减少双方武器技能剩余CD的30%并回复雪梨50Hp。',
+            cooldown: 10,
+          },
+          {
+            level: 3,
+            description: '减少CD。',
+            detailedDescription: '减少CD至8s。',
+            cooldown: 8,
+          },
+        ],
+        cueRange: '本房间可见',
+      },
+      {
+        name: '温柔体贴',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '每隔15s解除不良状态并回复少量Hp；治疗队友速度大幅提升。',
+            detailedDescription:
+              '点出技能后立刻回复25Hp并解除反向、失明、受伤等异常状态，每隔14.9s触发一次该效果；治疗队友速度提升至0.35s；治疗虚弱队友将解除其受伤状态。',
+          },
+          {
+            level: 2,
+            description: '治疗队友后，队友Hp全部恢复。',
+            detailedDescription: '治疗队友后，队友Hp恢复200。',
+          },
+          {
+            level: 3,
+            description: '治疗队友后，双方将持续恢复Hp、提升移速和跳跃速度，持续60s。',
+            detailedDescription:
+              '治疗队友后，双方移速和跳跃速度提升62%，持续0.5s。双方将额外以2.5/s持续恢复Hp、移速和跳跃速度提升10%，持续60s。',
+          },
+        ],
+      },
+    ],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '',
+      },
+    ],
+  },
+
   /* ----------------------------------- 魔术师 ----------------------------------- */
   魔术师: {
     aliases: ['二表哥'],

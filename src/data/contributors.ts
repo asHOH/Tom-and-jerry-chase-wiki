@@ -85,6 +85,7 @@ export const contributors: Contributor[] = [
           '剑客泰菲',
           '图茨',
           '仙女鼠',
+          '雪梨',
         ],
       },
       {
