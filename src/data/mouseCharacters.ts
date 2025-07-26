@@ -968,7 +968,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   /* ----------------------------------- 泰菲 ----------------------------------- */
   泰菲: {
     description: '杰瑞的侄子，总将自己吃得圆滚滚的',
-
     maxHp: 74,
     attackBoost: 5,
     hpRecovery: 2.5,
@@ -976,7 +975,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     jumpHeight: 380,
     cheesePushSpeed: 3.8,
     wallCrackDamageBoost: 0.5,
-
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -998,7 +996,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         additionalDescription: '',
       },
     ],
-
     skillAllocations: [
       {
         id: '火箭筒',
@@ -1010,25 +1007,33 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         id: '隐形感应雷',
-        pattern: '131330001',
+        pattern: '1313[30]00[30]1',
         weaponType: 'weapon2',
-        description:
-          '如果七级就进入墙缝战的话，可以考虑直接点出三级圆滚滚，毕竟一被和二被几乎没用。',
+        description: '仅供参考，实战要遵循什么时候进墙缝期什么时候点三级感应雷的原则',
         additionaldescription: '',
       },
     ],
-
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
-        description: '待补充',
+        description: '高风险高收益，卡残血伤害高，适合打不带皮糙肉厚的猫',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'S-护佑', 'C-救救我'],
-        description: '待补充',
+        description: '防止前期3级时白给',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'C-吃货', 'B-食物力量', 'C-救救我'],
+        description:
+          '速推卡，打死守猫用，带这套卡只用点一级炮，优先点出二被，利用五层食物力量、有吃货加强下的一被加血、二被减伤快速回血加推奶酪减伤，可以强推，特技推荐带治疗或自起',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
+        description:
+          '用来打依赖爪刀或有无敌霸体技能的猫。缴械可以在一定程度上防止霸体反杀，特别是泰菲不能自主取消武器后摇。缴械和火箭筒的冷却都是三十秒，控制好可以让每一炮都附带缴械。',
+        detailedDescription: '',
       },
     ],
-
     skills: [
       {
         name: '圆滚滚',
@@ -1049,7 +1054,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description: '滚动时处于无敌状态；滚动结束后短暂提升跳跃高度。',
-            detailedDescription: '滚动时处于无敌状态；滚动结束后极短暂地提升跳跃高度。',
+            detailedDescription:
+              '滚动时处于[无敌状态](无敌时间略少于滚动时间)；滚动结束后极短暂地提升跳跃高度。',
             cooldown: 12,
           },
           {
@@ -1059,15 +1065,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 12,
           },
         ],
+        aliases: ['无敌'],
+        cueRange: '全图可见',
       },
       {
         name: '火箭筒',
         type: 'weapon1',
         description: '发射一枚弹头，造成伤害和眩晕。',
-        // detailedDescription: '发射一枚弹头。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不可被打断',
         cancelableAftercast: '不可取消后摇',
         videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=46.4',
         skillLevels: [
@@ -1086,10 +1092,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '可以储存两发弹头。',
+            description: '可以储存两枚弹头。',
             cooldown: 30,
           },
         ],
+        aliases: ['炮'],
+        cancelableSkill: '不可被打断',
+        canHitInPipe: false,
+        cueRange: '全图可见',
       },
       {
         name: '隐形感应雷',
@@ -1130,7 +1140,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '牛奶加速生效期间，暂时提升25点Hp上限。',
+            description: '提高吃食物速度；牛奶加速生效期间，暂时提升25点Hp上限。',
           },
           {
             level: 2,
@@ -1144,6 +1154,45 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
               '免疫鞭炮、泡泡等爆炸；Hp恢复提升增加至5；吃食物速度提升增加至45%。',
           },
         ],
+      },
+    ],
+    counters: [
+      {
+        id: '剑客汤姆',
+        description: '',
+        isMinor: false,
+      },
+    ],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '用来打卡视野漂浮落炮或踏空骗刀落炮',
+      },
+      {
+        name: '绝处逢生',
+        description: '可以用来硬抗控制效果及排夹，在解控瞬间开启圆滚滚来避免受到二次伤害或控制',
+      },
+      {
+        name: '冰冻保鲜',
+        description: '在冰冻保鲜结束的一瞬间开启圆滚滚，打猫一个出其不意，顺便骗出猫的攻击手段',
+      },
+      {
+        name: '勇气投掷',
+        description:
+          '泰菲技能CD长，可以配合精准投射知识卡进行双减，增强续航牵制能力（该打法已不流行，因为许多人觉得泰菲本质上是个奶酪位）',
+      },
+      {
+        name: '急速翻滚',
+        description: '配合圆滚滚可以打出类似第五人格的双弹加速',
+      },
+      {
+        name: '应急治疗',
+        description: '常用于打米特，舍己跳救圆滚滚后秒点治疗，防止被胡椒粉毒死',
+      },
+      {
+        name: '干扰投掷',
+        description:
+          '用来打出干扰投掷接炮，提高炮命中率（注意不要手快点出无影炮），用于打速度快导致炮不易命中的猫',
       },
     ],
   },
