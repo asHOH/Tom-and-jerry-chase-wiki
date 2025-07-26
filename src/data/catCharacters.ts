@@ -1333,6 +1333,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '米特的胡椒粉罐头能快速破盾，使国王杰瑞很难单独救人。',
         isMinor: false,
       },
+      {
+        id: '泰菲',
+        description: '米特在七层野性后能够一刀秒泰菲及其他74点血的老鼠。',
+        isMinor: false,
+      },
+      {
+        id: '莱恩',
+        description: '米特在六层野性后能够一刀秒莱恩，而且米特被变线条猫后，不会掉胡椒粉，还能减少爪刀CD。然而莱恩也是为数不多可以破胡椒粉守火箭的干扰型角色。',
+        isMinor: true,
+      }
     ],
     specialSkills: [
       {
@@ -1360,12 +1370,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '',
+            description: '在手持老鼠时无法使用。',
             cooldown: 12,
           },
           {
             level: 2,
             description: '可以在手持老鼠时使用，老鼠会掉落并眩晕2秒。',
+            detailedDescription: '可以在手持老鼠时使用，老鼠会掉落并眩晕2秒。掉落2秒后老鼠会被禁用技能，且附带高额减速。',
             cooldown: 12,
           },
           {
@@ -1414,7 +1425,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description:
               '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在7层野性下绑火箭时会进入6秒强霸体（内置CD：17秒）。',
             detailedDescription:
-              '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在7层野性下绑火箭时会进入6秒强霸体（内置CD：17秒）。',
+              '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，每层野性造成4点额外伤害。在7层野性下绑火箭时会进入6秒强霸体（内置CD：17秒）。',
           },
           {
             level: 2,
