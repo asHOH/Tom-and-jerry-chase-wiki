@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { catKnowledgeCards } from '@/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
-import { Card } from '@/data/types';
+import { Card, FactionId } from '@/data/types';
 import Image from 'next/image';
 import Tooltip from './Tooltip';
 import clsx from 'clsx';
@@ -12,7 +12,7 @@ interface KnowledgeCardPickerProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (newCards: readonly string[]) => void;
-  factionId: 'cat' | 'mouse';
+  factionId: FactionId;
   initialSelectedCards: readonly string[];
 }
 

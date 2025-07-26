@@ -17,6 +17,7 @@ import {
   createStyleFromTokens,
   getPositioningTagColors,
 } from './design-tokens';
+import type { FactionId } from '@/data/types';
 
 // Re-export design tokens for easy access
 export { designTokens, componentTokens, createStyleFromTokens };
@@ -247,7 +248,7 @@ export const getToken = <T extends keyof DesignTokenPath>(
  */
 export const createMinorTagGradient = (
   tagName: string,
-  faction: 'cat' | 'mouse',
+  faction: FactionId,
   isDarkMode: boolean
 ): React.CSSProperties => {
   const colors = getPositioningTagColors(tagName, true, false, faction, isDarkMode);

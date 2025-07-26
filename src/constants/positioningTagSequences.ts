@@ -1,4 +1,4 @@
-import { CatPositioningTagName, MousePositioningTagName } from '@/data/types';
+import { CatPositioningTagName, MousePositioningTagName, FactionId } from '@/data/types';
 
 // Define display sequences for positioning tags
 export const CAT_POSITIONING_TAG_SEQUENCE: CatPositioningTagName[] = [
@@ -24,7 +24,7 @@ export const MOUSE_POSITIONING_TAG_SEQUENCE: MousePositioningTagName[] = [
 /**
  * Get the display sequence for a specific tag within its faction
  */
-export function getPositioningTagSequence(tagName: string, factionId: 'cat' | 'mouse'): number {
+export function getPositioningTagSequence(tagName: string, factionId: FactionId): number {
   if (factionId === 'cat') {
     const index = CAT_POSITIONING_TAG_SEQUENCE.indexOf(tagName as CatPositioningTagName);
     return index === -1 ? 999 : index;
@@ -40,7 +40,7 @@ export function getPositioningTagSequence(tagName: string, factionId: 'cat' | 'm
  */
 export function sortPositioningTags<
   T extends { readonly tagName: string; readonly isMinor: boolean },
->(tags: readonly T[], factionId: 'cat' | 'mouse'): T[] {
+>(tags: readonly T[], factionId: FactionId): T[] {
   return Array.from(tags).sort((a, b) => {
     // Main tags always come before minor tags
     if (a.isMinor !== b.isMinor) {
@@ -57,7 +57,7 @@ export function sortPositioningTags<
 /**
  * Sort positioning tag names according to their display sequence
  */
-export function sortPositioningTagNames(tagNames: string[], factionId: 'cat' | 'mouse'): string[] {
+export function sortPositioningTagNames(tagNames: string[], factionId: FactionId): string[] {
   return tagNames.sort((a, b) => {
     const aSequence = getPositioningTagSequence(a, factionId);
     const bSequence = getPositioningTagSequence(b, factionId);

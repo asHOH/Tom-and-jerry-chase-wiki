@@ -6,7 +6,7 @@ import CharacterSection from './CharacterSection';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { useCallback } from 'react';
 import { setNestedProperty } from '@/lib/editUtils';
-import { SkillAllocation } from '@/data/types';
+import { SkillAllocation, FactionId } from '@/data/types';
 import { characters } from '@/data';
 import { useSnapshot } from 'valtio';
 
@@ -57,7 +57,7 @@ export const useSkillAllocationManagement = () => {
 };
 
 interface SkillAllocationSectionProps {
-  factionId: 'cat' | 'mouse';
+  factionId: FactionId;
 }
 
 const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ factionId }) => {

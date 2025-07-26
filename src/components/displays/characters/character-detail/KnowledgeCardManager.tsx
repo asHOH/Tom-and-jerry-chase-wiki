@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { characters } from '@/data'; // Import Character type
-import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
+import type { KnowledgeCardGroup, KnowledgeCardGroupSet, FactionId } from '@/data/types';
 import KnowledgeCardSection from './KnowledgeCardSection';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import { useSnapshot } from 'valtio';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 interface KnowledgeCardManagerProps {
-  factionId: 'cat' | 'mouse';
+  factionId: FactionId;
 }
 
 // TODO: use local character to refactor

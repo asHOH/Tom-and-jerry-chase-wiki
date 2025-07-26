@@ -2,10 +2,11 @@
 
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 import { getCardRankColors } from '@/lib/design-tokens';
+import type { FactionId } from '@/data/types';
 
 // Faction button color utility
 function getFactionButtonColors(
-  faction: 'cat' | 'mouse',
+  faction: FactionId,
   isDarkMode: boolean
 ): { backgroundColor: string; color: string } {
   if (faction === 'cat') {
@@ -41,7 +42,7 @@ export default function KnowledgeCardGrid() {
 
   // Cost range state with faction-specific initial values
   const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
-  const [selectedFaction, setSelectedFaction] = useState<'cat' | 'mouse' | null>(null);
+  const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
 
   const { handleSelectCard } = useAppContext();
 

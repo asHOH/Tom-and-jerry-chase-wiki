@@ -53,7 +53,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         });
       }
     });
-    return sortPositioningTagNames(Array.from(tags), faction.id as 'cat' | 'mouse');
+    return sortPositioningTagNames(Array.from(tags), faction.id as FactionId);
   }, [faction.id]);
 
   const filteredCharacters = useMemo(() => {
@@ -150,11 +150,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
             return (
               <Tooltip
                 key={tag}
-                content={getPositioningTagTooltipContent(
-                  tag,
-                  faction.id as 'cat' | 'mouse',
-                  isDetailed
-                )}
+                content={getPositioningTagTooltipContent(tag, faction.id as FactionId, isDetailed)}
                 delay={800}
                 className='border-none cursor-pointer'
               >

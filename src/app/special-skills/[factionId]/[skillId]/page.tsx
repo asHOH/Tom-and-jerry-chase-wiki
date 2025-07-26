@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { specialSkills } from '@/data';
+import type { FactionId } from '@/data/types';
 import SpecialSkillDetailClient from './SpecialSkillDetailClient';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
@@ -48,7 +49,7 @@ export async function generateMetadata({
   if (factionIdRaw !== 'cat' && factionIdRaw !== 'mouse') {
     return {};
   }
-  const factionId = factionIdRaw as 'cat' | 'mouse';
+  const factionId = factionIdRaw as FactionId;
   const skill = getSkill(factionId, skillId);
 
   if (!skill) {
@@ -97,7 +98,7 @@ export default async function SpecialSkillDetailPage({
   if (factionIdRaw !== 'cat' && factionIdRaw !== 'mouse') {
     notFound();
   }
-  const factionId = factionIdRaw as 'cat' | 'mouse';
+  const factionId = factionIdRaw as FactionId;
   const skill = getSkill(factionId, skillId);
 
   if (!skill) {

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { specialSkills } from '@/data';
+import type { FactionId } from '@/data/types';
 import { useState } from 'react';
 import clsx from 'clsx';
 import PageTitle from '@/components/ui/PageTitle';
@@ -12,7 +13,7 @@ import FilterLabel from '@/components/ui/FilterLabel';
 const allSkills = [...Object.values(specialSkills.cat), ...Object.values(specialSkills.mouse)];
 
 export default function SpecialSkillClient() {
-  const [selectedFaction, setSelectedFaction] = useState<'cat' | 'mouse' | null>(null);
+  const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
 
   // Filter skills by faction if selected
   const filteredSkills = selectedFaction

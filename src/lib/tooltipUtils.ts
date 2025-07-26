@@ -3,6 +3,8 @@
  * Consolidates all tooltip helper functions from CharacterDetails components
  */
 
+import type { FactionId } from '@/data/types';
+
 // Property label mappings for tooltips
 const propertyTooltipsFallback: Record<string, string> = {
   Hp上限: '健康值上限，俗称"血条"',
@@ -110,7 +112,7 @@ const mousePositioningTagTooltips = {
  */
 export const getTooltipContent = (
   property: string,
-  faction: 'cat' | 'mouse',
+  faction: FactionId,
   isDetailed: boolean
 ): string => {
   const factionTooltips = propertyTooltips[faction];
@@ -137,7 +139,7 @@ export const getTooltipContent = (
  */
 export const getPositioningTagTooltipContent = (
   tagName: string,
-  faction: 'cat' | 'mouse',
+  faction: FactionId,
   isDetailed: boolean
 ): string => {
   // Select the appropriate tooltip set based on faction
@@ -200,7 +202,7 @@ export const hasItemKeyPatterns = (text: string): boolean => {
  * @param faction - Faction to get properties for
  * @returns Array of property names
  */
-export const getAvailableProperties = (faction: 'cat' | 'mouse'): string[] => {
+export const getAvailableProperties = (faction: FactionId): string[] => {
   return Object.keys(propertyTooltips[faction].normal);
 };
 
@@ -209,7 +211,7 @@ export const getAvailableProperties = (faction: 'cat' | 'mouse'): string[] => {
  * @param faction - Faction to get tags for
  * @returns Array of tag names
  */
-export const getAvailablePositioningTags = (faction: 'cat' | 'mouse'): string[] => {
+export const getAvailablePositioningTags = (faction: FactionId): string[] => {
   const tooltips = faction === 'cat' ? catPositioningTagTooltips : mousePositioningTagTooltips;
   return Object.keys(tooltips.normal);
 };

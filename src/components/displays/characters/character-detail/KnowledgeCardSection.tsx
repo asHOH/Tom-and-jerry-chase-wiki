@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Tooltip from '@/components/ui/Tooltip';
 import CharacterSection from './CharacterSection';
-import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
+import type { KnowledgeCardGroup, KnowledgeCardGroupSet, FactionId } from '@/data/types';
 import { useAppContext } from '../../../../context/AppContext';
 import { catKnowledgeCards } from '@/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
@@ -21,7 +21,7 @@ import clsx from 'clsx';
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: DeepReadonly<(KnowledgeCardGroup | KnowledgeCardGroupSet)[]>;
-  factionId: 'cat' | 'mouse';
+  factionId: FactionId;
   characterId: string;
   onCreateGroup: () => void;
   onRemoveGroup: (index: number) => void;

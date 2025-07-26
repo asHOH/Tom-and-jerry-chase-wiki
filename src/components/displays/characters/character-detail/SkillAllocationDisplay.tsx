@@ -2,7 +2,7 @@
 
 import React, { useMemo, useCallback } from 'react';
 import Image from 'next/image';
-import { SkillAllocation } from '@/data/types';
+import { SkillAllocation, FactionId } from '@/data/types';
 import {
   safeParseSkillAllocationPattern,
   validateSkillAllocationPattern,
@@ -33,7 +33,7 @@ type ProcessedSkillLevel = ParsedSkillLevel & {
 
 interface SkillAllocationDisplayProps {
   allocation: SkillAllocation;
-  factionId: 'cat' | 'mouse';
+  factionId: FactionId;
   onRemove: (allocationId: string) => void;
   index: number;
 }

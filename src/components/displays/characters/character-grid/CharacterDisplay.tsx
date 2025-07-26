@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { getPositioningTagColors } from '@/lib/design-tokens';
 import { CharacterDisplayProps } from '@/lib/types';
+import type { FactionId } from '@/data/types';
 import GameImage from '../../../ui/GameImage';
 import Tag from '../../../ui/Tag';
 import BaseCard from '../../../ui/BaseCard';
@@ -28,7 +29,7 @@ export default function CharacterDisplay({
   // Sort positioning tags according to sequence (main tags first, then by sequence)
   const sortedPositioningTags = useMemo(() => {
     if (!positioningTags || positioningTags.length === 0) return [];
-    return sortPositioningTags(positioningTags, factionId as 'cat' | 'mouse');
+    return sortPositioningTags(positioningTags, factionId as FactionId);
   }, [positioningTags, factionId]);
 
   return (
@@ -67,7 +68,7 @@ export default function CharacterDisplay({
           >
             {sortedPositioningTags.map((tag, index) => {
               const weaponImageUrl = tag.weapon
-                ? getWeaponSkillImageUrl(id, tag.weapon, factionId as 'cat' | 'mouse')
+                ? getWeaponSkillImageUrl(id, tag.weapon, factionId as FactionId)
                 : null;
 
               return (
@@ -77,7 +78,7 @@ export default function CharacterDisplay({
                       tag.tagName,
                       tag.isMinor,
                       false,
-                      factionId as 'cat' | 'mouse',
+                      factionId as FactionId,
                       isDarkMode
                     )}
                     size='xs'

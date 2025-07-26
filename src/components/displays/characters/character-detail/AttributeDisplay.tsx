@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import Tooltip from '../../../ui/Tooltip';
 import { getTooltipContent } from '@/lib/tooltipUtils';
+import type { FactionId } from '@/data/types';
 import EditableField from '@/components/ui/EditableField';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import { useSnapshot } from 'valtio';
@@ -9,7 +10,7 @@ import { characters } from '@/data';
 interface AttributeDisplayProps {
   label: string;
   value: string | number;
-  factionId: 'cat' | 'mouse';
+  factionId: FactionId;
   isDetailed: boolean;
   className?: string;
   path?: string;

@@ -8,6 +8,7 @@ import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { useSnapshot } from 'valtio';
 import { setNestedProperty } from '@/lib/editUtils';
 import { characters, PositioningTag } from '@/data';
+import type { FactionId } from '@/data/types';
 import { useAppContext } from '@/context/AppContext';
 import { CharacterWithFaction } from '@/lib/types';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
@@ -18,7 +19,7 @@ import Image from 'next/image';
 import clsx from 'clsx';
 
 // Helper function to get available tag names based on faction
-function getAvailableTagNames(factionId: 'cat' | 'mouse'): string[] {
+function getAvailableTagNames(factionId: FactionId): string[] {
   if (factionId === 'cat') {
     return ['进攻', '防守', '追击', '打架', '速通', '翻盘', '后期'];
   } else {
@@ -33,7 +34,7 @@ function TagNameDropdown({
   onSelect,
 }: {
   currentValue: string;
-  factionId: 'cat' | 'mouse';
+  factionId: FactionId;
   onSelect: (value: string) => void;
 }) {
   const availableTags = getAvailableTagNames(factionId);
@@ -103,10 +104,10 @@ function WeaponDropdown({
 
 interface PositioningTagsSectionProps {
   tags: DeepReadonly<PositioningTag[]>;
-  factionId: 'cat' | 'mouse';
+  factionId: FactionId;
 }
 
-function usePositioningTags({ factionId }: { factionId: 'cat' | 'mouse' }) {
+function usePositioningTags({ factionId }: { factionId: FactionId }) {
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';

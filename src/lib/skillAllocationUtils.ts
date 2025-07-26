@@ -1,5 +1,7 @@
 // Utility functions for skill allocation parsing and validation
 
+import type { FactionId } from '@/data/types';
+
 export type ParsedSkillLevel = {
   skillTypeNum: '0' | '1' | '2' | '3'; // 0=被动, 1=主动, 2=武器1, 3=武器2
   isDelayed: boolean; // In parentheses - 留加点
@@ -270,7 +272,7 @@ export const getSkillTypeDisplayName = (skillTypeNum: '0' | '1' | '2' | '3'): st
 export const getSkillAllocationImageUrl = (
   characterName: string,
   skillTypeNum: '0' | '1' | '2' | '3',
-  factionId: 'cat' | 'mouse',
+  factionId: FactionId,
   skillName?: string
 ): string => {
   if (skillTypeNum === '0') {

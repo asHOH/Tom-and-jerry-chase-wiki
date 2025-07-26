@@ -1,3 +1,5 @@
+import type { FactionId } from '@/data/types';
+
 export const designTokens = {
   spacing: {
     xs: '8px', // 2 units
@@ -689,7 +691,7 @@ export const getPositioningTagColors = (
   tagName: string,
   isMinor: boolean,
   includeBorder: boolean,
-  faction: 'cat' | 'mouse',
+  faction: FactionId,
   isDarkMode: boolean
 ) => {
   // Map Chinese tag names to design token keys
@@ -846,7 +848,7 @@ export const getSkillLevelContainerColor = (level: number, isDarkMode: boolean):
 export const getPositioningTagContainerColor = (
   tagName: string,
   isMinor: boolean,
-  faction: 'cat' | 'mouse',
+  faction: FactionId,
   isDarkMode: boolean
 ): string => {
   // Map Chinese tag names to design token keys
