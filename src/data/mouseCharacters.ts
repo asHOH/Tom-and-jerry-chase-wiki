@@ -1007,9 +1007,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         id: '隐形感应雷',
-        pattern: '1313[30]00[30]1',
+        pattern: '1313[30]001',
         weaponType: 'weapon2',
-        description: '仅供参考，实战要遵循什么时候进墙缝期什么时候点三级感应雷的原则',
+        description: '进墙缝期时再点三级感应雷。',
         additionaldescription: '',
       },
     ],
