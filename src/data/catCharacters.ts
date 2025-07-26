@@ -957,10 +957,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '火炮能射击七次。且对命中的老鼠额外施加短暂减速、禁用技能和道具键。',
+            description: '火炮能射击七次；对命中的老鼠额外施加短暂减速、禁用其技能和道具键。',
             cooldown: 25,
             detailedDescription:
-              '火炮能射击七次。且对命中的老鼠额外施加减速、禁用技能和道具键3.5秒。',
+              '火炮能射击七次；对命中的老鼠额外施加减速、禁用其技能和道具键3.5秒。',
           },
         ],
         cancelableSkill: ['道具键', '跳跃键'],
