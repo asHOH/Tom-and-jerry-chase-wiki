@@ -122,6 +122,17 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'yekonghaohan',
+    name: '夜空乄浩瀚',
+    url: 'https://space.bilibili.com/3546658333788386',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['泰菲'],
+      },
+    ],
+  },
+  {
     id: 'zhuifengtangmuofficial',
     name: '追风汤姆official',
     url: 'https://space.bilibili.com/1060009579',
