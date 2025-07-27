@@ -177,6 +177,17 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'gezi',
+    name: '鸽子',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['图多盖洛'],
+        isMinor: true, // knowledge card & skill allocation, brief skill descriptions
+      },
+    ],
+  },
+  {
     id: 'nixiaoruidadi',
     name: '你小睿大帝',
     roles: [

@@ -816,6 +816,364 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
   },
 
+  /* ----------------------------------- 图多盖洛 ----------------------------------- */
+  图多盖洛: {
+    description: '拥有惊人美貌的图多盖洛是上东区和知名度最高的千金小姐，他的追求者从纽约排到了巴黎',
+    maxHp: 230,
+    hpRecovery: 2,
+    moveSpeed: 770,
+    jumpHeight: 420,
+    clawKnifeCdHit: 3.5,
+    clawKnifeCdUnhit: 3.5,
+    clawKnifeRange: 300,
+    catPositioningTags: [
+      {
+        tagName: '防守',
+        isMinor: false,
+        description: '香水有强悍的后期防守强度',
+        additionalDescription: '',
+        weapon: 1,
+      },
+      {
+        tagName: '进攻',
+        isMinor: false,
+        description: '指甲油的10秒霸体有强悍的上火箭能力',
+        additionalDescription: '',
+        weapon: 2,
+      },
+      {
+        tagName: '打架',
+        isMinor: false,
+        description: '指甲油的高频率霸体有强大的打架能力',
+        additionalDescription: '',
+        weapon: 2,
+      },
+      {
+        tagName: '后期',
+        isMinor: false,
+        description: '图多后期有高额伤害和打架能力',
+        additionalDescription: '',
+      },
+      {
+        tagName: '翻盘',
+        isMinor: true,
+        description: '指甲油和被动的后期强度有一定的翻盘能力',
+        additionalDescription: '',
+        weapon: 2,
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '魅力香水',
+        pattern: '121221000',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+      {
+        id: '魅力甲油-无击晕',
+        pattern: '133131000',
+        weaponType: 'weapon2',
+        description: '',
+        additionaldescription: '无击晕常见配卡。',
+      },
+      {
+        id: '魅力甲油-击晕',
+        pattern: '033030111',
+        weaponType: 'weapon1',
+        description: '击晕流常见配卡',
+      },
+      {
+        id: '魅力甲油-破盾',
+        pattern: '133030011',
+        weaponType: 'weapon1',
+        description: '玩击晕流时需要破盾可以先点一级吻',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
+        description: '香水指甲油通用。常规追击卡组',
+      },
+      {
+        cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
+        description: '香水。香水图多常规防守卡组',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-知识渊博', 'S-击晕'],
+        description: '指甲油。在前中后期都有较高强度',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-知识渊博', 'A-加大火力', 'A-穷追猛打'],
+        description: '指甲油。穷追弥补找节奏能力，加大弥补放飞速度',
+      },
+      {
+        cards: ['S-乘胜追击', 'C-猫是液体', 'S-知识渊博', 'A-熊熊燃烧'],
+        description: '指甲油。适合森林牧场，太空堡垒三等管道图',
+      },
+      {
+        cards: ['S-猛攻', 'A-熊熊燃烧', 'A-细心', 'S-知识渊博'],
+        description: '指甲油。适合可以布局的图使用，后期拥有更强的防守翻盘能力',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-知识渊博', 'A-心灵手巧', 'B-皮糙肉厚'],
+        description: '指甲油。手巧和皮糙增强图多的打架能力，在敌方干扰能力过强可携带此卡',
+      },
+      {
+        cards: ['S-击晕', 'S-知识渊博', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '指甲油。下限更高的卡组',
+      },
+      {
+        cards: ['S-知识渊博', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
+        description: '指甲油。适合新手小图追击',
+      },
+      {
+        cards: ['S-击晕', 'S-知识渊博', 'A-细心', 'B-恐吓'],
+        description: '指甲油。更适合新手玩家守奶酪的卡组',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '通用',
+      },
+      {
+        name: '蓄力重击',
+        description: '绑定击晕',
+      },
+      {
+        name: '全垒打',
+        description: '高爆发能力',
+      },
+      {
+        name: '我生气了',
+        description: '提高输出',
+      },
+      {
+        name: '急速翻滚',
+        description: '提高机动性',
+      },
+    ],
+    skills: [
+      {
+        name: '魅惑之吻',
+        type: 'active',
+        aliases: ['小丑飞吻'],
+        description:
+          '（本角色文案待完善）释放一个飞吻，命中老鼠后，其移动、推奶酪等行为期间会受到持续伤害；受到[控制](包括碎片的僵直)将解除被吻效果；飞吻可被护盾和部分地形阻挡。', // 图多的破盾手段，增强图多的消耗能力
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['移动键', '药水键', '道具键'],
+        cancelableAftercast: ['道具键'],
+        cooldownTiming: '释放时',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description: '吻可以储存两个，被吻命中的老鼠额外受到减速。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description: '被吻命中的老鼠无法使用技能。',
+            cooldown: 15,
+          },
+        ],
+        cueRange: '全图可见',
+      },
+      {
+        name: '魅力香水',
+        aliases: ['小丑喷烟'],
+        type: 'weapon1',
+        description: '释放香水区域，香水内老鼠移动、跳跃、攻击、Hp恢复、推速下降。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '释放12次香水区域',
+            cooldown: 16,
+          },
+          {
+            level: 2,
+            description: '释放次数增加到18次；香水内图多爪刀伤害和频率提升；提高对老鼠的减益效果。',
+            cooldown: 16,
+          },
+          {
+            level: 3,
+            description: '增强香水内图多获得的增益效果；老鼠在香水内无法使用技能。',
+            cooldown: 16,
+          },
+        ],
+        canHitInPipe: false,
+        cooldownTiming: '释放时',
+        cueRange: '全图可见',
+      },
+      {
+        name: '魅力甲油',
+        type: 'weapon2',
+        description: '获得3次甲油强化的爪刀，获得额外爪刀判定范围，命中老鼠将造成少量伤害。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['道具键'],
+        cancelableAftercast: ['道具键'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 10,
+          },
+          {
+            level: 2,
+            description:
+              '强化爪刀命中后回复Hp、增加移速和交互速度，可叠加三层，持续12秒；再次命中重置持续时间。',
+            cooldown: 10,
+          },
+          {
+            level: 3,
+            description:
+              '爪刀命中获得10秒强霸体；强化爪刀第一次命中老鼠时，其下次落地时移动和跳跃受到短暂限制。',
+            cooldown: 10,
+          },
+        ],
+      },
+      {
+        name: '香水美人',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '免疫反向效果，遇到道具香水或武器技能香水获得加速。',
+          },
+          {
+            level: 2,
+            description: '爪刀命中额外施加反向；增加甲油额外爪刀判定范围的伤害。',
+          },
+          {
+            level: 3,
+            description: '爪刀命中额外使目标持续减少Hp。',
+          },
+        ],
+      },
+    ],
+    counters: [
+      {
+        id: '杰瑞',
+        description: '杰瑞梅子煲',
+        isMinor: false,
+      },
+      {
+        id: '航海士杰瑞',
+        description: '海盗梅子煲',
+        isMinor: false,
+      },
+      {
+        id: '剑客杰瑞',
+        description: '剑杰打不动',
+        isMinor: false,
+      },
+      {
+        id: '泰菲',
+        description: '泰菲梅子煲',
+        isMinor: false,
+      },
+      {
+        id: '恶魔泰菲',
+        description: '恶菲梅子煲',
+        isMinor: false,
+      },
+      {
+        id: '魔术师',
+        description: '魔术师梅子煲',
+        isMinor: false,
+      },
+      {
+        id: '米雪儿',
+        description: '米雪儿梅子煲',
+        isMinor: false,
+      },
+      {
+        id: '蒙金奇',
+        description: '三级吻克制蒙金奇',
+        isMinor: false,
+      },
+      {
+        id: '米可',
+        description: '大后期点出三级吻对米可有一定威胁',
+        isMinor: true,
+      },
+    ],
+    aliases: ['牢图', '哈基图'],
+    counteredBy: [
+      {
+        id: '侦探杰瑞',
+        description: '侦探杰瑞克制一切防守猫',
+        isMinor: false,
+      },
+      {
+        id: '国王杰瑞',
+        description: '甲油缺少破盾手段，会被护盾克制',
+        isMinor: false,
+      },
+      {
+        id: '剑客泰菲',
+        description: '剑菲拥有长时间的群体无敌，克制甲油和香水防守',
+        isMinor: false,
+      },
+      {
+        id: '天使杰瑞',
+        description: '图多没有手段阻拦天使复活队友',
+        isMinor: true,
+      },
+      {
+        id: '剑客莉莉',
+        description: '剑客莉莉风墙可以拖延图多上火箭，被动无敌可以无视图多救人',
+        isMinor: true,
+      },
+      {
+        id: '侦探泰菲',
+        description: '侦探泰菲拥有高强度自保和频繁隐身，前期不好控制奶酪进度，后期高频率隐身',
+        isMinor: true,
+      },
+      {
+        id: '尼宝',
+        description: '尼宝武器技能无视霸体，主动技能霸体可以轻松救人',
+        isMinor: false,
+      },
+      {
+        id: '仙女鼠',
+        description: '仙女鼠武器技能无视霸体，后期拥有高强度风筝能力',
+        isMinor: true,
+      },
+      {
+        id: '米可',
+        description: '米可拥有高额减伤，图多打不死',
+        isMinor: true,
+      },
+      {
+        id: '玛丽',
+        description: '扇子作为有效破局手段，主动技能可以禁用图多的核心爪刀',
+        isMinor: false,
+      },
+      {
+        id: '表演者•杰瑞',
+        description: '出生，前中后期都在图多头上拉式',
+        isMinor: false,
+      },
+      {
+        id: '罗宾汉泰菲',
+        description: '主动技能在甲油成型前干扰强悍，后期藤蔓群体续航克制图多消耗',
+        isMinor: true,
+      },
+    ],
+  },
+
   /* ----------------------------------- 侍卫汤姆 ----------------------------------- */
   侍卫汤姆: {
     description: '侍卫汤姆始终守护在皇宫内，负责保护国王的安全。',
