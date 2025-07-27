@@ -3052,6 +3052,175 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 马索尔 ----------------------------------- */
+  马索尔: {
+    description:
+      '黄色黑纹衣服，头戴绿色帽子，和杰瑞长相很相似。他是杰瑞的大表哥，实力强悍，勇敢威猛，是所有猫咪的克星。',
+    maxHp: 99,
+    attackBoost: 0,
+    hpRecovery: 2,
+    moveSpeed: 650,
+    jumpHeight: 400,
+    cheesePushSpeed: 0.6,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '救援',
+        isMinor: false,
+        description: '闪拳可拦截，传送可救援，有药水可以稳救。',
+        additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。',
+      },
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '拳头可干扰霸体上火箭。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '发怒拳头可以强推奶酪。',
+        additionalDescription: '后期发怒时可无视夹子和叉子。',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '沙包拳头',
+        pattern: '120022[10]1',
+        weaponType: 'weapon1',
+        description:
+          '八级时，顺风三被，逆风二级传送；二人残局优先三级传送；六级可留点随时二级传送。',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description: '常规卡组。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'S-护佑', 'C-救救我'],
+        description: '适合单救阵容，保证第一波救援能力，也可以增加前期生存能力。',
+      },
+      {
+        cards: ['S-铁血', 'S-无畏', 'B-逃之夭夭', 'C-救救我'],
+        description: '无畏常规卡组，踏空不熟练或单双排可用。',
+      },
+    ],
+    skills: [
+      {
+        name: '闪亮营救',
+        type: 'active',
+        description:
+          '大表哥点击按钮后可选择绑在火箭上和被猫抓在手中的队友，瞬移到身边落下，弹飞附近的道具，当怒气满时，可在下落瞬间通过向左右拖动按钮来攻击对应方向的目标。',
+        detailedDescription:
+          '前摇1.4s，大表哥点击按钮后可选择绑在火箭上和被猫抓在手中的队友，瞬移到其上方并在0.65s后落下，若成功落下且没有受到任何效果打断，可在0.25s后将附近半径250内的道具击飞；当怒气满时，可在下落0.5s内通过向左右拖动按钮来攻击对应方向的目标，前摇0.6s，造成50伤害，并眩晕2.4s，后摇0.75s。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: ['道具键*', '移动键', '跳跃键', '药水键', '其他技能键'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 60,
+          },
+          {
+            level: 2,
+            description: '传送可选所有老鼠为目标。',
+            cooldown: 60,
+          },
+          {
+            level: 3,
+            description: '减少CD。',
+            cooldown: 35,
+            detailedDescription: '减少CD至35s。',
+          },
+        ],
+        aliases: ['闪现'],
+        cueRange: '本房间可见',
+        canHitInPipe: true,
+      },
+      {
+        name: '沙包拳头',
+        aliases: ['爪刀'],
+        type: 'weapon1',
+        description:
+          '攥起拳头。再次使用技能将向按键拖动的方向挥出拳头，并在满怒时提升效果。\n按键向上-升龙拳：向上打飞敌方，同时熄灭火箭；满怒时额外打飞火箭。\n按键向前/不拖动-游龙拳：向前打飞敌方，同时熄灭火箭；满怒时增加击退距离并可打入一定进度的奶酪。\n按键向下-地龙拳：原地打晕敌方，并施加减速；满怒时增加眩晕时间、可能使敌方掉下其所在的平台。',
+        detailedDescription:
+          '前摇1.4s，之后的30秒内，再次使用技能将向按键拖动的方向挥出拳头。挥出拳头后立刻进入CD。成功挥出拳头有0.15s前摇，对前方[范围290](三种拳头都一样)的猫咪造成50点伤害，挥拳后有1s后摇。满怒时，使用技能改为对拳头充气，充气需1.4s，之后可在20s内至多挥出3次拳头，前后摇、伤害不变，但期间[无法使用道具](但可通过商店买道具在手上取消后摇)，每次挥拳有3秒CD。\n按键向上-升龙拳：造成[1s](满怒时为0.9s)眩晕，并击飞1.1s，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时额外向上击飞火箭2.5s。\n按键向前/不拖动-游龙拳：造成1s眩晕，并击退500距离，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时眩晕时间提高至1.5s，击退距离提高至1500，且敌方在击退过程中会撞碎冰块以外的可破碎道具，撞碎时受到2.8s眩晕和[50伤害](不会受到道具本身的伤害，且与道具本身无关，眩晕时间受到连击保护且与道具本身无关)，还可将洞中的奶酪打入[12.5%](不受其他推速加成影响)。\n按键向下-地龙拳：造成0.9s眩晕，眩晕结束后敌方受到17.5%的减速，持续5s；满怒时眩晕时间提高至1.4s，且若目标站在平台上，可能向下掉落。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: ['道具键*'],
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description:
+              '提高满怒时游龙拳打入奶酪的进度；提高升龙拳和游龙拳对墙缝的伤害，满怒后进一步提高。',
+            cooldown: 15,
+            detailedDescription:
+              '提高满怒时游龙拳打入奶酪的进度至[20%](不受其他推速加成影响)；升龙拳和游龙拳对墙缝的伤害提高至11点，满怒后提高至16点。',
+          },
+        ],
+        cueRange: '本房间可见',
+        cooldownTiming: '释放后',
+      },
+      {
+        name: '怒气喷发',
+        type: 'passive',
+        description:
+          '怒气：当附近队友受到猫攻击时，将积攒怒气。怒气满之后将进入持续较长的满怒状态，期间暴露小地图视野、沙包拳头得到强化、获得减伤。退出满怒状态后进入冷静状态，较长时间内不会获得怒气、大幅减速。',
+        detailedDescription:
+          '怒气：当半径1750范围内队友或自己受到猫攻击时，将积攒28%的怒气。怒气达到100%之后将进入满怒状态，持续32s，期间暴露小地图视野、沙包拳头得到强化、获得5点固定减伤。退出满怒状态后进入冷静状态，持续34.9s，期间不会获得怒气、减速25%。',
+        skillLevels: [
+          {
+            level: 1,
+            description: '满怒时，大幅加速。',
+            detailedDescription: '满怒时，加速20%。',
+          },
+          {
+            level: 2,
+            description: '满怒时，免疫控制效果，且提高Hp恢复。',
+            detailedDescription: '满怒时，免疫控制效果，且Hp恢复提高2.5/s。',
+          },
+          {
+            level: 3,
+            description: '满怒时，立刻刷新技能CD。',
+            detailedDescription: '满怒时，立刻刷新技能CD。',
+          },
+        ],
+      },
+    ],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '踏空必备',
+      },
+      {
+        name: '绝处逢生',
+        description: '传送破夹',
+      },
+      {
+        name: '干扰投掷',
+        description: '道具接拳',
+      },
+    ],
+    aliases: ['大表哥'],
+  },
+
   /* ----------------------------------- 米雪儿 ----------------------------------- */
   米雪儿: {
     description:

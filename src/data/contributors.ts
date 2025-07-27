@@ -59,7 +59,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['侦探杰瑞', '蒙金奇', '国王杰瑞', '剑客杰瑞'],
+        characters: ['侦探杰瑞', '蒙金奇', '国王杰瑞', '剑客杰瑞', '马索尔'],
       },
       {
         type: RoleType.ContentWriter,
@@ -86,6 +86,7 @@ export const contributors: Contributor[] = [
           '图茨',
           '仙女鼠',
           '雪梨',
+          '马索尔',
         ],
       },
       {
