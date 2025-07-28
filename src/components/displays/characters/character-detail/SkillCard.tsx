@@ -71,32 +71,63 @@ export default function SkillCard({
     return typeMap[type as keyof typeof typeMap] || '被动';
   };
 
+  const getCooldownProperty = () => {
+    if (!skill.skillLevels.some((level: SkillLevel) => level.cooldown)) return null;
+
+    const cooldowns = skill.skillLevels.map((level: SkillLevel) => level.cooldown || '-');
+    const uniqueCooldowns = Array.from(new Set(cooldowns));
+
+    if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== '-' && !isEditMode) {
+      return `CD: ${uniqueCooldowns[0]} 秒`;
+    }
+
+    return [
+      'CD: ',
+      cooldowns.map((i, index) => (
+        <React.Fragment key={index}>
+          {index != 0 ? '/' : ''}
+          <EditableField
+            tag='span'
+            path={`skills.${skillIndex}.skillLevels.${index}.cooldown`}
+            initialValue={i}
+          />
+        </React.Fragment>
+      )),
+      ' 秒',
+    ];
+  };
+
+  const createBooleanCheckbox = (
+    label: string,
+    property: 'canMoveWhileUsing' | 'canUseInAir' | 'canHitInPipe',
+    trueText: string,
+    falseText: string
+  ) => {
+    const skillRef = characters[characterId]!.skills[skillIndex]!;
+
+    return (
+      <div className='flex items-center gap-1 text-xs'>
+        <span className='text-gray-600'>{label}:</span>
+        <label className='flex items-center gap-1 cursor-pointer'>
+          <input
+            type='checkbox'
+            checked={skill[property] ?? false}
+            onChange={(e) => {
+              skillRef[property] = e.target.checked;
+            }}
+            className='w-3 h-3'
+          />
+          <span className='font-bold'>{skill[property] ? trueText : falseText}</span>
+        </label>
+      </div>
+    );
+  };
+
   const getSkillProperties = () => {
     const properties: React.ReactNode[] = [];
 
-    if (skill.skillLevels.some((level: SkillLevel) => level.cooldown)) {
-      const cooldowns = skill.skillLevels.map((level: SkillLevel) => level.cooldown || '-');
-      const uniqueCooldowns = Array.from(new Set(cooldowns));
-
-      if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== '-' && !isEditMode) {
-        properties.push(`CD: ${uniqueCooldowns[0]} 秒`);
-      } else {
-        properties.push([
-          'CD: ',
-          cooldowns.map((i, index) => (
-            <React.Fragment key={index}>
-              {index != 0 ? '/' : ''}
-              <EditableField
-                tag='span'
-                path={`skills.${skillIndex}.skillLevels.${index}.cooldown`}
-                initialValue={i}
-              />
-            </React.Fragment>
-          )),
-          ' 秒',
-        ]);
-      }
-    }
+    const cooldownProp = getCooldownProperty();
+    if (cooldownProp) properties.push(cooldownProp);
     if (isEditMode && skill.type !== 'passive') {
       properties.push(
         <div className='text-gray-600 text-xs flex'>
@@ -153,36 +184,8 @@ export default function SkillCard({
     }
     if (isEditMode && skill.type != 'passive') {
       properties.push(
-        <div className='flex items-center gap-1 text-xs'>
-          <span className='text-gray-600'>移动释放:</span>
-          <label className='flex items-center gap-1 cursor-pointer'>
-            <input
-              type='checkbox'
-              checked={skill.canMoveWhileUsing ?? false}
-              onChange={(e) => {
-                characters[characterId]!.skills[skillIndex]!.canMoveWhileUsing = e.target.checked;
-              }}
-              className='w-3 h-3'
-            />
-            <span className='font-bold'>
-              {skill.canMoveWhileUsing ? '可移动释放' : '不可移动释放'}
-            </span>
-          </label>
-        </div>,
-        <div className='flex items-center gap-1 text-xs'>
-          <span className='text-gray-600'>空中释放:</span>
-          <label className='flex items-center gap-1 cursor-pointer'>
-            <input
-              type='checkbox'
-              checked={skill.canUseInAir ?? false}
-              onChange={(e) => {
-                characters[characterId]!.skills[skillIndex]!.canUseInAir = e.target.checked;
-              }}
-              className='w-3 h-3'
-            />
-            <span className='font-bold'>{skill.canUseInAir ? '可空中释放' : '不可空中释放'}</span>
-          </label>
-        </div>,
+        createBooleanCheckbox('移动释放', 'canMoveWhileUsing', '可移动释放', '不可移动释放'),
+        createBooleanCheckbox('空中释放', 'canUseInAir', '可空中释放', '不可空中释放'),
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
             const specialOptions = ['无前摇', '不可被打断'] as const;
@@ -401,22 +404,12 @@ export default function SkillCard({
             );
           })()}
         </div>,
-        <div className='flex items-center gap-1 text-xs'>
-          <span className='text-gray-600'>管道攻击:</span>
-          <label className='flex items-center gap-1 cursor-pointer'>
-            <input
-              type='checkbox'
-              checked={skill.canHitInPipe ?? false}
-              onChange={(e) => {
-                characters[characterId]!.skills[skillIndex]!.canHitInPipe = e.target.checked;
-              }}
-              className='w-3 h-3'
-            />
-            <span className='font-bold'>
-              {skill.canHitInPipe ? '可击中管道中的角色' : '不可击中管道中的角色'}
-            </span>
-          </label>
-        </div>,
+        createBooleanCheckbox(
+          '管道攻击',
+          'canHitInPipe',
+          '可击中管道中的角色',
+          '不可击中管道中的角色'
+        ),
         <div className='flex items-center gap-1 text-xs'>
           <span className='text-gray-600'>CD时机:</span>
           {(() => {
