@@ -80,3 +80,7 @@ npm run storybook       # Start Storybook
 - Single quotes, semicolons, 2-space indentation
 - Trailing commas in ES5 contexts
 - LF line endings
+
+## Other Requirements
+
+- Write a draft commit message after each step with `feat|fix|docs|style|refactor|perf|test|chore(scope): ...` as a reference.
