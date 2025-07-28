@@ -48,13 +48,13 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
       <button
         type='button'
         aria-label={isOpen ? `折叠${groupSet.id}` : `展开${groupSet.id}`}
-        className='flex items-center justify-between w-full text-2xl font-bold py-3 mb-1 focus:outline-none cursor-pointer dark:text-white'
+        className='flex items-center justify-between w-full text-2xl font-bold py-1 focus:outline-none cursor-pointer dark:text-white'
         onClick={toggleOpen}
       >
         <h3 className='pl-1 text-lg'>{groupSet.id}</h3>
         <svg
           className={clsx(
-            'w-6 h-6 transform transition-transform duration-200 ease-out',
+            'w-5.5 h-5.5 transform transition-transform duration-200 ease-out',
             isOpen ? 'rotate-0' : '-rotate-90'
           )}
           fill='none'
@@ -80,7 +80,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
         {...(!isOpen && { 'aria-hidden': true })}
       >
         <div className='mb-6 rounded-lg p-4'>
-          <div className='mb-2 text-gray-700 dark:text-gray-300'>
+          <div className='mb-6 text-gray-700 dark:text-gray-300'>
             {isDetailedView && groupSet.detailedDescription
               ? groupSet.detailedDescription
               : groupSet.description}
