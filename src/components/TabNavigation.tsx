@@ -188,24 +188,54 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           )}
           {showDetailToggle && (
             <Tooltip
-              content={isDetailedView ? '简明描述' : '详细描述'}
+              content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
               className='border-none'
               disabled={!isMobile}
               delay={800}
             >
-              <button
-                type='button'
-                onClick={toggleDetailedView}
+              <div
                 className={clsx(
-                  'whitespace-nowrap rounded-md border-none cursor-pointer transition-colors',
-                  isMobile ? 'min-h-[40px] p-2 text-sm' : 'min-h-[44px] px-4 text-base',
-                  isDetailedView
-                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'
-                    : 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300'
+                  'relative flex rounded-lg dark:border-gray-600 bg-gray-100 dark:bg-slate-800 p-1 cursor-pointer transition-all duration-200',
+                  isMobile ? 'min-h-[40px]' : 'min-h-[44px]'
                 )}
+                onClick={toggleDetailedView}
               >
-                {isMobile ? (isDetailedView ? '简' : '详') : isDetailedView ? '简明' : '详细'}
-              </button>
+                {/* Background slider */}
+                <div
+                  className={clsx(
+                    'absolute top-1 bottom-1 rounded-md shadow-sm transition-all duration-200 ease-out w-[calc(50%-4px)]',
+                    isDetailedView
+                      ? 'left-1 transform translate-x-full bg-orange-100 dark:bg-orange-900'
+                      : 'left-1 transform translate-x-0 bg-blue-100 dark:bg-blue-900'
+                  )}
+                />
+
+                {/* Simple option */}
+                <div
+                  className={clsx(
+                    'relative z-10 flex items-center justify-center transition-colors duration-200 whitespace-nowrap',
+                    isMobile ? 'px-2 py-1 text-xs font-medium' : 'px-2.5 py-2 text-sm font-medium',
+                    !isDetailedView
+                      ? 'text-blue-600 dark:text-blue-400'
+                      : 'text-gray-500 dark:text-gray-500'
+                  )}
+                >
+                  {isMobile ? '简' : '简明'}
+                </div>
+
+                {/* Detailed option */}
+                <div
+                  className={clsx(
+                    'relative z-10 flex items-center justify-center transition-colors duration-200 whitespace-nowrap',
+                    isMobile ? 'px-2 py-1 text-xs font-medium' : 'px-2.5 py-2 text-sm font-medium',
+                    isDetailedView
+                      ? 'text-orange-600 dark:text-orange-400'
+                      : 'text-gray-500 dark:text-gray-500'
+                  )}
+                >
+                  {isMobile ? '详' : '详细'}
+                </div>
+              </div>
             </Tooltip>
           )}
         </div>
