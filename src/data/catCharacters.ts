@@ -1102,13 +1102,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         weapon: 1,
       },
       {
-        tagName: '进攻',
-        isMinor: false,
-        description: '指甲油的10秒霸体有强悍的上火箭能力',
-        additionalDescription: '',
-        weapon: 2,
-      },
-      {
         tagName: '打架',
         isMinor: false,
         description: '指甲油的高频率霸体有强大的打架能力',
@@ -1150,53 +1143,31 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         weaponType: 'weapon1',
         description: '击晕流常见配卡',
       },
-      {
-        id: '魅力甲油-破盾',
-        pattern: '133030011',
-        weaponType: 'weapon1',
-        description: '玩击晕流时需要破盾可以先点一级吻',
-      },
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
-        description: '香水指甲油通用。常规追击卡组',
-      },
-      {
-        cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
-        description: '香水。香水图多常规防守卡组',
-      },
-      {
         cards: ['S-乘胜追击', 'S-知识渊博', 'S-击晕'],
-        description: '指甲油。在前中后期都有较高强度',
-      },
-      {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'A-加大火力', 'A-穷追猛打'],
-        description: '指甲油。穷追弥补找节奏能力，加大弥补放飞速度',
+        description: '指甲油，在前中后期都有较高强度',
       },
       {
         cards: ['S-乘胜追击', 'C-猫是液体', 'S-知识渊博', 'A-熊熊燃烧'],
-        description: '指甲油。适合森林牧场，太空堡垒三等管道图',
+        description: '指甲油，适合森林牧场，太空堡垒三等管道图',
       },
       {
         cards: ['S-猛攻', 'A-熊熊燃烧', 'A-细心', 'S-知识渊博'],
-        description: '指甲油。适合可以布局的图使用，后期拥有更强的防守翻盘能力',
+        description: '指甲油，适合可以布局的图使用，后期拥有更强的防守翻盘能力',
       },
       {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'A-心灵手巧', 'B-皮糙肉厚'],
-        description: '指甲油。手巧和皮糙增强图多的打架能力，在敌方干扰能力过强可携带此卡',
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
+        description: '香水指甲油通用，常规追击卡组',
       },
       {
-        cards: ['S-击晕', 'S-知识渊博', 'A-穷追猛打', 'B-皮糙肉厚'],
-        description: '指甲油。下限更高的卡组',
+        cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
+        description: '香水，香水图多常规防守卡组',
       },
       {
-        cards: ['S-知识渊博', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
-        description: '指甲油。适合新手小图追击',
-      },
-      {
-        cards: ['S-击晕', 'S-知识渊博', 'A-细心', 'B-恐吓'],
-        description: '指甲油。更适合新手玩家守奶酪的卡组',
+        cards: ['S-乘胜追击', 'S-知识渊博', 'S-猛攻', 'B-反侦察'],
+        description: '指甲油，双经验卡成型更快，后期更强势',
       },
     ],
     specialSkills: [
@@ -1225,7 +1196,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '魅惑之吻',
         type: 'active',
-        aliases: ['小丑飞吻'],
         description:
           '（本角色文案待完善）释放一个飞吻，命中老鼠后，其移动、推奶酪等行为期间会受到持续伤害；受到[控制](包括碎片的僵直)将解除被吻效果；飞吻可被护盾和部分地形阻挡。', // 图多的破盾手段，增强图多的消耗能力
         canMoveWhileUsing: true,
@@ -1254,7 +1224,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         name: '魅力香水',
-        aliases: ['小丑喷烟'],
         type: 'weapon1',
         description: '释放香水区域，香水内老鼠移动、跳跃、攻击、Hp恢复、推速下降。',
         canMoveWhileUsing: false,
@@ -1324,98 +1293,53 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '爪刀命中额外使目标持续减少Hp。',
+            description: '爪刀命中额外使目标在一段时间内持续减少Hp。',
           },
         ],
       },
     ],
     counters: [
       {
-        id: '杰瑞',
-        description: '杰瑞梅子煲',
-        isMinor: false,
-      },
-      {
         id: '航海士杰瑞',
-        description: '海盗梅子煲',
-        isMinor: false,
-      },
-      {
-        id: '剑客杰瑞',
-        description: '剑杰打不动',
-        isMinor: false,
-      },
-      {
-        id: '泰菲',
-        description: '泰菲梅子煲',
-        isMinor: false,
-      },
-      {
-        id: '恶魔泰菲',
-        description: '恶菲梅子煲',
-        isMinor: false,
-      },
-      {
-        id: '魔术师',
-        description: '魔术师梅子煲',
-        isMinor: false,
-      },
-      {
-        id: '米雪儿',
-        description: '米雪儿梅子煲',
+        description: '图多六级后霸体无视海盗控制；海盗缺乏有效自保手段',
         isMinor: false,
       },
       {
         id: '蒙金奇',
-        description: '三级吻克制蒙金奇',
-        isMinor: false,
+        description: '大后期点出三级吻，克制蒙金奇',
+        isMinor: true,
       },
       {
         id: '米可',
-        description: '大后期点出三级吻对米可有一定威胁',
+        description: '大后期点出三级吻，对米可有一定威胁',
         isMinor: true,
       },
     ],
-    aliases: ['牢图', '哈基图'],
+    aliases: ['牢图', '母猫'],
     counteredBy: [
       {
         id: '侦探杰瑞',
-        description: '侦探杰瑞克制一切防守猫',
+        description: '侦探杰瑞的烟雾弹克制一切防守猫',
         isMinor: false,
       },
       {
         id: '国王杰瑞',
-        description: '甲油缺少破盾手段，会被护盾克制',
+        description: '甲油缺少破盾手段，被护盾克制',
         isMinor: false,
       },
       {
         id: '剑客泰菲',
-        description: '剑菲拥有长时间的群体无敌，克制甲油和香水防守',
+        description: '剑客泰菲拥有长时间的群体无敌，克制甲油和香水防守',
         isMinor: false,
       },
       {
-        id: '天使杰瑞',
-        description: '图多没有手段阻拦天使复活队友',
-        isMinor: true,
-      },
-      {
-        id: '剑客莉莉',
-        description: '剑客莉莉风墙可以拖延图多上火箭，被动无敌可以无视图多救人',
-        isMinor: true,
-      },
-      {
-        id: '侦探泰菲',
-        description: '侦探泰菲拥有高强度自保和频繁隐身，前期不好控制奶酪进度，后期高频率隐身',
-        isMinor: true,
-      },
-      {
         id: '尼宝',
-        description: '尼宝武器技能无视霸体，主动技能霸体可以轻松救人',
+        description: '尼宝武器技能无视图多的霸体、主动技能可以轻松救人',
         isMinor: false,
       },
       {
         id: '仙女鼠',
-        description: '仙女鼠武器技能无视霸体，后期拥有高强度风筝能力',
+        description: '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力',
         isMinor: true,
       },
       {
@@ -1426,16 +1350,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '玛丽',
         description: '扇子作为有效破局手段，主动技能可以禁用图多的核心爪刀',
-        isMinor: false,
+        isMinor: true,
       },
       {
         id: '表演者•杰瑞',
-        description: '出生，前中后期都在图多头上拉式',
-        isMinor: false,
-      },
-      {
-        id: '罗宾汉泰菲',
-        description: '主动技能在甲油成型前干扰强悍，后期藤蔓群体续航克制图多消耗',
+        description: '后期高血量且很难被放飞，克制图多的死守',
         isMinor: true,
       },
     ],
