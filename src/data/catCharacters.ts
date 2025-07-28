@@ -816,6 +816,273 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
   },
 
+  /* ----------------------------------- 牛仔汤姆 ----------------------------------- */
+  牛仔汤姆: {
+    description:
+      '牛仔汤姆身手敏捷、深藏不露，擅长使用绳索御牛，热爱自由的他，在草原上过着与世无争的生活。',
+    maxHp: 225,
+    hpRecovery: 2.5,
+    moveSpeed: 760,
+    jumpHeight: 420,
+    clawKnifeCdHit: 4.9,
+    clawKnifeCdUnhit: 3.5,
+    clawKnifeRange: 300,
+    catPositioningTags: [
+      {
+        tagName: '进攻',
+        isMinor: false,
+        description: '牛的干扰、弹弓的射程及被动的加持使牛汤拥有较强的攻击性。',
+        additionalDescription: '',
+        weapon: 2,
+      },
+      {
+        tagName: '翻盘',
+        isMinor: false,
+        description: '技能的控制抓取与2、3级被动的加持使牛汤拥有极强的翻盘能力。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '后期',
+        isMinor: false,
+        description: '压制力随着等级的提高呈现质的飞跃（6 7 8 10级）。',
+        additionalDescription: '',
+        weapon: 2,
+      },
+      {
+        tagName: '防守',
+        isMinor: false,
+        description:
+          '斗牛可清理道具并对地方眩晕，2级被动可减少技能CD，在防守时拥有较高的伤害和续航。',
+        additionalDescription: '',
+        weapon: 2,
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '鞭子（控制）',
+        pattern: '120211200',
+        weaponType: 'weapon1',
+        description: '以技能的控制和1级被动的快爪刀为主要进攻手段',
+      },
+      {
+        id: '鞭子（高伤）',
+        pattern: '120001122',
+        weaponType: 'weapon1',
+        description: '以3级被动的高伤为主要进攻手段',
+      },
+      {
+        id: '弹弓（常规）',
+        pattern: '133030011',
+        weaponType: 'weapon1',
+        description: '大部分地图常规加点',
+      },
+      {
+        id: '弹弓（牧场）',
+        pattern: '303030111',
+        weaponType: 'weapon1',
+        description: '森林牧场加点，地势平坦，斗牛作用较小',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-乘胜追击', 'S-击晕', 'S-知识渊博'],
+        description: '（鞭子）常规卡组',
+      },
+      {
+        cards: ['S-击晕', 'S-乘胜追击', 'A-细心', 'C-猫是液体'],
+        description: '（鞭子）大图及管道图，有需求可以把《细心》换成《皮糙肉厚》',
+      },
+      {
+        cards: ['S-击晕', 'S-知识渊博', 'A-威压', 'B-皮糙肉厚'],
+        description:
+          '（鞭子）叠层流，对前期节奏处理要求高，有需求可以把《威压》换成《穷追猛打》（转为鞭子打架流）',
+      },
+      {
+        cards: ['S-知识渊博', 'A-熊熊燃烧', 'A-细心', 'A-穷追猛打'],
+        description: '（弹弓防守流）常规卡组',
+      },
+      {
+        cards: ['S-知识渊博', 'A-细心', 'A-穷追猛打', 'B-皮糙肉厚', 'B-反侦察'],
+        description: '（弹弓防守流）反侦察',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-知识渊博', 'A-加大火力', 'A-穷追猛打'],
+        description: '（弹弓追击流）常规卡组',
+      },
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description:
+          '（弹弓追击流）打架队，如果同时是管道图，《熊熊燃烧》换成《加大火力》或《心灵手巧》（打强控制队）+《猫是液体》',
+      },
+    ],
+    skills: [
+      {
+        name: '斗牛',
+        type: 'active',
+        aliases: ['牛哥'],
+        description:
+          '释放斗牛，破坏易碎道具，并对老鼠造成伤害和眩晕。撞击一次伤害为25；被牛眩晕的老鼠可以被直接抓取。撞到墙体或已经插入地板的叉子会掉头。会带走已经布置的老鼠夹。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键', '道具键*'],
+        cancelableAftercast: '无后摇',
+        cooldownTiming: '释放时',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 18,
+            detailedDescription: '',
+          },
+          {
+            level: 2,
+            description: '斗牛持续更长时间。',
+            cooldown: 18,
+          },
+          {
+            level: 3,
+            description: '延长斗牛造成的眩晕效果。',
+            cooldown: 18,
+          },
+        ],
+        cueRange: '全图可见',
+      },
+      {
+        name: '鞭子',
+        type: 'weapon1',
+        description:
+          '造成1点伤害和减速。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加移速和减少爪刀CD。老鼠被累计命中两次后，受到伤害和眩晕效果，眩晕期间可被直接抓取。',
+        detailedDescription:
+          '造成1点伤害和减速。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加2.5%移速和减少2%爪刀CD。老鼠被累计命中两次后，受到伤害和眩晕效果，并清除鞭子带来的减益。鞭子眩晕期间可被直接抓取。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键'],
+        cancelableAftercast: '不可取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 3.5,
+          },
+          {
+            level: 2,
+            description: '鞭子命中老鼠后，会使老鼠缓慢减少Hp，同时附带更强的减速效果。',
+            cooldown: 3.5,
+          },
+          {
+            level: 3,
+            description: '减少CD；使用鞭子额外提升斗牛持续时间。',
+            cooldown: 2.5,
+            detailedDescription: '减少CD至2.5s；使用鞭子额外提升斗牛1秒持续时间。',
+          },
+        ],
+        cueRange: '全图可见',
+      },
+      {
+        name: '仙人掌弹弓',
+        type: 'weapon2',
+        description: '',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可被打断',
+        skillLevels: [
+          {
+            level: 1,
+            description: '向前发射三颗小仙人掌球，命中时造成伤害和受伤状态、获得老鼠的小地图位置。',
+            detailedDescription:
+              '向前喇叭形发射三颗小仙人掌球，命中时造成26伤害和受伤状态、获得老鼠的小地图位置。',
+            cooldown: 18,
+          },
+          {
+            level: 2,
+            description: '7秒内可进行第二次发射，向前更大角度内发射五颗小仙人掌球。',
+            cooldown: 18,
+          },
+          {
+            level: 3,
+            description:
+              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触到实体时爆炸，对周围的敌方造成60伤害和眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
+            cooldown: 18,
+          },
+        ],
+        cancelableAftercast: ['跳跃键', '移动键', '道具键'],
+        cooldownTiming: '前摇前',
+        aliases: ['加特林'],
+        cueRange: '本房间可见',
+        canHitInPipe: false,
+      },
+      {
+        name: '游刃有余',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '技能命中老鼠后，降低爪刀CD。',
+            detailedDescription: '技能命中老鼠后，降低3秒爪刀CD。',
+          },
+          {
+            level: 2,
+            description: '技能额外附加受伤状态；使老鼠进入虚弱状态时，减少主动和武器技能CD。',
+            detailedDescription:
+              '技能额外附加受伤状态；使老鼠进入虚弱状态时，减少12秒主动和武器技能CD。',
+          },
+          {
+            level: 3,
+            description: '爪刀和道具可直接击倒受伤状态的老鼠。',
+            detailedDescription: '爪刀和道具击中受伤状态的老鼠，额外附加200点伤害。',
+          },
+        ],
+      },
+    ],
+    counters: [
+      {
+        id: '侦探泰菲',
+        description: '侦探泰菲的分身会触发牛仔汤姆的2级被动，大幅减少技能CD',
+        isMinor: false,
+      },
+      {
+        id: '佩克斯',
+        description:
+          '牛仔汤姆可用技能控制直接抓取，佩克斯3级被动复活甲和主动技能给予的免疫虚弱基本无效',
+        isMinor: true,
+      },
+      {
+        id: '表演者•杰瑞',
+        description: '牛仔汤姆的3级被动可以压制表演者•杰瑞。',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '剑客杰瑞',
+        description: '（仅限第二武器）剑客杰瑞的格挡使斗牛立即消失（梗：我不吃牛肉）',
+        isMinor: false,
+      },
+      {
+        id: '米可',
+        description:
+          '米克采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）',
+        isMinor: false,
+      },
+      {
+        id: '尼宝',
+        description: '主动技能免疫控制',
+        isMinor: true,
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '技能与自身无霸体效果（推荐使用）',
+      },
+      {
+        name: '蓄力重击',
+        description: '斗牛撞击及大仙人掌球可造成眩晕效果，与蓄力重击有一定配合',
+      },
+    ],
+    aliases: ['牛汤'],
+  },
+
   /* ----------------------------------- 图多盖洛 ----------------------------------- */
   图多盖洛: {
     description: '拥有惊人美貌的图多盖洛是上东区和知名度最高的千金小姐，他的追求者从纽约排到了巴黎',
