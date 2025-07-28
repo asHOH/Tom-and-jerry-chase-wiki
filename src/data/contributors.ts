@@ -123,6 +123,37 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'xuniweilai',
+    name: '虚拟未来',
+    url: 'https://space.bilibili.com/489570540',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['牛仔汤姆'],
+      },
+    ],
+  },
+  {
+    id: 'dotdotdot',
+    name: '...',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['牛仔汤姆'],
+      },
+    ],
+  },
+  {
+    id: 'SYSTEM_CPYTHON',
+    name: 'SYSTEM_CPYTHON',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['牛仔汤姆'],
+      },
+    ],
+  },
+  {
     id: 'yekonghaohan',
     name: '夜空乄浩瀚',
     url: 'https://space.bilibili.com/3546658333788386',
