@@ -11,7 +11,7 @@
 - **Tailwind CSS 4** for utility-first styling
 - Custom design system with predefined color schemes for game elements
 - Responsive design with mobile-first approach
-- Safelist configuration for dynamic color classes
+- Allow list configuration for dynamic color classes
 
 ## State Management & Data
 
@@ -78,6 +78,5 @@ npm run storybook       # Start Storybook
 
 - Use TypeScript strict mode with additional checks
 - Single quotes, semicolons, 2-space indentation
-- 100 character line width
 - Trailing commas in ES5 contexts
 - LF line endings

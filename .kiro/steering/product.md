@@ -2,6 +2,15 @@
 
 This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠手游). The site provides comprehensive data and tools for players to look up character information, knowledge cards, and game mechanics.
 
+## Project Details
+
+- **Name**: Tom and Jerry Chase Wiki
+- **Homepage**: https://tjwiki.com
+- **Repository**: https://github.com/asHOH/Tom-and-jerry-chase-wiki
+- **Author**: asHOH
+- **Language**: Chinese (zh-CN)
+- **License**: Dual licensed under GPL and CC-BY
+
 ## Core Features
 
 - **Character Database**: Detailed information about cat and mouse characters including stats, skills, and recommended builds
@@ -20,3 +29,4 @@ Chinese-speaking players of the Tom and Jerry Chase mobile game who need quick a
 - **Performance**: Fast loading and responsive design for mobile gaming scenarios
 - **Accessibility**: Clean, intuitive interface that works well on mobile devices
 - **Community-Driven**: Open source project welcoming contributions from the gaming community
+- **Compatibility**: Ensure backward compatibility of import characters function in EditMode

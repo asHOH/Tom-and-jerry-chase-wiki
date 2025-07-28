@@ -7,10 +7,15 @@
 ├── .husky/             # Git hooks configuration
 ├── .kiro/              # Kiro AI assistant configuration
 ├── .storybook/         # Storybook configuration
+├── .next/              # Next.js build output (generated)
+├── .vercel/            # Vercel deployment configuration
+├── .vscode/            # VS Code workspace settings
+├── node_modules/       # Dependencies (generated)
 ├── public/             # Static assets (images, PWA manifest, robots.txt)
 ├── src/                # Source code
 ├── scripts/            # Build and utility scripts
-└── coverage/           # Test coverage reports
+├── coverage/           # Test coverage reports (generated)
+└── git-helpers/        # Git utility scripts
 ```
 
 ## Source Code Structure (`src/`)
@@ -44,6 +49,10 @@
   - `DarkModeContext.tsx` - Theme management
 
 - **`constants/`** - Application constants and configuration
+- **`hooks/`** - Custom React hooks
+- **`locales/`** - Internationalization files
+- **`middleware.ts`** - Next.js middleware
+- **`mdx-components.tsx`** - MDX component overrides
 
 ## File Naming Conventions
 
