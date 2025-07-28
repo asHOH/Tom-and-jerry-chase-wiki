@@ -2626,7 +2626,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     catPositioningTags: [
       {
         tagName: '防守',
-        isMinor: false,
+        isMinor: true,
         description:
           '守火箭能力强，风的大范围、击退和极短CD等特点能轻易拦下前来救援的老鼠，飞行时的碰撞体积可以打断老鼠跳救使其踩夹；风可以吹飞果盘，有一定守墙缝能力',
         additionalDescription: '',
@@ -2634,13 +2634,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '追击',
         isMinor: true,
-        description: '飞行的无视常规地形和加速提供很好的追击手段',
+        description: '飞行时无视常规地形且移速快，提供了很好的追击手段',
         additionalDescription: '',
       },
       {
         tagName: '速通',
-        isMinor: true,
-        description: '手中有老鼠时可利用铁砧反打，对面不注意时很容易会被打出多倒',
+        isMinor: false,
+        description:
+          '追风三级成型，在前期对鼠方的压制力很大。同时追风等级带来的提升很小，越到后期越乏力，因此需要快速减员，尽早赢下比赛',
         additionalDescription: '',
       },
     ],
@@ -2805,7 +2806,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
         ],
         description:
-          'Lv.0: [走地状态下](不处于空中时)，逐渐累积飞行时间。未处于飞行状态时爪刀CD减少。飞行状态下视野增大，可托起其他角色，并提高移速。飞行时[免疫控制](不免疫虚弱)，但无法拾取道具、使用商店或进行交互（抓起老鼠除外）；受到伤害会减少飞行时间。飞行状态可随时退出，但会清空剩余飞行时间。飞行被[强制打断](如被狗抓、被打死)会暂时禁用主动技能。',
+          'Lv.0: [走地状态下](不处于空中时)，逐渐累积飞行时间。未处于飞行状态时爪刀CD减少。飞行状态下视野增大，可托起其他角色，并提高移速。飞行时[免疫控制](同时不会被米可采访锁定；不免疫虚弱)，但无法拾取道具、使用商店或进行交互（抓起老鼠除外）；受到伤害会减少飞行时间。飞行状态可随时退出，但会清空剩余飞行时间。飞行被[强制打断](如被狗抓、被打死)会暂时禁用主动技能。',
         detailedDescription:
           'Lv.0: [走地状态下](不处于空中时)，每秒获得1秒飞行时间，最多储存10秒。未处于飞行状态时爪刀CD减少35%；飞行状态下[视野范围增加55%](覆盖其他远视效果)，可托起其他角色，无视小平台阻挡，并提高移速至水平1015、竖直840。悬停时角色会自动向前以水平350、竖直30的速度下落。飞行时[免疫控制](不免疫虚弱)，但无法拾取道具、使用商店或进行交互（抓起老鼠除外）；受到伤害会[减少2秒飞行时间](若此时剩余飞行时间少于2秒，受到伤害时也会受到其对应的控制效果)。飞行状态可随时退出，但会清空剩余飞行时间。“退出飞行状态”这一操作无cd。飞行被[强制打断](如被狗抓、被打死)会使主动技能进入10秒CD。该冷却不可通过吃蛋糕回复。',
       },
@@ -2814,7 +2815,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counteredBy: [
       {
         id: '侦探杰瑞',
-        description: '侦探杰瑞推速很快，自保较强，很容易加快游戏节奏，而追风后期不好拿节奏。',
+        description: '侦探杰瑞推速很快，自保较强，很容易加快游戏节奏，而追风属于前期猫',
         isMinor: true,
       },
       {
@@ -2825,7 +2826,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '天使杰瑞',
         description:
-          '天使杰瑞一被让追风无法技能接爪刀，雷云减伤可以放大追风缺伤害的缺点，打团也很强。祝福也一定程度上反制了追风的飞行强上火箭。',
+          '天使杰瑞一被和三被让追风无法快速拿刀，雷云减伤可以放大追风缺伤害的缺点，打团也很强。祝福可以一定程度上反制追风飞行强上火箭，但追风可以通过鞭尸消除祝福',
         isMinor: false,
       },
     ],
