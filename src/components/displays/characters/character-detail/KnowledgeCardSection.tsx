@@ -54,7 +54,11 @@ export function KnowledgeCardGroup({
   onRemoveGroup: (index: number) => void;
   getCardCost: (cardId: string) => number;
   getCardRank: (cardId: string) => string;
-  getCostStyles: (totalCost: number) => { containerClass: string; tooltipContent: string };
+  getCostStyles: (
+    totalCost: number,
+    hasOptionalCard?: boolean,
+    actualCost?: number
+  ) => { containerClass: string; tooltipContent: string };
   imageBasePath: string;
   handleDescriptionSave: (newDescription: string, index: number) => void;
 }) {
@@ -63,8 +67,11 @@ export function KnowledgeCardGroup({
     return null;
   }
 
+  // Check if group contains C-狡诈 card and handle optional display
+  const hasOptionalCard = group.some((cardId) => cardId === 'C-狡诈');
   const totalCost = group.reduce((sum, cardId) => sum + getCardCost(cardId), 0);
-  const { containerClass, tooltipContent } = getCostStyles(totalCost);
+  const displayCost = hasOptionalCard && totalCost === 21 ? 19 : totalCost;
+  const { containerClass, tooltipContent } = getCostStyles(displayCost, hasOptionalCard, totalCost);
 
   return (
     <div
@@ -86,7 +93,7 @@ export function KnowledgeCardGroup({
               containerClass
             )}
           >
-            {totalCost}
+            {displayCost}
           </div>
         </Tooltip>
         <div
@@ -99,6 +106,7 @@ export function KnowledgeCardGroup({
             const cardName = cardId.split('-')[1]!;
             const cardRank = getCardRank(cardId);
             const rankColors = getCardRankColors(cardRank, false, isDarkMode);
+            const isOptional = cardId === 'C-狡诈' && hasOptionalCard && totalCost === 21;
 
             if (isSqueezedView) {
               return (
@@ -109,7 +117,8 @@ export function KnowledgeCardGroup({
                 >
                   <span
                     className={clsx(
-                      'px-2 py-1 rounded-md text-sm font-medium cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm'
+                      'px-2 py-1 rounded-md text-sm font-medium cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm',
+                      isOptional && 'opacity-50'
                     )}
                     style={{
                       backgroundColor: rankColors.backgroundColor,
@@ -128,7 +137,10 @@ export function KnowledgeCardGroup({
               return (
                 <Tooltip key={cardId} content={cardName} className='border-none'>
                   <div
-                    className='relative w-20 h-20 sm:w-24 sm:h-24 cursor-pointer transition-transform duration-200 hover:scale-105'
+                    className={clsx(
+                      'relative w-20 h-20 sm:w-24 sm:h-24 cursor-pointer transition-transform duration-200 hover:scale-105',
+                      isOptional && 'opacity-50'
+                    )}
                     onClick={() => {
                       if (isEditMode) return;
                       handleSelectCard(cardName, characterId);
@@ -247,7 +259,7 @@ export default function KnowledgeCardSection({
     return cardData?.rank ?? 'C';
   };
 
-  const getCostStyles = (totalCost: number) => {
+  const getCostStyles = (totalCost: number, hasOptionalCard?: boolean, actualCost?: number) => {
     if (totalCost >= 22) {
       return {
         containerClass:
@@ -259,6 +271,12 @@ export default function KnowledgeCardSection({
         containerClass:
           'border-amber-500 bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:border-amber-500/80 dark:text-amber-400',
         tooltipContent: `知识量：${totalCost}点 (需开启+1知识量上限)`,
+      };
+    } else if (hasOptionalCard && actualCost === 21) {
+      return {
+        containerClass:
+          'border-blue-400 bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:border-blue-400/80 dark:text-blue-300',
+        tooltipContent: `知识量：${totalCost}点 (带狡诈需开启+1知识量上限)`,
       };
     } else {
       return {
