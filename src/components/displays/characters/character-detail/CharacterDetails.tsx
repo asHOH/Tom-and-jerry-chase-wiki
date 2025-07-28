@@ -70,8 +70,8 @@ export default function CharacterDetails({
       <div className='space-y-8'>
         <div className='flex flex-col md:flex-row gap-8'>
           <div className='md:w-1/3'>
-            <div className='card h-full dark:bg-slate-800 dark:border-slate-700'>
-              <div className='w-full h-64 bg-gray-200 dark:bg-slate-700 rounded-lg relative overflow-hidden mb-4 image-container'>
+            <div className='card h-full dark:bg-slate-800 dark:border-slate-700 overflow-hidden'>
+              <div className='h-64 bg-gray-200 dark:bg-slate-700 rounded-t-lg relative mb-4 image-container -mx-4 -mt-4'>
                 <div className='flex items-center justify-center h-full p-3'>
                   <Image
                     src={localCharacter.imageUrl}
