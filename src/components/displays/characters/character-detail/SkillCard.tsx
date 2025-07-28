@@ -123,6 +123,38 @@ export default function SkillCard({
     );
   };
 
+  const createRadioGroup = <T extends string>(
+    label: string,
+    property: 'cooldownTiming' | 'cueRange',
+    options: readonly T[],
+    defaultValue: T
+  ) => {
+    const skillRef = characters[characterId]!.skills[skillIndex]!;
+    const currentValue = (skill[property] as T) ?? defaultValue;
+
+    return (
+      <div className='flex items-center gap-1 text-xs'>
+        <span className='text-gray-600'>{label}:</span>
+        <div className='flex flex-wrap gap-1'>
+          {options.map((option) => (
+            <label key={option} className='flex items-center gap-1 cursor-pointer'>
+              <input
+                type='radio'
+                name={`${property}-${skillIndex}`}
+                checked={currentValue === option}
+                onChange={() => {
+                  (skillRef[property] as T) = option;
+                }}
+                className='w-3 h-3'
+              />
+              <span className={clsx({ 'font-bold': currentValue === option })}>{option}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const getSkillProperties = () => {
     const properties: React.ReactNode[] = [];
 
@@ -410,64 +442,18 @@ export default function SkillCard({
           '可击中管道中的角色',
           '不可击中管道中的角色'
         ),
-        <div className='flex items-center gap-1 text-xs'>
-          <span className='text-gray-600'>CD时机:</span>
-          {(() => {
-            const cooldownOptions = ['前摇前', '释放时', '释放后'];
-            const currentTiming = skill.cooldownTiming ?? '释放时';
-
-            return (
-              <div className='flex flex-wrap gap-1'>
-                {cooldownOptions.map((option) => (
-                  <label key={option} className='flex items-center gap-1 cursor-pointer'>
-                    <input
-                      type='radio'
-                      name={`cooldownTiming-${skillIndex}`}
-                      checked={currentTiming === option}
-                      onChange={() => {
-                        const skill = characters[characterId]!.skills[skillIndex]!;
-                        skill.cooldownTiming = option as '前摇前' | '释放时' | '释放后';
-                      }}
-                      className='w-3 h-3'
-                    />
-                    <span className={clsx({ 'font-bold': currentTiming === option })}>
-                      {option}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            );
-          })()}
-        </div>,
-        <div className='flex items-center gap-1 text-xs'>
-          <span className='text-gray-600'>技能音效:</span>
-          {(() => {
-            const cueRangeOptions = ['全图可见', '本房间可见', '无音效'] as const;
-            const currentCueRange = skill.cueRange ?? '无音效';
-
-            return (
-              <div className='flex flex-wrap gap-1'>
-                {cueRangeOptions.map((option) => (
-                  <label key={option} className='flex items-center gap-1 cursor-pointer'>
-                    <input
-                      type='radio'
-                      name={`cueRange-${skillIndex}`}
-                      checked={currentCueRange === option}
-                      onChange={() => {
-                        const skill = characters[characterId]!.skills[skillIndex]!;
-                        skill.cueRange = option;
-                      }}
-                      className='w-3 h-3'
-                    />
-                    <span className={clsx({ 'font-bold': currentCueRange === option })}>
-                      {option}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            );
-          })()}
-        </div>
+        createRadioGroup(
+          'CD时机',
+          'cooldownTiming',
+          ['前摇前', '释放时', '释放后'] as const,
+          '释放时'
+        ),
+        createRadioGroup(
+          '技能音效',
+          'cueRange',
+          ['全图可见', '本房间可见', '无音效'] as const,
+          '无音效'
+        )
       );
     } else {
       if (skill.canMoveWhileUsing) properties.push('移动释放');
