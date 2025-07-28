@@ -81,6 +81,7 @@ npm run storybook       # Start Storybook
 - Trailing commas in ES5 contexts
 - LF line endings
 
-## Other Requirements
+## Conclusion Requirements
 
-- Write a draft commit message after each step with `feat|fix|docs|style|refactor|perf|test|chore(scope): ...` as a reference.
+- The conclusion part should be concise
+- Write a draft commit message in the conclusion part with `feat|fix|docs|style|refactor|perf|test|chore(scope): ...` as a reference.

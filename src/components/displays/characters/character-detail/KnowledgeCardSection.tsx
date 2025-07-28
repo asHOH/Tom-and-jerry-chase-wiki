@@ -18,6 +18,11 @@ import { characters } from '@/data';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
+import {
+  calculateKnowledgeCardCosts,
+  isCardOptional,
+  getKnowledgeCardCostStyles,
+} from '@/lib/knowledgeCardSectionUtils';
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: DeepReadonly<(KnowledgeCardGroup | KnowledgeCardGroupSet)[]>;
@@ -39,7 +44,6 @@ export function KnowledgeCardGroup({
   onRemoveGroup,
   getCardCost,
   getCardRank,
-  getCostStyles,
   imageBasePath,
   handleDescriptionSave,
 }: {
@@ -54,11 +58,6 @@ export function KnowledgeCardGroup({
   onRemoveGroup: (index: number) => void;
   getCardCost: (cardId: string) => number;
   getCardRank: (cardId: string) => string;
-  getCostStyles: (
-    totalCost: number,
-    hasOptionalCard?: boolean,
-    actualCost?: number
-  ) => { containerClass: string; tooltipContent: string };
   imageBasePath: string;
   handleDescriptionSave: (newDescription: string, index: number) => void;
 }) {
@@ -67,11 +66,13 @@ export function KnowledgeCardGroup({
     return null;
   }
 
-  // Check if group contains C-狡诈 card and handle optional display
-  const hasOptionalCard = group.some((cardId) => cardId === 'C-狡诈');
-  const totalCost = group.reduce((sum, cardId) => sum + getCardCost(cardId), 0);
-  const displayCost = hasOptionalCard && totalCost === 21 ? 19 : totalCost;
-  const { containerClass, tooltipContent } = getCostStyles(displayCost, hasOptionalCard, totalCost);
+  // Calculate knowledge card costs and optional display logic
+  const costInfo = calculateKnowledgeCardCosts(group, getCardCost);
+  const { containerClass, tooltipContent } = getKnowledgeCardCostStyles(
+    costInfo.displayCost,
+    costInfo.hasOptionalCard,
+    costInfo.totalCost
+  );
 
   return (
     <div
@@ -93,7 +94,7 @@ export function KnowledgeCardGroup({
               containerClass
             )}
           >
-            {displayCost}
+            {costInfo.displayCost}
           </div>
         </Tooltip>
         <div
@@ -106,7 +107,7 @@ export function KnowledgeCardGroup({
             const cardName = cardId.split('-')[1]!;
             const cardRank = getCardRank(cardId);
             const rankColors = getCardRankColors(cardRank, false, isDarkMode);
-            const isOptional = cardId === 'C-狡诈' && hasOptionalCard && totalCost === 21;
+            const isOptional = isCardOptional(cardId, costInfo.hasOptionalCard, costInfo.totalCost);
 
             if (isSqueezedView) {
               return (
@@ -257,34 +258,6 @@ export default function KnowledgeCardSection({
     const cardData =
       factionId === 'cat' ? catKnowledgeCards[cardName] : mouseKnowledgeCards[cardName];
     return cardData?.rank ?? 'C';
-  };
-
-  const getCostStyles = (totalCost: number, hasOptionalCard?: boolean, actualCost?: number) => {
-    if (totalCost >= 22) {
-      return {
-        containerClass:
-          'border-red-500 bg-red-100 text-red-700 dark:bg-red-900/50 dark:border-red-500/80 dark:text-red-400',
-        tooltipContent: `知识量：${totalCost}点 (超出游戏限制)`,
-      };
-    } else if (totalCost === 21) {
-      return {
-        containerClass:
-          'border-amber-500 bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:border-amber-500/80 dark:text-amber-400',
-        tooltipContent: `知识量：${totalCost}点 (需开启+1知识量上限)`,
-      };
-    } else if (hasOptionalCard && actualCost === 21) {
-      return {
-        containerClass:
-          'border-blue-400 bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:border-blue-400/80 dark:text-blue-300',
-        tooltipContent: `知识量：${totalCost}点 (带狡诈需开启+1知识量上限)`,
-      };
-    } else {
-      return {
-        containerClass:
-          'border-blue-400 bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:border-blue-400/80 dark:text-blue-300',
-        tooltipContent: `知识量：${totalCost}点`,
-      };
-    }
   };
 
   const handleEditClick = (index: number) => {
@@ -457,7 +430,6 @@ export default function KnowledgeCardSection({
                   onRemoveGroup={onRemoveGroup}
                   getCardCost={getCardCost}
                   getCardRank={getCardRank}
-                  getCostStyles={getCostStyles}
                   imageBasePath={imageBasePath}
                   handleDescriptionSave={handleDescriptionSave}
                 />
@@ -476,7 +448,6 @@ export default function KnowledgeCardSection({
                   onRemoveGroup={onRemoveGroup}
                   getCardCost={getCardCost}
                   getCardRank={getCardRank}
-                  getCostStyles={getCostStyles}
                   imageBasePath={imageBasePath}
                   handleDescriptionSave={handleDescriptionSave}
                 />

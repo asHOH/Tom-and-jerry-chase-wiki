@@ -14,7 +14,6 @@ interface KnowledgeCardGroupSetDisplayProps {
   onRemoveGroup: (index: number) => void;
   getCardCost: (cardId: string) => number;
   getCardRank: (cardId: string) => string;
-  getCostStyles: (totalCost: number) => { containerClass: string; tooltipContent: string };
   imageBasePath: string;
   handleDescriptionSave: (newDescription: string, index: number) => void;
 }
@@ -28,7 +27,6 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
   onRemoveGroup,
   getCardCost,
   getCardRank,
-  getCostStyles,
   imageBasePath,
   handleDescriptionSave,
 }) => {
@@ -106,7 +104,6 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
                   onRemoveGroup={onRemoveGroup}
                   getCardCost={getCardCost}
                   getCardRank={getCardRank}
-                  getCostStyles={getCostStyles}
                   imageBasePath={imageBasePath}
                   handleDescriptionSave={handleDescriptionSave}
                 />
