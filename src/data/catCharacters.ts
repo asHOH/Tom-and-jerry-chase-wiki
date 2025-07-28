@@ -921,7 +921,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['牛哥'],
         description:
-          '释放斗牛，破坏易碎道具，并对老鼠造成伤害和眩晕。撞击一次伤害为25；被牛眩晕的老鼠可以被直接抓取。撞到墙体或已经插入地板的叉子会掉头。会带走已经布置的老鼠夹。',
+          '释放斗牛，破坏[易碎道具](包括牛仔杰瑞的仙人掌)，并对老鼠造成伤害和眩晕。撞击一次伤害为25；被牛眩晕的老鼠可以被直接抓取。撞到墙体或已经插入地板的叉子会掉头。会带走已经布置的老鼠夹。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键*'],

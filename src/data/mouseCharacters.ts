@@ -1418,6 +1418,254 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 牛仔杰瑞 ----------------------------------- */
+  牛仔杰瑞: {
+    description:
+      '牛仔杰瑞拥有很高的音乐天赋，擅长使用吉他鸣奏，热爱自由的他，在草原上过着与世无争的生活。',
+    maxHp: 124,
+    attackBoost: 10,
+    hpRecovery: 1.67,
+    moveSpeed: 650,
+    jumpHeight: 400,
+    cheesePushSpeed: 3.2,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '基础推速中上，二级琴加推速。',
+        additionalDescription: '二级琴加速后推速达到5.5%每秒，且琴真空期只有5秒。',
+      },
+      {
+        tagName: '干扰',
+        isMinor: true,
+        description:
+          '仙人掌和琴的干扰，但比较偏后期，同时也不是强控，无法直接把老鼠从猫手上救下来。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '后期',
+        isMinor: false,
+        description: '后期生存能力和干扰能力大幅提升',
+        additionalDescription:
+          '高等级牛仔杰瑞可以更加频繁的干扰，从而触发更多霸体，也可以给猫提供更多负面状态。',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '一般情况',
+        pattern: '022110021',
+        weaponType: 'weapon1',
+        description: '优先二级琴补推，随后出仙人掌加强干扰能力，再点三被加强整体眩晕能力。',
+      },
+      {
+        id: '主琴主被',
+        pattern: '022002111',
+        weaponType: 'weapon1',
+        description: '应对不怕仙人掌的猫，例如汤姆、牛汤',
+      },
+      {
+        id: '主仙人掌',
+        pattern: '011210022',
+        weaponType: 'weapon1',
+        description:
+          '应对怕减速的猫，例如斯飞；应对蓄势猫，例如塔拉；火箭下仙人掌方便守火箭，例如米特。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-舍己', 'S-铁血', 'S-回家', 'C-救救我'],
+        description: '牛仔杰瑞一被免疫碎片，防止回家护盾被碎片打破，进一步提高后期生存能力。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
+        description: '应对依赖爪刀的猫，例如苏瑞，天汤，托普斯。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-投手', 'C-不屈', 'C-救救我'],
+        description: '应对依赖乘胜追击的猫，例如斯飞，前期就可以有很好的减速效果。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description:
+          '逃窜提高容错，加血在部分情况下可以抗住天汤三次伤害，在被牛汤弹弓打中时也方便跑路。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'B-夹不住我', 'C-救救我', 'C-不屈'],
+        description:
+          '破夹专用，也是一个性价比较好的20点卡组。有21点后剩下费用也可以根据情况搭配别的。',
+      },
+    ],
+    skills: [
+      {
+        name: '仙人掌',
+        type: 'active',
+        description: '',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableAftercast: '不可取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '放置仙人掌，猫咪踩中受到僵直、减速和持续伤害，同时仙人掌消失。鼠方踩踏两次后仙人掌也会消失。',
+            detailedDescription:
+              '前摇0.65s，放置仙人掌，持续90秒。猫咪踩中受到1.2s僵直、15%减速、7.5/s的伤害，[持续3s](只造成两次伤害)，同时仙人掌消失。同一目标3秒内不会重复触发；减速最多叠加3层。所有老鼠不受仙人掌的影响，但鼠方踩踏两次后仙人掌消失。',
+            cooldown: 18,
+          },
+          {
+            level: 2,
+            description:
+              '可存储2个仙人掌，且减速和伤害效果加强。被踩中后会分裂为3个效果稍弱的小仙人掌。',
+            cooldown: 18,
+            detailedDescription:
+              '可存储2个仙人掌，效果提升至20%减速、10/s的伤害，[持续5s](只造成四次伤害)。仙人掌被踩中后会分裂为3个小仙人掌，猫咪踩中受到0.8s的僵直、13%减速、7.5/s的伤害，[持续3s](只造成两次伤害)；减速最多叠加三层；小仙人掌的减速与持续伤害与大仙人掌独立计算，同时小仙人掌继承大仙人掌的持续时间。小仙人掌被鼠方踩踏两次后消失，大仙人掌老鼠踩一次就会分裂。',
+          },
+          {
+            level: 3,
+            description: '仙人掌效果进一步提升。',
+            cooldown: 18,
+            detailedDescription: '仙人掌效果提升至2.2s僵直、25%减速、[持续10s](只造成九次伤害)。',
+          },
+        ],
+        cueRange: '全图可见',
+      },
+      {
+        name: '琴',
+        type: 'weapon1',
+        description: '',
+        detailedDescription:
+          '前摇0.9s，可左右拖动和原地释放，弹琴并向拖动方向移动，期间保留惯性。猫首次听到音乐时会陷入1s的僵直，[持续听到音乐](0.5s)后会受到35%减速并以15/s降低Hp，持续2.8s。弹琴可通过跳跃和移动键主动结束释放；空中释放会立刻解除；最多持续弹奏5s。后摇0.8s。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '弹琴，猫首次听到音乐时会陷入短暂的僵直，持续听到音乐后，还会受到减速效果，并降低健康值，可左右滑动释放，空中释放会立刻解除。',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description:
+              '提升音乐的范围。弹奏结束后解除不良状态并获得移速、跳跃高度、Hp恢复和推速加成。',
+            cooldown: 15,
+            detailedDescription:
+              '提升音乐的范围。弹奏结束后解除受伤、失明、反向、吻痕等状态，获得15%加速、跳跃高度提高50%、Hp恢复提高1.25/s、推速提升1.5%/s，持续10s。',
+          },
+          {
+            level: 3,
+            description: '猫咪持续听到音乐会陷入眩晕。',
+            cooldown: 15,
+            detailedDescription:
+              '猫咪持续听到音乐时，每秒叠加一层减速，两层时清空层数，受到35点伤害并[眩晕1.4s](内置CD：10s)、掉落手中老鼠。',
+          },
+        ],
+        cancelableAftercast: ['跳跃键', '移动键', '道具键'],
+        cueRange: '本房间可见',
+        cancelableSkill: ['其他技能键', '跳跃键'],
+      },
+      {
+        name: '西部风情',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '无视碎片、烫伤和[冰箱减速](不免疫冰冻和嫦娥冰减速)效果，并缩短受到的眩晕效果。',
+            detailedDescription:
+              '无视碎片、烫伤和[冰箱减速](不免疫冰冻和嫦娥冰减速)效果，并缩短35%受到眩晕的持续时间。',
+          },
+          {
+            level: 2,
+            description: '技能造成控制效果后获得弱霸体，并提升救援速度。',
+            detailedDescription:
+              '主动和武器技能造成控制效果后获得5s[弱霸体](会免疫部分正面buff，例如隐身)，并提升20%救援速度。',
+          },
+          {
+            level: 3,
+            description: '技能对猫控制时间提高50%。',
+            detailedDescription: '主动和武器技能对猫控制时间提高50%。',
+          },
+        ],
+      },
+    ],
+    aliases: ['牛杰'],
+    specialSkills: [
+      {
+        name: '冰冻保鲜',
+        description:
+          '一被配合冰冻保鲜可以有一秒多的无敌，部分情况下可以挡致命伤害，同时可以强救，但不好走。',
+      },
+      {
+        name: '魔术漂浮',
+        description: '仙人掌和琴都可以主动取消漂浮，通用性强',
+      },
+      {
+        name: '干扰投掷',
+        description: '增强干扰能力',
+      },
+    ],
+    counters: [
+      {
+        id: '莱特宁',
+        description: '莱特宁怕干扰，同时也不好处理124血量',
+        isMinor: false,
+      },
+      {
+        id: '库博',
+        description: '库博怕干扰，容易被牛仔杰瑞的僵直打掉蓄势，同时还会被传送点位的仙人掌拖延时间',
+        isMinor: false,
+      },
+      {
+        id: '侍卫汤姆',
+        description: '侍卫怕干扰，容易被牛仔杰瑞的僵直打掉蓄势',
+        isMinor: true,
+      },
+      {
+        id: '剑客汤姆',
+        description: '剑客汤姆怕干扰，不好上火箭，同时牛仔杰瑞的霸体免疫挑起',
+        isMinor: false,
+      },
+      {
+        id: '图茨',
+        description: '图茨怕干扰，不好处理火箭仙人掌，喵喵叫也会被仙人掌打断',
+        isMinor: true,
+      },
+      {
+        id: '米特',
+        description: '米特怕干扰，不好处理火箭仙人掌',
+        isMinor: false,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '汤姆',
+        description: '汤姆的无敌免疫控制，二级平底锅处理124血量',
+        isMinor: false,
+      },
+      {
+        id: '苏蕊',
+        description: '苏蕊跳舞时被控影响较小 而且可以绕过火箭下的仙人掌',
+        isMinor: false,
+      },
+      {
+        id: '托普斯',
+        description:
+          '托普斯的捕虫网无视牛仔杰瑞的霸体，同时托普斯三级分身在附近时拥有霸体，不会被控。',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '航海士杰瑞',
+        description: '牛仔软控配合海盗硬控',
+        isMinor: true,
+      },
+    ],
+  },
+
   /* ----------------------------------- 天使杰瑞 ----------------------------------- */
   天使杰瑞: {
     description: '拥有一颗善良之心的天使，总会在汤姆遇上危险的时候，对他施以援手。',

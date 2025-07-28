@@ -230,6 +230,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'dashuijiangjun',
+    name: '大水将军',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['牛仔杰瑞'],
+      },
+    ],
+  },
+  {
     id: 'bingmeishi',
     name: '冰美式',
     url: 'https://space.bilibili.com/439320147',
