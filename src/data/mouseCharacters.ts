@@ -4337,6 +4337,189 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
     ],
   },
+
+  /* ----------------------------------- 莱恩 ----------------------------------- */
+  莱恩: {
+    description:
+      '来自平面二维空间中的神秘之鼠，诞生于蘸水笔在蓝图上勾勒的几笔线条，获得生命后便决心将自己的灵感挥洒在每个角落。莱恩从画板中一跃而下，属于艺术家的创作从此揭开序幕。',
+    maxHp: 70,
+    attackBoost: 5,
+    hpRecovery: 1,
+    moveSpeed: 680,
+    jumpHeight: 400,
+    cheesePushSpeed: 2.8,
+    wallCrackDamageBoost: 0.5,
+    mousePositioningTags: [
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description: '圆形可以使猫手中道具掉落，三被减少队友技能CD。',
+        additionalDescription: '',
+        weapon: 1,
+      },
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '守火箭能力一流，配合蓝图，猫很难绑上火箭；方块可以封走位。',
+        additionalDescription: '',
+        weapon: 1,
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '蓝图',
+        pattern: '12[12]20001',
+        weaponType: 'weapon1',
+        description: '四级后，如果有队友在火箭上则点主动减慢火箭燃烧；其余情况皆点武器。',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'S-护佑'],
+        description: '带护佑提高自保能力',
+      },
+      {
+        cards: ['S-铁血', 'C-救救我', 'A-逃窜', 'S-舍己', 'C-不屈'],
+        description: '应对不能一套秒掉自己的猫，提高续航和牵制能力',
+      },
+      {
+        cards: ['S-回家', 'S-护佑', 'S-铁血', 'C-救救我'],
+        description: '适合四排，在队伍里有多个救援位的情况下，提高前后期自保',
+      },
+    ],
+    skills: [
+      {
+        name: '蓝图',
+        type: 'active',
+        description:
+          '莱恩扔出[蓝图](再次使用技能可可主动关闭)。蓝图内的火箭燃烧速度减半、隐身的猫咪会显形；在蓝图内受到伤害的猫咪会短暂变为线条猫，并使手中老鼠掉落。线条猫只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。',
+        detailedDescription:
+          '莱恩扔出[蓝图](大小1000×666，可主动打开和关闭蓝图，前摇0.6s，主动打开蓝图硬控0.5s)，碰到平台或者墙体时打开，持续30s。蓝图内的火箭燃烧速度减半、隐身的猫咪会显形；在蓝图内受到伤害的猫咪会短暂变为线条猫，[持续8s](内置CD20s)，并使手中老鼠掉落。线条猫只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。同一时间只可存在一个蓝图；蓝图收起后才会进入CD。\n合成配方：\n▲+●={航海士杰瑞}1级炸药桶\n▲+■={雪梨}1级花洒\n●+■={泰菲}1级地雷\n●+●={拿坡里}1级饼\n▲+▲={罗宾汉泰菲}2级藤蔓\n■+■={侦探杰瑞}1级烟雾弹',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableAftercast: '不可取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '提高蓝图持续时间。',
+            cooldown: 25,
+            detailedDescription: '提高蓝图持续时间至60s。',
+          },
+          {
+            level: 3,
+            description: '扔出的蓝图命中猫咪，会使其直接变成线条猫。',
+            cooldown: 25,
+          },
+        ],
+        cancelableSkill: '不可被打断',
+        canHitInPipe: false,
+        cooldownTiming: '释放后',
+        cueRange: '本房间可见',
+        aliases: [],
+      },
+      {
+        name: '蘸水笔',
+        aliases: ['方块或圆'],
+        type: 'weapon1',
+        description:
+          '莱恩可以绘制圆形、三角和方块（以自身为半径800范围，前摇0.1s），地方攻击或者碰撞一定次数后消失，可储存3次在蓝图上绘制时，两种图形碰撞可合成其他的老鼠专属道具。\n圆形：释放后朝着莱恩所在的反方向滚动，产生阻挡并对敌方造成伤害是敌方手上道具掉落，碰撞3次或10s后消失。\n三角：对踩中的敌方造成少量伤害或10s后消失，并使移动速度和绑火箭速度下降。\n方块：停留在生成位置，可被推动，作为平台或墙壁使用，碰撞四次或25s后销毁。',
+        detailedDescription:
+          '莱恩在半径800范围内绘制圆形、三角和方块，前摇0.1s，可储存3次。在蓝图上绘制时，两种图形碰撞可合成其他老鼠专属道具。\n圆形：释放后向莱恩的反方向滚动，产生阻挡并对触碰的猫咪造成30伤害；碰撞3次后或存在10s后消失。\n三角：对踩中的猫咪造成15伤害、12.5%减速和绑火箭速度下降35%，持续7s；被猫咪踩中或持续10s后消失。\n方块：停留在生成位置，可被推动，可作为平台或墙壁使用；碰撞四次、受到爪刀攻击或25s后消失。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        canHitInPipe: true,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 8,
+          },
+          {
+            level: 2,
+            description:
+              '在蓝图上绘制时，会强化能力。\n强化圆形：会进行跳跃，伤害更高，但移动速度减慢。\n强化三角：踩中后将飞出普通三角。\n强化方块：反弹碰到的敌方。',
+            cooldown: 8,
+            detailedDescription:
+              '在蓝图上绘制时，会强化能力。\n强化圆形：会进行跳跃，伤害提高为50，但移动速度减慢至原来的60%。\n强化三角：踩中后将飞出3个普通三角。\n强化方块：反弹碰到的敌方，第一次反弹0.65s，其余反弹0.1s。',
+          },
+          {
+            level: 3,
+            description: '提高强化图形持续时间；可多储存一次。',
+            cooldown: 8,
+            detailedDescription: '提高强化图形持续时间，方块60s，圆20s，三角15s；可多储存一次。',
+          },
+        ],
+        cancelableAftercast: ['跳跃键', '移动键', '道具键'],
+        cueRange: '本房间可见',
+        cancelableSkill: '不可被打断',
+      },
+      {
+        name: '莱恩的世界',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '莱恩在蓝图中获得减伤和加速。',
+            detailedDescription: '莱恩在蓝图中获得20%减伤和15%加速。',
+          },
+          {
+            level: 2,
+            description: '莱恩在蓝图中的救援速度提升。',
+            detailedDescription: '莱恩在蓝图中的救援速度提升10%。',
+          },
+          {
+            level: 3,
+            description: '友方在蓝图内大幅减少技能CD。',
+            detailedDescription: '友方在蓝图内技能进入CD时，减少40%该技能CD。',
+          },
+        ],
+      },
+    ],
+    aliases: ['粉笔鼠'],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '拉到高点放方块使猫上不来，拖时间',
+      },
+      {
+        name: '急速翻滚',
+        description: '拉开距离，方块阻挡，快速逃跑',
+      },
+    ],
+    counters: [
+      {
+        id: '追风汤姆',
+        description: '圆形、方块可以对其封锁走位，并阻挡旋风和铁砧，还有极大可能导致其坠机',
+        isMinor: false,
+      },
+      {
+        id: '汤姆',
+        description: '克制无敌，阻止上火箭，但注意不要被二被秒掉',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '布奇',
+        description: '挨一刀就死，伤害太高',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '音乐家杰瑞',
+        description: '可以配合音符双减CD，双拆火箭，双减火箭燃烧速度。',
+        isMinor: false,
+      },
+    ],
+  },
 };
 
 // Process character definitions to assign IDs and process skills
