@@ -1,5 +1,6 @@
 'use client';
 
+import BaseCard from '@/components/ui/BaseCard';
 import Tag from '@/components/ui/Tag';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -17,8 +18,8 @@ export default function ItemDetailClient({ item }: { item: Item }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: designTokens.spacing.xl }}>
         <div className='md:w-1/3'>
-          <div className='card h-full dark:bg-slate-800 dark:border-slate-700'>
-            <div className='w-full h-64 bg-gray-200 dark:bg-slate-700 rounded-lg relative overflow-hidden mb-4 image-container'>
+          <BaseCard variant='details'>
+            <div className='w-full h-64 bg-gray-200 dark:bg-slate-700 rounded-t-lg relative overflow-hidden mb-4 image-container'>
               <div className='flex items-center justify-center h-full p-3'>
                 <Image
                   src={item.imageUrl}
@@ -86,7 +87,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                 ))}
               </div>
             </div>
-          </div>
+          </BaseCard>
         </div>
         <div className='md:w-2/3'>
           <div
