@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import { VersionDisplay } from '@/components/VersionDisplay';
 import NotificationTooltip from '@/components/ui/NotificationTooltip';
-import FeedbackSection from '@/components/ui/FeedbackSection';
+import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider, useEditMode } from '@/context/EditModeContext';
 import HomePageSection from '@/components/ui/HomePageSection';
@@ -26,6 +26,7 @@ function HomeContent() {
   const { toggleEditMode, isEditMode } = useEditMode();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
 
   const handleEditModeToggle = () => {
     if (isEditMode) {
@@ -104,7 +105,7 @@ function HomeContent() {
         <div className='mt-8 text-center px-4' onDoubleClick={handleEditModeToggle}>
           <h2 className='text-3xl font-bold mb-6 py-2 dark:text-white'>网站说明</h2>
           <p className='max-w-2xl mx-auto text-gray-600 dark:text-gray-300 px-4 py-3'>
-            <DisclaimerText />
+            <DisclaimerText onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
           </p>
           {process.env.NEXT_PUBLIC_BUILD_TIME && (
             <p className='text-sm text-gray-500 dark:text-gray-400 mt-4'>
@@ -112,7 +113,7 @@ function HomeContent() {
             </p>
           )}
           <VersionDisplay />
-          <FeedbackSection />
+          <FeedbackSection ref={feedbackSectionRef} />
         </div>
       </div>
 

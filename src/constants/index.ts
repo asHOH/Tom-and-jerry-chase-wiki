@@ -58,6 +58,12 @@ export const PROJECT_INFO = {
   url: 'https://github.com/asHOH/Tom-and-jerry-chase-wiki',
   description: '本项目已在GitHub开源，欢迎参与建设、给出建议或点star⭐！',
   maintainerId: 'asHOH',
+  // Split description to make "给出建议" clickable
+  descriptionParts: {
+    before: '本项目已在GitHub开源，欢迎参与建设、',
+    feedbackLink: '给出建议',
+    after: '或点star⭐！',
+  },
 };
 
 // Structured disclaimer content - single source of truth

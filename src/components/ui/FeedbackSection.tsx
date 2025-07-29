@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 
-export default function FeedbackSection() {
+export interface FeedbackSectionRef {
+  openFeedback: () => void;
+}
+
+const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [feedbackFormData, setFeedbackFormData] = useState({
     type: 'suggestion',
@@ -11,6 +15,10 @@ export default function FeedbackSection() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    openFeedback: () => setIsFeedbackOpen(true),
+  }));
 
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -223,4 +231,8 @@ export default function FeedbackSection() {
       )}
     </>
   );
-}
+});
+
+FeedbackSection.displayName = 'FeedbackSection';
+
+export default FeedbackSection;

@@ -1,6 +1,10 @@
 import { CREATORS, DISCLAIMER_CONTENT, PROJECT_INFO } from '@/constants';
 
-export const DisclaimerText = () => {
+interface DisclaimerTextProps {
+  onFeedbackClick?: () => void;
+}
+
+export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
   // Helper function to render creator links
   const renderCreatorLinks = (creatorIds: readonly string[]) => {
     return creatorIds.map((creatorId, index) => (
@@ -71,7 +75,19 @@ export const DisclaimerText = () => {
         <br />
         <span>
           本项目由{renderCreatorLinks([PROJECT_INFO.maintainerId])}维护，
-          {PROJECT_INFO.description.slice(3)}
+          {PROJECT_INFO.descriptionParts.before}
+          {onFeedbackClick ? (
+            <button
+              type='button'
+              onClick={onFeedbackClick}
+              className='text-blue-600 hover:text-blue-800 underline cursor-pointer bg-transparent border-none p-0 font-inherit'
+            >
+              {PROJECT_INFO.descriptionParts.feedbackLink}
+            </button>
+          ) : (
+            PROJECT_INFO.descriptionParts.feedbackLink
+          )}
+          {PROJECT_INFO.descriptionParts.after}
         </span>
       </span>
 
