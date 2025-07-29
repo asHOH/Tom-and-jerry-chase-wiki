@@ -2066,10 +2066,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '西部情谊',
         type: 'active',
-        aliases: ['情谊'],
         description: '向前施放爱意，造成少量伤害。对男性角色及背对塔拉的角色有更强的效果。',
         detailedDescription:
-          '向前施放爱意，造成少量伤害。根据性别和相对塔拉的朝向而产生不同的效果:\n男性背对：增加本技能伤害，并使其一段时间内每隔3秒受到僵直\n男性面对或女性背对：额外给予其短暂减速。\n女性面对：额外给予其短暂加速。',
+          '向前施放爱意，造成少量伤害。根据性别和相对塔拉的朝向而产生不同的效果:\n男性背对：增加本技能伤害，并使其一段时间内每隔3秒受到僵直\n男性正对或女性背对：额外给予其短暂减速。\n女性正对：额外给予其短暂加速。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -2092,7 +2091,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             cooldown: 10,
           },
         ],
-        canHitInPipe: true,
+        canHitInPipe: false,
         videoUrl: 'https://nie.v.netease.com/nie/2021/0128/a9211df79cfb9d8e230ad83a90b97a0f.mp4',
       },
       {
@@ -2101,7 +2100,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '拖动技能，在面前135度的范围内甩出套索，对老鼠造成伤害和减速；再次点击按钮，塔拉将冲向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为扔出老鼠，老鼠碰到火箭直接绑上，但[不减少引线时间](二级被动和知识卡不受影响)。',
         detailedDescription:
-          '拖动技能，在面前135度的范围内甩出套索，对老鼠造成伤害和减速；再次点击按钮，塔拉将冲向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为扔出老鼠，老鼠碰到火箭直接绑上，但[不减少引线时间](二级被动和知识卡不受影响)；绳索可以套中机械鼠、护盾，但无伤害。',
+          '拖动技能，在面前135度的范围内甩出套索，对老鼠造成伤害和减速；再次点击按钮，塔拉将冲向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为扔出老鼠，期间老鼠无敌、碰到火箭直接绑上，但[不减少引线时间](二级被动和知识卡不受影响)；绳索可以套中机械鼠、护盾，但无伤害。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
