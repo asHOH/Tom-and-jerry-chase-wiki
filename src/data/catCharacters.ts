@@ -2028,7 +2028,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     skillAllocations: [
       {
         id: '',
-        pattern: '02201112',
+        pattern: '022001112',
         weaponType: 'weapon1',
         description:
           '开局搜刮远视药水，利用远视药水可以不急点二被，优先点出来2级绳索。抓到老鼠尽可能手绑火箭。',
