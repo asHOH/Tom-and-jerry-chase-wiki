@@ -2517,18 +2517,18 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '侍卫汤姆',
         description:
-          '兔子们的血量较高，能逼出侍卫汤姆的蓄势一击或蓄力重击。魔术师还能利用红牌封禁侍卫的技能，令其无法开炮。',
+          '兔子们的血量较高，能逼出侍卫汤姆的蓄势一击或蓄力重击。魔术师还能利用红牌封禁侍卫的技能，令其无法开炮',
         isMinor: true,
       },
       {
         id: '塔拉',
-        description: '兔子们的血量较高，能逼出塔拉的蓄势一击或蓄力重击。',
+        description: '兔子们的血量较高，能逼出塔拉的蓄势一击或蓄力重击',
         isMinor: true,
       },
       {
         id: '追风汤姆',
         description:
-          '追风汤姆伤害低，难以处理兔子们。兔子大表哥还会在追风试图利用技能将魔术师绑上火箭时瞬移出现，挡下当次技能，从而救下魔术师。',
+          '追风汤姆伤害低，难以处理兔子。兔子大表哥还会在追风试图利用技能将魔术师绑上火箭时瞬移出现，挡下当次技能，从而救下魔术师',
         isMinor: true,
       },
     ],
@@ -2536,22 +2536,22 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '航海士杰瑞',
         description:
-          '魔术师的卡牌和航海士杰瑞的金币可以相互弥补控制真空期，提高干扰能力。魔术师在干扰的同时还能推奶酪。',
+          '魔术师的卡牌和航海士杰瑞的金币可以相互弥补控制真空期，提高干扰能力。魔术师在干扰的同时还能推奶酪',
         isMinor: false,
       },
     ],
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '泛用性很高的特技，提高机动性和自保能力。',
+        description: '泛用性很高，提高机动性和自保能力',
       },
       {
         name: '绝处逢生',
-        description: '泛用性很高的特技，可用于回血、倒地自愈或清理捕鼠夹。',
+        description: '泛用性很高，可用于回血、倒地自愈或清理捕鼠夹',
       },
       {
         name: '干扰投掷',
-        description: '配合魔术卡牌提高干扰能力。',
+        description: '配合魔术卡牌提高干扰能力',
       },
     ],
   },
@@ -3475,7 +3475,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
         aliases: ['闪现'],
         cueRange: '本房间可见',
-        canHitInPipe: true,
+        canHitInPipe: false,
       },
       {
         name: '沙包拳头',
@@ -4367,9 +4367,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '说出你的故事',
         type: 'active',
         description:
-          '开始采访，期间免控，范围内的猫咪因紧张而降低移速和伤害能力。猫咪在镜头内使用爪刀、投掷道具、[使用技能](当猫在米可采访范围内时，牛仔汤姆弹弓每射出一个仙人掌都会提供一层素材；凯特的被动每层都会额外提供一层素材；图多盖洛的吻痕每造成一点伤害将提供一层素材)都会被记录为素材，最多叠加5层。采访时或终止采访后均可通过二段技能进行报道，拥有“素材”的猫咪会因被曝光而难堪，受到层数相关的伤害和眩晕效果；3层以上会掉落道具和老鼠。',
+          '开始采访，期间免控，范围内的猫咪因紧张而降低移速和伤害能力。猫咪在镜头内使用爪刀、投掷道具、[使用技能](牛仔汤姆的弹弓、凯特的被动、图多盖洛的吻痕将提供多层素材)都会被记录为素材，最多叠加5层。通过二段技能进行报道，猫咪因被曝光而受到[层数相关](无素材则无效果)的伤害和眩晕；3层以上会掉落道具和老鼠。',
         detailedDescription:
-          '开始采访，持续12.5秒，期间免控、不会被减速，范围内的猫咪因紧张而降低移速和伤害能力。猫咪在镜头内使用爪刀、投掷道具、[使用技能](当猫在米可采访范围内时，牛仔汤姆弹弓每射出一个仙人掌都会提供一层素材；凯特的被动每层都会额外提供一层素材；图多盖洛的吻痕每造成一点伤害将提供一层素材)都会被记录为素材，最多叠加5层。到达时限或点击额外技能键可终止采访。采访时或终止采访后均可通过二段技能进行报道，拥有“素材”的猫咪会因被曝光而难堪，受到层数相关的伤害和眩晕效果；3层以上会掉落道具和老鼠。',
+          '开始采访，持续12.5秒，期间免控、不会被减速，范围内的猫咪因紧张而降低移速和伤害能力。猫咪在镜头内使用爪刀、投掷道具、[使用技能](当猫在镜头内时，牛仔汤姆弹弓每射出一个仙人掌都会提供一层素材；凯特的被动每层都会额外提供一层素材；图多盖洛的吻痕每造成一点伤害将提供一层素材)都会被记录为素材，最多叠加5层。到达时限或点击额外技能键可终止采访。采访时或终止采访后均可通过二段技能进行报道，猫咪因被曝光而受到[层数相关](无素材则无效果)的伤害和眩晕；3层以上会掉落道具和老鼠。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键*'],
@@ -4382,7 +4382,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD；采访期间获得加速、加快Hp恢复速度。',
+            description: '减少CD；采访期间获得加速、提升Hp恢复速度。',
             cooldown: 25,
           },
           {
@@ -4500,6 +4500,20 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '苏蕊',
         description: '苏蕊的霸体和高伤能有效克制米可。',
         isMinor: false,
+      },
+    ],
+    specialSkills: [
+      {
+        name: '应急治疗',
+        description: '加强生存能力，与被动减伤配合较好',
+      },
+      {
+        name: '魔术漂浮',
+        description: '泛用性很高，提高机动性和自保能力',
+      },
+      {
+        name: '勇气投掷',
+        description: '用于缩短采访CD',
       },
     ],
   },
