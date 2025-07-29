@@ -69,21 +69,21 @@ export const PROJECT_INFO = {
 // Structured disclaimer content - single source of truth
 export const DISCLAIMER_CONTENT = {
   intro: '本网站为非盈利粉丝项目，仅供学习交流。',
-  privacyPolicy: '本网站承诺永不收集或分析任何用户数据。',
+  privacyPolicy: '本网站承诺永不收集任何用户数据。',
   freePolicy: '本网站承诺所有功能永久免费。',
   copyright:
     '猫和老鼠（Tom and Jerry）角色版权归华纳兄弟娱乐公司（Warner Bros. Entertainment Inc.）所有。游戏素材版权归网易猫和老鼠手游所有。',
-  takedownPolicy: '若版权方提出要求，我们将立即配合调整。反馈渠道：Github Issues。',
+  takedownPolicy: '若版权方提出要求，我们将立即调整。',
   acknowledgements: generateAcknowledgements(),
 };
 
 // Generate plain text version for metadata
 export const DISCLAIMER_TEXT = [
   DISCLAIMER_CONTENT.intro,
-  DISCLAIMER_CONTENT.copyright,
-  DISCLAIMER_CONTENT.takedownPolicy,
   DISCLAIMER_CONTENT.privacyPolicy,
   DISCLAIMER_CONTENT.freePolicy,
+  DISCLAIMER_CONTENT.copyright,
+  DISCLAIMER_CONTENT.takedownPolicy,
   ...Object.values(DISCLAIMER_CONTENT.acknowledgements).map(
     (ack) =>
       `${ack.prefix}${ack.creators.map((id) => CREATORS[id]?.name ?? id).join('、')}${ack.suffix}`

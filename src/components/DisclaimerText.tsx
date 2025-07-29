@@ -24,23 +24,6 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
 
   return (
     <>
-      {/* Website nature and commitments */}
-      <span className='block mb-4'>
-        {DISCLAIMER_CONTENT.intro}
-        <br />
-        {DISCLAIMER_CONTENT.privacyPolicy}
-        <br />
-        {DISCLAIMER_CONTENT.freePolicy}
-        <br />
-      </span>
-
-      {/* Copyright information */}
-      <span className='block mb-4'>
-        {DISCLAIMER_CONTENT.copyright}
-        <br />
-        {DISCLAIMER_CONTENT.takedownPolicy}
-      </span>
-
       {/* Project information */}
       <span className='block mb-4'>
         <span
@@ -89,6 +72,22 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
           )}
           {PROJECT_INFO.descriptionParts.after}
         </span>
+      </span>
+      {/* Website nature and commitments */}
+      <span className='block mb-4'>
+        {DISCLAIMER_CONTENT.intro}
+        <br />
+        {DISCLAIMER_CONTENT.privacyPolicy}
+        <br />
+        {DISCLAIMER_CONTENT.freePolicy}
+        <br />
+      </span>
+
+      {/* Copyright information */}
+      <span className='block mb-4'>
+        {DISCLAIMER_CONTENT.copyright}
+        <br />
+        {DISCLAIMER_CONTENT.takedownPolicy}
       </span>
 
       {/* Acknowledgments */}
