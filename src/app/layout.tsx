@@ -8,6 +8,7 @@ import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
+import FeedbackButton from '@/components/ui/FeedbackButton';
 import { DISCLAIMER_TEXT } from '@/constants';
 import './globals.css';
 import { DarkModeProvider } from '@/context/DarkModeContext';
@@ -95,6 +96,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
             <DarkModeProvider initialValue={isDarkMode}>{children}</DarkModeProvider>
           </main>
+          <FeedbackButton />
         </ErrorBoundary>
         <PerformanceMonitor />
         <ServiceWorkerRegistration />
