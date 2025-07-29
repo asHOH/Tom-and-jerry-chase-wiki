@@ -66,6 +66,9 @@ export const contributors: Contributor[] = [
         characters: ['图茨'],
         isMinor: true,
       },
+      {
+        type: RoleType.DataTester,
+      },
     ],
   },
   {
