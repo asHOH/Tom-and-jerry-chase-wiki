@@ -85,7 +85,7 @@ export default function FeedbackSection() {
             onClick={() => setIsFeedbackOpen(false)}
           />
 
-          <div className='fixed inset-4 md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-96 md:h-auto z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'>
+          <div className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-1/2 md:max-w-2xl md:min-w-[28rem] md:h-auto md:max-h-[80vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'>
             {submitted ? (
               <div className='p-6 text-center'>
                 <div className='text-4xl mb-4'>✅</div>
