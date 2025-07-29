@@ -4672,14 +4672,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: true,
         description: '圆形可以使猫手中道具掉落，三被减少队友技能CD。',
         additionalDescription: '',
-        weapon: 1,
       },
       {
         tagName: '干扰',
         isMinor: false,
         description: '守火箭能力一流，配合蓝图，猫很难绑上火箭；方块可以封走位。',
         additionalDescription: '',
-        weapon: 1,
       },
     ],
     skillAllocations: [
