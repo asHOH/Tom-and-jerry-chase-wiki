@@ -171,7 +171,7 @@ html {
 /* Character Card Performance Optimizations */
 .character-card {
   /* CSS containment for individual cards */
-  contain: layout style paint;
+  contain: layout style;
   /* Prevent layout thrashing */
   backface-visibility: hidden;
 }
@@ -249,22 +249,6 @@ html {
 .filter-button:not(:hover),
 .character-card button:not(:hover) {
   will-change: auto;
-}
-
-/* Reduce motion for users who prefer it */
-@media (prefers-reduced-motion: reduce) {
-  .character-grid,
-  .character-card,
-  .filter-button {
-    will-change: auto;
-    transform: none;
-    transition: none;
-    animation: none;
-  }
-
-  html {
-    scroll-behavior: auto;
-  }
 }
 
 /* Styles for content to account for fixed navbar */
