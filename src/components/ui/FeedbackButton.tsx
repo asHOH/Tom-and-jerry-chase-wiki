@@ -48,118 +48,6 @@ export default function FeedbackButton() {
     );
   };
 
-  if (isOpen) {
-    return (
-      <>
-        <div
-          className='fixed inset-0 bg-black bg-opacity-50 z-40'
-          onClick={() => setIsOpen(false)}
-        />
-
-        <div className='fixed inset-4 md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-96 md:h-auto z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'>
-          {submitted ? (
-            <div className='p-6 text-center'>
-              <div className='text-4xl mb-4'>✅</div>
-              <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2'>
-                反馈提交成功！
-              </h3>
-              <p className='text-gray-600 dark:text-gray-400 mb-4'>
-                感谢您的反馈，我们会认真考虑您的建议。
-              </p>
-              <button
-                onClick={() => {
-                  setSubmitted(false);
-                  setIsOpen(false);
-                }}
-                className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg'
-              >
-                关闭
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className='p-6'>
-              <div className='flex justify-between items-center mb-4'>
-                <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
-                  📝 反馈建议
-                </h3>
-                <button
-                  type='button'
-                  onClick={() => setIsOpen(false)}
-                  className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className='space-y-4'>
-                <div>
-                  <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-                    反馈类型
-                  </label>
-                  <select
-                    value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className='w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                    aria-label='反馈类型'
-                    title='选择反馈类型'
-                  >
-                    <option value='suggestion'>功能建议</option>
-                    <option value='bug'>错误报告</option>
-                    <option value='data'>数据纠错</option>
-                    <option value='other'>其他</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-                    详细描述 *
-                  </label>
-                  <textarea
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    placeholder='请详细描述您的建议或遇到的问题...'
-                    className='w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 h-32 resize-none'
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-                    联系方式（可选）
-                  </label>
-                  <input
-                    type='text'
-                    value={formData.contact}
-                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                    placeholder='QQ号或其他联系方式（如需回复）'
-                    className='w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                  />
-                </div>
-              </div>
-
-              <div className='flex space-x-3 mt-6'>
-                <button
-                  type='button'
-                  onClick={() => setIsOpen(false)}
-                  className='flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700'
-                >
-                  取消
-                </button>
-                <button
-                  type='submit'
-                  disabled={isSubmitting || !formData.content.trim()}
-                  className='flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg'
-                >
-                  {isSubmitting ? '提交中...' : '提交反馈'}
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
-      </>
-    );
-  }
-
   if (!isOpen) {
     return (
       <button
@@ -194,6 +82,7 @@ export default function FeedbackButton() {
               感谢您的反馈，我们会认真考虑您的建议。
             </p>
             <button
+              type='button'
               onClick={() => {
                 setSubmitted(false);
                 setIsOpen(false);

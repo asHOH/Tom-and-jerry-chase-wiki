@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+interface FeedbackData {
+  type: string;
+  content: string;
+  contact: string;
+  timestamp: string;
+  userAgent: string;
+  ip: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { type, content, contact } = await request.json();
@@ -28,8 +37,9 @@ export async function POST(request: NextRequest) {
     try {
       await sendFeedbackEmail(feedbackData);
       console.log('✅ Email sent successfully');
-    } catch (error) {
+    } catch (emailError) {
       console.log('❌ Email failed, logging to console:', feedbackData);
+      console.error('Email error:', emailError);
     }
 
     return NextResponse.json({
@@ -43,7 +53,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Email implementation using Resend (works well globally including China)
-async function sendFeedbackEmail(feedbackData: any) {
+async function sendFeedbackEmail(feedbackData: FeedbackData) {
   try {
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
