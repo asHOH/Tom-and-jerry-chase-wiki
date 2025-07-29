@@ -124,10 +124,6 @@
       "prettier --write --ignore-unknown"
     ]
   },
-  "overrides": {
-    "ajv": "^8.17.1",
-    "ajv-keywords": "^5.1.0"
-  },
   "depcheck": {
     "ignores": [
       "@tailwindcss/postcss",
