@@ -1531,9 +1531,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         cueRange: '全图可见',
       },
       {
-        name: '琴',
+        name: '牛仔吉他',
         type: 'weapon1',
-        description: '',
+        description:
+          '可左右拖动和原地释放，弹琴并向拖动方向移动。猫听到音乐会受到短暂僵直，持续听到音乐后会受到减速并持续降低Hp。',
         detailedDescription:
           '前摇0.9s，可左右拖动和原地释放，弹琴并向拖动方向移动，期间保留惯性。猫首次听到音乐时会陷入1s的僵直，[持续听到音乐](0.5s)后会受到35%减速并以15/s降低Hp，持续2.8s。弹琴可通过跳跃和移动键主动结束释放；空中释放会立刻解除；最多持续弹奏5s。后摇0.8s。',
         canMoveWhileUsing: false,
@@ -1542,8 +1543,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description:
-              '弹琴，猫首次听到音乐时会陷入短暂的僵直，持续听到音乐后，还会受到减速效果，并降低健康值，可左右滑动释放，空中释放会立刻解除。',
+            description: '',
             cooldown: 15,
           },
           {
@@ -2312,9 +2312,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     knowledgeCardGroups: [
       {
-        id: '投掷、干扰为主',
+        id: '投掷、干扰',
         description:
-          '以缴械、精准投射、投手等投掷命中类卡组组合而成的卡组，擅长利用魔术卡牌干扰和远程支援，但需要一定的投掷准度。注意：卡牌命中兔子大表哥时，上述知识卡不生效。',
+          '通过缴械、精准投射、投手等投掷命中类知识卡，增强卡牌干扰和远程支援，但需要一定的投掷准度。注意：卡牌命中兔子大表哥时，上述知识卡不生效。',
         groups: [
           {
             cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
@@ -2337,9 +2337,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         defaultFolded: false,
       },
       {
-        id: '无畏救援为主',
+        id: '兔子先生无畏救援',
         description:
-          '该类卡组绑定一武器兔子先生使用。兔子先生救援时能够继承无畏，可以用于破局或辅助救援，但不推荐承担队伍中的首要救援工作。注意：兔子先生无法继承舍己/逃之夭夭。',
+          '绑定一武器兔子先生。兔子先生救援时能够继承无畏，可以用于破局或辅助救援，但不推荐承担主要救援位。注意：兔子先生无法继承舍己/逃之夭夭。',
         groups: [
           {
             cards: ['S-铁血', 'S-无畏', 'S-缴械', 'C-救救我'],
@@ -2354,13 +2354,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         defaultFolded: true,
       },
       {
-        id: '自保为主',
+        id: '自保',
         description: '以自保为主的卡组，只要活着就能进行干扰和拉扯。',
         groups: [
           {
             cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
             description:
-              '泛用性较高的自保卡组，进可舍己救人、逃窜自保，退可在双人残局时用不屈拉扯，伺机破墙翻盘。',
+              '泛用性较高的自保卡组，进可舍己救人、逃窜自保，退可在双人残局时用不屈拉扯，伺机破墙翻盘。如果队伍中没有救人位，可以将逃窜换成逃之夭夭。',
           },
           {
             cards: ['S-铁血', 'A-祝愿', 'B-幸运', 'C-不屈', 'C-脱身'],
