@@ -5,6 +5,7 @@ import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import { VersionDisplay } from '@/components/VersionDisplay';
 import NotificationTooltip from '@/components/ui/NotificationTooltip';
+import FeedbackSection from '@/components/ui/FeedbackSection';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider, useEditMode } from '@/context/EditModeContext';
 import HomePageSection from '@/components/ui/HomePageSection';
@@ -111,6 +112,7 @@ function HomeContent() {
             </p>
           )}
           <VersionDisplay />
+          <FeedbackSection />
         </div>
       </div>
 
