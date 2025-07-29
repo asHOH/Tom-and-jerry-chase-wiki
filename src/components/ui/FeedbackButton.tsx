@@ -69,18 +69,19 @@ export default function FeedbackButton() {
 
   return (
     <>
-      <div className='fixed inset-0 bg-black bg-opacity-50 z-40' onClick={() => setIsOpen(false)} />
+      <div
+        className='fixed inset-0 bg-gray-900/30 backdrop-blur-sm z-40'
+        onClick={() => setIsOpen(false)}
+      />
 
       <div className='fixed inset-4 md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-96 md:h-auto z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'>
         {submitted ? (
           <div className='p-6 text-center'>
             <div className='text-4xl mb-4'>✅</div>
             <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2'>
-              反馈提交成功！
+              感谢您的反馈！
             </h3>
-            <p className='text-gray-600 dark:text-gray-400 mb-4'>
-              感谢您的反馈，我们会认真考虑您的建议。
-            </p>
+            <p className='text-gray-600 dark:text-gray-400 mb-4'>我们会认真考虑您的建议。</p>
             <button
               type='button'
               onClick={() => {
@@ -114,11 +115,9 @@ export default function FeedbackButton() {
                   <span className='text-lg'>💬</span>
                   <div>
                     <div className='text-sm font-medium text-blue-900 dark:text-blue-100'>
-                      QQ群交流：615882730
+                      QQ群：615882730
                     </div>
-                    <div className='text-xs text-blue-700 dark:text-blue-300'>
-                      最快的反馈方式，与开发者直接交流
-                    </div>
+                    <div className='text-xs text-blue-700 dark:text-blue-300'>与开发者直接交流</div>
                   </div>
                 </div>
                 <button
@@ -144,8 +143,8 @@ export default function FeedbackButton() {
                   title='选择反馈类型'
                 >
                   <option value='suggestion'>功能建议</option>
-                  <option value='bug'>错误报告</option>
-                  <option value='data'>数据纠错</option>
+                  <option value='bug'>网站错误</option>
+                  <option value='data'>数据建议</option>
                   <option value='other'>其他</option>
                 </select>
               </div>
