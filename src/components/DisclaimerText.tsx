@@ -14,7 +14,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
           href={CREATORS[creatorId]?.url ?? '#'}
           target='_blank'
           rel='noopener noreferrer'
-          className='text-blue-600 hover:text-blue-800 underline mx-1'
+          className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline mx-1'
         >
           {CREATORS[creatorId]?.name ?? creatorId}
         </a>
@@ -67,7 +67,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             href={PROJECT_INFO.url}
             target='_blank'
             rel='noopener noreferrer'
-            className='text-blue-600 hover:text-blue-800 underline font-medium'
+            className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline font-medium'
           >
             {PROJECT_INFO.name}
           </a>
@@ -80,7 +80,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             <button
               type='button'
               onClick={onFeedbackClick}
-              className='text-blue-600 hover:text-blue-800 underline cursor-pointer bg-transparent border-none p-0 font-inherit'
+              className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer bg-transparent border-none p-0 font-inherit'
             >
               {PROJECT_INFO.descriptionParts.feedbackLink}
             </button>
