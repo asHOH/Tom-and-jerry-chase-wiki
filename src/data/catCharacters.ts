@@ -12,7 +12,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     moveSpeed: 760,
     jumpHeight: 420,
     clawKnifeCdHit: 4.5,
-    clawKnifeCdUnhit: 2.3,
+    clawKnifeCdUnhit: 2.25,
     clawKnifeRange: 300,
 
     catPositioningTags: [
@@ -419,7 +419,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     moveSpeed: 780,
     jumpHeight: 420,
     clawKnifeCdHit: 5,
-    clawKnifeCdUnhit: 3.6,
+    clawKnifeCdUnhit: 3.5,
     clawKnifeRange: 220,
 
     catPositioningTags: [
@@ -627,7 +627,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     moveSpeed: 775,
     jumpHeight: 420,
     clawKnifeCdHit: 6.5,
-    clawKnifeCdUnhit: 4.5,
+    clawKnifeCdUnhit: 4.55,
     clawKnifeRange: 300,
     catPositioningTags: [
       {
@@ -822,7 +822,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     hpRecovery: 2.5,
     moveSpeed: 760,
     jumpHeight: 420,
-    clawKnifeCdHit: 4.9,
+    clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.5,
     clawKnifeRange: 300,
     catPositioningTags: [
@@ -1836,8 +1836,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     hpRecovery: 1,
     moveSpeed: 750,
     jumpHeight: 420,
-    clawKnifeCdHit: 5.4,
-    clawKnifeCdUnhit: 3.2,
+    clawKnifeCdHit: 5.5,
+    clawKnifeCdUnhit: 3.3,
     clawKnifeRange: 300,
     catPositioningTags: [
       {
@@ -1917,9 +1917,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '胡椒粉罐头',
         type: 'active',
         description:
-          '掏出胡椒粉罐头，持续对自身造成轻微伤害，米特因此受到“刺激”，增加移速和跳跃速度。再次便用技能将投掷罐头造成伤害。破碎后形成胡椒粉烟雾，持续对范围内角色造成伤害，猫咪在烟雾中会获得“刺激”效果。胡椒粉的效果在停止接触后会残留3秒。胡椒粉罐头在掏出后立刻开始进入CD。',
+          '掏出胡椒粉罐头，自身持续受到轻微伤害，并因此获得“刺激”状态，增加移速和跳跃速度。再次使用技能将投掷胡椒粉、造成伤害并形成胡椒粉烟雾，持续对范围内角色造成伤害。米特在烟雾中也会获得“刺激”状态。',
         detailedDescription:
-          '掏出胡椒粉罐头，持续对自身造成轻微伤害，米特因此受到“刺激”，增加移速和跳跃速度。再次便用技能将投掷罐头造成伤害。破碎后形成胡椒粉烟雾，持续对范围内角色造成伤害，猫咪在烟雾中会获得“刺激”效果。胡椒粉的效果在停止接触后会残留3秒。胡椒粉罐头在掏出后立刻开始进入CD。（CD结束后，若未投掷出胡椒粉罐头，可双击技能，胡椒粉会原地向下扔）\n',
+          '掏出胡椒粉罐头，自身持续受到轻微伤害，并因此获得“刺激”状态，增加移速和跳跃速度。再次使用技能将投掷胡椒粉、造成伤害，落地后破碎并形成胡椒粉烟雾，[持续对范围内角色造成伤害](不会破米特的护盾)、在停止接触后会残留约3秒。米特在烟雾中也会获得“刺激”状态。胡椒粉在掏出后立刻进入CD；CD冷却完成后，若未投掷出胡椒粉，可双击技能，胡椒粉会原地向下扔。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: '无后摇',
@@ -1940,7 +1940,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '持续伤害频率更高。猫咪在“刺激”状态下获得减伤50%并提高绑火箭速度50%。',
+            description: '持续伤害频率更高。猫咪在“刺激”状态下获得50%减伤并提高绑火箭速度50%。',
             cooldown: 12,
           },
         ],
@@ -2166,8 +2166,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     hpRecovery: 1.5,
     moveSpeed: 770,
     jumpHeight: 420,
-    clawKnifeCdHit: 7.9,
-    clawKnifeCdUnhit: 2.5,
+    clawKnifeCdHit: 8,
+    clawKnifeCdUnhit: 2.64,
     clawKnifeRange: 300,
     catPositioningTags: [
       {
@@ -2714,7 +2714,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '回复Hp，并随着音乐舞动，持续40秒。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复Hp、提升移速和攻击力。舞动时接触虚弱老鼠将使其自主跟随苏蕊30秒，期间遇到火箭立刻绑上。',
         detailedDescription:
-          '回复50Hp，随着音乐舞动，持续40秒。若手中有老鼠，则放下老鼠并使其自主跟随。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复30Hp、提升10%移速和15点攻击力。舞动时接触不在捕鼠夹上的虚弱老鼠或刚被击倒的老鼠，将使其自主跟随苏蕊30秒。在此状态下，老鼠无法主动使用技能、移动等操作，但仍能受到伤害和控制，且遇到火箭会立刻绑上。若老鼠与苏蕊距离较远（如钻管道后），则老鼠会解除跟随。',
+          '回复50Hp，随着音乐舞动，持续40秒。若手中有老鼠，则放下老鼠并使其自主跟随。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](CD为5.9秒（未命中）和11.9秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复30Hp、提升10%移速和15点攻击力。舞动时接触不在捕鼠夹上的虚弱老鼠或刚被击倒的老鼠，将使其自主跟随苏蕊30秒。在此状态下，老鼠无法主动使用技能、移动等操作，但仍能受到伤害和控制，且遇到火箭会立刻绑上。若老鼠与苏蕊距离较远（如钻管道后），则老鼠会解除跟随。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -2735,8 +2735,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description: '每次成功点击爱心将延长舞动时间。',
-            detailedDescription:
-              '每次爱心提示出现后成功点击技能按钮将延长舞动时间5秒，总舞动时间变为60秒。',
+            detailedDescription: '每次成功点击爱心将[延长舞动时间5秒](总舞动时间至多为60秒)。',
             cooldown: 40,
           },
         ],
@@ -2746,7 +2745,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'weapon1',
         description: '扔出瑜伽球并控制它膨胀，膨胀时使老鼠眩晕并弹飞。',
         detailedDescription:
-          '扔出瑜伽球。在瑜伽球飞行过程中苏蕊可再次点击技能键使瑜伽球膨胀，当膨胀时接触到敌方老鼠，则会造成30点伤害、1.5秒眩晕并弹飞，瑜伽球可积累2次使用机会。',
+          '扔出瑜伽球。在瑜伽球飞行过程中苏蕊可再次点击技能键使瑜伽球膨胀，当膨胀时接触到敌方老鼠，则会造成30点伤害、1.5秒眩晕并弹飞。可存储2次。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
@@ -2804,7 +2803,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     moveSpeed: 800,
     jumpHeight: 420,
     clawKnifeCdHit: 7,
-    clawKnifeCdUnhit: 3.8,
+    clawKnifeCdUnhit: 3.85,
     clawKnifeRange: 300,
     catPositioningTags: [
       {
@@ -2962,7 +2961,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             detailedDescription: '提高铁砧的伤害至30。',
           },
         ],
-        aliases: ['风', '飓风', '铁砧'],
+        aliases: ['飓风', '铁砧'],
         cancelableAftercast: ['道具键'],
         canHitInPipe: false,
         cooldownTiming: '释放后',
