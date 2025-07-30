@@ -2036,15 +2036,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        cards: ['A-熊熊燃烧', 'S-蓄势一击', 'A-细心', 'B-皮糙肉厚'],
-        description: '传统蓄势流，细心可换穷追or加大。现版本压力较大建议击晕流。',
+        cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
+        description: '传统蓄势流，细心可换穷追猛打或加大火力。现版本压力较大建议击晕流。',
       },
       {
-        cards: ['A-熊熊燃烧', 'S-击晕', 'B-皮糙肉厚', 'A-加大火力'],
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-加大火力'],
         description: '击晕流：现版本主流卡组。加大可换穷追，根据角色地图决定。',
       },
       {
-        cards: ['C-猫是液体', 'S-击晕', 'B-皮糙肉厚', 'A-熊熊燃烧', 'C-狡诈'],
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
         description: '猫液卡组。',
       },
       {

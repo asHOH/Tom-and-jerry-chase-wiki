@@ -66,9 +66,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '有难同当',
     rank: 'S',
     cost: 5,
-    description: 'Hp在一半以上时，牺牲自己的Hp为附近队友减伤；牺牲不会致死。有内置**CD**。',
+    description: 'Hp在一半以上时，[牺牲自己的Hp](不会致死)为附近队友减伤。有内置**CD**。',
     detailedDescription:
-      '当自身Hp在一半以上、附近队友受到猫咪伤害时，牺牲自己大量Hp来减少部分队友所受伤害，被“牺牲”的Hp一部分会在10秒内缓慢恢复，牺牲者会至少保留一定Hp。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
+      '当自身Hp在一半以上、半径1150范围内队友受到猫咪伤害时，该伤害减免为原来的30%。该伤害每有5点，自身[失去剩余Hp的3%](至少保留10Hp)。之后10s内，逐渐恢复失去Hp的50%。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
     levels: [
       { level: 1, description: 'CD：**40**秒。' },
       { level: 2, description: 'CD：**35**秒。' },
@@ -124,7 +124,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '当队友被猫咪抓住时，攻击力提升；如果猫咪不在附近，额外**提升**移动和跳跃速度。',
     detailedDescription:
-      '冲冠一怒！当队友被猫咪抓住时，攻击力提升15%；如果猫咪不在附近，额外**提升**移动和跳跃速度。',
+      '当队友被猫咪抓住时，基础攻击力提升15%；如果猫咪不在半径1100范围内，额外**提升**移动和跳跃速度。',
     levels: [
       { level: 1, description: '移动和跳跃速度提升**18%**。' },
       { level: 2, description: '移动和跳跃速度提升**19%**。' },
@@ -137,7 +137,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 5,
     description: '处于健康状态时，自己和附近队友推速**提升**。',
-    detailedDescription: '处于健康状态时，自己和附近队友推速**提升**（效果不可叠加）。',
+    detailedDescription: '处于健康状态时，自己和半径1700范围内队友推速**提升**（效果不可叠加）。',
     levels: [
       { level: 1, description: '推速提升**3%**。' },
       { level: 2, description: '推速提升**4%**。' },
@@ -177,7 +177,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '自己被放飞时，全体队友回复部分Hp、获得经验，并**短暂**提升移动和跳跃速度。',
     detailedDescription:
-      '这是心的呼唤，这是爱的奉献！自己被放飞时，全体队友回复部分Hp、获得经验，并**短暂**提升移动和跳跃速度。',
+      '这是心的呼唤，这是爱的奉献！自己被放飞时，全体队友回复50Hp、平分2500经验，并**短暂**提升14%移动和跳跃速度。',
     levels: [
       { level: 1, description: '队友移动和跳跃速度提升持续**10**秒。' },
       { level: 2, description: '队友移动和跳跃速度提升持续**11**秒。' },
