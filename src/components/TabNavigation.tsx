@@ -11,6 +11,21 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 
+// Helper function for button styling
+const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: boolean) => {
+  const baseClasses =
+    'whitespace-nowrap rounded-md border-none cursor-pointer transition-colors flex items-center justify-center';
+  const sizeClasses = isMobile ? 'min-h-[40px] p-2 text-sm' : 'min-h-[44px] px-4 text-base';
+
+  const stateClasses = isNavigating
+    ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
+    : isActive
+      ? 'bg-blue-600 text-white dark:bg-blue-700'
+      : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600';
+
+  return clsx(baseClasses, sizeClasses, stateClasses);
+};
+
 type Tab = {
   id: string;
   name: string;
@@ -119,13 +134,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               type='button'
               onClick={() => handleNavigation('/')}
               className={clsx(
-                'whitespace-nowrap rounded-md border-none cursor-pointer transition-colors flex items-center justify-center',
-                isMobile ? 'min-h-[40px] min-w-[40px] p-2 text-sm' : 'min-h-[44px] px-4 text-base',
-                navigatingTo === '/'
-                  ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
-                  : isHomeActive()
-                    ? 'bg-blue-600 text-white dark:bg-blue-700'
-                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
+                getButtonClassName(isMobile, navigatingTo === '/', isHomeActive()),
+                isMobile && 'min-w-[40px]'
               )}
               disabled={navigatingTo !== null}
             >
@@ -145,13 +155,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 type='button'
                 onClick={() => handleNavigation(tab.path)}
                 className={clsx(
-                  'whitespace-nowrap rounded-md border-none cursor-pointer transition-colors flex items-center justify-center',
-                  isMobile ? 'min-h-[40px] p-2 text-sm gap-0' : 'min-h-[44px] px-4 text-base gap-2',
-                  navigatingTo === tab.path
-                    ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
-                    : isTabActive(tab.path)
-                      ? 'bg-blue-600 text-white dark:bg-blue-700'
-                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
+                  getButtonClassName(isMobile, navigatingTo === tab.path, isTabActive(tab.path)),
+                  isMobile ? 'gap-0' : 'gap-2'
                 )}
                 disabled={navigatingTo !== null}
               >
