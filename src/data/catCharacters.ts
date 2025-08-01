@@ -919,28 +919,30 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['牛哥'],
         description:
-          '释放斗牛，破坏[易碎道具](包括牛仔杰瑞的仙人掌)，并对老鼠造成伤害和眩晕。撞击一次伤害为25；被牛眩晕的老鼠可以被直接抓取。撞到墙体或已经插入地板的叉子会掉头。会带走已经布置的老鼠夹。',
+          '释放斗牛，破坏[易碎道具](包括牛仔杰瑞的仙人掌)，并对老鼠造成伤害和[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
+        detailedDescription:
+          '释放斗牛，破坏[易碎道具](包括牛仔杰瑞的仙人掌)，并对老鼠造成25伤害和1.5秒[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: ['跳跃键', '道具键*'],
+        cancelableSkill: ['跳跃键', '道具键'],
         cancelableAftercast: '无后摇',
         cooldownTiming: '释放时',
         skillLevels: [
           {
             level: 1,
-            description: '',
+            description: '斗牛持续12秒。',
             cooldown: 18,
-            detailedDescription: '',
           },
           {
             level: 2,
-            description: '斗牛持续更长时间。',
+            description: '斗牛持续时间延长至20秒。',
             cooldown: 18,
           },
           {
             level: 3,
-            description: '延长斗牛造成的眩晕效果。',
+            description: '延长斗牛造成的眩晕时间。',
             cooldown: 18,
+            detailedDescription: '斗牛造成的眩晕时间延长至2.9秒。',
           },
         ],
         cueRange: '全图可见',
@@ -949,9 +951,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '鞭子',
         type: 'weapon1',
         description:
-          '造成1点伤害和减速。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加移速和减少爪刀CD。老鼠被累计命中两次后，受到伤害和眩晕效果，眩晕期间可被直接抓取。',
+          '对前方老鼠造成1点伤害和减速。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加移速和减少爪刀CD。老鼠被累计命中两次后，受到伤害和眩晕效果，眩晕期间可被直接抓取。',
         detailedDescription:
-          '造成1点伤害和减速。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加2.5%移速和减少2%爪刀CD。老鼠被累计命中两次后，受到伤害和眩晕效果，并清除鞭子带来的减益。鞭子眩晕期间可被直接抓取。',
+          '前摇0.25s，对前方老鼠造成1点伤害和持续7.9秒的9.5%减速、给自己持续8秒的1%加速和减少2%爪刀CD。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加3%移速和6%减少爪刀CD。老鼠被累计命中两次后，受到50点伤害和2.4秒眩晕效果，并清除鞭子带来的减益。鞭子眩晕期间可被直接抓取。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -966,6 +968,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             level: 2,
             description: '鞭子命中老鼠后，会使老鼠缓慢减少Hp，同时附带更强的减速效果。',
             cooldown: 3.5,
+            detailedDescription: '鞭子命中老鼠后，会使老鼠以3/s失去Hp，同时附带更强的减速效果。',
           },
           {
             level: 3,
@@ -988,19 +991,22 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             level: 1,
             description: '向前发射三颗小仙人掌球，命中时造成伤害和受伤状态、获得老鼠的小地图位置。',
             detailedDescription:
-              '向前喇叭形发射三颗小仙人掌球，命中时造成26伤害和受伤状态、获得老鼠的小地图位置。',
+              '向前喇叭形发射三颗小仙人掌球，命中时造成26伤害和受伤状态、获得老鼠的小地图位置4.85秒，同时自身获得持续5.85秒的12%加速。小仙人掌球最多存在1.5秒。',
             cooldown: 18,
           },
           {
             level: 2,
             description: '7秒内可进行第二次发射，向前更大角度内发射五颗小仙人掌球。',
             cooldown: 18,
+            detailedDescription: '7秒内可进行第二次发射，向前更大角度内发射五颗小仙人掌球。',
           },
           {
             level: 3,
             description:
-              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触到实体时爆炸，对周围的敌方造成60伤害和眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
+              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成伤害和眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
             cooldown: 18,
+            detailedDescription:
+              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成(60点伤害](不造成受伤)和3.5秒眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
           },
         ],
         cancelableAftercast: ['跳跃键', '移动键', '道具键'],
@@ -1052,8 +1058,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     counteredBy: [
       {
+        id: '剑客泰菲',
+        description:
+          '剑客泰菲的头盔可以抵挡牛仔汤姆的攻势，长枪的禁用技能可以大幅削弱牛仔汤姆的攻击力',
+        isMinor: false,
+      },
+      {
+        id: '罗宾汉泰菲',
+        description:
+          '牛仔汤姆缺乏霸体能力，并且机动性较差，可被罗菲连续控制或拉扯。罗菲的高低差爬树和高额恢复还克制弹弓和斗牛的远程消耗。',
+        isMinor: false,
+      },
+      {
         id: '剑客杰瑞',
-        description: '（仅限第二武器）剑客杰瑞的格挡使斗牛立即消失（梗：我不吃牛肉）',
+        description: '（仅限二武）剑客杰瑞的格挡使斗牛立即消失（梗：我不吃牛肉）',
         isMinor: false,
       },
       {
@@ -1064,7 +1082,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '尼宝',
-        description: '主动技能免疫控制',
+        description: '尼宝的主动技能免疫控制',
         isMinor: true,
       },
     ],
