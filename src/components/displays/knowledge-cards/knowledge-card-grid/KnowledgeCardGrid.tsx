@@ -130,7 +130,7 @@ export default function KnowledgeCardGrid() {
           </div>
         </div>
         {/* Cost Filter Controls */}
-        <div className='flex flex-col sm:flex-row sm:justify-center items-start gap-4'>
+        <div className='flex flex-col sm:flex-row sm:justify-center items-center gap-4'>
           <FilterLabel displayMode='inline'>费用筛选:</FilterLabel>
           <div className='w-full max-w-md'>
             <CostRangeSlider
