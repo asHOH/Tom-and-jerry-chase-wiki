@@ -7,6 +7,7 @@ import SearchBar from './ui/SearchBar'; // Import SearchBar
 import Tooltip from './ui/Tooltip'; // Import Tooltip
 import { useAppContext } from '@/context/AppContext';
 import { useNavigation } from '@/lib/useNavigation';
+import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 
@@ -61,22 +62,11 @@ type TabNavigationProps = {
 };
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
-  const [isMobile, setIsMobile] = useState(false);
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const { navigate } = useNavigation();
-
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
+  const isMobile = useMobile();
 
   // Reset navigation state when pathname changes
   useEffect(() => {
@@ -181,11 +171,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
         {/* Right-aligned detailed/simple view toggle button and SearchBar */}
         <div className={clsx('flex items-center', isMobile ? 'gap-2' : 'gap-3')}>
-          {pathname === '/' || pathname === '' ? (
-            <DarkModeToggleButton />
-          ) : (
-            <SearchBar isMobile={isMobile} />
-          )}
+          {pathname === '/' || pathname === '' ? <DarkModeToggleButton /> : <SearchBar />}
           {showDetailToggle && (
             <Tooltip
               content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}

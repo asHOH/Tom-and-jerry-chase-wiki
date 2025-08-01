@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, Fragment } from 'react';
 import Image from 'next/image';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
@@ -18,6 +18,7 @@ import {
 import { AssetManager } from '@/lib/assetManager';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 
 interface SkillCardProps {
@@ -37,26 +38,8 @@ export default function SkillCard({
   const { isDetailedView: isDetailed } = useAppContext();
   const localCharacter = useSnapshot(characters[characterId]!) as CharacterWithFaction;
   const [showVideoAddress, setShowVideoAddress] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
-
-  // Detect mobile layout (below md breakpoint: 768px)
-  useEffect(() => {
-    const checkMobile = () => {
-      if (typeof window !== 'undefined') {
-        setIsMobile(window.innerWidth < 768);
-      }
-    };
-
-    checkMobile();
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', checkMobile);
-      return () => window.removeEventListener('resize', checkMobile);
-    }
-
-    return () => {}; // Empty cleanup function for SSR
-  }, []);
 
   const getSkillTypeLabel = (type: string) => {
     if (isSingleWeapon && type === 'weapon1') {

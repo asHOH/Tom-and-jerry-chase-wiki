@@ -4,13 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion'; // Import AnimatePresence
 import SearchDialog from './SearchDialog'; // Import the new SearchDialog component
 import Tooltip from './Tooltip';
+import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 
-type SearchBarProps = {
-  isMobile: boolean; // Add isMobile prop
-};
-
-const SearchBar: React.FC<SearchBarProps> = ({ isMobile }) => {
+const SearchBar: React.FC<object> = () => {
+  const isMobile = useMobile();
   const [showSearchDialog, setShowSearchDialog] = useState(false);
 
   useEffect(() => {

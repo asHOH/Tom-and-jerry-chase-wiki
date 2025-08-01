@@ -6,6 +6,7 @@ import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
 import { Card, FactionId } from '@/data/types';
 import Image from 'next/image';
 import Tooltip from './Tooltip';
+import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 
 interface KnowledgeCardPickerProps {
@@ -25,16 +26,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
   initialSelectedCards,
 }) => {
   const [selectedCards, setSelectedCards] = useState<readonly string[]>(initialSelectedCards);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = useMobile();
 
   useEffect(() => {
     setSelectedCards(initialSelectedCards);
