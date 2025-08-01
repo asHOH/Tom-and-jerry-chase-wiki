@@ -1,7 +1,3 @@
-# Reply Style
-
-- Be concise. Eliminate filler words.
-
 # Project Information
 
 This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠手游). The site provides comprehensive data and tools for players to look up character information, knowledge cards, and game mechanics.
@@ -25,12 +21,6 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫�
 
 # Technology Stack
 
-## Core Framework
-
-- **Next.js 15** with App Router architecture
-- **React 19** with TypeScript for type safety
-- **Node.js >=20.0.0** and **npm >=10.0.0** required
-
 ## Styling & UI
 
 - **Tailwind CSS 4** for utility-first styling
@@ -46,7 +36,6 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫�
 
 ## Development Tools
 
-- **TypeScript** with strict configuration and additional checks
 - **ESLint** with Next.js, Testing Library, and Storybook plugins
 - **Prettier** for code formatting (single quotes, 100 char width)
 - **Husky** for git hooks with pre-commit, pre-push validation
@@ -56,73 +45,18 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫�
 - **Jest** with jsdom environment
 - **React Testing Library** for component testing
 - **Storybook** for component development and documentation
-- Coverage reporting with lcov and HTML formats
 
 ## Build & Deployment
 
 - **Vercel** for hosting and deployment
 - **PWA** capabilities with next-pwa and service worker
-- **Bundle Analyzer** for performance optimization
 - **MDX** support for documentation
 
 ## Performance & Analytics
 
 - **Vercel Analytics** and **Speed Insights**
-- Custom performance monitoring
 - Image optimization and caching strategies
 - Runtime caching for offline functionality
-
-# Command Line Syntax
-
-- Use PowerShell syntax: `;` instead of `&&`, etc.
-
-# Comment Edit Rules
-
-- Use meaningful variable/function names over comments
-- Add comments only for: complex logic, non-obvious algorithms, or public APIs
-
-# Code Standards
-
-- Follow project's existing patterns
-- Ensure TypeScript strict mode compliance
-- Write features with least net code increase
-- Avoid inline scripts/styles and use build-time bundling for CSP compliance (though not required)
-- Ensure your implementation plan complies with best practices before and after editing
-- Optimize for static delivery and client-side hydration
-- Write a draft commit message after each step with `feat|fix|docs|style|refactor|perf|test|chore(scope): ...` as a reference.
-
-## Code Style Requirements
-
-- Use TypeScript strict mode with additional checks
-- Single quotes, semicolons, 2-space indentation
-- Trailing commas in ES5 contexts
-- LF line endings
-
-# Common Commands
-
-```bash
-# Development
-npm run dev              # Start development server
-npm run build           # Production build
-npm run start           # Start production server
-
-# Code Quality
-npm run lint            # Run ESLint
-npm run lint:fix        # Fix ESLint issues
-npm run format          # Format with Prettier + ESLint
-npm run type-check      # TypeScript type checking
-
-# Testing
-npm test                # Run tests
-npm run test:watch      # Watch mode
-npm run test:coverage   # Generate coverage report
-npm run test:ci         # CI optimized testing
-
-# Utilities
-npm run clean           # Clean build artifacts
-npm run analyze         # Bundle analysis
-npm run storybook       # Start Storybook
-```
 
 # Project Structure
 
@@ -171,14 +105,6 @@ npm run storybook       # Start Storybook
 
 - **`constants/`** - Application constants and configuration
 
-## File Naming Conventions
-
-- **Components**: PascalCase (`CharacterCard.tsx`)
-- **Utilities**: camelCase (`skillUtils.ts`)
-- **Data files**: camelCase with descriptive names (`catCharacters.ts`)
-- **Types**: PascalCase interfaces/types in `types.ts` files
-- **Tests**: `__tests__/` directories or `.test.ts` suffix
-
 ## Architecture Patterns
 
 ### Data Layer
@@ -201,13 +127,6 @@ npm run storybook       # Start Storybook
 - Feature-specific utilities in `lib/`
 - Data organized by game entity type
 
-### Testing Structure
-
-- `__tests__/` directories alongside source files
-- Unit tests for utilities and data validation
-- Component tests using React Testing Library
-- Coverage reports exclude data files
-
 ## Import Conventions
 
 - Use `@/` path alias for `src/` directory
@@ -221,3 +140,38 @@ npm run storybook       # Start Storybook
 - **Accessibility**: Clean, intuitive interface that works well on mobile devices
 - **Community-Driven**: Open source project welcoming contributions from the gaming community
 - **Compatibility**: Ensure backward compatibility of import characters function in EditMode
+
+# Reply Rules
+
+## Reply style
+
+- Be concise! Eliminate filler words.
+
+## Comment Edit Rules
+
+- Use meaningful variable/function names over comments
+- Add comments only for: complex logic, non-obvious algorithms, or public APIs
+
+## Command Line Syntax
+
+- Use PowerShell syntax: `;` instead of `&&`, etc.
+
+# Code Standards
+
+- Follow project's existing patterns
+- Ensure TypeScript strict mode compliance
+- Write features with least net code increase
+- Avoid inline scripts/styles and use build-time bundling for CSP compliance (though not required)
+- Ensure your implementation plan complies with best practices before and after editing
+- Optimize for static delivery and client-side hydration
+
+# Things to do After Editing
+
+- Run the following commands to ensure code quality:
+
+```Powershell
+npm run lint            # Run ESLint
+npm run type-check      # TypeScript type checking
+```
+
+- Write a draft commit message with `feat|fix|docs|style|refactor|perf|test|chore(scope): ...` as a reference.
