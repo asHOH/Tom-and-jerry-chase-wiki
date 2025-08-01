@@ -213,7 +213,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '烟雾弹',
         pattern: '12[12]21000',
         weaponType: 'weapon1',
-        description: '四级一般点二级隐身；如果需要团推且猫不在附近，可先点二级烟雾弹。',
+        description:
+          '四级时，如果需要团推且猫不在附近，可先点二级烟雾弹；如果不清楚猫的位置则点二级隐身。',
         additionaldescription: '',
       },
       {
@@ -1187,7 +1188,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '干扰投掷',
         description:
-          '用来打出干扰投掷接炮，提高炮命中率（注意不要手快点出无影炮），用于打速度快导致炮不易命中的猫',
+          '用来打出干扰投掷接炮，提高炮命中率（注意不要手快取消投掷），用于打速度快导致炮不易命中的猫',
       },
     ],
   },
@@ -5084,29 +5085,23 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counters: [
       {
         id: '追风汤姆',
-        description: '圆形、方块可以对其封锁走位，并阻挡旋风和铁砧，还有极大可能导致其坠机',
+        description: '莱恩的圆形、方块可以封锁追风汤姆的走位，并阻挡旋风和铁砧，还可能导致其坠机',
         isMinor: false,
       },
       {
         id: '汤姆',
-        description: '克制无敌，阻止上火箭，但注意不要被二被秒掉',
+        description: '莱恩克制汤姆的无敌，阻止上火箭，但注意不要被二被秒掉',
         isMinor: true,
       },
     ],
     counteredBy: [
       {
         id: '布奇',
-        description: '挨一刀就死，伤害太高',
+        description: '布奇伤害高，莱恩挨一刀就死。',
         isMinor: false,
       },
     ],
-    collaborators: [
-      {
-        id: '音乐家杰瑞',
-        description: '可以配合音符双减CD，双拆火箭，双减火箭燃烧速度。',
-        isMinor: false,
-      },
-    ],
+    collaborators: [],
   },
 };
 

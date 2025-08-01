@@ -2311,7 +2311,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         detailedDescription:
           '点击技能，释放三段剑舞。一段旋刃突击，前摇0.3s，旋转着向前突进，并带走[碰到的敌方](无视敌方任何状态)；6s内可释放第二段剑刃重击（无视敌方任何状态都可触发连斩），前摇0.1s，后摇0.6s，可用道具键取消，对附近的敌方造成眩晕0.5s；6s内可释放第三段剑舞劈砍，对劈砍位置[附近](范围较小)的敌方造成50伤害、击退和眩晕（劈砍时若不在平台或地面将不会造成效果），命中时将减少8s骑士连斩CD。技能前摇和释放期间无霸体，若[被打断](包括碎片、夹子、眩晕、其他技能键、道具、特技、爪刀等)将直接进入技能CD。\n每段分别可与骑士连斩相互衔接释放：任意技能某段命中可触发两个技能下一段；连招最后使用的技能将进入CD。',
         // 推荐连招：剑舞1-剑舞2-连斩、冲刺-剑舞2-连斩。
-        canMoveWhileUsing: true,
+        canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableAftercast: ['道具键', '其他技能键'],
         skillLevels: [
