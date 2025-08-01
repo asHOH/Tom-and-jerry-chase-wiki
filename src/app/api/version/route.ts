@@ -15,13 +15,26 @@ const VERSION =
     ? `${packageJson.version}-${COMMIT_SHA.slice(0, 8)}`
     : `${packageJson.version}-dev`;
 
+// Detect deployment environment
+const getDeploymentEnvironment = () => {
+  // Vercel-specific environment detection
+  const vercelEnv = process.env.VERCEL_ENV;
+  if (vercelEnv) {
+    return vercelEnv; // 'development', 'preview', or 'production'
+  }
+
+  // Fallback to NODE_ENV for non-Vercel deployments
+  const nodeEnv = process.env.NODE_ENV || 'development';
+  return nodeEnv === 'production' ? 'production' : 'development';
+};
+
 // Generate version info without shell commands
 export async function GET() {
   const versionInfo = {
     version: VERSION,
     commitSha: COMMIT_SHA.slice(0, 8),
     buildTime: BUILD_TIME, // Static build time, not request time
-    environment: process.env.NODE_ENV || 'development',
+    environment: getDeploymentEnvironment(), // Use the smarter environment detection
     packageVersion: packageJson.version,
   };
 

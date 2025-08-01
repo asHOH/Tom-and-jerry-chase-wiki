@@ -38,7 +38,8 @@ export const VersionDisplay: React.FC = () => {
       const month = date.getMonth() + 1;
       const day = date.getDate();
 
-      if (environment === 'development') {
+      // Show seconds for development environment or preview deployments
+      if (environment === 'development' || environment === 'preview') {
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
         return `${month}月${day}日 ${hour}:${minute}`;
