@@ -2794,6 +2794,231 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
   },
 
+  /* ----------------------------------- 斯飞 ----------------------------------- */
+  斯飞: {
+    aliases: [],
+    description:
+      '因为与众不同的花色，斯飞在其他猫的眼里是个十足的怪猫。习惯独来独往的他从不和其他猫交流，独自一人住在城市的最中心，充满了神秘感。夜深人静的时候，他总会拿着一个挂坠，似乎在思念着谁。（猫鼠动画里毛色相似的小猫是他妹妹）',
+    maxHp: 225,
+    hpRecovery: 2,
+    moveSpeed: 780,
+    jumpHeight: 420,
+    clawKnifeCdHit: 4,
+    clawKnifeCdUnhit: 3.1,
+    clawKnifeRange: 300,
+    catPositioningTags: [
+      {
+        tagName: '追击',
+        isMinor: false,
+        description: '被动的加速使追击老鼠较为轻松',
+        additionalDescription: '',
+      },
+      {
+        tagName: '进攻',
+        isMinor: false,
+        description: '主动和武器技能均有伤害和控制，轻松击倒老鼠；被动的感电增强上火箭能力',
+        additionalDescription: '',
+      },
+      {
+        tagName: '翻盘',
+        isMinor: true,
+        description: '三级武器技能命中刷新CD，有一定翻盘能力',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '新手',
+        pattern: '0101[02]221',
+        weaponType: 'weapon1',
+        description: '初步接触的加点，六级时如果血量健康可以优先点出武器技能',
+      },
+      {
+        id: '熟练',
+        pattern: '010202211',
+        weaponType: 'weapon1',
+        description: '熟练后的推荐加点，要求对武器技能的熟练度',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-乘胜追击', 'S-暴怒', 'A-熊熊燃烧'],
+        description:
+          '萌新玩家可快速凑出本卡组度过开荒期，当资源足够或熟练后不推荐。管道图中，《暴怒》可替换为《加大火力》+《猫是液体》。',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
+        description: '经典776卡组，击晕依赖玩家选择，略有过时。',
+      },
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-心灵手巧', 'A-加大火力'],
+        description:
+          '主流卡组，心灵手巧可以使感电效果几乎持续到绑完火箭。可将最后两张换为《穷追猛打》，快速打开前期节奏；如遇打架队则可换为《皮糙肉厚》。',
+      },
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
+        description: '主流卡组，管道图用。',
+      },
+    ],
+    skills: [
+      {
+        name: '狂',
+        type: 'active',
+        aliases: ['牙通牙', '旋转'],
+        description: '向前方连续挥爪3次，造成伤害；疾冲状态下，改为向前穿刺，造成伤害和控制。',
+        detailedDescription:
+          '向前方连续挥爪3次，每次造成30伤害，范围为300。；疾冲状态下或武器技能飞行中，改为向前穿刺，造成60点伤害和1.8秒眩晕。技能可以穿门。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        canHitInPipe: true,
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 18,
+          },
+          {
+            level: 2,
+            description: '减少CD；技能期间免控。',
+            cooldown: 12,
+            detailedDescription: '减少CD；技能期间免控。',
+          },
+          {
+            level: 3,
+            description: '连续挥爪的伤害提升；穿刺攻击会将老鼠拉至终点位置。',
+            detailedDescription: '连续挥爪的伤害提升至每次40；穿刺攻击会将老鼠拉至终点位置。',
+            cooldown: 12,
+          },
+        ],
+        cancelableSkill: '无前摇',
+        cueRange: '本房间可见',
+      },
+      {
+        name: '猎',
+        type: 'weapon1',
+        description: '前摇0.45秒，扔出项坠，随后斯飞向项坠飞去，对碰到老鼠造成伤害和短暂眩晕。',
+        detailedDescription:
+          '前摇0.45秒，扔出项坠，0.75秒后或项坠碰撞到地面/墙壁后，斯飞以2000的速度向项坠飞去，飞行期间对碰到老鼠造成50点普通伤害、10点感电伤害和0.6秒眩晕。释放瞬间如果角色方向改变，将同时改变项坠方向。技能可以穿门。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键'],
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '飞行结束后8秒内，降低进入疾冲状态所需的奔跑时间和速度。',
+            cooldown: 20,
+            detailedDescription:
+              '飞行结束后8秒内，进入疾冲状态所需的奔跑时间降低至30%、所需的速度降低至基础移速的75%。',
+          },
+          {
+            level: 3,
+            description: '飞行期间伤害到敌人将刷新此技能。',
+            cooldown: 20,
+            detailedDescription: '飞行期间伤害每伤害到一个敌人，减少20秒本技能CD。',
+          },
+        ],
+        canHitInPipe: true,
+      },
+      {
+        name: '迅',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '斯飞以[一定移速](约基础速度90%)奔跑1.5秒后进入疾冲状态：\n1. 提高移动和跳跃速度\n 2.获得迅捷效果，获得加速，无视碎片、反向、失明、烫伤、感电、捕鼠夹\n3. 爪刀强化为向前扑击\n4. 获得感电状态，老鼠触碰到时会受到10点感电伤害并眩晕0.6秒\n当使用爪刀、施放技能或移速降到[一定数值](约为正常疾冲速度75%)时将退出疾冲状态。',
+            detailedDescription:
+              '斯飞以[一定移速](约基础速度90%)奔跑1.5秒后进入疾冲状态：\n1. 提高移动和跳跃速度\n 2.获得迅捷效果，获得加速，无视碎片、[反向、失明](包括魔术师的黄牌，拿坡里的足球，玛丽的扇子与反向)、烫伤、感电、捕鼠夹\n3. 爪刀强化为以2000速度向前扑击0.15秒\n4. 获得感电状态，身上环绕电流，老鼠触碰到时会受到10点感电伤害并眩晕0.6秒（同目标10秒内不会重复触发）\n当使用爪刀、施放技能或移速降到[一定数值](约为正常疾冲速度75%)以下0.5秒后将退出疾冲状态。',
+          },
+          {
+            level: 2,
+            description:
+              '退出疾冲状态后，迅捷状态继续保持10秒；迅捷状态额外提升[部分交互速度](绑火箭，放置老鼠夹等)。',
+            detailedDescription:
+              '退出疾冲状态后，迅捷状态继续保持10秒；迅捷状态额外提升[部分交互速度](绑火箭，放置老鼠夹等)65%。',
+          },
+          {
+            level: 3,
+            description: '迅捷状态额外持续恢复Hp。',
+            detailedDescription:
+              '迅捷状态额外获得30/s的Hp恢复；降低退出疾冲状态的速度至正常疾冲速度的70%。',
+          },
+        ],
+      },
+    ],
+    counteredBy: [
+      {
+        id: '航海士杰瑞',
+        description: '控制多，能炸火箭',
+        isMinor: true,
+      },
+      {
+        id: '尼宝',
+        description: '救人很稳，技能能让自己霸体和钩子让你强制位移',
+        isMinor: false,
+      },
+      {
+        id: '剑客杰瑞',
+        description: '在未点出三级被动的情况下，容易被这位打倒',
+        isMinor: true,
+      },
+      {
+        id: '侦探杰瑞',
+        description: '不好抓，容易被加快节奏',
+        isMinor: true,
+      },
+      {
+        id: '牛仔杰瑞',
+        description: '小心仙人掌的控制与减速',
+        isMinor: false,
+      },
+    ],
+    counters: [
+      {
+        id: '魔术师',
+        description: '被动免疫魔术师黄色卡牌，同时魔术师缺乏自保和打架能力',
+        isMinor: false,
+      },
+      {
+        id: '玛丽',
+        description: '被动免疫玛丽的扇子技能，同时玛丽缺乏打架能力',
+        isMinor: false,
+      },
+      {
+        id: '侦探泰菲',
+        description: '被动能免疫这位的分身干扰',
+        isMinor: true,
+      },
+      {
+        id: '剑客莉莉',
+        description: '高机动性让莉莉的干扰不起作用',
+        isMinor: true,
+      },
+      {
+        id: '仙女鼠',
+        description: '被变成大星星也能吃到被动，她的减速可以忽略',
+        isMinor: true,
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '自身缺乏防御手段（推荐）',
+      },
+      {
+        name: '急速翻滚',
+        description: '再次加快速度与机动性',
+      },
+    ],
+  },
+
   /* ----------------------------------- 追风汤姆 ----------------------------------- */
   追风汤姆: {
     description:
