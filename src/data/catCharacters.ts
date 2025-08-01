@@ -2577,6 +2577,224 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counters: [],
   },
 
+  /* ----------------------------------- 凯特 ----------------------------------- */
+  凯特: {
+    description:
+      '她是博学多才的都市美少女，冷静知性，是智慧与美貌并存的化身。她是校园中靓丽的风景线，也是学生眼中博学多识的师长。拥有无限魅力她，其爱慕者多如过江之鲫',
+    maxHp: 200,
+    hpRecovery: 3.5,
+    moveSpeed: 760,
+    jumpHeight: 420,
+    clawKnifeCdHit: 4.9,
+    clawKnifeCdUnhit: 3.5,
+    clawKnifeRange: 300,
+    catPositioningTags: [
+      {
+        tagName: '进攻',
+        isMinor: false,
+        description: '主动被动武器技能都是伤害性技能，在对局中可造成大量伤害',
+        additionalDescription:
+          '主动技能可以对一条直线内的敌人造成伤害；武器技能可以单独造成伤害或者夹住老鼠，也可以配合主动技能造成多段伤害；一级被动可以对老鼠造成更多伤害',
+      },
+      {
+        tagName: '打架',
+        isMinor: false,
+        description: '二级被动可以减少被控时间；主动技能为范围伤害，打架时命中率高',
+        additionalDescription: '三被命中破绽可减少技能CD，进一步提高打架优势',
+      },
+      {
+        tagName: '防守',
+        isMinor: true,
+        description: '三级追求者出击可造成控制，配合知识就是力量可造成多段控制',
+        additionalDescription: '',
+      },
+      {
+        tagName: '翻盘',
+        isMinor: true,
+        description: '在墙缝期混战中追求者在小范围内的命中率高，更大概率可造成多倒',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '常规加点',
+        pattern: '100112022',
+        weaponType: 'weapon1',
+        description: '常规加点',
+      },
+      {
+        id: '脆血加点',
+        pattern: '100211022',
+        weaponType: 'weapon1',
+        description: '五级点出知识即力量增加伤害',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '常规卡组，当面对剑杰等高伤老鼠或管道不重要时可携带',
+      },
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
+        description: '适合打管道图或者打架能力不高的队伍',
+      },
+      {
+        cards: ['S-乘胜追击', 'A-加大火力', 'A-熊熊燃烧', 'A-穷追猛打'],
+        description: '鼠方打架能力较弱且为无管道图',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '通用',
+      },
+      {
+        name: '全垒打',
+        description: '配合全垒打的兴奋加速更快地消耗老鼠团队',
+      },
+    ],
+    skills: [
+      {
+        name: '追求者出击',
+        type: 'active',
+        aliases: ['舔狗'],
+        description:
+          '从远处召唤追求者冲至面前；随后再次拖动技能键，使追求者向该方向再度出击，两段均可对触碰的老鼠造成伤害。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: ['道具键'],
+        cancelableAftercast: ['道具键'],
+        cooldownTiming: '释放后',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 18,
+          },
+          {
+            level: 2,
+            description: '追求者的速度更快',
+            cooldown: 18,
+          },
+          {
+            level: 3,
+            description: '追求者额外造成爆炸伤害和控制',
+            detailedDescription: '追求者额外造成25的爆炸伤害和控制',
+            cooldown: 18,
+          },
+        ],
+        canHitInPipe: false,
+        cueRange: '本房间可见',
+      },
+      {
+        name: '知识即力量',
+        type: 'weapon1',
+        description:
+          '投掷百科全书造成伤害，落地后书籍打开，5秒后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。可以通过交互键捡起书籍并将老鼠直接抓起。当书籍闭合时，周围的追求者会冲向书籍将其捡起并送还凯特，并对触碰到的老鼠造成伤害。',
+        detailedDescription:
+          '投掷百科全书造成[25伤害](受攻击力加成)，落地后书籍打开，5秒后或再次施放技能会让书籍闭合，造成伤害并[将老鼠夹住](挣脱时间不受夹不住我影响，但受捕鼠夹的影响)。书籍闭合后最多存在10秒，可以通过交互键捡起书籍返还5秒冷却并将老鼠直接抓起。当书籍闭合时，周围的追求者会冲向书籍将其捡起并送还凯特，并对触碰到的老鼠造成伤害。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: ['跳跃键', '道具键'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 15,
+          },
+          {
+            level: 3,
+            description: '被书籍砸中额外添加三层破绽，书籍最长开启状态延长为10秒。',
+            cooldown: 15,
+            detailedDescription:
+              '被书籍砸中额外添加三层破绽，书籍最长开启状态延长为10秒、存在20秒。',
+          },
+        ],
+        aliases: ['书'],
+        canHitInPipe: false,
+        cooldownTiming: '释放后',
+        cueRange: '本房间可见',
+      },
+      {
+        name: '骄傲的学霸',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '当老鼠出现在视线范围内时，每1.8秒为老鼠添加一层破绽状态。对老鼠造成伤害时，根据破绽层数造成额外伤害并获得额外经验。破绽状态上限5层。',
+            detailedDescription:
+              '当老鼠出现在视线范围内时，每1.8秒为老鼠添加一层持续10秒的破绽状态。对老鼠造成伤害时，根据破绽层数造成额外伤害并获得额外经验。破绽状态上限5层。每层破绽可增加6点伤害。',
+          },
+          {
+            level: 2,
+            description:
+              '附近老鼠使用技能、投掷道具、从火箭上救下同伴、吃下食物或药水，会获得一层破绽、增加凯特移速、减少被控制时间、加快绑火箭速度。',
+            detailedDescription:
+              '附近老鼠使用技能、投掷道具、从火箭上救下同伴、吃下食物或药水，会获得一层破绽、增加凯特移速、减少50%被控制时间、加快绑火箭速度至约1秒。减控共持续7秒。',
+          },
+          {
+            level: 3,
+            description: '击破破绽会减少凯特所有技能CD。',
+            detailedDescription: '击破破绽会减少凯特所有技能CD，每层破绽可减少2秒技能CD。',
+          },
+        ],
+      },
+    ],
+    counters: [
+      {
+        id: '航海士杰瑞',
+        description: '凯特二级被动减少控制时间，航海士杰瑞难以打出连控',
+        isMinor: true,
+      },
+      {
+        id: '剑客杰瑞',
+        description:
+          '凯特二级被动会导致剑客杰瑞华尔兹剑舞或者格挡无法与剑与苹果形成配合进行二次连控',
+        isMinor: true,
+      },
+      {
+        id: '表演者•杰瑞',
+        description: '凯特的破绽是二段伤害，可以使表演者杰瑞跳舞结束大幅提前',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '国王杰瑞',
+        description: '凯特难以处理国王杰瑞的国王权杖以及国王战旗',
+        isMinor: true,
+      },
+      {
+        id: '天使杰瑞',
+        description:
+          '凯特的技能命中天使杰瑞会造成爪刀与技能被禁，并且雷云范围内会削弱凯特伤害，并会被雷云攻击',
+        isMinor: false,
+      },
+      {
+        id: '剑客莉莉',
+        description: '难以处理剑客莉莉二级被动强行救人',
+        isMinor: true,
+      },
+      {
+        id: '剑客泰菲',
+        description: '凯特无法阻止头盔救人',
+        isMinor: false,
+      },
+      {
+        id: '米可',
+        description: '米可的采访减伤与回血还有霸体让凯特难以击倒米可',
+        isMinor: false,
+      },
+    ],
+  },
+
   /* ----------------------------------- 苏蕊 ---------------------------------- */
   苏蕊: {
     aliases: ['苏三心'],
