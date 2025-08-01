@@ -4605,6 +4605,192 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 霜月 ----------------------------------- */
+  霜月: {
+    description:
+      '外表秀气，内心坚强果敢的霜月是百年来唯一一个通过自己努力进入瑶池，参与仙考的鼠族。自幼和弟弟相依为命的她为了提升自己的修为，曾在幼年时期离开仙界，前往下界独自历练数年，回来的时候已经变成一个法力高强的仙子，身边还多了一个贪吃又可爱的小迷袋——胖呆呆。',
+    maxHp: 75,
+    attackBoost: 10,
+    hpRecovery: 2,
+    moveSpeed: 640,
+    jumpHeight: 400,
+    cheesePushSpeed: 2.4,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '可拦截猫或干扰绑火箭。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '破局',
+        isMinor: false,
+        description: '滑铲可铲飞图多盖洛香水或夹子。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '',
+        pattern: '121210002',
+        weaponType: 'weapon1',
+        description: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
+        description: '适合打斯飞等依靠追击的猫',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'C-不屈', 'C-救救我'],
+        description: '精准投射减少滑铲CD',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'B-绝地反击', 'C-不屈', 'C-救救我'],
+        description: '分金符继承绝反伤害可观，3级甚至可二连分金符',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
+        description: '适合打爪刀猫，如托普斯等',
+      },
+    ],
+    skills: [
+      {
+        name: '滑步踢',
+        type: 'active',
+        description:
+          '霜月向前滑铲，期间可转向且强霸体、跳起可扔出符。若手上无道具，则生成分金符，命中造成伤害、扣除猫的局内金币。若手上拿着[能造成减速的道具](番茄除外)，生成定身符，命中造成伤害和定身效果。手上的控制道具不会变成符。',
+        detailedDescription:
+          '霜月向前滑铲，期间可转向且强霸体、跳起可扔出符。若手上无道具，则生成分金符，命中造成{60}伤害、扣除猫500局内金币。若手上拿着[能造成减速的道具](番茄除外)，生成定身符，命中造成{40}伤害和2秒定身效果。手上的控制道具不会变成符。铲中猫将解除猫的控制效果。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['移动键'],
+        cancelableAftercast: ['移动键'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description:
+              '[可铲飞敌方猫](猫在被铲飞过程中为霸体)。每次滑铲命中减少CD。乾坤袋在附近时，滑铲还会造成少量伤害和眩晕。',
+            cooldown: 15,
+            detailedDescription:
+              '[可铲飞敌方猫1秒](猫在被铲飞过程中前0.7秒为霸体；5秒内不再受影响)。每次命中减少8秒CD。乾坤袋在附近时，滑铲还会造成10伤害和1秒眩晕。',
+          },
+          {
+            level: 3,
+            description: '可储存两次使用。',
+            cooldown: 15,
+          },
+        ],
+        aliases: ['滑铲'],
+        cueRange: '本房间可见',
+      },
+      {
+        name: '乾坤袋',
+        aliases: ['胖呆呆', '袋子'],
+        type: 'weapon1',
+        description:
+          '扔出乾坤袋，扔到猫会造成减速、扔到墙缝会造成伤害。落地后鼠方可进行交互。乾坤袋会自动吞噬周围道具或猫并吐出，受到两次攻击进入虚弱状态，一段时间后自动恢复。再次点击收回后技能进入CD。\n融合：老鼠点击交互键与胖呆呆融合。融合后对敌方隐藏小地图位置，并获得霸体。融合后可抱起队友，作为投掷道具扔出，可对猫造成伤害和眩晕。\n吞噬：吞噬投掷道具后，[优先向附近的敌方吐出](袋子伤害和破坏增伤皆为0)。吞噬打开的老鼠夹后，将吐出折叠的老鼠夹。吞噬蛋糕和牛奶后，将向附近的友方吐出，使其立即获得对应效果。吞噬奶酪后，将吐出轻奶酪，搬运时增加移速和跳跃高度。吞噬饮料后，将随机吐出另一个饮料。吞噬敌方猫后，吐出将使其减速一段时间。若吞噬的是火箭，则吐出时会熄灭火箭。\n激励：将自己携带的破墙、无畏、舍己效果给予友方。',
+        detailedDescription:
+          '扔出乾坤袋，扔到猫会造成减速40%，持续5秒、扔到墙缝会造成4点伤害。落地后所有玩家在小地图可见，鼠方可进行交互。乾坤袋血量为2，受到的伤害固定为1，倒地20秒后起身、获得1秒无敌。乾坤袋会每隔5秒尝试吞噬周围道具或猫并吐出。再次点击收回后技能进入CD。\n融合：老鼠点击交互键耗时1.5秒与胖呆呆融合。融合后对敌方隐藏小地图位置，并获得霸体。融合后可抱起队友，作为投掷道具扔出，可对猫造成50伤害和2.5秒眩晕。\n[吞噬](CD：8秒)：吞噬投掷道具后，[优先向附近的敌方吐出](袋子伤害和破坏增伤皆为0)。吞噬打开的老鼠夹后，将吐出折叠的老鼠夹。吞噬蛋糕和牛奶后，将向附近的友方吐出，使其立即获得对应效果。吞噬奶酪后，将吐出轻奶酪，搬运时增加移速和跳跃高度。吞噬饮料后，将随机吐出另一个饮料。[吞噬敌方猫](10秒后不会再被吞噬)后，吐出将会使其减速40%，持续3秒。若吞噬的是火箭，则吐出时会熄灭火箭。\n[激励](CD：25秒)：可在5秒持续时间内将自己携带的破墙、无畏、舍己、速推效果给予附近的友方。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键'],
+        cancelableAftercast: ['跳跃键', '移动键', '药水键'],
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 50,
+          },
+          {
+            level: 2,
+            description: '减少CD。收回后根据剩余血量返还CD。',
+            cooldown: 30,
+            detailedDescription:
+              '减少CD。收回后根据剩余血量决定CD（满血：10秒；半血：20秒；空血：30秒）。',
+          },
+          {
+            level: 3,
+            description: '提高乾坤袋自动吞噬附近道具的频率。',
+            cooldown: 30,
+            detailedDescription: '减少乾坤袋自动吞噬附近道具的间隔至3秒。',
+          },
+        ],
+        cooldownTiming: '释放后',
+        cueRange: '本房间可见',
+      },
+      {
+        name: '灵气修为',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '每隔15秒，获得5秒的跳跃加成。',
+            detailedDescription: '每隔15秒，获得5秒的50%跳跃高度加成。',
+          },
+          {
+            level: 2,
+            description: '符命中敌方时，获得短暂救援速度和推速提升。',
+            detailedDescription: '符命中敌方时，救援速度增加50%，推速增加100%，持续5秒。',
+          },
+          {
+            level: 3,
+            description: '受到猫的爪击后不会立刻减少Hp，而是在5秒内固定减少60%最大Hp。',
+            detailedDescription: '受到猫的爪击后不会立刻减少Hp，而是在5秒内以9/s失去Hp。',
+          },
+        ],
+      },
+    ],
+    counters: [
+      {
+        id: '汤姆',
+        description: '霜月滑铲可硬拖汤姆的无敌时间，使其绑不上火箭。',
+        isMinor: false,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '托普斯',
+        description: '托普斯三级分身霸体免疫滑铲，网可直接网住。',
+        isMinor: true,
+      },
+    ],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '漂浮空中可扔出多个符，且乾坤袋可终止漂浮。',
+      },
+      {
+        name: '干扰投掷',
+        description: '符为控制道具，可触发干扰投掷。',
+      },
+      {
+        name: '勇气投掷',
+        description: '减少滑铲CD便于守火箭。',
+      },
+    ],
+    collaborators: [
+      {
+        id: '航海士杰瑞',
+        description: '航海士杰瑞可拆掉火箭，便于霜月守火箭。',
+        isMinor: true,
+      },
+      {
+        id: '音乐家杰瑞',
+        description: '音乐家杰瑞可拆掉火箭，便于霜月守火箭。',
+        isMinor: true,
+      },
+    ],
+  },
+
   /* ----------------------------------- 表演者•杰瑞 ----------------------------------- */
   '表演者•杰瑞': {
     aliases: ['表演者杰瑞', '柠檬杰瑞'],
