@@ -128,7 +128,7 @@ export const contributors: Contributor[] = [
   {
     id: 'ainibushen',
     name: '爱你不慎走安详',
-    url: 'https://space.bilibili.com/3546721078479411',
+    url: 'https://space.bilibili.com/3493083362625926',
     roles: [
       {
         type: RoleType.ContentWriter,
