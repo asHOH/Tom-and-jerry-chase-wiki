@@ -31,14 +31,12 @@ export const VersionDisplay: React.FC = () => {
 
   if (!versionInfo) return null;
 
-  // Format the build time to show date in Chinese format
-  const formatBuildTime = (buildTime: string, environment: string) => {
+  const formatVersionTime = (buildTime: string, environment: string) => {
     try {
       const date = new Date(buildTime);
       const month = date.getMonth() + 1;
       const day = date.getDate();
 
-      // Show seconds for development environment or preview deployments
       if (environment === 'development' || environment === 'preview') {
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
@@ -54,7 +52,7 @@ export const VersionDisplay: React.FC = () => {
 
   return (
     <p className='text-sm text-gray-500 mt-2'>
-      版本：{formatBuildTime(versionInfo.buildTime, versionInfo.environment)}
+      版本：{formatVersionTime(versionInfo.buildTime, versionInfo.environment)}
     </p>
   );
 };
