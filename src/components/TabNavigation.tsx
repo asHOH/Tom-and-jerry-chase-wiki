@@ -3,13 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import SearchBar from './ui/SearchBar'; // Import SearchBar
-import Tooltip from './ui/Tooltip'; // Import Tooltip
+import SearchBar from './ui/SearchBar';
+import Tooltip from './ui/Tooltip';
 import { useAppContext } from '@/context/AppContext';
 import { useNavigation } from '@/lib/useNavigation';
 import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
+
+const NAVIGATION_RESET_DELAY = 2000;
 
 // Helper function for button styling
 const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: boolean) => {
@@ -102,7 +104,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         setNavigatingTo(null);
       } else {
         // Reset after a short delay to allow navigation to complete
-        setTimeout(() => setNavigatingTo(null), 2000);
+        setTimeout(() => setNavigatingTo(null), NAVIGATION_RESET_DELAY);
       }
     } catch (error) {
       console.error('Navigation error:', error);
