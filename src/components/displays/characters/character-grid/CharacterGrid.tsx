@@ -168,7 +168,10 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         </div>
       </div>
 
-      <div className='character-grid grid-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8'>
+      <div
+        className='character-grid grid-container grid gap-8 mt-8'
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))' }}
+      >
         {isEditMode && (
           <div className='character-card transform transition-transform hover:-translate-y-1'>
             <CharacterImport />

@@ -46,9 +46,9 @@ export default function GameImage({
         case 'CARD_DETAILS':
           return '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
         case 'CHARACTER_CARD':
-          return '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw';
-        case 'CARD_ITEM':
-          return '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw';
+          return '210px';
+        case 'KNOWLEDGECARD_CARD':
+          return '160px';
         default:
           return '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
       }
@@ -61,7 +61,7 @@ export default function GameImage({
 
   return (
     <div
-      className='w-full bg-gray-200 dark:bg-slate-700 relative overflow-hidden mb-4'
+      className='w-full bg-gray-200 dark:bg-slate-700 relative overflow-hidden mb-3'
       style={{
         height: containerHeight,
         borderRadius: componentTokens.image.container.borderRadius,

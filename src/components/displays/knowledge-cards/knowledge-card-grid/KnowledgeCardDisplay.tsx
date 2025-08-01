@@ -35,11 +35,11 @@ export default function KnowledgeCardDisplay({
       <GameImage
         src={imageUrl}
         alt={`${name}知识卡图标`}
-        size='CARD_ITEM'
+        size='KNOWLEDGECARD_CARD'
         className='hover:scale-105'
         priority={priority}
       />
-      <div className='px-4 pt-1 pb-4 text-center'>
+      <div className='px-3 pt-1 pb-3 text-center'>
         <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-1'>{name}</h3>
         <div
           className='flex justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'

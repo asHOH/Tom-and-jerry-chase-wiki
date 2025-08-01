@@ -57,7 +57,7 @@ export default function CharacterDisplay({
         className='hover:scale-105'
         priority={priority}
       />
-      <div className='px-6 pt-1 pb-6 text-center'>
+      <div className='px-4 pt-1 pb-5 text-center'>
         <h2 className='text-xl font-bold mb-2 dark:text-white'>{name}</h2>
 
         {sortedPositioningTags && sortedPositioningTags.length > 0 && (
