@@ -26,9 +26,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'S',
     cost: 6,
     description:
-      '保持60%Hp以上**一段时间**后进入乾坤一掷状态，提高移速和投掷物伤害，Hp低于60%后移除该状态。',
+      '保持60%Hp以上**一段时间**后进入乾坤一掷状态，提高移速和投掷物伤害。Hp低于60%后移除该状态。',
     detailedDescription:
-      '保持60%Hp以上**一段时间**后进入乾坤一掷状态，加速10%，投掷物伤害增加30点，Hp低于60%后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
+      '保持60%Hp以上**一段时间**后进入乾坤一掷状态，加速10%，投掷物伤害增加30点。Hp低于60%后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
     levels: [
       { level: 1, description: '保持**20**秒后进入乾坤一掷。' },
       { level: 2, description: '保持**19**秒后进入乾坤一掷。' },
@@ -77,29 +77,17 @@ export const catKnowledgeCards: Record<string, Card> = {
     ],
   },
 
-  猛攻: {
-    id: '猛攻',
-    rank: 'S',
-    cost: 5,
-    description: '猫咪的拍子和爪刀使老鼠**短暂**禁用技能和道具，并掉落手中道具。',
-    // detailedDescription: '',
-    levels: [
-      { level: 1, description: '猛攻效果持续**5**秒。' },
-      { level: 2, description: '猛攻效果持续**6**秒。' },
-      { level: 3, description: '猛攻效果持续**7**秒。' },
-    ],
-  },
-
   知识渊博: {
     id: '知识渊博',
     rank: 'S',
     cost: 6,
     description: '提升初始经验，同时**提升**经验自然增速。',
-    detailedDescription: '知识渊博的猫咪，天生拥有更多的经验，同时**提升**经验自然增速。',
+    detailedDescription:
+      '知识渊博的猫咪，天生拥有更多的经验。提升1000初始经验，同时**提升**经验自然增速。',
     levels: [
-      { level: 1, description: '**小幅**提升经验自然增速。' },
-      { level: 2, description: '**中幅**提升经验自然增速。' },
-      { level: 3, description: '**大幅**提升经验自然增速。' },
+      { level: 1, description: '提升经验自然增速至**3.8/s**。' },
+      { level: 2, description: '提升经验自然增速至**4.6/s**。' },
+      { level: 3, description: '提升经验自然增速至**5.4/s**。' },
     ],
   },
 
@@ -118,6 +106,19 @@ export const catKnowledgeCards: Record<string, Card> = {
     ],
   },
 
+  猛攻: {
+    id: '猛攻',
+    rank: 'S',
+    cost: 5,
+    description: '猫咪的拍子、爪刀和少数技能**短暂**禁用老鼠的技能和道具，并掉落手中道具。',
+    // detailedDescription: '',
+    levels: [
+      { level: 1, description: '猛攻效果持续**5**秒。' },
+      { level: 2, description: '猛攻效果持续**6**秒。' },
+      { level: 3, description: '猛攻效果持续**7**秒。' },
+    ],
+  },
+
   /* ----------------------------------- A级卡 ---------------------------------- */
   加大火力: {
     id: '加大火力',
@@ -126,7 +127,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     description:
       '火箭燃烧速度变得**更快**！在绑有老鼠的火箭附近击倒老鼠，会额外减少火箭5秒燃烧时间。(CD：20秒)',
     detailedDescription:
-      '点燃火箭吧！火箭燃烧速度变得**更快**！在绑有老鼠的火箭附近击倒老鼠，会额外减少火箭5秒燃烧时间。(CD：20秒)',
+      '点燃火箭吧！火箭燃烧速度变得**更快**！在绑有老鼠的火箭半径1100范围内击倒老鼠，会额外减少火箭5秒燃烧时间。(CD：20秒)',
     levels: [
       { level: 1, description: '火箭燃烧速度提升**12%**。' },
       { level: 2, description: '火箭燃烧速度提升**13%**。' },
@@ -140,7 +141,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '**减速**附近老鼠，并在使用技能后一段时间内造成更强的减速。',
     detailedDescription:
-      '给附近的老鼠带来强大的压迫感，**减速**附近老鼠，并在使用技能后一段时间内造成更强的减速。',
+      '给附近的老鼠带来强大的压迫感，**减速**半径825范围内的老鼠，并在使用技能后5s内将减速效果提高为18%。',
     levels: [
       { level: 1, description: '附近老鼠减速**6%**。' },
       { level: 2, description: '附近老鼠减速**7%**。' },
@@ -184,10 +185,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '必胜的信念让猫都燃起来了，穷追不舍状态给予猫攻击和速度**强化**效果，该状态在成功将老鼠绑上火箭或累计击倒8次老鼠时移除。“追寻的路上不乏激情，但成功后空虚往往随之而来，火总会熄灭的，捉老鼠如此，猫生亦是如此。”',
     levels: [
-      // TODO: 强化的数值
-      { level: 1, description: '获得**小幅**强化。' },
-      { level: 2, description: '获得**中幅**强化。' },
-      { level: 3, description: '获得**大幅**强化。' },
+      { level: 1, description: '攻击力提升**30**，加速**3.5%**。' },
+      { level: 2, description: '攻击力提升**40**，加速**5.5%**。' },
+      { level: 3, description: '攻击力提升**50**，加速**8.5%**。' },
     ],
   },
 
