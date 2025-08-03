@@ -1081,6 +1081,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
       {
+        id: '天使杰瑞',
+        description:
+          '牛汤的弹弓一段命中有三级被动的天杰后，无法使用后两段弹弓，从而强推最后一块奶酪。',
+        isMinor: false,
+      },
+      {
         id: '尼宝',
         description: '尼宝的主动技能免疫控制',
         isMinor: true,
@@ -1321,13 +1327,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
       {
-        id: '蒙金奇',
-        description: '大后期点出三级吻，克制蒙金奇',
+        id: '米可',
+        description: '图多大后期点出三级吻，对米可有一定威胁',
         isMinor: true,
       },
       {
-        id: '米可',
-        description: '大后期点出三级吻，对米可有一定威胁',
+        id: '蒙金奇',
+        description: '图多大后期点出三级吻，可克制蒙金奇',
         isMinor: true,
       },
     ],
@@ -1340,12 +1346,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '国王杰瑞',
-        description: '甲油缺少破盾手段，被护盾克制',
+        description: '图多的甲油缺少破盾手段，被护盾克制',
         isMinor: false,
       },
       {
         id: '剑客泰菲',
-        description: '剑客泰菲拥有长时间的群体无敌，克制甲油和香水防守',
+        description: '剑客泰菲拥有长时间的群体无敌，克制一切防守猫',
         isMinor: false,
       },
       {
@@ -1371,6 +1377,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '表演者•杰瑞',
         description: '后期高血量且很难被放飞，克制图多的死守',
+        isMinor: true,
+      },
+      {
+        id: '天使杰瑞',
+        description:
+          '当图多吻到有三级雷云的天使杰瑞，天使杰瑞可以通过持续移动并且保持血量的方式，使雷电不断锁定图多',
         isMinor: true,
       },
     ],
@@ -3135,7 +3147,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'weapon1',
         description: '前摇0.45秒，扔出项坠，随后斯飞向项坠飞去，对碰到老鼠造成伤害和短暂眩晕。',
         detailedDescription:
-          '前摇0.45秒，扔出项坠，0.75秒后或项坠碰撞到地面/墙壁后，斯飞以2000的速度向项坠飞去，飞行期间对碰到老鼠造成50点普通伤害、10点感电伤害和0.6秒眩晕。释放瞬间如果角色方向改变，将同时改变项坠方向。技能可以穿门。',
+          '前摇0.45秒，扔出项坠，0.75秒后或项坠碰撞到地面/墙壁后，斯飞以2000的速度向项坠飞去，飞行期间对碰到老鼠造成50点普通伤害、10点电击伤害和0.6秒眩晕。释放瞬间如果角色方向改变，将同时改变项坠方向。技能可以穿门。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -3169,9 +3181,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description:
-              '斯飞以[一定移速](约基础速度90%)奔跑1.5秒后进入疾冲状态：\n1. 提高移动和跳跃速度\n 2.获得迅捷效果，获得加速，无视碎片、反向、失明、烫伤、感电、捕鼠夹\n3. 爪刀强化为向前扑击\n4. 获得感电状态，老鼠触碰到时会受到10点感电伤害并眩晕0.6秒\n当使用爪刀、施放技能或移速降到[一定数值](约为正常疾冲速度75%)时将退出疾冲状态。',
+              '斯飞以[一定移速](约基础速度90%)奔跑1.5秒后进入疾冲状态：\n1. 提高移动和跳跃速度\n 2.获得迅捷效果，获得加速，无视碎片、反向、失明、烫伤、感电、捕鼠夹\n3. 爪刀强化为向前扑击\n4. 获得感电状态，老鼠触碰到时会受到10点电击伤害并眩晕0.6秒\n当使用爪刀、施放技能或移速降到[一定数值](约为正常疾冲速度75%)时将退出疾冲状态。',
             detailedDescription:
-              '斯飞以[一定移速](约基础速度90%)奔跑1.5秒后进入疾冲状态：\n1. 提高移动和跳跃速度\n 2.获得迅捷效果，获得加速，无视碎片、[反向、失明](包括魔术师的黄牌，拿坡里的足球，玛丽的扇子与反向)、烫伤、感电、捕鼠夹\n3. 爪刀强化为以2000速度向前扑击0.15秒\n4. 获得感电状态，身上环绕电流，老鼠触碰到时会受到10点感电伤害并眩晕0.6秒（同目标10秒内不会重复触发）\n当使用爪刀、施放技能或移速降到[一定数值](约为正常疾冲速度75%)以下0.5秒后将退出疾冲状态。',
+              '斯飞以[一定移速](约基础速度90%)奔跑1.5秒后进入疾冲状态：\n1. 提高移动和跳跃速度\n 2.获得迅捷效果，获得加速，无视碎片、[反向、失明](包括魔术师的黄牌，拿坡里的足球，玛丽的扇子与反向)、烫伤、感电、捕鼠夹\n3. 爪刀强化为以2000速度向前扑击0.15秒\n4. 获得感电状态，身上环绕电流，老鼠触碰到时会受到10点电击伤害并眩晕0.6秒（同目标10秒内不会重复触发）\n当使用爪刀、施放技能或移速降到[一定数值](约为正常疾冲速度75%)以下0.5秒后将退出疾冲状态。',
           },
           {
             level: 2,

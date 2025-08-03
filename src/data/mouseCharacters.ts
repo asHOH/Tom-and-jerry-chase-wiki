@@ -1852,8 +1852,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '雷击附带眩晕。',
-            detailedDescription: '雷击会附带0.7秒眩晕。1秒内猫不会重复受到雷电眩晕效果。',
+            description: '雷击附带眩晕，可击落猫手中的道具和老鼠。',
+            detailedDescription:
+              '雷击会附带0.7秒眩晕，可击落猫手中的道具和老鼠。1秒内猫不会重复受到雷电眩晕效果。',
             cooldown: 30,
           },
           {
@@ -1885,9 +1886,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '被猫以任意方式伤害时，短暂禁用其技能。',
+            description: '被猫以任意方式伤害时，短暂禁用其[所有技能](包括特技)。',
             detailedDescription:
-              '被猫以任意方式伤害时禁用其技能4秒。（[CD：10秒](和Lv.1效果不共享冷却)）',
+              '被猫以任意方式伤害时禁用其[所有技能](包括特技)4秒。（[CD：10秒](和Lv.1效果不共享冷却)）',
           },
         ],
       },
