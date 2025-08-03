@@ -149,7 +149,7 @@ export const contributors: Contributor[] = [
   },
   {
     id: 'dotdotdot',
-    name: '...',
+    name: '人畜有害的白菜',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -180,7 +180,7 @@ export const contributors: Contributor[] = [
   },
   {
     id: 'zhuifengtangmuofficial',
-    name: '追风汤姆official',
+    name: '追风汤姆Official',
     url: 'https://space.bilibili.com/1060009579',
     roles: [
       {
