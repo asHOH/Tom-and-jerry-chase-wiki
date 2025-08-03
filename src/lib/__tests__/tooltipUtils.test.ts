@@ -1,7 +1,6 @@
 import {
   getTooltipContent,
   getPositioningTagTooltipContent,
-  getStarredItemKeyTooltipContent,
   extractItemKeyActions,
   hasItemKeyPatterns,
   getAvailableProperties,
@@ -55,18 +54,6 @@ describe('tooltipUtils', () => {
     it('should fallback when tag not found', () => {
       const result = getPositioningTagTooltipContent('未知标签', 'cat', false);
       expect(result).toBe('未知标签定位的相关信息');
-    });
-  });
-
-  describe('getItemKeyTooltipContent', () => {
-    it('should return detailed item key tooltip', () => {
-      const result = getStarredItemKeyTooltipContent('打断', true);
-      expect(result).toBe('需要手中有道具或【所在处有道具且技能在地面原地释放】时才能打断');
-    });
-
-    it('should return simple item key tooltip', () => {
-      const result = getStarredItemKeyTooltipContent('取消后摇', false);
-      expect(result).toBe('需要手中有道具');
     });
   });
 
