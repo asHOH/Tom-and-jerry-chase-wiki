@@ -2610,38 +2610,38 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   /* ----------------------------------- 凯特 ----------------------------------- */
   凯特: {
     description:
-      '她是博学多才的都市美少女，冷静知性，是智慧与美貌并存的化身。她是校园中靓丽的风景线，也是学生眼中博学多识的师长。拥有无限魅力她，其爱慕者多如过江之鲫',
+      '她是博学多才的都市美少女，冷静知性，是智慧与美貌并存的化身。她是校园中靓丽的风景线，也是学生眼中博学多识的师长。拥有无限魅力她，其爱慕者多如过江之鲫。',
     maxHp: 250,
     hpRecovery: 3.5,
     moveSpeed: 760,
     jumpHeight: 420,
-    clawKnifeCdHit: 4.9,
+    clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.5,
     clawKnifeRange: 300,
     catPositioningTags: [
       {
         tagName: '进攻',
         isMinor: false,
-        description: '主动被动武器技能都是伤害性技能，在对局中可造成大量伤害',
+        description: '主动被动武器技能都是伤害性技能，在对局中可造成大量伤害。',
         additionalDescription:
-          '主动技能可以对一条直线内的敌人造成伤害；武器技能可以单独造成伤害或者夹住老鼠，也可以配合主动技能造成多段伤害；一级被动可以对老鼠造成更多伤害',
+          '主动技能可以对一条直线内的敌人造成伤害；武器技能可以单独造成伤害或者夹住老鼠，也可以配合主动技能造成多段伤害；一级被动可以对老鼠造成更多伤害。',
       },
       {
         tagName: '打架',
         isMinor: false,
-        description: '二级被动可以减少被控时间；主动技能为范围伤害，打架时命中率高',
-        additionalDescription: '三被命中破绽可减少技能CD，进一步提高打架优势',
+        description: '二级被动可以减少被控时间；主动技能为范围伤害，打架时命中率高。',
+        additionalDescription: '三被命中破绽可减少技能CD，进一步提高打架优势。',
       },
       {
         tagName: '防守',
         isMinor: true,
-        description: '三级追求者出击可造成控制，配合知识就是力量可造成多段控制',
+        description: '三级追求者出击可造成控制，配合知识就是力量可造成多段控制。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
         isMinor: true,
-        description: '在墙缝期混战中追求者在小范围内的命中率高，更大概率可造成多倒',
+        description: '在墙缝期混战中追求者在小范围内的命中率高，更大概率造成多倒。',
         additionalDescription: '',
       },
     ],
@@ -2650,13 +2650,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '常规加点',
         pattern: '100112022',
         weaponType: 'weapon1',
-        description: '常规加点',
+        description: '常规加点。',
       },
       {
         id: '脆血加点',
         pattern: '100211022',
         weaponType: 'weapon1',
-        description: '五级点出知识即力量增加伤害',
+        description: '适合应对血量低的老鼠。',
       },
     ],
     knowledgeCardGroups: [
@@ -2666,11 +2666,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-        description: '适合打管道图或者打架能力不高的队伍',
+        description: '适合打管道图或者打架能力不高的队伍。',
       },
       {
         cards: ['S-乘胜追击', 'A-加大火力', 'A-熊熊燃烧', 'A-穷追猛打'],
-        description: '鼠方打架能力较弱且为无管道图',
+        description: '鼠方打架能力较弱且为无管道图。',
       },
     ],
     specialSkills: [
@@ -2680,7 +2680,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         name: '全垒打',
-        description: '配合全垒打的兴奋加速更快地消耗老鼠团队',
+        description: '配合全垒打的兴奋加速更快的消耗老鼠团队',
       },
     ],
     skills: [
@@ -2703,14 +2703,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '追求者速度更快',
+            description: '追求者速度更快。',
             cooldown: 18,
-            detailedDescription: '追求者速度更快，一秒就可以冲至身前',
+            detailedDescription: '追求者速度更快，一秒就可以冲至身前。',
           },
           {
             level: 3,
-            description: '追求者额外造成爆炸伤害和控制',
-            detailedDescription: '追求者额外造成{25}的爆炸伤害和控制',
+            description: '追求者额外造成爆炸伤害和控制。',
+            detailedDescription: '追求者额外造成{25}的爆炸伤害和控制。',
             cooldown: 18,
           },
         ],
@@ -2721,10 +2721,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '知识即力量',
         type: 'weapon1',
         description:
-          '投掷百科全书造成伤害，落地后书籍打开，5秒后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。可以通过交互键捡起书籍并将老鼠直接抓起。当书籍闭合时，周围的追求者会冲向书籍将其捡起并送还凯特，并对触碰到的老鼠造成伤害。',
+          '将手中百科全书投掷出去造成伤害，落地后书籍会打开，一定时间后再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还部分冷却并将老鼠直接抓在手中。当书籍闭合时，周围的追求者会快速冲向书籍将其捡起并送还凯特。',
         detailedDescription:
-          '投掷百科全书造成[25伤害](受攻击力加成，但不触发乾坤一掷)，落地后书籍打开，5秒后或再次施放技能会让书籍闭合，造成伤害并[将老鼠夹住](挣脱时间不受夹不住我影响，但受捕鼠夹的影响；不能触发狡诈)。书籍闭合后最多存在10秒，可以通过交互键捡起书籍返还5秒冷却并将老鼠直接抓起。当书籍闭合时，周围的追求者会冲向书籍将其捡起并送还凯特，并对触碰到的老鼠造成伤害。',
-        canMoveWhileUsing: false,
+          '将手中百科全书投掷出去造成{25}伤害，落地后书籍会打开，5秒后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。书籍闭合后最多存在10秒，凯特可以通过交互键捡起书籍返还5秒冷却并将老鼠直接抓在手中。当书籍闭合时，周围的追求者会快速冲向书籍将其捡起并送还凯特。百科全书与夹子有一些[共性与不同](可以触发捕鼠夹，暴怒，穷追猛打，不能触发夹不住我，乾坤一掷，狡诈)。',
+        canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: ['跳跃键', '道具键'],
@@ -2736,12 +2736,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '减少CD。',
+            description: 'CD降低。',
             cooldown: 15,
+            detailedDescription: 'CD降低5秒。',
           },
           {
             level: 3,
-            description: '被书籍砸中会直接添加破绽；提升书籍开启状态时长。',
+            description: '被书籍砸中会直接添加破绽；提升书籍最长开启状态时长。',
             cooldown: 15,
             detailedDescription:
               '被书籍砸中额外添加三层破绽，书籍最长开启状态延长为10秒、存在20秒。',
@@ -2766,14 +2767,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description:
-              '附近老鼠使用技能、投掷道具、从火箭上救下同伴、吃下食物或药水，会获得一层破绽、增加凯特移速、减少被控制时间、加快绑火箭速度。',
+              '附近老鼠使用技能、投掷道具、从火箭上救下队友、吃下食物或药水，会获得破绽、为凯特增加移速、减少被控制时间、加快绑火箭速度。',
             detailedDescription:
-              '附近老鼠使用技能、投掷道具、从火箭上救下同伴、吃下食物或药水，会获得一层破绽、增加凯特移速、减少50%被控制时间、加快绑火箭速度至约1秒。减控共持续7秒。',
+              '附近老鼠使用技能、投掷道具、从火箭上救下队友、吃下食物或药水，会获得一层破绽、为凯特增加移速、减少50%被控制时间、加快绑火箭速度至约1秒，持续7秒。',
           },
           {
             level: 3,
-            description: '击破破绽会减少凯特所有技能CD。',
-            detailedDescription: '击破破绽会减少凯特所有技能CD，每层破绽可减少2秒技能CD。',
+            description: '击破破绽会减少凯特主动和武器技能CD。',
+            detailedDescription: '每击破一层破绽都会减少凯特主动和武器技能2秒CD。',
           },
         ],
       },
