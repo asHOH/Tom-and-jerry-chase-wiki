@@ -153,7 +153,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['牛仔汤姆'],
+        characters: ['牛仔汤姆', '杰瑞'],
       },
     ],
   },
