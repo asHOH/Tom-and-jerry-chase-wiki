@@ -2762,7 +2762,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description:
               '附近老鼠缓慢获得破绽状态。对老鼠造成伤害时，根据破绽层数造成额外伤害并获得额外经验。',
             detailedDescription:
-              '当老鼠出现在视线范围内时，每1.8秒为老鼠添加一层持续10秒的破绽状态，上限5层。对老鼠造成伤害时，每层破绽增加6点伤害和200经验。每层破绽伤害分独立计算。',
+              '当老鼠出现在视线范围内时，每1.8秒为老鼠添加一层持续10秒的破绽状态，上限5层。对老鼠造成伤害时，每层破绽增加6点伤害和80经验。每层破绽伤害分独立计算。',
           },
           {
             level: 2,
