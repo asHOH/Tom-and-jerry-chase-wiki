@@ -2611,7 +2611,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   凯特: {
     description:
       '她是博学多才的都市美少女，冷静知性，是智慧与美貌并存的化身。她是校园中靓丽的风景线，也是学生眼中博学多识的师长。拥有无限魅力她，其爱慕者多如过江之鲫',
-    maxHp: 200,
+    maxHp: 250,
     hpRecovery: 3.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -2703,13 +2703,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '追求者的速度更快',
+            description: '追求者速度更快',
             cooldown: 18,
+            detailedDescription: '追求者速度更快，一秒就可以冲至身前',
           },
           {
             level: 3,
             description: '追求者额外造成爆炸伤害和控制',
-            detailedDescription: '追求者额外造成25的爆炸伤害和控制',
+            detailedDescription: '追求者额外造成{25}的爆炸伤害和控制',
             cooldown: 18,
           },
         ],
@@ -2722,7 +2723,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '投掷百科全书造成伤害，落地后书籍打开，5秒后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。可以通过交互键捡起书籍并将老鼠直接抓起。当书籍闭合时，周围的追求者会冲向书籍将其捡起并送还凯特，并对触碰到的老鼠造成伤害。',
         detailedDescription:
-          '投掷百科全书造成[25伤害](受攻击力加成)，落地后书籍打开，5秒后或再次施放技能会让书籍闭合，造成伤害并[将老鼠夹住](挣脱时间不受夹不住我影响，但受捕鼠夹的影响)。书籍闭合后最多存在10秒，可以通过交互键捡起书籍返还5秒冷却并将老鼠直接抓起。当书籍闭合时，周围的追求者会冲向书籍将其捡起并送还凯特，并对触碰到的老鼠造成伤害。',
+          '投掷百科全书造成[25伤害](受攻击力加成，但不触发乾坤一掷)，落地后书籍打开，5秒后或再次施放技能会让书籍闭合，造成伤害并[将老鼠夹住](挣脱时间不受夹不住我影响，但受捕鼠夹的影响；不能触发狡诈)。书籍闭合后最多存在10秒，可以通过交互键捡起书籍返还5秒冷却并将老鼠直接抓起。当书籍闭合时，周围的追求者会冲向书籍将其捡起并送还凯特，并对触碰到的老鼠造成伤害。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -2740,7 +2741,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '被书籍砸中额外添加三层破绽，书籍最长开启状态延长为10秒。',
+            description: '被书籍砸中会直接添加破绽；提升书籍开启状态时长。',
             cooldown: 15,
             detailedDescription:
               '被书籍砸中额外添加三层破绽，书籍最长开启状态延长为10秒、存在20秒。',
@@ -2758,9 +2759,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description:
-              '当老鼠出现在视线范围内时，每1.8秒为老鼠添加一层破绽状态。对老鼠造成伤害时，根据破绽层数造成额外伤害并获得额外经验。破绽状态上限5层。',
+              '附近老鼠缓慢获得破绽状态。对老鼠造成伤害时，根据破绽层数造成额外伤害并获得额外经验。',
             detailedDescription:
-              '当老鼠出现在视线范围内时，每1.8秒为老鼠添加一层持续10秒的破绽状态。对老鼠造成伤害时，根据破绽层数造成额外伤害并获得额外经验。破绽状态上限5层。每层破绽可增加6点伤害。',
+              '当老鼠出现在视线范围内时，每1.8秒为老鼠添加一层持续10秒的破绽状态，上限5层。对老鼠造成伤害时，每层破绽增加6点伤害和200经验。每层破绽伤害分独立计算。',
           },
           {
             level: 2,
@@ -2819,7 +2820,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '米可',
-        description: '米可的采访减伤与回血还有霸体让凯特难以击倒米可',
+        description: '米可的采访减伤与回血还有霸体让凯特不好击倒米可',
         isMinor: false,
       },
     ],
