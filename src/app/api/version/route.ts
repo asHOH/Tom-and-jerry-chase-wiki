@@ -36,18 +36,8 @@ const getVersionTimestamp = (environment: string) => {
     // For local development: show server start time
     return SERVER_START_TIME;
   } else {
-    // For preview/production: try to get actual build/deployment time
-    const buildTimestamp =
-      process.env.VERCEL_BUILD_TIMESTAMP || // Unix timestamp when build started
-      process.env.BUILD_TIME || // Custom build time if set
-      SERVER_START_TIME; // Fallback to server start
-
-    // Convert Unix timestamp to ISO string if needed
-    if (buildTimestamp && /^\d+$/.test(buildTimestamp)) {
-      return new Date(parseInt(buildTimestamp) * 1000).toISOString();
-    }
-
-    return buildTimestamp;
+    // For preview/production: use build-time environment variable
+    return process.env.BUILD_TIMESTAMP || SERVER_START_TIME;
   }
 };
 

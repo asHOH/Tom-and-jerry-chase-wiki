@@ -85,6 +85,9 @@ const withMDX = createMDX({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  env: {
+    BUILD_TIMESTAMP: new Date().toISOString(),
+  },
   async rewrites() {
     return [
       {
