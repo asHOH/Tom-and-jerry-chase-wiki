@@ -3268,23 +3268,23 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     clawKnifeRange: 300,
     catPositioningTags: [
       {
-        tagName: '防守',
-        isMinor: true,
+        tagName: '速通',
+        isMinor: false,
         description:
-          '守火箭能力强，风的大范围、击退和极短CD等特点能轻易拦下前来救援的老鼠，飞行时的碰撞体积可以打断老鼠跳救使其踩夹；风可以吹飞果盘，有一定守墙缝能力',
+          '追风三级成型，在前期对鼠方的压制力很大。同时追风等级带来的提升很小，越到后期越乏力，因此需要快速减员，尽早赢下比赛',
         additionalDescription: '',
       },
       {
         tagName: '追击',
         isMinor: true,
-        description: '飞行时无视常规地形且移速快，提供了很好的追击手段',
+        description: '飞行时不受常规地形约束且移速快，提供很好的追击手段',
         additionalDescription: '',
       },
       {
-        tagName: '速通',
-        isMinor: false,
+        tagName: '防守',
+        isMinor: true,
         description:
-          '追风三级成型，在前期对鼠方的压制力很大。同时追风等级带来的提升很小，越到后期越乏力，因此需要快速减员，尽早赢下比赛',
+          '守火箭能力强，风的大范围、击退和极短CD等特点能轻易拦下前来救援的老鼠，飞行时的碰撞体积可以打断老鼠跳救使其踩夹；风可以吹飞果盘，有一定守墙缝能力',
         additionalDescription: '',
       },
     ],
@@ -3306,7 +3306,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'S-蓄势一击', 'A-熊熊燃烧', 'C-猫是液体'],
         description:
-          '该卡组综合能力强，万金油。在管道较为重要的大图效果更佳。缺点是第一波节奏不好拿，而且身板较脆',
+          '该卡组综合能力强，万金油。在大图效果更佳。缺点是第一波节奏不好拿，而且身板较脆。\n若未解锁21知识点，可舍弃“猫是液体”',
       },
       {
         cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-加大火力', 'A-穷追猛打'],
@@ -3337,6 +3337,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '航海士杰瑞',
         description:
           '金币难以命中飞行状态下的追风，且无法对其造成控制，炸药桶可用风推走；但可以组成双拆体系应对追风',
+        isMinor: true,
+      },
+      {
+        id: '剑客泰菲',
+        description:
+          '追风飞行时有碰撞箱，可以顶住前来救援的头盔剑菲，从而拖到头盔时间结束。守高点火箭时效果更佳',
         isMinor: true,
       },
     ],
@@ -3373,7 +3379,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '解锁俯冲技能。飞行时点击技能可向正前方俯冲、拖动技能可向斜前方俯冲，对碰到的敌方造成短暂眩晕和伤害。长按技能可蓄力，略微提升俯冲效果和距离。',
             cooldown: 8,
             detailedDescription:
-              '解锁俯冲技能。飞行时点击技能可向正前方俯冲，拖动技能可向斜前方俯冲，瞄准范围为自身正前方至正下方的90度角，附近有老鼠则会自动瞄向附近的老鼠俯冲。俯冲速度2000；长按技能可蓄力，期间水平移速降至550且不可转向，可点击道具键停止蓄力并保存蓄力效果。点击/蓄力0.5～1秒/蓄力1秒以上，冲刺时间为0.45/0.6/0.75秒，命中敌方造成0.8秒眩晕和35/37.5/40伤害。俯冲期间可使用爪刀、技能和取消飞行。俯冲伤害不受任何伤害加成和减免效果的影响。', // 无法命中猫单位
+              '解锁俯冲技能。飞行时点击技能可向正前方俯冲，拖动技能可向斜前方俯冲，瞄准范围为自身正前方至正下方的90度角，附近有老鼠则会自动瞄向附近的老鼠俯冲。俯冲速度2000；长按技能可蓄力，期间水平移速降至550且不可转向，可点击道具键停止蓄力并保存蓄力效果。点击/蓄力0.5～1秒/蓄力1秒以上，冲刺时间为0.45/0.6/0.75秒，命中敌方造成0.8秒眩晕和35/37.5/40伤害。俯冲期间可使用爪刀、技能和取消飞行。俯冲伤害不受任何伤害加成和减免效果的影响。',
+            // 无法命中猫单位
           },
           {
             level: 2,
@@ -3389,7 +3396,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '减少俯冲CD至5秒，点击/蓄力0.5～1.0秒/蓄力1秒以上，伤害提升至35/40/45，眩晕时间提升至0.8/0.9/1.1秒',
           },
         ],
-        aliases: ['冲刺'],
+        aliases: ['冲刺', '俯冲'],
         cancelableAftercast: '无后摇',
         cueRange: '本房间可见',
       },
