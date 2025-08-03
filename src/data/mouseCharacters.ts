@@ -6,7 +6,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
   杰瑞: {
     description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家',
-
     maxHp: 99,
     attackBoost: 15,
     hpRecovery: 2,
@@ -14,7 +13,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     jumpHeight: 400,
     cheesePushSpeed: 4,
     wallCrackDamageBoost: 1,
-
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -29,7 +27,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         additionalDescription: '',
       },
     ],
-
     skillAllocations: [
       {
         id: '大铁锤',
@@ -46,7 +43,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         additionaldescription: '',
       },
     ],
-
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
@@ -56,14 +52,18 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         cards: ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
         description: '无救援卡，需要及时与队友沟通，避免无救援卡救援。',
       },
+      {
+        cards: ['S-无畏', 'S-铁血', 'A-团队领袖', 'C-救救我'],
+        description: '新手未解锁+1知识量可用，以及针对米特。解锁后可将团队领袖换为缴械。',
+      },
     ],
-
     skills: [
       {
         name: '鼓舞',
         type: 'active',
         description: '短暂为自己和附近队友提供增益。',
-        // detailedDescription: '短暂为自己和附近队友提供增益。',
+        detailedDescription:
+          '前摇0.5s，后摇1s。短暂为自己和附近队友[提供增益](等级相同的鼓舞不可叠加，但等级不同的鼓舞可以叠加)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
@@ -72,8 +72,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '鼓舞增加移速和跳跃高度。',
-            detailedDescription: '鼓舞增加15%移速和45%跳跃高度，持续5秒。',
+            description: '增加移速和跳跃高度。',
+            detailedDescription: '增加15%移速和45%跳跃高度，持续5秒。',
             cooldown: 18,
           },
           {
@@ -93,10 +93,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         aliases: ['锤子'],
         type: 'weapon1',
         description: '举起大铁锤近身攻击。',
-        // detailedDescription: '举起大铁锤近身攻击。',
+        detailedDescription: '前摇0.8s，后摇0.6s，举起大铁锤近身攻击。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: ['道具键*'], //事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
+        cancelableSkill: ['道具键*'],
+        // 事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
         cancelableAftercast: '不可取消后摇',
         canHitInPipe: true,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=104.4',
@@ -104,16 +105,19 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description: '眩晕猫咪3秒。',
+            detailedDescription: '[眩晕猫咪3秒](不会在猫的状态栏显示)。',
             cooldown: 20,
           },
           {
             level: 2,
-            description: '额外造成65伤害；每次命中永久增加10%推速，最多叠五层。',
+            description: '减少CD；额外造成伤害；每次命中永久提升10%推速。',
+            detailedDescription:
+              '减少CD；额外造成{65}伤害；每次[命中猫咪](包括虚弱、霸体或无敌的猫咪)永久提升10%推速，最多叠五层。',
             cooldown: 16,
           },
           {
             level: 3,
-            description: '眩晕时间延长至4秒。',
+            description: '减少CD；眩晕时间延长至4秒。',
             cooldown: 12,
           },
         ],
@@ -121,9 +125,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '鸟哨',
         type: 'weapon2',
-        description: '召唤投掷炸弹的金丝雀。',
+        description: '召唤金丝雀投掷炸弹，造成伤害和眩晕。',
         detailedDescription:
-          '召唤投掷炸弹的金丝雀。同一房间内最多只能有一只投掷炸弹的金丝雀。猫咪被金丝雀的炸弹命中后将对其短暂免疫。',
+          '前摇1s，后摇1s，召唤金丝雀投掷炸弹，造成{55}伤害和2秒眩晕。同一房间内最多只能有一只投掷炸弹的金丝雀。猫咪被金丝雀的炸弹命中后将对其短暂免疫。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -132,20 +136,20 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '炸弹造成55伤害和2秒眩晕。',
-            detailedDescription: '炸弹造成55伤害和2秒眩晕；总共释放约15个炸弹。',
+            description: '',
+            detailedDescription: '金丝雀存在12s，每隔0.8s投掷一枚炸弹，总共15±1枚。',
             cooldown: 30,
           },
           {
             level: 2,
-            description: '提高金丝雀投掷炸弹的频率。',
-            detailedDescription: '提高金丝雀投掷炸弹的频率，炸弹数量提升到约17个。',
+            description: '缩短金丝雀投掷炸弹的间隔。',
+            detailedDescription: '缩短金丝雀投掷炸弹的间隔至0.75s，总共17±1枚。',
             cooldown: 30,
           },
           {
             level: 3,
-            description: '减少CD；进一步提高金丝雀投掷炸弹的频率。',
-            detailedDescription: '减少CD；进一步提高金丝雀投掷炸弹的频率，炸弹数量提升到约20个。',
+            description: '减少CD；进一步缩短金丝雀投掷炸弹的间隔。',
+            detailedDescription: '减少CD；进一步缩短金丝雀投掷炸弹的间隔至0.6s，总共20±1枚。',
             cooldown: 24,
           },
         ],
@@ -169,11 +173,35 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             level: 3,
             description: '奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。',
             detailedDescription:
-              '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、并获得2.7秒的13%加速。',
+              '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、并获得13%加速，持续2.7秒。',
           },
         ],
       },
     ],
+    specialSkills: [
+      {
+        name: '干扰投掷',
+        description: '适配大铁锤较长前摇',
+      },
+      {
+        name: '魔术漂浮',
+        description: '杰瑞所有技能均可中断漂浮，灵活性高',
+      },
+    ],
+    aliases: ['撅瑞'],
+    counteredBy: [
+      {
+        id: '侍卫汤姆',
+        description: '',
+        isMinor: true,
+      },
+      {
+        id: '汤姆',
+        description: '杰瑞技能前后摇较长，且鼓舞不能取消后摇，易被汤姆抓空档',
+        isMinor: true,
+      },
+    ],
+    collaborators: [],
   },
 
   /* ----------------------------------- 侦探杰瑞 ----------------------------------- */
