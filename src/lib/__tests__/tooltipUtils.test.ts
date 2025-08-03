@@ -1,7 +1,7 @@
 import {
   getTooltipContent,
   getPositioningTagTooltipContent,
-  getItemKeyTooltipContent,
+  getStarredItemKeyTooltipContent,
   extractItemKeyActions,
   hasItemKeyPatterns,
   getAvailableProperties,
@@ -60,12 +60,12 @@ describe('tooltipUtils', () => {
 
   describe('getItemKeyTooltipContent', () => {
     it('should return detailed item key tooltip', () => {
-      const result = getItemKeyTooltipContent('打断', true);
+      const result = getStarredItemKeyTooltipContent('打断', true);
       expect(result).toBe('需要手中有道具或【所在处有道具且技能在地面原地释放】时才能打断');
     });
 
     it('should return simple item key tooltip', () => {
-      const result = getItemKeyTooltipContent('取消后摇', false);
+      const result = getStarredItemKeyTooltipContent('取消后摇', false);
       expect(result).toBe('需要手中有道具');
     });
   });

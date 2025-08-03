@@ -160,11 +160,14 @@ export const getPositioningTagTooltipContent = (
  * @param isDetailed - Whether to show detailed explanation
  * @returns Tooltip content string
  */
-export const getItemKeyTooltipContent = (actionVerb: string, isDetailed: boolean): string => {
+export const getStarredItemKeyTooltipContent = (
+  actionVerb: string,
+  isDetailed: boolean
+): string => {
   if (isDetailed) {
-    return `需要手中有道具或【所在处有道具且技能在地面原地释放】时才能${actionVerb}`;
+    return `需要【手持道具】或【所在处有道具且技能在地面原地释放】时才能${actionVerb}`;
   } else {
-    return `需要手中有道具`;
+    return `需要手持道具`;
   }
 };
 

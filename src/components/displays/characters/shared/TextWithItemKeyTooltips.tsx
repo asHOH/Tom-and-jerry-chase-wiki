@@ -1,6 +1,6 @@
 import React from 'react';
 import Tooltip from '../../../ui/Tooltip';
-import { getItemKeyTooltipContent } from '@/lib/tooltipUtils';
+import { getStarredItemKeyTooltipContent } from '@/lib/tooltipUtils';
 
 interface TextWithItemKeyTooltipsProps {
   text: string;
@@ -28,7 +28,7 @@ export default function TextWithItemKeyTooltips({
     const actionVerb = match[1]?.trim() || '';
 
     parts.push(
-      <Tooltip key={match.index} content={getItemKeyTooltipContent(actionVerb, isDetailed)}>
+      <Tooltip key={match.index} content={getStarredItemKeyTooltipContent(actionVerb, isDetailed)}>
         道具键*
       </Tooltip>
     );
