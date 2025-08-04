@@ -45,14 +45,14 @@ export default function PreviewCard({
     <Link href={url} tabIndex={0} aria-label={`前往${typeLabels[type] || type}: ${name}`}>
       <BaseCard
         className={clsx(
-          'flex flex-col items-center p-4 w-full max-w-xs shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer',
+          'flex flex-row items-start p-4 w-full max-w-xs shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer',
           className
         )}
         variant='details'
         role='link'
         tabIndex={-1}
       >
-        <div className='w-24 h-24 mb-3 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden'>
+        <div className='w-24 h-24 flex-shrink-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mr-4'>
           {imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -66,7 +66,7 @@ export default function PreviewCard({
             <div className='text-4xl text-gray-400'>?</div>
           )}
         </div>
-        <div className='flex flex-col items-center w-full'>
+        <div className='flex flex-col items-start w-0 flex-1'>
           <span
             className={clsx(
               'px-2 py-0.5 rounded text-xs font-semibold mb-2',
@@ -76,14 +76,14 @@ export default function PreviewCard({
             {typeLabels[type] || type}
           </span>
           <div
-            className='font-bold text-lg text-center text-gray-900 dark:text-gray-100 mb-1 truncate w-full'
+            className='font-bold text-lg text-gray-900 dark:text-gray-100 mb-1 truncate w-full'
             title={name}
           >
             {name}
           </div>
           {description && (
             <div
-              className='text-sm text-gray-600 dark:text-gray-300 text-center line-clamp-3 w-full'
+              className='text-sm text-gray-600 dark:text-gray-300 line-clamp-3 w-full'
               title={description}
             >
               <TextWithHoverTooltips text={description} />
