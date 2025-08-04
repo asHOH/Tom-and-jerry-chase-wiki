@@ -883,34 +883,55 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-乘胜追击', 'S-击晕', 'S-知识渊博'],
-        description: '（鞭子）常规卡组',
+        id: '鞭子',
+        description: '',
+        groups: [
+          {
+            cards: ['S-乘胜追击', 'S-击晕', 'S-知识渊博'],
+            description: '常规卡组',
+          },
+          {
+            cards: ['S-击晕', 'S-乘胜追击', 'A-细心', 'C-猫是液体'],
+            description: '大图及管道图，有需求可以把{细心}换成{皮糙肉厚}',
+          },
+          {
+            cards: ['S-击晕', 'S-知识渊博', 'A-威压', 'B-皮糙肉厚'],
+            description:
+              '叠层流，对前期节奏处理要求高，有需求可以把{威压}换成{穷追猛打}（转为鞭子打架流）',
+          },
+        ],
+        defaultFolded: true,
       },
       {
-        cards: ['S-击晕', 'S-乘胜追击', 'A-细心', 'C-猫是液体'],
-        description: '（鞭子）大图及管道图，有需求可以把{细心}换成《皮糙肉厚》',
+        id: '弹弓防守流',
+        description: '',
+        groups: [
+          {
+            cards: ['S-知识渊博', 'A-熊熊燃烧', 'A-细心', 'A-穷追猛打'],
+            description: '常规卡组',
+          },
+          {
+            cards: ['S-知识渊博', 'A-细心', 'A-穷追猛打', 'B-皮糙肉厚', 'B-反侦察'],
+            description: '反侦察',
+          },
+        ],
+        defaultFolded: false,
       },
       {
-        cards: ['S-击晕', 'S-知识渊博', 'A-威压', 'B-皮糙肉厚'],
-        description:
-          '（鞭子）叠层流，对前期节奏处理要求高，有需求可以把《威压》换成《穷追猛打》（转为鞭子打架流）',
-      },
-      {
-        cards: ['S-知识渊博', 'A-熊熊燃烧', 'A-细心', 'A-穷追猛打'],
-        description: '（弹弓防守流）常规卡组',
-      },
-      {
-        cards: ['S-知识渊博', 'A-细心', 'A-穷追猛打', 'B-皮糙肉厚', 'B-反侦察'],
-        description: '（弹弓防守流）反侦察',
-      },
-      {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'A-加大火力', 'A-穷追猛打'],
-        description: '（弹弓追击流）常规卡组',
-      },
-      {
-        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-        description:
-          '（弹弓追击流）打架队，如果同时是管道图，《熊熊燃烧》换成《加大火力》或《心灵手巧》（打强控制队）+《猫是液体》',
+        id: '弹弓追击流',
+        description: '',
+        groups: [
+          {
+            cards: ['S-乘胜追击', 'S-知识渊博', 'A-加大火力', 'A-穷追猛打'],
+            description: '常规卡组',
+          },
+          {
+            cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+            description:
+              '打架队，如果同时是管道图，{熊熊燃烧}换成{加大火力}或{心灵手巧}（打强控制队）+{猫是液体}',
+          },
+        ],
+        defaultFolded: false,
       },
     ],
     skills: [
