@@ -888,7 +888,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         cards: ['S-击晕', 'S-乘胜追击', 'A-细心', 'C-猫是液体'],
-        description: '（鞭子）大图及管道图，有需求可以把《细心》换成《皮糙肉厚》',
+        description: '（鞭子）大图及管道图，有需求可以把{细心}换成《皮糙肉厚》',
       },
       {
         cards: ['S-击晕', 'S-知识渊博', 'A-威压', 'B-皮糙肉厚'],

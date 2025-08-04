@@ -2,6 +2,7 @@
 import BaseCard from './BaseCard';
 import clsx from 'clsx';
 import Link from 'next/link';
+import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 
 export type GotoPreviewCardProps = {
   url: string;
@@ -85,7 +86,7 @@ export default function PreviewCard({
               className='text-sm text-gray-600 dark:text-gray-300 text-center line-clamp-3 w-full'
               title={description}
             >
-              {description}
+              <TextWithHoverTooltips text={description} />
             </div>
           )}
         </div>

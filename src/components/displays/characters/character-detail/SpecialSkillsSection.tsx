@@ -42,7 +42,7 @@ export default function SpecialSkillsSection() {
                   tag='span'
                   initialValue={skill.name}
                   path={`specialSkills.${index}.name`}
-                  className='font-semibold text-base'
+                  className='font-bold text-base dark:text-white'
                 />
                 <EditableField
                   tag='span'
