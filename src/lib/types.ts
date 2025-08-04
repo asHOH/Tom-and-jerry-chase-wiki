@@ -82,6 +82,9 @@ export type GotoResult = {
     | 'special-skill-mouse'
     | 'doc'
     | 'character-skill';
+  name: string;
+  description: string | undefined;
+  imageUrl: string | undefined;
 };
 
 // Generic callback types
