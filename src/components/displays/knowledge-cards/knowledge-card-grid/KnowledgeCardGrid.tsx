@@ -144,7 +144,7 @@ export default function KnowledgeCardGrid() {
         </div>
       </header>
       <div
-        className='character-grid grid-container grid gap-4 mt-8'
+        className='auto-fit-grid grid-container grid gap-4 mt-8'
         style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}
       >
         {filteredAndSortedCards.map((card, index) => (
