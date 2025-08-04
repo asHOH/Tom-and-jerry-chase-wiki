@@ -204,12 +204,23 @@ export type SpecialSkill = SpecialSkillDefinition & {
   imageUrl: string;
 };
 
+export type Itemtypelist = '投掷物' | '特殊道具' | '场景物' | '饮料' | '地图道具' | '技能道具';
+
 export type ItemDefinition = {
-  damage: number;
+  itemtype: Itemtypelist; //type of items
+  damage?: number;
+  walldamage?: number; //damage to wall joint
   factionId?: FactionId;
   aliases?: string[]; // Alternative names for search
   description?: string; // Basic description (optional, especially for passive skills)
   detailedDescription?: string;
+  create?: string; //the way of items create
+  detailedCreate?: string;
+  store?: boolean; //if item can buy on store
+  price?: number; //item's price
+  unlocktime?: string; //when item unlock in store
+  storeCD?: number; //item's CD in store
+  teamCD?: boolean; //if item's CD in store is team shared
 };
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
