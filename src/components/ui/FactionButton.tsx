@@ -34,6 +34,7 @@ export function FactionButton({
       aria-label={ariaLabel}
       className={clsx(
         'faction-button',
+        'py-3',
         'flex flex-col items-center justify-center gap-1 md:gap-2 text-center flex-1 min-w-[180px]',
         'bg-gray-200 text-gray-800 shadow-md rounded-md border-none focus:outline-none',
         'dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900 dark:border-gray-700',
