@@ -72,6 +72,20 @@ export type FactionWithCharacters = {
 export type FactionCharactersProps = {
   faction: FactionWithCharacters;
 };
+export type GotoResult = {
+  url: string;
+  type:
+    | 'character'
+    | 'card'
+    | 'item'
+    | 'special-skill-cat'
+    | 'special-skill-mouse'
+    | 'doc'
+    | 'character-skill';
+  name: string;
+  description: string | undefined;
+  imageUrl: string | undefined;
+};
 
 // Generic callback types
 export type CharacterSelectionHandler = (characterId: string) => void;
