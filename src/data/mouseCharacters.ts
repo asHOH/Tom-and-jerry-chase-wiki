@@ -1639,7 +1639,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counters: [
       {
         id: '莱特宁',
-        description: '莱特宁怕干扰，同时也不好处理124血量',
+        description: '牛仔杰瑞可以通过仙人掌防止闪现刀，且莱特宁本身怕干扰、难以处理124Hp老鼠',
         isMinor: false,
       },
       {
@@ -5125,13 +5125,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '汤姆',
         description: '莱恩克制汤姆的无敌，阻止上火箭，但注意不要被二被秒掉',
         isMinor: true,
-      },
-    ],
-    counteredBy: [
-      {
-        id: '布奇',
-        description: '布奇伤害高，莱恩挨一刀就死。',
-        isMinor: false,
       },
     ],
     collaborators: [],

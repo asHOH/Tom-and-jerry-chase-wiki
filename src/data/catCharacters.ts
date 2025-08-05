@@ -388,23 +388,28 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counters: [
       {
         id: '泰菲',
-        description: '布奇的爪刀可以秒泰菲。',
-        isMinor: false,
+        description: '布奇的爪刀可以秒泰菲，但泰菲可以用圆滚滚拉走，不会被冲撞到。',
+        isMinor: true,
       },
       {
         id: '侦探泰菲',
         description: '布奇的爪刀可以秒侦探泰菲。',
-        isMinor: false,
+        isMinor: true,
       },
       {
         id: '恶魔泰菲',
         description: '布奇的爪刀可以秒恶魔泰菲。',
-        isMinor: false,
+        isMinor: true,
       },
       {
         id: '罗宾汉泰菲',
         description: '布奇的爪刀可以秒罗宾汉泰菲。',
-        isMinor: false,
+        isMinor: true,
+      },
+      {
+        id: '莱恩',
+        description: '布奇的爪刀可以秒莱恩。',
+        isMinor: true,
       },
     ],
   },
@@ -2202,7 +2207,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counteredBy: [
       {
         id: '牛仔杰瑞',
-        description: '牛仔一被减控，很克制塔拉，移速高不好抓；必ban角色。',
+        description: '牛仔杰瑞一被减控、移速高，不好抓。',
         isMinor: false,
       },
     ],
