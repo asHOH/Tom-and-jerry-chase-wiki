@@ -83,7 +83,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         aliases: ['无敌'],
         description: '解控并进入一段时间的无敌。',
         detailedDescription:
-          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到[真实伤害](如仙女鼠的一星；但不会因此被击倒)和[位移效果的影响](如尼宝的钩子)。若在莱恩蓝图内受到真实伤害，不免疫变线条猫。绑火箭等交互会被仙女鼠八星打断。无敌结束后会有2秒的10%减速，减速可以被护盾抵消。',
+          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到[真实伤害](如仙女鼠的一星；但不会因此被击倒)和[位移效果的影响](如尼宝的钩子)。若在{莱恩}{蓝图}内受到真实伤害，不免疫变线条猫。绑火箭等交互会被仙女鼠八星打断。无敌结束后会有2秒的10%减速，减速可以被护盾抵消。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
@@ -388,23 +388,28 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counters: [
       {
         id: '泰菲',
-        description: '布奇的爪刀可以秒泰菲。',
-        isMinor: false,
+        description: '布奇的爪刀可以秒泰菲，但泰菲可以用圆滚滚拉走，不会被冲撞到。',
+        isMinor: true,
       },
       {
         id: '侦探泰菲',
         description: '布奇的爪刀可以秒侦探泰菲。',
-        isMinor: false,
+        isMinor: true,
       },
       {
         id: '恶魔泰菲',
         description: '布奇的爪刀可以秒恶魔泰菲。',
-        isMinor: false,
+        isMinor: true,
       },
       {
         id: '罗宾汉泰菲',
         description: '布奇的爪刀可以秒罗宾汉泰菲。',
-        isMinor: false,
+        isMinor: true,
+      },
+      {
+        id: '莱恩',
+        description: '布奇的爪刀可以秒莱恩。',
+        isMinor: true,
       },
     ],
   },
@@ -883,34 +888,55 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-乘胜追击', 'S-击晕', 'S-知识渊博'],
-        description: '（鞭子）常规卡组',
+        id: '鞭子',
+        description: '',
+        groups: [
+          {
+            cards: ['S-乘胜追击', 'S-击晕', 'S-知识渊博'],
+            description: '常规卡组',
+          },
+          {
+            cards: ['S-击晕', 'S-乘胜追击', 'A-细心', 'C-猫是液体'],
+            description: '大图及管道图，有需求可以把{细心}换成{皮糙肉厚}',
+          },
+          {
+            cards: ['S-击晕', 'S-知识渊博', 'A-威压', 'B-皮糙肉厚'],
+            description:
+              '叠层流，对前期节奏处理要求高，有需求可以把{威压}换成{穷追猛打}（转为鞭子打架流）',
+          },
+        ],
+        defaultFolded: true,
       },
       {
-        cards: ['S-击晕', 'S-乘胜追击', 'A-细心', 'C-猫是液体'],
-        description: '（鞭子）大图及管道图，有需求可以把《细心》换成《皮糙肉厚》',
+        id: '弹弓防守流',
+        description: '',
+        groups: [
+          {
+            cards: ['S-知识渊博', 'A-熊熊燃烧', 'A-细心', 'A-穷追猛打'],
+            description: '常规卡组',
+          },
+          {
+            cards: ['S-知识渊博', 'A-细心', 'A-穷追猛打', 'B-皮糙肉厚', 'B-反侦察'],
+            description: '反侦察',
+          },
+        ],
+        defaultFolded: false,
       },
       {
-        cards: ['S-击晕', 'S-知识渊博', 'A-威压', 'B-皮糙肉厚'],
-        description:
-          '（鞭子）叠层流，对前期节奏处理要求高，有需求可以把《威压》换成《穷追猛打》（转为鞭子打架流）',
-      },
-      {
-        cards: ['S-知识渊博', 'A-熊熊燃烧', 'A-细心', 'A-穷追猛打'],
-        description: '（弹弓防守流）常规卡组',
-      },
-      {
-        cards: ['S-知识渊博', 'A-细心', 'A-穷追猛打', 'B-皮糙肉厚', 'B-反侦察'],
-        description: '（弹弓防守流）反侦察',
-      },
-      {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'A-加大火力', 'A-穷追猛打'],
-        description: '（弹弓追击流）常规卡组',
-      },
-      {
-        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-        description:
-          '（弹弓追击流）打架队，如果同时是管道图，《熊熊燃烧》换成《加大火力》或《心灵手巧》（打强控制队）+《猫是液体》',
+        id: '弹弓追击流',
+        description: '',
+        groups: [
+          {
+            cards: ['S-乘胜追击', 'S-知识渊博', 'A-加大火力', 'A-穷追猛打'],
+            description: '常规卡组',
+          },
+          {
+            cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+            description:
+              '打架队，如果同时是管道图，{熊熊燃烧}换成{加大火力}或{心灵手巧}（打强控制队）+{猫是液体}',
+          },
+        ],
+        defaultFolded: false,
       },
     ],
     skills: [
@@ -1107,7 +1133,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
 
   /* ----------------------------------- 图多盖洛 ----------------------------------- */
   图多盖洛: {
-    description: '拥有惊人美貌的图多盖洛是上东区和知名度最高的千金小姐，他的追求者从纽约排到了巴黎',
+    description: '拥有惊人美貌的图多盖洛是上东区和知名度最高的千金小姐，她的追求者从纽约排到了巴黎',
     maxHp: 230,
     hpRecovery: 2,
     moveSpeed: 770,
@@ -2181,7 +2207,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counteredBy: [
       {
         id: '牛仔杰瑞',
-        description: '牛仔一被减控，很克制塔拉，移速高不好抓；必ban角色。',
+        description: '牛仔杰瑞一被减控、移速高，不好抓。',
         isMinor: false,
       },
     ],
