@@ -83,7 +83,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         aliases: ['无敌'],
         description: '解控并进入一段时间的无敌。',
         detailedDescription:
-          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到[真实伤害](如仙女鼠的一星；但不会因此被击倒)和[位移效果的影响](如尼宝的钩子)。若在莱恩蓝图内受到真实伤害，不免疫变线条猫。绑火箭等交互会被仙女鼠八星打断。无敌结束后会有2秒的10%减速，减速可以被护盾抵消。',
+          '解控并进入一段时间的无敌，前摇期间为弱霸体，且会被冰水打断。无敌期间获得12.5%加速，仍会受到[真实伤害](如仙女鼠的一星；但不会因此被击倒)和[位移效果的影响](如尼宝的钩子)。若在{莱恩}{蓝图}内受到真实伤害，不免疫变线条猫。绑火箭等交互会被仙女鼠八星打断。无敌结束后会有2秒的10%减速，减速可以被护盾抵消。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
@@ -1128,7 +1128,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
 
   /* ----------------------------------- 图多盖洛 ----------------------------------- */
   图多盖洛: {
-    description: '拥有惊人美貌的图多盖洛是上东区和知名度最高的千金小姐，他的追求者从纽约排到了巴黎',
+    description: '拥有惊人美貌的图多盖洛是上东区和知名度最高的千金小姐，她的追求者从纽约排到了巴黎',
     maxHp: 230,
     hpRecovery: 2,
     moveSpeed: 770,

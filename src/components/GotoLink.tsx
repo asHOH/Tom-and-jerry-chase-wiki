@@ -1,5 +1,5 @@
 // GotoLink.tsx
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useSWR from 'swr';
 import PreviewCard, { GotoPreviewCardProps } from './ui/PreviewCard';
 import Link from 'next/link';
@@ -36,6 +36,14 @@ export default function GotoLink({ name, className, children }: GotoLinkProps) {
     fetcher
   );
 
+  const [url, setURL] = useState<string>(`/goto/${encodeURIComponent(name)}`);
+
+  useEffect(() => {
+    if (data?.url) {
+      setURL(data.url);
+    }
+  }, [data?.url]);
+
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setShow(true);
@@ -51,11 +59,7 @@ export default function GotoLink({ name, className, children }: GotoLinkProps) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <Link
-        href={data ? data.url : `/goto/${encodeURIComponent(name)}`}
-        className={className}
-        tabIndex={0}
-      >
+      <Link href={url} className={className} tabIndex={0}>
         {children}
       </Link>
       {show && (
