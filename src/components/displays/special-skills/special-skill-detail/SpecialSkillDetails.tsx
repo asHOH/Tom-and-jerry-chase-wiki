@@ -8,6 +8,8 @@ import BaseCard from '@/components/ui/BaseCard';
 import Tag from '@/components/ui/Tag';
 import { designTokens } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { characters } from '@/data';
+import Link from 'next/link';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;
@@ -16,6 +18,14 @@ interface SpecialSkillDetailClientProps {
 export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailClientProps) {
   const { isDetailedView } = useAppContext();
   const [isDarkMode] = useDarkMode();
+  // TODO: use useSnapshot if edit mode for special skill is supported
+  const usedCharacters = Object.values(characters).filter(
+    (character) =>
+      character.specialSkills?.some((s) => s.name === skill.name) &&
+      character.factionId === skill.factionId
+  );
+
+  console.log({ usedCharacters });
 
   if (!skill) return null;
 
@@ -118,6 +128,55 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
               </div>
             </div>
           </div>
+          {usedCharacters.length > 0 && (
+            <>
+              <div
+                className='flex items-center mt-3'
+                style={{
+                  marginBottom: designTokens.spacing.lg,
+                  paddingLeft: designTokens.spacing.sm,
+                  paddingRight: designTokens.spacing.sm,
+                }}
+              >
+                <h2
+                  className='text-2xl font-bold dark:text-white'
+                  style={{
+                    paddingTop: designTokens.spacing.sm,
+                    paddingBottom: designTokens.spacing.sm,
+                  }}
+                >
+                  使用该特技的角色
+                </h2>
+              </div>
+              <div className='rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
+                <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+                  {usedCharacters.map((character) => (
+                    <li
+                      key={character.id ?? ''}
+                      className='flex items-center gap-4 p-3 rounded-lg transition-colors'
+                    >
+                      <Link
+                        href={`/characters/${character.id}`}
+                        className='flex items-center gap-4 w-full'
+                        tabIndex={0}
+                      >
+                        <Image
+                          src={character.imageUrl!}
+                          alt={character.id!}
+                          className='w-10 h-10 bg-white'
+                          width={40}
+                          height={40}
+                        />
+                        <span className='font-bold text-lg dark:text-white truncate'>
+                          {character.id}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
