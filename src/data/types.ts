@@ -204,10 +204,12 @@ export type SpecialSkill = SpecialSkillDefinition & {
   imageUrl: string;
 };
 
-export type Itemtypelist = '投掷物' | '特殊道具' | '场景物' | '饮料' | '地图道具' | '技能道具';
+export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类'; //list of items' types
+export type Itemsourcelist = '常规道具' | '地图道具' | '技能道具'; //list of items' source
 
 export type ItemDefinition = {
   itemtype: Itemtypelist; //type of items
+  itemsource: Itemsourcelist; //source of items
   damage?: number;
   walldamage?: number; //damage to wall joint
   factionId?: FactionId;

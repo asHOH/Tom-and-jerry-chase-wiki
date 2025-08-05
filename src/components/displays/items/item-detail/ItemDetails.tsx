@@ -43,7 +43,8 @@ export default function ItemDetailClient({ item }: { item: Item }) {
               >
                 {item.name}
                 <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                  ({item.itemtype})
+                  ({item.itemtype}
+                  {item.itemsource})
                 </span>
               </h1>
               <div
@@ -62,7 +63,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     }
                     size='md'
                   >
-                    {item.factionId == 'cat' ? '只有猫咪能够使用' : '只有老鼠能够使用'}
+                    {item.factionId == 'cat' ? '只能被猫咪使用' : '只能被老鼠使用'}
                   </Tag>
                 )}
                 {!!item.damage && (
