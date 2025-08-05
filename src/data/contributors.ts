@@ -119,7 +119,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['罗宾汉泰菲', '魔术师', '库博'],
+        characters: ['罗宾汉泰菲', '魔术师', '库博', '如玉'],
       },
       {
         type: RoleType.DataTester,
@@ -165,7 +165,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['牛仔汤姆', '杰瑞'],
+        characters: ['牛仔汤姆', '杰瑞', '恶魔汤姆'],
       },
     ],
   },
@@ -328,7 +328,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['恶魔泰菲'],
+        characters: ['恶魔泰菲', '天使泰菲'],
       },
     ],
   },
