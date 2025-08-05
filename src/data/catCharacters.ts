@@ -855,7 +855,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         tagName: '防守',
         isMinor: false,
         description:
-          '斗牛可清理道具并对地方眩晕，2级被动可减少技能CD，在防守时拥有较高的伤害和续航。',
+          '斗牛可清理道具并对敌方眩晕，2级被动可减少技能CD，在防守时拥有较高的伤害和续航。',
         additionalDescription: '',
         weapon: 2,
       },
@@ -1032,7 +1032,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成伤害和眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
             cooldown: 18,
             detailedDescription:
-              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成(60点伤害](不造成受伤)和3.5秒眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
+              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成[60点伤害](不造成受伤)和3.5秒眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
           },
         ],
         cancelableAftercast: ['跳跃键', '移动键', '道具键'],
@@ -1103,7 +1103,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '米可',
         description:
-          '米克采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）',
+          '米可采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）',
         isMinor: false,
       },
       {
@@ -1232,7 +1232,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '高爆发能力',
       },
       {
-        name: '我生气了',
+        name: '我生气了！',
         description: '提高输出',
       },
       {
@@ -1390,6 +1390,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力',
         isMinor: true,
       },
+      // FIXME: 米可 is also 图多盖洛's counter
       {
         id: '米可',
         description: '米可拥有高额减伤，图多打不死',
@@ -1477,7 +1478,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description: '打高伤阵容，如剑杰、朵朵。',
           },
         ],
-        description: '蓄势一击配合侍卫二级被动可以打死125血血厚老鼠',
+        description: '蓄势一击配合侍卫二级被动可以打死125血量的老鼠',
         defaultFolded: false,
       },
       {
@@ -3298,7 +3299,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   /* ----------------------------------- 追风汤姆 ----------------------------------- */
   追风汤姆: {
     description:
-      '因为一场神秘的实验意外而降落于猫鼠五周年特别纪念展的不速之客，天生充满了对蓝天的向往，热爱钻研新奇的发明，脑袋里充满稀奇古怪的创意，立志成为猫咪届第一位飞行员，在汤姆和杰瑞的陪伴下被纪念展的内容所打动，来到这里继续进行新的创意发明。',
+      '因为一场神秘的实验意外而降落于猫鼠五周年特别纪念展的不速之客，天生充满了对蓝天的向往，热爱钻研新奇的发明，脑袋里充满稀奇古怪的创意，立志成为猫咪界第一位飞行员，在汤姆和杰瑞的陪伴下被纪念展的内容所打动，来到这里继续进行新的创意发明。',
     maxHp: 240,
     hpRecovery: 1,
     moveSpeed: 800,
