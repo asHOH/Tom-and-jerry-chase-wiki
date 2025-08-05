@@ -114,9 +114,10 @@ export const contributors: Contributor[] = [
     ],
   },
   {
-    id: 'musicianJerry',
+    id: 'ConductorJerry',
     name: '音乐家杰瑞',
     roles: [
+      { type: RoleType.Developer },
       {
         type: RoleType.ContentWriter,
         characters: ['罗宾汉泰菲', '魔术师', '库博', '如玉'],
