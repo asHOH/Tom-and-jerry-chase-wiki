@@ -41,7 +41,7 @@ export function FactionButton({
         className
       )}
     >
-      <div className='flex items-center gap-2 md:gap-3'>
+      <div className='flex items-center flex-col gap-2 md:gap-3 md:flex-row'>
         {imageSrc ? (
           <div className='text-xl md:text-2xl'>
             <Image

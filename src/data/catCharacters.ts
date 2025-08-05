@@ -855,7 +855,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         tagName: '防守',
         isMinor: false,
         description:
-          '斗牛可清理道具并对地方眩晕，2级被动可减少技能CD，在防守时拥有较高的伤害和续航。',
+          '斗牛可清理道具并对敌方眩晕，2级被动可减少技能CD，在防守时拥有较高的伤害和续航。',
         additionalDescription: '',
         weapon: 2,
       },
@@ -1032,7 +1032,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成伤害和眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
             cooldown: 18,
             detailedDescription:
-              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成(60点伤害](不造成受伤)和3.5秒眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
+              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成[60点伤害](不造成受伤)和3.5秒眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
           },
         ],
         cancelableAftercast: ['跳跃键', '移动键', '道具键'],
@@ -1103,7 +1103,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '米可',
         description:
-          '米克采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）',
+          '米可采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）',
         isMinor: false,
       },
       {
@@ -1232,7 +1232,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '高爆发能力',
       },
       {
-        name: '我生气了',
+        name: '我生气了！',
         description: '提高输出',
       },
       {
@@ -1390,6 +1390,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力',
         isMinor: true,
       },
+      // FIXME: 米可 is also 图多盖洛's counter
       {
         id: '米可',
         description: '米可拥有高额减伤，图多打不死',
@@ -1477,7 +1478,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description: '打高伤阵容，如剑杰、朵朵。',
           },
         ],
-        description: '蓄势一击配合侍卫二级被动可以打死125血血厚老鼠',
+        description: '蓄势一击配合侍卫二级被动可以打死125血量的老鼠',
         defaultFolded: false,
       },
       {
@@ -2990,7 +2991,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '回复Hp，并随着音乐舞动，持续40秒。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复Hp、提升移速和攻击力。舞动时接触虚弱老鼠将使其自主跟随苏蕊30秒，期间遇到火箭立刻绑上。',
         detailedDescription:
-          '回复50Hp，随着音乐舞动，持续40秒。若手中有老鼠，则放下老鼠并使其自主跟随。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](CD为5.9秒（未命中）和11.9秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复30Hp、提升10%移速和15点攻击力。舞动时接触不在捕鼠夹上的虚弱老鼠或刚被击倒的老鼠，将使其自主跟随苏蕊30秒。在此状态下，老鼠无法主动使用技能、移动等操作，但仍能受到伤害和控制，且遇到火箭会立刻绑上。若老鼠与苏蕊距离较远（如钻管道后），则老鼠会解除跟随。',
+          '回复50Hp，随着音乐舞动，持续40秒。若手中有老鼠，则放下老鼠并使其自主跟随。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](CD为5.9秒（未命中）和11.9秒（命中），伤害为70点，不受长爪、乘胜追击影响)，苍蝇拍范围也变为以苏蕊为中心，拍抓会使[老鼠](包括触发三级被动后灵体状态的表演者·杰瑞)自主跟随。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复30Hp、提升10%移速和15点攻击力。舞动时接触不在捕鼠夹上的虚弱老鼠或[刚被击倒的老鼠](包括刚进入知识卡铁血、表演者·杰瑞一级被动、佩克斯三级被动状态的老鼠)，将使其自主跟随。自主跟随持续30秒，在此状态下，老鼠解除并免疫虚弱，无法使用技能和道具、进行交互或主动移动，但仍能受到伤害和[部分控制](不包含冰块、鞭炮、老鼠夹造成的控制)，且遇到火箭会立刻绑上。若老鼠与苏蕊距离较远（如苏蕊钻管道后），则老鼠会提前解除跟随。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -3062,8 +3063,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '易碎道具击中[敌方](含虚弱老鼠)时将重置律动时间的CD。',
-            detailedDescription: '易碎道具击中[敌方](含虚弱老鼠)时将重置律动时间的CD。',
+            description: '易碎道具击中[敌方](含虚弱老鼠、鸭子)时将重置律动时间的CD。',
+            detailedDescription: '易碎道具击中[敌方](含虚弱老鼠、鸭子)时将重置律动时间的CD。',
           },
         ],
       },
@@ -3298,7 +3299,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   /* ----------------------------------- 追风汤姆 ----------------------------------- */
   追风汤姆: {
     description:
-      '因为一场神秘的实验意外而降落于猫鼠五周年特别纪念展的不速之客，天生充满了对蓝天的向往，热爱钻研新奇的发明，脑袋里充满稀奇古怪的创意，立志成为猫咪届第一位飞行员，在汤姆和杰瑞的陪伴下被纪念展的内容所打动，来到这里继续进行新的创意发明。',
+      '因为一场神秘的实验意外而降落于猫鼠五周年特别纪念展的不速之客，天生充满了对蓝天的向往，热爱钻研新奇的发明，脑袋里充满稀奇古怪的创意，立志成为猫咪界第一位飞行员，在汤姆和杰瑞的陪伴下被纪念展的内容所打动，来到这里继续进行新的创意发明。',
     maxHp: 240,
     hpRecovery: 1,
     moveSpeed: 800,
