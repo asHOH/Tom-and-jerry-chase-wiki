@@ -72,7 +72,8 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       return charactersToFilter;
     }
 
-    return charactersToFilter.filter((character) =>
+    // Filter by selected tags
+    const filtered = charactersToFilter.filter((character) =>
       Array.from(selectedPositioningTags).every((selectedTag) => {
         const tags =
           (character.factionId === 'cat'
@@ -81,6 +82,24 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         return tags.some((charTag) => charTag.tagName === selectedTag);
       })
     );
+
+    // Sort: not isMinor first, isMinor second (for the selected tags)
+    return filtered.sort((a, b) => {
+      const getIsMinor = (char: (typeof allCharacters)[keyof typeof allCharacters]) => {
+        const tags =
+          (char.factionId === 'cat' ? char.catPositioningTags : char.mousePositioningTags) || [];
+        // If any tag matching the selected filter is not minor, treat as not minor
+        return Array.from(selectedPositioningTags).every((selectedTag) => {
+          const tag = tags.find(
+            (t: { tagName: string; isMinor?: boolean }) => t.tagName === selectedTag
+          );
+          return tag ? tag.isMinor : true;
+        });
+      };
+      const aIsMinor = getIsMinor(a);
+      const bIsMinor = getIsMinor(b);
+      return Number(aIsMinor) - Number(bIsMinor);
+    });
   }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds]);
 
   return (
