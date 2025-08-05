@@ -3520,7 +3520,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         tagName: '救援',
         isMinor: false,
         description: '闪拳可拦截，传送可救援，有药水可以稳救。',
-        additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。',
+        additionalDescription: '',
       },
       {
         tagName: '干扰',
@@ -3529,8 +3529,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         additionalDescription: '',
       },
       {
-        tagName: '奶酪',
-        isMinor: true,
+        tagName: '破局',
+        isMinor: false,
         description: '发怒拳头可以强推奶酪。',
         additionalDescription: '后期发怒时可无视夹子和叉子。',
       },
