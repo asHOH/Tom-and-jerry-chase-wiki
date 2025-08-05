@@ -169,7 +169,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       </div>
 
       <div
-        className='character-grid grid-container grid gap-8 mt-8'
+        className='auto-fit-grid grid-container grid gap-8 mt-8'
         style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))' }}
       >
         {isEditMode && (

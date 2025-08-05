@@ -59,12 +59,24 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['侦探杰瑞', '蒙金奇', '国王杰瑞', '剑客杰瑞', '马索尔'],
-      },
-      {
-        type: RoleType.ContentWriter,
-        characters: ['图茨'],
-        isMinor: true,
+        characters: [
+          '侦探杰瑞',
+          '蒙金奇',
+          '国王杰瑞',
+          '剑客杰瑞',
+          '马索尔',
+          '莱特宁',
+          '剑客莉莉',
+          '侦探泰菲',
+          '佩克斯',
+          '米雪儿',
+          '剑客汤姆',
+          '剑客泰菲',
+          '图茨',
+          '仙女鼠',
+          '雪梨',
+          '马索尔',
+        ],
       },
       {
         type: RoleType.DataTester,
