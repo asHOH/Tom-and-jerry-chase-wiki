@@ -609,7 +609,7 @@ export default function SkillCard({
 
           {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
             <div className='mt-3 px-2'>
-              <p className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
+              <div className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
                 <EditableField
                   initialValue={
                     (isDetailed && skill.detailedDescription?.trim()
@@ -620,7 +620,7 @@ export default function SkillCard({
                   tag='span'
                   data-tutorial-id='skill-description-edit'
                 />
-              </p>
+              </div>
             </div>
           )}
         </div>

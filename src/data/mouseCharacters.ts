@@ -1639,7 +1639,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counters: [
       {
         id: '莱特宁',
-        description: '莱特宁怕干扰，同时也不好处理124血量',
+        description: '牛仔杰瑞可以通过仙人掌防止闪现刀，且莱特宁本身怕干扰、难以处理124Hp老鼠',
         isMinor: false,
       },
       {
@@ -3520,7 +3520,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         tagName: '救援',
         isMinor: false,
         description: '闪拳可拦截，传送可救援，有药水可以稳救。',
-        additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。',
+        additionalDescription: '',
       },
       {
         tagName: '干扰',
@@ -3529,8 +3529,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         additionalDescription: '',
       },
       {
-        tagName: '奶酪',
-        isMinor: true,
+        tagName: '破局',
+        isMinor: false,
         description: '发怒拳头可以强推奶酪。',
         additionalDescription: '后期发怒时可无视夹子和叉子。',
       },
@@ -5125,13 +5125,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '汤姆',
         description: '莱恩克制汤姆的无敌，阻止上火箭，但注意不要被二被秒掉',
         isMinor: true,
-      },
-    ],
-    counteredBy: [
-      {
-        id: '布奇',
-        description: '布奇伤害高，莱恩挨一刀就死。',
-        isMinor: false,
       },
     ],
     collaborators: [],

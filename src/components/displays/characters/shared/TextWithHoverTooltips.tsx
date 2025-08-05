@@ -4,7 +4,7 @@ import { renderTextWithHighlights } from '../../../../lib/textUtils';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import { characters } from '@/data';
 import { proxy, useSnapshot } from 'valtio';
-import Link from 'next/link';
+import GotoLink from '@/components/GotoLink';
 
 /**
  * Parse and render text with tooltips for patterns like {visible text}
@@ -55,13 +55,13 @@ export const renderTextWithTooltips = (
       const totalAttack = parseFloat(visibleText);
       if (Number.isNaN(totalAttack) || attackBoost == null) {
         parts.push(
-          <Link
-            href={`/goto/${encodeURIComponent(content)}`}
+          <GotoLink
+            name={content}
             className='underline'
             key={`${content}-${tooltipPattern.lastIndex}`}
           >
             {content}
-          </Link>
+          </GotoLink>
         );
         lastIndex = tooltipPattern.lastIndex;
         continue;

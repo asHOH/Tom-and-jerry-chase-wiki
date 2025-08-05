@@ -154,10 +154,9 @@ html {
   scroll-behavior: smooth;
 }
 
-/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+/* ===== DISPLAY OPTIMIZATIONS ===== */
 
-/* Character Grid Performance Optimizations */
-.character-grid {
+.auto-fit-grid {
   /* CSS containment for better performance */
   contain: layout style paint;
   /* Optimize for transform animations */
@@ -187,8 +186,7 @@ html {
 
 /* Mobile-specific optimizations */
 @media (max-width: 768px) {
-  .character-grid {
-    /* Single column layout optimization */
+  .auto-fit-grid {
     grid-template-columns: 1fr;
     gap: 0.75rem;
     /* Enhanced mobile scrolling */

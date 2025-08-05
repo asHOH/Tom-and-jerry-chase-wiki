@@ -21,7 +21,6 @@ import { getNestedProperty, handleChange } from '@/lib/editUtils';
  * @param {keyof HTMLElementTagNameMap} tag The HTML tag to use for the element (e.g., 'span', 'p', 'h1').
  * @param {string} path A dot-separated string representing the nested path to the value being edited (e.g., 'characterId.description'). This is used as a key for storing the edited value.
  * @param {T} initialValue The initial value of the field. Can be a string or a number.
- * @param {string} [className] Optional CSS classes to apply to the element.
  * @param {((newValue: string) => void) | undefined} [onSave] Optional function to invoke to replace default behavior.
  */
 interface EditableFieldProps<T, TagName extends keyof HTMLElementTagNameMap>
