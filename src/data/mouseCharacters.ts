@@ -1695,210 +1695,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
-  /* ----------------------------------- 天使杰瑞 ----------------------------------- */
-  天使杰瑞: {
-    description: '拥有一颗善良之心的天使，总会在汤姆遇上危险的时候，对他施以援手。',
-    maxHp: 99,
-    attackBoost: 5,
-    hpRecovery: 5,
-    moveSpeed: 665,
-    jumpHeight: 420,
-    cheesePushSpeed: 3.6,
-    wallCrackDamageBoost: 0.5,
-    mousePositioningTags: [
-      {
-        tagName: '辅助',
-        isMinor: false,
-        description: '独一无二的复活机制，会给猫很大的压力。',
-        additionalDescription:
-          '虽然复活体尽量不会再去参与救人但是仍然可以保证奶酪进度，还能废掉一个秒飞，有不错的辅助能力。',
-      },
-      {
-        tagName: '奶酪',
-        isMinor: true,
-        description: '推速较高，有一定自保。',
-        additionalDescription: '本身牵制、救人能力不突出，无秒飞火箭时一般当奶酪位。',
-      },
-      {
-        tagName: '破局',
-        isMinor: false,
-        description: '雷云的减伤和控制可以用于强推最后一块奶酪。',
-        additionalDescription: '',
-        weapon: 2,
-      },
-    ],
-    skillAllocations: [
-      {
-        id: '丘比特之箭',
-        pattern: '1(0)2110022',
-        weaponType: 'weapon1',
-        description:
-          '一般建议留加点，如一级被动可以等猫拍你的时候点，能救一命，打部分[技能输出猫](如牛仔汤姆)可以优先点出三被。',
-        additionaldescription: '',
-      },
-      {
-        id: '止戈雷云',
-        pattern: '3(0)[13]30011',
-        weaponType: 'weapon2',
-        description:
-          '加点灵活，开局队友暴毙、刷二手火箭则优先祝福，否则被动。后期打部分[技能输出猫](如牛仔汤姆)可以优先点出三被。',
-        additionaldescription: '',
-      },
-    ],
-    knowledgeCardGroups: [
-      {
-        cards: ['S-舍己', 'A-逃窜', 'C-救救我', 'C-不屈', 'S-铁血'],
-        description:
-          '适合新手游玩的卡组，不屈是天使的核心（队友被放飞时就产生增益，而不是被淘汰时），逃窜增加续航能力。',
-      },
-      {
-        cards: ['S-舍己', 'S-铁血', 'A-祝愿', 'C-救救我', 'C-不屈'],
-        description:
-          '日常使用，需要注意高端局猫可能会优先送走天使，因此带了祝愿，卖自己也能有稳定的收益。',
-      },
-      {
-        cards: ['S-无畏', 'S-铁血', 'B-绝地反击', 'C-救救我', 'C-不屈'],
-        description: '防守类猫对策卡组。',
-      },
-      {
-        cards: ['C-不屈', 'C-救救我', 'A-逃窜', 'A-泡泡浴', 'B-夹不住我', 'A-祝愿'],
-        description: '四排车队可用不死流卡组（务必保证队友提前知道且不用你操心救人；单排慎用）',
-      },
-    ],
-    skills: [
-      {
-        name: '天使祝福',
-        type: 'active',
-        description:
-          '开始吟唱，给予周围范围内火箭上或猫手上的队友[祝福状态](头上出现光圈)，持续30秒。该状态的队友被放飞不会立刻淘汰而是在[固定位置](只与地图有关，每个地图都有固定点位)以复活体的形式返回游戏。复活体会持续暴露小地图位置，且一旦Hp到达[0](即老鼠倒地起身时的血量。这意味着尼宝翻滚、佩克斯三级主动等“免疫虚弱”的效果并不能防止其被淘汰)或被抓起就会被淘汰。',
-        detailedDescription:
-          '开始吟唱，约1.1秒后给予周围范围内火箭上或[猫手上](不包括托普斯捕虫网中、泰克抓取、跟随苏蕊跳舞、被塔拉或追风汤姆扔向火箭且正在飞行中)的队友[祝福状态](头上出现光圈)，持续30秒。老鼠从猫手中以绑火箭外的任何形式脱离，[将失去祝福状态](但塔拉或追风汤姆仍火箭时，如果被提前在猫手上祝福过，则可以正常生效)。祝福状态的老鼠从火箭上被救下将返还40秒CD。祝福状态的队友被放飞不会立刻淘汰而是在[固定位置](只与地图有关，每个地图都有固定点位)以复活体的形式返回游戏。复活体一旦Hp到达[0](即老鼠倒地起身时的血量。这意味着尼宝翻滚、佩克斯三级主动等“免疫虚弱”的效果并不能防止其被淘汰)或被抓起就会被淘汰。复活体会持续暴露小地图位置，但可通过进机械鼠，拿白色花等方式暂时隐藏。如果老鼠在铁血期间被放飞，则重生时为铁血状态、铁血结束直接被淘汰；如果在铁血结束后十秒内被放飞，重生时将是虚弱状态，被猫抓取会直接被淘汰。如果受到流血类伤害钻进机械鼠，且在机械鼠内死亡，则会留下一个机械鼠空壳。\n与其他角色之间的互动：表演者•杰瑞被放飞会优先判定三级被动的复活。如果复活体被托普斯捕虫网抓扔上火箭，则会正常读秒计时，此时再受到祝福会显示图标但无法生效、复活体在火箭被放飞时淘汰。',
-        canMoveWhileUsing: false,
-        canUseInAir: true,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
-        skillLevels: [
-          {
-            level: 1,
-            description: '',
-            cooldown: 60,
-          },
-          {
-            level: 2,
-            description: '祝福期间获得护盾，[护盾存在时持续恢复大量Hp](护盾被打破则恢复效果消失)。',
-            cooldown: 60,
-            detailedDescription:
-              '祝福期间获得护盾，[护盾存在时持续恢复Hp](护盾被打破则恢复效果消失)，共计回复99点生命。',
-          },
-          {
-            level: 3,
-            description: '扩大祝福范围。',
-            cooldown: 60,
-          },
-        ],
-        aliases: ['复活'],
-        canHitInPipe: true,
-        cooldownTiming: '前摇前',
-      },
-      {
-        name: '丘比特之箭',
-        aliases: ['弓箭'],
-        type: 'weapon1',
-        description:
-          '点按技能射出一发弓箭，射中队友为其回复一定生命；射中猫造成伤害。长按技能开始蓄力，蓄力满射出一发大弓箭，射中队友为其回复更多Hp，射中猫造成更高伤害和眩晕。中途可以取消释放，会返还一半CD。',
-        detailedDescription:
-          '点按技能射出一发弓箭，射中队友为其回复25Hp并提供1.6秒的10%加速；射中猫造成30伤害。长按技能开始蓄力，蓄力至少1.83秒后可以射出一发大弓箭，射中队友为其回复50Hp和1.6秒的5%加速；射中猫造成55伤害和1.4秒[眩晕](无视苏蕊的跳舞，但不打断跳舞或队友的跟随；无视天使汤姆二级被动的霸体，且可救下队友)。点按可以在空中射出，但蓄力弓箭无法在空中射出。射箭时天使可以调整[出射角度](约上下15度)。射出后的弓箭飞行[无视地形](平台，地板，天花板均不会影响；经典之家的厨房挡板除外)，直到击中其他角色或森林牧场大鸭子。弓箭射出方向为出射时所按的方向键，若未按则为拉弓时角色朝向。弓箭受到重力，但[速度大小不变，只改变方向](不受外力时，箭的竖直速度逐渐增大而水平速度逐渐减小，并非严格的抛物线)。弓箭可被鞭炮影响而改变飞行轨迹。中途可以取消释放，会返还一半CD。',
-        canMoveWhileUsing: true,
-        canUseInAir: true,
-        cancelableSkill: ['本技能键'],
-        cancelableAftercast: ['道具键*'],
-        canHitInPipe: false,
-        skillLevels: [
-          {
-            level: 1,
-            description: '',
-            cooldown: 22,
-          },
-          {
-            level: 2,
-            description: '减少CD。',
-            cooldown: 12,
-          },
-          {
-            level: 3,
-            description: '治疗、伤害效果增强；蓄力箭命中虚弱队友会解除其虚弱状态。',
-            cooldown: 12,
-            detailedDescription:
-              '普通弓箭伤害提高为55，蓄力箭提高为105；普通弓箭对队友治疗效果提高为50，蓄力箭提高为99。蓄力箭命中虚弱队友会解除其虚弱状态。',
-          },
-        ],
-      },
-      {
-        name: '止戈雷云',
-        type: 'weapon2',
-        description:
-          '在左右召唤两朵雷云，持续15秒。雷云内猫移速和伤害降低。如果猫在雷云中做出[攻击行为](爪刀、道具、技能)则会被雷劈（有一定延迟），受到少量伤害。',
-        detailedDescription:
-          '在左右各召唤一朵雷云，前摇0.65s，持续15秒。猫在雷云中对老鼠的伤害固定减少10点、受到35%减速。如果猫在雷云中有[攻击行为](如爪刀、道具、技能)则会[被雷云锁定](头顶出现感叹号标志)，锁定1.5秒后判定猫0.5秒前所在位置并在0.08秒内向该位置连续两次落雷，形成雷区，猫被雷直接击中或踏入雷区会受到35电击伤害。[极短时间内](如果同时有三道雷，会中两道)猫只能被一次雷击中。',
-        canMoveWhileUsing: false,
-        canUseInAir: false,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '无后摇',
-        skillLevels: [
-          {
-            level: 1,
-            description: '',
-            cooldown: 30,
-          },
-          {
-            level: 2,
-            description: '雷击附带眩晕，可击落猫手中的道具和老鼠。',
-            detailedDescription:
-              '雷击会附带0.7秒眩晕，可击落猫手中的道具和老鼠。1秒内猫不会重复受到雷电眩晕效果。',
-            cooldown: 30,
-          },
-          {
-            level: 3,
-            description: '雷云会主动攻击猫。无论雷云是否存在，猫伤害天使杰瑞都会遭到雷击。',
-            detailedDescription:
-              '猫在雷云内每5秒自动被锁定降下雷击，离开雷云5秒会重置计时。无论雷云是否存在，猫伤害天使杰瑞都会立刻被标记，随后遭到雷击。',
-            cooldown: 30,
-          },
-        ],
-        cooldownTiming: '释放后',
-      },
-      {
-        name: '神之惩戒',
-        type: 'passive',
-        description: '',
-        detailedDescription: '所有被动均会被猫咪的护盾、无敌、霸体抵消，且不会破盾。',
-        skillLevels: [
-          {
-            level: 1,
-            description: '被猫以任意方式伤害时，短暂禁用其爪刀。',
-            detailedDescription: '被猫以任意方式伤害时禁用其爪刀5秒。（CD：10秒）',
-          },
-          {
-            level: 2,
-            description: '[附近](范围与一级复活相近)猫的爪刀和技能CD增加。',
-            detailedDescription:
-              '[附近](范围与一级复活相近)猫的爪刀和技能CD增加10%（特技不受影响）',
-          },
-          {
-            level: 3,
-            description: '被猫以任意方式伤害时，短暂禁用其[所有技能](包括特技)。',
-            detailedDescription:
-              '被猫以任意方式伤害时禁用其[所有技能](包括特技)4秒。（[CD：10秒](和Lv.1效果不共享冷却)）',
-          },
-        ],
-      },
-    ],
-  },
-
   /* ----------------------------------- 恶魔泰菲 ----------------------------------- */
   恶魔泰菲: {
     aliases: ['恶菲'],
-    description: '待补充',
+    description:
+      '迷人又危险的小恶魔泰菲！为了帮助玩具城的国王杰瑞，恶魔泰菲挺身而出，将霸占玩具国的邪恶猫咪团的猫咪们耍得团团转，成功拯救了玩具国的子民们。',
     maxHp: 74,
     attackBoost: 15,
     hpRecovery: 2.5,
@@ -1929,19 +1730,19 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     skillAllocations: [
       {
-        id: '方案1',
+        id: '恶魔之角',
         pattern: '01020[12][12]2',
         weaponType: 'weapon1',
         description: '一武加点。',
       },
       {
-        id: '方案2',
+        id: '小淘气1',
         pattern: '03030[13]11',
         weaponType: 'weapon2',
         description: '二武常见加点。',
       },
       {
-        id: '方案3',
+        id: '小淘气2',
         pattern: '013003311',
         weaponType: 'weapon2',
         description: '二武天宫需要搬奶酪这么加点。',
@@ -1954,11 +1755,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         cards: ['S-铁血', 'S-舍己', 'C-救救我', 'A-投手', 'B-夹不住我'],
-        description: '二武恶菲推荐卡组。投手提高牵制能力，绿色小恶魔可以快速叠夹不住我层数',
+        description: '二武恶菲推荐卡组。投手提高牵制能力，绿色小恶魔可以快速叠夹不住我层数。',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
-        description: '没21点知识量时的推荐。',
+        description: '没21点知识量时的推荐，缴械配合蓝恶魔让猫变白板。',
       },
     ],
     collaborators: [
@@ -2026,11 +1827,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '小淘气',
         type: 'weapon2',
-        // FIXME: description all uses '小恶魔', but official description uses '小淘气'.
         description:
-          '将附近道具变成小恶魔。\n易碎道具变成蓝色小恶魔：造成伤害并使敌方无法使用技能和道具，自动索敌；\n控制道具变成红色小恶魔：对敌方造成向右击退；\n高尔夫球变成绿色小恶魔：比高尔夫球有更大的弹性，不会消耗黑暗印记，可影响捕鼠夹和奶酪；捕鼠夹受影响会立刻打开；奶酪受影响后变轻、拾取后加速、并可投掷进洞。\n所有小恶魔猫鼠双方均可使用。',
+          '释放小淘气们影响附近道具。\n易碎道具变成蓝色小恶魔：自动索敌，命中时造成伤害并使敌方3秒内无法使用技能和道具；\n控制道具变成红色小恶魔：可穿墙投掷，命中时向右击退敌方；\n高尔夫球变成绿色小恶魔：有比高尔夫球有更大的弹性，命中敌方不会消耗黑暗印记。\n此外，小淘气还可以影响[捕鼠夹](指未打开的捕鼠夹)和奶酪；捕鼠夹受影响会立刻打开；奶酪受影响后变轻、拾取后加速、并可投掷进洞。\n所有小恶魔道具均可以被猫鼠双方使用。',
         detailedDescription:
-          '将附近道具变成小恶魔。\n易碎道具变成蓝色小恶魔：基础伤害为20，使敌方无法使用技能和道具，且放置原地自动索敌；\n控制道具变成红色小恶魔：对敌方造成向右击退；\n高尔夫球变成绿色小恶魔：比高尔夫球有更大的弹性，不会消耗黑暗印记，可影响捕鼠夹和奶酪；捕鼠夹受影响会立刻打开；奶酪受影响后变轻、拾取后加速、并可投掷进洞。\n所有小恶魔猫鼠双方均可使用。',
+          '释放小淘气们影响附近道具。\n易碎道具变成蓝色小恶魔：被投掷后留在原地自动索敌，命中时造成20[基础伤害](会受攻击增伤的影响，例如被恶魔泰菲投掷时的实际伤害为35)，并使敌方3秒内无法使用技能和道具，；\n控制道具变成红色小恶魔：[投掷轨迹为一条直线，可穿墙](无法穿越部分实体类的墙体，如地面及部分障碍物等)，命中时向右击退敌方；\n高尔夫球变成绿色小恶魔：有比高尔夫球有更大的弹性，且命中敌方不会消耗黑暗印记。\n此外，小淘气还可以影响[捕鼠夹](指未打开的捕鼠夹)和奶酪；捕鼠夹受影响会立刻打开；奶酪受影响后变轻、拾取后加速、并可投掷进洞。\n所有小恶魔道具均可以被猫鼠双方使用。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -2045,11 +1845,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             level: 2,
             description: '减少CD。',
             cooldown: 10,
+            detailedDescription: 'CD减少5秒。',
           },
           {
             level: 3,
             description:
-              '绿色小恶魔可直接砸墙，持续减少墙缝耐久，并使墙缝在受到攻击后额外减少耐久。',
+              '小淘气可以选中墙缝为目标：持续减少墙缝耐久，并使墙缝在受到攻击后额外减少耐久。',
             cooldown: 10,
           },
         ],
@@ -2072,11 +1873,39 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '最多叠三层印记；三层印记时，攻击力增强。',
-            detailedDescription:
-              '最多叠三层印记；三层印记时，攻击力增强：盘子165；碗、杯子、高尔夫140；二武蓝恶魔135；二武绿恶魔125。',
+            description: '最多叠三层印记；三层印记时，大幅增加攻击增伤。',
+            detailedDescription: '最多叠三层印记；三层印记时，攻击增伤增加100。',
           },
         ],
+      },
+    ],
+    counters: [
+      {
+        id: '托普斯',
+        description: '托普斯血量较低。',
+        isMinor: true,
+      },
+      {
+        id: '牛仔汤姆',
+        description: '恶菲机动性高，并且能回血和远程消耗。',
+        isMinor: false,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '库博',
+        description: '新增关系描述',
+        isMinor: false,
+      },
+    ],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '提高机动性。',
+      },
+      {
+        name: '绝处逢生',
+        description: '用于自保或破坏老鼠夹。',
       },
     ],
   },
@@ -2280,6 +2109,475 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '',
       },
     ],
+  },
+
+  /* ----------------------------------- 天使杰瑞 ----------------------------------- */
+  天使杰瑞: {
+    description: '拥有一颗善良之心的天使，总会在汤姆遇上危险的时候，对他施以援手。',
+    maxHp: 99,
+    attackBoost: 5,
+    hpRecovery: 5,
+    moveSpeed: 665,
+    jumpHeight: 420,
+    cheesePushSpeed: 3.6,
+    wallCrackDamageBoost: 0.5,
+    mousePositioningTags: [
+      {
+        tagName: '辅助',
+        isMinor: false,
+        description: '独一无二的复活机制，会给猫很大的压力。',
+        additionalDescription:
+          '虽然复活体尽量不会再去参与救人但是仍然可以保证奶酪进度，还能废掉一个秒飞，有不错的辅助能力。',
+      },
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '推速较高，有一定自保。',
+        additionalDescription: '本身牵制、救人能力不突出，无秒飞火箭时一般当奶酪位。',
+      },
+      {
+        tagName: '破局',
+        isMinor: false,
+        description: '雷云的减伤和控制可以用于强推最后一块奶酪。',
+        additionalDescription: '',
+        weapon: 2,
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '丘比特之箭',
+        pattern: '1(0)2110022',
+        weaponType: 'weapon1',
+        description:
+          '一般建议留加点，如一级被动可以等猫拍你的时候点，能救一命，打部分[技能输出猫](如牛仔汤姆)可以优先点出三被。',
+        additionaldescription: '',
+      },
+      {
+        id: '止戈雷云',
+        pattern: '3(0)[13]30011',
+        weaponType: 'weapon2',
+        description:
+          '加点灵活，开局队友暴毙、刷二手火箭则优先祝福，否则被动。后期打部分[技能输出猫](如牛仔汤姆)可以优先点出三被。',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-舍己', 'A-逃窜', 'C-救救我', 'C-不屈', 'S-铁血'],
+        description:
+          '适合新手游玩的卡组，不屈是天使的核心（队友被放飞时就产生增益，而不是被淘汰时），逃窜增加续航能力。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-祝愿', 'C-救救我', 'C-不屈'],
+        description:
+          '日常使用，需要注意高端局猫可能会优先送走天使，因此带了祝愿，卖自己也能有稳定的收益。',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'B-绝地反击', 'C-救救我', 'C-不屈'],
+        description: '防守类猫对策卡组。',
+      },
+      {
+        cards: ['C-不屈', 'C-救救我', 'A-逃窜', 'A-泡泡浴', 'B-夹不住我', 'A-祝愿'],
+        description: '四排车队可用不死流卡组（务必保证队友提前知道且不用你操心救人；单排慎用）',
+      },
+    ],
+    skills: [
+      {
+        name: '天使祝福',
+        type: 'active',
+        description:
+          '开始吟唱，给予周围范围内火箭上或猫手上的队友[祝福状态](头上出现光圈)，持续30秒。该状态的队友被放飞不会立刻淘汰而是在[固定位置](只与地图有关，每个地图都有固定点位)以复活体的形式返回游戏。复活体会持续暴露小地图位置，且一旦Hp到达[0](即老鼠倒地起身时的血量。这意味着尼宝翻滚、佩克斯三级主动等“免疫虚弱”的效果并不能防止其被淘汰)或被抓起就会被淘汰。',
+        detailedDescription:
+          '开始吟唱，约1.1秒后给予周围范围内火箭上或[猫手上](不包括托普斯捕虫网中、泰克抓取、跟随苏蕊跳舞、被塔拉或追风汤姆扔向火箭且正在飞行中)的队友[祝福状态](头上出现光圈)，持续30秒。老鼠从猫手中以绑火箭外的任何形式脱离，[将失去祝福状态](但塔拉或追风汤姆仍火箭时，如果被提前在猫手上祝福过，则可以正常生效)。祝福状态的老鼠从火箭上被救下将返还40秒CD。祝福状态的队友被放飞不会立刻淘汰而是在[固定位置](只与地图有关，每个地图都有固定点位)以复活体的形式返回游戏。复活体一旦Hp到达[0](即老鼠倒地起身时的血量。这意味着尼宝翻滚、佩克斯三级主动等“免疫虚弱”的效果并不能防止其被淘汰)或被抓起就会被淘汰。复活体会持续暴露小地图位置，但可通过进机械鼠，拿白色花等方式暂时隐藏。如果老鼠在铁血期间被放飞，则重生时为铁血状态、铁血结束直接被淘汰；如果在铁血结束后十秒内被放飞，重生时将是虚弱状态，被猫抓取会直接被淘汰。如果受到流血类伤害钻进机械鼠，且在机械鼠内死亡，则会留下一个机械鼠空壳。\n与其他角色之间的互动：表演者•杰瑞被放飞会优先判定三级被动的复活。如果复活体被托普斯捕虫网抓扔上火箭，则会正常读秒计时，此时再受到祝福会显示图标但无法生效、复活体在火箭被放飞时淘汰。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '不可被打断',
+        cancelableAftercast: '不可取消后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 60,
+          },
+          {
+            level: 2,
+            description: '祝福期间获得护盾，[护盾存在时持续恢复大量Hp](护盾被打破则恢复效果消失)。',
+            cooldown: 60,
+            detailedDescription:
+              '祝福期间获得护盾，[护盾存在时持续恢复Hp](护盾被打破则恢复效果消失)，共计回复99点生命。',
+          },
+          {
+            level: 3,
+            description: '扩大祝福范围。',
+            cooldown: 60,
+          },
+        ],
+        aliases: ['复活'],
+        canHitInPipe: true,
+        cooldownTiming: '前摇前',
+      },
+      {
+        name: '丘比特之箭',
+        aliases: ['弓箭'],
+        type: 'weapon1',
+        description:
+          '点按技能射出一发弓箭，射中队友为其回复一定生命；射中猫造成伤害。长按技能开始蓄力，蓄力满射出一发大弓箭，射中队友为其回复更多Hp，射中猫造成更高伤害和眩晕。中途可以取消释放，会返还一半CD。',
+        detailedDescription:
+          '点按技能射出一发弓箭，射中队友为其回复25Hp并提供1.6秒的10%加速；射中猫造成30伤害。长按技能开始蓄力，蓄力至少1.83秒后可以射出一发大弓箭，射中队友为其回复50Hp和1.6秒的5%加速；射中猫造成55伤害和1.4秒[眩晕](无视苏蕊的跳舞，但不打断跳舞或队友的跟随；无视天使汤姆二级被动的霸体，且可救下队友)。点按可以在空中射出，但蓄力弓箭无法在空中射出。射箭时天使可以调整[出射角度](约上下15度)。射出后的弓箭飞行[无视地形](平台，地板，天花板均不会影响；经典之家的厨房挡板除外)，直到击中其他角色或森林牧场大鸭子。弓箭射出方向为出射时所按的方向键，若未按则为拉弓时角色朝向。弓箭受到重力，但[速度大小不变，只改变方向](不受外力时，箭的竖直速度逐渐增大而水平速度逐渐减小，并非严格的抛物线)。弓箭可被鞭炮影响而改变飞行轨迹。中途可以取消释放，会返还一半CD。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['本技能键'],
+        cancelableAftercast: ['道具键*'],
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 22,
+          },
+          {
+            level: 2,
+            description: '减少CD。',
+            cooldown: 12,
+          },
+          {
+            level: 3,
+            description: '治疗、伤害效果增强；蓄力箭命中虚弱队友会解除其虚弱状态。',
+            cooldown: 12,
+            detailedDescription:
+              '普通弓箭伤害提高为55，蓄力箭提高为105；普通弓箭对队友治疗效果提高为50，蓄力箭提高为99。蓄力箭命中虚弱队友会解除其虚弱状态。',
+          },
+        ],
+      },
+      {
+        name: '止戈雷云',
+        type: 'weapon2',
+        description:
+          '在左右召唤两朵雷云，持续15秒。雷云内猫移速和伤害降低。如果猫在雷云中做出[攻击行为](爪刀、道具、技能)则会被雷劈（有一定延迟），受到少量[电击伤害](电击伤害会使目标感电，每层感电使受到的电击伤害增加15，可叠加)。',
+        detailedDescription:
+          '在左右各召唤一朵雷云，前摇0.65s，持续15秒。猫在雷云中对老鼠的伤害固定减少10点、受到35%减速。如果猫在雷云中有[攻击行为](如爪刀，道具，技能)则会[被雷云锁定](头顶出现感叹号标志)，锁定1.5秒后判定猫0.5秒前所在位置并在0.08秒内向该位置连续两次落雷，形成雷区，猫被雷直接击中或踏入雷区会受到35[电击伤害](电击伤害会使目标感电，每层感电使受到的电击伤害增加15，可叠加)。[极短时间内](如果同时有三道雷，会中两道)猫只能被一次雷击中。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: '不可被打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 30,
+          },
+          {
+            level: 2,
+            description: '雷击附带眩晕，可击落猫手中的道具和老鼠。',
+            detailedDescription:
+              '雷击会附带0.7秒眩晕，可击落猫手中的道具和老鼠。1秒内猫不会重复受到雷电眩晕效果。',
+            cooldown: 30,
+          },
+          {
+            level: 3,
+            description: '雷云会主动攻击猫。无论雷云是否存在，猫伤害天使杰瑞都会遭到雷击。',
+            detailedDescription:
+              '猫在雷云内每5秒自动被锁定降下雷击，离开雷云5秒会重置计时。无论雷云是否存在，猫伤害天使杰瑞都会立刻被标记，随后遭到雷击。',
+            cooldown: 30,
+          },
+        ],
+        cooldownTiming: '释放后',
+      },
+      {
+        name: '神之惩戒',
+        type: 'passive',
+        description: '',
+        detailedDescription: '所有被动均会被猫咪的护盾、无敌、霸体抵消，且不会破盾。',
+        skillLevels: [
+          {
+            level: 1,
+            description: '被猫以任意方式伤害时，短暂禁用其爪刀。',
+            detailedDescription: '被猫以任意方式伤害时禁用其爪刀5秒。（CD：10秒）',
+          },
+          {
+            level: 2,
+            description: '[附近](范围与一级复活相近)猫的爪刀和技能CD增加。',
+            detailedDescription:
+              '[附近](范围与一级复活相近)猫的爪刀和技能CD增加10%（特技不受影响）',
+          },
+          {
+            level: 3,
+            description: '被猫以任意方式伤害时，短暂禁用其[所有技能](包括特技)。',
+            detailedDescription:
+              '被猫以任意方式伤害时禁用其[所有技能](包括特技)4秒。（[CD：10秒](和Lv.1效果不共享冷却)）',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ----------------------------------- 天使泰菲 ----------------------------------- */
+  天使泰菲: {
+    description: '在王位争夺战中，泰菲化身为天使泰菲，用他的善良感动了汤姆，成功救下了国王杰瑞。',
+    maxHp: 74,
+    attackBoost: 5,
+    hpRecovery: 2.5,
+    moveSpeed: 650,
+    jumpHeight: 380,
+    cheesePushSpeed: 2.9,
+    wallCrackDamageBoost: 0.5,
+    mousePositioningTags: [
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '作为队伍的副推。',
+        additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description: '可以用庇护保人。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '救援',
+        isMinor: false,
+        description: '三级翅膀霸体和三级庇护免死后期救人十分强势。',
+        additionalDescription: '新增标签介绍',
+      },
+      {
+        tagName: '破局',
+        isMinor: false,
+        description: '庇护能保护队友强推最后一块奶酪。',
+        additionalDescription: '新增标签介绍',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '常规加点（容错续航较低）',
+        pattern: '1221[12][12]000',
+        weaponType: 'weapon1',
+        description: '最正常的加点，最适合打克制天菲的猫。',
+        additionaldescription: '',
+      },
+      {
+        id: '翅膀流加点',
+        pattern: '202121100',
+        weaponType: 'weapon2',
+        description: '打汤姆剑汤追风这种控制多的猫。',
+        additionaldescription: '',
+      },
+      {
+        id: '庇护流加点',
+        pattern: '121012200',
+        weaponType: 'weapon1',
+        description: '',
+      },
+      {
+        id: '偏门加点（偶有奇效）',
+        pattern: '200221110',
+        weaponType: 'weapon1',
+        description: '适合救完人后立刻点二被，续航自保很高但对队友实力要求高。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description: '有救援卡，逃窜适合打控制多的猫，不屈增加后期容错。',
+      },
+      {
+        cards: ['S-护佑', 'S-舍己', 'S-铁血', 'C-救救我'],
+        description:
+          '适合单排打库伯苏蕊这种前期优势大但怕盾的猫，也可以在某些特别烂的阵容充当前期救人位。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'C-救救我', 'A-祝愿', 'B-夹不住我'],
+        description:
+          '适合车队打法，因为后期天菲强度高可能被某些打后期老鼠乏力的猫针对，适用于主点庇护的玩法。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'C-救救我', 'B-精准投射', 'B-夹不住我'],
+        description:
+          '很流行的打法，很适配庇护流，精准投射能很好弥补武器技能和主动技能真空期的问题。',
+      },
+      {
+        cards: ['S-舍己', 'C-救救我', 'B-破墙', 'C-不屈', 'B-幸运'],
+        description: '天菲打逆风局很好用的卡，和队友说清楚没带铁血。',
+      },
+    ],
+    skills: [
+      {
+        name: '友情庇护',
+        type: 'active',
+        description:
+          '12秒内受到的伤害降低15，并转移范围内队友所受伤害和控制效果到自身，火箭在庇护范围内减少燃烧速度。优先使用怜悯值抵扣转移的伤害。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['药水键', '跳跃键', '道具键*', '其他技能键'],
+        cancelableAftercast: '无后摇',
+        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5',
+        skillLevels: [
+          {
+            level: 1,
+            description: '伤害转移比例为50%。火箭在庇护范围内减少20%燃烧速度。',
+            detailedDescription: '伤害转移比例为50%。火箭在庇护范围内减少20%燃烧速度。',
+            cooldown: 16,
+          },
+          {
+            level: 2,
+            description: '伤害转移比例增加到100%，火箭燃烧速度减缓至50%。',
+            cooldown: 16,
+            detailedDescription: '伤害转移比例增加到100%，火箭燃烧速度减缓至50%。',
+          },
+          {
+            level: 3,
+            description:
+              '若开启庇护时自身的怜悯值超过50%，消耗20%的怜悯值并在技能持续期间获得免疫虚弱的效果。',
+            cooldown: 16,
+          },
+        ],
+        cueRange: '无音效',
+        aliases: ['庇护'],
+        detailedDescription:
+          '12秒内受到的伤害降低15，并转移范围内队友所受伤害和控制效果到自身，火箭在庇护范围内减少20%燃烧速度。优先使用怜悯值抵扣转移的伤害，100%怜悯值可承担50伤害。[本技能有争议](另一种减伤说法：25伤害变10,50伤害变35,65伤害变45,75伤害变55,100伤害变65,115虚弱；另一种怜悯值消耗说法：100%怜悯值可承担60伤害)。',
+      },
+      {
+        name: '天使翅膀',
+        aliases: ['翅膀'],
+        type: 'weapon1',
+        description: '6秒内受到的伤害降低15，并反弹受到伤害的55%。可消耗怜悯值使反弹伤害增加。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['道具键', '跳跃键', '移动键', '其他技能键'],
+        cancelableAftercast: '不可取消后摇',
+        canHitInPipe: false,
+        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=104.4',
+        skillLevels: [
+          {
+            level: 1,
+            description: '若反弹时自身的怜悯值超过20%，消耗20%的怜悯值使当次反弹的伤害增加20。',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: 'CD减少10秒。',
+            cooldown: 10,
+          },
+          {
+            level: 3,
+            description:
+              'Lv.1效果中的额外反弹伤害增加到35。若开启庇护时自身的怜悯值超过30%，消耗30%怜悯值获得5秒[霸体](不免疫虚弱)。',
+            cooldown: 10,
+          },
+        ],
+        detailedDescription:
+          '6秒内受到的伤害降低15，并[反弹受到伤害]("反弹"即天使泰菲对攻击者造成一次伤害，该伤害不受攻击增伤影响；"受到伤害"的数值与实际受到的伤害值无关，其计算时机晚于攻击者的攻击增减伤，但早于天使泰菲的受击增减伤，并且最终数值不会超过天使泰菲当前的Hp)的55%。可消耗怜悯值使反弹伤害增加。[本技能有争议](另一种说法：不考虑怜悯值时，消耗25变5伤害返还20，50变25伤害返还25，75变50伤害返还20，100变60伤害返还40，125直接虚弱返还50；每10％反伤5伤害)。',
+      },
+      {
+        name: '怜悯之心',
+        type: 'passive',
+        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=36',
+        skillLevels: [
+          {
+            level: 1,
+            description: '怜悯值低于80%时，增长速度翻倍。',
+            detailedDescription: '怜悯值低于80%时，增长速度翻倍。',
+          },
+          {
+            level: 2,
+            description: '怜悯值高于20%时，Hp恢复速度增加到5/s。',
+            detailedDescription: '怜悯值高于20%时，Hp恢复速度增加到5/s。',
+          },
+          {
+            level: 3,
+            description: '怜悯值高于40%时，Hp上限增加到115。',
+            detailedDescription: '怜悯值高于40%时，Hp上限增加到115。',
+          },
+        ],
+        description:
+          '天使泰菲拥有怜悯值充能条，自然回复情况下怜悯值30秒回满。怜悯值会自然增加，也能在队友受到伤害时增加。怜悯值可以增强主动和武器技能。',
+        detailedDescription:
+          '天使泰菲拥有怜悯值充能条，自然回复情况下怜悯值30秒回满。怜悯值会自然增加，也能在同一房间内有队友受到伤害时增加（每1伤害增加0.1%怜悯值）。怜悯值可以增强主动和武器技能。',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '最适配主点翅膀的特技。',
+      },
+      {
+        name: '绝处逢生',
+        description: '增强自保，或用于破捕鼠夹。',
+      },
+      {
+        name: '应急治疗',
+        description: '配合减伤提高生存能力。',
+      },
+    ],
+    counters: [
+      {
+        id: '追风汤姆',
+        description: '很怕反伤。',
+        isMinor: false,
+      },
+      {
+        id: '米特',
+        description: '技能提供的减伤能大幅降低甚至免疫胡椒粉的伤害，还能反伤。',
+        isMinor: false,
+      },
+      {
+        id: '剑客汤姆',
+        description: '技能提供的减伤能大幅降低甚至免疫连斩的伤害。',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '托普斯',
+        description:
+          '托普斯的捕虫网能无视天菲的两个技能，即便是三级庇护都会被当成提款机(携带特技-我生气了时)。',
+        isMinor: false,
+      },
+      {
+        id: '图多盖洛',
+        description: '天菲既被香水死克，又被猛攻指甲油克制。',
+        isMinor: true,
+      },
+      {
+        id: '塔拉',
+        description:
+          '塔拉的超大视野逼迫天菲救人拦截方面提前开技能，蓄势重击克制翅膀流，拍子克制庇护流。',
+        isMinor: true,
+      },
+      {
+        id: '库博',
+        description: '库博伤害极高，90伤害使得击晕接道具秒天菲，蓄势140天妃三级翅膀直接死。',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '雪梨',
+        description: '雪梨和天使泰菲的技能搭配能大幅提高生存能力。',
+        isMinor: false,
+      },
+      {
+        id: '米雪儿',
+        description: '米雪儿和天使泰菲的技能搭配能大幅提高生存能力。',
+        isMinor: true,
+      },
+      {
+        id: '魔术师',
+        description: '天使泰菲后期强力。魔术师二武器能提供大量经验，帮助到达后期。',
+        isMinor: false,
+      },
+      {
+        id: '佩克斯',
+        description: '天使泰菲后期强力。佩克斯能提供大量经验，帮助到达后期。',
+        isMinor: true,
+      },
+      {
+        id: '侦探杰瑞',
+        description: '侦探杰瑞的推奶酪和破局能力很强，推奶酪提供的经验能帮助天使泰菲到达后期。',
+        isMinor: true,
+      },
+    ],
+    aliases: ['天菲', '天妃'],
   },
 
   /* ----------------------------------- 魔术师 ----------------------------------- */
@@ -5013,7 +5311,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '莱恩扔出[蓝图](再次使用技能可可主动关闭)。蓝图内的火箭燃烧速度减半、隐身的猫咪会显形；在蓝图内受到伤害的猫咪会短暂变为线条猫，并使手中老鼠掉落。线条猫只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。',
         detailedDescription:
-          '莱恩扔出[蓝图](大小1000×666，可主动打开和关闭蓝图，前摇0.6s，主动打开蓝图硬控0.5s)，碰到平台或者墙体时打开，持续30s。蓝图内的火箭燃烧速度减半、隐身的猫咪会显形；在蓝图内受到伤害的猫咪会短暂变为线条猫，[持续8s](内置CD20s)，并使手中老鼠掉落。线条猫只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。同一时间只可存在一个蓝图；蓝图收起后才会进入CD。\n合成配方：\n▲+●={航海士杰瑞}1级炸药桶\n▲+■={雪梨}1级花洒\n●+■={泰菲}1级地雷\n●+●={拿坡里}1级饼\n▲+▲={罗宾汉泰菲}2级藤蔓\n■+■={侦探杰瑞}1级烟雾弹',
+          '莱恩扔出[蓝图](大小1000×666，可主动打开和关闭蓝图，前摇0.6s，主动打开蓝图硬控0.5s)，碰到平台或者墙体时打开，持续30s。蓝图内的火箭燃烧速度减半、隐身的猫咪会显形；在蓝图内受到伤害的猫咪会短暂变为线条猫，[持续8s](内置CD20s)，并使手中老鼠掉落。线条猫只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。同一时间只可存在一个蓝图；蓝图收起后才会进入CD。\n合成配方：\n▲+●={航海士杰瑞}1级炸药桶\n▲+■={雪梨}1级花洒\n●+■={泰菲}1级地雷\n●+●={拿坡里鼠}1级饼\n▲+▲={罗宾汉泰菲}2级藤蔓\n■+■={侦探杰瑞}1级烟雾弹',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableAftercast: '不可取消后摇',
