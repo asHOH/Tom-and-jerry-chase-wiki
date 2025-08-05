@@ -14,6 +14,15 @@ import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data'; // Import characters data
 import { useDarkMode } from '@/context/DarkModeContext';
 
+// Local types for group checking
+type KnowledgeCardGroup = { cards: string[]; description?: string };
+type KnowledgeCardGroupSet = {
+  groups: (KnowledgeCardGroup | KnowledgeCardGroupSet)[];
+  id?: string;
+  detailedDescription?: string;
+  defaultFolded?: boolean;
+};
+
 export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps) {
   const { isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
@@ -25,6 +34,24 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   const costColors = getCardCostColors(card.cost, true, isDarkMode);
 
   const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
+
+  // Find characters that use this knowledge card
+  // Helper to check if a group or group set contains the card
+  function groupContainsCard(group: KnowledgeCardGroup | KnowledgeCardGroupSet): boolean {
+    if ('cards' in group && Array.isArray(group.cards)) {
+      return group.cards.includes(`${card.rank}-${card.id}`);
+    }
+    if ('groups' in group && Array.isArray(group.groups)) {
+      return group.groups.some(groupContainsCard);
+    }
+    return false;
+  }
+
+  const usedCharacters = Object.values(characters).filter(
+    (character) =>
+      character.factionId === card.factionId &&
+      character.knowledgeCardGroups?.some(groupContainsCard)
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.xl }}>
@@ -178,6 +205,54 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                 ))}
               </div>
             </div>
+            {usedCharacters.length > 0 && (
+              <>
+                <div
+                  className='flex items-center'
+                  style={{
+                    marginTop: designTokens.spacing.lg,
+                    marginBottom: designTokens.spacing.lg,
+                    paddingLeft: designTokens.spacing.sm,
+                    paddingRight: designTokens.spacing.sm,
+                  }}
+                >
+                  <h2
+                    className='text-2xl font-bold dark:text-white'
+                    style={{
+                      paddingTop: designTokens.spacing.sm,
+                      paddingBottom: designTokens.spacing.sm,
+                    }}
+                  >
+                    使用该知识卡的角色
+                  </h2>
+                </div>
+                <div className='rounded-xl bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
+                  <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+                    {usedCharacters.map((character) => (
+                      <li
+                        key={character.id ?? ''}
+                        className='flex items-center gap-4 p-3 rounded-lg transition-colors'
+                      >
+                        <a
+                          href={`/characters/${character.id}`}
+                          className='flex items-center gap-4 w-full'
+                          tabIndex={0}
+                        >
+                          <Image
+                            src={character.imageUrl!}
+                            alt={character.id!}
+                            className='w-10 h-10'
+                            width={40}
+                            height={40}
+                          />
+                          <span className='text-lg dark:text-white truncate'>{character.id}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

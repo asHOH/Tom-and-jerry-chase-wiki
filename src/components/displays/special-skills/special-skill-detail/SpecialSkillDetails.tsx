@@ -131,8 +131,9 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
           {usedCharacters.length > 0 && (
             <>
               <div
-                className='flex items-center mt-3'
+                className='flex items-center'
                 style={{
+                  marginTop: designTokens.spacing.lg,
                   marginBottom: designTokens.spacing.lg,
                   paddingLeft: designTokens.spacing.sm,
                   paddingRight: designTokens.spacing.sm,
@@ -163,13 +164,11 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
                         <Image
                           src={character.imageUrl!}
                           alt={character.id!}
-                          className='w-10 h-10 bg-white'
+                          className='w-10 h-10'
                           width={40}
                           height={40}
                         />
-                        <span className='font-bold text-lg dark:text-white truncate'>
-                          {character.id}
-                        </span>
+                        <span className='text-lg dark:text-white truncate'>{character.id}</span>
                       </Link>
                     </li>
                   ))}
