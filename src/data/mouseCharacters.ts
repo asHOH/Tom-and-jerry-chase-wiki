@@ -2410,7 +2410,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: ['药水键', '跳跃键', '道具键*', '其他技能键'],
         cancelableAftercast: '无后摇',
-        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5',
         skillLevels: [
           {
             level: 1,
@@ -2446,7 +2445,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         cancelableSkill: ['道具键', '跳跃键', '移动键', '其他技能键'],
         cancelableAftercast: '不可取消后摇',
         canHitInPipe: false,
-        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=104.4',
         skillLevels: [
           {
             level: 1,
@@ -2471,7 +2469,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '怜悯之心',
         type: 'passive',
-        videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=36',
         skillLevels: [
           {
             level: 1,
@@ -2785,7 +2782,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         cancelableSkill: '无前摇',
         canHitInPipe: true,
         cancelableAftercast: '无后摇',
-        videoUrl: '',
         skillLevels: [
           {
             level: 1,
@@ -2817,7 +2813,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '魔术戏法',
         type: 'passive',
-        videoUrl: 'https://www.bilibili.com/video/BV1Qd4y1W7fg/?t=69',
         skillLevels: [
           {
             level: 1,

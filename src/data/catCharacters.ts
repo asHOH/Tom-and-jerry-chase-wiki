@@ -3302,7 +3302,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   /* ----------------------------------- 恶魔汤姆 ----------------------------------- */
   恶魔汤姆: {
     description:
-      '恶魔汤姆驾驶着列车从深渊呼啸而来。他通体火红，脑袋上有一对略显狡黠的小触角，手持三叉戟的他一直鼓动着汤姆在老鼠面前找回场子。狡黠的恶魔汤姆身边还有一群忠诚的仆从，他们会不遗余力地完成主任的任何指令。',
+      '恶魔汤姆驾驶着列车从深渊呼啸而来。他通体火红，脑袋上有一对略显狡黠的小触角，手持三叉戟的他一直鼓动着汤姆在老鼠面前找回场子。狡黠的恶魔汤姆身边还有一群忠诚的仆从，他们会不遗余力地完成主人的任何指令。',
     maxHp: 200,
     hpRecovery: 1.5,
     moveSpeed: 760,
@@ -3372,7 +3372,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
         cooldownTiming: '释放后',
-        videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=127.35',
         skillLevels: [
           {
             level: 1,
@@ -3404,7 +3403,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键'],
         cancelableAftercast: '无后摇',
-        videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=16',
         skillLevels: [
           {
             level: 1,
@@ -3433,7 +3431,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '感同身受',
         type: 'passive',
-        videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=102.4',
         skillLevels: [
           {
             level: 1,
