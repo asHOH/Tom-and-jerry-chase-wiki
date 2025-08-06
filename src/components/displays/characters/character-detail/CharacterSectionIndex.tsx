@@ -45,7 +45,7 @@ export default function CharacterSectionIndex() {
       'Section:推荐加点',
       'Section:推荐知识卡组',
       'Section:技能描述',
-      `Section:${character.factionId == 'cat' ? '角色克制关系' : '角色关系'}`,
+      `Section:角色和克制关系`,
     ];
 
     // Add skill IDs
@@ -54,7 +54,7 @@ export default function CharacterSectionIndex() {
     });
 
     return ids;
-  }, [character.skills, character.factionId]);
+  }, [character.skills]);
 
   const activeSection = useScrollSpy(sectionIds, {
     threshold: 0.3,
@@ -132,10 +132,7 @@ export default function CharacterSectionIndex() {
         </li>
         <CharacterSectionIndexItem
           name={character.factionId == 'cat' ? '角色克制关系' : '角色关系'}
-          isActive={
-            activeSection ===
-            `Section:${character.factionId == 'cat' ? '角色克制关系' : '角色关系'}`
-          }
+          isActive={activeSection === `Section:角色和克制关系`}
         />
       </ul>
     </nav>
