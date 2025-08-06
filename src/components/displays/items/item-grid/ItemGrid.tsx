@@ -10,7 +10,14 @@ import { useState } from 'react';
 import type { Itemtypelist, Itemsourcelist, Item } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 
-const ITEM_TYPE_OPTIONS: Itemtypelist[] = ['投掷类', '手持类', '物件类', '食物类', '流程类'];
+const ITEM_TYPE_OPTIONS: Itemtypelist[] = [
+  '投掷类',
+  '手持类',
+  '物件类',
+  '食物类',
+  '流程类',
+  '其它',
+];
 const ITEM_SOURCE_OPTIONS: Itemsourcelist[] = ['常规道具', '地图道具', '技能道具'];
 
 export default function ItemClient() {
@@ -124,8 +131,8 @@ export default function ItemClient() {
                 },
                 {
                   key: 'none' as const,
-                  mobileLabel: '其它',
-                  label: '其它',
+                  mobileLabel: '通用',
+                  label: '通用',
                   color: 'bg-purple-500 text-white dark:bg-purple-500 dark:text-white',
                 },
               ].map((faction) => {
