@@ -63,11 +63,20 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     return undefined;
   };
 
+  // Polyfill for Array.fromAsync for compatibility with older browsers
+  async function arrayFromAsync<T>(iterable: AsyncIterable<T>): Promise<T[]> {
+    const arr: T[] = [];
+    for await (const item of iterable) {
+      arr.push(item);
+    }
+    return arr;
+  }
+
   const allSearchResults = await Promise.all([
-    Array.fromAsync(searchCharacters(findMatchContext, lowerCaseQuery, pinyinQuery)),
-    Array.fromAsync(searchCards(findMatchContext, lowerCaseQuery, pinyinQuery)),
-    Array.fromAsync(searchSpecialSkills(findMatchContext, lowerCaseQuery, pinyinQuery)),
-    Array.fromAsync(searchItems(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchCharacters(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchCards(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchSpecialSkills(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchItems(findMatchContext, lowerCaseQuery, pinyinQuery)),
   ]);
 
   // Limit results per type and sort by priority
