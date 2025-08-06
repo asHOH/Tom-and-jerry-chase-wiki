@@ -1695,6 +1695,234 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 恶魔杰瑞 ----------------------------------- */
+  恶魔杰瑞: {
+    description: '他是来自神秘之地的恶魔杰瑞，拥有不凡的力量。',
+    maxHp: 99,
+    attackBoost: 5,
+    hpRecovery: 5,
+    moveSpeed: 640,
+    jumpHeight: 400,
+    cheesePushSpeed: 3,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '后期',
+        isMinor: false,
+        description: '地狱裂隙的护盾和三级被动使恶魔杰瑞在后期拥有较强存活能力。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '一级被动增加推奶酪速度，但整体推速并不突出。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '救援',
+        isMinor: true,
+        description:
+          '地狱裂隙提供的护盾，加速和传送有效提高了恶魔杰瑞救人成功率，后期可作为替补救人位。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description: '恶魔之门可提供多种增益效果，并且可以强制传送敌方以及帮助我方队友逃生。',
+        additionalDescription: '辅助效果在车队中效果明显，单排效果较小。',
+        weapon: 1,
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '地狱裂隙流',
+        pattern: '011010222',
+        weaponType: 'weapon1',
+        description: '传送被动流，若墙缝期7级则点三叉戟。',
+      },
+      {
+        id: '三叉戟流',
+        pattern: '022010112',
+        weaponType: 'weapon1',
+        description: '地狱门被动流，以流放门玩法为主，对传送点位记忆和操作要求较高。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-救救我', 'C-不屈'],
+        description: '常规卡组，可用于大部分情况。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'B-夹不住我', 'C-救救我', 'C-不屈'],
+        description: '防守型猫以及没满20点时可用。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'B-幸运', 'C-救救我'],
+        description: '幸运流。',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'S-缴械', 'C-救救我'],
+        description: '针对米特图多。',
+      },
+    ],
+    skills: [
+      {
+        name: '地狱裂隙',
+        type: 'active',
+        description:
+          '标记一个地狱裂隙，同时技能进入12秒读条，期间再次使用技能标记一处新的地狱裂隙并传送回上一个地狱裂隙，传送后移速短暂提升。',
+        detailedDescription:
+          '在前摇0.9秒后标记一个地狱裂隙，同时技能进入12秒读条，期间再次使用技能[在1.45s前摇后](该前摇不可被跳跃打断)标记一处新的地狱裂隙并传送回上一个地狱裂隙，传送后移速提高18％，持续3s。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: ['道具键*', '跳跃键'],
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description: 'CD减少5秒，成功传送后获得一层护盾。',
+            cooldown: 10,
+            detailedDescription: 'CD减少5秒，期间获得一层护盾，护盾和移速持续时间增加至4s。',
+          },
+          {
+            level: 3,
+            description: '技能持续时间延长，成功传送后获得两层护盾。',
+            cooldown: 10,
+            detailedDescription:
+              '技能持续时间延长至14s，改为获得两层护盾，护盾和移速持续时间增加至5s。',
+          },
+        ],
+        cooldownTiming: '释放后',
+        cueRange: '全图可见',
+      },
+      {
+        name: '三叉戟',
+        aliases: ['传送门', '流放门'],
+        type: 'weapon1',
+        description:
+          '召唤一个[传送门](游戏内称呼：恶魔之门)，同时技能进入读条，期间再次使用召唤另一个传送门。友方可与传送门交互，被传送并获得一种随机强化效果，效果持续时间随两传送门距离增大（有下限和上限）；敌方碰到传送门后会被强制传送（短时间内不会重复触发）；[处于被投掷状态的道具](被投掷且速度未降为0的道具)碰到传送门也会被传送。[进行传送](包括投掷物传送，友方主动传送，敌方强制传送)会使传送门的持续时间减少。',
+        detailedDescription:
+          '在前摇2.2秒后召唤一个[传送门](游戏内称呼：恶魔之门)，召唤后摇0.2秒，成功召唤时技能进入读条，期间再次使用召唤另一个传送门。友方可与传送门交互，在前摇0.9秒后被传送并获得一种随机强化效果，效果持续时间随两传送门距离增大（有下限和上限）；敌方碰到传送门后会被强制传送（10秒内不会重复触发）；[处于被投掷状态的道具](被投掷且速度未降为0的道具)碰到传送门也会被传送。[进行传送](包括投掷物传送，友方主动传送，敌方强制传送)会使传送门的持续时间减少3秒（[自身首次和第二次传送例外](恶魔杰瑞与他的队友利用召唤的第一个传送门传送不减少持续时间，仅在使用第二个门传送时会减少持续时间)）。\n使用传送门的友方[随机获得以下8种增益中的一种](若此时已有增益则不再获得新增益，但如果随机到相同增益则重置持续时间)：\n1：主动技能CD减少70%；\n2：武器技能CD减少70%；\n3：推奶酪速度提高100%；\n4：攻击增伤提升50；\n5：获得一层护盾；\n6：获得远视；\n7：获得隐身；\n8：Hp恢复增加5/s，移速提升20%，跳跃高度提升50%。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: '无后摇',
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '技能读条时间为9秒，传送门持续时间为18秒。',
+            detailedDescription:
+              '技能读条时间为9秒，传送门持续时间为18秒。友方穿过传送门获得的强化效果最低持续时间为15秒，最高为45秒。',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '技能读条时间变为12秒，传送门持续时间增加，敌方传送后受到额外伤害。',
+            detailedDescription:
+              '技能读条时间变为12秒，传送门持续时间增加，敌方传送后[受到60伤害](该伤害无伤害来源，因此不受攻击增伤影响)。',
+            cooldown: 25,
+          },
+          {
+            level: 3,
+            description: '友方穿过传送门获得的强化效果最低持续时间提升。',
+            cooldown: 25,
+            detailedDescription: '友方穿过传送门获得的强化效果最低持续时间提升至25秒。',
+          },
+        ],
+        cooldownTiming: '释放后',
+        cueRange: '全图可见',
+      },
+      {
+        name: '捣蛋鬼',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '靠近队友时，自身增加移速，跳跃高度和推奶酪速度。',
+            detailedDescription:
+              '半径750范围内出现队友时，自身移速提高20％，跳跃高度提高50％，推奶酪速度提高60％。',
+          },
+          {
+            level: 2,
+            description: '靠近敌方时，对方降低移速和跳跃高度。',
+            detailedDescription: '周围半径700内的敌方移速降低15%，跳跃高度降低15%。',
+          },
+          {
+            level: 3,
+            description:
+              '受到来自敌方的伤害后，免疫[下次受到](包括任意来源的效果，触发一次后消失)的大部分增益、减益效果。',
+            detailedDescription:
+              '受到来自敌方的伤害后，免疫[下次受到](包括任意来源的效果，触发一次后消失)的攻击和[大部分增益、减益效果/状态](无法免疫受伤状态，同时以下状态不会被免疫：食物和饮料增益、知识卡-无畏/逃之夭夭/逃窜效果)。',
+          },
+        ],
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝处逢生',
+        description: '可回血可解除虚弱，适配大多数情况。',
+      },
+      {
+        name: '应急治疗',
+        description: '应对高机动性猫时使用',
+      },
+    ],
+    aliases: ['恶杰'],
+    counteredBy: [
+      {
+        id: '莱特宁',
+        description: '恶魔杰瑞两个技能均有较长前摇，被莱特宁三级传送克制。',
+        isMinor: false,
+      },
+      {
+        id: '侍卫汤姆',
+        description: '侍卫汤姆的警戒可消除恶魔杰瑞提供的增益效果。',
+        isMinor: false,
+      },
+      {
+        id: '托普斯',
+        description: '一级被动和分身加击晕可打断恶魔杰瑞的技能释放，三级被动可消除鼠方部分增益。',
+        isMinor: true,
+      },
+    ],
+    collaborators: [
+      {
+        id: '天使杰瑞',
+        description:
+          '天使杰瑞和恶魔杰瑞都属于后期角色，恶魔杰瑞被复活后的存活能力较强，恶魔为天使提供增益，天使为恶魔提供复活和雷云。',
+        isMinor: false,
+      },
+    ],
+    counters: [
+      {
+        id: '恶魔汤姆',
+        description: '恶魔杰瑞武器技能可以将恶魔汤姆传送走，克制其死守。',
+        isMinor: false,
+      },
+      {
+        id: '图茨',
+        description: '恶魔杰瑞三级被动有概率免疫喵喵叫。',
+        isMinor: true,
+      },
+      {
+        id: '苏蕊',
+        description: '后期恶魔杰瑞可刷盾免疫苏蕊攻击，但较长前摇可能会被苏蕊反制。',
+        isMinor: true,
+      },
+      {
+        id: '图多盖洛',
+        description: '图多盖洛指甲油被后期恶魔杰瑞地狱裂隙克制。',
+        isMinor: true,
+      },
+    ],
+  },
   /* ----------------------------------- 恶魔泰菲 ----------------------------------- */
   恶魔泰菲: {
     aliases: ['恶菲'],
