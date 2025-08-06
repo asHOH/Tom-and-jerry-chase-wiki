@@ -1086,7 +1086,19 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '剑客泰菲',
         description:
-          '剑客泰菲的头盔可以抵挡牛仔汤姆的攻势，长枪的禁用技能可以大幅削弱牛仔汤姆的攻击力',
+          '剑客泰菲的头盔可以抵挡牛仔汤姆的攻势，长枪的禁用技能可以大幅削弱牛仔汤姆的攻击力。',
+        isMinor: false,
+      },
+      {
+        id: '恶魔泰菲',
+        description:
+          '恶魔泰菲小淘气召唤的蓝恶魔能禁用技能，绿恶魔配合Lv.3被动的极高攻击增伤能迅速击倒牛汤，被动提供的恢复与高移速还能化解鞭子或仙人掌弹弓的消耗。',
+        isMinor: false,
+      },
+      {
+        id: '魔术师',
+        description:
+          '魔术师的主动技能获取的红牌可对牛汤造成干扰，在红牌命中后牛汤将无法使用技能，且正在释放前摇中的技能释放将会中断。兔子大表哥能挡住仙人掌弹弓，升至三级的免疫受伤效果还能克制牛汤的Lv.3被动。',
         isMinor: false,
       },
       {
@@ -1097,7 +1109,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '剑客杰瑞',
-        description: '（仅限二武）剑客杰瑞的格挡使斗牛立即消失（梗：我不吃牛肉）',
+        description: '剑客杰瑞的格挡使斗牛立即消失（我不吃牛肉！）。',
         isMinor: false,
       },
       {

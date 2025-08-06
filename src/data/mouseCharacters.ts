@@ -2115,7 +2115,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         id: '牛仔汤姆',
-        description: '恶菲机动性高，并且能回血和远程消耗。',
+        description:
+          '恶魔泰菲小淘气召唤的蓝恶魔能禁用技能，绿恶魔配合Lv.3被动的极高攻击增伤能迅速击倒牛汤，被动提供的恢复与高移速还能化解鞭子或仙人掌弹弓的消耗。',
         isMinor: false,
       },
     ],
@@ -2551,12 +2552,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     wallCrackDamageBoost: 0.5,
     mousePositioningTags: [
       {
-        tagName: '奶酪',
-        isMinor: true,
-        description: '作为队伍的副推。',
-        additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。',
-      },
-      {
         tagName: '辅助',
         isMinor: true,
         description: '可以用庇护保人。',
@@ -2564,15 +2559,21 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         tagName: '救援',
-        isMinor: false,
+        isMinor: true,
         description: '三级翅膀霸体和三级庇护免死后期救人十分强势。',
-        additionalDescription: '新增标签介绍',
+        additionalDescription: '',
       },
       {
         tagName: '破局',
         isMinor: false,
         description: '庇护能保护队友强推最后一块奶酪。',
-        additionalDescription: '新增标签介绍',
+        additionalDescription: '',
+      },
+      {
+        tagName: '后期',
+        isMinor: false,
+        description: '主动和武器技能的三级效果极其强大，后期生存和支援能力十分突出。',
+        additionalDescription: '',
       },
     ],
     skillAllocations: [
@@ -3068,20 +3069,26 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     counters: [
       {
+        id: '牛仔汤姆',
+        description:
+          '魔术师的主动技能获取的红牌可对牛汤造成干扰，在红牌命中后牛汤将无法使用技能，且正在释放前摇中的技能释放将会中断。兔子大表哥能挡住仙人掌弹弓，升至三级的免疫受伤效果还能克制牛汤的Lv.3被动。',
+        isMinor: false,
+      },
+      {
         id: '侍卫汤姆',
         description:
-          '兔子们的血量较高，能逼出侍卫汤姆的蓄势一击或蓄力重击。魔术师还能利用红牌封禁侍卫的技能，令其无法开炮',
+          '兔子们的血量较高，能逼出侍卫汤姆的蓄势一击或蓄力重击。魔术师还能利用红牌封禁侍卫的技能，令其无法开炮。',
         isMinor: true,
       },
       {
         id: '塔拉',
-        description: '兔子们的血量较高，能逼出塔拉的蓄势一击或蓄力重击',
+        description: '兔子们的血量较高，能逼出塔拉的蓄势一击或蓄力重击。',
         isMinor: true,
       },
       {
         id: '追风汤姆',
         description:
-          '追风汤姆伤害低，难以处理兔子。兔子大表哥还会在追风试图利用技能将魔术师绑上火箭时瞬移出现，挡下当次技能，从而救下魔术师',
+          '追风汤姆伤害低，难以处理兔子。兔子大表哥还会在追风试图利用技能将魔术师绑上火箭时瞬移出现，挡下当次技能，从而救下魔术师。',
         isMinor: true,
       },
     ],
@@ -3089,22 +3096,22 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '航海士杰瑞',
         description:
-          '魔术师的卡牌和航海士杰瑞的金币可以相互弥补控制真空期，提高干扰能力。魔术师在干扰的同时还能推奶酪',
+          '魔术师的卡牌和航海士杰瑞的金币可以相互弥补控制真空期，提高干扰能力。魔术师在干扰的同时还能推奶酪。',
         isMinor: false,
       },
     ],
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '泛用性很高，提高机动性和自保能力',
+        description: '泛用性很高，提高机动性和自保能力。',
       },
       {
         name: '绝处逢生',
-        description: '泛用性很高，可用于回血、倒地自愈或清理捕鼠夹',
+        description: '泛用性很高，可用于回血、倒地自愈或清理捕鼠夹。',
       },
       {
         name: '干扰投掷',
-        description: '配合魔术卡牌提高干扰能力',
+        description: '配合魔术卡牌提高干扰能力。',
       },
     ],
   },
@@ -4122,7 +4129,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '攥起拳头。再次使用技能将向按键拖动的方向挥出拳头，并在满怒时提升效果。\n按键向上-升龙拳：向上打飞敌方，同时熄灭火箭；满怒时额外打飞火箭。\n按键向前/不拖动-游龙拳：向前打飞敌方，同时熄灭火箭；满怒时增加击退距离并可打入一定进度的奶酪。\n按键向下-地龙拳：原地打晕敌方，并施加减速；满怒时增加眩晕时间、可能使敌方掉下其所在的平台。',
         detailedDescription:
-          '前摇1.4s，之后的30秒内，再次使用技能将向按键拖动的方向挥出拳头。挥出拳头后立刻进入CD。成功挥出拳头有0.15s前摇，对前方[范围290](三种拳头都一样)的猫咪造成50点伤害，挥拳后有1s后摇。满怒时，使用技能改为对拳头充气，充气需1.4s，之后可在20s内至多挥出3次拳头，前后摇、伤害不变，但期间[无法使用道具](但可通过商店买道具在手上取消后摇)，每次挥拳有3秒CD。\n按键向上-升龙拳：造成[1s](满怒时为0.9s)眩晕，并击飞1.1s，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时额外向上击飞火箭2.5s。\n按键向前/不拖动-游龙拳：造成1s眩晕，并击退500距离，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时眩晕时间提高至1.5s，击退距离提高至1500，且敌方在击退过程中会撞碎[易碎道具](不包括冰块；包括果子)，撞碎时受到2.8s眩晕和[50伤害](受马索尔增伤影响；不会受到道具本身的伤害，且与道具本身无关；眩晕时间受到连击保护且与道具本身无关)，还可将洞中的奶酪打入[12.5%](不受其他推速加成影响)。\n按键向下-地龙拳：造成0.9s眩晕，眩晕结束后敌方受到17.5%的减速，持续5s；满怒时眩晕时间提高至1.4s，且若目标站在平台上，可能向下掉落。',
+          '前摇1.4s，之后的30秒内，再次使用技能将向按键拖动的方向挥出拳头。挥出拳头后立刻进入CD。成功挥出拳头有0.15s前摇，对前方[范围290](三种拳头都一样)的猫咪造成50点伤害，挥拳后有1s后摇。满怒时，使用技能改为对拳头充气，充气需1.4s，之后可在20s内至多挥出3次拳头，前后摇、伤害不变，但期间[无法使用道具](但可通过商店买道具在手上取消后摇)，每次挥拳有3秒CD。\n按键向上-升龙拳：造成[1s](满怒时为0.9s)眩晕，并击飞1.1s，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时额外向上击飞火箭2.5s。\n按键向前/不拖动-游龙拳：造成1s眩晕，并击退500距离，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时眩晕时间提高至1.5s，击退距离提高至1500，且敌方在击退过程中会撞碎[易碎道具](包括：玻璃杯/碗/盘子/圆盘子/灰色花瓶/蓝白花瓶/香水瓶/胡椒瓶/番茄/果盘-果子/牛仔杰瑞-仙人掌，不包括冰块)，撞碎时受到2.8s眩晕和[50伤害](受马索尔增伤影响；不会受到道具本身的伤害，且与道具本身无关；眩晕时间受到连击保护且与道具本身无关)，还可将洞中的奶酪打入[12.5%](不受其他推速加成影响)。\n按键向下-地龙拳：造成0.9s眩晕，眩晕结束后敌方受到17.5%的减速，持续5s；满怒时眩晕时间提高至1.4s，且若目标站在平台上，可能向下掉落。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -5393,9 +5400,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         aliases: ['跳舞'],
         type: 'active',
         description:
-          '跳舞并获得霸体，持续20秒，期间[给予附近老鼠推速加成、增加附近猫咪爪刀CD](跳舞10秒后效果增强)、并使隐身的猫咪显形。每次受到伤害，持续时间减少6秒。',
+          '跳舞并获得霸体，持续20秒，舞步效果在跳舞10秒后增强。期间给予附近老鼠推速加成、增加附近猫咪爪刀CD，[并使隐身的猫咪显形](若猫咪持有护盾等状态则不会现形)。每次受到伤害使跳舞的持续时间减少6秒。再次点击技能键可以提前退出跳舞。',
         detailedDescription:
-          '跳舞并获得霸体，分为两段，每段10秒。第一段给予附近老鼠50%推速加成，附近猫咪爪刀CD增加20%；第二段改为100%推速加成、爪刀CD增加40%。跳舞可使附近隐身的猫咪显形。每次受到伤害，持续时间减少6秒。',
+          '跳舞并获得霸体，持续20秒，分为两段，每段10秒，第二段的效果更强。第一段给予附近老鼠50%推速加成，附近猫咪爪刀CD增加20%；第二段改为100%推速加成、爪刀CD增加40%，[并使隐身的猫咪显形](若猫咪持有护盾等状态则不会现形)。每次受到伤害使跳舞的持续时间减少6秒。再次点击技能键可以提前退出跳舞。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -5408,7 +5415,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '跳舞期间免疫虚弱。',
+            description:
+              '跳舞期间免疫虚弱和[部分异常状态](新增免疫香水、胡椒粉、番茄与冰面滑行效果，还能免疫受伤状态、图茨-喵喵叫、图多盖洛-魅惑之吻)。',
             cooldown: 35,
           },
           {
