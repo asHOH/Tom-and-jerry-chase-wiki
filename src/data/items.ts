@@ -16,7 +16,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   /* ----------------------------------- 投掷类常规道具 ----------------------------------- */
   盘子: Object.assign(
     {
-      aliases: ['圆盘子,'],
+      aliases: ['圆盘子'],
       walldamage: 5,
       store: true,
       price: 500,
