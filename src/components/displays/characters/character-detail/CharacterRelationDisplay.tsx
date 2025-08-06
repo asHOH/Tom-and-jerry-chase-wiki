@@ -714,9 +714,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                 return (
                   <div
                     key={cardName}
-                    className='flex flex-row items-center gap-3 p-2 rounded-lg bg-purple-50 dark:bg-purple-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800/40 focus:outline-none focus:ring-2 focus:ring-purple-400 active:scale-95'
-                    role='button'
-                    tabIndex={0}
+                    className={clsx(
+                      'flex flex-row items-center gap-3 p-2 rounded-lg bg-purple-50 dark:bg-purple-900/30',
+                      !isEditMode &&
+                        'cursor-pointer transition-shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800/40 focus:outline-none focus:ring-2 focus:ring-purple-400 active:scale-95'
+                    )}
+                    role={!isEditMode ? 'button' : undefined}
+                    tabIndex={!isEditMode ? 0 : undefined}
                     aria-label={`跳转到知识卡 ${cardName}`}
                     onClick={() => {
                       if (!isEditMode) {
@@ -729,14 +733,14 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                       }
                     }}
                   >
-                    <div className='w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center border border-purple-300 dark:border-purple-700'>
+                    <div className='w-10 h-10 flex items-center justify-center'>
                       {cardObj && cardObj.imageUrl ? (
                         <Image
                           src={cardObj.imageUrl}
                           alt={cardName}
                           width={32}
                           height={32}
-                          className='w-8 h-8 rounded-full object-cover'
+                          className='w-8 h-8'
                         />
                       ) : (
                         <span className='w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center text-purple-600 text-xs'>
@@ -837,9 +841,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                 return (
                   <div
                     key={skillName}
-                    className='flex flex-row items-center gap-3 p-2 rounded-lg bg-pink-50 dark:bg-pink-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-pink-100 dark:hover:bg-pink-800/40 focus:outline-none focus:ring-2 focus:ring-pink-400 active:scale-95'
-                    role='button'
-                    tabIndex={0}
+                    className={clsx(
+                      'flex flex-row items-center gap-3 p-2 rounded-lg bg-pink-50 dark:bg-pink-900/30',
+                      !isEditMode &&
+                        'cursor-pointer transition-shadow hover:shadow-lg hover:bg-pink-100 dark:hover:bg-pink-800/40 focus:outline-none focus:ring-2 focus:ring-pink-400 active:scale-95'
+                    )}
+                    role={!isEditMode ? 'button' : undefined}
+                    tabIndex={!isEditMode ? 0 : undefined}
                     aria-label={`跳转到特技 ${skillName}`}
                     onClick={() => {
                       if (!isEditMode) {
