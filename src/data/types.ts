@@ -154,16 +154,16 @@ export type CharacterDefinition = {
   counters?: CharacterRelationItem[];
   counteredBy?: CharacterRelationItem[];
   collaborators?: CharacterRelationItem[];
-  counteredByKnowledgeCards?: string[];
-  counteredBySpecialSkills?: string[];
+  counteredByKnowledgeCards?: CharacterRelationItem[];
+  counteredBySpecialSkills?: CharacterRelationItem[];
 };
 
 export type CharacterRelation = {
   counters: CharacterRelationItem[];
   counteredBy: CharacterRelationItem[];
   collaborators: CharacterRelationItem[];
-  counteredByKnowledgeCards: string[];
-  counteredBySpecialSkills: string[];
+  counteredByKnowledgeCards: CharacterRelationItem[];
+  counteredBySpecialSkills: CharacterRelationItem[];
 };
 
 export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDefinition>;

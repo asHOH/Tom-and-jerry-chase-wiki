@@ -692,7 +692,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                 selected={Array.from(localCharacter.counteredByKnowledgeCards ?? [])}
                 onSelect={(cardName) => {
                   const updated = Array.from(localCharacter.counteredByKnowledgeCards ?? []);
-                  updated.push(cardName);
+                  updated.push({
+                    id: cardName as string,
+                    description: '新增关系描述',
+                    isMinor: false,
+                  } as CharacterRelationItem);
                   setNestedProperty(
                     characters,
                     `${characterId}.counteredByKnowledgeCards`,
@@ -704,32 +708,33 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
             )}
           </div>
           <div className='grid grid-cols-1 gap-y-3 mt-2'>
-            {Array.isArray(localCharacter.counteredByKnowledgeCards) &&
-            localCharacter.counteredByKnowledgeCards.length ? (
-              localCharacter.counteredByKnowledgeCards.map((cardName) => {
-                const cardObj = cards[cardName];
+            {localCharacter.counteredByKnowledgeCards?.length ? (
+              localCharacter.counteredByKnowledgeCards.map((card, idx) => {
+                const cardObj = cards[card.id];
                 if (!cardObj) {
                   return null;
                 }
+                const isMinor = !!card.isMinor;
                 return (
                   <div
-                    key={cardName}
+                    key={card.id}
                     className={clsx(
                       'flex flex-row items-center gap-3 p-2 rounded-lg bg-purple-50 dark:bg-purple-900/30',
                       !isEditMode &&
-                        'cursor-pointer transition-shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800/40 focus:outline-none focus:ring-2 focus:ring-purple-400 active:scale-95'
+                        'cursor-pointer transition-shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800/40 focus:outline-none focus:ring-2 focus:ring-purple-400 active:scale-95',
+                      isMinor && 'opacity-60'
                     )}
                     role={!isEditMode ? 'button' : undefined}
                     tabIndex={!isEditMode ? 0 : undefined}
-                    aria-label={`跳转到知识卡 ${cardName}`}
+                    aria-label={`跳转到知识卡 ${card.id}`}
                     onClick={() => {
                       if (!isEditMode) {
-                        navigate(`/cards/${encodeURIComponent(cardName)}`);
+                        navigate(`/cards/${encodeURIComponent(card.id)}`);
                       }
                     }}
                     onKeyDown={(e) => {
                       if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
-                        navigate(`/cards/${encodeURIComponent(cardName)}`);
+                        navigate(`/cards/${encodeURIComponent(card.id)}`);
                       }
                     }}
                   >
@@ -737,7 +742,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                       {cardObj && cardObj.imageUrl ? (
                         <Image
                           src={cardObj.imageUrl}
-                          alt={cardName}
+                          alt={card.id}
                           width={32}
                           height={32}
                           className='w-8 h-8'
@@ -749,26 +754,76 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                       )}
                     </div>
                     <div className='flex flex-col flex-1'>
-                      <span className='text-xs text-gray-700 dark:text-gray-300'>{cardName}</span>
-                      {cardObj && cardObj.description && (
-                        <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
-                          {cardObj.description}
-                        </span>
+                      <div className='flex items-center gap-1'>
+                        <span className='text-xs text-gray-700 dark:text-gray-300'>{card.id}</span>
+                        {isEditMode ? (
+                          <button
+                            type='button'
+                            onClick={() => {
+                              const updated = [...(localCharacter.counteredByKnowledgeCards ?? [])];
+                              updated[idx] = {
+                                ...(updated[idx] as CharacterRelationItem),
+                                isMinor: !updated[idx]?.isMinor,
+                              };
+                              setNestedProperty(
+                                characters,
+                                `${characterId}.counteredByKnowledgeCards`,
+                                updated
+                              );
+                            }}
+                            className='text-[10px] px-1 py-0.5 bg-purple-200 dark:bg-purple-700 text-purple-800 dark:text-purple-200 rounded-full hover:bg-purple-300 dark:hover:bg-purple-600 cursor-pointer'
+                            aria-label={`切换${card.id}的知识卡关系为${isMinor ? '主要' : '次要'}`}
+                          >
+                            {isMinor ? '次要' : '主要'}
+                          </button>
+                        ) : (
+                          isMinor && (
+                            <span className='text-[10px] px-1 py-0.5 bg-purple-200 dark:bg-purple-700 text-purple-800 dark:text-purple-200 rounded-full'>
+                              次要
+                            </span>
+                          )
+                        )}
+                      </div>
+                      {isEditMode ? (
+                        <EditableField
+                          tag='span'
+                          path={`counteredByKnowledgeCards.${idx}.description`}
+                          initialValue={card.description || ''}
+                          className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+                          onSave={(newValue) => {
+                            const updated = [...(localCharacter.counteredByKnowledgeCards ?? [])];
+                            updated[idx] = {
+                              ...(updated[idx] as CharacterRelationItem),
+                              description: newValue,
+                            };
+                            setNestedProperty(
+                              characters,
+                              `${characterId}.counteredByKnowledgeCards`,
+                              updated
+                            );
+                          }}
+                        />
+                      ) : (
+                        card.description && (
+                          <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                            {card.description}
+                          </span>
+                        )
                       )}
                     </div>
                     {isEditMode && (
                       <button
                         type='button'
                         className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-                        aria-label={`移除知识卡 ${cardName}`}
+                        aria-label={`移除知识卡 ${card.id}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           if (!characters[characterId]!.counteredByKnowledgeCards) {
                             characters[characterId]!.counteredByKnowledgeCards = [];
                           }
-                          const updated = characters[characterId]!.counteredByKnowledgeCards.filter(
-                            (c) => c !== cardName
-                          );
+                          const updated = (
+                            characters[characterId]!.counteredByKnowledgeCards ?? []
+                          ).filter((_c: { id: string }, i: number) => i !== idx);
                           setNestedProperty(
                             characters,
                             `${characterId}.counteredByKnowledgeCards`,
@@ -822,44 +877,49 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
             {isEditMode && (
               <SpecialSkillSelector
                 selected={Array.from(localCharacter.counteredBySpecialSkills ?? [])}
-                factionId={factionId == 'cat' ? 'mouse' : 'cat'}
+                factionId={factionId}
                 onSelect={(skillName) => {
                   const updated = Array.from(localCharacter.counteredBySpecialSkills ?? []);
-                  updated.push(skillName);
+                  updated.push({
+                    id: skillName as string,
+                    description: '新增关系描述',
+                    isMinor: false,
+                  } as CharacterRelationItem);
                   setNestedProperty(characters, `${characterId}.counteredBySpecialSkills`, updated);
                 }}
               />
             )}
           </div>
           <div className='grid grid-cols-1 gap-y-3 mt-2'>
-            {Array.isArray(localCharacter.counteredBySpecialSkills) &&
-            localCharacter.counteredBySpecialSkills.length ? (
-              localCharacter.counteredBySpecialSkills.map((skillName) => {
+            {localCharacter.counteredBySpecialSkills?.length ? (
+              localCharacter.counteredBySpecialSkills.map((skill, idx) => {
                 // Try to find skill info from cat/mouse special skills
                 const oppositeFactionId = factionId == 'cat' ? 'mouse' : 'cat';
-                const skillObj = specialSkills[oppositeFactionId][skillName];
+                const skillObj = specialSkills[oppositeFactionId][skill.id];
+                const isMinor = !!skill.isMinor;
                 return (
                   <div
-                    key={skillName}
+                    key={skill.id}
                     className={clsx(
                       'flex flex-row items-center gap-3 p-2 rounded-lg bg-pink-50 dark:bg-pink-900/30',
                       !isEditMode &&
-                        'cursor-pointer transition-shadow hover:shadow-lg hover:bg-pink-100 dark:hover:bg-pink-800/40 focus:outline-none focus:ring-2 focus:ring-pink-400 active:scale-95'
+                        'cursor-pointer transition-shadow hover:shadow-lg hover:bg-pink-100 dark:hover:bg-pink-800/40 focus:outline-none focus:ring-2 focus:ring-pink-400 active:scale-95',
+                      isMinor && 'opacity-60'
                     )}
                     role={!isEditMode ? 'button' : undefined}
                     tabIndex={!isEditMode ? 0 : undefined}
-                    aria-label={`跳转到特技 ${skillName}`}
+                    aria-label={`跳转到特技 ${skill.id}`}
                     onClick={() => {
                       if (!isEditMode) {
                         navigate(
-                          `/special-skills/${oppositeFactionId}/${encodeURIComponent(skillName)}`
+                          `/special-skills/${oppositeFactionId}/${encodeURIComponent(skill.id)}`
                         );
                       }
                     }}
                     onKeyDown={(e) => {
                       if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
                         navigate(
-                          `/special-skills/${oppositeFactionId}/${encodeURIComponent(skillName)}`
+                          `/special-skills/${oppositeFactionId}/${encodeURIComponent(skill.id)}`
                         );
                       }
                     }}
@@ -868,7 +928,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                       {skillObj && skillObj.imageUrl ? (
                         <Image
                           src={skillObj.imageUrl}
-                          alt={skillName}
+                          alt={skill.id}
                           width={32}
                           height={32}
                           className='w-8 h-8 rounded-full object-cover'
@@ -880,26 +940,76 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                       )}
                     </div>
                     <div className='flex flex-col flex-1'>
-                      <span className='text-xs text-gray-700 dark:text-gray-300'>{skillName}</span>
-                      {skillObj && skillObj.description && (
-                        <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
-                          {skillObj.description}
-                        </span>
+                      <div className='flex items-center gap-1'>
+                        <span className='text-xs text-gray-700 dark:text-gray-300'>{skill.id}</span>
+                        {isEditMode ? (
+                          <button
+                            type='button'
+                            onClick={() => {
+                              const updated = [...(localCharacter.counteredBySpecialSkills ?? [])];
+                              updated[idx] = {
+                                ...(updated[idx] as CharacterRelationItem),
+                                isMinor: !updated[idx]?.isMinor,
+                              };
+                              setNestedProperty(
+                                characters,
+                                `${characterId}.counteredBySpecialSkills`,
+                                updated
+                              );
+                            }}
+                            className='text-[10px] px-1 py-0.5 bg-pink-200 dark:bg-pink-700 text-pink-800 dark:text-pink-200 rounded-full hover:bg-pink-300 dark:hover:bg-pink-600 cursor-pointer'
+                            aria-label={`切换${skill.id}的特技关系为${isMinor ? '主要' : '次要'}`}
+                          >
+                            {isMinor ? '次要' : '主要'}
+                          </button>
+                        ) : (
+                          isMinor && (
+                            <span className='text-[10px] px-1 py-0.5 bg-pink-200 dark:bg-pink-700 text-pink-800 dark:text-pink-200 rounded-full'>
+                              次要
+                            </span>
+                          )
+                        )}
+                      </div>
+                      {isEditMode ? (
+                        <EditableField
+                          tag='span'
+                          path={`counteredBySpecialSkills.${idx}.description`}
+                          initialValue={skill.description || ''}
+                          className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+                          onSave={(newValue) => {
+                            const updated = [...(localCharacter.counteredBySpecialSkills ?? [])];
+                            updated[idx] = {
+                              ...(updated[idx] as CharacterRelationItem),
+                              description: newValue,
+                            };
+                            setNestedProperty(
+                              characters,
+                              `${characterId}.counteredBySpecialSkills`,
+                              updated
+                            );
+                          }}
+                        />
+                      ) : (
+                        skill.description && (
+                          <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                            {skill.description}
+                          </span>
+                        )
                       )}
                     </div>
                     {isEditMode && (
                       <button
                         type='button'
                         className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-                        aria-label={`移除特技 ${skillName}`}
+                        aria-label={`移除特技 ${skill.id}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           if (!characters[characterId]!.counteredBySpecialSkills) {
                             characters[characterId]!.counteredBySpecialSkills = [];
                           }
-                          const updated = characters[characterId]!.counteredBySpecialSkills.filter(
-                            (s) => s !== skillName
-                          );
+                          const updated = (
+                            characters[characterId]!.counteredBySpecialSkills ?? []
+                          ).filter((_s: { id: string }, i: number) => i !== idx);
                           setNestedProperty(
                             characters,
                             `${characterId}.counteredBySpecialSkills`,

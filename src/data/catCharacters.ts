@@ -3284,8 +3284,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: true,
       },
     ],
-    counteredByKnowledgeCards: ['投手'],
-    counteredBySpecialSkills: ['干扰投掷'],
+    counteredByKnowledgeCards: [
+      {
+        id: '投手',
+        description: '投手的高额减速很容易使斯飞退出疾冲状态。',
+        isMinor: false,
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '干扰投掷',
+        description: '干扰投掷可以使斯飞退出疾冲状态。',
+        isMinor: false,
+      },
+    ],
     specialSkills: [
       {
         name: '绝地反击',

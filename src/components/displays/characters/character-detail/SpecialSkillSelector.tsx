@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import { FactionId, specialSkills } from '@/data';
 import Image from 'next/image';
+import { CharacterRelationItem } from '@/data/types';
 
 type Props = {
-  selected: string[];
+  selected: CharacterRelationItem[];
   factionId: FactionId;
   onSelect: (skillName: string) => void;
 };
@@ -16,7 +17,7 @@ const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect }
   const oppositeFaction: FactionId = factionId === 'cat' ? 'mouse' : 'cat';
 
   const availableSkills = Object.keys(specialSkills[oppositeFaction]).filter(
-    (name) => !selected.includes(name)
+    (name) => !selected.some((selection) => selection.id == name)
   );
 
   const handleSelect = (skillName: string) => {

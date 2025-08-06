@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import { cards } from '@/data';
 import Image from 'next/image';
+import { CharacterRelationItem } from '@/data/types';
 
 type Props = {
-  selected: string[];
+  selected: CharacterRelationItem[];
   onSelect: (cardName: string) => void;
   factionId: 'cat' | 'mouse';
 };
@@ -14,7 +15,8 @@ const KnowledgeCardSelector: React.FC<Props> = ({ selected, onSelect, factionId 
   const [isOpen, setIsOpen] = useState(false);
 
   const availableCards = Object.values(cards).filter(
-    ({ id, factionId: rawFactionId }) => !selected.includes(id) && rawFactionId === factionId
+    ({ id, factionId: rawFactionId }) =>
+      !selected.some((selection) => selection.id == id) && rawFactionId === factionId
   );
 
   const handleSelect = (cardName: string) => {
