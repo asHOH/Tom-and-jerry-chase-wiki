@@ -286,6 +286,8 @@ function getCharacterRelation(id: string): CharacterRelation {
   if (!char) {
     return {
       counters: [],
+      countersKnowledgeCards: [],
+      countersSpecialSkills: [],
       counteredBy: [],
       collaborators: [],
       counteredByKnowledgeCards: [],
@@ -345,6 +347,8 @@ function getCharacterRelation(id: string): CharacterRelation {
 
   return {
     counters: mergedCounters,
+    countersKnowledgeCards: char.countersKnowledgeCards ?? [],
+    countersSpecialSkills: char.countersSpecialSkills ?? [],
     counteredBy: mergedCounteredBy,
     collaborators: mergedCollaborators,
     counteredByKnowledgeCards: char.counteredByKnowledgeCards ?? [],
@@ -392,126 +396,465 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   <rect x='1.5' y='13.5' width='3' height='1' rx='0.5' fill='#2563eb' />
                 </svg>
               </span>
-              被{id}克制的角色
+              被{id}克制的角色/知识卡/特技
             </span>
             {isEditMode && (
-              <CharacterSelector
-                currentCharacterId={id}
-                factionId={factionId}
-                relationType='counters'
-                existingRelations={[...(localCharacter.counters || [])]}
-                onSelect={(characterId) => countersHook.handleAdd(characterId, '新增关系描述')}
-              />
+              <div className='flex gap-2'>
+                <CharacterSelector
+                  currentCharacterId={id}
+                  factionId={factionId}
+                  relationType='counters'
+                  existingRelations={[...(localCharacter.counters || [])]}
+                  onSelect={(characterId) => countersHook.handleAdd(characterId, '新增关系描述')}
+                />
+                <KnowledgeCardSelector
+                  selected={Array.from(localCharacter.countersKnowledgeCards ?? [])}
+                  onSelect={(cardName) => {
+                    const updated = Array.from(localCharacter.countersKnowledgeCards ?? []);
+                    updated.push({
+                      id: cardName as string,
+                      description: '新增关系描述',
+                      isMinor: false,
+                    } as CharacterRelationItem);
+                    setNestedProperty(characters, `${characterId}.countersKnowledgeCards`, updated);
+                  }}
+                  factionId={factionId == 'cat' ? 'mouse' : 'cat'}
+                />
+                <SpecialSkillSelector
+                  selected={Array.from(localCharacter.countersSpecialSkills ?? [])}
+                  factionId={factionId}
+                  onSelect={(skillName) => {
+                    const updated = Array.from(localCharacter.countersSpecialSkills ?? []);
+                    updated.push({
+                      id: skillName as string,
+                      description: '新增关系描述',
+                      isMinor: false,
+                    } as CharacterRelationItem);
+                    setNestedProperty(characters, `${characterId}.countersSpecialSkills`, updated);
+                  }}
+                />
+              </div>
             )}
           </div>
           <div className='grid grid-cols-1 gap-y-3 mt-2'>
-            {char.counters.length === 0 && !isEditMode ? (
+            {char.counters.length === 0 &&
+            (!localCharacter.countersKnowledgeCards ||
+              localCharacter.countersKnowledgeCards.length === 0) &&
+            (!localCharacter.countersSpecialSkills ||
+              localCharacter.countersSpecialSkills.length === 0) &&
+            !isEditMode ? (
               <span className='text-xs text-gray-400'>无</span>
             ) : (
-              char.counters.map((c) => {
-                // Find the original index in the direct relations for edit operations
-                const originalIndex = isEditMode
-                  ? (localCharacter.counters || []).findIndex((oc) => oc.id === c.id)
-                  : -1;
-                const isDirectRelation = originalIndex !== -1;
-
-                return (
-                  <div
-                    key={c.id}
-                    className={clsx(
-                      'flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30',
-                      !isEditMode &&
-                        'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95',
-                      c.isMinor && 'opacity-60'
-                    )}
-                    {...(!isEditMode && { role: 'button', tabIndex: 0 })}
-                    aria-label={!isEditMode ? `选择角色 ${c.id}` : `克制 ${c.id} 的关系`}
-                    onClick={() => {
-                      if (!isEditMode) {
-                        handleSelectCharacter(c.id);
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
-                        handleSelectCharacter(c.id);
-                      }
-                    }}
-                  >
-                    <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-300 dark:border-blue-700'>
-                      <Image
-                        src={getImageUrl(c.id)}
-                        alt={c.id}
-                        width={32}
-                        height={32}
-                        className='w-8 h-8 rounded-full object-cover'
-                      />
-                    </div>
-                    <div className='flex flex-col flex-1'>
-                      <div className='flex items-center gap-1'>
-                        <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
-                        {isEditMode && isDirectRelation ? (
+              [
+                ...char.counters.map((c) => ({
+                  ...c,
+                  _type: 'character',
+                })),
+                ...(localCharacter.countersKnowledgeCards ?? []).map((card, idx) => ({
+                  ...card,
+                  _type: 'knowledgeCard',
+                  _idx: idx,
+                })),
+                ...(localCharacter.countersSpecialSkills ?? []).map((skill, idx) => ({
+                  ...skill,
+                  _type: 'specialSkill',
+                  _idx: idx,
+                })),
+              ]
+                .sort((a, b) => (a.isMinor === b.isMinor ? 0 : a.isMinor ? 1 : -1))
+                .map((item) => {
+                  if (item._type === 'character') {
+                    // Character relation
+                    const c = item;
+                    const originalIndex = isEditMode
+                      ? (localCharacter.counters || []).findIndex((oc) => oc.id === c.id)
+                      : -1;
+                    const isDirectRelation = originalIndex !== -1;
+                    return (
+                      <div
+                        key={'character-' + c.id}
+                        className={clsx(
+                          'flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30',
+                          !isEditMode &&
+                            'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95',
+                          c.isMinor && 'opacity-60'
+                        )}
+                        {...(!isEditMode && { role: 'button', tabIndex: 0 })}
+                        aria-label={!isEditMode ? `选择角色 ${c.id}` : `克制 ${c.id} 的关系`}
+                        onClick={() => {
+                          if (!isEditMode) {
+                            handleSelectCharacter(c.id);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+                            handleSelectCharacter(c.id);
+                          }
+                        }}
+                      >
+                        <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-300 dark:border-blue-700'>
+                          <Image
+                            src={getImageUrl(c.id)}
+                            alt={c.id}
+                            width={32}
+                            height={32}
+                            className='w-8 h-8 rounded-full object-cover'
+                          />
+                        </div>
+                        <div className='flex flex-col flex-1'>
+                          <div className='flex items-center gap-1'>
+                            <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
+                            {isEditMode && isDirectRelation ? (
+                              <button
+                                type='button'
+                                onClick={() => countersHook.toggleIsMinor(originalIndex)}
+                                className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer'
+                                aria-label={`切换${c.id}的克制关系为${c.isMinor ? '主要' : '次要'}`}
+                              >
+                                {c.isMinor ? '次要' : '主要'}
+                              </button>
+                            ) : (
+                              !isEditMode &&
+                              c.isMinor && (
+                                <span className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full'>
+                                  次要
+                                </span>
+                              )
+                            )}
+                          </div>
+                          {isEditMode && isDirectRelation ? (
+                            <EditableField
+                              tag='span'
+                              path={`counters.${originalIndex}.description`}
+                              initialValue={c.description || ''}
+                              className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+                              onSave={(newValue) =>
+                                countersHook.handleUpdate(originalIndex, 'description', newValue)
+                              }
+                            />
+                          ) : (
+                            !isEditMode &&
+                            c.description && (
+                              <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                                {c.description}
+                              </span>
+                            )
+                          )}
+                        </div>
+                        {isEditMode && isDirectRelation && (
                           <button
                             type='button'
-                            onClick={() => countersHook.toggleIsMinor(originalIndex)}
-                            className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer'
-                            aria-label={`切换${c.id}的克制关系为${c.isMinor ? '主要' : '次要'}`}
+                            onClick={() => countersHook.handleRemove(originalIndex)}
+                            className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                            aria-label={`移除${c.id}的克制关系`}
                           >
-                            {c.isMinor ? '次要' : '主要'}
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              fill='none'
+                              viewBox='0 0 24 24'
+                              strokeWidth='2'
+                              stroke='currentColor'
+                              className='w-4 h-4'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                              />
+                            </svg>
                           </button>
-                        ) : (
-                          !isEditMode &&
-                          c.isMinor && (
-                            <span className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full'>
-                              次要
-                            </span>
-                          )
                         )}
                       </div>
-                      {isEditMode && isDirectRelation ? (
-                        <EditableField
-                          tag='span'
-                          path={`counters.${originalIndex}.description`}
-                          initialValue={c.description || ''}
-                          className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
-                          onSave={(newValue) =>
-                            countersHook.handleUpdate(originalIndex, 'description', newValue)
+                    );
+                  } else if (item._type === 'knowledgeCard') {
+                    // Knowledge card relation
+                    const card = item as typeof item & { _idx: number };
+                    const cardObj = cards[card.id];
+                    if (!cardObj) return null;
+                    const isMinor = !!card.isMinor;
+                    const idx = card._idx;
+                    return (
+                      <div
+                        key={'knowledgeCard-' + card.id}
+                        className={clsx(
+                          'flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30',
+                          !isEditMode &&
+                            'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95',
+                          isMinor && 'opacity-60'
+                        )}
+                        role={!isEditMode ? 'button' : undefined}
+                        tabIndex={!isEditMode ? 0 : undefined}
+                        aria-label={`跳转到知识卡 ${card.id}`}
+                        onClick={() => {
+                          if (!isEditMode) {
+                            navigate(`/cards/${encodeURIComponent(card.id)}`);
                           }
-                        />
-                      ) : (
-                        !isEditMode &&
-                        c.description && (
-                          <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
-                            {c.description}
-                          </span>
-                        )
-                      )}
-                    </div>
-                    {isEditMode && isDirectRelation && (
-                      <button
-                        type='button'
-                        onClick={() => countersHook.handleRemove(originalIndex)}
-                        className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-                        aria-label={`移除${c.id}的克制关系`}
+                        }}
+                        onKeyDown={(e) => {
+                          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+                            navigate(`/cards/${encodeURIComponent(card.id)}`);
+                          }
+                        }}
                       >
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          strokeWidth='2'
-                          stroke='currentColor'
-                          className='w-4 h-4'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                        <div className='w-10 h-10 flex items-center justify-center'>
+                          <Image
+                            src={cardObj.imageUrl}
+                            alt={card.id}
+                            width={32}
+                            height={32}
+                            className='w-8 h-8'
                           />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                );
-              })
+                        </div>
+                        <div className='flex flex-col flex-1'>
+                          <div className='flex items-center gap-1'>
+                            <span className='text-xs text-gray-700 dark:text-gray-300'>
+                              {card.id}
+                            </span>
+                            {isEditMode ? (
+                              <button
+                                type='button'
+                                onClick={() => {
+                                  const updated = [
+                                    ...(localCharacter.countersKnowledgeCards ?? []),
+                                  ];
+                                  updated[idx] = {
+                                    ...(updated[idx] as CharacterRelationItem),
+                                    isMinor: !updated[idx]?.isMinor,
+                                  };
+                                  setNestedProperty(
+                                    characters,
+                                    `${characterId}.countersKnowledgeCards`,
+                                    updated
+                                  );
+                                }}
+                                className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer'
+                                aria-label={`切换${card.id}的知识卡关系为${isMinor ? '主要' : '次要'}`}
+                              >
+                                {isMinor ? '次要' : '主要'}
+                              </button>
+                            ) : (
+                              isMinor && (
+                                <span className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full'>
+                                  次要
+                                </span>
+                              )
+                            )}
+                          </div>
+                          {isEditMode ? (
+                            <EditableField
+                              tag='span'
+                              path={`countersKnowledgeCards.${idx}.description`}
+                              initialValue={card.description || ''}
+                              className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+                              onSave={(newValue) => {
+                                const updated = [...(localCharacter.countersKnowledgeCards ?? [])];
+                                updated[idx] = {
+                                  ...(updated[idx] as CharacterRelationItem),
+                                  description: newValue,
+                                };
+                                setNestedProperty(
+                                  characters,
+                                  `${characterId}.countersKnowledgeCards`,
+                                  updated
+                                );
+                              }}
+                            />
+                          ) : (
+                            card.description && (
+                              <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                                {card.description}
+                              </span>
+                            )
+                          )}
+                        </div>
+                        {isEditMode && (
+                          <button
+                            type='button'
+                            className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                            aria-label={`移除知识卡 ${card.id}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!characters[characterId]!.countersKnowledgeCards) {
+                                characters[characterId]!.countersKnowledgeCards = [];
+                              }
+                              const updated = (
+                                characters[characterId]!.countersKnowledgeCards ?? []
+                              ).filter((_c: { id: string }, i: number) => i !== idx);
+                              setNestedProperty(
+                                characters,
+                                `${characterId}.countersKnowledgeCards`,
+                                updated
+                              );
+                            }}
+                          >
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              fill='none'
+                              viewBox='0 0 24 24'
+                              strokeWidth='2'
+                              stroke='currentColor'
+                              className='w-4 h-4'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                              />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  } else if (item._type === 'specialSkill') {
+                    // Special skill relation
+                    const skill = item as typeof item & { _idx: number };
+                    const oppositeFactionId = factionId == 'cat' ? 'mouse' : 'cat';
+                    const skillObj = specialSkills[oppositeFactionId][skill.id];
+                    const isMinor = !!skill.isMinor;
+                    const idx = skill._idx;
+                    return (
+                      <div
+                        key={'specialSkill-' + skill.id}
+                        className={clsx(
+                          'flex flex-row items-center gap-3 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30',
+                          !isEditMode &&
+                            'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95',
+                          isMinor && 'opacity-60'
+                        )}
+                        role={!isEditMode ? 'button' : undefined}
+                        tabIndex={!isEditMode ? 0 : undefined}
+                        aria-label={`跳转到特技 ${skill.id}`}
+                        onClick={() => {
+                          if (!isEditMode) {
+                            navigate(
+                              `/special-skills/${oppositeFactionId}/${encodeURIComponent(skill.id)}`
+                            );
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+                            navigate(
+                              `/special-skills/${oppositeFactionId}/${encodeURIComponent(skill.id)}`
+                            );
+                          }
+                        }}
+                      >
+                        <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-300 dark:border-blue-700'>
+                          {skillObj && skillObj.imageUrl ? (
+                            <Image
+                              src={skillObj.imageUrl}
+                              alt={skill.id}
+                              width={32}
+                              height={32}
+                              className='w-8 h-8 rounded-full object-cover'
+                            />
+                          ) : (
+                            <span className='w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+                              ?
+                            </span>
+                          )}
+                        </div>
+                        <div className='flex flex-col flex-1'>
+                          <div className='flex items-center gap-1'>
+                            <span className='text-xs text-gray-700 dark:text-gray-300'>
+                              {skill.id}
+                            </span>
+                            {isEditMode ? (
+                              <button
+                                type='button'
+                                onClick={() => {
+                                  const updated = [...(localCharacter.countersSpecialSkills ?? [])];
+                                  updated[idx] = {
+                                    ...(updated[idx] as CharacterRelationItem),
+                                    isMinor: !updated[idx]?.isMinor,
+                                  };
+                                  setNestedProperty(
+                                    characters,
+                                    `${characterId}.countersSpecialSkills`,
+                                    updated
+                                  );
+                                }}
+                                className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer'
+                                aria-label={`切换${skill.id}的特技关系为${isMinor ? '主要' : '次要'}`}
+                              >
+                                {isMinor ? '次要' : '主要'}
+                              </button>
+                            ) : (
+                              isMinor && (
+                                <span className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full'>
+                                  次要
+                                </span>
+                              )
+                            )}
+                          </div>
+                          {isEditMode ? (
+                            <EditableField
+                              tag='span'
+                              path={`countersSpecialSkills.${idx}.description`}
+                              initialValue={skill.description || ''}
+                              className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+                              onSave={(newValue) => {
+                                const updated = [...(localCharacter.countersSpecialSkills ?? [])];
+                                updated[idx] = {
+                                  ...(updated[idx] as CharacterRelationItem),
+                                  description: newValue,
+                                };
+                                setNestedProperty(
+                                  characters,
+                                  `${characterId}.countersSpecialSkills`,
+                                  updated
+                                );
+                              }}
+                            />
+                          ) : (
+                            skill.description && (
+                              <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                                {skill.description}
+                              </span>
+                            )
+                          )}
+                        </div>
+                        {isEditMode && (
+                          <button
+                            type='button'
+                            className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                            aria-label={`移除特技 ${skill.id}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!characters[characterId]!.countersSpecialSkills) {
+                                characters[characterId]!.countersSpecialSkills = [];
+                              }
+                              const updated = (
+                                characters[characterId]!.countersSpecialSkills ?? []
+                              ).filter((_s: { id: string }, i: number) => i !== idx);
+                              setNestedProperty(
+                                characters,
+                                `${characterId}.countersSpecialSkills`,
+                                updated
+                              );
+                            }}
+                          >
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              fill='none'
+                              viewBox='0 0 24 24'
+                              strokeWidth='2'
+                              stroke='currentColor'
+                              className='w-4 h-4'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                              />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
+                })
             )}
           </div>
         </div>
