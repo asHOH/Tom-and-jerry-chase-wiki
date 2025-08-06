@@ -214,7 +214,7 @@ export function KnowledgeCardGroup({
           )}
         >
           <EditableField
-            tag='p'
+            tag='div'
             path={`knowledgeCardGroups.${index}.description`}
             initialValue={description ?? ''}
             onSave={(newDescription) => handleDescriptionSave(newDescription, index)}

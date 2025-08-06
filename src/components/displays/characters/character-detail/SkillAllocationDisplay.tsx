@@ -174,13 +174,17 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       if (isDelayed)
         return (
           <span className='inline-block'>
-            <Tooltip content='留加点：加点瞬间有额外收益，需把握时机'>{iconElement}</Tooltip>
+            <Tooltip content='留加点：此技能加点需把握时机，因为加点瞬间有额外收益，或需要根据战局调整加点顺序'>
+              {iconElement}
+            </Tooltip>
           </span>
         );
       if (hasNegativeEffect)
         return (
           <span className='inline-block'>
-            <Tooltip content='负面效果：此技能升级会带来负面效果'>{iconElement}</Tooltip>
+            <Tooltip content='负面效果：此技能不建议升级，因为升级效果有好有坏或完全是负面效果'>
+              {iconElement}
+            </Tooltip>
           </span>
         );
       return iconElement;

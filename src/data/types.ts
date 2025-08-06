@@ -152,13 +152,25 @@ export type CharacterDefinition = {
 
   // character restraint information
   counters?: CharacterRelationItem[];
+  countersKnowledgeCards?: CharacterRelationItem[];
+  countersSpecialSkills?: CharacterRelationItem[];
+
   counteredBy?: CharacterRelationItem[];
+  counteredByKnowledgeCards?: CharacterRelationItem[];
+  counteredBySpecialSkills?: CharacterRelationItem[];
+
   collaborators?: CharacterRelationItem[];
 };
 
 export type CharacterRelation = {
   counters: CharacterRelationItem[];
+  countersKnowledgeCards: CharacterRelationItem[];
+  countersSpecialSkills: CharacterRelationItem[];
+
   counteredBy: CharacterRelationItem[];
+  counteredByKnowledgeCards: CharacterRelationItem[];
+  counteredBySpecialSkills: CharacterRelationItem[];
+
   collaborators: CharacterRelationItem[];
 };
 
@@ -204,12 +216,25 @@ export type SpecialSkill = SpecialSkillDefinition & {
   imageUrl: string;
 };
 
+export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '其它'; //list of items' types
+export type Itemsourcelist = '常规道具' | '地图道具' | '技能道具'; //list of items' source
+
 export type ItemDefinition = {
-  damage: number;
+  itemtype: Itemtypelist; //type of items
+  itemsource: Itemsourcelist; //source of items
+  damage?: number;
+  walldamage?: number; //damage to wall joint
   factionId?: FactionId;
   aliases?: string[]; // Alternative names for search
   description?: string; // Basic description (optional, especially for passive skills)
   detailedDescription?: string;
+  create?: string; //the way of items create
+  detailedCreate?: string;
+  store?: boolean; //if item can buy on store
+  price?: number; //item's price
+  unlocktime?: string; //when item unlock in store
+  storeCD?: number; //item's CD in store
+  teamCD?: boolean; //if item's CD in store is team shared
 };
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
