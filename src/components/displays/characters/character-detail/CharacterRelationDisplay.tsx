@@ -13,6 +13,8 @@ import { setNestedProperty } from '@/lib/editUtils';
 import EditableField from '@/components/ui/EditableField';
 import clsx from 'clsx';
 import { useNavigation } from '@/lib/useNavigation';
+import KnowledgeCardSelector from './KnowledgeCardSelector';
+import SpecialSkillSelector from './SpecialSkillSelector';
 
 type Props = {
   id: string;
@@ -286,6 +288,8 @@ function getCharacterRelation(id: string): CharacterRelation {
       counters: [],
       counteredBy: [],
       collaborators: [],
+      counteredByKnowledgeCards: [],
+      counteredBySpecialSkills: [],
     };
   }
 
@@ -343,6 +347,8 @@ function getCharacterRelation(id: string): CharacterRelation {
     counters: mergedCounters,
     counteredBy: mergedCounteredBy,
     collaborators: mergedCollaborators,
+    counteredByKnowledgeCards: char.counteredByKnowledgeCards ?? [],
+    counteredBySpecialSkills: char.counteredBySpecialSkills ?? [],
   };
 }
 
@@ -654,7 +660,8 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         </div>
         {/* Countered By Knowledge Cards */}
         <div>
-          <div className='flex items-center'>
+          {/* --- section title with yellow button on right --- */}
+          <div className='flex items-center justify-between'>
             <span className='font-semibold text-sm text-purple-700 dark:text-purple-300 flex items-center gap-1'>
               <span className='w-5 h-5 bg-purple-200 rounded-full flex items-center justify-center mr-1'>
                 <svg
@@ -680,9 +687,25 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
               </span>
               克制{id}的知识卡
             </span>
+            {isEditMode && (
+              <KnowledgeCardSelector
+                selected={Array.from(localCharacter.counteredByKnowledgeCards ?? [])}
+                onSelect={(cardName) => {
+                  const updated = Array.from(localCharacter.counteredByKnowledgeCards ?? []);
+                  updated.push(cardName);
+                  setNestedProperty(
+                    characters,
+                    `${characterId}.counteredByKnowledgeCards`,
+                    updated
+                  );
+                }}
+                factionId={factionId == 'cat' ? 'mouse' : 'cat'}
+              />
+            )}
           </div>
           <div className='grid grid-cols-1 gap-y-3 mt-2'>
-            {localCharacter.counteredByKnowledgeCards?.length ? (
+            {Array.isArray(localCharacter.counteredByKnowledgeCards) &&
+            localCharacter.counteredByKnowledgeCards.length ? (
               localCharacter.counteredByKnowledgeCards.map((cardName) => {
                 const cardObj = cards[cardName];
                 if (!cardObj) {
@@ -696,10 +719,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                     tabIndex={0}
                     aria-label={`跳转到知识卡 ${cardName}`}
                     onClick={() => {
-                      navigate(`/cards/${encodeURIComponent(cardName)}`);
+                      if (!isEditMode) {
+                        navigate(`/cards/${encodeURIComponent(cardName)}`);
+                      }
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
+                      if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
                         navigate(`/cards/${encodeURIComponent(cardName)}`);
                       }
                     }}
@@ -727,17 +752,53 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         </span>
                       )}
                     </div>
+                    {isEditMode && (
+                      <button
+                        type='button'
+                        className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                        aria-label={`移除知识卡 ${cardName}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!characters[characterId]!.counteredByKnowledgeCards) {
+                            characters[characterId]!.counteredByKnowledgeCards = [];
+                          }
+                          const updated = characters[characterId]!.counteredByKnowledgeCards.filter(
+                            (c) => c !== cardName
+                          );
+                          setNestedProperty(
+                            characters,
+                            `${characterId}.counteredByKnowledgeCards`,
+                            updated
+                          );
+                        }}
+                      >
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          strokeWidth='2'
+                          stroke='currentColor'
+                          className='w-4 h-4'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                          />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 );
               })
-            ) : (
+            ) : isEditMode ? null : (
               <span className='text-xs text-gray-400'>无</span>
             )}
           </div>
         </div>
         {/* Countered By Special Skills */}
         <div>
-          <div className='flex items-center'>
+          <div className='flex items-center justify-between'>
             <span className='font-semibold text-sm text-pink-700 dark:text-pink-300 flex items-center gap-1'>
               <span className='w-5 h-5 bg-pink-200 rounded-full flex items-center justify-center mr-1'>
                 <svg
@@ -754,9 +815,21 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
               </span>
               克制{id}的特技
             </span>
+            {isEditMode && (
+              <SpecialSkillSelector
+                selected={Array.from(localCharacter.counteredBySpecialSkills ?? [])}
+                factionId={factionId == 'cat' ? 'mouse' : 'cat'}
+                onSelect={(skillName) => {
+                  const updated = Array.from(localCharacter.counteredBySpecialSkills ?? []);
+                  updated.push(skillName);
+                  setNestedProperty(characters, `${characterId}.counteredBySpecialSkills`, updated);
+                }}
+              />
+            )}
           </div>
           <div className='grid grid-cols-1 gap-y-3 mt-2'>
-            {localCharacter.counteredBySpecialSkills?.length ? (
+            {Array.isArray(localCharacter.counteredBySpecialSkills) &&
+            localCharacter.counteredBySpecialSkills.length ? (
               localCharacter.counteredBySpecialSkills.map((skillName) => {
                 // Try to find skill info from cat/mouse special skills
                 const oppositeFactionId = factionId == 'cat' ? 'mouse' : 'cat';
@@ -769,12 +842,14 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                     tabIndex={0}
                     aria-label={`跳转到特技 ${skillName}`}
                     onClick={() => {
-                      navigate(
-                        `/special-skills/${oppositeFactionId}/${encodeURIComponent(skillName)}`
-                      );
+                      if (!isEditMode) {
+                        navigate(
+                          `/special-skills/${oppositeFactionId}/${encodeURIComponent(skillName)}`
+                        );
+                      }
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
+                      if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
                         navigate(
                           `/special-skills/${oppositeFactionId}/${encodeURIComponent(skillName)}`
                         );
@@ -804,10 +879,46 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         </span>
                       )}
                     </div>
+                    {isEditMode && (
+                      <button
+                        type='button'
+                        className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                        aria-label={`移除特技 ${skillName}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!characters[characterId]!.counteredBySpecialSkills) {
+                            characters[characterId]!.counteredBySpecialSkills = [];
+                          }
+                          const updated = characters[characterId]!.counteredBySpecialSkills.filter(
+                            (s) => s !== skillName
+                          );
+                          setNestedProperty(
+                            characters,
+                            `${characterId}.counteredBySpecialSkills`,
+                            updated
+                          );
+                        }}
+                      >
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          strokeWidth='2'
+                          stroke='currentColor'
+                          className='w-4 h-4'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                          />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 );
               })
-            ) : (
+            ) : isEditMode ? null : (
               <span className='text-xs text-gray-400'>无</span>
             )}
           </div>
