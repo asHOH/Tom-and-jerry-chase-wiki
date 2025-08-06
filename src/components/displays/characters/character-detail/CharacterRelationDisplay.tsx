@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from 'react';
 import Image from 'next/image';
-import { FactionId } from '@/data';
+import { cards, FactionId, specialSkills } from '@/data';
 import { AssetManager } from '@/lib/assetManager';
 import { CharacterRelation, CharacterRelationItem } from '@/data/types';
 import { characters } from '@/data';
@@ -12,6 +12,7 @@ import { useSnapshot } from 'valtio';
 import { setNestedProperty } from '@/lib/editUtils';
 import EditableField from '@/components/ui/EditableField';
 import clsx from 'clsx';
+import { useNavigation } from '@/lib/useNavigation';
 
 type Props = {
   id: string;
@@ -353,6 +354,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
     AssetManager.getCharacterImageUrl(id, factionId == 'cat' ? 'mouse' : 'cat');
   const char = getCharacterRelation(id);
   const { handleSelectCharacter } = useAppContext();
+  const { navigate } = useNavigation();
 
   // Get hooks for managing relations
   const countersHook = useCounters(id);
@@ -647,6 +649,166 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   </div>
                 );
               })
+            )}
+          </div>
+        </div>
+        {/* Countered By Knowledge Cards */}
+        <div>
+          <div className='flex items-center'>
+            <span className='font-semibold text-sm text-purple-700 dark:text-purple-300 flex items-center gap-1'>
+              <span className='w-5 h-5 bg-purple-200 rounded-full flex items-center justify-center mr-1'>
+                <svg
+                  width='16'
+                  height='16'
+                  viewBox='0 0 16 16'
+                  fill='none'
+                  aria-label='knowledge-card'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <rect
+                    x='2'
+                    y='3'
+                    width='12'
+                    height='10'
+                    rx='2'
+                    fill='#a78bfa'
+                    stroke='#7c3aed'
+                    strokeWidth='1.5'
+                  />
+                  <path d='M4 6h8M4 9h5' stroke='#7c3aed' strokeWidth='1.2' strokeLinecap='round' />
+                </svg>
+              </span>
+              克制{id}的知识卡
+            </span>
+          </div>
+          <div className='grid grid-cols-1 gap-y-3 mt-2'>
+            {localCharacter.counteredByKnowledgeCards?.length ? (
+              localCharacter.counteredByKnowledgeCards.map((cardName) => {
+                const cardObj = cards[cardName];
+                if (!cardObj) {
+                  return null;
+                }
+                return (
+                  <div
+                    key={cardName}
+                    className='flex flex-row items-center gap-3 p-2 rounded-lg bg-purple-50 dark:bg-purple-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800/40 focus:outline-none focus:ring-2 focus:ring-purple-400 active:scale-95'
+                    role='button'
+                    tabIndex={0}
+                    aria-label={`跳转到知识卡 ${cardName}`}
+                    onClick={() => {
+                      navigate(`/cards/${encodeURIComponent(cardName)}`);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        navigate(`/cards/${encodeURIComponent(cardName)}`);
+                      }
+                    }}
+                  >
+                    <div className='w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center border border-purple-300 dark:border-purple-700'>
+                      {cardObj && cardObj.imageUrl ? (
+                        <Image
+                          src={cardObj.imageUrl}
+                          alt={cardName}
+                          width={32}
+                          height={32}
+                          className='w-8 h-8 rounded-full object-cover'
+                        />
+                      ) : (
+                        <span className='w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center text-purple-600 text-xs'>
+                          ?
+                        </span>
+                      )}
+                    </div>
+                    <div className='flex flex-col flex-1'>
+                      <span className='text-xs text-gray-700 dark:text-gray-300'>{cardName}</span>
+                      {cardObj && cardObj.description && (
+                        <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                          {cardObj.description}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <span className='text-xs text-gray-400'>无</span>
+            )}
+          </div>
+        </div>
+        {/* Countered By Special Skills */}
+        <div>
+          <div className='flex items-center'>
+            <span className='font-semibold text-sm text-pink-700 dark:text-pink-300 flex items-center gap-1'>
+              <span className='w-5 h-5 bg-pink-200 rounded-full flex items-center justify-center mr-1'>
+                <svg
+                  width='16'
+                  height='16'
+                  viewBox='0 0 16 16'
+                  fill='none'
+                  aria-label='special-skill'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <circle cx='8' cy='8' r='7' fill='#fbcfe8' stroke='#db2777' strokeWidth='1.5' />
+                  <path d='M8 4v4l3 2' stroke='#db2777' strokeWidth='1.2' strokeLinecap='round' />
+                </svg>
+              </span>
+              克制{id}的特技
+            </span>
+          </div>
+          <div className='grid grid-cols-1 gap-y-3 mt-2'>
+            {localCharacter.counteredBySpecialSkills?.length ? (
+              localCharacter.counteredBySpecialSkills.map((skillName) => {
+                // Try to find skill info from cat/mouse special skills
+                const oppositeFactionId = factionId == 'cat' ? 'mouse' : 'cat';
+                const skillObj = specialSkills[oppositeFactionId][skillName];
+                return (
+                  <div
+                    key={skillName}
+                    className='flex flex-row items-center gap-3 p-2 rounded-lg bg-pink-50 dark:bg-pink-900/30 cursor-pointer transition-shadow hover:shadow-lg hover:bg-pink-100 dark:hover:bg-pink-800/40 focus:outline-none focus:ring-2 focus:ring-pink-400 active:scale-95'
+                    role='button'
+                    tabIndex={0}
+                    aria-label={`跳转到特技 ${skillName}`}
+                    onClick={() => {
+                      navigate(
+                        `/special-skills/${oppositeFactionId}/${encodeURIComponent(skillName)}`
+                      );
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        navigate(
+                          `/special-skills/${oppositeFactionId}/${encodeURIComponent(skillName)}`
+                        );
+                      }
+                    }}
+                  >
+                    <div className='w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center border border-pink-300 dark:border-pink-700'>
+                      {skillObj && skillObj.imageUrl ? (
+                        <Image
+                          src={skillObj.imageUrl}
+                          alt={skillName}
+                          width={32}
+                          height={32}
+                          className='w-8 h-8 rounded-full object-cover'
+                        />
+                      ) : (
+                        <span className='w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+                          ?
+                        </span>
+                      )}
+                    </div>
+                    <div className='flex flex-col flex-1'>
+                      <span className='text-xs text-gray-700 dark:text-gray-300'>{skillName}</span>
+                      {skillObj && skillObj.description && (
+                        <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                          {skillObj.description}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <span className='text-xs text-gray-400'>无</span>
             )}
           </div>
         </div>

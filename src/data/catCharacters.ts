@@ -3284,6 +3284,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: true,
       },
     ],
+    counteredByKnowledgeCards: ['投手'],
+    counteredBySpecialSkills: ['干扰投掷'],
     specialSkills: [
       {
         name: '绝地反击',
