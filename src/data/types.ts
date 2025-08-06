@@ -152,18 +152,26 @@ export type CharacterDefinition = {
 
   // character restraint information
   counters?: CharacterRelationItem[];
+  countersKnowledgeCards?: CharacterRelationItem[];
+  countersSpecialSkills?: CharacterRelationItem[];
+
   counteredBy?: CharacterRelationItem[];
-  collaborators?: CharacterRelationItem[];
   counteredByKnowledgeCards?: CharacterRelationItem[];
   counteredBySpecialSkills?: CharacterRelationItem[];
+
+  collaborators?: CharacterRelationItem[];
 };
 
 export type CharacterRelation = {
   counters: CharacterRelationItem[];
+  countersKnowledgeCards: CharacterRelationItem[];
+  countersSpecialSkills: CharacterRelationItem[];
+
   counteredBy: CharacterRelationItem[];
-  collaborators: CharacterRelationItem[];
   counteredByKnowledgeCards: CharacterRelationItem[];
   counteredBySpecialSkills: CharacterRelationItem[];
+
+  collaborators: CharacterRelationItem[];
 };
 
 export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDefinition>;

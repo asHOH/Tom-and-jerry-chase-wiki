@@ -2977,6 +2977,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
     ],
+    countersKnowledgeCards: [
+      { id: '铁血', description: '苏蕊可以使铁血状态的老鼠自主跟随。', isMinor: false },
+    ],
     specialSkills: [
       {
         name: '急速翻滚',
