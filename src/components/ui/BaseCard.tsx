@@ -1,5 +1,6 @@
 import { designTokens, componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 import clsx from 'clsx';
+import Link from 'next/link';
 
 type BaseCardProps = {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ type BaseCardProps = {
   tabIndex?: number;
   onKeyDown?: (e: React.KeyboardEvent) => void;
   'aria-label'?: string;
+  href?: string;
 };
 
 export default function BaseCard({
@@ -21,6 +23,7 @@ export default function BaseCard({
   role,
   tabIndex,
   onKeyDown,
+  href,
   'aria-label': ariaLabel,
 }: BaseCardProps) {
   const isClickable = !!onClick;
@@ -77,15 +80,24 @@ export default function BaseCard({
     : {
         style: cardStyle,
       };
-  return (
+
+  const content = (
     <div
       className={clsx(
-        'bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none',
+        'bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none flex-1',
         className
       )}
       {...cardProps}
     >
       {children}
     </div>
+  );
+
+  return href ? (
+    <Link className='flex' href={href}>
+      {content}
+    </Link>
+  ) : (
+    content
   );
 }
