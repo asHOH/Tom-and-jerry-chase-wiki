@@ -36,10 +36,10 @@ export default function CharacterDisplay({
       href={`/characters/${id}`}
       role='button'
       aria-label={`查看${name}角色详情`}
-      // className={clsx(
-      //   isEntryCard &&
-      //     'opacity-60 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50'
-      // )}
+      className={clsx(
+        isEntryCard &&
+          'opacity-60 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50'
+      )}
     >
       <GameImage
         src={imageUrl}
