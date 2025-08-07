@@ -11,7 +11,6 @@ export default function KnowledgeCardDisplay({
   rank,
   cost,
   imageUrl,
-  onClick,
   priority = false,
 }: KnowledgeCardDisplayProps & { priority?: boolean }) {
   const [isDarkMode] = useDarkMode();
@@ -21,15 +20,8 @@ export default function KnowledgeCardDisplay({
   return (
     <BaseCard
       variant='item'
-      onClick={() => onClick(id)}
+      href={`/cards/${id}`}
       role='button'
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onClick(id);
-        }
-      }}
       aria-label={`查看${name}知识卡详情，${rank}级，${cost}费`}
     >
       <GameImage

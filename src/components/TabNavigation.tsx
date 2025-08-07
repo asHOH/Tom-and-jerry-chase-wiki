@@ -2,16 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import SearchBar from './ui/SearchBar';
 import Tooltip from './ui/Tooltip';
 import { useAppContext } from '@/context/AppContext';
-import { useNavigation } from '@/lib/useNavigation';
 import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
-
-const NAVIGATION_RESET_DELAY = 2000;
 
 // Helper function for button styling
 const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: boolean) => {
@@ -82,7 +80,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
-  const { navigate } = useNavigation();
   const isMobile = useMobile();
 
   // Reset navigation state when pathname changes
@@ -94,23 +91,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
       }
     }
   }, [pathname, navigatingTo]);
-
-  const handleNavigation = async (targetPath: string) => {
-    setNavigatingTo(targetPath);
-    try {
-      const navigationSucceeded = await navigate(targetPath);
-      // If navigation failed (blocked), reset the navigating state
-      if (!navigationSucceeded) {
-        setNavigatingTo(null);
-      } else {
-        // Reset after a short delay to allow navigation to complete
-        setTimeout(() => setNavigatingTo(null), NAVIGATION_RESET_DELAY);
-      }
-    } catch (error) {
-      console.error('Navigation error:', error);
-      setNavigatingTo(null);
-    }
-  };
 
   const isTabActive = (tabPath: string) => {
     return pathname?.startsWith(tabPath) || false;
@@ -132,18 +112,23 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           )}
         >
           <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>
-            <button
-              type='button'
-              onClick={() => handleNavigation('/')}
+            <Link
+              href='/'
               className={clsx(
-                getButtonClassName(isMobile, navigatingTo === '/', isHomeActive()),
-                isMobile && 'min-w-[40px]'
+                getButtonClassName(isMobile, false, isHomeActive()),
+                isMobile && 'min-w-[40px]',
+                navigatingTo === '/' && 'pointer-events-none opacity-80'
               )}
-              disabled={navigatingTo !== null}
+              onClick={() => {
+                if (navigatingTo === '/') return;
+                setNavigatingTo('/');
+              }}
+              tabIndex={navigatingTo === '/' ? -1 : 0}
+              aria-disabled={navigatingTo === '/'}
             >
               {!isMobile && '首页'}
               {isMobile && '🏠'}
-            </button>
+            </Link>
           </Tooltip>
           {tabs.map((tab) => (
             <Tooltip
@@ -153,14 +138,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               disabled={!isMobile}
               delay={800}
             >
-              <button
-                type='button'
-                onClick={() => handleNavigation(tab.path)}
+              <Link
+                href={tab.path}
                 className={clsx(
-                  getButtonClassName(isMobile, navigatingTo === tab.path, isTabActive(tab.path)),
-                  isMobile ? 'gap-0' : 'gap-2'
+                  getButtonClassName(isMobile, false, isTabActive(tab.path)),
+                  isMobile ? 'gap-0' : 'gap-2',
+                  navigatingTo === tab.path && 'pointer-events-none opacity-80'
                 )}
-                disabled={navigatingTo !== null}
+                onClick={() => {
+                  if (navigatingTo === tab.path) return;
+                  setNavigatingTo(tab.path);
+                }}
+                tabIndex={navigatingTo === tab.path ? -1 : 0}
+                aria-disabled={navigatingTo === tab.path}
               >
                 <Image
                   src={tab.imageSrc}
@@ -171,7 +161,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   style={{ height: isMobile ? '24px' : '28px', width: 'auto' }}
                 />
                 {!isMobile && <span>{tab.name}</span>}
-              </button>
+              </Link>
             </Tooltip>
           ))}
         </div>

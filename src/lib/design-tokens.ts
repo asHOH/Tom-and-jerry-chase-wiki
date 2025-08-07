@@ -774,6 +774,67 @@ export const getPositioningTagColors = (
   };
 };
 
+/**
+ * Item type color utility
+ */
+export const getItemTypeColors = (itemtype: string, isDarkMode: boolean) => {
+  const itemTypeColorMap: Record<string, 'weapon1' | 'weapon2' | 'active' | 'passive'> = {
+    投掷类: 'weapon1',
+    手持类: 'weapon2',
+    物件类: 'active',
+    食物类: 'passive',
+    流程类: 'passive',
+    其它: 'passive',
+  };
+  const skillType = itemTypeColorMap[itemtype] || 'passive';
+  const colorScheme =
+    designTokens.colors.skillTypes[skillType] || designTokens.colors.skillTypes.passive;
+  return {
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+  };
+};
+
+/**
+ * Item source color utility
+ */
+export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => {
+  const itemSourceColorMap: Record<
+    string,
+    { color: string; backgroundColor: string; darkColor: string; darkBackgroundColor: string }
+  > = {
+    常规道具: {
+      color: designTokens.colors.primary[600],
+      backgroundColor: designTokens.colors.primary[50],
+      darkColor: designTokens.colors.primary.dark[500],
+      darkBackgroundColor: designTokens.colors.primary.dark[50],
+    },
+    地图道具: {
+      color: designTokens.colors.gray[600],
+      backgroundColor: designTokens.colors.gray[100],
+      darkColor: designTokens.colors.gray.dark[800],
+      darkBackgroundColor: designTokens.colors.gray.dark[100],
+    },
+    技能道具: {
+      color: designTokens.colors.rank.A.text,
+      backgroundColor: designTokens.colors.rank.A.background,
+      darkColor: designTokens.colors.rank.A.dark.text,
+      darkBackgroundColor: designTokens.colors.rank.A.dark.background,
+    },
+  };
+  const colorSet = itemSourceColorMap[itemsource] || {
+    color: designTokens.colors.gray[600],
+    backgroundColor: designTokens.colors.gray[100],
+    darkColor: designTokens.colors.gray.dark[800],
+    darkBackgroundColor: designTokens.colors.gray.dark[100],
+  };
+  return {
+    color: isDarkMode ? colorSet.darkColor : colorSet.color,
+    backgroundColor: isDarkMode ? colorSet.darkBackgroundColor : colorSet.backgroundColor,
+  };
+};
+
 // Skill type utility functions
 export const getSkillTypeColors = (
   skillType: 'passive' | 'active' | 'weapon1' | 'weapon2',

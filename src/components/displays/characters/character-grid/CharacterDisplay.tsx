@@ -7,7 +7,6 @@ import type { FactionId } from '@/data/types';
 import GameImage from '../../../ui/GameImage';
 import Tag from '../../../ui/Tag';
 import BaseCard from '../../../ui/BaseCard';
-import { useAppContext } from '@/context/AppContext';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
@@ -23,7 +22,6 @@ export default function CharacterDisplay({
   priority = false,
   isEntryCard = false, // Add the new prop
 }: CharacterDisplayProps & { priority?: boolean; isEntryCard?: boolean }) {
-  const { handleSelectCharacter } = useAppContext();
   const [isDarkMode] = useDarkMode();
 
   // Sort positioning tags according to sequence (main tags first, then by sequence)
@@ -35,15 +33,8 @@ export default function CharacterDisplay({
   return (
     <BaseCard
       variant='character'
-      onClick={() => handleSelectCharacter(id)}
+      href={`/characters/${id}`}
       role='button'
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleSelectCharacter(id);
-        }
-      }}
       aria-label={`查看${name}角色详情`}
       className={clsx(
         isEntryCard &&

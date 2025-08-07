@@ -13,7 +13,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
         <a
           href={CREATORS[creatorId]?.url ?? '#'}
           target='_blank'
-          rel='noopener noreferrer'
+          rel='nofollow noopener noreferrer'
           className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline mx-1'
         >
           {CREATORS[creatorId]?.name ?? creatorId}
