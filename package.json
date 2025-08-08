@@ -59,6 +59,7 @@
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.4.2",
+    "@radix-ui/react-tooltip": "^1.2.7",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "classnames": "^2.5.1",
