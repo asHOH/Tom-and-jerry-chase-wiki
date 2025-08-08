@@ -10,14 +10,20 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
     return creatorIds.map((creatorId, index) => (
       <span key={creatorId}>
         {index > 0 && '、'}
-        <a
-          href={CREATORS[creatorId]?.url ?? '#'}
-          target='_blank'
-          rel='nofollow noopener noreferrer'
-          className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline mx-1'
-        >
-          {CREATORS[creatorId]?.name ?? creatorId}
-        </a>
+        {CREATORS[creatorId]?.url ? (
+          <a
+            href={CREATORS[creatorId].url}
+            target='_blank'
+            rel='nofollow noopener noreferrer'
+            className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline mx-1'
+          >
+            {CREATORS[creatorId]?.name ?? creatorId}
+          </a>
+        ) : (
+          <span className='text-gray-700 dark:text-gray-300'>
+            {CREATORS[creatorId]?.name ?? creatorId}
+          </span>
+        )}
       </span>
     ));
   };

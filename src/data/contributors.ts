@@ -116,6 +116,7 @@ export const contributors: Contributor[] = [
   {
     id: 'ConductorJerry',
     name: '音乐家杰瑞',
+    url: 'https://github.com/ConductorJerry',
     roles: [
       { type: RoleType.Developer },
       {
