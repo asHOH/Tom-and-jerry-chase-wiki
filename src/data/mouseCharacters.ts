@@ -1769,10 +1769,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '地狱裂隙',
         type: 'active',
-        description:
-          '标记一个地狱裂隙，同时技能进入12秒读条，期间再次使用技能标记一处新的地狱裂隙并传送回上一个地狱裂隙，传送后移速短暂提升。',
+        description: '标记一个地狱裂隙，期间再次使用技能标记一处新的裂隙并传送回上一个地狱裂隙。',
         detailedDescription:
-          '在前摇0.9秒后标记一个地狱裂隙，同时技能进入12秒读条，期间再次使用技能[在1.45s前摇后](该前摇不可被跳跃打断)标记一处新的地狱裂隙并传送回上一个地狱裂隙，传送后移速提高18％，持续3s。',
+          '在前摇0.9秒后标记一个地狱裂隙，期间再次使用技能[在1.45s前摇后](该前摇不可被跳跃打断)标记一处新的地狱裂隙并传送回上一个地狱裂隙，传送后移速提高18％，持续3s。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键*', '跳跃键'],
@@ -1780,22 +1779,22 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '',
-            detailedDescription: '',
+            description: '使用技能后进入12s读条，成功传送后获得短暂加速。',
+            detailedDescription: '使用技能后进入12s读条，成功传送后获得3s的加速效果。',
             cooldown: 15,
           },
           {
             level: 2,
-            description: 'CD减少5秒，成功传送后获得一层护盾。',
+            description: 'CD减少，成功传送后额外获得一层护盾。',
             cooldown: 10,
-            detailedDescription: 'CD减少5秒，期间获得一层护盾，护盾和移速持续时间增加至4s。',
+            detailedDescription: 'CD减少5秒，成功传送后获得一层护盾，护盾和移速持续时间增加至4s。',
           },
           {
             level: 3,
-            description: '技能持续时间延长，成功传送后获得两层护盾。',
+            description: '技能持续时间延长，成功传送后额外获得两层护盾。',
             cooldown: 10,
             detailedDescription:
-              '技能持续时间延长至14s，改为获得两层护盾，护盾和移速持续时间增加至5s。',
+              '技能持续时间延长至14s，成功传送后获得两层护盾，护盾和移速持续时间增加至5s。',
           },
         ],
         cooldownTiming: '释放后',
