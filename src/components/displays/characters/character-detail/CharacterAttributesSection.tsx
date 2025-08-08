@@ -91,6 +91,12 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
       value: `${character.clawKnifeCdUnhit || 0} / ${character.clawKnifeCdHit || 0} 秒`,
       condition: factionId === 'cat' && !!character.clawKnifeCdHit && !!character.clawKnifeCdUnhit,
     },
+    {
+      label: '初始手持道具',
+      value: character.initialItem || '苍蝇拍',
+      condition: factionId === 'cat',
+      path: `initialItem`,
+    },
   ];
 
   const allAttributes = [

@@ -2905,6 +2905,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     clawKnifeCdHit: 7,
     clawKnifeCdUnhit: 5,
     clawKnifeRange: 280,
+    initialItem: '鞭炮束',
 
     catPositioningTags: [
       {
@@ -3794,6 +3795,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     clawKnifeCdHit: 3,
     clawKnifeCdUnhit: 3,
     clawKnifeRange: 270,
+    initialItem: '鞭炮束',
     catPositioningTags: [
       {
         tagName: '打架',

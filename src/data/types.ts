@@ -130,6 +130,7 @@ export type CharacterDefinition = {
   clawKnifeCdHit?: number; // 爪刀CD (命中)
   clawKnifeCdUnhit?: number; // 爪刀CD (未命中)
   clawKnifeRange?: number; // 爪刀范围
+  initialItem?: string; // 初始道具
 
   // Mouse-specific attributes
   cheesePushSpeed?: number; // 推速
