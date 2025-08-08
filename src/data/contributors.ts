@@ -76,6 +76,7 @@ export const contributors: Contributor[] = [
           '仙女鼠',
           '雪梨',
           '马索尔',
+          '图多盖洛',
         ],
       },
       {
@@ -102,6 +103,7 @@ export const contributors: Contributor[] = [
           '仙女鼠',
           '雪梨',
           '马索尔',
+          '图多盖洛',
         ],
       },
       {
@@ -366,6 +368,26 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'xiang  xiao',
+    name: '想  笑',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['莱恩'],
+      },
+    ],
+  },
+  {
+    id: 'renou',
+    name: '人偶',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['凯特'],
+      },
+    ],
+  },
+  {
     id: 'leshanhaoshi',
     name: '乐善好施陈阿姨',
     url: 'https://space.bilibili.com/418408689',
@@ -378,6 +400,7 @@ export const contributors: Contributor[] = [
     ],
   },
   // TODO: Add 米特技巧 contributor
+  // TODO：Add 恶魔杰瑞知识卡推荐 and 库博知识卡推荐 contributor
   {
     id: 'dreamback',
     name: '梦回_淦德蒸蚌',

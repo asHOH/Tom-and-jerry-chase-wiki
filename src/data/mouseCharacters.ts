@@ -5,7 +5,7 @@ import type { CharacterDefinition } from './types';
 const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
   杰瑞: {
-    description: '古灵精怪的小老鼠，喜欢戏弄汤姆，汤姆的欢喜冤家',
+    description: '一只古灵精怪的小老鼠，总喜欢戏弄汤姆，和汤姆是一对欢喜冤家。',
     maxHp: 99,
     attackBoost: 15,
     hpRecovery: 2,
@@ -991,7 +991,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
   /* ----------------------------------- 泰菲 ----------------------------------- */
   泰菲: {
-    description: '杰瑞的侄子，总将自己吃得圆滚滚的',
+    description:
+      '可爱的小婴儿泰菲，总是将自己吃得圆滚滚的，他非常依赖叔叔杰瑞，火箭筒是他最爱的玩具。',
     maxHp: 74,
     attackBoost: 5,
     hpRecovery: 2.5,
@@ -2140,7 +2141,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
   /* ----------------------------------- 雪梨 ----------------------------------- */
   雪梨: {
-    description: '雪梨是温柔可爱的女孩子，喜欢一切美好的东西。',
+    description: '雪梨是温柔可爱的女孩子，她喜欢一切漂亮美好的东西。',
     maxHp: 99,
     attackBoost: 0,
     hpRecovery: 2,
@@ -4653,7 +4654,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   /* ----------------------------------- 尼宝 ----------------------------------- */
   尼宝: {
     aliases: ['泥巴'],
-    description: '爱捣蛋、爱运动的机灵鬼',
+    description: '尼宝是一个爱捣蛋、爱运动的精灵鬼。',
 
     maxHp: 99,
     attackBoost: 10,
@@ -5352,7 +5353,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   /* ----------------------------------- 表演者•杰瑞 ----------------------------------- */
   '表演者•杰瑞': {
     aliases: ['表演者杰瑞', '柠檬杰瑞'],
-    description: '来自另一个平行时空的表演者，立志成为最好的表演家',
+    description:
+      '来自神秘平行时空的另一位杰瑞，曾因意外从西方漂洋过海来到东方戏院，立志成为一名优秀的演员。最终因一段奇妙际遇跟随汤姆和杰瑞来到它们的时空，不断磨砺演技，追寻着艺术梦想。',
     maxHp: 124,
     attackBoost: 5,
     hpRecovery: 2.5,
