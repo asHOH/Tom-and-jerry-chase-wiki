@@ -240,6 +240,42 @@ export async function* searchCharacters(
           isPinyinMatch = true;
           break;
         }
+
+        for (const level of skill.skillLevels) {
+          const levelDescriptionLowerCase = level.description.toLowerCase();
+          const levelDescriptionPinyin = await convertToPinyin(level.description);
+
+          if (levelDescriptionLowerCase.includes(lowerCaseQuery)) {
+            matchContext = await findMatchContext([level.description]);
+            priority = 0.2;
+            isPinyinMatch = false;
+            break;
+          } else if (levelDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
+            matchContext = await findMatchContext([level.description]);
+            priority = 0.19;
+            isPinyinMatch = true;
+            break;
+          }
+          if (level.detailedDescription) {
+            const levelDetailedDescriptionLowerCase = level.detailedDescription.toLowerCase();
+            const levelDetailedDescriptionPinyin = await convertToPinyin(level.detailedDescription);
+
+            if (levelDetailedDescriptionLowerCase.includes(lowerCaseQuery)) {
+              matchContext = await findMatchContext([level.detailedDescription]);
+              priority = 0.18;
+              isPinyinMatch = false;
+              break;
+            } else if (
+              levelDetailedDescriptionPinyin.includes(pinyinQuery) &&
+              pinyinQuery.length > 0
+            ) {
+              matchContext = await findMatchContext([level.detailedDescription]);
+              priority = 0.17;
+              isPinyinMatch = true;
+              break;
+            }
+          }
+        }
       }
     }
 
