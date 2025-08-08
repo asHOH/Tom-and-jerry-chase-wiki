@@ -52,7 +52,7 @@ export default function ItemClient() {
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>道具</PageTitle>
-        <PageDescription>拾取并投掷可对敌方造成伤害等效果——猫鼠相互对抗的关键机制</PageDescription>
+        <PageDescription>在地图中散落的各式各样的道具——猫鼠相互对抗的关键机制</PageDescription>
         {/* Filter Controls */}
         <div className='flex flex-col gap-4 mt-8'>
           {/* 类型筛选 */}
