@@ -77,6 +77,7 @@ export const contributors: Contributor[] = [
           '雪梨',
           '马索尔',
           '图多盖洛',
+          '塔拉',
         ],
       },
       {
@@ -104,6 +105,7 @@ export const contributors: Contributor[] = [
           '雪梨',
           '马索尔',
           '图多盖洛',
+          '塔拉',
         ],
       },
       {

@@ -322,9 +322,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '增加眩晕时间、命中的老鼠攻击力短暂降低；震碎附近的易碎道具。',
+            description:
+              '增加眩晕时间、命中的老鼠攻击力短暂降低；震碎附近的[易碎道具](玻璃杯/碗/盘子/扁盘/灰色花瓶/蓝白花瓶/香水瓶/胡椒瓶/冰块)。',
             detailedDescription:
-              '眩晕延长至2.4秒、命中的老鼠10秒内攻击力短暂降低固定值100；震碎附近的易碎道具。',
+              '眩晕延长至2.4秒、命中的老鼠10秒内攻击力短暂降低固定值100；震碎附近的[易碎道具](玻璃杯/碗/盘子/扁盘/灰色花瓶/蓝白花瓶/香水瓶/胡椒瓶/冰块)。',
             cooldown: 18,
           },
           {
@@ -948,9 +949,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['牛哥'],
         description:
-          '释放斗牛，破坏[易碎道具](包括牛仔杰瑞的仙人掌)，并对老鼠造成伤害和[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
+          '释放斗牛，破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰色花瓶/蓝白花瓶/香水瓶/胡椒瓶/冰块/牛仔杰瑞的仙人掌)，并对老鼠造成伤害和[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
         detailedDescription:
-          '释放斗牛，破坏[易碎道具](包括牛仔杰瑞的仙人掌)，并对老鼠造成25伤害和1.5秒[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
+          '释放斗牛，破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰色花瓶/蓝白花瓶/香水瓶/胡椒瓶/冰块/牛仔杰瑞的仙人掌)，并对老鼠造成25伤害和1.5秒[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键'],
@@ -1160,27 +1161,27 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '防守',
         isMinor: false,
-        description: '香水有强悍的后期防守强度',
+        description: '香水有强悍的后期防守强度。',
         additionalDescription: '',
         weapon: 1,
       },
       {
         tagName: '打架',
         isMinor: false,
-        description: '指甲油的高频率霸体有强大的打架能力',
+        description: '指甲油的高频率霸体有强大的打架能力。',
         additionalDescription: '',
         weapon: 2,
       },
       {
         tagName: '后期',
         isMinor: false,
-        description: '图多后期有高额伤害和打架能力',
+        description: '图多后期有高额伤害和打架能力。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
         isMinor: true,
-        description: '指甲油和被动的后期强度有一定的翻盘能力',
+        description: '指甲油和被动的后期强度有一定的翻盘能力。',
         additionalDescription: '',
         weapon: 2,
       },
@@ -1204,55 +1205,63 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '魅力甲油-击晕',
         pattern: '033030111',
         weaponType: 'weapon1',
-        description: '击晕流常见配卡',
+        description: '击晕流常见配卡。',
       },
     ],
     knowledgeCardGroups: [
       {
         cards: ['S-乘胜追击', 'S-知识渊博', 'S-击晕'],
-        description: '指甲油，在前中后期都有较高强度',
+        description: '指甲油，在前中后期都有较高强度。',
       },
       {
         cards: ['S-乘胜追击', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
-        description: '指甲油，适合森林牧场，太空堡垒三等管道图',
+        description: '指甲油，适合森林牧场，太空堡垒三等管道图。',
       },
       {
         cards: ['S-猛攻', 'S-知识渊博', 'A-细心', 'A-熊熊燃烧'],
-        description: '指甲油，适合可以布局的图使用，后期拥有更强的防守翻盘能力',
+        description: '指甲油，适合可以布局的图使用，后期拥有更强的防守翻盘能力。',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
-        description: '香水指甲油通用，常规追击卡组',
+        description: '香水指甲油通用，常规追击卡组。',
       },
       {
         cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
-        description: '香水，香水图多常规防守卡组',
+        description: '香水，香水图多常规防守卡组。',
       },
       {
         cards: ['S-乘胜追击', 'S-知识渊博', 'S-猛攻', 'B-反侦察'],
-        description: '指甲油，双经验卡成型更快，后期更强势',
+        description: '指甲油，双经验卡成型更快，后期更强势。',
+      },
+      {
+        cards: ['S-击晕', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
+        description: '指甲油，小图且玩家自身找节奏能力强可用。',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-屈打成招', 'A-细心', 'A-穷追猛打'],
+        description: '香水。',
       },
     ],
     specialSkills: [
       {
         name: '绝地反击',
-        description: '通用',
+        description: '通用。',
       },
       {
         name: '蓄力重击',
-        description: '绑定击晕',
+        description: '绑定击晕。',
       },
       {
         name: '全垒打',
-        description: '高爆发能力',
+        description: '高爆发能力。',
       },
       {
         name: '我生气了！',
-        description: '提高输出',
+        description: '提高输出。',
       },
       {
         name: '急速翻滚',
-        description: '提高机动性',
+        description: '提高机动性。',
       },
     ],
     skills: [
@@ -2077,9 +2086,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description:
-              '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在7层野性下绑火箭时会进入6秒强霸体（内置CD：17秒）。',
+              '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，根据层数造成额外伤害。在7层野性及以上时绑火箭时会进入6秒强霸体（内置CD：17秒）。',
             detailedDescription:
-              '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，每层野性造成4点额外伤害。在7层野性下绑火箭时会进入6秒强霸体（内置CD：17秒）。',
+              '每次受到伤害获得1层“野性”状态，持续15秒，最多叠加10层。每层野性略微提升Hp恢复。使用爪刀时消耗全部野性，每层野性造成4点额外伤害。在7层野性及以上时绑火箭时会进入6秒强霸体（内置CD：17秒）。',
           },
           {
             level: 2,
@@ -2105,18 +2114,18 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     jumpHeight: 420,
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 4,
-    clawKnifeRange: 0, //FIXME
+    clawKnifeRange: 300,
     catPositioningTags: [
       {
         tagName: '速通',
         isMinor: false,
         description: '武器技能可甩火箭',
-        additionalDescription: '配合熊熊燃烧，7秒火箭可直接甩',
+        additionalDescription: '配合熊熊燃烧，7秒火箭可直接甩。',
       },
       {
         tagName: '追击',
         isMinor: false,
-        description: '要移速有移速，要视野有视野，要霸体有霸体',
+        description: '要移速有移速，要视野有视野，要霸体有霸体。',
         additionalDescription: '',
       },
     ],
@@ -2163,7 +2172,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         description: '向前施放爱意，造成少量伤害。对男性角色及背对塔拉的角色有更强的效果。',
         detailedDescription:
-          '向前施放爱意，造成少量伤害。根据性别和相对塔拉的朝向而产生不同的效果:\n男性背对：增加本技能伤害，并使其一段时间内每隔3秒受到僵直\n男性正对或女性背对：额外给予其短暂减速。\n女性正对：额外给予其短暂加速。',
+          '前摇0.4s，向前600范围内施放爱意，造成伤害，后摇1s。根据性别和相对塔拉的朝向而产生不同的效果:\n男性背对：造成60伤害并击晕0.4s，之后每隔2.9s受到0.4s击晕，持续6.9s。\n男性正对：造成30伤害，移动速度降低30%，持续4.85s。\n女性背对：造成30伤害，移动速度降低30%，持续4.85秒。\n女性正对：造成30伤害，移动速度增加20%，持续2.8秒。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -2177,13 +2186,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '减少CD。',
+            description: '大幅减少CD。',
             cooldown: 10,
+            detailedDescription: '减少CD至15s。',
           },
           {
             level: 3,
             description: '大幅增加有效范围。',
             cooldown: 10,
+            detailedDescription: '有效范围提高至1100。',
           },
         ],
         canHitInPipe: false,
@@ -2193,9 +2204,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '牛仔鞭索',
         type: 'weapon1',
         description:
-          '拖动技能，在面前135度的范围内甩出套索，对老鼠造成伤害和减速；再次点击按钮，塔拉将冲向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为扔出老鼠，老鼠碰到火箭直接绑上，但[不减少引线时间](二级被动和知识卡不受影响)。',
+          '拖动技能，在面前135度的范围内甩出套索，若套中老鼠，对老鼠造成伤害和减速；再次点击按钮，塔拉将冲向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为可向任意方向扔出老鼠，老鼠碰到火箭将直接绑上，但[不减少引线时间](二级被动和知识卡不受影响)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，获得短暂无敌和加速。',
         detailedDescription:
-          '拖动技能，在面前135度的范围内甩出套索，对老鼠造成伤害和减速；再次点击按钮，塔拉将冲向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为扔出老鼠，期间老鼠无敌、碰到火箭直接绑上，但[不减少引线时间](二级被动和知识卡不受影响)；绳索可以套中机械鼠、护盾，但无伤害。',
+          '前摇0.5s，拖动技能，在面前135度的范围内甩出套索，套索存在时间0.75s，存在时间内最大飞行距离为1750，对套中的老鼠造成30伤害并减速20%；在使用技能2.9秒后若套中老鼠，再次点击按钮塔拉将以1850的速度冲向该老鼠位置，位移期间获得无法选中效果，位移时间最多4.9s，超过时间将会被直接传送至老鼠旁边。当塔拉用技能位移到老鼠旁边时或套中老鼠4.9s后，对老鼠的减速将解除。当塔拉手中抓有老鼠时，本技能改为可向任意方向以2000速度扔出老鼠，期间老鼠无敌，碰到火箭将接绑上，但[不减少引线时间](二级被动和知识卡不受影响)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，获得无敌效果并加速20%，持续2.9s。套索的捆绑效果不会被无敌，护盾，霸体、[机器鼠](不会破坏机器鼠)等效果抵消或免疫，但造成的伤害、减速、眩晕会被抵消或免疫。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -2210,11 +2221,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             level: 2,
             description: '套索命中附加眩晕并提升塔拉的移速。',
             cooldown: 12,
+            detailedDescription: '套索命中附加2.9s眩晕并提升塔拉的移速18.5%，持续5s。',
           },
           {
             level: 3,
             description: '减少CD；将老鼠投掷到火箭上时将回复Hp并获得短暂加速。',
             cooldown: 8,
+            detailedDescription:
+              '减少CD至8s；将老鼠投掷到火箭上后Hp回复提升5/s，移动速度提升25%，持续10s。',
           },
         ],
         canHitInPipe: false,
@@ -2228,16 +2242,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description: '根据场上男性角色的数量提升移速和Hp上限。',
-            detailedDescription: '',
+            detailedDescription:
+              '根据场上男性角色的数量移速提升5%/10%/15%/20%，Hp上限提升20/25/30/35。',
           },
           {
             level: 2,
-            description: '永久[扩大视野范围](覆盖其他远视效果)；绑或扔火箭额外减少2秒引线时间。',
-            detailedDescription: '',
+            description:
+              '永久[扩大视野范围1.8倍](覆盖其他远视效果)；绑或扔火箭额外减少2秒引线时间。',
+            detailedDescription:
+              '永久[扩大视野范围1.8倍](覆盖其他远视效果)；绑或扔火箭额外减少2秒引线时间。',
           },
           {
             level: 3,
-            description: '攻击男性角色使自己获得短暂的霸体，期间缓慢恢复Hp。',
+            description: '攻击男性角色将使自己获得短暂的霸体，期间缓慢恢复Hp。',
+            detailedDescription: '攻击男性角色将使自己获得强霸体，Hp回复提升15/s，持续4.75s。',
           },
         ],
         description: '',
@@ -2251,7 +2269,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
-
   /* ----------------------------------- 剑客汤姆 ----------------------------------- */
   剑客汤姆: {
     description: '拥有超群剑术的大师剑客汤姆，是法国万千少女心中的偶像。',
@@ -3113,8 +3130,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '易碎道具击中[敌方](含虚弱老鼠、鸭子)时将重置律动时间的CD。',
-            detailedDescription: '易碎道具击中[敌方](含虚弱老鼠、鸭子)时将重置律动时间的CD。',
+            description:
+              '[易碎道具](玻璃杯/碗/盘子/扁盘/灰色花瓶/蓝白花瓶/香水瓶/胡椒瓶/冰块)击中[敌方](含虚弱老鼠、鸭子)时将重置律动时间的CD。',
+            detailedDescription:
+              '[易碎道具](玻璃杯/碗/盘子/扁盘/灰色花瓶/蓝白花瓶/香水瓶/胡椒瓶/冰块)击中[敌方](含虚弱老鼠、鸭子)时将重置律动时间的CD。',
           },
         ],
       },
