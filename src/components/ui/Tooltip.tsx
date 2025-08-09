@@ -3,6 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import { useMobile } from '../../hooks/useMediaQuery';
 
 interface TooltipProps {
   children: React.ReactNode;
@@ -19,6 +20,10 @@ export default function Tooltip({
   disabled = false,
   delay = 0,
 }: TooltipProps) {
+  const isMobile = useMobile();
+  const [open, setOpen] = React.useState<boolean>(false);
+  const effectiveDelay = isMobile ? 0 : delay;
+
   const trigger = (
     <span
       className={clsx(
@@ -35,9 +40,19 @@ export default function Tooltip({
   }
 
   return (
-    <TooltipPrimitive.Provider delayDuration={delay}>
-      <TooltipPrimitive.Root>
-        <TooltipPrimitive.Trigger asChild>{trigger}</TooltipPrimitive.Trigger>
+    <TooltipPrimitive.Provider delayDuration={effectiveDelay}>
+      <TooltipPrimitive.Root open={open} onOpenChange={setOpen}>
+        <TooltipPrimitive.Trigger
+          asChild
+          onClick={(e) => {
+            if (isMobile) {
+              e.preventDefault();
+              setOpen((prev) => !prev);
+            }
+          }}
+        >
+          {trigger}
+        </TooltipPrimitive.Trigger>
         <TooltipPrimitive.Portal>
           <TooltipPrimitive.Content
             side='top'
