@@ -1023,12 +1023,18 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     skillAllocations: [
       {
-        id: '火箭筒',
+        id: '火箭筒1',
         pattern: '121220001',
         weaponType: 'weapon1',
         description: '',
         additionaldescription:
           '如果七级就进入墙缝战的话，可以考虑直接点出三级圆滚滚，毕竟一被和二被几乎没用。',
+      },
+      {
+        id: '火箭筒2',
+        pattern: '121000221',
+        weaponType: 'weapon1',
+        description: '牵制能力降低，自保续航增强.',
       },
       {
         id: '隐形感应雷',
@@ -1040,23 +1046,32 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
-        description: '高风险高收益，卡残血伤害高，适合打不带皮糙肉厚的猫',
+        cards: ['C-救救我', 'S-舍己', 'S-铁血', 'B-绝地反击', 'B-应激反应'],
+        description:
+          '高风险高收益卡组，卡残血触发绝反伤害高，绝反应激相互配合，适合打血量上限低、不带皮糙肉厚的猫',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'S-护佑', 'C-救救我'],
         description: '防止前期3级时白给',
       },
       {
-        cards: ['S-舍己', 'S-铁血', 'C-吃货', 'B-食物力量', 'C-救救我'],
+        cards: ['C-救救我', 'S-舍己', 'S-铁血', 'C-吃货', 'C-不屈'],
         description:
-          '速推卡，打死守猫用，带这套卡只用点一级炮，优先点出二被，利用五层食物力量、有吃货加强下的一被加血、二被减伤快速回血加推奶酪减伤，可以强推，特技推荐带治疗或自起',
+          '低风险卡组，可以用于打死守猫，带这套卡只用点一级炮，优先点被动，利用有吃货加强下的一被加血、二三被减伤快速回血加推奶酪减伤，可以强推，续航稳定，可抗三刀不死',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
         description:
           '用来打依赖爪刀或有无敌霸体技能的猫。缴械可以在一定程度上防止霸体反杀，特别是泰菲不能自主取消武器后摇。缴械和火箭筒的冷却都是三十秒，控制好可以让每一炮都附带缴械。',
         detailedDescription: '',
+      },
+      {
+        cards: ['C-救救我', 'S-舍己', 'S-铁血', 'C-不屈', 'B-精准投射'],
+        description: '舍精流打法，牵制能力强，有精投在可以做到6秒一个无敌，不屈增加续航',
+      },
+      {
+        cards: ['C-救救我', 'S-舍己', 'S-铁血', 'A-投手', 'C-不屈'],
+        description: '减速卡，用来打速度快的猫，如斯飞。',
       },
     ],
     skills: [
@@ -1128,7 +1143,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         name: '隐形感应雷',
-        aliases: ['地雷'],
+        aliases: ['地雷', '雷'],
         type: 'weapon2',
         description:
           '放下隐形感应雷。感应雷在猫咪靠近时现身，并在1.5秒后飞向猫咪并爆炸，造成伤害和控制。',
@@ -1157,6 +1172,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 22,
           },
         ],
+        cooldownTiming: '释放时',
       },
       {
         name: '茁壮成长',
@@ -1174,7 +1190,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '免疫爆炸；Hp恢复进一步提升；吃食物进一步更快。',
+            description: '免疫爆炸；Hp恢复进一步提升；吃食物速度进一步增加。',
             detailedDescription:
               '免疫鞭炮、泡泡等爆炸；Hp恢复提升增加至5；吃食物速度提升增加至45%。',
           },
@@ -1184,7 +1200,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counters: [
       {
         id: '剑客汤姆',
-        description: '',
+        description: '剑汤难以抓住泰菲。',
+        isMinor: false,
+      },
+      {
+        id: '图茨',
+        description: '圆滚滚的无敌克制喵喵叫。',
         isMinor: false,
       },
     ],
@@ -1217,9 +1238,59 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '干扰投掷',
         description:
-          '用来打出干扰投掷接炮，提高炮命中率（注意不要手快取消投掷），用于打速度快导致炮不易命中的猫',
+          '用来打出干扰投掷接炮，提高炮命中率（注意不要手快点出无影炮），用于打机动性高、速度快导致炮不易命中的猫。',
       },
     ],
+    counteredBy: [
+      {
+        id: '图多盖洛',
+        description: '甲油霸体克制泰菲。',
+        isMinor: false,
+      },
+      {
+        id: '布奇',
+        description:
+          '布奇的普攻伤害高，可一刀秒满血泰菲，并且三级桶盖的霸体也在一定程度上限制了炮的发挥。',
+        isMinor: false,
+      },
+      {
+        id: '侍卫汤姆',
+        description: '视野太大，远程炮被死克。',
+        isMinor: false,
+      },
+      {
+        id: '追风汤姆',
+        description: '追风的飞行碰撞箱太扁了，导致炮十分难命中，地雷也很容易躲。',
+        isMinor: false,
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '炮不能取消后摇，容易被霸体反杀。',
+        isMinor: false,
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '皮糙肉厚',
+        description: '皮糙肉厚减伤导致绝反炮菲无法发挥伤害高的优势。',
+        isMinor: false,
+      },
+      {
+        id: '乾坤一掷',
+        description: '有乾坤一掷加持下的猫扔一个基础伤害为50的道具就可以秒掉泰菲。',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '国王杰瑞',
+        description: '泰菲蹭国王的升级版救援战旗，开圆滚滚碰一下火箭就能实现稳救队友。',
+        isMinor: false,
+      },
+    ],
+    aliases: [],
   },
 
   /* ----------------------------------- 剑客泰菲 ----------------------------------- */
@@ -1259,14 +1330,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         tagName: '辅助',
         isMinor: false,
         description:
-          '2级及以上且有勇气的长枪可以解除队友和自己的受伤和虚弱效果，也可以带着队友转移',
+          '2级及以上且有勇气的长枪可以解除队友和自己的受伤和虚弱效果，也可以带着队友转移。',
         additionalDescription: '',
         weapon: 2,
       },
       {
         tagName: '后期',
         isMinor: true,
-        description: '后期6级8级带来的减少cd和护盾的质变能对长枪剑菲带来很强的后期作战能力',
+        description: '后期6级8级带来的减少cd和护盾的质变能对长枪剑菲带来很强的后期作战能力。',
         additionalDescription: '',
         weapon: 2,
       },
@@ -1431,23 +1502,59 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '仅限长枪。长枪上的音乐家杰瑞释放礼服可让长枪强制位移，对猫造成极高爆发伤害。',
         isMinor: true,
       },
+      {
+        id: '剑客莉莉',
+        description: '低成本拦截可以帮助头盔撤离和协作长枪打连控。',
+        isMinor: false,
+      },
     ],
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '补充头盔高点救人能力和自保，也可以为长枪拉开身位蓄力',
+        description: '补充头盔高点救人能力和自保，也可以为长枪拉开身位蓄力.',
       },
       {
         name: '绝处逢生',
-        description: '能在头盔内回复大量生命，也可以提高长枪的低下限',
+        description: '能在头盔内回复大量生命，也可以提高长枪的低下限.',
       },
       {
         name: '干扰投掷',
-        description: '和长枪形成连控',
+        description: '和长枪形成连控.',
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '屈打成招',
+        description: '可以提前拦截非高点的头盔，但是当前环境不大适合带该卡。',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '剑客汤姆',
+        description:
+          '头盔未3级的时候可以有效拖延时间且震慑也可以加速放飞减少可能被剑菲救援的次数，但是后期难以反制且被长枪克制。',
+        isMinor: true,
+      },
+    ],
+    counters: [
+      {
+        id: '图茨',
+        description: '被头盔稳定救人断节奏且无法反制。',
+        isMinor: false,
+      },
+      {
+        id: '米特',
+        description: '自身相对强悍的保节奏能力被头盔完全克制。',
+        isMinor: false,
+      },
+      {
+        id: '苏蕊',
+        description: '忌惮大部分救人位的角色。',
+        isMinor: false,
       },
     ],
   },
-
   /* ----------------------------------- 牛仔杰瑞 ----------------------------------- */
   牛仔杰瑞: {
     description:
@@ -1750,22 +1857,57 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-救救我', 'C-不屈'],
-        description: '常规卡组，可用于大部分情况。',
+        id: '编辑者推荐',
+        description: '',
+        groups: [
+          {
+            cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-救救我', 'C-不屈'],
+            description: '常规卡组，可用于大部分情况。',
+          },
+          {
+            cards: ['S-舍己', 'S-铁血', 'B-夹不住我', 'C-救救我', 'C-不屈'],
+            description: '防守型猫以及没满20点时可用。',
+          },
+          {
+            cards: ['S-舍己', 'S-铁血', 'B-幸运', 'C-救救我'],
+            description: '幸运流。',
+          },
+          {
+            cards: ['S-无畏', 'S-铁血', 'S-缴械', 'C-救救我'],
+            description: '针对米特图多。',
+          },
+        ],
+        defaultFolded: true,
       },
       {
-        cards: ['S-舍己', 'S-铁血', 'B-夹不住我', 'C-救救我', 'C-不屈'],
-        description: '防守型猫以及没满20点时可用。',
-      },
-      {
-        cards: ['S-舍己', 'S-铁血', 'B-幸运', 'C-救救我'],
-        description: '幸运流。',
-      },
-      {
-        cards: ['S-无畏', 'S-铁血', 'S-缴械', 'C-救救我'],
-        description: '针对米特图多。',
+        id: '贡献者推荐',
+        description:
+          '卡组提供者-秋雨绵绵（S24赛季全国第6恶魔杰瑞）。恶杰定位很不清晰，可推可救可牵制，最大的优点就是后期自保。推荐这个角色和天杰打体系，就一直推，幸运下来，走不掉祝福，后期都是耐活的老鼠。',
+        groups: [
+          {
+            cards: ['S-舍己', 'A-逃窜', 'A-泡泡浴', 'C-不屈', 'C-救救我'],
+          },
+          {
+            cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-救救我', 'C-不屈'],
+            description: '没幸运的卡组。',
+          },
+          {
+            cards: ['S-舍己', 'A-逃窜', 'B-幸运', 'C-脱身', 'C-不屈'],
+            description: '幸运卡组。',
+          },
+          {
+            cards: ['S-舍己', 'A-逃窜', 'A-泡泡浴', 'B-破墙', 'C-不屈'],
+            description: '对抗图茨使用。',
+          },
+          {
+            cards: ['S-无畏', 'S-铁血', 'S-缴械', 'C-救救我'],
+            description: '针对米特图多。',
+          },
+        ],
+        defaultFolded: true,
       },
     ],
+
     skills: [
       {
         name: '地狱裂隙',

@@ -1148,7 +1148,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
 
   /* ----------------------------------- 图多盖洛 ----------------------------------- */
   图多盖洛: {
-    description: '拥有惊人美貌的图多盖洛是上东区知名度最高的千金小姐，他的追求者从纽约排到了巴黎。',
+    description: '拥有惊人美貌的图多盖洛是上东区知名度最高的千金小姐，她的追求者从纽约排到了巴黎。',
     maxHp: 230,
     hpRecovery: 2,
     moveSpeed: 770,
@@ -3398,20 +3398,27 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-击晕', 'A-越挫越勇', 'A-穷追猛打', 'B-皮糙肉厚', 'C-猫是液体'],
-        description: '打架流，无21点时可舍弃猫液。',
-      },
-      {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'A-加大火力', 'A-越挫越勇'],
-        description: '大地图不好找节奏，慎用。',
-      },
-      {
-        cards: ['A-加大火力', 'A-越挫越勇', 'B-皮糙肉厚', 'B-恐吓', 'C-巡逻戒备', 'C-猫是液体'],
-        description: '纯死守流，无21点时可舍弃猫液。（本套卡组不适配特技-"我生气了!"）',
-      },
-      {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-巡逻戒备'],
-        description: '无21点或面对无畏流时考虑使用。',
+        id: '贡献者推荐',
+        description: '卡组提供者-无敌猫虎大王wy(现猫榜第32名)',
+        groups: [
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-加大火力'],
+            description: '御门酒店使用，对面高伤阵容换成越挫。',
+          },
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-穷追猛打'],
+            description: '常规地图使用。',
+          },
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'A-越挫越勇', 'A-穷追猛打'],
+            description: '常规地图，对面高伤阵容时使用。',
+          },
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
+            description: '森林牧场使用，对面高伤阵容则把皮糙换成越挫。',
+          },
+        ],
+        defaultFolded: false,
       },
     ],
     specialSkills: [
