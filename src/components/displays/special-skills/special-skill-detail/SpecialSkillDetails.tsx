@@ -25,7 +25,15 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
       character.factionId === skill.factionId
   );
 
-  console.log({ usedCharacters });
+  const unusedCharacters = Object.values(characters).filter(
+    (character) =>
+      !character.specialSkills?.some((s) => s.name === skill.name) &&
+      character.factionId === skill.factionId
+  );
+
+  console.log({ usedCharacters, unusedCharacters });
+
+  const displayUsedCharacters = usedCharacters.length <= unusedCharacters.length;
 
   if (!skill) return null;
 
@@ -146,12 +154,12 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
                     paddingBottom: designTokens.spacing.sm,
                   }}
                 >
-                  使用该特技的角色
+                  {!displayUsedCharacters && '未'}使用该特技的角色
                 </h2>
               </div>
               <div className='rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
                 <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-                  {usedCharacters.map((character) => (
+                  {(displayUsedCharacters ? usedCharacters : unusedCharacters).map((character) => (
                     <li
                       key={character.id ?? ''}
                       className='flex items-center gap-4 p-3 rounded-lg transition-colors'

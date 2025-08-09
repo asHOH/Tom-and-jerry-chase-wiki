@@ -59,7 +59,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
       !character.knowledgeCardGroups?.some(groupContainsCard)
   );
 
-  const displayUsedCharacters = usedCharacters.length > unusedCharacters.length;
+  const displayUsedCharacters = usedCharacters.length <= unusedCharacters.length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.xl }}>
