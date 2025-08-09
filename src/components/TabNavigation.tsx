@@ -168,7 +168,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
         {/* Right-aligned detailed/simple view toggle button and SearchBar */}
         <div className={clsx('flex items-center', isMobile ? 'gap-1' : 'gap-3')}>
-          {pathname === '/' || pathname === '' ? <DarkModeToggleButton /> : <SearchBar />}
+          {pathname === '/' || pathname === '' ? <SearchBar /> : <DarkModeToggleButton />}
           {showDetailToggle && (
             <Tooltip
               content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}

@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import { useMobile } from '../../hooks/useMediaQuery';
 
 interface TooltipProps {
   children: React.ReactNode;
@@ -18,11 +17,16 @@ export default function Tooltip({
   content,
   className = '',
   disabled = false,
-  delay = 0,
+  delay = 700,
 }: TooltipProps) {
-  const isMobile = useMobile();
   const [open, setOpen] = React.useState<boolean>(false);
-  const effectiveDelay = isMobile ? 0 : delay;
+  const [effectiveDelay, setEffectiveDelay] = useState(delay);
+
+  useEffect(() => {
+    if (window.matchMedia('(hover:hover)').matches) {
+      setEffectiveDelay(0);
+    }
+  }, []);
 
   const trigger = (
     <span
@@ -45,7 +49,7 @@ export default function Tooltip({
         <TooltipPrimitive.Trigger
           asChild
           onClick={(e) => {
-            if (isMobile) {
+            if (!window.matchMedia('(hover:hover)').matches) {
               e.preventDefault();
               setOpen((prev) => !prev);
             }
