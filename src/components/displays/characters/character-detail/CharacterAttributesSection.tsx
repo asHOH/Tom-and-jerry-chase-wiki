@@ -93,7 +93,7 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
     },
     {
       label: '初始手持道具',
-      value: character.initialItem || '苍蝇拍',
+      value: character.initialItem || '老鼠夹',
       condition: factionId === 'cat',
       path: `initialItem`,
     },
