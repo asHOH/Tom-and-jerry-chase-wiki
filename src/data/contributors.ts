@@ -368,8 +368,8 @@ export const contributors: Contributor[] = [
     ],
   },
   {
-    id: 'xiang  xiao',
-    name: '想  笑',
+    id: 'xiangxiao',
+    name: '想 ‎ 笑',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -388,6 +388,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'qingchengluomeng',
+    name: '青城落梦',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['剑客泰菲'],
+      },
+    ],
+  },
+  {
     id: 'leshanhaoshi',
     name: '乐善好施陈阿姨',
     url: 'https://space.bilibili.com/418408689',
@@ -396,6 +406,28 @@ export const contributors: Contributor[] = [
         type: RoleType.ContentWriter,
         characters: ['音乐家杰瑞'],
         isMinor: true, // knowledge card & skill allocation only
+      },
+    ],
+  },
+  {
+    id: 'qiuyumianmian',
+    name: '秋雨绵绵',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['恶魔杰瑞'],
+        isMinor: true,
+      },
+    ],
+  },
+  {
+    id: 'wudimaohudawang',
+    name: '无敌猫虎大王wy',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['恶魔汤姆'],
+        isMinor: true,
       },
     ],
   },
