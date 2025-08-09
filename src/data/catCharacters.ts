@@ -2312,16 +2312,24 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '老776，管道不重要时用',
       },
       {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-        description: '常用',
+        cards: ['S-乘胜追击', 'S-击晕', 'A-穷追猛打', 'C-猫是液体'],
+        description: '常用，猫是液体可换为其它三费知识卡',
       },
       {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
-        description: '管道重要时用',
+        cards: ['S-乘胜追击', 'S-击晕', 'B-皮糙肉厚', 'C-猫是液体'],
+        description: '鼠方高伤害时使用，猫是液体可换为其它三费知识卡',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
         description: '无击晕，新手勿用',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '常用，但无乘胜，怕拉扯',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
+        description: '管道重要时用',
       },
     ],
     specialSkills: [
