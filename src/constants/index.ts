@@ -22,6 +22,11 @@ const getContributorsByRole = (roleType: RoleType): string[] => {
         contributor.id !== projectMaintainerId && // Exclude the project maintainer
         contributor.roles.some((role) => role.type === roleType)
     )
+    .sort((a, b) => {
+      const aIsMinor = a.roles.some((role) => role.type === roleType && role.isMinor);
+      const bIsMinor = b.roles.some((role) => role.type === roleType && role.isMinor);
+      return Number(aIsMinor) - Number(bIsMinor);
+    })
     .map((contributor) => contributor.id);
 };
 
