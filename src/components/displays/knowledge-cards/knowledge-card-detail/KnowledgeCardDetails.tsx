@@ -53,6 +53,14 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
       character.knowledgeCardGroups?.some(groupContainsCard)
   );
 
+  const unusedCharacters = Object.values(characters).filter(
+    (character) =>
+      character.factionId === card.factionId &&
+      !character.knowledgeCardGroups?.some(groupContainsCard)
+  );
+
+  const displayUsedCharacters = usedCharacters.length > unusedCharacters.length;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: designTokens.spacing.xl }}>
@@ -223,32 +231,34 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                       paddingBottom: designTokens.spacing.sm,
                     }}
                   >
-                    使用该知识卡的角色
+                    {displayUsedCharacters ? '使用该知识卡的角色' : '未使用该知识卡的角色'}
                   </h2>
                 </div>
                 <div className='rounded-xl bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
                   <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {usedCharacters.map((character) => (
-                      <li
-                        key={character.id ?? ''}
-                        className='flex items-center gap-4 p-3 rounded-lg transition-colors'
-                      >
-                        <a
-                          href={`/characters/${character.id}`}
-                          className='flex items-center gap-4 w-full'
-                          tabIndex={0}
+                    {(displayUsedCharacters ? usedCharacters : unusedCharacters).map(
+                      (character) => (
+                        <li
+                          key={character.id ?? ''}
+                          className='flex items-center gap-4 p-3 rounded-lg transition-colors'
                         >
-                          <Image
-                            src={character.imageUrl!}
-                            alt={character.id!}
-                            className='w-10 h-10'
-                            width={40}
-                            height={40}
-                          />
-                          <span className='text-lg dark:text-white truncate'>{character.id}</span>
-                        </a>
-                      </li>
-                    ))}
+                          <a
+                            href={`/characters/${character.id}`}
+                            className='flex items-center gap-4 w-full'
+                            tabIndex={0}
+                          >
+                            <Image
+                              src={character.imageUrl!}
+                              alt={character.id!}
+                              className='w-10 h-10'
+                              width={40}
+                              height={40}
+                            />
+                            <span className='text-lg dark:text-white truncate'>{character.id}</span>
+                          </a>
+                        </li>
+                      )
+                    )}
                   </ul>
                 </div>
               </>
