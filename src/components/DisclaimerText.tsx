@@ -15,12 +15,12 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             href={CREATORS[creatorId].url}
             target='_blank'
             rel='nofollow noopener noreferrer'
-            className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline mx-1'
+            className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline mx-1 whitespace-pre-wrap'
           >
             {CREATORS[creatorId]?.name ?? creatorId}
           </a>
         ) : (
-          <span className='text-gray-700 dark:text-gray-300'>
+          <span className='text-gray-700 dark:text-gray-300 whitespace-pre-wrap'>
             {CREATORS[creatorId]?.name ?? creatorId}
           </span>
         )}
