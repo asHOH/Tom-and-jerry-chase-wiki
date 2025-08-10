@@ -73,7 +73,7 @@ export const renderTextWithTooltips = (
 
     parts.push(
       <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
-        <span className='cursor-help'>{visibleText}</span>
+        {visibleText}
       </Tooltip>
     );
 
@@ -116,7 +116,7 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
 
         intermediateParts.push(
           <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
-            <span className='cursor-help'>{visibleText}</span>
+            {visibleText}
           </Tooltip>
         );
 
@@ -140,7 +140,6 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
         ...renderTextWithTooltips(
           part,
           localCharacter.attackBoost ?? null,
-
           index,
           'wallCrackDamageBoost' in localCharacter ? localCharacter.wallCrackDamageBoost : undefined
         )

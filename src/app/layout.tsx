@@ -14,6 +14,7 @@ import './globals.css';
 import { DarkModeProvider } from '@/context/DarkModeContext';
 import { getDarkModeFromCookie } from '@/lib/darkModeActions';
 import clsx from 'clsx';
+import KeyboardNavigation from '@/components/KeyboardNavigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -92,6 +93,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className={inter.className}>
         <ErrorBoundary>
+          <KeyboardNavigation />
           <OfflineIndicator />
           <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
             <DarkModeProvider initialValue={isDarkMode}>{children}</DarkModeProvider>
