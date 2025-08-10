@@ -15,6 +15,7 @@ import GotoLink from '@/components/GotoLink';
 export const renderTextWithTooltips = (
   text: string,
   attackBoost: number | null,
+  index: number,
   wallCrackDamageBoost?: number
 ): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
@@ -71,7 +72,7 @@ export const renderTextWithTooltips = (
     }
 
     parts.push(
-      <Tooltip key={match.index} content={tooltipContent}>
+      <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
         <span className='cursor-help'>{visibleText}</span>
       </Tooltip>
     );
@@ -133,12 +134,14 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
   const finalParts: (string | React.ReactElement)[] = [];
 
   // Second pass: Handle {visible text} using the moved renderTextWithTooltips
-  intermediateParts.forEach((part) => {
+  intermediateParts.forEach((part, index) => {
     if (typeof part === 'string') {
       finalParts.push(
         ...renderTextWithTooltips(
           part,
           localCharacter.attackBoost ?? null,
+
+          index,
           'wallCrackDamageBoost' in localCharacter ? localCharacter.wallCrackDamageBoost : undefined
         )
       );
