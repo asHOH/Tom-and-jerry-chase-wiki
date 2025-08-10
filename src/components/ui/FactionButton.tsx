@@ -70,7 +70,7 @@ export function FactionButton({
       >
         <Link
           href={href}
-          className='flex flex-col items-center justify-center gap-1 md:gap-2 text-center flex-1 min-w-[180px] py-3'
+          className='flex flex-col items-center justify-center gap-1 md:gap-2 text-center flex-1 py-3'
         >
           {buttonContent}
         </Link>
