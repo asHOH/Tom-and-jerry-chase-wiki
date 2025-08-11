@@ -5599,14 +5599,17 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '',
+            description: '<无内容>',
             cooldown: 35,
+            detailedDescription: '<无内容>',
           },
           {
             level: 2,
             description:
               '跳舞期间免疫虚弱和[部分异常状态](新增免疫香水、胡椒粉、番茄与冰面滑行效果，还能免疫受伤状态、图茨-喵喵叫和汽水瓶的可叠加减速、图多盖洛-魅惑之吻)。',
             cooldown: 35,
+            detailedDescription:
+              '跳舞期间免疫虚弱和[部分异常状态](新增免疫香水、胡椒粉、番茄与冰面滑行效果，还能免疫受伤状态、图茨-喵喵叫和汽水瓶的可叠加减速、图多盖洛-魅惑之吻)。该技能Hp归零时仍可正常进入机器鼠，但在[其他延迟虚弱状态准备就绪时](铁血或Lv.1被动准备就绪时)会被打断，从而无法进入。',
           },
           {
             level: 3,
@@ -5621,7 +5624,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '原地释放技能，期间无法移动，对附近猫咪叠加酸涩效果，造成伤害并减少移速、交互速度，最多叠加5层，叠满时猫咪会受到伤害并[眩晕](可掉落老鼠)。再次点击技能进行“额外表演”，最多5次，满5次后可以移动并对碰到的敌方单位叠加3成酸涩。',
         detailedDescription:
-          '原地释放技能，期间无法移动，对附近猫咪叠加酸涩效果，造成15伤害并减少2.5%移速和交互速度，可叠加，最多叠加5层。叠满时猫咪会受到35伤害并[眩晕2秒](可掉落老鼠)。再次点击技能[进行“额外表演”](额外表演：表演者•杰瑞快速围绕柠檬一圈，同时蓄力条位置随机出现红/绿标志以表示表演的成功与否。成功与否仅影响表现，作为表演者•杰瑞的娱乐，不涉及技能效果)，最多5次，满5次后可以移动并对碰到的敌方单位叠加3层酸涩。',
+          '原地释放技能，期间无法移动，对附近猫咪叠加酸涩效果，造成{15}伤害并减少2.5%移速和交互速度，可叠加，最多叠加5层。叠满时猫咪会受到35伤害并[眩晕2秒](可掉落老鼠)，眩晕期间及结束后一段时间内免疫“酸涩”。再次点击技能[进行“额外表演”](额外表演：表演者•杰瑞快速围绕柠檬一圈，同时蓄力条位置随机出现红/绿标志以表示表演的成功与否。成功与否仅影响表现，作为表演者•杰瑞的娱乐，不涉及技能效果)，最多5次，满5次后可以移动并对碰到的敌方单位叠加3层酸涩。',
         canMoveWhileUsing: true,
         canUseInAir: false,
         canHitInPipe: false,
@@ -5679,7 +5682,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counters: [
       {
         id: '图茨',
-        description: '喵喵叫和汽水瓶都不能对柠檬的二级跳舞造成影响。',
+        description: '柠檬的二级跳舞时，喵喵叫和汽水瓶都不能给柠檬叠加减速。',
         isMinor: false,
       },
       {
@@ -5697,7 +5700,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     counteredBy: [],
   },
-
   /* ----------------------------------- 莱恩 ----------------------------------- */
   莱恩: {
     description:

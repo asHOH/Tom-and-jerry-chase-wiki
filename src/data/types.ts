@@ -236,6 +236,7 @@ export type ItemDefinition = {
   unlocktime?: string; //when item unlock in store
   storeCD?: number; //item's CD in store
   teamCD?: boolean; //if item's CD in store is team shared
+  exp?: number; //(cat) get exp when item hit mouse
 };
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };

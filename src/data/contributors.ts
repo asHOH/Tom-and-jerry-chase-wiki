@@ -433,8 +433,18 @@ export const contributors: Contributor[] = [
       },
     ],
   },
+  {
+    id: 'doujiang',
+    name: '豆浆',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['表演者•杰瑞'],
+      },
+    ],
+  },
   // TODO: Add 米特技巧 contributor
-  // TODO：Add 恶魔杰瑞知识卡推荐 and 库博知识卡推荐 contributor
+  // TODO：Add 库博知识卡推荐 contributor
   {
     id: 'dreamback',
     name: '梦回_淦德蒸蚌',
