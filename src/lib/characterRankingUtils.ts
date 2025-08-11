@@ -90,6 +90,7 @@ export const RANKABLE_PROPERTIES: PropertyInfo[] = [
     label: '推速',
     description: '老鼠角色推奶酪的速度',
     faction: 'mouse',
+    unit: '%/s',
     higherIsBetter: true,
   },
   {
