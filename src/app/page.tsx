@@ -82,6 +82,14 @@ function HomeContent() {
       href: '/items',
       ariaLabel: '道具列表',
     },
+    // {
+    //   imageSrc: '/images/icons/cat faction.png',
+    //   imageAlt: '排行榜图标',
+    //   title: '排行榜',
+    //   description: '角色属性排行榜',
+    //   href: '/ranks',
+    //   ariaLabel: '角色属性排行榜',
+    // },
   ];
 
   return (

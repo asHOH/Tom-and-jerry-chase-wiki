@@ -2344,7 +2344,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description: '拥有超群剑术的大师剑客汤姆，是法国万千少女心中的偶像。',
     aliases: ['剑汤'],
     maxHp: 270,
-    attackBoost: 0,
     hpRecovery: 1.5,
     moveSpeed: 770,
     jumpHeight: 420,
@@ -3726,7 +3725,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '再次加快速度与机动性',
       },
     ],
-    attackBoost: 0,
   },
 
   /* ----------------------------------- 恶魔汤姆 ----------------------------------- */
@@ -4403,7 +4401,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: true,
       },
     ],
-    attackBoost: 0,
     countersKnowledgeCards: [
       {
         id: '缴械',
