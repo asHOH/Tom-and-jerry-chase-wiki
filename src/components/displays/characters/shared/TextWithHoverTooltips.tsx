@@ -36,7 +36,7 @@ export const renderTextWithTooltips = (
       const [base, boost] = content.split('+').map((s) => parseFloat(s));
       if (base && boost) {
         visibleText = String(base + boost);
-        tooltipContent = `基础伤害${base}+角色增伤${boost}`;
+        tooltipContent = `基础伤害${base}+角色增伤${boost}，同时也能享受到其他来源的攻击增伤加成`;
       } else {
         visibleText = content;
         tooltipContent = content;
@@ -68,7 +68,7 @@ export const renderTextWithTooltips = (
         continue;
       }
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
-      tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}`;
+      tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也能享受到其他来源的攻击增伤加成`;
     }
 
     parts.push(

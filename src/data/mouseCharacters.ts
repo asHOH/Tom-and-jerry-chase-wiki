@@ -1312,6 +1312,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     collaborators: [
       {
+        id: '航海士杰瑞',
+        description: '感应雷可以中断交互动作，和火药桶可以相互配合，对火箭进行。',
+        isMinor: false,
+      },
+      {
         id: '国王杰瑞',
         description: '泰菲蹭国王的升级版救援战旗，开圆滚滚碰一下火箭就能实现稳救队友。',
         isMinor: false,
@@ -2912,11 +2917,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
     ],
     counters: [
-      {
-        id: '追风汤姆',
-        description: '很怕反伤。',
-        isMinor: false,
-      },
       {
         id: '米特',
         description: '技能提供的减伤能大幅降低甚至免疫胡椒粉的伤害，还能反伤。',
