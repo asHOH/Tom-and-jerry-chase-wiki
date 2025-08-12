@@ -66,7 +66,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     {item.factionId == 'cat' ? '只能被猫咪使用' : '只能被老鼠使用'}
                   </Tag>
                 )}
-                {!!item.damage && (
+                {item.damage != undefined && (
                   <Tag
                     colorStyles={
                       isDarkMode
@@ -78,7 +78,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     伤害： {item.damage}
                   </Tag>
                 )}
-                {!!item.walldamage && (
+                {item.walldamage != undefined && (
                   <Tag
                     colorStyles={
                       isDarkMode
@@ -88,6 +88,20 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     size='md'
                   >
                     对墙缝伤害： {item.walldamage}
+                  </Tag>
+                )}
+                {item.exp != undefined && (
+                  <Tag
+                    colorStyles={
+                      isDarkMode
+                        ? { background: '#334155', color: '#e0e7ef' }
+                        : { background: '#e0e7ef', color: '#1e293b' }
+                    }
+                    size='md'
+                  >
+                    {item.exp == 0
+                      ? '（猫）命中时不会获得经验'
+                      : `（猫）命中时获得经验：${item.exp}`}
                   </Tag>
                 )}
                 {item.store != undefined && (
@@ -111,7 +125,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     }
                     size='md'
                   >
-                    价格： {item.price}
+                    商店价格： {item.price}
                   </Tag>
                 )}
                 {!!item.storeCD && (
