@@ -83,7 +83,6 @@ export default function GameImage({
             objectFit: 'contain',
             maxHeight,
             maxWidth: '100%',
-            width: 'auto',
             height: 'auto',
             transition: designTokens.transitions.normal,
             opacity: isLoaded ? 1 : 0,
