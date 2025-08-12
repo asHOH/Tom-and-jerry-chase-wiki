@@ -9,6 +9,8 @@ import FilterLabel from '@/components/ui/FilterLabel';
 import { useState } from 'react';
 import type { Itemtypelist, Itemsourcelist, Item } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { getFactionButtonColors } from '@/lib/design-system';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 const ITEM_TYPE_OPTIONS: Itemtypelist[] = [
   '投掷类',
@@ -27,6 +29,7 @@ export default function ItemClient() {
   // Faction: 'cat', 'mouse', 'none' (none = 不受阵营限制)
   const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse' | 'none')[]>([]);
   const isMobile = useMobile();
+  const [isDarkMode] = useDarkMode();
 
   const filteredItems = Object.values(items).filter((item: Item) => {
     // 类型筛选
@@ -116,36 +119,48 @@ export default function ItemClient() {
             <FilterLabel displayMode='inline'>阵营筛选:</FilterLabel>
             <FilterLabel displayMode='block'>筛选:</FilterLabel>
             <div className='flex gap-2'>
-              {[
-                {
-                  key: 'cat' as const,
-                  mobileLabel: '猫阵营',
-                  label: '猫阵营专用',
-                  color: 'bg-yellow-400 text-black dark:bg-yellow-400 dark:text-black',
-                },
-                {
-                  key: 'mouse' as const,
-                  mobileLabel: '鼠阵营',
-                  label: '鼠阵营专用',
-                  color: 'bg-sky-400 text-black dark:bg-sky-400 dark:text-black',
-                },
-                {
-                  key: 'none' as const,
-                  mobileLabel: '通用',
-                  label: '通用',
-                  color: 'bg-purple-500 text-white dark:bg-purple-500 dark:text-white',
-                },
-              ].map((faction) => {
+              {(
+                [
+                  {
+                    key: 'cat' as const,
+                    mobileLabel: '猫阵营',
+                    label: '猫阵营专用',
+                  },
+                  {
+                    key: 'mouse' as const,
+                    mobileLabel: '鼠阵营',
+                    label: '鼠阵营专用',
+                  },
+                  {
+                    key: 'none' as const,
+                    mobileLabel: '通用',
+                    label: '通用',
+                  },
+                ] as const
+              ).map((faction) => {
                 const isActive = selectedFactions.includes(faction.key);
+                const factionColors =
+                  faction.key === 'none' ? null : getFactionButtonColors(faction.key, isDarkMode);
                 return (
                   <button
                     type='button'
                     key={faction.key}
-                    className={`filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none ${
-                      isActive
-                        ? faction.color
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                    }`}
+                    className={
+                      'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none ' +
+                      (!isActive
+                        ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
+                        : '')
+                    }
+                    style={
+                      isActive && factionColors
+                        ? {
+                            backgroundColor: factionColors.backgroundColor,
+                            color: factionColors.color,
+                          }
+                        : isActive && faction.key === 'none'
+                          ? { backgroundColor: '#e6d5f7', color: '#8b5cf6' }
+                          : {}
+                    }
                     onClick={() => {
                       setSelectedFactions((prev) =>
                         prev.includes(faction.key)
