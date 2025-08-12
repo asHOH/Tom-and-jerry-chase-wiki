@@ -45,7 +45,7 @@ export default function CharacterSectionIndex() {
       'Section:推荐加点',
       'Section:推荐知识卡组',
       'Section:技能描述',
-      `Section:角色和克制关系`,
+      `Section:克制关系`,
     ];
 
     // Add skill IDs
@@ -131,8 +131,8 @@ export default function CharacterSectionIndex() {
           </div>
         </li>
         <CharacterSectionIndexItem
-          name={character.factionId == 'cat' ? '角色克制关系' : '角色关系'}
-          isActive={activeSection === `Section:角色和克制关系`}
+          name={character.factionId == 'cat' ? '克制关系' : '克制/协作关系'}
+          isActive={activeSection === `Section:克制关系`}
         />
       </ul>
     </nav>
