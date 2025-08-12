@@ -3446,7 +3446,235 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
     ],
   },
-
+  /* ----------------------------------- 拿坡里鼠 ----------------------------------- */
+  拿坡里鼠: {
+    description:
+      '拿坡里鼠来自意大利，他是一只喜爱吃各种意大利美食的小老鼠，他生活在一个热闹的街道上，平时最喜欢打抱不平、帮助弱小，他是汤姆和杰瑞的好朋友。',
+    maxHp: 99,
+    attackBoost: 10,
+    hpRecovery: 2.5,
+    moveSpeed: 635,
+    jumpHeight: 400,
+    cheesePushSpeed: 3.33,
+    wallCrackDamageBoost: 0.5,
+    mousePositioningTags: [
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '斜塔封路，足球和饼都有一定的干扰能力。',
+        additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '意式披萨',
+        pattern: '121212333',
+        weaponType: 'weapon1',
+        description: '饼不吃等级，考虑自保即可。',
+      },
+      {
+        id: '世界波',
+        pattern: '133031100',
+        weaponType: 'weapon1',
+        description: '自保和干扰均衡发展。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-舍己', 'C-救救我', 'S-缴械', 'S-回家'],
+        description: '打苏蕊卡组。',
+      },
+      {
+        cards: ['S-铁血', 'C-救救我', 'S-舍己', 'S-缴械'],
+        description: '常规卡组。',
+      },
+      {
+        cards: ['S-铁血', 'C-救救我', 'S-舍己', 'B-食物力量', 'A-投手'],
+        description: '21知识点卡组，也可以针对斯飞，布奇等依赖移速的猫。',
+      },
+    ],
+    skills: [
+      {
+        name: '比萨斜塔',
+        type: 'active',
+        description: '召唤并弹出比萨斜塔，弹飞碰到的猫咪。斜塔与墙壁和地板类似，会阻挡道路。',
+        detailedDescription:
+          '在前摇0.5秒后召唤并弹出比萨斜塔，动作后摇0.4秒。斜塔出现时弹飞碰到的猫咪，使其[以850的速度被击退，并眩晕1.5秒](正常情况下最终位移距离1275，若弹飞过程中眩晕结束则停止弹飞。可破盾，可击飞跳舞中的苏蕊)。[斜塔与墙壁和地板类似，塔顶可站立，塔身会阻挡道路](朝右的斜塔允许鼠方从右往左通过；空中释放时概率出现无法站立的“飘塔”)。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键', '道具键'],
+        cancelableAftercast: ['跳跃键', '道具键'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '斜塔会存在3.5秒。',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: 'CD减少至12秒。',
+            cooldown: 12,
+          },
+          {
+            level: 3,
+            description: '增加斜塔的存在时间。',
+            cooldown: 12,
+            detailedDescription: '增加斜塔的存在时间至6秒。',
+          },
+        ],
+        aliases: ['斜塔'],
+        canHitInPipe: false,
+        cueRange: '全图可见',
+      },
+      {
+        name: '意式披萨',
+        aliases: ['足球'],
+        type: 'weapon1',
+        description:
+          '召唤披萨饼，老鼠可通过交互键骑乘并一同移动，滚动的披萨饼撞到敌方时破碎，对撞到的敌方和在披萨饼上驾驶的老鼠造成伤害和[眩晕](可掉落道具和老鼠)，并生成披萨块，老鼠碰到后会缓慢恢复Hp。披萨块存在一定时间后消失；披萨饼存在一定时间后也会自然破碎，但不生成披萨块。',
+        detailedDescription:
+          '在前摇1.4秒后召唤披萨饼，老鼠[可通过交互键骑乘](动作前摇1秒)并一同移动，但期间移速降低2.5%，跳跃高度降低70%，且路过与饼高度相同的平台时会强制解除交互；滚动的披萨饼撞到敌方时破碎，对撞到的敌方和在披萨饼上驾驶的老鼠造成伤害和[眩晕](可掉落道具和老鼠)，并生成披萨块，老鼠碰到后会获得5Hp/秒的恢复效果，持续10秒。披萨块存在5秒后消失；披萨饼存在30秒后也会自然破碎，但不生成披萨块。\n披萨块的生成数量取决于撞到多少敌人（例：1级时撞到两个敌人分裂两块披萨块）。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键', '道具键*'],
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '披萨饼破碎后基础生成1个披萨块。',
+            detailedDescription: '披萨饼碰撞会造成35伤害和1.9秒眩晕，破碎后基础生成1个披萨块。',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description:
+              '披萨饼造成的眩晕时间增加，破碎后生成披萨块的数量提高到3个。披萨块可以解除一些不良状态。',
+            detailedDescription:
+              '披萨饼造成的眩晕时间增加到2.9秒，破碎后生成披萨块的数量提高到3个。披萨块可以解除受伤，失明，反向效果。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: '受披萨饼眩晕的角色大幅减少视野。',
+            cooldown: 20,
+            detailedDescription:
+              '受披萨饼眩晕的角色大幅减少视野（为原来的50%），持续5秒。（当前Lv.3效果有bug，并不增加救援速度，与游戏内描述不符）',
+          },
+        ],
+        cancelableAftercast: '无后摇',
+        cueRange: '本房间可见',
+        cooldownTiming: '释放后',
+      },
+      {
+        name: '世界波',
+        type: 'weapon2',
+        description:
+          '蓄力并踢出足球，蓄力期间完全失重且增大视野。足球命中敌方时对敌方造成伤害和“强光耀眼”状态（失明，降低25%交互速度，此期间受来自拿坡里鼠的伤害会眩晕2秒，有内置CD）。足球存在时间与蓄力时间有关。足球可以反复弹跳。',
+        detailedDescription:
+          '[蓄力并踢出足球，蓄力期间完全失重且增大视野半径100%](蓄满力需1.7秒，此后最多保持蓄力状态3.5秒，到达时间后强制施放技能)。命中敌方时对敌方造成30伤害和“强光耀眼”状态（失明，降低25%交互速度，此期间受来自拿坡里鼠的伤害会眩晕2秒，有内置CD。该状态持续8秒）。[有效蓄力时间越长，足球存在时间越长](有效蓄力时长最长1.7秒，足球持续时间和速度由蓄力时间阶段性决定，并非线性关系)。足球碰到道具/墙壁/地板后会被反弹，可以反复弹跳。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '开始蓄力时，自动吸取并吃掉周围的一个食物。',
+            detailedDescription:
+              '开始蓄力时，自动[吸取](使对应道具消失，动画表现为被拿坡里鼠卷走)周围的1个蛋糕或牛奶，并在1秒后获得其效果。',
+            cooldown: 25,
+          },
+          {
+            level: 3,
+            description: 'CD减少至15秒，踢出足球时会立刻对小范围内所有敌方造成“强光耀眼”。',
+            detailedDescription: 'CD减少至15秒，踢出足球时会立刻对小范围内所有敌方造成“强光耀眼”。',
+            cooldown: 15,
+          },
+        ],
+        aliases: ['足球'],
+        canHitInPipe: false,
+        cueRange: '本房间可见',
+      },
+      {
+        name: '侠义相助',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '吃食物、喝饮料、碰触披萨块可以减少主动与武器技能的CD。',
+            detailedDescription:
+              '吃蛋糕或牛奶可以减少主动与武器技能10秒CD，喝药水则使CD减20秒，触碰披萨块则使CD减少3秒。（注：天宫的果子也算作食物，使用后可使CD减少10秒）',
+          },
+          {
+            level: 2,
+            description: '被绑上火箭时，火箭燃烧速度减少，被队友救援的速度增加。',
+            detailedDescription: '被绑上火箭时，火箭燃烧速度减少20%，被队友救援的速度增加20%。',
+          },
+          {
+            level: 3,
+            description: '技能命中猫咪后，救援队友的速度增加。',
+            detailedDescription: '技能命中猫咪后，救援队友的速度增加35%，持续6.1秒。',
+          },
+        ],
+        description: '',
+        detailedDescription: '<无内容>',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '配合技能空造塔或利用足球卡滞空。',
+      },
+    ],
+    aliases: ['小拿'],
+    counteredBy: [
+      {
+        id: '斯飞',
+        description: '斯飞的被动技能免疫足球失明效果。',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '罗宾汉泰菲',
+        description: '利用斜塔的碰撞，快速卡塔破墙。还能相互弥补控制真空期。',
+        isMinor: false,
+      },
+      {
+        id: '雪梨',
+        description: '骑乘披萨饼期间可通过花束快速位移，连带披萨饼一同移动，出其不意。',
+        isMinor: true,
+      },
+    ],
+    counters: [
+      {
+        id: '塔拉',
+        description: '斜塔能防止套索上火箭。',
+        isMinor: true,
+      },
+    ],
+    countersSpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '用塔使猫咪强制位移，防止绑上火箭。',
+        isMinor: true,
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '皮糙肉厚',
+        description: '大幅度降低足球和披萨饼的伤害。',
+        isMinor: true,
+      },
+    ],
+  },
   /* ----------------------------------- 侦探泰菲 ----------------------------------- */
   侦探泰菲: {
     aliases: ['侦菲'],
@@ -5182,11 +5410,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     knowledgeCardGroups: [
       {
         cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-不屈', 'C-救救我'],
-        description: '米可主流卡组',
+        description: '米可主流卡组。',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'S-缴械'],
-        description: '没有21点时带',
+        description: '没有21知识量时可选择携带。',
       },
     ],
     skills: [
@@ -5355,15 +5583,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     specialSkills: [
       {
         name: '应急治疗',
-        description: '加强生存能力，与被动减伤配合较好',
+        description: '加强生存能力，与被动减伤配合较好。',
       },
       {
         name: '魔术漂浮',
-        description: '泛用性很高，提高机动性和自保能力',
+        description: '泛用性很高，提高机动性和自保能力。',
       },
       {
         name: '勇气投掷',
-        description: '用于缩短采访CD',
+        description: '用于缩短采访CD。',
       },
     ],
   },

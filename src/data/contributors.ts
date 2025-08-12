@@ -443,6 +443,16 @@ export const contributors: Contributor[] = [
       },
     ],
   },
+  {
+    id: 'mizhehenwuliao',
+    name: '迷者很无聊',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['拿坡里鼠'],
+      },
+    ],
+  },
   // TODO: Add 米特技巧 contributor
   // TODO：Add 库博知识卡推荐 contributor
   {
