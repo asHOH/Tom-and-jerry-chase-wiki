@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import GameImage from '@/components/ui/GameImage';
 import Image from '@/components/Image';
 import { useAppContext } from '@/context/AppContext';
 import { SpecialSkill } from '@/data/types';
@@ -42,23 +43,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
       <div className='flex flex-col md:flex-row' style={{ gap: designTokens.spacing.xl }}>
         <div className='md:w-1/3'>
           <BaseCard variant='details'>
-            <div className='w-full h-64 bg-gray-200 dark:bg-slate-700 rounded-t-lg relative overflow-hidden mb-4 image-container'>
-              <div className='flex items-center justify-center h-full p-3'>
-                <Image
-                  src={skill.imageUrl}
-                  alt={skill.name}
-                  width={200}
-                  height={200}
-                  style={{
-                    objectFit: 'contain',
-                    maxHeight: '100%',
-                    maxWidth: '100%',
-                    width: 'auto',
-                    height: 'auto',
-                  }}
-                />
-              </div>
-            </div>
+            <GameImage src={skill.imageUrl} alt={skill.name} size='CARD_DETAILS' />
             <div style={{ padding: designTokens.spacing.md }}>
               <h1
                 className='text-3xl font-bold dark:text-white'

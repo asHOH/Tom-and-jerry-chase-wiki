@@ -6,7 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
-import Image from '@/components/Image';
+import GameImage from '@/components/ui/GameImage';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
   const { isDetailedView } = useAppContext();
@@ -23,23 +23,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
       <div className='flex flex-col md:flex-row' style={{ gap: spacing.xl }}>
         <div className='md:w-1/3'>
           <BaseCard variant='details'>
-            <div className='w-full h-64 bg-gray-200 dark:bg-slate-700 rounded-t-lg relative overflow-hidden mb-4 image-container -mx-4 -mt-4'>
-              <div className='flex items-center justify-center h-full p-3'>
-                <Image
-                  src={item.imageUrl}
-                  alt={item.name}
-                  width={200}
-                  height={200}
-                  style={{
-                    objectFit: 'contain',
-                    maxHeight: '100%',
-                    maxWidth: '100%',
-                    width: 'auto',
-                    height: 'auto',
-                  }}
-                />
-              </div>
-            </div>
+            <GameImage src={item.imageUrl} alt={item.name} size='CARD_DETAILS' />
             <div
               style={{
                 paddingLeft: spacing.md,
