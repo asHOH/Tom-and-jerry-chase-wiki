@@ -10,7 +10,7 @@ import BaseCard from '../../../ui/BaseCard';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import clsx from 'clsx';
 
 export default function CharacterDisplay({

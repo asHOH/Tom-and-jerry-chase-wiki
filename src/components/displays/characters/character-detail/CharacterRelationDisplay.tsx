@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { cards, FactionId, specialSkills } from '@/data';
 import { AssetManager } from '@/lib/assetManager';
 import { CharacterRelation, CharacterRelationItem } from '@/data/types';

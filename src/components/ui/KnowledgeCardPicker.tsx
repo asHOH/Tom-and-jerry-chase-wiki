@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { catKnowledgeCards } from '@/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
 import { Card, FactionId } from '@/data/types';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import Tooltip from './Tooltip';
 import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';

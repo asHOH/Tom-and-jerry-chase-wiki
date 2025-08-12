@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { cards } from '@/data';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { CharacterRelationItem } from '@/data/types';
 
 type Props = {

@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { useState } from 'react';
 import { designTokens, componentTokens } from '@/lib/design-tokens';
 
@@ -35,8 +35,8 @@ export default function GameImage({
       : componentTokens.image.container.height;
 
   // Detect if this is a cat character image for larger display
-  const isCatCharacter = src.includes('/images/cats/');
-  const maxHeight = isCatCharacter ? '90%' : '80%';
+  // const isCatCharacter = src.includes('/images/cats/');
+  // const maxHeight = isCatCharacter ? '90%' : '80%';
 
   // Optimize sizes attribute based on image size and usage
   const optimizedSizes =
@@ -81,10 +81,10 @@ export default function GameImage({
           onError={onError}
           style={{
             objectFit: 'contain',
-            maxHeight: maxHeight,
-            maxWidth: '100%',
-            width: 'auto',
-            height: 'auto',
+            // maxHeight: maxHeight,
+            // maxWidth: '100%',
+            // width: 'auto',
+            // height: 'auto',
             transition: designTokens.transitions.normal,
             opacity: isLoaded ? 1 : 0,
           }}

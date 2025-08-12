@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { useAppContext } from '@/context/AppContext';
 import { SpecialSkill } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';

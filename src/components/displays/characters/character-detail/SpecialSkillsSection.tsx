@@ -1,7 +1,7 @@
 import EditableField from '@/components/ui/EditableField';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { characters, specialSkills } from '@/data';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import Link from 'next/link';
 import { useSnapshot } from 'valtio';
 

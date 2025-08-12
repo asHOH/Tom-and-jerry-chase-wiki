@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, Fragment } from 'react';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
 import { Skill, SkillLevel } from '@/data/types';

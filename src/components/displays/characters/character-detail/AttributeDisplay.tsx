@@ -38,10 +38,6 @@ export default function AttributeDisplay({
 
   const getRankablePropertyKey = (): RankableProperty | undefined => {
     if (path && RANKABLE_PROPERTIES.some((p) => p.key === path)) {
-      console.log(
-        { path },
-        RANKABLE_PROPERTIES.map((p) => p.key)
-      );
       return path as RankableProperty;
     }
     return undefined;

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { CharacterDetailsProps } from '@/lib/types';
 import { Skill } from '@/data/types';
 import PositioningTagsSection from './PositioningTagsSection';
@@ -80,10 +80,10 @@ export default function CharacterDetails({
                     height={200}
                     style={{
                       objectFit: 'contain',
-                      maxHeight: '100%',
-                      maxWidth: '100%',
-                      width: 'auto',
-                      height: 'auto',
+                      // maxHeight: '100%',
+                      // maxWidth: '100%',
+                      // width: 'auto',
+                      // height: 'auto',
                     }}
                   />
                 </div>
