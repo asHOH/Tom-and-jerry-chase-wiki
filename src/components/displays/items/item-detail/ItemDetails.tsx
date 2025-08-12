@@ -6,7 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
-import Image from 'next/image';
+import Image from '@/components/Image';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
   const { isDetailedView } = useAppContext();

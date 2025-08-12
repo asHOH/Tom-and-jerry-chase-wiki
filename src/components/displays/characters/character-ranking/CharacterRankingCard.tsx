@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import { RankedCharacter, getRankDisplayName } from '@/lib/characterRankingUtils';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { getCardRankColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import BaseCard from '@/components/ui/BaseCard';

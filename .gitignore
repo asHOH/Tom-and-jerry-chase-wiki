@@ -98,5 +98,10 @@ public/workbox-*.js
 public/fallback-*.js
 public/version.json
 
+# Storybook logs and static files
 *storybook.log
 storybook-static
+
+# Generated images
+public/images/*/*.webp
+public/images/*/*.avif

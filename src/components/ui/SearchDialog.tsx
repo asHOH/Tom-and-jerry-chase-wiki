@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { motion } from 'framer-motion'; // Import motion
 import clsx from 'clsx';
 import { performSearch, SearchResult } from '@/lib/searchUtils';

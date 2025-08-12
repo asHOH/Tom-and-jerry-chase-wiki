@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { specialSkills } from '@/data';
 import type { FactionId } from '@/data/types';
 import { useState } from 'react';

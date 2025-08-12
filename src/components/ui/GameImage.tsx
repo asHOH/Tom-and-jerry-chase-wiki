@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { useState } from 'react';
 import { designTokens, componentTokens } from '@/lib/design-tokens';
 
@@ -81,7 +81,7 @@ export default function GameImage({
           onError={onError}
           style={{
             objectFit: 'contain',
-            maxHeight: maxHeight,
+            maxHeight,
             maxWidth: '100%',
             width: 'auto',
             height: 'auto',

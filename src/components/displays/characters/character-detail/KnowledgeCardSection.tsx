@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import Tooltip from '@/components/ui/Tooltip';
 import CharacterSection from './CharacterSection';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet, FactionId } from '@/data/types';

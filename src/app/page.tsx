@@ -75,7 +75,7 @@ function HomeContent() {
       ariaLabel: '特技列表',
     },
     {
-      imageSrc: '/images/items/%E7%9B%98%E5%AD%90.png',
+      imageSrc: '/images/items/%E8%93%9D%E8%8A%B1%E7%93%B6.png',
       imageAlt: '道具图标',
       title: '道具',
       description: '道具列表',

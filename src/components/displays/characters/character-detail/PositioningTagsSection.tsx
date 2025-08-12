@@ -15,7 +15,7 @@ import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import clsx from 'clsx';
 
 // Helper function to get available tag names based on faction

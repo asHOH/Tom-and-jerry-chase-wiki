@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { getCardRankColors, getCardCostColors, designTokens } from '@/lib/design-tokens';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';

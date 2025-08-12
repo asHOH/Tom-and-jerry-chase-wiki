@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import clsx from 'clsx';
 
 interface KnowledgeCardTooltipProps {

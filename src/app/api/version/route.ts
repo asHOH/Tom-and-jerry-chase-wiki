@@ -37,7 +37,7 @@ const getVersionTimestamp = (environment: string) => {
     return SERVER_START_TIME;
   } else {
     // For preview/production: use build-time environment variable
-    return process.env.BUILD_TIMESTAMP || SERVER_START_TIME;
+    return process.env.NEXT_PUBLIC_BUILD_TIMESTAMP || SERVER_START_TIME;
   }
 };
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useCallback } from 'react';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { SkillAllocation, FactionId } from '@/data/types';
 import {
   safeParseSkillAllocationPattern,

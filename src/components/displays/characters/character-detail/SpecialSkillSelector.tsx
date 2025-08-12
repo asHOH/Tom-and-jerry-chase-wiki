@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FactionId, specialSkills } from '@/data';
-import Image from 'next/image';
+import Image from '@/components/Image';
 import { CharacterRelationItem } from '@/data/types';
 
 type Props = {
