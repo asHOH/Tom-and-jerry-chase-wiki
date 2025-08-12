@@ -54,7 +54,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                   paddingBottom: spacing.xs,
                 }}
               >
-                {item.name}
+                {item.name}{' '}
                 <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
                   ({item.itemtype}
                   {item.itemsource})
@@ -66,49 +66,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
               >
                 {item.factionId != undefined && (
                   <Tag colorStyles={tagColorStyles} size='md'>
-                    {item.factionId == 'cat' ? '只能被猫咪使用' : '只能被老鼠使用'}
-                  </Tag>
-                )}
-                {item.damage != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    伤害： {item.damage}
-                  </Tag>
-                )}
-                {item.walldamage != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    对墙缝伤害： {item.walldamage}
-                  </Tag>
-                )}
-                {item.exp != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    {item.exp == 0
-                      ? '（猫）命中时不会获得经验'
-                      : `（猫）命中时获得经验：${item.exp}`}
-                  </Tag>
-                )}
-                {item.store != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    {item.store == true ? '可从局内商店购买' : '无法从局内商店购买'}
-                  </Tag>
-                )}
-                {!!item.price && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    商店价格： {item.price}
-                  </Tag>
-                )}
-                {!!item.storeCD && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    购买CD： {item.storeCD}秒
-                  </Tag>
-                )}
-                {item.teamCD != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    {item.teamCD == true ? '团队共享购买冷却' : '单独计算购买冷却'}
-                  </Tag>
-                )}
-                {item.unlocktime != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    商店解锁时间：{item.unlocktime}
+                    {item.factionId == 'cat' ? '限猫咪使用' : '限老鼠使用'}
                   </Tag>
                 )}
                 {(item.aliases ?? []).map((alias) => (
@@ -116,6 +74,41 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     别名: {alias}
                   </Tag>
                 ))}
+                {item.damage != undefined && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    伤害: {item.damage}
+                  </Tag>
+                )}
+                {item.walldamage != undefined && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    破墙伤害: {item.walldamage}
+                  </Tag>
+                )}
+                {item.exp != undefined && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    {item.exp == 0 ? '(猫) 命中无经验' : `(猫) 命中获得经验: ${item.exp}`}
+                  </Tag>
+                )}
+                {item.store != undefined && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    {item.store == true ? '局内商店有售' : '局内商店不售'}
+                  </Tag>
+                )}
+                {!!item.price && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    价格: {item.price}
+                  </Tag>
+                )}
+                {!!item.storeCD && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    购买CD: {item.storeCD}秒 ({item.teamCD == true ? '共享' : '独立'})
+                  </Tag>
+                )}
+                {item.unlocktime != undefined && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    解锁时间: {item.unlocktime}
+                  </Tag>
+                )}
               </div>
             </div>
           </BaseCard>
