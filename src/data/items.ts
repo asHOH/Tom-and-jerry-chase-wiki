@@ -59,7 +59,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   叉子: {
     itemtype: '投掷类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['餐叉', '铁叉'],
+    aliases: ['餐叉'],
     damage: 25,
     walldamage: 5,
     description:
@@ -73,7 +73,6 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   高尔夫球: {
     itemtype: '投掷类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['高尔夫', '球'],
     damage: 25,
     walldamage: 3,
     description: '击中敌方时造成伤害及短暂减速，击中敌方角色/墙壁/地面时会反弹。',
@@ -89,7 +88,6 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   香水瓶: {
     itemtype: '投掷类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['香水'],
     damage: 0,
     walldamage: 8,
     description:
@@ -121,7 +119,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   番茄: {
     itemtype: '投掷类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['大番茄', '西红柿'],
+    aliases: ['西红柿'],
     damage: 0,
     walldamage: 3,
     description: '击中敌方时破碎并造成减速，击中地面时破碎并生成会造成可叠加减速的番茄区域。',
@@ -150,7 +148,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   小鞭炮: {
     itemtype: '投掷类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['鞭炮', '小鞭炮', '炸药'],
+    aliases: ['炸药'],
     damage: 75,
     walldamage: 7,
     description:
@@ -167,7 +165,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   鞭炮束: {
     itemtype: '投掷类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['鞭炮', '大鞭炮', '核弹头', '大炸药'],
+    aliases: ['大鞭炮', '核弹头', '大炸药'],
     damage: 75,
     walldamage: 4,
     description:
@@ -184,16 +182,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   灰花瓶: {
     itemtype: '投掷类' as const,
     itemsource: '常规道具' as const,
-    aliases: [
-      '花瓶',
-      '灰色花瓶',
-      '灰罐子',
-      '灰色大花瓶',
-      '灰缸',
-      '黑色花瓶',
-      '黑罐子',
-      '黑色大花瓶',
-    ],
+    aliases: ['花瓶', '灰色花瓶', '灰罐子', '灰色大花瓶', '灰缸'],
     damage: 50,
     walldamage: 8,
     description:
@@ -215,7 +204,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     description:
       '击中敌方时破碎并造成伤害和眩晕，击中地面时破碎并生成四个碎片。可将至多3个其他投掷类常规道具（不包括番茄和其他蓝花瓶）装入蓝花瓶内，击中敌方或地面时使花瓶内的道具掉出。角色处于由部分道具导致的眩晕时，再次受到来自它们的眩晕不会使已有的眩晕时间延长。角色踩到碎片会短暂硬直，之后一段时间内免疫碎片效果。',
     detailedDescription:
-      '击中敌方时破碎并造成50伤害和2.8秒眩晕，击中地面时破碎并生成四个碎片。可将至多3个其他投掷类常规道具（不包括番茄和其他蓝花瓶）装入蓝花瓶内，击中敌方或地面时使花瓶内的道具以被投掷的形态掉出（以蓝花瓶的速度为初速度，蓝花瓶的中心点为生成点。伤害来源与蓝花瓶相同），这些道具命中敌方时也会造成对应效果。角色处于由冰块/鞭炮/花瓶/狗骨头/部分与道具有关的技能导致的眩晕时，再次受到来自它们的眩晕不会使已有的眩晕时间延长。角色踩到碎片会硬直1s，之后3.1秒内免疫碎片效果（期间踩到碎片不会令其消失）。',
+      '击中敌方时破碎并造成50伤害和2.8秒眩晕，击中地面时破碎并生成四个碎片。可将至多3个其他投掷类常规道具（不包括番茄和其他蓝花瓶）装入蓝花瓶内，击中敌方或地面时使花瓶内的道具以被投掷的形态掉出（以蓝花瓶的速度为初速度，蓝花瓶的中心点为生成点。伤害来源与蓝花瓶相同），这些道具命中敌方时也会造成对应效果。角色处于由冰块/鞭炮/花瓶/狗骨头/部分与道具有关的技能导致的眩晕时，再次受到来自它们的眩晕不会使已有的眩晕时间延长。角色踩到碎片会硬直1秒，之后3.1秒内免疫碎片效果（期间踩到碎片不会令其消失）。',
     create: '自然刷新，但每个房间初始最多刷新一个。或通过纸盒/传送带/彩蛋房/商店等途径获得。',
     store: true,
     price: 2400,
@@ -238,6 +227,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   玩具枪: {
     itemtype: '手持类' as const,
     itemsource: '常规道具' as const,
+    aliases: ['手枪'],
     damage: 50,
     walldamage: 6,
     description:
@@ -364,7 +354,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   鞭炮堆: {
     itemtype: '物件类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['鞭炮桶', '小鞭炮堆'],
+    aliases: ['鞭炮桶'],
     description:
       '可通过道具键从中取出小鞭炮，第一次取出时冷却为10秒，此后每次增加3秒，至多25秒。猫从鞭炮堆中取鞭炮的速度比老鼠快。',
     create: '自然刷新，但每个房间初始最多刷新一个。或通过商店等途径获得。',
@@ -386,7 +376,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   小纸盒: {
     itemtype: '物件类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['纸盒', '纸箱', '小纸箱', '纸袋', '小纸袋'],
+    aliases: ['纸箱', '小纸箱', '纸袋', '小纸袋'],
     description: '与其交互可以打开纸盒，随机掉落一个常规道具。',
     detailedDescription:
       '与其交互可以打开纸盒，随机掉落一个常规道具（包括所有投掷类道具，除了修理锤及黄金修理锤外的其他手持类道具，以及牛奶、蛋糕、神秘饮料、奶酪）。',
@@ -396,7 +386,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   大纸盒: {
     itemtype: '物件类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['纸盒', '纸箱', '大纸箱', '纸袋', '大纸袋'],
+    aliases: ['纸箱', '大纸箱', '纸袋', '大纸袋'],
     description: '与其交互可以打开纸盒，随机掉落一个常规道具。',
     detailedDescription:
       '与其交互可以打开纸盒，随机掉落一个常规道具（包括所有投掷类道具，除了修理锤及黄金修理锤外的其他手持类道具，以及牛奶、蛋糕、神秘饮料、奶酪）。',
@@ -496,7 +486,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   变身饮料: {
     itemtype: '食物类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['变身药水', '变大药水', '变壮药水', '力量药水', '比利鼠药水', '比例鼠药水'],
+    aliases: ['变身药水', '变大药水', '力量药水', '比利鼠药水', '比例鼠药水'],
     damage: 50,
     walldamage: 2.5,
     description:
@@ -513,7 +503,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   神秘饮料: {
     itemtype: '食物类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['神秘药水', '随机饮料', '随机药水', '彩色药水', '五颜六色的变大药水'],
+    aliases: ['神秘药水', '随机饮料', '随机药水', '彩色药水'],
     description:
       '拾取后储存在饮料栏，饮用后随机获得远视、隐身、护盾、兴奋、变身药水中的一个效果,各效果获得概率均等（恢复效果的数值取决于对应饮料的效果）。',
     detailedDescription:
@@ -563,7 +553,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   拳套盒: {
     itemtype: '其它' as const,
     itemsource: '常规道具' as const,
-    aliases: ['拳套盒子', '拳头', '拳套'],
+    aliases: ['拳套盒子', '拳头盒子'],
     description:
       '有角色路过时，在短暂延迟后出拳，造成伤害和眩晕（可击落道具和老鼠）。猫咪可通过交互键拆卸拳套盒并拿在手中，老鼠可通过交互将其缓慢向一个方向推行。',
     detailedDescription:

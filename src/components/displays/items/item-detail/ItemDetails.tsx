@@ -69,11 +69,11 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     {item.factionId == 'cat' ? '限猫咪使用' : '限老鼠使用'}
                   </Tag>
                 )}
-                {(item.aliases ?? []).map((alias) => (
-                  <Tag colorStyles={tagColorStyles} size='md' key={alias}>
-                    别名: {alias}
+                {!!(item.aliases && item.aliases.length) && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    别名: {(item.aliases ?? []).filter(Boolean).join(', ')}
                   </Tag>
-                ))}
+                )}
                 {item.damage != undefined && (
                   <Tag colorStyles={tagColorStyles} size='md'>
                     伤害: {item.damage}
