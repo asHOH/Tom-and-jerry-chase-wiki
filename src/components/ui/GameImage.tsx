@@ -49,6 +49,10 @@ export default function GameImage({
           return '210px';
         case 'KNOWLEDGECARD_CARD':
           return '160px';
+        case 'SPECIAL_SKILL_CARD':
+          return '90px';
+        case 'ITEM_CARD':
+          return '130px';
         default:
           return '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
       }

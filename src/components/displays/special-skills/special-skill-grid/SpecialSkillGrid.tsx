@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import Image from '@/components/Image';
+import GameImage from '@/components/ui/GameImage';
 import { specialSkills } from '@/data';
 import type { FactionId } from '@/data/types';
 import { useState } from 'react';
@@ -9,6 +8,7 @@ import clsx from 'clsx';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import FilterLabel from '@/components/ui/FilterLabel';
+import BaseCard from '@/components/ui/BaseCard';
 
 const allSkills = [...Object.values(specialSkills.cat), ...Object.values(specialSkills.mouse)];
 
@@ -56,28 +56,33 @@ export default function SpecialSkillClient() {
           </div>
         </div>
       </header>
-      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8'>
+      <div
+        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}
+      >
         {filteredSkills.map((skill) => (
-          <Link
+          <div
             key={skill.factionId + skill.name}
-            href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(skill.name)}`}
-            className='block bg-white dark:bg-slate-800 rounded-lg shadow hover:shadow-lg transform transition-all duration-200 hover:-translate-y-1 p-4 border border-gray-200 dark:border-slate-700'
+            className='character-card transform transition-transform hover:-translate-y-1'
           >
-            <div className='flex flex-col items-center'>
-              <div className='relative w-16 h-16 mb-2'>
-                <Image
-                  src={skill.imageUrl}
-                  alt={skill.name}
-                  fill
-                  sizes='64px'
-                  className='object-contain'
-                />
-              </div>
-              <div className='text-center'>
+            <BaseCard
+              variant='item'
+              href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(
+                skill.name
+              )}`}
+              aria-label={`查看${skill.name}特技详情`}
+            >
+              <GameImage
+                src={skill.imageUrl}
+                alt={skill.name}
+                size='SPECIAL_SKILL_CARD'
+                className='hover:scale-105'
+              />
+              <div className='px-3 pt-1 pb-3 text-center'>
                 <div className='font-semibold dark:text-white'>{skill.name}</div>
               </div>
-            </div>
-          </Link>
+            </BaseCard>
+          </div>
         ))}
       </div>
     </div>
