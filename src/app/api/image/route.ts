@@ -13,44 +13,39 @@ export async function GET(request: NextRequest) {
   // const width = searchParams.get('w'); // Next.js Image component passes 'w' for width
   // const quality = searchParams.get('q') || '75'; // Default quality to 75
 
-  // Sanitize the src to prevent directory traversal
   const sanitizedSrc = path.normalize(src).replace(/^(\.\.[/\\])+/, '');
   const fullOriginalPath = path.join(process.cwd(), 'public', sanitizedSrc);
 
-  // Get the path without the original extension
   const baseNameWithoutExt = path.basename(fullOriginalPath, path.extname(fullOriginalPath));
   const dirName = path.dirname(fullOriginalPath);
-  const baseImagePath = path.join(dirName, baseNameWithoutExt); // This is the path without any extension
+  const baseImagePath = path.join(dirName, baseNameWithoutExt);
 
   try {
-    // Determine preferred format based on Accept header
     const acceptHeader = request.headers.get('Accept') || '';
-    let filePathToServe = fullOriginalPath; // Start with the original path
-    let contentType = `image/${path.extname(fullOriginalPath).substring(1)}`; // Start with original content type
+    let filePathToServe = fullOriginalPath;
+    let contentType = `image/${path.extname(fullOriginalPath).substring(1)}`;
 
     // Check for AVIF
     if (acceptHeader.includes('image/avif')) {
-      const avifPath = `${baseImagePath}.avif`; // Use baseImagePath
+      const avifPath = `${baseImagePath}.avif`;
       try {
         await fs.access(avifPath);
         filePathToServe = avifPath;
         contentType = 'image/avif';
       } catch (e) {
         void e;
-        // AVIF not found, fall back to WebP or original
       }
     }
 
-    // Check for WebP if AVIF not found or not accepted
+    // Check for WEBP
     if (contentType !== 'image/avif' && acceptHeader.includes('image/webp')) {
-      const webpPath = `${baseImagePath}.webp`; // Use baseImagePath
+      const webpPath = `${baseImagePath}.webp`;
       try {
         await fs.access(webpPath);
         filePathToServe = webpPath;
         contentType = 'image/webp';
       } catch (e) {
         void e;
-        // WebP not found, fall back to original
       }
     }
 
@@ -58,9 +53,12 @@ export async function GET(request: NextRequest) {
 
     const headers = new Headers();
     headers.set('Content-Type', contentType);
-    headers.set('Cache-Control', 'public, max-age=31536000, immutable'); // Cache for a year
+    if (process.env.NODE_ENV === 'development') {
+      headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    } else {
+      headers.set('Cache-Control', 'private, max-age=2592000, immutable'); // use private because the response type is not shared
+    }
 
-    // Convert Buffer to ReadableStream for NextResponse
     const stream = new ReadableStream({
       start(controller) {
         controller.enqueue(imageBuffer);
@@ -70,7 +68,6 @@ export async function GET(request: NextRequest) {
 
     return new NextResponse(stream, { headers });
   } catch (error: unknown) {
-    // Type guard to check if error is an object with a 'code' property
     if (
       typeof error === 'object' &&
       error !== null &&
