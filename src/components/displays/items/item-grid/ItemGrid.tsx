@@ -162,11 +162,19 @@ export default function ItemClient() {
           </div>
         </div>
       </header>
-      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-8'>
+      <div
+        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}
+      >
         {filteredItems.map((item) => (
-          <Link key={item.name} href={`/items/${encodeURIComponent(item.name)}`} className='flex'>
-            <ItemCardDisplay item={item} />
-          </Link>
+          <div
+            key={item.name}
+            className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'
+          >
+            <Link href={`/items/${encodeURIComponent(item.name)}`} className='block'>
+              <ItemCardDisplay item={item} />
+            </Link>
+          </div>
         ))}
       </div>
     </div>
