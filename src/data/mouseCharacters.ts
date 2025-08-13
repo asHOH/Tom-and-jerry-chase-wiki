@@ -1797,7 +1797,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counters: [
       {
         id: '莱特宁',
-        description: '牛仔杰瑞可以通过仙人掌防止闪现刀，且莱特宁本身怕干扰、难以处理124Hp老鼠',
+        description:
+          '牛仔杰瑞可以通过弹琴解除莱特宁的被动标记、用仙人掌防止闪现刀，且莱特宁本身怕干扰、难以处理124Hp老鼠',
         isMinor: false,
       },
       {
@@ -2070,7 +2071,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counteredBy: [
       {
         id: '莱特宁',
-        description: '恶魔杰瑞两个技能均有较长前摇，被莱特宁三级传送克制。',
+        description: '恶魔杰瑞两个技能均有较长前摇，被莱特宁三级闪现克制。',
         isMinor: false,
       },
       {
@@ -5550,7 +5551,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '莱特宁',
         description:
-          '莱特宁攻击手段有限，米可的高减伤配上逃窜和特技治疗很难被莱特宁击倒。回溯可以吸莱特宁闪现，且还可以给莱特宁拍照闪现后回溯原位。',
+          '莱特宁攻击手段有限，而米可有高额减伤，配上逃窜和特技治疗很难被击倒。回溯可以吸莱特宁闪现，且还可以给莱特宁拍照、闪现后回溯原位。',
         isMinor: false,
       },
     ],

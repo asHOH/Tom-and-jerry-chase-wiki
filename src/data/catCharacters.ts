@@ -206,7 +206,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counters: [
       {
         id: '尼宝',
-        description: '汤姆的平底锅可以把尼宝拍飞，打断其救援。',
+        description: '汤姆无敌期间，尼宝钩子无法救下队友；平底锅可以把尼宝拍飞，打断其救援。',
         isMinor: false,
       },
     ],
