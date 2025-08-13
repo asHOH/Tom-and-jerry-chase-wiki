@@ -74,10 +74,6 @@ function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagName
   const handleBlurRef = useRef<() => void>(() => {});
 
   handleBlurRef.current = () => {
-    if (contentRef.current && content === '') {
-      contentRef.current!.textContent = '<无内容>';
-    }
-
     if (contentRef.current && contentRef.current.textContent !== String(content)) {
       const newContentStr = contentRef.current.textContent || '';
 
