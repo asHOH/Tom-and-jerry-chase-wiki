@@ -61,9 +61,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '鼓舞',
         type: 'active',
-        description: '短暂为自己和附近队友提供增益。',
+        description: '增加自身和附近队友的移速和跳跃高度。',
         detailedDescription:
-          '前摇0.5s，后摇1s。短暂为自己和附近队友[提供增益](等级相同的鼓舞不可叠加，但等级不同的鼓舞可以叠加)。',
+          '在前摇0.5秒后，增加自身和附近队友的移速和跳跃高度，技能后摇1秒。（不同等级的鼓舞效果可以叠加）。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
@@ -72,18 +72,22 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '增加移速和跳跃高度。',
-            detailedDescription: '增加15%移速和45%跳跃高度，持续5秒。',
+            description: '',
+            detailedDescription: '移速增加15%、跳跃高度增加45%，持续5秒。',
             cooldown: 18,
           },
           {
             level: 2,
-            description: '鼓舞额外回复25Hp。',
+            description: '鼓舞能额外回复Hp。',
+            detailedDescription: '鼓舞能额外回复25Hp。',
             cooldown: 18,
           },
           {
             level: 3,
-            description: '鼓舞额外解除受伤状态，并延长附近绑有老鼠的火箭10秒燃烧时间。',
+            description:
+              '鼓舞能解除受伤状态。可以对被绑上火箭的老鼠鼓舞，改为延长对应火箭的放飞倒计时。',
+            detailedDescription:
+              '鼓舞能解除受伤状态。[可以对被绑上火箭的老鼠鼓舞，改为延长对应火箭的放飞倒计时10秒](与库博天堂火箭的互动关系：鼓舞天堂火箭上的虚影或虚影对应的本体都可以增加天堂火箭的放飞倒计时，若同时鼓舞二者则效果翻倍；若队友被绑上地面火箭，鼓舞时也会增加地面火箭的倒计时)。',
             cooldown: 18,
           },
         ],
@@ -92,8 +96,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '大铁锤',
         aliases: ['锤子'],
         type: 'weapon1',
-        description: '举起大铁锤近身攻击。',
-        detailedDescription: '前摇0.8s，后摇0.6s，举起大铁锤近身攻击。',
+        description: '举起大铁锤，对面前的敌方造成眩晕。',
+        detailedDescription:
+          '举起大铁锤，在前摇0.8秒后对面前的敌方造成[眩晕](可掉落道具和老鼠，不会在对方状态栏显示)，技能后摇0.6秒。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -104,20 +109,22 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '眩晕猫咪3秒。',
-            detailedDescription: '[眩晕猫咪3秒](不会在猫的状态栏显示)。',
+            description: '',
+            detailedDescription: '眩晕时间为3秒。',
             cooldown: 20,
           },
           {
             level: 2,
-            description: '减少CD；额外造成伤害；每次命中永久提升10%推速。',
+            description:
+              'CD减少至16秒。大铁锤会造成伤害，且每次命中敌方时会使自身推速提高，可叠加，持续时间无限。',
             detailedDescription:
-              '减少CD；额外造成{65}伤害；每次[命中猫咪](包括虚弱、霸体或无敌的猫咪)永久提升10%推速，最多叠五层。',
+              'CD减少至16秒。大铁锤会造成{65}伤害，且每次[命中敌方时](包括命中虚弱、霸体或无敌的猫咪时)会使自身[推速提高10%，最多叠加五层](每层之间独立计算。所有百分比推速加成之间均为乘算关系，包括游戏自带的百分比推速增减)，持续时间无限。',
             cooldown: 16,
           },
           {
             level: 3,
-            description: '减少CD；眩晕时间延长至4秒。',
+            description: 'CD减少至12秒。大铁锤造成的眩晕时间延长。',
+            detailedDescription: 'CD减少至12秒。大铁锤造成的眩晕时间延长至4秒。',
             cooldown: 12,
           },
         ],
@@ -125,9 +132,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '鸟哨',
         type: 'weapon2',
-        description: '召唤金丝雀投掷炸弹，造成伤害和眩晕。',
+        description:
+          '吹响鸟哨召唤金丝雀。金丝雀会来回盘旋，持续掉落一枚[炸弹](外观酷似小鞭炮，但炸弹不会攻击友方，也不会造成范围伤害，这点与普通的鞭炮不同)，命中敌方时爆炸，造成伤害和眩晕；炸弹掉落一定时间后也会自行爆炸。金丝雀轰炸一段时间后自行飞离。同一房间内最多只能有1只由鸟哨召唤的金丝雀。敌方被炸弹命中并眩晕后，短暂免疫炸弹效果。',
         detailedDescription:
-          '前摇1s，后摇1s，召唤金丝雀投掷炸弹，造成{55}伤害和2秒眩晕。同一房间内最多只能有一只投掷炸弹的金丝雀。猫咪被金丝雀的炸弹命中后将对其短暂免疫。',
+          '在1秒前摇后吹响鸟哨，召唤金丝雀[飞到吹响鸟哨的位置](金丝雀会由地图左上角飞到目标位置，因此距离地图左上角越近，到达速度越快)，技能后摇1秒。金丝雀会[在一定范围内来回盘旋](金丝雀可穿墙)，每隔一段时间会垂直掉落一枚[炸弹](外观酷似小鞭炮，但炸弹不会攻击友方，也不会造成范围伤害，这点与普通的鞭炮不同)，命中敌方时爆炸，对目标造成{55}伤害和2秒眩晕；炸弹掉落一定时间后也会自行爆炸，不造成伤害和眩晕。金丝雀轰炸一段时间后自行飞离。[同一房间内最多只能有1只由鸟哨召唤的金丝雀](以吹响鸟哨的位置判定金丝雀所属房间，即使之后金丝雀穿越墙壁飞入其他房间也不会改变所属位置。金丝雀在飞到与飞离目标位置的过程中仍然算作存在于该房间内。与金丝雀NPC分开计数)。敌方被炸弹[命中并眩晕](若眩晕被敌方护盾、霸体、无敌等效果免疫，则不会触发后续免疫炸弹的效果)后，在眩晕期间及眩晕结束后1秒内免疫炸弹效果。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -137,19 +145,20 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description: '',
-            detailedDescription: '金丝雀存在12s，每隔0.8s投掷一枚炸弹，总共15±1枚。',
+            detailedDescription: '金丝雀存在12秒，每隔0.8秒投掷一枚炸弹，单次技能总共投掷15±1枚。',
             cooldown: 30,
           },
           {
             level: 2,
             description: '缩短金丝雀投掷炸弹的间隔。',
-            detailedDescription: '缩短金丝雀投掷炸弹的间隔至0.75s，总共17±1枚。',
+            detailedDescription: '缩短金丝雀投掷炸弹的间隔至0.75s，单次技能总共投掷17±1枚。',
             cooldown: 30,
           },
           {
             level: 3,
-            description: '减少CD；进一步缩短金丝雀投掷炸弹的间隔。',
-            detailedDescription: '减少CD；进一步缩短金丝雀投掷炸弹的间隔至0.6s，总共20±1枚。',
+            description: 'CD减少至24秒；进一步缩短金丝雀投掷炸弹的间隔。',
+            detailedDescription:
+              'CD减少至24秒；进一步缩短金丝雀投掷炸弹的间隔至0.6秒，单次技能总共投掷20±1枚。',
             cooldown: 24,
           },
         ],
@@ -161,19 +170,21 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '增加推速。',
-            detailedDescription: '增加30%推速',
+            description: '推速增加。',
+            detailedDescription:
+              '[推速增加30%](所有百分比推速加成之间均为乘算关系，包括游戏自带的百分比推速增减)。',
           },
           {
             level: 2,
-            description: '搬奶酪时，增加移速和跳跃高度。',
-            detailedDescription: '搬奶酪时，移速增加52%、跳跃高度增加25%。',
+            description: '搬运奶酪时，移速和跳跃高度增加。',
+            detailedDescription: '搬运奶酪时，移速增加52%、跳跃高度增加25%。',
           },
           {
             level: 3,
-            description: '奶酪被推完或墙缝被破坏到一定程度时，解除虚弱和受伤，并回复少量Hp。',
+            description:
+              '每当奶酪被推进或墙缝首次被破坏到一定程度时，解除虚弱和受伤、回复少量Hp、且移速短暂提高。',
             detailedDescription:
-              '奶酪被推完或墙缝被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、并获得13%加速，持续2.7秒。',
+              '每当奶酪被推进或墙缝首次被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、回复20Hp、且移速提高13%，持续2.7秒。',
           },
         ],
       },
@@ -181,11 +192,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     specialSkills: [
       {
         name: '干扰投掷',
-        description: '适配大铁锤较长前摇',
+        description: '与大铁锤搭配，提高命中率。',
       },
       {
         name: '魔术漂浮',
-        description: '杰瑞所有技能均可中断漂浮，灵活性高',
+        description: '杰瑞所有技能均可中断漂浮，灵活性高。',
       },
     ],
     aliases: ['撅瑞'],
@@ -197,7 +208,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         id: '汤姆',
-        description: '杰瑞技能前后摇较长，且鼓舞不能取消后摇，易被汤姆抓空档',
+        description: '杰瑞技能前后摇较长，且鼓舞不能取消后摇，易被汤姆抓空档。',
         isMinor: true,
       },
     ],
@@ -791,6 +802,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '拥有极高的输出和武器的控制，技能提供续航。',
         additionalDescription:
           '高等级剑杰可在打出大量伤害的同时控制猫数秒，双武器均可与干扰投掷配合。',
+      },
+      {
+        tagName: '后期',
+        isMinor: true,
+        weapon: 1,
+        description:
+          '高等级剑舞能先手打出控制，配合主动技能更能造成连续控制；高等级被动提供极高Hp加成。',
+        additionalDescription: '',
       },
     ],
     specialSkills: [
@@ -3534,7 +3553,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '召唤披萨饼，老鼠可通过交互键骑乘并一同移动，滚动的披萨饼撞到敌方时破碎，对撞到的敌方和在披萨饼上驾驶的老鼠造成伤害和[眩晕](可掉落道具和老鼠)，并生成披萨块，老鼠碰到后会缓慢恢复Hp。披萨块存在一定时间后消失；披萨饼存在一定时间后也会自然破碎，但不生成披萨块。',
         detailedDescription:
-          '在前摇1.4秒后召唤披萨饼，老鼠[可通过交互键骑乘](动作前摇1秒)并一同移动，但期间移速降低2.5%，跳跃高度降低70%，且路过与饼高度相同的平台时会强制解除交互；滚动的披萨饼撞到敌方时破碎，对撞到的敌方和在披萨饼上驾驶的老鼠造成伤害和[眩晕](可掉落道具和老鼠)，并生成披萨块，老鼠碰到后会获得5Hp/秒的恢复效果，持续10秒。披萨块存在5秒后消失；披萨饼存在30秒后也会自然破碎，但不生成披萨块。\n披萨块的生成数量取决于撞到多少敌人（例：1级时撞到两个敌人分裂两块披萨块）。',
+          '在前摇1.4秒后召唤披萨饼，老鼠[可通过交互键骑乘](动作前摇1秒)并一同移动，但期间移速降低2.5%，跳跃高度降低70%，且路过与饼高度相同的平台时会强制解除交互；滚动的披萨饼撞到敌方时破碎，[对撞到的敌方和在披萨饼上驾驶的老鼠造成伤害和眩晕](该伤害来源为拿坡里鼠，因此对拿坡里鼠自身造成伤害时不受攻击增伤影响；该眩晕可掉落道具和老鼠)，并生成披萨块，老鼠碰到后会获得5Hp/秒的恢复效果，持续10秒。披萨块存在5秒后消失；披萨饼存在30秒后也会自然破碎，但不生成披萨块。\n披萨块的生成数量取决于撞到多少敌人（例：1级时撞到两个敌人分裂两块披萨块）。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键*'],
@@ -3543,7 +3562,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description: '披萨饼破碎后基础生成1个披萨块。',
-            detailedDescription: '披萨饼碰撞会造成35伤害和1.9秒眩晕，破碎后基础生成1个披萨块。',
+            detailedDescription: '披萨饼碰撞会造成{35}伤害和1.9秒眩晕，破碎后基础生成1个披萨块。',
             cooldown: 20,
           },
           {
@@ -3570,9 +3589,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '世界波',
         type: 'weapon2',
         description:
-          '蓄力并踢出足球，蓄力期间完全失重且增大视野。足球命中敌方时对敌方造成伤害和“强光耀眼”状态（失明，降低25%交互速度，此期间受来自拿坡里鼠的伤害会眩晕2秒，有内置CD）。足球存在时间与蓄力时间有关。足球可以反复弹跳。',
+          '蓄力并踢出足球，蓄力期间无法移动、[完全失重](完全不会因受到重力而向下坠落。若该状态下受到其他受力效果（如鞭炮爆炸等），则会以固定速度进行位移)且增大视野。足球命中敌方时对敌方造成伤害和“强光耀眼”状态（失明，降低25%交互速度，此期间受来自拿坡里鼠的伤害会眩晕2秒，有内置CD）。足球存在时间与蓄力时间有关。足球可以反复弹跳。',
         detailedDescription:
-          '[蓄力并踢出足球，蓄力期间完全失重且增大视野半径100%](蓄满力需1.7秒，此后最多保持蓄力状态3.5秒，到达时间后强制施放技能)。命中敌方时对敌方造成30伤害和“强光耀眼”状态（失明，降低25%交互速度，此期间受来自拿坡里鼠的伤害会眩晕2秒，有内置CD。该状态持续8秒）。[有效蓄力时间越长，足球存在时间越长](有效蓄力时长最长1.7秒，足球持续时间和速度由蓄力时间阶段性决定，并非线性关系)。足球碰到道具/墙壁/地板后会被反弹，可以反复弹跳。',
+          '[蓄力并踢出足球](蓄满力需1.7秒，此后最多保持蓄力状态3.5秒，到达时间后强制施放技能)，蓄力期间无法移动、[完全失重](完全不会因受到重力而向下坠落。若该状态下受到其他受力效果（如鞭炮爆炸等），则会以固定速度进行位移)且增大视野半径100%。命中敌方时对敌方造成30伤害和“强光耀眼”状态（失明，降低25%交互速度，此期间受来自拿坡里鼠的伤害会眩晕2秒，有内置CD。该状态持续8秒）。[有效蓄力时间越长，足球存在时间越长](有效蓄力时长最长1.7秒，足球持续时间和速度由蓄力时间阶段性决定，并非线性关系)。足球碰到道具/墙壁/地板后会被反弹，可以反复弹跳。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -3624,7 +3643,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         description: '',
-        detailedDescription: '<无内容>',
+        detailedDescription: '',
       },
     ],
     specialSkills: [
@@ -3898,7 +3917,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '挥出一道剑气。剑气击中敌方将造成伤害和减速；击中友方将给予移速、救援及跳跃高度提升，且其在此期间可用交互键瞬移至附近幻影处。剑气击中平台则形成幻影，再次点击技能按钮可瞬移至幻影处。',
         detailedDescription:
-          '挥出一道剑气，前摇0.45s，飞行速度1750，持续5s。剑气击中角色可反弹一次，再次击中角色剑气消失。剑气击中敌方将造成10伤害（可继承状态），并降低其40%移速、跳跃高度，持续5s；击中友方将提升其25%移速、救援速度及跳跃高度，持续5s，且其在此期间可用交互键瞬移至附近幻影处。剑气击中平台则形成幻影，再次点击技能按钮可瞬移至幻影处。',
+          '挥出一道剑气，前摇0.45s，飞行速度1750，持续5s。剑气击中角色可反弹一次，再次击中角色剑气消失。剑气击中敌方将造成{10}伤害，并降低其40%移速、跳跃高度，持续5s；击中友方将提升其25%移速、救援速度及跳跃高度，持续5s，且其在此期间可用交互键瞬移至附近幻影处。剑气击中平台则形成幻影，再次点击技能按钮可瞬移至幻影处。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         // cancelableSkill: '不确定是否可被打断', // FIXME
@@ -3934,14 +3953,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '当道具命中敌方时，获得4秒无敌。（CD：45s）',
+            description: '当道具命中敌方时，获得4秒无敌，该效果有45秒内置CD。',
           },
           {
             level: 3,
             description:
-              '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成眩晕效果（可救下其手中的老鼠），敌方在45秒内不会重复受到此效果。',
+              '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成眩晕效果（可救下其手中的老鼠），对同一敌方有45秒内置CD。',
             detailedDescription:
-              '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成2.5秒眩晕效果（可救下其手中的老鼠），敌方在45秒内不会重复受到此效果。',
+              '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成2.5秒眩晕效果（可救下其手中的老鼠），对同一敌方有45秒内置CD。',
           },
         ],
       },
@@ -4246,7 +4265,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '侍卫汤姆',
         description:
-          '侍卫汤姆霸体减控能力间隔较长，所需等级较高，前期很容易被罗菲连续控制。火炮的远程消耗可以被藤蔓的恢复轻易化解。不过，侍卫汤姆移速快，二被动伤害高，超大的视野范围也能防范罗菲的偷袭，因此罗菲单人干扰侍卫汤姆有一定风险，非常建议配合其他干扰位。',
+          '侍卫汤姆霸体减控能力间隔较长，所需等级较高，前期很容易被罗菲连续控制,且火炮的远程消耗可以被藤蔓的恢复化解。不过，侍卫汤姆移速快，Lv.2被动伤害高，超大的视野范围也能防范罗菲的偷袭，可能会抓住罗菲的破绽。',
         isMinor: true,
       },
       {
@@ -5848,9 +5867,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '<无内容>',
+            description: '',
             cooldown: 35,
-            detailedDescription: '<无内容>',
+            detailedDescription: '',
           },
           {
             level: 2,
@@ -6196,7 +6215,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '<无内容>',
+            description: '',
             detailedDescription: '',
             cooldown: 18,
           },
@@ -6305,7 +6324,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     collaborators: [
       {
         id: '剑客莉莉',
-        description: '风墙可困住或阻挡猫，可防止猫碰到毛线损坏毛线球。',
+        description: '莉莉的风墙可困住或阻挡猫，方便梦游安全地拉取毛线球。',
         isMinor: true,
       },
       {

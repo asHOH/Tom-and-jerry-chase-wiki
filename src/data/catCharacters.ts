@@ -123,7 +123,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'weapon1',
         description: '手型枪水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。',
         detailedDescription:
-          '手型枪水平飞出、飞回，对[命中](飞出、飞回过程均可命中；包括因遇到护盾而提前返回的情况；至多只能抓回并眩晕一只老鼠)的老鼠造成{15}伤害、将其抓回并眩晕2.5秒。如果拉回过程[遇到障碍](包括墙壁、叉子的阻挡，或是某些高低差地形)，则[额外造成70伤害](可能会重复产生2-3次伤害，具体成因不详，疑似与墙壁厚度及高低差有关)。抓回及眩晕效果对变身状态的老鼠和虚弱的老鼠也生效。若手型枪命中的老鼠持有护盾，则打破一层护盾并提前返回。',
+          '手型枪水平飞出、飞回，对[命中](飞出、飞回过程均可命中；包括因遇到护盾而提前返回的情况；至多只能抓回并眩晕一只老鼠)的老鼠造成{15}伤害、[将其抓回并眩晕2.5秒](本技能造成伤害与造成眩晕的时机不同，所以即便该老鼠因该次伤害而进入"铁血"状态，也仍会受到后续的拉回和眩晕影响)。如果拉回过程[遇到障碍](包括墙壁、叉子的阻挡，或是某些高低差地形)，则[额外造成70伤害](可能会重复产生2-3次伤害，具体成因不详，疑似与墙壁厚度及高低差有关)。抓回及眩晕效果对变身状态的老鼠和虚弱的老鼠也生效。若手型枪命中的老鼠持有护盾，则打破一层护盾并提前返回。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -455,7 +455,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '剑客莉莉',
         description:
-          '剑客莉莉的风墙能阻挡冲刺的布奇，Lv.2提供的霸体和武器技能提供的位移也能相对安全地进行救援。',
+          '剑客莉莉的风墙能阻挡冲刺的布奇，Lv.2提供的无敌和武器技能提供的位移也能相对安全地进行救援。',
         isMinor: true,
       },
       {
@@ -1595,16 +1595,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description: '打高伤阵容，如剑杰、朵朵。',
           },
         ],
-        description: '蓄势一击配合侍卫二级被动可以打死125血量的老鼠',
+        description: '蓄势一击配合侍卫二级被动可以打死125血量的老鼠。',
         defaultFolded: false,
       },
       {
         cards: ['A-熊熊燃烧', 'A-心灵手巧', 'A-细心', 'A-加大火力', 'C-猫是液体'],
-        description: '牧场专用',
+        description: '牧场专用。',
       },
       {
         id: '击晕',
-        description: '待补充',
+        description: '',
         groups: [
           {
             cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
@@ -1726,59 +1726,44 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counters: [
       {
         id: '泰菲',
-        description: '',
+        description: '侍卫汤姆移速快，且在Lv.2被动加成下能一击击倒泰菲。',
         isMinor: false,
       },
       {
         id: '米雪儿',
-        description: '',
+        description: '侍卫汤姆能用警戒直接看穿变身状态的米雪儿。',
         isMinor: false,
       },
       {
         id: '侦探杰瑞',
-        description: '侍卫汤姆的警戒会导致侦探杰瑞的隐身失效，且降低推速',
+        description: '侍卫汤姆的警戒会导致侦探杰瑞的隐身失效，且降低推速。',
         isMinor: false,
       },
       {
         id: '杰瑞',
-        description: '',
-        isMinor: false,
-      },
-      {
-        id: '恶魔泰菲',
-        description: '',
+        description: '侍卫汤姆视野范围大，杰瑞自保能力差，容易成为突破口。',
         isMinor: false,
       },
     ],
     counteredBy: [
       {
         id: '剑客泰菲',
-        description: '',
-        isMinor: false,
-      },
-      {
-        id: '罗宾汉泰菲',
-        description: '',
+        description: '剑客泰菲破局能力强，能突破侍卫汤姆的火炮防守。',
         isMinor: false,
       },
       {
         id: '尼宝',
-        description: '',
-        isMinor: false,
-      },
-      {
-        id: '魔术师',
-        description: '',
+        description: '侍卫汤姆基本无法阻止尼宝救人，也难以突破尼宝的鱼钩防守。',
         isMinor: false,
       },
       {
         id: '航海士杰瑞',
-        description: '',
+        description: '航海士杰瑞控制时间长，控制频率高，火药桶还能炸火箭，对侍卫汤姆有很强压制力。',
         isMinor: false,
       },
       {
         id: '米可',
-        description: '',
+        description: '米可生存能力非常强，容易采访到侍卫汤姆的素材，侍卫汤姆对此缺乏反制手段。',
         isMinor: false,
       },
     ],
@@ -1790,6 +1775,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '图茨拥有娇小的身材和靓丽的脸庞，因为被富养，她性格可爱温柔，广受所有猫和老鼠的喜爱。',
     maxHp: 225,
+    attackBoost: 0,
     hpRecovery: 4.5,
     moveSpeed: 740,
     jumpHeight: 420, // FIXME: 梦回说跟托普斯一样是467.6、其他猫是481.7，但靠谱吗？
@@ -1825,14 +1811,21 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     skillAllocations: [
       {
-        id: '常规加点',
+        id: '防狼锤',
+        pattern: '121210002',
+        weaponType: 'weapon1',
+        description: '防狼锤综合强度较低，仅在需要利用其2级的禁用技能和道具效果时才推荐使用。',
+        additionaldescription: '',
+      },
+      {
+        id: '汽水罐常规加点',
         pattern: '131313000',
         weaponType: 'weapon2',
         description: '',
         additionaldescription: '',
       },
       {
-        id: '汽水爪刀流',
+        id: '汽水罐爪刀流',
         pattern: '131010033',
         weaponType: 'weapon1',
         description: '如果节奏突然断了，5级可以先点被动而不点汽水罐，尝试找节奏。',
@@ -1883,9 +1876,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '喵喵叫',
         type: 'active',
         description:
-          '按住技能键持续喵喵叫，期间可以移动并使用爪刀和特技霸体，附近老鼠不断叠加减速层数，每到五层时造成60点伤害和眩晕。被打断或取消会按比例返还CD。',
+          '按住技能键持续地喵喵叫，期间可以移动，也可以使用爪刀和特技-绝地反击；松开技能键可提前取消技能；喵喵叫期间对附近的老鼠持续施加[喵喵叫减速](喵喵叫减速与防狼锤减速的层数互通，但具体数值有差异)，叠加到第五层时造成伤害和眩晕，并清空减速层数。被打断或提前取消技能会按比例返还CD。',
         detailedDescription:
-          '前摇0.6s，按住技能键持续喵喵叫，期间可以移动并使用爪刀和特技霸体，周围半径1000范围内老鼠不断叠加减速层数，每层减速将使老鼠移速和跳跃速度降低8%，并暴露小地图视野。每到五层时造成60点伤害并眩晕2s，并清空减速层数。被打断或取消会按比例返还CD。',
+          '按住技能键，在前摇0.6秒后持续地喵喵叫，期间可以通过按住方向键不松开的方式移动，也可以正常使用爪刀和特技-绝地反击，松开技能键可提前取消技能；喵喵叫期间对周围半径1000范围内的老鼠持续施加[喵喵叫减速](喵喵叫减速与防狼锤减速的层数互通，但具体数值有差异)，每层[喵喵叫减速](喵喵叫减速与防狼锤减速的层数互通，但具体数值有差异)将使老鼠移速和跳跃速度降低8%，并暴露小地图视野；[喵喵叫减速](喵喵叫减速与防狼锤减速的层数互通，但具体数值有差异)叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。被打断或提前取消技能会按比例返还CD。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         canHitInPipe: true,
@@ -1894,18 +1887,21 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '叠层数频率为[0.5s](最高叠加5层)。',
+            description: '',
+            detailedDescription: '施加减速的频率为0.5秒（单次技能期间共计可叠加5次）。',
             cooldown: 25,
           },
           {
             level: 2,
-            description: '减少CD；叠层数频率提升至[0.4s](最高可叠6层)。',
+            description: 'CD减少至15秒。施加减速的频率提升。',
             cooldown: 15,
-            detailedDescription: '减少CD至15s；叠层数频率提升至[0.4秒](最高可叠6层)。',
+            detailedDescription:
+              'CD减少至15秒。施加减速的频率提升至0.4秒（单次技能期间共计可叠加6次）。',
           },
           {
             level: 3,
-            description: '叠层数频率提升至[0.3s](最高可叠11层)。',
+            description: '施加减速的频率进一步提升。',
+            detailedDescription: '施加减速的频率进一步提升至0.3秒（单次技能期间共计可叠加11次）。',
             cooldown: 15,
           },
         ],
@@ -1915,9 +1911,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '防狼锤',
         type: 'weapon1',
         aliases: ['锤子'],
-        description: '挥动防狼锤，造成少量伤害和一层减速。',
+        description:
+          '挥动防狼锤，对面前目标造成少量伤害，并对其施加一层[防狼锤减速](防狼锤减速与喵喵叫减速的层数互通，但具体数值有差异)，叠加到第五层时造成伤害和眩晕，并清空减速层数。使用该技能时，自身也会受到少量伤害。',
         detailedDescription:
-          '前摇0.3s，后摇0.4s，挥动防狼锤，对前方范围300内的老鼠造成5伤害和一层减速，移动和跳跃速度降低30%（最多降低90%），减速叠至五层时造成60点伤害并眩晕2s。使用时会因惯性向前移动一小段距离，自身受到10伤害。血量低于10时不能使用防狼锤。',
+          '挥动防狼锤，在前摇0.3秒后对前方300范围内的老鼠造成5伤害和一层[防狼锤减速](防狼锤减速与喵喵叫减速的层数互通，但具体数值有差异)，技能后摇0.4秒；每层[防狼锤减速](防狼锤减速与喵喵叫减速的层数互通，但具体数值有差异)将使老鼠移速和跳跃速度降低30%（最多降低90%），并暴露小地图视野；[防狼锤减速](防狼锤减速与喵喵叫减速的层数互通，但具体数值有差异)叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。使该技能时，会因惯性而向前移动一小段距离，且自身也会受到10伤害。Hp低于10时不能使用本技能。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
@@ -1930,15 +1927,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '命中额外造成长时间沉默。',
+            description: '防狼锤命中时，使目标在一段时间内无法使用技能和道具。',
             cooldown: 0.5,
-            detailedDescription: '命中额外造成6.9s沉默。',
+            detailedDescription: '防狼锤命中时，使目标无法使用技能和道具，持续6.9秒。',
           },
           {
             level: 3,
-            description: '减少CD。',
+            description: 'CD减少。',
             cooldown: 0.1,
-            detailedDescription: '减少CD至0.1s。',
+            detailedDescription: 'CD减少至0.1秒。',
           },
         ],
         canHitInPipe: false,
@@ -1947,9 +1944,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '汽水罐',
         type: 'weapon2',
         description:
-          '向任意方向扔出汽水罐。若未命中，达到终点后开始旋转，持续20秒。汽水罐听到喵喵叫将会提高运动速度和半径。命中老鼠或另一个汽水罐时，对小范围内所有老鼠造成少量伤害和冰冻。',
+          '向任意方向扔出汽水罐，汽水罐直线行进到终点后改为做旋转运动，持续20秒。盘旋的汽水罐在喵喵叫范围内时将会提高运动速度和半径。汽水罐命中老鼠或另一个汽水罐时，对小范围内所有老鼠造成少量伤害和冰冻。',
         detailedDescription:
-          '前摇0.5s，向任意方向扔出汽水罐，飞行速度1500。若未命中，飞行1.2s后开始旋转，盘旋路线半径250，飞行速度1000，持续20s。喵喵叫范围内盘旋的汽水罐运动速度每秒提升50，半径每秒增加200，喵喵叫结束后速度和半径将逐渐恢复正常。命中时，对半径175范围所有老鼠造成15伤害、[两层喵喵叫减速](无法被护盾、霸体、无敌抵挡；火箭上的老鼠也会受影响)和3s冰冻。两个汽水罐相撞将产生更大范围的冰爆，对半径350范围内所有老鼠造成造成30伤害、[四层喵喵叫减速](无法被护盾、霸体、无敌抵挡；火箭上的老鼠也会受影响)和3s冰冻。由于汽水罐而被施加[大于五层减速](如已有4层减速时被汽水罐命中，将达到6层减速)的老鼠，每多出一层都将额外受到一次60点伤害(5层为正常的60伤害，6层总共120伤害，以此类推)。',
+          '在前摇0.5秒后向任意方向扔出汽水罐，汽水罐基础飞行速度1500，直线飞行1.2秒后改为做旋转运动，盘旋路线半径250，飞行速度1000，持续20秒。盘旋的汽水罐在喵喵叫范围内时运动速度每秒提升50，半径每秒增加200，喵喵叫结束后速度和半径将逐渐恢复正常。汽水罐直接命中老鼠时，对[半径175范围所有老鼠](无法被护盾、霸体、无敌抵挡；火箭上的老鼠也会受影响)造成15伤害、3秒冰冻眩晕和两层[喵喵叫减速](喵喵叫减速之间的层数互通，效果相同)；两个汽水罐相撞将产生更大范围的冰爆，对[半径350范围内所有老鼠](无法被护盾、霸体、无敌抵挡；火箭上的老鼠也会受影响)造成30伤害、3秒冰冻和四层[喵喵叫减速](喵喵叫减速之间的层数互通，效果相同)。每层[喵喵叫减速](喵喵叫减速之间的层数互通，效果相同)将使老鼠移速和跳跃速度降低8%，并暴露小地图视野；[喵喵叫减速](喵喵叫减速之间的层数互通，效果相同)叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。[由于汽水罐而被施加大于五层喵喵叫减速](例如在已有四层减速时被汽水罐命中，因此达到六层减速)的老鼠，[每多出一层都将额外受到](例如五层为正常的60伤害，六层总共120伤害，以此类推)一次{60}伤害。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键', '其他技能键'],
@@ -1963,16 +1960,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description:
-              '汽水罐自然消失或相撞会形成特殊冰面，鼠滑到会进入[脆弱状态](放下道具，推速降低33%，救援速度降低73%，并暴露小地图位置，持续8s)，图茨滑到则会获得爆发性加速。',
+              '汽水罐自然消失或相撞会形成[特殊冰面](该冰面最多存在60秒，被踩踏3次或持续时间结束后消失，图茨踩上特殊冰面时不会中断喵喵叫)，鼠滑到会进入[脆弱状态](立刻掉落手中的道具，且推速和救援队友的速度降低，并暴露小地图位置，持续8秒)，图茨滑到则会获得短暂的的高额加速。',
             cooldown: 12,
             detailedDescription:
-              '汽水罐自然消失或相撞会形成特殊冰面(最多存在60s，被踩踏3次或持续时间结束后消失)。鼠滑到会进入[脆弱状态](放下道具，推速降低33%，救援速度降低73%，并暴露小地图位置，持续8s)，图茨滑到会获得100%加速，持续3s。',
+              '汽水罐自然消失或相撞会形成[特殊冰面](该冰面最多存在60秒，被踩踏3次或持续时间结束后消失，图茨踩上特殊冰面时不会中断喵喵叫)。鼠滑到会进入[脆弱状态](立刻掉落手中的道具，且推速降低33%，救援队友速度降低73%，并暴露小地图位置，持续8秒)，图茨滑到则会使移速提高100%，持续3秒。',
           },
           {
             level: 3,
-            description: '减少CD。',
+            description: 'CD减少。',
             cooldown: 8,
-            detailedDescription: '减少CD至8s。',
+            detailedDescription: 'CD减少至8秒。',
           },
         ],
       },
@@ -1983,19 +1980,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description:
-              '小地图不会显示图茨的位置；开关门不会有声音；处于同一房间时，不会使老鼠胆怯。',
+              '[隐藏自身在小地图上的位置](不会因被老鼠看到而出现在小地图上)；开关门不会有声音；处于同一房间时，不会使老鼠胆怯。',
             detailedDescription:
-              '小地图不会显示图茨的位置，但是老鼠喝远视或图茨手握老鼠时还是会出现在小地图上；开关门不会有声音；处于同一房间时，不会使老鼠胆怯。',
+              '[隐藏自身在小地图上的位置](不会因被老鼠看到而出现在小地图上，但是老鼠喝远视饮料或图茨手握老鼠时还是会出现在小地图上)；开关门不会有声音；处于同一房间时，不会使老鼠胆怯。',
           },
           {
             level: 2,
-            description: '血量不满时，可连续挥爪三次，并提高爪刀频率。',
-            detailedDescription: '血量不满时，可连续挥爪三次，空刀、实刀CD降低40%。',
+            description: '当前Hp低于Hp上限时，爪刀CD减少，且可连续挥爪三次。',
+            detailedDescription:
+              '当前Hp低于Hp上限时，爪刀CD减少40%，且在连续空刀三次后才会进入空刀CD。',
           },
           {
             level: 3,
-            description: '血量不满时，减少技能CD。',
-            detailedDescription: '血量不满时，技能CD减少40%。',
+            description: '当前Hp低于Hp上限时，主动和武器技能CD减少。',
+            detailedDescription: '当前Hp低于Hp上限时，主动和武器技能CD减少40%。',
           },
         ],
       },
@@ -2179,6 +2177,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   塔拉: {
     description: '塔拉是西部最美丽的牛仔母猫，她拥有俏丽的脸庞和苗条的身姿，吸引了无数人的目光。',
     maxHp: 250,
+    attackBoost: 0,
     hpRecovery: 2.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -2240,9 +2239,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '西部情谊',
         type: 'active',
-        description: '向前施放爱意，造成少量伤害。对男性角色及背对塔拉的角色有更强的效果。',
+        description:
+          '向前施放爱意，根据命中角色的性别和朝向造成不同的伤害和控制效果，对男性和背对塔拉的角色效果更强。',
         detailedDescription:
-          '前摇0.4s，向前600范围内施放爱意，造成伤害，后摇1s。根据性别和相对塔拉的朝向而产生不同的效果:\n男性背对：造成60伤害并击晕0.4s，之后每隔2.9s受到0.4s击晕，持续6.9s。\n男性正对：造成30伤害，移动速度降低30%，持续4.85s。\n女性背对：造成30伤害，移动速度降低30%，持续4.85秒。\n女性正对：造成30伤害，移动速度增加20%，持续2.8秒。',
+          '在前摇0.4秒后，向正前方600范围内施放爱意，技能后摇1秒，根据命中角色的性别和相对塔拉的朝向而产生不同的效果:\n男性背对：对其造成{60}伤害并眩晕0.4秒，之后每隔2.9秒受到0.4秒眩晕，该状态共持续6.9秒。\n男性正对：对其造成{30}伤害，且使其移速减少30%，持续4.85秒。\n女性背对：对其造成{30}伤害，且使其移速减少30%，持续4.85秒。\n女性正对：对其造成{30}伤害，但使其移速增加20%，持续2.8秒。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -2256,15 +2256,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '大幅减少CD。',
+            description: 'CD减少至10秒。',
             cooldown: 10,
-            detailedDescription: '减少CD至15s。',
+            detailedDescription: 'CD减少至10秒。',
           },
           {
             level: 3,
-            description: '大幅增加有效范围。',
+            description: '大幅增加生效范围。',
             cooldown: 10,
-            detailedDescription: '有效范围提高至1100。',
+            detailedDescription: '生效范围提高至1100。',
           },
         ],
         canHitInPipe: false,
@@ -2274,9 +2274,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '牛仔鞭索',
         type: 'weapon1',
         description:
-          '拖动技能，在面前135度的范围内甩出套索，若套中老鼠，对老鼠造成伤害和减速；再次点击按钮，塔拉将冲向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为可向任意方向扔出老鼠，老鼠碰到火箭将直接绑上，但[不减少引线时间](二级被动和知识卡不受影响)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，获得短暂无敌和加速。',
+          '拖动技能选择面前135度范围内的一个方向，松开时甩出套索，若套中老鼠，对老鼠造成伤害和减速；再次点击按钮使塔拉位移向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为可向任意方向扔出老鼠，老鼠碰到火箭将直接绑上，但[不减少引线时间](Lv.2被动和知识卡不受影响)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，然后获得短暂无敌和加速。',
         detailedDescription:
-          '前摇0.5s，拖动技能，在面前135度的范围内甩出套索，套索存在时间0.75s，存在时间内最大飞行距离为1750，对套中的老鼠造成30伤害并减速20%；在使用技能2.9秒后若套中老鼠，再次点击按钮塔拉将以1850的速度冲向该老鼠位置，位移期间获得无法选中效果，位移时间最多4.9s，超过时间将会被直接传送至老鼠旁边。当塔拉用技能位移到老鼠旁边时或套中老鼠4.9s后，对老鼠的减速将解除。当塔拉手中抓有老鼠时，本技能改为可向任意方向以2000速度扔出老鼠，期间老鼠无敌，碰到火箭将接绑上，但[不减少引线时间](二级被动和知识卡不受影响)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，获得无敌效果并加速20%，持续2.9s;飞行过程中[受力不停止飞行](包括鞭炮爆炸，电风扇吹风，轮胎击飞等效果。虽然不停止飞行，但仍会受力并可能改变方向)。套索的捆绑效果不会被无敌，护盾，霸体、[机器鼠](不会破坏机器鼠)等效果抵消或免疫，但造成的伤害、减速、眩晕会被抵消或免疫。',
+          '拖动技能选择面前135度范围内的一个方向，松开技能键时在前摇0.5秒后甩出套索，套索存在时间0.75s，存在时间内最大飞行距离为1750，对套中的老鼠造成{30}伤害并减速20%；在使用技能后进入2.9秒技能读条（若未套中老鼠则提前结束读条），套中老鼠后可再次点击技能，塔拉将[以1850的速度位移向该老鼠位置](位移期间获得无法选中效果，位移时间最多4.9秒，超过时间将会被直接传送至老鼠旁边)。当塔拉用技能位移到老鼠旁边时或套中老鼠4.9秒后，解除[套索效果](包括老鼠受到的减速效果，以及塔拉与老鼠之间连接的套绳贴图效果)。当塔拉手中抓有老鼠时，本技能改为可向任意方向以2000速度扔出老鼠，期间老鼠无敌，碰到火箭将直接绑上，但[不减少引线时间](Lv.2被动和知识卡不受影响)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，获得无敌效果并加速20%，持续2.9秒;飞行过程中[受力不停止飞行](包括鞭炮爆炸，电风扇吹风，轮胎击飞等效果。虽然不停止飞行，但仍会受力并可能改变方向)。套索的捆绑效果不会被无敌，护盾，霸体、[机器鼠](不会破坏机器鼠)等效果抵消或免疫，但造成的伤害、减速、眩晕会被抵消或免疫。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -2289,16 +2289,17 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '套索命中附加眩晕并提升塔拉的移速。',
+            description: '套索命中敌方时，对其造成眩晕，并提高塔拉的移速。',
             cooldown: 12,
-            detailedDescription: '套索命中附加2.9s眩晕并提升塔拉的移速18.5%，持续5s。',
+            detailedDescription:
+              '套索命中敌方时，[对其造成2.9s眩晕](本技能造成伤害与造成眩晕的时机不同，所以即便该老鼠因该次伤害而进入"铁血"状态，也仍会受到后续的眩晕影响)，并使塔拉的移速提高18.5%，持续5秒。',
           },
           {
             level: 3,
-            description: '减少CD；将老鼠投掷到火箭上时将回复Hp并获得短暂加速。',
+            description: 'CD减少至8秒；将老鼠投掷到火箭上时回复Hp并获得短暂加速。',
             cooldown: 8,
             detailedDescription:
-              '减少CD至8s；将老鼠投掷到火箭上后Hp回复提升5/s，移动速度提升25%，持续10s。',
+              'CD减少至8秒；将老鼠投掷到火箭上时，获得5Hp/秒的恢复效果，且移速提高25%，持续10秒。',
           },
         ],
         canHitInPipe: false,
@@ -2311,21 +2312,23 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '根据场上男性角色的数量提升移速和Hp上限。',
+            description: '根据场上男性角色的数量提高移速和Hp上限。',
             detailedDescription:
-              '根据场上男性角色的数量移速提升5%/10%/15%/20%，Hp上限提升20/25/30/35。',
+              '场上存在1/2/3/4+名男性角色时，自身移速提高5%/10%/15%/20%，Hp上限提高20/25/30/35。',
           },
           {
             level: 2,
             description:
-              '永久[扩大视野范围1.8倍](覆盖其他远视效果)；绑或扔火箭额外减少2秒引线时间。',
+              '永久[扩大视野范围1.8倍](覆盖其他远视效果)；[将老鼠绑上火箭](包括用套索丢上火箭的情况)使燃烧倒计时立刻减少2秒。',
             detailedDescription:
-              '永久[扩大视野范围1.8倍](覆盖其他远视效果)；绑或扔火箭额外减少2秒引线时间。',
+              '永久[扩大视野范围1.8倍](覆盖其他远视效果)；[将老鼠绑上火箭](包括用套索丢上火箭的情况)使燃烧倒计时立刻减少2秒。',
           },
           {
             level: 3,
-            description: '攻击男性角色将使自己获得短暂的霸体，期间缓慢恢复Hp。',
-            detailedDescription: '攻击男性角色将使自己获得强霸体，Hp回复提升15/s，持续4.75s。',
+            description:
+              '攻击男性角色将使自己获得短暂的[强霸体](免疫虚弱和大部分控制效果)和Hp恢复效果。',
+            detailedDescription:
+              '攻击男性角色将使自己获得[强霸体](免疫虚弱和大部分控制效果)和15Hp/秒的恢复效果，持续4.75秒。',
           },
         ],
         description: '',
@@ -3127,7 +3130,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '回复Hp，并随着音乐舞动，持续40秒。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复Hp、提升移速和攻击力。舞动时接触虚弱老鼠将使其自主跟随苏蕊30秒，期间遇到火箭立刻绑上。',
         detailedDescription:
-          '回复50Hp，随着音乐舞动，持续40秒。若手中有老鼠，则放下老鼠并使其自主跟随。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](CD为5.9秒（未命中）和11.9秒（命中），伤害为70点，不受长爪、乘胜追击影响)，苍蝇拍范围也变为以苏蕊为中心，拍抓会使[老鼠](包括触发三级被动后灵体状态的表演者•杰瑞)自主跟随。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复30Hp、提升10%移速和15点攻击力。舞动时接触不在捕鼠夹上的虚弱老鼠或[刚被击倒的老鼠](包括刚进入知识卡铁血、表演者•杰瑞一级被动、佩克斯三级被动状态的老鼠)，将使其自主跟随。自主跟随持续30秒，在此状态下，老鼠解除并免疫虚弱，无法使用技能和道具、进行交互或主动移动，但仍能受到伤害和[部分控制](不包含冰块、鞭炮、老鼠夹造成的控制)，且遇到火箭会立刻绑上。若老鼠与苏蕊距离较远（如苏蕊钻管道后），则老鼠会提前解除跟随。',
+          '回复50Hp，随着音乐舞动，持续40秒。若手中有老鼠，则放下老鼠并使其自主跟随。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](不受长爪、乘胜追击影响)（CD为5.9秒（未命中）和11.9秒（命中），伤害为70），苍蝇拍范围也变为以苏蕊为中心，拍抓会使[老鼠](包括触发三级被动后灵体状态的表演者•杰瑞)自主跟随。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复30Hp、提升10%移速和15点攻击力。舞动时接触不在捕鼠夹上的虚弱老鼠或[刚被击倒的老鼠](包括刚进入知识卡铁血、表演者•杰瑞一级被动、佩克斯三级被动状态的老鼠)，将使其自主跟随。自主跟随持续30秒，在此状态下，老鼠解除并免疫虚弱，无法使用技能和道具、进行交互或主动移动，但仍能受到伤害和[部分控制](不包含冰块、鞭炮、老鼠夹造成的控制)，且遇到火箭会立刻绑上。若老鼠与苏蕊距离较远（如苏蕊钻管道后），则老鼠会提前解除跟随。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -4330,7 +4333,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '<无内容>',
+            description: '',
             cooldown: 15,
           },
           {
