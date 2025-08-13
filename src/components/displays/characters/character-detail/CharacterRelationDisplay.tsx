@@ -250,13 +250,13 @@ function CharacterSelector({
       </button>
 
       {isOpen && (
-        <div className='absolute top-full right-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto'>
+        <div className='absolute top-full right-0 mt-1 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto'>
           {availableCharacters.map((char) => (
             <button
               key={char.id}
               type='button'
               onClick={() => handleSelect(char.id)}
-              className='w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2'
+              className='w-full text-left px-3 py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3'
               aria-label={`选择${char.id}`}
             >
               <Image
@@ -268,9 +268,9 @@ function CharacterSelector({
                       : AssetManager.getCharacterImageUrl(char.id, 'cat')
                 }
                 alt={char.id}
-                width={20}
-                height={20}
-                className='w-5 h-5 rounded-full object-cover'
+                width={28}
+                height={28}
+                className='w-7 h-7 rounded-full object-cover'
               />
               <span className='text-gray-700 dark:text-gray-300'>{char.id}</span>
             </button>
@@ -735,21 +735,19 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-300 dark:border-blue-700'>
-                          {skillObj && skillObj.imageUrl ? (
-                            <Image
-                              src={skillObj.imageUrl}
-                              alt={skill.id}
-                              width={40}
-                              height={40}
-                              className='w-10 h-10 rounded-full object-cover'
-                            />
-                          ) : (
-                            <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
-                              ?
-                            </span>
-                          )}
-                        </div>
+                        {skillObj && skillObj.imageUrl ? (
+                          <Image
+                            src={skillObj.imageUrl}
+                            alt={skill.id}
+                            width={40}
+                            height={40}
+                            className='w-10 h-10 rounded-full object-cover'
+                          />
+                        ) : (
+                          <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+                            ?
+                          </span>
+                        )}
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>
@@ -1084,9 +1082,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         <Image
                           src={cardObj.imageUrl}
                           alt={card.id}
-                          width={40}
+                          width={32}
                           height={40}
-                          className='w-10 h-10'
+                          className='w-8 h-10 mx-1'
                         />
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
@@ -1224,21 +1222,19 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 rounded-full bg-red-100 flex items-center justify-center border border-red-300 dark:border-red-700'>
-                          {skillObj && skillObj.imageUrl ? (
-                            <Image
-                              src={skillObj.imageUrl}
-                              alt={skill.id}
-                              width={40}
-                              height={40}
-                              className='w-10 h-10 rounded-full object-cover'
-                            />
-                          ) : (
-                            <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
-                              ?
-                            </span>
-                          )}
-                        </div>
+                        {skillObj && skillObj.imageUrl ? (
+                          <Image
+                            src={skillObj.imageUrl}
+                            alt={skill.id}
+                            width={40}
+                            height={40}
+                            className='w-10 h-10 rounded-full object-cover'
+                          />
+                        ) : (
+                          <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+                            ?
+                          </span>
+                        )}
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>
