@@ -329,7 +329,7 @@ export default function CharacterDetails({
                 })()}
               </div>
             </CharacterSection>
-            <CharacterSection title='角色和克制关系'>
+            <CharacterSection title={character.factionId == 'cat' ? '克制关系' : '克制/协作关系'}>
               <CharacterRelationDisplay id={localCharacter.id} factionId={factionId} />
             </CharacterSection>
             {children}

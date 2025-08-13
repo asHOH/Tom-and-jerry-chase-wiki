@@ -7,6 +7,7 @@ import {
   getItemSourceColors /* , getCardCostColors */,
 } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
+import BaseCard from '@/components/ui/BaseCard';
 
 export default function ItemCardDisplay({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
@@ -17,16 +18,11 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
   // const wallDamageColors = getCardCostColors(item.walldamage ?? 0, false, isDarkMode);
 
   return (
-    <div
-      className='bg-white dark:bg-slate-800 rounded-lg shadow p-4 border border-gray-200 dark:border-slate-700 flex flex-col items-center'
-      tabIndex={0}
-      role='button'
-      aria-label={`查看${item.name}道具详情`}
-    >
+    <BaseCard variant='item' aria-label={`查看${item.name}道具详情`}>
       <GameImage
         src={item.imageUrl}
         alt={`${item.name}道具图标`}
-        size='KNOWLEDGECARD_CARD'
+        size='ITEM_CARD'
         className='hover:scale-105'
       />
       <div className='px-3 pt-1 pb-3 text-center w-full'>
@@ -54,6 +50,6 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
           )} */}
         </div>
       </div>
-    </div>
+    </BaseCard>
   );
 }

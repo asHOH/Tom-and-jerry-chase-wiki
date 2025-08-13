@@ -609,8 +609,10 @@ export const componentTokens = {
   // Image component tokens
   image: {
     dimensions: {
-      CHARACTER_CARD: { width: 120, height: 120 },
+      CHARACTER_CARD: { width: 140, height: 140 },
       KNOWLEDGECARD_CARD: { width: 140, height: 140 },
+      SPECIAL_SKILL_CARD: { width: 90, height: 90 },
+      ITEM_CARD: { width: 130, height: 130 },
       CARD_DETAILS: { width: 220, height: 220 },
     },
     container: {
