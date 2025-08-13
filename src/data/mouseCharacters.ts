@@ -4941,6 +4941,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    counteredByKnowledgeCards: [
+      {
+        id: '皮糙肉厚',
+        description: '皮糙肉厚减伤导致音乐家的多段伤害大幅减少。',
+        isMinor: false,
+      },
+    ],
   },
 
   /* ----------------------------------- 蒙金奇 ---------------------------------- */
