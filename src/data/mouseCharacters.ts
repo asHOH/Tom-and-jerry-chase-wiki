@@ -3468,7 +3468,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skillAllocations: [
       {
         id: '意式披萨',
-        pattern: '121212333',
+        pattern: '121212000',
         weaponType: 'weapon1',
         description: '饼不吃等级，考虑自保即可。',
       },
