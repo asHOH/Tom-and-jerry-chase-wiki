@@ -122,7 +122,7 @@
       "prettier --write --ignore-unknown",
       "eslint --fix --max-warnings=0 --cache"
     ],
-    "*.{json,css,md}": [
+    "!(templates|.next|out|coverage)/**/*.{json,css,md,mdx}": [
       "prettier --write --ignore-unknown"
     ]
   },
