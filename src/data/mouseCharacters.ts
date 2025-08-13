@@ -1666,7 +1666,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
-        description: '应对依赖爪刀的猫，例如苏瑞，天汤，托普斯。',
+        description: '应对依赖爪刀的猫，例如苏蕊，天汤，托普斯。',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'A-投手', 'C-不屈', 'C-救救我'],
