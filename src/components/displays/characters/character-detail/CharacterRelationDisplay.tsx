@@ -492,15 +492,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-300 dark:border-blue-700'>
-                          <Image
-                            src={getImageUrl(c.id)}
-                            alt={c.id}
-                            width={32}
-                            height={32}
-                            className='w-8 h-8 rounded-full object-cover'
-                          />
-                        </div>
+                        <Image
+                          src={getImageUrl(c.id)}
+                          alt={c.id}
+                          width={40}
+                          height={40}
+                          className='w-10 h-10 rounded-full object-cover'
+                        />
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
@@ -596,15 +594,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 flex items-center justify-center'>
-                          <Image
-                            src={cardObj.imageUrl}
-                            alt={card.id}
-                            width={32}
-                            height={32}
-                            className='w-8 h-8'
-                          />
-                        </div>
+                        <Image
+                          src={cardObj.imageUrl}
+                          alt={card.id}
+                          width={32}
+                          height={40}
+                          className='w-8 h-10 mx-1'
+                        />
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>
@@ -744,12 +740,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             <Image
                               src={skillObj.imageUrl}
                               alt={skill.id}
-                              width={32}
-                              height={32}
-                              className='w-8 h-8 rounded-full object-cover'
+                              width={40}
+                              height={40}
+                              className='w-10 h-10 rounded-full object-cover'
                             />
                           ) : (
-                            <span className='w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+                            <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
                               ?
                             </span>
                           )}
@@ -983,15 +979,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 rounded-full bg-red-100 flex items-center justify-center border border-red-300 dark:border-red-700'>
-                          <Image
-                            src={getImageUrl(c.id)}
-                            alt={c.id}
-                            width={32}
-                            height={32}
-                            className='w-8 h-8 rounded-full object-cover'
-                          />
-                        </div>
+                        <Image
+                          src={getImageUrl(c.id)}
+                          alt={c.id}
+                          width={40}
+                          height={40}
+                          className='w-10 h-10 rounded-full object-cover'
+                        />
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
@@ -1087,15 +1081,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 flex items-center justify-center'>
-                          <Image
-                            src={cardObj.imageUrl}
-                            alt={card.id}
-                            width={32}
-                            height={32}
-                            className='w-8 h-8'
-                          />
-                        </div>
+                        <Image
+                          src={cardObj.imageUrl}
+                          alt={card.id}
+                          width={40}
+                          height={40}
+                          className='w-10 h-10'
+                        />
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>
@@ -1237,12 +1229,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             <Image
                               src={skillObj.imageUrl}
                               alt={skill.id}
-                              width={32}
-                              height={32}
-                              className='w-8 h-8 rounded-full object-cover'
+                              width={40}
+                              height={40}
+                              className='w-10 h-10 rounded-full object-cover'
                             />
                           ) : (
-                            <span className='w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+                            <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
                               ?
                             </span>
                           )}
@@ -1420,15 +1412,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         }
                       }}
                     >
-                      <div className='w-10 h-10 rounded-full bg-green-100 flex items-center justify-center border border-green-300 dark:border-green-700'>
-                        <Image
-                          src={AssetManager.getCharacterImageUrl(c.id, 'mouse')}
-                          alt={c.id}
-                          width={32}
-                          height={32}
-                          className='w-8 h-8 rounded-full object-cover'
-                        />
-                      </div>
+                      <Image
+                        src={AssetManager.getCharacterImageUrl(c.id, 'mouse')}
+                        alt={c.id}
+                        width={40}
+                        height={40}
+                        className='w-10 h-10 rounded-full object-cover'
+                      />
                       <div className='flex flex-col flex-1'>
                         <div className='flex items-center gap-1'>
                           <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
