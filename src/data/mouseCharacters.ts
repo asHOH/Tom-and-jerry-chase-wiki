@@ -451,11 +451,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
     knowledgeCardGroups: [
       {
-        cards: ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
-        description: '待补充',
+        cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
+        description: '打怕减速的猫咪，投手和一被叠加后能让猫咪难以追上老鼠。',
       },
       {
-        cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
+        cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
+        description: '打苏蕊、侍卫等单刀型猫咪。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
         description: '待补充',
       },
     ],
