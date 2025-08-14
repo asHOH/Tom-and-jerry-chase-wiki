@@ -78,6 +78,7 @@ export const contributors: Contributor[] = [
           '马索尔',
           '图多盖洛',
           '塔拉',
+          '朵朵',
         ],
       },
       {
@@ -106,6 +107,7 @@ export const contributors: Contributor[] = [
           '马索尔',
           '图多盖洛',
           '塔拉',
+          '朵朵',
         ],
       },
       {
@@ -400,6 +402,36 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'changheluori',
+    name: '长河落日',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['罗宾汉泰菲'],
+      },
+    ],
+  },
+  {
+    id: 'doujiang',
+    name: '豆浆',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['表演者•杰瑞'],
+      },
+    ],
+  },
+  {
+    id: 'mizhehenwuliao',
+    name: '迷者很无聊',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['拿坡里鼠'],
+      },
+    ],
+  },
+  {
     id: 'leshanhaoshi',
     name: '乐善好施陈阿姨',
     url: 'https://space.bilibili.com/418408689',
@@ -430,26 +462,6 @@ export const contributors: Contributor[] = [
         type: RoleType.ContentWriter,
         characters: ['恶魔汤姆'],
         isMinor: true,
-      },
-    ],
-  },
-  {
-    id: 'doujiang',
-    name: '豆浆',
-    roles: [
-      {
-        type: RoleType.ContentWriter,
-        characters: ['表演者•杰瑞'],
-      },
-    ],
-  },
-  {
-    id: 'mizhehenwuliao',
-    name: '迷者很无聊',
-    roles: [
-      {
-        type: RoleType.ContentWriter,
-        characters: ['拿坡里鼠'],
       },
     ],
   },
