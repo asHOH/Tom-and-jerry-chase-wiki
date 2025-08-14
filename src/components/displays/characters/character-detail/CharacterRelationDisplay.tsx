@@ -21,163 +21,58 @@ type Props = {
   factionId: FactionId;
 };
 
-// Hook to manage counters relations
-function useCounters(characterId: string) {
-  const localCharacter = useSnapshot(characters[characterId]!);
+// Lightweight generic hook to manage character relation arrays
+type RelationKey = 'counters' | 'counteredBy' | 'collaborators';
+type RelationArrays = Partial<Record<RelationKey, readonly CharacterRelationItem[]>>;
 
-  const updateCounters = useCallback(
-    (updatedCounters: CharacterRelationItem[]) => {
-      setNestedProperty(characters, `${characterId}.counters`, updatedCounters);
+function useRelationEditor(characterId: string, key: RelationKey) {
+  const localCharacter = useSnapshot(characters[characterId]!) as unknown as RelationArrays;
+
+  const update = useCallback(
+    (updated: CharacterRelationItem[]) => {
+      setNestedProperty(characters, `${characterId}.${key}`, updated);
     },
-    [characterId]
+    [characterId, key]
   );
 
   const handleUpdate = useCallback(
     (index: number, field: 'description' | 'isMinor', newValue: string | boolean) => {
-      const currentCounters = localCharacter.counters || [];
-      const updatedCounters = currentCounters.map((counter, i) =>
-        i === index ? { ...counter, [field]: newValue } : counter
+      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
+      const updated = current.map((item, i) =>
+        i === index ? { ...item, [field]: newValue } : item
       );
-      updateCounters(updatedCounters);
+      update(updated);
     },
-    [localCharacter.counters, updateCounters]
+    [localCharacter, key, update]
   );
 
   const handleAdd = useCallback(
-    (characterId: string, description: string = '', isMinor: boolean = false) => {
-      const currentCounters = localCharacter.counters || [];
-      const newCounter: CharacterRelationItem = { id: characterId, description, isMinor };
-      updateCounters([...currentCounters, newCounter]);
+    (relId: string, description: string = '', isMinor: boolean = false) => {
+      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
+      const newItem: CharacterRelationItem = { id: relId, description, isMinor };
+      update([...current, newItem]);
     },
-    [localCharacter.counters, updateCounters]
+    [localCharacter, key, update]
   );
 
   const handleRemove = useCallback(
     (index: number) => {
-      const currentCounters = localCharacter.counters || [];
-      const updatedCounters = currentCounters.filter((_, i) => i !== index);
-      updateCounters(updatedCounters);
+      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
+      const updated = current.filter((_, i) => i !== index);
+      update(updated);
     },
-    [localCharacter.counters, updateCounters]
+    [localCharacter, key, update]
   );
 
   const toggleIsMinor = useCallback(
     (index: number) => {
-      const currentCounters = localCharacter.counters || [];
-      const updatedCounters = currentCounters.map((counter, i) =>
-        i === index ? { ...counter, isMinor: !counter.isMinor } : counter
+      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
+      const updated = current.map((item, i) =>
+        i === index ? { ...item, isMinor: !item.isMinor } : item
       );
-      updateCounters(updatedCounters);
+      update(updated);
     },
-    [localCharacter.counters, updateCounters]
-  );
-
-  return { handleUpdate, handleAdd, handleRemove, toggleIsMinor };
-}
-
-// Hook to manage counteredBy relations
-function useCounteredBy(characterId: string) {
-  const localCharacter = useSnapshot(characters[characterId]!);
-
-  const updateCounteredBy = useCallback(
-    (updatedCounteredBy: CharacterRelationItem[]) => {
-      setNestedProperty(characters, `${characterId}.counteredBy`, updatedCounteredBy);
-    },
-    [characterId]
-  );
-
-  const handleUpdate = useCallback(
-    (index: number, field: 'description' | 'isMinor', newValue: string | boolean) => {
-      const currentCounteredBy = localCharacter.counteredBy || [];
-      const updatedCounteredBy = currentCounteredBy.map((counter, i) =>
-        i === index ? { ...counter, [field]: newValue } : counter
-      );
-      updateCounteredBy(updatedCounteredBy);
-    },
-    [localCharacter.counteredBy, updateCounteredBy]
-  );
-
-  const handleAdd = useCallback(
-    (characterId: string, description: string = '', isMinor: boolean = false) => {
-      const currentCounteredBy = localCharacter.counteredBy || [];
-      const newCounter: CharacterRelationItem = { id: characterId, description, isMinor };
-      updateCounteredBy([...currentCounteredBy, newCounter]);
-    },
-    [localCharacter.counteredBy, updateCounteredBy]
-  );
-
-  const handleRemove = useCallback(
-    (index: number) => {
-      const currentCounteredBy = localCharacter.counteredBy || [];
-      const updatedCounteredBy = currentCounteredBy.filter((_, i) => i !== index);
-      updateCounteredBy(updatedCounteredBy);
-    },
-    [localCharacter.counteredBy, updateCounteredBy]
-  );
-
-  const toggleIsMinor = useCallback(
-    (index: number) => {
-      const currentCounteredBy = localCharacter.counteredBy || [];
-      const updatedCounteredBy = currentCounteredBy.map((counter, i) =>
-        i === index ? { ...counter, isMinor: !counter.isMinor } : counter
-      );
-      updateCounteredBy(updatedCounteredBy);
-    },
-    [localCharacter.counteredBy, updateCounteredBy]
-  );
-
-  return { handleUpdate, handleAdd, handleRemove, toggleIsMinor };
-}
-
-// Hook to manage collaborators relations
-function useCollaborators(characterId: string) {
-  const localCharacter = useSnapshot(characters[characterId]!);
-
-  const updateCollaborators = useCallback(
-    (updatedCollaborators: CharacterRelationItem[]) => {
-      setNestedProperty(characters, `${characterId}.collaborators`, updatedCollaborators);
-    },
-    [characterId]
-  );
-
-  const handleUpdate = useCallback(
-    (index: number, field: 'description' | 'isMinor', newValue: string | boolean) => {
-      const currentCollaborators = localCharacter.collaborators || [];
-      const updatedCollaborators = currentCollaborators.map((collab, i) =>
-        i === index ? { ...collab, [field]: newValue } : collab
-      );
-      updateCollaborators(updatedCollaborators);
-    },
-    [localCharacter.collaborators, updateCollaborators]
-  );
-
-  const handleAdd = useCallback(
-    (characterId: string, description: string = '', isMinor: boolean = false) => {
-      const currentCollaborators = localCharacter.collaborators || [];
-      const newCollab: CharacterRelationItem = { id: characterId, description, isMinor };
-      updateCollaborators([...currentCollaborators, newCollab]);
-    },
-    [localCharacter.collaborators, updateCollaborators]
-  );
-
-  const handleRemove = useCallback(
-    (index: number) => {
-      const currentCollaborators = localCharacter.collaborators || [];
-      const updatedCollaborators = currentCollaborators.filter((_, i) => i !== index);
-      updateCollaborators(updatedCollaborators);
-    },
-    [localCharacter.collaborators, updateCollaborators]
-  );
-
-  const toggleIsMinor = useCallback(
-    (index: number) => {
-      const currentCollaborators = localCharacter.collaborators || [];
-      const updatedCollaborators = currentCollaborators.map((collab, i) =>
-        i === index ? { ...collab, isMinor: !collab.isMinor } : collab
-      );
-      updateCollaborators(updatedCollaborators);
-    },
-    [localCharacter.collaborators, updateCollaborators]
+    [localCharacter, key, update]
   );
 
   return { handleUpdate, handleAdd, handleRemove, toggleIsMinor };
@@ -193,7 +88,7 @@ function CharacterSelector({
 }: {
   currentCharacterId: string;
   factionId: FactionId;
-  relationType: 'counters' | 'counteredBy' | 'collaborators';
+  relationType: RelationKey;
   existingRelations: CharacterRelationItem[];
   onSelect: (characterId: string) => void;
 }) {
@@ -367,9 +262,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { navigate } = useNavigation();
 
   // Get hooks for managing relations
-  const countersHook = useCounters(id);
-  const counteredByHook = useCounteredBy(id);
-  const collaboratorsHook = useCollaborators(id);
+  const countersHook = useRelationEditor(id, 'counters');
+  const counteredByHook = useRelationEditor(id, 'counteredBy');
+  const collaboratorsHook = useRelationEditor(id, 'collaborators');
 
   return (
     <div className='flex gap-6 items-start bg-gray-50 dark:bg-slate-800/50 p-4 rounded-lg shadow'>
