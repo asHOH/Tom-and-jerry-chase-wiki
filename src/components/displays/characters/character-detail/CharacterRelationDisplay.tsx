@@ -336,19 +336,21 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   height='16'
                   viewBox='0 0 16 16'
                   fill='none'
-                  aria-label='sword'
+                  aria-label='smile'
                   xmlns='http://www.w3.org/2000/svg'
                 >
+                  <circle cx='5' cy='6' r='1.25' fill='#2563eb' />
+                  <circle cx='11' cy='6' r='1.25' fill='#2563eb' />
                   <path
-                    d='M2 14L14 2M10 2L14 2L14 6'
+                    d='M4 9.5 Q8 12.7 12 9.5'
                     stroke='#2563eb'
                     strokeWidth='2'
+                    fill='none'
                     strokeLinecap='round'
                   />
-                  <rect x='1.5' y='13.5' width='3' height='1' rx='0.5' fill='#2563eb' />
                 </svg>
               </span>
-              被{id}克制的角色/知识卡/特技
+              被{id}克制的{factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技
             </span>
             {isEditMode && (
               <div className='flex gap-2'>
@@ -740,18 +742,21 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   height='16'
                   viewBox='0 0 16 16'
                   fill='none'
-                  aria-label='shield'
+                  aria-label='sad'
                   xmlns='http://www.w3.org/2000/svg'
                 >
+                  <circle cx='5' cy='6' r='1.25' fill='#dc2626' />
+                  <circle cx='11' cy='6' r='1.25' fill='#dc2626' />
                   <path
-                    d='M8 2L13 4V7C13 11 8 14 8 14C8 14 3 11 3 7V4L8 2Z'
+                    d='M4 11 Q8 9.5 12 11'
                     stroke='#dc2626'
                     strokeWidth='2'
-                    fill='#fca5a5'
+                    fill='none'
+                    strokeLinecap='round'
                   />
                 </svg>
               </span>
-              克制{id}的角色/知识卡/特技
+              克制{id}的{factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技
             </span>
             {isEditMode && (
               <div className='flex gap-2'>
@@ -1143,15 +1148,20 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                     height='16'
                     viewBox='0 0 16 16'
                     fill='none'
-                    aria-label='collaborator'
+                    aria-label='heart'
                     xmlns='http://www.w3.org/2000/svg'
                   >
-                    <circle cx='8' cy='8' r='7' stroke='#16a34a' strokeWidth='2' fill='#bbf7d0' />
-                    <path d='M5 10c0-1.5 2-1.5 2-3s-2-1.5-2-3' stroke='#16a34a' strokeWidth='1.5' />
-                    <path d='M11 10c0-1.5-2-1.5-2-3s2-1.5 2-3' stroke='#16a34a' strokeWidth='1.5' />
+                    <path
+                      d='M8 13 C8 13 3.5 10.5 3.5 7.5 C3.5 6 4.7 4.8 6.2 4.8 C7.1 4.8 7.8 5.2 8 5.9 C8.2 5.2 8.9 4.8 9.8 4.8 C11.3 4.8 12.5 6 12.5 7.5 C12.5 10.5 8 13 8 13 Z'
+                      fill='#bbf7d0'
+                      stroke='#16a34a'
+                      strokeWidth='1.8'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
                   </svg>
                 </span>
-                与{id}协作的角色
+                与{id}协作的老鼠
               </span>
               {isEditMode && (
                 <CharacterSelector
