@@ -4,6 +4,7 @@ import { useState, forwardRef, useImperativeHandle } from 'react';
 
 export interface FeedbackSectionRef {
   openFeedback: () => void;
+  isOpen: () => boolean;
 }
 
 const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
@@ -19,6 +20,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
 
   useImperativeHandle(ref, () => ({
     openFeedback: () => setIsFeedbackOpen(true),
+    isOpen: () => isFeedbackOpen,
   }));
 
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
@@ -94,9 +96,13 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
           <div
             className='fixed inset-0 bg-gray-900/30 backdrop-blur-sm z-40'
             onClick={() => setIsFeedbackOpen(false)}
+            onDoubleClick={(e) => e.stopPropagation()}
           />
 
-          <div className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-1/2 md:max-w-2xl md:min-w-[28rem] md:h-auto md:max-h-[80vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'>
+          <div
+            className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-1/2 md:max-w-2xl md:min-w-[28rem] md:h-auto md:max-h-[80vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'
+            onDoubleClick={(e) => e.stopPropagation()}
+          >
             {submitted ? (
               <div className='p-6 text-center'>
                 <div className='text-4xl mb-4'>✅</div>
