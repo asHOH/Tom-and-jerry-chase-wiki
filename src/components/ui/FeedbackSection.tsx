@@ -188,39 +188,47 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                     />
                   </div>
 
-                  {/* Anonymous toggle */}
-                  <div className='flex items-center gap-2'>
-                    <input
-                      id='anonymous'
-                      type='checkbox'
-                      checked={isAnonymous}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setIsAnonymous(checked);
-                        if (checked) {
-                          // Clear contact to avoid accidental submission when switching to anonymous
-                          setFeedbackFormData({ ...feedbackFormData, contact: '' });
-                        }
-                      }}
-                      className='h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
-                      aria-label='匿名提交'
-                    />
-                    <label htmlFor='anonymous' className='text-sm text-gray-700 dark:text-gray-300'>
-                      匿名
-                    </label>
-                  </div>
-
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-                      {isAnonymous ? '联系方式（已匿名）' : '联系方式'}
-                    </label>
+                    <div className='mb-2 flex items-center justify-between'>
+                      <label
+                        htmlFor='contact'
+                        className='text-sm font-medium text-gray-700 dark:text-gray-300'
+                      >
+                        {isAnonymous ? '联系方式（已匿名）' : '联系方式'}
+                      </label>
+                      <label
+                        htmlFor='anonymous'
+                        className='inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300'
+                      >
+                        <input
+                          id='anonymous'
+                          type='checkbox'
+                          checked={isAnonymous}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setIsAnonymous(checked);
+                            if (checked) {
+                              // Clear contact to avoid accidental submission when switching to anonymous
+                              setFeedbackFormData({ ...feedbackFormData, contact: '' });
+                            }
+                          }}
+                          className='h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                          aria-controls='contact'
+                          aria-label='匿名提交'
+                        />
+                        匿名
+                      </label>
+                    </div>
                     <input
+                      id='contact'
                       type='text'
                       value={feedbackFormData.contact}
                       onChange={(e) =>
                         setFeedbackFormData({ ...feedbackFormData, contact: e.target.value })
                       }
-                      placeholder={isAnonymous ? '已匿名' : 'QQ号或其他联系方式'}
+                      placeholder={
+                        isAnonymous ? '匿名提交，无需填写联系方式' : 'QQ号或其他联系方式'
+                      }
                       className='w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 disabled:bg-gray-100 disabled:text-gray-400 disabled:dark:bg-gray-700/60 disabled:dark:text-gray-500'
                       disabled={isAnonymous}
                       aria-disabled={isAnonymous}
