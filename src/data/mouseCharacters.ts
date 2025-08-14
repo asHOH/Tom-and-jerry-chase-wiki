@@ -445,11 +445,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
 
     knowledgeCardGroups: [
       {
-        cards: ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
-        description: '待补充',
+        cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
+        description: '打怕减速的猫咪，投手和一被叠加后能让猫咪难以追上老鼠。',
       },
       {
-        cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
+        cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
+        description: '打苏蕊、侍卫等单刀型猫咪。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
         description: '待补充',
       },
     ],
@@ -1665,7 +1669,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
-        description: '应对依赖爪刀的猫，例如苏瑞，天汤，托普斯。',
+        description: '应对依赖爪刀的猫，例如苏蕊，天汤，托普斯。',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'A-投手', 'C-不屈', 'C-救救我'],
@@ -1796,7 +1800,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counters: [
       {
         id: '莱特宁',
-        description: '牛仔杰瑞可以通过仙人掌防止闪现刀，且莱特宁本身怕干扰、难以处理124Hp老鼠',
+        description:
+          '牛仔杰瑞可以通过弹琴解除莱特宁的被动标记、用仙人掌防止闪现刀，且莱特宁本身怕干扰、难以处理124Hp老鼠',
         isMinor: false,
       },
       {
@@ -2069,7 +2074,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counteredBy: [
       {
         id: '莱特宁',
-        description: '恶魔杰瑞两个技能均有较长前摇，被莱特宁三级传送克制。',
+        description: '恶魔杰瑞两个技能均有较长前摇，被莱特宁三级闪现克制。',
         isMinor: false,
       },
       {
@@ -4931,6 +4936,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    counteredByKnowledgeCards: [
+      {
+        id: '皮糙肉厚',
+        description: '皮糙肉厚减伤导致音乐家的多段伤害大幅减少。',
+        isMinor: false,
+      },
+    ],
   },
 
   /* ----------------------------------- 蒙金奇 ---------------------------------- */
@@ -5823,7 +5835,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '莱特宁',
         description:
-          '莱特宁攻击手段有限，米可的高减伤配上逃窜和特技治疗很难被莱特宁击倒。回溯可以吸莱特宁闪现，且还可以给莱特宁拍照闪现后回溯原位。',
+          '莱特宁攻击手段有限，而米可有高额减伤，配上逃窜和特技治疗很难被击倒。回溯可以吸莱特宁闪现，且还可以给莱特宁拍照、闪现后回溯原位。',
         isMinor: false,
       },
     ],

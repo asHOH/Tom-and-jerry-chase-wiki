@@ -21,163 +21,58 @@ type Props = {
   factionId: FactionId;
 };
 
-// Hook to manage counters relations
-function useCounters(characterId: string) {
-  const localCharacter = useSnapshot(characters[characterId]!);
+// Lightweight generic hook to manage character relation arrays
+type RelationKey = 'counters' | 'counteredBy' | 'collaborators';
+type RelationArrays = Partial<Record<RelationKey, readonly CharacterRelationItem[]>>;
 
-  const updateCounters = useCallback(
-    (updatedCounters: CharacterRelationItem[]) => {
-      setNestedProperty(characters, `${characterId}.counters`, updatedCounters);
+function useRelationEditor(characterId: string, key: RelationKey) {
+  const localCharacter = useSnapshot(characters[characterId]!) as unknown as RelationArrays;
+
+  const update = useCallback(
+    (updated: CharacterRelationItem[]) => {
+      setNestedProperty(characters, `${characterId}.${key}`, updated);
     },
-    [characterId]
+    [characterId, key]
   );
 
   const handleUpdate = useCallback(
     (index: number, field: 'description' | 'isMinor', newValue: string | boolean) => {
-      const currentCounters = localCharacter.counters || [];
-      const updatedCounters = currentCounters.map((counter, i) =>
-        i === index ? { ...counter, [field]: newValue } : counter
+      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
+      const updated = current.map((item, i) =>
+        i === index ? { ...item, [field]: newValue } : item
       );
-      updateCounters(updatedCounters);
+      update(updated);
     },
-    [localCharacter.counters, updateCounters]
+    [localCharacter, key, update]
   );
 
   const handleAdd = useCallback(
-    (characterId: string, description: string = '', isMinor: boolean = false) => {
-      const currentCounters = localCharacter.counters || [];
-      const newCounter: CharacterRelationItem = { id: characterId, description, isMinor };
-      updateCounters([...currentCounters, newCounter]);
+    (relId: string, description: string = '', isMinor: boolean = false) => {
+      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
+      const newItem: CharacterRelationItem = { id: relId, description, isMinor };
+      update([...current, newItem]);
     },
-    [localCharacter.counters, updateCounters]
+    [localCharacter, key, update]
   );
 
   const handleRemove = useCallback(
     (index: number) => {
-      const currentCounters = localCharacter.counters || [];
-      const updatedCounters = currentCounters.filter((_, i) => i !== index);
-      updateCounters(updatedCounters);
+      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
+      const updated = current.filter((_, i) => i !== index);
+      update(updated);
     },
-    [localCharacter.counters, updateCounters]
+    [localCharacter, key, update]
   );
 
   const toggleIsMinor = useCallback(
     (index: number) => {
-      const currentCounters = localCharacter.counters || [];
-      const updatedCounters = currentCounters.map((counter, i) =>
-        i === index ? { ...counter, isMinor: !counter.isMinor } : counter
+      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
+      const updated = current.map((item, i) =>
+        i === index ? { ...item, isMinor: !item.isMinor } : item
       );
-      updateCounters(updatedCounters);
+      update(updated);
     },
-    [localCharacter.counters, updateCounters]
-  );
-
-  return { handleUpdate, handleAdd, handleRemove, toggleIsMinor };
-}
-
-// Hook to manage counteredBy relations
-function useCounteredBy(characterId: string) {
-  const localCharacter = useSnapshot(characters[characterId]!);
-
-  const updateCounteredBy = useCallback(
-    (updatedCounteredBy: CharacterRelationItem[]) => {
-      setNestedProperty(characters, `${characterId}.counteredBy`, updatedCounteredBy);
-    },
-    [characterId]
-  );
-
-  const handleUpdate = useCallback(
-    (index: number, field: 'description' | 'isMinor', newValue: string | boolean) => {
-      const currentCounteredBy = localCharacter.counteredBy || [];
-      const updatedCounteredBy = currentCounteredBy.map((counter, i) =>
-        i === index ? { ...counter, [field]: newValue } : counter
-      );
-      updateCounteredBy(updatedCounteredBy);
-    },
-    [localCharacter.counteredBy, updateCounteredBy]
-  );
-
-  const handleAdd = useCallback(
-    (characterId: string, description: string = '', isMinor: boolean = false) => {
-      const currentCounteredBy = localCharacter.counteredBy || [];
-      const newCounter: CharacterRelationItem = { id: characterId, description, isMinor };
-      updateCounteredBy([...currentCounteredBy, newCounter]);
-    },
-    [localCharacter.counteredBy, updateCounteredBy]
-  );
-
-  const handleRemove = useCallback(
-    (index: number) => {
-      const currentCounteredBy = localCharacter.counteredBy || [];
-      const updatedCounteredBy = currentCounteredBy.filter((_, i) => i !== index);
-      updateCounteredBy(updatedCounteredBy);
-    },
-    [localCharacter.counteredBy, updateCounteredBy]
-  );
-
-  const toggleIsMinor = useCallback(
-    (index: number) => {
-      const currentCounteredBy = localCharacter.counteredBy || [];
-      const updatedCounteredBy = currentCounteredBy.map((counter, i) =>
-        i === index ? { ...counter, isMinor: !counter.isMinor } : counter
-      );
-      updateCounteredBy(updatedCounteredBy);
-    },
-    [localCharacter.counteredBy, updateCounteredBy]
-  );
-
-  return { handleUpdate, handleAdd, handleRemove, toggleIsMinor };
-}
-
-// Hook to manage collaborators relations
-function useCollaborators(characterId: string) {
-  const localCharacter = useSnapshot(characters[characterId]!);
-
-  const updateCollaborators = useCallback(
-    (updatedCollaborators: CharacterRelationItem[]) => {
-      setNestedProperty(characters, `${characterId}.collaborators`, updatedCollaborators);
-    },
-    [characterId]
-  );
-
-  const handleUpdate = useCallback(
-    (index: number, field: 'description' | 'isMinor', newValue: string | boolean) => {
-      const currentCollaborators = localCharacter.collaborators || [];
-      const updatedCollaborators = currentCollaborators.map((collab, i) =>
-        i === index ? { ...collab, [field]: newValue } : collab
-      );
-      updateCollaborators(updatedCollaborators);
-    },
-    [localCharacter.collaborators, updateCollaborators]
-  );
-
-  const handleAdd = useCallback(
-    (characterId: string, description: string = '', isMinor: boolean = false) => {
-      const currentCollaborators = localCharacter.collaborators || [];
-      const newCollab: CharacterRelationItem = { id: characterId, description, isMinor };
-      updateCollaborators([...currentCollaborators, newCollab]);
-    },
-    [localCharacter.collaborators, updateCollaborators]
-  );
-
-  const handleRemove = useCallback(
-    (index: number) => {
-      const currentCollaborators = localCharacter.collaborators || [];
-      const updatedCollaborators = currentCollaborators.filter((_, i) => i !== index);
-      updateCollaborators(updatedCollaborators);
-    },
-    [localCharacter.collaborators, updateCollaborators]
-  );
-
-  const toggleIsMinor = useCallback(
-    (index: number) => {
-      const currentCollaborators = localCharacter.collaborators || [];
-      const updatedCollaborators = currentCollaborators.map((collab, i) =>
-        i === index ? { ...collab, isMinor: !collab.isMinor } : collab
-      );
-      updateCollaborators(updatedCollaborators);
-    },
-    [localCharacter.collaborators, updateCollaborators]
+    [localCharacter, key, update]
   );
 
   return { handleUpdate, handleAdd, handleRemove, toggleIsMinor };
@@ -193,7 +88,7 @@ function CharacterSelector({
 }: {
   currentCharacterId: string;
   factionId: FactionId;
-  relationType: 'counters' | 'counteredBy' | 'collaborators';
+  relationType: RelationKey;
   existingRelations: CharacterRelationItem[];
   onSelect: (characterId: string) => void;
 }) {
@@ -250,13 +145,13 @@ function CharacterSelector({
       </button>
 
       {isOpen && (
-        <div className='absolute top-full right-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto'>
+        <div className='absolute top-full right-0 mt-1 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto'>
           {availableCharacters.map((char) => (
             <button
               key={char.id}
               type='button'
               onClick={() => handleSelect(char.id)}
-              className='w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2'
+              className='w-full text-left px-3 py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3'
               aria-label={`选择${char.id}`}
             >
               <Image
@@ -268,9 +163,9 @@ function CharacterSelector({
                       : AssetManager.getCharacterImageUrl(char.id, 'cat')
                 }
                 alt={char.id}
-                width={20}
-                height={20}
-                className='w-5 h-5 rounded-full object-cover'
+                width={28}
+                height={28}
+                className='w-7 h-7 rounded-full object-cover'
               />
               <span className='text-gray-700 dark:text-gray-300'>{char.id}</span>
             </button>
@@ -367,9 +262,66 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { navigate } = useNavigation();
 
   // Get hooks for managing relations
-  const countersHook = useCounters(id);
-  const counteredByHook = useCounteredBy(id);
-  const collaboratorsHook = useCollaborators(id);
+  const countersHook = useRelationEditor(id, 'counters');
+  const counteredByHook = useRelationEditor(id, 'counteredBy');
+  const collaboratorsHook = useRelationEditor(id, 'collaborators');
+
+  // Small helpers to dedupe array updates for knowledge cards and special skills
+  type ExtraRelationKey =
+    | 'countersKnowledgeCards'
+    | 'counteredByKnowledgeCards'
+    | 'countersSpecialSkills'
+    | 'counteredBySpecialSkills';
+  type LocalExtra = Partial<Record<ExtraRelationKey, readonly CharacterRelationItem[]>>;
+  const localExtra = localCharacter as unknown as LocalExtra;
+
+  const updateExtraArray = useCallback(
+    (
+      key: ExtraRelationKey,
+      updater: (items: CharacterRelationItem[]) => CharacterRelationItem[]
+    ) => {
+      const current = Array.from((localExtra[key] ?? []) as readonly CharacterRelationItem[]);
+      const updated = updater(current);
+      setNestedProperty(characters, `${characterId}.${key}`, updated);
+    },
+    [characterId, localExtra]
+  );
+
+  const toggleExtraMinor = useCallback(
+    (key: ExtraRelationKey, idx: number) =>
+      updateExtraArray(key, (items) => {
+        const item = items[idx];
+        if (!item) return items;
+        const next = [...items];
+        next[idx] = { ...item, isMinor: !item.isMinor };
+        return next;
+      }),
+    [updateExtraArray]
+  );
+
+  const updateExtraDescription = useCallback(
+    (key: ExtraRelationKey, idx: number, description: string) =>
+      updateExtraArray(key, (items) => {
+        const item = items[idx];
+        if (!item) return items;
+        const next = [...items];
+        next[idx] = { ...item, description };
+        return next;
+      }),
+    [updateExtraArray]
+  );
+
+  const removeExtraAt = useCallback(
+    (key: ExtraRelationKey, idx: number) =>
+      updateExtraArray(key, (items) => items.filter((_, i) => i !== idx)),
+    [updateExtraArray]
+  );
+
+  const addExtraItem = useCallback(
+    (key: ExtraRelationKey, id: string, description = '新增关系描述', isMinor = false) =>
+      updateExtraArray(key, (items) => [...items, { id, description, isMinor }]),
+    [updateExtraArray]
+  );
 
   return (
     <div className='flex gap-6 items-start bg-gray-50 dark:bg-slate-800/50 p-4 rounded-lg shadow'>
@@ -384,19 +336,21 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   height='16'
                   viewBox='0 0 16 16'
                   fill='none'
-                  aria-label='sword'
+                  aria-label='smile'
                   xmlns='http://www.w3.org/2000/svg'
                 >
+                  <circle cx='5' cy='6' r='1.25' fill='#2563eb' />
+                  <circle cx='11' cy='6' r='1.25' fill='#2563eb' />
                   <path
-                    d='M2 14L14 2M10 2L14 2L14 6'
+                    d='M4 9.5 Q8 12.7 12 9.5'
                     stroke='#2563eb'
                     strokeWidth='2'
+                    fill='none'
                     strokeLinecap='round'
                   />
-                  <rect x='1.5' y='13.5' width='3' height='1' rx='0.5' fill='#2563eb' />
                 </svg>
               </span>
-              被{id}克制的角色/知识卡/特技
+              被{id}克制的{factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技
             </span>
             {isEditMode && (
               <div className='flex gap-2'>
@@ -409,29 +363,17 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                 />
                 <KnowledgeCardSelector
                   selected={Array.from(localCharacter.countersKnowledgeCards ?? [])}
-                  onSelect={(cardName) => {
-                    const updated = Array.from(localCharacter.countersKnowledgeCards ?? []);
-                    updated.push({
-                      id: cardName as string,
-                      description: '新增关系描述',
-                      isMinor: false,
-                    } as CharacterRelationItem);
-                    setNestedProperty(characters, `${characterId}.countersKnowledgeCards`, updated);
-                  }}
+                  onSelect={(cardName) =>
+                    addExtraItem('countersKnowledgeCards', cardName as string)
+                  }
                   factionId={factionId == 'cat' ? 'mouse' : 'cat'}
                 />
                 <SpecialSkillSelector
                   selected={Array.from(localCharacter.countersSpecialSkills ?? [])}
                   factionId={factionId}
-                  onSelect={(skillName) => {
-                    const updated = Array.from(localCharacter.countersSpecialSkills ?? []);
-                    updated.push({
-                      id: skillName as string,
-                      description: '新增关系描述',
-                      isMinor: false,
-                    } as CharacterRelationItem);
-                    setNestedProperty(characters, `${characterId}.countersSpecialSkills`, updated);
-                  }}
+                  onSelect={(skillName) =>
+                    addExtraItem('countersSpecialSkills', skillName as string)
+                  }
                 />
               </div>
             )}
@@ -492,15 +434,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-300 dark:border-blue-700'>
-                          <Image
-                            src={getImageUrl(c.id)}
-                            alt={c.id}
-                            width={32}
-                            height={32}
-                            className='w-8 h-8 rounded-full object-cover'
-                          />
-                        </div>
+                        <Image
+                          src={getImageUrl(c.id)}
+                          alt={c.id}
+                          width={40}
+                          height={40}
+                          className='w-10 h-10 rounded-full object-cover'
+                        />
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
@@ -596,15 +536,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 flex items-center justify-center'>
-                          <Image
-                            src={cardObj.imageUrl}
-                            alt={card.id}
-                            width={32}
-                            height={32}
-                            className='w-8 h-8'
-                          />
-                        </div>
+                        <Image
+                          src={cardObj.imageUrl}
+                          alt={card.id}
+                          width={32}
+                          height={40}
+                          className='w-8 h-10 mx-1'
+                        />
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>
@@ -613,20 +551,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             {isEditMode ? (
                               <button
                                 type='button'
-                                onClick={() => {
-                                  const updated = [
-                                    ...(localCharacter.countersKnowledgeCards ?? []),
-                                  ];
-                                  updated[idx] = {
-                                    ...(updated[idx] as CharacterRelationItem),
-                                    isMinor: !updated[idx]?.isMinor,
-                                  };
-                                  setNestedProperty(
-                                    characters,
-                                    `${characterId}.countersKnowledgeCards`,
-                                    updated
-                                  );
-                                }}
+                                onClick={() => toggleExtraMinor('countersKnowledgeCards', idx)}
                                 className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer'
                                 aria-label={`切换${card.id}的知识卡关系为${isMinor ? '主要' : '次要'}`}
                               >
@@ -646,18 +571,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                               path={`countersKnowledgeCards.${idx}.description`}
                               initialValue={card.description || ''}
                               className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
-                              onSave={(newValue) => {
-                                const updated = [...(localCharacter.countersKnowledgeCards ?? [])];
-                                updated[idx] = {
-                                  ...(updated[idx] as CharacterRelationItem),
-                                  description: newValue,
-                                };
-                                setNestedProperty(
-                                  characters,
-                                  `${characterId}.countersKnowledgeCards`,
-                                  updated
-                                );
-                              }}
+                              onSave={(newValue) =>
+                                updateExtraDescription('countersKnowledgeCards', idx, newValue)
+                              }
                             />
                           ) : (
                             card.description && (
@@ -674,17 +590,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             aria-label={`移除知识卡 ${card.id}`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (!characters[characterId]!.countersKnowledgeCards) {
-                                characters[characterId]!.countersKnowledgeCards = [];
-                              }
-                              const updated = (
-                                characters[characterId]!.countersKnowledgeCards ?? []
-                              ).filter((_c: { id: string }, i: number) => i !== idx);
-                              setNestedProperty(
-                                characters,
-                                `${characterId}.countersKnowledgeCards`,
-                                updated
-                              );
+                              removeExtraAt('countersKnowledgeCards', idx);
                             }}
                           >
                             <svg
@@ -739,21 +645,19 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-300 dark:border-blue-700'>
-                          {skillObj && skillObj.imageUrl ? (
-                            <Image
-                              src={skillObj.imageUrl}
-                              alt={skill.id}
-                              width={32}
-                              height={32}
-                              className='w-8 h-8 rounded-full object-cover'
-                            />
-                          ) : (
-                            <span className='w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
-                              ?
-                            </span>
-                          )}
-                        </div>
+                        {skillObj && skillObj.imageUrl ? (
+                          <Image
+                            src={skillObj.imageUrl}
+                            alt={skill.id}
+                            width={40}
+                            height={40}
+                            className='w-10 h-10 rounded-full object-cover'
+                          />
+                        ) : (
+                          <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+                            ?
+                          </span>
+                        )}
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>
@@ -762,18 +666,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             {isEditMode ? (
                               <button
                                 type='button'
-                                onClick={() => {
-                                  const updated = [...(localCharacter.countersSpecialSkills ?? [])];
-                                  updated[idx] = {
-                                    ...(updated[idx] as CharacterRelationItem),
-                                    isMinor: !updated[idx]?.isMinor,
-                                  };
-                                  setNestedProperty(
-                                    characters,
-                                    `${characterId}.countersSpecialSkills`,
-                                    updated
-                                  );
-                                }}
+                                onClick={() => toggleExtraMinor('countersSpecialSkills', idx)}
                                 className='text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer'
                                 aria-label={`切换${skill.id}的特技关系为${isMinor ? '主要' : '次要'}`}
                               >
@@ -793,18 +686,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                               path={`countersSpecialSkills.${idx}.description`}
                               initialValue={skill.description || ''}
                               className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
-                              onSave={(newValue) => {
-                                const updated = [...(localCharacter.countersSpecialSkills ?? [])];
-                                updated[idx] = {
-                                  ...(updated[idx] as CharacterRelationItem),
-                                  description: newValue,
-                                };
-                                setNestedProperty(
-                                  characters,
-                                  `${characterId}.countersSpecialSkills`,
-                                  updated
-                                );
-                              }}
+                              onSave={(newValue) =>
+                                updateExtraDescription('countersSpecialSkills', idx, newValue)
+                              }
                             />
                           ) : (
                             skill.description && (
@@ -821,17 +705,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             aria-label={`移除特技 ${skill.id}`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (!characters[characterId]!.countersSpecialSkills) {
-                                characters[characterId]!.countersSpecialSkills = [];
-                              }
-                              const updated = (
-                                characters[characterId]!.countersSpecialSkills ?? []
-                              ).filter((_s: { id: string }, i: number) => i !== idx);
-                              setNestedProperty(
-                                characters,
-                                `${characterId}.countersSpecialSkills`,
-                                updated
-                              );
+                              removeExtraAt('countersSpecialSkills', idx);
                             }}
                           >
                             <svg
@@ -868,18 +742,21 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   height='16'
                   viewBox='0 0 16 16'
                   fill='none'
-                  aria-label='shield'
+                  aria-label='sad'
                   xmlns='http://www.w3.org/2000/svg'
                 >
+                  <circle cx='5' cy='6' r='1.25' fill='#dc2626' />
+                  <circle cx='11' cy='6' r='1.25' fill='#dc2626' />
                   <path
-                    d='M8 2L13 4V7C13 11 8 14 8 14C8 14 3 11 3 7V4L8 2Z'
+                    d='M4 11 Q8 9.5 12 11'
                     stroke='#dc2626'
                     strokeWidth='2'
-                    fill='#fca5a5'
+                    fill='none'
+                    strokeLinecap='round'
                   />
                 </svg>
               </span>
-              克制{id}的角色/知识卡/特技
+              克制{id}的{factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技
             </span>
             {isEditMode && (
               <div className='flex gap-2'>
@@ -892,37 +769,17 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                 />
                 <KnowledgeCardSelector
                   selected={Array.from(localCharacter.counteredByKnowledgeCards ?? [])}
-                  onSelect={(cardName) => {
-                    const updated = Array.from(localCharacter.counteredByKnowledgeCards ?? []);
-                    updated.push({
-                      id: cardName as string,
-                      description: '新增关系描述',
-                      isMinor: false,
-                    } as CharacterRelationItem);
-                    setNestedProperty(
-                      characters,
-                      `${characterId}.counteredByKnowledgeCards`,
-                      updated
-                    );
-                  }}
+                  onSelect={(cardName) =>
+                    addExtraItem('counteredByKnowledgeCards', cardName as string)
+                  }
                   factionId={factionId == 'cat' ? 'mouse' : 'cat'}
                 />
                 <SpecialSkillSelector
                   selected={Array.from(localCharacter.counteredBySpecialSkills ?? [])}
                   factionId={factionId}
-                  onSelect={(skillName) => {
-                    const updated = Array.from(localCharacter.counteredBySpecialSkills ?? []);
-                    updated.push({
-                      id: skillName as string,
-                      description: '新增关系描述',
-                      isMinor: false,
-                    } as CharacterRelationItem);
-                    setNestedProperty(
-                      characters,
-                      `${characterId}.counteredBySpecialSkills`,
-                      updated
-                    );
-                  }}
+                  onSelect={(skillName) =>
+                    addExtraItem('counteredBySpecialSkills', skillName as string)
+                  }
                 />
               </div>
             )}
@@ -983,15 +840,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 rounded-full bg-red-100 flex items-center justify-center border border-red-300 dark:border-red-700'>
-                          <Image
-                            src={getImageUrl(c.id)}
-                            alt={c.id}
-                            width={32}
-                            height={32}
-                            className='w-8 h-8 rounded-full object-cover'
-                          />
-                        </div>
+                        <Image
+                          src={getImageUrl(c.id)}
+                          alt={c.id}
+                          width={40}
+                          height={40}
+                          className='w-10 h-10 rounded-full object-cover'
+                        />
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
@@ -1087,15 +942,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 flex items-center justify-center'>
-                          <Image
-                            src={cardObj.imageUrl}
-                            alt={card.id}
-                            width={32}
-                            height={32}
-                            className='w-8 h-8'
-                          />
-                        </div>
+                        <Image
+                          src={cardObj.imageUrl}
+                          alt={card.id}
+                          width={32}
+                          height={40}
+                          className='w-8 h-10 mx-1'
+                        />
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>
@@ -1104,20 +957,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             {isEditMode ? (
                               <button
                                 type='button'
-                                onClick={() => {
-                                  const updated = [
-                                    ...(localCharacter.counteredByKnowledgeCards ?? []),
-                                  ];
-                                  updated[idx] = {
-                                    ...(updated[idx] as CharacterRelationItem),
-                                    isMinor: !updated[idx]?.isMinor,
-                                  };
-                                  setNestedProperty(
-                                    characters,
-                                    `${characterId}.counteredByKnowledgeCards`,
-                                    updated
-                                  );
-                                }}
+                                onClick={() => toggleExtraMinor('counteredByKnowledgeCards', idx)}
                                 className='text-[10px] px-1 py-0.5 bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200 rounded-full hover:bg-red-300 dark:hover:bg-red-600 cursor-pointer'
                                 aria-label={`切换${card.id}的知识卡关系为${isMinor ? '主要' : '次要'}`}
                               >
@@ -1137,20 +977,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                               path={`counteredByKnowledgeCards.${idx}.description`}
                               initialValue={card.description || ''}
                               className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
-                              onSave={(newValue) => {
-                                const updated = [
-                                  ...(localCharacter.counteredByKnowledgeCards ?? []),
-                                ];
-                                updated[idx] = {
-                                  ...(updated[idx] as CharacterRelationItem),
-                                  description: newValue,
-                                };
-                                setNestedProperty(
-                                  characters,
-                                  `${characterId}.counteredByKnowledgeCards`,
-                                  updated
-                                );
-                              }}
+                              onSave={(newValue) =>
+                                updateExtraDescription('counteredByKnowledgeCards', idx, newValue)
+                              }
                             />
                           ) : (
                             card.description && (
@@ -1167,17 +996,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             aria-label={`移除知识卡 ${card.id}`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (!characters[characterId]!.counteredByKnowledgeCards) {
-                                characters[characterId]!.counteredByKnowledgeCards = [];
-                              }
-                              const updated = (
-                                characters[characterId]!.counteredByKnowledgeCards ?? []
-                              ).filter((_c: { id: string }, i: number) => i !== idx);
-                              setNestedProperty(
-                                characters,
-                                `${characterId}.counteredByKnowledgeCards`,
-                                updated
-                              );
+                              removeExtraAt('counteredByKnowledgeCards', idx);
                             }}
                           >
                             <svg
@@ -1232,21 +1051,19 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                           }
                         }}
                       >
-                        <div className='w-10 h-10 rounded-full bg-red-100 flex items-center justify-center border border-red-300 dark:border-red-700'>
-                          {skillObj && skillObj.imageUrl ? (
-                            <Image
-                              src={skillObj.imageUrl}
-                              alt={skill.id}
-                              width={32}
-                              height={32}
-                              className='w-8 h-8 rounded-full object-cover'
-                            />
-                          ) : (
-                            <span className='w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
-                              ?
-                            </span>
-                          )}
-                        </div>
+                        {skillObj && skillObj.imageUrl ? (
+                          <Image
+                            src={skillObj.imageUrl}
+                            alt={skill.id}
+                            width={40}
+                            height={40}
+                            className='w-10 h-10 rounded-full object-cover'
+                          />
+                        ) : (
+                          <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+                            ?
+                          </span>
+                        )}
                         <div className='flex flex-col flex-1'>
                           <div className='flex items-center gap-1'>
                             <span className='text-xs text-gray-700 dark:text-gray-300'>
@@ -1255,20 +1072,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             {isEditMode ? (
                               <button
                                 type='button'
-                                onClick={() => {
-                                  const updated = [
-                                    ...(localCharacter.counteredBySpecialSkills ?? []),
-                                  ];
-                                  updated[idx] = {
-                                    ...(updated[idx] as CharacterRelationItem),
-                                    isMinor: !updated[idx]?.isMinor,
-                                  };
-                                  setNestedProperty(
-                                    characters,
-                                    `${characterId}.counteredBySpecialSkills`,
-                                    updated
-                                  );
-                                }}
+                                onClick={() => toggleExtraMinor('counteredBySpecialSkills', idx)}
                                 className='text-[10px] px-1 py-0.5 bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200 rounded-full hover:bg-red-300 dark:hover:bg-red-600 cursor-pointer'
                                 aria-label={`切换${skill.id}的特技关系为${isMinor ? '主要' : '次要'}`}
                               >
@@ -1288,20 +1092,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                               path={`counteredBySpecialSkills.${idx}.description`}
                               initialValue={skill.description || ''}
                               className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
-                              onSave={(newValue) => {
-                                const updated = [
-                                  ...(localCharacter.counteredBySpecialSkills ?? []),
-                                ];
-                                updated[idx] = {
-                                  ...(updated[idx] as CharacterRelationItem),
-                                  description: newValue,
-                                };
-                                setNestedProperty(
-                                  characters,
-                                  `${characterId}.counteredBySpecialSkills`,
-                                  updated
-                                );
-                              }}
+                              onSave={(newValue) =>
+                                updateExtraDescription('counteredBySpecialSkills', idx, newValue)
+                              }
                             />
                           ) : (
                             skill.description && (
@@ -1318,17 +1111,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             aria-label={`移除特技 ${skill.id}`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (!characters[characterId]!.counteredBySpecialSkills) {
-                                characters[characterId]!.counteredBySpecialSkills = [];
-                              }
-                              const updated = (
-                                characters[characterId]!.counteredBySpecialSkills ?? []
-                              ).filter((_s: { id: string }, i: number) => i !== idx);
-                              setNestedProperty(
-                                characters,
-                                `${characterId}.counteredBySpecialSkills`,
-                                updated
-                              );
+                              removeExtraAt('counteredBySpecialSkills', idx);
                             }}
                           >
                             <svg
@@ -1365,15 +1148,20 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                     height='16'
                     viewBox='0 0 16 16'
                     fill='none'
-                    aria-label='collaborator'
+                    aria-label='heart'
                     xmlns='http://www.w3.org/2000/svg'
                   >
-                    <circle cx='8' cy='8' r='7' stroke='#16a34a' strokeWidth='2' fill='#bbf7d0' />
-                    <path d='M5 10c0-1.5 2-1.5 2-3s-2-1.5-2-3' stroke='#16a34a' strokeWidth='1.5' />
-                    <path d='M11 10c0-1.5-2-1.5-2-3s2-1.5 2-3' stroke='#16a34a' strokeWidth='1.5' />
+                    <path
+                      d='M8 13 C8 13 3.5 10.5 3.5 7.5 C3.5 6 4.7 4.8 6.2 4.8 C7.1 4.8 7.8 5.2 8 5.9 C8.2 5.2 8.9 4.8 9.8 4.8 C11.3 4.8 12.5 6 12.5 7.5 C12.5 10.5 8 13 8 13 Z'
+                      fill='#bbf7d0'
+                      stroke='#16a34a'
+                      strokeWidth='1.8'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
                   </svg>
                 </span>
-                与{id}协作的角色
+                与{id}协作的老鼠
               </span>
               {isEditMode && (
                 <CharacterSelector
@@ -1420,15 +1208,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                         }
                       }}
                     >
-                      <div className='w-10 h-10 rounded-full bg-green-100 flex items-center justify-center border border-green-300 dark:border-green-700'>
-                        <Image
-                          src={AssetManager.getCharacterImageUrl(c.id, 'mouse')}
-                          alt={c.id}
-                          width={32}
-                          height={32}
-                          className='w-8 h-8 rounded-full object-cover'
-                        />
-                      </div>
+                      <Image
+                        src={AssetManager.getCharacterImageUrl(c.id, 'mouse')}
+                        alt={c.id}
+                        width={40}
+                        height={40}
+                        className='w-10 h-10 rounded-full object-cover'
+                      />
                       <div className='flex flex-col flex-1'>
                         <div className='flex items-center gap-1'>
                           <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>

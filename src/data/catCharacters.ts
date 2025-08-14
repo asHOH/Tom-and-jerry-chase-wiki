@@ -2190,6 +2190,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         ],
       },
     ],
+    countersKnowledgeCards: [
+      {
+        id: '舍己',
+        description: '老鼠舍己救人后一般为空血，若无特殊技能，将会被胡椒粉直接击倒。',
+        isMinor: false,
+      },
+    ],
   },
 
   /* ----------------------------------- 塔拉 ----------------------------------- */

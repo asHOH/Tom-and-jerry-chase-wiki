@@ -12,6 +12,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
 import Image from '@/components/Image';
 import clsx from 'clsx';
+import { GameDataManager } from '@/lib/dataManager';
 
 export default function CharacterDisplay({
   id,
@@ -30,10 +31,12 @@ export default function CharacterDisplay({
     return sortPositioningTags(positioningTags, factionId as FactionId);
   }, [positioningTags, factionId]);
 
+  const computedId = id in GameDataManager.getCharacters() ? id : `user/${id}`;
+
   return (
     <BaseCard
       variant='character'
-      href={`/characters/${id}`}
+      href={`/characters/${computedId}`}
       role='button'
       aria-label={`查看${name}角色详情`}
       className={clsx(
