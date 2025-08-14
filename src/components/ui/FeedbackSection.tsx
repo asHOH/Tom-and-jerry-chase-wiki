@@ -26,12 +26,13 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
     setIsSubmitting(true);
 
     try {
+      const payload = isAnonymous ? { ...feedbackFormData, contact: '' } : feedbackFormData;
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(feedbackFormData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -207,10 +208,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                           onChange={(e) => {
                             const checked = e.target.checked;
                             setIsAnonymous(checked);
-                            if (checked) {
-                              // Clear contact to avoid accidental submission when switching to anonymous
-                              setFeedbackFormData({ ...feedbackFormData, contact: '' });
-                            }
+                            // Preserve contact value so users can toggle back without losing input
                           }}
                           className='h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                           aria-controls='contact'
