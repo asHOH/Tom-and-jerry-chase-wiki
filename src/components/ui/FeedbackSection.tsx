@@ -1,9 +1,9 @@
 'use client';
-
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 export interface FeedbackSectionRef {
   openFeedback: () => void;
+  isOpen: () => boolean;
 }
 
 const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
@@ -15,9 +15,12 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useImperativeHandle(ref, () => ({
     openFeedback: () => setIsFeedbackOpen(true),
+    isOpen: () => isFeedbackOpen,
   }));
 
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
@@ -25,12 +28,13 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
     setIsSubmitting(true);
 
     try {
+      const payload = isAnonymous ? { ...feedbackFormData, contact: '' } : feedbackFormData;
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(feedbackFormData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -46,7 +50,8 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
           : feedbackFormData.type === 'data'
             ? '数据建议'
             : '功能建议';
-      const body = `反馈类型: ${subject}\n\n内容:\n${feedbackFormData.content}\n\n联系方式: ${feedbackFormData.contact}`;
+      const contactText = isAnonymous ? '匿名' : feedbackFormData.contact;
+      const body = `反馈类型: ${subject}\n\n内容:\n${feedbackFormData.content}\n\n联系方式: ${contactText}`;
       window.location.href = `mailto:your-email@example.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     } finally {
       setIsSubmitting(false);
@@ -59,6 +64,23 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
       '_blank'
     );
   };
+
+  useEffect(() => {
+    if (isFeedbackOpen && !submitted) {
+      textareaRef.current?.focus();
+    }
+  }, [isFeedbackOpen, submitted]);
+
+  useEffect(() => {
+    if (!isFeedbackOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsFeedbackOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isFeedbackOpen]);
 
   return (
     <>
@@ -91,11 +113,19 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
           <div
             className='fixed inset-0 bg-gray-900/30 backdrop-blur-sm z-40'
             onClick={() => setIsFeedbackOpen(false)}
+            onDoubleClick={(e) => e.stopPropagation()}
+            aria-hidden='true'
           />
 
-          <div className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-1/2 md:max-w-2xl md:min-w-[28rem] md:h-auto md:max-h-[80vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'>
+          <div
+            className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-1/2 md:max-w-2xl md:min-w-[28rem] md:h-auto md:max-h-[80vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'
+            onDoubleClick={(e) => e.stopPropagation()}
+            role='dialog'
+            aria-modal='true'
+            aria-labelledby='feedback-title'
+          >
             {submitted ? (
-              <div className='p-6 text-center'>
+              <div className='p-6 text-center' role='alert' aria-live='polite'>
                 <div className='text-4xl mb-4'>✅</div>
                 <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2'>
                   感谢您的反馈！
@@ -115,13 +145,17 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
             ) : (
               <form onSubmit={handleFeedbackSubmit} className='p-6'>
                 <div className='flex justify-between items-center mb-4'>
-                  <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
+                  <h3
+                    id='feedback-title'
+                    className='text-lg font-semibold text-gray-900 dark:text-gray-100'
+                  >
                     📝 反馈建议
                   </h3>
                   <button
                     type='button'
                     onClick={() => setIsFeedbackOpen(false)}
                     className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                    aria-label='关闭反馈窗口'
                   >
                     ✕
                   </button>
@@ -173,9 +207,10 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-                      详细描述 *
+                      详细描述
                     </label>
                     <textarea
+                      ref={textareaRef}
                       value={feedbackFormData.content}
                       onChange={(e) =>
                         setFeedbackFormData({ ...feedbackFormData, content: e.target.value })
@@ -187,17 +222,46 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                   </div>
 
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-                      联系方式（可选）
-                    </label>
+                    <div className='mb-2 flex items-center justify-between'>
+                      <label
+                        htmlFor='contact'
+                        className='text-sm font-medium text-gray-700 dark:text-gray-300'
+                      >
+                        {isAnonymous ? '联系方式（已匿名）' : '联系方式'}
+                      </label>
+                      <label
+                        htmlFor='anonymous'
+                        className='inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300'
+                      >
+                        <input
+                          id='anonymous'
+                          type='checkbox'
+                          checked={isAnonymous}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setIsAnonymous(checked);
+                            // Preserve contact value so users can toggle back without losing input
+                          }}
+                          className='h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                          aria-controls='contact'
+                          aria-label='匿名提交'
+                        />
+                        匿名
+                      </label>
+                    </div>
                     <input
+                      id='contact'
                       type='text'
                       value={feedbackFormData.contact}
                       onChange={(e) =>
                         setFeedbackFormData({ ...feedbackFormData, contact: e.target.value })
                       }
-                      placeholder='QQ号或其他联系方式（如需回复）'
-                      className='w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                      placeholder={isAnonymous ? '已匿名' : '请填写QQ号或其他联系方式，便于回复'}
+                      className='w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 disabled:bg-gray-100 disabled:text-gray-400 disabled:dark:bg-gray-700/60 disabled:dark:text-gray-500'
+                      disabled={isAnonymous}
+                      aria-disabled={isAnonymous}
+                      aria-describedby='contact-help'
+                      required={!isAnonymous}
                     />
                   </div>
                 </div>
@@ -212,7 +276,11 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                   </button>
                   <button
                     type='submit'
-                    disabled={isSubmitting || !feedbackFormData.content.trim()}
+                    disabled={
+                      isSubmitting ||
+                      !feedbackFormData.content.trim() ||
+                      (!isAnonymous && !feedbackFormData.contact.trim())
+                    }
                     className='flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg'
                   >
                     {isSubmitting ? '提交中...' : '提交反馈'}

@@ -158,16 +158,16 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (çŒ«å’
 
 # Code Standards
 
-- Follow project's existing patterns
+- Follow existing patterns
 - Ensure TypeScript strict mode compliance
 - Write features with least net code increase
 - Avoid inline scripts/styles and use build-time bundling for CSP compliance (though not required)
-- Ensure your implementation plan complies with best practices before and after editing
+- Evaluate the code to ensure best practices before and after editing
 - Optimize for static delivery and client-side hydration
 
-# Things to do After Editing
+# Things to do After Editing (important!)
 
-- Run the following commands to ensure code quality:
+- Run these commands to ensure code quality:
 
 ```Powershell
 npm run lint            # Run ESLint

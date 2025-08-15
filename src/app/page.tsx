@@ -29,6 +29,9 @@ function HomeContent() {
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
 
   const handleEditModeToggle = () => {
+    if (feedbackSectionRef.current?.isOpen?.()) {
+      return; // Do nothing if feedback modal is open
+    }
     if (isEditMode) {
       setNotificationMessage('成功退出编辑模式');
     } else {
