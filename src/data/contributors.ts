@@ -180,6 +180,7 @@ export const contributors: Contributor[] = [
   {
     id: 'SYSTEM_CPYTHON',
     name: 'SYSTEM_CPYTHON',
+    url: 'https://space.bilibili.com/2060407817',
     roles: [
       {
         type: RoleType.ContentWriter,
