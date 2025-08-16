@@ -887,6 +887,15 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     detailedDescription: '命中敌方造成2.5伤害并在2.5秒内降低10%移速，可触发投掷类知识卡和特技。',
     create: '表演者•杰瑞-喜剧之王达到Lv.3并触发放飞返场后，其可通过拖拽道具键掷出，有内置CD。',
   },
+  '蓝图(道具)': {
+    itemtype: '其它' as const,
+    itemsource: '技能道具' as const,
+    description:
+      '命中后或莱恩使用技能时，展开蓝图(场景物)。当莱恩-蓝图达到Lv.3时，命中猫咪会直接将其变为线条猫。',
+    detailedDescription:
+      '命中敌方/平台/地面、或莱恩再次使用技能时，展开蓝图(场景物)。命中敌方可触发投掷类知识卡和特技。当莱恩-蓝图达到Lv.3时，命中猫咪会直接将其变为线条猫。',
+    create: '通过莱恩-蓝图技能丢出。',
+  },
   毛线球: {
     itemtype: '其它' as const,
     itemsource: '技能道具' as const,
