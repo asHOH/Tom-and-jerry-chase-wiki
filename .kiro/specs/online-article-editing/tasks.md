@@ -10,8 +10,8 @@ This plan breaks down the work required to implement the online article editing 
   - [x] 1.5. Create PostgreSQL `security definer` functions for sensitive operations like generating salts, hashing credentials, and checking permissions.
 
 - [ ] 2. **Authentication & User Management**
-  - [ ] 2.1. Create the multi-step UI component for the unified login/registration flow.
-  - [ ] 2.2. Implement the backend API endpoint (e.g., `/api/auth/check-username`) to handle the initial username check.
+  - [x] 2.1. Create the multi-step UI component for the unified login/registration flow.
+  - [x] 2.2. Implement the backend API endpoint (e.g., `/api/auth/check-username`) to handle the initial username check.
   - [ ] 2.3. Implement the client-side logic to process the API response and render the appropriate next step (password field or new registration form).
   - [ ] 2.4. Build the admin panel for Coordinators to manage user roles, usernames, nicknames, and passwords.
   - [ ] 2.5. Create a settings page for authenticated users to change their own password.
