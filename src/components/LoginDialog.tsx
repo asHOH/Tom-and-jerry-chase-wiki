@@ -21,51 +21,91 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
 
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  // Mock API call to check username
   const checkUsername = async () => {
+    if (username.trim() === '') {
+      setError('用户名不能为空。');
+      return;
+    }
     setIsLoading(true);
     setError(null);
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Mock responses based on username
-    if (username === 'user_no_pass') {
-      setStep('username'); // Should be auto-login, but for now, just reset
-      onClose(); // Simulate successful login
-    } else if (username === 'user_with_pass') {
-      setStep('password');
-    } else if (username.trim() === '') {
-      setError('Username cannot be empty.');
-    } else {
-      setStep('register');
+    try {
+      const response = await fetch('/api/auth/check-username', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || '发生错误。');
+      }
+      switch (data.status) {
+        case 'exists_no_password':
+          // Auto-login for passwordless users
+          await handleLogin(true);
+          break;
+        case 'exists_with_password':
+          setStep('password');
+          break;
+        case 'not_exists':
+          setStep('register');
+          break;
+        default:
+          setError('从服务器收到意外响应。');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (isPasswordless = false) => {
     setIsLoading(true);
     setError(null);
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    if (password === 'password') {
-      onClose(); // Simulate successful login
-    } else {
-      setError('Incorrect password.');
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password: isPasswordless ? undefined : password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || '登录失败。');
+      }
+      // Assuming successful login returns a session, we close the dialog.
+      // In a real app, you'd handle the session state.
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '发生未知错误。');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleRegister = async () => {
+    if (nickname.trim() === '') {
+      setError('昵称不能为空。');
+      return;
+    }
     setIsLoading(true);
     setError(null);
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    if (nickname.trim() === '') {
-      setError('Nickname cannot be empty.');
-    } else {
-      onClose(); // Simulate successful registration
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, nickname, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || '注册失败。');
+      }
+      // After successful registration, log the user in.
+      await handleLogin();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '发生未知错误。');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -116,13 +156,13 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       case 'password':
         return (
           <>
-            <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-2'>Enter Password</h2>
+            <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-2'>输入密码</h2>
             <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
-              Welcome back, <span className='font-semibold'>{username}</span>.
+              欢迎回来，<span className='font-semibold'>{username}</span>。
             </p>
             <input
               type='password'
-              placeholder='Password'
+              placeholder='密码'
               className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -133,13 +173,13 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       case 'register':
         return (
           <>
-            <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-2'>Create Account</h2>
+            <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-2'>创建账户</h2>
             <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
-              Username <span className='font-semibold'>{username}</span> is not taken.
+              用户名 <span className='font-semibold'>{username}</span> 未被占用。
             </p>
             <input
               type='text'
-              placeholder='Nickname'
+              placeholder='昵称'
               className='w-full p-2 mb-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
@@ -147,7 +187,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             />
             <input
               type='password'
-              placeholder='Password (optional)'
+              placeholder='密码（可选）'
               className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -158,12 +198,10 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       default:
         return (
           <>
-            <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-4'>
-              Login or Register
-            </h2>
+            <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-4'>登录或注册</h2>
             <input
               type='text'
-              placeholder='Enter your username'
+              placeholder='输入您的用户名'
               className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -201,7 +239,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
           type='button'
           onClick={onClose}
           className='absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-          aria-label='Close dialog'
+          aria-label='关闭对话框'
         >
           <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
             <path
@@ -245,7 +283,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
                 ></path>
               </svg>
             ) : (
-              'Continue'
+              '继续'
             )}
           </button>
         </form>

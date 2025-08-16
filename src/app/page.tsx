@@ -11,6 +11,8 @@ import { EditModeProvider, useEditMode } from '@/context/EditModeContext';
 import HomePageSection from '@/components/ui/HomePageSection';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '../components/ui/PageDescription';
+import LoginDialog from '@/components/LoginDialog';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 export default function Home() {
   return (
@@ -26,7 +28,9 @@ function HomeContent() {
   const { toggleEditMode, isEditMode } = useEditMode();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
+  const isMobile = useMobile();
 
   const handleEditModeToggle = () => {
     if (feedbackSectionRef.current?.isOpen?.()) {
@@ -34,8 +38,10 @@ function HomeContent() {
     }
     if (isEditMode) {
       setNotificationMessage('成功退出编辑模式');
+      setShowLoginDialog(false);
     } else {
       setNotificationMessage('成功进入编辑模式，编辑模式下，修改只在本地保存');
+      setShowLoginDialog(true);
     }
     setShowNotification(true);
     toggleEditMode();
@@ -130,6 +136,10 @@ function HomeContent() {
         type={isEditMode ? 'success' : 'info'}
         duration={isEditMode ? 3000 : 4000}
       />
+
+      {isEditMode && showLoginDialog && (
+        <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
+      )}
     </TabNavigationWrapper>
   );
 }
