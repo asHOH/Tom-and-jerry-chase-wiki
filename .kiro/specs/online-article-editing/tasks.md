@@ -2,12 +2,12 @@
 
 This plan breaks down the work required to implement the online article editing feature into sequential, actionable tasks.
 
-- [ ] 1. **Backend Setup (Supabase)**
-  - [ ] 1.1. Initialize a new Supabase project.
-  - [ ] 1.2. Write and execute SQL scripts to define custom enum types (`role_type`, `version_status`, `visibility_type`) and the base table schema.
-  - [ ] 1.3. Create database views (e.g., `users_public_view`, `article_versions_public_view`) to expose only the columns safe for public consumption, implementing Column Level Security.
-  - [ ] 1.4. Implement Row Level Security (RLS) policies on the base tables to control row visibility based on user role and status (e.g., `approved` vs. `pending`).
-  - [ ] 1.5. Create PostgreSQL `security definer` functions for sensitive operations like generating salts, hashing credentials, and checking permissions.
+- [x] 1. **Backend Setup (Supabase)**
+  - [x] 1.1. Initialize a new Supabase project.
+  - [x] 1.2. Write and execute SQL scripts to define custom enum types (`role_type`, `version_status`, `visibility_type`) and the base table schema.
+  - [x] 1.3. Create database views (e.g., `users_public_view`, `article_versions_public_view`) to expose only the columns safe for public consumption, implementing Column Level Security.
+  - [x] 1.4. Implement Row Level Security (RLS) policies on the base tables to control row visibility based on user role and status (e.g., `approved` vs. `pending`).
+  - [x] 1.5. Create PostgreSQL `security definer` functions for sensitive operations like generating salts, hashing credentials, and checking permissions.
 
 - [ ] 2. **Authentication & User Management**
   - [ ] 2.1. Create the multi-step UI component for the unified login/registration flow.

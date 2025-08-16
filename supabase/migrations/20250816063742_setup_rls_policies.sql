@@ -2,22 +2,40 @@
 ALTER TABLE articles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE article_versions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE roles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 
 -- USERS RLS
--- 1. Users can only see their own row
-CREATE POLICY "Users can view their own data"
+-- FIX: Combined SELECT policies for `users` to fix `multiple_permissive_policies` and applied `auth_rls_initplan` fix.
+CREATE POLICY "Authenticated users can view users"
 ON public.users FOR SELECT
 TO authenticated
-USING (auth.uid() = id);
+USING (
+    (select auth.uid()) = id OR get_user_role((select auth.uid())) = 'Coordinator'
+);
 
--- 2. Coordinators can see all users
-CREATE POLICY "Coordinators can view all users"
-ON public.users FOR SELECT
+-- FIX: The original `FOR ALL` policy was too broad. Scoped to UPDATE and applied `auth_rls_initplan` fix.
+CREATE POLICY "Coordinators can update users"
+ON public.users FOR UPDATE
 TO authenticated
-USING (get_user_role(auth.uid()) = 'Coordinator');
+USING (get_user_role((select auth.uid())) = 'Coordinator')
+WITH CHECK (get_user_role((select auth.uid())) = 'Coordinator');
+
+
+-- ROLES RLS
+CREATE POLICY "Public can view roles" ON public.roles FOR SELECT USING (TRUE);
+
+-- CATEGORIES RLS
+CREATE POLICY "Public can view categories" ON public.categories FOR SELECT USING (TRUE);
+
+-- FIX: Applied `auth_rls_initplan` fix.
+CREATE POLICY "Reviewers can update category default visibility"
+ON public.categories FOR UPDATE
+TO authenticated
+USING (get_user_role((select auth.uid())) = 'Reviewer')
+WITH CHECK (get_user_role((select auth.uid())) = 'Reviewer');
 
 -- ARTICLES RLS
--- 1. Anyone can see articles that have at least one approved version
 CREATE POLICY "Public can view approved articles"
 ON public.articles FOR SELECT
 USING (
@@ -27,20 +45,39 @@ USING (
   )
 );
 
+-- FIX: Applied `auth_rls_initplan` fix.
+CREATE POLICY "Reviewers and coordinators can delete articles"
+ON public.articles FOR DELETE
+TO authenticated
+USING (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'));
+
 -- ARTICLE_VERSIONS RLS
--- 1. Anyone can see approved versions
-CREATE POLICY "Public can view approved versions"
+-- FIX: Replaced multiple SELECT policies with specific ones for anon and authenticated roles.
+-- Policy for anonymous users.
+CREATE POLICY "Anonymous users can view approved versions"
 ON public.article_versions FOR SELECT
+TO anon
 USING (status = 'approved');
 
--- 2. Contributors and Reviewers can see pending and rejected versions
-CREATE POLICY "Contributors and reviewers can view pending and rejected versions"
+-- Policy for authenticated users.
+CREATE POLICY "Authenticated users can view versions"
 ON public.article_versions FOR SELECT
 TO authenticated
 USING (
-  get_user_role(auth.uid()) IN ('Contributor', 'Reviewer')
-  AND status IN ('pending', 'rejected')
+    status = 'approved'
+    OR (
+        get_user_role((select auth.uid())) IN ('Contributor', 'Reviewer', 'Coordinator')
+        AND status IN ('pending', 'rejected', 'revoked')
+    )
 );
+
+-- FIX: Applied `auth_rls_initplan` fix.
+CREATE POLICY "Reviewers and coordinators can update versions"
+ON public.article_versions FOR UPDATE
+TO authenticated
+USING (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'))
+WITH CHECK (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'));
+
 
 -- Allow all access for service_role, bypassing RLS
 ALTER TABLE users FORCE ROW LEVEL SECURITY;
@@ -58,5 +95,17 @@ USING (true);
 ALTER TABLE article_versions FORCE ROW LEVEL SECURITY;
 CREATE POLICY "Allow all access for service_role on article_versions"
 ON public.article_versions FOR ALL
+TO service_role
+USING (true);
+
+ALTER TABLE roles FORCE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all access for service_role on roles"
+ON public.roles FOR ALL
+TO service_role
+USING (true);
+
+ALTER TABLE categories FORCE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all access for service_role on categories"
+ON public.categories FOR ALL
 TO service_role
 USING (true);
