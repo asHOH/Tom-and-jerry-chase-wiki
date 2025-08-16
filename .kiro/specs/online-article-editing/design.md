@@ -30,6 +30,7 @@ To ensure data integrity, the following custom ENUM types will be created and us
   - Values: `'pending'`, `'approved'`, `'rejected'`, `'revoked'`
 - **`visibility_type`**: Defines the default visibility for categories.
   - Values: `'approved'`, `'pending'`
+    @
 
 ### `roles`
 

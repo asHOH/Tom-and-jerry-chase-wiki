@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { updateSession } from '@/lib/supabase/middleware';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Handle OPTIONS requests for CORS
   if (request.method === 'OPTIONS') {
     return new NextResponse(null, {
@@ -68,8 +69,11 @@ export function middleware(request: NextRequest) {
     return res;
   }
 
-  // Continue with the request
-  return NextResponse.next();
+  // Now, run the Supabase session update logic
+  const supabaseResponse = await updateSession(request);
+
+  // Return the response from Supabase middleware, which includes updated cookies
+  return supabaseResponse;
 }
 
 export const config = {
@@ -80,7 +84,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - Any file with a common image extension
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

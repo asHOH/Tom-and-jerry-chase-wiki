@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import { VersionDisplay } from '@/components/VersionDisplay';
@@ -30,7 +31,20 @@ function HomeContent() {
   const [notificationMessage, setNotificationMessage] = useState('');
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const isMobile = useMobile();
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+      setShowLoginDialog(!session);
+    };
+    checkLoginStatus();
+  }, []);
 
   const handleEditModeToggle = () => {
     if (feedbackSectionRef.current?.isOpen?.()) {
@@ -41,7 +55,7 @@ function HomeContent() {
       setShowLoginDialog(false);
     } else {
       setNotificationMessage('成功进入编辑模式，编辑模式下，修改只在本地保存');
-      setShowLoginDialog(true);
+      if (!isLoggedIn) setShowLoginDialog(true);
     }
     setShowNotification(true);
     toggleEditMode();

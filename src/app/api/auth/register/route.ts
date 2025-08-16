@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/server';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash, randomBytes, pbkdf2Sync } from 'crypto';
 import { TablesInsert } from '@/data/database.types';
+import { createClient } from '@/lib/supabase/server';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
@@ -41,42 +42,20 @@ export async function POST(request: NextRequest) {
 
     const salt = randomBytes(16).toString('hex');
     const usernameHash = hashUsername(username);
-    const passwordHash = password ? hashPassword(password, salt) : null;
+    const passwordHash = password ? hashPassword(password, salt) : '';
 
-    let authUserId: string;
-    if (password) {
-      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-        email: `${username}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`,
-        password: password,
-        email_confirm: true,
-      });
+    const authUserEmail = `${username}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`;
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email: authUserEmail,
+      password: password || username,
+      email_confirm: true,
+    });
 
-      if (authError || !authData.user) {
-        console.error('Error creating auth user:', authError);
-        return NextResponse.json(
-          { error: 'Could not create authentication user.' },
-          { status: 500 }
-        );
-      }
-      authUserId = authData.user.id;
-    } else {
-      // For passwordless accounts, create a user without password in auth.users
-      const tempPassword = randomBytes(16).toString('hex'); // Generate a temporary password
-      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-        email: `${username}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`, // Using username as email for auth.users
-        password: tempPassword,
-        email_confirm: true,
-      });
-
-      if (authError || !authData.user) {
-        console.error('Error creating auth user (passwordless):', authError);
-        return NextResponse.json(
-          { error: 'Could not create authentication user for passwordless account.' },
-          { status: 500 }
-        );
-      }
-      authUserId = authData.user.id;
+    if (authError || !authData.user) {
+      console.error('Error creating auth user:', authError);
+      return NextResponse.json({ error: 'Could not create authentication user.' }, { status: 500 });
     }
+    const authUserId = authData.user.id;
 
     const { error: insertError } = await supabaseAdmin.from('users').insert({
       id: authUserId, // Use the ID from auth.users
@@ -99,7 +78,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Could not create user.' }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+    // After successful registration, sign in the user to persist the session
+    const supabase = await createClient(); // Get the server-side client
+    const { error: sessionError } = await supabase.auth.signInWithPassword({
+      email: authUserEmail,
+      password: password || username!, // Use the provided password or the generated tempPassword
+    });
+
+    if (sessionError) {
+      console.error('Error signing in new user after registration:', sessionError);
+      return NextResponse.json(
+        { error: 'Registration successful, but login failed.' },
+        { status: 500 }
+      );
+    }
+
+    const response = NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+    // The updateSession middleware will handle setting the cookies on the response
+    // We just need to ensure the session is created on the server side
+    return response;
   } catch (e) {
     console.error('Registration error:', e);
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
