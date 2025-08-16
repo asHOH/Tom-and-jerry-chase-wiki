@@ -698,6 +698,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '"流浪猫铁三角"中的一员。莱特宁是一只橙红色的猫，喜欢与汤姆争夺女主人的宠爱，他移动速度快如闪电，没有任何老鼠能逃脱他的追击。',
     maxHp: 260,
+    attackBoost: 0,
     hpRecovery: 3,
     moveSpeed: 775,
     jumpHeight: 420,
@@ -751,6 +752,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
         description: '管道用，若没21知识点可以去掉狡诈。',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
+        description: '主布局，防守。',
       },
       {
         cards: ['S-猛攻', 'A-细心', 'A-穷追猛打', 'B-恐吓', 'B-皮糙肉厚'],
@@ -946,6 +951,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '牛仔汤姆身手敏捷、深藏不露，擅长使用绳索御牛，热爱自由的他，在草原上过着与世无争的生活。',
     maxHp: 225,
+    attackBoost: 0,
     hpRecovery: 2.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -1251,6 +1257,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   图多盖洛: {
     description: '拥有惊人美貌的图多盖洛是上东区知名度最高的千金小姐，她的追求者从纽约排到了巴黎。',
     maxHp: 230,
+    attackBoost: 0,
     hpRecovery: 2,
     moveSpeed: 770,
     jumpHeight: 420,
@@ -1566,6 +1573,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   侍卫汤姆: {
     description: '侍卫汤姆始终守护在皇宫内，负责保护国王的安全。',
     maxHp: 270,
+    attackBoost: 0,
     hpRecovery: 1.67,
     moveSpeed: 745,
     jumpHeight: 420,
@@ -2030,6 +2038,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '米特是一只流浪猫，他的尾巴曾在一场流浪猫战争中受过伤，但他十分勇猛，从来不会向敌人认输。',
     maxHp: 325,
+    attackBoost: 0,
     hpRecovery: 1,
     moveSpeed: 750,
     jumpHeight: 420,
@@ -2374,6 +2383,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description: '拥有超群剑术的大师剑客汤姆，是法国万千少女心中的偶像。',
     aliases: ['剑汤'],
     maxHp: 270,
+    attackBoost: 0,
     hpRecovery: 1.5,
     moveSpeed: 770,
     jumpHeight: 420,
@@ -2587,6 +2597,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '天空列车站的站长，拥有能够看穿他人内心的力量。他博学多才，善于思考，同时也是知识的化身。',
     maxHp: 210,
+    attackBoost: 0,
     hpRecovery: 1.5,
     moveSpeed: 735,
     jumpHeight: 420,
@@ -2800,6 +2811,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '她是博学多才的都市美少女，冷静知性，是智慧与美貌并存的化身。她是校园中靓丽的风景线，也是学生眼中博学多识的师长。拥有无限魅力她，其爱慕者多如过江之鲫。',
     maxHp: 250,
+    attackBoost: 0,
     hpRecovery: 3.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -3022,6 +3034,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       '苏蕊是最受欢迎的啦啦队队长，充满活力的她，脸上时时刻刻都洋溢着灿烂的笑容。她热爱生活，享受美食，认识她的猫和老鼠都会被她吸引，和她成为朋友。',
 
     maxHp: 200,
+    attackBoost: 0,
     hpRecovery: 2.5,
     moveSpeed: 770,
     jumpHeight: 420,
@@ -3242,6 +3255,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '天使汤姆乘坐库博的天国火车，从神秘的天堂中而来。身穿纯白色长袍，头戴天使光环的他认为猫和老鼠都应该有快乐的空间，温柔善良的他脸上始终带着一抹浅浅的微笑，手持小竖琴时不时传来悠扬的乐声，让猫猫鼠鼠们忍不住靠近。',
     maxHp: 230,
+    attackBoost: 15,
     hpRecovery: 3.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -3426,7 +3440,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
     ],
-    attackBoost: 15,
     counteredBy: [
       {
         id: '剑客泰菲',
@@ -3523,6 +3536,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '因为与众不同的花色，斯飞在其他猫的眼里是个十足的怪猫。习惯独来独往的他从不和其他猫交流，独自一人住在城市的最中心，充满了神秘感。[夜深人静的时候，他总会拿着一个挂坠，似乎在思念着谁](猫鼠动画里毛色相似的小猫是他妹妹)。',
     maxHp: 225,
+    attackBoost: 0,
     hpRecovery: 2,
     moveSpeed: 780,
     jumpHeight: 420,
@@ -3761,6 +3775,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '恶魔汤姆驾驶着列车从深渊呼啸而来。他通体火红，脑袋上有一对略显狡黠的小触角，手持三叉戟的他一直鼓动着汤姆在老鼠面前找回场子。狡黠的恶魔汤姆身边还有一群忠诚的仆从，他们会不遗余力地完成主人的任何指令。',
     maxHp: 200,
+    attackBoost: 0,
     hpRecovery: 1.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -3968,6 +3983,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '因为一场神秘的实验意外而降落于猫鼠五周年特别纪念展的不速之客，天生充满了对蓝天的向往，热爱钻研新奇的发明，脑袋里充满稀奇古怪的创意，立志成为猫咪界第一位飞行员，在汤姆和杰瑞的陪伴下被纪念展的内容所打动，来到这里继续进行新的创意发明。',
     maxHp: 240,
+    attackBoost: 0,
     hpRecovery: 1,
     moveSpeed: 800,
     jumpHeight: 420,
@@ -4124,7 +4140,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '解锁俯冲技能。飞行时点击技能可向正前方俯冲、拖动技能可向斜前方俯冲，对碰到的敌方造成短暂眩晕和伤害。长按技能可蓄力，略微提升俯冲效果和距离。',
             cooldown: 8,
             detailedDescription:
-              '解锁俯冲技能。飞行时点击技能可向正前方俯冲，拖动技能可向斜前方俯冲，瞄准范围为自身正前方至正下方的90度角，附近有老鼠则会自动瞄向附近的老鼠俯冲。俯冲速度2000；长按技能可蓄力，期间水平移速降至550且不可转向，可点击道具键停止蓄力并保存蓄力效果。点击/蓄力0.5～1秒/蓄力1秒以上，冲刺时间为0.45/0.6/0.75秒，命中敌方造成0.8秒眩晕和35/37.5/40伤害。俯冲期间可使用爪刀、技能和取消飞行。俯冲伤害不受任何伤害加成和减免效果的影响。',
+              '解锁俯冲技能。飞行时点击技能可向正前方俯冲，拖动技能可向斜前方俯冲，瞄准范围为自身正前方至正下方的90度角，附近有老鼠则会自动瞄向附近的老鼠俯冲。俯冲速度2000；长按技能可蓄力，期间水平移速降至550且不可转向，可点击道具键停止蓄力并保存蓄力效果。点击/蓄力0.5～1秒/蓄力1秒以上，冲刺时间为0.45/0.6/0.75秒，命中老鼠造成0.8秒眩晕和35/37.5/40伤害。俯冲期间可使用爪刀、技能和取消飞行。俯冲伤害固定，[不受任何伤害加成和减免效果的影响](霜月的乾坤袋机制除外)',
           },
           {
             level: 2,
@@ -4150,7 +4166,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '未处于飞行状态时，向前释放飓风，对敌方造成少量伤害和击退。击退期间对触碰到的[所有单位](包括追风汤姆)造成少量伤害，对敌方额外造成眩晕效果。\n处于飞行状态时，向正下方扔出铁砧，砸中敌方造成少量伤害和短暂眩晕。\n当手中有老鼠时，会优先扔出老鼠并自动绑上碰到的火箭，但会被其他敌方单位阻挡。',
         detailedDescription:
-          '未处于飞行状态时，向前释放飓风，前摇0.5秒，后摇0.75秒。飓风速度1000，存在2秒，[可推动沿途的道具和部分场景物](但飓风也会因此减速)，可被墙体阻挡；多个风之间不可叠加。飓风命中敌方将造成20伤害和2秒击退，击退速度为550。击退期间对触碰到的[所有单位](包括追风汤姆)造成35伤害，对敌方额外造成1.5秒眩晕。\n处于飞行状态时，向正下方扔出铁砧(无前后摇)。铁砧下落1.6秒或命中后对附近敌方造成小范围的[18伤害和1.2秒眩晕](老鼠被铁砧眩晕期间及其效果结束后1秒内不会再受到铁砧效果)。铁砧可穿越小平台。\n当手中有老鼠时，会优先[扔出老鼠](扔需要消耗一次技能)，使其回复60血，并自动绑上碰到的火箭，但会被其他敌方单位阻挡；攻击效果等于飓风/铁砧；老鼠在被扔出期间可使用技能和道具、进行交互、免疫伤害（追风的俯冲伤害除外），但不免疫控制。',
+          '未处于飞行状态时，向前释放飓风，前摇0.5秒，后摇0.75秒。飓风速度1000，存在2秒，[可推动沿途的道具和部分场景物](但飓风也会因此减速)，可被墙体阻挡；多个风之间不可叠加。飓风命中敌方将造成{20}伤害和2秒击退，击退速度为550。击退期间对触碰到的[所有单位](包括追风汤姆)造成35伤害，对敌方额外造成1.5秒眩晕。\n处于飞行状态时，向正下方扔出铁砧(无前后摇)。铁砧下落1.6秒或命中后对附近敌方造成小范围的[18伤害和1.2秒眩晕](铁砧不享受攻击力加成；老鼠被铁砧眩晕期间及其效果结束后1秒内不会再受到铁砧效果)。铁砧可穿越小平台。\n当手中有老鼠时，会优先[扔出老鼠](扔需要消耗一次技能)，使其回复60血，并自动绑上碰到的火箭，但会被其他敌方单位以及部分可被攻击的[中立生物](如森林牧场的鸭爸爸、鸭妈妈)阻挡，攻击效果等于飓风/铁砧；若以铁砧的形式扔出老鼠，则在铁砧命中或提前结束时同样会给予老鼠铁砧效果；老鼠在被扔出期间可使用技能和道具、进行交互、[免疫伤害]（追风的俯冲伤害除外），但不免疫控制，且不可自主逃离。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
@@ -4232,12 +4248,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
-
   /* ----------------------------------- 如玉 ----------------------------------- */
   如玉: {
     description:
       '畅音阁的当家旦角如玉，身段灵动优雅，唱腔娴熟婉转，在多年苦练后，终于如愿在戏台上展现自己的风姿。作为一只猫，优秀的柔韧性，使得如玉的青旦角色身姿优雅，更将水袖与扇子舞动的如天外来仙。极佳的弹跳能力，更是帮助她的刀马旦角色在戏台上下翻飞，如同一位除暴安良的侠女。怀揣着心中的正义与对金城的眷恋，如玉手中常持一杆花枪。尽管没有法力，可她依旧尝试保卫自己的家园，守护金城的和平和安定。',
     maxHp: 185,
+    attackBoost: 0,
     hpRecovery: 3.5,
     moveSpeed: 780,
     jumpHeight: 420,

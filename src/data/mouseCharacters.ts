@@ -2793,17 +2793,17 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     skillAllocations: [
       {
-        id: '常规加点（容错续航较低）',
-        pattern: '1221[12][12]000',
+        id: '常规加点',
+        pattern: '1221[12]000',
         weaponType: 'weapon1',
-        description: '最正常的加点，最适合打克制天菲的猫。',
+        description: '最正常的加点，最适合打克制天菲的猫，但容错率和续航相对较低。',
         additionaldescription: '',
       },
       {
         id: '翅膀流加点',
         pattern: '202121100',
         weaponType: 'weapon2',
-        description: '打汤姆剑汤追风这种控制多的猫。',
+        description: '适合打以控制技能为主的猫，例如汤姆、剑客汤姆、追风汤姆。',
         additionaldescription: '',
       },
       {
