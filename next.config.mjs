@@ -169,8 +169,8 @@ const nextConfig = {
       const thisFile = fileURLToPath(import.meta.url);
       config.cache = {
         type: 'filesystem',
-        // Many smaller files instead of a single huge pack
-        store: 'idle',
+        // Webpack requires 'pack' here; keep compression and external cache dir to limit artifact size
+        store: 'pack',
         // Reduce on-disk size
         compression: 'gzip',
         allowCollectingMemory: true,
