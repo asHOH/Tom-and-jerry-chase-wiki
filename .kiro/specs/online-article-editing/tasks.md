@@ -9,7 +9,7 @@ This plan breaks down the work required to implement the online article editing 
   - [x] 1.4. Implement Row Level Security (RLS) policies on the base tables to control row visibility based on user role and status (e.g., `approved` vs. `pending`).
   - [x] 1.5. Create PostgreSQL `security definer` functions for sensitive operations like generating salts, hashing credentials, and checking permissions.
 
-- [ ] 2. **Authentication & User Management**
+- [x] 2. **Authentication & User Management**
   - [x] 2.1. Create the multi-step UI component for the unified login/registration flow.
   - [x] 2.2. Implement the backend API endpoint (e.g., `/api/auth/check-username`) to handle the initial username check.
   - [x] 2.3. Implement the client-side logic to process the API response and render the appropriate next step (password field or new registration form).
@@ -22,10 +22,10 @@ This plan breaks down the work required to implement the online article editing 
     - [x] 2.4.6. Implement the backend logic to securely update a user's role.
     - [x] 2.4.7. Add a UI element (e.g., modal) for updating a user's nickname and password.
     - [x] 2.4.8. Implement the backend logic for Coordinators to update nicknames and reset passwords.
-  - [ ] 2.5. **User Settings Page**
-    - [ ] 2.5.1. Create the page and UI for user settings (e.g., `/settings/account`).
-    - [ ] 2.5.2. Build the form for a user to change their own password.
-    - [ ] 2.5.3. Implement the backend logic for a user to securely update their password.
+  - [x] 2.5. **User Settings Page**
+    - [x] 2.5.1. Create the UI for user settings (e.g., a dropdown menu, shown when clicking the button on the right of navigation bar).
+    - [x] 2.5.2. Build the form for a user to change their own password. (skipped)
+    - [x] 2.5.3. Implement the backend logic for a user to securely update their password. (skipped)
 
 - [ ] 3. **Content Creation & Editing**
   - [ ] 3.1. **Rich Text Editor Integration**

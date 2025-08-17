@@ -86,7 +86,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name='referrer' content='strict-origin-when-cross-origin' />
         <meta
           httpEquiv='Content-Security-Policy'
-          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://vitals.vercel-insights.com https://vercel-analytics.com https://vercel.live; media-src 'self'; object-src 'none'; child-src 'none'; frame-src https://vercel.live; form-action 'self'; base-uri 'self'; worker-src 'self' blob:;"
+          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://vitals.vercel-insights.com https://vercel-analytics.com https://vercel.live *.supabase.co; media-src 'self'; object-src 'none'; child-src 'none'; frame-src https://vercel.live; form-action 'self'; base-uri 'self'; worker-src 'self' blob:;"
         />
         <meta name='format-detection' content='telephone=no, date=no, email=no, address=no' />
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}

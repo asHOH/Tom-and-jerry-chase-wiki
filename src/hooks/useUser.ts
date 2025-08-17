@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
 export const useUser = () => {
   const [role, setRole] = useState<string | null>(null);
@@ -7,7 +7,6 @@ export const useUser = () => {
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
-        const supabase = createClient();
         const { data, error } = await supabase
           .from('users')
           .select('role')

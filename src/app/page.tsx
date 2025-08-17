@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import { VersionDisplay } from '@/components/VersionDisplay';
@@ -36,7 +36,6 @@ function HomeContent() {
 
   useEffect(() => {
     const checkLoginStatus = async () => {
-      const supabase = createClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
