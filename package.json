@@ -22,8 +22,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/run-image-optimization.cjs && next build",
-    "postbuild": "rimraf .next/cache cache",
-    "build:edgeone": "cross-env EDGEONE=1 node scripts/run-image-optimization.cjs && next build && rimraf .next/cache",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

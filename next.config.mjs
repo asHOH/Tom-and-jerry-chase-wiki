@@ -2,8 +2,6 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import withPWA from 'next-pwa';
 import remarkGfm from 'remark-gfm';
-import os from 'node:os';
-import path from 'node:path';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -90,8 +88,6 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_BUILD_TIMESTAMP: new Date().toISOString(),
   },
-  // Avoid shipping large sourcemaps and caches in CI-like builds
-  productionBrowserSourceMaps: false,
   async rewrites() {
     return [
       {
@@ -154,30 +150,6 @@ const nextConfig = {
   compress: true,
   // Safe webpack configuration
   webpack: (config, { isServer }) => {
-    const disableCache = process.env.DISABLE_WEBPACK_CACHE === '1';
-    const isEdgeOne = process.env.EDGEONE === '1';
-
-    if (disableCache) {
-      config.cache = false;
-    } else {
-      // Keep filesystem cache, but avoid giant single .pack files and keep cache out of the artifact on EdgeOne
-      const cacheDir = isEdgeOne
-        ? path.join(os.tmpdir(), 'tjwiki-webpack-cache')
-        : path.resolve(process.cwd(), 'node_modules/.cache/webpack');
-
-      config.cache = {
-        type: 'filesystem',
-        // Many smaller files instead of a single huge pack
-        store: 'idle',
-        // Reduce on-disk size
-        compression: 'gzip',
-        allowCollectingMemory: true,
-        cacheDirectory: cacheDir,
-        buildDependencies: {
-          config: [__filename],
-        },
-      };
-    }
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
