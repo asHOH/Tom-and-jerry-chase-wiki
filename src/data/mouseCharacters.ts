@@ -3299,12 +3299,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '兔子们的血量较高，能逼出塔拉的蓄势一击或蓄力重击。',
         isMinor: true,
       },
-      {
-        id: '追风汤姆',
-        description:
-          '魔术师携带兔子大表哥时可通过刷经验形成等级压制；同时追风汤姆伤害低，难以处理兔子。兔子大表哥还会在追风试图利用技能将魔术师绑上火箭时瞬移出现挡下技能，导致追风汤姆被迫落地手动绑火箭。',
-        isMinor: true,
-      },
     ],
     collaborators: [
       {
@@ -6419,11 +6413,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
     ],
     counters: [
-      {
-        id: '追风汤姆',
-        description: '莱恩的圆形、方块可以封锁追风汤姆的走位，并阻挡旋风和铁砧，还可能导致其坠机',
-        isMinor: true,
-      },
       {
         id: '汤姆',
         description: '莱恩克制汤姆的无敌，阻止上火箭，但注意不要被二被秒掉',
