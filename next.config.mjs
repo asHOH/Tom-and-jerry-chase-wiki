@@ -4,7 +4,6 @@ import withPWA from 'next-pwa';
 import remarkGfm from 'remark-gfm';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -166,7 +165,6 @@ const nextConfig = {
         ? path.join(os.tmpdir(), 'tjwiki-webpack-cache')
         : path.resolve(process.cwd(), 'node_modules/.cache/webpack');
 
-      const thisFile = fileURLToPath(import.meta.url);
       config.cache = {
         type: 'filesystem',
         // Many smaller files instead of a single huge pack
@@ -176,7 +174,7 @@ const nextConfig = {
         allowCollectingMemory: true,
         cacheDirectory: cacheDir,
         buildDependencies: {
-          config: [thisFile],
+          config: [__filename],
         },
       };
     }
