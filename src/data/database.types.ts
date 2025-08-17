@@ -230,6 +230,18 @@ export type Database = {
       };
     };
     Functions: {
+      create_category: {
+        Args: {
+          _default_visibility?: Database['public']['Enums']['version_status'];
+          _name: string;
+          _parent_category_id?: string;
+        };
+        Returns: string;
+      };
+      delete_category: {
+        Args: { _id: string };
+        Returns: undefined;
+      };
       generate_salt: {
         Args: Record<PropertyKey, never>;
         Returns: string;
@@ -244,6 +256,15 @@ export type Database = {
           id: string;
           preview_token: string;
           status: Database['public']['Enums']['version_status'];
+        }[];
+      };
+      get_categories: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          default_visibility: Database['public']['Enums']['version_status'];
+          id: string;
+          name: string;
+          parent_category_id: string;
         }[];
       };
       get_user_role: {
@@ -261,6 +282,15 @@ export type Database = {
           content: string;
           editor_id: string;
           title: string;
+        };
+        Returns: undefined;
+      };
+      update_category: {
+        Args: {
+          _default_visibility?: Database['public']['Enums']['version_status'];
+          _id: string;
+          _name: string;
+          _parent_category_id?: string;
         };
         Returns: undefined;
       };

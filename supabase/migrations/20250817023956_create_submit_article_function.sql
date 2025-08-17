@@ -7,16 +7,25 @@ create or replace function submit_article(
   editor_id uuid
 ) returns void as $$
 begin
-  -- Insert a new pending article version
-  insert into article_versions (article_id, content, editor_id, status, preview_token, created_at)
-  values (
-    article_id,
-    content,
-    editor_id,
-    'pending',
-    encode(gen_random_bytes(16), 'hex'), -- Generate a unique preview token
-    now()
-  );
+  -- Fetch the default_visibility of the selected category
+  declare
+    category_visibility visibility_type;
+  begin
+    select default_visibility
+    into category_visibility
+    from categories
+    where id = category_id;
+
+    -- Insert a new pending article version
+    insert into article_versions (article_id, content, editor_id, status, preview_token, created_at)
+    values (
+      article_id,
+      content,
+      editor_id,
+      category_visibility,
+      encode(gen_random_bytes(16), 'hex'), -- Generate a unique preview token
+      now()
+    );
 
   -- Update the article's title and category if provided
   update articles

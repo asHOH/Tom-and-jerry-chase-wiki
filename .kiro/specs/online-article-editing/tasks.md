@@ -27,7 +27,7 @@ This plan breaks down the work required to implement the online article editing 
     - [x] 2.5.2. Build the form for a user to change their own password. (skipped)
     - [x] 2.5.3. Implement the backend logic for a user to securely update their password. (skipped)
 
-- [ ] 3. **Content Creation & Editing**
+- [x] 3. **Content Creation & Editing**
   - [x] 3.1. **Rich Text Editor Integration**
     - [x] 3.1.1. Choose and install a rich text editor library (e.g., Tiptap).
     - [x] 3.1.2. Create a reusable React component that wraps the editor.
@@ -41,11 +41,11 @@ This plan breaks down the work required to implement the online article editing 
     - [x] 3.3.1. Implement the client-side function to gather article data (title, content, category).
     - [x] 3.3.2. Create a Supabase function to create a new `pending` entry in the `article_versions` table.
     - [x] 3.3.3. Connect the editor page's "Submit" button to the submission logic.
-  - [ ] 3.4. **Category Management**
-    - [ ] 3.4.1. Create a basic UI for Coordinators to view, create, and edit categories.
-    - [ ] 3.4.2. Implement the backend functions for category CRUD operations.
-    - [ ] 3.4.3. Add UI controls to the category editor for setting `default_visibility`.
-    - [ ] 3.4.4. Modify the article creation logic to inherit `default_visibility` from its selected category.
+  - [x] 3.4. **Category Management**
+    - [x] 3.4.1. Create a basic UI for Coordinators to view, create, and edit categories.
+    - [x] 3.4.2. Implement the backend functions for category CRUD operations.
+    - [x] 3.4.3. Add UI controls to the category editor for setting `default_visibility`.
+    - [x] 3.4.4. Modify the article creation logic to inherit `default_visibility` from its selected category.
 
 - [ ] 4. **Moderation Workflow**
   - [ ] 4.1. **Pending Changes Dashboard**

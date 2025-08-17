@@ -24,7 +24,7 @@ CREATE POLICY "Public can view categories" ON public.categories FOR SELECT USING
 
 -- FIX: Applied `auth_rls_initplan` fix.
 CREATE POLICY "Reviewers can update category default visibility"
-ON public.categories FOR UPDATE
+ON public.categories FOR ALL
 TO authenticated
 USING (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'))
 WITH CHECK (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'));
