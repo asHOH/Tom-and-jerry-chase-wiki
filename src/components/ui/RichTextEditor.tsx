@@ -6,6 +6,7 @@ const RichTextEditor: React.FC = () => {
   const editor = useEditor({
     extensions: [StarterKit],
     content: '<p>Start editing...</p>',
+    immediatelyRender: false,
   });
 
   if (!editor) {
