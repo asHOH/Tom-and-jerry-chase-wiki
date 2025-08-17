@@ -28,16 +28,15 @@ export async function POST(request: NextRequest) {
       .eq('username_hash', usernameHash)
       .single();
 
-    console.log({ user });
-
     if (userError || !user) {
       return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
     }
 
     // Fetch the corresponding user from Supabase auth.users table to get the email
-    const { data: authUser, error: authUserError } = await supabaseAdmin.auth.admin.getUserById(
-      user.id
-    );
+    const {
+      data: { user: authUser },
+      error: authUserError,
+    } = await supabaseAdmin.auth.admin.getUserById(user.id);
 
     if (authUserError || !authUser) {
       console.error('Error fetching auth user:', authUserError);
@@ -45,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (user.password_hash) {
-      const providedPasswordHash = hashPassword(password || username, user.salt);
+      const providedPasswordHash = hashPassword(password, user.salt);
       if (providedPasswordHash !== user.password_hash) {
         return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
       }
@@ -55,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     const { error: sessionError } = await supabase.auth.signInWithPassword({
       email: `${username}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`,
-      password: password, // Use the provided password
+      password: password || username, // Use the provided password
     });
 
     if (sessionError) {
