@@ -32,27 +32,18 @@ To ensure data integrity, the following custom ENUM types will be created and us
   - Values: `'approved'`, `'pending'`
     @
 
-### `roles`
-
-Stores the different user roles.
-
-| Column | Type        | Constraints      |
-| ------ | ----------- | ---------------- |
-| `id`   | `uuid`      | Primary Key      |
-| `name` | `role_type` | Not Null, Unique |
-
 ### `users`
 
 Stores user account information.
 
-| Column          | Type   | Constraints                                  |
-| --------------- | ------ | -------------------------------------------- |
-| `id`            | `uuid` | Primary Key, Foreign Key to `auth.users(id)` |
-| `username_hash` | `text` | Not Null, Unique                             |
-| `nickname`      | `text` | Not Null, Unique                             |
-| `password_hash` | `text` | Nullable                                     |
-| `salt`          | `text` | Not Null                                     |
-| `role_id`       | `uuid` | Not Null, Foreign Key to `roles(id)`         |
+| Column          | Type        | Constraints                                  |
+| --------------- | ----------- | -------------------------------------------- |
+| `id`            | `uuid`      | Primary Key, Foreign Key to `auth.users(id)` |
+| `username_hash` | `text`      | Not Null, Unique                             |
+| `nickname`      | `text`      | Not Null, Unique                             |
+| `password_hash` | `text`      | Nullable                                     |
+| `salt`          | `text`      | Not Null                                     |
+| `role`          | `role_type` | Not Null, Default `'Contributor'`            |
 
 ### `categories`
 

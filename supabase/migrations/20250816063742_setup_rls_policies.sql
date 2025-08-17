@@ -2,7 +2,6 @@
 ALTER TABLE articles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE article_versions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 
 -- USERS RLS
@@ -14,16 +13,11 @@ USING (
     (select auth.uid()) = id OR get_user_role((select auth.uid())) = 'Coordinator'
 );
 
--- FIX: The original `FOR ALL` policy was too broad. Scoped to UPDATE and applied `auth_rls_initplan` fix.
-CREATE POLICY "Coordinators can update users"
-ON public.users FOR UPDATE
+CREATE POLICY "Coordinators have complete access to users"
+ON public.users FOR ALL
 TO authenticated
 USING (get_user_role((select auth.uid())) = 'Coordinator')
 WITH CHECK (get_user_role((select auth.uid())) = 'Coordinator');
-
-
--- ROLES RLS
-CREATE POLICY "Public can view roles" ON public.roles FOR SELECT USING (TRUE);
 
 -- CATEGORIES RLS
 CREATE POLICY "Public can view categories" ON public.categories FOR SELECT USING (TRUE);
@@ -32,8 +26,8 @@ CREATE POLICY "Public can view categories" ON public.categories FOR SELECT USING
 CREATE POLICY "Reviewers can update category default visibility"
 ON public.categories FOR UPDATE
 TO authenticated
-USING (get_user_role((select auth.uid())) = 'Reviewer')
-WITH CHECK (get_user_role((select auth.uid())) = 'Reviewer');
+USING (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'))
+WITH CHECK (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'));
 
 -- ARTICLES RLS
 CREATE POLICY "Public can view approved articles"
@@ -47,7 +41,7 @@ USING (
 
 -- FIX: Applied `auth_rls_initplan` fix.
 CREATE POLICY "Reviewers and coordinators can delete articles"
-ON public.articles FOR DELETE
+ON public.articles FOR ALL
 TO authenticated
 USING (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'));
 
@@ -67,13 +61,12 @@ USING (
     status = 'approved'
     OR (
         get_user_role((select auth.uid())) IN ('Contributor', 'Reviewer', 'Coordinator')
-        AND status IN ('pending', 'rejected', 'revoked')
     )
 );
 
 -- FIX: Applied `auth_rls_initplan` fix.
 CREATE POLICY "Reviewers and coordinators can update versions"
-ON public.article_versions FOR UPDATE
+ON public.article_versions FOR ALL
 TO authenticated
 USING (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'))
 WITH CHECK (get_user_role((select auth.uid())) IN ('Reviewer', 'Coordinator'));
@@ -95,12 +88,6 @@ USING (true);
 ALTER TABLE article_versions FORCE ROW LEVEL SECURITY;
 CREATE POLICY "Allow all access for service_role on article_versions"
 ON public.article_versions FOR ALL
-TO service_role
-USING (true);
-
-ALTER TABLE roles FORCE ROW LEVEL SECURITY;
-CREATE POLICY "Allow all access for service_role on roles"
-ON public.roles FOR ALL
 TO service_role
 USING (true);
 

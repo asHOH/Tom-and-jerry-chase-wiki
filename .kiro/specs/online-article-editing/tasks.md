@@ -2,6 +2,10 @@
 
 This plan breaks down the work required to implement the online article editing feature into sequential, actionable tasks.
 
+# Implementation Plan
+
+This plan breaks down the work required to implement the online article editing feature into sequential, actionable tasks.
+
 - [x] 1. **Backend Setup (Supabase)**
   - [x] 1.1. Initialize a new Supabase project.
   - [x] 1.2. Write and execute SQL scripts to define custom enum types (`role_type`, `version_status`, `visibility_type`) and the base table schema.
@@ -13,32 +17,81 @@ This plan breaks down the work required to implement the online article editing 
   - [x] 2.1. Create the multi-step UI component for the unified login/registration flow.
   - [x] 2.2. Implement the backend API endpoint (e.g., `/api/auth/check-username`) to handle the initial username check.
   - [x] 2.3. Implement the client-side logic to process the API response and render the appropriate next step (password field or new registration form).
-  - [ ] 2.4. Build the admin panel for Coordinators to manage user roles, usernames, nicknames, and passwords.
-  - [ ] 2.5. Create a settings page for authenticated users to change their own password.
+  - [ ] 2.4. **Coordinator Admin Panel**
+    - [ ] 2.4.1. Create the page and basic layout for the user management panel at `/admin/users`.
+    - [ ] 2.4.2. Show 404 for any other users who visit the panel.
+    - [ ] 2.4.3. Implement a Supabase function for Coordinators to fetch all user data.
+    - [ ] 2.4.4. Build the UI to display the list of users with their current roles and nicknames.
+    - [ ] 2.4.5. Add a UI element (e.g., dropdown) to change a user's role.
+    - [ ] 2.4.6. Implement the backend logic to securely update a user's role.
+    - [ ] 2.4.7. Add a UI element (e.g., modal) for updating a user's nickname and password.
+    - [ ] 2.4.8. Implement the backend logic for Coordinators to update nicknames and reset passwords.
+  - [ ] 2.5. **User Settings Page**
+    - [ ] 2.5.1. Create the page and UI for user settings (e.g., `/settings/account`).
+    - [ ] 2.5.2. Build the form for a user to change their own password.
+    - [ ] 2.5.3. Implement the backend logic for a user to securely update their password.
 
 - [ ] 3. **Content Creation & Editing**
-  - [ ] 3.1. Integrate a rich text editor component (e.g., Tiptap) into the application.
-  - [ ] 3.2. Develop the article editor page, which allows creating new articles or proposing edits to existing ones.
-  - [ ] 3.3. Implement the submission logic that creates a new `pending` entry in the `article_versions` table.
-  - [ ] 3.4. Build a simple UI for Reviewers/Coordinators to manage categories.
-  - [ ] 3.5. Enhance the category management UI to allow setting the `default_visibility`.
-  - [ ] 3.6. Ensure the article creation process inherits this default visibility from the category.
+  - [ ] 3.1. **Rich Text Editor Integration**
+    - [ ] 3.1.1. Choose and install a rich text editor library (e.g., Tiptap).
+    - [ ] 3.1.2. Create a reusable React component that wraps the editor.
+    - [ ] 3.1.3. Configure the editor with necessary plugins (e.g., headings, lists, images).
+  - [ ] 3.2. **Article Editor Page**
+    - [ ] 3.2.1. Create the page for creating new articles (e.g., `/articles/new`).
+    - [ ] 3.2.2. Create the page for editing existing articles (e.g., `/articles/[id]/edit`).
+    - [ ] 3.2.3. Add fields for title and category selection.
+    - [ ] 3.2.4. Integrate the rich text editor component for the article body.
+  - [ ] 3.3. **Submission Logic**
+    - [ ] 3.3.1. Implement the client-side function to gather article data (title, content, category).
+    - [ ] 3.3.2. Create a Supabase function to create a new `pending` entry in the `article_versions` table.
+    - [ ] 3.3.3. Connect the editor page's "Submit" button to the submission logic.
+  - [ ] 3.4. **Category Management**
+    - [ ] 3.4.1. Create a basic UI for Coordinators to view, create, and edit categories.
+    - [ ] 3.4.2. Implement the backend functions for category CRUD operations.
+    - [ ] 3.4.3. Add UI controls to the category editor for setting `default_visibility`.
+    - [ ] 3.4.4. Modify the article creation logic to inherit `default_visibility` from its selected category.
 
 - [ ] 4. **Moderation Workflow**
-  - [ ] 4.1. Create the "Pending Changes" dashboard where Reviewers can see a list of all submissions awaiting moderation.
-  - [ ] 4.2. Implement the preview page, accessible via a unique token, to display pending content.
-  - [ ] 4.3. Add "Approve" and "Reject" functionality for Reviewers, which updates the status of an `article_version`.
-  - [ ] 4.4. Implement the logic for revoking articles/edits.
+  - [ ] 4.1. **Pending Changes Dashboard**
+    - [ ] 4.1.1. Create the page and layout for the moderation dashboard (e.g., `/moderation/pending`).
+    - [ ] 4.1.2. Implement the backend query for Reviewers to fetch all `pending` and `rejected` article versions.
+    - [ ] 4.1.3. Build the UI to list pending submissions with links to preview and approve/reject.
+  - [ ] 4.2. **Preview Page**
+    - [ ] 4.2.1. Create a dynamic page (e.g., `/previews/[token]`) to display a specific article version.
+    - [ ] 4.2.2. Implement a Supabase function to fetch an article version by its `preview_token`.
+    - [ ] 4.2.3. Add a prominent banner to the page indicating it's a preview.
+  - [ ] 4.3. **Approve/Reject Logic**
+    - [ ] 4.3.1. Implement the backend function for Reviewers to change an `article_version` status to `approved` or `rejected`.
+    - [ ] 4.3.2. Add buttons to the dashboard and/or preview page to trigger the approve/reject logic.
+  - [ ] 4.4. **Revoke/Remove Logic**
+    - [ ] 4.4.1. Implement a backend function to revoke an approved version (reverts to the previous approved version).
+    - [ ] 4.4.2. Add a UI element for Reviewers to trigger the revocation.
 
 - [ ] 5. **Public Viewing & Version History**
-  - [ ] 5.1. Develop the main article page that fetches and displays the latest `approved` version of an article by querying the public views.
-  - [ ] 5.2. Create the version history component that lists all approved versions of an article.
-  - [ ] 5.3. (Optional) Implement a diff viewer to show changes between two versions.
+  - [ ] 5.1. **Main Article View**
+    - [ ] 5.1.1. Create the main article page (e.g., `/articles/[id]`).
+    - [ ] 5.1.2. Implement the data fetching logic to get the latest `approved` version using the public views.
+    - [ ] 5.1.3. Render the article title and content.
+  - [ ] 5.2. **Version History Page**
+    - [ ] 5.2.1. Create the version history page (e.g., `/articles/[id]/history`).
+    - [ ] 5.2.2. Implement data fetching to get all `approved` versions for an article.
+    - [ ] 5.2.3. Build the UI to list versions with editor, timestamp, and a link to view the content.
+  - [ ] 5.3. **(Optional) Diff Viewer**
+    - [ ] 5.3.1. Research and select a library for text diffing (e.g., `diff-match-patch`).
+    - [ ] 5.3.2. Create a component that takes two content strings and displays a visual diff.
+    - [ ] 5.3.3. Integrate the diff component into the version history page.
 
 - [ ] 6. **Frontend Integration**
-  - [ ] 6.1. Integrate the Supabase client library (`supabase-js`) into the Next.js application context.
-  - [ ] 6.2. Create all necessary pages (`/articles/[id]`, `/edit/[id]`, `/history/[id]`, `/admin/users`, etc.).
-  - [ ] 6.3. Use hooks and context to manage user session and role, conditionally rendering UI elements based on permissions.
+  - [ ] 6.1. **Supabase Client Setup**
+    - [ ] 6.1.1. Install `supabase-js`.
+    - [ ] 6.1.2. Create a Supabase client instance and make it available through React Context.
+  - [ ] 6.2. **Page & Route Creation**
+    - [ ] 6.2.1. Create file-based routes in the `app/` directory for all new pages mentioned above.
+  - [ ] 6.3. **Auth & Permissions**
+    - [ ] 6.3.1. Create a hook (e.g., `useUser`) to access the current user's session and role.
+    - [ ] 6.3.2. Wrap components or layouts with logic to conditionally render UI based on user role (e.g., show "Edit" button only to Contributors).
 
 - [ ] 7. **Testing & Validation**
-  - [ ] 7.1. Use Supabase's testing tools to write integration tests for both the database views (CLS) and RLS policies to ensure they work together correctly.
+  - [ ] 7.1. **RLS/CLS Policy Tests**
+    - [ ] 7.1.1. Set up Supabase's `pg_prove` testing framework.
+    - [ ] 7.1.2. Write test cases for each role (anonymous, Contributor, Reviewer, Coordinator) to verify they can only access the intended rows and columns.

@@ -4,12 +4,6 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TYPE role_type AS ENUM ('Contributor', 'Reviewer', 'Coordinator');
 CREATE TYPE version_status AS ENUM ('pending', 'approved', 'rejected', 'revoked');
 
--- Create roles table
-CREATE TABLE roles (
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name role_type NOT NULL UNIQUE
-);
-
 -- Create users table
 CREATE TABLE users (
     id uuid PRIMARY KEY,
@@ -17,7 +11,7 @@ CREATE TABLE users (
     nickname text NOT NULL UNIQUE,
     password_hash text,
     salt text NOT NULL,
-    role_id uuid NOT NULL REFERENCES roles(id),
+    role role_type NOT NULL DEFAULT 'Contributor',
     CONSTRAINT fk_auth_users FOREIGN KEY (id) REFERENCES auth.users(id)
 );
 
