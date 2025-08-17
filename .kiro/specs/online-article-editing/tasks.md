@@ -28,10 +28,10 @@ This plan breaks down the work required to implement the online article editing 
     - [x] 2.5.3. Implement the backend logic for a user to securely update their password. (skipped)
 
 - [ ] 3. **Content Creation & Editing**
-  - [ ] 3.1. **Rich Text Editor Integration**
-    - [ ] 3.1.1. Choose and install a rich text editor library (e.g., Tiptap).
-    - [ ] 3.1.2. Create a reusable React component that wraps the editor.
-    - [ ] 3.1.3. Configure the editor with necessary plugins (e.g., headings, lists, images).
+  - [x] 3.1. **Rich Text Editor Integration**
+    - [x] 3.1.1. Choose and install a rich text editor library (e.g., Tiptap).
+    - [x] 3.1.2. Create a reusable React component that wraps the editor.
+    - [x] 3.1.3. Configure the editor with necessary plugins (e.g., headings, lists, images).
   - [ ] 3.2. **Article Editor Page**
     - [ ] 3.2.1. Create the page for creating new articles (e.g., `/articles/new`).
     - [ ] 3.2.2. Create the page for editing existing articles (e.g., `/articles/[id]/edit`).
