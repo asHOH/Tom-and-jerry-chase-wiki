@@ -2,10 +2,14 @@ import React from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
-const RichTextEditor: React.FC = () => {
+interface RichTextEditorProps {
+  content?: string;
+}
+
+const RichTextEditor: React.FC<RichTextEditorProps> = ({ content }) => {
   const editor = useEditor({
     extensions: [StarterKit],
-    content: '<p>Start editing...</p>',
+    content: content || '<p>Start editing...</p>',
     immediatelyRender: false,
   });
 

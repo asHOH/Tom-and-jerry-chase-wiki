@@ -7,9 +7,30 @@ const NewArticlePage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
 
-  const handleSave = () => {
-    // Placeholder logic for saving the article
-    console.log('Article saved:', { title, category });
+  const handleSave = async () => {
+    const editor = document.querySelector('.ProseMirror'); // Access the editor content
+    const content = editor?.innerHTML; // Get content from RichTextEditor
+    if (!content) {
+      alert('Content is empty!');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/articles/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, category, content }),
+      });
+
+      if (response.ok) {
+        alert('Article submitted successfully!');
+      } else {
+        alert('Failed to submit article.');
+      }
+    } catch (error) {
+      console.error('Error submitting article:', error);
+      alert('An error occurred.');
+    }
   };
 
   return (
@@ -49,7 +70,7 @@ const NewArticlePage: React.FC = () => {
           </select>
         </div>
         <div className='mb-4 prose'>
-          <label className='block text-sm font-medium text-gray-700'>内容：</label>
+          <label className='block text-sm font-medium text-gray-700'>Content:</label>
           <RichTextEditor />
         </div>
         <button
@@ -57,7 +78,7 @@ const NewArticlePage: React.FC = () => {
           onClick={handleSave}
           className='w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
         >
-          保存
+          Save
         </button>
       </form>
     </div>

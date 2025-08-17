@@ -13,18 +13,48 @@ const EditArticlePage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      // Placeholder logic to fetch article data by ID
-      console.log('Fetching article data for ID:', id);
-      // Simulate fetching data
-      setTitle('Example Title');
-      setCategory('example-category-1');
-      setContent('<p>Example content...</p>');
+      fetch(`/api/articles/${id}/info`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch article information');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setTitle(data.article.title);
+          setCategory(data.article.category_id);
+          setContent(data.article.article_versions[0]?.content || '');
+        })
+        .catch((error) => {
+          console.error('Error fetching article information:', error);
+        });
     }
   }, [id]);
 
-  const handleSave = () => {
-    // Placeholder logic for saving the updated article
-    console.log('Article updated:', { id, title, category, content });
+  const handleSave = async () => {
+    const editor = document.querySelector('.ProseMirror'); // Access the editor content
+    const updatedContent = editor?.innerHTML; // Get content from RichTextEditor
+    if (!updatedContent) {
+      alert('Content is empty!');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/articles/${id}/edit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, category, content: updatedContent }),
+      });
+
+      if (response.ok) {
+        alert('Article updated successfully!');
+      } else {
+        alert('Failed to update article.');
+      }
+    } catch (error) {
+      console.error('Error updating article:', error);
+      alert('An error occurred.');
+    }
   };
 
   return (
@@ -65,7 +95,7 @@ const EditArticlePage: React.FC = () => {
         </div>
         <div className='mb-4 prose'>
           <label className='block text-sm font-medium text-gray-700'>内容：</label>
-          <RichTextEditor />
+          <RichTextEditor content={content} />
         </div>
         <button
           type='button'

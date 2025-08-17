@@ -32,15 +32,15 @@ This plan breaks down the work required to implement the online article editing 
     - [x] 3.1.1. Choose and install a rich text editor library (e.g., Tiptap).
     - [x] 3.1.2. Create a reusable React component that wraps the editor.
     - [x] 3.1.3. Configure the editor with necessary plugins (e.g., headings, lists, images).
-  - [ ] 3.2. **Article Editor Page**
-    - [ ] 3.2.1. Create the page for creating new articles (e.g., `/articles/new`).
-    - [ ] 3.2.2. Create the page for editing existing articles (e.g., `/articles/[id]/edit`).
-    - [ ] 3.2.3. Add fields for title and category selection.
-    - [ ] 3.2.4. Integrate the rich text editor component for the article body.
-  - [ ] 3.3. **Submission Logic**
-    - [ ] 3.3.1. Implement the client-side function to gather article data (title, content, category).
-    - [ ] 3.3.2. Create a Supabase function to create a new `pending` entry in the `article_versions` table.
-    - [ ] 3.3.3. Connect the editor page's "Submit" button to the submission logic.
+  - [x] 3.2. **Article Editor Page**
+    - [x] 3.2.1. Create the page for creating new articles (e.g., `/articles/new`).
+    - [x] 3.2.2. Create the page for editing existing articles (e.g., `/articles/[id]/edit`).
+    - [x] 3.2.3. Add fields for title and category selection.
+    - [x] 3.2.4. Integrate the rich text editor component for the article body.
+  - [x] 3.3. **Submission Logic**
+    - [x] 3.3.1. Implement the client-side function to gather article data (title, content, category).
+    - [x] 3.3.2. Create a Supabase function to create a new `pending` entry in the `article_versions` table.
+    - [x] 3.3.3. Connect the editor page's "Submit" button to the submission logic.
   - [ ] 3.4. **Category Management**
     - [ ] 3.4.1. Create a basic UI for Coordinators to view, create, and edit categories.
     - [ ] 3.4.2. Implement the backend functions for category CRUD operations.

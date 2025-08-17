@@ -254,6 +254,16 @@ export type Database = {
         Args: { credential: string; salt: string };
         Returns: string;
       };
+      submit_article: {
+        Args: {
+          article_id: string;
+          category_id: string;
+          content: string;
+          editor_id: string;
+          title: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       role_type: 'Contributor' | 'Reviewer' | 'Coordinator';
