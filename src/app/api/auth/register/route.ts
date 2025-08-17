@@ -28,18 +28,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get the default 'Contributor' role ID
-    const { data: roleData, error: roleError } = await supabaseAdmin
-      .from('roles')
-      .select('id')
-      .eq('name', 'Contributor')
-      .single();
-
-    if (roleError || !roleData) {
-      console.error('Error fetching role:', roleError);
-      return NextResponse.json({ error: 'Could not set user role.' }, { status: 500 });
-    }
-
     const salt = randomBytes(16).toString('hex');
     const usernameHash = hashUsername(username);
     const passwordHash = password ? hashPassword(password, salt) : '';
@@ -63,7 +51,7 @@ export async function POST(request: NextRequest) {
       nickname,
       password_hash: passwordHash,
       salt,
-      role_id: roleData.id,
+      role: 'Contributor',
     } as TablesInsert<'users'>);
 
     if (insertError) {

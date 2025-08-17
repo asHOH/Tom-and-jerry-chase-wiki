@@ -2,10 +2,6 @@
 
 This plan breaks down the work required to implement the online article editing feature into sequential, actionable tasks.
 
-# Implementation Plan
-
-This plan breaks down the work required to implement the online article editing feature into sequential, actionable tasks.
-
 - [x] 1. **Backend Setup (Supabase)**
   - [x] 1.1. Initialize a new Supabase project.
   - [x] 1.2. Write and execute SQL scripts to define custom enum types (`role_type`, `version_status`, `visibility_type`) and the base table schema.
@@ -17,15 +13,15 @@ This plan breaks down the work required to implement the online article editing 
   - [x] 2.1. Create the multi-step UI component for the unified login/registration flow.
   - [x] 2.2. Implement the backend API endpoint (e.g., `/api/auth/check-username`) to handle the initial username check.
   - [x] 2.3. Implement the client-side logic to process the API response and render the appropriate next step (password field or new registration form).
-  - [ ] 2.4. **Coordinator Admin Panel**
-    - [ ] 2.4.1. Create the page and basic layout for the user management panel at `/admin/users`.
-    - [ ] 2.4.2. Show 404 for any other users who visit the panel.
-    - [ ] 2.4.3. Implement a Supabase function for Coordinators to fetch all user data.
-    - [ ] 2.4.4. Build the UI to display the list of users with their current roles and nicknames.
-    - [ ] 2.4.5. Add a UI element (e.g., dropdown) to change a user's role.
-    - [ ] 2.4.6. Implement the backend logic to securely update a user's role.
-    - [ ] 2.4.7. Add a UI element (e.g., modal) for updating a user's nickname and password.
-    - [ ] 2.4.8. Implement the backend logic for Coordinators to update nicknames and reset passwords.
+  - [x] 2.4. **Coordinator Admin Panel**
+    - [x] 2.4.1. Create the page and basic layout for the user management panel at `/admin/users`.
+    - [x] 2.4.2. Show 404 for any other users who visit the panel.
+    - [x] 2.4.3. Implement a Supabase function for Coordinators to fetch all user data.
+    - [x] 2.4.4. Build the UI to display the list of users with their current roles and nicknames.
+    - [x] 2.4.5. Add a UI element (e.g., dropdown) to change a user's role.
+    - [x] 2.4.6. Implement the backend logic to securely update a user's role.
+    - [x] 2.4.7. Add a UI element (e.g., modal) for updating a user's nickname and password.
+    - [x] 2.4.8. Implement the backend logic for Coordinators to update nicknames and reset passwords.
   - [ ] 2.5. **User Settings Page**
     - [ ] 2.5.1. Create the page and UI for user settings (e.g., `/settings/account`).
     - [ ] 2.5.2. Build the form for a user to change their own password.
@@ -90,8 +86,3 @@ This plan breaks down the work required to implement the online article editing 
   - [ ] 6.3. **Auth & Permissions**
     - [ ] 6.3.1. Create a hook (e.g., `useUser`) to access the current user's session and role.
     - [ ] 6.3.2. Wrap components or layouts with logic to conditionally render UI based on user role (e.g., show "Edit" button only to Contributors).
-
-- [ ] 7. **Testing & Validation**
-  - [ ] 7.1. **RLS/CLS Policy Tests**
-    - [ ] 7.1.1. Set up Supabase's `pg_prove` testing framework.
-    - [ ] 7.1.2. Write test cases for each role (anonymous, Contributor, Reviewer, Coordinator) to verify they can only access the intended rows and columns.

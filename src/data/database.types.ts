@@ -135,27 +135,12 @@ export type Database = {
           },
         ];
       };
-      roles: {
-        Row: {
-          id: string;
-          name: Database['public']['Enums']['role_type'];
-        };
-        Insert: {
-          id?: string;
-          name: Database['public']['Enums']['role_type'];
-        };
-        Update: {
-          id?: string;
-          name?: Database['public']['Enums']['role_type'];
-        };
-        Relationships: [];
-      };
       users: {
         Row: {
           id: string;
           nickname: string;
           password_hash: string | null;
-          role_id: string;
+          role: Database['public']['Enums']['role_type'];
           salt: string;
           username_hash: string;
         };
@@ -163,7 +148,7 @@ export type Database = {
           id: string;
           nickname: string;
           password_hash?: string | null;
-          role_id: string;
+          role?: Database['public']['Enums']['role_type'];
           salt: string;
           username_hash: string;
         };
@@ -171,19 +156,11 @@ export type Database = {
           id?: string;
           nickname?: string;
           password_hash?: string | null;
-          role_id?: string;
+          role?: Database['public']['Enums']['role_type'];
           salt?: string;
           username_hash?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'users_role_id_fkey';
-            columns: ['role_id'];
-            isOneToOne: false;
-            referencedRelation: 'roles';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
     };
     Views: {
