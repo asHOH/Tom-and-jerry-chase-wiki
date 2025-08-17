@@ -240,3 +240,22 @@ export type ItemDefinition = {
 };
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
+
+export type Entitytypelist = '道具类' | '投射物类' | '召唤物类' | '平台类' | 'NPC类' | '其它';
+
+export type EntityDefinition = {
+  entitytype: Entitytypelist; //type of entity
+  characterName: string; //which character does this entity belong to
+  skillname?: string; //which skill does this entity belong to
+  aliases?: string[]; // (entities') Alternative names for search
+  move?: boolean; //if entity can move (by itself)
+  gravity?: boolean; //if entity can be influenced by gravity
+  collsion?: boolean; //if entity have collsion box
+  ignore?: string[]; //(if 'collsion: true')which object does this entity ignore collsion
+  description?: string;
+  detailedDescription?: string;
+  create?: string; //the way of items create
+  detailedCreate?: string;
+};
+
+export type Entity = EntityDefinition & { name: string; imageUrl: string };
