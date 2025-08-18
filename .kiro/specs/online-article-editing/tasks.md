@@ -86,15 +86,15 @@ This plan breaks down the work required to implement the online article editing 
     - [ ] 5.4.2. Create a component that takes two content strings and displays a visual diff.
     - [ ] 5.4.3. Integrate the diff component into the version history page.
 
-- [ ] 6. **Frontend - Moderation Workflow**
-  - [ ] 6.1. **Pending Changes Dashboard**
-    - [ ] 6.1.1. Create the page and layout for the moderation dashboard (e.g., `/moderation/pending`).
-    - [ ] 6.1.2. Integrate the UI with the `GET /api/moderation/pending` endpoint to list submissions.
-    - [ ] 6.1.3. Add UI elements (buttons/links) for previewing, approving, and rejecting submissions.
-  - [ ] 6.2. **Approve/Reject/Revoke Integration**
-    - [ ] 6.2.1. Connect the "Approve" button to the `POST /api/moderation/approve/[versionId]` endpoint.
-    - [ ] 6.2.2. Connect the "Reject" button to the `POST /api/moderation/reject/[versionId]` endpoint.
-    - [ ] 6.2.3. Add a UI element for reviewers (e.g., on the history page) and connect it to the `POST /api/moderation/revoke/[versionId]` endpoint.
+- [x] 6. **Frontend - Moderation Workflow**
+  - [x] 6.1. **Pending Changes Dashboard**
+    - [x] 6.1.1. Create the page and layout for the moderation dashboard (e.g., `/articles/moderation/pending`).
+    - [x] 6.1.2. Integrate the UI with the `GET /api/moderation/pending` endpoint to list submissions.
+    - [x] 6.1.3. Add UI elements (buttons/links) for previewing, approving, and rejecting submissions.
+  - [x] 6.2. **Approve/Reject/Revoke Integration**
+    - [x] 6.2.1. Connect the "Approve" button to the `POST /api/moderation/[versionId]?action=approve` endpoint.
+    - [x] 6.2.2. Connect the "Reject" button to the `POST /api/moderation/[versionId]?action=reject` endpoint.
+    - [x] 6.2.3. Add a UI element for reviewers (e.g., on the history page) and connect it to the `POST /api/moderation/[versionId]?action=revoke` endpoint.
 
 - [ ] 7. **Frontend - Final Touches**
   - [ ] 7.1. **UI Permissions**

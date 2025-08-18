@@ -296,10 +296,28 @@ export default function ArticleHistoryPage() {
 
                 {canRevoke && version.status === 'approved' && index === 0 && (
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       if (confirm('确定要撤销这个版本吗？这将回退到上一个已发布的版本。')) {
-                        // TODO: Implement revoke functionality
-                        alert('撤销功能即将推出');
+                        try {
+                          const response = await fetch(
+                            `/api/moderation/${version.id}?action=revoke`,
+                            {
+                              method: 'POST',
+                            }
+                          );
+
+                          if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || '撤销操作失败');
+                          }
+
+                          alert('版本已成功撤销');
+                          // Refresh the history data
+                          window.location.reload();
+                        } catch (err) {
+                          console.error('Error revoking version:', err);
+                          alert(`撤销操作失败: ${err instanceof Error ? err.message : '未知错误'}`);
+                        }
                       }
                     }}
                     className='px-3 py-1.5 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors text-center'
