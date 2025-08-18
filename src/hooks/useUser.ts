@@ -6,11 +6,15 @@ export const useUser = () => {
 
   useEffect(() => {
     const fetchUserRole = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
       try {
         const { data, error } = await supabase
           .from('users')
           .select('role')
-          .eq('id', (await supabase.auth.getUser()).data?.user?.id)
+          .eq('id', user.id)
           .single();
 
         if (error) {

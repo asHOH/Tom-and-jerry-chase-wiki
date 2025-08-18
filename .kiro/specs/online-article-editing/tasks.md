@@ -49,7 +49,7 @@ This plan breaks down the work required to implement the online article editing 
 
 - [ ] 4. **Moderation Workflow**
   - [ ] 4.1. **Pending Changes Dashboard**
-    - [ ] 4.1.1. Create the page and layout for the moderation dashboard (e.g., `/moderation/pending`).
+    - [x] 4.1.1. Create the page and layout for the moderation dashboard (e.g., `/moderation/pending`).
     - [ ] 4.1.2. Implement the backend query for Reviewers to fetch all `pending` and `rejected` article versions.
     - [ ] 4.1.3. Build the UI to list pending submissions with links to preview and approve/reject.
   - [ ] 4.2. **Preview Page**
@@ -78,11 +78,11 @@ This plan breaks down the work required to implement the online article editing 
     - [ ] 5.3.3. Integrate the diff component into the version history page.
 
 - [ ] 6. **Frontend Integration**
-  - [ ] 6.1. **Supabase Client Setup**
-    - [ ] 6.1.1. Install `supabase-js`.
-    - [ ] 6.1.2. Create a Supabase client instance and make it available through React Context.
-  - [ ] 6.2. **Page & Route Creation**
-    - [ ] 6.2.1. Create file-based routes in the `app/` directory for all new pages mentioned above.
-  - [ ] 6.3. **Auth & Permissions**
-    - [ ] 6.3.1. Create a hook (e.g., `useUser`) to access the current user's session and role.
+  - [x] 6.1. **Supabase Client Setup**
+    - [x] 6.1.1. Install `supabase-js`.
+    - [x] 6.1.2. Create a Supabase client instance and make it available through React Context. (skipped)
+  - [x] 6.2. **Page & Route Creation**
+    - [x] 6.2.1. Create file-based routes in the `app/` directory for all new pages mentioned above.
+  - [x] 6.3. **Auth & Permissions**
+    - [x] 6.3.1. Create a hook (e.g., `useUser`) to access the current user's session and role. (skipped)
     - [ ] 6.3.2. Wrap components or layouts with logic to conditionally render UI based on user role (e.g., show "Edit" button only to Contributors).
