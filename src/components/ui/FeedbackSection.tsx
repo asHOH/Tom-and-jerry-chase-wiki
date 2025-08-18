@@ -263,6 +263,16 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                       aria-describedby='contact-help'
                       required={!isAnonymous}
                     />
+                    {/^\s*wxid_/i.test(feedbackFormData.contact || '') && !isAnonymous && (
+                      <div
+                        id='contact-help'
+                        className='mt-1 text-xs text-gray-500 dark:text-gray-400'
+                      >
+                        <span className='ml-1 text-red-600 dark:text-red-400'>
+                          注意：以 wxid_ 开头的微信ID无法通过搜索添加，请更换其他联系方式
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
