@@ -68,6 +68,7 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "json5": "^2.2.3",
     "jsondiffpatch": "^0.7.3",
     "motion": "^12.23.12",

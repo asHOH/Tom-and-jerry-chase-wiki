@@ -49,7 +49,7 @@ This plan breaks down the work required to implement the online article editing 
 
 ---
 
-### Phase 1: Backend API Development
+## Phase 1: Backend API Development
 
 ---
 
@@ -66,21 +66,21 @@ This plan breaks down the work required to implement the online article editing 
 
 ---
 
-### Phase 2: Frontend UI & Integration
+## Phase 2: Frontend UI & Integration
 
 ---
 
-- [ ] 5. **Frontend - Public Viewing**
-  - [ ] 5.1. **Main Article View**
-    - [ ] 5.1.1. Create the main article page UI (e.g., `/articles/[id]`).
-    - [ ] 5.1.2. Integrate the UI with the `GET /api/articles/[id]` endpoint to display the latest approved content.
-  - [ ] 5.2. **Version History Page**
-    - [ ] 5.2.1. Create the version history page UI (e.g., `/articles/[id]/history`).
-    - [ ] 5.2.2. Integrate the UI with the `GET /api/articles/[id]/history` endpoint to list all approved versions.
-  - [ ] 5.3. **Preview Page**
-    - [ ] 5.3.1. Create the dynamic preview page UI (e.g., `/previews/[token]`).
-    - [ ] 5.3.2. Integrate the UI with the `GET /api/previews/[token]` endpoint.
-    - [ ] 5.3.3. Add a prominent banner to the page indicating it's a preview.
+- [x] 5. **Frontend - Public Viewing**
+  - [x] 5.1. **Main Article View**
+    - [x] 5.1.1. Create the main article page UI (e.g., `/articles/[id]`).
+    - [x] 5.1.2. Integrate the UI with the `GET /api/articles/[id]` endpoint to display the latest approved content.
+  - [x] 5.2. **Version History Page**
+    - [x] 5.2.1. Create the version history page UI (e.g., `/articles/[id]/history`).
+    - [x] 5.2.2. Integrate the UI with the `GET /api/articles/[id]/history` endpoint to list all approved versions.
+  - [x] 5.3. **Preview Page**
+    - [x] 5.3.1. Create the dynamic preview page UI (e.g., `/articles/preview?token=[token]`).
+    - [x] 5.3.2. Integrate the UI with the `GET /api/articles/preview?token=[token]` endpoint.
+    - [x] 5.3.3. Add a prominent banner to the page indicating it's a preview.
   - [ ] 5.4. **(Optional) Diff Viewer**
     - [ ] 5.4.1. Research and select a library for text diffing (e.g., `diff-match-patch`).
     - [ ] 5.4.2. Create a component that takes two content strings and displays a visual diff.
