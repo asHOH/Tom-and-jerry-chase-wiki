@@ -1,15 +1,36 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
-export async function GET() {
-  const { data, error } = await supabaseAdmin
-    .from('article_versions')
-    .select('id, editor_id, status, created_at')
-    .eq('status', 'pending');
+export async function GET(request: NextRequest) {
+  void request;
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    // Use the new function to get pending versions with full details
+    const { data, error } = await supabaseAdmin.rpc('get_pending_versions_for_moderation', {
+      requester_id: user.id,
+    });
+
+    if (error) {
+      console.error('Error fetching pending versions:', error);
+      return NextResponse.json({ error: 'Failed to fetch pending versions' }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      pending_versions: data || [],
+      total_count: data?.length || 0,
+    });
+  } catch (err) {
+    console.error('API error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }

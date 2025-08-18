@@ -83,7 +83,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const isMobile = useMobile();
-  const [nickname, setNickname] = useState(null);
+  const [nickname, setNickname] = useState<string | null>(null);
   useEffect(() => {
     (async () => {
       const {

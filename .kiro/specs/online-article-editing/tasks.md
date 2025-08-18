@@ -53,16 +53,16 @@ This plan breaks down the work required to implement the online article editing 
 
 ---
 
-- [ ] 4. **Backend - Moderation & Public API**
-  - [ ] 4.1. **Public Viewing Endpoints**
-    - [ ] 4.1.1. Create an API endpoint (e.g., `GET /api/articles/[id]`) to fetch the latest approved version of an article for public viewing.
-    - [ ] 4.1.2. Create an API endpoint (e.g., `GET /api/articles/[id]/history`) to fetch the list of all approved versions for an article.
-    - [ ] 4.1.3. Create an API endpoint (e.g., `GET /api/previews/[token]`) to fetch a specific article version using its preview token. This endpoint will be public and will use a `security definer` function internally to bypass RLS.
-  - [ ] 4.2. **Moderation Endpoints (Reviewer Role Required)**
-    - [ ] 4.2.1. Create an API endpoint (e.g., `GET /api/moderation/pending`) to fetch all `pending` and `rejected` article versions for reviewers.
-    - [ ] 4.2.2. Create an API endpoint (e.g., `POST /api/moderation/approve/[versionId]`) for reviewers to approve a pending version.
-    - [ ] 4.2.3. Create an API endpoint (e.g., `POST /api/moderation/reject/[versionId]`) for reviewers to reject a pending version.
-    - [ ] 4.2.4. Create an API endpoint (e.g., `POST /api/moderation/revoke/[versionId]`) for reviewers to revoke a previously approved version, reverting to the prior one. This will encapsulate the complex logic on the backend.
+- [x] 4. **Backend - Moderation & Public API**
+  - [x] 4.1. **Public Viewing Endpoints**s
+    - [x] 4.1.1. Create an API endpoint (e.g., `GET /api/articles/[id]`) to fetch the latest approved version of an article for public viewing.
+    - [x] 4.1.2. Create an API endpoint (e.g., `GET /api/articles/[id]/history`) to fetch the list of all approved versions for an article.
+    - [x] 4.1.3. Create an API endpoint (e.g., `GET /api/articles/preview/?token=[token]`) to fetch a specific article version using its preview token. This endpoint will be public and will use a `security definer` function internally to bypass RLS.
+  - [x] 4.2. **Moderation Endpoints (Reviewer Role Required)**
+    - [x] 4.2.1. Create an API endpoint (e.g., `GET /api/moderation/pending`) to fetch all `pending` article versions for contributors.
+    - [x] 4.2.2. Create an API endpoint (e.g., `POST /api/moderation/[versionId]?action=approve`) for reviewers to approve a pending version.
+    - [x] 4.2.3. Create an API endpoint (e.g., `POST /api/moderation/[versionId]?action=reject`) for reviewers to reject a pending version.
+    - [x] 4.2.4. Create an API endpoint (e.g., `POST /api/moderation/[versionId]?action=revoke`) for reviewers to revoke a previously approved version, reverting to the prior one. This will encapsulate the complex logic on the backend.
 
 ---
 

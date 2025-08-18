@@ -230,6 +230,10 @@ export type Database = {
       };
     };
     Functions: {
+      approve_article_version: {
+        Args: { reviewer_id: string; version_id: string };
+        Returns: undefined;
+      };
       create_category: {
         Args: {
           _default_visibility?: Database['public']['Enums']['version_status'];
@@ -267,6 +271,21 @@ export type Database = {
           parent_category_id: string;
         }[];
       };
+      get_pending_versions_for_moderation: {
+        Args: { requester_id: string };
+        Returns: {
+          article_id: string;
+          article_title: string;
+          category_name: string;
+          content: string;
+          created_at: string;
+          editor_id: string;
+          editor_nickname: string;
+          preview_token: string;
+          status: Database['public']['Enums']['version_status'];
+          version_id: string;
+        }[];
+      };
       get_user_role: {
         Args: { user_id: string };
         Returns: Database['public']['Enums']['role_type'];
@@ -274,6 +293,14 @@ export type Database = {
       hash_credential: {
         Args: { credential: string; salt: string };
         Returns: string;
+      };
+      reject_article_version: {
+        Args: { reviewer_id: string; version_id: string };
+        Returns: undefined;
+      };
+      revoke_article_version: {
+        Args: { reviewer_id: string; version_id: string };
+        Returns: undefined;
       };
       submit_article: {
         Args: {

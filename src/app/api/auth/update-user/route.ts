@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { pbkdf2Sync } from 'crypto';
+
+const hashPassword = (password: string, salt: string) => {
+  return pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+};
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -31,15 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to generate salt' }, { status: 500 });
     }
 
-    const { data: hashData, error: hashError } = await supabase.rpc('hash_password', {
-      password,
-      salt: saltData,
-    });
-    if (hashError || !hashData) {
-      return NextResponse.json({ error: 'Failed to hash password' }, { status: 500 });
-    }
-
-    updates.password_hash = hashData;
+    updates.password_hash = hashPassword(password, saltData);
   }
 
   const { error } = await supabase.from('users').update(updates).eq('id', userId);
