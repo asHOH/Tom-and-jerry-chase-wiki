@@ -1,36 +1,34 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase/client';
+'use client';
+
+import { useEffect, ReactNode } from 'react';
+import { proxy, useSnapshot } from 'valtio';
+
+type UserType = { role: string | null; nickname: string | null };
+
+const userObject = proxy<UserType & { clearData: () => void }>({
+  role: null,
+  nickname: null,
+  clearData() {
+    userObject.role = null;
+    userObject.nickname = null;
+  },
+});
+
+export const UserProvider = ({
+  children,
+  initialValue,
+}: {
+  children: ReactNode;
+  initialValue: Promise<UserType>;
+}) => {
+  useEffect(() => {
+    (async () => {
+      Object.assign(userObject, await initialValue);
+    })();
+  }, [initialValue]);
+  return children;
+};
 
 export const useUser = () => {
-  const [role, setRole] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-      try {
-        const { data, error } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (error) {
-          console.error('Error fetching user role:', error);
-          setRole(null);
-        } else {
-          setRole(data?.role || null);
-        }
-      } catch (err) {
-        console.error('Unexpected error:', err);
-        setRole(null);
-      }
-    };
-
-    fetchUserRole();
-  }, []);
-
-  return { role };
+  return useSnapshot(userObject);
 };

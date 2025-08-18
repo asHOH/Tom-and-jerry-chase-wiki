@@ -11,6 +11,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import { supabase } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/useUser';
 
 // Helper function for button styling
 const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: boolean) => {
@@ -83,17 +84,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const isMobile = useMobile();
-  const [nickname, setNickname] = useState<string | null>(null);
-  useEffect(() => {
-    (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data } = await supabase.from('users').select('nickname').eq('id', user.id).single();
-      if (data) setNickname(data.nickname);
-    })();
-  }, []);
+  const { nickname, clearData: clearUserData } = useUser();
 
   // Reset navigation state when pathname changes
   useEffect(() => {
@@ -267,7 +258,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'
                       onClick={() => {
                         supabase.auth.signOut();
-                        setNickname(null);
+                        clearUserData();
                         setDropdownOpen(false);
                       }}
                     >
