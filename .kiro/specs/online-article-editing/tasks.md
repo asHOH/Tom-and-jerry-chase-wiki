@@ -47,42 +47,55 @@ This plan breaks down the work required to implement the online article editing 
     - [x] 3.4.3. Add UI controls to the category editor for setting `default_visibility`.
     - [x] 3.4.4. Modify the article creation logic to inherit `default_visibility` from its selected category.
 
-- [ ] 4. **Moderation Workflow**
-  - [ ] 4.1. **Pending Changes Dashboard**
-    - [x] 4.1.1. Create the page and layout for the moderation dashboard (e.g., `/moderation/pending`).
-    - [ ] 4.1.2. Implement the backend query for Reviewers to fetch all `pending` and `rejected` article versions.
-    - [ ] 4.1.3. Build the UI to list pending submissions with links to preview and approve/reject.
-  - [ ] 4.2. **Preview Page**
-    - [ ] 4.2.1. Create a dynamic page (e.g., `/previews/[token]`) to display a specific article version.
-    - [ ] 4.2.2. Implement a Supabase function to fetch an article version by its `preview_token`.
-    - [ ] 4.2.3. Add a prominent banner to the page indicating it's a preview.
-  - [ ] 4.3. **Approve/Reject Logic**
-    - [ ] 4.3.1. Implement the backend function for Reviewers to change an `article_version` status to `approved` or `rejected`.
-    - [ ] 4.3.2. Add buttons to the dashboard and/or preview page to trigger the approve/reject logic.
-  - [ ] 4.4. **Revoke/Remove Logic**
-    - [ ] 4.4.1. Implement a backend function to revoke an approved version (reverts to the previous approved version).
-    - [ ] 4.4.2. Add a UI element for Reviewers to trigger the revocation.
+---
 
-- [ ] 5. **Public Viewing & Version History**
+### Phase 1: Backend API Development
+
+---
+
+- [ ] 4. **Backend - Moderation & Public API**
+  - [ ] 4.1. **Public Viewing Endpoints**
+    - [ ] 4.1.1. Create an API endpoint (e.g., `GET /api/articles/[id]`) to fetch the latest approved version of an article for public viewing.
+    - [ ] 4.1.2. Create an API endpoint (e.g., `GET /api/articles/[id]/history`) to fetch the list of all approved versions for an article.
+    - [ ] 4.1.3. Create an API endpoint (e.g., `GET /api/previews/[token]`) to fetch a specific article version using its preview token. This endpoint will be public and will use a `security definer` function internally to bypass RLS.
+  - [ ] 4.2. **Moderation Endpoints (Reviewer Role Required)**
+    - [ ] 4.2.1. Create an API endpoint (e.g., `GET /api/moderation/pending`) to fetch all `pending` and `rejected` article versions for reviewers.
+    - [ ] 4.2.2. Create an API endpoint (e.g., `POST /api/moderation/approve/[versionId]`) for reviewers to approve a pending version.
+    - [ ] 4.2.3. Create an API endpoint (e.g., `POST /api/moderation/reject/[versionId]`) for reviewers to reject a pending version.
+    - [ ] 4.2.4. Create an API endpoint (e.g., `POST /api/moderation/revoke/[versionId]`) for reviewers to revoke a previously approved version, reverting to the prior one. This will encapsulate the complex logic on the backend.
+
+---
+
+### Phase 2: Frontend UI & Integration
+
+---
+
+- [ ] 5. **Frontend - Public Viewing**
   - [ ] 5.1. **Main Article View**
-    - [ ] 5.1.1. Create the main article page (e.g., `/articles/[id]`).
-    - [ ] 5.1.2. Implement the data fetching logic to get the latest `approved` version using the public views.
-    - [ ] 5.1.3. Render the article title and content.
+    - [ ] 5.1.1. Create the main article page UI (e.g., `/articles/[id]`).
+    - [ ] 5.1.2. Integrate the UI with the `GET /api/articles/[id]` endpoint to display the latest approved content.
   - [ ] 5.2. **Version History Page**
-    - [ ] 5.2.1. Create the version history page (e.g., `/articles/[id]/history`).
-    - [ ] 5.2.2. Implement data fetching to get all `approved` versions for an article.
-    - [ ] 5.2.3. Build the UI to list versions with editor, timestamp, and a link to view the content.
-  - [ ] 5.3. **(Optional) Diff Viewer**
-    - [ ] 5.3.1. Research and select a library for text diffing (e.g., `diff-match-patch`).
-    - [ ] 5.3.2. Create a component that takes two content strings and displays a visual diff.
-    - [ ] 5.3.3. Integrate the diff component into the version history page.
+    - [ ] 5.2.1. Create the version history page UI (e.g., `/articles/[id]/history`).
+    - [ ] 5.2.2. Integrate the UI with the `GET /api/articles/[id]/history` endpoint to list all approved versions.
+  - [ ] 5.3. **Preview Page**
+    - [ ] 5.3.1. Create the dynamic preview page UI (e.g., `/previews/[token]`).
+    - [ ] 5.3.2. Integrate the UI with the `GET /api/previews/[token]` endpoint.
+    - [ ] 5.3.3. Add a prominent banner to the page indicating it's a preview.
+  - [ ] 5.4. **(Optional) Diff Viewer**
+    - [ ] 5.4.1. Research and select a library for text diffing (e.g., `diff-match-patch`).
+    - [ ] 5.4.2. Create a component that takes two content strings and displays a visual diff.
+    - [ ] 5.4.3. Integrate the diff component into the version history page.
 
-- [ ] 6. **Frontend Integration**
-  - [x] 6.1. **Supabase Client Setup**
-    - [x] 6.1.1. Install `supabase-js`.
-    - [x] 6.1.2. Create a Supabase client instance and make it available through React Context. (skipped)
-  - [x] 6.2. **Page & Route Creation**
-    - [x] 6.2.1. Create file-based routes in the `app/` directory for all new pages mentioned above.
-  - [x] 6.3. **Auth & Permissions**
-    - [x] 6.3.1. Create a hook (e.g., `useUser`) to access the current user's session and role. (skipped)
-    - [ ] 6.3.2. Wrap components or layouts with logic to conditionally render UI based on user role (e.g., show "Edit" button only to Contributors).
+- [ ] 6. **Frontend - Moderation Workflow**
+  - [ ] 6.1. **Pending Changes Dashboard**
+    - [ ] 6.1.1. Create the page and layout for the moderation dashboard (e.g., `/moderation/pending`).
+    - [ ] 6.1.2. Integrate the UI with the `GET /api/moderation/pending` endpoint to list submissions.
+    - [ ] 6.1.3. Add UI elements (buttons/links) for previewing, approving, and rejecting submissions.
+  - [ ] 6.2. **Approve/Reject/Revoke Integration**
+    - [ ] 6.2.1. Connect the "Approve" button to the `POST /api/moderation/approve/[versionId]` endpoint.
+    - [ ] 6.2.2. Connect the "Reject" button to the `POST /api/moderation/reject/[versionId]` endpoint.
+    - [ ] 6.2.3. Add a UI element for reviewers (e.g., on the history page) and connect it to the `POST /api/moderation/revoke/[versionId]` endpoint.
+
+- [ ] 7. **Frontend - Final Touches**
+  - [ ] 7.1. **UI Permissions**
+    - [ ] 7.1.1. Wrap components or layouts with logic to conditionally render UI based on user role (e.g., show "Moderation Dashboard" link only to Reviewers/Coordinators). This will use the existing `useUser` hook.
