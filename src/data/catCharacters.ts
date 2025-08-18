@@ -3840,7 +3840,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
         description: '列车可用于守奶酪和火箭，并且列车可以为恶魔汤姆提供护盾效果。',
         additionalDescription: '',
-        weapon: 1,
       },
       {
         tagName: '后期',
