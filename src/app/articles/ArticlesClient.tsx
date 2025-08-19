@@ -219,42 +219,44 @@ export default function ArticlesClient() {
         <PageDescription>浏览和搜索汤姆杰瑞追逐战的文章内容</PageDescription>
 
         {/* Category Filter Controls */}
-        <div className='filter-section flex justify-center items-center gap-4 mt-8'>
-          <FilterLabel displayMode='inline'>分类筛选:</FilterLabel>
-          <FilterLabel displayMode='block'>筛选:</FilterLabel>
-          <div className='flex flex-wrap gap-2 justify-center'>
-            {data?.categories.map((category) => {
-              const isActive = hasCategoryFilter(category.id);
-              return (
+        {!!data && data.categories.length > 0 && (
+          <div className='filter-section flex justify-center items-center gap-4 mt-8'>
+            <FilterLabel displayMode='inline'>分类筛选:</FilterLabel>
+            <FilterLabel displayMode='block'>筛选:</FilterLabel>
+            <div className='flex flex-wrap gap-2 justify-center'>
+              {data?.categories.map((category) => {
+                const isActive = hasCategoryFilter(category.id);
+                return (
+                  <button
+                    type='button'
+                    key={category.id}
+                    onClick={() => handleCategoryToggle(category.id)}
+                    className={clsx(
+                      'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
+                      isActive
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
+                    )}
+                  >
+                    {category.name}
+                  </button>
+                );
+              })}
+              {selectedCategories.size > 0 && (
                 <button
                   type='button'
-                  key={category.id}
-                  onClick={() => handleCategoryToggle(category.id)}
-                  className={clsx(
-                    'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-                    isActive
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                  )}
+                  onClick={() => {
+                    clearCategoryFilters();
+                    setCurrentPage(1);
+                  }}
+                  className='filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30'
                 >
-                  {category.name}
+                  清除筛选
                 </button>
-              );
-            })}
-            {selectedCategories.size > 0 && (
-              <button
-                type='button'
-                onClick={() => {
-                  clearCategoryFilters();
-                  setCurrentPage(1);
-                }}
-                className='filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30'
-              >
-                清除筛选
-              </button>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Sort Controls */}
         <div className='filter-section flex justify-center items-center gap-4 mt-6'>

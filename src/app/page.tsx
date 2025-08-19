@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { useState, useRef } from 'react';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import { VersionDisplay } from '@/components/VersionDisplay';
@@ -14,6 +13,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '../components/ui/PageDescription';
 import LoginDialog from '@/components/LoginDialog';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useUser } from "@/hooks/useUser";
 
 export default function Home() {
   return (
@@ -31,19 +31,8 @@ function HomeContent() {
   const [notificationMessage, setNotificationMessage] = useState('');
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const {nickname} = useUser()
   const isMobile = useMobile();
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setIsLoggedIn(!!session);
-      setShowLoginDialog(!session);
-    };
-    checkLoginStatus();
-  }, []);
 
   const handleEditModeToggle = () => {
     if (feedbackSectionRef.current?.isOpen?.()) {
@@ -54,7 +43,7 @@ function HomeContent() {
       setShowLoginDialog(false);
     } else {
       setNotificationMessage('成功进入编辑模式，编辑模式下，修改只在本地保存');
-      if (!isLoggedIn) setShowLoginDialog(true);
+      if (!nickname) setShowLoginDialog(true);
     }
     setShowNotification(true);
     toggleEditMode();

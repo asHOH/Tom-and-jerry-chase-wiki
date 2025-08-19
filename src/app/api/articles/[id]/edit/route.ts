@@ -21,11 +21,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const { data, error } = await supabaseAdmin.rpc('submit_article', {
-      article_id: id,
-      title,
-      content,
-      category_id: category,
-      editor_id: user.id,
+      p_article_id: id,
+      p_title: title,
+      p_content: content,
+      p_category_id: category,
+      p_editor_id: user.id,
     });
 
     if (error) {

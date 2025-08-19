@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     // Check user role
     const { data: userRole, error: roleError } = await supabaseAdmin.rpc('get_user_role', {
-      user_id: user.id,
+      p_user_id: user.id,
     });
 
     if (roleError) {

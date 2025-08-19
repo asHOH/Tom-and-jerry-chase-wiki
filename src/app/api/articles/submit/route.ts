@@ -1,40 +1,64 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: Request) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (req.method !== 'POST' || !user) {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { title, category, content } = req.body;
+  const { title, category, content } = await req.json();
 
   if (!title || !category || !content) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
   try {
-    const { data, error } = await supabaseAdmin.rpc('submit_article', {
-      article_id: null as unknown as string,
-      title,
-      content,
-      category_id: category,
-      editor_id: user.id,
-    });
+    // First, create the article and get its ID
+    const { data: newArticle, error: articleError } = await supabaseAdmin
+      .from('articles')
+      .insert({
+        title,
+        category_id: category,
+        author_id: user.id,
+      })
+      .select('id')
+      .single();
 
-    if (error) {
-      console.error('Supabase RPC error:', error);
-      return res.status(500).json({ error: 'Failed to submit article' });
+    if (articleError) {
+      console.error('Supabase article insert error:', articleError);
+      return NextResponse.json({ error: 'Failed to create article' }, { status: 500 });
     }
 
-    res.status(200).json({ message: 'Article submitted successfully', data });
+    const newArticleId = newArticle.id;
+
+    // Then, submit the first version using the RPC
+    const { error: rpcError } = await supabaseAdmin.rpc('submit_article', {
+      p_article_id: newArticleId,
+      p_title: title,
+      p_content: content,
+      p_category_id: category,
+      p_editor_id: user.id,
+    });
+
+    if (rpcError) {
+      console.error('Supabase RPC error:', rpcError);
+      // If submitting the version fails, delete the article to avoid orphans.
+      await supabaseAdmin.from('articles').delete().eq('id', newArticleId);
+      return NextResponse.json({ error: 'Failed to submit article version' }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      message: 'Article submitted successfully',
+      article_id: newArticleId,
+    });
   } catch (err) {
     console.error('API error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -231,7 +231,7 @@ export type Database = {
     };
     Functions: {
       approve_article_version: {
-        Args: { reviewer_id: string; version_id: string };
+        Args: { p_reviewer_id: string; p_version_id: string };
         Returns: undefined;
       };
       create_category: {
@@ -272,7 +272,7 @@ export type Database = {
         }[];
       };
       get_pending_versions_for_moderation: {
-        Args: { requester_id: string };
+        Args: { p_requester_id: string };
         Returns: {
           article_id: string;
           article_title: string;
@@ -287,7 +287,7 @@ export type Database = {
         }[];
       };
       get_user_role: {
-        Args: { user_id: string };
+        Args: { p_user_id: string };
         Returns: Database['public']['Enums']['role_type'];
       };
       hash_credential: {
@@ -295,20 +295,20 @@ export type Database = {
         Returns: string;
       };
       reject_article_version: {
-        Args: { reviewer_id: string; version_id: string };
+        Args: { p_reviewer_id: string; p_version_id: string };
         Returns: undefined;
       };
       revoke_article_version: {
-        Args: { reviewer_id: string; version_id: string };
+        Args: { p_reviewer_id: string; p_version_id: string };
         Returns: undefined;
       };
       submit_article: {
         Args: {
-          article_id: string;
-          category_id: string;
-          content: string;
-          editor_id: string;
-          title: string;
+          p_article_id: string;
+          p_category_id: string;
+          p_content: string;
+          p_editor_id: string;
+          p_title: string;
         };
         Returns: undefined;
       };

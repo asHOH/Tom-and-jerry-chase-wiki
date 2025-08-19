@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     // Use the new function to get pending versions with full details
     const { data, error } = await supabaseAdmin.rpc('get_pending_versions_for_moderation', {
-      requester_id: user.id,
+      p_requester_id: user.id,
     });
 
     if (error) {

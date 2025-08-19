@@ -30,7 +30,7 @@ export async function POST(request: NextRequest, { params }: { params: { version
 
     // Check user role
     const { data: userRole, error: roleError } = await supabaseAdmin.rpc('get_user_role', {
-      user_id: user.id,
+      p_user_id: user.id,
     });
 
     if (roleError) {
@@ -61,8 +61,8 @@ export async function POST(request: NextRequest, { params }: { params: { version
     }
 
     const { error: actionError } = await supabaseAdmin.rpc(functionName, {
-      version_id: versionId,
-      reviewer_id: user.id,
+      p_version_id: versionId,
+      p_reviewer_id: user.id,
     });
     if (actionError) {
       console.error(`Error executing ${action} action:`, actionError);

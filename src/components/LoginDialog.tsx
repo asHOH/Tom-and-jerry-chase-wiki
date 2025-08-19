@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
+import { getUserData, userObject } from '@/hooks/useUser';
 
 type LoginDialogProps = {
   onClose: () => void;
@@ -74,6 +75,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       }
       // Assuming successful login returns a session, we close the dialog.
       // In a real app, you'd handle the session state.
+      Object.assign(userObject, await getUserData());
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : '发生未知错误。');
