@@ -81,7 +81,11 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const isDarkMode = await getDarkModeFromCookie();
   return (
-    <html lang='zh-CN' className={clsx('bg-gray-100 dark:bg-slate-900', isDarkMode && 'dark')}>
+    <html
+      lang='zh-CN'
+      className={clsx('bg-gray-100 dark:bg-slate-900', isDarkMode && 'dark')}
+      data-scroll-behavior='smooth'
+    >
       <head>
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />

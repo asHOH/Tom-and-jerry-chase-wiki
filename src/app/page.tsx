@@ -104,6 +104,14 @@ function HomeContent() {
       href: '/items',
       ariaLabel: '道具列表',
     },
+    {
+      imageSrc: '/images/icons/cat faction.png',
+      imageAlt: '文章图标',
+      title: '文章',
+      description: '社区文章列表',
+      href: '/articles',
+      ariaLabel: '社区文章列表',
+    },
     // {
     //   imageSrc: '/images/icons/cat faction.png',
     //   imageAlt: '排行榜图标',

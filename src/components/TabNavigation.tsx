@@ -72,6 +72,13 @@ const tabs: Tab[] = [
     imageAlt: '道具图标',
     path: '/items',
   },
+  {
+    id: 'articles',
+    name: '文章',
+    imageSrc: '/images/icons/cat faction.png',
+    imageAlt: '文章图标',
+    path: '/articles',
+  },
 ];
 
 type TabNavigationProps = {
