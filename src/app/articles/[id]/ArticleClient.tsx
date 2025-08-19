@@ -7,7 +7,6 @@ import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 
 import PageTitle from '@/components/ui/PageTitle';
-import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 
@@ -80,7 +79,7 @@ export default function ArticleClient() {
   if (error || !article) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <BaseCard className='text-center py-12'>
+        <div className='text-center py-12'>
           <div className='text-6xl mb-4'>📄</div>
           <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
             {error || '文章未找到'}
@@ -94,7 +93,7 @@ export default function ArticleClient() {
           >
             返回首页
           </Link>
-        </BaseCard>
+        </div>
       </div>
     );
   }
@@ -105,11 +104,13 @@ export default function ArticleClient() {
   return (
     <div className='container mx-auto px-4 py-8 max-w-4xl'>
       {/* Header */}
-      <div className='mb-8'>
-        <PageTitle>{article.title}</PageTitle>
+      <div className='mb-8 flex flex-col'>
+        <header className='text-center'>
+          <PageTitle>{article.title}</PageTitle>
+        </header>
 
         {/* Article Meta */}
-        <BaseCard className='mt-6 p-6'>
+        <div className='mt-6 p-6'>
           <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
             <div className='flex items-center gap-2'>
               <svg
@@ -126,7 +127,6 @@ export default function ArticleClient() {
                   d='M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
                 />
               </svg>
-
               <span>作者: {article.users_public_view?.nickname || '未知用户'}</span>
             </div>
 
@@ -245,11 +245,11 @@ export default function ArticleClient() {
               </Link>
             )}
           </div>
-        </BaseCard>
+        </div>
       </div>
 
       {/* Article Content */}
-      <BaseCard className='p-8'>
+      <div className='p-8'>
         <div
           className='prose prose-lg max-w-none dark:prose-invert prose-blue
                      prose-headings:text-gray-900 dark:prose-headings:text-gray-100
@@ -265,7 +265,7 @@ export default function ArticleClient() {
             __html: article.latest_version?.content || '<p>内容加载中...</p>',
           }}
         />
-      </BaseCard>
+      </div>
 
       {/* Footer Actions */}
       <div className='mt-8 text-center'>

@@ -9,7 +9,7 @@ export const dynamic = 'force-static';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '文章列表 - 猫鼠wiki',
-  description: '浏览和搜索汤姆杰瑞追逐战的文章内容',
+  description: '浏览和搜索猫和老鼠手游的文章内容',
   keywords: ['文章', '攻略', '猫和老鼠', '手游'],
   canonicalUrl: 'https://tjwiki.com/articles',
 });

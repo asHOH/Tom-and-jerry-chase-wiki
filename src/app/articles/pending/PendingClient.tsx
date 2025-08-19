@@ -283,7 +283,7 @@ export default function PendingClient() {
       ) : (
         <div className='space-y-4'>
           {filteredVersions.map((version) => (
-            <BaseCard key={version.id} className='p-6'>
+            <BaseCard key={JSON.stringify(version)} className='p-6'>
               <div className='flex flex-col lg:flex-row lg:items-start gap-6'>
                 {/* Content Info */}
                 <div className='flex-1'>

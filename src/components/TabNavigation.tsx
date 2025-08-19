@@ -91,7 +91,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const isMobile = useMobile();
-  const { nickname, clearData: clearUserData } = useUser();
+  const { nickname, role, clearData: clearUserData } = useUser();
 
   // Reset navigation state when pathname changes
   useEffect(() => {
@@ -261,6 +261,16 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md z-[99999]'>
                   <ul>
                     <li className='px-4 py-2'>你好，{nickname}</li>
+                    {role == 'Coordinator' && (
+                      <li className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'>
+                        <Link href='/admin/users'>管理用户数据</Link>
+                      </li>
+                    )}
+                    {(role == 'Coordinator' || role == 'Reviewer') && (
+                      <li className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'>
+                        <Link href='/admin/categories'>管理分类数据</Link>
+                      </li>
+                    )}
                     <li
                       className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'
                       onClick={() => {

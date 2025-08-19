@@ -34,18 +34,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
-    // Get the latest approved version using the public view (RLS will filter)
+    // Get the latest approved version
     const { data: latestVersion, error: versionError } = await supabase
       .from('article_versions_public_view')
-      .select(
-        `
-        id,
-        content,
-        created_at,
-        editor_id,
-        users_public_view!article_versions_public_view_editor_id_fkey(nickname)
-      `
-      )
+      .select('id, content, created_at, editor_id')
       .eq('article_id', id)
       .eq('status', 'approved')
       .order('created_at', { ascending: false })
@@ -57,11 +49,34 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'No approved version found' }, { status: 404 });
     }
 
+    // Get the editor's nickname separately if we have an editor_id
+    let editorNickname = null;
+    if (latestVersion.editor_id) {
+      const { data: editorData, error: editorError } = await supabase
+        .from('users_public_view')
+        .select('nickname')
+        .eq('id', latestVersion.editor_id)
+        .single();
+
+      if (editorError) {
+        console.error('Error fetching editor info:', editorError);
+        // Don't fail the request if we can't get editor info
+      } else {
+        editorNickname = editorData?.nickname || null;
+      }
+    }
+
+    // Add editor info to the version
+    const versionWithEditor = {
+      ...latestVersion,
+      editor_nickname: editorNickname,
+    };
+
     // Combine the data
     const response = {
       article: {
         ...article,
-        latest_version: latestVersion,
+        latest_version: versionWithEditor,
       },
     };
 

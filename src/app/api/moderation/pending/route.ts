@@ -31,41 +31,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch pending submissions
-    // Contributors can see all pending, Reviewers/Coordinators can see pending and rejected
-    const statusFilter =
-      userRole === 'Contributor' ? (['pending'] as const) : (['pending', 'rejected'] as const);
-
-    const { data: pendingVersions, error: fetchError } = await supabaseAdmin
-      .from('article_versions_public_view')
-      .select(
-        `
-        id,
-        content,
-        created_at,
-        status,
-        article_id,
-        editor_id,
-        users_public_view:editor_id (
-          nickname
-        ),
-        articles (
-          id,
-          title,
-          author_id,
-          created_at,
-          categories (
-            id,
-            name
-          ),
-          users_public_view:author_id (
-            nickname
-          )
-        )
-      `
-      )
-      .in('status', statusFilter)
-      .order('created_at', { ascending: false });
+    // Use the new function to get pending versions with full details
+    const { data: pendingVersions, error: fetchError } = await supabaseAdmin.rpc(
+      'get_pending_versions_for_moderation',
+      {
+        p_requester_id: user.id,
+      }
+    );
 
     if (fetchError) {
       console.error('Error fetching pending versions:', fetchError);

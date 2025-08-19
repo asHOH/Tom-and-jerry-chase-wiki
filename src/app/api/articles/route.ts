@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     // Get total count for pagination
     let countQuery = supabaseAdmin
       .from('articles')
-      .select('id', { count: 'exact', head: true })
+      .select('id, article_versions_public_view!inner(id)', { count: 'exact', head: true })
       .eq('article_versions_public_view.status', 'approved');
 
     if (category && category !== 'all') {

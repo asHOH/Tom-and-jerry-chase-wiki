@@ -216,7 +216,7 @@ export default function ArticlesClient() {
       {/* Header */}
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>文章列表</PageTitle>
-        <PageDescription>浏览和搜索汤姆杰瑞追逐战的文章内容</PageDescription>
+        <PageDescription>浏览和搜索猫和老鼠手游的文章内容</PageDescription>
 
         {/* Category Filter Controls */}
         {!!data && data.categories.length > 0 && (
@@ -408,42 +408,33 @@ export default function ArticlesClient() {
             return (
               <BaseCard
                 key={article.id}
-                className='p-6 hover:shadow-lg transform transition-all duration-200 hover:-translate-y-1'
+                variant='character'
+                href={`/articles/${article.id}`}
+                role='button'
+                aria-label={`查看文章 ${article.title}`}
+                className='character-card shover:shadow-lg transform transition-transform hover:-translate-y-1'
               >
-                <div className='flex flex-col h-full'>
-                  {/* Article Header */}
-                  <div className='mb-4'>
-                    <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2'>
-                      <Link
-                        href={`/articles/${article.id}`}
-                        className='hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
-                      >
-                        {article.title}
-                      </Link>
-                    </h3>
+                <div className='px-4 pt-1 pb-5 flex flex-col h-full text-left'>
+                  <h3 className='text-xl font-bold mb-2 dark:text-white line-clamp-2'>
+                    {article.title}
+                  </h3>
 
-                    <div className='flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400'>
-                      <span>作者: {article.users_public_view?.nickname || '未知'}</span>
-                      <span className='px-2 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded text-xs'>
-                        {article.categories?.name || '未分类'}
-                      </span>
-                    </div>
+                  <div className='flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mb-3'>
+                    <span>作者: {article.users_public_view?.nickname || '未知'}</span>
+                    <span className='px-2 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded text-xs'>
+                      {article.categories?.name || '未分类'}
+                    </span>
                   </div>
 
-                  {/* Content Preview */}
-                  <div className='flex-1 mb-4'>
-                    <div
-                      className='prose prose-sm max-w-none dark:prose-invert line-clamp-3'
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          (latestVersion?.content?.substring(0, 150) || '') +
-                            ((latestVersion?.content?.length || 0) > 150 ? '...' : '') ||
-                          '暂无内容',
-                      }}
-                    />
-                  </div>
+                  <div
+                    className='prose prose-sm max-w-none dark:prose-invert line-clamp-3 flex-1 mb-4'
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        (latestVersion?.content?.substring(0, 150) || '') +
+                          ((latestVersion?.content?.length || 0) > 150 ? '...' : '') || '暂无内容',
+                    }}
+                  />
 
-                  {/* Article Footer */}
                   <div className='mt-auto'>
                     <div className='flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-3'>
                       <span>
@@ -458,13 +449,7 @@ export default function ArticlesClient() {
                     </div>
 
                     <div className='flex items-center gap-2'>
-                      <Link
-                        href={`/articles/${article.id}`}
-                        className='flex-1 text-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 text-sm'
-                      >
-                        阅读文章
-                      </Link>
-
+                      <div className='flex-1' />
                       <Link
                         href={`/articles/${article.id}/history`}
                         className='px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 text-sm'

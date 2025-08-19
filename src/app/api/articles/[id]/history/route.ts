@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   void request;
-  const { id } = params;
+  const { id } = await params;
 
   if (!id) {
     return NextResponse.json({ error: 'Missing article ID' }, { status: 400 });
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         content,
         created_at,
         editor_id,
-        users_public_view!article_versions_public_view_editor_id_fkey(nickname)
+        users(nickname)
       `
       )
       .eq('article_id', id)
