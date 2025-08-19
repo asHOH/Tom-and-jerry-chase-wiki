@@ -38,7 +38,7 @@ export async function generateMetadata({
   return {
     title: `${entity.name} - 猫鼠wiki`,
     description: entity.description,
-    keywords: [entity.name, '道具', '猫和老鼠', '手游', '攻略'],
+    keywords: [entity.name, '衍生物', '猫和老鼠', '手游', '攻略'],
     openGraph: {
       title: `${entity.name} - 猫鼠wiki`,
       description: entity.description,
@@ -46,7 +46,7 @@ export async function generateMetadata({
         ? [
             {
               url: entity.imageUrl,
-              alt: `${entity.name}道具图标`,
+              alt: `${entity.name}衍生物图标`,
             },
           ]
         : [],

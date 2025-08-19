@@ -14,10 +14,10 @@ export default function EntityCardDisplay({ entity }: { entity: Entity }) {
   // const wallDamageColors = getCardCostColors(entity.walldamage ?? 0, false, isDarkMode);
 
   return (
-    <BaseCard variant='item' aria-label={`查看${entity.name}道具详情`}>
+    <BaseCard variant='item' aria-label={`查看${entity.name}衍生物详情`}>
       <GameImage
         src={entity.imageUrl}
-        alt={`${entity.name}道具图标`}
+        alt={`${entity.name}衍生物图标`}
         size='ITEM_CARD'
         className='hover:scale-105'
       />
@@ -26,21 +26,11 @@ export default function EntityCardDisplay({ entity }: { entity: Entity }) {
         <div
           className='flex flex-wrap justify-center entitys-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'
-          aria-label='道具属性'
+          aria-label='衍生物属性'
         >
           <Tag size='xs' variant='compact' colorStyles={typeColors}>
             {isMobile ? entity.entitytype.slice(0, 2) : entity.entitytype}
           </Tag>
-          {/* {typeof entity.damage === 'number' && (
-            <Tag size='xs' variant='compact' colorStyles={damageColors}>
-              伤害: {entity.damage}
-            </Tag>
-          )}
-          {typeof entity.walldamage === 'number' && (
-            <Tag size='xs' variant='compact' colorStyles={wallDamageColors}>
-              墙伤害: {entity.walldamage}
-            </Tag>
-          )} */}
         </div>
       </div>
     </BaseCard>

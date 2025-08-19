@@ -56,11 +56,11 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
   红色卡牌: {
     entitytype: '道具类' as const,
     characterName: '魔术师',
+    skillname: '奇思妙想',
     aliases: ['红牌', '红色纸牌'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台', '地面', '墙壁'],
+    collsion: false,
     description:
       '可穿墙且被投掷时的初速度较高，命中目标被强制传送一段距离且改变朝向，立刻受到伤害并掉落手中道具，然后禁用技能且移速降低一段时间。',
     detailedDescription:
@@ -73,8 +73,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['黄牌', '黄色纸牌'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台', '地面', '墙壁'],
+    collsion: false,
     description:
       '可穿墙且被投掷时的初速度较高，命中目标被强制传送一段距离且改变朝向，获得间歇性的反向+高额移速，持续一段时间。',
     detailedDescription:
@@ -87,8 +86,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['蓝牌', '蓝色纸牌'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台', '地面', '墙壁'],
+    collsion: false,
     description:
       '可穿墙且被投掷时的初速度较高，命中目标被强制传送一段距离且改变朝向，获得一段时间的失重状态且降低跳跃速度，但可在空中进行跳跃。',
     detailedDescription:
@@ -192,8 +190,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['分金符', '符', '纸符'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台', '地面', '墙壁'],
+    collsion: false,
     description: '命中敌方造成伤害，并扣除一定局内金币。可穿墙且被投掷时的初速度较高。',
     detailedDescription:
       '命中敌方造成50伤害，并扣除500局内金币。被投掷时无前摇，可穿墙且被投掷时的初速度较高，可触发投掷类知识卡和特技。',
@@ -205,8 +202,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['分金符', '符', '纸符'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台', '地面', '墙壁'],
+    collsion: false,
     description: '命中敌方造成伤害和短暂定身状态。可穿墙且被投掷时的初速度较高。',
     detailedDescription:
       '命中敌方造成30伤害和2秒定身状态（无法移动、交互、使用道具或技能，且自身完全失重）。可穿墙且被投掷时的初速度较高，可触发投掷类知识卡和特技。',

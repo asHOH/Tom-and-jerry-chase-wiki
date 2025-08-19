@@ -47,19 +47,10 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
                 className='flex entitys-center flex-wrap'
                 style={{ gap: spacing.sm, marginTop: spacing.lg }}
               >
-                {entity.factionId != undefined && (
+                {entity.factionId != undefined && entity.characterName != undefined && (
                   <Tag colorStyles={tagColorStyles} size='md'>
-                    {entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}
-                  </Tag>
-                )}
-                {entity.characterName != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    所属角色: {entity.characterName}
-                  </Tag>
-                )}
-                {entity.skillname != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    所属技能: {entity.skillname}
+                    所属者:{entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}--{entity.characterName}
+                    {entity.skillname === undefined ? '' : `--${entity.skillname}`}
                   </Tag>
                 )}
                 {!!(entity.aliases && entity.aliases.length) && (
@@ -67,24 +58,24 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
                     别名: {(entity.aliases ?? []).filter(Boolean).join(', ')}
                   </Tag>
                 )}
-                {entity.move != undefined && (
+                {(entity.move != undefined || entity.gravity != undefined) && (
                   <Tag colorStyles={tagColorStyles} size='md'>
-                    {entity.move == true ? '可移动' : '不可移动'}
+                    移动情况：
+                    {entity.move == true ? '可移动' : entity.move == undefined ? '' : '不可移动'}
+                    {entity.move != undefined && entity.gravity != undefined && '，'}
+                    {entity.gravity == true
+                      ? `${entity.move == false ? '但' : ''}会受重力影响`
+                      : entity.gravity == undefined
+                        ? ''
+                        : '不受重力影响'}
                   </Tag>
                 )}
-                {entity.gravity != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    {entity.gravity == true ? '受重力影响' : '不受重力影响'}
-                  </Tag>
-                )}
-                {!!entity.collsion && (
+                {entity.collsion != undefined && (
                   <Tag colorStyles={tagColorStyles} size='md'>
                     {entity.collsion == true ? '会产生碰撞' : '不会产生碰撞'}
-                  </Tag>
-                )}
-                {!!entity.ignore && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    不会与{(entity.ignore ?? []).filter(Boolean).join(', ')}产生碰撞
+                    {entity.ignore === undefined
+                      ? ''
+                      : `，但无视${(entity.ignore ?? []).filter(Boolean).join(', ')}`}
                   </Tag>
                 )}
               </div>

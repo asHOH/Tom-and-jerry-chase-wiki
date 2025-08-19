@@ -24,8 +24,8 @@ const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
 export default function EntityClient() {
   // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<Entitytypelist[]>([]);
-  // Faction: 'cat', 'mouse', 'none' (none = 不受阵营限制)
-  const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse' | 'none')[]>([]);
+  // Faction: 'cat', 'mouse'
+  const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse')[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
@@ -37,14 +37,10 @@ export default function EntityClient() {
     // 阵营筛选
     let factionMatch = true;
     if (selectedFactions.length > 0) {
-      // "none" means entities with no faction restriction (entity.factionId is null/undefined/"none")
-      const isNone = selectedFactions.includes('none');
       const isCat = selectedFactions.includes('cat');
       const isMouse = selectedFactions.includes('mouse');
       factionMatch =
-        (isNone && entity.factionId == null) ||
-        (isCat && entity.factionId === 'cat') ||
-        (isMouse && entity.factionId === 'mouse');
+        (isCat && entity.factionId === 'cat') || (isMouse && entity.factionId === 'mouse');
     }
     return typeMatch && factionMatch;
   });
@@ -53,7 +49,7 @@ export default function EntityClient() {
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>衍生物</PageTitle>
-        <PageDescription>在地图中散落的各式各样的道具——猫鼠相互对抗的关键机制</PageDescription>
+        <PageDescription>由角色技能衍生出的独立实体，拥有各自独特的属性和作用</PageDescription>
         {/* Filter Controls */}
         <div className='flex flex-col gap-4 mt-8'>
           {/* 类型筛选 */}
@@ -94,23 +90,17 @@ export default function EntityClient() {
                   {
                     key: 'cat' as const,
                     mobileLabel: '猫阵营',
-                    label: '猫阵营专用',
+                    label: '猫阵营',
                   },
                   {
                     key: 'mouse' as const,
                     mobileLabel: '鼠阵营',
-                    label: '鼠阵营专用',
-                  },
-                  {
-                    key: 'none' as const,
-                    mobileLabel: '通用',
-                    label: '通用',
+                    label: '鼠阵营',
                   },
                 ] as const
               ).map((faction) => {
                 const isActive = selectedFactions.includes(faction.key);
-                const factionColors =
-                  faction.key === 'none' ? null : getFactionButtonColors(faction.key, isDarkMode);
+                const factionColors = getFactionButtonColors(faction.key, isDarkMode);
                 return (
                   <button
                     type='button'
@@ -127,7 +117,7 @@ export default function EntityClient() {
                             backgroundColor: factionColors.backgroundColor,
                             color: factionColors.color,
                           }
-                        : isActive && faction.key === 'none'
+                        : isActive
                           ? { backgroundColor: '#e6d5f7', color: '#8b5cf6' }
                           : {}
                     }
