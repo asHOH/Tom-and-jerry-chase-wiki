@@ -29,6 +29,12 @@
 
 - **QQ交流群**: [615882730](https://qun.qq.com/universal-share/share?ac=1&authKey=%2BgPPblp3JfnQP2o3BI5PO1NmwvsNciCCaVCtSI9T6RAbv6yV2QHzzjz6gwY%2Bva9U&busi_data=eyJncm91cENvZGUiOiI2MTU4ODI3MzAiLCJ0b2tlbiI6Ijg3Ym9kMk9HTUVFTnJSU25GU2JCdWJoNEwxNGNOUlhWMGgvK3lMTWRGdy80Z0FnaUd4Yy9LYkZsYUJ5ZStTbUgiLCJ1aW4iOiIyOTAxODMzMjI1In0%3D&data=0yzCZAnaW0ZOxf01YibLkPBLkN17DRX2fS1NGi5Nndx2Qq2DMFDdWr1pxH3J8F9RefUGjWh_Zel5Rfjy-dPZ2A&svctype=4&tempid=h5_group_info) (了解项目进展、提供建议、贡献内容、技术交流)
 
+## ❤️ 支持本项目
+
+如果你喜欢这个项目，欢迎通过 Patreon [赞助我们](https://patreon.com/asHOH)。
+
+特别感谢所有项目[赞助者](SPONSORS.md)！
+
 ## 🛠️ 技术栈
 
 - **框架**: [Next.js 15](https://nextjs.org/) (App Router)
