@@ -258,4 +258,4 @@ export type EntityDefinition = {
   detailedCreate?: string;
 };
 
-export type Entity = EntityDefinition & { name: string; imageUrl: string };
+export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };

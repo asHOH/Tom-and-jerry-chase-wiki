@@ -70,6 +70,13 @@ const tabs: Tab[] = [
     imageAlt: '道具图标',
     path: '/items',
   },
+  {
+    id: 'entities',
+    name: '衍生物',
+    imageSrc: '/images/icons/entity.png',
+    imageAlt: '衍生物图标',
+    path: '/entities',
+  },
 ];
 
 type TabNavigationProps = {
