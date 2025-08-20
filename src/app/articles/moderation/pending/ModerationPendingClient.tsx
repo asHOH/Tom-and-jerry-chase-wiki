@@ -6,26 +6,29 @@ import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 
 import PageTitle from '@/components/ui/PageTitle';
+import PageDescription from '@/components/ui/PageDescription';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
+import clsx from 'clsx';
 
+/**
+ * Represents a single article submission returned by the moderation API.
+ * Some fields are optional because different endpoints may return slightly
+ * different shapes (flat vs nested relations).
+ */
 interface PendingSubmission {
   id: string;
-  content: string;
-  created_at: string;
-  status: 'pending' | 'rejected';
+  version_id: string;
   article_id: string;
-  editor_id: string;
-  users_public_view: { nickname: string };
-  articles: {
-    id: string;
-    title: string;
-    author_id: string;
-    created_at: string;
-    categories: { id: string; name: string };
-    users_public_view: { nickname: string };
-  };
+  article_title?: string;
+  editor_id?: string;
+  editor_nickname?: string;
+  content: string;
+  status: 'pending' | 'rejected' | (string & Record<never, never>);
+  created_at: string;
+  category_name?: string;
+  preview_token?: string;
 }
 
 interface PendingData {
@@ -174,14 +177,14 @@ export default function ModerationPendingClient() {
   }
 
   return (
-    <div className='container mx-auto px-4 py-8 max-w-6xl'>
+    <div className='space-y-8 dark:text-slate-200'>
       {/* Header */}
-      <div className='mb-8'>
+      <header className='text-center space-y-2 mb-8 px-4'>
         <PageTitle>内容审核</PageTitle>
-        <p className='mt-2 text-gray-600 dark:text-gray-400'>
+        <PageDescription>
           {canModerate ? '管理待审核的文章提交' : '查看您的待审核提交'}
-        </p>
-      </div>
+        </PageDescription>
+      </header>
 
       {/* Stats & Filters */}
       <div className='mb-6'>
@@ -202,32 +205,35 @@ export default function ModerationPendingClient() {
             <div className='flex items-center gap-2'>
               <button
                 onClick={() => setFilter('all')}
-                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                className={clsx(
+                  'px-3 py-1.5 text-sm rounded-lg transition-colors',
                   filter === 'all'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
+                )}
               >
                 全部
               </button>
               <button
                 onClick={() => setFilter('pending')}
-                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                className={clsx(
+                  'px-3 py-1.5 text-sm rounded-lg transition-colors',
                   filter === 'pending'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
+                )}
               >
                 待审核
               </button>
               {canModerate && (
                 <button
                   onClick={() => setFilter('rejected')}
-                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                  className={clsx(
+                    'px-3 py-1.5 text-sm rounded-lg transition-colors',
                     filter === 'rejected'
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                  }`}
+                  )}
                 >
                   已拒绝
                 </button>
@@ -244,6 +250,31 @@ export default function ModerationPendingClient() {
         </BaseCard>
       </div>
 
+      {/* Quick Actions */}
+      {canModerate && (
+        <div className='mb-6 px-4'>
+          <BaseCard className='p-4'>
+            <div className='flex items-center justify-between'>
+              <div className='text-sm font-medium text-gray-700 dark:text-gray-300'>快速操作</div>
+              <div className='flex items-center gap-3'>
+                <Link
+                  href='/articles/pending'
+                  className='inline-flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm'
+                >
+                  待审核
+                </Link>
+                <Link
+                  href='/admin/users'
+                  className='inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm'
+                >
+                  用户管理
+                </Link>
+              </div>
+            </div>
+          </BaseCard>
+        </div>
+      )}
+
       {/* Submissions List */}
       {filteredSubmissions.length === 0 ? (
         <BaseCard className='text-center py-12'>
@@ -255,28 +286,40 @@ export default function ModerationPendingClient() {
                 ? '暂无待审核项目'
                 : '暂无已拒绝项目'}
           </h3>
-          <p className='text-gray-600 dark:text-gray-400'>
+          <p className='text-gray-600 dark:text-gray-400 mb-4'>
             {filter === 'all' ? '所有提交都已处理完成' : '尝试切换其他筛选条件查看更多内容'}
           </p>
+          <div className='flex flex-wrap justify-center gap-3'>
+            <Link
+              href='/articles'
+              className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+            >
+              返回文章列表
+            </Link>
+            <button
+              onClick={fetchPendingSubmissions}
+              className='inline-flex items-center px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
+            >
+              刷新
+            </button>
+          </div>
         </BaseCard>
       ) : (
         <div className='space-y-4'>
           {filteredSubmissions.map((submission) => (
-            <BaseCard key={submission.id} className='p-6'>
+            <BaseCard key={submission.version_id} className='p-6'>
               <div className='flex flex-col lg:flex-row lg:items-start gap-6'>
                 {/* Content Info */}
                 <div className='flex-1'>
                   <div className='flex items-start justify-between mb-4'>
                     <div>
                       <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2'>
-                        {submission.articles.title}
+                        {submission.article_title}
                       </h3>
                       <div className='flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400'>
-                        <span>
-                          作者: {submission.articles.users_public_view?.nickname || '未知'}
-                        </span>
-                        <span>编辑者: {submission.users_public_view?.nickname || '未知'}</span>
-                        <span>分类: {submission.articles.categories?.name || '未分类'}</span>
+                        <span>作者: {submission.editor_nickname || '未知'}</span>
+                        <span>编辑者: {submission.editor_nickname || '未知'}</span>
+                        <span>分类: {submission.category_name || '未分类'}</span>
                       </div>
                     </div>
                     {getStatusBadge(submission.status)}
@@ -305,7 +348,7 @@ export default function ModerationPendingClient() {
                 {/* Actions */}
                 <div className='flex flex-col gap-3 lg:w-48'>
                   <Link
-                    href={`/articles/preview?token=${submission.id}`}
+                    href={`/articles/preview?token=${submission.preview_token || submission.version_id}`}
                     className='inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-colors text-sm'
                   >
                     <svg
@@ -333,11 +376,11 @@ export default function ModerationPendingClient() {
                   {canModerate && submission.status === 'pending' && (
                     <>
                       <button
-                        onClick={() => handleModerationAction(submission.id, 'approve')}
-                        disabled={processingVersions.has(submission.id)}
+                        onClick={() => handleModerationAction(submission.version_id, 'approve')}
+                        disabled={processingVersions.has(submission.version_id)}
                         className='inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm'
                       >
-                        {processingVersions.has(submission.id) ? (
+                        {processingVersions.has(submission.version_id) ? (
                           <LoadingSpinner size='sm' />
                         ) : (
                           <svg
@@ -359,11 +402,11 @@ export default function ModerationPendingClient() {
                       </button>
 
                       <button
-                        onClick={() => handleModerationAction(submission.id, 'reject')}
-                        disabled={processingVersions.has(submission.id)}
+                        onClick={() => handleModerationAction(submission.version_id, 'reject')}
+                        disabled={processingVersions.has(submission.version_id)}
                         className='inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm'
                       >
-                        {processingVersions.has(submission.id) ? (
+                        {processingVersions.has(submission.version_id) ? (
                           <LoadingSpinner size='sm' />
                         ) : (
                           <svg

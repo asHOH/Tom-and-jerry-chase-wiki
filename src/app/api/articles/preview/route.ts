@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      console.error('Error fetching preview version:', error);
       return NextResponse.json({ error: 'Invalid preview token' }, { status: 404 });
     }
 

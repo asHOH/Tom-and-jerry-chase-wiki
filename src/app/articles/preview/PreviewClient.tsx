@@ -7,22 +7,24 @@ import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 
 import PageTitle from '@/components/ui/PageTitle';
-import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface PreviewData {
-  version: {
-    id: string;
-    content: string;
-    created_at: string;
-    status: 'pending' | 'approved' | 'rejected' | 'revoked';
-    users_public_view: { nickname: string };
-  };
+  is_preview: boolean;
+  preview_token: string;
   article: {
     id: string;
     title: string;
     categories: { name: string };
     users_public_view: { nickname: string };
+    version: {
+      content: string;
+      status: 'pending' | 'approved' | 'rejected' | 'revoked';
+      created_at: string;
+      editor: {
+        nickname: string;
+      };
+    };
   };
 }
 
@@ -56,7 +58,7 @@ export default function PreviewClient() {
         }
 
         const result = await response.json();
-        setData(result);
+        setData(result.preview);
       } catch (err) {
         console.error('Error fetching preview:', err);
         setError('加载预览时发生错误');
@@ -81,7 +83,7 @@ export default function PreviewClient() {
   if (error || !data) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <BaseCard className='text-center py-12'>
+        <div className='text-center py-12'>
           <div className='text-6xl mb-4'>🔗</div>
           <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
             {error || '预览不可用'}
@@ -95,7 +97,7 @@ export default function PreviewClient() {
           >
             返回首页
           </Link>
-        </BaseCard>
+        </div>
       </div>
     );
   }
@@ -127,13 +129,13 @@ export default function PreviewClient() {
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
   };
 
-  const statusInfo = getStatusInfo(data.version.status);
+  const statusInfo = getStatusInfo(data.article.version.status);
 
   return (
     <div className='container mx-auto px-4 py-8 max-w-4xl'>
       {/* Preview Banner */}
       <div className='mb-6'>
-        <BaseCard
+        <div
           className={`p-4 border-l-4 ${
             statusInfo.color.includes('yellow')
               ? 'border-yellow-400'
@@ -178,15 +180,15 @@ export default function PreviewClient() {
               <p className='text-sm text-gray-600 dark:text-gray-400'>{statusInfo.description}</p>
             </div>
           </div>
-        </BaseCard>
+        </div>
       </div>
 
       {/* Article Header */}
-      <div className='mb-8'>
+      <header className='mb-8 text-center'>
         <PageTitle>{data.article.title}</PageTitle>
 
         {/* Article Meta */}
-        <BaseCard className='mt-6 p-6'>
+        <div className='mt-6 p-6'>
           <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
             <div className='flex items-center gap-2'>
               <svg
@@ -203,7 +205,7 @@ export default function PreviewClient() {
                   d='M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
                 />
               </svg>
-              <span>作者: {data.article.users_public_view?.nickname || '未知用户'}</span>
+              <span>作者: {data.article.users_public_view.nickname || '未知用户'}</span>
             </div>
 
             <div className='flex items-center gap-2'>
@@ -239,7 +241,7 @@ export default function PreviewClient() {
                   d='m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10'
                 />
               </svg>
-              <span>编辑者: {data.version.users_public_view?.nickname || '未知用户'}</span>
+              <span>编辑者: {data.article.version.editor.nickname || '未知用户'}</span>
             </div>
 
             <div className='flex items-center gap-2'>
@@ -259,7 +261,7 @@ export default function PreviewClient() {
               </svg>
               <span>
                 编辑时间:{' '}
-                {format(new Date(data.version.created_at), 'yyyy年MM月dd日 HH:mm', {
+                {format(new Date(data.article.version.created_at), 'yyyy年MM月dd日 HH:mm', {
                   locale: zhCN,
                 })}
               </span>
@@ -267,7 +269,7 @@ export default function PreviewClient() {
           </div>
 
           {/* Quick Actions */}
-          {data.version.status === 'approved' && (
+          {data.article.version.status === 'approved' && (
             <div className='mt-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
               <Link
                 href={`/articles/${data.article.id}`}
@@ -291,11 +293,11 @@ export default function PreviewClient() {
               </Link>
             </div>
           )}
-        </BaseCard>
-      </div>
+        </div>
+      </header>
 
       {/* Article Content */}
-      <BaseCard className='p-8'>
+      <div className='p-8'>
         <div
           className='prose prose-lg max-w-none dark:prose-invert prose-blue
                      prose-headings:text-gray-900 dark:prose-headings:text-gray-100
@@ -308,14 +310,14 @@ export default function PreviewClient() {
                      prose-ul:list-disc prose-ol:list-decimal
                      prose-li:text-gray-700 dark:prose-li:text-gray-300'
           dangerouslySetInnerHTML={{
-            __html: data.version.content || '<p>内容加载中...</p>',
+            __html: data.article.version.content || '<p>内容加载中...</p>',
           }}
         />
-      </BaseCard>
+      </div>
 
       {/* Footer Notice */}
       <div className='mt-8 text-center'>
-        <BaseCard className='p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800'>
+        <div className='p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800'>
           <div className='flex items-center justify-center gap-2 text-sm text-orange-800 dark:text-orange-300'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -333,7 +335,7 @@ export default function PreviewClient() {
             </svg>
             <span>这是一个预览页面，显示的内容可能与最终发布版本不同</span>
           </div>
-        </BaseCard>
+        </div>
 
         <div className='flex flex-wrap justify-center gap-3 mt-6'>
           <Link
