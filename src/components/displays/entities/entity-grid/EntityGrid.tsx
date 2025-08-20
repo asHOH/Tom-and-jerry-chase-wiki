@@ -29,8 +29,7 @@ export default function EntityClient() {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  //以下代码拷贝自ItemGrid，但entities的数据结构与items不同，此处参照网上的教程对其进行了连接，不确定是否合适
-  const allentities = { ...entities['cat'], ...entities['mouse'] }; //链接entities的两个部分
+  const allentities = { ...entities['cat'], ...entities['mouse'] }; //connect two parts of entities
   const filteredEntities = Object.values(allentities).filter((entity: Entity) => {
     // 类型筛选
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(entity.entitytype);
@@ -49,11 +48,11 @@ export default function EntityClient() {
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>衍生物</PageTitle>
-        <PageDescription>由角色技能衍生出的独立实体，拥有各自独特的属性和作用</PageDescription>
+        <PageDescription>由角色技能衍生出的独立物体，拥有各自独特的属性和作用</PageDescription>
         {/* Filter Controls */}
         <div className='flex flex-col gap-4 mt-8'>
           {/* 类型筛选 */}
-          <div className='filter-section flex justify-center entities-center gap-4 flex-wrap'>
+          <div className='filter-section flex justify-center items-center gap-4 flex-wrap'>
             <FilterLabel displayMode='inline'>类型筛选:</FilterLabel>
             <FilterLabel displayMode='block'>筛选:</FilterLabel>
             <div className='flex gap-2'>
@@ -81,7 +80,7 @@ export default function EntityClient() {
             </div>
           </div>
           {/* 阵营筛选 */}
-          <div className='filter-section flex justify-center entities-center gap-4 flex-wrap'>
+          <div className='filter-section flex justify-center items-center gap-4 flex-wrap'>
             <FilterLabel displayMode='inline'>阵营筛选:</FilterLabel>
             <FilterLabel displayMode='block'>筛选:</FilterLabel>
             <div className='flex gap-2'>

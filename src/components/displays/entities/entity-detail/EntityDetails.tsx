@@ -49,13 +49,13 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
               >
                 {entity.factionId != undefined && entity.characterName != undefined && (
                   <Tag colorStyles={tagColorStyles} size='md'>
-                    所属者:{entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}--{entity.characterName}
-                    {entity.skillname === undefined ? '' : `--${entity.skillname}`}
+                    所属者：{entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}-{entity.characterName}
+                    {entity.skillname === undefined ? '' : `-${entity.skillname}`}
                   </Tag>
                 )}
                 {!!(entity.aliases && entity.aliases.length) && (
                   <Tag colorStyles={tagColorStyles} size='md'>
-                    别名: {(entity.aliases ?? []).filter(Boolean).join(', ')}
+                    别名：{(entity.aliases ?? []).filter(Boolean).join(', ')}
                   </Tag>
                 )}
                 {(entity.move != undefined || entity.gravity != undefined) && (
