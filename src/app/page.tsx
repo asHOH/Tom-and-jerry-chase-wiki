@@ -93,6 +93,14 @@ function HomeContent() {
     //   href: '/ranks',
     //   ariaLabel: '角色属性排行榜',
     // },
+    {
+      imageSrc: '/images/icons/entity.png',
+      imageAlt: '衍生物图标',
+      title: '衍生物',
+      description: '衍生物列表',
+      href: '/entities',
+      ariaLabel: '衍生物列表',
+    },
   ];
 
   return (
