@@ -1179,7 +1179,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         aliases: ['地雷', '雷'],
         type: 'weapon2',
         description:
-          '放下隐形感应雷。感应雷在敌方靠近时现身，并在1.5秒后飞向敌方并爆炸，造成伤害和控制。',
+          '放下隐形{感应雷}。感应雷在敌方靠近时现身，并在1.5秒后飞向敌方并爆炸，造成伤害和控制。',
         detailedDescription:
           '放下隐形感应雷。雷在敌方靠近时现身，并在1.5秒后飞向敌方并爆炸，对周围的敌方和墙缝造成一定伤害、1.9秒爆炸眩晕和击退。爆炸也会弹飞老鼠，但不造成伤害。隐身状态的猫咪不会触发雷。雷被道具攻击后会在一段时间后原地爆炸。雷会在30秒后自然消失。',
         canMoveWhileUsing: true,

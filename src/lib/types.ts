@@ -77,6 +77,7 @@ export type GotoResult = {
   type:
     | 'character'
     | 'card'
+    | 'entity'
     | 'item'
     | 'special-skill-cat'
     | 'special-skill-mouse'

@@ -1,6 +1,6 @@
 // Utility for resolving goto targets by name
 
-import { characters, cards, items, specialSkills } from '@/data';
+import { characters, cards, items, specialSkills, entities } from '@/data';
 import { getDocPages } from '@/lib/docUtils';
 import type { GotoResult } from '@/lib/types';
 
@@ -27,6 +27,26 @@ export async function getGotoResult(name: string): Promise<GotoResult | null> {
       name: card!.id,
       description: card!.description,
       imageUrl: card!.imageUrl,
+    };
+  }
+  if (name in entities['cat']) {
+    const entity = entities['cat'][name];
+    return {
+      url: `/entities/${encodeURIComponent(name)}`,
+      type: 'entity',
+      name: entity!.name,
+      description: entity!.description,
+      imageUrl: entity!.imageUrl,
+    };
+  }
+  if (name in entities['mouse']) {
+    const entity = entities['mouse'][name];
+    return {
+      url: `/entities/${encodeURIComponent(name)}`,
+      type: 'entity',
+      name: entity!.name,
+      description: entity!.description,
+      imageUrl: entity!.imageUrl,
     };
   }
   if (name in items) {
@@ -78,6 +98,26 @@ export async function getGotoResult(name: string): Promise<GotoResult | null> {
       name: character!.id,
       description: character!.description,
       imageUrl: character!.imageUrl,
+    };
+  }
+  const catEntity = Object.values(entities['cat']).find((i) => i.aliases?.includes(name));
+  if (catEntity) {
+    return {
+      url: `/entities/${encodeURIComponent(catEntity.name)}`,
+      type: 'entity',
+      name: catEntity!.name,
+      description: catEntity!.description,
+      imageUrl: catEntity!.imageUrl,
+    };
+  }
+  const mouseEntity = Object.values(entities['mouse']).find((i) => i.aliases?.includes(name));
+  if (mouseEntity) {
+    return {
+      url: `/entities/${encodeURIComponent(mouseEntity.name)}`,
+      type: 'entity',
+      name: catEntity!.name,
+      description: catEntity!.description,
+      imageUrl: catEntity!.imageUrl,
     };
   }
   const item = Object.values(items).find((i) => i.aliases?.includes(name));
