@@ -11,9 +11,17 @@ type GotoLinkProps = {
   name: string;
   className?: string;
   children: React.ReactNode;
+  asPreviewOnly?: boolean; // when true, do not navigate; only show preview tooltip
+  hideImagePreview?: boolean; // when true, hide image in preview content
 };
 
-export default function GotoLink({ name, className, children }: GotoLinkProps) {
+export default function GotoLink({
+  name,
+  className,
+  children,
+  asPreviewOnly = false,
+  hideImagePreview = false,
+}: GotoLinkProps) {
   const [open, setOpen] = useState(false);
 
   const fetcher = async (url: string): Promise<GotoPreviewCardProps | null> => {
@@ -68,9 +76,15 @@ export default function GotoLink({ name, className, children }: GotoLinkProps) {
       <TooltipPrimitive.Root open={open} onOpenChange={setOpen}>
         <TooltipPrimitive.Trigger asChild>
           <span className='inline-block'>
-            <Link href={url} className={className} tabIndex={0}>
-              {children}
-            </Link>
+            {asPreviewOnly ? (
+              <span className={className} tabIndex={0}>
+                {children}
+              </span>
+            ) : (
+              <Link href={url} className={className} tabIndex={0}>
+                {children}
+              </Link>
+            )}
           </span>
         </TooltipPrimitive.Trigger>
         <TooltipPrimitive.Portal>
@@ -81,7 +95,13 @@ export default function GotoLink({ name, className, children }: GotoLinkProps) {
             className='z-50 pointer-events-none'
             style={{ minWidth: 260, maxWidth: 320 }}
           >
-            {previewContent}
+            {isLoading ? (
+              previewContent
+            ) : data ? (
+              <PreviewCard {...data} hideImage={hideImagePreview} />
+            ) : (
+              previewContent
+            )}
           </TooltipPrimitive.Content>
         </TooltipPrimitive.Portal>
       </TooltipPrimitive.Root>

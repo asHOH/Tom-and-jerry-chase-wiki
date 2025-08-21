@@ -11,6 +11,7 @@ export type GotoPreviewCardProps = {
   description?: string;
   imageUrl?: string;
   className?: string;
+  hideImage?: boolean;
 };
 
 const typeLabels: Record<string, string> = {
@@ -42,6 +43,7 @@ export default function PreviewCard({
   description,
   imageUrl,
   className = '',
+  hideImage = false,
 }: GotoPreviewCardProps) {
   return (
     <Link href={url} tabIndex={0} aria-label={`前往${typeLabels[type] || type}: ${name}`}>
@@ -54,9 +56,9 @@ export default function PreviewCard({
         role='link'
         tabIndex={-1}
       >
-        <div className='w-24 h-24 flex-shrink-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mr-4'>
-          {imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
+        {!hideImage && imageUrl ? (
+          <div className='w-24 h-24 flex-shrink-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mr-4'>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}
               alt={name}
@@ -64,10 +66,8 @@ export default function PreviewCard({
               loading='lazy'
               draggable={false}
             />
-          ) : (
-            <div className='text-4xl text-gray-400'>?</div>
-          )}
-        </div>
+          </div>
+        ) : null}
         <div className='flex flex-col items-start w-0 flex-1'>
           <span
             className={clsx(
