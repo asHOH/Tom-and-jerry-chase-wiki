@@ -42,7 +42,7 @@ export default function PreviewCard({
     <Link href={url} tabIndex={0} aria-label={`前往${typeLabels[type] || type}: ${name}`}>
       <BaseCard
         className={clsx(
-          'flex flex-row items-start p-4 w-full max-w-xs shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer',
+          'flex flex-row items-start p-4 md:p-5 lg:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer',
           className
         )}
         variant='details'
@@ -50,7 +50,7 @@ export default function PreviewCard({
         tabIndex={-1}
       >
         {!hideImage && imageUrl ? (
-          <div className='w-24 h-24 flex-shrink-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mr-4'>
+          <div className='w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 flex-shrink-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mr-4'>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageUrl}

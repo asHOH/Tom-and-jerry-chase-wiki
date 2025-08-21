@@ -93,7 +93,7 @@ export default function GotoLink({
             align='center'
             sideOffset={8}
             className='z-50 pointer-events-none'
-            style={{ minWidth: 260, maxWidth: 320 }}
+            style={{ minWidth: 320, maxWidth: 480 }}
           >
             {isLoading ? (
               previewContent
