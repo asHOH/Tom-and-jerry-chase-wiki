@@ -129,7 +129,7 @@ export function KnowledgeCardGroup({
                       size='sm'
                       variant='compact'
                       className={clsx(
-                        'transition-all duration-200 hover:scale-105 hover:shadow-sm',
+                        'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
                         isOptional && 'opacity-50'
                       )}
                     >
