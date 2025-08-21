@@ -7,6 +7,7 @@ type TagProps = {
   size?: 'xs' | 'sm' | 'md';
   variant?: 'default' | 'compact';
   role?: string; // Accessibility
+  className?: string;
 };
 
 export default function Tag({
@@ -15,6 +16,7 @@ export default function Tag({
   size = 'md',
   variant = 'default',
   role,
+  className,
 }: TagProps) {
   const baseTagStyle = createStyleFromTokens(
     variant === 'compact' ? componentTokens.tag.compact : componentTokens.tag.base
@@ -60,7 +62,7 @@ export default function Tag({
   };
 
   return (
-    <span style={tagStyle} {...(role ? { role } : {})}>
+    <span style={tagStyle} {...(role ? { role } : {})} className={className}>
       {children}
     </span>
   );

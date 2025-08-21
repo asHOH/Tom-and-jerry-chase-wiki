@@ -599,7 +599,7 @@ export const componentTokens = {
     },
     compact: {
       padding: `${designTokens.spacing.xxs} ${designTokens.spacing.compact}`, // Very compact: 4px 6px
-      borderRadius: designTokens.radius.xs, // Smaller radius for tiny tags
+      borderRadius: designTokens.radius.compact, // Smaller radius for tiny tags
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: '1px solid transparent',

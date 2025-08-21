@@ -18,6 +18,7 @@ import { characters } from '@/data';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
+import Tag from '@/components/ui/Tag';
 import {
   calculateKnowledgeCardCosts,
   isCardOptional,
@@ -117,20 +118,23 @@ export function KnowledgeCardGroup({
                   imageUrl={`${imageBasePath}${cardId}.png`}
                 >
                   <span
-                    className={clsx(
-                      'px-2 py-1 rounded-md text-sm font-medium cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm',
-                      isOptional && 'opacity-50'
-                    )}
-                    style={{
-                      backgroundColor: rankColors.backgroundColor,
-                      color: rankColors.color,
-                    }}
                     onClick={() => {
                       if (isEditMode) return;
                       handleSelectCard(cardName, characterId);
                     }}
+                    className='cursor-pointer'
                   >
-                    {cardName}
+                    <Tag
+                      colorStyles={rankColors}
+                      size='sm'
+                      variant='compact'
+                      className={clsx(
+                        'transition-all duration-200 hover:scale-105 hover:shadow-sm',
+                        isOptional && 'opacity-50'
+                      )}
+                    >
+                      {cardName}
+                    </Tag>
                   </span>
                 </KnowledgeCardTooltip>
               );
