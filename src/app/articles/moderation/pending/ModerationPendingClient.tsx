@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
@@ -36,48 +37,33 @@ interface PendingData {
   count: number;
 }
 
+const fetcher = (url: string) =>
+  fetch(url).then((res) => {
+    if (!res.ok) {
+      const error = new Error('An error occurred while fetching the data.') as Error & {
+        info: unknown;
+        status: number;
+      };
+      error.info = res.json();
+      error.status = res.status;
+      throw error;
+    }
+    return res.json();
+  });
+
 export default function ModerationPendingClient() {
   const { role: userRole } = useUser();
-  const [data, setData] = useState<PendingData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [processingVersions, setProcessingVersions] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'rejected'>('all');
 
-  useEffect(() => {
-    // Check permissions
-    if (!userRole || !['Contributor', 'Reviewer', 'Coordinator'].includes(userRole)) {
-      setError('您没有权限访问此页面');
-      setLoading(false);
-      return;
-    }
+  const { data, error, mutate } = useSWR<PendingData>(
+    userRole && ['Contributor', 'Reviewer', 'Coordinator'].includes(userRole)
+      ? '/api/moderation/pending'
+      : null,
+    fetcher
+  );
 
-    fetchPendingSubmissions();
-  }, [userRole]);
-
-  const fetchPendingSubmissions = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/moderation/pending');
-
-      if (!response.ok) {
-        if (response.status === 403) {
-          setError('您没有权限访问此页面');
-        } else {
-          setError('加载待审核内容失败');
-        }
-        return;
-      }
-
-      const result = await response.json();
-      setData(result);
-    } catch (err) {
-      console.error('Error fetching pending submissions:', err);
-      setError('加载待审核内容时发生错误');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loading = !data && !error;
 
   const handleModerationAction = async (versionId: string, action: 'approve' | 'reject') => {
     if (processingVersions.has(versionId)) return;
@@ -95,14 +81,16 @@ export default function ModerationPendingClient() {
       }
 
       // Refresh the data
-      await fetchPendingSubmissions();
+      mutate();
 
       // Show success message
       alert(`已成功${action === 'approve' ? '批准' : '拒绝'}此提交`);
     } catch (err) {
       console.error(`Error ${action}ing submission:`, err);
       alert(
-        `${action === 'approve' ? '批准' : '拒绝'}操作失败: ${err instanceof Error ? err.message : '未知错误'}`
+        `${action === 'approve' ? '批准' : '拒绝'}操作失败: ${
+          err instanceof Error ? err.message : '未知错误'
+        }`
       );
     } finally {
       setProcessingVersions((prev) => {
@@ -159,7 +147,9 @@ export default function ModerationPendingClient() {
       <div className='container mx-auto px-4 py-8'>
         <BaseCard className='text-center py-12'>
           <div className='text-6xl mb-4'>🚫</div>
-          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>{error}</h2>
+          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
+            {error.status === 403 ? '您没有权限访问此页面' : '加载待审核内容失败'}
+          </h2>
           <p className='text-gray-600 dark:text-gray-400 mb-6'>
             {userRole === 'Contributor'
               ? '您可以查看自己的待审核提交，但不能进行审核操作'
@@ -240,7 +230,7 @@ export default function ModerationPendingClient() {
               )}
 
               <button
-                onClick={fetchPendingSubmissions}
+                onClick={() => mutate()}
                 className='px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors ml-2'
               >
                 刷新
@@ -297,7 +287,7 @@ export default function ModerationPendingClient() {
               返回文章列表
             </Link>
             <button
-              onClick={fetchPendingSubmissions}
+              onClick={() => mutate()}
               className='inline-flex items-center px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
             >
               刷新

@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -28,47 +29,31 @@ interface PreviewData {
   };
 }
 
+const fetcher = (url: string) =>
+  fetch(url).then((res) => {
+    if (!res.ok) {
+      const error = new Error('An error occurred while fetching the data.') as Error & {
+        info: unknown;
+        status: number;
+      };
+      error.info = res.json();
+      error.status = res.status;
+      throw error;
+    }
+    return res.json();
+  });
+
 export default function PreviewClient() {
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
 
-  const [data, setData] = useState<PreviewData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: previewData, error } = useSWR<{ preview: PreviewData }>(
+    token ? `/api/articles/preview?token=${encodeURIComponent(token)}` : null,
+    fetcher
+  );
 
-  useEffect(() => {
-    const fetchPreview = async () => {
-      if (!token) {
-        setError('缺少预览令牌');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/articles/preview?token=${encodeURIComponent(token)}`);
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('预览链接无效或已过期');
-          } else {
-            setError('加载预览失败');
-          }
-          return;
-        }
-
-        const result = await response.json();
-        setData(result.preview);
-      } catch (err) {
-        console.error('Error fetching preview:', err);
-        setError('加载预览时发生错误');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPreview();
-  }, [token]);
+  const data = previewData?.preview;
+  const loading = !previewData && !error;
 
   if (loading) {
     return (
@@ -86,7 +71,7 @@ export default function PreviewClient() {
         <div className='text-center py-12'>
           <div className='text-6xl mb-4'>🔗</div>
           <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
-            {error || '预览不可用'}
+            {error ? '加载预览失败' : '预览不可用'}
           </h2>
           <p className='text-gray-600 dark:text-gray-400 mb-6'>
             此预览链接可能无效、已过期或文章已被删除

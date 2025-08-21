@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';
 import BaseCard from '@/components/ui/BaseCard';
@@ -29,45 +30,21 @@ interface ArticleHistoryData {
   versions: ArticleVersion[];
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function ArticleHistoryClient() {
   const params = useParams();
   const { role: userRole } = useUser();
   const articleId = params?.id as string;
 
-  const [data, setData] = useState<ArticleHistoryData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, error } = useSWR<ArticleHistoryData>(
+    articleId ? `/api/articles/${articleId}/history` : null,
+    fetcher
+  );
+
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
 
-  useEffect(() => {
-    const fetchHistory = async () => {
-      if (!articleId) return;
-
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/articles/${articleId}/history`);
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('文章未找到');
-          } else {
-            setError('加载历史版本失败');
-          }
-          return;
-        }
-
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        console.error('Error fetching article history:', err);
-        setError('加载历史版本时发生错误');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHistory();
-  }, [articleId]);
+  const loading = !data && !error;
 
   const handleVersionSelect = (versionId: string) => {
     setSelectedVersions((prev) => {
@@ -132,7 +109,7 @@ export default function ArticleHistoryClient() {
         <BaseCard className='text-center py-12'>
           <div className='text-6xl mb-4'>📚</div>
           <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
-            {error || '历史版本未找到'}
+            {error ? '加载历史版本失败' : '历史版本未找到'}
           </h2>
           <p className='text-gray-600 dark:text-gray-400 mb-6'>无法加载此文章的历史版本</p>
           <Link

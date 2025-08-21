@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import clsx from 'clsx';
+import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
@@ -29,41 +30,27 @@ interface PendingData {
   total_count: number;
 }
 
+const fetcher = (url: string) =>
+  fetch(url).then((res) => {
+    if (!res.ok) {
+      const error = new Error('An error occurred while fetching the data.') as Error & {
+        info: unknown;
+        status: number;
+      };
+      error.info = res.json();
+      error.status = res.status;
+      throw error;
+    }
+    return res.json();
+  });
+
 export default function PendingClient() {
   const { role: userRole } = useUser();
-  const [data, setData] = useState<PendingData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'rejected'>('all');
 
-  const fetchPendingVersions = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch('/api/articles/pending');
+  const { data, error, mutate } = useSWR<PendingData>('/api/articles/pending', fetcher);
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          setError('请先登录查看待审核内容');
-        } else {
-          setError('加载待审核内容失败');
-        }
-        return;
-      }
-
-      const result = await response.json();
-      setData(result);
-    } catch (err) {
-      console.error('Error fetching pending versions:', err);
-      setError('加载待审核内容时发生错误');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPendingVersions();
-  }, [fetchPendingVersions]);
+  const loading = !data && !error;
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -111,7 +98,9 @@ export default function PendingClient() {
       <div className='container mx-auto px-4 py-8'>
         <BaseCard className='text-center py-12'>
           <div className='text-6xl mb-4'>⚠️</div>
-          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>{error}</h2>
+          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
+            {error.status === 401 ? '请先登录查看待审核内容' : '加载待审核内容失败'}
+          </h2>
           <p className='text-gray-600 dark:text-gray-400 mb-6'>请检查您的登录状态或联系管理员</p>
           <div className='flex flex-wrap justify-center gap-3'>
             <Link
@@ -121,7 +110,7 @@ export default function PendingClient() {
               浏览文章
             </Link>
             <button
-              onClick={fetchPendingVersions}
+              onClick={() => mutate()}
               className='inline-flex items-center px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
             >
               重试
@@ -195,7 +184,7 @@ export default function PendingClient() {
               )}
 
               <button
-                onClick={fetchPendingVersions}
+                onClick={() => mutate()}
                 className='px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors ml-2'
               >
                 刷新
@@ -253,7 +242,7 @@ export default function PendingClient() {
                 创建新文章
               </Link>
               <button
-                onClick={fetchPendingVersions}
+                onClick={() => mutate()}
                 className='px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
               >
                 刷新

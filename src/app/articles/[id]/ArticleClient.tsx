@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -27,44 +28,32 @@ interface ArticleData {
   };
 }
 
+const fetcher = (url: string) =>
+  fetch(url).then((res) => {
+    if (!res.ok) {
+      const error = new Error('An error occurred while fetching the data.') as Error & {
+        info: unknown;
+        status: number;
+      };
+      error.info = res.json();
+      error.status = res.status;
+      throw error;
+    }
+    return res.json();
+  });
+
 export default function ArticleClient() {
   const params = useParams();
   const { role: userRole } = useUser();
   const articleId = params?.id as string;
 
-  const [article, setArticle] = useState<ArticleData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, error } = useSWR<{ article: ArticleData }>(
+    articleId ? `/api/articles/${articleId}` : null,
+    fetcher
+  );
 
-  useEffect(() => {
-    const fetchArticle = async () => {
-      if (!articleId) return;
-
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/articles/${articleId}`);
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('文章未找到或没有已发布的版本');
-          } else {
-            setError('加载文章失败');
-          }
-          return;
-        }
-
-        const data = await response.json();
-        setArticle(data.article);
-      } catch (err) {
-        console.error('Error fetching article:', err);
-        setError('加载文章时发生错误');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticle();
-  }, [articleId]);
+  const article = data?.article;
+  const loading = !data && !error;
 
   if (loading) {
     return (
@@ -82,7 +71,7 @@ export default function ArticleClient() {
         <div className='text-center py-12'>
           <div className='text-6xl mb-4'>📄</div>
           <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
-            {error || '文章未找到'}
+            {error ? '加载文章失败' : '文章未找到'}
           </h2>
           <p className='text-gray-600 dark:text-gray-400 mb-6'>
             请检查链接是否正确，或返回首页浏览其他内容

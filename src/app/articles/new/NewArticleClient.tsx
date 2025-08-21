@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
+import useSWR from 'swr';
 
 import RichTextEditor from '@/components/ui/RichTextEditor';
 import PageTitle from '@/components/ui/PageTitle';
@@ -12,10 +13,40 @@ import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 
+interface Article {
+  id: string;
+  title: string;
+  created_at: string;
+  author_id: string;
+  category_id: string;
+  categories: { id: string; name: string };
+  users_public_view: { nickname: string };
+  latest_approved_version: Array<{
+    id: string;
+    content: string;
+    created_at: string;
+    status: string;
+    editor_id: string;
+    users_public_view: { nickname: string };
+  }>;
+}
+
 interface Category {
   id: string;
   name: string;
 }
+
+interface ArticlesData {
+  articles: Article[];
+  total_count: number;
+  current_page: number;
+  total_pages: number;
+  categories: Category[];
+  has_next: boolean;
+  has_prev: boolean;
+}
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const NewArticleClient: React.FC = () => {
   const router = useRouter();
@@ -24,31 +55,17 @@ const NewArticleClient: React.FC = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
-  const [categories, setCategories] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Fetch categories
-  const fetchCategories = useCallback(async () => {
-    try {
-      setIsLoadingCategories(true);
-      const response = await fetch('/api/articles?page=1&limit=1');
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data.categories || []);
-      } else {
-        setError('获取分类列表失败');
-      }
-    } catch (err) {
-      console.error('Error fetching categories:', err);
-      setError('获取分类列表时发生错误');
-    } finally {
-      setIsLoadingCategories(false);
-    }
-  }, []);
+  const { data: categoriesData, error: categoriesError } = useSWR<ArticlesData>(
+    userRole ? '/api/articles?page=1&limit=1' : null,
+    fetcher
+  );
+  const categories: Category[] = categoriesData?.categories || [];
+  const isLoadingCategories = !categoriesData && !categoriesError;
 
   useEffect(() => {
     // Give some time for the user data to load
@@ -56,13 +73,11 @@ const NewArticleClient: React.FC = () => {
       setIsInitialized(true);
       if (!userRole) {
         router.push('/articles');
-        return;
       }
-      fetchCategories();
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [userRole, router, fetchCategories]);
+  }, [userRole, router]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -165,7 +180,7 @@ const NewArticleClient: React.FC = () => {
       {/* Main Content */}
       <div className='max-w-4xl mx-auto px-4'>
         {/* Alert Messages */}
-        {error && (
+        {(error || categoriesError) && (
           <BaseCard className='mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'>
             <div className='flex items-center gap-3'>
               <svg
@@ -179,7 +194,9 @@ const NewArticleClient: React.FC = () => {
                   clipRule='evenodd'
                 />
               </svg>
-              <p className='text-red-800 dark:text-red-200'>{error}</p>
+              <p className='text-red-800 dark:text-red-200'>
+                {error || categoriesError?.message || '加载数据失败'}
+              </p>
             </div>
           </BaseCard>
         )}
@@ -260,6 +277,7 @@ const NewArticleClient: React.FC = () => {
             </div>
 
             {/* Content Editor */}
+
             <div className='space-y-2'>
               <label className='block text-lg font-semibold text-gray-900 dark:text-gray-100'>
                 文章内容 <span className='text-red-500'>*</span>

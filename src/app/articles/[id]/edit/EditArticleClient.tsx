@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
+import useSWR from 'swr';
 
 import RichTextEditor from '@/components/ui/RichTextEditor';
 import PageTitle from '@/components/ui/PageTitle';
@@ -12,10 +13,47 @@ import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 
+interface Article {
+  id: string;
+  title: string;
+  created_at: string;
+  author_id: string;
+  category_id: string;
+  categories: { id: string; name: string };
+  users_public_view: { nickname: string };
+  latest_approved_version: Array<{
+    id: string;
+    content: string;
+    created_at: string;
+    status: string;
+    editor_id: string;
+    users_public_view: { nickname: string };
+  }>;
+}
+
 interface Category {
   id: string;
   name: string;
 }
+
+interface ArticlesData {
+  articles: Article[];
+  total_count: number;
+  current_page: number;
+  total_pages: number;
+  categories: Category[];
+  has_next: boolean;
+  has_prev: boolean;
+}
+
+interface ArticleInfo {
+  article: {
+    title: string;
+    category_id: string;
+    article_versions: Array<{ content: string }>;
+  };
+}
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const EditArticleClient: React.FC = () => {
   const params = useParams();
@@ -26,59 +64,35 @@ const EditArticleClient: React.FC = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
-  const [categories, setCategories] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Fetch categories
-  const fetchCategories = useCallback(async () => {
-    try {
-      setIsLoadingCategories(true);
-      const response = await fetch('/api/articles?page=1&limit=1');
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data.categories || []);
-      } else {
-        setError('获取分类列表失败');
-      }
-    } catch (err) {
-      console.error('Error fetching categories:', err);
-      setError('获取分类列表时发生错误');
-    } finally {
-      setIsLoadingCategories(false);
-    }
-  }, []);
+  const { data: categoriesData, error: categoriesError } = useSWR<ArticlesData>(
+    '/api/articles?page=1&limit=1',
+    fetcher
+  );
+  const categories: Category[] = categoriesData?.categories || [];
+  const isLoadingCategories = !categoriesData && !categoriesError;
 
-  // Fetch article data
+  const { data: articleData, error: articleError } = useSWR<ArticleInfo>(
+    id && userRole ? `/api/articles/${id}/info` : null,
+    fetcher
+  );
+
+  useEffect(() => {
+    if (articleData) {
+      setTitle(articleData.article.title);
+      setCategory(articleData.article.category_id);
+      setContent(articleData.article.article_versions[0]?.content || '');
+    }
+  }, [articleData]);
+
   useEffect(() => {
     if (!userRole) {
       router.push('/articles');
-      return;
     }
-
-    if (id) {
-      Promise.all([fetch(`/api/articles/${id}/info`), fetchCategories()])
-        .then(async ([articleResponse]) => {
-          if (!articleResponse.ok) {
-            throw new Error('Failed to fetch article information');
-          }
-          const data = await articleResponse.json();
-          setTitle(data.article.title);
-          setCategory(data.article.category_id);
-          setContent(data.article.article_versions[0]?.content || '');
-        })
-        .catch((error) => {
-          console.error('Error fetching article information:', error);
-          setError('加载文章信息失败');
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  }, [id, userRole, router, fetchCategories]);
+  }, [userRole, router]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -135,6 +149,8 @@ const EditArticleClient: React.FC = () => {
   const handleCancel = () => {
     router.push(`/articles/${id}`);
   };
+
+  const isLoading = !articleData && !articleError && id;
 
   // Loading state for user authentication and article data
   if (isLoading) {
@@ -194,7 +210,7 @@ const EditArticleClient: React.FC = () => {
       {/* Main Content */}
       <div className='max-w-4xl mx-auto px-4'>
         {/* Alert Messages */}
-        {error && (
+        {(error || articleError || categoriesError) && (
           <BaseCard className='mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'>
             <div className='flex items-center gap-3'>
               <svg
@@ -208,7 +224,9 @@ const EditArticleClient: React.FC = () => {
                   clipRule='evenodd'
                 />
               </svg>
-              <p className='text-red-800 dark:text-red-200'>{error}</p>
+              <p className='text-red-800 dark:text-red-200'>
+                {error || articleError?.message || categoriesError?.message || '加载数据失败'}
+              </p>
             </div>
           </BaseCard>
         )}

@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import clsx from 'clsx';
+import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
@@ -47,11 +48,10 @@ interface ArticlesData {
   has_prev: boolean;
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function ArticlesClient() {
   const { role: userRole } = useUser();
-  const [data, setData] = useState<ArticlesData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Use centralized filter state management
   const {
@@ -65,43 +65,25 @@ export default function ArticlesClient() {
   const [sortBy, setSortBy] = useState<'created_at' | 'title'>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
-  const fetchArticles = useCallback(async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: '20',
-        sortBy,
-        sortOrder,
-      });
+  const params = new URLSearchParams({
+    page: currentPage.toString(),
+    limit: '20',
+    sortBy,
+    sortOrder,
+  });
 
-      // Handle multiple category filters
-      if (selectedCategories.size > 0) {
-        selectedCategories.forEach((category) => {
-          params.append('category', category);
-        });
-      }
+  if (selectedCategories.size > 0) {
+    selectedCategories.forEach((category) => {
+      params.append('category', category);
+    });
+  }
 
-      const response = await fetch(`/api/articles?${params}`);
-
-      if (!response.ok) {
-        setError('加载文章列表失败');
-        return;
-      }
-
-      const result = await response.json();
-      setData(result);
-    } catch (err) {
-      console.error('Error fetching articles:', err);
-      setError('加载文章列表时发生错误');
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, selectedCategories, sortBy, sortOrder]);
-
-  useEffect(() => {
-    fetchArticles();
-  }, [fetchArticles]);
+  const {
+    data,
+    error,
+    isLoading: loading,
+    mutate,
+  } = useSWR<ArticlesData>(`/api/articles?${params.toString()}`, fetcher);
 
   const handleCategoryToggle = (categoryId: string) => {
     toggleCategoryFilter(categoryId);
@@ -199,10 +181,12 @@ export default function ArticlesClient() {
       <div className='container mx-auto px-4 py-8'>
         <BaseCard className='text-center py-12'>
           <div className='text-6xl mb-4'>🚫</div>
-          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>{error}</h2>
+          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
+            加载文章列表失败
+          </h2>
           <p className='text-gray-600 dark:text-gray-400 mb-6'>请稍后重试或联系管理员</p>
           <button
-            onClick={fetchArticles}
+            onClick={() => mutate()}
             className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
           >
             重试
@@ -303,8 +287,7 @@ export default function ArticlesClient() {
               <span className='block sm:inline'>
                 {' '}
                 (已筛选:{' '}
-                {Array.prototype.slice
-                  .call(selectedCategories)
+                {Array.from(selectedCategories)
                   .map((id) => data?.categories.find((c) => c.id === id)?.name)
                   .filter(Boolean)
                   .join(', ')}
