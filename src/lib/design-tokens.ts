@@ -2,14 +2,14 @@ import type { FactionId } from '@/data/types';
 
 export const designTokens = {
   spacing: {
+    xxxs: '4px', // 1 unit
+    xxs: '6px', // 1.5 units
     xs: '8px', // 2 units
     sm: '12px', // 3 units
     md: '16px', // 4 units
     lg: '24px', // 6 units
     xl: '32px', // 8 units
     // Compact spacing for tags
-    xxs: '4px', // 1 unit - for very compact padding
-    compact: '6px', // 1.5 units - for compact tag spacing
   },
   colors: {
     faction: {
@@ -478,14 +478,12 @@ export const designTokens = {
   },
   radius: {
     none: '0',
-    sm: '4px',
+    xs: '4px',
+    sm: '6px',
     md: '8px',
     lg: '12px',
     xl: '16px',
     full: '9999px',
-    // Compact radius for tags
-    xs: '3px', // Extra small for compact tags
-    compact: '6px', // Between sm and md for modern look
   },
 
   zIndex: {
@@ -591,15 +589,15 @@ export const componentTokens = {
   // Tag component tokens
   tag: {
     base: {
-      padding: `${designTokens.spacing.compact} ${designTokens.spacing.xs}`, // More compact: 6px 8px instead of 8px 12px
-      borderRadius: designTokens.radius.compact, // More rounded: 6px instead of 4px
+      padding: `${designTokens.spacing.xxs} ${designTokens.spacing.xs}`, // More compact: 6px 8px instead of 8px 12px
+      borderRadius: designTokens.radius.sm, // More rounded: 6px instead of 4px
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: '1px solid transparent', // Add subtle border for better definition
     },
     compact: {
-      padding: `${designTokens.spacing.xxs} ${designTokens.spacing.compact}`, // Very compact: 4px 6px
-      borderRadius: designTokens.radius.xs, // Smaller radius for tiny tags
+      padding: `${designTokens.spacing.xxxs} ${designTokens.spacing.xxs}`, // Very compact: 4px 6px
+      borderRadius: designTokens.radius.sm, // Smaller radius for tiny tags
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: '1px solid transparent',
@@ -685,6 +683,33 @@ export const getCardCostColors = (cost: number, includeBorder: boolean, isDarkMo
     ...(includeBorder && {
       borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
     }),
+  };
+};
+
+// Type label utility (for preview badges like 角色/知识卡)
+export const getTypeLabelColors = (type: string) => {
+  const map: Record<
+    string,
+    {
+      text: string;
+      background: string;
+      dark?: { text: string; background: string };
+    }
+  > = {
+    character: { text: '#1D4ED8', background: '#DBEAFE' }, // blue-700 on blue-100
+    card: { text: '#A16207', background: '#FEF9C3' }, // yellow-700 on yellow-100
+    item: { text: '#15803D', background: '#DCFCE7' }, // green-700 on green-100
+    entity: { text: '#C2410C', background: '#FFEDD5' }, // orange-700 on orange-100
+    'special-skill-cat': { text: '#BE185D', background: '#FCE7F3' }, // pink-700 on pink-100
+    'special-skill-mouse': { text: '#6D28D9', background: '#EDE9FE' }, // purple-700 on purple-100
+    doc: { text: '#374151', background: '#F3F4F6' }, // gray-700 on gray-100
+    'character-skill': { text: '#4338CA', background: '#E0E7FF' }, // indigo-700 on indigo-100
+  };
+
+  const scheme = map[type] ?? map.doc!;
+  return {
+    color: scheme!.text,
+    backgroundColor: scheme!.background,
   };
 };
 

@@ -374,7 +374,7 @@ export const contributors: Contributor[] = [
   },
   {
     id: 'xiangxiao',
-    name: '想 ‎ 笑',
+    name: '想  笑',
     roles: [
       {
         type: RoleType.ContentWriter,

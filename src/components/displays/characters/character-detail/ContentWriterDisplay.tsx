@@ -14,7 +14,7 @@ export default function ContentWriterDisplay({ characterId }: ContentWriterDispl
 
   return (
     <div className='text-xs text-gray-400 dark:text-gray-500 mt-2'>
-      文案撰写：{contentWriters.join('、')}
+      文案撰写：<span className='whitespace-pre'>{contentWriters.join('、')}</span>
     </div>
   );
 }
