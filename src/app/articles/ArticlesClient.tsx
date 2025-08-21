@@ -392,14 +392,13 @@ export default function ArticlesClient() {
               <BaseCard
                 key={article.id}
                 variant='character'
-                href={`/articles/${article.id}`}
                 role='button'
                 aria-label={`查看文章 ${article.title}`}
                 className='character-card shover:shadow-lg transform transition-transform hover:-translate-y-1'
               >
                 <div className='px-4 pt-1 pb-5 flex flex-col h-full text-left'>
                   <h3 className='text-xl font-bold mb-2 dark:text-white line-clamp-2'>
-                    {article.title}
+                    <Link href={`/articles/${article.id}`}>{article.title}</Link>
                   </h3>
 
                   <div className='flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mb-3'>

@@ -67,6 +67,7 @@ const EditArticleClient: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [placeholder, setPlaceholder] = useState('');
 
   const { data: categoriesData, error: categoriesError } = useSWR<ArticlesData>(
     '/api/articles?page=1&limit=1',
@@ -84,7 +85,8 @@ const EditArticleClient: React.FC = () => {
     if (articleData) {
       setTitle(articleData.article.title);
       setCategory(articleData.article.category_id);
-      setContent(articleData.article.article_versions[0]?.content || '');
+      console.log(articleData.article.article_versions[0]?.content);
+      setPlaceholder(articleData.article.article_versions[0]?.content || '');
     }
   }, [articleData]);
 
@@ -315,7 +317,7 @@ const EditArticleClient: React.FC = () => {
               <RichTextEditor
                 content={content}
                 onChange={handleContentChange}
-                placeholder='开始编写您的精彩内容...'
+                placeholder={placeholder}
               />
               <p className='text-sm text-gray-600 dark:text-gray-400'>
                 使用富文本编辑器修改文章内容，支持格式化、链接、图片、表格等多种功能

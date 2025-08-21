@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { EditorContent, useEditor, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -436,6 +436,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       },
     },
   });
+
+  useEffect(() => {
+    if (editor) {
+      editor.commands.setContent(placeholder);
+    }
+  }, [placeholder, editor]);
 
   if (!editor) {
     return (

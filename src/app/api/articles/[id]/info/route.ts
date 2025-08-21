@@ -1,15 +1,12 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const id = Array.isArray(req.query.id) ? req.query.id[0] : req.query.id;
+export async function GET(request: Request, { params }: { params: Promise<{ id?: string }> }) {
+  void request;
+  const { id } = await params;
 
   if (!id) {
-    return res.status(400).json({ error: 'Missing article ID' });
+    return NextResponse.json({ error: 'Missing article ID' }, { status: 400 });
   }
 
   try {
@@ -23,12 +20,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (error) {
       console.error('Supabase query error:', error);
-      return res.status(500).json({ error: 'Failed to fetch article information' });
+      return NextResponse.json({ error: 'Failed to fetch article information' }, { status: 500 });
     }
 
-    res.status(200).json({ article: data });
+    return NextResponse.json({ article: data }, { status: 200 });
   } catch (err) {
     console.error('API error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

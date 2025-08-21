@@ -1,22 +1,28 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(request: Request, { params }: { params: { id?: string } }) {
+  // await params as requested (params may be a plain object but awaiting a resolved promise
+  // satisfies the requirement while keeping behavior unchanged)
+  const id = (await Promise.resolve(params))?.id;
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (req.method !== 'POST' || !user) {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (!user) {
+    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
-  const id = Array.isArray(req.query.id) ? req.query.id[0] : req.query.id;
-  const { title, category, content } = req.body;
+  const body = await request.json().catch(() => null);
+  const title = body?.title;
+  const category = body?.category;
+  const content = body?.content;
 
   if (!id || !title || !category || !content) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
   try {
@@ -30,12 +36,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (error) {
       console.error('Supabase RPC error:', error);
-      return res.status(500).json({ error: 'Failed to update article' });
+      return NextResponse.json({ error: 'Failed to update article' }, { status: 500 });
     }
 
-    res.status(200).json({ message: 'Article updated successfully', data });
+    return NextResponse.json({ message: 'Article updated successfully', data }, { status: 200 });
   } catch (err) {
     console.error('API error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
