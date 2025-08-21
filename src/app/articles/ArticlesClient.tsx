@@ -14,6 +14,7 @@ import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 import { useFilterState } from '@/lib/filterUtils';
+import { sanitizeHTML } from '@/lib/xssUtils';
 
 interface Article {
   id: string;
@@ -411,9 +412,10 @@ export default function ArticlesClient() {
                   <div
                     className='prose prose-sm max-w-none dark:prose-invert line-clamp-3 flex-1 mb-4'
                     dangerouslySetInnerHTML={{
-                      __html:
+                      __html: sanitizeHTML(
                         (latestVersion?.content?.substring(0, 150) || '') +
-                          ((latestVersion?.content?.length || 0) > 150 ? '...' : '') || '暂无内容',
+                          ((latestVersion?.content?.length || 0) > 150 ? '...' : '') || '暂无内容'
+                      ),
                     }}
                   />
 

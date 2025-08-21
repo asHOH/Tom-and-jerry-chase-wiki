@@ -7,12 +7,12 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
-import { Table } from '@tiptap/extension-table';
-import TableRow from '@tiptap/extension-table-row';
-import TableCell from '@tiptap/extension-table-cell';
-import TableHeader from '@tiptap/extension-table-header';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import { createLowlight } from 'lowlight';
+// import { Table } from '@tiptap/extension-table';
+// import TableRow from '@tiptap/extension-table-row';
+// import TableCell from '@tiptap/extension-table-cell';
+// import TableHeader from '@tiptap/extension-table-header';
+// import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+// import { createLowlight } from 'lowlight';
 import clsx from 'clsx';
 
 interface RichTextEditorProps {
@@ -80,9 +80,9 @@ const Toolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   }, [editor]);
 
-  const insertTable = useCallback(() => {
-    editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
-  }, [editor]);
+  // const insertTable = useCallback(() => {
+  //   editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+  // }, [editor]);
 
   return (
     <div className='border-b border-gray-300 dark:border-gray-600 p-3 bg-gray-50 dark:bg-gray-800/50'>
@@ -325,7 +325,7 @@ const Toolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
             </svg>
           </ToolbarButton>
 
-          <ToolbarButton onClick={insertTable} title='插入表格'>
+          {/* <ToolbarButton onClick={insertTable} title='插入表格'>
             <svg className='size-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
               <path
                 strokeLinecap='round'
@@ -334,7 +334,7 @@ const Toolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
                 d='M3 10h18M3 14h18m-9-4v8m-7 0V4a1 1 0 011-1h12a1 1 0 011 1v16a1 1 0 01-1 1H5a1 1 0 01-1-1z'
               />
             </svg>
-          </ToolbarButton>
+          </ToolbarButton> */}
         </div>
 
         <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
@@ -382,7 +382,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   placeholder = '',
   className,
 }) => {
-  const lowlight = createLowlight();
+  // const lowlight = createLowlight();
 
   const editor = useEditor({
     extensions: [
@@ -403,18 +403,18 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           class: 'max-w-full h-auto rounded-lg',
         },
       }),
-      Table.configure({
-        resizable: true,
-      }),
-      TableRow,
-      TableHeader,
-      TableCell,
-      CodeBlockLowlight.configure({
-        lowlight,
-        HTMLAttributes: {
-          class: 'bg-gray-100 dark:bg-gray-800 rounded-md p-4 font-mono text-sm',
-        },
-      }),
+      // Table.configure({
+      //   resizable: true,
+      // }),
+      // TableRow,
+      // TableHeader,
+      // TableCell,
+      // CodeBlockLowlight.configure({
+      //   lowlight,
+      //   HTMLAttributes: {
+      //     class: 'bg-gray-100 dark:bg-gray-800 rounded-md p-4 font-mono text-sm',
+      //   },
+      // }),
     ],
     content: content || `<p>${placeholder}</p>`,
     immediatelyRender: false,

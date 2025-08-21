@@ -10,6 +10,7 @@ import useSWR from 'swr';
 import PageTitle from '@/components/ui/PageTitle';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
+import { sanitizeHTML } from '@/lib/xssUtils';
 
 interface ArticleData {
   id: string;
@@ -251,7 +252,7 @@ export default function ArticleClient() {
                      prose-ul:list-disc prose-ol:list-decimal
                      prose-li:text-gray-700 dark:prose-li:text-gray-300'
           dangerouslySetInnerHTML={{
-            __html: article.latest_version?.content || '<p>内容加载中...</p>',
+            __html: sanitizeHTML(article.latest_version?.content || '<p>内容加载中...</p>'),
           }}
         />
       </div>

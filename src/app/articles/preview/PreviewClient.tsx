@@ -9,6 +9,7 @@ import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { sanitizeHTML } from '@/lib/xssUtils';
 
 interface PreviewData {
   is_preview: boolean;
@@ -295,7 +296,7 @@ export default function PreviewClient() {
                      prose-ul:list-disc prose-ol:list-decimal
                      prose-li:text-gray-700 dark:prose-li:text-gray-300'
           dangerouslySetInnerHTML={{
-            __html: data.article.version.content || '<p>内容加载中...</p>',
+            __html: sanitizeHTML(data.article.version.content || '<p>内容加载中...</p>'),
           }}
         />
       </div>

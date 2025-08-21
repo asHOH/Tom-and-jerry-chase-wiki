@@ -11,6 +11,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
+import { sanitizeHTML } from '@/lib/xssUtils';
 
 /**
  * Represents a unified article submission.
@@ -333,9 +334,10 @@ export default function PendingClient() {
                     <div
                       className='prose prose-sm max-w-none dark:prose-invert line-clamp-3'
                       dangerouslySetInnerHTML={{
-                        __html:
+                        __html: sanitizeHTML(
                           submission.content.substring(0, 300) +
-                          (submission.content.length > 300 ? '...' : ''),
+                            (submission.content.length > 300 ? '...' : '')
+                        ),
                       }}
                     />
                   </div>

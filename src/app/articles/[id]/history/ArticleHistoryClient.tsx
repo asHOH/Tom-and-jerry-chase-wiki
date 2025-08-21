@@ -11,6 +11,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
+import { sanitizeHTML } from '@/lib/xssUtils';
 
 interface ArticleVersion {
   id: string;
@@ -41,7 +42,6 @@ export default function ArticleHistoryClient() {
     articleId ? `/api/articles/${articleId}/history` : null,
     fetcher
   );
-  console.log(data);
 
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
 
@@ -255,9 +255,10 @@ export default function ArticleHistoryClient() {
                   <div
                     className='line-clamp-3 prose prose-sm max-w-none dark:prose-invert'
                     dangerouslySetInnerHTML={{
-                      __html:
+                      __html: sanitizeHTML(
                         version.content.substring(0, 200) +
-                        (version.content.length > 200 ? '...' : ''),
+                          (version.content.length > 200 ? '...' : '')
+                      ),
                     }}
                   />
                 </div>
