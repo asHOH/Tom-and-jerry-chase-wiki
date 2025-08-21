@@ -66,7 +66,13 @@ export const renderTextWithTooltips = (
           const rankColors = getCardRankColors(card.rank, false, isDarkMode);
           parts.push(
             <GotoLink name={content} className='no-underline' key={`${card.rank}-${match.index}`}>
-              <Tag colorStyles={rankColors} size='sm' variant='compact' role='link'>
+              <Tag
+                colorStyles={rankColors}
+                size='sm'
+                variant='compact'
+                role='link'
+                className='mx-0.5'
+              >
                 {content}
               </Tag>
             </GotoLink>
