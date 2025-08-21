@@ -46,7 +46,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
-        description: '有救援卡，逃窜适合打击晕猫',
+        description: '有救援卡，逃窜适合打击晕猫。',
       },
       {
         cards: ['S-铁血', 'S-护佑', 'S-回家', 'C-救救我'],
@@ -446,15 +446,16 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
-        description: '打怕减速的猫咪，投手和一被叠加后能让猫咪难以追上老鼠。',
+        description:
+          '打怕减速的猫咪，投手和一被叠加后能让猫咪难以追上老鼠。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
-        description: '打苏蕊、侍卫等单刀型猫咪。',
+        description: '打苏蕊、侍卫等单刀型猫咪。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
-        description: '待补充',
+        description: '（待翻新，有意提供知识卡可填写反馈建议）',
       },
     ],
 
@@ -2163,7 +2164,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skillAllocations: [
       {
         id: '恶魔之角',
-        pattern: '01020[12][12]2',
+        pattern: '01020[12][12]',
         weaponType: 'weapon1',
         description: '一武加点。',
       },
@@ -2961,12 +2962,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counters: [
       {
         id: '米特',
-        description: '技能提供的减伤能大幅降低甚至免疫胡椒粉的伤害，还能反伤。',
+        description: '天菲技能提供的减伤能大幅降低甚至免疫胡椒粉的伤害，还能反伤。',
         isMinor: false,
       },
       {
         id: '剑客汤姆',
-        description: '技能提供的减伤能大幅降低甚至免疫连斩的伤害。',
+        description:
+          '天菲前期开启任意一个技能就能极大幅削减（无“穷追猛打”情况下的）剑客连斩的伤害，后期霸体让控制多伤害偏低的剑汤十分棘手，庇护还可以保队友，转移控制的效果还能让范围内的队友通过卡内刀/使用控制道具/直接脱离的方式中断剑汤连招。并且剑汤较惧怕“后期”定位的角色，墙缝期剑汤怕碎片怕满地道具怕高伤怕有自保和保队友能力的老鼠。并且剑汤前期一旦虚弱会导致乘胜层数减半，对局面影响很大，而天菲的翅膀反伤是个很好压血线的工具——哪怕把天菲刮死了，剑汤本身血条不多，容错也很低。不过天菲技能较为被动，确实有被高熟练度剑汤通过操作弥补克制关系的可能，还是要小心。',
         isMinor: true,
       },
     ],
@@ -2974,7 +2976,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '托普斯',
         description:
-          '托普斯的捕虫网能无视天菲的两个技能，即便是三级庇护都会被当成提款机(携带特技-我生气了时)。',
+          '托普斯的捕虫网能无视天菲的两个技能。哪怕是开启Lv.3友情庇护的天菲，也能被携带“我生气了！”特技的托普斯利用击晕和Lv.1被动进行连续控制，当成“提款机”。',
         isMinor: false,
       },
       {
@@ -2990,7 +2992,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         id: '库博',
-        description: '库博伤害极高，90伤害使得击晕接道具秒天菲，蓄势140天妃三级翅膀直接死。',
+        description:
+          '库博的被动和主动技能提供额外的攻击增伤，能击晕接道具秒天菲，或利用蓄势90*2的伤害打死三级翅膀的天菲。',
         isMinor: false,
       },
     ],
@@ -3930,7 +3933,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '挥出一道剑气。剑气击中平台形成幻影，再次点击技能按钮可传送至幻影处。剑气击中敌方将造成伤害和减速；击中友方将给予移速、救援及跳跃高度提升，且其在此期间可用额外技能键瞬移至附近幻影处。',
         detailedDescription:
-          '在0.45秒前摇后挥出一道剑气，剑气飞行速度1750，击中角色和部分墙壁可反弹一次，再次击中时剑气消失；同时技能进入5秒读条。剑气击中平台形成幻影，若技能读条未结束则可再次点击技能按钮传送至幻影处，幻影存在5秒。剑气击中敌方将造成{30}伤害，并降低其40%移速、跳跃高度，持续5s；击中友方使其移速、救援速度、跳跃高度提高25%，持续5秒，且友方可用额外技能键瞬移至幻影处。幻影未形成时，剑客莉莉自身进入读条的主动技能以及队友被击中获得的额外技能均处于不可使用状态。',
+          '在0.45秒前摇后挥出一道剑气，剑气飞行速度1750，击中角色和部分墙壁可反弹一次，再次击中时剑气消失；同时技能进入5秒读条。剑气击中平台形成幻影，若技能读条未结束则可再次点击技能按钮传送至幻影处，幻影存在5秒。剑气击中敌方将造成{30}伤害，并降低其40%移速、跳跃高度，持续5s；击中[友方](包括处于虚弱状态的友方)使其移速、救援速度、跳跃高度提高25%，持续5秒，且友方可用额外技能键瞬移至幻影处。幻影未形成时，剑客莉莉自身进入读条的主动技能以及队友被击中获得的额外技能均处于不可使用状态。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         // cancelableSkill: '不确定是否可被打断', // FIXME
@@ -5133,11 +5136,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'B-逃之夭夭', 'C-不屈', 'C-救救我'],
-        description: '待补充',
+        description: '（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
-        description: '待补充',
+        description: '（待翻新，有意提供知识卡可填写反馈建议）',
       },
     ],
 
