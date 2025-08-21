@@ -9,7 +9,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 
-import { DISCLAIMER_TEXT } from '@/constants';
+import { defaultMetadata } from '@/constants/seo';
 import './globals.css';
 import { DarkModeProvider } from '@/context/DarkModeContext';
 import { getDarkModeFromCookie } from '@/lib/darkModeActions';
@@ -18,63 +18,7 @@ import KeyboardNavigation from '@/components/KeyboardNavigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://tjwiki.com'),
-  title: '猫和老鼠手游wiki',
-  description: `猫和老鼠手游wiki - 角色技能加点和知识卡效果查询网站。${DISCLAIMER_TEXT}`,
-  keywords: '猫和老鼠手游,wiki,攻略,角色,技能,知识卡,Tom and Jerry Chase',
-  authors: [{ name: '猫和老鼠手游wiki' }],
-  creator: '猫和老鼠手游wiki',
-  publisher: '猫和老鼠手游wiki',
-  robots: 'index, follow',
-  alternates: {
-    canonical: 'https://tjwiki.com',
-  },
-  other: {
-    'application/ld+json': JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: '猫和老鼠手游wiki',
-      alternateName: '猫鼠wiki',
-      description: '猫和老鼠手游wiki - 角色技能加点和知识卡效果查询网站',
-      url: 'https://tjwiki.com',
-      inLanguage: 'zh-CN',
-      // TODO: Implement search functionality before enabling this
-      // potentialAction: {
-      //   '@type': 'SearchAction',
-      //   target: 'https://tjwiki.com?search={search_term_string}',
-      //   'query-input': 'required name=search_term_string',
-      // },
-    }),
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'zh_CN',
-    url: 'https://tjwiki.com',
-    title: '猫和老鼠手游wiki',
-    description: '角色技能加点和知识卡效果查询网站',
-    siteName: '猫和老鼠手游wiki',
-    images: [
-      {
-        url: '/icon.png',
-        width: 512,
-        height: 512,
-        alt: '猫和老鼠手游wiki',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary',
-    title: '猫和老鼠手游wiki',
-    description: '角色技能加点和知识卡效果查询网站',
-    images: ['/icon.png'],
-  },
-  icons: {
-    icon: '/icon.png',
-    shortcut: '/favicon.ico',
-    apple: '/icon.png',
-  },
-};
+export const metadata: Metadata = defaultMetadata;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const isDarkMode = await getDarkModeFromCookie();

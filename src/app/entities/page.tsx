@@ -8,9 +8,9 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = generatePageMetadata({
-  title: '衍生物 - 猫鼠wiki',
+  title: '衍生物',
   description: '游戏内所有技能衍生物列表。',
-  keywords: ['衍生物', '猫和老鼠', '手游', '攻略'],
+  keywords: ['衍生物'],
   canonicalUrl: 'https://tjwiki.com/entities',
 });
 

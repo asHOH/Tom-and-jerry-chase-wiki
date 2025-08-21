@@ -6,6 +6,7 @@ import SpecialSkillDetailClient from './SpecialSkillDetailClient';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
+import { generateArticleMetadata } from '@/lib/metadataUtils';
 
 type CatSkill = (typeof specialSkills)['cat'][string];
 type MouseSkill = (typeof specialSkills)['mouse'][string];
@@ -56,35 +57,26 @@ export async function generateMetadata({
     return {};
   }
 
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: `${skill.name} - 猫鼠wiki`,
-    description: skill.description,
-    image: skill.imageUrl,
-  };
-
-  return {
-    title: `${skill.name} - 猫鼠wiki`,
-    description: skill.description,
-    keywords: [skill.name, '特殊技能', '猫和老鼠', '手游', '攻略'],
-    openGraph: {
-      title: `${skill.name} - 猫鼠wiki`,
-      description: skill.description,
-      images: skill.imageUrl
-        ? [
-            {
-              url: skill.imageUrl,
-              alt: `${skill.name}技能图标`,
-            },
-          ]
-        : [],
-      type: 'article',
+  const desc = skill.description ?? `${skill.name}技能详情`;
+  return generateArticleMetadata({
+    title: skill.name,
+    description: desc,
+    keywords: [skill.name, '特殊技能'],
+    canonicalUrl: `https://tjwiki.com/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
+    imageUrl: skill.imageUrl,
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: `${skill.name} - 猫鼠wiki`,
+      description: desc,
+      author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+      publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `https://tjwiki.com/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
+      },
     },
-    other: {
-      'application/ld+json': JSON.stringify(structuredData),
-    },
-  };
+  });
 }
 
 export default async function SpecialSkillDetailPage({

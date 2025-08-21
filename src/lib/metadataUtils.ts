@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { SITE_SHORT_NAME, DEFAULT_KEYWORDS } from '@/constants/seo';
 
 // Basic structure for Schema.org data
 interface BaseStructuredData {
@@ -71,15 +72,17 @@ export function generatePageMetadata({
   canonicalUrl,
   structuredData,
 }: PageMetadata): Metadata {
+  const fullTitle = title.includes(SITE_SHORT_NAME) ? title : `${title} - ${SITE_SHORT_NAME}`;
+  const mergedKeywords = Array.from(new Set([...(keywords || []), ...DEFAULT_KEYWORDS]));
   const metadata: Metadata = {
-    title,
+    title: fullTitle,
     description,
-    keywords,
+    keywords: mergedKeywords,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       type: 'website',
     },
@@ -92,4 +95,75 @@ export function generatePageMetadata({
   }
 
   return metadata;
+}
+
+export function generateArticleMetadata({
+  title,
+  description,
+  keywords = [],
+  canonicalUrl,
+  imageUrl,
+  structuredData,
+}: {
+  title: string;
+  description: string;
+  keywords?: string[];
+  canonicalUrl: string;
+  imageUrl?: string;
+  structuredData?: StructuredData;
+}): Metadata {
+  const base = generatePageMetadata({
+    title,
+    description,
+    keywords,
+    canonicalUrl,
+  });
+
+  const images = imageUrl
+    ? [
+        {
+          url: imageUrl,
+          alt: `${title}封面`,
+        },
+      ]
+    : [];
+
+  return {
+    ...base,
+    openGraph: {
+      ...base.openGraph,
+      type: 'article',
+      images,
+    },
+    ...(structuredData
+      ? {
+          other: {
+            'application/ld+json': JSON.stringify(structuredData),
+          },
+        }
+      : {}),
+  };
+}
+
+export function buildArticleStructuredData({
+  title,
+  description,
+  canonicalUrl,
+  inLanguage = 'zh-CN',
+}: {
+  title: string;
+  description: string;
+  canonicalUrl: string;
+  inLanguage?: string;
+}): ArticleStructuredData {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
+    inLanguage,
+  };
 }

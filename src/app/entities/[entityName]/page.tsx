@@ -5,6 +5,7 @@ import EntityDetailClient from './EntityDetailsClient';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
+import { generateArticleMetadata } from '@/lib/metadataUtils';
 
 // Generate static params for all special skills
 export function generateStaticParams() {
@@ -27,35 +28,26 @@ export async function generateMetadata({
     return {};
   }
 
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: `${entity.name} - 猫鼠wiki`,
-    description: entity.description,
-    image: entity.imageUrl,
-  };
-
-  return {
-    title: `${entity.name} - 猫鼠wiki`,
-    description: entity.description,
-    keywords: [entity.name, '衍生物', '猫和老鼠', '手游', '攻略'],
-    openGraph: {
-      title: `${entity.name} - 猫鼠wiki`,
-      description: entity.description,
-      images: entity.imageUrl
-        ? [
-            {
-              url: entity.imageUrl,
-              alt: `${entity.name}衍生物图标`,
-            },
-          ]
-        : [],
-      type: 'article',
+  const desc = entity.description ?? `${entity.name}详细信息`;
+  return generateArticleMetadata({
+    title: entity.name,
+    description: desc,
+    keywords: [entity.name, '衍生物'],
+    canonicalUrl: `https://tjwiki.com/entities/${encodeURIComponent(entityName)}`,
+    imageUrl: entity.imageUrl,
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: `${entity.name} - 猫鼠wiki`,
+      description: desc,
+      author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+      publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `https://tjwiki.com/entities/${encodeURIComponent(entityName)}`,
+      },
     },
-    other: {
-      'application/ld+json': JSON.stringify(structuredData),
-    },
-  };
+  });
 }
 
 export default async function SpecialSkillDetailPage({

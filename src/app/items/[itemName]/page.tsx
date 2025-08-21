@@ -5,6 +5,7 @@ import ItemDetailClient from './ItemDetailsClient';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
+import { generateArticleMetadata } from '@/lib/metadataUtils';
 
 // Generate static params for all special skills
 export function generateStaticParams() {
@@ -25,35 +26,26 @@ export async function generateMetadata({
     return {};
   }
 
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: `${item.name} - 猫鼠wiki`,
-    description: item.description,
-    image: item.imageUrl,
-  };
-
-  return {
-    title: `${item.name} - 猫鼠wiki`,
-    description: item.description,
-    keywords: [item.name, '道具', '猫和老鼠', '手游', '攻略'],
-    openGraph: {
-      title: `${item.name} - 猫鼠wiki`,
-      description: item.description,
-      images: item.imageUrl
-        ? [
-            {
-              url: item.imageUrl,
-              alt: `${item.name}道具图标`,
-            },
-          ]
-        : [],
-      type: 'article',
+  const desc = item.description ?? `${item.name}详细信息`;
+  return generateArticleMetadata({
+    title: item.name,
+    description: desc,
+    keywords: [item.name, '道具'],
+    canonicalUrl: `https://tjwiki.com/items/${encodeURIComponent(itemName)}`,
+    imageUrl: item.imageUrl,
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: `${item.name} - 猫鼠wiki`,
+      description: desc,
+      author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+      publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `https://tjwiki.com/items/${encodeURIComponent(itemName)}`,
+      },
     },
-    other: {
-      'application/ld+json': JSON.stringify(structuredData),
-    },
-  };
+  });
 }
 
 export default async function SpecialSkillDetailPage({
