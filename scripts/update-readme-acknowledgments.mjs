@@ -121,7 +121,7 @@ async function updateReadmeAcknowledgments() {
 
     const newAcknowledgments =
       acknowledgmentLines.length > 0
-        ? `\n\n${acknowledgmentLines.join('\n')}\n`
+        ? `\n\n<!-- prettier-ignore -->\n${acknowledgmentLines.join('\n')}\n`
         : '\n\n（暂无特别鸣谢）\n';
 
     const newReadmeContent = beforeSection + newAcknowledgments + afterSection;

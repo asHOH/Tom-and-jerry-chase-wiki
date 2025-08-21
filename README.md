@@ -185,6 +185,7 @@ npm run analyze         # 包分析
 
 **特别鸣谢:**
 
+<!-- prettier-ignore -->
 - [追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、[音乐家杰瑞](https://github.com/ConductorJerry)、[梦回\_淦德蒸蚌](https://space.bilibili.com/1193776217)、[是莫莫喵](https://space.bilibili.com/443541296) 提供测试数据
 - [隔壁老米LM](https://space.bilibili.com/3493090618771682)、[凡叔哇](https://space.bilibili.com/273122087) 分享图片素材
 - [海阔天空](https://github.com/3swordman)、[音乐家杰瑞](https://github.com/ConductorJerry) 进行项目开发
