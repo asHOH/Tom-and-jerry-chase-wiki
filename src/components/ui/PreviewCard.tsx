@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 import Tag from './Tag';
+import { getTypeLabelColors } from '@/lib/design-tokens';
 
 export type GotoPreviewCardProps = {
   url: string;
@@ -26,19 +27,7 @@ const typeLabels: Record<string, string> = {
   'character-skill': '技能',
 };
 
-// kept for backward reference if needed, but not used now; tokens provide colors
-
-const typeTokenStyles: Record<string, React.CSSProperties> = {
-  character: { backgroundColor: '#DBEAFE', color: '#1D4ED8' },
-  card: { backgroundColor: '#FEF9C3', color: '#A16207' },
-  item: { backgroundColor: '#DCFCE7', color: '#15803D' },
-  entity: { backgroundColor: '#FFEDD5', color: '#C2410C' },
-  'special-skill-cat': { backgroundColor: '#FCE7F3', color: '#BE185D' },
-  'special-skill-mouse': { backgroundColor: '#EDE9FE', color: '#6D28D9' },
-  doc: { backgroundColor: '#F3F4F6', color: '#374151' },
-  'character-skill': { backgroundColor: '#E0E7FF', color: '#4338CA' },
-};
-const defaultTypeStyle: React.CSSProperties = { backgroundColor: '#F3F4F6', color: '#374151' };
+const typeTokenStyles = (type: string) => getTypeLabelColors(type);
 
 export default function PreviewCard({
   url,
@@ -75,12 +64,7 @@ export default function PreviewCard({
         <div className='flex flex-col items-start w-0 flex-1'>
           {!hideImage && imageUrl ? (
             <>
-              <Tag
-                colorStyles={typeTokenStyles[type] ?? defaultTypeStyle}
-                size='xs'
-                variant='compact'
-                className='mb-2'
-              >
+              <Tag colorStyles={typeTokenStyles(type)} size='xs' variant='compact' className='mb-2'>
                 {typeLabels[type] || type}
               </Tag>
               <div
@@ -99,7 +83,7 @@ export default function PreviewCard({
                 {name}
               </div>
               <Tag
-                colorStyles={typeTokenStyles[type] ?? defaultTypeStyle}
+                colorStyles={typeTokenStyles(type)}
                 size='xs'
                 variant='compact'
                 className='flex-shrink-0'

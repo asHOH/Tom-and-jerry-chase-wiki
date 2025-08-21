@@ -686,6 +686,33 @@ export const getCardCostColors = (cost: number, includeBorder: boolean, isDarkMo
   };
 };
 
+// Type label utility (for preview badges like 角色/知识卡)
+export const getTypeLabelColors = (type: string) => {
+  const map: Record<
+    string,
+    {
+      text: string;
+      background: string;
+      dark?: { text: string; background: string };
+    }
+  > = {
+    character: { text: '#1D4ED8', background: '#DBEAFE' }, // blue-700 on blue-100
+    card: { text: '#A16207', background: '#FEF9C3' }, // yellow-700 on yellow-100
+    item: { text: '#15803D', background: '#DCFCE7' }, // green-700 on green-100
+    entity: { text: '#C2410C', background: '#FFEDD5' }, // orange-700 on orange-100
+    'special-skill-cat': { text: '#BE185D', background: '#FCE7F3' }, // pink-700 on pink-100
+    'special-skill-mouse': { text: '#6D28D9', background: '#EDE9FE' }, // purple-700 on purple-100
+    doc: { text: '#374151', background: '#F3F4F6' }, // gray-700 on gray-100
+    'character-skill': { text: '#4338CA', background: '#E0E7FF' }, // indigo-700 on indigo-100
+  };
+
+  const scheme = map[type] ?? map.doc!;
+  return {
+    color: scheme!.text,
+    backgroundColor: scheme!.background,
+  };
+};
+
 // Positioning tag utility functions
 export const getPositioningTagColors = (
   tagName: string,
