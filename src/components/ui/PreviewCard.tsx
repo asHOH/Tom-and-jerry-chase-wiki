@@ -3,6 +3,7 @@ import BaseCard from './BaseCard';
 import clsx from 'clsx';
 import Link from 'next/link';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
+import Tag from './Tag';
 
 export type GotoPreviewCardProps = {
   url: string;
@@ -25,16 +26,19 @@ const typeLabels: Record<string, string> = {
   'character-skill': '技能',
 };
 
-const typeColors: Record<string, string> = {
-  character: 'bg-blue-100 text-blue-700',
-  card: 'bg-yellow-100 text-yellow-700',
-  item: 'bg-green-100 text-green-700',
-  entity: 'bg-orange-100 text-orange-700',
-  'special-skill-cat': 'bg-pink-100 text-pink-700',
-  'special-skill-mouse': 'bg-purple-100 text-purple-700',
-  doc: 'bg-gray-100 text-gray-700',
-  'character-skill': 'bg-indigo-100 text-indigo-700',
+// kept for backward reference if needed, but not used now; tokens provide colors
+
+const typeTokenStyles: Record<string, React.CSSProperties> = {
+  character: { backgroundColor: '#DBEAFE', color: '#1D4ED8' },
+  card: { backgroundColor: '#FEF9C3', color: '#A16207' },
+  item: { backgroundColor: '#DCFCE7', color: '#15803D' },
+  entity: { backgroundColor: '#FFEDD5', color: '#C2410C' },
+  'special-skill-cat': { backgroundColor: '#FCE7F3', color: '#BE185D' },
+  'special-skill-mouse': { backgroundColor: '#EDE9FE', color: '#6D28D9' },
+  doc: { backgroundColor: '#F3F4F6', color: '#374151' },
+  'character-skill': { backgroundColor: '#E0E7FF', color: '#4338CA' },
 };
+const defaultTypeStyle: React.CSSProperties = { backgroundColor: '#F3F4F6', color: '#374151' };
 
 export default function PreviewCard({
   url,
@@ -69,20 +73,41 @@ export default function PreviewCard({
           </div>
         ) : null}
         <div className='flex flex-col items-start w-0 flex-1'>
-          <span
-            className={clsx(
-              'px-2 py-0.5 rounded text-xs font-semibold mb-2',
-              typeColors[type] || 'bg-gray-200 text-gray-700'
-            )}
-          >
-            {typeLabels[type] || type}
-          </span>
-          <div
-            className='font-bold text-lg text-gray-900 dark:text-gray-100 mb-1 truncate w-full'
-            title={name}
-          >
-            {name}
-          </div>
+          {!hideImage && imageUrl ? (
+            <>
+              <Tag
+                colorStyles={typeTokenStyles[type] ?? defaultTypeStyle}
+                size='xs'
+                variant='compact'
+                className='mb-2'
+              >
+                {typeLabels[type] || type}
+              </Tag>
+              <div
+                className='font-bold text-lg text-gray-900 dark:text-gray-100 mb-1 truncate w-full'
+                title={name}
+              >
+                {name}
+              </div>
+            </>
+          ) : (
+            <div className='flex items-center gap-2 w-full mb-1'>
+              <div
+                className='font-bold text-lg text-gray-900 dark:text-gray-100 truncate flex-1'
+                title={name}
+              >
+                {name}
+              </div>
+              <Tag
+                colorStyles={typeTokenStyles[type] ?? defaultTypeStyle}
+                size='xs'
+                variant='compact'
+                className='flex-shrink-0'
+              >
+                {typeLabels[type] || type}
+              </Tag>
+            </div>
+          )}
           {description && (
             <div
               className='text-sm text-gray-600 dark:text-gray-300 line-clamp-3 w-full'
