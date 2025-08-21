@@ -44,17 +44,19 @@ async function updateReadmeAcknowledgments() {
       );
     };
 
-    const escapeMarkdown = (text) => {
-      // Escape underscores in markdown to prevent italic formatting
-      return text.replace(/_/g, '\\_');
+    const toMarkdownName = (name) => {
+      // Preserve double spaces in GitHub markdown by converting to nbsp
+      // Also escape underscores to avoid italics
+      const escaped = name.replace(/_/g, '\\_');
+      return escaped.replace(/  /g, '&nbsp;&nbsp;');
     };
 
     const formatContributors = (contributors) => {
       return contributors
         .map((contributor) =>
           contributor.url
-            ? `[${escapeMarkdown(contributor.name)}](${contributor.url})`
-            : escapeMarkdown(contributor.name)
+            ? `[${toMarkdownName(contributor.name)}](${contributor.url})`
+            : toMarkdownName(contributor.name)
         )
         .join('、');
     };
