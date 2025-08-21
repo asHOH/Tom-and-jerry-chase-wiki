@@ -2,14 +2,14 @@ import type { FactionId } from '@/data/types';
 
 export const designTokens = {
   spacing: {
+    xxxs: '4px', // 1 unit
+    xxs: '6px', // 1.5 units
     xs: '8px', // 2 units
     sm: '12px', // 3 units
     md: '16px', // 4 units
     lg: '24px', // 6 units
     xl: '32px', // 8 units
     // Compact spacing for tags
-    xxs: '4px', // 1 unit - for very compact padding
-    compact: '6px', // 1.5 units - for compact tag spacing
   },
   colors: {
     faction: {
@@ -478,14 +478,12 @@ export const designTokens = {
   },
   radius: {
     none: '0',
-    sm: '4px',
+    xs: '4px',
+    sm: '6px',
     md: '8px',
     lg: '12px',
     xl: '16px',
     full: '9999px',
-    // Compact radius for tags
-    xs: '3px', // Extra small for compact tags
-    compact: '6px', // Between sm and md for modern look
   },
 
   zIndex: {
@@ -591,15 +589,15 @@ export const componentTokens = {
   // Tag component tokens
   tag: {
     base: {
-      padding: `${designTokens.spacing.compact} ${designTokens.spacing.xs}`, // More compact: 6px 8px instead of 8px 12px
-      borderRadius: designTokens.radius.compact, // More rounded: 6px instead of 4px
+      padding: `${designTokens.spacing.xxs} ${designTokens.spacing.xs}`, // More compact: 6px 8px instead of 8px 12px
+      borderRadius: designTokens.radius.sm, // More rounded: 6px instead of 4px
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: '1px solid transparent', // Add subtle border for better definition
     },
     compact: {
-      padding: `${designTokens.spacing.xxs} ${designTokens.spacing.compact}`, // Very compact: 4px 6px
-      borderRadius: designTokens.radius.compact, // Smaller radius for tiny tags
+      padding: `${designTokens.spacing.xxxs} ${designTokens.spacing.xxs}`, // Very compact: 4px 6px
+      borderRadius: designTokens.radius.sm, // Smaller radius for tiny tags
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: '1px solid transparent',

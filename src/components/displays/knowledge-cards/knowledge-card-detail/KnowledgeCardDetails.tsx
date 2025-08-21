@@ -91,8 +91,8 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                   <p
                     className='text-base text-gray-700 dark:text-gray-300'
                     style={{
-                      paddingTop: designTokens.spacing.xxs,
-                      paddingBottom: designTokens.spacing.xxs,
+                      paddingTop: designTokens.spacing.xxxs,
+                      paddingBottom: designTokens.spacing.xxxs,
                     }}
                   >
                     <Tag colorStyles={rankColors} size='md'>
@@ -102,8 +102,8 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                   <p
                     className='text-base text-gray-700 dark:text-gray-300'
                     style={{
-                      paddingTop: designTokens.spacing.xxs,
-                      paddingBottom: designTokens.spacing.xxs,
+                      paddingTop: designTokens.spacing.xxxs,
+                      paddingBottom: designTokens.spacing.xxxs,
                     }}
                   >
                     <Tag colorStyles={costColors} size='md'>
@@ -198,8 +198,8 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                       style={{
                         paddingLeft: designTokens.spacing.sm,
                         paddingRight: designTokens.spacing.sm,
-                        paddingTop: designTokens.spacing.xxs,
-                        paddingBottom: designTokens.spacing.xxs,
+                        paddingTop: designTokens.spacing.xxxs,
+                        paddingBottom: designTokens.spacing.xxxs,
                       }}
                     >
                       <span className='font-bold'>Lv.{level.level}:</span>{' '}
