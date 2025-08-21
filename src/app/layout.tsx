@@ -9,7 +9,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 
-import { defaultMetadata } from '@/constants/seo';
+import { defaultMetadata, getSiteJsonLd } from '@/constants/seo';
 import './globals.css';
 import { DarkModeProvider } from '@/context/DarkModeContext';
 import { getDarkModeFromCookie } from '@/lib/darkModeActions';
@@ -36,6 +36,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
       <body className={inter.className}>
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(getSiteJsonLd()) }}
+        />
         <ErrorBoundary>
           <KeyboardNavigation />
           <OfflineIndicator />

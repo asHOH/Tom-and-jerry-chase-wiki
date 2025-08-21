@@ -72,7 +72,7 @@ export function generatePageMetadata({
   canonicalUrl,
   structuredData,
 }: PageMetadata): Metadata {
-  const fullTitle = title.includes(SITE_SHORT_NAME) ? title : `${title} - ${SITE_SHORT_NAME}`;
+  const fullTitle = title.includes(SITE_SHORT_NAME) ? title : `${title}`;
   const mergedKeywords = Array.from(new Set([...(keywords || []), ...DEFAULT_KEYWORDS]));
   const metadata: Metadata = {
     title: fullTitle,

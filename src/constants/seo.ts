@@ -23,14 +23,18 @@ export const DEFAULT_KEYWORDS = [
 
 export const defaultMetadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: SITE_NAME,
+  title: { default: SITE_NAME, template: `%s - ${SITE_SHORT_NAME}` },
   description: DEFAULT_DESCRIPTION,
   keywords: DEFAULT_KEYWORDS,
   authors: [{ name: SITE_NAME }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
-  robots: 'index, follow',
-  alternates: { canonical: SITE_URL },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1',
+  },
+  alternates: { canonical: SITE_URL, languages: { 'zh-CN': SITE_URL, 'x-default': SITE_URL } },
   openGraph: {
     type: 'website',
     locale: SITE_LOCALE,
@@ -51,15 +55,16 @@ export const defaultMetadata: Metadata = {
     shortcut: '/favicon.ico',
     apple: DEFAULT_IMAGE,
   },
-  other: {
-    'application/ld+json': JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: SITE_NAME,
-      alternateName: SITE_SHORT_NAME,
-      description: `${SITE_NAME} - ${SITE_TAGLINE}`,
-      url: SITE_URL,
-      inLanguage: SITE_LANG,
-    }),
-  },
 };
+
+export function getSiteJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    alternateName: SITE_SHORT_NAME,
+    description: `${SITE_NAME} - ${SITE_TAGLINE}`,
+    url: SITE_URL,
+    inLanguage: SITE_LANG,
+  } as const;
+}
