@@ -2,9 +2,12 @@ import React from 'react';
 import Tooltip from '../../../ui/Tooltip';
 import { renderTextWithHighlights } from '../../../../lib/textUtils';
 import { useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data';
+import { characters, cards } from '@/data';
 import { proxy, useSnapshot } from 'valtio';
 import GotoLink from '@/components/GotoLink';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { getCardRankColors } from '@/lib/design-tokens';
+import Tag from '@/components/ui/Tag';
 
 /**
  * Parse and render text with tooltips for patterns like {visible text}
@@ -16,7 +19,8 @@ export const renderTextWithTooltips = (
   text: string,
   attackBoost: number | null,
   index: number,
-  wallCrackDamageBoost?: number
+  wallCrackDamageBoost?: number,
+  isDarkMode: boolean = false
 ): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
   let lastIndex = 0;
@@ -54,7 +58,24 @@ export const renderTextWithTooltips = (
     } else {
       visibleText = content;
       const totalAttack = parseFloat(visibleText);
+
+      // If it's not a number or attack boost not available, try rendering as Knowledge Card tag
       if (Number.isNaN(totalAttack) || attackBoost == null) {
+        const card = cards[content as keyof typeof cards];
+        if (card) {
+          const rankColors = getCardRankColors(card.rank, false, isDarkMode);
+          parts.push(
+            <GotoLink name={content} className='no-underline' key={`${card.rank}-${match.index}`}>
+              <Tag colorStyles={rankColors} size='sm' variant='compact' role='link'>
+                {content}
+              </Tag>
+            </GotoLink>
+          );
+          lastIndex = tooltipPattern.lastIndex;
+          continue;
+        }
+
+        // Fallback to plain goto link for non-card references
         parts.push(
           <GotoLink
             name={content}
@@ -67,8 +88,17 @@ export const renderTextWithTooltips = (
         lastIndex = tooltipPattern.lastIndex;
         continue;
       }
+
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
       tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也能享受到其他来源的攻击增伤加成`;
+
+      parts.push(
+        <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
+          {visibleText}
+        </Tooltip>
+      );
+      lastIndex = tooltipPattern.lastIndex;
+      continue;
     }
 
     parts.push(
@@ -94,6 +124,7 @@ interface TextWithHoverTooltipsProps {
 const emptyObject = proxy({ attackBoost: 0 });
 
 export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsProps) {
+  const [isDarkMode] = useDarkMode();
   const highlightedParts = renderTextWithHighlights(text); // Handles **bold**
   const intermediateParts: (string | React.ReactElement)[] = [];
   const rawLocalCharacter = characters[useLocalCharacter().characterId];
@@ -141,7 +172,10 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
           part,
           localCharacter.attackBoost ?? null,
           index,
-          'wallCrackDamageBoost' in localCharacter ? localCharacter.wallCrackDamageBoost : undefined
+          'wallCrackDamageBoost' in localCharacter
+            ? localCharacter.wallCrackDamageBoost
+            : undefined,
+          isDarkMode
         )
       );
     } else {
