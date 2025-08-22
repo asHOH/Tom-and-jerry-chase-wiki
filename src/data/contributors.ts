@@ -433,6 +433,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'HZZHD',
+    name: 'HZZHD',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['梦游杰瑞'],
+      },
+    ],
+  },
+  {
     id: 'leshanhaoshi',
     name: '乐善好施陈阿姨',
     url: 'https://space.bilibili.com/418408689',
