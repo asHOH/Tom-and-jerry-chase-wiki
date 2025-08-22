@@ -2,16 +2,16 @@ import type { FactionId } from '@/data/types';
 
 export const designTokens = {
   spacing: {
-    xxxxxxs: '3px',
-    xxxxxs: '4px', // 1 unit
-    xxxxs: '5px',
-    xxxs: '6px',
-    xxs: '7px',
-    xs: '8px',
-    sm: '12px',
-    md: '16px',
-    lg: '24px',
-    xl: '32px',
+    xxxxxxs: '0.1875rem', // 3px
+    xxxxxs: '0.25rem', // 4px (1 unit)
+    xxxxs: '0.3125rem', // 5px
+    xxxs: '0.375rem', // 6px
+    xxs: '0.4375rem', // 7px
+    xs: '0.5rem', // 8px
+    sm: '0.75rem', // 12px
+    md: '1rem', // 16px
+    lg: '1.5rem', // 24px
+    xl: '2rem', // 32px
   },
   colors: {
     faction: {
@@ -480,11 +480,11 @@ export const designTokens = {
   },
   radius: {
     none: '0',
-    xs: '4px',
-    sm: '6px',
-    md: '8px',
-    lg: '12px',
-    xl: '16px',
+    xs: '0.25rem', // 4px
+    sm: '0.375rem', // 6px
+    md: '0.5rem', // 8px
+    lg: '0.75rem', // 12px
+    xl: '1rem', // 16px
     full: '9999px',
   },
 
@@ -511,7 +511,7 @@ export const designTokens = {
 export const componentTokens = {
   factionButton: {
     base: {
-      padding: '16px 24px',
+      padding: '1rem 1.5rem', // 16px 24px
       borderRadius: designTokens.radius.md,
       fontSize: designTokens.typography.fontSize.base,
       fontWeight: designTokens.typography.fontWeight.bold,
@@ -526,14 +526,14 @@ export const componentTokens = {
       gap: designTokens.spacing.xs,
       textAlign: 'center' as const,
       flex: 1,
-      minWidth: '180px',
+      minWidth: '11.25rem', // 180px
       backgroundColor: designTokens.colors.faction.background,
       color: designTokens.colors.faction.text,
       boxShadow: designTokens.shadows.card,
     },
 
     mobile: {
-      padding: '12px 16px',
+      padding: '0.75rem 1rem', // 12px 16px
     },
 
     content: {
@@ -555,7 +555,7 @@ export const componentTokens = {
     description: {
       fontSize: designTokens.typography.fontSize.sm,
       color: designTokens.colors.faction.textSecondary,
-      marginTop: '4px',
+      marginTop: '0.25rem', // 4px
     },
 
     hover: {
@@ -571,7 +571,7 @@ export const componentTokens = {
     justifyContent: 'center',
     gap: designTokens.spacing.lg,
     width: '100%',
-    maxWidth: '700px',
+    maxWidth: '43.75rem', // 700px
     margin: '0 auto',
   },
 
