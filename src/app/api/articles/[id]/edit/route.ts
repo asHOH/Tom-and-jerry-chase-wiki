@@ -3,9 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request, { params }: { params: { id?: string } }) {
-  // await params as requested (params may be a plain object but awaiting a resolved promise
-  // satisfies the requirement while keeping behavior unchanged)
-  const id = (await Promise.resolve(params))?.id;
+  const id = params?.id;
 
   const supabase = await createClient();
   const {
@@ -26,6 +24,22 @@ export async function POST(request: Request, { params }: { params: { id?: string
   }
 
   try {
+    const { data: article, error: articleError } = await supabaseAdmin
+      .from('articles')
+      .select('author_id')
+      .eq('id', id)
+      .single();
+
+    if (articleError) {
+      return NextResponse.json({ error: 'Article not found' }, { status: 404 });
+    }
+
+    const { data: userRole } = await supabaseAdmin.rpc('get_user_role', { p_user_id: user.id });
+
+    if (article.author_id !== user.id && userRole !== 'Coordinator' && userRole !== 'Reviewer') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { data, error } = await supabaseAdmin.rpc('submit_article', {
       p_article_id: id,
       p_title: title,

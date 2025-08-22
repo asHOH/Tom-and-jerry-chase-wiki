@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, ReactNode } from 'react';
+import { useEffect, ReactNode, use } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 import { supabase } from '@/lib/supabase/client';
 
@@ -22,6 +22,10 @@ export const UserProvider = ({
   children: ReactNode;
   initialValue: Promise<UserType>;
 }) => {
+  const initialUser = use(initialValue);
+  useEffect(() => {
+    Object.assign(userObject, initialUser);
+  });
   useEffect(() => {
     (async () => {
       Object.assign(userObject, await initialValue);
