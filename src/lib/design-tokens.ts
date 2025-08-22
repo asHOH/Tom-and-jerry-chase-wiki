@@ -2,14 +2,16 @@ import type { FactionId } from '@/data/types';
 
 export const designTokens = {
   spacing: {
-    xxxs: '4px', // 1 unit
-    xxs: '6px', // 1.5 units
-    xs: '8px', // 2 units
-    sm: '12px', // 3 units
-    md: '16px', // 4 units
-    lg: '24px', // 6 units
-    xl: '32px', // 8 units
-    // Compact spacing for tags
+    xxxxxxs: '3px',
+    xxxxxs: '4px', // 1 unit
+    xxxxs: '5px',
+    xxxs: '6px',
+    xxs: '7px',
+    xs: '8px',
+    sm: '12px',
+    md: '16px',
+    lg: '24px',
+    xl: '32px',
   },
   colors: {
     faction: {
@@ -589,18 +591,25 @@ export const componentTokens = {
   // Tag component tokens
   tag: {
     base: {
-      padding: `${designTokens.spacing.xxs} ${designTokens.spacing.xs}`, // More compact: 6px 8px instead of 8px 12px
-      borderRadius: designTokens.radius.sm, // More rounded: 6px instead of 4px
+      padding: `${designTokens.spacing.xxxs} ${designTokens.spacing.xs}`, // 6px 8px
+      borderRadius: designTokens.radius.sm,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
-      border: '1px solid transparent', // Add subtle border for better definition
+      border: 'none',
     },
     compact: {
-      padding: `${designTokens.spacing.xxxs} ${designTokens.spacing.xxs}`, // Very compact: 4px 6px
-      borderRadius: designTokens.radius.sm, // Smaller radius for tiny tags
+      padding: `${designTokens.spacing.xxxxs} ${designTokens.spacing.xxs}`, // 5px 7px
+      borderRadius: designTokens.radius.sm,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
-      border: '1px solid transparent',
+      border: 'none',
+    },
+    micro: {
+      padding: `${designTokens.spacing.xxxxxxs} ${designTokens.spacing.xxxxxs}`, // 3px 4px
+      borderRadius: designTokens.radius.sm,
+      fontWeight: designTokens.typography.fontWeight.medium,
+      display: 'inline-block',
+      border: 'none',
     },
   },
 

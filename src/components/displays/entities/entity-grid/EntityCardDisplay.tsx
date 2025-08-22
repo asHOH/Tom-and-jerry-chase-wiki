@@ -28,7 +28,7 @@ export default function EntityCardDisplay({ entity }: { entity: Entity }) {
           role='group'
           aria-label='衍生物属性'
         >
-          <Tag size='xs' variant='compact' colorStyles={typeColors}>
+          <Tag size='xs' margin='compact' colorStyles={typeColors}>
             {isMobile ? entity.entitytype.slice(0, 2) : entity.entitytype}
           </Tag>
         </div>

@@ -40,7 +40,7 @@ export const renderTextWithTooltips = (
       const [base, boost] = content.split('+').map((s) => parseFloat(s));
       if (base && boost) {
         visibleText = String(base + boost);
-        tooltipContent = `基础伤害${base}+角色增伤${boost}，同时也能享受到其他来源的攻击增伤加成`;
+        tooltipContent = `基础伤害${base}+角色增伤${boost}，同时也享受其他来源的攻击增伤加成`;
       } else {
         visibleText = content;
         tooltipContent = content;
@@ -69,9 +69,9 @@ export const renderTextWithTooltips = (
               <Tag
                 colorStyles={rankColors}
                 size='sm'
-                variant='compact'
+                margin='micro'
                 role='link'
-                className='mx-0.5'
+                className='ml-0.75 mr-0.5'
               >
                 {content}
               </Tag>
@@ -96,7 +96,7 @@ export const renderTextWithTooltips = (
       }
 
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
-      tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也能享受到其他来源的攻击增伤加成`;
+      tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也享受其他来源的攻击增伤加成`;
 
       parts.push(
         <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>

@@ -32,10 +32,10 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
           role='group'
           aria-label='道具属性'
         >
-          <Tag size='xs' variant='compact' colorStyles={typeColors}>
+          <Tag size='xs' margin='compact' colorStyles={typeColors}>
             {isMobile ? item.itemtype.slice(0, 2) : item.itemtype}
           </Tag>
-          <Tag size='xs' variant='compact' colorStyles={sourceColors}>
+          <Tag size='xs' margin='compact' colorStyles={sourceColors}>
             {isMobile ? item.itemsource.slice(0, 2) : item.itemsource}
           </Tag>
           {/* {typeof item.damage === 'number' && (

@@ -64,7 +64,7 @@ export default function PreviewCard({
         <div className='flex flex-col items-start w-0 flex-1'>
           {!hideImage && imageUrl ? (
             <>
-              <Tag colorStyles={typeTokenStyles(type)} size='xs' variant='compact' className='mb-2'>
+              <Tag colorStyles={typeTokenStyles(type)} size='xs' margin='compact' className='mb-2'>
                 {typeLabels[type] || type}
               </Tag>
               <div
@@ -85,7 +85,7 @@ export default function PreviewCard({
               <Tag
                 colorStyles={typeTokenStyles(type)}
                 size='xs'
-                variant='compact'
+                margin='compact'
                 className='flex-shrink-0'
               >
                 {typeLabels[type] || type}
