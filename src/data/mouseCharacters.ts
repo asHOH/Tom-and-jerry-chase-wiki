@@ -3408,7 +3408,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description: '额外造成大量伤害、可以击落猫手中道具和老鼠。',
-            detailedDescription: '额外造成90伤害并使敌方眩晕0.4秒、可以击落猫手中道具和老鼠。',
+            detailedDescription: '额外造成{90}伤害并使敌方眩晕0.4秒、可以击落猫手中道具和老鼠。',
             cooldown: 15,
           },
           {
@@ -3461,6 +3461,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description: '每分钟鼠方全体获得佩克斯赠与的额外经验值，每次获得的经验值逐渐提升。',
+            detailedDescription:
+              '每分钟鼠方全体获得佩克斯赠与的额外经验值，每次获得的经验值逐渐提升（经验为平分的总经验，依次为800→1000→1200→1400→1600，1600往后不再叠加）。',
           },
           {
             level: 2,
@@ -3473,9 +3475,82 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             description:
               '进入虚弱状态时，直接回满Hp，同时获得短暂的无敌效果（每局限1次）；佩克斯从火箭上救下队友可以刷新此效果（每局限1次）。',
             detailedDescription:
-              '进入虚弱状态时，立即解除虚弱并回复200Hp，同时获得短暂的无敌效果（CD：15分钟），佩克斯从火箭上救下队友可以刷新此效果（每局限1次）。',
+              '进入虚弱状态时，立即解除虚弱并回复200Hp，同时获得短暂的无敌效果（CD：15分钟，可通过吃蛋糕减少），佩克斯从火箭上救下队友可以刷新此效果（每局限1次）。',
           },
         ],
+      },
+    ],
+    counters: [
+      {
+        id: '莱特宁',
+        description: '缺霸体不好上火箭，后期三级闪有一定反制能力。',
+        isMinor: false,
+      },
+      {
+        id: '米特',
+        description: '一个琴高伤害远击退还掉胡椒粉。',
+        isMinor: false,
+      },
+      {
+        id: '剑客汤姆',
+        description: '缺霸体不好上火箭，伤害还高。',
+        isMinor: false,
+      },
+      {
+        id: '苏蕊',
+        description: '击退和高伤有一定能力反制跳舞。',
+        isMinor: true,
+      },
+      {
+        id: '如玉',
+        description: '不能反击，124血还不容易打死。',
+        isMinor: false,
+      },
+      {
+        id: '汤姆',
+        description: '击退有一定能力反制无敌。',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '图多盖洛',
+        description: '一直霸体和回复很克制，但武器技能可以突破防守，琴可以弹开香水。',
+        isMinor: true,
+      },
+      {
+        id: '库博',
+        description: '高伤、高回复和强机动性非常克制佩克斯。',
+        isMinor: false,
+      },
+      {
+        id: '天使汤姆',
+        description: '高伤、高回复和强机动性非常克制佩克斯。',
+        isMinor: false,
+      },
+      {
+        id: '斯飞',
+        description: '电可以抓住前摇绑上火箭。',
+        isMinor: true,
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '蓄力重击',
+        description: '克制高血量老鼠。',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '雪梨',
+        description: '可以为佩克斯提供续航。',
+        isMinor: false,
+      },
+      {
+        id: '牛仔杰瑞',
+        description: '牛仔控住可接弹琴，一被提供的经验可以助他活到后期。',
+        isMinor: false,
       },
     ],
   },

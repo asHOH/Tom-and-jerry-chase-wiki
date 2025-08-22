@@ -79,6 +79,7 @@ export const contributors: Contributor[] = [
           '图多盖洛',
           '塔拉',
           '朵朵',
+          '兔八哥',
         ],
       },
       {
@@ -108,6 +109,7 @@ export const contributors: Contributor[] = [
           '图多盖洛',
           '塔拉',
           '朵朵',
+          '兔八哥',
         ],
       },
       {
