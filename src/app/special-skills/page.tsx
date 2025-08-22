@@ -8,9 +8,9 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = generatePageMetadata({
-  title: '特技 - 猫鼠wiki',
+  title: '特技',
   description: '特殊技能列表，展示所有特殊技能及其效果',
-  keywords: ['特技', '猫和老鼠', '手游', '攻略'],
+  keywords: ['特技'],
   canonicalUrl: 'https://tjwiki.com/special-skills',
 });
 

@@ -9,10 +9,10 @@ export const dynamic = 'force-static';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generatePageMetadata({
-    title: '角色属性排行榜 - 猫鼠wiki',
+    title: '角色属性排行榜',
     description:
       '查看猫和老鼠手游中所有角色在各项属性上的排名对比，包括移速、HP、攻击力等数据分析。',
-    keywords: ['角色排行榜', '属性对比', '数据分析', '猫和老鼠', '手游', '攻略'],
+    keywords: ['角色排行榜', '属性对比', '数据分析'],
     canonicalUrl: 'https://tjwiki.com/ranks',
   });
 }

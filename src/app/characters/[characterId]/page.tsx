@@ -54,9 +54,9 @@ export async function generateMetadata({
   };
 
   return generatePageMetadata({
-    title: `${character.id} - 猫鼠wiki`,
+    title: character.id,
     description: `${character.id}详细信息 - 属性、技能、加点、知识卡推荐`,
-    keywords: [character.id, '猫和老鼠', '手游', '攻略'],
+    keywords: [character.id],
     canonicalUrl: `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
     structuredData,
   });
