@@ -89,6 +89,10 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       setError('昵称不能为空。');
       return;
     }
+    if (password.trim() === '' && process.env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH) {
+      setError('密码不能为空。');
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -189,7 +193,9 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             />
             <input
               type='password'
-              placeholder='密码（可选）'
+              placeholder={
+                process.env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH ? '密码' : '密码（可选）'
+              }
               className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}

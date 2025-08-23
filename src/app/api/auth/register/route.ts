@@ -28,6 +28,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!password && process.env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH) {
+      return NextResponse.json({ error: 'Password is required.' }, { status: 400 });
+    }
+
     const salt = randomBytes(16).toString('hex');
     const usernameHash = hashUsername(username);
     const passwordHash = password ? hashPassword(password, salt) : '';

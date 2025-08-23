@@ -18,9 +18,9 @@ type NewCategory = {
 };
 
 const visibilityLabel = (v: Category['default_visibility']) => {
-  if (v === 'approved') return '已通过';
-  if (v === 'pending') return '待审核';
-  if (v === 'rejected') return '已拒绝';
+  if (v === 'approved') return '修改直接通过';
+  if (v === 'pending') return '修改需要审核';
+  if (v === 'rejected') return '禁止修改';
   if (v === 'revoked') return '已撤销';
   return v ?? '';
 };
@@ -50,7 +50,8 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
     try {
       const { error } = await supabase.rpc('create_category', {
         _name: newCategory.name,
-        _parent_category_id: (newCategory.parent_category_id ?? null)!,
+        _parent_category_id:
+          newCategory.parent_category_id ?? categories.find(({ name }) => name == '根分类')!.id,
         _default_visibility: newCategory.default_visibility,
       });
 
@@ -60,7 +61,11 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
 
       setMessage({ type: 'success', text: '已创建分类' });
       mutateCategories(); // Revalidate categories data
-      setNewCategory({ name: '', parent_category_id: undefined, default_visibility: 'approved' });
+      setNewCategory({
+        name: '',
+        parent_category_id: categories.find(({ name }) => name == '根分类')!.id,
+        default_visibility: 'approved',
+      });
     } catch (error) {
       console.error('Error creating category:', error);
       setMessage({ type: 'error', text: '创建分类失败' });
@@ -160,7 +165,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
             }
             className='border p-2 rounded'
           >
-            <option value=''>无（根分类）</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
@@ -229,12 +233,14 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                       >
                         编辑
                       </button>
-                      <button
-                        onClick={() => handleDeleteCategory(category.id)}
-                        className='bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded'
-                      >
-                        删除
-                      </button>
+                      {category.name !== '根分类' && (
+                        <button
+                          onClick={() => handleDeleteCategory(category.id)}
+                          className='bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded'
+                        >
+                          删除
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -262,25 +268,26 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
               onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
               className='border p-2 rounded flex-1'
             />
-            <select
-              value={editingCategory.parent_category_id ?? ''}
-              onChange={(e) =>
-                setEditingCategory((prev) => ({
-                  ...prev,
-                  parent_category_id: e.target.value === '' ? null : (e.target.value as string),
-                }))
-              }
-              className='border p-2 rounded'
-            >
-              <option value=''>无（根分类）</option>
-              {categories
-                .filter((c) => c.id !== editingCategory.id) // avoid choosing itself as parent
-                .map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-            </select>
+            {editingCategory.name != '根分类' && (
+              <select
+                value={editingCategory.parent_category_id ?? ''}
+                onChange={(e) =>
+                  setEditingCategory((prev) => ({
+                    ...prev,
+                    parent_category_id: e.target.value === '' ? null : (e.target.value as string),
+                  }))
+                }
+                className='border p-2 rounded'
+              >
+                {categories
+                  .filter((c) => c.id !== editingCategory.id) // avoid choosing itself as parent
+                  .map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+              </select>
+            )}
             <select
               value={editingCategory.default_visibility ?? ''}
               onChange={(e) =>
@@ -291,8 +298,9 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
               }
               className='border p-2 rounded'
             >
-              <option value='approved'>已通过</option>
-              <option value='pending'>待审核</option>
+              <option value='approved'>修改直接通过</option>
+              <option value='pending'>修改需要审核</option>
+              <option value='rejected'>禁止修改</option>
             </select>
             <div className='flex gap-2'>
               <button
