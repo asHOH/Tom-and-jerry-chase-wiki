@@ -5548,7 +5548,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         id: '仙女鼠',
-        description: '1星可以低成本为朵朵恢复电量。',
+        description: '1星可以低成本为朵朵回复电量。',
         isMinor: true,
       },
     ],
