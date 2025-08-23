@@ -81,6 +81,7 @@ export const contributors: Contributor[] = [
           '塔拉',
           '朵朵',
           '兔八哥',
+          '罗宾汉杰瑞',
         ],
       },
       {
@@ -111,6 +112,7 @@ export const contributors: Contributor[] = [
           '塔拉',
           '朵朵',
           '兔八哥',
+          '罗宾汉杰瑞',
         ],
       },
       {
@@ -412,7 +414,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['罗宾汉泰菲'],
+        characters: ['罗宾汉泰菲', '罗宾汉杰瑞'],
       },
     ],
   },
@@ -443,6 +445,16 @@ export const contributors: Contributor[] = [
       {
         type: RoleType.ContentWriter,
         characters: ['梦游杰瑞'],
+      },
+    ],
+  },
+  {
+    id: 'xiaozheng',
+    name: '小郑',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['罗宾汉杰瑞'],
       },
     ],
   },

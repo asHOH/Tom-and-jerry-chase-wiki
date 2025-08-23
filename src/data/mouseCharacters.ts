@@ -391,6 +391,338 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
   },
 
+  /* ----------------------------------- 罗宾汉杰瑞 ----------------------------------- */
+  罗宾汉杰瑞: {
+    description: '来自12世纪英国的侠盗罗宾汉，身手敏捷，快迅如风，拥有在空中二段跳的能力。',
+    maxHp: 99,
+    attackBoost: 10,
+    hpRecovery: 1.67,
+    moveSpeed: 660,
+    jumpHeight: 400,
+    cheesePushSpeed: 3.6,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '罗宾汉推速较快，自身灵活性也高，可作为队伍副推位。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '辅助',
+        isMinor: false,
+        description: '二段跳的全图支援非常强力。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '后期',
+        isMinor: false,
+        description: '罗宾汉速度很快且非常灵活，后期哪怕是有七层乘胜的猫也很难追上他。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '降落伞',
+        pattern: '12[12]12000',
+        weaponType: 'weapon1',
+        description: '',
+        additionaldescription: '',
+      },
+      {
+        id: '降落伞2',
+        pattern: '1200[12][12]0',
+        weaponType: 'weapon1',
+        description: '打剑汤推荐加点。',
+      },
+      {
+        id: '登山镐常规加点',
+        pattern: '13[13][13]000',
+        weaponType: 'weapon2',
+        description: '视情况决定主动和武器的加点顺序。',
+        additionaldescription: '',
+      },
+      {
+        id: '登山飞镐2',
+        pattern: '13300[13]10',
+        weaponType: 'weapon1',
+        description: '打牛汤推荐加点。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description: '强自保，高等级后速度很快，猫很难追上，逃窜在受伤后加速，不屈献祭队友。',
+      },
+      {
+        cards: ['S-铁血', 'B-幸运', 'C-不屈', 'C-脱身', 'A-逃窜'],
+        description: '幸运卡组，幸运交后注意自保，逃窜可换救救我。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'C-救救我', 'B-飞跃', 'C-不屈'],
+        description: '有飞跃可以上更多点位，不屈可以替换。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'C-不屈', 'B-夹不住我'],
+        description: '20知识量平替卡组，不屈、夹不住我可换。',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'C-救救我', 'A-逃窜'],
+        description: '打特殊猫专用无畏卡组，一般情况不建议。',
+      },
+    ],
+    skills: [
+      {
+        name: '二段跳',
+        type: 'active',
+        description: '全体队友获得二段跳状态，并提高移速，持续一段时间。',
+        detailedDescription:
+          '全体队友[获得二段跳状态](可被部分免疫状态的效果免疫，例如自身的降落伞降落期间)（移速提升10%，且可在空中[进行1次额外跳跃](从上一次接触平台/地面起，至多进行2次跳跃，再次接触平台/地面时重置。多个额外跳跃效果取次数最高的生效)），持续一段时间。（不同等级二段跳提供的移速加成可叠加）',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: '无后摇',
+        videoUrl: '',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '持续3.9秒。',
+            cooldown: 25,
+          },
+          {
+            level: 2,
+            description: '二段跳持续时间更长。',
+            cooldown: 25,
+            detailedDescription: '持续时间增加至6.45秒。',
+          },
+          {
+            level: 3,
+            description: '二段跳期间还能提高跳跃高度，且自身获得三段跳。',
+            cooldown: 25,
+            detailedDescription:
+              '二段跳状态追加使跳跃高度提高12.5%的效果。[自身在二段跳状态下改为可进行2次额外跳跃](包括自身因其他罗宾汉杰瑞技能获得的二段跳效果。额外跳跃：从上一次接触平台/地面起，至多进行3次跳跃，再次接触平台/地面时重置。多个额外跳跃效果取次数最高的生效)。',
+          },
+        ],
+        cooldownTiming: '前摇前',
+      },
+      {
+        name: '降落伞',
+        aliases: ['伞'],
+        type: 'weapon1',
+        description:
+          '打开降落伞，从高处落下不受到任何阻碍，[期间免疫大部分效果](包括绝大多数负面和正面效果)，若落地则进入不可取消后摇，过程中可随时跳跃。',
+        detailedDescription:
+          '打开降落伞，[重置自身竖直方向的初速度为向上的100](因此会向上飘一小段距离)，并获得使重力加速度变为1000/秒²的[失重状态](失重：改变重力加速度的值。通常认为正常重力环境下重力加速度为3000/秒²，角色合速度上限为2000/秒)；降落期间无视所有平台，且[免疫大部分效果](包括绝大多数负面和正面效果，如二段跳，干扰器隐身；部分“接触地面时”延迟触发的效果除外，如平底锅的落地伤害和眩晕，Lv.3魅力甲油的使敌方钉在地板上的效果)，接触地面后进入0.65秒不可取消后摇；降落过程中可随时[进行1次额外跳跃](该跳跃属于技能效果，额外跳跃不受跳跃次数的限制，但仍记为一次跳跃（例如在二段跳情况下可通过普通跳跃+降落伞跳跃进行二段跳，但此时无法再通过二段跳效果进行三段跳；反之若通过普通跳跃+二段跳跳跃进行二段跳，那仍可通过降落伞效果进行三段跳）)，{绝处逢生}也可终止技能。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: ['跳跃键'],
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 10,
+            detailedDescription: '',
+          },
+          {
+            level: 2,
+            description: '离开降落伞后，短暂提高移速和救援速度。',
+            cooldown: 10,
+            detailedDescription: '降落伞状态结束后，自身移动速度和救援速度提高20%，持续3秒。',
+          },
+          {
+            level: 3,
+            description: 'CD减少至5秒。',
+            cooldown: 5,
+          },
+        ],
+        cueRange: '本房间可见',
+      },
+      {
+        name: '登山飞镐',
+        type: 'weapon2',
+        description:
+          '可存储3次。只有在[接触](包括已接触但未站立在其上的平台)平台或墙壁时才能使用飞镐。\n对于平台：尝试翻越并悬挂在平台下方，持续一段时间；悬挂期间可快速[左右移动](若移动超过平台范围则掉落)，同时逐渐叠加全面加速状态（移速、跳跃速度、救援速度、推速短暂提高），悬挂期间可点击特殊技能主动取消，也可跳跃打断，跳跃打断将获得短时间的免疫碎片和老鼠夹的效果，同时小幅提高救援速度。\n对于墙壁：短时间悬挂在墙壁上。\n悬挂期间可手持道具和喝饮料，如果手上有奶酪，则奶酪会掉落；获得变身效果也会结束悬挂。',
+        detailedDescription:
+          '可存储3次。只有在[接触](包括已接触但未站立在其上的平台——以这种方式触发则不会有翻越平台的过渡时间)可翻越平台或竖直墙壁时才能使用飞镐。\n对于平台：尝试翻越到并悬挂在平台下方，持续一段时间，悬挂期间可快速[左右移动](若移动超过平台范围则掉落)，可使用二段跳和除{魔术漂浮}以外的特技；同时[每1.5秒](进入悬挂状态时立刻触发，此后每1.5秒再触发一次)增加一层全面加速状态（移速提高10%、跳跃速度提高18%、救援速度提高11.5%、推速提高25%，持续3.75秒。除跳跃加成外的其余加成均可乘算叠加，最多叠加3层）；悬挂期间可点击特殊技能主动取消，也可跳跃打断，跳跃打断将获得免疫碎片和老鼠夹的效果，且救援速度提高6%，持续2.9秒，受到眩晕将掉落；悬挂有0.15秒后摇，若使用道具键解除后摇，或[无法进行悬挂](当两个平台距离过近时，会导致悬挂在第一个平台下时被第二个平台挤压，这种情况无法悬挂)，则会[直接解除技能](根据平台的穿越所需时间，可能出现穿越平台或仍在平台上方两种结果)，[不进行悬挂](A仍会触发获得全面加速的效果，以及Lv.2的回复效果等)。\n对于墙壁：则悬挂在墙壁上，无后摇，持续2秒。\n悬挂期间可手持道具和喝饮料，如果手上有奶酪，则奶酪会掉落；获得变身效果也会结束悬挂。',
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '，在平台下悬挂的最长时间为10秒。全面加速状态最多叠加3层。',
+            cooldown: 15,
+          },
+          {
+            level: 2,
+            description: '减少CD至8秒，对平台释放技能时可以恢复Hp，在平台下悬挂的最长时间提升。',
+            detailedDescription:
+              '减少CD至8秒，对平台释放技能时可以恢复25Hp，在平台下悬挂的最长时间提升至15秒。',
+            cooldown: 8,
+          },
+          {
+            level: 3,
+            description: '技能期间免疫控制，且不会因受到伤害而打断技能。全面加速状态最高层数增加。',
+            detailedDescription:
+              '技能期间[免疫控制](包括隐身饮料的效果)，且[不会因受到伤害而打断技能](但是可以被某些角色技能造成的效果打断如:牛仔汤姆的牛、大型仙人掌，莱特宁的垃圾桶，追风汤姆的追风双翼、战术机动，汤姆的平底锅等)。全面加速状态最多叠加层数增加至5层。',
+            cooldown: 8,
+          },
+        ],
+        canHitInPipe: false,
+        cooldownTiming: '释放时',
+        cancelableAftercast: ['道具键*'],
+        cueRange: '本房间可见',
+        aliases: ['废稿'],
+        cancelableSkill: '无前摇',
+      },
+      {
+        name: '身轻如燕',
+        type: 'passive',
+        videoUrl: '',
+        skillLevels: [
+          {
+            level: 1,
+            description: '提升跳跃的高度。',
+            detailedDescription: '跳跃速度提高7.5%（400→430）。',
+          },
+          {
+            level: 2,
+            description:
+              '受到敌方攻击后，[解除先前的控制](包括老鼠夹导致的控制，不包括虚弱)，并且获得短暂加速。',
+            detailedDescription:
+              '[受到敌方攻击后](以敌方为伤害来源的伤害均在此列，例如平底锅，斗牛，剑客连斩，捕鼠夹知识卡)，[解除先前的控制](包括老鼠夹导致的控制，不包括虚弱)，并且移速提高18.75%，持续3秒。',
+          },
+          {
+            level: 3,
+            description: '自身周围一定范围内存在敌方时，CD倒计时速度加快。',
+            detailedDescription: '自身周围一定范围内存在敌方时，CD倒计时速度加快。（该数据待补充）',
+          },
+        ],
+      },
+    ],
+    aliases: ['罗杰'],
+    counteredBy: [
+      {
+        id: '追风汤姆',
+        description: '追风的高机动性和眩晕可以反制罗宾。',
+        isMinor: false,
+      },
+      {
+        id: '天使汤姆',
+        description: '天汤的高机动性和眩晕可以反制罗宾。',
+        isMinor: false,
+      },
+      {
+        id: '恶魔汤姆',
+        description: '罗宾汉没有破局能力，打防守猫比较吃力。',
+        isMinor: false,
+      },
+      {
+        id: '牛仔汤姆',
+        description: '罗宾汉没有破局能力，打防守猫比较吃力。',
+        isMinor: false,
+      },
+      {
+        id: '兔八哥',
+        description: '罗宾汉没有破局能力，打防守猫比较吃力，但伞和加速可以躲避一波萝卜。',
+        isMinor: true,
+      },
+      {
+        id: '斯飞',
+        description: '斯飞用电和主动技能这些眩晕型攻击可以抓住机会一套秒罗宾汉。',
+        isMinor: false,
+      },
+    ],
+    counters: [
+      {
+        id: '剑客汤姆',
+        description: '罗宾汉利用Lv.2被动和降落伞可以脱离剑客汤姆的连斩。',
+        isMinor: false,
+      },
+      {
+        id: '图茨',
+        description: '罗宾汉降落伞和加速不怕图茨的喵喵叫和汽水罐。',
+        isMinor: false,
+      },
+      {
+        id: '布奇',
+        description: '布奇冲撞可以被罗宾汉二段跳或降落伞躲开；不过布奇的武器技能对罗宾汉仍有威慑。',
+        isMinor: true,
+      },
+      {
+        id: '莱特宁',
+        description:
+          '罗宾汉降落伞和莱特宁闪现CD差不多，罗宾汉听到闪现立马降落伞就能规避，且伞可以免疫垃圾桶伤害。',
+        isMinor: false,
+      },
+      {
+        id: '苏蕊',
+        description: '苏蕊跳舞时爪刀难以命中罗宾汉，瑜伽球可以二段跳或伞躲开。',
+        isMinor: false,
+      },
+      {
+        id: '如玉',
+        description: '如玉花枪反击可以被罗宾降落伞躲避，且罗宾很灵活不好追击。',
+        isMinor: false,
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝处逢生',
+        description: '高机动性可以拉远用自起。',
+      },
+      {
+        name: '应急治疗',
+        description: '被追的过程可以用治疗增加容错。',
+      },
+    ],
+    countersKnowledgeCards: [
+      {
+        id: '捕鼠夹',
+        description:
+          'Lv.2被动受伤清除控制效果，包括夹子；捕鼠夹的伤害会立刻触发该效果，直接清理夹子。',
+        isMinor: false,
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '击晕',
+        description: '用击晕可以抓住机会一套秒罗宾汉。',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '国王杰瑞',
+        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
+        isMinor: false,
+      },
+      {
+        id: '剑客泰菲',
+        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
+        isMinor: false,
+      },
+      {
+        id: '剑客莉莉',
+        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
+        isMinor: false,
+      },
+      {
+        id: '马索尔',
+        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
+        isMinor: false,
+      },
+      {
+        id: '尼宝',
+        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
+        isMinor: false,
+      },
+    ],
+  },
+
   /* ----------------------------------- 航海士杰瑞 ----------------------------------- */
   航海士杰瑞: {
     aliases: ['海盗杰瑞'],
