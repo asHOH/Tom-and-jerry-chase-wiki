@@ -395,9 +395,9 @@ export default function ArticlesClient() {
                 variant='character'
                 role='button'
                 aria-label={`查看文章 ${article.title}`}
-                className='character-card shover:shadow-lg transform transition-transform hover:-translate-y-1'
+                className='character-card shover:shadow-lg transform transition-transform! hover:-translate-y-1'
               >
-                <div className='px-4 pt-1 pb-5 flex flex-col h-full text-left'>
+                <div className='px-4 pt-2 pb-5 flex flex-col h-full text-left'>
                   <h3 className='text-xl font-bold mb-2 dark:text-white line-clamp-2'>
                     <Link href={`/articles/${article.id}`}>{article.title}</Link>
                   </h3>
@@ -419,8 +419,8 @@ export default function ArticlesClient() {
                     }}
                   />
 
-                  <div className='mt-auto'>
-                    <div className='flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-3'>
+                  <div className='mt-auto flex'>
+                    <div className='flex flex-col items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-3'>
                       <span>
                         发布: {format(new Date(article.created_at), 'MM月dd日', { locale: zhCN })}
                       </span>
@@ -432,7 +432,7 @@ export default function ArticlesClient() {
                       )}
                     </div>
 
-                    <div className='flex items-center gap-2'>
+                    <div className='flex items-center gap-2 ml-auto my-auto'>
                       <div className='flex-1' />
                       <Link
                         href={`/articles/${article.id}/history`}

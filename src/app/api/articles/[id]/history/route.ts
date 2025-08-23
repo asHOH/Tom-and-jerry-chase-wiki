@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   void request;
@@ -10,10 +10,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   try {
-    const supabase = await createClient();
-
     // First, verify the article exists
-    const { data: article, error: articleError } = await supabase
+    const { data: article, error: articleError } = await supabaseAdmin
       .from('articles')
       .select('id, title')
       .eq('id', id)
@@ -25,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Get all approved versions using the public view (RLS will filter)
-    const { data: versions, error: versionsError } = await supabase
+    const { data: versions, error: versionsError } = await supabaseAdmin
       .from('article_versions_public_view')
       .select(
         `

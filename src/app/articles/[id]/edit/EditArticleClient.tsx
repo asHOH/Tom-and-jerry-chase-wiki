@@ -253,7 +253,7 @@ const EditArticleClient: React.FC = () => {
         )}
 
         {/* Article Form */}
-        <BaseCard className='p-8'>
+        <div className='p-8 flex flex-col'>
           <form onSubmit={(e) => e.preventDefault()} className='space-y-8'>
             {/* Title Input */}
             <div className='space-y-2'>
@@ -382,7 +382,7 @@ const EditArticleClient: React.FC = () => {
               </button>
             </div>
           </form>
-        </BaseCard>
+        </div>
       </div>
     </div>
   );

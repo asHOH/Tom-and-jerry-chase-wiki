@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   void request;
@@ -10,10 +10,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   try {
-    const supabase = await createClient();
-
     // Get the article basic info
-    const { data: article, error: articleError } = await supabase
+    const { data: article, error: articleError } = await supabaseAdmin
       .from('articles')
       .select(
         `
@@ -23,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         author_id,
         created_at,
         categories(name),
-        users_public_view!articles_author_id_fkey(nickname)
+        users_public_view!author_id(nickname)
       `
       )
       .eq('id', id)
@@ -34,10 +32,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
-    // Get the latest approved version
-    const { data: latestVersion, error: versionError } = await supabase
+    // Get the latest approved version with editor info
+    const { data: latestVersion, error: versionError } = await supabaseAdmin
       .from('article_versions_public_view')
-      .select('id, content, created_at, editor_id')
+      .select(
+        `
+        id, 
+        content, 
+        created_at, 
+        editor_id,
+        users_public_view!editor_id(nickname)
+      `
+      )
       .eq('article_id', id)
       .eq('status', 'approved')
       .order('created_at', { ascending: false })
@@ -49,34 +55,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'No approved version found' }, { status: 404 });
     }
 
-    // Get the editor's nickname separately if we have an editor_id
-    let editorNickname = null;
-    if (latestVersion.editor_id) {
-      const { data: editorData, error: editorError } = await supabase
-        .from('users_public_view')
-        .select('nickname')
-        .eq('id', latestVersion.editor_id)
-        .single();
-
-      if (editorError) {
-        console.error('Error fetching editor info:', editorError);
-        // Don't fail the request if we can't get editor info
-      } else {
-        editorNickname = editorData?.nickname || null;
-      }
-    }
-
-    // Add editor info to the version
-    const versionWithEditor = {
-      ...latestVersion,
-      editor_nickname: editorNickname,
-    };
-
     // Combine the data
     const response = {
       article: {
         ...article,
-        latest_version: versionWithEditor,
+        latest_version: latestVersion,
       },
     };
 

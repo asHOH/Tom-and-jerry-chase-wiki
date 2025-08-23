@@ -53,6 +53,8 @@ export default function ArticleClient() {
     fetcher
   );
 
+  console.log({ data });
+
   const article = data?.article;
   const loading = !data && !error;
 

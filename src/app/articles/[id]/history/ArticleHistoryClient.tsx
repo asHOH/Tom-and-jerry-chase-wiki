@@ -127,8 +127,8 @@ export default function ArticleHistoryClient() {
   return (
     <div className='container mx-auto px-4 py-8 max-w-6xl'>
       {/* Header */}
-      <div className='mb-8'>
-        <div className='flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4'>
+      <header className='mb-8 text-center'>
+        {/* <div className='flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4'>
           <Link
             href={`/articles/${articleId}`}
             className='hover:text-blue-600 dark:hover:text-blue-400'
@@ -137,7 +137,7 @@ export default function ArticleHistoryClient() {
           </Link>
           <span>/</span>
           <span>历史版本</span>
-        </div>
+        </div> */}
 
         <PageTitle>版本历史</PageTitle>
 
@@ -145,7 +145,7 @@ export default function ArticleHistoryClient() {
           <p>分类: {data.article.categories?.name || '未分类'}</p>
           <p className='mt-1'>共 {data.versions.length} 个版本</p>
         </div>
-      </div>
+      </header>
 
       {/* Comparison Actions */}
       {selectedVersions.length === 2 && (
@@ -178,7 +178,7 @@ export default function ArticleHistoryClient() {
       {/* Version List */}
       <div className='space-y-4'>
         {data.versions.map((version, index) => (
-          <BaseCard key={version.id} className='p-6'>
+          <div key={version.id} className='p-6'>
             <div className='flex items-start justify-between'>
               <div className='flex-1'>
                 <div className='flex items-center gap-4 mb-3'>
@@ -306,7 +306,7 @@ export default function ArticleHistoryClient() {
                 )}
               </div>
             </div>
-          </BaseCard>
+          </div>
         ))}
       </div>
 

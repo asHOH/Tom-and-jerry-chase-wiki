@@ -1,19 +1,12 @@
-'use client';
-
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { EditorContent, useEditor, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
-// import { Table } from '@tiptap/extension-table';
-// import TableRow from '@tiptap/extension-table-row';
-// import TableCell from '@tiptap/extension-table-cell';
-// import TableHeader from '@tiptap/extension-table-header';
-// import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-// import { createLowlight } from 'lowlight';
 import clsx from 'clsx';
+import { htmlToWikiText, wikiTextToHTML } from '@/lib/richTextUtils';
 
 interface RichTextEditorProps {
   content?: string;
@@ -56,7 +49,11 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
   </button>
 );
 
-const Toolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
+const Toolbar: React.FC<{
+  editor: Editor;
+  viewMode: string;
+  onModeChange: (mode: 'rich' | 'wiki' | 'html') => void;
+}> = ({ editor, viewMode, onModeChange }) => {
   const addImage = useCallback(() => {
     const url = window.prompt('图片链接');
     if (url) {
@@ -79,10 +76,6 @@ const Toolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
 
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   }, [editor]);
-
-  // const insertTable = useCallback(() => {
-  //   editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
-  // }, [editor]);
 
   return (
     <div className='border-b border-gray-300 dark:border-gray-600 p-3 bg-gray-50 dark:bg-gray-800/50'>
@@ -324,17 +317,6 @@ const Toolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
               />
             </svg>
           </ToolbarButton>
-
-          {/* <ToolbarButton onClick={insertTable} title='插入表格'>
-            <svg className='size-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M3 10h18M3 14h18m-9-4v8m-7 0V4a1 1 0 011-1h12a1 1 0 011 1v16a1 1 0 01-1 1H5a1 1 0 01-1-1z'
-              />
-            </svg>
-          </ToolbarButton> */}
         </div>
 
         <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
@@ -371,6 +353,35 @@ const Toolbar: React.FC<{ editor: Editor }> = ({ editor }) => {
             </svg>
           </ToolbarButton>
         </div>
+
+        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+
+        {/* View Switcher */}
+        <div className='flex items-center gap-1'>
+          <ToolbarButton
+            onClick={() => onModeChange('rich')}
+            isActive={viewMode === 'rich'}
+            title='富文本'
+          >
+            Rich
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => onModeChange('html')}
+            isActive={viewMode === 'html'}
+            title='HTML'
+          >
+            HTML
+          </ToolbarButton>
+          {!process.env.NEXT_PUBLIC_DISABLE_WIKITEXT_EDITOR && (
+            <ToolbarButton
+              onClick={() => onModeChange('wiki')}
+              isActive={viewMode === 'wiki'}
+              title='WikiText'
+            >
+              WikiText (实验性功能)
+            </ToolbarButton>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -382,7 +393,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   placeholder = '',
   className,
 }) => {
-  // const lowlight = createLowlight();
+  const [viewMode, setViewMode] = useState<'rich' | 'wiki' | 'html'>('rich');
+  const [rawContent, setRawContent] = useState('');
 
   const editor = useEditor({
     extensions: [
@@ -403,20 +415,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           class: 'max-w-full h-auto rounded-lg',
         },
       }),
-      // Table.configure({
-      //   resizable: true,
-      // }),
-      // TableRow,
-      // TableHeader,
-      // TableCell,
-      // CodeBlockLowlight.configure({
-      //   lowlight,
-      //   HTMLAttributes: {
-      //     class: 'bg-gray-100 dark:bg-gray-800 rounded-md p-4 font-mono text-sm',
-      //   },
-      // }),
     ],
-    content: content || `<p>${placeholder}</p>`,
+    content: content || placeholder,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       if (onChange) {
@@ -438,10 +438,36 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   });
 
   useEffect(() => {
-    if (editor) {
-      editor.commands.setContent(placeholder);
+    if (editor && placeholder && placeholder !== editor.getHTML()) {
+      editor.commands.setContent(placeholder, { emitUpdate: true });
     }
   }, [placeholder, editor]);
+
+  useEffect(() => {
+    setRawContent(placeholder);
+  }, [placeholder]);
+
+  const handleModeChange = (mode: 'rich' | 'wiki' | 'html') => {
+    if (!editor) return;
+
+    if (mode === viewMode) return;
+
+    const currentHtml = editor.getHTML();
+
+    if (mode === 'wiki') {
+      setRawContent(htmlToWikiText(currentHtml));
+    } else if (mode === 'html') {
+      setRawContent(currentHtml);
+    } else {
+      // Switching back to rich text
+      let newHtml = rawContent;
+      if (viewMode === 'wiki') {
+        newHtml = wikiTextToHTML(rawContent);
+      }
+      editor.commands.setContent(newHtml);
+    }
+    setViewMode(mode);
+  };
 
   if (!editor) {
     return (
@@ -470,8 +496,21 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <div className='border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 overflow-hidden'>
-      <Toolbar editor={editor} />
-      <EditorContent editor={editor} />
+      <Toolbar editor={editor} viewMode={viewMode} onModeChange={handleModeChange} />
+      {viewMode === 'rich' ? (
+        <EditorContent editor={editor} />
+      ) : (
+        <textarea
+          value={rawContent}
+          onChange={(e) => setRawContent(e.target.value)}
+          className={clsx(
+            'w-full h-full p-6 min-h-[400px] bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100',
+            'font-mono text-sm focus:outline-none',
+            className
+          )}
+          aria-label={viewMode === 'wiki' ? 'WikiText editor' : 'HTML editor'}
+        />
+      )}
     </div>
   );
 };
