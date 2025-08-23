@@ -249,6 +249,7 @@ export const contributors: Contributor[] = [
   {
     id: 'gezi',
     name: '鸽子',
+    description: '多赛季前十图多',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -460,7 +461,7 @@ export const contributors: Contributor[] = [
   {
     id: 'qiuyumianmian',
     name: '秋雨绵绵',
-    // description: 'S24赛季全国第6恶魔杰瑞',
+    description: 'S24赛季全国第6恶魔杰瑞',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -472,6 +473,7 @@ export const contributors: Contributor[] = [
   {
     id: 'wudimaohudawang',
     name: '无敌猫虎大王wy',
+    description: '现猫榜第15名（截至2025.8.23）',
     roles: [
       {
         type: RoleType.ContentWriter,

@@ -1946,7 +1946,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '贡献者推荐',
         description:
-          '卡组提供者-秋雨绵绵（S24赛季全国第6恶魔杰瑞）。恶杰定位很不清晰，可推可救可牵制，最大的优点就是后期自保。推荐这个角色和天杰打体系，就一直推，幸运下来，走不掉祝福，后期都是耐活的老鼠。',
+          '“恶杰定位很不清晰，可推可救可牵制，最大的优点就是后期自保。推荐和天杰打幸运体系，一直推奶酪，用幸运自救，没跑掉就给天使祝福，后期都是生存强的老鼠。”',
         groups: [
           {
             cards: ['S-舍己', 'A-逃窜', 'A-泡泡浴', 'C-不屈', 'C-救救我'],
@@ -1973,7 +1973,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             contributor: '秋雨绵绵',
           },
         ],
-        defaultFolded: true,
+        defaultFolded: false,
       },
     ],
 

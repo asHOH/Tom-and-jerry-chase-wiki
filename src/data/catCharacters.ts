@@ -1354,36 +1354,62 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'S-击晕'],
-        description: '指甲油，在前中后期都有较高强度。',
-      },
-      {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
-        description: '指甲油，适合森林牧场，太空堡垒三等管道图。',
-      },
-      {
-        cards: ['S-猛攻', 'S-知识渊博', 'A-细心', 'A-熊熊燃烧'],
-        description: '指甲油，适合可以布局的图使用，后期拥有更强的防守翻盘能力。',
-      },
-      {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
         description: '香水指甲油通用，常规追击卡组。',
+        contributor: '鸽子',
       },
       {
-        cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
-        description: '香水，香水图多常规防守卡组。',
+        id: '魅力香水专用',
+        description: '',
+        groups: [
+          {
+            cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
+            description: '香水图多常规防守卡组。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-屈打成招', 'A-细心', 'A-穷追猛打'],
+            contributor: '鸽子',
+          },
+          {
+            cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-捕鼠夹', 'C-巡逻戒备'],
+            description: '20知识量卡组。',
+            contributor: '鸽子',
+          },
+        ],
+        defaultFolded: true,
       },
       {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'S-猛攻', 'B-反侦察'],
-        description: '指甲油，双经验卡成型更快，后期更强势。',
-      },
-      {
-        cards: ['S-击晕', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
-        description: '指甲油，小图且玩家自身找节奏能力强可用。',
-      },
-      {
-        cards: ['S-乘胜追击', 'S-屈打成招', 'A-细心', 'A-穷追猛打'],
-        description: '香水。',
+        id: '魅力甲油专用',
+        description: '',
+        groups: [
+          {
+            cards: ['S-乘胜追击', 'S-知识渊博', 'S-击晕'],
+            description: '在前中后期都有较高强度。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
+            description: '适合森林牧场，太空堡垒三等管道图。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-猛攻', 'S-知识渊博', 'A-细心', 'A-熊熊燃烧'],
+            description: '适合可以布局的图使用，后期拥有更强的防守翻盘能力。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-知识渊博', 'S-猛攻', 'B-反侦察'],
+            description: '双经验卡成型更快，后期更强势。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-击晕', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
+            description: '小图且玩家自身找节奏能力强可用。',
+            contributor: '鸽子',
+          },
+        ],
+        defaultFolded: true,
       },
     ],
     specialSkills: [
@@ -1554,17 +1580,17 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counters: [
       {
         id: '航海士杰瑞',
-        description: '图多六级后霸体无视海盗控制；海盗缺乏有效自保手段',
+        description: '图多六级后霸体无视海盗控制；海盗缺乏有效自保手段。',
         isMinor: false,
       },
       {
         id: '蒙金奇',
-        description: '大后期点出三级吻，克制蒙金奇',
+        description: '大后期点出三级吻，克制蒙金奇。',
         isMinor: true,
       },
       {
         id: '米可',
-        description: '大后期点出三级吻，对米可有一定威胁',
+        description: '大后期点出三级吻，对米可有一定威胁。',
         isMinor: true,
       },
     ],
@@ -1572,42 +1598,42 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counteredBy: [
       {
         id: '侦探杰瑞',
-        description: '侦探杰瑞的烟雾弹克制一切防守猫',
+        description: '侦探杰瑞的烟雾弹克制一切防守猫。',
         isMinor: false,
       },
       {
         id: '国王杰瑞',
-        description: '甲油缺少破盾手段，被护盾克制',
+        description: '甲油缺少破盾手段，被护盾克制。',
         isMinor: false,
       },
       {
         id: '剑客泰菲',
-        description: '剑客泰菲拥有长时间的群体无敌，克制甲油和香水防守',
+        description: '剑客泰菲拥有长时间的群体无敌，克制甲油和香水防守。',
         isMinor: false,
       },
       {
         id: '尼宝',
-        description: '尼宝武器技能无视图多的霸体、主动技能可以轻松救人',
+        description: '尼宝武器技能无视图多的霸体、主动技能可以轻松救人。',
         isMinor: false,
       },
       {
         id: '仙女鼠',
-        description: '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力',
+        description: '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力。',
         isMinor: true,
       },
       {
         id: '米可',
-        description: '米可拥有高额减伤，图多打不死',
+        description: '米可拥有高额减伤，图多打不死。',
         isMinor: true,
       },
       {
         id: '玛丽',
-        description: '扇子作为有效破局手段，主动技能可以禁用图多的核心爪刀',
+        description: '扇子作为有效破局手段，主动技能可以禁用图多的核心爪刀。',
         isMinor: true,
       },
       {
         id: '表演者•杰瑞',
-        description: '后期高血量且很难被放飞，克制图多的死守',
+        description: '后期高血量且很难被放飞，克制图多的死守。',
         isMinor: true,
       },
     ],
@@ -3873,27 +3899,24 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        id: '贡献者推荐',
-        description: '卡组提供者-无敌猫虎大王wy(现猫榜第32名)',
-        groups: [
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-加大火力'],
-            description: '御门酒店使用，对面高伤阵容换成越挫。',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-穷追猛打'],
-            description: '常规地图使用。',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'A-越挫越勇', 'A-穷追猛打'],
-            description: '常规地图，对面高伤阵容时使用。',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
-            description: '森林牧场使用，对面高伤阵容则把皮糙换成越挫。',
-          },
-        ],
-        defaultFolded: false,
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-加大火力'],
+        description: '御门酒店使用，对面高伤阵容换成越挫。',
+        contributor: '无敌猫虎大王wy',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-穷追猛打'],
+        description: '常规地图使用。',
+        contributor: '无敌猫虎大王wy',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-越挫越勇', 'A-穷追猛打'],
+        description: '常规地图，对面高伤阵容时使用。',
+        contributor: '无敌猫虎大王wy',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
+        description: '森林牧场使用，对面高伤阵容则把皮糙换成越挫。',
+        contributor: '无敌猫虎大王wy',
       },
     ],
     specialSkills: [
