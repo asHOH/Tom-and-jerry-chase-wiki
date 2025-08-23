@@ -129,7 +129,7 @@ export function KnowledgeCardGroup({
                     <Tag
                       colorStyles={rankColors}
                       size='sm'
-                      variant='compact'
+                      margin='compact'
                       className={clsx(
                         'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
                         isOptional && 'opacity-50'

@@ -65,10 +65,10 @@ function CharacterRankingCard({ rankedCharacter, priority = false }: CharacterRa
           role='group'
           aria-label='角色排名信息'
         >
-          <Tag colorStyles={rankColors} size='xs' variant='compact'>
+          <Tag colorStyles={rankColors} size='xs' margin='compact'>
             {getRankDisplayName(rank)}
           </Tag>
-          <Tag colorStyles={valueColors} size='xs' variant='compact'>
+          <Tag colorStyles={valueColors} size='xs' margin='compact'>
             {formattedValue}
           </Tag>
         </div>
