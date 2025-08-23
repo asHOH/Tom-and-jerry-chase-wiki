@@ -92,6 +92,7 @@ export type Skill = SkillDefinition & {
 export type KnowledgeCardGroup = {
   cards: string[];
   description?: string;
+  contributor?: string;
 };
 
 export type KnowledgeCardGroupSet = {

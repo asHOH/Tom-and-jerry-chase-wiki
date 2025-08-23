@@ -24,6 +24,7 @@ import {
   isCardOptional,
   getKnowledgeCardCostStyles,
 } from '@/lib/knowledgeCardSectionUtils';
+import { Contributor, contributors } from '@/data/contributors';
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: DeepReadonly<(KnowledgeCardGroup | KnowledgeCardGroupSet)[]>;
@@ -47,6 +48,8 @@ export function KnowledgeCardGroup({
   getCardRank,
   imageBasePath,
   handleDescriptionSave,
+  contributor,
+  contributorInformation,
 }: {
   group: readonly string[];
   index: number;
@@ -61,6 +64,8 @@ export function KnowledgeCardGroup({
   getCardRank: (cardId: string) => string;
   imageBasePath: string;
   handleDescriptionSave: (newDescription: string, index: number) => void;
+  contributor: string | undefined;
+  contributorInformation: Contributor | undefined;
 }) {
   const [isDarkMode] = useDarkMode();
   if (group.length === 0 && !isEditMode) {
@@ -98,6 +103,7 @@ export function KnowledgeCardGroup({
             {costInfo.displayCost}
           </div>
         </Tooltip>
+
         <div
           className={clsx(
             'flex flex-1 min-w-0',
@@ -212,6 +218,40 @@ export function KnowledgeCardGroup({
           </div>
         )}
       </div>
+
+      {/*Display KnowledgeCardGroup's contributor and his/her Description
+       *ToDo：rewrite this part of the code*/}
+      {!!contributor && !isEditMode && (
+        <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
+          {
+            <Tag
+              colorStyles={
+                isDarkMode
+                  ? { background: '#334155', color: '#e0e7ef' }
+                  : { background: '#e0e7ef', color: '#1e293b' }
+              }
+            >
+              卡组推荐者：
+              {contributorInformation !== undefined ? (
+                (contributorInformation as unknown as Contributor)['description'] !== undefined ? (
+                  <Tooltip
+                    content={
+                      (contributorInformation as unknown as Contributor)['description'] as string
+                    }
+                  >
+                    {contributor}
+                  </Tooltip>
+                ) : (
+                  contributor
+                )
+              ) : (
+                contributor
+              )}
+            </Tag>
+          }
+        </div>
+      )}
+
       {(!!description || isEditMode) && (
         <div
           className={clsx(
@@ -420,7 +460,6 @@ export default function KnowledgeCardSection({
               </button>
             )}
           </div>
-
           {knowledgeCardGroups.map((group, index) =>
             'cards' in group ? (
               <React.Fragment key={index}>
@@ -438,6 +477,8 @@ export default function KnowledgeCardSection({
                   getCardRank={getCardRank}
                   imageBasePath={imageBasePath}
                   handleDescriptionSave={handleDescriptionSave}
+                  contributor={group.contributor}
+                  contributorInformation={contributors.find((a) => a['name'] === group.contributor)}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
                   <div className='border-t border-gray-200 dark:border-slate-700 my-4'></div>

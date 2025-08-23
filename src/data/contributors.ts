@@ -2,6 +2,7 @@
 export interface Contributor {
   id: string; // Unique identifier
   name: string; // Display name
+  description?: string; //Contributor's description.For example:"S24赛季第4恶魔汤姆，段位榜第24"
   url?: string; // Link to their personal homepage
   roles: Role[]; // Array of roles they have fulfilled
 }
@@ -459,6 +460,7 @@ export const contributors: Contributor[] = [
   {
     id: 'qiuyumianmian',
     name: '秋雨绵绵',
+    // description: 'S24赛季全国第6恶魔杰瑞',
     roles: [
       {
         type: RoleType.ContentWriter,
