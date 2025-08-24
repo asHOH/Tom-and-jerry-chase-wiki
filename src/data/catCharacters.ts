@@ -3675,7 +3675,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         aliases: ['牙通牙', '旋转'],
         description: '向前方连续挥爪3次，造成伤害；疾冲状态下，改为向前穿刺，造成伤害和控制。',
         detailedDescription:
-          '向前方连续挥爪3次，每次造成30伤害，范围为300。；疾冲状态下或武器技能飞行中，改为向前穿刺，造成60点伤害和1.8秒眩晕。技能可以穿门。',
+          '向前方连续挥爪3次，每次造成30伤害，范围为300；疾冲状态下或武器技能飞行中，改为向前穿刺，造成60点伤害和1.8秒眩晕。技能可以穿门。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         canHitInPipe: true,
