@@ -228,15 +228,22 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '奶酪',
         isMinor: false,
-        description: '拥有鼠方全角色第一的基础推速。',
-        additionalDescription: '烟雾弹能进一步提高团队推速。',
+        description: '基础推速与侦探泰菲并列第一。若携带烟雾弹则能进一步提高团队推速。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        weapon: 2,
+        description: '干扰器能提供短暂的群体隐身，而且前摇较短。',
+        additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: true,
+        isMinor: false,
         weapon: 1,
         description:
-          '烟雾弹的沉默和巨额推速加成能使鼠方快速推完最后一块奶酪，克制大多数守奶酪的猫咪。',
+          '烟雾弹的禁用技能和巨额推速加成能使鼠方快速推完最后一块奶酪，克制大多数守奶酪的猫咪。',
         additionalDescription:
           '墙缝期时，烟雾弹也有着很强的干扰能力，尤其是阻止猫咪修墙。长时间的隐身也为烟雾弹的释放提供了保障。',
       },
@@ -248,7 +255,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         pattern: '12[12]21000',
         weaponType: 'weapon1',
         description:
-          '四级时，如果需要团推且猫不在附近，可先点二级烟雾弹；如果不清楚猫的位置则点二级隐身。',
+          '四级时通常先点Lv.2烟雾弹；如果猫在附近或不清楚猫的位置，则可点Lv.2隐身保证生存。',
         additionaldescription: '',
       },
       {
@@ -416,7 +423,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         tagName: '后期',
-        isMinor: false,
+        isMinor: true,
         description: '罗宾汉速度很快且非常灵活，后期哪怕是有七层乘胜的猫也很难追上他。',
         additionalDescription: '',
       },
@@ -539,6 +546,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         cueRange: '本房间可见',
+        cooldownTiming: '释放后',
       },
       {
         name: '登山飞镐',
@@ -1970,10 +1978,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         tagName: '干扰',
-        isMinor: true,
-        description:
-          '仙人掌和琴的干扰，但比较偏后期，同时也不是强控，无法直接把老鼠从猫手上救下来。',
-        additionalDescription: '',
+        isMinor: false,
+        description: '仙人掌和琴的干扰频率高，效果也不错。',
+        additionalDescription:
+          '但牛仔杰瑞的干扰能力比较偏后期，同时大部分也不是强控，无法直接把老鼠从猫手上救下来。',
       },
       {
         tagName: '后期',
@@ -2236,6 +2244,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '恶魔之门可提供多种增益效果，并且可以强制传送敌方以及帮助我方队友逃生。',
         additionalDescription: '辅助效果在车队中效果明显，单排效果较小。',
       },
+      {
+        tagName: '破局',
+        isMinor: false,
+        description: '恶魔之门可将进行防守的猫咪直接传送走，阻止其防守奶酪。',
+        additionalDescription: '',
+      },
     ],
     skillAllocations: [
       {
@@ -2434,6 +2448,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '一级被动和分身加击晕可打断恶魔杰瑞的技能释放，三级被动可消除鼠方部分增益。',
         isMinor: true,
       },
+      {
+        id: '天使汤姆',
+        description:
+          '天使汤姆飞行的高机动性克制恶魔杰瑞的拉扯，武器技能的道具（瓶子除外）可以无视恶魔杰瑞Lv.3被动，直接造成伤害。',
+        isMinor: true,
+      },
     ],
     collaborators: [
       {
@@ -2493,10 +2513,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         tagName: '干扰',
-        isMinor: false,
+        isMinor: true,
         weapon: 2,
-        description: '二武蓝色小淘气减速猫咪、红色小淘气与猫咪拉开距离，拥有很强的干扰能力。',
-        additionalDescription: '',
+        description:
+          '蓝色小淘气减速猫咪、红色小淘气与猫咪拉开距离，绿色小淘气后期有爆发伤害，拥有很强的干扰能力。',
+        additionalDescription:
+          '但恶魔泰菲自身使用红/蓝色小淘气会失去被动层数，并且一定程度上拖慢了奶酪进度。',
       },
     ],
     skillAllocations: [
@@ -2697,20 +2719,27 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '辅助',
         isMinor: false,
-        description: '为队友回复Hp、远程治疗',
+        description: '可为队友回复Hp、远程治疗。',
         additionalDescription: '',
       },
       {
         tagName: '砸墙',
         isMinor: false,
-        description: '花洒配合高尔夫快速破墙',
-        additionalDescription: '',
+        description:
+          '花洒能持续对道具施加推力，可通过让高尔夫球在墙缝与花洒右侧水流之间来回弹射进行破墙。',
+        additionalDescription: '该操作通常要站在墙缝的左边，并且要把控距离，因此需要一定的熟练度。',
         weapon: 1,
       },
       {
         tagName: '救援',
         isMinor: true,
-        description: '花洒搭配精准投掷可以无限浇灭火箭；花束+舍己，救下队友后双方均有较高Hp',
+        description: '花洒搭配精准投掷可以无限浇灭火箭；花束+舍己，救下队友后双方均有较高Hp。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '基础推速相对较高，适合推奶酪。',
         additionalDescription: '',
       },
     ],
@@ -2733,15 +2762,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'C-不屈', 'C-救救我', 'B-精准投射'],
-        description: '花洒卡组，精准投射可刷新花洒CD，持续浇灭火箭',
+        description: '花洒卡组，精准投射可刷新花洒CD，持续浇灭火箭。',
       },
       {
         cards: ['S-铁血', 'C-救救我', 'S-舍己', 'C-相助', 'C-不屈'],
-        description: '花洒花束皆可',
+        description: '花洒花束通用卡组。',
       },
       {
         cards: ['S-无畏', 'S-铁血', 'C-救救我', 'C-不屈', 'B-绝地反击'],
-        description: '辅助救人',
+        description: '辅助救援卡组。',
       },
     ],
     skills: [
@@ -2764,18 +2793,18 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description:
-              '减少CD；友好关系期间，同伴的Hp恢复效果提升，并在Hp大于一半时免疫直接抓取效果。',
+              'CD减少至14秒；友好关系期间，同伴的Hp恢复效果提升，并在Hp大于一半时免疫直接抓取效果。',
             cooldown: 14,
             detailedDescription:
-              '减少CD至14s；建立友好关系时，同伴立即恢复25Hp，并解除受伤；友好关系期间，同伴的Hp恢复效果提升至5/s，并在Hp大于一半时免疫直接抓取效果。',
+              'CD减少至14秒；建立友好关系时，同伴立即恢复25Hp，并解除受伤；友好关系期间，同伴的Hp恢复效果提升至5Hp/秒，并在Hp大于一半时免疫直接抓取效果。',
           },
           {
             level: 3,
             description:
-              '减少CD；强化效果所需时间降低至10s，进入强化状态后同伴额外回复Hp、提高Hp上限。',
+              'CD减少至10秒；强化效果所需时间降低至10秒，进入强化状态后同伴额外回复Hp、提高Hp上限。',
             cooldown: 10,
             detailedDescription:
-              '减少CD至10s；强化效果所需时间降低至10s，进入强化状态后同伴额外回复20Hp、提高50点Hp上限。',
+              'CD减少至10秒；强化效果所需时间降低至10秒，进入强化状态后同伴额外回复20Hp、提高50点Hp上限。',
           },
         ],
         cancelableSkill: ['道具键*'],
@@ -2912,10 +2941,24 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         tagName: '破局',
-        isMinor: false,
+        isMinor: true,
         description: '雷云的减伤和控制可以用于强推最后一块奶酪。',
         additionalDescription: '',
         weapon: 2,
+      },
+      {
+        tagName: '干扰',
+        isMinor: true,
+        description:
+          '弓箭可以远距离进行控制干扰；雷云可以降低敌方的移速和伤害，还能对敌方造成伤害和控制；被动可以暂时封锁敌方的爪刀或技能。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '后期',
+        isMinor: true,
+        description:
+          '天使杰瑞后期的生存能力有质的飞跃，被动的禁用爪刀和技能以及武器技能的高频控制也让猫咪非常头疼。',
+        additionalDescription: '需注意：某些拥有霸体的猫反而能将天使杰瑞作为突破口。',
       },
     ],
     skillAllocations: [
@@ -3111,8 +3154,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     mousePositioningTags: [
       {
         tagName: '辅助',
-        isMinor: true,
-        description: '可以用庇护保人。',
+        isMinor: false,
+        description: '庇护可以保护队友，Lv.2以上时能使队友完全不受伤害和控制效果。',
         additionalDescription: '',
       },
       {
@@ -3381,11 +3424,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     mousePositioningTags: [
       {
         tagName: '奶酪',
-        isMinor: false,
-        description: '兔子可以安全地运送和推入奶酪。',
+        isMinor: true,
+        description: '兔子可以安全地运送和推入奶酪，而兔子大表哥可以提高魔术师的推速。',
         additionalDescription:
-          '兔子的推速并不占优，不过可以通过反复拉扯来创造推奶酪机会。兔子大表哥Lv.1增加的推速数值较低，不建议当做奶酪位来玩。',
-        weapon: 1,
+          '兔子的推速并不占优，不过可以通过反复拉扯来创造推奶酪机会。兔子大表哥Lv.1增加的推速数值较低，但额外推速不受其他状态影响的特点也能规避前期队友上火箭导致的推速降低，且如果队友不幸被放飞则自身推速会有质的飞跃。',
       },
       {
         tagName: '干扰',
@@ -3398,15 +3440,23 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         tagName: '救援',
         isMinor: true,
         description:
-          '兔子先生[拥有一定救援能力](通常需携带“无畏”知识卡，否则可能无法进行有效救援)；兔子大表哥[可以阻止秒飞火箭起飞](需要魔术师在附近，实战时需抉择)。',
+          '兔子先生[可以进行火箭救援](通常需携带“无畏”知识卡，否则可能无法进行有效救援)；兔子大表哥[可以阻止秒飞火箭起飞](需要魔术师在附近，实战时需抉择)，还能大幅增加自身的救援速度。',
         additionalDescription: '兔子先生救援时建议搭配红牌干扰，提高稳定性。',
       },
       {
         tagName: '辅助',
         isMinor: true,
-        description: '分别点出Lv.1的主动、武器、被动技能后，可以通过卡牌刷取经验。',
-        additionalDescription: '',
+        description: '分别点出Lv.1的主动、武器、被动技能后，可以向兔子大表哥投掷卡牌以刷取经验。',
+        additionalDescription: '吃蛋糕可减少被动和主动技能的CD，可以用这个方法提高刷经验效率。',
         weapon: 2,
+      },
+      {
+        tagName: '破局',
+        isMinor: true,
+        description:
+          '兔子先生可以强行对最后一块奶酪进行攻坚，哪怕被击倒也可以通过升级技能、吃蛋糕、[卡牌命中](需有Lv.1被动)等方式减少CD，快速召唤下一只兔子进行攻坚。红色卡牌暂时性的封锁技能，能克制部分以技能为主的防守猫。',
+        additionalDescription: '',
+        weapon: 1,
       },
     ],
     skillAllocations: [
@@ -4141,19 +4191,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '奶酪',
         isMinor: false,
-        description: '和侦探杰瑞并列第一的鼠方基础推速。',
-        additionalDescription: '',
-      },
-      {
-        tagName: '辅助',
-        isMinor: true,
-        description: '利用分身和被动探查猫视野。',
+        description: '基础推速与侦探杰瑞并列第一。另外后期可以用Lv.3分身的换位进行超远程搬运奶酪。',
         additionalDescription: '',
       },
     ],
     skillAllocations: [
       {
-        id: '隐身',
+        id: '常规加点',
         pattern: '101012220',
         weaponType: 'weapon1',
         description: '',
@@ -4281,14 +4325,22 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '救援',
         isMinor: false,
-        description: '二级被动无敌，配合剑气无伤救援。',
+        description: 'Lv.2被动提供短暂无敌，可提前生成剑气幻影，救下队友后立刻传送，达成无伤救援。',
         additionalDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。',
       },
       {
         tagName: '干扰',
         isMinor: true,
-        description: '风墙关键时刻可以救队友，剑气高减速。',
+        description:
+          '风墙可以困住或阻挡猫咪；剑气命中敌方有高额减速；自身攻击增伤也较高，适合投掷道具干扰。',
         additionalDescription: '',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description: 'Lv.2及以上的风墙可以让队友快速起身，避免被抓。',
+        additionalDescription:
+          '若有需要，也可以尝试用剑气命中[队友](甚至包括虚弱的队友)，让其获得位移能力。但老鼠模型小，剑气很难命中。',
       },
     ],
     skillAllocations: [
@@ -4391,7 +4443,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             description:
               '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成眩晕效果（可救下其手中的老鼠），对同一敌方有45秒内置CD。',
             detailedDescription:
-              '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成2.5秒眩晕效果（可救下其手中的老鼠），对同一敌方有45秒内置CD。',
+              '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成2.5秒眩晕效果（可救下其手中的老鼠），[对同一敌方有45秒内置CD](敌方会获得名为“免疫”的状态，状态期间免疫该眩晕效果)。',
           },
         ],
       },
@@ -4916,6 +4968,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '发怒拳头可以强推奶酪。',
         additionalDescription: '后期发怒时可无视夹子和叉子。',
       },
+      {
+        tagName: '砸墙',
+        isMinor: true,
+        description: 'Lv.3沙包拳头能对墙缝造成伤害，发怒期间的拳头伤害更高。',
+        additionalDescription: '',
+      },
     ],
     skillAllocations: [
       {
@@ -5070,19 +5128,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '辅助',
         isMinor: false,
-        description: '队友铁血可用主动技能救活队友（建议车队配合）。',
-        additionalDescription: '',
+        description: '[队友铁血可用主动技能救活队友](队友和自身距离不能太远，建议车队配合)。',
+        additionalDescription: '自身也可变作道具偷袭猫，或让队友投掷。',
       },
       {
         tagName: '砸墙',
         isMinor: false,
         description: '后期15秒一个变大；三级武器对墙缝的增伤也很可观。',
-        additionalDescription: '',
-      },
-      {
-        tagName: '干扰',
-        isMinor: true,
-        description: '可变成道具偷袭猫。',
         additionalDescription: '',
       },
     ],
@@ -5212,8 +5264,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     mousePositioningTags: [
       {
         tagName: '救援',
-        isMinor: false,
-        description: '可利用二级被动快速将老鼠救下火箭。',
+        isMinor: true,
+        description: '可利用Lv.2被动摧毁火箭，快速将老鼠救下。',
         additionalDescription: '但在此期间容易吃到控制导致礼服被断。',
       },
       {
@@ -5959,6 +6011,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '四星帮队友回血；六星将队友变星星。',
         additionalDescription: '',
       },
+      {
+        tagName: '破局',
+        isMinor: true,
+        description: '将猫变为大星星后使其暂时失去部分攻击和防守能力，可以抱团强行推奶酪。',
+        additionalDescription: '',
+      },
     ],
     skillAllocations: [
       {
@@ -6010,13 +6068,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD。',
+            description: 'CD减少。',
             cooldown: 40,
-            detailedDescription: '减少CD至40s。',
+            detailedDescription: 'CD减少至40秒。',
           },
           {
             level: 3,
-            description: '许愿内容提高质量。',
+            description: '有概率许愿出更稀有的道具，例如{狗骨头}、{火药桶}、{花洒}、{披萨}。',
             cooldown: 40,
           },
         ],
@@ -6120,8 +6178,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         tagName: '后期',
-        isMinor: true,
-        description: '米可后期三级主动加三级被动很难被击倒。',
+        isMinor: false,
+        description:
+          '米可主动技能和被动技能的降低伤害效果可加算叠加，完全体状态下能使受到的伤害总共降低75%，并且还有霸体和回溯，常规手段几乎无法击倒他；Lv.3主动和武器技能还能造成很强的干扰效果。',
         additionalDescription: '',
       },
     ],
@@ -6347,6 +6406,21 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '滑铲可铲飞图多盖洛香水或夹子。',
         additionalDescription: '',
       },
+      {
+        tagName: '救援',
+        isMinor: true,
+        description:
+          '滑铲可铲飞并熄灭火箭，还能踢走夹子；铲飞猫咪并补上定身符即可相对安全地进行救援。',
+        additionalDescription:
+          '小心敌方的特技-绝地反击。另外敌方在点燃火箭动作期间是无法进行火箭救援的，需尽量避免这种情况。',
+      },
+      {
+        tagName: '辅助',
+        isMinor: true,
+        description:
+          '乾坤袋可以抱起倒地的队友逃跑，或是吞吐食物帮助队友快速恢复Hp。队友也可以使用乾坤袋。',
+        additionalDescription: '',
+      },
     ],
     skillAllocations: [
       {
@@ -6529,7 +6603,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '救援',
         isMinor: false,
-        description: '可以铁血换人。',
+        description:
+          '主动技能可以安全地接近火箭，即便不慎被击倒也可以用Lv.1被动及铁血效果强行进行救援。',
         additionalDescription: '',
       },
       {
@@ -6602,9 +6677,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '柠檬旋风',
         type: 'weapon1',
         description:
-          '原地释放技能，期间无法移动，对附近猫咪叠加酸涩效果，造成伤害并减少移速、交互速度，最多叠加5层，叠满时猫咪会受到伤害并[眩晕](可掉落老鼠)。再次点击技能进行“额外表演”，最多5次，满5次后可以移动并对碰到的敌方单位叠加3成酸涩。',
+          '拿出柠檬开始表演，同时技能进入读条；表演期间无法移动，且每隔一段时间对附近猫咪叠加一层“酸涩”（造成伤害并减少移速、交互速度，最多叠加5层，叠满时会受到伤害并[眩晕](可掉落老鼠)）；再次点击技能进行[“额外表演”](仅用作解锁后续的移动效果，无其他作用。动作表现：快速围绕柠檬一圈)，最多5次，满5次后可以移动并对碰到的敌方单位叠加3层酸涩状态。',
         detailedDescription:
-          '原地释放技能，期间无法移动，对附近猫咪叠加酸涩效果，造成{15}伤害并减少2.5%移速和交互速度，可叠加，最多叠加5层。叠满时猫咪会受到35伤害并[眩晕2秒](可掉落老鼠)，眩晕期间及结束后一段时间内免疫“酸涩”。再次点击技能[进行“额外表演”](额外表演：表演者•杰瑞快速围绕柠檬一圈，同时蓄力条位置随机出现红/绿标志以表示表演的成功与否。成功与否仅影响表现，作为表演者•杰瑞的娱乐，不涉及技能效果)，最多5次，满5次后可以移动并对碰到的敌方单位叠加3层酸涩。',
+          '拿出柠檬开始表演，同时技能进入10秒读条，读条结束后结束技能；表演期间无法移动，且每隔一段时间对附近猫咪叠加一层“酸涩”（造成{15}伤害并减少2.5%移速和交互速度，[可乘算叠加](每层之间效果独立，单独乘算叠加)，最多叠加5层。叠满时会触发“酸涩难耐”——受到{35}伤害并[眩晕2秒](可掉落老鼠)，眩晕期间及结束后一段时间内免疫“酸涩”）；再次点击技能进行[“额外表演”](仅用作解锁后续的移动效果，无其他作用。动作表现：表演者•杰瑞快速围绕柠檬一圈，同时蓄力条位置随机出现红/绿标志以表示表演的成功与否。成功与否仅影响表现，作为表演者•杰瑞的娱乐，不涉及技能效果)，最多5次，满5次后[化身为柠檬旋风](该效果有特殊的贴图变化)，随后可以移动并对碰到的敌方单位[叠加3层酸涩状态](与“酸涩难耐”的结算顺序：先结算完3层酸涩的伤害，随后再判断是否进入酸涩难耐状态)；。',
         canMoveWhileUsing: true,
         canUseInAir: false,
         canHitInPipe: false,
@@ -6617,14 +6692,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少10秒。',
+            description: 'CD减少至20秒。',
             cooldown: 20,
           },
           {
             level: 3,
-            description: '使用技能期间快速恢复Hp。',
+            description: '技能期间快速恢复Hp。',
             cooldown: 20,
-            detailedDescription: '使用技能期间以20/s恢复Hp。',
+            detailedDescription:
+              '技能期间[获得20Hp/秒的恢复效果](与角色基础的Hp恢复效果不同，不会因受伤而失效)。',
           },
         ],
         cooldownTiming: '释放后',
@@ -6891,7 +6967,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         tagName: '砸墙',
-        isMinor: true,
+        isMinor: false,
         description: '毛线球可拉动道具，利用高尔夫球和毛线球可实现快速破墙。',
         additionalDescription: '',
       },
