@@ -27,6 +27,15 @@ export const renderTextWithTooltips = (
   const tooltipPattern = /\{([^}]+?)\}/g;
   let match;
 
+  // Small helper to keep tooltip element creation consistent
+  const pushTooltip = (visibleText: string, tooltipContent: string) => {
+    parts.push(
+      <Tooltip key={`hover-${index}-${match!.index}`} content={tooltipContent}>
+        {visibleText}
+      </Tooltip>
+    );
+  };
+
   while ((match = tooltipPattern.exec(text)) !== null) {
     if (match.index > lastIndex) {
       parts.push(text.slice(lastIndex, match.index));
@@ -37,8 +46,14 @@ export const renderTextWithTooltips = (
     let tooltipContent: string;
 
     if (content.includes('+')) {
-      const [base, boost] = content.split('+').map((s) => parseFloat(s));
-      if (base && boost) {
+      const partsNum = content.split('+').map((s) => Number.parseFloat(s));
+      const [base, boost] = partsNum;
+      if (
+        base !== undefined &&
+        boost !== undefined &&
+        !Number.isNaN(base) &&
+        !Number.isNaN(boost)
+      ) {
         visibleText = String(base + boost);
         tooltipContent = `基础伤害${base}+角色增伤${boost}，同时也享受其他来源的攻击增伤加成`;
       } else {
@@ -98,20 +113,13 @@ export const renderTextWithTooltips = (
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
       tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也享受其他来源的攻击增伤加成`;
 
-      parts.push(
-        <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
-          {visibleText}
-        </Tooltip>
-      );
+      pushTooltip(visibleText, tooltipContent);
       lastIndex = tooltipPattern.lastIndex;
       continue;
     }
 
-    parts.push(
-      <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
-        {visibleText}
-      </Tooltip>
-    );
+    // For '+' and '_' branches (or invalid '+'), show tooltip for computed visible text
+    pushTooltip(visibleText, tooltipContent);
 
     lastIndex = tooltipPattern.lastIndex;
   }
