@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import PreviewCard, { GotoPreviewCardProps } from './ui/PreviewCard';
+import type { CategoryHint } from '@/lib/types';
 import Link from 'next/link';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
@@ -13,7 +14,7 @@ type GotoLinkProps = {
   children: React.ReactNode;
   asPreviewOnly?: boolean; // when true, do not navigate; only show preview tooltip
   hideImagePreview?: boolean; // when true, hide image in preview content
-  categoryHint?: string; // optional type/category hint to disambiguate targets
+  categoryHint?: CategoryHint; // optional type/category hint to disambiguate targets
 };
 
 export default function GotoLink({

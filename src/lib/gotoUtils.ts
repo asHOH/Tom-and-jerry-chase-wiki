@@ -2,14 +2,25 @@
 
 import { characters, cards, items, specialSkills, entities } from '@/data';
 import { getDocPages } from '@/lib/docUtils';
-import type { GotoResult } from '@/lib/types';
+import type { GotoResult, CategoryHint } from '@/lib/types';
+import { CATEGORY_HINTS } from '@/lib/types';
 
 /**
  * Resolves a name to a goto result (url and type).
  * Returns null if no match is found.
  */
-export async function getGotoResult(name: string, category?: string): Promise<GotoResult | null> {
-  const normalizedCategory = category?.trim();
+function normalizeCategoryHint(raw?: string): CategoryHint | undefined {
+  const v = raw?.trim();
+  if (!v) return undefined;
+  // Only accept known hints (single source of truth)
+  return (CATEGORY_HINTS as readonly string[]).includes(v) ? (v as CategoryHint) : undefined;
+}
+
+export async function getGotoResult(
+  name: string,
+  category?: CategoryHint | string
+): Promise<GotoResult | null> {
+  const normalizedCategory = normalizeCategoryHint(category);
   if (name in characters) {
     const c = characters[name];
     return {

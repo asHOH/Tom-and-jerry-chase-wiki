@@ -8,6 +8,7 @@ import GotoLink from '@/components/GotoLink';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getCardRankColors } from '@/lib/design-tokens';
 import Tag from '@/components/ui/Tag';
+import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
 
 /**
  * Parse and render text with tooltips for patterns like {visible text}
@@ -23,6 +24,8 @@ export const renderTextWithTooltips = (
   isDarkMode: boolean = false
 ): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
+  const isCategoryHint = (v: string | null): v is CategoryHint =>
+    !!v && (CATEGORY_HINTS as readonly string[]).includes(v);
   // Normalize 《content》 to {content} so we can reuse the same parser
   const normalized = text.replace(/《([^》]+?)》/g, '{$1}');
   let lastIndex = 0;
@@ -97,12 +100,14 @@ export const renderTextWithTooltips = (
         // If explicitly marked as knowledge card or no hint (and we can resolve as a card), render as card Tag
         if ((!categoryHint || categoryHint === '知识卡') && card) {
           const rankColors = getCardRankColors(card.rank, false, isDarkMode);
+          // Only pass recognized category hints to GotoLink for type safety
+          const hint = isCategoryHint(categoryHint) ? categoryHint : undefined;
           parts.push(
             <GotoLink
               name={linkName}
               className='no-underline'
               key={`${card.rank}-${match.index}`}
-              {...(categoryHint ? { categoryHint } : {})}
+              {...(hint ? { categoryHint: hint } : {})}
             >
               <Tag
                 colorStyles={rankColors}
@@ -120,12 +125,13 @@ export const renderTextWithTooltips = (
         }
 
         // For other categories (e.g., 特技, 技能, etc.) or unknowns, render a plain goto link with the category kept in the link target
+        const hint2 = isCategoryHint(categoryHint) ? categoryHint : undefined;
         parts.push(
           <GotoLink
             name={linkName}
             className='underline'
             key={`${linkName}-${tooltipPattern.lastIndex}`}
-            {...(categoryHint ? { categoryHint } : {})}
+            {...(hint2 ? { categoryHint: hint2 } : {})}
           >
             {baseName}
           </GotoLink>
