@@ -76,16 +76,34 @@ export const renderTextWithTooltips = (
         tooltipContent = `墙缝伤害${visibleText}`;
       }
     } else {
-      visibleText = content;
+      // Support optional trailing category hint in parentheses, e.g. 绝地反击(特技) or 绝地反击(知识卡)
+      const categoryMatch = /^(.*?)(?:\(([^)]+)\))$/.exec(content);
+      let baseName: string = content;
+      let categoryHint: string | null = null;
+      if (categoryMatch) {
+        const nameGroup = categoryMatch[1] ?? '';
+        const hintGroup = categoryMatch[2] ?? '';
+        baseName = (nameGroup || content).trim();
+        categoryHint = hintGroup.trim() || null;
+      }
+      visibleText = baseName;
       const totalAttack = parseFloat(visibleText);
 
       // If it's not a number or attack boost not available, try rendering as Knowledge Card tag
       if (Number.isNaN(totalAttack) || attackBoost == null) {
-        const card = cards[content as keyof typeof cards];
-        if (card) {
+        const linkName = baseName;
+        const card = cards[baseName as keyof typeof cards];
+
+        // If explicitly marked as knowledge card or no hint (and we can resolve as a card), render as card Tag
+        if ((!categoryHint || categoryHint === '知识卡') && card) {
           const rankColors = getCardRankColors(card.rank, false, isDarkMode);
           parts.push(
-            <GotoLink name={content} className='no-underline' key={`${card.rank}-${match.index}`}>
+            <GotoLink
+              name={linkName}
+              className='no-underline'
+              key={`${card.rank}-${match.index}`}
+              {...(categoryHint ? { categoryHint } : {})}
+            >
               <Tag
                 colorStyles={rankColors}
                 size='sm'
@@ -93,7 +111,7 @@ export const renderTextWithTooltips = (
                 role='link'
                 className='ml-0.75 mr-0.5'
               >
-                {content}
+                {baseName}
               </Tag>
             </GotoLink>
           );
@@ -101,14 +119,15 @@ export const renderTextWithTooltips = (
           continue;
         }
 
-        // Fallback to plain goto link for non-card references
+        // For other categories (e.g., 特技, 技能, etc.) or unknowns, render a plain goto link with the category kept in the link target
         parts.push(
           <GotoLink
-            name={content}
+            name={linkName}
             className='underline'
-            key={`${content}-${tooltipPattern.lastIndex}`}
+            key={`${linkName}-${tooltipPattern.lastIndex}`}
+            {...(categoryHint ? { categoryHint } : {})}
           >
-            {content}
+            {baseName}
           </GotoLink>
         );
         lastIndex = tooltipPattern.lastIndex;
