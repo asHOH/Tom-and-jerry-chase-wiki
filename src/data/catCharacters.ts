@@ -3652,7 +3652,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'S-暴怒', 'A-熊熊燃烧'],
         description:
-          '萌新玩家可快速凑出本卡组度过开荒期，当资源足够或熟练后不推荐。管道图中，"暴怒"可替换为"加大火力"+"猫是液体"。',
+          '萌新玩家可快速凑出本卡组度过开荒期，当资源足够或熟练后不推荐。管道图中，《暴怒》可替换为《加大火力》+《猫是液体》。',
       },
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
@@ -3661,7 +3661,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-心灵手巧', 'A-加大火力'],
         description:
-          '主流卡组，心灵手巧可以使感电效果几乎持续到绑完火箭。可将最后两张换为"穷追猛打"，快速打开前期节奏；如遇打架队则可换为"皮糙肉厚"。',
+          '主流卡组，心灵手巧可以使感电效果几乎持续到绑完火箭。可将最后两张换为《穷追猛打》，快速打开前期节奏；如遇打架队则可换为《皮糙肉厚》。',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],

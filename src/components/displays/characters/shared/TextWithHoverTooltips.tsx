@@ -23,6 +23,8 @@ export const renderTextWithTooltips = (
   isDarkMode: boolean = false
 ): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
+  // Normalize 《content》 to {content} so we can reuse the same parser
+  const normalized = text.replace(/《([^》]+?)》/g, '{$1}');
   let lastIndex = 0;
   const tooltipPattern = /\{([^}]+?)\}/g;
   let match;
@@ -36,9 +38,9 @@ export const renderTextWithTooltips = (
     );
   };
 
-  while ((match = tooltipPattern.exec(text)) !== null) {
+  while ((match = tooltipPattern.exec(normalized)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
+      parts.push(normalized.slice(lastIndex, match.index));
     }
 
     const content = match[1] || '';
@@ -55,7 +57,10 @@ export const renderTextWithTooltips = (
         !Number.isNaN(boost)
       ) {
         visibleText = String(base + boost);
-        tooltipContent = `基础伤害${base}+角色增伤${boost}，同时也享受其他来源的攻击增伤加成`;
+        tooltipContent =
+          boost === 0
+            ? `同时也享受其他来源的攻击增伤加成`
+            : `基础伤害${base}+角色增伤${boost}，同时也享受其他来源的攻击增伤加成`;
       } else {
         visibleText = content;
         tooltipContent = content;
@@ -111,7 +116,10 @@ export const renderTextWithTooltips = (
       }
 
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
-      tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也享受其他来源的攻击增伤加成`;
+      tooltipContent =
+        attackBoost === 0
+          ? `同时也享受其他来源的攻击增伤加成`
+          : `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也享受其他来源的攻击增伤加成`;
 
       pushTooltip(visibleText, tooltipContent);
       lastIndex = tooltipPattern.lastIndex;
@@ -124,8 +132,8 @@ export const renderTextWithTooltips = (
     lastIndex = tooltipPattern.lastIndex;
   }
 
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
+  if (lastIndex < normalized.length) {
+    parts.push(normalized.slice(lastIndex));
   }
 
   return parts;
