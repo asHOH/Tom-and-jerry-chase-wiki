@@ -2,13 +2,25 @@
 
 import { characters, cards, items, specialSkills, entities } from '@/data';
 import { getDocPages } from '@/lib/docUtils';
-import type { GotoResult } from '@/lib/types';
+import type { GotoResult, CategoryHint } from '@/lib/types';
+import { CATEGORY_HINTS } from '@/lib/types';
 
 /**
  * Resolves a name to a goto result (url and type).
  * Returns null if no match is found.
  */
-export async function getGotoResult(name: string): Promise<GotoResult | null> {
+function normalizeCategoryHint(raw?: string): CategoryHint | undefined {
+  const v = raw?.trim();
+  if (!v) return undefined;
+  // Only accept known hints (single source of truth)
+  return (CATEGORY_HINTS as readonly string[]).includes(v) ? (v as CategoryHint) : undefined;
+}
+
+export async function getGotoResult(
+  name: string,
+  category?: CategoryHint | string
+): Promise<GotoResult | null> {
+  const normalizedCategory = normalizeCategoryHint(category);
   if (name in characters) {
     const c = characters[name];
     return {
@@ -19,7 +31,7 @@ export async function getGotoResult(name: string): Promise<GotoResult | null> {
       imageUrl: c!.imageUrl,
     };
   }
-  if (name in cards) {
+  if ((!normalizedCategory || normalizedCategory === '知识卡') && name in cards) {
     const card = cards[name];
     return {
       url: `/cards/${encodeURIComponent(name)}`,
@@ -29,7 +41,10 @@ export async function getGotoResult(name: string): Promise<GotoResult | null> {
       imageUrl: card!.imageUrl,
     };
   }
-  if (name in entities['cat']) {
+  if (
+    (!normalizedCategory || normalizedCategory === '实体' || normalizedCategory === '道具') &&
+    name in entities['cat']
+  ) {
     const entity = entities['cat'][name];
     return {
       url: `/entities/${encodeURIComponent(name)}`,
@@ -39,7 +54,10 @@ export async function getGotoResult(name: string): Promise<GotoResult | null> {
       imageUrl: entity!.imageUrl,
     };
   }
-  if (name in entities['mouse']) {
+  if (
+    (!normalizedCategory || normalizedCategory === '实体' || normalizedCategory === '道具') &&
+    name in entities['mouse']
+  ) {
     const entity = entities['mouse'][name];
     return {
       url: `/entities/${encodeURIComponent(name)}`,
@@ -49,7 +67,7 @@ export async function getGotoResult(name: string): Promise<GotoResult | null> {
       imageUrl: entity!.imageUrl,
     };
   }
-  if (name in items) {
+  if ((!normalizedCategory || normalizedCategory === '道具') && name in items) {
     const item = items[name];
     return {
       url: `/items/${encodeURIComponent(name)}`,
@@ -59,7 +77,7 @@ export async function getGotoResult(name: string): Promise<GotoResult | null> {
       imageUrl: item!.imageUrl,
     };
   }
-  if (name in specialSkills['cat']) {
+  if ((!normalizedCategory || normalizedCategory === '特技') && name in specialSkills['cat']) {
     const skill = specialSkills['cat'][name];
     return {
       url: `/special-skills/cat/${encodeURIComponent(name)}`,
@@ -69,7 +87,7 @@ export async function getGotoResult(name: string): Promise<GotoResult | null> {
       imageUrl: skill!.imageUrl,
     };
   }
-  if (name in specialSkills['mouse']) {
+  if ((!normalizedCategory || normalizedCategory === '特技') && name in specialSkills['mouse']) {
     const skill = specialSkills['mouse'][name];
     return {
       url: `/special-skills/mouse/${encodeURIComponent(name)}`,

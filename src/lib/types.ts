@@ -88,6 +88,10 @@ export type GotoResult = {
   imageUrl: string | undefined;
 };
 
+// Narrowed category hints used to disambiguate goto targets
+export const CATEGORY_HINTS = ['知识卡', '特技', '道具', '实体'] as const;
+export type CategoryHint = (typeof CATEGORY_HINTS)[number];
+
 // Generic callback types
 export type CharacterSelectionHandler = (characterId: string) => void;
 export type KnowledgeCardSelectionHandler = (cardId: string) => void;

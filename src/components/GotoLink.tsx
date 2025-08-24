@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import PreviewCard, { GotoPreviewCardProps } from './ui/PreviewCard';
+import type { CategoryHint } from '@/lib/types';
 import Link from 'next/link';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
@@ -13,6 +14,7 @@ type GotoLinkProps = {
   children: React.ReactNode;
   asPreviewOnly?: boolean; // when true, do not navigate; only show preview tooltip
   hideImagePreview?: boolean; // when true, hide image in preview content
+  categoryHint?: CategoryHint; // optional type/category hint to disambiguate targets
 };
 
 export default function GotoLink({
@@ -21,6 +23,7 @@ export default function GotoLink({
   children,
   asPreviewOnly = false,
   hideImagePreview = false,
+  categoryHint,
 }: GotoLinkProps) {
   const [open, setOpen] = useState(false);
 
@@ -42,11 +45,17 @@ export default function GotoLink({
   };
 
   const { data, isLoading } = useSWR<GotoPreviewCardProps | null>(
-    open ? `/api/goto/${encodeURIComponent(name)}` : null,
+    open
+      ? `/api/goto/${encodeURIComponent(name)}${
+          categoryHint ? `?category=${encodeURIComponent(categoryHint)}` : ''
+        }`
+      : null,
     fetcher
   );
 
-  const [url, setURL] = useState<string>(`/goto/${encodeURIComponent(name)}`);
+  const [url, setURL] = useState<string>(
+    `/goto/${encodeURIComponent(name)}${categoryHint ? `?category=${encodeURIComponent(categoryHint)}` : ''}`
+  );
 
   useEffect(() => {
     if (data?.url) {

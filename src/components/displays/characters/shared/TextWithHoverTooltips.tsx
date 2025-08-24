@@ -8,6 +8,7 @@ import GotoLink from '@/components/GotoLink';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getCardRankColors } from '@/lib/design-tokens';
 import Tag from '@/components/ui/Tag';
+import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
 
 /**
  * Parse and render text with tooltips for patterns like {visible text}
@@ -23,13 +24,26 @@ export const renderTextWithTooltips = (
   isDarkMode: boolean = false
 ): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
+  const isCategoryHint = (v: string | null): v is CategoryHint =>
+    !!v && (CATEGORY_HINTS as readonly string[]).includes(v);
+  // Normalize 《content》 to {content} so we can reuse the same parser
+  const normalized = text.replace(/《([^》]+?)》/g, '{$1}');
   let lastIndex = 0;
   const tooltipPattern = /\{([^}]+?)\}/g;
   let match;
 
-  while ((match = tooltipPattern.exec(text)) !== null) {
+  // Small helper to keep tooltip element creation consistent
+  const pushTooltip = (visibleText: string, tooltipContent: string) => {
+    parts.push(
+      <Tooltip key={`hover-${index}-${match!.index}`} content={tooltipContent}>
+        {visibleText}
+      </Tooltip>
+    );
+  };
+
+  while ((match = tooltipPattern.exec(normalized)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
+      parts.push(normalized.slice(lastIndex, match.index));
     }
 
     const content = match[1] || '';
@@ -37,10 +51,19 @@ export const renderTextWithTooltips = (
     let tooltipContent: string;
 
     if (content.includes('+')) {
-      const [base, boost] = content.split('+').map((s) => parseFloat(s));
-      if (base && boost) {
+      const partsNum = content.split('+').map((s) => Number.parseFloat(s));
+      const [base, boost] = partsNum;
+      if (
+        base !== undefined &&
+        boost !== undefined &&
+        !Number.isNaN(base) &&
+        !Number.isNaN(boost)
+      ) {
         visibleText = String(base + boost);
-        tooltipContent = `基础伤害${base}+角色增伤${boost}，同时也享受其他来源的攻击增伤加成`;
+        tooltipContent =
+          boost === 0
+            ? `同时也享受其他来源的攻击增伤加成`
+            : `基础伤害${base}+角色增伤${boost}，同时也享受其他来源的攻击增伤加成`;
       } else {
         visibleText = content;
         tooltipContent = content;
@@ -56,16 +79,36 @@ export const renderTextWithTooltips = (
         tooltipContent = `墙缝伤害${visibleText}`;
       }
     } else {
-      visibleText = content;
+      // Support optional trailing category hint in parentheses, e.g. 绝地反击(特技) or 绝地反击(知识卡)
+      const categoryMatch = /^(.*?)(?:\(([^)]+)\))$/.exec(content);
+      let baseName: string = content;
+      let categoryHint: string | null = null;
+      if (categoryMatch) {
+        const nameGroup = categoryMatch[1] ?? '';
+        const hintGroup = categoryMatch[2] ?? '';
+        baseName = (nameGroup || content).trim();
+        categoryHint = hintGroup.trim() || null;
+      }
+      visibleText = baseName;
       const totalAttack = parseFloat(visibleText);
 
       // If it's not a number or attack boost not available, try rendering as Knowledge Card tag
       if (Number.isNaN(totalAttack) || attackBoost == null) {
-        const card = cards[content as keyof typeof cards];
-        if (card) {
+        const linkName = baseName;
+        const card = cards[baseName as keyof typeof cards];
+
+        // If explicitly marked as knowledge card or no hint (and we can resolve as a card), render as card Tag
+        if ((!categoryHint || categoryHint === '知识卡') && card) {
           const rankColors = getCardRankColors(card.rank, false, isDarkMode);
+          // Only pass recognized category hints to GotoLink for type safety
+          const hint = isCategoryHint(categoryHint) ? categoryHint : undefined;
           parts.push(
-            <GotoLink name={content} className='no-underline' key={`${card.rank}-${match.index}`}>
+            <GotoLink
+              name={linkName}
+              className='no-underline'
+              key={`${card.rank}-${match.index}`}
+              {...(hint ? { categoryHint: hint } : {})}
+            >
               <Tag
                 colorStyles={rankColors}
                 size='sm'
@@ -73,7 +116,7 @@ export const renderTextWithTooltips = (
                 role='link'
                 className='ml-0.75 mr-0.5'
               >
-                {content}
+                {baseName}
               </Tag>
             </GotoLink>
           );
@@ -81,14 +124,16 @@ export const renderTextWithTooltips = (
           continue;
         }
 
-        // Fallback to plain goto link for non-card references
+        // For other categories (e.g., 特技, 技能, etc.) or unknowns, render a plain goto link with the category kept in the link target
+        const hint2 = isCategoryHint(categoryHint) ? categoryHint : undefined;
         parts.push(
           <GotoLink
-            name={content}
+            name={linkName}
             className='underline'
-            key={`${content}-${tooltipPattern.lastIndex}`}
+            key={`${linkName}-${tooltipPattern.lastIndex}`}
+            {...(hint2 ? { categoryHint: hint2 } : {})}
           >
-            {content}
+            {baseName}
           </GotoLink>
         );
         lastIndex = tooltipPattern.lastIndex;
@@ -96,28 +141,24 @@ export const renderTextWithTooltips = (
       }
 
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
-      tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也享受其他来源的攻击增伤加成`;
+      tooltipContent =
+        attackBoost === 0
+          ? `同时也享受其他来源的攻击增伤加成`
+          : `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也享受其他来源的攻击增伤加成`;
 
-      parts.push(
-        <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
-          {visibleText}
-        </Tooltip>
-      );
+      pushTooltip(visibleText, tooltipContent);
       lastIndex = tooltipPattern.lastIndex;
       continue;
     }
 
-    parts.push(
-      <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
-        {visibleText}
-      </Tooltip>
-    );
+    // For '+' and '_' branches (or invalid '+'), show tooltip for computed visible text
+    pushTooltip(visibleText, tooltipContent);
 
     lastIndex = tooltipPattern.lastIndex;
   }
 
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
+  if (lastIndex < normalized.length) {
+    parts.push(normalized.slice(lastIndex));
   }
 
   return parts;
