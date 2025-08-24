@@ -66,7 +66,7 @@ const tabs: Tab[] = [
   {
     id: 'items',
     name: '道具',
-    imageSrc: '/images/items/%E8%93%9D%E8%8A%B1%E7%93%B6.png',
+    imageSrc: '/images/icons/item.png',
     imageAlt: '道具图标',
     path: '/items',
   },
