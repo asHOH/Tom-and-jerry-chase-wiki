@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import NotificationTooltip from './ui/NotificationTooltip';
 
 interface VersionInfo {
@@ -14,6 +14,9 @@ interface VersionInfo {
 export const VersionChecker: React.FC = () => {
   const [showUpdateNotice, setShowUpdateNotice] = useState(false);
   const [currentVersion, setCurrentVersion] = useState<string | null>(null);
+  // Persist the latest seen version across reloads to avoid duplicate prompts
+  const LATEST_SEEN_VERSION_KEY = 'tjcw.latestSeenVersion';
+  const [latestSeenVersion, setLatestSeenVersion] = useState<string | null>(null);
   const [showDebugPanel, setShowDebugPanel] = useState(true);
   const [debugInfo, setDebugInfo] = useState<{
     status: 'loading' | 'ready' | 'error';
@@ -33,16 +36,25 @@ export const VersionChecker: React.FC = () => {
     timestamp: number;
   }>({ data: null, timestamp: 0 });
 
+  // Only reload on controllerchange when we've actually detected a newer version
+  const hasPendingUpdateRef = useRef(false);
+
   useEffect(() => {
     // Load initial version info
     const loadInitialVersion = async () => {
       try {
         setDebugInfo((prev) => ({ ...prev, status: 'loading' }));
-        const response = await fetch('/api/version', { cache: 'no-cache' });
+        // Cache-bust the initial fetch to avoid stale CDN/SW caches
+        const response = await fetch(`/api/version?_t=${Date.now()}`);
 
         if (response.ok) {
           const versionInfo: VersionInfo = await response.json();
           setCurrentVersion(versionInfo.version);
+          // Persist latest seen version
+          try {
+            localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
+            setLatestSeenVersion(versionInfo.version);
+          } catch {}
           setDebugInfo({
             status: 'ready',
             lastCheck: new Date().toLocaleTimeString(),
@@ -62,6 +74,11 @@ export const VersionChecker: React.FC = () => {
         }));
       }
     };
+    // Load last seen version from storage (best-effort)
+    try {
+      const stored = localStorage.getItem(LATEST_SEEN_VERSION_KEY);
+      if (stored) setLatestSeenVersion(stored);
+    } catch {}
 
     loadInitialVersion();
   }, []);
@@ -116,6 +133,7 @@ export const VersionChecker: React.FC = () => {
         );
         setNotificationMessage(`正在更新到最新版本 ${versionInfo.version}...`);
         setShowUpdateNotice(true);
+        hasPendingUpdateRef.current = true;
 
         // Update service worker if available
         if ('serviceWorker' in navigator) {
@@ -136,7 +154,9 @@ export const VersionChecker: React.FC = () => {
       const cacheAge = now - lastVersionResponse.timestamp;
       if (lastVersionResponse.data && cacheAge < 30000) {
         const versionInfo = lastVersionResponse.data;
-        if (versionInfo.version !== currentVersion) {
+        // Only treat as update if it's different from both the current in-memory version
+        // and the latest seen version persisted locally (guards against stale initial fetch)
+        if (versionInfo.version !== currentVersion && versionInfo.version !== latestSeenVersion) {
           await handleVersionUpdate(versionInfo, 'cached');
         }
         return;
@@ -147,9 +167,7 @@ export const VersionChecker: React.FC = () => {
         setDebugInfo((prev) => ({ ...prev, lastCheck: new Date().toLocaleTimeString() }));
 
         // Check version.json for updates
-        const response = await fetch('/api/version?_t=' + Date.now(), {
-          cache: 'no-cache',
-        });
+        const response = await fetch('/api/version?_t=' + Date.now());
 
         if (response.ok) {
           const versionInfo: VersionInfo = await response.json();
@@ -160,10 +178,16 @@ export const VersionChecker: React.FC = () => {
             timestamp: now,
           });
 
-          if (versionInfo.version !== currentVersion) {
+          if (versionInfo.version !== currentVersion && versionInfo.version !== latestSeenVersion) {
             await handleVersionUpdate(versionInfo, 'fresh');
             return;
           }
+
+          // Keep local latestSeenVersion in sync when versions match
+          try {
+            localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
+            setLatestSeenVersion(versionInfo.version);
+          } catch {}
         }
 
         // Reset retry count on successful check
@@ -194,6 +218,7 @@ export const VersionChecker: React.FC = () => {
     debugInfo.retryCount,
     isCheckingVersion,
     isOnline,
+    latestSeenVersion,
     lastVersionResponse.data,
     lastVersionResponse.timestamp,
   ]);
@@ -202,7 +227,8 @@ export const VersionChecker: React.FC = () => {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       const handleControllerChange = () => {
-        if (!showUpdateNotice) {
+        // Only react to controller changes if we know an update is pending
+        if (!showUpdateNotice && hasPendingUpdateRef.current) {
           setNotificationMessage('检测到新版本，正在更新...');
           setShowUpdateNotice(true);
           setTimeout(() => {
