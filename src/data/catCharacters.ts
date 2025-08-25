@@ -2265,7 +2265,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '爪刀命中时，回复伤害等量的生命值；不论是否命中，每消耗一层野性，减少0.3秒爪刀CD。',
+              '爪刀命中时，回复伤害等量的Hp；不论是否命中，每消耗一层野性，减少0.3秒爪刀CD。',
           },
         ],
       },

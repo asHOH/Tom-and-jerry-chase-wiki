@@ -10,6 +10,7 @@ import { FactionId } from '@/data/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
 import FilterLabel from '@/components/ui/FilterLabel';
+import Tooltip from '@/components/ui/Tooltip';
 
 interface PropertySelectorProps {
   currentProperty?: RankableProperty | undefined;
@@ -69,7 +70,6 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
     const colors = getPropertyColors(isActive);
 
     return (
-      /* <Tooltip content={property.description} delay={500}> */
       <button
         type='button'
         onClick={() => handlePropertySelect(property.key)}
@@ -80,10 +80,10 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
         )}
         style={isActive ? { backgroundColor: colors.backgroundColor, color: colors.color } : {}}
       >
-        {property.label}
-        {property.unit && <span className='ml-1 text-xs opacity-70'>({property.unit})</span>}
+        <Tooltip content={property.description} delay={500} className='border-none cursor-pointer'>
+          {property.label}{' '}
+        </Tooltip>
       </button>
-      /* </Tooltip> */
     );
   };
 
@@ -113,7 +113,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
               {factionId === 'cat'
                 ? '猫阵营专属:'
                 : factionId === 'mouse'
-                  ? '老鼠阵营专属:'
+                  ? '鼠阵营专属:'
                   : '阵营专属:'}
             </FilterLabel>
             <FilterLabel displayMode='block'>筛选:</FilterLabel>
@@ -175,7 +175,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
                       : {}
                   }
                 >
-                  {factionName === 'cat' ? '仅猫阵营' : '仅老鼠阵营'}
+                  {factionName === 'cat' ? '仅猫阵营' : '仅鼠阵营'}
                 </button>
               );
             })}

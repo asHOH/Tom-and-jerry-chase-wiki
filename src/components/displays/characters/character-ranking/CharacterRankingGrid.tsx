@@ -14,6 +14,8 @@ import PropertySelector from './PropertySelector';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import { useSearchParams } from 'next/navigation';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { getCardRankColors } from '@/lib/design-tokens';
 
 interface CharacterRankingGridProps {
   initialProperty?: RankableProperty;
@@ -25,6 +27,46 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
   );
 
   const factionId = (useSearchParams().get('faction') ?? undefined) as FactionId | undefined;
+  const [isDarkMode] = useDarkMode();
+
+  // Helpers to create softer backgrounds from token colors
+  const hexToRgba = (hex: string, alpha: number) => {
+    const raw = hex.startsWith('#') ? hex.slice(1) : hex;
+    const full =
+      raw.length === 3
+        ? raw
+            .split('')
+            .map((ch) => ch + ch)
+            .join('')
+        : raw.padStart(6, '0').slice(0, 6);
+    const r = parseInt(full.slice(0, 2), 16);
+    const g = parseInt(full.slice(2, 4), 16);
+    const b = parseInt(full.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  const softBackground = (color: string, alpha = 0.15) => {
+    const c = (color || '').trim();
+    if (c.startsWith('rgba(')) {
+      const inner = c
+        .slice(5, -1)
+        .split(',')
+        .map((p) => p.trim());
+      return `rgba(${inner[0]}, ${inner[1]}, ${inner[2]}, ${alpha})`;
+    }
+    if (c.startsWith('rgb(')) {
+      const inner = c
+        .slice(4, -1)
+        .split(',')
+        .map((p) => p.trim());
+      return `rgba(${inner[0]}, ${inner[1]}, ${inner[2]}, ${alpha})`;
+    }
+    if (c.startsWith('#')) {
+      return hexToRgba(c, alpha);
+    }
+    // Fallback: return as-is
+    return c;
+  };
 
   // Get all characters as array and filter by faction if specified
   const allCharacters = useMemo(() => {
@@ -39,6 +81,33 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
     if (!selectedProperty) return [];
     return rankCharactersByProperty(allCharacters, selectedProperty);
   }, [allCharacters, selectedProperty]);
+
+  // Build a map of characterId -> rank group index based on unique rank buckets
+  // Example ranks: 1,1,1,4,4,6,6,6,9 -> groups: 1,1,1 (group 1), 4,4 (group 2), 6,6,6 (group 3), 9+ (group 4)
+  const rankGroupIndexById = useMemo(() => {
+    const map: Record<string, number> = {};
+    if (!rankedCharacters.length) return map;
+
+    // Collect unique ranks in appearance order
+    const uniqueRanks: number[] = [];
+    let lastRank: number | undefined;
+    for (const rc of rankedCharacters) {
+      if (lastRank === undefined || rc.rank !== lastRank) {
+        uniqueRanks.push(rc.rank);
+        lastRank = rc.rank;
+      }
+    }
+
+    // Assign group index for each character
+    for (const rc of rankedCharacters) {
+      const idx = uniqueRanks.indexOf(rc.rank);
+      // group index is 1-based for first 3 groups; anything beyond is treated as 4 (others)
+      const groupIndex = idx >= 0 ? Math.min(idx + 1, 4) : 4;
+      map[rc.character.id] = groupIndex;
+    }
+
+    return map;
+  }, [rankedCharacters]);
 
   // Get property info for display
   const propertyInfo = selectedProperty ? getPropertyInfo(selectedProperty) : undefined;
@@ -59,8 +128,8 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
         <header className='text-center space-y-4 mb-8 px-4'>
           <PageTitle>角色属性排行榜</PageTitle>
           <PageDescription>
-            选择一个属性来查看所有角色在该属性上的排名。
-            {factionId && `当前显示: ${factionId === 'cat' ? '猫阵营' : '老鼠阵营'}角色`}
+            选择一个属性来查看角色在此属性上的排名。
+            {factionId && `当前为: ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}角色`}
           </PageDescription>
         </header>
 
@@ -80,7 +149,7 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
       <div className='space-y-8'>
         <header className='text-center space-y-4 mb-8 px-4'>
           <PageTitle>角色属性排行榜</PageTitle>
-          <PageDescription>没有角色拥有所选属性的数据</PageDescription>
+          <PageDescription>没有角色拥有此属性</PageDescription>
         </header>
 
         <div className='max-w-4xl mx-auto px-4'>
@@ -99,13 +168,13 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>
           {propertyInfo?.label}排行榜
-          {factionId && ` - ${factionId === 'cat' ? '猫阵营' : '老鼠阵营'}`}
+          {factionId && ` - ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}`}
         </PageTitle>
         <PageDescription>
           {propertyInfo?.description}
           {charactersWithProperty.length > 0 && (
             <span className='block mt-2 text-sm text-gray-600 dark:text-gray-400'>
-              共有 {charactersWithProperty.length} 个角色拥有此属性数据
+              共 {charactersWithProperty.length} 个角色拥有此属性
               {propertyInfo?.higherIsBetter === false && ' (数值越低越好)'}
             </span>
           )}
@@ -133,6 +202,9 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
           >
             <CharacterRankingCard
               rankedCharacter={rankedCharacter}
+              {...(rankGroupIndexById[rankedCharacter.character.id]
+                ? { rankGroupIndex: rankGroupIndexById[rankedCharacter.character.id] }
+                : {})}
               priority={index < 6} // Prioritize loading for top 6 characters
             />
           </div>
@@ -145,36 +217,63 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
         rankedCharacters[rankedCharacters.length - 1] && (
           <div className='max-w-4xl mx-auto px-4 pt-8 border-t border-gray-200 dark:border-gray-700'>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-center'>
-              <div className='bg-green-50 dark:bg-green-900/20 p-4 rounded-lg'>
-                <div className='text-2xl font-bold text-green-600 dark:text-green-400'>
-                  {rankedCharacters[0]?.formattedValue}
-                </div>
-                <div className='text-sm text-green-700 dark:text-green-300'>
-                  最高值 ({rankedCharacters[0]?.character.id})
-                </div>
-              </div>
+              {/* Highest -> S rank colors with soft background */}
+              {(() => {
+                const s = getCardRankColors('S', false, isDarkMode);
+                return (
+                  <div
+                    className='p-4 rounded-lg'
+                    style={{ backgroundColor: softBackground(s.backgroundColor as string, 0.15) }}
+                  >
+                    <div className='text-2xl font-bold' style={{ color: s.color }}>
+                      {rankedCharacters[0]?.formattedValue}
+                    </div>
+                    <div className='text-sm' style={{ color: s.color }}>
+                      最高 ({rankedCharacters[0]?.character.id})
+                    </div>
+                  </div>
+                );
+              })()}
 
-              <div className='bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg'>
-                <div className='text-2xl font-bold text-blue-600 dark:text-blue-400'>
-                  {rankedCharacters[rankedCharacters.length - 1]?.formattedValue}
-                </div>
-                <div className='text-sm text-blue-700 dark:text-blue-300'>
-                  最低值 ({rankedCharacters[rankedCharacters.length - 1]?.character.id})
-                </div>
-              </div>
+              {/* Lowest -> C rank colors with soft background */}
+              {(() => {
+                const c = getCardRankColors('C', false, isDarkMode);
+                return (
+                  <div
+                    className='p-4 rounded-lg'
+                    style={{ backgroundColor: softBackground(c.backgroundColor as string, 0.15) }}
+                  >
+                    <div className='text-2xl font-bold' style={{ color: c.color }}>
+                      {rankedCharacters[rankedCharacters.length - 1]?.formattedValue}
+                    </div>
+                    <div className='text-sm' style={{ color: c.color }}>
+                      最低 ({rankedCharacters[rankedCharacters.length - 1]?.character.id})
+                    </div>
+                  </div>
+                );
+              })()}
 
-              <div className='bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg'>
-                <div className='text-2xl font-bold text-purple-600 dark:text-purple-400'>
-                  {Math.round(
-                    (rankedCharacters.reduce((sum, rc) => sum + rc.value, 0) /
-                      rankedCharacters.length) *
-                      10
-                  ) / 10}
-                </div>
-                <div className='text-sm text-purple-700 dark:text-purple-300'>
-                  平均值{propertyInfo?.unit && ` (${propertyInfo.unit})`}
-                </div>
-              </div>
+              {/* Average -> B rank colors with soft background */}
+              {(() => {
+                const b = getCardRankColors('B', false, isDarkMode);
+                return (
+                  <div
+                    className='p-4 rounded-lg'
+                    style={{ backgroundColor: softBackground(b.backgroundColor as string, 0.15) }}
+                  >
+                    <div className='text-2xl font-bold' style={{ color: b.color }}>
+                      {Math.round(
+                        (rankedCharacters.reduce((sum, rc) => sum + rc.value, 0) /
+                          rankedCharacters.length) *
+                          10
+                      ) / 10}
+                    </div>
+                    <div className='text-sm' style={{ color: b.color }}>
+                      平均{propertyInfo?.unit && ` (${propertyInfo.unit})`}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         )}
