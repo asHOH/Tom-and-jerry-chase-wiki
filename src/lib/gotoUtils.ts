@@ -42,7 +42,7 @@ export async function getGotoResult(
     };
   }
   if (
-    (!normalizedCategory || normalizedCategory === '实体' || normalizedCategory === '道具') &&
+    (!normalizedCategory || normalizedCategory === '衍生物' || normalizedCategory === '道具') &&
     name in entities['cat']
   ) {
     const entity = entities['cat'][name];
@@ -55,7 +55,7 @@ export async function getGotoResult(
     };
   }
   if (
-    (!normalizedCategory || normalizedCategory === '实体' || normalizedCategory === '道具') &&
+    (!normalizedCategory || normalizedCategory === '衍生物' || normalizedCategory === '道具') &&
     name in entities['mouse']
   ) {
     const entity = entities['mouse'][name];
