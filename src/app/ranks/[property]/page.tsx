@@ -37,7 +37,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     return {};
   }
 
-  const factionSuffix = factionId ? ` - ${factionId === 'cat' ? '猫阵营' : '老鼠阵营'}` : '';
+  const factionSuffix = factionId ? ` - ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}` : '';
 
   return generatePageMetadata({
     title: `${propertyInfo.label}排行榜${factionSuffix}`,

@@ -33,7 +33,7 @@ export const RANKABLE_PROPERTIES: PropertyInfo[] = [
   {
     key: 'maxHp',
     label: 'HP上限',
-    description: '角色的最大生命值',
+    description: '角色的健康值上限',
     higherIsBetter: true,
   },
   {
@@ -88,7 +88,7 @@ export const RANKABLE_PROPERTIES: PropertyInfo[] = [
   {
     key: 'cheesePushSpeed',
     label: '推速',
-    description: '老鼠角色推奶酪的速度',
+    description: '鼠角色推奶酪的速度',
     faction: 'mouse',
     unit: '%/s',
     higherIsBetter: true,
@@ -96,9 +96,8 @@ export const RANKABLE_PROPERTIES: PropertyInfo[] = [
   {
     key: 'wallCrackDamageBoost',
     label: '墙缝增伤',
-    description: '老鼠角色在墙缝中的伤害加成',
+    description: '鼠角色对墙缝的伤害加成',
     faction: 'mouse',
-    unit: '%',
     higherIsBetter: true,
   },
 ];

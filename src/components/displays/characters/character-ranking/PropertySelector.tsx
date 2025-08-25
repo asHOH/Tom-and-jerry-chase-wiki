@@ -113,7 +113,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
               {factionId === 'cat'
                 ? '猫阵营专属:'
                 : factionId === 'mouse'
-                  ? '老鼠阵营专属:'
+                  ? '鼠阵营专属:'
                   : '阵营专属:'}
             </FilterLabel>
             <FilterLabel displayMode='block'>筛选:</FilterLabel>
@@ -175,7 +175,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
                       : {}
                   }
                 >
-                  {factionName === 'cat' ? '仅猫阵营' : '仅老鼠阵营'}
+                  {factionName === 'cat' ? '仅猫阵营' : '仅鼠阵营'}
                 </button>
               );
             })}

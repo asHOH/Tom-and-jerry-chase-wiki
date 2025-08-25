@@ -59,8 +59,8 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
         <header className='text-center space-y-4 mb-8 px-4'>
           <PageTitle>角色属性排行榜</PageTitle>
           <PageDescription>
-            选择一个属性来查看所有角色在该属性上的排名。
-            {factionId && `当前显示: ${factionId === 'cat' ? '猫阵营' : '老鼠阵营'}角色`}
+            选择一个属性来查看角色在此属性上的排名。
+            {factionId && `当前为: ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}角色`}
           </PageDescription>
         </header>
 
@@ -80,7 +80,7 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
       <div className='space-y-8'>
         <header className='text-center space-y-4 mb-8 px-4'>
           <PageTitle>角色属性排行榜</PageTitle>
-          <PageDescription>没有角色拥有所选属性的数据</PageDescription>
+          <PageDescription>没有角色拥有此属性</PageDescription>
         </header>
 
         <div className='max-w-4xl mx-auto px-4'>
@@ -99,13 +99,13 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>
           {propertyInfo?.label}排行榜
-          {factionId && ` - ${factionId === 'cat' ? '猫阵营' : '老鼠阵营'}`}
+          {factionId && ` - ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}`}
         </PageTitle>
         <PageDescription>
           {propertyInfo?.description}
           {charactersWithProperty.length > 0 && (
             <span className='block mt-2 text-sm text-gray-600 dark:text-gray-400'>
-              共有 {charactersWithProperty.length} 个角色拥有此属性数据
+              共 {charactersWithProperty.length} 个角色拥有此属性
               {propertyInfo?.higherIsBetter === false && ' (数值越低越好)'}
             </span>
           )}
@@ -150,7 +150,7 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
                   {rankedCharacters[0]?.formattedValue}
                 </div>
                 <div className='text-sm text-green-700 dark:text-green-300'>
-                  最高值 ({rankedCharacters[0]?.character.id})
+                  最高 ({rankedCharacters[0]?.character.id})
                 </div>
               </div>
 
@@ -159,7 +159,7 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
                   {rankedCharacters[rankedCharacters.length - 1]?.formattedValue}
                 </div>
                 <div className='text-sm text-blue-700 dark:text-blue-300'>
-                  最低值 ({rankedCharacters[rankedCharacters.length - 1]?.character.id})
+                  最低 ({rankedCharacters[rankedCharacters.length - 1]?.character.id})
                 </div>
               </div>
 
@@ -172,7 +172,7 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
                   ) / 10}
                 </div>
                 <div className='text-sm text-purple-700 dark:text-purple-300'>
-                  平均值{propertyInfo?.unit && ` (${propertyInfo.unit})`}
+                  平均{propertyInfo?.unit && ` (${propertyInfo.unit})`}
                 </div>
               </div>
             </div>
