@@ -10,6 +10,7 @@ import { FactionId } from '@/data/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
 import FilterLabel from '@/components/ui/FilterLabel';
+import Tooltip from '@/components/ui/Tooltip';
 
 interface PropertySelectorProps {
   currentProperty?: RankableProperty | undefined;
@@ -69,7 +70,6 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
     const colors = getPropertyColors(isActive);
 
     return (
-      /* <Tooltip content={property.description} delay={500}> */
       <button
         type='button'
         onClick={() => handlePropertySelect(property.key)}
@@ -80,9 +80,10 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
         )}
         style={isActive ? { backgroundColor: colors.backgroundColor, color: colors.color } : {}}
       >
-        {property.label}
+        <Tooltip content={property.description} delay={500} className='border-none cursor-pointer'>
+          {property.label}{' '}
+        </Tooltip>
       </button>
-      /* </Tooltip> */
     );
   };
 
