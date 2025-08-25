@@ -81,7 +81,6 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
         style={isActive ? { backgroundColor: colors.backgroundColor, color: colors.color } : {}}
       >
         {property.label}
-        {property.unit && <span className='ml-1 text-xs opacity-70'>({property.unit})</span>}
       </button>
       /* </Tooltip> */
     );
