@@ -32,7 +32,7 @@ export const RANKABLE_PROPERTIES: PropertyInfo[] = [
   // Common properties
   {
     key: 'maxHp',
-    label: 'HP上限',
+    label: 'Hp上限',
     description: '角色的健康值上限',
     higherIsBetter: true,
   },
@@ -44,8 +44,8 @@ export const RANKABLE_PROPERTIES: PropertyInfo[] = [
   },
   {
     key: 'hpRecovery',
-    label: 'HP恢复',
-    description: '角色的生命值恢复速度',
+    label: 'Hp恢复',
+    description: '角色的健康值恢复速度',
     higherIsBetter: true,
   },
   {
