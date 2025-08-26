@@ -1,6 +1,7 @@
 'use client';
 
 import BaseCard from '@/components/ui/BaseCard';
+import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import Tag from '@/components/ui/Tag';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -15,7 +16,6 @@ export default function ItemDetailClient({ item }: { item: Item }) {
   const tagColorStyles = isDarkMode
     ? { background: '#334155', color: '#e0e7ef' }
     : { background: '#e0e7ef', color: '#1e293b' };
-
   if (!item) return null;
 
   return (
@@ -73,26 +73,28 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     {item.exp == 0 ? '(猫) 命中无经验' : `(猫) 命中获得经验: ${item.exp}`}
                   </Tag>
                 )}
-                {item.store != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    {item.store == true ? '局内商店有售' : '局内商店不售'}
-                  </Tag>
-                )}
-                {!!item.price && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    价格: {item.price}
-                  </Tag>
-                )}
-                {!!item.storeCD && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    购买CD: {item.storeCD}秒 ({item.teamCD == true ? '共享' : '独立'})
-                  </Tag>
-                )}
-                {item.unlocktime != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    解锁时间: {item.unlocktime}
-                  </Tag>
-                )}
+                <div className='flex items-center flex-wrap' style={{ gap: spacing.sm }}>
+                  {item.store != undefined && (
+                    <Tag colorStyles={tagColorStyles} size='md'>
+                      {item.store == true ? '局内商店有售' : '局内商店不售'}
+                    </Tag>
+                  )}
+                  {!!item.price && (
+                    <Tag colorStyles={tagColorStyles} size='md'>
+                      价格: {item.price}
+                    </Tag>
+                  )}
+                  {!!item.storeCD && (
+                    <Tag colorStyles={tagColorStyles} size='md'>
+                      购买CD: {item.storeCD}秒 {item.teamCD == true ? '(团队共享)' : ''}
+                    </Tag>
+                  )}
+                  {item.unlocktime != undefined && (
+                    <Tag colorStyles={tagColorStyles} size='md'>
+                      解锁时间: {item.unlocktime}
+                    </Tag>
+                  )}
+                </div>
               </div>
             </div>
           </BaseCard>
@@ -100,17 +102,21 @@ export default function ItemDetailClient({ item }: { item: Item }) {
         <div className='md:w-2/3'>
           <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
             {[
-              {
-                title: '道具描述',
-                text:
-                  isDetailedView && item.detailedDescription
-                    ? item.detailedDescription
-                    : item.description,
-              },
-              {
-                title: '生成方式',
-                text: isDetailedView && item.detailedCreate ? item.detailedCreate : item.create,
-              },
+              item.description === undefined
+                ? { title: '道具描述', text: '待补充' }
+                : {
+                    title: '道具描述',
+                    text:
+                      isDetailedView && item.detailedDescription
+                        ? item.detailedDescription
+                        : item.description,
+                  },
+              item.create === undefined
+                ? { title: '生成方式', text: '待补充' }
+                : {
+                    title: '生成方式',
+                    text: isDetailedView && item.detailedCreate ? item.detailedCreate : item.create,
+                  },
             ].map(({ title, text }) => (
               <div key={title}>
                 <h2
@@ -131,7 +137,8 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     className='text-black dark:text-gray-200 text-lg'
                     style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
                   >
-                    {text}
+                    <TextWithHoverTooltips text={text as string} />
+                    {/*ToDo:add line break fuction*/}
                   </p>
                 </div>
               </div>
