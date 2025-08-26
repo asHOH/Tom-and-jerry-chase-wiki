@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { getUserData, userObject } from '@/hooks/useUser';
+import CaptchaComponent from './CaptchaComponent';
 
 type LoginDialogProps = {
   onClose: () => void;
@@ -19,10 +20,15 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const [nickname, setNickname] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const checkUsername = async () => {
+    if (token === null) {
+      setError('请通过验证码。');
+      return;
+    }
     if (username.trim() === '') {
       setError('用户名不能为空。');
       return;
@@ -33,7 +39,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       const response = await fetch('/api/auth/check-username', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username }),
+        body: JSON.stringify({ username, token }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -214,6 +220,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoFocus
+            />
+            <CaptchaComponent
+              onVerify={function (token) {
+                setToken(token);
+              }}
             />
           </>
         );

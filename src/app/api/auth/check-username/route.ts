@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash } from 'crypto';
+import { verifyCaptchaToken } from '@/lib/captchaUtils';
 
 // Helper function to hash the username
 // In a real-world scenario, ensure this matches the hashing strategy used during user creation.
@@ -10,10 +11,14 @@ const hashUsername = (username: string) => {
 
 export async function POST(request: NextRequest) {
   try {
-    const { username } = await request.json();
+    const { username, token } = await request.json();
 
     if (!username || typeof username !== 'string') {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
+    }
+
+    if (!(await verifyCaptchaToken(token))) {
+      return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
     }
 
     const usernameHash = hashUsername(username);
