@@ -5,7 +5,7 @@ export const getMouseEntityImageUrl = (name: string): string => {
 };
 
 const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
-  '金丝雀(鸟哨)': {
+  鸟哨金丝雀: {
     entitytype: 'NPC类' as const,
     characterName: '杰瑞',
     skillname: '鸟哨',
@@ -13,12 +13,12 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     gravity: false,
     collsion: false,
     description:
-      '金丝雀会来回盘旋，持续向下方投掷{小鞭炮(鸟哨)(衍生物)}，轰炸一段时间后自行飞离。同一房间内最多只能有1只由鸟哨召唤的金丝雀。',
+      '金丝雀会来回盘旋，持续向下方投掷{鸟哨鞭炮}，轰炸一段时间后自行飞离。同一房间内最多只能有1只由鸟哨召唤的金丝雀。',
     detailedDescription:
-      '金丝雀会来回盘旋，每0.8/0.75/0.6秒向下方投掷{小鞭炮(鸟哨)(衍生物)}，轰炸一段时间后自行飞离。同一房间内最多只能有1只由鸟哨召唤的金丝雀。',
+      '金丝雀会来回盘旋，每0.8/0.75/0.6秒向下方投掷{鸟哨鞭炮}，轰炸一段时间后自行飞离。同一房间内最多只能有1只由鸟哨召唤的金丝雀。',
     create: '由杰瑞-鸟哨召唤。',
   },
-  '小鞭炮(鸟哨)': {
+  鸟哨鞭炮: {
     entitytype: '投射物类' as const,
     characterName: '杰瑞',
     skillname: '鸟哨',
@@ -31,9 +31,9 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '命中敌方时爆炸，造成伤害和眩晕，被命中的目标短暂免疫该道具效果；掉落一定时间后也会自行爆炸。',
     detailedDescription:
       '命中敌方时造成[55伤害](不受攻击增伤影响)和2秒爆炸眩晕，可触发投掷类知识卡和特技，并会获得300商店金钱，但被命中的目标在眩晕期间及眩晕结束后1秒内免疫该道具效果。掉落一定时间后也会自行爆炸，不造成伤害和眩晕。其外观酷似小鞭炮，但无法被拾取、不会攻击友方、也不会造成范围伤害。',
-    create: '由杰瑞-鸟哨召唤的{金丝雀(鸟哨)(衍生物)}进行投掷。',
+    create: '由杰瑞-鸟哨召唤的{鸟哨金丝雀}进行投掷。',
   },
-  '烟雾(烟雾弹)': {
+  烟雾: {
     entitytype: '其它' as const,
     characterName: '侦探杰瑞',
     skillname: '烟雾弹',
@@ -59,7 +59,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '干扰器落地时，使小范围内的友方老鼠获得3.5秒隐身。Lv.1干扰器提供的隐身会被部分交互行为破除。Lv.2干扰器提供的隐身不再会被交互破除，且能免疫香水反向、烟雾失明、魅力香水烟雾的效果。Lv.3干扰器提供的隐身附带移速提高20%的效果。',
     create: '由侦探杰瑞-视觉干扰器召唤。',
   },
-  '金币(道具)': {
+  金币: {
     entitytype: '道具类' as const,
     characterName: '航海士杰瑞',
     skillname: '飞翔金币',
@@ -73,7 +73,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '金币命中敌方时造成2秒眩晕,但被命中的敌方在眩晕期间及眩晕结束后1秒内免疫该道具效果。金币不会因虚弱而从手中掉落。Lv.3金币命中敌方会[分别造成35和40两段伤害](均受攻击增伤加成。航海士杰瑞攻击增伤20，因此实际伤害通常是55+60。另外要注意第二段伤害往往因伤害保护降低20%)，可分别击破护盾。',
     create: '通过航海士杰瑞-飞翔金币召唤。',
   },
-  '火药桶(召唤物)': {
+  火药桶: {
     entitytype: '召唤物类' as const,
     characterName: '航海士杰瑞',
     skillname: '火药桶',
@@ -172,7 +172,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '碰触的友方提高50%跳跃高度，持续5秒。被其他队友碰触2/1/0次后获得强化，之后碰触的友方获得二段跳状态。获得战旗效果后的15秒内无法再次获得同类型的效果（五种战旗共用CD，未强化和强化效果分别计算CD）。同一时间游戏内只能存在一面战旗。',
     create: '通过国王杰瑞-国王战旗召唤。',
   },
-  '火箭筒(投射物)': {
+  火箭筒: {
     entitytype: '投射物类' as const,
     characterName: '泰菲',
     skillname: '火箭筒',
@@ -242,7 +242,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '被猫咪踩踏时消失，并对其造成0.8秒硬直，移速降低13%，每秒受到7.5无来源伤害（共计15伤害），持续3秒，减速效果可叠加最多3层，大/小仙人掌的减速和伤害效果分别独立计算；被老鼠踩踏2次后消失；存在90秒后会自然消失。同一角色踩踏大/小仙人掌后，在3秒内不会踩踏其他大/小仙人掌。场上存在持有西部风情Lv.3的牛仔杰瑞时，现有和之后召唤的所有大/小仙人掌都会延长控制时间（无论所属角色是谁）。',
     create: '牛仔杰瑞-仙人掌Lv.2及以上时，召唤的大仙人掌在非自然消失时产生3个小仙人掌。',
   },
-  '地狱裂隙(衍生物)': {
+  地狱裂隙: {
     entitytype: '其它' as const,
     characterName: '恶魔杰瑞',
     skillname: '地狱裂隙',
