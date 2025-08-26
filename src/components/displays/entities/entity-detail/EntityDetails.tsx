@@ -1,6 +1,7 @@
 'use client';
 
 import BaseCard from '@/components/ui/BaseCard';
+import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import Tag from '@/components/ui/Tag';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -49,8 +50,10 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
               >
                 {entity.factionId != undefined && entity.characterName != undefined && (
                   <Tag colorStyles={tagColorStyles} size='md'>
-                    所属者：{entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}-{entity.characterName}
-                    {entity.skillname === undefined ? '' : `-${entity.skillname}`}
+                    <TextWithHoverTooltips
+                      text={`所属者：${entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}-{${entity.characterName}}
+                    ${entity.skillname === undefined ? '' : `-{${entity.skillname}}`}`}
+                    />
                   </Tag>
                 )}
                 {!!(entity.aliases && entity.aliases.length) && (
@@ -85,18 +88,24 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
         <div className='md:w-2/3'>
           <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
             {[
-              {
-                title: '衍生物描述',
-                text:
-                  isDetailedView && entity.detailedDescription
-                    ? entity.detailedDescription
-                    : entity.description,
-              },
-              {
-                title: '生成方式',
-                text:
-                  isDetailedView && entity.detailedCreate ? entity.detailedCreate : entity.create,
-              },
+              entity.description === undefined
+                ? { title: '衍生物描述', text: '待补充' }
+                : {
+                    title: '衍生物描述',
+                    text:
+                      isDetailedView && entity.detailedDescription
+                        ? entity.detailedDescription
+                        : entity.description,
+                  },
+              entity.create === undefined
+                ? { title: '生成方式', text: '待补充' }
+                : {
+                    title: '生成方式',
+                    text:
+                      isDetailedView && entity.detailedCreate
+                        ? entity.detailedCreate
+                        : entity.create,
+                  },
             ].map(({ title, text }) => (
               <div key={title}>
                 <h2
@@ -117,7 +126,8 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
                     className='text-black dark:text-gray-200 text-lg'
                     style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
                   >
-                    {text}
+                    <TextWithHoverTooltips text={text as string} />
+                    {/*ToDo:add line break fuction*/}
                   </p>
                 </div>
               </div>

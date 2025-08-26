@@ -8,6 +8,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   胡椒粉罐头: {
     entitytype: '投射物类' as const,
     characterName: '米特',
+    skillname: '胡椒粉罐头',
     aliases: ['胡椒粉', '胡椒罐'],
     move: true,
     gravity: true,
