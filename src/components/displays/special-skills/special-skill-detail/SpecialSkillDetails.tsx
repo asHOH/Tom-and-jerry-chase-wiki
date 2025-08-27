@@ -11,12 +11,21 @@ import { designTokens } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { characters } from '@/data';
 import Link from 'next/link';
+import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
+import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;
 }
 
 export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailClientProps) {
+  // Keyboard navigation
+  useSpecifyTypeKeyboardNavigation(
+    skill.name,
+    'specialSkill',
+    skill.factionId == 'cat' ? false : true
+  );
+
   const { isDetailedView } = useAppContext();
   const [isDarkMode] = useDarkMode();
   // TODO: use useSnapshot if edit mode for special skill is supported
@@ -54,7 +63,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
               <div
                 className='flex items-center flex-wrap'
                 style={{
-                  marginTop: designTokens.spacing.lg,
+                  marginTop: designTokens.spacing.sm,
                   gap: designTokens.spacing.sm,
                 }}
               >
@@ -78,6 +87,13 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
                 >
                   阵营: {skill.factionId === 'cat' ? '猫' : '鼠'}
                 </Tag>
+
+                {/*Navigation */}
+                <SpecifyTypeNavigationButtons
+                  currentId={skill.name}
+                  specifyType='specialSkill'
+                  under={skill.factionId == 'cat' ? false : true}
+                />
               </div>
             </div>
           </BaseCard>
@@ -121,7 +137,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
               </div>
             </div>
           </div>
-          {usedCharacters.length > 0 && (
+          {
             <>
               <div
                 className='flex items-center'
@@ -139,36 +155,41 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
                     paddingBottom: designTokens.spacing.sm,
                   }}
                 >
+                  {usedCharacters.length == 0 && '没有任何'}
                   {!displayUsedCharacters && '未'}使用该特技的角色
                 </h2>
               </div>
-              <div className='rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
-                <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-                  {(displayUsedCharacters ? usedCharacters : unusedCharacters).map((character) => (
-                    <li
-                      key={character.id ?? ''}
-                      className='flex items-center gap-4 p-3 rounded-lg transition-colors'
-                    >
-                      <Link
-                        href={`/characters/${character.id}`}
-                        className='flex items-center gap-4 w-full'
-                        tabIndex={0}
-                      >
-                        <Image
-                          src={character.imageUrl!}
-                          alt={character.id!}
-                          className='w-10 h-10'
-                          width={40}
-                          height={40}
-                        />
-                        <span className='text-lg dark:text-white truncate'>{character.id}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {usedCharacters.length > 0 && (
+                <div className='rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
+                  <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+                    {(displayUsedCharacters ? usedCharacters : unusedCharacters).map(
+                      (character) => (
+                        <li
+                          key={character.id ?? ''}
+                          className='flex items-center gap-4 p-3 rounded-lg transition-colors'
+                        >
+                          <Link
+                            href={`/characters/${character.id}`}
+                            className='flex items-center gap-4 w-full'
+                            tabIndex={0}
+                          >
+                            <Image
+                              src={character.imageUrl!}
+                              alt={character.id!}
+                              className='w-10 h-10'
+                              width={40}
+                              height={40}
+                            />
+                            <span className='text-lg dark:text-white truncate'>{character.id}</span>
+                          </Link>
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </div>
+              )}
             </>
-          )}
+          }
         </div>
       </div>
     </div>

@@ -5,21 +5,23 @@ import { useSpecifyTypeNavigation } from '@/lib/hooks/useSpecifyTypeNavigation';
 import { motion } from 'motion/react';
 
 //The NavigationButtons for knowledgeCards,specialSkills,items,entities
-type typelist = 'item' | 'entity';
+type typelist = 'specialSkill' | 'item' | 'entity';
 
 interface TargetNavigationButtonsProps {
   currentId: string;
   specifyType: typelist;
+  under?: boolean;
   className?: string;
 }
 
 export default function SpecifyTypeNavigationButtons({
   currentId,
   specifyType,
+  under = false,
   className = '',
 }: TargetNavigationButtonsProps) {
   const { previousTarget, nextTarget, navigateToPrevious, navigateToNext, currentIndex, totals } =
-    useSpecifyTypeNavigation(currentId, specifyType);
+    useSpecifyTypeNavigation(currentId, specifyType, under);
 
   return (
     <div className={`flex items-center justify-between gap-4 ${className}`}>

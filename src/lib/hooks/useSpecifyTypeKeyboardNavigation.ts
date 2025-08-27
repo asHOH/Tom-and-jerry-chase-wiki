@@ -3,10 +3,14 @@ import { useSpecifyTypeNavigation } from './useSpecifyTypeNavigation';
 
 //The KeyboardNavigation for knowledgeCards,specialSkills,items,entities
 
-type typelist = 'item' | 'entity';
-export const useSpecifyTypeKeyboardNavigation = (currentId: string, specifyType: typelist) => {
+type typelist = 'specialSkill' | 'item' | 'entity';
+export const useSpecifyTypeKeyboardNavigation = (
+  currentId: string,
+  specifyType: typelist,
+  under: boolean = false
+) => {
   const { navigateToPrevious, navigateToNext, previousTarget, nextTarget } =
-    useSpecifyTypeNavigation(currentId, specifyType);
+    useSpecifyTypeNavigation(currentId, specifyType, under);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
