@@ -8,8 +8,8 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { Entity } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
 import GameImage from '@/components/ui/GameImage';
-import { useEntityKeyboardNavigation } from '@/lib/hooks/useEntityKeyboardNavigation';
-import EntityNavigationButtons from '@/components/ui/EntityNavigationButtons';
+import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
+import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 
 export default function EntityDetailClient({ entity }: { entity: Entity }) {
   const { isDetailedView } = useAppContext();
@@ -19,7 +19,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
     ? { background: '#334155', color: '#e0e7ef' }
     : { background: '#e0e7ef', color: '#1e293b' };
   // Keyboard navigation
-  useEntityKeyboardNavigation(entity.name);
+  useSpecifyTypeKeyboardNavigation(entity.name, 'entity');
   if (!entity) return null;
 
   return (
@@ -86,7 +86,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
                 )}
 
                 {/* Entity Navigation */}
-                <EntityNavigationButtons currentEntityId={entity.name} />
+                <SpecifyTypeNavigationButtons currentId={entity.name} specifyType='entity' />
               </div>
             </div>
           </BaseCard>
