@@ -8,8 +8,13 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
 import GameImage from '@/components/ui/GameImage';
+import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
+import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
+  // Keyboard navigation
+  useSpecifyTypeKeyboardNavigation(item.name, 'item');
+
   const { isDetailedView } = useAppContext();
   const [isDarkMode] = useDarkMode();
   const spacing = designTokens.spacing;
@@ -46,16 +51,16 @@ export default function ItemDetailClient({ item }: { item: Item }) {
               </h1>
               <div
                 className='flex items-center flex-wrap'
-                style={{ gap: spacing.sm, marginTop: spacing.lg }}
+                style={{ gap: spacing.sm, marginTop: spacing.sm }}
               >
-                {item.factionId != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    {item.factionId == 'cat' ? '限猫咪使用' : '限老鼠使用'}
-                  </Tag>
-                )}
                 {!!(item.aliases && item.aliases.length) && (
                   <Tag colorStyles={tagColorStyles} size='md'>
                     别名: {(item.aliases ?? []).filter(Boolean).join(', ')}
+                  </Tag>
+                )}
+                {item.factionId != undefined && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    {item.factionId == 'cat' ? '限猫咪使用' : '限老鼠使用'}
                   </Tag>
                 )}
                 {item.damage != undefined && (
@@ -94,6 +99,9 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                       解锁时间: {item.unlocktime}
                     </Tag>
                   )}
+
+                  {/*Navigation */}
+                  <SpecifyTypeNavigationButtons currentId={item.name} specifyType='item' />
                 </div>
               </div>
             </div>

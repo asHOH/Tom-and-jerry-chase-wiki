@@ -4,17 +4,11 @@ import { useSpecifyTypeNavigation } from './useSpecifyTypeNavigation';
 //The KeyboardNavigation for knowledgeCards,specialSkills,items,entities
 
 type typelist = 'item' | 'entity';
-export const useSpecifyTypeKeyboardNavigation = (
-  currentId: string,
-  specifyType: typelist,
-  disabled = false
-) => {
+export const useSpecifyTypeKeyboardNavigation = (currentId: string, specifyType: typelist) => {
   const { navigateToPrevious, navigateToNext, previousTarget, nextTarget } =
     useSpecifyTypeNavigation(currentId, specifyType);
 
   useEffect(() => {
-    if (disabled) return;
-
     const handleKeyPress = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'ArrowLeft':
@@ -46,5 +40,5 @@ export const useSpecifyTypeKeyboardNavigation = (
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [disabled, navigateToPrevious, navigateToNext, previousTarget, nextTarget]);
+  }, [navigateToPrevious, navigateToNext, previousTarget, nextTarget]);
 };

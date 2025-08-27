@@ -12,14 +12,15 @@ import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyb
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 
 export default function EntityDetailClient({ entity }: { entity: Entity }) {
+  // Keyboard navigation
+  useSpecifyTypeKeyboardNavigation(entity.name, 'entity');
+
   const { isDetailedView } = useAppContext();
   const [isDarkMode] = useDarkMode();
   const spacing = designTokens.spacing;
   const tagColorStyles = isDarkMode
     ? { background: '#334155', color: '#e0e7ef' }
     : { background: '#e0e7ef', color: '#1e293b' };
-  // Keyboard navigation
-  useSpecifyTypeKeyboardNavigation(entity.name, 'entity');
   if (!entity) return null;
 
   return (
@@ -49,7 +50,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
               </h1>
               <div
                 className='flex entitys-center flex-wrap'
-                style={{ gap: spacing.sm, marginTop: spacing.lg }}
+                style={{ gap: spacing.sm, marginTop: spacing.sm }}
               >
                 {entity.factionId != undefined && entity.characterName != undefined && (
                   <Tag colorStyles={tagColorStyles} size='md'>

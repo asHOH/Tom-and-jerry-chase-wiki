@@ -12,7 +12,9 @@ export const useSpecifyTypeNavigation = (currentId: string, specifyType: typelis
   // (For items and entities, Id refers to 'Name')
 
   const allIds: Record<typelist, string[]> = {
-    item: Object.keys(items),
+    item: useMemo(() => {
+      return Object.keys(items);
+    }, []),
     entity: useMemo(() => {
       const catIds = Object.keys(entities['cat']);
       const mouseIds = Object.keys(entities['mouse']);
@@ -49,17 +51,21 @@ export const useSpecifyTypeNavigation = (currentId: string, specifyType: typelis
   }, [Ids, currentIndex]);
 
   // Navigation functions
+
+  const specifyTypeUrl = useMemo(() => {
+    return { item: 'items', entity: 'entities' };
+  }, []);
   const navigateToPrevious = useCallback(() => {
     if (previousTarget?.id) {
-      router.push(`/entities/${encodeURIComponent(previousTarget.id)}`);
+      router.push(`/${specifyTypeUrl[specifyType]}/${encodeURIComponent(previousTarget.id)}`);
     }
-  }, [previousTarget, router]);
+  }, [previousTarget, router, specifyType, specifyTypeUrl]);
 
   const navigateToNext = useCallback(() => {
     if (nextTarget?.id) {
-      router.push(`/entities/${encodeURIComponent(nextTarget.id)}`);
+      router.push(`/${specifyTypeUrl[specifyType]}/${encodeURIComponent(nextTarget.id)}`);
     }
-  }, [nextTarget, router]);
+  }, [nextTarget, router, specifyType, specifyTypeUrl]);
 
   return {
     previousTarget,
