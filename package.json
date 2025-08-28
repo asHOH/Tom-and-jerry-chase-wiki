@@ -11,7 +11,12 @@
   "bugs": {
     "url": "https://github.com/asHOH/Tom-and-jerry-chase-wiki/issues"
   },
+  "funding": {
+    "type": "patreon",
+    "url": "https://patreon.com/asHOH"
+  },
   "author": "asHOH",
+  "license": "(CC-BY-4.0 AND GPL-3.0-or-later)",
   "keywords": [
     "tom-and-jerry",
     "mobile-game",

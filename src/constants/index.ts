@@ -71,6 +71,28 @@ export const PROJECT_INFO = {
   },
 };
 
+// License information
+export const LICENSE_INFO = {
+  title: '开源许可',
+  description: '本项目采用双重许可证：',
+  licenses: [
+    {
+      name: 'Creative Commons Attribution 4.0 International',
+      shortName: 'CC BY 4.0',
+      url: 'https://creativecommons.org/licenses/by/4.0/',
+      scope: '内容与文档',
+      additionalDescription: '使用时须署名原作者 asHOH 并链接到本项目对应的 GitHub 仓库',
+    },
+    {
+      name: 'GNU General Public License v3.0',
+      shortName: 'GPL v3',
+      url: 'https://www.gnu.org/licenses/gpl-3.0.html',
+      scope: '源代码',
+      additionalDescription: '部署本网站者须将完整的项目源代码向所有用户公开',
+    },
+  ],
+};
+
 // Structured disclaimer content - single source of truth
 export const DISCLAIMER_CONTENT = {
   intro: '本网站为非盈利粉丝项目，仅供学习交流。',
