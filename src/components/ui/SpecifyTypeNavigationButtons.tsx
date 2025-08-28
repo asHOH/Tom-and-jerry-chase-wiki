@@ -4,8 +4,7 @@ import React from 'react';
 import { useSpecifyTypeNavigation } from '@/lib/hooks/useSpecifyTypeNavigation';
 import { motion } from 'motion/react';
 
-//The NavigationButtons for knowledgeCards,specialSkills,items,entities
-type typelist = 'specialSkill' | 'item' | 'entity';
+type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity';
 
 interface TargetNavigationButtonsProps {
   currentId: string;
@@ -14,6 +13,12 @@ interface TargetNavigationButtonsProps {
   className?: string;
 }
 
+/**
+ * Navigation for knowledgeCards,specialSkills,items,entities
+ * @param currentId - string - name of target to be searched
+ * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' -type of target to be searched
+ * @param under - boolean(default false) - revease search to avoid same name(such as 应急治疗)
+ */
 export default function SpecifyTypeNavigationButtons({
   currentId,
   specifyType,

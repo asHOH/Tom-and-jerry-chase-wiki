@@ -1,9 +1,14 @@
 import { useEffect } from 'react';
 import { useSpecifyTypeNavigation } from './useSpecifyTypeNavigation';
 
-//The KeyboardNavigation for knowledgeCards,specialSkills,items,entities
+type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity';
 
-type typelist = 'specialSkill' | 'item' | 'entity';
+/**
+ * Navigation for knowledgeCards,specialSkills,items,entities
+ * @param currentId - string - name of target to be searched
+ * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' -type of target to be searched
+ * @param under - boolean(default false) - revease search to avoid same name(such as 应急治疗)
+ */
 export const useSpecifyTypeKeyboardNavigation = (
   currentId: string,
   specifyType: typelist,

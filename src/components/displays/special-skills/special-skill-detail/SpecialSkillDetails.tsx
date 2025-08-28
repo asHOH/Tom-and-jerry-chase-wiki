@@ -155,11 +155,11 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
                     paddingBottom: designTokens.spacing.sm,
                   }}
                 >
-                  {usedCharacters.length == 0 && '没有任何'}
+                  {(usedCharacters.length == 0 || unusedCharacters.length == 0) && '没有任何'}
                   {!displayUsedCharacters && '未'}使用该特技的角色
                 </h2>
               </div>
-              {usedCharacters.length > 0 && (
+              {usedCharacters.length > 0 && unusedCharacters.length > 0 && (
                 <div className='rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
                   <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {(displayUsedCharacters ? usedCharacters : unusedCharacters).map(

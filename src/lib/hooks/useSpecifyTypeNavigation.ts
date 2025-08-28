@@ -1,11 +1,19 @@
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { specialSkills, items, entities } from '@/data';
+import { cards, specialSkills, items, entities } from '@/data';
+import { sortCardsByRank } from '@/lib/sortingUtils';
+import { useFilterState, createRankFilter } from '@/lib/filterUtils';
+import { useState } from 'react';
+import type { FactionId } from '@/data/types';
 
-//The Navigation for knowledgeCards,specialSkills,items,entities
-// "under" is used for avoid same name(specialSkills)
+type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity';
 
-type typelist = 'specialSkill' | 'item' | 'entity';
+/**
+ * Navigation for knowledgeCards,specialSkills,items,entities
+ * @param currentId - string - name of target to be searched
+ * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' -type of target to be searched
+ * @param under - boolean(default false) - revease search to avoid same name(such as 应急治疗)
+ */
 export const useSpecifyTypeNavigation = (
   currentId: string,
   specifyType: typelist,
@@ -13,10 +21,25 @@ export const useSpecifyTypeNavigation = (
 ) => {
   const router = useRouter();
 
-  // Get all IDs in the same order as displayed in entity grid
-  // (For items and entities, Id refers to 'Name')
+  const { selectedFilters: selectedRanks } = useFilterState<string>();
+  const [costRange] = useState<[number, number]>([2, 7]);
+  const [selectedFaction] = useState<FactionId | null>(null);
 
+  const filteredAndSortedCards = sortCardsByRank(
+    Object.values(cards)
+      .filter(createRankFilter(selectedRanks))
+      .filter((card) => card.cost >= costRange[0] && card.cost <= costRange[1])
+      .filter((card) => !selectedFaction || card.factionId === selectedFaction)
+  );
+
+  // Get all Ids in the same order as displayed in entity grid
   const allIds: Record<typelist, string[]> = {
+    knowledgeCard: useMemo(() => {
+      const cardlist: string[] = filteredAndSortedCards.map((card) => {
+        return card.id;
+      });
+      return cardlist;
+    }, [filteredAndSortedCards]),
     specialSkill: useMemo(() => {
       const catIds = Object.keys(specialSkills['cat']);
       const mouseIds = Object.keys(specialSkills['mouse']);
@@ -31,6 +54,8 @@ export const useSpecifyTypeNavigation = (
       return [...catIds, ...mouseIds];
     }, []),
   };
+
+  //Get specifyType's Ids
   const Ids = allIds[specifyType];
 
   // Get current index
@@ -63,7 +88,12 @@ export const useSpecifyTypeNavigation = (
 
   // specifyType's url
   const specifyTypeUrl = useMemo(() => {
-    return { specialSkill: 'special-skills', item: 'items', entity: 'entities' };
+    return {
+      knowledgeCard: 'cards',
+      specialSkill: 'special-skills',
+      item: 'items',
+      entity: 'entities',
+    };
   }, []);
 
   //adopt specialSkill's url
