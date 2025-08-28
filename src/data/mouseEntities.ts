@@ -368,6 +368,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
   黄色卡牌: {
     entitytype: '道具类' as const,
     characterName: '魔术师',
+    skillname: '奇思妙想',
     aliases: ['黄牌', '黄色纸牌'],
     move: true,
     gravity: true,
@@ -381,6 +382,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
   蓝色卡牌: {
     entitytype: '道具类' as const,
     characterName: '魔术师',
+    skillname: '奇思妙想',
     aliases: ['蓝牌', '蓝色纸牌'],
     move: true,
     gravity: true,
@@ -390,6 +392,30 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     detailedDescription:
       '可穿墙且被投掷时的初速度较高，使命中的敌方向卡牌飞行方向传送80距离且改变角色朝向，获得8秒失重状态，并且降低跳跃速度，但可在空中进行跳跃。',
     create: '通过魔术师-奇思妙想召唤，或通过魔术师-魔术戏法Lv.1效果自动生成。',
+  },
+  兔子先生: {
+    entitytype: 'NPC类' as const,
+    characterName: '魔术师',
+    skillname: '兔子先生',
+    aliases: ['小兔子'],
+    move: true,
+    gravity: true,
+    collsion: true,
+    description:
+      '魔术师可对其下达救援、搬奶酪、推奶酪、拾取、投掷、治疗或跟随指令。兔子继承魔术师的部分效果。详见技能描述。',
+    create: '通过魔术师-兔子先生召唤.',
+  },
+  兔子大表哥: {
+    entitytype: 'NPC类' as const,
+    characterName: '魔术师',
+    skillname: '兔子大表哥',
+    aliases: ['大兔子', '兔表哥', '蛋白兔'],
+    move: true,
+    gravity: true,
+    collsion: true,
+    description:
+      '魔术师可对其下达举火箭、指卧撑或保镖指令。兔表哥被卡牌命中时会储存该效果，并在通过技能出拳命中猫咪时对其附加。详见技能描述。',
+    create: '通过魔术师-兔子大表哥召唤。',
   },
   闪耀足球: {
     entitytype: '投射物类' as const,

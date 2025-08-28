@@ -3624,6 +3624,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         cueRange: '全图可见',
+        aliases: ['小兔子'],
       },
       {
         name: '兔子大表哥',
@@ -3663,7 +3664,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         cueRange: '全图可见',
-        aliases: ['兔表哥', '蛋白兔'],
+        aliases: ['大兔子', '兔表哥', '蛋白兔'],
       },
       {
         name: '魔术戏法',
