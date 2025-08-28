@@ -471,6 +471,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
     ],
+    counteredBySpecialSkills: [
+      {
+        id: '魔术漂浮',
+        description: '魔术漂浮能躲开布奇的冲撞。',
+        isMinor: true,
+      },
+    ],
   },
 
   /* ----------------------------------- 托普斯 ---------------------------------- */
@@ -604,7 +611,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '技能本身的CD减少至20秒；换位CD减少至5秒；分身不会主动消失；如果分身在本体附近，本体受到的[眩晕控制](不包括斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
+              '技能本身的CD减少至20秒；换位CD减少至5秒；分身不会主动消失；如果分身在本体附近，本体受到的[眩晕控制](包括大部分眩晕，另外还能免疫尼宝的鱼钩；不包括其它控制，如斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
             cooldown: 20,
           },
         ],

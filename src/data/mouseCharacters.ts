@@ -800,6 +800,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         cards: ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
         description: '（待翻新，有意提供知识卡可填写反馈建议）',
       },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-求生欲', 'C-脱身', 'C-救救我'],
+        description:
+          '求生欲和脱身配合Lv.2被动达到快速挣扎的效果，适合中低端局自保，但上限较低，且较为依赖地图和敌方角色。',
+      },
     ],
 
     skills: [
@@ -922,6 +927,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             detailedDescription: '[自身墙缝增伤增加1.3](即墙缝增伤增加至2.8)。',
           },
         ],
+      },
+    ],
+    collaborators: [
+      {
+        id: '拿坡里鼠',
+        description: '航海士杰瑞和拿坡里鼠能相互补充控制，火药桶和斜塔还能一起守火箭。',
+        isMinor: true,
       },
     ],
   },
@@ -5101,6 +5113,24 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    collaborators: [
+      {
+        id: '国王杰瑞',
+        description:
+          '国王杰瑞的救援战旗能为马索尔提供救援速度，守护战旗或国王权杖能提供护盾，辅助其稳定救援。',
+        isMinor: true,
+      },
+      {
+        id: '剑客莉莉',
+        description: '剑客莉莉的剑气能为马索尔提供回溯能力，帮助其救援后返回。',
+        isMinor: true,
+      },
+      {
+        id: '米可',
+        description: '米可的相机能为马索尔提供回溯能力，帮助其救援后返回。',
+        isMinor: true,
+      },
+    ],
     specialSkills: [
       {
         name: '魔术漂浮',
@@ -5115,6 +5145,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '道具接拳',
       },
     ],
+
     aliases: ['大表哥'],
   },
 
@@ -5566,6 +5597,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
               '每格士气值额外提供2%的移速和0.2/s的Hp恢复速度；士气自然增长速度提高到0.15格/s。',
           },
         ],
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '猛攻',
+        description: '猛攻能让乘坐战车的蒙金奇无法脱离，失去干扰能力的同时还可能被战车炸死。',
+        isMinor: false,
       },
     ],
   },
@@ -6383,6 +6421,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '勇气投掷',
         description: '用于缩短采访CD。',
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '猛攻',
+        description: '猛攻能阻止米可曝光和回溯，且米可的霸体无法抵御猛攻的效果。',
+        isMinor: false,
       },
     ],
   },
