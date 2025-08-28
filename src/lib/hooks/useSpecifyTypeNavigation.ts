@@ -60,7 +60,11 @@ export const useSpecifyTypeNavigation = (
 
   // Get current index
   const currentIndex = useMemo(() => {
-    if (under) return Ids.length - Ids.reverse().indexOf(currentId) - 1;
+    if (under) {
+      const Return = Ids.length - Ids.reverse().indexOf(currentId) - 1;
+      Ids.reverse();
+      return Return;
+    }
     return Ids.indexOf(currentId);
   }, [Ids, currentId, under]);
 
