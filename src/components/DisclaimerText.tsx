@@ -1,4 +1,4 @@
-import { CREATORS, DISCLAIMER_CONTENT, PROJECT_INFO } from '@/constants';
+import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
 
 interface DisclaimerTextProps {
   onFeedbackClick?: () => void;
@@ -94,6 +94,27 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
         {DISCLAIMER_CONTENT.copyright}
         <br />
         {DISCLAIMER_CONTENT.takedownPolicy}
+      </span>
+
+      {/* License information */}
+      <span className='block mb-4'>
+        {LICENSE_INFO.description}
+        <br />
+        {LICENSE_INFO.licenses.map((license, index) => (
+          <span key={license.shortName}>
+            {index > 0 && <br />}
+            {license.scope}使用{' '}
+            <a
+              href={license.url}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline'
+            >
+              {license.shortName}
+            </a>{' '}
+            许可证，{license.additionalDescription}。
+          </span>
+        ))}
       </span>
 
       {/* Acknowledgments */}
