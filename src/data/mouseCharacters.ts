@@ -62,12 +62,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '鼓舞',
         type: 'active',
         description: '增加自身和附近队友的移速和跳跃高度。',
-        detailedDescription:
-          '在前摇0.5秒后，增加自身和附近队友的移速和跳跃高度，技能后摇1秒。（不同等级的鼓舞效果可以叠加）。',
+        detailedDescription: '增加自身和附近队友的移速和跳跃高度。不同等级的鼓舞效果可以叠加。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
         cancelableAftercast: '不可取消后摇',
+        forecast: 0.5,
+        aftercast: 1,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5',
         skillLevels: [
           {
@@ -98,12 +99,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         type: 'weapon1',
         description: '举起大铁锤，对面前的敌方造成眩晕。',
         detailedDescription:
-          '举起大铁锤，在前摇0.8秒后对面前的敌方造成[眩晕](可掉落道具和老鼠，不会在对方状态栏显示)，技能后摇0.6秒。',
+          '举起大铁锤，对面前的敌方造成[眩晕](可掉落道具和老鼠，不会在对方状态栏显示)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         // 事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
         cancelableAftercast: '不可取消后摇',
+        forecast: 0.8,
+        aftercast: 0.6,
         canHitInPipe: true,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=104.4',
         skillLevels: [
@@ -135,11 +138,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '吹响鸟哨召唤{鸟哨金丝雀}。金丝雀会来回盘旋，持续向下方投掷{鸟哨鞭炮}（命中敌方时爆炸，造成伤害和眩晕，被命中的敌方短暂免疫该道具效果；掉落一定时间后也会自行爆炸）。金丝雀轰炸一段时间后自行飞离。同一房间内最多只能有1只由鸟哨召唤的金丝雀。',
         detailedDescription:
-          '在1秒前摇后吹响鸟哨，召唤{鸟哨金丝雀}[飞到吹响鸟哨的位置](金丝雀会由地图左上角飞到目标位置，因此距离地图左上角越近，到达速度越快)，技能后摇1秒。金丝雀会[在一定范围内来回盘旋](金丝雀可穿墙)，每隔一段时间会向下方垂直投掷一枚{鸟哨鞭炮}（命中敌方时爆炸，对目标造成55伤害和2秒眩晕，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)，但被命中的敌方[在眩晕期间及眩晕结束后1秒内](若眩晕被敌方护盾、霸体、无敌等效果免疫，则不会触发后续免疫效果)免疫该道具效果；掉落一定时间后也会自行爆炸，不造成伤害和眩晕）。金丝雀轰炸一段时间后自行飞离。[同一房间内最多只能有1只由鸟哨召唤的金丝雀](以吹响鸟哨的位置判定金丝雀所属房间，即使之后金丝雀穿越墙壁飞入其他房间也不会改变所属位置。金丝雀在飞到与飞离目标位置的过程中仍然算作存在于该房间内。与金丝雀NPC分开计数)。',
+          '吹响鸟哨，召唤{鸟哨金丝雀}[飞到吹响鸟哨的位置](金丝雀会由地图左上角飞到目标位置，因此距离地图左上角越近，到达速度越快)。金丝雀会[在一定范围内来回盘旋](金丝雀可穿墙)，每隔一段时间会向下方垂直投掷一枚{鸟哨鞭炮}（命中敌方时爆炸，对目标造成55伤害和2秒眩晕，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)，但被命中的敌方[在眩晕期间及眩晕结束后1秒内](若眩晕被敌方护盾、霸体、无敌等效果免疫，则不会触发后续免疫效果)免疫该道具效果；掉落一定时间后也会自行爆炸，不造成伤害和眩晕）。金丝雀轰炸一段时间后自行飞离。[同一房间内最多只能有1只由鸟哨召唤的金丝雀](以吹响鸟哨的位置判定金丝雀所属房间，即使之后金丝雀穿越墙壁飞入其他房间也不会改变所属位置。金丝雀在飞到与飞离目标位置的过程中仍然算作存在于该房间内。与金丝雀NPC分开计数)。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         cancelableAftercast: ['道具键*'],
+        forecast: 1,
+        aftercast: 1,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=125.5',
         skillLevels: [
           {

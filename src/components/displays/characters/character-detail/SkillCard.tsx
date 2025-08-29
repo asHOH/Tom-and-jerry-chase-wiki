@@ -225,6 +225,20 @@ export default function SkillCard({
             return (
               <div className='space-y-1'>
                 <div className='text-xs'>{displayText()}</div>
+                <div className='flex items-center gap-1 text-xs'>
+                  <span className='text-gray-600'>前摇:</span>
+                  <EditableField
+                    tag='span'
+                    path={`skills.${skillIndex}.forecast`}
+                    initialValue={skill.forecast}
+                    onSave={(val) => {
+                      const s = characters[characterId]!.skills[skillIndex]!;
+                      const n = parseFloat(String(val).trim());
+                      s.forecast = Number.isFinite(n) ? n : 0;
+                    }}
+                  />
+                  <span className='text-gray-600'>秒</span>
+                </div>
                 <div className='flex flex-wrap gap-1 text-xs'>
                   {specialOptions.map((option) => (
                     <label key={option} className='flex items-center gap-1 cursor-pointer'>
@@ -323,6 +337,20 @@ export default function SkillCard({
             return (
               <div className='space-y-1'>
                 <div className='text-xs'>{displayText()}</div>
+                <div className='flex items-center gap-1 text-xs'>
+                  <span className='text-gray-600'>后摇:</span>
+                  <EditableField
+                    tag='span'
+                    path={`skills.${skillIndex}.aftercast`}
+                    initialValue={skill.aftercast}
+                    onSave={(val) => {
+                      const s = characters[characterId]!.skills[skillIndex]!;
+                      const n = parseFloat(String(val).trim());
+                      s.aftercast = Number.isFinite(n) ? n : 0;
+                    }}
+                  />
+                  <span className='text-gray-600'>秒</span>
+                </div>
                 <div className='flex flex-wrap gap-1 text-xs'>
                   {specialOptions.map((option) => (
                     <label key={option} className='flex items-center gap-1 cursor-pointer'>
@@ -441,6 +469,8 @@ export default function SkillCard({
     } else {
       if (skill.canMoveWhileUsing) properties.push('移动释放');
       if (skill.canUseInAir) properties.push('空中释放');
+      properties.push(`前摇: ${skill.forecast} 秒`);
+      properties.push(`后摇: ${skill.aftercast} 秒`);
       if (skill.cancelableSkill) {
         properties.push(
           <TextWithItemKeyTooltips

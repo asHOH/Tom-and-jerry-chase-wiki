@@ -7,6 +7,8 @@ describe('skillUtils', () => {
     name: '发怒冲刺',
     type: 'active',
     description: 'Tom charges forward',
+    forecast: 0,
+    aftercast: 0,
     skillLevels: [{ level: 1, description: 'Level 1 effect' }],
   };
 
@@ -15,6 +17,8 @@ describe('skillUtils', () => {
     name: '被动技能',
     type: 'passive',
     description: 'Passive ability',
+    forecast: 0,
+    aftercast: 0,
     skillLevels: [{ level: 1, description: 'Always active' }],
   };
 
@@ -23,6 +27,8 @@ describe('skillUtils', () => {
     name: '手型枪',
     type: 'weapon1',
     description: 'Weapon 1 skill',
+    forecast: 0,
+    aftercast: 0,
     skillLevels: [{ level: 1, description: 'Ranged attack' }],
   };
 
@@ -31,6 +37,8 @@ describe('skillUtils', () => {
     name: '平底锅',
     type: 'weapon2',
     description: 'Weapon 2 skill',
+    forecast: 0,
+    aftercast: 0,
     skillLevels: [{ level: 1, description: 'Melee attack' }],
   };
 

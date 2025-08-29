@@ -17,10 +17,15 @@ import type {
  * @returns Skills array with IDs automatically assigned
  */
 export function processSkillsWithIds(characterName: string, skills: SkillDefinition[]): Skill[] {
-  return skills.map((skill) => ({
-    ...skill,
-    id: `${characterName}-${skill.type}`,
-  }));
+  return skills.map((skill) => {
+    const { forecast, aftercast, ...rest } = skill;
+    return {
+      ...rest,
+      forecast: typeof forecast === 'number' ? forecast : 0,
+      aftercast: typeof aftercast === 'number' ? aftercast : 0,
+      id: `${characterName}-${skill.type}`,
+    };
+  });
 }
 
 /**
