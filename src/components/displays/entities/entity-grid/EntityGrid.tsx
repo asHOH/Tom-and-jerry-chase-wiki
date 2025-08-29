@@ -48,7 +48,9 @@ export default function EntityClient() {
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>衍生物</PageTitle>
-        <PageDescription>由角色技能衍生出的独立物体，拥有各自独特的属性和作用</PageDescription>
+        <PageDescription>
+          由角色技能衍生出的独立物体，拥有各自独特的属性和作用（该界面更新中）
+        </PageDescription>
         {/* Filter Controls */}
         <div className='flex flex-col gap-4 mt-8'>
           {/* 类型筛选 */}
