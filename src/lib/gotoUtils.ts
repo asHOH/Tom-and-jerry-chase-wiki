@@ -31,18 +31,6 @@ export async function getGotoResult(
       imageUrl: c!.imageUrl,
     };
   }
-  const skill = Object.values(characters)
-    .flatMap((c) => c.skills)
-    .find((skill) => skill.name === name || skill.aliases?.includes(name));
-  if (skill) {
-    return {
-      url: `/characters/${skill.id.split('-')[0]}#Skill:${encodeURIComponent(skill.name)}`,
-      type: 'character-skill',
-      name: skill!.name,
-      description: skill!.description,
-      imageUrl: skill!.imageUrl,
-    };
-  }
   if ((!normalizedCategory || normalizedCategory === '知识卡') && name in cards) {
     const card = cards[name];
     return {
@@ -178,6 +166,18 @@ export async function getGotoResult(
       name: mouseSkill!.name,
       description: mouseSkill!.description,
       imageUrl: mouseSkill!.imageUrl,
+    };
+  }
+  const skill = Object.values(characters)
+    .flatMap((c) => c.skills)
+    .find((skill) => skill.name === name || skill.aliases?.includes(name));
+  if ((!normalizedCategory || normalizedCategory === '技能') && skill) {
+    return {
+      url: `/characters/${skill.id.split('-')[0]}#Skill:${encodeURIComponent(skill.name)}`,
+      type: 'character-skill',
+      name: skill!.name,
+      description: skill!.description,
+      imageUrl: skill!.imageUrl,
     };
   }
   return null;

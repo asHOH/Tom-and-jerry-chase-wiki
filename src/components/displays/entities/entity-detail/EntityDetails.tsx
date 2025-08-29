@@ -56,7 +56,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
                   <Tag colorStyles={tagColorStyles} size='md'>
                     <TextWithHoverTooltips
                       text={`所属者：${entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}-{${entity.characterName}}
-                    ${entity.skillname === undefined ? '' : `-{${entity.skillname}}`}`}
+                    ${entity.skillname === undefined ? '' : `-{${entity.skillname}(技能)}`}`}
                     />
                   </Tag>
                 )}

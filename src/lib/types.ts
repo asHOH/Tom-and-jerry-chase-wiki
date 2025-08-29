@@ -89,7 +89,7 @@ export type GotoResult = {
 };
 
 // Narrowed category hints used to disambiguate goto targets
-export const CATEGORY_HINTS = ['知识卡', '特技', '道具', '衍生物'] as const;
+export const CATEGORY_HINTS = ['知识卡', '特技', '道具', '衍生物', '技能'] as const;
 export type CategoryHint = (typeof CATEGORY_HINTS)[number];
 
 // Generic callback types
