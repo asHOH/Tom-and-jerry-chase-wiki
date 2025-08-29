@@ -66,7 +66,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         forecast: 0.5,
         aftercast: 1,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5',
@@ -104,7 +104,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         // 事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         forecast: 0.8,
         aftercast: 0.6,
         canHitInPipe: true,
@@ -323,7 +323,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -528,7 +528,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         canHitInPipe: false,
         skillLevels: [
           {
@@ -1069,7 +1069,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         videoUrl: 'https://www.bilibili.com/video/BV12P4y1e7rg?t=81.9',
         skillLevels: [
           {
@@ -1507,7 +1507,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '发射一枚{火箭筒}，直接命中敌方时造成一段伤害，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)，该伤害先于爆炸伤害结算；命中敌方角色/墙壁/平台/其他道具后爆炸，对一定范围内敌方造成伤害和眩晕。火箭筒可对墙缝造成伤害。爆炸产生的冲击波可以炸飞老鼠夹、叉子等道具。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=46.4',
         skillLevels: [
           {
@@ -2064,7 +2064,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -2594,7 +2594,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -2620,7 +2620,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -3036,7 +3036,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -3296,7 +3296,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键', '跳跃键', '移动键', '其他技能键'],
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         canHitInPipe: false,
         skillLevels: [
           {
@@ -6880,7 +6880,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '莱恩在0.6秒前摇后扔出{蓝图(投射物)(衍生物)}，同时技能进入读条；蓝图飞行期间，碰到敌方/[平台/地面](不包括莱恩主动技能释放的方块)、或莱恩再次使用本技能时，[展开](蓝图的贴图需要一小段时间才能完全展开，该动画期间莱恩无法使用技能收回蓝图，但蓝图效果在未完全展开时就已经生效)一个[蓝图(场景物)](大小1000×666)，动作后摇0.5秒。蓝图内的火箭燃烧速度减半；隐身的猫咪会[暂时显形](隐身效果在离开蓝图时依然存在)；在蓝图内受到伤害的猫咪会变为线条猫，并使手中老鼠掉落，线条猫状态持续8秒，变身结束后20秒内不会再次变为线条猫。同一时间只可存在一个蓝图。再次使用技能或较长时间后收回蓝图，蓝图收起后才会进入CD。\n线条猫：只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -7114,7 +7114,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         canHitInPipe: false,
         skillLevels: [
           {

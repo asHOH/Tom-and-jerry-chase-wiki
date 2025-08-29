@@ -329,7 +329,7 @@ export default function SkillCard({
         </div>,
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
-            const specialOptions = ['无后摇', '不可取消后摇'] as const;
+            const specialOptions = ['无后摇', '不可被取消'] as const;
             const cancelableOptions = [
               '道具键',
               '道具键*',
