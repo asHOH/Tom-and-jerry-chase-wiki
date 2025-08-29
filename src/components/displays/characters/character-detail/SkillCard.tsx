@@ -203,7 +203,7 @@ export default function SkillCard({
         createBooleanCheckbox('空中释放', 'canUseInAir', '可空中释放', '不可空中释放'),
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
-            const specialOptions = ['无前摇', '不可被打断'] as const;
+            const specialOptions = ['不可被打断'] as const;
             const cancelableOptions = [
               '道具键',
               '道具键*',
@@ -236,6 +236,9 @@ export default function SkillCard({
                         const s = characters[characterId]!.skills[skillIndex]!;
                         const n = parseFloat(String(val).trim());
                         s.forecast = Number.isFinite(n) ? n : -1;
+                        if (s.forecast !== 0 && s.cancelableSkill === '无前摇') {
+                          delete s.cancelableSkill;
+                        }
                       }}
                     />
                     <span className='text-gray-600'>秒</span>
@@ -247,89 +250,114 @@ export default function SkillCard({
                       onChange={(e) => {
                         const s = characters[characterId]!.skills[skillIndex]!;
                         s.forecast = e.target.checked ? 0 : -1;
+                        if (e.target.checked) {
+                          s.cancelableSkill = '无前摇';
+                        } else if (s.cancelableSkill === '无前摇') {
+                          delete s.cancelableSkill;
+                        }
                       }}
                       className='w-3 h-3'
                     />
                     <span className={clsx({ 'font-bold': skill.forecast === 0 })}>无前摇</span>
                   </label>
                 </div>
-                <div className='flex flex-wrap gap-1 text-xs'>
-                  {specialOptions.map((option) => (
-                    <label key={option} className='flex items-center gap-1 cursor-pointer'>
-                      <input
-                        type='checkbox'
-                        checked={skill.cancelableSkill == option}
-                        onChange={(e) => {
-                          const skill = characters[characterId]!.skills[skillIndex]!;
-                          if (e.target.checked) {
-                            skill.cancelableSkill = option;
-                          } else {
-                            delete skill.cancelableSkill;
-                          }
-                        }}
-                        className='w-3 h-3'
-                      />
-                      <span className={clsx(skill.cancelableSkill == option ? 'font-bold' : '')}>
-                        {option}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-                <div className='flex flex-wrap gap-1 text-xs'>
-                  <span className='text-gray-600'>可被</span>
-                  {cancelableOptions.map((option) => (
-                    <label key={option} className='flex items-center gap-1 cursor-pointer'>
-                      <input
-                        type='checkbox'
-                        checked={activeCancelableOptions.includes(option)}
-                        onChange={(e) => {
-                          const skill = characters[characterId]!.skills[skillIndex]!;
-                          if (e.target.checked) {
-                            if (!Array.isArray(skill.cancelableSkill)) {
-                              skill.cancelableSkill = [];
-                            }
-                            if (!activeCancelableOptions.includes(option)) {
-                              skill.cancelableSkill.push(option);
-                            }
-                            // Mutual exclusion for 道具键 and 道具键*
-                            if (option === '道具键' && skill.cancelableSkill.includes('道具键*')) {
-                              const index = skill.cancelableSkill.indexOf('道具键*');
-                              skill.cancelableSkill.splice(index, 1);
-                            } else if (
-                              option === '道具键*' &&
-                              skill.cancelableSkill.includes('道具键')
-                            ) {
-                              const index = skill.cancelableSkill.indexOf('道具键');
-                              skill.cancelableSkill.splice(index, 1);
-                            }
-                          } else {
-                            if (!Array.isArray(skill.cancelableSkill)) {
-                              return;
-                            }
-                            const index = activeCancelableOptions.indexOf(option);
-                            if (index > -1) {
-                              skill.cancelableSkill.splice(index, 1);
-                            }
-                          }
-                        }}
-                        className='w-3 h-3'
-                      />
-                      <span
-                        className={clsx({ 'font-bold': activeCancelableOptions.includes(option) })}
+                {(() => {
+                  const disabled = skill.forecast === 0;
+                  return (
+                    <>
+                      <div
+                        className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
                       >
-                        {option}
-                      </span>
-                    </label>
-                  ))}
-                  <span className='text-gray-600'>打断</span>
-                </div>
+                        {specialOptions.map((option) => (
+                          <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                            <input
+                              type='checkbox'
+                              disabled={disabled}
+                              checked={skill.cancelableSkill == option}
+                              onChange={(e) => {
+                                const skill = characters[characterId]!.skills[skillIndex]!;
+                                if (e.target.checked) {
+                                  skill.cancelableSkill = option;
+                                } else {
+                                  delete skill.cancelableSkill;
+                                }
+                              }}
+                              className='w-3 h-3'
+                            />
+                            <span
+                              className={clsx(skill.cancelableSkill == option ? 'font-bold' : '')}
+                            >
+                              {option}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                      <div
+                        className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
+                      >
+                        <span className='text-gray-600'>可被</span>
+                        {cancelableOptions.map((option) => (
+                          <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                            <input
+                              type='checkbox'
+                              disabled={disabled}
+                              checked={activeCancelableOptions.includes(option)}
+                              onChange={(e) => {
+                                const skill = characters[characterId]!.skills[skillIndex]!;
+                                if (e.target.checked) {
+                                  if (!Array.isArray(skill.cancelableSkill)) {
+                                    skill.cancelableSkill = [];
+                                  }
+                                  if (!activeCancelableOptions.includes(option)) {
+                                    skill.cancelableSkill.push(option);
+                                  }
+                                  // Mutual exclusion for 道具键 and 道具键*
+                                  if (
+                                    option === '道具键' &&
+                                    skill.cancelableSkill.includes('道具键*')
+                                  ) {
+                                    const index = skill.cancelableSkill.indexOf('道具键*');
+                                    skill.cancelableSkill.splice(index, 1);
+                                  } else if (
+                                    option === '道具键*' &&
+                                    skill.cancelableSkill.includes('道具键')
+                                  ) {
+                                    const index = skill.cancelableSkill.indexOf('道具键');
+                                    skill.cancelableSkill.splice(index, 1);
+                                  }
+                                } else {
+                                  if (!Array.isArray(skill.cancelableSkill)) {
+                                    return;
+                                  }
+                                  const index = activeCancelableOptions.indexOf(option);
+                                  if (index > -1) {
+                                    skill.cancelableSkill.splice(index, 1);
+                                  }
+                                }
+                              }}
+                              className='w-3 h-3'
+                            />
+                            <span
+                              className={clsx({
+                                'font-bold': activeCancelableOptions.includes(option),
+                              })}
+                            >
+                              {option}
+                            </span>
+                          </label>
+                        ))}
+                        <span className='text-gray-600'>打断</span>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             );
           })()}
         </div>,
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
-            const specialOptions = ['无后摇', '不可被取消'] as const;
+            const specialOptions = ['不可被取消'] as const;
             const cancelableOptions = [
               '道具键',
               '道具键*',
@@ -362,6 +390,9 @@ export default function SkillCard({
                         const s = characters[characterId]!.skills[skillIndex]!;
                         const n = parseFloat(String(val).trim());
                         s.aftercast = Number.isFinite(n) ? n : -1;
+                        if (s.aftercast !== 0 && s.cancelableAftercast === '无后摇') {
+                          delete s.cancelableAftercast;
+                        }
                       }}
                     />
                     <span className='text-gray-600'>秒</span>
@@ -373,104 +404,124 @@ export default function SkillCard({
                       onChange={(e) => {
                         const s = characters[characterId]!.skills[skillIndex]!;
                         s.aftercast = e.target.checked ? 0 : -1;
+                        if (e.target.checked) {
+                          s.cancelableAftercast = '无后摇';
+                        } else if (s.cancelableAftercast === '无后摇') {
+                          delete s.cancelableAftercast;
+                        }
                       }}
                       className='w-3 h-3'
                     />
                     <span className={clsx({ 'font-bold': skill.aftercast === 0 })}>无后摇</span>
                   </label>
                 </div>
-                <div className='flex flex-wrap gap-1 text-xs'>
-                  {specialOptions.map((option) => (
-                    <label key={option} className='flex items-center gap-1 cursor-pointer'>
-                      <input
-                        type='checkbox'
-                        checked={skill.cancelableAftercast == option}
-                        onChange={(e) => {
-                          const skill = characters[characterId]!.skills[skillIndex]!;
-                          if (e.target.checked) {
-                            skill.cancelableAftercast = option;
-                          } else {
-                            delete skill.cancelableAftercast;
-                          }
-                        }}
-                        className='w-3 h-3'
-                      />
-                      <span className={clsx({ 'font-bold': skill.cancelableAftercast == option })}>
-                        {option}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-                <div className='flex flex-wrap gap-1 text-xs'>
-                  <span className='text-gray-600'>可被</span>
-                  {cancelableOptions.map((option) => (
-                    <label key={option} className='flex items-center gap-1 cursor-pointer'>
-                      <input
-                        type='checkbox'
-                        checked={activeCancelableOptions.includes(option)}
-                        onChange={(e) => {
-                          const skill = characters[characterId]!.skills[skillIndex]!;
-                          if (e.target.checked) {
-                            // If currently a string (special option), convert to array and add new option
-                            if (typeof skill.cancelableAftercast === 'string') {
-                              skill.cancelableAftercast = [option];
-                            } else if (Array.isArray(skill.cancelableAftercast)) {
-                              // If already an array, add if not present
-                              if (!skill.cancelableAftercast.includes(option)) {
-                                skill.cancelableAftercast.push(option);
-                              }
-                            } else {
-                              // If undefined, initialize as array with new option
-                              skill.cancelableAftercast = [option];
-                            }
-                            // Mutual exclusion for 道具键 and 道具键*
-                            if (Array.isArray(skill.cancelableAftercast)) {
-                              if (
-                                option === '道具键' &&
-                                skill.cancelableAftercast.includes('道具键*')
-                              ) {
-                                const index = skill.cancelableAftercast.indexOf('道具键*');
-                                skill.cancelableAftercast.splice(index, 1);
-                              } else if (
-                                option === '道具键*' &&
-                                skill.cancelableAftercast.includes('道具键')
-                              ) {
-                                const index = skill.cancelableAftercast.indexOf('道具键');
-                                skill.cancelableAftercast.splice(index, 1);
-                              }
-                            }
-                          } else {
-                            // If unchecking
-                            if (Array.isArray(skill.cancelableAftercast)) {
-                              // Remove option from array
-                              const index = skill.cancelableAftercast.indexOf(option);
-                              if (index > -1) {
-                                skill.cancelableAftercast.splice(index, 1);
-                              }
-                              // If array becomes empty, delete the property
-                              if (skill.cancelableAftercast.length === 0) {
-                                delete skill.cancelableAftercast;
-                              }
-                            } else if (typeof skill.cancelableAftercast === 'string') {
-                              // If it was a special string and now unchecked, delete it
-                              delete skill.cancelableAftercast;
-                            }
-                            // If it was already undefined, do nothing
-                          }
-                        }}
-                        className='w-3 h-3'
-                      />
-                      <span
-                        className={clsx({
-                          'font-bold': activeCancelableOptions.includes(option),
-                        })}
+                {(() => {
+                  const disabled = skill.aftercast === 0;
+                  return (
+                    <>
+                      <div
+                        className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
                       >
-                        {option}
-                      </span>
-                    </label>
-                  ))}
-                  <span className='text-gray-600'>取消后摇</span>
-                </div>
+                        {specialOptions.map((option) => (
+                          <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                            <input
+                              type='checkbox'
+                              disabled={disabled}
+                              checked={skill.cancelableAftercast == option}
+                              onChange={(e) => {
+                                const skill = characters[characterId]!.skills[skillIndex]!;
+                                if (e.target.checked) {
+                                  skill.cancelableAftercast = option;
+                                } else {
+                                  delete skill.cancelableAftercast;
+                                }
+                              }}
+                              className='w-3 h-3'
+                            />
+                            <span
+                              className={clsx({ 'font-bold': skill.cancelableAftercast == option })}
+                            >
+                              {option}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                      <div
+                        className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
+                      >
+                        <span className='text-gray-600'>可被</span>
+                        {cancelableOptions.map((option) => (
+                          <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                            <input
+                              type='checkbox'
+                              disabled={disabled}
+                              checked={activeCancelableOptions.includes(option)}
+                              onChange={(e) => {
+                                const skill = characters[characterId]!.skills[skillIndex]!;
+                                if (e.target.checked) {
+                                  // If currently a string (special option), convert to array and add new option
+                                  if (typeof skill.cancelableAftercast === 'string') {
+                                    skill.cancelableAftercast = [option];
+                                  } else if (Array.isArray(skill.cancelableAftercast)) {
+                                    // If already an array, add if not present
+                                    if (!skill.cancelableAftercast.includes(option)) {
+                                      skill.cancelableAftercast.push(option);
+                                    }
+                                  } else {
+                                    // If undefined, initialize as array with new option
+                                    skill.cancelableAftercast = [option];
+                                  }
+                                  // Mutual exclusion for 道具键 and 道具键*
+                                  if (Array.isArray(skill.cancelableAftercast)) {
+                                    if (
+                                      option === '道具键' &&
+                                      skill.cancelableAftercast.includes('道具键*')
+                                    ) {
+                                      const index = skill.cancelableAftercast.indexOf('道具键*');
+                                      skill.cancelableAftercast.splice(index, 1);
+                                    } else if (
+                                      option === '道具键*' &&
+                                      skill.cancelableAftercast.includes('道具键')
+                                    ) {
+                                      const index = skill.cancelableAftercast.indexOf('道具键');
+                                      skill.cancelableAftercast.splice(index, 1);
+                                    }
+                                  }
+                                } else {
+                                  // If unchecking
+                                  if (Array.isArray(skill.cancelableAftercast)) {
+                                    // Remove option from array
+                                    const index = skill.cancelableAftercast.indexOf(option);
+                                    if (index > -1) {
+                                      skill.cancelableAftercast.splice(index, 1);
+                                    }
+                                    // If array becomes empty, delete the property
+                                    if (skill.cancelableAftercast.length === 0) {
+                                      delete skill.cancelableAftercast;
+                                    }
+                                  } else if (typeof skill.cancelableAftercast === 'string') {
+                                    // If it was a special string and now unchecked, delete it
+                                    delete skill.cancelableAftercast;
+                                  }
+                                  // If it was already undefined, do nothing
+                                }
+                              }}
+                              className='w-3 h-3'
+                            />
+                            <span
+                              className={clsx({
+                                'font-bold': activeCancelableOptions.includes(option),
+                              })}
+                            >
+                              {option}
+                            </span>
+                          </label>
+                        ))}
+                        <span className='text-gray-600'>取消后摇</span>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             );
           })()}
