@@ -225,19 +225,33 @@ export default function SkillCard({
             return (
               <div className='space-y-1'>
                 <div className='text-xs'>{displayText()}</div>
-                <div className='flex items-center gap-1 text-xs'>
-                  <span className='text-gray-600'>前摇:</span>
-                  <EditableField
-                    tag='span'
-                    path={`skills.${skillIndex}.forecast`}
-                    initialValue={skill.forecast}
-                    onSave={(val) => {
-                      const s = characters[characterId]!.skills[skillIndex]!;
-                      const n = parseFloat(String(val).trim());
-                      s.forecast = Number.isFinite(n) ? n : 0;
-                    }}
-                  />
-                  <span className='text-gray-600'>秒</span>
+                <div className='flex items-center gap-2 text-xs'>
+                  <div className='flex items-center gap-1'>
+                    <span className='text-gray-600'>前摇:</span>
+                    <EditableField
+                      tag='span'
+                      path={`skills.${skillIndex}.forecast`}
+                      initialValue={skill.forecast}
+                      onSave={(val) => {
+                        const s = characters[characterId]!.skills[skillIndex]!;
+                        const n = parseFloat(String(val).trim());
+                        s.forecast = Number.isFinite(n) ? n : -1;
+                      }}
+                    />
+                    <span className='text-gray-600'>秒</span>
+                  </div>
+                  <label className='flex items-center gap-1 cursor-pointer'>
+                    <input
+                      type='checkbox'
+                      checked={skill.forecast === 0}
+                      onChange={(e) => {
+                        const s = characters[characterId]!.skills[skillIndex]!;
+                        s.forecast = e.target.checked ? 0 : -1;
+                      }}
+                      className='w-3 h-3'
+                    />
+                    <span className={clsx({ 'font-bold': skill.forecast === 0 })}>无前摇</span>
+                  </label>
                 </div>
                 <div className='flex flex-wrap gap-1 text-xs'>
                   {specialOptions.map((option) => (
@@ -337,19 +351,33 @@ export default function SkillCard({
             return (
               <div className='space-y-1'>
                 <div className='text-xs'>{displayText()}</div>
-                <div className='flex items-center gap-1 text-xs'>
-                  <span className='text-gray-600'>后摇:</span>
-                  <EditableField
-                    tag='span'
-                    path={`skills.${skillIndex}.aftercast`}
-                    initialValue={skill.aftercast}
-                    onSave={(val) => {
-                      const s = characters[characterId]!.skills[skillIndex]!;
-                      const n = parseFloat(String(val).trim());
-                      s.aftercast = Number.isFinite(n) ? n : 0;
-                    }}
-                  />
-                  <span className='text-gray-600'>秒</span>
+                <div className='flex items-center gap-2 text-xs'>
+                  <div className='flex items-center gap-1'>
+                    <span className='text-gray-600'>后摇:</span>
+                    <EditableField
+                      tag='span'
+                      path={`skills.${skillIndex}.aftercast`}
+                      initialValue={skill.aftercast}
+                      onSave={(val) => {
+                        const s = characters[characterId]!.skills[skillIndex]!;
+                        const n = parseFloat(String(val).trim());
+                        s.aftercast = Number.isFinite(n) ? n : -1;
+                      }}
+                    />
+                    <span className='text-gray-600'>秒</span>
+                  </div>
+                  <label className='flex items-center gap-1 cursor-pointer'>
+                    <input
+                      type='checkbox'
+                      checked={skill.aftercast === 0}
+                      onChange={(e) => {
+                        const s = characters[characterId]!.skills[skillIndex]!;
+                        s.aftercast = e.target.checked ? 0 : -1;
+                      }}
+                      className='w-3 h-3'
+                    />
+                    <span className={clsx({ 'font-bold': skill.aftercast === 0 })}>无后摇</span>
+                  </label>
                 </div>
                 <div className='flex flex-wrap gap-1 text-xs'>
                   {specialOptions.map((option) => (
@@ -469,26 +497,33 @@ export default function SkillCard({
     } else {
       if (skill.canMoveWhileUsing) properties.push('移动释放');
       if (skill.canUseInAir) properties.push('空中释放');
-      properties.push(`前摇: ${skill.forecast} 秒`);
-      properties.push(`后摇: ${skill.aftercast} 秒`);
-      if (skill.cancelableSkill) {
-        properties.push(
-          <TextWithItemKeyTooltips
-            key='cancelableSkill'
-            text={convertCancelableSkillToDisplayText(skill.cancelableSkill)}
-            isDetailed={isDetailed}
-          />
-        );
-      }
-      if (skill.cancelableAftercast) {
-        properties.push(
-          <TextWithItemKeyTooltips
-            key='cancelableAftercast'
-            text={convertCancelableAftercastToDisplayText(skill.cancelableAftercast)}
-            isDetailed={isDetailed}
-          />
-        );
-      }
+      // Combine forecast with cancelableSkill
+      const forecastText =
+        skill.forecast < 0
+          ? '前摇未测试'
+          : skill.forecast === 0
+            ? '无前摇'
+            : `前摇 ${skill.forecast} 秒`;
+      const forecastDisplay = skill.cancelableSkill
+        ? `${forecastText}${forecastText === '无前摇' ? '' : '，'}${typeof skill.cancelableSkill === 'string' ? skill.cancelableSkill : convertCancelableSkillToDisplayText(skill.cancelableSkill)}`
+        : forecastText;
+      properties.push(
+        <TextWithItemKeyTooltips key='forecast' text={forecastDisplay} isDetailed={isDetailed} />
+      );
+
+      // Combine aftercast with cancelableAftercast
+      const aftercastText =
+        skill.aftercast < 0
+          ? '后摇未测试'
+          : skill.aftercast === 0
+            ? '无后摇'
+            : `后摇 ${skill.aftercast} 秒`;
+      const aftercastDisplay = skill.cancelableAftercast
+        ? `${aftercastText}${aftercastText === '无后摇' ? '' : '，'}${typeof skill.cancelableAftercast === 'string' ? skill.cancelableAftercast : convertCancelableAftercastToDisplayText(skill.cancelableAftercast)}`
+        : aftercastText;
+      properties.push(
+        <TextWithItemKeyTooltips key='aftercast' text={aftercastDisplay} isDetailed={isDetailed} />
+      );
 
       if (skill.canHitInPipe) properties.push('可击中管道中的角色');
       if (skill.cooldownTiming && skill.cooldownTiming !== '释放时') {

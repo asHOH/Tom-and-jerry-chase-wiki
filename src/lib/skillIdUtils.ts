@@ -21,8 +21,8 @@ export function processSkillsWithIds(characterName: string, skills: SkillDefinit
     const { forecast, aftercast, ...rest } = skill;
     return {
       ...rest,
-      forecast: typeof forecast === 'number' ? forecast : 0,
-      aftercast: typeof aftercast === 'number' ? aftercast : 0,
+      forecast: typeof forecast === 'number' ? forecast : -1,
+      aftercast: typeof aftercast === 'number' ? aftercast : -1,
       id: `${characterName}-${skill.type}`,
     };
   });
