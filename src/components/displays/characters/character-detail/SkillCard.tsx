@@ -90,7 +90,7 @@ export default function SkillCard({
 
     return (
       <div className='flex items-center gap-1 text-xs'>
-        <span className='text-gray-600'>{label}:</span>
+        <span className='text-xs text-gray-400 dark:text-gray-500'>{label}:</span>
         <label className='flex items-center gap-1 cursor-pointer'>
           <input
             type='checkbox'
@@ -117,7 +117,7 @@ export default function SkillCard({
 
     return (
       <div className='flex items-center gap-1 text-xs'>
-        <span className='text-gray-600'>{label}:</span>
+        <span className='text-xs text-gray-400 dark:text-gray-500'>{label}:</span>
         <div className='flex flex-wrap gap-1'>
           {options.map((option) => (
             <label key={option} className='flex items-center gap-1 cursor-pointer'>
@@ -145,7 +145,7 @@ export default function SkillCard({
     if (cooldownProp) properties.push(cooldownProp);
     if (isEditMode && skill.type !== 'passive') {
       properties.push(
-        <div className='text-gray-600 text-xs flex'>
+        <div className='text-xs text-gray-400 dark:text-gray-500 flex'>
           别名：
           {skill.aliases &&
             skill.aliases.map((alias, index) => (
@@ -227,7 +227,7 @@ export default function SkillCard({
                 <div className='text-xs'>{displayText()}</div>
                 <div className='flex items-center gap-2 text-xs'>
                   <div className='flex items-center gap-1'>
-                    <span className='text-gray-600'>前摇:</span>
+                    <span className='text-xs text-gray-400 dark:text-gray-500'>前摇:</span>
                     <EditableField
                       tag='span'
                       path={`skills.${skillIndex}.forecast`}
@@ -241,7 +241,7 @@ export default function SkillCard({
                         }
                       }}
                     />
-                    <span className='text-gray-600'>秒</span>
+                    <span className='text-xs text-gray-400 dark:text-gray-500'>秒</span>
                   </div>
                   <label className='flex items-center gap-1 cursor-pointer'>
                     <input
@@ -295,7 +295,7 @@ export default function SkillCard({
                       <div
                         className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
                       >
-                        <span className='text-gray-600'>可被</span>
+                        <span className='text-xs text-gray-400 dark:text-gray-500'>可被</span>
                         {cancelableOptions.map((option) => (
                           <label key={option} className='flex items-center gap-1 cursor-pointer'>
                             <input
@@ -346,7 +346,7 @@ export default function SkillCard({
                             </span>
                           </label>
                         ))}
-                        <span className='text-gray-600'>打断</span>
+                        <span className='text-xs text-gray-400 dark:text-gray-500'>打断</span>
                       </div>
                     </>
                   );
@@ -381,7 +381,7 @@ export default function SkillCard({
                 <div className='text-xs'>{displayText()}</div>
                 <div className='flex items-center gap-2 text-xs'>
                   <div className='flex items-center gap-1'>
-                    <span className='text-gray-600'>后摇:</span>
+                    <span className='text-xs text-gray-400 dark:text-gray-500'>后摇:</span>
                     <EditableField
                       tag='span'
                       path={`skills.${skillIndex}.aftercast`}
@@ -395,7 +395,7 @@ export default function SkillCard({
                         }
                       }}
                     />
-                    <span className='text-gray-600'>秒</span>
+                    <span className='text-xs text-gray-400 dark:text-gray-500'>秒</span>
                   </div>
                   <label className='flex items-center gap-1 cursor-pointer'>
                     <input
@@ -449,7 +449,7 @@ export default function SkillCard({
                       <div
                         className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
                       >
-                        <span className='text-gray-600'>可被</span>
+                        <span className='text-xs text-gray-400 dark:text-gray-500'>可被</span>
                         {cancelableOptions.map((option) => (
                           <label key={option} className='flex items-center gap-1 cursor-pointer'>
                             <input
@@ -517,7 +517,7 @@ export default function SkillCard({
                             </span>
                           </label>
                         ))}
-                        <span className='text-gray-600'>取消后摇</span>
+                        <span className='text-xs text-gray-400 dark:text-gray-500'>取消后摇</span>
                       </div>
                     </>
                   );
