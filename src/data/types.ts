@@ -89,9 +89,9 @@ export type SkillDefinition = {
 // Final processed skill (with ID assigned)
 export type Skill = Omit<SkillDefinition, 'forecast' | 'aftercast'> & {
   id: string;
-  // 处理后的技能必须有前摇/后摇数值（秒）
-  forecast: number;
-  aftercast: number;
+  // 处理后的技能可以没有前摇/后摇（未测试），也可以为负值表示未测试
+  forecast?: number;
+  aftercast?: number;
 };
 
 export type KnowledgeCardGroup = {

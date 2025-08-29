@@ -231,7 +231,7 @@ export default function SkillCard({
                     <EditableField
                       tag='span'
                       path={`skills.${skillIndex}.forecast`}
-                      initialValue={skill.forecast}
+                      initialValue={skill.forecast ?? ''}
                       onSave={(val) => {
                         const s = characters[characterId]!.skills[skillIndex]!;
                         const n = parseFloat(String(val).trim());
@@ -385,7 +385,7 @@ export default function SkillCard({
                     <EditableField
                       tag='span'
                       path={`skills.${skillIndex}.aftercast`}
-                      initialValue={skill.aftercast}
+                      initialValue={skill.aftercast ?? ''}
                       onSave={(val) => {
                         const s = characters[characterId]!.skills[skillIndex]!;
                         const n = parseFloat(String(val).trim());
@@ -548,33 +548,53 @@ export default function SkillCard({
     } else {
       if (skill.canMoveWhileUsing) properties.push('移动释放');
       if (skill.canUseInAir) properties.push('空中释放');
-      // Combine forecast with cancelableSkill
-      const forecastText =
-        skill.forecast < 0
-          ? '前摇未测试'
-          : skill.forecast === 0
-            ? '无前摇'
-            : `前摇 ${skill.forecast} 秒`;
-      const forecastDisplay = skill.cancelableSkill
-        ? `${forecastText}${forecastText === '无前摇' ? '' : '，'}${typeof skill.cancelableSkill === 'string' ? skill.cancelableSkill : convertCancelableSkillToDisplayText(skill.cancelableSkill)}`
-        : forecastText;
-      properties.push(
-        <TextWithItemKeyTooltips key='forecast' text={forecastDisplay} isDetailed={isDetailed} />
-      );
+      if (skill.type !== 'passive') {
+        // Combine forecast with cancelableSkill (optional fields)
+        const forecastBase =
+          typeof skill.forecast === 'number'
+            ? skill.forecast < 0
+              ? '前摇未测试'
+              : skill.forecast === 0
+                ? '无前摇'
+                : `前摇 ${skill.forecast} 秒`
+            : undefined;
+        const cancelableSkillText =
+          skill.cancelableSkill &&
+          (typeof skill.cancelableSkill === 'string'
+            ? skill.cancelableSkill
+            : convertCancelableSkillToDisplayText(skill.cancelableSkill));
+        if (forecastBase || cancelableSkillText) {
+          const text = `${forecastBase ?? ''}${forecastBase && cancelableSkillText ? '，' : ''}${
+            cancelableSkillText ?? ''
+          }`;
+          properties.push(
+            <TextWithItemKeyTooltips key='forecast' text={text} isDetailed={isDetailed} />
+          );
+        }
 
-      // Combine aftercast with cancelableAftercast
-      const aftercastText =
-        skill.aftercast < 0
-          ? '后摇未测试'
-          : skill.aftercast === 0
-            ? '无后摇'
-            : `后摇 ${skill.aftercast} 秒`;
-      const aftercastDisplay = skill.cancelableAftercast
-        ? `${aftercastText}${aftercastText === '无后摇' ? '' : '，'}${typeof skill.cancelableAftercast === 'string' ? skill.cancelableAftercast : convertCancelableAftercastToDisplayText(skill.cancelableAftercast)}`
-        : aftercastText;
-      properties.push(
-        <TextWithItemKeyTooltips key='aftercast' text={aftercastDisplay} isDetailed={isDetailed} />
-      );
+        // Combine aftercast with cancelableAftercast (optional fields)
+        const aftercastBase =
+          typeof skill.aftercast === 'number'
+            ? skill.aftercast < 0
+              ? '后摇未测试'
+              : skill.aftercast === 0
+                ? '无后摇'
+                : `后摇 ${skill.aftercast} 秒`
+            : undefined;
+        const cancelableAfterText =
+          skill.cancelableAftercast &&
+          (typeof skill.cancelableAftercast === 'string'
+            ? skill.cancelableAftercast
+            : convertCancelableAftercastToDisplayText(skill.cancelableAftercast));
+        if (aftercastBase || cancelableAfterText) {
+          const text = `${aftercastBase ?? ''}${aftercastBase && cancelableAfterText ? '，' : ''}${
+            cancelableAfterText ?? ''
+          }`;
+          properties.push(
+            <TextWithItemKeyTooltips key='aftercast' text={text} isDetailed={isDetailed} />
+          );
+        }
+      }
 
       if (skill.canHitInPipe) properties.push('可击中管道中的角色');
       if (skill.cooldownTiming && skill.cooldownTiming !== '释放时') {
