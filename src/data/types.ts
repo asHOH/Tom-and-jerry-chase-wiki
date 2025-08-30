@@ -53,7 +53,7 @@ export type CancellableKeyType =
   | '其他技能键';
 
 export type CancelableSkillType = CancellableKeyType[] | '无前摇' | '不可被打断';
-export type CancelableAftercastType = CancellableKeyType[] | '无后摇' | '不可取消后摇';
+export type CancelableAftercastType = CancellableKeyType[] | '无后摇' | '不可被取消';
 
 export type SkillLevel = {
   level: number;
@@ -77,6 +77,8 @@ export type SkillDefinition = {
   canUseInAir?: boolean; // 空中释放
   cancelableSkill?: CancelableSkillType; // 可取消释放
   cancelableAftercast?: CancelableAftercastType; // 可取消后摇
+  forecast?: number; // 前摇（秒）
+  aftercast?: number; // 后摇（秒）
   canHitInPipe?: boolean; // 可击中管道中的角色
   cooldownTiming?: '前摇前' | '释放时' | '释放后'; // 进入CD时机
   cueRange?: '全图可见' | '本房间可见' | '无音效'; // 技能音效的范围
@@ -85,8 +87,11 @@ export type SkillDefinition = {
 };
 
 // Final processed skill (with ID assigned)
-export type Skill = SkillDefinition & {
+export type Skill = Omit<SkillDefinition, 'forecast' | 'aftercast'> & {
   id: string;
+  // 处理后的技能可以没有前摇/后摇（未测试），也可以为负值表示未测试
+  forecast?: number;
+  aftercast?: number;
 };
 
 export type KnowledgeCardGroup = {

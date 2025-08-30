@@ -62,12 +62,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '鼓舞',
         type: 'active',
         description: '增加自身和附近队友的移速和跳跃高度。',
-        detailedDescription:
-          '在前摇0.5秒后，增加自身和附近队友的移速和跳跃高度，技能后摇1秒。（不同等级的鼓舞效果可以叠加）。',
+        detailedDescription: '增加自身和附近队友的移速和跳跃高度。不同等级的鼓舞效果可以叠加。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
+        forecast: 0.5,
+        aftercast: 1,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5',
         skillLevels: [
           {
@@ -98,12 +99,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         type: 'weapon1',
         description: '举起大铁锤，对面前的敌方造成眩晕。',
         detailedDescription:
-          '举起大铁锤，在前摇0.8秒后对面前的敌方造成[眩晕](可掉落道具和老鼠，不会在对方状态栏显示)，技能后摇0.6秒。',
+          '举起大铁锤，对面前的敌方造成[眩晕](可掉落道具和老鼠，不会在对方状态栏显示)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         // 事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
+        forecast: 0.8,
+        aftercast: 0.6,
         canHitInPipe: true,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=104.4',
         skillLevels: [
@@ -135,11 +138,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '吹响鸟哨召唤{鸟哨金丝雀}。金丝雀会来回盘旋，持续向下方投掷{鸟哨鞭炮}（命中敌方时爆炸，造成伤害和眩晕，被命中的敌方短暂免疫该道具效果；掉落一定时间后也会自行爆炸）。金丝雀轰炸一段时间后自行飞离。同一房间内最多只能有1只由鸟哨召唤的金丝雀。',
         detailedDescription:
-          '在1秒前摇后吹响鸟哨，召唤{鸟哨金丝雀}[飞到吹响鸟哨的位置](金丝雀会由地图左上角飞到目标位置，因此距离地图左上角越近，到达速度越快)，技能后摇1秒。金丝雀会[在一定范围内来回盘旋](金丝雀可穿墙)，每隔一段时间会向下方垂直投掷一枚{鸟哨鞭炮}（命中敌方时爆炸，对目标造成55伤害和2秒眩晕，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)，但被命中的敌方[在眩晕期间及眩晕结束后1秒内](若眩晕被敌方护盾、霸体、无敌等效果免疫，则不会触发后续免疫效果)免疫该道具效果；掉落一定时间后也会自行爆炸，不造成伤害和眩晕）。金丝雀轰炸一段时间后自行飞离。[同一房间内最多只能有1只由鸟哨召唤的金丝雀](以吹响鸟哨的位置判定金丝雀所属房间，即使之后金丝雀穿越墙壁飞入其他房间也不会改变所属位置。金丝雀在飞到与飞离目标位置的过程中仍然算作存在于该房间内。与金丝雀NPC分开计数)。',
+          '吹响鸟哨，召唤{鸟哨金丝雀}[飞到吹响鸟哨的位置](金丝雀会由地图左上角飞到目标位置，因此距离地图左上角越近，到达速度越快)。金丝雀会[在一定范围内来回盘旋](金丝雀可穿墙)，每隔一段时间会向下方垂直投掷一枚{鸟哨鞭炮}（命中敌方时爆炸，对目标造成55伤害和2秒眩晕，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)，但被命中的敌方[在眩晕期间及眩晕结束后1秒内](若眩晕被敌方护盾、霸体、无敌等效果免疫，则不会触发后续免疫效果)免疫该道具效果；掉落一定时间后也会自行爆炸，不造成伤害和眩晕）。金丝雀轰炸一段时间后自行飞离。[同一房间内最多只能有1只由鸟哨召唤的金丝雀](以吹响鸟哨的位置判定金丝雀所属房间，即使之后金丝雀穿越墙壁飞入其他房间也不会改变所属位置。金丝雀在飞到与飞离目标位置的过程中仍然算作存在于该房间内。与金丝雀NPC分开计数)。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         cancelableAftercast: ['道具键*'],
+        forecast: 1,
+        aftercast: 1,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=125.5',
         skillLevels: [
           {
@@ -283,11 +288,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '隐身',
         type: 'active',
         description: '进入隐身状态，期间获得加速。',
-        detailedDescription: '前摇1.9秒，进入隐身状态，期间加速15%。',
+        detailedDescription: '进入隐身状态，期间加速15%。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
+        forecast: 1.9,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -314,11 +321,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         type: 'weapon1',
         description: '引爆烟雾弹遮挡猫的视野。在烟雾中猫咪无法查看小地图。',
         detailedDescription:
-          '引爆烟雾弹遮挡猫的视野。前摇0.5秒，后摇1.5秒。在烟雾中猫咪无法查看小地图，此效果可以被一层护盾抵消。',
+          '引爆烟雾弹遮挡猫的视野。在烟雾中猫咪无法查看小地图。此效果可以被一层护盾抵消。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
+        forecast: 0.5,
+        aftercast: 1.5,
         skillLevels: [
           {
             level: 1,
@@ -352,6 +361,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         // cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -489,6 +499,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         videoUrl: '',
         skillLevels: [
           {
@@ -523,7 +535,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
+        forecast: 0,
         canHitInPipe: false,
         skillLevels: [
           {
@@ -579,12 +592,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 8,
           },
         ],
-        canHitInPipe: false,
-        cooldownTiming: '释放时',
-        cancelableAftercast: ['道具键*'],
-        cueRange: '本房间可见',
         aliases: ['废稿'],
         cancelableSkill: '无前摇',
+        cancelableAftercast: ['道具键*'],
+        forecast: 0,
+        canHitInPipe: false,
+        cueRange: '本房间可见',
+        cooldownTiming: '释放时',
       },
       {
         name: '身轻如燕',
@@ -814,11 +828,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '拿出一枚{金币(衍生物)}（能穿过大部分平台，命中敌方造成眩晕，被命中的敌方短暂免疫该道具效果）。获得金币时会替换并掉落手中的其他道具。',
         detailedDescription:
-          '在1.2秒前摇后，拿出一枚{金币(衍生物)}（能穿过大部分平台，命中敌方造成2秒眩晕，但被命中的敌方[在眩晕期间及眩晕结束后1秒内](若眩晕被敌方护盾、霸体、无敌等效果免疫，则不会触发后续免疫效果)免疫该道具效果）。获得金币时会替换并掉落手中的其他道具，金币不会因虚弱而从手中掉落。',
+          '拿出一枚{金币(衍生物)}（能穿过大部分平台，命中敌方造成2秒眩晕，但被命中的敌方[在眩晕期间及眩晕结束后1秒内](若眩晕被敌方护盾、霸体、无敌等效果免疫，则不会触发后续免疫效果)免疫该道具效果）。获得金币时会替换并掉落手中的其他道具，金币不会因虚弱而从手中掉落。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
+        forecast: 1.2,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -846,11 +862,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '放置一个火药桶，延迟数秒后爆炸，对周围造成不分敌我的伤害和眩晕，对墙缝造成伤害，并[炸毁范围内的火箭](猫咪在绑老鼠前需要先修复火箭)。猫咪可以通过交互拆除火药桶，老鼠可以通过交互推动火药桶。火药桶被部分其他道具命中时缩短引爆时间。',
         detailedDescription:
-          '在1秒前摇后，放置一个火药桶，延迟数秒后爆炸，对周围造成不分敌我的[伤害](对其他角色（包括敌方和队友，不包括自身）的伤害会受攻击增伤的影响)和眩晕，[对墙缝造成伤害](会直接炸毁墙缝上的泡泡，且仍造成全额伤害)，并[炸毁范围内的火箭](猫咪在绑老鼠前需要先修复火箭；火药桶的下端判定相对较大)，若其上有老鼠则[将其救下](视作航海士杰瑞进行的救援，可触发知识卡-无畏/舍己等)。猫咪可以[通过交互拆除火药桶](动作时长1秒)，老鼠可以通过交互推动火药桶。火药桶被部分其他道具命中时，引爆时间缩短5秒。\n火药桶与其他道具的互动关系：火药桶可被{小鞭炮}或{鞭炮束}炸飞，在火药桶左侧的鞭炮会使火药桶呈抛物线飞出，右侧的鞭炮会使火药桶水平滑行。使用特定道具斜向下45°打击桶外侧可使桶产生横向加速，其中{扁盘}产生的加速较大，约为{玻璃杯}的两倍。未引爆的鞭炮也可以使桶位移，且不会缩短引线。',
+          '放置一个火药桶，延迟数秒后爆炸，对周围造成不分敌我的[伤害](对其他角色（包括敌方和队友，不包括自身）的伤害会受攻击增伤的影响)和眩晕，[对墙缝造成伤害](会直接炸毁墙缝上的泡泡，且仍造成全额伤害)，并[炸毁范围内的火箭](猫咪在绑老鼠前需要先修复火箭；火药桶的下端判定相对较大)，若其上有老鼠则[将其救下](视作航海士杰瑞进行的救援，可触发知识卡-无畏/舍己等)。猫咪可以[通过交互拆除火药桶](动作时长1秒)，老鼠可以通过交互推动火药桶。火药桶被部分其他道具命中时，引爆时间缩短5秒。\n火药桶与其他道具的互动关系：火药桶可被{小鞭炮}或{鞭炮束}炸飞，在火药桶左侧的鞭炮会使火药桶呈抛物线飞出，右侧的鞭炮会使火药桶水平滑行。使用特定道具斜向下45°打击桶外侧可使桶产生横向加速，其中{扁盘}产生的加速较大，约为{玻璃杯}的两倍。未引爆的鞭炮也可以使桶位移，且不会缩短引线。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
+        forecast: 1,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -881,11 +899,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '放置一个{火炮}。老鼠可通过交互键进入火炮，通过投掷键发射自身，对碰到的敌方造成伤害与眩晕，碰到绑在火箭上的队友时自动进行救援交互。火炮内不会被投掷道具及部分技能命中。若火炮内老鼠进入虚弱，则火炮会提前消失。同一房间最多出现两个火炮。火炮持续数秒后消失。火炮会在小地图上全程暴露位置。',
         detailedDescription:
-          '在0.7秒前摇后放置一个{火炮}，后摇0.3秒。老鼠可通过交互键进入火炮（交互动作时长1秒），通过拖拽投掷键选择方向发射自身，无视部分平台阻挡，碰到敌方会[反弹](速度不变，方向遵循反射定律且反射面必定为竖直面)并对其造成[50](基础伤害50，受被发射者的攻击增伤影响，视作被发射者造成的伤害。例如航海士杰瑞自己使用时会造成70伤害)伤害与1.5秒眩晕，碰到绑在火箭上的队友时自动进行救援交互，碰到地面或跳跃时结束被发射状态。火炮内不会被投掷道具及部分技能命中。若火炮内老鼠进入虚弱，则火炮会提前消失。同一房间最多出现两个火炮。火炮持续数秒后消失。火炮会在小地图上全程暴露位置。',
+          '放置一个{火炮}。老鼠可通过交互键进入火炮（交互动作时长1秒），通过拖拽投掷键选择方向发射自身，无视部分平台阻挡，碰到敌方会[反弹](速度不变，方向遵循反射定律且反射面必定为竖直面)并对其造成[50](基础伤害50，受被发射者的攻击增伤影响，视作被发射者造成的伤害。例如航海士杰瑞自己使用时会造成70伤害)伤害与1.5秒眩晕，碰到绑在火箭上的队友时自动进行救援交互，碰到地面或跳跃时结束被发射状态。火炮内不会被投掷道具及部分技能命中。若火炮内老鼠进入虚弱，则火炮会提前消失。同一房间最多出现两个火炮。火炮持续数秒后消失。火炮会在小地图上全程暴露位置。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         // cancelableSkill: '不确定是否可被打断', // FIXME
         // cancelableAftercast: '不确定是否可取消后摇', // FIXME
+        forecast: 0.7,
+        aftercast: 0.3,
         skillLevels: [
           {
             level: 1,
@@ -1034,6 +1054,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         videoUrl: 'https://www.bilibili.com/video/BV12P4y1e7rg?t=5.2',
         skillLevels: [
           {
@@ -1060,11 +1082,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         aliases: ['大盾'],
         type: 'weapon1',
         description: '给予附近友方短暂的无敌。',
-        detailedDescription: '给予附近友方短暂的无敌。前摇0.9秒，后摇1秒。',
+        detailedDescription: '给予附近友方短暂的无敌。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
+        forecast: 0.9,
+        aftercast: 1,
         videoUrl: 'https://www.bilibili.com/video/BV12P4y1e7rg?t=81.9',
         skillLevels: [
           {
@@ -1093,11 +1117,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '召唤战旗，为碰触的友方提供增益。战旗被碰触若干次后将获得强化。同一时间游戏内只能存在一面战旗。\n攻击战旗：提高攻击力（强化：额外获得墙缝增伤、免疫受伤）\n救援战旗：提高救援速度。（强化：改为[获得瞬息救援能力](碰触火箭直接救援成功)）\n守护战旗：解除虚弱；Hp较低时将缓慢恢复Hp并加速（强化：改为获得一层护盾）\n感知战旗：对猫隐藏自己的小地图位置（强化：额外显示猫的位置）\n灵巧战旗：提高跳跃高度（强化：额外获得[二段跳状态](可在空中进行1次额外跳跃)）。',
         detailedDescription:
-          '在身前略高于地面的位置召唤战旗，为碰触的友方老鼠提供增益，前摇0.9秒，后摇0.5秒，战旗存在15秒。战旗被碰触若干次后获得强化。战旗具有重力，无碰撞体积，会因受力而移动。同一时间游戏内只能存在一面战旗。获得战旗效果后的15秒内无法再次获得同等级的效果。机械鼠不会继承战旗的增益效果。\n攻击战旗：增加35点攻击力，持续10秒（强化：额外增加2点墙缝增伤、免疫受伤）\n救援战旗：提高100%救援速度，持续5秒（强化：改为[获得瞬息救援能力](碰触火箭直接救援成功)，持续5秒。以该方式救下队友不计入赛后的数据统计）\n守护战旗：解除虚弱；Hp低于30%时，以7.5/s的速度恢复Hp，加速25%，并解除反向、失明、受伤等异常状态，持续2秒（强化：改为获得一层护盾，持续4秒。）\n感知战旗：对猫隐藏自己的小地图位置，持续10秒（强化：额外显示5秒猫的位置）\n灵巧战旗：提高50%跳跃高度，持续5秒（强化：额外获得二段跳状态（可在空中[进行1次额外跳跃](从上一次接触平台/地面起，至多进行2次跳跃，再次接触平台/地面时重置。多个额外跳跃效果取次数最高的生效)））。', // 感知战旗可以感知所有敌方单位
+          '在身前略高于地面的位置召唤战旗，为碰触的友方老鼠提供增益，战旗存在15秒。战旗被碰触若干次后获得强化。战旗具有重力，无碰撞体积，会因受力而移动。同一时间游戏内只能存在一面战旗。获得战旗效果后的15秒内无法再次获得同等级的效果。机械鼠不会继承战旗的增益效果。\n攻击战旗：增加35点攻击力，持续10秒（强化：额外增加2点墙缝增伤、免疫受伤）\n救援战旗：提高100%救援速度，持续5秒（强化：改为[获得瞬息救援能力](碰触火箭直接救援成功)，持续5秒。以该方式救下队友不计入赛后的数据统计）\n守护战旗：解除虚弱；Hp低于30%时，以7.5/s的速度恢复Hp，加速25%，并解除反向、失明、受伤等异常状态，持续2秒（强化：改为获得一层护盾，持续4秒。）\n感知战旗：对猫隐藏自己的小地图位置，持续10秒（强化：额外显示5秒猫的位置）\n灵巧战旗：提高50%跳跃高度，持续5秒（强化：额外获得二段跳状态（可在空中[进行1次额外跳跃](从上一次接触平台/地面起，至多进行2次跳跃，再次接触平台/地面时重置。多个额外跳跃效果取次数最高的生效)））。', // 感知战旗可以感知所有敌方单位
         canMoveWhileUsing: true,
         canUseInAir: false,
         cancelableSkill: ['跳跃键'],
         cancelableAftercast: ['道具键*'],
+        forecast: 0.9,
+        aftercast: 0.5,
         videoUrl: 'https://www.bilibili.com/video/BV12P4y1e7rg?t=100.25',
         skillLevels: [
           {
@@ -1227,6 +1253,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: false,
         cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -1254,7 +1281,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         name: '剑舞华尔兹',
-        aliases: [],
         type: 'weapon1',
         description: '使用三段剑舞近身攻击，造成伤害；前两段额外造成减速，第三段额外造成眩晕。',
         detailedDescription:
@@ -1263,6 +1289,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
+        forecast: 0.45,
+        aftercast: 0,
         canHitInPipe: false,
         cooldownTiming: '释放后',
         skillLevels: [
@@ -1297,6 +1325,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: false,
         cancelableSkill: '无前摇',
         cancelableAftercast: ['道具键*', '跳跃键'],
+        forecast: 0,
         skillLevels: [
           {
             level: 1,
@@ -1468,6 +1497,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
         videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=11.15',
         skillLevels: [
           {
@@ -1502,7 +1532,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '发射一枚{火箭筒}，直接命中敌方时造成一段伤害，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)，该伤害先于爆炸伤害结算；命中敌方角色/墙壁/平台/其他道具后爆炸，对一定范围内敌方造成伤害和眩晕。火箭筒可对墙缝造成伤害。爆炸产生的冲击波可以炸飞老鼠夹、叉子等道具。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=46.4',
         skillLevels: [
           {
@@ -1792,10 +1822,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '向前冲刺一段时间，冲刺期间移速提高，并恢复少量勇气。途径敌方会对其造成伤害，但消耗一定的勇气。只有处于勇气释放期间才能释放本技能。',
         detailedDescription:
-          '在前摇0.2秒后，向前冲刺0.7秒，冲刺期间移速提高50%，并恢复少量勇气，冲刺后摇0.3秒。途径敌方会对猫咪造成{40}伤害，但消耗一定的勇气。只有处于勇气释放期间才能释放本技能。',
+          '向前冲刺0.7秒，冲刺期间移速提高50%，并恢复少量勇气。途径敌方会对其造成{40}伤害，但消耗一定的勇气。只有处于勇气释放期间才能释放本技能。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: ['移动键', '跳跃键', '道具键', '药水键', '本技能键', '其他技能键'],
+        forecast: 0.2,
+        aftercast: 0.3,
         cooldownTiming: '释放后',
         cancelableSkill: '不可被打断',
         skillLevels: [
@@ -1828,12 +1860,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '举起头盔保护自己和队友，期间无敌，但惯性增大；小范围内的队友也无敌，但不能使用技能。头盔受击会减少0.5s；救下队友后头盔剩余时间减半。',
         detailedDescription:
-          '前摇1.5s，举起头盔保护自己和队友，期间无敌，但惯性增大、移速降低3.5%、跳跃速度降低15%；小范围内的队友也无敌，但不能使用技能。头盔[受击](包括爪刀、道具、技能、来自友方的伤害)会减少0.5s；救下队友后头盔剩余时间减半。',
+          '举起头盔保护自己和队友，期间无敌，但惯性增大、移速降低3.5%、跳跃速度降低15%；小范围内的队友也无敌，但不能使用技能。头盔[受击](包括爪刀、道具、技能、来自友方的伤害)会减少0.5s；救下队友后头盔剩余时间减半。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         canHitInPipe: false,
         cancelableAftercast: '无后摇',
         cancelableSkill: '不可被打断',
+        forecast: 1.5,
+        aftercast: 0,
         cooldownTiming: '释放时',
         skillLevels: [
           {
@@ -1861,10 +1895,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '蓄力投掷长枪。蓄力期间获得远视。蓄力时间越长，投掷速度越快、距离越长。长枪对触碰的敌方造成伤害和减速。投掷后，短时间内可再次点击技能瞬移到长枪尾部跟随飞行。长枪碰到队友后，可携带1名友方进行飞行。期间剑客泰菲和友方均可通过跳跃键、道具键、药水键离开。飞行中碰到[易碎道具](玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶)和打开的捕鼠夹，也会挂着该道具飞行。长枪在碰到墙壁、地面、向下碰到平台时将消失。',
         detailedDescription:
-          '前摇0.15s，蓄力投掷长枪。蓄力期间视野扩大到原来的2倍，同时清除原有的视野提升效果。蓄力时间越长，投掷速度越快、距离越长。蓄力至最大值需0.8s。长枪对触碰的敌方造成{60}伤害和20%减速，持续2.4s。在投掷后的1.8s内，可再次点击技能瞬移到长枪尾部跟随飞行。长枪碰到队友后，可携带1名友方进行飞行，期间剑客泰菲和友方均可通过跳跃键、道具键、药水键离开，受到眩晕或虚弱会强制离开。飞行中碰到[易碎道具](玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶)和打开的捕鼠夹，也会挂着该道具飞行。长枪最大存在时间为9.9s，在碰到墙壁、地面、向下碰到平台时将消失。长枪消失或剑菲上长枪后技能进入CD。',
+          '蓄力投掷长枪。蓄力期间视野扩大到原来的2倍，同时清除原有的视野提升效果。蓄力时间越长，投掷速度越快、距离越长。蓄力至最大值需0.8s。长枪对触碰的敌方造成{60}伤害和20%减速，持续2.4s。在投掷后的1.8s内，可再次点击技能瞬移到长枪尾部跟随飞行。长枪碰到队友后，可携带1名友方进行飞行，期间剑客泰菲和友方均可通过跳跃键、道具键、药水键离开，受到眩晕或虚弱会强制离开。飞行中碰到[易碎道具](玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶)和打开的捕鼠夹，也会挂着该道具飞行。长枪最大存在时间为9.9s，在碰到墙壁、地面、向下碰到平台时将消失。长枪消失或剑菲上长枪后技能进入CD。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableAftercast: '无后摇',
+        forecast: 0.15,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -2059,14 +2095,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
+        forecast: 0.65,
         skillLevels: [
           {
             level: 1,
             description:
               '放置仙人掌，猫咪踩中受到硬直、减速和持续伤害，同时仙人掌消失。鼠方踩踏两次后仙人掌也会消失。',
             detailedDescription:
-              '前摇0.65s，放置仙人掌，持续90秒。猫咪踩中受到1.2秒硬直、15%减速、7.5/s的伤害，[持续3s](只造成两次伤害)，同时仙人掌消失。同一目标3秒内不会重复触发；减速最多叠加3层。所有老鼠不受仙人掌的影响，但鼠方踩踏两次后仙人掌消失。',
+              '放置仙人掌，持续90秒。猫咪踩中受到1.2秒硬直、15%减速、7.5/s的伤害，[持续3s](只造成两次伤害)，同时仙人掌消失。同一目标3秒内不会重复触发；减速最多叠加3层。所有老鼠不受仙人掌的影响，但鼠方踩踏两次后仙人掌消失。',
             cooldown: 18,
           },
           {
@@ -2092,10 +2129,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '可左右拖动和原地释放，弹琴并向拖动方向移动。猫听到音乐会受到短暂僵直，持续听到音乐后会受到减速并持续降低Hp。',
         detailedDescription:
-          '前摇0.9s，可左右拖动和原地释放，弹琴并向拖动方向移动，期间保留惯性。猫首次听到音乐时会陷入1s的僵直，[持续听到音乐](0.5s)后会受到35%减速并以15/s降低Hp，持续2.8s。弹琴可通过跳跃和移动键主动结束释放；空中释放会立刻解除；最多持续弹奏5s。后摇0.8s。',
+          '可左右拖动和原地释放，弹琴并向拖动方向移动，期间保留惯性。猫首次听到音乐时会陷入1s的僵直，[持续听到音乐](0.5s)后会受到35%减速并以15/s降低Hp，持续2.8s。弹琴可通过跳跃和移动键主动结束释放；空中释放会立刻解除；最多持续弹奏5s。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         canHitInPipe: false,
+        forecast: 0.9,
+        aftercast: 0.8,
         skillLevels: [
           {
             level: 1,
@@ -2345,11 +2384,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '标记一个地狱裂隙，技能进入12s读条，期间再次使用技能标记一处新的裂隙并传送回上一个地狱裂隙，传送后获得短暂加速。',
         detailedDescription:
-          '在前摇0.9秒后标记一个地狱裂隙，技能进入12s读条，期间再次使用技能将在1.45s可被道具键*打断的前摇后标记一处新的地狱裂隙并传送回上一个地狱裂隙，传送后加速18%，持续3s。',
+          '标记一个地狱裂隙，技能进入12s读条，期间再次使用技能将在可被道具键*打断的1.45s前摇后标记一处新的地狱裂隙并传送回上一个地狱裂隙，传送后加速18%，持续3s。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
+        forecast: 0.9,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -2382,12 +2423,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '召唤一个[传送门](游戏内称呼：恶魔之门)，同时技能进入读条，期间再次使用召唤另一个传送门。友方可与传送门交互，被传送并获得一种随机强化效果，效果持续时间随两传送门距离增大（有下限和上限）；敌方碰到传送门后会被强制传送（短时间内不会重复触发）；[处于被投掷状态的道具](被投掷且速度未降为0的道具)碰到传送门也会被传送。传送门持续一定时间后消失，[进行传送](包括投掷物传送，友方主动传送，敌方强制传送)会减少传送门的持续时间。',
         detailedDescription:
-          '在前摇2.2秒后召唤一个[传送门](游戏内称呼：恶魔之门)，召唤后摇0.2秒，成功召唤时技能进入读条，期间再次使用召唤另一个传送门。友方可与传送门交互，在前摇0.9秒后被传送并获得一种随机强化效果，效果持续时间随两传送门距离增大（有下限和上限）；敌方碰到传送门后会被强制传送（10秒内不会重复触发）；[处于被投掷状态的道具](被投掷且速度未降为0的道具)碰到传送门也会被传送。[进行传送](包括投掷物传送，友方主动传送，敌方强制传送)会使传送门的持续时间减少3秒（[自身首次和第二次传送例外](恶魔杰瑞与他的队友利用召唤的第一个传送门传送不减少持续时间，仅在使用第二个门传送时会减少持续时间)）。\n使用传送门的友方[随机获得以下8种增益中的一种](若此时已有增益则不再获得新增益，但如果随机到相同增益则重置持续时间)：\n1：主动技能CD减少70%；\n2：武器技能CD减少70%；\n3：推速提高100%；\n4：攻击增伤提升50；\n5：获得一层护盾（可以免疫铁血）；\n6：获得远视；\n7：获得隐身；\n8：Hp恢复增加5/s，移速提升20%，跳跃高度提升50%。',
+          '召唤一个[传送门](游戏内称呼：恶魔之门)，成功召唤时技能进入读条，期间再次使用召唤另一个传送门。友方可与传送门交互，在前摇0.9秒后被传送并获得一种随机强化效果，效果持续时间随两传送门距离增大（有下限和上限）；敌方碰到传送门后会被强制传送（10秒内不会重复触发）；[处于被投掷状态的道具](被投掷且速度未降为0的道具)碰到传送门也会被传送。[进行传送](包括投掷物传送，友方主动传送，敌方强制传送)会使传送门的持续时间减少3秒（[自身首次和第二次传送例外](恶魔杰瑞与他的队友利用召唤的第一个传送门传送不减少持续时间，仅在使用第二个门传送时会减少持续时间)）。\n使用传送门的友方[随机获得以下8种增益中的一种](若此时已有增益则不再获得新增益，但如果随机到相同增益则重置持续时间)：\n1：主动技能CD减少70%；\n2：武器技能CD减少70%；\n3：推速提高100%；\n4：攻击增伤提升50；\n5：获得一层护盾（可以免疫铁血）；\n6：获得远视；\n7：获得隐身；\n8：Hp恢复增加5/s，移速提升20%，跳跃高度提升50%。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键*'],
-        cancelableAftercast: '无后摇',
+        // cancelableAftercast: '' // FIXME
         canHitInPipe: false,
+        forecast: 2.2,
+        aftercast: 0.2,
         skillLevels: [
           {
             level: 1,
@@ -2589,7 +2632,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -2615,7 +2658,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -2797,9 +2840,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '附近有队友时可使用技能。吻出一个爱心飘向最近的队友，队友被爱心触碰后与雪梨建立友好关系，持续恢复Hp；友好关系持续20s后，同伴额外获得全面的强化效果，同时免疫反向和失明，直到友好关系中断。友好关系期间，雪梨可通过特殊技能按键[远程治疗同伴](每次建立关系只可使用一次，可被打断。CD：5s。)，且若雪梨隐身，则双方都隐身。',
         detailedDescription:
-          '自身半径范围1800内有队友时可使用技能。前摇1s，后摇0.5s，原地吻出一个爱心，存在[20秒](超时后自爆)，会以650的速度追踪周围半径1500内的[队友](包括火箭上的队友和机械鼠，但不会与机械鼠建立友好关系)。队友被爱心触碰0.2s后，与雪梨的距离在2400之内则建立友好关系。与雪梨建立友好关系的队友将额外提高2.5/s的Hp恢复；友好关系持续20s后，同伴额外获得全面的强化效果：攻击力提高15，移速、跳跃速度提高10%，推速提高30%，Hp上限提高25，同时免疫反向和失明，直到友好关系中断。友好关系期间，雪梨可通过特殊技能按键[远程治疗同伴](每次建立关系只可使用一次，可被打断。享受被动增益。CD：5s。)，且若雪梨隐身，则[双方都隐身](双方隐身持续时间相同；例外是恶魔杰瑞的门提供的隐身，在同伴身上只会持续1秒)。\n解除友好关系的方式：1、再次使用主动技能；2、使用花束被其他队友接到；3、其中一方被猫咪或斯派克抓住，或进机械鼠；4、双方距离超过2400。',
+          '自身半径范围1800内有队友时可使用技能。原地吻出一个爱心，存在[20秒](超时后自爆)，会以650的速度追踪周围半径1500内的[队友](包括火箭上的队友和机械鼠，但不会与机械鼠建立友好关系)。队友被爱心触碰0.2s后，与雪梨的距离在2400之内则建立友好关系。与雪梨建立友好关系的队友将额外提高2.5/s的Hp恢复；友好关系持续20s后，同伴额外获得全面的强化效果：攻击力提高15，移速、跳跃速度提高10%，推速提高30%，Hp上限提高25，同时免疫反向和失明，直到友好关系中断。友好关系期间，雪梨可通过特殊技能按键[远程治疗同伴](每次建立关系只可使用一次，可被打断。享受被动增益。CD：5s。)，且若雪梨隐身，则[双方都隐身](双方隐身持续时间相同；例外是恶魔杰瑞的门提供的隐身，在同伴身上只会持续1秒)。\n解除友好关系的方式：1、再次使用主动技能；2、使用花束被其他队友接到；3、其中一方被猫咪或斯派克抓住，或进机械鼠；4、双方距离超过2400。',
         canMoveWhileUsing: false,
         canUseInAir: false,
+        forecast: 1,
+        aftercast: 0.5,
         skillLevels: [
           {
             level: 1,
@@ -2836,12 +2881,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '在地面放置{花洒}。范围内的友方持续恢复Hp并解除反向和失明，还能浇灭{小鞭炮}/{鞭炮束}、熄灭{火箭}、对敌方和道具产生推力、减速敌方。花洒存在一段时间后消失。',
         detailedDescription:
-          '前摇0.5秒后，在地面放置{花洒}。花洒每个方向水流范围为175，初始方向为双向，可通过交互[改变水流方向](前摇1秒，顺序为双向→右→左)；花洒范围内的友方[获得10Hp/秒的恢复效果](该效果与角色基础Hp恢复不同，不会因受伤而失效)并解除反向和失明，对雪梨自身效果提高至15Hp/秒。花洒可浇灭{小鞭炮}/{鞭炮束}、熄灭{火箭}。花洒水流[对敌方和道具能产生推力](双头花洒、右花洒的力向右，左花洒的力向左；敌方受力的移速为25；道具受力较大)，并使范围内敌方减速25%。花洒存在一段时间后消失。',
+          '在地面放置{花洒}。花洒每个方向水流范围为175，初始方向为双向，可通过交互[改变水流方向](前摇1秒，顺序为双向→右→左)；花洒范围内的友方[获得10Hp/秒的恢复效果](该效果与角色基础Hp恢复不同，不会因受伤而失效)并解除反向和失明，对雪梨自身效果提高至15Hp/秒。花洒可浇灭{小鞭炮}/{鞭炮束}、熄灭{火箭}。花洒水流[对敌方和道具能产生推力](双头花洒、右花洒的力向右，左花洒的力向左；敌方受力的移速为25；道具受力较大)，并使范围内敌方减速25%。花洒存在一段时间后消失。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键*'],
         cancelableAftercast: '无后摇',
         canHitInPipe: false,
+        forecast: 0.5,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -2870,11 +2917,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '投掷{花束}，为命中的友方回复Hp，并弹向最近的另一个友方。若首先命中的友方已建立友好关系，则双方额外回复Hp，且双方各获得一个[一次性传送技能](点击技能后立刻飞向同伴，传送期间获得无法被任何道具、技能命中；友好关系解除时该技能同步失效)。若已建立友好关系，但花束首先命中的不是友好关系的友方，则与之建立友好关系并获得传送技能、之前的友好关系消失。',
         detailedDescription:
-          '前摇0.3秒，投掷{花束}，飞行速度650，无视平台，但会被地板墙壁阻挡。花束为命中的友方回复50Hp，若附近半径1250内还有其他友方，将失重并以2000的速度弹向最近的友方，最多弹射3次、最多存在5秒。若首先命中的友方已建立友好关系，则双方额外回复50Hp，且双方各获得一个[一次性传送技能](点击技能后立刻以1750速度飞向同伴，传送期间获得无法被任何道具、技能命中；友好关系解除时该技能同步失效)。若已建立友好关系，但花束首先命中的不是友好关系的友方，则与之建立友好关系并获得传送技能、之前的友好关系消失。',
+          '投掷{花束}，飞行速度650，无视平台，但会被地板墙壁阻挡。花束为命中的友方回复50Hp，若附近半径1250内还有其他友方，将失重并以2000的速度弹向最近的友方，最多弹射3次、最多存在5秒。若首先命中的友方已建立友好关系，则双方额外回复50Hp，且双方各获得一个[一次性传送技能](点击技能后立刻以1750速度飞向同伴，传送期间获得无法被任何道具、技能命中；友好关系解除时该技能同步失效)。若已建立友好关系，但花束首先命中的不是友好关系的友方，则与之建立友好关系并获得传送技能、之前的友好关系消失。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         cancelableAftercast: '无后摇',
+        forecast: 0.3,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -3031,7 +3080,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -3094,11 +3143,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '在左右召唤两朵雷云，持续15秒。雷云内敌方移速和伤害降低。如果敌方在雷云中做出[攻击行为](爪刀、道具、技能)则会被雷劈（有一定延迟），受到[电击伤害](电击伤害会使目标感电，每层感电使受到的电击伤害增加，可叠加)。',
         detailedDescription:
-          '在左右各召唤一朵雷云，前摇0.65秒，持续15秒。敌方在雷云中对老鼠的伤害固定减少10、移速降低35%。如果敌方在雷云中有[攻击行为](如爪刀，道具，技能)则会[被雷云锁定](头顶出现感叹号标志)，锁定1.5秒后判定敌方0.5秒前所在位置并在0.08秒内向该位置连续两次落雷，形成雷区，敌方被雷直接击中或踏入雷区会受到35[电击伤害](电击伤害会对目标附加感电，使受到的电击伤害增加15，持续9.9秒，可叠加。感电结束时获得5秒电免疫状态，免疫电击伤害)。[极短时间内](如果同时有三道雷，会中两道)敌方只能被一次雷击中。',
+          '在左右各召唤一朵雷云，持续15秒。敌方在雷云中对老鼠的伤害固定减少10、移速降低35%。如果敌方在雷云中有[攻击行为](如爪刀，道具，技能)则会[被雷云锁定](头顶出现感叹号标志)，锁定1.5秒后判定敌方0.5秒前所在位置并在0.08秒内向该位置连续两次落雷，形成雷区，敌方被雷直接击中或踏入雷区会受到35[电击伤害](电击伤害会对目标附加感电，使受到的电击伤害增加15，持续9.9秒，可叠加。感电结束时获得5秒电免疫状态，免疫电击伤害)。[极短时间内](如果同时有三道雷，会中两道)敌方只能被一次雷击中。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
+        forecast: 0.65,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -3278,20 +3329,21 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         cueRange: '无音效',
-        aliases: ['庇护'],
         detailedDescription:
           '（本技能改动频繁，特性复杂，仍有机制暂未探明，数据仅供参考）展开光盾，使自身12秒内受到的伤害降低15，并[转移范围内队友所受伤害和控制效果到自身](结算“转移伤害”效果时，使伤害改为由天使泰菲及队友共同承担，比例由转移伤害比例决定；若“受到的伤害值”超过队友的Hp上限，则实际分摊的伤害值改为等同于队友Hp上限；自身因转移受到的伤害视作无来源的伤害。结算“转移控制”效果时，解除队友受到的控制效果，同时自身受到对应的控制效果；若该控制效果附带伤害，则自身会再次受到伤害，因此会出现“1次带控制的伤害=2次伤害”的情况)，火箭在庇护范围内减缓燃烧速度，且倒计时归零时暂时不放飞（对[秒飞火箭](因绑上老鼠立刻减少倒计时而导致倒计时归零的火箭)不生效）。优先使用怜悯值抵扣转移的伤害，每1%怜悯值可承担1伤害。', //[本技能有争议](另一种减伤说法：25伤害变10,50伤害变35,65伤害变45,75伤害变55,100伤害变65,115虚弱；另一种怜悯值消耗说法：100%怜悯值可承担60伤害)。
       },
       {
         name: '天使翅膀',
-        aliases: ['翅膀'],
         type: 'weapon1',
         description:
           '使受到的伤害降低一段时间，期间若受到来自敌方的伤害，则对其造成一次基于该次伤害值一定比例的伤害，可消耗怜悯值使反弹伤害增加。',
+        detailedDescription:
+          '展开天使翅膀，使自身6秒内受到的伤害降低15，期间若受到来自敌方的伤害，则对其造成一次[等同于该次伤害值55%的伤害（若“该次伤害值”超过天使泰菲的剩余Hp，则对对方造成伤害改为天使泰菲剩余Hp的55%）](该伤害不受攻击增伤影响。"受到伤害"的计算时机晚于攻击者的攻击增/减伤，但早于天使泰菲的受击增/减伤，并且最终数值不会超过天使泰菲当前的Hp。主动技能的转移伤害没有伤害来源，因此不触发该效果)。若反弹伤害时自身的怜悯值超过25%，消耗25%怜悯值使反弹伤害额外增加。', //[本技能有争议](另一种说法：不考虑怜悯值时，消耗25变5伤害返还20，50变25伤害返还25，75变50伤害返还20，100变60伤害返还40，125直接虚弱返还50；每10％反伤5伤害)。
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键', '跳跃键', '移动键', '其他技能键'],
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
+        forecast: 0.55,
         canHitInPipe: false,
         skillLevels: [
           {
@@ -3314,8 +3366,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 10,
           },
         ],
-        detailedDescription:
-          '在0.55秒前摇后展开天使翅膀，使自身6秒内受到的伤害降低15，期间若受到来自敌方的伤害，则对其造成一次[等同于该次伤害值55%的伤害（若“该次伤害值”超过天使泰菲的剩余Hp，则对对方造成伤害改为天使泰菲剩余Hp的55%）](该伤害不受攻击增伤影响。"受到伤害"的计算时机晚于攻击者的攻击增/减伤，但早于天使泰菲的受击增/减伤，并且最终数值不会超过天使泰菲当前的Hp。主动技能的转移伤害没有伤害来源，因此不触发该效果)。若反弹伤害时自身的怜悯值超过25%，消耗25%怜悯值使反弹伤害额外增加。', //[本技能有争议](另一种说法：不考虑怜悯值时，消耗25变5伤害返还20，50变25伤害返还25，75变50伤害返还20，100变60伤害返还40，125直接虚弱返还50；每10％反伤5伤害)。
       },
       {
         name: '怜悯之心',
@@ -3567,6 +3617,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键*'],
         cancelableAftercast: '无后摇',
+        forecast: 1.5,
         skillLevels: [
           {
             level: 1,
@@ -3575,7 +3626,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD降低至18秒。',
+            description: '减少CD至18秒。',
             cooldown: 18,
           },
           {
@@ -3600,6 +3651,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键*'],
         cancelableAftercast: '无后摇',
+        forecast: 1.9,
         cooldownTiming: '释放后',
         videoUrl: 'https://www.bilibili.com/video/BV1Qd4y1W7fg/?t=88',
         skillLevels: [
@@ -3636,8 +3688,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
-        canHitInPipe: true,
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
+        canHitInPipe: true,
         skillLevels: [
           {
             level: 1,
@@ -3800,11 +3854,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '魔音贯耳',
         type: 'active',
         description: '发出声波，击退琴头方向的猫咪。前摇期间可以移动和跳跃。',
-        detailedDescription:
-          '发出声波，击退琴头方向的猫咪1700距离。前摇0.75秒，期间可以移动和跳跃。',
+        detailedDescription: '发出声波，击退琴头方向的猫咪1700距离。前摇期间可以移动和跳跃。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableAftercast: ['道具键*', '跳跃键'],
+        forecast: 0.75,
         skillLevels: [
           {
             level: 1,
@@ -3834,11 +3888,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         type: 'weapon1',
         description: '持续演奏吉他，范围内的友方持续恢复Hp、猫咪被减速并受到少量伤害。',
         detailedDescription:
-          '前摇0.35秒，持续演奏吉他2.6秒，弹奏范围为半径750的圆，友方进入范围后0.35、0.75、1.15、1.55、1.95、2.35秒回复10Hp。猫咪减速22%，并在进入范围后0.35、0.75、1.15、1.55秒叠加一次（覆盖原有效果），此后不再叠加；在进入范围1.95、2.35秒后再施加一次[4级减速效果](减速77%)。减速效果持续0.8秒，猫咪进入范围后1.4秒、2.4秒将分别受到10伤害。',
+          '持续演奏吉他2.6秒，弹奏范围为半径750的圆，友方进入范围后0.35、0.75、1.15、1.55、1.95、2.35秒回复10Hp。猫咪减速22%，并在进入范围后0.35、0.75、1.15、1.55秒叠加一次（覆盖原有效果），此后不再叠加；在进入范围1.95、2.35秒后再施加一次[4级减速效果](减速77%)。减速效果持续0.8秒，猫咪进入范围后1.4秒、2.4秒将分别受到10伤害。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableAftercast: '无后摇',
         cancelableSkill: ['道具键*', '跳跃键'],
+        forecast: 0.35,
         skillLevels: [
           {
             level: 1,
@@ -4014,11 +4069,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         type: 'active',
         description: '召唤并弹出{斜塔}，弹飞碰到的敌方。斜塔与墙壁和地板类似，会阻挡道路。',
         detailedDescription:
-          '在前摇0.5秒后召唤并弹出{斜塔}，动作后摇0.4秒。斜塔出现时弹飞碰到的敌方，使其[以850的速度被击退，并眩晕1.5秒](正常情况下最终位移距离1275，若弹飞过程中眩晕结束则停止弹飞。可破盾，可击飞跳舞中的苏蕊)。[斜塔与墙壁和地板类似，塔顶可站立，塔身会阻挡道路](朝右的斜塔允许鼠方从右往左通过；空中释放时概率出现无法站立的“飘塔”)。',
+          '召唤并弹出{斜塔}。斜塔出现时弹飞碰到的敌方，使其[以850的速度被击退，并眩晕1.5秒](正常情况下最终位移距离1275，若弹飞过程中眩晕结束则停止弹飞。可破盾，可击飞跳舞中的苏蕊)。[斜塔与墙壁和地板类似，塔顶可站立，塔身会阻挡道路](朝右的斜塔允许鼠方从右往左通过；空中释放时概率出现无法站立的“飘塔”)。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键'],
         cancelableAftercast: ['跳跃键', '道具键'],
+        forecast: 0.5,
+        aftercast: 0.4,
         skillLevels: [
           {
             level: 1,
@@ -4049,11 +4106,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '召唤{披萨}，老鼠可通过交互键骑乘并一同移动，滚动的披萨撞到敌方时破碎，对撞到的敌方和在披萨上驾驶的老鼠造成伤害和[眩晕](可掉落道具和老鼠)，并生成{披萨块}，老鼠碰到后会缓慢恢复Hp。披萨块存在一定时间后消失；披萨存在一定时间后也会自然破碎，但不生成披萨块。',
         detailedDescription:
-          '在前摇1.4秒后召唤{披萨}，老鼠[可通过交互键骑乘](动作前摇1秒)并一同移动，但期间移速降低2.5%，跳跃高度降低70%，且路过与披萨高度相同的平台时会强制解除交互；滚动的披萨撞到敌方时破碎，[对撞到的敌方和在披萨上驾驶的老鼠造成伤害和眩晕](该伤害来源为拿坡里鼠，对拿坡里鼠自身造成伤害时不受攻击增伤影响，对其他角色（包括队友）造成的伤害受攻击增伤影响，因此通常为35；该眩晕可掉落道具和老鼠)，并生成{披萨块}，老鼠碰到后会获得5Hp/秒的恢复效果，持续10秒。披萨块存在5秒后消失；披萨饼存在30秒后也会自然破碎，但不生成披萨块。\n[披萨块的生成数量取决于撞到多少敌人](例：1级时撞到两个敌人分裂两块披萨块)。',
+          '召唤{披萨}，老鼠[可通过交互键骑乘](动作前摇1秒)并一同移动，但期间移速降低2.5%，跳跃高度降低70%，且路过与披萨高度相同的平台时会强制解除交互；滚动的披萨撞到敌方时破碎，[对撞到的敌方和在披萨上驾驶的老鼠造成伤害和眩晕](该伤害来源为拿坡里鼠，对拿坡里鼠自身造成伤害时不受攻击增伤影响，对其他角色（包括队友）造成的伤害受攻击增伤影响，因此通常为35；该眩晕可掉落道具和老鼠)，并生成{披萨块}，老鼠碰到后会获得5Hp/秒的恢复效果，持续10秒。披萨块存在5秒后消失；披萨饼存在30秒后也会自然破碎，但不生成披萨块。\n[披萨块的生成数量取决于撞到多少敌人](例：1级时撞到两个敌人分裂两块披萨块)。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键*'],
         canHitInPipe: false,
+        forecast: 1.4,
         skillLevels: [
           {
             level: 1,
@@ -4093,6 +4151,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -4246,6 +4306,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -4278,11 +4340,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '拿出饮料杯朝地上倾倒，留下{饮料印记}，持续25秒。一旦印记与猫咪处在同一个房间，印记会召唤1个[模拟自己或队友外形](只包括存活的鼠方队友)的{饮料分身}。分身被击倒时使敌方短暂失明。存在{侦探泰菲分身}或{饮料分身}时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。',
         detailedDescription:
-          '前摇1.3秒。拿出饮料杯朝地上倾倒，留下{饮料印记}，持续25秒。一旦印记与猫咪处在同一个房间，印记会召唤1个[模拟自己或队友外形](只包括存活的鼠方队友)的{饮料分身}，持续较长时间。分身被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。当场上存在[由自身召唤](即不包括其他侦探泰菲召唤的分身)的{侦探泰菲分身}或{饮料分身}时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。同一房间同时召唤的分身越多，分身存在时间越短。\n饮料分身特性：Hp上限为角色Hp上限减49并[按比例继承本体Hp](如124血的剑杰Hp为24，召唤出的分身Hp将为15)，若同房间内出现出现猫咪将跑向最近的道具/水果盘/冰桶处，若半径800范围内出现猫咪将使用相应道具进行攻击。', // FIXME: 玩具枪也会用吗？“被击倒”是Hp归零还是要小于0？
+          '拿出饮料杯朝地上倾倒，留下{饮料印记}，持续25秒。一旦印记与猫咪处在同一个房间，印记会召唤1个[模拟自己或队友外形](只包括存活的鼠方队友)的{饮料分身}，持续较长时间。分身被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。当场上存在[由自身召唤](即不包括其他侦探泰菲召唤的分身)的{侦探泰菲分身}或{饮料分身}时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。同一房间同时召唤的分身越多，分身存在时间越短。\n饮料分身特性：Hp上限为角色Hp上限减49并[按比例继承本体Hp](如124血的剑杰Hp为24，召唤出的分身Hp将为15)，若同房间内出现出现猫咪将跑向最近的道具/水果盘/冰桶处，若半径800范围内出现猫咪将使用相应道具进行攻击。', // FIXME: 玩具枪也会用吗？“被击倒”是Hp归零还是要小于0？
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键', '跳跃键'],
         cancelableAftercast: '无后摇',
+        forecast: 1.3,
         skillLevels: [
           {
             level: 1,
@@ -4393,11 +4456,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '创造一道{风之屏障}，[敌方会被风墙阻挡，无法进出风墙](位于风墙内的敌方仍可通过部分传送及强制位移类技能离开，如莱特宁-瞬移闪击，库博-虚幻梦影)。',
         detailedDescription:
-          '在前摇0.5秒后，创造一道{风之屏障}，风墙大小500*500，持续一小段时间。[敌方会被风墙阻挡，无法进出风墙](位于风墙内的敌方仍可通过部分传送及强制位移类技能离开，如莱特宁-瞬移闪击，库博-虚幻梦影)。风墙对所有角色造成判定干扰，如猫的爪刀、拍子无法穿过风墙，风墙卡位时老鼠不能推奶酪。小跳风可将正在绑火箭的猫挤出火箭从而强行阻止猫绑火箭。',
+          '创造一道{风之屏障}，风墙大小500*500，持续一小段时间。[敌方会被风墙阻挡，无法进出风墙](位于风墙内的敌方仍可通过部分传送及强制位移类技能离开，如莱特宁-瞬移闪击，库博-虚幻梦影)。风墙对所有角色造成判定干扰，如猫的爪刀、拍子无法穿过风墙，风墙卡位时老鼠不能推奶酪。小跳风可将正在绑火箭的猫挤出火箭从而强行阻止猫绑火箭。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         // cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
+        forecast: 0.5,
         skillLevels: [
           {
             level: 1,
@@ -4425,11 +4489,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '挥出一道{剑气}。剑气击中角色和部分墙壁可反弹一次，再次击中时剑气消失；击中平台形成{幻影}，再次点击技能按钮可传送至幻影处。剑气击中敌方将造成伤害和减速；击中友方将给予移速、救援及跳跃高度提升，且其在此期间可用额外技能键瞬移至幻影处。',
         detailedDescription:
-          '在0.45秒前摇后挥出一道{剑气}，剑气飞行速度1750，击中角色和部分墙壁可反弹一次，再次击中时剑气消失；同时技能进入5秒读条。剑气击中平台形成{幻影}，若技能读条未结束则可再次点击技能按钮传送至幻影处，幻影存在5秒。剑气击中敌方将造成{30}伤害，并降低其40%移速、跳跃高度，持续5秒；击中[友方](包括处于虚弱状态的友方)使其移速、救援速度、跳跃高度提高25%，持续5秒，且友方可用额外技能键瞬移至幻影处。幻影未形成时，剑客莉莉自身进入读条的主动技能以及队友被击中获得的额外技能均处于不可使用状态。',
+          '挥出一道{剑气}，剑气飞行速度1750，击中角色和部分墙壁可反弹一次，再次击中时剑气消失；同时技能进入5秒读条。剑气击中平台形成{幻影}，若技能读条未结束则可再次点击技能按钮传送至幻影处，幻影存在5秒。剑气击中敌方将造成{30}伤害，并降低其40%移速、跳跃高度，持续5秒；击中[友方](包括处于虚弱状态的友方)使其移速、救援速度、跳跃高度提高25%，持续5秒，且友方可用额外技能键瞬移至幻影处。幻影未形成时，剑客莉莉自身进入读条的主动技能以及队友被击中获得的额外技能均处于不可使用状态。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         // cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: '无后摇',
+        forecast: 0.45,
         skillLevels: [
           {
             level: 1,
@@ -4604,8 +4669,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '长按技能键，在0.5秒前摇后开始蓄力，[拖拽并松开技能键进行弹射](弹射方向由技能拖拽的方向决定，初速度锁定为1675)，弹射时间随蓄力时间线性增加，最短1秒，最长4.7秒（[需要蓄力条满](满后仍能继续蓄力，但不增加弹射时间)，即蓄力2.5秒以上）。弹射过程中碰撞体积增大，碰撞到[目标](包括：敌方、墙缝、小黄鸭、森林牧场大鸭子、墙壁、平台、地面)时将被[反弹](方向遵守反射定律。反弹平面为竖直面时，速度不变；为水平面时，改变速度：首次反弹初速度最高为1225，最低为1050，再次反弹初速度锁定为1050。碰撞敌方/墙缝/鸭子时的反弹平面始终为竖直面，与他们的碰撞体积重叠期间只会进行一次反弹)。弹射时技能同步进入读条，可通过道具键*立刻结束技能，再次点击技能则[竖直向下坠落1.5秒](初速度锁定为2000；下坠期间只会碰撞平台或地面，动作期间无法进行其他操作，可用道具键*打断)，碰撞平台或地面时进入0.3秒不可被打断的后摇。前摇期间取消技能不进入CD，蓄力期间取消则进入50%的CD。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableAftercast: ['道具键*'],
         cancelableSkill: '不可被打断',
+        cancelableAftercast: ['道具键*'],
+        forecast: 0.5,
         canHitInPipe: false,
         cooldownTiming: '释放后',
         skillLevels: [
@@ -5031,11 +5097,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '大表哥点击按钮后可选择绑在火箭上和被猫抓在手中的队友，瞬移到身边落下，弹飞附近的道具，当怒气满时，可在下落瞬间通过向左右拖动按钮来攻击对应方向的目标。',
         detailedDescription:
-          '前摇1.4s，大表哥点击按钮后可选择绑在火箭上和被猫抓在手中的队友，瞬移到其上方并在0.65s后落下，若成功落下且没有受到任何效果打断，可在0.25s后将附近半径250内的道具击飞；当怒气满时，可在下落0.5s内通过向左右拖动按钮来攻击对应方向的目标，前摇0.6s，造成50伤害，并眩晕2.4s，后摇0.75s。',
+          '大表哥点击按钮后可选择绑在火箭上和被猫抓在手中的队友，瞬移到其上方并在0.65s后落下，若成功落下且没有受到任何效果打断，可在0.25s后将附近半径250内的道具击飞；当怒气满时，可在下落0.5s内通过向左右拖动按钮来攻击对应方向的目标，前摇0.6s，造成50伤害，并眩晕2.4s，后摇0.75s。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         cancelableAftercast: ['道具键*', '移动键', '跳跃键', '药水键', '其他技能键'],
+        forecast: 1.4,
         skillLevels: [
           {
             level: 1,
@@ -5066,12 +5133,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '攥起拳头。再次使用技能将向按键拖动的方向挥出拳头，并在满怒时提升效果。\n按键向上-升龙拳：向上打飞敌方，同时熄灭火箭；满怒时额外打飞火箭。\n按键向前/不拖动-游龙拳：向前打飞敌方，同时熄灭火箭；满怒时增加击退距离并可打入一定进度的奶酪。\n按键向下-地龙拳：原地打晕敌方，并施加减速；满怒时增加眩晕时间、可能使敌方掉下其所在的平台。',
         detailedDescription:
-          '前摇1.4s，之后的30秒内，再次使用技能将向按键拖动的方向挥出拳头。挥出拳头后立刻进入CD。成功挥出拳头有0.15s前摇，对前方[范围290](三种拳头都一样)的猫咪造成50点伤害，挥拳后有1s后摇。满怒时，使用技能改为对拳头充气，充气需1.4s，之后可在20s内至多挥出3次拳头，前后摇、伤害不变，但期间[无法使用道具](但可通过商店买道具在手上取消后摇)，每次挥拳有3秒CD。\n按键向上-升龙拳：造成[1s](满怒时为0.9s)眩晕，并击飞1.1s，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时额外向上击飞火箭2.5s。\n按键向前/不拖动-游龙拳：造成1s眩晕，并击退500距离，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时眩晕时间提高至1.5s，击退距离提高至1500，且敌方在击退过程中会撞碎[易碎道具](包括：玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶/番茄/水果盘-果子/牛仔杰瑞-仙人掌，不包括冰块)，撞碎时受到2.8s眩晕和[50伤害](受马索尔增伤影响；不会受到道具本身的伤害，且与道具本身无关；眩晕时间受到连击保护且与道具本身无关)，还可将洞中的奶酪打入[12.5%](不受其他推速加成影响)。\n按键向下-地龙拳：造成0.9s眩晕，眩晕结束后敌方受到17.5%的减速，持续5s；满怒时眩晕时间提高至1.4s，且若目标站在平台上，可能向下掉落。',
+          '之后的30秒内，再次使用技能将向按键拖动的方向挥出拳头。挥出拳头后立刻进入CD。成功挥出拳头有0.15s前摇，对前方[范围290](三种拳头都一样)的猫咪造成50点伤害，挥拳后有1s后摇。满怒时，使用技能改为对拳头充气，充气需1.4s，之后可在20s内至多挥出3次拳头，前后摇、伤害不变，但期间[无法使用道具](但可通过商店买道具在手上取消后摇)，每次挥拳有3秒CD。\n按键向上-升龙拳：造成[1s](满怒时为0.9s)眩晕，并击飞1.1s，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时额外向上击飞火箭2.5s。\n按键向前/不拖动-游龙拳：造成1s眩晕，并击退500距离，对墙缝造成1点伤害，熄灭范围内点燃的火箭；满怒时眩晕时间提高至1.5s，击退距离提高至1500，且敌方在击退过程中会撞碎[易碎道具](包括：玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶/番茄/水果盘-果子/牛仔杰瑞-仙人掌，不包括冰块)，撞碎时受到2.8s眩晕和[50伤害](受马索尔增伤影响；不会受到道具本身的伤害，且与道具本身无关；眩晕时间受到连击保护且与道具本身无关)，还可将洞中的奶酪打入[12.5%](不受其他推速加成影响)。\n按键向下-地龙拳：造成0.9s眩晕，眩晕结束后敌方受到17.5%的减速，持续5s；满怒时眩晕时间提高至1.4s，且若目标站在平台上，可能向下掉落。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         cancelableAftercast: ['道具键*'],
         canHitInPipe: false,
+        forecast: 1.4,
         skillLevels: [
           {
             level: 1,
@@ -5208,7 +5276,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '技能平时禁用，在自己和以自己为中心半径1500内的队友受到猫攻击后激活30秒。点击技能将原地大哭诉说委屈，持续3.9秒，并获得1层持续7.9秒的护盾。哭泣750*750的矩形范围内将下起伤心的雨，对敌方造成25%减速。友方老鼠进入范围后可通过交互对米雪儿进行安抚，安抚前摇0.6秒，前摇前获得1层持续7.8秒的护盾。安抚结束后友方将变成攻击力强大的巨型比例鼠，持续9.9秒（爪刀前摇0.5秒，后摇0.5秒，爪刀范围[300](与汤姆相同)，对敌方造成110的基础伤害，并造成20%减速，持续1.9秒；对墙伤害为1.5）。哭时使用道具键*取消后摇或安抚成功后，将清除米雪儿的护盾；队友未安抚不会清除米雪儿的护盾；若在队友安抚的途中取消后摇不会清除队友的护盾，且该护盾能抵消虚弱状态。',
         canMoveWhileUsing: false,
         canUseInAir: true,
+        cancelableSkill: '无前摇',
         cancelableAftercast: ['道具键*'],
+        forecast: 0,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -5228,7 +5299,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 15,
           },
         ],
-        cancelableSkill: '无前摇',
       },
       {
         name: '超级变！变！变！',
@@ -5242,6 +5312,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         cancelableSkill: ['道具键*'],
         cancelableAftercast: '无后摇',
         cooldownTiming: '释放后',
+        forecast: 1.5,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -5413,6 +5485,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=286.4',
         skillLevels: [
           {
@@ -5529,8 +5603,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '向前冲撞，期间获得霸体和30%减伤，持续1秒，推开道具并对猫造成10点伤害和击退。施放时可以消耗3格士气值造成25点伤害和更强的击退效果，并击落猫咪手中的道具与老鼠。驾驶战车时也可以施放，且无论士气值如何，均造成强化后的效果。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断', //前摇0.3秒
+        cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
+        forecast: 0.3,
         skillLevels: [
           {
             level: 1,
@@ -5558,8 +5633,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '消耗全部士气值，召唤战车并坐入其中，每格士气值提升战车3秒持续时间，战车最多持续20秒；战车拥有独立Hp，且持有[强霸体](免疫虚弱和大部分控制状态，但不免疫禁用技能效果)。乘坐战车期间无法交互、使用道具或[回复Hp](国王杰瑞-国王战旗（守护）除外)，可通过拖拽本技能键向前方投出{战矛}（命中敌方或墙缝造成伤害，可触发[部分投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手，特技-干扰投掷/勇气投掷，不包括知识卡-追风)），投掷战矛有0.2秒前摇和2秒内置CD。可通过额外技能键主动跳出战车。当战车Hp归零、持续时间结束、蒙金奇主动脱离时，战车进入5秒自毁倒计时，结束时爆炸对范围内所有单位造成{75}伤害和2秒爆炸眩晕，对未脱离战车的蒙金奇造成蒙金奇Hp100%的伤害。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断', // 前摇0.7秒
+        cancelableSkill: '不可被打断',
         cancelableAftercast: '无后摇',
+        forecast: 0.7,
         skillLevels: [
           {
             level: 1,
@@ -5676,6 +5752,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true, // 可以下落中释放，不能跳跃中释放
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=10.6',
         skillLevels: [
           {
@@ -5833,6 +5911,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         videoUrl: '',
         skillLevels: [
           {
@@ -5873,6 +5953,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         canHitInPipe: true,
         videoUrl: '',
         skillLevels: [
@@ -6104,12 +6186,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '召唤魔镜。魔镜处可消耗三星获得道具、消耗六星传送至任意房间（猫咪也可用魔镜）。',
         detailedDescription:
-          '前摇1.5s，召唤魔镜，后摇0.32s。魔镜[存在60s](可同时存在多个)。魔镜处可消耗三星获得随机道具、消耗六星传送至任意房间（进入传送界面即扣除星星，取消传送不返还星星；猫咪也可用魔镜；使用魔镜不能借用队友的星星）。\n一、二级道具概率：易碎道具:20%、高尔夫球:15%、胡椒粉:15%、香水瓶:10%、冰块:10%、遥控器:10%、苍蝇拍:10%、捕鼠夹:5%、药水:4%、奶酪:1%。\n三级道具概率：高尔夫球:15%(0)、胡椒粉:15%(0)、香水瓶:10%(0)、冰块:10%(0)、遥控器:10%(0)、易碎道具:10%(↓)、苍蝇拍:5%(↓)、鞭炮束:5%(+)、狗骨头:5%(+)、捕鼠夹:5%(↓)、神秘药水:5%(↑)、[技能产物](包括拿坡里鼠的饼和饼的碎片、航海士杰瑞的火药桶、雪梨的花洒（可以治疗猫）):4%(+)、奶酪:1%(0)。',
+          '召唤魔镜。魔镜[存在60s](可同时存在多个)。魔镜处可消耗三星获得随机道具、消耗六星传送至任意房间（进入传送界面即扣除星星，取消传送不返还星星；猫咪也可用魔镜；使用魔镜不能借用队友的星星）。\n一、二级道具概率：易碎道具:20%、高尔夫球:15%、胡椒粉:15%、香水瓶:10%、冰块:10%、遥控器:10%、苍蝇拍:10%、捕鼠夹:5%、药水:4%、奶酪:1%。\n三级道具概率：高尔夫球:15%(0)、胡椒粉:15%(0)、香水瓶:10%(0)、冰块:10%(0)、遥控器:10%(0)、易碎道具:10%(↓)、苍蝇拍:5%(↓)、鞭炮束:5%(+)、狗骨头:5%(+)、捕鼠夹:5%(↓)、神秘药水:5%(↑)、[技能产物](包括拿坡里鼠的饼和饼的碎片、航海士杰瑞的火药桶、雪梨的花洒（可以治疗猫）):4%(+)、奶酪:1%(0)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*', '跳跃键'],
         canHitInPipe: false,
         cancelableAftercast: '无后摇',
+        forecast: 1.5,
+        aftercast: 0.32,
         skillLevels: [
           {
             level: 1,
@@ -6136,11 +6220,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '消耗一定数量的星星来投掷可穿墙的星星，并对命中者施加对应的效果：\n1星：队友隐身；减少猫咪Hp和移速\n2星：队友获得二段跳效果；猫咪同1星\n4星：队友缓慢恢复Hp；猫咪同1星\n6星：队友变为小星星，免疫虚弱和眩晕；猫咪同1星\n8星：对队友无效；猫咪变为大星星、手上的老鼠掉落\n星星的获取方式：\n老鼠：主要来自对猫咪造成负面效果；仙女鼠拥有本技能时额外自动获取星星\n猫咪：每次对老鼠造成伤害[夺取2颗](老鼠的星星少于2颗则全部夺取)\n每个角色最多存储9颗星星；仙女鼠可以[借用附近队友的星星](有借无还)。',
         detailedDescription:
-          '前摇0.32s，消耗一定数量的星星来投掷[可穿墙的星星](飞行速度2000；会被经典之家的挡板挡住)，后摇0.15s，并对命中者施加对应的效果：\n1星：队友隐身3s；对猫咪造成{20}点[真实伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)，减速17%\n2星：队友获得二段跳效果，持续5s；猫咪同1星\n4星：队友回复10Hp，并持续回血8s，每秒7.5Hp；猫咪同1星\n6星：队友变为小星星，持续5.9s，命中时[解除并免疫虚弱和眩晕](不免疫剑汤挑起)，小星星移速665，可使用星星翻滚，CD为2s，向前方滚动1.3s，期间移速增加50%；猫咪同1星\n8星：对队友无效；猫咪[变为大星星](不会取消苏蕊跳舞、恶魔汤姆打碟)，持续8s，命中时解除并免疫虚弱和眩晕、手上的老鼠掉落。大星星移速为725，模型比猫咪大、无法穿过狭窄地形，可[吐出小星星](前摇0.3s，不可移动、不可取消；CD为1s，最多存储3发)，小星星飞行速度为2000，会对老鼠造成基础伤害为20的[真实伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)和10%减速，持续2s；大星星拥有爪刀，爪刀判定范围与附加效果不受影响。\n星星的获取方式：\n老鼠：对猫咪造成[负面效果](每次造成均+1颗星星；击倒猫咪相当于造成伤害和虚弱效果，故可获得两颗；仙女鼠自身的三级被动除外)、推入奶酪、[救下队友](包括被猫抓住和被绑上火箭的队友)；仙女鼠拥有本技能时额外自动获取星星\n猫咪：每次对老鼠造成伤害[夺取2颗](老鼠的星星少于2颗则全部夺取)\n每个角色最多存储9颗星星；当仙女鼠半径1800范围内有队友时，本技能可以[借用队友的星星](有借无还；先用队友的星星；如果有多个队友，则先借最近队友的星星)。',
+          '消耗一定数量的星星来投掷[可穿墙的星星](飞行速度2000；会被经典之家的挡板挡住)，并对命中者施加对应的效果：\n1星：队友隐身3s；对猫咪造成{20}点[真实伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)，减速17%\n2星：队友获得二段跳效果，持续5s；猫咪同1星\n4星：队友回复10Hp，并持续回血8s，每秒7.5Hp；猫咪同1星\n6星：队友变为小星星，持续5.9s，命中时[解除并免疫虚弱和眩晕](不免疫剑汤挑起)，小星星移速665，可使用星星翻滚，CD为2s，向前方滚动1.3s，期间移速增加50%；猫咪同1星\n8星：对队友无效；猫咪[变为大星星](不会取消苏蕊跳舞、恶魔汤姆打碟)，持续8s，命中时解除并免疫虚弱和眩晕、手上的老鼠掉落。大星星移速为725，模型比猫咪大、无法穿过狭窄地形，可[吐出小星星](前摇0.3s，不可移动、不可取消；CD为1s，最多存储3发)，小星星飞行速度为2000，会对老鼠造成基础伤害为20的[真实伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)和10%减速，持续2s；大星星拥有爪刀，爪刀判定范围与附加效果不受影响。\n星星的获取方式：\n老鼠：对猫咪造成[负面效果](每次造成均+1颗星星；击倒猫咪相当于造成伤害和虚弱效果，故可获得两颗；仙女鼠自身的三级被动除外)、推入奶酪、[救下队友](包括被猫抓住和被绑上火箭的队友)；仙女鼠拥有本技能时额外自动获取星星\n猫咪：每次对老鼠造成伤害[夺取2颗](老鼠的星星少于2颗则全部夺取)\n每个角色最多存储9颗星星；当仙女鼠半径1800范围内有队友时，本技能可以[借用队友的星星](有借无还；先用队友的星星；如果有多个队友，则先借最近队友的星星)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['移动键', '跳跃键'],
-        cancelableAftercast: '无后摇',
+        forecast: 0.32,
+        aftercast: 0.15,
+        // cancelableAftercast: '无后摇', //FIXME
         canHitInPipe: false,
         skillLevels: [
           {
@@ -6709,6 +6795,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -6872,10 +6960,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '莱恩扔出{蓝图(投射物)(衍生物)}，生成一个蓝图(场景物)。蓝图内的火箭燃烧速度减半；隐身的猫咪会暂时显形；在蓝图内受到伤害的猫咪会短暂变为线条猫，并使手中老鼠掉落，有内置CD。再次使用技能或较长时间后收回蓝图。\n线条猫：只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。',
         detailedDescription:
-          '莱恩在0.6秒前摇后扔出{蓝图(投射物)(衍生物)}，同时技能进入读条；蓝图飞行期间，碰到敌方/[平台/地面](不包括莱恩主动技能释放的方块)、或莱恩再次使用本技能时，[展开](蓝图的贴图需要一小段时间才能完全展开，该动画期间莱恩无法使用技能收回蓝图，但蓝图效果在未完全展开时就已经生效)一个[蓝图(场景物)](大小1000×666)，动作后摇0.5秒。蓝图内的火箭燃烧速度减半；隐身的猫咪会[暂时显形](隐身效果在离开蓝图时依然存在)；在蓝图内受到伤害的猫咪会变为线条猫，并使手中老鼠掉落，线条猫状态持续8秒，变身结束后20秒内不会再次变为线条猫。同一时间只可存在一个蓝图。再次使用技能或较长时间后收回蓝图，蓝图收起后才会进入CD。\n线条猫：只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。',
+          '莱恩扔出{蓝图(投射物)(衍生物)}，同时技能进入读条；蓝图飞行期间，碰到敌方/[平台/地面](不包括莱恩主动技能释放的方块)、或莱恩再次使用本技能时，[展开](蓝图的贴图需要一小段时间才能完全展开，该动画期间莱恩无法使用技能收回蓝图，但蓝图效果在未完全展开时就已经生效)一个[蓝图(场景物)](大小1000×666)。蓝图内的火箭燃烧速度减半；隐身的猫咪会[暂时显形](隐身效果在离开蓝图时依然存在)；在蓝图内受到伤害的猫咪会变为线条猫，并使手中老鼠掉落，线条猫状态持续8秒，变身结束后20秒内不会再次变为线条猫。同一时间只可存在一个蓝图。再次使用技能或较长时间后收回蓝图，蓝图收起后才会进入CD。\n线条猫：只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: '不可取消后摇',
+        forecast: 0.6,
+        aftercast: 0.5,
+        cancelableAftercast: '不可被取消',
         skillLevels: [
           {
             level: 1,
@@ -7069,9 +7159,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '进入梦境，期间提高推速，受到伤害时解除此伤害带来的控制，然后在短时间内免疫虚弱并进入强制移动状态，该状态下碰到敌方会造成减速和伤害。[香甜梦境持续期间](未进入强制移动状态前)再次点按本技能键可退出梦境状态。',
         detailedDescription:
-          '在前摇1.25秒后进入梦境，技能后摇1秒。梦境期间推速增加50%，受到伤害会解除此伤害带来的控制，然后[在1.9秒内免疫虚弱并以800的速度强制移动](强制移动期间可跳跃和改变移动方向，只能通过部分动作前摇自行取消（例如“进入机械鼠”或特技-绝处逢生的前摇）。强制移动不会因受到伤害打断，但会被眩晕打断。若在触发受伤但未导致虚弱的伤害导致的强制移动状态期间被攻击至虚弱，则刷新持续时间。若强制移动期间因受力等原因改变速度，则会持续保持，这可能造成自身被“硬控在原地”)，强制移动时碰到敌方会对其造成20点伤害并降低20%移速，持续1.5秒。[香甜梦境持续期间](未进入强制移动状态前)再次点击技能可在1.25秒前摇后结束梦境，后摇1秒。梦境可持续40s。该技能效果先于知识卡-铁血触发。',
+          '进入梦境。梦境期间推速增加50%，受到伤害会解除此伤害带来的控制，然后[在1.9秒内免疫虚弱并以800的速度强制移动](强制移动期间可跳跃和改变移动方向，只能通过部分动作前摇自行取消（例如“进入机械鼠”或特技-绝处逢生的前摇）。强制移动不会因受到伤害打断，但会被眩晕打断。若在触发受伤但未导致虚弱的伤害导致的强制移动状态期间被攻击至虚弱，则刷新持续时间。若强制移动期间因受力等原因改变速度，则会持续保持，这可能造成自身被“硬控在原地”)，强制移动时碰到敌方会对其造成20点伤害并降低20%移速，持续1.5秒。[香甜梦境持续期间](未进入强制移动状态前)再次点击技能可在1.25秒前摇后结束梦境，后摇1秒。梦境可持续40s。该技能效果先于知识卡-铁血触发。',
         canMoveWhileUsing: false,
         canUseInAir: true,
+        forecast: 1.25,
+        aftercast: 1,
         skillLevels: [
           {
             level: 1,
@@ -7105,11 +7197,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '抛出毛线球，毛线球伸出毛线与自身绑定，毛线随自身移动逐渐拉长，踩到毛线的敌方会被减速。毛线球停留一段时间自动收回，带回碰到的虚弱队友和[部分道具](包括奶酪、盘子、高尔夫球、灰花瓶、蓝花瓶、打开的老鼠夹)。被毛线球带回的奶酪碰到空洞口会自动放入；被带回的[其它道具](不包括奶酪和打开的老鼠夹)在[碰到敌方时会直接命中](除高尔夫球以外的道具会直接被碰碎，高尔夫球会持续产生碰撞，直到被毛线强制拉回)，[碰到洞口的奶酪时](除高尔夫球以外的道具会直接被碰碎，高尔夫球会在碰撞后脱离毛线球的控制)会立即增加一定奶酪推入进度。单次携带的[道具](即不包括倒地队友)数量有上限。',
         detailedDescription:
-          '在前摇0.5秒后，[向上方固定角度](约为自身正上方偏后5-15°左右，该角度固定，无法改变，平抛时约落在自身身后600距离)抛出毛线球，后摇1.25秒；[毛线球伸出毛线与自身绑定，毛线随自身移动逐渐拉长](毛线球在落地前会被墙壁及敌方角色反弹，在落地后立刻与梦游杰瑞所在位置形成第一根毛线连接并打结，随后每隔一段时间以最新的打结处与梦游杰瑞实际位置为两端点形成一道连接并打结，然后若新生成的连接与上一个连接之间的夹角接近0°或180°、且上一个连接的连接对象不为毛线球、且上一个连接的长度不等于0，则清除这两道连接之间的打结，重新生成一个更长的连接。毛线球和已打结的部分不会因隐身药水隐藏)，踩到毛线的敌方会受到2.5伤害并在2.5秒内降低10%移速。毛线球停留4秒后自动收回，带回碰到的虚弱队友和[部分道具](包括奶酪、盘子、高尔夫球、灰花瓶、蓝花瓶、打开的老鼠夹)。被毛线球带回的奶酪碰到空洞口会自动放入；被带回的[其它道具](不包括奶酪)在[碰到敌方时会直接命中](除高尔夫球以外的道具会直接被碰碎，高尔夫球会持续产生碰撞，直到被毛线强制拉回)，[碰到洞口的奶酪时](除高尔夫球以外的道具会直接被碰碎，高尔夫球会在碰撞后脱离毛线球的控制)会立即将奶酪推入一部分。单次携带的[道具](即不包括倒地队友)数量有上限。若梦游杰瑞被击倒，则毛线球会立即消失，技能进入CD。',
+          '[向上方固定角度](约为自身正上方偏后5-15°左右，该角度固定，无法改变，平抛时约落在自身身后600距离)抛出毛线球；[毛线球伸出毛线与自身绑定，毛线随自身移动逐渐拉长](毛线球在落地前会被墙壁及敌方角色反弹，在落地后立刻与梦游杰瑞所在位置形成第一根毛线连接并打结，随后每隔一段时间以最新的打结处与梦游杰瑞实际位置为两端点形成一道连接并打结，然后若新生成的连接与上一个连接之间的夹角接近0°或180°、且上一个连接的连接对象不为毛线球、且上一个连接的长度不等于0，则清除这两道连接之间的打结，重新生成一个更长的连接。毛线球和已打结的部分不会因隐身药水隐藏)，踩到毛线的敌方会受到2.5伤害并在2.5秒内降低10%移速。毛线球停留4秒后自动收回，带回碰到的虚弱队友和[部分道具](包括奶酪、盘子、高尔夫球、灰花瓶、蓝花瓶、打开的老鼠夹)。被毛线球带回的奶酪碰到空洞口会自动放入；被带回的[其它道具](不包括奶酪)在[碰到敌方时会直接命中](除高尔夫球以外的道具会直接被碰碎，高尔夫球会持续产生碰撞，直到被毛线强制拉回)，[碰到洞口的奶酪时](除高尔夫球以外的道具会直接被碰碎，高尔夫球会在碰撞后脱离毛线球的控制)会立即将奶酪推入一部分。单次携带的[道具](即不包括倒地队友)数量有上限。若梦游杰瑞被击倒，则毛线球会立即消失，技能进入CD。',
         canMoveWhileUsing: true,
         canUseInAir: true,
+        forecast: 0.5,
+        aftercast: 1.25,
         cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可被取消',
         canHitInPipe: false,
         skillLevels: [
           {
