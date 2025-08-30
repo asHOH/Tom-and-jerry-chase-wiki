@@ -560,6 +560,7 @@ export default function SkillCard({
             : undefined;
         const cancelableSkillText =
           skill.cancelableSkill &&
+          skill.forecast !== 0 &&
           (typeof skill.cancelableSkill === 'string'
             ? skill.cancelableSkill
             : convertCancelableSkillToDisplayText(skill.cancelableSkill));
@@ -583,6 +584,7 @@ export default function SkillCard({
             : undefined;
         const cancelableAfterText =
           skill.cancelableAftercast &&
+          skill.aftercast !== 0 &&
           (typeof skill.cancelableAftercast === 'string'
             ? skill.cancelableAftercast
             : convertCancelableAftercastToDisplayText(skill.cancelableAftercast));
