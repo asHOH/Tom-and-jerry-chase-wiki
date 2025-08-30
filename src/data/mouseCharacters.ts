@@ -5695,8 +5695,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
   /* ----------------------------------- 尼宝 ----------------------------------- */
   尼宝: {
     aliases: ['泥巴'],
-    description: '尼宝是一个爱捣蛋、爱运动的精灵鬼。',
-
+    description: '爱捣蛋、爱运动的机灵鬼',
     maxHp: 99,
     attackBoost: 10,
     hpRecovery: 2,
@@ -5704,52 +5703,57 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     jumpHeight: 400,
     cheesePushSpeed: 2.8,
     wallCrackDamageBoost: 1,
-
     mousePositioningTags: [
       {
         tagName: '救援',
         isMinor: false,
-        description: '二级翻滚免控免死。',
+        description: '二级翻滚免控免死，钩子也能进行一定程度的拦截。',
         additionalDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。',
       },
       {
         tagName: '砸墙',
         isMinor: true,
-        description: '二被+水果盘，墙缝蒸发一半',
+        description: '二被提供超高墙缝增伤，配合果盘蒸发墙缝，一套就能打掉一半Hp。',
         additionalDescription: '触发条件较为苛刻，且需要与队友有一定沟通。',
       },
     ],
-
     skillAllocations: [
       {
-        id: '',
+        id: '常规加点',
         pattern: '121000122',
         weaponType: 'weapon1',
         description: '',
         additionaldescription: '',
       },
     ],
-
     knowledgeCardGroups: [
       {
-        cards: ['S-铁血', 'S-舍己', 'B-逃之夭夭', 'C-不屈', 'C-救救我'],
-        description: '（待翻新，有意提供知识卡可填写反馈建议）',
+        cards: ['S-铁血', 'S-舍己', 'C-不屈', 'C-救救我', 'A-逃窜'],
+        description: '逃窜提高生存能力，同时也方便救援后跑路。',
       },
       {
-        cards: ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
-        description: '（待翻新，有意提供知识卡可填写反馈建议）',
+        cards: ['S-铁血', 'S-舍己', 'B-幸运', 'C-救救我'],
+        description:
+          '提高容错，在只有泥巴一个救援位或者队友不好救下时可以自己下来。下来后翻滚能提高生存能力，所以不用为了幸运把救救我换脱身。同时幸运在一些情况下也可以断节奏（例如前期穷追）。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-逃之夭夭', 'C-不屈', 'C-救救我'],
+        description: '在救援后提高双方的速度，让双方更好的逃脱，但只能救援后触发，有一定局限性。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'C-不屈', 'B-夹不住我', 'C-救救我'],
+        description: '没有21点的情况下，可以用这个进行过渡 ，夹不住我也可以应对很多放夹子的猫。',
       },
     ],
-
     skills: [
       {
         name: '灵活跳跃',
         aliases: ['翻滚'],
         type: 'active',
         description: '快速向后翻滚。',
-        detailedDescription: '快速向后翻滚。（不能在跳跃中释放）',
+        detailedDescription: '快速向后翻滚。（不能在跳跃中释放，但自由下落时可释放）。',
         canMoveWhileUsing: false,
-        canUseInAir: true, // 可以下落中释放，不能跳跃中释放
+        canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
         forecast: 0,
@@ -5783,13 +5787,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         aliases: ['钩子'],
         type: 'weapon1',
         description:
-          '附近没有自身召唤的{尼宝的朋友(衍生物)}时，在面前召唤一个朋友（技能不会进入CD），朋友持续一段时间后消失；反之则使附近的朋友向尼宝扔出鱼钩。鱼钩碰到道具会携带之；碰到角色会将其勾回，并救下猫咪手中的老鼠。',
+          '附近没有自身召唤的{尼宝的朋友(衍生物)}时，在面前召唤一个朋友（技能不会进入CD），朋友持续一段时间后消失；反之则使附近的朋友向尼宝扔出{鱼钩}。鱼钩碰到道具会携带之；碰到角色会将其勾回，并救下猫咪手中的老鼠。',
         detailedDescription:
-          '附近没有自身召唤的{尼宝的朋友(衍生物)}时，在面前召唤一个朋友（技能不会进入CD），朋友在30秒后自然消失；反之则使附近的朋友向尼宝扔出鱼钩。朋友扔出鱼钩过程中再次点击技能会使朋友将鱼钩收回（有前摇）。鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并救下[猫咪](包括部分护盾、霸体状态下的猫咪)手中的老鼠。',
+          '附近没有自身召唤的{尼宝的朋友(衍生物)}时，[在面前召唤一个朋友](有单独0.5秒前摇)（技能不会进入CD），朋友在30秒后自然消失；反之则使附近的朋友向尼宝扔出{鱼钩}（扔鱼钩前摇0.33秒）。朋友扔出鱼钩过程中再次点击技能会使朋友将鱼钩收回。鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并救下[猫咪](包括部分护盾、霸体状态下的猫咪)手中的老鼠。',
+        forecast: 0.67,
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         cancelableAftercast: '无后摇',
+
         videoUrl: 'https://www.bilibili.com/video/BV1ts4y1Y7Fj?t=50.7',
         skillLevels: [
           {
@@ -5800,7 +5806,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD。',
+            description: 'CD减少至10秒。',
             cooldown: 10,
           },
           {
@@ -5834,7 +5840,50 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '钩子可以主动取消漂浮，也方便更快的支援和救援后跑路。',
+      },
+      {
+        name: '干扰投掷',
+        description:
+          '在无眩晕道具时提供一定的干扰能力，同时也能在一些情况下强换托普斯的网和剑客汤姆的旋。',
+      },
+    ],
+    counters: [
+      {
+        id: '斯飞',
+        description: '斯飞拦不住翻滚；但斯飞在“疾冲”状态下被勾，抓在手上老鼠的还是会被电。',
+        isMinor: true,
+      },
+      {
+        id: '牛仔汤姆',
+        description: '牛仔汤姆拦不住翻滚，也不好抓尼宝。另外尼宝往往携带逃窜，克制牛汤。',
+        isMinor: true,
+      },
+      {
+        id: '布奇',
+        description: '布奇拦不住翻滚，而且旋转桶盖霸体也免疫不了鱼钩。',
+        isMinor: false,
+      },
+    ],
+    collaborators: [
+      {
+        id: '剑客莉莉',
+        description: '可以配合泥巴救援后传送',
+        isMinor: true,
+      },
+    ],
+    countersSpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '钩子还可以勾霸体猫手上的老鼠。',
+        isMinor: false,
+      },
+    ],
   },
+
   /* ----------------------------------- 朵朵 ----------------------------------- */
   朵朵: {
     description:
