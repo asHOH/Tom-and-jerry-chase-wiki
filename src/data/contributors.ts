@@ -494,6 +494,18 @@ export const contributors: Contributor[] = [
       },
     ],
   },
+  {
+    id: 'qianligongchanjuan',
+    name: '千里共婵娟',
+    description: '现国一追风汤姆，现猫榜第33名（截至2025年8月30日）',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['追风汤姆'],
+        isMinor: true,
+      },
+    ],
+  },
   // TODO: Add 米特技巧 contributor
   // TODO：Add 库博知识卡推荐 contributor
   {

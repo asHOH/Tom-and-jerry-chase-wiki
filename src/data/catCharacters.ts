@@ -4416,14 +4416,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         defaultFolded: false,
         groups: [
           {
-            cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
-            description:
-              '推荐新手带，下限较高。开局提前布局放夹子，可以有效克制知识卡-幸运，同时提高守火箭能力。对面选出多个破夹能力强的角色时慎用',
-          },
-          {
             cards: ['S-蓄势一击', 'S-屈打成招', 'A-熊熊燃烧', 'C-猫是液体'],
             description:
               '上限极高。屈打用于拦截救人和换绑进行拉扯，不怕隐身救援，找节奏能力很强，管道图效果更佳。缺点是续航较差，容错率极低，对熟练度要求很高。',
+            contributor: '千里共婵娟',
+          },
+          {
+            cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
+            description:
+              '推荐新手带，下限较高。开局提前布局放夹子，可以有效克制知识卡-幸运，同时提高守火箭能力。对面选出多个破夹能力强的角色时慎用',
           },
           {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-加大火力', 'B-皮糙肉厚'],
