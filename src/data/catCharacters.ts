@@ -2880,11 +2880,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '尼宝',
         description: '尼宝的鱼钩可以在天堂对库博造成控制，并且自保较强而难以让库博抓住破绽。',
-        isMinor: false,
+        isMinor: true,
       },
       {
         id: '仙女鼠',
         description: '仙女鼠的强制变身能在天堂干扰库博。',
+        isMinor: true,
+      },
+      {
+        id: '莱恩',
+        description: '莱恩的强制变身能在天堂干扰库博。',
         isMinor: true,
       },
     ],
@@ -3401,7 +3406,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-屈打成招', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
         description:
-          '可以作为入门卡组使用，穷追前期也有更多的压制力，屈打提供更多拦截能力。\n熟悉后可以选择性把穷追换成皮糙应对高伤阵容，也可以穷追换加大提高更多火箭收益。',
+          '可以作为入门卡组使用，穷追前期也有更多的压制力，屈打提供更多拦截能力。\n熟悉后可以选择性把屈打或穷追换成皮糙应对高伤阵容，也可以穷追换加大提高更多火箭收益，换为心灵手巧应对拆火箭，换为猛攻应对蒙金奇或米可。',
       },
       {
         cards: ['A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚', 'A-加大火力', 'B-捕鼠夹'],
@@ -3549,28 +3554,30 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '表演者•杰瑞',
-        description: '一被配合铁血，即可以强救队友，也可以消耗天汤飞行导致不好吸火箭。',
+        description:
+          '表演者•杰瑞Lv.1被动配合铁血，即可以强救队友，也可以消耗天汤飞行导致不好吸火箭。',
         isMinor: false,
       },
       {
         id: '莱恩',
-        description: '蓝图打断飞行，圆消耗武器道具，且莱恩多缴械。',
+        description:
+          '天使汤姆在蓝图内变身线条猫会打断飞行，莱恩的圆形能消耗天使汤姆武器技能的道具，且莱恩大多携带缴械。',
         isMinor: true,
       },
       {
         id: '蒙金奇',
-        description: '不好处理战车 ，且蒙金奇多干扰投掷和缴械。',
+        description: '天使汤姆不好处理蒙金奇战车 ，且蒙金奇大多携带干扰投掷和缴械。',
         isMinor: true,
       },
       {
         id: '米可',
-        description: '采访容易打断飞行，同时也不好处理采访中的米可',
+        description: '米可采访容易打断天使汤姆飞行，同时也不好处理采访中的米可',
         isMinor: false,
       },
       {
         id: '霜月',
-        description: '滑铲打断飞行且免死。',
-        isMinor: false,
+        description: '霜月的滑铲能打断天使汤姆飞行，且有免死效果。',
+        isMinor: true,
       },
     ],
     counteredByKnowledgeCards: [
