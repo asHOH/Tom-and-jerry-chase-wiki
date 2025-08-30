@@ -108,7 +108,14 @@ export default function ItemDetailClient({ item }: { item: Item }) {
           </BaseCard>
         </div>
         <div className='md:w-2/3'>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: spacing.xl,
+              whiteSpace: 'pre-wrap',
+            }}
+          >
             {[
               item.description === undefined
                 ? { title: '道具描述', text: '待补充' }
@@ -146,7 +153,6 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
                   >
                     <TextWithHoverTooltips text={text as string} />
-                    {/*ToDo:add line break fuction*/}
                   </p>
                 </div>
               </div>

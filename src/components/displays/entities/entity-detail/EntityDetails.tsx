@@ -93,7 +93,14 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
           </BaseCard>
         </div>
         <div className='md:w-2/3'>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: spacing.xl,
+              whiteSpace: 'pre-wrap',
+            }}
+          >
             {[
               entity.description === undefined
                 ? { title: '衍生物描述', text: '待补充' }
@@ -134,7 +141,6 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
                     style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
                   >
                     <TextWithHoverTooltips text={text as string} />
-                    {/*ToDo:add line break fuction*/}
                   </p>
                 </div>
               </div>
