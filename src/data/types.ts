@@ -52,8 +52,8 @@ export type CancellableKeyType =
   | '本技能键'
   | '其他技能键';
 
-export type CancelableSkillType = CancellableKeyType[] | '无前摇' | '不可被打断';
-export type CancelableAftercastType = CancellableKeyType[] | '无后摇' | '不可被取消';
+export type CancelableSkillType = CancellableKeyType[] | '无前摇' | '不可主动打断';
+export type CancelableAftercastType = CancellableKeyType[] | '无后摇' | '不可取消';
 
 export type SkillLevel = {
   level: number;

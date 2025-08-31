@@ -65,8 +65,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         detailedDescription: '增加自身和附近队友的移速和跳跃高度。不同等级的鼓舞效果可以叠加。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可被取消',
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '不可取消',
         forecast: 0.5,
         aftercast: 1,
         videoUrl: 'https://www.bilibili.com/video/BV14F4m1u7rg?t=66.5',
@@ -104,7 +104,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         // 事实上，如果技能释放时和点道具键时有同一个道具可拾取，那么这样短距离的移动释放也能取消后摇
-        cancelableAftercast: '不可被取消',
+        cancelableAftercast: '不可取消',
         forecast: 0.8,
         aftercast: 0.6,
         canHitInPipe: true,
@@ -291,7 +291,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         detailedDescription: '进入隐身状态，期间加速15%。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
         forecast: 1.9,
         aftercast: 0,
@@ -324,8 +324,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '引爆烟雾弹遮挡猫的视野。在烟雾中猫咪无法查看小地图。此效果可以被一层护盾抵消。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可被取消',
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '不可取消',
         forecast: 0.5,
         aftercast: 1.5,
         skillLevels: [
@@ -535,7 +535,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
-        cancelableAftercast: '不可被取消',
+        cancelableAftercast: '不可取消',
         forecast: 0,
         canHitInPipe: false,
         skillLevels: [
@@ -1085,8 +1085,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         detailedDescription: '给予附近友方短暂的无敌。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可被取消',
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '不可取消',
         forecast: 0.9,
         aftercast: 1,
         videoUrl: 'https://www.bilibili.com/video/BV12P4y1e7rg?t=81.9',
@@ -1251,7 +1251,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '使用华丽的剑法切碎苹果并吃掉它，该动作需要1.9秒。技能释放完成后解除[部分不良状态](包括失明、反向等效果，不包括受伤)、使武器技能CD减少、根据技能等级获得不同增益效果。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
         aftercast: 0,
         skillLevels: [
@@ -1287,7 +1287,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '使用三段剑舞近身攻击。\n第一段，前摇0.45秒，对前方200、后方50范围内的敌方造成{30}点伤害，并减速30%，持续1.9秒；\n第二段，前摇0.45秒，对前方200、后方50范围内的敌方造成{30}点伤害，并减速50%，持续2.4秒；\n第三段，前摇0.75秒，后摇0.4秒，对前方200、后方70范围内的敌方造成{30}点伤害，并眩晕3秒。\n开始释放技能后的9.9秒内可以再次点击技能释放下一段，否则进入CD。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
         forecast: 0.45,
         aftercast: 0,
@@ -1532,7 +1532,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '发射一枚{火箭筒}，直接命中敌方时造成一段伤害，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)，该伤害先于爆炸伤害结算；命中敌方角色/墙壁/平台/其他道具后爆炸，对一定范围内敌方造成伤害和眩晕。火箭筒可对墙缝造成伤害。爆炸产生的冲击波可以炸飞老鼠夹、叉子等道具。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: '不可被取消',
+        cancelableAftercast: '不可取消',
         videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=46.4',
         skillLevels: [
           {
@@ -1555,7 +1555,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         aliases: ['炮'],
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         canHitInPipe: false,
         cueRange: '全图可见',
       },
@@ -1829,7 +1829,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         forecast: 0.2,
         aftercast: 0.3,
         cooldownTiming: '释放后',
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         skillLevels: [
           {
             level: 1,
@@ -1865,7 +1865,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: false,
         canHitInPipe: false,
         cancelableAftercast: '无后摇',
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         forecast: 1.5,
         aftercast: 0,
         cooldownTiming: '释放时',
@@ -2095,7 +2095,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableAftercast: '不可被取消',
+        cancelableAftercast: '不可取消',
         forecast: 0.65,
         skillLevels: [
           {
@@ -2631,8 +2631,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '吸附半径300范围内、除鞭炮堆以外的鼠方可用道具和场景物。每吸附一个道具或场景物加速8.9%。优先吸附左侧的道具。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可被取消',
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '不可取消',
         skillLevels: [
           {
             level: 1,
@@ -2658,7 +2658,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
-        cancelableAftercast: '不可被取消',
+        cancelableAftercast: '不可取消',
         skillLevels: [
           {
             level: 1,
@@ -3079,8 +3079,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '开始吟唱，约1.1秒后给予周围范围内火箭上或[猫手上](不包括托普斯捕虫网中、泰克抓取、跟随苏蕊跳舞、被塔拉或追风汤姆扔向火箭且正在飞行中)的队友[祝福状态](头上出现光圈)，持续30秒。老鼠从猫手中以绑火箭外的任何形式脱离，[将失去祝福状态](但塔拉或追风汤姆仍火箭时，如果被提前在猫手上祝福过，则可以正常生效)。祝福状态的老鼠从火箭上被救下将返还40秒CD。祝福状态的队友被放飞不会立刻淘汰而是在[固定位置](只与地图有关，每个地图都有固定点位)以复活体的形式返回游戏。复活体一旦Hp到达[0](即老鼠倒地起身时的血量。这意味着尼宝翻滚、佩克斯三级主动等“免疫虚弱”的效果并不能防止其被淘汰)或被抓起就会被淘汰。复活体会持续暴露小地图位置，但可通过进机械鼠，拿白色花等方式暂时隐藏。如果老鼠在铁血期间被放飞，则重生时为铁血状态、铁血结束直接被淘汰；如果在铁血结束后十秒内被放飞，重生时将是虚弱状态，被猫抓取会直接被淘汰。如果受到流血类伤害钻进机械鼠，且在机械鼠内死亡，则会留下一个机械鼠空壳。\n与其他角色之间的互动：表演者•杰瑞被放飞会优先判定三级被动的复活。如果复活体被托普斯捕虫网抓扔上火箭，则会正常读秒计时，此时再受到祝福会显示图标但无法生效、复活体在火箭被放飞时淘汰。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可被取消',
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '不可取消',
         skillLevels: [
           {
             level: 1,
@@ -3146,7 +3146,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '在左右各召唤一朵{雷云}，持续15秒。敌方在雷云中对老鼠的伤害固定减少10、移速降低35%。如果敌方在雷云中有[攻击行为](如爪刀，道具，技能)则会[被雷云锁定](头顶出现感叹号标志)，锁定1.5秒后判定敌方0.5秒前所在位置并在0.08秒内向该位置连续两次落雷，形成雷区，敌方被雷直接击中或踏入雷区会受到35[电击伤害](电击伤害会对目标附加感电，使受到的电击伤害增加15，持续9.9秒，可叠加。感电结束时获得5秒电免疫状态，免疫电击伤害)。[极短时间内](如果同时有三道雷，会中两道)敌方只能被一次雷击中。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
         forecast: 0.65,
         aftercast: 0,
@@ -3342,7 +3342,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键', '跳跃键', '移动键', '其他技能键'],
-        cancelableAftercast: '不可被取消',
+        cancelableAftercast: '不可取消',
         forecast: 0.55,
         canHitInPipe: false,
         skillLevels: [
@@ -4664,12 +4664,12 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         aliases: ['弹球'],
         type: 'active',
         description:
-          '蓄力弹射，对目标造成效果。弹射过程中，点击技能将结束弹射并[下坠](属于技能后摇，可被道具键*打断)。',
+          '蓄力弹射，对目标造成效果。弹射过程中，点击技能将结束弹射并[下坠](属于技能后摇，可被道具键*取消)。',
         detailedDescription:
-          '长按技能键，在0.5秒前摇后开始蓄力，[拖拽并松开技能键进行弹射](弹射方向由技能拖拽的方向决定，初速度锁定为1675)，弹射时间随蓄力时间线性增加，最短1秒，最长4.7秒（[需要蓄力条满](满后仍能继续蓄力，但不增加弹射时间)，即蓄力2.5秒以上）。弹射过程中碰撞体积增大，碰撞到[目标](包括：敌方、墙缝、小黄鸭、森林牧场大鸭子、墙壁、平台、地面)时将被[反弹](方向遵守反射定律。反弹平面为竖直面时，速度不变；为水平面时，改变速度：首次反弹初速度最高为1225，最低为1050，再次反弹初速度锁定为1050。碰撞敌方/墙缝/鸭子时的反弹平面始终为竖直面，与他们的碰撞体积重叠期间只会进行一次反弹)。弹射时技能同步进入读条，可通过道具键*立刻结束技能，再次点击技能则[竖直向下坠落1.5秒](初速度锁定为2000；下坠期间只会碰撞平台或地面，动作期间无法进行其他操作，可用道具键*打断)，碰撞平台或地面时进入0.3秒不可被打断的后摇。前摇期间取消技能不进入CD，蓄力期间取消则进入50%的CD。',
+          '长按技能键，在0.5秒前摇后开始蓄力，[拖拽并松开技能键进行弹射](弹射方向由技能拖拽的方向决定，初速度锁定为1675)，弹射时间随蓄力时间线性增加，最短1秒，最长4.7秒（[需要蓄力条满](满后仍能继续蓄力，但不增加弹射时间)，即蓄力2.5秒以上）。弹射过程中碰撞体积增大，碰撞到[目标](包括：敌方、墙缝、小黄鸭、森林牧场大鸭子、墙壁、平台、地面)时将被[反弹](方向遵守反射定律。反弹平面为竖直面时，速度不变；为水平面时，改变速度：首次反弹初速度最高为1225，最低为1050，再次反弹初速度锁定为1050。碰撞敌方/墙缝/鸭子时的反弹平面始终为竖直面，与他们的碰撞体积重叠期间只会进行一次反弹)。弹射时技能同步进入读条，可通过道具键*立刻结束技能，再次点击技能则[竖直向下坠落1.5秒](初速度锁定为2000；下坠期间只会碰撞平台或地面，动作期间无法进行其他操作，可用道具键*取消)，碰撞平台或地面时进入0.3秒不可取消的后摇。前摇期间取消技能不进入CD，蓄力期间取消则进入50%的CD。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         cancelableAftercast: ['道具键*'],
         forecast: 0.5,
         canHitInPipe: false,
@@ -5603,7 +5603,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '向前冲撞，期间获得霸体和30%减伤，持续1秒，推开道具并对猫造成10点伤害和击退。施放时可以消耗3格士气值造成25点伤害和更强的击退效果，并击落猫咪手中的道具与老鼠。驾驶战车时也可以施放，且无论士气值如何，均造成强化后的效果。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
         forecast: 0.3,
         skillLevels: [
@@ -5633,7 +5633,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '消耗全部士气值，召唤战车并坐入其中，每格士气值提升战车3秒持续时间，战车最多持续20秒；战车拥有独立Hp，且持有[强霸体](免疫虚弱和大部分控制状态，但不免疫禁用技能效果)。乘坐战车期间无法交互、使用道具或[回复Hp](国王杰瑞-国王战旗（守护）除外)，可通过拖拽本技能键向前方投出{战矛}（命中敌方造成[30伤害](无法受到攻击增伤加成)，命中墙缝造成[5伤害](无法受到攻击增伤加成)，可触发部分投掷类知识卡和特技：{缴械}、{投手}、{精准投射}、{干扰投掷}、{勇气投掷}），投掷战矛有0.2秒前摇和2秒内置CD。可通过额外技能键主动跳出战车。当战车Hp归零、持续时间结束、蒙金奇主动脱离时，战车进入5秒自毁倒计时，结束时爆炸对范围内所有单位造成{75}伤害和2秒爆炸眩晕，对未脱离战车的蒙金奇造成蒙金奇Hp100%的伤害。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
         forecast: 0.7,
         skillLevels: [
@@ -7017,7 +7017,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         forecast: 0.6,
         aftercast: 0.5,
-        cancelableAftercast: '不可被取消',
+        cancelableAftercast: '不可取消',
         skillLevels: [
           {
             level: 1,
@@ -7037,7 +7037,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 25,
           },
         ],
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         canHitInPipe: false,
         cooldownTiming: '释放后',
         cueRange: '本房间可见',
@@ -7078,7 +7078,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
         cancelableAftercast: ['跳跃键', '移动键', '道具键'],
         cueRange: '本房间可见',
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
       },
       {
         name: '莱恩的世界',
@@ -7255,8 +7255,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         forecast: 0.5,
         aftercast: 1.25,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可被取消',
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '不可取消',
         canHitInPipe: false,
         skillLevels: [
           {

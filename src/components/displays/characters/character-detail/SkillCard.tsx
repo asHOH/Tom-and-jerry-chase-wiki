@@ -203,7 +203,7 @@ export default function SkillCard({
         createBooleanCheckbox('空中释放', 'canUseInAir', '可空中释放', '不可空中释放'),
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
-            const specialOptions = ['不可被打断'] as const;
+            const specialOptions = ['不可主动打断'] as const;
             const cancelableOptions = [
               '道具键',
               '道具键*',
@@ -357,7 +357,7 @@ export default function SkillCard({
         </div>,
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
-            const specialOptions = ['不可被取消'] as const;
+            const specialOptions = ['不可取消'] as const;
             const cancelableOptions = [
               '道具键',
               '道具键*',
@@ -559,11 +559,11 @@ export default function SkillCard({
                 : `前摇 ${skill.forecast} 秒`
             : undefined;
         const cancelableSkillText =
-          skill.cancelableSkill &&
-          skill.forecast !== 0 &&
-          (typeof skill.cancelableSkill === 'string'
-            ? skill.cancelableSkill
-            : convertCancelableSkillToDisplayText(skill.cancelableSkill));
+          skill.forecast !== 0 && skill.cancelableSkill
+            ? typeof skill.cancelableSkill === 'string'
+              ? skill.cancelableSkill
+              : convertCancelableSkillToDisplayText(skill.cancelableSkill)
+            : undefined;
         if (forecastBase || cancelableSkillText) {
           const text = `${forecastBase ?? ''}${forecastBase && cancelableSkillText ? '，' : ''}${
             cancelableSkillText ?? ''
@@ -583,11 +583,11 @@ export default function SkillCard({
                 : `后摇 ${skill.aftercast} 秒`
             : undefined;
         const cancelableAfterText =
-          skill.cancelableAftercast &&
-          skill.aftercast !== 0 &&
-          (typeof skill.cancelableAftercast === 'string'
-            ? skill.cancelableAftercast
-            : convertCancelableAftercastToDisplayText(skill.cancelableAftercast));
+          skill.aftercast !== 0 && skill.cancelableAftercast
+            ? typeof skill.cancelableAftercast === 'string'
+              ? skill.cancelableAftercast
+              : convertCancelableAftercastToDisplayText(skill.cancelableAftercast)
+            : undefined;
         if (aftercastBase || cancelableAfterText) {
           const text = `${aftercastBase ?? ''}${aftercastBase && cancelableAfterText ? '，' : ''}${
             cancelableAfterText ?? ''
