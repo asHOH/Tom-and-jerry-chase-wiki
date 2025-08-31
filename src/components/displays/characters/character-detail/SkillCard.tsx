@@ -203,7 +203,7 @@ export default function SkillCard({
         createBooleanCheckbox('空中释放', 'canUseInAir', '可空中释放', '不可空中释放'),
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
-            const specialOptions = ['不可被打断'] as const;
+            const specialOptions = ['不可主动打断'] as const;
             const cancelableOptions = [
               '道具键',
               '道具键*',
@@ -357,7 +357,7 @@ export default function SkillCard({
         </div>,
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
-            const specialOptions = ['不可被取消'] as const;
+            const specialOptions = ['不可取消'] as const;
             const cancelableOptions = [
               '道具键',
               '道具键*',
