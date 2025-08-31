@@ -1,6 +1,10 @@
 import { Entity, EntityDefinition } from './types';
 
-export const getMouseEntityImageUrl = (name: string): string => {
+export const getMouseEntityImageUrl = (
+  name: string,
+  specialImageUrl: string | undefined
+): string => {
+  if (!!specialImageUrl) return specialImageUrl;
   return `/images/mouseEntities/${encodeURIComponent(name)}.png`;
 };
 
@@ -896,7 +900,7 @@ const mouseEntitiesWithImages: Record<string, Entity> = Object.fromEntries(
       ...entity,
       name: entityName,
       factionId: 'mouse' as const,
-      imageUrl: getMouseEntityImageUrl(entityName),
+      imageUrl: getMouseEntityImageUrl(entityName, entity.specialImageUrl),
     },
   ])
 );

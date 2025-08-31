@@ -1,6 +1,8 @@
 import { Entity, EntityDefinition } from './types';
 
-export const getCatEntityImageUrl = (name: string): string => {
+//(interim) use other image instead of missing image
+export const getCatEntityImageUrl = (name: string, specialImageUrl: string | undefined): string => {
+  if (!!specialImageUrl) return specialImageUrl;
   return `/images/catEntities/${encodeURIComponent(name)}.png`;
 };
 
@@ -159,7 +161,7 @@ const catEntitiesWithImages: Record<string, Entity> = Object.fromEntries(
       ...entity,
       name: entityName,
       factionId: 'cat' as const,
-      imageUrl: getCatEntityImageUrl(entityName),
+      imageUrl: getCatEntityImageUrl(entityName, entity.specialImageUrl),
     },
   ])
 );

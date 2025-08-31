@@ -262,6 +262,8 @@ export type EntityDefinition = {
   detailedDescription?: string;
   create?: string; //the way of items create
   detailedCreate?: string;
+
+  specialImageUrl?: string; //(interim) use other image instead of entity's missing image
 };
 
 export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };
