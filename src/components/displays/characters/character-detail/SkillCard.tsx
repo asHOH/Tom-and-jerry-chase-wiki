@@ -559,11 +559,11 @@ export default function SkillCard({
                 : `前摇 ${skill.forecast} 秒`
             : undefined;
         const cancelableSkillText =
-          skill.cancelableSkill &&
-          skill.forecast !== 0 &&
-          (typeof skill.cancelableSkill === 'string'
-            ? skill.cancelableSkill
-            : convertCancelableSkillToDisplayText(skill.cancelableSkill));
+          skill.forecast !== 0 && skill.cancelableSkill
+            ? typeof skill.cancelableSkill === 'string'
+              ? skill.cancelableSkill
+              : convertCancelableSkillToDisplayText(skill.cancelableSkill)
+            : undefined;
         if (forecastBase || cancelableSkillText) {
           const text = `${forecastBase ?? ''}${forecastBase && cancelableSkillText ? '，' : ''}${
             cancelableSkillText ?? ''
@@ -583,11 +583,11 @@ export default function SkillCard({
                 : `后摇 ${skill.aftercast} 秒`
             : undefined;
         const cancelableAfterText =
-          skill.cancelableAftercast &&
-          skill.aftercast !== 0 &&
-          (typeof skill.cancelableAftercast === 'string'
-            ? skill.cancelableAftercast
-            : convertCancelableAftercastToDisplayText(skill.cancelableAftercast));
+          skill.aftercast !== 0 && skill.cancelableAftercast
+            ? typeof skill.cancelableAftercast === 'string'
+              ? skill.cancelableAftercast
+              : convertCancelableAftercastToDisplayText(skill.cancelableAftercast)
+            : undefined;
         if (aftercastBase || cancelableAfterText) {
           const text = `${aftercastBase ?? ''}${aftercastBase && cancelableAfterText ? '，' : ''}${
             cancelableAfterText ?? ''
