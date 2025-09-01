@@ -155,7 +155,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
             width={40}
             height={40}
             className='w-full h-full object-contain'
-            style={{ padding: '4px' }}
+            style={{ padding: '6px' }}
           />
 
           {showArc && (
