@@ -137,17 +137,18 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       const imageUrl =
         skill?.imageUrl ||
         getSkillAllocationImageUrl(characterName, skillType, factionId, skill?.name);
+
+      // Compute colors and edge styles. For lv1/2, we render a partial circular arc instead of a full border.
+      type SkillLevelColors = { color: string; backgroundColor: string; borderColor?: string };
+      const colors: SkillLevelColors = getSkillLevelColors(currentLevel, true, isDarkMode);
+      const edgeColor = (colors?.borderColor as string) ?? '#9ca3af';
+      const showArc = currentLevel === 1 || currentLevel === 2 || currentLevel === 3;
       const baseStyle = {
-        ...getSkillLevelColors(currentLevel, true, isDarkMode),
-        borderWidth: '2px',
-        borderStyle: 'solid',
-      };
+        ...colors,
+      } as React.CSSProperties;
 
       const iconElement = (
-        <div
-          className={clsx('relative w-10 h-10 border-2', !isDelayed && 'rounded-full')}
-          style={baseStyle}
-        >
+        <div className={clsx('relative w-10 h-10', !isDelayed && 'rounded-full')} style={baseStyle}>
           <Image
             src={imageUrl}
             alt={skill?.name || `技能${skillType}`}
@@ -156,6 +157,57 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
             className='w-full h-full object-contain'
             style={{ padding: '4px' }}
           />
+
+          {showArc && (
+            <svg
+              className='absolute inset-0 pointer-events-none overflow-visible'
+              viewBox='0 0 40 40'
+              width={40}
+              height={40}
+            >
+              {/* Rotate -90deg so the arc starts at 12 o'clock */}
+              <g transform='rotate(-90 20 20)'>
+                {(() => {
+                  const strokeWidth = 2; // visual thickness of the edge
+                  // Draw fully inside the 40x40 box: r = 20 - strokeWidth/2 keeps stroke within bounds
+                  const r = 20 - strokeWidth / 2; // 19
+                  const circumference = 2 * Math.PI * r;
+                  const degrees = currentLevel === 1 ? 120 : currentLevel === 2 ? 240 : 360;
+                  if (degrees >= 360) {
+                    return (
+                      <circle
+                        cx='20'
+                        cy='20'
+                        r={r}
+                        fill='none'
+                        stroke={edgeColor}
+                        strokeWidth={strokeWidth}
+                        shapeRendering='geometricPrecision'
+                      />
+                    );
+                  } else {
+                    const arc = (degrees / 360) * circumference;
+                    const gap = Math.max(0, circumference - arc);
+                    return (
+                      <circle
+                        cx='20'
+                        cy='20'
+                        r={r}
+                        fill='none'
+                        stroke={edgeColor}
+                        strokeWidth={strokeWidth}
+                        strokeLinecap='round'
+                        shapeRendering='geometricPrecision'
+                        strokeDasharray={`${arc} ${gap}`}
+                        strokeDashoffset={0}
+                      />
+                    );
+                  }
+                })()}
+              </g>
+            </svg>
+          )}
+
           {hasNegativeEffect && (
             <div className='absolute -top-[5px] -right-[5px] w-4 h-4 pointer-events-none z-10'>
               <Image
