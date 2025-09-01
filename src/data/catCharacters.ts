@@ -240,7 +240,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '打架',
         isMinor: false,
-        description: 'Lv.1被动快速起身和Lv.3旋转桶盖的霸体提供了较强的打架能力。',
+        description: '{1级被动}快速起身和{3级旋转桶盖}的霸体提供了较强的打架能力。',
         additionalDescription: '',
       },
     ],
@@ -506,7 +506,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '打架',
         isMinor: true,
-        description: '通过换位和Lv.3分身提供的霸体反制老鼠的控制。',
+        description: '通过换位和{3级主动}提供的霸体反制老鼠的控制。',
         additionalDescription: '但难以应对爆发输出。',
       },
     ],
@@ -531,21 +531,21 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
         description:
-          '利用击晕配合Lv.1被动提高控制能力，或是配合捕虫网直接抓住老鼠；皮糙肉厚提高分身的生存能力。（待翻新，有意提供知识卡可填写反馈建议）',
+          '利用{击晕}配合{1级被动}提高控制能力，或是配合捕虫网直接抓住老鼠；{皮糙肉厚}提高分身的生存能力。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-击晕', 'S-乘胜追击', 'A-熊熊燃烧'],
         description:
-          '乘胜追击提高机动性，且能更好地配合击晕和Lv.1被动。（待翻新，有意提供知识卡可填写反馈建议）',
+          '{乘胜追击}提高机动性，且能更好地配合{击晕}和{1级被动}。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-击晕', 'S-乘胜追击', 'A-加大火力', 'C-猫是液体'],
-        description: '猫是液体在管道图有较强的机动性。（待翻新，有意提供知识卡可填写反馈建议）',
+        description: '{猫是液体}在管道图有较强的机动性。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
         description:
-          '托普斯爪刀较短，长爪能极大幅提高爪刀范围，配合击晕、Lv.1被动和“我生气了”特技打出连续控制和爆发伤害，还能刷取经验。但长爪负面效果也很明显，使用时需再三斟酌，因此本卡组较偏向娱乐。（待翻新，有意提供知识卡可填写反馈建议）',
+          '托普斯爪刀较短，{长爪}能极大幅提高爪刀范围，配合{击晕}、{1级被动}和{我生气了！}打出连续控制和爆发伤害，还能刷取经验。但{长爪}负面效果也很明显，使用时需再三斟酌，因此本卡组较偏向娱乐。（待翻新，有意提供知识卡可填写反馈建议）',
       },
     ],
     counters: [
@@ -563,7 +563,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     specialSkills: [
       {
         name: '绝地反击',
-        description: '配合捕虫网或击晕+Lv.1被动，实现反击效果。',
+        description: '配合捕虫网或击晕+Lv.1被动，实现反击效果。', // FIXME： 这里改成{1级被动}会产生bug，不过不严重，不影响使用，下次有空修
       },
       {
         name: '我生气了！',
