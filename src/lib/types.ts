@@ -3,7 +3,7 @@
  * Eliminates duplication of type definitions across components
  */
 
-import { Character, Card, PositioningTag, PositioningTagName } from '@/data';
+import { Character, Card, PositioningTag, PositioningTagName, FactionId } from '@/data';
 import { ReactNode } from 'react';
 
 // Extended types with faction information (used in components)
@@ -86,6 +86,10 @@ export type GotoResult = {
   name: string;
   description: string | undefined;
   imageUrl: string | undefined;
+  // Optional metadata for previews
+  factionId?: FactionId; // For characters
+  ownerName?: string; // For character skills
+  ownerFactionId?: FactionId; // For character skills (owner's faction)
 };
 
 // Narrowed category hints used to disambiguate goto targets

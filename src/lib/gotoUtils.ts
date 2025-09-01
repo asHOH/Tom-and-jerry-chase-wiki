@@ -23,13 +23,14 @@ export async function getGotoResult(
   const normalizedCategory = normalizeCategoryHint(category);
   if (name in characters) {
     const c = characters[name];
-    return {
+    const base: GotoResult = {
       url: `/characters/${encodeURIComponent(name)}`,
       type: 'character',
       name: c!.id,
       description: c!.description,
       imageUrl: c!.imageUrl,
     };
+    return c!.factionId ? { ...base, factionId: c!.factionId } : base;
   }
   if ((!normalizedCategory || normalizedCategory === '知识卡') && name in cards) {
     const card = cards[name];
@@ -110,13 +111,14 @@ export async function getGotoResult(
   }
   const character = Object.values(characters).find((c) => c.aliases?.includes(name));
   if (character) {
-    return {
+    const base: GotoResult = {
       url: `/characters/${encodeURIComponent(character.id)}`,
       type: 'character',
       name: character!.id,
       description: character!.description,
       imageUrl: character!.imageUrl,
     };
+    return character.factionId ? { ...base, factionId: character.factionId } : base;
   }
   const catEntity = Object.values(entities['cat']).find((i) => i.aliases?.includes(name));
   if (catEntity) {
@@ -133,9 +135,9 @@ export async function getGotoResult(
     return {
       url: `/entities/${encodeURIComponent(mouseEntity.name)}`,
       type: 'entity',
-      name: catEntity!.name,
-      description: catEntity!.description,
-      imageUrl: catEntity!.imageUrl,
+      name: mouseEntity!.name,
+      description: mouseEntity!.description,
+      imageUrl: mouseEntity!.imageUrl,
     };
   }
   const item = Object.values(items).find((i) => i.aliases?.includes(name));
@@ -172,13 +174,24 @@ export async function getGotoResult(
     .flatMap((c) => c.skills)
     .find((skill) => skill.name === name || skill.aliases?.includes(name));
   if ((!normalizedCategory || normalizedCategory === '技能') && skill) {
-    return {
-      url: `/characters/${skill.id.split('-')[0]}#Skill:${encodeURIComponent(skill.name)}`,
+    // Skill in processed characters should have id like `${ownerId}-...`
+    const id = (skill as { id?: string }).id;
+    const ownerId = id ? id.split('-')[0] : undefined;
+    const owner = ownerId ? characters[ownerId] : undefined;
+    const base: GotoResult = {
+      url: `/characters/${ownerId ?? ''}#Skill:${encodeURIComponent(skill.name)}`,
       type: 'character-skill',
       name: skill!.name,
       description: skill!.description,
       imageUrl: skill!.imageUrl,
     };
+    return owner
+      ? {
+          ...base,
+          ownerName: owner.id,
+          ...(owner.factionId ? { ownerFactionId: owner.factionId } : {}),
+        }
+      : base;
   }
   return null;
 }

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 import Tag from './Tag';
 import { getTypeLabelColors } from '@/lib/design-tokens';
+import type { FactionId } from '@/data';
 
 export type GotoPreviewCardProps = {
   url: string;
@@ -14,6 +15,9 @@ export type GotoPreviewCardProps = {
   imageUrl?: string;
   className?: string;
   hideImage?: boolean;
+  factionId?: FactionId;
+  ownerName?: string;
+  ownerFactionId?: FactionId;
 };
 
 const typeLabels: Record<string, string> = {
@@ -37,7 +41,19 @@ export default function PreviewCard({
   imageUrl,
   className = '',
   hideImage = false,
+  factionId,
+  ownerName,
+  ownerFactionId,
 }: GotoPreviewCardProps) {
+  const factionLabel = (f: FactionId | undefined) =>
+    f === 'cat' ? '猫' : f === 'mouse' ? '鼠' : undefined;
+  const characterTypeLabel = factionLabel(factionId)
+    ? `${factionLabel(factionId)}${typeLabels[type] || type}`
+    : typeLabels[type] || type;
+  const ownerSuffix =
+    type === 'character-skill' && ownerName
+      ? `（${ownerFactionId ? factionLabel(ownerFactionId) + '‐' : ''}${ownerName}）`
+      : undefined;
   return (
     <Link href={url} tabIndex={0} aria-label={`前往${typeLabels[type] || type}: ${name}`}>
       <BaseCard
@@ -65,31 +81,38 @@ export default function PreviewCard({
           {!hideImage && imageUrl ? (
             <>
               <Tag colorStyles={typeTokenStyles(type)} size='xs' margin='compact' className='mb-2'>
-                {typeLabels[type] || type}
+                {type === 'character' ? characterTypeLabel : typeLabels[type] || type}
               </Tag>
-              <div
-                className='font-bold text-lg text-gray-900 dark:text-gray-100 mb-1 truncate w-full'
-                title={name}
-              >
-                {name}
+              <div className='mb-1 w-full flex items-baseline min-w-0' title={name}>
+                <span className='font-bold text-lg text-gray-900 dark:text-gray-100 truncate min-w-0'>
+                  {name}
+                </span>
+                {ownerSuffix && (
+                  <span className='text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap'>
+                    {'\u00A0\u00A0'}
+                    {ownerSuffix}
+                  </span>
+                )}
               </div>
             </>
           ) : (
             <div className='flex items-center gap-2 w-full mb-1'>
-              <div
-                className='font-bold text-lg text-gray-900 dark:text-gray-100 truncate flex-1'
-                title={name}
-              >
-                {name}
+              <div className='flex items-center gap-2 flex-shrink-0'>
+                <Tag colorStyles={typeTokenStyles(type)} size='xs' margin='compact'>
+                  {type === 'character' ? characterTypeLabel : typeLabels[type] || type}
+                </Tag>
               </div>
-              <Tag
-                colorStyles={typeTokenStyles(type)}
-                size='xs'
-                margin='compact'
-                className='flex-shrink-0'
-              >
-                {typeLabels[type] || type}
-              </Tag>
+              <div className='flex-1 min-w-0 flex items-baseline' title={name}>
+                <span className='font-bold text-lg text-gray-900 dark:text-gray-100 truncate min-w-0'>
+                  {name}
+                </span>
+                {ownerSuffix && (
+                  <span className='text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap'>
+                    {'\u00A0\u00A0'}
+                    {ownerSuffix}
+                  </span>
+                )}
+              </div>
             </div>
           )}
           {description && (

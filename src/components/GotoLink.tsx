@@ -44,6 +44,9 @@ export default function GotoLink({
         description: result.description ?? '',
         imageUrl: result.imageUrl ?? '',
         className: '',
+        ...(result.factionId ? { factionId: result.factionId } : {}),
+        ...(result.ownerName ? { ownerName: result.ownerName } : {}),
+        ...(result.ownerFactionId ? { ownerFactionId: result.ownerFactionId } : {}),
       };
     }
     return null;
