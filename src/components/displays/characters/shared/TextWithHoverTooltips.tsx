@@ -90,10 +90,31 @@ export const renderTextWithTooltips = (
         categoryHint = hintGroup.trim() || null;
       }
       visibleText = baseName;
-      const totalAttack = parseFloat(visibleText);
+
+      // If matches leveled skill prefix like "2级机械身躯", render as a skill link
+      if (/^\d+级/.test(baseName)) {
+        const hint2 = '技能' as CategoryHint;
+        const linkName = baseName;
+        parts.push(
+          <GotoLink
+            name={linkName}
+            className='underline'
+            key={`${linkName}-${tooltipPattern.lastIndex}`}
+            categoryHint={hint2}
+          >
+            {baseName}
+          </GotoLink>
+        );
+        lastIndex = tooltipPattern.lastIndex;
+        continue;
+      }
+
+      // Only treat as numeric if it's a pure number (no units or letters)
+      const numericOnlyPattern = /^-?\d+(?:\.\d+)?$/;
+      const isNumericOnly = numericOnlyPattern.test(visibleText);
 
       // If it's not a number or attack boost not available, try rendering as Knowledge Card tag
-      if (Number.isNaN(totalAttack) || attackBoost == null) {
+      if (!isNumericOnly || attackBoost == null) {
         const linkName = baseName;
         const card = cards[baseName as keyof typeof cards];
 
@@ -140,6 +161,7 @@ export const renderTextWithTooltips = (
         continue;
       }
 
+      const totalAttack = parseFloat(visibleText);
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
       tooltipContent =
         attackBoost === 0

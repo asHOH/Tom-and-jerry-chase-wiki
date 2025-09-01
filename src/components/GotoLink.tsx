@@ -47,6 +47,11 @@ export default function GotoLink({
         ...(result.factionId ? { factionId: result.factionId } : {}),
         ...(result.ownerName ? { ownerName: result.ownerName } : {}),
         ...(result.ownerFactionId ? { ownerFactionId: result.ownerFactionId } : {}),
+        ...(result.skillLevel ? { skillLevel: result.skillLevel } : {}),
+        ...(result.skillType ? { skillType: result.skillType } : {}),
+        ...(result.skillLevelDescription
+          ? { skillLevelDescription: result.skillLevelDescription }
+          : {}),
       };
     }
     return null;
@@ -81,7 +86,12 @@ export default function GotoLink({
       </div>
     </div>
   ) : data ? (
-    <PreviewCard {...data} hideImage={hideImagePreview} className='w-full max-w-none' />
+    <PreviewCard
+      {...data}
+      clickable={false}
+      hideImage={hideImagePreview}
+      className='w-full max-w-none'
+    />
   ) : (
     <div className='w-full p-4 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md'>
       <div className='text-gray-400 text-lg'>未找到&ldquo;{name}&rdquo;的跳转目标</div>
@@ -112,13 +122,7 @@ export default function GotoLink({
             className='z-50 pointer-events-none'
             style={{ width: 'clamp(320px, 50vw, 640px)' }}
           >
-            {isLoading ? (
-              previewContent
-            ) : data ? (
-              <PreviewCard {...data} hideImage={hideImagePreview} className='w-full max-w-none' />
-            ) : (
-              previewContent
-            )}
+            {previewContent}
           </TooltipPrimitive.Content>
         </TooltipPrimitive.Portal>
       </TooltipPrimitive.Root>

@@ -1,6 +1,6 @@
 // Utility for resolving goto targets by name
 
-import { characters, cards, items, specialSkills, entities } from '@/data';
+import { characters, cards, items, specialSkills, entities, type Skill } from '@/data';
 import { getDocPages } from '@/lib/docUtils';
 import type { GotoResult, CategoryHint } from '@/lib/types';
 import { CATEGORY_HINTS } from '@/lib/types';
@@ -21,6 +21,14 @@ export async function getGotoResult(
   category?: CategoryHint | string
 ): Promise<GotoResult | null> {
   const normalizedCategory = normalizeCategoryHint(category);
+  // Parse skill level prefix like "2级技能名"
+  let skillLevelRequested: number | null = null;
+  let rawName = name;
+  const levelMatch = /^(\d+)级(.+)$/.exec(name);
+  if (levelMatch && levelMatch[1] && levelMatch[2]) {
+    skillLevelRequested = parseInt(levelMatch[1] as string, 10);
+    rawName = (levelMatch[2] as string).trim();
+  }
   if (name in characters) {
     const c = characters[name];
     const base: GotoResult = {
@@ -172,12 +180,21 @@ export async function getGotoResult(
   }
   const skill = Object.values(characters)
     .flatMap((c) => c.skills)
-    .find((skill) => skill.name === name || skill.aliases?.includes(name));
+    .find((skill) => skill.name === rawName || skill.aliases?.includes(rawName));
   if ((!normalizedCategory || normalizedCategory === '技能') && skill) {
     // Skill in processed characters should have id like `${ownerId}-...`
     const id = (skill as { id?: string }).id;
     const ownerId = id ? id.split('-')[0] : undefined;
     const owner = ownerId ? characters[ownerId] : undefined;
+    // Level-specific description if requested and available
+    let levelDesc: string | undefined;
+    const levelNum = skillLevelRequested ?? undefined;
+    if (levelNum) {
+      const s = skill as Skill;
+      const lvl = s.skillLevels.find((l) => l.level === levelNum);
+      levelDesc = lvl?.detailedDescription || lvl?.description || undefined;
+    }
+
     const base: GotoResult = {
       url: `/characters/${ownerId ?? ''}#Skill:${encodeURIComponent(skill.name)}`,
       type: 'character-skill',
@@ -185,13 +202,23 @@ export async function getGotoResult(
       description: skill!.description,
       imageUrl: skill!.imageUrl,
     };
-    return owner
+    const enriched = owner
       ? {
           ...base,
           ownerName: owner.id,
           ...(owner.factionId ? { ownerFactionId: owner.factionId } : {}),
         }
       : base;
+
+    if (levelNum) {
+      return {
+        ...enriched,
+        skillLevel: levelNum,
+        skillType: (skill as Skill).type,
+        ...(levelDesc ? { skillLevelDescription: levelDesc } : {}),
+      };
+    }
+    return enriched;
   }
   return null;
 }

@@ -90,6 +90,10 @@ export type GotoResult = {
   factionId?: FactionId; // For characters
   ownerName?: string; // For character skills
   ownerFactionId?: FactionId; // For character skills (owner's faction)
+  // Leveled skill metadata
+  skillLevel?: number; // When query specified like "2级技能名"
+  skillType?: 'passive' | 'active' | 'weapon1' | 'weapon2';
+  skillLevelDescription?: string; // Description for that level, if any
 };
 
 // Narrowed category hints used to disambiguate goto targets
