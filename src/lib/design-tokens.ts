@@ -696,30 +696,61 @@ export const getCardCostColors = (cost: number, includeBorder: boolean, isDarkMo
 };
 
 // Type label utility (for preview badges like 角色/知识卡)
-export const getTypeLabelColors = (type: string) => {
+export const getTypeLabelColors = (type: string, isDarkMode = false) => {
   const map: Record<
     string,
     {
       text: string;
       background: string;
-      dark?: { text: string; background: string };
+      dark: { text: string; background: string };
     }
   > = {
-    character: { text: '#1D4ED8', background: '#DBEAFE' }, // blue-700 on blue-100
-    card: { text: '#A16207', background: '#FEF9C3' }, // yellow-700 on yellow-100
-    item: { text: '#15803D', background: '#DCFCE7' }, // green-700 on green-100
-    entity: { text: '#C2410C', background: '#FFEDD5' }, // orange-700 on orange-100
-    'special-skill-cat': { text: '#BE185D', background: '#FCE7F3' }, // pink-700 on pink-100
-    'special-skill-mouse': { text: '#6D28D9', background: '#EDE9FE' }, // purple-700 on purple-100
-    doc: { text: '#374151', background: '#F3F4F6' }, // gray-700 on gray-100
-    'character-skill': { text: '#4338CA', background: '#E0E7FF' }, // indigo-700 on indigo-100
+    character: {
+      text: '#1D4ED8',
+      background: '#DBEAFE',
+      dark: { text: '#60A5FA', background: '#1E3A8A' },
+    }, // blue-700 on blue-100 | dark: blue-400 on blue-900
+    card: {
+      text: '#A16207',
+      background: '#FEF9C3',
+      dark: { text: '#C4B5FD', background: '#581C87' },
+    }, // yellow-700 | dark: purple-300 on purple-900
+    item: {
+      text: '#15803D',
+      background: '#DCFCE7',
+      dark: { text: '#34D399', background: '#064E3B' },
+    }, // green-700 | dark: emerald-400 on emerald-900
+    entity: {
+      text: '#C2410C',
+      background: '#FFEDD5',
+      dark: { text: '#FDBA74', background: '#7C2D12' },
+    }, // orange-700 | dark: orange-300 on orange-900
+    'special-skill-cat': {
+      text: '#BE185D',
+      background: '#FCE7F3',
+      dark: { text: '#F9A8D4', background: '#831843' },
+    }, // pink-700 | dark: pink-300 on pink-900
+    'special-skill-mouse': {
+      text: '#6D28D9',
+      background: '#EDE9FE',
+      dark: { text: '#C4B5FD', background: '#4C1D95' },
+    }, // purple-700 | dark: violet-300 on violet-900
+    doc: {
+      text: '#374151',
+      background: '#F3F4F6',
+      dark: { text: '#9CA3AF', background: '#1F2937' },
+    }, // gray-700 | dark: gray-400 on gray-800
+    'character-skill': {
+      text: '#4338CA',
+      background: '#E0E7FF',
+      dark: { text: '#A5B4FC', background: '#3730A3' },
+    }, // indigo-700 | dark: indigo-300 on indigo-900
   };
 
   const scheme = map[type] ?? map.doc!;
-  return {
-    color: scheme!.text,
-    backgroundColor: scheme!.background,
-  };
+  return isDarkMode
+    ? { color: scheme.dark.text, backgroundColor: scheme.dark.background }
+    : { color: scheme.text, backgroundColor: scheme.background };
 };
 
 // Positioning tag utility functions

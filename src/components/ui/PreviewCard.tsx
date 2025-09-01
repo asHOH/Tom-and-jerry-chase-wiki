@@ -5,6 +5,7 @@ import Link from 'next/link';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 import Tag from './Tag';
 import { getTypeLabelColors } from '@/lib/design-tokens';
+import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data';
 
 export type GotoPreviewCardProps = {
@@ -31,7 +32,7 @@ const typeLabels: Record<string, string> = {
   'character-skill': '技能',
 };
 
-const typeTokenStyles = (type: string) => getTypeLabelColors(type);
+const typeTokenStyles = (type: string, isDarkMode: boolean) => getTypeLabelColors(type, isDarkMode);
 
 export default function PreviewCard({
   url,
@@ -45,6 +46,7 @@ export default function PreviewCard({
   ownerName,
   ownerFactionId,
 }: GotoPreviewCardProps) {
+  const [isDarkMode] = useDarkMode();
   const factionLabel = (f: FactionId | undefined) =>
     f === 'cat' ? '猫' : f === 'mouse' ? '鼠' : undefined;
   const characterTypeLabel = factionLabel(factionId)
@@ -80,7 +82,12 @@ export default function PreviewCard({
         <div className='flex flex-col items-start w-0 flex-1'>
           {!hideImage && imageUrl ? (
             <>
-              <Tag colorStyles={typeTokenStyles(type)} size='xs' margin='compact' className='mb-2'>
+              <Tag
+                colorStyles={typeTokenStyles(type, isDarkMode)}
+                size='xs'
+                margin='compact'
+                className='mb-2'
+              >
                 {type === 'character' ? characterTypeLabel : typeLabels[type] || type}
               </Tag>
               <div className='mb-1 w-full flex items-baseline min-w-0' title={name}>
@@ -98,7 +105,7 @@ export default function PreviewCard({
           ) : (
             <div className='flex items-center gap-2 w-full mb-1'>
               <div className='flex items-center gap-2 flex-shrink-0'>
-                <Tag colorStyles={typeTokenStyles(type)} size='xs' margin='compact'>
+                <Tag colorStyles={typeTokenStyles(type, isDarkMode)} size='xs' margin='compact'>
                   {type === 'character' ? characterTypeLabel : typeLabels[type] || type}
                 </Tag>
               </div>
