@@ -26,6 +26,11 @@ export default function GotoLink({
   categoryHint,
 }: GotoLinkProps) {
   const [open, setOpen] = useState(false);
+  // Use a thinner, solid underline with a small offset by default.
+  // Caller-supplied className (e.g., 'no-underline' or custom thickness) will override due to ordering.
+  const linkClasses = ['decoration-1 underline-offset-2 decoration-solid', className ?? '']
+    .join(' ')
+    .trim();
 
   const fetcher = async (url: string): Promise<GotoPreviewCardProps | null> => {
     const res = await fetch(url);
@@ -86,11 +91,11 @@ export default function GotoLink({
         <TooltipPrimitive.Trigger asChild>
           <span className='inline-block'>
             {asPreviewOnly ? (
-              <span className={className} tabIndex={0}>
+              <span className={linkClasses} tabIndex={0}>
                 {children}
               </span>
             ) : (
-              <Link href={url} className={className} tabIndex={0}>
+              <Link href={url} className={linkClasses} tabIndex={0}>
                 {children}
               </Link>
             )}
