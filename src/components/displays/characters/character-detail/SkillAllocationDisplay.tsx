@@ -168,28 +168,31 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               {/* Rotate -90deg so the arc starts at 12 o'clock */}
               <g transform='rotate(-90 20 20)'>
                 {(() => {
-                  const strokeWidth = 2; // visual thickness of the edge
-                  // Draw fully inside the 40x40 box: r = 20 - strokeWidth/2 keeps stroke within bounds
-                  const r = 20 - strokeWidth / 2; // 19
+                  const strokeWidth = 2; // thickness of the edge
+                  const r = 20 - strokeWidth / 2; // keep stroke inside the 40x40 box
                   const circumference = 2 * Math.PI * r;
-                  const degrees = currentLevel === 1 ? 120 : currentLevel === 2 ? 240 : 360;
-                  if (degrees >= 360) {
+                  const HALF_SPLIT_DEG = 5; // half the split degree
+
+                  // Build cumulative segments per level
+                  const segments: Array<{ startDeg: number; endDeg: number }> = [];
+                  if (currentLevel >= 1) {
+                    segments.push({ startDeg: 0 + HALF_SPLIT_DEG, endDeg: 120 - HALF_SPLIT_DEG });
+                  }
+                  if (currentLevel >= 2) {
+                    segments.push({ startDeg: 120 + HALF_SPLIT_DEG, endDeg: 240 - HALF_SPLIT_DEG });
+                  }
+                  if (currentLevel >= 3) {
+                    segments.push({ startDeg: 240 + HALF_SPLIT_DEG, endDeg: 360 - HALF_SPLIT_DEG });
+                  }
+
+                  return segments.map(({ startDeg, endDeg }, idx) => {
+                    const segDeg = Math.max(0, endDeg - startDeg);
+                    const dash = (segDeg / 360) * circumference;
+                    const gap = Math.max(0, circumference - dash);
+                    const offset = -(startDeg / 360) * circumference;
                     return (
                       <circle
-                        cx='20'
-                        cy='20'
-                        r={r}
-                        fill='none'
-                        stroke={edgeColor}
-                        strokeWidth={strokeWidth}
-                        shapeRendering='geometricPrecision'
-                      />
-                    );
-                  } else {
-                    const arc = (degrees / 360) * circumference;
-                    const gap = Math.max(0, circumference - arc);
-                    return (
-                      <circle
+                        key={idx}
                         cx='20'
                         cy='20'
                         r={r}
@@ -198,11 +201,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                         strokeWidth={strokeWidth}
                         strokeLinecap='round'
                         shapeRendering='geometricPrecision'
-                        strokeDasharray={`${arc} ${gap}`}
-                        strokeDashoffset={0}
+                        strokeDasharray={`${dash} ${gap}`}
+                        strokeDashoffset={offset}
                       />
                     );
-                  }
+                  });
                 })()}
               </g>
             </svg>
