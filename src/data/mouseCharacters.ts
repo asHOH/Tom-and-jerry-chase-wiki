@@ -260,7 +260,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         pattern: '12[12]21000',
         weaponType: 'weapon1',
         description:
-          '四级时通常先点Lv.2烟雾弹；如果猫在附近或不清楚猫的位置，则可点Lv.2隐身保证生存。',
+          '四级时通常先点{2级烟雾弹}；如果猫在附近或不清楚猫的位置，则可点{2级隐身}保证生存。',
         additionaldescription: '',
       },
       {
@@ -818,7 +818,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         cards: ['S-铁血', 'S-舍己', 'B-求生欲', 'C-脱身', 'C-救救我'],
         description:
-          '求生欲和脱身配合Lv.2被动达到快速挣扎的效果，适合中低端局自保，但上限较低，且较为依赖地图和敌方角色。',
+          '求生欲和脱身配合{2级被动}达到快速挣扎的效果，适合中低端局自保，但上限较低，且较为依赖地图和敌方角色。',
       },
     ],
 
@@ -1247,33 +1247,32 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '剑与苹果',
         type: 'active',
         description:
-          '使用华丽的剑法切碎苹果并吃掉它，解除[部分不良状态](包括失明、反向等效果，不包括受伤)、使武器技能CD减少、根据技能等级获得不同增益效果。',
+          '切碎并吃掉苹果，解除[部分不良状态](包括失明、反向等效果，不包括受伤)、减少武器技能CD、恢复或回复Hp。',
         detailedDescription:
-          '使用华丽的剑法切碎苹果并吃掉它，该动作需要1.9秒。技能释放完成后解除[部分不良状态](包括失明、反向等效果，不包括受伤)、使武器技能CD减少、根据技能等级获得不同增益效果。',
+          '切碎并吃掉苹果，解除[部分不良状态](包括失明、反向等效果，不包括受伤)、减少武器技能CD、恢复或回复Hp。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
+        forecast: 1.9,
         aftercast: 0,
         skillLevels: [
           {
             level: 1,
-            description: '使武器技能CD减少20秒；获得短暂的Hp恢复效果。',
-            detailedDescription: '使武器技能CD减少20秒；获得10Hp/秒的恢复效果，持续5秒。',
+            description: '武器技能CD减少20秒；获得短暂的Hp恢复效果。',
+            detailedDescription: '武器技能CD减少20秒；获得10Hp/秒的恢复效果，持续5秒。',
             cooldown: 10,
           },
           {
             level: 2,
-            description: '在Lv.1基础上：改为使武器技能CD减少30秒；Hp恢复效果改为立刻回复Hp。',
-            detailedDescription:
-              '在Lv.1基础上：武器技能CD减少改为减少30秒；Hp恢复效果改为立刻回复50Hp。',
+            description: '武器技能CD减少30秒；改为立刻回复Hp。',
+            detailedDescription: '武器技能CD减少30秒；改为立刻回复50Hp。',
             cooldown: 10,
           },
           {
             level: 3,
-            description: '在Lv.2基础上：改为使武器技能CD减少40秒；在一段时间内提高攻击增伤。',
-            detailedDescription:
-              '在Lv.2基础上：改为使武器技能CD减少40秒；攻击增伤提升15，持续14.9秒。',
+            description: '武器技能CD减少40秒；额外在一段时间内提升攻击增伤。',
+            detailedDescription: '武器技能CD减少40秒；额外提升15攻击增伤，持续14.9秒。',
             cooldown: 10,
           },
         ],
@@ -3224,25 +3223,25 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '辅助',
         isMinor: false,
-        description: '庇护可以保护队友，Lv.2以上时能使队友完全不受伤害和控制效果。',
+        description: '{友情庇护}可以保护队友；升到{2级友情庇护}后能使队友完全不受伤害和控制效果。',
         additionalDescription: '',
       },
       {
         tagName: '救援',
         isMinor: true,
-        description: '三级翅膀霸体和三级庇护免死后期救人十分强势。',
+        description: '{3级天使翅膀}霸体和{3级友情庇护}免死，后期救人十分强势。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
         isMinor: false,
-        description: '庇护能保护队友强推最后一块奶酪。',
+        description: '{友情庇护}能保护队友强推最后一块奶酪。',
         additionalDescription: '',
       },
       {
         tagName: '后期',
         isMinor: false,
-        description: '主动和武器技能的三级效果极其强大，后期生存和支援能力十分突出。',
+        description: '{3级天使翅膀}霸体和{3级友情庇护}免死极其强大，后期生存和支援能力十分突出。',
         additionalDescription: '',
       },
     ],
@@ -3258,7 +3257,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '翅膀流加点',
         pattern: '202121100',
         weaponType: 'weapon2',
-        description: '适合打以控制技能为主的猫，例如汤姆、剑客汤姆、追风汤姆。',
+        description: '适合打以控制技能为主的猫，例如{汤姆}、{剑客汤姆}、{追风汤姆}。',
         additionaldescription: '',
       },
       {
@@ -3271,32 +3270,31 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '偏门加点（偶有奇效）',
         pattern: '200221110',
         weaponType: 'weapon1',
-        description: '适合救完人后立刻点二被，续航自保很高但对队友实力要求高。',
+        description: '适合救完人后立刻点{2级被动}，续航自保很高但对队友实力要求高。',
       },
     ],
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
-        description: '有救援卡，逃窜适合打控制多的猫，不屈增加后期容错。',
+        description: '有救援卡，{逃窜}适合打控制多的猫，{不屈}增加后期容错。',
       },
       {
         cards: ['S-护佑', 'S-舍己', 'S-铁血', 'C-救救我'],
         description:
-          '适合单排打库伯苏蕊这种前期优势大但怕盾的猫，也可以在某些特别烂的阵容充当前期救人位。',
+          '适合单排打{库博}、{苏蕊}这种前期优势大但怕盾的猫，也可以在某些特别烂的阵容充当前期救人位。',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'A-祝愿', 'B-夹不住我'],
         description:
-          '适合车队打法，因为后期天菲强度高可能被某些打后期老鼠乏力的猫针对，适用于主点庇护的玩法。',
+          '适合车队打法，因为后期天菲强度高可能被某些打后期老鼠乏力的猫针对，适用于主点{友情庇护}的玩法。',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'B-精准投射', 'B-夹不住我'],
-        description:
-          '很流行的打法，很适配庇护流，精准投射能很好弥补武器技能和主动技能真空期的问题。',
+        description: '很流行的打法，很适配庇护流，{精准投射}能很好解决技能真空期的问题。',
       },
       {
         cards: ['S-舍己', 'C-救救我', 'B-破墙', 'C-不屈', 'B-幸运'],
-        description: '天菲打逆风局很好用的卡，和队友说清楚没带铁血。',
+        description: '天菲打逆风局很好用的卡，和队友说清楚没带{铁血}。',
       },
     ],
     skills: [
@@ -3305,6 +3303,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         type: 'active',
         description:
           '使受到的伤害降低一段时间，并转移一定范围内的友方所受伤害和控制效果到自身，且使范围内的火箭减缓燃烧速度，倒计时自然归零时暂时不放飞。优先使用怜悯值抵扣转移的伤害。',
+        detailedDescription:
+          '（本技能改动频繁，特性复杂，仍有机制暂未探明，数据仅供参考）展开光盾，使自身12秒内受到的伤害降低15，并[转移范围内队友所受伤害和控制效果到自身](结算“转移伤害”效果时，使伤害改为由天使泰菲及队友共同承担，比例由转移伤害比例决定；若“受到的伤害值”超过队友的Hp上限，则实际分摊的伤害值改为等同于队友Hp上限；自身因转移受到的伤害视作无来源的伤害。结算“转移控制”效果时，解除队友受到的控制效果，同时自身受到对应的控制效果；若该控制效果附带伤害，则自身会再次受到伤害，因此会出现“1次带控制的伤害=2次伤害”的情况)，火箭在庇护范围内减缓燃烧速度，且倒计时归零时暂时不放飞（对[秒飞火箭](因绑上老鼠立刻减少倒计时而导致倒计时归零的火箭)不生效）。优先使用怜悯值抵扣转移的伤害，每1%怜悯值可承担1伤害。', //[本技能有争议](另一种减伤说法：25伤害变10,50伤害变35,65伤害变45,75伤害变55,100伤害变65,115虚弱；另一种怜悯值消耗说法：100%怜悯值可承担60伤害)。
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['药水键', '跳跃键', '道具键*', '其他技能键'],
@@ -3330,8 +3330,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         cueRange: '无音效',
-        detailedDescription:
-          '（本技能改动频繁，特性复杂，仍有机制暂未探明，数据仅供参考）展开光盾，使自身12秒内受到的伤害降低15，并[转移范围内队友所受伤害和控制效果到自身](结算“转移伤害”效果时，使伤害改为由天使泰菲及队友共同承担，比例由转移伤害比例决定；若“受到的伤害值”超过队友的Hp上限，则实际分摊的伤害值改为等同于队友Hp上限；自身因转移受到的伤害视作无来源的伤害。结算“转移控制”效果时，解除队友受到的控制效果，同时自身受到对应的控制效果；若该控制效果附带伤害，则自身会再次受到伤害，因此会出现“1次带控制的伤害=2次伤害”的情况)，火箭在庇护范围内减缓燃烧速度，且倒计时归零时暂时不放飞（对[秒飞火箭](因绑上老鼠立刻减少倒计时而导致倒计时归零的火箭)不生效）。优先使用怜悯值抵扣转移的伤害，每1%怜悯值可承担1伤害。', //[本技能有争议](另一种减伤说法：25伤害变10,50伤害变35,65伤害变45,75伤害变55,100伤害变65,115虚弱；另一种怜悯值消耗说法：100%怜悯值可承担60伤害)。
       },
       {
         name: '天使翅膀',
@@ -3495,7 +3493,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: true,
         description: '兔子可以安全地运送和推入奶酪，而兔子大表哥可以提高魔术师的推速。',
         additionalDescription:
-          '兔子的推速并不占优，不过可以通过反复拉扯来创造推奶酪机会。兔子大表哥Lv.1增加的推速数值较低，但额外推速不受其他状态影响的特点也能规避前期队友上火箭导致的推速降低，且如果队友不幸被放飞则自身推速会有质的飞跃。',
+          '兔子的推速并不占优，不过可以通过反复拉扯来创造推奶酪机会。{1级兔子大表哥}增加的推速数值较低，但额外推速不受其他状态影响的特点也能规避前期队友上火箭导致的推速降低，且如果队友被放飞则自身推速会有质的飞跃。',
       },
       {
         tagName: '干扰',
@@ -4134,7 +4132,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             description: '受披萨饼眩晕的角色大幅减少视野。',
             cooldown: 20,
             detailedDescription:
-              '受披萨饼眩晕的角色大幅减少视野（为原来的50%），持续5秒。（当前Lv.3效果有bug，并不增加救援速度，与游戏内描述不符）',
+              '受披萨饼眩晕的角色减少视野至原来的50%，持续5秒。（当前Lv.3效果有bug，并不增加救援速度，与游戏内描述不符）',
           },
         ],
         cancelableAftercast: '无后摇',
@@ -4271,7 +4269,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '奶酪',
         isMinor: false,
-        description: '基础推速与侦探杰瑞并列第一。另外后期可以用Lv.3分身的换位进行超远程搬运奶酪。',
+        description:
+          '基础推速与侦探杰瑞并列第一。另外后期可以用{3级主动}的换位进行超远程搬运奶酪。',
         additionalDescription: '',
       },
     ],
@@ -4281,7 +4280,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         pattern: '101012220',
         weaponType: 'weapon1',
         description: '',
-        additionaldescription: '如有自保或回血需要，可以在8级先点出三级被动。',
+        additionaldescription: '如有自保或回血需要，可以在8级先点出{3级被动}。',
       },
     ],
     knowledgeCardGroups: [
@@ -4412,8 +4411,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '救援',
         isMinor: false,
-        description: 'Lv.2被动提供短暂无敌，可提前生成剑气幻影，救下队友后立刻传送，达成无伤救援。',
-        additionalDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。',
+        description:
+          '{2级被动}提供短暂无敌，可提前生成剑气幻影，救下队友后立刻传送，达成无伤救援。',
+        additionalDescription: '稳救不稳走，依赖隐身；被{捕虫网}和各种强制位移技能克制。',
       },
       {
         tagName: '干扰',
@@ -4425,7 +4425,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '辅助',
         isMinor: true,
-        description: 'Lv.2及以上的风墙可以让队友快速起身，避免被抓。',
+        description: '{2级主动}的风墙可以让队友快速起身，避免被抓。',
         additionalDescription:
           '若有需要，也可以尝试用剑气命中[队友](甚至包括虚弱的队友)，让其获得位移能力。但老鼠模型小，剑气很难命中。',
       },
@@ -4563,7 +4563,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '辅助',
         isMinor: false,
-        description: '藤蔓可制造特殊地形进行支援，Lv.2时还能为全队提供恢复。',
+        description: '藤蔓可制造特殊地形进行支援，{2级藤蔓}还能为全队提供恢复。',
         additionalDescription: '',
       },
       {
@@ -4584,9 +4584,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '通用加点',
         pattern: '12[12]10(0)(0)2',
         weaponType: 'weapon1',
-        description: '本套为通用加点，适合大部分场合。如果不需要Lv.3弹球，可以将被动的加点提前。',
+        description:
+          '本套为通用加点，适合大部分场合。如果不需要{3级弹力圆球}，可以将被动的加点提前。',
         additionaldescription:
-          '主动技能Lv.2提供控制，武器技能Lv.2提供恢复和储存，根据实际情况抉择。被动升至Lv.2/Lv.3时会立即刷新护盾，推荐在需要时再加点。',
+          '{2级主动}提供控制，{2级武器}提供恢复和储存，根据实际情况抉择。被动升至Lv.2/Lv.3时会立即刷新护盾，推荐在需要时再加点。',
       },
       {
         id: '打斯飞',
@@ -4753,9 +4754,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description:
-              '获得Hp恢复状态；Lv.2的护盾触发时解除[受伤](被猫咪攻击时附加的状态，效果为停止自然Hp恢复且减速5%)；加点时立刻获得护盾。',
+              '获得Hp恢复状态；{2级被动}的护盾触发时解除[受伤](被猫咪攻击时附加的状态，效果为停止自然Hp恢复且减速5%)；加点时立刻获得护盾。',
             detailedDescription:
-              '[获得2Hp/秒的恢复状态](在受伤期间也生效)；Lv.2的护盾触发时解除[受伤](被猫咪攻击时附加的状态，效果为停止自然Hp恢复且减速5%)；加点时立刻获得护盾并重置护盾CD。',
+              '[获得2Hp/秒的恢复状态](在受伤期间也生效)；{2级被动}的护盾触发时解除[受伤](被猫咪攻击时附加的状态，效果为停止自然Hp恢复且减速5%)；加点时立刻获得护盾并重置护盾CD。',
           },
         ],
       },
@@ -5063,7 +5064,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '砸墙',
         isMinor: true,
-        description: 'Lv.3沙包拳头能对墙缝造成伤害，发怒期间的拳头伤害更高。',
+        description: '{3级沙包拳头}能对墙缝造成伤害，发怒期间的拳头伤害更高。',
         additionalDescription: '',
       },
     ],
@@ -5382,7 +5383,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '救援',
         isMinor: true,
-        description: '可利用Lv.2被动摧毁火箭，快速将老鼠救下。',
+        description: '可利用{2级被动}摧毁火箭，快速将老鼠救下。',
         additionalDescription: '但在此期间容易吃到控制导致礼服被断。',
       },
       {
@@ -5923,7 +5924,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         pattern: '1(2)21(2)1000',
         weaponType: 'weapon1',
         description:
-          '加点Lv.1能源装置后，若进入虚弱状态则会因没有电池而被迫在起身后原地罚站，由此产生负面效果，建议在需要时才进行加点；在过载期间点出Lv.3能源装置能立即充满能量条并释放一次电流，同样建议留加点；后期若等级充裕或道具充足可优先加点被动，最后再点Lv.3主动。',
+          '加点{1级能源装置}后，若进入虚弱状态则会因没有电池而被迫在起身后原地罚站，由此产生负面效果，建议在需要时才进行加点；在过载期间点出{3级能源装置}能立即充满能量条并释放一次电流，同样建议留加点；后期若等级充裕或道具充足可优先加点被动，最后再点{3级主动}。',
         additionaldescription: '',
       },
       {
@@ -5931,22 +5932,23 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         pattern: '1(2)20(2)0011',
         weaponType: 'weapon1',
         description:
-          '优先加点Lv.2被动以应对[固定连招或控制起手的猫](如汤姆，追风汤姆等)，且可[通过冰冻保鲜救人](Lv.2被动能减少冰冻保鲜对自身的冻结时间，但不减少无敌时间)，也能防苍蝇拍；Lv.3被动也有一定生存能力，尤其克制剑汤。',
+          '优先加点{2级被动}以应对[固定连招或控制起手的猫](如汤姆，追风汤姆等)，且可[通过冰冻保鲜救人](Lv.2被动能减少冰冻保鲜对自身的冻结时间，但不减少无敌时间)，也能防苍蝇拍；{3级被动}也有一定生存能力，尤其克制剑汤。',
       },
     ],
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'B-绝地反击', 'C-不屈', 'C-救救我'],
-        description: '绝反提供反杀能力，不屈提供生存能力，压好血线后期能顶着皮糙满血斩杀。',
+        description:
+          '{绝地反击}提供反杀能力，{不屈}提供生存能力，压好血线后期能斩杀满血且带{皮糙肉厚}猫。',
       },
       {
         cards: ['A-投手', 'A-冲冠一怒', 'B-应激反应', 'B-绝地反击', 'C-不屈', 'C-救救我'],
-        description: '体系卡组，需队友配合控制与输出。自保强但容错低，慎用。冲冠可换逃窜。',
+        description: '体系卡组，需队友配合控制与输出。自保强但容错低，慎用。{冲冠一怒}可换{逃窜}。',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
         description:
-          '通用卡组，打无道具的单刀猫可直接缴械救人。舍己可换无畏（配合Lv.2被动和冰冻保鲜稳定救援），但需队友接应。',
+          '通用卡组，打无道具的单刀猫可直接{缴械}救人。{舍己}可换{无畏}（配合{2级被动}和{冰冻保鲜}稳定救援），但需队友接应。',
       },
     ],
     skills: [
@@ -6368,7 +6370,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         tagName: '后期',
         isMinor: false,
         description:
-          '米可主动技能和被动技能的降低伤害效果可加算叠加，完全体状态下能使受到的伤害总共降低75%，并且还有霸体和回溯，常规手段几乎无法击倒他；Lv.3主动和武器技能还能造成很强的干扰效果。',
+          '米可主动技能和被动技能的降低伤害效果可加算叠加，完全体状态下能使受到的伤害总共降低75%，并且还有霸体和回溯，几乎无法被常规手段击倒；{3级主动}还能造成很强的干扰效果。',
         additionalDescription: '',
       },
     ],
@@ -6399,6 +6401,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skills: [
       {
         name: '说出你的故事',
+        aliases: ['采访'],
         type: 'active',
         description:
           '开始采访，期间免疫控制且移速固定，范围内敌方的移速降低，造成的伤害降低，且[作出攻击行为](包括使用爪刀、投掷道具、使用技能、对米可造成伤害)时会为其自身叠加一层“素材”状态，最多叠加5层。可通过第二段技能进行曝光，对大范围内持有“素材”的敌方造成伤害和眩晕，“素材”层数越高效果越强，3层以上时会掉落道具和老鼠。曝光后清除对方持有的素材。',
@@ -6801,7 +6804,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         tagName: '救援',
         isMinor: false,
         description:
-          '主动技能可以安全地接近火箭，即便不慎被击倒也可以用Lv.1被动及铁血效果强行进行救援。',
+          '主动技能可以安全地接近火箭，即便不慎被击倒也可以用{1级被动}及{铁血}效果强行救援。',
         additionalDescription: '',
       },
       {
@@ -6826,7 +6829,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'B-应激反应'],
-        description: '可以在被打的时候快速跑路。也可以把应激换成不屈。',
+        description: '可以在被打的时候快速跑路。也可以把{应激反应}换成{不屈}。',
       },
     ],
     specialSkills: [

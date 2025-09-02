@@ -3372,7 +3372,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '打架',
         isMinor: true,
-        description: '伤害高应对高Hp老鼠，Lv.2被动为打架提高霸体和回血。',
+        description: '伤害高应对高Hp老鼠，{2级被动}为打架提高霸体和回血。',
         additionalDescription: '对打架阵容有很强的反制能力。',
       },
       {
@@ -3391,7 +3391,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         tagName: '进攻',
         isMinor: false,
         description:
-          '伤害高，很容易处理124Hp老鼠；Lv.2被动提供霸体以及飞行吸火箭，上火箭能力较强。',
+          '伤害高，很容易处理124Hp老鼠；{2级被动}提供霸体以及飞行吸火箭，上火箭能力较强。',
         additionalDescription: '新增标签介绍',
       },
       {
@@ -4055,9 +4055,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: 'Lv.2被动触发时，自身根据周围陷入异常状态的敌方数量获得额外增益。',
+            description: '{2级被动}触发时，自身根据周围陷入异常状态的敌方数量获得额外增益。',
             detailedDescription:
-              'Lv.2被动触发时，自身根据周围陷入异常状态的敌方数量获得额外增益，持续5秒：\n1个及以上：移速增加20%，获得2.5Hp/秒的恢复效果；\n2个及以上：视野范围提高至原先的约3.58倍；\n3个及以上：获得一层护盾；\n4个及以上：获得100攻击增伤。',
+              '{2级被动}触发时，自身根据周围陷入异常状态的敌方数量获得额外增益，持续5秒：\n1个及以上：加速20%，获得2.5Hp/秒的恢复效果；\n2个及以上：视野范围提高至原先的约3.58倍；\n3个及以上：获得一层护盾；\n4个及以上：获得100攻击增伤。',
           },
         ],
         description:
@@ -4722,7 +4722,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         pattern: '120220(0)11',
         weaponType: 'weapon1',
         description:
-          '被动技能“戏剧转折”提供的“坚毅”效果能免疫眩晕并延迟虚弱，是如玉的核心。掷花枪升级能大幅减少CD，提高主动进攻的能力。被动技能Lv.3会提高进入“坚毅”状态的回血量，可能不利于快速触发“坚毅”状态，应视情况决定加点与否。',
+          '被动技能“戏剧转折”提供的“坚毅”效果能免疫眩晕并延迟虚弱，是如玉的核心。掷花枪升级能大幅减少CD，提高主动进攻的能力。{3级被动}会提高进入“坚毅”状态的回血量，可能不利于快速触发“坚毅”状态，应视情况决定加点与否。',
       },
       {
         id: '主点被动',
@@ -4735,21 +4735,21 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-暴怒', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
         description:
-          '常规卡组。如玉被动提供的“坚毅”状态使她无需虚弱即可享受暴怒效果，暴怒提供的可观攻击增伤又能让如玉更容易造成敌方虚弱，从而退出“坚毅”状态，适配性不错。可根据需要将加大火力换为其他知识卡，例如细心或心灵手巧。',
+          '常规卡组。如玉被动提供的“坚毅”状态使她无需虚弱即可享受{暴怒}效果，{暴怒}提供的可观攻击增伤又能让如玉更容易造成敌方虚弱，从而退出“坚毅”状态，适配性不错。可根据需要将{加大火力}换为其他知识卡，例如{细心}或{心灵手巧}。',
       },
       {
         cards: ['S-暴怒', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-        description: '常规卡组变种。猫是液体在管道图十分灵活。',
+        description: '常规卡组变种。{猫是液体}在管道图十分灵活。',
       },
       {
         cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'A-加大火力', 'C-猫是液体'],
         description:
-          '舍弃暴怒的卡组，灵活性大大提升，可用老鼠夹补充防守能力。但这套配卡打架能力不如暴怒卡组，需尽量避免跟多只老鼠缠斗，防止老鼠发现如玉没带暴怒。',
+          '舍弃{暴怒}的卡组，灵活性大大提升，可用老鼠夹补充防守能力。但这套配卡打架能力不如{暴怒}卡组，需尽量避免跟多只老鼠缠斗，防止老鼠发现如玉没带{暴怒}。',
       },
       {
         cards: ['S-屈打成招', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
         description:
-          '以屈打成招替换掉暴怒的卡组，利用屈打提供的额外位置信息制定战术，但同样要避免缠斗。',
+          '以{屈打成招}替换掉{暴怒}的卡组，利用屈打提供的额外位置信息制定战术，但同样要避免缠斗。',
       },
     ],
     specialSkills: [
@@ -4854,9 +4854,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '“坚毅”会回复更多Hp，且对敌方造成眩晕即可解除该状态。Lv.2效果的持续时间改为60秒。',
+              '“坚毅”会回复更多Hp，且对敌方造成眩晕即可解除该状态。{2级被动}效果的持续时间改为60秒。',
             detailedDescription:
-              '“坚毅”改为回复200Hp，且对敌方造成眩晕即可解除该状态。Lv.2效果的持续时间改为60秒。',
+              '“坚毅”改为回复200Hp，且对敌方造成眩晕即可解除该状态。{2级被动}效果的持续时间改为60秒。',
           },
         ],
         description:
