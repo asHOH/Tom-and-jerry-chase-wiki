@@ -76,7 +76,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         name: '蓄力重击',
-        description: '配合击晕或手型枪使用，一下一个小老鼠。',
+        description: '配合{击晕}或手型枪使用，一下一个小老鼠。',
       },
       {
         name: '全垒打',
