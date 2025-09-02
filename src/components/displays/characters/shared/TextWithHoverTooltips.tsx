@@ -92,106 +92,9 @@ export const renderTextWithTooltips = (
       }
       visibleText = baseName;
 
-      // If matches special leveled passive pattern like "2级被动", link to current character's passive skill
-      const passiveLevelMatch = /^(\d+)级被动$/.exec(baseName);
-      if (passiveLevelMatch && currentCharacterId) {
-        const level = passiveLevelMatch[1];
-        const owner = characters[currentCharacterId as keyof typeof characters];
-        const passive = owner?.skills?.find?.((s) => s.type === 'passive');
-        if (passive?.name) {
-          const hint2 = '技能' as CategoryHint;
-          const linkName = `${level}级${passive.name}`;
-          parts.push(
-            <GotoLink
-              name={linkName}
-              className='underline'
-              key={`${linkName}-${tooltipPattern.lastIndex}`}
-              categoryHint={hint2}
-            >
-              {baseName}
-            </GotoLink>
-          );
-          lastIndex = tooltipPattern.lastIndex;
-          continue;
-        }
-      }
-
-      // N级主动 -> current character's first active skill
-      const activeLevelMatch = /^(\d+)级主动$/.exec(baseName);
-      if (activeLevelMatch && currentCharacterId) {
-        const level = activeLevelMatch[1];
-        const owner = characters[currentCharacterId as keyof typeof characters];
-        const active = owner?.skills?.find?.((s) => s.type === 'active');
-        if (active?.name) {
-          const hint2 = '技能' as CategoryHint;
-          const linkName = `${level}级${active.name}`;
-          parts.push(
-            <GotoLink
-              name={linkName}
-              className='underline'
-              key={`${linkName}-${tooltipPattern.lastIndex}`}
-              categoryHint={hint2}
-            >
-              {baseName}
-            </GotoLink>
-          );
-          lastIndex = tooltipPattern.lastIndex;
-          continue;
-        }
-      }
-
-      // N级武器 or N级一武 -> weapon1
-      const weapon1LevelMatch = /^(\d+)级(武器|一武)$/.exec(baseName);
-      if (weapon1LevelMatch && currentCharacterId) {
-        const level = weapon1LevelMatch[1];
-        const owner = characters[currentCharacterId as keyof typeof characters];
-        const w1 = owner?.skills?.find?.((s) => s.type === 'weapon1');
-        if (w1?.name) {
-          const hint2 = '技能' as CategoryHint;
-          const linkName = `${level}级${w1.name}`;
-          parts.push(
-            <GotoLink
-              name={linkName}
-              className='underline'
-              key={`${linkName}-${tooltipPattern.lastIndex}`}
-              categoryHint={hint2}
-            >
-              {baseName}
-            </GotoLink>
-          );
-          lastIndex = tooltipPattern.lastIndex;
-          continue;
-        }
-      }
-
-      // N级二武 -> weapon2
-      const weapon2LevelMatch = /^(\d+)级二武$/.exec(baseName);
-      if (weapon2LevelMatch && currentCharacterId) {
-        const level = weapon2LevelMatch[1];
-        const owner = characters[currentCharacterId as keyof typeof characters];
-        const w2 = owner?.skills?.find?.((s) => s.type === 'weapon2');
-        if (w2?.name) {
-          const hint2 = '技能' as CategoryHint;
-          const linkName = `${level}级${w2.name}`;
-          parts.push(
-            <GotoLink
-              name={linkName}
-              className='underline'
-              key={`${linkName}-${tooltipPattern.lastIndex}`}
-              categoryHint={hint2}
-            >
-              {baseName}
-            </GotoLink>
-          );
-          lastIndex = tooltipPattern.lastIndex;
-          continue;
-        }
-      }
-
-      // If matches leveled skill prefix like "2级机械身躯", render as a skill link
-      if (/^\d+级/.test(baseName)) {
+      // Helper: push a skill goto link with consistent props
+      const pushSkillLink = (displayText: string, linkName: string) => {
         const hint2 = '技能' as CategoryHint;
-        const linkName = baseName;
         parts.push(
           <GotoLink
             name={linkName}
@@ -199,9 +102,59 @@ export const renderTextWithTooltips = (
             key={`${linkName}-${tooltipPattern.lastIndex}`}
             categoryHint={hint2}
           >
-            {baseName}
+            {displayText}
           </GotoLink>
         );
+      };
+
+      // Consolidated leveled-skill patterns
+      if (currentCharacterId) {
+        const owner = characters[currentCharacterId as keyof typeof characters];
+        type TSkill = 'passive' | 'active' | 'weapon1' | 'weapon2';
+        const leveledPatterns: Array<{ regex: RegExp; type: TSkill }> = [
+          { regex: /^(\d+)级被动$/, type: 'passive' },
+          { regex: /^(\d+)级主动$/, type: 'active' },
+          { regex: /^(\d+)级(?:武器|一武)$/, type: 'weapon1' },
+          { regex: /^(\d+)级二武$/, type: 'weapon2' },
+        ];
+
+        let matchedLeveled = false;
+        for (const { regex, type } of leveledPatterns) {
+          const m = regex.exec(baseName);
+          if (!m) continue;
+          const level = m[1];
+          const skill = owner?.skills?.find?.((s) => s.type === type);
+          if (skill?.name) {
+            pushSkillLink(baseName, `${level}级${skill.name}`);
+            lastIndex = tooltipPattern.lastIndex;
+            matchedLeveled = true;
+            break;
+          }
+        }
+        if (matchedLeveled) continue;
+
+        // Non-leveled aliases
+        if (baseName === '主动技能') {
+          const active = owner?.skills?.find?.((s) => s.type === 'active');
+          if (active?.name) {
+            pushSkillLink(baseName, active.name);
+            lastIndex = tooltipPattern.lastIndex;
+            continue;
+          }
+        }
+        if (baseName === '武器技能') {
+          const w1 = owner?.skills?.find?.((s) => s.type === 'weapon1');
+          if (w1?.name) {
+            pushSkillLink(baseName, w1.name);
+            lastIndex = tooltipPattern.lastIndex;
+            continue;
+          }
+        }
+      }
+
+      // If matches leveled skill prefix like "2级机械身躯", render as a generic skill link
+      if (/^\d+级/.test(baseName)) {
+        pushSkillLink(baseName, baseName);
         lastIndex = tooltipPattern.lastIndex;
         continue;
       }
