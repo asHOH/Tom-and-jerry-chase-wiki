@@ -18,12 +18,7 @@ import { useSnapshot } from 'valtio';
 import { characters } from '@/data';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
-
-// Component to render text with item key tooltips
-const TextWithItemKeyTooltips = ({ text }: { text: string; isDetailed: boolean }) => {
-  // For now, just return the text as-is
-  return <>{text}</>;
-};
+import TextWithHoverTooltips from '@/components/displays/characters/shared/TextWithHoverTooltips';
 
 // Type for processed skill levels with current level information
 type ProcessedSkillLevel = ParsedSkillLevel & {
@@ -611,7 +606,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           ) : (
             hasDescription && (
               <p className='text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap'>
-                <TextWithItemKeyTooltips text={allocation.description!} isDetailed={isDetailed} />
+                <TextWithHoverTooltips text={allocation.description!} />
               </p>
             )
           )}
