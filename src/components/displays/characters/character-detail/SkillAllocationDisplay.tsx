@@ -138,8 +138,14 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       const colors: SkillLevelColors = getSkillLevelColors(currentLevel, true, isDarkMode);
       const edgeColor = (colors?.borderColor as string) ?? '#9ca3af';
       const showArc = currentLevel === 1 || currentLevel === 2 || currentLevel === 3;
+      const delayedBgInset = 2; // shrink background for delayed skills to better match circle
       const baseStyle = {
         ...colors,
+        padding: isDelayed ? delayedBgInset : undefined,
+        // Only color the content box so the padding acts as visual inset around the background
+        backgroundClip: isDelayed
+          ? ('content-box' as React.CSSProperties['backgroundClip'])
+          : undefined,
       } as React.CSSProperties;
 
       const iconElement = (
@@ -147,8 +153,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           <Image
             src={imageUrl}
             alt={skill?.name || `技能${skillType}`}
-            width={40}
-            height={40}
+            width={34}
+            height={34}
             className='w-full h-full object-contain'
             style={{ padding: '6px' }}
           />
@@ -166,7 +172,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                 {(() => {
                   const strokeWidth = 2; // edge thickness
                   const size = 40;
-                  const inset = strokeWidth / 2; // keep stroke fully inside the box
+                  const inset = strokeWidth / 2 + delayedBgInset; // keep stroke fully inside the box
                   const left = inset;
                   const right = size - inset;
                   const top = inset;
@@ -412,6 +418,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
     group: (typeof levelGroups)[0],
     isParallel: boolean
   ) => {
+    const DELAYED_INSET = 2; // keep in sync with delayedBgInset used in icon rendering
+    const sourceIsDelayed = isParallel
+      ? Boolean(group.levels[levelIndex]?.isDelayed)
+      : Boolean(group.levels[0]?.isDelayed);
+    const startAdjustStyle = sourceIsDelayed ? { marginLeft: -DELAYED_INSET } : undefined;
     const isLastLevelInGroup = levelIndex === group.levels.length - 1;
     const nextGroup = groupIndex < levelGroups.length - 1 ? levelGroups[groupIndex + 1] : null;
 
@@ -436,7 +447,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       if (!isLastLevelInGroup) {
         // Within parallel group -> straight lines
         return (
-          <div className='absolute left-10 top-3 w-4 h-auto'>
+          <div className='absolute left-10 top-3 w-4 h-auto' style={startAdjustStyle}>
             <div className='w-full h-px bg-gray-400 dark:bg-gray-600'></div>
             <div className='w-full h-px bg-gray-400 dark:bg-gray-600 mt-7'></div>
           </div>
@@ -444,7 +455,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       } else if (isLastLevelInGroup && nextGroup?.isParallelGroup) {
         // Parallel to parallel (different groups) -> converge then diverge
         return (
-          <div className='absolute left-7 top-3 w-10 h-7'>
+          <div className='absolute left-7 top-3 w-10 h-7' style={startAdjustStyle}>
             <svg className='w-full h-full overflow-visible' viewBox='0 0 40 28'>
               {/* Converging lines from current group */}
               <path
@@ -482,7 +493,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       } else if (isLastLevelInGroup && nextGroup) {
         // Parallel to single -> converge
         return (
-          <div className='absolute left-10 top-3 w-4 h-7'>
+          <div className='absolute left-10 top-3 w-4 h-7' style={startAdjustStyle}>
             <svg className='w-full h-full' viewBox='0 0 16 28'>
               <path
                 d='M0 0 Q8 0 16 14'
@@ -507,7 +518,10 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         // Single to parallel -> diverge
         return (
           // The top-[7px] value centers the divergence point vertically with the single 40px icon.
-          <div className='absolute left-8 top-[7px] w-4 h-7 [transform:scaleX(-1)]'>
+          <div
+            className='absolute left-8 top-[7px] w-4 h-7 [transform:scaleX(-1)]'
+            style={startAdjustStyle}
+          >
             <svg className='w-full h-full' viewBox='0 0 16 28'>
               <path
                 d='M0 1 Q8 1 16 14'
@@ -528,7 +542,12 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         );
       } else {
         // Single to single -> straight line
-        return <div className='absolute left-10 top-5 w-4 h-px bg-gray-400 dark:bg-gray-600'></div>;
+        return (
+          <div
+            className='absolute left-10 top-5 w-4 h-px bg-gray-400 dark:bg-gray-600'
+            style={startAdjustStyle}
+          ></div>
+        );
       }
     }
     return null;
