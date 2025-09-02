@@ -243,11 +243,13 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                   };
 
                   const paths: React.ReactNode[] = [];
-                  for (let i = 0; i < Math.min(3, currentLevel); i++) {
+                  const drawnCount = Math.min(3, currentLevel);
+                  for (let i = 0; i < drawnCount; i++) {
                     const base = i * segLen;
                     const s1 = base + splitGap / 2;
                     const s2 = base + segLen - splitGap / 2;
                     const d = segmentToPath(s1, s2);
+                    const isLast = i === drawnCount - 1;
                     paths.push(
                       <path
                         key={i}
@@ -256,6 +258,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                         stroke={edgeColor}
                         strokeWidth={strokeWidth}
                         strokeLinecap='round'
+                        strokeDasharray={isLast ? '1 4' : undefined}
                         shapeRendering='geometricPrecision'
                       />
                     );
