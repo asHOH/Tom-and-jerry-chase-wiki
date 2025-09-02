@@ -153,58 +153,175 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
             style={{ padding: '6px' }}
           />
 
-          {showArc && (
-            <svg
-              className='absolute inset-0 pointer-events-none overflow-visible'
-              viewBox='0 0 40 40'
-              width={40}
-              height={40}
-            >
-              {/* Rotate -90deg so the arc starts at 12 o'clock */}
-              <g transform='rotate(-90 20 20)'>
+          {showArc &&
+            (isDelayed ? (
+              // Square-style 3-segment edge for 留加点 (delayed) skills
+              // Starts at top-middle and each level covers 1/3 of total perimeter
+              <svg
+                className='absolute inset-0 pointer-events-none overflow-visible'
+                viewBox='0 0 40 40'
+                width={40}
+                height={40}
+              >
                 {(() => {
-                  const strokeWidth = 2; // thickness of the edge
-                  const r = 20 - strokeWidth / 2; // keep stroke inside the 40x40 box
-                  const circumference = 2 * Math.PI * r;
-                  const HALF_SPLIT_DEG = 5; // half the split degree
+                  const strokeWidth = 2; // edge thickness
+                  const size = 40;
+                  const inset = strokeWidth / 2; // keep stroke fully inside the box
+                  const left = inset;
+                  const right = size - inset;
+                  const top = inset;
+                  const bottom = size - inset;
+                  const L = right - left; // usable edge length per side
+                  const P = 4 * L; // total perimeter
+                  const segLen = P / 3; // each level covers exactly 1/3
+                  const splitGap = 3.5; // visual split at segment boundaries (total), half on each side
 
-                  // Build cumulative segments per level
-                  const segments: Array<{ startDeg: number; endDeg: number }> = [];
-                  if (currentLevel >= 1) {
-                    segments.push({ startDeg: 0 + HALF_SPLIT_DEG, endDeg: 120 - HALF_SPLIT_DEG });
-                  }
-                  if (currentLevel >= 2) {
-                    segments.push({ startDeg: 120 + HALF_SPLIT_DEG, endDeg: 240 - HALF_SPLIT_DEG });
-                  }
-                  if (currentLevel >= 3) {
-                    segments.push({ startDeg: 240 + HALF_SPLIT_DEG, endDeg: 360 - HALF_SPLIT_DEG });
-                  }
+                  // Map distance s (from top-middle, clockwise) to a point on the square perimeter
+                  const getPoint = (s: number) => {
+                    // normalize to [0, P)
+                    let sn = s % P;
+                    if (sn < 0) sn += P;
+                    const halfTop = L / 2; // length from top-middle to top-right
+                    if (sn < halfTop) {
+                      // top edge: middle -> right
+                      return { x: left + L / 2 + sn, y: top };
+                    }
+                    sn -= halfTop;
+                    if (sn < L) {
+                      // right edge: top -> bottom
+                      return { x: right, y: top + sn };
+                    }
+                    sn -= L;
+                    if (sn < L) {
+                      // bottom edge: right -> left
+                      return { x: right - sn, y: bottom };
+                    }
+                    sn -= L;
+                    if (sn < L) {
+                      // left edge: bottom -> top
+                      return { x: left, y: bottom - sn };
+                    }
+                    sn -= L;
+                    // top edge: left -> middle
+                    return { x: left + sn, y: top };
+                  };
 
-                  return segments.map(({ startDeg, endDeg }, idx) => {
-                    const segDeg = Math.max(0, endDeg - startDeg);
-                    const dash = (segDeg / 360) * circumference;
-                    const gap = Math.max(0, circumference - dash);
-                    const offset = -(startDeg / 360) * circumference;
-                    return (
-                      <circle
-                        key={idx}
-                        cx='20'
-                        cy='20'
-                        r={r}
+                  // Convert [s1, s2] arc along perimeter into a path string that crosses corners cleanly
+                  const segmentToPath = (s1: number, s2: number) => {
+                    const boundaries = [
+                      L / 2, // top-middle -> top-right
+                      L / 2 + L, // right-bottom corner
+                      L / 2 + 2 * L, // bottom-left corner
+                      L / 2 + 3 * L, // left-top corner
+                      L / 2 + 4 * L, // back to top-middle (P)
+                    ];
+
+                    let d = '';
+                    let curS = s1;
+                    const start = getPoint(curS);
+                    d += `M ${start.x} ${start.y}`;
+
+                    while (curS < s2) {
+                      const base = Math.floor(curS / P) * P;
+                      const pos = curS - base; // pos in [0, P)
+                      // find next boundary strictly greater than pos
+                      let nextB = P; // default wraps to end
+                      for (let i = 0; i < boundaries.length; i++) {
+                        const b = boundaries[i];
+                        if (b !== undefined && b > pos) {
+                          nextB = b;
+                          break;
+                        }
+                      }
+                      let nextS = base + nextB; // absolute s at boundary
+                      if (nextS > s2) nextS = s2;
+                      const pt = getPoint(nextS);
+                      d += ` L ${pt.x} ${pt.y}`;
+                      curS = nextS;
+                    }
+                    return d;
+                  };
+
+                  const paths: React.ReactNode[] = [];
+                  for (let i = 0; i < Math.min(3, currentLevel); i++) {
+                    const base = i * segLen;
+                    const s1 = base + splitGap / 2;
+                    const s2 = base + segLen - splitGap / 2;
+                    const d = segmentToPath(s1, s2);
+                    paths.push(
+                      <path
+                        key={i}
+                        d={d}
                         fill='none'
                         stroke={edgeColor}
                         strokeWidth={strokeWidth}
                         strokeLinecap='round'
                         shapeRendering='geometricPrecision'
-                        strokeDasharray={`${dash} ${gap}`}
-                        strokeDashoffset={offset}
                       />
                     );
-                  });
+                  }
+                  return paths;
                 })()}
-              </g>
-            </svg>
-          )}
+              </svg>
+            ) : (
+              // Circular 3-segment edge for normal skills
+              <svg
+                className='absolute inset-0 pointer-events-none overflow-visible'
+                viewBox='0 0 40 40'
+                width={40}
+                height={40}
+              >
+                {/* Rotate -90deg so the arc starts at 12 o'clock */}
+                <g transform='rotate(-90 20 20)'>
+                  {(() => {
+                    const strokeWidth = 2; // thickness of the edge
+                    const r = 20 - strokeWidth / 2; // keep stroke inside the 40x40 box
+                    const circumference = 2 * Math.PI * r;
+                    const HALF_SPLIT_DEG = 5; // half the split degree
+
+                    // Build cumulative segments per level
+                    const segments: Array<{ startDeg: number; endDeg: number }> = [];
+                    if (currentLevel >= 1) {
+                      segments.push({ startDeg: 0 + HALF_SPLIT_DEG, endDeg: 120 - HALF_SPLIT_DEG });
+                    }
+                    if (currentLevel >= 2) {
+                      segments.push({
+                        startDeg: 120 + HALF_SPLIT_DEG,
+                        endDeg: 240 - HALF_SPLIT_DEG,
+                      });
+                    }
+                    if (currentLevel >= 3) {
+                      segments.push({
+                        startDeg: 240 + HALF_SPLIT_DEG,
+                        endDeg: 360 - HALF_SPLIT_DEG,
+                      });
+                    }
+
+                    return segments.map(({ startDeg, endDeg }, idx) => {
+                      const segDeg = Math.max(0, endDeg - startDeg);
+                      const dash = (segDeg / 360) * circumference;
+                      const gap = Math.max(0, circumference - dash);
+                      const offset = -(startDeg / 360) * circumference;
+                      return (
+                        <circle
+                          key={idx}
+                          cx='20'
+                          cy='20'
+                          r={r}
+                          fill='none'
+                          stroke={edgeColor}
+                          strokeWidth={strokeWidth}
+                          strokeLinecap='round'
+                          shapeRendering='geometricPrecision'
+                          strokeDasharray={`${dash} ${gap}`}
+                          strokeDashoffset={offset}
+                        />
+                      );
+                    });
+                  })()}
+                </g>
+              </svg>
+            ))}
 
           {hasNegativeEffect && (
             <div className='absolute -top-[5px] -right-[5px] w-4 h-4 pointer-events-none z-10'>
