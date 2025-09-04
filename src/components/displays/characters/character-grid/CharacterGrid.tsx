@@ -14,7 +14,7 @@ import { useEditMode } from '@/context/EditModeContext';
 import { getOriginalCharacterIds } from '@/lib/editUtils';
 import { characters as allCharacters } from '@/data';
 import CharacterCreate from './CharacterCreate';
-import { getPositioningTagColors } from '@/lib/design-tokens';
+import { getPositioningTagColors, getAvatarFilterColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
 import PageTitle from '@/components/ui/PageTitle';
@@ -39,6 +39,14 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
     toggleFilter: togglePositioningTagFilter,
     hasFilter: hasPositioningTagFilter,
   } = useFilterState<PositioningTagName>();
+
+  // Avatar filter (mouse faction only): 杰瑞 / 泰菲 / 其他
+  type AvatarOption = '杰瑞' | '泰菲' | '其他';
+  const {
+    selectedFilters: selectedAvatar,
+    toggleFilter: toggleAvatar,
+    hasFilter: hasAvatar,
+  } = useFilterState<AvatarOption>();
 
   const uniquePositioningTags = useMemo(() => {
     const tags = new Set<PositioningTagName>();
@@ -66,6 +74,20 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       charactersToFilter = charactersToFilter.filter(
         (char) => !originalCharacterIds.includes(char.id)
       );
+    }
+
+    // Apply avatar filter for mouse faction
+    if (faction.id === 'mouse' && selectedAvatar.size > 0) {
+      charactersToFilter = charactersToFilter.filter((c) => {
+        const name = c.id; // ids are Chinese display names in this project
+        const hasJerry = name.includes('杰瑞');
+        const hasTuffy = name.includes('泰菲');
+
+        // Determine classification
+        const cls: AvatarOption = hasJerry ? '杰瑞' : hasTuffy ? '泰菲' : '其他';
+        // If multiple selected, any match passes
+        return selectedAvatar.has(cls);
+      });
     }
 
     if (selectedPositioningTags.size === 0) {
@@ -100,7 +122,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       const bIsMinor = getIsMinor(b);
       return Number(aIsMinor) - Number(bIsMinor);
     });
-  }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds]);
+  }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds, selectedAvatar]);
 
   return (
     <div className='space-y-8'>
@@ -186,6 +208,45 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
           })}
         </div>
       </div>
+
+      {/* Avatar Filter (mouse only) */}
+      {faction.id === 'mouse' && (
+        <div className='filter-section flex justify-center items-center gap-4 mt-2'>
+          <FilterLabel displayMode='inline'>形象筛选:</FilterLabel>
+          <FilterLabel displayMode='block'>筛选:</FilterLabel>
+          <div className='flex gap-2'>
+            {(['杰瑞', '泰菲', '其他'] as AvatarOption[]).map((opt) => {
+              const isActive = hasAvatar(opt);
+              const colors = getAvatarFilterColors(opt, isDarkMode);
+              const baseStyle = {
+                padding: '8px 12px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 500,
+                transition: 'all 0.2s ease',
+                fontSize: '14px',
+                backgroundColor: isActive
+                  ? colors.backgroundColor
+                  : isDarkMode
+                    ? '#23272f'
+                    : '#f3f4f6',
+                color: isActive ? colors.color : isDarkMode ? '#6b7280' : '#9ca3af',
+              } as const;
+              return (
+                <button
+                  key={opt}
+                  type='button'
+                  onClick={() => toggleAvatar(opt)}
+                  style={baseStyle}
+                  className={clsx('filter-button', !isActive && 'hover:bg-gray-200')}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div
         className='auto-fit-grid grid-container grid gap-8 mt-8'

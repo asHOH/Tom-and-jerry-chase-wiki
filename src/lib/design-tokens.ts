@@ -902,6 +902,45 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
   };
 };
 
+/**
+ * Avatar filter color utility
+ * - 杰瑞: use the same brownish colors as the "砸墙" positioning tag
+ * - 泰菲: grayish blue
+ * - 其他: neutral gray
+ */
+export const getAvatarFilterColors = (
+  option: '杰瑞' | '泰菲' | '其他',
+  isDarkMode: boolean
+): { color: string; backgroundColor: string; borderColor?: string } => {
+  if (option === '杰瑞') {
+    const c = designTokens.colors.positioningTags.wallBreak;
+    return {
+      color: isDarkMode && c.dark ? c.dark.text : c.text,
+      backgroundColor: isDarkMode && c.dark ? c.dark.background : c.background,
+      ...(c.border && { borderColor: isDarkMode && c.dark ? c.dark.border : c.border }),
+    };
+  }
+
+  if (option === '泰菲') {
+    const light = { bg: '#D8DBF8', text: '#4453AA', border: '#93C5FD' };
+    const dark = { bg: '#4453AA', text: '#D7DAF9', border: '#2563EB' };
+    return {
+      color: isDarkMode ? dark.text : light.text,
+      backgroundColor: isDarkMode ? dark.bg : light.bg,
+      borderColor: isDarkMode ? dark.border : light.border,
+    };
+  }
+
+  // 其他
+  const otherLight = { bg: '#e5e7eb', text: '#4b5563', border: '#d1d5db' }; // gray-200 bg, gray-600 text
+  const otherDark = { bg: '#374151', text: '#e5e7eb', border: '#4b5563' }; // gray-700 bg, gray-200 text
+  return {
+    color: isDarkMode ? otherDark.text : otherLight.text,
+    backgroundColor: isDarkMode ? otherDark.bg : otherLight.bg,
+    borderColor: isDarkMode ? otherDark.border : otherLight.border,
+  };
+};
+
 // Skill type utility functions
 export const getSkillTypeColors = (
   skillType: 'passive' | 'active' | 'weapon1' | 'weapon2',
