@@ -12,6 +12,8 @@ export type FilterRowProps<T extends string | number> = {
   renderOption?: (opt: T, button: ReactNode) => ReactNode;
   getButtonClassName?: (opt: T, active: boolean) => string;
   getButtonStyle?: (opt: T, active: boolean) => React.CSSProperties | undefined;
+  // Option can be disabled (e.g., interlocks)
+  getButtonDisabled?: (opt: T, active: boolean) => boolean | undefined;
   // Container overrides
   className?: string;
   innerClassName?: string;
@@ -31,6 +33,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
     renderOption,
     getButtonClassName,
     getButtonStyle,
+    getButtonDisabled,
     className,
     innerClassName,
     ariaLabel,
@@ -40,7 +43,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
   return (
     <div
       className={clsx(
-        'filter-section flex flex-col md:flex-row md:items-center gap-2 md:gap-4',
+        'filter-section flex flex-col md:flex-row md:items-center gap-2 md:gap-4 py-0.5',
         className
       )}
     >
@@ -70,6 +73,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                   getButtonClassName?.(opt as T, active)
                 )}
                 style={finalStyle}
+                disabled={getButtonDisabled?.(opt as T, active)}
               >
                 {labelNode}
               </button>
