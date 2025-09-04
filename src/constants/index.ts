@@ -62,12 +62,11 @@ export const PROJECT_INFO = {
   title: '项目开源地址',
   url: 'https://github.com/asHOH/Tom-and-jerry-chase-wiki',
   maintainerId: 'asHOH',
-  // description: '本项目已在GitHub开源，欢迎参与建设、给出建议或点star⭐！',
   // Split description to make "给出建议" clickable
   descriptionParts: {
     before: '已在 GitHub 开源，欢迎',
     feedbackLink: '给出建议',
-    after: '或点star⭐！',
+    after: '或点Star⭐！',
   },
 };
 

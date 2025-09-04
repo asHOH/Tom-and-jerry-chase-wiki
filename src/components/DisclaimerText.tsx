@@ -15,7 +15,8 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             href={CREATORS[creatorId].url}
             target='_blank'
             rel='nofollow noopener noreferrer'
-            className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline whitespace-pre-wrap'
+            aria-label={`${CREATORS[creatorId]?.name ?? creatorId}（在新标签页打开）`}
+            className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline whitespace-pre-wrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
           >
             {CREATORS[creatorId]?.name ?? creatorId}
           </a>
@@ -49,8 +50,9 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
           <a
             href={PROJECT_INFO.url}
             target='_blank'
-            rel='noopener noreferrer'
-            className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline font-medium'
+            rel='nofollow noopener noreferrer'
+            aria-label={`${PROJECT_INFO.title}（在新标签页打开）`}
+            className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
           >
             {PROJECT_INFO.title}
           </a>
@@ -62,7 +64,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             <button
               type='button'
               onClick={onFeedbackClick}
-              className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer bg-transparent border-none p-0 font-inherit'
+              className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer bg-transparent border-none p-0 font-inherit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
             >
               {PROJECT_INFO.descriptionParts.feedbackLink}
             </button>
@@ -95,8 +97,9 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             <a
               href={license.url}
               target='_blank'
-              rel='noopener noreferrer'
-              className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline'
+              rel='nofollow noopener noreferrer'
+              aria-label={`${license.shortName}（在新标签页打开）`}
+              className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
             >
               {license.shortName}
             </a>{' '}
