@@ -83,6 +83,17 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
         <p>{DISCLAIMER_CONTENT.freePolicy}</p>
       </section>
 
+      {/* Acknowledgments */}
+      <section className='mb-4' aria-label='致谢'>
+        {Object.values(DISCLAIMER_CONTENT.acknowledgements).map((ack, index) => (
+          <p key={index} className={index > 0 ? 'mt-1' : undefined}>
+            {ack.prefix}
+            {renderCreatorLinks(ack.creators)}
+            {ack.suffix}
+          </p>
+        ))}
+      </section>
+
       {/* Copyright information based on DISCLAIMER_CONTENT.copyright */}
       <section className='mb-4 text-sm leading-6' aria-label='版权说明'>
         <p>
@@ -95,7 +106,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
       </section>
 
       {/* License information */}
-      <section className='mb-4 text-sm leading-6' aria-label='开源许可'>
+      <section className='text-sm leading-6' aria-label='开源许可'>
         <p>{LICENSE_INFO.description}</p>
         {LICENSE_INFO.licenses.map((license) => (
           <p key={license.shortName}>
@@ -110,17 +121,6 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
               {license.shortName}
             </a>{' '}
             许可证，{license.additionalDescription}。
-          </p>
-        ))}
-      </section>
-
-      {/* Acknowledgments */}
-      <section aria-label='致谢'>
-        {Object.values(DISCLAIMER_CONTENT.acknowledgements).map((ack, index) => (
-          <p key={index} className={index > 0 ? 'mt-1' : undefined}>
-            {ack.prefix}
-            {renderCreatorLinks(ack.creators)}
-            {ack.suffix}
           </p>
         ))}
       </section>
