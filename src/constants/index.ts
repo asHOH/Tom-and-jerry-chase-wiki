@@ -1,5 +1,8 @@
 import { contributors, RoleType } from '@/data/contributors';
 
+// Use Chinese collator to keep name ordering deterministic for acknowledgements
+const ZH_COLLATOR = new Intl.Collator('zh-Hans');
+
 // Create a map of contributors for easy lookup
 export const CREATORS = contributors.reduce(
   (acc, contributor) => {
@@ -25,7 +28,13 @@ const getContributorsByRole = (roleType: RoleType): string[] => {
     .sort((a, b) => {
       const aIsMinor = a.roles.some((role) => role.type === roleType && role.isMinor);
       const bIsMinor = b.roles.some((role) => role.type === roleType && role.isMinor);
-      return Number(aIsMinor) - Number(bIsMinor);
+      // non-minor first, then stable zh name order
+      const minorDelta = Number(aIsMinor) - Number(bIsMinor);
+      if (minorDelta !== 0) return minorDelta;
+      const nameDelta = ZH_COLLATOR.compare(a.name, b.name);
+      if (nameDelta !== 0) return nameDelta;
+      // final tiebreaker by id to keep stable ordering
+      return a.id.localeCompare(b.id);
     })
     .map((contributor) => contributor.id);
 };
