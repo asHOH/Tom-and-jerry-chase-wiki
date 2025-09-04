@@ -162,7 +162,6 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                   ...tagColors,
                   padding: '8px 12px',
                   borderRadius: '8px',
-                  border: 'none',
                   cursor: 'pointer',
                   fontWeight: '500',
                   transition: 'all 0.2s ease',
@@ -172,7 +171,6 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                 ? {
                     padding: '8px 12px',
                     borderRadius: '8px',
-                    border: 'none',
                     cursor: 'pointer',
                     fontWeight: '500',
                     transition: 'all 0.2s ease',
@@ -186,7 +184,6 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                 : {
                     padding: '8px 12px',
                     borderRadius: '8px',
-                    border: 'none',
                     cursor: 'pointer',
                     fontWeight: '500',
                     transition: 'all 0.2s ease',
