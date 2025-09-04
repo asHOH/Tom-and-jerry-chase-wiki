@@ -906,10 +906,11 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
  * Avatar filter color utility
  * - 杰瑞: use the same brownish colors as the "砸墙" positioning tag
  * - 泰菲: grayish blue
+ * - 汤姆: blue
  * - 其他: neutral gray
  */
 export const getAvatarFilterColors = (
-  option: '杰瑞' | '泰菲' | '其他',
+  option: '杰瑞' | '泰菲' | '汤姆' | '其他',
   isDarkMode: boolean
 ): { color: string; backgroundColor: string; borderColor?: string } => {
   if (option === '杰瑞') {
@@ -918,6 +919,16 @@ export const getAvatarFilterColors = (
       color: isDarkMode && c.dark ? c.dark.text : c.text,
       backgroundColor: isDarkMode && c.dark ? c.dark.background : c.background,
       ...(c.border && { borderColor: isDarkMode && c.dark ? c.dark.border : c.border }),
+    };
+  }
+
+  if (option === '汤姆') {
+    const light = { bg: '#E0F2FF', text: '#0369A1', border: '#CBD5E1' };
+    const dark = { bg: '#024D72', text: '#09AFFF', border: '#94A3B8' };
+    return {
+      color: isDarkMode ? dark.text : light.text,
+      backgroundColor: isDarkMode ? dark.bg : light.bg,
+      borderColor: isDarkMode ? dark.border : light.border,
     };
   }
 

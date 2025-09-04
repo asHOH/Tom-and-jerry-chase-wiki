@@ -40,8 +40,8 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
     hasFilter: hasPositioningTagFilter,
   } = useFilterState<PositioningTagName>();
 
-  // Avatar filter (mouse faction only): 杰瑞 / 泰菲 / 其他
-  type AvatarOption = '杰瑞' | '泰菲' | '其他';
+  // Avatar filter
+  type AvatarOption = '杰瑞' | '泰菲' | '汤姆' | '其他';
   const {
     selectedFilters: selectedAvatar,
     toggleFilter: toggleAvatar,
@@ -86,6 +86,16 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         // Determine classification
         const cls: AvatarOption = hasJerry ? '杰瑞' : hasTuffy ? '泰菲' : '其他';
         // If multiple selected, any match passes
+        return selectedAvatar.has(cls);
+      });
+    }
+
+    // Apply avatar filter for cat faction
+    if (faction.id === 'cat' && selectedAvatar.size > 0) {
+      charactersToFilter = charactersToFilter.filter((c) => {
+        const name = c.id;
+        const hasTom = name.includes('汤姆');
+        const cls: AvatarOption = hasTom ? '汤姆' : '其他';
         return selectedAvatar.has(cls);
       });
     }
@@ -216,6 +226,45 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
           <FilterLabel displayMode='block'>筛选:</FilterLabel>
           <div className='flex gap-2'>
             {(['杰瑞', '泰菲', '其他'] as AvatarOption[]).map((opt) => {
+              const isActive = hasAvatar(opt);
+              const colors = getAvatarFilterColors(opt, isDarkMode);
+              const baseStyle = {
+                padding: '8px 12px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 500,
+                transition: 'all 0.2s ease',
+                fontSize: '14px',
+                backgroundColor: isActive
+                  ? colors.backgroundColor
+                  : isDarkMode
+                    ? '#23272f'
+                    : '#f3f4f6',
+                color: isActive ? colors.color : isDarkMode ? '#6b7280' : '#9ca3af',
+              } as const;
+              return (
+                <button
+                  key={opt}
+                  type='button'
+                  onClick={() => toggleAvatar(opt)}
+                  style={baseStyle}
+                  className={clsx('filter-button', !isActive && 'hover:bg-gray-200')}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Avatar Filter (cat only) */}
+      {faction.id === 'cat' && (
+        <div className='filter-section flex justify-center items-center gap-4 mt-2'>
+          <FilterLabel displayMode='inline'>形象筛选:</FilterLabel>
+          <FilterLabel displayMode='block'>筛选:</FilterLabel>
+          <div className='flex gap-2'>
+            {(['汤姆', '其他'] as AvatarOption[]).map((opt) => {
               const isActive = hasAvatar(opt);
               const colors = getAvatarFilterColors(opt, isDarkMode);
               const baseStyle = {
