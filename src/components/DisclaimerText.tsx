@@ -31,20 +31,14 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
   return (
     <>
       {/* Project information */}
-      <span className='block mb-4'>
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            margin: '0.5rem 0',
-          }}
-        >
+      <section className='mb-4' aria-label='项目信息'>
+        <div className='inline-flex items-center gap-2 my-2 text-gray-700 dark:text-gray-300'>
           <svg
-            style={{ width: '1.25rem', height: '1.25rem', color: '#374151' }}
+            className='w-5 h-5 text-gray-700 dark:text-gray-300'
             fill='currentColor'
             viewBox='0 0 20 20'
             xmlns='http://www.w3.org/2000/svg'
+            aria-hidden='true'
           >
             <path
               fillRule='evenodd'
@@ -60,9 +54,8 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
           >
             {PROJECT_INFO.title}
           </a>
-        </span>
-        <br />
-        <span>
+        </div>
+        <p>
           本项目由{renderCreatorLinks([PROJECT_INFO.maintainerId])}维护，
           {PROJECT_INFO.descriptionParts.before}
           {onFeedbackClick ? (
@@ -77,32 +70,27 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             PROJECT_INFO.descriptionParts.feedbackLink
           )}
           {PROJECT_INFO.descriptionParts.after}
-        </span>
-      </span>
+        </p>
+      </section>
+
       {/* Website nature and commitments */}
-      <span className='block mb-4'>
-        {DISCLAIMER_CONTENT.intro}
-        <br />
-        {DISCLAIMER_CONTENT.privacyPolicy}
-        <br />
-        {DISCLAIMER_CONTENT.freePolicy}
-        <br />
-      </span>
+      <section className='mb-4' aria-label='网站性质与承诺'>
+        <p>{DISCLAIMER_CONTENT.intro}</p>
+        <p>{DISCLAIMER_CONTENT.privacyPolicy}</p>
+        <p>{DISCLAIMER_CONTENT.freePolicy}</p>
+      </section>
 
       {/* Copyright information */}
-      <span className='block mb-4'>
-        {DISCLAIMER_CONTENT.copyright}
-        <br />
-        {DISCLAIMER_CONTENT.takedownPolicy}
-      </span>
+      <section className='mb-4' aria-label='版权说明'>
+        <p>{DISCLAIMER_CONTENT.copyright}</p>
+        <p>{DISCLAIMER_CONTENT.takedownPolicy}</p>
+      </section>
 
       {/* License information */}
-      <span className='block mb-4'>
-        {LICENSE_INFO.description}
-        <br />
-        {LICENSE_INFO.licenses.map((license, index) => (
-          <span key={license.shortName}>
-            {index > 0 && <br />}
+      <section className='mb-4' aria-label='开源许可'>
+        <p>{LICENSE_INFO.description}</p>
+        {LICENSE_INFO.licenses.map((license) => (
+          <p key={license.shortName}>
             {license.scope}使用{' '}
             <a
               href={license.url}
@@ -113,21 +101,20 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
               {license.shortName}
             </a>{' '}
             许可证，{license.additionalDescription}。
-          </span>
+          </p>
         ))}
-      </span>
+      </section>
 
       {/* Acknowledgments */}
-      <span className='block'>
+      <section aria-label='致谢'>
         {Object.values(DISCLAIMER_CONTENT.acknowledgements).map((ack, index) => (
-          <span key={index}>
-            {index > 0 && <br />}
+          <p key={index} className={index > 0 ? 'mt-1' : undefined}>
             {ack.prefix}
             {renderCreatorLinks(ack.creators)}
             {ack.suffix}
-          </span>
+          </p>
         ))}
-      </span>
+      </section>
     </>
   );
 };
