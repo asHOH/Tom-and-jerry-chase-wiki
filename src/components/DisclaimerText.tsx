@@ -79,8 +79,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
       {/* Website nature and commitments */}
       <section className='mb-4' aria-label='网站性质与承诺'>
         <p>{DISCLAIMER_CONTENT.intro}</p>
-        <p>{DISCLAIMER_CONTENT.privacyPolicy}</p>
-        <p>{DISCLAIMER_CONTENT.freePolicy}</p>
+        <p>{DISCLAIMER_CONTENT.policy}</p>
       </section>
 
       {/* Acknowledgments */}
