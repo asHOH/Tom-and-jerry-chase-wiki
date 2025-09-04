@@ -948,6 +948,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
+
   /* ----------------------------------- 牛仔汤姆 ----------------------------------- */
   牛仔汤姆: {
     description:
@@ -1108,9 +1109,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '鞭子',
         type: 'weapon1',
         description:
-          '对前方老鼠造成极低伤害和减速，能破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加移速和减少爪刀CD。老鼠被累计命中两次后，受到伤害和眩晕效果，眩晕期间可被直接抓取。使用技能时还能使场上的{斗牛}加速。',
+          '对前方老鼠造成极低伤害和减速，能破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加移速和减少爪刀CD。老鼠被累计命中两次后，受到伤害和眩晕效果，眩晕期间可被直接抓取。使用技能时还能使场上的{斗牛}加速。。',
         detailedDescription:
-          '前摇0.25s，对前方老鼠造成1点伤害和持续7.9秒的9.5%减速、给自己持续8秒的1%加速和减少2%爪刀CD，能破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加3%移速和减少6%爪刀CD。老鼠被累计命中两次后，受到50点伤害和2.4秒眩晕效果，并清除鞭子带来的减益。鞭子眩晕期间可被直接抓取。。使用技能时还能使场上的{斗牛}加速。',
+          '前摇0.25s，对前方老鼠造成1点伤害和持续7.9秒的9.5%减速、给自己持续8秒的1%加速和减少2%爪刀CD，能破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加3%移速和减少6%爪刀CD。老鼠被累计命中两次后，受到50点伤害和2.4秒眩晕效果，并清除鞭子带来的减益。鞭子眩晕期间可被直接抓取。使用技能时还能使场上的{斗牛}加速。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -1172,6 +1173,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         ],
         cancelableAftercast: ['跳跃键', '移动键', '道具键'],
         cooldownTiming: '前摇前',
+        aliases: ['加特林'],
         cueRange: '本房间可见',
         canHitInPipe: false,
       },
@@ -1216,6 +1218,17 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '牛仔汤姆的3级被动可以压制表演者•杰瑞。',
         isMinor: true,
       },
+      {
+        id: '米雪儿',
+        description: '牛仔汤姆的攻击很容易波及到米雪儿的变身。',
+        isMinor: true,
+      },
+      {
+        id: '仙女鼠',
+        description:
+          '牛仔汤姆的弹弓和斗牛在混战中很容易打到仙女鼠，从而掠夺仙女鼠的星星；此外牛汤被变为大星星时依旧能触发三级被动。',
+        isMinor: true,
+      },
     ],
     counteredBy: [
       {
@@ -1232,29 +1245,39 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '米可',
         description:
-          '米可采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）',
+          '米可采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）。',
         isMinor: false,
       },
       {
         id: '天使杰瑞',
         description:
-          '天使杰瑞被动带来的禁用技能与爪刀能使牛仔汤姆的进攻大幅削弱，并且牛仔汤姆很容易对天使杰瑞造成伤害',
+          '天使杰瑞被动带来的禁用技能与爪刀能使牛仔汤姆的进攻大幅削弱，并且牛仔汤姆很容易对天使杰瑞造成伤害。',
         isMinor: false,
       },
       {
+        id: '尼宝',
+        description: '尼宝的主动技能免疫控制。',
+        isMinor: true,
+      },
+      {
         id: '莱恩',
-        description: '莱恩武器画的阻挡物能阻挡牛仔汤姆的斗牛',
+        description: '莱恩武器画的阻挡物能阻挡牛仔汤姆的斗牛。',
         isMinor: false,
+      },
+      {
+        id: '雪梨',
+        description: '雪梨能快速解除老鼠的受伤状态和恢复血量。',
+        isMinor: true,
       },
     ],
     specialSkills: [
       {
         name: '绝地反击',
-        description: '技能与自身无霸体效果（推荐使用）',
+        description: '技能与自身无霸体效果（推荐使用）。',
       },
       {
         name: '蓄力重击',
-        description: '斗牛撞击及大仙人掌球可造成眩晕效果，与蓄力重击有一定配合',
+        description: '斗牛撞击及大仙人掌球可造成眩晕效果，与蓄力重击有一定配合。',
       },
     ],
     aliases: ['牛汤'],
@@ -1270,11 +1293,21 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '当被斗牛在离牛仔汤姆较远距离击倒后能快速起身。',
         isMinor: true,
       },
+      {
+        id: '回家',
+        description: '在墙缝出现的时候让老鼠获得大量增益，让牛仔汤姆的墙缝期较为难打',
+        isMinor: false,
+      },
     ],
     countersKnowledgeCards: [
       {
         id: '铁血',
         description: '牛仔汤姆的技能控制很足，同时也能直接抓起老鼠。',
+        isMinor: false,
+      },
+      {
+        id: '护佑',
+        description: '牛仔汤姆的攻击很容易波及并打破护佑',
         isMinor: false,
       },
     ],
@@ -1286,6 +1319,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
+
   /* ----------------------------------- 图多盖洛 ----------------------------------- */
   图多盖洛: {
     description: '拥有惊人美貌的图多盖洛是上东区知名度最高的千金小姐，她的追求者从纽约排到了巴黎。',
@@ -2108,6 +2142,18 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             detailedDescription: '当前Hp低于Hp上限时，{主动技能}和{武器技能}CD减少40%。',
           },
         ],
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '冰冻保鲜',
+        description: '冰冻保鲜能暂时躲过喵喵叫的攻击。',
+        isMinor: true,
+      },
+      {
+        id: '干扰投掷',
+        description: '干扰投掷能中断喵喵叫，此外图茨缺乏霸体能力。',
+        isMinor: false,
       },
     ],
   },
