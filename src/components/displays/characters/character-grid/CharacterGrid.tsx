@@ -8,6 +8,7 @@ import { FactionId, PositioningTagName } from '@/data';
 import { useFilterState } from '@/lib/filterUtils';
 import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
 import Tooltip from '@/components/ui/Tooltip';
+import FilterRow from '@/components/ui/FilterRow';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -16,10 +17,8 @@ import { characters as allCharacters } from '@/data';
 import CharacterCreate from './CharacterCreate';
 import { getPositioningTagColors, getAvatarFilterColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
-import clsx from 'clsx';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
-import FilterLabel from '@/components/ui/FilterLabel';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const { isDetailedView: isDetailed } = useAppContext();
@@ -142,129 +141,55 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
 
       {/* Filters wrapper */}
       <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
-        {/* Positioning Filter */}
-        <div className='filter-section flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mt-4'>
-          <div className='label-col w-full md:w-32 text-left'>
-            <FilterLabel displayMode='inline'>定位筛选:</FilterLabel>
-            <FilterLabel displayMode='block'>定位:</FilterLabel>
-          </div>
-          <div className='flex-1 flex justify-center'>
-            <div className='flex flex-wrap gap-2'>
-              {uniquePositioningTags.map((tag) => {
-                const isActive = hasPositioningTagFilter(tag as PositioningTagName);
-                const tagColors = getPositioningTagColors(
-                  tag as PositioningTagName,
-                  false,
-                  false,
-                  faction.id as FactionId,
-                  isDarkMode
-                );
+        <FilterRow
+          label='定位筛选:'
+          options={uniquePositioningTags as readonly PositioningTagName[]}
+          isActive={(tag) => hasPositioningTagFilter(tag as PositioningTagName)}
+          onToggle={(tag) => togglePositioningTagFilter(tag as PositioningTagName)}
+          isDarkMode={isDarkMode}
+          renderOption={(tag, button) => (
+            <Tooltip
+              key={String(tag)}
+              content={getPositioningTagTooltipContent(
+                tag as PositioningTagName,
+                faction.id as FactionId,
+                isDetailed
+              )}
+              delay={800}
+              className='border-none cursor-pointer'
+            >
+              {button}
+            </Tooltip>
+          )}
+          getButtonStyle={(tag) => {
+            const isActive = hasPositioningTagFilter(tag as PositioningTagName);
+            const tagColors = getPositioningTagColors(
+              tag as PositioningTagName,
+              false,
+              false,
+              faction.id as FactionId,
+              isDarkMode
+            );
+            return isActive ? { ...tagColors } : undefined;
+          }}
+          className='mt-4'
+        />
 
-                // Tailwind classes for button styling and dark mode support
-                const buttonStyle = isActive
-                  ? {
-                      ...tagColors,
-                      padding: '8px 12px',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease',
-                      fontSize: '14px',
-                    }
-                  : isDarkMode
-                    ? {
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontWeight: '500',
-                        transition: 'all 0.2s ease',
-                        fontSize: '14px',
-                        backgroundColor: '#23272f',
-                        color: '#6b7280',
-                        ':hover': {
-                          backgroundColor: '#2d323b',
-                        },
-                      }
-                    : {
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontWeight: '500',
-                        transition: 'all 0.2s ease',
-                        fontSize: '14px',
-                        backgroundColor: '#f3f4f6',
-                        color: '#9ca3af',
-                        ':hover': {
-                          backgroundColor: '#e5e7eb',
-                        },
-                      };
-
-                return (
-                  <Tooltip
-                    key={tag}
-                    content={getPositioningTagTooltipContent(
-                      tag,
-                      faction.id as FactionId,
-                      isDetailed
-                    )}
-                    delay={800}
-                    className='border-none cursor-pointer'
-                  >
-                    <button
-                      type='button'
-                      onClick={() => togglePositioningTagFilter(tag as PositioningTagName)}
-                      style={buttonStyle}
-                      className={clsx('filter-button', !isActive && 'hover:bg-gray-200')}
-                    >
-                      {tag}
-                    </button>
-                  </Tooltip>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Avatar Filter */}
-        <div className='filter-section flex flex-col md:flex-row md:items-center gap-2 md:gap-4'>
-          <div className='label-col w-full md:w-32 text-left'>
-            <FilterLabel displayMode='inline'>形象筛选:</FilterLabel>
-            <FilterLabel displayMode='block'>形象:</FilterLabel>
-          </div>
-          <div className='flex-1 flex justify-center'>
-            <div className='flex flex-wrap gap-2'>
-              {avatarOptions.map((opt) => {
-                const isActive = hasAvatar(opt);
-                const colors = getAvatarFilterColors(opt, isDarkMode);
-                const baseStyle = {
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                  transition: 'all 0.2s ease',
-                  fontSize: '14px',
-                  backgroundColor: isActive
-                    ? colors.backgroundColor
-                    : isDarkMode
-                      ? '#23272f'
-                      : '#f3f4f6',
-                  color: isActive ? colors.color : isDarkMode ? '#6b7280' : '#9ca3af',
-                } as const;
-                return (
-                  <button
-                    key={opt}
-                    type='button'
-                    onClick={() => toggleAvatar(opt)}
-                    style={baseStyle}
-                    className={clsx('filter-button', !isActive && 'hover:bg-gray-200')}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        <FilterRow
+          label='形象筛选:'
+          options={avatarOptions}
+          isActive={(opt) => hasAvatar(opt)}
+          onToggle={(opt) => toggleAvatar(opt)}
+          isDarkMode={isDarkMode}
+          getButtonStyle={(opt) => {
+            const isActive = hasAvatar(opt);
+            const colors = getAvatarFilterColors(opt, isDarkMode);
+            return isActive
+              ? { backgroundColor: colors.backgroundColor, color: colors.color }
+              : undefined;
+          }}
+          className='mt-0'
+        />
       </div>
 
       <div
