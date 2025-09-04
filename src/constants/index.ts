@@ -59,13 +59,13 @@ const generateAcknowledgements = () => {
 
 // Project information
 export const PROJECT_INFO = {
-  name: '项目开源地址',
+  title: '项目开源地址',
   url: 'https://github.com/asHOH/Tom-and-jerry-chase-wiki',
-  description: '本项目已在GitHub开源，欢迎参与建设、给出建议或点star⭐！',
   maintainerId: 'asHOH',
+  // description: '本项目已在GitHub开源，欢迎参与建设、给出建议或点star⭐！',
   // Split description to make "给出建议" clickable
   descriptionParts: {
-    before: '本项目已在GitHub开源，欢迎参与建设、',
+    before: '已在 GitHub 开源，欢迎',
     feedbackLink: '给出建议',
     after: '或点star⭐！',
   },
@@ -81,14 +81,14 @@ export const LICENSE_INFO = {
       shortName: 'CC BY 4.0',
       url: 'https://creativecommons.org/licenses/by/4.0/',
       scope: '内容与文档',
-      additionalDescription: '使用时须署名原作者 asHOH 并链接到本项目对应的 GitHub 仓库',
+      additionalDescription: '使用时须署名原作者小曙光并链接到本项目的 GitHub 仓库',
     },
     {
       name: 'GNU General Public License v3.0',
       shortName: 'GPL v3',
       url: 'https://www.gnu.org/licenses/gpl-3.0.html',
       scope: '源代码',
-      additionalDescription: '部署本网站者须将完整的项目源代码向所有用户公开',
+      additionalDescription: '部署本网站者须公开完整的项目源代码',
     },
   ],
 };

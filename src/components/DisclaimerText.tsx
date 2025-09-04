@@ -58,7 +58,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             rel='noopener noreferrer'
             className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline font-medium'
           >
-            {PROJECT_INFO.name}
+            {PROJECT_INFO.title}
           </a>
         </span>
         <br />
