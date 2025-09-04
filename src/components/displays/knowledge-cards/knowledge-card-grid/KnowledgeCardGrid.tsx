@@ -15,7 +15,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { cards } from '@/data';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
-import FilterLabel from '@/components/ui/FilterLabel';
+import FilterRow from '@/components/ui/FilterRow';
 
 export default function KnowledgeCardGrid() {
   // Use centralized filter state management for ranks
@@ -47,85 +47,54 @@ export default function KnowledgeCardGrid() {
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>知识卡</PageTitle>
         <PageDescription>提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力</PageDescription>
-        {/* Faction Filter Controls */}
-        <div className='filter-section flex justify-center items-center gap-4 mt-8'>
-          <FilterLabel displayMode='inline'>阵营筛选:</FilterLabel>
-          <FilterLabel displayMode='block'>筛选:</FilterLabel>
-          <div className='flex gap-2'>
-            {(['cat', 'mouse'] as const).map((factionName) => {
-              const factionColor = getFactionButtonColors(factionName, isDarkMode);
-              const isActive = factionName == selectedFaction;
+        {/* Filters wrapper */}
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+          <FilterRow<FactionId>
+            label='阵营筛选:'
+            options={['cat', 'mouse'] as const}
+            isActive={(opt) => selectedFaction === opt}
+            onToggle={(opt) => setSelectedFaction(selectedFaction === opt ? null : opt)}
+            getOptionLabel={(opt) => (opt === 'cat' ? '猫阵营' : '鼠阵营')}
+            getButtonStyle={(opt, active) =>
+              active ? getFactionButtonColors(opt, isDarkMode) : undefined
+            }
+            isDarkMode={isDarkMode}
+          />
 
-              return (
-                <button
-                  type='button'
-                  key={factionName}
-                  onClick={() => {
-                    if (isActive) {
-                      setSelectedFaction(null); // Clear selection if already active
-                    } else {
-                      setSelectedFaction(factionName);
-                    }
-                  }}
-                  className={clsx(
-                    'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-                    !isActive &&
-                      'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                  )}
-                  style={
-                    isActive
-                      ? { backgroundColor: factionColor.backgroundColor, color: factionColor.color }
-                      : {}
-                  }
-                >
-                  {factionName == 'cat' ? '猫阵营' : '鼠阵营'}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        {/* Rank Filter Controls */}
-        <div className='filter-section flex justify-center items-center gap-4 mt-8'>
-          <FilterLabel displayMode='inline'>等级筛选:</FilterLabel>
-          <FilterLabel displayMode='block'>筛选:</FilterLabel>
-          <div className='flex gap-2'>
-            {RANK_OPTIONS.map((rank) => {
-              const rankColors = getCardRankColors(rank, false, isDarkMode);
-              const isActive = hasRankFilter(rank);
+          <FilterRow<string>
+            label='等级筛选:'
+            options={RANK_OPTIONS}
+            isActive={(opt) => hasRankFilter(opt)}
+            onToggle={(opt) => toggleRankFilter(opt)}
+            getOptionLabel={(opt) => `${opt}级`}
+            getButtonStyle={(opt, active) =>
+              active ? getCardRankColors(opt, false, isDarkMode) : undefined
+            }
+            isDarkMode={isDarkMode}
+          />
 
-              return (
-                <button
-                  type='button'
-                  key={rank}
-                  onClick={() => toggleRankFilter(rank)}
-                  className={clsx(
-                    'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-                    !isActive &&
-                      'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                  )}
-                  style={
-                    isActive
-                      ? { backgroundColor: rankColors.backgroundColor, color: rankColors.color }
-                      : {}
-                  }
-                >
-                  {rank}级
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        {/* Cost Filter Controls */}
-        <div className='flex flex-col sm:flex-row sm:justify-center items-center gap-4'>
-          <FilterLabel displayMode='inline'>费用筛选:</FilterLabel>
-          <div className='w-full max-w-md'>
-            <CostRangeSlider
-              min={2}
-              max={7}
-              value={costRange}
-              onChange={setCostRange}
-              className='px-4'
-            />
+          {/* Cost Filter Controls styled like FilterRow */}
+          <div className='filter-section flex flex-col md:flex-row md:items-center gap-2 md:gap-4'>
+            <div className='label-col w-full md:w-32 text-left'>
+              <div className='font-medium'>费用筛选:</div>
+            </div>
+            <div className='w-full min-w-0 flex justify-center'>
+              <div
+                className={clsx(
+                  'flex w-full max-w-md items-center px-2 rounded-lg',
+                  isDarkMode ? 'bg-slate-800 text-gray-300' : 'bg-gray-100 text-gray-700'
+                )}
+                aria-label='费用筛选'
+              >
+                <CostRangeSlider
+                  min={2}
+                  max={7}
+                  value={costRange}
+                  onChange={setCostRange}
+                  className='w-full'
+                />
+              </div>
+            </div>
           </div>
         </div>
       </header>

@@ -7,6 +7,8 @@ export type FilterRowProps<T extends string | number> = {
   isActive: (opt: T) => boolean;
   onToggle: (opt: T) => void;
   // Optional wrappers and styling
+  // Provide a custom label for each option; defaults to String(opt)
+  getOptionLabel?: (opt: T, active: boolean) => ReactNode;
   renderOption?: (opt: T, button: ReactNode) => ReactNode;
   getButtonClassName?: (opt: T, active: boolean) => string;
   getButtonStyle?: (opt: T, active: boolean) => React.CSSProperties | undefined;
@@ -25,6 +27,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
     options,
     isActive,
     onToggle,
+    getOptionLabel,
     renderOption,
     getButtonClassName,
     getButtonStyle,
@@ -56,6 +59,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
               ? { backgroundColor: '#23272f', color: '#6b7280' }
               : { backgroundColor: '#f3f4f6', color: '#9ca3af' };
             const finalStyle = active ? provided : { ...inactiveDefaults, ...(provided || {}) };
+            const labelNode = getOptionLabel ? getOptionLabel(opt as T, active) : String(opt);
             const button = (
               <button
                 key={String(opt)}
@@ -67,7 +71,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                 )}
                 style={finalStyle}
               >
-                {String(opt)}
+                {labelNode}
               </button>
             );
             return renderOption ? renderOption(opt as T, button) : button;
