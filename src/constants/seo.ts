@@ -66,5 +66,14 @@ export function getSiteJsonLd() {
     description: `${SITE_NAME} - ${SITE_TAGLINE}`,
     url: SITE_URL,
     inLanguage: SITE_LANG,
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    license: [
+      'https://creativecommons.org/licenses/by/4.0/',
+      'https://www.gnu.org/licenses/gpl-3.0.html',
+    ],
   } as const;
 }
