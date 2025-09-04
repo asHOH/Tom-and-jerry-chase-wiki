@@ -912,44 +912,35 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
 export const getAvatarFilterColors = (
   option: '杰瑞' | '泰菲' | '汤姆' | '其他',
   isDarkMode: boolean
-): { color: string; backgroundColor: string; borderColor?: string } => {
+): { color: string; backgroundColor: string } => {
+  // 杰瑞: 复用“砸墙”定位标签的配色
   if (option === '杰瑞') {
     const c = designTokens.colors.positioningTags.wallBreak;
-    return {
-      color: isDarkMode && c.dark ? c.dark.text : c.text,
-      backgroundColor: isDarkMode && c.dark ? c.dark.background : c.background,
-      ...(c.border && { borderColor: isDarkMode && c.dark ? c.dark.border : c.border }),
-    };
+    const light = { text: c.text, bg: c.background };
+    const dark = c.dark ? { text: c.dark.text, bg: c.dark.background } : light;
+    const theme = isDarkMode ? dark : light;
+    return { color: theme.text, backgroundColor: theme.bg };
   }
 
-  if (option === '汤姆') {
-    const light = { bg: '#E0F2FF', text: '#0369A1', border: '#CBD5E1' };
-    const dark = { bg: '#024D72', text: '#09AFFF', border: '#94A3B8' };
-    return {
-      color: isDarkMode ? dark.text : light.text,
-      backgroundColor: isDarkMode ? dark.bg : light.bg,
-      borderColor: isDarkMode ? dark.border : light.border,
-    };
-  }
+  // 其他选项采用固定配色
+  const palette = {
+    汤姆: {
+      light: { bg: '#E0F2FF', text: '#0369A1' },
+      dark: { bg: '#024D72', text: '#09AFFF' },
+    },
+    泰菲: {
+      light: { bg: '#D8DBF8', text: '#4453AA' },
+      dark: { bg: '#4453AA', text: '#D7DAF9' },
+    },
+    其他: {
+      light: { bg: '#e5e7eb', text: '#4b5563' },
+      dark: { bg: '#374151', text: '#e5e7eb' },
+    },
+  } as const;
 
-  if (option === '泰菲') {
-    const light = { bg: '#D8DBF8', text: '#4453AA', border: '#93C5FD' };
-    const dark = { bg: '#4453AA', text: '#D7DAF9', border: '#2563EB' };
-    return {
-      color: isDarkMode ? dark.text : light.text,
-      backgroundColor: isDarkMode ? dark.bg : light.bg,
-      borderColor: isDarkMode ? dark.border : light.border,
-    };
-  }
-
-  // 其他
-  const otherLight = { bg: '#e5e7eb', text: '#4b5563', border: '#d1d5db' }; // gray-200 bg, gray-600 text
-  const otherDark = { bg: '#374151', text: '#e5e7eb', border: '#4b5563' }; // gray-700 bg, gray-200 text
-  return {
-    color: isDarkMode ? otherDark.text : otherLight.text,
-    backgroundColor: isDarkMode ? otherDark.bg : otherLight.bg,
-    borderColor: isDarkMode ? otherDark.border : otherLight.border,
-  };
+  const scheme = palette[option];
+  const theme = isDarkMode ? scheme.dark : scheme.light;
+  return { color: theme.text, backgroundColor: theme.bg };
 };
 
 // Skill type utility functions
