@@ -48,6 +48,11 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
     hasFilter: hasAvatar,
   } = useFilterState<AvatarOption>();
 
+  // Avatar options derived by faction to deduplicate UI rendering
+  const avatarOptions = useMemo((): AvatarOption[] => {
+    return faction.id === 'mouse' ? ['杰瑞', '泰菲', '其他'] : ['汤姆', '其他'];
+  }, [faction.id]);
+
   const uniquePositioningTags = useMemo(() => {
     const tags = new Set<PositioningTagName>();
     Object.values(allCharacters).forEach((character) => {
@@ -76,26 +81,20 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       );
     }
 
-    // Apply avatar filter for mouse faction
-    if (faction.id === 'mouse' && selectedAvatar.size > 0) {
+    // Apply avatar filter
+    if (selectedAvatar.size > 0) {
       charactersToFilter = charactersToFilter.filter((c) => {
         const name = c.id; // ids are Chinese display names in this project
-        const hasJerry = name.includes('杰瑞');
-        const hasTuffy = name.includes('泰菲');
-
-        // Determine classification
-        const cls: AvatarOption = hasJerry ? '杰瑞' : hasTuffy ? '泰菲' : '其他';
+        let cls: AvatarOption = '其他';
+        if (faction.id === 'mouse') {
+          const hasJerry = name.includes('杰瑞');
+          const hasTuffy = name.includes('泰菲');
+          cls = hasJerry ? '杰瑞' : hasTuffy ? '泰菲' : '其他';
+        } else if (faction.id === 'cat') {
+          const hasTom = name.includes('汤姆');
+          cls = hasTom ? '汤姆' : '其他';
+        }
         // If multiple selected, any match passes
-        return selectedAvatar.has(cls);
-      });
-    }
-
-    // Apply avatar filter for cat faction
-    if (faction.id === 'cat' && selectedAvatar.size > 0) {
-      charactersToFilter = charactersToFilter.filter((c) => {
-        const name = c.id;
-        const hasTom = name.includes('汤姆');
-        const cls: AvatarOption = hasTom ? '汤姆' : '其他';
         return selectedAvatar.has(cls);
       });
     }
@@ -216,83 +215,42 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         </div>
       </div>
 
-      {/* Avatar Filter (mouse only) */}
-      {faction.id === 'mouse' && (
-        <div className='filter-section flex justify-center items-center gap-4 mt-2'>
-          <FilterLabel displayMode='inline'>形象筛选:</FilterLabel>
-          <FilterLabel displayMode='block'>筛选:</FilterLabel>
-          <div className='flex gap-2'>
-            {(['杰瑞', '泰菲', '其他'] as AvatarOption[]).map((opt) => {
-              const isActive = hasAvatar(opt);
-              const colors = getAvatarFilterColors(opt, isDarkMode);
-              const baseStyle = {
-                padding: '8px 12px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 500,
-                transition: 'all 0.2s ease',
-                fontSize: '14px',
-                backgroundColor: isActive
-                  ? colors.backgroundColor
-                  : isDarkMode
-                    ? '#23272f'
-                    : '#f3f4f6',
-                color: isActive ? colors.color : isDarkMode ? '#6b7280' : '#9ca3af',
-              } as const;
-              return (
-                <button
-                  key={opt}
-                  type='button'
-                  onClick={() => toggleAvatar(opt)}
-                  style={baseStyle}
-                  className={clsx('filter-button', !isActive && 'hover:bg-gray-200')}
-                >
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
+      {/* Avatar Filter */}
+      <div className='filter-section flex justify-center items-center gap-4 mt-2'>
+        <FilterLabel displayMode='inline'>形象筛选:</FilterLabel>
+        <FilterLabel displayMode='block'>筛选:</FilterLabel>
+        <div className='flex gap-2'>
+          {avatarOptions.map((opt) => {
+            const isActive = hasAvatar(opt);
+            const colors = getAvatarFilterColors(opt, isDarkMode);
+            const baseStyle = {
+              padding: '8px 12px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: 500,
+              transition: 'all 0.2s ease',
+              fontSize: '14px',
+              backgroundColor: isActive
+                ? colors.backgroundColor
+                : isDarkMode
+                  ? '#23272f'
+                  : '#f3f4f6',
+              color: isActive ? colors.color : isDarkMode ? '#6b7280' : '#9ca3af',
+            } as const;
+            return (
+              <button
+                key={opt}
+                type='button'
+                onClick={() => toggleAvatar(opt)}
+                style={baseStyle}
+                className={clsx('filter-button', !isActive && 'hover:bg-gray-200')}
+              >
+                {opt}
+              </button>
+            );
+          })}
         </div>
-      )}
-
-      {/* Avatar Filter (cat only) */}
-      {faction.id === 'cat' && (
-        <div className='filter-section flex justify-center items-center gap-4 mt-2'>
-          <FilterLabel displayMode='inline'>形象筛选:</FilterLabel>
-          <FilterLabel displayMode='block'>筛选:</FilterLabel>
-          <div className='flex gap-2'>
-            {(['汤姆', '其他'] as AvatarOption[]).map((opt) => {
-              const isActive = hasAvatar(opt);
-              const colors = getAvatarFilterColors(opt, isDarkMode);
-              const baseStyle = {
-                padding: '8px 12px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 500,
-                transition: 'all 0.2s ease',
-                fontSize: '14px',
-                backgroundColor: isActive
-                  ? colors.backgroundColor
-                  : isDarkMode
-                    ? '#23272f'
-                    : '#f3f4f6',
-                color: isActive ? colors.color : isDarkMode ? '#6b7280' : '#9ca3af',
-              } as const;
-              return (
-                <button
-                  key={opt}
-                  type='button'
-                  onClick={() => toggleAvatar(opt)}
-                  style={baseStyle}
-                  className={clsx('filter-button', !isActive && 'hover:bg-gray-200')}
-                >
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      </div>
 
       <div
         className='auto-fit-grid grid-container grid gap-8 mt-8'
