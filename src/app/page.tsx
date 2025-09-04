@@ -123,9 +123,9 @@ function HomeContent() {
 
         <div className='mt-8 text-center px-2 sm:px-4' onDoubleClick={handleEditModeToggle}>
           <h2 className='text-3xl font-bold mb-6 py-2 dark:text-white'>网站说明</h2>
-          <p className='max-w-2xl mx-auto text-gray-600 dark:text-gray-300 px-2 sm:px-4 py-3'>
+          <div className='max-w-2xl mx-auto text-gray-600 dark:text-gray-300 px-2 sm:px-4 py-3'>
             <DisclaimerText onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
-          </p>
+          </div>
           <VersionDisplay />
           <FeedbackSection ref={feedbackSectionRef} />
         </div>
