@@ -4,31 +4,31 @@ interface DisclaimerTextProps {
   onFeedbackClick?: () => void;
 }
 
-export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
-  // Helper function to render creator links
-  const renderCreatorLinks = (creatorIds: readonly string[]) => {
-    return creatorIds.map((creatorId, index) => (
-      <span key={creatorId}>
-        {index > 0 && '、'}
-        {CREATORS[creatorId]?.url ? (
-          <a
-            href={CREATORS[creatorId].url}
-            target='_blank'
-            rel='nofollow noopener noreferrer'
-            aria-label={`${CREATORS[creatorId]?.name ?? creatorId}（在新标签页打开）`}
-            className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline whitespace-pre-wrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
-          >
-            {CREATORS[creatorId]?.name ?? creatorId}
-          </a>
-        ) : (
-          <span className='text-gray-700 dark:text-gray-300 whitespace-pre-wrap'>
-            {CREATORS[creatorId]?.name ?? creatorId}
-          </span>
-        )}
-      </span>
-    ));
-  };
+// Helper function to render creator links (module scope to keep it stable across renders)
+const renderCreatorLinks = (creatorIds: readonly string[]) => {
+  return creatorIds.map((creatorId, index) => (
+    <span key={creatorId}>
+      {index > 0 && '、'}
+      {CREATORS[creatorId]?.url ? (
+        <a
+          href={CREATORS[creatorId].url}
+          target='_blank'
+          rel='nofollow noopener noreferrer'
+          aria-label={`${CREATORS[creatorId]?.name ?? creatorId}（在新标签页打开）`}
+          className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline whitespace-pre-wrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
+        >
+          {CREATORS[creatorId]?.name ?? creatorId}
+        </a>
+      ) : (
+        <span className='text-gray-700 dark:text-gray-300 whitespace-pre-wrap'>
+          {CREATORS[creatorId]?.name ?? creatorId}
+        </span>
+      )}
+    </span>
+  ));
+};
 
+export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
   return (
     <>
       {/* Project information */}
