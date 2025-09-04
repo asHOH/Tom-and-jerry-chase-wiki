@@ -140,16 +140,16 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         <PageDescription>{faction.description}</PageDescription>
       </header>
 
-      {/* Filters wrapper: minimize spacing and limit max width to keep label close to tags */}
+      {/* Filters wrapper */}
       <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
         {/* Positioning Filter */}
-        <div className='filter-section flex items-center gap-4 mt-4'>
-          <div className='label-col w-28 md:w-32 text-left'>
+        <div className='filter-section flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mt-4'>
+          <div className='label-col w-full md:w-32 text-left'>
             <FilterLabel displayMode='inline'>定位筛选:</FilterLabel>
             <FilterLabel displayMode='block'>定位:</FilterLabel>
           </div>
           <div className='flex-1 flex justify-center'>
-            <div className='flex gap-2'>
+            <div className='flex flex-wrap gap-2'>
               {uniquePositioningTags.map((tag) => {
                 const isActive = hasPositioningTagFilter(tag as PositioningTagName);
                 const tagColors = getPositioningTagColors(
@@ -225,14 +225,14 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
           </div>
         </div>
 
-        {/* Avatar Filter (unified) */}
-        <div className='filter-section flex items-center gap-4 mt-0'>
-          <div className='label-col w-28 md:w-32 text-left'>
+        {/* Avatar Filter */}
+        <div className='filter-section flex flex-col md:flex-row md:items-center gap-2 md:gap-4'>
+          <div className='label-col w-full md:w-32 text-left'>
             <FilterLabel displayMode='inline'>形象筛选:</FilterLabel>
             <FilterLabel displayMode='block'>形象:</FilterLabel>
           </div>
           <div className='flex-1 flex justify-center'>
-            <div className='flex gap-2'>
+            <div className='flex flex-wrap gap-2'>
               {avatarOptions.map((opt) => {
                 const isActive = hasAvatar(opt);
                 const colors = getAvatarFilterColors(opt, isDarkMode);
