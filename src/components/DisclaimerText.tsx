@@ -1,4 +1,5 @@
 import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
+import Tooltip from '@/components/ui/Tooltip';
 
 interface DisclaimerTextProps {
   onFeedbackClick?: () => void;
@@ -82,14 +83,19 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
         <p>{DISCLAIMER_CONTENT.freePolicy}</p>
       </section>
 
-      {/* Copyright information */}
-      <section className='mb-4' aria-label='版权说明'>
-        <p>{DISCLAIMER_CONTENT.copyright}</p>
+      {/* Copyright information based on DISCLAIMER_CONTENT.copyright */}
+      <section className='mb-4 text-sm leading-6' aria-label='版权说明'>
+        <p>
+          <Tooltip content='Tom and Jerry'>猫和老鼠</Tooltip>
+          角色版权归
+          <Tooltip content='Warner Bros. Entertainment Inc.'>华纳兄弟娱乐公司</Tooltip>
+          所有。游戏素材版权归网易猫和老鼠手游所有。
+        </p>
         <p>{DISCLAIMER_CONTENT.takedownPolicy}</p>
       </section>
 
       {/* License information */}
-      <section className='mb-4' aria-label='开源许可'>
+      <section className='mb-4 text-sm leading-6' aria-label='开源许可'>
         <p>{LICENSE_INFO.description}</p>
         {LICENSE_INFO.licenses.map((license) => (
           <p key={license.shortName}>
