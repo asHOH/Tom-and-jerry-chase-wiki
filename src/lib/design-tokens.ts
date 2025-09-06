@@ -31,6 +31,17 @@ export const designTokens = {
         border: 'transparent',
       },
     },
+    // Centralized faction filter palettes (used for faction filter buttons)
+    factions: {
+      cat: {
+        light: { background: '#fef9c3', text: '#b45309' }, // yellow-100 bg, yellow-800 text
+        dark: { background: '#fbbf24', text: '#000000' }, // yellow-400 bg, black text
+      },
+      mouse: {
+        light: { background: '#e0f2fe', text: '#0369a1' }, // sky-100 bg, sky-800 text
+        dark: { background: '#38bdf8', text: '#000000' }, // sky-400 bg, black text
+      },
+    },
 
     // Skill type colors
     skillTypes: {

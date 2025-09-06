@@ -7,6 +7,7 @@ import {
   RankableProperty,
 } from '@/lib/characterRankingUtils';
 import { FactionId } from '@/data/types';
+import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
@@ -15,22 +16,6 @@ interface PropertySelectorProps {
   currentProperty?: RankableProperty | undefined;
   factionId?: FactionId | undefined;
   onPropertyChange: (property: RankableProperty) => void;
-}
-
-// Faction button color utility
-function getFactionButtonColors(
-  faction: FactionId,
-  isDarkMode: boolean
-): { backgroundColor: string; color: string } {
-  if (faction === 'cat') {
-    return isDarkMode
-      ? { backgroundColor: '#fbbf24', color: '#000000' } // dark: bright yellow-400 bg, black text
-      : { backgroundColor: '#fef9c3', color: '#b45309' }; // light: yellow-100 bg, yellow-800 text
-  } else {
-    return isDarkMode
-      ? { backgroundColor: '#38bdf8', color: '#000000' } // dark: bright sky-400 bg, black text
-      : { backgroundColor: '#e0f2fe', color: '#0369a1' }; // light: sky-100 bg, sky-800 text
-  }
 }
 
 function PropertySelector({ currentProperty, onPropertyChange }: PropertySelectorProps) {

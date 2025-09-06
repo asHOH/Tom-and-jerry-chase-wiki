@@ -194,15 +194,10 @@ export function getFactionButtonColors(
   faction: FactionId,
   isDarkMode: boolean
 ): { backgroundColor: string; color: string } {
-  if (faction === 'cat') {
-    return isDarkMode
-      ? { backgroundColor: '#38bdf8', color: '#000000' } // dark: sky-400 bg, black text
-      : { backgroundColor: '#e0f2fe', color: '#0369a1' }; // light: sky-100 bg, sky-800 text
-  } else {
-    return isDarkMode
-      ? { backgroundColor: '#fbbf24', color: '#000000' } // dark: yellow-400 bg, black text
-      : { backgroundColor: '#fef9c3', color: '#b45309' }; // light: yellow-100 bg, yellow-800 text
-  }
+  const palette = designTokens.colors.factions;
+  const scheme = faction === 'cat' ? palette.cat : palette.mouse;
+  const theme = isDarkMode ? scheme.dark : scheme.light;
+  return { backgroundColor: theme.background, color: theme.text };
 }
 
 /**
