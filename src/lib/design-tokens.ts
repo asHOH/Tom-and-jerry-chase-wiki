@@ -1,5 +1,10 @@
 import type { FactionId } from '@/data/types';
 
+// Returned style for positioning tag colors
+export type PositioningTagColorStyle =
+  | { color: string; backgroundColor: string; borderColor?: string }
+  | { color: string; background: string; borderColor?: string };
+
 export const designTokens = {
   spacing: {
     xxxxxxs: '0.1875rem', // 3px
@@ -14,6 +19,11 @@ export const designTokens = {
     xl: '2rem', // 32px
   },
   colors: {
+    // Common base colors
+    common: {
+      white: '#ffffff',
+      black: '#000000',
+    },
     faction: {
       // Base faction button colors
       background: '#e5e7eb', // gray-200
@@ -771,7 +781,7 @@ export const getPositioningTagColors = (
   includeBorder: boolean,
   faction: FactionId,
   isDarkMode: boolean
-) => {
+): PositioningTagColorStyle => {
   // Map Chinese tag names to design token keys
   const tagMapping: Record<string, keyof typeof designTokens.colors.positioningTags> = {
     进攻: 'attack',

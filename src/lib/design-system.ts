@@ -16,6 +16,7 @@ import {
   componentTokens,
   createStyleFromTokens,
   getPositioningTagColors,
+  type PositioningTagColorStyle,
 } from './design-tokens';
 import type { FactionId } from '@/data/types';
 
@@ -169,7 +170,7 @@ export const createButtonStyles = (
       return {
         ...baseButtonStyle,
         backgroundColor: isDarkMode ? primaryColors.dark[500] : primaryColors[500],
-        color: '#ffffff',
+        color: designTokens.colors.common.white,
         boxShadow: isDarkMode ? designTokens.shadows.dark.button : designTokens.shadows.button,
       };
     case 'secondary':
@@ -266,8 +267,22 @@ export const createMinorTagGradient = (
   faction: FactionId,
   isDarkMode: boolean
 ): React.CSSProperties => {
-  const colors = getPositioningTagColors(tagName, true, false, faction, isDarkMode);
-  return colors;
+  const colors: PositioningTagColorStyle = getPositioningTagColors(
+    tagName,
+    true,
+    false,
+    faction,
+    isDarkMode
+  );
+  // When a gradient is provided it uses `background` key, map to CSSProperties
+  if ('background' in colors) {
+    const { color, background, borderColor } = colors;
+    const result: React.CSSProperties = { color, backgroundImage: background };
+    if (borderColor) result.borderColor = borderColor;
+    return result;
+  }
+  // Otherwise it's already backgroundColor style
+  return colors as React.CSSProperties;
 };
 
 /**
