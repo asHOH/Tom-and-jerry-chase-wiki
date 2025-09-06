@@ -1185,14 +1185,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: false,
         description: '拥有极高的输出和武器的控制，技能提供续航。',
         additionalDescription:
-          '高等级剑杰可在打出大量伤害的同时控制猫数秒，双武器均可与{干扰投掷}配合。',
+          '高等级时可在打出大量伤害的同时控制猫数秒；双武器均可与{干扰投掷}配合。',
       },
       {
         tagName: '后期',
         isMinor: true,
         weapon: 1,
         description:
-          '高等级剑舞能先手打出控制，配合{主动技能}更能造成连续控制；高等级被动提供极高Hp加成。',
+          '高等级{剑舞华尔兹}能先手打出控制，配合{主动技能}更能造成连续控制；{3级被动}提供极高Hp加成。',
         additionalDescription: '',
       },
     ],
@@ -1207,14 +1207,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '剑舞华尔兹',
         pattern: '20212[1100]',
         weaponType: 'weapon1',
-        description: '对于难以命中或是难以有效输出干扰的猫，出于自保可八级点出三级被动。',
+        description: '对于难以被有效输出干扰的猫，出于自保可八级点出{3级被动}。',
         additionaldescription: '',
       },
       {
         id: '常规格挡',
         pattern: '303131100',
         weaponType: 'weapon2',
-        description: '常规加点。对于不怕灌伤的猫，可以十级再点三级格挡。',
+        description: '常规加点。对于不怕灌伤的猫，可以十级再点{3级格挡之剑}。',
         additionaldescription: '',
       },
       {
@@ -1227,15 +1227,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'A-投手', 'B-绝地反击', 'C-救救我'],
-        description: '双武器通用卡组，投手可换应激，有效输出的同时保证自保。',
+        description: '双武器通用卡组，{投手}可换{应激反应}，有效输出的同时保证自保。',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
-        description: '二武常用卡组，配合控制与干扰投射，随时拥有反杀能力，上限极高。',
+        description: '二武常用卡组，配合控制与{干扰投掷}，随时拥有反杀能力，上限极高。',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
-        description: '用于干扰收益不大的猫，偏自保，逃窜可换应激。',
+        description: '用于对抗不怕剑杰干扰的猫，偏自保，{逃窜}可换{应激反应}。',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'B-绝地反击', 'C-不屈', 'C-救救我'],
