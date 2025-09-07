@@ -13,7 +13,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '../components/ui/PageDescription';
 import LoginDialog from '@/components/LoginDialog';
 import { useMobile } from '@/hooks/useMediaQuery';
-import { useUser } from "@/hooks/useUser";
+import { useUser } from '@/hooks/useUser';
 
 export default function Home() {
   return (
@@ -31,7 +31,7 @@ function HomeContent() {
   const [notificationMessage, setNotificationMessage] = useState('');
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
-  const {nickname} = useUser()
+  const { nickname } = useUser();
   const isMobile = useMobile();
 
   const handleEditModeToggle = () => {
