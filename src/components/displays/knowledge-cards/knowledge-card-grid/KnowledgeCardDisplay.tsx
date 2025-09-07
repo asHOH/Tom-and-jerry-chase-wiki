@@ -38,10 +38,10 @@ export default function KnowledgeCardDisplay({
           role='group'
           aria-label='卡片属性'
         >
-          <Tag colorStyles={rankColors} size='xs' variant='compact'>
+          <Tag colorStyles={rankColors} size='xs' margin='compact'>
             {rank}级
           </Tag>
-          <Tag colorStyles={costColors} size='xs' variant='compact'>
+          <Tag colorStyles={costColors} size='xs' margin='compact'>
             {cost}费
           </Tag>
         </div>

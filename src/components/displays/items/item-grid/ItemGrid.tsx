@@ -5,7 +5,7 @@ import ItemCardDisplay from './ItemCardDisplay';
 import { items } from '@/data';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
-import FilterLabel from '@/components/ui/FilterLabel';
+import FilterRow from '@/components/ui/FilterRow';
 import { useState } from 'react';
 import type { Itemtypelist, Itemsourcelist, Item } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -20,7 +20,7 @@ const ITEM_TYPE_OPTIONS: Itemtypelist[] = [
   '流程类',
   '其它',
 ];
-const ITEM_SOURCE_OPTIONS: Itemsourcelist[] = ['常规道具', '地图道具', '技能道具'];
+const ITEM_SOURCE_OPTIONS: Itemsourcelist[] = ['常规道具', '地图道具'];
 
 export default function ItemClient() {
   // Multi-select state for filters
@@ -57,124 +57,74 @@ export default function ItemClient() {
         <PageTitle>道具</PageTitle>
         <PageDescription>在地图中散落的各式各样的道具——猫鼠相互对抗的关键机制</PageDescription>
         {/* Filter Controls */}
-        <div className='flex flex-col gap-4 mt-8'>
+        {/* Filters wrapper */}
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2 mt-8'>
           {/* 类型筛选 */}
-          <div className='filter-section flex justify-center items-center gap-4 flex-wrap'>
-            <FilterLabel displayMode='inline'>类型筛选:</FilterLabel>
-            <FilterLabel displayMode='block'>筛选:</FilterLabel>
-            <div className='flex gap-2'>
-              {ITEM_TYPE_OPTIONS.map((type) => {
-                const isActive = selectedTypes.includes(type);
-                return (
-                  <button
-                    type='button'
-                    key={type}
-                    className={`filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none ${
-                      isActive
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                    }`}
-                    onClick={() => {
-                      setSelectedTypes((prev) =>
-                        prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-                      );
-                    }}
-                  >
-                    {isMobile ? type.slice(0, 2) : type}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <FilterRow<Itemtypelist>
+            label='类型筛选:'
+            options={ITEM_TYPE_OPTIONS}
+            isActive={(type) => selectedTypes.includes(type)}
+            onToggle={(type) =>
+              setSelectedTypes((prev) =>
+                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+              )
+            }
+            getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
+            getButtonStyle={(_, active) =>
+              active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
+            }
+            isDarkMode={isDarkMode}
+          />
+
           {/* 来源筛选 */}
-          <div className='filter-section flex justify-center items-center gap-4 flex-wrap'>
-            <FilterLabel displayMode='inline'>来源筛选:</FilterLabel>
-            <FilterLabel displayMode='block'>筛选:</FilterLabel>
-            <div className='flex gap-2'>
-              {ITEM_SOURCE_OPTIONS.map((source) => {
-                const isActive = selectedSources.includes(source);
-                return (
-                  <button
-                    type='button'
-                    key={source}
-                    className={`filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none ${
-                      isActive
-                        ? 'bg-green-500 text-white'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                    }`}
-                    onClick={() => {
-                      setSelectedSources((prev) =>
-                        prev.includes(source) ? prev.filter((s) => s !== source) : [...prev, source]
-                      );
-                    }}
-                  >
-                    {isMobile ? source.slice(0, 2) : source}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <FilterRow<Itemsourcelist>
+            label='来源筛选:'
+            options={ITEM_SOURCE_OPTIONS}
+            isActive={(source) => selectedSources.includes(source)}
+            onToggle={(source) =>
+              setSelectedSources((prev) =>
+                prev.includes(source) ? prev.filter((s) => s !== source) : [...prev, source]
+              )
+            }
+            getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
+            getButtonStyle={(_, active) =>
+              active ? { backgroundColor: '#10b981', color: '#fff' } : undefined
+            }
+            isDarkMode={isDarkMode}
+          />
+
           {/* 阵营筛选 */}
-          <div className='filter-section flex justify-center items-center gap-4 flex-wrap'>
-            <FilterLabel displayMode='inline'>阵营筛选:</FilterLabel>
-            <FilterLabel displayMode='block'>筛选:</FilterLabel>
-            <div className='flex gap-2'>
-              {(
-                [
-                  {
-                    key: 'cat' as const,
-                    mobileLabel: '猫阵营',
-                    label: '猫阵营专用',
-                  },
-                  {
-                    key: 'mouse' as const,
-                    mobileLabel: '鼠阵营',
-                    label: '鼠阵营专用',
-                  },
-                  {
-                    key: 'none' as const,
-                    mobileLabel: '通用',
-                    label: '通用',
-                  },
-                ] as const
-              ).map((faction) => {
-                const isActive = selectedFactions.includes(faction.key);
-                const factionColors =
-                  faction.key === 'none' ? null : getFactionButtonColors(faction.key, isDarkMode);
-                return (
-                  <button
-                    type='button'
-                    key={faction.key}
-                    className={
-                      'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none ' +
-                      (!isActive
-                        ? 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                        : '')
-                    }
-                    style={
-                      isActive && factionColors
-                        ? {
-                            backgroundColor: factionColors.backgroundColor,
-                            color: factionColors.color,
-                          }
-                        : isActive && faction.key === 'none'
-                          ? { backgroundColor: '#e6d5f7', color: '#8b5cf6' }
-                          : {}
-                    }
-                    onClick={() => {
-                      setSelectedFactions((prev) =>
-                        prev.includes(faction.key)
-                          ? prev.filter((f) => f !== faction.key)
-                          : [...prev, faction.key]
-                      );
-                    }}
-                  >
-                    {isMobile ? faction.mobileLabel : faction.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <FilterRow<'cat' | 'mouse' | 'none'>
+            label='阵营筛选:'
+            options={['cat', 'mouse', 'none']}
+            isActive={(f) => selectedFactions.includes(f)}
+            onToggle={(f) =>
+              setSelectedFactions((prev) =>
+                prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
+              )
+            }
+            getOptionLabel={(f) =>
+              isMobile
+                ? f === 'cat'
+                  ? '猫专用'
+                  : f === 'mouse'
+                    ? '鼠专用'
+                    : '通用'
+                : f === 'cat'
+                  ? '猫阵营专用'
+                  : f === 'mouse'
+                    ? '鼠阵营专用'
+                    : '通用'
+            }
+            getButtonStyle={(f, active) =>
+              active
+                ? f === 'none'
+                  ? { backgroundColor: '#e6d5f7', color: '#8b5cf6' }
+                  : getFactionButtonColors(f as 'cat' | 'mouse', isDarkMode)
+                : undefined
+            }
+            isDarkMode={isDarkMode}
+          />
         </div>
       </header>
       <div

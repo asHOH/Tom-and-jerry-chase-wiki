@@ -1,0 +1,109 @@
+'use client';
+
+import Link from 'next/link';
+import EntityCardDisplay from './EntityCardDisplay';
+import { entities } from '@/data';
+import PageTitle from '@/components/ui/PageTitle';
+import PageDescription from '@/components/ui/PageDescription';
+import { useState } from 'react';
+import type { Entitytypelist, Entity } from '@/data/types';
+import { useMobile } from '@/hooks/useMediaQuery';
+import { getFactionButtonColors } from '@/lib/design-system';
+import { useDarkMode } from '@/context/DarkModeContext';
+import FilterRow from '@/components/ui/FilterRow';
+
+const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
+  '道具类',
+  '投射物类',
+  '召唤物类',
+  '平台类',
+  'NPC类',
+  '其它',
+];
+
+export default function EntityClient() {
+  // Multi-select state for filters
+  const [selectedTypes, setSelectedTypes] = useState<Entitytypelist[]>([]);
+  // Faction: 'cat', 'mouse'
+  const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse')[]>([]);
+  const isMobile = useMobile();
+  const [isDarkMode] = useDarkMode();
+
+  const allentities = { ...entities['cat'], ...entities['mouse'] }; //connect two parts of entities
+  const filteredEntities = Object.values(allentities).filter((entity: Entity) => {
+    // 类型筛选
+    const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(entity.entitytype);
+    // 阵营筛选
+    let factionMatch = true;
+    if (selectedFactions.length > 0) {
+      const isCat = selectedFactions.includes('cat');
+      const isMouse = selectedFactions.includes('mouse');
+      factionMatch =
+        (isCat && entity.factionId === 'cat') || (isMouse && entity.factionId === 'mouse');
+    }
+    return typeMatch && factionMatch;
+  });
+
+  return (
+    <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
+      <header className='text-center space-y-4 mb-8 px-4'>
+        <PageTitle>衍生物</PageTitle>
+        <PageDescription>
+          由角色技能衍生出的独立物体，拥有各自独特的属性和作用（该界面更新中）
+        </PageDescription>
+        {/* Filters wrapper */}
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2 mt-8'>
+          {/* 类型筛选 */}
+          <FilterRow<Entitytypelist>
+            label='类型筛选:'
+            options={ITEM_TYPE_OPTIONS}
+            isActive={(type) => selectedTypes.includes(type)}
+            onToggle={(type) =>
+              setSelectedTypes((prev) =>
+                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+              )
+            }
+            getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
+            getButtonStyle={(_, active) =>
+              active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
+            }
+          />
+
+          {/* 阵营筛选 */}
+          <FilterRow<'cat' | 'mouse'>
+            label='阵营筛选:'
+            options={['cat', 'mouse']}
+            isActive={(f) => selectedFactions.includes(f)}
+            onToggle={(f) =>
+              setSelectedFactions((prev) =>
+                prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
+              )
+            }
+            getOptionLabel={(f) =>
+              isMobile ? (f === 'cat' ? '猫阵营' : '鼠阵营') : f === 'cat' ? '猫阵营' : '鼠阵营'
+            }
+            getButtonStyle={(f, active) =>
+              active ? getFactionButtonColors(f, isDarkMode) : undefined
+            }
+            isDarkMode={isDarkMode}
+          />
+        </div>
+      </header>
+      <div
+        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}
+      >
+        {filteredEntities.map((entity) => (
+          <div
+            key={entity.name}
+            className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'
+          >
+            <Link href={`/entities/${encodeURIComponent(entity.name)}`} className='block'>
+              <EntityCardDisplay entity={entity} />
+            </Link>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

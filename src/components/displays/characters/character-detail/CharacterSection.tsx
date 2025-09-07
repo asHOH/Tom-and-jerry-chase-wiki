@@ -14,13 +14,22 @@ export default function CharacterSection({
   to?: string;
 }) {
   const [isOpen, setIsOpen] = useState(true);
+  const [isMounted, setIsMounted] = useState(true); // Unmount content when folded to avoid lingering overlays
   const { navigate } = useNavigation();
 
   const toggleOpen = () => {
     if (to) {
       navigate(to);
+      return;
+    }
+
+    if (isOpen) {
+      // Start closing animation; unmount on transition end
+      setIsOpen(false);
     } else {
-      setIsOpen(!isOpen);
+      // Mount first, then open on next frame to allow transition-in
+      setIsMounted(true);
+      requestAnimationFrame(() => setIsOpen(true));
     }
   };
 
@@ -75,17 +84,22 @@ export default function CharacterSection({
           </svg>
         )}
       </button>
-      <div
-        className={clsx(
-          'transition-all ease-out',
-          isOpen ? 'duration-300' : 'duration-200',
-          isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
-        )}
-        style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
-        {...(!isOpen && { 'aria-hidden': true })}
-      >
-        {children}
-      </div>
+      {isMounted && (
+        <div
+          className={clsx(
+            'transition-all ease-out',
+            isOpen ? 'duration-300' : 'duration-200',
+            isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
+          )}
+          style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
+          aria-hidden={!isOpen}
+          onTransitionEnd={() => {
+            if (!isOpen) setIsMounted(false);
+          }}
+        >
+          {children}
+        </div>
+      )}
     </div>
   );
 }

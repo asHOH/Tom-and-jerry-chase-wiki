@@ -3,7 +3,7 @@
  * Eliminates duplication of type definitions across components
  */
 
-import { Character, Card, PositioningTag, PositioningTagName } from '@/data';
+import { Character, Card, PositioningTag, PositioningTagName, FactionId } from '@/data';
 import { ReactNode } from 'react';
 
 // Extended types with faction information (used in components)
@@ -77,6 +77,7 @@ export type GotoResult = {
   type:
     | 'character'
     | 'card'
+    | 'entity'
     | 'item'
     | 'special-skill-cat'
     | 'special-skill-mouse'
@@ -85,7 +86,19 @@ export type GotoResult = {
   name: string;
   description: string | undefined;
   imageUrl: string | undefined;
+  // Optional metadata for previews
+  factionId?: FactionId; // For characters
+  ownerName?: string; // For character skills
+  ownerFactionId?: FactionId; // For character skills (owner's faction)
+  // Leveled skill metadata
+  skillLevel?: number; // When query specified like "2级技能名"
+  skillType?: 'passive' | 'active' | 'weapon1' | 'weapon2';
+  skillLevelDescription?: string; // Description for that level, if any
 };
+
+// Narrowed category hints used to disambiguate goto targets
+export const CATEGORY_HINTS = ['知识卡', '特技', '道具', '衍生物', '技能'] as const;
+export type CategoryHint = (typeof CATEGORY_HINTS)[number];
 
 // Generic callback types
 export type CharacterSelectionHandler = (characterId: string) => void;

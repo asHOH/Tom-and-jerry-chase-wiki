@@ -2,14 +2,16 @@ import type { FactionId } from '@/data/types';
 
 export const designTokens = {
   spacing: {
-    xs: '8px', // 2 units
-    sm: '12px', // 3 units
-    md: '16px', // 4 units
-    lg: '24px', // 6 units
-    xl: '32px', // 8 units
-    // Compact spacing for tags
-    xxs: '4px', // 1 unit - for very compact padding
-    compact: '6px', // 1.5 units - for compact tag spacing
+    xxxxxxs: '0.1875rem', // 3px
+    xxxxxs: '0.25rem', // 4px (1 unit)
+    xxxxs: '0.3125rem', // 5px
+    xxxs: '0.375rem', // 6px
+    xxs: '0.4375rem', // 7px
+    xs: '0.5rem', // 8px
+    sm: '0.75rem', // 12px
+    md: '1rem', // 16px
+    lg: '1.5rem', // 24px
+    xl: '2rem', // 32px
   },
   colors: {
     faction: {
@@ -478,14 +480,12 @@ export const designTokens = {
   },
   radius: {
     none: '0',
-    sm: '4px',
-    md: '8px',
-    lg: '12px',
-    xl: '16px',
+    xs: '0.25rem', // 4px
+    sm: '0.375rem', // 6px
+    md: '0.5rem', // 8px
+    lg: '0.75rem', // 12px
+    xl: '1rem', // 16px
     full: '9999px',
-    // Compact radius for tags
-    xs: '3px', // Extra small for compact tags
-    compact: '6px', // Between sm and md for modern look
   },
 
   zIndex: {
@@ -511,7 +511,7 @@ export const designTokens = {
 export const componentTokens = {
   factionButton: {
     base: {
-      padding: '16px 24px',
+      padding: '1rem 1.5rem', // 16px 24px
       borderRadius: designTokens.radius.md,
       fontSize: designTokens.typography.fontSize.base,
       fontWeight: designTokens.typography.fontWeight.bold,
@@ -526,14 +526,14 @@ export const componentTokens = {
       gap: designTokens.spacing.xs,
       textAlign: 'center' as const,
       flex: 1,
-      minWidth: '180px',
+      minWidth: '11.25rem', // 180px
       backgroundColor: designTokens.colors.faction.background,
       color: designTokens.colors.faction.text,
       boxShadow: designTokens.shadows.card,
     },
 
     mobile: {
-      padding: '12px 16px',
+      padding: '0.75rem 1rem', // 12px 16px
     },
 
     content: {
@@ -555,7 +555,7 @@ export const componentTokens = {
     description: {
       fontSize: designTokens.typography.fontSize.sm,
       color: designTokens.colors.faction.textSecondary,
-      marginTop: '4px',
+      marginTop: '0.25rem', // 4px
     },
 
     hover: {
@@ -571,7 +571,7 @@ export const componentTokens = {
     justifyContent: 'center',
     gap: designTokens.spacing.lg,
     width: '100%',
-    maxWidth: '700px',
+    maxWidth: '43.75rem', // 700px
     margin: '0 auto',
   },
 
@@ -591,18 +591,25 @@ export const componentTokens = {
   // Tag component tokens
   tag: {
     base: {
-      padding: `${designTokens.spacing.compact} ${designTokens.spacing.xs}`, // More compact: 6px 8px instead of 8px 12px
-      borderRadius: designTokens.radius.compact, // More rounded: 6px instead of 4px
+      padding: `${designTokens.spacing.xxxs} ${designTokens.spacing.xs}`, // 6px 8px
+      borderRadius: designTokens.radius.sm,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
-      border: '1px solid transparent', // Add subtle border for better definition
+      border: 'none',
     },
     compact: {
-      padding: `${designTokens.spacing.xxs} ${designTokens.spacing.compact}`, // Very compact: 4px 6px
-      borderRadius: designTokens.radius.xs, // Smaller radius for tiny tags
+      padding: `${designTokens.spacing.xxxxs} ${designTokens.spacing.xxs}`, // 5px 7px
+      borderRadius: designTokens.radius.sm,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
-      border: '1px solid transparent',
+      border: 'none',
+    },
+    micro: {
+      padding: `${designTokens.spacing.xxxxxxs} ${designTokens.spacing.xxxxxs}`, // 3px 4px
+      borderRadius: designTokens.radius.sm,
+      fontWeight: designTokens.typography.fontWeight.medium,
+      display: 'inline-block',
+      border: 'none',
     },
   },
 
@@ -686,6 +693,64 @@ export const getCardCostColors = (cost: number, includeBorder: boolean, isDarkMo
       borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
     }),
   };
+};
+
+// Type label utility (for preview badges like 角色/知识卡)
+export const getTypeLabelColors = (type: string, isDarkMode = false) => {
+  const map: Record<
+    string,
+    {
+      text: string;
+      background: string;
+      dark: { text: string; background: string };
+    }
+  > = {
+    character: {
+      text: '#1D4ED8',
+      background: '#DBEAFE',
+      dark: { text: '#60A5FA', background: '#1E3A8A' },
+    }, // blue-700 on blue-100 | dark: blue-400 on blue-900
+    card: {
+      text: '#A16207',
+      background: '#FEF9C3',
+      dark: { text: '#C4B5FD', background: '#581C87' },
+    }, // yellow-700 | dark: purple-300 on purple-900
+    item: {
+      text: '#15803D',
+      background: '#DCFCE7',
+      dark: { text: '#34D399', background: '#064E3B' },
+    }, // green-700 | dark: emerald-400 on emerald-900
+    entity: {
+      text: '#C2410C',
+      background: '#FFEDD5',
+      dark: { text: '#FDBA74', background: '#7C2D12' },
+    }, // orange-700 | dark: orange-300 on orange-900
+    'special-skill-cat': {
+      text: '#BE185D',
+      background: '#FCE7F3',
+      dark: { text: '#F9A8D4', background: '#831843' },
+    }, // pink-700 | dark: pink-300 on pink-900
+    'special-skill-mouse': {
+      text: '#6D28D9',
+      background: '#EDE9FE',
+      dark: { text: '#C4B5FD', background: '#4C1D95' },
+    }, // purple-700 | dark: violet-300 on violet-900
+    doc: {
+      text: '#374151',
+      background: '#F3F4F6',
+      dark: { text: '#9CA3AF', background: '#1F2937' },
+    }, // gray-700 | dark: gray-400 on gray-800
+    'character-skill': {
+      text: '#4338CA',
+      background: '#E0E7FF',
+      dark: { text: '#A5B4FC', background: '#3730A3' },
+    }, // indigo-700 | dark: indigo-300 on indigo-900
+  };
+
+  const scheme = map[type] ?? map.doc!;
+  return isDarkMode
+    ? { color: scheme.dark.text, backgroundColor: scheme.dark.background }
+    : { color: scheme.text, backgroundColor: scheme.background };
 };
 
 // Positioning tag utility functions
@@ -837,6 +902,47 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
   };
 };
 
+/**
+ * Avatar filter color utility
+ * - 杰瑞: use the same brownish colors as the "砸墙" positioning tag
+ * - 泰菲: grayish blue
+ * - 汤姆: blue
+ * - 其他: neutral gray
+ */
+export const getAvatarFilterColors = (
+  option: '杰瑞' | '泰菲' | '汤姆' | '其他',
+  isDarkMode: boolean
+): { color: string; backgroundColor: string } => {
+  // 杰瑞: 复用“砸墙”定位标签的配色
+  if (option === '杰瑞') {
+    const c = designTokens.colors.positioningTags.wallBreak;
+    const light = { text: c.text, bg: c.background };
+    const dark = c.dark ? { text: c.dark.text, bg: c.dark.background } : light;
+    const theme = isDarkMode ? dark : light;
+    return { color: theme.text, backgroundColor: theme.bg };
+  }
+
+  // 其他选项采用固定配色
+  const palette = {
+    汤姆: {
+      light: { bg: '#E0F2FF', text: '#0369A1' },
+      dark: { bg: '#024D72', text: '#09AFFF' },
+    },
+    泰菲: {
+      light: { bg: '#D8DBF8', text: '#4453AA' },
+      dark: { bg: '#4453AA', text: '#D7DAF9' },
+    },
+    其他: {
+      light: { bg: '#e5e7eb', text: '#4b5563' },
+      dark: { bg: '#374151', text: '#e5e7eb' },
+    },
+  } as const;
+
+  const scheme = palette[option];
+  const theme = isDarkMode ? scheme.dark : scheme.light;
+  return { color: theme.text, backgroundColor: theme.bg };
+};
+
 // Skill type utility functions
 export const getSkillTypeColors = (
   skillType: 'passive' | 'active' | 'weapon1' | 'weapon2',
@@ -943,4 +1049,26 @@ export const getPositioningTagContainerColor = (
   }
 
   return isDarkMode && colorScheme.dark ? colorScheme.dark.container : colorScheme.container;
+};
+
+/**
+ * Entity type color utility
+ */
+export const getEntityTypeColors = (entitytype: string, isDarkMode: boolean) => {
+  const entityTypeColorMap: Record<string, 'weapon1' | 'weapon2' | 'active' | 'passive'> = {
+    道具类: 'weapon1',
+    投射物类: 'weapon2',
+    召唤物类: 'active',
+    平台类: 'passive',
+    NPC类: 'passive',
+    其它: 'passive',
+  };
+  const skillType = entityTypeColorMap[entitytype] || 'passive';
+  const colorScheme =
+    designTokens.colors.skillTypes[skillType] || designTokens.colors.skillTypes.passive;
+  return {
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+  };
 };

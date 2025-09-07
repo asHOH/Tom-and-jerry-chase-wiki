@@ -29,6 +29,12 @@
 
 - **QQ交流群**: [615882730](https://qun.qq.com/universal-share/share?ac=1&authKey=%2BgPPblp3JfnQP2o3BI5PO1NmwvsNciCCaVCtSI9T6RAbv6yV2QHzzjz6gwY%2Bva9U&busi_data=eyJncm91cENvZGUiOiI2MTU4ODI3MzAiLCJ0b2tlbiI6Ijg3Ym9kMk9HTUVFTnJSU25GU2JCdWJoNEwxNGNOUlhWMGgvK3lMTWRGdy80Z0FnaUd4Yy9LYkZsYUJ5ZStTbUgiLCJ1aW4iOiIyOTAxODMzMjI1In0%3D&data=0yzCZAnaW0ZOxf01YibLkPBLkN17DRX2fS1NGi5Nndx2Qq2DMFDdWr1pxH3J8F9RefUGjWh_Zel5Rfjy-dPZ2A&svctype=4&tempid=h5_group_info) (了解项目进展、提供建议、贡献内容、技术交流)
 
+## ❤️ 支持本项目
+
+如果你喜欢这个项目，欢迎通过 Patreon [赞助我们](https://patreon.com/asHOH)。
+
+特别感谢所有项目[赞助者](SPONSORS.md)！
+
 ## 🛠️ 技术栈
 
 - **框架**: [Next.js 15](https://nextjs.org/) (App Router)
@@ -114,31 +120,20 @@ npm run analyze         # 包分析
 
 加入我们的[QQ群](#-社区交流)吧~
 
-### 数据文件结构
-
-- **猫角色数据**: [`src/data/catCharacters.ts`](src/data/catCharacters.ts)
-- **鼠角色数据**: [`src/data/mouseCharacters.ts`](src/data/mouseCharacters.ts)
-- **猫知识卡**: [`src/data/catKnowledgeCards.ts`](src/data/catKnowledgeCards.ts)
-- **鼠知识卡**: [`src/data/mouseKnowledgeCards.ts`](src/data/mouseKnowledgeCards.ts)
-- **图片资源**: [`public/images/`](public/images)
-
 ### 开发功能
 
 项目计划：
 
 #### 🚀 急
 
-- **编辑模式** - 角色攻略（小心rce）、知识卡、特技、道具、角色详情中知识卡组的组合
-- **统一伤害写法** - 统一为基础（+增伤）的形式
+- **编辑模式** - 角色攻略（小心rce）
 - **特殊爪刀CD** - 苏蕊、托普斯、天汤等等
 
 #### 📋 不急
 
 - **增强筛选** - 按外观筛选角色
-- **角色关系** - 展示角色间的克制和配合关系
 - **统一用词** - 技能描述中的“硬直/眩晕”，等等
 - **NPC** - 斯派克、女主人等
-- **药水** - 五种药水的功能
 - **年鉴** - 历代更新和角色调整记录
 - **画廊** - 各种猫鼠二创
 - **地图** - 展示地图，以及点位信息（墙缝、库博传送、几何桶等）
@@ -162,7 +157,7 @@ npm run analyze         # 包分析
 │   │   └── displays/   # 复杂展示组件
 │   ├── constants/      # 全局常量
 │   ├── context/        # React Context 提供者
-│   ├── data/           # 核心游戏数据与类型定义
+│   ├── data/           # 核心数据与类型定义
 │   ├── lib/            # 工具函数与业务逻辑
 ├── scripts/            # 工具脚本
 ├── README.md           # 项目说明
@@ -190,10 +185,11 @@ npm run analyze         # 包分析
 
 **特别鸣谢:**
 
+<!-- prettier-ignore -->
 - [追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、[音乐家杰瑞](https://github.com/ConductorJerry)、[梦回\_淦德蒸蚌](https://space.bilibili.com/1193776217)、[是莫莫喵](https://space.bilibili.com/443541296) 提供测试数据
 - [隔壁老米LM](https://space.bilibili.com/3493090618771682)、[凡叔哇](https://space.bilibili.com/273122087) 分享图片素材
 - [海阔天空](https://github.com/3swordman)、[音乐家杰瑞](https://github.com/ConductorJerry) 进行项目开发
-- [海阔天空](https://github.com/3swordman)、[追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、[音乐家杰瑞](https://github.com/ConductorJerry)、[雨狼嗷嗷](https://space.bilibili.com/3546721078479411)、[爱你不慎走安详](https://space.bilibili.com/3493083362625926)、[虚拟未来](https://space.bilibili.com/489570540)、人畜有害的白菜、[SYSTEM\_CPYTHON](https://space.bilibili.com/2060407817)、[夜空乄浩瀚](https://space.bilibili.com/3546658333788386)、[追风汤姆Official](https://space.bilibili.com/1060009579)、[-无尽炽羽-](https://space.bilibili.com/3493104889891012)、[北雀](https://space.bilibili.com/510324311)、一个气球君、鸽子、你小睿大帝、大水将军、[冰美式](https://space.bilibili.com/439320147)、[饮泉思源](https://zh.moegirl.org.cn/User:Yqsychzs)、[睡亿夏](https://space.bilibili.com/1350743315)、[港鸽](https://space.bilibili.com/431678062)、[若梦](https://space.bilibili.com/3537122405386648)、生煎包勇闯猫鼠、祈风盼陌上花开、[\_1322\_](https://space.bilibili.com/508985250)、dream、想 ‎ 笑、人偶、青城落梦、长河落日、豆浆、迷者很无聊、[乐善好施陈阿姨](https://space.bilibili.com/418408689)、秋雨绵绵、无敌猫虎大王wy 撰写角色文案
+- [海阔天空](https://github.com/3swordman)、[追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、[音乐家杰瑞](https://github.com/ConductorJerry)、[雨狼嗷嗷](https://space.bilibili.com/3546721078479411)、[爱你不慎走安详](https://space.bilibili.com/3493083362625926)、[虚拟未来](https://space.bilibili.com/489570540)、人畜有害的白菜、[SYSTEM\_CPYTHON](https://space.bilibili.com/2060407817)、[夜空乄浩瀚](https://space.bilibili.com/3546658333788386)、[追风汤姆Official](https://space.bilibili.com/1060009579)、[-无尽炽羽-](https://space.bilibili.com/3493104889891012)、[北雀](https://space.bilibili.com/510324311)、一个气球君、鸽子、你小睿大帝、大水将军、[冰美式](https://space.bilibili.com/439320147)、[饮泉思源](https://zh.moegirl.org.cn/User:Yqsychzs)、[睡亿夏](https://space.bilibili.com/1350743315)、[港鸽](https://space.bilibili.com/431678062)、[若梦](https://space.bilibili.com/3537122405386648)、生煎包勇闯猫鼠、祈风盼陌上花开、[\_1322\_](https://space.bilibili.com/508985250)、dream、想&nbsp;&nbsp;笑、人偶、青城落梦、长河落日、豆浆、迷者很无聊、HZZHD、小郑、[乐善好施陈阿姨](https://space.bilibili.com/418408689)、秋雨绵绵、无敌猫虎大王wy、千里共婵娟 撰写角色文案
 
 ---
 

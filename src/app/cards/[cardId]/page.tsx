@@ -6,6 +6,7 @@ import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
+import { generateArticleMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
@@ -29,33 +30,25 @@ export async function generateMetadata({
     return {};
   }
 
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: `${card.id} - 猫鼠wiki`,
+  return generateArticleMetadata({
+    title: card.id,
     description: card.description,
-    image: card.imageUrl,
-  };
-
-  return {
-    title: `${card.id} - 猫鼠wiki`,
-    description: card.description,
-    keywords: [card.id, '知识卡', '猫和老鼠', '手游', '攻略'],
-    openGraph: {
-      title: `${card.id} - 猫鼠wiki`,
+    keywords: [card.id, '知识卡'],
+    canonicalUrl: `https://tjwiki.com/cards/${encodeURIComponent(cardId)}`,
+    imageUrl: card.imageUrl,
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: `${card.id} - 猫鼠wiki`,
       description: card.description,
-      images: [
-        {
-          url: card.imageUrl,
-          alt: `${card.id}知识卡图标`,
-        },
-      ],
-      type: 'article',
+      author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+      publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `https://tjwiki.com/cards/${encodeURIComponent(cardId)}`,
+      },
     },
-    other: {
-      'application/ld+json': JSON.stringify(structuredData),
-    },
-  };
+  });
 }
 
 // This page uses the KnowledgeCardDetails component to avoid code duplication

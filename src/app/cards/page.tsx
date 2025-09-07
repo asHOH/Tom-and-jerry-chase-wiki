@@ -8,9 +8,9 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = generatePageMetadata({
-  title: '知识卡 - 猫鼠wiki',
+  title: '知识卡',
   description: '知识卡列表，提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力',
-  keywords: ['知识卡', '猫和老鼠', '手游', '攻略'],
+  keywords: ['知识卡'],
   canonicalUrl: 'https://tjwiki.com/cards',
 });
 

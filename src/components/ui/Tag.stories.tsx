@@ -11,7 +11,7 @@ const meta: Meta<typeof Tag> = {
   argTypes: {
     children: { control: 'text' },
     size: { control: 'select', options: ['xs', 'sm', 'md'] },
-    variant: { control: 'select', options: ['default', 'compact'] },
+    margin: { control: 'select', options: ['default', 'compact'] },
     colorStyles: { control: 'object' },
   },
 };
@@ -27,7 +27,7 @@ export const Default: Story = {
       color: '#333333',
     },
     size: 'md',
-    variant: 'default',
+    margin: 'default',
   },
 };
 
@@ -51,7 +51,7 @@ export const Compact: Story = {
   args: {
     ...Default.args,
     children: 'Compact Tag',
-    variant: 'compact',
+    margin: 'compact',
   },
 };
 

@@ -17,6 +17,8 @@ import { CharacterWithFaction, FactionWithCharacters } from '@/lib/types';
 import { proxy, subscribe } from 'valtio';
 import catSpecialSkillsWithImages from './catSpecialSkills';
 import mouseSpecialSkillsWithImages from './mouseSpecialSkills';
+import catEntitiesWithImages from './catEntities';
+import mouseEntitiesWithImages from './mouseEntities';
 
 export const { factionData, characterData, cardData } = GameDataManager.getRawData();
 
@@ -42,3 +44,8 @@ export const specialSkills = {
 };
 
 export { default as items } from './items';
+
+export const entities = {
+  cat: catEntitiesWithImages,
+  mouse: mouseEntitiesWithImages,
+};

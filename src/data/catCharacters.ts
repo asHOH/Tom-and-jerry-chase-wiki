@@ -20,20 +20,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '进攻',
         isMinor: false,
-        description: '主动技能的无敌有很强的上火箭能力。',
+        description: '{主动技能}的无敌有很强的上火箭能力。',
         additionalDescription:
-          '手型枪+蓄力重击，或者Lv.2被动+平底锅，都能对守火箭的老鼠产生极大威胁。',
+          '{手型枪}+{蓄力重击}，或者{2级被动}+{平底锅}，都能对守火箭的老鼠产生极大威胁。',
       },
       {
         tagName: '打架',
         isMinor: false,
-        description: '主动技能提供无敌和解控，Lv.1被动提供续航，对打架阵容有很强的反制能力。',
+        description: '{主动技能}提供无敌和解控，{1级被动}提供续航，对打架阵容有很强的反制能力。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
         isMinor: true,
-        description: '武器技能的直接抓取提供了一定的翻盘能力。',
+        description: '{手型枪}和{平底锅}的直接抓取提供了一定的翻盘能力。',
         additionalDescription: '',
       },
     ],
@@ -57,30 +57,30 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     knowledgeCardGroups: [
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
-        description: '平底锅，爪刀接二级锅接爪刀轻松打死124血老鼠。',
+        description:
+          '平底锅，爪刀接二级锅接爪刀轻松打死124Hp老鼠。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
-        description: '手型枪，适合打无管道图。',
+        description: '手型枪，适合打无管道图。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-        description: '手型枪，适合打管道图。',
+        description: '手型枪，适合打管道图。（待翻新，有意提供知识卡可填写反馈建议）',
       },
     ],
     specialSkills: [
       {
         name: '绝地反击',
-        description: '与主动技能的无敌相互弥补真空期。',
+        description: '与{主动技能}的无敌相互弥补真空期。',
       },
       {
         name: '蓄力重击',
-        description: '配合击晕或手型枪使用，一下一个小老鼠。',
+        description: '配合{击晕}或手型枪使用，一下一只老鼠。',
       },
       {
         name: '全垒打',
-        description:
-          '配合平底锅使用，平底锅每一段伤害都能受到全垒打的攻击增伤，瞬间打出爆发伤害。全垒打还能提高移速。',
+        description: '配合平底锅使用，平底锅每一段伤害都能受到全垒打的攻击增伤，瞬间打出爆发伤害。',
       },
     ],
     skills: [
@@ -122,9 +122,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '手型枪',
         type: 'weapon1',
         description:
-          '手型枪水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。如果拉回过程[遇到障碍](包括墙壁、叉子的阻挡，或是某些高低差地形)，则额外造成高额伤害。',
+          '释放{手型枪(衍生物)}水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。如果拉回过程[遇到障碍](包括墙壁、叉子的阻挡，或是某些高低差地形)，则额外造成高额伤害。',
         detailedDescription:
-          '手型枪水平飞出、飞回，对[命中](飞出、飞回过程均可命中；包括因遇到护盾而提前返回的情况；至多只能抓回并眩晕一只老鼠)的老鼠造成{15}伤害、[将其抓回并眩晕2.5秒](本技能造成伤害与造成眩晕的时机不同，所以即便该老鼠因该次伤害而进入"铁血"状态，也仍会受到后续的拉回和眩晕影响)。如果拉回过程[遇到障碍](包括墙壁、叉子的阻挡，或是某些高低差地形)，则[额外造成70伤害](可能会重复产生2-3次伤害，具体成因不详，疑似与墙壁厚度及高低差有关)。抓回及眩晕效果对变身状态的老鼠和虚弱的老鼠也生效。若手型枪命中的老鼠持有护盾，则打破一层护盾并提前返回。',
+          '释放{手型枪(衍生物)}水平飞出、飞回，对[命中](飞出、飞回过程均可命中；包括因遇到护盾而提前返回的情况；至多只能抓回并眩晕一只老鼠)的老鼠造成{15}伤害、[将其抓回并眩晕2.5秒](本技能造成伤害与造成眩晕的时机不同，所以即便该老鼠因该次伤害而进入"铁血"状态，也仍会受到后续的拉回和眩晕影响)。如果拉回过程[遇到障碍](包括墙壁、叉子的阻挡，或是某些高低差地形)，则[额外造成70伤害](不受攻击增伤影响；可能会重复产生2-3次伤害，具体成因不详，疑似与墙壁厚度及高低差有关)。抓回及眩晕效果对变身状态的老鼠和虚弱的老鼠也生效。若手型枪命中的老鼠持有护盾，则打破一层护盾并提前返回。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
@@ -151,9 +151,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '平底锅',
         type: 'weapon2',
-        description: '挥锅攻击老鼠并打出煎蛋，打晕并致盲附近老鼠、降低其救援速度；也能击飞道具。',
+        description: '挥锅攻击老鼠并打出{煎蛋}，打晕并致盲附近老鼠、降低其救援速度；也能击飞道具。',
         detailedDescription:
-          '挥舞平底锅，对直接命中的老鼠造成{15}伤害，向斜上方略微击飞对方，并附加5秒[煎蛋失明](特效为一块煎蛋蒙蔽双眼，与常规失明不同)和55%救援减速效果；挥锅时会以固定角度和力度飞出一块煎蛋，煎蛋对命中的老鼠造成{15}点伤害，并附加5秒煎蛋失明和55%救援减速效果；被平底锅直接命中并击飞的老鼠落地后受到{30}伤害，并眩晕1秒。',
+          '挥舞平底锅，对直接命中的老鼠造成{15}伤害，向斜上方略微击飞对方，并附加5秒[煎蛋失明](特效为一块煎蛋蒙蔽双眼，与常规失明不同)和55%救援减速效果；挥锅时会以固定角度和力度飞出一块{煎蛋}，煎蛋对命中的老鼠造成{15}点伤害，并附加5秒煎蛋失明和55%救援减速效果；被平底锅直接命中并击飞的老鼠落地后受到{30}伤害，并眩晕1秒。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
@@ -204,13 +204,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         ],
       },
     ],
-    counters: [
-      {
-        id: '尼宝',
-        description: '汤姆主动技能期间能免疫鱼钩眩晕；平底锅还能把尼宝拍飞，打断其救援。',
-        isMinor: false,
-      },
-    ],
     counteredBy: [
       {
         id: '剑客莉莉',
@@ -240,13 +233,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '防守',
         isMinor: false,
-        description: '主动技能可以将奶酪推离洞口；旋转桶盖可以有效守火箭或奶酪。',
+        description: '{主动技能}可以将奶酪推离洞口；旋转桶盖可以有效守火箭或奶酪。',
         additionalDescription: '',
       },
       {
         tagName: '打架',
         isMinor: false,
-        description: 'Lv.1被动快速起身和Lv.3旋转桶盖的霸体提供了较强的打架能力。',
+        description: '{1级被动}快速起身和{3级旋转桶盖}的霸体提供了较强的打架能力。',
         additionalDescription: '',
       },
     ],
@@ -256,34 +249,31 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '垃圾盖',
         pattern: '12000[1122]',
         weaponType: 'weapon1',
-        description:
-          '利用被动的高伤害和延长控制效果提高攻击能力。点出Lv.3被动后视情况对主动或武器技能进行加点。',
+        description: '利用被动的高伤害和延长控制效果提高攻击能力。点出{3级被动}后视情况进行加点。',
         additionaldescription: '',
       },
       {
         id: '旋转桶盖',
         pattern: '13(0)330011',
         weaponType: 'weapon2',
-        description: '三级时可以适当留加点，如果血量告急则先点Lv.1被动。',
+        description: '三级时可以适当留加点，如果血量告急则先点{1级被动}。',
         additionaldescription: '',
       },
     ],
     knowledgeCardGroups: [
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
-        description: '利用击晕补充控制链，乘胜追击补充移速，提高追击能力。',
+        description:
+          '利用{击晕}补充控制链，{乘胜追击}补充移速，提高追击能力。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-        description: '利用穷追猛打刷取经验，为后期打架做准备。',
+        description:
+          '利用{穷追猛打}刷取经验，为后期打架做准备。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-        description: '打管道较多的地图可考虑使用。无21知识量时可去掉狡诈。',
-      },
-      {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'A-穷追猛打'],
-        description: '利用细心和击晕进行防守。可酌情将穷追猛打替换为其他知识卡。',
+        description: '打管道较多的地图可考虑使用。（待翻新，有意提供知识卡可填写反馈建议）',
       },
     ],
     specialSkills: [
@@ -298,7 +288,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '全垒打',
         description:
-          '在某些需要极高伤害的场合可酌情使用。主动和武器技能都能享受到攻击增伤，配合全垒打打出爆发伤害。全垒打提供的极高移速还能提高主动技能的冲刺距离。',
+          '在需要高伤害的场合可酌情使用。主动和武器技能都能享受全垒打的攻击增伤；全垒打提供的移速还能提高{主动技能}的冲刺距离。',
       },
     ],
 
@@ -308,13 +298,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['冲刺', '冲撞'],
         description:
-          '向前冲刺一段时间，撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到的老鼠造成伤害和短暂眩晕。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，且可以使用爪刀、道具和技能。',
+          '向前冲刺，冲刺期间免疫控制效果，并撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到的老鼠造成伤害和短暂眩晕。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
         detailedDescription:
-          '[在短暂前摇后开始冲刺](前摇过程中没有霸体)，向前冲刺一段时间，撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到老鼠造成{26}伤害和短暂眩晕。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，且可以使用爪刀、道具和技能。',
+          '在0.6秒前摇后开始向前冲刺，冲刺持续1.2秒，期间免疫控制效果，并撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到老鼠造成{26}伤害和短暂眩晕，冲刺结束后进入0.2秒后摇。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不可被打断',
-        cancelableAftercast: '不可取消后摇',
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '不可取消',
         videoUrl: 'https://www.bilibili.com/video/BV1Eg41147Eo?t=4.8',
         skillLevels: [
           {
@@ -343,7 +333,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可取消',
         videoUrl: 'https://www.bilibili.com/video/BV1Eg41147Eo?t=47.5',
         skillLevels: [
           {
@@ -371,9 +361,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '旋转桶盖',
         type: 'weapon2',
         description:
-          '点按原地丢出旋转桶盖，或拖拽技能向指定方向扔出旋转桶盖，伤害并眩晕命中的老鼠；友方再次碰到桶盖会将其拾取，使自身受到的伤害降低一段时间。',
+          '拖拽技能向指定方向、或点按原地扔出{旋转桶盖(衍生物)}，伤害并眩晕命中的敌方；友方再次碰到桶盖时将其拾取，使自身受到的伤害降低一段时间。',
         detailedDescription:
-          '点按原地丢出旋转桶盖，或拖拽技能向指定方向扔出旋转桶盖，对命中的老鼠造成55伤害并眩晕1.5秒；友方再次碰到桶盖会将其拾取，使自身受到的伤害降低20，持续6秒。桶盖被投掷时的初速度较快，会被道具和墙壁反弹。',
+          '拖拽技能向指定方向、或点按原地扔出{旋转桶盖(衍生物)}，对命中的敌方造成{55}伤害并眩晕1.5秒；友方再次碰到桶盖时将其拾取，使自身受到的伤害降低20，持续6秒。桶盖被投掷时的初速度较快，会被道具和墙壁反弹。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键'],
@@ -392,7 +382,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '增加桶盖飞行速度；自己捡到桶盖获得[强霸体](免疫虚弱和绝大多数控制效果)。',
+            description: '桶盖飞行速度增加；捡到桶盖会获得[霸体](免疫虚弱和绝大多数控制效果)。',
             cooldown: 12,
           },
         ],
@@ -404,21 +394,22 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '虚弱时间大幅降低，起身后的无敌时间大幅增长。',
+            description: '虚弱时间大幅降低，虚弱期间Hp恢复速度大幅增加，起身后的无敌时间延长。',
             detailedDescription:
-              '虚弱后的Hp恢复速度极大幅增加，虚弱时间大幅降低，起身后的无敌时间大幅延长。',
+              '虚弱时间降低至3.8秒，且[虚弱期间的Hp恢复速度增加至100Hp/秒](该效果保证了绝大多数情况下布奇将以满Hp状态起身)，虚弱结束后的无敌时间延长。',
           },
           {
             level: 2,
             description:
-              '[投掷道具](包括本来没有伤害的果子、香水瓶、胡椒瓶、番茄等)命中敌方时[额外造成伤害](与原伤害分为不同的两段，若原伤害命中在敌方护盾上时则不造成额外伤害)，造成伤害后将回复Hp，同时在一段时间内提高移速。',
+              '[投掷道具](包括本来没有伤害的果子、香水瓶、胡椒瓶、番茄等)命中敌方时造成额外伤害，造成伤害后将回复Hp，同时在一段时间内提高移速。',
             detailedDescription:
-              '[投掷道具](包括本来没有伤害的果子、香水瓶、胡椒瓶、番茄等)命中敌方时[额外造成25伤害](与原伤害分为不同的两段，若原伤害命中在敌方护盾上时则不造成额外伤害)，造成伤害后将回复Hp，同时提高移速，持续5秒。',
+              '[投掷道具](包括本来没有伤害的果子、香水瓶、胡椒瓶、番茄等)命中敌方时[造成25额外伤害](与原伤害分为不同的两段，若原伤害命中在敌方护盾上时则不造成额外伤害)，造成伤害后将回复Hp，同时提高移速，持续5秒。',
           },
           {
             level: 3,
-            description: '爪刀有一定概率额外造成极高伤害；技能和道具造成的控制时间小幅度增加。',
-            detailedDescription: '爪刀有30%概率额外造成200伤害；技能和道具造成的控制时间增加1秒。',
+            description: '爪刀有一定概率造成极高额外伤害；技能和道具造成的控制时间小幅度增加。',
+            detailedDescription:
+              '爪刀有30%概率[造成200额外伤害](与原伤害分为不同的两段，若原伤害命中在敌方护盾上时则不造成额外伤害)；技能和道具造成的控制时间增加1秒。',
           },
         ],
       },
@@ -451,12 +442,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '剑客莉莉',
         description:
-          '剑客莉莉的风墙能阻挡冲刺的布奇，Lv.2提供的无敌和武器技能提供的位移也能相对安全地进行救援。',
-        isMinor: true,
-      },
-      {
-        id: '尼宝',
-        description: '尼宝的翻滚能躲过布奇的攻击，或是安全地进行救援。',
+          '剑客莉莉的风墙能阻挡冲刺的布奇，Lv.2被动提供的无敌和武器技能提供的位移也能相对安全地进行救援。',
         isMinor: true,
       },
       {
@@ -468,6 +454,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '侦探杰瑞',
         description: '侦探杰瑞推奶酪和自保能力强，烟雾弹还能反制布奇的防守奶酪能力。',
         isMinor: false,
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '魔术漂浮',
+        description: '魔术漂浮能躲开布奇的冲撞。',
+        isMinor: true,
       },
     ],
   },
@@ -510,7 +503,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '打架',
         isMinor: true,
-        description: '通过换位和Lv.3分身提供的霸体反制老鼠的控制。',
+        description: '通过换位和{3级主动}提供的霸体反制老鼠的控制。',
         additionalDescription: '但难以应对爆发输出。',
       },
     ],
@@ -535,20 +528,21 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
         description:
-          '利用击晕配合Lv.1被动提高控制能力，或是配合捕虫网直接抓住老鼠；皮糙肉厚提高分身的生存能力。',
+          '利用{击晕}配合{1级被动}提高控制能力，或是配合捕虫网直接抓住老鼠；{皮糙肉厚}提高分身的生存能力。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-击晕', 'S-乘胜追击', 'A-熊熊燃烧'],
-        description: '乘胜追击提高机动性，且能更好地配合击晕和Lv.1被动。',
+        description:
+          '{乘胜追击}提高机动性，且能更好地配合{击晕}和{1级被动}。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-击晕', 'S-乘胜追击', 'A-加大火力', 'C-猫是液体'],
-        description: '猫是液体在管道图有较强的机动性。',
+        description: '{猫是液体}在管道图有较强的机动性。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
         description:
-          '托普斯爪刀较短，长爪能极大幅提高爪刀范围，配合击晕、Lv.1被动和“我生气了”特技打出连续控制和爆发伤害，还能刷取经验。但长爪负面效果也很明显，使用时需再三斟酌，因此本卡组较偏向娱乐。',
+          '托普斯爪刀较短，{长爪}能极大幅提高爪刀范围，配合{击晕}、{1级被动}和{我生气了！}打出连续控制和爆发伤害，还能刷取经验。但{长爪}负面效果也很明显，使用时需再三斟酌，因此本卡组较偏向娱乐。（待翻新，有意提供知识卡可填写反馈建议）',
       },
     ],
     counters: [
@@ -566,7 +560,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     specialSkills: [
       {
         name: '绝地反击',
-        description: '配合捕虫网或击晕+Lv.1被动，实现反击效果。',
+        description: '配合捕虫网或击晕+Lv.1被动，实现反击效果。', // FIXME： 这里改成{1级被动}会产生bug，不过不严重，不影响使用，下次有空修
       },
       {
         name: '我生气了！',
@@ -578,15 +572,17 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '双重猫格',
         type: 'active',
-        aliases: ['分身'],
+        aliases: ['分身', '弟弟'],
         description:
-          '释放一个分身。分身爪刀伤害提高，爪刀CD减少，免疫碎片和老鼠夹，且[继承部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和本体叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加](包括受到部分环境伤害时)。分身存在期间本体获得额外技能，点击可指挥分身出击或跟随（有CD）。再次使用主动技能可与分身换位（有CD）。本体[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。',
+          '释放一个{托普斯分身}。分身爪刀伤害提高，爪刀CD减少，免疫碎片和老鼠夹，且[继承部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和本体叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加](包括受到部分环境伤害时)。分身存在期间本体获得额外技能，点击可指挥分身出击或跟随（有CD）。再次使用主动技能可与分身换位（有CD）。本体[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。',
         detailedDescription:
-          '在一段时间的前摇后，释放一个[与自身相貌相同的分身](昵称与Hp显示和自身本体几乎相同)。分身爪刀伤害提高15，爪刀CD减少，免疫碎片和老鼠夹，且[继承部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和本体叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加20](包括受到部分环境伤害时)。分身存在期间本体获得额外技能，点击可指挥分身出击或跟随（CD：5秒）。再次使用主动技能可与分身换位（有CD，与技能等级有关，与技能本身的冷却无关）。本体[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。分身成功释放后，技能本身的CD就开始倒计时；分身被击倒或消失后，技能切换回本来的CD。',
+          '释放一个{托普斯分身}，其[与自身相貌相同](装扮、昵称、Hp条显示的方式和本体完全一致)。分身爪刀伤害提高15，爪刀CD减少，免疫碎片和老鼠夹，且[继承部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和本体叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加20](包括受到部分环境伤害时)。分身存在期间本体获得额外技能，点击可指挥分身出击或跟随（CD：5秒）。再次使用主动技能可与分身换位（有CD，与技能等级有关，与技能本身的冷却无关）。本体[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。分身成功释放后，技能本身的CD就开始倒计时；分身被击倒或消失后，技能切换回本来的CD。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
+        forecast: 2.2,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -602,7 +598,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '技能本身的CD减少至20秒；换位CD减少至5秒；分身不会主动消失；如果分身在本体附近，本体受到的[眩晕控制](不包括斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
+              '技能本身的CD减少至20秒；换位CD减少至5秒；分身不会主动消失；如果分身在本体附近，本体受到的[眩晕控制](包括大部分眩晕，另外还能免疫尼宝的鱼钩；不包括其它控制，如斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
             cooldown: 20,
           },
         ],
@@ -611,13 +607,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '泡泡棒',
         type: 'weapon1',
         description:
-          '召唤在场景中漂浮的泡泡，[鼠方碰到泡泡时会被困住](若有护盾则消耗一层护盾)，需通过挣脱才能离开。[泡泡存在一段时间后消失](有老鼠在其内被困住时则不会自然消失)，可以提前被道具砸破。泡泡被砸破或因挣脱破碎时，对周围的老鼠造成伤害和短暂的爆炸眩晕。直接释放技能会吹出留在原地的泡泡，拖动释放技能则使吹出的泡泡向该方向缓慢漂移。',
+          '召唤在场景中漂浮的{泡泡}，[鼠方碰到泡泡时会被困住](若有护盾则消耗一层护盾)，需通过挣脱才能离开。[泡泡存在一段时间后消失](有老鼠在其内被困住时则不会自然消失)，可以提前被道具砸破。泡泡被砸破或因挣脱破碎时，对周围的老鼠造成伤害和短暂的爆炸眩晕。直接释放技能会吹出留在原地的泡泡，拖动释放技能则使吹出的泡泡向该方向缓慢漂移。',
         detailedDescription:
-          '召唤在场景中漂浮的泡泡，[鼠方碰到泡泡时会被困住](若有护盾则消耗一层护盾)，需通过挣脱才能离开。[泡泡存在20秒后消失](有老鼠在其内被困住时则不会自然消失)，可以提前被道具砸破。泡泡被砸破或因挣脱破碎时，对周围的老鼠造成25伤害和短暂的爆炸眩晕。直接释放技能会吹出留在原地的泡泡，拖动释放技能则使吹出的泡泡向该方向缓慢漂移。',
+          '召唤在场景中漂浮的{泡泡}，[鼠方碰到泡泡时会被困住](若有护盾则消耗一层护盾)，需通过挣脱才能离开。[泡泡存在20秒后消失](有老鼠在其内被困住时则不会自然消失)，可以提前被道具砸破。泡泡被砸破或因挣脱破碎时，对周围的老鼠造成[25](不受攻击增伤影响)伤害和短暂的爆炸眩晕。直接释放技能会吹出留在原地的泡泡，拖动释放技能则使吹出的泡泡向该方向缓慢漂移。',
         canMoveWhileUsing: false,
         canUseInAir: false,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -651,7 +648,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description: '',
-            // detailedDescription: '网住一只老鼠。',
             cooldown: 15,
           },
           {
@@ -698,6 +694,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '"流浪猫铁三角"中的一员。莱特宁是一只橙红色的猫，喜欢与汤姆争夺女主人的宠爱，他移动速度快如闪电，没有任何老鼠能逃脱他的追击。',
     maxHp: 260,
+    attackBoost: 0,
     hpRecovery: 3,
     moveSpeed: 775,
     jumpHeight: 420,
@@ -715,13 +712,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         tagName: '防守',
         isMinor: false,
         weapon: 1,
-        description: '垃圾桶可阻止老鼠推奶酪，且能无缝衔接。',
+        description: '{垃圾桶}可阻止老鼠推奶酪，且能无缝衔接。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
         isMinor: true,
-        description: '主动技能的直接抓取有一定翻盘能力。',
+        description: '{主动技能}的直接抓取有一定翻盘能力。',
         additionalDescription: '',
       },
     ],
@@ -753,6 +750,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '管道用，若没21知识点可以去掉狡诈。',
       },
       {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
+        description: '主布局，防守。',
+      },
+      {
         cards: ['S-猛攻', 'A-细心', 'A-穷追猛打', 'B-恐吓', 'B-皮糙肉厚'],
         description: '防守流。',
       },
@@ -772,12 +773,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '瞬移闪击',
         type: 'active',
         aliases: ['闪现'],
-        description: '向前移动一段距离。如果附近有老鼠，可以瞬移到老鼠身后，范围在小地图显示。',
+        description:
+          '向前传送一段距离。如果附近有[老鼠](处于隐身状态的老鼠除外)，改为传送到老鼠身后，该范围会在小地图显示。',
+        detailedDescription:
+          '[向前传送1450距离](若有墙壁等障碍物阻挡，则改为传送到障碍物面前)。如果附近有[老鼠](处于隐身状态的老鼠除外)，改为传送到老鼠身后，该范围会在小地图显示。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         canHitInPipe: false,
         cancelableAftercast: '无后摇',
-        cancelableSkill: '不可被打断',
+        aftercast: 0,
+        cancelableSkill: '不可主动打断',
         cueRange: '全图可见',
         skillLevels: [
           {
@@ -787,16 +792,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '瞬移后获得8秒“疾如风”状态，提升移速和攻击频率。',
+            description: '瞬移后获得8秒“疾如风”状态（移速提高、爪刀CD减少）。',
             cooldown: 8,
-            detailedDescription: '瞬移后获得8秒“疾如风”状态，加速10%、爪刀CD减半。',
+            detailedDescription: '瞬移后获得8秒“疾如风”状态（移速提高10%、爪刀CD减少50%）。',
           },
           {
             level: 3,
             description:
-              '提高瞬移范围；瞬移到[交互中](包括推奶酪、救队友、在捕鼠夹上挣扎、吃蛋糕，喝牛奶，喝饮料、开纸箱、技能前摇、开关门、推车、推斧头、摇钟、调药水、开监控、采花、摇三角铁、进机械鼠、自起特技)的老鼠身后时，对其造成[眩晕](可被霸体或消耗一层护盾抵挡)，期间可直接抓起。',
+              '提高瞬移范围；瞬移到[交互中](包括绝大多数前摇、后摇、交互等动作)的老鼠身后时，对其造成[眩晕](可被霸体或消耗一层护盾抵挡)，期间可直接抓起。',
             detailedDescription:
-              '提高瞬移范围；瞬移到[交互中](包括推奶酪、救队友、在捕鼠夹上挣扎、吃蛋糕，喝牛奶，喝饮料、开纸箱、技能前摇、开关门、推车、推斧头、摇钟、调药水、开监控、采花、摇三角铁、进机械鼠、自起特技)的老鼠身后时，对其造成2秒[眩晕](可被霸体或消耗一层护盾抵挡)，期间可直接抓起。',
+              '提高瞬移范围；瞬移到[交互中](包括绝大多数前摇、后摇、交互等动作，部分列举如下：推奶酪、救队友、在捕鼠夹上挣扎、吃蛋糕，喝牛奶，喝饮料、开纸箱、技能前摇、开关门、推车、推斧头、摇钟、调药水、开监控、采花、摇三角铁、进机械鼠、自起特技)的老鼠身后时，对其造成2秒[眩晕](可被霸体或消耗一层护盾抵挡)，期间可直接抓起。',
             cooldown: 8,
           },
         ],
@@ -805,19 +810,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '垃圾桶',
         type: 'weapon1',
         description:
-          '放置垃圾桶阻挡老鼠的道路，垃圾桶在受到4次攻击后会摧毁。垃圾桶的异味会使老鼠受到减速和伤害。由此造成伤害时会减少爪刀CD。',
+          '放置{垃圾桶(衍生物)}阻挡道路，可被推动且被猫推动时的力度更大，可被爪刀打飞，受到4次攻击后会摧毁。垃圾桶的异味会使老鼠受到减速和伤害。由此造成伤害时会减少爪刀CD。',
         detailedDescription:
-          '放置垃圾桶阻挡老鼠的道路，垃圾桶在受到4次攻击后会摧毁。垃圾桶的异味会使老鼠受到减速和伤害。每造成1次伤害会降低0.6秒爪刀CD，每秒只生效一次。垃圾桶不会对倒地的老鼠造成伤害并降低爪刀CD，在垃圾桶范围内倒地并起身的老鼠不会受到垃圾桶的伤害，但重新进入垃圾桶范围仍会受到伤害。',
+          '放置{垃圾桶(衍生物)}阻挡道路，可被推动且被猫推动时的力度更大，可被爪刀打飞，受到4次攻击后会摧毁。垃圾桶的异味会使老鼠受到减速和伤害。每造成1次伤害会降低0.6秒爪刀CD，每秒只生效一次。垃圾桶不会对倒地的老鼠造成伤害并降低爪刀CD，在垃圾桶范围内倒地并起身的老鼠不会受到垃圾桶的伤害，但重新进入垃圾桶范围仍会受到伤害。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
             description: '垃圾桶持续12秒。',
             detailedDescription:
-              '垃圾桶持续12秒，老鼠[进入垃圾桶范围瞬间](包括放置时在范围内和老鼠进入)会受到10伤害，并以5/s持续降低Hp。',
+              '垃圾桶持续12秒，老鼠[进入垃圾桶范围瞬间](包括放置时在范围内和老鼠进入)会受到[10伤害](为固定值伤害，伤害值不受任何增伤/减伤效果影响（仍会受伤害转移影响）)，且每秒受到[5伤害](为固定值伤害，伤害值不受任何增伤/减伤效果影响（仍会受伤害转移影响）)。',
             cooldown: 18,
           },
           {
@@ -825,14 +831,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description: '垃圾桶持续时间提高至18秒；提高伤害。',
             cooldown: 18,
             detailedDescription:
-              '垃圾桶持续时间提高至18秒；老鼠进入垃圾桶范围瞬间伤害提高至15，持续性伤害提高至8/s。',
+              '垃圾桶持续时间提高至18秒；老鼠进入垃圾桶范围瞬间伤害提高至[15](为固定值伤害，伤害值不受任何增伤/减伤效果影响（仍会受伤害转移影响）)，且每秒受到[8伤害](为固定值伤害，伤害值不受任何增伤/减伤效果影响（仍会受伤害转移影响）)。',
           },
           {
             level: 3,
             description: '提高减速效果和伤害。',
             cooldown: 18,
             detailedDescription:
-              '提高减速效果；老鼠进入垃圾桶范围瞬间伤害提高至25，持续性伤害提高至12/s。',
+              '提高减速效果；老鼠进入垃圾桶范围瞬间伤害提高至[25](为固定值伤害，伤害值不受任何增伤/减伤效果影响（仍会受伤害转移影响）)，且每秒受到[12伤害](为固定值伤害，伤害值不受任何增伤/减伤效果影响（仍会受伤害转移影响）)。',
           },
         ],
       },
@@ -840,13 +846,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '咸鱼',
         type: 'weapon2',
         description:
-          '从垃圾桶中倒出咸鱼，鼠方踩到后会受到小幅全属性减益。爪刀命中[带有咸鱼效果的敌方](包括虚弱老鼠)时，将重置瞬移闪击CD、减少爪刀CD，并回复Hp。瞬移闪击将优先追踪带有咸鱼效果的敌方；手中有老鼠时，则优先追踪最近的咸鱼。',
+          '从垃圾桶中倒出{咸鱼(衍生物)}，鼠方踩到后会受到小幅全属性减益。爪刀命中[带有咸鱼效果的敌方](包括虚弱老鼠)时，将重置瞬移闪击CD、减少爪刀CD，并回复Hp。瞬移闪击将优先追踪带有咸鱼效果的敌方；手中有老鼠时，则优先追踪最近的咸鱼。',
         detailedDescription:
-          '从垃圾桶中倒出咸鱼并标记在小地图上，咸鱼持续一分钟，鼠方踩到后会受咸鱼影响，持续20秒，期间推速降低40%，救援、治疗速度降低33%，移速降低10%，跳跃高度降低（未测），同时暴露小地图位置。可通过吃蛋糕、喝牛奶、喝饮料、特技-治疗、牛仔弹琴来解除。爪刀命中[带有咸鱼效果的敌方](包括虚弱老鼠)时，将重置瞬移闪击CD，爪刀CD减少至1.9s，并以50/s恢复Hp，持续1s。瞬移闪击将优先追踪带有咸鱼效果的敌方，并大幅提高追踪范围；手中有老鼠时，则优先追踪最近的咸鱼。',
+          '从垃圾桶中倒出{咸鱼(衍生物)}并标记在小地图上，咸鱼持续一分钟，鼠方踩到后会受咸鱼影响，持续20秒，期间推速降低40%，救援、治疗速度降低33%，移速降低10%，跳跃高度降低（未测），同时暴露小地图位置。可通过吃{蛋糕}、喝{牛奶}、喝饮料、{应急治疗}、{2级牛仔吉他}来解除。爪刀命中[带有咸鱼效果的敌方](包括虚弱老鼠)时，将重置瞬移闪击CD，爪刀CD减少至1.9秒，并获得50Hp/秒的恢复效果，持续1秒。瞬移闪击将优先追踪带有咸鱼效果的敌方，并大幅提高追踪范围；手中有老鼠时，则优先追踪最近的咸鱼。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
+        aftercast: 0,
         canHitInPipe: false,
         skillLevels: [
           {
@@ -941,11 +948,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
+
   /* ----------------------------------- 牛仔汤姆 ----------------------------------- */
   牛仔汤姆: {
     description:
       '牛仔汤姆身手敏捷、深藏不露，擅长使用绳索御牛，热爱自由的他，在草原上过着与世无争的生活。',
     maxHp: 225,
+    attackBoost: 0,
     hpRecovery: 2.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -1067,13 +1076,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['牛哥'],
         description:
-          '释放斗牛，破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶/冰块/牛仔杰瑞的仙人掌)，并对老鼠造成伤害和[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
+          '释放{斗牛(衍生物)}，斗牛会来回冲撞，破坏[部分道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)，并对老鼠造成伤害和[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
         detailedDescription:
-          '释放斗牛，破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶/冰块/牛仔杰瑞的仙人掌)，并对老鼠造成25伤害和1.5秒[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
+          '释放{斗牛(衍生物)}，斗牛会来回冲撞，破坏[部分道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)，并对老鼠造成25伤害和1.5秒[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。最多同时召唤2头斗牛。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键'],
         cancelableAftercast: '无后摇',
+        aftercast: 0,
         cooldownTiming: '释放时',
         skillLevels: [
           {
@@ -1099,13 +1109,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '鞭子',
         type: 'weapon1',
         description:
-          '对前方老鼠造成1点伤害和减速。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加移速和减少爪刀CD。老鼠被累计命中两次后，受到伤害和眩晕效果，眩晕期间可被直接抓取。',
+          '对前方老鼠造成极低伤害和减速，能破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加移速和减少爪刀CD。老鼠被累计命中两次后，受到伤害和眩晕效果，眩晕期间可被直接抓取。使用技能时还能使场上的{斗牛}加速。。',
         detailedDescription:
-          '前摇0.25s，对前方老鼠造成1点伤害和持续7.9秒的9.5%减速、给自己持续8秒的1%加速和减少2%爪刀CD。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加3%移速和6%减少爪刀CD。老鼠被累计命中两次后，受到50点伤害和2.4秒眩晕效果，并清除鞭子带来的减益。鞭子眩晕期间可被直接抓取。',
+          '前摇0.25s，对前方老鼠造成1点伤害和持续7.9秒的9.5%减速、给自己持续8秒的1%加速和减少2%爪刀CD，能破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)。连续命中敌方角色两次后获得1层[增益](上限5层)，永久增加3%移速和减少6%爪刀CD。老鼠被累计命中两次后，受到50点伤害和2.4秒眩晕效果，并清除鞭子带来的减益。鞭子眩晕期间可被直接抓取。使用技能时还能使场上的{斗牛}加速。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
-        cancelableAftercast: '不可取消后摇',
+        cancelableAftercast: '不可取消',
+        forecast: 0.25,
         skillLevels: [
           {
             level: 1,
@@ -1114,9 +1125,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '鞭子命中老鼠后，会使老鼠缓慢减少Hp，同时附带更强的减速效果。',
+            description:
+              '鞭子命中老鼠后，会使老鼠缓慢减少Hp，同时使移速降低的效果增强，持续一段时间。',
             cooldown: 3.5,
-            detailedDescription: '鞭子命中老鼠后，会使老鼠以3/s失去Hp，同时附带更强的减速效果。',
+            detailedDescription:
+              '鞭子命中老鼠后，会使老鼠以3/s失去Hp，同时使移速降低的效果增强到10%，持续7.9秒。',
           },
           {
             level: 3,
@@ -1133,13 +1146,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
         skillLevels: [
           {
             level: 1,
-            description: '向前发射三颗小仙人掌球，命中时造成伤害和受伤状态、获得老鼠的小地图位置。',
+            description:
+              '向前发射三颗{小仙人掌球}，命中时造成伤害和受伤状态、并获得老鼠的小地图位置。',
             detailedDescription:
-              '向前喇叭形发射三颗小仙人掌球，命中时造成26伤害和受伤状态、获得老鼠的小地图位置4.85秒，同时自身获得持续5.85秒的12%加速。小仙人掌球最多存在1.5秒。',
+              '向前喇叭形发射三颗{小仙人掌球}，命中时造成26伤害和受伤状态、获得老鼠的小地图位置4.85秒，同时自身获得持续5.85秒的12%加速。小仙人掌球最多存在1.5秒。',
             cooldown: 18,
           },
           {
@@ -1151,10 +1165,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成伤害和眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
+              '7秒内可进行第三次发射，发射一颗{大仙人掌球}，在碰触实体时爆炸，对周围的敌方造成伤害和眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
             cooldown: 18,
             detailedDescription:
-              '7秒内可进行第三次发射，发射一颗大仙人掌球，在碰触实体时爆炸，对周围的敌方造成[60点伤害](不造成受伤)和3.5秒眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
+              '7秒内可进行第三次发射，发射一颗{大仙人掌球}，在碰触实体时爆炸，对周围的敌方造成[60伤害](不造成受伤)和3.5秒眩晕，同时分裂成10颗小仙人掌球飞向不同方向。',
           },
         ],
         cancelableAftercast: ['跳跃键', '移动键', '道具键'],
@@ -1174,9 +1188,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '技能额外附加受伤状态；使老鼠进入虚弱状态时，减少主动和武器技能CD。',
+            description:
+              '技能额外附加受伤状态；使老鼠进入虚弱状态时，减少{主动技能}和{武器技能}CD。',
             detailedDescription:
-              '技能额外附加受伤状态；使老鼠进入虚弱状态时，减少12秒主动和武器技能CD。',
+              '技能额外附加受伤状态；使老鼠进入虚弱状态时，减少12秒{主动技能}和{武器技能}CD。',
           },
           {
             level: 3,
@@ -1203,6 +1218,17 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '牛仔汤姆的3级被动可以压制表演者•杰瑞。',
         isMinor: true,
       },
+      {
+        id: '米雪儿',
+        description: '牛仔汤姆的攻击很容易波及到米雪儿的变身。',
+        isMinor: true,
+      },
+      {
+        id: '仙女鼠',
+        description:
+          '牛仔汤姆的弹弓和斗牛在混战中很容易打到仙女鼠，从而掠夺仙女鼠的星星；此外牛汤被变为大星星时依旧能触发三级被动。',
+        isMinor: true,
+      },
     ],
     counteredBy: [
       {
@@ -1214,43 +1240,91 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '剑客杰瑞',
         description: '剑客杰瑞的格挡使斗牛立即消失（我不吃牛肉！）。',
-        isMinor: false,
+        isMinor: true,
       },
       {
         id: '米可',
         description:
-          '米可采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）',
+          '米可采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）。',
         isMinor: false,
       },
       {
         id: '天使杰瑞',
         description:
-          '牛汤的弹弓一段命中有三级被动的天杰后，无法使用后两段弹弓，从而强推最后一块奶酪。',
+          '天使杰瑞被动带来的禁用技能与爪刀能使牛仔汤姆的进攻大幅削弱，并且牛仔汤姆很容易对天使杰瑞造成伤害。',
         isMinor: false,
       },
       {
         id: '尼宝',
-        description: '尼宝的主动技能免疫控制',
+        description: '尼宝的主动技能免疫控制。',
+        isMinor: true,
+      },
+      {
+        id: '莱恩',
+        description: '莱恩武器画的阻挡物能阻挡牛仔汤姆的斗牛。',
+        isMinor: false,
+      },
+      {
+        id: '雪梨',
+        description: '雪梨能快速解除老鼠的受伤状态和恢复血量。',
         isMinor: true,
       },
     ],
     specialSkills: [
       {
         name: '绝地反击',
-        description: '技能与自身无霸体效果（推荐使用）',
+        description: '技能与自身无霸体效果（推荐使用）。',
       },
       {
         name: '蓄力重击',
-        description: '斗牛撞击及大仙人掌球可造成眩晕效果，与蓄力重击有一定配合',
+        description: '斗牛撞击及大仙人掌球可造成眩晕效果，与蓄力重击有一定配合。',
       },
     ],
     aliases: ['牛汤'],
+    counteredByKnowledgeCards: [
+      {
+        id: '祝愿',
+        description:
+          '老鼠被放飞时能解除其他老鼠的受伤状态和回复其他老鼠血量，对牛仔汤姆的进攻造成干扰。',
+        isMinor: false,
+      },
+      {
+        id: '强健',
+        description: '当被斗牛在离牛仔汤姆较远距离击倒后能快速起身。',
+        isMinor: true,
+      },
+      {
+        id: '回家',
+        description: '在墙缝出现的时候让老鼠获得大量增益，让牛仔汤姆的墙缝期较为难打',
+        isMinor: false,
+      },
+    ],
+    countersKnowledgeCards: [
+      {
+        id: '铁血',
+        description: '牛仔汤姆的技能控制很足，同时也能直接抓起老鼠。',
+        isMinor: false,
+      },
+      {
+        id: '护佑',
+        description: '牛仔汤姆的攻击很容易波及并打破护佑',
+        isMinor: false,
+      },
+    ],
+    countersSpecialSkills: [
+      {
+        id: '绝处逢生',
+        description: '牛仔汤姆的鞭子能有效的使绝处逢生无效，斗牛和弹弓能给予压制。',
+        isMinor: false,
+      },
+    ],
   },
 
   /* ----------------------------------- 图多盖洛 ----------------------------------- */
   图多盖洛: {
     description: '拥有惊人美貌的图多盖洛是上东区知名度最高的千金小姐，她的追求者从纽约排到了巴黎。',
     maxHp: 230,
+    attackBoost: 0,
     hpRecovery: 2,
     moveSpeed: 770,
     jumpHeight: 420,
@@ -1310,36 +1384,62 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'S-击晕'],
-        description: '指甲油，在前中后期都有较高强度。',
-      },
-      {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
-        description: '指甲油，适合森林牧场，太空堡垒三等管道图。',
-      },
-      {
-        cards: ['S-猛攻', 'S-知识渊博', 'A-细心', 'A-熊熊燃烧'],
-        description: '指甲油，适合可以布局的图使用，后期拥有更强的防守翻盘能力。',
-      },
-      {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
         description: '香水指甲油通用，常规追击卡组。',
+        contributor: '鸽子',
       },
       {
-        cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
-        description: '香水，香水图多常规防守卡组。',
+        id: '魅力香水专用',
+        description: '',
+        groups: [
+          {
+            cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
+            description: '香水图多常规防守卡组。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-屈打成招', 'A-细心', 'A-穷追猛打'],
+            contributor: '鸽子',
+          },
+          {
+            cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-捕鼠夹', 'C-巡逻戒备'],
+            description: '20知识量卡组。',
+            contributor: '鸽子',
+          },
+        ],
+        defaultFolded: true,
       },
       {
-        cards: ['S-乘胜追击', 'S-知识渊博', 'S-猛攻', 'B-反侦察'],
-        description: '指甲油，双经验卡成型更快，后期更强势。',
-      },
-      {
-        cards: ['S-击晕', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
-        description: '指甲油，小图且玩家自身找节奏能力强可用。',
-      },
-      {
-        cards: ['S-乘胜追击', 'S-屈打成招', 'A-细心', 'A-穷追猛打'],
-        description: '香水。',
+        id: '魅力甲油专用',
+        description: '',
+        groups: [
+          {
+            cards: ['S-乘胜追击', 'S-知识渊博', 'S-击晕'],
+            description: '在前中后期都有较高强度。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
+            description: '适合森林牧场，太空堡垒三等管道图。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-猛攻', 'S-知识渊博', 'A-细心', 'A-熊熊燃烧'],
+            description: '适合可以布局的图使用，后期拥有更强的防守翻盘能力。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-知识渊博', 'S-猛攻', 'B-反侦察'],
+            description: '双经验卡成型更快，后期更强势。',
+            contributor: '鸽子',
+          },
+          {
+            cards: ['S-击晕', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
+            description: '小图且玩家自身找节奏能力强可用。',
+            contributor: '鸽子',
+          },
+        ],
+        defaultFolded: true,
       },
     ],
     specialSkills: [
@@ -1369,85 +1469,99 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '魅惑之吻',
         type: 'active',
         description:
-          '释放一个飞吻，释放后将追踪并锁定附近的老鼠，锁定后将全图追踪且不会更换目标，若追踪途中命中其他老鼠将由其他老鼠承担吻效果，命中老鼠后，其移动、跳跃、搬动奶酪等行为期间会受到持续伤害；受到[控制](包括碎片的僵直、夹子)以及虚弱后将解除被吻效果；飞吻可被护盾、无敌、虚弱和部分地形（包括门、厚墙壁、地面等）阻挡。',
+          '释放一个{飞吻}，飞吻将锁定并追踪附近的老鼠，持续一段时间后消失，也可被护盾、无敌、虚弱抵消，被[部分地形](包括门、厚墙壁、地面等)阻挡。命中老鼠后，其移动、跳跃、搬动奶酪等行为期间会受到持续伤害；受到其他[伤害或部分控制效果](包括爪刀攻击（指甲油外刀除外）、碎片的僵直、夹子、虚弱、部分变身效果（包括变身饮料效果）等，不包括香水反向、烟雾失明、场景物-轮胎造成的击退等)才能解除被吻效果。',
+        detailedDescription:
+          '释放一个{飞吻}，飞吻将锁定并全图追踪半径1200范围内的老鼠，锁定后将追踪且不会更换目标，若追踪途中命中其他老鼠将由其他老鼠承担吻效果；飞吻最多存在18秒，超过18秒将自动消失；飞吻可被护盾、无敌、虚弱抵消，也可被[部分地形](包括门、厚墙壁、地面等)阻挡。飞吻命中老鼠后，其移动、跳跃、搬动奶酪等行为期间会受到持续伤害，通常只有受到其他[伤害或部分控制效果](包括爪刀攻击（指甲油外刀除外）、碎片的僵直、夹子、虚弱、部分变身效果（包括变身饮料效果）等，不包括香水反向、烟雾失明、场景物-轮胎造成的击退等)才能解除被吻效果（{2级牛仔吉他}也可以直接解除）。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['移动键', '药水键', '道具键'],
         cancelableAftercast: ['道具键'],
+        forecast: 0.35,
+        aftercast: 0.8,
         cooldownTiming: '释放时',
         skillLevels: [
           {
             level: 1,
             description: '',
+            detailedDescription:
+              '伤害：每次跳跃受到1.3伤害；移动期间以[0.55Hp/次](该数值通过米可主动技能进行测段数，逆推计算获得。其他伤害数据参考了过往玩家的测量结果，可根据该方法测量或通过该数据推算得到单次伤害值)，折合8.3Hp/秒的速度受到伤害；搬动奶酪以折合15Hp/秒的速度受到伤害（现版本推奶酪不扣血）（{2级机械身躯}可令伤害减半）。',
             cooldown: 15,
           },
           {
             level: 2,
             description: '吻可以储存两个，被吻命中的老鼠额外受到减速，增加吻对老鼠的伤害。',
             cooldown: 15,
-            detailedDescription: '吻可以储存两个，被吻命中的老鼠额外受到减速24.6%。',
+            detailedDescription:
+              '吻可以储存两个，被吻命中的老鼠额外受到减速24.6%。\n伤害增加：每次跳跃受到1.8伤害；移动期间以折合9.8Hp/秒的速度受到伤害；搬动奶酪以折合21Hp/秒的速度受到伤害（现版本推奶酪不扣血）（{2级机械身躯}可令伤害减半）。',
           },
           {
             level: 3,
-            description: '被吻命中的老鼠无法使用技能，增加吻对老鼠的伤害。',
+            description: '被吻命中的老鼠无法使用技能，进一步增加吻对老鼠的伤害。',
             cooldown: 15,
-            detailedDescription: '被吻命中的老鼠无法使用技能。',
+            detailedDescription:
+              '被吻命中的老鼠无法使用技能。\n伤害进一步增加：每次跳跃受到2.3伤害；移动期间以折合11.3Hp/秒的速度受到伤害；搬动奶酪以折合32Hp/秒的速度受到伤害（现版本推奶酪不扣血）（{2级机械身躯}可令伤害减半）。',
           },
         ],
         cueRange: '全图可见',
-        detailedDescription:
-          '前摇0.35s，释放一个飞吻，后摇0.8s，释放后将追踪并锁定吻半径1200范围内的老鼠，锁定后将全图追踪且不会更换目标，若追踪途中命中其他老鼠将由其他老鼠承担吻效果，吻最多存在18s，超过18s将自动消失，命中老鼠后，其移动、跳跃、搬动奶酪等行为期间会受到持续伤害；受到[控制](包括碎片的僵直、夹子)以及虚弱后将解除被吻效果；飞吻可被护盾、无敌、虚弱和部分地形（包括门、厚墙壁、地面等）阻挡。\n一级吻伤害：跳跃1.3/次，移动以每秒8.3的伤害匀速扣血，搬动奶酪以每秒15的伤害匀速扣血（朵朵二被伤害减半），现版本推奶酪不扣血。\n二级吻伤害：跳跃1.8/次，移动以每秒9.8的伤害匀速扣血，搬动奶酪以每秒21的伤害匀速扣血（朵朵二被伤害减半），现版本推奶酪不扣血。\n三级吻伤害：跳跃2.3/次，移动以每秒11.3的伤害匀速扣血，搬动奶酪以每秒32的伤害匀速扣血（朵朵二被伤害减半），现版本推奶酪不扣血。',
         aliases: ['吻'],
       },
       {
         name: '魅力香水',
         type: 'weapon1',
         description:
-          '释放香水区域，香水内图多将缓慢恢复健康值，香水内老鼠移动、跳跃、攻击、Hp恢复、推速全面下降。释放香水期间爪刀和投掷道具命中敌方时，将在敌方位置生成香水区域，香水区域重叠时持续时间会少量减少。\n香水区域可被鞭炮、海盗炸药桶、泰菲火箭筒炸飞；可被佩克斯弹琴、表哥传送弹飞；可被蒙金奇撞飞；可被霜月滑铲铲飞。',
+          '喷洒香水，之后每隔一段时间在自身途径区域释放{香水区域}，爪刀和投掷道具命中敌方时也会在敌方位置生成{香水区域}，持续一段时间。图多盖洛在香水内获得增益，敌方在香水内的基础属性下降。香水区域重叠时持续时间会少量减少。香水区域可被部分受力效果影响而弹飞，沿指定方向飞出地图外。',
+        detailedDescription:
+          '喷洒香水，获得[香水释放状态](贴图：图多盖洛周身围绕一圈香水雾气，该雾气隐身期间也能被敌方看到)，期间每隔一段时间在自身途径区域释放{香水区域}，爪刀和投掷道具命中敌方时在敌方位置生成{香水区域}，香水释放状态持续一段时间。图多盖洛在香水内获得增益，敌方在香水内的属性下降。香水区域重叠时持续时间会少量减少。香水区域可被部分受力效果影响而弹飞，沿指定方向飞出地图外。\n可影响香水区域的效果：{小鞭炮}或{鞭炮束}爆炸；{航海士杰瑞}-{火药桶}或{泰菲}-{火箭筒}的爆炸；{佩克斯}-{魔音贯耳}的弹飞道具效果；{马索尔}-{闪亮营救}传送落地触发的弹飞道具效果；{蒙金奇}-{勇往直前}的撞飞道具效果；{霜月}-{滑步踢}的踢飞道具效果。另外{侦探杰瑞}-{视觉干扰器}可以短暂免疫香水效果。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
         cancelableAftercast: '无后摇',
+        forecast: 2.36,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
-            description: '释放12次香水区域。',
+            description:
+              '图多盖洛在香水内将缓慢恢复健康值；敌方在香水内的移速、跳跃速度、推速、造成的伤害、Hp自然恢复速度全面下降。',
             cooldown: 16,
-            detailedDescription: '释放12次香水区域，释放频率为1s/次。',
+            detailedDescription:
+              '香水自然释放频率为1秒/次（单次技能共能自然释放12次）。图多盖洛在香水内获得10Hp/秒的恢复效果；敌方在香水内移速降低30%，跳跃速度降低10%，推速降低10%，[造成的伤害降低10](最低为0)，[Hp自然恢复速度降低5/秒](最低为0，只对基础属性中的自然恢复一项生效，对因其他途径获得的恢复效果无效)。',
           },
           {
             level: 2,
             description:
-              '提高释放频率，释放次数增加到18次；香水内图多回复、伤害和爪刀频率提升；提高对老鼠的减益效果。',
+              '提高香水释放次数和释放状态持续时间。图多盖洛获得的恢复效果增强，且额外提高攻击增伤、减少爪刀CD；对敌方的减益效果数值全面增强。',
             cooldown: 16,
             detailedDescription:
-              '释放频率提高至0.8s/次，释放次数增加到18次；香水内图多回复额外增加15/s，伤害提高25，爪刀频率提升30%；香水内老鼠移动速度降低55%，跳跃速度降低20%，攻击降低20、Hp恢复降低5、推速降低30%。',
+              '香水自然释放频率提高至0.8秒/次（自然释放次数增加到18次）。图多盖洛在香水内获得的恢复效果改为15Hp/秒，且攻击增伤提高25，爪刀CD减少30%；敌方在香水区域内移速改为降低55%，跳跃速度改为降低20%，推速改为降低30%，[造成的伤害改为降低20](最低为0)。',
           },
           {
             level: 3,
             description:
-              '增强香水内图多获得的增益效果；提高对老鼠的减益效果。香水内爪刀范围获得提升；老鼠在香水内无法使用技能。',
+              '图多盖洛获得的所有增益效果数值全面增强，且额外提高爪刀范围；对敌方减益效果数值进一步增强，且使其无法使用技能。',
             cooldown: 16,
             detailedDescription:
-              '香水内图多回复额外增加20/s，伤害提高50，爪刀频率提升70%；香水内老鼠移动速度降低80%，跳跃速度降低30%，攻击降低30、Hp恢复降低5、推速降低70%。爪刀范围获得提升；老鼠在香水内无法使用技能。',
+              '图多盖洛在香水内获得的恢复效果改为20Hp/秒，攻击增伤改为提高50，爪刀CD改为减少70%，且爪刀范围提高到300；敌方在香水区域内移速改为降低80%，跳跃速度改为降低30%，推速改为降低70%，[造成的伤害改为降低30](最低为0)，且无法使用技能。',
           },
         ],
         canHitInPipe: false,
         cooldownTiming: '释放时',
         cueRange: '全图可见',
         aliases: ['香水'],
-        detailedDescription:
-          '前摇2.36s，技能释放1s后将释放一次香水区域，香水将存在12s，香水内图多回复额外增加10/s，香水内老鼠移动速度降低30%，跳跃速度降低10%，攻击降低10、Hp恢复降低5、推速降低10%。释放香水期间爪刀和投掷道具命中敌方时，将在敌方位置生成香水区域，香水区域重叠时先释放的香水区域持续时间会减少5s。\n香水区域可被鞭炮、海盗炸药桶、泰菲火箭筒炸飞；可被佩克斯弹琴、表哥传送弹飞；可被蒙金奇撞飞；可被霜月滑铲铲飞。',
       },
       {
         name: '魅力甲油',
         type: 'weapon2',
         description:
-          '图多盖洛涂上指甲油，在随后的20s或3次爪刀期间提高图多的移动速度，攻击会产生额外爪击区域（对爪刀有关的知识卡、特技也会生效），对敌人触发当前等级的被动效果并减少健康值，使用额外爪击区域命中敌方不会中断魅惑之吻效果，使用额外爪击区域命中带有反向效果的目标将造成额外伤害（近身亦可），使用额外爪击区域命中受到魅惑之吻影响的目标会造成额外伤害。',
+          '涂上指甲油，在随后的20s或3次爪刀期间加速，攻击会产生额外爪击区域（对爪刀有关的知识卡、特技也会生效），对敌人触发当前等级的被动效果并造成固定伤害。使用额外爪击区域命中敌方不会中断魅惑之吻效果，且命中带有反向效果或受到魅惑之吻影响的目标会造成额外伤害。',
+        detailedDescription:
+          '涂上指甲油，在随后的20s或3次爪刀期间加速10%，攻击会产生额外爪击区域（对爪刀有关的知识卡、特技也会生效），对敌人触发当前等级的被动效果并造成30固定伤害。使用额外爪击区域命中敌方不会中断魅惑之吻效果，使用额外爪击区域命中带有反向效果的目标将造成额外20伤害（近身亦可），使用额外爪击区域命中受到魅惑之吻影响的目标会造成40额外伤害。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
         cancelableAftercast: ['道具键'],
+        forecast: 1,
+        aftercast: 0.18,
         skillLevels: [
           {
             level: 1,
@@ -1465,16 +1579,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '强化爪刀命中获得强霸体；强化爪刀第一次命中老鼠时，若老鼠在地面将造成[黏性甲油效果](粘滞6.15s，粘滞期间禁用技能、机器鼠，跳跃速度减少为0，掉落手中的道具（能掉落道具和击晕一致）。老鼠可小范围移动，可购买、拾取、投掷道具，不持续向一个方向移动、跳跃不会减少粘滞时间，仅向一个方向持续移动0.5s将提前挣脱)，若老鼠在空中，其下次落地时造成[黏性甲油效果](粘滞6.15s，粘滞期间禁用技能、机器鼠，跳跃速度减少为0，掉落手中的道具（能掉落道具和击晕一致）。老鼠可小范围移动，可购买、拾取、投掷道具，不持续向一个方向移动、跳跃不会减少粘滞时间，仅向一个方向持续移动0.5s将提前挣脱)，后续强化爪刀不会造成此效果。使用额外爪击区域命中受到魅惑之吻影响的目标会造成额外伤害并获得满层神采奕奕状态。',
+              '强化爪刀命中获得强霸体；强化爪刀第一次命中老鼠时，若老鼠在地面将造成[黏性甲油效果](粘滞6.15s，粘滞期间禁用技能、机器鼠，跳跃速度减少为0，掉落手中的道具（能掉落道具和击晕一致）。老鼠可小范围移动，可购买、拾取、投掷道具，不持续向一个方向移动、跳跃不会减少粘滞时间，仅向一个方向持续移动0.5s将提前挣脱)，若老鼠在空中，其下次落地时造成[黏性甲油效果](粘滞6.15s，粘滞期间禁用技能、机器鼠，跳跃速度减少为0，掉落手中的道具（能掉落道具和击晕一致）。老鼠可小范围移动，可购买、拾取、投掷道具，不持续向一个方向移动、跳跃不会减少粘滞时间，仅向一个方向持续移动0.5s将提前挣脱)，后续强化爪刀不会造成此效果。使用额外爪击区域命中受到魅惑之吻影响的目标会获得满层神采奕奕状态。',
             cooldown: 10,
             detailedDescription:
-              '强化爪刀命中获得10s强霸体；强化爪刀第一次命中老鼠时，若老鼠在地面将造成[黏性甲油效果](粘滞6.15s，粘滞期间禁用技能、机器鼠，跳跃速度减少为0，掉落手中的道具（能掉落道具和击晕一致）。老鼠可小范围移动，可购买、拾取、投掷道具，不持续向一个方向移动、跳跃不会减少粘滞时间，仅向一个方向持续移动0.5s将提前挣脱)，若老鼠在空中，其下次落地时造成[黏性甲油效果](粘滞6.15s，粘滞期间禁用技能、机器鼠，跳跃速度减少为0，掉落手中的道具（能掉落道具和击晕一致）。老鼠可小范围移动，可购买、拾取、投掷道具，不持续向一个方向移动、跳跃不会减少粘滞时间，仅向一个方向持续移动0.5s将提前挣脱)，后续强化爪刀不会造成此效果。使用额外爪击区域命中受到魅惑之吻影响的目标会造成40额外伤害并获得满层神采奕奕状态。',
+              '强化爪刀命中获得10s强霸体；强化爪刀第一次命中老鼠时，若老鼠在地面将造成[黏性甲油效果](粘滞6.15s，粘滞期间禁用技能、机器鼠，跳跃速度减少为0，掉落手中的道具（能掉落道具和击晕一致）。老鼠可小范围移动，可购买、拾取、投掷道具，不持续向一个方向移动、跳跃不会减少粘滞时间，仅向一个方向持续移动0.5s将提前挣脱)，若老鼠在空中，其下次落地时造成[黏性甲油效果](粘滞6.15s，粘滞期间禁用技能、机器鼠，跳跃速度减少为0，掉落手中的道具（能掉落道具和击晕一致）。老鼠可小范围移动，可购买、拾取、投掷道具，不持续向一个方向移动、跳跃不会减少粘滞时间，仅向一个方向持续移动0.5s将提前挣脱)，后续强化爪刀不会造成此效果。使用额外爪击区域命中受到魅惑之吻影响的目标会获得满层神采奕奕状态。',
           },
         ],
         aliases: ['指甲油'],
         cueRange: '全图可见',
-        detailedDescription:
-          '前摇1s，图多盖洛涂上指甲油，后摇0.18s，在随后的20s或3次爪刀期间提高图多的移动速度10%，攻击会产生额外爪击区域（对爪刀有关的知识卡、特技也会生效），对敌人触发当前等级的被动效果并造成30固定伤害，使用额外爪击区域命中敌方不会中断魅惑之吻效果，使用额外爪击区域命中带有反向效果的目标将造成额外20伤害（近身亦可），使用额外爪击区域命中受到魅惑之吻影响的目标会造成40额外伤害。',
       },
       {
         name: '香水美人',
@@ -1482,8 +1594,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '免疫反向效果，遇到道具香水或武器技能香水获得加速。',
-            detailedDescription: '免疫反向效果，遇到道具香水或武器技能香水获得加速21%。',
+            description: '免疫反向效果，遇到道具香水或{武器技能}香水获得加速。',
+            detailedDescription: '免疫反向效果，遇到道具香水或{武器技能}香水获得21%加速。',
           },
           {
             level: 2,
@@ -1504,17 +1616,17 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counters: [
       {
         id: '航海士杰瑞',
-        description: '图多六级后霸体无视海盗控制；海盗缺乏有效自保手段',
+        description: '图多六级后霸体无视海盗控制；海盗缺乏有效自保手段。',
         isMinor: false,
       },
       {
         id: '蒙金奇',
-        description: '大后期点出三级吻，克制蒙金奇',
+        description: '大后期点出三级吻，克制蒙金奇。',
         isMinor: true,
       },
       {
         id: '米可',
-        description: '大后期点出三级吻，对米可有一定威胁',
+        description: '大后期点出三级吻，对米可有一定威胁。',
         isMinor: true,
       },
     ],
@@ -1522,42 +1634,42 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counteredBy: [
       {
         id: '侦探杰瑞',
-        description: '侦探杰瑞的烟雾弹克制一切防守猫',
+        description: '侦探杰瑞的烟雾弹克制一切防守猫。',
         isMinor: false,
       },
       {
         id: '国王杰瑞',
-        description: '甲油缺少破盾手段，被护盾克制',
+        description: '甲油缺少破盾手段，被护盾克制。',
         isMinor: false,
       },
       {
         id: '剑客泰菲',
-        description: '剑客泰菲拥有长时间的群体无敌，克制甲油和香水防守',
+        description: '剑客泰菲拥有长时间的群体无敌，克制甲油和香水防守。',
         isMinor: false,
       },
       {
         id: '尼宝',
-        description: '尼宝武器技能无视图多的霸体、主动技能可以轻松救人',
+        description: '尼宝武器技能无视图多的霸体、主动技能可以轻松救人。',
         isMinor: false,
       },
       {
         id: '仙女鼠',
-        description: '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力',
+        description: '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力。',
         isMinor: true,
       },
       {
         id: '米可',
-        description: '米可拥有高额减伤，图多打不死',
+        description: '米可拥有高额减伤，图多打不死。',
         isMinor: true,
       },
       {
         id: '玛丽',
-        description: '扇子作为有效破局手段，主动技能可以禁用图多的核心爪刀',
+        description: '扇子作为有效破局手段，主动技能可以禁用图多的核心爪刀。',
         isMinor: true,
       },
       {
         id: '表演者•杰瑞',
-        description: '后期高血量且很难被放飞，克制图多的死守',
+        description: '后期高血量且很难被放飞，克制图多的死守。',
         isMinor: true,
       },
     ],
@@ -1566,6 +1678,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   侍卫汤姆: {
     description: '侍卫汤姆始终守护在皇宫内，负责保护国王的安全。',
     maxHp: 270,
+    attackBoost: 0,
     hpRecovery: 1.67,
     moveSpeed: 745,
     jumpHeight: 420,
@@ -1667,11 +1780,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '大幅提高视野范围，并警戒房间内所有老鼠。被警戒的老鼠推速下降50%、暴露小地图视野，并清除部分增益。若警戒到老鼠，额外获得加速；若未警戒到，则返还15s冷却。',
         detailedDescription:
-          '前摇1.31秒，大幅提高视野范围，并警戒房间内[所有老鼠](距离极远的除外)。被警戒到的老鼠推速下降50%，暴露小地图视野，并清除[部分增益](所有药水；侦探杰瑞、侦探泰菲的隐身；大部分护盾效果，如知识卡、角色技能的护盾（罗菲2被与恶魔传送门的盾不会被消除）；部分无敌效果，如无畏、舍己、国王护盾、莉莉二被；米雪儿小情绪的变大；仙女鼠星星与二被的隐身；红花；太空药水仓的跳跃提升、变大和隐身；熊猫谷药水仓的兴奋；天宫香炉的远视)。若警戒到老鼠，额外获得20%加速；若未警戒到，则返还15s冷却。使用降落伞中的罗宾汉不会被警戒到。',
+          '大幅提高视野范围，并警戒房间内[所有老鼠](距离极远的除外)。被警戒到的老鼠推速下降50%，暴露小地图视野，并清除[部分增益](所有药水；侦探杰瑞、侦探泰菲的隐身；大部分护盾效果，如知识卡、角色技能的护盾（罗菲2被与恶魔传送门的盾不会被消除）；部分无敌效果，如无畏、舍己、国王护盾、莉莉二被；米雪儿小情绪的变大；仙女鼠星星与二被的隐身；红花；太空药水仓的跳跃提升、变大和隐身；熊猫谷药水仓的兴奋；天宫香炉的远视)。若警戒到老鼠，额外获得20%加速；若未警戒到，则返还15s冷却。使用降落伞中的罗宾汉不会被警戒到。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键', '跳跃键'],
         cancelableAftercast: '无后摇',
+        forecast: 1.31,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -1700,11 +1815,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         videoUrl: 'https://www.bilibili.com/video/BV1JquQzHEyJ?t=129.6',
         canMoveWhileUsing: false,
         canUseInAir: false,
+        cancelableSkill: ['道具键', '跳跃键'],
         cancelableAftercast: '无后摇',
+        forecast: 0.684,
         description:
-          '原地召唤皇家火炮，对附近老鼠造成短暂眩晕和少量伤害，侍卫汤姆获得短暂的两层护盾。火炮存在期间，可以拖动技能键操纵火炮发射，命中时对老鼠造成眩晕和伤害，同时侍卫汤姆获得大幅加速和护盾。',
+          '原地召唤{皇家火炮(衍生物)}，对附近老鼠造成短暂眩晕和少量伤害，侍卫汤姆获得短暂的两层护盾。火炮存在期间，可以拖动技能键远程操纵火炮发射{炮弹}，命中时对老鼠造成眩晕和伤害，同时侍卫汤姆获得大幅加速和护盾。火炮可射击数次，有内置CD。',
         detailedDescription:
-          '前摇0.684秒，原地召唤皇家火炮，对附近老鼠造成0.93秒眩晕及10点伤害，侍卫汤姆获得两层护盾，持续1.95秒。火炮存在期间，侍卫汤姆可以自由活动，拖动技能键操纵火炮发射，命中时对老鼠造成0.56秒眩晕和50点伤害、移除其[部分增益](隐身、兴奋、远视；天宫图香炉的远视；除了尼宝三级翻滚和魔术师三级卡牌以外的技能与被动隐身)；同时侍卫汤姆加速49%并获得两层护盾，效果持续2.96秒',
+          '原地召唤{皇家火炮(衍生物)}，对附近老鼠造成0.93秒眩晕及10点伤害，侍卫汤姆获得两层护盾，持续1.95秒。火炮存在期间，侍卫汤姆可以自由活动，拖动技能键远程操纵火炮发射{炮弹}，命中时对老鼠造成0.56秒眩晕和[50伤害](不受攻击增伤加成)、移除其[部分增益](隐身、兴奋、远视；天宫图香炉的远视；除了尼宝三级翻滚和魔术师三级卡牌以外的技能与被动隐身)；同时侍卫汤姆加速49%并获得两层护盾，效果持续2.96秒。火炮可射击数次，每次射击之间有最短间隔。',
         skillLevels: [
           {
             level: 1,
@@ -1724,7 +1841,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '火炮能射击七次；对命中的老鼠额外施加减速、禁用其技能和道具键3.5秒。',
           },
         ],
-        cancelableSkill: ['道具键', '跳跃键'],
       },
       {
         name: '随机应变',
@@ -1812,25 +1928,25 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         tagName: '防守',
         isMinor: false,
         description:
-          '武器技能汽水罐，放在火箭上可以妨碍救援；主动技能喵喵叫大范围伤害搭配汽水可以防守最后一块奶酪',
+          '{汽水罐}放在火箭上可以妨碍救援；{喵喵叫}大范围伤害搭配汽水可以防守最后一块奶酪',
         additionalDescription: '对打架阵容有很强的反制能力。',
       },
       {
         tagName: '进攻',
         isMinor: false,
-        description: '喵喵叫的大范围伤害和控制是有力的进攻手段。',
+        description: '{喵喵叫}的大范围伤害和控制是有力的进攻手段。',
         additionalDescription: '',
       },
       {
         tagName: '打架',
         isMinor: true,
-        description: '喵喵叫的大范围群体伤害和控制在打团时有一定发挥。',
+        description: '{喵喵叫}的大范围群体伤害和控制在打团时有一定发挥。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
         isMinor: true,
-        description: '鼠方一旦失误，喵喵叫的大范围群体伤害和控制可以对鼠方造成重创。',
+        description: '鼠方一旦失误，{喵喵叫}的大范围群体伤害和控制可以对鼠方造成重创。',
         additionalDescription: '',
       },
     ],
@@ -1853,7 +1969,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '汽水罐爪刀流',
         pattern: '131010033',
         weaponType: 'weapon1',
-        description: '如果节奏突然断了，5级可以先点被动而不点汽水罐，尝试找节奏。',
+        description: '如果节奏突然断了，5级可以先点{1级被动}而不点汽水罐，尝试找节奏。',
       },
     ],
     knowledgeCardGroups: [
@@ -1901,14 +2017,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '喵喵叫',
         type: 'active',
         description:
-          '按住技能键持续地喵喵叫，期间可以移动，也可以使用爪刀和特技-绝地反击；松开技能键可提前取消技能；喵喵叫期间对附近的老鼠持续施加[喵喵叫减速](喵喵叫减速与防狼锤减速的层数互通，但具体数值有差异)，叠加到第五层时造成伤害和眩晕，并清空减速层数。被打断或提前取消技能会按比例返还CD。',
+          '按住技能键持续地喵喵叫，期间可以移动，也可以使用爪刀和《绝地反击(特技)》；松开技能键可提前取消技能；喵喵叫期间对附近的老鼠持续施加喵喵叫减速，叠加到第五层时造成伤害和眩晕，并清空减速层数。被打断或提前取消技能会按比例返还CD。',
         detailedDescription:
-          '按住技能键，在前摇0.6秒后持续地喵喵叫，期间可以通过按住方向键不松开的方式移动，也可以正常使用爪刀和特技-绝地反击，松开技能键可提前取消技能；喵喵叫期间对周围半径1000范围内的老鼠持续施加[喵喵叫减速](喵喵叫减速与防狼锤减速的层数互通，但具体数值有差异)，每层[喵喵叫减速](喵喵叫减速与防狼锤减速的层数互通，但具体数值有差异)将使老鼠移速和跳跃速度降低8%，并暴露小地图视野；[喵喵叫减速](喵喵叫减速与防狼锤减速的层数互通，但具体数值有差异)叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。被打断或提前取消技能会按比例返还CD。',
+          '按住技能键，在前摇后持续地喵喵叫，期间可以通过按住方向键不松开的方式移动，也可以正常使用爪刀和《绝地反击(特技)》，松开技能键可提前取消技能；喵喵叫期间对周围半径1000范围内的老鼠持续施加喵喵叫减速。被打断或提前取消技能会按比例返还CD。\n\n喵喵叫减速：使老鼠移速和跳跃速度降低8%，并暴露小地图视野；喵喵叫减速叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         canHitInPipe: true,
         cancelableAftercast: '无后摇',
-        cancelableSkill: '不可被打断',
+        cancelableSkill: '不可主动打断',
+        forecast: 0.6,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -1937,13 +2055,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'weapon1',
         aliases: ['锤子'],
         description:
-          '挥动防狼锤，对面前目标造成少量伤害，并对其施加一层[防狼锤减速](防狼锤减速与喵喵叫减速的层数互通，但具体数值有差异)，叠加到第五层时造成伤害和眩晕，并清空减速层数。使用该技能时，自身也会受到少量伤害。',
+          '挥动防狼锤，对面前目标造成少量伤害，并对其施加一层防狼锤减速，叠加到第五层时造成伤害和眩晕，并清空减速层数。使用该技能时，自身也会受到少量伤害。',
         detailedDescription:
-          '挥动防狼锤，在前摇0.3秒后对前方300范围内的老鼠造成5伤害和一层[防狼锤减速](防狼锤减速与喵喵叫减速的层数互通，但具体数值有差异)，技能后摇0.4秒；每层[防狼锤减速](防狼锤减速与喵喵叫减速的层数互通，但具体数值有差异)将使老鼠移速和跳跃速度降低30%（最多降低90%），并暴露小地图视野；[防狼锤减速](防狼锤减速与喵喵叫减速的层数互通，但具体数值有差异)叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。使该技能时，会因惯性而向前移动一小段距离，且自身也会受到10伤害。Hp低于10时不能使用本技能。',
+          '挥动防狼锤，对前方300范围内的老鼠造成5伤害和一层防狼锤减速。使用该技能时，会因惯性而向前移动一小段距离，且自身也会受到10伤害。Hp低于10时不能使用本技能。\n\n防狼锤减速：使老鼠移速和跳跃速度降低30%（最多降低90%），并暴露小地图视野；防狼锤减速叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。喵喵叫减速和防狼锤减速之间的层数互通，效果类似，但数值有差异。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
         cancelableAftercast: ['道具键'],
+        forecast: 0.3,
+        aftercast: 0.4,
         skillLevels: [
           {
             level: 1,
@@ -1969,13 +2089,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '汽水罐',
         type: 'weapon2',
         description:
-          '向任意方向扔出汽水罐，汽水罐直线行进到终点后改为做旋转运动，持续20秒。盘旋的汽水罐在喵喵叫范围内时将会提高运动速度和半径。汽水罐命中老鼠或另一个汽水罐时，对小范围内所有老鼠造成少量伤害和冰冻。',
+          '向任意方向扔出{汽水罐(衍生物)}，汽水罐直线行进到终点后改为做旋转运动，持续20秒。盘旋的汽水罐在喵喵叫范围内时将会提高运动速度和半径。汽水罐命中老鼠或另一个汽水罐时，对小范围内所有老鼠造成少量伤害和冰冻。',
         detailedDescription:
-          '在前摇0.5秒后向任意方向扔出汽水罐，汽水罐基础飞行速度1500，直线飞行1.2秒后改为做旋转运动，盘旋路线半径250，飞行速度1000，持续20秒。盘旋的汽水罐在喵喵叫范围内时运动速度每秒提升50，半径每秒增加200，喵喵叫结束后速度和半径将逐渐恢复正常。汽水罐直接命中老鼠时，对[半径175范围所有老鼠](无法被护盾、霸体、无敌抵挡；火箭上的老鼠也会受影响)造成15伤害、3秒冰冻眩晕和两层[喵喵叫减速](喵喵叫减速之间的层数互通，效果相同)；两个汽水罐相撞将产生更大范围的冰爆，对[半径350范围内所有老鼠](无法被护盾、霸体、无敌抵挡；火箭上的老鼠也会受影响)造成30伤害、3秒冰冻和四层[喵喵叫减速](喵喵叫减速之间的层数互通，效果相同)。每层[喵喵叫减速](喵喵叫减速之间的层数互通，效果相同)将使老鼠移速和跳跃速度降低8%，并暴露小地图视野；[喵喵叫减速](喵喵叫减速之间的层数互通，效果相同)叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。[由于汽水罐而被施加大于五层喵喵叫减速](例如在已有四层减速时被汽水罐命中，因此达到六层减速)的老鼠，[每多出一层都将额外受到](例如五层为正常的60伤害，六层总共120伤害，以此类推)一次{60}伤害。',
+          '向任意方向扔出{汽水罐(衍生物)}，汽水罐基础飞行速度1500，直线飞行1.2秒后改为做旋转运动，盘旋路线半径250，飞行速度1000，持续20秒。盘旋的汽水罐在喵喵叫范围内时运动速度每秒提升50，半径每秒增加200，喵喵叫结束后速度和半径将逐渐恢复正常。汽水罐直接命中老鼠时，对[半径175范围所有老鼠](无法被护盾、霸体、无敌抵挡；火箭上的老鼠也会受影响)造成15伤害、3秒冰冻眩晕和两层喵喵叫减速；两个汽水罐相撞将产生更大范围的冰爆，对[半径350范围内所有老鼠](无法被护盾、霸体、无敌抵挡；火箭上的老鼠也会受影响)造成30伤害、3秒冰冻和四层喵喵叫减速。\n\n喵喵叫减速：使老鼠移速和跳跃速度降低8%，并暴露小地图视野；喵喵叫减速叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。喵喵叫减速和防狼锤减速之间的层数互通，效果类似，但数值有差异。[由于汽水罐而被施加大于五层喵喵叫减速](例如在已有四层减速时被汽水罐命中，因此达到六层减速)的老鼠，[每多出一层都将额外受到](例如五层为正常的60伤害，六层总共120伤害，以此类推)一次{60}伤害。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键', '其他技能键'],
         cancelableAftercast: ['道具键'],
+        forecast: 0.5,
         skillLevels: [
           {
             level: 1,
@@ -2017,10 +2138,22 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '当前Hp低于Hp上限时，主动和武器技能CD减少。',
-            detailedDescription: '当前Hp低于Hp上限时，主动和武器技能CD减少40%。',
+            description: '当前Hp低于Hp上限时，{主动技能}和{武器技能}CD减少。',
+            detailedDescription: '当前Hp低于Hp上限时，{主动技能}和{武器技能}CD减少40%。',
           },
         ],
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '冰冻保鲜',
+        description: '冰冻保鲜能暂时躲过喵喵叫的攻击。',
+        isMinor: true,
+      },
+      {
+        id: '干扰投掷',
+        description: '干扰投掷能中断喵喵叫，此外图茨缺乏霸体能力。',
+        isMinor: false,
       },
     ],
   },
@@ -2030,6 +2163,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '米特是一只流浪猫，他的尾巴曾在一场流浪猫战争中受过伤，但他十分勇猛，从来不会向敌人认输。',
     maxHp: 325,
+    attackBoost: 0,
     hpRecovery: 1,
     moveSpeed: 750,
     jumpHeight: 420,
@@ -2132,7 +2266,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '持续伤害频率更高。猫咪在“刺激”状态下获得50%减伤并提高绑火箭速度50%。',
+            description: '持续伤害频率更高。米特在“刺激”状态下获得50%减伤并提高绑火箭速度50%。',
             cooldown: 12,
           },
         ],
@@ -2141,9 +2275,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '饭盒陷阱',
         type: 'weapon1',
         description:
-          '放下装有食物的饭盒，老鼠踩中或被砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速。放置捕鼠夹时，会将其替换成饭盒。可存储两次',
+          '放下装有食物的{饭盒}，被老鼠踩中或被砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速。放置{老鼠夹}时，会将其替换成饭盒。可存储两次',
         detailedDescription:
-          '放下装有食物的饭盒，老鼠踩中或被投掷物砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速，持续10秒。放置捕鼠夹时，会将其替换成饭盒。可存储两次。',
+          '放下装有食物的{饭盒}，被老鼠踩中或被投掷物砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速，持续10秒。放置{老鼠夹}时，会将其替换成饭盒。可存储两次。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: '无后摇',
@@ -2157,7 +2291,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description:
-              '增加饭盒伤害。爆炸后留下食物，米特触碰后会获得持续Hp恢复效果。大幅提高放置捕鼠夹的效率。', // （连招：击晕接捕鼠夹）
+              '增加饭盒伤害。爆炸后留下{食物}，米特触碰后会获得持续Hp恢复效果。大幅提高放置老鼠夹的效率。', // （连招：击晕接捕鼠夹）
             cooldown: 20,
           },
           {
@@ -2186,7 +2320,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '爪刀命中时，回复伤害等量的生命值；不论是否命中，每消耗一层野性，减少0.3秒爪刀CD。',
+              '爪刀命中时，回复伤害等量的Hp；不论是否命中，每消耗一层野性，减少0.3秒爪刀CD。',
           },
         ],
       },
@@ -2215,7 +2349,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '速通',
         isMinor: false,
-        description: '武器技能可甩火箭',
+        description: '{武器技能}可甩火箭',
         additionalDescription: '配合熊熊燃烧，7秒火箭可直接甩。',
       },
       {
@@ -2269,11 +2403,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '向前施放爱意，根据命中角色的性别和朝向造成不同的伤害和控制效果，对男性和背对塔拉的角色效果更强。',
         detailedDescription:
-          '在前摇0.4秒后，向正前方600范围内施放爱意，技能后摇1秒，根据命中角色的性别和相对塔拉的朝向而产生不同的效果:\n男性背对：对其造成{60}伤害并眩晕0.4秒，之后每隔2.9秒受到0.4秒眩晕，该状态共持续6.9秒。\n男性正对：对其造成{30}伤害，且使其移速减少30%，持续4.85秒。\n女性背对：对其造成{30}伤害，且使其移速减少30%，持续4.85秒。\n女性正对：对其造成{30}伤害，但使其移速增加20%，持续2.8秒。',
+          '向正前方600范围内施放爱意，根据命中角色的性别和相对塔拉的朝向而产生不同的效果:\n男性背对：对其造成{60}伤害并眩晕0.4秒，之后每隔2.9秒受到0.4秒眩晕，该状态共持续6.9秒。\n男性正对：对其造成{30}伤害，且使其移速减少30%，持续4.85秒。\n女性背对：对其造成{30}伤害，且使其移速减少30%，持续4.85秒。\n女性正对：对其造成{30}伤害，但使其移速增加20%，持续2.8秒。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
-        cancelableAftercast: '无后摇',
+        // cancelableAftercast: '', //FIXME
+        forecast: 0.4,
+        aftercast: 1,
         cooldownTiming: '释放后',
         skillLevels: [
           {
@@ -2301,13 +2437,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '牛仔鞭索',
         type: 'weapon1',
         description:
-          '拖动技能选择面前135度范围内的一个方向，松开时甩出套索，若套中老鼠，对老鼠造成伤害和减速；再次点击按钮使塔拉位移向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为可向任意方向扔出老鼠，老鼠碰到火箭将直接绑上，但[不减少引线时间](Lv.2被动和知识卡不受影响)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，然后获得短暂无敌和加速。',
+          '拖动技能选择面前135度范围内的一个方向，松开时甩出{套索}，若套中老鼠，对老鼠造成伤害和减速；再次点击按钮使塔拉位移向该老鼠位置。当塔拉手中抓有老鼠时，本技能改为可向任意方向扔出老鼠，老鼠碰到火箭将直接绑上，但[不减少引线时间](Lv.2被动和知识卡仍能触发)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，然后获得短暂无敌和加速。',
         detailedDescription:
-          '拖动技能选择面前135度范围内的一个方向，松开技能键时在前摇0.5秒后甩出套索，套索存在时间0.75s，存在时间内最大飞行距离为1750，对套中的老鼠造成{30}伤害并减速20%；在使用技能后进入2.9秒技能读条（若未套中老鼠则提前结束读条），套中老鼠后可再次点击技能，塔拉将[以1850的速度位移向该老鼠位置](位移期间获得无法选中效果，位移时间最多4.9秒，超过时间将会被直接传送至老鼠旁边)。当塔拉用技能位移到老鼠旁边时或套中老鼠4.9秒后，解除[套索效果](包括老鼠受到的减速效果，以及塔拉与老鼠之间连接的套绳贴图效果)。当塔拉手中抓有老鼠时，本技能改为可向任意方向以2000速度扔出老鼠，期间老鼠无敌，碰到火箭将直接绑上，但[不减少引线时间](Lv.2被动和知识卡不受影响)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，获得无敌效果并加速20%，持续2.9秒;飞行过程中[受力不停止飞行](包括鞭炮爆炸，电风扇吹风，轮胎击飞等效果。虽然不停止飞行，但仍会受力并可能改变方向)。套索的捆绑效果不会被无敌，护盾，霸体、[机器鼠](不会破坏机器鼠)等效果抵消或免疫，但造成的伤害、减速、眩晕会被抵消或免疫。',
+          '拖动技能选择面前135度范围内的一个方向，松开技能键时甩出{套索}，套索存在时间0.75秒，存在时间内最大飞行距离为1750，对套中的老鼠造成{30}伤害并减速20%；在使用技能后进入2.9秒技能读条（若未套中老鼠则提前结束读条），套中老鼠后可再次点击技能，塔拉将[以1850的速度位移向该老鼠位置](位移期间获得无法选中效果，位移时间最多4.9秒，超过时间将会被直接传送至老鼠旁边)。当塔拉用技能位移到老鼠旁边时或套中老鼠4.9秒后，解除[套索效果](包括老鼠受到的减速效果，以及塔拉与老鼠之间连接的套绳贴图效果)。当塔拉手中抓有老鼠时，本技能改为可向任意方向以2000速度扔出老鼠，期间老鼠无敌，碰到火箭将直接绑上，但[不减少引线时间](Lv.2被动和知识卡仍能触发)；飞行过程中的老鼠在碰到平台，墙壁，拳头盒子，火箭后停止飞行，获得无敌效果并加速20%，持续2.9秒;飞行过程中[受力不停止飞行](包括鞭炮爆炸，电风扇吹风，轮胎击飞等效果。虽然不停止飞行，但仍会受力并可能改变方向)。套索的捆绑效果不会被无敌，护盾，霸体、[机器鼠](不会破坏机器鼠)等效果抵消或免疫，但造成的伤害、减速、眩晕会被抵消或免疫。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
+        forecast: 0.5,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -2319,7 +2457,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description: '套索命中敌方时，对其造成眩晕，并提高塔拉的移速。',
             cooldown: 12,
             detailedDescription:
-              '套索命中敌方时，[对其造成2.9s眩晕](本技能造成伤害与造成眩晕的时机不同，所以即便该老鼠因该次伤害而进入"铁血"状态，也仍会受到后续的眩晕影响)，并使塔拉的移速提高18.5%，持续5秒。',
+              '套索命中敌方时，[对其造成2.9秒眩晕](本技能造成伤害与造成眩晕的时机不同，所以即便该老鼠因该次伤害而进入"铁血"状态，也仍会受到后续的眩晕影响)，并使塔拉的移速提高18.5%，持续5秒。',
           },
           {
             level: 3,
@@ -2374,6 +2512,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description: '拥有超群剑术的大师剑客汤姆，是法国万千少女心中的偶像。',
     aliases: ['剑汤'],
     maxHp: 270,
+    attackBoost: 0,
     hpRecovery: 1.5,
     moveSpeed: 770,
     jumpHeight: 420,
@@ -2384,7 +2523,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '进攻',
         isMinor: false,
-        description: '主动技能以及三被可打出高额伤害。',
+        description: '{主动技能}以及{3级被动}可打出高额伤害。',
         additionalDescription: '',
       },
       {
@@ -2402,7 +2541,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '翻盘',
         isMinor: true,
-        description: '后期三被刷新主动技能拥有极高的上限，可能成为翻盘的点。',
+        description: '后期{3级被动}刷新{主动技能}拥有极高的上限，可能成为翻盘的点。',
         additionalDescription: '',
       },
     ],
@@ -2462,10 +2601,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '向前冲刺，期间无敌，若命中敌方将造成少量伤害、大幅降低其移速和跳跃高度，且可在短时间内使用二段技能[挑飞](无视护盾和部分无敌效果)；若挑飞老鼠，可使用三段技能追踪到老鼠位置进行[连斩](无视护盾、霸体和无敌效果)，使老鼠减少Hp且无法移动，但可以使用技能和交互。快速点击技能键可加速连斩。被连斩的老鼠受到威慑效果，被绑上火箭时，引线将额外减少10s。',
         detailedDescription:
-          '向前冲刺2s，期间无敌、移速提升75%，若命中敌方将造成10伤害、使其移速降低25%，跳跃高度降低50%，持续3s。冲刺时遇到正常、虚弱、护盾、霸体和[部分无敌效果](罗宾汉降落伞、剑杰格挡、剑菲冲刺、冰冻保鲜特技、变大)的老鼠均可解锁二段技能挑飞，否则技能进入CD。解锁后可在6s内使用二段技能[挑飞](前摇0.35s，可用道具键、其他技能键取消释放；无视护盾和除罗宾汉杰瑞的降落伞，剑客泰菲的冲刺、变大外的其他无敌效果，但不能挑飞霸体老鼠)，向上挑飞脚下的老鼠，对老鼠造成1.9s眩晕并击飞1s。若挑飞老鼠，可在6s内使用三段技能[追踪到老鼠位置](以2000速度飞向敌方，飞行最大时间0.6s，若发生以下情形将不会释放连斩：超过最大飞行时间，被打断，被墙体、拳头盒子、嫦娥阻挡，老鼠在自己下方（泰菲家族由于模型小，若与剑汤站在同一水平面则无法连斩）)进行[连斩](无视护盾、霸体和无敌效果；期间只会受到天使泰菲反伤和可击中管道中的角色的技能伤害)。连斩持续3.1秒，会使[范围内的老鼠](不包括手中的老鼠)浮空4.2秒、每0.55秒受到10点[真实伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)，总共5次。连斩期间老鼠无法移动，但可以使用技能和交互。无法打爆机械鼠。[快速点击可加速连斩](每次点击使连斩持续时间减少0.5s，同时老鼠浮空时间减少0.5s，并且总共至多额外造成两次伤害)。连斩后摇0.8s，可用道具键取消。连斩造成两次伤害后会使老鼠受到[威慑效果](绑上火箭后消失)，被绑上火箭时，引线将额外减少10s。挑飞和连斩[在空中释放](不是跳斩)将直接进入CD。',
+          '向前冲刺2s，期间无敌、移速提升75%，若命中敌方将造成10伤害、使其移速降低25%，跳跃高度降低50%，持续3s。冲刺时遇到正常、虚弱、护盾、霸体和[部分无敌效果](罗宾汉降落伞、剑杰格挡、剑菲冲刺、冰冻保鲜特技、变大)的老鼠均可解锁二段技能挑飞，否则技能进入CD。解锁后可在6s内使用二段技能[挑飞](前摇0.35s，可用道具键、其他技能键取消释放；无视护盾和除罗宾汉杰瑞的降落伞、剑客泰菲的冲刺、变大外的其他无敌效果，但不能挑飞霸体老鼠)，向上挑飞脚下的老鼠，对老鼠造成1.9s眩晕并击飞1s。若挑飞老鼠，可在6s内使用三段技能[追踪到老鼠位置](以2000速度飞向敌方，飞行最大时间0.6s，若发生以下情形将不会释放连斩：超过最大飞行时间，被打断，被墙体、拳头盒子、嫦娥阻挡，老鼠在自己下方（泰菲家族由于模型小，若与剑汤站在同一水平面则无法连斩）)进行[连斩](无视护盾、霸体和无敌效果；期间只会受到天使泰菲反伤和可击中管道中的角色的技能伤害)。连斩持续3.1秒，会使[范围内的老鼠](不包括手中的老鼠)浮空4.2秒、每0.55秒受到10点[真实伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)，总共5次。连斩期间老鼠无法移动，但可以使用技能和交互。无法打爆机械鼠。[快速点击可加速连斩](每次点击使连斩持续时间减少0.5s，同时老鼠浮空时间减少0.5s，并且总共至多额外造成两次伤害)。连斩后摇0.8s，可用道具键取消。连斩造成两次伤害后会使老鼠受到[威慑效果](绑上火箭后消失)，被绑上火箭时，引线将额外减少10s。挑飞和连斩[在空中释放](不是跳放)将直接进入CD。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
+        forecast: 0,
+        aftercast: 0,
         cancelableAftercast: ['道具键', '其他技能键'],
         cooldownTiming: '释放后',
         skillLevels: [
@@ -2501,6 +2642,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: ['道具键*', '道具键'],
+        forecast: 0,
+        aftercast: 0.9,
         skillLevels: [
           {
             level: 1,
@@ -2532,7 +2675,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         // 推荐连招：剑舞1-剑舞2-连斩、冲刺-剑舞2-连斩。
         canMoveWhileUsing: false,
         canUseInAir: true,
+        cancelableSkill: ['其他技能键', '道具键'],
         cancelableAftercast: ['道具键', '其他技能键'],
+        forecast: 0.3,
+        cooldownTiming: '释放后',
         skillLevels: [
           {
             level: 1,
@@ -2553,8 +2699,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             detailedDescription: '减少CD至12s；释放第三段将获得12%加速，持续3.4s。',
           },
         ],
-        cancelableSkill: ['其他技能键', '道具键'],
-        cooldownTiming: '释放后',
       },
       {
         name: '骑士之剑',
@@ -2574,10 +2718,17 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '剑气命中敌方时重置主动技能的CD。',
-            detailedDescription: '剑气命中敌方时[重置主动技能的CD](实际为主动技能CD减少30s)。',
+            description: '剑气命中敌方时重置{主动技能}的CD。',
+            detailedDescription: '剑气命中敌方时，{主动技能}的CD减少30s。',
           },
         ],
+      },
+    ],
+    counters: [
+      {
+        id: '尼宝',
+        description: '剑客汤姆的剑舞可以强行拉走救援的尼宝，剑舞也能打断正常救援。',
+        isMinor: false,
       },
     ],
   },
@@ -2587,6 +2738,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '天空列车站的站长，拥有能够看穿他人内心的力量。他博学多才，善于思考，同时也是知识的化身。',
     maxHp: 210,
+    attackBoost: 0,
     hpRecovery: 1.5,
     moveSpeed: 735,
     jumpHeight: 420,
@@ -2621,7 +2773,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         pattern: '1001[01]222',
         weaponType: 'weapon1',
         description:
-          'Lv.1天堂和Lv.2被动是库博机动性的核心组成部分；Lv.3被动的高额恢复与Lv.3天堂的减伤均能极大提高库博的生存能力。残血时先点Lv.3被动；满血先点Lv.3天堂。',
+          '{1级主动}和{2级被动}是库博机动性的核心组成部分；{3级被动}的高额恢复与{3级主动}的减伤均能极大提高库博的生存能力。残血时先点{3级被动}；满血先点{3级主动}。',
         additionaldescription: '',
       },
     ],
@@ -2685,13 +2837,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['天梯'],
         description:
-          '使用时获得加速和间歇性隐身，但靠近老鼠时，对方头顶会有感叹号提示；再次使用进入天堂并留下天梯（最多存在2个）。库博在天堂中持有强霸体，可在天堂天梯获知所有老鼠的位置，并任意选择房间传送；老鼠则通过天堂天梯传送到随机洞口。天堂内有2个天堂火箭，能绑上老鼠的虚影，[拥有强制放飞机制](300秒倒计时，结束时直接淘汰对应老鼠)。虚影被救援时，改为绑上救援者的虚影，救援所需时间较长，救援位置较普通火箭[偏下](如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。在对应老鼠被绑上地面火箭或进入墙缝期后，倒计时速度会加快。',
+          '使用时获得加速和间歇性隐身，但靠近老鼠时，对方头顶会有感叹号提示；再次使用进入天堂并留下{天空扶梯}（最多存在2个）。库博在天堂中持有强霸体，可在天堂内的{天空扶梯}获知所有老鼠的位置，并任意选择房间传送；老鼠则可通过其传送到随机洞口。天堂内有2个天堂火箭，能绑上老鼠的虚影，[拥有强制放飞机制](300秒倒计时，结束时直接淘汰对应老鼠)。虚影被救援时，改为绑上救援者的虚影，救援所需时间较长，救援位置较普通火箭[偏下](如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。在对应老鼠被绑上地面火箭或进入墙缝期后，倒计时速度会加快。',
         detailedDescription:
-          '本技能分两段：\n第一段：在1.2秒前摇后，获得持续30秒的以下状态：加速7.5%；[每隔5秒获得2.5秒的隐身效果](技能释放时立刻进入2.5秒隐身，隐身结束2.5秒后会再次获得；能被主动技能隐身的侦探泰菲看到；会触发遥控器召唤的机器鼠爆炸；不能被玛丽和表演者杰瑞的主动技能消除)；隐身期间在自身3秒前的位置生成[阴影](即角色脚下的影子，无效果。阴影能被其他人看到)；靠近老鼠1000范围内时，对方头顶会有感叹号提示。获得该状态时使技能同步进入读条，再次点击技能释放第二段。\n第二段：[立刻使技能进入CD](即前摇前立刻使技能进入CD，被打断不返还)。在1.2秒前摇后，传送到天堂，并在自身原位置生成[天梯](判定和交互区域为矩形，会受重力影响而下坠至平台或地面处，之后不受影响；与其他角色、道具、场景物等不产生碰撞；可重叠)（最多存在2个，达到上限则销毁最早生成的1个）。所有角色都可以[与天梯交互并传送到天堂](该交互优先级极低)。\n“天堂”：位于常规地图外的特殊房间，通常只能经由天梯进出。库博在天堂内持有[强霸体](无法免疫强制位移和变身；无特效；获得霸体有一瞬间的延迟，如果进入天堂的瞬间踩中夹子则会被夹住，通常由于在入口处插叉子再在其上放夹子导致)，但无法释放主动技能。天堂入口处有一个特殊天梯，猫咪[与其交互可打开传送面板](显示所有老鼠的位置，可任意选择房间传送；该交互不打断移动)；老鼠与其交互将被传送到随机洞口。天堂内默认生成[2个蛋糕](位于入口处及右侧中部平台处)，2个天堂火箭，[1瓶神秘药水](在以下4处位置中的随机1处生成：1.天堂左侧地板；2.天堂右侧地板——被云层挡住，需走近才能发现；3.天堂右侧中部平台——几乎被列车站标签挡住，需仔细观察；4.天堂右侧顶端平台——可借助右数第2节围栏顶部的平台进行跳跃)。\n“天堂火箭”：放飞倒计时固定为300秒，绑上老鼠时改为绑上对应虚影，老鼠本体会传送到随机洞口；虚影被救援时，改为绑上救援者的虚影；[救援天堂火箭](读条显示为“破坏火箭”)的所需时间固定并且较长，救援位置较普通火箭[偏下](救援时站在地面；如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。兔子先生无法对天堂火箭下达救援指令。倒计时结束时，[直接淘汰虚影对应的老鼠](钻入机械鼠中的老鼠也会被放飞；钻入盔甲人或乾坤袋中的老鼠暂时无法被放飞；表演者杰瑞Lv.3被动只在同时也被绑在地面火箭时才触发；天使祝福无法祝福虚影，也无法复活因天堂火箭而被放飞的老鼠)。天堂火箭当虚影对应老鼠被绑上地面火箭时，[地面火箭倒计时停止](倒计时速度归零；仍会因老鼠被绑上火箭而减少引线时间，此时火箭引线时间降为0时也不会起飞；会因挣扎、鼓舞Lv.3等效果而增加读秒)，天堂火箭倒计时速度提高到原先的7倍；进入墙缝期后，天堂火箭倒计时速度提高到原先的2倍；若二者同时触发则取最高值。天堂火箭不受[其他绝大部分机制](会受到鼓舞Lv.3的影响（增加读秒的效果对本体和虚影分别计算，可重复计算，即同时鼓舞虚影和本体则-20秒）；除此之外不受绑火箭或火箭燃烧速度变化的影响，包括自身被动技能Lv.2，知识卡-加大火力/熊熊燃烧，技能-炸药桶/爱之花洒/友情庇护/兔子大表哥/侠义相助/Lv.3沙包拳头/风格骤变Lv.3/共鸣Lv.2/滑步踢/乾坤袋/蓝图/梦中乐园的影响)影响，但会[影响知识卡-穷追猛打](绑上天堂火箭时，穷追猛打效果立刻结束)。',
+          '本技能分两段：\n第一段：在1.2秒前摇后，获得持续30秒的以下状态：加速7.5%；[每隔5秒获得2.5秒的隐身效果](技能释放时立刻进入2.5秒隐身，隐身结束2.5秒后会再次获得；能被主动技能隐身的侦探泰菲看到；会触发遥控器召唤的机器鼠爆炸；不能被玛丽和表演者杰瑞的主动技能消除)；隐身期间在自身3秒前的位置生成[阴影](即角色脚下的影子，无效果。阴影能被其他人看到)；靠近老鼠1000范围内时，对方头顶会有感叹号提示。获得该状态时使技能同步进入读条，再次点击技能释放第二段。\n第二段：[立刻使技能进入CD](即前摇前立刻使技能进入CD，被打断不返还)。在1.2秒前摇后，传送到天堂，并在自身原位置生成{天空扶梯}（最多存在2个，达到上限则销毁最早生成的1个）。所有角色都可以[与天梯交互并传送到天堂](该交互优先级极低)。\n“天堂”：位于常规地图外的特殊房间，通常只能经由天梯进出。库博在天堂内持有[强霸体](无法免疫强制位移和变身；无特效；获得霸体有一瞬间的延迟，如果进入天堂的瞬间踩中夹子则会被夹住，通常由于在入口处插叉子再在其上放夹子导致)，但无法释放主动技能。天堂入口处有一个特殊天梯，猫咪与其交互可[打开传送面板](显示所有老鼠的位置，可任意选择房间传送；该交互不打断移动)；老鼠与其交互将被传送到随机洞口。天堂内默认生成[2个蛋糕](位于入口处及右侧中部平台处)，2个天堂火箭，[1瓶神秘药水](在以下4处位置中的随机1处生成：1.天堂左侧地板；2.天堂右侧地板——被云层挡住，需走近才能发现；3.天堂右侧中部平台——几乎被列车站标签挡住，需仔细观察；4.天堂右侧顶端平台——可借助右数第2节围栏顶部的平台进行跳跃)。\n“天堂火箭”：放飞倒计时固定为300秒，绑上老鼠时改为绑上对应虚影，老鼠本体会传送到随机洞口；虚影被救援时，改为绑上救援者的虚影；[救援天堂火箭](读条显示为“破坏火箭”)的所需时间固定并且较长，救援位置较普通火箭[偏下](救援时站在地面；如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。兔子先生无法对天堂火箭下达救援指令。倒计时结束时，[直接淘汰虚影对应的老鼠](钻入机械鼠中的老鼠也会被放飞；钻入盔甲人或乾坤袋中的老鼠暂时无法被放飞；表演者杰瑞Lv.3被动只在同时也被绑在地面火箭时才触发；天使祝福无法祝福虚影，也无法复活因天堂火箭而被放飞的老鼠)。天堂火箭当虚影对应老鼠被绑上地面火箭时，[地面火箭倒计时停止](倒计时速度归零；仍会因老鼠被绑上火箭而减少引线时间，此时火箭引线时间降为0时也不会起飞；会因挣扎、鼓舞Lv.3等效果而增加读秒)，天堂火箭倒计时速度提高到原先的7倍；进入墙缝期后，天堂火箭倒计时速度提高到原先的2倍；若二者同时触发则取最高值。天堂火箭不受[其他绝大部分机制](会受到鼓舞Lv.3的影响（增加读秒的效果对本体和虚影分别计算，可重复计算，即同时鼓舞虚影和本体则-20秒）；除此之外不受绑火箭或火箭燃烧速度变化的影响，包括自身被动技能Lv.2，知识卡-加大火力/熊熊燃烧，技能-炸药桶/爱之花洒/友情庇护/兔子大表哥/侠义相助/Lv.3沙包拳头/风格骤变Lv.3/共鸣Lv.2/滑步踢/乾坤袋/蓝图/梦中乐园的影响)影响，但会[影响知识卡-穷追猛打](绑上天堂火箭时，穷追猛打效果立刻结束)。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
         cancelableAftercast: '无后摇',
+        forecast: 1.2,
+        aftercast: 0,
         cooldownTiming: '释放后',
         skillLevels: [
           {
@@ -2725,6 +2879,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -2800,6 +2956,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '她是博学多才的都市美少女，冷静知性，是智慧与美貌并存的化身。她是校园中靓丽的风景线，也是学生眼中博学多识的师长。拥有无限魅力她，其爱慕者多如过江之鲫。',
     maxHp: 250,
+    attackBoost: 0,
     hpRecovery: 3.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -2812,24 +2969,24 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
         description: '主动被动武器技能都是伤害性技能，在对局中可造成大量伤害。',
         additionalDescription:
-          '主动技能可以对一条直线内的敌人造成伤害；武器技能可以单独造成伤害或者夹住老鼠，也可以配合主动技能造成多段伤害；一级被动可以对老鼠造成更多伤害。',
+          '{主动技能}可以对一条直线内的敌人造成伤害；{武器技能}可以单独造成伤害或者夹住老鼠，也可以配合{主动技能}造成多段伤害；{1级被动}可以对老鼠造成更多伤害。',
       },
       {
         tagName: '打架',
         isMinor: false,
-        description: '二级被动可以减少被控时间；主动技能为范围伤害，打架时命中率高。',
-        additionalDescription: '三被命中破绽可减少技能CD，进一步提高打架优势。',
+        description: '{2级被动}可以减少被控时间；{主动技能}为范围伤害，打架时命中率高。',
+        additionalDescription: '{3级被动}命中破绽可减少技能CD，进一步提高打架优势。',
       },
       {
         tagName: '防守',
         isMinor: true,
-        description: '三级追求者出击可造成控制，配合知识就是力量可造成多段控制。',
+        description: '{3级主动}可造成控制，配合{武器技能}可造成多段控制。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
         isMinor: true,
-        description: '在墙缝期混战中追求者在小范围内的命中率高，更大概率造成多倒。',
+        description: '在墙缝期混战中{主动技能}在小范围内的命中率高，更大概率造成多倒。',
         additionalDescription: '',
       },
     ],
@@ -2877,7 +3034,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['舔狗'],
         description:
-          '从远处召唤追求者冲至面前；随后再次拖动技能键，使追求者向该方向再度出击，两段均可对触碰的老鼠造成伤害。',
+          '从远处召唤{追求者}冲至面前；随后再次拖动技能键，使追求者向该方向再度出击，两段均可对触碰的老鼠造成伤害。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键'],
@@ -2909,34 +3066,33 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '知识即力量',
         type: 'weapon1',
         description:
-          '将手中百科全书投掷出去造成伤害，落地后书籍会打开，一定时间后再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还部分冷却并将老鼠直接抓在手中。当书籍闭合时，周围的追求者会快速冲向书籍将其捡起并送还凯特。',
+          '投掷{百科全书}，命中时造成伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还部分冷却并将老鼠直接抓在手中。当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。',
         detailedDescription:
-          '将手中百科全书投掷出去造成{25}伤害，落地后书籍会打开，5秒后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。书籍闭合后最多存在10秒，凯特可以通过交互键捡起书籍返还5秒冷却并将老鼠直接抓在手中。当书籍闭合时，周围的追求者会快速冲向书籍将其捡起并送还凯特。百科全书与夹子有一些[共性与不同](可以触发捕鼠夹，暴怒，穷追猛打，不能触发夹不住我，乾坤一掷，狡诈)。',
+          '在短暂前摇后投掷{百科全书}，[有短暂投掷后摇](后摇期间无法移动)。书籍对直接命中的老鼠造成{25}伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，[造成伤害](受其他攻击增伤影响)并将老鼠夹住，随后技能进入CD。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还5秒冷却并将被夹住的老鼠直接抓在手中。当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。\n书籍与夹子有相似和不同之处（可以触发{捕鼠夹}，但无法触发{夹不住我}、{狡诈}）。被投掷的书籍也无法触发{乾坤一掷}。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: '无前摇',
+        // cancelableSkill: '无前摇', // FIXME
         cancelableAftercast: ['跳跃键', '道具键'],
         skillLevels: [
           {
             level: 1,
             description: '',
+            detailedDescription: '书籍打开5秒后会自动闭合，闭合后存在10秒。',
             cooldown: 20,
           },
           {
             level: 2,
-            description: 'CD降低。',
+            description: 'CD减少至15秒。',
             cooldown: 15,
-            detailedDescription: 'CD降低5秒。',
           },
           {
             level: 3,
-            description: '被书籍砸中会直接添加破绽；提升书籍最长开启状态时长。',
+            description: '被书籍砸中会直接添加3层破绽；书籍自动闭合的时间延后。',
             cooldown: 15,
-            detailedDescription:
-              '被书籍砸中额外添加三层破绽，书籍最长开启状态延长为10秒、存在20秒。',
+            detailedDescription: '被书籍砸中额外添加3层破绽，书籍自动闭合的时间延后至10秒。',
           },
         ],
-        aliases: ['书'],
+        aliases: ['书', '书籍'],
         canHitInPipe: false,
         cooldownTiming: '释放后',
         cueRange: '本房间可见',
@@ -2961,8 +3117,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '击破破绽会减少凯特主动和武器技能CD。',
-            detailedDescription: '每击破一层破绽都会减少凯特主动和武器技能2秒CD。',
+            description: '击破破绽会减少{主动技能}和{武器技能}CD。',
+            detailedDescription: '每击破一层破绽都会减少{主动技能}和{武器技能}2秒CD。',
           },
         ],
       },
@@ -3022,6 +3178,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       '苏蕊是最受欢迎的啦啦队队长，充满活力的她，脸上时时刻刻都洋溢着灿烂的笑容。她热爱生活，享受美食，认识她的猫和老鼠都会被她吸引，和她成为朋友。',
 
     maxHp: 200,
+    attackBoost: 0,
     hpRecovery: 2.5,
     moveSpeed: 770,
     jumpHeight: 420,
@@ -3154,13 +3311,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['跳舞'],
         description:
-          '回复Hp，并随着音乐舞动，持续40秒。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为范围更大的[舞动亮相](CD为6秒（未命中）和12秒（命中），伤害为70点)。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复Hp、提升移速和攻击力。舞动时接触虚弱老鼠将使其自主跟随苏蕊30秒，期间遇到火箭立刻绑上。',
+          '苏蕊开始舞动，持续40秒。舞动开始时立刻回复Hp，放下手中老鼠并使其自主跟随。舞动期间[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为“舞动亮相”。舞动时每隔13秒出现爱心提示，期间点击技能按钮将回复Hp且移速和攻击增伤提高。舞动时接触虚弱老鼠将使其自主跟随苏蕊30秒，期间遇到火箭立刻绑上。\n“舞动亮相”：CD大幅增加，但伤害提高，且范围改为[以苏蕊为中心的圆形区域](半径相比普通爪刀的攻击距离有所增加)。{苍蝇拍}范围和效果也随之改变。',
         detailedDescription:
-          '回复50Hp，随着音乐舞动，持续40秒。若手中有老鼠，则放下老鼠并使其自主跟随。舞动时[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为以苏蕊为中心、范围更大的[舞动亮相](不受长爪、乘胜追击影响)（CD为5.9秒（未命中）和11.9秒（命中），伤害为70），苍蝇拍范围也变为以苏蕊为中心，拍抓会使[老鼠](包括触发三级被动后灵体状态的表演者•杰瑞)自主跟随。舞动时每隔13秒出现爱心提示，此时点击技能按钮将回复30Hp、提升10%移速和15点攻击力。舞动时接触不在捕鼠夹上的虚弱老鼠或[刚被击倒的老鼠](包括刚进入知识卡铁血、表演者•杰瑞一级被动、佩克斯三级被动状态的老鼠)，将使其自主跟随。自主跟随持续30秒，在此状态下，老鼠解除并免疫虚弱，无法使用技能和道具、进行交互或主动移动，但仍能受到伤害和[部分控制](不包含冰块、鞭炮、老鼠夹造成的控制)，且遇到火箭会立刻绑上。若老鼠与苏蕊距离较远（如苏蕊钻管道后），则老鼠会提前解除跟随。',
+          '苏蕊开始舞动，持续40秒。舞动开始时立刻回复50Hp，若手中有老鼠，则放下老鼠并使其自主跟随。舞动期间[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为“舞动亮相”。舞动时每隔13秒出现爱心提示，[提示期间点击技能按钮](虚弱，交互等状态期间无法点击；若提示期间未及时点击按钮则爱心提示破碎，不会获得增益效果)将回复30Hp、移速提高10%、攻击增伤提高15。舞动时接触虚弱老鼠（正被{老鼠夹}夹住的老鼠除外）或[刚被击倒的老鼠](包括刚进入知识卡铁血、表演者•杰瑞一级被动、佩克斯三级被动状态的老鼠)，将使其自主跟随30秒，在此状态下老鼠不受控制地跟随苏蕊，期间解除并免疫虚弱、无法使用技能和道具、无法自主移动和交互，但仍能受到伤害和[部分控制效果](不包含冰块、鞭炮、老鼠夹造成的控制)，且遇到火箭会[立刻绑上](会触发绑火箭-10秒的机制)。老鼠跟随期间与苏蕊距离较远时，会立即传送到苏蕊身边；但若[老鼠与苏蕊距离极远](如苏蕊钻管道后)，则老鼠会提前解除跟随。\n“舞动亮相”：与爪刀类似，但[CD改为6秒（未命中）和12秒（命中）](未命中CD本质上是命中CD返还一定百分比后的结果，对于苏蕊来说是返还50%；无视其他改变CD的效果（包括变身饮料改变基础CD的效果，及乘胜追击等百分比减少CD的效果）)，伤害提高到{70}，范围改为[以苏蕊为中心的圆形区域](半径相比普通爪刀的攻击距离有所增加)，且{长爪}失效；如果携带了{乘胜追击}和{蓄势一击}且[造成了蓄势一击的伤害效果](若敌方受到蓄势伤害/亮相攻击伤害后就进入了虚弱状态，则不算作造成效果)，则会[在原本的基础上额外叠加一层乘胜效果](即使爪刀命中多名老鼠，也只会额外叠加一层)。{苍蝇拍}范围也随之改变，且直接抓起时的效果改为[使老鼠立刻自主跟随](包括触发三级被动后灵体状态的表演者•杰瑞)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
+        cooldownTiming: '释放后',
         // 没找到好的技能教学视频
         skillLevels: [
           {
@@ -3171,7 +3331,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description: '舞动时受到的伤害减少。',
-            detailedDescription: '舞动时固定减伤10点。',
+            detailedDescription: '舞动时受到的伤害降低10。',
             cooldown: 40,
           },
           {
@@ -3185,9 +3345,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         name: '瑜伽球',
         type: 'weapon1',
-        description: '扔出瑜伽球并控制它膨胀，膨胀时使老鼠眩晕并弹飞。',
+        description:
+          '扔出{瑜伽球(衍生物)}，再次使用技能使其膨胀，膨胀的瞬间对周围的敌方造成伤害和眩晕，并弹飞对方。',
         detailedDescription:
-          '扔出瑜伽球。在瑜伽球飞行过程中苏蕊可再次点击技能键使瑜伽球膨胀，当膨胀时接触到敌方老鼠，则会造成30点伤害、1.5秒眩晕并弹飞。可存储2次。',
+          '扔出{瑜伽球(衍生物)}，同时技能进入读条，期间苏蕊可再次点击技能键使瑜伽球膨胀，膨胀的瞬间对周围的敌方造成30伤害和眩晕，[眩晕期间对方会被弹飞](弹飞距离取决于眩晕时间)。可存储2次。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['本技能键'],
@@ -3196,17 +3357,18 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description: '',
+            detailedDescription: '瑜伽球的眩晕持续时间为1.5秒。',
             cooldown: 20,
           },
           {
             level: 2,
-            description: '减少CD。',
+            description: 'CD减少至15秒。',
             cooldown: 15,
           },
           {
             level: 3,
-            description: '瑜伽球造成的眩晕时间提升。',
-            detailedDescription: '瑜伽球造成的眩晕时间提升至2.5秒。',
+            description: '瑜伽球造成的眩晕持续时间提升。',
+            detailedDescription: '瑜伽球造成的眩晕持续时间提升至2.5秒。',
             cooldown: 15,
           },
         ],
@@ -3217,21 +3379,22 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '爪刀和舞动亮相命中敌方时将重置瑜伽球的CD。',
+            description: '爪刀或舞动亮相命中敌方时将重置{武器技能}CD。',
             detailedDescription:
-              '爪刀和舞动亮相命中敌方时将重置瑜伽球的CD，击中多个敌方将重置多个CD。',
+              '爪刀或舞动亮相命中敌方时将重置{武器技能}CD，击中多个敌方可重复触发该效果。',
           },
           {
             level: 2,
             description: '虚弱时间减少至2秒。',
-            detailedDescription: '虚弱时间减少至2秒，起身时只有100Hp。',
+            detailedDescription:
+              '[虚弱时间减少至2秒](但通常起身时只有100Hp。这是因为虚弱本质上会附带高额Hp恢复，该恢复时间被减短了)。',
           },
           {
             level: 3,
             description:
-              '[易碎道具](玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶/冰块)击中[敌方](含虚弱老鼠、鸭子)时将重置律动时间的CD。',
+              '[易碎道具](玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶/冰块)击中[目标](包括老鼠，虚弱老鼠，大鸭子NPC等)时将重置{主动技能}大量CD。',
             detailedDescription:
-              '[易碎道具](玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶/冰块)击中[敌方](含虚弱老鼠、鸭子)时将重置律动时间的CD。',
+              '[易碎道具](玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶/冰块)击中[目标](包括老鼠，虚弱老鼠，大鸭子NPC等)时将减少{主动技能}100秒CD。',
           },
         ],
       },
@@ -3242,6 +3405,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '天使汤姆乘坐库博的天国火车，从神秘的天堂中而来。身穿纯白色长袍，头戴天使光环的他认为猫和老鼠都应该有快乐的空间，温柔善良的他脸上始终带着一抹浅浅的微笑，手持小竖琴时不时传来悠扬的乐声，让猫猫鼠鼠们忍不住靠近。',
     maxHp: 230,
+    attackBoost: 15,
     hpRecovery: 3.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -3252,7 +3416,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '打架',
         isMinor: true,
-        description: '伤害高应对高Hp老鼠，Lv.2被动为打架提高霸体和回血。',
+        description: '伤害高应对高Hp老鼠，{2级被动}为打架提高霸体和回血。',
         additionalDescription: '对打架阵容有很强的反制能力。',
       },
       {
@@ -3271,7 +3435,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         tagName: '进攻',
         isMinor: false,
         description:
-          '伤害高，很容易处理124Hp老鼠；Lv.2被动提供霸体以及飞行吸火箭，上火箭能力较强。',
+          '伤害高，很容易处理124Hp老鼠；{2级被动}提供霸体以及飞行吸火箭，上火箭能力较强。',
         additionalDescription: '新增标签介绍',
       },
       {
@@ -3426,7 +3590,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
     ],
-    attackBoost: 15,
     counteredBy: [
       {
         id: '剑客泰菲',
@@ -3523,6 +3686,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '因为与众不同的花色，斯飞在其他猫的眼里是个十足的怪猫。习惯独来独往的他从不和其他猫交流，独自一人住在城市的最中心，充满了神秘感。[夜深人静的时候，他总会拿着一个挂坠，似乎在思念着谁](猫鼠动画里毛色相似的小猫是他妹妹)。',
     maxHp: 225,
+    attackBoost: 0,
     hpRecovery: 2,
     moveSpeed: 780,
     jumpHeight: 420,
@@ -3533,19 +3697,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '追击',
         isMinor: false,
-        description: '被动的加速使追击老鼠较为轻松。',
+        description: '{1级被动}和{2级被动}的加速使追击老鼠较为轻松。',
         additionalDescription: '',
       },
       {
         tagName: '进攻',
         isMinor: false,
-        description: '主动和武器技能均有伤害和控制，轻松击倒老鼠；被动的感电增强上火箭能力。',
+        description:
+          '{主动技能}和{武器技能}均有伤害和控制，轻松击倒老鼠；{1级被动}的感电增强上火箭能力。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
         isMinor: true,
-        description: '三级武器技能命中刷新CD，有一定翻盘能力。',
+        description: '{3级武器}命中刷新CD，有一定翻盘能力。',
         additionalDescription: '',
       },
     ],
@@ -3554,7 +3719,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '新手',
         pattern: '0101[02]221',
         weaponType: 'weapon1',
-        description: '初步接触的加点，六级时如果血量健康可以优先点出武器技能。',
+        description: '初步接触的加点，六级时如果血量健康可以优先点出{武器技能}。',
       },
       {
         id: '熟练',
@@ -3567,7 +3732,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'S-暴怒', 'A-熊熊燃烧'],
         description:
-          '萌新玩家可快速凑出本卡组度过开荒期，当资源足够或熟练后不推荐。管道图中，"暴怒"可替换为"加大火力"+"猫是液体"。',
+          '萌新玩家可快速凑出本卡组度过开荒期，当资源足够或熟练后不推荐。管道图中，《暴怒》可替换为《加大火力》+《猫是液体》。',
       },
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
@@ -3576,7 +3741,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-心灵手巧', 'A-加大火力'],
         description:
-          '主流卡组，心灵手巧可以使感电效果几乎持续到绑完火箭。可将最后两张换为"穷追猛打"，快速打开前期节奏；如遇打架队则可换为"皮糙肉厚"。',
+          '主流卡组，心灵手巧可以使感电效果几乎持续到绑完火箭。可将最后两张换为《穷追猛打》，快速打开前期节奏；如遇打架队则可换为《皮糙肉厚》。',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
@@ -3590,11 +3755,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         aliases: ['牙通牙', '旋转'],
         description: '向前方连续挥爪3次，造成伤害；疾冲状态下，改为向前穿刺，造成伤害和控制。',
         detailedDescription:
-          '向前方连续挥爪3次，每次造成30伤害，范围为300。；疾冲状态下或武器技能飞行中，改为向前穿刺，造成60点伤害和1.8秒眩晕。技能可以穿门。',
+          '向前方连续挥爪3次，每次造成30伤害，范围为300；疾冲状态下或{武器技能}飞行中，改为向前穿刺，造成60点伤害和1.8秒眩晕。技能可以穿门。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        canHitInPipe: true,
+        cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
+        canHitInPipe: true,
         skillLevels: [
           {
             level: 1,
@@ -3614,19 +3782,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             cooldown: 12,
           },
         ],
-        cancelableSkill: '无前摇',
         cueRange: '本房间可见',
       },
       {
         name: '猎',
         type: 'weapon1',
-        description: '前摇0.45秒，扔出项坠，随后斯飞向项坠飞去，对碰到老鼠造成伤害和短暂眩晕。',
+        description: '扔出{项坠}，随后斯飞向项坠飞去，对碰到的老鼠造成伤害和短暂眩晕。',
         detailedDescription:
-          '前摇0.45秒，扔出项坠，0.75秒后或项坠碰撞到地面/墙壁后，斯飞以2000的速度向项坠飞去，飞行期间对碰到老鼠造成50点普通伤害、10点[电击伤害](电击伤害会使目标感电，每层感电使受到的电击伤害增加15，可叠加)和0.6秒眩晕。释放瞬间如果角色方向改变，将同时改变项坠方向。技能可以穿门。',
+          '扔出{项坠}，0.75秒后或项坠碰撞到地面/墙壁后，斯飞以2000的速度向项坠飞去，飞行期间对碰到的老鼠造成50点普通伤害、10点[电击伤害](电击伤害会使目标感电，每层感电使受到的电击伤害增加15，可叠加)和0.6秒眩晕。释放瞬间如果角色方向改变，将同时改变项坠方向。技能可以穿门。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
+        forecast: 0.45,
+        canHitInPipe: true,
         skillLevels: [
           {
             level: 1,
@@ -3647,7 +3816,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             detailedDescription: '飞行期间伤害每伤害到一个敌人，减少20秒本技能CD。',
           },
         ],
-        canHitInPipe: true,
       },
       {
         name: '迅',
@@ -3681,11 +3849,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '航海士杰瑞',
         description: '航海士杰瑞不仅控制多，还能炸火箭。',
         isMinor: true,
-      },
-      {
-        id: '尼宝',
-        description: '尼宝救人很稳，技能能让自身霸体和钩子让猫强制位移。',
-        isMinor: false,
       },
       {
         id: '剑客杰瑞',
@@ -3736,6 +3899,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '投手的高额减速很容易使斯飞退出疾冲状态。',
         isMinor: false,
       },
+      {
+        id: '缴械',
+        description: '缴械能使斯飞的输出短时间大幅降低。',
+        isMinor: false,
+      },
+      {
+        id: '绝地反击',
+        description: '使老鼠具有反打斯飞的可能。',
+        isMinor: true,
+      },
     ],
     counteredBySpecialSkills: [
       {
@@ -3754,13 +3927,25 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '再次加快速度与机动性',
       },
     ],
+    countersKnowledgeCards: [
+      {
+        id: '护佑',
+        description: '斯飞身上环绕的电流能直接破掉护佑。',
+        isMinor: false,
+      },
+      {
+        id: '无畏',
+        description: '处于无畏状态下的老鼠不容易逃脱斯飞的追击。',
+        isMinor: true,
+      },
+    ],
   },
-
   /* ----------------------------------- 恶魔汤姆 ----------------------------------- */
   恶魔汤姆: {
     description:
       '恶魔汤姆驾驶着列车从深渊呼啸而来。他通体火红，脑袋上有一对略显狡黠的小触角，手持三叉戟的他一直鼓动着汤姆在老鼠面前找回场子。狡黠的恶魔汤姆身边还有一群忠诚的仆从，他们会不遗余力地完成主人的任何指令。',
     maxHp: 200,
+    attackBoost: 0,
     hpRecovery: 1.5,
     moveSpeed: 760,
     jumpHeight: 420,
@@ -3773,7 +3958,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
         description: '列车可用于守奶酪和火箭，并且列车可以为恶魔汤姆提供护盾效果。',
         additionalDescription: '',
-        weapon: 1,
       },
       {
         tagName: '后期',
@@ -3793,27 +3977,24 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        id: '贡献者推荐',
-        description: '卡组提供者-无敌猫虎大王wy(现猫榜第32名)',
-        groups: [
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-加大火力'],
-            description: '御门酒店使用，对面高伤阵容换成越挫。',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-穷追猛打'],
-            description: '常规地图使用。',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'A-越挫越勇', 'A-穷追猛打'],
-            description: '常规地图，对面高伤阵容时使用。',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
-            description: '森林牧场使用，对面高伤阵容则把皮糙换成越挫。',
-          },
-        ],
-        defaultFolded: false,
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-加大火力'],
+        description: '御门酒店使用，对面高伤阵容换成越挫。',
+        contributor: '无敌猫虎大王wy',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-穷追猛打'],
+        description: '常规地图使用。',
+        contributor: '无敌猫虎大王wy',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-越挫越勇', 'A-穷追猛打'],
+        description: '常规地图，对面高伤阵容时使用。',
+        contributor: '无敌猫虎大王wy',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
+        description: '森林牧场使用，对面高伤阵容则把皮糙换成越挫。',
+        contributor: '无敌猫虎大王wy',
       },
     ],
     specialSkills: [
@@ -3832,13 +4013,15 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['打碟'],
         description:
-          '[获得霸体，持续10s](该霸体免疫绝大部分控制效果，但不免疫虚弱)。技能期间对附近的敌人造成持续伤害和减速，且敌人头顶会出现舞步指令，若未按照头顶提示的方向移动则会受到伤害和眩晕。',
+          '开始狂欢，期间无法进行[部分交互](可正常移动、跳跃、抓取老鼠和绑火箭等，但无法进行攀爬等交互)，且[免疫大多数控制效果](不包括虚弱)，持续10秒。技能期间对附近的敌人造成持续伤害和减速，且敌人头顶会出现舞步指令，若未按照头顶提示的方向移动则会受到伤害和眩晕。',
         detailedDescription:
-          '[获得霸体，持续10s](该霸体免疫绝大部分控制效果，包括仙女鼠八星的变身效果，但不免疫虚弱。技能期间被莱恩变身为线条猫时，技能不中断)。技能期间对附近的敌人造成持续伤害和减速，且敌人头顶会出现舞步指令，若未按照头顶提示的方向移动则会受到伤害和眩晕。技能释放期间同步进入读条，释放完毕后才会进入冷却。',
+          '开始狂欢，期间无法进行[部分交互](可正常移动、跳跃、抓取老鼠和绑火箭等，但无法进行攀爬等交互)，且[免疫大多数控制效果](包括仙女鼠八星的变身效果，但不包括虚弱、减速、尼宝鱼钩拽取等效果。技能期间被莱恩变身为线条猫时，技能不中断)，持续10秒。技能期间对附近的敌人造成持续伤害和减速，且敌人头顶会出现舞步指令，若未按照头顶提示的方向移动则会受到伤害和眩晕，且可[随机触发一次Lv.2被动的效果](不占用Lv.2被动的触发序列，四种效果随机触发)。技能释放期间同步进入读条，释放完毕后才会进入冷却。该技能对机器鼠无效。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         cooldownTiming: '释放后',
         skillLevels: [
           {
@@ -3864,27 +4047,29 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '迷乱列车',
         type: 'weapon1',
         description:
-          '召唤列车沿固定轨道冲撞，对被撞击的敌人施加伤害，眩晕和击退效果。冲撞完成后重新生成下一段列车，重复数次。',
+          '在自身所在位置召唤{轨道}，随后会有{列车}沿轨道冲撞，对被撞击的敌人施加伤害，眩晕和击退效果。冲撞完成后重新生成下一段轨道，重复数次。',
         detailedDescription:
-          '召唤列车沿固定轨道冲撞，对被撞击的敌人施加50伤害，并造成眩晕和击退效果。冲撞完成后重新生成下一段列车，重复数次。被冲撞过的老鼠短时间内获得冲撞免疫效果（免疫列车冲撞带来的伤害和控制，但被撞击仍会造成小幅度位移）。\n注：列车前摇释放完毕后进入技能冷却，列车冲撞结束后，技能剩余冷却时间为技能真空期。1级真空期约10秒，2级真空期约2s，3级真空期约6s。',
+          '在自身所在位置召唤{轨道}，轨道需要2.1秒生成，以技能释放的位置为中点生成，但方向随机；轨道完全生成后召唤{列车}冲撞，冲撞持续1.8秒，对被撞击的敌人施加50伤害，并造成眩晕和击退效果。冲撞完成后重新生成下一段轨道，重复数次。被冲撞过的老鼠短时间内获得冲撞免疫效果（免疫列车冲撞带来的伤害和控制，但被撞击仍会造成小幅度位移）。\n注：列车前摇释放完毕后进入技能冷却，列车冲撞结束后，技能剩余CD为技能真空期。1级真空期约10秒，2级真空期约2秒，3级真空期约6秒。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键'],
         cancelableAftercast: '无后摇',
+        forecast: 1.7,
+        aftercast: 0,
         skillLevels: [
           {
             level: 1,
             description: '列车共冲撞3次。',
             cooldown: 20,
-            detailedDescription: '列车共冲撞3次，共持续约10s。',
+            detailedDescription: '列车共冲撞3次，共持续约10秒。',
           },
           {
             level: 2,
             description:
-              '释放列车成功后给予一层护盾，列车冲撞次数提升至5次，列车经过恶魔汤姆会使恶魔汤姆获得一层护盾，撞击老鼠会使恶魔汤姆移速提高，爪刀CD固定降低，持续一段时间。',
+              '释放列车成功后给予自身一层护盾。列车冲撞次数提升至5次，列车经过恶魔汤姆会使恶魔汤姆获得一层护盾，撞击老鼠会使恶魔汤姆移速提高，爪刀CD固定降低，持续一段时间。',
             cooldown: 20,
             detailedDescription:
-              '释放列车成功后给予一层护盾。列车冲撞次数提升至5次，共持续约18秒。列车经过恶魔汤姆会使恶魔汤姆获得一层护盾。撞击老鼠会使恶魔汤姆移速提高，[爪刀CD固定降低3.5秒](空刀CD由命中时的CD乘角色内置的空刀返还CD比例得到。对于恶魔汤姆来说，2级列车减少爪刀CD后，空刀冷却约2.2s，命中敌方冷却约4.5s)，持续数秒。',
+              '释放列车成功后给予自身一层护盾，持续5秒。列车冲撞次数提升至5次，共持续约18秒。列车经过恶魔汤姆会使恶魔汤姆获得一层护盾。撞击老鼠会使恶魔汤姆移速提高15%，[爪刀CD固定降低3.5秒](空刀CD由命中时的CD乘角色内置的空刀返还CD比例得到。对于恶魔汤姆来说，2级列车减少爪刀CD后，空刀冷却约2.2秒，命中敌方冷却约4.5秒)，持续8秒。',
           },
           {
             level: 3,
@@ -3909,42 +4094,42 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description:
-              '恶魔汤姆附近的敌人每隔一段时间受到一个随机异常状态，并且会将自身异常状态扩散给队友。',
+              '恶魔汤姆附近的敌方每隔一段时间受到一个随机[异常状态](包括反向、失明、冰冻眩晕、爆炸眩晕)（有[内置触发顺序逻辑](先是2次反向/失明，其后是1次冰冻眩晕/爆炸眩晕，如此循环反复)。所有老鼠受到的效果相同），并扩散给队友。因狂欢时刻陷入眩晕的敌方也会受到一个随机[异常状态](反向；失明；爆炸眩晕；冰冻眩晕)。',
             detailedDescription:
-              '恶魔汤姆附近500范围内的老鼠每隔5秒受到一个随机[异常状态](3秒反向；3秒失明；2.1秒爆炸眩晕和1点伤害；2.3秒冰冻眩晕和1点伤害)，并且会将自身异常状态扩散给队友。爆炸和冰冻异常状态只有在每15秒时才会触发，且必然触发。该技能效果可被大部分护盾效果免疫或抵消。',
+              '恶魔汤姆附近500范围内的老鼠[每隔5秒](技能加点后开始产生作用，每隔5秒进行一次判定：若范围内有老鼠则触发效果，反之无事发生（不占用本技能的触发序列）)受到一个随机[异常状态](包括：3秒反向；3秒失明；2.3秒冰冻眩晕和1点伤害；2.1秒爆炸眩晕和1点伤害)（有[内置触发顺序逻辑](先是2次反向/失明，其后是1次冰冻眩晕/爆炸眩晕，如此循环反复)。所有老鼠受到的效果相同），然后[重置由本技能Lv.2效果导致的异常状态的持续时间](仅包括本技能导致的反向、失明、冰冻眩晕、爆炸眩晕。包括由自然触发和因狂欢时刻导致的该效果。重置时间通常是指狂欢时刻与本技能联动导致的异常状态的持续时间。例如：杰瑞先触发狂欢时刻的眩晕并因此获得了本技能提供的冰冻眩晕，此时经过2秒后恰好触发了本技能的效果，则会重置该冰冻眩晕时间为2.3秒，同时还会按序列再获得一个异常状态（可能重复）)，再将上述状态[扩散给约250范围内的队友](指的是让队友受到同样的状态)。因狂欢时刻陷入眩晕的敌方也会受到一个随机[异常状态](反向；失明；爆炸眩晕；冰冻眩晕)（不占用本技能的触发序列，四种效果随机触发）。该技能效果可被大部分护盾效果免疫或抵消。',
           },
           {
             level: 3,
-            description: 'Lv.2被动触发时，自身根据周围陷入异常状态的敌人数量获得额外增益。',
+            description: '{2级被动}触发时，自身根据周围陷入异常状态的敌方数量获得额外增益。',
             detailedDescription:
-              'Lv.2被动触发时，自身根据周围陷入异常状态的老鼠数量获得持续5秒的额外增益：\n1只：移速增加20%，HP恢复增加2.5/s；\n2只：在1只的基础上，视野范围约提高至原先的3.58倍；\n3只：在2只的基础上，获得一层护盾；\n4只：在3只的基础上，获得100攻击增伤。',
+              '{2级被动}触发时，自身根据周围陷入异常状态的敌方数量获得额外增益，持续5秒：\n1个及以上：加速20%，获得2.5Hp/秒的恢复效果；\n2个及以上：视野范围提高至原先的约3.58倍；\n3个及以上：获得一层护盾；\n4个及以上：获得100攻击增伤。',
           },
         ],
         description:
-          '恶魔汤姆绑火箭拥有特殊机制：第一段为[恶魔汤姆对其仆从小恶魔施加指令](可被道具键打断)，约1.2s，第二段为小恶魔将老鼠绑上火箭，约1.7s，期间老鼠[脱离恶魔汤姆本体](不会因恶魔汤姆眩晕或挣扎进度条充满而挣脱，但如果火箭在此期间被毁则不会被绑上，且恶魔汤姆在此期间无法抓取其他老鼠)。',
+          '恶魔汤姆绑火箭拥有特殊机制：第一段为[恶魔汤姆对其仆从小恶魔施加指令](可被道具键打断)，约1.2秒，第二段为小恶魔将老鼠绑上火箭，约1.7秒，期间老鼠[脱离恶魔汤姆本体](不会因恶魔汤姆眩晕或挣扎进度条充满而挣脱，但如果火箭在此期间被毁则不会被绑上，且恶魔汤姆在此期间无法抓取其他老鼠)。',
         detailedDescription:
-          '恶魔汤姆绑火箭拥有特殊机制：第一段为[恶魔汤姆对其仆从小恶魔施加指令](可被道具键打断)，约1.2s，第二段为小恶魔将老鼠绑上火箭，约1.7s，期间老鼠[脱离恶魔汤姆本体](不会因恶魔汤姆眩晕或挣扎进度条充满而挣脱，但如果火箭在此期间被毁则不会被绑上，且恶魔汤姆在此期间无法抓取其他老鼠)。',
+          '恶魔汤姆绑火箭拥有特殊机制：第一段为[恶魔汤姆对其仆从小恶魔施加指令](可被道具键打断)，约1.2秒，第二段为小恶魔将老鼠绑上火箭，约1.7秒，期间老鼠[脱离恶魔汤姆本体](不会因恶魔汤姆眩晕或挣扎进度条充满而挣脱，但如果火箭在此期间被毁则不会被绑上，且恶魔汤姆在此期间无法抓取其他老鼠)。',
       },
     ],
     counters: [
       {
         id: '牛仔杰瑞',
-        description: '列车克制霸体角色，且恶魔汤姆技能免控以及列车给予护盾，牛仔杰瑞很难刷出霸体',
+        description: '列车克制霸体角色，且恶魔汤姆技能免控以及列车给予护盾，牛仔杰瑞很难刷出霸体。',
         isMinor: false,
       },
       {
         id: '米可',
-        description: '恶魔汤姆技能免控，列车冲撞会给予其护盾，列车克制霸体角色',
+        description: '恶魔汤姆技能免控，列车冲撞会给予其护盾，列车克制霸体角色。',
         isMinor: false,
       },
       {
         id: '国王杰瑞',
-        description: '恶魔汤姆主流特技我生气了和列车克制国王小盾，降低国王容错',
+        description: '恶魔汤姆主流特技我生气了和列车克制国王小盾，降低国王容错。',
         isMinor: true,
       },
       {
         id: '表演者•杰瑞',
-        description: '列车克制霸体角色，表演者跳舞期间易被火车连撞',
+        description: '列车克制霸体角色，表演者跳舞期间易被火车连撞。',
         isMinor: false,
       },
     ],
@@ -3952,22 +4137,305 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counteredBy: [
       {
         id: '侦探杰瑞',
-        description: '速推克制恶魔汤姆死守，三级烟雾弹禁用技能',
+        description: '速推克制恶魔汤姆死守，三级烟雾弹禁用技能。',
+        isMinor: false,
+      },
+      {
+        id: '天使杰瑞',
+        description:
+          '天使Lv.1被动禁用爪刀使红温流恶汤无法发挥效果；雷云使被动流恶汤一直遭雷劈；后期3级被动禁用技能，对于恶汤技能型防守特别难受；主动技能复活，能够避免恶汤的死守火箭救不下来而减员，也能尽可能的拖时间，恶魔汤姆没有很强的追击性，很难再把复活的人击倒。',
         isMinor: false,
       },
       {
         id: '剑客泰菲',
-        description: '头盔掩护队友强推奶酪，长枪禁用技能',
+        description:
+          '恶魔汤姆非常怕破局或拥有禁用技能能力的老鼠。剑客泰菲头盔能强行救援或掩护队友强推奶酪，长枪能禁用技能，因此克制恶魔汤姆。尽管恶魔汤姆可以用"我生气了！"快速击破头盔，但该特技CD极长，而头盔的CD较短，且击破头盔所需的时间足以让剑客泰菲逃跑，综合来看该克制关系仍然十分明显。',
+        isMinor: false,
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '无畏',
+        description:
+          '恶汤正常防守时都要绑火箭。使用无畏知识卡救完人后就强推。找几个人送一下，吃蛋糕刷新知识卡CD，反复几次救援就能破局。',
         isMinor: false,
       },
     ],
   },
-
+  /* ----------------------------------- 兔八哥 ----------------------------------- */
+  兔八哥: {
+    description:
+      '身为一只疯狂又理智的免子，免八哥在每个紧要关头都能凭借自己的勇气和智慧战胜对手，获得胜利。闲暇之余的他，一边啃着造型和口味都堪称完美的胡萝卜，一边到处挖洞为自己寻找满意的小窝。',
+    maxHp: 200,
+    attackBoost: 0,
+    hpRecovery: 2,
+    moveSpeed: 800,
+    jumpHeight: 420,
+    clawKnifeCdHit: 5,
+    clawKnifeCdUnhit: 2.5,
+    clawKnifeRange: 300,
+    catPositioningTags: [
+      {
+        tagName: '后期',
+        isMinor: false,
+        description: '三被主动宣战效果，不然老鼠不容易被兔子宣战。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '防守',
+        isMinor: true,
+        description: '萝卜可以把奶酪从洞口冲出来，还能暂时阻挡推入。',
+        additionalDescription: '曾经的某些版本很强，但现今版本该流派已被大幅削弱，防守能力很差。',
+      },
+      {
+        tagName: '打架',
+        isMinor: false,
+        description: '兔子需要通过宣战来打架开节奏的，宣战后追踪胡萝卜满天飞有一定打架能力。',
+        additionalDescription: '你知道这意味着宣战！',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '常规加点',
+        pattern: '200102211',
+        weaponType: 'weapon1',
+        description: '',
+      },
+      {
+        id: '主萝卜',
+        pattern: '200202111',
+        weaponType: 'weapon1',
+        description: '新手用，地洞熟练后可以换上面的一套加点。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
+        description: '经典的776卡组。',
+      },
+      {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
+        description: '适合管道较多的图。',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-击晕', 'A-加大火力', 'C-猫是液体'],
+        description: '适合森林牧场。',
+      },
+      {
+        cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '打100Hp的老鼠多且控制较差的阵容。',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝地反击',
+        description: '泛用性极高的特技。',
+      },
+      {
+        name: '蓄力重击',
+        description: '与钻洞或击晕配合击倒老鼠。',
+      },
+    ],
+    skills: [
+      {
+        name: '狡兔三窟',
+        type: 'active',
+        aliases: ['钻地'],
+        description:
+          '兔八哥跳起并[钻入地面](若所在平台空间不足将无法钻地，改为在原地留下2个洞穴，技能仍然进入读条，但同时也直接进入冷却)，原地留下一个{洞穴}并[在所在平台或地面的地下行进](行进时自身模型暂时隐藏，可以穿过部分墙壁和门)，行进中会对碰撞到的敌方将造成伤害和短暂击飞但会减少钻地时间，再次使用技能会提前钻出地面，若上方有老鼠将造成伤害，出土后原地留下一个{洞穴}，敌方触碰洞穴时会受到伤害并眩晕一段时间，随后洞穴消失。进入地下的时候一定概率因迷路而全程反向，出土后恢复正常。如果存在“胜利”状态，每层胜利状态增加地下行进时间和降低迷路概率。',
+        detailedDescription:
+          '兔八哥跳起并[钻入地面](若所在平台空间不足将无法钻地，改为在原地留下2个洞穴，技能仍然进入读条，但同时也直接进入冷却)，原地留下一个{洞穴}并[在所在平台或地面的地下行进](行进时自身模型暂时隐藏，可以穿过部分墙壁和门)，行进时速度固定800，可以穿过部分墙壁和门，不能使用与跳跃键、交互键、药水键、道具键和大萝卜，其他均可使用，行进过程中每隔1秒对上方的所有老鼠造成25伤害，击飞0.7秒并眩晕1.5秒（每只老鼠3秒内只触发一次），同时每次攻击会使钻地最大时间固定减少3秒，再次使用技能会提前钻出地面，若上方有老鼠将造成40伤害，出土后原地留下一个{洞穴}，洞穴持续11.5秒（出现的第1秒没有贴图），敌方触碰洞穴时会受到25伤害和1.5秒眩晕，随后洞穴消失。进入地下的时候20%概率因迷路而全程反向，出土后恢复正常。如果存在“胜利”状态，每层胜利状态增加地下行进时间5秒并降低迷路概率4%。',
+        forecast: 0.5,
+        aftercast: 1,
+        canMoveWhileUsing: false,
+        canUseInAir: false,
+        cancelableSkill: ['道具键'],
+        cancelableAftercast: '无后摇',
+        cooldownTiming: '释放后',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description:
+              '从洞中钻出后，大幅提升将老鼠绑上火箭的速度，并减少受到的伤害，持续一段时间。',
+            detailedDescription:
+              '从洞中钻出后，将老鼠绑火箭的速度提高55%（1.75秒→1.13秒），受到的伤害减少50%，持续10秒。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: 'CD减少至10秒。钻地行进速度更快，钻地过程中持续会回复健康值。',
+            detailedDescription:
+              'CD减少至10秒。钻地行进速度提高40%（800→1120），钻地过程中获得20Hp/秒的恢复效果。',
+            cooldown: 10,
+          },
+        ],
+        cueRange: '本房间可见',
+      },
+      {
+        name: '胡萝卜',
+        type: 'weapon1',
+        description:
+          '兔八哥可以通过轮盘选择不同的胡萝卜，每种胡萝卜的特性和冷却时间各有不同，使用任意胡萝卜将统一进入该胡萝卜的冷却时间。\n\n[1.胡萝卜飞镖](可移动释放，可空中释放，前摇可被道具键打断，后摇为动画后摇)\n投掷{胡萝卜飞镖(衍生物)}造成伤害并减速，会自动锁定一定范围内的宣战目标发射一枚额外的追踪胡萝卜。每次使用飞镖技能可以释放3次。存在“胜利”时消耗1层并再投掷1根胡萝卜飞镖。\n\n[2.美味胡萝卜](可移动释放，可空中释放，前摇可被药水键、本技能键、其他技能键打断，不可取消)\n拿出胡萝卜吃掉，回复一定Hp，提高Hp恢复速度和移速，持续一段时间。存在“胜利”时，消耗1层获得额外回复量和攻击加成，并减少狡免三窟的冷却时间。\n\n[3.巨型胡萝卜](不可移动释放，不可空中释放，前摇可被道具键打断，后摇不可取消)\n将{巨型胡萝卜(衍生物)}插入地面，砸晕范围内敌人并造成伤害，巨型胡萝卜周围老鼠大幅度降低移速和推奶酪速度，在洞口附近时会阻碍奶酪推进，巨型胡萝卜会存在一段时间，老鼠可以通过交互吃掉巨型胡萝卜。存在“胜利”时，将消耗1层状态造成额外伤害并将奶酪冲出洞口（最后一块奶酪只能被冲出一次）。',
+        detailedDescription:
+          '兔八哥可以通过轮盘选择不同的胡萝卜，每种胡萝卜的特性和冷却时间各有不同，使用任意胡萝卜将[统一进入该胡萝卜的冷却时间](该技能在进入时的CD数值固定为对应胡萝卜的数值，不会受到更改CD的效果影响，但CD期间仍可受到加快/减慢冷却时间的效果影响)。\n\n1.胡萝卜飞镖\n特性：可移动释放，可空中释放，前摇可被道具键打断，后摇为动画后摇。\n作用：选中自身前方90°范围内的一个方向，在前摇0.35秒后投掷{胡萝卜飞镖(衍生物)}，会自动锁定自身半径10000范围内的每个宣战目标发射一枚额外的追踪胡萝卜，后摇0.2秒。普通胡萝卜飞镖飞行速度2000，可穿墙，命中目标造成40伤害并使其移速降低20%，持续2.6秒；追踪胡萝卜飞镖飞行速度1750，不受重力影响，当目标不与飞行轨迹处于同一直线时，会以100°/秒的速度绕半径350的圆弧调整飞行方向，可穿墙，追击3秒后消失，命中造成40伤害。[每次使用飞镖技能可以释放3次](只有释放最后一次时才会进入胡萝卜飞镖的CD，每次冷却完毕后会将飞镖数补至3发)。存在“胜利”时消耗1层并在0.65秒后向同一方向再投掷1根普通胡萝卜飞镖。\n\n2.美味胡萝卜\n特性：可移动释放，可空中释放，前摇可被药水键、本技能键、其他技能键打断，不可取消。\n作用：前摇0.5秒，拿出胡萝卜吃掉，后摇0.25秒，回复100Hp，获得4Hp/秒的恢复效果，期间移速提升20%，持续10秒。存在“胜利”时，消耗1层获得额外回复20Hp，且攻击增伤提高15，持续10秒，并减少狡免三窟剩余冷却时间的20%。\n\n3.巨型胡萝卜\n特性：不可移动释放，不可空中释放，前摇可被道具键打断，后摇不可取消。\n作用：在前摇0.35秒，在前方放置{巨型胡萝卜(衍生物)}，后摇0.2秒。巨型胡萝卜生成时对命中的敌方造成25伤害并眩晕1.6秒；随后，以巨型胡萝卜为中心周围450×350范围内的敌方移速降低10%，推速降低15%。在洞口附近时[敌方无法进行推奶酪交互](会提示"有物体遮挡"；已经在进行的推奶酪交互不会中断)，老鼠可以通过交互吃掉巨型胡萝卜，吃掉巨型胡萝卜共需2秒，巨型胡萝卜存在9秒。存在“胜利”时，将消耗1层状态[额外造成50伤害](与原本的伤害独立结算，即：若有1层盾将造成50伤害并眩晕1.6秒，若有2层盾将破盾)并[将奶酪冲出洞口](将已丢入洞口但暂未推入的奶酪以固定角度和初速度弹出，但会保留该洞口的推入进度)（最后一块奶酪只能被冲出一次）。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['道具键'],
+        // cancelableAftercast: '无后摇', // FIXME
+        forecast: 0.35,
+        aftercast: 0.2,
+        skillLevels: [
+          {
+            level: 1,
+            description: '初始CD：\n胡萝卜飞镖：15秒\n美味胡萝卜：12秒\n巨型胡萝卜：20秒',
+            cooldown: 0,
+          },
+          {
+            level: 2,
+            description: 'CD缩短至：\n胡萝卜飞镖：10秒\n美味胡萝卜：8秒\n巨型胡萝卜：15秒',
+            cooldown: 0,
+          },
+          {
+            level: 3,
+            description:
+              '追加新的效果：\n胡萝卜飞镖：消耗“胜利”时投掷数量提升1个。\n美味胡萝卜：食用后增加交互速度并重置爪刀冷却时间。\n巨型胡萝卜：减少奶酪进度，但不会低于0。',
+            cooldown: 0,
+            detailedDescription:
+              '追加新的效果：\n胡萝卜飞镖：消耗“胜利”时在投掷第二个胡萝卜飞镖0.5秒后向同一方向再投掷1根胡萝卜飞镖。\n美味胡萝卜：食用后增加交互速度50%，持续10秒，重置爪刀冷却时间。\n巨型胡萝卜：减少奶酪现有进度的10%，但不会低于0。',
+          },
+        ],
+        cueRange: '本房间可见',
+      },
+      {
+        name: '我，兔八哥',
+        type: 'passive',
+        description:
+          '兔八哥可在特定条件下对敌方施加“宣战”状态，或使自身获得“胜利”状态。\n["宣战"](可被护盾免疫，不消耗层数)：获取目标视野，持续20秒；附近有被宣战的老鼠时，[自身移速提高，并免疫反向失明的影响](状态特效与恢复效果相似，但并不会提高Hp恢复速度)。目标在"宣战"持续期间[进入虚弱](某些免死效果实际为先进入虚弱后解除并触发效果（例如知识卡-铁血本质是解除虚弱并在数秒后再度虚弱），这类效果触发时有可能会多次触发获得“胜利”的效果（例如击倒被宣战的有铁血的老鼠将获得3×2层“胜利”状态）)时，自身会获得3层“胜利”状态。\n"胜利"：每层“胜利”状态将提升Hp上跟，最多叠加5层，在虚弱后失去一半层数（向下取整）。"胜利"还能强化其他技能。',
+        detailedDescription:
+          '兔八哥可在特定条件下对敌方施加“宣战”状态，或使自身获得“胜利”状态。\n["宣战"](可被护盾免疫，不消耗层数)：获取目标视野，持续20秒；以自身为中心1300×250范围内有被宣战的老鼠时，[自身移速提高25%，并免疫反向失明的影响](状态特效与恢复效果相似，但并不会提高Hp恢复速度)。目标在"宣战"持续期间[进入虚弱](某些免死效果实际为先进入虚弱后解除并触发效果（例如知识卡-铁血本质是解除虚弱并在数秒后再度虚弱），这类效果触发时有可能会多次触发获得“胜利”的效果（例如击倒被宣战的有铁血的老鼠将获得3×2层“胜利”状态）)时，自身会获得3层“胜利”状态。\n"胜利"：每层“胜利”状态将提升20Hp上跟，最多叠加5层，在虚弱后失去一半层数（向下取整）。"胜利"还能强化其他技能。',
+        skillLevels: [
+          {
+            level: 1,
+            description: '兔八哥受到伤害时，对伤害来源"宣战"。',
+            detailedDescription: '免八哥受到伤害时，对伤害来源"宣战"。',
+          },
+          {
+            level: 2,
+            description:
+              '每隔一段时间，兔八哥[完全闪避](使该投掷物接触自身碰撞箱时视作未接触，继续进行飞行；离开自身碰撞箱后恢复正常判定)下一次[投掷攻击](无法免疫知识卡和技能附带异常状态)。闪避成功获得一层“胜利”状态。',
+            detailedDescription:
+              '每隔20秒，兔八哥[完全闪避](使该投掷物接触自身碰撞箱时视作未接触，继续进行飞行；离开自身碰撞箱后恢复正常判定)下一次[投掷攻击](无法免疫知识卡和技能附带异常状态)。闪避成功获得一层“胜利”状态，闪避不会打断交互，自身眩晕时也可触发闪避效果。\n能闪避的道具：除{电风扇}/{小鞭炮}/{鞭炮束}外的所有投掷道具；{果子}、{子弹}，机器鼠激光，{鸟哨鞭炮}，{金币(衍生物)}，{火箭筒}，{红色卡牌}，{黄色卡牌}，{蓝色卡牌}，{战矛}，{小电球}、{大电球}、{电池}，{乾坤袋(投射物)(衍生物)}，{定身符}、{金币符}，{蓝图(投射物)(衍生物)}。\n通常误认为能闪避实则不能的道具：{长枪}，天使弓箭，{闪耀足球}，剑客莉莉打出的剑气，仙女鼠星星。',
+          },
+          {
+            level: 3,
+            description:
+              '免八哥会观察附近的目标，观察3秒后会向目标"宣战"并额外根据目标当前状态造成不同效果：\n目标在推奶酪：一段时间内降低推速；\n目标有手持道具：掉落手中道具，并短暂禁用道具键；\n目标在移动中：短时间内移速降低。\n满足多种情况时同时生效，同一目标一段时间内不会重复触发观察效果。',
+            detailedDescription:
+              '免八哥会[观察以自身为中心1700×250范围内的目标，累计观察3秒后](若在观察期间内敌方离开判定范倒计时将会停止，若离开5秒后还未重新进入判定范围，则本次观察被打断，可立刻进行下一次观察)会向目标"宣战"并额外根据目标当前状态造成不同效果：\n目标在推奶酪：5秒内降低推速15%；\n目标有手持道具：掉落手中道具，并禁用道具键5秒；\n目标在移动中：移速降低15%，持续5秒。\n满足多种情况时同时生效，同一目标15秒内不会重复触发观察效果。',
+          },
+        ],
+      },
+    ],
+    counters: [
+      {
+        id: '恶魔泰菲',
+        description: '兔八哥克制低Hp的老鼠。',
+        isMinor: false,
+      },
+      {
+        id: '泰菲',
+        description:
+          '兔八哥克制低Hp的老鼠，Lv.2被动可以避开火箭筒；不过泰菲的圆滚滚无敌效果可以躲胡萝卜飞镖。',
+        isMinor: true,
+      },
+      {
+        id: '莱恩',
+        description: '兔八哥克制低Hp的老鼠，莱恩被宣战后更难受。',
+        isMinor: false,
+      },
+      {
+        id: '天使泰菲',
+        description: '兔八哥克制低Hp的老鼠，但天菲后期免死和反伤较难处理。',
+        isMinor: true,
+      },
+      {
+        id: '侦探泰菲',
+        description: '兔八哥克制低Hp的老鼠。',
+        isMinor: false,
+      },
+      {
+        id: '罗宾汉泰菲',
+        description: '兔八哥克制低Hp的老鼠，但罗菲能反制兔八哥Lv.2被动。',
+        isMinor: true,
+      },
+      {
+        id: '航海士杰瑞',
+        description: '兔八哥Lv.2被动可以躲金币，但躲不过火炮。',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '剑客泰菲',
+        description: '剑客泰菲头盔破局和救援能力过于强大。',
+        isMinor: false,
+      },
+      {
+        id: '尼宝',
+        description: '尼宝提供稳定救援，克制兔八哥。',
+        isMinor: false,
+      },
+      {
+        id: '剑客莉莉',
+        description: '剑客莉莉提供稳定救援，克制兔八哥。',
+        isMinor: false,
+      },
+      {
+        id: '侦探杰瑞',
+        description: '侦探杰瑞破局和推奶酪能力强，克制兔八哥的防守。',
+        isMinor: false,
+      },
+      {
+        id: '梦游杰瑞',
+        description:
+          '梦游杰瑞破局和推奶酪能力强，克制兔八哥的防守；但梦游杰瑞主动移动也会触发宣战。',
+        isMinor: true,
+      },
+      {
+        id: '仙女鼠',
+        description:
+          '仙女鼠被宣战后比较难受，但仙女鼠Lv.1被动克制胡萝卜飞镖，以及兔八哥Lv2被动不免疫星星。',
+        isMinor: true,
+      },
+    ],
+    aliases: ['兔子', '兔bug'],
+    counteredByKnowledgeCards: [
+      {
+        id: '逃窜',
+        description: '恢复和加速效果可以躲避一波追击。',
+        isMinor: false,
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '冰冻保鲜',
+        description: '冰冻保鲜可躲一波胡萝卜飞镖。',
+        isMinor: false,
+      },
+    ],
+  },
   /* ----------------------------------- 追风汤姆 ----------------------------------- */
   追风汤姆: {
     description:
       '因为一场神秘的实验意外而降落于猫鼠五周年特别纪念展的不速之客，天生充满了对蓝天的向往，热爱钻研新奇的发明，脑袋里充满稀奇古怪的创意，立志成为猫咪界第一位飞行员，在汤姆和杰瑞的陪伴下被纪念展的内容所打动，来到这里继续进行新的创意发明。',
     maxHp: 240,
+    attackBoost: 0,
     hpRecovery: 1,
     moveSpeed: 800,
     jumpHeight: 420,
@@ -3998,16 +4466,18 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     skillAllocations: [
       {
-        id: '稳重流',
-        pattern: '210002112',
+        id: '最优',
+        pattern: '212000211',
         weaponType: 'weapon1',
-        description: '先点出三级被动，提高上火箭、追击和打架能力。',
+        description:
+          '先点出二级武器，提高守火箭能力；三被提高容错和赶路能力；三级武器增加的伤害可以稍微削减知识卡“不屈”增加的血量带来的反制能力',
       },
       {
-        id: '激进流',
-        pattern: '212112000',
+        id: '适合萌新',
+        pattern: '122112000',
         weaponType: 'weapon1',
-        description: '先点出二级武器，提高守火箭能力。',
+        description:
+          '点出二级武器之后，点出三级俯冲。俯冲的自动索敌对萌新比较友好，而且三级时减少冷却，大大提高容错率。',
       },
     ],
     knowledgeCardGroups: [
@@ -4017,18 +4487,19 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         defaultFolded: false,
         groups: [
           {
+            cards: ['S-蓄势一击', 'S-屈打成招', 'A-熊熊燃烧', 'C-猫是液体'],
+            description:
+              '上限极高。屈打用于拦截救人和换绑进行拉扯，不怕隐身救援，找节奏能力很强，管道图效果更佳。缺点是续航较差，容错率极低，对熟练度要求很高。',
+            contributor: '千里共婵娟',
+          },
+          {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
             description:
               '推荐新手带，下限较高。开局提前布局放夹子，可以有效克制知识卡-幸运，同时提高守火箭能力。对面选出多个破夹能力强的角色时慎用',
           },
           {
-            cards: ['S-蓄势一击', 'S-屈打成招', 'A-熊熊燃烧', 'C-猫是液体'],
-            description:
-              '上限很高。屈打方便拦截救人和换绑，可以做到一波杀穿，管道图效果更佳。缺点是血脆，易断节奏；同时下限很低，推荐熟练度高的带',
-          },
-          {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-加大火力', 'B-皮糙肉厚'],
-            description: '上限极高，适用地图和阵容最广，万金油卡组。但不推荐在牧场、酒店图带',
+            description: '适用地图和阵容最广，万金油卡组，上限也不错。但不推荐在牧场、酒店图带。',
           },
           {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-加大火力', 'C-猫是液体', 'C-狡诈'],
@@ -4076,34 +4547,35 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '航海士杰瑞',
         description:
-          '金币难以命中飞行状态下的追风，且无法对其造成控制，炸药桶可用风推走；但可以组成双拆体系应对追风',
+          '金币难以命中飞行状态下的追汤，且无法对其造成控制，炸药桶可用风推走；但可以组成双拆体系应对追汤',
         isMinor: true,
       },
       {
         id: '剑客泰菲',
         description:
-          '追风飞行时有碰撞箱，可以顶住前来救援的头盔剑菲，从而拖到头盔时间结束。守高点火箭时效果更佳',
+          '追汤飞行时有碰撞箱，可以顶住前来救援的头盔剑菲，从而拖到头盔时间结束。守高点火箭时效果更佳',
         isMinor: true,
       },
       {
         id: '米可',
-        description: '追风的飞行霸体无视米可采访的弱化和叠素材，可以蓄势一刀打死',
-        isMinor: false,
+        description:
+          '追汤的飞行霸体无视米可采访的弱化和叠素材，可以蓄势一刀打死；但后期米可点了二三级被动后，追汤就难以将其击倒了',
+        isMinor: true,
       },
     ],
     specialSkills: [
       {
-        name: '应急治疗',
-        description: '推荐在没带知识卡皮糙肉厚或面对高伤阵容时带。',
-      },
-      {
         name: '绝地反击',
-        description: '推荐面对多控阵容时带。',
+        description: '适用于一般情况，用于残血强绑。',
       },
       {
         name: '蓄力重击',
         description:
           '推荐在对面选出魔术师时带，用于秒杀兔子大表哥，防止因为缺伤害导致处理不了兔子举秒飞而无法及时减员。',
+      },
+      {
+        name: '应急治疗',
+        description: '推荐新手带，保下限。',
       },
     ],
     skills: [
@@ -4116,7 +4588,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
+        cancelableAftercast: '无后摇',
+        forecast: 0,
+        aftercast: 0,
         canHitInPipe: false,
+        aliases: ['冲刺', '俯冲'],
+        cueRange: '本房间可见',
         skillLevels: [
           {
             level: 1,
@@ -4124,7 +4601,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '解锁俯冲技能。飞行时点击技能可向正前方俯冲、拖动技能可向斜前方俯冲，对碰到的敌方造成短暂眩晕和伤害。长按技能可蓄力，略微提升俯冲效果和距离。',
             cooldown: 8,
             detailedDescription:
-              '解锁俯冲技能。飞行时点击技能可向正前方俯冲，拖动技能可向斜前方俯冲，瞄准范围为自身正前方至正下方的90度角，附近有老鼠则会自动瞄向附近的老鼠俯冲。俯冲速度2000；长按技能可蓄力，期间水平移速降至550且不可转向，可点击道具键停止蓄力并保存蓄力效果。点击/蓄力0.5～1秒/蓄力1秒以上，冲刺时间为0.45/0.6/0.75秒，命中敌方造成0.8秒眩晕和35/37.5/40伤害。俯冲期间可使用爪刀、技能和取消飞行。俯冲伤害不受任何伤害加成和减免效果的影响。',
+              '解锁俯冲技能。飞行时点击技能可向正前方俯冲，拖动技能可向斜前方俯冲，瞄准范围为自身正前方至正下方的90度角，附近有老鼠则会自动瞄向附近的老鼠俯冲。俯冲速度2000；长按技能可蓄力，期间水平移速降至550且不可转向，可点击道具键停止蓄力并保存蓄力效果。点击/蓄力0.5～1秒/蓄力1秒以上，冲刺时间为0.45/0.6/0.75秒，命中老鼠造成0.8秒眩晕和35/37.5/40伤害。俯冲期间可使用爪刀、技能和取消飞行。俯冲伤害固定，[不受任何伤害加成和减免效果的影响](霜月的乾坤袋机制除外)。',
           },
           {
             level: 2,
@@ -4140,19 +4617,18 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '减少俯冲CD至5秒，点击/蓄力0.5～1.0秒/蓄力1秒以上，伤害提升至35/40/45，眩晕时间提升至0.8/0.9/1.1秒',
           },
         ],
-        aliases: ['冲刺', '俯冲'],
-        cancelableAftercast: '无后摇',
-        cueRange: '本房间可见',
       },
       {
         name: '追风双翼',
         type: 'weapon1',
         description:
-          '未处于飞行状态时，向前释放飓风，对敌方造成少量伤害和击退。击退期间对触碰到的[所有单位](包括追风汤姆)造成少量伤害，对敌方额外造成眩晕效果。\n处于飞行状态时，向正下方扔出铁砧，砸中敌方造成少量伤害和短暂眩晕。\n当手中有老鼠时，会优先扔出老鼠并自动绑上碰到的火箭，但会被其他敌方单位阻挡。',
+          '未处于飞行状态时，向前释放{飓风}，对敌方造成少量伤害和击退。击退期间对触碰到的[所有单位](包括追风汤姆)造成少量伤害，对敌方额外造成眩晕效果。\n处于飞行状态时，向正下方扔出{铁砧}，砸中敌方造成少量伤害和短暂眩晕。\n当手中有老鼠时，会优先扔出老鼠并自动绑上碰到的火箭，但会被其他敌方单位阻挡。',
         detailedDescription:
-          '未处于飞行状态时，向前释放飓风，前摇0.5秒，后摇0.75秒。飓风速度1000，存在2秒，[可推动沿途的道具和部分场景物](但飓风也会因此减速)，可被墙体阻挡；多个风之间不可叠加。飓风命中敌方将造成20伤害和2秒击退，击退速度为550。击退期间对触碰到的[所有单位](包括追风汤姆)造成35伤害，对敌方额外造成1.5秒眩晕。\n处于飞行状态时，向正下方扔出铁砧(无前后摇)。铁砧下落1.6秒或命中后对附近敌方造成小范围的[18伤害和1.2秒眩晕](老鼠被铁砧眩晕期间及其效果结束后1秒内不会再受到铁砧效果)。铁砧可穿越小平台。\n当手中有老鼠时，会优先[扔出老鼠](扔需要消耗一次技能)，使其回复60血，并自动绑上碰到的火箭，但会被其他敌方单位阻挡；攻击效果等于飓风/铁砧；老鼠在被扔出期间可使用技能和道具、进行交互、免疫伤害（追风的俯冲伤害除外），但不免疫控制。',
+          '未处于飞行状态时，向前释放{飓风}，前摇0.5秒，后摇0.75秒。飓风速度1000，存在2秒，[可推动沿途的道具和部分场景物](但飓风也会因此减速)，可被墙体阻挡；多个风之间不可叠加。飓风命中敌方将造成{20}伤害和2秒击退，击退速度为550。击退期间对触碰到的[所有单位](包括追风汤姆)造成35伤害，对敌方额外造成1.5秒眩晕。\n处于飞行状态时，向正下方扔出{铁砧}（无前后摇）。铁砧下落1.6秒或命中后对附近敌方造成小范围的[18伤害和1.2秒眩晕](铁砧不享受攻击力加成；老鼠被铁砧眩晕期间及其效果结束后1秒内不会再受到铁砧效果)。铁砧可穿越小平台。\n当手中有老鼠时，会优先[扔出老鼠](扔需要消耗一次技能)，使其回复60血，并自动绑上碰到的火箭，但会被其他敌方单位以及部分可被攻击的[中立生物](如森林牧场的鸭爸爸、鸭妈妈)阻挡，攻击效果等于飓风/铁砧；若以铁砧的形式扔出老鼠，则在铁砧命中或提前结束时同样会给予老鼠铁砧效果；老鼠在被扔出期间可使用技能和道具、进行交互、[免疫伤害](追风的俯冲伤害除外)，但不免疫控制，且不可自主逃离。',
         canMoveWhileUsing: false,
         canUseInAir: true,
+        forecast: 0.5,
+        aftercast: 0.75,
         cancelableSkill: ['道具键'],
         skillLevels: [
           {
@@ -4200,22 +4676,23 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
         ],
         description:
-          'Lv.0: [走地状态下](不处于空中时，即不包括处于跳跃，坠落等状态中)，逐渐累积飞行时间。未处于飞行状态时爪刀CD减少。飞行状态下视野增大，可托起其他角色，并提高移速。飞行时[免疫控制](同时不会被米可采访锁定；不免疫虚弱)，但无法拾取道具、使用商店或进行交互（抓起老鼠除外）；受到伤害会减少飞行时间。飞行状态可随时退出，但会清空剩余飞行时间。飞行被[强制打断](如被狗抓、被打死)会暂时禁用主动技能。',
+          'Lv.0: [走地状态下](不处于空中时，即不包括处于跳跃，坠落等状态中)，逐渐累积飞行时间。未处于飞行状态时爪刀CD减少。飞行状态下视野增大，可托起其他角色，并提高移速。飞行时[免疫控制](同时不会被米可采访锁定；不免疫虚弱)，但无法拾取道具、使用商店或进行交互（抓起老鼠除外）；受到伤害会减少飞行时间。飞行状态可随时退出，但会清空剩余飞行时间。飞行被[强制打断](如被狗抓、被打死)会暂时禁用{主动技能}。',
         detailedDescription:
-          'Lv.0: [走地状态下](不处于空中时，即不包括处于跳跃，坠落等状态中)，每秒获得1秒飞行时间，最多储存10秒。未处于飞行状态时爪刀CD减少35%；飞行状态下[视野范围增加55%](覆盖其他远视效果)，可托起其他角色，无视小平台阻挡，并提高移速至水平1015、竖直840。悬停时角色会自动向前以水平350、竖直30的速度下落。飞行时[免疫控制](不免疫虚弱)，但无法拾取道具、使用商店或进行交互（抓起老鼠除外）；受到伤害会[减少2秒飞行时间](若此时剩余飞行时间少于2秒，受到伤害时也会受到其对应的控制效果)。飞行状态可随时退出，但会清空剩余飞行时间。“退出飞行状态”这一操作无cd。飞行被[强制打断](如被狗抓、被打死)会使主动技能进入10秒CD。该冷却不可通过吃蛋糕回复。',
+          'Lv.0: [走地状态下](不处于空中时，即不包括处于跳跃，坠落等状态中)，每秒获得1秒飞行时间，最多储存10秒。未处于飞行状态时爪刀CD减少35%；飞行状态下[视野范围增加55%](覆盖其他大部分远视效果，但可以和天宫-香炉远视效果叠加)，[可托起其他角色](机器鼠等单位除外)，无视小平台阻挡，并提高移速至水平1015、竖直840。悬停时角色会自动向前以水平350、竖直30的速度下落。飞行时[免疫控制](不免疫虚弱)，但无法拾取道具、使用商店或进行交互（抓起老鼠除外）；受到伤害会减少2秒飞行时间。飞行状态可随时退出，但会清空剩余飞行时间。“退出飞行状态”这一操作无cd。飞行被[强制打断](如被狗抓、被打死)会使{主动技能}进入10秒CD。该冷却不可通过吃蛋糕回复。',
+        videoUrl: 'https://b23.tv/ddQ74q6',
       },
     ],
-    aliases: ['追汤', '坠机汤姆'],
+    aliases: ['猫头鹰', '追汤', '追风', '坠机汤姆'],
     counteredBy: [
       {
         id: '梦游杰瑞',
-        description: '梦游杰瑞受击后的滑行碰撞可以秒破追风飞行，而且蓄势一刀秒不掉，推得也快。',
+        description: '梦游杰瑞受击后的滑行碰撞可以秒破追汤飞行，而且蓄势一刀秒不掉，推得也快。',
         isMinor: true,
       },
       {
         id: '天使杰瑞',
         description:
-          '天使杰瑞一被和三被让追风无法快速拿刀，雷云减伤可以放大追风缺伤害的缺点，打团也很强。祝福可以一定程度上反制追风飞行强上火箭，但追风可以通过鞭尸消除祝福',
+          '天使杰瑞一被和三被让追汤无法快速拿刀，雷云减伤可以放大追汤缺伤害的缺点，打团也很强。祝福可以一定程度上反制追汤飞行强上火箭；同时追汤缺伤害，不易处理复活体。',
         isMinor: false,
       },
       {
@@ -4223,21 +4700,44 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '一被提升自保能力，二级琴和二被进一步提升自保并且具有副推副救能力',
         isMinor: true,
       },
+      {
+        id: '魔术师',
+        description:
+          '魔术师携带兔子大表哥时可通过刷经验形成等级压制；同时追汤伤害低，难以处理兔子。兔子大表哥还会在追汤试图利用技能将魔术师绑上火箭时瞬移出现挡下技能，导致追汤被迫落地手动绑火箭。兔子保镖机制让追汤不易通过鞭尸魔术师刷新挣扎进度。',
+        isMinor: false,
+      },
+      {
+        id: '莱恩',
+        description:
+          '莱恩的圆形、方块可以封锁追汤的走位，并阻挡旋风和铁砧，且命中率极高，能快速削减追汤的飞行时间和血量。',
+        isMinor: false,
+      },
+      {
+        id: '恶魔杰瑞',
+        description: '后期的三被和三级主动使其自保极强，且具有较强救援能力。',
+        isMinor: true,
+      },
     ],
     counteredByKnowledgeCards: [
       {
         id: '不屈',
-        description: '不屈增加的额外血量增大了追风打倒老鼠的难度',
+        description:
+          '不屈增加的额外血量和移速增大了追汤打倒老鼠的难度，加的推速使老鼠发育更快并更易来到后期。',
+        isMinor: false,
+      },
+      {
+        id: '祝愿',
+        description: '祝愿提供经验可以使老鼠快速发育到后期，放大追汤成长性差的缺点。',
         isMinor: true,
       },
     ],
   },
-
   /* ----------------------------------- 如玉 ----------------------------------- */
   如玉: {
     description:
       '畅音阁的当家旦角如玉，身段灵动优雅，唱腔娴熟婉转，在多年苦练后，终于如愿在戏台上展现自己的风姿。作为一只猫，优秀的柔韧性，使得如玉的青旦角色身姿优雅，更将水袖与扇子舞动的如天外来仙。极佳的弹跳能力，更是帮助她的刀马旦角色在戏台上下翻飞，如同一位除暴安良的侠女。怀揣着心中的正义与对金城的眷恋，如玉手中常持一杆花枪。尽管没有法力，可她依旧尝试保卫自己的家园，守护金城的和平和安定。',
     maxHp: 185,
+    attackBoost: 0,
     hpRecovery: 3.5,
     moveSpeed: 780,
     jumpHeight: 420,
@@ -4249,7 +4749,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '打架',
         isMinor: false,
-        description: '主动技能提供解控，被动技能提供免疫眩晕和延迟虚弱，使如玉有很强的打架能力。',
+        description: '{主动技能}提供解控，被动技能提供免疫眩晕和延迟虚弱，使如玉有很强的打架能力。',
         additionalDescription:
           '注意“舞花枪"期间没有霸体，可被敌方禁用技能类效果封锁而无法释放反击；"花枪反击"期间没有霸体且无法移动，可被熟悉技能的敌方迅速控制住或通过走位扭开。',
       },
@@ -4267,7 +4767,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         pattern: '120220(0)11',
         weaponType: 'weapon1',
         description:
-          '被动技能“戏剧转折”提供的“坚毅”效果能免疫眩晕并延迟虚弱，是如玉的核心。掷花枪升级能大幅减少CD，提高主动进攻的能力。被动技能Lv.3会提高进入“坚毅”状态的回血量，可能不利于快速触发“坚毅”状态，应视情况决定加点与否。',
+          '被动技能“戏剧转折”提供的“坚毅”效果能免疫眩晕并延迟虚弱，是如玉的核心。掷花枪升级能大幅减少CD，提高主动进攻的能力。{3级被动}会提高进入“坚毅”状态的回血量，可能不利于快速触发“坚毅”状态，应视情况决定加点与否。',
       },
       {
         id: '主点被动',
@@ -4280,16 +4780,21 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-暴怒', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
         description:
-          '常规卡组。如玉被动提供的“坚毅”状态使她无需虚弱即可享受暴怒效果，暴怒提供的可观攻击增伤又能让如玉更容易造成敌方虚弱，从而退出“坚毅”状态，适配性不错。可根据需要将加大火力换为其他知识卡，例如细心或心灵手巧。',
+          '常规卡组。如玉被动提供的“坚毅”状态使她无需虚弱即可享受{暴怒}效果，{暴怒}提供的可观攻击增伤又能让如玉更容易造成敌方虚弱，从而退出“坚毅”状态，适配性不错。可根据需要将{加大火力}换为其他知识卡，例如{细心}或{心灵手巧}。',
       },
       {
         cards: ['S-暴怒', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-        description: '常规卡组变种。猫是液体在管道图十分灵活。',
+        description: '常规卡组变种。{猫是液体}在管道图十分灵活。',
       },
       {
         cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'A-加大火力', 'C-猫是液体'],
         description:
-          '舍弃暴怒的卡组，灵活性大大提升，可用老鼠夹补充防守能力。但这套配卡打架能力不如暴怒卡组，需尽量避免跟多只老鼠缠斗，防止老鼠发现如玉没带暴怒。',
+          '舍弃{暴怒}的卡组，灵活性大大提升，可用老鼠夹补充防守能力。但这套配卡打架能力不如{暴怒}卡组，需尽量避免跟多只老鼠缠斗，防止老鼠发现如玉没带{暴怒}。',
+      },
+      {
+        cards: ['S-屈打成招', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
+        description:
+          '以{屈打成招}替换掉{暴怒}的卡组，利用屈打提供的额外位置信息制定战术，但同样要避免缠斗。',
       },
     ],
     specialSkills: [
@@ -4308,13 +4813,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: [],
         description:
-          '舞起花枪，期间移速提高、免疫碎片、可移动跳跃但无法交互；间歇性对碰触的老鼠造成伤害和减速，最高叠加4层；受到来自老鼠的伤害时，可点按["花枪反击"键](该按键位置和大小可进行调整)触发“花枪反击”，若在技能释放1秒内受击会立刻自动反击。\n\n“花枪反击”：解除控制，减少主动技能CD，然后进行一次扫击，造成伤害和眩晕；若目标距离较远，则会传送到对方身后扫击。若老鼠[因扫击伤害虚弱](包括进入“铁血”等状态)，且扫击方向上有火箭，则会将其击飞到火箭上。',
+          '舞起花枪，期间移速提高、免疫碎片、可移动跳跃但无法交互；间歇性对碰触的老鼠造成伤害和减速，最高叠加4层；受到来自老鼠的伤害时，可点按["花枪反击"键](该按键位置和大小可进行调整)触发“花枪反击”，若在技能释放1秒内受击会立刻自动反击。\n\n“花枪反击”：解除控制，减少{主动技能}CD，然后进行一次扫击，造成伤害和眩晕；若目标距离较远，则会传送到对方身后扫击。若老鼠[因扫击伤害虚弱](包括进入“铁血”等状态)，且扫击方向上有火箭，则会将其击飞到火箭上。',
         detailedDescription:
-          '舞起花枪，持续5秒，期间移速提高、免疫碎片、可移动跳跃但无法交互，每隔一段时间对碰触的老鼠造成8伤害和可叠加的减速，最高叠加4层。技能期间受到来自老鼠的伤害时，可在1.6秒内点按["花枪反击"键](该按键位置和大小可进行调整)对其触发“花枪反击”。技能开启1秒内受击会立刻自动反击。\n\n“花枪反击”：立刻解除控制，结束技能并减少主动技能4秒CD，[若目标距离较近](处于以如玉模型中心为圆心，半径约500的圆内)，则直接对[前方600范围内](高度约与自身平齐，范围较大)进行一次[前摇0.3秒，后摇0.6秒](前后摇无法主动取消，且动作期间无法转向、移动、跳跃)的扫击，对所有命中的目标造成{65}伤害和1.9秒眩晕；[若目标距离较远](不处于以如玉模型中心为圆心，半径约500的圆内)，则会[传送到对方头顶并在0.3秒后落下](释放技能时立刻传送到目标头顶高约250的位置并失重，0.3秒后落下。前后摇期间无法主动取消动作，但失重落地的瞬间可以通过爪刀强制中止技能，这会吞掉技能的伤害和控制效果；动作期间无法转向、移动、跳跃)，然后对[前方600范围内](高度约与自身平齐，范围较大)进行一次[前摇0.4秒，后摇0.55秒](前后摇无法主动取消，且动作期间无法移动跳跃)的扫击，对所有命中的目标造成{65}伤害和1.9秒眩晕。若任意老鼠[因扫击伤害虚弱](包括进入“铁血”等状态)，且[扫击方向上有火箭](以如玉为半圆的圆心，半径约800的半圆内有空置火箭，且中间无平台阻挡)，则会[将其击飞到火箭上](将其向火箭方向上直线击飞，击飞期间失重，碰到火箭时自动绑上并点燃，正常触发绑火箭的-10秒引线效果及相关知识卡。该效果的瞄准有一定问题，可能出现多只虚弱老鼠向同一个火箭方向扫击的情况，并且距离火箭过近时可能会出现向上击飞而未击飞到火箭上的情况)。',
+          '舞起花枪，持续5秒，期间移速提高、免疫碎片、可移动跳跃但无法交互，每隔一段时间对碰触的老鼠造成8伤害和可叠加的减速，最高叠加4层。技能期间受到来自老鼠的伤害时，可在1.6秒内点按["花枪反击"键](该按键位置和大小可进行调整)对其触发“花枪反击”。技能开启1秒内受击会立刻自动反击。\n\n“花枪反击”：立刻解除控制，结束技能并减少{主动技能}4秒CD，[若目标距离较近](处于以如玉模型中心为圆心，半径约500的圆内)，则直接对[前方600范围内](高度约与自身平齐，范围较大)进行一次[前摇0.3秒，后摇0.6秒](前后摇无法主动取消，且动作期间无法转向、移动、跳跃)的扫击，对所有命中的目标造成{65}伤害和1.9秒眩晕；[若目标距离较远](不处于以如玉模型中心为圆心，半径约500的圆内)，则会[传送到对方头顶并在0.3秒后再度传送到其身后](释放技能时立刻传送到目标头顶高约250的位置并失重，0.3秒后再度传送到其身后。前后摇期间无法主动取消动作，但失重落地的瞬间可以通过爪刀强制中止技能，这会吞掉技能的伤害和控制效果；动作期间无法转向、移动、跳跃)，然后对[前方600范围内](高度约与自身平齐，范围较大)进行一次[前摇0.4秒，后摇0.55秒](前后摇无法主动取消，且动作期间无法移动跳跃)的扫击，对所有命中的目标造成{65}伤害和1.9秒眩晕。若任意老鼠[因扫击伤害虚弱](包括进入“铁血”等状态)，且[扫击方向上有火箭](以如玉为半圆的圆心，半径约800的半圆内有空置火箭，且中间无平台阻挡)，则会[将其击飞到火箭上](将其向火箭方向上直线击飞，击飞期间失重，碰到火箭时自动绑上并点燃，正常触发绑火箭的-10秒引线效果及相关知识卡。该效果的瞄准有一定问题，可能出现多只虚弱老鼠向同一个火箭方向扫击的情况，并且距离火箭过近时可能会出现向上击飞而未击飞到火箭上的情况)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
-        cooldownTiming: '前摇前',
+        forecast: 0,
+        cooldownTiming: '释放时',
         skillLevels: [
           {
             level: 1,
@@ -4345,9 +4851,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '掷花枪',
         type: 'weapon1',
         description:
-          '掷出旋转的花枪，对碰到的老鼠造成少量伤害。花枪飞行一段时间后或再次点击技能时折返回如玉身边，[折返时也会造成伤害](老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若折返时命中花枪折返前命中过的目标，可点按["花枪反击"键](该按键位置和大小可进行调整)触发“花枪反击”。\n\n“花枪反击”：解除控制，减少主动技能CD，然后进行一次扫击，造成伤害和眩晕；若目标距离较远，则会传送到对方身后扫击。若老鼠[因扫击伤害虚弱](包括进入“铁血”等状态)，且扫击方向上有火箭，则会将其击飞到火箭上。',
+          '掷出{旋转的花枪}，对碰到的老鼠造成少量伤害。花枪飞行一段时间后或再次点击技能时折返回如玉身边，[折返时也会造成伤害](老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若折返时命中花枪折返前命中过的目标，可点按["花枪反击"键](该按键位置和大小可进行调整)触发“花枪反击”。\n\n“花枪反击”：解除控制，减少{主动技能}CD，然后进行一次扫击，造成伤害和眩晕；若目标距离较远，则会传送到对方身后扫击。若老鼠[因扫击伤害虚弱](包括进入“铁血”等状态)，且扫击方向上有火箭，则会将其击飞到火箭上。',
         detailedDescription:
-          '[向任意指定方向掷出旋转的花枪](花枪沿直线飞行，飞行速度约1900)，对[碰到](碰撞面积为圆形，半径约150)的老鼠造成5伤害。花枪飞行1.1秒后或在1秒内再次技能时[折返回如玉身边](改为向如玉方向飞行，碰到如玉或累计飞行8.1秒后消失)，[折返时也会造成5伤害](老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若[折返时命中花枪折返前命中过的目标](包括持有护盾、无敌，或是虚弱的目标，甚至包括火箭起飞时待复活的目标———这会导致如玉瞬移到对方的复活位置进行花枪反击)，可在1.6秒内点按["花枪反击"键](该按键位置和大小可进行调整)对其触发“花枪反击”。\n\n“花枪反击”：立刻解除控制，结束技能并减少主动技能4秒CD，[若目标距离较近](处于以如玉模型中心为圆心，半径约500的圆内)，则直接对[前方600范围内](高度约与自身平齐，范围较大)进行一次[前摇0.3秒，后摇0.6秒](前后摇无法主动取消，且动作期间无法转向、移动、跳跃)的扫击，对所有命中的目标造成{65}伤害和1.9秒眩晕；[若目标距离较远](不处于以如玉模型中心为圆心，半径约500的圆内)，则会[传送到对方头顶并在0.3秒后落下](释放技能时立刻传送到目标头顶高约250的位置并失重，0.3秒后落下。前后摇期间无法主动取消动作，但失重落地的瞬间可以通过爪刀强制中止技能，这会吞掉技能的伤害和控制效果；动作期间无法转向、移动、跳跃)，然后对[前方600范围内](高度约与自身平齐，范围较大)进行一次[前摇0.4秒，后摇0.55秒](前后摇无法主动取消，且动作期间无法移动跳跃)的扫击，对所有命中的目标造成{65}伤害和1.9秒眩晕。若任意老鼠[因扫击伤害虚弱](包括进入“铁血”等状态)，且[扫击方向上有火箭](以如玉为半圆的圆心，半径约800的半圆内有空置火箭，且中间无平台阻挡)，则会[将其击飞到火箭上](将其向火箭方向上直线击飞，击飞期间失重，碰到火箭时自动绑上并点燃，正常触发绑火箭的-10秒引线效果及相关知识卡。该效果的瞄准有一定问题，可能出现多只虚弱老鼠向同一个火箭方向扫击的情况，并且距离火箭过近时可能会出现向上击飞而未击飞到火箭上的情况)。',
+          '向任意指定方向掷出{旋转的花枪}，花枪沿直线飞行，飞行速度约1900，对[碰到](碰撞面积为圆形，半径约150)的老鼠造成[5伤害](不受攻击增伤影响)。花枪飞行1.1秒后或在1秒内再次技能时[折返回如玉身边](改为向如玉方向飞行，碰到如玉或累计飞行8.1秒后消失)，[折返时也会造成5伤害](不受攻击增伤影响；老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若[折返时命中花枪折返前命中过的目标](包括持有护盾、无敌，或是虚弱的目标，甚至包括火箭起飞时待复活的目标———这会导致如玉瞬移到对方的复活位置进行花枪反击)，可在1.6秒内点按["花枪反击"键](该按键位置和大小可进行调整)对其触发“花枪反击”。\n\n“花枪反击”：立刻解除控制，结束技能并减少{主动技能}4秒CD，[若目标距离较近](处于以如玉模型中心为圆心，半径约500的圆内)，则直接对[前方600范围内](高度约与自身平齐，范围较大)进行一次[前摇0.3秒，后摇0.6秒](前后摇无法主动取消，且动作期间无法转向、移动、跳跃)的扫击，对所有命中的目标造成{65}伤害和1.9秒眩晕；[若目标距离较远](不处于以如玉模型中心为圆心，半径约500的圆内)，则会[传送到对方头顶并在0.3秒后再度传送到其身后](释放技能时立刻传送到目标头顶高约250的位置并失重，0.3秒后再度传送到其身后。前后摇期间无法主动取消动作，但失重落地的瞬间可以通过爪刀强制中止技能，这会吞掉技能的伤害和控制效果；动作期间无法转向、移动、跳跃)，然后对[前方600范围内](高度约与自身平齐，范围较大)进行一次[前摇0.4秒，后摇0.55秒](前后摇无法主动取消，且动作期间无法移动跳跃)的扫击，对所有命中的目标造成{65}伤害和1.9秒眩晕。若任意老鼠[因扫击伤害虚弱](包括进入“铁血”等状态)，且[扫击方向上有火箭](以如玉为半圆的圆心，半径约800的半圆内有空置火箭，且中间无平台阻挡)，则会[将其击飞到火箭上](将其向火箭方向上直线击飞，击飞期间失重，碰到火箭时自动绑上并点燃，正常触发绑火箭的-10秒引线效果及相关知识卡。该效果的瞄准有一定问题，可能出现多只虚弱老鼠向同一个火箭方向扫击的情况，并且距离火箭过近时可能会出现向上击飞而未击飞到火箭上的情况)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键'],
@@ -4393,9 +4899,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '“坚毅”会回复更多Hp，且对敌方造成眩晕即可解除该状态。Lv.2效果的持续时间改为60秒。',
+              '“坚毅”会回复更多Hp，且对敌方造成眩晕即可解除该状态。{2级被动}效果的持续时间改为60秒。',
             detailedDescription:
-              '“坚毅”改为回复200Hp，且对敌方造成眩晕即可解除该状态。Lv.2效果的持续时间改为60秒。',
+              '“坚毅”改为回复200Hp，且对敌方造成眩晕即可解除该状态。{2级被动}效果的持续时间改为60秒。',
           },
         ],
         description:
@@ -4413,19 +4919,18 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '国王杰瑞',
-        description:
-          '国王杰瑞开盾救援队友时能被回马枪戳飞，如果同时被前刺回马枪命中甚至可能直接虚弱。',
+        description: '前刺+回马枪同时命中能破2层盾+造成110伤害，容易抓住国王的破绽。',
         isMinor: true,
       },
       {
         id: '剑客泰菲',
         description:
-          '剑客泰菲开启头盔救援队友时能被回马枪戳飞，他的长枪和冲刺可以触发如玉的“花枪反击”。但剑菲勇气释放期间的长枪有禁用技能效果，能反制如玉的反击。',
+          '剑客泰菲开启头盔救援队友时能被回马枪戳飞，他的长枪和冲刺可以触发如玉的“花枪反击”。不过剑菲勇气释放期间的长枪有禁用技能效果，能反制如玉的反击。',
         isMinor: true,
       },
       {
         id: '尼宝',
-        description: '尼宝救援队友时能被回马枪戳飞。但如玉也难以处理尼宝的鱼钩救援。',
+        description: '尼宝救援队友时能被回马枪戳飞，中断救援。不过如玉也难以处理尼宝的鱼钩。',
         isMinor: true,
       },
       {
@@ -4436,7 +4941,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '米可',
         description:
-          '米可极高的伤害反而更容易触发如玉被动技能的“坚毅”效果，并且如玉的前刺回马枪同时命中时能造成高达170点的基础伤害，前期能稍微反制米可的减伤，但后期不容易击倒米可。',
+          '米可极高的伤害反而更容易触发如玉被动技能的“坚毅”效果，并且如玉的前刺回马枪同时命中时能造成高达170点的基础伤害，米可在点出Lv.3被动前都会被秒杀。',
         isMinor: true,
       },
     ],

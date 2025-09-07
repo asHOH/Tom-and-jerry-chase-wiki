@@ -13,6 +13,8 @@ export const catKnowledgeCards: Record<string, Card> = {
     cost: 7,
     description:
       '爪刀命中老鼠或使老鼠进入虚弱时，提升2.5%移速和2%爪刀频率，可**叠加**。猫咪进入虚弱状态移除当前一半层数。',
+    detailedDescription:
+      '爪刀命中非虚弱老鼠或使老鼠进入虚弱时，提升2.5%移速和2%爪刀频率，可**叠加**（每层加成间独立乘算）。猫咪进入虚弱状态移除当前一半层数。（与{苏蕊}+{蓄势一击}有特殊互动关系，详见二者界面）',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '最多叠加**5**层。' },
@@ -85,9 +87,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '知识渊博的猫咪，天生拥有更多的经验。提升1000初始经验，同时**提升**经验自然增速。',
     levels: [
-      { level: 1, description: '提升经验自然增速至**3.8/s**。' },
-      { level: 2, description: '提升经验自然增速至**4.6/s**。' },
-      { level: 3, description: '提升经验自然增速至**5.4/s**。' },
+      { level: 1, description: '提升经验自然增速**40%**。' },
+      { level: 2, description: '提升经验自然增速**70%**。' },
+      { level: 3, description: '提升经验自然增速**100%**。' },
     ],
   },
 
@@ -98,7 +100,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     description:
       '每隔**一段时间**，获得蓄势一击状态，下次爪刀附带额外伤害。被老鼠眩晕或硬直会移除该状态。虚弱起身或角色升级后立刻获得该状态。',
     detailedDescription:
-      '每一次的潜伏，都是为了今后的爆发。每隔**一段时间**，获得蓄势一击状态，下次爪刀附带[与普通爪刀伤害相等](苏蕊舞动亮相的蓄势仍为50点增伤)的额外伤害。被老鼠眩晕或硬直会移除该状态。虚弱起身或角色升级后立刻获得该状态。',
+      '每一次的潜伏，都是为了今后的爆发。每隔**一段时间**，获得蓄势一击状态，下次爪刀附带[额外伤害](视为两段伤害，但若第一段伤害被护盾抵挡则不会造成第二段伤害；伤害类型与爪刀不同，不会触发霜月Lv.3被动等效果，但有一个例外——当苏蕊同时携带蓄势+乘胜，且开启律动时间时，舞动亮相+蓄势一击的效果若同时触发，则会额外叠加一层乘胜追击效果)，[基础伤害为50](会受其他来源的攻击增伤等效果影响，因此在绝大多数情况下伤害与爪刀相同，但对于苏蕊-律动时间等会改变爪刀基础伤害数据的技能，其蓄势基础伤害仍为50)，携带{长爪}时改为[0](且改为不受攻击增伤等效果影响)。被老鼠眩晕或硬直会移除该状态。虚弱起身或角色升级后立刻获得该状态。',
     levels: [
       { level: 1, description: '每隔**14**秒，获得蓄势一击状态。' },
       { level: 2, description: '每隔**13**秒，获得蓄势一击状态。' },
@@ -110,8 +112,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '猛攻',
     rank: 'S',
     cost: 5,
-    description: '猫咪的拍子、爪刀和少数技能**短暂**禁用老鼠的技能和道具，并掉落手中道具。',
-    // detailedDescription: '',
+    description: '猫咪的爪刀和拍子攻击能**短暂**禁用老鼠的技能和道具，并掉落手中道具。',
+    detailedDescription:
+      '猫咪的爪刀和拍子攻击能**短暂**禁用老鼠的技能和道具，并掉落手中道具。{图多盖洛}-{魅力甲油}的额外爪刀区域也可以触发该效果。',
     levels: [
       { level: 1, description: '猛攻效果持续**5**秒。' },
       { level: 2, description: '猛攻效果持续**6**秒。' },
@@ -125,9 +128,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description:
-      '火箭燃烧速度变得**更快**！在绑有老鼠的火箭附近击倒老鼠，会额外减少火箭5秒燃烧时间。(CD：20秒)',
+      '火箭燃烧速度变得**更快**！在绑有老鼠的火箭附近击倒老鼠，会额外减少火箭5秒燃烧时间(CD：20秒)。',
     detailedDescription:
-      '点燃火箭吧！火箭燃烧速度变得**更快**！在绑有老鼠的火箭半径1100范围内击倒老鼠，会额外减少火箭5秒燃烧时间。(CD：20秒)',
+      '点燃火箭吧！火箭燃烧速度变得**更快**！在绑有老鼠的火箭半径1100范围内击倒老鼠，会额外减少火箭5秒燃烧时间(CD：20秒，[火箭上的不同老鼠独立](减燃烧效果生效目标为火箭上的老鼠，生效后20秒内不会对该老鼠重复生效；不同老鼠的CD互相独立))。',
     levels: [
       { level: 1, description: '火箭燃烧速度提升**12%**。' },
       { level: 2, description: '火箭燃烧速度提升**13%**。' },
@@ -141,7 +144,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '**减速**附近老鼠，并在使用技能后一段时间内造成更强的减速。',
     detailedDescription:
-      '给附近的老鼠带来强大的压迫感，**减速**半径825范围内的老鼠，并在使用技能后5s内将减速效果提高为18%。',
+      '给附近的老鼠带来强大的压迫感，**减速**半径825范围内的老鼠，并在使用技能后5秒内将减速效果提高为18%。',
     levels: [
       { level: 1, description: '附近老鼠减速**6%**。' },
       { level: 2, description: '附近老鼠减速**7%**。' },
@@ -211,7 +214,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '每次进入虚弱状态，永久提升Hp上限、Hp恢复速度和移速，可**叠加**。',
     detailedDescription:
-      '每次进入虚弱状态，Hp上限永久提升25点，Hp恢复速度提升1.5点/s，移速提升1.5%，可**叠加**。',
+      '每次进入虚弱状态，Hp上限永久提升25，Hp恢复速度提升1.5/秒，移速提升1.5%，可**叠加**（每层移速加成间独立乘算，其他加成为加算）。',
     levels: [
       { level: 1, description: '最多叠加**3**层。' },
       { level: 2, description: '最多叠加**4**层。' },
@@ -331,7 +334,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 3,
     description: '老鼠踩中捕鼠夹时会受到伤害，且**更难**挣脱。',
-    detailedDescription: '布置更强力的捕鼠夹，老鼠踩中捕鼠夹时会受到伤害，且**更难**挣脱。', //TODO: 伤害数值
+    detailedDescription: '布置更强力的捕鼠夹，老鼠踩中捕鼠夹时会受到30伤害，且**更难**挣脱。', //TODO: 伤害数值
     levels: [
       { level: 1, description: '老鼠挣脱捕鼠夹的速度降低**10%**。' },
       { level: 2, description: '老鼠挣脱捕鼠夹的速度降低**15%**。' },
@@ -344,7 +347,8 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 3,
     description: '当老鼠在推奶酪且猫咪附近没有老鼠时，获得**加速**。',
-    detailedDescription: '当老鼠在推奶酪且猫咪附近没有老鼠时，猫咪试图快速接近老鼠，获得**加速**。',
+    detailedDescription:
+      '当老鼠在推奶酪且猫咪附近900范围内没有老鼠时，猫咪试图快速接近老鼠，获得**加速**。',
     levels: [
       { level: 1, description: '加速**18%**。' },
       { level: 2, description: '加速**19%**。' },
@@ -399,7 +403,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 3,
     description: '**降低**附近老鼠推速。',
-    detailedDescription: '四处巡逻的猫咪，会**降低**附近老鼠推速。',
+    detailedDescription: '四处巡逻的猫咪，会**降低**附近1100范围内老鼠的推速。',
     levels: [
       { level: 1, description: '降低**10%**。' },
       { level: 2, description: '降低**20%**。' },
@@ -426,7 +430,8 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 3,
     description: '墙缝出现后，移动、跳跃速度**短暂**提升。',
-    detailedDescription: '最后的关头！墙缝出现后，愤怒的猫咪鼓起气势，移动、跳跃速度**短暂**提升。',
+    detailedDescription:
+      '最后的关头！墙缝出现后，愤怒的猫咪鼓起气势，移动、跳跃速度**短暂**提升30%。',
     levels: [
       { level: 1, description: '效果持续**10**秒。' },
       { level: 2, description: '效果持续**15**秒。' },
@@ -439,6 +444,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 2,
     description: '当老鼠踩中捕鼠夹后，猫咪获得**短暂**的加速。',
+    detailedDescription: '当老鼠踩中捕鼠夹后，猫咪获得**短暂**的20%移速加成。',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '加速持续**6**秒。' },
@@ -468,7 +474,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     description:
       '猫咪不会再受到斯派克的攻击，但靠近斯派克时，**略微**减速。此外，免疫女主人的眩晕效果。',
     detailedDescription:
-      '猫咪与斯派克成为塑料朋友后，不会再受到斯派克的攻击，但靠近斯派克时，**略微**减速。此外，免疫女主人的眩晕效果。',
+      '猫咪与斯派克成为塑料朋友后，不会再受到斯派克的攻击，但周围1050范围内有斯派克时，**略微**减速。此外，免疫女主人的眩晕效果。',
     levels: [
       { level: 1, description: '靠近斯派克时减速**5%**。' },
       { level: 2, description: '靠近斯派克时减速**4%**。' },

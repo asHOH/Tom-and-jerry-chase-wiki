@@ -8,8 +8,8 @@ import {
 } from '@/lib/characterRankingUtils';
 import { FactionId } from '@/data/types';
 import { useDarkMode } from '@/context/DarkModeContext';
-import clsx from 'clsx';
-import FilterLabel from '@/components/ui/FilterLabel';
+import FilterRow from '@/components/ui/FilterRow';
+import Tooltip from '@/components/ui/Tooltip';
 
 interface PropertySelectorProps {
   currentProperty?: RankableProperty | undefined;
@@ -63,123 +63,89 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
     return {}; // Return empty object for inactive buttons to use className styling
   };
 
-  // Update button styles to match KnowledgeCardGrid
-  const PropertyButton = ({ property }: { property: PropertyInfo }) => {
-    const isActive = currentProperty === property.key;
-    const colors = getPropertyColors(isActive);
-
-    return (
-      /* <Tooltip content={property.description} delay={500}> */
-      <button
-        type='button'
-        onClick={() => handlePropertySelect(property.key)}
-        className={clsx(
-          'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-          !isActive &&
-            'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-        )}
-        style={isActive ? { backgroundColor: colors.backgroundColor, color: colors.color } : {}}
-      >
-        {property.label}
-        {property.unit && <span className='ml-1 text-xs opacity-70'>({property.unit})</span>}
-      </button>
-      /* </Tooltip> */
-    );
-  };
-
-  // Determine if faction-specific properties are shown
-  const isFactionSpecificShown = factionSpecificProperties.some(
-    (prop) => prop.key == currentProperty
+  // Helper to render label with tooltip
+  const propertyLabel = (p: PropertyInfo) => (
+    <Tooltip content={p.description} delay={500} className='border-none cursor-pointer'>
+      {p.label}
+    </Tooltip>
   );
+
+  // Determine if faction-specific properties are shown (inline checks where needed)
 
   return (
     <div className='space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
-        {/* Common Properties */}
-        <div className='filter-section flex justify-center items-center gap-4 mt-8'>
-          <FilterLabel displayMode='inline'>通用属性:</FilterLabel>
-          <FilterLabel displayMode='block'>筛选:</FilterLabel>
-          <div className='flex flex-wrap gap-2 justify-center'>
-            {commonProperties.map((property) => (
-              <PropertyButton key={property.key} property={property} />
-            ))}
-          </div>
-        </div>
+        {/* Filters wrapper */}
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2 mt-8'>
+          {/* 通用属性 */}
+          <FilterRow<RankableProperty>
+            label='通用属性:'
+            options={commonProperties.map((p) => p.key)}
+            isActive={(opt) => currentProperty === opt}
+            onToggle={(opt) => handlePropertySelect(opt)}
+            getOptionLabel={(opt) => {
+              const p = commonProperties.find((x) => x.key === opt)!;
+              return propertyLabel(p);
+            }}
+            getButtonStyle={(_, active) => (active ? getPropertyColors(true) : undefined)}
+            isDarkMode={isDarkMode}
+          />
 
-        {/* Faction-Specific Properties */}
-        {factionSpecificProperties.length > 0 && (
-          <div className='filter-section flex justify-center items-center gap-4 mt-8'>
-            <FilterLabel displayMode='inline'>
-              {factionId === 'cat'
-                ? '猫阵营专属:'
-                : factionId === 'mouse'
-                  ? '老鼠阵营专属:'
-                  : '阵营专属:'}
-            </FilterLabel>
-            <FilterLabel displayMode='block'>筛选:</FilterLabel>
-            <div className='flex flex-wrap gap-2 justify-center'>
-              {factionSpecificProperties.map((property) => (
-                <PropertyButton key={property.key} property={property} />
-              ))}
-            </div>
-          </div>
-        )}
+          {/* 阵营专属属性 */}
+          {factionSpecificProperties.length > 0 && (
+            <FilterRow<RankableProperty>
+              label={
+                factionId === 'cat'
+                  ? '猫阵营专属:'
+                  : factionId === 'mouse'
+                    ? '鼠阵营专属:'
+                    : '阵营专属:'
+              }
+              options={factionSpecificProperties.map((p) => p.key)}
+              isActive={(opt) => currentProperty === opt}
+              onToggle={(opt) => handlePropertySelect(opt)}
+              getOptionLabel={(opt) => {
+                const p = factionSpecificProperties.find((x) => x.key === opt)!;
+                return propertyLabel(p);
+              }}
+              getButtonStyle={(_, active) => (active ? getPropertyColors(true) : undefined)}
+              isDarkMode={isDarkMode}
+            />
+          )}
 
-        {/* Faction Filter Buttons */}
-        <div className='filter-section flex justify-center items-center gap-4 mt-8'>
-          <FilterLabel displayMode='inline'>阵营筛选:</FilterLabel>
-          <FilterLabel displayMode='block'>筛选:</FilterLabel>
-          <div className='flex gap-2'>
-            <button
-              type='button'
-              onClick={() => {
+          {/* 阵营筛选 */}
+          <FilterRow<'all' | 'cat' | 'mouse'>
+            label='阵营筛选:'
+            options={['all', 'cat', 'mouse']}
+            isActive={(opt) => (opt === 'all' ? !factionId : factionId === opt)}
+            onToggle={(opt) => {
+              if (opt === 'all') {
                 const url = currentProperty ? `/ranks/${currentProperty}` : '/ranks';
                 router.push(url);
-              }}
-              className={clsx(
-                'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-                'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-              )}
-            >
-              全部角色
-            </button>
-            {(['cat', 'mouse'] as const).map((factionName) => {
-              const factionColor = getFactionButtonColors(factionName, isDarkMode);
-              const isActive = factionId === factionName;
-              // Disable the other faction button when faction-specific properties are shown
-              const isDisabled = isFactionSpecificShown && factionId !== factionName;
-              return (
-                <button
-                  type='button'
-                  key={factionName}
-                  onClick={() => {
-                    if (isDisabled) return;
-                    const url = currentProperty
-                      ? `/ranks/${currentProperty}?faction=${factionName}`
-                      : `/ranks?faction=${factionName}`;
-                    router.push(url);
-                  }}
-                  disabled={isDisabled}
-                  className={clsx(
-                    'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-                    !isActive &&
-                      'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300',
-                    'disabled:opacity-50 disabled:cursor-not-allowed'
-                  )}
-                  style={
-                    isActive
-                      ? {
-                          backgroundColor: factionColor.backgroundColor,
-                          color: factionColor.color,
-                        }
-                      : {}
-                  }
-                >
-                  {factionName === 'cat' ? '仅猫阵营' : '仅老鼠阵营'}
-                </button>
-              );
-            })}
-          </div>
+              } else {
+                const url = currentProperty
+                  ? `/ranks/${currentProperty}?faction=${opt}`
+                  : `/ranks?faction=${opt}`;
+                router.push(url);
+              }
+            }}
+            getOptionLabel={(opt) =>
+              opt === 'all' ? '全部角色' : opt === 'cat' ? '仅猫阵营' : '仅鼠阵营'
+            }
+            getButtonStyle={(opt, active) =>
+              active
+                ? opt === 'all'
+                  ? { backgroundColor: '#e5e7eb', color: '#374151' } // gray look for "all"
+                  : getFactionButtonColors(opt, isDarkMode)
+                : undefined
+            }
+            getButtonDisabled={(opt) =>
+              opt !== 'all' && factionSpecificProperties.some((p) => p.key === currentProperty)
+                ? factionId !== opt
+                : false
+            }
+            isDarkMode={isDarkMode}
+          />
         </div>
       </header>
     </div>

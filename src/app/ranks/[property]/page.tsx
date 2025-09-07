@@ -37,12 +37,12 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     return {};
   }
 
-  const factionSuffix = factionId ? ` - ${factionId === 'cat' ? '猫阵营' : '老鼠阵营'}` : '';
+  const factionSuffix = factionId ? ` - ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}` : '';
 
   return generatePageMetadata({
-    title: `${propertyInfo.label}排行榜${factionSuffix} - 猫鼠wiki`,
+    title: `${propertyInfo.label}排行榜${factionSuffix}`,
     description: `查看猫和老鼠手游中所有角色在${propertyInfo.label}属性上的排名对比。${propertyInfo.description}`,
-    keywords: [propertyInfo.label, '角色排行榜', '属性对比', '猫和老鼠', '手游', '攻略'],
+    keywords: [propertyInfo.label, '角色排行榜', '属性对比'],
     canonicalUrl: `https://tjwiki.com/ranks/${resolvedParams.property}${factionId ? `?faction=${factionId}` : ''}`,
   });
 }

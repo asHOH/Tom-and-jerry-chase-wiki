@@ -8,18 +8,17 @@ import { FactionId, PositioningTagName } from '@/data';
 import { useFilterState } from '@/lib/filterUtils';
 import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
 import Tooltip from '@/components/ui/Tooltip';
+import FilterRow from '@/components/ui/FilterRow';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { getOriginalCharacterIds } from '@/lib/editUtils';
 import { characters as allCharacters } from '@/data';
 import CharacterCreate from './CharacterCreate';
-import { getPositioningTagColors } from '@/lib/design-tokens';
+import { getPositioningTagColors, getAvatarFilterColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
-import clsx from 'clsx';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
-import FilterLabel from '@/components/ui/FilterLabel';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const { isDetailedView: isDetailed } = useAppContext();
@@ -39,6 +38,19 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
     toggleFilter: togglePositioningTagFilter,
     hasFilter: hasPositioningTagFilter,
   } = useFilterState<PositioningTagName>();
+
+  // Avatar filter
+  type AvatarOption = '杰瑞' | '泰菲' | '汤姆' | '其他';
+  const {
+    selectedFilters: selectedAvatar,
+    toggleFilter: toggleAvatar,
+    hasFilter: hasAvatar,
+  } = useFilterState<AvatarOption>();
+
+  // Avatar options derived by faction to deduplicate UI rendering
+  const avatarOptions = useMemo((): AvatarOption[] => {
+    return faction.id === 'mouse' ? ['杰瑞', '泰菲', '其他'] : ['汤姆', '其他'];
+  }, [faction.id]);
 
   const uniquePositioningTags = useMemo(() => {
     const tags = new Set<PositioningTagName>();
@@ -66,6 +78,24 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       charactersToFilter = charactersToFilter.filter(
         (char) => !originalCharacterIds.includes(char.id)
       );
+    }
+
+    // Apply avatar filter
+    if (selectedAvatar.size > 0) {
+      charactersToFilter = charactersToFilter.filter((c) => {
+        const name = c.id; // ids are Chinese display names in this project
+        let cls: AvatarOption = '其他';
+        if (faction.id === 'mouse') {
+          const hasJerry = name.includes('杰瑞');
+          const hasTuffy = name.includes('泰菲');
+          cls = hasJerry ? '杰瑞' : hasTuffy ? '泰菲' : '其他';
+        } else if (faction.id === 'cat') {
+          const hasTom = name.includes('汤姆');
+          cls = hasTom ? '汤姆' : '其他';
+        }
+        // If multiple selected, any match passes
+        return selectedAvatar.has(cls);
+      });
     }
 
     if (selectedPositioningTags.size === 0) {
@@ -100,7 +130,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       const bIsMinor = getIsMinor(b);
       return Number(aIsMinor) - Number(bIsMinor);
     });
-  }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds]);
+  }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds, selectedAvatar]);
 
   return (
     <div className='space-y-8'>
@@ -109,12 +139,29 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         <PageDescription>{faction.description}</PageDescription>
       </header>
 
-      {/* Filter Section */}
-      <div className='filter-section flex justify-center items-center gap-4 mt-4'>
-        <FilterLabel displayMode='inline'>定位筛选:</FilterLabel>
-        <FilterLabel displayMode='block'>筛选:</FilterLabel>
-        <div className='flex gap-2'>
-          {uniquePositioningTags.map((tag) => {
+      {/* Filters wrapper */}
+      <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+        <FilterRow
+          label='定位筛选:'
+          options={uniquePositioningTags as readonly PositioningTagName[]}
+          isActive={(tag) => hasPositioningTagFilter(tag as PositioningTagName)}
+          onToggle={(tag) => togglePositioningTagFilter(tag as PositioningTagName)}
+          isDarkMode={isDarkMode}
+          renderOption={(tag, button) => (
+            <Tooltip
+              key={String(tag)}
+              content={getPositioningTagTooltipContent(
+                tag as PositioningTagName,
+                faction.id as FactionId,
+                isDetailed
+              )}
+              delay={800}
+              className='border-none cursor-pointer'
+            >
+              {button}
+            </Tooltip>
+          )}
+          getButtonStyle={(tag) => {
             const isActive = hasPositioningTagFilter(tag as PositioningTagName);
             const tagColors = getPositioningTagColors(
               tag as PositioningTagName,
@@ -123,68 +170,26 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
               faction.id as FactionId,
               isDarkMode
             );
+            return isActive ? { ...tagColors } : undefined;
+          }}
+          className='mt-4'
+        />
 
-            // Tailwind classes for button styling and dark mode support
-            const buttonStyle = isActive
-              ? {
-                  ...tagColors,
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: '500',
-                  transition: 'all 0.2s ease',
-                  fontSize: '14px',
-                }
-              : isDarkMode
-                ? {
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    fontSize: '14px',
-                    backgroundColor: '#23272f',
-                    color: '#6b7280',
-                    ':hover': {
-                      backgroundColor: '#2d323b',
-                    },
-                  }
-                : {
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    fontSize: '14px',
-                    backgroundColor: '#f3f4f6',
-                    color: '#9ca3af',
-                    ':hover': {
-                      backgroundColor: '#e5e7eb',
-                    },
-                  };
-
-            return (
-              <Tooltip
-                key={tag}
-                content={getPositioningTagTooltipContent(tag, faction.id as FactionId, isDetailed)}
-                delay={800}
-                className='border-none cursor-pointer'
-              >
-                <button
-                  type='button'
-                  onClick={() => togglePositioningTagFilter(tag as PositioningTagName)}
-                  style={buttonStyle}
-                  className={clsx('filter-button', !isActive && 'hover:bg-gray-200')}
-                >
-                  {tag}
-                </button>
-              </Tooltip>
-            );
-          })}
-        </div>
+        <FilterRow
+          label='形象筛选:'
+          options={avatarOptions}
+          isActive={(opt) => hasAvatar(opt)}
+          onToggle={(opt) => toggleAvatar(opt)}
+          isDarkMode={isDarkMode}
+          getButtonStyle={(opt) => {
+            const isActive = hasAvatar(opt);
+            const colors = getAvatarFilterColors(opt, isDarkMode);
+            return isActive
+              ? { backgroundColor: colors.backgroundColor, color: colors.color }
+              : undefined;
+          }}
+          className='mt-0'
+        />
       </div>
 
       <div

@@ -2,6 +2,7 @@
 export interface Contributor {
   id: string; // Unique identifier
   name: string; // Display name
+  description?: string; //Contributor's description.For example:"S24赛季第4恶魔汤姆，段位榜第24"
   url?: string; // Link to their personal homepage
   roles: Role[]; // Array of roles they have fulfilled
 }
@@ -79,6 +80,8 @@ export const contributors: Contributor[] = [
           '图多盖洛',
           '塔拉',
           '朵朵',
+          '兔八哥',
+          '罗宾汉杰瑞',
         ],
       },
       {
@@ -108,6 +111,8 @@ export const contributors: Contributor[] = [
           '图多盖洛',
           '塔拉',
           '朵朵',
+          '兔八哥',
+          '罗宾汉杰瑞',
         ],
       },
       {
@@ -246,6 +251,7 @@ export const contributors: Contributor[] = [
   {
     id: 'gezi',
     name: '鸽子',
+    description: '多赛季前十图多',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -270,7 +276,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['牛仔杰瑞', '天使汤姆'],
+        characters: ['牛仔杰瑞', '天使汤姆', '尼宝'],
       },
     ],
   },
@@ -374,7 +380,7 @@ export const contributors: Contributor[] = [
   },
   {
     id: 'xiangxiao',
-    name: '想 ‎ 笑',
+    name: '想  笑',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -408,7 +414,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['罗宾汉泰菲'],
+        characters: ['罗宾汉泰菲', '罗宾汉杰瑞'],
       },
     ],
   },
@@ -433,6 +439,26 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'HZZHD',
+    name: 'HZZHD',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['梦游杰瑞'],
+      },
+    ],
+  },
+  {
+    id: 'xiaozheng',
+    name: '小郑',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['罗宾汉杰瑞'],
+      },
+    ],
+  },
+  {
     id: 'leshanhaoshi',
     name: '乐善好施陈阿姨',
     url: 'https://space.bilibili.com/418408689',
@@ -447,6 +473,7 @@ export const contributors: Contributor[] = [
   {
     id: 'qiuyumianmian',
     name: '秋雨绵绵',
+    description: 'S24赛季全国第6恶魔杰瑞',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -458,10 +485,23 @@ export const contributors: Contributor[] = [
   {
     id: 'wudimaohudawang',
     name: '无敌猫虎大王wy',
+    description: '现猫榜第15名（截至2025.8.23）',
     roles: [
       {
         type: RoleType.ContentWriter,
         characters: ['恶魔汤姆'],
+        isMinor: true,
+      },
+    ],
+  },
+  {
+    id: 'qianligongchanjuan',
+    name: '千里共婵娟',
+    description: '现国一追风汤姆，现猫榜第33名（截至2025年8月30日）',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['追风汤姆'],
         isMinor: true,
       },
     ],

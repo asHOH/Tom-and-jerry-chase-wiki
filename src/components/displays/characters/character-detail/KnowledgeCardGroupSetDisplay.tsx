@@ -4,6 +4,7 @@ import { KnowledgeCardGroup } from './KnowledgeCardSection';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useAppContext } from '@/context/AppContext';
 import clsx from 'clsx';
+import { contributors } from '@/data/contributors';
 
 interface KnowledgeCardGroupSetDisplayProps {
   groupSet: DeepReadonly<KnowledgeCardGroupSet>;
@@ -106,6 +107,8 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
                   getCardRank={getCardRank}
                   imageBasePath={imageBasePath}
                   handleDescriptionSave={handleDescriptionSave}
+                  contributor={group.contributor}
+                  contributorInformation={contributors.find((a) => a['name'] === group.contributor)}
                 />
               )
             )}

@@ -92,9 +92,11 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
       condition: factionId === 'cat' && !!character.clawKnifeCdHit && !!character.clawKnifeCdUnhit,
     },
     {
-      label: '初始手持道具',
-      value: character.initialItem || '老鼠夹',
-      condition: factionId === 'cat',
+      label: '初始道具',
+      value: character.initialItem as string,
+      condition:
+        factionId === 'cat' && !!character.initialItem && character.initialItem !== '老鼠夹',
+      className: 'text-sm text-amber-600 dark:text-amber-400 py-1',
       path: `initialItem`,
     },
   ];

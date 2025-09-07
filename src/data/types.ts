@@ -52,8 +52,8 @@ export type CancellableKeyType =
   | '本技能键'
   | '其他技能键';
 
-export type CancelableSkillType = CancellableKeyType[] | '无前摇' | '不可被打断';
-export type CancelableAftercastType = CancellableKeyType[] | '无后摇' | '不可取消后摇';
+export type CancelableSkillType = CancellableKeyType[] | '无前摇' | '不可主动打断';
+export type CancelableAftercastType = CancellableKeyType[] | '无后摇' | '不可取消';
 
 export type SkillLevel = {
   level: number;
@@ -77,6 +77,8 @@ export type SkillDefinition = {
   canUseInAir?: boolean; // 空中释放
   cancelableSkill?: CancelableSkillType; // 可取消释放
   cancelableAftercast?: CancelableAftercastType; // 可取消后摇
+  forecast?: number; // 前摇（秒）
+  aftercast?: number; // 后摇（秒）
   canHitInPipe?: boolean; // 可击中管道中的角色
   cooldownTiming?: '前摇前' | '释放时' | '释放后'; // 进入CD时机
   cueRange?: '全图可见' | '本房间可见' | '无音效'; // 技能音效的范围
@@ -85,13 +87,17 @@ export type SkillDefinition = {
 };
 
 // Final processed skill (with ID assigned)
-export type Skill = SkillDefinition & {
+export type Skill = Omit<SkillDefinition, 'forecast' | 'aftercast'> & {
   id: string;
+  // 处理后的技能可以没有前摇/后摇（未测试），也可以为负值表示未测试
+  forecast?: number;
+  aftercast?: number;
 };
 
 export type KnowledgeCardGroup = {
   cards: string[];
   description?: string;
+  contributor?: string;
 };
 
 export type KnowledgeCardGroupSet = {
@@ -218,7 +224,7 @@ export type SpecialSkill = SpecialSkillDefinition & {
 };
 
 export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '其它'; //list of items' types
-export type Itemsourcelist = '常规道具' | '地图道具' | '技能道具'; //list of items' source
+export type Itemsourcelist = '常规道具' | '地图道具'; //list of items' source
 
 export type ItemDefinition = {
   itemtype: Itemtypelist; //type of items
@@ -240,3 +246,24 @@ export type ItemDefinition = {
 };
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
+
+export type Entitytypelist = '道具类' | '投射物类' | '召唤物类' | '平台类' | 'NPC类' | '其它';
+
+export type EntityDefinition = {
+  entitytype: Entitytypelist; //type of entity
+  characterName: string; //which character does this entity belong to
+  skillname?: string; //which skill does this entity belong to
+  aliases?: string[]; // (entities') Alternative names for search
+  move?: boolean; //if entity can move (by itself)
+  gravity?: boolean; //if entity can be influenced by gravity
+  collsion?: boolean; //if entity have collsion box
+  ignore?: string[]; //(if 'collsion: true')which object does this entity ignore collsion
+  description?: string;
+  detailedDescription?: string;
+  create?: string; //the way of items create
+  detailedCreate?: string;
+
+  specialImageUrl?: string; //(interim) use other image instead of entity's missing image
+};
+
+export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };

@@ -86,7 +86,7 @@ function HomeContent() {
       ariaLabel: '特技列表',
     },
     {
-      imageSrc: '/images/items/%E8%93%9D%E8%8A%B1%E7%93%B6.png',
+      imageSrc: '/images/icons/item.png',
       imageAlt: '道具图标',
       title: '道具',
       description: '道具列表',
@@ -109,12 +109,20 @@ function HomeContent() {
     //   href: '/ranks',
     //   ariaLabel: '角色属性排行榜',
     // },
+    {
+      imageSrc: '/images/icons/entity.png',
+      imageAlt: '衍生物图标',
+      title: '衍生物',
+      description: '衍生物列表',
+      href: '/entities',
+      ariaLabel: '衍生物列表',
+    },
   ];
 
   return (
     <TabNavigationWrapper showDetailToggle={false}>
       <div className='space-y-8'>
-        <header className='text-center space-y-4'>
+        <header className='text-center space-y-2'>
           <PageTitle>猫和老鼠手游wiki</PageTitle>
           <PageDescription>查询角色技能和知识卡效果</PageDescription>
         </header>
@@ -123,17 +131,17 @@ function HomeContent() {
         <HomePageSection title='更多内容' buttons={cardButtons} />
 
         {/* Division line before 网站说明 */}
-        <div className='mt-24 mb-8 px-2 sm:px-4'>
+        <div className='mt-24 px-2 sm:px-4'>
           <div className='max-w-4xl mx-auto'>
             <div className='h-px bg-gray-300 dark:bg-gray-700 w-full'></div>
           </div>
         </div>
 
         <div className='mt-8 text-center px-2 sm:px-4' onDoubleClick={handleEditModeToggle}>
-          <h2 className='text-3xl font-bold mb-6 py-2 dark:text-white'>网站说明</h2>
-          <p className='max-w-2xl mx-auto text-gray-600 dark:text-gray-300 px-2 sm:px-4 py-3'>
+          <h2 className='text-3xl font-bold mb-2 py-2 dark:text-white'>网站说明</h2>
+          <div className='max-w-2xl mx-auto text-gray-600 dark:text-gray-300 px-2 sm:px-4 py-3'>
             <DisclaimerText onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
-          </p>
+          </div>
           <VersionDisplay />
           <FeedbackSection ref={feedbackSectionRef} />
         </div>

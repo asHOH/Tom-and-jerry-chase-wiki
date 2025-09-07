@@ -76,7 +76,7 @@ export default function CharacterDisplay({
                       isDarkMode
                     )}
                     size='xs'
-                    variant='compact'
+                    margin='compact'
                   >
                     {tag.tagName}
                   </Tag>

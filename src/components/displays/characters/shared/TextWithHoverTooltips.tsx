@@ -2,9 +2,13 @@ import React from 'react';
 import Tooltip from '../../../ui/Tooltip';
 import { renderTextWithHighlights } from '../../../../lib/textUtils';
 import { useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data';
+import { characters, cards } from '@/data';
 import { proxy, useSnapshot } from 'valtio';
 import GotoLink from '@/components/GotoLink';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { getCardRankColors } from '@/lib/design-tokens';
+import Tag from '@/components/ui/Tag';
+import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
 
 /**
  * Parse and render text with tooltips for patterns like {visible text}
@@ -16,16 +20,31 @@ export const renderTextWithTooltips = (
   text: string,
   attackBoost: number | null,
   index: number,
-  wallCrackDamageBoost?: number
+  wallCrackDamageBoost?: number,
+  isDarkMode: boolean = false,
+  currentCharacterId?: string
 ): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
+  const isCategoryHint = (v: string | null): v is CategoryHint =>
+    !!v && (CATEGORY_HINTS as readonly string[]).includes(v);
+  // Normalize 《content》 to {content} so we can reuse the same parser
+  const normalized = text.replace(/《([^》]+?)》/g, '{$1}');
   let lastIndex = 0;
   const tooltipPattern = /\{([^}]+?)\}/g;
   let match;
 
-  while ((match = tooltipPattern.exec(text)) !== null) {
+  // Small helper to keep tooltip element creation consistent
+  const pushTooltip = (visibleText: string, tooltipContent: string) => {
+    parts.push(
+      <Tooltip key={`hover-${index}-${match!.index}`} content={tooltipContent}>
+        {visibleText}
+      </Tooltip>
+    );
+  };
+
+  while ((match = tooltipPattern.exec(normalized)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
+      parts.push(normalized.slice(lastIndex, match.index));
     }
 
     const content = match[1] || '';
@@ -33,10 +52,19 @@ export const renderTextWithTooltips = (
     let tooltipContent: string;
 
     if (content.includes('+')) {
-      const [base, boost] = content.split('+').map((s) => parseFloat(s));
-      if (base && boost) {
+      const partsNum = content.split('+').map((s) => Number.parseFloat(s));
+      const [base, boost] = partsNum;
+      if (
+        base !== undefined &&
+        boost !== undefined &&
+        !Number.isNaN(base) &&
+        !Number.isNaN(boost)
+      ) {
         visibleText = String(base + boost);
-        tooltipContent = `基础伤害${base}+角色增伤${boost}，同时也能享受到其他来源的攻击增伤加成`;
+        tooltipContent =
+          boost === 0
+            ? `同时也享受其他来源的攻击增伤加成`
+            : `基础伤害${base}+角色增伤${boost}，同时也享受其他来源的攻击增伤加成`;
       } else {
         visibleText = content;
         tooltipContent = content;
@@ -52,36 +80,157 @@ export const renderTextWithTooltips = (
         tooltipContent = `墙缝伤害${visibleText}`;
       }
     } else {
-      visibleText = content;
-      const totalAttack = parseFloat(visibleText);
-      if (Number.isNaN(totalAttack) || attackBoost == null) {
+      // Support optional trailing category hint in parentheses, e.g. 绝地反击(特技) or 绝地反击(知识卡)
+      const categoryMatch = /^(.*?)(?:\(([^)]+)\))$/.exec(content);
+      let baseName: string = content;
+      let categoryHint: string | null = null;
+      if (categoryMatch) {
+        const nameGroup = categoryMatch[1] ?? '';
+        const hintGroup = categoryMatch[2] ?? '';
+        baseName = (nameGroup || content).trim();
+        categoryHint = hintGroup.trim() || null;
+      }
+      visibleText = baseName;
+
+      // Helper: push a skill goto link with consistent props
+      const pushSkillLink = (displayText: string, linkName: string) => {
+        const hint2 = '技能' as CategoryHint;
         parts.push(
           <GotoLink
-            name={content}
+            name={linkName}
             className='underline'
-            key={`${content}-${tooltipPattern.lastIndex}`}
+            key={`${linkName}-${tooltipPattern.lastIndex}`}
+            categoryHint={hint2}
           >
-            {content}
+            {displayText}
+          </GotoLink>
+        );
+      };
+
+      // Consolidated leveled-skill patterns
+      if (currentCharacterId) {
+        const owner = characters[currentCharacterId as keyof typeof characters];
+        type TSkill = 'passive' | 'active' | 'weapon1' | 'weapon2';
+        const leveledPatterns: Array<{ regex: RegExp; type: TSkill }> = [
+          { regex: /^(\d+)级被动$/, type: 'passive' },
+          { regex: /^(\d+)级主动$/, type: 'active' },
+          { regex: /^(\d+)级(?:武器|一武)$/, type: 'weapon1' },
+          { regex: /^(\d+)级二武$/, type: 'weapon2' },
+        ];
+
+        let matchedLeveled = false;
+        for (const { regex, type } of leveledPatterns) {
+          const m = regex.exec(baseName);
+          if (!m) continue;
+          const level = m[1];
+          const skill = owner?.skills?.find?.((s) => s.type === type);
+          if (skill?.name) {
+            pushSkillLink(baseName, `${level}级${skill.name}`);
+            lastIndex = tooltipPattern.lastIndex;
+            matchedLeveled = true;
+            break;
+          }
+        }
+        if (matchedLeveled) continue;
+
+        // Non-leveled aliases
+        if (baseName === '主动技能') {
+          const active = owner?.skills?.find?.((s) => s.type === 'active');
+          if (active?.name) {
+            pushSkillLink(baseName, active.name);
+            lastIndex = tooltipPattern.lastIndex;
+            continue;
+          }
+        }
+        if (baseName === '武器技能') {
+          const w1 = owner?.skills?.find?.((s) => s.type === 'weapon1');
+          if (w1?.name) {
+            pushSkillLink(baseName, w1.name);
+            lastIndex = tooltipPattern.lastIndex;
+            continue;
+          }
+        }
+      }
+
+      // If matches leveled skill prefix like "2级机械身躯", render as a generic skill link
+      if (/^\d+级/.test(baseName)) {
+        pushSkillLink(baseName, baseName);
+        lastIndex = tooltipPattern.lastIndex;
+        continue;
+      }
+
+      // Only treat as numeric if it's a pure number (no units or letters)
+      const numericOnlyPattern = /^-?\d+(?:\.\d+)?$/;
+      const isNumericOnly = numericOnlyPattern.test(visibleText);
+
+      // If it's not a number or attack boost not available, try rendering as Knowledge Card tag
+      if (!isNumericOnly || attackBoost == null) {
+        const linkName = baseName;
+        const card = cards[baseName as keyof typeof cards];
+
+        // If explicitly marked as knowledge card or no hint (and we can resolve as a card), render as card Tag
+        if ((!categoryHint || categoryHint === '知识卡') && card) {
+          const rankColors = getCardRankColors(card.rank, false, isDarkMode);
+          // Only pass recognized category hints to GotoLink for type safety
+          const hint = isCategoryHint(categoryHint) ? categoryHint : undefined;
+          parts.push(
+            <GotoLink
+              name={linkName}
+              className='no-underline'
+              key={`${card.rank}-${match.index}`}
+              {...(hint ? { categoryHint: hint } : {})}
+            >
+              <Tag
+                colorStyles={rankColors}
+                size='sm'
+                margin='micro'
+                role='link'
+                className='ml-0.75 mr-0.5'
+              >
+                {baseName}
+              </Tag>
+            </GotoLink>
+          );
+          lastIndex = tooltipPattern.lastIndex;
+          continue;
+        }
+
+        // For other categories (e.g., 特技, 技能, etc.) or unknowns, render a plain goto link with the category kept in the link target
+        const hint2 = isCategoryHint(categoryHint) ? categoryHint : undefined;
+        parts.push(
+          <GotoLink
+            name={linkName}
+            className='underline'
+            key={`${linkName}-${tooltipPattern.lastIndex}`}
+            {...(hint2 ? { categoryHint: hint2 } : {})}
+          >
+            {baseName}
           </GotoLink>
         );
         lastIndex = tooltipPattern.lastIndex;
         continue;
       }
+
+      const totalAttack = parseFloat(visibleText);
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
-      tooltipContent = `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也能享受到其他来源的攻击增伤加成`;
+      tooltipContent =
+        attackBoost === 0
+          ? `同时也享受其他来源的攻击增伤加成`
+          : `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也享受其他来源的攻击增伤加成`;
+
+      pushTooltip(visibleText, tooltipContent);
+      lastIndex = tooltipPattern.lastIndex;
+      continue;
     }
 
-    parts.push(
-      <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
-        {visibleText}
-      </Tooltip>
-    );
+    // For '+' and '_' branches (or invalid '+'), show tooltip for computed visible text
+    pushTooltip(visibleText, tooltipContent);
 
     lastIndex = tooltipPattern.lastIndex;
   }
 
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
+  if (lastIndex < normalized.length) {
+    parts.push(normalized.slice(lastIndex));
   }
 
   return parts;
@@ -94,9 +243,12 @@ interface TextWithHoverTooltipsProps {
 const emptyObject = proxy({ attackBoost: 0 });
 
 export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsProps) {
+  const [isDarkMode] = useDarkMode();
   const highlightedParts = renderTextWithHighlights(text); // Handles **bold**
   const intermediateParts: (string | React.ReactElement)[] = [];
-  const rawLocalCharacter = characters[useLocalCharacter().characterId];
+  const localCharacterCtx = useLocalCharacter();
+  const currentCharacterId = localCharacterCtx.characterId;
+  const rawLocalCharacter = characters[currentCharacterId];
   const localCharacter = useSnapshot(rawLocalCharacter ?? emptyObject);
 
   // First pass: Handle [visible text](tooltip content)
@@ -141,7 +293,11 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
           part,
           localCharacter.attackBoost ?? null,
           index,
-          'wallCrackDamageBoost' in localCharacter ? localCharacter.wallCrackDamageBoost : undefined
+          'wallCrackDamageBoost' in localCharacter
+            ? localCharacter.wallCrackDamageBoost
+            : undefined,
+          isDarkMode,
+          currentCharacterId
         )
       );
     } else {

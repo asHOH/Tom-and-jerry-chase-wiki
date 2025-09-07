@@ -238,7 +238,7 @@ export default function CostRangeSlider({
       </div>
 
       {/* Cost labels */}
-      <div className='flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400 select-none'>
+      <div className='flex justify-between mt-0.5 text-xs text-gray-500 dark:text-gray-400 select-none'>
         {Array.from({ length: max - min + 1 }, (_, i) => {
           const cost = min + i;
           const isInRange = cost >= minValue && cost <= maxValue;

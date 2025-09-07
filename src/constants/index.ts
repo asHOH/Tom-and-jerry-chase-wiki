@@ -1,5 +1,8 @@
 import { contributors, RoleType } from '@/data/contributors';
 
+// Use Chinese collator to keep name ordering deterministic for acknowledgements
+const ZH_COLLATOR = new Intl.Collator('zh-Hans');
+
 // Create a map of contributors for easy lookup
 export const CREATORS = contributors.reduce(
   (acc, contributor) => {
@@ -25,7 +28,13 @@ const getContributorsByRole = (roleType: RoleType): string[] => {
     .sort((a, b) => {
       const aIsMinor = a.roles.some((role) => role.type === roleType && role.isMinor);
       const bIsMinor = b.roles.some((role) => role.type === roleType && role.isMinor);
-      return Number(aIsMinor) - Number(bIsMinor);
+      // non-minor first, then stable zh name order
+      const minorDelta = Number(aIsMinor) - Number(bIsMinor);
+      if (minorDelta !== 0) return minorDelta;
+      const nameDelta = ZH_COLLATOR.compare(a.name, b.name);
+      if (nameDelta !== 0) return nameDelta;
+      // final tiebreaker by id to keep stable ordering
+      return a.id.localeCompare(b.id);
     })
     .map((contributor) => contributor.id);
 };
@@ -59,23 +68,43 @@ const generateAcknowledgements = () => {
 
 // Project information
 export const PROJECT_INFO = {
-  name: '项目开源地址',
+  title: '项目开源地址',
   url: 'https://github.com/asHOH/Tom-and-jerry-chase-wiki',
-  description: '本项目已在GitHub开源，欢迎参与建设、给出建议或点star⭐！',
   maintainerId: 'asHOH',
   // Split description to make "给出建议" clickable
   descriptionParts: {
-    before: '本项目已在GitHub开源，欢迎参与建设、',
+    before: '已在 GitHub 开源，欢迎',
     feedbackLink: '给出建议',
-    after: '或点star⭐！',
+    after: '或点Star⭐！',
   },
+};
+
+// License information
+export const LICENSE_INFO = {
+  title: '开源许可',
+  description: '本项目采用双重许可证：',
+  licenses: [
+    {
+      name: 'Creative Commons Attribution 4.0 International',
+      shortName: 'CC BY 4.0',
+      url: 'https://creativecommons.org/licenses/by/4.0/',
+      scope: '内容与文档',
+      additionalDescription: '使用时须署名原作者小曙光并链接到本项目的 GitHub 仓库',
+    },
+    {
+      name: 'GNU General Public License v3.0',
+      shortName: 'GPL v3',
+      url: 'https://www.gnu.org/licenses/gpl-3.0.html',
+      scope: '源代码',
+      additionalDescription: '部署本网站者须公开完整的项目源代码',
+    },
+  ],
 };
 
 // Structured disclaimer content - single source of truth
 export const DISCLAIMER_CONTENT = {
   intro: '本网站为非盈利粉丝项目，仅供学习交流。',
-  privacyPolicy: '本网站承诺永不收集任何用户数据。',
-  freePolicy: '本网站承诺所有功能永久免费。',
+  policy: '本网站承诺永不收集任何用户数据、所有功能永久免费。',
   copyright:
     '猫和老鼠（Tom and Jerry）角色版权归华纳兄弟娱乐公司（Warner Bros. Entertainment Inc.）所有。游戏素材版权归网易猫和老鼠手游所有。',
   takedownPolicy: '若版权方提出要求，我们将立即调整。',
@@ -85,8 +114,7 @@ export const DISCLAIMER_CONTENT = {
 // Generate plain text version for metadata
 export const DISCLAIMER_TEXT = [
   DISCLAIMER_CONTENT.intro,
-  DISCLAIMER_CONTENT.privacyPolicy,
-  DISCLAIMER_CONTENT.freePolicy,
+  DISCLAIMER_CONTENT.policy,
   DISCLAIMER_CONTENT.copyright,
   DISCLAIMER_CONTENT.takedownPolicy,
   ...Object.values(DISCLAIMER_CONTENT.acknowledgements).map(

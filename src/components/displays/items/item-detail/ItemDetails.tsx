@@ -1,21 +1,26 @@
 'use client';
 
 import BaseCard from '@/components/ui/BaseCard';
+import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import Tag from '@/components/ui/Tag';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
 import GameImage from '@/components/ui/GameImage';
+import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
+import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
+  // Keyboard navigation
+  useSpecifyTypeKeyboardNavigation(item.name, 'item');
+
   const { isDetailedView } = useAppContext();
   const [isDarkMode] = useDarkMode();
   const spacing = designTokens.spacing;
   const tagColorStyles = isDarkMode
     ? { background: '#334155', color: '#e0e7ef' }
     : { background: '#e0e7ef', color: '#1e293b' };
-
   if (!item) return null;
 
   return (
@@ -46,16 +51,16 @@ export default function ItemDetailClient({ item }: { item: Item }) {
               </h1>
               <div
                 className='flex items-center flex-wrap'
-                style={{ gap: spacing.sm, marginTop: spacing.lg }}
+                style={{ gap: spacing.sm, marginTop: spacing.sm }}
               >
-                {item.factionId != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    {item.factionId == 'cat' ? '限猫咪使用' : '限老鼠使用'}
-                  </Tag>
-                )}
                 {!!(item.aliases && item.aliases.length) && (
                   <Tag colorStyles={tagColorStyles} size='md'>
                     别名: {(item.aliases ?? []).filter(Boolean).join(', ')}
+                  </Tag>
+                )}
+                {item.factionId != undefined && (
+                  <Tag colorStyles={tagColorStyles} size='md'>
+                    {item.factionId == 'cat' ? '限猫咪使用' : '限老鼠使用'}
                   </Tag>
                 )}
                 {item.damage != undefined && (
@@ -73,44 +78,60 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     {item.exp == 0 ? '(猫) 命中无经验' : `(猫) 命中获得经验: ${item.exp}`}
                   </Tag>
                 )}
-                {item.store != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    {item.store == true ? '局内商店有售' : '局内商店不售'}
-                  </Tag>
-                )}
-                {!!item.price && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    价格: {item.price}
-                  </Tag>
-                )}
-                {!!item.storeCD && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    购买CD: {item.storeCD}秒 ({item.teamCD == true ? '共享' : '独立'})
-                  </Tag>
-                )}
-                {item.unlocktime != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    解锁时间: {item.unlocktime}
-                  </Tag>
-                )}
+                <div className='flex items-center flex-wrap' style={{ gap: spacing.sm }}>
+                  {item.store != undefined && (
+                    <Tag colorStyles={tagColorStyles} size='md'>
+                      {item.store == true ? '局内商店有售' : '局内商店不售'}
+                    </Tag>
+                  )}
+                  {!!item.price && (
+                    <Tag colorStyles={tagColorStyles} size='md'>
+                      价格: {item.price}
+                    </Tag>
+                  )}
+                  {!!item.storeCD && (
+                    <Tag colorStyles={tagColorStyles} size='md'>
+                      购买CD: {item.storeCD}秒 {item.teamCD == true ? '(团队共享)' : ''}
+                    </Tag>
+                  )}
+                  {item.unlocktime != undefined && (
+                    <Tag colorStyles={tagColorStyles} size='md'>
+                      解锁时间: {item.unlocktime}
+                    </Tag>
+                  )}
+
+                  {/*Navigation */}
+                  <SpecifyTypeNavigationButtons currentId={item.name} specifyType='item' />
+                </div>
               </div>
             </div>
           </BaseCard>
         </div>
         <div className='md:w-2/3'>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: spacing.xl,
+              whiteSpace: 'pre-wrap',
+            }}
+          >
             {[
-              {
-                title: '道具描述',
-                text:
-                  isDetailedView && item.detailedDescription
-                    ? item.detailedDescription
-                    : item.description,
-              },
-              {
-                title: '生成方式',
-                text: isDetailedView && item.detailedCreate ? item.detailedCreate : item.create,
-              },
+              item.description === undefined
+                ? { title: '道具描述', text: '待补充' }
+                : {
+                    title: '道具描述',
+                    text:
+                      isDetailedView && item.detailedDescription
+                        ? item.detailedDescription
+                        : item.description,
+                  },
+              item.create === undefined
+                ? { title: '生成方式', text: '待补充' }
+                : {
+                    title: '生成方式',
+                    text: isDetailedView && item.detailedCreate ? item.detailedCreate : item.create,
+                  },
             ].map(({ title, text }) => (
               <div key={title}>
                 <h2
@@ -131,7 +152,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
                     className='text-black dark:text-gray-200 text-lg'
                     style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
                   >
-                    {text}
+                    <TextWithHoverTooltips text={text as string} />
                   </p>
                 </div>
               </div>

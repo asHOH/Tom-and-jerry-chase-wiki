@@ -10,29 +10,31 @@ import Tag from '@/components/ui/Tag';
 
 interface CharacterRankingCardProps {
   rankedCharacter: RankedCharacter;
+  // This controls the color only
+  rankGroupIndex?: number | undefined;
   priority?: boolean;
 }
 
-function CharacterRankingCard({ rankedCharacter, priority = false }: CharacterRankingCardProps) {
+function CharacterRankingCard({
+  rankedCharacter,
+  rankGroupIndex,
+  priority = false,
+}: CharacterRankingCardProps) {
   const { character, rank, formattedValue } = rankedCharacter;
   const [isDarkMode] = useDarkMode();
 
   // Get rank colors using design tokens - map ranks to card rank system
-  const getRankColorScheme = (rank: number) => {
-    if (rank === 1) return getCardRankColors('S', false, isDarkMode);
-    if (rank === 2) return getCardRankColors('A', false, isDarkMode);
-    if (rank === 3) return getCardRankColors('B', false, isDarkMode);
+  // We color by unique rank groups: group 1 -> S, group 2 -> A, group 3 -> B, others -> C
+  const getRankColorScheme = (groupIndex: number) => {
+    if (groupIndex === 1) return getCardRankColors('S', false, isDarkMode);
+    if (groupIndex === 2) return getCardRankColors('A', false, isDarkMode);
+    if (groupIndex === 3) return getCardRankColors('B', false, isDarkMode);
     return getCardRankColors('C', false, isDarkMode);
   };
 
-  // Get value display colors - use primary blue theme
-  const getValueColorScheme = () => ({
-    color: isDarkMode ? '#60a5fa' : '#2563eb', // blue-400 : blue-600
-    backgroundColor: isDarkMode ? '#1e3a8a' : '#eff6ff', // blue-900 : blue-50
-  });
-
-  const rankColors = getRankColorScheme(rank);
-  const valueColors = getValueColorScheme();
+  const effectiveGroupIndex = rankGroupIndex ?? (rank <= 3 ? rank : 4); // Fallback keeps previous behavior
+  const rankColors = getRankColorScheme(effectiveGroupIndex);
+  const valueColors = rankColors;
 
   return (
     <BaseCard
@@ -65,10 +67,10 @@ function CharacterRankingCard({ rankedCharacter, priority = false }: CharacterRa
           role='group'
           aria-label='角色排名信息'
         >
-          <Tag colorStyles={rankColors} size='xs' variant='compact'>
+          <Tag colorStyles={rankColors} size='xs' margin='compact'>
             {getRankDisplayName(rank)}
           </Tag>
-          <Tag colorStyles={valueColors} size='xs' variant='compact'>
+          <Tag colorStyles={valueColors} size='xs' margin='compact'>
             {formattedValue}
           </Tag>
         </div>
