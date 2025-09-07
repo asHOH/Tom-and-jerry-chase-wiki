@@ -58,7 +58,7 @@ export default function ItemClient() {
         <PageDescription>在地图中散落的各式各样的道具——猫鼠相互对抗的关键机制</PageDescription>
         {/* Filter Controls */}
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2 mt-8'>
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 类型筛选 */}
           <FilterRow<Itemtypelist>
             label='类型筛选:'

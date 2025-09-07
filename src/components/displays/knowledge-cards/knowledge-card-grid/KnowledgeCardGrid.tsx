@@ -41,9 +41,7 @@ export default function KnowledgeCardGrid() {
   );
 
   return (
-    <div className='space-y-8 dark:text-slate-200'>
-      {' '}
-      {/* Padding for navbar is now handled at the page level */}
+    <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>知识卡</PageTitle>
         <PageDescription>提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力</PageDescription>

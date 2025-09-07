@@ -61,7 +61,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
     <div className='space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2 mt-8'>
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 通用属性 */}
           <FilterRow<RankableProperty>
             label='通用属性:'
