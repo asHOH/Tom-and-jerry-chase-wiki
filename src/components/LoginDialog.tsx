@@ -22,6 +22,10 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
+  const isUsernameCorrect =
+    username != '' &&
+    /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*$/.test(username);
+
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const checkUsername = async () => {
@@ -29,8 +33,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       setError('请通过验证码。');
       return;
     }
-    if (username.trim() === '') {
-      setError('用户名不能为空。');
+    if (!isUsernameCorrect) {
+      setError('用户名格式错误。');
       return;
     }
     setIsLoading(true);
@@ -215,7 +219,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-4'>登录或注册</h2>
             <input
               type='text'
-              placeholder='输入您的用户名'
+              placeholder='用户名，支持字母、数字和._-+'
               className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -277,8 +281,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
 
           <button
             type='submit'
-            disabled={isLoading}
-            className='w-full p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 flex items-center justify-center'
+            disabled={isLoading || !isUsernameCorrect}
+            className='w-full p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 flex items-center justify-center disabled:cursor-not-allowed'
           >
             {isLoading ? (
               <svg
