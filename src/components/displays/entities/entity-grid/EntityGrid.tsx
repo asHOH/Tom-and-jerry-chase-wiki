@@ -52,7 +52,7 @@ export default function EntityClient() {
           由角色技能衍生出的独立物体，拥有各自独特的属性和作用（该界面更新中）
         </PageDescription>
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2 mt-8'>
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 类型筛选 */}
           <FilterRow<Entitytypelist>
             label='类型筛选:'

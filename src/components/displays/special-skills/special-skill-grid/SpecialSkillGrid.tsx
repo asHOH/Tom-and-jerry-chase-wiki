@@ -28,7 +28,7 @@ export default function SpecialSkillClient() {
         <PageTitle>特技</PageTitle>
         <PageDescription>角色可配备的额外技能，合理使用将大幅提高角色能力</PageDescription>
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2 mt-8'>
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           <FilterRow<'cat' | 'mouse'>
             label='阵营筛选:'
             options={['cat', 'mouse']}

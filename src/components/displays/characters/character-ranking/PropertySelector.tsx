@@ -7,6 +7,7 @@ import {
   RankableProperty,
 } from '@/lib/characterRankingUtils';
 import { FactionId } from '@/data/types';
+import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
@@ -15,22 +16,6 @@ interface PropertySelectorProps {
   currentProperty?: RankableProperty | undefined;
   factionId?: FactionId | undefined;
   onPropertyChange: (property: RankableProperty) => void;
-}
-
-// Faction button color utility
-function getFactionButtonColors(
-  faction: FactionId,
-  isDarkMode: boolean
-): { backgroundColor: string; color: string } {
-  if (faction === 'cat') {
-    return isDarkMode
-      ? { backgroundColor: '#fbbf24', color: '#000000' } // dark: bright yellow-400 bg, black text
-      : { backgroundColor: '#fef9c3', color: '#b45309' }; // light: yellow-100 bg, yellow-800 text
-  } else {
-    return isDarkMode
-      ? { backgroundColor: '#38bdf8', color: '#000000' } // dark: bright sky-400 bg, black text
-      : { backgroundColor: '#e0f2fe', color: '#0369a1' }; // light: sky-100 bg, sky-800 text
-  }
 }
 
 function PropertySelector({ currentProperty, onPropertyChange }: PropertySelectorProps) {
@@ -76,7 +61,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
     <div className='space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2 mt-8'>
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 通用属性 */}
           <FilterRow<RankableProperty>
             label='通用属性:'

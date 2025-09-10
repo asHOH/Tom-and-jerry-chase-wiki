@@ -133,64 +133,63 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
   }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds, selectedAvatar]);
 
   return (
-    <div className='space-y-8'>
+    <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>{faction.name}</PageTitle>
         <PageDescription>{faction.description}</PageDescription>
-      </header>
-
-      {/* Filters wrapper */}
-      <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
-        <FilterRow
-          label='定位筛选:'
-          options={uniquePositioningTags as readonly PositioningTagName[]}
-          isActive={(tag) => hasPositioningTagFilter(tag as PositioningTagName)}
-          onToggle={(tag) => togglePositioningTagFilter(tag as PositioningTagName)}
-          isDarkMode={isDarkMode}
-          renderOption={(tag, button) => (
-            <Tooltip
-              key={String(tag)}
-              content={getPositioningTagTooltipContent(
+        {/* Filters wrapper */}
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+          <FilterRow
+            label='定位筛选:'
+            options={uniquePositioningTags as readonly PositioningTagName[]}
+            isActive={(tag) => hasPositioningTagFilter(tag as PositioningTagName)}
+            onToggle={(tag) => togglePositioningTagFilter(tag as PositioningTagName)}
+            isDarkMode={isDarkMode}
+            renderOption={(tag, button) => (
+              <Tooltip
+                key={String(tag)}
+                content={getPositioningTagTooltipContent(
+                  tag as PositioningTagName,
+                  faction.id as FactionId,
+                  isDetailed
+                )}
+                delay={800}
+                className='border-none cursor-pointer'
+              >
+                {button}
+              </Tooltip>
+            )}
+            getButtonStyle={(tag) => {
+              const isActive = hasPositioningTagFilter(tag as PositioningTagName);
+              const tagColors = getPositioningTagColors(
                 tag as PositioningTagName,
+                false,
+                false,
                 faction.id as FactionId,
-                isDetailed
-              )}
-              delay={800}
-              className='border-none cursor-pointer'
-            >
-              {button}
-            </Tooltip>
-          )}
-          getButtonStyle={(tag) => {
-            const isActive = hasPositioningTagFilter(tag as PositioningTagName);
-            const tagColors = getPositioningTagColors(
-              tag as PositioningTagName,
-              false,
-              false,
-              faction.id as FactionId,
-              isDarkMode
-            );
-            return isActive ? { ...tagColors } : undefined;
-          }}
-          className='mt-4'
-        />
+                isDarkMode
+              );
+              return isActive ? { ...tagColors } : undefined;
+            }}
+            className='mt-4'
+          />
 
-        <FilterRow
-          label='形象筛选:'
-          options={avatarOptions}
-          isActive={(opt) => hasAvatar(opt)}
-          onToggle={(opt) => toggleAvatar(opt)}
-          isDarkMode={isDarkMode}
-          getButtonStyle={(opt) => {
-            const isActive = hasAvatar(opt);
-            const colors = getAvatarFilterColors(opt, isDarkMode);
-            return isActive
-              ? { backgroundColor: colors.backgroundColor, color: colors.color }
-              : undefined;
-          }}
-          className='mt-0'
-        />
-      </div>
+          <FilterRow
+            label='形象筛选:'
+            options={avatarOptions}
+            isActive={(opt) => hasAvatar(opt)}
+            onToggle={(opt) => toggleAvatar(opt)}
+            isDarkMode={isDarkMode}
+            getButtonStyle={(opt) => {
+              const isActive = hasAvatar(opt);
+              const colors = getAvatarFilterColors(opt, isDarkMode);
+              return isActive
+                ? { backgroundColor: colors.backgroundColor, color: colors.color }
+                : undefined;
+            }}
+            className='mt-0'
+          />
+        </div>
+      </header>
 
       <div
         className='auto-fit-grid grid-container grid gap-8 mt-8'
