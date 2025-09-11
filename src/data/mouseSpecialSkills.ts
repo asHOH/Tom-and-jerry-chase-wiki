@@ -23,7 +23,7 @@ const mouseSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
   },
   魔术漂浮: {
     cooldown: 60,
-    description: '立刻向斜上方进行一次固定数值的跳跃，并在一段时间内小幅度失重。只能在空中使用。',
+    description: '立刻向斜上方进行一次固定数值的跳跃，并在一段时间内小幅度失重。只能在起跳后使用。',
   },
   勇气投掷: {
     cooldown: 50,
