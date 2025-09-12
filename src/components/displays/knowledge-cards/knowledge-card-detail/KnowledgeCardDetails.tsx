@@ -15,6 +15,7 @@ import { characters } from '@/data'; // Import characters data
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
+import SectionHeader from '@/components/ui/SectionHeader';
 
 // Local types for group checking
 type KnowledgeCardGroup = { cards: string[]; description?: string };
@@ -113,8 +114,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
         </div>
         <div className='md:w-2/3 space-y-3'>
           {/* Card description title */}
-          <div className='flex justify-between items-center'>
-            <h2 className='text-2xl font-bold dark:text-white py-2'>知识卡效果</h2>
+          <SectionHeader title='知识卡效果'>
             {fromCharacter && (
               <button
                 type='button'
@@ -139,7 +139,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                 )}
               </button>
             )}
-          </div>
+          </SectionHeader>
 
           {/* Card description content */}
           <div className='card dark:bg-slate-800 dark:border-slate-700 p-6 mb-8'>
@@ -175,15 +175,12 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
           </div>
 
           <div>
-            <div className='flex items-center mb-3'>
-              <h2 className='text-2xl font-bold dark:text-white py-2'>
-                {(usedCharacters.length == 0 || unusedCharacters.length == 0) && '没有任何'}
-                {displayUsedCharacters ? '使用该知识卡的角色' : '未使用该知识卡的角色'}
-              </h2>
-            </div>
+            <SectionHeader
+              title={`${usedCharacters.length == 0 || unusedCharacters.length == 0 ? '没有任何' : ''}${displayUsedCharacters ? '使用该知识卡的角色' : '未使用该知识卡的角色'}`}
+            />
             {usedCharacters.length > 0 && unusedCharacters.length > 0 && (
               <div className='rounded-xl bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
-                <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+                <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
                   {(displayUsedCharacters ? usedCharacters : unusedCharacters).map((character) => (
                     <li
                       key={character.id ?? ''}
