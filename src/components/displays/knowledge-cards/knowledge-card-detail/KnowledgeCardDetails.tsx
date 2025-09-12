@@ -67,6 +67,21 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
 
   const displayUsedCharacters = usedCharacters.length <= unusedCharacters.length;
 
+  // Generate faction-specific title
+  const factionName = card.factionId === 'cat' ? '猫方' : '鼠方';
+
+  const getCharacterSectionTitle = () => {
+    if (usedCharacters.length === 0) {
+      return `没有${factionName}角色使用该知识卡`;
+    } else if (unusedCharacters.length === 0) {
+      return `所有${factionName}角色均使用该知识卡`;
+    } else {
+      return displayUsedCharacters
+        ? `使用该知识卡的${factionName}角色`
+        : `未使用该知识卡的${factionName}角色`;
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: designTokens.spacing.xl }}>
@@ -175,9 +190,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
           </div>
 
           <div>
-            <SectionHeader
-              title={`${usedCharacters.length == 0 || unusedCharacters.length == 0 ? '没有任何' : ''}${displayUsedCharacters ? '使用该知识卡的角色' : '未使用该知识卡的角色'}`}
-            />
+            <SectionHeader title={getCharacterSectionTitle()} />
             {usedCharacters.length > 0 && unusedCharacters.length > 0 && (
               <div className='rounded-xl bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
                 <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
