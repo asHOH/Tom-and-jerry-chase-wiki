@@ -92,55 +92,29 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                   gap: designTokens.spacing.sm,
                 }}
               >
-                <div className='grid grid-cols-2' style={{ gap: designTokens.spacing.sm }}>
-                  <p
-                    className='text-base text-gray-700 dark:text-gray-300'
-                    style={{
-                      paddingTop: designTokens.spacing.xxxs,
-                      paddingBottom: designTokens.spacing.xxxs,
-                    }}
-                  >
+                <div className='grid grid-cols-2'>
+                  <p className='text-base text-gray-700 dark:text-gray-300'>
                     <Tag colorStyles={rankColors} size='md'>
                       等级: {card.rank}
                     </Tag>
                   </p>
-                  <p
-                    className='text-base text-gray-700 dark:text-gray-300'
-                    style={{
-                      paddingTop: designTokens.spacing.xxxs,
-                      paddingBottom: designTokens.spacing.xxxs,
-                    }}
-                  >
+                  <p className='text-base text-gray-700 dark:text-gray-300'>
                     <Tag colorStyles={costColors} size='md'>
                       费用: {card.cost}
                     </Tag>
                   </p>
                 </div>
 
-                {/*Navigation */}
+                {/* Navigation */}
                 <SpecifyTypeNavigationButtons currentId={card.id} specifyType='knowledgeCard' />
               </div>
             </div>
           </BaseCard>
-        </div>{' '}
-        <div className='md:w-2/3'>
-          <div
-            className='flex justify-between items-center'
-            style={{
-              marginBottom: designTokens.spacing.lg,
-              paddingLeft: designTokens.spacing.sm,
-              paddingRight: designTokens.spacing.sm,
-            }}
-          >
-            <h2
-              className='text-2xl font-bold dark:text-white'
-              style={{
-                paddingTop: designTokens.spacing.sm,
-                paddingBottom: designTokens.spacing.sm,
-              }}
-            >
-              知识卡效果
-            </h2>
+        </div>
+        <div className='md:w-2/3 space-y-3'>
+          {/* Card description title */}
+          <div className='flex justify-between items-center'>
+            <h2 className='text-2xl font-bold dark:text-white py-2'>知识卡效果</h2>
             {fromCharacter && (
               <button
                 type='button'
@@ -167,115 +141,73 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
             )}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.lg }}>
-            <div
-              className='card dark:bg-slate-800 dark:border-slate-700'
-              style={{ padding: designTokens.spacing.lg }}
-            >
-              {/* Card description */}
-              <div style={{ marginBottom: designTokens.spacing.lg }}>
-                <p
-                  className='text-black dark:text-gray-200 text-lg'
-                  style={{
-                    paddingTop: designTokens.spacing.sm,
-                    paddingBottom: designTokens.spacing.sm,
-                  }}
-                >
-                  <TextWithHoverTooltips
-                    text={
-                      isDetailedView && card.detailedDescription
-                        ? card.detailedDescription
-                        : card.description
-                    }
-                  />
-                </p>
-              </div>
-
-              <div
-                className='grid grid-cols-1 md:grid-cols-3'
-                style={{ gap: designTokens.spacing.md }}
-              >
-                {card.levels.map((level) => (
-                  <div
-                    key={`${card.id}-${level.level}`}
-                    className='bg-gray-100 dark:bg-slate-700 rounded'
-                    style={{ padding: designTokens.spacing.md }}
-                  >
-                    <p
-                      className='text-black dark:text-gray-200'
-                      style={{
-                        paddingLeft: designTokens.spacing.sm,
-                        paddingRight: designTokens.spacing.sm,
-                        paddingTop: designTokens.spacing.xxxs,
-                        paddingBottom: designTokens.spacing.xxxs,
-                      }}
-                    >
-                      <span className='font-bold'>Lv.{level.level}:</span>{' '}
-                      {renderTextWithHighlights(
-                        isDetailedView && level.detailedDescription
-                          ? level.detailedDescription
-                          : level.description
-                      )}
-                    </p>
-                  </div>
-                ))}
-              </div>
+          {/* Card description content */}
+          <div className='card dark:bg-slate-800 dark:border-slate-700 p-6 mb-8'>
+            <div className='mb-6'>
+              <p className='text-black dark:text-gray-200 text-lg py-2'>
+                <TextWithHoverTooltips
+                  text={
+                    isDetailedView && card.detailedDescription
+                      ? card.detailedDescription
+                      : card.description
+                  }
+                />
+              </p>
             </div>
-            {
-              <>
+
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+              {card.levels.map((level) => (
                 <div
-                  className='flex items-center'
-                  style={{
-                    marginTop: designTokens.spacing.lg,
-                    marginBottom: designTokens.spacing.lg,
-                    paddingLeft: designTokens.spacing.sm,
-                    paddingRight: designTokens.spacing.sm,
-                  }}
+                  key={`${card.id}-${level.level}`}
+                  className='bg-gray-100 dark:bg-slate-700 rounded p-4'
                 >
-                  <h2
-                    className='text-2xl font-bold dark:text-white'
-                    style={{
-                      paddingTop: designTokens.spacing.sm,
-                      paddingBottom: designTokens.spacing.sm,
-                    }}
-                  >
-                    {(usedCharacters.length == 0 || unusedCharacters.length == 0) && '没有任何'}
-                    {displayUsedCharacters ? '使用该知识卡的角色' : '未使用该知识卡的角色'}
-                  </h2>
+                  <p className='text-black dark:text-gray-200 px-2 py-1'>
+                    <span className='font-bold'>Lv.{level.level}:</span>{' '}
+                    {renderTextWithHighlights(
+                      isDetailedView && level.detailedDescription
+                        ? level.detailedDescription
+                        : level.description
+                    )}
+                  </p>
                 </div>
-                {usedCharacters.length > 0 && unusedCharacters.length > 0 && (
-                  <div className='rounded-xl bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
-                    <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-                      {(displayUsedCharacters ? usedCharacters : unusedCharacters).map(
-                        (character) => (
-                          <li
-                            key={character.id ?? ''}
-                            className='flex items-center gap-4 p-3 rounded-lg transition-colors'
-                          >
-                            <a
-                              href={`/characters/${character.id}`}
-                              className='flex items-center gap-4 w-full'
-                              tabIndex={0}
-                            >
-                              <Image
-                                src={character.imageUrl!}
-                                alt={character.id!}
-                                className='w-10 h-10'
-                                width={40}
-                                height={40}
-                              />
-                              <span className='text-lg dark:text-white truncate'>
-                                {character.id}
-                              </span>
-                            </a>
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-                )}
-              </>
-            }
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className='flex items-center mb-3'>
+              <h2 className='text-2xl font-bold dark:text-white py-2'>
+                {(usedCharacters.length == 0 || unusedCharacters.length == 0) && '没有任何'}
+                {displayUsedCharacters ? '使用该知识卡的角色' : '未使用该知识卡的角色'}
+              </h2>
+            </div>
+            {usedCharacters.length > 0 && unusedCharacters.length > 0 && (
+              <div className='rounded-xl bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
+                <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+                  {(displayUsedCharacters ? usedCharacters : unusedCharacters).map((character) => (
+                    <li
+                      key={character.id ?? ''}
+                      className='flex items-center gap-4 p-3 rounded-lg transition-colors'
+                    >
+                      <a
+                        href={`/characters/${character.id}`}
+                        className='flex items-center gap-4 w-full'
+                        tabIndex={0}
+                      >
+                        <Image
+                          src={character.imageUrl!}
+                          alt={character.id!}
+                          className='w-10 h-10'
+                          width={40}
+                          height={40}
+                        />
+                        <span className='text-lg dark:text-white truncate'>{character.id}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>
