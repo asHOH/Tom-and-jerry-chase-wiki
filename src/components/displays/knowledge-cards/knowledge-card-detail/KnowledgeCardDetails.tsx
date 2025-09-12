@@ -16,6 +16,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import SectionHeader from '@/components/ui/SectionHeader';
+import CharacterList from './CharacterList';
 
 // Local types for group checking
 type KnowledgeCardGroup = { cards: string[]; description?: string };
@@ -191,33 +192,10 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
 
           <div>
             <SectionHeader title={getCharacterSectionTitle()} />
-            {usedCharacters.length > 0 && unusedCharacters.length > 0 && (
-              <div className='rounded-xl bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
-                <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
-                  {(displayUsedCharacters ? usedCharacters : unusedCharacters).map((character) => (
-                    <li
-                      key={character.id ?? ''}
-                      className='flex items-center gap-4 p-3 rounded-lg transition-colors'
-                    >
-                      <a
-                        href={`/characters/${character.id}`}
-                        className='flex items-center gap-4 w-full'
-                        tabIndex={0}
-                      >
-                        <Image
-                          src={character.imageUrl!}
-                          alt={character.id!}
-                          className='w-10 h-10'
-                          width={40}
-                          height={40}
-                        />
-                        <span className='text-lg dark:text-white truncate'>{character.id}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <CharacterList
+              characters={displayUsedCharacters ? usedCharacters : unusedCharacters}
+              showList={usedCharacters.length > 0 && unusedCharacters.length > 0}
+            />
           </div>
         </div>
       </div>
