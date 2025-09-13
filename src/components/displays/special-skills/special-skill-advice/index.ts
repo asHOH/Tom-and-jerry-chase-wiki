@@ -1,1 +1,1 @@
-export { default as SpecialSkillGrid } from './SpecialSkillGrid';
+export { default as SpecialSkillAdvice } from './SpecialSkillAdvice';
