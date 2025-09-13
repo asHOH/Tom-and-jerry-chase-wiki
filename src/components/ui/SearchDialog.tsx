@@ -9,6 +9,7 @@ import { useAppContext } from '@/context/AppContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { useEditMode } from '@/context/EditModeContext';
 import { useNavigation } from '@/lib/useNavigation';
+import { useChat } from '@/lib/useChat';
 
 type SearchDialogProps = {
   onClose: () => void;
@@ -85,6 +86,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const { isEditMode, toggleEditMode } = useEditMode();
   const { navigate } = useNavigation();
 
+  // Use chat hook to get AI response for the search query
+  const {
+    responseText: aiResponseText,
+    isLoading: isChatLoading,
+    error: chatError,
+  } = useChat(searchQuery.length > 1 ? searchQuery : undefined, 2000);
+
   const handleResultClick = useCallback(
     (result: SearchResult) => {
       switch (result.type) {
@@ -140,27 +148,37 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
       }
 
       // Handle navigation keys
+      const totalResults = searchQuery.length > 1 ? searchResults.length + 1 : searchResults.length;
       switch (event.key) {
         case 'ArrowDown':
           event.preventDefault();
           setHighlightedIndex((prev) => {
             const newIndex = prev + 1;
-            return newIndex >= searchResults.length ? 0 : newIndex; // Wrap to top
+            return newIndex >= totalResults ? 0 : newIndex; // Wrap to top
           });
           break;
         case 'ArrowUp':
           event.preventDefault();
           setHighlightedIndex((prev) => {
             const newIndex = prev - 1;
-            return newIndex < 0 ? searchResults.length - 1 : newIndex; // Wrap to bottom
+            return newIndex < 0 ? totalResults - 1 : newIndex; // Wrap to bottom
           });
           break;
         case 'Enter':
           // Only handle Enter if search input is not focused or if we have a highlighted result
           if (document.activeElement !== searchInputRef.current || highlightedIndex >= 0) {
             event.preventDefault();
-            if (highlightedIndex >= 0 && searchResults[highlightedIndex]) {
-              handleResultClick(searchResults[highlightedIndex]);
+            if (highlightedIndex >= 0) {
+              // If chat result is highlighted (index 0 when chat is present), do nothing
+              if (searchQuery.length > 1 && highlightedIndex === 0) {
+                // Chat result is highlighted, do nothing for now
+                return;
+              }
+              // Handle regular search results
+              const resultIndex = searchQuery.length > 1 ? highlightedIndex - 1 : highlightedIndex;
+              if (resultIndex >= 0 && searchResults[resultIndex]) {
+                handleResultClick(searchResults[resultIndex]);
+              }
             }
           }
           break;
@@ -172,7 +190,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onClose, highlightedIndex, searchResults, handleResultClick]); // Updated dependencies
+  }, [onClose, highlightedIndex, searchResults, handleResultClick, searchQuery.length]); // Updated dependencies
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -202,9 +220,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           if (searchIdRef.current === currentId) {
             newResults = [...newResults, result];
             setSearchResults([...newResults]); // Store all results (already sorted by searchUtils)
-            // Initialize highlighted index to first result if not set
+            // Initialize highlighted index to first result if not set (accounting for chat result)
             if (newResults.length === 1) {
-              setHighlightedIndex(0);
+              setHighlightedIndex(searchQuery.length > 1 ? 1 : 0);
             }
           } else {
             break; // A new search has started, stop processing old results
@@ -276,9 +294,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         </button>
         <div className='mb-4 pr-8'>
           <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-1'>搜索</h2>
-          {searchResults.length > 0 && (
+          {(searchResults.length > 0 ||
+            (searchQuery.length > 1 && (aiResponseText || isChatLoading))) && (
             <span className='text-sm text-gray-500 dark:text-gray-400'>
-              {searchResults.length} 个结果
+              {searchQuery.length > 1 ? searchResults.length + 1 : searchResults.length} 个结果
             </span>
           )}
         </div>
@@ -310,67 +329,131 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           </div>
         </div>
 
-        {searchQuery.length > 0 && searchResults.length > 0 && (
-          <motion.ul
-            ref={resultsListRef}
-            className={clsx(
-              'overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md',
-              isMobile ? 'flex-1' : 'max-h-60'
-            )}
-            initial='hidden'
-            animate='visible'
-            variants={{
-              visible: {
-                transition: {
-                  staggerChildren: 0.05, // Stagger animation for children
+        {searchQuery.length > 0 &&
+          (searchResults.length > 0 ||
+            (searchQuery.length > 1 && (aiResponseText || isChatLoading))) && (
+            <motion.ul
+              ref={resultsListRef}
+              className={clsx(
+                'overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md',
+                isMobile ? 'flex-1' : 'max-h-60'
+              )}
+              initial='hidden'
+              animate='visible'
+              variants={{
+                visible: {
+                  transition: {
+                    staggerChildren: 0.05, // Stagger animation for children
+                  },
                 },
-              },
-            }}
-          >
-            {searchResults.map((result, index) => (
-              <motion.li
-                // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
-                key={`${result.type}-${result.id}-${result.name}-${result.factionId}`}
-                className='border-b border-gray-200 dark:border-gray-700 last:border-b-0'
-                variants={{
-                  hidden: { opacity: 0, y: 10 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-                transition={{ duration: 0.2 }}
-              >
-                <button
-                  type='button'
-                  onClick={() => handleResultClick(result)}
-                  className={clsx(
-                    'flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left',
-                    highlightedIndex === index && 'bg-gray-100 dark:bg-gray-700'
-                  )}
-                  onMouseEnter={() => setHighlightedIndex(index)}
+              }}
+            >
+              {/* Chat result as first item */}
+              {searchQuery.length > 1 && (aiResponseText || isChatLoading) && (
+                <motion.li
+                  key='chat-result'
+                  className='border-b border-gray-200 dark:border-gray-700'
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {result.imageUrl && (
-                    <Image
-                      src={result.imageUrl}
-                      // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
-                      alt={result.id ?? result.name ?? ''}
-                      width={32}
-                      height={32}
-                      className='object-cover mr-3'
-                    />
-                  )}
-                  <span className='text-gray-900 dark:text-white whitespace-nowrap'>
-                    {'id' in result ? result.id : 'name' in result ? result.name : ''}{' '}
-                    {/* ({result.type === 'character' ? '角色' : '知识卡'}) */}
-                  </span>
-                  {result.matchContext && (
-                    <span className='ml-2 text-gray-500 dark:text-gray-400 text-sm truncate'>
-                      {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
+                  <div
+                    className={clsx(
+                      'flex items-start p-3 bg-blue-50 dark:bg-blue-900/20',
+                      highlightedIndex === 0 && 'bg-blue-100 dark:bg-blue-900/40'
+                    )}
+                    onMouseEnter={() => setHighlightedIndex(0)}
+                  >
+                    <div className='flex-shrink-0 mr-3'>
+                      <div className='w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center'>
+                        <svg
+                          className='w-4 h-4 text-white'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='2'
+                            d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className='flex-1 min-w-0'>
+                      <div className='text-sm font-medium text-blue-700 dark:text-blue-300 mb-1'>
+                        AI 助手回答
+                      </div>
+                      <div className='text-sm text-gray-700 dark:text-gray-300'>
+                        {isChatLoading ? (
+                          <div className='flex items-center'>
+                            <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2'></div>
+                            正在生成回答...
+                          </div>
+                        ) : chatError ? (
+                          <span className='text-red-600 dark:text-red-400'>生成回答时出错</span>
+                        ) : (
+                          <div className='whitespace-pre-wrap'>
+                            {aiResponseText || '正在思考...'}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </motion.li>
+              )}
+
+              {/* Regular search results */}
+              {searchResults.map((result, index) => (
+                <motion.li
+                  // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
+                  key={`${result.type}-${result.id}-${result.name}-${result.factionId}`}
+                  className='border-b border-gray-200 dark:border-gray-700 last:border-b-0'
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <button
+                    type='button'
+                    onClick={() => handleResultClick(result)}
+                    className={clsx(
+                      'flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left',
+                      highlightedIndex === (searchQuery.length > 1 ? index + 1 : index) &&
+                        'bg-gray-100 dark:bg-gray-700'
+                    )}
+                    onMouseEnter={() =>
+                      setHighlightedIndex(searchQuery.length > 1 ? index + 1 : index)
+                    }
+                  >
+                    {result.imageUrl && (
+                      <Image
+                        src={result.imageUrl}
+                        // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
+                        alt={result.id ?? result.name ?? ''}
+                        width={32}
+                        height={32}
+                        className='object-cover mr-3'
+                      />
+                    )}
+                    <span className='text-gray-900 dark:text-white whitespace-nowrap'>
+                      {'id' in result ? result.id : 'name' in result ? result.name : ''}{' '}
+                      {/* ({result.type === 'character' ? '角色' : '知识卡'}) */}
                     </span>
-                  )}
-                </button>
-              </motion.li>
-            ))}
-          </motion.ul>
-        )}
+                    {result.matchContext && (
+                      <span className='ml-2 text-gray-500 dark:text-gray-400 text-sm truncate'>
+                        {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
+                      </span>
+                    )}
+                  </button>
+                </motion.li>
+              ))}
+            </motion.ul>
+          )}
 
         {searchQuery.length > 0 && searchResults.length === 0 && (
           <div className='p-2 text-gray-500 dark:text-gray-400 pr-8'>无结果</div>
