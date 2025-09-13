@@ -11,6 +11,9 @@ import { EditModeProvider, useEditMode } from '@/context/EditModeContext';
 import HomePageSection from '@/components/ui/HomePageSection';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '../components/ui/PageDescription';
+import LoginDialog from '@/components/LoginDialog';
+import { useMobile } from '@/hooks/useMediaQuery';
+import { useUser } from '@/hooks/useUser';
 
 export default function Home() {
   return (
@@ -26,7 +29,10 @@ function HomeContent() {
   const { toggleEditMode, isEditMode } = useEditMode();
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
+  const { nickname } = useUser();
+  const isMobile = useMobile();
 
   const handleEditModeToggle = () => {
     if (feedbackSectionRef.current?.isOpen?.()) {
@@ -34,8 +40,10 @@ function HomeContent() {
     }
     if (isEditMode) {
       setNotificationMessage('成功退出编辑模式');
+      setShowLoginDialog(false);
     } else {
       setNotificationMessage('成功进入编辑模式，编辑模式下，修改只在本地保存');
+      if (!nickname) setShowLoginDialog(true);
     }
     setShowNotification(true);
     toggleEditMode();
@@ -84,6 +92,14 @@ function HomeContent() {
       description: '道具列表',
       href: '/items',
       ariaLabel: '道具列表',
+    },
+    {
+      imageSrc: '/images/icons/cat faction.png',
+      imageAlt: '文章图标',
+      title: '文章',
+      description: '社区文章列表',
+      href: '/articles',
+      ariaLabel: '社区文章列表',
     },
     // {
     //   imageSrc: '/images/icons/cat faction.png',
@@ -138,6 +154,10 @@ function HomeContent() {
         type={isEditMode ? 'success' : 'info'}
         duration={isEditMode ? 3000 : 4000}
       />
+
+      {isEditMode && showLoginDialog && (
+        <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
+      )}
     </TabNavigationWrapper>
   );
 }
