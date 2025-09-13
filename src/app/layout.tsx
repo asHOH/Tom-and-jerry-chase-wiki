@@ -15,6 +15,8 @@ import { DarkModeProvider } from '@/context/DarkModeContext';
 import { getDarkModeFromCookie } from '@/lib/darkModeActions';
 import clsx from 'clsx';
 import KeyboardNavigation from '@/components/KeyboardNavigation';
+import { UserProvider } from '@/hooks/useUser';
+import { getUserData } from '@/lib/userActions';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,14 +25,18 @@ export const metadata: Metadata = defaultMetadata;
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const isDarkMode = await getDarkModeFromCookie();
   return (
-    <html lang='zh-CN' className={clsx('bg-gray-100 dark:bg-slate-900', isDarkMode && 'dark')}>
+    <html
+      lang='zh-CN'
+      className={clsx('bg-gray-100 dark:bg-slate-900', isDarkMode && 'dark')}
+      data-scroll-behavior='smooth'
+    >
       <head>
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
         <meta name='referrer' content='strict-origin-when-cross-origin' />
         <meta
           httpEquiv='Content-Security-Policy'
-          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://vitals.vercel-insights.com https://vercel-analytics.com https://vercel.live; media-src 'self'; object-src 'none'; child-src 'none'; frame-src https://vercel.live; form-action 'self'; base-uri 'self'; worker-src 'self' blob:;"
+          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; img-src 'self' data:; font-src 'self'; connect-src 'self' https://vitals.vercel-insights.com https://vercel-analytics.com https://vercel.live *.supabase.co https://hcaptcha.com https://*.hcaptcha.com; media-src 'self'; object-src 'none'; child-src 'none'; frame-src https://vercel.live https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; form-action 'self'; base-uri 'self'; worker-src 'self' blob:;"
         />
         <meta name='format-detection' content='telephone=no, date=no, email=no, address=no' />
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
@@ -44,7 +50,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <KeyboardNavigation />
           <OfflineIndicator />
           <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
-            <DarkModeProvider initialValue={isDarkMode}>{children}</DarkModeProvider>
+            <UserProvider initialValue={getUserData()}>
+              <DarkModeProvider initialValue={isDarkMode}>{children}</DarkModeProvider>
+            </UserProvider>
           </main>
         </ErrorBoundary>
         <PerformanceMonitor />

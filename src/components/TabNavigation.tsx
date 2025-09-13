@@ -10,6 +10,8 @@ import { useAppContext } from '@/context/AppContext';
 import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
+import { supabase } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/useUser';
 
 // Helper function for button styling
 const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: boolean) => {
@@ -77,6 +79,13 @@ const tabs: Tab[] = [
     imageAlt: '衍生物图标',
     path: '/entities',
   },
+  {
+    id: 'articles',
+    name: '文章',
+    imageSrc: '/images/icons/cat faction.png',
+    imageAlt: '文章图标',
+    path: '/articles',
+  },
 ];
 
 type TabNavigationProps = {
@@ -84,10 +93,12 @@ type TabNavigationProps = {
 };
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const isMobile = useMobile();
+  const { nickname, role, clearData: clearUserData } = useUser();
 
   // Reset navigation state when pathname changes
   useEffect(() => {
@@ -173,7 +184,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           ))}
         </div>
 
-        {/* Right-aligned detailed/simple view toggle button and SearchBar */}
+        {/* Right-aligned detailed/simple view toggle button, SearchBar, and User Settings */}
         <div className={clsx('flex items-center', isMobile ? 'gap-1' : 'gap-3')}>
           {pathname === '/' || pathname === '' ? <SearchBar /> : <DarkModeToggleButton />}
           {showDetailToggle && (
@@ -227,6 +238,55 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 </div>
               </div>
             </Tooltip>
+          )}
+          {/* User Settings Dropdown */}
+          {!!nickname && (
+            <div className='relative'>
+              <button
+                className={clsx(
+                  getButtonClassName(isMobile, false, dropdownOpen),
+                  'flex items-center justify-center p-2!'
+                )}
+                onClick={() => setDropdownOpen((prev) => !prev)}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='size-6'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
+                  />
+                </svg>
+              </button>
+              {dropdownOpen && (
+                <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md z-[99999]'>
+                  <ul>
+                    <li className='px-4 py-2'>你好，{nickname}</li>
+                    {(role == 'Coordinator' || role == 'Reviewer') && (
+                      <li className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'>
+                        <Link href='/admin/'>进入管理面板</Link>
+                      </li>
+                    )}
+                    <li
+                      className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'
+                      onClick={() => {
+                        supabase.auth.signOut();
+                        clearUserData();
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      注销
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
