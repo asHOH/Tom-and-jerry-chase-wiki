@@ -1400,7 +1400,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
         description: '香水指甲油通用，常规追击卡组。',
-        contributor: '鸽子',
+        contributor: '樱鹜ying',
       },
       {
         id: '魅力香水专用',
@@ -1409,16 +1409,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
             description: '香水图多常规防守卡组。',
-            contributor: '鸽子',
+            contributor: '樱鹜ying',
           },
           {
             cards: ['S-乘胜追击', 'S-屈打成招', 'A-细心', 'A-穷追猛打'],
-            contributor: '鸽子',
+            contributor: '樱鹜ying',
           },
           {
             cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-捕鼠夹', 'C-巡逻戒备'],
             description: '20知识量卡组。',
-            contributor: '鸽子',
+            contributor: '樱鹜ying',
           },
         ],
         defaultFolded: true,
@@ -1430,27 +1430,27 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             cards: ['S-乘胜追击', 'S-知识渊博', 'S-击晕'],
             description: '在前中后期都有较高强度。',
-            contributor: '鸽子',
+            contributor: '樱鹜ying',
           },
           {
             cards: ['S-乘胜追击', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
             description: '适合森林牧场，太空堡垒三等管道图。',
-            contributor: '鸽子',
+            contributor: '樱鹜ying',
           },
           {
             cards: ['S-猛攻', 'S-知识渊博', 'A-细心', 'A-熊熊燃烧'],
             description: '适合可以布局的图使用，后期拥有更强的防守翻盘能力。',
-            contributor: '鸽子',
+            contributor: '樱鹜ying',
           },
           {
             cards: ['S-乘胜追击', 'S-知识渊博', 'S-猛攻', 'B-反侦察'],
             description: '双经验卡成型更快，后期更强势。',
-            contributor: '鸽子',
+            contributor: '樱鹜ying',
           },
           {
             cards: ['S-击晕', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
             description: '小图且玩家自身找节奏能力强可用。',
-            contributor: '鸽子',
+            contributor: '樱鹜ying',
           },
         ],
         defaultFolded: true,

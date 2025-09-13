@@ -250,7 +250,8 @@ export const contributors: Contributor[] = [
   },
   {
     id: 'gezi',
-    name: '鸽子',
+    name: '樱鹜ying',
+    url: 'https://space.bilibili.com/1441596139',
     description: '多赛季前十图多',
     roles: [
       {
