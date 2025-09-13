@@ -10,6 +10,7 @@ import { designTokens } from '@/lib/design-tokens';
 import GameImage from '@/components/ui/GameImage';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
+import SectionHeader from '@/components/ui/SectionHeader';
 
 export default function EntityDetailClient({ entity }: { entity: Entity }) {
   // Keyboard navigation
@@ -92,60 +93,40 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
             </div>
           </BaseCard>
         </div>
-        <div className='md:w-2/3'>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: spacing.xl,
-              whiteSpace: 'pre-wrap',
-            }}
-          >
-            {[
-              entity.description === undefined
-                ? { title: '衍生物描述', text: '待补充' }
-                : {
-                    title: '衍生物描述',
-                    text:
-                      isDetailedView && entity.detailedDescription
-                        ? entity.detailedDescription
-                        : entity.description,
-                  },
-              entity.create === undefined
-                ? { title: '生成方式', text: '待补充' }
-                : {
-                    title: '生成方式',
-                    text:
-                      isDetailedView && entity.detailedCreate
-                        ? entity.detailedCreate
-                        : entity.create,
-                  },
-            ].map(({ title, text }) => (
-              <div key={title}>
-                <h2
-                  className='text-2xl font-bold dark:text-white'
-                  style={{
-                    paddingTop: spacing.xs,
-                    paddingBottom: spacing.xs,
-                    marginBottom: spacing.md,
-                  }}
+        <div className='md:w-2/3 space-y-3'>
+          {[
+            entity.description === undefined
+              ? { title: '衍生物描述', text: '待补充' }
+              : {
+                  title: '衍生物描述',
+                  text:
+                    isDetailedView && entity.detailedDescription
+                      ? entity.detailedDescription
+                      : entity.description,
+                },
+            entity.create === undefined
+              ? { title: '生成方式', text: '待补充' }
+              : {
+                  title: '生成方式',
+                  text:
+                    isDetailedView && entity.detailedCreate ? entity.detailedCreate : entity.create,
+                },
+          ].map(({ title, text }) => (
+            <div key={title}>
+              <SectionHeader title={title} />
+              <div
+                className='card dark:bg-slate-800 dark:border-slate-700 mb-8'
+                style={{ padding: spacing.lg }}
+              >
+                <p
+                  className='text-black dark:text-gray-200 text-lg'
+                  style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
                 >
-                  {title}
-                </h2>
-                <div
-                  className='card dark:bg-slate-800 dark:border-slate-700'
-                  style={{ padding: spacing.lg }}
-                >
-                  <p
-                    className='text-black dark:text-gray-200 text-lg'
-                    style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
-                  >
-                    <TextWithHoverTooltips text={text as string} />
-                  </p>
-                </div>
+                  <TextWithHoverTooltips text={text as string} />
+                </p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

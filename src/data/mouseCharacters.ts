@@ -7171,19 +7171,19 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '奶酪',
         isMinor: false,
-        description: '本身为奶酪位，{主动技能}可提高自身推奶酪速度。',
+        description: '推速高，{香甜梦境}进一步提高自身推速，{毛线球}进一步加快奶酪进度。',
         additionalDescription: '',
       },
       {
         tagName: '砸墙',
         isMinor: false,
-        description: '毛线球可拉动道具，利用高尔夫球和毛线球可实现快速破墙。',
+        description: '{毛线球}可拉动道具，利用高尔夫球和毛线球可实现快速破墙。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
         isMinor: false,
-        description: '毛线球拉动道具砸入奶酪进度的特性使其克制大部分防守猫。',
+        description: '{毛线球}拉动道具砸入奶酪进度的特性使其克制大部分防守猫。',
         additionalDescription: '最后一块奶酪时请  不  要  和  梦  游  抢  高  尔  夫！！！谢谢！！',
       },
     ],
@@ -7192,7 +7192,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '',
         pattern: '21(0)[21]2100',
         weaponType: 'weapon1',
-        description: '若前期被针对可考虑点出一级被动，若未被针对则可不点被动。',
+        description: '若前期被针对可点{1级被动}，若未被针对则可不点被动。',
       },
     ],
     knowledgeCardGroups: [
@@ -7210,7 +7210,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         cards: ['S-舍己', 'S-铁血', 'B-夹不住我', 'C-救救我', 'C-脱身'],
-        description: '脱身适配一级被动，可理解为幸运流。',
+        description: '{脱身}适配{1级被动}，可理解为幸运流。',
       },
     ],
     skills: [
@@ -7220,7 +7220,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '进入梦境，期间提高推速，受到伤害时解除此伤害带来的控制，然后在短时间内免疫虚弱并进入强制移动状态，该状态下碰到敌方会造成减速和伤害。[香甜梦境持续期间](未进入强制移动状态前)再次点按本技能键可退出梦境状态。',
         detailedDescription:
-          '进入梦境。梦境期间推速增加50%，受到伤害会解除此伤害带来的控制，然后[在1.9秒内免疫虚弱并以800的速度强制移动](强制移动期间可跳跃和改变移动方向，只能通过部分动作前摇自行取消（例如“进入机械鼠”或特技-绝处逢生的前摇）。强制移动不会因受到伤害打断，但会被眩晕打断。若在触发受伤但未导致虚弱的伤害导致的强制移动状态期间被攻击至虚弱，则刷新持续时间。若强制移动期间因受力等原因改变速度，则会持续保持，这可能造成自身被“硬控在原地”)，强制移动时碰到敌方会对其造成20点伤害并降低20%移速，持续1.5秒。[香甜梦境持续期间](未进入强制移动状态前)再次点击技能可在1.25秒前摇后结束梦境，后摇1秒。梦境可持续40s。该技能效果先于知识卡-铁血触发。',
+          '进入梦境，期间推速增加50%，受到伤害会解除此伤害带来的控制，然后[在1.9秒内免疫虚弱并以800的速度强制移动](强制移动期间可跳跃和改变移动方向，只能通过部分动作前摇自行取消（例如“进机器鼠”或{绝处逢生}的前摇）。强制移动不会因受到伤害打断，但会被眩晕打断。若在触发受伤但未导致虚弱的伤害导致的强制移动状态期间被攻击至虚弱，则刷新持续时间。若强制移动期间因受力等原因改变速度，则会持续保持，这可能造成自身被“硬控在原地”)，强制移动时碰到敌方会对其造成20点伤害并降低20%移速，持续1.5秒。[香甜梦境持续期间](未进入强制移动状态前)再次点击技能可在1.25秒前摇后结束梦境，后摇1秒。梦境可持续40s。该技能效果先于{铁血}触发。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         forecast: 1.25,
@@ -7234,10 +7234,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '释放技能立刻恢复大量Hp。梦境期间隐藏自身在小地图上的位置。',
+            description: '释放技能立刻回复大量Hp。梦境期间隐藏自身在小地图上的位置。',
             cooldown: 18,
             detailedDescription:
-              '释放技能立刻恢复51点Hp。梦境期间隐藏自身在小地图上的位置，且[受到可导致虚弱的伤害时](注意：若在触发受伤但未导致虚弱的伤害导致的强制移动状态期间被攻击至虚弱，则刷新持续时间)，使强制移动的速度增加到1200。',
+              '释放技能立刻回复51点Hp。梦境期间隐藏自身在小地图上的位置，且[受到可导致虚弱的伤害时](注意：若在触发受伤但未导致虚弱的伤害导致的强制移动状态期间被攻击至虚弱，则刷新持续时间)，使强制移动的速度增加到1200。',
           },
           {
             level: 3,
@@ -7275,17 +7275,17 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '被毛线球带回的奶酪碰到空洞口放入后，也会增加一定奶酪推入进度。',
-            detailedDescription: '被毛线球带回的奶酪碰到空洞口放入后，会增加15%奶酪推入进度。',
+            description: '毛线球将奶酪拉进洞口时，增加一定奶酪推入进度。',
+            detailedDescription: '毛线球将奶酪拉进洞口时，增加15%奶酪推入进度。',
             cooldown: 15,
           },
           {
             level: 3,
             description:
-              '大幅提高本技能带回的奶酪和道具碰撞增加的奶酪推入进度。提高可带回的道具数量。',
+              '毛线球单次携带的道具数量提升为3个；大幅提高将奶酪拉进洞口和道具碰撞增加的奶酪推入进度。',
             cooldown: 15,
             detailedDescription:
-              '单次携带的道具数量提升为3个，将奶酪拉进洞口后增加的进度提高至32.67%，道具与奶酪碰撞增加的进度提高至21.67%。',
+              '毛线球单次携带的道具数量提升为3个；将奶酪拉进洞口增加的进度提高至32.67%，道具与奶酪碰撞增加的进度提高至21.67%。',
           },
         ],
         cueRange: '全图可见',
@@ -7305,7 +7305,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description:
-              '当敌方处于眩晕或虚弱状态时，站在敌方附近并面朝敌方时将会进行嘲笑，回复Hp并减少技能冷却时间。',
+              '当敌方处于眩晕或虚弱状态时，站在敌方附近并面朝敌方时将会进行嘲笑，回复Hp并减少技能CD。',
             detailedDescription:
               '当敌方处于眩晕或虚弱状态时，[站在距离敌方400的范围内并面朝敌方时将会进行嘲笑](梦游杰瑞移动时不会进行嘲笑，静止不动时面朝眩晕中的敌人自动开始嘲笑，可被移动键、跳跃键及道具键*打断)，动作持续1s，可回复30Hp并减少{主动技能}和{武器技能}CD上限的50%。该效果有10秒CD。',
           },
@@ -7320,18 +7320,18 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     specialSkills: [
       {
         name: '急速翻滚',
-        description: '搭配毛线球提高搬奶酪效率。',
+        description: '搭配{毛线球}提高搬奶酪效率。',
       },
       {
         name: '绝处逢生',
-        description: '香甜梦境持续期间受到伤害带来的移速加成可拉开与猫咪的距离。',
+        description:
+          '{香甜梦境}持续期间受到伤害带来的移速加成可拉开与猫咪的距离，可能可以通过本特技逃脱。',
       },
     ],
-    aliases: ['梦游'],
     counteredBy: [
       {
         id: '莱特宁',
-        description: '梦游拉毛线时会被莱特宁三级闪现恐吓，莱特宁的垃圾桶还能略微反制梦游的破局。',
+        description: '梦游拉毛线时会被莱特宁3级闪现恐吓，莱特宁的垃圾桶还能略微反制梦游的破局。',
         isMinor: true,
       },
     ],
