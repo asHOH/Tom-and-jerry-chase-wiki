@@ -14,10 +14,7 @@ import { designTokens } from '@/lib/design-tokens';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import { characters } from '@/data';
 import { CharacterWithFaction } from '@/lib/types';
-import Image from '@/components/Image';
-import Link from 'next/link';
-import { useMobile } from '@/hooks/useMediaQuery';
-import clsx from 'clsx';
+import AdviceCharacterList from './AdviceCharacterList';
 
 const allSkillsAdvice = [
   ...Object.values(specialSkillsAdvice.cat),
@@ -27,7 +24,6 @@ const allSkillsAdvice = [
 export default function SpecialSkillAdviceClient() {
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
-  const isMobile = useMobile();
 
   // Filter skills by faction if selected
   const filteredSkills = selectedFaction
@@ -168,52 +164,11 @@ export default function SpecialSkillAdviceClient() {
                     </span>
                     被{skill.name}克制的{skill.factionId == 'cat' ? '老鼠' : '猫咪'}：
                   </span>
-                  <div className='rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-2 py-2'>
-                    <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-                      {allCounteredBy(skill)[0].map((character) => (
-                        <li
-                          key={character.id ?? ''}
-                          className='flex items-center gap-4 p-3 rounded-lg transition-colors bg-blue-50 dark:bg-blue-900/30 hover:-translate-y-1'
-                        >
-                          <Link
-                            href={`/characters/${character.id}`}
-                            className='flex items-center gap-2 w-full'
-                            tabIndex={0}
-                          >
-                            <Image
-                              src={character.imageUrl!}
-                              alt={character.id!}
-                              className='w-10 h-10'
-                              width={40}
-                              height={40}
-                            />
-                            <span className='text-lg dark:text-white truncate'>{character.id}</span>
-                          </Link>
-                        </li>
-                      ))}
-                      {allCounteredBy(skill)[1].map((character) => (
-                        <li
-                          key={character.id ?? ''}
-                          className='flex items-center gap-4 p-3 rounded-lg transition-colors bg-blue-50 dark:bg-blue-900/30 opacity-60 hover:-translate-y-1'
-                        >
-                          <Link
-                            href={`/characters/${character.id}`}
-                            className='flex items-center gap-2 w-full opacity-80'
-                            tabIndex={0}
-                          >
-                            <Image
-                              src={character.imageUrl!}
-                              alt={character.id!}
-                              className='w-10 h-10'
-                              width={40}
-                              height={40}
-                            />
-                            <span className='text-lg dark:text-white truncate'>{character.id}</span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <AdviceCharacterList
+                    characters={allCounteredBy(skill)[0]}
+                    isMinorCharacters={allCounteredBy(skill)[1]}
+                    color='blue'
+                  />
                 </div>
               )}
 
@@ -243,52 +198,11 @@ export default function SpecialSkillAdviceClient() {
                     </span>
                     克制{skill.name}的{skill.factionId == 'cat' ? '老鼠' : '猫咪'}：
                   </span>
-                  <div className='rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-2 py-2'>
-                    <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-                      {allCounters(skill)[0].map((character) => (
-                        <li
-                          key={character.id ?? ''}
-                          className='flex items-center gap-4 p-3 rounded-lg transition-colors bg-red-50 dark:bg-red-900/30 hover:-translate-y-1'
-                        >
-                          <Link
-                            href={`/characters/${character.id}`}
-                            className='flex items-center gap-2 w-full'
-                            tabIndex={0}
-                          >
-                            <Image
-                              src={character.imageUrl!}
-                              alt={character.id!}
-                              className='w-10 h-10'
-                              width={40}
-                              height={40}
-                            />
-                            <span className='text-lg dark:text-white truncate'>{character.id}</span>
-                          </Link>
-                        </li>
-                      ))}
-                      {allCounters(skill)[1].map((character) => (
-                        <li
-                          key={character.id ?? ''}
-                          className='flex items-center gap-4 p-3 rounded-lg transition-colors bg-red-50 dark:bg-red-900/30 opacity-60 hover:-translate-y-1'
-                        >
-                          <Link
-                            href={`/characters/${character.id}`}
-                            className='flex items-center gap-2 w-full opacity-80'
-                            tabIndex={0}
-                          >
-                            <Image
-                              src={character.imageUrl!}
-                              alt={character.id!}
-                              className='w-10 h-10'
-                              width={40}
-                              height={40}
-                            />
-                            <span className='text-lg dark:text-white truncate'>{character.id}</span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <AdviceCharacterList
+                    characters={allCounters(skill)[0]}
+                    isMinorCharacters={allCounters(skill)[1]}
+                    color='red'
+                  />
                 </div>
               )}
 
@@ -317,40 +231,7 @@ export default function SpecialSkillAdviceClient() {
                     </span>
                     适合携带{skill.name}的{skill.factionId == 'cat' ? '猫咪' : '老鼠'}：
                   </span>
-                  <div className='rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-2 py-2'>
-                    <ul
-                      className={clsx(
-                        'grid grid-cols-1 sm:grid-cols-2 gap-4',
-                        allUsers(skill).length <= 8 ? 'lg:grid-cols-4' : 'lg:grid-cols-10'
-                      )}
-                    >
-                      {allUsers(skill).map((character) => (
-                        <li
-                          key={character.id ?? ''}
-                          className='flex items-center gap-4 p-3 rounded-lg transition-colors bg-green-50 dark:bg-green-900/30 hover:-translate-y-1'
-                        >
-                          <Link
-                            href={`/characters/${character.id}`}
-                            className='flex items-center gap-2 w-full'
-                            tabIndex={0}
-                          >
-                            <Image
-                              src={character.imageUrl!}
-                              alt={character.id!}
-                              className='w-10 h-10'
-                              width={40}
-                              height={40}
-                            />
-                            {(isMobile || allUsers(skill).length <= 8) && (
-                              <span className='text-lg dark:text-white truncate'>
-                                {character.id}
-                              </span>
-                            )}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <AdviceCharacterList characters={allUsers(skill)} color='green' />
                 </div>
               )}
             </div>
