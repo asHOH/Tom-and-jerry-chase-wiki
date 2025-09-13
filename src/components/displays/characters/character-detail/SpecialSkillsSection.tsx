@@ -13,7 +13,15 @@ export default function SpecialSkillsSection() {
   if (!character.specialSkills?.length && !isEditMode) return null;
   return (
     <div>
-      <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3'>推荐特技</h3>
+      <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3'>
+        {isEditMode ? (
+          '推荐特技'
+        ) : (
+          <Link href={`/special-skills/advice`} className='hover:underline'>
+            推荐特技
+          </Link>
+        )}
+      </h3>
       <ul className='flex flex-col items-center gap-2'>
         {(character.specialSkills ?? []).map((skill, index) => {
           const specialSkill = specialSkills[character.factionId!][skill.name];

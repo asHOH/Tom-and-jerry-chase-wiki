@@ -18,7 +18,7 @@ function normalizeCategoryHint(raw?: string): CategoryHint | undefined {
 
 export async function getGotoResult(
   name: string,
-  category?: CategoryHint | string
+  category?: CategoryHint | (string & Record<never, never>)
 ): Promise<GotoResult | null> {
   const normalizedCategory = normalizeCategoryHint(category);
   // Parse skill level prefix like "2级技能名"
