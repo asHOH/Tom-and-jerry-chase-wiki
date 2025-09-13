@@ -129,111 +129,87 @@ export async function POST(req: NextRequest) {
     const getGeminiUrl = () =>
       `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
-    const requestBody = {
-      contents: messages,
-      tools: [getDataTool],
-      safetySettings,
-      systemInstruction,
-    };
+    const currentMessages: Content[] = [...messages];
+    const MAX_TOOL_CALLS = 5; // Safety break to prevent infinite loops
 
-    console.log('Request body:', JSON.stringify(requestBody, null, 2));
+    for (let i = 0; i < MAX_TOOL_CALLS; i++) {
+      const requestBody = {
+        contents: currentMessages,
+        tools: [getDataTool],
+        safetySettings,
+        systemInstruction,
+      };
 
-    // 1. Make a non-streaming call to check for tool calls
-    const initialResponse = await fetch(getGeminiUrl(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody),
-    });
+      console.log(`Loop ${i + 1} - Request body:`, JSON.stringify(requestBody, null, 2));
 
-    if (!initialResponse.ok) {
-      const errorText = await initialResponse.text();
-      console.error('Initial API call failed:', errorText);
-      return new NextResponse(
-        JSON.stringify({ error: 'Gemini API call failed', details: errorText }),
-        { status: initialResponse.status }
-      );
-    }
-
-    const responseJson = await initialResponse.json();
-    console.log('Initial API response:', JSON.stringify(responseJson, null, 2));
-
-    const candidate = responseJson.candidates?.[0];
-
-    if (!candidate) {
-      console.error('No candidate in response:', responseJson);
-      return new NextResponse(JSON.stringify({ error: 'No response candidate from Gemini' }), {
-        status: 500,
+      const response = await fetch(getGeminiUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
       });
-    }
 
-    const functionCall = candidate.content?.parts?.find(
-      (part: Part) => part.functionCall
-    )?.functionCall;
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API call failed in loop ${i + 1}:`, errorText);
+        return new NextResponse(
+          JSON.stringify({ error: 'Gemini API call failed', details: errorText }),
+          { status: response.status }
+        );
+      }
 
-    // 2. If Gemini requests a tool call (check for function call regardless of finish reason)
-    if (functionCall) {
-      console.log('Function call detected:', functionCall);
-      const { name, args } = functionCall;
+      const responseJson = await response.json();
+      console.log(`Loop ${i + 1} - API response:`, JSON.stringify(responseJson, null, 2));
 
-      if (name === 'getData') {
-        const toolResult = await getData(args);
-        console.log('Tool result:', toolResult);
+      const candidate = responseJson.candidates?.[0];
 
-        const newMessages: Content[] = [
-          ...messages,
-          { role: 'model', parts: [{ functionCall }] },
-          {
-            role: 'user',
-            parts: [
-              {
-                functionResponse: {
-                  name: 'getData',
-                  response: { name: 'getData', content: toolResult },
-                },
-              },
-            ],
-          },
-        ];
-
-        const finalRequestBody = {
-          contents: newMessages,
-          tools: [getDataTool],
-          safetySettings,
-          systemInstruction,
-        };
-
-        console.log('Final request body:', JSON.stringify(finalRequestBody, null, 2));
-
-        // 3. Make a second call with the tool result
-        const finalResponse = await fetch(getGeminiUrl(), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(finalRequestBody),
+      if (!candidate) {
+        console.error('No candidate in response:', responseJson);
+        return new NextResponse(JSON.stringify({ error: 'No response candidate from Gemini' }), {
+          status: 500,
         });
+      }
 
-        if (!finalResponse.ok) {
-          const errorText = await finalResponse.text();
-          console.error('Final API call failed:', errorText);
-          return new NextResponse(
-            JSON.stringify({ error: 'Failed to get final response', details: errorText }),
-            { status: finalResponse.status }
+      const functionCallPart = candidate.content?.parts?.find((part: Part) => part.functionCall);
+
+      if (functionCallPart?.functionCall) {
+        console.log('Function call detected:', functionCallPart.functionCall);
+        const { name, args } = functionCallPart.functionCall;
+
+        if (name === 'getData') {
+          const toolResult = await getData(args as { name: string });
+          console.log('Tool result:', toolResult);
+
+          // Append the model's function call and the tool's response to the history
+          currentMessages.push(
+            { role: 'model', parts: [functionCallPart] },
+            {
+              role: 'user',
+              parts: [
+                {
+                  functionResponse: {
+                    name: 'getData',
+                    response: { name: 'getData', content: toolResult },
+                  },
+                },
+              ],
+            }
           );
+          // Continue the loop to send the tool result back to the model
+        } else {
+          console.error('Unsupported tool call:', name);
+          return new NextResponse(JSON.stringify({ error: `Unsupported tool call: ${name}` }), {
+            status: 400,
+          });
         }
+      } else {
+        // No function call, so it must be a text response. We're done.
+        const text = candidate.content?.parts?.map((part: Part) => part.text).join('') || '';
+        console.log('Final text response:', text);
 
-        const finalResponseJson = await finalResponse.json();
-        console.log('Final API response:', JSON.stringify(finalResponseJson, null, 2));
-
-        const finalCandidate = finalResponseJson.candidates?.[0];
-        const finalText =
-          finalCandidate?.content?.parts?.map((part: Part) => part.text).join('') || '';
-
-        console.log('Final text response:', finalText);
-
-        // 4. Return the final text response as JSON
         return new NextResponse(
           JSON.stringify({
-            text: finalText,
-            candidates: finalResponseJson.candidates,
+            text,
+            candidates: responseJson.candidates,
           }),
           {
             headers: {
@@ -241,28 +217,14 @@ export async function POST(req: NextRequest) {
             },
           }
         );
-      } else {
-        console.error('Unsupported tool call:', name);
-        return new NextResponse(JSON.stringify({ error: `Unsupported tool call: ${name}` }), {
-          status: 400,
-        });
       }
     }
 
-    // 5. If no tool call, return the direct text response
-    const text = candidate.content?.parts?.map((part: Part) => part.text).join('') || '';
-    console.log('Direct text response:', text);
-
+    // If the loop finishes, it means the maximum number of tool calls was reached.
+    console.error('Maximum number of tool calls reached.');
     return new NextResponse(
-      JSON.stringify({
-        text,
-        candidates: responseJson.candidates,
-      }),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
+      JSON.stringify({ error: 'Maximum number of tool calls reached. Please try again.' }),
+      { status: 500 }
     );
   } catch (error) {
     console.error('Chat API error:', error);

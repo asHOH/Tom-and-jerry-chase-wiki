@@ -455,9 +455,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             </motion.ul>
           )}
 
-        {searchQuery.length > 0 && searchResults.length === 0 && (
-          <div className='p-2 text-gray-500 dark:text-gray-400 pr-8'>无结果</div>
-        )}
+        {searchQuery.length > 0 &&
+          searchResults.length === 0 &&
+          !(aiResponseText || isChatLoading) && (
+            <div className='p-2 text-gray-500 dark:text-gray-400 pr-8'>无结果</div>
+          )}
       </motion.div>
     </motion.div>
   );
