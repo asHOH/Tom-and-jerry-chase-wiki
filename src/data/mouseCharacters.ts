@@ -407,6 +407,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    specialSkills: [
+      { name: '绝处逢生', description: '绝处逢生配合隐身能有效提高生存能力，还能用来清理夹子。' },
+    ],
   },
 
   /* ----------------------------------- 罗宾汉杰瑞 ----------------------------------- */
@@ -950,6 +953,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    specialSkills: [
+      { name: '魔术漂浮', description: '魔术漂浮泛用性很高，在各场合均有不错发挥。' },
+      { name: '绝处逢生', description: '绝处逢生泛用性很高，在各场合均有不错发挥。' },
+      { name: '干扰投掷', description: '干扰投掷能提高航海士杰瑞的干扰能力。' },
+    ],
     collaborators: [
       {
         id: '拿坡里鼠',
@@ -957,8 +965,16 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: true,
       },
     ],
+    counteredBySpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '猫咪会利用绝地反击解除或免疫控制。',
+        isMinor: false,
+      },
+    ],
   },
 
+  /* ----------------------------------- 国王杰瑞 ----------------------------------- */
   国王杰瑞: {
     description:
       '国王杰瑞是玩具国的王，他胸怀天下，对自己的子民良善，但对破坏国家安定的野猫毫不留情。',
@@ -1166,6 +1182,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    specialSkills: [
+      { name: '魔术漂浮', description: '魔术漂浮泛用性很高，在各场合均有不错发挥。' },
+      { name: '绝处逢生', description: '绝处逢生泛用性很高，在各场合均有不错发挥。' },
+    ],
   },
 
   /* ----------------------------------- 剑客杰瑞 ----------------------------------- */
@@ -1199,7 +1219,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     specialSkills: [
       {
         name: '干扰投掷',
-        description: '',
+        description: '提高干扰能力和技能命中率。',
       },
     ],
     skillAllocations: [
@@ -1393,6 +1413,18 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '国王杰瑞',
         description: '战旗的增益能使剑杰的输出能力进一步提升。',
+        isMinor: true,
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '蓄力重击',
+        description: '蓄力重击可以直接击倒高Hp老鼠。',
+        isMinor: true,
+      },
+      {
+        id: '绝地反击',
+        description: '猫咪会利用绝地反击解除或免疫控制。',
         isMinor: true,
       },
     ],
@@ -2261,6 +2293,18 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: true,
       },
     ],
+    counteredBySpecialSkills: [
+      {
+        id: '蓄力重击',
+        description: '蓄力重击可以直接击倒高Hp老鼠。',
+        isMinor: true,
+      },
+      {
+        id: '绝地反击',
+        description: '猫咪会利用绝地反击解除或免疫控制。',
+        isMinor: true,
+      },
+    ],
   },
 
   /* ----------------------------------- 恶魔杰瑞 ----------------------------------- */
@@ -2977,7 +3021,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '',
+        description: '泛用性很高的特技，在各场合均有发挥。',
       },
     ],
   },
@@ -3202,6 +3246,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    specialSkills: [
+      {
+        name: '应急治疗',
+        description:
+          '天使杰瑞被动需要受伤触发，利用应急治疗提高续航。另外天使杰瑞基础恢复速度快，解除受伤后能快速回满Hp。',
+      },
+      { name: '绝处逢生', description: '集自救恢复解控于一体，在各场合均有发挥。' },
+    ],
     collaborators: [
       {
         id: '仙女鼠',
@@ -3209,6 +3261,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '天使杰瑞的Lv.2被动可以夺取猫身上的星星，供仙女鼠使用；雷云还能降低对方伤害，提高二者的容错率。但这一组合中的仙女鼠压力极大，很怕空技能和猛攻，相对来说操作和收益并不完全对等，慎用。',
         isMinor: true,
       },
+    ],
+    countersSpecialSkills: [
+      { id: '我生气了！', description: '天使杰瑞一被动能封锁爪刀。', isMinor: false },
     ],
   },
 
@@ -3477,6 +3532,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
     ],
     aliases: ['天菲', '天妃'],
+    counteredBySpecialSkills: [
+      {
+        id: '蓄力重击',
+        description:
+          '蓄力重击可以直接击倒天菲；不过天菲后期的三级庇护的免死效果持续期间能抗下蓄力重击。',
+        isMinor: true,
+      },
+    ],
   },
 
   /* ----------------------------------- 魔术师 ----------------------------------- */
@@ -3792,6 +3855,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '配合魔术卡牌提高干扰能力。',
       },
     ],
+    counteredBySpecialSkills: [
+      {
+        id: '蓄力重击',
+        description: '蓄力重击可以直接击倒魔术师的兔子。',
+        isMinor: true,
+      },
+    ],
   },
 
   /* ----------------------------------- 佩克斯 ----------------------------------- */
@@ -3945,6 +4015,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    specialSkills: [
+      {
+        name: '干扰投掷',
+        description: '干扰投掷能提高佩克斯的干扰能力，还能让主动技能更容易命中敌方。',
+      },
+      { name: '魔术漂浮', description: '魔术漂浮泛用性很高，在大部分场合均有发挥。' },
+      { name: '绝处逢生', description: '绝处逢生泛用性很高，在大部分场合均有发挥。' },
+    ],
     counters: [
       {
         id: '莱特宁',
@@ -4002,7 +4080,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     counteredBySpecialSkills: [
       {
         id: '蓄力重击',
-        description: '克制高血量老鼠。',
+        description: '蓄力重击可以直接击倒高Hp老鼠。',
         isMinor: false,
       },
     ],
@@ -4302,9 +4380,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '分身大师',
         type: 'active',
         description:
-          '自身进入隐身状态，同时召唤1个{侦探泰菲分身}，分身会自由走动，被击倒时使敌方短暂失明。', // FIXME: 被友方击倒呢？
+          '自身进入隐身状态，同时召唤1个{侦探泰菲分身}，分身会自由走动，被敌方击倒时使其短暂失明。',
         detailedDescription:
-          '自身进入隐身状态，持续一段时间；同时召唤1个{侦探泰菲分身}，存在6.9秒，被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。\n分身大师分身特性：Hp上限为25并[按比例继承本体Hp](如本体Hp为24，分身Hp将为8.33)、继承角色Hp恢复速度、不继承本体状态和知识卡、免疫捕鼠夹；Hp归零或持续时间结束时将原地消失；会在地图内四处走动，可能会钻管道；若半径800范围内出现猫咪，分身会尝试远离之。',
+          '自身进入隐身状态，持续一段时间；同时召唤1个{侦探泰菲分身}，存在6.9秒，被敌方击倒时使其失明1.75秒，但不会破盾或减少护盾时间。\n分身大师分身特性：Hp上限为25并[按比例继承本体Hp](如本体Hp为24，分身Hp将为8.33)、继承角色Hp恢复速度、不继承本体状态和知识卡、免疫捕鼠夹；Hp归零或持续时间结束时将原地消失；会在地图内四处走动，可能会钻管道；若半径800范围内出现猫咪，分身会尝试远离之。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -4341,9 +4419,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '追踪饮料',
         type: 'weapon1',
         description:
-          '拿出饮料杯朝地上倾倒，留下{饮料印记}，持续25秒。一旦印记与猫咪处在同一个房间，印记会召唤1个[模拟自己或队友外形](只包括存活的鼠方队友)的{饮料分身}。分身被击倒时使敌方短暂失明。存在{侦探泰菲分身}或{饮料分身}时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。',
+          '拿出饮料杯朝地上倾倒，留下{饮料印记}，持续25秒。一旦印记与猫咪处在同一个房间，印记会召唤1个[模拟自己或队友外形](只包括存活的鼠方队友)的{饮料分身}。分身被敌方击倒时使其短暂失明。存在{侦探泰菲分身}或{饮料分身}时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。',
         detailedDescription:
-          '拿出饮料杯朝地上倾倒，留下{饮料印记}，持续25秒。一旦印记与猫咪处在同一个房间，印记会召唤1个[模拟自己或队友外形](只包括存活的鼠方队友)的{饮料分身}，持续较长时间。分身被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。当场上存在[由自身召唤](即不包括其他侦探泰菲召唤的分身)的{侦探泰菲分身}或{饮料分身}时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。同一房间同时召唤的分身越多，分身存在时间越短。\n饮料分身特性：Hp上限为角色Hp上限减49并[按比例继承本体Hp](如124血的剑杰Hp为24，召唤出的分身Hp将为15)，若同房间内出现出现猫咪将跑向最近的道具/水果盘/冰桶处，若半径800范围内出现猫咪将使用相应道具进行攻击。', // FIXME: 玩具枪也会用吗？“被击倒”是Hp归零还是要小于0？
+          '拿出饮料杯朝地上倾倒，留下{饮料印记}，持续25秒。一旦印记与猫咪处在同一个房间，印记会召唤1个[模拟自己或队友外形](只包括存活的鼠方队友)的{饮料分身}，持续较长时间。分身被敌方击倒时使其失明1.75秒，但不会破盾或减少护盾时间。当场上存在[由自身召唤](即不包括其他侦探泰菲召唤的分身)的{侦探泰菲分身}或{饮料分身}时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。同一房间同时召唤的分身越多，分身存在时间越短。\n饮料分身特性：Hp上限为角色Hp上限减49并[按比例继承本体Hp](如124血的剑杰Hp为24，召唤出的分身Hp将为15)，若同房间内出现出现猫咪将跑向最近的道具/水果盘/冰桶处，若半径800范围内出现猫咪将使用相应道具进行攻击。', // FIXME: 玩具枪也会用吗？“被击倒”是Hp归零还是要小于0？
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键*', '跳跃键'],
@@ -4395,6 +4473,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
       },
+    ],
+    specialSkills: [
+      { name: '绝处逢生', description: '绝处逢生和隐身搭配能大幅提高生存能力，还能用来清理夹子。' },
+      { name: '魔术漂浮', description: '泛用性很高的特技，在大多数场合均有发挥。' },
     ],
   },
 
@@ -4540,6 +4622,17 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
               '当道具命中困在风墙内或被剑气打中的猫咪时，额外造成2.5秒眩晕效果（可救下其手中的老鼠），[对同一敌方有45秒内置CD](敌方会获得名为“免疫”的状态，状态期间免疫该眩晕效果)。',
           },
         ],
+      },
+    ],
+    specialSkills: [
+      { name: '干扰投掷', description: '干扰投掷能提高干扰能力，还能配合风墙拖延更长时间。' },
+      { name: '应急治疗', description: '应急治疗提高续航能力，并且能更方便地触发一被动。' },
+    ],
+    countersSpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '风墙的干扰无法被绝地反击免疫，且莉莉二被动命中霸体敌方也能触发。',
+        isMinor: true,
       },
     ],
   },
@@ -4886,6 +4979,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '部分高低差较多的地图可考虑携带，补充容错。不过罗菲本身就有藤蔓和[圆球二段跳](在空中向上释放弹力圆球，达到类似二段跳的效果)，并不特别依赖漂浮。',
       },
     ],
+    counteredBySpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '罗菲需要近距离接触猫咪才能干扰，一旦猫咪使用绝地反击就很容易形成反打。',
+        isMinor: false,
+      },
+    ],
   },
 
   /* ----------------------------------- 玛丽 ----------------------------------- */
@@ -5031,6 +5131,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
       },
+    ],
+    specialSkills: [
+      { name: '魔术漂浮', description: '魔术漂浮泛用性很高，在各场合均有发挥。' },
+      { name: '干扰投掷', description: '干扰投掷能提高玛丽的干扰能力和技能命中率。' },
     ],
   },
 
@@ -5215,19 +5319,27 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '踏空必备',
+        description:
+          '[踏空救援](马索尔在传送救援后使用魔术漂浮避免踩夹。这一操作需要传送前滞空/传送的瞬间跳跃，并且需要一定熟练度)必备。',
       },
       {
         name: '绝处逢生',
-        description: '传送破夹',
+        description:
+          '[传送破夹](传送前使用绝处逢生，传送后触发解控效果，从而清理火箭下的夹子)必备。',
       },
       {
         name: '干扰投掷',
-        description: '道具接拳',
+        description: '干扰投掷提高马索尔的干扰能力和拳头命中率。',
       },
     ],
-
     aliases: ['大表哥'],
+    counteredBySpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '绝地反击能克制大表哥的拳头干扰，不过无法免疫升龙拳的击飞效果。',
+        isMinor: true,
+      },
+    ],
   },
 
   /* ----------------------------------- 米雪儿 ----------------------------------- */
@@ -5368,6 +5480,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
       },
     ],
+    specialSkills: [{ name: '魔术漂浮', description: '泛用性很高的特技，在各地图均有发挥。' }],
   },
 
   /* ----------------------------------- 音乐家杰瑞 ----------------------------------- */
@@ -5439,7 +5552,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     specialSkills: [
       {
         name: '急速翻滚',
-        description: '',
+        description: '音乐家在武器技能持续期间持有惯性，此时使用急速翻滚能快速位移。',
       },
     ],
 
@@ -5541,6 +5654,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '皮糙肉厚',
         description: '皮糙肉厚减伤导致音乐家的多段伤害大幅减少。',
         isMinor: false,
+      },
+    ],
+    countersSpecialSkills: [
+      {
+        id: '绝地反击',
+        description:
+          '音乐家能快速拆火箭，阻止猫咪霸体绑火箭。不过绝地反击能免疫共鸣眩晕，还是要小心。',
+        isMinor: true,
       },
     ],
   },
@@ -5692,6 +5813,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '猛攻',
         description: '猛攻能让乘坐战车的蒙金奇无法脱离，失去干扰能力的同时还可能被战车炸死。',
+        isMinor: false,
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '绝地反击能免疫眩晕，还会大幅降低冲撞的击退距离',
         isMinor: false,
       },
     ],
@@ -5883,7 +6011,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     countersSpecialSkills: [
       {
         id: '绝地反击',
-        description: '钩子还可以勾霸体猫手上的老鼠。',
+        description: '钩子可以勾霸体猫手上的老鼠。',
         isMinor: false,
       },
     ],
@@ -6173,6 +6301,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: false,
       },
     ],
+    counteredBySpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '绝地反击能暂时免疫朵朵的控制，但免疫不了伤害。',
+        isMinor: true,
+      },
+    ],
   },
   /* ----------------------------------- 仙女鼠 ----------------------------------- */
   仙女鼠: {
@@ -6330,12 +6465,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '',
+        description: '魔术漂浮泛用性很高，在各场合均有不错发挥。',
       },
       {
         name: '绝处逢生',
-        description: '',
+        description: '绝处逢生泛用性很高，在各场合均有不错发挥。',
       },
+    ],
+    countersSpecialSkills: [
+      { id: '绝地反击', description: '仙女鼠八星变身无视霸体效果。', isMinor: false },
     ],
   },
 
@@ -6582,6 +6720,18 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: false,
       },
     ],
+    counteredBySpecialSkills: [
+      {
+        id: '蓄力重击',
+        description: '蓄力重击能直接秒掉高减伤米可，不过不太容易命中采访期间的米可。',
+        isMinor: true,
+      },
+      {
+        id: '绝地反击',
+        description: '绝地反击能免疫米可技能的眩晕，但无法免疫伤害及拍摄效果。',
+        isMinor: true,
+      },
+    ],
   },
 
   /* ----------------------------------- 霜月 ----------------------------------- */
@@ -6786,6 +6936,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '音乐家杰瑞',
         description: '音乐家杰瑞可拆掉火箭，便于霜月守火箭。',
+        isMinor: true,
+      },
+    ],
+    countersSpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '霜月的乾坤袋吞噬无视霸体，滑步踢踢飞火箭也能阻止猫咪绑火箭',
         isMinor: true,
       },
     ],

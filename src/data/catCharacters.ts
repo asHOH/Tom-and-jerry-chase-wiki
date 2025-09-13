@@ -212,6 +212,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: true,
       },
     ],
+    counteredBySpecialSkills: [
+      {
+        id: '干扰投掷',
+        description: '汤姆主动技能无敌期间免疫眩晕，且释放主动技能会立刻解除眩晕。',
+        isMinor: true,
+      },
+    ],
   },
 
   /* ----------------------------------- 布奇 ----------------------------------- */
@@ -1315,6 +1322,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         id: '绝处逢生',
         description: '牛仔汤姆的鞭子能有效的使绝处逢生无效，斗牛和弹弓能给予压制。',
+        isMinor: false,
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '应急治疗',
+        description: '应急治疗能解除受伤和恢复Hp，克制牛仔汤姆的远程消耗和二被动。',
         isMinor: false,
       },
     ],
@@ -2949,6 +2963,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: true,
       },
     ],
+    counteredBySpecialSkills: [
+      {
+        id: '绝处逢生',
+        description:
+          '绝处逢生能破除库博在天堂布置的老鼠夹；此外部分地图中的猫传送点距离鼠洞过远，老鼠有概率利用铁血+绝处逢生逃跑。',
+        isMinor: true,
+      },
+    ],
   },
 
   /* ----------------------------------- 凯特 ----------------------------------- */
@@ -3398,6 +3420,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
         ],
       },
+    ],
+    countersSpecialSkills: [
+      { id: '干扰投掷', description: '苏蕊跳舞期间免疫眩晕。', isMinor: false },
     ],
   },
   /* ----------------------------------- 天使汤姆 ----------------------------------- */
@@ -4161,6 +4186,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
       },
     ],
+    countersSpecialSkills: [
+      { id: '干扰投掷', description: '恶魔汤姆打碟期间免疫眩晕。', isMinor: true },
+    ],
   },
   /* ----------------------------------- 兔八哥 ----------------------------------- */
   兔八哥: {
@@ -4730,6 +4758,22 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '祝愿提供经验可以使老鼠快速发育到后期，放大追汤成长性差的缺点。',
         isMinor: true,
       },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '应急治疗',
+        description: '追风汤姆技能伤害低，若没能击倒老鼠则容易让其快速恢复状态。',
+        isMinor: true,
+      },
+      {
+        id: '绝处逢生',
+        description: '追风汤姆技能伤害低，若没能击倒老鼠则容易让其快速恢复状态。',
+        isMinor: true,
+      },
+    ],
+    countersSpecialSkills: [
+      { id: '干扰投掷', description: '追风汤姆飞行期间免疫眩晕。', isMinor: true },
+      { id: '魔术漂浮', description: '追风汤姆机动性很强，漂浮无法拉开距离。', isMinor: true },
     ],
   },
   /* ----------------------------------- 如玉 ----------------------------------- */
