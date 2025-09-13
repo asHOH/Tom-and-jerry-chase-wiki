@@ -2,7 +2,6 @@
 
 import React from 'react';
 import GameImage from '@/components/ui/GameImage';
-import Image from '@/components/Image';
 import { useAppContext } from '@/context/AppContext';
 import { SpecialSkill } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
@@ -10,9 +9,10 @@ import Tag from '@/components/ui/Tag';
 import { designTokens } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { characters } from '@/data';
-import Link from 'next/link';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
+import SectionHeader from '@/components/ui/SectionHeader';
+import CharacterList from '../../../displays/knowledge-cards/knowledge-card-detail/CharacterList';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;
@@ -28,7 +28,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
 
   const { isDetailedView } = useAppContext();
   const [isDarkMode] = useDarkMode();
-  // TODO: use useSnapshot if edit mode for special skill is supported
+  // use useSnapshot if edit mode for special skill is supported
   const usedCharacters = Object.values(characters).filter(
     (character) =>
       character.specialSkills?.some((s) => s.name === skill.name) &&
@@ -41,9 +41,22 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
       character.factionId === skill.factionId
   );
 
-  console.log({ usedCharacters, unusedCharacters });
-
   const displayUsedCharacters = usedCharacters.length <= unusedCharacters.length;
+
+  // Generate faction-specific title
+  const factionName = skill.factionId === 'cat' ? '猫方' : '鼠方';
+
+  const getCharacterSectionTitle = () => {
+    if (usedCharacters.length === 0) {
+      return `没有${factionName}角色使用该特技`;
+    } else if (unusedCharacters.length === 0) {
+      return `所有${factionName}角色均使用该特技`;
+    } else {
+      return displayUsedCharacters
+        ? `使用该特技的${factionName}角色`
+        : `未使用该特技的${factionName}角色`;
+    }
+  };
 
   if (!skill) return null;
 
@@ -98,26 +111,12 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
             </div>
           </BaseCard>
         </div>
-        <div className='md:w-2/3'>
+        <div className='md:w-2/3 space-y-3'>
+          <SectionHeader title='技能描述' />
           <div
-            className='flex items-center'
-            style={{
-              marginBottom: designTokens.spacing.lg,
-              paddingLeft: designTokens.spacing.sm,
-              paddingRight: designTokens.spacing.sm,
-            }}
+            className='mb-8'
+            style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.lg }}
           >
-            <h2
-              className='text-2xl font-bold dark:text-white'
-              style={{
-                paddingTop: designTokens.spacing.sm,
-                paddingBottom: designTokens.spacing.sm,
-              }}
-            >
-              技能描述
-            </h2>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.lg }}>
             <div
               className='card dark:bg-slate-800 dark:border-slate-700'
               style={{ padding: designTokens.spacing.lg }}
@@ -137,59 +136,13 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
               </div>
             </div>
           </div>
-          {
-            <>
-              <div
-                className='flex items-center'
-                style={{
-                  marginTop: designTokens.spacing.lg,
-                  marginBottom: designTokens.spacing.lg,
-                  paddingLeft: designTokens.spacing.sm,
-                  paddingRight: designTokens.spacing.sm,
-                }}
-              >
-                <h2
-                  className='text-2xl font-bold dark:text-white'
-                  style={{
-                    paddingTop: designTokens.spacing.sm,
-                    paddingBottom: designTokens.spacing.sm,
-                  }}
-                >
-                  {(usedCharacters.length == 0 || unusedCharacters.length == 0) && '没有任何'}
-                  {!displayUsedCharacters && '未'}使用该特技的角色
-                </h2>
-              </div>
-              {usedCharacters.length > 0 && unusedCharacters.length > 0 && (
-                <div className='rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm px-2 py-4'>
-                  <ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {(displayUsedCharacters ? usedCharacters : unusedCharacters).map(
-                      (character) => (
-                        <li
-                          key={character.id ?? ''}
-                          className='flex items-center gap-4 p-3 rounded-lg transition-colors'
-                        >
-                          <Link
-                            href={`/characters/${character.id}`}
-                            className='flex items-center gap-4 w-full'
-                            tabIndex={0}
-                          >
-                            <Image
-                              src={character.imageUrl!}
-                              alt={character.id!}
-                              className='w-10 h-10'
-                              width={40}
-                              height={40}
-                            />
-                            <span className='text-lg dark:text-white truncate'>{character.id}</span>
-                          </Link>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
-            </>
-          }
+          <div>
+            <SectionHeader title={getCharacterSectionTitle()} />
+            <CharacterList
+              characters={displayUsedCharacters ? usedCharacters : unusedCharacters}
+              showList={usedCharacters.length > 0 && unusedCharacters.length > 0}
+            />
+          </div>
         </div>
       </div>
     </div>
