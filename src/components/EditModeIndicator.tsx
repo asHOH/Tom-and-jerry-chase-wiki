@@ -33,7 +33,7 @@ export const EditModeIndicator: React.FC = () => {
   if (!isEditMode || isHidden || !mounted) return null;
 
   return (
-    <div className='fixed left-0 right-0 bg-amber-600 text-white px-4 py-2 text-sm font-medium z-[9999] edit-mode-banner'>
+    <div className='fixed left-0 right-0 bg-amber-600 text-white px-4 py-2 text-sm font-medium z-40 edit-mode-banner'>
       <div className='flex items-center justify-center space-x-2 relative'>
         <div className='w-2 h-2 bg-amber-200 rounded-full animate-pulse'></div>
         <span>
