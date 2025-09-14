@@ -16,9 +16,47 @@ import { characters } from '@/data';
 import { CharacterWithFaction } from '@/lib/types';
 import AdviceCharacterList from './AdviceCharacterList';
 
+function allCounters(skill: SpecialSkill) {
+  const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
+    (character) =>
+      character.countersSpecialSkills?.some((s) => s.id === skill.name && s.isMinor === true) &&
+      character.factionId !== skill.factionId
+  );
+  const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter(
+    (character) =>
+      character.countersSpecialSkills?.some((s) => s.id === skill.name && s.isMinor === false) &&
+      character.factionId !== skill.factionId
+  );
+  return { 0: UnIsMinor, 1: IsMinor };
+}
+function allUsers(skill: SpecialSkill) {
+  const Return: CharacterWithFaction[] = Object.values(characters).filter(
+    (character) =>
+      character.specialSkills?.some((s) => s.name === skill.name) &&
+      character.factionId === skill.factionId
+  );
+  return Return;
+}
+
 const allSkillsAdvice = [
-  ...Object.values(specialSkills.cat),
-  ...Object.values(specialSkills.mouse),
+  ...Object.values(specialSkills.cat).sort(
+    (a, b) =>
+      allCounters(b)[0].length +
+      allCounters(b)[1].length +
+      allUsers(b).length -
+      allCounters(a)[0].length -
+      allCounters(a)[1].length -
+      allUsers(a).length
+  ),
+  ...Object.values(specialSkills.mouse).sort(
+    (a, b) =>
+      allCounters(b)[0].length +
+      allCounters(b)[1].length +
+      allUsers(b).length -
+      allCounters(a)[0].length -
+      allCounters(a)[1].length -
+      allUsers(a).length
+  ),
 ];
 
 export default function SpecialSkillAdviceClient() {
@@ -45,27 +83,6 @@ export default function SpecialSkillAdviceClient() {
         ) && character.factionId !== skill.factionId
     );
     return { 0: UnIsMinor, 1: IsMinor };
-  }
-  function allCounters(skill: SpecialSkill) {
-    const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
-      (character) =>
-        character.countersSpecialSkills?.some((s) => s.id === skill.name && s.isMinor === true) &&
-        character.factionId !== skill.factionId
-    );
-    const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter(
-      (character) =>
-        character.countersSpecialSkills?.some((s) => s.id === skill.name && s.isMinor === false) &&
-        character.factionId !== skill.factionId
-    );
-    return { 0: UnIsMinor, 1: IsMinor };
-  }
-  function allUsers(skill: SpecialSkill) {
-    const Return: CharacterWithFaction[] = Object.values(characters).filter(
-      (character) =>
-        character.specialSkills?.some((s) => s.name === skill.name) &&
-        character.factionId === skill.factionId
-    );
-    return Return;
   }
 
   return (
