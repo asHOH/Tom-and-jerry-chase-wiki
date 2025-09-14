@@ -22,6 +22,7 @@ interface Article {
   created_at: string;
   author_id: string;
   category_id: string;
+  view_count?: number;
   categories: { id: string; name: string };
   users_public_view: { nickname: string };
   latest_approved_version: Array<{
@@ -437,6 +438,7 @@ export default function ArticlesClient() {
                           {format(new Date(latestVersion.created_at), 'MM月dd日', { locale: zhCN })}
                         </span>
                       )}
+                      <span>浏览: {article.view_count ?? 0}</span>
                     </div>
 
                     <div className='flex items-center gap-2 ml-auto my-auto'>

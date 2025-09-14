@@ -106,6 +106,7 @@ export type Database = {
           created_at: string;
           id: string;
           title: string;
+          view_count: number;
         };
         Insert: {
           author_id: string;
@@ -113,6 +114,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           title: string;
+          view_count?: number;
         };
         Update: {
           author_id?: string;
@@ -120,6 +122,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           title?: string;
+          view_count?: number;
         };
         Relationships: [
           {
@@ -332,6 +335,10 @@ export type Database = {
       hash_credential: {
         Args: { credential: string; salt: string };
         Returns: string;
+      };
+      increment_article_view_count: {
+        Args: { p_article_id: string };
+        Returns: undefined;
       };
       reject_article_version: {
         Args: { p_reviewer_id: string; p_version_id: string };
