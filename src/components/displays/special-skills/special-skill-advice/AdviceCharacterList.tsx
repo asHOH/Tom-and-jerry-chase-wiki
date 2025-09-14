@@ -31,7 +31,7 @@ export default function AdviceCharacterList({
   if (!showList) {
     return null;
   }
-  const useSmallGrid = characters.length + isMinorCharacters.length <= 8;
+  const useSmallGrid = characters.length + isMinorCharacters.length > 8;
 
   return (
     <div className='rounded-xl bg-white dark:bg-slate-800 shadow-sm px-2 py-3'>
@@ -40,8 +40,8 @@ export default function AdviceCharacterList({
         style={{
           display: 'grid',
           gridTemplateColumns: useSmallGrid
-            ? 'repeat(auto-fit, minmax(175px, 0.5fr))'
-            : 'repeat(auto-fit, minmax(65px, 0.2fr))',
+            ? 'repeat(auto-fit, minmax(60px, 0.2fr))'
+            : 'repeat(auto-fit, minmax(170px, 0.33fr))',
         }}
       >
         {characters.map((character) => (
@@ -61,7 +61,7 @@ export default function AdviceCharacterList({
                 width={90}
                 height={90}
               />
-              {useSmallGrid && (
+              {!useSmallGrid && (
                 <span className='text-lg dark:text-white truncate'>{character.id}</span>
               )}
             </a>
@@ -84,7 +84,9 @@ export default function AdviceCharacterList({
                 width={40}
                 height={40}
               />
-              <span className='text-lg dark:text-white truncate'>{character.id}</span>
+              {!useSmallGrid && (
+                <span className='text-lg dark:text-white truncate'>{character.id}</span>
+              )}
             </a>
           </li>
         ))}
