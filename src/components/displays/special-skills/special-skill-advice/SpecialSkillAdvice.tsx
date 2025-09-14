@@ -1,8 +1,8 @@
 'use client';
 
 import GameImage from '@/components/ui/GameImage';
-import specialSkillsAdvice, { SpecialSkillAdvice } from './SpecialSkillAdivceData';
-import type { FactionId } from '@/data/types';
+import { specialSkills } from '@/data';
+import type { FactionId, SpecialSkill } from '@/data/types';
 import { useState } from 'react';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
@@ -17,8 +17,8 @@ import { CharacterWithFaction } from '@/lib/types';
 import AdviceCharacterList from './AdviceCharacterList';
 
 const allSkillsAdvice = [
-  ...Object.values(specialSkillsAdvice.cat),
-  ...Object.values(specialSkillsAdvice.mouse),
+  ...Object.values(specialSkills.cat),
+  ...Object.values(specialSkills.mouse),
 ];
 
 export default function SpecialSkillAdviceClient() {
@@ -31,7 +31,7 @@ export default function SpecialSkillAdviceClient() {
     : allSkillsAdvice;
 
   // Filter characters
-  function allCounteredBy(skill: SpecialSkillAdvice) {
+  function allCounteredBy(skill: SpecialSkill) {
     const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
       (character) =>
         character.counteredBySpecialSkills?.some(
@@ -46,7 +46,7 @@ export default function SpecialSkillAdviceClient() {
     );
     return { 0: UnIsMinor, 1: IsMinor };
   }
-  function allCounters(skill: SpecialSkillAdvice) {
+  function allCounters(skill: SpecialSkill) {
     const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
       (character) =>
         character.countersSpecialSkills?.some((s) => s.id === skill.name && s.isMinor === true) &&
@@ -59,7 +59,7 @@ export default function SpecialSkillAdviceClient() {
     );
     return { 0: UnIsMinor, 1: IsMinor };
   }
-  function allUsers(skill: SpecialSkillAdvice) {
+  function allUsers(skill: SpecialSkill) {
     const Return: CharacterWithFaction[] = Object.values(characters).filter(
       (character) =>
         character.specialSkills?.some((s) => s.name === skill.name) &&
@@ -124,7 +124,7 @@ export default function SpecialSkillAdviceClient() {
               }}
             >
               {/*description*/}
-              {skill.description !== undefined && (
+              {skill.adviceDescription !== undefined && (
                 <div>
                   <p
                     className='text-black dark:text-gray-200 text-lg'
@@ -133,7 +133,7 @@ export default function SpecialSkillAdviceClient() {
                       paddingBottom: designTokens.spacing.sm,
                     }}
                   >
-                    <TextWithHoverTooltips text={skill.description as string} />
+                    <TextWithHoverTooltips text={skill.adviceDescription as string} />
                   </p>
                 </div>
               )}

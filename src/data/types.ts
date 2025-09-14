@@ -215,6 +215,7 @@ export type SpecialSkillDefinition = {
   aliases?: string[]; // Alternative names for search
   description?: string; // Basic description (optional, especially for passive skills)
   detailedDescription?: string;
+  adviceDescription?: string;
 };
 
 export type SpecialSkill = SpecialSkillDefinition & {
