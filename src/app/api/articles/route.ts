@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
         id,
         title,
         created_at,
+        view_count,
         author_id,
         category_id,
         categories (

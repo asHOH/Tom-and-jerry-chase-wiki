@@ -22,6 +22,7 @@ interface Article {
   created_at: string;
   author_id: string;
   category_id: string;
+  view_count?: number;
   categories: { id: string; name: string };
   users_public_view: { nickname: string };
   latest_approved_version: Array<{
@@ -209,24 +210,26 @@ export default function ArticlesClient() {
             <FilterLabel displayMode='inline'>分类筛选:</FilterLabel>
             <FilterLabel displayMode='block'>筛选:</FilterLabel>
             <div className='flex flex-wrap gap-2 justify-center'>
-              {data?.categories.map((category) => {
-                const isActive = hasCategoryFilter(category.id);
-                return (
-                  <button
-                    type='button'
-                    key={category.id}
-                    onClick={() => handleCategoryToggle(category.id)}
-                    className={clsx(
-                      'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-                      isActive
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                    )}
-                  >
-                    {category.name}
-                  </button>
-                );
-              })}
+              {data?.categories
+                .filter((category) => category.name != '根分类')
+                .map((category) => {
+                  const isActive = hasCategoryFilter(category.id);
+                  return (
+                    <button
+                      type='button'
+                      key={category.id}
+                      onClick={() => handleCategoryToggle(category.id)}
+                      className={clsx(
+                        'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
+                        isActive
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
+                      )}
+                    >
+                      {category.name}
+                    </button>
+                  );
+                })}
               {selectedCategories.size > 0 && (
                 <button
                   type='button'
@@ -437,6 +440,7 @@ export default function ArticlesClient() {
                           {format(new Date(latestVersion.created_at), 'MM月dd日', { locale: zhCN })}
                         </span>
                       )}
+                      <span>浏览: {article.view_count ?? 0}</span>
                     </div>
 
                     <div className='flex items-center gap-2 ml-auto my-auto'>

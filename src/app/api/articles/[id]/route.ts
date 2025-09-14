@@ -10,6 +10,16 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   try {
+    // Increment view count
+    const { error: incrementError } = await supabaseAdmin.rpc('increment_article_view_count', {
+      p_article_id: id,
+    });
+
+    if (incrementError) {
+      // Log the error but don't block the request
+      console.error('Error incrementing view count:', incrementError);
+    }
+
     // Get the article basic info
     const { data: article, error: articleError } = await supabaseAdmin
       .from('articles')
@@ -20,6 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         category_id,
         author_id,
         created_at,
+        view_count,
         categories(name),
         users_public_view!author_id(nickname)
       `

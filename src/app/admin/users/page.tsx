@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import UserManagementPanelClient from './UserManagementPanelClient';
 
 const UserManagementPanel = async () => {
+  notFound();
   const supabase = await createClient();
   const {
     data: { user },
@@ -13,7 +14,11 @@ const UserManagementPanel = async () => {
     notFound();
   }
 
-  const { data: roleData } = await supabase.from('users').select('role').eq('id', user.id).single();
+  const { data: roleData } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user!.id)
+    .single();
 
   if (roleData?.role !== 'Coordinator') {
     notFound();

@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash, randomBytes, pbkdf2Sync } from 'crypto';
 import { TablesInsert } from '@/data/database.types';
 import { createClient } from '@/lib/supabase/server';
+import { convertToPinyin } from '@/lib/pinyinUtils';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
@@ -20,6 +21,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Username and nickname are required' }, { status: 400 });
     }
 
+    const usernamePinyin = await convertToPinyin(username);
+
     // Requirement 6.6: Nickname and username must not be the same for passwordless accounts
     if (!password && username === nickname) {
       return NextResponse.json(
@@ -36,7 +39,7 @@ export async function POST(request: NextRequest) {
     const usernameHash = hashUsername(username);
     const passwordHash = password ? hashPassword(password, salt) : '';
 
-    const authUserEmail = `${username}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`;
+    const authUserEmail = `${usernamePinyin}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`;
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: authUserEmail,
       password: password || username,

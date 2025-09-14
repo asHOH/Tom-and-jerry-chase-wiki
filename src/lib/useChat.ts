@@ -71,7 +71,7 @@ export function useChat(message?: string, debounceMs = 500) {
 
   // Create SWR key with only the current message (single round request)
   const swrKey = useMemo(() => {
-    if (!debouncedMessage?.trim()) return null;
+    if (!debouncedMessage?.trim() || !process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) return null;
 
     const singleMessage: Message = { role: 'user', parts: [{ text: debouncedMessage }] };
     return `chat|${JSON.stringify([singleMessage])}`;
@@ -90,9 +90,15 @@ export function useChat(message?: string, debounceMs = 500) {
   // Extract the response text
   const responseText = responseData?.text || '';
 
-  return {
-    responseText,
-    isLoading,
-    error,
-  };
+  return process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL
+    ? {
+        responseText,
+        isLoading,
+        error,
+      }
+    : {
+        responseText: null,
+        isLoading: false,
+        error: null,
+      };
 }
