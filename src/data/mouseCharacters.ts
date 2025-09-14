@@ -2092,7 +2092,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         cards: ['S-舍己', 'S-铁血', 'S-回家', 'C-救救我'],
         description: '牛仔杰瑞一被免疫碎片，防止回家护盾被碎片打破，进一步提高后期生存能力。',
-        contributor: '秋雨绵绵',
+        contributor: 'qiuyumianmian',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
@@ -2387,27 +2387,27 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         groups: [
           {
             cards: ['S-舍己', 'A-逃窜', 'A-泡泡浴', 'C-不屈', 'C-救救我'],
-            contributor: '秋雨绵绵',
+            contributor: 'qiuyumianmian',
           },
           {
             cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-救救我', 'C-不屈'],
             description: '没幸运的卡组。',
-            contributor: '秋雨绵绵',
+            contributor: 'qiuyumianmian',
           },
           {
             cards: ['S-舍己', 'A-逃窜', 'B-幸运', 'C-脱身', 'C-不屈'],
             description: '幸运卡组。',
-            contributor: '秋雨绵绵',
+            contributor: 'qiuyumianmian',
           },
           {
             cards: ['S-舍己', 'A-逃窜', 'A-泡泡浴', 'B-破墙', 'C-不屈'],
             description: '对抗图茨使用。',
-            contributor: '秋雨绵绵',
+            contributor: 'qiuyumianmian',
           },
           {
             cards: ['S-无畏', 'S-铁血', 'S-缴械', 'C-救救我'],
             description: '针对米特图多。',
-            contributor: '秋雨绵绵',
+            contributor: 'qiuyumianmian',
           },
         ],
         defaultFolded: false,

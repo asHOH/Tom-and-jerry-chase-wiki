@@ -219,8 +219,7 @@ export function KnowledgeCardGroup({
         )}
       </div>
 
-      {/*Display KnowledgeCardGroup's contributor and his/her Description
-       *ToDo：rewrite this part of the code*/}
+      {/*Display KnowledgeCardGroup's contributor and his/her Description*/}
       {!!contributor && !isEditMode && (
         <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
           {
@@ -232,21 +231,12 @@ export function KnowledgeCardGroup({
               }
             >
               卡组推荐者：
-              {contributorInformation !== undefined ? (
-                (contributorInformation as unknown as Contributor)['description'] !== undefined ? (
-                  <Tooltip
-                    content={
-                      (contributorInformation as unknown as Contributor)['description'] as string
-                    }
-                  >
-                    {contributor}
-                  </Tooltip>
-                ) : (
-                  contributor
-                )
-              ) : (
-                contributor
-              )}
+              {(contributorInformation?.description !== undefined && (
+                <Tooltip content={contributorInformation.description}>
+                  {contributorInformation.name}
+                </Tooltip>
+              )) ||
+                contributor}
             </Tag>
           }
         </div>
@@ -478,7 +468,9 @@ export default function KnowledgeCardSection({
                   imageBasePath={imageBasePath}
                   handleDescriptionSave={handleDescriptionSave}
                   contributor={group.contributor}
-                  contributorInformation={contributors.find((a) => a['name'] === group.contributor)}
+                  contributorInformation={contributors.find(
+                    (a) => a.id === group.contributor || a.name === group.contributor
+                  )}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
                   <div className='border-t border-gray-200 dark:border-slate-700 my-4'></div>

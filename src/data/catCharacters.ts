@@ -1400,7 +1400,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-细心'],
         description: '香水指甲油通用，常规追击卡组。',
-        contributor: '樱鹜ying',
+        contributor: 'gezi',
       },
       {
         id: '魅力香水专用',
@@ -1409,16 +1409,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
             description: '香水图多常规防守卡组。',
-            contributor: '樱鹜ying',
+            contributor: 'gezi',
           },
           {
             cards: ['S-乘胜追击', 'S-屈打成招', 'A-细心', 'A-穷追猛打'],
-            contributor: '樱鹜ying',
+            contributor: 'gezi',
           },
           {
             cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'B-捕鼠夹', 'C-巡逻戒备'],
             description: '20知识量卡组。',
-            contributor: '樱鹜ying',
+            contributor: 'gezi',
           },
         ],
         defaultFolded: true,
@@ -1430,27 +1430,27 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             cards: ['S-乘胜追击', 'S-知识渊博', 'S-击晕'],
             description: '在前中后期都有较高强度。',
-            contributor: '樱鹜ying',
+            contributor: 'gezi',
           },
           {
             cards: ['S-乘胜追击', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
             description: '适合森林牧场，太空堡垒三等管道图。',
-            contributor: '樱鹜ying',
+            contributor: 'gezi',
           },
           {
             cards: ['S-猛攻', 'S-知识渊博', 'A-细心', 'A-熊熊燃烧'],
             description: '适合可以布局的图使用，后期拥有更强的防守翻盘能力。',
-            contributor: '樱鹜ying',
+            contributor: 'gezi',
           },
           {
             cards: ['S-乘胜追击', 'S-知识渊博', 'S-猛攻', 'B-反侦察'],
             description: '双经验卡成型更快，后期更强势。',
-            contributor: '樱鹜ying',
+            contributor: 'gezi',
           },
           {
             cards: ['S-击晕', 'S-知识渊博', 'A-熊熊燃烧', 'C-猫是液体'],
             description: '小图且玩家自身找节奏能力强可用。',
-            contributor: '樱鹜ying',
+            contributor: 'gezi',
           },
         ],
         defaultFolded: true,
@@ -4004,22 +4004,22 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-加大火力'],
         description: '御门酒店使用，对面高伤阵容换成越挫。',
-        contributor: '无敌猫虎大王wy',
+        contributor: 'wudimaohudawang',
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-穷追猛打'],
         description: '常规地图使用。',
-        contributor: '无敌猫虎大王wy',
+        contributor: 'wudimaohudawang',
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-越挫越勇', 'A-穷追猛打'],
         description: '常规地图，对面高伤阵容时使用。',
-        contributor: '无敌猫虎大王wy',
+        contributor: 'wudimaohudawang',
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
         description: '森林牧场使用，对面高伤阵容则把皮糙换成越挫。',
-        contributor: '无敌猫虎大王wy',
+        contributor: 'wudimaohudawang',
       },
     ],
     specialSkills: [
@@ -4518,7 +4518,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             cards: ['S-蓄势一击', 'S-屈打成招', 'A-熊熊燃烧', 'C-猫是液体'],
             description:
               '上限极高。屈打用于拦截救人和换绑进行拉扯，不怕隐身救援，找节奏能力很强，管道图效果更佳。缺点是续航较差，容错率极低，对熟练度要求很高。',
-            contributor: '千里共婵娟',
+            contributor: 'qianligongchanjuan',
           },
           {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],

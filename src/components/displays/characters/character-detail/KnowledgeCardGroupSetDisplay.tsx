@@ -108,7 +108,9 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
                   imageBasePath={imageBasePath}
                   handleDescriptionSave={handleDescriptionSave}
                   contributor={group.contributor}
-                  contributorInformation={contributors.find((a) => a['name'] === group.contributor)}
+                  contributorInformation={contributors.find(
+                    (a) => a.id === group.contributor || a.name === group.contributor
+                  )}
                 />
               )
             )}
