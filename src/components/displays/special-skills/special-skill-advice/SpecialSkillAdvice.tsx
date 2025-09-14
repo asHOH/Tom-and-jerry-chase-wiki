@@ -16,6 +16,7 @@ import { characters } from '@/data';
 import { CharacterWithFaction } from '@/lib/types';
 import AdviceCharacterList from './AdviceCharacterList';
 
+// Filter characters
 function allCounters(skill: SpecialSkill) {
   const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
     (character) =>
@@ -29,6 +30,20 @@ function allCounters(skill: SpecialSkill) {
   );
   return { 0: UnIsMinor, 1: IsMinor };
 }
+function allCounteredBy(skill: SpecialSkill) {
+  const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
+    (character) =>
+      character.counteredBySpecialSkills?.some((s) => s.id === skill.name && s.isMinor === true) &&
+      character.factionId !== skill.factionId
+  );
+  const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter(
+    (character) =>
+      character.counteredBySpecialSkills?.some((s) => s.id === skill.name && s.isMinor === false) &&
+      character.factionId !== skill.factionId
+  );
+  return { 0: UnIsMinor, 1: IsMinor };
+}
+
 function allUsers(skill: SpecialSkill) {
   const Return: CharacterWithFaction[] = Object.values(characters).filter(
     (character) =>
@@ -38,25 +53,19 @@ function allUsers(skill: SpecialSkill) {
   return Return;
 }
 
-const allSkillsAdvice = [
-  ...Object.values(specialSkills.cat).sort(
-    (a, b) =>
-      allCounters(b)[0].length +
-      allCounters(b)[1].length +
-      allUsers(b).length -
-      allCounters(a)[0].length -
-      allCounters(a)[1].length -
-      allUsers(a).length
-  ),
-  ...Object.values(specialSkills.mouse).sort(
-    (a, b) =>
-      allCounters(b)[0].length +
-      allCounters(b)[1].length +
-      allUsers(b).length -
-      allCounters(a)[0].length -
-      allCounters(a)[1].length -
-      allUsers(a).length
-  ),
+function userQuantity(skill: SpecialSkill) {
+  return (
+    allCounters(skill)[0].length +
+    allCounters(skill)[1].length +
+    allCounteredBy(skill)[0].length +
+    allCounteredBy(skill)[1].length +
+    allUsers(skill).length
+  );
+}
+
+const allSkills = [
+  ...Object.values(specialSkills.cat).sort((a, b) => userQuantity(b) - userQuantity(a)),
+  ...Object.values(specialSkills.mouse).sort((a, b) => userQuantity(b) - userQuantity(a)),
 ];
 
 export default function SpecialSkillAdviceClient() {
@@ -65,25 +74,8 @@ export default function SpecialSkillAdviceClient() {
 
   // Filter skills by faction if selected
   const filteredSkills = selectedFaction
-    ? allSkillsAdvice.filter((skill) => skill.factionId === selectedFaction)
-    : allSkillsAdvice;
-
-  // Filter characters
-  function allCounteredBy(skill: SpecialSkill) {
-    const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
-      (character) =>
-        character.counteredBySpecialSkills?.some(
-          (s) => s.id === skill.name && s.isMinor === true
-        ) && character.factionId !== skill.factionId
-    );
-    const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter(
-      (character) =>
-        character.counteredBySpecialSkills?.some(
-          (s) => s.id === skill.name && s.isMinor === false
-        ) && character.factionId !== skill.factionId
-    );
-    return { 0: UnIsMinor, 1: IsMinor };
-  }
+    ? allSkills.filter((skill) => skill.factionId === selectedFaction)
+    : allSkills;
 
   return (
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
