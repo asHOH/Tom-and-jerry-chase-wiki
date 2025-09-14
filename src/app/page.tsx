@@ -68,6 +68,25 @@ function HomeContent() {
     },
   ];
 
+  const itemButtons = [
+    {
+      imageSrc: '/images/icons/item.png',
+      imageAlt: '道具图标',
+      title: '道具',
+      description: '道具列表',
+      href: '/items',
+      ariaLabel: '道具列表',
+    },
+    {
+      imageSrc: '/images/icons/entity.png',
+      imageAlt: '衍生物图标',
+      title: '衍生物',
+      description: '衍生物列表',
+      href: '/entities',
+      ariaLabel: '衍生物列表',
+    },
+  ];
+
   const cardButtons = [
     {
       imageSrc: '/images/icons/cat knowledge card.png',
@@ -86,14 +105,6 @@ function HomeContent() {
       ariaLabel: '特技列表',
     },
     {
-      imageSrc: '/images/icons/item.png',
-      imageAlt: '道具图标',
-      title: '道具',
-      description: '道具列表',
-      href: '/items',
-      ariaLabel: '道具列表',
-    },
-    {
       imageSrc: '/images/icons/cat faction.png',
       imageAlt: '文章图标',
       title: '文章',
@@ -109,14 +120,6 @@ function HomeContent() {
     //   href: '/ranks',
     //   ariaLabel: '角色属性排行榜',
     // },
-    {
-      imageSrc: '/images/icons/entity.png',
-      imageAlt: '衍生物图标',
-      title: '衍生物',
-      description: '衍生物列表',
-      href: '/entities',
-      ariaLabel: '衍生物列表',
-    },
   ];
 
   return (
@@ -128,6 +131,7 @@ function HomeContent() {
         </header>
 
         <HomePageSection title='角色' buttons={characterButtons} />
+        <HomePageSection title='道具与衍生物' buttons={itemButtons} />
         <HomePageSection title='更多内容' buttons={cardButtons} />
 
         {/* Division line before 网站说明 */}
