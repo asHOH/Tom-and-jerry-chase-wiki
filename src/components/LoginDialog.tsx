@@ -227,17 +227,19 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-4'>登录或注册</h2>
             <input
               type='text'
-              placeholder='用户名，支持字母、数字和._-+'
+              placeholder='用户名，支持汉字、拉丁字母、数字和._-+'
               className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoFocus
             />
-            <CaptchaComponent
-              onVerify={function (token) {
-                setToken(token);
-              }}
-            />
+            <div className='my-3'>
+              <CaptchaComponent
+                onVerify={function (token) {
+                  setToken(token);
+                }}
+              />
+            </div>
           </>
         );
     }
