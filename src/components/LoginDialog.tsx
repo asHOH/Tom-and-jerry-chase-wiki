@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { getUserData, userObject } from '@/hooks/useUser';
 import CaptchaComponent from './CaptchaComponent';
+import { convertToPinyin } from '@/lib/pinyinUtils';
 
 type LoginDialogProps = {
   onClose: () => void;
@@ -22,9 +23,16 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  const isUsernameCorrect =
-    username != '' &&
-    /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*$/.test(username);
+  const [isUsernameCorrect, setIsUsernameCorrect] = useState(false);
+
+  useEffect(() => {
+    convertToPinyin(username).then((pinyin) => {
+      setIsUsernameCorrect(
+        pinyin != '' &&
+          /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*$/.test(pinyin)
+      );
+    });
+  }, [username]);
 
   const dialogRef = useRef<HTMLDivElement>(null);
 

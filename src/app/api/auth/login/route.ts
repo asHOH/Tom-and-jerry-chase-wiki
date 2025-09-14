@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash, pbkdf2Sync } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
+import { convertToPinyin } from '@/lib/pinyinUtils';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
@@ -20,6 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     const usernameHash = hashUsername(username);
+    const usernamePinyin = await convertToPinyin(username);
 
     // Query the custom users table to find a user with the matching username_hash
     const { data: user, error: userError } = await supabaseAdmin
@@ -53,7 +55,7 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient(); // Get the server-side client
 
     const { error: sessionError } = await supabase.auth.signInWithPassword({
-      email: `${username}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`,
+      email: `${usernamePinyin}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`,
       password: password || username, // Use the provided password
     });
 
