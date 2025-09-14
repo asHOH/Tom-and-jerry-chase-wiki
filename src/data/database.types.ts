@@ -60,6 +60,45 @@ export type Database = {
           },
         ];
       };
+      article_versions_archive: {
+        Row: {
+          archived_at: string | null;
+          archived_by: string | null;
+          article_id: string | null;
+          content: string;
+          created_at: string | null;
+          editor_id: string | null;
+          id: number;
+          original_id: string;
+          preview_token: string | null;
+          status: Database['public']['Enums']['version_status'];
+        };
+        Insert: {
+          archived_at?: string | null;
+          archived_by?: string | null;
+          article_id?: string | null;
+          content: string;
+          created_at?: string | null;
+          editor_id?: string | null;
+          id?: never;
+          original_id: string;
+          preview_token?: string | null;
+          status: Database['public']['Enums']['version_status'];
+        };
+        Update: {
+          archived_at?: string | null;
+          archived_by?: string | null;
+          article_id?: string | null;
+          content?: string;
+          created_at?: string | null;
+          editor_id?: string | null;
+          id?: never;
+          original_id?: string;
+          preview_token?: string | null;
+          status?: Database['public']['Enums']['version_status'];
+        };
+        Relationships: [];
+      };
       articles: {
         Row: {
           author_id: string;
@@ -318,6 +357,18 @@ export type Database = {
           _id: string;
           _name: string;
           _parent_category_id?: string;
+        };
+        Returns: undefined;
+      };
+      update_pending_article: {
+        Args: {
+          p_article_id: string;
+          p_category_id: string;
+          p_content: string;
+          p_editor_id: string;
+          p_title: string;
+          p_user_id: string;
+          p_version_id: string;
         };
         Returns: undefined;
       };
