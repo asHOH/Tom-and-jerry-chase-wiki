@@ -299,11 +299,13 @@ const EditArticleClient: React.FC = () => {
                   disabled={isSubmitting}
                 >
                   <option value=''>请选择文章分类</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
+                  {categories
+                    .filter((cat) => cat.name != '根分类')
+                    .map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
                 </select>
               )}
               <p className='text-sm text-gray-600 dark:text-gray-400'>选择最符合文章内容的分类</p>

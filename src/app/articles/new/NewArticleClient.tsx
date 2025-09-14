@@ -64,7 +64,8 @@ const NewArticleClient: React.FC = () => {
     userRole ? '/api/articles?page=1&limit=1' : null,
     fetcher
   );
-  const categories: Category[] = categoriesData?.categories || [];
+  const categories: Category[] =
+    categoriesData?.categories.filter((category) => category.name != '根分类') || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
 
   useEffect(() => {
