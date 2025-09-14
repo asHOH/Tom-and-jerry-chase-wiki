@@ -525,7 +525,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       ) : (
         <textarea
           value={rawContent}
-          onChange={(e) => setRawContent(e.target.value)}
+          onChange={(e) => {
+            setRawContent(e.target.value);
+            if (viewMode === 'wiki') {
+              onChange?.(wikiTextToHTML(e.target.value));
+            }
+            if (viewMode === 'html') {
+              onChange?.(e.target.value);
+            }
+          }}
           className={clsx(
             'w-full h-full p-6 min-h-[400px] bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100',
             'font-mono text-sm focus:outline-none',
