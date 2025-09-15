@@ -49,3 +49,5 @@ export const entities = {
   cat: catEntitiesWithImages,
   mouse: mouseEntitiesWithImages,
 };
+
+export { default as buffs } from './buffs';

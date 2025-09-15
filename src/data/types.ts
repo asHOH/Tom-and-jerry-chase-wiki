@@ -284,7 +284,7 @@ export type BuffDefinition = {
   duration?: number | 'infinite'; // duration of buff.If buff has more than two different durations,don't fill in this attribute.
   failure?: string; //failure conditions of buff
   description?: string;
-  deatiledDescription?: string;
+  detailedDescription?: string;
   stack?: string; // the stacking way in more than two same buffs
   detailedStack?: string;
 
