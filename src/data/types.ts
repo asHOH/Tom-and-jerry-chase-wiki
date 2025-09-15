@@ -288,7 +288,7 @@ export type BuffDefinition = {
   stack?: string; // the stacking way in more than two same buffs
   detailedStack?: string;
 
-  useImage?: boolean; //show its image in grid.Default:true
+  unuseImage?: boolean; //show its image in grid.Default:false
   specialImageUrl?: string; //use other image instead of buff's image
 };
 

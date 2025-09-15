@@ -12,19 +12,21 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const isMobile = useMobile();
 
   return (
-    <BaseCard variant='item' aria-label={`查看${buff.name}道具详情`}>
-      <GameImage
-        src={buff.imageUrl}
-        alt={`${buff.name}道具图标`}
-        size='ITEM_CARD'
-        className='hover:scale-105'
-      />
+    <BaseCard variant='item' aria-label={`查看${buff.name}效果详情`}>
+      {!buff.unuseImage && (
+        <GameImage
+          src={buff.imageUrl}
+          alt={`${buff.name}效果图标`}
+          size='ITEM_CARD'
+          className='hover:scale-105'
+        />
+      )}
       <div className='px-3 pt-1 pb-3 text-center w-full'>
         <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-1'>{buff.name}</h3>
         <div
           className='flex flex-wrap justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'
-          aria-label='道具属性'
+          aria-label='状态效果属性'
         >
           <Tag size='xs' margin='compact' colorStyles={typeColors}>
             {isMobile ? buff.bufftype.slice(0, 2) : buff.bufftype}

@@ -19,11 +19,21 @@ export default function BuffClient() {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const filteredBuffs = Object.values(buffs).filter((buff: Buff) => {
-    // 类型筛选
-    const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
-    return typeMatch;
-  });
+  const filteredBuffs = Object.values(buffs)
+    .filter((buff: Buff) => !buff.unuseImage)
+    .filter((buff: Buff) => {
+      // 类型筛选
+      const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
+      return typeMatch;
+    });
+
+  const unuseImageFilteredBuffs = Object.values(buffs)
+    .filter((buff: Buff) => buff.unuseImage)
+    .filter((buff: Buff) => {
+      // 类型筛选
+      const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
+      return typeMatch;
+    });
 
   return (
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
@@ -53,9 +63,24 @@ export default function BuffClient() {
       </header>
       <div
         className='auto-fit-grid grid-container grid gap-4 mt-8'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 0.5fr))' }}
       >
         {filteredBuffs.map((buff) => (
+          <div
+            key={buff.name}
+            className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'
+          >
+            <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
+              <BuffCardDisplay buff={buff} />
+            </Link>
+          </div>
+        ))}
+      </div>
+      <div
+        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 0.5fr))' }}
+      >
+        {unuseImageFilteredBuffs.map((buff) => (
           <div
             key={buff.name}
             className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'
