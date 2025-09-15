@@ -7,28 +7,30 @@ import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
 interface FactionButtonProps {
   imageSrc: string;
   imageAlt: string;
-  title: string;
+  title?: string;
   description: string;
   href: string;
   ariaLabel: string;
 }
 
 interface HomePageSectionProps {
-  title: string;
+  title?: string;
   buttons: FactionButtonProps[];
 }
 
 const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => {
   return (
     <div className='flex flex-col items-center mt-16 px-2 md:px-4'>
-      <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800 dark:text-white'>{title}</h2>
+      {title !== undefined && (
+        <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800 dark:text-white'>{title}</h2>
+      )}
       <FactionButtonGroup>
         {buttons.map((button, index) => (
           <FactionButton
             key={index}
             imageSrc={button.imageSrc}
             imageAlt={button.imageAlt}
-            title={button.title}
+            title={button.title || ''}
             description={button.description}
             href={button.href}
             ariaLabel={button.ariaLabel}

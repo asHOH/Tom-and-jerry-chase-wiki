@@ -143,8 +143,8 @@ function HomeContent() {
 
         <HomePageSection title='角色' buttons={characterButtons} />
         <HomePageSection title='更多内容' buttons={prepareButtons} />
-        <HomePageSection title='道具与衍生物' buttons={itemButtons} />
-        <HomePageSection title='更多内容' buttons={cardButtons} />
+        <HomePageSection buttons={itemButtons} />
+        <HomePageSection buttons={cardButtons} />
 
         {/* Division line before 网站说明 */}
         <div className='mt-24 px-2 sm:px-4'>

@@ -7,7 +7,7 @@ export interface FactionButtonProps {
   emoji?: string;
   imageSrc?: string;
   imageAlt?: string;
-  title: string;
+  title?: string;
   description: string;
   href?: string;
   onClick?: () => void;
@@ -36,7 +36,7 @@ export function FactionButton({
           <div className='text-xl md:text-2xl'>
             <Image
               src={imageSrc}
-              alt={imageAlt || title}
+              alt={imageAlt || title || ''}
               width={36}
               height={36}
               style={{ height: '36px', width: 'auto' }}
@@ -47,7 +47,9 @@ export function FactionButton({
         ) : (
           <span className='text-xl md:text-2xl'>{emoji}</span>
         )}
-        <span className='text-xl md:text-2xl font-bold whitespace-nowrap'>{title}</span>
+        {title != undefined && (
+          <span className='text-xl md:text-2xl font-bold whitespace-nowrap'>{title}</span>
+        )}
       </div>
       <div className='text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1 dark:text-gray-400'>
         {description}
