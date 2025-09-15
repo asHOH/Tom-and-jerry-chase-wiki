@@ -1099,17 +1099,20 @@ export const getPositioningTagContainerColor = (
  * Entity type color utility
  */
 export const getEntityTypeColors = (entitytype: string, isDarkMode: boolean) => {
-  const entityTypeColorMap: Record<string, 'weapon1' | 'weapon2' | 'active' | 'passive'> = {
-    道具类: 'weapon1',
-    投射物类: 'weapon2',
-    召唤物类: 'active',
-    平台类: 'passive',
-    NPC类: 'passive',
-    其它: 'passive',
+  const entityTypeColorMap: Record<
+    string,
+    'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese'
+  > = {
+    道具类: 'rescue',
+    投射物类: 'support',
+    召唤物类: 'breakthrough',
+    平台类: 'wallBreak',
+    NPC类: 'disrupt',
+    其它: 'cheese',
   };
-  const skillType = entityTypeColorMap[entitytype] || 'passive';
+  const skillType = entityTypeColorMap[entitytype] || 'cheese';
   const colorScheme =
-    designTokens.colors.skillTypes[skillType] || designTokens.colors.skillTypes.passive;
+    designTokens.colors.positioningTags[skillType] || designTokens.colors.skillTypes.passive;
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
     backgroundColor:

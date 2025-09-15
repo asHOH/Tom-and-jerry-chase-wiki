@@ -11,6 +11,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
 import FilterRow from '@/components/ui/FilterRow';
+import { getPositioningTagColors } from '@/lib/design-system';
 
 const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
   '道具类',
@@ -64,9 +65,25 @@ export default function EntityClient() {
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(_, active) =>
-              active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
-            }
+            getButtonStyle={(name, active) => {
+              const isActive = active;
+              const tagColors = getPositioningTagColors(
+                {
+                  道具类: '救援',
+                  投射物类: '辅助',
+                  召唤物类: '破局',
+                  平台类: '砸墙',
+                  NPC类: '干扰',
+                  其它: '奶酪',
+                }[name],
+                false,
+                false,
+                'mouse',
+                isDarkMode
+              );
+              return isActive ? { ...tagColors } : undefined;
+            }}
+            isDarkMode={isDarkMode}
           />
 
           {/* 阵营筛选 */}
