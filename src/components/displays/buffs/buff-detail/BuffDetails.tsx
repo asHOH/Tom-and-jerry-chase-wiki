@@ -61,13 +61,15 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
                 {!!(buff.correlations && buff.correlations.length) && (
                   <Tag colorStyles={tagColorStyles} size='md'>
                     相关项:{' '}
-                    <TextWithHoverTooltips text={(buff.aliases ?? []).filter(Boolean).join(', ')} />
+                    <TextWithHoverTooltips
+                      text={(buff.correlations ?? []).filter(Boolean).join(', ')}
+                    />
                   </Tag>
                 )}
                 {!!(buff.source && buff.source.length) && (
                   <Tag colorStyles={tagColorStyles} size='md'>
                     来源:{' '}
-                    <TextWithHoverTooltips text={(buff.aliases ?? []).filter(Boolean).join(', ')} />
+                    <TextWithHoverTooltips text={(buff.source ?? []).filter(Boolean).join(', ')} />
                   </Tag>
                 )}
                 {buff.duration != undefined && (
