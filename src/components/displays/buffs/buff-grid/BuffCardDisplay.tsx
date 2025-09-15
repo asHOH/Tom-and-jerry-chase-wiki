@@ -2,13 +2,13 @@ import { Buff } from '@/data/types';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { getItemTypeColors } from '@/lib/design-tokens';
+import { getBuffTypeColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
-  const typeColors = getItemTypeColors(buff.bufftype, isDarkMode);
+  const typeColors = getBuffTypeColors(buff.bufftype, isDarkMode);
   const isMobile = useMobile();
 
   return (

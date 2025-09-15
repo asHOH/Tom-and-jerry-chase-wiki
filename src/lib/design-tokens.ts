@@ -929,6 +929,24 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
 };
 
 /**
+ * Buff type color utility
+ */
+export const getBuffTypeColors = (bufftype: string, isDarkMode: boolean) => {
+  const buffTypeColorMap: Record<string, 'disrupt' | 'rescue'> = {
+    正面效果: 'rescue',
+    负面效果: 'disrupt',
+  };
+  const buffType = buffTypeColorMap[bufftype] || 'cheese';
+  const colorScheme =
+    designTokens.colors.positioningTags[buffType] || designTokens.colors.skillTypes.passive;
+  return {
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+  };
+};
+
+/**
  * Avatar filter color utility
  * - 杰瑞: use the same brownish colors as the "砸墙" positioning tag
  * - 泰菲: grayish blue

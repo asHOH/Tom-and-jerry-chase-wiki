@@ -10,8 +10,9 @@ import { useState } from 'react';
 import type { Bufftypelist, Buff } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { getPositioningTagColors } from '@/lib/design-system';
 
-const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['增益效果', '负面效果'];
+const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['正面效果', '负面效果'];
 
 export default function BuffClient() {
   // Multi-select state for filters
@@ -39,7 +40,9 @@ export default function BuffClient() {
     <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
       <header className='text-center space-y-4 mb-8 px-4'>
         <PageTitle>状态效果</PageTitle>
-        <PageDescription>角色持有的各类状态效果，包括正面和负面效果</PageDescription>
+        <PageDescription>
+          角色持有的各类状态效果，包括正面和负面效果（该页面建设中）
+        </PageDescription>
         {/* Filter Controls */}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
@@ -54,9 +57,18 @@ export default function BuffClient() {
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(_, active) =>
-              active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
-            }
+            //Use PositioningTagColors to avoid creating new colorStyles
+            getButtonStyle={(name, active) => {
+              const isActive = active;
+              const tagColors = getPositioningTagColors(
+                { 正面效果: '救援', 负面效果: '干扰' }[name],
+                false,
+                false,
+                'mouse',
+                isDarkMode
+              );
+              return isActive ? { ...tagColors } : undefined;
+            }}
             isDarkMode={isDarkMode}
           />
         </div>

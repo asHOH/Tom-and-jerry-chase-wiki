@@ -269,7 +269,7 @@ export type EntityDefinition = {
 
 export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };
 
-export type Bufftypelist = '增益效果' | '负面效果';
+export type Bufftypelist = '正面效果' | '负面效果';
 //Todo: add Buffclass
 {
   /*export type Buffclass = '全局效果' | '常规效果' | '特殊技能效果';*/
