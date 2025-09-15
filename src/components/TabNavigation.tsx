@@ -86,6 +86,13 @@ const tabs: Tab[] = [
     imageAlt: '文章图标',
     path: '/articles',
   },
+  {
+    id: 'buffs',
+    name: '状态效果',
+    imageSrc: '/images/icons/buff.png',
+    imageAlt: '状态效果图标',
+    path: '/buffs',
+  },
 ];
 
 type TabNavigationProps = {
