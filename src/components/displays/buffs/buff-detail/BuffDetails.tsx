@@ -8,13 +8,13 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
 import GameImage from '@/components/ui/GameImage';
-//import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-//import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
+import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
+import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import SectionHeader from '@/components/ui/SectionHeader';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
-  // Keyboard navigation TODO
-  //useSpecifyTypeKeyboardNavigation(buff.name, 'buff');
+  // Keyboard navigation
+  useSpecifyTypeKeyboardNavigation(buff.name, 'buff');
 
   const { isDetailedView } = useAppContext();
   const [isDarkMode] = useDarkMode();
@@ -83,8 +83,8 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
                   </Tag>
                 )}
 
-                {/*Navigation TODO*/}
-                {/*<SpecifyTypeNavigationButtons currentId={buff.name} specifyType='buff' />*/}
+                {/*Navigation*/}
+                <SpecifyTypeNavigationButtons currentId={buff.name} specifyType='buff' />
               </div>
             </div>
           </BaseCard>

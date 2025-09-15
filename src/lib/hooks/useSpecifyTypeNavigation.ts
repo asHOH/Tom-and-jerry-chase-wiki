@@ -1,17 +1,17 @@
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { cards, specialSkills, items, entities } from '@/data';
+import { cards, specialSkills, items, entities, buffs } from '@/data';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useFilterState, createRankFilter } from '@/lib/filterUtils';
 import { useState } from 'react';
 import type { FactionId } from '@/data/types';
 
-type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity';
+type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff';
 
 /**
  * Navigation for knowledgeCards,specialSkills,items,entities
  * @param currentId - string - name of target to be searched
- * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' -type of target to be searched
+ * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff' -type of target to be searched
  * @param under - boolean(default false) - revease search to avoid same name(such as 应急治疗)
  */
 export const useSpecifyTypeNavigation = (
@@ -52,6 +52,9 @@ export const useSpecifyTypeNavigation = (
       const catIds = Object.keys(entities['cat']);
       const mouseIds = Object.keys(entities['mouse']);
       return [...catIds, ...mouseIds];
+    }, []),
+    buff: useMemo(() => {
+      return Object.keys(buffs);
     }, []),
   };
 
@@ -97,6 +100,7 @@ export const useSpecifyTypeNavigation = (
       specialSkill: 'special-skills',
       item: 'items',
       entity: 'entities',
+      buff: 'buffs',
     };
   }, []);
 

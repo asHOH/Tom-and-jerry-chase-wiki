@@ -4,7 +4,7 @@ import React from 'react';
 import { useSpecifyTypeNavigation } from '@/lib/hooks/useSpecifyTypeNavigation';
 import { motion } from 'motion/react';
 
-type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity';
+type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff';
 
 interface TargetNavigationButtonsProps {
   currentId: string;
@@ -16,7 +16,7 @@ interface TargetNavigationButtonsProps {
 /**
  * Navigation for knowledgeCards,specialSkills,items,entities
  * @param currentId - string - name of target to be searched
- * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' -type of target to be searched
+ * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff' -type of target to be searched
  * @param under - boolean(default false) - revease search to avoid same name(such as 应急治疗)
  */
 export default function SpecifyTypeNavigationButtons({
