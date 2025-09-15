@@ -108,7 +108,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
             </div>
           </BaseCard>
         </div>
-        <div className='md:w-2/3 space-y-3'>
+        <div className='md:w-2/3 space-y-3' style={{ whiteSpace: 'pre-wrap' }}>
           {[
             item.description === undefined
               ? { title: '道具描述', text: '待补充' }

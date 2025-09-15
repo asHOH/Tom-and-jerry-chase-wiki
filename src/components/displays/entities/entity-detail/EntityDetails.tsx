@@ -93,7 +93,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
             </div>
           </BaseCard>
         </div>
-        <div className='md:w-2/3 space-y-3'>
+        <div className='md:w-2/3 space-y-3' style={{ whiteSpace: 'pre-wrap' }}>
           {[
             entity.description === undefined
               ? { title: '衍生物描述', text: '待补充' }
