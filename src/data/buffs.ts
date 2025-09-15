@@ -1,7 +1,9 @@
 import { Buff, BuffDefinition } from './types';
 
-export const getBuffImageUrl = (name: string, specialImageUrl?: string): string => {
-  if (!!specialImageUrl) return specialImageUrl;
+export const getBuffImageUrl = (name: string, buff: BuffDefinition): string => {
+  if (!!buff.specialImageUrl) return buff.specialImageUrl;
+  if (buff.unuseImage)
+    return `/images/buffs/default-${buff.bufftype == '负面效果' ? 'debuff' : 'buff'}.png`;
   return `/images/buffs/${encodeURIComponent(name)}.png`;
 };
 
@@ -79,7 +81,7 @@ const buffsWithImages: Record<string, Buff> = Object.fromEntries(
     {
       ...buff,
       name: buffName,
-      imageUrl: getBuffImageUrl(buffName),
+      imageUrl: getBuffImageUrl(buffName, buff),
     },
   ])
 );
