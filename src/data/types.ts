@@ -268,3 +268,28 @@ export type EntityDefinition = {
 };
 
 export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };
+
+export type Bufftypelist = '增益效果' | '负面效果';
+//Todo: add Buffclass
+{
+  /*export type Buffclass = '全局效果' | '常规效果' | '特殊技能效果';*/
+}
+
+export type BuffDefinition = {
+  bufftype: Bufftypelist;
+  //buffclass: Buffclass;
+  aliases?: string[];
+  correlations?: string[];
+  source?: string[]; //all sources of buff
+  duration?: number | 'infinite'; // duration of buff.If buff has more than two different durations,don't fill in this attribute.
+  failure?: string; //failure conditions of buff
+  description?: string;
+  deatiledDescription?: string;
+  stack?: string; // the stacking way in more than two same buffs
+  detailedStack?: string;
+
+  useImage?: boolean; //show its image in grid.Default:true
+  specialImageUrl?: string; //use other image instead of buff's image
+};
+
+export type Buff = BuffDefinition & { name: string; imageUrl: string };
