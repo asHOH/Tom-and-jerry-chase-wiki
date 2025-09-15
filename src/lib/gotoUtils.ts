@@ -1,6 +1,6 @@
 // Utility for resolving goto targets by name
 
-import { characters, cards, items, specialSkills, entities, type Skill } from '@/data';
+import { characters, cards, items, specialSkills, entities, buffs, type Skill } from '@/data';
 import { getDocPages } from '@/lib/docUtils';
 import type { GotoResult, CategoryHint } from '@/lib/types';
 import { CATEGORY_HINTS } from '@/lib/types';
@@ -86,6 +86,16 @@ export async function getGotoResult(
       imageUrl: item!.imageUrl,
     };
   }
+  if ((!normalizedCategory || normalizedCategory === '状态效果') && name in buffs) {
+    const buff = buffs[name];
+    return {
+      url: `/buffs/${encodeURIComponent(name)}`,
+      type: 'buff',
+      name: buff!.name,
+      description: buff!.description,
+      imageUrl: buff!.imageUrl,
+    };
+  }
   if ((!normalizedCategory || normalizedCategory === '特技') && name in specialSkills['cat']) {
     const skill = specialSkills['cat'][name];
     return {
@@ -156,6 +166,16 @@ export async function getGotoResult(
       name: item!.name,
       description: item!.description,
       imageUrl: item!.imageUrl,
+    };
+  }
+  const buff = Object.values(buffs).find((i) => i.aliases?.includes(name));
+  if (buff) {
+    return {
+      url: `/buffs/${encodeURIComponent(buff.name)}`,
+      type: 'buff',
+      name: buff!.name,
+      description: buff!.description,
+      imageUrl: buff!.imageUrl,
     };
   }
   const catSkill = Object.values(specialSkills['cat']).find((s) => s.aliases?.includes(name));

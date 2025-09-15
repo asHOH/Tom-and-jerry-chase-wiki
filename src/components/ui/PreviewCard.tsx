@@ -34,6 +34,7 @@ const typeLabels: Record<string, string> = {
   'special-skill-mouse': '鼠特技',
   doc: '文档',
   'character-skill': '技能',
+  buff: '状态效果',
 };
 
 const typeTokenStyles = (type: string, isDarkMode: boolean) => getTypeLabelColors(type, isDarkMode);
