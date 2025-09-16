@@ -13,6 +13,7 @@ type GameImageProps = {
   sizes?: string;
   onLoad?: () => void;
   onError?: () => void;
+  useImageHeight?: boolean; //不规定组件的默认高度，以使UI更加紧凑
 };
 
 export default function GameImage({
@@ -24,13 +25,15 @@ export default function GameImage({
   sizes,
   onLoad,
   onError,
+  useImageHeight,
 }: GameImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const { width, height } = componentTokens.image.dimensions[size];
 
-  // Use card height for details view, image height for others
-  const containerHeight =
-    size === 'CARD_DETAILS'
+  // Use card height for details view, image height for others,unless useShort is true
+  const containerHeight = useImageHeight
+    ? ''
+    : size === 'CARD_DETAILS'
       ? componentTokens.card.content.height
       : componentTokens.image.container.height;
 

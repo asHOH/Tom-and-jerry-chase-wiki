@@ -19,6 +19,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           alt={`${buff.name}效果图标`}
           size='ITEM_CARD'
           className='hover:scale-105'
+          useImageHeight={isMobile ? true : false}
         />
       )}
       <div className='px-3 pt-1 pb-3 text-center w-full'>
