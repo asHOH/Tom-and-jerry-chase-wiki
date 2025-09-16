@@ -1219,7 +1219,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     specialSkills: [
       {
         name: '干扰投掷',
-        description: '提高干扰能力和技能命中率。',
+        description: '道具起手，衔接武器技能打出连控。',
       },
     ],
     skillAllocations: [
@@ -1274,8 +1274,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: false,
         cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
-        forecast: 1.9,
-        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -1298,6 +1296,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         ],
         cooldownTiming: '释放后',
         canHitInPipe: false,
+        forecast: 1.9,
+        aftercast: 0,
       },
       {
         name: '剑舞华尔兹',
@@ -1309,8 +1309,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: true,
         cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
-        forecast: 0.45,
-        aftercast: 0,
         canHitInPipe: false,
         cooldownTiming: '释放后',
         skillLevels: [
@@ -1333,6 +1331,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             detailedDescription: '第一段剑舞额外造成2秒眩晕。',
           },
         ],
+        forecast: 0.45,
+        aftercast: 0,
       },
       {
         name: '格挡之剑',
@@ -1345,7 +1345,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         canUseInAir: false,
         cancelableSkill: '无前摇',
         cancelableAftercast: ['道具键*', '跳跃键'],
-        forecast: 0,
         skillLevels: [
           {
             level: 1,
@@ -1366,6 +1365,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         canHitInPipe: false,
+        forecast: 0,
       },
       {
         name: '越战越勇',
@@ -1400,6 +1400,16 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '莱特宁',
         description: '有效牵制习惯闪现接爪刀的莱特宁玩家。',
         isMinor: true,
+      },
+      {
+        id: '如玉',
+        description: '格挡的无敌有效克制反击。',
+        isMinor: true,
+      },
+      {
+        id: '图茨',
+        description: '华尔兹无敌与格挡无敌可有效规避喵喵叫，高伤能快速击倒血脆的图茨。',
+        isMinor: false,
       },
     ],
     counteredBy: [
