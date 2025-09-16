@@ -8,6 +8,7 @@ import {
 } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
+import { designTokens } from '@/lib/design-tokens';
 
 export default function ItemCardDisplay({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
@@ -24,9 +25,15 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
         alt={`${item.name}道具图标`}
         size='ITEM_CARD'
         className='hover:scale-105'
+        useShortHeight={isMobile ? true : false}
       />
       <div className='px-3 pt-1 pb-3 text-center w-full'>
-        <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-1'>{item.name}</h3>
+        <h3
+          className={`${isMobile && item.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
+          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+        >
+          {item.name}
+        </h3>
         <div
           className='flex flex-wrap justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'

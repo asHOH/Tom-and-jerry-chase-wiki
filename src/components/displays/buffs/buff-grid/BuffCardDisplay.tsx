@@ -5,6 +5,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { getBuffTypeColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
+import { designTokens } from '@/lib/design-tokens';
 
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
@@ -19,18 +20,23 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           alt={`${buff.name}效果图标`}
           size='ITEM_CARD'
           className='hover:scale-105'
-          useImageHeight={isMobile ? true : false}
+          useShortHeight={isMobile ? true : false}
         />
       )}
       <div className='px-3 pt-1 pb-3 text-center w-full'>
-        <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-1'>{buff.name}</h3>
+        <h3
+          className={`${isMobile && buff.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
+          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+        >
+          {buff.name}
+        </h3>
         <div
           className='flex flex-wrap justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'
           aria-label='状态效果属性'
         >
           <Tag size='xs' margin='compact' colorStyles={typeColors}>
-            {isMobile ? buff.bufftype.slice(0, 2) : buff.bufftype}
+            {/*isMobile ? buff.bufftype.slice(0, 2) : buff.bufftype*/ buff.bufftype}
           </Tag>
         </div>
       </div>

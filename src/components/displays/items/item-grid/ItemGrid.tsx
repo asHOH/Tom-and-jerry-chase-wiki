@@ -52,10 +52,20 @@ export default function ItemClient() {
   });
 
   return (
-    <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
-      <header className='text-center space-y-4 mb-8 px-4'>
+    <div
+      className={
+        isMobile
+          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
+          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+      }
+    >
+      <header
+        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+      >
         <PageTitle>道具</PageTitle>
-        <PageDescription>在地图中散落的各式各样的道具——猫鼠相互对抗的关键机制</PageDescription>
+        {!isMobile && (
+          <PageDescription>在地图中散落的各式各样的道具——猫鼠相互对抗的关键机制</PageDescription>
+        )}
         {/* Filter Controls */}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
@@ -129,7 +139,9 @@ export default function ItemClient() {
       </header>
       <div
         className='auto-fit-grid grid-container grid gap-4 mt-8'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}
+        style={{
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
+        }}
       >
         {filteredItems.map((item) => (
           <div

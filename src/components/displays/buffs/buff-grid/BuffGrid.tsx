@@ -66,7 +66,7 @@ export default function BuffClient() {
                 prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
               )
             }
-            getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
+            //*getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}*/
             //Use PositioningTagColors to avoid creating new colorStyles
             getButtonStyle={(name, active) => {
               const isActive = active;

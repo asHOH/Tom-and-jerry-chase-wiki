@@ -5,6 +5,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { getEntityTypeColors /* , getCardCostColors */ } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
+import { designTokens } from '@/lib/design-tokens';
 
 export default function EntityCardDisplay({ entity }: { entity: Entity }) {
   const [isDarkMode] = useDarkMode();
@@ -20,16 +21,22 @@ export default function EntityCardDisplay({ entity }: { entity: Entity }) {
         alt={`${entity.name}衍生物图标`}
         size='ITEM_CARD'
         className='hover:scale-105'
+        useShortHeight={isMobile ? true : false}
       />
       <div className='px-3 pt-1 pb-3 text-center w-full'>
-        <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-1'>{entity.name}</h3>
+        <h3
+          className={`${isMobile && entity.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
+          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+        >
+          {entity.name}
+        </h3>
         <div
           className='flex flex-wrap justify-center entitys-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'
           aria-label='衍生物属性'
         >
           <Tag size='xs' margin='compact' colorStyles={typeColors}>
-            {isMobile ? entity.entitytype.slice(0, 2) : entity.entitytype}
+            {isMobile ? entity.entitytype.slice(0, 3) : entity.entitytype}
           </Tag>
         </div>
       </div>

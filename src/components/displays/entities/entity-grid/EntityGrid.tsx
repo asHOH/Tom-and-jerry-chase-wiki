@@ -46,12 +46,22 @@ export default function EntityClient() {
   });
 
   return (
-    <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
-      <header className='text-center space-y-4 mb-8 px-4'>
+    <div
+      className={
+        isMobile
+          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
+          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+      }
+    >
+      <header
+        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+      >
         <PageTitle>衍生物</PageTitle>
-        <PageDescription>
-          由角色技能衍生出的独立物体，拥有各自独特的属性和作用（该界面更新中）
-        </PageDescription>
+        {!isMobile && (
+          <PageDescription>
+            由角色技能衍生出的独立物体，拥有各自独特的属性和作用（该界面更新中）
+          </PageDescription>
+        )}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 类型筛选 */}
@@ -64,7 +74,7 @@ export default function EntityClient() {
                 prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
               )
             }
-            getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
+            getOptionLabel={(opt) => (isMobile ? opt.slice(0, 3) : opt)}
             getButtonStyle={(name, active) => {
               const isActive = active;
               const tagColors = getPositioningTagColors(
@@ -108,7 +118,9 @@ export default function EntityClient() {
       </header>
       <div
         className='auto-fit-grid grid-container grid gap-4 mt-8'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}
+        style={{
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
+        }}
       >
         {filteredEntities.map((entity) => (
           <div
