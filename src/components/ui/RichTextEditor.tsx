@@ -42,31 +42,28 @@ interface ToolbarButtonProps {
   title?: string;
 }
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = ({
-  onClick,
-  isActive = false,
-  disabled = false,
-  children,
-  title,
-}) => (
-  <button
-    type='button'
-    onClick={onClick}
-    disabled={disabled}
-    title={title}
-    className={clsx(
-      'p-2 rounded-md border transition-all duration-200 text-sm font-medium',
-      'hover:bg-gray-100 dark:hover:bg-gray-700',
-      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
-      'disabled:opacity-50 disabled:cursor-not-allowed',
-      isActive
-        ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300'
-        : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
-    )}
-  >
-    {children}
-  </button>
+const ToolbarButton = React.memo<ToolbarButtonProps>(
+  ({ onClick, isActive = false, disabled = false, children, title }) => (
+    <button
+      type='button'
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      className={clsx(
+        'p-2 rounded-md border transition-all duration-200 text-sm font-medium',
+        'hover:bg-gray-100 dark:hover:bg-gray-700',
+        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+        'disabled:opacity-50 disabled:cursor-not-allowed',
+        isActive
+          ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300'
+          : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
+      )}
+    >
+      {children}
+    </button>
+  )
 );
+ToolbarButton.displayName = 'ToolbarButton';
 
 const Toolbar: React.FC<{
   editor: Editor;
