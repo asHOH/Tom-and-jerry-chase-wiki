@@ -207,7 +207,7 @@ export function wikiTextToHTML(wikiText: string): string {
   const tables: string[] = [];
 
   // Extract and temporarily replace tables
-  let text = wikiText.replace(/\{\|([\s\S]*?)\|\}/g, (_, tableContent) => {
+  let text = wikiText.replace(/\{\|([\s\S]*?)\|\}/gm, (_, tableContent) => {
     const htmlTable = parseWikiTable(tableContent);
     tables.push(htmlTable);
     return `__TABLE_${tables.length - 1}__`;

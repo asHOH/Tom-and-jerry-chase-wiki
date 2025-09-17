@@ -182,6 +182,30 @@ describe('WikiTable Support', () => {
       expect(normalize(backToWiki)).toContain('| Cell 2');
     });
 
+    it('should handle WikiText with newlines that comes from HTML conversion', () => {
+      // Simulate what happens when HTML is converted back to WikiText (which adds newlines)
+      const originalWiki = `{| class="wikitable"
+! Header 1
+! Header 2
+|-
+| Cell 1
+| Cell 2
+|}`;
+
+      const html = wikiTextToHTML(originalWiki);
+      const wikiWithNewlines = htmlToWikiText(html);
+
+      // The wikiWithNewlines might have extra newlines, but should still parse correctly
+      const htmlAgain = wikiTextToHTML(wikiWithNewlines);
+
+      expect(htmlAgain).toContain('<table class="wikitable">');
+      expect(htmlAgain).toContain('<th>Header 1</th>');
+      expect(htmlAgain).toContain('<td>Cell 1</td>');
+
+      // Should not treat table syntax as paragraphs
+      expect(htmlAgain).not.toContain('<p>{|');
+      expect(htmlAgain).not.toContain('<p>!</p>');
+    });
     it('should handle complex table with mixed content', () => {
       const complexWiki = `{| class="wikitable"
 !
@@ -214,6 +238,157 @@ describe('WikiTable Support', () => {
       expect(result).toContain('<td></td>');
     });
 
+    it('should handle mixed content with text before tables', () => {
+      const mixedContent = `数据由隔壁老米测试。注：勇气值自然积累需要27s回满、自然消耗需要50s耗完。
+
+{| class="wikitable"
+!
+! 吃蛋糕
+! 喝牛奶
+|-
+! 减少勇气积累时间/s（每次）
+| 10
+| 10
+|}`;
+
+      const result = wikiTextToHTML(mixedContent);
+      expect(result).toContain(
+        '<p>数据由隔壁老米测试。注：勇气值自然积累需要27s回满、自然消耗需要50s耗完。</p>'
+      );
+      expect(result).toContain('<table class="wikitable">');
+      expect(result).toContain('<th>吃蛋糕</th>');
+      expect(result).toContain('<td>10</td>');
+      // Should NOT contain table syntax as plain text
+      expect(result).not.toContain('<p>{| class="wikitable"</p>');
+    });
+
+    it('should parse tables with extra newlines between elements', () => {
+      const tableWithNewlines = `{| class="wikitable"
+
+!
+
+! 吃蛋糕
+
+! 喝牛奶
+
+|-
+
+! 减少勇气积累时间/s（每次）
+
+| 10
+
+| 10
+
+|}`;
+
+      const result = wikiTextToHTML(tableWithNewlines);
+      expect(result).toContain('<table class="wikitable">');
+      expect(result).toContain('<th>吃蛋糕</th>');
+      expect(result).toContain('<td>10</td>');
+    });
+
+    it('should handle the exact user input case', () => {
+      const userInput = `数据由隔壁老米测试。注：勇气值自然积累需要27s回满、自然消耗需要50s耗完。
+
+{| class="wikitable"
+!
+! 吃蛋糕
+! 喝牛奶
+! 喝药水
+! 推奶酪
+! 冲刺
+! 冰水
+! 胡椒粉
+|-
+! 减少勇气积累时间/s（每次）
+| 10
+| 10
+| 6
+| 1
+| ——
+| 1.6
+| 2
+| 2
+|-
+! 延长勇气流失时间/s（每次）
+| 16
+| 16
+| 10
+| 1.6
+| 2s，冲到猫/鸭子减6.5s（净减4.5s）
+| 4.6
+| 3.2
+| 3.2
+|}`;
+
+      const result = wikiTextToHTML(userInput);
+
+      // Should contain proper HTML table
+      expect(result).toContain('<table class="wikitable">');
+      expect(result).toContain('<th>吃蛋糕</th>');
+      expect(result).toContain('<td>10</td>');
+
+      // Should NOT contain table syntax as plain text paragraphs
+      expect(result).not.toContain('<p>{| class="wikitable"</p>');
+      expect(result).not.toContain('<p>!</p>');
+      expect(result).not.toContain('<p>|-</p>');
+    });
+
+    it('should handle tables that get regenerated with extra newlines', () => {
+      // This simulates the case where HTML is converted back to WikiText with extra newlines
+      const tableWithExtraNewlines = `{| class="wikitable"
+
+!
+
+! 吃蛋糕
+
+! 喝牛奶
+
+! 喝药水
+
+! 推奶酪
+
+! 冲刺
+
+|-
+
+! 减少勇气积累时间/s（每次）
+
+| 10
+
+| 10
+
+| 6
+
+| 1
+
+| ——
+
+|-
+
+! 延长勇气流失时间/s（每次）
+
+| 16
+
+| 16
+
+| 10
+
+| 1.6
+
+| 2s，冲到猫/鸭子减6.5s（净减4.5s）
+
+|}`;
+
+      const result = wikiTextToHTML(tableWithExtraNewlines);
+
+      // Should still parse correctly
+      expect(result).toContain('<table class="wikitable">');
+      expect(result).toContain('<th>吃蛋糕</th>');
+      expect(result).toContain('<td>10</td>');
+      expect(result).toContain('<td>2s，冲到猫/鸭子减6.5s（净减4.5s）</td>');
+    });
+
     it('should handle tables mixed with other content', () => {
       const mixedContent = `This is a paragraph.
 
@@ -239,6 +414,22 @@ Another paragraph.`;
 
       // Should not throw an error
       expect(() => wikiTextToHTML(malformedTable)).not.toThrow();
+    });
+
+    it('should handle various line ending formats', () => {
+      // Test with Windows line endings (\r\n)
+      const windowsLineEndings =
+        '{| class="wikitable"\r\n!\r\n! Header 1\r\n! Header 2\r\n|-\r\n| Cell 1\r\n| Cell 2\r\n|}';
+      const windowsResult = wikiTextToHTML(windowsLineEndings);
+      expect(windowsResult).toContain('<table class="wikitable">');
+      expect(windowsResult).toContain('<th>Header 1</th>');
+
+      // Test with mixed line endings
+      const mixedLineEndings =
+        '{| class="wikitable"\n!\r\n! Header 1\n! Header 2\r\n|-\n| Cell 1\r\n| Cell 2\n|}';
+      const mixedResult = wikiTextToHTML(mixedLineEndings);
+      expect(mixedResult).toContain('<table class="wikitable">');
+      expect(mixedResult).toContain('<th>Header 1</th>');
     });
   });
 });
