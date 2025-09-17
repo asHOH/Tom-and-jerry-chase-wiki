@@ -1161,8 +1161,8 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         {/*counterEachOther*/}
         <div>
           <div className='flex items-center justify-between'>
-            <span className='font-semibold text-sm text-red-700 dark:text-red-300 flex items-center gap-1'>
-              <span className='w-5 h-5 bg-red-200 rounded-full flex items-center justify-center mr-1'>
+            <span className='font-semibold text-sm text-amber-700 dark:text-amber-300 flex items-center gap-1'>
+              <span className='w-5 h-5 bg-amber-200 rounded-full flex items-center justify-center mr-1'>
                 <svg
                   width='16'
                   height='16'
@@ -1171,11 +1171,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   aria-label='sad'
                   xmlns='http://www.w3.org/2000/svg'
                 >
-                  <circle cx='5' cy='6' r='1.25' fill='#dc2626' />
-                  <circle cx='11' cy='6' r='1.25' fill='#dc2626' />
+                  <circle cx='5' cy='6' r='1.25' fill='#ca8a04' />
+                  <circle cx='11' cy='6' r='1.25' fill='#ca8a04' />
                   <path
-                    d='M4 11 Q8 9.5 12 11'
-                    stroke='#dc2626'
+                    d='M4 11 H12 11'
+                    stroke='#ca8a04'
                     strokeWidth='2'
                     fill='none'
                     strokeLinecap='round'
@@ -1221,13 +1221,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                       <div
                         key={'character-' + c.id}
                         className={clsx(
-                          'flex flex-row items-center gap-3 p-2 rounded-lg bg-red-50 dark:bg-red-900/30',
+                          'flex flex-row items-center gap-3 p-2 rounded-lg bg-amber-50 dark:bg-amber-900/30',
                           !isEditMode &&
-                            'cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95',
+                            'cursor-pointer transition-shadow hover:shadow-lg hover:bg-amber-100 dark:hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-amber-400 active:scale-95',
                           c.isMinor && 'opacity-60'
                         )}
                         {...(!isEditMode && { role: 'button', tabIndex: 0 })}
-                        aria-label={!isEditMode ? `选择角色 ${c.id}` : `被 ${c.id} 克制的关系`}
+                        aria-label={!isEditMode ? `选择角色 ${c.id}` : `与 ${c.id} 互有克制的关系`}
                         onClick={() => {
                           if (!isEditMode) {
                             handleSelectCharacter(c.id);
@@ -1253,7 +1253,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                               <button
                                 type='button'
                                 onClick={() => counterEachOtherHook.toggleIsMinor(originalIndex)}
-                                className='text-[10px] px-1 py-0.5 bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200 rounded-full hover:bg-red-300 dark:hover:bg-red-600 cursor-pointer'
+                                className='text-[10px] px-1 py-0.5 bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200 rounded-full hover:bg-amber-300 dark:hover:bg-amber-600 cursor-pointer'
                                 aria-label={`切换${c.id}的互有克制关系为${c.isMinor ? '主要' : '次要'}`}
                               >
                                 {c.isMinor ? '次要' : '主要'}
@@ -1261,7 +1261,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             ) : (
                               !isEditMode &&
                               c.isMinor && (
-                                <span className='text-[10px] px-1 py-0.5 bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200 rounded-full'>
+                                <span className='text-[10px] px-1 py-0.5 bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200 rounded-full'>
                                   次要
                                 </span>
                               )
@@ -1295,7 +1295,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                             type='button'
                             onClick={() => counterEachOtherHook.handleRemove(originalIndex)}
                             className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-                            aria-label={`移除${c.id}的被克制关系`}
+                            aria-label={`移除${c.id}的互有克制关系`}
                           >
                             <svg
                               xmlns='http://www.w3.org/2000/svg'
