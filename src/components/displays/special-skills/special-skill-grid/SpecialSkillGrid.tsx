@@ -10,12 +10,14 @@ import BaseCard from '@/components/ui/BaseCard';
 import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
 import FilterRow from '@/components/ui/FilterRow';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 const allSkills = [...Object.values(specialSkills.cat), ...Object.values(specialSkills.mouse)];
 
 export default function SpecialSkillClient() {
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
+  const isMobile = useMobile();
 
   // Filter skills by faction if selected
   const filteredSkills = selectedFaction
@@ -23,10 +25,20 @@ export default function SpecialSkillClient() {
     : allSkills;
 
   return (
-    <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
-      <header className='text-center space-y-4 mb-8 px-4'>
+    <div
+      className={
+        isMobile
+          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
+          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+      }
+    >
+      <header
+        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+      >
         <PageTitle>特技</PageTitle>
-        <PageDescription>角色可配备的额外技能，合理使用将大幅提高角色能力</PageDescription>
+        {!isMobile && (
+          <PageDescription>角色可配备的额外技能，合理使用将大幅提高角色能力</PageDescription>
+        )}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           <FilterRow<'cat' | 'mouse'>
@@ -44,7 +56,9 @@ export default function SpecialSkillClient() {
       </header>
       <div
         className='auto-fit-grid grid-container grid gap-4 mt-8'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}
+        style={{
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
+        }}
       >
         {filteredSkills.map((skill) => (
           <div
@@ -63,6 +77,7 @@ export default function SpecialSkillClient() {
                 alt={skill.name}
                 size='SPECIAL_SKILL_CARD'
                 className='hover:scale-105'
+                useShortHeight={isMobile ? true : false}
               />
               <div className='px-3 pt-1 pb-3 text-center'>
                 <div className='font-semibold dark:text-white'>{skill.name}</div>
