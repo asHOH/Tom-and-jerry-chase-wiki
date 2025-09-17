@@ -224,6 +224,8 @@ type CharacterDefinition = {
   counteredByKnowledgeCards?: CharacterRelationItem[]; // Matchups where the opponent's knowledge cards are a disadvantage.
   counteredBySpecialSkills?: CharacterRelationItem[]; // Matchups where the opponent's special skills are a disadvantage.
 
+  counteredEachOther?: CharacterRelationItem[]; // Charaters this character has different relation with (in different time periods within the game),or both parties have low fault tolerance rates.
+
   collaborators?: CharacterRelationItem[]; // Characters this character has good synergy with.
 };
 \`\`\`

@@ -166,6 +166,8 @@ export type CharacterDefinition = {
   counteredByKnowledgeCards?: CharacterRelationItem[];
   counteredBySpecialSkills?: CharacterRelationItem[];
 
+  counterEachOther?: CharacterRelationItem[];
+
   collaborators?: CharacterRelationItem[];
 };
 
@@ -177,6 +179,8 @@ export type CharacterRelation = {
   counteredBy: CharacterRelationItem[];
   counteredByKnowledgeCards: CharacterRelationItem[];
   counteredBySpecialSkills: CharacterRelationItem[];
+
+  counterEachOther: CharacterRelationItem[];
 
   collaborators: CharacterRelationItem[];
 };
