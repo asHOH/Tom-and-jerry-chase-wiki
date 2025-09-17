@@ -6,11 +6,10 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import useSWR from 'swr';
-
-import PageTitle from '@/components/ui/PageTitle';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 import { sanitizeHTML } from '@/lib/xssUtils';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 interface ArticleData {
   id: string;
@@ -48,6 +47,7 @@ export default function ArticleClient() {
   const params = useParams();
   const { role: userRole } = useUser();
   const articleId = params?.id as string;
+  const isMobile = useMobile();
 
   const { data, error } = useSWR<{ article: ArticleData }>(
     articleId ? `/api/articles/${articleId}` : null,
@@ -93,17 +93,20 @@ export default function ArticleClient() {
 
   const canEdit =
     userRole === 'Contributor' || userRole === 'Reviewer' || userRole === 'Coordinator';
+  const titleSize = !isMobile ? 'text-4xl' : article.title.length <= 10 ? 'text-3xl' : 'text-2xl';
 
   return (
-    <div className='container mx-auto px-4 py-8 max-w-4xl'>
+    <div className={`container mx-auto ${isMobile ? 'px-1 py-2' : 'px-4 py-8'} max-w-4xl`}>
       {/* Header */}
       <div className='mb-8 flex flex-col'>
         <header className='text-center'>
-          <PageTitle>{article.title}</PageTitle>
+          <h1 className={`${titleSize} font-bold text-blue-600 dark:text-blue-400 py-3`}>
+            {article.title}
+          </h1>
         </header>
 
         {/* Article Meta */}
-        <div className='mt-6 p-6'>
+        <div className={isMobile ? 'p-2' : 'mt-6 p-6'}>
           <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
             <div className='flex items-center gap-2'>
               <svg
@@ -266,7 +269,7 @@ export default function ArticleClient() {
       </div>
 
       {/* Article Content */}
-      <div className='p-8'>
+      <div className={isMobile ? '' : 'p-8'}>
         <div
           className='prose prose-lg max-w-none dark:prose-invert prose-blue
                      prose-headings:text-gray-900 dark:prose-headings:text-gray-100
