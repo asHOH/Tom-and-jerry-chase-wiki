@@ -16,6 +16,7 @@ import { cards } from '@/data';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import FilterRow from '@/components/ui/FilterRow';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 export default function KnowledgeCardGrid() {
   // Use centralized filter state management for ranks
@@ -25,6 +26,7 @@ export default function KnowledgeCardGrid() {
     hasFilter: hasRankFilter,
   } = useFilterState<string>();
   const [isDarkMode] = useDarkMode();
+  const isMobile = useMobile();
 
   // Cost range state with faction-specific initial values
   const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
@@ -41,10 +43,22 @@ export default function KnowledgeCardGrid() {
   );
 
   return (
-    <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
-      <header className='text-center space-y-4 mb-8 px-4'>
+    <div
+      className={
+        isMobile
+          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
+          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+      }
+    >
+      <header
+        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+      >
         <PageTitle>知识卡</PageTitle>
-        <PageDescription>提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力</PageDescription>
+        {!isMobile && (
+          <PageDescription>
+            提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力
+          </PageDescription>
+        )}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           <FilterRow<FactionId>
@@ -98,7 +112,9 @@ export default function KnowledgeCardGrid() {
       </header>
       <div
         className='auto-fit-grid grid-container grid gap-4 mt-8'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}
+        style={{
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '160px'}, 1fr))`,
+        }}
       >
         {filteredAndSortedCards.map((card, index) => (
           <div

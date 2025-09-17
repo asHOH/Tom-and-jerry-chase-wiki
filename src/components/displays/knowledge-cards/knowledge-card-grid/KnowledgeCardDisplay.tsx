@@ -4,6 +4,7 @@ import GameImage from '../../../ui/GameImage';
 import Tag from '../../../ui/Tag';
 import BaseCard from '../../../ui/BaseCard';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 export default function KnowledgeCardDisplay({
   id,
@@ -16,6 +17,7 @@ export default function KnowledgeCardDisplay({
   const [isDarkMode] = useDarkMode();
   const rankColors = getCardRankColors(rank, false, isDarkMode);
   const costColors = getCardCostColors(cost, false, isDarkMode);
+  const isMobile = useMobile();
 
   return (
     <BaseCard
@@ -30,6 +32,7 @@ export default function KnowledgeCardDisplay({
         size='KNOWLEDGECARD_CARD'
         className='hover:scale-105'
         priority={priority}
+        useShortHeight={isMobile ? true : false}
       />
       <div className='px-3 pt-1 pb-3 text-center'>
         <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-1'>{name}</h3>
