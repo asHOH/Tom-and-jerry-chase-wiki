@@ -15,6 +15,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 import { useFilterState } from '@/lib/filterUtils';
 import { sanitizeHTML } from '@/lib/xssUtils';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 interface Article {
   id: string;
@@ -54,6 +55,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ArticlesClient() {
   const { role: userRole } = useUser();
+  const isMobile = useMobile();
 
   // Use centralized filter state management
   const {
@@ -198,18 +200,22 @@ export default function ArticlesClient() {
     );
   }
   return (
-    <div className='space-y-8 dark:text-slate-200'>
+    <div className={isMobile ? 'space-y-2 dark:text-slate-200' : 'space-y-8 dark:text-slate-200'}>
       {/* Header */}
-      <header className='text-center space-y-4 mb-8 px-4'>
+      <header
+        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+      >
         <PageTitle>文章列表</PageTitle>
-        <PageDescription>浏览和搜索猫和老鼠手游的文章内容</PageDescription>
+        {!isMobile && <PageDescription>浏览和搜索猫和老鼠手游的文章内容</PageDescription>}
 
         {/* Category Filter Controls */}
         {!!data && data.categories.length > 0 && (
-          <div className='filter-section flex justify-center items-center gap-4 mt-8'>
+          <div
+            className={`filter-section flex justify-center items-center ${isMobile ? 'gap-2 mt-4' : 'gap-4 mt-8'}`}
+          >
             <FilterLabel displayMode='inline'>分类筛选:</FilterLabel>
             <FilterLabel displayMode='block'>筛选:</FilterLabel>
-            <div className='flex flex-wrap gap-2 justify-center'>
+            <div className={`flex flex-wrap ${!isMobile && 'gap-2'} justify-center`}>
               {data?.categories
                 .filter((category) => category.name != '根分类')
                 .map((category) => {
@@ -247,10 +253,12 @@ export default function ArticlesClient() {
         )}
 
         {/* Sort Controls */}
-        <div className='filter-section flex justify-center items-center gap-4 mt-6'>
+        <div
+          className={`filter-section flex justify-center items-center ${isMobile ? 'gap-2 mt-2' : 'gap-4 mt-6'}`}
+        >
           <FilterLabel displayMode='inline'>排序方式:</FilterLabel>
           <FilterLabel displayMode='block'>排序:</FilterLabel>
-          <div className='flex gap-2'>
+          <div className={`flex flex-wrap ${!isMobile && 'gap-2'} justify-center`}>
             {[
               { value: 'created_at-desc', label: '最新发布' },
               { value: 'created_at-asc', label: '最早发布' },
@@ -284,7 +292,9 @@ export default function ArticlesClient() {
         </div>
 
         {/* Stats and Quick Actions */}
-        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-8 px-4'>
+        <div
+          className={`flex flex-col sm:flex-row sm:items-center sm:justify-between ${isMobile ? 'gap-2 mt-4 px-2' : 'gap-4 mt-8 px-4'}`}
+        >
           <div className='text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left'>
             共找到 {data?.total_count || 0} 篇文章
             {selectedCategories.size > 0 && (
@@ -394,7 +404,7 @@ export default function ArticlesClient() {
         </div>
       ) : (
         <div
-          className='auto-fit-grid grid-container grid gap-6 mt-8 px-4'
+          className={`auto-fit-grid grid-container grid ${!isMobile && 'gap-6 mt-8 px-4'}`}
           style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}
         >
           {data?.articles.map((article) => {
