@@ -250,6 +250,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           {!!nickname && (
             <div className='relative'>
               <button
+                type='button'
+                aria-label='用户设置'
+                title='用户设置'
                 className={clsx(
                   getButtonClassName(isMobile, false, dropdownOpen),
                   'flex items-center justify-center p-2!'
