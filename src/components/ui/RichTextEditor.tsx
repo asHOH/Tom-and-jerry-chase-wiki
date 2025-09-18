@@ -1,3 +1,7 @@
+import { Table } from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableHeader from '@tiptap/extension-table-header';
+import TableCell from '@tiptap/extension-table-cell';
 import React, { useCallback, useEffect, useState } from 'react';
 import { EditorContent, useEditor, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -220,6 +224,86 @@ const Toolbar: React.FC<{
 
         <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
 
+        {/* Tables */}
+        <div className='flex items-center gap-1'>
+          <ToolbarButton
+            onClick={() =>
+              editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+            }
+            disabled={
+              !editor
+                .can()
+                .chain()
+                .focus()
+                .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+                .run()
+            }
+            title='插入表格 (3x3)'
+          >
+            表格
+          </ToolbarButton>
+
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleHeaderRow().run()}
+            disabled={!editor.can().chain().focus().toggleHeaderRow().run()}
+            title='开关表头行'
+          >
+            表头
+          </ToolbarButton>
+
+          <ToolbarButton
+            onClick={() => editor.chain().focus().addRowAfter().run()}
+            disabled={!editor.can().chain().focus().addRowAfter().run()}
+            title='在下方添加行'
+          >
+            加行
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().addColumnAfter().run()}
+            disabled={!editor.can().chain().focus().addColumnAfter().run()}
+            title='在右侧添加列'
+          >
+            加列
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().deleteRow().run()}
+            disabled={!editor.can().chain().focus().deleteRow().run()}
+            title='删除当前行'
+          >
+            删行
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().deleteColumn().run()}
+            disabled={!editor.can().chain().focus().deleteColumn().run()}
+            title='删除当前列'
+          >
+            删列
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().mergeCells().run()}
+            disabled={!editor.can().chain().focus().mergeCells().run()}
+            title='合并单元格'
+          >
+            合并
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().splitCell().run()}
+            disabled={!editor.can().chain().focus().splitCell().run()}
+            title='拆分单元格'
+          >
+            拆分
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().deleteTable().run()}
+            disabled={!editor.can().chain().focus().deleteTable().run()}
+            title='删除表格'
+          >
+            删表
+          </ToolbarButton>
+        </div>
+
+        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+
         {/* Special Content */}
         <div className='flex items-center gap-1'>
           <ToolbarButton
@@ -332,6 +416,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           class: 'max-w-full h-auto rounded-lg',
         },
       }),
+      // Table support to preserve and edit tables in rich mode
+      Table.configure({
+        resizable: true,
+        lastColumnResizable: true,
+        allowTableNodeSelection: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: content || placeholder,
     immediatelyRender: false,
@@ -369,19 +462,29 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
     if (mode === viewMode) return;
 
-    const currentHtml = editor.getHTML();
-
+    // Determine conversions based on current view
     if (mode === 'wiki') {
-      setRawContent(htmlToWikiText(currentHtml));
+      if (viewMode === 'html') {
+        setRawContent(htmlToWikiText(rawContent));
+      } else if (viewMode === 'rich') {
+        const currentHtml = editor.getHTML();
+        setRawContent(htmlToWikiText(currentHtml));
+      }
     } else if (mode === 'html') {
-      setRawContent(currentHtml);
+      if (viewMode === 'wiki') {
+        setRawContent(wikiTextToHTML(rawContent));
+      } else if (viewMode === 'rich') {
+        const currentHtml = editor.getHTML();
+        setRawContent(currentHtml);
+      }
     } else {
       // Switching back to rich text
       let newHtml = rawContent;
       if (viewMode === 'wiki') {
         newHtml = wikiTextToHTML(rawContent);
       }
-      editor.commands.setContent(newHtml);
+      // If coming from HTML view, rawContent already holds HTML
+      editor.commands.setContent(newHtml, { emitUpdate: true });
     }
     setViewMode(mode);
   };
