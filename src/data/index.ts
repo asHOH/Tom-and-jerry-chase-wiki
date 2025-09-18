@@ -51,3 +51,5 @@ export const entities = {
 };
 
 export { default as buffs } from './buffs';
+
+export { default as itemGroups } from './itemGroups';

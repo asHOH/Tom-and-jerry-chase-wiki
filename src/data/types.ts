@@ -297,3 +297,21 @@ export type BuffDefinition = {
 };
 
 export type Buff = BuffDefinition & { name: string; imageUrl: string };
+
+//Create a group include similar items(or entites/buffs),so that can use navigation in one href
+export type SingleItem = {
+  name: string;
+  type: 'character' | 'skill' | 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff';
+  factionId?: FactionId; //Just use to distinguish specialSkills 应急治疗/急速翻滚
+};
+
+export type ItemGroupDefinition = {
+  aliases?: string[];
+  description?: string;
+
+  group: SingleItem[];
+
+  specialImageUrl?: string; //use other image instead of buff's image
+};
+
+export type ItemGroup = ItemGroupDefinition & { name: string }; //no imageUrl
