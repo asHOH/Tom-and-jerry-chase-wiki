@@ -112,6 +112,7 @@ const Toolbar: React.FC<{
   viewMode: string;
   onModeChange: (mode: 'rich' | 'wiki' | 'html') => void;
 }> = ({ editor, viewMode, onModeChange }) => {
+  const [showTableTools, setShowTableTools] = useState(false);
   const addImage = useCallback(() => {
     const url = window.prompt('图片链接');
     if (url) {
@@ -262,7 +263,7 @@ const Toolbar: React.FC<{
 
         <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
 
-        {/* Tables */}
+        {/* Tables (foldable) */}
         <div className='flex items-center gap-1'>
           <ToolbarButton
             onClick={() =>
@@ -281,63 +282,78 @@ const Toolbar: React.FC<{
             表格
           </ToolbarButton>
 
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeaderRow().run()}
-            disabled={!editor.can().chain().focus().toggleHeaderRow().run()}
-            title='开关表头行'
+          <button
+            type='button'
+            onClick={() => setShowTableTools((v) => !v)}
+            title={showTableTools ? '收起表格工具' : '展开表格工具'}
+            aria-pressed={showTableTools}
+            className={clsx(
+              'p-1 rounded',
+              'bg-transparent border-0',
+              'hover:bg-gray-100 dark:hover:bg-gray-700',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1'
+            )}
           >
-            表头
-          </ToolbarButton>
+            <svg
+              viewBox='0 0 20 20'
+              fill='currentColor'
+              className={clsx(
+                'w-4 h-4 transition-transform',
+                showTableTools ? 'rotate-90' : 'rotate-0'
+              )}
+              aria-hidden='true'
+            >
+              <path d='M7.21 14.77a.75.75 0 01.02-1.06L10.94 10 7.23 6.29a.75.75 0 111.06-1.06l4.24 4.24a.75.75 0 010 1.06L8.29 14.77a.75.75 0 01-1.08-.02z' />
+            </svg>
+          </button>
 
-          <ToolbarButton
-            onClick={() => editor.chain().focus().addRowAfter().run()}
-            disabled={!editor.can().chain().focus().addRowAfter().run()}
-            title='在下方添加行'
-          >
-            加行
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().addColumnAfter().run()}
-            disabled={!editor.can().chain().focus().addColumnAfter().run()}
-            title='在右侧添加列'
-          >
-            加列
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().deleteRow().run()}
-            disabled={!editor.can().chain().focus().deleteRow().run()}
-            title='删除当前行'
-          >
-            删行
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().deleteColumn().run()}
-            disabled={!editor.can().chain().focus().deleteColumn().run()}
-            title='删除当前列'
-          >
-            删列
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().mergeCells().run()}
-            disabled={!editor.can().chain().focus().mergeCells().run()}
-            title='合并单元格'
-          >
-            合并
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().splitCell().run()}
-            disabled={!editor.can().chain().focus().splitCell().run()}
-            title='拆分单元格'
-          >
-            拆分
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().deleteTable().run()}
-            disabled={!editor.can().chain().focus().deleteTable().run()}
-            title='删除表格'
-          >
-            删表
-          </ToolbarButton>
+          {showTableTools && (
+            <>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().toggleHeaderRow().run()}
+                disabled={!editor.can().chain().focus().toggleHeaderRow().run()}
+                title='开关表头行'
+              >
+                表头
+              </ToolbarButton>
+
+              <ToolbarButton
+                onClick={() => editor.chain().focus().addRowAfter().run()}
+                disabled={!editor.can().chain().focus().addRowAfter().run()}
+                title='在下方添加行'
+              >
+                加行
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().addColumnAfter().run()}
+                disabled={!editor.can().chain().focus().addColumnAfter().run()}
+                title='在右侧添加列'
+              >
+                加列
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().deleteRow().run()}
+                disabled={!editor.can().chain().focus().deleteRow().run()}
+                title='删除当前行'
+              >
+                删行
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().deleteColumn().run()}
+                disabled={!editor.can().chain().focus().deleteColumn().run()}
+                title='删除当前列'
+              >
+                删列
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().deleteTable().run()}
+                disabled={!editor.can().chain().focus().deleteTable().run()}
+                title='删除表格'
+              >
+                删表
+              </ToolbarButton>
+            </>
+          )}
         </div>
 
         <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
