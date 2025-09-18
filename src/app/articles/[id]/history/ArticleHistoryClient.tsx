@@ -192,6 +192,7 @@ export default function ArticleHistoryClient() {
                       disabled={
                         !selectedVersions.includes(version.id) && selectedVersions.length >= 2
                       }
+                      aria-label={`选择版本 #${data.versions.length - index}`}
                     />
 
                     <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
