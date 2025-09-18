@@ -30,6 +30,9 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (typeof window !== 'undefined' && hasInitialized) {
       localStorage.setItem('isEditMode', JSON.stringify(isEditMode));
+      try {
+        window.dispatchEvent(new CustomEvent('editmode:changed', { detail: { isEditMode } }));
+      } catch {}
     }
   }, [isEditMode, hasInitialized]);
 

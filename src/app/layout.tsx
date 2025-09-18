@@ -8,6 +8,7 @@ import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
+import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
 
 import { defaultMetadata, getSiteJsonLd } from '@/constants/seo';
 import './globals.css';
@@ -49,6 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ErrorBoundary>
           <KeyboardNavigation />
           <OfflineIndicator />
+          <DynamicFaviconEditBadge />
           <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
             <UserProvider initialValue={getUserData()}>
               <DarkModeProvider initialValue={isDarkMode}>{children}</DarkModeProvider>
