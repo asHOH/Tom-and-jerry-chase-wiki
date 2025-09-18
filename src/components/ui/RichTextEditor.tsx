@@ -4,6 +4,7 @@ import TableHeader from '@tiptap/extension-table-header';
 import TableCell from '@tiptap/extension-table-cell';
 import React, { useCallback, useEffect, useState } from 'react';
 import { EditorContent, useEditor, Editor } from '@tiptap/react';
+import type { Node as PMNode } from '@tiptap/pm/model';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
@@ -113,6 +114,95 @@ const Toolbar: React.FC<{
   onModeChange: (mode: 'rich' | 'wiki' | 'html') => void;
 }> = ({ editor, viewMode, onModeChange }) => {
   const [showTableTools, setShowTableTools] = useState(false);
+  const transposeTable = useCallback(() => {
+    // Transpose the currently selected table. Does not support merged cells.
+    const { state, view } = editor;
+    const { $from } = state.selection;
+
+    // Find enclosing table node depth
+    let tableDepth = -1;
+    for (let d = $from.depth; d >= 0; d--) {
+      const n = $from.node(d);
+      if (n && n.type && n.type.name === 'table') {
+        tableDepth = d;
+        break;
+      }
+    }
+    if (tableDepth === -1) return;
+
+    const tableNode = $from.node(tableDepth) as PMNode;
+    const startPos = $from.before(tableDepth);
+    const endPos = $from.after(tableDepth);
+
+    const rows: PMNode[][] = [];
+    let maxCols = 0;
+    let hasSpan = false;
+    tableNode.forEach((row: PMNode) => {
+      if (row.type.name !== 'tableRow') return;
+      const cells: PMNode[] = [];
+      row.forEach((cell: PMNode) => {
+        if (cell.type.name !== 'tableCell' && cell.type.name !== 'tableHeader') return;
+        if ((cell.attrs?.colspan ?? 1) > 1 || (cell.attrs?.rowspan ?? 1) > 1) {
+          hasSpan = true;
+        }
+        cells.push(cell);
+      });
+      maxCols = Math.max(maxCols, cells.length);
+      rows.push(cells);
+    });
+
+    if (hasSpan) {
+      window.alert('暂不支持包含合并单元格的表格进行转置');
+      return;
+    }
+
+    const schema = state.schema;
+    const tableRowType = schema.nodes.tableRow;
+    const tableCellType = schema.nodes.tableCell;
+    const tableHeaderType = schema.nodes.tableHeader;
+    const paragraphType = schema.nodes.paragraph;
+
+    if (!tableRowType || !tableCellType || !tableHeaderType || !paragraphType) {
+      window.alert('转置失败：编辑器表格节点类型不可用');
+      return;
+    }
+
+    const hasHeaderRow =
+      rows.length > 0 &&
+      rows[0] !== undefined &&
+      rows[0]!.length > 0 &&
+      rows[0]!.every((c) => Boolean(c) && c!.type === tableHeaderType);
+    const hasHeaderCol =
+      rows.length > 0 && rows.every((r) => r[0] && r[0]!.type === tableHeaderType);
+
+    const makeCellLike = (source: PMNode | undefined, forceHeader: boolean): PMNode => {
+      if (!source) {
+        const filled = tableCellType.createAndFill();
+        return filled ?? tableCellType.create({}, paragraphType.create());
+      }
+      if (forceHeader || source.type === tableHeaderType) {
+        return tableHeaderType.create(source.attrs ?? {}, source.content);
+      }
+      return tableCellType.create(source.attrs ?? {}, source.content);
+    };
+
+    const newRowNodes: PMNode[] = [];
+    for (let c = 0; c < maxCols; c++) {
+      const newCells: PMNode[] = [];
+      for (let r = 0; r < rows.length; r++) {
+        const sourceCell = rows[r]?.[c];
+        const forceHeader = c === 0 && (hasHeaderRow || hasHeaderCol);
+        newCells.push(makeCellLike(sourceCell, forceHeader));
+      }
+      const rowNode = tableRowType.create({}, newCells);
+      newRowNodes.push(rowNode);
+    }
+
+    const newTable = tableNode.type.create(tableNode.attrs ?? {}, newRowNodes);
+
+    const tr = state.tr.replaceWith(startPos, endPos, newTable);
+    view.dispatch(tr.scrollIntoView());
+  }, [editor]);
   const addImage = useCallback(() => {
     const url = window.prompt('图片链接');
     if (url) {
@@ -315,6 +405,18 @@ const Toolbar: React.FC<{
                 title='开关表头行'
               >
                 表头
+              </ToolbarButton>
+
+              <ToolbarButton
+                onClick={transposeTable}
+                disabled={
+                  !editor.isActive('table') &&
+                  !editor.isActive('tableCell') &&
+                  !editor.isActive('tableHeader')
+                }
+                title='转置当前表格（沿对角线翻转）'
+              >
+                转置
               </ToolbarButton>
 
               <ToolbarButton
