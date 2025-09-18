@@ -312,7 +312,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // Exclude extensions we want to configure separately
+        link: false,
+      }),
       Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -405,7 +408,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           onChange={(e) => {
             setRawContent(e.target.value);
             if (viewMode === 'wiki') {
-              onChange?.(wikiTextToHTML(e.target.value));
+              const convertedHTML = wikiTextToHTML(e.target.value);
+              onChange?.(convertedHTML);
             }
             if (viewMode === 'html') {
               onChange?.(e.target.value);
