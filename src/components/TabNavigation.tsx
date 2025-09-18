@@ -291,7 +291,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         setDropdownOpen(false);
                       }}
                     >
-                      注销
+                      退出登录
                     </li>
                   </ul>
                 </div>
