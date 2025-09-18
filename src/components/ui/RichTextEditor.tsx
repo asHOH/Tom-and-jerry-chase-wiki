@@ -31,6 +31,44 @@ import {
   LoadingSpinnerIcon,
 } from './RichTextEditorIcons';
 
+// Normalize editor-produced HTML for display/export, especially tables.
+function cleanHTMLForExport(html: string): string {
+  let out = html;
+  // Remove colgroup added by resizable tables
+  out = out.replace(/<colgroup>[\s\S]*?<\/colgroup>/gi, '');
+  // Strip inline styles on table tag (e.g., min-width)
+  out = out.replace(/<table\b([^>]*?)\sstyle="[^"]*"/gi, '<table$1');
+  // Unwrap <p> inside table cells: <td><p>..</p></td> -> <td>..</td>
+  out = out.replace(/<(td|th)([^>]*)>\s*<p>([\s\S]*?)<\/p>\s*<\/\1>/gi, '<$1$2>$3</$1>');
+  // Remove empty <p> right after or before table
+  out = out.replace(/<table([^>]*)>\s*<p>\s*<\/p>/gi, '<table$1>');
+  out = out.replace(/<\/table>\s*<p>\s*<\/p>/gi, '</table>');
+  // Remove default colspan/rowspan="1"
+  out = out.replace(/\s(colspan|rowspan)="1"/gi, '');
+  // Remove tbody wrapper for simpler markup (optional)
+  out = out.replace(/<\/?tbody>/gi, '');
+  // Pretty print: add newlines for readability
+  // Ensure newline between preceding block and table
+  out = out.replace(/<\/(p|div|section|article|h[1-6])>\s*<table/gi, '</$1>\n<table');
+  out = out.replace(/<table(\b[^>]*)>/gi, '<table$1>\n');
+  out = out.replace(/<\/table>/gi, '\n</table>');
+  // One newline before <tr>, none after, to avoid blank line before first cell
+  out = out.replace(/<tr(\b[^>]*)>/gi, '\n<tr$1>');
+  // One newline before closing </tr>, none after; next <tr> adds its own newline
+  out = out.replace(/<\/(tr)>/gi, '\n</$1>');
+  out = out.replace(/<(th|td)(\b[^>]*)>/gi, '\n<$1$2>');
+  out = out.replace(/<\/(th|td)>/gi, '</$1>\n');
+  // Collapse excessive blank lines
+  out = out.replace(/\n{2,}/g, '\n');
+  // Trim spaces between tags lines
+  out = out
+    .split('\n')
+    .map((l) => l.trimEnd())
+    .join('\n')
+    .trim();
+  return out;
+}
+
 interface RichTextEditorProps {
   content?: string;
   onChange?: (content: string) => void;
@@ -475,7 +513,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         setRawContent(wikiTextToHTML(rawContent));
       } else if (viewMode === 'rich') {
         const currentHtml = editor.getHTML();
-        setRawContent(currentHtml);
+        setRawContent(cleanHTMLForExport(currentHtml));
       }
     } else {
       // Switching back to rich text
