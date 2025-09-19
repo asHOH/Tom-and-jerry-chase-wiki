@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import { supabase } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/useUser';
+import { useEditMode } from '@/context/EditModeContext';
 
 // Helper function for button styling
 const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: boolean) => {
@@ -106,6 +107,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const isMobile = useMobile();
   const { nickname, role, clearData: clearUserData } = useUser();
+  const { isEditMode } = useEditMode();
 
   // Reset navigation state when pathname changes
   useEffect(() => {
@@ -141,6 +143,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               href='/'
               className={clsx(
                 getButtonClassName(isMobile, false, isHomeActive()),
+                'relative',
                 isMobile && 'min-w-[40px]',
                 navigatingTo === '/' && 'pointer-events-none opacity-80'
               )}
@@ -153,6 +156,16 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             >
               {!isMobile && '首页'}
               {isMobile && '🏠'}
+              {isEditMode && (
+                <span
+                  className='pointer-events-none absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full bg-amber-500 text-white ring-2 ring-white dark:ring-slate-900'
+                  style={{ width: isMobile ? 12 : 14, height: isMobile ? 12 : 14, fontSize: 9 }}
+                  aria-hidden
+                  title='编辑模式'
+                >
+                  ✎
+                </span>
+              )}
             </Link>
           </Tooltip>
           {tabs.map((tab) => (
@@ -250,6 +263,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           {!!nickname && (
             <div className='relative'>
               <button
+                type='button'
+                aria-label='用户设置'
+                title='用户设置'
                 className={clsx(
                   getButtonClassName(isMobile, false, dropdownOpen),
                   'flex items-center justify-center p-2!'
@@ -288,7 +304,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         setDropdownOpen(false);
                       }}
                     >
-                      注销
+                      退出登录
                     </li>
                   </ul>
                 </div>

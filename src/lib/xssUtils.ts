@@ -42,8 +42,28 @@ export function sanitizeHTML(html: string): string {
       'br',
       'hr',
       'img',
+      // Table-related tags for article content
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+      'colgroup',
+      'col',
     ],
-    ALLOWED_ATTR: ['href', 'class', 'style', 'src', 'alt', 'title'],
+    ALLOWED_ATTR: [
+      'href',
+      'class',
+      'style',
+      'src',
+      'alt',
+      'title',
+      // Table cell attributes
+      'colspan',
+      'rowspan',
+      'scope',
+    ],
   });
 
   DOMPurify.removeHook('afterSanitizeAttributes');

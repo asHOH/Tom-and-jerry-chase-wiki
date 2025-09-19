@@ -3,15 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import clsx from 'clsx';
 import useSWR from 'swr';
 
-import RichTextEditor from '@/components/ui/RichTextEditor';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
-import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
+import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
 
 interface Article {
   id: string;
@@ -31,10 +29,7 @@ interface Article {
   }>;
 }
 
-interface Category {
-  id: string;
-  name: string;
-}
+type Category = CategoryOption;
 
 interface ArticlesData {
   articles: Article[];
@@ -179,180 +174,24 @@ const NewArticleClient: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <div className='max-w-4xl mx-auto px-4'>
-        {/* Alert Messages */}
-        {(error || categoriesError) && (
-          <BaseCard className='mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'>
-            <div className='flex items-center gap-3'>
-              <svg
-                className='size-5 text-red-600 dark:text-red-400'
-                fill='currentColor'
-                viewBox='0 0 20 20'
-              >
-                <path
-                  fillRule='evenodd'
-                  d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
-                  clipRule='evenodd'
-                />
-              </svg>
-              <p className='text-red-800 dark:text-red-200'>
-                {error || categoriesError?.message || '加载数据失败'}
-              </p>
-            </div>
-          </BaseCard>
-        )}
-
-        {success && (
-          <BaseCard className='mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'>
-            <div className='flex items-center gap-3'>
-              <svg
-                className='size-5 text-green-600 dark:text-green-400'
-                fill='currentColor'
-                viewBox='0 0 20 20'
-              >
-                <path
-                  fillRule='evenodd'
-                  d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-                  clipRule='evenodd'
-                />
-              </svg>
-              <p className='text-green-800 dark:text-green-200'>{success}</p>
-            </div>
-          </BaseCard>
-        )}
-
-        {/* Article Form */}
-        <div className='p-8'>
-          <form onSubmit={(e) => e.preventDefault()} className='space-y-8'>
-            {/* Title Input */}
-            <div className='space-y-2'>
-              <label
-                htmlFor='title'
-                className='block text-lg font-semibold text-gray-900 dark:text-gray-100'
-              >
-                文章标题 <span className='text-red-500'>*</span>
-              </label>
-              <input
-                id='title'
-                type='text'
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder='请输入文章标题...'
-                className='w-full px-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
-                disabled={isSubmitting}
-              />
-              <p className='text-sm text-gray-600 dark:text-gray-400'>
-                输入一个清晰、描述性的标题来吸引读者
-              </p>
-            </div>
-
-            {/* Category Select */}
-            <div className='space-y-2'>
-              <label
-                htmlFor='category'
-                className='block text-lg font-semibold text-gray-900 dark:text-gray-100'
-              >
-                文章分类 <span className='text-red-500'>*</span>
-              </label>
-              {isLoadingCategories ? (
-                <div className='flex items-center gap-2 py-3'>
-                  <LoadingSpinner size='sm' />
-                </div>
-              ) : (
-                <select
-                  id='category'
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className='w-full px-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
-                  disabled={isSubmitting}
-                >
-                  <option value=''>请选择文章分类</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-              <p className='text-sm text-gray-600 dark:text-gray-400'>选择最符合文章内容的分类</p>
-            </div>
-
-            {/* Content Editor */}
-
-            <div className='space-y-2'>
-              <label className='block text-lg font-semibold text-gray-900 dark:text-gray-100'>
-                文章内容 <span className='text-red-500'>*</span>
-              </label>
-              <RichTextEditor
-                content={content}
-                onChange={handleContentChange}
-                placeholder='开始编写您的精彩内容...'
-              />
-              <p className='text-sm text-gray-600 dark:text-gray-400'>
-                使用富文本编辑器创建内容丰富的文章，支持格式化、链接、图片、表格等多种功能
-              </p>
-            </div>
-
-            {/* Action Buttons */}
-            <div className='flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200 dark:border-gray-700'>
-              <button
-                type='button'
-                onClick={handleSave}
-                disabled={isSubmitting || !title.trim() || !category || !content}
-                className={clsx(
-                  'flex-1 sm:flex-none inline-flex items-center justify-center gap-3 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200',
-                  'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
-                  isSubmitting || !title.trim() || !category
-                    ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white transform hover:scale-105 shadow-lg hover:shadow-xl'
-                )}
-              >
-                {isSubmitting ? (
-                  <>
-                    <LoadingSpinner size='sm' />
-                    提交中...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className='size-5'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={2}
-                      stroke='currentColor'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        d='M4.5 12.75l6 6 9-13.5'
-                      />
-                    </svg>
-                    提交文章
-                  </>
-                )}
-              </button>
-
-              <button
-                type='button'
-                onClick={handleCancel}
-                disabled={isSubmitting}
-                className='flex-1 sm:flex-none inline-flex items-center justify-center gap-3 px-8 py-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold text-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2'
-              >
-                <svg
-                  className='size-5'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={2}
-                  stroke='currentColor'
-                >
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-                </svg>
-                取消
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+      <ArticleForm
+        title={title}
+        onTitleChange={setTitle}
+        category={category}
+        onCategoryChange={setCategory}
+        content={content}
+        onContentChange={handleContentChange}
+        categories={categories}
+        isLoadingCategories={isLoadingCategories}
+        isSubmitting={isSubmitting}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        submitLabel='提交文章'
+        submittingLabel='提交中...'
+        errorMessage={error || categoriesError?.message || null}
+        successMessage={success}
+        contentPlaceholder='开始编写您的精彩内容...'
+      />
     </div>
   );
 };

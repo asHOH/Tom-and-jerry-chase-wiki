@@ -1,5 +1,10 @@
+import { Table } from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableHeader from '@tiptap/extension-table-header';
+import TableCell from '@tiptap/extension-table-cell';
 import React, { useCallback, useEffect, useState } from 'react';
 import { EditorContent, useEditor, Editor } from '@tiptap/react';
+import type { Node as PMNode } from '@tiptap/pm/model';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
@@ -26,6 +31,44 @@ import {
   RedoIcon,
   LoadingSpinnerIcon,
 } from './RichTextEditorIcons';
+
+// Normalize editor-produced HTML for display/export, especially tables.
+function cleanHTMLForExport(html: string): string {
+  let out = html;
+  // Remove colgroup added by resizable tables
+  out = out.replace(/<colgroup>[\s\S]*?<\/colgroup>/gi, '');
+  // Strip inline styles on table tag (e.g., min-width)
+  out = out.replace(/<table\b([^>]*?)\sstyle="[^"]*"/gi, '<table$1');
+  // Unwrap <p> inside table cells: <td><p>..</p></td> -> <td>..</td>
+  out = out.replace(/<(td|th)([^>]*)>\s*<p>([\s\S]*?)<\/p>\s*<\/\1>/gi, '<$1$2>$3</$1>');
+  // Remove empty <p> right after or before table
+  out = out.replace(/<table([^>]*)>\s*<p>\s*<\/p>/gi, '<table$1>');
+  out = out.replace(/<\/table>\s*<p>\s*<\/p>/gi, '</table>');
+  // Remove default colspan/rowspan="1"
+  out = out.replace(/\s(colspan|rowspan)="1"/gi, '');
+  // Remove tbody wrapper for simpler markup (optional)
+  out = out.replace(/<\/?tbody>/gi, '');
+  // Pretty print: add newlines for readability
+  // Ensure newline between preceding block and table
+  out = out.replace(/<\/(p|div|section|article|h[1-6])>\s*<table/gi, '</$1>\n<table');
+  out = out.replace(/<table(\b[^>]*)>/gi, '<table$1>\n');
+  out = out.replace(/<\/table>/gi, '\n</table>');
+  // One newline before <tr>, none after, to avoid blank line before first cell
+  out = out.replace(/<tr(\b[^>]*)>/gi, '\n<tr$1>');
+  // One newline before closing </tr>, none after; next <tr> adds its own newline
+  out = out.replace(/<\/(tr)>/gi, '\n</$1>');
+  out = out.replace(/<(th|td)(\b[^>]*)>/gi, '\n<$1$2>');
+  out = out.replace(/<\/(th|td)>/gi, '</$1>\n');
+  // Collapse excessive blank lines
+  out = out.replace(/\n{2,}/g, '\n');
+  // Trim spaces between tags lines
+  out = out
+    .split('\n')
+    .map((l) => l.trimEnd())
+    .join('\n')
+    .trim();
+  return out;
+}
 
 interface RichTextEditorProps {
   content?: string;
@@ -70,6 +113,96 @@ const Toolbar: React.FC<{
   viewMode: string;
   onModeChange: (mode: 'rich' | 'wiki' | 'html') => void;
 }> = ({ editor, viewMode, onModeChange }) => {
+  const [showTableTools, setShowTableTools] = useState(false);
+  const transposeTable = useCallback(() => {
+    // Transpose the currently selected table. Does not support merged cells.
+    const { state, view } = editor;
+    const { $from } = state.selection;
+
+    // Find enclosing table node depth
+    let tableDepth = -1;
+    for (let d = $from.depth; d >= 0; d--) {
+      const n = $from.node(d);
+      if (n && n.type && n.type.name === 'table') {
+        tableDepth = d;
+        break;
+      }
+    }
+    if (tableDepth === -1) return;
+
+    const tableNode = $from.node(tableDepth) as PMNode;
+    const startPos = $from.before(tableDepth);
+    const endPos = $from.after(tableDepth);
+
+    const rows: PMNode[][] = [];
+    let maxCols = 0;
+    let hasSpan = false;
+    tableNode.forEach((row: PMNode) => {
+      if (row.type.name !== 'tableRow') return;
+      const cells: PMNode[] = [];
+      row.forEach((cell: PMNode) => {
+        if (cell.type.name !== 'tableCell' && cell.type.name !== 'tableHeader') return;
+        if ((cell.attrs?.colspan ?? 1) > 1 || (cell.attrs?.rowspan ?? 1) > 1) {
+          hasSpan = true;
+        }
+        cells.push(cell);
+      });
+      maxCols = Math.max(maxCols, cells.length);
+      rows.push(cells);
+    });
+
+    if (hasSpan) {
+      window.alert('暂不支持包含合并单元格的表格进行转置');
+      return;
+    }
+
+    const schema = state.schema;
+    const tableRowType = schema.nodes.tableRow;
+    const tableCellType = schema.nodes.tableCell;
+    const tableHeaderType = schema.nodes.tableHeader;
+    const paragraphType = schema.nodes.paragraph;
+
+    if (!tableRowType || !tableCellType || !tableHeaderType || !paragraphType) {
+      window.alert('转置失败：编辑器表格节点类型不可用');
+      return;
+    }
+
+    const hasHeaderRow =
+      rows.length > 0 &&
+      rows[0] !== undefined &&
+      rows[0]!.length > 0 &&
+      rows[0]!.every((c) => Boolean(c) && c!.type === tableHeaderType);
+    const hasHeaderCol =
+      rows.length > 0 && rows.every((r) => r[0] && r[0]!.type === tableHeaderType);
+
+    const makeCellLike = (source: PMNode | undefined, forceHeader: boolean): PMNode => {
+      if (!source) {
+        const filled = tableCellType.createAndFill();
+        return filled ?? tableCellType.create({}, paragraphType.create());
+      }
+      if (forceHeader || source.type === tableHeaderType) {
+        return tableHeaderType.create(source.attrs ?? {}, source.content);
+      }
+      return tableCellType.create(source.attrs ?? {}, source.content);
+    };
+
+    const newRowNodes: PMNode[] = [];
+    for (let c = 0; c < maxCols; c++) {
+      const newCells: PMNode[] = [];
+      for (let r = 0; r < rows.length; r++) {
+        const sourceCell = rows[r]?.[c];
+        const forceHeader = c === 0 && (hasHeaderRow || hasHeaderCol);
+        newCells.push(makeCellLike(sourceCell, forceHeader));
+      }
+      const rowNode = tableRowType.create({}, newCells);
+      newRowNodes.push(rowNode);
+    }
+
+    const newTable = tableNode.type.create(tableNode.attrs ?? {}, newRowNodes);
+
+    const tr = state.tr.replaceWith(startPos, endPos, newTable);
+    view.dispatch(tr.scrollIntoView());
+  }, [editor]);
   const addImage = useCallback(() => {
     const url = window.prompt('图片链接');
     if (url) {
@@ -220,6 +353,113 @@ const Toolbar: React.FC<{
 
         <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
 
+        {/* Tables (foldable) */}
+        <div className='flex items-center gap-1'>
+          <ToolbarButton
+            onClick={() =>
+              editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+            }
+            disabled={
+              !editor
+                .can()
+                .chain()
+                .focus()
+                .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+                .run()
+            }
+            title='插入表格 (3x3)'
+          >
+            表格
+          </ToolbarButton>
+
+          <button
+            type='button'
+            onClick={() => setShowTableTools((v) => !v)}
+            title={showTableTools ? '收起表格工具' : '展开表格工具'}
+            aria-pressed={showTableTools}
+            className={clsx(
+              'p-1 rounded',
+              'bg-transparent border-0',
+              'hover:bg-gray-100 dark:hover:bg-gray-700',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1'
+            )}
+          >
+            <svg
+              viewBox='0 0 20 20'
+              fill='currentColor'
+              className={clsx(
+                'w-4 h-4 transition-transform',
+                showTableTools ? 'rotate-90' : 'rotate-0'
+              )}
+              aria-hidden='true'
+            >
+              <path d='M7.21 14.77a.75.75 0 01.02-1.06L10.94 10 7.23 6.29a.75.75 0 111.06-1.06l4.24 4.24a.75.75 0 010 1.06L8.29 14.77a.75.75 0 01-1.08-.02z' />
+            </svg>
+          </button>
+
+          {showTableTools && (
+            <>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().toggleHeaderRow().run()}
+                disabled={!editor.can().chain().focus().toggleHeaderRow().run()}
+                title='开关表头行'
+              >
+                表头
+              </ToolbarButton>
+
+              <ToolbarButton
+                onClick={transposeTable}
+                disabled={
+                  !editor.isActive('table') &&
+                  !editor.isActive('tableCell') &&
+                  !editor.isActive('tableHeader')
+                }
+                title='转置当前表格（沿对角线翻转）'
+              >
+                转置
+              </ToolbarButton>
+
+              <ToolbarButton
+                onClick={() => editor.chain().focus().addRowAfter().run()}
+                disabled={!editor.can().chain().focus().addRowAfter().run()}
+                title='在下方添加行'
+              >
+                加行
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().addColumnAfter().run()}
+                disabled={!editor.can().chain().focus().addColumnAfter().run()}
+                title='在右侧添加列'
+              >
+                加列
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().deleteRow().run()}
+                disabled={!editor.can().chain().focus().deleteRow().run()}
+                title='删除当前行'
+              >
+                删行
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().deleteColumn().run()}
+                disabled={!editor.can().chain().focus().deleteColumn().run()}
+                title='删除当前列'
+              >
+                删列
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => editor.chain().focus().deleteTable().run()}
+                disabled={!editor.can().chain().focus().deleteTable().run()}
+                title='删除表格'
+              >
+                删表
+              </ToolbarButton>
+            </>
+          )}
+        </div>
+
+        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+
         {/* Special Content */}
         <div className='flex items-center gap-1'>
           <ToolbarButton
@@ -312,7 +552,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // Exclude extensions we want to configure separately
+        link: false,
+      }),
       Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -329,6 +572,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           class: 'max-w-full h-auto rounded-lg',
         },
       }),
+      // Table support to preserve and edit tables in rich mode
+      Table.configure({
+        resizable: true,
+        lastColumnResizable: true,
+        allowTableNodeSelection: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: content || placeholder,
     immediatelyRender: false,
@@ -366,19 +618,29 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
     if (mode === viewMode) return;
 
-    const currentHtml = editor.getHTML();
-
+    // Determine conversions based on current view
     if (mode === 'wiki') {
-      setRawContent(htmlToWikiText(currentHtml));
+      if (viewMode === 'html') {
+        setRawContent(htmlToWikiText(rawContent));
+      } else if (viewMode === 'rich') {
+        const currentHtml = editor.getHTML();
+        setRawContent(htmlToWikiText(currentHtml));
+      }
     } else if (mode === 'html') {
-      setRawContent(currentHtml);
+      if (viewMode === 'wiki') {
+        setRawContent(wikiTextToHTML(rawContent));
+      } else if (viewMode === 'rich') {
+        const currentHtml = editor.getHTML();
+        setRawContent(cleanHTMLForExport(currentHtml));
+      }
     } else {
       // Switching back to rich text
       let newHtml = rawContent;
       if (viewMode === 'wiki') {
         newHtml = wikiTextToHTML(rawContent);
       }
-      editor.commands.setContent(newHtml);
+      // If coming from HTML view, rawContent already holds HTML
+      editor.commands.setContent(newHtml, { emitUpdate: true });
     }
     setViewMode(mode);
   };
@@ -405,7 +667,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           onChange={(e) => {
             setRawContent(e.target.value);
             if (viewMode === 'wiki') {
-              onChange?.(wikiTextToHTML(e.target.value));
+              const convertedHTML = wikiTextToHTML(e.target.value);
+              onChange?.(convertedHTML);
             }
             if (viewMode === 'html') {
               onChange?.(e.target.value);
