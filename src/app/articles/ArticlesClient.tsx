@@ -4,12 +4,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
-import clsx from 'clsx';
 import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
-import FilterLabel from '@/components/ui/FilterLabel';
+import FilterRow from '@/components/ui/FilterRow';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
@@ -210,33 +209,29 @@ export default function ArticlesClient() {
 
         {/* Category Filter Controls */}
         {!!data && data.categories.length > 0 && (
-          <div
-            className={`filter-section flex justify-center items-center ${isMobile ? 'gap-2 mt-4' : 'gap-4 mt-8'}`}
-          >
-            <FilterLabel displayMode='inline'>分类筛选:</FilterLabel>
-            <FilterLabel displayMode='block'>筛选:</FilterLabel>
-            <div className={`flex flex-wrap ${!isMobile && 'gap-2'} justify-center`}>
-              {data?.categories
-                .filter((category) => category.name != '根分类')
-                .map((category) => {
-                  const isActive = hasCategoryFilter(category.id);
-                  return (
-                    <button
-                      type='button'
-                      key={category.id}
-                      onClick={() => handleCategoryToggle(category.id)}
-                      className={clsx(
-                        'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-                        isActive
-                          ? 'bg-blue-600 text-white hover:bg-blue-700'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                      )}
-                    >
-                      {category.name}
-                    </button>
-                  );
-                })}
-              {selectedCategories.size > 0 && (
+          <>
+            <FilterRow
+              label='分类筛选:'
+              options={data.categories.filter((c) => c.name !== '根分类').map((c) => c.id)}
+              isActive={(id) => hasCategoryFilter(id)}
+              onToggle={(id) => {
+                handleCategoryToggle(id);
+              }}
+              className={isMobile ? 'gap-2 mt-4' : 'gap-4 mt-8'}
+              innerClassName={!isMobile ? 'gap-2' : undefined}
+              ariaLabel='categories'
+              getOptionLabel={(id) => {
+                return data.categories.find((c) => c.id === id)?.name ?? id;
+              }}
+              getButtonClassName={(id, active) => (
+                void id,
+                active
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
+              )}
+            />
+            {selectedCategories.size > 0 && (
+              <div className={isMobile ? 'flex justify-center mt-2' : 'flex justify-center mt-4'}>
                 <button
                   type='button'
                   onClick={() => {
@@ -247,49 +242,42 @@ export default function ArticlesClient() {
                 >
                   清除筛选
                 </button>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Sort Controls */}
-        <div
-          className={`filter-section flex justify-center items-center ${isMobile ? 'gap-2 mt-2' : 'gap-4 mt-6'}`}
-        >
-          <FilterLabel displayMode='inline'>排序方式:</FilterLabel>
-          <FilterLabel displayMode='block'>排序:</FilterLabel>
-          <div className={`flex flex-wrap ${!isMobile && 'gap-2'} justify-center`}>
-            {[
-              { value: 'created_at-desc', label: '最新发布' },
-              { value: 'created_at-asc', label: '最早发布' },
-              { value: 'title-asc', label: '标题 A-Z' },
-              { value: 'title-desc', label: '标题 Z-A' },
-            ].map((option) => {
-              const isActive = `${sortBy}-${sortOrder}` === option.value;
-              return (
-                <button
-                  type='button'
-                  key={option.value}
-                  onClick={() => {
-                    const [newSortBy, newSortOrder] = option.value.split('-') as [
-                      'created_at' | 'title',
-                      'asc' | 'desc',
-                    ];
-                    handleSortChange(newSortBy, newSortOrder);
-                  }}
-                  className={clsx(
-                    'filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none',
-                    isActive
-                      ? 'bg-green-600 text-white hover:bg-green-700'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-                  )}
-                >
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <FilterRow
+          label='排序方式:'
+          options={['created_at-desc', 'created_at-asc', 'title-asc', 'title-desc']}
+          isActive={(opt) => `${sortBy}-${sortOrder}` === opt}
+          onToggle={(opt) => {
+            const [newSortBy, newSortOrder] = opt.split('-') as [
+              'created_at' | 'title',
+              'asc' | 'desc',
+            ];
+            handleSortChange(newSortBy, newSortOrder);
+          }}
+          className={isMobile ? 'gap-2 mt-2' : 'gap-4 mt-6'}
+          innerClassName={!isMobile ? 'gap-2' : undefined}
+          ariaLabel='sort'
+          getOptionLabel={(opt) =>
+            opt === 'created_at-desc'
+              ? '最新发布'
+              : opt === 'created_at-asc'
+                ? '最早发布'
+                : opt === 'title-asc'
+                  ? '标题 A-Z'
+                  : '标题 Z-A'
+          }
+          getButtonClassName={(opt, active) => (
+            void opt,
+            active
+              ? 'bg-green-600 text-white hover:bg-green-700'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
+          )}
+        />
 
         {/* Stats and Quick Actions */}
         <div
