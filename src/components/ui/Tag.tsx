@@ -3,7 +3,7 @@ import { componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 type TagProps = {
   children: React.ReactNode;
   colorStyles: React.CSSProperties; // New design token approach
-  size?: 'xs' | 'sm' | 'md';
+  size?: 'xxs' | 'xs' | 'sm' | 'md';
   margin?: 'default' | 'compact' | 'micro';
   role?: string; // Accessibility
   className?: string;
@@ -26,7 +26,8 @@ export default function Tag({
   );
 
   // Size-based font sizing
-  const fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '0.875rem' : '1rem';
+  const fontSize =
+    size === 'xxs' ? '0.625rem' : size === 'xs' ? '0.75rem' : size === 'sm' ? '0.875rem' : '1rem';
 
   const tagStyle: React.CSSProperties = {
     ...baseTagStyle,

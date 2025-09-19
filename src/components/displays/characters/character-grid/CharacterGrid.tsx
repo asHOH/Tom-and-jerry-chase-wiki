@@ -202,7 +202,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       </header>
 
       <div
-        className={`auto-fit-grid grid-container grid ${isMobile && 'gap-8'} mt-8`}
+        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-8'} mt-8`}
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '120px' : '210px'}, 1fr))`,
         }}

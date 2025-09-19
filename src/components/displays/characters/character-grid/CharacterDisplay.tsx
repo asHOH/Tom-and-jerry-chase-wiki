@@ -54,7 +54,7 @@ export default function CharacterDisplay({
         priority={priority}
         useShortHeight={isMobile ? true : false}
       />
-      <div className={`${isMobile && 'px-4 pt-1 pb-5'}  text-center`}>
+      <div className={`${isMobile ? 'pb-3' : 'px-4 pb-5'} pt-1 text-center`}>
         <h2
           className={`${isMobile ? 'text-lg' : 'text-xl mb-2'} font-bold dark:text-white`}
           style={{ whiteSpace: 'pre' }}
@@ -64,7 +64,7 @@ export default function CharacterDisplay({
 
         {sortedPositioningTags && sortedPositioningTags.length > 0 && (
           <div
-            className={`flex flex-wrap justify-center ${isMobile && 'gap-1 mt-2'}`}
+            className={`flex flex-wrap justify-center gap-1 ${isMobile ? '' : 'mt-2'}`}
             role='list'
             aria-label='角色定位标签'
           >
@@ -83,7 +83,7 @@ export default function CharacterDisplay({
                       factionId as FactionId,
                       isDarkMode
                     )}
-                    size='xs'
+                    size={isMobile ? 'xxs' : 'xs'}
                     margin='compact'
                   >
                     {tag.tagName}
