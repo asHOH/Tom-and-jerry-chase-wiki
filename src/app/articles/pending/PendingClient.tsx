@@ -11,7 +11,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
-import { sanitizeHTML } from '@/lib/xssUtils';
+import RichTextDisplay from '@/components/ui/RichTextDisplay';
 
 /**
  * Represents a unified article submission.
@@ -331,15 +331,7 @@ export default function PendingClient() {
                   </div>
 
                   <div className='bg-gray-50 dark:bg-gray-800 rounded-lg p-4'>
-                    <div
-                      className='prose prose-sm max-w-none dark:prose-invert line-clamp-3'
-                      dangerouslySetInnerHTML={{
-                        __html: sanitizeHTML(
-                          submission.content.substring(0, 300) +
-                            (submission.content.length > 300 ? '...' : '')
-                        ),
-                      }}
-                    />
+                    <RichTextDisplay content={submission.content} preview />
                   </div>
                 </div>
 

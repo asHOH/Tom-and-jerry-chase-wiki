@@ -11,7 +11,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
-import { sanitizeHTML } from '@/lib/xssUtils';
+import RichTextDisplay from '@/components/ui/RichTextDisplay';
 
 interface ArticleVersion {
   id: string;
@@ -253,15 +253,7 @@ export default function ArticleHistoryClient() {
 
                 {/* Content Preview */}
                 <div className='text-gray-700 dark:text-gray-300 text-sm'>
-                  <div
-                    className='line-clamp-3 prose prose-sm max-w-none dark:prose-invert'
-                    dangerouslySetInnerHTML={{
-                      __html: sanitizeHTML(
-                        version.content.substring(0, 200) +
-                          (version.content.length > 200 ? '...' : '')
-                      ),
-                    }}
-                  />
+                  <RichTextDisplay content={version.content} preview />
                 </div>
               </div>
 

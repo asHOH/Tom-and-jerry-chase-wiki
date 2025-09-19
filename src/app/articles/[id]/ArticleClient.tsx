@@ -8,8 +8,8 @@ import { zhCN } from 'date-fns/locale';
 import useSWR from 'swr';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
-import { sanitizeHTML } from '@/lib/xssUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import RichTextDisplay from '@/components/ui/RichTextDisplay';
 
 interface ArticleData {
   id: string;
@@ -270,21 +270,7 @@ export default function ArticleClient() {
 
       {/* Article Content */}
       <div className={isMobile ? '' : 'p-8'}>
-        <div
-          className='prose prose-lg max-w-none dark:prose-invert prose-blue
-                     prose-headings:text-gray-900 dark:prose-headings:text-gray-100
-                     prose-p:text-gray-700 dark:prose-p:text-gray-300
-                     prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
-                     prose-strong:text-gray-900 dark:prose-strong:text-gray-100
-                     prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-                     prose-pre:bg-gray-100 dark:prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-gray-700
-                     prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-900/20 prose-blockquote:py-2 prose-blockquote:px-4
-                     prose-ul:list-disc prose-ol:list-decimal
-                     prose-li:text-gray-700 dark:prose-li:text-gray-300'
-          dangerouslySetInnerHTML={{
-            __html: sanitizeHTML(article.latest_version?.content || '<p>内容加载中...</p>'),
-          }}
-        />
+        <RichTextDisplay content={article.latest_version?.content} />
       </div>
 
       {/* Footer Actions */}
