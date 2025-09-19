@@ -135,6 +135,8 @@ export type CharacterDefinition = {
   // Cat-specific attributes
   clawKnifeCdHit?: number; // 爪刀CD (命中)
   clawKnifeCdUnhit?: number; // 爪刀CD (未命中)
+  specialClawKnifeCdHit?: number; // 特殊爪刀CD (命中)
+  specialClawKnifeCdUnhit?: number; // 特殊爪刀CD (未命中)
   clawKnifeRange?: number; // 爪刀范围
   initialItem?: string; // 初始道具
 

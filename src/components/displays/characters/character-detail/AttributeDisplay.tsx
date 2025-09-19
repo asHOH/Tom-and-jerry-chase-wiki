@@ -93,10 +93,16 @@ export default function AttributeDisplay({
         >
           {localCharacter.clawKnifeCdUnhit}
         </Link>
+        {!!localCharacter.specialClawKnifeCdUnhit && (
+          <span className='italic'> ({localCharacter.specialClawKnifeCdUnhit})</span>
+        )}
         <GrayUnit> / </GrayUnit>
         <Link href={`/ranks/clawKnifeCdHit?faction=cat`} className='hover:underline cursor-pointer'>
           {localCharacter.clawKnifeCdHit}
         </Link>
+        {!!localCharacter.specialClawKnifeCdHit && (
+          <span className='italic'> ({localCharacter.specialClawKnifeCdHit})</span>
+        )}
         <GrayUnit> 秒</GrayUnit>
         {suffix && <GrayUnit>{suffix}</GrayUnit>}
       </>

@@ -88,7 +88,7 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
     },
     {
       label: '爪刀CD',
-      value: `${character.clawKnifeCdUnhit || 0} / ${character.clawKnifeCdHit || 0} 秒`,
+      value: `${character.clawKnifeCdUnhit || 0}${character.specialClawKnifeCdUnhit ? ' (' + character.specialClawKnifeCdUnhit + ')' : ''} / ${character.clawKnifeCdHit || 0}${character.specialClawKnifeCdHit ? ' (' + character.specialClawKnifeCdHit + ')' : ''} 秒`,
       condition: factionId === 'cat' && !!character.clawKnifeCdHit && !!character.clawKnifeCdUnhit,
     },
     {

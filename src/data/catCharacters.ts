@@ -3206,6 +3206,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     jumpHeight: 420,
     clawKnifeCdHit: 7,
     clawKnifeCdUnhit: 5,
+    specialClawKnifeCdHit: 12,
+    specialClawKnifeCdUnhit: 6,
     clawKnifeRange: 280,
     initialItem: '鞭炮束',
 
