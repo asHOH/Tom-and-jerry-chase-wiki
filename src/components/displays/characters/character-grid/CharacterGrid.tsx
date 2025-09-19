@@ -138,7 +138,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
     <div
       className={
         isMobile
-          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
+          ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
           : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
       }
     >
@@ -202,8 +202,10 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       </header>
 
       <div
-        className='auto-fit-grid grid-container grid gap-8 mt-8'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))' }}
+        className={`auto-fit-grid grid-container grid ${isMobile && 'gap-8'} mt-8`}
+        style={{
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '120px' : '210px'}, 1fr))`,
+        }}
       >
         {isEditMode && (
           <div className='character-card transform transition-transform hover:-translate-y-1'>

@@ -13,6 +13,7 @@ import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
 import Image from '@/components/Image';
 import clsx from 'clsx';
 import { GameDataManager } from '@/lib/dataManager';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 export default function CharacterDisplay({
   id,
@@ -24,6 +25,7 @@ export default function CharacterDisplay({
   isEntryCard = false, // Add the new prop
 }: CharacterDisplayProps & { priority?: boolean; isEntryCard?: boolean }) {
   const [isDarkMode] = useDarkMode();
+  const isMobile = useMobile();
 
   // Sort positioning tags according to sequence (main tags first, then by sequence)
   const sortedPositioningTags = useMemo(() => {
@@ -50,13 +52,19 @@ export default function CharacterDisplay({
         size='CHARACTER_CARD'
         className='hover:scale-105'
         priority={priority}
+        useShortHeight={isMobile ? true : false}
       />
-      <div className='px-4 pt-1 pb-5 text-center'>
-        <h2 className='text-xl font-bold mb-2 dark:text-white'>{name}</h2>
+      <div className={`${isMobile && 'px-4 pt-1 pb-5'}  text-center`}>
+        <h2
+          className={`${isMobile ? 'text-lg' : 'text-xl mb-2'} font-bold dark:text-white`}
+          style={{ whiteSpace: 'pre' }}
+        >
+          {name}
+        </h2>
 
         {sortedPositioningTags && sortedPositioningTags.length > 0 && (
           <div
-            className='flex flex-wrap justify-center gap-1 mt-2'
+            className={`flex flex-wrap justify-center ${isMobile && 'gap-1 mt-2'}`}
             role='list'
             aria-label='角色定位标签'
           >
