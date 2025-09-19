@@ -26,6 +26,7 @@ type Content = {
 };
 
 const characters = Object.values(GameDataManager.getCharacters());
+const cards = Object.values(GameDataManager.getCards());
 
 // Gemini safety settings - configured to the strictest level
 const safetySettings = [
@@ -35,15 +36,15 @@ const safetySettings = [
   { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_LOW_AND_ABOVE' },
 ];
 
-const systemInstructionText = `You are Chase, a helpful and knowledgeable assistant for the Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
+const systemInstructionText = `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
 Your purpose is to provide accurate information about characters, skills, knowledge cards, and other game elements.
-When a user asks for information about a specific character, use the 'getData' tool to retrieve the most up-to-date details.
+When a user asks for information about a specific character or knowledge card, use the 'getData' tool to retrieve the most up-to-date details.
 Be friendly, concise, and focus on answering the user's question based on the data provided by the tool.
 If the user asks about something outside of characters or game data, politely inform them that your expertise is limited to Tom and Jerry: Chase game information.
 If the user's prompt consists of only a character's name, use the getData tool to retrieve information and provide a brief introduction of that character.
 You MUST respond in simplified Chinese in plain text without any markdown formatting, HTML tags, or special characters. 
 
-For requests that are harmful, unethical, inappropriate, your only response MUST be: "I'm not able to assist with that." Do not apologize or provide any explanation.
+For requests that are harmful, unethical, inappropriate, your only response MUST be: "我无法提供帮助。" Do not apologize or provide any explanation.
 
 # Tool Usage: getData
 
@@ -51,16 +52,16 @@ For requests that are harmful, unethical, inappropriate, your only response MUST
 The getData tool is your primary source for all character-specific information in Tom and Jerry: Chase. It connects to the game's database to retrieve the latest, most accurate details.
 
 **2. When to Use It:**
-You **must** call this tool whenever a user's query is about a specific character. You have the access to the following characters: ${JSON.stringify(characters.map(({ id, aliases }) => ({ id, aliases })))}. 
+You **must** call this tool whenever a user's query is about a specific character or knowledge card. You have access to the following characters: ${JSON.stringify(characters.map(({ id, aliases }) => ({ id, aliases })))} and the following cards: ${JSON.stringify(cards.map(({ id, rank }) => ({ id, rank })))}.
 
 **3. How to Use It:**
-The tool takes the character's Chinese name as an input. For example: getData(name="汤姆"). The name MUST match exactly with the character's name or one of their aliases. 
+The tool takes the character's Chinese name as an input. For example: getData(name="汤姆"). The name MUST match exactly with the character or knowledge card's name or one of their aliases or the format \`\${rank}-\${name}\`. 
 
 **4. Data Reliance:**
 Your response **must be based exclusively** on the data returned by the getData tool. Do not add information from other sources or make assumptions. If the tool does not provide a specific piece of information the user asked for, you should state that the information is not available in your database.
 
 **5. Return Type:**
-The tool's return type is a JSON object \` { character: CharacterDefinition } \`.  Below are the detailed TypeScript type definitions for \`CharacterDefinition\`, with each field's meaning explained via comments.
+The tool's return type is a JSON object \` { character: CharacterDefinition } | { card: Card } \`.  Below are the detailed TypeScript type definitions for \`CharacterDefinition\`, with each field's meaning explained via comments.
 
 \`\`\`typescript
 // The unique identifier for a character's faction.
@@ -228,6 +229,25 @@ type CharacterDefinition = {
 
   collaborators?: CharacterRelationItem[]; // Characters this character has good synergy with.
 };
+
+// Card-related types
+export type CardRank = 'C' | 'B' | 'A' | 'S';
+
+export type CardLevel = {
+  level: number;
+  description: string;
+  detailedDescription?: string;
+};
+
+export type Card = {
+  id: string; // Chinese name without rank prefix (e.g., '乘胜追击')
+  factionId?: FactionId; // Optional in base definition, will be assigned in bulk
+  rank: CardRank;
+  cost: number;
+  description: string;
+  detailedDescription?: string;
+  levels: CardLevel[]; // Each knowledge card has 3 levels
+};
 \`\`\`
 `;
 
@@ -269,17 +289,30 @@ const getDataTool = {
 async function getData({ name }: { name: string }) {
   console.log(`Tool called: getData for "${name}"`);
 
-  // const result = await getGotoResult(name);
-  // if (!result) {
-  //   return { error: `Character "${name}" not found.` };
-  // }
-  // return { result };
+  // Try exact character id or alias
   const character =
     characters.find((c) => c.id === name) ?? characters.find((c) => c.aliases?.includes(name));
-  if (!character) {
-    return { error: `Character "${name}" not found.` };
+  if (character) {
+    return { character };
   }
-  return { character };
+
+  // Normalize card name: allow "A-加大火力" style inputs
+  const rankPrefixMatch = String(name).match(/^[SABC]-(.+)$/);
+  const normalized = rankPrefixMatch?.[1]?.trim() ?? name;
+
+  // Try exact card id first
+  const cardById = cards.find((card) => card.id === normalized);
+  if (cardById) {
+    return { card: cardById };
+  }
+
+  // Try fuzzy card match by id equality with original input as fallback
+  const cardByOriginal = cards.find((card) => card.id === name);
+  if (cardByOriginal) {
+    return { card: cardByOriginal };
+  }
+
+  return { error: `Item "${name}" not found.` };
 }
 
 // Main POST handler for the chat API
@@ -375,7 +408,8 @@ export async function POST(req: NextRequest) {
         }
       } else {
         // No function call, so it must be a text response. We're done.
-        const text = candidate.content?.parts?.map((part: Part) => part.text).join('') || '';
+        const partsArray = candidate.content?.parts ?? [];
+        const text = partsArray.map((part: Part) => part.text ?? '').join('') || '';
         console.log('Final text response:', text);
 
         return new NextResponse(

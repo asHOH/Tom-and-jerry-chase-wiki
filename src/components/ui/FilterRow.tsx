@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import clsx from 'clsx';
+import FilterLabel from './FilterLabel';
 
 export type FilterRowProps<T extends string | number> = {
   label: string;
@@ -8,19 +9,19 @@ export type FilterRowProps<T extends string | number> = {
   onToggle: (opt: T) => void;
   // Optional wrappers and styling
   // Provide a custom label for each option; defaults to String(opt)
-  getOptionLabel?: (opt: T, active: boolean) => ReactNode;
-  renderOption?: (opt: T, button: ReactNode) => ReactNode;
-  getButtonClassName?: (opt: T, active: boolean) => string;
-  getButtonStyle?: (opt: T, active: boolean) => React.CSSProperties | undefined;
+  getOptionLabel?: ((opt: T, active: boolean) => ReactNode) | undefined;
+  renderOption?: ((opt: T, button: ReactNode) => ReactNode) | undefined;
+  getButtonClassName?: ((opt: T, active: boolean) => string) | undefined;
+  getButtonStyle?: ((opt: T, active: boolean) => React.CSSProperties | undefined) | undefined;
   // Option can be disabled (e.g., interlocks)
-  getButtonDisabled?: (opt: T, active: boolean) => boolean | undefined;
+  getButtonDisabled?: ((opt: T, active: boolean) => boolean | undefined) | undefined;
   // Container overrides
-  className?: string;
-  innerClassName?: string;
+  className?: string | undefined;
+  innerClassName?: string | undefined;
   // Accessibility
-  ariaLabel?: string;
+  ariaLabel?: string | undefined;
   // Theme
-  isDarkMode?: boolean;
+  isDarkMode?: boolean | undefined;
 };
 
 export default function FilterRow<T extends string | number>(props: FilterRowProps<T>) {
@@ -42,15 +43,14 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
 
   return (
     <div
-      className={clsx(
-        'filter-section flex flex-col md:flex-row md:items-center gap-2 md:gap-4 py-0.5',
-        className
-      )}
+      className={clsx(`flex justify-center items-center md:gap-2 md:mt-4 gap-4 mt-8`, className)}
     >
-      <div className='label-col w-full md:w-32 text-left'>
+      <FilterLabel displayMode='inline'>{label}</FilterLabel>
+      <FilterLabel displayMode='block'>筛选:</FilterLabel>
+      {/* <div className='w-full md:w-32 text-left'>
         <div className='font-medium'>{label}</div>
-      </div>
-      <div className='w-full min-w-0 flex justify-center'>
+      </div> */}
+      <div className='flex'>
         <div
           className={clsx('flex flex-wrap gap-1 md:gap-2', innerClassName)}
           aria-label={ariaLabel || label}
