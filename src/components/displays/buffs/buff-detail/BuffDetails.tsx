@@ -55,26 +55,12 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
               >
                 {!!(buff.aliases && buff.aliases.length) && (
                   <Tag colorStyles={tagColorStyles} size='md'>
-                    别名: {(buff.aliases ?? []).filter(Boolean).join(', ')}
-                  </Tag>
-                )}
-                {!!(buff.correlations && buff.correlations.length) && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    相关项:{' '}
-                    <TextWithHoverTooltips
-                      text={(buff.correlations ?? []).filter(Boolean).join(', ')}
-                    />
-                  </Tag>
-                )}
-                {!!(buff.source && buff.source.length) && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    来源:{' '}
-                    <TextWithHoverTooltips text={(buff.source ?? []).filter(Boolean).join(', ')} />
+                    别名：{(buff.aliases ?? []).filter(Boolean).join(', ')}
                   </Tag>
                 )}
                 {buff.duration != undefined && (
                   <Tag colorStyles={tagColorStyles} size='md'>
-                    持续时间: {buff.duration}
+                    持续时间：{buff.duration == 'infinite' ? '无限' : `${buff.duration}秒`}
                   </Tag>
                 )}
                 {buff.failure != undefined && (
@@ -92,13 +78,19 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
         <div className='md:w-2/3 space-y-3' style={{ whiteSpace: 'pre-wrap' }}>
           {[
             buff.description === undefined
-              ? { title: '状态效果', text: '待补充' }
+              ? { title: '效果介绍', text: '待补充' }
               : {
-                  title: '状态效果',
+                  title: '效果介绍',
                   text:
                     isDetailedView && buff.detailedDescription
                       ? buff.detailedDescription
                       : buff.description,
+                },
+            buff.source === undefined
+              ? { title: '效果来源', text: '待补充' }
+              : {
+                  title: '效果来源',
+                  text: isDetailedView && buff.detailedSource ? buff.detailedSource : buff.source,
                 },
             buff.stack === undefined
               ? { title: '同类效果叠加方式', text: '待补充' }

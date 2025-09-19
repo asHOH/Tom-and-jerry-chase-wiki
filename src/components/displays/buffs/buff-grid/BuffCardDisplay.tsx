@@ -23,7 +23,9 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           useShortHeight={isMobile ? true : false}
         />
       )}
-      <div className='px-3 pt-1 pb-3 text-center w-full'>
+      <div
+        className={`px-3 pt-1 pb-3 text-center w-full ${buff.unuseImage && `border border-dashed border-blue-500`}`}
+      >
         <h3
           className={`${isMobile && buff.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
           style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}

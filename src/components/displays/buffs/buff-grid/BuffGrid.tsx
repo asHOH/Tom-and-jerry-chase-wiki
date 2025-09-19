@@ -7,16 +7,18 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import FilterRow from '@/components/ui/FilterRow';
 import { useState } from 'react';
-import type { Bufftypelist, Buff } from '@/data/types';
+import type { Bufftypelist, Buff, Buffclasslist } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getPositioningTagColors } from '@/lib/design-system';
 
 const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['正面效果', '负面效果'];
+const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['常规类', '全局类', '特殊技能类'];
 
 export default function BuffClient() {
   // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<Bufftypelist[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<Buffclasslist[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
@@ -25,7 +27,8 @@ export default function BuffClient() {
     .filter((buff: Buff) => {
       // 类型筛选
       const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
-      return typeMatch;
+      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.buffclass);
+      return typeMatch && classMatch;
     });
 
   const unuseImageFilteredBuffs = Object.values(buffs)
@@ -33,7 +36,8 @@ export default function BuffClient() {
     .filter((buff: Buff) => {
       // 类型筛选
       const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
-      return typeMatch;
+      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.buffclass);
+      return typeMatch && classMatch;
     });
 
   return (
@@ -72,6 +76,33 @@ export default function BuffClient() {
               const isActive = active;
               const tagColors = getPositioningTagColors(
                 { 正面效果: '救援', 负面效果: '干扰' }[name],
+                false,
+                false,
+                'mouse',
+                isDarkMode
+              );
+              return isActive ? { ...tagColors } : undefined;
+            }}
+            isDarkMode={isDarkMode}
+          />
+        </div>
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+          {/* 类型筛选 */}
+          <FilterRow<Buffclasslist>
+            label='类型筛选:'
+            options={ITEM_CLASS_OPTIONS}
+            isActive={(type) => selectedClasses.includes(type)}
+            onToggle={(type) =>
+              setSelectedClasses((prev) =>
+                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+              )
+            }
+            //*getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}*/
+            //Use PositioningTagColors to avoid creating new colorStyles
+            getButtonStyle={(name, active) => {
+              const isActive = active;
+              const tagColors = getPositioningTagColors(
+                { 常规类: '辅助', 全局类: '奶酪', 特殊技能类: '破局' }[name],
                 false,
                 false,
                 'mouse',
