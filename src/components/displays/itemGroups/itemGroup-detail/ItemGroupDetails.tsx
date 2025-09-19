@@ -44,7 +44,7 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
         const ownerId = id ? id.split('-')[0] : undefined;
 
         R = `/characters/${ownerId}`;
-      } //todo:fix it to support level!!!!!
+      }
     }
 
     return R || '/error';

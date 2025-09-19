@@ -771,6 +771,11 @@ export const getTypeLabelColors = (type: string, isDarkMode = false) => {
       background: '#fef9c3',
       dark: { text: '#facc15', background: '#854d0e' },
     }, // yellow-700 | dark: yellow-400 on yellow-800
+    itemGroup: {
+      text: '#be123c',
+      background: '#ffe4e6',
+      dark: { text: '#fda4af', background: '#881337' },
+    }, // rose-700 | dark: rose-300 on rose-900
   };
 
   const scheme = map[type] ?? map.doc!;

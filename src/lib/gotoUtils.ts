@@ -1,9 +1,20 @@
 // Utility for resolving goto targets by name
 
-import { characters, cards, items, specialSkills, entities, buffs, type Skill } from '@/data';
+import {
+  characters,
+  cards,
+  items,
+  specialSkills,
+  entities,
+  buffs,
+  itemGroups,
+  type Skill,
+} from '@/data';
 import { getDocPages } from '@/lib/docUtils';
 import type { GotoResult, CategoryHint } from '@/lib/types';
 import { CATEGORY_HINTS } from '@/lib/types';
+import { getItemGroupImageUrl } from '@/components/displays/itemGroups/itemGroup-grid/getItemGroupImageUrl';
+import { ItemGroupDefinition } from '@/data/types';
 
 /**
  * Resolves a name to a goto result (url and type).
@@ -39,6 +50,16 @@ export async function getGotoResult(
       imageUrl: c!.imageUrl,
     };
     return c!.factionId ? { ...base, factionId: c!.factionId } : base;
+  }
+  if ((!normalizedCategory || normalizedCategory === '道具组') && name in itemGroups) {
+    const itemGroup = itemGroups[name];
+    return {
+      url: `/itemGroups/${encodeURIComponent(name)}`,
+      type: 'itemGroup',
+      name: itemGroup!.name || '',
+      description: itemGroup!.description,
+      imageUrl: getItemGroupImageUrl((itemGroup as ItemGroupDefinition) || { group: [] }),
+    };
   }
   if ((!normalizedCategory || normalizedCategory === '知识卡') && name in cards) {
     const card = cards[name];
@@ -137,6 +158,16 @@ export async function getGotoResult(
       imageUrl: character!.imageUrl,
     };
     return character.factionId ? { ...base, factionId: character.factionId } : base;
+  }
+  const itemGroup = Object.values(itemGroups).find((i) => i.aliases?.includes(name));
+  if (itemGroup) {
+    return {
+      url: `/itemGroups/${encodeURIComponent(itemGroup.name)}`,
+      type: 'itemGroup',
+      name: itemGroup!.name,
+      description: itemGroup!.description,
+      imageUrl: getItemGroupImageUrl((itemGroup as ItemGroupDefinition) || { group: [] }),
+    };
   }
   const catEntity = Object.values(entities['cat']).find((i) => i.aliases?.includes(name));
   if (catEntity) {
