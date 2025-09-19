@@ -165,6 +165,15 @@ export const renderTextWithTooltips = (
 
       // If it's not a number or attack boost not available, try rendering as Knowledge Card tag
       if (!isNumericOnly || attackBoost == null) {
+        if (content.startsWith(':')) {
+          parts.push(
+            new Function('$char', `with ($char) { return ${content.slice(1)}; }`)(
+              characters[currentCharacterId as keyof typeof characters]
+            )
+          );
+          lastIndex = tooltipPattern.lastIndex;
+          continue;
+        }
         const linkName = baseName;
         const card = cards[baseName as keyof typeof cards];
 
@@ -268,7 +277,16 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
 
         intermediateParts.push(
           <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
-            {visibleText}
+            {renderTextWithTooltips(
+              visibleText,
+              localCharacter.attackBoost ?? null,
+              index,
+              'wallCrackDamageBoost' in localCharacter
+                ? localCharacter.wallCrackDamageBoost
+                : undefined,
+              isDarkMode,
+              currentCharacterId
+            )}
           </Tooltip>
         );
 
