@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useLayoutEffect, useState } from 'react';
 import { sanitizeHTML } from '@/lib/xssUtils';
 import clsx from 'clsx';
 
@@ -9,13 +9,17 @@ export default memo(function RichTextDisplay({
   content: string | null | undefined;
   preview?: boolean;
 }) {
-  const sanitizedHTML = useMemo(() => {
+  const [sanitizedHTML, setSanitizedHTML] = useState('<p>内容加载中...</p>');
+  useLayoutEffect(() => {
     const sanitizedHTML = sanitizeHTML(content ?? '<p>内容加载中...</p>');
-    if (!preview) return sanitizedHTML;
+    if (!preview) {
+      setSanitizedHTML(sanitizedHTML);
+      return;
+    }
     const fragment = document.createElement('div');
     // const fragment = document.createDocumentFragment();
     fragment.innerHTML = sanitizedHTML;
-    return fragment.innerText;
+    setSanitizedHTML(fragment.innerText);
   }, [content, preview]);
   return (
     <div
