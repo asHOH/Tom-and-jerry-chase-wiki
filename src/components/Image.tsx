@@ -10,4 +10,6 @@ const Image = (props: ImageProps) => {
   return <NextImage loader={customImageLoader} {...props} />;
 };
 
-export default Image;
+void Image;
+
+export default NextImage;
