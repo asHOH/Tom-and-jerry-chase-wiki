@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RichTextEditor from '@/components/ui/RichTextEditor';
+import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 
 export interface CategoryOption {
   id: string;
@@ -151,7 +152,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             <RichTextEditor
               content={content}
               onChange={onContentChange}
-              placeholder={contentPlaceholder ?? '开始编写您的精彩内容...'}
+              placeholder={contentPlaceholder ?? ARTICLE_EDITOR_PLACEHOLDER}
             />
           </div>
 
