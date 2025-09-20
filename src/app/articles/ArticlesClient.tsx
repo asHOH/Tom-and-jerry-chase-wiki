@@ -15,6 +15,7 @@ import { useUser } from '@/hooks/useUser';
 import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 interface Article {
   id: string;
@@ -55,6 +56,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function ArticlesClient() {
   const { role: userRole } = useUser();
   const isMobile = useMobile();
+  const [isDarkMode] = useDarkMode();
 
   // Use centralized filter state management
   const {
@@ -205,7 +207,7 @@ export default function ArticlesClient() {
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
         <PageTitle>文章列表</PageTitle>
-        {!isMobile && <PageDescription>浏览和搜索猫和老鼠手游的文章内容</PageDescription>}
+        {!isMobile && <PageDescription>浏览其他爱好者的记录、思考和发现</PageDescription>}
 
         {/* Category Filter Controls */}
         {!!data && data.categories.length > 0 && (
@@ -220,6 +222,7 @@ export default function ArticlesClient() {
               className={isMobile ? 'gap-2 mt-4' : 'gap-4 mt-8'}
               innerClassName={!isMobile ? 'gap-2' : undefined}
               ariaLabel='categories'
+              isDarkMode={isDarkMode}
               getOptionLabel={(id) => {
                 return data.categories.find((c) => c.id === id)?.name ?? id;
               }}
@@ -262,6 +265,7 @@ export default function ArticlesClient() {
           className={isMobile ? 'gap-2 mt-2' : 'gap-4 mt-6'}
           innerClassName={!isMobile ? 'gap-2' : undefined}
           ariaLabel='sort'
+          isDarkMode={isDarkMode}
           getOptionLabel={(opt) =>
             opt === 'created_at-desc'
               ? '最新发布'
