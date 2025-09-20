@@ -12,8 +12,8 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getPositioningTagColors } from '@/lib/design-system';
 
-const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['正面效果', '负面效果'];
-const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['常规类', '全局类', '特殊技能类'];
+const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['正面效果', '负面效果', '其它效果'];
+const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['常规类', '全局类', '特殊类'];
 
 export default function BuffClient() {
   // Multi-select state for filters
@@ -75,7 +75,7 @@ export default function BuffClient() {
             getButtonStyle={(name, active) => {
               const isActive = active;
               const tagColors = getPositioningTagColors(
-                { 正面效果: '救援', 负面效果: '干扰' }[name],
+                { 正面效果: '救援', 负面效果: '干扰', 其它效果: '辅助' }[name],
                 false,
                 false,
                 'mouse',
@@ -102,7 +102,7 @@ export default function BuffClient() {
             getButtonStyle={(name, active) => {
               const isActive = active;
               const tagColors = getPositioningTagColors(
-                { 常规类: '辅助', 全局类: '奶酪', 特殊技能类: '破局' }[name],
+                { 常规类: '辅助', 全局类: '奶酪', 特殊类: '破局' }[name],
                 false,
                 false,
                 'mouse',

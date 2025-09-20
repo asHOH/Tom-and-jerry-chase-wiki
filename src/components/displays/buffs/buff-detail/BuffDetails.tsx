@@ -24,6 +24,13 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
     : { background: '#e0e7ef', color: '#1e293b' };
   if (!buff) return null;
 
+  const avilableAliases = (buff.aliases ?? [])
+    .filter((i) => i[0] !== '#')
+    .map((i) => {
+      return i.replace(/[\?\*]/g, '');
+    })
+    .filter((i) => i !== buff.name);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: spacing.xl }}>
@@ -44,18 +51,20 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
                   paddingBottom: spacing.xs,
                 }}
               >
-                {buff.name}{' '}
+                {buff.name}
                 <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                  ({buff.bufftype})
+                  ({buff.buffclass}
+                  {buff.bufftype})
                 </span>
               </h1>
               <div
                 className='flex items-center flex-wrap'
                 style={{ gap: spacing.sm, marginTop: spacing.sm }}
               >
-                {!!(buff.aliases && buff.aliases.length) && (
+                {avilableAliases.length > 0 && (
                   <Tag colorStyles={tagColorStyles} size='md'>
-                    别名：{(buff.aliases ?? []).filter(Boolean).join(', ')}
+                    别名：
+                    {avilableAliases.filter(Boolean).join(', ')}
                   </Tag>
                 )}
                 {buff.duration != undefined && (
@@ -93,27 +102,30 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
                   text: isDetailedView && buff.detailedSource ? buff.detailedSource : buff.source,
                 },
             buff.stack === undefined
-              ? { title: '同类效果叠加方式', text: '待补充' }
+              ? { title: '', text: '' }
               : {
                   title: '同类效果叠加方式',
                   text: isDetailedView && buff.detailedStack ? buff.detailedStack : buff.stack,
                 },
-          ].map(({ title, text }) => (
-            <div key={title}>
-              <SectionHeader title={title} />
-              <div
-                className='card dark:bg-slate-800 dark:border-slate-700  mb-8'
-                style={{ padding: spacing.lg }}
-              >
-                <p
-                  className='text-black dark:text-gray-200 text-lg'
-                  style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
-                >
-                  <TextWithHoverTooltips text={text as string} />
-                </p>
-              </div>
-            </div>
-          ))}
+          ].map(
+            ({ title, text }) =>
+              text !== '' && (
+                <div key={title}>
+                  <SectionHeader title={title} />
+                  <div
+                    className='card dark:bg-slate-800 dark:border-slate-700  mb-8'
+                    style={{ padding: spacing.lg }}
+                  >
+                    <p
+                      className='text-black dark:text-gray-200 text-lg'
+                      style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
+                    >
+                      <TextWithHoverTooltips text={text as string} />
+                    </p>
+                  </div>
+                </div>
+              )
+          )}
         </div>
       </div>
     </div>

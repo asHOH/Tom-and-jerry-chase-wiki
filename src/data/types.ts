@@ -275,14 +275,14 @@ export type EntityDefinition = {
 
 export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };
 
-export type Bufftypelist = '正面效果' | '负面效果';
-export type Buffclasslist = '全局类' | '常规类' | '特殊技能类';
+export type Bufftypelist = '正面效果' | '负面效果' | '其它效果';
+export type Buffclasslist = '常规类' | '全局类' | '特殊类';
 
 export type BuffDefinition = {
   bufftype: Bufftypelist;
   buffclass: Buffclasslist;
 
-  aliases?: string[];
+  aliases?: string[]; //特殊：允许使用通配符“*”或“?”，且在比较时自动忽略“#”（在字符串最前端使用#会避免在详情页中显示该别名）
   duration?: number | 'infinite'; // duration of buff.If buff has more than two different durations,don't fill in this attribute.
   failure?: string; //failure conditions of buff
 

@@ -15,6 +15,7 @@ import type { GotoResult, CategoryHint } from '@/lib/types';
 import { CATEGORY_HINTS } from '@/lib/types';
 import { getItemGroupImageUrl } from '@/components/displays/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 import { ItemGroupDefinition } from '@/data/types';
+import { stringMatch } from './stringMatch';
 
 /**
  * Resolves a name to a goto result (url and type).
@@ -199,16 +200,6 @@ export async function getGotoResult(
       imageUrl: item!.imageUrl,
     };
   }
-  const buff = Object.values(buffs).find((i) => i.aliases?.includes(name));
-  if (buff) {
-    return {
-      url: `/buffs/${encodeURIComponent(buff.name)}`,
-      type: 'buff',
-      name: buff!.name,
-      description: buff!.description,
-      imageUrl: buff!.imageUrl,
-    };
-  }
   const catSkill = Object.values(specialSkills['cat']).find((s) => s.aliases?.includes(name));
   if (catSkill) {
     return {
@@ -270,6 +261,17 @@ export async function getGotoResult(
       };
     }
     return enriched;
+  }
+
+  const buff = Object.values(buffs).find((i) => i.aliases?.find((n) => stringMatch(n, name)));
+  if (buff) {
+    return {
+      url: `/buffs/${encodeURIComponent(buff.name)}`,
+      type: 'buff',
+      name: buff!.name,
+      description: buff!.description,
+      imageUrl: buff!.imageUrl,
+    };
   }
   return null;
 }

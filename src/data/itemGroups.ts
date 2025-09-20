@@ -233,7 +233,7 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
     ],
   },
   //-------------------------------------状态效果---------------------------------------------/
-  眩晕: {
+  常规眩晕: {
     description: '指会在角色头顶显示为“眩晕”的状态效果。',
     group: [
       { name: '眩晕', type: 'buff' },
@@ -241,7 +241,19 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
       { name: '冰冻', type: 'buff' },
       { name: '爆炸', type: 'buff' },
       { name: '电击', type: 'buff' },
-      { name: '被拍扁', type: 'buff' },
+      { name: '拍扁', type: 'buff' },
+      { name: '夹住', type: 'buff' },
+    ],
+  },
+  软控制: {
+    aliases: ['软控', '非硬性控制'],
+    description: '指不会限制角色行动，但会限制/影响角色行为的一类控制效果。',
+    group: [
+      { name: '减速', type: 'buff' },
+      { name: '反向', type: 'buff' },
+      { name: '失明', type: 'buff' },
+      { name: '视野范围降低', type: 'buff' },
+      { name: '禁用效果', type: 'buff' },
     ],
   },
 };
