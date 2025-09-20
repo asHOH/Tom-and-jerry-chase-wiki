@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
@@ -71,15 +71,11 @@ export default function ArticlesClient() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   const params = new URLSearchParams({
-    page: currentPage.toString(),
-    limit: '20',
+    // Fetch all articles once to enable client-side filtering/pagination
+    limit: '9999',
   });
 
-  if (selectedCategories.size > 0) {
-    selectedCategories.forEach((category) => {
-      params.append('category', category);
-    });
-  }
+  // Do not append category to params; filter on client
 
   const {
     data,
@@ -88,9 +84,14 @@ export default function ArticlesClient() {
     mutate,
   } = useSWR<ArticlesData>(`/api/articles?${params.toString()}`, fetcher);
 
-  const sortedArticles = useMemo(() => {
+  const filteredArticles = useMemo(() => {
     if (!data?.articles) return [] as Article[];
-    const arr = [...data.articles];
+    if (selectedCategories.size === 0) return data.articles;
+    return data.articles.filter((a) => selectedCategories.has(a.category_id));
+  }, [data?.articles, selectedCategories]);
+
+  const sortedArticles = useMemo(() => {
+    const arr = [...filteredArticles];
     if (sortBy === 'created_at') {
       arr.sort((a, b) =>
         sortOrder === 'desc'
@@ -105,7 +106,19 @@ export default function ArticlesClient() {
       });
     }
     return arr;
-  }, [data?.articles, sortBy, sortOrder]);
+  }, [filteredArticles, sortBy, sortOrder]);
+
+  const pageSize = 20;
+  const clientTotalPages = Math.max(1, Math.ceil(sortedArticles.length / pageSize));
+  const clampedPage = Math.min(currentPage, clientTotalPages);
+  const startIndex = (clampedPage - 1) * pageSize;
+  const visibleArticles = sortedArticles.slice(startIndex, startIndex + pageSize);
+
+  useEffect(() => {
+    if (currentPage > clientTotalPages) {
+      setCurrentPage(1);
+    }
+  }, [clientTotalPages, currentPage]);
 
   const handleCategoryToggle = (categoryId: string) => {
     toggleCategoryFilter(categoryId);
@@ -119,11 +132,11 @@ export default function ArticlesClient() {
   };
 
   const renderPagination = () => {
-    if (!data || data.total_pages <= 1) return null;
+    if (!data || clientTotalPages <= 1) return null;
 
     const pages = [];
     const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(data.total_pages, currentPage + 2);
+    const endPage = Math.min(clientTotalPages, currentPage + 2);
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
@@ -132,8 +145,9 @@ export default function ArticlesClient() {
     return (
       <div className='flex items-center justify-center gap-2 mt-8'>
         <button
+          type='button'
           onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={!data.has_prev}
+          disabled={currentPage <= 1}
           className='px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
         >
           上一页
@@ -142,6 +156,7 @@ export default function ArticlesClient() {
         {startPage > 1 && (
           <>
             <button
+              type='button'
               onClick={() => setCurrentPage(1)}
               className='px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
             >
@@ -153,6 +168,7 @@ export default function ArticlesClient() {
 
         {pages.map((page) => (
           <button
+            type='button'
             key={page}
             onClick={() => setCurrentPage(page)}
             className={`px-3 py-2 text-sm rounded-lg transition-colors ${
@@ -165,21 +181,23 @@ export default function ArticlesClient() {
           </button>
         ))}
 
-        {endPage < data.total_pages && (
+        {endPage < clientTotalPages && (
           <>
-            {endPage < data.total_pages - 1 && <span className='px-2 text-gray-500'>...</span>}
+            {endPage < clientTotalPages - 1 && <span className='px-2 text-gray-500'>...</span>}
             <button
-              onClick={() => setCurrentPage(data.total_pages)}
+              type='button'
+              onClick={() => setCurrentPage(clientTotalPages)}
               className='px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
             >
-              {data.total_pages}
+              {clientTotalPages}
             </button>
           </>
         )}
 
         <button
+          type='button'
           onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={!data.has_next}
+          disabled={currentPage >= clientTotalPages}
           className='px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
         >
           下一页
@@ -208,6 +226,7 @@ export default function ArticlesClient() {
           </h2>
           <p className='text-gray-600 dark:text-gray-400 mb-6'>请稍后重试或联系管理员</p>
           <button
+            type='button'
             onClick={() => mutate()}
             className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
           >
@@ -305,7 +324,7 @@ export default function ArticlesClient() {
           className={`flex flex-col sm:flex-row sm:items-center sm:justify-between ${isMobile ? 'gap-2 mt-4 px-2' : 'gap-4 mt-8 px-4'}`}
         >
           <div className='text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left'>
-            共找到 {data?.total_count || 0} 篇文章
+            共找到 {filteredArticles.length} 篇文章
             {selectedCategories.size > 0 && (
               <span className='block sm:inline'>
                 {' '}
@@ -378,7 +397,7 @@ export default function ArticlesClient() {
         <div className='flex items-center justify-center py-12'>
           <LoadingSpinner size='lg' />
         </div>
-      ) : data?.articles.length === 0 ? (
+      ) : filteredArticles.length === 0 ? (
         <div className='text-center py-12 px-4'>
           <div className='text-6xl mb-4'>📄</div>
           <h3 className='text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2'>
@@ -392,6 +411,7 @@ export default function ArticlesClient() {
           <div className='flex flex-wrap justify-center gap-3'>
             {selectedCategories.size > 0 && (
               <button
+                type='button'
                 onClick={() => {
                   clearCategoryFilters();
                   setCurrentPage(1);
@@ -416,7 +436,7 @@ export default function ArticlesClient() {
           className={`auto-fit-grid grid-container grid ${!isMobile && 'gap-6 mt-8 px-4'}`}
           style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}
         >
-          {sortedArticles.map((article) => {
+          {visibleArticles.map((article) => {
             const latestVersion = article.latest_approved_version[0];
             return (
               <BaseCard
