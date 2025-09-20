@@ -627,6 +627,8 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     detailedDescription:
       '与{大纸盒}类似，但只会开出以下8种道具：{盘子}、{扁盘}、{玻璃杯}、{碗}、{叉子}、{高尔夫球}、{灰花瓶}、{奶酪}。携带“美食家”知识卡时，改为开出{牛奶}或{蛋糕}，与{小纸盒}/{大纸盒}共计次数。',
     create: '伴随{藤蔓}一同生成。',
+
+    specialImageUrl: '/images/items/大纸盒.png',
   },
   战矛: {
     entitytype: '投射物类' as const,
