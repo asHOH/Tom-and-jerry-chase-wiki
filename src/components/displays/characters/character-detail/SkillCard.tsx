@@ -28,6 +28,16 @@ interface SkillCardProps {
   skillIndex: number;
 }
 
+function SkillDescriptionPrefix({ skill, level }: { skill: DeepReadonly<Skill>; level: number }) {
+  if (level == 1) return null;
+  const previousCooldown = skill.skillLevels[level - 2]?.cooldown ?? 0;
+  const cooldown = skill.skillLevels[level - 1]?.cooldown ?? 0;
+  if (previousCooldown != cooldown) {
+    return `CD减少至${cooldown}秒${skill.skillLevels[level - 1]?.description ? '；' : '。'}`;
+  }
+  return null;
+}
+
 export default function SkillCard({
   skill,
   isSingleWeapon,
@@ -793,6 +803,7 @@ export default function SkillCard({
                   >
                     Lv.{level.level}:
                   </span>{' '}
+                  <SkillDescriptionPrefix skill={skill} level={level.level} />
                   <EditableField
                     initialValue={
                       isDetailed && level.detailedDescription?.trim()

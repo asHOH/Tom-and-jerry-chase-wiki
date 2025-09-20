@@ -119,15 +119,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description:
-              'CD减少至16秒。大铁锤会造成伤害，且每次命中敌方时会使自身推速提高，可叠加，持续时间无限。',
+              '大铁锤会造成伤害，且每次命中敌方时会使自身推速提高，可叠加，持续时间无限。',
             detailedDescription:
-              'CD减少至16秒。大铁锤会造成{65}伤害，且每次[命中敌方时](包括命中虚弱、霸体或无敌的猫咪时)会使自身[推速提高10%，最多叠加五层](每层之间独立计算。所有百分比推速加成之间均为乘算关系，包括游戏自带的百分比推速增减)，持续时间无限。',
+              '大铁锤会造成{65}伤害，且每次[命中敌方时](包括命中虚弱、霸体或无敌的猫咪时)会使自身[推速提高10%，最多叠加五层](每层之间独立计算。所有百分比推速加成之间均为乘算关系，包括游戏自带的百分比推速增减)，持续时间无限。',
             cooldown: 16,
           },
           {
             level: 3,
-            description: 'CD减少至12秒。大铁锤造成的眩晕时间延长。',
-            detailedDescription: 'CD减少至12秒。大铁锤造成的眩晕时间延长至4秒。',
+            description: '大铁锤造成的眩晕时间延长。',
+            detailedDescription: '大铁锤造成的眩晕时间延长至4秒。',
             cooldown: 12,
           },
         ],
@@ -162,9 +162,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: 'CD减少至24秒；进一步缩短金丝雀的投掷间隔。',
-            detailedDescription:
-              'CD减少至24秒；进一步缩短金丝雀的投掷间隔至0.6秒，单次技能期间总共投掷20±1次。',
+            description: '进一步缩短金丝雀的投掷间隔。',
+            detailedDescription: '进一步缩短金丝雀的投掷间隔至0.6秒，单次技能期间总共投掷20±1次。',
             cooldown: 24,
           },
         ],
@@ -557,7 +556,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: 'CD减少至5秒。',
+            description: '',
             cooldown: 5,
           },
         ],
@@ -582,9 +581,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至8秒；对平台释放技能时回复Hp。',
-            detailedDescription:
-              'CD减少至8秒；对平台释放技能时回复25Hp；在平台下悬挂的最长时间提升至15秒。',
+            description: '对平台释放技能时回复Hp。',
+            detailedDescription: '对平台释放技能时回复25Hp；在平台下悬挂的最长时间提升至15秒。',
             cooldown: 8,
           },
           {
@@ -847,7 +845,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少到15秒。',
+            description: '',
             cooldown: 15,
           },
           {

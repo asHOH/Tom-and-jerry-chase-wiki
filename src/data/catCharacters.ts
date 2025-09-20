@@ -384,7 +384,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: 'CD减少8秒。',
+            description: '',
             cooldown: 12,
           },
           {
@@ -598,14 +598,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description:
-              '技能本身的CD减少至24秒；换位CD减少至10秒；换位时回复Hp，且移速和交互速度短暂提高。',
+            description: '换位CD减少至10秒；换位时回复Hp，且移速和交互速度短暂提高。',
             cooldown: 24,
           },
           {
             level: 3,
             description:
-              '技能本身的CD减少至20秒；换位CD减少至5秒；分身不会主动消失；如果分身在本体附近，本体受到的[眩晕控制](包括大部分眩晕，另外还能免疫尼宝的鱼钩；不包括其它控制，如斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
+              '换位CD减少至5秒；分身不会主动消失；如果分身在本体附近，本体受到的[眩晕控制](包括大部分眩晕，另外还能免疫尼宝的鱼钩；不包括其它控制，如斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
             cooldown: 20,
           },
         ],
@@ -630,7 +629,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: 'CD减少至12秒。',
+            description: '',
             cooldown: 12,
           },
           {
@@ -666,7 +665,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: 'CD减少至10秒。',
+            description: '',
             cooldown: 10,
           },
         ],
@@ -1140,9 +1139,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '减少CD；使用鞭子额外提升斗牛持续时间。',
+            description: '使用鞭子额外提升斗牛持续时间。',
             cooldown: 2.5,
-            detailedDescription: '减少CD至2.5s；使用鞭子额外提升斗牛1秒持续时间。',
+            detailedDescription: '使用鞭子额外提升斗牛1秒持续时间。',
           },
         ],
         cueRange: '全图可见',
@@ -1809,7 +1808,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '减少CD。',
+            description: '',
             cooldown: 20,
           },
           {
@@ -1844,7 +1843,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '减少CD。',
+            description: '',
             cooldown: 25,
           },
           {
@@ -2050,10 +2049,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: 'CD减少至15秒。施加减速的频率提升。',
+            description: '施加减速的频率提升。',
             cooldown: 15,
-            detailedDescription:
-              'CD减少至15秒。施加减速的频率提升至0.4秒（单次技能期间共计可叠加6次）。',
+            detailedDescription: '施加减速的频率提升至0.4秒（单次技能期间共计可叠加6次）。',
           },
           {
             level: 3,
@@ -2092,9 +2090,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: 'CD减少。',
+            description: '',
             cooldown: 0.1,
-            detailedDescription: 'CD减少至0.1秒。',
+            detailedDescription: '',
           },
         ],
         canHitInPipe: false,
@@ -2127,9 +2125,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: 'CD减少。',
+            description: '',
             cooldown: 8,
-            detailedDescription: 'CD减少至8秒。',
+            detailedDescription: '',
           },
         ],
       },
@@ -2433,9 +2431,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: 'CD减少至10秒。',
+            description: '',
             cooldown: 10,
-            detailedDescription: 'CD减少至10秒。',
+            detailedDescription: '',
           },
           {
             level: 3,
@@ -2475,10 +2473,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: 'CD减少至8秒；将老鼠投掷到火箭上时回复Hp并获得短暂加速。',
+            description: '将老鼠投掷到火箭上时回复Hp并获得短暂加速。',
             cooldown: 8,
             detailedDescription:
-              'CD减少至8秒；将老鼠投掷到火箭上时，获得5Hp/秒的恢复效果，且移速提高25%，持续10秒。',
+              '将老鼠投掷到火箭上时，获得5Hp/秒的恢复效果，且移速提高25%，持续10秒。',
           },
         ],
         canHitInPipe: false,
@@ -2631,10 +2629,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '减少CD；连斩后极大提高绑火箭速度，持续一段时间。',
+            description: '连斩后极大提高绑火箭速度，持续一段时间。',
             cooldown: 18,
-            detailedDescription:
-              '减少CD至18s；连斩后绑火箭速度提升500%（只需0.29s绑火箭），持续20s。',
+            detailedDescription: '连斩后绑火箭速度提升500%（只需0.29s绑火箭），持续20s。',
           },
           {
             level: 3,
@@ -2666,8 +2663,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '减少CD；防御期间不再减速。',
-            detailedDescription: '减少CD至12s；防御期间不再减速。',
+            description: '防御期间不再减速。',
+            detailedDescription: '防御期间不再减速。',
             cooldown: 12,
           },
           {
@@ -2708,9 +2705,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '减少CD；释放第三段将提高移速一段时间。',
+            description: '释放第三段将提高移速一段时间。',
             cooldown: 12,
-            detailedDescription: '减少CD至12s；释放第三段将获得12%加速，持续3.4s。',
+            detailedDescription: '释放第三段将获得12%加速，持续3.4s。',
           },
         ],
       },
@@ -2869,9 +2866,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '减少CD。技能期间获得额外的攻击增伤。',
+            description: '技能期间获得额外的攻击增伤。',
             cooldown: 25,
-            detailedDescription: '减少CD至25秒。第一段技能的状态持续期间，额外获得25攻击增伤。',
+            detailedDescription: '第一段技能的状态持续期间，额外获得25攻击增伤。',
           },
           {
             level: 3,
@@ -2913,10 +2910,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description:
-              '减少CD。新增可生成道具：[拍子](与技能额外添加的拍子分别计数，因此一组愿望可能出现2个拍子)、[金锤子](每场游戏最多通过该技能获得3个金锤子，达到上限则不再生成)。此外每组愿望再[额外添加](在原有道具之外添加，不影响其他道具的刷新)1瓶神秘药水，总共生成5个道具。',
+              '新增可生成道具：[拍子](与技能额外添加的拍子分别计数，因此一组愿望可能出现2个拍子)、[金锤子](每场游戏最多通过该技能获得3个金锤子，达到上限则不再生成)。此外每组愿望再[额外添加](在原有道具之外添加，不影响其他道具的刷新)1瓶神秘药水，总共生成5个道具。',
             cooldown: 8,
             detailedDescription:
-              '减少CD至8秒。新增可生成道具：[拍子](与技能额外添加的拍子分别计数，因此一组愿望可能出现2个拍子)、[金锤子](每场游戏最多通过该技能获得3个金锤子，达到上限则不再生成)。此外每组愿望再[额外添加](在原有道具之外添加，不影响其他道具的刷新)1瓶神秘药水，总共生成5个道具。拍子生成概率与其他道具相同，金锤子生成概率约为其他道具的1/3。',
+              '新增可生成道具：[拍子](与技能额外添加的拍子分别计数，因此一组愿望可能出现2个拍子)、[金锤子](每场游戏最多通过该技能获得3个金锤子，达到上限则不再生成)。此外每组愿望再[额外添加](在原有道具之外添加，不影响其他道具的刷新)1瓶神秘药水，总共生成5个道具。拍子生成概率与其他道具相同，金锤子生成概率约为其他道具的1/3。',
           },
         ],
         cooldownTiming: '释放后',
@@ -3104,7 +3101,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: 'CD减少至15秒。',
+            description: '',
             cooldown: 15,
           },
           {
@@ -3386,7 +3383,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: 'CD减少至15秒。',
+            description: '',
             cooldown: 15,
           },
           {
@@ -3798,9 +3795,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '减少CD；技能期间免疫控制。',
+            description: '技能期间免疫控制。',
             cooldown: 12,
-            detailedDescription: '减少CD；技能期间免疫控制。',
+            detailedDescription: '技能期间免疫控制。',
           },
           {
             level: 3,
@@ -4063,8 +4060,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: 'CD降低10s。',
-            detailedDescription: 'CD降低10s。',
+            description: '',
+            detailedDescription: '',
             cooldown: 20,
           },
         ],
@@ -4299,9 +4296,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: 'CD减少至10秒。钻地行进速度更快，钻地过程中持续会回复健康值。',
+            description: '钻地行进速度更快，钻地过程中持续会回复健康值。',
             detailedDescription:
-              'CD减少至10秒。钻地行进速度提高40%（800→1120），钻地过程中获得20Hp/秒的恢复效果。',
+              '钻地行进速度提高40%（800→1120），钻地过程中获得20Hp/秒的恢复效果。',
             cooldown: 10,
           },
         ],
@@ -4641,10 +4638,10 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '减少俯冲CD，同时略微增加蓄力提升的伤害和眩晕时间',
+            description: '略微增加蓄力提升的伤害和眩晕时间',
             cooldown: 5,
             detailedDescription:
-              '减少俯冲CD至5秒，点击/蓄力0.5～1.0秒/蓄力1秒以上，伤害提升至35/40/45，眩晕时间提升至0.8/0.9/1.1秒',
+              '点击/蓄力0.5～1.0秒/蓄力1秒以上，伤害提升至35/40/45，眩晕时间提升至0.8/0.9/1.1秒',
           },
         ],
       },
@@ -4912,7 +4909,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '冷却时间降低。',
+            description: '',
             cooldown: 10,
           },
           {
