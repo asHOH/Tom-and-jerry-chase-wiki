@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
@@ -73,8 +73,6 @@ export default function ArticlesClient() {
   const params = new URLSearchParams({
     page: currentPage.toString(),
     limit: '20',
-    sortBy,
-    sortOrder,
   });
 
   if (selectedCategories.size > 0) {
@@ -89,6 +87,25 @@ export default function ArticlesClient() {
     isLoading: loading,
     mutate,
   } = useSWR<ArticlesData>(`/api/articles?${params.toString()}`, fetcher);
+
+  const sortedArticles = useMemo(() => {
+    if (!data?.articles) return [] as Article[];
+    const arr = [...data.articles];
+    if (sortBy === 'created_at') {
+      arr.sort((a, b) =>
+        sortOrder === 'desc'
+          ? new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          : new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+    } else if (sortBy === 'title') {
+      arr.sort((a, b) => {
+        const at = a.title || '';
+        const bt = b.title || '';
+        return sortOrder === 'asc' ? at.localeCompare(bt, 'zh-CN') : bt.localeCompare(at, 'zh-CN');
+      });
+    }
+    return arr;
+  }, [data?.articles, sortBy, sortOrder]);
 
   const handleCategoryToggle = (categoryId: string) => {
     toggleCategoryFilter(categoryId);
@@ -399,7 +416,7 @@ export default function ArticlesClient() {
           className={`auto-fit-grid grid-container grid ${!isMobile && 'gap-6 mt-8 px-4'}`}
           style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}
         >
-          {data?.articles.map((article) => {
+          {sortedArticles.map((article) => {
             const latestVersion = article.latest_approved_version[0];
             return (
               <BaseCard
