@@ -74,6 +74,18 @@ export default function AttributeDisplay({
           initialValue={localCharacter.clawKnifeCdUnhit || 0}
           className='inline'
         />
+        <span className='italic'>
+          {' '}
+          (
+          <EditableField
+            tag='span'
+            path='specialClawKnifeCdUnhit'
+            initialValue={
+              localCharacter.specialClawKnifeCdUnhit || localCharacter.clawKnifeCdUnhit || 0
+            }
+          />
+          )
+        </span>
         <GrayUnit> / </GrayUnit>
         <EditableField
           tag='span'
@@ -81,6 +93,18 @@ export default function AttributeDisplay({
           initialValue={localCharacter.clawKnifeCdHit || 0}
           className='inline'
         />
+        <span className='italic'>
+          {' '}
+          (
+          <EditableField
+            tag='span'
+            path='specialClawKnifeCdHit'
+            initialValue={
+              localCharacter.specialClawKnifeCdHit || localCharacter.clawKnifeCdHit || 0
+            }
+          />
+          )
+        </span>
         <GrayUnit> 秒</GrayUnit>
         {suffix && <GrayUnit>{suffix}</GrayUnit>}
       </>
