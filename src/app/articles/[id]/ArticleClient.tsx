@@ -5,8 +5,8 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
-import useSWR from 'swr';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+// import useSWR from 'swr';
+// import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 import { useMobile } from '@/hooks/useMediaQuery';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -19,77 +19,77 @@ interface ArticleData {
   created_at: string;
   view_count?: number;
   categories: { name: string };
-  users_public_view: { nickname: string };
+  users_public_view: { nickname: string | null } | null;
   latest_version: {
-    id: string;
-    content: string;
-    created_at: string;
-    editor_id: string;
-    users_public_view: { nickname: string };
+    id: string | null;
+    content: string | null;
+    created_at: string | null;
+    editor_id: string | null;
+    users_public_view: { nickname: string | null } | null;
   };
 }
 
-const fetcher = (url: string) =>
-  fetch(url).then((res) => {
-    if (!res.ok) {
-      const error = new Error('An error occurred while fetching the data.') as Error & {
-        info: unknown;
-        status: number;
-      };
-      error.info = res.json();
-      error.status = res.status;
-      throw error;
-    }
-    return res.json();
-  });
+// const fetcher = (url: string) =>
+//   fetch(url).then((res) => {
+//     if (!res.ok) {
+//       const error = new Error('An error occurred while fetching the data.') as Error & {
+//         info: unknown;
+//         status: number;
+//       };
+//       error.info = res.json();
+//       error.status = res.status;
+//       throw error;
+//     }
+//     return res.json();
+//   });
 
-export default function ArticleClient() {
+export default function ArticleClient({ article }: { article: ArticleData }) {
   const params = useParams();
   const { role: userRole } = useUser();
   const articleId = params?.id as string;
   const isMobile = useMobile();
 
-  const { data, error } = useSWR<{ article: ArticleData }>(
-    articleId ? `/api/articles/${articleId}` : null,
-    fetcher
-  );
+  // const { data, error } = useSWR<{ article: ArticleData }>(
+  //   articleId ? `/api/articles/${articleId}` : null,
+  //   fetcher
+  // );
 
-  console.log({ data });
+  // console.log({ data });
 
-  const article = data?.article;
-  const loading = !data && !error;
+  // const article = data?.article;
+  // const loading = !data && !error;
 
-  if (loading) {
-    return (
-      <div className='container mx-auto px-4 py-8'>
-        <div className='flex items-center justify-center min-h-[400px]'>
-          <LoadingSpinner size='lg' />
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className='container mx-auto px-4 py-8'>
+  //       <div className='flex items-center justify-center min-h-[400px]'>
+  //         <LoadingSpinner size='lg' />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  if (error || !article) {
-    return (
-      <div className='container mx-auto px-4 py-8'>
-        <div className='text-center py-12'>
-          <div className='text-6xl mb-4'>📄</div>
-          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
-            {error ? '加载文章失败' : '文章未找到'}
-          </h2>
-          <p className='text-gray-600 dark:text-gray-400 mb-6'>
-            请检查链接是否正确，或返回首页浏览其他内容
-          </p>
-          <Link
-            href='/'
-            className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
-          >
-            返回首页
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // if (error || !article) {
+  //   return (
+  //     <div className='container mx-auto px-4 py-8'>
+  //       <div className='text-center py-12'>
+  //         <div className='text-6xl mb-4'>📄</div>
+  //         <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
+  //           {error ? '加载文章失败' : '文章未找到'}
+  //         </h2>
+  //         <p className='text-gray-600 dark:text-gray-400 mb-6'>
+  //           请检查链接是否正确，或返回首页浏览其他内容
+  //         </p>
+  //         <Link
+  //           href='/'
+  //           className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+  //         >
+  //           返回首页
+  //         </Link>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const canEdit =
     userRole === 'Contributor' || userRole === 'Reviewer' || userRole === 'Coordinator';
@@ -209,7 +209,7 @@ export default function ArticleClient() {
 
                 <span>
                   最后编辑:{' '}
-                  {format(new Date(article.latest_version.created_at), 'yyyy年MM月dd日 HH:mm', {
+                  {format(new Date(article.latest_version.created_at!), 'yyyy年MM月dd日 HH:mm', {
                     locale: zhCN,
                   })}
                   {article.latest_version.users_public_view?.nickname &&
