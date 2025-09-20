@@ -119,15 +119,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description:
-              'CD减少至16秒。大铁锤会造成伤害，且每次命中敌方时会使自身推速提高，可叠加，持续时间无限。',
+              '大铁锤会造成伤害，且每次命中敌方时会使自身推速提高，可叠加，持续时间无限。',
             detailedDescription:
-              'CD减少至16秒。大铁锤会造成{65}伤害，且每次[命中敌方时](包括命中虚弱、霸体或无敌的猫咪时)会使自身[推速提高10%，最多叠加五层](每层之间独立计算。所有百分比推速加成之间均为乘算关系，包括游戏自带的百分比推速增减)，持续时间无限。',
+              '大铁锤会造成{65}伤害，且每次[命中敌方时](包括命中虚弱、霸体或无敌的猫咪时)会使自身[推速提高10%，最多叠加五层](每层之间独立计算。所有百分比推速加成之间均为乘算关系，包括游戏自带的百分比推速增减)，持续时间无限。',
             cooldown: 16,
           },
           {
             level: 3,
-            description: 'CD减少至12秒。大铁锤造成的眩晕时间延长。',
-            detailedDescription: 'CD减少至12秒。大铁锤造成的眩晕时间延长至4秒。',
+            description: '大铁锤造成的眩晕时间延长。',
+            detailedDescription: '大铁锤造成的眩晕时间延长至4秒。',
             cooldown: 12,
           },
         ],
@@ -162,9 +162,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: 'CD减少至24秒；进一步缩短金丝雀的投掷间隔。',
-            detailedDescription:
-              'CD减少至24秒；进一步缩短金丝雀的投掷间隔至0.6秒，单次技能期间总共投掷20±1次。',
+            description: '进一步缩短金丝雀的投掷间隔。',
+            detailedDescription: '进一步缩短金丝雀的投掷间隔至0.6秒，单次技能期间总共投掷20±1次。',
             cooldown: 24,
           },
         ],
@@ -557,7 +556,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: 'CD减少至5秒。',
+            description: '',
             cooldown: 5,
           },
         ],
@@ -582,9 +581,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至8秒；对平台释放技能时回复Hp。',
-            detailedDescription:
-              'CD减少至8秒；对平台释放技能时回复25Hp；在平台下悬挂的最长时间提升至15秒。',
+            description: '对平台释放技能时回复Hp。',
+            detailedDescription: '对平台释放技能时回复25Hp；在平台下悬挂的最长时间提升至15秒。',
             cooldown: 8,
           },
           {
@@ -847,7 +845,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少到15秒。',
+            description: '',
             cooldown: 15,
           },
           {
@@ -883,9 +881,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至30秒。爆炸伤害提高。',
+            description: '爆炸伤害提高。',
             detailedDescription:
-              'CD减少至30秒。爆炸对角色的伤害提升至[25](基础伤害25，对其他角色（包括敌方和队友，不包括自身）的伤害会受攻击增伤的影响，例如对敌方造成的伤害为45)。',
+              '爆炸对角色的伤害提升至[25](基础伤害25，对其他角色（包括敌方和队友，不包括自身）的伤害会受攻击增伤的影响，例如对敌方造成的伤害为45)。',
             cooldown: 30,
           },
           {
@@ -925,7 +923,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: 'CD减少至15秒。',
+            description: '',
             cooldown: 15,
           },
         ],
@@ -1083,13 +1081,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '护盾持续期间获得加速；减少CD。',
-            detailedDescription: '护盾持续期间获得18.5%加速；减少CD。',
+            description: '护盾持续期间获得加速。',
+            detailedDescription: '护盾持续期间获得18.5%加速。',
             cooldown: 25,
           },
           {
             level: 3,
-            description: '改为获得两层护盾；减少CD。',
+            description: '改为获得两层护盾。',
             cooldown: 18,
           },
         ],
@@ -1150,7 +1148,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '战旗被碰触一次后即获得强化；减少CD。',
+            description: '战旗被碰触一次后即获得强化。',
             cooldown: 12,
           },
           {
@@ -1353,8 +1351,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '大幅减少CD。',
-            detailedDescription: '减少CD至7秒。',
+            description: '',
+            detailedDescription: '',
             cooldown: 7,
           },
           {
@@ -2447,10 +2445,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少；成功传送后额外获得一层护盾。',
+            description: '成功传送后额外获得一层护盾。',
             cooldown: 10,
-            detailedDescription:
-              'CD减少至10秒；成功传送后额外获得一层护盾；护盾和加速持续时间增加至4s。',
+            detailedDescription: '成功传送后额外获得一层护盾；护盾和加速持续时间增加至4s。',
           },
           {
             level: 3,
@@ -2714,7 +2711,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD降低至25秒。',
+            description: '',
             cooldown: 25,
           },
           {
@@ -2743,7 +2740,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至10秒。',
+            description: '',
             cooldown: 10,
           },
           {
@@ -2901,19 +2898,17 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description:
-              'CD减少至14秒；友好关系期间，同伴的Hp恢复效果提升，并在Hp大于一半时免疫直接抓取效果。',
+            description: '友好关系期间，同伴的Hp恢复效果提升，并在Hp大于一半时免疫直接抓取效果。',
             cooldown: 14,
             detailedDescription:
-              'CD减少至14秒；建立友好关系时，同伴立即恢复25Hp，并解除受伤；友好关系期间，同伴的Hp恢复效果提升至5Hp/秒，并在Hp大于一半时免疫直接抓取效果。',
+              '建立友好关系时，同伴立即恢复25Hp，并解除受伤；友好关系期间，同伴的Hp恢复效果提升至5Hp/秒，并在Hp大于一半时免疫直接抓取效果。',
           },
           {
             level: 3,
-            description:
-              'CD减少至10秒；强化效果所需时间降低至10秒，进入强化状态后同伴额外回复Hp、提高Hp上限。',
+            description: '强化效果所需时间降低至10秒，进入强化状态后同伴额外回复Hp、提高Hp上限。',
             cooldown: 10,
             detailedDescription:
-              'CD减少至10秒；强化效果所需时间降低至10秒，进入强化状态后同伴额外回复20Hp、Hp上限提高50。',
+              '强化效果所需时间降低至10秒，进入强化状态后同伴额外回复20Hp、Hp上限提高50。',
           },
         ],
         cancelableSkill: ['道具键*'],
@@ -2988,7 +2983,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: 'CD减少至8秒。',
+            description: '',
             cooldown: 8,
           },
         ],
@@ -3173,8 +3168,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD。',
-            detailedDescription: '减少CD至12秒。',
+            description: '',
+            detailedDescription: '',
             cooldown: 12,
           },
           {
@@ -3413,8 +3408,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD。',
-            detailedDescription: '减少CD至10秒。',
+            description: '',
+            detailedDescription: '',
             cooldown: 10,
           },
           {
@@ -3694,7 +3689,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD至18秒。',
+            description: '',
             cooldown: 18,
           },
           {
@@ -3730,8 +3725,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD；提高兔子的Hp上限。升级时召回兔子并重置CD。',
-            detailedDescription: '减少CD至40秒；兔子Hp上限增加40。升级时召回兔子并使CD归零。',
+            description: '提高兔子的Hp上限。升级时召回兔子并重置CD。',
+            detailedDescription: '兔子Hp上限增加40。升级时召回兔子并使CD归零。',
             cooldown: 40,
           },
           {
@@ -4168,7 +4163,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD至12秒。',
+            description: '',
             cooldown: 12,
           },
           {
@@ -4251,10 +4246,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description:
-              'CD减少至15秒，踢出足球时会立刻对以自身为中心的矩形范围内所有敌方造成“强光耀眼”状态。',
+            description: '踢出足球时会立刻对以自身为中心的矩形范围内所有敌方造成“强光耀眼”状态。',
             detailedDescription:
-              'CD减少至15秒，踢出足球时会立刻对以自身为中心的矩形范围内所有敌方造成“强光耀眼”状态。',
+              '踢出足球时会立刻对以自身为中心的矩形范围内所有敌方造成“强光耀眼”状态。',
             cooldown: 15,
           },
         ],
@@ -4446,8 +4440,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '减少CD；分身存在时间增加。',
-            detailedDescription: '减少CD至16秒；分身存在时间增加至20秒。',
+            description: '分身存在时间增加。',
+            detailedDescription: '分身存在时间增加至20秒。',
             cooldown: 16,
           },
         ],
@@ -4591,9 +4585,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少。',
+            description: '',
             cooldown: 10,
-            detailedDescription: 'CD减少至10秒。',
+            detailedDescription: '',
           },
           {
             level: 3,
@@ -5072,7 +5066,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至15秒。',
+            description: '',
             cooldown: 15,
           },
           {
@@ -5228,9 +5222,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '减少CD。',
+            description: '',
             cooldown: 35,
-            detailedDescription: '减少CD至35s。',
+            detailedDescription: '',
           },
         ],
         aliases: ['闪现'],
@@ -5259,7 +5253,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD。',
+            description: '',
             cooldown: 15,
           },
           {
@@ -5413,8 +5407,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '减少CD。',
-            detailedDescription: '减少CD至15秒。',
+            description: '',
+            detailedDescription: '',
             cooldown: 15,
           },
         ],
@@ -5742,7 +5736,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '减少CD。',
+            description: '',
             cooldown: 20,
           },
           {
@@ -5779,7 +5773,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: 'CD减少至28秒。',
+            description: '',
             cooldown: 28,
           },
         ],
@@ -5941,7 +5935,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至10秒。',
+            description: '',
             cooldown: 10,
           },
           {
@@ -6396,7 +6390,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至40秒。',
+            description: '',
             cooldown: 40,
           },
           {
@@ -6430,7 +6424,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至2秒。',
+            description: '',
             cooldown: 2,
           },
           {
@@ -6565,9 +6559,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至25秒；采访期间的移速提高，并获得Hp恢复效果。',
+            description: '采访期间的移速提高，并获得Hp恢复效果。',
             detailedDescription:
-              'CD减少至25秒；采访期间的移速提高至750、并[获得2.5Hp/秒的恢复效果](该效果与自然恢复不同，不会因受伤而失效)。',
+              '采访期间的移速提高至750、并[获得2.5Hp/秒的恢复效果](该效果与自然恢复不同，不会因受伤而失效)。',
             cooldown: 25,
           },
           {
@@ -6607,7 +6601,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: 'CD减少到20秒。',
+            description: '',
             cooldown: 20,
           },
         ],
@@ -6860,10 +6854,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至30秒。若技能期间乾坤袋未进入过虚弱状态，收回时根据剩余Hp返还CD。',
+            description: '若技能期间乾坤袋未进入过虚弱状态，收回时根据剩余Hp返还CD。',
             cooldown: 30,
             detailedDescription:
-              'CD减少至30秒。若技能期间乾坤袋未进入过虚弱状态，收回时根据剩余Hp返还CD，每1Hp返还10秒CD。',
+              '若技能期间乾坤袋未进入过虚弱状态，收回时根据剩余Hp返还CD，每1Hp返还10秒CD。',
           },
           {
             level: 3,
@@ -7033,7 +7027,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: 'CD减少10秒。',
+            description: '',
             cooldown: 25,
           },
         ],
@@ -7057,7 +7051,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: 'CD减少至20秒。',
+            description: '',
             cooldown: 20,
           },
           {
@@ -7400,9 +7394,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '减少CD。',
+            description: '',
             cooldown: 12,
-            detailedDescription: '减少CD至12秒。',
+            detailedDescription: '',
           },
         ],
         cooldownTiming: '释放后',

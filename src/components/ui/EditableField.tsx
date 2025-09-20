@@ -6,6 +6,17 @@ import { characters } from '@/data/index';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 import { useAppContext } from '@/context/AppContext';
 import { getNestedProperty, handleChange } from '@/lib/editUtils';
+import { CharacterWithFaction } from '@/lib/types';
+
+type Key<T> = T extends object
+  ? {
+      [K in keyof T & string]: T[K] extends readonly (infer U)[]
+        ? K | `${K}.${number}` | (U extends object ? `${K}.${Key<U>}` : never)
+        : T[K] extends object
+          ? K | `${K}.${Key<T[K]>}`
+          : K;
+    }[keyof T & string]
+  : never;
 
 /**
  * A component that displays a field that can be edited when in "edit mode".
@@ -26,7 +37,7 @@ import { getNestedProperty, handleChange } from '@/lib/editUtils';
 interface EditableFieldProps<T, TagName extends keyof HTMLElementTagNameMap>
   extends Omit<React.HTMLAttributes<HTMLElementTagNameMap[TagName]>, 'children'> {
   tag: TagName;
-  path: string; // e.g., 'character.id', 'character.description'
+  path: Key<CharacterWithFaction> | (string & {}); // e.g., 'character.id', 'character.description'
   initialValue: T;
   onSave?: ((newValue: string) => void) | undefined;
   factionId?: string | undefined; // Optional faction ID for edit operations
