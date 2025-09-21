@@ -105,10 +105,8 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (çŒ«å’
 
 ### Quick Improvements
 
-- Use server client for admin category mutations: move `CategoryManagementPanelClient` writes behind `/api/admin/categories/*` to centralize role checks and avoid exposing RPC names to the client.
-- Add shared role guard helper: e.g., `lib/auth/requireRole.ts` to DRY checks in route handlers.
-- Minimize `/api/articles` payload when `ArticlesClient` already fetches all: consider an `/api/articles/summary` selecting only required fields for the list grid to reduce bandwidth.
-- Subscribe to auth state: in `useUser`, subscribe to `supabase.auth.onAuthStateChange` to refresh role/nickname when session changes.
+- Add shared role guard helper: e.g., `lib/auth/requireRole.ts` to DRY checks in route handlers. (Very low effort; improves consistency.)
+- Subscribe to auth state: in `useUser`, subscribe to `supabase.auth.onAuthStateChange` to refresh role/nickname when session changes. (Tiny change; improves UX.)
 
 ## Performance & Analytics
 
