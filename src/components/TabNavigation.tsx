@@ -103,6 +103,8 @@ type TabNavigationProps = {
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState<string | null>(null);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const isMobile = useMobile();
@@ -125,6 +127,26 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
   const isHomeActive = () => {
     return pathname === '/';
+  };
+
+  const handleSignOut = async () => {
+    if (signingOut) return;
+    setSignOutError(null);
+    setSigningOut(true);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        setSignOutError(error.message || '退出登录失败，请稍后再试');
+        return;
+      }
+      clearUserData();
+      setDropdownOpen(false);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : '未知错误';
+      setSignOutError(msg);
+    } finally {
+      setSigningOut(false);
+    }
   };
 
   return (
@@ -296,15 +318,23 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         <Link href='/admin/'>进入管理面板</Link>
                       </li>
                     )}
-                    <li
-                      className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'
-                      onClick={() => {
-                        supabase.auth.signOut();
-                        clearUserData();
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      退出登录
+                    {!!signOutError && (
+                      <li className='px-4 py-2 text-red-600 dark:text-red-400'>{signOutError}</li>
+                    )}
+                    <li>
+                      <button
+                        type='button'
+                        className={clsx(
+                          'w-full text-left px-4 py-2 cursor-pointer rounded-b-md',
+                          signingOut
+                            ? 'opacity-60 pointer-events-none bg-gray-100 dark:bg-slate-700'
+                            : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                        )}
+                        onClick={handleSignOut}
+                        disabled={signingOut}
+                      >
+                        {signingOut ? '正在退出…' : '退出登录'}
+                      </button>
                     </li>
                   </ul>
                 </div>
