@@ -13,7 +13,7 @@ const figureDescription: string =
 
 const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
   鸟哨金丝雀: {
-    entitytype: 'NPC类' as const,
+    entitytype: 'NPC类',
     characterName: '杰瑞',
     skillname: '鸟哨',
     move: true,
@@ -26,7 +26,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由杰瑞-鸟哨召唤。',
   },
   鸟哨鞭炮: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '杰瑞',
     skillname: '鸟哨',
     aliases: ['炸弹', '鸟哨炸弹'],
@@ -41,7 +41,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由杰瑞-鸟哨召唤的{鸟哨金丝雀}进行投掷。',
   },
   烟雾: {
-    entitytype: '其它' as const,
+    entitytype: '召唤物类',
     characterName: '侦探杰瑞',
     skillname: '烟雾弹',
     move: false,
@@ -54,7 +54,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由侦探杰瑞-烟雾弹召唤。也可以通过{莱恩}-{蘸水笔}在蓝图上以□+□配方合成。',
   },
   干扰器: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '侦探杰瑞',
     skillname: '视觉干扰器',
     move: true,
@@ -67,7 +67,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由侦探杰瑞-视觉干扰器召唤。',
   },
   金币: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '航海士杰瑞',
     skillname: '飞翔金币',
     move: true,
@@ -81,7 +81,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过航海士杰瑞-飞翔金币召唤。',
   },
   火药桶: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '航海士杰瑞',
     skillname: '火药桶',
     aliases: ['桶', '炸药桶'],
@@ -96,7 +96,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '通过航海士杰瑞-火药桶召唤。也可以通过{仙女鼠}-{魔镜召唤咒}Lv.3概率许愿获得，或通过{莱恩}-{蘸水笔}在蓝图上以△+○配方合成。',
   },
   火炮: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '航海士杰瑞',
     skillname: '舰艇火炮',
     move: false,
@@ -110,7 +110,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过航海士杰瑞-舰艇火炮召唤。',
   },
   攻击战旗: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '国王杰瑞',
     skillname: '国王战旗',
     move: true,
@@ -124,7 +124,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过国王杰瑞-国王战旗召唤。',
   },
   救援战旗: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '国王杰瑞',
     skillname: '国王战旗',
     move: true,
@@ -138,7 +138,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过国王杰瑞-国王战旗召唤。',
   },
   守护战旗: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '国王杰瑞',
     skillname: '国王战旗',
     move: true,
@@ -152,7 +152,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过国王杰瑞-国王战旗召唤。',
   },
   感知战旗: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '国王杰瑞',
     skillname: '国王战旗',
     move: true,
@@ -166,7 +166,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过国王杰瑞-国王战旗召唤。',
   },
   灵巧战旗: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '国王杰瑞',
     skillname: '国王战旗',
     move: true,
@@ -180,7 +180,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过国王杰瑞-国王战旗召唤。',
   },
   火箭筒: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '泰菲',
     skillname: '火箭筒',
     aliases: ['炮', '炮弹'],
@@ -194,7 +194,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由泰菲-火箭筒技能射出。',
   },
   感应雷: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '泰菲',
     skillname: '隐形感应雷',
     aliases: ['地雷', '隐形雷'],
@@ -207,8 +207,22 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '被放置一小段时间后进入隐身状态，敌方靠近时现身，并在1.5秒延迟后飞向敌方并爆炸，对小范围内的敌方造成50/50/80伤害和1.9秒爆炸眩晕，对墙缝造成10/10/15伤害，对范围内所有角色产生小幅度的爆炸击退效果。感应雷被道具击中会原地倒计时并爆炸。感应雷30秒后自然消失。Lv.2感应雷可击落敌方手中的老鼠和道具。感应雷造成的伤害可受攻击增伤影响。',
     create: '由泰菲-隐形感应雷技能召唤。也可以通过{莱恩}-{蘸水笔}在蓝图上以○+□配方合成。',
   },
+  头盔: {
+    entitytype: '变身类',
+    characterName: '剑客泰菲',
+    skillname: '头盔',
+    move: true,
+    gravity: true,
+    collsion: true,
+    ignore: ['道具'],
+    description: '期间{无敌}，但惯性增大；小范围内的队友也{无敌}，但{禁用技能}。',
+    detailedDescription:
+      '期间{无敌}，但惯性增大、移速降低3.5%、跳跃速度降低15%；小范围内的队友也{无敌}，但{禁用技能}。3级头盔可以[更灵活地移动](不再受惯性影响，不会降低移速和跳跃速度)。\n注：该效果属于{1类变身}（详见“变身”的效果描述）。',
+    create: '由剑客泰菲-头盔召唤。',
+    specialImageUrl: '/images/mouseSkills/剑客泰菲2-头盔.png', //ToDo: add this entity's image
+  },
   长枪: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '剑客泰菲',
     skillname: '剑客长枪',
     aliases: ['长矛'],
@@ -223,7 +237,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由剑客泰菲-剑客长枪召唤。',
   },
   大仙人掌: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '牛仔杰瑞',
     skillname: '仙人掌',
     aliases: ['仙人掌'],
@@ -237,7 +251,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由牛仔杰瑞-仙人掌召唤。',
   },
   小仙人掌: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '牛仔杰瑞',
     skillname: '仙人掌',
     move: true,
@@ -250,7 +264,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '牛仔杰瑞-仙人掌Lv.2及以上时，召唤的大仙人掌在非自然消失时产生3个小仙人掌。',
   },
   地狱裂隙: {
-    entitytype: '其它' as const,
+    entitytype: '指示类',
     characterName: '恶魔杰瑞',
     skillname: '地狱裂隙',
     move: false,
@@ -260,7 +274,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '恶魔杰瑞-地狱裂隙在使用时自动生成。',
   },
   恶魔之门: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '恶魔杰瑞',
     skillname: '三叉戟',
     aliases: ['传送门', '地狱之门'],
@@ -274,7 +288,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由恶魔杰瑞-三叉戟召唤。',
   },
   蓝色小淘气: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '恶魔泰菲',
     skillname: '小淘气',
     aliases: ['蓝恶魔', '蓝色小恶魔'],
@@ -289,7 +303,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过恶魔泰菲-小淘气转化{盘子}/{扁盘}/{玻璃杯}/{碗}获得。',
   },
   红色小淘气: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '恶魔泰菲',
     skillname: '小淘气',
     aliases: ['红恶魔', '红色小恶魔'],
@@ -303,7 +317,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过恶魔泰菲-小淘气转化{冰块}/{灰花瓶}/{蓝花瓶}获得。',
   },
   绿色小淘气: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '恶魔泰菲',
     skillname: '小淘气',
     aliases: ['绿恶魔', '绿色小恶魔'],
@@ -317,7 +331,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过恶魔泰菲-小淘气转化{高尔夫球}获得。',
   },
   爱心之吻: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '雪梨',
     skillname: '爱心之吻',
     move: true,
@@ -330,7 +344,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由雪梨-爱心之吻召唤。',
   },
   花洒: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '雪梨',
     skillname: '爱之花洒',
     move: false,
@@ -344,7 +358,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '通过雪梨-爱之花洒召唤。也可以通过{仙女鼠}-{魔镜召唤咒}Lv.3概率许愿获得（通过该方式获得的花洒为中立阵营道具），或通过{莱恩}-{蘸水笔}在蓝图上以△+□配方合成。',
   },
   花束: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '雪梨',
     skillname: '爱心花束',
     move: true,
@@ -358,7 +372,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过雪梨-爱心花束投掷。',
   },
   弓箭: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '天使杰瑞',
     skillname: '丘比特之箭',
     move: true,
@@ -370,7 +384,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由天使杰瑞-丘比特之箭在蓄力条未满时射出。',
   },
   蓄力箭: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '天使杰瑞',
     skillname: '丘比特之箭',
     move: true,
@@ -382,7 +396,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由天使杰瑞-丘比特之箭在蓄力条充满时射出。',
   },
   雷云: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '天使杰瑞',
     skillname: '止戈雷云',
     move: false,
@@ -396,7 +410,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/mouseSkills/天使杰瑞3-止戈雷云.png', //ToDo: add this entity's image
   },
   红色卡牌: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '魔术师',
     skillname: '奇思妙想',
     aliases: ['红牌', '红色纸牌'],
@@ -410,7 +424,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过魔术师-奇思妙想召唤，或通过魔术师-魔术戏法Lv.1效果自动生成。',
   },
   黄色卡牌: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '魔术师',
     skillname: '奇思妙想',
     aliases: ['黄牌', '黄色纸牌'],
@@ -424,7 +438,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过魔术师-奇思妙想召唤，或通过魔术师-魔术戏法Lv.1效果自动生成。',
   },
   蓝色卡牌: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '魔术师',
     skillname: '奇思妙想',
     aliases: ['蓝牌', '蓝色纸牌'],
@@ -438,7 +452,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过魔术师-奇思妙想召唤，或通过魔术师-魔术戏法Lv.1效果自动生成。',
   },
   兔子先生: {
-    entitytype: 'NPC类' as const,
+    entitytype: 'NPC类',
     characterName: '魔术师',
     skillname: '兔子先生',
     aliases: ['小兔子'],
@@ -451,7 +465,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过魔术师-兔子先生召唤.',
   },
   兔子大表哥: {
-    entitytype: 'NPC类' as const,
+    entitytype: 'NPC类',
     characterName: '魔术师',
     skillname: '兔子大表哥',
     aliases: ['大兔子', '兔表哥', '蛋白兔'],
@@ -464,7 +478,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过魔术师-兔子大表哥召唤。',
   },
   斜塔: {
-    entitytype: '平台类' as const,
+    entitytype: '平台类',
     characterName: '拿坡里鼠',
     skillname: '比萨斜塔',
     move: false,
@@ -477,7 +491,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由拿坡里鼠-比萨斜塔召唤。',
   },
   披萨: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '拿坡里鼠',
     skillname: '意式披萨',
     aliases: ['披萨饼', '大饼'],
@@ -493,7 +507,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '由拿坡里鼠-意式披萨召唤。也可以通过{仙女鼠}-{魔镜召唤咒}Lv.3概率许愿获得，或通过{莱恩}-{蘸水笔}在蓝图上以○+○配方合成。',
   },
   披萨块: {
-    entitytype: '其它' as const,
+    entitytype: '召唤物类',
     characterName: '拿坡里鼠',
     skillname: '意式披萨',
     move: true,
@@ -507,7 +521,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由{披萨}碰撞敌方后生成。',
   },
   闪耀足球: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '拿坡里鼠',
     skillname: '世界波',
     aliases: ['足球'],
@@ -521,7 +535,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由拿坡里鼠-世界波蓄力并踢出。',
   },
   侦探泰菲分身: {
-    entitytype: 'NPC类' as const,
+    entitytype: 'NPC类',
     characterName: '侦探泰菲',
     skillname: '分身大师',
     aliases: ['分身'],
@@ -535,7 +549,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由侦探泰菲-分身大师召唤。',
   },
   饮料印记: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '侦探泰菲',
     skillname: '追踪饮料',
     move: true,
@@ -549,7 +563,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由侦探泰菲-追踪饮料召唤。',
   },
   饮料分身: {
-    entitytype: 'NPC类' as const,
+    entitytype: 'NPC类',
     characterName: '侦探泰菲',
     skillname: '追踪饮料',
     aliases: ['分身'],
@@ -564,7 +578,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由{饮料印记}在特定条件下召唤。',
   },
   风之屏障: {
-    entitytype: '平台类' as const,
+    entitytype: '平台类',
     characterName: '剑客莉莉',
     skillname: '御风剑舞',
     aliases: ['风墙'],
@@ -578,7 +592,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由剑客莉莉-御风剑舞召唤。',
   },
   剑气: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '剑客莉莉',
     skillname: '幻影剑气',
     move: true,
@@ -592,7 +606,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由剑客莉莉-幻影剑气召唤。',
   },
   幻影: {
-    entitytype: '其它' as const,
+    entitytype: '指示类',
     characterName: '剑客莉莉',
     skillname: '幻影剑气',
     ignore: ['剑气幻影'],
@@ -603,7 +617,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由[剑气]落地时召唤。',
   },
   藤蔓: {
-    entitytype: '平台类' as const,
+    entitytype: '平台类',
     characterName: '罗宾汉泰菲',
     skillname: '藤蔓',
     move: false,
@@ -617,7 +631,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由罗宾汉泰菲-藤蔓召唤。',
   },
   藤蔓纸盒: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '罗宾汉泰菲',
     skillname: '藤蔓',
     move: true,
@@ -630,8 +644,58 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
 
     specialImageUrl: '/images/items/大纸盒.png',
   },
+  战车: {
+    entitytype: '变身类',
+    characterName: '蒙金奇',
+    skillname: '军团战车',
+    move: true,
+    gravity: true,
+    collsion: true,
+    ignore: ['道具'],
+    description:
+      '战车拥有独立Hp，且持有{霸体}（免疫{虚弱}和大部分控制状态，但不免疫{禁用技能}）。乘坐战车期间可以使用“投掷战矛”（替代原本的武器技能）和原本的主动技能，但无法交互、使用道具或回复Hp。当战车Hp归零、持续时间结束、蒙金奇主动脱离时，战车进入自毁倒计时，期间{禁用主动、武器技能}，结束时爆炸对范围内所有单位造成伤害和{爆炸}，对未脱离战车的蒙金奇造成极高伤害。',
+    detailedDescription:
+      '战车拥有独立的100/125/125Hp，且持有{霸体}（免疫{虚弱}和大部分控制状态，但不免疫{禁用技能}）。乘坐战车期间可以使用“投掷战矛”（替代原本的武器技能）和原本的主动技能，但无法交互、使用道具或回复Hp。当战车Hp归零、持续时间结束、蒙金奇主动脱离时，战车进入自毁倒计时，期间{禁用主动、武器技能}，期间{禁用主动、武器技能}，结束时爆炸对范围内所有单位造成{75}伤害和2秒{爆炸}，对未脱离战车的蒙金奇造成极高伤害。\n注：该效果属于{2类变身}（详见“变身”的效果描述）。',
+    create: '由蒙金奇-军团战车召唤。',
+    skills: [
+      {
+        name: '投掷战矛',
+        type: 'weapon1',
+        description: '以固定角度和速度向前方投掷{战矛}。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '无后摇',
+        forecast: 0.2,
+        colddown: 2,
+        skillLevels: [],
+      },
+      {
+        name: '分离',
+        type: 'passive',
+        description:
+          '蒙金奇脱离战车，并在原地生成一个{战车-分离态}，其继承原本战车的速度和自毁倒计时进度。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        skillLevels: [],
+      },
+    ],
+  },
+  '战车-分离态': {
+    entitytype: '召唤物类',
+    characterName: '蒙金奇',
+    skillname: '军团战车',
+    move: true,
+    gravity: true,
+    collsion: true,
+    ignore: ['道具'],
+    description: '有自毁倒计时，结束时爆炸对范围内所有单位造成伤害和{爆炸}。',
+    detailedDescription: '有自毁倒计时，结束时爆炸对范围内所有单位造成{75}伤害和2秒{爆炸}。',
+    create: '蒙金奇与{战车}分离后生成。',
+  },
   战矛: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '蒙金奇',
     skillname: '军团战车',
     aliases: ['矛', '长矛'],
@@ -640,11 +704,11 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     collsion: true,
     description: '命中敌方或墙缝造成伤害。',
     detailedDescription:
-      '命中敌方造成[30伤害](无法受到攻击增伤加成)，命中墙缝造成[5伤害](无法受到攻击增伤加成)，可触发部分投掷类知识卡和特技：{缴械}、{投手}、{精准投射}、{干扰投掷}、{勇气投掷}。',
-    create: '由蒙金奇-军团战车在技能期间通过技能键掷出。',
+      '命中敌方造成[30伤害](无法受到攻击增伤加成)，命中墙缝造成[5伤害](无法受到攻击增伤加成)，可触发{投掷命中效果}（{追风}除外）。',
+    create: '由{战车}释放武器技能掷出。',
   },
   尼宝的朋友: {
-    entitytype: 'NPC类' as const,
+    entitytype: 'NPC类',
     characterName: '尼宝',
     skillname: '尼宝的朋友',
     move: false,
@@ -657,7 +721,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由尼宝-尼宝的朋友召唤。',
   },
   鱼钩: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '尼宝',
     skillname: '尼宝的朋友',
     aliases: ['钩子'],
@@ -670,7 +734,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由{尼宝的朋友(衍生物)}掷出。',
   },
   小电球: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '朵朵',
     skillname: '强能灌注',
     aliases: ['电球'],
@@ -684,7 +748,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过朵朵-强能灌注Lv.3在非过载状态下召唤。',
   },
   大电球: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '朵朵',
     skillname: '强能灌注',
     aliases: ['电球'],
@@ -698,7 +762,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过朵朵-强能灌注Lv.3在过载状态下召唤。',
   },
   电池: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '朵朵',
     skillname: '能源装置',
     move: true,
@@ -711,7 +775,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '朵朵-能源装置达到Lv.2后，朵朵进入虚弱状态时自动召唤并弹出。',
   },
   魔镜: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '仙女鼠',
     skillname: '魔镜召唤咒',
     aliases: ['镜子'],
@@ -725,20 +789,90 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由仙女鼠-魔镜召唤咒召唤。',
   },
   星星: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '仙女鼠',
     skillname: '仙女棒',
     move: true,
     gravity: true,
     collsion: false,
     description:
-      '对命中者施加对应的效果，根据召唤时消耗的星星数获得不同特性：\n1星：队友隐身；猫咪受到伤害并减速\n2星：队友获得二段跳效果；猫咪同1星\n4星：队友缓慢恢复Hp；猫咪同1星\n6星：队友变为小星星，免疫虚弱和眩晕；猫咪同1星\n8星：对队友无效；猫咪变为大星星、手上的老鼠掉落',
+      '对命中者施加对应的效果，根据召唤时消耗的星星数获得不同特性：\n1星：队友隐身；猫咪受到伤害并减速\n2星：队友获得二段跳效果；猫咪同1星\n4星：队友缓慢恢复Hp；猫咪同1星\n6星：队友变为{小星星}，免疫虚弱和眩晕；猫咪同1星\n8星：对队友无效；猫咪变为{大星星}、手上的老鼠掉落',
     detailedDescription:
-      '飞行速度2000；会被经典之家的挡板挡住；对命中者施加对应的效果，根据召唤时消耗的星星数获得不同特性：\n1星：队友隐身3秒；对猫咪造成[20](基础伤害10+仙女鼠基础攻击增伤10，同时能受到其他来源的攻击增伤加成)点[无视护盾的伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)，减速17%\n2星：队友获得二段跳效果，持续5秒；猫咪同1星\n4星：队友回复10Hp，并持续回血8秒，每秒7.5Hp；猫咪同1星\n6星：队友变为小星星，持续5.9秒，命中时[解除并免疫虚弱和眩晕](不免疫剑汤挑起)，小星星移速665，可使用星星翻滚，CD为2秒，向前方滚动1.3秒，期间移速增加50%；猫咪同1星\n8星：对队友无效；猫咪[变为大星星](不会取消苏蕊跳舞、恶魔汤姆打碟)，持续8秒，命中时解除并免疫虚弱和眩晕、手上的老鼠掉落。大星星移速为725，模型比猫咪大、无法穿过狭窄地形，可[吐出小星星](前摇0.3秒，不可移动、不可取消；CD为1秒，最多存储3发)，小星星飞行速度为2000，会对老鼠造成基础伤害为20的[真实伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)和10%减速，持续2秒；大星星拥有爪刀，爪刀判定范围与附加效果不受影响。',
+      '飞行速度2000；会被经典之家的挡板挡住；对命中者施加对应的效果，根据召唤时消耗的星星数获得不同特性：\n1星：队友隐身3秒；对猫咪造成[20](基础伤害10+仙女鼠基础攻击增伤10，同时能受到其他来源的攻击增伤加成)点[无视护盾的伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)，减速17%\n2星：队友获得二段跳效果，持续5秒；猫咪同1星\n4星：队友回复10Hp，并持续回血8秒，每秒7.5Hp；猫咪同1星\n6星：队友变为{小星星}，持续5.9秒，命中时[解除并免疫虚弱和眩晕](不免疫剑汤挑起)，小星星移速665，可使用星星翻滚，CD为2秒，向前方滚动1.3秒，期间移速增加50%；猫咪同1星\n8星：对队友无效；猫咪变为{大星星}（不会取消苏蕊跳舞、恶魔汤姆打碟），持续8秒，命中时解除并免疫虚弱和眩晕、手上的老鼠掉落。大星星移速为725，模型比猫咪大、无法穿过狭窄地形，可[吐出小星星](前摇0.3秒，不可移动、不可取消；CD为1秒，最多存储3发)，小星星飞行速度为2000，会对老鼠造成基础伤害为20的[真实伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)和10%减速，持续2秒；大星星拥有爪刀，爪刀判定范围与附加效果不受影响。',
     create: '由仙女鼠-仙女棒掷出，根据掷出时消耗的星星数获得不同能力效果。',
   },
+  小星星: {
+    entitytype: '变身类',
+    characterName: '仙女鼠',
+    skillname: '仙女棒',
+    move: true,
+    gravity: true,
+    collsion: true,
+    ignore: ['道具'],
+    description:
+      '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具}。小星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}。',
+    detailedDescription:
+      '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具}。小星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}；小星星移速665。变身持续5.9秒。\n注：该效果属于{1类变身}（详见“变身”的效果描述）。',
+    create: '仙女鼠消耗6颗星星召唤的{星星}命中友方老鼠时{变身}。',
+    specialImageUrl: '/images/mouseSkills/仙女鼠2-仙女棒.png', //ToDo: add this entity's image,
+    skills: [
+      {
+        name: '星星翻滚',
+        type: 'active',
+        description: '向前方滚动1.3秒，期间移速增加50%。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: '无后摇',
+        colddown: 2,
+        skillLevels: [],
+      },
+    ],
+  },
+  大星星: {
+    entitytype: '变身类',
+    characterName: '仙女鼠',
+    skillname: '仙女棒',
+    move: true,
+    gravity: true,
+    collsion: true,
+    ignore: ['道具'],
+    description:
+      '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}。大星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}。大星星拥有比普通猫咪更大的体型。大星星拥有爪刀，爪刀判定范围与附加效果不受影响。',
+    detailedDescription:
+      '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}。大星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}；大星星移速725。大星星拥有比普通猫咪更大的体型。大星星拥有爪刀，爪刀判定范围与附加效果不受影响。\n注：该效果属于{1类变身}（详见“变身”的效果描述）。',
+    create: '仙女鼠消耗8颗星星召唤的{星星}命中敌方猫咪时{变身}。',
+    specialImageUrl: '/images/mouseSkills/仙女鼠2-仙女棒.png', //ToDo: add this entity's image,
+    skills: [
+      {
+        name: '吐星星',
+        type: 'active',
+        description: '向选定方向吐出{星星-敌方}。可储存3次。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '无后摇',
+        forecast: 0.3,
+        colddown: 1,
+        skillLevels: [],
+      },
+    ],
+  },
+  '星星-敌方': {
+    entitytype: '投射物类',
+    characterName: '仙女鼠',
+    skillname: '仙女棒',
+    move: true,
+    gravity: true,
+    collsion: false,
+    description: '对命中者造成伤害和微弱减速。',
+    detailedDescription:
+      '对命中者造成{20}的[无视护盾的伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)和10%减速，持续2秒',
+    create: '由{大星星}吐出。',
+    specialImageUrl: '/images/mouseEntities/星星.png',
+  },
   照片: {
-    entitytype: '其它' as const,
+    entitytype: '指示类',
     characterName: '米可',
     skillname: '记录美好瞬间',
     move: false,
@@ -748,7 +882,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由米可-记录美好瞬间在被拍摄者所在位置生成。',
   },
   金币符: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '霜月',
     skillname: '滑步踢',
     aliases: ['分金符', '符', '纸符'],
@@ -761,7 +895,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由霜月-滑步踢在跳起且无手持道具的情况下投掷出。',
   },
   定身符: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '霜月',
     skillname: '滑步踢',
     aliases: ['分金符', '符', '纸符'],
@@ -776,7 +910,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '由霜月-滑步踢在跳起且手持部分道具的情况下投掷出，包括盘子/扁盘/玻璃杯/碗/叉子/高尔夫球/香水瓶/胡椒瓶。',
   },
   '乾坤袋(投射物)': {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '霜月',
     skillname: '乾坤袋',
     aliases: ['胖呆呆', '袋子'],
@@ -791,7 +925,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由霜月-乾坤袋在使用时掷出，或是在结束技能时短暂变回。',
   },
   '乾坤袋(NPC)': {
-    entitytype: 'NPC类' as const,
+    entitytype: 'NPC类',
     characterName: '霜月',
     skillname: '乾坤袋',
     aliases: ['胖呆呆', '袋子'],
@@ -806,7 +940,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由{乾坤袋(投射物)(召唤物)}落地后召唤。',
   },
   柠檬: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '表演者•杰瑞',
     skillname: '喜剧之王',
     move: true,
@@ -818,7 +952,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '表演者•杰瑞-喜剧之王达到Lv.3并触发放飞返场后，其可通过拖拽道具键掷出，有内置CD。',
   },
   '蓝图(投射物)': {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '莱恩',
     skillname: '蓝图',
     move: true,
@@ -834,7 +968,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过莱恩-蓝图技能丢出。',
   },
   '蓝图(召唤物)': {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '莱恩',
     skillname: '蓝图',
     move: false,
@@ -848,8 +982,22 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       figureDescription,
     create: '通过{蓝图(投射物)(衍生物)}生成。',
   },
+  线条猫: {
+    entitytype: '变身类',
+    characterName: '莱恩',
+    skillname: '蓝图',
+    move: true,
+    gravity: true,
+    collsion: true,
+    ignore: ['道具'],
+    description:
+      '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}；变身期间只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。变身结束后一段时间内{免疫线条猫效果}。',
+    detailedDescription:
+      '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}；变身期间只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。变身持续8秒，变身结束后20秒内{免疫线条猫效果}\n注：该效果属于{1类变身}（详见“变身”的效果描述）。',
+    create: '猫咪在{蓝图}内受到伤害时自动变身。',
+  },
   线条火箭: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '莱恩',
     skillname: '蓝图',
     move: false,
@@ -860,7 +1008,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '接触{蓝图(召唤物)(衍生物)}的{火箭}变为{线条火箭}，离开范围时恢复。',
   },
   圆形: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '莱恩',
     skillname: '蘸水笔',
     move: true,
@@ -875,7 +1023,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过莱恩-蘸水笔生成。',
   },
   强化圆形: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '莱恩',
     skillname: '蘸水笔',
     move: true,
@@ -890,7 +1038,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过莱恩-蘸水笔Lv.2及以上时在{蓝图(召唤物)(衍生物)}上绘制生成。',
   },
   三角: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '莱恩',
     skillname: '蘸水笔',
     aliases: ['三角形'],
@@ -905,7 +1053,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过莱恩-蘸水笔生成。',
   },
   强化三角: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '莱恩',
     skillname: '蘸水笔',
     aliases: ['三角形'],
@@ -922,7 +1070,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过莱恩-蘸水笔Lv.2及以上时在{蓝图(召唤物)(衍生物)}上绘制生成。',
   },
   方块: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '莱恩',
     skillname: '蘸水笔',
     aliases: ['正方形'],
@@ -937,7 +1085,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过莱恩-蘸水笔生成。',
   },
   强化方块: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '莱恩',
     skillname: '蘸水笔',
     aliases: ['正方形'],
@@ -953,7 +1101,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过莱恩-蘸水笔Lv.2及以上时在{蓝图(召唤物)(衍生物)}上绘制生成。',
   },
   毛线球: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '梦游杰瑞',
     skillname: '毛线球',
     aliases: ['毛线团'],
@@ -968,7 +1116,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由梦游杰瑞-毛线球技能掷出。',
   },
   毛线: {
-    entitytype: '其它' as const,
+    entitytype: '指示类',
     characterName: '梦游杰瑞',
     skillname: '毛线球',
     move: false,
@@ -979,6 +1127,64 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
       '{毛线球}与{梦游杰瑞}通过{毛线}连接。[毛线随梦游杰瑞移动逐渐拉长，且会按规律打结](毛线球在落地前会被墙壁及敌方角色反弹，在落地后立刻与梦游杰瑞所在位置形成第一根毛线连接并打结，随后每隔一段时间以最新的打结处与梦游杰瑞实际位置为两端点形成一道连接并打结，然后若新生成的连接与上一个连接之间的夹角接近0°或180°、且上一个连接的连接对象不为毛线球、且上一个连接的长度不等于0，则清除这两道连接之间的打结，重新生成一个更长的连接。毛线球和已打结的部分不会因隐身药水隐藏)，踩到毛线的敌方会受到2.5伤害并在2.5秒内降低10%移速。',
     create: '在{梦游杰瑞}与{毛线球}之间自动生成。',
   },
+  机器鼠: {
+    entitytype: '变身类',
+    characterName: '',
+    skillname: '',
+    move: true,
+    gravity: true,
+    collsion: true,
+    ignore: ['道具'],
+    description:
+      '持有{霸体}但无法进行部分交互，且受到伤害（部分伤害除外）时会自爆并弹出驾驶员，若被猫咪击毁则会为其提供额外经验值。',
+    detailedDescription:
+      '持有{霸体}但无法进行部分交互，且受到伤害（部分伤害除外）时会自爆并弹出驾驶员，若被猫咪击毁则会为其提供额外经验值。\n注：该效果属于{2类变身}（详见“变身”的效果描述）。',
+    create:
+      '老鼠出洞前可与未使用的机器鼠进行交互进入机器鼠，也可于自身所属机器鼠未爆炸时在局内通过进入机器鼠键进入机器鼠（有前摇和内置CD）。',
+    skills: [
+      {
+        name: '机器鼠激光',
+        type: 'active',
+        description: '以固定角度和速度向前方发射{激光}。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '无后摇',
+        colddown: 10,
+        skillLevels: [],
+      },
+      {
+        name: '机器鼠铁锤',
+        type: 'weapon1',
+        description: '锤击面前区域，对敌方造成{眩晕}和少量伤害。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '不可取消',
+        colddown: 60,
+        skillLevels: [],
+      },
+      {
+        name: '离开机器鼠',
+        type: 'passive',
+        description: '释放技能后离开机器鼠，可在之后通过“进入机器鼠”键再次进入。',
+        canMoveWhileUsing: false,
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '无后摇',
+        skillLevels: [],
+      },
+    ],
+  },
+  激光: {
+    entitytype: '投射物类',
+    characterName: '机器鼠(衍生物)',
+    skillname: '',
+    move: true,
+    gravity: true,
+    collsion: true,
+    description: '对命中的敌方造成{减速}。',
+    create: '由{机器鼠(衍生物)}使用主动技能发射。',
+  },
 };
 
 const mouseEntitiesWithImages: Record<string, Entity> = Object.fromEntries(
@@ -987,7 +1193,7 @@ const mouseEntitiesWithImages: Record<string, Entity> = Object.fromEntries(
     {
       ...entity,
       name: entityName,
-      factionId: 'mouse' as const,
+      factionId: 'mouse',
       imageUrl: getMouseEntityImageUrl(entityName, entity.specialImageUrl),
     },
   ])

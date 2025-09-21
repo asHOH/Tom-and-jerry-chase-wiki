@@ -1122,16 +1122,17 @@ export const getPositioningTagContainerColor = (
 export const getEntityTypeColors = (entitytype: string, isDarkMode: boolean) => {
   const entityTypeColorMap: Record<
     string,
-    'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese'
+    'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese' | 'lateGameMouse'
   > = {
     道具类: 'rescue',
     投射物类: 'support',
     召唤物类: 'breakthrough',
     平台类: 'wallBreak',
     NPC类: 'disrupt',
-    其它: 'cheese',
+    变身类: 'cheese',
+    指示类: 'lateGameMouse',
   };
-  const skillType = entityTypeColorMap[entitytype] || 'cheese';
+  const skillType = entityTypeColorMap[entitytype] || 'lateGameMouse';
   const colorScheme =
     designTokens.colors.positioningTags[skillType] || designTokens.colors.skillTypes.passive;
   return {

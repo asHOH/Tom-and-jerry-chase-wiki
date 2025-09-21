@@ -8,7 +8,7 @@ export const getCatEntityImageUrl = (name: string, specialImageUrl: string | und
 
 const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   手型枪: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '汤姆',
     skillname: '手型枪',
     move: true,
@@ -22,7 +22,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/汤姆2-手型枪.png', //ToDo: add this entity's image
   },
   煎蛋: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '汤姆',
     skillname: '平底锅',
     aliases: ['胡椒粉', '胡椒罐'],
@@ -35,7 +35,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '汤姆-平底锅在使用时自动飞出。',
   },
   旋转桶盖: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '布奇',
     skillname: '旋转桶盖',
     move: true,
@@ -48,7 +48,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/布奇3-旋转桶盖.png', //ToDo: add this entity's image
   },
   托普斯分身: {
-    entitytype: 'NPC类' as const,
+    entitytype: 'NPC类',
     characterName: '托普斯',
     skillname: '双重猫格',
     aliases: ['分身', '弟弟'],
@@ -63,7 +63,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由托普斯-双重猫格召唤。',
   },
   泡泡: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '托普斯',
     skillname: '泡泡棒',
     move: true,
@@ -78,7 +78,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/托普斯2-泡泡棒.png', //ToDo: add this entity's image
   },
   垃圾桶: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '莱特宁',
     skillname: '垃圾桶',
     move: true,
@@ -92,7 +92,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/莱特宁2-垃圾桶.png', //ToDo: add this entity's image
   },
   咸鱼: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '莱特宁',
     skillname: '咸鱼',
     move: true,
@@ -105,7 +105,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由莱特宁-咸鱼召唤。',
   },
   斗牛: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '牛仔汤姆',
     skillname: '斗牛',
     move: true,
@@ -119,7 +119,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由牛仔汤姆-斗牛技能召唤。',
   },
   小仙人掌球: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '牛仔汤姆',
     skillname: '仙人掌弹弓',
     move: true,
@@ -131,7 +131,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由牛仔汤姆-仙人掌弹弓第1、2段射出，或由{大仙人掌球}分裂。',
   },
   大仙人掌球: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '牛仔汤姆',
     skillname: '仙人掌弹弓',
     move: true,
@@ -144,7 +144,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由牛仔汤姆-仙人掌弹弓Lv.3时的第3段射出。',
   },
   飞吻: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '图多盖洛',
     skillname: '魅惑之吻',
     move: true,
@@ -159,7 +159,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/图多盖洛1-魅惑之吻.png', //ToDo: add this entity's image
   },
   香水区域: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '图多盖洛',
     skillname: '魅力香水',
     move: true,
@@ -173,7 +173,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/图多盖洛2-魅力香水.png', //ToDo: add this entity's image
   },
   皇家火炮: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '侍卫汤姆',
     skillname: '皇家火炮',
     move: false,
@@ -186,7 +186,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由侍卫汤姆-皇家火炮召唤。',
   },
   炮弹: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '侍卫汤姆',
     skillname: '皇家火炮',
     move: true,
@@ -198,7 +198,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由侍卫汤姆操作{皇家火炮(衍生物)}射出。',
   },
   汽水罐: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '图茨',
     skillname: '汽水罐',
     move: true,
@@ -213,7 +213,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   //ToDo: add 汽水冰面
   胡椒粉罐头: {
-    entitytype: '道具类' as const,
+    entitytype: '道具类',
     characterName: '米特',
     skillname: '胡椒粉罐头',
     aliases: ['胡椒粉', '胡椒罐'],
@@ -227,7 +227,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过米特-胡椒粉罐头召唤。',
   },
   饭盒: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '米特',
     skillname: '饭盒陷阱',
     move: true,
@@ -240,7 +240,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过米特-饭盒陷阱召唤。',
   },
   食物: {
-    entitytype: '其它' as const,
+    entitytype: '召唤物类',
     characterName: '米特',
     skillname: '饭盒陷阱',
     //ToDo: add missing information
@@ -248,7 +248,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: 'Lv.2以上的{饭盒}爆炸时生成。',
   },
   套索: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '塔拉',
     skillname: '牛仔鞭索',
     move: true,
@@ -261,7 +261,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   //ToDo?: add 剑盾
   天空扶梯: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '库博',
     skillname: '虚幻梦影',
     aliases: ['天梯'],
@@ -275,9 +275,23 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
       '判定和交互区域为矩形。\n在地面时：所有角色都可以[与天梯交互并传送到天堂](该交互优先级极低)，最多同时存在2个，达到上限则销毁最早生成的1个。\n在天堂时：猫咪与其交互可[打开传送面板](显示所有老鼠的位置，可任意选择房间传送；该交互不打断移动)；老鼠与其交互将被传送到随机洞口。',
     create: '通过库博-虚幻梦影召唤。',
   },
-  //ToDo: add 天堂火箭
+  天堂火箭: {
+    entitytype: '召唤物类',
+    characterName: '库博',
+    skillname: '虚幻梦影',
+    aliases: ['天火'],
+    move: false,
+    gravity: false,
+    collsion: false,
+    description:
+      '能绑上老鼠的虚影，[拥有强制放飞机制](300秒倒计时，结束时直接淘汰对应老鼠)。虚影被救援时，改为绑上救援者的虚影，救援所需时间较长，救援位置较普通火箭[偏下](如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。在对应老鼠被绑上地面火箭或进入墙缝期后，倒计时速度会加快。',
+    detailedDescription:
+      '放飞倒计时固定为300秒，绑上老鼠时改为绑上对应虚影，老鼠本体会传送到随机洞口；虚影被救援时，改为绑上救援者的虚影；[救援天堂火箭](读条显示为“破坏火箭”)的所需时间固定并且较长，救援位置较普通火箭[偏下](救援时站在地面；如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。兔子先生无法对天堂火箭下达救援指令。倒计时结束时，[直接淘汰虚影对应的老鼠](钻入机械鼠中的老鼠也会被放飞；钻入盔甲人或乾坤袋中的老鼠暂时无法被放飞；表演者杰瑞Lv.3被动只在同时也被绑在地面火箭时才触发；天使祝福无法祝福虚影，也无法复活因天堂火箭而被放飞的老鼠)。天堂火箭当虚影对应老鼠被绑上地面火箭时，[地面火箭倒计时停止](倒计时速度归零；仍会因老鼠被绑上火箭而减少引线时间，此时火箭引线时间降为0时也不会起飞；会因挣扎、鼓舞Lv.3等效果而增加读秒)，天堂火箭倒计时速度提高到原先的7倍；进入墙缝期后，天堂火箭倒计时速度提高到原先的2倍；若二者同时触发则取最高值。天堂火箭不受[其他绝大部分机制](会受到鼓舞Lv.3的影响（增加读秒的效果对本体和虚影分别计算，可重复计算，即同时鼓舞虚影和本体则-20秒）；除此之外不受绑火箭或火箭燃烧速度变化的影响，包括自身被动技能Lv.2，知识卡-加大火力/熊熊燃烧，技能-炸药桶/爱之花洒/友情庇护/兔子大表哥/侠义相助/Lv.3沙包拳头/风格骤变Lv.3/共鸣Lv.2/滑步踢/乾坤袋/蓝图/梦中乐园的影响)影响，但会影响{穷追猛打}(绑上天堂火箭时，穷追猛打效果立刻结束)。',
+    create: '在库博-虚幻梦影对应的天堂中自动生成2个。',
+    specialImageUrl: '/images/items/火箭.png', //ToDo: add this entity's image
+  },
   追求者: {
-    entitytype: 'NPC类' as const,
+    entitytype: 'NPC类',
     characterName: '凯特',
     skillname: '追求者出击',
     aliases: ['舔狗'],
@@ -291,7 +305,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过凯特-追求者出击召唤。',
   },
   百科全书: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '凯特',
     skillname: '知识即力量',
     aliases: ['书', '书籍'],
@@ -306,7 +320,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/凯特2-知识即力量.png', //ToDo: add this entity's image
   },
   瑜伽球: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '苏蕊',
     skillname: '瑜伽球',
     move: true,
@@ -320,7 +334,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/苏蕊2-瑜伽球.png', //ToDo: add this entity's image
   },
   项坠: {
-    entitytype: '其它' as const,
+    entitytype: '投射物类',
     characterName: '斯飞',
     skillname: '猎',
     move: true,
@@ -331,7 +345,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由斯飞-猎召唤并投掷。',
   },
   轨道: {
-    entitytype: '召唤物类' as const,
+    entitytype: '指示类',
     characterName: '恶魔汤姆',
     skillname: '迷乱列车',
     move: false,
@@ -345,7 +359,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/恶魔汤姆2-迷乱列车.png', //ToDo: add this entity's image
   },
   列车: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '恶魔汤姆',
     skillname: '迷乱列车',
     move: true,
@@ -358,7 +372,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     specialImageUrl: '/images/catSkills/恶魔汤姆2-迷乱列车.png', //ToDo: add this entity's image
   },
   洞穴: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '兔八哥',
     skillname: '狡兔三窟',
     move: false,
@@ -370,7 +384,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由兔八哥-狡兔三窟在钻地及出土时召唤。',
   },
   胡萝卜飞镖: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '兔八哥',
     skillname: '胡萝卜',
     move: true,
@@ -384,7 +398,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
       '由兔八哥-胡萝卜选择胡萝卜飞镖模式时会投掷普通胡萝卜飞镖，在附近有被宣战的目标（详见{我，兔八哥}）时会额外投出追踪胡萝卜飞镖。',
   },
   巨型胡萝卜: {
-    entitytype: '召唤物类' as const,
+    entitytype: '召唤物类',
     characterName: '兔八哥',
     skillname: '胡萝卜',
     move: true,
@@ -398,7 +412,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由兔八哥-胡萝卜选择巨型胡萝卜模式时召唤。',
   },
   飓风: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '追风汤姆',
     skillname: '追风双翼',
     move: true,
@@ -412,7 +426,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由追风汤姆-追风双翼在不处于飞行状态时召唤。',
   },
   铁砧: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '追风汤姆',
     skillname: '追风双翼',
     move: true,
@@ -425,7 +439,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由追风汤姆-追风双翼在处于飞行状态时召唤。',
   },
   旋转的花枪: {
-    entitytype: '投射物类' as const,
+    entitytype: '投射物类',
     characterName: '如玉',
     skillname: '掷花枪',
     move: true,
@@ -445,7 +459,7 @@ const catEntitiesWithImages: Record<string, Entity> = Object.fromEntries(
     {
       ...entity,
       name: entityName,
-      factionId: 'cat' as const,
+      factionId: 'cat',
       imageUrl: getCatEntityImageUrl(entityName, entity.specialImageUrl),
     },
   ])

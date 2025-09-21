@@ -17,9 +17,10 @@ const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
   '道具类',
   '投射物类',
   '召唤物类',
-  '平台类',
+  '变身类',
   'NPC类',
-  '其它',
+  '平台类',
+  '指示类',
 ];
 
 export default function EntityClient() {
@@ -59,7 +60,7 @@ export default function EntityClient() {
         <PageTitle>衍生物</PageTitle>
         {!isMobile && (
           <PageDescription>
-            由角色技能衍生出的独立物体，拥有各自独特的属性和作用（该界面更新中）
+            由角色技能等方式衍生出的独立物体，拥有各自独特的属性和作用（该界面更新中）
           </PageDescription>
         )}
         {/* Filters wrapper */}
@@ -82,9 +83,10 @@ export default function EntityClient() {
                   道具类: '救援',
                   投射物类: '辅助',
                   召唤物类: '破局',
-                  平台类: '砸墙',
+                  变身类: '奶酪',
                   NPC类: '干扰',
-                  其它: '奶酪',
+                  平台类: '砸墙',
+                  指示类: '后期',
                 }[name],
                 false,
                 false,

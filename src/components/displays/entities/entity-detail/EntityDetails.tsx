@@ -11,6 +11,9 @@ import GameImage from '@/components/ui/GameImage';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import SectionHeader from '@/components/ui/SectionHeader';
+import EntitySkillCard from './EntitySkillCard';
+import { Skill } from '@/data/types';
+import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 export default function EntityDetailClient({ entity }: { entity: Entity }) {
   // Keyboard navigation
@@ -56,8 +59,11 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
                 {entity.factionId != undefined && entity.characterName != undefined && (
                   <Tag colorStyles={tagColorStyles} size='md'>
                     <TextWithHoverTooltips
-                      text={`所属者：${entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}-{${entity.characterName}}
-                    ${entity.skillname === undefined ? '' : `-{${entity.skillname}(技能)}`}`}
+                      text={`所属对象：${entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}${
+                        entity.characterName
+                          ? `-{${entity.characterName}}${!!entity.skillname ? `-{${entity.skillname}(技能)}` : ''}`
+                          : ''
+                      }`}
                     />
                   </Tag>
                 )}
@@ -127,6 +133,21 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
               </div>
             </div>
           ))}
+          {entity.skills !== undefined && (
+            <div key='衍生物技能'>
+              <SectionHeader title='衍生物技能' />
+              {entity.skills
+                .map((skill) => {
+                  const R: Skill & { colddown?: number } = { ...skill, id: entity.characterName };
+                  return R;
+                })
+                .map<React.ReactNode>(
+                  (skill: DeepReadonly<Skill & { colddown?: number }>, index) => (
+                    <EntitySkillCard key={skill.id + skill.type} skill={skill} skillIndex={index} />
+                  )
+                )}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -254,7 +254,14 @@ export type ItemDefinition = {
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
 
-export type Entitytypelist = '道具类' | '投射物类' | '召唤物类' | '平台类' | 'NPC类' | '其它';
+export type Entitytypelist =
+  | '道具类'
+  | '投射物类'
+  | '召唤物类'
+  | '平台类'
+  | 'NPC类'
+  | '变身类'
+  | '指示类';
 
 export type EntityDefinition = {
   entitytype: Entitytypelist; //type of entity
@@ -270,6 +277,7 @@ export type EntityDefinition = {
   create?: string; //the way of items create
   detailedCreate?: string;
 
+  skills?: (SkillDefinition & { colddown?: number })[]; //
   specialImageUrl?: string; //(interim) use other image instead of entity's missing image
 };
 
