@@ -10,14 +10,12 @@ import { generatePageMetadata, ArticleStructuredData } from '@/lib/metadataUtils
 import CharacterDocs from './CharacterDocs';
 import { getTutorialPage } from '@/lib/docUtils';
 
-// Force dynamic rendering to avoid prerender issues
-export const dynamic = 'force-dynamic';
+// Revalidate once per day to keep docs fresh
+export const revalidate = 86400;
 
-// Generate static params for all characters - temporarily disabled due to build issues
+// Generate static params for all characters
 export function generateStaticParams() {
-  // Return empty array to force dynamic rendering for all characters
-  // This avoids the webpack runtime error during static generation
-  return [];
+  return Object.keys(characters).map((id) => ({ characterId: id }));
 }
 
 export async function generateMetadata({
