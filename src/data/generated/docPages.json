@@ -1,0 +1,17 @@
+[
+  {
+    "title": "米特操作技巧",
+    "slug": "meathead",
+    "path": "/docs/meathead"
+  },
+  {
+    "title": "汤姆操作技巧",
+    "slug": "tom",
+    "path": "/docs/tom"
+  },
+  {
+    "title": "追风汤姆操作技巧",
+    "slug": "wind-chaser-tom",
+    "path": "/docs/wind-chaser-tom"
+  }
+]

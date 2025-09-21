@@ -19,9 +19,13 @@ import { getCardRankColors } from '@/lib/design-tokens';
 
 interface CharacterRankingGridProps {
   initialProperty?: RankableProperty;
+  description?: string;
 }
 
-export default function CharacterRankingGrid({ initialProperty }: CharacterRankingGridProps) {
+export default function CharacterRankingGrid({
+  initialProperty,
+  description,
+}: CharacterRankingGridProps) {
   const [selectedProperty, setSelectedProperty] = useState<RankableProperty | undefined>(
     initialProperty
   );
@@ -128,8 +132,8 @@ export default function CharacterRankingGrid({ initialProperty }: CharacterRanki
         <header className='text-center space-y-4 mb-8 px-4'>
           <PageTitle>角色属性排行榜</PageTitle>
           <PageDescription>
-            选择一个属性来查看角色在此属性上的排名。
-            {factionId && `当前为: ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}角色`}
+            {description ?? ''}
+            {factionId && `，当前为: ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}角色`}
           </PageDescription>
         </header>
 

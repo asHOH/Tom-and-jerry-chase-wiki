@@ -30,7 +30,7 @@ export async function generateMetadata({
   return generateArticleMetadata({
     title: buff.name,
     description: desc,
-    keywords: [buff.name, '状态效果'],
+    keywords: [buff.name, '状态'],
     canonicalUrl: `https://tjwiki.com/buffs/${encodeURIComponent(buffName)}`,
     imageUrl: buff.imageUrl,
     structuredData: {

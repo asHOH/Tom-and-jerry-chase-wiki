@@ -1,7 +1,9 @@
 'use client';
 import dynamic from 'next/dynamic';
 
-const ItemGroupGridClient = dynamic(
+type Props = { description?: string };
+
+const ItemGroupGridClient = dynamic<Props>(
   () => import('@/components/displays/itemGroups/itemGroup-grid/ItemGroupGrid'),
   {
     loading: () => (

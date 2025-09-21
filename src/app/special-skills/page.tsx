@@ -7,9 +7,11 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
+const DESCRIPTION = '角色可配备的额外技能，合理使用将大幅提高角色能力';
+
 export const metadata: Metadata = generatePageMetadata({
   title: '特技',
-  description: '特殊技能列表，展示所有特殊技能及其效果',
+  description: DESCRIPTION,
   keywords: ['特技'],
   canonicalUrl: 'https://tjwiki.com/special-skills',
 });
@@ -19,7 +21,7 @@ export default function SpecialSkillsPage() {
     <AppProvider>
       <EditModeProvider>
         <TabNavigationWrapper showDetailToggle={false}>
-          <SpecialSkillClient />
+          <SpecialSkillClient description={DESCRIPTION} />
         </TabNavigationWrapper>
       </EditModeProvider>
     </AppProvider>

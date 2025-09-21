@@ -132,6 +132,7 @@ const UserManagementPanelClient = () => {
                 <td className='border border-gray-300 px-4 py-2'>{user.nickname}</td>
                 <td className='border border-gray-300 px-4 py-2'>
                   <select
+                    aria-label='用户角色'
                     className='border border-gray-300 px-2 py-1'
                     value={user.role}
                     onChange={async (e) => {
@@ -164,6 +165,7 @@ const UserManagementPanelClient = () => {
                 </td>
                 <td className='border border-gray-300 px-4 py-2'>
                   <button
+                    type='button'
                     className='bg-blue-500 text-white px-2 py-1 rounded'
                     onClick={() => handleOpenModal(user)}
                   >

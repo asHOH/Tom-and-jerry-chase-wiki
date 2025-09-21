@@ -12,6 +12,8 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
 
+type Props = { description?: string };
+
 const ITEM_TYPE_OPTIONS: Itemtypelist[] = [
   '投掷类',
   '手持类',
@@ -22,7 +24,7 @@ const ITEM_TYPE_OPTIONS: Itemtypelist[] = [
 ];
 const ITEM_SOURCE_OPTIONS: Itemsourcelist[] = ['常规道具', '地图道具'];
 
-export default function ItemClient() {
+export default function ItemClient({ description }: Props) {
   // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<Itemtypelist[]>([]);
   const [selectedSources, setSelectedSources] = useState<Itemsourcelist[]>([]);
@@ -63,10 +65,7 @@ export default function ItemClient() {
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
         <PageTitle>道具</PageTitle>
-        {!isMobile && (
-          <PageDescription>在地图中散落的各式各样的道具——猫鼠相互对抗的关键机制</PageDescription>
-        )}
-        {/* Filter Controls */}
+        {!isMobile && <PageDescription>{description}</PageDescription>}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 类型筛选 */}

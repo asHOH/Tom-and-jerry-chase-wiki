@@ -51,6 +51,57 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (çŒ«å’
 - **Vercel** for hosting and deployment
 - **PWA** capabilities with next-pwa and service worker
 - **MDX** support for documentation
+- **Static-first**: Most pages use SSG via `generateStaticParams`. Use ISR only when content changes outside deploys.
+  - Characters detail uses ISR (`export const revalidate = 86400`).
+  - Items and special-skills are SSG (static TS data). `characters/user/*` remains dynamic.
+- **Docs index generator**: `scripts/generate-doc-pages.mjs` runs in `npm run build` to produce `src/data/generated/docPages.(json|ts)`. Import the typed TS (`docPages.ts`) from runtime code; avoid `fs` in RSC.
+- **Edge-safe middleware**: Supabase session update dynamically deep-imports `createServerClient` from `@supabase/ssr/dist/module/createServerClient.js` to avoid Edge runtime Node API warnings. `@supabase/ssr` is pinned to `0.7.0`.
+
+## Supabase Integration
+
+- **Clients**:
+  - `src/lib/supabase/client.ts`: Browser client via `createBrowserClient<Database>(NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)`. Exported singleton `supabase` is used in client components/hooks.
+  - `src/lib/supabase/server.ts`: RSC/Route Handler client via `createServerClient<Database>(...)` with Next `cookies()` bridge for session cookies. Use `await createClient()` inside server code.
+  - `src/lib/supabase/admin.ts`: Service-role client via `@supabase/supabase-js` and `SUPABASE_SERVICE_ROLE_KEY`. For privileged server-only actions (auth admin, moderation RPCs). Never import in client code.
+
+- **Session Middleware**:
+  - `src/lib/supabase/middleware.ts#updateSession(request)`: Deep-imports `@supabase/ssr/dist/module/createServerClient.js` to keep Edge bundle Node-free. Syncs auth cookies by calling `supabase.auth.getUser()` and propagating `setAll` cookie writes to the response.
+  - `src/middleware.ts`: Global middleware calling `updateSession`. Skips `api/` and static assets; also handles CORS OPTIONS and blocks specific UAs. This ensures SSR and Route Handlers have an up-to-date session.
+
+- **Auth & User Data Flow**:
+  - Client state: `src/hooks/useUser.ts` uses browser `supabase.auth.getUser()` then queries `users` table for `role,nickname`. State held in Valtio `userObject` and used across UI (e.g., `TabNavigation` for sign-out and admin links).
+  - Login: `src/app/api/auth/login/route.ts` validates a custom `users` record by SHA-256 username hash and PBKDF2 password hash, looks up auth user via `supabaseAdmin.auth.admin.getUserById`, then creates a session using server client `supabase.auth.signInWithPassword()` with synthetic email `${pinyin}@${NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`.
+  - Register: `src/app/api/auth/register/route.ts` creates `auth.users` via admin API, inserts to `public.users` with `username_hash`, `nickname`, `salt`, `password_hash`, default role `Contributor`, then signs in server-side to persist the session.
+  - Logout: Client `TabNavigation` calls `supabase.auth.signOut()` and clears Valtio state.
+
+- **Articles & Categories**:
+  - Public list: `src/app/api/articles/route.ts` uses `supabaseAdmin` to fetch approved articles with joins:
+    - `categories(id,name)`, `users_public_view:author_id(nickname)`, `latest_approved_version:article_versions_public_view!inner(...)` and count via `head: true` query.
+    - Returns both articles and `categories` list for filters. Client `ArticlesClient.tsx` fetches via SWR (`/api/articles?limit=9999`) and performs client-side filter/sort/pagination.
+  - Article detail/history/preview: Route handlers join `article_versions_public_view`, `users_public_view` and may call RPCs like `increment_article_view_count`.
+  - Categories Admin: Client `src/app/admin/categories/CategoryManagementPanelClient.tsx` calls RPCs `get_categories`, `create_category`, `update_category`, `delete_category` using browser `supabase`.
+
+- **Moderation & Admin**:
+  - Role checks: Admin endpoints (`/api/auth/*`) and moderation (`/api/moderation/*`) use server client `createClient()` to read current user, then verify `users.role` (e.g., only `Coordinator` can update role/user info; Reviewer/Coordinator for moderation). Avoids exposing service key in handlers handling cookies.
+  - Admin operations using `supabaseAdmin` include: `auth.admin.createUser`, `auth.admin.getUserById`, article submission/updates via RPCs `submit_article`, `update_pending_article`, `get_pending_versions_for_moderation`, `get_user_role`.
+
+- **Database Types & Views**:
+  - Types: `src/data/database.types.ts` generated types ensure typed queries on `articles`, `categories`, `users`, views `users_public_view`, `article_versions_public_view`, and functions like `get_categories`.
+  - Ensure RLS policies match usage: public reads rely on views with restricted columns; writes/moderation go through SQL functions (RPCs) with server-side checks.
+
+- **Environment Variables**:
+  - Required: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`.
+  - Optional feature gates: `NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH` (forces password on register/login rules).
+
+- **Security Notes**:
+  - Never import `supabaseAdmin` in client bundles. Keep service key server-only.
+  - Prefer server client (`createClient()` in route handlers) for any operation touching auth cookies or requiring session context; the global middleware keeps cookies fresh.
+  - Use RPCs for privileged mutations so that logic and authorization live in the database; check roles in handlers before calling RPCs.
+
+- **Dev Checklist**:
+  - Add env vars in Vercel/Local `.env.local`.
+  - Verify middleware runs (auth cookie refresh) and CSP `connect-src` allows `*.supabase.co` (configured in `app/layout.tsx`).
+  - Run `npm run lint` and `npm run type-check` to validate DB types usage.
 
 ## Performance & Analytics
 
@@ -119,6 +170,7 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (çŒ«å’
 - Context for global state management
 - Utility functions separated from components
 - Custom hooks in `lib/` directory
+- Prefer build-time data generation over runtime `fs` in RSC. Keep pages static by default; opt into ISR only when needed.
 
 ### Feature Organization
 

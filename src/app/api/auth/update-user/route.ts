@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireRole } from '@/lib/auth/requireRole';
 import { pbkdf2Sync } from 'crypto';
 
 const hashPassword = (password: string, salt: string) => {
@@ -7,20 +7,9 @@ const hashPassword = (password: string, salt: string) => {
 };
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const { data: roleData } = await supabase.from('users').select('role').eq('id', user.id).single();
-
-  if (roleData?.role !== 'Coordinator') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
+  const guard = await requireRole(['Coordinator']);
+  if ('error' in guard) return guard.error;
+  const { supabase } = guard;
 
   const { userId, nickname, password } = await request.json();
 

@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase/client';
-import { Database } from '@/data/database.types'; // Assuming this file contains Supabase type definitions
+import { Database } from '@/data/database.types';
 type Category = Database['public']['Tables']['categories']['Row'];
 
 const visibilityLabel = (v: Category['default_visibility']) => {
@@ -38,13 +37,16 @@ const CategoryManagement = () => {
 
   const fetchCategories = async () => {
     setLoading(true);
-    const { data, error } = await supabase.rpc('get_categories');
-    setLoading(false);
-    if (error) {
-      console.error('Error fetching categories:', error);
-      setMessage({ type: 'error', text: '获取分类失败' });
-    } else {
+    try {
+      const res = await fetch('/api/admin/categories');
+      if (!res.ok) throw new Error('Failed to fetch categories');
+      const data = await res.json();
       setCategories((data || []) as Category[]);
+    } catch (e) {
+      console.error('Error fetching categories:', e);
+      setMessage({ type: 'error', text: '获取分类失败' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,19 +56,25 @@ const CategoryManagement = () => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.rpc('create_category', {
-      _name: newCategory.name,
-      _parent_category_id: (newCategory.parent_category_id ?? null)!,
-      _default_visibility: newCategory.default_visibility,
-    });
-    setLoading(false);
-    if (error) {
-      console.error('Error creating category:', error);
-      setMessage({ type: 'error', text: '创建分类失败' });
-    } else {
+    try {
+      const res = await fetch('/api/admin/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newCategory.name,
+          parent_category_id: newCategory.parent_category_id ?? null,
+          default_visibility: newCategory.default_visibility,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to create category');
       setMessage({ type: 'success', text: '已创建分类' });
       await fetchCategories();
       setNewCategory({ name: '', parent_category_id: undefined, default_visibility: 'approved' });
+    } catch (e) {
+      console.error('Error creating category:', e);
+      setMessage({ type: 'error', text: '创建分类失败' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,34 +85,46 @@ const CategoryManagement = () => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.rpc('update_category', {
-      _id: editingCategory.id,
-      _name: editingCategory.name,
-      _parent_category_id: (editingCategory.parent_category_id ?? null)!,
-      _default_visibility: editingCategory.default_visibility,
-    });
-    setLoading(false);
-    if (error) {
-      console.error('Error editing category:', error);
-      setMessage({ type: 'error', text: '更新分类失败' });
-    } else {
+    try {
+      const res = await fetch('/api/admin/categories', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingCategory.id,
+          name: editingCategory.name,
+          parent_category_id: editingCategory.parent_category_id ?? null,
+          default_visibility: editingCategory.default_visibility,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to update category');
       setMessage({ type: 'success', text: '分类已更新' });
       await fetchCategories();
       setEditingCategory(null);
+    } catch (e) {
+      console.error('Error editing category:', e);
+      setMessage({ type: 'error', text: '更新分类失败' });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeleteCategory = async (id: string) => {
     if (!confirm('确定要删除此分类吗？此操作无法恢复。')) return;
     setLoading(true);
-    const { error } = await supabase.rpc('delete_category', { _id: id });
-    setLoading(false);
-    if (error) {
-      console.error('Error deleting category:', error);
-      setMessage({ type: 'error', text: '删除分类失败' });
-    } else {
+    try {
+      const res = await fetch('/api/admin/categories', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) throw new Error('Failed to delete category');
       setMessage({ type: 'success', text: '分类已删除' });
       await fetchCategories();
+    } catch (e) {
+      console.error('Error deleting category:', e);
+      setMessage({ type: 'error', text: '删除分类失败' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -137,6 +157,7 @@ const CategoryManagement = () => {
             className='border p-2 rounded flex-1'
           />
           <select
+            aria-label='父分类'
             value={newCategory.parent_category_id ?? ''}
             onChange={(e) =>
               setNewCategory({
@@ -154,6 +175,7 @@ const CategoryManagement = () => {
             ))}
           </select>
           <select
+            aria-label='默认可见性'
             value={newCategory.default_visibility || ''}
             onChange={(e) =>
               setNewCategory({
@@ -248,6 +270,7 @@ const CategoryManagement = () => {
               className='border p-2 rounded flex-1'
             />
             <select
+              aria-label='父分类'
               value={editingCategory.parent_category_id ?? ''}
               onChange={(e) =>
                 setEditingCategory((prev) => ({
@@ -267,6 +290,7 @@ const CategoryManagement = () => {
                 ))}
             </select>
             <select
+              aria-label='默认可见性'
               value={editingCategory.default_visibility ?? ''}
               onChange={(e) =>
                 setEditingCategory((prev) => ({

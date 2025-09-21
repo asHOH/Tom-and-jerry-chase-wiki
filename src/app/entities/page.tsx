@@ -7,9 +7,11 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
+const DESCRIPTION = '由角色技能衍生出的独立物体，各自拥有独特的作用（该界面更新中）';
+
 export const metadata: Metadata = generatePageMetadata({
   title: '衍生物',
-  description: '游戏内所有技能衍生物列表。',
+  description: DESCRIPTION,
   keywords: ['衍生物'],
   canonicalUrl: 'https://tjwiki.com/entities',
 });
@@ -19,7 +21,7 @@ export default function EntitysPage() {
     <AppProvider>
       <EditModeProvider>
         <TabNavigationWrapper showDetailToggle={false}>
-          <EntityClient />
+          <EntityClient description={DESCRIPTION} />
         </TabNavigationWrapper>
       </EditModeProvider>
     </AppProvider>

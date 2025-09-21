@@ -7,7 +7,9 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import { useMobile } from '@/hooks/useMediaQuery';
 
-export default function ItemGroupClient() {
+type Props = { description?: string };
+
+export default function ItemGroupClient({ description }: Props) {
   // Multi-select state for filters
   const isMobile = useMobile();
 
@@ -25,7 +27,9 @@ export default function ItemGroupClient() {
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
         <PageTitle>道具组</PageTitle>
-        {!isMobile && <PageDescription>列举目前支持的所有道具组</PageDescription>}
+        {!isMobile && (
+          <PageDescription>{description ?? '列举目前支持的所有道具组'}</PageDescription>
+        )}
       </header>
       <div
         className='auto-fit-grid grid-container grid gap-4 mt-8'

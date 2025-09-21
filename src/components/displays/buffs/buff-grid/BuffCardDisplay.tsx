@@ -36,7 +36,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
         <div
           className='flex flex-wrap justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'
-          aria-label='状态效果属性'
+          aria-label='状态属性'
         >
           <Tag size='xs' margin='compact' colorStyles={classColors}>
             {/*isMobile ? buff.bufftype.slice(0, 2) : buff.bufftype*/ buff.buffclass}

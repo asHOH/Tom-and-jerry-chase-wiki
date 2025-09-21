@@ -1,7 +1,9 @@
 'use client';
 import dynamic from 'next/dynamic';
 
-const SpecialSkillClient = dynamic(
+type Props = { description?: string };
+
+const SpecialSkillClient = dynamic<Props>(
   () => import('@/components/displays/special-skills/special-skill-grid/SpecialSkillGrid'),
   {
     loading: () => (

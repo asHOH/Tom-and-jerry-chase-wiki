@@ -15,7 +15,9 @@ import { getPositioningTagColors } from '@/lib/design-system';
 const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['正面效果', '负面效果', '其它效果'];
 const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['基础类', '全局类', '特殊类'];
 
-export default function BuffClient() {
+type Props = { description?: string };
+
+export default function BuffClient({ description }: Props) {
   // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<Bufftypelist[]>([]);
   const [selectedClasses, setSelectedClasses] = useState<Buffclasslist[]>([]);
@@ -51,12 +53,8 @@ export default function BuffClient() {
       <header
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
-        <PageTitle>状态效果</PageTitle>
-        {!isMobile && (
-          <PageDescription>
-            角色持有的各类状态效果，包括正面和负面效果（该页面建设中）
-          </PageDescription>
-        )}
+        <PageTitle>状态</PageTitle>
+        {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
         {/* Filter Controls */}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>

@@ -1,14 +1,10 @@
 'use client';
-
 import dynamic from 'next/dynamic';
-import { AppProvider } from '@/context/AppContext';
 
-// Dynamic import for KnowledgeCardGrid component
-const KnowledgeCardGrid = dynamic(
-  () =>
-    import('@/components/displays/knowledge-cards').then((mod) => ({
-      default: mod.KnowledgeCardGrid,
-    })),
+type Props = { description?: string };
+
+const KnowledgeCardGrid = dynamic<Props>(
+  () => import('@/components/displays/knowledge-cards/knowledge-card-grid/KnowledgeCardGrid'),
   {
     loading: () => (
       <div className='max-w-6xl mx-auto p-6 space-y-6'>
@@ -26,10 +22,6 @@ const KnowledgeCardGrid = dynamic(
   }
 );
 
-export default function KnowledgeCardClient() {
-  return (
-    <AppProvider>
-      <KnowledgeCardGrid />
-    </AppProvider>
-  );
+export default function KnowledgeCardClient(props: Props) {
+  return <KnowledgeCardGrid {...props} />;
 }

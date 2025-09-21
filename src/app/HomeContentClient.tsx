@@ -1,0 +1,170 @@
+'use client';
+
+import { useState, useRef } from 'react';
+import TabNavigationWrapper from '@/components/TabNavigationWrapper';
+import { DisclaimerText } from '@/components/DisclaimerText';
+import { VersionDisplay } from '@/components/VersionDisplay';
+import NotificationTooltip from '@/components/ui/NotificationTooltip';
+import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
+import HomePageSection from '@/components/ui/HomePageSection';
+import PageTitle from '@/components/ui/PageTitle';
+import PageDescription from '@/components/ui/PageDescription';
+import LoginDialog from '@/components/LoginDialog';
+import { useMobile } from '@/hooks/useMediaQuery';
+import { useUser } from '@/hooks/useUser';
+import { useEditMode } from '@/context/EditModeContext';
+
+type Props = { description: string };
+
+export default function HomeContentClient({ description }: Props) {
+  const { toggleEditMode, isEditMode } = useEditMode();
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
+  const { nickname } = useUser();
+  const isMobile = useMobile();
+
+  const handleEditModeToggle = () => {
+    if (feedbackSectionRef.current?.isOpen?.()) {
+      return; // Do nothing if feedback modal is open
+    }
+    if (isEditMode) {
+      setNotificationMessage('成功退出编辑模式');
+      setShowLoginDialog(false);
+    } else {
+      setNotificationMessage('成功进入编辑模式，编辑模式下，修改只在本地保存');
+      if (!nickname) setShowLoginDialog(true);
+    }
+    setShowNotification(true);
+    toggleEditMode();
+  };
+
+  const characterButtons = [
+    {
+      imageSrc: '/images/icons/cat faction.png',
+      imageAlt: '猫阵营图标',
+      title: '猫阵营',
+      description: '猫阵营角色列表',
+      href: '/factions/cat',
+      ariaLabel: '猫阵营角色列表',
+    },
+    {
+      imageSrc: '/images/icons/mouse faction.png',
+      imageAlt: '鼠阵营图标',
+      title: '鼠阵营',
+      description: '鼠阵营角色列表',
+      href: '/factions/mouse',
+      ariaLabel: '鼠阵营角色列表',
+    },
+  ];
+
+  const prepareButtons = [
+    {
+      imageSrc: '/images/icons/cat knowledge card.png',
+      imageAlt: '知识卡图标',
+      title: '知识卡',
+      description: '知识卡列表',
+      href: '/cards',
+      ariaLabel: '知识卡列表',
+    },
+    {
+      imageSrc: '/images/mouseSpecialSkills/%E5%BA%94%E6%80%A5%E6%B2%BB%E7%96%97.png',
+      imageAlt: '特技图标',
+      title: '特技',
+      description: '特技列表',
+      href: '/special-skills',
+      ariaLabel: '特技列表',
+    },
+  ];
+
+  const itemButtons = [
+    {
+      imageSrc: '/images/icons/item.png',
+      imageAlt: '道具图标',
+      title: '道具',
+      description: '道具列表',
+      href: '/items',
+      ariaLabel: '道具列表',
+    },
+    {
+      imageSrc: '/images/icons/entity.png',
+      imageAlt: '衍生物图标',
+      title: '衍生物',
+      description: '衍生物列表',
+      href: '/entities',
+      ariaLabel: '衍生物列表',
+    },
+  ];
+
+  const cardButtons = [
+    {
+      imageSrc: '/images/icons/cat faction.png',
+      imageAlt: '文章图标',
+      title: '文章',
+      description: '社区文章列表',
+      href: '/articles',
+      ariaLabel: '社区文章列表',
+    },
+    {
+      imageSrc: '/images/icons/buff.png',
+      imageAlt: '状态图标',
+      title: '状态',
+      description: '状态列表',
+      href: '/buffs',
+      ariaLabel: '状态列表',
+    },
+    // {
+    //   imageSrc: '/images/icons/cat faction.png',
+    //   imageAlt: '排行榜图标',
+    //   title: '排行榜',
+    //   description: '角色属性排行榜',
+    //   href: '/ranks',
+    //   ariaLabel: '角色属性排行榜',
+    // },
+  ];
+
+  return (
+    <TabNavigationWrapper showDetailToggle={false}>
+      <div className='space-y-8'>
+        <header className='text-center space-y-2'>
+          <PageTitle>猫和老鼠手游wiki</PageTitle>
+          <PageDescription>{description}</PageDescription>
+        </header>
+
+        <HomePageSection title='角色' buttons={characterButtons} />
+        <HomePageSection title='更多内容' buttons={prepareButtons} />
+        <HomePageSection buttons={itemButtons} />
+        <HomePageSection buttons={cardButtons} />
+
+        {/* Division line before 网站说明 */}
+        <div className='mt-24 px-2 sm:px-4'>
+          <div className='max-w-4xl mx-auto'>
+            <div className='h-px bg-gray-300 dark:bg-gray-700 w-full'></div>
+          </div>
+        </div>
+
+        <div className='mt-8 text-center px-2 sm:px-4' onDoubleClick={handleEditModeToggle}>
+          <h2 className='text-3xl font-bold mb-2 py-2 dark:text-white'>网站说明</h2>
+          <div className='max-w-2xl mx-auto text-gray-600 dark:text-gray-300 px-2 sm:px-4 py-3'>
+            <DisclaimerText onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
+          </div>
+          <VersionDisplay />
+          <FeedbackSection ref={feedbackSectionRef} />
+        </div>
+      </div>
+
+      <NotificationTooltip
+        message={notificationMessage}
+        show={showNotification}
+        onHide={() => setShowNotification(false)}
+        type={isEditMode ? 'success' : 'info'}
+        duration={isEditMode ? 3000 : 4000}
+      />
+
+      {isEditMode && showLoginDialog && (
+        <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
+      )}
+    </TabNavigationWrapper>
+  );
+}

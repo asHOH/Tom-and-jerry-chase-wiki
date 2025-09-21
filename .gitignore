@@ -13,10 +13,6 @@
 /out/
 /build/
 
-# Database
-/prisma/*.db
-/prisma/*.db-journal
-
 # Environment variables
 .env
 .env.local
@@ -38,13 +34,9 @@ Thumbs.db
 .tsbuildinfo
 next-env.d.ts
 
-# ESLint cache
+# Caches
 .eslintcache
-
-# Jest cache
 .jest-cache
-
-# Next.js
 .next/cache/
 
 # Turbo
@@ -53,7 +45,6 @@ next-env.d.ts
 # IDE
 .idea/
 .vscode/
-.history/
 *.code-workspace
 
 # Vercel
@@ -70,12 +61,12 @@ src/stories
 
 # Other
 dist/
-.cache/
 .tmp/
 .temp/
 pnpm-lock.yaml
 .gemini/
 GEMINI.md
+.codex/
 
 # Personal git workflow helpers
 /git-helpers/
@@ -97,10 +88,6 @@ public/sw.js
 public/workbox-*.js
 public/fallback-*.js
 public/version.json
-
-# Storybook logs and static files
-*storybook.log
-storybook-static
 
 # Generated images
 public/images/*/*.webp

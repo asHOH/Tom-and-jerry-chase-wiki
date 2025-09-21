@@ -23,7 +23,9 @@ const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
   '指示类',
 ];
 
-export default function EntityClient() {
+type Props = { description?: string };
+
+export default function EntityClient({ description }: Props) {
   // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<Entitytypelist[]>([]);
   // Faction: 'cat', 'mouse'
@@ -58,11 +60,7 @@ export default function EntityClient() {
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
         <PageTitle>衍生物</PageTitle>
-        {!isMobile && (
-          <PageDescription>
-            由角色技能等方式衍生出的独立物体，拥有各自独特的属性和作用（该界面更新中）
-          </PageDescription>
-        )}
+        {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 类型筛选 */}

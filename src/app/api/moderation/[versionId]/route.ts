@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireRole } from '@/lib/auth/requireRole';
 
 export async function POST(request: NextRequest, { params }: { params: { versionId: string } }) {
   const { versionId } = params;
@@ -19,30 +19,14 @@ export async function POST(request: NextRequest, { params }: { params: { version
   }
 
   try {
-    const supabase = await createClient();
+    const guard = await requireRole(['Reviewer', 'Coordinator']);
+    if ('error' in guard) return guard.error;
+    const { supabase } = guard;
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
     if (!user) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-    }
-
-    // Check user role
-    const { data: userRole, error: roleError } = await supabaseAdmin.rpc('get_user_role', {
-      p_user_id: user.id,
-    });
-
-    if (roleError) {
-      console.error('Error checking user role:', roleError);
-      return NextResponse.json({ error: 'Failed to verify permissions' }, { status: 500 });
-    }
-
-    if (!userRole || !['Reviewer', 'Coordinator'].includes(userRole)) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions. Reviewer or Coordinator role required.' },
-        { status: 403 }
-      );
     }
 
     let functionName: `${'approve' | 'reject' | 'revoke'}_article_version`;

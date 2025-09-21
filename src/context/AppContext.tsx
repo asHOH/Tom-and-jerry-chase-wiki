@@ -36,7 +36,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const toggleDetailedView = () => {
-    setIsDetailedView(!isDetailedView);
+    setIsDetailedView((prev) => !prev);
   };
 
   return (
