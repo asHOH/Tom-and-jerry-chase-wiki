@@ -10,6 +10,7 @@ import PageDescription from '@/components/ui/PageDescription';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
+import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 
 interface Article {
   id: string;
@@ -65,7 +66,7 @@ const EditArticleClient: React.FC = () => {
   const [placeholder, setPlaceholder] = useState('');
 
   const { data: categoriesData, error: categoriesError } = useSWR<ArticlesData>(
-    '/api/articles?page=1&limit=1',
+    userRole ? '/api/articles?page=1&limit=1' : null,
     fetcher
   );
   const categories: Category[] = categoriesData?.categories || [];
@@ -80,7 +81,6 @@ const EditArticleClient: React.FC = () => {
     if (articleData) {
       setTitle(articleData.article.title);
       setCategory(articleData.article.category_id);
-      console.log(articleData.article.article_versions[0]?.content);
       setPlaceholder(articleData.article.article_versions[0]?.content || '');
     }
   }, [articleData]);
@@ -95,6 +95,17 @@ const EditArticleClient: React.FC = () => {
     setContent(newContent);
   };
 
+  const isContentEmpty = (html: string) => {
+    if (!html) return true;
+    const stripped = html
+      .replace(/<br\s*\/?>(?=\s*<\/p>|\s*$)/gi, '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;|\s+/g, '')
+      .trim();
+    if (stripped.length === 0) return true;
+    return stripped === ARTICLE_EDITOR_PLACEHOLDER.replace(/\s+/g, '');
+  };
+
   const handleSave = async () => {
     if (!title.trim()) {
       setError('请输入文章标题');
@@ -106,12 +117,7 @@ const EditArticleClient: React.FC = () => {
       return;
     }
 
-    if (
-      !content ||
-      content.trim() === '<p></p>' ||
-      content.trim() === '' ||
-      content.trim() === '<p>开始编写您的内容...</p>'
-    ) {
+    if (isContentEmpty(content)) {
       setError('请输入文章内容');
       return;
     }
@@ -147,7 +153,7 @@ const EditArticleClient: React.FC = () => {
     router.push(`/articles/${id}`);
   };
 
-  const isLoading = !articleData && !articleError && id;
+  const isLoading = !!id && !articleData && !articleError;
 
   // Loading state for user authentication and article data
   if (isLoading) {

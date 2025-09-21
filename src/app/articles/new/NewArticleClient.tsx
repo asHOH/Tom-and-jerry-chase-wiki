@@ -10,6 +10,7 @@ import PageDescription from '@/components/ui/PageDescription';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
+import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 
 interface Article {
   id: string;
@@ -63,6 +64,17 @@ const NewArticleClient: React.FC = () => {
     categoriesData?.categories.filter((category) => category.name != '根分类') || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
 
+  const isContentEmpty = (html: string) => {
+    if (!html) return true;
+    const stripped = html
+      .replace(/<br\s*\/?>(?=\s*<\/p>|\s*$)/gi, '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;|\s+/g, '')
+      .trim();
+    if (stripped.length === 0) return true;
+    return stripped === ARTICLE_EDITOR_PLACEHOLDER.replace(/\s+/g, '');
+  };
+
   useEffect(() => {
     // Give some time for the user data to load
     const timer = setTimeout(() => {
@@ -90,12 +102,7 @@ const NewArticleClient: React.FC = () => {
       return;
     }
 
-    if (
-      !content ||
-      content.trim() === '<p></p>' ||
-      content.trim() === '' ||
-      content.trim() === '<p>开始编写您的内容...</p>'
-    ) {
+    if (isContentEmpty(content)) {
       setError('请输入文章内容');
       return;
     }
@@ -190,7 +197,7 @@ const NewArticleClient: React.FC = () => {
         submittingLabel='提交中...'
         errorMessage={error || categoriesError?.message || null}
         successMessage={success}
-        contentPlaceholder='开始编写您的精彩内容...'
+        contentPlaceholder={ARTICLE_EDITOR_PLACEHOLDER}
       />
     </div>
   );
