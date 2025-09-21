@@ -319,6 +319,8 @@ async function buildGotoIndex(): Promise<GotoIndex> {
   // Docs
   const docPages = await getDocPages();
   for (const page of docPages) {
+    const slugKey = normalizeName(page.slug);
+    const titleKey = normalizeName(page.title);
     const goto: GotoResult = {
       url: `/docs/${encodeURIComponent(page.slug)}`,
       type: 'doc',
@@ -326,16 +328,18 @@ async function buildGotoIndex(): Promise<GotoIndex> {
       description: '',
       imageUrl: undefined,
     };
-    push(byName, normalizeName(page.slug), {
+    push(byName, slugKey, {
       kind: 'doc',
       priority: PRIORITY.doc.name,
       goto,
     });
-    push(byName, normalizeName(page.title), {
-      kind: 'doc',
-      priority: PRIORITY.doc.name,
-      goto,
-    });
+    if (titleKey !== slugKey) {
+      push(byName, titleKey, {
+        kind: 'doc',
+        priority: PRIORITY.doc.name,
+        goto,
+      });
+    }
   }
 
   // Sort lists by priority to keep selection deterministic

@@ -16,6 +16,20 @@ export async function getGotoResult(
   category?: CategoryHint | (string & Record<never, never>)
 ): Promise<GotoResult | null> {
   const normalizedCategory = normalizeCategoryHint(category);
+  const categoryPredicate = (hint?: CategoryHint) => {
+    type K = { kind: string };
+    if (!hint) return undefined as undefined | ((c: K) => boolean);
+    if (hint === '道具组') return (c: K) => c.kind === 'itemGroup';
+    if (hint === '知识卡') return (c: K) => c.kind === 'card';
+    if (hint === '状态') return (c: K) => c.kind === 'buff';
+    if (hint === '特技')
+      return (c: K) => c.kind === 'special-skill-cat' || c.kind === 'special-skill-mouse';
+    if (hint === '技能') return (c: K) => c.kind === 'character-skill';
+    if (hint === '道具')
+      return (c: K) => c.kind === 'item' || c.kind === 'entity-cat' || c.kind === 'entity-mouse';
+    if (hint === '衍生物') return (c: K) => c.kind === 'entity-cat' || c.kind === 'entity-mouse';
+    return undefined;
+  };
   // Parse skill level prefix like "2级技能名"
   let skillLevelRequested: number | null = null;
   let rawName = name;
@@ -28,21 +42,8 @@ export async function getGotoResult(
   const { byName } = await ensureGotoIndex();
   const key = normalizeName(rawName);
   const candidates = byName.get(key) ?? [];
-  const filtered = normalizedCategory
-    ? candidates.filter((c) => {
-        if (normalizedCategory === '道具组') return c.kind === 'itemGroup';
-        if (normalizedCategory === '知识卡') return c.kind === 'card';
-        if (normalizedCategory === '状态') return c.kind === 'buff';
-        if (normalizedCategory === '特技')
-          return c.kind === 'special-skill-cat' || c.kind === 'special-skill-mouse';
-        if (normalizedCategory === '技能') return c.kind === 'character-skill';
-        if (normalizedCategory === '道具')
-          return c.kind === 'item' || c.kind === 'entity-cat' || c.kind === 'entity-mouse';
-        if (normalizedCategory === '衍生物')
-          return c.kind === 'entity-cat' || c.kind === 'entity-mouse';
-        return true;
-      })
-    : candidates;
+  const pred = categoryPredicate(normalizedCategory);
+  const filtered = pred ? candidates.filter(pred as (c: { kind: string }) => boolean) : candidates;
 
   const chosen = filtered[0] ?? candidates[0];
   if (chosen) {
