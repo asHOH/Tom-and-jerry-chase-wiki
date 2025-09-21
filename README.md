@@ -11,19 +11,20 @@
 ## 📱 功能简介
 
 - **角色查询**: 查看角色属性、技能、推荐加点和知识卡等
-- **知识卡查询**: 查看知识卡及其效果
-- **筛选与搜索**: 快速找到目标角色或知识卡。
+- **知识卡/道具/衍生物/特技/状态查询**: 查看其准确的具体效果
+- **文章分享**: 浏览其他爱好者的记录、思考和发现
+- **筛选与搜索**: 快速找到目标条目
 
 ## 🌟 亮点
 
-- 精确的角色数值
-- 简洁的技能描述
-- 直观的技能加点
+- 数值精确、机制详细
+- 描述详略可自由切换
+- 极为直观的技能加点
 
 ## 🚀 快速访问
 
 - **在线网站**: [tjwiki.com](https://tjwiki.com)
-- **开发预览**: [develop 分支预览](https://dev.tjwiki.com)
+- **开发预览**: [dev.tjwiki.com](https://dev.tjwiki.com)
 
 ## 💬 社区交流
 
@@ -31,7 +32,7 @@
 
 ## ❤️ 支持本项目
 
-如果你喜欢这个项目，欢迎通过 Patreon [赞助我们](https://patreon.com/asHOH)。
+如果你喜欢本项目，欢迎通过 Patreon [赞助](https://patreon.com/asHOH)。
 
 特别感谢所有项目[赞助者](SPONSORS.md)！
 
@@ -44,6 +45,7 @@
 - **测试**: [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/)
 - **部署**: [Vercel](https://vercel.com/)
 - **代码规范**: [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
+- **认证与数据**: [Supabase](https://supabase.com/)（Auth、Postgres、RPC）
 
 ## 💻 本地开发
 
@@ -51,6 +53,7 @@
 
 - **Node.js**: `>=20.0.0`
 - **npm**: `>=10.0.0`
+- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`
 
 ### 开发步骤
 
@@ -110,7 +113,7 @@ npm run analyze         # 包分析
     git checkout develop
     git checkout -b feature/your-feature-name
     ```
-3.  进行代码开发或数据修改。
+3.  进行开发。
 4.  提交代码前，运行本地检查以确保代码质量：
     - **Windows (PowerShell)**: `.\test-github-workflows.ps1`
     - **macOS/Linux**: `./test-github-workflows.bash`
@@ -124,24 +127,11 @@ npm run analyze         # 包分析
 
 项目计划：
 
-#### 🚀 急
-
-- **编辑模式** - 角色攻略（小心rce）
-- **特殊爪刀CD** - 苏蕊、托普斯、天汤等等
-
-#### 📋 不急
-
-- **增强筛选** - 按外观筛选角色
-- **统一用词** - 技能描述中的“硬直/眩晕”，等等
 - **NPC** - 斯派克、女主人等
 - **年鉴** - 历代更新和角色调整记录
-- **画廊** - 各种猫鼠二创
-- **地图** - 展示地图，以及点位信息（墙缝、库博传送、几何桶等）
-
-#### 🎨 技术改进
-
-- UI美化
-- 移动端适配改进
+- **统一用词** - 技能描述中的“硬直/眩晕”等（定义待统一）
+- **画廊** - 各种猫鼠二创（缺素材）
+- **地图** - 展示地图及点位信息（缺素材）
 
 ## 📁 项目结构
 
@@ -159,6 +149,7 @@ npm run analyze         # 包分析
 │   ├── context/        # React Context 提供者
 │   ├── data/           # 核心数据与类型定义
 │   ├── lib/            # 工具函数与业务逻辑
+│   └── supabase/       # Supabase 客户端（browser/server/admin）
 ├── scripts/            # 工具脚本
 ├── README.md           # 项目说明
 └── package.json        # 项目依赖与脚本
