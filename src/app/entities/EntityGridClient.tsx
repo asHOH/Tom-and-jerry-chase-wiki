@@ -1,7 +1,9 @@
 'use client';
 import dynamic from 'next/dynamic';
 
-const EntityGridClient = dynamic(
+type Props = { description?: string };
+
+const EntityGridClient = dynamic<Props>(
   () => import('@/components/displays/entities/entity-grid/EntityGrid'),
   {
     loading: () => (

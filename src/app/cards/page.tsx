@@ -7,9 +7,11 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
+const DESCRIPTION = '提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力';
+
 export const metadata: Metadata = generatePageMetadata({
   title: '知识卡',
-  description: '知识卡列表，提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力',
+  description: DESCRIPTION,
   keywords: ['知识卡'],
   canonicalUrl: 'https://tjwiki.com/cards',
 });
@@ -19,7 +21,7 @@ export default function CardsPage() {
     <AppProvider>
       <EditModeProvider>
         <TabNavigationWrapper showDetailToggle={false}>
-          <KnowledgeCardClient />
+          <KnowledgeCardClient description={DESCRIPTION} />
         </TabNavigationWrapper>
       </EditModeProvider>
     </AppProvider>

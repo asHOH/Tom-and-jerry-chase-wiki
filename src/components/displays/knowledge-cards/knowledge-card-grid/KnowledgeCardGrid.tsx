@@ -18,7 +18,9 @@ import PageDescription from '@/components/ui/PageDescription';
 import FilterRow from '@/components/ui/FilterRow';
 import { useMobile } from '@/hooks/useMediaQuery';
 
-export default function KnowledgeCardGrid() {
+type Props = { description?: string };
+
+export default function KnowledgeCardGrid({ description }: Props) {
   // Use centralized filter state management for ranks
   const {
     selectedFilters: selectedRanks,
@@ -54,11 +56,7 @@ export default function KnowledgeCardGrid() {
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
         <PageTitle>知识卡</PageTitle>
-        {!isMobile && (
-          <PageDescription>
-            提升猫击倒、放飞老鼠的能力与老鼠生存、救援和推奶酪的能力
-          </PageDescription>
-        )}
+        {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           <FilterRow<FactionId>

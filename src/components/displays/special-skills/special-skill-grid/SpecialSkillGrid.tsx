@@ -14,7 +14,9 @@ import { useMobile } from '@/hooks/useMediaQuery';
 
 const allSkills = [...Object.values(specialSkills.cat), ...Object.values(specialSkills.mouse)];
 
-export default function SpecialSkillClient() {
+type Props = { description?: string };
+
+export default function SpecialSkillClient({ description }: Props) {
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
@@ -36,9 +38,7 @@ export default function SpecialSkillClient() {
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
         <PageTitle>特技</PageTitle>
-        {!isMobile && (
-          <PageDescription>角色可配备的额外技能，合理使用将大幅提高角色能力</PageDescription>
-        )}
+        {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           <FilterRow<'cat' | 'mouse'>

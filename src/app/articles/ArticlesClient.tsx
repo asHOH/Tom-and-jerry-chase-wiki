@@ -17,6 +17,10 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { useDarkMode } from '@/context/DarkModeContext';
 
+interface ArticlesClientProps {
+  description?: string;
+}
+
 interface Article {
   id: string;
   title: string;
@@ -53,7 +57,7 @@ interface ArticlesData {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function ArticlesClient() {
+export default function ArticlesClient({ description }: ArticlesClientProps) {
   const { role: userRole } = useUser();
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
@@ -243,7 +247,7 @@ export default function ArticlesClient() {
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
         <PageTitle>文章列表</PageTitle>
-        {!isMobile && <PageDescription>浏览其他爱好者的记录、思考和发现</PageDescription>}
+        {!isMobile && description && <PageDescription>{description}</PageDescription>}
 
         {/* Category Filter Controls */}
         {!!data && data.categories.length > 0 && (

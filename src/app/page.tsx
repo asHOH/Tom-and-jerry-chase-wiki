@@ -13,6 +13,17 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '../components/ui/PageDescription';
 import LoginDialog from '@/components/LoginDialog';
 import { useMobile } from '@/hooks/useMediaQuery';
+import type { Metadata } from 'next';
+import { generatePageMetadata } from '@/lib/metadataUtils';
+
+const DESCRIPTION = '查询角色技能和知识卡效果';
+
+export const dynamic = 'force-static';
+export const metadata: Metadata = generatePageMetadata({
+  title: '猫和老鼠手游wiki',
+  description: DESCRIPTION,
+  canonicalUrl: 'https://tjwiki.com/',
+});
 import { useUser } from '@/hooks/useUser';
 
 export default function Home() {
@@ -138,7 +149,7 @@ function HomeContent() {
       <div className='space-y-8'>
         <header className='text-center space-y-2'>
           <PageTitle>猫和老鼠手游wiki</PageTitle>
-          <PageDescription>查询角色技能和知识卡效果</PageDescription>
+          <PageDescription>{DESCRIPTION}</PageDescription>
         </header>
 
         <HomePageSection title='角色' buttons={characterButtons} />

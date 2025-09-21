@@ -4,7 +4,9 @@ import dynamic from 'next/dynamic';
 import { AppProvider } from '@/context/AppContext';
 
 // Dynamic import for KnowledgeCardGrid component
-const KnowledgeCardGrid = dynamic(
+type Props = { description?: string };
+
+const KnowledgeCardGrid = dynamic<Props>(
   () =>
     import('@/components/displays/knowledge-cards').then((mod) => ({
       default: mod.KnowledgeCardGrid,
@@ -26,10 +28,10 @@ const KnowledgeCardGrid = dynamic(
   }
 );
 
-export default function KnowledgeCardClient() {
+export default function KnowledgeCardClient(props: Props) {
   return (
     <AppProvider>
-      <KnowledgeCardGrid />
+      <KnowledgeCardGrid {...props} />
     </AppProvider>
   );
 }

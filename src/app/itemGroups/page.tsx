@@ -7,9 +7,11 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
+const DESCRIPTION = '列举目前支持的所有道具组';
+
 export const metadata: Metadata = generatePageMetadata({
   title: '道具组',
-  description: '站内所有道具组的列表。',
+  description: DESCRIPTION,
   keywords: ['道具组'],
   canonicalUrl: 'https://tjwiki.com/itemGroups',
 });
@@ -19,7 +21,7 @@ export default function ItemGroupsPage() {
     <AppProvider>
       <EditModeProvider>
         <TabNavigationWrapper showDetailToggle={false}>
-          <ItemGroupClient />
+          <ItemGroupClient description={DESCRIPTION} />
         </TabNavigationWrapper>
       </EditModeProvider>
     </AppProvider>
