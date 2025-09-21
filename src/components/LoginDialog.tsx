@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
-import { getUserData, userObject } from '@/hooks/useUser';
 import CaptchaComponent from './CaptchaComponent';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 
@@ -15,6 +15,7 @@ type LoginDialogProps = {
 type AuthStep = 'username' | 'password' | 'register';
 
 const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
+  const router = useRouter();
   const [step, setStep] = useState<AuthStep>('username');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -91,9 +92,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       if (!response.ok) {
         throw new Error(data.error || '登录失败。');
       }
-      // Assuming successful login returns a session, we close the dialog.
-      // In a real app, you'd handle the session state.
-      Object.assign(userObject, await getUserData());
+      // Server-side login sets HttpOnly cookies; refresh to reflect session client-side
+      router.refresh();
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : '发生未知错误。');

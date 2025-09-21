@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash, pbkdf2Sync } from 'crypto';
-import { createClient } from '@/lib/supabase/server';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 
 const hashUsername = (username: string) => {
@@ -51,8 +50,29 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
       }
     }
-    // Password-based user is valid, create session
-    const supabase = await createClient(); // Get the server-side client
+    // Password-based user is valid, create session and attach cookies to response
+    type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
+    const { createServerClient }: { createServerClient: CreateServerClient } = await import(
+      '@supabase/ssr/dist/module/createServerClient.js'
+    );
+    const response = NextResponse.json({ message: 'Login successful' });
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            // Reflect cookie writes onto the response
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            );
+          },
+        },
+      }
+    );
 
     const { error: sessionError } = await supabase.auth.signInWithPassword({
       email: `${usernamePinyin}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`,
@@ -64,9 +84,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Login failed' }, { status: 500 });
     }
 
-    const response = NextResponse.json({ message: 'Login successful' });
-    // The updateSession middleware will handle setting the cookies on the response
-    // We just need to ensure the session is created on the server side
+    // Return JSON with Set-Cookie attached
     return response;
   } catch (e) {
     console.error('Login error:', e);

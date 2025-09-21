@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash, randomBytes, pbkdf2Sync } from 'crypto';
 import { TablesInsert } from '@/data/database.types';
-import { createClient } from '@/lib/supabase/server';
+// We'll construct a server client bound to this response to attach cookies
 import { convertToPinyin } from '@/lib/pinyinUtils';
 
 const hashUsername = (username: string) => {
@@ -73,8 +73,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Could not create user.' }, { status: 500 });
     }
 
-    // After successful registration, sign in the user to persist the session
-    const supabase = await createClient(); // Get the server-side client
+    // After successful registration, sign in the user and attach cookies to response
+    type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
+    const { createServerClient }: { createServerClient: CreateServerClient } = await import(
+      '@supabase/ssr/dist/module/createServerClient.js'
+    );
+    const response = NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            );
+          },
+        },
+      }
+    );
     const { error: sessionError } = await supabase.auth.signInWithPassword({
       email: authUserEmail,
       password: password || username!, // Use the provided password or the generated tempPassword
@@ -88,9 +108,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = NextResponse.json({ message: 'User created successfully' }, { status: 201 });
-    // The updateSession middleware will handle setting the cookies on the response
-    // We just need to ensure the session is created on the server side
     return response;
   } catch (e) {
     console.error('Registration error:', e);
