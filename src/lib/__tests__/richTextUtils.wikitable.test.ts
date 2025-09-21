@@ -431,5 +431,42 @@ Another paragraph.`;
       expect(mixedResult).toContain('<table class="wikitable">');
       expect(mixedResult).toContain('<th>Header 1</th>');
     });
+
+    it('should convert wiki links at start-of-line and preserve spaces in HTML (round-trip may trim)', () => {
+      const samples = [
+        '[https://example.com 示例]',
+        ' [https://example.com 示例]',
+        '   [https://example.com 示例]',
+      ];
+
+      const results = samples.map((s) => wikiTextToHTML(s));
+
+      expect(results[0]).toBe('<p><a href="https://example.com">示例</a></p>');
+      expect(results[1]).toBe('<p> <a href="https://example.com">示例</a></p>');
+      expect(results[2]).toBe('<p>   <a href="https://example.com">示例</a></p>');
+
+      // Round-trip back to wikitext keeps the link; leading spaces may be trimmed by final .trim()
+      const back = results.map((html) => htmlToWikiText(html));
+      expect(back[0]).toMatch(/^\s*\[https:\/\/example\.com 示例\]\s*$/);
+      expect(back[1]).toMatch(/^\s*\[https:\/\/example\.com 示例\]\s*$/);
+      expect(back[2]).toMatch(/^\s*\[https:\/\/example\.com 示例\]\s*$/);
+    });
+
+    it('should convert wiki links inside table cells including at cell start', () => {
+      const wikiTableWithLinks = `{|
+! 资源
+|-
+| [https://ex.com 链接一]
+| [https://ex2.com 链接二]
+|}`;
+
+      const html = wikiTextToHTML(wikiTableWithLinks);
+      expect(html).toContain('<td><a href="https://ex.com">链接一</a></td>');
+      expect(html).toContain('<td><a href="https://ex2.com">链接二</a></td>');
+
+      const back = htmlToWikiText(html);
+      expect(back).toMatch(/\|\s+\[https:\/\/ex\.com 链接一\]/);
+      expect(back).toMatch(/\|\s+\[https:\/\/ex2\.com 链接二\]/);
+    });
   });
 });

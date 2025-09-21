@@ -17,7 +17,7 @@ const processInlines = (text: string): string => {
       /\[\[Video:([^\]]+)\]\]/g,
       '<iframe src="$1" frameborder="0" allowfullscreen></iframe>'
     )
-    .replace(/ \[([^\[\]]+)\s([^\[\]]+)\]/g, '<a href="$1">$2</a>')
+    .replace(/(^|\s+)\[([^\[\]]+)\s([^\[\]]+)\]/g, '$1<a href="$2">$3</a>')
     .replace(/__([^_]+)__/g, '<u>$1</u>')
     .replace(/~~([^~]+)~~/g, '<s>$1</s>')
     .replace(/`([^`]+)`/g, '<code>$1</code>');
