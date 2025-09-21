@@ -268,7 +268,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 title='用户设置'
                 className={clsx(
                   getButtonClassName(isMobile, false, dropdownOpen),
-                  'flex items-center justify-center p-2!'
+                  'flex items-center justify-center p-2'
                 )}
                 onClick={() => setDropdownOpen((prev) => !prev)}
               >
