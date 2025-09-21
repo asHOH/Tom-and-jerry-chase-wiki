@@ -13,6 +13,7 @@ import LoginDialog from '@/components/LoginDialog';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
+import { NAV_ITEMS } from '@/constants/navigation';
 
 type Props = { description: string };
 
@@ -40,89 +41,43 @@ export default function HomeContentClient({ description }: Props) {
     toggleEditMode();
   };
 
-  const characterButtons = [
-    {
-      imageSrc: '/images/icons/cat faction.png',
-      imageAlt: '猫阵营图标',
-      title: '猫阵营',
-      description: '猫阵营角色列表',
-      href: '/factions/cat',
-      ariaLabel: '猫阵营角色列表',
-    },
-    {
-      imageSrc: '/images/icons/mouse faction.png',
-      imageAlt: '鼠阵营图标',
-      title: '鼠阵营',
-      description: '鼠阵营角色列表',
-      href: '/factions/mouse',
-      ariaLabel: '鼠阵营角色列表',
-    },
-  ];
+  const characterButtons = NAV_ITEMS.filter((i) => i.id === 'cat' || i.id === 'mouse').map((i) => ({
+    imageSrc: i.iconSrc,
+    imageAlt: i.iconAlt,
+    title: i.label,
+    description: i.id === 'cat' ? '猫阵营角色列表' : '鼠阵营角色列表',
+    href: i.href,
+    ariaLabel: i.id === 'cat' ? '猫阵营角色列表' : '鼠阵营角色列表',
+  }));
 
-  const prepareButtons = [
-    {
-      imageSrc: '/images/icons/cat knowledge card.png',
-      imageAlt: '知识卡图标',
-      title: '知识卡',
-      description: '知识卡列表',
-      href: '/cards',
-      ariaLabel: '知识卡列表',
-    },
-    {
-      imageSrc: '/images/mouseSpecialSkills/%E5%BA%94%E6%80%A5%E6%B2%BB%E7%96%97.png',
-      imageAlt: '特技图标',
-      title: '特技',
-      description: '特技列表',
-      href: '/special-skills',
-      ariaLabel: '特技列表',
-    },
-  ];
+  const prepareButtons = NAV_ITEMS.filter((i) => i.id === 'cards' || i.id === 'special-skills').map(
+    (i) => ({
+      imageSrc: i.iconSrc,
+      imageAlt: i.iconAlt,
+      title: i.label,
+      description: i.id === 'cards' ? '知识卡列表' : '特技列表',
+      href: i.href,
+      ariaLabel: i.id === 'cards' ? '知识卡列表' : '特技列表',
+    })
+  );
 
-  const itemButtons = [
-    {
-      imageSrc: '/images/icons/item.png',
-      imageAlt: '道具图标',
-      title: '道具',
-      description: '道具列表',
-      href: '/items',
-      ariaLabel: '道具列表',
-    },
-    {
-      imageSrc: '/images/icons/entity.png',
-      imageAlt: '衍生物图标',
-      title: '衍生物',
-      description: '衍生物列表',
-      href: '/entities',
-      ariaLabel: '衍生物列表',
-    },
-  ];
+  const itemButtons = NAV_ITEMS.filter((i) => i.id === 'items' || i.id === 'entities').map((i) => ({
+    imageSrc: i.iconSrc,
+    imageAlt: i.iconAlt,
+    title: i.label,
+    description: i.id === 'items' ? '道具列表' : '衍生物列表',
+    href: i.href,
+    ariaLabel: i.id === 'items' ? '道具列表' : '衍生物列表',
+  }));
 
-  const cardButtons = [
-    {
-      imageSrc: '/images/icons/cat faction.png',
-      imageAlt: '文章图标',
-      title: '文章',
-      description: '社区文章列表',
-      href: '/articles',
-      ariaLabel: '社区文章列表',
-    },
-    {
-      imageSrc: '/images/icons/buff.png',
-      imageAlt: '状态图标',
-      title: '状态',
-      description: '状态列表',
-      href: '/buffs',
-      ariaLabel: '状态列表',
-    },
-    // {
-    //   imageSrc: '/images/icons/cat faction.png',
-    //   imageAlt: '排行榜图标',
-    //   title: '排行榜',
-    //   description: '角色属性排行榜',
-    //   href: '/ranks',
-    //   ariaLabel: '角色属性排行榜',
-    // },
-  ];
+  const cardButtons = NAV_ITEMS.filter((i) => i.id === 'articles' || i.id === 'buffs').map((i) => ({
+    imageSrc: i.iconSrc,
+    imageAlt: i.iconAlt,
+    title: i.label,
+    description: i.id === 'articles' ? '社区文章列表' : '状态列表',
+    href: i.href,
+    ariaLabel: i.id === 'articles' ? '社区文章列表' : '状态列表',
+  }));
 
   return (
     <TabNavigationWrapper showDetailToggle={false}>

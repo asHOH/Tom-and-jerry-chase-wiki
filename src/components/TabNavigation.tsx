@@ -13,6 +13,7 @@ import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import { supabase } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
+import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 
 // Helper function for button styling
 const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: boolean) => {
@@ -28,73 +29,6 @@ const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: 
 
   return clsx(baseClasses, sizeClasses, stateClasses);
 };
-
-type Tab = {
-  id: string;
-  name: string;
-  imageSrc: string;
-  imageAlt: string;
-  path: string;
-};
-
-const tabs: Tab[] = [
-  {
-    id: 'cat',
-    name: '猫阵营',
-    imageSrc: '/images/icons/cat faction.png',
-    imageAlt: '猫阵营图标',
-    path: '/factions/cat',
-  },
-  {
-    id: 'mouse',
-    name: '鼠阵营',
-    imageSrc: '/images/icons/mouse faction.png',
-    imageAlt: '鼠阵营图标',
-    path: '/factions/mouse',
-  },
-  {
-    id: 'cards',
-    name: '知识卡',
-    imageSrc: '/images/icons/cat knowledge card.png',
-    imageAlt: '知识卡图标',
-    path: '/cards',
-  },
-  {
-    id: 'special-skills',
-    name: '特技',
-    imageSrc: '/images/mouseSpecialSkills/%E5%BA%94%E6%80%A5%E6%B2%BB%E7%96%97.png',
-    imageAlt: '特技图标',
-    path: '/special-skills',
-  },
-  {
-    id: 'items',
-    name: '道具',
-    imageSrc: '/images/icons/item.png',
-    imageAlt: '道具图标',
-    path: '/items',
-  },
-  {
-    id: 'entities',
-    name: '衍生物',
-    imageSrc: '/images/icons/entity.png',
-    imageAlt: '衍生物图标',
-    path: '/entities',
-  },
-  {
-    id: 'articles',
-    name: '文章',
-    imageSrc: '/images/icons/cat faction.png',
-    imageAlt: '文章图标',
-    path: '/articles',
-  },
-  {
-    id: 'buffs',
-    name: '状态',
-    imageSrc: '/images/icons/buff.png',
-    imageAlt: '状态图标',
-    path: '/buffs',
-  },
-];
 
 type TabNavigationProps = {
   showDetailToggle?: boolean;
@@ -112,6 +46,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const isMobile = useMobile();
   const { nickname, role, clearData: clearUserData } = useUser();
   const { isEditMode } = useEditMode();
+  const { items, isActive } = useNavigationTabs();
 
   useEffect(() => {
     setMounted(true);
@@ -127,9 +62,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     }
   }, [pathname, navigatingTo]);
 
-  const isTabActive = (tabPath: string) => {
-    return pathname?.startsWith(tabPath) || false;
-  };
+  const isTabActive = (tabPath: string) => isActive(tabPath);
 
   const isHomeActive = () => {
     return pathname === '/';
@@ -196,37 +129,37 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               )}
             </Link>
           </Tooltip>
-          {tabs.map((tab) => (
+          {items.map((tab) => (
             <Tooltip
               key={tab.id}
-              content={tab.name}
+              content={tab.label}
               className='border-none'
               disabled={!isMobile}
               delay={800}
             >
               <Link
-                href={tab.path}
+                href={tab.href}
                 className={clsx(
-                  getButtonClassName(isMobile, false, isTabActive(tab.path)),
+                  getButtonClassName(isMobile, false, isTabActive(tab.href)),
                   isMobile ? 'gap-0' : 'gap-2',
-                  navigatingTo === tab.path && 'pointer-events-none opacity-80'
+                  navigatingTo === tab.href && 'pointer-events-none opacity-80'
                 )}
                 onClick={() => {
-                  if (navigatingTo === tab.path) return;
-                  setNavigatingTo(tab.path);
+                  if (navigatingTo === tab.href) return;
+                  setNavigatingTo(tab.href);
                 }}
-                tabIndex={navigatingTo === tab.path ? -1 : 0}
-                aria-disabled={navigatingTo === tab.path}
+                tabIndex={navigatingTo === tab.href ? -1 : 0}
+                aria-disabled={navigatingTo === tab.href}
               >
                 <Image
-                  src={tab.imageSrc}
-                  alt={tab.imageAlt}
+                  src={tab.iconSrc}
+                  alt={tab.iconAlt}
                   width={64}
                   height={64}
                   className='object-contain'
                   style={{ height: isMobile ? '24px' : '28px', width: 'auto' }}
                 />
-                {!isMobile && <span>{tab.name}</span>}
+                {!isMobile && <span>{tab.label}</span>}
               </Link>
             </Tooltip>
           ))}
