@@ -32,6 +32,16 @@ export const UserProvider = ({
       Object.assign(userObject, await getUserData());
     })();
   }, [initialValue]);
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async () => {
+      Object.assign(userObject, await getUserData());
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
   return children;
 };
 

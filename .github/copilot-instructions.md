@@ -103,11 +103,6 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (çŒ«å’
   - Verify middleware runs (auth cookie refresh) and CSP `connect-src` allows `*.supabase.co` (configured in `app/layout.tsx`).
   - Run `npm run lint` and `npm run type-check` to validate DB types usage.
 
-### Quick Improvements
-
-- Add shared role guard helper: e.g., `lib/auth/requireRole.ts` to DRY checks in route handlers. (Very low effort; improves consistency.)
-- Subscribe to auth state: in `useUser`, subscribe to `supabase.auth.onAuthStateChange` to refresh role/nickname when session changes. (Tiny change; improves UX.)
-
 ## Performance & Analytics
 
 - **Vercel Analytics** and **Speed Insights**
