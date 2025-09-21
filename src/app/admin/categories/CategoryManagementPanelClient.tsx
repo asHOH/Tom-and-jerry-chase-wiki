@@ -157,6 +157,7 @@ const CategoryManagement = () => {
             className='border p-2 rounded flex-1'
           />
           <select
+            aria-label='父分类'
             value={newCategory.parent_category_id ?? ''}
             onChange={(e) =>
               setNewCategory({
@@ -174,6 +175,7 @@ const CategoryManagement = () => {
             ))}
           </select>
           <select
+            aria-label='默认可见性'
             value={newCategory.default_visibility || ''}
             onChange={(e) =>
               setNewCategory({
@@ -268,6 +270,7 @@ const CategoryManagement = () => {
               className='border p-2 rounded flex-1'
             />
             <select
+              aria-label='父分类'
               value={editingCategory.parent_category_id ?? ''}
               onChange={(e) =>
                 setEditingCategory((prev) => ({
@@ -287,6 +290,7 @@ const CategoryManagement = () => {
                 ))}
             </select>
             <select
+              aria-label='默认可见性'
               value={editingCategory.default_visibility ?? ''}
               onChange={(e) =>
                 setEditingCategory((prev) => ({
