@@ -1,7 +1,11 @@
-import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
+  type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
+  const { createServerClient }: { createServerClient: CreateServerClient } = await import(
+    // Deep import to avoid pulling createBrowserClient into the Edge bundle
+    '@supabase/ssr/dist/module/createServerClient.js'
+  );
   let supabaseResponse = NextResponse.next({
     request,
   });
