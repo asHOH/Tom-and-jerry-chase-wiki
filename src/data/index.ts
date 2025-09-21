@@ -12,44 +12,5 @@ export type {
   PositioningTagName,
 } from './types';
 
-import { GameDataManager } from '@/lib/dataManager';
-import { CharacterWithFaction, FactionWithCharacters } from '@/lib/types';
-import { proxy, subscribe } from 'valtio';
-import catSpecialSkillsWithImages from './catSpecialSkills';
-import mouseSpecialSkillsWithImages from './mouseSpecialSkills';
-import catEntitiesWithImages from './catEntities';
-import mouseEntitiesWithImages from './mouseEntities';
-
-export const { factionData, characterData, cardData } = GameDataManager.getRawData();
-
-export const characters: Record<string, CharacterWithFaction> = proxy(
-  GameDataManager.getCharacters()
-);
-
-export const factions: Record<string, FactionWithCharacters> = proxy(GameDataManager.getFactions());
-
-subscribe(characters, () => {
-  localStorage.setItem('characters', JSON.stringify(characters));
-});
-
-subscribe(factions, () => {
-  localStorage.setItem('factions', JSON.stringify(factions));
-});
-
-export const cards = GameDataManager.getCards();
-
-export const specialSkills = {
-  cat: catSpecialSkillsWithImages,
-  mouse: mouseSpecialSkillsWithImages,
-};
-
-export { default as items } from './items';
-
-export const entities = {
-  cat: catEntitiesWithImages,
-  mouse: mouseEntitiesWithImages,
-};
-
-export { default as buffs } from './buffs';
-
-export { default as itemGroups } from './itemGroups';
+export * from './static';
+export * from './store';
