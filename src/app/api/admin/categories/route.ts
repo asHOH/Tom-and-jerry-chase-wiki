@@ -1,36 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-
-async function requireReviewerOrCoordinator() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
-  }
-
-  const { data: roleData, error: roleErr } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  if (roleErr || !roleData) {
-    return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
-  }
-
-  const allowed = roleData.role === 'Coordinator' || roleData.role === 'Reviewer';
-  if (!allowed) {
-    return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
-  }
-
-  return { supabase };
-}
+import { requireRole } from '@/lib/auth/requireRole';
 
 export async function GET() {
-  const guard = await requireReviewerOrCoordinator();
+  const guard = await requireRole(['Coordinator', 'Reviewer']);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
@@ -42,7 +14,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const guard = await requireReviewerOrCoordinator();
+  const guard = await requireRole(['Coordinator', 'Reviewer']);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
@@ -63,7 +35,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const guard = await requireReviewerOrCoordinator();
+  const guard = await requireRole(['Coordinator', 'Reviewer']);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
@@ -85,7 +57,7 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const guard = await requireReviewerOrCoordinator();
+  const guard = await requireRole(['Coordinator', 'Reviewer']);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
