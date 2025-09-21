@@ -3,7 +3,7 @@ import TableRow from '@tiptap/extension-table-row';
 import TableHeader from '@tiptap/extension-table-header';
 import TableCell from '@tiptap/extension-table-cell';
 import React, { useCallback, useEffect, useState } from 'react';
-import { EditorContent, useEditor, Editor } from '@tiptap/react';
+import { EditorContent, useEditor } from '@tiptap/react';
 import type { Node as PMNode } from '@tiptap/pm/model';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -12,63 +12,11 @@ import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import clsx from 'clsx';
 import { htmlToWikiText, wikiTextToHTML } from '@/lib/richTextUtils';
-import {
-  BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-  StrikethroughIcon,
-  InlineCodeIcon,
-  BulletListIcon,
-  OrderedListIcon,
-  AlignLeftIcon,
-  AlignCenterIcon,
-  AlignRightIcon,
-  BlockquoteIcon,
-  CodeBlockIcon,
-  LinkIcon,
-  ImageIcon,
-  UndoIcon,
-  RedoIcon,
-  LoadingSpinnerIcon,
-} from './RichTextEditorIcons';
+import { cleanHTMLForExport } from '@/lib/richtext/htmlTransforms';
+import Toolbar, { ToolbarCommands, ToolbarState } from './RichTextEditor/Toolbar';
+import { LoadingSpinnerIcon } from './RichTextEditorIcons';
 
-// Normalize editor-produced HTML for display/export, especially tables.
-function cleanHTMLForExport(html: string): string {
-  let out = html;
-  // Remove colgroup added by resizable tables
-  out = out.replace(/<colgroup>[\s\S]*?<\/colgroup>/gi, '');
-  // Strip inline styles on table tag (e.g., min-width)
-  out = out.replace(/<table\b([^>]*?)\sstyle="[^"]*"/gi, '<table$1');
-  // Unwrap <p> inside table cells: <td><p>..</p></td> -> <td>..</td>
-  out = out.replace(/<(td|th)([^>]*)>\s*<p>([\s\S]*?)<\/p>\s*<\/\1>/gi, '<$1$2>$3</$1>');
-  // Remove empty <p> right after or before table
-  out = out.replace(/<table([^>]*)>\s*<p>\s*<\/p>/gi, '<table$1>');
-  out = out.replace(/<\/table>\s*<p>\s*<\/p>/gi, '</table>');
-  // Remove default colspan/rowspan="1"
-  out = out.replace(/\s(colspan|rowspan)="1"/gi, '');
-  // Remove tbody wrapper for simpler markup (optional)
-  out = out.replace(/<\/?tbody>/gi, '');
-  // Pretty print: add newlines for readability
-  // Ensure newline between preceding block and table
-  out = out.replace(/<\/(p|div|section|article|h[1-6])>\s*<table/gi, '</$1>\n<table');
-  out = out.replace(/<table(\b[^>]*)>/gi, '<table$1>\n');
-  out = out.replace(/<\/table>/gi, '\n</table>');
-  // One newline before <tr>, none after, to avoid blank line before first cell
-  out = out.replace(/<tr(\b[^>]*)>/gi, '\n<tr$1>');
-  // One newline before closing </tr>, none after; next <tr> adds its own newline
-  out = out.replace(/<\/(tr)>/gi, '\n</$1>');
-  out = out.replace(/<(th|td)(\b[^>]*)>/gi, '\n<$1$2>');
-  out = out.replace(/<\/(th|td)>/gi, '</$1>\n');
-  // Collapse excessive blank lines
-  out = out.replace(/\n{2,}/g, '\n');
-  // Trim spaces between tags lines
-  out = out
-    .split('\n')
-    .map((l) => l.trimEnd())
-    .join('\n')
-    .trim();
-  return out;
-}
+// conversion helpers moved to '@/lib/richtext/htmlTransforms'
 
 interface RichTextEditorProps {
   content?: string;
@@ -77,469 +25,7 @@ interface RichTextEditorProps {
   className?: string;
 }
 
-interface ToolbarButtonProps {
-  onClick: () => void;
-  isActive?: boolean;
-  disabled?: boolean;
-  children: React.ReactNode;
-  title?: string;
-}
-
-const ToolbarButton = React.memo<ToolbarButtonProps>(
-  ({ onClick, isActive = false, disabled = false, children, title }) => (
-    <button
-      type='button'
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-      className={clsx(
-        'p-2 rounded-md border transition-all duration-200 text-sm font-medium',
-        'hover:bg-gray-100 dark:hover:bg-gray-700',
-        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
-        isActive
-          ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300'
-          : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
-      )}
-    >
-      {children}
-    </button>
-  )
-);
-ToolbarButton.displayName = 'ToolbarButton';
-
-const Toolbar: React.FC<{
-  editor: Editor;
-  viewMode: string;
-  onModeChange: (mode: 'rich' | 'wiki' | 'html') => void;
-}> = ({ editor, viewMode, onModeChange }) => {
-  const [showTableTools, setShowTableTools] = useState(false);
-  const transposeTable = useCallback(() => {
-    // Transpose the currently selected table. Does not support merged cells.
-    const { state, view } = editor;
-    const { $from } = state.selection;
-
-    // Find enclosing table node depth
-    let tableDepth = -1;
-    for (let d = $from.depth; d >= 0; d--) {
-      const n = $from.node(d);
-      if (n && n.type && n.type.name === 'table') {
-        tableDepth = d;
-        break;
-      }
-    }
-    if (tableDepth === -1) return;
-
-    const tableNode = $from.node(tableDepth) as PMNode;
-    const startPos = $from.before(tableDepth);
-    const endPos = $from.after(tableDepth);
-
-    const rows: PMNode[][] = [];
-    let maxCols = 0;
-    let hasSpan = false;
-    tableNode.forEach((row: PMNode) => {
-      if (row.type.name !== 'tableRow') return;
-      const cells: PMNode[] = [];
-      row.forEach((cell: PMNode) => {
-        if (cell.type.name !== 'tableCell' && cell.type.name !== 'tableHeader') return;
-        if ((cell.attrs?.colspan ?? 1) > 1 || (cell.attrs?.rowspan ?? 1) > 1) {
-          hasSpan = true;
-        }
-        cells.push(cell);
-      });
-      maxCols = Math.max(maxCols, cells.length);
-      rows.push(cells);
-    });
-
-    if (hasSpan) {
-      window.alert('暂不支持包含合并单元格的表格进行转置');
-      return;
-    }
-
-    const schema = state.schema;
-    const tableRowType = schema.nodes.tableRow;
-    const tableCellType = schema.nodes.tableCell;
-    const tableHeaderType = schema.nodes.tableHeader;
-    const paragraphType = schema.nodes.paragraph;
-
-    if (!tableRowType || !tableCellType || !tableHeaderType || !paragraphType) {
-      window.alert('转置失败：编辑器表格节点类型不可用');
-      return;
-    }
-
-    const hasHeaderRow =
-      rows.length > 0 &&
-      rows[0] !== undefined &&
-      rows[0]!.length > 0 &&
-      rows[0]!.every((c) => Boolean(c) && c!.type === tableHeaderType);
-    const hasHeaderCol =
-      rows.length > 0 && rows.every((r) => r[0] && r[0]!.type === tableHeaderType);
-
-    const makeCellLike = (source: PMNode | undefined, forceHeader: boolean): PMNode => {
-      if (!source) {
-        const filled = tableCellType.createAndFill();
-        return filled ?? tableCellType.create({}, paragraphType.create());
-      }
-      if (forceHeader || source.type === tableHeaderType) {
-        return tableHeaderType.create(source.attrs ?? {}, source.content);
-      }
-      return tableCellType.create(source.attrs ?? {}, source.content);
-    };
-
-    const newRowNodes: PMNode[] = [];
-    for (let c = 0; c < maxCols; c++) {
-      const newCells: PMNode[] = [];
-      for (let r = 0; r < rows.length; r++) {
-        const sourceCell = rows[r]?.[c];
-        const forceHeader = c === 0 && (hasHeaderRow || hasHeaderCol);
-        newCells.push(makeCellLike(sourceCell, forceHeader));
-      }
-      const rowNode = tableRowType.create({}, newCells);
-      newRowNodes.push(rowNode);
-    }
-
-    const newTable = tableNode.type.create(tableNode.attrs ?? {}, newRowNodes);
-
-    const tr = state.tr.replaceWith(startPos, endPos, newTable);
-    view.dispatch(tr.scrollIntoView());
-  }, [editor]);
-  const addImage = useCallback(() => {
-    const url = window.prompt('图片链接');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
-  }, [editor]);
-
-  const addLink = useCallback(() => {
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('链接地址', previousUrl);
-
-    if (url === null) {
-      return;
-    }
-
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
-    }
-
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-  }, [editor]);
-
-  return (
-    <div className='border-b border-gray-300 dark:border-gray-600 p-3 bg-gray-50 dark:bg-gray-800/50'>
-      <div className='flex flex-wrap items-center gap-2'>
-        {/* Text Formatting */}
-        <div className='flex items-center gap-1'>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            isActive={editor.isActive('bold')}
-            title='粗体 (Ctrl+B)'
-          >
-            <BoldIcon />
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            isActive={editor.isActive('italic')}
-            title='斜体 (Ctrl+I)'
-          >
-            <ItalicIcon />
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            isActive={editor.isActive('underline')}
-            title='下划线 (Ctrl+U)'
-          >
-            <UnderlineIcon />
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            isActive={editor.isActive('strike')}
-            title='删除线'
-          >
-            <StrikethroughIcon />
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleCode().run()}
-            isActive={editor.isActive('code')}
-            title='行内代码'
-          >
-            <InlineCodeIcon />
-          </ToolbarButton>
-        </div>
-
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
-
-        {/* Headings */}
-        <div className='flex items-center gap-1'>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            isActive={editor.isActive('heading', { level: 1 })}
-            title='标题 1'
-          >
-            H1
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            isActive={editor.isActive('heading', { level: 2 })}
-            title='标题 2'
-          >
-            H2
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            isActive={editor.isActive('heading', { level: 3 })}
-            title='标题 3'
-          >
-            H3
-          </ToolbarButton>
-        </div>
-
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
-
-        {/* Lists */}
-        <div className='flex items-center gap-1'>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            isActive={editor.isActive('bulletList')}
-            title='无序列表'
-          >
-            <BulletListIcon />
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            isActive={editor.isActive('orderedList')}
-            title='有序列表'
-          >
-            <OrderedListIcon />
-          </ToolbarButton>
-        </div>
-
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
-
-        {/* Alignment */}
-        <div className='flex items-center gap-1'>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().setTextAlign('left').run()}
-            isActive={editor.isActive({ textAlign: 'left' })}
-            title='左对齐'
-          >
-            <AlignLeftIcon />
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().setTextAlign('center').run()}
-            isActive={editor.isActive({ textAlign: 'center' })}
-            title='居中对齐'
-          >
-            <AlignCenterIcon />
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().setTextAlign('right').run()}
-            isActive={editor.isActive({ textAlign: 'right' })}
-            title='右对齐'
-          >
-            <AlignRightIcon />
-          </ToolbarButton>
-        </div>
-
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
-
-        {/* Tables (foldable) */}
-        <div className='flex items-center gap-1'>
-          <ToolbarButton
-            onClick={() =>
-              editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-            }
-            disabled={
-              !editor
-                .can()
-                .chain()
-                .focus()
-                .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-                .run()
-            }
-            title='插入表格 (3x3)'
-          >
-            表格
-          </ToolbarButton>
-
-          <button
-            type='button'
-            onClick={() => setShowTableTools((v) => !v)}
-            title={showTableTools ? '收起表格工具' : '展开表格工具'}
-            aria-pressed={showTableTools}
-            className={clsx(
-              'p-1 rounded',
-              'bg-transparent border-0',
-              'hover:bg-gray-100 dark:hover:bg-gray-700',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1'
-            )}
-          >
-            <svg
-              viewBox='0 0 20 20'
-              fill='currentColor'
-              className={clsx(
-                'w-4 h-4 transition-transform',
-                showTableTools ? 'rotate-90' : 'rotate-0'
-              )}
-              aria-hidden='true'
-            >
-              <path d='M7.21 14.77a.75.75 0 01.02-1.06L10.94 10 7.23 6.29a.75.75 0 111.06-1.06l4.24 4.24a.75.75 0 010 1.06L8.29 14.77a.75.75 0 01-1.08-.02z' />
-            </svg>
-          </button>
-
-          {showTableTools && (
-            <>
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleHeaderRow().run()}
-                disabled={!editor.can().chain().focus().toggleHeaderRow().run()}
-                title='开关表头行'
-              >
-                表头
-              </ToolbarButton>
-
-              <ToolbarButton
-                onClick={transposeTable}
-                disabled={
-                  !editor.isActive('table') &&
-                  !editor.isActive('tableCell') &&
-                  !editor.isActive('tableHeader')
-                }
-                title='转置当前表格（沿对角线翻转）'
-              >
-                转置
-              </ToolbarButton>
-
-              <ToolbarButton
-                onClick={() => editor.chain().focus().addRowAfter().run()}
-                disabled={!editor.can().chain().focus().addRowAfter().run()}
-                title='在下方添加行'
-              >
-                加行
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() => editor.chain().focus().addColumnAfter().run()}
-                disabled={!editor.can().chain().focus().addColumnAfter().run()}
-                title='在右侧添加列'
-              >
-                加列
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() => editor.chain().focus().deleteRow().run()}
-                disabled={!editor.can().chain().focus().deleteRow().run()}
-                title='删除当前行'
-              >
-                删行
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() => editor.chain().focus().deleteColumn().run()}
-                disabled={!editor.can().chain().focus().deleteColumn().run()}
-                title='删除当前列'
-              >
-                删列
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() => editor.chain().focus().deleteTable().run()}
-                disabled={!editor.can().chain().focus().deleteTable().run()}
-                title='删除表格'
-              >
-                删表
-              </ToolbarButton>
-            </>
-          )}
-        </div>
-
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
-
-        {/* Special Content */}
-        <div className='flex items-center gap-1'>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            isActive={editor.isActive('blockquote')}
-            title='引用'
-          >
-            <BlockquoteIcon />
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-            isActive={editor.isActive('codeBlock')}
-            title='代码块'
-          >
-            <CodeBlockIcon />
-          </ToolbarButton>
-
-          <ToolbarButton onClick={addLink} isActive={editor.isActive('link')} title='插入链接'>
-            <LinkIcon />
-          </ToolbarButton>
-
-          <ToolbarButton onClick={addImage} title='插入图片'>
-            <ImageIcon />
-          </ToolbarButton>
-        </div>
-
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
-
-        {/* Undo/Redo */}
-        <div className='flex items-center gap-1'>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().undo().run()}
-            disabled={!editor.can().undo()}
-            title='撤销 (Ctrl+Z)'
-          >
-            <UndoIcon />
-          </ToolbarButton>
-
-          <ToolbarButton
-            onClick={() => editor.chain().focus().redo().run()}
-            disabled={!editor.can().redo()}
-            title='重做 (Ctrl+Y)'
-          >
-            <RedoIcon />
-          </ToolbarButton>
-        </div>
-
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
-
-        {/* View Switcher */}
-        <div className='flex items-center gap-1'>
-          <ToolbarButton
-            onClick={() => onModeChange('rich')}
-            isActive={viewMode === 'rich'}
-            title='富文本'
-          >
-            Rich
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => onModeChange('html')}
-            isActive={viewMode === 'html'}
-            title='HTML'
-          >
-            HTML
-          </ToolbarButton>
-          {!process.env.NEXT_PUBLIC_DISABLE_WIKITEXT_EDITOR && (
-            <ToolbarButton
-              onClick={() => onModeChange('wiki')}
-              isActive={viewMode === 'wiki'}
-              title='WikiText'
-            >
-              WikiText (实验性功能)
-            </ToolbarButton>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+// inline Toolbar removed; using decoupled Toolbar component
 
 const RichTextEditor: React.FC<RichTextEditorProps> = ({
   content,
@@ -549,6 +35,22 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const [viewMode, setViewMode] = useState<'rich' | 'wiki' | 'html'>('rich');
   const [rawContent, setRawContent] = useState('');
+  const [toolbarState, setToolbarState] = useState<ToolbarState>({
+    bold: false,
+    italic: false,
+    underline: false,
+    strike: false,
+    code: false,
+    headingLevel: null,
+    bulletList: false,
+    orderedList: false,
+    textAlign: null,
+    blockquote: false,
+    codeBlock: false,
+    canUndo: false,
+    canRedo: false,
+    inTable: false,
+  });
 
   const editor = useEditor({
     extensions: [
@@ -613,6 +115,202 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     setRawContent(placeholder);
   }, [placeholder]);
 
+  // derive toolbar state on selection/transaction changes
+  useEffect(() => {
+    if (!editor) return;
+    let raf = 0 as number;
+    const compute = (): ToolbarState => {
+      let headingLevel: ToolbarState['headingLevel'] = null;
+      for (const level of [1, 2, 3] as const) {
+        if (editor.isActive('heading', { level })) {
+          headingLevel = level;
+          break;
+        }
+      }
+      let textAlign: ToolbarState['textAlign'] = null;
+      if (editor.isActive({ textAlign: 'left' })) textAlign = 'left';
+      else if (editor.isActive({ textAlign: 'center' })) textAlign = 'center';
+      else if (editor.isActive({ textAlign: 'right' })) textAlign = 'right';
+      return {
+        bold: editor.isActive('bold'),
+        italic: editor.isActive('italic'),
+        underline: editor.isActive('underline'),
+        strike: editor.isActive('strike'),
+        code: editor.isActive('code'),
+        headingLevel,
+        bulletList: editor.isActive('bulletList'),
+        orderedList: editor.isActive('orderedList'),
+        textAlign,
+        blockquote: editor.isActive('blockquote'),
+        codeBlock: editor.isActive('codeBlock'),
+        canUndo: editor.can().undo(),
+        canRedo: editor.can().redo(),
+        inTable:
+          editor.isActive('table') ||
+          editor.isActive('tableCell') ||
+          editor.isActive('tableHeader'),
+      };
+    };
+    const update = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => setToolbarState(compute()));
+    };
+    editor.on('selectionUpdate', update);
+    editor.on('transaction', update);
+    update();
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      editor.off('selectionUpdate', update);
+      editor.off('transaction', update);
+    };
+  }, [editor]);
+
+  // commands bound to editor
+  const transposeTable = useCallback(() => {
+    if (!editor) return;
+    const { state, view } = editor;
+    const { $from } = state.selection;
+    let tableDepth = -1;
+    for (let d = $from.depth; d >= 0; d--) {
+      const n = $from.node(d);
+      if (n && n.type && n.type.name === 'table') {
+        tableDepth = d;
+        break;
+      }
+    }
+    if (tableDepth === -1) return;
+    const tableNode = $from.node(tableDepth) as PMNode;
+    const startPos = $from.before(tableDepth);
+    const endPos = $from.after(tableDepth);
+    const rows: PMNode[][] = [];
+    let maxCols = 0;
+    let hasSpan = false;
+    tableNode.forEach((row: PMNode) => {
+      if (row.type.name !== 'tableRow') return;
+      const cells: PMNode[] = [];
+      row.forEach((cell: PMNode) => {
+        const name = cell.type.name;
+        if (name !== 'tableCell' && name !== 'tableHeader') return;
+        const colspanVal = (cell.attrs && (cell.attrs as Record<string, unknown>)['colspan']) as
+          | number
+          | undefined;
+        const rowspanVal = (cell.attrs && (cell.attrs as Record<string, unknown>)['rowspan']) as
+          | number
+          | undefined;
+        const colspan = typeof colspanVal === 'number' ? colspanVal : 1;
+        const rowspan = typeof rowspanVal === 'number' ? rowspanVal : 1;
+        if (colspan > 1 || rowspan > 1) {
+          hasSpan = true;
+        }
+        cells.push(cell);
+      });
+      maxCols = Math.max(maxCols, cells.length);
+      rows.push(cells);
+    });
+    if (hasSpan) {
+      window.alert('暂不支持包含合并单元格的表格进行转置');
+      return;
+    }
+    const schema = state.schema;
+    const tableRowType = schema.nodes.tableRow!;
+    const tableCellType = schema.nodes.tableCell!;
+    const tableHeaderType = schema.nodes.tableHeader!;
+    const paragraphType = schema.nodes.paragraph!;
+    if (!tableRowType || !tableCellType || !tableHeaderType || !paragraphType) {
+      window.alert('转置失败：编辑器表格节点类型不可用');
+      return;
+    }
+    const hasHeaderRow =
+      rows.length > 0 &&
+      rows[0] &&
+      rows[0]!.length > 0 &&
+      rows[0]!.every((c) => c && c.type === tableHeaderType);
+    const hasHeaderCol =
+      rows.length > 0 && rows.every((r) => r[0] && r[0]!.type === tableHeaderType);
+    const makeCellLike = (source: PMNode | undefined, forceHeader: boolean): PMNode => {
+      if (!source) {
+        const filled = tableCellType.createAndFill();
+        return filled ?? tableCellType.create({}, paragraphType.create());
+      }
+      if (forceHeader || source.type === tableHeaderType) {
+        return tableHeaderType.create(source.attrs ?? {}, source.content);
+      }
+      return tableCellType.create(source.attrs ?? {}, source.content);
+    };
+    const newRowNodes: PMNode[] = [];
+    for (let c = 0; c < maxCols; c++) {
+      const newCells: PMNode[] = [];
+      for (let r = 0; r < rows.length; r++) {
+        const sourceCell = rows[r]?.[c];
+        const forceHeader = c === 0 && (hasHeaderRow || hasHeaderCol);
+        newCells.push(makeCellLike(sourceCell, forceHeader));
+      }
+      const rowNode = tableRowType.create({}, newCells);
+      newRowNodes.push(rowNode);
+    }
+    const newTable = tableNode.type.create(tableNode.attrs ?? {}, newRowNodes);
+    const tr = state.tr.replaceWith(startPos, endPos, newTable);
+    view.dispatch(tr.scrollIntoView());
+  }, [editor]);
+
+  const addImage = useCallback(() => {
+    if (!editor) return;
+    const url = window.prompt('图片链接');
+    if (url) {
+      editor.chain().focus().setImage({ src: url }).run();
+    }
+  }, [editor]);
+
+  const addLink = useCallback(() => {
+    if (!editor) return;
+    const previousUrl = editor.getAttributes('link').href;
+    const url = window.prompt('链接地址', previousUrl);
+    if (url === null) return;
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
+    }
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  }, [editor]);
+
+  const commands: ToolbarCommands = {
+    toggleBold: useCallback(() => editor?.chain().focus().toggleBold().run(), [editor]),
+    toggleItalic: useCallback(() => editor?.chain().focus().toggleItalic().run(), [editor]),
+    toggleUnderline: useCallback(() => editor?.chain().focus().toggleUnderline().run(), [editor]),
+    toggleStrike: useCallback(() => editor?.chain().focus().toggleStrike().run(), [editor]),
+    toggleInlineCode: useCallback(() => editor?.chain().focus().toggleCode().run(), [editor]),
+    toggleHeading: useCallback(
+      (level: 1 | 2 | 3) => editor?.chain().focus().toggleHeading({ level }).run(),
+      [editor]
+    ),
+    toggleBulletList: useCallback(() => editor?.chain().focus().toggleBulletList().run(), [editor]),
+    toggleOrderedList: useCallback(
+      () => editor?.chain().focus().toggleOrderedList().run(),
+      [editor]
+    ),
+    setTextAlign: useCallback(
+      (alignment) => editor?.chain().focus().setTextAlign(alignment).run(),
+      [editor]
+    ),
+    insertTable: useCallback(
+      () => editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
+      [editor]
+    ),
+    toggleHeaderRow: useCallback(() => editor?.chain().focus().toggleHeaderRow().run(), [editor]),
+    transposeTable,
+    addRowAfter: useCallback(() => editor?.chain().focus().addRowAfter().run(), [editor]),
+    addColumnAfter: useCallback(() => editor?.chain().focus().addColumnAfter().run(), [editor]),
+    deleteRow: useCallback(() => editor?.chain().focus().deleteRow().run(), [editor]),
+    deleteColumn: useCallback(() => editor?.chain().focus().deleteColumn().run(), [editor]),
+    deleteTable: useCallback(() => editor?.chain().focus().deleteTable().run(), [editor]),
+    toggleBlockquote: useCallback(() => editor?.chain().focus().toggleBlockquote().run(), [editor]),
+    toggleCodeBlock: useCallback(() => editor?.chain().focus().toggleCodeBlock().run(), [editor]),
+    addLink,
+    addImage,
+    undo: useCallback(() => editor?.chain().focus().undo().run(), [editor]),
+    redo: useCallback(() => editor?.chain().focus().redo().run(), [editor]),
+  };
+
   const handleModeChange = (mode: 'rich' | 'wiki' | 'html') => {
     if (!editor) return;
 
@@ -658,7 +356,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <div className='border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 overflow-hidden'>
-      <Toolbar editor={editor} viewMode={viewMode} onModeChange={handleModeChange} />
+      <Toolbar
+        state={toolbarState}
+        commands={commands}
+        mode={viewMode}
+        onModeChange={handleModeChange}
+      />
       {viewMode === 'rich' ? (
         <EditorContent editor={editor} />
       ) : (
