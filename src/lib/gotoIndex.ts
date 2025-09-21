@@ -27,13 +27,9 @@ type Kind =
   | 'doc'
   | 'character-skill';
 
-type MatchType = 'name' | 'alias';
-
 export type IndexEntry = {
   kind: Kind;
-  matchType: MatchType;
   priority: number;
-  key: string;
   goto: GotoResult; // base result; skills don't include level fields yet
   // Skill enrichment metadata
   skillMeta?: {
@@ -110,17 +106,13 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(id), {
       kind: 'character',
-      matchType: 'name',
       priority: PRIORITY.character.name,
-      key: id,
       goto: base,
     });
     for (const alias of c.aliases ?? []) {
       push(byName, normalizeName(alias), {
         kind: 'character',
-        matchType: 'alias',
         priority: PRIORITY.character.alias,
-        key: alias,
         goto: base,
       });
     }
@@ -136,9 +128,8 @@ async function buildGotoIndex(): Promise<GotoIndex> {
         ownerName: c.id,
         ...(c.factionId ? { ownerFactionId: c.factionId } : {}),
       };
-      const entryBase: Omit<IndexEntry, 'key'> = {
+      const entryBase: IndexEntry = {
         kind: 'character-skill',
-        matchType: 'name',
         priority: PRIORITY['character-skill'].name,
         goto: skillGoto,
         skillMeta: {
@@ -148,13 +139,11 @@ async function buildGotoIndex(): Promise<GotoIndex> {
           ...(c.factionId ? { ownerFactionId: c.factionId } : {}),
         },
       };
-      push(byName, normalizeName(s.name), { ...entryBase, key: s.name });
+      push(byName, normalizeName(s.name), entryBase);
       for (const a of s.aliases ?? []) {
         push(byName, normalizeName(a), {
           ...entryBase,
-          matchType: 'alias',
           priority: PRIORITY['character-skill'].alias,
-          key: a,
         });
       }
     }
@@ -171,17 +160,13 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(name), {
       kind: 'itemGroup',
-      matchType: 'name',
       priority: PRIORITY.itemGroup.name,
-      key: name,
       goto,
     });
     for (const a of g.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'itemGroup',
-        matchType: 'alias',
         priority: PRIORITY.itemGroup.alias,
-        key: a,
         goto,
       });
     }
@@ -198,9 +183,7 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(id), {
       kind: 'card',
-      matchType: 'name',
       priority: PRIORITY.card.name,
-      key: id,
       goto,
     });
   }
@@ -216,17 +199,13 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(name), {
       kind: 'entity-cat',
-      matchType: 'name',
       priority: PRIORITY['entity-cat'].name,
-      key: name,
       goto,
     });
     for (const a of e.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'entity-cat',
-        matchType: 'alias',
         priority: PRIORITY['entity-cat'].alias,
-        key: a,
         goto,
       });
     }
@@ -241,17 +220,13 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(name), {
       kind: 'entity-mouse',
-      matchType: 'name',
       priority: PRIORITY['entity-mouse'].name,
-      key: name,
       goto,
     });
     for (const a of e.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'entity-mouse',
-        matchType: 'alias',
         priority: PRIORITY['entity-mouse'].alias,
-        key: a,
         goto,
       });
     }
@@ -268,17 +243,13 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(name), {
       kind: 'item',
-      matchType: 'name',
       priority: PRIORITY.item.name,
-      key: name,
       goto,
     });
     for (const a of it.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'item',
-        matchType: 'alias',
         priority: PRIORITY.item.alias,
-        key: a,
         goto,
       });
     }
@@ -296,9 +267,7 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(name), {
       kind: 'buff',
-      matchType: 'name',
       priority: PRIORITY.buff.name,
-      key: name,
       goto,
     });
   }
@@ -314,17 +283,13 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(name), {
       kind: 'special-skill-cat',
-      matchType: 'name',
       priority: PRIORITY['special-skill-cat'].name,
-      key: name,
       goto,
     });
     for (const a of s.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'special-skill-cat',
-        matchType: 'alias',
         priority: PRIORITY['special-skill-cat'].alias,
-        key: a,
         goto,
       });
     }
@@ -339,17 +304,13 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(name), {
       kind: 'special-skill-mouse',
-      matchType: 'name',
       priority: PRIORITY['special-skill-mouse'].name,
-      key: name,
       goto,
     });
     for (const a of s.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'special-skill-mouse',
-        matchType: 'alias',
         priority: PRIORITY['special-skill-mouse'].alias,
-        key: a,
         goto,
       });
     }
@@ -367,24 +328,19 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     };
     push(byName, normalizeName(page.slug), {
       kind: 'doc',
-      matchType: 'name',
       priority: PRIORITY.doc.name,
-      key: page.slug,
       goto,
     });
     push(byName, normalizeName(page.title), {
       kind: 'doc',
-      matchType: 'name',
       priority: PRIORITY.doc.name,
-      key: page.title,
       goto,
     });
   }
 
   // Sort lists by priority to keep selection deterministic
-  byName.forEach((list, k) => {
+  byName.forEach((list) => {
     (list as IndexEntry[]).sort((a: IndexEntry, b: IndexEntry) => a.priority - b.priority);
-    byName.set(k, list);
   });
 
   return { byName };
