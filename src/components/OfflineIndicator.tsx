@@ -6,7 +6,7 @@ import NotificationTooltip from './ui/NotificationTooltip';
 export const OfflineIndicator: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean | null>(null); // null for SSR
   const [showNotification, setShowNotification] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasOfflineRef = useRef(false);
 
   const clearNotificationTimeout = useCallback(() => {
