@@ -1,5 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
+// Maintainer note:
+// We dynamically deep-import createServerClient from @supabase/ssr to prevent the Edge
+// bundle from including browser/realtime code (which relies on Node APIs). This avoids
+// Edge runtime warnings. Package version is pinned in package.json for stability.
+
 export async function updateSession(request: NextRequest) {
   type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
   const { createServerClient }: { createServerClient: CreateServerClient } = await import(

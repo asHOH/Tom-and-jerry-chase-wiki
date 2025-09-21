@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "dev": "next dev",
-  "build": "node scripts/run-image-optimization.cjs && node scripts/generate-doc-pages.mjs && next build",
+    "build": "node scripts/run-image-optimization.cjs && node scripts/generate-doc-pages.mjs && next build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -67,7 +67,7 @@
     "@mdx-js/react": "^3.1.1",
     "@next/mdx": "^15.5.2",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@supabase/ssr": "^0.7.0",
+    "@supabase/ssr": "0.7.0",
     "@supabase/supabase-js": "^2.57.4",
     "@tiptap/core": "^3.4.2",
     "@tiptap/extension-code-block-lowlight": "^3.4.2",
