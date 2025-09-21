@@ -13,7 +13,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { getPositioningTagColors } from '@/lib/design-system';
 
 const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['正面效果', '负面效果', '其它效果'];
-const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['常规类', '全局类', '特殊类'];
+const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['基础类', '全局类', '特殊类'];
 
 export default function BuffClient() {
   // Multi-select state for filters
@@ -60,6 +60,33 @@ export default function BuffClient() {
         {/* Filter Controls */}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+          {/* 范围筛选 */}
+          <FilterRow<Buffclasslist>
+            label='范围筛选:'
+            options={ITEM_CLASS_OPTIONS}
+            isActive={(type) => selectedClasses.includes(type)}
+            onToggle={(type) =>
+              setSelectedClasses((prev) =>
+                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+              )
+            }
+            //*getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}*/
+            //Use PositioningTagColors to avoid creating new colorStyles
+            getButtonStyle={(name, active) => {
+              const isActive = active;
+              const tagColors = getPositioningTagColors(
+                { 基础类: '辅助', 全局类: '奶酪', 特殊类: '破局' }[name],
+                false,
+                false,
+                'mouse',
+                isDarkMode
+              );
+              return isActive ? { ...tagColors } : undefined;
+            }}
+            isDarkMode={isDarkMode}
+          />
+        </div>
+        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 类型筛选 */}
           <FilterRow<Bufftypelist>
             label='类型筛选:'
@@ -76,33 +103,6 @@ export default function BuffClient() {
               const isActive = active;
               const tagColors = getPositioningTagColors(
                 { 正面效果: '救援', 负面效果: '干扰', 其它效果: '砸墙' }[name],
-                false,
-                false,
-                'mouse',
-                isDarkMode
-              );
-              return isActive ? { ...tagColors } : undefined;
-            }}
-            isDarkMode={isDarkMode}
-          />
-        </div>
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
-          {/* 类型筛选 */}
-          <FilterRow<Buffclasslist>
-            label='类型筛选:'
-            options={ITEM_CLASS_OPTIONS}
-            isActive={(type) => selectedClasses.includes(type)}
-            onToggle={(type) =>
-              setSelectedClasses((prev) =>
-                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-              )
-            }
-            //*getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}*/
-            //Use PositioningTagColors to avoid creating new colorStyles
-            getButtonStyle={(name, active) => {
-              const isActive = active;
-              const tagColors = getPositioningTagColors(
-                { 常规类: '辅助', 全局类: '奶酪', 特殊类: '破局' }[name],
                 false,
                 false,
                 'mouse',

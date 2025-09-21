@@ -937,10 +937,10 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
  * Buff type color utility
  */
 export const getBuffTypeColors = (bufftype: string, isDarkMode: boolean) => {
-  const buffTypeColorMap: Record<string, 'disrupt' | 'rescue' | 'wallBreak'> = {
+  const buffTypeColorMap: Record<string, 'disrupt' | 'rescue' | 'support'> = {
     正面效果: 'rescue',
     负面效果: 'disrupt',
-    其它效果: 'wallBreak',
+    其它效果: 'support',
   };
   const buffType = buffTypeColorMap[bufftype] || 'lateGameMouse';
   const colorScheme =
@@ -952,9 +952,9 @@ export const getBuffTypeColors = (bufftype: string, isDarkMode: boolean) => {
   };
 };
 export const getBuffClassColors = (buffclass: string, isDarkMode: boolean) => {
-  const buffTypeColorMap: Record<string, 'support' | 'cheese' | 'breakthrough'> = {
-    常规类: 'support',
-    全局类: 'cheese',
+  const buffTypeColorMap: Record<string, 'cheese' | 'wallBreak' | 'breakthrough'> = {
+    基础类: 'cheese',
+    全局类: 'wallBreak',
     特殊类: 'breakthrough',
   };
   const buffType = buffTypeColorMap[buffclass] || 'lateGameMouse';

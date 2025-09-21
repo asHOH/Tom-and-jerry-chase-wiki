@@ -284,7 +284,7 @@ export type EntityDefinition = {
 export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };
 
 export type Bufftypelist = '正面效果' | '负面效果' | '其它效果';
-export type Buffclasslist = '常规类' | '全局类' | '特殊类';
+export type Buffclasslist = '基础类' | '全局类' | '特殊类';
 
 export type BuffDefinition = {
   bufftype: Bufftypelist;

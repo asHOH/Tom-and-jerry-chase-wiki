@@ -8,11 +8,11 @@ export const getBuffImageUrl = (name: string, buff: BuffDefinition): string => {
 };
 
 const buffDefinitions: Record<string, BuffDefinition> = {
-  //------------------------------常规类-------------------------------------/
+  //------------------------------基础类-------------------------------------/
   //------------------------------正面效果-------------------------------------/
   加速: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*加速*', '#*移速提高*', '提高*移速', '#*移速增加*', '#增加*移速'],
     description:
       '使移速提高指定百分比，但不超过[速度上限](游戏内所有物体在水平和竖直方向上的合速度均不能超过某一指定数值，目前测量该数值为2000/秒)。',
@@ -25,7 +25,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   提高跳跃高度: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#提高*跳跃?度', '#增加*跳跃?度', '#*跳跃?度提高*', '#*跳跃?度增加*'],
     description:
       '使跳跃高度提高指定百分比，但不超过[跳跃高度上限](游戏内所有物体在水平和竖直方向上的合速度均不能超过某一指定数值，目前测量该数值为2000/秒，又因为游戏内重力加速度为3000/秒，因此在默认重力情况下平跳的跳跃高度上限约为660)。\n另注：提高跳跃高度本质上是提高跳跃初速度，因此“提高跳跃高度”和“提高跳跃速度”的本质相同，但数值不同，可通过物理公式进行计算替换（即二者数值相同时，“提高跳跃高度”的效果要弱于“提高跳跃速度”，因为后者计算时需要平方）。',
@@ -38,7 +38,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   恢复: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*恢复*', '*回复*', '*回血*'],
     description:
       '分为瞬时和持续两种：使角色Hp立刻恢复一定数值，或是使Hp每隔一段时间（通常是每秒）恢复一定数值。',
@@ -49,7 +49,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   远视: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['提高*视野范围'],
     description: '使角色视野范围提高。',
     source: '通常由{远视药水}获得，也可由{警戒}等方式获得。',
@@ -59,7 +59,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   隐身: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     description: '使自身角色模型对敌方不可见，但从高处落地时产生的烟雾仍能被敌方看到。',
     source: '通常由{隐身药水}获得，也可由{隐身}等方式获得。',
     stack: '同类效果互不影响，但只会同时生效一个。',
@@ -68,7 +68,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   隐匿: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*隐匿*', '*隐藏*位置*'],
     description: '使角色不会因某些原因而显示在小地图上或发出声响提示。',
     source: '通常由{面粉袋}获得，此外也可由{1级愤怒的少女}等方式获得。',
@@ -78,7 +78,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   护盾: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     failure: '抵消指定类型状态时，或持续时间结束时。',
     description:
       '护盾能抵挡一次负面效果（例如{常规眩晕}或{虚弱}等）。部分护盾在抵挡指定类型的负面效果时不消耗层数。',
@@ -89,7 +89,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   无敌: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     description:
       '无敌期间能抵挡所有负面效果（例如{常规眩晕}或{虚弱}等）。该效果与{护盾}类似，但持续时间固定。',
     source:
@@ -100,7 +100,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   霸体: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*霸体'],
     description: '{免疫}部分状态效果。不同霸体效果免疫的范围不同，会单独进行注明。',
     detailedDescription:
@@ -112,34 +112,36 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   兴奋: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#攻击增伤', '攻击增伤提高', '攻击力提高*', '造成?伤害提高*', '#提高*攻击*'],
     description:
       '按固定值提高自身造成的指定类型伤害，或按百分比提高自身的基础攻击增伤。只会提高“受攻击增伤影响”的伤害，例如爪刀等。',
     source: '很多方式都能获得兴奋效果或提高攻击增伤，例如{兴奋药水}、{攻击战旗}、{1级越战越勇}等。',
-    stack: '通常来说，数值的固定值与百分比之间均为互相加算，而后作为一个整体带入伤害计算公式中。',
+    stack:
+      '通常来说，数值的固定值与百分比形式互相独立，各自加算，而后分别作为一个整体带入伤害计算公式中。',
     detailedStack:
-      '通常来说，数值的固定值与百分比之间均为互相加算，而后作为一个整体带入伤害计算公式中。\n\n以下为通用的伤害计算规则：\n受双方增减伤影响：实际伤害=[基础伤害+角色基础攻击增伤[ 角色基础攻击增伤本质是固定值攻击增伤，只因会受百分比攻击增伤影响而导致计算过程不同。]×(1+百分比攻击增伤)+固定值攻击增伤-固定值攻击减伤]×(1-百分比攻击减伤-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n受目标增减伤影响：实际伤害=基础伤害×(1-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n不受增减伤影响：实际伤害=基础伤害\n实际伤害最低为0，不会小于0。\n伤害转移效果在实际伤害计算完毕后再进行计算。',
+      '通常来说，数值的固定值与百分比形式互相独立，各自加算，而后分别作为一个整体带入伤害计算公式中。\n\n以下为通用的伤害计算规则：\n受双方增减伤影响：实际伤害=[基础伤害+角色基础攻击增伤[ 角色基础攻击增伤本质是固定值攻击增伤，只因会受百分比攻击增伤影响而导致计算过程不同。]×(1+百分比攻击增伤)+固定值攻击增伤-固定值攻击减伤]×(1-百分比攻击减伤-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n受目标增减伤影响：实际伤害=基础伤害×(1-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n不受增减伤影响：实际伤害=基础伤害\n实际伤害最低为0，不会小于0。\n伤害转移效果在实际伤害计算完毕后再进行计算。',
 
     unuseImage: true,
   },
   减伤: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['受到?伤害降低*', '受击减伤'],
     description: '按固定值或百分比降低自身受到的伤害。',
     detailedDescription:
       '按固定值或百分比降低自身受到的伤害。另外{削伤}又名攻击减伤，需与本词条指代的受击减伤进行区分。',
     source: '很多方式都能获得减伤，例如{天使翅膀}、{1级攻无不克}等。',
-    stack: '通常来说，数值的固定值与百分比之间均为互相加算，而后作为一个整体带入伤害计算公式中。',
+    stack:
+      '通常来说，数值的固定值与百分比形式互相独立，各自加算，而后分别作为一个整体带入伤害计算公式中。',
     detailedStack:
-      '通常来说，数值的固定值与百分比之间均为互相加算，而后作为一个整体带入伤害计算公式中。\n\n以下为通用的伤害计算规则：\n受双方增减伤影响：实际伤害=[基础伤害+角色基础攻击增伤[ 角色基础攻击增伤本质是固定值攻击增伤，只因会受百分比攻击增伤影响而导致计算过程不同。]×(1+百分比攻击增伤)+固定值攻击增伤-固定值攻击减伤]×(1-百分比攻击减伤-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n受目标增减伤影响：实际伤害=基础伤害×(1-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n不受增减伤影响：实际伤害=基础伤害\n实际伤害最低为0，不会小于0。\n伤害转移效果在实际伤害计算完毕后再进行计算。',
+      '通常来说，数值的固定值与百分比形式互相独立，各自加算，而后分别作为一个整体带入伤害计算公式中。\n\n以下为通用的伤害计算规则：\n受双方增减伤影响：实际伤害=[基础伤害+角色基础攻击增伤[ 角色基础攻击增伤本质是固定值攻击增伤，只因会受百分比攻击增伤影响而导致计算过程不同。]×(1+百分比攻击增伤)+固定值攻击增伤-固定值攻击减伤]×(1-百分比攻击减伤-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n受目标增减伤影响：实际伤害=基础伤害×(1-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n不受增减伤影响：实际伤害=基础伤害\n实际伤害最低为0，不会小于0。\n伤害转移效果在实际伤害计算完毕后再进行计算。',
 
     unuseImage: true,
   },
   效果转移: {
     bufftype: '正面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#*转移*'],
     description:
       '将友方受到的效果（例如伤害或{常规眩晕}等）改为由自身和友方共同分担。伤害和控制的效果转移分别结算，可出现[重复结算](部分控制效果附带伤害，由于伤害和控制是分别转移的，因而导致转移了2次伤害和1次控制)。',
@@ -155,7 +157,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   //------------------------------负面效果-------------------------------------/
   受伤: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     duration: 'infinite',
     description:
       '自身[基础Hp恢复](不包括其它来源的恢复效果)强制归零，且{移速降低5%}。其它老鼠可通过交互键治疗受伤的老鼠，成功治疗时获得少量经验。',
@@ -166,7 +168,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   减速: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*减速*', '#*移速降低*', '降低*移速', '#*移速减少*', '#减少*移速'],
     description: '使移速降低指定百分比。',
     source: '很多方式都能获得减速，例如{果子}、{威压}、{2级捣蛋鬼}等。',
@@ -178,7 +180,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   降低跳跃高度: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#降低*跳跃?度', '#减少*跳跃?度', '#*跳跃?度降低*', '#*跳跃?度减少*'],
     description:
       '使跳跃高度降低指定百分比。\n另注：降低跳跃高度本质上是降低跳跃初速度，因此“降低跳跃高度”和“降低跳跃速度”的本质相同，但数值不同，可通过物理公式进行计算替换（即二者数值相同时，“降低跳跃高度”的效果要弱于“降低跳跃速度”，因为后者计算时需要平方）。',
@@ -191,7 +193,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   反向: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*反向'],
     description:
       '使左右移动键的效果互换，且通常具有使角色视野以一定规律进行扭曲的效果。跳跃和（拥有飞行能力的角色的）上下移动不受影响。',
@@ -202,7 +204,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   失明: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*失明', '*致盲'],
     description:
       '使角色视野范围缩小至自身周围极小的一圈，未特殊注明时，失明同时具有{禁用小地图键}的效果。',
@@ -213,9 +215,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   虚弱: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*虚弱'],
-    duration: 10,
     description:
       '无法使用技能和道具，鼠虚弱期间获得高额{减速}及{跳跃高度降低}，且可被{抓起}，持续10秒；猫虚弱期间无法移动、跳跃，且额外获得50Hp/秒的恢复效果。该效果结束时获得短暂{无敌}。',
     source: '鼠角色Hp小于0时自动进入虚弱，并重置自身Hp为0。部分效果结束时也会触发虚弱。',
@@ -227,7 +228,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   持续受到伤害: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#*持续*伤*'],
     description: '角色每隔一段时间（通常是每秒）受到一定数值的伤害。',
     source: '很多方式都能获得持续伤害效果，例如{垃圾桶(衍生物)}、{牛仔吉他}等。',
@@ -237,7 +238,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   视野范围降低: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#*近视*', '#*降低视野范围*', '视野范围降低*'],
     description: '使角色视野范围提高。',
     source:
@@ -248,7 +249,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   眩晕: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     description:
       '无法移动、跳跃、使用技能和道具。未特殊标注时，眩晕同时具有{击落手中道具/老鼠}的效果。{硬直}、{冰冻}、{爆炸}、{电击}、{被拍扁}等状态属于眩晕，但特性有所不同。',
     source: '很多方式都能造成眩晕，例如{花瓶}、{金币}、{大铁锤}等。',
@@ -259,7 +260,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   硬直: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['眩晕'],
     description:
       '无法移动、跳跃、使用技能和道具。与{眩晕}不同的是，硬直通常没有{击落手中道具/老鼠}的效果。硬直属于{眩晕}，但特性有所不同。',
@@ -271,7 +272,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   冰冻: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['眩晕'],
     description:
       '无法移动、跳跃、使用技能和道具。未特殊标注时，冰冻同时具有{击落手中道具/老鼠}的效果。冰冻属于{眩晕}。',
@@ -283,7 +284,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   爆炸: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['眩晕'],
     description:
       '无法移动、跳跃、使用技能和道具。未特殊标注时，爆炸同时具有{击落手中道具/老鼠}的效果。爆炸属于{眩晕}。',
@@ -295,7 +296,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   电击: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['眩晕'],
     description:
       '无法移动、跳跃、使用技能和道具，并**叠加**一层{感电}（感电会使电系伤害增加）。未特殊标注时，电击同时具有{击落手中道具/老鼠}的效果。电击属于{眩晕}，但特性有所不同。',
@@ -307,7 +308,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   拍扁: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['眩晕', '#被拍扁'],
     description:
       '无法移动、跳跃、使用技能和道具，且{可被直接抓起}。未特殊标注时，被拍扁同时具有{击落手中道具/老鼠}的效果。被拍扁属于{眩晕}，但特性有所不同。',
@@ -319,7 +320,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   夹住: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#被夹住'],
     description:
       '无法移动、跳跃、使用技能和道具，只有通过挣扎键增加挣扎进度条，进度条充满时才能挣脱。未特殊标注时，被夹住同时具有{击落手中道具/老鼠}的效果。被夹住属于{眩晕}，但特性有所不同。',
@@ -330,7 +331,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   抓起: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#被抓起'],
     description:
       '无法移动、跳跃、使用技能和道具，并{掉落手中道具}，只有通过挣扎键增加挣扎进度条，进度条充满时才能挣脱。',
@@ -341,7 +342,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   绑上火箭: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#被绑上火箭'],
     description:
       '被绑上火箭的老鼠无法移动、跳跃、使用技能和道具，同时以1/秒的基础速度减少自身所在火箭的倒计时；每隔一段时间可通过挣扎键增加挣扎进度条，进度条充满时根据挣扎类型触发+5秒/+10秒/[直接挣脱](现版本只能通过“幸运”或梦游杰瑞-1级“梦中乐园”触发)的效果。绑上火箭时会自动触发{火箭引线长度缩短10秒}的效果。',
@@ -351,8 +352,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   放飞: {
     bufftype: '负面效果',
-    buffclass: '常规类',
-    aliases: ['#被放飞'],
+    buffclass: '基础类',
+    aliases: ['#被放飞', '*起飞'],
     description: '一次性效果。使鼠方角色离开游戏。在经典模式中，猫咪使3只老鼠被放飞即可取得胜利。',
     source: '通常由{火箭}造成，此外也可由{天堂火箭}等方式造成。',
 
@@ -360,34 +361,35 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   易伤: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['受到?伤害提高*', '受击增伤'],
     description: '按固定值提高自身受到的伤害。',
     detailedDescription: '按固定值提高自身受到的伤害。',
     source: '{托普斯分身}。',
     stack: '由于易伤目前只有一种来源，因此不考虑叠加特性。',
     detailedStack:
-      '通常来说，数值的固定值与百分比之间均为互相加算，而后作为一个整体带入伤害计算公式中。\n\n以下为通用的伤害计算规则：\n受双方增减伤影响：实际伤害=[基础伤害+角色基础攻击增伤[ 角色基础攻击增伤本质是固定值攻击增伤，只因会受百分比攻击增伤影响而导致计算过程不同。]×(1+百分比攻击增伤)+固定值攻击增伤-固定值攻击减伤]×(1-百分比攻击减伤-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n受目标增减伤影响：实际伤害=基础伤害×(1-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n不受增减伤影响：实际伤害=基础伤害\n实际伤害最低为0，不会小于0。\n伤害转移效果在实际伤害计算完毕后再进行计算。',
+      '通常来说，数值的固定值与百分比形式互相独立，各自加算，而后分别作为一个整体带入伤害计算公式中。\n\n以下为通用的伤害计算规则：\n受双方增减伤影响：实际伤害=[基础伤害+角色基础攻击增伤[ 角色基础攻击增伤本质是固定值攻击增伤，只因会受百分比攻击增伤影响而导致计算过程不同。]×(1+百分比攻击增伤)+固定值攻击增伤-固定值攻击减伤]×(1-百分比攻击减伤-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n受目标增减伤影响：实际伤害=基础伤害×(1-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n不受增减伤影响：实际伤害=基础伤害\n实际伤害最低为0，不会小于0。\n伤害转移效果在实际伤害计算完毕后再进行计算。',
 
     unuseImage: true,
   },
   削伤: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['造成?伤害降低*', '攻击减伤'],
     description: '按固定值或百分比降低自身造成的伤害。',
     detailedDescription:
       '按固定值或百分比降低自身造成的伤害。另外削伤又名攻击减伤，需与{减伤}指代的受击减伤进行区分。',
     source: '{2级垃圾盖}、{守株待鼠}、{2级必备专业素养}等。',
-    stack: '通常来说，数值的固定值与百分比之间均为互相加算，而后作为一个整体带入伤害计算公式中。',
+    stack:
+      '通常来说，数值的固定值与百分比形式互相独立，各自加算，而后分别作为一个整体带入伤害计算公式中。',
     detailedStack:
-      '通常来说，数值的固定值与百分比之间均为互相加算，而后作为一个整体带入伤害计算公式中。\n\n以下为通用的伤害计算规则：\n受双方增减伤影响：实际伤害=[基础伤害+角色基础攻击增伤[ 角色基础攻击增伤本质是固定值攻击增伤，只因会受百分比攻击增伤影响而导致计算过程不同。]×(1+百分比攻击增伤)+固定值攻击增伤-固定值攻击减伤]×(1-百分比攻击减伤-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n受目标增减伤影响：实际伤害=基础伤害×(1-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n不受增减伤影响：实际伤害=基础伤害\n实际伤害最低为0，不会小于0。\n伤害转移效果在实际伤害计算完毕后再进行计算。',
+      '通常来说，数值的固定值与百分比形式互相独立，各自加算，而后分别作为一个整体带入伤害计算公式中。\n\n以下为通用的伤害计算规则：\n受双方增减伤影响：实际伤害=[基础伤害+角色基础攻击增伤[ 角色基础攻击增伤本质是固定值攻击增伤，只因会受百分比攻击增伤影响而导致计算过程不同。]×(1+百分比攻击增伤)+固定值攻击增伤-固定值攻击减伤]×(1-百分比攻击减伤-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n受目标增减伤影响：实际伤害=基础伤害×(1-百分比受击减伤)+固定值受击增伤-固定值受击减伤\n不受增减伤影响：实际伤害=基础伤害\n实际伤害最低为0，不会小于0。\n伤害转移效果在实际伤害计算完毕后再进行计算。',
 
     unuseImage: true,
   },
   可被直接抓起: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['#直接抓起'],
     description: '猫咪使用爪刀命中可被直接抓起的老鼠时，会将其{抓起}。',
     source:
@@ -397,7 +399,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   掉落物品: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*击落*', '*掉落*'],
     description: '一次性效果。使角色手中的指定物品（例如道具/老鼠）掉落。',
     source:
@@ -407,7 +409,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   禁用效果: {
     bufftype: '负面效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*禁用*', '*无法使用*', '沉默'],
     description:
       '使角色的某些键位变为无法使用，例如技能键、道具键、爪刀键等。注：禁用小地图键时，小地图键会直接隐藏，无法查看。\n另外，禁用技能键的效果俗称“沉默”，禁用爪刀键的效果俗称“缴械”。',
@@ -420,7 +422,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   //------------------------------其它效果-------------------------------------/
   感电: {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     duration: 9.9,
     description:
       '使受到的电击伤害增加，可叠加。感电结束时获得{电免疫}，免疫电击伤害。感电持续期间接触部分水地形会触发电爆，提前结束感电效果并对周围所有角色造成短暂{电击}和电击伤害。',
@@ -433,7 +435,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   电免疫: {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     duration: 4.9,
     description: '免疫电击和电击伤害。',
     source: '{感电}结束时自动获得。',
@@ -442,7 +444,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   '失重/超重': {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     description:
       '改变自身受到的重力加速度，以提高/降低跳跃高度。特别地，“完全失重”指的是将自身受到的重力加速度变为0。',
     detailedDescription:
@@ -454,7 +456,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   变身: {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*变身*'],
     description:
       '变身为指定类型的衍生物。变身分为两种：一种是通过对自身施加变身状态进行变身，另一种是使自身{模型消失}，从而操纵另一种指定类型的衍生物。变身效果的优先级很高，通常不会因{霸体}、{虚弱}等效果而{免疫}。',
@@ -470,7 +472,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   模型消失: {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     description: '使自身模型隐藏，且不再与其他道具产生碰撞，但仍能被少部分范围类效果影响。',
     source:
       '模型消失效果在各处广泛存在，包括钻管道时，进行第三段{骑士连斩}时，触发部分{变身}效果时，被{抓起}或被{放飞}后，诸如此类。',
@@ -479,7 +481,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   传送: {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     description:
       '使自身瞬间到达指定位置，且通常会立刻切换到对应位置的视野。传送不受[速度上限](游戏内所有物体在水平和竖直方向上的合速度均不能超过某一指定数值，目前测量该数值为2000/秒)影响。',
     source:
@@ -489,7 +491,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   强制牵引: {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     description: '使指定目标向指定方向强制移动。',
     detailedDescription: '使指定目标向指定方向强制移动。',
     source: '少部分技能拥有该效果，例如{牛仔鞭索}、{猎}、{尼宝的朋友}等。',
@@ -498,8 +500,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   交互速度改变: {
     bufftype: '其它效果',
-    buffclass: '常规类',
-    aliases: ['*速度*'],
+    buffclass: '基础类',
+    aliases: ['#*推??速度*', '#*挣*速度*', '#*救援*速度*'],
     description: '使所有或指定类型的交互速度进行改变。',
     source: '交互速度改变效果在各处广泛存在，例如{救救我}、{煎蛋}等。',
     stack: '所有百分比加速/减速效果均为**乘算叠加**。',
@@ -510,7 +512,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   清除效果: {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*清除*', '*解除*'],
     description: '一次性效果。若目标角色身上有指定类型的状态效果，则使对应效果立刻结束。',
     source:
@@ -520,7 +522,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   免疫效果: {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     aliases: ['*免疫*'],
     description: '免疫指定类型的状态效果。',
     source:
@@ -531,7 +533,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   害怕: {
     bufftype: '其它效果',
-    buffclass: '常规类',
+    buffclass: '基础类',
     description: '仅用于提示房间内有猫咪，无其他作用。',
     source:
       '老鼠与猫咪身处同一房间内时，老鼠会出现害怕动作。当老鼠手持道具原地站立/猫或老鼠有{隐身}或{隐匿}效果时，老鼠暂时不会出现害怕动作。',
@@ -545,7 +547,6 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     aliases: ['*伤害保护*'],
     duration: 1,
     description: '每层该效果使受到的伤害降低20%。（注意：该效果的叠加方式与{减伤}不同）',
-    detailedDescription: '按固定值提高自身受到的伤害。',
     source: '每当**猫咪**受到伤害时，均会获得一层该效果。',
     stack:
       '可叠加，每次叠加重置持续时间。当存在多层本效果时，先进行**乘算**后再作为一个独立的{减伤}参与伤害计算。',
@@ -569,7 +570,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     bufftype: '正面效果',
     buffclass: '全局类',
     failure: '结束推奶酪状态时',
-    description: '使自身获得{12%减伤}。',
+    description: '使自身获得12%的{减伤}。',
     source: '**老鼠**在推奶酪时自动获得该效果。',
 
     unuseImage: true,
@@ -586,9 +587,10 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   全局推速降低: {
     bufftype: '负面效果',
     buffclass: '全局类',
-    failure: '游戏进行到第3分钟时自动解除',
-    description: '使自身{推奶酪速度降低20%}。（注：本网站的角色基础推速已计入该状态的效果）。',
-    source: '在经典模式的前3分钟内，所有**老鼠**均会受到该效果影响。',
+    description:
+      '有2个同类效果：\n1.对局前3分钟内：使自身{推奶酪速度降低20%}。（注：本网站的角色基础推速已计入该状态的效果）。\n2.有队友被绑上火箭：使自身{推奶酪速度降低10%}。',
+    source: '在经典模式的前3分钟内，或有队友被绑上火箭时，所有**老鼠**均会受到该效果影响。',
+    stack: '两种全局推速降低效果可叠加生效，此类效果均为乘算。',
 
     unuseImage: true,
   },
@@ -636,7 +638,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   阻止火箭放飞: {
     bufftype: '其它效果',
     buffclass: '特殊类',
-    aliases: ['阻止火箭起飞', '阻止*飞'],
+    aliases: ['阻止火箭起飞', '#阻止*飞'],
     description:
       '使{火箭}引线燃烧至0时也不{起飞}，但通常无法阻止经典之家-杂货间炸药堆等方式导致的强制放飞。',
     source: '部分技能效果能造成阻滞火箭放飞的效果，例如{兔子大表哥}、{友情庇护}等。',
