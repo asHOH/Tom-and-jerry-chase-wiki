@@ -75,7 +75,7 @@ export default function BuffClient() {
             getButtonStyle={(name, active) => {
               const isActive = active;
               const tagColors = getPositioningTagColors(
-                { 正面效果: '救援', 负面效果: '干扰', 其它效果: '辅助' }[name],
+                { 正面效果: '救援', 负面效果: '干扰', 其它效果: '砸墙' }[name],
                 false,
                 false,
                 'mouse',
