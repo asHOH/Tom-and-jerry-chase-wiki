@@ -42,9 +42,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
   } = props;
 
   return (
-    <div
-      className={clsx(`flex justify-center items-center md:gap-2 md:mt-4 gap-4 mt-8`, className)}
-    >
+    <div className={clsx(`flex justify-center items-center gap-2 mt-4`, className)}>
       <FilterLabel displayMode='inline'>{label}</FilterLabel>
       <FilterLabel displayMode='block'>筛选:</FilterLabel>
       {/* <div className='w-full md:w-32 text-left'>
