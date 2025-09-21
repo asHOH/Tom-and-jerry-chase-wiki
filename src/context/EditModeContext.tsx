@@ -1,6 +1,7 @@
 'use client';
 
 import { characters, factions } from '@/data';
+import { proxy } from 'valtio';
 import { GameDataManager } from '@/lib/dataManager';
 import { usePathname } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -54,7 +55,8 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
       const originalCharacters = GameDataManager.getCharacters();
       const originalFactions = GameDataManager.getFactions();
       for (const [key, value] of Object.entries(originalCharacters)) {
-        characters[key] = value;
+        // Keep nested entries as proxies to support useSnapshot on sub-objects
+        characters[key] = proxy(value);
       }
       for (const key of Object.keys(characters)) {
         if (!originalCharacters[key]) {
@@ -69,6 +71,8 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
           delete factions[key];
         }
       }
+      // Restore caches to canonical data
+      GameDataManager.invalidate();
     }
   };
 

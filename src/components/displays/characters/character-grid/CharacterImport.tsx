@@ -12,6 +12,8 @@ import { AssetManager } from '@/lib/assetManager';
 import { useParams } from 'next/navigation';
 import { processCharacters } from '@/lib/skillIdUtils';
 import { useAppContext } from '@/context/AppContext';
+import { GameDataManager } from '@/lib/dataManager';
+import { proxy } from 'valtio';
 
 function handleUploadedData(
   data: string,
@@ -48,7 +50,10 @@ function handleUploadedData(
   newCharacters = processCharacters(newCharacters) as Record<string, CharacterWithFaction>;
 
   // Update the global characters object
-  Object.assign(characters, newCharacters);
+  for (const [id, value] of Object.entries(newCharacters)) {
+    // Use proxies so sub-reads via useSnapshot work on nested structures
+    characters[id] = proxy(value);
+  }
 
   for (const character of Object.values(newCharacters)) {
     const faction = factions[factionId]!.characters.find(({ id }) => id == character.id);
@@ -66,6 +71,7 @@ function handleUploadedData(
   }
 
   // Trigger success callback - no reload needed, let's see if UI updates automatically
+  GameDataManager.invalidate({ characters: true, factions: true });
   onImportSuccess(importedNames);
 }
 

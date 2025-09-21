@@ -2,7 +2,7 @@ import { catCharactersWithImages } from '@/data/catCharacters';
 import { mouseCharactersWithImages } from '@/data/mouseCharacters';
 import { catCardsWithImages } from '@/data/catKnowledgeCards';
 import { mouseCardsWithImages } from '@/data/mouseKnowledgeCards';
-import { FactionId, Faction, Character } from '@/data/types';
+import { FactionId, Faction, Character, Card, PositioningTag } from '@/data/types';
 
 // Raw data aggregation
 const rawCharacterData = {
@@ -58,12 +58,76 @@ export class GameDataManager {
     );
   }
 
-  static getFactions() {
-    return this.getFactionsWithCharacters(rawCharacterData);
+  // Module-scoped caches (lazy-initialized)
+  private static _charactersCache: Readonly<
+    Record<string, Character & { imageUrl: string; faction: { id: FactionId; name: string } }>
+  > | null = null;
+  private static _cardsCache: Readonly<
+    Record<string, Card & { imageUrl: string; faction: { id: FactionId; name: string } }>
+  > | null = null;
+  private static _factionsCache: Readonly<
+    Record<
+      string,
+      Faction & {
+        characters: Array<{
+          id: string;
+          name: string;
+          imageUrl: string;
+          positioningTags: PositioningTag[];
+        }>;
+      }
+    >
+  > | null = null;
+
+  /**
+   * Clear memoized caches. If no options provided, clears all.
+   */
+  static invalidate(opts?: { characters?: boolean; cards?: boolean; factions?: boolean }) {
+    const all = !opts || (!opts.characters && !opts.cards && !opts.factions);
+    if (all || opts?.characters) {
+      this._charactersCache = null;
+      // Factions depend on characters; clear as well
+      this._factionsCache = null;
+    }
+    if (all || opts?.cards) this._cardsCache = null;
+    if (all || opts?.factions) this._factionsCache = null;
   }
 
-  static getCharacters() {
-    return Object.fromEntries(
+  static getFactions(): Readonly<
+    Record<
+      string,
+      Faction & {
+        characters: Array<{
+          id: string;
+          name: string;
+          imageUrl: string;
+          positioningTags: PositioningTag[];
+        }>;
+      }
+    >
+  > {
+    if (this._factionsCache) return this._factionsCache;
+    const characters = this.getCharacters();
+    const built = this.getFactionsWithCharacters(characters);
+    this._factionsCache = built as Record<
+      string,
+      Faction & {
+        characters: Array<{
+          id: string;
+          name: string;
+          imageUrl: string;
+          positioningTags: PositioningTag[];
+        }>;
+      }
+    >;
+    return this._factionsCache!;
+  }
+
+  static getCharacters(): Readonly<
+    Record<string, Character & { imageUrl: string; faction: { id: FactionId; name: string } }>
+  > {
+    if (this._charactersCache) return this._charactersCache;
+    const built = Object.fromEntries(
       Object.entries(rawCharacterData).map(([characterId, character]) => {
         const factionId = character.factionId as FactionId;
         const faction = rawFactionData[factionId];
@@ -78,10 +142,18 @@ export class GameDataManager {
         ];
       })
     );
+    this._charactersCache = built as Record<
+      string,
+      Character & { imageUrl: string; faction: { id: FactionId; name: string } }
+    >;
+    return this._charactersCache!;
   }
 
-  static getCards() {
-    return Object.fromEntries(
+  static getCards(): Readonly<
+    Record<string, Card & { imageUrl: string; faction: { id: FactionId; name: string } }>
+  > {
+    if (this._cardsCache) return this._cardsCache;
+    const built = Object.fromEntries(
       Object.entries(rawCardData).map(([cardId, card]) => {
         const factionId = card.factionId as FactionId;
         const faction = rawFactionData[factionId];
@@ -96,6 +168,11 @@ export class GameDataManager {
         ];
       })
     );
+    this._cardsCache = built as Record<
+      string,
+      Card & { imageUrl: string; faction: { id: FactionId; name: string } }
+    >;
+    return this._cardsCache!;
   }
 
   /**
