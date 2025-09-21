@@ -105,11 +105,17 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
+  // Ensure client-only UI matches server HTML on first paint
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const isMobile = useMobile();
   const { nickname, role, clearData: clearUserData } = useUser();
   const { isEditMode } = useEditMode();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Reset navigation state when pathname changes
   useEffect(() => {
@@ -281,8 +287,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               </div>
             </Tooltip>
           )}
-          {/* User Settings Dropdown */}
-          {!!nickname && (
+          {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
+          {mounted && !!nickname && (
             <div className='relative'>
               <button
                 type='button'
