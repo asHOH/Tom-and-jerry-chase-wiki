@@ -105,7 +105,7 @@ export const CATEGORY_HINTS = [
   '道具',
   '衍生物',
   '技能',
-  '状态效果',
+  '状态',
   '道具组',
 ] as const;
 export type CategoryHint = (typeof CATEGORY_HINTS)[number];

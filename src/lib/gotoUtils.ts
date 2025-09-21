@@ -108,7 +108,7 @@ export async function getGotoResult(
       imageUrl: item!.imageUrl,
     };
   }
-  if ((!normalizedCategory || normalizedCategory === '状态效果') && name in buffs) {
+  if ((!normalizedCategory || normalizedCategory === '状态') && name in buffs) {
     const buff = buffs[name];
     return {
       url: `/buffs/${encodeURIComponent(name)}`,

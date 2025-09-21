@@ -108,11 +108,11 @@ export default function HomeContentClient({ description }: Props) {
     },
     {
       imageSrc: '/images/icons/buff.png',
-      imageAlt: '状态效果图标',
-      title: '状态效果',
-      description: '状态效果列表',
+      imageAlt: '状态图标',
+      title: '状态',
+      description: '状态列表',
       href: '/buffs',
-      ariaLabel: '状态效果列表',
+      ariaLabel: '状态列表',
     },
     // {
     //   imageSrc: '/images/icons/cat faction.png',

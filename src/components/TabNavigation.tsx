@@ -89,9 +89,9 @@ const tabs: Tab[] = [
   },
   {
     id: 'buffs',
-    name: '状态效果',
+    name: '状态',
     imageSrc: '/images/icons/buff.png',
-    imageAlt: '状态效果图标',
+    imageAlt: '状态图标',
     path: '/buffs',
   },
 ];
