@@ -213,7 +213,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   //ToDo: add 汽水冰面
   胡椒粉罐头: {
-    entitytype: '道具类',
+    entitytype: ['道具类', '投射物'],
     characterName: '米特',
     skillname: '胡椒粉罐头',
     aliases: ['胡椒粉', '胡椒罐'],
@@ -305,7 +305,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过凯特-追求者出击召唤。',
   },
   百科全书: {
-    entitytype: '投射物',
+    entitytype: ['投射物', '召唤物'],
     characterName: '凯特',
     skillname: '知识即力量',
     aliases: ['书', '书籍'],
