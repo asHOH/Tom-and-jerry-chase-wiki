@@ -9,10 +9,35 @@ import { designTokens } from '@/lib/design-tokens';
 
 export default function EntityCardDisplay({ entity }: { entity: Entity }) {
   const [isDarkMode] = useDarkMode();
-  const typeColors = getEntityTypeColors(entity.entitytype, isDarkMode);
+  //const typeColors = getEntityTypeColors(entity.entitytype, isDarkMode)
   const isMobile = useMobile();
-  // const damageColors = getCardCostColors(entity.damage ?? 0, false, isDarkMode);
-  // const wallDamageColors = getCardCostColors(entity.walldamage ?? 0, false, isDarkMode);
+
+  function putTypeTagOn(entity: Entity) {
+    if (typeof entity.entitytype === 'string') {
+      return (
+        <Tag
+          size='xs'
+          margin='compact'
+          colorStyles={getEntityTypeColors(entity.entitytype, isDarkMode)}
+        >
+          {entity.entitytype}
+        </Tag>
+      );
+    } else {
+      return entity.entitytype.map((type) => {
+        return (
+          <Tag
+            size='xs'
+            margin='compact'
+            colorStyles={getEntityTypeColors(type, isDarkMode)}
+            key={type}
+          >
+            {type}
+          </Tag>
+        );
+      });
+    }
+  }
 
   return (
     <BaseCard variant='item' aria-label={`查看${entity.name}衍生物详情`}>
@@ -23,9 +48,9 @@ export default function EntityCardDisplay({ entity }: { entity: Entity }) {
         className='hover:scale-105'
         useShortHeight={isMobile ? true : false}
       />
-      <div className='px-3 pt-1 pb-3 text-center w-full'>
+      <div className={`${isMobile ? '' : 'px-3'} pt-1 pb-3 text-center w-full`}>
         <h3
-          className={`${isMobile && entity.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
+          className={`${isMobile && entity.name.length >= 6 ? 'text-md' : 'text-lg mb-1'} font-bold text-gray-800 dark:text-white`}
           style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
         >
           {entity.name}
@@ -35,9 +60,7 @@ export default function EntityCardDisplay({ entity }: { entity: Entity }) {
           role='group'
           aria-label='衍生物属性'
         >
-          <Tag size='xs' margin='compact' colorStyles={typeColors}>
-            {isMobile ? entity.entitytype.slice(0, 3) : entity.entitytype}
-          </Tag>
+          {putTypeTagOn(entity)}
         </div>
       </div>
     </BaseCard>

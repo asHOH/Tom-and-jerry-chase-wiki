@@ -256,15 +256,15 @@ export type Item = ItemDefinition & { name: string; imageUrl: string };
 
 export type Entitytypelist =
   | '道具类'
-  | '投射物类'
-  | '召唤物类'
+  | '投射物'
+  | '召唤物'
   | '平台类'
-  | 'NPC类'
+  | 'NPC'
   | '变身类'
-  | '指示类';
+  | '指示物';
 
 export type EntityDefinition = {
-  entitytype: Entitytypelist; //type of entity
+  entitytype: Entitytypelist | Entitytypelist[]; //type of entity
   characterName: string; //which character does this entity belong to
   skillname?: string; //which skill does this entity belong to
   aliases?: string[]; // (entities') Alternative names for search

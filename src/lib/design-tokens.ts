@@ -1125,12 +1125,12 @@ export const getEntityTypeColors = (entitytype: string, isDarkMode: boolean) => 
     'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese' | 'lateGameMouse'
   > = {
     道具类: 'rescue',
-    投射物类: 'support',
-    召唤物类: 'breakthrough',
+    投射物: 'support',
+    召唤物: 'breakthrough',
     平台类: 'wallBreak',
-    NPC类: 'disrupt',
+    NPC: 'disrupt',
     变身类: 'cheese',
-    指示类: 'lateGameMouse',
+    指示物: 'lateGameMouse',
   };
   const skillType = entityTypeColorMap[entitytype] || 'lateGameMouse';
   const colorScheme =
