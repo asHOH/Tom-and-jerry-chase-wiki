@@ -2,7 +2,6 @@
 
 import { buffs, type Skill } from '@/data';
 import type { GotoResult, CategoryHint } from '@/lib/types';
-import { stringMatch } from './stringMatch';
 import { ensureGotoIndex, normalizeCategoryHint, normalizeName } from './gotoIndex';
 
 /**
@@ -63,7 +62,12 @@ export async function getGotoResult(
   }
 
   // Fuzzy buff alias fallback (preserve existing behavior)
-  const fuzzyBuff = Object.values(buffs).find((i) => i.aliases?.find((n) => stringMatch(n, name)));
+  // substitude RegExp for stringMatch()，RegExp identifier is '#' or '%'
+  const fuzzyBuff = Object.values(buffs).find((i) =>
+    i.aliases?.find((n) =>
+      ['#', '%'].includes(n[0] || '') ? RegExp(n.slice(1)).test(name) : n === name
+    )
+  );
   if (fuzzyBuff) {
     return {
       url: `/buffs/${encodeURIComponent(fuzzyBuff.name)}`,
