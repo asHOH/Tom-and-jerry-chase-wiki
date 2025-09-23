@@ -39,7 +39,7 @@ async function main() {
   entries.sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'));
 
   const json = JSON.stringify(entries, null, 2);
-  await fs.writeFile(outFile, json, 'utf-8');
+  await fs.writeFile(outFile, json + '\n', 'utf-8');
   console.log(`Generated ${outFile} with ${entries.length} entries.`);
 }
 
