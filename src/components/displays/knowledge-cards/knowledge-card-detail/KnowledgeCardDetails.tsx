@@ -39,6 +39,9 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
 
   const rankColors = getCardRankColors(card.rank, true, isDarkMode);
   const costColors = getCardCostColors(card.cost, true, isDarkMode);
+  const priorityColors = isDarkMode
+    ? { background: '#334155', color: '#e0e7ef' }
+    : { background: '#e0e7ef', color: '#1e293b' };
 
   const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
 
@@ -109,7 +112,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                   gap: designTokens.spacing.sm,
                 }}
               >
-                <div className='grid grid-cols-2'>
+                <div className='grid grid-cols-2 gap-2'>
                   <p className='text-base text-gray-700 dark:text-gray-300'>
                     <Tag colorStyles={rankColors} size='md'>
                       等级: {card.rank}
@@ -120,6 +123,13 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                       费用: {card.cost}
                     </Tag>
                   </p>
+                  {card.priority && (
+                    <p className='text-base text-gray-700 dark:text-gray-300'>
+                      <Tag colorStyles={priorityColors} size='md'>
+                        升级优先级: {card.priority}
+                      </Tag>
+                    </p>
+                  )}
                 </div>
 
                 {/* Navigation */}

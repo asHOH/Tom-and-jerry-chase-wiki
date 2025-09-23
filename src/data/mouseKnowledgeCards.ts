@@ -33,6 +33,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
           '再额外**获得2层护盾**（该护盾与护佑或护盾药水效果不同，持续时间无限，但会被碎片消耗）。',
       },
     ],
+    priority: '3级质变',
   },
 
   护佑: {
@@ -90,6 +91,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '缴械持续**4**秒。' },
       { level: 3, description: '缴械持续**4.5**秒。' },
     ],
+    priority: '提升明显',
   },
 
   舍己: {
@@ -159,6 +161,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '减速**8%**。' },
       { level: 3, description: '减速**12%**。' },
     ],
+    priority: '提升明显',
   },
 
   泡泡浴: {
@@ -494,6 +497,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '恢复**75Hp**。' },
       { level: 3, description: '恢复**100Hp**。' },
     ],
+    priority: '提升明显',
   },
 
   门卫: {

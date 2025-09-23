@@ -177,6 +177,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '引信额外减少**4**秒。' },
       { level: 3, description: '引信额外减少**5**秒。' },
     ],
+    priority: '提升明显',
   },
 
   穷追猛打: {
@@ -192,6 +193,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '攻击力提升**40**，加速**5.5%**。' },
       { level: 3, description: '攻击力提升**50**，加速**8.5%**。' },
     ],
+    priority: '3级质变',
   },
 
   细心: {
@@ -381,6 +383,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '获得**25**固定减伤。' },
       { level: 3, description: '获得**30**固定减伤。' },
     ],
+    priority: '提升明显',
   },
 
   观察员: {

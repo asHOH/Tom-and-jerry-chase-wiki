@@ -199,6 +199,8 @@ export type Character = CharacterDefinition & {
 // Card-related types
 export type CardRank = 'C' | 'B' | 'A' | 'S';
 
+export type CardPriority = '3级质变' | '提升明显' | '几乎无提升';
+
 export type CardLevel = {
   level: number;
   description: string;
@@ -214,6 +216,7 @@ export type Card = {
   detailedDescription?: string;
   imageUrl?: string; // We'll generate it automatically
   levels: CardLevel[];
+  priority?: CardPriority;
 };
 
 export type SpecialSkillDefinition = {
