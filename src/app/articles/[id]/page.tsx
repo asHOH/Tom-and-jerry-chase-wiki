@@ -1,9 +1,59 @@
+import { Metadata } from 'next';
+import { supabaseAdmin } from '@/lib/supabase/admin';
+import { generateArticleMetadata, buildArticleStructuredData } from '@/lib/metadataUtils';
 import ArticleClient from './ArticleClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
-import { supabaseAdmin } from '@/lib/supabase/admin';
 import { notFound } from 'next/navigation';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+
+  const { data: article } = await supabaseAdmin
+    .from('articles')
+    .select('id, title')
+    .eq('id', id)
+    .single();
+
+  if (!article) {
+    return {};
+  }
+
+  const { data: latestVersion } = await supabaseAdmin
+    .from('article_versions_public_view')
+    .select('content')
+    .eq('article_id', id)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  const stripHtml = (html: string | null) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>?/gm, '');
+  };
+
+  const description = stripHtml(latestVersion!.content).substring(0, 150) || article.title;
+
+  const canonicalUrl = `https://tjwiki.com/articles/${id}`;
+
+  return generateArticleMetadata({
+    title: `${article.title} - 猫鼠wiki`,
+    description: description,
+    keywords: ['文章', article.title],
+    canonicalUrl,
+    structuredData: buildArticleStructuredData({
+      title: article.title,
+      description: description,
+      canonicalUrl,
+    }),
+  });
+}
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
