@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from '@/components/Image';
-import { motion } from 'framer-motion'; // Import motion
+import { motion } from 'motion/react';
 import clsx from 'clsx';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useAppContext } from '@/context/AppContext';

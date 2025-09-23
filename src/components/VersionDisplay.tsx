@@ -1,6 +1,5 @@
 'use client';
-
-import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 interface VersionInfo {
   version: string;
@@ -10,24 +9,12 @@ interface VersionInfo {
   packageVersion: string;
 }
 
+async function fetcher(url: string): Promise<VersionInfo> {
+  return await (await fetch(url, { cache: 'no-cache' })).json();
+}
+
 export const VersionDisplay: React.FC = () => {
-  const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
-
-  useEffect(() => {
-    const loadVersionInfo = async () => {
-      try {
-        const response = await fetch('/api/version', { cache: 'no-cache' });
-        if (response.ok) {
-          const info: VersionInfo = await response.json();
-          setVersionInfo(info);
-        }
-      } catch {
-        // Silently fail - version display is not critical
-      }
-    };
-
-    loadVersionInfo();
-  }, []);
+  const { data: versionInfo } = useSWR('/api/version', fetcher);
 
   if (!versionInfo) return null;
 
