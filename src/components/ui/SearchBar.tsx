@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion'; // Import AnimatePresence
+import { AnimatePresence } from 'motion/react'; // Import AnimatePresence
 import SearchDialog from './SearchDialog'; // Import the new SearchDialog component
 import Tooltip from './Tooltip';
 import { useMobile } from '@/hooks/useMediaQuery';

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import clsx from 'clsx';
 import CaptchaComponent from './CaptchaComponent';
 import { convertToPinyin } from '@/lib/pinyinUtils';
