@@ -7,7 +7,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
   汤姆: {
     description:
       '全能男神汤姆，开得了大型演唱会，造得出飞行翅膀，弹琴舞蹈样样精通，除了不会抓老鼠什么都会。',
-
     maxHp: 255,
     attackBoost: 0,
     hpRecovery: 3.5,
@@ -37,7 +36,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         additionalDescription: '',
       },
     ],
-
     skillAllocations: [
       {
         id: '手型枪',
@@ -58,15 +56,16 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
         description:
-          '平底锅，爪刀接二级锅接爪刀轻松打死124Hp老鼠。（待翻新，有意提供知识卡可填写反馈建议）',
+          '经典776锅汤，适用于大部分情况。{击晕}爪刀接一级锅可击倒99血老鼠，接二级锅接爪刀轻松打死124Hp老鼠且有效干扰鼠方救援，配合三级锅还可以直接抓取；{乘胜追击}弥补机动性不足的缺点；{熊熊燃烧}增加绑火箭收益。但开局不好找节奏，需要多注意这个问题。',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
-        description: '手型枪，适合打无管道图。（待翻新，有意提供知识卡可填写反馈建议）',
+        description:
+          '手型枪，适合打无管道图。{穷追猛打}解决开局不好找节奏的问题，{乘胜追击}弥补机动性不足的缺点，{加大火力}进一步提高火箭收益。',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-        description: '手型枪，适合打管道图。（待翻新，有意提供知识卡可填写反馈建议）',
+        description: '手型枪，应对管道图。',
       },
     ],
     specialSkills: [
@@ -211,12 +210,82 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '剑客莉莉的风墙可以阻挡开启无敌的汤姆；剑客莉莉Lv.2被动的护盾持续时间也够长，救援能力足够稳定。',
         isMinor: true,
       },
-    ],
-    counteredBySpecialSkills: [
       {
-        id: '干扰投掷',
-        description: '汤姆主动技能无敌期间免疫眩晕，且释放主动技能会立刻解除眩晕。',
+        id: '罗宾汉杰瑞',
+        description:
+          '罗宾汉杰瑞可以为团队提供二段跳，增强拉扯和自保能力，而776锅汤前期不好找节奏，',
+        isMinor: false,
+      },
+      {
+        id: '侦探杰瑞',
+        description:
+          '自保能力较强，同时兼具一定的救援能力，较快的推速也可以加快游戏节奏，烟雾弹强推也在一定程度上克制汤姆。',
+        isMinor: false,
+      },
+      {
+        id: '雪梨',
+        description: '雪梨花洒配合干扰投掷浇灭火箭。',
         isMinor: true,
+      },
+      {
+        id: '霜月',
+        description: '霜月滑铲拦截汤姆无敌上火箭，且霜月滑铲霸体自保能力强。',
+        isMinor: false,
+      },
+      {
+        id: '拿坡里鼠',
+        description: '拿坡里斜塔干扰汤姆无敌上火箭。',
+        isMinor: true,
+      },
+      {
+        id: '魔术师',
+        description:
+          '魔术师的兔子大表哥举火箭影响放飞效率，且魔术师兔子先生多拉扯，强推与救援也不好拦截。',
+        isMinor: true,
+      },
+      {
+        id: '罗宾汉泰菲',
+        description: '罗宾汉泰菲拉扯能力较强，藤蔓团队增益能力较强',
+        isMinor: true,
+      },
+      {
+        id: '尼宝',
+        description:
+          '泥巴的钩子在一定程度上影响汤姆无敌上火箭（无敌也会被勾到位移），翻滚救援拦截不了。',
+        isMinor: false,
+      },
+      {
+        id: '佩克斯',
+        description: '佩克斯团队增益较强。',
+        isMinor: true,
+      },
+      {
+        id: '莱恩',
+        description:
+          '莱恩方块提前拦截汤姆无敌，阻止上火箭，蓝图影响火箭燃烧效率。但莱恩拦截要小心汤姆2级被动。',
+        isMinor: true,
+      },
+    ],
+    counters: [
+      {
+        id: '剑客杰瑞',
+        description: '汤姆无敌挡伤害和干扰，二级锅解决124血量，且推速和救援能力差。',
+        isMinor: false,
+      },
+      {
+        id: '牛仔杰瑞',
+        description: '汤姆无敌挡仙人掌和琴，二级锅解决124血量，平底锅击飞干扰冰冻保鲜救援。',
+        isMinor: false,
+      },
+      {
+        id: '杰瑞',
+        description: '杰瑞自保能力差，汤姆无敌挡鸟哨轰炸。',
+        isMinor: false,
+      },
+      {
+        id: '泰菲',
+        description: '泰菲自保能力差，推速较慢，机动性差，救援能力差，汤姆无敌挡泰菲的干扰。',
+        isMinor: false,
       },
     ],
   },
@@ -226,7 +295,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     description:
       '"流浪猫铁三角"中的老大。在街头流浪的黑猫布奇，总是喜欢和汤姆争夺千金母猫“图多盖洛”，最终成功逆袭为亿万富豪。',
     aliases: ['黑猫', '黑鼠'],
-
     maxHp: 220,
     attackBoost: 25,
     hpRecovery: 2,
@@ -235,7 +303,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     clawKnifeCdHit: 6,
     clawKnifeCdUnhit: 4.8,
     clawKnifeRange: 280,
-
     catPositioningTags: [
       {
         tagName: '防守',
@@ -250,7 +317,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         additionalDescription: '',
       },
     ],
-
     skillAllocations: [
       {
         id: '垃圾盖',
@@ -269,18 +335,19 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
-        description:
-          '利用{击晕}补充控制链，{乘胜追击}补充移速，提高追击能力。（待翻新，有意提供知识卡可填写反馈建议）',
-      },
-      {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
         description:
-          '利用{穷追猛打}刷取经验，为后期打架做准备。（待翻新，有意提供知识卡可填写反馈建议）',
+          '利用{穷追猛打}刷取经验的同时在前期打出多倒以及叠加乘胜，为中后期追击和打架做准备。{熊熊燃烧}提高火箭燃烧效率，{皮糙肉厚}应对伤害较高的阵容，在管道图可以考虑替换为{猫是液体}{狡诈}；而拆火箭阵容可以考虑换为{心灵手巧}；伤害过高的阵容可以考虑{越挫越勇}。',
       },
       {
-        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-        description: '打管道较多的地图可考虑使用。（待翻新，有意提供知识卡可填写反馈建议）',
+        cards: ['S-乘胜追击', 'S-屈打成招', 'A-熊熊燃烧', 'C-猫是液体'],
+        description:
+          '牧场或者酒店这种有七色花以及经典一小图，可以考虑不要{穷追猛打}，同时携带{屈打成招}提高拦截能力，{猫是液体}在牧场配合{屈打成招}利用好来拉扯老鼠，酒店管道利用率低可以考虑换{狡诈}。',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-知识渊博', 'A-加大火力', 'A-穷追猛打'],
+        description:
+          '娱乐性较高。{知识渊博}加快等级的提升，{加大火力}提高火箭燃烧效率。{知识渊博}也可以换为{暴怒}或者{乾坤一掷}，但均为娱乐卡组。',
       },
     ],
     specialSkills: [
@@ -289,16 +356,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '补充霸体和解控能力，提高打架能力。',
       },
       {
-        name: '急速翻滚',
-        description: '提高机动性。',
-      },
-      {
         name: '全垒打',
         description:
           '在需要高伤害的场合可酌情使用。主动和武器技能都能享受全垒打的攻击增伤；全垒打提供的移速还能提高{主动技能}的冲刺距离。',
       },
     ],
-
     skills: [
       {
         name: '横冲直撞',
@@ -307,7 +369,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '向前冲刺，冲刺期间免疫控制效果，并撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到的老鼠造成伤害和短暂眩晕。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
         detailedDescription:
-          '在0.6秒前摇后开始向前冲刺，冲刺持续1.2秒，期间免疫控制效果，并撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到老鼠造成{26}伤害和短暂眩晕，冲刺结束后进入0.2秒后摇。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
+          '向前冲刺，冲刺持续1.2秒，期间免疫控制效果，并撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到老鼠造成{26}伤害和短暂眩晕。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
+        forecast: 0.6,
+        aftercast: 0.2,
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可主动打断',
@@ -384,7 +448,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '',
+            description: 'CD减少8秒。',
             cooldown: 12,
           },
           {
@@ -408,9 +472,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description:
-              '[投掷道具](包括本来没有伤害的果子、香水瓶、胡椒瓶、番茄等)命中敌方时造成额外伤害，造成伤害后将回复Hp，同时在一段时间内提高移速。',
+              '{投掷道具}命中敌方时造成额外伤害，造成伤害后将回复Hp，同时在一段时间内提高移速。',
             detailedDescription:
-              '[投掷道具](包括本来没有伤害的果子、香水瓶、胡椒瓶、番茄等)命中敌方时[造成25额外伤害](与原伤害分为不同的两段，若原伤害命中在敌方护盾上时则不造成额外伤害)，造成伤害后将回复Hp，同时提高移速，持续5秒。',
+              '{投掷道具}命中敌方时[造成25额外伤害](与原伤害分为不同的两段，若原伤害命中在敌方护盾上时则不造成额外伤害)，造成伤害后将回复Hp，同时提高移速，持续5秒。',
           },
           {
             level: 3,
@@ -424,13 +488,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     counters: [
       {
         id: '侦探泰菲',
-        description: '布奇的爪刀可以秒侦探泰菲，冲飞洞口的奶酪也能克制侦菲的游击策略。',
+        description:
+          '布奇的爪刀可以秒侦探泰菲，冲飞洞口的奶酪也能克制侦菲的游击策略。同时缺少强推和干扰能力，救援也容易被桶盖干扰。',
         isMinor: false,
       },
       {
         id: '恶魔泰菲',
         description: '布奇的爪刀可以秒恶魔泰菲，冲飞洞口的奶酪也能克制恶菲的游击策略。',
-        isMinor: false,
+        isMinor: true,
       },
       {
         id: '罗宾汉泰菲',
@@ -442,7 +507,17 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '表演者•杰瑞',
         description:
           '布奇的高攻击和冲刺的高频伤害可以反制表演者•杰瑞的跳舞，高频控制效果有时也能阻止表演者•杰瑞利用被动和铁血强行救援的意图。',
+        isMinor: true,
+      },
+      {
+        id: '泰菲',
+        description: '布奇的爪刀理由秒泰菲，同时泰菲推速较慢，干扰能力不够，救援能力较差。',
         isMinor: false,
+      },
+      {
+        id: '米可',
+        description: '布奇伤害较高，相对能更好的处理米可。',
+        isMinor: true,
       },
     ],
     counteredBy: [
@@ -462,6 +537,47 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '侦探杰瑞推奶酪和自保能力强，烟雾弹还能反制布奇的防守奶酪能力。',
         isMinor: false,
       },
+      {
+        id: '尼宝',
+        description: '泥巴翻滚救援不会拦截，桶盖的霸体也会被勾下来。',
+        isMinor: false,
+      },
+      {
+        id: '罗宾汉杰瑞',
+        description: '罗宾汉拉扯能力较强，同时二段跳的全体增益能更好的规避布奇的冲刺。',
+        isMinor: true,
+      },
+      {
+        id: '梦游杰瑞',
+        description: '梦游杰瑞强推能力较强，同时自保能力也较强。',
+        isMinor: false,
+      },
+      {
+        id: '航海士杰瑞',
+        description: '海盗的金币可以打断冲刺前摇，炸毁的火箭也可以拖延桶盖的霸体，但救援能力较差。',
+        isMinor: true,
+      },
+      {
+        id: '国王杰瑞',
+        description:
+          '国王杰瑞主救能力较差，但战旗与其队友配合会有较大的威胁。例如进攻旗加伤，守护旗在冲刺真空期不好处理，感知旗拉扯，灵巧旗躲冲刺。',
+        isMinor: true,
+      },
+      {
+        id: '天使杰瑞',
+        description: '高等级天使杰瑞不好处理。',
+        isMinor: true,
+      },
+      {
+        id: '马索尔',
+        description: '马索尔干扰能力较强，破局能力较强，易断节奏。',
+        isMinor: true,
+      },
+      {
+        id: '霜月',
+        description: '霜月的血量正好不能被布奇一刀击倒，滑铲干扰能力较强，同时拖延桶盖的霸体。',
+        isMinor: false,
+      },
     ],
     counteredBySpecialSkills: [
       {
@@ -470,14 +586,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: true,
       },
     ],
+    counteredByKnowledgeCards: [
+      {
+        id: '缴械',
+        description: '缴械禁用爪刀，影响关键时刻的衔接。',
+        isMinor: true,
+      },
+    ],
   },
 
-  /* ----------------------------------- 托普斯 ---------------------------------- */
+  /* ----------------------------------- 托普斯 ----------------------------------- */
   托普斯: {
-    aliases: ['托斯', '奶猫'],
+    aliases: ['托斯', '奶猫', '仓鼠', '哈基米'],
     description:
       '"流浪猫铁三角"中的一员。托普斯是一只呆萌的小灰猫，喜欢和老鼠交朋友，他智商很高，经常捣鼓出一些令人意想不到的发明。',
-
     maxHp: 200,
     attackBoost: 0,
     hpRecovery: 2.5,
@@ -486,7 +608,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.5,
     clawKnifeRange: 220,
-
     catPositioningTags: [
       {
         tagName: '追击',
@@ -514,7 +635,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         additionalDescription: '但难以应对爆发输出。',
       },
     ],
-
     skillAllocations: [
       {
         id: '泡泡棒',
@@ -535,46 +655,86 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
         description:
-          '利用{击晕}配合{1级被动}提高控制能力，或是配合捕虫网直接抓住老鼠；{皮糙肉厚}提高分身的生存能力。（待翻新，有意提供知识卡可填写反馈建议）',
+          '利用{击晕}配合{1级被动}提高控制能力，或是配合{捕虫网}直接抓住老鼠；{皮糙肉厚}提高分身的生存能力，{穷追猛打}提高前期找节奏能力。',
       },
       {
         cards: ['S-击晕', 'S-乘胜追击', 'A-熊熊燃烧'],
         description:
-          '{乘胜追击}提高机动性，且能更好地配合{击晕}和{1级被动}。（待翻新，有意提供知识卡可填写反馈建议）',
-      },
-      {
-        cards: ['S-击晕', 'S-乘胜追击', 'A-加大火力', 'C-猫是液体'],
-        description: '{猫是液体}在管道图有较强的机动性。（待翻新，有意提供知识卡可填写反馈建议）',
+          '{乘胜追击}提高机动性，且能更好地配合{击晕}和{1级被动}。但缺少{皮糙肉厚}的减伤和{穷追猛打}的前期找节奏能力，所以需要更多的注意分身的状态，同时推荐在有七色花的地图使用，弥补前期缺少找节奏能力的问题。',
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-长爪', 'B-皮糙肉厚'],
         description:
-          '托普斯爪刀较短，{长爪}能极大幅提高爪刀范围，配合{击晕}、{1级被动}和{我生气了！}打出连续控制和爆发伤害，还能刷取经验。但{长爪}负面效果也很明显，使用时需再三斟酌，因此本卡组较偏向娱乐。（待翻新，有意提供知识卡可填写反馈建议）',
+          '托普斯爪刀较短，{长爪}能极大幅提高爪刀范围，配合{击晕}、{1级被动}和{我生气了！}打出连续控制和爆发伤害，还能刷取经验。但{长爪}负面效果也很明显，使用时需再三斟酌，因此本卡组较偏向娱乐。',
+      },
+      {
+        cards: ['S-击晕', 'A-加大火力', 'A-穷追猛打', 'B-皮糙肉厚', 'C-猫是液体'],
+        description: '推荐在管道图使用，{加大火力}弥补火箭燃烧效率不足的问题。',
       },
     ],
     counters: [
       {
         id: '尼宝',
-        description: '托普斯的捕虫网可以直接抓取灵活跳跃后霸体的尼宝，使尼宝很难救人。',
+        description:
+          '托普斯的捕虫网可以直接抓取灵活跳跃后霸体的尼宝，使尼宝很难救人。同时分身换位也会让泥宝钩子的效果大打折扣。',
         isMinor: false,
       },
       {
         id: '表演者•杰瑞',
-        description: '托普斯的捕虫网可以直接抓取梦幻舞步状态下的表演者•杰瑞。',
+        description:
+          '托普斯的捕虫网可以直接抓取梦幻舞步状态下的表演者•杰瑞。托普斯一级被动也能更多的拦截柠檬的强换。',
         isMinor: false,
+      },
+      {
+        id: '天使泰菲',
+        description:
+          '托普斯的网可以无视天使泰菲两个技能。即便是开启3级友情庇护的天菲，也可能被托普斯利用{击晕}、{“我生气了！”}和{1级元气满满}进行连续控制。',
+        isMinor: false,
+      },
+      {
+        id: '米可',
+        description:
+          '托普斯的网可以直接网住采访的米可，3级分身转移眩晕，主流托普斯携带皮糙还能减少采访的伤害，前期穷追也能提供更强的击倒能力。',
+        isMinor: false,
+      },
+      {
+        id: '恶魔杰瑞',
+        description: '托普斯配合分身和技能打断恶魔杰瑞的技能，托普斯三级被动消除增益。',
+        isMinor: true,
+      },
+      {
+        id: '杰瑞',
+        description: '杰瑞自保能力较差，托普斯三级分身眩晕转移也让鸟哨的干扰能力大打折扣。',
+        isMinor: true,
+      },
+      {
+        id: '马索尔',
+        description:
+          '托普斯的网可以网发怒的马索尔，同时马索尔传送救援时，可能会被托普斯和分身拦截，有护盾的情况下也可能被爪刀+网+道具拦截，有隐身的情况下也会被分身透视导致隐身效果大打折扣。',
+        isMinor: false,
+      },
+      {
+        id: '霜月',
+        description: '托普斯三级分身霸体免疫滑铲，网可直接网住。',
+        isMinor: true,
+      },
+      {
+        id: '蒙金奇',
+        description:
+          '主流托普斯携带皮糙让蒙金奇的战车长矛打不出来较高的伤害，托普斯的三级分身还能减少控制的影响。',
+        isMinor: true,
       },
     ],
     specialSkills: [
       {
         name: '绝地反击',
-        description: '配合捕虫网或击晕+Lv.1被动，实现反击效果。', // FIXME： 这里改成{1级被动}会产生bug，不过不严重，不影响使用，下次有空修
+        description: '配合捕虫网或击晕+{1级被动}，实现反击效果。', // FIXME： 这里改成{1级被动}会产生bug，不过不严重，不影响使用，下次有空修
       },
       {
         name: '我生气了！',
         description: '配合击晕和Lv.1被动，形成连续控制，以此造成高额伤害或刷取经验。',
       },
     ],
-
     skills: [
       {
         name: '双重猫格',
@@ -583,22 +743,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '释放一个{托普斯分身}。分身爪刀伤害提高，爪刀CD减少，免疫碎片和老鼠夹，且[继承部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和本体叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加](包括受到部分环境伤害时)。分身存在期间本体获得额外技能，点击可指挥分身出击或跟随（有CD）。再次使用主动技能可与分身换位（有CD）。本体[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。',
         detailedDescription:
-          '释放一个{托普斯分身}，其[与自身相貌相同](装扮、昵称、Hp条显示的方式和本体完全一致)。分身爪刀伤害提高15，爪刀CD减少，免疫碎片和老鼠夹，且[继承部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和本体叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加20](包括受到部分环境伤害时)。分身存在期间本体获得额外技能，点击可指挥分身出击或跟随（CD：5秒）。再次使用主动技能可与分身换位（有CD，与技能等级有关，与技能本身的冷却无关）。本体[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。分身成功释放后，技能本身的CD就开始倒计时；分身被击倒或消失后，技能切换回本来的CD。',
+          '释放一个{托普斯分身}，其[与自身相貌相同](装扮、昵称、Hp条显示的方式和本体完全一致)。分身爪刀伤害提高15，爪刀CD减少至3,2秒，免疫碎片和老鼠夹，且[继承部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和本体叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加20](包括受到部分环境伤害时)。\n分身存在期间本体获得额外技能，点击可指挥分身出击或跟随（CD：5秒）出击：根据本体朝向前进，遇到障碍物会尝试跳跃过去，失败则原路返回。跟随：向本体。\n再次使用主动技能可与分身换位（有CD，与技能等级有关，与技能本身的冷却无关）。本体[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。分身成功释放后，技能本身的CD就开始倒计时；分身被击倒或消失后，技能切换回本来的CD。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
-        forecast: 2.2,
-        aftercast: 0,
         skillLevels: [
           {
             level: 1,
-            description: '与分身换位CD为15秒；分身存在一段时间或被击倒后消失。',
+            description: '与分身换位CD为15秒；分身存在30秒或被击倒后消失。',
             cooldown: 36,
           },
           {
             level: 2,
-            description: '换位CD减少至10秒；换位时回复Hp，且移速和交互速度短暂提高。',
+            description: '换位CD减少至10秒；换位时回复Hp，且移速和交互速度提高，持续6秒。',
             cooldown: 24,
           },
           {
@@ -608,6 +766,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             cooldown: 20,
           },
         ],
+        forecast: 2.2,
+        aftercast: 0,
       },
       {
         name: '泡泡棒',
@@ -615,12 +775,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '召唤在场景中漂浮的{泡泡}，[鼠方碰到泡泡时会被困住](若有护盾则消耗一层护盾)，需通过挣脱才能离开。[泡泡存在一段时间后消失](有老鼠在其内被困住时则不会自然消失)，可以提前被道具砸破。泡泡被砸破或因挣脱破碎时，对周围的老鼠造成伤害和短暂的爆炸眩晕。直接释放技能会吹出留在原地的泡泡，拖动释放技能则使吹出的泡泡向该方向缓慢漂移。',
         detailedDescription:
-          '召唤在场景中漂浮的{泡泡}，[鼠方碰到泡泡时会被困住](若有护盾则消耗一层护盾)，需通过挣脱才能离开。[泡泡存在20秒后消失](有老鼠在其内被困住时则不会自然消失)，可以提前被道具砸破。泡泡被砸破或因挣脱破碎时，对周围的老鼠造成[25](不受攻击增伤影响)伤害和短暂的爆炸眩晕。直接释放技能会吹出留在原地的泡泡，拖动释放技能则使吹出的泡泡向该方向缓慢漂移。',
+          '召唤在场景中漂浮的{泡泡}，[鼠方碰到泡泡时会被困住](若有护盾则消耗一层护盾)，需通过挣脱才能离开。[泡泡存在20秒后消失](有老鼠在其内被困住时则不会自然消失)，可以提前被道具砸破。泡泡被砸破或因挣脱破碎时，对周围的老鼠造成[25](不受攻击增伤影响)伤害和1.5秒爆炸眩晕。直接释放技能会吹出留在原地的泡泡，拖动释放技能则使吹出的泡泡向该方向缓慢漂移。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
-        aftercast: 0,
         skillLevels: [
           {
             level: 1,
@@ -638,6 +797,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             cooldown: 12,
           },
         ],
+        aftercast: 0,
       },
       {
         name: '捕虫网',
@@ -690,6 +850,89 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description: '击中老鼠时，[移除其部分增益效果](包括隐身、远视等)。',
           },
         ],
+      },
+    ],
+    countersKnowledgeCards: [
+      {
+        id: '铁血',
+        description: '托普斯的一级被动和网能有效拦截铁血强换。',
+        isMinor: true,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '侦探杰瑞',
+        description: '强推能力较强，与队友配合能较好的处理最后一个奶酪。',
+        isMinor: true,
+      },
+      {
+        id: '国王杰瑞',
+        description:
+          '国王杰瑞护盾挡托普斯的网，旗子团队增益能力强，能为队友提供更多增益来应对托普斯。',
+        isMinor: false,
+      },
+      {
+        id: '剑客杰瑞',
+        description:
+          '剑客杰瑞伤害高，能较好的处理托普斯的分身。需注意{剑客格挡}只有被动戳击才能攻击分身。',
+        isMinor: false,
+      },
+      {
+        id: '罗宾汉泰菲',
+        description: '罗宾汉泰菲能快速击倒托普斯的分身。',
+        isMinor: false,
+      },
+      {
+        id: '朵朵',
+        description: '朵朵伤害较高，能较好的处理托普斯的分身。',
+        isMinor: false,
+      },
+      {
+        id: '剑客泰菲',
+        description: '剑客泰菲的头盔救援能力强，强推能力也强。',
+        isMinor: false,
+      },
+      {
+        id: '剑客莉莉',
+        description:
+          '托普斯的分身也会触发剑客莉莉二级被动的护盾，提高其救援能力。同时剑客莉莉的基础伤害较高，也容易击倒托普斯的分身。剑客莉莉的风墙也在一定程度上拦截托普斯与分身的汇合。',
+        isMinor: true,
+      },
+      {
+        id: '梦游杰瑞',
+        description: '梦游杰瑞的强推能力较强，主动技能让托普斯不好衔接技能与道具。',
+        isMinor: true,
+      },
+      {
+        id: '恶魔泰菲',
+        description: '恶魔泰菲的绿色小恶魔配合三级被动，能很好的处理托普斯的分身。',
+        isMinor: true,
+      },
+      {
+        id: '牛仔杰瑞',
+        description:
+          '牛仔杰瑞的干扰在托普斯没有三级分身时影响较大，同时琴和仙人掌的干扰也容易击倒分身，一被配合冰冻保鲜的救援也不好拦截。',
+        isMinor: true,
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '缴械',
+        description: '缴械禁用爪刀，可能导致有的情况下托普斯不好衔接。',
+        isMinor: false,
+      },
+      {
+        id: '救救我',
+        description:
+          '在猫不会卡救援接爪刀的情况下，携带救救我可以强换下来，但没有的情况下是不可以的。同时救救我也能为救援提高更多容错。',
+        isMinor: false,
+      },
+    ],
+    counteredBySpecialSkills: [
+      {
+        id: '干扰投掷',
+        description: '干扰投掷能提高一定的救援能力，但较吃投掷。',
+        isMinor: true,
       },
     ],
   },
@@ -787,6 +1030,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canUseInAir: true,
         canHitInPipe: false,
         cancelableAftercast: '无后摇',
+        forecast: 0.7,
         aftercast: 0,
         cancelableSkill: '不可主动打断',
         cueRange: '全图可见',
@@ -859,6 +1103,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
         cancelableAftercast: '无后摇',
+        forecast: 0.63,
         aftercast: 0,
         canHitInPipe: false,
         skillLevels: [
@@ -1639,8 +1884,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '米可',
-        description: '大后期点出三级吻，对米可有一定威胁。',
-        isMinor: true,
+        description:
+          '图多盖洛{3级魅力甲油}后的霸体可以让米可打不出干扰效果，即使没有{猛攻}后期图多捏好{拍子}把{3级香水美人}点出来也相对并不缺少处理后期米可的常态高坦度的手段，大后期{3级魅惑之吻}也是可以直接废掉米可。',
+        isMinor: false,
       },
     ],
     aliases: ['母猫', '图多', '土豆', '土豆盖洛'],
@@ -1793,7 +2039,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '大幅提高视野范围，并警戒房间内所有老鼠。被警戒的老鼠推速下降50%、暴露小地图视野，并清除部分增益。若警戒到老鼠，额外获得加速；若未警戒到，则返还15s冷却。',
         detailedDescription:
-          '大幅提高视野范围，并警戒房间内[所有老鼠](距离极远的除外)。被警戒到的老鼠推速下降50%，暴露小地图视野，并清除[部分增益](所有药水；侦探杰瑞、侦探泰菲的隐身；大部分护盾效果，如知识卡、角色技能的护盾（罗菲2被与恶魔传送门的盾不会被消除）；部分无敌效果，如无畏、舍己、国王护盾、莉莉二被；米雪儿小情绪的变大；仙女鼠星星与二被的隐身；红花；太空药水仓的跳跃提升、变大和隐身；熊猫谷药水仓的兴奋；天宫香炉的远视)。若警戒到老鼠，额外获得20%加速；若未警戒到，则返还15s冷却。使用降落伞中的罗宾汉不会被警戒到。',
+          '大幅提高视野范围，并警戒房间内[所有老鼠](距离极远的除外)，持续25秒。被警戒到的老鼠推速下降50%，暴露小地图视野，并清除[部分增益](所有药水；侦探杰瑞、侦探泰菲的隐身；大部分护盾效果，如知识卡、角色技能的护盾（罗菲2被与恶魔传送门的盾不会被消除）；部分无敌效果，如无畏、舍己、国王护盾、莉莉二被；米雪儿小情绪的变大；仙女鼠星星与二被的隐身；红花；太空药水仓的跳跃提升、变大和隐身；熊猫谷药水仓的兴奋；天宫香炉的远视)。若警戒到老鼠，额外获得20%加速；若未警戒到，则返还15s冷却。使用降落伞中的罗宾汉不会被警戒到。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键', '跳跃键'],
@@ -1830,11 +2076,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canUseInAir: false,
         cancelableSkill: ['道具键', '跳跃键'],
         cancelableAftercast: '无后摇',
-        forecast: 0.684,
+        forecast: 0.9,
         description:
           '原地召唤{皇家火炮(衍生物)}，对附近老鼠造成短暂眩晕和少量伤害，侍卫汤姆获得短暂的两层护盾。火炮存在期间，可以拖动技能键远程操纵火炮发射{炮弹}，命中时对老鼠造成眩晕和伤害，同时侍卫汤姆获得大幅加速和护盾。火炮可射击数次，有内置CD。',
         detailedDescription:
-          '原地召唤{皇家火炮(衍生物)}，对附近老鼠造成0.93秒眩晕及10点伤害，侍卫汤姆获得两层护盾，持续1.95秒。火炮存在期间，侍卫汤姆可以自由活动，拖动技能键远程操纵火炮发射{炮弹}，命中时对老鼠造成0.56秒眩晕和[50伤害](不受攻击增伤加成)、移除其[部分增益](隐身、兴奋、远视；天宫图香炉的远视；除了尼宝三级翻滚和魔术师三级卡牌以外的技能与被动隐身)；同时侍卫汤姆加速49%并获得两层护盾，效果持续2.96秒。火炮可射击数次，每次射击之间有最短间隔。',
+          '原地召唤{皇家火炮(衍生物)}，对附近老鼠造成0.93秒眩晕及10点伤害，侍卫汤姆获得两层护盾，持续1.95秒。火炮存在期间，侍卫汤姆可以自由活动，拖动技能键远程操纵火炮发射{炮弹}（发射前摇0.5秒），命中时对老鼠造成0.56秒眩晕和[50伤害](不受攻击增伤加成)、移除其[部分增益](隐身、兴奋、远视；天宫图香炉的远视；除了尼宝三级翻滚和魔术师三级卡牌以外的技能与被动隐身)；同时侍卫汤姆加速49%并获得两层护盾，效果持续2.96秒。火炮可射击数次，每次射击之间有最短间隔。',
         skillLevels: [
           {
             level: 1,
@@ -2032,7 +2278,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '按住技能键持续地喵喵叫，期间可以移动，也可以使用爪刀和《绝地反击(特技)》；松开技能键可提前取消技能；喵喵叫期间对附近的老鼠持续施加喵喵叫减速，叠加到第五层时造成伤害和眩晕，并清空减速层数。被打断或提前取消技能会按比例返还CD。',
         detailedDescription:
-          '按住技能键，在前摇后持续地喵喵叫，期间可以通过按住方向键不松开的方式移动，也可以正常使用爪刀和《绝地反击(特技)》，松开技能键可提前取消技能；喵喵叫期间对周围半径1000范围内的老鼠持续施加喵喵叫减速。被打断或提前取消技能会按比例返还CD。\n\n喵喵叫减速：使老鼠移速和跳跃速度降低8%，并暴露小地图视野；喵喵叫减速叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。',
+          '按住技能键持续地喵喵叫，至多3秒，期间可以通过按住方向键不松开的方式移动，也可以正常使用爪刀和《绝地反击(特技)》，松开技能键可提前取消技能；喵喵叫期间对周围半径1000范围内的老鼠持续施加喵喵叫减速。被打断或提前取消技能会按比例返还CD。\n\n喵喵叫减速：使老鼠移速和跳跃速度降低8%，并暴露小地图视野；喵喵叫减速叠加到第五层时对其造成{60}伤害并眩晕2秒，然后清空减速层数。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         canHitInPipe: true,
@@ -3334,7 +3580,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '苏蕊开始舞动，持续40秒。舞动开始时立刻回复Hp，放下手中老鼠并使其自主跟随。舞动期间[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为“舞动亮相”。舞动时每隔13秒出现爱心提示，期间点击技能按钮将回复Hp且移速和攻击增伤提高。舞动时接触虚弱老鼠将使其自主跟随苏蕊30秒，期间遇到火箭立刻绑上。\n“舞动亮相”：CD大幅增加，但伤害提高，且范围改为[以苏蕊为中心的圆形区域](半径相比普通爪刀的攻击距离有所增加)。{苍蝇拍}范围和效果也随之改变。',
         detailedDescription:
-          '苏蕊开始舞动，持续40秒。舞动开始时立刻回复50Hp，若手中有老鼠，则放下老鼠并使其自主跟随。舞动期间[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为“舞动亮相”。舞动时每隔13秒出现爱心提示，[提示期间点击技能按钮](虚弱，交互等状态期间无法点击；若提示期间未及时点击按钮则爱心提示破碎，不会获得增益效果)将回复30Hp、移速提高10%、攻击增伤提高15。舞动时接触虚弱老鼠（正被{老鼠夹}夹住的老鼠除外）或[刚被击倒的老鼠](包括刚进入知识卡铁血、表演者•杰瑞一级被动、佩克斯三级被动状态的老鼠)，将使其自主跟随30秒，在此状态下老鼠不受控制地跟随苏蕊，期间解除并免疫虚弱、无法使用技能和道具、无法自主移动和交互，但仍能受到伤害和[部分控制效果](不包含冰块、鞭炮、老鼠夹造成的控制)，且遇到火箭会[立刻绑上](会触发绑火箭-10秒的机制)。老鼠跟随期间与苏蕊距离较远时，会立即传送到苏蕊身边；但若[老鼠与苏蕊距离极远](如苏蕊钻管道后)，则老鼠会提前解除跟随。\n“舞动亮相”：与爪刀类似，但[CD改为{:specialClawKnifeCdUnhit}秒（未命中）和{:specialClawKnifeCdHit}秒（命中）](未命中CD本质上是命中CD返还一定百分比后的结果，对于苏蕊来说是返还50%；无视其他改变CD的效果（包括变身饮料改变基础CD的效果，及乘胜追击等百分比减少CD的效果）)，伤害提高到{70}，范围改为[以苏蕊为中心的圆形区域](半径相比普通爪刀的攻击距离有所增加)，且{长爪}失效；如果携带了{乘胜追击}和{蓄势一击}且[造成了蓄势一击的伤害效果](若敌方受到蓄势伤害/亮相攻击伤害后就进入了虚弱状态，则不算作造成效果)，则会[在原本的基础上额外叠加一层乘胜效果](即使爪刀命中多名老鼠，也只会额外叠加一层)。{苍蝇拍}范围也随之改变，且直接抓起时的效果改为[使老鼠立刻自主跟随](包括触发三级被动后灵体状态的表演者•杰瑞)。',
+          '苏蕊开始舞动，持续40秒。舞动开始时立刻回复50Hp，若手中有老鼠，则放下老鼠并使其自主跟随。舞动期间[免疫部分眩晕效果](包括控制道具和部分老鼠技能，但不免疫大部分NPC的控制)，爪刀变为“舞动亮相”。舞动时每隔13秒出现爱心提示，持续3秒，[提示期间点击技能按钮](虚弱，交互等状态期间无法点击；若提示期间未及时点击按钮则爱心提示破碎，不会获得增益效果)将回复30Hp、移速提高10%、攻击增伤提高15。舞动时接触虚弱老鼠（正被{老鼠夹}夹住的老鼠除外）或[刚被击倒的老鼠](包括刚进入知识卡铁血、表演者•杰瑞一级被动、佩克斯三级被动状态的老鼠)，将使其自主跟随30秒，在此状态下老鼠不受控制地跟随苏蕊，期间解除并免疫虚弱、无法使用技能和道具、无法自主移动和交互，但仍能受到伤害和[部分控制效果](不包含冰块、鞭炮、老鼠夹造成的控制)，且遇到火箭会[立刻绑上](会触发绑火箭-10秒的机制)。老鼠跟随期间与苏蕊距离较远时，会立即传送到苏蕊身边；但若[老鼠与苏蕊距离极远](如苏蕊钻管道后)，则老鼠会提前解除跟随。\n“舞动亮相”：与爪刀类似，但[CD改为{:specialClawKnifeCdUnhit}秒（未命中）和{:specialClawKnifeCdHit}秒（命中）](未命中CD本质上是命中CD返还一定百分比后的结果，对于苏蕊来说是返还50%；无视其他改变CD的效果（包括变身饮料改变基础CD的效果，及乘胜追击等百分比减少CD的效果）)，伤害提高到{70}，范围改为[以苏蕊为中心的圆形区域](半径相比普通爪刀的攻击距离有所增加)，且{长爪}失效；如果携带了{乘胜追击}和{蓄势一击}且[造成了蓄势一击的伤害效果](若敌方受到蓄势伤害/亮相攻击伤害后就进入了虚弱状态，则不算作造成效果)，则会[在原本的基础上额外叠加一层乘胜效果](即使爪刀命中多名老鼠，也只会额外叠加一层)。{苍蝇拍}范围也随之改变，且直接抓起时的效果改为[使老鼠立刻自主跟随](包括触发三级被动后灵体状态的表演者•杰瑞)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -3647,13 +3893,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         id: '蒙金奇',
-        description: '不好处理战车 ，且蒙金奇多干扰投掷和缴械。',
+        description: '不好处理战车，且蒙金奇多干扰投掷和缴械。',
         isMinor: true,
       },
       {
         id: '米可',
         description: '采访容易打断飞行，同时也不好处理采访中的米可',
-        isMinor: false,
+        isMinor: true,
       },
       {
         id: '霜月',
@@ -3779,12 +4025,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         aliases: ['牙通牙', '旋转'],
         description: '向前方连续挥爪3次，造成伤害；疾冲状态下，改为向前穿刺，造成伤害和控制。',
         detailedDescription:
-          '向前方连续挥爪3次，每次造成30伤害，范围为300；疾冲状态下或{武器技能}飞行中，改为向前穿刺，造成60点伤害和1.8秒眩晕。技能可以穿门。',
+          '向前方连续挥爪3次，前摇分别为0.3、0.4、0.6秒，每次造成30伤害，范围为300；疾冲状态下或{武器技能}飞行中，改为向前穿刺，造成60点伤害和1.8秒眩晕。技能可以穿门。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
-        forecast: 0,
         aftercast: 0,
         canHitInPipe: true,
         skillLevels: [
