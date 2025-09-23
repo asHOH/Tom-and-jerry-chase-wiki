@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
-import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
@@ -17,10 +16,6 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { useDarkMode } from '@/context/DarkModeContext';
 
-interface ArticlesClientProps {
-  description?: string;
-}
-
 interface Article {
   id: string;
   title: string;
@@ -31,12 +26,12 @@ interface Article {
   categories: { id: string; name: string };
   users_public_view: { nickname: string };
   latest_approved_version: Array<{
-    id: string;
-    content: string;
-    created_at: string;
-    status: string;
-    editor_id: string;
-    users_public_view: { nickname: string };
+    id: string | null;
+    content: string | null;
+    created_at: string | null;
+    status: string | null;
+    editor_id: string | null;
+    users_public_view: { nickname: string } | null;
   }>;
 }
 
@@ -47,17 +42,20 @@ interface Category {
 
 interface ArticlesData {
   articles: Article[];
-  total_count: number;
-  current_page: number;
-  total_pages: number;
+  // total_count: number;
+  // current_page: number;
+  // total_pages: number;
   categories: Category[];
-  has_next: boolean;
-  has_prev: boolean;
+  // has_next: boolean;
+  // has_prev: boolean;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+interface ArticlesClientProps {
+  articles: ArticlesData;
+  description?: string;
+}
 
-export default function ArticlesClient({ description }: ArticlesClientProps) {
+export default function ArticlesClient({ articles: data, description }: ArticlesClientProps) {
   const { role: userRole } = useUser();
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
@@ -74,19 +72,23 @@ export default function ArticlesClient({ description }: ArticlesClientProps) {
   const [sortBy, setSortBy] = useState<'created_at' | 'title'>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
-  const params = new URLSearchParams({
-    // Fetch all articles once to enable client-side filtering/pagination
-    limit: '9999',
-  });
+  // const params = new URLSearchParams({
+  //   // Fetch all articles once to enable client-side filtering/pagination
+  //   limit: '9999',
+  // });
 
   // Do not append category to params; filter on client
 
-  const {
-    data,
-    error,
-    isLoading: loading,
-    mutate,
-  } = useSWR<ArticlesData>(`/api/articles?${params.toString()}`, fetcher);
+  // const {
+  //   data,
+  //   error,
+  //   isLoading: loading,
+  //   mutate,
+  // } = useSWR<ArticlesData>(`/api/articles?${params.toString()}`, fetcher);
+
+  const loading = false;
+  const error = null;
+  function mutate() {}
 
   const filteredArticles = useMemo(() => {
     if (!data?.articles) return [] as Article[];
@@ -472,7 +474,9 @@ export default function ArticlesClient({ description }: ArticlesClientProps) {
                       {latestVersion && (
                         <span>
                           更新:{' '}
-                          {format(new Date(latestVersion.created_at), 'MM月dd日', { locale: zhCN })}
+                          {format(new Date(latestVersion.created_at!), 'MM月dd日', {
+                            locale: zhCN,
+                          })}
                         </span>
                       )}
                       <span>浏览: {article.view_count ?? 0}</span>
