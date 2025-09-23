@@ -27,9 +27,8 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
   const avilableAliases = (buff.aliases ?? [])
     .filter((i) => i[0] !== '#')
     .map((i) => {
-      return i.replace(/[\?\*]/g, '');
-    })
-    .filter((i) => i !== buff.name);
+      return i[0] === '%' ? i.replace(/[%\^\$\.\*\+\?\[\]\(\)\{\}\\]/g, '') : i; //移除“%”和部分常用元字符
+    });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>

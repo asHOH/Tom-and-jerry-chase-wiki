@@ -15,12 +15,12 @@ import { getPositioningTagColors } from '@/lib/design-system';
 
 const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
   '道具类',
-  '投射物类',
-  '召唤物类',
+  '投射物',
+  '召唤物',
+  'NPC',
   '变身类',
-  'NPC类',
   '平台类',
-  '指示类',
+  '指示物',
 ];
 
 type Props = { description?: string };
@@ -33,10 +33,23 @@ export default function EntityClient({ description }: Props) {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
+  //search if selectedTypes includes any entitytype
+  function searchTypeIn(entity: Entity): boolean {
+    if (typeof entity.entitytype == 'string') {
+      return selectedTypes.includes(entity.entitytype);
+    } else {
+      return entity.entitytype
+        .map((type) => {
+          return selectedTypes.includes(type);
+        })
+        .includes(true);
+    }
+  }
+
   const allentities = { ...entities['cat'], ...entities['mouse'] }; //connect two parts of entities
   const filteredEntities = Object.values(allentities).filter((entity: Entity) => {
     // 类型筛选
-    const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(entity.entitytype);
+    const typeMatch = selectedTypes.length === 0 || searchTypeIn(entity);
     // 阵营筛选
     let factionMatch = true;
     if (selectedFactions.length > 0) {
@@ -52,7 +65,7 @@ export default function EntityClient({ description }: Props) {
     <div
       className={
         isMobile
-          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
+          ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
           : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
       }
     >
@@ -73,18 +86,18 @@ export default function EntityClient({ description }: Props) {
                 prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
               )
             }
-            getOptionLabel={(opt) => (isMobile ? opt.slice(0, 3) : opt)}
+            getOptionLabel={(opt) => opt}
             getButtonStyle={(name, active) => {
               const isActive = active;
               const tagColors = getPositioningTagColors(
                 {
                   道具类: '救援',
-                  投射物类: '辅助',
-                  召唤物类: '破局',
+                  投射物: '辅助',
+                  召唤物: '破局',
+                  NPC: '干扰',
                   变身类: '奶酪',
-                  NPC类: '干扰',
                   平台类: '砸墙',
-                  指示类: '后期',
+                  指示物: '后期',
                 }[name],
                 false,
                 false,
@@ -117,9 +130,9 @@ export default function EntityClient({ description }: Props) {
         </div>
       </header>
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-4'} mt-8`}
         style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '120px' : '150px'}, 1fr))`,
         }}
       >
         {filteredEntities.map((entity) => (

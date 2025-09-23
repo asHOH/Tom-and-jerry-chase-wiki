@@ -49,7 +49,11 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
               >
                 {entity.name}{' '}
                 <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                  ({entity.entitytype})
+                  (
+                  {typeof entity.entitytype === 'string'
+                    ? entity.entitytype
+                    : entity.entitytype.join(', ')}
+                  )
                 </span>
               </h1>
               <div

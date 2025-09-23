@@ -256,15 +256,15 @@ export type Item = ItemDefinition & { name: string; imageUrl: string };
 
 export type Entitytypelist =
   | '道具类'
-  | '投射物类'
-  | '召唤物类'
+  | '投射物'
+  | '召唤物'
   | '平台类'
-  | 'NPC类'
+  | 'NPC'
   | '变身类'
-  | '指示类';
+  | '指示物';
 
 export type EntityDefinition = {
-  entitytype: Entitytypelist; //type of entity
+  entitytype: Entitytypelist | Entitytypelist[]; //type of entity
   characterName: string; //which character does this entity belong to
   skillname?: string; //which skill does this entity belong to
   aliases?: string[]; // (entities') Alternative names for search
@@ -290,7 +290,7 @@ export type BuffDefinition = {
   bufftype: Bufftypelist;
   buffclass: Buffclasslist;
 
-  aliases?: string[]; //特殊：允许使用通配符“*”或“?”，且在比较时自动忽略“#”（在字符串最前端使用#会避免在详情页中显示该别名）
+  aliases?: string[]; //支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
   duration?: number | 'infinite'; // duration of buff.If buff has more than two different durations,don't fill in this attribute.
   failure?: string; //failure conditions of buff
 
