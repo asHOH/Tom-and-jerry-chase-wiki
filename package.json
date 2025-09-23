@@ -27,6 +27,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/run-image-optimization.cjs && node scripts/generate-doc-pages.mjs && next build",
+    "build:skip-images": "node scripts/generate-doc-pages.mjs && next build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
