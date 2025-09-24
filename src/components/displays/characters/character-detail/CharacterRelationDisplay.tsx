@@ -755,6 +755,175 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
             )}
           </div>
         </div>
+
+        {/*counterEachOther*/}
+        <div>
+          <div className='flex items-center justify-between'>
+            <span className='font-semibold text-sm text-amber-700 dark:text-amber-300 flex items-center gap-1'>
+              <span className='w-5 h-5 bg-amber-200 rounded-full flex items-center justify-center mr-1'>
+                <svg
+                  width='16'
+                  height='16'
+                  viewBox='0 0 16 16'
+                  fill='none'
+                  aria-label='sad'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <circle cx='5' cy='6' r='1.25' fill='#ca8a04' />
+                  <circle cx='11' cy='6' r='1.25' fill='#ca8a04' />
+                  <path
+                    d='M4 11 H12 11'
+                    stroke='#ca8a04'
+                    strokeWidth='2'
+                    fill='none'
+                    strokeLinecap='round'
+                  />
+                </svg>
+              </span>
+              与{id}互有克制的{factionId == 'cat' ? '老鼠' : '猫咪'}
+            </span>
+            {isEditMode && (
+              <div className='flex gap-2'>
+                <CharacterSelector
+                  currentCharacterId={id}
+                  factionId={factionId}
+                  relationType='counterEachOther'
+                  existingRelations={[
+                    ...getCharacterRelation(id).counters,
+                    ...getCharacterRelation(id).counteredBy,
+                    ...getCharacterRelation(id).counterEachOther,
+                  ]}
+                  onSelect={(characterId) =>
+                    counterEachOtherHook.handleAdd(characterId, '新增关系描述')
+                  }
+                />
+              </div>
+            )}
+          </div>
+          <div className='grid grid-cols-1 gap-y-3 mt-2'>
+            {char.counterEachOther.length === 0 && !isEditMode ? (
+              <span className='text-xs text-gray-400'>无</span>
+            ) : (
+              [
+                ...char.counterEachOther.map((c) => ({
+                  ...c,
+                  _type: 'character',
+                })),
+              ]
+                .sort((a, b) => (a.isMinor === b.isMinor ? 0 : a.isMinor ? 1 : -1))
+                .map((item) => {
+                  if (item._type === 'character') {
+                    // Character relation
+                    const c = item;
+                    const originalIndex = isEditMode
+                      ? (localCharacter.counterEachOther || []).findIndex((oc) => oc.id === c.id)
+                      : -1;
+                    const isDirectRelation = originalIndex !== -1;
+                    return (
+                      <div
+                        key={'character-' + c.id}
+                        className={clsx(
+                          'flex flex-row items-center gap-3 p-2 rounded-lg bg-amber-50 dark:bg-amber-900/30',
+                          !isEditMode &&
+                            'cursor-pointer transition-shadow hover:shadow-lg hover:bg-amber-100 dark:hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-amber-400 active:scale-95',
+                          c.isMinor && 'opacity-60'
+                        )}
+                        {...(!isEditMode && { role: 'button', tabIndex: 0 })}
+                        aria-label={!isEditMode ? `选择角色 ${c.id}` : `与 ${c.id} 互有克制的关系`}
+                        onClick={() => {
+                          if (!isEditMode) {
+                            handleSelectCharacter(c.id);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+                            handleSelectCharacter(c.id);
+                          }
+                        }}
+                      >
+                        <Image
+                          src={getImageUrl(c.id)}
+                          alt={c.id}
+                          width={40}
+                          height={40}
+                          className='w-10 h-10 rounded-full object-cover'
+                        />
+                        <div className='flex flex-col flex-1'>
+                          <div className='flex items-center gap-1'>
+                            <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
+                            {isEditMode && isDirectRelation ? (
+                              <button
+                                type='button'
+                                onClick={() => counterEachOtherHook.toggleIsMinor(originalIndex)}
+                                className='text-[10px] px-1 py-0.5 bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200 rounded-full hover:bg-amber-300 dark:hover:bg-amber-600 cursor-pointer'
+                                aria-label={`切换${c.id}的互有克制关系为${c.isMinor ? '主要' : '次要'}`}
+                              >
+                                {c.isMinor ? '次要' : '主要'}
+                              </button>
+                            ) : (
+                              !isEditMode &&
+                              c.isMinor && (
+                                <span className='text-[10px] px-1 py-0.5 bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200 rounded-full'>
+                                  次要
+                                </span>
+                              )
+                            )}
+                          </div>
+                          {isEditMode && isDirectRelation ? (
+                            <EditableField
+                              tag='span'
+                              path={`counterEachOther.${originalIndex}.description`}
+                              initialValue={c.description || ''}
+                              className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+                              onSave={(newValue) =>
+                                counterEachOtherHook.handleUpdate(
+                                  originalIndex,
+                                  'description',
+                                  newValue
+                                )
+                              }
+                            />
+                          ) : (
+                            !isEditMode &&
+                            c.description && (
+                              <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                                {c.description}
+                              </span>
+                            )
+                          )}
+                        </div>
+                        {isEditMode && isDirectRelation && (
+                          <button
+                            type='button'
+                            onClick={() => counterEachOtherHook.handleRemove(originalIndex)}
+                            className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                            aria-label={`移除${c.id}的互有克制关系`}
+                          >
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              fill='none'
+                              viewBox='0 0 24 24'
+                              strokeWidth='2'
+                              stroke='currentColor'
+                              className='w-4 h-4'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                              />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
+                })
+            )}
+          </div>
+        </div>
+
         {/* Combined Countered By (Characters + Knowledge Cards + Special Skills) */}
         <div>
           <div className='flex items-center justify-between'>
@@ -1140,174 +1309,6 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                               e.stopPropagation();
                               removeExtraAt('counteredBySpecialSkills', idx);
                             }}
-                          >
-                            <svg
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              strokeWidth='2'
-                              stroke='currentColor'
-                              className='w-4 h-4'
-                            >
-                              <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
-                              />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-                    );
-                  }
-                  return null;
-                })
-            )}
-          </div>
-        </div>
-
-        {/*counterEachOther*/}
-        <div>
-          <div className='flex items-center justify-between'>
-            <span className='font-semibold text-sm text-amber-700 dark:text-amber-300 flex items-center gap-1'>
-              <span className='w-5 h-5 bg-amber-200 rounded-full flex items-center justify-center mr-1'>
-                <svg
-                  width='16'
-                  height='16'
-                  viewBox='0 0 16 16'
-                  fill='none'
-                  aria-label='sad'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <circle cx='5' cy='6' r='1.25' fill='#ca8a04' />
-                  <circle cx='11' cy='6' r='1.25' fill='#ca8a04' />
-                  <path
-                    d='M4 11 H12 11'
-                    stroke='#ca8a04'
-                    strokeWidth='2'
-                    fill='none'
-                    strokeLinecap='round'
-                  />
-                </svg>
-              </span>
-              与{id}互有克制的{factionId == 'cat' ? '老鼠' : '猫咪'}
-            </span>
-            {isEditMode && (
-              <div className='flex gap-2'>
-                <CharacterSelector
-                  currentCharacterId={id}
-                  factionId={factionId}
-                  relationType='counterEachOther'
-                  existingRelations={[
-                    ...getCharacterRelation(id).counters,
-                    ...getCharacterRelation(id).counteredBy,
-                    ...getCharacterRelation(id).counterEachOther,
-                  ]}
-                  onSelect={(characterId) =>
-                    counterEachOtherHook.handleAdd(characterId, '新增关系描述')
-                  }
-                />
-              </div>
-            )}
-          </div>
-          <div className='grid grid-cols-1 gap-y-3 mt-2'>
-            {char.counterEachOther.length === 0 && !isEditMode ? (
-              <span className='text-xs text-gray-400'>无</span>
-            ) : (
-              [
-                ...char.counterEachOther.map((c) => ({
-                  ...c,
-                  _type: 'character',
-                })),
-              ]
-                .sort((a, b) => (a.isMinor === b.isMinor ? 0 : a.isMinor ? 1 : -1))
-                .map((item) => {
-                  if (item._type === 'character') {
-                    // Character relation
-                    const c = item;
-                    const originalIndex = isEditMode
-                      ? (localCharacter.counterEachOther || []).findIndex((oc) => oc.id === c.id)
-                      : -1;
-                    const isDirectRelation = originalIndex !== -1;
-                    return (
-                      <div
-                        key={'character-' + c.id}
-                        className={clsx(
-                          'flex flex-row items-center gap-3 p-2 rounded-lg bg-amber-50 dark:bg-amber-900/30',
-                          !isEditMode &&
-                            'cursor-pointer transition-shadow hover:shadow-lg hover:bg-amber-100 dark:hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-amber-400 active:scale-95',
-                          c.isMinor && 'opacity-60'
-                        )}
-                        {...(!isEditMode && { role: 'button', tabIndex: 0 })}
-                        aria-label={!isEditMode ? `选择角色 ${c.id}` : `与 ${c.id} 互有克制的关系`}
-                        onClick={() => {
-                          if (!isEditMode) {
-                            handleSelectCharacter(c.id);
-                          }
-                        }}
-                        onKeyDown={(e) => {
-                          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
-                            handleSelectCharacter(c.id);
-                          }
-                        }}
-                      >
-                        <Image
-                          src={getImageUrl(c.id)}
-                          alt={c.id}
-                          width={40}
-                          height={40}
-                          className='w-10 h-10 rounded-full object-cover'
-                        />
-                        <div className='flex flex-col flex-1'>
-                          <div className='flex items-center gap-1'>
-                            <span className='text-xs text-gray-700 dark:text-gray-300'>{c.id}</span>
-                            {isEditMode && isDirectRelation ? (
-                              <button
-                                type='button'
-                                onClick={() => counterEachOtherHook.toggleIsMinor(originalIndex)}
-                                className='text-[10px] px-1 py-0.5 bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200 rounded-full hover:bg-amber-300 dark:hover:bg-amber-600 cursor-pointer'
-                                aria-label={`切换${c.id}的互有克制关系为${c.isMinor ? '主要' : '次要'}`}
-                              >
-                                {c.isMinor ? '次要' : '主要'}
-                              </button>
-                            ) : (
-                              !isEditMode &&
-                              c.isMinor && (
-                                <span className='text-[10px] px-1 py-0.5 bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200 rounded-full'>
-                                  次要
-                                </span>
-                              )
-                            )}
-                          </div>
-                          {isEditMode && isDirectRelation ? (
-                            <EditableField
-                              tag='span'
-                              path={`counterEachOther.${originalIndex}.description`}
-                              initialValue={c.description || ''}
-                              className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
-                              onSave={(newValue) =>
-                                counterEachOtherHook.handleUpdate(
-                                  originalIndex,
-                                  'description',
-                                  newValue
-                                )
-                              }
-                            />
-                          ) : (
-                            !isEditMode &&
-                            c.description && (
-                              <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
-                                {c.description}
-                              </span>
-                            )
-                          )}
-                        </div>
-                        {isEditMode && isDirectRelation && (
-                          <button
-                            type='button'
-                            onClick={() => counterEachOtherHook.handleRemove(originalIndex)}
-                            className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-                            aria-label={`移除${c.id}的互有克制关系`}
                           >
                             <svg
                               xmlns='http://www.w3.org/2000/svg'
