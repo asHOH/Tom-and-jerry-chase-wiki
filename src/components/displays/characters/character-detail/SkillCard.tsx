@@ -29,13 +29,23 @@ interface SkillCardProps {
 }
 
 function SkillDescriptionPrefix({ skill, level }: { skill: DeepReadonly<Skill>; level: number }) {
-  if (level == 1) return null;
+  const results: string[] = [];
+  const previousCharges = skill.skillLevels[level - 2]?.charges ?? 1;
+  const charges = skill.skillLevels[level - 1]?.charges ?? 1;
+  if (previousCharges != charges) {
+    if (charges != 1) {
+      results.push(`技能可以存储${charges}次`);
+    }
+  }
   const previousCooldown = skill.skillLevels[level - 2]?.cooldown ?? 0;
   const cooldown = skill.skillLevels[level - 1]?.cooldown ?? 0;
-  if (previousCooldown != cooldown) {
-    return `CD减少至${cooldown}秒${skill.skillLevels[level - 1]?.description ? '；' : '。'}`;
+  if (previousCooldown != cooldown && level != 1) {
+    results.push(`CD减少至${cooldown}秒`);
   }
-  return null;
+  return (
+    results.join('；') +
+    (results.length ? (skill.skillLevels[level - 1]?.description ? '；' : '。') : '')
+  );
 }
 
 export default function SkillCard({
@@ -88,6 +98,33 @@ export default function SkillCard({
       )),
       ' 秒',
     ];
+  };
+
+  const getChargesProperty = () => {
+    if (skill.type == 'passive') return null;
+
+    const charges = skill.skillLevels.map((level: SkillLevel) => level.charges || 1);
+    const uniqueCharges = Array.from(new Set(charges));
+
+    if (uniqueCharges.length === 1 && uniqueCharges[0] !== 1 && !isEditMode) {
+      return `技能存储次数: ${uniqueCharges[0]}`;
+    }
+
+    return (
+      <div>
+        技能存储次数:{' '}
+        {charges.map((i, index) => (
+          <React.Fragment key={index}>
+            {index != 0 ? '/' : ''}
+            <EditableField
+              tag='span'
+              path={`skills.${skillIndex}.skillLevels.${index}.charges`}
+              initialValue={i}
+            />
+          </React.Fragment>
+        ))}
+      </div>
+    );
   };
 
   const createBooleanCheckbox = (
@@ -153,6 +190,10 @@ export default function SkillCard({
 
     const cooldownProp = getCooldownProperty();
     if (cooldownProp) properties.push(cooldownProp);
+
+    const chargesProp = getChargesProperty();
+    if (chargesProp) properties.push(chargesProp);
+
     if (isEditMode && skill.type !== 'passive') {
       properties.push(
         <div className='text-xs text-gray-400 dark:text-gray-500 flex'>
