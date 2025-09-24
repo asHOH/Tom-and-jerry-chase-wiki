@@ -15,7 +15,7 @@ export default function ItemGroupCardDisplay({ itemGroup }: { itemGroup: ItemGro
         alt={`${itemGroup.name}效果图标`}
         size='ITEM_CARD'
         className='hover:scale-105'
-        useShortHeight={isMobile ? true : false}
+        style={isMobile ? { height: '8rem' } : {}}
       />
       <div className='px-3 pt-1 pb-3 text-center w-full'>
         <h3

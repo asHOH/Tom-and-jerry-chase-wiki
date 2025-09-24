@@ -13,7 +13,6 @@ type GameImageProps = {
   sizes?: string;
   onLoad?: () => void;
   onError?: () => void;
-  useShortHeight?: boolean; //use short height to make ui compact
   style?: CSSProperties; //replace default style
 };
 
@@ -26,16 +25,14 @@ export default function GameImage({
   sizes,
   onLoad,
   onError,
-  useShortHeight,
   style,
 }: GameImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const { width, height } = componentTokens.image.dimensions[size];
 
   // Use card height for details view, image height for others
-  const containerHeight = useShortHeight
-    ? '8rem'
-    : size === 'CARD_DETAILS'
+  const containerHeight =
+    size === 'CARD_DETAILS'
       ? componentTokens.card.content.height
       : componentTokens.image.container.height;
 

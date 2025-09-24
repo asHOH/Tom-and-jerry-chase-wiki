@@ -77,7 +77,7 @@ export default function SpecialSkillClient({ description }: Props) {
                 alt={skill.name}
                 size='SPECIAL_SKILL_CARD'
                 className='hover:scale-105'
-                useShortHeight={isMobile ? true : false}
+                style={isMobile ? { height: '8rem' } : {}}
               />
               <div className='px-3 pt-1 pb-3 text-center'>
                 <div className='font-semibold dark:text-white'>{skill.name}</div>

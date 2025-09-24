@@ -25,7 +25,7 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
         alt={`${item.name}道具图标`}
         size='ITEM_CARD'
         className='hover:scale-105'
-        useShortHeight={isMobile ? true : false}
+        style={isMobile ? { height: '8rem' } : {}}
       />
       <div className='px-3 pt-1 pb-3 text-center w-full'>
         <h3

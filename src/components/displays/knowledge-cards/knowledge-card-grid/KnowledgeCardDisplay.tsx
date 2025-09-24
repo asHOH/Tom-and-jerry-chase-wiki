@@ -32,7 +32,7 @@ export default function KnowledgeCardDisplay({
         size='KNOWLEDGECARD_CARD'
         className='hover:scale-105'
         priority={priority}
-        useShortHeight={isMobile ? true : false}
+        style={isMobile ? { height: '8rem' } : {}}
       />
       <div className='px-3 pt-1 pb-3 text-center'>
         <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-1'>{name}</h3>
