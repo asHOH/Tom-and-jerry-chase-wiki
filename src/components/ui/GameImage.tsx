@@ -1,5 +1,5 @@
 import Image from '@/components/Image';
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 import { designTokens, componentTokens } from '@/lib/design-tokens';
 
 type ImageSize = keyof typeof componentTokens.image.dimensions;
@@ -14,6 +14,7 @@ type GameImageProps = {
   onLoad?: () => void;
   onError?: () => void;
   useShortHeight?: boolean; //use short height to make ui compact
+  style?: CSSProperties; //replace default style
 };
 
 export default function GameImage({
@@ -26,11 +27,12 @@ export default function GameImage({
   onLoad,
   onError,
   useShortHeight,
+  style,
 }: GameImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const { width, height } = componentTokens.image.dimensions[size];
 
-  // Use card height for details view, image height for others,unless useShort is true
+  // Use card height for details view, image height for others
   const containerHeight = useShortHeight
     ? '8rem'
     : size === 'CARD_DETAILS'
@@ -70,8 +72,11 @@ export default function GameImage({
     <div
       className='w-full bg-gray-200 dark:bg-slate-700 relative overflow-hidden mb-3'
       style={{
-        height: containerHeight,
-        borderRadius: componentTokens.image.container.borderRadius,
+        ...{
+          height: containerHeight,
+          borderRadius: componentTokens.image.container.borderRadius,
+        },
+        ...style,
       }}
     >
       <div className='flex items-center justify-center h-full p-2'>
