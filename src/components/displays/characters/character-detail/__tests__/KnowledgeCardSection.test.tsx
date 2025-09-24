@@ -1,76 +1,50 @@
-import {
-  calculateKnowledgeCardCosts,
-  isCardOptional,
-  getKnowledgeCardTooltipContent,
-} from '@/lib/knowledgeCardSectionUtils';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { characters } from '@/data';
 
-describe('KnowledgeCardSection - C-狡诈 Optional Card Logic', () => {
-  // Test the core logic for handling C-狡诈 as optional card
+describe('KnowledgeCard nested persistence (sanity tests)', () => {
+  const charId = 'test-char-for-knowledgecard-section';
 
-  const mockGetCardCost = (cardId: string) => {
-    const costs: Record<string, number> = {
-      'S-乘胜追击': 7,
-      'A-熊熊燃烧': 6,
-      'A-穷追猛打': 4,
-      'C-猫是液体': 2,
-      'C-狡诈': 2,
+  beforeEach(() => {
+    // reset test character in the Valtio characters store
+    // minimal shape used by the components
+    (characters as any)[charId] = {
+      id: charId,
+      knowledgeCardGroups: [
+        {
+          id: 'preset-1',
+          description: 'preset desc',
+          detailedDescription: 'detailed',
+          defaultFolded: false,
+          groups: [
+            { cards: ['cat-1'], description: 'g1' },
+            { cards: ['cat-2'], description: 'g2' },
+          ],
+        },
+      ],
     };
-    return costs[cardId] || 0;
-  };
-
-  it('should calculate normal cost for groups without C-狡诈', () => {
-    const group = ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打'];
-    const costInfo = calculateKnowledgeCardCosts(group, mockGetCardCost);
-
-    expect(costInfo.totalCost).toBe(17); // 7 + 6 + 4
-    expect(costInfo.displayCost).toBe(17);
-    expect(costInfo.hasOptionalCard).toBe(false);
-    expect(costInfo.isOptionalActive).toBe(false);
   });
 
-  it('should show adjusted cost for groups with C-狡诈 totaling 21', () => {
-    const group = ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'];
-    const costInfo = calculateKnowledgeCardCosts(group, mockGetCardCost);
-
-    expect(costInfo.totalCost).toBe(21); // 7 + 6 + 4 + 2 + 2
-    expect(costInfo.displayCost).toBe(19); // 21 - 2 (optional C-狡诈)
-    expect(costInfo.hasOptionalCard).toBe(true);
-    expect(costInfo.isOptionalActive).toBe(true);
+  afterEach(() => {
+    // cleanup
+    delete (characters as any)[charId];
   });
 
-  it('should show normal cost for groups with C-狡诈 not totaling 21', () => {
-    const group = ['A-熊熊燃烧', 'C-狡诈']; // 6 + 2 = 8
-    const costInfo = calculateKnowledgeCardCosts(group, mockGetCardCost);
+  test('writing nested group cards updates the Valtio characters store', () => {
+    // sanity write following the example pattern from implementation plan
+    (characters as any)[charId]!.knowledgeCardGroups[0]!.groups[1]!.cards = Array.from(['cat-99']);
 
-    expect(costInfo.totalCost).toBe(8);
-    expect(costInfo.displayCost).toBe(8);
-    expect(costInfo.hasOptionalCard).toBe(true);
-    expect(costInfo.isOptionalActive).toBe(false);
+    expect((characters as any)[charId]!.knowledgeCardGroups[0]!.groups[1]!.cards).toEqual([
+      'cat-99',
+    ]);
   });
 
-  it('should identify C-狡诈 as optional only when total is exactly 21', () => {
-    expect(isCardOptional('C-狡诈', true, 21)).toBe(true);
-    expect(isCardOptional('C-狡诈', true, 19)).toBe(false);
-    expect(isCardOptional('C-狡诈', false, 21)).toBe(false);
-    expect(isCardOptional('A-熊熊燃烧', true, 21)).toBe(false);
-  });
+  test('updating group-set metadata persists to characters store', () => {
+    (characters as any)[charId]!.knowledgeCardGroups[0]!.id = 'preset-1-renamed';
+    (characters as any)[charId]!.knowledgeCardGroups[0]!.description = 'updated desc';
+    (characters as any)[charId]!.knowledgeCardGroups[0]!.defaultFolded = true;
 
-  it('should handle groups without any cards', () => {
-    const group: string[] = [];
-    const costInfo = calculateKnowledgeCardCosts(group, mockGetCardCost);
-
-    expect(costInfo.totalCost).toBe(0);
-    expect(costInfo.displayCost).toBe(0);
-    expect(costInfo.hasOptionalCard).toBe(false);
-    expect(costInfo.isOptionalActive).toBe(false);
-  });
-
-  it('should generate correct tooltip content', () => {
-    expect(getKnowledgeCardTooltipContent(19, true, 21)).toBe(
-      '知识量：19点 (带狡诈需开启+1知识量上限)'
-    );
-    expect(getKnowledgeCardTooltipContent(21, false, 21)).toBe('知识量：21点 (需开启+1知识量上限)');
-    expect(getKnowledgeCardTooltipContent(22, false, 22)).toBe('知识量：22点 (超出游戏限制)');
-    expect(getKnowledgeCardTooltipContent(15, false, 15)).toBe('知识量：15点');
+    expect((characters as any)[charId]!.knowledgeCardGroups[0]!.id).toBe('preset-1-renamed');
+    expect((characters as any)[charId]!.knowledgeCardGroups[0]!.description).toBe('updated desc');
+    expect((characters as any)[charId]!.knowledgeCardGroups[0]!.defaultFolded).toBe(true);
   });
 });

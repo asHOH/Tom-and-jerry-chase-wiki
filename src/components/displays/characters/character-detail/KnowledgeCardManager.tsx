@@ -34,10 +34,20 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
     characters[character.id]!.knowledgeCardGroups.push(newGroup);
   };
 
-  const handleRemoveGroup = (index: number) => {
-    characters[character.id]!.knowledgeCardGroups = characters[
-      character.id
-    ]!.knowledgeCardGroups.filter((_, i) => i !== index);
+  const handleRemoveGroup = (topIndex: number, innerIndex?: number) => {
+    // If no innerIndex is provided, remove a top-level group.
+    if (innerIndex === undefined) {
+      characters[character.id]!.knowledgeCardGroups = characters[
+        character.id
+      ]!.knowledgeCardGroups.filter((_, i) => i !== topIndex);
+      return;
+    }
+
+    // Otherwise remove the inner group from a KnowledgeCardGroupSet at topIndex.
+    const groupEntry = characters[character.id]!.knowledgeCardGroups[topIndex];
+    if (groupEntry && 'groups' in groupEntry && Array.isArray(groupEntry.groups)) {
+      groupEntry.groups = groupEntry.groups.filter((_, i) => i !== innerIndex);
+    }
   };
 
   return (

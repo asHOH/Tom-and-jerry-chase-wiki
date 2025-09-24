@@ -44,7 +44,8 @@ export function sortCardsByCost<T extends { cost: number }>(cards: T[]): T[] {
  * @returns Sorted array by name
  */
 export function sortCharactersByName<T extends { name: string }>(characters: T[]): T[] {
-  return [...characters].sort((a, b) => a.name.localeCompare(b.name));
+  // Use Chinese collation to ensure expected ordering for CJK names (pinyin-like ordering)
+  return [...characters].sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
 }
 
 /**

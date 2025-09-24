@@ -31,7 +31,7 @@ interface KnowledgeCardSectionProps {
   factionId: FactionId;
   characterId: string;
   onCreateGroup: () => void;
-  onRemoveGroup: (index: number) => void;
+  onRemoveGroup: (topIndex: number, innerIndex?: number) => void;
 }
 /** KnowledgeCardGroup component extracted from renderKnowledgeCardGroup */
 export function KnowledgeCardGroup({
@@ -47,7 +47,7 @@ export function KnowledgeCardGroup({
   getCardCost,
   getCardRank,
   imageBasePath,
-  handleDescriptionSave,
+  descriptionPath,
   contributor,
   contributorInformation,
 }: {
@@ -63,10 +63,12 @@ export function KnowledgeCardGroup({
   getCardCost: (cardId: string) => number;
   getCardRank: (cardId: string) => string;
   imageBasePath: string;
-  handleDescriptionSave: (newDescription: string, index: number) => void;
+  descriptionPath: string;
   contributor: string | undefined;
   contributorInformation: Contributor | undefined;
 }) {
+  console.log(Array.from(group), description, descriptionPath, index);
+
   const [isDarkMode] = useDarkMode();
   if (group.length === 0 && !isEditMode) {
     return null;
@@ -251,9 +253,8 @@ export function KnowledgeCardGroup({
         >
           <EditableField
             tag='div'
-            path={`knowledgeCardGroups.${index}.description`}
+            path={descriptionPath}
             initialValue={description ?? ''}
-            onSave={(newDescription) => handleDescriptionSave(newDescription, index)}
             className='text-sm text-gray-700 dark:text-gray-300'
             enableEdit={isEditMode}
           />
@@ -273,7 +274,11 @@ export default function KnowledgeCardSection({
   const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
   const [isPickerOpen, setPickerOpen] = useState(false);
-  const [currentGroupIndex, setCurrentGroupIndex] = useState<number | null>(null);
+  const [currentTarget, setCurrentTarget] = useState<{
+    topIndex: number;
+    innerIndex?: number;
+    isGroupSet: boolean;
+  } | null>(null);
   const [isSqueezedView, setIsSqueezedView] = useState(false);
 
   const imageBasePath = factionId === 'cat' ? '/images/catCards/' : '/images/mouseCards/';
@@ -296,40 +301,65 @@ export default function KnowledgeCardSection({
     return cardData?.rank ?? 'C';
   };
 
-  const handleEditClick = (index: number) => {
-    setCurrentGroupIndex(index);
+  // Persistence helpers for top-level and nested groups (use Valtio store directly)
+  const persistGroupCards = (
+    topIndex: number,
+    innerIndex: number | undefined,
+    newCards: readonly string[]
+  ) => {
+    if (innerIndex === undefined) {
+      (characters[characterId]!.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards =
+        Array.from(newCards);
+      return;
+    }
+    // nested
+    const groupEntry = characters[characterId]!.knowledgeCardGroups[topIndex];
+    if (groupEntry && 'groups' in groupEntry && Array.isArray(groupEntry.groups)) {
+      groupEntry.groups[innerIndex]!.cards = Array.from(newCards);
+    }
+  };
+
+  const updateGroupSetMetadata = (
+    topIndex: number,
+    field: 'id' | 'description' | 'detailedDescription' | 'defaultFolded',
+    value: string | boolean | undefined
+  ) => {
+    const entry = characters[characterId]!.knowledgeCardGroups[topIndex];
+    if (!entry || !('groups' in entry)) return;
+    (entry as unknown as Record<string, string | boolean | undefined>)[field] = value;
+  };
+
+  const handleEditClick = (topIndex: number, innerIndex?: number) => {
+    if (innerIndex === undefined) {
+      setCurrentTarget({ topIndex, isGroupSet: false });
+    } else {
+      setCurrentTarget({ topIndex, innerIndex, isGroupSet: true });
+    }
     setPickerOpen(true);
   };
 
-  const handleDescriptionSave = (newDescription: string, index: number) => {
-    const updatedGroups = [...knowledgeCardGroups];
-    const currentGroup = updatedGroups[index];
-
-    if (currentGroup) {
-      // Update description - all groups are now objects
-      characters[characterId]!.knowledgeCardGroups[index]!.description = newDescription;
-    }
-  };
-
   const handlePickerSave = (newCards: readonly string[]) => {
-    if (currentGroupIndex === null) return;
+    const target = currentTarget;
+    if (!target) return;
 
-    const updatedGroups = [...knowledgeCardGroups];
-    const currentGroup = updatedGroups[currentGroupIndex];
-
-    if (currentGroup) {
-      // Update cards - all groups are now objects
-      (
-        characters[characterId]!.knowledgeCardGroups[currentGroupIndex] as KnowledgeCardGroup
-      ).cards = Array.from(newCards);
-    }
-
+    persistGroupCards(target.topIndex, target.innerIndex, newCards);
     setPickerOpen(false);
+    setCurrentTarget(null);
   };
 
-  const currentGroup =
-    currentGroupIndex !== null ? knowledgeCardGroups[currentGroupIndex] : undefined;
-  const initialSelectedCards = (currentGroup as KnowledgeCardGroup)?.cards ?? [];
+  // Determine initial selected cards based on currentTarget (top-level or nested)
+  let initialSelectedCards: readonly string[] = [];
+  if (currentTarget) {
+    const top = knowledgeCardGroups[currentTarget.topIndex];
+    if (!top) {
+      initialSelectedCards = [];
+    } else if (currentTarget.innerIndex === undefined) {
+      initialSelectedCards = 'cards' in top ? ((top as KnowledgeCardGroup).cards ?? []) : [];
+    } else if (!('cards' in top) && 'groups' in top) {
+      const inner = top.groups[currentTarget.innerIndex];
+      initialSelectedCards = inner?.cards ?? [];
+    }
+  }
 
   if (!knowledgeCardGroups || knowledgeCardGroups.length === 0) {
     if (isEditMode) {
@@ -466,7 +496,7 @@ export default function KnowledgeCardSection({
                   getCardCost={getCardCost}
                   getCardRank={getCardRank}
                   imageBasePath={imageBasePath}
-                  handleDescriptionSave={handleDescriptionSave}
+                  descriptionPath={`knowledgeCardGroups.${index}.description`}
                   contributor={group.contributor}
                   contributorInformation={contributors.find(
                     (a) => a.id === group.contributor || a.name === group.contributor
@@ -480,15 +510,21 @@ export default function KnowledgeCardSection({
               <React.Fragment key={index}>
                 <KnowledgeCardGroupSetDisplay
                   groupSet={group}
+                  topIndex={index}
+                  isEditMode={isEditMode}
                   characterId={characterId}
                   isSqueezedView={isSqueezedView}
                   handleSelectCard={handleSelectCard}
                   handleEditClick={handleEditClick}
+                  onRemoveInnerGroup={(top: number, inner: number) => onRemoveGroup(top, inner)}
                   onRemoveGroup={onRemoveGroup}
+                  onEditGroupSetMetadata={updateGroupSetMetadata}
                   getCardCost={getCardCost}
                   getCardRank={getCardRank}
                   imageBasePath={imageBasePath}
-                  handleDescriptionSave={handleDescriptionSave}
+                  // handleDescriptionSave={(newDesc, innerIndex) =>
+                  //   persistGroupDescription(index, innerIndex, newDesc)
+                  // }
                 />
                 {index < knowledgeCardGroups.length - 1 && (
                   <div className='border-t border-gray-200 dark:border-slate-700 my-4'></div>
