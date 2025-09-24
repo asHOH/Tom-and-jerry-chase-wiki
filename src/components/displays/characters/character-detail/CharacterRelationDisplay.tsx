@@ -377,7 +377,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   currentCharacterId={id}
                   factionId={factionId}
                   relationType='counters'
-                  existingRelations={[...(localCharacter.counters || [])]}
+                  existingRelations={[
+                    ...getCharacterRelation(id).counters,
+                    ...getCharacterRelation(id).counteredBy,
+                    ...getCharacterRelation(id).counterEachOther,
+                  ]}
                   onSelect={(characterId) => countersHook.handleAdd(characterId, '新增关系描述')}
                 />
                 <KnowledgeCardSelector
@@ -783,7 +787,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   currentCharacterId={id}
                   factionId={factionId}
                   relationType='counteredBy'
-                  existingRelations={[...(localCharacter.counteredBy || [])]}
+                  existingRelations={[
+                    ...getCharacterRelation(id).counters,
+                    ...getCharacterRelation(id).counteredBy,
+                    ...getCharacterRelation(id).counterEachOther,
+                  ]}
                   onSelect={(characterId) => counteredByHook.handleAdd(characterId, '新增关系描述')}
                 />
                 <KnowledgeCardSelector
@@ -1190,7 +1198,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   currentCharacterId={id}
                   factionId={factionId}
                   relationType='counterEachOther'
-                  existingRelations={[...(localCharacter.counterEachOther || [])]}
+                  existingRelations={[
+                    ...getCharacterRelation(id).counters,
+                    ...getCharacterRelation(id).counteredBy,
+                    ...getCharacterRelation(id).counterEachOther,
+                  ]}
                   onSelect={(characterId) =>
                     counterEachOtherHook.handleAdd(characterId, '新增关系描述')
                   }
@@ -1352,7 +1364,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   currentCharacterId={id}
                   factionId={factionId}
                   relationType='collaborators'
-                  existingRelations={[...(localCharacter.collaborators || [])]}
+                  existingRelations={getCharacterRelation(id).collaborators}
                   onSelect={(characterId) =>
                     collaboratorsHook.handleAdd(characterId, '新增关系描述')
                   }
