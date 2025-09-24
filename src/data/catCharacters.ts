@@ -1747,10 +1747,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '吻可以储存两个，被吻命中的老鼠额外受到减速，增加吻对老鼠的伤害。',
+            description: '被吻命中的老鼠额外受到减速，增加吻对老鼠的伤害。',
             cooldown: 15,
+            charges: 2,
             detailedDescription:
-              '吻可以储存两个，被吻命中的老鼠额外受到减速24.6%。\n伤害增加：每次跳跃受到1.8伤害；移动期间以折合9.8Hp/秒的速度受到伤害；搬动奶酪以折合21Hp/秒的速度受到伤害（现版本推奶酪不扣血）（{2级机械身躯}可令伤害减半）。',
+              '被吻命中的老鼠额外受到减速24.6%。\n伤害增加：每次跳跃受到1.8伤害；移动期间以折合9.8Hp/秒的速度受到伤害；搬动奶酪以折合21Hp/秒的速度受到伤害（现版本推奶酪不扣血）（{2级机械身躯}可令伤害减半）。',
           },
           {
             level: 3,
@@ -2533,9 +2534,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '饭盒陷阱',
         type: 'weapon1',
         description:
-          '放下装有食物的{饭盒}，被老鼠踩中或被砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速。放置{老鼠夹}时，会将其替换成饭盒。可存储两次',
+          '放下装有食物的{饭盒}，被老鼠踩中或被砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速。放置{老鼠夹}时，会将其替换成饭盒。',
         detailedDescription:
-          '放下装有食物的{饭盒}，被老鼠踩中或被投掷物砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速，持续10秒。放置{老鼠夹}时，会将其替换成饭盒。可存储两次。',
+          '放下装有食物的{饭盒}，被老鼠踩中或被投掷物砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速，持续10秒。放置{老鼠夹}时，会将其替换成饭盒。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: '无后摇',
@@ -2545,17 +2546,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             level: 1,
             description: '',
             cooldown: 20,
+            charges: 2,
           },
           {
             level: 2,
             description:
               '增加饭盒伤害。爆炸后留下{食物}，米特触碰后会获得持续Hp恢复效果。大幅提高放置老鼠夹的效率。', // （连招：击晕接捕鼠夹）
             cooldown: 20,
+            charges: 2,
           },
           {
             level: 3,
-            description: '饭盒可存储三次。',
+            description: '',
             cooldown: 20,
+            charges: 3,
           },
         ],
       },
@@ -3615,7 +3619,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '扔出{瑜伽球(衍生物)}，再次使用技能使其膨胀，膨胀的瞬间对周围的敌方造成伤害和眩晕，并弹飞对方。',
         detailedDescription:
-          '扔出{瑜伽球(衍生物)}，同时技能进入读条，期间苏蕊可再次点击技能键使瑜伽球膨胀，膨胀的瞬间对周围的敌方造成30伤害和眩晕，[眩晕期间对方会被弹飞](弹飞距离取决于眩晕时间)。可存储2次。',
+          '扔出{瑜伽球(衍生物)}，同时技能进入读条，期间苏蕊可再次点击技能键使瑜伽球膨胀，膨胀的瞬间对周围的敌方造成30伤害和眩晕，[眩晕期间对方会被弹飞](弹飞距离取决于眩晕时间)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['本技能键'],
@@ -3626,17 +3630,20 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description: '',
             detailedDescription: '瑜伽球的眩晕持续时间为1.5秒。',
             cooldown: 20,
+            charges: 2,
           },
           {
             level: 2,
             description: '',
             cooldown: 15,
+            charges: 2,
           },
           {
             level: 3,
             description: '瑜伽球造成的眩晕持续时间提升。',
             detailedDescription: '瑜伽球造成的眩晕持续时间提升至2.5秒。',
             cooldown: 15,
+            charges: 2,
           },
         ],
       },
@@ -4905,20 +4912,23 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         skillLevels: [
           {
             level: 1,
-            description: '可存储2次。',
+            description: '',
             cooldown: 9,
+            charges: 2,
           },
           {
             level: 2,
-            description: '可存储3次；提高飓风的持续时间。',
+            description: '提高飓风的持续时间。',
             cooldown: 9,
-            detailedDescription: '可存储3次；提高飓风的持续时间至3.5秒。',
+            detailedDescription: '提高飓风的持续时间至3.5秒。',
+            charges: 3,
           },
           {
             level: 3,
             description: '提高铁砧的伤害。',
             cooldown: 9,
             detailedDescription: '提高铁砧的伤害至30。',
+            charges: 3,
           },
         ],
         aliases: ['飓风', '铁砧'],
@@ -5159,7 +5169,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 3,
-            description: '可储存2次。',
+            description: '',
+            charges: 2,
             cooldown: 10,
           },
         ],

@@ -67,8 +67,6 @@ export function KnowledgeCardGroup({
   contributor: string | undefined;
   contributorInformation: Contributor | undefined;
 }) {
-  console.log(Array.from(group), description, descriptionPath, index);
-
   const [isDarkMode] = useDarkMode();
   if (group.length === 0 && !isEditMode) {
     return null;

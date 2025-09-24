@@ -60,7 +60,7 @@ export type SkillLevel = {
   description: string;
   detailedDescription?: string;
   cooldown?: number;
-  charges?: number;
+  charges?: number; // 技能存储次数
 };
 
 // Raw skill definition (without ID, for character definitions)

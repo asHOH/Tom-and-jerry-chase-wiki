@@ -105,26 +105,24 @@ export default function SkillCard({
 
     const charges = skill.skillLevels.map((level: SkillLevel) => level.charges || 1);
     const uniqueCharges = Array.from(new Set(charges));
-
-    if (uniqueCharges.length === 1 && uniqueCharges[0] !== 1 && !isEditMode) {
+    if (uniqueCharges.length === 1 && !isEditMode) {
+      if (uniqueCharges[0] === 1) return null;
       return `技能存储次数: ${uniqueCharges[0]}`;
     }
 
-    return (
-      <div>
-        技能存储次数:{' '}
-        {charges.map((i, index) => (
-          <React.Fragment key={index}>
-            {index != 0 ? '/' : ''}
-            <EditableField
-              tag='span'
-              path={`skills.${skillIndex}.skillLevels.${index}.charges`}
-              initialValue={i}
-            />
-          </React.Fragment>
-        ))}
-      </div>
-    );
+    return [
+      '技能存储次数: ',
+      charges.map((i, index) => (
+        <React.Fragment key={index}>
+          {index != 0 ? '/' : ''}
+          <EditableField
+            tag='span'
+            path={`skills.${skillIndex}.skillLevels.${index}.charges`}
+            initialValue={i}
+          />
+        </React.Fragment>
+      )),
+    ];
   };
 
   const createBooleanCheckbox = (
