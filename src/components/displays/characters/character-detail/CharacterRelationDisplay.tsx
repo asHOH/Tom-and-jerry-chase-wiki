@@ -772,7 +772,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   <circle cx='5' cy='6' r='1.25' fill='#ca8a04' />
                   <circle cx='11' cy='6' r='1.25' fill='#ca8a04' />
                   <path
-                    d='M4 11 H12 11'
+                    d='M5 11.25 L11 11.25'
                     stroke='#ca8a04'
                     strokeWidth='2'
                     fill='none'
