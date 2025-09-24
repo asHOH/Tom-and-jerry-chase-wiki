@@ -276,7 +276,19 @@ export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsPro
         const tooltipContent = match[2] || '';
 
         intermediateParts.push(
-          <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
+          <Tooltip
+            key={`hover-${index}-${match.index}`}
+            content={renderTextWithTooltips(
+              tooltipContent,
+              localCharacter.attackBoost ?? null,
+              index,
+              'wallCrackDamageBoost' in localCharacter
+                ? localCharacter.wallCrackDamageBoost
+                : undefined,
+              isDarkMode,
+              currentCharacterId
+            )}
+          >
             {renderTextWithTooltips(
               visibleText,
               localCharacter.attackBoost ?? null,
