@@ -10,7 +10,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2,
     moveSpeed: 650,
     jumpHeight: 400,
-    cheesePushSpeed: 4,
+    cheesePushSpeed: 5,
   },
   侦探杰瑞: {
     attackBoost: 10,
@@ -19,7 +19,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1.67,
     moveSpeed: 640,
     jumpHeight: 380,
-    cheesePushSpeed: 4.6,
+    cheesePushSpeed: 5.75,
   },
   罗宾汉杰瑞: {
     attackBoost: 10,
@@ -28,7 +28,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1.67,
     moveSpeed: 660,
     jumpHeight: 400,
-    cheesePushSpeed: 3.6,
+    cheesePushSpeed: 4.5,
     description: '来自12世纪英国的侠盗罗宾汉，身手敏捷，快迅如风，拥有在空中二段跳的能力。',
   },
   航海士杰瑞: {
@@ -38,7 +38,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1.67,
     moveSpeed: 640,
     jumpHeight: 380,
-    cheesePushSpeed: 2.6,
+    cheesePushSpeed: 3.25,
   },
   国王杰瑞: {
     attackBoost: 10,
@@ -47,7 +47,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1.67,
     moveSpeed: 600,
     jumpHeight: 380,
-    cheesePushSpeed: 3,
+    cheesePushSpeed: 3.75,
   },
   剑客杰瑞: {
     attackBoost: 25,
@@ -56,7 +56,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 0,
     moveSpeed: 640,
     jumpHeight: 380,
-    cheesePushSpeed: 2.4,
+    cheesePushSpeed: 3,
     description:
       '来自法国的剑客杰瑞，是顶级的剑术大师，他常常冲锋陷阵在最前，是所有老鼠敬仰的英雄。',
   },
@@ -67,7 +67,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 630,
     jumpHeight: 380,
-    cheesePushSpeed: 3.8,
+    cheesePushSpeed: 4.75,
   },
   剑客泰菲: {
     attackBoost: 10,
@@ -76,7 +76,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1,
     moveSpeed: 600,
     jumpHeight: 380,
-    cheesePushSpeed: 2.4,
+    cheesePushSpeed: 3,
     description: '剑客泰菲虽然平时惹祸不断，但在学剑之余，他勤加练习掌握了操控盔甲人的技巧。',
   },
   牛仔杰瑞: {
@@ -86,7 +86,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1.67,
     moveSpeed: 650,
     jumpHeight: 400,
-    cheesePushSpeed: 3.2,
+    cheesePushSpeed: 4,
     description:
       '牛仔杰瑞拥有很高的音乐天赋，擅长使用吉他鸣奏，热爱自由的他，在草原上过着与世无争的生活。',
   },
@@ -97,7 +97,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 5,
     moveSpeed: 640,
     jumpHeight: 400,
-    cheesePushSpeed: 3,
+    cheesePushSpeed: 3.75,
     description: '他是来自神秘之地的恶魔杰瑞，拥有不凡的力量。',
   },
   恶魔泰菲: {
@@ -107,7 +107,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 645,
     jumpHeight: 400,
-    cheesePushSpeed: 3.6,
+    cheesePushSpeed: 4.5,
   },
   雪梨: {
     attackBoost: 0,
@@ -116,7 +116,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2,
     moveSpeed: 680,
     jumpHeight: 380,
-    cheesePushSpeed: 3.8,
+    cheesePushSpeed: 4.75,
     description: '雪梨是温柔可爱的女孩子，她喜欢一切漂亮美好的东西。',
   },
   天使杰瑞: {
@@ -126,7 +126,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 5,
     moveSpeed: 665,
     jumpHeight: 420,
-    cheesePushSpeed: 3.6,
+    cheesePushSpeed: 4.5,
     description: '拥有一颗善良之心的天使，总会在汤姆遇上危险的时候，对他施以援手。',
   },
   天使泰菲: {
@@ -136,7 +136,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 650,
     jumpHeight: 400,
-    cheesePushSpeed: 3.4,
+    cheesePushSpeed: 4.25,
     description: '在王位争夺战中，泰菲化身为天使泰菲，用他的善良感动了汤姆，成功救下了国王杰瑞。',
   },
   魔术师: {
@@ -146,7 +146,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2,
     moveSpeed: 645,
     jumpHeight: 400,
-    cheesePushSpeed: 0.4,
+    cheesePushSpeed: 0.5,
   },
   佩克斯: {
     attackBoost: 10,
@@ -155,7 +155,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 650,
     jumpHeight: 380,
-    cheesePushSpeed: 2.8,
+    cheesePushSpeed: 3.5,
   },
   拿坡里鼠: {
     attackBoost: 10,
@@ -164,7 +164,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 635,
     jumpHeight: 380,
-    cheesePushSpeed: 3.4,
+    cheesePushSpeed: 4.25,
     description:
       '拿坡里鼠来自意大利，他是一只喜爱吃各种意大利美食的小老鼠，他生活在一个热闹的街道上，平时最喜欢打抱不平、帮助弱小，他是汤姆和杰瑞的好朋友。',
   },
@@ -175,7 +175,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 635,
     jumpHeight: 380,
-    cheesePushSpeed: 4.6,
+    cheesePushSpeed: 5.75,
   },
   剑客莉莉: {
     attackBoost: 20,
@@ -184,7 +184,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1,
     moveSpeed: 645,
     jumpHeight: 380,
-    cheesePushSpeed: 2.6,
+    cheesePushSpeed: 3.25,
   },
   罗宾汉泰菲: {
     attackBoost: 5,
@@ -193,7 +193,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 630,
     jumpHeight: 380,
-    cheesePushSpeed: 3.8,
+    cheesePushSpeed: 4.75,
   },
   玛丽: {
     attackBoost: 0,
@@ -202,7 +202,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 635,
     jumpHeight: 380,
-    cheesePushSpeed: 3.4,
+    cheesePushSpeed: 4.25,
   },
   马索尔: {
     attackBoost: 0,
@@ -211,7 +211,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2,
     moveSpeed: 650,
     jumpHeight: 400,
-    cheesePushSpeed: 0.6,
+    cheesePushSpeed: 0.75,
     description:
       '黄色黑纹衣服，头戴绿色帽子，和杰瑞长相很相似。他是杰瑞的大表哥，实力强悍，勇敢威猛，是所有猫咪的克星。',
   },
@@ -222,7 +222,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2,
     moveSpeed: 650,
     jumpHeight: 400,
-    cheesePushSpeed: 3,
+    cheesePushSpeed: 3.75,
     description:
       '米雪儿和图多盖洛居住在一个富有的家庭中，是一名富有的千金小姐。她喜欢吃甜品，但她不喜欢火炮类的东西，热爱自然的花草树木，尤其喜爱花朵类的装饰品。',
   },
@@ -233,7 +233,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1,
     moveSpeed: 600,
     jumpHeight: 400,
-    cheesePushSpeed: 2.8,
+    cheesePushSpeed: 3.5,
   },
   蒙金奇: {
     attackBoost: 25,
@@ -242,7 +242,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 0.5,
     moveSpeed: 640,
     jumpHeight: 380,
-    cheesePushSpeed: 2.4,
+    cheesePushSpeed: 3,
   },
   尼宝: {
     attackBoost: 10,
@@ -251,7 +251,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2,
     moveSpeed: 640,
     jumpHeight: 400,
-    cheesePushSpeed: 2.8,
+    cheesePushSpeed: 3.5,
   },
   朵朵: {
     attackBoost: 10,
@@ -260,7 +260,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1,
     moveSpeed: 630,
     jumpHeight: 380,
-    cheesePushSpeed: 2.4,
+    cheesePushSpeed: 3,
     description:
       '朵朵原本是汤姆制造出来捕捉杰瑞的机器母鼠，但是在和杰瑞的友好相处中，她被杰瑞的善良勇敢热情打动，喜欢上了杰瑞。最终朵朵获得了人工智能，帮助杰瑞打败了汤姆。',
   },
@@ -271,7 +271,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2,
     moveSpeed: 640,
     jumpHeight: 400,
-    cheesePushSpeed: 2.8,
+    cheesePushSpeed: 3.5,
     description:
       '仙女鼠来自于神秘的地方，优雅又充满智慧的她，对小老鼠们充满了怜悯。在杰瑞遇到困难的时候，她悄然出现，好像灰姑娘的教母，满足杰瑞的愿望，帮助杰瑞战胜强敌。',
   },
@@ -282,7 +282,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 640,
     jumpHeight: 400,
-    cheesePushSpeed: 2.6,
+    cheesePushSpeed: 3.25,
     description:
       '米可是米雪儿的哥哥，出身良好的他立志成为一个优秀的新闻人。以优异成绩毕业后，米可投身新闻事业，总是第一时间出现在新闻现场，向观众提供专业权威的新闻报道。',
   },
@@ -293,7 +293,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2,
     moveSpeed: 640,
     jumpHeight: 400,
-    cheesePushSpeed: 2.4,
+    cheesePushSpeed: 3,
     description:
       '外表秀气，内心坚强果敢的霜月是百年来唯一一个通过自己努力进入瑶池，参与仙考的鼠族。自幼和弟弟相依为命的她为了提升自己的修为，曾在幼年时期离开仙界，前往下界独自历练数年，回来的时候已经变成一个法力高强的仙子，身边还多了一个贪吃又可爱的小迷袋——胖呆呆。',
   },
@@ -304,7 +304,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 2.5,
     moveSpeed: 650,
     jumpHeight: 380,
-    cheesePushSpeed: 2.6,
+    cheesePushSpeed: 3.25,
   },
   莱恩: {
     attackBoost: 5,
@@ -313,7 +313,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1,
     moveSpeed: 680,
     jumpHeight: 400,
-    cheesePushSpeed: 2.8,
+    cheesePushSpeed: 3.5,
     description:
       '来自平面二维空间中的神秘之鼠，诞生于蘸水笔在蓝图上勾勒的几笔线条，获得生命后便决心将自己的灵感挥洒在每个角落。莱恩从画板中一跃而下，属于艺术家的创作从此揭开序幕。',
   },
@@ -324,7 +324,7 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     hpRecovery: 1,
     moveSpeed: 650,
     jumpHeight: 380,
-    cheesePushSpeed: 3.4,
+    cheesePushSpeed: 4.25,
     description:
       '杰瑞起初并不知道自己为何总是在奇怪的地方醒来。一天，他在梦中打包火腿时惊醒，而眼前是被毛线绑住的可怜汤姆。这时他才意识到自己似乎患上了严重的梦游症。“不要睡着，太危险了……” 梦游杰瑞一边干嚼咖啡豆。一边不断呢喃着，最终……沉沉地睡去。',
   },

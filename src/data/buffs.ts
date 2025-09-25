@@ -592,7 +592,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     bufftype: '负面效果',
     buffclass: '全局类',
     description:
-      '有2个同类效果：\n1.对局前3分钟内：使自身{推奶酪速度降低20%}。（注：本网站的角色基础推速已计入该状态的效果）。\n2.有队友被绑上火箭：使自身{推奶酪速度降低10%}。',
+      '有2个同类效果：\n1.对局前3分钟内：使自身{推奶酪速度降低20%}。\n2.有队友被绑上火箭：使自身{推奶酪速度降低10%}。',
     source: '在经典模式的前3分钟内，或有队友被绑上火箭时，所有**老鼠**均会受到该效果影响。',
     stack: '两种全局推速降低效果可叠加生效，此类效果均为乘算。',
 
@@ -601,8 +601,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   全局推速提高: {
     bufftype: '正面效果',
     buffclass: '全局类',
-    description:
-      '使自身{推奶酪速度提高20%}。（注：本网站的角色基础推速计入了{全局推速降低}的效果，因此实际速度应当为网站显示原数值的150%）',
+    description: '使自身{推奶酪速度提高20%}。',
     source: '在经典模式的3分钟之后，所有**老鼠**均会受到该效果影响。',
 
     unuseImage: true,
