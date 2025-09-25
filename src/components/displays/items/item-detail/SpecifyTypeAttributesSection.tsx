@@ -8,6 +8,10 @@ import { designTokens, componentTokens } from '@/lib/design-tokens';
 import GameImage from '@/components/ui/GameImage';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import { useMobile } from '@/hooks/useMediaQuery';
+import {
+  getItemTypeColors,
+  getItemSourceColors /* , getCardCostColors */,
+} from '@/lib/design-tokens';
 
 export default function SpecifyTypeAttributesSection({
   item,
@@ -19,15 +23,13 @@ export default function SpecifyTypeAttributesSection({
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
   const spacing = designTokens.spacing;
-  const tagColorStyles = isDarkMode
-    ? { background: '#334155', color: '#e0e7ef' }
-    : { background: '#e0e7ef', color: '#1e293b' };
   const type: 'item' | 'entity' | undefined = !!item ? 'item' : !!entity ? 'entity' : undefined;
   if (type === undefined) return null;
 
   const imageUrl = item?.imageUrl || entity?.imageUrl || '/images/icons/cat faction.png';
   const name = item?.name || entity?.name || '';
   const aliases = item?.aliases || entity?.aliases || [];
+  const factionId = item?.factionId || entity?.factionId || undefined;
 
   return (
     <BaseCard variant='details'>
@@ -59,7 +61,8 @@ export default function SpecifyTypeAttributesSection({
                 {name}{' '}
               </h1>
               <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
-                ({{ item: '道具', entity: '衍生物' }[type]})
+                ({{ item: '道具', entity: '衍生物' }[type]}
+                {factionId === 'cat' ? '·猫' : factionId === 'mouse' ? '·鼠' : ''})
               </h1>
               {aliases.length > 0 && (
                 <h1
@@ -109,65 +112,110 @@ export default function SpecifyTypeAttributesSection({
       {/*------Item Attributes------*/}
       {type === 'item' && (
         <div
-          className='flex items-center flex-wrap border-t border-gray-300 dark:border-gray-600'
+          className='grid items-center border-t border-gray-300 dark:border-gray-600'
           style={{
             gap: spacing.sm,
             marginLeft: spacing.md,
             marginRight: spacing.md,
-            paddingBottom: spacing.md,
+            paddingTop: spacing.xs,
+            paddingBottom: spacing.xs,
           }}
         >
-          <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-            ({item?.itemtype}
-            {item?.itemsource})
-          </span>
-          {item?.factionId != undefined && (
-            <Tag colorStyles={tagColorStyles} size='md'>
-              {item.factionId == 'cat' ? '限猫咪使用' : '限老鼠使用'}
+          <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
+            <span className={`text-sm whitespace-pre`}>类型: </span>
+            <Tag
+              size='sm'
+              margin='compact'
+              colorStyles={getItemTypeColors(item?.itemtype || '', isDarkMode)}
+            >
+              {item?.itemtype}
             </Tag>
-          )}
-          {item?.damage != undefined && (
-            <Tag colorStyles={tagColorStyles} size='md'>
-              伤害: {item.damage}
+            <Tag
+              size='sm'
+              margin='compact'
+              colorStyles={getItemSourceColors(item?.itemsource || '', isDarkMode)}
+            >
+              {item?.itemsource}
             </Tag>
-          )}
-          {item?.walldamage != undefined && (
-            <Tag colorStyles={tagColorStyles} size='md'>
-              破墙伤害: {item.walldamage}
-            </Tag>
+          </div>
+          {(item?.damage !== undefined || item?.walldamage !== undefined) && (
+            <div
+              className='auto-fit-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+              style={{
+                gridTemplateColumns: `repeat(auto-fit, minmax(40px, 1fr))`,
+              }}
+            >
+              {item.damage !== undefined && (
+                <span className={`text-sm whitespace-pre`}>伤害：{item.damage}</span>
+              )}
+              {item.walldamage !== undefined && (
+                <span className={`text-sm whitespace-pre`}>破墙伤害：{item.walldamage}</span>
+              )}
+            </div>
           )}
           {item?.exp != undefined && (
-            <Tag colorStyles={tagColorStyles} size='md'>
-              {item.exp == 0 ? '(猫) 命中无经验' : `(猫) 命中获得经验: ${item.exp}`}
-            </Tag>
+            <span className={`text-sm whitespace-pre`}>
+              {item.exp == 0 ? '(猫) 命中不获得经验' : `(猫) 命中获得 ${item.exp} 经验`}
+            </span>
           )}
-          <div className='flex items-center flex-wrap' style={{ gap: spacing.sm }}>
-            {item?.store != undefined && (
-              <Tag colorStyles={tagColorStyles} size='md'>
-                {item.store == true ? '局内商店有售' : '局内商店不售'}
-              </Tag>
-            )}
-            {!!item?.price && (
-              <Tag colorStyles={tagColorStyles} size='md'>
-                价格: {item.price}
-              </Tag>
-            )}
-            {!!item?.storeCD && (
-              <Tag colorStyles={tagColorStyles} size='md'>
-                购买CD: {item.storeCD}秒 {item.teamCD == true ? '(团队共享)' : ''}
-              </Tag>
-            )}
-            {item?.unlocktime != undefined && (
-              <Tag colorStyles={tagColorStyles} size='md'>
-                解锁时间: {item.unlocktime}
-              </Tag>
-            )}
-
-            {/*Navigation */}
-            <SpecifyTypeNavigationButtons currentId={name} specifyType='item' />
-          </div>
+          {item?.store !== undefined && item.store === false ? (
+            <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+              <span className='text-lg font-bold whitespace-pre text-red-600 dark:text-red-500'>
+                局内商店不售
+              </span>
+            </div>
+          ) : (
+            <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+              <span className='text-lg font-bold whitespace-pre text-green-600 dark:text-green-500'>
+                局内商店有售
+              </span>
+              <div
+                className='auto-fit-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+                style={{
+                  gridTemplateColumns: `repeat(auto-fit, minmax(60px, 1fr))`,
+                }}
+              >
+                <span className={`text-sm whitespace-pre`}>
+                  售价：
+                  <span className='text-orange-600 dark:text-orange-400'>{item?.price || 0}</span>
+                </span>
+                <span className={`text-sm whitespace-pre`}>
+                  {item?.unlocktime === undefined ? '初始解锁' : `于${item.unlocktime}解锁`}
+                </span>
+              </div>
+              <div
+                className='auto-fit-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+                style={{
+                  gridTemplateColumns: `repeat(auto-fit, minmax(80px, 1fr))`,
+                }}
+              >
+                <span className={`text-sm whitespace-pre`}>
+                  {item?.storeCD === undefined ? '无购买CD' : `购买有${item.storeCD}秒CD`}
+                </span>
+                {item?.teamCD === true && (
+                  <span className='text-sm whitespace-pre text-fuchsia-600 dark:text-fuchsia-400'>
+                    (鼠)团队共享CD
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
+
+      {/*Navigation */}
+      <div
+        className='flex items-center flex-wrap border-t text-sm border-gray-300 dark:border-gray-600'
+        style={{
+          gap: spacing.sm,
+          marginLeft: spacing.md,
+          marginRight: spacing.md,
+          paddingTop: spacing.xs,
+          paddingBottom: spacing.md,
+        }}
+      >
+        <SpecifyTypeNavigationButtons currentId={name} specifyType={type} />
+      </div>
     </BaseCard>
   );
 }
