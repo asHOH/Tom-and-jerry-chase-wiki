@@ -1757,6 +1757,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             level: 3,
             description: '被吻命中的老鼠无法使用技能，进一步增加吻对老鼠的伤害。',
             cooldown: 15,
+            charges: 2,
             detailedDescription:
               '被吻命中的老鼠无法使用技能。\n伤害进一步增加：每次跳跃受到2.3伤害；移动期间以折合11.3Hp/秒的速度受到伤害；搬动奶酪以折合32Hp/秒的速度受到伤害（现版本推奶酪不扣血）（{2级机械身躯}可令伤害减半）。',
           },
