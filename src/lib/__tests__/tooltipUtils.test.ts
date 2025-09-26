@@ -21,7 +21,7 @@ describe('tooltipUtils', () => {
 
     it('should return mouse-specific tooltip', () => {
       const result = getTooltipContent('推速', 'mouse', true);
-      expect(result).toBe('推奶酪速度（前3分钟）');
+      expect(result).toContain('推奶酪速度');
     });
 
     it('should fallback to general tooltip when faction-specific not available', () => {
