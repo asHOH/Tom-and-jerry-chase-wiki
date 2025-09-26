@@ -123,24 +123,35 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
         </div>
         {(item?.damage !== undefined || item?.walldamage !== undefined) && (
           <div
-            className='auto-fit-grid grid-container grid text-sm font-normal items-center justify-center gap-1'
+            className='auto-fill-grid grid-container grid text-sm font-normal items-center justify-center gap-1'
             style={{
               gridTemplateColumns: `repeat(2, minmax(40px, 1fr))`,
             }}
           >
             <span className={`text-sm whitespace-pre`}>
-              伤害：{item.damage === undefined ? '--' : item.damage}
+              伤害：
+              <span className='text-red-600 dark:text-red-400'>
+                {item.damage === undefined ? '--' : item.damage}
+              </span>
             </span>
             <span className={`text-sm whitespace-pre`}>
-              破墙伤害：{item.walldamage === undefined ? '--' : item.walldamage}
+              破墙伤害：
+              <span className='text-yellow-700 dark:text-yellow-500'>
+                {item.walldamage === undefined ? '--' : item.walldamage}
+              </span>
             </span>
           </div>
         )}
-        {item?.exp != undefined && (
-          <span className={`text-sm whitespace-pre`}>
-            {item.exp == 0 ? `(猫)命中不获得经验` : `(猫)命中获得 ${item.exp} 经验`}
-          </span>
-        )}
+        {item?.exp != undefined &&
+          (item.exp == 0 ? (
+            <span className={`text-sm whitespace-pre`}>(猫)命中不获得经验</span>
+          ) : (
+            <span className={`text-sm whitespace-pre`}>
+              {'(猫)命中获得 '}
+              <span className='text-indigo-700 dark:text-indigo-400'>{item.exp}</span>
+              {' 经验'}
+            </span>
+          ))}
         {item?.store !== undefined &&
           (item.store !== true ? (
             <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
@@ -154,22 +165,36 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                 局内商店有售
               </span>
               <div
-                className='auto-fit-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+                className='auto-fill-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
                 style={{
                   gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
                   gridTemplateRows: 'repeat(2,1fr)',
                 }}
               >
-                <span className={`text-sm whitespace-pre`}>
-                  售价：
-                  <span className='text-orange-600 dark:text-orange-400'>{item?.price || 0}</span>
-                </span>
-                <span className={`text-sm whitespace-pre`}>
-                  {item?.unlocktime === undefined ? '初始解锁' : `于${item.unlocktime}解锁`}
-                </span>
-                <span className={`text-sm whitespace-pre`}>
-                  {item?.storeCD === undefined ? '无购买CD' : `购买有${item.storeCD}秒CD`}
-                </span>
+                {
+                  <span className={`text-sm whitespace-pre`}>
+                    售价：
+                    <span className='text-orange-600 dark:text-orange-400'>{item?.price || 0}</span>
+                  </span>
+                }
+                {item?.unlocktime === undefined ? (
+                  <span className={`text-sm whitespace-pre`}>初始解锁</span>
+                ) : (
+                  <span className={`text-sm whitespace-pre`}>
+                    {'于'}
+                    <span className='text-indigo-700 dark:text-indigo-400'>{item.unlocktime}</span>
+                    {'解锁'}
+                  </span>
+                )}
+                {item?.storeCD === undefined ? (
+                  <span className={`text-sm whitespace-pre`}>无购买CD</span>
+                ) : (
+                  <span className={`text-sm whitespace-pre`}>
+                    {'购买CD '}
+                    <span className='text-indigo-700 dark:text-indigo-400'>{item.storeCD}</span>
+                    {' 秒'}
+                  </span>
+                )}
                 {item?.teamCD === true && (
                   <span className='text-sm whitespace-pre text-fuchsia-600 dark:text-fuchsia-400'>
                     (鼠)团队共享CD
