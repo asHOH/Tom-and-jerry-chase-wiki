@@ -1,107 +1,29 @@
 'use client';
 
-import BaseCard from '@/components/ui/BaseCard';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
-import Tag from '@/components/ui/Tag';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { Entity } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
-import GameImage from '@/components/ui/GameImage';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import SectionHeader from '@/components/ui/SectionHeader';
 import EntitySkillCard from './EntitySkillCard';
 import { Skill } from '@/data/types';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import EntityAttributesCard from './EntityAttributesCard';
 
 export default function EntityDetailClient({ entity }: { entity: Entity }) {
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(entity.name, 'entity');
 
   const { isDetailedView } = useAppContext();
-  const [isDarkMode] = useDarkMode();
   const spacing = designTokens.spacing;
-  const tagColorStyles = isDarkMode
-    ? { background: '#334155', color: '#e0e7ef' }
-    : { background: '#e0e7ef', color: '#1e293b' };
   if (!entity) return null;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: spacing.xl }}>
         <div className='md:w-1/3'>
-          <BaseCard variant='details'>
-            <GameImage src={entity.imageUrl} alt={entity.name} size='CARD_DETAILS' />
-            <div
-              style={{
-                paddingLeft: spacing.md,
-                paddingRight: spacing.md,
-                paddingBottom: spacing.md,
-              }}
-            >
-              <h1
-                className='text-3xl font-bold dark:text-white'
-                style={{
-                  paddingTop: spacing.xs,
-                  paddingBottom: spacing.xs,
-                }}
-              >
-                {entity.name}{' '}
-                <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                  (
-                  {typeof entity.entitytype === 'string'
-                    ? entity.entitytype
-                    : entity.entitytype.join(', ')}
-                  )
-                </span>
-              </h1>
-              <div
-                className='flex entitys-center flex-wrap'
-                style={{ gap: spacing.sm, marginTop: spacing.sm }}
-              >
-                {entity.factionId != undefined && entity.characterName != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    <TextWithHoverTooltips
-                      text={`所属对象：${entity.factionId == 'cat' ? '猫阵营' : '鼠阵营'}${
-                        entity.characterName
-                          ? `-{${entity.characterName}}${!!entity.skillname ? `-{${entity.skillname}(技能)}` : ''}`
-                          : ''
-                      }`}
-                    />
-                  </Tag>
-                )}
-                {!!(entity.aliases && entity.aliases.length) && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    别名：{(entity.aliases ?? []).filter(Boolean).join(', ')}
-                  </Tag>
-                )}
-                {(entity.move != undefined || entity.gravity != undefined) && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    移动情况：
-                    {entity.move == true ? '可移动' : entity.move == undefined ? '' : '不可移动'}
-                    {entity.move != undefined && entity.gravity != undefined && '，'}
-                    {entity.gravity == true
-                      ? `${entity.move == false ? '但' : ''}会受重力影响`
-                      : entity.gravity == undefined
-                        ? ''
-                        : '不受重力影响'}
-                  </Tag>
-                )}
-                {entity.collsion != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    {entity.collsion == true ? '会产生碰撞' : '不会产生碰撞'}
-                    {entity.ignore === undefined
-                      ? ''
-                      : `，但无视${(entity.ignore ?? []).filter(Boolean).join(', ')}`}
-                  </Tag>
-                )}
-
-                {/* Entity Navigation */}
-                <SpecifyTypeNavigationButtons currentId={entity.name} specifyType='entity' />
-              </div>
-            </div>
-          </BaseCard>
+          <EntityAttributesCard entity={entity} />
         </div>
         <div className='md:w-2/3 space-y-3' style={{ whiteSpace: 'pre-wrap' }}>
           {[

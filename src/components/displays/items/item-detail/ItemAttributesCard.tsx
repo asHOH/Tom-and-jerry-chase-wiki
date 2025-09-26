@@ -78,7 +78,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
           >
             <h1 className='text-3xl font-bold dark:text-white'>
               {item.name}{' '}
-              <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>(道具)</span>
+              <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
+                (道具{item.factionId === 'cat' ? '·猫' : item.factionId === 'mouse' ? '·鼠' : ''})
+              </span>
             </h1>
           </div>
           {item.aliases !== undefined && (
