@@ -1,18 +1,14 @@
 'use client';
 
 import React from 'react';
-import GameImage from '@/components/ui/GameImage';
 import { useAppContext } from '@/context/AppContext';
 import { SpecialSkill } from '@/data/types';
-import BaseCard from '@/components/ui/BaseCard';
-import Tag from '@/components/ui/Tag';
 import { designTokens } from '@/lib/design-tokens';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { characters } from '@/data';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import SectionHeader from '@/components/ui/SectionHeader';
 import CharacterList from '../../../displays/knowledge-cards/knowledge-card-detail/CharacterList';
+import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;
@@ -27,7 +23,6 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
   );
 
   const { isDetailedView } = useAppContext();
-  const [isDarkMode] = useDarkMode();
   // use useSnapshot if edit mode for special skill is supported
   const usedCharacters = Object.values(characters).filter(
     (character) =>
@@ -64,52 +59,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
     <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: designTokens.spacing.xl }}>
         <div className='md:w-1/3'>
-          <BaseCard variant='details'>
-            <GameImage src={skill.imageUrl} alt={skill.name} size='CARD_DETAILS' />
-            <div style={{ padding: designTokens.spacing.md }}>
-              <h1
-                className='text-3xl font-bold dark:text-white'
-                style={{ paddingBottom: designTokens.spacing.sm }}
-              >
-                {skill.name}
-              </h1>
-              <div
-                className='flex items-center flex-wrap'
-                style={{
-                  marginTop: designTokens.spacing.sm,
-                  gap: designTokens.spacing.sm,
-                }}
-              >
-                <Tag
-                  colorStyles={
-                    isDarkMode
-                      ? { background: '#334155', color: '#e0e7ef' }
-                      : { background: '#e0e7ef', color: '#1e293b' }
-                  }
-                  size='md'
-                >
-                  冷却时间: {skill.cooldown}s
-                </Tag>
-                <Tag
-                  colorStyles={
-                    isDarkMode
-                      ? { background: '#334155', color: '#e0e7ef' }
-                      : { background: '#e0e7ef', color: '#1e293b' }
-                  }
-                  size='md'
-                >
-                  阵营: {skill.factionId === 'cat' ? '猫' : '鼠'}
-                </Tag>
-
-                {/*Navigation */}
-                <SpecifyTypeNavigationButtons
-                  currentId={skill.name}
-                  specifyType='specialSkill'
-                  under={skill.factionId == 'cat' ? false : true}
-                />
-              </div>
-            </div>
-          </BaseCard>
+          <SpecialSkillAttributesCard skill={skill} />
         </div>
         <div className='md:w-2/3 space-y-3'>
           <SectionHeader title='技能描述' />
