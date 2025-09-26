@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import useSWR from 'swr';
-import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/data/database.types';
 import UserManagement from '@/components/displays/admin/UserManagement';
 import CategoryManagement from '@/components/displays/admin/CategoryManagement';
@@ -26,11 +25,11 @@ const fetchUsers = async (): Promise<User[]> => {
 };
 
 const fetchCategories = async (): Promise<Category[]> => {
-  const { data, error } = await supabase.rpc('get_categories');
-  if (error) {
+  const response = await fetch('/api/admin/categories');
+  if (!response.ok) {
     throw new Error('Failed to fetch categories');
   }
-  return (data || []) as Category[];
+  return response.json();
 };
 
 const AdminPanel = () => {
