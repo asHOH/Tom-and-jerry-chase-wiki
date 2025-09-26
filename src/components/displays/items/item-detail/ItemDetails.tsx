@@ -6,7 +6,7 @@ import { Item } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import SectionHeader from '@/components/ui/SectionHeader';
-import SpecifyTypeAttributesSection from './SpecifyTypeAttributesSection';
+import ItemAttributesCard from './ItemAttributesCard';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
   // Keyboard navigation
@@ -20,7 +20,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: spacing.xl }}>
         <div className='md:w-1/3'>
-          <SpecifyTypeAttributesSection item={item} />
+          <ItemAttributesCard item={item} />
         </div>
         <div className='md:w-2/3 space-y-3' style={{ whiteSpace: 'pre-wrap' }}>
           {[
