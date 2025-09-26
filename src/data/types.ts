@@ -218,6 +218,7 @@ export type Card = {
   imageUrl?: string; // We'll generate it automatically
   levels: CardLevel[];
   priority?: CardPriority;
+  aliases?: string[];
 };
 
 export type SpecialSkillDefinition = {

@@ -3,20 +3,16 @@
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from '@/components/Image';
-import { getCardRankColors, getCardCostColors, designTokens } from '@/lib/design-tokens';
+import { designTokens } from '@/lib/design-tokens';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
-import GameImage from '../../../ui/GameImage';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
-import Tag from '../../../ui/Tag';
-import BaseCard from '../../../ui/BaseCard';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data'; // Import characters data
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import SectionHeader from '@/components/ui/SectionHeader';
 import CharacterList from './CharacterList';
+import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';
 
 // Local types for group checking
 type KnowledgeCardGroup = { cards: string[]; description?: string };
@@ -35,13 +31,6 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null; // Add null check
   const { handleSelectCharacter } = useAppContext();
-  const [isDarkMode] = useDarkMode();
-
-  const rankColors = getCardRankColors(card.rank, true, isDarkMode);
-  const costColors = getCardCostColors(card.cost, true, isDarkMode);
-  const priorityColors = isDarkMode
-    ? { background: '#334155', color: '#e0e7ef' }
-    : { background: '#e0e7ef', color: '#1e293b' };
 
   const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
 
@@ -90,53 +79,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
     <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: designTokens.spacing.xl }}>
         <div className='md:w-1/3'>
-          <BaseCard variant='details'>
-            <GameImage src={card.imageUrl} alt={card.id} size='CARD_DETAILS' />
-            <div style={{ padding: designTokens.spacing.md }}>
-              <h1
-                className='text-3xl font-bold dark:text-white'
-                style={{ paddingBottom: designTokens.spacing.sm }}
-              >
-                {card.id}{' '}
-                <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                  ({card.factionId === 'cat' ? '猫方知识卡' : '鼠方知识卡'})
-                </span>
-              </h1>
-
-              {/* Card attributes section */}
-              <div
-                style={{
-                  marginTop: designTokens.spacing.lg,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: designTokens.spacing.sm,
-                }}
-              >
-                <div className='grid grid-cols-2 gap-2'>
-                  <p className='text-base text-gray-700 dark:text-gray-300'>
-                    <Tag colorStyles={rankColors} size='md'>
-                      等级: {card.rank}
-                    </Tag>
-                  </p>
-                  <p className='text-base text-gray-700 dark:text-gray-300'>
-                    <Tag colorStyles={costColors} size='md'>
-                      费用: {card.cost}
-                    </Tag>
-                  </p>
-                  {card.priority && (
-                    <p className='text-base text-gray-700 dark:text-gray-300'>
-                      <Tag colorStyles={priorityColors} size='md'>
-                        升级优先级: {card.priority}
-                      </Tag>
-                    </p>
-                  )}
-                </div>
-
-                {/* Navigation */}
-                <SpecifyTypeNavigationButtons currentId={card.id} specifyType='knowledgeCard' />
-              </div>
-            </div>
-          </BaseCard>
+          <KnowledgeCardAttributesCard card={card} />
         </div>
         <div className='md:w-2/3 space-y-3'>
           {/* Card description title */}
