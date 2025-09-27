@@ -53,7 +53,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
     id: 'articles',
     label: '文章',
     href: '/articles',
-    iconSrc: '/images/icons/cat faction.png',
+    iconSrc: '/images/icons/article.png',
     iconAlt: '文章图标',
   },
   {
