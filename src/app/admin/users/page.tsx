@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server';
 import UserManagementPanelClient from './UserManagementPanelClient';
 
 const UserManagementPanel = async () => {
-  notFound();
   const supabase = await createClient();
   const {
     data: { user },

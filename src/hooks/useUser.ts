@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, ReactNode, use } from 'react';
+import { useEffect, ReactNode, use, useRef } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 import { supabase } from '@/lib/supabase/client';
 
@@ -30,6 +30,11 @@ export const UserProvider = ({
   initialValue: Promise<UserType>;
 }) => {
   const initialUser = use(initialValue);
+  const hasAppliedInitial = useRef(false);
+  if (!hasAppliedInitial.current) {
+    applyUserData(initialUser, { allowEmpty: true });
+    hasAppliedInitial.current = true;
+  }
   useEffect(() => {
     applyUserData(initialUser, { allowEmpty: true });
   });
