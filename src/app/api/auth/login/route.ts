@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
 
     const usernameHash = hashUsername(username);
     const usernamePinyin = await convertToPinyin(username);
+    const passwordlessSecret = `pw-${usernameHash.slice(0, 32)}`;
 
     // Query the custom users table to find a user with the matching username_hash
     const { data: user, error: userError } = await supabaseAdmin
@@ -45,6 +46,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (user.password_hash) {
+      if (!password || typeof password !== 'string') {
+        return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
+      }
       const providedPasswordHash = hashPassword(password, user.salt);
       if (providedPasswordHash !== user.password_hash) {
         return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
@@ -76,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     const { error: sessionError } = await supabase.auth.signInWithPassword({
       email: `${usernamePinyin}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`,
-      password: password || username, // Use the provided password
+      password: password || passwordlessSecret,
     });
 
     if (sessionError) {

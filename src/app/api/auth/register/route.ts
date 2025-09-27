@@ -22,6 +22,9 @@ export async function POST(request: NextRequest) {
     }
 
     const usernamePinyin = await convertToPinyin(username);
+    const usernameHash = hashUsername(username);
+    const passwordlessSecret = `pw-${usernameHash.slice(0, 32)}`;
+    const authPassword = password || passwordlessSecret;
 
     // Requirement 6.6: Nickname and username must not be the same for passwordless accounts
     if (!password && username === nickname) {
@@ -35,18 +38,65 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Password is required.' }, { status: 400 });
     }
 
+    const { data: existingByUsername, error: usernameLookupError } = await supabaseAdmin
+      .from('users')
+      .select('id')
+      .eq('username_hash', usernameHash)
+      .maybeSingle();
+
+    if (usernameLookupError && usernameLookupError.code !== 'PGRST116') {
+      console.error('Error checking existing username:', usernameLookupError);
+      return NextResponse.json(
+        { error: 'Could not verify username availability.' },
+        { status: 500 }
+      );
+    }
+
+    if (existingByUsername) {
+      return NextResponse.json(
+        { error: 'Username or nickname is already taken.' },
+        { status: 409 }
+      );
+    }
+
+    const { data: existingByNickname, error: nicknameLookupError } = await supabaseAdmin
+      .from('users')
+      .select('id')
+      .eq('nickname', nickname)
+      .maybeSingle();
+
+    if (nicknameLookupError && nicknameLookupError.code !== 'PGRST116') {
+      console.error('Error checking existing nickname:', nicknameLookupError);
+      return NextResponse.json(
+        { error: 'Could not verify nickname availability.' },
+        { status: 500 }
+      );
+    }
+
+    if (existingByNickname) {
+      return NextResponse.json(
+        { error: 'Username or nickname is already taken.' },
+        { status: 409 }
+      );
+    }
+
     const salt = randomBytes(16).toString('hex');
-    const usernameHash = hashUsername(username);
     const passwordHash = password ? hashPassword(password, salt) : '';
 
     const authUserEmail = `${usernamePinyin}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`;
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: authUserEmail,
-      password: password || username,
+      password: authPassword,
       email_confirm: true,
     });
 
     if (authError || !authData.user) {
+      if (authError?.message?.includes('already registered')) {
+        return NextResponse.json(
+          { error: 'Username or nickname is already taken.' },
+          { status: 409 }
+        );
+      }
       console.error('Error creating auth user:', authError);
       return NextResponse.json({ error: 'Could not create authentication user.' }, { status: 500 });
     }
@@ -64,12 +114,14 @@ export async function POST(request: NextRequest) {
     if (insertError) {
       // Unique constraint violation codes for PostgreSQL
       if (insertError.code === '23505') {
+        await supabaseAdmin.auth.admin.deleteUser(authUserId);
         return NextResponse.json(
           { error: 'Username or nickname is already taken.' },
           { status: 409 }
         );
       }
       console.error('Error inserting user:', insertError);
+      await supabaseAdmin.auth.admin.deleteUser(authUserId);
       return NextResponse.json({ error: 'Could not create user.' }, { status: 500 });
     }
 
@@ -97,7 +149,7 @@ export async function POST(request: NextRequest) {
     );
     const { error: sessionError } = await supabase.auth.signInWithPassword({
       email: authUserEmail,
-      password: password || username!, // Use the provided password or the generated tempPassword
+      password: authPassword,
     });
 
     if (sessionError) {
