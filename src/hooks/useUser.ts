@@ -15,6 +15,13 @@ export const userObject = proxy<UserType & { clearData: () => void }>({
   },
 });
 
+const applyUserData = (data: UserType, { allowEmpty = false }: { allowEmpty?: boolean } = {}) => {
+  if (!allowEmpty && !data.nickname && !data.role) {
+    return;
+  }
+  Object.assign(userObject, data);
+};
+
 export const UserProvider = ({
   children,
   initialValue,
@@ -24,19 +31,23 @@ export const UserProvider = ({
 }) => {
   const initialUser = use(initialValue);
   useEffect(() => {
-    Object.assign(userObject, initialUser);
+    applyUserData(initialUser, { allowEmpty: true });
   });
   useEffect(() => {
     (async () => {
-      Object.assign(userObject, await initialValue);
-      Object.assign(userObject, await getUserData());
+      applyUserData(await initialValue, { allowEmpty: true });
+      const clientUser = await getUserData();
+      const shouldAllowEmpty = !userObject.nickname && !userObject.role;
+      applyUserData(clientUser, { allowEmpty: shouldAllowEmpty });
     })();
   }, [initialValue]);
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async () => {
-      Object.assign(userObject, await getUserData());
+    } = supabase.auth.onAuthStateChange(async (event) => {
+      const clientUser = await getUserData();
+      const shouldAllowEmpty = event === 'SIGNED_OUT';
+      applyUserData(clientUser, { allowEmpty: shouldAllowEmpty });
     });
     return () => {
       subscription.unsubscribe();
