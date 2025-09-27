@@ -559,6 +559,18 @@ const buffDefinitions: Record<string, BuffDefinition> = {
 
     unuseImage: true,
   },
+  眩晕保护: {
+    bufftype: '正面效果',
+    buffclass: '全局类',
+    aliases: ['#伤害保护'],
+    duration: 1,
+    description: '使**之后**受到的{常规眩晕}时长降低70%。',
+    source:
+      '当**猫咪**在{常规眩晕}未结束时再次受到{常规眩晕}则获得该效果（当次眩晕不生效），持续至猫咪身上的所有{常规眩晕}结束。例如猫在非眩晕状态下受到第1个眩晕效果，在该效果持续期间又受到了第2次眩晕，以及第3次和第4次眩晕，那么第3次和第4次眩晕的持续时间减少70%，直至此次眩晕效果解除，以此类推。',
+    stack: '不可叠加。',
+
+    unuseImage: true,
+  },
   队友的鼓励: {
     bufftype: '正面效果',
     buffclass: '全局类',
@@ -601,8 +613,11 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   全局推速提高: {
     bufftype: '正面效果',
     buffclass: '全局类',
-    description: '使自身{推奶酪速度提高20%}。',
-    source: '在经典模式的3分钟之后，所有**老鼠**均会受到该效果影响。',
+    description:
+      '有2个同类效果：\n1.对局3分钟后：使自身{推奶酪速度提高20%}。\n2.对局8分30秒后，且已有四块奶酪被推入时：使自身{推奶酪速度提高50%}。',
+    source:
+      '在经典模式的3分钟之后，或对局超过8分30秒且已有四块奶酪被推入时，所有**老鼠**均会受到该效果影响。',
+    stack: '两种全局推速提高效果可叠加生效，此类效果均为乘算。',
 
     unuseImage: true,
   },
