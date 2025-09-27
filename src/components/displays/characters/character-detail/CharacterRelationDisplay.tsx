@@ -857,6 +857,153 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
     );
   };
 
+  const sections: SectionConfig[] = [
+    {
+      key: 'counters',
+      accent: 'blue',
+      title: ({ id: relationId, factionId: relationFaction }) =>
+        `被${relationId}克制的${relationFaction === 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
+      icon: (
+        <svg
+          width='16'
+          height='16'
+          viewBox='0 0 16 16'
+          fill='none'
+          aria-label='smile'
+          xmlns='http://www.w3.org/2000/svg'
+        >
+          <circle cx='5' cy='6' r='1.25' fill='#2563eb' />
+          <circle cx='11' cy='6' r='1.25' fill='#2563eb' />
+          <path d='M4 9.5 Q8 12.7 12 9.5' stroke='#2563eb' strokeWidth='2' fill='none' strokeLinecap='round' />
+        </svg>
+      ),
+      characterAria: {
+        view: (characterId) => `选择角色 ${characterId}`,
+        edit: (characterId) => `克制 ${characterId} 的关系`,
+        toggle: (characterId, isMinor) =>
+          `切换${characterId}的克制关系为${isMinor ? '主要' : '次要'}`,
+        remove: (characterId) => `移除${characterId}的克制关系`,
+      },
+      includeKnowledgeKey: 'countersKnowledgeCards',
+      includeSpecialKey: 'countersSpecialSkills',
+      selectExistingRelations: () => combinedSelectorRelations,
+      knowledgeSelectorFaction: (currentFactionId) =>
+        currentFactionId === 'cat' ? 'mouse' : 'cat',
+      specialSkillDisplayFaction: (currentFactionId) =>
+        currentFactionId === 'cat' ? 'mouse' : 'cat',
+      getCharacterImage: (characterId, currentFactionId) =>
+        AssetManager.getCharacterImageUrl(
+          characterId,
+          currentFactionId === 'cat' ? 'mouse' : 'cat'
+        ),
+    },
+    {
+      key: 'counterEachOther',
+      accent: 'amber',
+      title: ({ id: relationId, factionId: relationFaction }) =>
+        `与${relationId}互有克制的${relationFaction === 'cat' ? '老鼠' : '猫咪'}`,
+      icon: (
+        <svg
+          width='16'
+          height='16'
+          viewBox='0 0 16 16'
+          fill='none'
+          aria-label='neutral'
+          xmlns='http://www.w3.org/2000/svg'
+        >
+          <circle cx='5' cy='6' r='1.25' fill='#ca8a04' />
+          <circle cx='11' cy='6' r='1.25' fill='#ca8a04' />
+          <path d='M5 11.25 L11 11.25' stroke='#ca8a04' strokeWidth='2' fill='none' strokeLinecap='round' />
+        </svg>
+      ),
+      characterAria: {
+        view: (characterId) => `选择角色 ${characterId}`,
+        edit: (characterId) => `与 ${characterId} 互有克制的关系`,
+        toggle: (characterId, isMinor) =>
+          `切换${characterId}的互有克制关系为${isMinor ? '主要' : '次要'}`,
+        remove: (characterId) => `移除${characterId}的互有克制关系`,
+      },
+      selectExistingRelations: () => combinedSelectorRelations,
+      getCharacterImage: (characterId, currentFactionId) =>
+        AssetManager.getCharacterImageUrl(
+          characterId,
+          currentFactionId === 'cat' ? 'mouse' : 'cat'
+        ),
+    },
+    {
+      key: 'counteredBy',
+      accent: 'red',
+      title: ({ id: relationId, factionId: relationFaction }) =>
+        `克制${relationId}的${relationFaction === 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
+      icon: (
+        <svg
+          width='16'
+          height='16'
+          viewBox='0 0 16 16'
+          fill='none'
+          aria-label='sad'
+          xmlns='http://www.w3.org/2000/svg'
+        >
+          <circle cx='5' cy='6' r='1.25' fill='#dc2626' />
+          <circle cx='11' cy='6' r='1.25' fill='#dc2626' />
+          <path d='M4 11 Q8 9.5 12 11' stroke='#dc2626' strokeWidth='2' fill='none' strokeLinecap='round' />
+        </svg>
+      ),
+      characterAria: {
+        view: (characterId) => `选择角色 ${characterId}`,
+        edit: (characterId) => `被 ${characterId} 克制的关系`,
+        toggle: (characterId, isMinor) =>
+          `切换${characterId}的被克制关系为${isMinor ? '主要' : '次要'}`,
+        remove: (characterId) => `移除${characterId}的被克制关系`,
+      },
+      includeKnowledgeKey: 'counteredByKnowledgeCards',
+      includeSpecialKey: 'counteredBySpecialSkills',
+      selectExistingRelations: () => combinedSelectorRelations,
+      knowledgeSelectorFaction: (currentFactionId) =>
+        currentFactionId === 'cat' ? 'mouse' : 'cat',
+      specialSkillDisplayFaction: (currentFactionId) =>
+        currentFactionId === 'cat' ? 'mouse' : 'cat',
+      getCharacterImage: (characterId, currentFactionId) =>
+        AssetManager.getCharacterImageUrl(
+          characterId,
+          currentFactionId === 'cat' ? 'mouse' : 'cat'
+        ),
+    },
+    {
+      key: 'collaborators',
+      accent: 'green',
+      title: ({ id: relationId }) => `与${relationId}协作的老鼠`,
+      icon: (
+        <svg
+          width='16'
+          height='16'
+          viewBox='0 0 16 16'
+          fill='none'
+          aria-label='heart'
+          xmlns='http://www.w3.org/2000/svg'
+        >
+          <path
+            d='M8 13 C8 13 3.5 10.5 3.5 7.5 C3.5 6 4.7 4.8 6.2 4.8 C7.1 4.8 7.8 5.2 8 5.9 C8.2 5.2 8.9 4.8 9.8 4.8 C11.3 4.8 12.5 6 12.5 7.5 C12.5 10.5 8 13 8 13 Z'
+            fill='#bbf7d0'
+            stroke='#16a34a'
+            strokeWidth='1.8'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+          />
+        </svg>
+      ),
+      characterAria: {
+        view: (characterId) => `选择角色 ${characterId}`,
+        edit: (characterId) => `与 ${characterId} 的协作关系`,
+        toggle: (characterId, isMinor) =>
+          `切换${characterId}的协作关系为${isMinor ? '主要' : '次要'}`,
+        remove: (characterId) => `移除${characterId}的协作关系`,
+      },
+      show: (currentFactionId) => currentFactionId === 'mouse',
+      getCharacterImage: (characterId) => AssetManager.getCharacterImageUrl(characterId, 'mouse'),
+    },
+  ];
+
   const updateExtraArray = useCallback(
     (
       key: ExtraRelationKey,
