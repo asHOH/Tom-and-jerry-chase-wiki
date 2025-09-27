@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import NotificationTooltip from './ui/NotificationTooltip';
 
 interface VersionInfo {
@@ -37,6 +37,7 @@ export const VersionChecker: React.FC = () => {
   // Persist the latest seen version across reloads to avoid duplicate prompts
   const LATEST_SEEN_VERSION_KEY = 'tjcw.latestSeenVersion';
   const [latestSeenVersion, setLatestSeenVersion] = useState<string | null>(null);
+  const [hasLoadedSeenVersion, setHasLoadedSeenVersion] = useState(false);
   const [showDebugPanel, setShowDebugPanel] = useState(true);
   const [debugInfo, setDebugInfo] = useState<{
     status: 'loading' | 'ready' | 'error';
@@ -74,6 +75,41 @@ export const VersionChecker: React.FC = () => {
       window.location.reload();
     }, delay);
   };
+
+  const persistLatestSeenVersion = useCallback((version: string) => {
+    setLatestSeenVersion(version);
+    setHasLoadedSeenVersion(true);
+    try {
+      localStorage.setItem(LATEST_SEEN_VERSION_KEY, version);
+    } catch {}
+  }, []);
+
+  const markSeenVersionLoaded = useCallback(() => {
+    setHasLoadedSeenVersion((loaded) => (loaded ? loaded : true));
+  }, []);
+
+  const shouldAnnounceVersion = useCallback(
+    (nextVersion: string) => {
+      if (!currentVersion) {
+        return false;
+      }
+
+      if (!hasLoadedSeenVersion) {
+        return nextVersion !== currentVersion;
+      }
+
+      if (nextVersion === currentVersion) {
+        return false;
+      }
+
+      if (latestSeenVersion && nextVersion === latestSeenVersion) {
+        return false;
+      }
+
+      return true;
+    },
+    [currentVersion, hasLoadedSeenVersion, latestSeenVersion]
+  );
 
   const requestServiceWorkerActivation = async (): Promise<boolean> => {
     if (!('serviceWorker' in navigator)) {
@@ -142,10 +178,7 @@ export const VersionChecker: React.FC = () => {
         const versionInfo = await fetchVersionInfo();
         setCurrentVersion(versionInfo.version);
         // Persist latest seen version
-        try {
-          localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
-          setLatestSeenVersion(versionInfo.version);
-        } catch {}
+        persistLatestSeenVersion(versionInfo.version);
         setDebugInfo({
           status: 'ready',
           lastCheck: new Date().toLocaleTimeString(),
@@ -165,11 +198,15 @@ export const VersionChecker: React.FC = () => {
     // Load last seen version from storage (best-effort)
     try {
       const stored = localStorage.getItem(LATEST_SEEN_VERSION_KEY);
-      if (stored) setLatestSeenVersion(stored);
+      if (stored) {
+        setLatestSeenVersion(stored);
+      }
     } catch {}
 
+    markSeenVersionLoaded();
+
     loadInitialVersion();
-  }, []);
+  }, [markSeenVersionLoaded, persistLatestSeenVersion]);
 
   // Monitor network status
   useEffect(() => {
@@ -241,7 +278,7 @@ export const VersionChecker: React.FC = () => {
         const versionInfo = lastVersionResponse.data;
         // Only treat as update if it's different from both the current in-memory version
         // and the latest seen version persisted locally (guards against stale initial fetch)
-        if (versionInfo.version !== currentVersion && versionInfo.version !== latestSeenVersion) {
+        if (shouldAnnounceVersion(versionInfo.version)) {
           await handleVersionUpdate(versionInfo, 'cached');
         }
         return;
@@ -260,16 +297,13 @@ export const VersionChecker: React.FC = () => {
           timestamp: now,
         });
 
-        if (versionInfo.version !== currentVersion && versionInfo.version !== latestSeenVersion) {
+        if (shouldAnnounceVersion(versionInfo.version)) {
           await handleVersionUpdate(versionInfo, 'fresh');
           return;
         }
 
         // Keep local latestSeenVersion in sync when versions match
-        try {
-          localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
-          setLatestSeenVersion(versionInfo.version);
-        } catch {}
+        persistLatestSeenVersion(versionInfo.version);
 
         // Reset retry count on successful check
         setDebugInfo((prev) => ({ ...prev, retryCount: 0, error: null }));
@@ -300,8 +334,11 @@ export const VersionChecker: React.FC = () => {
     isCheckingVersion,
     isOnline,
     latestSeenVersion,
+    hasLoadedSeenVersion,
     lastVersionResponse.data,
     lastVersionResponse.timestamp,
+    persistLatestSeenVersion,
+    shouldAnnounceVersion,
   ]);
 
   // Listen for service worker updates (fallback method)
