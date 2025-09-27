@@ -25,6 +25,80 @@ type Props = {
 type RelationKey = 'counters' | 'counteredBy' | 'counterEachOther' | 'collaborators';
 type RelationArrays = Partial<Record<RelationKey, readonly CharacterRelationItem[]>>;
 
+export type ExtraRelationKey =
+  | 'countersKnowledgeCards'
+  | 'counteredByKnowledgeCards'
+  | 'countersSpecialSkills'
+  | 'counteredBySpecialSkills';
+
+type AccentName = 'blue' | 'amber' | 'red' | 'green';
+
+export const ACCENT_STYLES: Record<
+  AccentName,
+  {
+    headerText: string;
+    iconBg: string;
+    cardBg: string;
+    cardHover: string;
+    badge: string;
+  }
+> = {
+  blue: {
+    headerText: 'text-blue-700 dark:text-blue-300',
+    iconBg: 'bg-blue-200',
+    cardBg: 'bg-blue-50 dark:bg-blue-900/30',
+    cardHover:
+      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95',
+    badge: 'bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200',
+  },
+  amber: {
+    headerText: 'text-amber-700 dark:text-amber-300',
+    iconBg: 'bg-amber-200',
+    cardBg: 'bg-amber-50 dark:bg-amber-900/30',
+    cardHover:
+      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-amber-100 dark:hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-amber-400 active:scale-95',
+    badge: 'bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200',
+  },
+  red: {
+    headerText: 'text-red-700 dark:text-red-300',
+    iconBg: 'bg-red-200',
+    cardBg: 'bg-red-50 dark:bg-red-900/30',
+    cardHover:
+      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95',
+    badge: 'bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200',
+  },
+  green: {
+    headerText: 'text-green-700 dark:text-green-300',
+    iconBg: 'bg-green-200',
+    cardBg: 'bg-green-50 dark:bg-green-900/30',
+    cardHover:
+      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800/40 focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95',
+    badge: 'bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-200',
+  },
+};
+
+export type SectionItem =
+  | { type: 'character'; data: CharacterRelationItem }
+  | { type: 'knowledgeCard'; data: CharacterRelationItem; idx: number; extraKey: ExtraRelationKey }
+  | { type: 'specialSkill'; data: CharacterRelationItem; idx: number; extraKey: ExtraRelationKey };
+
+export type SectionConfig = {
+  key: RelationKey;
+  accent: AccentName;
+  title: (params: { id: string; factionId: FactionId }) => string;
+  icon: React.ReactNode;
+  characterAria: {
+    view: (characterId: string) => string;
+    edit: (characterId: string) => string;
+    toggle: (characterId: string, isMinor: boolean) => string;
+    remove: (characterId: string) => string;
+  };
+  show?: (factionId: FactionId) => boolean;
+  includeKnowledgeKey?: ExtraRelationKey;
+  includeSpecialKey?: ExtraRelationKey;
+  getCharacterImage: (characterId: string, factionId: FactionId) => string;
+};
+
 function useRelationEditor(characterId: string, key: RelationKey) {
   const localCharacter = useSnapshot(characters[characterId]!) as unknown as RelationArrays;
 
@@ -286,11 +360,6 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const collaboratorsHook = useRelationEditor(id, 'collaborators');
 
   // Small helpers to dedupe array updates for knowledge cards and special skills
-  type ExtraRelationKey =
-    | 'countersKnowledgeCards'
-    | 'counteredByKnowledgeCards'
-    | 'countersSpecialSkills'
-    | 'counteredBySpecialSkills';
   type LocalExtra = Partial<Record<ExtraRelationKey, readonly CharacterRelationItem[]>>;
   const localExtra = localCharacter as unknown as LocalExtra;
 
