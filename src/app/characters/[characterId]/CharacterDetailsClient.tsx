@@ -15,25 +15,58 @@ import { useSwipeGesture } from '@/lib/hooks/useSwipeGesture';
 import { useCharacterNavigation } from '@/lib/hooks/useCharacterNavigation';
 import { useKeyboardNavigation } from '@/lib/hooks/useKeyboardNavigation';
 import SwipeNavigationIndicator from '@/components/ui/SwipeNavigationIndicator';
+import { GameDataManager } from '@/lib/dataManager';
+import { proxy } from 'valtio';
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const [character, setCharacter] = useState(props.character);
   const pathname = usePathname();
+  const { isEditMode } = useEditMode();
 
   useEffect(() => {
+    if (isEditMode) {
+      return;
+    }
+
     try {
       const pathParts = pathname.split('/');
       const characterId = decodeURIComponent(pathParts[pathParts.length - 1] || '');
-      const newCharacter = characters[characterId];
+      GameDataManager.invalidate({ characters: true, factions: true });
+      const canonicalCharacters = GameDataManager.getCharacters();
+      const newCharacter = canonicalCharacters[characterId];
       if (newCharacter && newCharacter.id !== character.id) {
         setCharacter(newCharacter);
       }
     } catch (error) {
       console.error('Error updating character from URL:', error);
     }
-  }, [pathname, character.id]);
+  }, [pathname, character.id, isEditMode]);
 
-  const { isEditMode } = useEditMode();
+  useEffect(() => {
+    if (isEditMode) {
+      return;
+    }
+
+    setCharacter(props.character);
+
+    GameDataManager.invalidate({ characters: true, factions: true });
+    const canonicalCharacters = GameDataManager.getCharacters();
+
+    for (const [id, value] of Object.entries(canonicalCharacters)) {
+      const existing = characters[id];
+      if (existing) {
+        Object.assign(existing, value);
+      } else {
+        characters[id] = proxy(value);
+      }
+    }
+
+    for (const id of Object.keys(characters)) {
+      if (!canonicalCharacters[id]) {
+        delete characters[id];
+      }
+    }
+  }, [props.character, isEditMode]);
 
   const [showTutorial, setShowTutorial] = useState(false);
 
