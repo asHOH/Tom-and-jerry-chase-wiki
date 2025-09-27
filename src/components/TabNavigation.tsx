@@ -251,10 +251,12 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               {dropdownOpen && (
                 <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md z-[99999]'>
                   <ul>
-                    <li className='px-4 py-2'>你好，{nickname}</li>
+                    <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>你好，{nickname}</li>
                     {(role == 'Coordinator' || role == 'Reviewer') && (
                       <li className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'>
-                        <Link href='/admin/'>进入管理面板</Link>
+                        <Link href='/admin/' className='block text-gray-800 dark:text-gray-200'>
+                          进入管理面板
+                        </Link>
                       </li>
                     )}
                     {!!signOutError && (
@@ -264,7 +266,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       <button
                         type='button'
                         className={clsx(
-                          'w-full text-left px-4 py-2 cursor-pointer rounded-b-md',
+                          'w-full text-left px-4 py-2 cursor-pointer rounded-b-md text-gray-800 dark:text-gray-200',
                           signingOut
                             ? 'opacity-60 pointer-events-none bg-gray-100 dark:bg-slate-700'
                             : 'hover:bg-gray-100 dark:hover:bg-slate-700'
