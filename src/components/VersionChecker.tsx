@@ -11,6 +11,25 @@ interface VersionInfo {
   packageVersion: string;
 }
 
+const VERSION_REQUEST_OPTIONS: RequestInit = {
+  cache: 'no-store',
+  headers: {
+    'Cache-Control': 'no-cache',
+  },
+};
+
+const buildVersionUrl = () => `/api/version?_t=${Date.now()}`;
+
+const fetchVersionInfo = async (): Promise<VersionInfo> => {
+  const response = await fetch(buildVersionUrl(), VERSION_REQUEST_OPTIONS);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  return response.json();
+};
+
 export const VersionChecker: React.FC = () => {
   const [hasMounted, setHasMounted] = useState(false);
   const [showUpdateNotice, setShowUpdateNotice] = useState(false);
@@ -47,26 +66,19 @@ export const VersionChecker: React.FC = () => {
     const loadInitialVersion = async () => {
       try {
         setDebugInfo((prev) => ({ ...prev, status: 'loading' }));
-        // Cache-bust the initial fetch to avoid stale CDN/SW caches
-        const response = await fetch(`/api/version?_t=${Date.now()}`);
-
-        if (response.ok) {
-          const versionInfo: VersionInfo = await response.json();
-          setCurrentVersion(versionInfo.version);
-          // Persist latest seen version
-          try {
-            localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
-            setLatestSeenVersion(versionInfo.version);
-          } catch {}
-          setDebugInfo({
-            status: 'ready',
-            lastCheck: new Date().toLocaleTimeString(),
-            error: null,
-            retryCount: 0,
-          });
-        } else {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        const versionInfo = await fetchVersionInfo();
+        setCurrentVersion(versionInfo.version);
+        // Persist latest seen version
+        try {
+          localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
+          setLatestSeenVersion(versionInfo.version);
+        } catch {}
+        setDebugInfo({
+          status: 'ready',
+          lastCheck: new Date().toLocaleTimeString(),
+          error: null,
+          retryCount: 0,
+        });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         setDebugInfo((prev) => ({
@@ -174,28 +186,24 @@ export const VersionChecker: React.FC = () => {
         setDebugInfo((prev) => ({ ...prev, lastCheck: new Date().toLocaleTimeString() }));
 
         // Check version.json for updates
-        const response = await fetch('/api/version?_t=' + Date.now());
+        const versionInfo = await fetchVersionInfo();
 
-        if (response.ok) {
-          const versionInfo: VersionInfo = await response.json();
+        // Cache the response
+        setLastVersionResponse({
+          data: versionInfo,
+          timestamp: now,
+        });
 
-          // Cache the response
-          setLastVersionResponse({
-            data: versionInfo,
-            timestamp: now,
-          });
-
-          if (versionInfo.version !== currentVersion && versionInfo.version !== latestSeenVersion) {
-            await handleVersionUpdate(versionInfo, 'fresh');
-            return;
-          }
-
-          // Keep local latestSeenVersion in sync when versions match
-          try {
-            localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
-            setLatestSeenVersion(versionInfo.version);
-          } catch {}
+        if (versionInfo.version !== currentVersion && versionInfo.version !== latestSeenVersion) {
+          await handleVersionUpdate(versionInfo, 'fresh');
+          return;
         }
+
+        // Keep local latestSeenVersion in sync when versions match
+        try {
+          localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
+          setLatestSeenVersion(versionInfo.version);
+        } catch {}
 
         // Reset retry count on successful check
         setDebugInfo((prev) => ({ ...prev, retryCount: 0, error: null }));
