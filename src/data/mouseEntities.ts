@@ -1185,6 +1185,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     entitytype: '变身类',
     characterName: '',
     skillname: '',
+    aliases: ['机械鼠'],
     move: true,
     gravity: true,
     collsion: true,
