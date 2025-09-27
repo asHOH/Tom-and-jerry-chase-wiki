@@ -33,16 +33,13 @@ export type ExtraRelationKey =
 
 type AccentName = 'blue' | 'amber' | 'red' | 'green';
 
-export const ACCENT_STYLES: Record<
-  AccentName,
-  {
-    headerText: string;
-    iconBg: string;
-    cardBg: string;
-    cardHover: string;
-    badge: string;
-  }
-> = {
+export const ACCENT_STYLES: Record<AccentName, {
+  headerText: string;
+  iconBg: string;
+  cardBg: string;
+  cardHover: string;
+  badge: string;
+}> = {
   blue: {
     headerText: 'text-blue-700 dark:text-blue-300',
     iconBg: 'bg-blue-200',
@@ -96,6 +93,10 @@ export type SectionConfig = {
   show?: (factionId: FactionId) => boolean;
   includeKnowledgeKey?: ExtraRelationKey;
   includeSpecialKey?: ExtraRelationKey;
+  selectExistingRelations?: (relations: CharacterRelation) => CharacterRelationItem[];
+  knowledgeSelectorFaction?: (factionId: FactionId) => FactionId;
+  specialSkillSelectorFaction?: (factionId: FactionId) => FactionId;
+  specialSkillDisplayFaction?: (factionId: FactionId) => FactionId;
   getCharacterImage: (characterId: string, factionId: FactionId) => string;
 };
 
@@ -352,6 +353,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const char = getCharacterRelation(id);
   const { handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
+  const oppositeFactionId = factionId === 'cat' ? 'mouse' : 'cat';
 
   const combinedSelectorRelations = React.useMemo(() => {
     const map = new Map<string, CharacterRelationItem>();
@@ -371,9 +373,489 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const counterEachOtherHook = useRelationEditor(id, 'counterEachOther');
   const collaboratorsHook = useRelationEditor(id, 'collaborators');
 
+  const relationHookMap: Record<RelationKey, ReturnType<typeof useRelationEditor>> = {
+    counters: countersHook,
+    counteredBy: counteredByHook,
+    counterEachOther: counterEachOtherHook,
+    collaborators: collaboratorsHook,
+  };
+
   // Small helpers to dedupe array updates for knowledge cards and special skills
   type LocalExtra = Partial<Record<ExtraRelationKey, readonly CharacterRelationItem[]>>;
   const localExtra = localCharacter as unknown as LocalExtra;
+
+  const localRelationsMap: Record<RelationKey, CharacterRelationItem[]> = {
+    counters: Array.from((localCharacter.counters ?? []) as readonly CharacterRelationItem[]),
+    counteredBy: Array.from((localCharacter.counteredBy ?? []) as readonly CharacterRelationItem[]),
+    counterEachOther: Array.from(
+      (localCharacter.counterEachOther ?? []) as readonly CharacterRelationItem[]
+    ),
+    collaborators: Array.from(
+      (localCharacter.collaborators ?? []) as readonly CharacterRelationItem[]
+    ),
+  };
+
+  const localExtraMap: Record<ExtraRelationKey, CharacterRelationItem[]> = {
+    countersKnowledgeCards: Array.from(
+      (localExtra.countersKnowledgeCards ?? []) as readonly CharacterRelationItem[]
+    ),
+    counteredByKnowledgeCards: Array.from(
+      (localExtra.counteredByKnowledgeCards ?? []) as readonly CharacterRelationItem[]
+    ),
+    countersSpecialSkills: Array.from(
+      (localExtra.countersSpecialSkills ?? []) as readonly CharacterRelationItem[]
+    ),
+    counteredBySpecialSkills: Array.from(
+      (localExtra.counteredBySpecialSkills ?? []) as readonly CharacterRelationItem[]
+    ),
+  };
+
+  const renderSection = (config: SectionConfig) => {
+    if (config.show && !config.show(factionId)) {
+      return null;
+    }
+
+    const accent = ACCENT_STYLES[config.accent];
+    const relationHook = relationHookMap[config.key];
+    const localRelations = localRelationsMap[config.key];
+    const knowledgeKey = config.includeKnowledgeKey;
+    const specialKey = config.includeSpecialKey;
+
+    const relationItems = Array.from(
+      ((char[config.key] ?? []) as readonly CharacterRelationItem[])
+    ).map((item) => ({ type: 'character' as const, data: item }));
+
+    const knowledgeItems = knowledgeKey
+      ? (localExtraMap[knowledgeKey] ?? []).map((item, idx) => ({
+          type: 'knowledgeCard' as const,
+          data: item,
+          idx,
+          extraKey: knowledgeKey,
+        }))
+      : [];
+
+    const specialItems = specialKey
+      ? (localExtraMap[specialKey] ?? []).map((item, idx) => ({
+          type: 'specialSkill' as const,
+          data: item,
+          idx,
+          extraKey: specialKey,
+        }))
+      : [];
+
+    const items: SectionItem[] = [...relationItems, ...knowledgeItems, ...specialItems].sort(
+      (a, b) => {
+        const aMinor = !!a.data.isMinor;
+        const bMinor = !!b.data.isMinor;
+        if (aMinor === bMinor) return 0;
+        return aMinor ? 1 : -1;
+      }
+    );
+
+    const existingRelations =
+      config.selectExistingRelations?.(char) ??
+      (config.key === 'collaborators' ? char.collaborators : combinedSelectorRelations);
+
+    const hasContent = items.length > 0;
+    const knowledgeSelectorFaction = config.knowledgeSelectorFaction?.(factionId) ?? oppositeFactionId;
+    const specialSkillSelectorFaction = config.specialSkillSelectorFaction?.(factionId) ?? factionId;
+    const specialSkillDisplayFaction = config.specialSkillDisplayFaction?.(factionId) ?? oppositeFactionId;
+
+    return (
+      <div>
+        <div className='flex items-center justify-between'>
+          <span
+            className={clsx('font-semibold text-sm flex items-center gap-1', accent.headerText)}
+          >
+            <span
+              className={clsx(
+                'w-5 h-5 rounded-full flex items-center justify-center mr-1',
+                accent.iconBg
+              )}
+            >
+              {config.icon}
+            </span>
+            {config.title({ id, factionId })}
+          </span>
+          {isEditMode && (
+            <div className='flex gap-2'>
+              <CharacterSelector
+                currentCharacterId={id}
+                factionId={factionId}
+                relationType={config.key}
+                existingRelations={existingRelations}
+                onSelect={(characterId) => relationHook.handleAdd(characterId, '新增关系描述')}
+              />
+              {knowledgeKey && (
+                <KnowledgeCardSelector
+                  selected={localExtraMap[knowledgeKey] ?? []}
+                  onSelect={(cardName) => addExtraItem(knowledgeKey, cardName as string)}
+                  factionId={knowledgeSelectorFaction}
+                />
+              )}
+              {specialKey && (
+                <SpecialSkillSelector
+                  selected={localExtraMap[specialKey] ?? []}
+                  factionId={specialSkillSelectorFaction}
+                  onSelect={(skillName) => addExtraItem(specialKey, skillName as string)}
+                />
+              )}
+            </div>
+          )}
+        </div>
+        <div className='grid grid-cols-1 gap-y-3 mt-2'>
+          {!hasContent && !isEditMode ? (
+            <span className='text-xs text-gray-400'>无</span>
+          ) : (
+            items.map((item) => {
+              if (item.type === 'character') {
+                const relation = item.data;
+                const originalIndex = isEditMode
+                  ? localRelations.findIndex((local) => local.id === relation.id)
+                  : -1;
+                const isDirectRelation = originalIndex !== -1;
+                const ariaLabel = isEditMode
+                  ? config.characterAria.edit(relation.id)
+                  : config.characterAria.view(relation.id);
+
+                return (
+                  <div
+                    key={`character-${relation.id}`}
+                    className={clsx(
+                      'flex flex-row items-center gap-3 p-2 rounded-lg',
+                      accent.cardBg,
+                      !isEditMode && accent.cardHover,
+                      relation.isMinor && 'opacity-60'
+                    )}
+                    {...(!isEditMode && { role: 'button', tabIndex: 0 })}
+                    aria-label={ariaLabel}
+                    onClick={() => {
+                      if (!isEditMode) {
+                        handleSelectCharacter(relation.id);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+                        handleSelectCharacter(relation.id);
+                      }
+                    }}
+                  >
+                    <Image
+                      src={config.getCharacterImage(relation.id, factionId)}
+                      alt={relation.id}
+                      width={40}
+                      height={40}
+                      className='w-10 h-10 rounded-full object-cover'
+                    />
+                    <div className='flex flex-col flex-1'>
+                      <div className='flex items-center gap-1'>
+                        <span className='text-xs text-gray-700 dark:text-gray-300'>
+                          {relation.id}
+                        </span>
+                        {isEditMode && isDirectRelation ? (
+                          <button
+                            type='button'
+                            onClick={() => relationHook.toggleIsMinor(originalIndex)}
+                            className={clsx(
+                              'text-[10px] px-1 py-0.5 rounded-full hover:bg-opacity-80 cursor-pointer',
+                              accent.badge
+                            )}
+                            aria-label={config.characterAria.toggle(
+                              relation.id,
+                              !!relation.isMinor
+                            )}
+                          >
+                            {relation.isMinor ? '次要' : '主要'}
+                          </button>
+                        ) : (
+                          !isEditMode &&
+                          relation.isMinor && (
+                            <span className={clsx('text-[10px] px-1 py-0.5 rounded-full', accent.badge)}>
+                              次要
+                            </span>
+                          )
+                        )}
+                      </div>
+                      {isEditMode && isDirectRelation ? (
+                        <EditableField
+                          tag='span'
+                          path={`${config.key}.${originalIndex}.description`}
+                          initialValue={relation.description || ''}
+                          className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+                          onSave={(newValue) =>
+                            relationHook.handleUpdate(originalIndex, 'description', newValue)
+                          }
+                        />
+                      ) : (
+                        !isEditMode &&
+                        relation.description && (
+                          <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                            {relation.description}
+                          </span>
+                        )
+                      )}
+                    </div>
+                    {isEditMode && isDirectRelation && (
+                      <button
+                        type='button'
+                        onClick={() => relationHook.handleRemove(originalIndex)}
+                        className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                        aria-label={config.characterAria.remove(relation.id)}
+                      >
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          strokeWidth='2'
+                          stroke='currentColor'
+                          className='w-4 h-4'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                );
+              }
+
+              if (item.type === 'knowledgeCard') {
+                const cardInfo = cards[item.data.id];
+                if (!cardInfo) {
+                  return null;
+                }
+                const isMinor = !!item.data.isMinor;
+                const idx = item.idx;
+
+                return (
+                  <div
+                    key={`knowledgeCard-${item.data.id}`}
+                    className={clsx(
+                      'flex flex-row items-center gap-3 p-2 rounded-lg',
+                      accent.cardBg,
+                      !isEditMode && accent.cardHover,
+                      isMinor && 'opacity-60'
+                    )}
+                    role={!isEditMode ? 'button' : undefined}
+                    tabIndex={!isEditMode ? 0 : undefined}
+                    aria-label={`跳转到知识卡 ${item.data.id}`}
+                    onClick={() => {
+                      if (!isEditMode) {
+                        navigate(`/cards/${encodeURIComponent(item.data.id)}`);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+                        navigate(`/cards/${encodeURIComponent(item.data.id)}`);
+                      }
+                    }}
+                  >
+                    <Image
+                      src={cardInfo.imageUrl}
+                      alt={item.data.id}
+                      width={32}
+                      height={40}
+                      className='w-8 h-10 mx-1'
+                    />
+                    <div className='flex flex-col flex-1'>
+                      <div className='flex items-center gap-1'>
+                        <span className='text-xs text-gray-700 dark:text-gray-300'>
+                          {item.data.id}
+                        </span>
+                        {isEditMode ? (
+                          <button
+                            type='button'
+                            onClick={() => toggleExtraMinor(item.extraKey, idx)}
+                            className={clsx(
+                              'text-[10px] px-1 py-0.5 rounded-full hover:bg-opacity-80 cursor-pointer',
+                              accent.badge
+                            )}
+                            aria-label={`切换${item.data.id}的知识卡关系为${isMinor ? '主要' : '次要'}`}
+                          >
+                            {isMinor ? '次要' : '主要'}
+                          </button>
+                        ) : (
+                          isMinor && (
+                            <span className={clsx('text-[10px] px-1 py-0.5 rounded-full', accent.badge)}>
+                              次要
+                            </span>
+                          )
+                        )}
+                      </div>
+                      {isEditMode ? (
+                        <EditableField
+                          tag='span'
+                          path={`${item.extraKey}.${idx}.description`}
+                          initialValue={item.data.description || ''}
+                          className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+                          onSave={(newValue) => updateExtraDescription(item.extraKey, idx, newValue)}
+                        />
+                      ) : (
+                        item.data.description && (
+                          <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                            {item.data.description}
+                          </span>
+                        )
+                      )}
+                    </div>
+                    {isEditMode && (
+                      <button
+                        type='button'
+                        className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                        aria-label={`移除知识卡 ${item.data.id}`}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          removeExtraAt(item.extraKey, idx);
+                        }}
+                      >
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          strokeWidth='2'
+                          stroke='currentColor'
+                          className='w-4 h-4'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                );
+              }
+
+              if (item.type === 'specialSkill') {
+                const skillInfo =
+                  specialSkills[specialSkillDisplayFaction]?.[item.data.id as keyof typeof specialSkills[FactionId]] ??
+                  specialSkills[specialSkillDisplayFaction]?.[item.data.id as keyof typeof specialSkills[FactionId]];
+                const isMinor = !!item.data.isMinor;
+                const idx = item.idx;
+
+                return (
+                  <div
+                    key={`specialSkill-${item.data.id}`}
+                    className={clsx(
+                      'flex flex-row items-center gap-3 p-2 rounded-lg',
+                      accent.cardBg,
+                      !isEditMode && accent.cardHover,
+                      isMinor && 'opacity-60'
+                    )}
+                    role={!isEditMode ? 'button' : undefined}
+                    tabIndex={!isEditMode ? 0 : undefined}
+                    aria-label={`跳转到特技 ${item.data.id}`}
+                    onClick={() => {
+                      if (!isEditMode) {
+                        navigate(
+                          `/special-skills/${specialSkillDisplayFaction}/${encodeURIComponent(item.data.id)}`
+                        );
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+                        navigate(
+                          `/special-skills/${specialSkillDisplayFaction}/${encodeURIComponent(item.data.id)}`
+                        );
+                      }
+                    }}
+                  >
+                    {skillInfo && skillInfo.imageUrl ? (
+                      <Image
+                        src={skillInfo.imageUrl}
+                        alt={item.data.id}
+                        width={40}
+                        height={40}
+                        className='w-10 h-10 rounded-full object-cover'
+                      />
+                    ) : (
+                      <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+                        ?
+                      </span>
+                    )}
+                    <div className='flex flex-col flex-1'>
+                      <div className='flex items-center gap-1'>
+                        <span className='text-xs text-gray-700 dark:text-gray-300'>
+                          {item.data.id}
+                        </span>
+                        {isEditMode ? (
+                          <button
+                            type='button'
+                            onClick={() => toggleExtraMinor(item.extraKey, idx)}
+                            className={clsx(
+                              'text-[10px] px-1 py-0.5 rounded-full hover:bg-opacity-80 cursor-pointer',
+                              accent.badge
+                            )}
+                            aria-label={`切换${item.data.id}的特技关系为${isMinor ? '主要' : '次要'}`}
+                          >
+                            {isMinor ? '次要' : '主要'}
+                          </button>
+                        ) : (
+                          isMinor && (
+                            <span className={clsx('text-[10px] px-1 py-0.5 rounded-full', accent.badge)}>
+                              次要
+                            </span>
+                          )
+                        )}
+                      </div>
+                      {isEditMode ? (
+                        <EditableField
+                          tag='span'
+                          path={`${item.extraKey}.${idx}.description`}
+                          initialValue={item.data.description || ''}
+                          className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+                          onSave={(newValue) => updateExtraDescription(item.extraKey, idx, newValue)}
+                        />
+                      ) : (
+                        item.data.description && (
+                          <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+                            {item.data.description}
+                          </span>
+                        )
+                      )}
+                    </div>
+                    {isEditMode && (
+                      <button
+                        type='button'
+                        className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                        aria-label={`移除特技 ${item.data.id}`}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          removeExtraAt(item.extraKey, idx);
+                        }}
+                      >
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          strokeWidth='2'
+                          stroke='currentColor'
+                          className='w-4 h-4'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                );
+              }
+
+              return null;
+            })
+          )}
+        </div>
+      </div>
+    );
+  };
 
   const updateExtraArray = useCallback(
     (
