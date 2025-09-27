@@ -97,9 +97,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         name: '大铁锤',
         aliases: ['锤子'],
         type: 'weapon1',
-        description: '举起大铁锤，对面前的敌方造成眩晕。',
+        description: '举起大铁锤，对面前的敌方造成[眩晕](可击落道具和老鼠)。',
         detailedDescription:
-          '举起大铁锤，对面前的敌方造成[眩晕](可掉落道具和老鼠，不会在对方状态栏显示)。',
+          '举起大铁锤，对面前的敌方造成[眩晕](可击落道具和老鼠；不会在对方状态栏显示)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -118,16 +118,15 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description:
-              '大铁锤会造成伤害，且每次命中敌方时会使自身推速提高，可叠加，持续时间无限。',
+            description: '大铁锤额外造成伤害，且每次命中敌方时永久提升自身推速，可叠加。',
             detailedDescription:
-              '大铁锤会造成{65}伤害，且每次[命中敌方时](包括命中虚弱、霸体或无敌的猫咪时)会使自身[推速提高10%，最多叠加五层](每层之间独立计算。所有百分比推速加成之间均为乘算关系，包括游戏自带的百分比推速增减)，持续时间无限。',
+              '大铁锤额外造成{65}伤害，且每次[命中敌方时](包括命中虚弱、霸体或无敌的猫咪时)会使自身[推速提高10%，最多叠加五层](每层之间独立计算。所有百分比推速加成之间均为乘算关系，包括游戏自带的百分比推速增减)，持续时间无限。',
             cooldown: 16,
           },
           {
             level: 3,
-            description: '大铁锤造成的眩晕时间延长。',
-            detailedDescription: '大铁锤造成的眩晕时间延长至4秒。',
+            description: '眩晕时间延长。',
+            detailedDescription: '眩晕时间延长至4秒。',
             cooldown: 12,
           },
         ],
