@@ -2,8 +2,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
@@ -15,6 +13,29 @@ import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { useDarkMode } from '@/context/DarkModeContext';
+
+const monthDayFormatter = new Intl.DateTimeFormat('zh-CN', {
+  timeZone: 'Asia/Shanghai',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+const formatMonthDay = (value: string | null | undefined) => {
+  if (!value) {
+    return '日期未知';
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '日期未知';
+  }
+  const parts = monthDayFormatter.formatToParts(date);
+  const month = parts.find((part) => part.type === 'month')?.value;
+  const day = parts.find((part) => part.type === 'day')?.value;
+  if (!month || !day) {
+    return monthDayFormatter.format(date);
+  }
+  return `${month}月${day}日`;
+};
 
 interface Article {
   id: string;
@@ -468,16 +489,9 @@ export default function ArticlesClient({ articles: data, description }: Articles
 
                   <div className='mt-auto flex'>
                     <div className='flex flex-col items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-3'>
-                      <span>
-                        发布: {format(new Date(article.created_at), 'MM月dd日', { locale: zhCN })}
-                      </span>
+                      <span>发布: {formatMonthDay(article.created_at)}</span>
                       {latestVersion && (
-                        <span>
-                          更新:{' '}
-                          {format(new Date(latestVersion.created_at!), 'MM月dd日', {
-                            locale: zhCN,
-                          })}
-                        </span>
+                        <span>更新: {formatMonthDay(latestVersion.created_at)}</span>
                       )}
                       <span>浏览: {article.view_count ?? 0}</span>
                     </div>
