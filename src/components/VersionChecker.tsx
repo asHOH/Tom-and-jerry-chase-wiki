@@ -56,10 +56,83 @@ export const VersionChecker: React.FC = () => {
 
   // Only reload on controllerchange when we've actually detected a newer version
   const hasPendingUpdateRef = useRef(false);
+  const reloadTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     setHasMounted(true);
+
+    return () => {
+      if (reloadTimeoutRef.current !== null) {
+        window.clearTimeout(reloadTimeoutRef.current);
+      }
+    };
   }, []);
+
+  const scheduleReload = (delay: number) => {
+    if (reloadTimeoutRef.current !== null) return;
+    reloadTimeoutRef.current = window.setTimeout(() => {
+      window.location.reload();
+    }, delay);
+  };
+
+  const requestServiceWorkerActivation = async (): Promise<boolean> => {
+    if (!('serviceWorker' in navigator)) {
+      return false;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) {
+        return false;
+      }
+
+      const promoteWaiting = () => {
+        const waitingWorker = registration.waiting;
+        if (waitingWorker) {
+          waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+          return true;
+        }
+        return false;
+      };
+
+      if (promoteWaiting()) {
+        return true;
+      }
+
+      await registration.update();
+
+      if (promoteWaiting()) {
+        return true;
+      }
+
+      const installingWorker = registration.installing;
+      if (!installingWorker) {
+        return false;
+      }
+
+      if (installingWorker.state === 'installed') {
+        return promoteWaiting();
+      }
+
+      return await new Promise<boolean>((resolve) => {
+        const handleStateChange = () => {
+          if (installingWorker.state === 'installed') {
+            const promoted = promoteWaiting();
+            installingWorker.removeEventListener('statechange', handleStateChange);
+            resolve(promoted);
+          } else if (installingWorker.state === 'redundant') {
+            installingWorker.removeEventListener('statechange', handleStateChange);
+            resolve(false);
+          }
+        };
+
+        installingWorker.addEventListener('statechange', handleStateChange);
+      });
+    } catch (error) {
+      console.log('Service worker activation failed:', error);
+      return false;
+    }
+  };
 
   useEffect(() => {
     // Load initial version info
@@ -155,17 +228,10 @@ export const VersionChecker: React.FC = () => {
         hasPendingUpdateRef.current = true;
 
         // Update service worker if available
-        if ('serviceWorker' in navigator) {
-          const registration = await navigator.serviceWorker.getRegistration();
-          if (registration) {
-            registration.update();
-          }
+        const activated = await requestServiceWorkerActivation();
+        if (!activated) {
+          scheduleReload(3000);
         }
-
-        // Auto-reload after showing notice for 3 seconds
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
       };
 
       // Use cached response if it's fresh (less than 30 seconds old)
@@ -243,13 +309,11 @@ export const VersionChecker: React.FC = () => {
     if ('serviceWorker' in navigator) {
       const handleControllerChange = () => {
         // Only react to controller changes if we know an update is pending
-        if (!showUpdateNotice && hasPendingUpdateRef.current) {
-          setNotificationMessage('检测到新版本，正在更新...');
-          setShowUpdateNotice(true);
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        }
+        if (!hasPendingUpdateRef.current) return;
+
+        setNotificationMessage('检测到新版本，正在更新...');
+        setShowUpdateNotice(true);
+        scheduleReload(2000);
       };
 
       navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
