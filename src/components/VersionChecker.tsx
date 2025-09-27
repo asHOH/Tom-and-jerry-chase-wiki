@@ -12,6 +12,7 @@ interface VersionInfo {
 }
 
 export const VersionChecker: React.FC = () => {
+  const [hasMounted, setHasMounted] = useState(false);
   const [showUpdateNotice, setShowUpdateNotice] = useState(false);
   const [currentVersion, setCurrentVersion] = useState<string | null>(null);
   // Persist the latest seen version across reloads to avoid duplicate prompts
@@ -25,9 +26,7 @@ export const VersionChecker: React.FC = () => {
     retryCount: number;
   }>({ status: 'loading', lastCheck: null, error: null, retryCount: 0 });
   const [notificationMessage, setNotificationMessage] = useState('');
-  const [isOnline, setIsOnline] = useState(
-    typeof navigator !== 'undefined' ? navigator.onLine : true
-  );
+  const [isOnline, setIsOnline] = useState(true);
 
   // Request deduplication state
   const [isCheckingVersion, setIsCheckingVersion] = useState(false);
@@ -38,6 +37,10 @@ export const VersionChecker: React.FC = () => {
 
   // Only reload on controllerchange when we've actually detected a newer version
   const hasPendingUpdateRef = useRef(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   useEffect(() => {
     // Load initial version info
@@ -85,6 +88,10 @@ export const VersionChecker: React.FC = () => {
 
   // Monitor network status
   useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      setIsOnline(navigator.onLine);
+    }
+
     const handleOnline = () => {
       setIsOnline(true);
       // Reset retry count when network recovers
@@ -248,7 +255,7 @@ export const VersionChecker: React.FC = () => {
     return () => {};
   }, [showUpdateNotice]);
 
-  return (
+  return hasMounted ? (
     <>
       {/* Debug Panel - Only in development */}
       {process.env.NODE_ENV === 'development' && showDebugPanel && (
@@ -294,5 +301,5 @@ export const VersionChecker: React.FC = () => {
         type='info'
       />
     </>
-  );
+  ) : null;
 };
