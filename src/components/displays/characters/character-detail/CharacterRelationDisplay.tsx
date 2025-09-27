@@ -353,6 +353,18 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
 
+  const combinedSelectorRelations = React.useMemo(() => {
+    const map = new Map<string, CharacterRelationItem>();
+    [char.counters, char.counteredBy, char.counterEachOther].forEach((list) => {
+      list.forEach((item) => {
+        if (!map.has(item.id)) {
+          map.set(item.id, item);
+        }
+      });
+    });
+    return Array.from(map.values());
+  }, [char.counters, char.counterEachOther, char.counteredBy]);
+
   // Get hooks for managing relations
   const countersHook = useRelationEditor(id, 'counters');
   const counteredByHook = useRelationEditor(id, 'counteredBy');
@@ -446,11 +458,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
                   currentCharacterId={id}
                   factionId={factionId}
                   relationType='counters'
-                  existingRelations={[
-                    ...getCharacterRelation(id).counters,
-                    ...getCharacterRelation(id).counteredBy,
-                    ...getCharacterRelation(id).counterEachOther,
-                  ]}
+                  existingRelations={combinedSelectorRelations}
                   onSelect={(characterId) => countersHook.handleAdd(characterId, '新增关系描述')}
                 />
                 <KnowledgeCardSelector
