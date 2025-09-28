@@ -255,6 +255,11 @@ export type ItemDefinition = {
   storeCD?: number; //item's CD in store
   teamCD?: boolean; //if item's CD in store is team shared
   exp?: number; //(cat) get exp when item hit mouse
+
+  move?: boolean; //copied from entity
+  gravity?: boolean; //copied from entity
+  collsion?: boolean; //copied from entity
+  ignore?: string[]; //copied from entity
 };
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
