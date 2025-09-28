@@ -238,6 +238,18 @@ export type SpecialSkill = SpecialSkillDefinition & {
 export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '其它'; //list of items' types
 export type Itemsourcelist = '常规道具' | '地图道具'; //list of items' source
 
+export type ItemAttributesAsCharacter = {
+  type: 'cat' | 'mouse' | 'special'; //which kind of character does item close to
+  factionBelong: 'cat' | 'mouse' | 'other'; //which faction does item belong to
+
+  // Common attributes for all characters
+  maxHp?: number | '特殊'; // Hp上限
+  attackBoost?: number; // 攻击增伤
+  hpRecovery?: number; // Hp恢复
+  moveSpeed?: number; // 移速
+  jumpHeight?: number; // 跳跃
+};
+
 export type ItemDefinition = {
   itemtype: Itemtypelist; //type of items
   itemsource: Itemsourcelist; //source of items
@@ -260,6 +272,8 @@ export type ItemDefinition = {
   gravity?: boolean; //copied from entity
   collsion?: boolean; //copied from entity
   ignore?: string[]; //copied from entity
+
+  itemAttributesAsCharacter?: ItemAttributesAsCharacter;
 };
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
@@ -289,6 +303,8 @@ export type EntityDefinition = {
 
   skills?: (SkillDefinition & { colddown?: number })[]; //
   specialImageUrl?: string; //(interim) use other image instead of entity's missing image
+
+  entityAttributesAsCharacter?: ItemAttributesAsCharacter;
 };
 
 export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };

@@ -12,10 +12,14 @@ import {
   getItemTypeColors,
   getItemSourceColors /* , getCardCostColors */,
 } from '@/lib/design-tokens';
+import Tooltip from '../../../ui/Tooltip';
+import { getTooltipContent } from '@/lib/tooltipUtils';
+import { useAppContext } from '@/context/AppContext';
 
 export default function ItemAttributesCard({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
+  const { isDetailedView: isDetailed } = useAppContext();
   const spacing = designTokens.spacing;
   if (!item) return null;
 
@@ -154,6 +158,84 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               {' 经验'}
             </span>
           ))}
+        {/*itemAttributesAsCharacter*/}
+        {item.itemAttributesAsCharacter !== undefined && (
+          <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+            <span className='text-sm font-bold'>
+              该道具特性与<span className={`text-fuchsia-600 dark:text-fuchsia-400`}>角色</span>
+              类似，可看作
+              {item.itemAttributesAsCharacter.factionBelong === 'cat' ? (
+                <span className={`text-sky-600 dark:text-sky-400`}>猫阵营</span>
+              ) : item.itemAttributesAsCharacter.factionBelong === 'mouse' ? (
+                <span className={`text-amber-700 dark:text-amber-600`}>鼠阵营</span>
+              ) : (
+                <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>第三阵营</span>
+              )}
+              的
+              {item.itemAttributesAsCharacter.type === 'cat' ? (
+                <span className={`text-sky-600 dark:text-sky-400`}>猫角色</span>
+              ) : item.itemAttributesAsCharacter.type === 'mouse' ? (
+                <span className={`text-amber-700 dark:text-amber-600`}>鼠角色</span>
+              ) : (
+                <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>特殊角色</span>
+              )}
+            </span>
+            <div
+              className='auto-fill-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+              style={{
+                gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
+              }}
+            >
+              {[
+                item.itemAttributesAsCharacter.maxHp === undefined
+                  ? { title: null, text: null }
+                  : {
+                      title: 'Hp上限',
+                      text: item.itemAttributesAsCharacter.maxHp,
+                    },
+                item.itemAttributesAsCharacter.hpRecovery === undefined
+                  ? { title: null, text: null }
+                  : {
+                      title: 'Hp恢复',
+                      text: item.itemAttributesAsCharacter.hpRecovery,
+                    },
+                item.itemAttributesAsCharacter.moveSpeed === undefined
+                  ? { title: null, text: null }
+                  : {
+                      title: '移速',
+                      text: item.itemAttributesAsCharacter.moveSpeed,
+                    },
+                item.itemAttributesAsCharacter.jumpHeight === undefined
+                  ? { title: null, text: null }
+                  : {
+                      title: '跳跃',
+                      text: item.itemAttributesAsCharacter.jumpHeight,
+                    },
+                item.itemAttributesAsCharacter.attackBoost === undefined
+                  ? { title: null, text: null }
+                  : {
+                      title: '攻击增伤',
+                      text: item.itemAttributesAsCharacter.attackBoost,
+                    },
+              ].map(({ title, text }) =>
+                title === null ? null : (
+                  <span className={`text-sm whitespace-pre`} key={title}>
+                    <Tooltip
+                      content={getTooltipContent(
+                        title,
+                        item.itemAttributesAsCharacter?.type === 'cat' ? 'cat' : 'mouse',
+                        isDetailed
+                      )}
+                    >
+                      {title}
+                    </Tooltip>
+                    ：<span className='text-indigo-700 dark:text-indigo-400'>{text}</span>
+                  </span>
+                )
+              )}
+            </div>
+          </div>
+        )}
         {(item.move !== undefined || item.gravity !== undefined || item.collsion !== undefined) && (
           <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
             <span className='text-lg font-bold whitespace-pre'>移动信息</span>
