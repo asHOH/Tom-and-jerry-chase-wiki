@@ -4,7 +4,6 @@ import { CharacterDetails } from '@/components/displays/characters/character-det
 import { CharacterDetailsProps } from '@/lib/types';
 import { characters } from '@/data';
 import { useEffect, useState, useCallback } from 'react';
-import { usePathname } from 'next/navigation';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 import {
   hasUserSeenCharacterDetailsTutorial,
@@ -15,25 +14,36 @@ import { useSwipeGesture } from '@/lib/hooks/useSwipeGesture';
 import { useCharacterNavigation } from '@/lib/hooks/useCharacterNavigation';
 import { useKeyboardNavigation } from '@/lib/hooks/useKeyboardNavigation';
 import SwipeNavigationIndicator from '@/components/ui/SwipeNavigationIndicator';
+import { proxy } from 'valtio';
+
+const syncCharacterStoreEntry = (
+  characterId: string,
+  value: CharacterDetailsProps['character']
+) => {
+  const existing = characters[characterId];
+  if (existing) {
+    Object.assign(existing, value);
+  } else {
+    characters[characterId] = proxy(value);
+  }
+};
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
-  const [character, setCharacter] = useState(props.character);
-  const pathname = usePathname();
-
-  useEffect(() => {
-    try {
-      const pathParts = pathname.split('/');
-      const characterId = decodeURIComponent(pathParts[pathParts.length - 1] || '');
-      const newCharacter = characters[characterId];
-      if (newCharacter && newCharacter.id !== character.id) {
-        setCharacter(newCharacter);
-      }
-    } catch (error) {
-      console.error('Error updating character from URL:', error);
-    }
-  }, [pathname, character.id]);
-
   const { isEditMode } = useEditMode();
+  const [character, setCharacter] = useState(() => {
+    if (typeof window !== 'undefined' && !isEditMode) {
+      syncCharacterStoreEntry(props.character.id, props.character);
+    }
+    return props.character;
+  });
+  useEffect(() => {
+    if (isEditMode) {
+      return;
+    }
+
+    syncCharacterStoreEntry(props.character.id, props.character);
+    setCharacter(props.character);
+  }, [props.character, isEditMode]);
 
   const [showTutorial, setShowTutorial] = useState(false);
 

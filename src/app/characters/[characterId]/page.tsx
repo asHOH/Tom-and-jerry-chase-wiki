@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { characters } from '@/data';
+import { GameDataManager } from '@/lib/dataManager';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
@@ -10,12 +10,21 @@ import { generatePageMetadata, ArticleStructuredData } from '@/lib/metadataUtils
 import CharacterDocs from './CharacterDocs';
 import { getTutorialPage } from '@/lib/docUtils';
 
-// Revalidate once per day to keep docs fresh
-export const revalidate = 86400;
+// Revalidate once per 8 hours to keep docs fresh
+export const revalidate = 28800;
+
+const getCharacterMap = () => {
+  if (process.env.NODE_ENV !== 'production') {
+    GameDataManager.invalidate({ characters: true, factions: true });
+  }
+
+  return GameDataManager.getCharacters();
+};
 
 // Generate static params for all characters
 export function generateStaticParams() {
-  return Object.keys(characters).map((id) => ({ characterId: id }));
+  const characterMap = getCharacterMap();
+  return Object.keys(characterMap).map((id) => ({ characterId: id }));
 }
 
 export async function generateMetadata({
@@ -25,7 +34,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
-  const character = characters[characterId];
+  const characterMap = getCharacterMap();
+  const character = characterMap[characterId];
 
   if (!character) {
     return {};
@@ -71,7 +81,8 @@ export default async function CharacterPage({
   try {
     const resolvedParams = await params;
     const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
-    const character = characters[characterId];
+    const characterMap = getCharacterMap();
+    const character = characterMap[characterId];
     const docPage = await getTutorialPage(characterId);
 
     if (!character) {

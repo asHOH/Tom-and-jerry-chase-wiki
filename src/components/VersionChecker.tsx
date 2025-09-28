@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import NotificationTooltip from './ui/NotificationTooltip';
 
 interface VersionInfo {
@@ -11,12 +11,33 @@ interface VersionInfo {
   packageVersion: string;
 }
 
+const VERSION_REQUEST_OPTIONS: RequestInit = {
+  cache: 'no-store',
+  headers: {
+    'Cache-Control': 'no-cache',
+  },
+};
+
+const buildVersionUrl = () => `/api/version?_t=${Date.now()}`;
+
+const fetchVersionInfo = async (): Promise<VersionInfo> => {
+  const response = await fetch(buildVersionUrl(), VERSION_REQUEST_OPTIONS);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  return response.json();
+};
+
 export const VersionChecker: React.FC = () => {
+  const [hasMounted, setHasMounted] = useState(false);
   const [showUpdateNotice, setShowUpdateNotice] = useState(false);
   const [currentVersion, setCurrentVersion] = useState<string | null>(null);
   // Persist the latest seen version across reloads to avoid duplicate prompts
   const LATEST_SEEN_VERSION_KEY = 'tjcw.latestSeenVersion';
   const [latestSeenVersion, setLatestSeenVersion] = useState<string | null>(null);
+  const [hasLoadedSeenVersion, setHasLoadedSeenVersion] = useState(false);
   const [showDebugPanel, setShowDebugPanel] = useState(true);
   const [debugInfo, setDebugInfo] = useState<{
     status: 'loading' | 'ready' | 'error';
@@ -25,9 +46,7 @@ export const VersionChecker: React.FC = () => {
     retryCount: number;
   }>({ status: 'loading', lastCheck: null, error: null, retryCount: 0 });
   const [notificationMessage, setNotificationMessage] = useState('');
-  const [isOnline, setIsOnline] = useState(
-    typeof navigator !== 'undefined' ? navigator.onLine : true
-  );
+  const [isOnline, setIsOnline] = useState(true);
 
   // Request deduplication state
   const [isCheckingVersion, setIsCheckingVersion] = useState(false);
@@ -38,32 +57,134 @@ export const VersionChecker: React.FC = () => {
 
   // Only reload on controllerchange when we've actually detected a newer version
   const hasPendingUpdateRef = useRef(false);
+  const reloadTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setHasMounted(true);
+
+    return () => {
+      if (reloadTimeoutRef.current !== null) {
+        window.clearTimeout(reloadTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const scheduleReload = (delay: number) => {
+    if (reloadTimeoutRef.current !== null) return;
+    reloadTimeoutRef.current = window.setTimeout(() => {
+      window.location.reload();
+    }, delay);
+  };
+
+  const persistLatestSeenVersion = useCallback((version: string) => {
+    setLatestSeenVersion(version);
+    setHasLoadedSeenVersion(true);
+    try {
+      localStorage.setItem(LATEST_SEEN_VERSION_KEY, version);
+    } catch {}
+  }, []);
+
+  const markSeenVersionLoaded = useCallback(() => {
+    setHasLoadedSeenVersion((loaded) => (loaded ? loaded : true));
+  }, []);
+
+  const shouldAnnounceVersion = useCallback(
+    (nextVersion: string) => {
+      if (!currentVersion) {
+        return false;
+      }
+
+      if (!hasLoadedSeenVersion) {
+        return nextVersion !== currentVersion;
+      }
+
+      if (nextVersion === currentVersion) {
+        return false;
+      }
+
+      if (latestSeenVersion && nextVersion === latestSeenVersion) {
+        return false;
+      }
+
+      return true;
+    },
+    [currentVersion, hasLoadedSeenVersion, latestSeenVersion]
+  );
+
+  const requestServiceWorkerActivation = async (): Promise<boolean> => {
+    if (!('serviceWorker' in navigator)) {
+      return false;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) {
+        return false;
+      }
+
+      const promoteWaiting = () => {
+        const waitingWorker = registration.waiting;
+        if (waitingWorker) {
+          waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+          return true;
+        }
+        return false;
+      };
+
+      if (promoteWaiting()) {
+        return true;
+      }
+
+      await registration.update();
+
+      if (promoteWaiting()) {
+        return true;
+      }
+
+      const installingWorker = registration.installing;
+      if (!installingWorker) {
+        return false;
+      }
+
+      if (installingWorker.state === 'installed') {
+        return promoteWaiting();
+      }
+
+      return await new Promise<boolean>((resolve) => {
+        const handleStateChange = () => {
+          if (installingWorker.state === 'installed') {
+            const promoted = promoteWaiting();
+            installingWorker.removeEventListener('statechange', handleStateChange);
+            resolve(promoted);
+          } else if (installingWorker.state === 'redundant') {
+            installingWorker.removeEventListener('statechange', handleStateChange);
+            resolve(false);
+          }
+        };
+
+        installingWorker.addEventListener('statechange', handleStateChange);
+      });
+    } catch (error) {
+      console.log('Service worker activation failed:', error);
+      return false;
+    }
+  };
 
   useEffect(() => {
     // Load initial version info
     const loadInitialVersion = async () => {
       try {
         setDebugInfo((prev) => ({ ...prev, status: 'loading' }));
-        // Cache-bust the initial fetch to avoid stale CDN/SW caches
-        const response = await fetch(`/api/version?_t=${Date.now()}`);
-
-        if (response.ok) {
-          const versionInfo: VersionInfo = await response.json();
-          setCurrentVersion(versionInfo.version);
-          // Persist latest seen version
-          try {
-            localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
-            setLatestSeenVersion(versionInfo.version);
-          } catch {}
-          setDebugInfo({
-            status: 'ready',
-            lastCheck: new Date().toLocaleTimeString(),
-            error: null,
-            retryCount: 0,
-          });
-        } else {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        const versionInfo = await fetchVersionInfo();
+        setCurrentVersion(versionInfo.version);
+        // Persist latest seen version
+        persistLatestSeenVersion(versionInfo.version);
+        setDebugInfo({
+          status: 'ready',
+          lastCheck: new Date().toLocaleTimeString(),
+          error: null,
+          retryCount: 0,
+        });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         setDebugInfo((prev) => ({
@@ -77,14 +198,22 @@ export const VersionChecker: React.FC = () => {
     // Load last seen version from storage (best-effort)
     try {
       const stored = localStorage.getItem(LATEST_SEEN_VERSION_KEY);
-      if (stored) setLatestSeenVersion(stored);
+      if (stored) {
+        setLatestSeenVersion(stored);
+      }
     } catch {}
 
+    markSeenVersionLoaded();
+
     loadInitialVersion();
-  }, []);
+  }, [markSeenVersionLoaded, persistLatestSeenVersion]);
 
   // Monitor network status
   useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      setIsOnline(navigator.onLine);
+    }
+
     const handleOnline = () => {
       setIsOnline(true);
       // Reset retry count when network recovers
@@ -136,17 +265,10 @@ export const VersionChecker: React.FC = () => {
         hasPendingUpdateRef.current = true;
 
         // Update service worker if available
-        if ('serviceWorker' in navigator) {
-          const registration = await navigator.serviceWorker.getRegistration();
-          if (registration) {
-            registration.update();
-          }
+        const activated = await requestServiceWorkerActivation();
+        if (!activated) {
+          scheduleReload(3000);
         }
-
-        // Auto-reload after showing notice for 3 seconds
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
       };
 
       // Use cached response if it's fresh (less than 30 seconds old)
@@ -156,7 +278,7 @@ export const VersionChecker: React.FC = () => {
         const versionInfo = lastVersionResponse.data;
         // Only treat as update if it's different from both the current in-memory version
         // and the latest seen version persisted locally (guards against stale initial fetch)
-        if (versionInfo.version !== currentVersion && versionInfo.version !== latestSeenVersion) {
+        if (shouldAnnounceVersion(versionInfo.version)) {
           await handleVersionUpdate(versionInfo, 'cached');
         }
         return;
@@ -167,28 +289,21 @@ export const VersionChecker: React.FC = () => {
         setDebugInfo((prev) => ({ ...prev, lastCheck: new Date().toLocaleTimeString() }));
 
         // Check version.json for updates
-        const response = await fetch('/api/version?_t=' + Date.now());
+        const versionInfo = await fetchVersionInfo();
 
-        if (response.ok) {
-          const versionInfo: VersionInfo = await response.json();
+        // Cache the response
+        setLastVersionResponse({
+          data: versionInfo,
+          timestamp: now,
+        });
 
-          // Cache the response
-          setLastVersionResponse({
-            data: versionInfo,
-            timestamp: now,
-          });
-
-          if (versionInfo.version !== currentVersion && versionInfo.version !== latestSeenVersion) {
-            await handleVersionUpdate(versionInfo, 'fresh');
-            return;
-          }
-
-          // Keep local latestSeenVersion in sync when versions match
-          try {
-            localStorage.setItem(LATEST_SEEN_VERSION_KEY, versionInfo.version);
-            setLatestSeenVersion(versionInfo.version);
-          } catch {}
+        if (shouldAnnounceVersion(versionInfo.version)) {
+          await handleVersionUpdate(versionInfo, 'fresh');
+          return;
         }
+
+        // Keep local latestSeenVersion in sync when versions match
+        persistLatestSeenVersion(versionInfo.version);
 
         // Reset retry count on successful check
         setDebugInfo((prev) => ({ ...prev, retryCount: 0, error: null }));
@@ -219,8 +334,11 @@ export const VersionChecker: React.FC = () => {
     isCheckingVersion,
     isOnline,
     latestSeenVersion,
+    hasLoadedSeenVersion,
     lastVersionResponse.data,
     lastVersionResponse.timestamp,
+    persistLatestSeenVersion,
+    shouldAnnounceVersion,
   ]);
 
   // Listen for service worker updates (fallback method)
@@ -228,13 +346,11 @@ export const VersionChecker: React.FC = () => {
     if ('serviceWorker' in navigator) {
       const handleControllerChange = () => {
         // Only react to controller changes if we know an update is pending
-        if (!showUpdateNotice && hasPendingUpdateRef.current) {
-          setNotificationMessage('检测到新版本，正在更新...');
-          setShowUpdateNotice(true);
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        }
+        if (!hasPendingUpdateRef.current) return;
+
+        setNotificationMessage('检测到新版本，正在更新...');
+        setShowUpdateNotice(true);
+        scheduleReload(2000);
       };
 
       navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
@@ -248,7 +364,7 @@ export const VersionChecker: React.FC = () => {
     return () => {};
   }, [showUpdateNotice]);
 
-  return (
+  return hasMounted ? (
     <>
       {/* Debug Panel - Only in development */}
       {process.env.NODE_ENV === 'development' && showDebugPanel && (
@@ -294,5 +410,5 @@ export const VersionChecker: React.FC = () => {
         type='info'
       />
     </>
-  );
+  ) : null;
 };
