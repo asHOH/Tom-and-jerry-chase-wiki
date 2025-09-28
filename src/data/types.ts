@@ -243,7 +243,7 @@ export type ItemAttributesAsCharacter = {
   factionBelong: 'cat' | 'mouse' | 'other'; //which faction does item belong to
 
   // Common attributes for all characters
-  maxHp?: number | '特殊'; // Hp上限
+  maxHp?: number | '一击即溃'; // Hp上限
   attackBoost?: number; // 攻击增伤
   hpRecovery?: number; // Hp恢复
   moveSpeed?: number; // 移速

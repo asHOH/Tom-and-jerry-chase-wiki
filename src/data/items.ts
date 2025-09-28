@@ -701,6 +701,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     move: true,
     gravity: true,
     collsion: true,
+    itemAttributesAsCharacter: { type: 'special', factionBelong: 'other', maxHp: '一击即溃' },
   },
   净化萝卜: {
     itemtype: '其它' as const,

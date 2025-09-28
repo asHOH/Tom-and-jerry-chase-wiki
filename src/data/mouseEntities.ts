@@ -461,8 +461,17 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     collsion: true,
     ignore: ['道具'],
     description:
-      '魔术师可对其下达救援、搬奶酪、推奶酪、拾取、投掷、治疗或跟随指令。兔子继承魔术师的部分效果。详见技能描述。',
+      '魔术师可对其下达救援、搬奶酪、推奶酪、拾取、投掷、治疗或跟随指令。兔子继承魔术师的部分效果。详见{魔术师}技能描述。',
     create: '通过魔术师-兔子先生召唤.',
+    entityAttributesAsCharacter: {
+      type: 'mouse',
+      factionBelong: 'mouse',
+      maxHp: 110,
+      hpRecovery: 2.5,
+      moveSpeed: 820,
+      jumpHeight: 550,
+      attackBoost: 20,
+    },
   },
   兔子大表哥: {
     entitytype: 'NPC',
@@ -474,8 +483,17 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     collsion: true,
     ignore: ['道具'],
     description:
-      '魔术师可对其下达举火箭、指卧撑或保镖指令。兔表哥被卡牌命中时会储存该效果，并在通过技能出拳命中猫咪时对其附加。详见技能描述。',
+      '魔术师可对其下达举火箭、指卧撑或保镖指令。兔表哥被卡牌命中时会储存该效果，并在通过技能出拳命中猫咪时对其附加。详见{魔术师}技能描述。',
     create: '通过魔术师-兔子大表哥召唤。',
+    entityAttributesAsCharacter: {
+      type: 'cat',
+      factionBelong: 'mouse',
+      maxHp: 200,
+      hpRecovery: 3,
+      moveSpeed: 820,
+      jumpHeight: 550,
+      attackBoost: 0,
+    },
   },
   斜塔: {
     entitytype: ['平台类', '召唤物'],
@@ -547,6 +565,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     detailedDescription:
       '分身存在6.9/6.9/11.9秒，被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。分身Hp上限为25并[按比例继承本体Hp](如本体Hp为24，分身Hp将为8.33)、继承角色Hp恢复速度、不继承本体状态和知识卡、免疫捕鼠夹；Hp归零或持续时间结束时将原地消失；会在地图内四处走动，可能会钻管道；若半径800范围内出现猫咪，分身会尝试远离之。Lv.3分身存在期间，侦探泰菲可以再次点击技能键与分身换位（CD：5秒），但爬梯子、被眩晕时无法换位。',
     create: '由侦探泰菲-分身大师召唤。',
+    entityAttributesAsCharacter: { type: 'mouse', factionBelong: 'mouse' },
   },
   饮料印记: {
     entitytype: '召唤物',
@@ -576,6 +595,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     detailedDescription:
       '饮料分身持续9.9/9.9/20秒，会[模拟侦探泰菲或队友外形](只包括存活的鼠方队友)，被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。使用分身大师将使饮料分身立即消失。同一房间同时召唤的分身越多，分身存在时间越短。饮料分身Hp上限为角色Hp上限减49并[按比例继承本体Hp](如124血的剑杰Hp为24，召唤出的分身Hp将为15)，若同房间内出现出现猫咪将跑向最近的道具/水果盘/冰桶处，若半径800范围内出现猫咪将使用相应道具进行攻击。',
     create: '由{饮料印记}在特定条件下召唤。',
+    entityAttributesAsCharacter: { type: 'mouse', factionBelong: 'mouse' },
   },
   风之屏障: {
     entitytype: ['平台类', '召唤物'],
@@ -682,6 +702,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
         skillLevels: [],
       },
     ],
+    entityAttributesAsCharacter: { type: 'mouse', factionBelong: 'mouse' },
   },
   '战车-分离态': {
     entitytype: '召唤物',
@@ -992,6 +1013,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
         skillLevels: [],
       },
     ],
+    entityAttributesAsCharacter: { type: 'mouse', factionBelong: 'mouse', maxHp: 2 },
   },
   柠檬: {
     entitytype: '投射物',
@@ -1231,6 +1253,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
         skillLevels: [],
       },
     ],
+    entityAttributesAsCharacter: { type: 'special', factionBelong: 'mouse', maxHp: '一击即溃' },
   },
   激光: {
     entitytype: '投射物',
