@@ -154,6 +154,63 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               {' 经验'}
             </span>
           ))}
+        {(item.move !== undefined || item.gravity !== undefined || item.collsion !== undefined) && (
+          <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+            <span className='text-lg font-bold whitespace-pre'>移动信息</span>
+            <div
+              className='auto-fill-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+              style={{
+                gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
+                gridTemplateRows: 'repeat(2,1fr)',
+              }}
+            >
+              {item.move !== undefined && (
+                <span className={`text-sm whitespace-pre`}>
+                  {item.move === true ? (
+                    <span className={`text-green-600 dark:text-green-500`}>可</span>
+                  ) : (
+                    <span className={`text-red-600 dark:text-red-500`}>不可</span>
+                  )}
+                  移动
+                </span>
+              )}
+              {item.gravity !== undefined && (
+                <span className={`text-sm whitespace-pre`}>
+                  {item.gravity === true ? (
+                    <span className={`text-orange-600 dark:text-orange-400`}>会受</span>
+                  ) : (
+                    <span className={`text-indigo-700 dark:text-indigo-400`}>不受</span>
+                  )}
+                  重力影响
+                </span>
+              )}
+              {item.collsion !== undefined && (
+                <span className={`text-sm whitespace-pre`}>
+                  {item.collsion === true ? (
+                    <>
+                      <span className={`text-orange-600 dark:text-orange-400`}>会</span>
+                      产生碰撞
+                      {!!item.ignore ? (
+                        <>
+                          ，但不与
+                          <span className='text-fuchsia-600 dark:text-fuchsia-400'>
+                            {(item.ignore ?? []).filter(Boolean).join(', ')}
+                          </span>
+                          碰撞
+                        </>
+                      ) : null}
+                    </>
+                  ) : (
+                    <>
+                      <span className={`text-indigo-700 dark:text-indigo-400`}>不会</span>
+                      产生碰撞
+                    </>
+                  )}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
         {item?.store !== undefined &&
           (item.store !== true ? (
             <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
