@@ -276,7 +276,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '通过库博-虚幻梦影召唤。',
   },
   天堂火箭: {
-    entitytype: '召唤物',
+    entitytype: '道具类',
     characterName: '库博',
     skillname: '虚幻梦影',
     aliases: ['天火'],

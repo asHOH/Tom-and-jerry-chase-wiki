@@ -790,7 +790,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '由仙女鼠-魔镜召唤咒召唤。',
   },
   魔镜经验蛋糕: {
-    entitytype: '召唤物',
+    entitytype: ['道具类', '召唤物'],
     characterName: '仙女鼠',
     skillname: '魔镜召唤咒',
     move: true,
@@ -1051,7 +1051,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     create: '猫咪在{蓝图}内受到伤害时自动变身。',
   },
   线条火箭: {
-    entitytype: ['道具类'],
+    entitytype: '道具类',
     characterName: '莱恩',
     skillname: '蓝图',
     move: false,
