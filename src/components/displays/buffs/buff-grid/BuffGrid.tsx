@@ -7,43 +7,59 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import FilterRow from '@/components/ui/FilterRow';
 import { useState } from 'react';
-import type { Buffinfluencelist, Buff, Bufftypelist } from '@/data/types';
+import type { Buff, Bufftypelist, Buffclasslist } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getPositioningTagColors } from '@/lib/design-system';
 
-const ITEM_TYPE_OPTIONS: Buffinfluencelist[] = ['正面', '负面'];
-const ITEM_CLASS_OPTIONS: Bufftypelist[] = ['常规类', '全局类', '技能类'];
+const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['常规类', '全局类', '技能类'];
+const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['状态', '效果'];
 
 type Props = { description?: string };
 
 export default function BuffClient({ description }: Props) {
   // Multi-select state for filters
-  const [selectedTypes, setSelectedTypes] = useState<Buffinfluencelist[]>([]);
-  const [selectedClasses, setSelectedClasses] = useState<Bufftypelist[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<Bufftypelist[]>([]);
+  const [selectedInfluences, setSelectedInfluences] = useState<('正面' | '负面' | '其它')[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<Buffclasslist[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
   const filteredBuffs = Object.values(buffs)
     .filter((buff: Buff) => !buff.unuseImage)
     .filter((buff: Buff) => {
-      // 类型筛选
-      const typeMatch =
-        selectedTypes.length === 0 ||
-        (buff.buffinfluence && selectedTypes.includes(buff.buffinfluence));
-      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.bufftype);
-      return typeMatch && classMatch;
+      const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
+      let influenceMatch = true;
+      if (selectedInfluences.length > 0) {
+        // "其它" means buffs with no influence restriction
+        const isNone = selectedInfluences.includes('其它');
+        const isBuff = selectedInfluences.includes('正面');
+        const isDebuff = selectedInfluences.includes('负面');
+        influenceMatch =
+          (isNone && buff.buffinfluence == undefined) ||
+          (isBuff && buff.buffinfluence === '正面') ||
+          (isDebuff && buff.buffinfluence === '负面');
+      }
+      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.buffclass);
+      return typeMatch && influenceMatch && classMatch;
     });
-
   const unuseImageFilteredBuffs = Object.values(buffs)
     .filter((buff: Buff) => buff.unuseImage)
     .filter((buff: Buff) => {
-      // 类型筛选
-      const typeMatch =
-        selectedTypes.length === 0 ||
-        (buff.buffinfluence && selectedTypes.includes(buff.buffinfluence));
-      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.bufftype);
-      return typeMatch && classMatch;
+      const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
+      let influenceMatch = true;
+      if (selectedInfluences.length > 0) {
+        // "其它" means buffs with no influence restriction
+        const isNone = selectedInfluences.includes('其它');
+        const isBuff = selectedInfluences.includes('正面');
+        const isDebuff = selectedInfluences.includes('负面');
+        influenceMatch =
+          (isNone && buff.buffinfluence == undefined) ||
+          (isBuff && buff.buffinfluence === '正面') ||
+          (isDebuff && buff.buffinfluence === '负面');
+      }
+      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.buffclass);
+      return typeMatch && influenceMatch && classMatch;
     });
 
   return (
@@ -62,35 +78,8 @@ export default function BuffClient({ description }: Props) {
         {/* Filter Controls */}
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
-          {/* 范围筛选 */}
-          <FilterRow<Bufftypelist>
-            label='范围筛选:'
-            options={ITEM_CLASS_OPTIONS}
-            isActive={(type) => selectedClasses.includes(type)}
-            onToggle={(type) =>
-              setSelectedClasses((prev) =>
-                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-              )
-            }
-            //*getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}*/
-            //Use PositioningTagColors to avoid creating new colorStyles
-            getButtonStyle={(name, active) => {
-              const isActive = active;
-              const tagColors = getPositioningTagColors(
-                { 常规类: '辅助', 全局类: '奶酪', 技能类: '破局' }[name],
-                false,
-                false,
-                'mouse',
-                isDarkMode
-              );
-              return isActive ? { ...tagColors } : undefined;
-            }}
-            isDarkMode={isDarkMode}
-          />
-        </div>
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 类型筛选 */}
-          <FilterRow<Buffinfluencelist>
+          <FilterRow<Bufftypelist>
             label='类型筛选:'
             options={ITEM_TYPE_OPTIONS}
             isActive={(type) => selectedTypes.includes(type)}
@@ -104,7 +93,60 @@ export default function BuffClient({ description }: Props) {
             getButtonStyle={(name, active) => {
               const isActive = active;
               const tagColors = getPositioningTagColors(
-                { 正面: '救援', 负面: '干扰' }[name],
+                { 常规类: '辅助', 全局类: '干扰', 技能类: '奶酪' }[name],
+                false,
+                false,
+                'mouse',
+                isDarkMode
+              );
+              return isActive ? { ...tagColors } : undefined;
+            }}
+            isDarkMode={isDarkMode}
+          />
+
+          {/* 效果筛选——参考item阵营筛选 */}
+          <FilterRow<'正面' | '负面' | '其它'>
+            label='效果筛选:'
+            options={['正面', '负面', '其它']}
+            isActive={(f) => selectedInfluences.includes(f)}
+            onToggle={(f) =>
+              setSelectedInfluences((prev) =>
+                prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
+              )
+            }
+            getOptionLabel={(f) => f}
+            getButtonStyle={(f, active) =>
+              active
+                ? f === '其它'
+                  ? { backgroundColor: '#e6d5f7', color: '#8b5cf6' }
+                  : getPositioningTagColors(
+                      { 正面: '救援', 负面: '干扰' }[f],
+                      false,
+                      false,
+                      'mouse',
+                      isDarkMode
+                    )
+                : undefined
+            }
+            isDarkMode={isDarkMode}
+          />
+
+          {/* 类型筛选 */}
+          <FilterRow<Buffclasslist>
+            label='类型筛选:'
+            options={ITEM_CLASS_OPTIONS}
+            isActive={(type) => selectedClasses.includes(type)}
+            onToggle={(type) =>
+              setSelectedClasses((prev) =>
+                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+              )
+            }
+            //*getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}*/
+            //Use PositioningTagColors to avoid creating new colorStyles
+            getButtonStyle={(name, active) => {
+              const isActive = active;
+              const tagColors = getPositioningTagColors(
+                { 状态: '奶酪', 效果: '破局' }[name],
                 false,
                 false,
                 'mouse',
