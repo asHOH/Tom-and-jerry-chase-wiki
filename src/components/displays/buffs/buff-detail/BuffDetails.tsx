@@ -1,87 +1,26 @@
 'use client';
 
-import BaseCard from '@/components/ui/BaseCard';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
-import Tag from '@/components/ui/Tag';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
-import GameImage from '@/components/ui/GameImage';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import SectionHeader from '@/components/ui/SectionHeader';
+import BuffAttributesCard from './BuffAttributesCard';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(buff.name, 'buff');
 
   const { isDetailedView } = useAppContext();
-  const [isDarkMode] = useDarkMode();
   const spacing = designTokens.spacing;
-  const tagColorStyles = isDarkMode
-    ? { background: '#334155', color: '#e0e7ef' }
-    : { background: '#e0e7ef', color: '#1e293b' };
   if (!buff) return null;
-
-  const avilableAliases = (buff.aliases ?? [])
-    .filter((i) => i[0] !== '#')
-    .map((i) => {
-      return i[0] === '%' ? i.replace(/[%\^\$\.\*\+\?\[\]\(\)\{\}\\]/g, '') : i; //移除“%”和部分常用元字符
-    });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
       <div className='flex flex-col md:flex-row' style={{ gap: spacing.xl }}>
         <div className='md:w-1/3'>
-          <BaseCard variant='details'>
-            <GameImage src={buff.imageUrl} alt={buff.name} size='CARD_DETAILS' />
-            <div
-              style={{
-                paddingLeft: spacing.md,
-                paddingRight: spacing.md,
-                paddingBottom: spacing.md,
-              }}
-            >
-              <h1
-                className='text-3xl font-bold dark:text-white'
-                style={{
-                  paddingTop: spacing.xs,
-                  paddingBottom: spacing.xs,
-                }}
-              >
-                {buff.name}
-                <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                  ({buff.bufftype}
-                  {buff.buffinfluence})
-                </span>
-              </h1>
-              <div
-                className='flex items-center flex-wrap'
-                style={{ gap: spacing.sm, marginTop: spacing.sm }}
-              >
-                {avilableAliases.length > 0 && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    别名：
-                    {avilableAliases.filter(Boolean).join(', ')}
-                  </Tag>
-                )}
-                {buff.duration != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    持续时间：{buff.duration == 'infinite' ? '无限' : `${buff.duration}秒`}
-                  </Tag>
-                )}
-                {buff.failure != undefined && (
-                  <Tag colorStyles={tagColorStyles} size='md'>
-                    效果中止条件: {buff.failure}
-                  </Tag>
-                )}
-
-                {/*Navigation*/}
-                <SpecifyTypeNavigationButtons currentId={buff.name} specifyType='buff' />
-              </div>
-            </div>
-          </BaseCard>
+          <BuffAttributesCard buff={buff} />
         </div>
         <div className='md:w-2/3 space-y-3' style={{ whiteSpace: 'pre-wrap' }}>
           {[

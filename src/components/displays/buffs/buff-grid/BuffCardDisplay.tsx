@@ -39,10 +39,15 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           aria-label='状态属性'
         >
           <Tag size='xs' margin='compact' colorStyles={classColors}>
-            {/*isMobile ? buff.buffinfluence.slice(0, 2) : buff.buffinfluence*/ buff.bufftype}
+            {buff.bufftype}
           </Tag>
+          {buff.buffinfluence !== undefined && (
+            <Tag size='xs' margin='compact' colorStyles={{ color: '', background: '' }}>
+              {buff.buffinfluence}
+            </Tag>
+          )}
           <Tag size='xs' margin='compact' colorStyles={{ color: '', background: '' }}>
-            {/*isMobile ? buff.buffinfluence.slice(0, 2) : buff.buffinfluence*/ buff.buffinfluence}
+            {buff.buffclass}
           </Tag>
         </div>
       </div>
