@@ -675,7 +675,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   },
   /* ----------------------------------- 其它常规道具 ----------------------------------- */
   拳套盒: {
-    itemtype: '其它' as const,
+    itemtype: '特殊类' as const,
     itemsource: '常规道具' as const,
     aliases: ['拳套盒子', '拳头盒子'],
     description:
@@ -689,7 +689,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     collsion: true,
   },
   电风扇: {
-    itemtype: '其它' as const,
+    itemtype: '特殊类' as const,
     itemsource: '常规道具' as const,
     aliases: ['风扇'],
     description:
@@ -704,7 +704,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     itemAttributesAsCharacter: { type: 'special', factionBelong: 'other', maxHp: '一击即溃' },
   },
   净化萝卜: {
-    itemtype: '其它' as const,
+    itemtype: '特殊类' as const,
     itemsource: '常规道具' as const,
     aliases: ['纯净萝卜', '白花', '纯白之花'],
     description:
@@ -719,7 +719,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     ignore: ['道具'],
   },
   经验蛋糕: {
-    itemtype: '其它' as const,
+    itemtype: '特殊类' as const,
     itemsource: '常规道具' as const,
     aliases: ['Exp蛋糕', '普通经验蛋糕'],
     description: '被猫咪拾取可直接获得经验，被机械鼠拾取并带回老鼠洞后可获得经验。',
@@ -734,8 +734,8 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     ignore: ['道具'],
   },
   碎片: {
-    itemtype: '其它' as const,
-    itemsource: '常规道具' as const,
+    itemtype: '投掷类' as const,
+    itemsource: '衍生道具' as const,
     description: '角色踩到碎片会短暂硬直，之后一段时间内免疫碎片效果。',
     detailedDescription:
       '角色踩到碎片会硬直1s，之后3.1秒内[免疫碎片效果](不会受到碎片效果，期间踩到碎片也不会令其消失)。',
@@ -745,8 +745,8 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     collsion: true,
   },
   果子: {
-    itemtype: '其它' as const,
-    itemsource: '常规道具' as const,
+    itemtype: '投掷类' as const,
+    itemsource: '衍生道具' as const,
     damage: 0,
     walldamage: 0.5,
     description:
@@ -760,8 +760,8 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     collsion: true,
   },
   子弹: {
-    itemtype: '其它' as const,
-    itemsource: '常规道具' as const,
+    itemtype: '投掷类' as const,
+    itemsource: '衍生道具' as const,
     damage: 50,
     walldamage: 6,
     description: '对命中的敌方造成伤害和高额减速效果，对命中的墙缝造成伤害。',

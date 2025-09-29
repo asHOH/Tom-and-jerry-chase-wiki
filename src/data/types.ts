@@ -235,8 +235,8 @@ export type SpecialSkill = SpecialSkillDefinition & {
   imageUrl: string;
 };
 
-export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '其它'; //list of items' types
-export type Itemsourcelist = '常规道具' | '地图道具'; //list of items' source
+export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '特殊类'; //list of items' types
+export type Itemsourcelist = '常规道具' | '衍生道具' | '地图道具'; //list of items' source
 
 export type ItemAttributesAsCharacter = {
   type: 'cat' | 'mouse' | 'special'; //which kind of character does item close to
