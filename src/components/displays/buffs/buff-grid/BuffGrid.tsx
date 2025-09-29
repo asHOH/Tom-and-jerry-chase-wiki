@@ -73,7 +73,7 @@ export default function BuffClient({ description }: Props) {
       <header
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
-        <PageTitle>状态</PageTitle>
+        <PageTitle>状态和效果</PageTitle>
         {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
         {/* Filter Controls */}
         {/* Filters wrapper */}
