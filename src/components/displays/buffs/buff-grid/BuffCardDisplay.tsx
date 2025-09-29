@@ -2,15 +2,15 @@ import { Buff } from '@/data/types';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { getBuffTypeColors, getBuffClassColors } from '@/lib/design-tokens';
+import { getBuffClassColors } from '@/lib/design-tokens'; // getBuffTypeColors,
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import { designTokens } from '@/lib/design-tokens';
 
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
-  const typeColors = getBuffTypeColors(buff.bufftype, isDarkMode);
-  const classColors = getBuffClassColors(buff.buffclass, isDarkMode);
+  //const typeColors = getBuffTypeColors(buff.buffinfluence, isDarkMode);
+  const classColors = getBuffClassColors(buff.bufftype, isDarkMode);
   const isMobile = useMobile();
 
   return (
@@ -39,10 +39,10 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           aria-label='状态属性'
         >
           <Tag size='xs' margin='compact' colorStyles={classColors}>
-            {/*isMobile ? buff.bufftype.slice(0, 2) : buff.bufftype*/ buff.buffclass}
+            {/*isMobile ? buff.buffinfluence.slice(0, 2) : buff.buffinfluence*/ buff.bufftype}
           </Tag>
-          <Tag size='xs' margin='compact' colorStyles={typeColors}>
-            {/*isMobile ? buff.bufftype.slice(0, 2) : buff.bufftype*/ buff.bufftype}
+          <Tag size='xs' margin='compact' colorStyles={{ color: '', background: '' }}>
+            {/*isMobile ? buff.buffinfluence.slice(0, 2) : buff.buffinfluence*/ buff.buffinfluence}
           </Tag>
         </div>
       </div>

@@ -936,13 +936,12 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
 /**
  * Buff type color utility
  */
-export const getBuffTypeColors = (bufftype: string, isDarkMode: boolean) => {
+export const getBuffTypeColors = (buffinfluence: string, isDarkMode: boolean) => {
   const buffTypeColorMap: Record<string, 'disrupt' | 'rescue' | 'support'> = {
-    正面效果: 'rescue',
-    负面效果: 'disrupt',
-    其它效果: 'support',
+    正面: 'rescue',
+    负面: 'disrupt',
   };
-  const buffType = buffTypeColorMap[bufftype] || 'lateGameMouse';
+  const buffType = buffTypeColorMap[buffinfluence] || 'lateGameMouse';
   const colorScheme =
     designTokens.colors.positioningTags[buffType] || designTokens.colors.skillTypes.passive;
   return {
@@ -951,13 +950,13 @@ export const getBuffTypeColors = (bufftype: string, isDarkMode: boolean) => {
       isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
   };
 };
-export const getBuffClassColors = (buffclass: string, isDarkMode: boolean) => {
+export const getBuffClassColors = (bufftype: string, isDarkMode: boolean) => {
   const buffTypeColorMap: Record<string, 'cheese' | 'wallBreak' | 'breakthrough'> = {
-    基础类: 'cheese',
+    常规类: 'cheese',
     全局类: 'wallBreak',
     特殊类: 'breakthrough',
   };
-  const buffType = buffTypeColorMap[buffclass] || 'lateGameMouse';
+  const buffType = buffTypeColorMap[bufftype] || 'lateGameMouse';
   const colorScheme =
     designTokens.colors.positioningTags[buffType] || designTokens.colors.skillTypes.passive;
   return {

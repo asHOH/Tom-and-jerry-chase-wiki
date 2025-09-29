@@ -7,20 +7,20 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import FilterRow from '@/components/ui/FilterRow';
 import { useState } from 'react';
-import type { Bufftypelist, Buff, Buffclasslist } from '@/data/types';
+import type { Buffinfluencelist, Buff, Bufftypelist } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getPositioningTagColors } from '@/lib/design-system';
 
-const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['正面效果', '负面效果', '其它效果'];
-const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['基础类', '全局类', '特殊类'];
+const ITEM_TYPE_OPTIONS: Buffinfluencelist[] = ['正面', '负面'];
+const ITEM_CLASS_OPTIONS: Bufftypelist[] = ['常规类', '全局类', '技能类'];
 
 type Props = { description?: string };
 
 export default function BuffClient({ description }: Props) {
   // Multi-select state for filters
-  const [selectedTypes, setSelectedTypes] = useState<Bufftypelist[]>([]);
-  const [selectedClasses, setSelectedClasses] = useState<Buffclasslist[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<Buffinfluencelist[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<Bufftypelist[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
@@ -28,8 +28,10 @@ export default function BuffClient({ description }: Props) {
     .filter((buff: Buff) => !buff.unuseImage)
     .filter((buff: Buff) => {
       // 类型筛选
-      const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
-      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.buffclass);
+      const typeMatch =
+        selectedTypes.length === 0 ||
+        (buff.buffinfluence && selectedTypes.includes(buff.buffinfluence));
+      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.bufftype);
       return typeMatch && classMatch;
     });
 
@@ -37,8 +39,10 @@ export default function BuffClient({ description }: Props) {
     .filter((buff: Buff) => buff.unuseImage)
     .filter((buff: Buff) => {
       // 类型筛选
-      const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
-      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.buffclass);
+      const typeMatch =
+        selectedTypes.length === 0 ||
+        (buff.buffinfluence && selectedTypes.includes(buff.buffinfluence));
+      const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.bufftype);
       return typeMatch && classMatch;
     });
 
@@ -59,7 +63,7 @@ export default function BuffClient({ description }: Props) {
         {/* Filters wrapper */}
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 范围筛选 */}
-          <FilterRow<Buffclasslist>
+          <FilterRow<Bufftypelist>
             label='范围筛选:'
             options={ITEM_CLASS_OPTIONS}
             isActive={(type) => selectedClasses.includes(type)}
@@ -73,7 +77,7 @@ export default function BuffClient({ description }: Props) {
             getButtonStyle={(name, active) => {
               const isActive = active;
               const tagColors = getPositioningTagColors(
-                { 基础类: '辅助', 全局类: '奶酪', 特殊类: '破局' }[name],
+                { 常规类: '辅助', 全局类: '奶酪', 技能类: '破局' }[name],
                 false,
                 false,
                 'mouse',
@@ -86,7 +90,7 @@ export default function BuffClient({ description }: Props) {
         </div>
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 类型筛选 */}
-          <FilterRow<Bufftypelist>
+          <FilterRow<Buffinfluencelist>
             label='类型筛选:'
             options={ITEM_TYPE_OPTIONS}
             isActive={(type) => selectedTypes.includes(type)}
@@ -100,7 +104,7 @@ export default function BuffClient({ description }: Props) {
             getButtonStyle={(name, active) => {
               const isActive = active;
               const tagColors = getPositioningTagColors(
-                { 正面效果: '救援', 负面效果: '干扰', 其它效果: '砸墙' }[name],
+                { 正面: '救援', 负面: '干扰' }[name],
                 false,
                 false,
                 'mouse',
