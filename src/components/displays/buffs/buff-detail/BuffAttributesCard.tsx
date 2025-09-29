@@ -4,7 +4,13 @@ import BaseCard from '@/components/ui/BaseCard';
 import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
-import { designTokens, componentTokens, getBuffClassColors } from '@/lib/design-tokens';
+import {
+  designTokens,
+  componentTokens,
+  getBuffTypeColors,
+  getBuffInfluenceColors,
+  getBuffClassColors,
+} from '@/lib/design-tokens';
 import GameImage from '@/components/ui/GameImage';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -113,18 +119,26 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
         <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
           <span className={`text-sm whitespace-pre`}>类型: </span>
           <Tag
-            size='xs'
+            size='sm'
             margin='compact'
-            colorStyles={getBuffClassColors(buff.bufftype, isDarkMode)}
+            colorStyles={getBuffTypeColors(buff.bufftype, isDarkMode)}
           >
             {buff.bufftype}
           </Tag>
           {buff.buffinfluence !== undefined && (
-            <Tag size='xs' margin='compact' colorStyles={{ color: '', background: '' }}>
+            <Tag
+              size='sm'
+              margin='compact'
+              colorStyles={getBuffInfluenceColors(buff.buffinfluence || '', isDarkMode)}
+            >
               {buff.buffinfluence}
             </Tag>
           )}
-          <Tag size='xs' margin='compact' colorStyles={{ color: '', background: '' }}>
+          <Tag
+            size='sm'
+            margin='compact'
+            colorStyles={getBuffClassColors(buff.buffclass, isDarkMode)}
+          >
             {buff.buffclass}
           </Tag>
         </div>

@@ -936,29 +936,44 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
 /**
  * Buff type color utility
  */
-export const getBuffTypeColors = (buffinfluence: string, isDarkMode: boolean) => {
-  const buffTypeColorMap: Record<string, 'disrupt' | 'rescue' | 'support'> = {
-    正面: 'rescue',
-    负面: 'disrupt',
+export const getBuffInfluenceColors = (buffinfluence: string, isDarkMode: boolean) => {
+  const buffTypeColorMap: Record<string, 'high' | 'veryLow'> = {
+    正面: 'veryLow',
+    负面: 'high',
   };
-  const buffType = buffTypeColorMap[buffinfluence] || 'lateGameMouse';
-  const colorScheme =
-    designTokens.colors.positioningTags[buffType] || designTokens.colors.skillTypes.passive;
+  const buffType = buffTypeColorMap[buffinfluence] || 'medium';
+  //复用cost的colors
+  const colorScheme = designTokens.colors.cost[buffType] || designTokens.colors.skillTypes.passive;
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
     backgroundColor:
       isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
   };
 };
-export const getBuffClassColors = (bufftype: string, isDarkMode: boolean) => {
-  const buffTypeColorMap: Record<string, 'cheese' | 'wallBreak' | 'breakthrough'> = {
-    常规类: 'cheese',
-    全局类: 'wallBreak',
-    特殊类: 'breakthrough',
+export const getBuffTypeColors = (bufftype: string, isDarkMode: boolean) => {
+  const buffTypeColorMap: Record<string, 'level1' | 'level2' | 'level3'> = {
+    常规类: 'level1',
+    全局类: 'level3',
+    特殊类: 'level2',
   };
-  const buffType = buffTypeColorMap[bufftype] || 'lateGameMouse';
+  const buffType = buffTypeColorMap[bufftype] || 'level2';
+  //复用skillLevels的colors
   const colorScheme =
-    designTokens.colors.positioningTags[buffType] || designTokens.colors.skillTypes.passive;
+    designTokens.colors.skillLevels[buffType] || designTokens.colors.skillTypes.passive;
+  return {
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+  };
+};
+export const getBuffClassColors = (buffinfluence: string, isDarkMode: boolean) => {
+  const buffTypeColorMap: Record<string, 'S' | 'A'> = {
+    状态: 'S',
+    效果: 'A',
+  };
+  const buffType = buffTypeColorMap[buffinfluence] || 'default';
+  //复用rank的colors
+  const colorScheme = designTokens.colors.rank[buffType] || designTokens.colors.skillTypes.passive;
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
     backgroundColor:
