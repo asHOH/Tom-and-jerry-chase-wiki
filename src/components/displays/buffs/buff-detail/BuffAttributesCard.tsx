@@ -163,7 +163,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                 </span>
               )}
               {buff.failure !== undefined && (
-                <span className={`text-sm whitespace-pre`}>
+                <span className={`text-sm`}>
                   中止条件：
                   <span className={`text-orange-600 dark:text-orange-400`}>{buff.failure}</span>
                 </span>

@@ -23,7 +23,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
         />
       )}
       <div
-        className={`px-3 pt-1 pb-3 text-center w-full ${buff.unuseImage && `border border-dashed border-blue-500`}`}
+        className={`${isMobile ? 'pb-2' : 'px-3 pb-3'} pt-1 text-center w-full ${buff.unuseImage && `border border-dashed border-blue-500`}`}
       >
         <h3
           className={`${isMobile && buff.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
@@ -32,12 +32,12 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           {buff.name}
         </h3>
         <div
-          className='flex flex-wrap justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
+          className={`flex flex-wrap justify-center items-center ${isMobile ? 'gap-0.5' : 'gap-1.5'} text-sm text-gray-600 dark:text-gray-300`}
           role='group'
           aria-label='状态属性'
         >
           <Tag
-            size='xs'
+            size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
             margin='compact'
             colorStyles={getBuffTypeColors(buff.bufftype, isDarkMode)}
           >
@@ -45,7 +45,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           </Tag>
           {buff.buffinfluence !== undefined && (
             <Tag
-              size='xs'
+              size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
               margin='compact'
               colorStyles={getBuffInfluenceColors(buff.buffinfluence || '', isDarkMode)}
             >
@@ -53,7 +53,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
             </Tag>
           )}
           <Tag
-            size='xs'
+            size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
             margin='compact'
             colorStyles={getBuffClassColors(buff.buffclass, isDarkMode)}
           >

@@ -66,7 +66,7 @@ export default function BuffClient({ description }: Props) {
     <div
       className={
         isMobile
-          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
+          ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
           : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
       }
     >
@@ -159,9 +159,9 @@ export default function BuffClient({ description }: Props) {
         </div>
       </header>
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-4'} mt-8`}
         style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '120px' : '150px'}, 1fr))`,
         }}
       >
         {filteredBuffs.map((buff) => (
@@ -176,8 +176,10 @@ export default function BuffClient({ description }: Props) {
         ))}
       </div>
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}
+        className='auto-fit-grid grid-container grid gap-4 mt-4'
+        style={{
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '240px' : '300px'}, 1fr))`,
+        }}
       >
         {unuseImageFilteredBuffs.map((buff) => (
           <div
