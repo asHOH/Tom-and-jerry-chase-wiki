@@ -367,9 +367,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'active',
         aliases: ['冲刺', '冲撞'],
         description:
-          '向前冲刺，冲刺期间免疫控制效果，并撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到的老鼠造成伤害和短暂眩晕。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
+          '向前冲刺，冲刺期间加速并免疫控制效果，且撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到的老鼠造成伤害和短暂眩晕。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
         detailedDescription:
-          '向前冲刺，冲刺持续1.2秒，期间免疫控制效果，并撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到老鼠造成{26}伤害和短暂眩晕。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
+          '向前冲刺，冲刺持续1.2秒，期间加速并免疫控制效果，且撞飞碰到的道具（包括已放入洞口的奶酪），并对撞到老鼠造成{26}伤害和短暂眩晕。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
         forecast: 0.6,
         aftercast: 0.2,
         canMoveWhileUsing: true,
@@ -381,11 +381,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 1,
             description: '',
+            detailedDescription: '冲刺期间获得90%加速。',
             cooldown: 20,
           },
           {
             level: 2,
-            description: '冲刺期间获得加速。',
+            description: '冲刺期间获得更高加速。',
+            detailedDescription: '冲刺期间改为获得110%加速。',
             cooldown: 20,
           },
           {
@@ -756,7 +758,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           },
           {
             level: 2,
-            description: '换位CD减少至10秒；换位时回复Hp，且移速和交互速度提高，持续6秒。',
+            description:
+              '换位CD减少至10秒；换位时回复Hp，且移速提高20%、交互速度提高25%，持续6秒。',
             cooldown: 24,
           },
           {
@@ -2041,7 +2044,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '大幅提高视野范围，并警戒房间内所有老鼠。被警戒的老鼠推速下降50%、暴露小地图视野，并清除部分增益。若警戒到老鼠，额外获得加速；若未警戒到，则返还15s冷却。',
         detailedDescription:
-          '大幅提高视野范围，并警戒房间内[所有老鼠](距离极远的除外)，持续25秒。被警戒到的老鼠推速下降50%，暴露小地图视野，并清除[部分增益](所有药水；侦探杰瑞、侦探泰菲的隐身；大部分护盾效果，如知识卡、角色技能的护盾（罗菲2被与恶魔传送门的盾不会被消除）；部分无敌效果，如无畏、舍己、国王护盾、莉莉二被；米雪儿小情绪的变大；仙女鼠星星与二被的隐身；红花；太空药水仓的跳跃提升、变大和隐身；熊猫谷药水仓的兴奋；天宫香炉的远视)。若警戒到老鼠，额外获得20%加速；若未警戒到，则返还15s冷却。使用降落伞中的罗宾汉不会被警戒到。',
+          '提高视野范围至原先的3.7倍，并警戒房间内[所有老鼠](距离极远的除外)，持续25秒。被警戒到的老鼠推速下降50%，暴露小地图视野，并清除[部分增益](所有药水；侦探杰瑞、侦探泰菲的隐身；大部分护盾效果，如知识卡、角色技能的护盾（罗菲2被与恶魔传送门的盾不会被消除）；部分无敌效果，如无畏、舍己、国王护盾、莉莉二被；米雪儿小情绪的变大；仙女鼠星星与二被的隐身；红花；太空药水仓的跳跃提升、变大和隐身；熊猫谷药水仓的兴奋；天宫香炉的远视)。若警戒到老鼠，额外获得20%加速；若未警戒到，则返还15s冷却。使用降落伞中的罗宾汉不会被警戒到。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键', '跳跃键'],
@@ -2503,9 +2506,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         name: '胡椒粉罐头',
         type: 'active',
         description:
-          '掏出{胡椒粉罐头}，自身持续受到轻微伤害，并因此获得“刺激”状态，增加移速和跳跃速度。再次使用技能将投掷胡椒粉、造成伤害并形成胡椒粉烟雾，持续对范围内角色造成伤害。米特在烟雾中也会获得“刺激”状态。',
+          '掏出{胡椒粉罐头}，自身持续受到轻微伤害，并因此获得“刺激”状态，增加移速和跳跃高度。再次使用技能将投掷胡椒粉、造成伤害并形成胡椒粉烟雾，持续对范围内角色造成伤害。米特在烟雾中也会获得“刺激”状态。',
         detailedDescription:
-          '掏出{胡椒粉罐头}，自身持续受到轻微伤害，并因此获得“刺激”状态，增加移速和跳跃速度。再次使用技能将投掷胡椒粉、造成伤害，落地后破碎并形成胡椒粉烟雾，[持续对范围内角色造成伤害](不会破米特的护盾)、在停止接触后会残留约3秒。米特在烟雾中也会获得“刺激”状态。胡椒粉在掏出后立刻进入CD；CD冷却完成后，若未投掷出胡椒粉，可双击技能，胡椒粉会原地向下扔。',
+          '掏出{胡椒粉罐头}，自身持续受到轻微伤害，并因此获得“刺激”状态，移速和跳跃高度提高20%。再次使用技能将投掷胡椒粉、直接命中会造成30伤害，命中或落地后破碎并形成胡椒粉烟雾，持续20秒，[每秒对范围内角色造成5伤害](不会破米特的护盾)、在停止接触后会残留约3秒。米特在烟雾中也会获得“刺激”状态。胡椒粉在掏出后立刻进入CD；CD冷却完成后，若未投掷出胡椒粉，可双击技能，胡椒粉会原地向下扔。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: '无后摇',
@@ -2527,6 +2530,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 3,
             description: '持续伤害频率更高。米特在“刺激”状态下获得50%减伤并提高绑火箭速度50%。',
+            detailedDescription:
+              '持续伤害频率提高至0.5秒/次。米特在“刺激”状态下获得50%减伤并提高绑火箭速度50%。',
             cooldown: 12,
           },
         ],
@@ -2537,7 +2542,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '放下装有食物的{饭盒}，被老鼠踩中或被砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速。放置{老鼠夹}时，会将其替换成饭盒。',
         detailedDescription:
-          '放下装有食物的{饭盒}，被老鼠踩中或被投掷物砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速，持续10秒。放置{老鼠夹}时，会将其替换成饭盒。',
+          '放下装有食物的{饭盒}，被老鼠踩中或被投掷物砸中后，饭盒会爆炸，对附近所有老鼠造成50伤害和2秒眩晕，并使其暴露小地图视野、减少37%推速，持续10秒。放置{老鼠夹}时，会将其替换成饭盒。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableAftercast: '无后摇',
@@ -2552,7 +2557,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           {
             level: 2,
             description:
-              '增加饭盒伤害。爆炸后留下{食物}，米特触碰后会获得持续Hp恢复效果。大幅提高放置老鼠夹的效率。', // （连招：击晕接捕鼠夹）
+              '增加饭盒伤害。爆炸后留下{食物}，米特触碰后会获得持续Hp恢复效果。大幅提高放置老鼠夹的速度。', // （连招：击晕接捕鼠夹）
+            detailedDescription:
+              '增加饭盒伤害。爆炸后留下{食物}，米特触碰后会获得持续Hp恢复效果。提高放置老鼠夹的速度至原先的400%。',
             cooldown: 17,
             charges: 2,
           },
@@ -2579,6 +2586,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             level: 2,
             description:
               '被爪刀命中的老鼠20秒内无法回复生命。此期间被绑上火箭时，需要更多时间才能救下。',
+            detailedDescription:
+              '被爪刀命中的老鼠20秒内无法回复生命。此期间被绑上火箭时，队友救援该角色的速度降低50%。',
           },
           {
             level: 3,
@@ -3248,12 +3257,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         additionalDescription: '{3级被动}命中破绽可减少技能CD，进一步提高打架优势。',
       },
       {
-        tagName: '防守',
-        isMinor: true,
-        description: '{3级主动}可造成控制，配合{武器技能}可造成多段控制。',
-        additionalDescription: '',
-      },
-      {
         tagName: '翻盘',
         isMinor: true,
         description: '在墙缝期混战中{主动技能}在小范围内的命中率高，更大概率造成多倒。',
@@ -3315,22 +3318,25 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             level: 1,
             description: '',
             cooldown: 18,
+            detailedDescription: '追求者的出击速度为2000，伤害为{30}，可存在15秒。',
           },
           {
             level: 2,
             description: '追求者速度更快。',
             cooldown: 18,
-            detailedDescription: '追求者速度更快，一秒就可以冲至身前。',
+            detailedDescription: '追求者速度更快，一秒就可以冲至身前，但出击移速没有发生变化。',
           },
           {
             level: 3,
             description: '追求者额外造成爆炸伤害和控制。',
-            detailedDescription: '追求者额外造成{25}的爆炸伤害和控制。',
+            detailedDescription: '追求者额外造成25的爆炸伤害和2秒{爆炸眩晕}。',
             cooldown: 18,
           },
         ],
         canHitInPipe: false,
         cueRange: '本房间可见',
+        detailedDescription:
+          '从远处召唤{追求者}冲至面前距离200的位置，追求者在后摇结束后0.2秒停下(凯特本身静止不动)；随后再次拖动技能键，经0.35秒前摇后使追求者向该方向再度出击，随后进入0.35秒后摇，两段均可对触碰的老鼠造成伤害。',
       },
       {
         name: '知识即力量',
@@ -3338,10 +3344,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '投掷{百科全书}，命中时造成伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还部分冷却并将老鼠直接抓在手中。当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。',
         detailedDescription:
-          '在短暂前摇后投掷{百科全书}，[有短暂投掷后摇](后摇期间无法移动)。书籍对直接命中的老鼠造成{25}伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，[造成伤害](受其他攻击增伤影响)并将老鼠夹住，随后技能进入CD。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还5秒冷却并将被夹住的老鼠直接抓在手中。当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。\n书籍与夹子有相似和不同之处（可以触发{捕鼠夹}，但无法触发{夹不住我}、{狡诈}）。被投掷的书籍也无法触发{乾坤一掷}。',
+          '以水平方向1500的速度投掷{百科全书}。书籍对直接命中的老鼠造成{25}伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，[造成伤害](受其他攻击增伤影响)并将老鼠夹住，随后技能进入CD。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还5秒冷却并将被夹住的老鼠直接抓在手中。当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。\n书籍与夹子有相似和不同之处（可以触发{捕鼠夹}，但无法触发{夹不住我}、{狡诈}）。被投掷的书籍也无法触发{乾坤一掷}。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        // cancelableSkill: '无前摇', // FIXME
+        forecast: 0.3,
+        aftercast: 0.2,
         cancelableAftercast: ['跳跃键', '道具键'],
         skillLevels: [
           {
@@ -3383,7 +3390,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             description:
               '附近老鼠使用技能、投掷道具、从火箭上救下队友、吃下食物或药水，会获得破绽、为凯特增加移速、减少被控制时间、加快绑火箭速度。',
             detailedDescription:
-              '附近老鼠使用技能、投掷道具、从火箭上救下队友、吃下食物或药水，会获得一层破绽、为凯特增加移速、减少50%被控制时间、加快绑火箭速度至约1秒，持续7秒。',
+              '附近老鼠使用技能、投掷道具、从火箭上救下队友、吃下食物或药水，会获得一层破绽、为凯特增加移速16.5％、减少50%被控制时间、加快绑火箭速度至约1秒，持续7秒。',
           },
           {
             level: 3,
@@ -4033,7 +4040,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         aliases: ['牙通牙', '旋转'],
         description: '向前方连续挥爪3次，造成伤害；疾冲状态下，改为向前穿刺，造成伤害和控制。',
         detailedDescription:
-          '向前方连续挥爪3次，前摇分别为0.3、0.4、0.6秒，每次造成30伤害，范围为300；疾冲状态下或{武器技能}飞行中，改为向前穿刺，造成60点伤害和1.8秒眩晕。技能可以穿门。',
+          '向前方连续挥爪3次，前摇分别为0.3、0.4、0.6秒，每次造成30伤害，范围为300；疾冲状态下或{武器技能}飞行中，改为以1560的速度向前穿刺，造成60点伤害和1.8秒眩晕。技能可以穿门。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -4066,7 +4073,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         type: 'weapon1',
         description: '扔出{项坠}，随后斯飞向项坠飞去，对碰到的老鼠造成伤害和短暂眩晕。',
         detailedDescription:
-          '扔出{项坠}，0.75秒后或项坠碰撞到地面/墙壁后，斯飞以2000的速度向项坠飞去，飞行期间对碰到的老鼠造成50点普通伤害、10点[电击伤害](电击伤害会使目标感电，每层感电使受到的电击伤害增加15，可叠加)和0.6秒眩晕。释放瞬间如果角色方向改变，将同时改变项坠方向。技能可以穿门。',
+          '扔出{项坠}，0.75秒后或项坠碰撞到地面/墙壁后，斯飞以3120的速度向项坠飞去，飞行期间对碰到的老鼠造成50点普通伤害、10点[电击伤害](电击伤害会使目标感电，每层感电使受到的电击伤害增加15，可叠加)和0.6秒眩晕。释放瞬间如果角色方向改变，将同时改变项坠方向。技能可以穿门。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
