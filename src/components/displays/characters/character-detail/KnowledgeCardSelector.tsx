@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { cards } from '@/data';
 import Image from '@/components/Image';
 import { CharacterRelationItem } from '@/data/types';
+import { PlusIcon } from '@/components/icons/CommonIcons';
 
 type Props = {
   selected: CharacterRelationItem[];
@@ -36,16 +37,7 @@ const KnowledgeCardSelector: React.FC<Props> = ({ selected, onSelect, factionId 
         className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
         aria-label='添加知识卡'
       >
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          strokeWidth='2'
-          stroke='currentColor'
-          className='w-4 h-4'
-        >
-          <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-        </svg>
+        <PlusIcon className='w-4 h-4' aria-hidden='true' />
       </button>
 
       {isOpen && (

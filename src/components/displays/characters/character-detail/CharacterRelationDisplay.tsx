@@ -15,14 +15,8 @@ import clsx from 'clsx';
 import { useNavigation } from '@/lib/useNavigation';
 import KnowledgeCardSelector from './KnowledgeCardSelector';
 import SpecialSkillSelector from './SpecialSkillSelector';
-import {
-  HappyFaceIcon,
-  NeutralFaceIcon,
-  SadFaceIcon,
-  HeartIcon,
-  PlusIcon,
-  TrashIcon,
-} from './CharacterRelationIcons';
+import { HappyFaceIcon, NeutralFaceIcon, SadFaceIcon, HeartIcon } from './CharacterRelationIcons';
+import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 type Props = {
   id: string;
