@@ -10,6 +10,13 @@ import { zhCN } from 'date-fns/locale';
 import { useUser } from '@/hooks/useUser';
 import { useMobile } from '@/hooks/useMediaQuery';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
+import {
+  ClockIcon,
+  EyeIcon,
+  FolderIcon,
+  PencilSquareIcon,
+  UserCircleIcon,
+} from '@/components/icons/CommonIcons';
 
 interface ArticleData {
   id: string;
@@ -109,57 +116,18 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
         <div className={isMobile ? 'p-2' : 'mt-6 p-6'}>
           <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
             <div className='flex items-center gap-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
-                />
-              </svg>
+              <UserCircleIcon className='size-4' strokeWidth={1.5} />
               <span>作者: {article.users_public_view?.nickname || '未知用户'}</span>
             </div>
 
             <div className='flex items-center gap-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z'
-                />
-              </svg>
+              <FolderIcon className='size-4' strokeWidth={1.5} />
 
               <span>分类: {article.categories?.name || '未分类'}</span>
             </div>
 
             <div className='flex items-center gap-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
-                />
-              </svg>
+              <ClockIcon className='size-4' strokeWidth={1.5} />
               <span>
                 创建于:{' '}
                 {format(new Date(article.created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })}
@@ -167,45 +135,14 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
             </div>
 
             <div className='flex items-center gap-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z'
-                />
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
-                />
-              </svg>
+              <EyeIcon className='size-4' strokeWidth={1.5} />
 
               <span>浏览: {article.view_count ?? 0}</span>
             </div>
 
             {article.latest_version && (
               <div className='flex items-center gap-2'>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='size-4'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10'
-                  />
-                </svg>
+                <PencilSquareIcon className='size-4' strokeWidth={1.5} />
 
                 <span>
                   最后编辑:{' '}
@@ -225,20 +162,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
               href={`/articles/${articleId}/history`}
               className='inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
             >
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
-                />
-              </svg>
+              <ClockIcon className='size-4' strokeWidth={1.5} />
               查看历史版本
             </Link>
 
@@ -247,20 +171,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
                 href={`/articles/${articleId}/edit`}
                 className='inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
               >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='size-4'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10'
-                  />
-                </svg>
+                <PencilSquareIcon className='size-4' strokeWidth={1.5} />
                 编辑文章
               </Link>
             )}
@@ -276,25 +187,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
       {/* Footer Actions */}
       <div className='mt-8 text-center'>
         <div className='flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='size-4'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z'
-            />
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
-            />
-          </svg>
+          <EyeIcon className='size-4' strokeWidth={1.5} />
 
           <span>正在查看已发布版本</span>
         </div>
