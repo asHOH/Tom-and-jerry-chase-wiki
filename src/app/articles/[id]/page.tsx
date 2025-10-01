@@ -55,8 +55,15 @@ export async function generateMetadata({
   });
 }
 
-export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ArticlePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ version?: string }>;
+}) {
   const { id } = await params;
+  const { version } = await searchParams;
 
   try {
     // Increment view count
@@ -93,7 +100,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     }
 
     // Get the latest approved version with editor info
-    const { data: latestVersion, error: versionError } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('article_versions_public_view')
       .select(
         `
@@ -105,10 +112,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         `
       )
       .eq('article_id', id)
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      .eq('status', 'approved');
+
+    if (version) {
+      query = query.eq('id', version);
+    } else {
+      query = query.order('created_at', { ascending: false });
+    }
+
+    const { data: latestVersion, error: versionError } = await query.limit(1).single();
 
     if (versionError) {
       console.error('Error fetching latest version:', versionError);
