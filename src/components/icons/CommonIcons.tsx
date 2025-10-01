@@ -1,10 +1,11 @@
 import type { ReactNode, SVGProps } from 'react';
 
+// 一些用法：<PlusIcon className='w-5 h-5 text-muted-foreground' /> 或 <PlusIcon size={20} decorative={false} title='新增按钮' />
 export type IconProps = Omit<SVGProps<SVGSVGElement>, 'width' | 'height' | 'role'> & {
   size?: number | string;
   decorative?: boolean;
   title?: string;
-  strokeWidth?: number;
+  strokeWidth?: number | string;
 };
 
 type SvgIconProps = IconProps & {
