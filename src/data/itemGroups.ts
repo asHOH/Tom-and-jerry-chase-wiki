@@ -234,7 +234,8 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
   },
   //-------------------------------------状态---------------------------------------------/
   常规眩晕: {
-    description: '指会在角色头顶显示为“眩晕”的状态。',
+    description:
+      '指部分会在角色头顶显示为“眩晕”的状态，但不包括被{夹住}。此外{鱼钩眩晕}虽然有类似效果，但与常规眩晕仍有显著不同。',
     group: [
       { name: '眩晕', type: 'buff' },
       { name: '硬直', type: 'buff' },
@@ -242,7 +243,6 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
       { name: '爆炸', type: 'buff' },
       { name: '电击', type: 'buff' },
       { name: '拍扁', type: 'buff' },
-      { name: '夹住', type: 'buff' },
     ],
   },
   软控制: {
@@ -250,10 +250,19 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
     description: '指不会限制角色行动，但会限制/影响角色行为的一类控制效果。',
     group: [
       { name: '减速', type: 'buff' },
+      { name: '降低跳跃高度', type: 'buff' },
       { name: '反向', type: 'buff' },
       { name: '失明', type: 'buff' },
       { name: '视野范围降低', type: 'buff' },
       { name: '禁用效果', type: 'buff' },
+    ],
+  },
+  虚弱: {
+    description:
+      '包括猫虚弱与鼠虚弱。虚弱期间{禁用技能}且{禁用道具}，鼠虚弱期间获得高额{减速}及{跳跃高度降低}，且可被{抓起}，持续10秒；猫虚弱期间{无法移动、跳跃}，且额外获得50Hp/秒的{恢复}效果。该效果结束时获得1秒{无敌}。',
+    group: [
+      { name: '猫虚弱', type: 'buff' },
+      { name: '鼠虚弱', type: 'buff' },
     ],
   },
 };
