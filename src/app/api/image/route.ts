@@ -13,8 +13,17 @@ export async function GET(request: NextRequest) {
   // const width = searchParams.get('w'); // Next.js Image component passes 'w' for width
   // const quality = searchParams.get('q') || '75'; // Default quality to 75
 
+  // Define the allowed public directory
+  const publicDir = path.resolve(process.cwd(), 'public');
+
+  // Sanitize and resolve the requested path
   const sanitizedSrc = path.normalize(src).replace(/^(\.\.[/\\])+/, '');
-  const fullOriginalPath = path.join(process.cwd(), 'public', sanitizedSrc);
+  const fullOriginalPath = path.resolve(publicDir, sanitizedSrc);
+
+  // Validate that the resolved path is within the public directory
+  if (!fullOriginalPath.startsWith(publicDir + path.sep) && fullOriginalPath !== publicDir) {
+    return new NextResponse('Invalid file path', { status: 403 });
+  }
 
   const baseNameWithoutExt = path.basename(fullOriginalPath, path.extname(fullOriginalPath));
   const dirName = path.dirname(fullOriginalPath);
@@ -27,25 +36,31 @@ export async function GET(request: NextRequest) {
 
     // Check for AVIF
     if (acceptHeader.includes('image/avif')) {
-      const avifPath = `${baseImagePath}.avif`;
-      try {
-        await fs.access(avifPath);
-        filePathToServe = avifPath;
-        contentType = 'image/avif';
-      } catch (e) {
-        void e;
+      const avifPath = path.resolve(`${baseImagePath}.avif`);
+      // Validate AVIF path is within public directory
+      if (avifPath.startsWith(publicDir + path.sep) || avifPath === publicDir) {
+        try {
+          await fs.access(avifPath);
+          filePathToServe = avifPath;
+          contentType = 'image/avif';
+        } catch (e) {
+          void e;
+        }
       }
     }
 
     // Check for WEBP
     if (contentType !== 'image/avif' && acceptHeader.includes('image/webp')) {
-      const webpPath = `${baseImagePath}.webp`;
-      try {
-        await fs.access(webpPath);
-        filePathToServe = webpPath;
-        contentType = 'image/webp';
-      } catch (e) {
-        void e;
+      const webpPath = path.resolve(`${baseImagePath}.webp`);
+      // Validate WEBP path is within public directory
+      if (webpPath.startsWith(publicDir + path.sep) || webpPath === publicDir) {
+        try {
+          await fs.access(webpPath);
+          filePathToServe = webpPath;
+          contentType = 'image/webp';
+        } catch (e) {
+          void e;
+        }
       }
     }
 
