@@ -319,7 +319,7 @@ export type BuffDefinition = {
   buffclass: Buffclasslist; //状态：是一或多种效果的结合；效果：有特定作用，具有单一和不可再分性，是状态的基础组成部分，也可单独作为状态使用
 
   aliases?: string[]; //支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
-  duration?: number | 'infinite'; // duration of buff.If buff has more than two different durations,don't fill in this attribute.
+  duration?: number | 'infinite' | 'disposable'; // duration of buff.
   failure?: string; //failure conditions of buff
   relate?: string[]; //组成某状态的相关效果列表
 

@@ -60,7 +60,9 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
               >
                 {buff.name}{' '}
               </h1>
-              <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>(状态/效果)</h1>
+              <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
+                ({buff.buffclass})
+              </h1>
               {avilableAliases.length > 0 && (
                 <h1
                   className={`text-xs text-gray-400 dark:text-gray-500 ${isMobile ? '' : 'mt-2'}`}
@@ -89,7 +91,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
             <h1 className='text-3xl font-bold dark:text-white'>
               {buff.name}{' '}
               <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                (状态/效果)
+                ({buff.buffclass})
               </span>
             </h1>
           </div>
@@ -156,10 +158,21 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
             >
               {buff.duration !== undefined && (
                 <span className={`text-sm whitespace-pre`}>
-                  持续时间：
-                  <span className={`text-indigo-700 dark:text-indigo-400`}>
-                    {buff.duration === 'infinite' ? '无限' : `${buff.duration}秒`}
-                  </span>
+                  {buff.duration === 'disposable' ? (
+                    <>
+                      该{buff.buffclass}为
+                      <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>
+                        一次性{buff.buffclass}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      持续时间：
+                      <span className={`text-indigo-700 dark:text-indigo-400`}>
+                        {buff.duration === 'infinite' ? '无限' : `${buff.duration}秒`}
+                      </span>
+                    </>
+                  )}
                 </span>
               )}
               {buff.failure !== undefined && (
