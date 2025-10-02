@@ -13,6 +13,7 @@ import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
 
 const monthDayFormatter = new Intl.DateTimeFormat('zh-CN', {
   timeZone: 'Asia/Shanghai',
@@ -373,20 +374,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                   href='/articles/pending'
                   className='inline-flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-all duration-200 text-sm'
                 >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='size-4'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      d='M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
-                    />
-                  </svg>
+                  <ClockIcon className='size-4' strokeWidth={1.5} />
                   待审核
                 </Link>
 
@@ -394,16 +382,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                   href='/articles/new'
                   className='inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 text-sm'
                 >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='size-4'
-                  >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-                  </svg>
+                  <PlusIcon className='size-4' strokeWidth={1.5} aria-hidden='true' />
                   新建文章
                 </Link>
               </>
@@ -503,20 +482,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                         className='px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 text-sm'
                         title='查看历史版本'
                       >
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          strokeWidth={1.5}
-                          stroke='currentColor'
-                          className='size-4'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            d='M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
-                          />
-                        </svg>
+                        <ClockIcon className='size-4' strokeWidth={1.5} />
                       </Link>
                     </div>
                   </div>

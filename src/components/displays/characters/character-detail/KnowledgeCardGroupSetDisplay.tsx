@@ -6,6 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import clsx from 'clsx';
 import { contributors } from '@/data/contributors';
 import EditableField from '@/components/ui/EditableField';
+import { TrashIcon } from '@/components/icons/CommonIcons';
 
 interface KnowledgeCardGroupSetDisplayProps {
   groupSet: DeepReadonly<KnowledgeCardGroupSet>;
@@ -100,20 +101,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
               onClick={() => onRemoveGroup(topIndex)}
               className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
             >
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth='2'
-                stroke='currentColor'
-                className='w-4 h-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m-1.022.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.924a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165M12 2.252V5.25m0 0A2.25 2.25 0 0114.25 7.5h2.25M12 2.252V5.25m0 0A2.25 2.25 0 009.75 7.5H7.5'
-                />
-              </svg>
+              <TrashIcon className='w-4 h-4' aria-hidden='true' />
             </button>
           </div>
         )}
