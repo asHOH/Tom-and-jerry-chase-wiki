@@ -63,6 +63,7 @@ src/stories
 dist/
 .tmp/
 .temp/
+tmp/
 pnpm-lock.yaml
 .gemini/
 GEMINI.md

@@ -353,3 +353,68 @@ export type ItemGroupDefinition = {
 };
 
 export type ItemGroup = ItemGroupDefinition & { name: string }; //no imageUrl
+
+/**
+ * Defines the type of balance change applied.
+ */
+export enum ChangeType {
+  BUFF = '加强',
+  NERF = '削弱',
+  ADJUSTMENT = '调整',
+  REWORK = '重做',
+}
+
+/**
+ * Represents a detailed balance change for a specific game entity.
+ */
+interface BalanceChange {
+  name: string;
+  changeType: ChangeType;
+}
+
+/**
+ * Details for new content added to the game.
+ */
+interface ContentDetails {
+  newCharacters?: string[];
+  newItems?: string[];
+  newSecondWeapons?: `${string}-${string}`[]; // ${character}-${weapon}
+  newKnowledgeCards?: string[];
+}
+
+/**
+ * Details for balance changes affecting various game elements.
+ * This structure is now more detailed.
+ */
+interface BalanceDetails {
+  characterChanges?: BalanceChange[];
+  knowledgeCardChanges?: BalanceChange[];
+  itemChanges?: BalanceChange[];
+}
+
+/**
+ * Represents a single, dated event in the game's history.
+ */
+interface TimelineEvent {
+  date: `${number}.${number}` | `${number}.${number}-${'次年' | ''}${number}.${number}`; // e.g., "7.24" or "12.25-次年1.1"
+  description: string;
+  details: {
+    content?: ContentDetails;
+    balance?: BalanceDetails;
+    milestone?: string; // e,g., "游戏上线", "周年庆"
+    testPhaseInfo?: string; // e.g. "公测", "共研服"
+  };
+}
+
+/**
+ * Contains all the timeline events for a specific year.
+ */
+interface YearData {
+  year: number; // e.g., "2020"
+  events: TimelineEvent[];
+}
+
+/**
+ * The complete, structured history of the game.
+ */
+export type GameHistory = YearData[];
