@@ -26,6 +26,7 @@ import { useLocalCharacter } from '@/context/EditModeContext';
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { PlusIcon } from '@/components/icons/CommonIcons';
+import CreateDateDisplay from './CreateDateDisplay';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;
@@ -254,6 +255,7 @@ export default function CharacterDetails({
                     )}
                   </h1>
                   <ContentWriterDisplay characterId={localCharacter.id} />
+                  <CreateDateDisplay createDate={localCharacter.createDate} />
                 </>
               )}
               {!isEditMode && isMobile && (
