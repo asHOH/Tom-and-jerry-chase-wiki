@@ -3,6 +3,7 @@ import { mouseCharactersWithImages } from '@/data/mouseCharacters';
 import { catCardsWithImages } from '@/data/catKnowledgeCards';
 import { mouseCardsWithImages } from '@/data/mouseKnowledgeCards';
 import { FactionId, Faction, Character, Card, PositioningTag } from '@/data/types';
+import { historyData } from '@/data/history';
 
 // Raw data aggregation
 const rawCharacterData = {
@@ -28,6 +29,23 @@ const rawFactionData: Record<FactionId, Faction> = {
   },
 };
 
+function getCreateTime(name: string) {
+  for (const entry of historyData) {
+    for (const event of entry.events) {
+      for (const item of (event.details.content?.newCharacters ?? []).concat(
+        event.details.content?.newItems ?? [],
+        event.details.content?.newKnowledgeCards ?? [],
+        event.details.content?.newSecondWeapons ?? []
+      )) {
+        if (item == name) {
+          return `${entry.year}.${event.date}`;
+        }
+      }
+    }
+  }
+  return null;
+}
+
 // Simple memoization utility for functions with no arguments
 /**
  * Data Manager - Handles all data transformations
@@ -49,6 +67,7 @@ export class GameDataManager {
               id: character.id,
               name: character.id,
               imageUrl: character.imageUrl!,
+              createDate: getCreateTime(character.id),
               positioningTags,
             };
           });
@@ -60,10 +79,24 @@ export class GameDataManager {
 
   // Module-scoped caches (lazy-initialized)
   private static _charactersCache: Readonly<
-    Record<string, Character & { imageUrl: string; faction: { id: FactionId; name: string } }>
+    Record<
+      string,
+      Character & {
+        imageUrl: string;
+        faction: { id: FactionId; name: string };
+        createDate: string | null;
+      }
+    >
   > | null = null;
   private static _cardsCache: Readonly<
-    Record<string, Card & { imageUrl: string; faction: { id: FactionId; name: string } }>
+    Record<
+      string,
+      Card & {
+        imageUrl: string;
+        faction: { id: FactionId; name: string };
+        createDate: string | null;
+      }
+    >
   > | null = null;
   private static _factionsCache: Readonly<
     Record<
@@ -74,6 +107,7 @@ export class GameDataManager {
           name: string;
           imageUrl: string;
           positioningTags: PositioningTag[];
+          createDate: string | null;
         }>;
       }
     >
@@ -102,6 +136,7 @@ export class GameDataManager {
           name: string;
           imageUrl: string;
           positioningTags: PositioningTag[];
+          createDate: string | null;
         }>;
       }
     >
@@ -117,6 +152,7 @@ export class GameDataManager {
           name: string;
           imageUrl: string;
           positioningTags: PositioningTag[];
+          createDate: string | null;
         }>;
       }
     >;
@@ -124,7 +160,14 @@ export class GameDataManager {
   }
 
   static getCharacters(): Readonly<
-    Record<string, Character & { imageUrl: string; faction: { id: FactionId; name: string } }>
+    Record<
+      string,
+      Character & {
+        imageUrl: string;
+        faction: { id: FactionId; name: string };
+        createDate: string | null;
+      }
+    >
   > {
     if (this._charactersCache) return this._charactersCache;
     const built = Object.fromEntries(
@@ -138,19 +181,31 @@ export class GameDataManager {
             ...character,
             imageUrl: character.imageUrl!,
             faction: { id: faction.id, name: faction.name },
+            createDate: getCreateTime(character.id),
           },
         ];
       })
     );
     this._charactersCache = built as Record<
       string,
-      Character & { imageUrl: string; faction: { id: FactionId; name: string } }
+      Character & {
+        imageUrl: string;
+        faction: { id: FactionId; name: string };
+        createDate: string | null;
+      }
     >;
     return this._charactersCache!;
   }
 
   static getCards(): Readonly<
-    Record<string, Card & { imageUrl: string; faction: { id: FactionId; name: string } }>
+    Record<
+      string,
+      Card & {
+        imageUrl: string;
+        faction: { id: FactionId; name: string };
+        createDate: string | null;
+      }
+    >
   > {
     if (this._cardsCache) return this._cardsCache;
     const built = Object.fromEntries(
@@ -164,13 +219,18 @@ export class GameDataManager {
             ...card,
             imageUrl: card.imageUrl!,
             faction: { id: faction.id, name: faction.name },
+            createDate: getCreateTime(card.id),
           },
         ];
       })
     );
     this._cardsCache = built as Record<
       string,
-      Card & { imageUrl: string; faction: { id: FactionId; name: string } }
+      Card & {
+        imageUrl: string;
+        faction: { id: FactionId; name: string };
+        createDate: string | null;
+      }
     >;
     return this._cardsCache!;
   }

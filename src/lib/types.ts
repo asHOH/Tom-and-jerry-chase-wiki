@@ -9,10 +9,12 @@ import { ReactNode } from 'react';
 // Extended types with faction information (used in components)
 export type CharacterWithFaction = Character & {
   imageUrl: string; // Required in components
+  createDate: string | null; // Date when the character was added to the game (e.g., "2020.7.24")
 };
 
 export type KnowledgeCardWithFaction = Card & {
   imageUrl: string; // Required in components
+  createDate: string | null; // Date when the character was added to the game (e.g., "2020.7.24")
 };
 
 // Component prop types
