@@ -29,21 +29,35 @@ const rawFactionData: Record<FactionId, Faction> = {
   },
 };
 
-function getCreateTime(name: string) {
+const createTimeLookup = new Map<string, string>();
+
+function populateCreateTimeLookup() {
+  if (createTimeLookup.size) return;
+
   for (const entry of historyData) {
     for (const event of entry.events) {
-      for (const item of (event.details.content?.newCharacters ?? []).concat(
-        event.details.content?.newItems ?? [],
-        event.details.content?.newKnowledgeCards ?? [],
-        event.details.content?.newSecondWeapons ?? []
-      )) {
-        if (item == name) {
-          return `${entry.year}.${event.date}`;
+      const additions = [
+        ...(event.details.content?.newCharacters ?? []),
+        ...(event.details.content?.newItems ?? []),
+        ...(event.details.content?.newKnowledgeCards ?? []),
+        ...(event.details.content?.newSecondWeapons ?? []),
+      ];
+
+      for (const item of additions) {
+        if (!createTimeLookup.has(item)) {
+          createTimeLookup.set(item, `${entry.year}.${event.date.split('-')[0]}`);
         }
       }
     }
   }
-  return null;
+}
+
+function getCreateTime(name: string) {
+  if (!createTimeLookup.size) {
+    populateCreateTimeLookup();
+  }
+
+  return createTimeLookup.get(name) ?? null;
 }
 
 // Simple memoization utility for functions with no arguments
