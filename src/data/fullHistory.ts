@@ -3786,4 +3786,738 @@ export const historyData: GameHistory = [
       },
     ],
   },
+  {
+    year: 2024,
+    events: [
+      {
+        date: '1.4',
+        description: '更新魔镜皮肤“捉妖师”。',
+        details: {},
+      },
+      {
+        date: '1.11',
+        description: '角色与知识卡平衡性调整。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '杰瑞', changeType: ChangeType.BUFF },
+              { name: '剑客莉莉', changeType: ChangeType.BUFF },
+              { name: '米雪儿', changeType: ChangeType.BUFF },
+              { name: '泰菲', changeType: ChangeType.BUFF },
+              { name: '库博', changeType: ChangeType.BUFF },
+              { name: '莱特宁', changeType: ChangeType.BUFF },
+              { name: '剑客泰菲', changeType: ChangeType.NERF },
+              { name: '侦探杰瑞', changeType: ChangeType.NERF },
+              { name: '侍卫汤姆', changeType: ChangeType.NERF },
+            ],
+            knowledgeCardChanges: [
+              { name: '翩若惊鸿', changeType: ChangeType.BUFF },
+              { name: '脱身', changeType: ChangeType.BUFF },
+              { name: '恐吓', changeType: ChangeType.BUFF },
+              { name: '斗志昂扬', changeType: ChangeType.BUFF },
+              { name: '反侦察', changeType: ChangeType.BUFF },
+            ],
+          },
+        },
+      },
+      {
+        date: '1.12',
+        description: 'S19赛季开启，新赛季货架皮肤“火锅大侠”上架。',
+        details: {},
+      },
+      {
+        date: '1.18',
+        description: '更新AP级皮肤“兔子先生”。',
+        details: {},
+      },
+      {
+        date: '1.25',
+        description:
+          '新角色“表演者·杰瑞”上线，并推出其伴生皮肤“小花脸”。\n更新AP级皮肤“花开富贵”。\n调整多元乱斗玩法。',
+        details: {
+          content: {
+            newCharacters: ['表演者·杰瑞'],
+          },
+        },
+      },
+      {
+        date: '1.25',
+        description: '游戏累计注册用户突破两亿。',
+        details: {
+          milestone: '累计注册用户突破两亿',
+        },
+      },
+      {
+        date: '2.1',
+        description: '更新魔镜皮肤“雉尾生”与足迹“香甜奶酪”。\n调整成就与个人空间系统。',
+        details: {},
+      },
+      {
+        date: '2.1-3.29',
+        description:
+          '举办第一届皮肤染色活动，设计对象为“小花脸”与“暖心守岁”，冠军作品为“橘韵”和“莹彩”。',
+        details: {},
+      },
+      {
+        date: '2.8',
+        description:
+          '春节更新：上线活动皮肤“狻猊龙威”，羽毛皮肤“狴犴正气”，机器鼠皮肤“腾云驾雾”，火箭皮肤“鹤鸣九霄”。\n限时玩法“混沌大作战”开启。\n猫鼠广场新增地图“梨苑”。',
+        details: {},
+      },
+      {
+        date: '2.15',
+        description: '更新AP级皮肤“冰雪圆子”。',
+        details: {},
+      },
+      {
+        date: '2.29',
+        description: '更新魔镜皮肤“柳岸微雨”。',
+        details: {},
+      },
+      {
+        date: '3.7-4.29',
+        description: '举办第二届皮肤设计大赛，冠军作品为“獬月梦探”。',
+        details: {},
+      },
+      {
+        date: '3.14',
+        description: '更新AP级皮肤“牡丹仙子”。\n“时光造影”系统上线。',
+        details: {},
+      },
+      {
+        date: '3.21',
+        description: '调整“多元乱斗”玩法。',
+        details: {},
+      },
+      {
+        date: '3.28',
+        description:
+          '更新魔镜皮肤“锡兵女王”与转盘皮肤“时空旅人”。\n地图“森林牧场”换色为“玩具王国”主题。',
+        details: {},
+      },
+      {
+        date: '4.4',
+        description: '“剑客汤姆”的第二武器“旋刃剑舞”上线。\n调整局内快捷消息系统。',
+        details: {
+          content: {
+            newSecondWeapons: ['剑客汤姆-旋刃剑舞'],
+          },
+        },
+      },
+      {
+        date: '4.12',
+        description: 'S20赛季开启，新赛季货架皮肤“游戏之王”上架。',
+        details: {},
+      },
+      {
+        date: '4.25',
+        description: '更新魔镜皮肤“绮梦飞影”，AP皮肤“旋转木马”，以及多款饰品皮肤。',
+        details: {},
+      },
+      {
+        date: '5.23',
+        description: '新角色“追风汤姆”上线，并推出其伴生皮肤“飞行先驱”。\n更新魔镜皮肤“无限星辉”。',
+        details: {
+          content: {
+            newCharacters: ['追风汤姆'],
+          },
+        },
+      },
+      {
+        date: '5.30',
+        description: '更新祈愿皮肤“爱神之吻”。\n猫鼠广场新增“劈树”玩法。\n“梦想祈愿”系统上线。',
+        details: {},
+      },
+      {
+        date: '6.13',
+        description: '更新“黑桃国王”的染色皮肤“摩登”。\n“锦标赛”玩法上线。',
+        details: {},
+      },
+      {
+        date: '6.20',
+        description: '更新魔镜皮肤“波涛极速”。\n调整“锦标赛”玩法。',
+        details: {},
+      },
+      {
+        date: '6.27',
+        description: '更新转盘皮肤“萦香似梦”。',
+        details: {},
+      },
+      {
+        date: '7.11',
+        description:
+          '游戏机制与系统大规模调整。\n经典奶酪赛移除侦查期；天梯赛移除皇级以下晋级与保级赛；调整机器鼠与蛋糕机制。\nUI、角色专精、成就、扫货通行证等多个系统更新或调整。',
+        details: {
+          balance: {
+            knowledgeCardChanges: [
+              { name: '越挫越勇', changeType: ChangeType.BUFF },
+              { name: '穷追猛打', changeType: ChangeType.NERF },
+              { name: '不屈', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '7.12',
+        description: 'S21赛季开启，新赛季货架皮肤“神秘博士”与染色皮肤“蔚蓝”上架。',
+        details: {},
+      },
+      {
+        date: '7.16',
+        description: '经典奶酪赛机制调整，移除经验蛋糕，并调整机器鼠和道具刷新。',
+        details: {},
+      },
+      {
+        date: '7.18',
+        description: '更新魔镜皮肤“秘境仙后”。\n继续对经典奶酪赛机制、机器鼠及战斗UI进行调整。',
+        details: {},
+      },
+      {
+        date: '7.25',
+        description:
+          '角色平衡性调整。\n更新“噩梦船长”系列皮肤与饰品。\n猫鼠广场新增地图“梦境之船”。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '米雪儿', changeType: ChangeType.BUFF },
+              { name: '霜月', changeType: ChangeType.BUFF },
+              { name: '天使泰菲', changeType: ChangeType.BUFF },
+              { name: '罗宾汉泰菲', changeType: ChangeType.BUFF },
+              { name: '剑客泰菲', changeType: ChangeType.BUFF },
+              { name: '剑客杰瑞', changeType: ChangeType.BUFF },
+              { name: '罗宾汉杰瑞', changeType: ChangeType.BUFF },
+              { name: '汤姆', changeType: ChangeType.BUFF },
+              { name: '米特', changeType: ChangeType.BUFF },
+              { name: '托普斯', changeType: ChangeType.BUFF },
+              { name: '恶魔汤姆', changeType: ChangeType.BUFF },
+              { name: '图多盖洛', changeType: ChangeType.BUFF },
+            ],
+          },
+        },
+      },
+      {
+        date: '8.1',
+        description:
+          '游戏机制与玩法调整。\n调整经典奶酪赛与墙缝期机制，调整克隆大作战与特工行动玩法。',
+        details: {
+          balance: {
+            knowledgeCardChanges: [
+              { name: '反侦察', changeType: ChangeType.ADJUSTMENT },
+              { name: '观察员', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '8.8',
+        description: '更新AP皮肤“鹊桥仙”的染色皮肤“青鸾”。',
+        details: {},
+      },
+      {
+        date: '8.15',
+        description: '更新魔镜皮肤“雀翎传说”。',
+        details: {},
+      },
+      {
+        date: '8.22',
+        description: '更新AP皮肤“宫廷预言师”。\n调整部分地图的奶酪与道具刷新位置。',
+        details: {},
+      },
+      {
+        date: '8.29',
+        description: '地图场景与中立生物调整。\n重启共研服。',
+        details: {
+          testPhaseInfo: '共研服重启',
+        },
+      },
+      {
+        date: '9.5',
+        description: '对多个地图中的场景交互物进行调整。',
+        details: {},
+      },
+      {
+        date: '9.12',
+        description: '更新魔镜皮肤“假面掠影”。\n调整中立生物“斯派克”及投降系统。',
+        details: {},
+      },
+      {
+        date: '9.26',
+        description:
+          '新角色“莱恩”上线，并推出其伴生皮肤“艺术创想”。\n更新“醒狮”主题系列皮肤与饰品。\n调整道具刷新机制与“幸运”知识卡（移除星星棒机制）。\n猫鼠广场新增地图“醒狮登高”。',
+        details: {
+          content: {
+            newCharacters: ['莱恩'],
+          },
+          balance: {
+            knowledgeCardChanges: [{ name: '幸运', changeType: ChangeType.ADJUSTMENT }],
+          },
+        },
+      },
+      {
+        date: '10.3',
+        description: '角色平衡性调整。\n染色与新品兑换系统调整。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '莱特宁', changeType: ChangeType.BUFF },
+              { name: '兔八哥', changeType: ChangeType.BUFF },
+              { name: '布奇', changeType: ChangeType.BUFF },
+              { name: '魔术师', changeType: ChangeType.BUFF },
+              { name: '玛丽', changeType: ChangeType.BUFF },
+              { name: '汤姆', changeType: ChangeType.NERF },
+              { name: '马索尔', changeType: ChangeType.NERF },
+              { name: '剑客泰菲', changeType: ChangeType.NERF },
+              { name: '恶魔杰瑞', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '10.4',
+        description: 'S22赛季开启，新赛季货架皮肤“朋克音浪”与染色皮肤“秘银”上架。',
+        details: {},
+      },
+      {
+        date: '10.10',
+        description: '更新魔镜皮肤“獬月梦探”（第二届皮肤设计大赛冠军作品）。',
+        details: {},
+      },
+      {
+        date: '10.17',
+        description: '角色平衡性调整。\n调整个人胜利系统。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '兔八哥', changeType: ChangeType.NERF },
+              { name: '莱特宁', changeType: ChangeType.NERF },
+              { name: '莱恩', changeType: ChangeType.NERF },
+            ],
+          },
+        },
+      },
+      {
+        date: '10.24',
+        description: '更新“烈焰伯爵”的染色皮肤“冰蓝”。',
+        details: {},
+      },
+      {
+        date: '11.7',
+        description:
+          '知识卡与地图场景调整。\n天梯巅峰对决新增快速禁选系统。\n新增道具精准拾取系统。',
+        details: {
+          balance: {
+            knowledgeCardChanges: [
+              { name: '长爪', changeType: ChangeType.ADJUSTMENT },
+              { name: '脱身', changeType: ChangeType.ADJUSTMENT },
+              { name: '暴怒', changeType: ChangeType.ADJUSTMENT },
+              { name: '美食家', changeType: ChangeType.ADJUSTMENT },
+              { name: '寻踪', changeType: ChangeType.ADJUSTMENT },
+              { name: '有难同当', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '11.14',
+        description: '知识卡平衡性调整。\n更新“天鹅湖”的染色皮肤“黛羽”。',
+        details: {
+          balance: {
+            knowledgeCardChanges: [
+              { name: '皮糙肉厚', changeType: ChangeType.ADJUSTMENT },
+              { name: '祝愿', changeType: ChangeType.ADJUSTMENT },
+              { name: '求生欲', changeType: ChangeType.ADJUSTMENT },
+              { name: '严防死守', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '11.14-11.30',
+        description: '举办“猫鼠逆风起航奖”评选活动，冠军为“凯特”。',
+        details: {},
+      },
+      {
+        date: '11.21',
+        description: '知识卡“皮糙肉厚”平衡性调整。',
+        details: {
+          balance: {
+            knowledgeCardChanges: [{ name: '皮糙肉厚', changeType: ChangeType.ADJUSTMENT }],
+          },
+        },
+      },
+      {
+        date: '11.28',
+        description: '更新AP级皮肤“竹报平安”。',
+        details: {},
+      },
+      {
+        date: '12.5',
+        description: '更新魔镜皮肤“凡尔赛之歌”。',
+        details: {},
+      },
+      {
+        date: '12.19',
+        description: '更新“雪国公主”的染色皮肤“复苏”。\n猫鼠广场新增地图“圣诞打雪仗”。',
+        details: {},
+      },
+      {
+        date: '12.26',
+        description: '更新转盘皮肤“凡尔赛之锁”。\n调整会员商城系统。',
+        details: {},
+      },
+    ],
+  },
+  {
+    year: 2025,
+    events: [
+      {
+        date: '1.2',
+        description: '更新魔镜皮肤“喜乐颂”与AP皮肤“糖描盛景”。',
+        details: {},
+      },
+      {
+        date: '1.9',
+        description: '大规模角色平衡性调整。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '凯特', changeType: ChangeType.BUFF },
+              { name: '塔拉', changeType: ChangeType.BUFF },
+              { name: '莱特宁', changeType: ChangeType.BUFF },
+              { name: '天使汤姆', changeType: ChangeType.BUFF },
+              { name: '米特', changeType: ChangeType.BUFF },
+              { name: '布奇', changeType: ChangeType.BUFF },
+              { name: '图茨', changeType: ChangeType.BUFF },
+              { name: '天使泰菲', changeType: ChangeType.BUFF },
+              { name: '侦探泰菲', changeType: ChangeType.BUFF },
+              { name: '玛丽', changeType: ChangeType.BUFF },
+              { name: '蒙金奇', changeType: ChangeType.BUFF },
+              { name: '恶魔泰菲', changeType: ChangeType.BUFF },
+              { name: '莱恩', changeType: ChangeType.NERF },
+              { name: '牛仔汤姆', changeType: ChangeType.NERF },
+              { name: '杰瑞', changeType: ChangeType.NERF },
+              { name: '海盗杰瑞', changeType: ChangeType.NERF },
+              { name: '库博', changeType: ChangeType.ADJUSTMENT },
+              { name: '图多盖洛', changeType: ChangeType.ADJUSTMENT },
+              { name: '兔八哥', changeType: ChangeType.ADJUSTMENT },
+              { name: '追风汤姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '霜月', changeType: ChangeType.ADJUSTMENT },
+              { name: '雪梨', changeType: ChangeType.ADJUSTMENT },
+              { name: '米雪儿', changeType: ChangeType.ADJUSTMENT },
+              { name: '朵朵', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '1.10',
+        description: 'S23赛季开启，新赛季货架皮肤“光阴滴答”与染色皮肤“靛蓝”上架。',
+        details: {},
+      },
+      {
+        date: '1.16',
+        description: '新角色“梦游杰瑞”上线，并推出其伴生皮肤“半醒好梦”。',
+        details: {
+          content: {
+            newCharacters: ['梦游杰瑞'],
+          },
+        },
+      },
+      {
+        date: '1.23',
+        description:
+          '角色平衡性调整。\n春节更新：上线“剪春风”、“书新禧”等多款皮肤与饰品。\n猫鼠广场新增地图“唐人街”。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '梦游杰瑞', changeType: ChangeType.BUFF },
+              { name: '库博', changeType: ChangeType.BUFF },
+            ],
+          },
+        },
+      },
+      {
+        date: '2.6',
+        description: '更新AP级皮肤“月宵上”。\n调整黄金与幸运转盘，调整金币角色购买方式。',
+        details: {},
+      },
+      {
+        date: '2.20',
+        description:
+          '更新“精灵王爷”的染色皮肤“鎏金”。\n对局内战斗UI、快捷轮盘、播报与消息系统进行调整。',
+        details: {},
+      },
+      {
+        date: '2.27',
+        description: '更新魔镜皮肤“野餐日”。\n角色平衡性调整。\n移除银币与知识结晶货币。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '梦游杰瑞', changeType: ChangeType.BUFF },
+              { name: '兔八哥', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '3.6',
+        description: '对角色、成就、魔镜等多个系统进行调整。\n皮肤“富翁先生”调整至AP档位。',
+        details: {},
+      },
+      {
+        date: '3.13',
+        description: '更新AP皮肤“牡丹仙子”的染色皮肤“魏紫”。\n调整“泰菲淘淘集市”系统。',
+        details: {},
+      },
+      {
+        date: '3.20',
+        description: '调整机器鼠、天梯巅峰对决BP系统以及多个游戏内系统。',
+        details: {},
+      },
+      {
+        date: '3.27',
+        description: '更新魔镜皮肤“奶酪伯爵”与转盘皮肤“王牌特工”。\n调整局内商店、角色与房间系统。',
+        details: {},
+      },
+      {
+        date: '4.3',
+        description:
+          '知识卡平衡性调整。\n更新AP皮肤“机械女郎”。\n天梯巅峰对决新增匿名系统，并限制模拟器超宽屏。',
+        details: {
+          balance: {
+            knowledgeCardChanges: [
+              { name: '暴怒', changeType: ChangeType.BUFF },
+              { name: '知识渊博', changeType: ChangeType.BUFF },
+              { name: '猫是液体', changeType: ChangeType.BUFF },
+              { name: '无畏', changeType: ChangeType.BUFF },
+              { name: '有难同当', changeType: ChangeType.BUFF },
+            ],
+            itemChanges: [{ name: '隐身药水', changeType: ChangeType.ADJUSTMENT }],
+          },
+        },
+      },
+      {
+        date: '4.10',
+        description: '知识卡平衡性调整。\n调整天梯玩法加分机制与积分补偿卡。',
+        details: {
+          balance: {
+            knowledgeCardChanges: [
+              { name: '皮糙肉厚', changeType: ChangeType.NERF },
+              { name: '幸运', changeType: ChangeType.NERF },
+            ],
+          },
+        },
+      },
+      {
+        date: '4.11',
+        description: 'S24赛季开启，新赛季货架皮肤“丛林探险家”与染色皮肤“原野”上架。',
+        details: {},
+      },
+      {
+        date: '4.24',
+        description:
+          '“恶魔泰菲”的第二武器“小淘气”上线，并对其进行平衡性调整。\n更新“星海队长”系列皮肤与饰品。',
+        details: {
+          content: {
+            newSecondWeapons: ['恶魔泰菲-小淘气'],
+          },
+          balance: {
+            characterChanges: [{ name: '恶魔泰菲', changeType: ChangeType.ADJUSTMENT }],
+          },
+        },
+      },
+      {
+        date: '5.1',
+        description: '大规模角色平衡性调整。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '梦游杰瑞', changeType: ChangeType.BUFF },
+              { name: '雪梨', changeType: ChangeType.BUFF },
+              { name: '米可', changeType: ChangeType.BUFF },
+              { name: '音乐家杰瑞', changeType: ChangeType.BUFF },
+              { name: '凯特', changeType: ChangeType.BUFF },
+              { name: '图多盖洛', changeType: ChangeType.BUFF },
+              { name: '塔拉', changeType: ChangeType.BUFF },
+              { name: '斯飞', changeType: ChangeType.BUFF },
+              { name: '表演者·杰瑞', changeType: ChangeType.NERF },
+              { name: '天使汤姆', changeType: ChangeType.NERF },
+              { name: '托普斯', changeType: ChangeType.NERF },
+              { name: '泰菲', changeType: ChangeType.ADJUSTMENT },
+              { name: '牛仔杰瑞', changeType: ChangeType.ADJUSTMENT },
+              { name: '拿坡里鼠', changeType: ChangeType.ADJUSTMENT },
+              { name: '恶魔汤姆', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '5.8',
+        description: '对天梯匹配机制及多个游戏内系统（染色、收藏、成就等）进行调整。',
+        details: {},
+      },
+      {
+        date: '5.15',
+        description: '继续调整天梯玩法匹配机制。',
+        details: {},
+      },
+      {
+        date: '5.22',
+        description: '更新魔镜皮肤“梅花教母”。',
+        details: {},
+      },
+      {
+        date: '5.29',
+        description: '更新祈愿皮肤“神圣辉光”。',
+        details: {},
+      },
+      {
+        date: '6.5',
+        description: '角色与知识卡平衡性调整。',
+        details: {
+          balance: {
+            characterChanges: [{ name: '剑客泰菲', changeType: ChangeType.ADJUSTMENT }],
+            knowledgeCardChanges: [
+              { name: '皮糙肉厚', changeType: ChangeType.NERF },
+              { name: '幸运', changeType: ChangeType.NERF },
+            ],
+          },
+        },
+      },
+      {
+        date: '6.12',
+        description:
+          '更新羽毛皮肤《窈窕淑女》与染色皮肤“乘风破浪-日落”。\n天梯巅峰对决新增角色帮抢系统。',
+        details: {},
+      },
+      {
+        date: '6.19',
+        description: '更新魔镜皮肤“假期烦恼”。',
+        details: {},
+      },
+      {
+        date: '6.26',
+        description: '“魔术师”的第二武器“兔子大表哥”上线。\n更新AP皮肤“碧蓝水手”的染色皮肤“鲨滩”。',
+        details: {
+          content: {
+            newSecondWeapons: ['魔术师-兔子大表哥'],
+          },
+        },
+      },
+      {
+        date: '7.10',
+        description:
+          '大规模角色、道具与场景交互物平衡性调整。\n新增推奶酪减伤与救援时火箭保护机制。\n知识卡系统更新。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '米可', changeType: ChangeType.BUFF },
+              { name: '天使杰瑞', changeType: ChangeType.BUFF },
+              { name: '侦探泰菲', changeType: ChangeType.BUFF },
+              { name: '魔术师', changeType: ChangeType.BUFF },
+              { name: '罗宾汉杰瑞', changeType: ChangeType.BUFF },
+              { name: '布奇', changeType: ChangeType.BUFF },
+              { name: '米特', changeType: ChangeType.BUFF },
+              { name: '剑客汤姆', changeType: ChangeType.BUFF },
+              { name: '库博', changeType: ChangeType.BUFF },
+              { name: '罗宾汉泰菲', changeType: ChangeType.NERF },
+              { name: '凯特', changeType: ChangeType.NERF },
+              { name: '剑客泰菲', changeType: ChangeType.ADJUSTMENT },
+              { name: '恶魔泰菲', changeType: ChangeType.ADJUSTMENT },
+              { name: '仙女鼠', changeType: ChangeType.ADJUSTMENT },
+              { name: '剑客莉莉', changeType: ChangeType.ADJUSTMENT },
+              { name: '追风汤姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '莱特宁', changeType: ChangeType.ADJUSTMENT },
+              { name: '兔八哥', changeType: ChangeType.ADJUSTMENT },
+              { name: '天使汤姆', changeType: ChangeType.ADJUSTMENT },
+            ],
+            itemChanges: [
+              { name: '灰色花瓶', changeType: ChangeType.ADJUSTMENT },
+              { name: '蓝色花瓶', changeType: ChangeType.ADJUSTMENT },
+              { name: '冰块', changeType: ChangeType.ADJUSTMENT },
+              { name: '鞭炮', changeType: ChangeType.ADJUSTMENT },
+              { name: '泡泡机', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '7.11',
+        description: 'S25赛季开启，新赛季货架皮肤“天文学家”与染色皮肤“日冕”上架。',
+        details: {},
+      },
+      {
+        date: '7.17',
+        description:
+          '更新魔镜皮肤“乞丐王子”。\n猫鼠广场新增地图“猫鼠乐园”，跑酷玩法新增地图“女巫糖果屋”。',
+        details: {},
+      },
+      {
+        date: '7.24',
+        description:
+          '更新活动皮肤“贞德”及配套饰品。\n“妙妙罐头”系统上线，并移除月签到、在线时长奖励等多个旧系统。',
+        details: {},
+      },
+      {
+        date: '7.31',
+        description: '更新“小红帽”的染色皮肤“紫丁香”。\n调整新品兑换系统。',
+        details: {},
+      },
+      {
+        date: '8.7',
+        description: '新角色“如玉”上线，并推出其伴生皮肤“花衫”。\n角色“罗宾汉泰菲”平衡性调整。',
+        details: {
+          content: {
+            newCharacters: ['如玉'],
+          },
+          balance: {
+            characterChanges: [{ name: '罗宾汉泰菲', changeType: ChangeType.ADJUSTMENT }],
+          },
+        },
+      },
+      {
+        date: '8.14',
+        description: '更新魔镜皮肤“堂吉诃德”。\n角色“如玉”平衡性调整。\n跑酷玩法新增Boss与地图。',
+        details: {
+          balance: {
+            characterChanges: [{ name: '如玉', changeType: ChangeType.ADJUSTMENT }],
+          },
+        },
+      },
+      {
+        date: '8.21',
+        description: '调整道具“叉子”与穿墙相关问题。',
+        details: {
+          balance: { itemChanges: [{ name: '叉子', changeType: ChangeType.ADJUSTMENT }] },
+        },
+      },
+      {
+        date: '8.28',
+        description: '调整道具“果盘”、“冰块”与穿墙相关问题。',
+        details: {
+          balance: {
+            itemChanges: [
+              { name: '果盘', changeType: ChangeType.ADJUSTMENT },
+              { name: '冰块', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '9.4',
+        description: '调整会员商城系统与穿墙相关问题。',
+        details: {},
+      },
+      {
+        date: '9.11',
+        description: '更新魔镜皮肤“神秘探员”。\n继续调整穿墙相关问题。',
+        details: {},
+      },
+      {
+        date: '9.25',
+        description: '更新转盘皮肤“小小龙骑”，活动皮肤“宇宙超鼠”及配套饰品。',
+        details: {},
+      },
+    ],
+  },
 ];
