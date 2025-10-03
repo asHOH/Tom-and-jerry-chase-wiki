@@ -814,8 +814,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
-  const getImageUrl = (id: string) =>
-    AssetManager.getCharacterImageUrl(id, factionId == 'cat' ? 'mouse' : 'cat');
+  const getImageUrl = React.useCallback(
+    (targetId: string) =>
+      AssetManager.getCharacterImageUrl(targetId, factionId === 'cat' ? 'mouse' : 'cat'),
+    [factionId]
+  );
   const char = getCharacterRelation(id);
   const { handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
@@ -838,102 +841,150 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
     [char.counters, char.counteredBy, char.counterEachOther]
   );
 
-  const countersItems = sortByImportance([
-    ...buildCharacterItems(
-      'counters',
+  const countersItems = React.useMemo(
+    () =>
+      sortByImportance([
+        ...buildCharacterItems(
+          'counters',
+          char.counters,
+          localCharacter.counters,
+          countersHook,
+          getImageUrl,
+          handleSelectCharacter,
+          {
+            view: (targetId: string) => `选择角色 ${targetId}`,
+            edit: (targetId: string) => `克制 ${targetId} 的关系`,
+          },
+          (targetId: string, isMinor: boolean) =>
+            `切换${targetId}的克制关系为${isMinor ? '主要' : '次要'}`,
+          (targetId: string) => `移除${targetId}的克制关系`
+        ),
+        ...buildKnowledgeCardItems(
+          localCharacter.countersKnowledgeCards,
+          'countersKnowledgeCards',
+          countersKnowledgeCardsHook,
+          (cardId) => navigate(`/cards/${encodeURIComponent(cardId)}`)
+        ),
+        ...buildSpecialSkillItems(
+          localCharacter.countersSpecialSkills,
+          'countersSpecialSkills',
+          countersSpecialSkillsHook,
+          (skillId) =>
+            navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
+          oppositeFactionId
+        ),
+      ]),
+    [
       char.counters,
-      localCharacter.counters,
       countersHook,
+      countersKnowledgeCardsHook,
+      countersSpecialSkillsHook,
       getImageUrl,
       handleSelectCharacter,
-      {
-        view: (targetId: string) => `选择角色 ${targetId}`,
-        edit: (targetId: string) => `克制 ${targetId} 的关系`,
-      },
-      (targetId: string, isMinor: boolean) =>
-        `切换${targetId}的克制关系为${isMinor ? '主要' : '次要'}`,
-      (targetId: string) => `移除${targetId}的克制关系`
-    ),
-    ...buildKnowledgeCardItems(
+      localCharacter.counters,
       localCharacter.countersKnowledgeCards,
-      'countersKnowledgeCards',
-      countersKnowledgeCardsHook,
-      (cardId) => navigate(`/cards/${encodeURIComponent(cardId)}`)
-    ),
-    ...buildSpecialSkillItems(
       localCharacter.countersSpecialSkills,
-      'countersSpecialSkills',
-      countersSpecialSkillsHook,
-      (skillId) => navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
-      oppositeFactionId
-    ),
-  ]);
+      navigate,
+      oppositeFactionId,
+    ]
+  );
 
-  const counterEachOtherItems = sortByImportance(
-    buildCharacterItems(
-      'counterEachOther',
+  const counterEachOtherItems = React.useMemo(
+    () =>
+      sortByImportance(
+        buildCharacterItems(
+          'counterEachOther',
+          char.counterEachOther,
+          localCharacter.counterEachOther,
+          counterEachOtherHook,
+          getImageUrl,
+          handleSelectCharacter,
+          {
+            view: (targetId: string) => `选择角色 ${targetId}`,
+            edit: (targetId: string) => `与 ${targetId} 互有克制的关系`,
+          },
+          (targetId: string, isMinor: boolean) =>
+            `切换${targetId}的互有克制关系为${isMinor ? '主要' : '次要'}`,
+          (targetId: string) => `移除${targetId}的互有克制关系`
+        )
+      ),
+    [
       char.counterEachOther,
-      localCharacter.counterEachOther,
       counterEachOtherHook,
       getImageUrl,
       handleSelectCharacter,
-      {
-        view: (targetId: string) => `选择角色 ${targetId}`,
-        edit: (targetId: string) => `与 ${targetId} 互有克制的关系`,
-      },
-      (targetId: string, isMinor: boolean) =>
-        `切换${targetId}的互有克制关系为${isMinor ? '主要' : '次要'}`,
-      (targetId: string) => `移除${targetId}的互有克制关系`
-    )
+      localCharacter.counterEachOther,
+    ]
   );
 
-  const counteredByItems = sortByImportance([
-    ...buildCharacterItems(
-      'counteredBy',
+  const counteredByItems = React.useMemo(
+    () =>
+      sortByImportance([
+        ...buildCharacterItems(
+          'counteredBy',
+          char.counteredBy,
+          localCharacter.counteredBy,
+          counteredByHook,
+          getImageUrl,
+          handleSelectCharacter,
+          {
+            view: (targetId: string) => `选择角色 ${targetId}`,
+            edit: (targetId: string) => `被 ${targetId} 克制的关系`,
+          },
+          (targetId: string, isMinor: boolean) =>
+            `切换${targetId}的被克制关系为${isMinor ? '主要' : '次要'}`,
+          (targetId: string) => `移除${targetId}的被克制关系`
+        ),
+        ...buildKnowledgeCardItems(
+          localCharacter.counteredByKnowledgeCards,
+          'counteredByKnowledgeCards',
+          counteredByKnowledgeCardsHook,
+          (cardId) => navigate(`/cards/${encodeURIComponent(cardId)}`)
+        ),
+        ...buildSpecialSkillItems(
+          localCharacter.counteredBySpecialSkills,
+          'counteredBySpecialSkills',
+          counteredBySpecialSkillsHook,
+          (skillId) =>
+            navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
+          oppositeFactionId
+        ),
+      ]),
+    [
       char.counteredBy,
-      localCharacter.counteredBy,
       counteredByHook,
+      counteredByKnowledgeCardsHook,
+      counteredBySpecialSkillsHook,
       getImageUrl,
       handleSelectCharacter,
-      {
-        view: (targetId: string) => `选择角色 ${targetId}`,
-        edit: (targetId: string) => `被 ${targetId} 克制的关系`,
-      },
-      (targetId: string, isMinor: boolean) =>
-        `切换${targetId}的被克制关系为${isMinor ? '主要' : '次要'}`,
-      (targetId: string) => `移除${targetId}的被克制关系`
-    ),
-    ...buildKnowledgeCardItems(
+      localCharacter.counteredBy,
       localCharacter.counteredByKnowledgeCards,
-      'counteredByKnowledgeCards',
-      counteredByKnowledgeCardsHook,
-      (cardId) => navigate(`/cards/${encodeURIComponent(cardId)}`)
-    ),
-    ...buildSpecialSkillItems(
       localCharacter.counteredBySpecialSkills,
-      'counteredBySpecialSkills',
-      counteredBySpecialSkillsHook,
-      (skillId) => navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
-      oppositeFactionId
-    ),
-  ]);
+      navigate,
+      oppositeFactionId,
+    ]
+  );
 
-  const collaboratorItems = sortByImportance(
-    buildCharacterItems(
-      'collaborators',
-      char.collaborators,
-      localCharacter.collaborators,
-      collaboratorsHook,
-      (targetId: string) => AssetManager.getCharacterImageUrl(targetId, 'mouse'),
-      handleSelectCharacter,
-      {
-        view: (targetId: string) => `选择角色 ${targetId}`,
-        edit: (targetId: string) => `与 ${targetId} 的协作关系`,
-      },
-      (targetId: string, isMinor: boolean) =>
-        `切换${targetId}的协作关系为${isMinor ? '主要' : '次要'}`,
-      (targetId: string) => `移除${targetId}的协作关系`
-    )
+  const collaboratorItems = React.useMemo(
+    () =>
+      sortByImportance(
+        buildCharacterItems(
+          'collaborators',
+          char.collaborators,
+          localCharacter.collaborators,
+          collaboratorsHook,
+          (targetId: string) => AssetManager.getCharacterImageUrl(targetId, 'mouse'),
+          handleSelectCharacter,
+          {
+            view: (targetId: string) => `选择角色 ${targetId}`,
+            edit: (targetId: string) => `与 ${targetId} 的协作关系`,
+          },
+          (targetId: string, isMinor: boolean) =>
+            `切换${targetId}的协作关系为${isMinor ? '主要' : '次要'}`,
+          (targetId: string) => `移除${targetId}的协作关系`
+        )
+      ),
+    [char.collaborators, collaboratorsHook, handleSelectCharacter, localCharacter.collaborators]
   );
 
   const sectionConfigs: RelationSectionConfig[] = [
