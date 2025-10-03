@@ -32,7 +32,7 @@ export const ViewModeToggle = React.memo(function ViewModeToggle({
         onClick={() => onChange('rich')}
         disabled={disabled}
         className={clsx(
-          'p-2 rounded-md border text-sm',
+          'inline-flex h-8 items-center justify-center p-2 rounded-md border text-sm',
           mode === 'rich'
             ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300'
             : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
@@ -46,7 +46,7 @@ export const ViewModeToggle = React.memo(function ViewModeToggle({
         onClick={() => onChange('html')}
         disabled={disabled}
         className={clsx(
-          'p-2 rounded-md border text-sm',
+          'inline-flex h-8 items-center justify-center p-2 rounded-md border text-sm',
           mode === 'html'
             ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300'
             : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
@@ -61,7 +61,7 @@ export const ViewModeToggle = React.memo(function ViewModeToggle({
           onClick={() => onChange('wiki')}
           disabled={disabled}
           className={clsx(
-            'p-2 rounded-md border text-sm',
+            'inline-flex h-8 items-center justify-center p-2 rounded-md border text-sm',
             mode === 'wiki'
               ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300'
               : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'

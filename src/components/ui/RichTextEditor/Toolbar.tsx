@@ -94,7 +94,7 @@ const ToolbarButton = React.memo(function ToolbarButton({
       disabled={disabled || mode !== 'rich'}
       title={title}
       className={clsx(
-        'p-2 rounded-md border transition-all duration-200 text-sm font-medium',
+        'inline-flex h-8 items-center justify-center p-2 rounded-md border transition-all duration-200 text-sm font-medium',
         'hover:bg-gray-100 dark:hover:bg-gray-700',
         'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
         'disabled:opacity-50 disabled:cursor-not-allowed',
