@@ -38,6 +38,10 @@ export default function CharacterHistoryDisplay({ name }: { name: string }) {
     return null;
   }
 
+  function getCount(type: ChangeType) {
+    return sortedHistory.reduce((count, history) => (history.type == type ? count + 1 : count), 0);
+  }
+
   return (
     <div className='text-xs text-gray-400 dark:text-gray-500 mt-2'>
       <button
@@ -60,6 +64,16 @@ export default function CharacterHistoryDisplay({ name }: { name: string }) {
 
       {isExpanded && (
         <ul className='mt-2 space-y-1 pl-2'>
+          <li>
+            <ul className='flex gap-1'>
+              {Object.values(ChangeType).map((value) => (
+                <li key={value}>
+                  <strong>{value}: </strong>
+                  {getCount(value)}
+                </li>
+              ))}
+            </ul>
+          </li>
           {sortedHistory.map((entry, index) => (
             <li
               key={`${entry.year}-${entry.date}-${entry.type}`}
