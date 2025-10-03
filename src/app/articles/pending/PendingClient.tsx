@@ -12,7 +12,7 @@ import PageDescription from '@/components/ui/PageDescription';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
-import { ClockIcon, EyeIcon } from '@/components/icons/CommonIcons';
+import { CheckBadgeIcon, CloseIcon, ClockIcon, EyeIcon } from '@/components/icons/CommonIcons';
 
 /**
  * Represents a unified article submission.
@@ -357,20 +357,7 @@ export default function PendingClient() {
                         {processingVersions.has(submission.version_id) ? (
                           <LoadingSpinner size='sm' />
                         ) : (
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth={1.5}
-                            stroke='currentColor'
-                            className='size-4'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M4.5 12.75l6 6 9-13.5'
-                            />
-                          </svg>
+                          <CheckBadgeIcon className='size-4' strokeWidth={1.5} />
                         )}
                         批准
                       </button>
@@ -383,20 +370,7 @@ export default function PendingClient() {
                         {processingVersions.has(submission.version_id) ? (
                           <LoadingSpinner size='sm' />
                         ) : (
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth={1.5}
-                            stroke='currentColor'
-                            className='size-4'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M6 18L18 6M6 6l12 12'
-                            />
-                          </svg>
+                          <CloseIcon className='size-4' strokeWidth={1.5} />
                         )}
                         拒绝
                       </button>

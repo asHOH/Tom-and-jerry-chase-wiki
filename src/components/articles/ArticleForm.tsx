@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RichTextEditor from '@/components/ui/RichTextEditor';
+import { CheckBadgeIcon, CloseIcon } from '@/components/icons/CommonIcons';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 
 export interface CategoryOption {
@@ -176,15 +177,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 </>
               ) : (
                 <>
-                  <svg
-                    className='size-5'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={2}
-                    stroke='currentColor'
-                  >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M4.5 12.75l6 6 9-13.5' />
-                  </svg>
+                  <CheckBadgeIcon className='size-5' />
                   {submitLabel}
                 </>
               )}
@@ -196,15 +189,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               disabled={isSubmitting}
               className='flex-1 sm:flex-none inline-flex items-center justify-center gap-3 px-8 py-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold text-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2'
             >
-              <svg
-                className='size-5'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={2}
-                stroke='currentColor'
-              >
-                <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-              </svg>
+              <CloseIcon className='size-5' />
               取消
             </button>
           </div>

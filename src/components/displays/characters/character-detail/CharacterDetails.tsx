@@ -25,7 +25,7 @@ import { characters } from '@/data';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import { useMobile } from '@/hooks/useMediaQuery';
-import { PlusIcon } from '@/components/icons/CommonIcons';
+import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import CreateDateDisplay from './CreateDateDisplay';
 import CharacterHistoryDisplay from './CharacterHistoryDisplay';
 
@@ -219,20 +219,7 @@ export default function CharacterDetails({
                           )}
                           {copyMessage === 'error' && (
                             // Error icon
-                            <svg
-                              xmlns='http://www.w3.org/2000/svg'
-                              className='w-5 h-5 text-red-500'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                            >
-                              <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                strokeWidth='3'
-                                d='M6 18L18 6M6 6l12 12'
-                              />
-                            </svg>
+                            <CloseIcon className='w-5 h-5 text-red-500' strokeWidth={3} />
                           )}
                           {!copyMessage && (
                             // Download icon

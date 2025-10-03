@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import clsx from 'clsx';
 import CaptchaComponent from './CaptchaComponent';
 import { convertToPinyin } from '@/lib/pinyinUtils';
+import { CloseIcon } from '@/components/icons/CommonIcons';
 
 type LoginDialogProps = {
   onClose: () => void;
@@ -274,14 +275,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
           className='absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
           aria-label='关闭对话框'
         >
-          <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='M6 18L18 6M6 6l12 12'
-            />
-          </svg>
+          <CloseIcon className='h-6 w-6' />
         </button>
 
         <form onSubmit={handleSubmit}>

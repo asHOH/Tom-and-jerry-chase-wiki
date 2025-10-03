@@ -51,6 +51,46 @@ export const PlusIcon = (props: IconProps) => (
   </SvgIcon>
 );
 
+export const CloseIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
+  </SvgIcon>
+);
+
+export const ChevronLeftIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M15 19l-7-7 7-7' />
+  </SvgIcon>
+);
+
+export const ChevronRightIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M9 5l7 7-7 7' />
+  </SvgIcon>
+);
+
+export const SearchIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+    />
+  </SvgIcon>
+);
+
+export const CheckBadgeIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M4.5 12.75l6 6 9-13.5' />
+  </SvgIcon>
+);
+
+export const ChatBubbleIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' />
+  </SvgIcon>
+);
+
 export const TrashIcon = (props: IconProps) => (
   <SvgIcon {...props}>
     <path

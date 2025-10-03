@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
 
 export interface FeedbackSectionRef {
   openFeedback: () => void;
@@ -93,14 +94,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
           aria-label='反馈建议'
         >
           <div className='flex items-center gap-3'>
-            <svg className='w-8 h-8' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
-              />
-            </svg>
+            <ChatBubbleIcon className='w-8 h-8' strokeWidth={2} />
             <span className='text-2xl font-bold whitespace-nowrap'>反馈建议</span>
           </div>
           <div className='text-sm text-gray-500 mt-1 dark:text-gray-400'>提交建议或报告问题</div>

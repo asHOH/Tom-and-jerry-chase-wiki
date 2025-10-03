@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getDocPages } from '@/lib/docUtils';
+import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 export default async function DocsIndexPage() {
   const docPages = await getDocPages();
@@ -44,20 +45,7 @@ export default async function DocsIndexPage() {
                 </div>
                 <div className='flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors'>
                   阅读更多
-                  <svg
-                    className='w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={2}
-                      d='M9 5l7 7-7 7'
-                    />
-                  </svg>
+                  <ChevronRightIcon className='w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform' />
                 </div>
               </div>
             </Link>

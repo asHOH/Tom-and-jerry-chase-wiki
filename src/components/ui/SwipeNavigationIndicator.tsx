@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 interface SwipeNavigationIndicatorProps {
   direction: 'left' | 'right' | null;
@@ -27,30 +28,9 @@ export default function SwipeNavigationIndicator({
       >
         <div className='bg-black/80 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2'>
           {direction === 'left' ? (
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='w-5 h-5'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M15 19l-7-7 7-7'
-              />
-            </svg>
+            <ChevronLeftIcon className='w-5 h-5' />
           ) : (
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='w-5 h-5'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-            </svg>
+            <ChevronRightIcon className='w-5 h-5' />
           )}
           <span className='text-sm'>
             {characterName || (direction === 'left' ? '上一个角色' : '下一个角色')}
