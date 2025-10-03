@@ -27,6 +27,7 @@ import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButto
 import { useMobile } from '@/hooks/useMediaQuery';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import CreateDateDisplay from './CreateDateDisplay';
+import CharacterHistoryDisplay from './CharacterHistoryDisplay';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;
@@ -256,6 +257,7 @@ export default function CharacterDetails({
                   </h1>
                   <ContentWriterDisplay characterId={localCharacter.id} />
                   <CreateDateDisplay createDate={localCharacter.createDate} />
+                  <CharacterHistoryDisplay name={localCharacter.id} />
                 </>
               )}
               {!isEditMode && isMobile && (
@@ -291,6 +293,8 @@ export default function CharacterDetails({
                         )
                       </h1>
                       <ContentWriterDisplay characterId={localCharacter.id} type='isMobile' />
+                      <CreateDateDisplay createDate={localCharacter.createDate} />
+                      <CharacterHistoryDisplay name={localCharacter.id} />
                     </div>
                   </div>
                 </div>
