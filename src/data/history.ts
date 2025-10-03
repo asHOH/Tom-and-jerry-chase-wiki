@@ -57,7 +57,7 @@ export const historyData: GameHistory = [
         description:
           '游戏开启第一次测试，标志着1v4非对称竞技玩法的《猫和老鼠》手游正式诞生。初期玩法近似于现今的黄金钥匙赛，角色技能主要以独特的被动形式呈现。',
         details: {
-          testPhaseInfo: '第一次测试',
+          testPhaseInfo: '第一次测试开始',
           content: {
             newCharacters: ['汤姆', '杰瑞', '侦探杰瑞', '罗宾汉杰瑞', '海盗杰瑞'],
           },
@@ -67,14 +67,14 @@ export const historyData: GameHistory = [
         date: '4.26-5.7',
         description: '游戏开启第二次测试，对操作系统和游戏机制进行了更新。',
         details: {
-          testPhaseInfo: '第二次测试',
+          testPhaseInfo: '第二次测试开始',
         },
       },
       {
         date: '5.12-5.19',
         description: '游戏开启第三次测试，引入了新角色布奇、国王杰瑞和剑客杰瑞。',
         details: {
-          testPhaseInfo: '第三次测试',
+          testPhaseInfo: '第三次测试开始',
           content: {
             newCharacters: ['布奇', '国王杰瑞', '剑客杰瑞'],
           },
@@ -85,7 +85,7 @@ export const historyData: GameHistory = [
         description:
           '共研服2.0开启，游戏核心玩法迭代为经典的奶酪赛模式。新增了NPC斯派克和女主人，并加入了道具遥控器。此次测试诞生了全服首位猫皇“虎牙北城的故事”。',
         details: {
-          testPhaseInfo: '共研服2.0',
+          testPhaseInfo: '共研服2.0开始',
           content: {
             newItems: ['遥控器'],
           },
@@ -95,14 +95,14 @@ export const historyData: GameHistory = [
         date: '7.18-8.2',
         description: '游戏开启暑假内测，引入了技能系统（知识卡前身）和角色等级系统（熟练度前身）。',
         details: {
-          testPhaseInfo: '暑假内测',
+          testPhaseInfo: '暑假内测开始',
         },
       },
       {
         date: '12.21-12.23',
         description: 'iOS端进行了一次小范围测试，新增了角色托普斯和泰菲，并更新了角色技能系统。',
         details: {
-          testPhaseInfo: 'iOS端小测',
+          testPhaseInfo: 'iOS端小测开始',
           content: {
             newCharacters: ['托普斯', '泰菲'],
           },
@@ -118,7 +118,7 @@ export const historyData: GameHistory = [
         description:
           '共研服3.0开启，新增地图经典之家II、III和雪夜古堡。加入了拳头盒子、高尔夫球等多种新道具，并实装了局内技能点升级系统。',
         details: {
-          testPhaseInfo: '共研服3.0',
+          testPhaseInfo: '共研服3.0开始',
           content: {
             newItems: ['拳头盒子', '高尔夫球', '锤子', '泡泡机', '炸药堆'],
           },
@@ -128,7 +128,7 @@ export const historyData: GameHistory = [
         date: '3.29-4.14',
         description: '安卓端进行了一次小范围测试，新增地图夏日邮轮和道具狗骨头，并上线了学业系统。',
         details: {
-          testPhaseInfo: '安卓端小测',
+          testPhaseInfo: '安卓端小测开始',
           content: {
             newItems: ['狗骨头'],
           },
@@ -139,14 +139,14 @@ export const historyData: GameHistory = [
         description:
           '游戏进行灰度测试，新增地图雪夜古堡II、III和NPC金丝雀。现代的熟练度系统和知识卡系统正式更新。',
         details: {
-          testPhaseInfo: '灰度测试',
+          testPhaseInfo: '灰度测试开始',
         },
       },
       {
         date: '5.31',
         description: '《猫和老鼠》手游安卓端于上午8:00正式开启公测，标志着游戏正式诞生。',
         details: {
-          milestone: '安卓端公测开启',
+          milestone: '庆典季开始',
           testPhaseInfo: '公测',
           content: {
             newCharacters: [
@@ -194,7 +194,7 @@ export const historyData: GameHistory = [
         date: '6.1',
         description: 'iOS端公测开启，游戏正式实现全平台上线。',
         details: {
-          milestone: '全平台上线',
+          milestone: 'iOS端公测开始',
         },
       },
       {
@@ -3823,7 +3823,9 @@ export const historyData: GameHistory = [
       {
         date: '1.12',
         description: 'S19赛季开启，新赛季货架皮肤“火锅大侠”上架。',
-        details: {},
+        details: {
+          milestone: 'S19赛季开始',
+        },
       },
       {
         date: '1.18',
@@ -3907,7 +3909,9 @@ export const historyData: GameHistory = [
       {
         date: '4.12',
         description: 'S20赛季开启，新赛季货架皮肤“游戏之王”上架。',
-        details: {},
+        details: {
+          milestone: 'S20赛季开始',
+        },
       },
       {
         date: '4.25',
@@ -3960,7 +3964,9 @@ export const historyData: GameHistory = [
       {
         date: '7.12',
         description: 'S21赛季开启，新赛季货架皮肤“神秘博士”与染色皮肤“蔚蓝”上架。',
-        details: {},
+        details: {
+          milestone: 'S21赛季开始',
+        },
       },
       {
         date: '7.16',
@@ -4075,7 +4081,9 @@ export const historyData: GameHistory = [
       {
         date: '10.4',
         description: 'S22赛季开启，新赛季货架皮肤“朋克音浪”与染色皮肤“秘银”上架。',
-        details: {},
+        details: {
+          milestone: 'S22赛季开始',
+        },
       },
       {
         date: '10.10',
@@ -4212,7 +4220,9 @@ export const historyData: GameHistory = [
       {
         date: '1.10',
         description: 'S23赛季开启，新赛季货架皮肤“光阴滴答”与染色皮肤“靛蓝”上架。',
-        details: {},
+        details: {
+          milestone: 'S23赛季开始',
+        },
       },
       {
         date: '1.16',
@@ -4311,7 +4321,9 @@ export const historyData: GameHistory = [
       {
         date: '4.11',
         description: 'S24赛季开启，新赛季货架皮肤“丛林探险家”与染色皮肤“原野”上架。',
-        details: {},
+        details: {
+          milestone: 'S24赛季开始',
+        },
       },
       {
         date: '4.24',
@@ -4444,7 +4456,9 @@ export const historyData: GameHistory = [
       {
         date: '7.11',
         description: 'S25赛季开启，新赛季货架皮肤“天文学家”与染色皮肤“日冕”上架。',
-        details: {},
+        details: {
+          milestone: 'S25赛季开始',
+        },
       },
       {
         date: '7.17',

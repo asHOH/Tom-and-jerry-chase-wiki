@@ -66,7 +66,7 @@ export default function CharacterHistoryDisplay({ name }: { name: string }) {
               className={index === 0 ? 'text-blue-600 dark:text-blue-400' : ''}
             >
               <strong>
-                {entry.year}.{entry.date}
+                {entry.year}.{entry.date} ({entry.season})
               </strong>
               {' - '}
               {getTypeText(entry.type)}
