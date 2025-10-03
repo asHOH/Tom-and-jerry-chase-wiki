@@ -987,111 +987,141 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
     [char.collaborators, collaboratorsHook, handleSelectCharacter, localCharacter.collaborators]
   );
 
-  const sectionConfigs: RelationSectionConfig[] = [
-    {
-      key: 'counters',
-      theme: 'blue',
-      title: `被${id}克制的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
-      icon: <HappyFaceIcon aria-hidden='true' />,
-      items: countersItems,
-      selectors: (
-        <div className='flex gap-2'>
-          <CharacterSelector
-            currentCharacterId={id}
-            factionId={factionId}
-            relationType='counters'
-            existingRelations={sharedSelectorRelations}
-            onSelect={(characterId) => countersHook.handleAdd(characterId, '新增关系描述')}
-          />
-          <KnowledgeCardSelector
-            selected={Array.from(localCharacter.countersKnowledgeCards ?? [])}
-            onSelect={(cardName) =>
-              countersKnowledgeCardsHook.handleAdd(cardName as string, '新增关系描述')
-            }
-            factionId={factionId == 'cat' ? 'mouse' : 'cat'}
-          />
-          <SpecialSkillSelector
-            selected={Array.from(localCharacter.countersSpecialSkills ?? [])}
-            factionId={factionId}
-            onSelect={(skillName) =>
-              countersSpecialSkillsHook.handleAdd(skillName as string, '新增关系描述')
-            }
-          />
-        </div>
-      ),
-    },
-    {
-      key: 'counterEachOther',
-      theme: 'amber',
-      title: `与${id}互有克制的${factionId == 'cat' ? '老鼠' : '猫咪'}`,
-      icon: <NeutralFaceIcon aria-hidden='true' />,
-      items: counterEachOtherItems,
-      selectors: (
-        <div className='flex gap-2'>
-          <CharacterSelector
-            currentCharacterId={id}
-            factionId={factionId}
-            relationType='counterEachOther'
-            existingRelations={sharedSelectorRelations}
-            onSelect={(characterId) => counterEachOtherHook.handleAdd(characterId, '新增关系描述')}
-          />
-        </div>
-      ),
-      show: isEditMode || counterEachOtherItems.length > 0,
-    },
-    {
-      key: 'counteredBy',
-      theme: 'red',
-      title: `克制${id}的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
-      icon: <SadFaceIcon aria-hidden='true' />,
-      items: counteredByItems,
-      selectors: (
-        <div className='flex gap-2'>
-          <CharacterSelector
-            currentCharacterId={id}
-            factionId={factionId}
-            relationType='counteredBy'
-            existingRelations={sharedSelectorRelations}
-            onSelect={(characterId) => counteredByHook.handleAdd(characterId, '新增关系描述')}
-          />
-          <KnowledgeCardSelector
-            selected={Array.from(localCharacter.counteredByKnowledgeCards ?? [])}
-            onSelect={(cardName) =>
-              counteredByKnowledgeCardsHook.handleAdd(cardName as string, '新增关系描述')
-            }
-            factionId={factionId == 'cat' ? 'mouse' : 'cat'}
-          />
-          <SpecialSkillSelector
-            selected={Array.from(localCharacter.counteredBySpecialSkills ?? [])}
-            factionId={factionId}
-            onSelect={(skillName) =>
-              counteredBySpecialSkillsHook.handleAdd(skillName as string, '新增关系描述')
-            }
-          />
-        </div>
-      ),
-    },
-    {
-      key: 'collaborators',
-      theme: 'green',
-      title: `与${id}协作的老鼠`,
-      icon: <HeartIcon aria-hidden='true' />,
-      items: collaboratorItems,
-      selectors:
-        factionId === 'mouse' ? (
-          <CharacterSelector
-            currentCharacterId={id}
-            factionId={factionId}
-            relationType='collaborators'
-            existingRelations={char.collaborators}
-            onSelect={(characterId) => collaboratorsHook.handleAdd(characterId, '新增关系描述')}
-          />
-        ) : undefined,
-      show: factionId === 'mouse',
-    },
-  ];
+  const sectionConfigs: RelationSectionConfig[] = React.useMemo(
+    () => [
+      {
+        key: 'counters',
+        theme: 'blue',
+        title: `被${id}克制的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
+        icon: <HappyFaceIcon aria-hidden='true' />,
+        items: countersItems,
+        selectors: (
+          <div className='flex gap-2'>
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='counters'
+              existingRelations={sharedSelectorRelations}
+              onSelect={(characterId) => countersHook.handleAdd(characterId, '新增关系描述')}
+            />
+            <KnowledgeCardSelector
+              selected={Array.from(localCharacter.countersKnowledgeCards ?? [])}
+              onSelect={(cardName) =>
+                countersKnowledgeCardsHook.handleAdd(cardName as string, '新增关系描述')
+              }
+              factionId={factionId == 'cat' ? 'mouse' : 'cat'}
+            />
+            <SpecialSkillSelector
+              selected={Array.from(localCharacter.countersSpecialSkills ?? [])}
+              factionId={factionId}
+              onSelect={(skillName) =>
+                countersSpecialSkillsHook.handleAdd(skillName as string, '新增关系描述')
+              }
+            />
+          </div>
+        ),
+      },
+      {
+        key: 'counterEachOther',
+        theme: 'amber',
+        title: `与${id}互有克制的${factionId == 'cat' ? '老鼠' : '猫咪'}`,
+        icon: <NeutralFaceIcon aria-hidden='true' />,
+        items: counterEachOtherItems,
+        selectors: (
+          <div className='flex gap-2'>
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='counterEachOther'
+              existingRelations={sharedSelectorRelations}
+              onSelect={(characterId) =>
+                counterEachOtherHook.handleAdd(characterId, '新增关系描述')
+              }
+            />
+          </div>
+        ),
+        show: isEditMode || counterEachOtherItems.length > 0,
+      },
+      {
+        key: 'counteredBy',
+        theme: 'red',
+        title: `克制${id}的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
+        icon: <SadFaceIcon aria-hidden='true' />,
+        items: counteredByItems,
+        selectors: (
+          <div className='flex gap-2'>
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='counteredBy'
+              existingRelations={sharedSelectorRelations}
+              onSelect={(characterId) => counteredByHook.handleAdd(characterId, '新增关系描述')}
+            />
+            <KnowledgeCardSelector
+              selected={Array.from(localCharacter.counteredByKnowledgeCards ?? [])}
+              onSelect={(cardName) =>
+                counteredByKnowledgeCardsHook.handleAdd(cardName as string, '新增关系描述')
+              }
+              factionId={factionId == 'cat' ? 'mouse' : 'cat'}
+            />
+            <SpecialSkillSelector
+              selected={Array.from(localCharacter.counteredBySpecialSkills ?? [])}
+              factionId={factionId}
+              onSelect={(skillName) =>
+                counteredBySpecialSkillsHook.handleAdd(skillName as string, '新增关系描述')
+              }
+            />
+          </div>
+        ),
+      },
+      {
+        key: 'collaborators',
+        theme: 'green',
+        title: `与${id}协作的老鼠`,
+        icon: <HeartIcon aria-hidden='true' />,
+        items: collaboratorItems,
+        selectors:
+          factionId === 'mouse' ? (
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='collaborators'
+              existingRelations={char.collaborators}
+              onSelect={(characterId) => collaboratorsHook.handleAdd(characterId, '新增关系描述')}
+            />
+          ) : undefined,
+        show: factionId === 'mouse',
+      },
+    ],
+    [
+      char.collaborators,
+      counterEachOtherHook,
+      counterEachOtherItems,
+      counteredByHook,
+      counteredByItems,
+      counteredByKnowledgeCardsHook,
+      counteredBySpecialSkillsHook,
+      countersHook,
+      countersItems,
+      countersKnowledgeCardsHook,
+      countersSpecialSkillsHook,
+      collaboratorsHook,
+      factionId,
+      id,
+      isEditMode,
+      localCharacter.countersKnowledgeCards,
+      localCharacter.countersSpecialSkills,
+      localCharacter.counteredByKnowledgeCards,
+      localCharacter.counteredBySpecialSkills,
+      collaboratorItems,
+      sharedSelectorRelations,
+    ]
+  );
 
-  const visibleSections = sectionConfigs.filter((section) => section.show !== false);
+  const visibleSections = React.useMemo(
+    () => sectionConfigs.filter((section) => section.show !== false),
+    [sectionConfigs]
+  );
 
   return (
     <div className='flex gap-6 items-start bg-gray-50 dark:bg-slate-800/50 p-4 rounded-lg shadow'>
