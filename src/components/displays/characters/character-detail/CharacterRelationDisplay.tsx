@@ -1037,6 +1037,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           />
         </div>
       ),
+      show: isEditMode || counterEachOtherItems.length > 0,
     },
     {
       key: 'counteredBy',
