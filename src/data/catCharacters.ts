@@ -4715,6 +4715,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
+
   /* ----------------------------------- 追风汤姆 ----------------------------------- */
   追风汤姆: {
     description:
@@ -4874,8 +4875,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
-        forecast: 0,
-        aftercast: 0,
         canHitInPipe: false,
         aliases: ['冲刺', '俯冲'],
         cueRange: '本房间可见',
@@ -4902,6 +4901,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
               '点击/蓄力0.5～1.0秒/蓄力1秒以上，伤害提升至35/40/45，眩晕时间提升至0.8/0.9/1.1秒',
           },
         ],
+        forecast: 0,
+        aftercast: 0,
+        videoUrl: 'https://b23.tv/BGvwkao',
       },
       {
         name: '追风双翼',
@@ -4912,8 +4914,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
           '未处于飞行状态时，向前释放{飓风}，前摇0.5秒，后摇0.75秒。飓风速度1000，存在2秒，[可推动沿途的道具和部分场景物](但飓风也会因此减速)，可被墙体阻挡；多个风之间不可叠加。飓风命中敌方将造成{20}伤害和2秒击退，击退速度为550。击退期间对触碰到的[所有单位](包括追风汤姆)造成35伤害，对敌方额外造成1.5秒眩晕。\n处于飞行状态时，向正下方扔出{铁砧}（无前后摇）。铁砧下落1.6秒或命中后对附近敌方造成小范围的[18伤害和1.2秒眩晕](铁砧不享受攻击力加成；老鼠被铁砧眩晕期间及其效果结束后1秒内不会再受到铁砧效果)。铁砧可穿越小平台。\n当手中有老鼠时，会优先[扔出老鼠](扔需要消耗一次技能)，使其回复60血，并自动绑上碰到的火箭，但会被其他敌方单位以及部分可被攻击的[中立生物](如森林牧场的鸭爸爸、鸭妈妈)阻挡，攻击效果等于飓风/铁砧；若以铁砧的形式扔出老鼠，则在铁砧命中或提前结束时同样会给予老鼠铁砧效果；老鼠在被扔出期间可使用技能和道具、进行交互、[免疫伤害](追风的俯冲伤害除外)，但不免疫控制，且不可自主逃离。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        forecast: 0.5,
-        aftercast: 0.75,
         cancelableSkill: ['道具键'],
         skillLevels: [
           {
@@ -4942,6 +4942,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canHitInPipe: false,
         cooldownTiming: '释放后',
         cueRange: '全图可见',
+        forecast: 0.5,
+        aftercast: 0.75,
       },
       {
         name: '追风状态',
@@ -5032,10 +5034,33 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
     countersSpecialSkills: [
-      { id: '干扰投掷', description: '追风汤姆飞行期间免疫眩晕。', isMinor: true },
-      { id: '魔术漂浮', description: '追风汤姆机动性很强，漂浮无法拉开距离。', isMinor: true },
+      {
+        id: '干扰投掷',
+        description: '追风汤姆飞行期间免疫眩晕。',
+        isMinor: true,
+      },
+      {
+        id: '魔术漂浮',
+        description: '追风汤姆机动性很强，漂浮无法拉开距离。',
+        isMinor: true,
+      },
+    ],
+    counterEachOther: [
+      {
+        id: '米可',
+        description:
+          '追汤的飞行霸体无视米可采访的弱化和叠素材，可以蓄势一刀打死；但后期米可点了二三级被动后，追汤就难以将其击倒了',
+        isMinor: false,
+      },
+      {
+        id: '恶魔杰瑞',
+        description:
+          '恶杰前期对战追风比较白板，但后期的三被和三级主动使其自保极强，且具有较强救援能力。',
+        isMinor: false,
+      },
     ],
   },
+
   /* ----------------------------------- 如玉 ----------------------------------- */
   如玉: {
     description:

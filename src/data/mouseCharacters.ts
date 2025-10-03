@@ -1603,7 +1603,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description: '',
-            detailedDescription: '感应雷爆炸对敌方的伤害为{55}，对墙缝的伤害为{10.5}。',
+            detailedDescription: '感应雷爆炸对敌方的伤害为{55}，对墙缝的伤害为{_10.5}。',
             cooldown: 22,
           },
           {
@@ -1615,7 +1615,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 3,
             description: '提高感应雷对猫咪和墙缝的伤害。',
-            detailedDescription: '感应雷对敌方的伤害提高至{85}；对墙缝的伤害提高至{15.5}。',
+            detailedDescription: '感应雷对敌方的伤害提高至{85}；对墙缝的伤害提高至{_15.5}。',
             cooldown: 22,
             charges: 2,
           },
@@ -5020,8 +5020,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         name: '贵族礼仪',
         type: 'active',
-        description: '玛丽优雅行礼，对一定范围内的所有敌方造成负面效果。',
-        detailedDescription: '玛丽优雅行礼，对以自身为中心，较长横向范围内的所有敌方造成负面效果。',
+        description: '玛丽优雅行礼，对左右两侧一定范围内的所有敌方造成负面效果。',
+        detailedDescription:
+          '玛丽优雅行礼，对以自身为中心，对左右两侧600范围内的所有敌方造成负面效果。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键*', '跳跃键'],
@@ -5045,16 +5046,17 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 15,
           },
         ],
+        forecast: 0.25,
+        aftercast: 0.75,
       },
       {
         name: '香风折扇',
         aliases: ['扇子'],
         type: 'weapon1',
         description:
-          '手持折扇向目标方向扇风，对命中的猫咪造成少量伤害、反向和失明效果（可击破护盾）。',
+          '手持折扇向前方扇风，对命中的猫咪造成[少量伤害、反向和失明效果](可分别击破共计2层护盾)，持续5秒。',
         detailedDescription:
-          '手持折扇向目标方向扇风，对命中的猫咪先造成反向效果，再造成少量伤害和失明效果（可分别击破共计2层护盾）。',
-        // 2级折扇因为有对自身的加速效果所以可以搭配翻滚特技和应激反应来使用，能够在被猫攻击后快速逃脱，如果技能打中猫可直接断掉猫的节奏。墙缝战的时候如果点了3级折扇，可以卡在炸药包0秒时使用对墙缝造成大量伤害，达到破墙的效果(难度较高)\n注意1:不要对朵朵使用2级折扇\n注意2:折扇的基础效果对斯飞没用。
+          '手持折扇向前方扇风，对前方650范围内的敌方[先造成{反向}效果，再造成{50}伤害和{失明}效果](可分别击破共计2层护盾)，持续5秒。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键*', '跳跃键'],
@@ -5069,6 +5071,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             level: 2,
             description: '可解除队友的虚弱状态并回复自身和队友的少量Hp，短暂提升推速和移速。',
             cooldown: 20,
+            detailedDescription:
+              '可解除前方650范围内的队友的虚弱状态并回复自身和队友的30Hp，增加推速4%/s并提升移速18%，持续5秒。',
           },
           {
             level: 3,
@@ -5078,6 +5082,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
         ],
         canHitInPipe: false,
+        forecast: 0.3,
+        aftercast: 0.85,
       },
       {
         name: '优雅从容',
@@ -5086,6 +5092,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description: '队友在附近时可免除一次虚弱状态。(CD：50秒)',
+            detailedDescription: '玛丽自身周围半径900范围内有队友时可免除一次虚弱状态。(CD：50秒)',
           },
           {
             level: 2,
@@ -5093,14 +5100,23 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '虚弱下减速附近猫咪；附近有队友时，提高自己和附近队友的虚弱状态移速。',
+            description:
+              '附近的敌方会受到减速效果。队友在附近时，玛丽和附近的队友的移速不会低于310。',
+            detailedDescription:
+              '附近半径1000内的敌方移动速度降低15%。当附近900范围内有队友时，附近半径900范围内的所有友方单位的移速不会低于310。',
           },
         ],
       },
     ],
     specialSkills: [
-      { name: '魔术漂浮', description: '魔术漂浮泛用性很高，在各场合均有发挥。' },
-      { name: '干扰投掷', description: '干扰投掷能提高玛丽的干扰能力和技能命中率。' },
+      {
+        name: '魔术漂浮',
+        description: '魔术漂浮泛用性很高，在各场合均有发挥。',
+      },
+      {
+        name: '干扰投掷',
+        description: '干扰投掷能提高玛丽的干扰能力和技能命中率。',
+      },
     ],
   },
 
