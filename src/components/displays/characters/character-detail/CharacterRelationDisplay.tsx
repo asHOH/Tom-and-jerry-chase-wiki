@@ -25,12 +25,14 @@ type Props = {
 
 // Lightweight generic hook to manage character relation arrays
 type RelationKey = 'counters' | 'counteredBy' | 'counterEachOther' | 'collaborators';
-type RelationArrays = Partial<Record<RelationKey, readonly CharacterRelationItem[]>>;
 type ExtraRelationKey =
   | 'countersKnowledgeCards'
   | 'counteredByKnowledgeCards'
   | 'countersSpecialSkills'
   | 'counteredBySpecialSkills';
+
+type RelationCollectionKey = RelationKey | ExtraRelationKey;
+type RelationCollections = Partial<Record<RelationCollectionKey, readonly CharacterRelationItem[]>>;
 
 type RelationTheme = 'blue' | 'amber' | 'red' | 'green';
 
@@ -213,9 +215,7 @@ const buildCharacterItems = (
 const buildKnowledgeCardItems = (
   items: readonly CharacterRelationItem[] | undefined,
   descriptionPathPrefix: ExtraRelationKey,
-  toggleMinor: (idx: number) => void,
-  updateDescription: (idx: number, value: string) => void,
-  remove: (idx: number) => void,
+  hook: ReturnType<typeof useRelationEditor>,
   navigateToCard: (id: string) => void
 ): KnowledgeCardDisplayItem[] =>
   toArray(items)
@@ -232,11 +232,11 @@ const buildKnowledgeCardItems = (
         ariaLabel: `跳转到知识卡 ${card.id}`,
         onNavigate: () => navigateToCard(card.id),
         editablePath: `${descriptionPathPrefix}.${idx}.description`,
-        onUpdateDescription: (value: string) => updateDescription(idx, value),
-        onToggleMinor: () => toggleMinor(idx),
+        onUpdateDescription: (value: string) => hook.handleUpdate(idx, 'description', value),
+        onToggleMinor: () => hook.toggleIsMinor(idx),
         getToggleLabel: (currentIsMinor) =>
           `切换${card.id}的知识卡关系为${currentIsMinor ? '主要' : '次要'}`,
-        onRemove: () => remove(idx),
+        onRemove: () => hook.handleRemove(idx),
         removeLabel: `移除知识卡 ${card.id}`,
       } satisfies KnowledgeCardDisplayItem;
     })
@@ -245,9 +245,7 @@ const buildKnowledgeCardItems = (
 const buildSpecialSkillItems = (
   items: readonly CharacterRelationItem[] | undefined,
   descriptionPathPrefix: ExtraRelationKey,
-  toggleMinor: (idx: number) => void,
-  updateDescription: (idx: number, value: string) => void,
-  remove: (idx: number) => void,
+  hook: ReturnType<typeof useRelationEditor>,
   navigateToSkill: (id: string) => void,
   targetFaction: FactionId
 ): SpecialSkillDisplayItem[] =>
@@ -263,11 +261,11 @@ const buildSpecialSkillItems = (
       ariaLabel: `跳转到特技 ${skill.id}`,
       onNavigate: () => navigateToSkill(skill.id),
       editablePath: `${descriptionPathPrefix}.${idx}.description`,
-      onUpdateDescription: (value: string) => updateDescription(idx, value),
-      onToggleMinor: () => toggleMinor(idx),
+      onUpdateDescription: (value: string) => hook.handleUpdate(idx, 'description', value),
+      onToggleMinor: () => hook.toggleIsMinor(idx),
       getToggleLabel: (currentIsMinor) =>
         `切换${skill.id}的特技关系为${currentIsMinor ? '主要' : '次要'}`,
-      onRemove: () => remove(idx),
+      onRemove: () => hook.handleRemove(idx),
       removeLabel: `移除特技 ${skill.id}`,
     } satisfies SpecialSkillDisplayItem;
   });
@@ -577,8 +575,8 @@ const RelationSection: React.FC<RelationSectionProps> = ({
   );
 };
 
-function useRelationEditor(characterId: string, key: RelationKey) {
-  const localCharacter = useSnapshot(characters[characterId]!) as unknown as RelationArrays;
+function useRelationEditor(characterId: string, key: RelationCollectionKey) {
+  const localCharacter = useSnapshot(characters[characterId]!) as unknown as RelationCollections;
 
   const update = useCallback(
     (updated: CharacterRelationItem[]) => {
@@ -828,57 +826,10 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const counterEachOtherHook = useRelationEditor(id, 'counterEachOther');
   const collaboratorsHook = useRelationEditor(id, 'collaborators');
 
-  // Small helpers to dedupe array updates for knowledge cards and special skills
-  type LocalExtra = Partial<Record<ExtraRelationKey, readonly CharacterRelationItem[]>>;
-  const localExtra = localCharacter as unknown as LocalExtra;
-
-  const updateExtraArray = useCallback(
-    (
-      key: ExtraRelationKey,
-      updater: (items: CharacterRelationItem[]) => CharacterRelationItem[]
-    ) => {
-      const current = Array.from((localExtra[key] ?? []) as readonly CharacterRelationItem[]);
-      const updated = updater(current);
-      setNestedProperty(characters, `${characterId}.${key}`, updated);
-    },
-    [characterId, localExtra]
-  );
-
-  const toggleExtraMinor = useCallback(
-    (key: ExtraRelationKey, idx: number) =>
-      updateExtraArray(key, (items) => {
-        const item = items[idx];
-        if (!item) return items;
-        const next = [...items];
-        next[idx] = { ...item, isMinor: !item.isMinor };
-        return next;
-      }),
-    [updateExtraArray]
-  );
-
-  const updateExtraDescription = useCallback(
-    (key: ExtraRelationKey, idx: number, description: string) =>
-      updateExtraArray(key, (items) => {
-        const item = items[idx];
-        if (!item) return items;
-        const next = [...items];
-        next[idx] = { ...item, description };
-        return next;
-      }),
-    [updateExtraArray]
-  );
-
-  const removeExtraAt = useCallback(
-    (key: ExtraRelationKey, idx: number) =>
-      updateExtraArray(key, (items) => items.filter((_, i) => i !== idx)),
-    [updateExtraArray]
-  );
-
-  const addExtraItem = useCallback(
-    (key: ExtraRelationKey, id: string, description = '新增关系描述', isMinor = false) =>
-      updateExtraArray(key, (items) => [...items, { id, description, isMinor }]),
-    [updateExtraArray]
-  );
+  const countersKnowledgeCardsHook = useRelationEditor(id, 'countersKnowledgeCards');
+  const counteredByKnowledgeCardsHook = useRelationEditor(id, 'counteredByKnowledgeCards');
+  const countersSpecialSkillsHook = useRelationEditor(id, 'countersSpecialSkills');
+  const counteredBySpecialSkillsHook = useRelationEditor(id, 'counteredBySpecialSkills');
 
   const oppositeFactionId = factionId === 'cat' ? 'mouse' : 'cat';
 
@@ -904,19 +855,15 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       (targetId: string) => `移除${targetId}的克制关系`
     ),
     ...buildKnowledgeCardItems(
-      localExtra.countersKnowledgeCards,
+      localCharacter.countersKnowledgeCards,
       'countersKnowledgeCards',
-      (idx) => toggleExtraMinor('countersKnowledgeCards', idx),
-      (idx, value) => updateExtraDescription('countersKnowledgeCards', idx, value),
-      (idx) => removeExtraAt('countersKnowledgeCards', idx),
+      countersKnowledgeCardsHook,
       (cardId) => navigate(`/cards/${encodeURIComponent(cardId)}`)
     ),
     ...buildSpecialSkillItems(
-      localExtra.countersSpecialSkills,
+      localCharacter.countersSpecialSkills,
       'countersSpecialSkills',
-      (idx) => toggleExtraMinor('countersSpecialSkills', idx),
-      (idx, value) => updateExtraDescription('countersSpecialSkills', idx, value),
-      (idx) => removeExtraAt('countersSpecialSkills', idx),
+      countersSpecialSkillsHook,
       (skillId) => navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
       oppositeFactionId
     ),
@@ -957,19 +904,15 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       (targetId: string) => `移除${targetId}的被克制关系`
     ),
     ...buildKnowledgeCardItems(
-      localExtra.counteredByKnowledgeCards,
+      localCharacter.counteredByKnowledgeCards,
       'counteredByKnowledgeCards',
-      (idx) => toggleExtraMinor('counteredByKnowledgeCards', idx),
-      (idx, value) => updateExtraDescription('counteredByKnowledgeCards', idx, value),
-      (idx) => removeExtraAt('counteredByKnowledgeCards', idx),
+      counteredByKnowledgeCardsHook,
       (cardId) => navigate(`/cards/${encodeURIComponent(cardId)}`)
     ),
     ...buildSpecialSkillItems(
-      localExtra.counteredBySpecialSkills,
+      localCharacter.counteredBySpecialSkills,
       'counteredBySpecialSkills',
-      (idx) => toggleExtraMinor('counteredBySpecialSkills', idx),
-      (idx, value) => updateExtraDescription('counteredBySpecialSkills', idx, value),
-      (idx) => removeExtraAt('counteredBySpecialSkills', idx),
+      counteredBySpecialSkillsHook,
       (skillId) => navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
       oppositeFactionId
     ),
@@ -1011,13 +954,17 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           />
           <KnowledgeCardSelector
             selected={Array.from(localCharacter.countersKnowledgeCards ?? [])}
-            onSelect={(cardName) => addExtraItem('countersKnowledgeCards', cardName as string)}
+            onSelect={(cardName) =>
+              countersKnowledgeCardsHook.handleAdd(cardName as string, '新增关系描述')
+            }
             factionId={factionId == 'cat' ? 'mouse' : 'cat'}
           />
           <SpecialSkillSelector
             selected={Array.from(localCharacter.countersSpecialSkills ?? [])}
             factionId={factionId}
-            onSelect={(skillName) => addExtraItem('countersSpecialSkills', skillName as string)}
+            onSelect={(skillName) =>
+              countersSpecialSkillsHook.handleAdd(skillName as string, '新增关系描述')
+            }
           />
         </div>
       ),
@@ -1057,13 +1004,17 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           />
           <KnowledgeCardSelector
             selected={Array.from(localCharacter.counteredByKnowledgeCards ?? [])}
-            onSelect={(cardName) => addExtraItem('counteredByKnowledgeCards', cardName as string)}
+            onSelect={(cardName) =>
+              counteredByKnowledgeCardsHook.handleAdd(cardName as string, '新增关系描述')
+            }
             factionId={factionId == 'cat' ? 'mouse' : 'cat'}
           />
           <SpecialSkillSelector
             selected={Array.from(localCharacter.counteredBySpecialSkills ?? [])}
             factionId={factionId}
-            onSelect={(skillName) => addExtraItem('counteredBySpecialSkills', skillName as string)}
+            onSelect={(skillName) =>
+              counteredBySpecialSkillsHook.handleAdd(skillName as string, '新增关系描述')
+            }
           />
         </div>
       ),
