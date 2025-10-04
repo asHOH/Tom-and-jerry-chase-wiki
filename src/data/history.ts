@@ -4529,7 +4529,52 @@ export const historyData: GameHistory = [
       },
       {
         date: '9.25',
-        description: '更新转盘皮肤“小小龙骑”，活动皮肤“宇宙超鼠”及配套饰品。',
+        description:
+          '更新转盘皮肤“小小龙骑”，活动皮肤“宇宙超鼠”，机器鼠“拓扑单轮车”，火箭“维度折叠门”，足迹“超能之路”。调整经典奶酪赛奶酪期机制、部分墙缝/火箭/道具点位及局内战斗UI。更新眩晕叠加衰减机制。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '米特', changeType: ChangeType.BUFF },
+              { name: '塔拉', changeType: ChangeType.BUFF },
+              { name: '仙女鼠', changeType: ChangeType.BUFF },
+              { name: '米雪儿', changeType: ChangeType.BUFF },
+              { name: '蒙金奇', changeType: ChangeType.BUFF },
+              { name: '剑客杰瑞', changeType: ChangeType.BUFF },
+              { name: '梦游杰瑞', changeType: ChangeType.NERF },
+              { name: '恶魔汤姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '兔八哥', changeType: ChangeType.ADJUSTMENT },
+              { name: '如玉', changeType: ChangeType.ADJUSTMENT },
+              { name: '库博', changeType: ChangeType.ADJUSTMENT },
+              { name: '莱恩', changeType: ChangeType.ADJUSTMENT },
+            ],
+            itemChanges: [
+              { name: '拳套盒子', changeType: ChangeType.ADJUSTMENT },
+              { name: '泡泡机', changeType: ChangeType.ADJUSTMENT },
+            ],
+            knowledgeCardChanges: [{ name: '恐吓', changeType: ChangeType.NERF }],
+          },
+        },
+      },
+      {
+        date: '10.2',
+        description:
+          '更新道具“灭火器”。\n更新跑酷玩法天赋配方系统、关卡词缀系统。\n调整试用卡组系统与地图装扮系统。',
+        details: {
+          content: {
+            newItems: ['灭火器'],
+          },
+        },
+      },
+      {
+        date: '10.3',
+        description: 'S26赛季开始，货架皮“编号3·1/2”与染色皮肤“默剧集”上架。',
+        details: {
+          milestone: 'S26赛季开始',
+        },
+      },
+      {
+        date: '10.9',
+        description: '更新魔镜皮肤“青龙令”。',
         details: {},
       },
     ],
