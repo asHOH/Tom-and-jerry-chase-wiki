@@ -9,7 +9,7 @@ type HistoryEntry = {
   description?: string;
 };
 
-export function getHistory(name: string): HistoryEntry[] {
+export function getHistory(names: string[]): HistoryEntry[] {
   const history: HistoryEntry[] = [];
   let season: string = '';
 
@@ -24,9 +24,9 @@ export function getHistory(name: string): HistoryEntry[] {
       }
 
       if (
-        event.details.content?.newCharacters?.includes(name) ||
-        event.details.content?.newItems?.includes(name) ||
-        event.details.content?.newKnowledgeCards?.includes(name)
+        event.details.content?.newCharacters?.some((name) => names.includes(name)) ||
+        event.details.content?.newItems?.some((name) => names.includes(name)) ||
+        event.details.content?.newKnowledgeCards?.some((name) => names.includes(name))
       ) {
         history.push({
           year: yearData.year,
@@ -39,7 +39,7 @@ export function getHistory(name: string): HistoryEntry[] {
 
       if (event.details.balance?.characterChanges) {
         for (const change of event.details.balance.characterChanges) {
-          if (change.name === name) {
+          if (names.includes(change.name)) {
             history.push({
               year: yearData.year,
               date: event.date,

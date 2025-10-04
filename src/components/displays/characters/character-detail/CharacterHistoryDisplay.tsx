@@ -2,9 +2,15 @@ import { getHistory } from '@/lib/historyUtils';
 import { useMemo, useState } from 'react';
 import { ChangeType } from '@/data/types';
 
-export default function CharacterHistoryDisplay({ name }: { name: string }) {
+export default function CharacterHistoryDisplay({
+  name,
+  aliases,
+}: {
+  name: string;
+  aliases: readonly string[];
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const history = useMemo(() => getHistory(name), [name]);
+  const history = useMemo(() => getHistory([name, ...aliases]), [name, aliases]);
 
   const sortedHistory = useMemo(() => {
     return [...history].sort((a, b) => {

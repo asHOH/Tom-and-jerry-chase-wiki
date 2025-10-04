@@ -244,7 +244,10 @@ export default function CharacterDetails({
                   </h1>
                   <ContentWriterDisplay characterId={localCharacter.id} />
                   <CreateDateDisplay createDate={localCharacter.createDate} />
-                  <CharacterHistoryDisplay name={localCharacter.id} />
+                  <CharacterHistoryDisplay
+                    name={localCharacter.id}
+                    aliases={localCharacter.aliases || []}
+                  />
                 </>
               )}
               {!isEditMode && isMobile && (
@@ -281,7 +284,10 @@ export default function CharacterDetails({
                       </h1>
                       <ContentWriterDisplay characterId={localCharacter.id} type='isMobile' />
                       <CreateDateDisplay createDate={localCharacter.createDate} />
-                      <CharacterHistoryDisplay name={localCharacter.id} />
+                      <CharacterHistoryDisplay
+                        name={localCharacter.id}
+                        aliases={localCharacter.aliases || []}
+                      />
                     </div>
                   </div>
                 </div>
