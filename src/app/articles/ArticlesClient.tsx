@@ -451,10 +451,11 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 role='button'
                 aria-label={`查看文章 ${article.title}`}
                 className='character-card shover:shadow-lg transform transition-transform! hover:-translate-y-1'
+                href={`/articles/${article.id}`}
               >
                 <div className='px-4 pt-2 pb-5 flex flex-col h-full text-left'>
                   <h3 className='text-xl font-bold mb-2 dark:text-white line-clamp-2'>
-                    <Link href={`/articles/${article.id}`}>{article.title}</Link>
+                    {article.title}
                   </h3>
 
                   <div className='flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mb-3'>
@@ -475,16 +476,18 @@ export default function ArticlesClient({ articles: data, description }: Articles
                       <span>浏览: {article.view_count ?? 0}</span>
                     </div>
 
-                    <div className='flex items-center gap-2 ml-auto my-auto'>
-                      <div className='flex-1' />
-                      <Link
-                        href={`/articles/${article.id}/history`}
-                        className='px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 text-sm'
-                        title='查看历史版本'
-                      >
-                        <ClockIcon className='size-4' strokeWidth={1.5} />
-                      </Link>
-                    </div>
+                    <object>
+                      <div className='flex items-center gap-2 ml-auto my-auto'>
+                        <div className='flex-1' />
+                        <Link
+                          href={`/articles/${article.id}/history`}
+                          className='px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 text-sm'
+                          title='查看历史版本'
+                        >
+                          <ClockIcon className='size-4' strokeWidth={1.5} />
+                        </Link>
+                      </div>
+                    </object>
                   </div>
                 </div>
               </BaseCard>
