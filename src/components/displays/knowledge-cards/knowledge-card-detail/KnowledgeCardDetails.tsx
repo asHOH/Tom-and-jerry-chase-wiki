@@ -100,8 +100,8 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                   <Image
                     src={fromCharacter.imageUrl}
                     alt={fromCharacter.id}
-                    width={0}
-                    height={0}
+                    width={40}
+                    height={40}
                     className='rounded-full object-cover'
                     style={{ height: '40px', width: 'auto' }}
                   />
