@@ -785,9 +785,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     buffinfluence: '负面',
     bufftype: '常规类',
     buffclass: '状态',
-    aliases: [
-      '#[^(硬直)(冰冻)(爆炸)(电击)(拍扁)(夹住)]*眩晕[^(硬直)(冰冻)(爆炸)(电击)(拍扁)(夹住)]*',
-    ],
+    aliases: ['#[^(硬直)(冰冻)(爆炸)(电击)(拍扁)(夹住)]眩晕*'],
     relate: ['无法移动', '禁用技能', '禁用道具', '禁用爪刀', '掉落'],
     description:
       '无法移动、跳跃、使用技能和道具。未特殊标注时，眩晕同时具有掉落手中道具/老鼠的效果。',
