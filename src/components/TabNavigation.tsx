@@ -18,7 +18,7 @@ import { UserCircleIcon } from '@/components/icons/CommonIcons';
 // Helper function for button styling
 const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {
   const baseClasses =
-    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:px-2.5 md:text-sm lg:min-h-[44px] lg:px-3.5 lg:text-base';
+    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:px-2.5 lg:min-h-[44px] lg:px-3.5 lg:text-base';
 
   const stateClasses = isNavigating
     ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
@@ -109,7 +109,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               href='/'
               className={clsx(
                 getButtonClassName(navigatingTo === '/', isHomeActive()),
-                'relative min-w-[36px] lg:min-w-fit',
+                'relative lg:min-w-fit',
                 navigatingTo === '/' && 'pointer-events-none opacity-80'
               )}
               aria-label='首页'
@@ -120,7 +120,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               tabIndex={navigatingTo === '/' ? -1 : 0}
               aria-disabled={navigatingTo === '/'}
             >
-              <span className='lg:hidden' aria-hidden='true'>
+              <span className='md:py-0.75 lg:hidden' aria-hidden='true'>
                 🏠
               </span>
               <span className='hidden lg:inline'>首页</span>
