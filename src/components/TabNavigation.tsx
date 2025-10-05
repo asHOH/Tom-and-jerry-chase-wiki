@@ -129,7 +129,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 <span
                   className='pointer-events-none absolute -bottom-0.5 -right-0.5 inline-flex h-[12px] w-[12px] items-center justify-center rounded-full bg-amber-500 text-[9px] leading-none text-white ring-2 ring-white dark:ring-slate-900 md:h-[14px] md:w-[14px] md:text-[10px]'
                   aria-hidden
-                  title='编辑模式'
                 >
                   ✎
                 </span>
@@ -223,18 +222,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
           {mounted && !!nickname && (
             <div className='relative'>
-              <button
-                type='button'
-                aria-label='用户设置'
-                title='用户设置'
-                className={clsx(
-                  getButtonClassName(false, dropdownOpen),
-                  'flex items-center justify-center p-2'
-                )}
-                onClick={() => setDropdownOpen((prev) => !prev)}
-              >
-                <UserCircleIcon className='size-6' strokeWidth={1.5} />
-              </button>
+              <Tooltip content='用户设置' className='border-none' delay={800}>
+                <button
+                  type='button'
+                  aria-label='用户设置'
+                  className={clsx(
+                    getButtonClassName(false, dropdownOpen),
+                    'flex items-center justify-center p-2'
+                  )}
+                  onClick={() => setDropdownOpen((prev) => !prev)}
+                >
+                  <UserCircleIcon className='size-6' strokeWidth={1.5} />
+                </button>
+              </Tooltip>
               {dropdownOpen && (
                 <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md z-[99999]'>
                   <ul>
