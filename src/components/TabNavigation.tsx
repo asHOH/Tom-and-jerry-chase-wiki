@@ -18,7 +18,7 @@ import { UserCircleIcon } from '@/components/icons/CommonIcons';
 // Helper function for button styling
 const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {
   const baseClasses =
-    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:min-h-[44px] md:px-4 md:text-base';
+    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:min-h-[42px] md:px-3 md:text-sm lg:min-h-[44px] lg:px-4 lg:text-base';
 
   const stateClasses = isNavigating
     ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
@@ -92,7 +92,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         {/* Left-aligned navigation buttons */}
         <div
           className={clsx(
-            'relative flex gap-1 overflow-x-auto overflow-y-visible md:gap-3 md:overflow-visible',
+            'relative flex gap-1 overflow-x-auto overflow-y-visible md:gap-2 md:overflow-visible lg:gap-2.5',
             "[scrollbar-width:none] [-ms-overflow-style:'none']"
           )}
         >
@@ -109,7 +109,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               href='/'
               className={clsx(
                 getButtonClassName(navigatingTo === '/', isHomeActive()),
-                'relative min-w-[40px] sm:min-w-fit',
+                'relative min-w-[36px] lg:min-w-fit',
                 navigatingTo === '/' && 'pointer-events-none opacity-80'
               )}
               aria-label='首页'
@@ -142,7 +142,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 href={tab.href}
                 className={clsx(
                   getButtonClassName(navigatingTo === tab.href, isTabActive(tab.href)),
-                  'gap-0 md:gap-2',
+                  'gap-0 md:gap-1 lg:gap-2',
                   navigatingTo === tab.href && 'pointer-events-none opacity-80'
                 )}
                 aria-label={tab.label}
@@ -168,7 +168,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         </div>
 
         {/* Right-aligned detailed/simple view toggle button, SearchBar, and User Settings */}
-        <div className='flex items-center gap-1 md:gap-3'>
+        <div className='flex items-center gap-1 md:gap-2 lg:gap-2.5'>
           {pathname === '/' || pathname === '' ? <SearchBar /> : <DarkModeToggleButton />}
           {showDetailToggle && (
             <Tooltip
@@ -178,7 +178,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             >
               <div
                 className={clsx(
-                  'relative flex min-h-[40px] cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 dark:bg-slate-800 dark:border-gray-600 sm:min-h-[44px]'
+                  'relative flex min-h-[40px] cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 dark:bg-slate-800 dark:border-gray-600 md:min-h-[42px] lg:min-h-[44px]'
                 )}
                 onClick={toggleDetailedView}
               >
@@ -195,27 +195,27 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 {/* Simple option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 sm:px-2.5 md:py-2 md:text-sm',
+                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:px-2.5 md:py-1.5 md:text-sm lg:py-2',
                     !isDetailedView
                       ? 'text-blue-600 dark:text-blue-400'
                       : 'text-gray-500 dark:text-gray-500'
                   )}
                 >
-                  <span className='md:hidden'>简</span>
-                  <span className='hidden md:inline'>简明</span>
+                  <span className='lg:hidden'>简</span>
+                  <span className='hidden lg:inline'>简明</span>
                 </div>
 
                 {/* Detailed option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:px-2.5 md:py-2 md:text-sm',
+                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:px-2.5 md:py-1.5 md:text-sm lg:py-2',
                     isDetailedView
                       ? 'text-orange-600 dark:text-orange-400'
                       : 'text-gray-500 dark:text-gray-500'
                   )}
                 >
-                  <span className='md:hidden'>详</span>
-                  <span className='hidden md:inline'>详细</span>
+                  <span className='lg:hidden'>详</span>
+                  <span className='hidden lg:inline'>详细</span>
                 </div>
               </div>
             </Tooltip>
