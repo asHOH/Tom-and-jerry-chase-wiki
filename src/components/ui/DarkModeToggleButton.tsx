@@ -9,11 +9,9 @@ export function DarkModeToggleButton() {
       type='button'
       onClick={toggleDarkMode}
       className={clsx(
-        'p-2 w-[40px] h-[40px] sm:p-2 sm:w-11 sm:h-11',
-        'rounded-md bg-gray-200 text-gray-900',
+        'flex h-10 w-10 items-center justify-center rounded-md border-none bg-gray-200 p-2 text-gray-900 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:h-[42px] md:w-[42px] md:p-2 lg:h-11 lg:w-11 lg:p-2.5',
         'dark:bg-slate-700 dark:text-gray-200',
-        'focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400',
-        'flex items-center justify-center border-none cursor-pointer transition-colors'
+        'cursor-pointer'
       )}
       whileTap={{ scale: 0.85, rotate: 15 }}
       whileHover={{ scale: 1.1 }}
