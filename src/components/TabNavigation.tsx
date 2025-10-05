@@ -18,7 +18,7 @@ import { UserCircleIcon } from '@/components/icons/CommonIcons';
 // Helper function for button styling
 const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {
   const baseClasses =
-    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:min-h-[42px] md:px-3 md:text-sm lg:min-h-[44px] lg:px-4 lg:text-base';
+    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:px-2.5 md:text-sm lg:min-h-[44px] lg:px-3.5 lg:text-base';
 
   const stateClasses = isNavigating
     ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
@@ -120,11 +120,11 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               tabIndex={navigatingTo === '/' ? -1 : 0}
               aria-disabled={navigatingTo === '/'}
             >
-              <span className='md:hidden' aria-hidden='true'>
+              <span className='lg:hidden' aria-hidden='true'>
                 🏠
               </span>
-              <span className='hidden md:inline'>首页</span>
-              <span className='sr-only md:hidden'>首页</span>
+              <span className='hidden lg:inline'>首页</span>
+              <span className='sr-only lg:hidden'>首页</span>
               {isEditMode && (
                 <span
                   className='pointer-events-none absolute -bottom-0.5 -right-0.5 inline-flex h-[12px] w-[12px] items-center justify-center rounded-full bg-amber-500 text-[9px] leading-none text-white ring-2 ring-white dark:ring-slate-900 md:h-[14px] md:w-[14px] md:text-[10px]'
@@ -195,7 +195,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 {/* Simple option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:px-2.5 md:py-1.5 md:text-sm lg:py-2',
+                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
                     !isDetailedView
                       ? 'text-blue-600 dark:text-blue-400'
                       : 'text-gray-500 dark:text-gray-500'
@@ -208,7 +208,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 {/* Detailed option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:px-2.5 md:py-1.5 md:text-sm lg:py-2',
+                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
                     isDetailedView
                       ? 'text-orange-600 dark:text-orange-400'
                       : 'text-gray-500 dark:text-gray-500'
