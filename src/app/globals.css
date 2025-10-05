@@ -304,12 +304,6 @@ body.offline-banner-visible main {
   padding-top: 5.5rem; /* Account for nav bar (60px) + offline banner (2.5rem) */
 }
 
-@media (max-width: 640px) {
-  body.offline-banner-visible main {
-    padding-top: 6rem; /* Slightly more padding on mobile */
-  }
-}
-
 /* Fix for Next.js error overlay CSS property ordering */
 [data-nextjs-call-stack-frame] {
   display: block !important;
