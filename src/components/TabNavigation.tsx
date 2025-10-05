@@ -92,8 +92,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         {/* Left-aligned navigation buttons */}
         <div
           className={clsx(
-            'relative flex gap-1 overflow-x-auto md:gap-3 md:overflow-visible',
-            "[scrollbar-width:none] [-ms-overflow-style:'none'] [overflow-y:visible]"
+            'relative flex gap-1 overflow-x-auto overflow-y-visible md:gap-3 md:overflow-visible',
+            "[scrollbar-width:none] [-ms-overflow-style:'none']"
           )}
         >
           {/* <span
