@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 import SearchBar from './ui/SearchBar';
 import Tooltip from './ui/Tooltip';
 import { useAppContext } from '@/context/AppContext';
-import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import { supabase } from '@/lib/supabase/client';
@@ -17,10 +16,9 @@ import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { UserCircleIcon } from '@/components/icons/CommonIcons';
 
 // Helper function for button styling
-const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: boolean) => {
+const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {
   const baseClasses =
-    'whitespace-nowrap rounded-md border-none cursor-pointer transition-colors flex items-center justify-center';
-  const sizeClasses = isMobile ? 'min-h-[40px] p-2 text-sm' : 'min-h-[44px] px-4 text-base';
+    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors md:min-h-[44px] md:px-4 md:text-base';
 
   const stateClasses = isNavigating
     ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
@@ -28,7 +26,7 @@ const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: 
       ? 'bg-blue-600 text-white dark:bg-blue-700'
       : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600';
 
-  return clsx(baseClasses, sizeClasses, stateClasses);
+  return clsx(baseClasses, stateClasses);
 };
 
 type TabNavigationProps = {
@@ -44,7 +42,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
-  const isMobile = useMobile();
   const { nickname, role, clearData: clearUserData } = useUser();
   const { isEditMode } = useEditMode();
   const { items, isActive } = useNavigationTabs();
@@ -95,20 +92,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         {/* Left-aligned navigation buttons */}
         <div
           className={clsx(
-            'flex',
-            isMobile ? 'gap-1 overflow-x-auto' : 'gap-3',
+            'flex gap-1 overflow-x-auto md:gap-3 md:overflow-visible',
             "[scrollbar-width:none] [-ms-overflow-style:'none'] [overflow-y:visible] relative"
           )}
         >
-          <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>
+          <Tooltip content='首页' className='border-none' delay={800}>
             <Link
               href='/'
               className={clsx(
-                getButtonClassName(isMobile, false, isHomeActive()),
-                'relative',
-                isMobile && 'min-w-[40px]',
+                getButtonClassName(navigatingTo === '/', isHomeActive()),
+                'relative min-w-[40px] sm:min-w-fit',
                 navigatingTo === '/' && 'pointer-events-none opacity-80'
               )}
+              aria-label='首页'
               onClick={() => {
                 if (navigatingTo === '/') return;
                 setNavigatingTo('/');
@@ -116,12 +112,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               tabIndex={navigatingTo === '/' ? -1 : 0}
               aria-disabled={navigatingTo === '/'}
             >
-              {!isMobile && '首页'}
-              {isMobile && '🏠'}
+              <span className='md:hidden' aria-hidden='true'>
+                🏠
+              </span>
+              <span className='hidden md:inline'>首页</span>
+              <span className='sr-only md:hidden'>首页</span>
               {isEditMode && (
                 <span
-                  className='pointer-events-none absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full bg-amber-500 text-white ring-2 ring-white dark:ring-slate-900'
-                  style={{ width: isMobile ? 12 : 14, height: isMobile ? 12 : 14, fontSize: 9 }}
+                  className='pointer-events-none absolute -bottom-0.5 -right-0.5 inline-flex h-[12px] w-[12px] items-center justify-center rounded-full bg-amber-500 text-[9px] leading-none text-white ring-2 ring-white dark:ring-slate-900 md:h-[14px] md:w-[14px] md:text-[10px]'
                   aria-hidden
                   title='编辑模式'
                 >
@@ -131,20 +129,15 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             </Link>
           </Tooltip>
           {items.map((tab) => (
-            <Tooltip
-              key={tab.id}
-              content={tab.label}
-              className='border-none'
-              disabled={!isMobile}
-              delay={800}
-            >
+            <Tooltip key={tab.id} content={tab.label} className='border-none' delay={800}>
               <Link
                 href={tab.href}
                 className={clsx(
-                  getButtonClassName(isMobile, false, isTabActive(tab.href)),
-                  isMobile ? 'gap-0' : 'gap-2',
+                  getButtonClassName(navigatingTo === tab.href, isTabActive(tab.href)),
+                  'gap-0 md:gap-2',
                   navigatingTo === tab.href && 'pointer-events-none opacity-80'
                 )}
+                aria-label={tab.label}
                 onClick={() => {
                   if (navigatingTo === tab.href) return;
                   setNavigatingTo(tab.href);
@@ -157,29 +150,26 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   alt={tab.iconAlt}
                   width={64}
                   height={64}
-                  className='object-contain'
-                  style={{ height: isMobile ? '24px' : '28px', width: 'auto' }}
+                  className='h-6 w-auto object-contain md:h-7'
                 />
-                {!isMobile && <span>{tab.label}</span>}
+                <span className='hidden md:inline'>{tab.label}</span>
               </Link>
             </Tooltip>
           ))}
         </div>
 
         {/* Right-aligned detailed/simple view toggle button, SearchBar, and User Settings */}
-        <div className={clsx('flex items-center', isMobile ? 'gap-1' : 'gap-3')}>
+        <div className='flex items-center gap-1 md:gap-3'>
           {pathname === '/' || pathname === '' ? <SearchBar /> : <DarkModeToggleButton />}
           {showDetailToggle && (
             <Tooltip
               content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
               className='border-none'
-              disabled={!isMobile}
               delay={800}
             >
               <div
                 className={clsx(
-                  'relative flex rounded-lg dark:border-gray-600 bg-gray-100 dark:bg-slate-800 p-1 cursor-pointer transition-all duration-200',
-                  isMobile ? 'min-h-[40px]' : 'min-h-[44px]'
+                  'relative flex min-h-[40px] cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 dark:bg-slate-800 dark:border-gray-600 sm:min-h-[44px]'
                 )}
                 onClick={toggleDetailedView}
               >
@@ -196,27 +186,27 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 {/* Simple option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center transition-colors duration-200 whitespace-nowrap',
-                    isMobile ? 'px-2 py-1 text-xs font-medium' : 'px-2.5 py-2 text-sm font-medium',
+                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 sm:px-2.5 md:py-2 md:text-sm',
                     !isDetailedView
                       ? 'text-blue-600 dark:text-blue-400'
                       : 'text-gray-500 dark:text-gray-500'
                   )}
                 >
-                  {isMobile ? '简' : '简明'}
+                  <span className='md:hidden'>简</span>
+                  <span className='hidden md:inline'>简明</span>
                 </div>
 
                 {/* Detailed option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center transition-colors duration-200 whitespace-nowrap',
-                    isMobile ? 'px-2 py-1 text-xs font-medium' : 'px-2.5 py-2 text-sm font-medium',
+                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:px-2.5 md:py-2 md:text-sm',
                     isDetailedView
                       ? 'text-orange-600 dark:text-orange-400'
                       : 'text-gray-500 dark:text-gray-500'
                   )}
                 >
-                  {isMobile ? '详' : '详细'}
+                  <span className='md:hidden'>详</span>
+                  <span className='hidden md:inline'>详细</span>
                 </div>
               </div>
             </Tooltip>
@@ -229,7 +219,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 aria-label='用户设置'
                 title='用户设置'
                 className={clsx(
-                  getButtonClassName(isMobile, false, dropdownOpen),
+                  getButtonClassName(false, dropdownOpen),
                   'flex items-center justify-center p-2'
                 )}
                 onClick={() => setDropdownOpen((prev) => !prev)}

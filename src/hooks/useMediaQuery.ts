@@ -38,11 +38,3 @@ export function useMediaQuery(query: string): boolean {
 export function useMobile(): boolean {
   return useMediaQuery('(max-width: 767px)');
 }
-
-/**
- * Hook to detect tablet and above devices (screen width >= 768px)
- * Consistent with Tailwind's md: breakpoint
- */
-export function useTabletAndUp(): boolean {
-  return useMediaQuery('(min-width: 768px)');
-}
