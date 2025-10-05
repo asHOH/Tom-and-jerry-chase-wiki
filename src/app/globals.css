@@ -111,44 +111,6 @@ img {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-@media (max-width: 640px) {
-  .nav-container {
-    padding: 0.5rem 1rem;
-  }
-
-  .nav-buttons {
-    gap: 0.5rem;
-  }
-
-  .nav-button {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.875rem;
-  }
-
-  /* Responsive faction buttons */
-  .faction-button {
-    flex: 1 !important;
-    min-width: 0 !important;
-    padding: 12px 16px !important;
-  }
-
-  /* Adjust font sizes for mobile */
-  .faction-button span:nth-child(1) {
-    font-size: 1.5rem !important;
-  }
-
-  .faction-button span:nth-child(2) {
-    font-size: 1.25rem !important;
-  }
-
-  /* Make sure the tooltip is properly positioned on mobile */
-  .tooltip {
-    white-space: normal !important;
-    max-width: 90vw !important;
-    text-align: center !important;
-  }
-}
-
 /* Add smooth scrolling to the whole page */
 html {
   scroll-behavior: smooth;
