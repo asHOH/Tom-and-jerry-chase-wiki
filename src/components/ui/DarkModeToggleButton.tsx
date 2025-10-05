@@ -9,7 +9,7 @@ export function DarkModeToggleButton() {
       type='button'
       onClick={toggleDarkMode}
       className={clsx(
-        'flex h-10 w-10 items-center justify-center rounded-md border-none bg-gray-200 p-2 text-gray-900 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:h-[42px] md:w-[42px] md:p-2 lg:h-11 lg:w-11 lg:p-2.5',
+        'flex h-10 w-10 items-center justify-center rounded-md border-none bg-gray-200 p-2 text-gray-900 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:min-h-[44px] lg:h-11 lg:w-11 lg:p-2.5',
         'dark:bg-slate-700 dark:text-gray-200',
         'cursor-pointer'
       )}
