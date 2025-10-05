@@ -42,7 +42,7 @@ const SearchBar: React.FC<object> = () => {
 
   return (
     <div>
-      <Tooltip content='搜索 (快捷键：/ )' className='border-none' delay={800}>
+      <Tooltip content='搜索 (快捷键：/ )' className='border-none'>
         <button
           type='button'
           onClick={handleOpenSearch}

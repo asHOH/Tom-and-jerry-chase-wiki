@@ -50,7 +50,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
 
   // Helper to render label with tooltip
   const propertyLabel = (p: PropertyInfo) => (
-    <Tooltip content={p.description} delay={500} className='border-none cursor-pointer'>
+    <Tooltip content={p.description} className='border-none cursor-pointer'>
       {p.label}
     </Tooltip>
   );

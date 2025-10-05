@@ -104,7 +104,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             aria-hidden
             className='pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-900 md:hidden'
           /> */}
-          <Tooltip content='首页' className='border-none' delay={800}>
+          <Tooltip content='首页' className='border-none'>
             <Link
               href='/'
               className={clsx(
@@ -136,7 +136,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             </Link>
           </Tooltip>
           {items.map((tab) => (
-            <Tooltip key={tab.id} content={tab.label} className='border-none' delay={800}>
+            <Tooltip key={tab.id} content={tab.label} className='border-none'>
               <Link
                 href={tab.href}
                 className={clsx(
@@ -173,7 +173,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             <Tooltip
               content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
               className='border-none'
-              delay={800}
             >
               <div
                 className={clsx(
@@ -222,7 +221,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
           {mounted && !!nickname && (
             <div className='relative'>
-              <Tooltip content='用户设置' className='border-none' delay={800}>
+              <Tooltip content='用户设置' className='border-none'>
                 <button
                   type='button'
                   aria-label='用户设置'
