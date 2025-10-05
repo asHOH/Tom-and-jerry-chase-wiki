@@ -18,7 +18,7 @@ import { UserCircleIcon } from '@/components/icons/CommonIcons';
 // Helper function for button styling
 const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {
   const baseClasses =
-    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors md:min-h-[44px] md:px-4 md:text-base';
+    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:min-h-[44px] md:px-4 md:text-base';
 
   const stateClasses = isNavigating
     ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
@@ -92,10 +92,18 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         {/* Left-aligned navigation buttons */}
         <div
           className={clsx(
-            'flex gap-1 overflow-x-auto md:gap-3 md:overflow-visible',
-            "[scrollbar-width:none] [-ms-overflow-style:'none'] [overflow-y:visible] relative"
+            'relative flex gap-1 overflow-x-auto md:gap-3 md:overflow-visible',
+            "[scrollbar-width:none] [-ms-overflow-style:'none'] [overflow-y:visible]"
           )}
         >
+          {/* <span
+            aria-hidden
+            className='pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white to-transparent dark:from-slate-900 md:hidden'
+          />
+          <span
+            aria-hidden
+            className='pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-900 md:hidden'
+          /> */}
           <Tooltip content='首页' className='border-none' delay={800}>
             <Link
               href='/'
@@ -153,6 +161,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   className='h-6 w-auto object-contain md:h-7'
                 />
                 <span className='hidden md:inline'>{tab.label}</span>
+                <span className='sr-only md:hidden'>{tab.label}</span>
               </Link>
             </Tooltip>
           ))}
