@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/admin';
 import { requireRole } from '@/lib/auth/requireRole';
 
 export async function POST(request: NextRequest, { params }: { params: { versionId: string } }) {
@@ -44,9 +43,8 @@ export async function POST(request: NextRequest, { params }: { params: { version
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
-    const { error: actionError } = await supabaseAdmin.rpc(functionName, {
+    const { error: actionError } = await supabase.rpc(functionName, {
       p_version_id: versionId,
-      p_reviewer_id: user.id,
     });
     if (actionError) {
       console.error(`Error executing ${action} action:`, actionError);
