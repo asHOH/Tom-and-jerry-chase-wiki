@@ -7,17 +7,17 @@
 -- =====================================================
 
 -- Drop the old approve_article_version with p_reviewer_id parameter
-DROP FUNCTION IF EXISTS public.approve_article_version(uuid, uuid)
+DROP FUNCTION IF EXISTS public.approve_article_version(uuid, uuid);
 -- Drop the old reject_article_version with p_reviewer_id parameter
-DROP FUNCTION IF EXISTS public.reject_article_version(uuid, uuid)
+DROP FUNCTION IF EXISTS public.reject_article_version(uuid, uuid);
 -- Drop the old revoke_article_version with p_reviewer_id parameter
-DROP FUNCTION IF EXISTS public.revoke_article_version(uuid, uuid)
+DROP FUNCTION IF EXISTS public.revoke_article_version(uuid, uuid);
 -- Drop the old get_pending_versions_for_moderation with p_requester_id parameter
-DROP FUNCTION IF EXISTS public.get_pending_versions_for_moderation(uuid)
+DROP FUNCTION IF EXISTS public.get_pending_versions_for_moderation(uuid);
 -- Drop the old submit_article with p_editor_id parameter
-DROP FUNCTION IF EXISTS public.submit_article(uuid, text, text, uuid, uuid)
+DROP FUNCTION IF EXISTS public.submit_article(uuid, text, text, uuid, uuid);
 -- Drop the old update_pending_article with p_editor_id and p_user_id parameters
-DROP FUNCTION IF EXISTS public.update_pending_article(uuid, uuid, text, text, uuid, uuid, uuid)
+DROP FUNCTION IF EXISTS public.update_pending_article(uuid, uuid, text, text, uuid, uuid, uuid);
 -- =====================================================
 -- Step 2: CREATE new secure function signatures
 -- =====================================================
@@ -50,7 +50,8 @@ BEGIN
         RAISE EXCEPTION 'Article version not found or not in pending status';
     END IF;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- =====================================================
 -- 2. Fix reject_article_version
 -- =====================================================
@@ -79,7 +80,8 @@ BEGIN
         RAISE EXCEPTION 'Article version not found or not in pending status';
     END IF;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- =====================================================
 -- 3. Fix revoke_article_version
 -- =====================================================
@@ -127,7 +129,8 @@ BEGIN
     -- If there's no previous version, this is acceptable (article will have no approved version)
     -- The front-end should handle this case appropriately
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- =====================================================
 -- 4. Fix get_pending_versions_for_moderation
 -- =====================================================
@@ -180,7 +183,8 @@ BEGIN
       )
     ORDER BY av.created_at DESC;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- =====================================================
 -- 5. Fix submit_article
 -- =====================================================
@@ -236,7 +240,8 @@ BEGIN
     category_id = p_category_id
   WHERE id = p_article_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- =====================================================
 -- 6. Fix update_pending_article
 -- =====================================================
@@ -298,7 +303,8 @@ BEGIN
     category_id = p_category_id
   WHERE id = p_article_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- =====================================================
 -- 7. Fix increment_article_view_count (bonus security improvement)
 -- =====================================================
@@ -317,4 +323,4 @@ BEGIN
     --     RAISE EXCEPTION 'Article not found';
     -- END IF;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
