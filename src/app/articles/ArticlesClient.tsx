@@ -476,8 +476,8 @@ export default function ArticlesClient({ articles: data, description }: Articles
                       <span>浏览: {article.view_count ?? 0}</span>
                     </div>
 
-                    <object>
-                      <div className='flex items-center gap-2 ml-auto my-auto'>
+                    <object className='ml-auto my-auto'>
+                      <div className='flex items-center gap-2'>
                         <div className='flex-1' />
                         <Link
                           href={`/articles/${article.id}/history`}
