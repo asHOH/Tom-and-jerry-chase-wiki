@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth/requireRole';
 
-export async function POST(request: NextRequest, { params }: { params: { versionId: string } }) {
-  const { versionId } = params;
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ versionId: string }> }
+) {
+  const { versionId } = await params;
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
 
