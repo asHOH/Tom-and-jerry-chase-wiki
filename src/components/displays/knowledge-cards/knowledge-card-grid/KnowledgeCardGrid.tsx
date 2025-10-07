@@ -91,8 +91,8 @@ export default function KnowledgeCardGrid({ description }: Props) {
             <div className='w-full min-w-0 flex justify-center'>
               <div
                 className={clsx(
-                  'flex w-full max-w-md items-center px-2 rounded-lg',
-                  isDarkMode ? 'bg-slate-800 text-gray-300' : 'bg-gray-100 text-gray-700'
+                  'flex w-full max-w-md items-center px-2 rounded-lg bg-transparent',
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
                 )}
                 aria-label='费用筛选'
               >
