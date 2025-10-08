@@ -817,7 +817,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     move: true,
     gravity: true,
     collsion: false,
-    description: '被角色拾取可直接获得经验，其中{机械鼠(衍生物)}只有在未携带道具时才能拾取。',
+    description: '[角色未手持道具时](机器鼠则为未拾取道具时)可通过交互键将其拾取，直接获得经验。',
     create: '用{魔镜}许愿时有概率出现。',
     specialImageUrl: '/images/items/经验蛋糕.png',
   },
