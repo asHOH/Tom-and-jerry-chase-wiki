@@ -4,7 +4,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: '13.0.4';
+    PostgrestVersion: '13.0.5';
   };
   public: {
     Tables: {
@@ -59,45 +59,6 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
-      };
-      article_versions_archive: {
-        Row: {
-          archived_at: string | null;
-          archived_by: string | null;
-          article_id: string | null;
-          content: string;
-          created_at: string | null;
-          editor_id: string | null;
-          id: number;
-          original_id: string;
-          preview_token: string | null;
-          status: Database['public']['Enums']['version_status'];
-        };
-        Insert: {
-          archived_at?: string | null;
-          archived_by?: string | null;
-          article_id?: string | null;
-          content: string;
-          created_at?: string | null;
-          editor_id?: string | null;
-          id?: never;
-          original_id: string;
-          preview_token?: string | null;
-          status: Database['public']['Enums']['version_status'];
-        };
-        Update: {
-          archived_at?: string | null;
-          archived_by?: string | null;
-          article_id?: string | null;
-          content?: string;
-          created_at?: string | null;
-          editor_id?: string | null;
-          id?: never;
-          original_id?: string;
-          preview_token?: string | null;
-          status?: Database['public']['Enums']['version_status'];
-        };
-        Relationships: [];
       };
       articles: {
         Row: {
@@ -273,7 +234,7 @@ export type Database = {
     };
     Functions: {
       approve_article_version: {
-        Args: { p_reviewer_id: string; p_version_id: string };
+        Args: { p_version_id: string };
         Returns: undefined;
       };
       create_category: {
@@ -314,7 +275,7 @@ export type Database = {
         }[];
       };
       get_pending_versions_for_moderation: {
-        Args: { p_requester_id: string };
+        Args: Record<PropertyKey, never>;
         Returns: {
           article_id: string;
           article_title: string;
@@ -341,11 +302,11 @@ export type Database = {
         Returns: undefined;
       };
       reject_article_version: {
-        Args: { p_reviewer_id: string; p_version_id: string };
+        Args: { p_version_id: string };
         Returns: undefined;
       };
       revoke_article_version: {
-        Args: { p_reviewer_id: string; p_version_id: string };
+        Args: { p_version_id: string };
         Returns: undefined;
       };
       submit_article: {
@@ -353,7 +314,6 @@ export type Database = {
           p_article_id: string;
           p_category_id: string;
           p_content: string;
-          p_editor_id: string;
           p_title: string;
         };
         Returns: undefined;
@@ -372,9 +332,7 @@ export type Database = {
           p_article_id: string;
           p_category_id: string;
           p_content: string;
-          p_editor_id: string;
           p_title: string;
-          p_user_id: string;
           p_version_id: string;
         };
         Returns: undefined;

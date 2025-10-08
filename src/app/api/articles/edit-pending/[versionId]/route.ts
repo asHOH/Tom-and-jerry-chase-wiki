@@ -40,14 +40,12 @@ export async function POST(request: Request, { params }: { params: { versionId?:
     }
 
     // Call RPC to update pending article in a transaction
-    const { error: rpcError } = await supabaseAdmin.rpc('update_pending_article', {
+    const { error: rpcError } = await supabase.rpc('update_pending_article', {
       p_version_id: versionId,
       p_article_id: version.article_id,
       p_title: title,
       p_content: content,
       p_category_id: category,
-      p_editor_id: user.id,
-      p_user_id: user.id,
     });
 
     if (rpcError) {
