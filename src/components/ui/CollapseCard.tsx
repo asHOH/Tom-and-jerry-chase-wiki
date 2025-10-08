@@ -12,6 +12,16 @@ type CollapseCardProps = {
   openOnStart?: boolean;
 };
 
+/**
+ * 可折叠卡片组件
+ * @param children - 卡片内容
+ * @param title - 标题文本
+ * @param className - 内容容器样式
+ * @param titleClassName - 标题栏样式
+ * @param size - 尺寸: xs/sm/md
+ * @param color - 颜色主题
+ * @param openOnStart - 初始是否展开
+ */
 export default function CollapseCard({
   children,
   title,
