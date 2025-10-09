@@ -7,7 +7,7 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION = '由角色技能衍生出的独立物体，各自拥有独特的作用（该界面更新中）';
+const DESCRIPTION = '由角色技能或其它方式衍生出的独立物体，具有各自独特的作用';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '衍生物',

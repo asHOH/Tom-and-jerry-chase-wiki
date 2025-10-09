@@ -7,8 +7,7 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION =
-  '游戏内的全部状态和效果。状态是一或多种效果的结合，效果具有单一不可再分的特定作用。部分效果本身也是一种状态。（该页面建设中）';
+const DESCRIPTION = '游戏内的全部状态和效果（该页面建设调整中，非最终版本）';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '状态和效果',

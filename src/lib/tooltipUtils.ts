@@ -107,6 +107,28 @@ const mousePositioningTagTooltips = {
   },
 };
 
+const itemPositioningTagTooltips = {
+  投掷类: '可被拾取，通过道具键瞄准和投掷的道具类别',
+  手持类: '可被拾取，通过点击道具键直接使用的道具类别',
+  物件类: '不可拾取，通过交互等方式进行使用的道具类别',
+  食物类: '包括牛奶、蛋糕和饮料，是游戏内的常规恢复手段',
+  流程类: '与游戏进程关联的道具类别',
+  特殊类: '特性复杂，难以归类的特殊道具类别',
+  常规道具: '包括绝大多数道具',
+  衍生道具: '包括只能由其他道具进一步衍生的特殊道具',
+  地图道具: '包括只能在部分地图出现的道具(不包括场景组件)',
+};
+
+const entityPositioningTagTooltips = {
+  道具类: '可被当作道具拾取，或与某个道具在外形和作用上高度相似',
+  投射物: '可在场景中运动，命中目标后产生效果，通常在产生效果后就会消失',
+  召唤物: '可存在较长时间，通过指定方式产生作用',
+  NPC: '外观与特性和角色或地图NPC相似，无法由玩家操作',
+  变身类: '外观与特性和角色相似，可由玩家操作',
+  平台类: '具有"平台"或"墙壁"特性的一类特殊衍生物',
+  指示物: '不与其它物体互动，也几乎不产生效果，仅仅作为一种特殊的技能标示物',
+};
+
 /**
  * Get tooltip content with fallback logic for character properties
  * @param property - Property name to get tooltip for
@@ -156,6 +178,22 @@ export const getPositioningTagTooltipContent = (
 
   // Fallback to normal tooltip
   return tooltips.normal[tagName as keyof typeof tooltips.normal] || `${tagName}定位的相关信息`;
+};
+
+export const getSpecifyTypePositioningTagTooltipContent = (
+  tagName: string,
+  type: 'item' | 'entity'
+): string => {
+  const tooltips = {
+    item: itemPositioningTagTooltips,
+    entity: entityPositioningTagTooltips,
+  }[type];
+
+  if (tooltips[tagName as keyof typeof tooltips]) {
+    return tooltips[tagName as keyof typeof tooltips];
+  }
+
+  return `${tagName}`;
 };
 
 /**

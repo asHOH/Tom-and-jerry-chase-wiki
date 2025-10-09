@@ -12,6 +12,8 @@ import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
 import FilterRow from '@/components/ui/FilterRow';
 import { getPositioningTagColors } from '@/lib/design-system';
+import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import Tooltip from '@/components/ui/Tooltip';
 
 const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
   '道具类',
@@ -107,6 +109,15 @@ export default function EntityClient({ description }: Props) {
               return isActive ? { ...tagColors } : undefined;
             }}
             isDarkMode={isDarkMode}
+            renderOption={(tag, button) => (
+              <Tooltip
+                key={String(tag)}
+                content={getSpecifyTypePositioningTagTooltipContent(tag, 'entity')}
+                className='border-none cursor-pointer'
+              >
+                {button}
+              </Tooltip>
+            )}
           />
 
           {/* 阵营筛选 */}

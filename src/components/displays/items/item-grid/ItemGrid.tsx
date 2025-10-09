@@ -11,6 +11,8 @@ import type { Itemtypelist, Itemsourcelist, Item } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import Tooltip from '@/components/ui/Tooltip';
 
 type Props = { description?: string };
 
@@ -83,6 +85,15 @@ export default function ItemClient({ description }: Props) {
               active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
             }
             isDarkMode={isDarkMode}
+            renderOption={(tag, button) => (
+              <Tooltip
+                key={String(tag)}
+                content={getSpecifyTypePositioningTagTooltipContent(tag, 'item')}
+                className='border-none cursor-pointer'
+              >
+                {button}
+              </Tooltip>
+            )}
           />
 
           {/* 来源筛选 */}
@@ -100,6 +111,15 @@ export default function ItemClient({ description }: Props) {
               active ? { backgroundColor: '#10b981', color: '#fff' } : undefined
             }
             isDarkMode={isDarkMode}
+            renderOption={(tag, button) => (
+              <Tooltip
+                key={String(tag)}
+                content={getSpecifyTypePositioningTagTooltipContent(tag, 'item')}
+                className='border-none cursor-pointer'
+              >
+                {button}
+              </Tooltip>
+            )}
           />
 
           {/* 阵营筛选 */}
