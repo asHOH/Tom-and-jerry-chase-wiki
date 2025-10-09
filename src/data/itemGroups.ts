@@ -2,6 +2,19 @@ import { ItemGroup, ItemGroupDefinition } from './types';
 
 const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
   //------------------------------------角色，技能，知识卡，特技----------------------------------------------/
+  泰菲类角色: {
+    aliases: ['泰菲家族'],
+    description:
+      '指的是游戏内存在的6种“泰菲”角色。他们的碰撞体积比正常鼠方小一些，并且拥有特殊比利鼠外观及角色彩蛋。',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '剑客泰菲', type: 'character' },
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '天使泰菲', type: 'character' },
+      { name: '侦探泰菲', type: 'character' },
+      { name: '罗宾汉泰菲', type: 'character' },
+    ],
+  },
   投掷命中效果: {
     description:
       '指的是以投掷命中为触发条件的效果，这类效果[可以](少部分"投掷道具"无法触发其中的某几种效果，已单独注明)由{投掷道具}触发。包括知识卡、特技、角色技能。',

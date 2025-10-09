@@ -56,6 +56,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         cards: ['S-无畏', 'S-铁血', 'A-团队领袖', 'C-救救我'],
         description: '新手未解锁+1知识量可用，以及针对米特。解锁后可将团队领袖换为缴械。',
       },
+      {
+        cards: ['S-无畏', 'S-铁血', 'S-回家', 'C-救救我'],
+        description: '用于打防守猫。',
+      },
     ],
     skills: [
       {
@@ -3883,11 +3887,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         cards: ['S-铁血', 'S-舍己', 'A-投手', 'B-绝地反击', 'C-救救我'],
-        description: '常用卡组。干扰能力强。对战如玉时可将{绝地反击}换为{不屈}。',
+        description: '常用卡组。干扰能力强。对战{斯飞}或{如玉}时可将{绝地反击}换为{不屈}。',
       },
       {
         cards: ['S-缴械', 'S-铁血', 'S-舍己', 'C-救救我'],
-        description: '缴械卡组。',
+        description: '{缴械}卡组。',
       },
     ],
     skills: [
@@ -3944,7 +3948,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '演奏使友方恢复Hp更多、额外提高推速。',
+            description: '演奏使友方恢复更多Hp、额外提高推速。',
             cooldown: 22,
             detailedDescription: '每次回复量从10Hp提升至15Hp，额外固定增加7%/s推速。',
           },
