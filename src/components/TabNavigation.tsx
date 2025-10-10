@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from '@/components/Image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -33,6 +33,8 @@ type TabNavigationProps = {
   showDetailToggle?: boolean;
 };
 
+const STACK_COLLAPSE_WIDTHS = [494, 452, 410, 368, 326, 284, 242] as const;
+
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [overflowOpen, setOverflowOpen] = useState(false);
@@ -41,7 +43,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [signOutError, setSignOutError] = useState<string | null>(null);
   // Ensure client-only UI matches server HTML on first paint
   const [mounted, setMounted] = useState(false);
-  const [isCompactMode, setIsCompactMode] = useState(false);
+  const [collapsedCount, setCollapsedCount] = useState(0);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const { nickname, role, clearData: clearUserData } = useUser();
@@ -52,19 +54,39 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const shouldCompact = window.innerWidth < 480;
-      setIsCompactMode(shouldCompact);
-      if (!shouldCompact) {
-        setOverflowOpen(false);
-      }
-    };
+  const evaluateCollapsedCount = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const width = window.innerWidth;
+    const total = items.length;
+    let nextCollapsed = 0;
 
-    handleResize();
+    STACK_COLLAPSE_WIDTHS.forEach((threshold, index) => {
+      if (width < threshold) {
+        const collapseSize = Math.min(total, index + 2);
+        nextCollapsed = Math.max(nextCollapsed, collapseSize);
+      }
+    });
+
+    if (nextCollapsed !== collapsedCount) {
+      setCollapsedCount(nextCollapsed);
+    }
+    if (nextCollapsed === 0 && overflowOpen) {
+      setOverflowOpen(false);
+    }
+  }, [collapsedCount, items, overflowOpen]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    evaluateCollapsedCount();
+  }, [mounted, items, pathname, evaluateCollapsedCount]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => evaluateCollapsedCount();
+    evaluateCollapsedCount();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [evaluateCollapsedCount]);
 
   // Reset navigation state when pathname changes
   useEffect(() => {
@@ -104,11 +126,15 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     }
   };
 
-  const primaryTabs = isCompactMode ? items.slice(0, 2) : items;
-  const overflowTabs = isCompactMode ? items.slice(2) : [];
+  const totalTabs = items.length;
+  const clampedCollapsed = Math.min(collapsedCount, totalTabs);
+  const isCompactMode = clampedCollapsed > 0;
+  const visibleCount = Math.max(totalTabs - clampedCollapsed, 0);
+  const primaryTabs = items.slice(0, visibleCount);
+  const overflowTabs = clampedCollapsed > 0 ? items.slice(visibleCount) : [];
 
-  const compactButtonSizing = isCompactMode ? 'min-w-[40px]' : undefined;
-  const compactHomeSizing = isCompactMode ? 'min-w-[40px]' : 'lg:min-w-fit';
+  const tabMinWidthClass = 'min-w-[40px]';
+  const homeButtonSizing = clsx('min-w-[40px]', !isCompactMode && 'lg:min-w-fit');
   const tabIconClassName = clsx(
     'h-6 object-contain md:h-7',
     isCompactMode ? 'w-6 flex-shrink-0 md:w-7' : 'w-auto'
@@ -118,7 +144,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     <div className='fixed top-0 left-0 right-0 bg-white shadow-md z-50 w-full py-2 dark:bg-slate-900 dark:shadow-lg'>
       <div className='flex justify-between items-center max-w-screen-xl mx-auto px-4 gap-4'>
         {/* Left-aligned navigation buttons */}
-        <div className={clsx('relative flex flex-wrap gap-1 md:flex-nowrap md:gap-2 lg:gap-2.5')}>
+        <div
+          className={clsx('relative flex flex-nowrap gap-1 overflow-hidden md:gap-2 lg:gap-2.5')}
+        >
           {/* <span
             aria-hidden
             className='pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white to-transparent dark:from-slate-900 md:hidden'
@@ -133,7 +161,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               className={clsx(
                 getButtonClassName(navigatingTo === '/', isHomeActive()),
                 'relative',
-                compactHomeSizing,
+                homeButtonSizing,
                 navigatingTo === '/' && 'pointer-events-none opacity-80'
               )}
               aria-label='首页'
@@ -166,7 +194,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 className={clsx(
                   getButtonClassName(navigatingTo === tab.href, isTabActive(tab.href)),
                   'gap-0 md:gap-1 lg:gap-2',
-                  compactButtonSizing,
+                  tabMinWidthClass,
                   navigatingTo === tab.href && 'pointer-events-none opacity-80'
                 )}
                 aria-label={tab.label}
@@ -197,7 +225,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   aria-label='更多分类'
                   className={clsx(
                     getButtonClassName(false, overflowOpen),
-                    'min-w-[44px] px-2 md:px-2.5 lg:px-3.5'
+                    tabMinWidthClass,
+                    'px-2 md:px-2.5 lg:px-3.5'
                   )}
                   onClick={() => {
                     setOverflowOpen((prev) => !prev);
