@@ -143,6 +143,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     'h-6 object-contain md:h-7',
     isCompactMode ? 'w-6 flex-shrink-0 md:w-7' : 'w-auto'
   );
+  const shouldAlignLeft = showDetailToggle || !!nickname;
+  const dropdownAlignmentClass = shouldAlignLeft ? 'left-0' : 'right-0';
 
   return (
     <div className='fixed top-0 left-0 right-0 bg-white shadow-md z-50 w-full py-2 dark:bg-slate-900 dark:shadow-lg'>
@@ -231,7 +233,12 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 </button>
               </Tooltip>
               {overflowOpen && (
-                <div className='absolute right-0 mt-2 min-w-[160px] rounded-md bg-white shadow-lg dark:bg-slate-800 z-[9999]'>
+                <div
+                  className={clsx(
+                    'absolute mt-2 min-w-[140px] rounded-md bg-white shadow-lg dark:bg-slate-800 z-[9999]',
+                    dropdownAlignmentClass
+                  )}
+                >
                   <ul className='py-1'>
                     {overflowTabs.map((tab) => (
                       <li key={tab.id}>
