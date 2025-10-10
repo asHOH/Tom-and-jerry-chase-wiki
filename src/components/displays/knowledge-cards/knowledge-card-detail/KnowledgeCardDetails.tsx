@@ -4,6 +4,7 @@ import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from '@/components/Image';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
+import { designTokens } from '@/lib/design-tokens';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
@@ -30,6 +31,11 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null; // Add null check
   const { handleSelectCharacter } = useAppContext();
+  const spacing = designTokens.spacing;
+  const baseTextStyle: React.CSSProperties = {
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.xs,
+  };
 
   const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
 
@@ -104,7 +110,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
       content: (
         <>
           <div className='mb-6'>
-            <p className='text-black dark:text-gray-200 text-lg py-2'>
+            <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
               <TextWithHoverTooltips
                 text={
                   isDetailedView && card.detailedDescription
@@ -147,6 +153,10 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   ];
 
   return (
-    <DetailShell leftColumn={<KnowledgeCardAttributesCard card={card} />} sections={sections} />
+    <DetailShell
+      leftColumn={<KnowledgeCardAttributesCard card={card} />}
+      sections={sections}
+      rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
+    />
   );
 }

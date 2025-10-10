@@ -23,6 +23,11 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
   );
 
   const { isDetailedView } = useAppContext();
+  const spacing = designTokens.spacing;
+  const baseTextStyle: React.CSSProperties = {
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.xs,
+  };
   // use useSnapshot if edit mode for special skill is supported
   const usedCharacters = Object.values(characters).filter(
     (character) =>
@@ -59,13 +64,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
     {
       title: '技能描述',
       content: (
-        <p
-          className='text-black dark:text-gray-200 text-lg'
-          style={{
-            paddingTop: designTokens.spacing.sm,
-            paddingBottom: designTokens.spacing.sm,
-          }}
-        >
+        <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
           {isDetailedView && skill.detailedDescription
             ? skill.detailedDescription
             : skill.description}
@@ -85,6 +84,10 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
   ];
 
   return (
-    <DetailShell leftColumn={<SpecialSkillAttributesCard skill={skill} />} sections={sections} />
+    <DetailShell
+      leftColumn={<SpecialSkillAttributesCard skill={skill} />}
+      sections={sections}
+      rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
+    />
   );
 }
