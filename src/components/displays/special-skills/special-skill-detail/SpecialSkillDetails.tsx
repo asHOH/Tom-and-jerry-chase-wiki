@@ -2,9 +2,9 @@
 
 import React from 'react';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
+import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { SpecialSkill } from '@/data/types';
-import { designTokens } from '@/lib/design-tokens';
 import { characters } from '@/data';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import CharacterList from '../../../displays/knowledge-cards/knowledge-card-detail/CharacterList';
@@ -23,11 +23,6 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
   );
 
   const { isDetailedView } = useAppContext();
-  const spacing = designTokens.spacing;
-  const baseTextStyle: React.CSSProperties = {
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.xs,
-  };
   // use useSnapshot if edit mode for special skill is supported
   const usedCharacters = Object.values(characters).filter(
     (character) =>
@@ -62,13 +57,15 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
 
   const sections: DetailSection[] = [
     {
-      title: '技能描述',
-      content: (
-        <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
-          {isDetailedView && skill.detailedDescription
-            ? skill.detailedDescription
-            : skill.description}
-        </p>
+      key: 'description',
+      render: () => (
+        <DetailTextSection
+          title='技能描述'
+          value={skill.description ?? null}
+          detailedValue={skill.detailedDescription ?? null}
+          fallbackText='待补充'
+          isDetailedView={isDetailedView}
+        />
       ),
     },
     {

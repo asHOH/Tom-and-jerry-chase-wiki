@@ -4,10 +4,9 @@ import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from '@/components/Image';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
-import { designTokens } from '@/lib/design-tokens';
+import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data'; // Import characters data
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
@@ -31,11 +30,6 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null; // Add null check
   const { handleSelectCharacter } = useAppContext();
-  const spacing = designTokens.spacing;
-  const baseTextStyle: React.CSSProperties = {
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.xs,
-  };
 
   const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
 
@@ -82,44 +76,41 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
 
   const sections: DetailSection[] = [
     {
-      title: '知识卡效果',
-      headerContent: fromCharacter ? (
-        <button
-          type='button'
-          aria-label={`返回 ${fromCharacter.id}`}
-          onClick={() => handleSelectCharacter(fromCharacterId!)}
-          className='flex items-center gap-2 font-bold py-1.5 pl-4 pr-2 rounded-full rounded-r-lg text-md border shadow-sm transition-all duration-200
-                     bg-blue-50 text-blue-700 border-blue-200
-                     hover:bg-blue-500 hover:text-white hover:border-blue-500 hover:translate-x-[-5px]
-                     dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700
-                     dark:hover:bg-blue-600 dark:hover:text-white dark:hover:border-blue-600'
+      key: 'effect',
+      render: () => (
+        <DetailTextSection
+          title='知识卡效果'
+          value={card.description ?? null}
+          detailedValue={card.detailedDescription ?? null}
+          fallbackText='待补充'
+          isDetailedView={isDetailedView}
+          headerContent={
+            fromCharacter ? (
+              <button
+                type='button'
+                aria-label={`返回 ${fromCharacter.id}`}
+                onClick={() => handleSelectCharacter(fromCharacterId!)}
+                className='flex items-center gap-2 font-bold py-1.5 pl-4 pr-2 rounded-full rounded-r-lg text-md border shadow-sm transition-all duration-200
+                           bg-blue-50 text-blue-700 border-blue-200
+                           hover:bg-blue-500 hover:text-white hover:border-blue-500 hover:translate-x-[-5px]
+                           dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700
+                           dark:hover:bg-blue-600 dark:hover:text-white dark:hover:border-blue-600'
+              >
+                ← 返回 {fromCharacter.id}
+                {fromCharacter.imageUrl && (
+                  <Image
+                    src={fromCharacter.imageUrl}
+                    alt={fromCharacter.id}
+                    width={40}
+                    height={40}
+                    className='rounded-full object-cover'
+                    style={{ height: '40px', width: 'auto' }}
+                  />
+                )}
+              </button>
+            ) : undefined
+          }
         >
-          ← 返回 {fromCharacter.id}
-          {fromCharacter.imageUrl && (
-            <Image
-              src={fromCharacter.imageUrl}
-              alt={fromCharacter.id}
-              width={40}
-              height={40}
-              className='rounded-full object-cover'
-              style={{ height: '40px', width: 'auto' }}
-            />
-          )}
-        </button>
-      ) : undefined,
-      content: (
-        <>
-          <div className='mb-6'>
-            <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
-              <TextWithHoverTooltips
-                text={
-                  isDetailedView && card.detailedDescription
-                    ? card.detailedDescription
-                    : card.description
-                }
-              />
-            </p>
-          </div>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             {card.levels.map((level) => (
               <div
@@ -137,7 +128,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
               </div>
             ))}
           </div>
-        </>
+        </DetailTextSection>
       ),
     },
     {

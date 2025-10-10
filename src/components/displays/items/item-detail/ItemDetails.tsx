@@ -2,11 +2,10 @@
 
 import React from 'react';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
+import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { Item } from '@/data/types';
-import { designTokens } from '@/lib/design-tokens';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import ItemAttributesCard from './ItemAttributesCard';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
@@ -14,45 +13,30 @@ export default function ItemDetailClient({ item }: { item: Item }) {
   useSpecifyTypeKeyboardNavigation(item.name, 'item');
 
   const { isDetailedView } = useAppContext();
-  const spacing = designTokens.spacing;
   if (!item) return null;
-
-  const baseTextStyle: React.CSSProperties = {
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.xs,
-  };
-
   const sections: DetailSection[] = [
     {
-      title: '道具描述',
-      content: (
-        <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
-          <TextWithHoverTooltips
-            text={
-              item.description === undefined
-                ? '待补充'
-                : isDetailedView && item.detailedDescription
-                  ? item.detailedDescription
-                  : item.description
-            }
-          />
-        </p>
+      key: 'description',
+      render: () => (
+        <DetailTextSection
+          title='道具描述'
+          value={item.description ?? null}
+          detailedValue={item.detailedDescription ?? null}
+          fallbackText='待补充'
+          isDetailedView={isDetailedView}
+        />
       ),
     },
     {
-      title: '生成方式',
-      content: (
-        <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
-          <TextWithHoverTooltips
-            text={
-              item.create === undefined
-                ? '待补充'
-                : isDetailedView && item.detailedCreate
-                  ? item.detailedCreate
-                  : item.create
-            }
-          />
-        </p>
+      key: 'create',
+      render: () => (
+        <DetailTextSection
+          title='生成方式'
+          value={item.create ?? null}
+          detailedValue={item.detailedCreate ?? null}
+          fallbackText='待补充'
+          isDetailedView={isDetailedView}
+        />
       ),
     },
   ];

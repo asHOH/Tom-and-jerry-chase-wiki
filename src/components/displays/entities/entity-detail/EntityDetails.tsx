@@ -2,12 +2,11 @@
 
 import React from 'react';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
+import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { Entity, Skill } from '@/data/types';
-import { designTokens } from '@/lib/design-tokens';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import EntityAttributesCard from './EntityAttributesCard';
 import EntitySkillCard from './EntitySkillCard';
 
@@ -16,45 +15,30 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
   useSpecifyTypeKeyboardNavigation(entity.name, 'entity');
 
   const { isDetailedView } = useAppContext();
-  const spacing = designTokens.spacing;
   if (!entity) return null;
-
-  const baseTextStyle: React.CSSProperties = {
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.xs,
-  };
-
   const sections: DetailSection[] = [
     {
-      title: '衍生物描述',
-      content: (
-        <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
-          <TextWithHoverTooltips
-            text={
-              entity.description === undefined
-                ? '待补充'
-                : isDetailedView && entity.detailedDescription
-                  ? entity.detailedDescription
-                  : entity.description
-            }
-          />
-        </p>
+      key: 'description',
+      render: () => (
+        <DetailTextSection
+          title='衍生物描述'
+          value={entity.description ?? null}
+          detailedValue={entity.detailedDescription ?? null}
+          fallbackText='待补充'
+          isDetailedView={isDetailedView}
+        />
       ),
     },
     {
-      title: '生成方式',
-      content: (
-        <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
-          <TextWithHoverTooltips
-            text={
-              entity.create === undefined
-                ? '待补充'
-                : isDetailedView && entity.detailedCreate
-                  ? entity.detailedCreate
-                  : entity.create
-            }
-          />
-        </p>
+      key: 'create',
+      render: () => (
+        <DetailTextSection
+          title='生成方式'
+          value={entity.create ?? null}
+          detailedValue={entity.detailedCreate ?? null}
+          fallbackText='待补充'
+          isDetailedView={isDetailedView}
+        />
       ),
     },
   ];
