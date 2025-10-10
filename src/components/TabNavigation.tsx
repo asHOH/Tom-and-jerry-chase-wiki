@@ -43,7 +43,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
-  // Ensure client-only UI matches server HTML on first paint
   const [mounted, setMounted] = useState(false);
   const [collapsedCount, setCollapsedCount] = useState(0);
   const pathname = usePathname();
@@ -149,17 +148,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     <div className='fixed top-0 left-0 right-0 bg-white shadow-md z-50 w-full py-2 dark:bg-slate-900 dark:shadow-lg'>
       <div className='flex justify-between items-center max-w-screen-xl mx-auto px-4 gap-4'>
         {/* Left-aligned navigation buttons */}
-        <div
-          className={clsx('relative flex flex-nowrap gap-1 overflow-hidden md:gap-2 lg:gap-2.5')}
-        >
-          {/* <span
-            aria-hidden
-            className='pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white to-transparent dark:from-slate-900 md:hidden'
-          />
-          <span
-            aria-hidden
-            className='pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-900 md:hidden'
-          /> */}
+        <div className={clsx('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
           <Tooltip content='首页' className='border-none'>
             <Link
               href='/'
