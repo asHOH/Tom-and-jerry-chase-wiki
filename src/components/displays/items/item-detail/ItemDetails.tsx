@@ -1,11 +1,12 @@
 'use client';
 
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
+import React from 'react';
+import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import { useAppContext } from '@/context/AppContext';
 import { Item } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import SectionHeader from '@/components/ui/SectionHeader';
+import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import ItemAttributesCard from './ItemAttributesCard';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
@@ -16,47 +17,51 @@ export default function ItemDetailClient({ item }: { item: Item }) {
   const spacing = designTokens.spacing;
   if (!item) return null;
 
+  const baseTextStyle: React.CSSProperties = {
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.xs,
+  };
+
+  const sections: DetailSection[] = [
+    {
+      title: '道具描述',
+      content: (
+        <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
+          <TextWithHoverTooltips
+            text={
+              item.description === undefined
+                ? '待补充'
+                : isDetailedView && item.detailedDescription
+                  ? item.detailedDescription
+                  : item.description
+            }
+          />
+        </p>
+      ),
+    },
+    {
+      title: '生成方式',
+      content: (
+        <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
+          <TextWithHoverTooltips
+            text={
+              item.create === undefined
+                ? '待补充'
+                : isDetailedView && item.detailedCreate
+                  ? item.detailedCreate
+                  : item.create
+            }
+          />
+        </p>
+      ),
+    },
+  ];
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
-      <div className='flex flex-col md:flex-row' style={{ gap: spacing.xl }}>
-        <div className='md:w-1/3'>
-          <ItemAttributesCard item={item} />
-        </div>
-        <div className='md:w-2/3 space-y-3' style={{ whiteSpace: 'pre-wrap' }}>
-          {[
-            item.description === undefined
-              ? { title: '道具描述', text: '待补充' }
-              : {
-                  title: '道具描述',
-                  text:
-                    isDetailedView && item.detailedDescription
-                      ? item.detailedDescription
-                      : item.description,
-                },
-            item.create === undefined
-              ? { title: '生成方式', text: '待补充' }
-              : {
-                  title: '生成方式',
-                  text: isDetailedView && item.detailedCreate ? item.detailedCreate : item.create,
-                },
-          ].map(({ title, text }) => (
-            <div key={title}>
-              <SectionHeader title={title} />
-              <div
-                className='card dark:bg-slate-800 dark:border-slate-700  mb-8'
-                style={{ padding: spacing.lg }}
-              >
-                <p
-                  className='text-black dark:text-gray-200 text-lg'
-                  style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
-                >
-                  <TextWithHoverTooltips text={text as string} />
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <DetailShell
+      leftColumn={<ItemAttributesCard item={item} />}
+      sections={sections}
+      rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
+    />
   );
 }

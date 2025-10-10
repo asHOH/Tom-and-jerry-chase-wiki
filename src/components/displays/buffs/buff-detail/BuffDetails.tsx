@@ -1,11 +1,12 @@
 'use client';
 
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
+import React from 'react';
+import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import { useAppContext } from '@/context/AppContext';
 import { Buff } from '@/data/types';
 import { designTokens } from '@/lib/design-tokens';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import SectionHeader from '@/components/ui/SectionHeader';
+import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import BuffAttributesCard from './BuffAttributesCard';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
@@ -16,56 +17,48 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
   const spacing = designTokens.spacing;
   if (!buff) return null;
 
+  const baseTextStyle: React.CSSProperties = {
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.xs,
+  };
+
+  const sections: DetailSection[] = (
+    [
+      {
+        title: '效果介绍',
+        text:
+          isDetailedView && buff.detailedDescription
+            ? buff.detailedDescription
+            : (buff.description ?? '待补充'),
+      },
+      {
+        title: '效果来源',
+        text:
+          isDetailedView && buff.detailedSource ? buff.detailedSource : (buff.source ?? '待补充'),
+      },
+      buff.stack === undefined
+        ? null
+        : {
+            title: '同类效果叠加方式',
+            text: isDetailedView && buff.detailedStack ? buff.detailedStack : buff.stack,
+          },
+    ] as const
+  )
+    .filter(<T,>(section: T | null): section is T => section !== null)
+    .map<DetailSection>(({ title, text }) => ({
+      title,
+      content: (
+        <p className='text-black dark:text-gray-200 text-lg' style={baseTextStyle}>
+          <TextWithHoverTooltips text={text as string} />
+        </p>
+      ),
+    }));
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.xl }}>
-      <div className='flex flex-col md:flex-row' style={{ gap: spacing.xl }}>
-        <div className='md:w-1/3'>
-          <BuffAttributesCard buff={buff} />
-        </div>
-        <div className='md:w-2/3 space-y-3' style={{ whiteSpace: 'pre-wrap' }}>
-          {[
-            buff.description === undefined
-              ? { title: '效果介绍', text: '待补充' }
-              : {
-                  title: '效果介绍',
-                  text:
-                    isDetailedView && buff.detailedDescription
-                      ? buff.detailedDescription
-                      : buff.description,
-                },
-            buff.source === undefined
-              ? { title: '效果来源', text: '待补充' }
-              : {
-                  title: '效果来源',
-                  text: isDetailedView && buff.detailedSource ? buff.detailedSource : buff.source,
-                },
-            buff.stack === undefined
-              ? { title: '', text: '' }
-              : {
-                  title: '同类效果叠加方式',
-                  text: isDetailedView && buff.detailedStack ? buff.detailedStack : buff.stack,
-                },
-          ].map(
-            ({ title, text }) =>
-              text !== '' && (
-                <div key={title}>
-                  <SectionHeader title={title} />
-                  <div
-                    className='card dark:bg-slate-800 dark:border-slate-700  mb-8'
-                    style={{ padding: spacing.lg }}
-                  >
-                    <p
-                      className='text-black dark:text-gray-200 text-lg'
-                      style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs }}
-                    >
-                      <TextWithHoverTooltips text={text as string} />
-                    </p>
-                  </div>
-                </div>
-              )
-          )}
-        </div>
-      </div>
-    </div>
+    <DetailShell
+      leftColumn={<BuffAttributesCard buff={buff} />}
+      sections={sections}
+      rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
+    />
   );
 }
