@@ -33,7 +33,9 @@ type TabNavigationProps = {
   showDetailToggle?: boolean;
 };
 
-const STACK_COLLAPSE_WIDTHS = [494, 452, 410, 368, 326, 284, 242] as const;
+const STACK_COLLAPSE_WIDTHS = [494, 454, 414, 374, 334, 294, 254] as const;
+const DETAIL_TOGGLE_WIDTH = 56;
+const USER_BUTTON_WIDTH = 44;
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -57,11 +59,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const evaluateCollapsedCount = useCallback(() => {
     if (typeof window === 'undefined') return;
     const width = window.innerWidth;
+    const extraWidth =
+      (showDetailToggle ? DETAIL_TOGGLE_WIDTH : 0) + (!!nickname ? USER_BUTTON_WIDTH : 0);
+    const adjustedWidth = Math.max(width - extraWidth, 0);
     const total = items.length;
     let nextCollapsed = 0;
 
     STACK_COLLAPSE_WIDTHS.forEach((threshold, index) => {
-      if (width < threshold) {
+      if (adjustedWidth < threshold) {
         const collapseSize = Math.min(total, index + 2);
         nextCollapsed = Math.max(nextCollapsed, collapseSize);
       }
@@ -73,7 +78,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     if (nextCollapsed === 0 && overflowOpen) {
       setOverflowOpen(false);
     }
-  }, [collapsedCount, items, overflowOpen]);
+  }, [collapsedCount, items, nickname, overflowOpen, showDetailToggle]);
 
   useEffect(() => {
     if (!mounted) return;
