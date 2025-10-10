@@ -21,7 +21,7 @@ const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {
     'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:px-2.5 md:min-h-[44px] lg:px-3.5 lg:text-base';
 
   const stateClasses = isNavigating
-    ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
+    ? 'bg-gray-400 text-white cursor-not-allowed opacity-80 pointer-events-none'
     : isActive
       ? 'bg-blue-600 text-white dark:bg-blue-700'
       : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600';
@@ -64,20 +64,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     const total = items.length;
     let nextCollapsed = 0;
 
-    STACK_COLLAPSE_WIDTHS.forEach((threshold, index) => {
+    for (let index = 0; index < STACK_COLLAPSE_WIDTHS.length; index += 1) {
+      const threshold = STACK_COLLAPSE_WIDTHS[index]!;
       if (adjustedWidth < threshold) {
         const collapseSize = Math.min(total, index + 2);
         nextCollapsed = Math.max(nextCollapsed, collapseSize);
       }
-    });
+    }
 
-    if (nextCollapsed !== collapsedCount) {
-      setCollapsedCount(nextCollapsed);
+    setCollapsedCount((prev) => (prev === nextCollapsed ? prev : nextCollapsed));
+    if (nextCollapsed === 0) {
+      setOverflowOpen((prev) => (prev ? false : prev));
     }
-    if (nextCollapsed === 0 && overflowOpen) {
-      setOverflowOpen(false);
-    }
-  }, [collapsedCount, items, nickname, overflowOpen, showDetailToggle]);
+  }, [items, nickname, showDetailToggle]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -157,8 +156,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               className={clsx(
                 getButtonClassName(navigatingTo === '/', isHomeActive()),
                 'relative',
-                homeButtonSizing,
-                navigatingTo === '/' && 'pointer-events-none opacity-80'
+                homeButtonSizing
               )}
               aria-label='首页'
               onClick={() => {
@@ -190,8 +188,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 className={clsx(
                   getButtonClassName(navigatingTo === tab.href, isTabActive(tab.href)),
                   'gap-0 md:gap-1 lg:gap-2',
-                  tabMinWidthClass,
-                  navigatingTo === tab.href && 'pointer-events-none opacity-80'
+                  tabMinWidthClass
                 )}
                 aria-label={tab.label}
                 onClick={() => {
@@ -331,10 +328,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 <button
                   type='button'
                   aria-label='用户设置'
-                  className={clsx(
-                    getButtonClassName(false, userDropdownOpen),
-                    'flex items-center justify-center p-2'
-                  )}
+                  className={clsx(getButtonClassName(false, userDropdownOpen), 'p-2')}
                   onClick={() => setUserDropdownOpen((prev) => !prev)}
                 >
                   <UserCircleIcon className='size-6' strokeWidth={1.5} />
