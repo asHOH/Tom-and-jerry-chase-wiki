@@ -63,7 +63,6 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
           title='技能描述'
           value={skill.description ?? null}
           detailedValue={skill.detailedDescription ?? null}
-          fallbackText='待补充'
           isDetailedView={isDetailedView}
         />
       ),

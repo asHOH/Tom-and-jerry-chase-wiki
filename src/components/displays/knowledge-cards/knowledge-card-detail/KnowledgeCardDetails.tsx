@@ -82,7 +82,6 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
           title='知识卡效果'
           value={card.description ?? null}
           detailedValue={card.detailedDescription ?? null}
-          fallbackText='待补充'
           isDetailedView={isDetailedView}
           headerContent={
             fromCharacter ? (

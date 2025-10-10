@@ -24,7 +24,6 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
           title='衍生物描述'
           value={entity.description ?? null}
           detailedValue={entity.detailedDescription ?? null}
-          fallbackText='待补充'
           isDetailedView={isDetailedView}
         />
       ),
@@ -36,7 +35,6 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
           title='生成方式'
           value={entity.create ?? null}
           detailedValue={entity.detailedCreate ?? null}
-          fallbackText='待补充'
           isDetailedView={isDetailedView}
         />
       ),

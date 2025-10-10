@@ -22,7 +22,6 @@ export default function ItemDetailClient({ item }: { item: Item }) {
           title='道具描述'
           value={item.description ?? null}
           detailedValue={item.detailedDescription ?? null}
-          fallbackText='待补充'
           isDetailedView={isDetailedView}
         />
       ),
@@ -34,7 +33,6 @@ export default function ItemDetailClient({ item }: { item: Item }) {
           title='生成方式'
           value={item.create ?? null}
           detailedValue={item.detailedCreate ?? null}
-          fallbackText='待补充'
           isDetailedView={isDetailedView}
         />
       ),
