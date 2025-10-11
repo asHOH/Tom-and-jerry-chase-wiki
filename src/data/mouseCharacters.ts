@@ -184,8 +184,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '搬运奶酪时，移速和跳跃高度增加。',
-            detailedDescription: '搬运奶酪时，移速增加52%、跳跃高度增加25%。',
+            description: '搬运{奶酪}时，移速和跳跃高度增加，同时视野不再降低。',
+            detailedDescription:
+              '搬运{奶酪}时，移速增加52%、跳跃高度增加25%，同时视野不再降低。（该效果需技能加点后再次搬奶酪才会触发）',
           },
           {
             level: 3,

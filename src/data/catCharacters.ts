@@ -3369,6 +3369,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         cueRange: '本房间可见',
         detailedDescription:
           '从远处召唤{追求者}冲至面前距离200的位置，追求者在后摇结束后0.2秒停下(凯特本身静止不动)；随后再次拖动技能键，经0.35秒前摇后使追求者向该方向再度出击，随后进入0.35秒后摇，两段均可对触碰的老鼠造成伤害。',
+        videoUrl: 'https://b23.tv/uBonj7M',
       },
       {
         name: '知识即力量',
@@ -3376,11 +3377,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description:
           '投掷{百科全书}，命中时造成伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还部分冷却并将老鼠直接抓在手中。当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。',
         detailedDescription:
-          '以水平方向1500的速度投掷{百科全书}。书籍对直接命中的老鼠造成{25}伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，[造成伤害](受其他攻击增伤影响)并将老鼠夹住，随后技能进入CD。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还5秒冷却并将被夹住的老鼠直接抓在手中。当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。\n书籍与夹子有相似和不同之处（可以触发{捕鼠夹}，但无法触发{夹不住我}、{狡诈}）。被投掷的书籍也无法触发{乾坤一掷}。',
+          '以水平方向1500的速度投掷{百科全书}。书籍对直接命中的老鼠造成{30}伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，[造成伤害](受其他攻击增伤影响)并将老鼠夹住，随后技能进入CD。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还5秒冷却并将被夹住的老鼠直接抓在手中。当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。\n书籍与夹子有相似和不同之处（可以触发{捕鼠夹}，但无法触发{夹不住我}、{狡诈}）。被投掷的书籍也无法触发{乾坤一掷}。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        forecast: 0.3,
-        aftercast: 0.2,
         cancelableAftercast: ['跳跃键', '道具键'],
         skillLevels: [
           {
@@ -3405,6 +3404,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canHitInPipe: false,
         cooldownTiming: '释放后',
         cueRange: '本房间可见',
+        forecast: 0.3,
+        aftercast: 0.2,
+        videoUrl: 'https://b23.tv/uBonj7M',
       },
       {
         name: '骄傲的学霸',
@@ -3430,51 +3432,52 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             detailedDescription: '每击破一层破绽都会减少{主动技能}和{武器技能}2秒CD。',
           },
         ],
+        videoUrl: 'https://b23.tv/uBonj7M',
       },
     ],
     counters: [
       {
         id: '航海士杰瑞',
-        description: '凯特二级被动减少控制时间，航海士杰瑞难以打出连控',
+        description: '凯特二级被动减少控制时间，航海士杰瑞难以打出连控。',
         isMinor: true,
       },
       {
         id: '剑客杰瑞',
         description:
-          '凯特二级被动会导致剑客杰瑞华尔兹剑舞或者格挡无法与剑与苹果形成配合进行二次连控',
+          '凯特二级被动会导致剑客杰瑞华尔兹剑舞或者格挡无法与剑与苹果形成配合进行二次连控。',
         isMinor: true,
       },
       {
         id: '表演者•杰瑞',
-        description: '凯特的破绽是二段伤害，可以使表演者杰瑞跳舞结束大幅提前',
+        description: '凯特的破绽是多段伤害，可以使表演者杰瑞跳舞结束大幅提前。',
         isMinor: true,
       },
     ],
     counteredBy: [
       {
         id: '国王杰瑞',
-        description: '凯特难以处理国王杰瑞的国王权杖以及国王战旗',
+        description: '凯特难以处理国王杰瑞的国王权杖以及国王战旗。',
         isMinor: true,
       },
       {
         id: '天使杰瑞',
         description:
-          '凯特的技能命中天使杰瑞会造成爪刀与技能被禁，并且雷云范围内会削弱凯特伤害，并会被雷云攻击',
+          '凯特的技能命中天使杰瑞会造成爪刀与技能被禁，并且雷云范围内会削弱凯特伤害，并会被雷云攻击。',
         isMinor: false,
       },
       {
         id: '剑客莉莉',
-        description: '难以处理剑客莉莉二级被动强行救人',
+        description: '凯特难以处理剑客莉莉二级被动强行救人。',
         isMinor: true,
       },
       {
         id: '剑客泰菲',
-        description: '凯特无法阻止头盔救人',
+        description: '凯特无法阻止剑客泰菲头盔救人。',
         isMinor: false,
       },
       {
         id: '米可',
-        description: '米可的采访减伤与回血还有霸体让凯特不好击倒米可',
+        description: '米可的采访减伤与回血还有霸体让凯特不好击倒米可。',
         isMinor: false,
       },
     ],
