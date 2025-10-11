@@ -18,6 +18,26 @@ export default function Tooltip({
   disabled = false,
 }: TooltipProps) {
   const [open, setOpen] = React.useState<boolean>(false);
+  const [isHoverOnly, setIsHoverOnly] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const updateHoverState = () => setIsHoverOnly(mediaQuery.matches);
+
+    updateHoverState();
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateHoverState);
+      return () => mediaQuery.removeEventListener('change', updateHoverState);
+    }
+
+    mediaQuery.addListener(updateHoverState);
+    return () => mediaQuery.removeListener(updateHoverState);
+  }, []);
 
   const trigger = (
     <span
@@ -40,7 +60,7 @@ export default function Tooltip({
         <TooltipPrimitive.Trigger
           asChild
           onClick={(e) => {
-            if (!window.matchMedia('(hover:hover)').matches) {
+            if (!isHoverOnly) {
               e.preventDefault();
               setOpen((prev) => !prev);
             }
