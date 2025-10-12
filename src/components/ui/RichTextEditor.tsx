@@ -305,6 +305,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     deleteTable: useCallback(() => editor?.chain().focus().deleteTable().run(), [editor]),
     toggleBlockquote: useCallback(() => editor?.chain().focus().toggleBlockquote().run(), [editor]),
     toggleCodeBlock: useCallback(() => editor?.chain().focus().toggleCodeBlock().run(), [editor]),
+    insertHorizontalRule: useCallback(
+      () => editor?.chain().focus().setHorizontalRule().scrollIntoView().run(),
+      [editor]
+    ),
     addLink,
     addImage,
     undo: useCallback(() => editor?.chain().focus().undo().run(), [editor]),

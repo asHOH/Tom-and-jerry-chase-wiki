@@ -15,6 +15,7 @@ import {
   CodeBlockIcon,
   LinkIcon,
   ImageIcon,
+  HorizontalRuleIcon,
   UndoIcon,
   RedoIcon,
 } from '../RichTextEditorIcons';
@@ -57,6 +58,7 @@ export interface ToolbarCommands {
   deleteTable(): void;
   toggleBlockquote(): void;
   toggleCodeBlock(): void;
+  insertHorizontalRule(): void;
   addLink(): void;
   addImage(): void;
   undo(): void;
@@ -315,7 +317,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={commands.toggleBlockquote}
             isActive={!!state.blockquote}
-            title='引用'
+            title='引用块'
             mode={mode}
           >
             <BlockquoteIcon />
@@ -327,6 +329,9 @@ export const Toolbar = React.memo(function Toolbar({
             mode={mode}
           >
             <CodeBlockIcon />
+          </ToolbarButton>
+          <ToolbarButton onClick={commands.insertHorizontalRule} title='插入分隔线' mode={mode}>
+            <HorizontalRuleIcon />
           </ToolbarButton>
           <ToolbarButton onClick={commands.addLink} title='插入链接' mode={mode}>
             <LinkIcon />
