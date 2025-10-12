@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { GameDataManager } from '@/lib/dataManager';
@@ -9,6 +9,8 @@ import { EditModeProvider } from '@/context/EditModeContext';
 import { generatePageMetadata, ArticleStructuredData } from '@/lib/metadataUtils';
 import CharacterDocs from './CharacterDocs';
 import { getTutorialPage } from '@/lib/docUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
+import CharacterArticle from './CharacterArticle';
 
 // Revalidate once per 8 hours to keep docs fresh
 export const revalidate = 28800;
@@ -84,6 +86,37 @@ export default async function CharacterPage({
     const characterMap = getCharacterMap();
     const character = characterMap[characterId];
     const docPage = await getTutorialPage(characterId);
+    const article = (
+      docPage
+        ? Promise.resolve(null)
+        : supabaseAdmin
+            .from('articles')
+            .select('id')
+            .in(
+              'title',
+              [characterId]
+                .concat(character?.aliases ?? [])
+                .map((name) => `萌新专区角色教学，${name}`)
+            )
+            .limit(1)
+            .single()
+    ).then((result) => result?.data ?? null);
+
+    const articleContent = Promise.resolve(
+      article.then((data) =>
+        data
+          ? supabaseAdmin
+              .from('article_versions_public_view')
+              .select('content')
+              .eq('article_id', data.id)
+              .eq('status', 'approved')
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .single()
+              .then((result) => ({ content: result?.data?.content ?? null, id: data.id }))
+          : null
+      )
+    );
 
     if (!character) {
       notFound();
@@ -94,7 +127,13 @@ export default async function CharacterPage({
         <EditModeProvider>
           <TabNavigationWrapper showDetailToggle={true}>
             <CharacterDetailsClient character={character}>
-              {!!docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
+              {!!docPage ? (
+                <CharacterDocs docPage={docPage}></CharacterDocs>
+              ) : (
+                <Suspense fallback={null}>
+                  <CharacterArticle content={articleContent} />
+                </Suspense>
+              )}
             </CharacterDetailsClient>
           </TabNavigationWrapper>
         </EditModeProvider>

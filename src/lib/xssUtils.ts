@@ -1,6 +1,9 @@
 import DOMPurify from 'dompurify';
 
-export function sanitizeHTML(html: string): string {
+export function sanitizeHTML(
+  html: string,
+  { removeH1 = false }: { removeH1?: boolean } = {}
+): string {
   DOMPurify.addHook('afterSanitizeAttributes', (node) => {
     if (node.hasAttribute('style')) {
       const style = node.getAttribute('style') || '';
@@ -30,7 +33,6 @@ export function sanitizeHTML(html: string): string {
       'strike',
       'del',
       'a',
-      'h1',
       'h2',
       'h3',
       'ul',
@@ -51,7 +53,7 @@ export function sanitizeHTML(html: string): string {
       'td',
       'colgroup',
       'col',
-    ],
+    ].concat(removeH1 ? [] : ['h1']),
     ALLOWED_ATTR: [
       'href',
       'class',
