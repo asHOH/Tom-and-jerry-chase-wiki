@@ -118,6 +118,12 @@ export default async function CharacterPage({
       )
     );
 
+    articleContent.then((result) =>
+      result?.id
+        ? supabaseAdmin.rpc('increment_article_view_count', { p_article_id: result.id })
+        : null
+    );
+
     if (!character) {
       notFound();
     }
