@@ -3483,12 +3483,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     ],
   },
 
-  /* ----------------------------------- 苏蕊 ---------------------------------- */
+  /* ----------------------------------- 苏蕊 ----------------------------------- */
   苏蕊: {
     aliases: ['苏三心'],
     description:
       '苏蕊是最受欢迎的啦啦队队长，充满活力的她，脸上时时刻刻都洋溢着灿烂的笑容。她热爱生活，享受美食，认识她的猫和老鼠都会被她吸引，和她成为朋友。',
-
     maxHp: 200,
     attackBoost: 0,
     hpRecovery: 2.5,
@@ -3500,7 +3499,6 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     specialClawKnifeCdUnhit: 6,
     clawKnifeRange: 280,
     initialItem: '鞭炮束',
-
     catPositioningTags: [
       {
         tagName: '进攻',
@@ -3521,10 +3519,9 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         additionalDescription: '',
       },
     ],
-
     skillAllocations: [
       {
-        id: '',
+        id: '常规加点',
         pattern: '12000122-1',
         weaponType: 'weapon1',
         description: '',
@@ -3534,70 +3531,64 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
     knowledgeCardGroups: [
       {
         id: '蓄势一击',
-        description: '蓄势一击使苏蕊通过球接爪刀可以轻松打死125血老鼠。',
+        description: '{蓄势一击}使苏蕊通过球接爪刀可以轻松打死125Hp老鼠。',
         groups: [
           {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
-            description: '待补充',
+            description:
+              '以{蓄势一击}和{熊熊燃烧}为主的卡组，可用于大部分情况，{穷追猛打}开局找节奏，{蓄势一击}补伤害，{熊熊燃烧}提高火箭燃烧效率。剩下4费可以选择性的换{加大火力}进一步提高火箭燃烧效率；换{皮糙肉厚}应对高频伤害的阵容；若是习惯{细心}也可以换上。',
           },
           {
             cards: ['S-蓄势一击', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
-            description: '待补充',
-          },
-          {
-            cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-            description: '待补充',
+            description:
+              '以{屈打成招}替换{熊熊燃烧}，牺牲火箭燃烧效率换取更强的拦截能力，也能提供滚雪球能力，但容错较低，一方面可能导致火箭燃烧太慢拖慢节奏，另一方面鼠方支援快或者两边支援会让{屈打成招}效果大打折扣。剩下4费同上。',
           },
           {
             cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-攻其不备', 'C-猫是液体'],
-            description: '待补充',
+            description: '{猫是液体}可应对管道较多的地图。',
           },
         ],
         defaultFolded: false,
       },
       {
         id: '击晕',
-        description: '击晕卡组比较适合新手。',
+        description:
+          '{击晕}卡组比较适合新手，还能提供一定干扰。但可能会出现跳舞爪刀伤害不够的情况，需要更多的衔接瑜伽球和道具，且跳舞爪刀cd较长。',
         groups: [
           {
             cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
-            description: '待补充',
+            description: '{熊熊燃烧}提高火箭燃烧效率。剩余4费仍然可以根据个人情况自由选择。',
           },
           {
             cards: ['S-击晕', 'S-屈打成招', 'A-穷追猛打', 'A-加大火力'],
-            description: '待补充',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-            description: '待补充',
+            description: '{屈打成招}替换{熊熊燃烧}，优劣同上。',
           },
           {
             cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'C-狡诈', 'C-猫是液体'],
-            description: '待补充',
+            description: '{猫是液体}应对管道较多的地图。',
           },
         ],
         defaultFolded: true,
       },
-      // refer to Tom's livestream replay.
       {
         id: '乘胜追击',
-        description: '乘胜卡组有着较高的门槛，但不怕拉扯。',
+        description:
+          '{乘胜追击}卡组有着较高的门槛，但不怕拉扯。不过一方面既有缺伤害的问题，另一方面也有控制缺少的问题。同时苏蕊血量低，容易造成层数大量流失，所以并不太推荐萌新使用。',
         groups: [
           {
             cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-            description: '待补充',
-          },
-          {
-            cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-越挫越勇'],
-            description: '待补充',
+            description:
+              '{乘胜追击}提高机动性，{穷追猛打}开局找节奏，{熊熊燃烧}提高火箭燃烧效率。剩下费用自由选择，同上。',
           },
           {
             cards: ['S-乘胜追击', 'S-蓄势一击', 'A-熊熊燃烧', 'C-猫是液体'],
-            description: '待补充',
+            description:
+              '{乘胜追击}加{蓄势一击}，解决单一{乘胜追击}缺少伤害的问题，但没有{穷追猛打}，开局不太好找节奏，对于猫方找节奏能力有一定要求。比较推荐有七色花或者其他有增益的地图使用。',
           },
           {
             cards: ['S-乘胜追击', 'S-蓄势一击', 'A-加大火力', 'B-皮糙肉厚'],
-            description: '待补充',
+            description:
+              '{加大火力}替换{熊熊燃烧}，随后{乘胜追击}和{蓄势一击}一起携带，这样还能再带一张4费卡。但同上一样需要更多找节奏能力。',
           },
         ],
         defaultFolded: true,
@@ -3609,14 +3600,24 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '苏蕊在律动时间中免疫航海士杰瑞各个技能的控制效果。',
         isMinor: false,
       },
+      {
+        id: '杰瑞',
+        description: '杰瑞自保能力较差，容易被抓，且杰瑞阵容多三保一，易被针对。',
+        isMinor: false,
+      },
     ],
     countersKnowledgeCards: [
-      { id: '铁血', description: '苏蕊可以使铁血状态的老鼠自主跟随。', isMinor: false },
+      {
+        id: '铁血',
+        description: '苏蕊可以使铁血状态的老鼠自主跟随。',
+        isMinor: false,
+      },
     ],
     specialSkills: [
       {
         name: '急速翻滚',
-        description: '',
+        description:
+          '跳舞能提供霸体，所以对于特技霸体的要求降低。同时翻滚快速拉进距离，有利用打出出其不意的效果。',
       },
     ],
     skills: [
@@ -3632,10 +3633,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
-        forecast: 0,
-        aftercast: 0,
         cooldownTiming: '释放后',
-        // 没找到好的技能教学视频
         skillLevels: [
           {
             level: 1,
@@ -3655,6 +3653,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             cooldown: 40,
           },
         ],
+        forecast: 0,
+        aftercast: 0,
       },
       {
         name: '瑜伽球',
@@ -3717,7 +3717,32 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
     countersSpecialSkills: [
-      { id: '干扰投掷', description: '苏蕊跳舞期间免疫眩晕。', isMinor: false },
+      {
+        id: '干扰投掷',
+        description: '苏蕊跳舞期间免疫眩晕。',
+        isMinor: false,
+      },
+    ],
+    counteredBy: [
+      {
+        id: '国王杰瑞',
+        description:
+          '国王杰瑞技能较全面，守护旗的护盾苏蕊不好处理，救援旗的秒救可以搭配其他老鼠实现无伤救，例如大表哥传送，蒙金奇战车等等。进攻旗提高攻击力可能导致苏蕊多倒。但国王单救能力较差。',
+        isMinor: true,
+      },
+      {
+        id: '尼宝',
+        description:
+          '尼宝的翻滚救援不好拦截，虽然跳舞可以在一定程度上克制钩子，但尼宝可以选择优先被动，放弃钩子，这会让尼宝更快3被提高生存能力。',
+        isMinor: false,
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '缴械',
+        description: '苏蕊攻击手段较为单一，跳舞爪刀cd长，主要输出又依赖跳舞蓄势爪刀。',
+        isMinor: false,
+      },
     ],
   },
   /* ----------------------------------- 天使汤姆 ----------------------------------- */
@@ -5146,13 +5171,13 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         isMinor: false,
         description: '{主动技能}提供解控，被动技能提供免疫眩晕和延迟虚弱，使如玉有很强的打架能力。',
         additionalDescription:
-          '注意“舞花枪"期间没有霸体，可被敌方禁用技能类效果封锁而无法释放反击；"花枪反击"期间没有霸体且无法移动，可被熟悉技能的敌方迅速控制住或通过走位扭开。',
+          '注意“舞花枪"期间没有霸体，可被敌方禁用技能类效果封锁而无法释放反击；"花枪反击"落地时没有霸体，可能被敌方道具或技能打断。',
       },
       {
         tagName: '进攻',
         isMinor: false,
         description:
-          '技能和特殊爪刀均能造成伤害，前刺回马枪同时命中更是能造成极高额伤害。手中有老鼠时也能攻击。',
+          '技能和特殊爪刀均能造成伤害，前刺回马枪同时命中更是能造成极高额伤害。手中有老鼠时也能攻击。此外自身还拥有15攻击增伤。',
         additionalDescription: '',
       },
     ],
@@ -5162,34 +5187,38 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         pattern: '120220(0)11',
         weaponType: 'weapon1',
         description:
-          '被动技能“戏剧转折”提供的“坚毅”效果能免疫眩晕并延迟虚弱，是如玉的核心。掷花枪升级能大幅减少CD，提高主动进攻的能力。{3级被动}会提高进入“坚毅”状态的回血量，可能不利于快速触发“坚毅”状态，应视情况决定加点与否。',
+          '被动技能“戏剧转折”提供的“坚毅”效果能免疫眩晕并延迟虚弱，是如玉的核心。掷花枪升级能大幅减少CD，提高主动进攻的能力。{3级被动}会提高进入“坚毅”状态的回血量，可能不利于连续触发“坚毅”状态或{暴怒}，可视情况决定加点与否。',
       },
       {
         id: '主点被动',
-        pattern: '1200(0)2211',
+        pattern: '120022(0)11',
         weaponType: 'weapon1',
-        description: '提前加点被动技能能更早享受到免疫眩晕的效果，但一定程度上降低了攻击能力。',
+        description:
+          '提前加点被动技能能更早享受到免疫眩晕及{2级被动}的反击效果，提高被动打架能力，但一定程度上降低了主动进攻能力。',
       },
     ],
     knowledgeCardGroups: [
       {
+        cards: ['S-暴怒', 'A-熊熊燃烧', 'A-穷追猛打', 'B-反侦察', 'C-猫是液体'],
+        description:
+          '在管道多的地图中可以使用。如玉较难找节奏，可以等机械鼠出洞后再选择房间，带{反侦察}打爆一只机械鼠后立刻升级，防止因缺少被动而导致找不到节奏。',
+        contributor: 'xiaotian',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-暴怒', 'A-熊熊燃烧', 'C-猫是液体'],
+        description:
+          '推荐在森林牧场使用。也可把{猫是液体}换为{狡诈}，在御门酒店使用。{乘胜追击}增加移速，防止被拉扯。本卡组缺点在于开局节奏不好找，不过在森林牧场中可以采七色花弥补这点。',
+        contributor: 'xiaotian',
+      },
+      {
+        cards: ['S-暴怒', 'A-熊熊燃烧', 'A-细心', 'B-捕鼠夹', 'C-狡诈'],
+        description: '推荐在夏日游轮I或II，以及太空堡垒中使用。',
+        contributor: 'xiaotian',
+      },
+      {
         cards: ['S-暴怒', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
         description:
-          '常规卡组。如玉被动提供的“坚毅”状态使她无需虚弱即可享受{暴怒}效果，{暴怒}提供的可观攻击增伤又能让如玉更容易造成敌方虚弱，从而退出“坚毅”状态，适配性不错。可根据需要将{加大火力}换为其他知识卡，例如{细心}或{心灵手巧}。',
-      },
-      {
-        cards: ['S-暴怒', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
-        description: '常规卡组变种。{猫是液体}在管道图十分灵活。',
-      },
-      {
-        cards: ['A-熊熊燃烧', 'A-穷追猛打', 'A-细心', 'A-加大火力', 'C-猫是液体'],
-        description:
-          '舍弃{暴怒}的卡组，灵活性大大提升，可用老鼠夹补充防守能力。但这套配卡打架能力不如{暴怒}卡组，需尽量避免跟多只老鼠缠斗，防止老鼠发现如玉没带{暴怒}。',
-      },
-      {
-        cards: ['S-屈打成招', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
-        description:
-          '以{屈打成招}替换掉{暴怒}的卡组，利用屈打提供的额外位置信息制定战术，但同样要避免缠斗。',
+          '如玉的基础卡组。如玉被动提供的“坚毅”状态使她无需虚弱即可享受{暴怒}效果，{暴怒}提供的可观攻击增伤又能让如玉更容易造成敌方虚弱，从而退出“坚毅”状态，适配性不错。可根据需要将{加大火力}换为其他知识卡，例如{细心}或{心灵手巧}。',
       },
     ],
     specialSkills: [

@@ -2342,13 +2342,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     skillAllocations: [
       {
         id: '地狱裂隙流',
-        pattern: '011010222',
+        pattern: '011001222',
         weaponType: 'weapon1',
         description: '传送被动流，若墙缝期7级则点三叉戟。',
       },
       {
         id: '三叉戟流',
-        pattern: '022010112',
+        pattern: '022001112',
         weaponType: 'weapon1',
         description: '地狱门被动流，以流放门玩法为主，对传送点位记忆和操作要求较高。',
       },
@@ -4116,6 +4116,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         cards: ['S-铁血', 'C-救救我', 'S-舍己', 'B-食物力量', 'A-投手'],
         description: '21知识点卡组，也可以针对斯飞，布奇等依赖移速的猫。',
       },
+      {
+        cards: ['S-铁血', 'C-救救我', 'S-舍己', 'B-飞跃', 'B-绝地反击'],
+        description: '21知识点卡组，能提升拿坡里的自保，使拿坡里变得更全能。',
+      },
     ],
     skills: [
       {
@@ -5316,7 +5320,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '干扰投掷提高马索尔的干扰能力和拳头命中率。',
       },
     ],
-    aliases: ['大表哥'],
+    aliases: ['大表哥', '小表弟'],
     counteredBySpecialSkills: [
       {
         id: '绝地反击',
@@ -5506,14 +5510,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         additionalDescription: '若4只老鼠均在墙缝附近可以技能全交做到秒破。',
       },
     ],
-
     skillAllocations: [
       {
-        id: '',
+        id: '常规加点',
         pattern: '0210-22011',
         weaponType: 'weapon1',
         description:
-          '加点灵活。五级时若奶酪位被放飞可先点二级协奏补推。二级礼服增加拆火箭难度，应将加点留到七级，直接升到三级礼服。',
+          '五级时若奶酪位被放飞可先点二级协奏补推。二级礼服增加拆火箭难度，应将加点留到七级，直接升到三级礼服。面对上火箭能力较弱的猫可以优先点出二级被动。',
         additionaldescription:
           '若进入墙缝战时未满8级或猫咪破盾能力强，可舍弃三级礼服点三级被动及二级协奏。',
       },
@@ -5522,16 +5525,22 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'B-夹不住我', 'C-救救我'],
         description:
-          '利用精准投射快速刷新礼服CD，速炸火箭，让猫短时间内绑不上火箭，夹不住我可配合2级协奏音符速破夹子。',
+          '利用{精准投射}快速刷新礼服CD，速炸火箭，让猫短时间内绑不上火箭，{夹不住我}可配合2级协奏音符速破夹子。',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'B-绝地反击', 'C-救救我', 'C-不屈'],
         description:
-          '知识量不足可带本套卡组。绝地反击可配合共鸣冲击波快速打出高额伤害，不屈增加自保，可换成夹不住我。',
+          '知识量不足可带本套卡组。{绝地反击}可配合共鸣冲击波快速打出高额伤害，{不屈}增加自保，可换成{夹不住我}。',
       },
       {
-        cards: ['S-铁血', 'S-无畏', 'A-投手', 'C-救救我'],
-        description: '米特专用卡组。',
+        cards: ['S-铁血', 'S-无畏', 'C-救救我', 'C-不屈', 'B-绝地反击'],
+        description:
+          '打米特可用卡组（未开启21点可舍弃{绝地反击}），尽量找到机会近身打掉胡椒罐（前提是血量健康），本卡组虽配备了{绝地反击}，但由于米特的血量较高还是尽量不要与其打架',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
+        description:
+          '打架特化卡组，可以频繁的干扰猫的进攻节奏，但是丧失了部分功能性及自保，推荐四排且队伍里没有干扰位时使用',
       },
     ],
     specialSkills: [
@@ -5540,7 +5549,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '音乐家在武器技能持续期间持有惯性，此时使用急速翻滚能快速位移。',
       },
     ],
-
     skills: [
       {
         name: '风格骤变',
@@ -5550,7 +5558,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           '根据演奏风格给予周围友方增益效果。使用技能可切换风格，切换时音乐家杰瑞会同时保持上一种风格8秒。点出该技能时风格为协奏。',
         canMoveWhileUsing: false,
         canUseInAir: true,
-        // cancelableSkill: '不确定是否可被打断', // FIXME
         cancelableAftercast: ['道具键*', '跳跃键'],
         videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=408.2',
         skillLevels: [
@@ -5576,6 +5583,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 15,
           },
         ],
+        forecast: 1,
+        aftercast: 0.2,
       },
       {
         name: '幻风礼服',
@@ -5583,13 +5592,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description:
           '进行一场忘我演奏，期间受到的伤害降低，可通过移动键进行最多3次快速位移。[再次按下技能键可取消技能](使用技能后的1秒/进行位移后的0.6秒内无法取消技能)。不可交互，可丢道具。',
         detailedDescription:
-          '进行一场持续10秒或3次位移的忘我演奏，期间受到的伤害降低20，操作按键切换为移动键，可通过点按进行最多3次快速位移（每次位移均视作使用了一次技能）。[再次按下技能键可取消技能](使用技能后的1秒/进行位移后的0.6秒内无法取消技能)。不可交互，可丢道具。',
+          '进行一场持续10秒或3次位移的忘我演奏，期间受到的伤害降低20，操作按键切换为移动键，可通过点按进行最多3次快速位移，每次位移前摇0.1秒，位移时间0.25秒，且视作使用了一次技能。[再次按下技能键可取消技能](使用技能后的1秒/进行位移后的0.6秒内无法取消技能)。不可交互，可丢道具。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
-        forecast: 0,
-        aftercast: 0,
         videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=286.4',
         skillLevels: [
           {
@@ -5608,6 +5615,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
             cooldown: 18,
           },
         ],
+        forecast: 0,
+        aftercast: 0,
       },
       {
         name: '共鸣',
@@ -5647,6 +5656,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '绝地反击',
         description:
           '音乐家能快速拆火箭，阻止猫咪霸体绑火箭。不过绝地反击能免疫共鸣眩晕，还是要小心。',
+        isMinor: true,
+      },
+    ],
+    counters: [
+      {
+        id: '莱特宁',
+        description:
+          '音乐家可以利用礼服撞开{垃圾桶}，避免莱特宁抓起老鼠后用垃圾桶鞭尸，而且由于莱特宁缺少控制手段，音乐家可以安全的使用礼服拆火箭。但由于莱特宁的高机动性还是得注意闪现爪刀和交互闪，防止被打死',
         isMinor: true,
       },
     ],
@@ -5955,7 +5972,8 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能。(内置CD：9秒)',
+            description:
+              '对猫咪造成伤害或受到猫咪的伤害时，刷新主动技能[和武器技能](游戏内描述有误，未提到刷新武器技能的效果)。(内置CD：9秒)',
           },
         ],
       },

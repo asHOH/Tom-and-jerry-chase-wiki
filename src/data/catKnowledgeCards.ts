@@ -323,7 +323,8 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 4,
     description: '爪刀使老鼠在**一段时间**内推速大幅下降。',
-    detailedDescription: '爪刀对老鼠造成恐吓，使老鼠在**一段时间**内推速下降60%。',
+    detailedDescription:
+      '爪刀对老鼠造成恐吓，使老鼠在**一段时间**内推速下降60%。\n注：由于{全局推奶酪加速}的效果，老鼠会在奶酪期最后1分30秒时免疫恐吓。',
     levels: [
       { level: 1, description: '恐吓效果持续**30**秒。' },
       { level: 2, description: '恐吓效果持续**45**秒。' },

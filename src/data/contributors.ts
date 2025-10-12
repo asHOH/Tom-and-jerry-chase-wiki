@@ -507,6 +507,19 @@ export const contributors: Contributor[] = [
       },
     ],
   },
+  {
+    id: 'xiaotian',
+    name: '丷小天丷',
+    description:
+      'S19、20、21国服前十表演者·杰瑞，S22国一兔八哥、S23国五仙女鼠、国六莱恩、国三梦游杰瑞、S24国三兔八哥、国六莱恩，s25国十米可，国六如玉',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['如玉'],
+        isMinor: true,
+      },
+    ],
+  },
   // TODO: Add 米特技巧 contributor
   // TODO：Add 库博知识卡推荐 contributor
   {
