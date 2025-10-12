@@ -16,6 +16,12 @@ body {
   position: relative;
 }
 
+/* Refine article heading scale for better balance on desktop */
+.prose :where(h1):not(:where([class~='not-prose'] *)) {
+  font-size: 2.125rem;
+  line-height: 2.5rem;
+}
+
 /* Focus styles for accessibility */
 *:focus-visible {
   outline: 2px solid #3b82f6;
