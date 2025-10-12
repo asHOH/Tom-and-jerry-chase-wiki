@@ -156,7 +156,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={commands.toggleStrike}
             isActive={!!state.strike}
-            title='删除线'
+            title='删除线 (Ctrl+Shift+S)'
             mode={mode}
           >
             <StrikethroughIcon />
@@ -164,7 +164,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={commands.toggleInlineCode}
             isActive={!!state.code}
-            title='行内代码'
+            title='行内代码 (Ctrl+E)'
             mode={mode}
           >
             <InlineCodeIcon />
@@ -177,7 +177,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={() => commands.toggleHeading(1)}
             isActive={state.headingLevel === 1}
-            title='标题 1'
+            title='标题 1 (Ctrl+Alt+1)'
             mode={mode}
           >
             H1
@@ -185,7 +185,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={() => commands.toggleHeading(2)}
             isActive={state.headingLevel === 2}
-            title='标题 2'
+            title='标题 2 (Ctrl+Alt+2)'
             mode={mode}
           >
             H2
@@ -193,7 +193,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={() => commands.toggleHeading(3)}
             isActive={state.headingLevel === 3}
-            title='标题 3'
+            title='标题 3 (Ctrl+Alt+3)'
             mode={mode}
           >
             H3
@@ -206,7 +206,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={commands.toggleBulletList}
             isActive={!!state.bulletList}
-            title='无序列表'
+            title='无序列表 (Ctrl+Shift+8)'
             mode={mode}
           >
             <BulletListIcon />
@@ -214,7 +214,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={commands.toggleOrderedList}
             isActive={!!state.orderedList}
-            title='有序列表'
+            title='有序列表 (Ctrl+Shift+7)'
             mode={mode}
           >
             <OrderedListIcon />
@@ -317,7 +317,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={commands.toggleBlockquote}
             isActive={!!state.blockquote}
-            title='引用块'
+            title='引用块 (Ctrl+Shift+B)'
             mode={mode}
           >
             <BlockquoteIcon />
@@ -325,7 +325,7 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={commands.toggleCodeBlock}
             isActive={!!state.codeBlock}
-            title='代码块'
+            title='代码块 (Ctrl+Alt+C)'
             mode={mode}
           >
             <CodeBlockIcon />
