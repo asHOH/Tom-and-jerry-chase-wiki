@@ -181,6 +181,13 @@ export const ImageIcon = React.memo<IconProps>(({ className = 'size-4', ...rest 
 ));
 ImageIcon.displayName = 'ImageIcon';
 
+export const HorizontalRuleIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => (
+  <SvgIcon className={className} strokeWidth={2} {...rest}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M4 12h16' />
+  </SvgIcon>
+));
+HorizontalRuleIcon.displayName = 'HorizontalRuleIcon';
+
 // Undo/Redo icons
 export const UndoIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => (
   <SvgIcon className={className} strokeWidth={2} {...rest}>

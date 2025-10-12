@@ -6,7 +6,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import type { Node as PMNode } from '@tiptap/pm/model';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
@@ -58,7 +57,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         // Exclude extensions we want to configure separately
         link: false,
       }),
-      Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
@@ -305,6 +303,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     deleteTable: useCallback(() => editor?.chain().focus().deleteTable().run(), [editor]),
     toggleBlockquote: useCallback(() => editor?.chain().focus().toggleBlockquote().run(), [editor]),
     toggleCodeBlock: useCallback(() => editor?.chain().focus().toggleCodeBlock().run(), [editor]),
+    insertHorizontalRule: useCallback(
+      () => editor?.chain().focus().setHorizontalRule().scrollIntoView().run(),
+      [editor]
+    ),
     addLink,
     addImage,
     undo: useCallback(() => editor?.chain().focus().undo().run(), [editor]),
