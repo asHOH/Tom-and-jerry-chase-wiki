@@ -133,8 +133,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const clampedCollapsed = Math.min(collapsedCount, totalTabs);
   const isCompactMode = clampedCollapsed > 0;
   const visibleCount = Math.max(totalTabs - clampedCollapsed, 0);
-  const primaryTabs = items.slice(0, visibleCount);
-  const overflowTabs = clampedCollapsed > 0 ? items.slice(visibleCount) : [];
+  const activeIndex = items.findIndex((tab) => isTabActive(tab.href));
+  const sortedTabs = isCompactMode
+    ? items
+        .slice()
+        .sort((a, b) => +(items.indexOf(a) < activeIndex) - +(items.indexOf(b) < activeIndex))
+    : items;
+  const primaryTabs = sortedTabs.slice(0, visibleCount);
+  const overflowTabs = clampedCollapsed > 0 ? sortedTabs.slice(visibleCount) : [];
 
   const tabMinWidthClass = 'min-w-[40px]';
   const homeButtonSizing = clsx('min-w-[40px]', !isCompactMode && 'lg:min-w-fit');
