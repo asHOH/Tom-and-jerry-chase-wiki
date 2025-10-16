@@ -4092,6 +4092,11 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
         description: '主流卡组，管道图用。',
       },
+      {
+        cards: ['S-乘胜追击', 'S-屈打成招', 'S-乾坤一掷', 'C-猫是液体'],
+        description:
+          '可以一定程度上反制减速，但是可能会牺牲放飞速度，建议有一定基本功再考虑带{屈打成招}，若不适应可换为{熊熊燃烧}。',
+      },
     ],
     skills: [
       {

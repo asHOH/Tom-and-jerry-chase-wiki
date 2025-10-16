@@ -486,7 +486,7 @@ export const contributors: Contributor[] = [
   {
     id: 'wudimaohudawang',
     name: '无敌猫虎大王wy',
-    description: '现猫榜第15名（截至2025.8.23）',
+    description: 'S25赛季全国第3恶魔汤姆',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -498,7 +498,7 @@ export const contributors: Contributor[] = [
   {
     id: 'qianligongchanjuan',
     name: '千里共婵娟',
-    description: '现国一追风汤姆，现猫榜第33名（截至2025年8月30日）',
+    description: 'S25赛季全国第1追风汤姆，最高猫天梯排行榜第10',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -511,7 +511,7 @@ export const contributors: Contributor[] = [
     id: 'xiaotian',
     name: '丷小天丷',
     description:
-      'S19、20、21国服前十表演者·杰瑞，S22国一兔八哥、S23国五仙女鼠、国六莱恩、国三梦游杰瑞、S24国三兔八哥、国六莱恩，s25国十米可，国六如玉',
+      'S25赛季全国第6如玉；S19、20、21国服前十表演者·杰瑞，S22国一兔八哥、S23国五仙女鼠、国六莱恩、国三梦游杰瑞、S24国三兔八哥、国六莱恩，S25国十米可',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -544,6 +544,11 @@ export const contributors: Contributor[] = [
     id: 'fanshuwa',
     name: '凡叔哇',
     url: 'https://space.bilibili.com/273122087',
+    roles: [{ type: RoleType.ArtProvider }],
+  },
+  {
+    id: 'rumeng',
+    name: '如梦',
     roles: [{ type: RoleType.ArtProvider }],
   },
 ];
