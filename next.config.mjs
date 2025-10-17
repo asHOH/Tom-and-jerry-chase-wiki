@@ -2,6 +2,7 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import withPWA from 'next-pwa';
 import remarkGfm from 'remark-gfm';
+import { cspHeaderValue } from './csp.config.mjs';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -115,8 +116,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://va.vercel-scripts.com https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; img-src 'self' data: https://vitals.vercel-insights.com https://*.supabase.co; font-src 'self'; connect-src 'self' https://vitals.vercel-insights.com https://vercel-analytics.com https://vercel.live *.supabase.co https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; frame-src 'self' about: https://vercel.live https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; child-src 'self' about: https://vercel.live https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; form-action 'self'; base-uri 'self'; worker-src 'self' blob:; frame-ancestors 'none';",
+            value: cspHeaderValue,
           },
         ],
       },
