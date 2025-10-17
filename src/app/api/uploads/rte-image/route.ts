@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
 import { extname } from 'node:path';
 
@@ -10,7 +10,93 @@ import {
   RTE_IMAGE_ALLOWED_MIME_TYPES,
   RTE_IMAGE_BUCKET,
   RTE_IMAGE_MAX_BYTES,
+  RTE_IMAGE_PUBLIC_BASE,
 } from '@/lib/richtext/imagePolicy';
+
+const MAX_LIBRARY_LIMIT = 60;
+
+export async function GET(request: NextRequest) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const limitParam = Number.parseInt(searchParams.get('limit') ?? '30', 10);
+  const limit = Number.isFinite(limitParam)
+    ? Math.min(Math.max(limitParam, 1), MAX_LIBRARY_LIMIT)
+    : 30;
+  const scope = searchParams.get('scope') === 'all' ? 'all' : 'mine';
+  const searchTerm = searchParams.get('search')?.trim();
+
+  // storage.objects isn't part of the generated Database types, so fall back to an untyped query
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const storageQuery = (supabaseAdmin as any).from('storage.objects');
+
+  let query = storageQuery
+    .select('name,created_at,metadata', { count: 'exact' })
+    .eq('bucket_id', RTE_IMAGE_BUCKET);
+
+  if (scope === 'mine') {
+    const prefixPattern = `${user.id}/%`;
+    if (searchTerm) {
+      const sanitized = searchTerm.replace(/[%_]/g, '\\$&');
+      query = query.ilike('name', `${user.id}/%${sanitized}%`);
+    } else {
+      query = query.ilike('name', prefixPattern);
+    }
+  } else if (searchTerm) {
+    const sanitized = searchTerm.replace(/[%_]/g, '\\$&');
+    query = query.ilike('name', `%${sanitized}%`);
+  }
+
+  const { data, error } = await query.order('created_at', { ascending: false }).limit(limit);
+
+  if (error) {
+    console.error('Supabase storage list error', error);
+    return NextResponse.json({ error: 'Failed to list images' }, { status: 500 });
+  }
+
+  type StorageObjectRow = {
+    name: string;
+    created_at: string | null;
+    metadata: null | { size?: number; mimetype?: string; [key: string]: unknown };
+  };
+
+  const rows: StorageObjectRow[] = Array.isArray(data) ? (data as StorageObjectRow[]) : [];
+
+  const items = rows.map((item) => {
+    const metadata = item.metadata ?? {};
+    const rawSize = (metadata as Record<string, unknown>).size;
+    const size =
+      typeof rawSize === 'number'
+        ? rawSize
+        : typeof rawSize === 'string'
+          ? Number.parseInt(rawSize, 10)
+          : null;
+    const mimeType = (metadata as Record<string, unknown>).mimetype;
+    const publicUrl = RTE_IMAGE_PUBLIC_BASE
+      ? `${RTE_IMAGE_PUBLIC_BASE}/${item.name}`
+      : supabaseAdmin.storage.from(RTE_IMAGE_BUCKET).getPublicUrl(item.name).data.publicUrl;
+    return {
+      name:
+        String(item.name ?? '')
+          .split('/')
+          .pop() ?? '',
+      path: item.name as string,
+      publicUrl,
+      createdAt: item.created_at as string | null,
+      size,
+      mimeType: typeof mimeType === 'string' ? mimeType : null,
+    };
+  });
+
+  return NextResponse.json({ items });
+}
 
 const MIME_EXTENSION_MAP: Record<string, string> = {
   'image/png': 'png',

@@ -21,6 +21,7 @@ import {
 } from '@/lib/richtext/imagePolicy';
 import Toolbar, { ToolbarCommands, ToolbarState } from './RichTextEditor/Toolbar';
 import { LoadingSpinnerIcon } from './RichTextEditorIcons';
+import ImagePickerModal from './RichTextEditor/ImagePickerModal';
 
 interface RichTextEditorProps {
   content?: string;
@@ -28,8 +29,6 @@ interface RichTextEditorProps {
   placeholder?: string;
   className?: string;
 }
-
-const ACCEPTED_MIME_STRING = RTE_IMAGE_ALLOWED_MIME_TYPES.join(',');
 
 function formatBytes(bytes: number): string {
   if (bytes >= 1024 * 1024) {
@@ -72,6 +71,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     inTable: false,
   });
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [showImagePicker, setShowImagePicker] = useState(false);
+  const [libraryRefreshKey, setLibraryRefreshKey] = useState(0);
 
   const editor = useEditor({
     extensions: [
@@ -287,105 +288,69 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const allowedImageSourcesText = useMemo(() => describeAllowedImageSources(), []);
 
-  const addImage = useCallback(() => {
-    if (!editor) return;
-
-    const manualUrl = window.prompt(
-      `请输入${allowedImageSourcesText}的图片地址，留空以从本地上传。`
-    );
-    if (manualUrl === null) {
-      return;
+  const uploadImageFile = useCallback(async (file: File) => {
+    if (!RTE_IMAGE_ALLOWED_MIME_TYPES.includes(file.type)) {
+      throw new Error('仅支持上传 PNG、JPEG、WEBP、AVIF 或 GIF 图片');
+    }
+    if (file.size > RTE_IMAGE_MAX_BYTES) {
+      throw new Error(
+        `图片大小需小于 ${formatBytes(RTE_IMAGE_MAX_BYTES)}，当前为 ${formatBytes(file.size)}`
+      );
     }
 
-    if (manualUrl.trim()) {
-      const normalized = normalizeHostedImageUrl(manualUrl);
-      if (!normalized) {
-        window.alert(`仅允许使用 ${allowedImageSourcesText}`);
-        return;
-      }
-      editor.chain().focus().setImage({ src: normalized }).run();
-      return;
-    }
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    setIsUploadingImage(true);
 
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = ACCEPTED_MIME_STRING;
-    input.style.display = 'none';
-    document.body.appendChild(input);
-
-    const cleanup = () => {
-      input.value = '';
-      if (input.parentNode) {
-        input.parentNode.removeChild(input);
-      }
-    };
-
-    input.addEventListener(
-      'blur',
-      () => {
-        // defer so change handler (if any) runs first
-        setTimeout(() => {
-          cleanup();
-        }, 0);
-      },
-      { once: true }
-    );
-
-    input.onchange = () => {
-      const file = input.files?.[0];
-      if (!file) {
-        cleanup();
-        return;
-      }
-      if (!RTE_IMAGE_ALLOWED_MIME_TYPES.includes(file.type)) {
-        window.alert('仅支持上传 PNG、JPEG、WEBP、AVIF 或 GIF 图片');
-        cleanup();
-        return;
-      }
-      if (file.size > RTE_IMAGE_MAX_BYTES) {
-        window.alert(
-          `图片大小需小于 ${formatBytes(RTE_IMAGE_MAX_BYTES)}，当前为 ${formatBytes(file.size)}`
-        );
-        cleanup();
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('file', file, file.name);
-      setIsUploadingImage(true);
-
-      fetch('/api/uploads/rte-image', {
+    try {
+      const response = await fetch('/api/uploads/rte-image', {
         method: 'POST',
         body: formData,
-      })
-        .then(async (response) => {
-          if (!response.ok) {
-            const message = await response.text();
-            throw new Error(message || '上传失败');
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        try {
+          const payload = JSON.parse(text) as { error?: string };
+          throw new Error(payload.error || '上传失败');
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            throw new Error(text || '上传失败');
           }
-          return response.json() as Promise<{ publicUrl: string }>;
-        })
-        .then(({ publicUrl }) => {
-          const normalized = normalizeHostedImageUrl(publicUrl);
-          if (!normalized) {
-            throw new Error('上传的图片地址未通过安全校验');
-          }
-          editor.chain().focus().setImage({ src: normalized }).run();
-        })
-        .catch((error) => {
-          console.error('上传图片失败', error);
-          window.alert('上传图片失败，请稍后重试或联系管理员。');
-        })
-        .finally(() => {
-          setIsUploadingImage(false);
-          cleanup();
-        });
-    };
+          throw error;
+        }
+      }
+      const result = (await response.json()) as { publicUrl?: string };
+      if (!result?.publicUrl) {
+        throw new Error('上传失败，未返回图片地址');
+      }
+      const normalized = normalizeHostedImageUrl(result.publicUrl);
+      if (!normalized) {
+        throw new Error('上传的图片地址未通过安全校验');
+      }
+      setLibraryRefreshKey((key) => key + 1);
+      return normalized;
+    } finally {
+      setIsUploadingImage(false);
+    }
+  }, []);
 
-    setTimeout(() => {
-      input.click();
-    }, 0);
-  }, [editor, allowedImageSourcesText]);
+  const addImage = useCallback(() => {
+    if (!editor) return;
+    setShowImagePicker(true);
+  }, [editor]);
+
+  const handleImagePicked = useCallback(
+    (url: string) => {
+      const normalized = normalizeHostedImageUrl(url) ?? (url.startsWith('/') ? url : null);
+      if (!normalized) {
+        window.alert('选取的图片地址未通过安全校验，请联系管理员。');
+        return;
+      }
+      editor?.chain().focus().setImage({ src: normalized }).run();
+      setShowImagePicker(false);
+    },
+    [editor]
+  );
 
   const addLink = useCallback(() => {
     if (!editor) return;
@@ -495,6 +460,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         mode={viewMode}
         onModeChange={handleModeChange}
         isUploadingImage={isUploadingImage}
+      />
+      <ImagePickerModal
+        isOpen={showImagePicker}
+        onClose={() => setShowImagePicker(false)}
+        onSelect={handleImagePicked}
+        onUpload={uploadImageFile}
+        isUploading={isUploadingImage}
+        allowedSourcesDescription={allowedImageSourcesText}
+        refreshLibraryKey={libraryRefreshKey}
       />
       {viewMode === 'rich' ? (
         <EditorContent editor={editor} />
