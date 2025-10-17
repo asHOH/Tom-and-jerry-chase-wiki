@@ -1,6 +1,6 @@
 const directives = {
-  "default-src": ["'self'"],
-  "script-src": [
+  'default-src': ["'self'"],
+  'script-src': [
     "'self'",
     "'unsafe-inline'",
     "'unsafe-eval'",
@@ -10,20 +10,10 @@ const directives = {
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
   ],
-  "style-src": [
-    "'self'",
-    "'unsafe-inline'",
-    'https://hcaptcha.com',
-    'https://*.hcaptcha.com',
-  ],
-  "img-src": [
-    "'self'",
-    'data:',
-    'https://vitals.vercel-insights.com',
-    'https://*.supabase.co',
-  ],
-  "font-src": ["'self'"],
-  "connect-src": [
+  'style-src': ["'self'", "'unsafe-inline'", 'https://hcaptcha.com', 'https://*.hcaptcha.com'],
+  'img-src': ["'self'", 'data:', 'https://vitals.vercel-insights.com', 'https://*.supabase.co'],
+  'font-src': ["'self'"],
+  'connect-src': [
     "'self'",
     'https://vitals.vercel-insights.com',
     'https://vercel-analytics.com',
@@ -33,9 +23,9 @@ const directives = {
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
   ],
-  "media-src": ["'self'"],
-  "object-src": ['none'],
-  "frame-src": [
+  'media-src': ["'self'"],
+  'object-src': ['none'],
+  'frame-src': [
     "'self'",
     'about:',
     'https://vercel.live',
@@ -43,7 +33,7 @@ const directives = {
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
   ],
-  "child-src": [
+  'child-src': [
     "'self'",
     'about:',
     'https://vercel.live',
@@ -51,10 +41,10 @@ const directives = {
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
   ],
-  "form-action": ["'self'"],
-  "base-uri": ["'self'"],
-  "worker-src": ["'self'", 'blob:'],
-  "frame-ancestors": ['none'],
+  'form-action': ["'self'"],
+  'base-uri': ["'self'"],
+  'worker-src': ["'self'", 'blob:'],
+  'frame-ancestors': ['none'],
 };
 
 function serializeCsp(map) {
