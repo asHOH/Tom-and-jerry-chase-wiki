@@ -10,7 +10,7 @@ import { RTE_IMAGE_ALLOWED_MIME_TYPES, RTE_IMAGE_MAX_BYTES } from '@/lib/richtex
 
 const TABS = [
   { id: 'upload', label: '上传新图片' },
-  { id: 'library', label: 'Supabase 图库' },
+  { id: 'library', label: '文章图库' },
   { id: 'site', label: '站内图片' },
 ] as const;
 
@@ -289,11 +289,13 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         )}
       </div>
       <div className='rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900'>
-        <p className='text-sm text-gray-700 dark:text-gray-300'>如果已知图片 URL，可直接粘贴：</p>
+        <p className='text-sm text-gray-700 dark:text-gray-300'>
+          若已知图片 URL，可直接粘贴（仅支持站内/网站数据库的 URL）：
+        </p>
         <div className='mt-2 flex gap-2'>
           <input
             type='text'
-            className='flex-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='flex-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-xs leading-snug text-gray-900 dark:text-gray-100 placeholder:text-[11px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
             placeholder={allowedSourcesDescription}
             value={manualInput}
             onChange={(event) => setManualInput(event.target.value)}
@@ -472,9 +474,6 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         <div className='flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4'>
           <div>
             <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>插入图片</h2>
-            <p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-              {allowedSourcesDescription}
-            </p>
           </div>
           <button
             type='button'
