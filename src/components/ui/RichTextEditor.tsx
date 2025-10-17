@@ -2,7 +2,7 @@ import { Table } from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableHeader from '@tiptap/extension-table-header';
 import TableCell from '@tiptap/extension-table-cell';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import type { Node as PMNode } from '@tiptap/pm/model';
 import StarterKit from '@tiptap/starter-kit';
@@ -12,16 +12,33 @@ import Image from '@tiptap/extension-image';
 import clsx from 'clsx';
 import { htmlToWikiText, wikiTextToHTML } from '@/lib/richTextUtils';
 import { cleanHTMLForExport } from '@/lib/richtext/htmlTransforms';
+import {
+  describeAllowedImageSources,
+  normalizeHostedImageUrl,
+  RTE_IMAGE_ALLOWED_MIME_TYPES,
+  RTE_IMAGE_MAX_BYTES,
+  stripDisallowedImages,
+} from '@/lib/richtext/imagePolicy';
 import Toolbar, { ToolbarCommands, ToolbarState } from './RichTextEditor/Toolbar';
 import { LoadingSpinnerIcon } from './RichTextEditorIcons';
-
-// conversion helpers moved to '@/lib/richtext/htmlTransforms'
 
 interface RichTextEditorProps {
   content?: string;
   onChange?: (content: string) => void;
   placeholder?: string;
   className?: string;
+}
+
+const ACCEPTED_MIME_STRING = RTE_IMAGE_ALLOWED_MIME_TYPES.join(',');
+
+function formatBytes(bytes: number): string {
+  if (bytes >= 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+  if (bytes >= 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+  return `${bytes} B`;
 }
 
 // inline Toolbar removed; using decoupled Toolbar component
@@ -32,8 +49,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   placeholder = '',
   className,
 }) => {
+  const sanitizedPlaceholder = useMemo(() => stripDisallowedImages(placeholder), [placeholder]);
+  const sanitizedContent = useMemo(() => stripDisallowedImages(content ?? ''), [content]);
+  const initialHtml = sanitizedContent || sanitizedPlaceholder;
+
   const [viewMode, setViewMode] = useState<'rich' | 'wiki' | 'html'>('rich');
-  const [rawContent, setRawContent] = useState('');
+  const [rawContent, setRawContent] = useState(initialHtml);
   const [toolbarState, setToolbarState] = useState<ToolbarState>({
     bold: false,
     italic: false,
@@ -50,6 +71,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     canRedo: false,
     inTable: false,
   });
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -82,12 +104,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       TableHeader,
       TableCell,
     ],
-    content: content || placeholder,
+    content: initialHtml,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
-      if (onChange) {
-        onChange(editor.getHTML());
+      const html = editor.getHTML();
+      const sanitized = stripDisallowedImages(html);
+      if (sanitized !== html) {
+        editor.commands.setContent(sanitized, { emitUpdate: false });
       }
+      onChange?.(sanitized);
     },
     editorProps: {
       attributes: {
@@ -104,14 +129,23 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   });
 
   useEffect(() => {
-    if (editor && placeholder && placeholder !== editor.getHTML()) {
-      editor.commands.setContent(placeholder, { emitUpdate: true });
+    if (!editor) return;
+    const target = sanitizedContent || sanitizedPlaceholder || '';
+    const current = stripDisallowedImages(editor.getHTML());
+    if (target !== current) {
+      editor.commands.setContent(target, { emitUpdate: true });
     }
-  }, [placeholder, editor]);
+  }, [editor, sanitizedContent, sanitizedPlaceholder]);
 
   useEffect(() => {
-    setRawContent(placeholder);
-  }, [placeholder]);
+    const target = sanitizedContent || sanitizedPlaceholder || '';
+    if (viewMode === 'wiki') {
+      const wiki = htmlToWikiText(target);
+      setRawContent((prev) => (prev === wiki ? prev : wiki));
+    } else if (viewMode === 'html') {
+      setRawContent((prev) => (prev === target ? prev : target));
+    }
+  }, [sanitizedContent, sanitizedPlaceholder, viewMode]);
 
   // derive toolbar state on selection/transaction changes
   useEffect(() => {
@@ -251,13 +285,107 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     view.dispatch(tr.scrollIntoView());
   }, [editor]);
 
+  const allowedImageSourcesText = useMemo(() => describeAllowedImageSources(), []);
+
   const addImage = useCallback(() => {
     if (!editor) return;
-    const url = window.prompt('图片链接');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+
+    const manualUrl = window.prompt(
+      `请输入${allowedImageSourcesText}的图片地址，留空以从本地上传。`
+    );
+    if (manualUrl === null) {
+      return;
     }
-  }, [editor]);
+
+    if (manualUrl.trim()) {
+      const normalized = normalizeHostedImageUrl(manualUrl);
+      if (!normalized) {
+        window.alert(`仅允许使用 ${allowedImageSourcesText}`);
+        return;
+      }
+      editor.chain().focus().setImage({ src: normalized }).run();
+      return;
+    }
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = ACCEPTED_MIME_STRING;
+    input.style.display = 'none';
+    document.body.appendChild(input);
+
+    const cleanup = () => {
+      input.value = '';
+      if (input.parentNode) {
+        input.parentNode.removeChild(input);
+      }
+    };
+
+    input.addEventListener(
+      'blur',
+      () => {
+        // defer so change handler (if any) runs first
+        setTimeout(() => {
+          cleanup();
+        }, 0);
+      },
+      { once: true }
+    );
+
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (!file) {
+        cleanup();
+        return;
+      }
+      if (!RTE_IMAGE_ALLOWED_MIME_TYPES.includes(file.type)) {
+        window.alert('仅支持上传 PNG、JPEG、WEBP、AVIF 或 GIF 图片');
+        cleanup();
+        return;
+      }
+      if (file.size > RTE_IMAGE_MAX_BYTES) {
+        window.alert(
+          `图片大小需小于 ${formatBytes(RTE_IMAGE_MAX_BYTES)}，当前为 ${formatBytes(file.size)}`
+        );
+        cleanup();
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+      setIsUploadingImage(true);
+
+      fetch('/api/uploads/rte-image', {
+        method: 'POST',
+        body: formData,
+      })
+        .then(async (response) => {
+          if (!response.ok) {
+            const message = await response.text();
+            throw new Error(message || '上传失败');
+          }
+          return response.json() as Promise<{ publicUrl: string }>;
+        })
+        .then(({ publicUrl }) => {
+          const normalized = normalizeHostedImageUrl(publicUrl);
+          if (!normalized) {
+            throw new Error('上传的图片地址未通过安全校验');
+          }
+          editor.chain().focus().setImage({ src: normalized }).run();
+        })
+        .catch((error) => {
+          console.error('上传图片失败', error);
+          window.alert('上传图片失败，请稍后重试或联系管理员。');
+        })
+        .finally(() => {
+          setIsUploadingImage(false);
+          cleanup();
+        });
+    };
+
+    setTimeout(() => {
+      input.click();
+    }, 0);
+  }, [editor, allowedImageSourcesText]);
 
   const addLink = useCallback(() => {
     if (!editor) return;
@@ -321,14 +449,16 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     // Determine conversions based on current view
     if (mode === 'wiki') {
       if (viewMode === 'html') {
-        setRawContent(htmlToWikiText(rawContent));
+        const sanitizedHtml = stripDisallowedImages(rawContent);
+        setRawContent(htmlToWikiText(sanitizedHtml));
       } else if (viewMode === 'rich') {
-        const currentHtml = editor.getHTML();
+        const currentHtml = stripDisallowedImages(editor.getHTML());
         setRawContent(htmlToWikiText(currentHtml));
       }
     } else if (mode === 'html') {
       if (viewMode === 'wiki') {
-        setRawContent(wikiTextToHTML(rawContent));
+        const htmlFromWiki = stripDisallowedImages(wikiTextToHTML(rawContent));
+        setRawContent(cleanHTMLForExport(htmlFromWiki));
       } else if (viewMode === 'rich') {
         const currentHtml = editor.getHTML();
         setRawContent(cleanHTMLForExport(currentHtml));
@@ -340,7 +470,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         newHtml = wikiTextToHTML(rawContent);
       }
       // If coming from HTML view, rawContent already holds HTML
-      editor.commands.setContent(newHtml, { emitUpdate: true });
+      const sanitizedHtml = stripDisallowedImages(newHtml);
+      editor.commands.setContent(sanitizedHtml, { emitUpdate: true });
     }
     setViewMode(mode);
   };
@@ -363,6 +494,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         commands={commands}
         mode={viewMode}
         onModeChange={handleModeChange}
+        isUploadingImage={isUploadingImage}
       />
       {viewMode === 'rich' ? (
         <EditorContent editor={editor} />
@@ -370,13 +502,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <textarea
           value={rawContent}
           onChange={(e) => {
-            setRawContent(e.target.value);
+            const value = e.target.value;
             if (viewMode === 'wiki') {
-              const convertedHTML = wikiTextToHTML(e.target.value);
+              setRawContent(value);
+              const convertedHTML = stripDisallowedImages(wikiTextToHTML(value));
               onChange?.(convertedHTML);
-            }
-            if (viewMode === 'html') {
-              onChange?.(e.target.value);
+            } else {
+              const sanitizedHtml = stripDisallowedImages(value);
+              setRawContent(sanitizedHtml);
+              onChange?.(sanitizedHtml);
             }
           }}
           className={clsx(
