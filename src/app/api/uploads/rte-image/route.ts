@@ -14,6 +14,61 @@ import {
 } from '@/lib/richtext/imagePolicy';
 
 const MAX_LIBRARY_LIMIT = 60;
+const LIST_PAGE_SIZE = 100;
+
+type StorageEntry = {
+  name: string | null;
+  id: string | null;
+  updated_at: string | null;
+  created_at: string | null;
+  metadata: { size?: number; mimetype?: string } | null;
+};
+
+async function collectFiles(
+  prefix: string,
+  depth: number,
+  limit: number,
+  searchTerm: string | null,
+  results: Array<{ entry: StorageEntry; path: string }>
+): Promise<void> {
+  if (results.length >= limit) return;
+
+  const options = {
+    limit: LIST_PAGE_SIZE,
+    offset: 0,
+    sortBy: { column: 'updated_at', order: 'desc' } as const,
+  };
+
+  const { data, error } = await supabaseAdmin.storage.from(RTE_IMAGE_BUCKET).list(prefix, options);
+
+  if (error) {
+    throw error;
+  }
+
+  for (const rawEntry of data ?? []) {
+    if (!rawEntry?.name) continue;
+    const entry = rawEntry as StorageEntry;
+    const name = entry.name ?? '';
+    if (!name) continue;
+    const isFile = Boolean(entry.id);
+    const fullPath = prefix ? `${prefix}/${name}` : name;
+
+    if (isFile) {
+      if (searchTerm && !fullPath.toLowerCase().includes(searchTerm)) {
+        continue;
+      }
+      results.push({ entry, path: fullPath });
+      if (results.length >= limit) {
+        return;
+      }
+    } else if (depth > 0) {
+      await collectFiles(fullPath, depth - 1, limit, searchTerm, results);
+      if (results.length >= limit) {
+        return;
+      }
+    }
+  }
+}
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
@@ -33,63 +88,40 @@ export async function GET(request: NextRequest) {
   const scope = searchParams.get('scope') === 'all' ? 'all' : 'mine';
   const searchTerm = searchParams.get('search')?.trim();
 
-  // storage.objects isn't part of the generated Database types, so fall back to an untyped query
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const storageQuery = (supabaseAdmin as any).from('storage.objects');
+  const normalizedSearch = searchTerm ? searchTerm.toLowerCase() : null;
+  const prefixes = scope === 'mine' ? [user.id] : [''];
+  const maxDepth = scope === 'mine' ? 2 : 3;
+  const aggregated: Array<{ entry: StorageEntry; path: string }> = [];
 
-  let query = storageQuery
-    .select('name,created_at,metadata', { count: 'exact' })
-    .eq('bucket_id', RTE_IMAGE_BUCKET);
-
-  if (scope === 'mine') {
-    const prefixPattern = `${user.id}/%`;
-    if (searchTerm) {
-      const sanitized = searchTerm.replace(/[%_]/g, '\\$&');
-      query = query.ilike('name', `${user.id}/%${sanitized}%`);
-    } else {
-      query = query.ilike('name', prefixPattern);
+  try {
+    for (const prefix of prefixes) {
+      await collectFiles(prefix, maxDepth, limit, normalizedSearch, aggregated);
+      if (aggregated.length >= limit) {
+        break;
+      }
     }
-  } else if (searchTerm) {
-    const sanitized = searchTerm.replace(/[%_]/g, '\\$&');
-    query = query.ilike('name', `%${sanitized}%`);
-  }
-
-  const { data, error } = await query.order('created_at', { ascending: false }).limit(limit);
-
-  if (error) {
-    console.error('Supabase storage list error', error);
+  } catch (error) {
+    console.error('Supabase storage recursive list error', error);
     return NextResponse.json({ error: 'Failed to list images' }, { status: 500 });
   }
 
-  type StorageObjectRow = {
-    name: string;
-    created_at: string | null;
-    metadata: null | { size?: number; mimetype?: string; [key: string]: unknown };
-  };
-
-  const rows: StorageObjectRow[] = Array.isArray(data) ? (data as StorageObjectRow[]) : [];
-
-  const items = rows.map((item) => {
-    const metadata = item.metadata ?? {};
-    const rawSize = (metadata as Record<string, unknown>).size;
+  const items = aggregated.slice(0, limit).map(({ entry, path }) => {
+    const rawSize = entry.metadata?.size;
     const size =
       typeof rawSize === 'number'
         ? rawSize
         : typeof rawSize === 'string'
           ? Number.parseInt(rawSize, 10)
           : null;
-    const mimeType = (metadata as Record<string, unknown>).mimetype;
+    const mimeType = entry.metadata?.mimetype;
     const publicUrl = RTE_IMAGE_PUBLIC_BASE
-      ? `${RTE_IMAGE_PUBLIC_BASE}/${item.name}`
-      : supabaseAdmin.storage.from(RTE_IMAGE_BUCKET).getPublicUrl(item.name).data.publicUrl;
+      ? `${RTE_IMAGE_PUBLIC_BASE}/${path}`
+      : supabaseAdmin.storage.from(RTE_IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
     return {
-      name:
-        String(item.name ?? '')
-          .split('/')
-          .pop() ?? '',
-      path: item.name as string,
+      name: path.split('/').pop() ?? '',
+      path,
       publicUrl,
-      createdAt: item.created_at as string | null,
+      createdAt: entry.created_at,
       size,
       mimeType: typeof mimeType === 'string' ? mimeType : null,
     };
