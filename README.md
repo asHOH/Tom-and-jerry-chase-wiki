@@ -30,11 +30,18 @@
 
 - **QQ交流群**: [615882730](https://qun.qq.com/universal-share/share?ac=1&authKey=%2BgPPblp3JfnQP2o3BI5PO1NmwvsNciCCaVCtSI9T6RAbv6yV2QHzzjz6gwY%2Bva9U&busi_data=eyJncm91cENvZGUiOiI2MTU4ODI3MzAiLCJ0b2tlbiI6Ijg3Ym9kMk9HTUVFTnJSU25GU2JCdWJoNEwxNGNOUlhWMGgvK3lMTWRGdy80Z0FnaUd4Yy9LYkZsYUJ5ZStTbUgiLCJ1aW4iOiIyOTAxODMzMjI1In0%3D&data=0yzCZAnaW0ZOxf01YibLkPBLkN17DRX2fS1NGi5Nndx2Qq2DMFDdWr1pxH3J8F9RefUGjWh_Zel5Rfjy-dPZ2A&svctype=4&tempid=h5_group_info) (了解项目进展、提供建议、贡献内容、技术交流)
 
+## 项目计划
+
+- **统一用词** - 技能描述中的“硬直/眩晕”等（定义待统一）
+- **画廊** - 各种猫鼠二创（缺素材）
+- **地图NPC** - 斯派克、女主人等
+- **地图** - 展示地图及点位信息（缺素材）
+
 ## ❤️ 支持本项目
 
 如果你喜欢本项目，欢迎通过 Patreon [赞助](https://patreon.com/asHOH)。
 
-特别感谢所有项目[赞助者](SPONSORS.md)！
+特别感谢所有[赞助者](SPONSORS.md)！
 
 ## 🛠️ 技术栈
 
@@ -45,7 +52,7 @@
 - **测试**: [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/)
 - **部署**: [Vercel](https://vercel.com/)
 - **代码规范**: [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
-- **认证与数据**: [Supabase](https://supabase.com/)（Auth、Postgres、RPC）
+- **认证与数据**: [Supabase](https://supabase.com/) (Auth、Postgres、RPC)
 
 ## 💻 本地开发
 
@@ -53,7 +60,7 @@
 
 - **Node.js**: `>=20.0.0`
 - **npm**: `>=10.0.0`
-- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`
+- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN` (后续计划在环境变量缺失时做兼容)
 
 ### 开发步骤
 
@@ -103,35 +110,19 @@ npm run analyze         # 包分析
 
 ## 🤝 一起完善这个项目吧
 
-### 贡献流程
+**方法一** - 加入[QQ交流群](#-社区交流)
 
-**方法一：✅ GitHub 老手**
+**方法二** - 直接贡献代码
 
 1.  **Fork** 本仓库。
-2.  基于 `develop` 分支创建新的功能分支:
+2.  基于 `develop` 分支创建新的feature分支，并进行开发:
     ```bash
     git checkout develop
     git checkout -b feature/your-feature-name
     ```
-3.  进行开发。
-4.  提交代码前，运行本地检查以确保代码质量：
+3.  提交 Pull Request 到 `develop` 分支。提交前，建议运行本地检查以确保代码质量：
     - **Windows (PowerShell)**: `.\test-github-workflows.ps1`
     - **macOS/Linux**: `./test-github-workflows.bash`
-5.  提交 Pull Request 到 `develop` 分支。
-
-**方法二：🌱 GitHub 新手**
-
-加入我们的[QQ群](#-社区交流)吧~
-
-### 开发功能
-
-项目计划：
-
-- **NPC** - 斯派克、女主人等
-- **年鉴** - 历代更新和角色调整记录
-- **统一用词** - 技能描述中的“硬直/眩晕”等（定义待统一）
-- **画廊** - 各种猫鼠二创（缺素材）
-- **地图** - 展示地图及点位信息（缺素材）
 
 ## 📁 项目结构
 
@@ -142,7 +133,7 @@ npm run analyze         # 包分析
 ├── public/             # 静态资源 (图片, PWA manifest)
 ├── src/
 │   ├── app/            # Next.js App Router 页面与 API 路由
-│   ├── components/     # 可复用 React 组件
+│   ├── components/     # React 组件
 │   │   ├── ui/         # 基础 UI 组件
 │   │   └── displays/   # 复杂展示组件
 │   ├── constants/      # 全局常量
@@ -180,7 +171,7 @@ npm run analyze         # 包分析
 - [追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、[音乐家杰瑞](https://github.com/ConductorJerry)、[梦回\_淦德蒸蚌](https://space.bilibili.com/1193776217)、[是莫莫喵](https://space.bilibili.com/443541296) 提供测试数据
 - [隔壁老米LM](https://space.bilibili.com/3493090618771682)、[凡叔哇](https://space.bilibili.com/273122087) 分享图片素材
 - [海阔天空](https://github.com/3swordman)、[音乐家杰瑞](https://github.com/ConductorJerry) 进行项目开发
-- [海阔天空](https://github.com/3swordman)、[追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、[音乐家杰瑞](https://github.com/ConductorJerry)、[雨狼嗷嗷](https://space.bilibili.com/3546721078479411)、[爱你不慎走安详](https://space.bilibili.com/3493083362625926)、[虚拟未来](https://space.bilibili.com/489570540)、人畜有害的白菜、[SYSTEM\_CPYTHON](https://space.bilibili.com/2060407817)、[夜空乄浩瀚](https://space.bilibili.com/3546658333788386)、[追风汤姆Official](https://space.bilibili.com/1060009579)、[-无尽炽羽-](https://space.bilibili.com/3493104889891012)、[北雀](https://space.bilibili.com/510324311)、一个气球君、[樱鹜ying](https://space.bilibili.com/1441596139)、你小睿大帝、大水将军、[冰美式](https://space.bilibili.com/439320147)、[饮泉思源](https://zh.moegirl.org.cn/User:Yqsychzs)、[睡亿夏](https://space.bilibili.com/1350743315)、[港鸽](https://space.bilibili.com/431678062)、[若梦](https://space.bilibili.com/3537122405386648)、生煎包勇闯猫鼠、祈风盼陌上花开、[\_1322\_](https://space.bilibili.com/508985250)、dream、想&nbsp;&nbsp;笑、人偶、青城落梦、长河落日、豆浆、迷者很无聊、HZZHD、小郑、[乐善好施陈阿姨](https://space.bilibili.com/418408689)、秋雨绵绵、无敌猫虎大王wy、千里共婵娟 撰写角色文案
+- [海阔天空](https://github.com/3swordman)、[追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、[音乐家杰瑞](https://github.com/ConductorJerry)、[雨狼嗷嗷](https://space.bilibili.com/3546721078479411)、[爱你不慎走安详](https://space.bilibili.com/3493083362625926)、[虚拟未来](https://space.bilibili.com/489570540)、人畜有害的白菜、[SYSTEM\_CPYTHON](https://space.bilibili.com/2060407817)、[夜空乄浩瀚](https://space.bilibili.com/3546658333788386)、[追风汤姆Official](https://space.bilibili.com/1060009579)、[-无尽炽羽-](https://space.bilibili.com/3493104889891012)、[北雀](https://space.bilibili.com/510324311)、一个气球君、[樱鹜ying](https://space.bilibili.com/1441596139)、你小睿大帝、大水将军、[冰美式](https://space.bilibili.com/439320147)、[饮泉思源](https://zh.moegirl.org.cn/User:Yqsychzs)、[睡亿夏](https://space.bilibili.com/1350743315)、[港鸽](https://space.bilibili.com/431678062)、[若梦](https://space.bilibili.com/3537122405386648)、生煎包勇闯猫鼠、祈风盼陌上花开、[\_1322\_](https://space.bilibili.com/508985250)、dream、想&nbsp;&nbsp;笑、人偶、青城落梦、长河落日、豆浆、迷者很无聊、HZZHD、小郑、[乐善好施陈阿姨](https://space.bilibili.com/418408689)、秋雨绵绵、无敌猫虎大王wy、千里共婵娟、丷小天丷 撰写角色文案
 
 ---
 

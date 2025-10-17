@@ -9,10 +9,12 @@ import { ReactNode } from 'react';
 // Extended types with faction information (used in components)
 export type CharacterWithFaction = Character & {
   imageUrl: string; // Required in components
+  createDate: string | null; // Date when the character was added to the game (e.g., "2020.7.24")
 };
 
 export type KnowledgeCardWithFaction = Card & {
   imageUrl: string; // Required in components
+  createDate: string | null; // Date when the character was added to the game (e.g., "2020.7.24")
 };
 
 // Component prop types
@@ -99,15 +101,7 @@ export type GotoResult = {
 };
 
 // Narrowed category hints used to disambiguate goto targets
-export const CATEGORY_HINTS = [
-  '知识卡',
-  '特技',
-  '道具',
-  '衍生物',
-  '技能',
-  '状态',
-  '道具组',
-] as const;
+export const CATEGORY_HINTS = ['知识卡', '特技', '道具', '衍生物', '技能', '状态', '组合'] as const;
 export type CategoryHint = (typeof CATEGORY_HINTS)[number];
 
 // Generic callback types

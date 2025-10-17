@@ -6,6 +6,7 @@ import { Database } from '@/data/database.types';
 import UserManagement from '@/components/displays/admin/UserManagement';
 import CategoryManagement from '@/components/displays/admin/CategoryManagement';
 import { useUser } from '@/hooks/useUser';
+import { notFound } from 'next/navigation';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 
@@ -53,34 +54,8 @@ const AdminPanel = () => {
     mutate: mutateCategories,
   } = useSWR(user ? 'categories' : null, fetchCategories);
 
-  if (user.role === 'Contributor') {
-    return (
-      <div className='p-6 max-w-4xl mx-auto'>
-        <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded'>
-          访问被拒绝: 您没有权限访问此页面
-        </div>
-      </div>
-    );
-  }
-
-  if (!user.role) {
-    return (
-      <div className='p-6 max-w-4xl mx-auto'>
-        <div className='bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded'>
-          正在验证权限...
-        </div>
-      </div>
-    );
-  }
-
-  if (usersError || categoriesError) {
-    return (
-      <div className='p-6 max-w-4xl mx-auto'>
-        <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded'>
-          Error loading admin data: {usersError?.message || categoriesError?.message}
-        </div>
-      </div>
-    );
+  if (user.role === 'Contributor' || !user.role || usersError || categoriesError) {
+    notFound();
   }
 
   return (

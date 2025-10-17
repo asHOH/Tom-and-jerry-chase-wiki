@@ -3,14 +3,13 @@
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from '@/components/Image';
-import { designTokens } from '@/lib/design-tokens';
+import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
+import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data'; // Import characters data
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import SectionHeader from '@/components/ui/SectionHeader';
 import CharacterList from './CharacterList';
 import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';
 
@@ -75,16 +74,17 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
     }
   };
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing.xl }}>
-      <div className='flex flex-col md:flex-row' style={{ gap: designTokens.spacing.xl }}>
-        <div className='md:w-1/3'>
-          <KnowledgeCardAttributesCard card={card} />
-        </div>
-        <div className='md:w-2/3 space-y-3'>
-          {/* Card description title */}
-          <SectionHeader title='知识卡效果'>
-            {fromCharacter && (
+  const sections: DetailSection[] = [
+    {
+      key: 'effect',
+      render: () => (
+        <DetailTextSection
+          title='知识卡效果'
+          value={card.description ?? null}
+          detailedValue={card.detailedDescription ?? null}
+          isDetailedView={isDetailedView}
+          headerContent={
+            fromCharacter ? (
               <button
                 type='button'
                 aria-label={`返回 ${fromCharacter.id}`}
@@ -100,58 +100,53 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                   <Image
                     src={fromCharacter.imageUrl}
                     alt={fromCharacter.id}
-                    width={0}
-                    height={0}
+                    width={40}
+                    height={40}
                     className='rounded-full object-cover'
                     style={{ height: '40px', width: 'auto' }}
                   />
                 )}
               </button>
-            )}
-          </SectionHeader>
-
-          {/* Card description content */}
-          <div className='card dark:bg-slate-800 dark:border-slate-700 p-6 mb-8'>
-            <div className='mb-6'>
-              <p className='text-black dark:text-gray-200 text-lg py-2'>
-                <TextWithHoverTooltips
-                  text={
-                    isDetailedView && card.detailedDescription
-                      ? card.detailedDescription
-                      : card.description
-                  }
-                />
-              </p>
-            </div>
-
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-              {card.levels.map((level) => (
-                <div
-                  key={`${card.id}-${level.level}`}
-                  className='bg-gray-100 dark:bg-slate-700 rounded p-4'
-                >
-                  <p className='text-black dark:text-gray-200 px-2 py-1'>
-                    <span className='font-bold'>Lv.{level.level}:</span>{' '}
-                    {renderTextWithHighlights(
-                      isDetailedView && level.detailedDescription
-                        ? level.detailedDescription
-                        : level.description
-                    )}
-                  </p>
-                </div>
-              ))}
-            </div>
+            ) : undefined
+          }
+        >
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            {card.levels.map((level) => (
+              <div
+                key={`${card.id}-${level.level}`}
+                className='bg-gray-100 dark:bg-slate-700 rounded p-4'
+              >
+                <p className='text-black dark:text-gray-200 px-2 py-1'>
+                  <span className='font-bold'>Lv.{level.level}:</span>{' '}
+                  {renderTextWithHighlights(
+                    isDetailedView && level.detailedDescription
+                      ? level.detailedDescription
+                      : level.description
+                  )}
+                </p>
+              </div>
+            ))}
           </div>
+        </DetailTextSection>
+      ),
+    },
+    {
+      title: getCharacterSectionTitle(),
+      cardOptions: { variant: 'none' },
+      content: (
+        <CharacterList
+          characters={displayUsedCharacters ? usedCharacters : unusedCharacters}
+          showList={usedCharacters.length > 0 && unusedCharacters.length > 0}
+        />
+      ),
+    },
+  ];
 
-          <div>
-            <SectionHeader title={getCharacterSectionTitle()} />
-            <CharacterList
-              characters={displayUsedCharacters ? usedCharacters : unusedCharacters}
-              showList={usedCharacters.length > 0 && unusedCharacters.length > 0}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+  return (
+    <DetailShell
+      leftColumn={<KnowledgeCardAttributesCard card={card} />}
+      sections={sections}
+      rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
+    />
   );
 }

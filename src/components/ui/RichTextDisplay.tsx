@@ -1,6 +1,31 @@
-import { memo, useLayoutEffect, useState } from 'react';
+import { memo, useLayoutEffect, useMemo, useState } from 'react';
 import { sanitizeHTML } from '@/lib/xssUtils';
 import clsx from 'clsx';
+
+function htmlToText(html: string): string {
+  // Remove HTML tags
+  let text = html.replace(/<[^>]*>/g, '');
+
+  // Decode common HTML entities
+  const entities: Record<string, string> = {
+    '&nbsp;': ' ',
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&apos;': "'",
+  };
+
+  text = text.replace(/&[a-z]+;|&#\d+;/gi, (match) => {
+    return entities[match.toLowerCase()] || match;
+  });
+
+  // Normalize whitespace
+  text = text.replace(/\s+/g, ' ').trim();
+
+  return text;
+}
 
 export default memo(function RichTextDisplay({
   content,
@@ -9,23 +34,25 @@ export default memo(function RichTextDisplay({
   content: string | null | undefined;
   preview?: boolean;
 }) {
+  // For preview mode, compute text directly (SSR-friendly, no side effects)
+  const plainText = useMemo(() => htmlToText(content ?? '<p>内容加载中...</p>'), [content]);
+
+  // For full display mode, use client-side sanitization
   const [sanitizedHTML, setSanitizedHTML] = useState('<p>内容加载中...</p>');
   useLayoutEffect(() => {
-    const sanitizedHTML = sanitizeHTML(content ?? '<p>内容加载中...</p>');
     if (!preview) {
-      setSanitizedHTML(sanitizedHTML);
-      return;
+      setSanitizedHTML(sanitizeHTML(content ?? '<p>内容加载中...</p>'));
     }
-    const fragment = document.createElement('div');
-    // const fragment = document.createDocumentFragment();
-    fragment.innerHTML = sanitizedHTML;
-    setSanitizedHTML(fragment.innerText);
   }, [content, preview]);
+
+  if (preview) {
+    return <div className='line-clamp-3 text-sm mt-1 mb-3'>{plainText}</div>;
+  }
+
   return (
     <div
       className={clsx(
-        !preview &&
-          `prose prose-lg max-w-none dark:prose-invert prose-blue
+        `prose prose-lg max-w-none dark:prose-invert prose-blue
           prose-headings:text-gray-900 dark:prose-headings:text-gray-100
           prose-p:text-gray-700 dark:prose-p:text-gray-300
           prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
@@ -35,8 +62,7 @@ export default memo(function RichTextDisplay({
           prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-900/20 prose-blockquote:py-2 prose-blockquote:px-4
           prose-ul:list-disc prose-ol:list-decimal
           prose-li:text-gray-700 dark:prose-li:text-gray-300
-        `,
-        preview && 'line-clamp-3 text-sm mt-1 mb-3'
+        `
       )}
       dangerouslySetInnerHTML={{
         __html: sanitizedHTML,

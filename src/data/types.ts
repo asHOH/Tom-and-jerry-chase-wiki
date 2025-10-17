@@ -235,8 +235,20 @@ export type SpecialSkill = SpecialSkillDefinition & {
   imageUrl: string;
 };
 
-export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '其它'; //list of items' types
-export type Itemsourcelist = '常规道具' | '地图道具'; //list of items' source
+export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '特殊类'; //list of items' types
+export type Itemsourcelist = '常规道具' | '衍生道具' | '地图道具'; //list of items' source
+
+export type ItemAttributesAsCharacter = {
+  type: 'cat' | 'mouse' | 'special'; //which kind of character does item close to
+  factionBelong: 'cat' | 'mouse' | 'other'; //which faction does item belong to
+
+  // Common attributes for all characters
+  maxHp?: number | '一击即溃'; // Hp上限
+  attackBoost?: number; // 攻击增伤
+  hpRecovery?: number; // Hp恢复
+  moveSpeed?: number; // 移速
+  jumpHeight?: number; // 跳跃
+};
 
 export type ItemDefinition = {
   itemtype: Itemtypelist; //type of items
@@ -255,6 +267,13 @@ export type ItemDefinition = {
   storeCD?: number; //item's CD in store
   teamCD?: boolean; //if item's CD in store is team shared
   exp?: number; //(cat) get exp when item hit mouse
+
+  move?: boolean; //copied from entity
+  gravity?: boolean; //copied from entity
+  collsion?: boolean; //copied from entity
+  ignore?: string[]; //copied from entity
+
+  itemAttributesAsCharacter?: ItemAttributesAsCharacter;
 };
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
@@ -284,26 +303,31 @@ export type EntityDefinition = {
 
   skills?: (SkillDefinition & { colddown?: number })[]; //
   specialImageUrl?: string; //(interim) use other image instead of entity's missing image
+
+  entityAttributesAsCharacter?: ItemAttributesAsCharacter;
 };
 
 export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };
 
-export type Bufftypelist = '正面效果' | '负面效果' | '其它效果';
-export type Buffclasslist = '基础类' | '全局类' | '特殊类';
+export type Bufftypelist = '常规类' | '全局类' | '技能类';
+export type Buffinfluencelist = '正面' | '负面';
+export type Buffclasslist = '状态' | '效果';
 
 export type BuffDefinition = {
   bufftype: Bufftypelist;
-  buffclass: Buffclasslist;
+  buffinfluence?: Buffinfluencelist;
+  buffclass: Buffclasslist; //状态：是一或多种效果的结合；效果：有特定作用，具有单一和不可再分性，是状态的基础组成部分，也可单独作为状态使用
 
   aliases?: string[]; //支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
-  duration?: number | 'infinite'; // duration of buff.If buff has more than two different durations,don't fill in this attribute.
+  duration?: number | 'infinite' | 'disposable'; // duration of buff.
   failure?: string; //failure conditions of buff
+  relate?: string[]; //组成某状态的相关效果列表
 
   description?: string;
   detailedDescription?: string;
   source?: string; //source of buff.
   detailedSource?: string;
-  stack?: string; // the stacking way in more than two same buffs
+  stack?: string; // the stacking way in two or more buffs
   detailedStack?: string;
 
   unuseImage?: boolean; //show its image in grid.Default:false
@@ -329,3 +353,68 @@ export type ItemGroupDefinition = {
 };
 
 export type ItemGroup = ItemGroupDefinition & { name: string }; //no imageUrl
+
+/**
+ * Defines the type of balance change applied.
+ */
+export enum ChangeType {
+  BUFF = '加强',
+  NERF = '削弱',
+  ADJUSTMENT = '调整',
+  REWORK = '重做',
+}
+
+/**
+ * Represents a detailed balance change for a specific game entity.
+ */
+interface BalanceChange {
+  name: string;
+  changeType: ChangeType;
+}
+
+/**
+ * Details for new content added to the game.
+ */
+interface ContentDetails {
+  newCharacters?: string[];
+  newItems?: string[];
+  newSecondWeapons?: `${string}-${string}`[]; // ${character}-${weapon}
+  newKnowledgeCards?: string[];
+}
+
+/**
+ * Details for balance changes affecting various game elements.
+ * This structure is now more detailed.
+ */
+interface BalanceDetails {
+  characterChanges?: BalanceChange[];
+  knowledgeCardChanges?: BalanceChange[];
+  itemChanges?: BalanceChange[];
+}
+
+/**
+ * Represents a single, dated event in the game's history.
+ */
+interface TimelineEvent {
+  date: `${number}.${number}` | `${number}.${number}-${'次年' | ''}${number}.${number}`; // e.g., "7.24" or "12.25-次年1.1"
+  description: string;
+  details: {
+    content?: ContentDetails;
+    balance?: BalanceDetails;
+    milestone?: string; // e,g., "游戏上线", "周年庆"
+    testPhaseInfo?: string; // e.g. "公测", "共研服"
+  };
+}
+
+/**
+ * Contains all the timeline events for a specific year.
+ */
+interface YearData {
+  year: number; // e.g., "2020"
+  events: TimelineEvent[];
+}
+
+/**
+ * The complete, structured history of the game.
+ */
+export type GameHistory = YearData[];

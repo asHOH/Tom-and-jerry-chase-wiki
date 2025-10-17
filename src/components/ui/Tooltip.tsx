@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
@@ -9,7 +9,6 @@ interface TooltipProps {
   content: React.ReactNode;
   className?: string;
   disabled?: boolean;
-  delay?: number;
 }
 
 export default function Tooltip({
@@ -17,15 +16,27 @@ export default function Tooltip({
   content,
   className = '',
   disabled = false,
-  delay = 700,
 }: TooltipProps) {
   const [open, setOpen] = React.useState<boolean>(false);
-  const [effectiveDelay, setEffectiveDelay] = useState(delay);
+  const [isHoverOnly, setIsHoverOnly] = React.useState<boolean>(false);
 
-  useEffect(() => {
-    if (window.matchMedia('(hover:hover)').matches) {
-      setEffectiveDelay(0);
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return;
     }
+
+    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const updateHoverState = () => setIsHoverOnly(mediaQuery.matches);
+
+    updateHoverState();
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateHoverState);
+      return () => mediaQuery.removeEventListener('change', updateHoverState);
+    }
+
+    mediaQuery.addListener(updateHoverState);
+    return () => mediaQuery.removeListener(updateHoverState);
   }, []);
 
   const trigger = (
@@ -44,12 +55,12 @@ export default function Tooltip({
   }
 
   return (
-    <TooltipPrimitive.Provider delayDuration={effectiveDelay}>
+    <TooltipPrimitive.Provider>
       <TooltipPrimitive.Root open={open} onOpenChange={setOpen}>
         <TooltipPrimitive.Trigger
           asChild
           onClick={(e) => {
-            if (!window.matchMedia('(hover:hover)').matches) {
+            if (!isHoverOnly) {
               e.preventDefault();
               setOpen((prev) => !prev);
             }

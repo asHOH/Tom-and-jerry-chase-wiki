@@ -40,12 +40,11 @@ export async function POST(request: Request, { params }: { params: { id?: string
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { data, error } = await supabaseAdmin.rpc('submit_article', {
+    const { data, error } = await supabase.rpc('submit_article', {
       p_article_id: id,
       p_title: title,
       p_content: content,
       p_category_id: category,
-      p_editor_id: user.id,
     });
 
     if (error) {

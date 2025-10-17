@@ -12,6 +12,7 @@ import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
 import { ClientProviders } from '@/components/ClientProviders';
 
 import { defaultMetadata, getSiteJsonLd } from '@/constants/seo';
+import { cspHeaderValue } from '@/constants/csp';
 import './globals.css';
 import { DarkModeProvider } from '@/context/DarkModeContext';
 import { getDarkModeFromCookie } from '@/lib/darkModeActions';
@@ -36,10 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
         <meta name='referrer' content='strict-origin-when-cross-origin' />
-        <meta
-          httpEquiv='Content-Security-Policy'
-          content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; img-src 'self' data: https://vitals.vercel-insights.com; font-src 'self'; connect-src 'self' https://vitals.vercel-insights.com https://vercel-analytics.com https://vercel.live *.supabase.co https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; media-src 'self'; object-src 'none'; child-src 'self' about: https://vercel.live https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; frame-src 'self' about: https://vercel.live https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; form-action 'self'; base-uri 'self'; worker-src 'self' blob:;"
-        />
+        <meta httpEquiv='Content-Security-Policy' content={cspHeaderValue} />
         <meta name='format-detection' content='telephone=no, date=no, email=no, address=no' />
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>

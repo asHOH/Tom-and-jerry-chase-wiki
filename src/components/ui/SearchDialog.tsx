@@ -10,6 +10,7 @@ import { isOriginalCharacter } from '@/lib/editUtils';
 import { useEditMode } from '@/context/EditModeContext';
 import { useNavigation } from '@/lib/useNavigation';
 import { useChat } from '@/lib/useChat';
+import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
 
 type SearchDialogProps = {
   onClose: () => void;
@@ -283,14 +284,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           className='absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
           aria-label='关闭搜索对话框'
         >
-          <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='M6 18L18 6M6 6l12 12'
-            />
-          </svg>
+          <CloseIcon className='h-6 w-6' />
         </button>
         <div className='mb-4 pr-8'>
           <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-1'>搜索</h2>
@@ -312,20 +306,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             ref={searchInputRef}
           />
           <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-            <svg
+            <SearchIcon
               className='h-5 w-5 text-gray-400 dark:text-gray-500'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
+              decorative={false}
               aria-label='搜索图标'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-              />
-            </svg>
+            />
           </div>
         </div>
 
@@ -368,19 +353,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                   >
                     <div className='flex-shrink-0 mr-3'>
                       <div className='w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center'>
-                        <svg
-                          className='w-4 h-4 text-white'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          stroke='currentColor'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            strokeWidth='2'
-                            d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
-                          />
-                        </svg>
+                        <ChatBubbleIcon className='w-4 h-4 text-white' strokeWidth={2} />
                       </div>
                     </div>
                     <div className='flex-1 min-w-0'>

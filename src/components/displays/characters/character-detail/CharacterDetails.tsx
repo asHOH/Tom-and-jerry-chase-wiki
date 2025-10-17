@@ -25,6 +25,9 @@ import { characters } from '@/data';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
+import CreateDateDisplay from './CreateDateDisplay';
+import CharacterHistoryDisplay from './CharacterHistoryDisplay';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;
@@ -216,20 +219,7 @@ export default function CharacterDetails({
                           )}
                           {copyMessage === 'error' && (
                             // Error icon
-                            <svg
-                              xmlns='http://www.w3.org/2000/svg'
-                              className='w-5 h-5 text-red-500'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                            >
-                              <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                strokeWidth='3'
-                                d='M6 18L18 6M6 6l12 12'
-                              />
-                            </svg>
+                            <CloseIcon className='w-5 h-5 text-red-500' strokeWidth={3} />
                           )}
                           {!copyMessage && (
                             // Download icon
@@ -253,6 +243,11 @@ export default function CharacterDetails({
                     )}
                   </h1>
                   <ContentWriterDisplay characterId={localCharacter.id} />
+                  <CreateDateDisplay createDate={localCharacter.createDate} />
+                  <CharacterHistoryDisplay
+                    name={localCharacter.id}
+                    aliases={localCharacter.aliases || []}
+                  />
                 </>
               )}
               {!isEditMode && isMobile && (
@@ -288,6 +283,11 @@ export default function CharacterDetails({
                         )
                       </h1>
                       <ContentWriterDisplay characterId={localCharacter.id} type='isMobile' />
+                      <CreateDateDisplay createDate={localCharacter.createDate} />
+                      <CharacterHistoryDisplay
+                        name={localCharacter.id}
+                        aliases={localCharacter.aliases || []}
+                      />
                     </div>
                   </div>
                 </div>
@@ -350,20 +350,7 @@ export default function CharacterDetails({
                           className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
                           key='new-weapon-button'
                         >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth='2'
-                            stroke='currentColor'
-                            className='w-4 h-4'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M12 4.5v15m7.5-7.5h-15'
-                            />
-                          </svg>
+                          <PlusIcon className='w-4 h-4' aria-hidden='true' />
                         </button>
                       ) : null
                     );

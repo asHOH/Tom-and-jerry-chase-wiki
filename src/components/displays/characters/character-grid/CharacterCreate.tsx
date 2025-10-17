@@ -8,6 +8,7 @@ import { handleCharacterIdChange } from '@/lib/editUtils';
 import { usePathname } from 'next/navigation';
 import { FactionId } from '@/data';
 import { useAppContext } from '@/context/AppContext';
+import { PlusIcon } from '@/components/icons/CommonIcons';
 
 export default function CharacterCreate() {
   const { width, height } = componentTokens.image.dimensions.CHARACTER_CARD;
@@ -84,24 +85,18 @@ export default function CharacterCreate() {
               borderRadius: componentTokens.image.container.borderRadius,
             }}
           >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
+            <PlusIcon
               className='text-gray-500 dark:text-gray-400 hover:scale-105'
               style={{
-                width: width,
-                height: height,
+                width,
+                height,
                 objectFit: 'contain',
                 maxHeight: '50%',
                 maxWidth: '70%',
                 transition: designTokens.transitions.normal,
               }}
-            >
-              <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-            </svg>
+              aria-hidden='true'
+            />
           </div>
           <div className='px-6 pt-1 pb-6 text-center'>
             <h2 className='text-xl font-bold mb-2 dark:text-white'>创建角色</h2>

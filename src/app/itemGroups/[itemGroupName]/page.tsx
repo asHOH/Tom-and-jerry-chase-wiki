@@ -31,7 +31,7 @@ export async function generateMetadata({
   return generateArticleMetadata({
     title: itemGroup.name,
     description: desc,
-    keywords: [itemGroup.name, '道具组'],
+    keywords: [itemGroup.name, '组合'],
     canonicalUrl: `https://tjwiki.com/itemGroups/${encodeURIComponent(itemGroupName)}`,
     imageUrl: getItemGroupImageUrl(itemGroup),
     structuredData: {

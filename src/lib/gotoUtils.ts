@@ -18,7 +18,7 @@ export async function getGotoResult(
   const categoryPredicate = (hint?: CategoryHint) => {
     type K = { kind: string };
     if (!hint) return undefined as undefined | ((c: K) => boolean);
-    if (hint === '道具组') return (c: K) => c.kind === 'itemGroup';
+    if (hint === '组合') return (c: K) => c.kind === 'itemGroup';
     if (hint === '知识卡') return (c: K) => c.kind === 'card';
     if (hint === '状态') return (c: K) => c.kind === 'buff';
     if (hint === '特技')

@@ -46,6 +46,7 @@ next-env.d.ts
 .idea/
 .vscode/
 *.code-workspace
+*.swp
 
 # Vercel
 .vercel
@@ -63,6 +64,7 @@ src/stories
 dist/
 .tmp/
 .temp/
+tmp/
 pnpm-lock.yaml
 .gemini/
 GEMINI.md

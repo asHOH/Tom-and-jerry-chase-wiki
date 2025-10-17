@@ -163,7 +163,6 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                   faction.id as FactionId,
                   isDetailed
                 )}
-                delay={800}
                 className='border-none cursor-pointer'
               >
                 {button}

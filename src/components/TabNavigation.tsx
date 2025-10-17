@@ -1,49 +1,52 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from '@/components/Image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import SearchBar from './ui/SearchBar';
 import Tooltip from './ui/Tooltip';
 import { useAppContext } from '@/context/AppContext';
-import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import { supabase } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
+import { UserCircleIcon } from '@/components/icons/CommonIcons';
 
 // Helper function for button styling
-const getButtonClassName = (isMobile: boolean, isNavigating: boolean, isActive: boolean) => {
+const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {
   const baseClasses =
-    'whitespace-nowrap rounded-md border-none cursor-pointer transition-colors flex items-center justify-center';
-  const sizeClasses = isMobile ? 'min-h-[40px] p-2 text-sm' : 'min-h-[44px] px-4 text-base';
+    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:px-2.5 md:min-h-[44px] lg:px-3.5 lg:text-base';
 
   const stateClasses = isNavigating
-    ? 'bg-gray-400 text-white cursor-not-allowed opacity-80'
+    ? 'bg-gray-400 text-white cursor-not-allowed opacity-80 pointer-events-none'
     : isActive
       ? 'bg-blue-600 text-white dark:bg-blue-700'
       : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600';
 
-  return clsx(baseClasses, sizeClasses, stateClasses);
+  return clsx(baseClasses, stateClasses);
 };
 
 type TabNavigationProps = {
   showDetailToggle?: boolean;
 };
 
+const STACK_COLLAPSE_WIDTHS = [494, 454, 414, 374, 334, 294, 254] as const;
+const DETAIL_TOGGLE_WIDTH = 56;
+const USER_BUTTON_WIDTH = 44;
+
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [overflowOpen, setOverflowOpen] = useState(false);
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
-  // Ensure client-only UI matches server HTML on first paint
   const [mounted, setMounted] = useState(false);
+  const [collapsedCount, setCollapsedCount] = useState(0);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
-  const isMobile = useMobile();
   const { nickname, role, clearData: clearUserData } = useUser();
   const { isEditMode } = useEditMode();
   const { items, isActive } = useNavigationTabs();
@@ -51,6 +54,42 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const evaluateCollapsedCount = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const width = window.innerWidth;
+    const extraWidth =
+      (showDetailToggle ? DETAIL_TOGGLE_WIDTH : 0) + (!!nickname ? USER_BUTTON_WIDTH : 0);
+    const adjustedWidth = Math.max(width - extraWidth, 0);
+    const total = items.length;
+    let nextCollapsed = 0;
+
+    for (let index = 0; index < STACK_COLLAPSE_WIDTHS.length; index += 1) {
+      const threshold = STACK_COLLAPSE_WIDTHS[index]!;
+      if (adjustedWidth < threshold) {
+        const collapseSize = Math.min(total, index + 2);
+        nextCollapsed = Math.max(nextCollapsed, collapseSize);
+      }
+    }
+
+    setCollapsedCount((prev) => (prev === nextCollapsed ? prev : nextCollapsed));
+    if (nextCollapsed === 0) {
+      setOverflowOpen((prev) => (prev ? false : prev));
+    }
+  }, [items, nickname, showDetailToggle]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    evaluateCollapsedCount();
+  }, [mounted, items, pathname, evaluateCollapsedCount]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => evaluateCollapsedCount();
+    evaluateCollapsedCount();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [evaluateCollapsedCount]);
 
   // Reset navigation state when pathname changes
   useEffect(() => {
@@ -60,6 +99,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         setNavigatingTo(null);
       }
     }
+    setOverflowOpen(false);
+    setUserDropdownOpen(false);
   }, [pathname, navigatingTo]);
 
   const isTabActive = (tabPath: string) => isActive(tabPath);
@@ -79,7 +120,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         return;
       }
       clearUserData();
-      setDropdownOpen(false);
+      setUserDropdownOpen(false);
     } catch (e) {
       const msg = e instanceof Error ? e.message : '未知错误';
       setSignOutError(msg);
@@ -88,26 +129,42 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     }
   };
 
+  const totalTabs = items.length;
+  const clampedCollapsed = Math.min(collapsedCount, totalTabs);
+  const isCompactMode = clampedCollapsed > 0;
+  const visibleCount = Math.max(totalTabs - clampedCollapsed, 0);
+  const activeIndex = items.findIndex((tab) => isTabActive(tab.href));
+  const sortedTabs = isCompactMode
+    ? items
+        .slice()
+        .sort((a, b) => +(items.indexOf(a) < activeIndex) - +(items.indexOf(b) < activeIndex))
+    : items;
+  const primaryTabs = sortedTabs.slice(0, visibleCount);
+  const overflowTabs = clampedCollapsed > 0 ? sortedTabs.slice(visibleCount) : [];
+
+  const tabMinWidthClass = 'min-w-[40px]';
+  const homeButtonSizing = clsx('min-w-[40px]', !isCompactMode && 'lg:min-w-fit');
+  const tabIconClassName = clsx(
+    'h-6 object-contain md:h-7',
+    isCompactMode ? 'w-6 flex-shrink-0 md:w-7' : 'w-auto'
+  );
+  const shouldAlignLeft = showDetailToggle || !!nickname;
+  const dropdownAlignmentClass = shouldAlignLeft ? 'left-0' : 'right-0';
+
   return (
     <div className='fixed top-0 left-0 right-0 bg-white shadow-md z-50 w-full py-2 dark:bg-slate-900 dark:shadow-lg'>
       <div className='flex justify-between items-center max-w-screen-xl mx-auto px-4 gap-4'>
         {/* Left-aligned navigation buttons */}
-        <div
-          className={clsx(
-            'flex',
-            isMobile ? 'gap-1 overflow-x-auto' : 'gap-3',
-            "[scrollbar-width:none] [-ms-overflow-style:'none'] [overflow-y:visible] relative"
-          )}
-        >
-          <Tooltip content='首页' className='border-none' disabled={!isMobile} delay={800}>
+        <div className={clsx('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
+          <Tooltip content='首页' className='border-none'>
             <Link
               href='/'
               className={clsx(
-                getButtonClassName(isMobile, false, isHomeActive()),
+                getButtonClassName(navigatingTo === '/', isHomeActive()),
                 'relative',
-                isMobile && 'min-w-[40px]',
-                navigatingTo === '/' && 'pointer-events-none opacity-80'
+                homeButtonSizing
               )}
+              aria-label='首页'
               onClick={() => {
                 if (navigatingTo === '/') return;
                 setNavigatingTo('/');
@@ -115,35 +172,31 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               tabIndex={navigatingTo === '/' ? -1 : 0}
               aria-disabled={navigatingTo === '/'}
             >
-              {!isMobile && '首页'}
-              {isMobile && '🏠'}
+              <span className='lg:hidden' aria-hidden='true'>
+                🏠
+              </span>
+              <span className='hidden lg:inline'>首页</span>
+              <span className='sr-only lg:hidden'>首页</span>
               {isEditMode && (
                 <span
-                  className='pointer-events-none absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full bg-amber-500 text-white ring-2 ring-white dark:ring-slate-900'
-                  style={{ width: isMobile ? 12 : 14, height: isMobile ? 12 : 14, fontSize: 9 }}
+                  className='pointer-events-none absolute -bottom-0.5 -right-0.5 inline-flex h-[12px] w-[12px] items-center justify-center rounded-full bg-amber-500 text-[9px] leading-none text-white ring-2 ring-white dark:ring-slate-900 md:h-[14px] md:w-[14px] md:text-[10px]'
                   aria-hidden
-                  title='编辑模式'
                 >
                   ✎
                 </span>
               )}
             </Link>
           </Tooltip>
-          {items.map((tab) => (
-            <Tooltip
-              key={tab.id}
-              content={tab.label}
-              className='border-none'
-              disabled={!isMobile}
-              delay={800}
-            >
+          {primaryTabs.map((tab) => (
+            <Tooltip key={tab.id} content={tab.label} className='border-none'>
               <Link
                 href={tab.href}
                 className={clsx(
-                  getButtonClassName(isMobile, false, isTabActive(tab.href)),
-                  isMobile ? 'gap-0' : 'gap-2',
-                  navigatingTo === tab.href && 'pointer-events-none opacity-80'
+                  getButtonClassName(navigatingTo === tab.href, isTabActive(tab.href)),
+                  'gap-0 md:gap-1 lg:gap-2',
+                  tabMinWidthClass
                 )}
+                aria-label={tab.label}
                 onClick={() => {
                   if (navigatingTo === tab.href) return;
                   setNavigatingTo(tab.href);
@@ -156,29 +209,83 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   alt={tab.iconAlt}
                   width={64}
                   height={64}
-                  className='object-contain'
-                  style={{ height: isMobile ? '24px' : '28px', width: 'auto' }}
+                  className={tabIconClassName}
                 />
-                {!isMobile && <span>{tab.label}</span>}
+                <span className='hidden md:inline'>{tab.label}</span>
+                <span className='sr-only md:hidden'>{tab.label}</span>
               </Link>
             </Tooltip>
           ))}
+          {!!overflowTabs.length && (
+            <div className='relative'>
+              <Tooltip content='更多分类' className='border-none'>
+                <button
+                  type='button'
+                  aria-label='更多分类'
+                  className={clsx(
+                    getButtonClassName(false, overflowOpen),
+                    tabMinWidthClass,
+                    'px-2 md:px-2.5 lg:px-3.5'
+                  )}
+                  onClick={() => {
+                    setOverflowOpen((prev) => !prev);
+                    setUserDropdownOpen(false);
+                  }}
+                >
+                  ⋮
+                </button>
+              </Tooltip>
+              {overflowOpen && (
+                <div
+                  className={clsx(
+                    'absolute mt-2 min-w-[140px] rounded-md bg-white shadow-lg dark:bg-slate-800 z-[9999]',
+                    dropdownAlignmentClass
+                  )}
+                >
+                  <ul className='py-1'>
+                    {overflowTabs.map((tab) => (
+                      <li key={tab.id}>
+                        <Link
+                          href={tab.href}
+                          className={clsx(
+                            'flex items-center gap-2 px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                            isTabActive(tab.href) && 'font-semibold'
+                          )}
+                          onClick={() => {
+                            if (navigatingTo === tab.href) return;
+                            setNavigatingTo(tab.href);
+                            setOverflowOpen(false);
+                          }}
+                        >
+                          <Image
+                            src={tab.iconSrc}
+                            alt={tab.iconAlt}
+                            width={64}
+                            height={64}
+                            className='h-6 w-6 flex-shrink-0 object-contain'
+                          />
+                          <span>{tab.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Right-aligned detailed/simple view toggle button, SearchBar, and User Settings */}
-        <div className={clsx('flex items-center', isMobile ? 'gap-1' : 'gap-3')}>
+        <div className='flex items-center gap-1 md:gap-2 lg:gap-2.5'>
           {pathname === '/' || pathname === '' ? <SearchBar /> : <DarkModeToggleButton />}
           {showDetailToggle && (
             <Tooltip
               content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
               className='border-none'
-              disabled={!isMobile}
-              delay={800}
             >
               <div
                 className={clsx(
-                  'relative flex rounded-lg dark:border-gray-600 bg-gray-100 dark:bg-slate-800 p-1 cursor-pointer transition-all duration-200',
-                  isMobile ? 'min-h-[40px]' : 'min-h-[44px]'
+                  'relative flex min-h-[40px] cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 dark:bg-slate-800 dark:border-gray-600 md:min-h-[44px]'
                 )}
                 onClick={toggleDetailedView}
               >
@@ -195,27 +302,27 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 {/* Simple option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center transition-colors duration-200 whitespace-nowrap',
-                    isMobile ? 'px-2 py-1 text-xs font-medium' : 'px-2.5 py-2 text-sm font-medium',
+                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
                     !isDetailedView
                       ? 'text-blue-600 dark:text-blue-400'
                       : 'text-gray-500 dark:text-gray-500'
                   )}
                 >
-                  {isMobile ? '简' : '简明'}
+                  <span className='lg:hidden'>简</span>
+                  <span className='hidden lg:inline'>简明</span>
                 </div>
 
                 {/* Detailed option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center transition-colors duration-200 whitespace-nowrap',
-                    isMobile ? 'px-2 py-1 text-xs font-medium' : 'px-2.5 py-2 text-sm font-medium',
+                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
                     isDetailedView
                       ? 'text-orange-600 dark:text-orange-400'
                       : 'text-gray-500 dark:text-gray-500'
                   )}
                 >
-                  {isMobile ? '详' : '详细'}
+                  <span className='lg:hidden'>详</span>
+                  <span className='hidden lg:inline'>详细</span>
                 </div>
               </div>
             </Tooltip>
@@ -223,32 +330,17 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
           {mounted && !!nickname && (
             <div className='relative'>
-              <button
-                type='button'
-                aria-label='用户设置'
-                title='用户设置'
-                className={clsx(
-                  getButtonClassName(isMobile, false, dropdownOpen),
-                  'flex items-center justify-center p-2'
-                )}
-                onClick={() => setDropdownOpen((prev) => !prev)}
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='size-6'
+              <Tooltip content='用户设置' className='border-none'>
+                <button
+                  type='button'
+                  aria-label='用户设置'
+                  className={clsx(getButtonClassName(false, userDropdownOpen), 'p-2')}
+                  onClick={() => setUserDropdownOpen((prev) => !prev)}
                 >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
-                  />
-                </svg>
-              </button>
-              {dropdownOpen && (
+                  <UserCircleIcon className='size-6' strokeWidth={1.5} />
+                </button>
+              </Tooltip>
+              {userDropdownOpen && (
                 <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md z-[99999]'>
                   <ul>
                     <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>你好，{nickname}</li>

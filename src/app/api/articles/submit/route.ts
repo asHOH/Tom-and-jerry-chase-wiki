@@ -38,12 +38,11 @@ export async function POST(req: Request) {
     const newArticleId = newArticle.id;
 
     // Then, submit the first version using the RPC
-    const { error: rpcError } = await supabaseAdmin.rpc('submit_article', {
+    const { error: rpcError } = await supabase.rpc('submit_article', {
       p_article_id: newArticleId,
       p_title: title,
       p_content: content,
       p_category_id: category,
-      p_editor_id: user.id,
     });
 
     if (rpcError) {

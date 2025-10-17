@@ -26,10 +26,8 @@ export default function ItemGroupClient({ description }: Props) {
       <header
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
-        <PageTitle>道具组</PageTitle>
-        {!isMobile && (
-          <PageDescription>{description ?? '列举目前支持的所有道具组'}</PageDescription>
-        )}
+        <PageTitle>组合</PageTitle>
+        {!isMobile && <PageDescription>{description ?? '列举目前支持的所有组合'}</PageDescription>}
       </header>
       <div
         className='auto-fit-grid grid-container grid gap-4 mt-8'

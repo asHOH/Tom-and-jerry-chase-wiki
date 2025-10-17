@@ -52,7 +52,7 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (çŒ«å’
 - **PWA** capabilities with next-pwa and service worker
 - **MDX** support for documentation
 - **Static-first**: Most pages use SSG via `generateStaticParams`. Use ISR only when content changes outside deploys.
-  - Characters detail uses ISR (`export const revalidate = 86400`).
+  - Characters detail uses ISR (`export const revalidate = 28800`).
   - Items and special-skills are SSG (static TS data). `characters/user/*` remains dynamic.
 - **Docs index generator**: `scripts/generate-doc-pages.mjs` runs in `npm run build` to produce `src/data/generated/docPages.(json|ts)`. Import the typed TS (`docPages.ts`) from runtime code; avoid `fs` in RSC.
 - **Edge-safe middleware**: Supabase session update dynamically deep-imports `createServerClient` from `@supabase/ssr/dist/module/createServerClient.js` to avoid Edge runtime Node API warnings. `@supabase/ssr` is pinned to `0.7.0`.

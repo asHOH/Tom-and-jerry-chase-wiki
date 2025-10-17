@@ -3,6 +3,7 @@
 import React from 'react';
 import { useCharacterNavigation } from '@/lib/hooks/useCharacterNavigation';
 import { motion } from 'motion/react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 interface CharacterNavigationButtonsProps {
   currentCharacterId: string;
@@ -36,15 +37,7 @@ export default function CharacterNavigationButtons({
         whileHover={previousCharacter ? { scale: 1.05 } : {}}
         whileTap={previousCharacter ? { scale: 0.95 } : {}}
       >
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          className='w-4 h-4'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke='currentColor'
-        >
-          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 19l-7-7 7-7' />
-        </svg>
+        <ChevronLeftIcon className='w-4 h-4' />
         <span className='hidden sm:inline'>
           {previousCharacter ? previousCharacter.character?.id : '上一个'}
         </span>
@@ -70,15 +63,7 @@ export default function CharacterNavigationButtons({
         <span className='hidden sm:inline'>
           {nextCharacter ? nextCharacter.character?.id : '下一个'}
         </span>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          className='w-4 h-4'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke='currentColor'
-        >
-          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-        </svg>
+        <ChevronRightIcon className='w-4 h-4' />
       </motion.button>
     </div>
   );

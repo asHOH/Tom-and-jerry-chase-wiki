@@ -7,19 +7,20 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import FilterRow from '@/components/ui/FilterRow';
 import { useState } from 'react';
-import type { Bufftypelist, Buff, Buffclasslist } from '@/data/types';
+import type { Buff, Bufftypelist, Buffclasslist } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getPositioningTagColors } from '@/lib/design-system';
 
-const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['正面效果', '负面效果', '其它效果'];
-const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['基础类', '全局类', '特殊类'];
+const ITEM_TYPE_OPTIONS: Bufftypelist[] = ['常规类', '全局类', '技能类'];
+const ITEM_CLASS_OPTIONS: Buffclasslist[] = ['状态', '效果'];
 
 type Props = { description?: string };
 
 export default function BuffClient({ description }: Props) {
   // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<Bufftypelist[]>([]);
+  const [selectedInfluences, setSelectedInfluences] = useState<('正面' | '负面' | '其它')[]>([]);
   const [selectedClasses, setSelectedClasses] = useState<Buffclasslist[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
@@ -27,63 +28,55 @@ export default function BuffClient({ description }: Props) {
   const filteredBuffs = Object.values(buffs)
     .filter((buff: Buff) => !buff.unuseImage)
     .filter((buff: Buff) => {
-      // 类型筛选
       const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
+      let influenceMatch = true;
+      if (selectedInfluences.length > 0) {
+        // "其它" means buffs with no influence restriction
+        const isNone = selectedInfluences.includes('其它');
+        const isBuff = selectedInfluences.includes('正面');
+        const isDebuff = selectedInfluences.includes('负面');
+        influenceMatch =
+          (isNone && buff.buffinfluence == undefined) ||
+          (isBuff && buff.buffinfluence === '正面') ||
+          (isDebuff && buff.buffinfluence === '负面');
+      }
       const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.buffclass);
-      return typeMatch && classMatch;
+      return typeMatch && influenceMatch && classMatch;
     });
-
   const unuseImageFilteredBuffs = Object.values(buffs)
     .filter((buff: Buff) => buff.unuseImage)
     .filter((buff: Buff) => {
-      // 类型筛选
       const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(buff.bufftype);
+      let influenceMatch = true;
+      if (selectedInfluences.length > 0) {
+        // "其它" means buffs with no influence restriction
+        const isNone = selectedInfluences.includes('其它');
+        const isBuff = selectedInfluences.includes('正面');
+        const isDebuff = selectedInfluences.includes('负面');
+        influenceMatch =
+          (isNone && buff.buffinfluence == undefined) ||
+          (isBuff && buff.buffinfluence === '正面') ||
+          (isDebuff && buff.buffinfluence === '负面');
+      }
       const classMatch = selectedClasses.length === 0 || selectedClasses.includes(buff.buffclass);
-      return typeMatch && classMatch;
+      return typeMatch && influenceMatch && classMatch;
     });
 
   return (
     <div
       className={
         isMobile
-          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
+          ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
           : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
       }
     >
       <header
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
-        <PageTitle>状态</PageTitle>
+        <PageTitle>状态和效果</PageTitle>
         {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
         {/* Filter Controls */}
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
-          {/* 范围筛选 */}
-          <FilterRow<Buffclasslist>
-            label='范围筛选:'
-            options={ITEM_CLASS_OPTIONS}
-            isActive={(type) => selectedClasses.includes(type)}
-            onToggle={(type) =>
-              setSelectedClasses((prev) =>
-                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-              )
-            }
-            //*getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}*/
-            //Use PositioningTagColors to avoid creating new colorStyles
-            getButtonStyle={(name, active) => {
-              const isActive = active;
-              const tagColors = getPositioningTagColors(
-                { 基础类: '辅助', 全局类: '奶酪', 特殊类: '破局' }[name],
-                false,
-                false,
-                'mouse',
-                isDarkMode
-              );
-              return isActive ? { ...tagColors } : undefined;
-            }}
-            isDarkMode={isDarkMode}
-          />
-        </div>
         <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
           {/* 类型筛选 */}
           <FilterRow<Bufftypelist>
@@ -100,7 +93,60 @@ export default function BuffClient({ description }: Props) {
             getButtonStyle={(name, active) => {
               const isActive = active;
               const tagColors = getPositioningTagColors(
-                { 正面效果: '救援', 负面效果: '干扰', 其它效果: '砸墙' }[name],
+                { 常规类: '辅助', 全局类: '干扰', 技能类: '奶酪' }[name],
+                false,
+                false,
+                'mouse',
+                isDarkMode
+              );
+              return isActive ? { ...tagColors } : undefined;
+            }}
+            isDarkMode={isDarkMode}
+          />
+
+          {/* 效果筛选——参考item阵营筛选 */}
+          <FilterRow<'正面' | '负面' | '其它'>
+            label='效果筛选:'
+            options={['正面', '负面', '其它']}
+            isActive={(f) => selectedInfluences.includes(f)}
+            onToggle={(f) =>
+              setSelectedInfluences((prev) =>
+                prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
+              )
+            }
+            getOptionLabel={(f) => f}
+            getButtonStyle={(f, active) =>
+              active
+                ? f === '其它'
+                  ? { backgroundColor: '#e6d5f7', color: '#8b5cf6' }
+                  : getPositioningTagColors(
+                      { 正面: '救援', 负面: '干扰' }[f],
+                      false,
+                      false,
+                      'mouse',
+                      isDarkMode
+                    )
+                : undefined
+            }
+            isDarkMode={isDarkMode}
+          />
+
+          {/* 类型筛选 */}
+          <FilterRow<Buffclasslist>
+            label='类型筛选:'
+            options={ITEM_CLASS_OPTIONS}
+            isActive={(type) => selectedClasses.includes(type)}
+            onToggle={(type) =>
+              setSelectedClasses((prev) =>
+                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+              )
+            }
+            //*getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}*/
+            //Use PositioningTagColors to avoid creating new colorStyles
+            getButtonStyle={(name, active) => {
+              const isActive = active;
+              const tagColors = getPositioningTagColors(
+                { 状态: '奶酪', 效果: '破局' }[name],
                 false,
                 false,
                 'mouse',
@@ -113,9 +159,9 @@ export default function BuffClient({ description }: Props) {
         </div>
       </header>
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-4'} mt-8`}
         style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '120px' : '150px'}, 1fr))`,
         }}
       >
         {filteredBuffs.map((buff) => (
@@ -130,8 +176,10 @@ export default function BuffClient({ description }: Props) {
         ))}
       </div>
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}
+        className='auto-fit-grid grid-container grid gap-4 mt-4'
+        style={{
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '240px' : '300px'}, 1fr))`,
+        }}
       >
         {unuseImageFilteredBuffs.map((buff) => (
           <div

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/admin';
 import { requireRole } from '@/lib/auth/requireRole';
 
 export async function GET(request: NextRequest) {
@@ -16,11 +15,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Use the new function to get pending versions with full details
-    const { data: pendingVersions, error: fetchError } = await supabaseAdmin.rpc(
-      'get_pending_versions_for_moderation',
-      {
-        p_requester_id: user.id,
-      }
+    const { data: pendingVersions, error: fetchError } = await supabase.rpc(
+      'get_pending_versions_for_moderation'
     );
 
     if (fetchError) {

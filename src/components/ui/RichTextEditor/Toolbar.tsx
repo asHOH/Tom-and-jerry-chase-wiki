@@ -15,8 +15,10 @@ import {
   CodeBlockIcon,
   LinkIcon,
   ImageIcon,
+  HorizontalRuleIcon,
   UndoIcon,
   RedoIcon,
+  LoadingSpinnerIcon,
 } from '../RichTextEditorIcons';
 import ViewModeToggle, { EditorViewMode } from './ViewModeToggle';
 
@@ -57,6 +59,7 @@ export interface ToolbarCommands {
   deleteTable(): void;
   toggleBlockquote(): void;
   toggleCodeBlock(): void;
+  insertHorizontalRule(): void;
   addLink(): void;
   addImage(): void;
   undo(): void;
@@ -70,6 +73,7 @@ export interface ToolbarProps {
   onModeChange: (mode: EditorViewMode) => void;
   className?: string;
   hideWiki?: boolean;
+  isUploadingImage?: boolean;
 }
 
 const ToolbarButton = React.memo(function ToolbarButton({
@@ -78,21 +82,23 @@ const ToolbarButton = React.memo(function ToolbarButton({
   disabled = false,
   children,
   title,
+  mode,
 }: {
   onClick: () => void;
   isActive?: boolean;
   disabled?: boolean;
   children: React.ReactNode;
   title?: string;
+  mode: EditorViewMode;
 }) {
   return (
     <button
       type='button'
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || mode !== 'rich'}
       title={title}
       className={clsx(
-        'p-2 rounded-md border transition-all duration-200 text-sm font-medium',
+        'inline-flex h-8 items-center justify-center p-2 rounded-md border transition-all duration-200 text-sm font-medium',
         'hover:bg-gray-100 dark:hover:bg-gray-700',
         'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
         'disabled:opacity-50 disabled:cursor-not-allowed',
@@ -113,6 +119,7 @@ export const Toolbar = React.memo(function Toolbar({
   onModeChange,
   className,
   hideWiki,
+  isUploadingImage,
 }: ToolbarProps) {
   const [showTableTools, setShowTableTools] = useState(false);
 
@@ -129,6 +136,7 @@ export const Toolbar = React.memo(function Toolbar({
             onClick={commands.toggleBold}
             isActive={!!state.bold}
             title='粗体 (Ctrl+B)'
+            mode={mode}
           >
             <BoldIcon />
           </ToolbarButton>
@@ -136,6 +144,7 @@ export const Toolbar = React.memo(function Toolbar({
             onClick={commands.toggleItalic}
             isActive={!!state.italic}
             title='斜体 (Ctrl+I)'
+            mode={mode}
           >
             <ItalicIcon />
           </ToolbarButton>
@@ -143,16 +152,23 @@ export const Toolbar = React.memo(function Toolbar({
             onClick={commands.toggleUnderline}
             isActive={!!state.underline}
             title='下划线 (Ctrl+U)'
+            mode={mode}
           >
             <UnderlineIcon />
           </ToolbarButton>
-          <ToolbarButton onClick={commands.toggleStrike} isActive={!!state.strike} title='删除线'>
+          <ToolbarButton
+            onClick={commands.toggleStrike}
+            isActive={!!state.strike}
+            title='删除线 (Ctrl+Shift+S)'
+            mode={mode}
+          >
             <StrikethroughIcon />
           </ToolbarButton>
           <ToolbarButton
             onClick={commands.toggleInlineCode}
             isActive={!!state.code}
-            title='行内代码'
+            title='行内代码 (Ctrl+E)'
+            mode={mode}
           >
             <InlineCodeIcon />
           </ToolbarButton>
@@ -164,21 +180,24 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={() => commands.toggleHeading(1)}
             isActive={state.headingLevel === 1}
-            title='标题 1'
+            title='标题 1 (Ctrl+Alt+1)'
+            mode={mode}
           >
             H1
           </ToolbarButton>
           <ToolbarButton
             onClick={() => commands.toggleHeading(2)}
             isActive={state.headingLevel === 2}
-            title='标题 2'
+            title='标题 2 (Ctrl+Alt+2)'
+            mode={mode}
           >
             H2
           </ToolbarButton>
           <ToolbarButton
             onClick={() => commands.toggleHeading(3)}
             isActive={state.headingLevel === 3}
-            title='标题 3'
+            title='标题 3 (Ctrl+Alt+3)'
+            mode={mode}
           >
             H3
           </ToolbarButton>
@@ -190,14 +209,16 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={commands.toggleBulletList}
             isActive={!!state.bulletList}
-            title='无序列表'
+            title='无序列表 (Ctrl+Shift+8)'
+            mode={mode}
           >
             <BulletListIcon />
           </ToolbarButton>
           <ToolbarButton
             onClick={commands.toggleOrderedList}
             isActive={!!state.orderedList}
-            title='有序列表'
+            title='有序列表 (Ctrl+Shift+7)'
+            mode={mode}
           >
             <OrderedListIcon />
           </ToolbarButton>
@@ -210,6 +231,7 @@ export const Toolbar = React.memo(function Toolbar({
             onClick={() => commands.setTextAlign('left')}
             isActive={state.textAlign === 'left'}
             title='左对齐'
+            mode={mode}
           >
             <AlignLeftIcon />
           </ToolbarButton>
@@ -217,6 +239,7 @@ export const Toolbar = React.memo(function Toolbar({
             onClick={() => commands.setTextAlign('center')}
             isActive={state.textAlign === 'center'}
             title='居中对齐'
+            mode={mode}
           >
             <AlignCenterIcon />
           </ToolbarButton>
@@ -224,6 +247,7 @@ export const Toolbar = React.memo(function Toolbar({
             onClick={() => commands.setTextAlign('right')}
             isActive={state.textAlign === 'right'}
             title='右对齐'
+            mode={mode}
           >
             <AlignRightIcon />
           </ToolbarButton>
@@ -232,7 +256,7 @@ export const Toolbar = React.memo(function Toolbar({
         <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
 
         <div className='flex items-center gap-1'>
-          <ToolbarButton onClick={commands.insertTable} title='插入表格 (3x3)'>
+          <ToolbarButton onClick={commands.insertTable} title='插入表格 (3x3)' mode={mode}>
             表格
           </ToolbarButton>
           <button
@@ -261,25 +285,29 @@ export const Toolbar = React.memo(function Toolbar({
           </button>
           {showTableTools && (
             <>
-              <ToolbarButton onClick={commands.toggleHeaderRow} title='开关表头行'>
+              <ToolbarButton onClick={commands.toggleHeaderRow} title='开关表头行' mode={mode}>
                 表头
               </ToolbarButton>
-              <ToolbarButton onClick={commands.transposeTable} title='转置当前表格（沿对角线翻转）'>
+              <ToolbarButton
+                onClick={commands.transposeTable}
+                title='转置当前表格（沿对角线翻转）'
+                mode={mode}
+              >
                 转置
               </ToolbarButton>
-              <ToolbarButton onClick={commands.addRowAfter} title='在下方添加行'>
+              <ToolbarButton onClick={commands.addRowAfter} title='在下方添加行' mode={mode}>
                 加行
               </ToolbarButton>
-              <ToolbarButton onClick={commands.addColumnAfter} title='在右侧添加列'>
+              <ToolbarButton onClick={commands.addColumnAfter} title='在右侧添加列' mode={mode}>
                 加列
               </ToolbarButton>
-              <ToolbarButton onClick={commands.deleteRow} title='删除当前行'>
+              <ToolbarButton onClick={commands.deleteRow} title='删除当前行' mode={mode}>
                 删行
               </ToolbarButton>
-              <ToolbarButton onClick={commands.deleteColumn} title='删除当前列'>
+              <ToolbarButton onClick={commands.deleteColumn} title='删除当前列' mode={mode}>
                 删列
               </ToolbarButton>
-              <ToolbarButton onClick={commands.deleteTable} title='删除表格'>
+              <ToolbarButton onClick={commands.deleteTable} title='删除表格' mode={mode}>
                 删表
               </ToolbarButton>
             </>
@@ -292,32 +320,56 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={commands.toggleBlockquote}
             isActive={!!state.blockquote}
-            title='引用'
+            title='引用块 (Ctrl+Shift+B)'
+            mode={mode}
           >
             <BlockquoteIcon />
           </ToolbarButton>
           <ToolbarButton
             onClick={commands.toggleCodeBlock}
             isActive={!!state.codeBlock}
-            title='代码块'
+            title='代码块 (Ctrl+Alt+C)'
+            mode={mode}
           >
             <CodeBlockIcon />
           </ToolbarButton>
-          <ToolbarButton onClick={commands.addLink} title='插入链接'>
+          <ToolbarButton onClick={commands.insertHorizontalRule} title='插入分隔线' mode={mode}>
+            <HorizontalRuleIcon />
+          </ToolbarButton>
+          <ToolbarButton onClick={commands.addLink} title='插入链接' mode={mode}>
             <LinkIcon />
           </ToolbarButton>
-          <ToolbarButton onClick={commands.addImage} title='插入图片'>
-            <ImageIcon />
+          <ToolbarButton
+            onClick={commands.addImage}
+            title={isUploadingImage ? '图片上传中...' : '插入图片'}
+            mode={mode}
+            disabled={!!isUploadingImage}
+          >
+            {isUploadingImage ? (
+              <LoadingSpinnerIcon className='animate-spin size-4' />
+            ) : (
+              <ImageIcon />
+            )}
           </ToolbarButton>
         </div>
 
         <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
 
         <div className='flex items-center gap-1'>
-          <ToolbarButton onClick={commands.undo} disabled={!state.canUndo} title='撤销 (Ctrl+Z)'>
+          <ToolbarButton
+            onClick={commands.undo}
+            disabled={!state.canUndo}
+            title='撤销 (Ctrl+Z)'
+            mode={mode}
+          >
             <UndoIcon />
           </ToolbarButton>
-          <ToolbarButton onClick={commands.redo} disabled={!state.canRedo} title='重做 (Ctrl+Y)'>
+          <ToolbarButton
+            onClick={commands.redo}
+            disabled={!state.canRedo}
+            title='重做 (Ctrl+Y)'
+            mode={mode}
+          >
             <RedoIcon />
           </ToolbarButton>
         </div>

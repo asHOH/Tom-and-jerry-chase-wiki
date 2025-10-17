@@ -2,15 +2,13 @@ import { Buff } from '@/data/types';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { getBuffTypeColors, getBuffClassColors } from '@/lib/design-tokens';
+import { getBuffTypeColors, getBuffInfluenceColors, getBuffClassColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import { designTokens } from '@/lib/design-tokens';
 
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
-  const typeColors = getBuffTypeColors(buff.bufftype, isDarkMode);
-  const classColors = getBuffClassColors(buff.buffclass, isDarkMode);
   const isMobile = useMobile();
 
   return (
@@ -25,7 +23,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
         />
       )}
       <div
-        className={`px-3 pt-1 pb-3 text-center w-full ${buff.unuseImage && `border border-dashed border-blue-500`}`}
+        className={`${isMobile ? 'pb-2' : 'px-3 pb-3'} pt-1 text-center w-full ${buff.unuseImage && `border border-dashed border-blue-500`}`}
       >
         <h3
           className={`${isMobile && buff.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
@@ -34,15 +32,32 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           {buff.name}
         </h3>
         <div
-          className='flex flex-wrap justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
+          className={`flex flex-wrap justify-center items-center ${isMobile ? 'gap-0.5' : 'gap-1.5'} text-sm text-gray-600 dark:text-gray-300`}
           role='group'
           aria-label='状态属性'
         >
-          <Tag size='xs' margin='compact' colorStyles={classColors}>
-            {/*isMobile ? buff.bufftype.slice(0, 2) : buff.bufftype*/ buff.buffclass}
+          <Tag
+            size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
+            margin='compact'
+            colorStyles={getBuffTypeColors(buff.bufftype, isDarkMode)}
+          >
+            {buff.bufftype}
           </Tag>
-          <Tag size='xs' margin='compact' colorStyles={typeColors}>
-            {/*isMobile ? buff.bufftype.slice(0, 2) : buff.bufftype*/ buff.bufftype}
+          {buff.buffinfluence !== undefined && (
+            <Tag
+              size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
+              margin='compact'
+              colorStyles={getBuffInfluenceColors(buff.buffinfluence || '', isDarkMode)}
+            >
+              {buff.buffinfluence}
+            </Tag>
+          )}
+          <Tag
+            size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
+            margin='compact'
+            colorStyles={getBuffClassColors(buff.buffclass, isDarkMode)}
+          >
+            {buff.buffclass}
           </Tag>
         </div>
       </div>

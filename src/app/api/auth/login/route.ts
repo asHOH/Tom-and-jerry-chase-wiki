@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { createHash, pbkdf2Sync } from 'crypto';
+import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 
 const hashUsername = (username: string) => {
@@ -10,6 +10,16 @@ const hashUsername = (username: string) => {
 const hashPassword = (password: string, salt: string) => {
   return pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
 };
+
+function stringTimingSafeEqual(a: string, b: string): boolean {
+  const bufA = Buffer.from(a, 'utf16le');
+  const bufB = Buffer.from(b, 'utf16le');
+  if (bufA.length !== bufB.length) {
+    return false;
+  }
+
+  return timingSafeEqual(bufA, bufB);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,7 +60,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
       }
       const providedPasswordHash = hashPassword(password, user.salt);
-      if (providedPasswordHash !== user.password_hash) {
+      if (!stringTimingSafeEqual(providedPasswordHash, user.password_hash)) {
         return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
       }
     }

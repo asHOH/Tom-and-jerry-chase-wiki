@@ -7,12 +7,12 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION = '列举目前支持的所有道具组';
+const DESCRIPTION = '列举目前支持的所有组合';
 
 export const metadata: Metadata = generatePageMetadata({
-  title: '道具组',
+  title: '组合',
   description: DESCRIPTION,
-  keywords: ['道具组'],
+  keywords: ['组合'],
   canonicalUrl: 'https://tjwiki.com/itemGroups',
 });
 

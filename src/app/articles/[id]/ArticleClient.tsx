@@ -1,15 +1,20 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
-// import useSWR from 'swr';
-// import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
 import { useMobile } from '@/hooks/useMediaQuery';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
+import {
+  ClockIcon,
+  EyeIcon,
+  FolderIcon,
+  PencilSquareIcon,
+  UserCircleIcon,
+} from '@/components/icons/CommonIcons';
 
 interface ArticleData {
   id: string;
@@ -27,6 +32,12 @@ interface ArticleData {
     editor_id: string | null;
     users_public_view: { nickname: string | null } | null;
   };
+}
+
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
 }
 
 // const fetcher = (url: string) =>
@@ -48,273 +59,313 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
   const { role: userRole } = useUser();
   const articleId = params?.id as string;
   const isMobile = useMobile();
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [tocItems, setTocItems] = useState<TocItem[]>([]);
+  const [activeHeadingId, setActiveHeadingId] = useState<string>('');
 
-  // const { data, error } = useSWR<{ article: ArticleData }>(
-  //   articleId ? `/api/articles/${articleId}` : null,
-  //   fetcher
-  // );
+  const articleContent = useMemo(
+    () => article.latest_version?.content ?? '',
+    [article.latest_version?.content]
+  );
 
-  // console.log({ data });
+  useEffect(() => {
+    const container = contentRef.current;
+    if (!container) {
+      setTocItems([]);
+      return;
+    }
 
-  // const article = data?.article;
-  // const loading = !data && !error;
+    const generateTocItems = () => {
+      const headingElements = Array.from(
+        container.querySelectorAll<HTMLHeadingElement>('h1, h2, h3, h4, h5, h6')
+      );
 
-  // if (loading) {
-  //   return (
-  //     <div className='container mx-auto px-4 py-8'>
-  //       <div className='flex items-center justify-center min-h-[400px]'>
-  //         <LoadingSpinner size='lg' />
-  //       </div>
-  //     </div>
-  //   );
-  // }
+      if (!headingElements.length) {
+        setTocItems((prev) => {
+          if (!prev.length) {
+            return prev;
+          }
+          return [];
+        });
+        setActiveHeadingId((prev) => (prev ? '' : prev));
+        return;
+      }
 
-  // if (error || !article) {
-  //   return (
-  //     <div className='container mx-auto px-4 py-8'>
-  //       <div className='text-center py-12'>
-  //         <div className='text-6xl mb-4'>📄</div>
-  //         <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
-  //           {error ? '加载文章失败' : '文章未找到'}
-  //         </h2>
-  //         <p className='text-gray-600 dark:text-gray-400 mb-6'>
-  //           请检查链接是否正确，或返回首页浏览其他内容
-  //         </p>
-  //         <Link
-  //           href='/'
-  //           className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
-  //         >
-  //           返回首页
-  //         </Link>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+      const slugCounts: Record<string, number> = {};
+      const mapHeadingToId = (text: string, fallbackIndex: number) => {
+        const normalizedText = text
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~]/g, '');
+
+        const baseId = normalizedText || `section-${fallbackIndex + 1}`;
+        const currentCount = slugCounts[baseId] ?? 0;
+        slugCounts[baseId] = currentCount + 1;
+        return currentCount ? `${baseId}-${currentCount}` : baseId;
+      };
+
+      const generatedItems = headingElements
+        .map((heading, index) => {
+          const rawText = heading.textContent?.trim() ?? '';
+          if (!rawText) {
+            return null;
+          }
+
+          const level = Number(heading.tagName.substring(1));
+          const existingId = heading.id.trim();
+          const id = existingId || mapHeadingToId(rawText, index);
+          heading.id = id;
+          heading.classList.add('scroll-mt-24');
+
+          return { id, text: rawText, level } satisfies TocItem;
+        })
+        .filter((item): item is TocItem => Boolean(item));
+
+      setTocItems((prev) => {
+        if (
+          prev.length === generatedItems.length &&
+          prev.every((item, idx) => {
+            const next = generatedItems[idx];
+            if (!next) {
+              return false;
+            }
+            return item.id === next.id && item.text === next.text && item.level === next.level;
+          })
+        ) {
+          return prev;
+        }
+        return generatedItems;
+      });
+
+      setActiveHeadingId((prev) =>
+        prev && generatedItems.some((item) => item.id === prev)
+          ? prev
+          : (generatedItems[0]?.id ?? '')
+      );
+    };
+
+    generateTocItems();
+
+    const observer = new MutationObserver(() => {
+      generateTocItems();
+    });
+
+    observer.observe(container, { childList: true, subtree: true, characterData: true });
+
+    return () => observer.disconnect();
+  }, [articleContent]);
+
+  useEffect(() => {
+    if (!tocItems.length) {
+      return;
+    }
+
+    const handleScroll = () => {
+      let currentId = tocItems[0]?.id ?? '';
+      for (const item of tocItems) {
+        const element = document.getElementById(item.id);
+        if (!element) {
+          continue;
+        }
+        const { top } = element.getBoundingClientRect();
+        if (top <= 128) {
+          currentId = item.id;
+        } else {
+          break;
+        }
+      }
+
+      setActiveHeadingId((prev) => (prev === currentId ? prev : currentId));
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [tocItems]);
 
   const canEdit =
     userRole === 'Contributor' || userRole === 'Reviewer' || userRole === 'Coordinator';
   const titleSize = !isMobile ? 'text-4xl' : article.title.length <= 10 ? 'text-3xl' : 'text-2xl';
+  const hasToc = tocItems.length > 0;
+  const minHeadingLevel = useMemo(() => {
+    if (!tocItems.length) {
+      return 1;
+    }
+    const firstLevel = tocItems[0]?.level ?? 1;
+    return tocItems.reduce((minLevel, item) => Math.min(minLevel, item.level), firstLevel);
+  }, [tocItems]);
+
+  const renderTocList = (itemClassName: string, showHeadingLabel = true) => (
+    <nav aria-label='文章目录'>
+      {showHeadingLabel && (
+        <div className='mb-3 text-sm font-semibold text-gray-800 dark:text-gray-200'>目录</div>
+      )}
+      <ul className='space-y-1'>
+        {tocItems.map((item) => {
+          const isActive = activeHeadingId === item.id;
+          const levelOffset = Math.max(item.level - minHeadingLevel, 0);
+          return (
+            <li key={item.id} style={{ marginLeft: `${levelOffset * 12}px` }}>
+              <a
+                href={`#${item.id}`}
+                className={`block rounded px-2 py-1 text-sm transition-colors ${itemClassName} ${
+                  isActive
+                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200'
+                    : 'text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-300'
+                }`}
+              >
+                {item.text}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
 
   return (
-    <div className={`container mx-auto ${isMobile ? 'px-1 py-2' : 'px-4 py-8'} max-w-4xl`}>
-      {/* Header */}
-      <div className='mb-8 flex flex-col'>
-        <header className='text-center'>
-          <h1 className={`${titleSize} font-bold text-blue-600 dark:text-blue-400 py-3`}>
-            {article.title}
-          </h1>
-        </header>
+    <div className={`container mx-auto ${isMobile ? 'px-1 py-2' : 'px-6 py-8'} max-w-6xl`}>
+      <div className='flex flex-col lg:flex-row lg:items-start lg:gap-10'>
+        {hasToc && (
+          <aside className='sticky top-24 hidden h-max max-h-[75vh] overflow-auto rounded-lg border border-gray-200 bg-white/60 p-4 shadow-sm backdrop-blur dark:border-gray-700 dark:bg-gray-900/40 lg:block lg:w-64'>
+            {renderTocList('text-left')}
+          </aside>
+        )}
 
-        {/* Article Meta */}
-        <div className={isMobile ? 'p-2' : 'mt-6 p-6'}>
-          <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
-            <div className='flex items-center gap-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
-                />
-              </svg>
-              <span>作者: {article.users_public_view?.nickname || '未知用户'}</span>
-            </div>
+        <div className='flex-1'>
+          {/* Header */}
+          <div className='mb-8 flex flex-col'>
+            <header className='text-center'>
+              <h1 className={`${titleSize} font-bold text-blue-600 dark:text-blue-400 py-3`}>
+                {article.title}
+              </h1>
+            </header>
 
-            <div className='flex items-center gap-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z'
-                />
-              </svg>
+            {/* Article Meta */}
+            <div
+              className={
+                isMobile ? 'p-2' : 'mt-6 rounded-lg border border-gray-200 p-6 dark:border-gray-700'
+              }
+            >
+              <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
+                <div className='flex items-center gap-2'>
+                  <UserCircleIcon className='size-4' strokeWidth={1.5} />
+                  <span>作者: {article.users_public_view?.nickname || '未知用户'}</span>
+                </div>
 
-              <span>分类: {article.categories?.name || '未分类'}</span>
-            </div>
+                <div className='flex items-center gap-2'>
+                  <FolderIcon className='size-4' strokeWidth={1.5} />
 
-            <div className='flex items-center gap-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
-                />
-              </svg>
-              <span>
-                创建于:{' '}
-                {format(new Date(article.created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })}
-              </span>
-            </div>
+                  <span>分类: {article.categories?.name || '未分类'}</span>
+                </div>
 
-            <div className='flex items-center gap-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z'
-                />
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
-                />
-              </svg>
+                <div className='flex items-center gap-2'>
+                  <ClockIcon className='size-4' strokeWidth={1.5} />
+                  <span>
+                    创建于:{' '}
+                    {format(new Date(article.created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })}
+                  </span>
+                </div>
 
-              <span>浏览: {article.view_count ?? 0}</span>
-            </div>
+                <div className='flex items-center gap-2'>
+                  <EyeIcon className='size-4' strokeWidth={1.5} />
 
-            {article.latest_version && (
-              <div className='flex items-center gap-2'>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='size-4'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10'
-                  />
-                </svg>
+                  <span>浏览: {article.view_count ?? 0}</span>
+                </div>
 
-                <span>
-                  最后编辑:{' '}
-                  {format(new Date(article.latest_version.created_at!), 'yyyy年MM月dd日 HH:mm', {
-                    locale: zhCN,
-                  })}
-                  {article.latest_version.users_public_view?.nickname &&
-                    ` 由 ${article.latest_version.users_public_view.nickname}`}
-                </span>
+                {article.latest_version && (
+                  <div className='flex items-center gap-2'>
+                    <PencilSquareIcon className='size-4' strokeWidth={1.5} />
+
+                    <span>
+                      最后编辑:{' '}
+                      {format(
+                        new Date(article.latest_version.created_at!),
+                        'yyyy年MM月dd日 HH:mm',
+                        {
+                          locale: zhCN,
+                        }
+                      )}
+                      {article.latest_version.users_public_view?.nickname &&
+                        ` 由 ${article.latest_version.users_public_view.nickname}`}
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {/* Action Buttons */}
-          <div className='flex flex-wrap gap-3 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
-            <Link
-              href={`/articles/${articleId}/history`}
-              className='inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
-            >
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='size-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
-                />
-              </svg>
-              查看历史版本
-            </Link>
-
-            {canEdit && (
-              <Link
-                href={`/articles/${articleId}/edit`}
-                className='inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='size-4'
+              {/* Action Buttons */}
+              <div className='mt-4 flex flex-wrap gap-3 pt-4 border-t border-gray-200 dark:border-gray-700'>
+                <Link
+                  href={`/articles/${articleId}/history`}
+                  className='inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10'
-                  />
-                </svg>
-                编辑文章
-              </Link>
-            )}
+                  <ClockIcon className='size-4' strokeWidth={1.5} />
+                  查看历史版本
+                </Link>
+
+                {canEdit && (
+                  <Link
+                    href={`/articles/${articleId}/edit`}
+                    className='inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700'
+                  >
+                    <PencilSquareIcon className='size-4' strokeWidth={1.5} />
+                    编辑文章
+                  </Link>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Article Content */}
-      <div className={isMobile ? '' : 'p-8'}>
-        <RichTextDisplay content={article.latest_version?.content} />
-      </div>
-
-      {/* Footer Actions */}
-      <div className='mt-8 text-center'>
-        <div className='flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='size-4'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z'
-            />
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'
-            />
-          </svg>
-
-          <span>正在查看已发布版本</span>
-        </div>
-
-        <div className='flex flex-wrap justify-center gap-3'>
-          <Link
-            href='/articles'
-            className='px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors'
-          >
-            浏览更多文章
-          </Link>
-
-          {canEdit && (
-            <Link
-              href='/articles/new'
-              className='px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors'
-            >
-              创建新文章
-            </Link>
+          {hasToc && (
+            <div className='mb-6 rounded-lg border border-gray-200 bg-white/70 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900/40 lg:hidden'>
+              <details open>
+                <summary className='cursor-pointer text-sm font-semibold text-gray-800 dark:text-gray-200'>
+                  目录
+                </summary>
+                <div className='mt-3'>{renderTocList('text-left', false)}</div>
+              </details>
+            </div>
           )}
+
+          {/* Article Content */}
+          <div
+            ref={contentRef}
+            className={
+              isMobile
+                ? ''
+                : 'rounded-lg border border-transparent p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40'
+            }
+          >
+            <RichTextDisplay content={article.latest_version?.content} />
+          </div>
+
+          {/* Footer Actions */}
+          <div className='mt-8 text-center'>
+            <div className='mb-4 flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400'>
+              <EyeIcon className='size-4' strokeWidth={1.5} />
+
+              <span>正在查看已发布版本</span>
+            </div>
+
+            <div className='flex flex-wrap justify-center gap-3'>
+              <Link
+                href='/articles'
+                className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+              >
+                浏览更多文章
+              </Link>
+
+              {canEdit && (
+                <Link
+                  href='/articles/new'
+                  className='rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700'
+                >
+                  创建新文章
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

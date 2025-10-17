@@ -78,6 +78,7 @@ describe('SkillAllocationDisplay', () => {
       skills: [],
       knowledgeCardGroups: [],
       imageUrl: '/images/cats/汤姆.png',
+      createDate: '2018.2.8',
     });
   });
 

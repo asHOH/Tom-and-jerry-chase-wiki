@@ -1,5 +1,7 @@
+import { stripDisallowedImages } from './imagePolicy';
+
 export function cleanHTMLForExport(html: string): string {
-  let out = html;
+  let out = stripDisallowedImages(html);
   out = out.replace(/<colgroup>[\s\S]*?<\/colgroup>/gi, '');
   out = out.replace(/<table\b([^>]*?)\sstyle="[^"]*"/gi, '<table$1');
   out = out.replace(/<(td|th)([^>]*)>\s*<p>([\s\S]*?)<\/p>\s*<\/\1>/gi, '<$1$2>$3</$1>');
