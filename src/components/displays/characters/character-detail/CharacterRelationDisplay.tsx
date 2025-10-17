@@ -822,6 +822,19 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const char = getCharacterRelation(id);
   const { handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
+  const oppositeFactionId = factionId === 'cat' ? 'mouse' : 'cat';
+
+  const combinedSelectorRelations = React.useMemo(() => {
+    const map = new Map<string, CharacterRelationItem>();
+    [char.counters, char.counteredBy, char.counterEachOther].forEach((list) => {
+      list.forEach((item) => {
+        if (!map.has(item.id)) {
+          map.set(item.id, item);
+        }
+      });
+    });
+    return Array.from(map.values());
+  }, [char.counters, char.counterEachOther, char.counteredBy]);
 
   // Get hooks for managing relations
   const countersHook = useRelationEditor(id, 'counters');
