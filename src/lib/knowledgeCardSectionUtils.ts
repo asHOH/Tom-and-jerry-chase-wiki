@@ -56,6 +56,19 @@ export function flattenCardGroup(cards: readonly CardGroup[]): string[][] {
       }
     }
     console.log(structuredClone({ isOr, result, groupCombinations, restCombinations }));
+    console.log(
+      structuredClone(
+        (() => {
+          const result: string[][] = [];
+          for (const groupCombo of groupCombinations[0]!) {
+            for (const restCombo of restCombinations) {
+              result.push([groupCombo, ...restCombo]);
+            }
+          }
+          return { isOr: true, result, groupCombinations, restCombinations };
+        })()
+      )
+    );
     return result;
   }
 }

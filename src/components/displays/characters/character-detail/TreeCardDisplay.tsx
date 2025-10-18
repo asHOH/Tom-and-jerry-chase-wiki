@@ -114,10 +114,22 @@ const TreeNodeDisplay: React.FC<
     );
   }
 
+  if (node.type === 'and-group' && node.children) {
+    return (
+      <div
+        className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'gap-2')}
+      >
+        {node.children.map((child, index) => (
+          <TreeNodeDisplay key={index} node={child} depth={depth + 1} {...props} />
+        ))}
+      </div>
+    );
+  }
+
   if ((node.type === 'or-group' || node.type === 'and-group') && node.children) {
     // Render children in a vertical column
     return (
-      <div className='flex flex-col gap-1'>
+      <div className='flex flex-col gap-1 items-center'>
         {node.children.map((child, index) => (
           <TreeNodeDisplay key={index} node={child} depth={depth + 1} {...props} />
         ))}
@@ -130,7 +142,7 @@ const TreeNodeDisplay: React.FC<
 
 const TreeCardDisplay: React.FC<TreeCardDisplayProps> = (props) => {
   return (
-    <div className={clsx('flex flex-wrap', props.isSqueezedView ? 'gap-1' : 'gap-2')}>
+    <div className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'gap-2')}>
       {props.tree.map((node, index) => (
         <TreeNodeDisplay key={index} node={node} depth={0} {...props} />
       ))}
