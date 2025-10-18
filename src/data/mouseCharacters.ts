@@ -275,6 +275,10 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         description: '待补充',
       },
       {
+        cards: ['S-铁血', 'S-舍己', [false, 'S-回家', 'S-护佑'], 'C-救救我'],
+        description: '待补充',
+      },
+      {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
         description: '待补充',
       },

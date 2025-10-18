@@ -12,15 +12,8 @@ import { characters } from '@/data'; // Import characters data
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import CharacterList from './CharacterList';
 import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';
-
-// Local types for group checking
-type KnowledgeCardGroup = { cards: string[]; description?: string };
-type KnowledgeCardGroupSet = {
-  groups: (KnowledgeCardGroup | KnowledgeCardGroupSet)[];
-  id?: string;
-  detailedDescription?: string;
-  defaultFolded?: boolean;
-};
+import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
+import { flattenCardGroup } from '@/lib/knowledgeCardSectionUtils';
 
 export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps) {
   // Keyboard navigation
@@ -37,7 +30,11 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   // Helper to check if a group or group set contains the card
   function groupContainsCard(group: KnowledgeCardGroup | KnowledgeCardGroupSet): boolean {
     if ('cards' in group && Array.isArray(group.cards)) {
-      return group.cards.includes(`${card.rank}-${card.id}`);
+      // Flatten the CardGroup[] to get all possible card combinations
+      const allCombinations = flattenCardGroup(group.cards);
+      const cardId = `${card.rank}-${card.id}`;
+      // Check if any combination contains this card
+      return allCombinations.some((combo) => combo.includes(cardId));
     }
     if ('groups' in group && Array.isArray(group.groups)) {
       return group.groups.some(groupContainsCard);

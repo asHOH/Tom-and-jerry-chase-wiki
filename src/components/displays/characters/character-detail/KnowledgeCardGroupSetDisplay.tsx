@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { KnowledgeCardGroupSet } from '@/data/types';
-import { KnowledgeCardGroup } from './KnowledgeCardSection';
+import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardSection';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useAppContext } from '@/context/AppContext';
 import clsx from 'clsx';
@@ -13,7 +13,7 @@ interface KnowledgeCardGroupSetDisplayProps {
   topIndex: number;
   isEditMode: boolean;
   characterId: string;
-  isSqueezedView: boolean;
+  viewMode: ViewMode;
   handleSelectCard: (cardName: string, characterId: string) => void;
   handleEditClick: (topIndex: number, innerIndex?: number) => void;
   onRemoveInnerGroup: (topIndex: number, innerIndex: number) => void;
@@ -33,7 +33,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
   topIndex,
   isEditMode,
   characterId,
-  isSqueezedView,
+  viewMode,
   handleSelectCard,
   handleEditClick,
   onRemoveInnerGroup,
@@ -139,13 +139,13 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
 
           <div className='flex flex-col gap-y-4'>
             {groupSet.groups.map((group, index) => (
-              <KnowledgeCardGroup
+              <KnowledgeCardGroupDisplay
                 key={index}
                 group={group.cards}
                 index={index}
                 description={group.description}
                 isEditMode={isEditMode}
-                isSqueezedView={isSqueezedView}
+                viewMode={viewMode}
                 handleSelectCard={handleSelectCard}
                 characterId={characterId}
                 handleEditClick={() => handleEditClick(topIndex, index)}

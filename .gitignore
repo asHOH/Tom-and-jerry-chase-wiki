@@ -70,6 +70,7 @@ pnpm-lock.yaml
 GEMINI.md
 .codex/
 implementation_plan.md
+implementation_notes.md
 
 # Personal git workflow helpers
 /git-helpers/

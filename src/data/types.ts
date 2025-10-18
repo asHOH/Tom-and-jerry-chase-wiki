@@ -95,8 +95,21 @@ export type Skill = Omit<SkillDefinition, 'forecast' | 'aftercast'> & {
   aftercast?: number;
 };
 
+// true means "or", false means "and"
+// Limit recursion depth to 5 levels to avoid TypeScript type instantiation errors
+type CardGroup0 = string;
+type CardGroup1 = readonly [boolean, ...CardGroup0[]] | CardGroup0;
+type CardGroup2 = readonly [boolean, ...CardGroup1[]] | CardGroup1;
+type CardGroup3 = readonly [boolean, ...CardGroup2[]] | CardGroup2;
+type CardGroup4 = readonly [boolean, ...CardGroup3[]] | CardGroup3;
+export type CardGroup = readonly [boolean, ...CardGroup4[]] | CardGroup4;
+
+// e.g. { cards: ['A', [false, 'B', 'C']] } means "A and B and C", have the exact same meaning as { cards: ['A', 'B', 'C'] }
+// { cards: ['A', [true, 'B', 'C']] } means "A and (B or C)", it will be flattened in flat view to { cards: ['A', 'B'] }, { cards: ['A', 'C'] }
+// CardGroup can be nested to any depth (up to 5 levels), e.g. { cards: ['A', 'B', [true, [false, 'C', 'D'], [false, 'E', 'F']]] } means "(A and B and ((C and D) or (E and F)))"
+// the root definition implies "and" relationship
 export type KnowledgeCardGroup = {
-  cards: string[];
+  cards: readonly CardGroup[];
   description?: string;
   contributor?: string;
 };
