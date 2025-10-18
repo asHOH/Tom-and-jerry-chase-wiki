@@ -2,23 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
-  // Handle OPTIONS requests for CORS
-  if (request.method === 'OPTIONS') {
-    return new NextResponse(null, {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-        'Access-Control-Max-Age': '86400',
-      },
-    });
-  }
-
   // Block Baidu Browser (Android) by UA, allow force continue
   const ua = request.headers.get('user-agent')?.toLowerCase() || '';
   const isBaiduAndroid =
-    ua.includes('baidubrowser') || (ua.includes('baidu') && ua.includes('android'));
+    ua.includes('baidubrowser') ||
+    ua.includes('bdbrowser') ||
+    (ua.includes('baidu') && ua.includes('android'));
   const url = new URL(request.url);
   const forceContinue =
     url.searchParams.get('force_continue') === '1' ||
