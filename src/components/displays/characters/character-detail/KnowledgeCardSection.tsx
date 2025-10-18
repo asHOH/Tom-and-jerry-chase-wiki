@@ -39,7 +39,7 @@ interface KnowledgeCardSectionProps {
   onRemoveGroup: (topIndex: number, innerIndex?: number) => void;
 }
 
-export type ViewMode = 'compact' | 'flat' | 'tree';
+export type ViewMode = 'compact' | 'flat' | 'tree' | 'tree-folded';
 
 /** Flat knowledge card group component - renders a simple string[] group */
 function KnowledgeCardGroupFlat({
@@ -289,7 +289,8 @@ export function KnowledgeCardGroupDisplay({
   contributorInformation: Contributor | undefined;
 }) {
   const isSqueezedView = viewMode === 'compact';
-  const isTreeView = viewMode === 'tree';
+  const isTreeView = viewMode === 'tree' || viewMode === 'tree-folded';
+  const isFoldedMode = viewMode === 'tree-folded';
   const [isDarkMode] = useDarkMode();
 
   if (isTreeView) {
@@ -333,6 +334,7 @@ export function KnowledgeCardGroupDisplay({
               getCardRank={getCardRank}
               imageBasePath={imageBasePath}
               isOptionalCard={(cardId) => cardId === 'C-狡诈' && hasAnyOptional}
+              isFoldedMode={isFoldedMode}
             />
           </div>
 
@@ -415,7 +417,7 @@ export function KnowledgeCardGroupDisplay({
             <KnowledgeCardGroupFlat
               cards={cards}
               index={index}
-              description={subIndex === 0 ? description : undefined}
+              description={description}
               isEditMode={isEditMode}
               isSqueezedView={isSqueezedView}
               handleSelectCard={handleSelectCard}
@@ -541,7 +543,8 @@ export default function KnowledgeCardSection({
 
   const cycleViewMode = () => {
     setViewMode((prev) => {
-      if (prev === 'tree') return 'flat';
+      if (prev === 'tree') return 'tree-folded';
+      if (prev === 'tree-folded') return 'flat';
       if (prev === 'flat') return 'compact';
       return 'tree';
     });
@@ -549,6 +552,7 @@ export default function KnowledgeCardSection({
 
   const getViewModeLabel = () => {
     if (viewMode === 'tree') return '树状视图';
+    if (viewMode === 'tree-folded') return '折叠树状视图';
     if (viewMode === 'flat') return '扁平视图';
     return '紧凑视图';
   };

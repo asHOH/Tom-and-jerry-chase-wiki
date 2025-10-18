@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from '@/components/Image';
 import GotoLink from '@/components/GotoLink';
 import Tag from '@/components/ui/Tag';
@@ -16,6 +16,7 @@ interface TreeCardDisplayProps {
   getCardRank: (cardId: string) => string;
   imageBasePath: string;
   isOptionalCard: (cardId: string) => boolean;
+  isFoldedMode?: boolean;
 }
 
 interface CardDisplayProps {
@@ -89,6 +90,74 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
   );
 };
 
+// Separate component for OR groups with local state
+const OrGroupDisplay: React.FC<
+  TreeCardDisplayProps & {
+    nodes: TreeNode[];
+    depth: number;
+  }
+> = ({ nodes, depth, ...props }) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const isFolded = props.isFoldedMode;
+  const childrenCount = nodes.length;
+  const validSelectedIndex = Math.min(selectedIndex, childrenCount - 1);
+
+  const handleNavigate = (direction: 'prev' | 'next') => {
+    setSelectedIndex((prev) => {
+      if (direction === 'prev') {
+        return prev > 0 ? prev - 1 : childrenCount - 1;
+      } else {
+        return prev < childrenCount - 1 ? prev + 1 : 0;
+      }
+    });
+  };
+
+  if (isFolded) {
+    // In folded mode, only show the selected child
+    const selectedChild = nodes[validSelectedIndex];
+    if (!selectedChild) return null;
+
+    return (
+      <div className='flex flex-col gap-2 items-center'>
+        <TreeNodeDisplay node={selectedChild} depth={depth + 1} {...props} />
+        {/* Navigation bar */}
+        {childrenCount > 1 && (
+          <div className='flex items-center gap-2 bg-gray-100 dark:bg-slate-700 rounded-md px-3 py-1.5'>
+            <button
+              type='button'
+              onClick={() => handleNavigate('prev')}
+              className='text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
+              aria-label='上一个选项'
+            >
+              ←
+            </button>
+            <span className='text-xs text-gray-600 dark:text-gray-400 font-medium'>
+              {validSelectedIndex + 1} / {childrenCount}
+            </span>
+            <button
+              type='button'
+              onClick={() => handleNavigate('next')}
+              className='text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
+              aria-label='下一个选项'
+            >
+              →
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Normal mode: Render children in a vertical column
+  return (
+    <div className='flex flex-col gap-1 items-center'>
+      {nodes.map((child, index) => (
+        <TreeNodeDisplay key={index} node={child} depth={depth + 1} {...props} />
+      ))}
+    </div>
+  );
+};
+
 const TreeNodeDisplay: React.FC<
   TreeCardDisplayProps & {
     node: TreeNode;
@@ -127,14 +196,7 @@ const TreeNodeDisplay: React.FC<
   }
 
   if (node.type === 'or-group' && node.children) {
-    // Render children in a vertical column
-    return (
-      <div className='flex flex-col gap-1 items-center'>
-        {node.children.map((child, index) => (
-          <TreeNodeDisplay key={index} node={child} depth={depth + 1} {...props} />
-        ))}
-      </div>
-    );
+    return <OrGroupDisplay nodes={node.children} depth={depth} {...props} />;
   }
 
   return null;

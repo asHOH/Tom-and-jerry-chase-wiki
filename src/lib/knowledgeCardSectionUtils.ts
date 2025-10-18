@@ -64,14 +64,13 @@ export function calculateMaxCostForTree(
   getCardCost: (cardId: string) => number
 ): number {
   const allCombinations = flattenCardGroup(cards);
-  let maxCost = 0;
 
-  for (const combo of allCombinations) {
-    const cost = combo.reduce((sum, cardId) => sum + getCardCost(cardId), 0);
-    maxCost = Math.max(maxCost, cost);
-  }
-
-  return maxCost;
+  return Math.max.apply(
+    null,
+    allCombinations.map((combo) =>
+      combo.reduce((sum, cardId) => sum + (cardId == 'C-狡诈' ? 0 : getCardCost(cardId)), 0)
+    )
+  );
 }
 
 /**
