@@ -126,7 +126,7 @@ const TreeNodeDisplay: React.FC<
     );
   }
 
-  if ((node.type === 'or-group' || node.type === 'and-group') && node.children) {
+  if (node.type === 'or-group' && node.children) {
     // Render children in a vertical column
     return (
       <div className='flex flex-col gap-1 items-center'>

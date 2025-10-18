@@ -36,41 +36,24 @@ export function flattenCardGroup(cards: readonly CardGroup[]): string[][] {
   }
 
   const [isOr, ...groupCards] = first as readonly [boolean, ...CardGroup[]];
-  const groupCombinations = flattenCardGroup(groupCards);
+  let groupCombinations: string[][];
 
   if (isOr) {
-    // OR relationship - create separate combinations for each branch
-    const result: string[][] = [];
-    for (const groupCombo of groupCombinations[0]!) {
-      for (const restCombo of restCombinations) {
-        result.push([groupCombo, ...restCombo]);
-      }
-    }
-    return result;
+    // OR relationship: treat each item in groupCards as a separate option.
+    groupCombinations = groupCards.flatMap((card) => flattenCardGroup([card]));
   } else {
-    // AND relationship - all group combinations must be combined with all rest combinations
-    const result: string[][] = [];
-    for (const groupCombo of groupCombinations) {
-      for (const restCombo of restCombinations) {
-        result.push([...groupCombo, ...restCombo]);
-      }
-    }
-    console.log(structuredClone({ isOr, result, groupCombinations, restCombinations }));
-    console.log(
-      structuredClone(
-        (() => {
-          const result: string[][] = [];
-          for (const groupCombo of groupCombinations[0]!) {
-            for (const restCombo of restCombinations) {
-              result.push([groupCombo, ...restCombo]);
-            }
-          }
-          return { isOr: true, result, groupCombinations, restCombinations };
-        })()
-      )
-    );
-    return result;
+    // AND relationship: items in groupCards are all taken together.
+    groupCombinations = flattenCardGroup(groupCards);
   }
+
+  // Combine the group's combinations with the combinations of the rest of the cards.
+  const result: string[][] = [];
+  for (const groupCombo of groupCombinations) {
+    for (const restCombo of restCombinations) {
+      result.push([...groupCombo, ...restCombo]);
+    }
+  }
+  return result;
 }
 
 /**
