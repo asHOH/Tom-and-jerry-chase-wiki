@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import PageTitle from '@/components/ui/PageTitle';
@@ -112,13 +112,13 @@ export default function ArticlesClient({ articles: data, description }: Articles
   const error = null;
   function mutate() {}
 
-  const filteredArticles = useMemo(() => {
+  const filteredArticles = (() => {
     if (!data?.articles) return [] as Article[];
     if (selectedCategories.size === 0) return data.articles;
     return data.articles.filter((a) => selectedCategories.has(a.category_id));
-  }, [data?.articles, selectedCategories]);
+  })();
 
-  const sortedArticles = useMemo(() => {
+  const sortedArticles = (() => {
     const arr = [...filteredArticles];
     if (sortBy === 'created_at') {
       arr.sort((a, b) =>
@@ -134,7 +134,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
       });
     }
     return arr;
-  }, [filteredArticles, sortBy, sortOrder]);
+  })();
 
   const pageSize = 20;
   const clientTotalPages = Math.max(1, Math.ceil(sortedArticles.length / pageSize));

@@ -13,7 +13,6 @@ interface KnowledgeCardManagerProps {
 
 // TODO: use local character to refactor
 export default function KnowledgeCardManager({ factionId }: KnowledgeCardManagerProps) {
-  'use no memo';
   const { characterId } = useLocalCharacter();
   const character = useSnapshot(characters[characterId]!);
 

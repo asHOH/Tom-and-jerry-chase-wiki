@@ -77,8 +77,6 @@ function KnowledgeCardGroupFlat({
   contributorInformation: Contributor | undefined;
   isDarkMode: boolean;
 }) {
-  'use no memo';
-
   if (cards.length === 0 && !isEditMode) {
     return null;
   }
@@ -292,7 +290,6 @@ export function KnowledgeCardGroupDisplay({
   contributorInformation: Contributor | undefined;
   isDarkMode: boolean;
 }) {
-  'use no memo';
   const isSqueezedView = viewMode === 'compact';
   const isTreeView = viewMode === 'tree' || viewMode === 'tree-folded';
   const isFoldedMode = viewMode === 'tree-folded';
@@ -454,7 +451,6 @@ export default function KnowledgeCardSection({
   onCreateGroup,
   onRemoveGroup,
 }: KnowledgeCardSectionProps) {
-  'use no memo';
   const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
   const [isDarkMode] = useDarkMode();

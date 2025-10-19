@@ -166,7 +166,10 @@ const nextConfig = {
     return config;
   },
   experimental: {
-    reactCompiler: true,
+    reactCompiler: {
+      panicThreshold: 'CRITICAL_ERRORS',
+      compilationMode: 'annotation',
+    },
   },
 };
 

@@ -29,7 +29,7 @@ export const useSkillAllocationManagement = () => {
     [localCharacter]
   );
 
-  const handleAddSkillAllocation = useCallback(() => {
+  const handleAddSkillAllocation = () => {
     if (!localCharacter.skillAllocations) return;
     const newAllocationId = `加点方案 ${localCharacter.skillAllocations.length + 1}`;
     const newAllocation: SkillAllocation = {
@@ -39,17 +39,12 @@ export const useSkillAllocationManagement = () => {
       description: '新增加点方案描述',
     };
     handleSaveChanges([...localCharacter.skillAllocations, newAllocation]);
-  }, [handleSaveChanges, localCharacter?.skillAllocations]);
+  };
 
-  const handleRemoveSkillAllocation = useCallback(
-    (allocationId: string) => {
-      if (!localCharacter.skillAllocations) return;
-      handleSaveChanges(
-        localCharacter.skillAllocations.filter((alloc) => alloc.id !== allocationId)
-      );
-    },
-    [handleSaveChanges, localCharacter?.skillAllocations]
-  );
+  const handleRemoveSkillAllocation = (allocationId: string) => {
+    if (!localCharacter.skillAllocations) return;
+    handleSaveChanges(localCharacter.skillAllocations.filter((alloc) => alloc.id !== allocationId));
+  };
 
   return {
     handleAddSkillAllocation,
