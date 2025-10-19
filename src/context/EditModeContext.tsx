@@ -1,7 +1,7 @@
 'use client';
 
 import { characters, factions } from '@/data';
-import { proxy } from 'valtio';
+import { proxy, subscribe } from 'valtio';
 import { GameDataManager } from '@/lib/dataManager';
 import { usePathname } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -45,6 +45,20 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
         Object.assign(factions, JSON.parse(localStorage.getItem('factions') ?? '{}'));
       }
     }
+    const unsubChars = subscribe(characters, () => {
+      try {
+        localStorage.setItem('characters', JSON.stringify(characters));
+      } catch {}
+    });
+    const unsubFactions = subscribe(factions, () => {
+      try {
+        localStorage.setItem('factions', JSON.stringify(factions));
+      } catch {}
+    });
+    return () => {
+      unsubChars();
+      unsubFactions();
+    };
   }, [isEditMode, hasInitialized]);
 
   const toggleEditMode = () => {
