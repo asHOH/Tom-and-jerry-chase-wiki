@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from '@/components/Image';
 import Tooltip from '@/components/ui/Tooltip';
 import CharacterSection from './CharacterSection';
@@ -460,7 +460,13 @@ export default function KnowledgeCardSection({
     innerIndex?: number;
     isGroupSet: boolean;
   } | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('tree');
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    () => (localStorage.getItem('view-mode') ?? 'tree-folded') as ViewMode
+  );
+
+  useEffect(() => {
+    localStorage.setItem('view-mode', viewMode);
+  });
 
   const imageBasePath = factionId === 'cat' ? '/images/catCards/' : '/images/mouseCards/';
 
