@@ -3,6 +3,7 @@ import type { KnowledgeCardGroupSet } from '@/data/types';
 import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardSection';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
 import { contributors } from '@/data/contributors';
 import EditableField from '@/components/ui/EditableField';
@@ -45,10 +46,13 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
 }) => {
   'use no memo';
   const { isDetailedView } = useAppContext();
-  const [isOpen, setIsOpen] = useState(!groupSet.defaultFolded || isEditMode);
+  const [isDarkMode] = useDarkMode();
+  const [isOpen, setIsOpen] = useState(() => !groupSet.defaultFolded || isEditMode);
 
   const toggleOpen = () => {
-    setIsOpen(isEditMode ? true : !isOpen);
+    if (!isEditMode) {
+      setIsOpen((prev) => !prev);
+    }
   };
 
   return (
@@ -159,6 +163,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
                 contributorInformation={contributors.find(
                   (a) => a.id === group.contributor || a.name === group.contributor
                 )}
+                isDarkMode={isDarkMode}
               />
             ))}
           </div>

@@ -17,6 +17,7 @@ interface TreeCardDisplayProps {
   imageBasePath: string;
   isOptionalCard: (cardId: string) => boolean;
   isFoldedMode?: boolean;
+  isDarkMode?: boolean;
 }
 
 interface CardDisplayProps {
@@ -42,6 +43,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
   isOptional,
   isDarkMode,
 }) => {
+  'use no memo';
   const cardName = cardId.split('-')[1]!;
   const cardRank = getCardRank(cardId);
   const rankColors = getCardRankColors(cardRank, false, isDarkMode);
@@ -97,10 +99,13 @@ const OrGroupDisplay: React.FC<
     depth: number;
   }
 > = ({ nodes, depth, ...props }) => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const isFolded = props.isFoldedMode;
+  'use no memo';
   const childrenCount = nodes.length;
-  const validSelectedIndex = Math.min(selectedIndex, childrenCount - 1);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Reset selected index if it's out of bounds
+  const validSelectedIndex = selectedIndex >= childrenCount ? 0 : selectedIndex;
+  const isFolded = props.isFoldedMode;
 
   const handleNavigate = (direction: 'prev' | 'next') => {
     setSelectedIndex((prev) => {
@@ -119,7 +124,12 @@ const OrGroupDisplay: React.FC<
 
     return (
       <div className='flex flex-col gap-2 items-center'>
-        <TreeNodeDisplay node={selectedChild} depth={depth + 1} {...props} />
+        <TreeNodeDisplay
+          node={selectedChild}
+          depth={depth + 1}
+          isDarkMode={props.isDarkMode ?? false}
+          {...props}
+        />
         {/* Navigation bar */}
         {childrenCount > 1 && (
           <div className='flex items-center gap-2 bg-gray-100 dark:bg-slate-700 rounded-md px-3 py-1.5'>
@@ -152,7 +162,13 @@ const OrGroupDisplay: React.FC<
   return (
     <div className='flex flex-col gap-1 items-center'>
       {nodes.map((child, index) => (
-        <TreeNodeDisplay key={index} node={child} depth={depth + 1} {...props} />
+        <TreeNodeDisplay
+          key={index}
+          node={child}
+          depth={depth + 1}
+          isDarkMode={props.isDarkMode ?? false}
+          {...props}
+        />
       ))}
     </div>
   );
@@ -162,9 +178,10 @@ const TreeNodeDisplay: React.FC<
   TreeCardDisplayProps & {
     node: TreeNode;
     depth: number;
+    isDarkMode: boolean;
   }
-> = ({ node, depth, ...props }) => {
-  const [isDarkMode] = useDarkMode();
+> = ({ node, depth, isDarkMode, ...props }) => {
+  'use no memo';
 
   if (node.type === 'card' && node.cardId) {
     const isOptional = props.isOptionalCard(node.cardId);
@@ -189,24 +206,41 @@ const TreeNodeDisplay: React.FC<
         className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'gap-2')}
       >
         {node.children.map((child, index) => (
-          <TreeNodeDisplay key={index} node={child} depth={depth + 1} {...props} />
+          <TreeNodeDisplay
+            key={index}
+            node={child}
+            depth={depth + 1}
+            isDarkMode={isDarkMode}
+            {...props}
+          />
         ))}
       </div>
     );
   }
 
   if (node.type === 'or-group' && node.children) {
-    return <OrGroupDisplay nodes={node.children} depth={depth} {...props} />;
+    return (
+      <OrGroupDisplay nodes={node.children} depth={depth} isDarkMode={isDarkMode} {...props} />
+    );
   }
 
   return null;
 };
 
 const TreeCardDisplay: React.FC<TreeCardDisplayProps> = (props) => {
+  'use no memo';
+  const [isDarkMode] = useDarkMode();
+
   return (
     <div className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'gap-2')}>
       {props.tree.map((node, index) => (
-        <TreeNodeDisplay key={index} node={node} depth={0} {...props} />
+        <TreeNodeDisplay
+          key={index}
+          node={node}
+          depth={0}
+          isDarkMode={props.isDarkMode ?? isDarkMode}
+          {...props}
+        />
       ))}
     </div>
   );

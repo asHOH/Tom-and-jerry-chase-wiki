@@ -58,6 +58,7 @@ function KnowledgeCardGroupFlat({
   descriptionPath,
   contributor,
   contributorInformation,
+  isDarkMode,
 }: {
   cards: readonly string[];
   index: number;
@@ -74,8 +75,9 @@ function KnowledgeCardGroupFlat({
   descriptionPath: string;
   contributor: string | undefined;
   contributorInformation: Contributor | undefined;
+  isDarkMode: boolean;
 }) {
-  const [isDarkMode] = useDarkMode();
+  'use no memo';
 
   if (cards.length === 0 && !isEditMode) {
     return null;
@@ -271,6 +273,7 @@ export function KnowledgeCardGroupDisplay({
   descriptionPath,
   contributor,
   contributorInformation,
+  isDarkMode,
 }: {
   group: readonly CardGroup[];
   index: number;
@@ -287,12 +290,12 @@ export function KnowledgeCardGroupDisplay({
   descriptionPath: string;
   contributor: string | undefined;
   contributorInformation: Contributor | undefined;
+  isDarkMode: boolean;
 }) {
   'use no memo';
   const isSqueezedView = viewMode === 'compact';
   const isTreeView = viewMode === 'tree' || viewMode === 'tree-folded';
   const isFoldedMode = viewMode === 'tree-folded';
-  const [isDarkMode] = useDarkMode();
 
   if (isTreeView) {
     // Tree mode: show tree structure with max cost
@@ -336,6 +339,7 @@ export function KnowledgeCardGroupDisplay({
               imageBasePath={imageBasePath}
               isOptionalCard={(cardId) => cardId === 'C-狡诈' && hasAnyOptional}
               isFoldedMode={isFoldedMode}
+              isDarkMode={isDarkMode}
             />
           </div>
 
@@ -431,6 +435,7 @@ export function KnowledgeCardGroupDisplay({
               descriptionPath={descriptionPath}
               contributor={subIndex === 0 ? contributor : undefined}
               contributorInformation={subIndex === 0 ? contributorInformation : undefined}
+              isDarkMode={isDarkMode}
             />
             {subIndex < flattenedCombinations.length - 1 && (
               <div className='border-t border-gray-300 dark:border-slate-600 my-2'></div>
@@ -452,6 +457,7 @@ export default function KnowledgeCardSection({
   'use no memo';
   const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
+  const [isDarkMode] = useDarkMode();
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [currentTarget, setCurrentTarget] = useState<{
     topIndex: number;
@@ -664,6 +670,7 @@ export default function KnowledgeCardSection({
                   contributorInformation={contributors.find(
                     (a) => a.id === group.contributor || a.name === group.contributor
                   )}
+                  isDarkMode={isDarkMode}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
                   <div className='border-t border-gray-200 dark:border-slate-700 my-4'></div>

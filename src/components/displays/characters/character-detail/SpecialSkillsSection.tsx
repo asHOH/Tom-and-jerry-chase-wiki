@@ -8,6 +8,7 @@ import TextWithHoverTooltips from '@/components/displays/characters/shared/TextW
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 export default function SpecialSkillsSection() {
+  'use no memo';
   const { characterId } = useLocalCharacter();
   const { isEditMode } = useEditMode();
   const character = useSnapshot(characters[characterId]!);
