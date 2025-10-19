@@ -43,6 +43,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
   getCardRank,
   imageBasePath,
 }) => {
+  'use no memo';
   const { isDetailedView } = useAppContext();
   const [isOpen, setIsOpen] = useState(!groupSet.defaultFolded || isEditMode);
 

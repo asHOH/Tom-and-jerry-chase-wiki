@@ -288,6 +288,7 @@ export function KnowledgeCardGroupDisplay({
   contributor: string | undefined;
   contributorInformation: Contributor | undefined;
 }) {
+  'use no memo';
   const isSqueezedView = viewMode === 'compact';
   const isTreeView = viewMode === 'tree' || viewMode === 'tree-folded';
   const isFoldedMode = viewMode === 'tree-folded';
@@ -448,6 +449,7 @@ export default function KnowledgeCardSection({
   onCreateGroup,
   onRemoveGroup,
 }: KnowledgeCardSectionProps) {
+  'use no memo';
   const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
   const [isPickerOpen, setPickerOpen] = useState(false);
