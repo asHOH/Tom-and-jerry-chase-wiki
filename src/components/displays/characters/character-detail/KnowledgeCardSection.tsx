@@ -625,6 +625,20 @@ export default function KnowledgeCardSection({
     return '紧凑视图';
   };
 
+  const isTwoModeCycle = !hasTreeStructure;
+  const viewToggleButtonClass = clsx(
+    'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200',
+    isTwoModeCycle
+      ? viewMode === 'compact'
+        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
+      : 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+  );
+  const viewToggleIconClass = clsx(
+    'w-4 h-4 transition-transform duration-200',
+    viewMode === 'compact' ? 'rotate-90' : 'rotate-180'
+  );
+
   if (!knowledgeCardGroups || knowledgeCardGroups.length === 0) {
     if (isEditMode) {
       return (
@@ -635,23 +649,25 @@ export default function KnowledgeCardSection({
                 <button
                   type='button'
                   onClick={cycleViewMode}
-                  className='flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
+                  className={viewToggleButtonClass}
                   aria-label={`当前: ${getViewModeLabel()}`}
                 >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth='2'
-                    stroke='currentColor'
-                    className='w-4 h-4'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      d='M8.25 13.75L12 10L15.75 13.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                    />
-                  </svg>
+                  {isTwoModeCycle && (
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth='2'
+                      stroke='currentColor'
+                      className={viewToggleIconClass}
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        d='M8.25 13.75L12 10L15.75 13.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                      />
+                    </svg>
+                  )}
                   {getViewModeLabel()}
                 </button>
                 <button
@@ -679,23 +695,25 @@ export default function KnowledgeCardSection({
             <button
               type='button'
               onClick={cycleViewMode}
-              className='flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+              className={viewToggleButtonClass}
               aria-label={`当前: ${getViewModeLabel()}`}
             >
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth='2'
-                stroke='currentColor'
-                className='w-4 h-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M8.25 13.75L12 10L15.75 13.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                />
-              </svg>
+              {isTwoModeCycle && (
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth='2'
+                  stroke='currentColor'
+                  className={viewToggleIconClass}
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M8.25 13.75L12 10L15.75 13.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                  />
+                </svg>
+              )}
               {getViewModeLabel()}
             </button>
             {isEditMode && (
