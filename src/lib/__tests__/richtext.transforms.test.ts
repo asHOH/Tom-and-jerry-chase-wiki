@@ -47,4 +47,13 @@ describe('cleanHTMLForExport', () => {
     expect(out).toMatch(/\n<td>b<\/td>\n/);
     expect(out).toMatch(/\n<\/tr>/);
   });
+
+  it('removes images from disallowed origins', () => {
+    const input =
+      '<p>ok</p><img src="https://example.com/image.png" onerror="alert(1)" /><img src="/images/local.png" data-test="stay" />';
+    const out = cleanHTMLForExport(input);
+    expect(out).not.toContain('https://example.com/image.png');
+    expect(out).not.toContain('onerror');
+    expect(out).toContain('/images/local.png');
+  });
 });

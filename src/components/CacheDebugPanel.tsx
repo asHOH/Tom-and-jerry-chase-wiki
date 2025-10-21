@@ -12,6 +12,13 @@ export const CacheDebugPanel: React.FC = () => {
     'success' | 'info' | 'warning' | 'error'
   >('success');
 
+  const getCacheInfo = async () => {
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      setCacheInfo(cacheNames);
+    }
+  };
+
   useEffect(() => {
     // Show debug panel with Ctrl+Shift+D
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -26,13 +33,6 @@ export const CacheDebugPanel: React.FC = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isVisible]);
-
-  const getCacheInfo = async () => {
-    if ('caches' in window) {
-      const cacheNames = await caches.keys();
-      setCacheInfo(cacheNames);
-    }
-  };
 
   const clearAllCaches = async () => {
     if ('caches' in window) {

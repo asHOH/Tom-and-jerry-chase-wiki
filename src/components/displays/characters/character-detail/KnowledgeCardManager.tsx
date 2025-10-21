@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { characters } from '@/data'; // Import Character type
-import type { KnowledgeCardGroup, KnowledgeCardGroupSet, FactionId } from '@/data/types';
+import type { FactionId, KnowledgeCardGroup } from '@/data/types';
 import KnowledgeCardSection from './KnowledgeCardSection';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import { useSnapshot } from 'valtio';
-import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 
 interface KnowledgeCardManagerProps {
   factionId: FactionId;
@@ -14,17 +13,8 @@ interface KnowledgeCardManagerProps {
 
 // TODO: use local character to refactor
 export default function KnowledgeCardManager({ factionId }: KnowledgeCardManagerProps) {
-  const [knowledgeCardGroups, setKnowledgeCardGroups] = useState<
-    DeepReadonly<(KnowledgeCardGroup | KnowledgeCardGroupSet)[]>
-  >([]);
   const { characterId } = useLocalCharacter();
   const character = useSnapshot(characters[characterId]!);
-
-  useEffect(() => {
-    if (character?.knowledgeCardGroups) {
-      setKnowledgeCardGroups(character.knowledgeCardGroups);
-    }
-  }, [character.knowledgeCardGroups]);
 
   const handleCreateGroup = () => {
     const newGroup: KnowledgeCardGroup = {
@@ -52,7 +42,7 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
 
   return (
     <KnowledgeCardSection
-      knowledgeCardGroups={knowledgeCardGroups}
+      knowledgeCardGroups={character.knowledgeCardGroups ?? []}
       factionId={factionId}
       characterId={character.id}
       onCreateGroup={handleCreateGroup}

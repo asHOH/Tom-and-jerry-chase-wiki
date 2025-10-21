@@ -8,6 +8,7 @@ import {
   useMemo,
   useContext,
   useLayoutEffect,
+  useEffect,
 } from 'react';
 
 // Cookie helper functions
@@ -72,10 +73,12 @@ export function DarkModeProvider({
     () => [isDarkMode, toggleDarkMode] as const,
     [isDarkMode, toggleDarkMode]
   );
-  if (typeof window !== 'undefined') {
-    // @ts-expect-error: debugging purpose
-    window.toggleDarkMode = toggleDarkMode;
-  }
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // @ts-expect-error: debugging purpose
+      window.toggleDarkMode = toggleDarkMode;
+    }
+  }, [toggleDarkMode]);
 
   return <DarkModeContext value={contextValue}>{children}</DarkModeContext>;
 }

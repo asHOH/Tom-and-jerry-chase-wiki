@@ -18,6 +18,7 @@ import {
   HorizontalRuleIcon,
   UndoIcon,
   RedoIcon,
+  LoadingSpinnerIcon,
 } from '../RichTextEditorIcons';
 import ViewModeToggle, { EditorViewMode } from './ViewModeToggle';
 
@@ -72,6 +73,7 @@ export interface ToolbarProps {
   onModeChange: (mode: EditorViewMode) => void;
   className?: string;
   hideWiki?: boolean;
+  isUploadingImage?: boolean;
 }
 
 const ToolbarButton = React.memo(function ToolbarButton({
@@ -117,6 +119,7 @@ export const Toolbar = React.memo(function Toolbar({
   onModeChange,
   className,
   hideWiki,
+  isUploadingImage,
 }: ToolbarProps) {
   const [showTableTools, setShowTableTools] = useState(false);
 
@@ -336,8 +339,17 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton onClick={commands.addLink} title='插入链接' mode={mode}>
             <LinkIcon />
           </ToolbarButton>
-          <ToolbarButton onClick={commands.addImage} title='插入图片' mode={mode}>
-            <ImageIcon />
+          <ToolbarButton
+            onClick={commands.addImage}
+            title={isUploadingImage ? '图片上传中...' : '插入图片'}
+            mode={mode}
+            disabled={!!isUploadingImage}
+          >
+            {isUploadingImage ? (
+              <LoadingSpinnerIcon className='animate-spin size-4' />
+            ) : (
+              <ImageIcon />
+            )}
           </ToolbarButton>
         </div>
 

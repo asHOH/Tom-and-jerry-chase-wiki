@@ -29,6 +29,7 @@ export const UserProvider = ({
   children: ReactNode;
   initialValue: Promise<UserType>;
 }) => {
+  'use no memo';
   const initialUser = use(initialValue);
   const hasAppliedInitial = useRef(false);
   if (!hasAppliedInitial.current) {

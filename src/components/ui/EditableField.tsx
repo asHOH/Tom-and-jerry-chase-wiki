@@ -51,6 +51,7 @@ function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagName
   factionId,
   ...rest // Capture all other props
 }: EditableFieldProps<T, TagName>) {
+  'use no memo';
   const [content, setContent] = useState<T>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
   const { characterId } = useLocalCharacter();
@@ -187,6 +188,7 @@ function EditableField<T, TagName extends keyof HTMLElementTagNameMap>({
   enableEdit = true,
   ...rest // Capture all other props
 }: EditableFieldProps<T, TagName> & { enableEdit?: boolean }) {
+  'use no memo';
   const { isEditMode } = useEditMode();
   return isEditMode && enableEdit ? (
     <EditableFieldImplementation

@@ -2,9 +2,100 @@
  * Utility functions for knowledge card calculations and display logic
  */
 
+import type { CardGroup } from '@/data/types';
+
 // Constants for optional card rules
 const OPTIONAL_CARD_ID = 'C-狡诈';
 const MAX_COST = 21;
+
+// Types for tree structure display
+export type TreeNode = {
+  type: 'card' | 'and-group' | 'or-group';
+  cardId?: string; // For type 'card'
+  children?: TreeNode[]; // For type 'and-group' or 'or-group'
+};
+
+/**
+ * Flatten CardGroup into all possible card combinations
+ * Example: ['A', [true, 'B', 'C']] → [['A', 'B'], ['A', 'C']]
+ */
+export function flattenCardGroup(cards: readonly CardGroup[]): string[][] {
+  if (cards.length === 0) return [[]];
+
+  const [first, ...rest] = cards;
+  const restCombinations = flattenCardGroup(rest);
+
+  if (typeof first === 'string') {
+    // Simple card - add it to all rest combinations
+    return restCombinations.map((combo) => [first, ...combo]);
+  }
+
+  // It's a nested group [boolean, ...CardGroup[]]
+  if (!Array.isArray(first) || first.length === 0) {
+    return restCombinations;
+  }
+
+  const [isOr, ...groupCards] = first as readonly [boolean, ...CardGroup[]];
+  let groupCombinations: string[][];
+
+  if (isOr) {
+    // OR relationship: treat each item in groupCards as a separate option.
+    groupCombinations = groupCards.flatMap((card) => flattenCardGroup([card]));
+  } else {
+    // AND relationship: items in groupCards are all taken together.
+    groupCombinations = flattenCardGroup(groupCards);
+  }
+
+  // Combine the group's combinations with the combinations of the rest of the cards.
+  const result: string[][] = [];
+  for (const groupCombo of groupCombinations) {
+    for (const restCombo of restCombinations) {
+      result.push([...groupCombo, ...restCombo]);
+    }
+  }
+  return result;
+}
+
+/**
+ * Calculate the maximum cost among all possible combinations in a CardGroup
+ */
+export function calculateMaxCostForTree(
+  cards: readonly CardGroup[],
+  getCardCost: (cardId: string) => number
+): number {
+  const allCombinations = flattenCardGroup(cards);
+
+  return Math.max.apply(
+    null,
+    allCombinations.map((combo) =>
+      combo.reduce((sum, cardId) => sum + (cardId == 'C-狡诈' ? 0 : getCardCost(cardId)), 0)
+    )
+  );
+}
+
+/**
+ * Convert CardGroup array to tree structure for display
+ */
+export function buildTreeStructure(cards: readonly CardGroup[]): TreeNode[] {
+  const result: TreeNode[] = [];
+
+  for (const card of cards) {
+    if (typeof card === 'string') {
+      // Simple card
+      result.push({ type: 'card', cardId: card });
+    } else {
+      // Nested group [boolean, ...CardGroup[]]
+      const [isOr, ...groupCards] = card;
+      const children = buildTreeStructure(groupCards);
+      result.push({
+        type: isOr ? 'or-group' : 'and-group',
+        children,
+      });
+    }
+  }
+
+  return result;
+}
 
 export interface KnowledgeCardCostInfo {
   totalCost: number;

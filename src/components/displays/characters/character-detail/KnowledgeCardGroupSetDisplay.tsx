@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import type { KnowledgeCardGroupSet } from '@/data/types';
-import { KnowledgeCardGroup } from './KnowledgeCardSection';
+import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardSection';
 import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
 import { contributors } from '@/data/contributors';
 import EditableField from '@/components/ui/EditableField';
@@ -13,7 +14,7 @@ interface KnowledgeCardGroupSetDisplayProps {
   topIndex: number;
   isEditMode: boolean;
   characterId: string;
-  isSqueezedView: boolean;
+  viewMode: ViewMode;
   handleSelectCard: (cardName: string, characterId: string) => void;
   handleEditClick: (topIndex: number, innerIndex?: number) => void;
   onRemoveInnerGroup: (topIndex: number, innerIndex: number) => void;
@@ -33,7 +34,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
   topIndex,
   isEditMode,
   characterId,
-  isSqueezedView,
+  viewMode,
   handleSelectCard,
   handleEditClick,
   onRemoveInnerGroup,
@@ -44,10 +45,13 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
   imageBasePath,
 }) => {
   const { isDetailedView } = useAppContext();
-  const [isOpen, setIsOpen] = useState(!groupSet.defaultFolded || isEditMode);
+  const [isDarkMode] = useDarkMode();
+  const [isOpen, setIsOpen] = useState(() => !groupSet.defaultFolded || isEditMode);
 
   const toggleOpen = () => {
-    setIsOpen(isEditMode ? true : !isOpen);
+    if (!isEditMode) {
+      setIsOpen((prev) => !prev);
+    }
   };
 
   return (
@@ -139,13 +143,13 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
 
           <div className='flex flex-col gap-y-4'>
             {groupSet.groups.map((group, index) => (
-              <KnowledgeCardGroup
+              <KnowledgeCardGroupDisplay
                 key={index}
                 group={group.cards}
                 index={index}
                 description={group.description}
                 isEditMode={isEditMode}
-                isSqueezedView={isSqueezedView}
+                viewMode={viewMode}
                 handleSelectCard={handleSelectCard}
                 characterId={characterId}
                 handleEditClick={() => handleEditClick(topIndex, index)}
@@ -158,6 +162,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
                 contributorInformation={contributors.find(
                   (a) => a.id === group.contributor || a.name === group.contributor
                 )}
+                isDarkMode={isDarkMode}
               />
             ))}
           </div>
