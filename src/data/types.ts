@@ -213,7 +213,7 @@ export type Character = CharacterDefinition & {
 // Card-related types
 export type CardRank = 'C' | 'B' | 'A' | 'S';
 
-export type CardPriority = '3级质变' | '提升明显' | '几乎无提升';
+export type CardPriority = '3级质变' | '提升明显' | '提升较小' | '几乎无提升' | '本身无用';
 
 export type CardLevel = {
   level: number;

@@ -11,7 +11,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '回家',
     rank: 'S',
     cost: 6,
-    description: '墙缝出现后立刻解除虚弱和受伤，回复极大量Hp，并额外获得**增益**。',
+    description: '墙缝出现后立刻解除虚弱和受伤，回满Hp，并额外获得**增益**。',
     detailedDescription:
       '为所有爱执着的痛，再痛我也要回家！墙缝出现后立刻解除虚弱和受伤，回复200Hp，并额外获得**增益**。',
     levels: [
@@ -48,6 +48,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '护佑持续**270**秒。' },
       { level: 3, description: '护佑持续**300**秒。' },
     ],
+    priority: '几乎无提升',
   },
 
   无畏: {
@@ -63,6 +64,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '无畏持续**6.5**秒。' },
       { level: 3, description: '无畏持续**7**秒。' },
     ],
+    priority: '提升较小',
   },
 
   有难同当: {
@@ -77,6 +79,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: 'CD：**35**秒。' },
       { level: 3, description: 'CD：**30**秒。' },
     ],
+    priority: '提升较小',
   },
 
   缴械: {
@@ -105,6 +108,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '无敌持续**4.5**秒。' },
       { level: 3, description: '无敌持续**5**秒。' },
     ],
+    priority: '提升明显',
   },
 
   铁血: {
@@ -119,6 +123,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '铁血持续**4.5**秒。' },
       { level: 3, description: '铁血持续**5**秒。' },
     ],
+    priority: '提升明显',
   },
 
   /* ----------------------------------- A级卡 ---------------------------------- */
@@ -134,6 +139,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '移动和跳跃速度提升**19%**。' },
       { level: 3, description: '移动和跳跃速度提升**20%**。' },
     ],
+    priority: '几乎无提升',
   },
 
   团队领袖: {
@@ -148,6 +154,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '推速提升**4%**。' },
       { level: 3, description: '推速提升**5%**。' },
     ],
+    priority: '提升明显',
   },
 
   投手: {
@@ -175,6 +182,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '每隔**55**秒触发。' },
       { level: 3, description: '每隔**45**秒触发。' },
     ],
+    priority: '提升明显',
   },
 
   祝愿: {
@@ -189,6 +197,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '队友移动和跳跃速度提升持续**11**秒。' },
       { level: 3, description: '队友移动和跳跃速度提升持续**12**秒。' },
     ],
+    priority: '几乎无提升',
   },
 
   翩若惊鸿: {
@@ -203,6 +212,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '加速**15%**。' },
       { level: 3, description: '加速**20%**。' },
     ],
+    priority: '提升明显',
   },
 
   逃窜: {
@@ -217,6 +227,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '效果持续**9**秒。' },
       { level: 3, description: '效果持续**10**秒。' },
     ],
+    priority: '提升较小',
   },
 
   闭门羹: {
@@ -231,6 +242,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '加速持续**5**秒。' },
       { level: 3, description: '加速持续**5.5**秒。' },
     ],
+    priority: '提升明显',
   },
 
   /* ----------------------------------- B级卡 ---------------------------------- */
@@ -245,6 +257,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '每层提升**14%**挣脱速度。' },
       { level: 3, description: '每层提升**16%**挣脱速度。' },
     ],
+    priority: '提升较小',
   },
 
   孤军奋战: {
@@ -258,6 +271,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '加速**4%**。' },
       { level: 3, description: '加速**5%**。' },
     ],
+    priority: '提升明显',
   },
 
   幸运: {
@@ -271,6 +285,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '首次挣扎速度提升**20%**。' },
       { level: 3, description: '首次挣扎速度提升**35%**。' },
     ],
+    priority: '提升明显',
   },
 
   应激反应: {
@@ -284,6 +299,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '提升**8%**。' },
       { level: 3, description: '提升**9%**。' },
     ],
+    priority: '提升较小',
   },
 
   求生欲: {
@@ -298,6 +314,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '挣扎速度提升**18%**。' },
       { level: 3, description: '挣扎速度提升**21%**。' },
     ],
+    priority: '提升明显',
   },
 
   破墙: {
@@ -312,6 +329,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '增伤**0.8**。' },
       { level: 3, description: '增伤**1**。' },
     ],
+    priority: '提升明显',
   },
 
   精准投射: {
@@ -325,6 +343,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '降低**3**秒CD。' },
       { level: 3, description: '降低**4**秒CD。' },
     ],
+    priority: '3级质变',
   },
 
   绝地反击: {
@@ -338,6 +357,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: 'Hp不高于**30%**时触发。' },
       { level: 3, description: 'Hp不高于**35%**时触发。' },
     ],
+    priority: '3级质变',
   },
 
   追风: {
@@ -352,6 +372,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '加速**7%**。' },
       { level: 3, description: '加速**10%**。' },
     ],
+    priority: '本身无用',
   },
 
   逃之夭夭: {
@@ -365,6 +386,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '加速持续**6**秒。' },
       { level: 3, description: '加速持续**7**秒。' },
     ],
+    priority: '提升明显',
   },
 
   速推: {
@@ -378,6 +400,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '提升**4%**。' },
       { level: 3, description: '提升**5%**。' },
     ],
+    priority: '本身无用',
   },
 
   飞跃: {
@@ -391,6 +414,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '跳跃速度提升**6%**。' },
       { level: 3, description: '跳跃速度提升**7%**。' },
     ],
+    priority: '提升明显',
   },
 
   食物力量: {
@@ -398,12 +422,12 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 3,
     description: '老鼠喝牛奶或吃蛋糕后，永久**提升**推速，最多叠加5层。',
-    // detailedDescription: '',
     levels: [
       { level: 1, description: '每层提升**1%**推速。' },
       { level: 2, description: '每层提升**2%**推速。' },
       { level: 3, description: '每层提升**3%**推速。' },
     ],
+    priority: '提升明显',
   },
 
   /* ----------------------------------- C级卡 ---------------------------------- */
@@ -419,6 +443,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '移速提升**6%**。' },
       { level: 3, description: '移速提升**7%**。' },
     ],
+    priority: '提升明显',
   },
 
   吃货: {
@@ -432,6 +457,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '延长**30%**。' },
       { level: 3, description: '延长**50%**。' },
     ],
+    priority: '提升明显',
   },
 
   强健: {
@@ -445,6 +471,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '减少**25%**。' },
       { level: 3, description: '减少**30%**。' },
     ],
+    priority: '提升明显',
   },
 
   救救我: {
@@ -458,6 +485,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '提升**35%**。' },
       { level: 3, description: '提升**40%**。' },
     ],
+    priority: '提升明显',
   },
 
   相助: {
@@ -471,6 +499,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '提升**12%**。' },
       { level: 3, description: '提升**16%**。' },
     ],
+    priority: '本身无用',
   },
 
   美食家: {
@@ -484,6 +513,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '每局**前3次**打开箱子时触发。' },
       { level: 3, description: '每局**前4次**打开箱子时触发。' },
     ],
+    priority: '本身无用',
   },
 
   脱身: {
@@ -491,7 +521,6 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 3,
     description: '从猫手里或火箭上挣扎下来时，恢复**大量Hp**。',
-    // detailedDescription: '',
     levels: [
       { level: 1, description: '恢复**50Hp**。' },
       { level: 2, description: '恢复**75Hp**。' },
@@ -505,12 +534,12 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 3,
     description: '**提高**开门和关门速度。',
-    // detailedDescription: '',
     levels: [
       { level: 1, description: '开关门速度提高**30%**。' },
       { level: 2, description: '开关门速度提高**40%**。' },
       { level: 3, description: '开关门速度提高**50%**。' },
     ],
+    priority: '本身无用',
   },
 };
 

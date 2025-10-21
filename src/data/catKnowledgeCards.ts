@@ -21,6 +21,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '最多叠加**6**层。' },
       { level: 3, description: '最多叠加**7**层。' },
     ],
+    priority: '提升明显',
   },
 
   乾坤一掷: {
@@ -36,6 +37,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '保持**19**秒后进入乾坤一掷。' },
       { level: 3, description: '保持**18**秒后进入乾坤一掷。' },
     ],
+    priority: '几乎无提升',
   },
 
   击晕: {
@@ -49,6 +51,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '击晕**0.9**秒。' },
       { level: 3, description: '击晕**1.0**秒。' },
     ],
+    priority: '提升明显',
   },
 
   屈打成招: {
@@ -63,6 +66,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '获得**2只**老鼠的位置。' },
       { level: 3, description: '获得**3只**老鼠的位置。' },
     ],
+    priority: '3级质变',
   },
 
   暴怒: {
@@ -77,6 +81,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '墙缝被破坏**25%**后触发。' },
       { level: 3, description: '墙缝被破坏**20%**后触发。' },
     ],
+    priority: '几乎无提升',
   },
 
   知识渊博: {
@@ -91,6 +96,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '提升经验自然增速**70%**。' },
       { level: 3, description: '提升经验自然增速**100%**。' },
     ],
+    priority: '提升明显',
   },
 
   蓄势一击: {
@@ -106,6 +112,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '每隔**13**秒，获得蓄势一击状态。' },
       { level: 3, description: '每隔**12**秒，获得蓄势一击状态。' },
     ],
+    priority: '提升较小',
   },
 
   猛攻: {
@@ -120,6 +127,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '猛攻效果持续**6**秒。' },
       { level: 3, description: '猛攻效果持续**7**秒。' },
     ],
+    priority: '提升明显',
   },
 
   /* ----------------------------------- A级卡 ---------------------------------- */
@@ -136,6 +144,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '火箭燃烧速度提升**13%**。' },
       { level: 3, description: '火箭燃烧速度提升**14%**。' },
     ],
+    priority: '几乎无提升',
   },
 
   威压: {
@@ -150,6 +159,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '附近老鼠减速**7%**。' },
       { level: 3, description: '附近老鼠减速**8%**。' },
     ],
+    priority: '提升较小',
   },
 
   心灵手巧: {
@@ -164,6 +174,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '提升**28%**。' },
       { level: 3, description: '提升**30%**。' },
     ],
+    priority: '几乎无提升',
   },
 
   熊熊燃烧: {
@@ -208,6 +219,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '减速**6.5%**。' },
       { level: 3, description: '减速**6%**。' },
     ],
+    priority: '提升较小',
   },
 
   越挫越勇: {
@@ -222,6 +234,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '最多叠加**4**层。' },
       { level: 3, description: '最多叠加**5**层。' },
     ],
+    priority: '几乎无提升',
   },
 
   铜墙: {
@@ -235,6 +248,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '墙缝出现时，每只存活老鼠提升**11%**墙缝坚固程度。' },
       { level: 3, description: '墙缝出现时，每只存活老鼠提升**12%**墙缝坚固程度。' },
     ],
+    priority: '提升较小',
   },
 
   长爪: {
@@ -250,6 +264,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '爪刀范围提高**73%**。' },
       { level: 3, description: '爪刀范围提高**82%**。' },
     ],
+    priority: '提升较小',
   },
 
   /* ----------------------------------- B级卡 ---------------------------------- */
@@ -258,12 +273,12 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 4,
     description: '火箭附近老鼠越多，救援速度越**慢**。',
-    // TODO: 乘算还是加算？
     levels: [
       { level: 1, description: '每只老鼠降低**11%**救援速度。' },
       { level: 2, description: '每只老鼠降低**18%**救援速度。' },
       { level: 3, description: '每只老鼠降低**25%**救援速度。' },
     ],
+    priority: '提升明显',
   },
 
   减速警告: {
@@ -277,6 +292,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '减速**6%**。' },
       { level: 3, description: '减速**7%**。' },
     ],
+    priority: '本身无用',
   },
 
   反侦察: {
@@ -290,6 +306,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '额外获得**500**经验。' },
       { level: 3, description: '额外获得**600**经验。' },
     ],
+    priority: '提升明显',
   },
 
   守株待鼠: {
@@ -303,6 +320,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '投掷伤害降低**15**。' },
       { level: 3, description: '投掷伤害降低**20**。' },
     ],
+    priority: '提升明显',
   },
 
   寻踪: {
@@ -316,6 +334,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '最多看到**3**只老鼠。' },
       { level: 3, description: '最多看到**4**只老鼠。' },
     ],
+    priority: '几乎无提升',
   },
 
   恐吓: {
@@ -330,6 +349,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '恐吓效果持续**45**秒。' },
       { level: 3, description: '恐吓效果持续**60**秒。' },
     ],
+    priority: '3级质变',
   },
 
   捕鼠夹: {
@@ -337,12 +357,13 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 3,
     description: '老鼠踩中捕鼠夹时会受到伤害，且**更难**挣脱。',
-    detailedDescription: '布置更强力的捕鼠夹，老鼠踩中捕鼠夹时会受到30伤害，且**更难**挣脱。', //TODO: 伤害数值
+    detailedDescription: '布置更强力的捕鼠夹，老鼠踩中捕鼠夹时会受到30伤害，且**更难**挣脱。',
     levels: [
       { level: 1, description: '老鼠挣脱捕鼠夹的速度降低**10%**。' },
       { level: 2, description: '老鼠挣脱捕鼠夹的速度降低**15%**。' },
       { level: 3, description: '老鼠挣脱捕鼠夹的速度降低**20%**。' },
     ],
+    priority: '提升明显',
   },
 
   攻其不备: {
@@ -357,6 +378,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '加速**19%**。' },
       { level: 3, description: '加速**20%**。' },
     ],
+    priority: '几乎无提升',
   },
 
   斗志昂扬: {
@@ -370,6 +392,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '爪刀CD减少**6%**。' },
       { level: 3, description: '爪刀CD减少**7%**。' },
     ],
+    priority: '提升较小',
   },
 
   皮糙肉厚: {
@@ -399,6 +422,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '持续到游戏开始后**25**秒。' },
       { level: 3, description: '持续到游戏开始后**30**秒。' },
     ],
+    priority: '本身无用',
   },
 
   /* ----------------------------------- C级卡 ---------------------------------- */
@@ -413,6 +437,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '降低**20%**。' },
       { level: 3, description: '降低**30%**。' },
     ],
+    priority: '提升明显',
   },
 
   春风得意: {
@@ -427,6 +452,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '移动、跳跃速度提升**6%**。' },
       { level: 3, description: '移动、跳跃速度提升**7%**。' },
     ],
+    priority: '几乎无提升',
   },
 
   气势如牛: {
@@ -441,6 +467,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '效果持续**15**秒。' },
       { level: 3, description: '效果持续**20**秒。' },
     ],
+    priority: '本身无用',
   },
 
   狡诈: {
@@ -455,6 +482,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '加速持续**7**秒。' },
       { level: 3, description: '加速持续**8**秒。' },
     ],
+    priority: '提升较小',
   },
 
   猫是液体: {
@@ -469,6 +497,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '钻管道速度提升**65%**。' },
       { level: 3, description: '钻管道速度提升**70%**。' },
     ],
+    priority: '提升较小',
   },
 
   都是朋友: {
@@ -478,12 +507,13 @@ export const catKnowledgeCards: Record<string, Card> = {
     description:
       '猫咪不会再受到斯派克的攻击，但靠近斯派克时，**略微**减速。此外，免疫女主人的眩晕效果。',
     detailedDescription:
-      '猫咪与斯派克成为塑料朋友后，不会再受到斯派克的攻击，但周围1050范围内有斯派克时，**略微**减速。此外，免疫女主人的眩晕效果。',
+      '猫咪与斯派克成为塑料朋友后，不会再受到斯派克的攻击，但附近1050范围内有斯派克时，**略微**减速。此外，免疫女主人的眩晕效果。',
     levels: [
       { level: 1, description: '靠近斯派克时减速**5%**。' },
       { level: 2, description: '靠近斯派克时减速**4%**。' },
       { level: 3, description: '靠近斯派克时减速**3%**。' },
     ],
+    priority: '提升较小',
   },
 
   铁手: {
@@ -497,6 +527,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '降低**6%**。' },
       { level: 3, description: '降低**10%**。' },
     ],
+    priority: '本身无用',
   },
 
   震慑: {
@@ -510,6 +541,7 @@ export const catKnowledgeCards: Record<string, Card> = {
       { level: 2, description: '降低**12%**。' },
       { level: 3, description: '降低**16%**。' },
     ],
+    priority: '本身无用',
   },
 };
 
