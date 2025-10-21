@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from '@/components/Image';
 import Tooltip from '@/components/ui/Tooltip';
 import CharacterSection from './CharacterSection';
@@ -30,6 +30,39 @@ import {
 import { Contributor, contributors } from '@/data/contributors';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import TreeCardDisplay from './TreeCardDisplay';
+
+const cardGroupHasTreeStructure = (card: unknown): boolean => {
+  if (typeof card === 'string') {
+    return false;
+  }
+
+  if (!Array.isArray(card)) {
+    return false;
+  }
+
+  return (card as readonly unknown[]).some((item, index) => {
+    if (index === 0 && typeof item === 'boolean') {
+      return true;
+    }
+
+    if (typeof item === 'boolean') {
+      return false;
+    }
+
+    return cardGroupHasTreeStructure(item);
+  });
+};
+
+const knowledgeGroupHasTreeStructure = (group: DeepReadonly<KnowledgeCardGroup>): boolean =>
+  group.cards.some((card) => cardGroupHasTreeStructure(card));
+
+const knowledgeGroupSetHasTreeStructure = (
+  groupSet: DeepReadonly<KnowledgeCardGroupSet>
+): boolean => groupSet.groups.some((group) => knowledgeGroupHasTreeStructure(group));
+
+const isKnowledgeCardGroupSet = (
+  group: DeepReadonly<KnowledgeCardGroup | KnowledgeCardGroupSet>
+): group is DeepReadonly<KnowledgeCardGroupSet> => 'groups' in group;
 
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: DeepReadonly<(KnowledgeCardGroup | KnowledgeCardGroupSet)[]>;
@@ -463,10 +496,24 @@ export default function KnowledgeCardSection({
   const [viewMode, setViewMode] = useState<ViewMode>(
     () => (localStorage.getItem('view-mode') ?? 'tree-folded') as ViewMode
   );
+  const hasTreeStructure = useMemo(() => {
+    return knowledgeCardGroups.some((group) => {
+      if (isKnowledgeCardGroupSet(group)) {
+        return knowledgeGroupSetHasTreeStructure(group);
+      }
+      return knowledgeGroupHasTreeStructure(group);
+    });
+  }, [knowledgeCardGroups]);
 
   useEffect(() => {
     localStorage.setItem('view-mode', viewMode);
-  });
+  }, [viewMode]);
+
+  useEffect(() => {
+    if (!hasTreeStructure && (viewMode === 'tree' || viewMode === 'tree-folded')) {
+      setViewMode('flat');
+    }
+  }, [hasTreeStructure, viewMode]);
 
   const imageBasePath = factionId === 'cat' ? '/images/catCards/' : '/images/mouseCards/';
 
@@ -552,18 +599,29 @@ export default function KnowledgeCardSection({
   }
 
   const cycleViewMode = () => {
+    const availableModes: ViewMode[] = hasTreeStructure
+      ? ['tree', 'tree-folded', 'flat', 'compact']
+      : ['flat', 'compact'];
+
     setViewMode((prev) => {
-      if (prev === 'tree') return 'tree-folded';
-      if (prev === 'tree-folded') return 'flat';
-      if (prev === 'flat') return 'compact';
-      return 'tree';
+      if (availableModes.length === 0) {
+        return prev;
+      }
+
+      const currentIndex = availableModes.indexOf(prev);
+      if (currentIndex === -1) {
+        return availableModes[0] as ViewMode;
+      }
+
+      const nextIndex = (currentIndex + 1) % availableModes.length;
+      return availableModes[nextIndex] as ViewMode;
     });
   };
 
   const getViewModeLabel = () => {
     if (viewMode === 'tree') return '树状视图';
     if (viewMode === 'tree-folded') return '折叠树状视图';
-    if (viewMode === 'flat') return '扁平视图';
+    if (viewMode === 'flat') return hasTreeStructure ? '扁平视图' : '图片视图';
     return '紧凑视图';
   };
 
