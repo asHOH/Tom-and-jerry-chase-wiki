@@ -9,6 +9,7 @@ interface SwipeGestureOptions {
   velocityThreshold?: number; // Minimum velocity for a swipe
   preventDefaultTouchmove?: boolean;
   disabled?: boolean;
+  directionLockThreshold?: number; // Minimum axis difference before locking direction
 }
 
 interface TouchPoint {
@@ -27,11 +28,13 @@ export const useSwipeGesture = (options: SwipeGestureOptions = {}) => {
     velocityThreshold = 0.3,
     preventDefaultTouchmove = false,
     disabled = false,
+    directionLockThreshold = 16,
   } = options;
 
   const touchStart = useRef<TouchPoint | null>(null);
   const touchEnd = useRef<TouchPoint | null>(null);
   const elementRef = useRef<HTMLElement | null>(null);
+  const lockedAxisRef = useRef<'x' | 'y' | null>(null);
 
   const handleTouchStart = useCallback(
     (e: TouchEvent) => {
@@ -46,6 +49,7 @@ export const useSwipeGesture = (options: SwipeGestureOptions = {}) => {
         time: Date.now(),
       };
       touchEnd.current = null;
+      lockedAxisRef.current = null;
     },
     [disabled]
   );
@@ -66,8 +70,21 @@ export const useSwipeGesture = (options: SwipeGestureOptions = {}) => {
         y: touch.clientY,
         time: Date.now(),
       };
+
+      if (touchStart.current && lockedAxisRef.current === null) {
+        const deltaX = touchEnd.current.x - touchStart.current.x;
+        const deltaY = touchEnd.current.y - touchStart.current.y;
+        const absDeltaX = Math.abs(deltaX);
+        const absDeltaY = Math.abs(deltaY);
+
+        if (absDeltaX > absDeltaY + directionLockThreshold) {
+          lockedAxisRef.current = 'x';
+        } else if (absDeltaY > absDeltaX + directionLockThreshold) {
+          lockedAxisRef.current = 'y';
+        }
+      }
     },
-    [disabled, preventDefaultTouchmove]
+    [disabled, preventDefaultTouchmove, directionLockThreshold]
   );
 
   const handleTouchEnd = useCallback(() => {
@@ -76,6 +93,13 @@ export const useSwipeGesture = (options: SwipeGestureOptions = {}) => {
     const deltaX = touchEnd.current.x - touchStart.current.x;
     const deltaY = touchEnd.current.y - touchStart.current.y;
     const deltaTime = touchEnd.current.time - touchStart.current.time;
+
+    if (deltaTime === 0) {
+      touchStart.current = null;
+      touchEnd.current = null;
+      lockedAxisRef.current = null;
+      return;
+    }
 
     // Calculate distance and velocity
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -89,8 +113,24 @@ export const useSwipeGesture = (options: SwipeGestureOptions = {}) => {
     // Determine swipe direction based on the larger delta
     const absDeltaX = Math.abs(deltaX);
     const absDeltaY = Math.abs(deltaY);
+    let primaryAxis = lockedAxisRef.current;
 
-    if (absDeltaX > absDeltaY) {
+    if (!primaryAxis) {
+      if (absDeltaX > absDeltaY + directionLockThreshold) {
+        primaryAxis = 'x';
+      } else if (absDeltaY > absDeltaX + directionLockThreshold) {
+        primaryAxis = 'y';
+      }
+    }
+
+    if (!primaryAxis) {
+      touchStart.current = null;
+      touchEnd.current = null;
+      lockedAxisRef.current = null;
+      return;
+    }
+
+    if (primaryAxis === 'x') {
       // Horizontal swipe
       if (deltaX > 0) {
         onSwipeRight?.();
@@ -109,7 +149,17 @@ export const useSwipeGesture = (options: SwipeGestureOptions = {}) => {
     // Reset touch points
     touchStart.current = null;
     touchEnd.current = null;
-  }, [disabled, threshold, velocityThreshold, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
+    lockedAxisRef.current = null;
+  }, [
+    disabled,
+    threshold,
+    velocityThreshold,
+    onSwipeLeft,
+    onSwipeRight,
+    onSwipeUp,
+    onSwipeDown,
+    directionLockThreshold,
+  ]);
 
   useEffect(() => {
     const element = elementRef.current;
