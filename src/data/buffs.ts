@@ -465,6 +465,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     buffclass: '效果',
     aliases: ['%暴露.*视野', '#暴露.*位置', '#[(小地图)(位置)(视野)(显示)(暴露)]{3,}'],
     description: '使敌方能在小地图上看到自身位置。',
+    source:
+      '搬运或正在推入{奶酪}的老鼠会暴露位置；{远视饮料}、{屈打成招}、{寻踪}、太空堡垒的监视器、森林牧场/御门酒店的蓝色或七色花可以让敌方暴露位置。',
     stack: '同类效果持续时间互不影响，但效果无法叠加。',
 
     unuseImage: true,

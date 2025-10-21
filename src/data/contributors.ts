@@ -460,6 +460,16 @@ export const contributors: Contributor[] = [
     ],
   },
   {
+    id: 'shouzhai', //一只屑憨憨 喵~
+    name: '瘦宅',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['库博'],
+      },
+    ],
+  },
+  {
     id: 'leshanhaoshi',
     name: '乐善好施陈阿姨',
     url: 'https://space.bilibili.com/418408689',
