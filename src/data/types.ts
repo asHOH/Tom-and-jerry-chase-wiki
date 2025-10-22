@@ -362,7 +362,7 @@ export type ItemGroupDefinition = {
 
   group: SingleItem[];
 
-  specialImageUrl?: string; //use other image instead of buff's image
+  specialImageUrl?: string; //use other image
 };
 
 export type ItemGroup = ItemGroupDefinition & { name: string }; //no imageUrl
@@ -431,3 +431,9 @@ interface YearData {
  * The complete, structured history of the game.
  */
 export type GameHistory = YearData[];
+
+export type Trait = {
+  description: string;
+  group: (SingleItem | SingleItem[])[];
+  isMinor?: boolean;
+};
