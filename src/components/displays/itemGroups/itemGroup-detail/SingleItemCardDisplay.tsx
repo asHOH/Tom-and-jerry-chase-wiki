@@ -3,7 +3,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import { designTokens } from '@/lib/design-tokens';
 import { SingleItem } from '@/data/types';
-import { getSingleItemImageUrl } from '../itemGroup-grid/getItemGroupImageUrl';
+import { getSingleItemImageUrl } from '@/lib/singleItemTools';
 
 export default function SingleItemCardDisplay({ singleItem }: { singleItem: SingleItem }) {
   const isMobile = useMobile();

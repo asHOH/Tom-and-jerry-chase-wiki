@@ -6,49 +6,12 @@ import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
 import type { ItemGroup } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
-import { characters, specialSkills } from '@/data';
-import { SingleItem } from '@/data/types';
+import { getSingleItemHref } from '@/lib/singleItemTools';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 
 export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup }) {
   // Multi-select state for filters
   const isMobile = useMobile();
-
-  const getSingleItemHref = (singleItem: SingleItem): string => {
-    let R: string | undefined;
-    if (singleItem.type == 'character') {
-      R = `/characters/${singleItem.name}`;
-    } else if (singleItem.type == 'knowledgeCard') {
-      R = `/cards/${singleItem.name}`;
-    } else if (singleItem.type == 'specialSkill') {
-      const allSpecialSkills = { ...specialSkills.cat, ...specialSkills.mouse };
-      const factionId = singleItem.factionId
-        ? singleItem.factionId
-        : Object.values(allSpecialSkills).find((skill) => skill.name == singleItem.name)?.factionId;
-      R = `/special-skills/${factionId}/${singleItem.name}`;
-    } else if (singleItem.type == 'item') {
-      R = `/items/${singleItem.name}`;
-    } else if (singleItem.type == 'entity') {
-      R = `/entities/${singleItem.name}`;
-    } else if (singleItem.type == 'buff') {
-      R = `/buffs/${singleItem.name}`;
-    } else if (singleItem.type == 'skill') {
-      const skill = Object.values(characters)
-        .flatMap((c) => c.skills)
-        .find(
-          (skill) => skill.name === singleItem.name || skill.aliases?.includes(singleItem.name)
-        );
-      if (skill) {
-        // Skill in processed characters should have id like `${ownerId}-...`
-        const id = (skill as { id?: string }).id;
-        const ownerId = id ? id.split('-')[0] : undefined;
-
-        R = `/characters/${ownerId}`;
-      }
-    }
-
-    return R || '/error';
-  };
 
   return (
     <div
