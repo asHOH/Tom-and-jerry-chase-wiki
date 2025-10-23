@@ -15,7 +15,7 @@ import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/lib/knowledgeCardSectionUtils';
 import CollapseCard from '@/components/ui/CollapseCard';
-import SingleItemTraitsText from '../../traits/shared/TextOfSingleItemTraits';
+import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
 
 export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps) {
   // Keyboard navigation

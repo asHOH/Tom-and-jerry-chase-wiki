@@ -29,7 +29,7 @@ import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import CreateDateDisplay from './CreateDateDisplay';
 import CharacterHistoryDisplay from './CharacterHistoryDisplay';
 import CollapseCard from '@/components/ui/CollapseCard';
-import SingleItemTraitsText from '../../traits/shared/TextOfSingleItemTraits';
+import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;

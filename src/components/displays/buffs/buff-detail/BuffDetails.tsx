@@ -8,7 +8,7 @@ import { Buff } from '@/data/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import BuffAttributesCard from './BuffAttributesCard';
 import CollapseCard from '@/components/ui/CollapseCard';
-import SingleItemTraitsText from '../../traits/shared/TextOfSingleItemTraits';
+import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
   // Keyboard navigation

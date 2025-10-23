@@ -10,7 +10,7 @@ import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import EntityAttributesCard from './EntityAttributesCard';
 import EntitySkillCard from './EntitySkillCard';
 import CollapseCard from '@/components/ui/CollapseCard';
-import SingleItemTraitsText from '../../traits/shared/TextOfSingleItemTraits';
+import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
 
 export default function EntityDetailClient({ entity }: { entity: Entity }) {
   // Keyboard navigation

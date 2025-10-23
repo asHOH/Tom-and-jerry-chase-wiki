@@ -10,7 +10,7 @@ import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyb
 import CharacterList from '../../../displays/knowledge-cards/knowledge-card-detail/CharacterList';
 import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';
 import CollapseCard from '@/components/ui/CollapseCard';
-import SingleItemTraitsText from '../../traits/shared/TextOfSingleItemTraits';
+import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;
