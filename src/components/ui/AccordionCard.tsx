@@ -8,6 +8,7 @@ type AccordionItem = {
   children: React.ReactNode;
   className?: string;
   color?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue';
+  activeColor?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue'; // 新增激活状态颜色
 };
 
 type AccordionProps = {
@@ -29,7 +30,8 @@ type AccordionProps = {
  *   - title: 标题按钮显示文本
  *   - children: 展开时显示的内容
  *   - className: 内容面板的自定义样式类
- *   - color: 标题按钮颜色主题
+ *   - color: 标题按钮默认颜色主题
+ *   - activeColor: 标题按钮激活状态颜色主题
  *
  * @param className - 组件容器自定义样式类
  * @param titleClassName - 标题按钮容器自定义样式类
@@ -65,6 +67,18 @@ export default function AccordionCard({
     });
   };
 
+  // 颜色配置映射
+  const colorMap = {
+    default: 'bg-gray-200 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700',
+    red: 'bg-red-200 dark:bg-red-900 border-2 border-red-300 dark:border-red-700',
+    orange: 'bg-orange-200 dark:bg-orange-900 border-2 border-orange-300 dark:border-orange-700',
+    yellow: 'bg-yellow-200 dark:bg-yellow-900 border-2 border-yellow-300 dark:border-yellow-700',
+    green: 'bg-green-200 dark:bg-green-900 border-2 border-green-400 dark:border-green-700',
+    blue: 'bg-blue-200 dark:bg-blue-900 border-2 border-blue-400 dark:border-blue-700',
+    purple:
+      'bg-fuchsia-200 dark:bg-fuchsia-900 border-2 border-fuchsia-300 dark:border-fuchsia-700',
+  };
+
   return (
     <div className={className}>
       {/* 标题按钮容器 - 水平滚动布局 */}
@@ -77,18 +91,11 @@ export default function AccordionCard({
       >
         {items.map((item) => {
           const isExpanded = openItems.has(item.id);
-          const titleColor = {
-            default: 'bg-gray-200 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700',
-            red: 'bg-red-200 dark:bg-red-900 border-2 border-red-300 dark:border-red-700',
-            orange:
-              'bg-orange-200 dark:bg-orange-900 border-2 border-orange-300 dark:border-orange-700',
-            yellow:
-              'bg-yellow-200 dark:bg-yellow-900 border-2 border-yellow-300 dark:border-yellow-700',
-            green: 'bg-green-200 dark:bg-green-900 border-2 border-green-400 dark:border-green-700',
-            blue: 'bg-blue-200 dark:bg-blue-900 border-2 border-blue-400 dark:border-blue-700',
-            purple:
-              'bg-fuchsia-200 dark:bg-fuchsia-900 border-2 border-fuchsia-300 dark:border-fuchsia-700',
-          }[item.color || 'default'];
+
+          // 根据激活状态选择颜色
+          const colorToUse =
+            isExpanded && item.activeColor ? item.activeColor : item.color || 'default';
+          const titleColor = colorMap[colorToUse];
 
           return (
             <button

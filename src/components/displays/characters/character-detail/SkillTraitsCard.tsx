@@ -18,6 +18,7 @@ export default function SkillTraitsCard({ skill }: SkillTraitsCardProps) {
       id: String(key),
       title: `${entity.name}`,
       children: <SingleItemTraitsText singleItem={{ name: entity.name, type: 'entity' }} />,
+      activeColor: 'orange' as const,
     };
   });
   return (
@@ -39,7 +40,7 @@ export default function SkillTraitsCard({ skill }: SkillTraitsCardProps) {
                 id: 'skill',
                 title: `${skill.name}(技能)`,
                 children: <SingleItemTraitsText singleItem={{ name: skill.name, type: 'skill' }} />,
-                color: 'orange',
+                activeColor: 'orange',
               },
               ...OwnEntitiesItems,
             ]}

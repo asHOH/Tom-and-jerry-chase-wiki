@@ -33,7 +33,7 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
   //------------------------------------道具-------------------------------------------/
   非控制易碎道具: {
     description:
-      '指的是能产生{碎片}但不产生{眩晕}的4种道具，也就是除{灰花瓶}和{蓝花瓶}以外的{易碎道具}。',
+      '指的是能产生{碎片}但不产生{眩晕}的4种道具。投掷命中敌方造成伤害和减速，命中墙壁、地面时破碎并产生{碎片}。',
     group: [
       { name: '盘子', type: 'item' },
       { name: '扁盘', type: 'item' },
@@ -42,7 +42,8 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
     ],
   },
   花瓶: {
-    description: '包括灰花瓶和蓝花瓶，命中敌方造成眩晕和伤害，命中其他目标破碎并产生{碎片}。',
+    description:
+      '包括灰花瓶和蓝花瓶。投掷命中敌方造成伤害和眩晕，命中墙壁、地面时破碎并产生{碎片}。',
     group: [
       { name: '灰花瓶', type: 'item' },
       { name: '蓝花瓶', type: 'item' },
@@ -50,7 +51,7 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
   },
   易碎道具: {
     description:
-      '指的是能产生{碎片}的全部6种道具，也就是{非控制易碎道具}和{花瓶}。如需查询所有投掷命中后破碎并产生效果的道具，请见{可破碎道具}。',
+      '指的是能产生{碎片}的6种道具。投掷命中敌方造成伤害和减速或眩晕，命中墙壁、地面时破碎并产生{碎片}。',
     group: [
       { name: '盘子', type: 'item' },
       { name: '扁盘', type: 'item' },
@@ -62,7 +63,7 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
   },
   可破碎道具: {
     description:
-      '指的是投掷命中后破碎并产生效果的10种道具。如仅需查询能产生{碎片}的道具，请见{易碎道具}。',
+      '指的是投掷命中后破碎并产生效果的10种道具。投掷命中敌方造成伤害和负面效果，命中墙壁、地面时破碎并产生各自的衍生道具，如{碎片}等。',
     group: [
       { name: '盘子', type: 'item' },
       { name: '扁盘', type: 'item' },

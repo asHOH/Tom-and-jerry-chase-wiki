@@ -90,19 +90,10 @@ const traits: Trait[] = [
   {
     group: [
       { name: '垃圾盖', type: 'skill' },
-      [
-        { name: '玻璃杯', type: 'item' },
-        { name: '碗', type: 'item' },
-        { name: '盘子', type: 'item' },
-        { name: '扁盘', type: 'item' },
-        { name: '灰花瓶', type: 'item' },
-        { name: '蓝花瓶', type: 'item' },
-        { name: '香水瓶', type: 'item' },
-        { name: '胡椒瓶', type: 'item' },
-        { name: '冰块', type: 'item' },
-      ],
+      { name: '可破碎道具', type: 'itemGroup' },
     ],
-    description: '2级垃圾盖可以直接震碎部分易碎道具（会产生各自破碎时的效果）。',
+    description:
+      '2级垃圾盖可以直接震碎可破碎道具（{番茄}除外）。被垃圾盖震碎的道具会产生投掷命中墙壁/地面时的破碎效果。',
   },
   //----------------------------------托普斯------------------------------------------/
   {
