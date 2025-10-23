@@ -9,6 +9,8 @@ import { characters } from '@/data';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import CharacterList from '../../../displays/knowledge-cards/knowledge-card-detail/CharacterList';
 import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';
+import CollapseCard from '@/components/ui/CollapseCard';
+import SingleItemTraitsText from '../../traits/shared/TextOfSingleItemTraits';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;
@@ -64,7 +66,20 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
           value={skill.description ?? null}
           detailedValue={skill.detailedDescription ?? null}
           isDetailedView={isDetailedView}
-        />
+        >
+          <div className='-mt-4'>
+            <CollapseCard
+              title={`  ${skill.name}的相关互动特性`}
+              size='xs'
+              color='orange'
+              className='pb-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
+            >
+              <SingleItemTraitsText
+                singleItem={{ name: skill.name, type: 'specialSkill', factionId: skill.factionId }}
+              />
+            </CollapseCard>
+          </div>
+        </DetailTextSection>
       ),
     },
     {

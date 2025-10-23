@@ -21,6 +21,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import SkillTraitsCard from './SkillTraitsCard';
 
 interface SkillCardProps {
   skill: DeepReadonly<Skill>;
@@ -835,6 +836,9 @@ export default function SkillCard({
               </div>
             ))}
         </div>
+      </div>
+      <div className='mt-4'>
+        <SkillTraitsCard skill={skill as Skill} />
       </div>
     </div>
   );

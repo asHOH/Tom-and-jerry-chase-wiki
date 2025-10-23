@@ -110,7 +110,7 @@ export default function AccordionCard({
       </div>
 
       {/* 内容面板区域 */}
-      <div className='mt-2'>
+      <div>
         {items.map((item) => {
           const isExpanded = openItems.has(item.id);
           return (

@@ -28,6 +28,8 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import CreateDateDisplay from './CreateDateDisplay';
 import CharacterHistoryDisplay from './CharacterHistoryDisplay';
+import CollapseCard from '@/components/ui/CollapseCard';
+import SingleItemTraitsText from '../../traits/shared/TextOfSingleItemTraits';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;
@@ -355,6 +357,16 @@ export default function CharacterDetails({
                       ) : null
                     );
                 })()}
+                <div>
+                  <CollapseCard
+                    title={`${character.id}角色自身的相关互动特性`}
+                    size='xs'
+                    className='pb-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
+                    titleClassName='pl-3'
+                  >
+                    <SingleItemTraitsText singleItem={{ name: character.id, type: 'character' }} />
+                  </CollapseCard>
+                </div>
               </div>
             </CharacterSection>
             <CharacterSection title={character.factionId == 'cat' ? '克制关系' : '克制/协作关系'}>

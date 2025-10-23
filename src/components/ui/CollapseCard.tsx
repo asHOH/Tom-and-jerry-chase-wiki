@@ -82,7 +82,7 @@ export default function CollapseCard({
       {/* 动画容器 */}
       <div
         className={clsx(
-          'transform transition-all duration-100 ease-in-out overflow-hidden',
+          'transform transition-all duration-100 ease-in-out overflow-hidden text-black dark:text-white',
           isExpanded
             ? 'max-h-[5000px] opacity-100 translate-y-0'
             : 'max-h-0 opacity-0 -translate-y-2'

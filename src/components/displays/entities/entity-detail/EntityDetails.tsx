@@ -9,6 +9,8 @@ import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyb
 import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
 import EntityAttributesCard from './EntityAttributesCard';
 import EntitySkillCard from './EntitySkillCard';
+import CollapseCard from '@/components/ui/CollapseCard';
+import SingleItemTraitsText from '../../traits/shared/TextOfSingleItemTraits';
 
 export default function EntityDetailClient({ entity }: { entity: Entity }) {
   // Keyboard navigation
@@ -25,7 +27,18 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
           value={entity.description ?? null}
           detailedValue={entity.detailedDescription ?? null}
           isDetailedView={isDetailedView}
-        />
+        >
+          <div className='-mt-4'>
+            <CollapseCard
+              title={`  ${entity.name}的相关互动特性`}
+              size='xs'
+              color='orange'
+              className='pb-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
+            >
+              <SingleItemTraitsText singleItem={{ name: entity.name, type: 'entity' }} />
+            </CollapseCard>
+          </div>
+        </DetailTextSection>
       ),
     },
     {

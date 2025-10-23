@@ -7,6 +7,8 @@ import { useAppContext } from '@/context/AppContext';
 import { Item } from '@/data/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import ItemAttributesCard from './ItemAttributesCard';
+import CollapseCard from '@/components/ui/CollapseCard';
+import SingleItemTraitsText from '../../traits/shared/TextOfSingleItemTraits';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
   // Keyboard navigation
@@ -23,7 +25,18 @@ export default function ItemDetailClient({ item }: { item: Item }) {
           value={item.description ?? null}
           detailedValue={item.detailedDescription ?? null}
           isDetailedView={isDetailedView}
-        />
+        >
+          <div className='-mt-4'>
+            <CollapseCard
+              title={`  ${item.name}的相关互动特性`}
+              size='xs'
+              color='orange'
+              className='pb-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
+            >
+              <SingleItemTraitsText singleItem={{ name: item.name, type: 'item' }} />
+            </CollapseCard>
+          </div>
+        </DetailTextSection>
       ),
     },
     {

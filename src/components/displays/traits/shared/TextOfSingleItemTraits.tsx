@@ -29,13 +29,18 @@ export const filterTraitsBySingleItem = (singleItem: SingleItem): Trait[] => {
   });
 };
 
-interface TextOfSingleItemTraitsProps {
+interface SingleItemTraitsTextProps {
   singleItem: SingleItem;
 }
 
-export default function TextOfSingleItemTraits({ singleItem }: TextOfSingleItemTraitsProps) {
+export default function SingleItemTraitsText({ singleItem }: SingleItemTraitsTextProps) {
   // 第1步：引用先前的函数，筛选包含该SingleItem的Trait
   const filteredTraits = filterTraitsBySingleItem(singleItem);
+  if (filteredTraits.length === 0) {
+    return (
+      <TextWithHoverTooltips text='    $暂未收录相关特性$italic text-gray-500 dark:text-gray-400 text-sm#' />
+    );
+  }
 
   // 第2步：为每个Trait生成格式化字符串
   const result: string[] = filteredTraits.map((trait) => {
@@ -46,7 +51,10 @@ export default function TextOfSingleItemTraits({ singleItem }: TextOfSingleItemT
       if (Array.isArray(groupItem)) {
         // 对于数组类型，检查是否包含目标singleItem
         const containsTarget = groupItem.some(
-          (item) => singleItem.name === item.name && singleItem.type === item.type
+          (item) =>
+            singleItem.name === item.name &&
+            singleItem.type === item.type &&
+            (item.factionId === undefined || singleItem.factionId === item.factionId)
         );
 
         if (containsTarget) {
@@ -62,17 +70,22 @@ export default function TextOfSingleItemTraits({ singleItem }: TextOfSingleItemT
           // 如果不包含目标，保留整个数组
           const arrayItemNames = groupItem
             .map(
-              (item) =>
-                item.name + `$text-indigo-700 dark:text-indigo-400#(${SingleItemType(item)})`
+              (item) => item.name + `$text-blue-700 dark:text-blue-400#(${SingleItemType(item)})`
             )
             .join('}/{$');
           itemNames.push(arrayItemNames);
         }
       } else {
         // 对于单个SingleItem，如果不是目标SingleItem，则保留
-        if (!(groupItem.name === singleItem.name && groupItem.type === singleItem.type)) {
+        if (
+          !(
+            groupItem.name === singleItem.name &&
+            groupItem.type === singleItem.type &&
+            (singleItem.factionId === undefined || groupItem.factionId === singleItem.factionId)
+          )
+        ) {
           itemNames.push(
-            groupItem.name + `$text-indigo-700 dark:text-indigo-400#(${SingleItemType(groupItem)})`
+            groupItem.name + `$text-blue-700 dark:text-blue-400#(${SingleItemType(groupItem)})`
           );
         }
       }
@@ -83,7 +96,7 @@ export default function TextOfSingleItemTraits({ singleItem }: TextOfSingleItemT
       return `{${singleItem.name}}：${trait.description}`;
     } else {
       const namesString = itemNames.join('}、{$');
-      return ` • {$${singleItem.name}$text-indigo-700 dark:text-indigo-400#(${SingleItemType(singleItem)})} 与 {$${namesString}}：${trait.description}`;
+      return ` • {$${singleItem.name}$text-blue-700 dark:text-blue-400#(${SingleItemType(singleItem)})} 与 {$${namesString}}：${trait.description}`;
     }
   });
 
