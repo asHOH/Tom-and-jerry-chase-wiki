@@ -81,6 +81,14 @@ const traits: Trait[] = [
     description:
       '2级垃圾盖可以直接震碎可破碎道具（{番茄}除外）。被垃圾盖震碎的道具会产生投掷命中墙壁/地面时的破碎效果。',
   },
+  {
+    group: [
+      { name: '垃圾盖', type: 'skill' },
+      { name: '纸盒', type: 'itemGroup' },
+      { name: '面粉袋', type: 'item' },
+    ],
+    description: '2级垃圾盖无法震碎纸盒或面粉袋。',
+  },
   //----------------------------------托普斯------------------------------------------/
   {
     group: [
@@ -90,7 +98,7 @@ const traits: Trait[] = [
       ],
       [{ name: '捕鼠夹', type: 'knowledgeCard' }],
     ],
-    description: '托普斯分身继承的部分知识卡效果可以与托普斯自身叠加，效果因此翻倍。',
+    description: '托普斯分身继承的捕鼠夹等知识卡效果可以与托普斯自身叠加，效果因此翻倍。',
   },
   {
     group: [
@@ -103,7 +111,7 @@ const traits: Trait[] = [
         { name: '熊熊燃烧', type: 'knowledgeCard' },
       ],
     ],
-    description: '托普斯分身无法继承部分知识卡的效果。',
+    description: '托普斯分身无法继承知识渊博、熊熊燃烧等知识卡的效果。',
   },
   {
     group: [
@@ -163,11 +171,135 @@ const traits: Trait[] = [
         { name: '机器鼠', type: 'entity' },
       ],
     ],
-    description: '捕虫网无法网住变身期间的老鼠。',
+    description: '捕虫网无法网住绝大多数变身期间的老鼠。',
   },
   //----------------------------------莱特宁------------------------------------------/
+  {
+    group: [
+      [
+        { name: '咸鱼', type: 'skill' },
+        { name: '穷追不舍', type: 'skill' },
+      ],
+      [
+        { name: '应急治疗', type: 'specialSkill', factionId: 'mouse' },
+        { name: '牛仔吉他', type: 'skill' },
+      ],
+    ],
+    description:
+      '应急治疗和2级牛仔吉他可以解除咸鱼附加的腥味debuff，也可以解除1级穷追不舍附加的debuff。',
+  },
   //----------------------------------牛仔汤姆----------------------------------------/
+  {
+    group: [
+      [
+        { name: '斗牛', type: 'entity' },
+        { name: '鞭子', type: 'skill' },
+      ],
+      { name: '可破碎道具', type: 'itemGroup' },
+      { name: '纸盒', type: 'itemGroup' },
+      { name: '面粉袋', type: 'item' },
+      { name: '仙人掌', type: 'itemGroup' },
+    ],
+    description:
+      '斗牛和鞭子均可以破坏可破碎道具（{冰块}和{番茄}除外），以及纸盒、面粉袋和牛仔杰瑞的仙人掌。被斗牛破坏的可破碎道具会产生投掷命中墙壁/地面时的破碎效果，而纸盒、面粉袋、仙人掌会直接消失。',
+  },
+  {
+    group: [
+      { name: '斗牛', type: 'entity' },
+      { name: '格挡之剑', type: 'skill' },
+    ],
+    description: '剑客杰瑞格挡期间，可以使碰撞自身的斗牛立即消失。',
+  },
+  {
+    group: [
+      { name: '斗牛', type: 'entity' },
+      [
+        { name: '方块', type: 'entity' },
+        { name: '强化方块', type: 'entity' },
+      ],
+    ],
+    description: '方块可以阻挡斗牛，使其折返。',
+  },
+  {
+    group: [
+      { name: '说出你的故事', type: 'skill' },
+      { name: '仙人掌弹弓', type: 'skill' },
+    ],
+    description:
+      '牛仔汤姆位于米可采访范围内时，每射出1颗仙人掌球均会额外叠加1层素材（与其它叠加素材方式不冲突）。',
+  },
+  {
+    group: [
+      { name: '游刃有余', type: 'skill' },
+      [
+        { name: '兔子先生', type: 'entity' },
+        { name: '侦探泰菲分身', type: 'entity' },
+        { name: '饮料分身', type: 'entity' },
+      ],
+    ],
+    description: '牛仔汤姆击倒部分NPC类衍生物也能触发2级游刃有余效果，如兔子先生，侦探泰菲分身等。',
+  },
+  {
+    group: [
+      { name: '游刃有余', type: 'skill' },
+      [
+        { name: '大星星', type: 'entity' },
+        { name: '星星-敌方', type: 'entity' },
+      ],
+    ],
+    description: '牛仔汤姆变身为大星星时，吐出的星星可以触发3级游刃有余的效果。',
+  },
   //----------------------------------图多盖洛----------------------------------------/
+  {
+    group: [
+      { name: '飞吻', type: 'entity' },
+      { name: '牛仔吉他', type: 'skill' },
+    ],
+    description: '2级牛仔吉他可以解除飞吻造成的吻痕效果。',
+  },
+  {
+    group: [
+      { name: '香水区域', type: 'entity' },
+      { name: '干扰器', type: 'entity' },
+    ],
+    description: '2级干扰器生效期间可以暂时无视香水区域的负面效果。',
+  },
+  {
+    group: [
+      { name: '香水区域', type: 'entity' },
+      { name: '鞭炮', type: 'itemGroup' },
+      [
+        { name: '火药桶', type: 'entity' },
+        { name: '火箭筒', type: 'entity' },
+      ],
+    ],
+    description: '爆炸带有受力效果，因此鞭炮、火药桶、火箭筒的爆炸效果可以将香水区域炸飞。',
+  },
+  {
+    group: [
+      { name: '香水区域', type: 'entity' },
+      [
+        { name: '魔音穿耳', type: 'skill' },
+        { name: '香风折扇', type: 'skill' },
+        { name: '闪亮营救', type: 'skill' },
+        { name: '勇往直前', type: 'skill' },
+        { name: '滑步踢', type: 'skill' },
+      ],
+    ],
+    description:
+      '魔音穿耳、3级香风折扇、闪亮营救（满怒落地）、勇往直前、滑步踢的技能效果可以将香水区域弹飞。',
+  },
+  {
+    group: [
+      { name: '魅力甲油', type: 'skill' },
+      [
+        { name: '击晕', type: 'knowledgeCard' },
+        { name: '猛攻', type: 'knowledgeCard' },
+        { name: '乘胜追击', type: 'knowledgeCard' },
+      ],
+    ],
+    description: '[部分](具体生效范围待补充)与爪刀有关的知识卡、特技能对甲油额外爪击区域生效。',
+  },
   //----------------------------------侍卫汤姆----------------------------------------/
   //----------------------------------图茨--------------------------------------------/
   //----------------------------------米特--------------------------------------------/
