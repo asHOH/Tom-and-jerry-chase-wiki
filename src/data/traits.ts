@@ -24,6 +24,7 @@ const traits: Trait[] = [
     group: [
       { name: '杰瑞', type: 'character' },
       { name: '剑客泰菲', type: 'character' },
+      { name: '泰菲类角色', type: 'itemGroup' },
       [
         { name: '泰菲', type: 'character' },
         { name: '泰菲', type: 'character' },

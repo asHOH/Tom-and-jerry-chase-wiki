@@ -2,6 +2,7 @@ import React from 'react';
 import { Trait, SingleItem } from '@/data/types';
 import traits from '@/data/traits';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
+import { itemGroups } from '@/data';
 
 const SingleItemType = (singleItem: SingleItem): string => {
   return {
@@ -20,6 +21,10 @@ export const filterTraitsBySingleItem = (singleItem: SingleItem): Trait[] => {
     return trait.group.some((groupItem) => {
       if (Array.isArray(groupItem)) {
         return groupItem.some(
+          (item) => singleItem.name === item.name && singleItem.type === item.type
+        );
+      } else if (groupItem.type === 'itemGroup') {
+        return itemGroups[groupItem.name]?.group.some(
           (item) => singleItem.name === item.name && singleItem.type === item.type
         );
       } else {
@@ -46,6 +51,7 @@ export default function SingleItemTraitsText({ singleItem }: SingleItemTraitsTex
   const result: string[] = filteredTraits.map((trait) => {
     // 处理group内的所有SingleItem，生成名称列表（排除当前singleItem）
     const itemNames: string[] = [];
+    const printName: string[] = [singleItem.name]; //最终显示时只会显示最后一个名称
 
     trait.group.forEach((groupItem) => {
       if (Array.isArray(groupItem)) {
@@ -57,23 +63,34 @@ export default function SingleItemTraitsText({ singleItem }: SingleItemTraitsTex
             (item.factionId === undefined || singleItem.factionId === item.factionId)
         );
 
-        if (containsTarget) {
-          // 如果包含目标，只添加数组中其他非目标的项
-          const otherItems = groupItem
-            .filter((item) => !(item.name === singleItem.name && item.type === singleItem.type))
-            .map((item) => item.name);
-
-          if (otherItems.length > 0) {
-            itemNames.push(otherItems.join('}/{$'));
-          }
-        } else {
-          // 如果不包含目标，保留整个数组
+        if (!containsTarget) {
+          // 如果不包含目标，保留整个数组，反之则整个删去
           const arrayItemNames = groupItem
             .map(
               (item) => item.name + `$text-blue-700 dark:text-blue-400#(${SingleItemType(item)})`
             )
             .join('}/{$');
           itemNames.push(arrayItemNames);
+        }
+      } else if (groupItem.type === 'itemGroup') {
+        //对于组合，先判断能否查找到对应组合内容，若无对应目标则整个删去
+        const group = itemGroups[groupItem.name]?.group;
+        if (group !== undefined) {
+          // 然后检查是否包含目标singleItem
+          const containsTarget = group.some(
+            (item) =>
+              singleItem.name === item.name &&
+              singleItem.type === item.type &&
+              (item.factionId === undefined || singleItem.factionId === item.factionId)
+          );
+
+          if (!containsTarget) {
+            // 如果不包含目标，则输出组合名
+            itemNames.push(groupItem.name + `$text-blue-700 dark:text-blue-400#(组合)`);
+          } else {
+            //如果包含目标，则在最终输出时以该组合的name替代原本SingleItem的name
+            printName.push(groupItem.name);
+          }
         }
       } else {
         // 对于单个SingleItem，如果不是目标SingleItem，则保留
@@ -96,7 +113,7 @@ export default function SingleItemTraitsText({ singleItem }: SingleItemTraitsTex
       return `{${singleItem.name}}：${trait.description}`;
     } else {
       const namesString = itemNames.join('}、{$');
-      return ` • {$${singleItem.name}$text-blue-700 dark:text-blue-400#(${SingleItemType(singleItem)})} 与 {$${namesString}}：${trait.description}`;
+      return ` • {$${printName[printName.length - 1]}$text-blue-700 dark:text-blue-400#(${SingleItemType(singleItem)})} 与 {$${namesString}}：${trait.description}`;
     }
   });
 
