@@ -14,8 +14,7 @@ import CharacterList from './CharacterList';
 import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/lib/knowledgeCardSectionUtils';
-import CollapseCard from '@/components/ui/CollapseCard';
-import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
+import DetailTraitsCard from '../../shared/DetailTraitsCard';
 
 export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps) {
   // Keyboard navigation
@@ -127,14 +126,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
             ))}
           </div>
           <div className='mt-4'>
-            <CollapseCard
-              title={`  ${card.id}的相关互动特性`}
-              size='xs'
-              color='orange'
-              className='pb-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
-            >
-              <SingleItemTraitsText singleItem={{ name: card.id, type: 'knowledgeCard' }} />
-            </CollapseCard>
+            <DetailTraitsCard singleItem={{ name: card.id, type: 'knowledgeCard' }} />
           </div>
         </DetailTextSection>
       ),

@@ -7,8 +7,7 @@ import { useAppContext } from '@/context/AppContext';
 import { Buff } from '@/data/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import BuffAttributesCard from './BuffAttributesCard';
-import CollapseCard from '@/components/ui/CollapseCard';
-import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
+import DetailTraitsCard from '../../shared/DetailTraitsCard';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
   // Keyboard navigation
@@ -53,14 +52,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
         >
           {key === 'description' && (
             <div className='-mt-4'>
-              <CollapseCard
-                title={`  ${buff.name}的相关互动特性`}
-                size='xs'
-                color='orange'
-                className='pb-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
-              >
-                <SingleItemTraitsText singleItem={{ name: buff.name, type: 'buff' }} />
-              </CollapseCard>
+              <DetailTraitsCard singleItem={{ name: buff.name, type: 'buff' }} />
             </div>
           )}
         </DetailTextSection>

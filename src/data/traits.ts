@@ -24,7 +24,7 @@ const traits: Trait[] = [
     group: [
       { name: '发怒冲刺', type: 'skill' },
       [
-        { name: '尼宝的朋友', type: 'skill' },
+        { name: '尼宝的朋友', type: 'entity' },
         { name: '鱼钩', type: 'entity' },
       ],
     ],
@@ -33,26 +33,18 @@ const traits: Trait[] = [
   {
     group: [
       { name: '发怒冲刺', type: 'skill' },
-      [
-        { name: '仙女棒', type: 'skill' },
-        { name: '星星', type: 'entity' },
-        { name: '大星星', type: 'entity' },
-      ],
-      [
-        { name: '蓝图', type: 'skill' },
-        { name: '蓝图(召唤物)', type: 'entity' },
-        { name: '线条猫', type: 'entity' },
-      ],
+      { name: '星星', type: 'entity' },
+      { name: '大星星', type: 'entity' },
+      { name: '蓝图(投射物)', type: 'entity' },
+      { name: '蓝图(召唤物)', type: 'entity' },
+      { name: '线条猫', type: 'entity' },
     ],
     description:
-      '发怒冲刺期间免疫仙女棒的8星变身效果和3级蓝图直接命中导致的变身效果，但不免疫仙女棒1/2/4/6星的效果。若因为受到1/2/4/6星的效果而在蓝图内受到伤害，则会变为线条猫。',
+      '发怒冲刺期间免疫8星变身效果和3级蓝图直接命中导致的变身效果，但不免疫1/2/4/6星的效果。若因为受到1/2/4/6星的效果而在蓝图内受到伤害，则会变为线条猫。',
   },
   {
     group: [
-      [
-        { name: '手型枪', type: 'skill' },
-        { name: '手型枪', type: 'entity' },
-      ],
+      { name: '手型枪', type: 'entity' },
       [
         { name: '铁血', type: 'knowledgeCard' },
         { name: '喜剧之王', type: 'skill' },
@@ -63,10 +55,7 @@ const traits: Trait[] = [
   },
   {
     group: [
-      [
-        { name: '手型枪', type: 'skill' },
-        { name: '手型枪', type: 'entity' },
-      ],
+      { name: '手型枪', type: 'entity' },
       { name: '鼠虚弱', type: 'buff' },
     ],
     description:
@@ -74,10 +63,7 @@ const traits: Trait[] = [
   },
   {
     group: [
-      [
-        { name: '手型枪', type: 'skill' },
-        { name: '手型枪', type: 'entity' },
-      ],
+      { name: '手型枪', type: 'entity' },
       [
         { name: '变身饮料', type: 'item' },
         { name: '比利鼠', type: 'entity' },
@@ -121,20 +107,14 @@ const traits: Trait[] = [
   },
   {
     group: [
-      [
-        { name: '双重猫格', type: 'skill' },
-        { name: '托普斯分身', type: 'entity' },
-      ],
+      { name: '托普斯分身', type: 'entity' },
       { name: '猫虚弱', type: 'buff' },
     ],
     description: '3级托普斯分身无法转移老鼠夹与虚弱的控制效果。',
   },
   {
     group: [
-      [
-        { name: '双重猫格', type: 'skill' },
-        { name: '托普斯分身', type: 'entity' },
-      ],
+      { name: '托普斯分身', type: 'entity' },
       { name: '格挡之剑', type: 'skill' },
     ],
     description: '格挡之剑的主动戳击无法命中托普斯分身。',
@@ -199,7 +179,7 @@ const traits: Trait[] = [
       { name: '泰菲类角色', type: 'itemGroup' },
     ],
     description:
-      '泰菲类角色体型比正常角色小一些。他们被骑士连斩第二段挑飞并落地后，当剑客汤姆与其处于同一平台时，释放第三段连斩会因碰撞到平台而释放失败。可通过[高低差](剑客汤姆在下方，泰菲在上方)或在泰菲未落地前进行连斩以避免这种情况。',
+      '泰菲类角色体型比正常角色小一些，所以剑客汤姆与他们处于同一平台时，骑士连斩第三段会因碰撞到平台/地面而连斩失败。剑客汤姆可通过[高低差](剑客汤姆在下方，泰菲在上方)或在泰菲因第二段挑飞而未落地前进行连斩，以避免这种情况。',
   },
   //----------------------------------库博--------------------------------------------/
   //----------------------------------凯特--------------------------------------------/

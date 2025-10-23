@@ -8,7 +8,7 @@ type CollapseCardProps = {
   className?: string;
   titleClassName?: string;
   size?: 'xs' | 'md' | 'sm';
-  color?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue';
+  color?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue' | 'lime';
   openOnStart?: boolean;
 };
 
@@ -43,6 +43,7 @@ export default function CollapseCard({
     blue: 'bg-blue-200 dark:bg-blue-900 border-2 border-blue-400 dark:border-blue-700',
     purple:
       'bg-fuchsia-200 dark:bg-fuchsia-900 border-2 border-fuchsia-300 dark:border-fuchsia-700',
+    lime: 'bg-lime-100 dark:bg-lime-900 border-2 border-lime-200 dark:border-lime-700',
   }[color];
 
   return (

@@ -30,6 +30,7 @@ import CreateDateDisplay from './CreateDateDisplay';
 import CharacterHistoryDisplay from './CharacterHistoryDisplay';
 import CollapseCard from '@/components/ui/CollapseCard';
 import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
+import { filterTraitsBySingleItem } from '../../traits/shared/SingleItemTraitsText';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;
@@ -359,9 +360,9 @@ export default function CharacterDetails({
                 })()}
                 <div>
                   <CollapseCard
-                    title={`${character.id}角色自身的相关互动特性`}
+                    title={`${character.id}角色自身的相关互动特性(${filterTraitsBySingleItem({ name: character.id, type: 'character' }).length})`}
                     size='xs'
-                    className='pb-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
+                    className='pb-1 px-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
                     titleClassName='pl-3'
                   >
                     <SingleItemTraitsText singleItem={{ name: character.id, type: 'character' }} />
