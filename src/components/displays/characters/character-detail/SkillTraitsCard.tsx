@@ -14,16 +14,16 @@ export default function SkillTraitsCard({ skill }: SkillTraitsCardProps) {
   const OwnEntities = Object.values({ ...entities.cat, ...entities.mouse }).filter(
     (entity) => entity.skillname === skill.name
   );
+  const NumberOfOwnTraits: number[] = [skill, ...OwnEntities].map((a, key) => {
+    return filterTraitsBySingleItem({ name: a.name, type: key === 0 ? 'skill' : 'entity' }).length;
+  });
   const OwnEntitiesItems = OwnEntities.map((entity, key) => {
     return {
       id: String(key + 1),
-      title: `${entity.name}${entity.name === skill.name ? '-衍生物' : ''}`,
+      title: `${entity.name}${entity.name === skill.name ? '-衍生物' : ''}(${NumberOfOwnTraits[key + 1]})`,
       children: <SingleItemTraitsText singleItem={{ name: entity.name, type: 'entity' }} />,
       activeColor: 'orange' as const,
     };
-  });
-  const NumberOfOwnTraits: number[] = [skill, ...OwnEntities].map((a, key) => {
-    return filterTraitsBySingleItem({ name: a.name, type: key === 0 ? 'skill' : 'entity' }).length;
   });
 
   return (
@@ -44,7 +44,7 @@ export default function SkillTraitsCard({ skill }: SkillTraitsCardProps) {
             items={[
               {
                 id: '0',
-                title: `${skill.name}`,
+                title: `${skill.name}(${NumberOfOwnTraits[0]})`,
                 children: <SingleItemTraitsText singleItem={{ name: skill.name, type: 'skill' }} />,
                 activeColor: 'orange',
               },
