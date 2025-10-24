@@ -656,10 +656,12 @@ export default function SkillCard({
   const hasProperties = properties.length > 0;
 
   return (
-    <div className='card p-6! dark:bg-slate-800 dark:border-slate-700'>
-      <div className='flex justify-between items-start'>
+    <div
+      className={`card ${isMobile ? 'px-4! py-6!' : 'p-6!'} dark:bg-slate-800 dark:border-slate-700`}
+    >
+      <div className='flex items-start'>
         {skill.imageUrl && (
-          <div className='flex-shrink-0 mr-6'>
+          <div className={`flex-shrink-0 ${isMobile ? 'mr-2' : 'mr-6'}`}>
             <div className='relative w-16 h-16 rounded-full border-2 overflow-hidden border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700'>
               <Image
                 src={skill.imageUrl}
@@ -720,51 +722,142 @@ export default function SkillCard({
             )}
           </div>
         )}
+        {/*电脑版*/}
+        {!isMobile && (
+          <div className='flex-1'>
+            <div className='flex justify-between items-center'>
+              <h3 className='text-xl font-bold px-2 py-2 dark:text-white'>
+                {getSkillTypeLabel(skill.type)} ·{' '}
+                <EditableField
+                  tag='span'
+                  id={`Skill:${skill.name}`}
+                  path={`skills.${skillIndex}.name`}
+                  initialValue={skill.name}
+                  onSave={(newName) => {
+                    // Update skill with new name and regenerate image URL
+                    const factionId = localCharacter.factionId!;
 
-        <div className='flex-1'>
-          <div className='flex justify-between items-center'>
-            <h3 className='text-xl font-bold px-2 py-2 dark:text-white'>
-              {getSkillTypeLabel(skill.type)} ·{' '}
-              <EditableField
-                tag='span'
-                id={`Skill:${skill.name}`}
-                path={`skills.${skillIndex}.name`}
-                initialValue={skill.name}
-                onSave={(newName) => {
-                  // Update skill with new name and regenerate image URL
-                  const factionId = localCharacter.factionId!;
-
-                  const skill = characters[characterId]!.skills[skillIndex]!;
-                  skill.name = newName;
-                  skill.imageUrl = AssetManager.getSkillImageUrl(
-                    localCharacter?.id,
-                    { ...skill, name: newName },
-                    factionId
-                  );
-                }}
-              />
-            </h3>
-            {isEditMode && skill.type == 'weapon2' && (
-              <button
-                type='button'
-                aria-label='移除技能'
-                onClick={() => {
-                  function removeSkill(localCharacter: CharacterWithFaction) {
-                    localCharacter.skills = localCharacter.skills.filter(
-                      ({ type }: Skill) => type != 'weapon2'
+                    const skill = characters[characterId]!.skills[skillIndex]!;
+                    skill.name = newName;
+                    skill.imageUrl = AssetManager.getSkillImageUrl(
+                      localCharacter?.id,
+                      { ...skill, name: newName },
+                      factionId
                     );
-                  }
-                  removeSkill(characters[characterId]!);
-                }}
-                className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-              >
-                <TrashIcon className='w-4 h-4' aria-hidden='true' />
-              </button>
+                  }}
+                />
+              </h3>
+              {isEditMode && skill.type == 'weapon2' && (
+                <button
+                  type='button'
+                  aria-label='移除技能'
+                  onClick={() => {
+                    function removeSkill(localCharacter: CharacterWithFaction) {
+                      localCharacter.skills = localCharacter.skills.filter(
+                        ({ type }: Skill) => type != 'weapon2'
+                      );
+                    }
+                    removeSkill(characters[characterId]!);
+                  }}
+                  className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                >
+                  <TrashIcon className='w-4 h-4' aria-hidden='true' />
+                </button>
+              )}
+            </div>
+
+            {hasProperties && (
+              <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2'>
+                {properties.map((prop, index) => (
+                  <React.Fragment key={index}>
+                    {index > 0 && !isEditMode && ' · '}
+                    {prop}
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
+
+            {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
+              <div className='mt-3 px-2'>
+                <div className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
+                  <EditableField
+                    initialValue={
+                      (isDetailed && skill.detailedDescription?.trim()
+                        ? skill.detailedDescription
+                        : skill.description) ?? '<无内容>'
+                    }
+                    path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
+                    tag='span'
+                    data-tutorial-id='skill-description-edit'
+                  />
+                </div>
+              </div>
             )}
           </div>
+        )}
+        {/*手机版-标题栏*/}
+        {isMobile && (
+          <div className='flex-1'>
+            <div className='flex justify-between items-center'>
+              <h3 className='text-xl font-bold px-2 dark:text-white'>
+                {getSkillTypeLabel(skill.type)} ·{' '}
+                <EditableField
+                  tag='span'
+                  id={`Skill:${skill.name}`}
+                  path={`skills.${skillIndex}.name`}
+                  initialValue={skill.name}
+                  onSave={(newName) => {
+                    // Update skill with new name and regenerate image URL
+                    const factionId = localCharacter.factionId!;
 
-          {hasProperties && (
-            <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2'>
+                    const skill = characters[characterId]!.skills[skillIndex]!;
+                    skill.name = newName;
+                    skill.imageUrl = AssetManager.getSkillImageUrl(
+                      localCharacter?.id,
+                      { ...skill, name: newName },
+                      factionId
+                    );
+                  }}
+                />
+              </h3>
+              {isEditMode && skill.type == 'weapon2' && (
+                <button
+                  type='button'
+                  aria-label='移除技能'
+                  onClick={() => {
+                    function removeSkill(localCharacter: CharacterWithFaction) {
+                      localCharacter.skills = localCharacter.skills.filter(
+                        ({ type }: Skill) => type != 'weapon2'
+                      );
+                    }
+                    removeSkill(characters[characterId]!);
+                  }}
+                  className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                >
+                  <TrashIcon className='w-4 h-4' aria-hidden='true' />
+                </button>
+              )}
+            </div>
+
+            {!isEditMode && hasProperties && (
+              <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2'>
+                {properties.map((prop, index) => (
+                  <React.Fragment key={index}>
+                    {index > 0 && !isEditMode && ' · '}
+                    {prop}
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/*手机版-主体栏*/}
+      {isMobile && (
+        <div className='flex-1'>
+          {isEditMode && hasProperties && (
+            <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2 divide-y divide-dashed divide-gray-300'>
               {properties.map((prop, index) => (
                 <React.Fragment key={index}>
                   {index > 0 && !isEditMode && ' · '}
@@ -773,7 +866,6 @@ export default function SkillCard({
               ))}
             </div>
           )}
-
           {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
             <div className='mt-3 px-2'>
               <div className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
@@ -791,7 +883,7 @@ export default function SkillCard({
             </div>
           )}
         </div>
-      </div>
+      )}
 
       <div className='mt-6'>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
