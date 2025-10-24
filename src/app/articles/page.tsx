@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
 const DESCRIPTION = '浏览其他爱好者的记录、思考和发现';
 
