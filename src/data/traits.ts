@@ -4,13 +4,13 @@ const traits: Trait[] = [
   /**
    * 备忘
    * 该文件的数据存储格式与其它data不同（因为特性不需要命名）
-   * 一条特性包括group，description和isMinor（可选）。其中group由若干个singleItem（即{name,type,factionId?}）组成
+   * 一条特性包括group，description和isMinor（可选）。其中group由若干个singleItem（即{name,type,factionId?}）组成，isMinor在显示上暂无区别
    * 可以用[]框选数个singleItem形成singleItem[]，代表“或”，也就是“其中之一”。[]最多嵌套一层。
    * type='itemGroup'时，代表加入组合，组合会在索引判定时进行拆解，在显示时只显示名称。组合不支持与[]进行嵌套
    * singleItem的name不要用别名
    * factionId仅用于区分特技里的两个急速翻滚/应急治疗，因此平时不需要填写
    *
-   * 编写有持有者的衍生物时建议同时加上它的所属技能（不用加所属角色），并应用[]格式
+   * 目前不建议在条目内包含buff，因为buff的归类暂时不太稳定
    * 文件内分类原则：group内有明确的角色/技能/有持有者的衍生物时，归属到它所属者之一的条目下即可。如果不确定是否已收录，可以在网站上查看一下有没有相关信息，或在文件内查找，避免重复*/
   //----------------------------------汤姆--------------------------------------------/
   {
@@ -35,12 +35,26 @@ const traits: Trait[] = [
       { name: '发怒冲刺', type: 'skill' },
       { name: '星星', type: 'entity' },
       { name: '大星星', type: 'entity' },
+    ],
+    description:
+      '汤姆在发怒冲刺期间免疫被8星命中导致的变身效果，但仍会因被1/2/4/6星命中而受到伤害。',
+  },
+  {
+    group: [
+      { name: '发怒冲刺', type: 'skill' },
       { name: '蓝图(投射物)', type: 'entity' },
+      { name: '线条猫', type: 'entity' },
+    ],
+    description: '汤姆在发怒冲刺期间免疫被3级蓝图直接命中导致的变身效果。',
+  },
+  {
+    group: [
+      { name: '发怒冲刺', type: 'skill' },
+      { name: '星星', type: 'entity' },
       { name: '蓝图(召唤物)', type: 'entity' },
       { name: '线条猫', type: 'entity' },
     ],
-    description:
-      '发怒冲刺期间免疫8星变身效果和3级蓝图直接命中导致的变身效果，但不免疫1/2/4/6星的效果。若因为受到1/2/4/6星的效果而在蓝图内受到伤害，则会变为线条猫。',
+    description: '发怒冲刺期间在蓝图内受到伤害（例如被1/2/4/6星命中）依然会变身为线条猫。',
   },
   {
     group: [
@@ -50,8 +64,7 @@ const traits: Trait[] = [
         { name: '喜剧之王', type: 'skill' },
       ],
     ],
-    description:
-      '手型枪先造成伤害后造成眩晕。老鼠因手型枪伤害而进入铁血或1级喜剧之王的状态时，无法解除后续眩晕。',
+    description: '老鼠因手型枪伤害而进入铁血或1级喜剧之王的状态时，仍会受到后续眩晕。',
   },
   {
     group: [
@@ -64,13 +77,10 @@ const traits: Trait[] = [
   {
     group: [
       { name: '手型枪', type: 'entity' },
-      [
-        { name: '变身饮料', type: 'item' },
-        { name: '比利鼠', type: 'entity' },
-      ],
+      { name: '比利鼠', type: 'entity' },
     ],
     description:
-      '手型枪可以抓回比利鼠，且比利鼠会受到眩晕。若手型枪已满3级且比利鼠在受手型枪眩晕期间解除变身状态，则仍可直接抓起。',
+      '手型枪可以抓回比利鼠，且比利鼠会受到眩晕。若手型枪已满3级且比利鼠在受手型枪眩晕期间解除变身状态，则可将该老鼠直接抓起。',
   },
   //----------------------------------布奇--------------------------------------------/
   {
@@ -91,21 +101,12 @@ const traits: Trait[] = [
   },
   //----------------------------------托普斯------------------------------------------/
   {
-    group: [
-      [
-        { name: '双重猫格', type: 'skill' },
-        { name: '托普斯分身', type: 'entity' },
-      ],
-      [{ name: '捕鼠夹', type: 'knowledgeCard' }],
-    ],
+    group: [{ name: '托普斯分身', type: 'entity' }, [{ name: '捕鼠夹', type: 'knowledgeCard' }]],
     description: '托普斯分身继承的捕鼠夹等知识卡效果可以与托普斯自身叠加，效果因此翻倍。',
   },
   {
     group: [
-      [
-        { name: '双重猫格', type: 'skill' },
-        { name: '托普斯分身', type: 'entity' },
-      ],
+      { name: '托普斯分身', type: 'entity' },
       [
         { name: '知识渊博', type: 'knowledgeCard' },
         { name: '熊熊燃烧', type: 'knowledgeCard' },
@@ -118,14 +119,14 @@ const traits: Trait[] = [
       { name: '托普斯分身', type: 'entity' },
       { name: '猫虚弱', type: 'buff' },
     ],
-    description: '3级托普斯分身无法转移老鼠夹与虚弱的控制效果。',
+    description: '3级托普斯分身无法转移老鼠夹与虚弱导致的控制效果。',
   },
   {
     group: [
       { name: '托普斯分身', type: 'entity' },
       { name: '格挡之剑', type: 'skill' },
     ],
-    description: '格挡之剑的主动戳击无法命中托普斯分身。',
+    description: '格挡之剑的主动戳击无法命中托普斯分身，只有被动反击才能命中。',
   },
   {
     group: [
@@ -142,7 +143,7 @@ const traits: Trait[] = [
       ],
     ],
     description:
-      '捕虫网无视大部分霸体效果，如3级天使翅膀，2级弹力圆球，2级怒气喷发，勇往直前，2级灵活跳跃，说出你的故事，滑步踢，梦幻舞步等。',
+      '捕虫网的捕捉无视大部分霸体效果，例如3级天使翅膀，2级弹力圆球，2级怒气喷发，勇往直前，2级灵活跳跃，说出你的故事，滑步踢，梦幻舞步等。',
   },
   {
     group: [
@@ -152,21 +153,16 @@ const traits: Trait[] = [
         { name: '格挡之剑', type: 'skill' },
       ],
     ],
-    description: '少部分霸体效果无视捕虫网，如降落伞，格挡之剑等。',
+    description: '部分霸体效果能够免疫捕虫网的捕捉，例如降落伞，格挡之剑等。',
   },
   {
     group: [
       { name: '捕虫网', type: 'skill' },
       [
-        { name: '头盔', type: 'skill' },
         { name: '头盔', type: 'entity' },
-        { name: '军团战车', type: 'skill' },
         { name: '战车', type: 'entity' },
-        { name: '仙女棒', type: 'skill' },
         { name: '小星星', type: 'entity' },
-        { name: '乾坤袋', type: 'skill' },
         { name: '乾坤袋(NPC)', type: 'entity' },
-        { name: '变身饮料', type: 'item' },
         { name: '比利鼠', type: 'entity' },
         { name: '机器鼠', type: 'entity' },
       ],
@@ -177,7 +173,7 @@ const traits: Trait[] = [
   {
     group: [
       [
-        { name: '咸鱼', type: 'skill' },
+        { name: '咸鱼', type: 'entity' },
         { name: '穷追不舍', type: 'skill' },
       ],
       [
@@ -201,7 +197,7 @@ const traits: Trait[] = [
       { name: '仙人掌', type: 'itemGroup' },
     ],
     description:
-      '斗牛和鞭子均可以破坏可破碎道具（{冰块}和{番茄}除外），以及纸盒、面粉袋和牛仔杰瑞的仙人掌。被斗牛破坏的可破碎道具会产生投掷命中墙壁/地面时的破碎效果，而纸盒、面粉袋、仙人掌会直接消失。',
+      '斗牛和鞭子均可以破坏可破碎道具（{冰块}和{番茄}除外），以及纸盒、面粉袋、吊灯、牛仔杰瑞的仙人掌等。被斗牛破坏的可破碎道具会产生投掷命中墙壁/地面时的破碎效果，而纸盒、面粉袋、仙人掌会直接消失。',
   },
   {
     group: [
@@ -226,7 +222,7 @@ const traits: Trait[] = [
       { name: '仙人掌弹弓', type: 'skill' },
     ],
     description:
-      '牛仔汤姆位于米可采访范围内时，每射出1颗仙人掌球均会额外叠加1层素材（与其它叠加素材方式不冲突）。',
+      '牛仔汤姆位于米可采访范围内时，每射出1颗仙人掌球均会额外叠加1层素材（与其它素材叠加方式不冲突）。',
   },
   {
     group: [
@@ -273,7 +269,8 @@ const traits: Trait[] = [
         { name: '火箭筒', type: 'entity' },
       ],
     ],
-    description: '爆炸带有受力效果，因此鞭炮、火药桶、火箭筒的爆炸效果可以将香水区域炸飞。',
+    description:
+      '爆炸带有受力效果，因此鞭炮、火药桶、火箭筒的爆炸效果可以将香水区域炸飞（沿直线飞出场外）。',
   },
   {
     group: [
@@ -287,7 +284,7 @@ const traits: Trait[] = [
       ],
     ],
     description:
-      '魔音穿耳、3级香风折扇、闪亮营救（满怒落地）、勇往直前、滑步踢的技能效果可以将香水区域弹飞。',
+      '魔音穿耳、3级香风折扇、闪亮营救（满怒落地）、勇往直前、滑步踢的技能效果可以将香水区域弹飞（沿直线飞出场外）。',
   },
   {
     group: [
@@ -301,9 +298,166 @@ const traits: Trait[] = [
     description: '[部分](具体生效范围待补充)与爪刀有关的知识卡、特技能对甲油额外爪击区域生效。',
   },
   //----------------------------------侍卫汤姆----------------------------------------/
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      { name: '饮料', type: 'itemGroup' },
+    ],
+    description: '警戒能清除任何饮料的效果。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      [
+        { name: '隐身', type: 'skill' },
+        { name: '分身大师', type: 'skill' },
+        { name: '星星', type: 'entity' },
+        { name: '魔咒强身', type: 'skill' },
+      ],
+    ],
+    description:
+      '警戒能清除大部分隐身效果，其中包括由太空堡垒科研舱、部分技能（隐身、分身大师、星星（1星）、2级魔咒强身）提供的隐身。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      [
+        { name: '无畏', type: 'knowledgeCard' },
+        { name: '舍己', type: 'knowledgeCard' },
+        { name: '护佑', type: 'knowledgeCard' },
+        { name: '回家', type: 'knowledgeCard' },
+        { name: '威严光盾', type: 'skill' },
+        { name: '国王权杖', type: 'skill' },
+        { name: '守护战旗', type: 'entity' },
+        { name: '勇者无惧', type: 'skill' },
+        { name: '天使祝福', type: 'skill' },
+        { name: '老牛仔', type: 'skill' },
+        { name: '攻无不克', type: 'skill' },
+        { name: '小情绪', type: 'skill' },
+        { name: '幻风礼服', type: 'skill' },
+      ],
+    ],
+    description:
+      '警戒能清除大部分有“护盾”特效的护盾或无敌效果，其中包括由知识卡（无畏、舍己、护佑、回家）或部分角色技能（威严光盾、国王权杖、国王战旗-守护、3级勇者无惧、2级天使祝福、3级老牛仔、2级攻无不克、小情绪、3级幻风礼服）提供的此类效果。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      [
+        { name: '恶魔之门', type: 'entity' },
+        { name: '野生体格', type: 'skill' },
+      ],
+    ],
+    description: '警戒无法清除由2级野生体格或恶魔之门（友方使用时）提供的护盾效果。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      { name: '比利鼠', type: 'entity' },
+      [{ name: '小情绪', type: 'skill' }],
+    ],
+    description:
+      '警戒能清除所有比利鼠变身效果，其中包括由太空堡垒科研舱、部分技能（小情绪）提供的比利鼠效果。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      { name: '必备专业素养', type: 'skill' },
+    ],
+    description: '警戒无法清除部分永久类远视效果，包括由必备专业素养提供的远视。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      { name: '超级变！变！变！', type: 'skill' },
+    ],
+    description: '警戒会直接解除米雪儿的变身效果。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      { name: '降落伞', type: 'skill' },
+    ],
+    description: '降落伞降落期间不会被警戒影响。',
+  },
+  {
+    group: [
+      { name: '炮弹', type: 'entity' },
+      [
+        { name: '隐身饮料', type: 'item' },
+        { name: '远视饮料', type: 'item' },
+        { name: '兴奋饮料', type: 'item' },
+        { name: '神秘饮料', type: 'item' },
+      ],
+    ],
+    description: '炮弹命中敌方时，会清除由饮料提供的隐身、远视、兴奋效果。',
+  },
+  {
+    group: [
+      { name: '炮弹', type: 'entity' },
+      [
+        { name: '隐身', type: 'skill' },
+        { name: '分身大师', type: 'skill' },
+        { name: '星星', type: 'entity' },
+        { name: '魔咒强身', type: 'skill' },
+      ],
+    ],
+    description:
+      '炮弹命中敌方时，会清除大部分隐身效果，其中包括由部分技能（隐身、分身大师、星星（1星）、2级魔咒强身）提供的隐身。',
+  },
+  {
+    group: [
+      { name: '炮弹', type: 'entity' },
+      [
+        { name: '黄色卡牌', type: 'entity' },
+        { name: '灵活跳跃', type: 'skill' },
+      ],
+    ],
+    description:
+      '炮弹命中敌方时，无法清除部分隐身效果，其中包括由部分技能（3级奇思妙想-黄牌、3级灵活跳跃）提供的隐身。',
+  },
   //----------------------------------图茨--------------------------------------------/
   //----------------------------------米特--------------------------------------------/
+  {
+    group: [
+      { name: '胡椒粉罐头', type: 'entity' },
+      { name: '鼠虚弱', type: 'buff' },
+      [
+        { name: '无畏', type: 'knowledgeCard' },
+        { name: '舍己', type: 'knowledgeCard' },
+      ],
+    ],
+    description:
+      '胡椒粉罐头导致的持续伤害不会因进入虚弱状态或被抓起而清除，此时老鼠可能因被抓起后再次受到伤害而在猫手中或火箭上进入虚弱状态。火箭上的老鼠在虚弱持续期间被救下时，仍会继续处于虚弱状态，且无畏和舍己无法令其获得护盾或恢复Hp。',
+  },
   //----------------------------------塔拉--------------------------------------------/
+  {
+    group: [
+      { name: '牛仔鞭索', type: 'skill' },
+      { name: '拳套盒', type: 'item' },
+    ],
+    description:
+      '被塔拉抓住并通过牛仔鞭索丢出的老鼠，碰到拳套盒时会停止飞行（与碰到墙壁的效果类似）。',
+  },
+  {
+    group: [
+      { name: '牛仔鞭索', type: 'skill' },
+      { name: '鞭炮', type: 'itemGroup' },
+      { name: '电风扇', type: 'item' },
+    ],
+    description:
+      '被塔拉抓住并通过牛仔鞭索丢出的老鼠，因部分原因（如鞭炮爆炸，电风扇吹风，经典之家轮胎命中）导致受力时，不会停止飞行，但可能改变运动方向。',
+  },
+  {
+    group: [
+      { name: '套索', type: 'entity' },
+      [
+        { name: '铁血', type: 'knowledgeCard' },
+        { name: '喜剧之王', type: 'skill' },
+      ],
+    ],
+    description: '老鼠因2级套索伤害而进入铁血或1级喜剧之王的状态时，仍会受到后续眩晕。',
+  },
   //----------------------------------剑客汤姆----------------------------------------/
   {
     group: [
