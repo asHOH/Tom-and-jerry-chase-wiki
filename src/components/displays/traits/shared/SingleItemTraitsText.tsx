@@ -86,7 +86,7 @@ export default function SingleItemTraitsText({ singleItem }: SingleItemTraitsTex
 
           if (!containsTarget) {
             // 如果不包含目标，则输出组合名
-            itemNames.push(groupItem.name + `$text-blue-700 dark:text-blue-400#(组合)`);
+            itemNames.push(groupItem.name + `$text-orange-600 dark:text-orange-400#(组合)`);
           } else {
             //如果包含目标，则在最终输出时以该组合的name替代原本SingleItem的name
             printName.push(groupItem.name);
