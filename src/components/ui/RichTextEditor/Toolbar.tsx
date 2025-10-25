@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import {
   BoldIcon,
@@ -124,17 +125,22 @@ export const Toolbar = React.memo(function Toolbar({
   isUploadingImage,
 }: ToolbarProps) {
   const [showTableTools, setShowTableTools] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const isMobile = useMobile();
   const isKeyboardVisible = useVirtualKeyboardVisible();
   const shouldBeSticky = isMobile && isKeyboardVisible;
   const [showMore, setShowMore] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const commonButtonProps = {
     mode,
     isMobile: shouldBeSticky,
   };
 
-  return (
+  const toolbarContent = (
     <div
       className={clsx(
         className,
@@ -454,8 +460,8 @@ export const Toolbar = React.memo(function Toolbar({
               <ToolbarButton
                 onClick={commands.addImage}
                 title={isUploadingImage ? '图片上传中...' : '插入图片'}
-                mode={mode}
                 disabled={!!isUploadingImage}
+                {...commonButtonProps}
               >
                 {isUploadingImage ? (
                   <LoadingSpinnerIcon className='animate-spin size-4' />
@@ -500,6 +506,12 @@ export const Toolbar = React.memo(function Toolbar({
       </div>
     </div>
   );
+
+  if (shouldBeSticky && isClient) {
+    return createPortal(toolbarContent, document.body);
+  }
+
+  return toolbarContent;
 });
 
 export default Toolbar;
