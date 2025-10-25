@@ -1,14 +1,19 @@
 import { Trait } from './types';
 
+/*//用于直接引用itemGroups的值（与type=itemGroup效果类似，但这种方式实际显示时会将它们拆开，并且支持与[]嵌套一次）
+const getGroup = (name: string): SingleItem[] => itemGroups[name]?.group || [];
+const getDescription = (name: string): string => itemGroups[name]?.description || '';*/
+
 const traits: Trait[] = [
   /**
-   * 备忘
+   * 维护说明：
    * 该文件的数据存储格式与其它data不同（因为特性不需要命名）
    * 一条特性包括group，description和isMinor（可选）。其中group由若干个singleItem（即{name,type,factionId?}）组成，isMinor在显示上暂无区别
    * 可以用[]框选数个singleItem形成singleItem[]，代表“或”，也就是“其中之一”。[]最多嵌套一层。
-   * type='itemGroup'时，代表加入组合，组合会在索引判定时进行拆解，在显示时只显示名称。组合不支持与[]进行嵌套
-   * singleItem的name不要用别名
-   * factionId仅用于区分特技里的两个急速翻滚/应急治疗，因此平时不需要填写
+   * type='itemGroup'时，代表加入组合，组合会在索引时进行拆解并对每个内容单独判断归属（与[]嵌套类似），在显示时只显示名称。组合不支持与[]进行嵌套
+   * 也可以用本文件顶部给出的两个函数达到加入组合的效果，适用于更加灵活的场合
+   * singleItem的name不要用别名，否则会出现索引问题
+   * factionId仅用于区分特技里的两个急速翻滚/应急治疗，平时不需要填写
    *
    * 目前不建议在条目内包含buff，因为buff的归类暂时不太稳定
    * 文件内分类原则：group内有明确的角色/技能/有持有者的衍生物时，归属到它所属者之一的条目下即可。如果不确定是否已收录，可以在网站上查看一下有没有相关信息，或在文件内查找，避免重复*/
@@ -72,7 +77,7 @@ const traits: Trait[] = [
       { name: '鼠虚弱', type: 'buff' },
     ],
     description:
-      '手型枪可以抓回虚弱的老鼠，不会造成眩晕，但[3级的直接抓起效果会正常生效](效果持续期间，汤姆爪刀命中虚弱老鼠时会将其直接抓起)。',
+      '手型枪可以抓回虚弱的老鼠，且[3级的直接抓起效果会正常生效](效果持续期间，汤姆爪刀命中虚弱老鼠时会将其直接抓起)。',
   },
   {
     group: [
@@ -131,19 +136,9 @@ const traits: Trait[] = [
   {
     group: [
       { name: '捕虫网', type: 'skill' },
-      [
-        { name: '天使翅膀', type: 'skill' },
-        { name: '弹力圆球', type: 'skill' },
-        { name: '怒气喷发', type: 'skill' },
-        { name: '勇往直前', type: 'skill' },
-        { name: '灵活跳跃', type: 'skill' },
-        { name: '说出你的故事', type: 'skill' },
-        { name: '滑步踢', type: 'skill' },
-        { name: '梦幻舞步', type: 'skill' },
-      ],
+      { name: '鼠方霸体效果', type: 'itemGroup' },
     ],
-    description:
-      '捕虫网的捕捉无视大部分霸体效果，例如3级天使翅膀，2级弹力圆球，2级怒气喷发，勇往直前，2级灵活跳跃，说出你的故事，滑步踢，梦幻舞步等。',
+    description: `捕虫网可以网住持有霸体的老鼠。`,
   },
   {
     group: [
@@ -153,23 +148,30 @@ const traits: Trait[] = [
         { name: '格挡之剑', type: 'skill' },
       ],
     ],
-    description: '部分霸体效果能够免疫捕虫网的捕捉，例如降落伞，格挡之剑等。',
+    description: '捕虫网无法网住此类无敌期间的老鼠。',
   },
   {
     group: [
       { name: '捕虫网', type: 'skill' },
-      [
-        { name: '头盔', type: 'entity' },
-        { name: '战车', type: 'entity' },
-        { name: '小星星', type: 'entity' },
-        { name: '乾坤袋(NPC)', type: 'entity' },
-        { name: '比利鼠', type: 'entity' },
-        { name: '机器鼠', type: 'entity' },
-      ],
+      { name: '鼠方变身效果', type: 'itemGroup' },
     ],
-    description: '捕虫网无法网住绝大多数变身期间的老鼠。',
+    description: `捕虫网无法网住变身期间的老鼠。`,
+  },
+  {
+    group: [
+      { name: '捕虫网', type: 'skill' },
+      { name: '兔子先生', type: 'entity' },
+    ],
+    description: '捕虫网无法网住兔子先生。',
   },
   //----------------------------------莱特宁------------------------------------------/
+  {
+    group: [
+      { name: '瞬移闪击', type: 'skill' },
+      { name: '牛仔吉他', type: 'skill' },
+    ],
+    description: `莱特宁使用3级瞬移闪击瞬移到正在弹奏吉他的牛仔杰瑞身后时，牛仔杰瑞会先眩晕，因此莱特宁不会陷入眩晕（除非牛仔杰瑞有霸体/护盾等效果）。`,
+  },
   {
     group: [
       [
@@ -187,17 +189,14 @@ const traits: Trait[] = [
   //----------------------------------牛仔汤姆----------------------------------------/
   {
     group: [
-      [
-        { name: '斗牛', type: 'entity' },
-        { name: '鞭子', type: 'skill' },
-      ],
+      { name: '斗牛', type: 'entity' },
       { name: '可破碎道具', type: 'itemGroup' },
       { name: '纸盒', type: 'itemGroup' },
       { name: '面粉袋', type: 'item' },
       { name: '仙人掌', type: 'itemGroup' },
     ],
     description:
-      '斗牛和鞭子均可以破坏可破碎道具（{冰块}和{番茄}除外），以及纸盒、面粉袋、吊灯、牛仔杰瑞的仙人掌等。被斗牛破坏的可破碎道具会产生投掷命中墙壁/地面时的破碎效果，而纸盒、面粉袋、仙人掌会直接消失。',
+      '斗牛可以破坏可破碎道具（{冰块}和{番茄}除外），以及纸盒、面粉袋、吊灯、牛仔杰瑞的仙人掌等。被破坏的可破碎道具会产生投掷命中墙壁/地面时的破碎效果，而纸盒、面粉袋、仙人掌会直接消失。',
   },
   {
     group: [
@@ -215,6 +214,17 @@ const traits: Trait[] = [
       ],
     ],
     description: '方块可以阻挡斗牛，使其折返。',
+  },
+  {
+    group: [
+      { name: '鞭子', type: 'skill' },
+      { name: '可破碎道具', type: 'itemGroup' },
+      { name: '纸盒', type: 'itemGroup' },
+      { name: '面粉袋', type: 'item' },
+      { name: '仙人掌', type: 'itemGroup' },
+    ],
+    description:
+      '鞭子可以破坏可破碎道具（{冰块}和{番茄}除外），以及纸盒、面粉袋、吊灯、牛仔杰瑞的仙人掌等。被破坏的可破碎道具会产生投掷命中墙壁/地面时的破碎效果，而纸盒、面粉袋、仙人掌会直接消失。',
   },
   {
     group: [
@@ -301,14 +311,22 @@ const traits: Trait[] = [
   {
     group: [
       { name: '警戒', type: 'skill' },
-      { name: '饮料', type: 'itemGroup' },
+      { name: '远视饮料', type: 'item' },
     ],
-    description: '警戒能清除任何饮料的效果。',
+    description: '警戒能清除由远视饮料提供的远视。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      { name: '必备专业素养', type: 'skill' },
+    ],
+    description: '警戒无法清除部分永久类远视效果，包括：必备专业素养提供的远视。',
   },
   {
     group: [
       { name: '警戒', type: 'skill' },
       [
+        { name: '隐身饮料', type: 'item' },
         { name: '隐身', type: 'skill' },
         { name: '分身大师', type: 'skill' },
         { name: '星星', type: 'entity' },
@@ -316,29 +334,31 @@ const traits: Trait[] = [
       ],
     ],
     description:
-      '警戒能清除大部分隐身效果，其中包括由太空堡垒科研舱、部分技能（隐身、分身大师、星星（1星）、2级魔咒强身）提供的隐身。',
+      '警戒能清除大部分隐身效果，包括：隐身饮料、太空堡垒科研舱、部分技能（隐身、分身大师、星星（1星）、2级魔咒强身）提供的隐身。',
   },
   {
     group: [
       { name: '警戒', type: 'skill' },
       [
-        { name: '无畏', type: 'knowledgeCard' },
-        { name: '舍己', type: 'knowledgeCard' },
+        { name: '护盾饮料', type: 'item' },
         { name: '护佑', type: 'knowledgeCard' },
         { name: '回家', type: 'knowledgeCard' },
         { name: '威严光盾', type: 'skill' },
-        { name: '国王权杖', type: 'skill' },
         { name: '守护战旗', type: 'entity' },
         { name: '勇者无惧', type: 'skill' },
         { name: '天使祝福', type: 'skill' },
-        { name: '老牛仔', type: 'skill' },
-        { name: '攻无不克', type: 'skill' },
         { name: '小情绪', type: 'skill' },
         { name: '幻风礼服', type: 'skill' },
       ],
     ],
-    description:
-      '警戒能清除大部分有“护盾”特效的护盾或无敌效果，其中包括由知识卡（无畏、舍己、护佑、回家）或部分角色技能（威严光盾、国王权杖、国王战旗-守护、3级勇者无惧、2级天使祝福、3级老牛仔、2级攻无不克、小情绪、3级幻风礼服）提供的此类效果。',
+    description: '警戒能清除大部分护盾效果。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      { name: '鼠方护盾类无敌效果', type: 'itemGroup' },
+    ],
+    description: `警戒能清除有“护盾”特效的无敌效果。`,
   },
   {
     group: [
@@ -348,23 +368,21 @@ const traits: Trait[] = [
         { name: '野生体格', type: 'skill' },
       ],
     ],
-    description: '警戒无法清除由2级野生体格或恶魔之门（友方使用时）提供的护盾效果。',
+    description: '警戒无法清除由2级野生体格或恶魔之门（友方使用时）提供的护盾。',
+  },
+  {
+    group: [
+      { name: '警戒', type: 'skill' },
+      { name: '兴奋饮料', type: 'item' },
+    ],
+    description: '警戒能清除由兴奋饮料提供的兴奋效果。',
   },
   {
     group: [
       { name: '警戒', type: 'skill' },
       { name: '比利鼠', type: 'entity' },
-      [{ name: '小情绪', type: 'skill' }],
     ],
-    description:
-      '警戒能清除所有比利鼠变身效果，其中包括由太空堡垒科研舱、部分技能（小情绪）提供的比利鼠效果。',
-  },
-  {
-    group: [
-      { name: '警戒', type: 'skill' },
-      { name: '必备专业素养', type: 'skill' },
-    ],
-    description: '警戒无法清除部分永久类远视效果，包括由必备专业素养提供的远视。',
+    description: '警戒能清除所有比利鼠变身效果。',
   },
   {
     group: [
@@ -383,19 +401,15 @@ const traits: Trait[] = [
   {
     group: [
       { name: '炮弹', type: 'entity' },
-      [
-        { name: '隐身饮料', type: 'item' },
-        { name: '远视饮料', type: 'item' },
-        { name: '兴奋饮料', type: 'item' },
-        { name: '神秘饮料', type: 'item' },
-      ],
+      { name: '远视饮料', type: 'item' },
     ],
-    description: '炮弹命中敌方时，会清除由饮料提供的隐身、远视、兴奋效果。',
+    description: '炮弹命中敌方时，会清除由远视饮料提供的远视。',
   },
   {
     group: [
       { name: '炮弹', type: 'entity' },
       [
+        { name: '隐身饮料', type: 'item' },
         { name: '隐身', type: 'skill' },
         { name: '分身大师', type: 'skill' },
         { name: '星星', type: 'entity' },
@@ -403,7 +417,7 @@ const traits: Trait[] = [
       ],
     ],
     description:
-      '炮弹命中敌方时，会清除大部分隐身效果，其中包括由部分技能（隐身、分身大师、星星（1星）、2级魔咒强身）提供的隐身。',
+      '炮弹命中敌方时，会清除大部分隐身效果，包括：隐身饮料、太空堡垒科研舱、部分技能（隐身、分身大师、星星（1星）、2级魔咒强身）提供的隐身。',
   },
   {
     group: [
@@ -414,7 +428,14 @@ const traits: Trait[] = [
       ],
     ],
     description:
-      '炮弹命中敌方时，无法清除部分隐身效果，其中包括由部分技能（3级奇思妙想-黄牌、3级灵活跳跃）提供的隐身。',
+      '炮弹命中敌方时，不会清除此类隐身效果，包括：由3级奇思妙想-黄色卡牌、3级灵活跳跃提供的隐身。',
+  },
+  {
+    group: [
+      { name: '炮弹', type: 'entity' },
+      { name: '兴奋饮料', type: 'item' },
+    ],
+    description: '炮弹命中敌方时，会清除由兴奋饮料提供的兴奋效果。',
   },
   //----------------------------------图茨--------------------------------------------/
   //----------------------------------米特--------------------------------------------/
@@ -431,6 +452,13 @@ const traits: Trait[] = [
       '胡椒粉罐头导致的持续伤害不会因进入虚弱状态或被抓起而清除，此时老鼠可能因被抓起后再次受到伤害而在猫手中或火箭上进入虚弱状态。火箭上的老鼠在虚弱持续期间被救下时，仍会继续处于虚弱状态，且无畏和舍己无法令其获得护盾或恢复Hp。',
   },
   //----------------------------------塔拉--------------------------------------------/
+  {
+    group: [
+      { name: '西部情谊', type: 'skill' },
+      { name: '乾坤袋(NPC)', type: 'entity' },
+    ],
+    description: '西部情谊无法命中乾坤袋。',
+  },
   {
     group: [
       { name: '牛仔鞭索', type: 'skill' },
@@ -458,6 +486,28 @@ const traits: Trait[] = [
     ],
     description: '老鼠因2级套索伤害而进入铁血或1级喜剧之王的状态时，仍会受到后续眩晕。',
   },
+  {
+    group: [
+      { name: '套索', type: 'entity' },
+      { name: '机器鼠', type: 'entity' },
+    ],
+    description:
+      '套索可以命中机器鼠，会将其套中（塔拉可释放二段技能飞向对方），但无法将其打爆，且机器鼠免疫套索的控制效果。',
+  },
+  {
+    group: [
+      { name: '心思缜密', type: 'skill' },
+      { name: '远视饮料', type: 'item' },
+    ],
+    description: '2级心思缜密生效期间会移除其它大部分远视效果。',
+  },
+  {
+    group: [
+      { name: '心思缜密', type: 'skill' },
+      { name: '乾坤袋(NPC)', type: 'entity' },
+    ],
+    description: '命中乾坤袋也可以触发3级心思缜密的效果。',
+  },
   //----------------------------------剑客汤姆----------------------------------------/
   {
     group: [
@@ -467,7 +517,232 @@ const traits: Trait[] = [
     description:
       '泰菲类角色体型比正常角色小一些，所以剑客汤姆与他们处于同一平台时，骑士连斩第三段会因碰撞到平台/地面而连斩失败。剑客汤姆可通过[高低差](剑客汤姆在下方，泰菲在上方)或在泰菲因第二段挑飞而未落地前进行连斩，以避免这种情况。',
   },
+  {
+    group: [
+      { name: '骑士连斩', type: 'skill' },
+      { name: '拳套盒', type: 'item' },
+    ],
+    description: '骑士连斩第三段会被拳套盒阻挡，导致释放失败（与碰撞到墙壁的效果类似）。',
+  },
+  {
+    group: [
+      { name: '骑士连斩', type: 'skill' },
+      { name: '鼠虚弱', type: 'buff' },
+    ],
+    description: `骑士连斩冲刺命中虚弱老鼠能解锁第二段，且能无视虚弱将其挑飞并连斩。`,
+  },
+  {
+    group: [
+      { name: '骑士连斩', type: 'skill' },
+      { name: '鼠方护盾效果', type: 'itemGroup' },
+    ],
+    description: `骑士连斩冲刺命中持有护盾的老鼠能解锁第二段，且能无视护盾将其挑飞并连斩，连斩伤害无视护盾直接对角色本身造成伤害，若角色因此虚弱则消耗1层护盾免疫此次虚弱。`,
+  },
+  {
+    group: [
+      { name: '骑士连斩', type: 'skill' },
+      { name: '鼠方霸体效果', type: 'itemGroup' },
+    ],
+    description: `骑士连斩冲刺命中持有霸体的老鼠能解锁第二段，但无法将其挑飞。`,
+  },
+  {
+    group: [
+      { name: '骑士连斩', type: 'skill' },
+      { name: '鼠方变身效果', type: 'itemGroup' },
+    ],
+    description: `骑士连斩冲刺命中变身期间的老鼠能解锁第二段，但无法将其挑飞。`,
+  },
+  {
+    group: [
+      { name: '骑士连斩', type: 'skill' },
+      [
+        { name: '冰冻保鲜', type: 'specialSkill' },
+        { name: '降落伞', type: 'skill' },
+        { name: '格挡之剑', type: 'skill' },
+        { name: '勇气冲刺', type: 'skill' },
+      ],
+    ],
+    description: `骑士连斩冲刺命中此类无敌期间的老鼠能解锁第二段，但无法将其挑飞。`,
+  },
+  {
+    group: [
+      { name: '骑士连斩', type: 'skill' },
+      [
+        { name: '无畏', type: 'knowledgeCard' },
+        { name: '舍己', type: 'knowledgeCard' },
+        { name: '国王权杖', type: 'skill' },
+        { name: '老牛仔', type: 'skill' },
+        { name: '攻无不克', type: 'skill' },
+      ],
+    ],
+    description: `骑士连斩冲刺命中此类无敌期间的老鼠无法解锁第二段，但可借助命中其它目标解锁的二段技能将其挑飞，连斩伤害无视无敌直接对角色本身造成伤害，但无敌持续期间角色不会因此虚弱。`,
+  },
+  {
+    group: [
+      { name: '剑盾防御', type: 'skill' },
+      { name: '远视饮料', type: 'item' },
+    ],
+    description: '剑盾防御生效期间会移除其它大部分远视效果。',
+  },
+  {
+    group: [
+      { name: '旋刃剑舞', type: 'skill' },
+      { name: '鼠方护盾效果', type: 'itemGroup' },
+      { name: '鼠方霸体效果', type: 'itemGroup' },
+      { name: '鼠方无敌效果', type: 'itemGroup' },
+      { name: '鼠方变身效果', type: 'itemGroup' },
+      [
+        { name: '捣蛋鬼', type: 'skill' },
+        { name: '超级变！变！变！', type: 'skill' },
+        { name: '香甜梦境', type: 'skill' },
+      ],
+    ],
+    description: `旋刃剑舞第一段无法被任何状态免疫。`,
+  },
   //----------------------------------库博--------------------------------------------/
+  {
+    group: [
+      { name: '虚幻梦影', type: 'skill' },
+      { name: '遥控器', type: 'item' },
+    ],
+    description: '虚幻梦影隐身期间依然会被遥控器召唤的机器鼠索敌和控制。',
+  },
+  {
+    group: [
+      { name: '虚幻梦影', type: 'skill' },
+      { name: '暗中观察', type: 'skill' },
+    ],
+    description: '隐身的侦探泰菲能通过1级暗中观察的效果看到处于虚幻梦影隐身期间的库博。',
+  },
+  {
+    group: [
+      { name: '虚幻梦影', type: 'skill' },
+      [
+        { name: '贵族礼仪', type: 'skill' },
+        { name: '梦幻舞步', type: 'skill' },
+      ],
+    ],
+    description: '虚幻梦影提供的隐身状态不会被贵族礼仪或梦幻舞步清除。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '老鼠夹', type: 'item' },
+    ],
+    description:
+      '救援天堂火箭上的老鼠时，若火箭下方有夹子则必定会踩夹，无法“跳救”。这是因为天堂火箭的救援位置与普通火箭不同。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '兔子先生', type: 'skill' },
+    ],
+    description: '魔术师无法对天堂火箭下达救援指令。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '兔子大表哥', type: 'skill' },
+    ],
+    description: '魔术师无法对天堂火箭下达举火箭指令。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '机器鼠', type: 'entity' },
+    ],
+    description: '钻入机器鼠中的老鼠依然会因天堂火箭效果而被放飞。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '乾坤袋(NPC)', type: 'entity' },
+    ],
+    description: '与乾坤袋融合的老鼠暂时不会因天堂火箭效果而被放飞，但在解除该状态的瞬间会被放飞。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '火箭', type: 'item' },
+      { name: '喜剧之王', type: 'skill' },
+    ],
+    description:
+      '表演者•杰瑞因天堂火箭倒计时归零而被放飞时，若自身同时被绑在普通火箭上，则会正常触发3级喜剧之王的复活效果；若自身没有被绑在普通火箭上，则会被直接放飞，无法触发3级喜剧之王的复活效果。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '天使祝福', type: 'skill' },
+    ],
+    description:
+      '天使祝福无法祝福被绑在天堂火箭上的老鼠虚影，也无法复活因天堂火箭倒计时归零而被放飞的老鼠。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '火箭', type: 'item' },
+      { name: '鼓舞', type: 'skill' },
+    ],
+    description:
+      '3级鼓舞的增加火箭读秒效果对普通火箭和天堂火箭分别生效，对角色和虚影分别生效，可叠加。例：杰瑞对被同时绑上天堂和普通火箭的罗宾汉杰瑞进行鼓舞，则地面和天堂火箭的读秒均增加；杰瑞同时鼓舞自身和被绑在天堂火箭上的自己的虚影，则天堂火箭增加双倍读秒。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      [
+        { name: '身体素质', type: 'skill' },
+        { name: '心灵手巧', type: 'knowledgeCard' },
+        { name: '闪耀足球', type: 'entity' },
+        { name: '三角', type: 'entity' },
+        { name: '强化三角', type: 'entity' },
+      ],
+    ],
+    description: '绑上天堂火箭所需的时间固定，不受绑火箭加/减速影响（包括自身的2级被动）。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      [
+        { name: '加大火力', type: 'knowledgeCard' },
+        { name: '熊熊燃烧', type: 'knowledgeCard' },
+        { name: '友情庇护', type: 'skill' },
+        { name: '侠义相助', type: 'skill' },
+        { name: '风格骤变', type: 'skill' },
+        { name: '蓝图', type: 'entity' },
+        { name: '梦中乐园', type: 'skill' },
+      ],
+    ],
+    description: '天堂火箭的燃烧速度固定，同时免受部分改变引线长度效果的影响。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      [
+        { name: '火药桶', type: 'entity' },
+        { name: '共鸣', type: 'skill' },
+      ],
+    ],
+    description: '天堂火箭无法被炸毁。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      [
+        { name: '花洒', type: 'entity' },
+        { name: '沙包拳头', type: 'skill' },
+        { name: '滑步踢', type: 'skill' },
+        { name: '乾坤袋(NPC)', type: 'entity' },
+      ],
+    ],
+    description: '天堂火箭无法熄灭，也不会移动。',
+  },
+  {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '穷追猛打', type: 'knowledgeCard' },
+    ],
+    description: '绑上天堂火箭也会导致穷追猛打失效。',
+  },
   //----------------------------------凯特--------------------------------------------/
   //----------------------------------苏蕊--------------------------------------------/
   //----------------------------------天使汤姆----------------------------------------/
