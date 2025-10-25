@@ -2,7 +2,7 @@ import { memo, useLayoutEffect, useMemo, useState } from 'react';
 import { sanitizeHTML } from '@/lib/xssUtils';
 import clsx from 'clsx';
 
-function htmlToText(html: string): string {
+function extractPlainTextPreview(html: string): string {
   let text = html
     .replace(/<\/(p|div|section|article|li|h[1-6]|blockquote)>/gi, '\n')
     .replace(/<br\s*\/?/gi, '\n')
@@ -37,7 +37,10 @@ export default memo(function RichTextDisplay({
   preview?: boolean;
 }) {
   // For preview mode, compute text directly (SSR-friendly, no side effects)
-  const plainText = useMemo(() => htmlToText(content ?? '<p>内容加载中...</p>'), [content]);
+  const plainText = useMemo(
+    () => extractPlainTextPreview(content ?? '<p>内容加载中...</p>'),
+    [content]
+  );
 
   // For full display mode, use client-side sanitization
   const [sanitizedHTML, setSanitizedHTML] = useState('<p>内容加载中...</p>');
