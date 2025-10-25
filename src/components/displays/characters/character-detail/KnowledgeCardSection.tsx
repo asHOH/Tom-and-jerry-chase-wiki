@@ -494,7 +494,9 @@ export default function KnowledgeCardSection({
     isGroupSet: boolean;
   } | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(
-    () => (localStorage.getItem('view-mode') ?? 'tree-folded') as ViewMode
+    () =>
+      ((typeof localStorage != 'undefined' && localStorage.getItem('view-mode')) ||
+        'tree-folded') as ViewMode
   );
   const hasTreeStructure = useMemo(() => {
     return knowledgeCardGroups.some((group) => {

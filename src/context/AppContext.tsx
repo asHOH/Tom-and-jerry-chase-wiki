@@ -1,9 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useEffect } from 'react';
 import { EditModeProvider } from './EditModeContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { useNavigation } from '@/lib/useNavigation';
+import { proxy, subscribe, useSnapshot } from 'valtio';
 
 interface AppContextType {
   isDetailedView: boolean;
@@ -14,9 +15,18 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const isDetailedViewStore = proxy({ isDetailedView: false });
+
+if (typeof localStorage !== 'undefined') {
+  const isDetailedViewStored: boolean = JSON.parse(
+    localStorage.getItem('isDetailedView') ?? 'false'
+  );
+  isDetailedViewStore.isDetailedView = isDetailedViewStored;
+}
+
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const { navigate } = useNavigation();
-  const [isDetailedView, setIsDetailedView] = useState<boolean>(false);
+  const { isDetailedView } = useSnapshot(isDetailedViewStore);
 
   const handleSelectCharacter = (characterId: string) => {
     const isOriginal = isOriginalCharacter(characterId);
@@ -36,8 +46,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const toggleDetailedView = () => {
-    setIsDetailedView((prev) => !prev);
+    isDetailedViewStore.isDetailedView = !isDetailedViewStore.isDetailedView;
   };
+
+  useEffect(() => {
+    const unsubscribe = subscribe(isDetailedViewStore, () => {
+      localStorage.setItem('isDetailedView', JSON.stringify(isDetailedViewStore.isDetailedView));
+    });
+    return unsubscribe;
+  }, []);
 
   return (
     <EditModeProvider>
