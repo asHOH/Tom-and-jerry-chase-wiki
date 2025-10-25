@@ -6,17 +6,21 @@ const getDescription = (name: string): string => itemGroups[name]?.description |
 
 const traits: Trait[] = [
   /**
-   * 维护说明：
-   * 该文件的数据存储格式与其它data不同（因为特性不需要命名）
+   * 格式说明：
    * 一条特性包括group，description和isMinor（可选）。其中group由若干个singleItem（即{name,type,factionId?}）组成，isMinor在显示上暂无区别
    * 可以用[]框选数个singleItem形成singleItem[]，代表“或”，也就是“其中之一”。[]最多嵌套一层。
-   * type='itemGroup'时，代表加入组合，组合会在索引时进行拆解并对每个内容单独判断归属（与[]嵌套类似），在显示时只显示名称。组合不支持与[]进行嵌套
-   * 也可以用本文件顶部给出的两个函数达到加入组合的效果，适用于更加灵活的场合
+   * type='itemGroup'时，代表加入组合，组合会在索引时进行拆解并对每个内容单独判断归属（与[]嵌套类似），在显示时只显示名称。组合可与[]进行嵌套，最多一层
+   * 也可以用本文件顶部给出的两个函数达到类似的效果
+   *
+   * 填写说明：
    * singleItem的name不要用别名，否则会出现索引问题
    * factionId仅用于区分特技里的两个急速翻滚/应急治疗，平时不需要填写
-   *
    * 目前不建议在条目内包含buff，因为buff的归类暂时不太稳定
-   * 文件内分类原则：group内有明确的角色/技能/有持有者的衍生物时，归属到它所属者之一的条目下即可。如果不确定是否已收录，可以在网站上查看一下有没有相关信息，或在文件内查找，避免重复*/
+   * 善用[]格式，以此更好地区分主次或是复用文案
+   * 文件内分类原则：group内有明确的角色/技能/有持有者的衍生物时，归属到它所属者之一的条目下即可，优先归类到与该特性相关度更高的所属者条目下。如果不确定是否已收录，可以在网站上查看一下有没有相关信息，或在文件内查找，避免重复
+   *
+   * 程序维护说明：
+   * 该文件的数据存储格式与其它data不同，不是record格式（因为特性不需要命名）*/
   //----------------------------------汤姆--------------------------------------------/
   {
     group: [
@@ -99,8 +103,10 @@ const traits: Trait[] = [
   {
     group: [
       { name: '垃圾盖', type: 'skill' },
-      { name: '纸盒', type: 'itemGroup' },
-      { name: '面粉袋', type: 'item' },
+      [
+        { name: '纸盒', type: 'itemGroup' },
+        { name: '面粉袋', type: 'item' },
+      ],
     ],
     description: '2级垃圾盖无法震碎纸盒或面粉袋。',
   },
@@ -190,10 +196,12 @@ const traits: Trait[] = [
   {
     group: [
       { name: '斗牛', type: 'entity' },
-      { name: '可破碎道具', type: 'itemGroup' },
-      { name: '纸盒', type: 'itemGroup' },
-      { name: '面粉袋', type: 'item' },
-      { name: '仙人掌', type: 'itemGroup' },
+      [
+        { name: '可破碎道具', type: 'itemGroup' },
+        { name: '纸盒', type: 'itemGroup' },
+        { name: '面粉袋', type: 'item' },
+        { name: '仙人掌', type: 'itemGroup' },
+      ],
     ],
     description:
       '斗牛可以破坏可破碎道具（{冰块}和{番茄}除外），以及纸盒、面粉袋、吊灯、牛仔杰瑞的仙人掌等。被破坏的可破碎道具会产生投掷命中墙壁/地面时的破碎效果，而纸盒、面粉袋、仙人掌会直接消失。',
@@ -218,10 +226,12 @@ const traits: Trait[] = [
   {
     group: [
       { name: '鞭子', type: 'skill' },
-      { name: '可破碎道具', type: 'itemGroup' },
-      { name: '纸盒', type: 'itemGroup' },
-      { name: '面粉袋', type: 'item' },
-      { name: '仙人掌', type: 'itemGroup' },
+      [
+        { name: '可破碎道具', type: 'itemGroup' },
+        { name: '纸盒', type: 'itemGroup' },
+        { name: '面粉袋', type: 'item' },
+        { name: '仙人掌', type: 'itemGroup' },
+      ],
     ],
     description:
       '鞭子可以破坏可破碎道具（{冰块}和{番茄}除外），以及纸盒、面粉袋、吊灯、牛仔杰瑞的仙人掌等。被破坏的可破碎道具会产生投掷命中墙壁/地面时的破碎效果，而纸盒、面粉袋、仙人掌会直接消失。',
@@ -273,8 +283,8 @@ const traits: Trait[] = [
   {
     group: [
       { name: '香水区域', type: 'entity' },
-      { name: '鞭炮', type: 'itemGroup' },
       [
+        { name: '鞭炮', type: 'itemGroup' },
         { name: '火药桶', type: 'entity' },
         { name: '火箭筒', type: 'entity' },
       ],
@@ -470,8 +480,10 @@ const traits: Trait[] = [
   {
     group: [
       { name: '牛仔鞭索', type: 'skill' },
-      { name: '鞭炮', type: 'itemGroup' },
-      { name: '电风扇', type: 'item' },
+      [
+        { name: '鞭炮', type: 'itemGroup' },
+        { name: '电风扇', type: 'item' },
+      ],
     ],
     description:
       '被塔拉抓住并通过牛仔鞭索丢出的老鼠，因部分原因（如鞭炮爆炸，电风扇吹风，经典之家轮胎命中）导致受力时，不会停止飞行，但可能改变运动方向。',
@@ -587,11 +599,11 @@ const traits: Trait[] = [
   {
     group: [
       { name: '旋刃剑舞', type: 'skill' },
-      { name: '鼠方护盾效果', type: 'itemGroup' },
-      { name: '鼠方霸体效果', type: 'itemGroup' },
-      { name: '鼠方无敌效果', type: 'itemGroup' },
-      { name: '鼠方变身效果', type: 'itemGroup' },
       [
+        { name: '鼠方护盾效果', type: 'itemGroup' },
+        { name: '鼠方霸体效果', type: 'itemGroup' },
+        { name: '鼠方无敌效果', type: 'itemGroup' },
+        { name: '鼠方变身效果', type: 'itemGroup' },
         { name: '捣蛋鬼', type: 'skill' },
         { name: '超级变！变！变！', type: 'skill' },
         { name: '香甜梦境', type: 'skill' },

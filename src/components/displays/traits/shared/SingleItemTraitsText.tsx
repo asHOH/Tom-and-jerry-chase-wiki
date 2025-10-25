@@ -55,19 +55,37 @@ export default function SingleItemTraitsText({ singleItem }: SingleItemTraitsTex
 
     trait.group.forEach((groupItem) => {
       if (Array.isArray(groupItem)) {
-        // 对于数组类型，检查是否包含目标singleItem
-        const containsTarget = groupItem.some(
-          (item) =>
-            singleItem.name === item.name &&
-            singleItem.type === item.type &&
-            (item.factionId === undefined || singleItem.factionId === item.factionId)
-        );
+        // 对于数组类型，检查是否包含目标singleItem。对itemGroup需进行拆解，且若查找到目标则更改printName
+        const containsTarget = groupItem.some((item) => {
+          if (item.type === 'itemGroup') {
+            return itemGroups[item.name]?.group.some((childrenItem) => {
+              if (
+                singleItem.name === childrenItem.name &&
+                singleItem.type === childrenItem.type &&
+                (childrenItem.factionId === undefined ||
+                  singleItem.factionId === childrenItem.factionId)
+              ) {
+                printName.push(item.name);
+                return true;
+              }
+              return false;
+            });
+          } else {
+            return (
+              singleItem.name === item.name &&
+              singleItem.type === item.type &&
+              (item.factionId === undefined || singleItem.factionId === item.factionId)
+            );
+          }
+        });
 
         if (!containsTarget) {
           // 如果不包含目标，保留整个数组，反之则整个删去
           const arrayItemNames = groupItem
-            .map(
-              (item) => item.name + `$text-blue-700 dark:text-blue-400#(${SingleItemType(item)})`
+            .map((item) =>
+              item.type === 'itemGroup'
+                ? item.name + `$text-orange-600 dark:text-orange-400#(组合)`
+                : item.name + `$text-blue-700 dark:text-blue-400#(${SingleItemType(item)})`
             )
             .join('}/{$');
           itemNames.push(arrayItemNames);
@@ -108,12 +126,16 @@ export default function SingleItemTraitsText({ singleItem }: SingleItemTraitsTex
       }
     });
 
-    // 第3步：生成最终格式化的字符串
+    // 第3步：生成最终格式化的字符串，注意singleItem与itemGroup的颜色区别
     if (itemNames.length === 0) {
       return `{${singleItem.name}}：${trait.description}`;
     } else {
       const namesString = itemNames.join('}、{$');
-      return ` • {$${printName[printName.length - 1]}$text-blue-700 dark:text-blue-400#(${SingleItemType(singleItem)})} 与 {$${namesString}}：${trait.description}`;
+      return ` • {$${printName[printName.length - 1]}${
+        printName[printName.length - 1] !== printName[0]
+          ? '$text-orange-600 dark:text-orange-400#(组合)'
+          : `$text-blue-700 dark:text-blue-400#(${SingleItemType(singleItem)})`
+      }} 与 {$${namesString}}：${trait.description}`;
     }
   });
 

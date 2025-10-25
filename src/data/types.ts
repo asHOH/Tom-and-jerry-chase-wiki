@@ -434,6 +434,10 @@ export type GameHistory = YearData[];
 
 export type Trait = {
   description: string;
-  group: (SingleItem | SingleItem[] | { name: string; type: 'itemGroup' })[];
+  group: (
+    | SingleItem
+    | { name: string; type: 'itemGroup' }
+    | (SingleItem | { name: string; type: 'itemGroup' })[]
+  )[];
   isMinor?: boolean;
 };
