@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import PageTitle from '@/components/ui/PageTitle';
@@ -89,6 +89,23 @@ export default function ArticlesClient({ articles: data, description }: Articles
     hasFilter: hasCategoryFilter,
     clearFilters: clearCategoryFilters,
   } = useFilterState<string>();
+
+  const categoriesForFilter = useMemo<Category[]>(() => {
+    if (!data?.categories) return [];
+
+    return data.categories
+      .filter((category) => category.name !== '根分类')
+      .sort((a, b) => {
+        if (a.name === '其他类型' && b.name !== '其他类型') return 1;
+        if (b.name === '其他类型' && a.name !== '其他类型') return -1;
+        return 0;
+      });
+  }, [data?.categories]);
+
+  const categoryOptions = useMemo<string[]>(
+    () => categoriesForFilter.map((category) => category.id),
+    [categoriesForFilter]
+  );
 
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<'created_at' | 'title'>('created_at');
@@ -274,21 +291,25 @@ export default function ArticlesClient({ articles: data, description }: Articles
         {!isMobile && description && <PageDescription>{description}</PageDescription>}
 
         {/* Category Filter Controls */}
-        {!!data && data.categories.length > 0 && (
+        {categoriesForFilter.length > 0 && (
           <>
             <FilterRow
               label='分类筛选:'
-              options={data.categories.filter((c) => c.name !== '根分类').map((c) => c.id)}
-              isActive={(id) => hasCategoryFilter(id)}
+              options={categoryOptions}
+              isActive={(id) => hasCategoryFilter(String(id))}
               onToggle={(id) => {
-                handleCategoryToggle(id);
+                handleCategoryToggle(String(id));
               }}
               className={isMobile ? 'gap-2 mt-4' : 'gap-4 mt-8'}
               innerClassName={!isMobile ? 'gap-2' : undefined}
               ariaLabel='categories'
               isDarkMode={isDarkMode}
               getOptionLabel={(id) => {
-                return data.categories.find((c) => c.id === id)?.name ?? id;
+                const categoryId = String(id);
+                return (
+                  categoriesForFilter.find((category) => category.id === categoryId)?.name ??
+                  categoryId
+                );
               }}
               getButtonClassName={(id, active) => (
                 void id,
