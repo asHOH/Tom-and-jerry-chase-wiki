@@ -150,6 +150,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   );
   const shouldAlignLeft = showDetailToggle || !!nickname;
   const dropdownAlignmentClass = shouldAlignLeft ? 'left-0' : 'right-0';
+  const shouldDisplayUserSettings =
+    pathname === '/' || pathname === '' || pathname.startsWith('/articles');
 
   return (
     <div className='fixed top-0 left-0 right-0 bg-white shadow-md z-50 w-full py-2 dark:bg-slate-900 dark:shadow-lg'>
@@ -328,7 +330,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             </Tooltip>
           )}
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
-          {mounted && !!nickname && (
+          {mounted && !!nickname && shouldDisplayUserSettings && (
             <div className='relative'>
               <Tooltip content='用户设置' className='border-none'>
                 <button
