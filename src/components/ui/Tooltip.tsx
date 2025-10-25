@@ -74,7 +74,7 @@ export default function Tooltip({
             align='center'
             sideOffset={8}
             collisionPadding={{ top: 92, bottom: 8, left: 8, right: 8 }}
-            className='z-[10000] px-3 py-2 text-sm text-white bg-gray-800 dark:bg-black dark:text-gray-200 rounded-md shadow-lg pointer-events-none max-w-xs break-words whitespace-pre-wrap'
+            className='z-[10000] px-3 py-2 text-sm text-white bg-gray-800 dark:bg-black dark:text-gray-200 rounded-md shadow-lg max-w-xs break-words whitespace-pre-wrap'
           >
             {content}
             <TooltipPrimitive.Arrow
