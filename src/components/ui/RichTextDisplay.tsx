@@ -3,10 +3,12 @@ import { sanitizeHTML } from '@/lib/xssUtils';
 import clsx from 'clsx';
 
 function htmlToText(html: string): string {
-  // Remove HTML tags
-  let text = html.replace(/<[^>]*>/g, '');
+  let text = html
+    .replace(/<\/(p|div|section|article|li|h[1-6]|blockquote)>/gi, '\n')
+    .replace(/<br\s*\/?/gi, '\n')
+    .replace(/<li[^>]*>/gi, '\n- ')
+    .replace(/<[^>]*>/g, '');
 
-  // Decode common HTML entities
   const entities: Record<string, string> = {
     '&nbsp;': ' ',
     '&amp;': '&',
@@ -21,7 +23,7 @@ function htmlToText(html: string): string {
     return entities[match.toLowerCase()] || match;
   });
 
-  // Normalize whitespace
+  text = text.replace(/[\r\n]+/g, ' ');
   text = text.replace(/\s+/g, ' ').trim();
 
   return text;
