@@ -300,8 +300,6 @@ export default function ArticlesClient({ articles: data, description }: Articles
               onToggle={(id) => {
                 handleCategoryToggle(String(id));
               }}
-              className={isMobile ? 'gap-2 mt-4' : 'gap-4 mt-8'}
-              innerClassName={!isMobile ? 'gap-2' : undefined}
               ariaLabel='categories'
               isDarkMode={isDarkMode}
               getOptionLabel={(id) => {
@@ -347,13 +345,11 @@ export default function ArticlesClient({ articles: data, description }: Articles
             ];
             handleSortChange(newSortBy, newSortOrder);
           }}
-          className={isMobile ? 'gap-2 mt-2' : 'gap-4 mt-6'}
-          innerClassName={!isMobile ? 'gap-2' : undefined}
           ariaLabel='sort'
           isDarkMode={isDarkMode}
           getOptionLabel={(opt) =>
             opt === 'created_at-desc'
-              ? '最新发布'
+              ? '最近发布'
               : opt === 'created_at-asc'
                 ? '最早发布'
                 : opt === 'title-asc'
@@ -373,7 +369,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
           className={`flex flex-col sm:flex-row sm:items-center sm:justify-between ${isMobile ? 'gap-2 mt-4 px-2' : 'gap-4 mt-8 px-4'}`}
         >
           <div className='text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left'>
-            共找到 {filteredArticles.length} 篇文章
+            共 {filteredArticles.length} 篇文章
             {selectedCategories.size > 0 && (
               <span className='block sm:inline'>
                 {' '}
@@ -428,7 +424,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
         <div className='text-center py-12 px-4'>
           <div className='text-6xl mb-4'>📄</div>
           <h3 className='text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {selectedCategories.size > 0 ? '未找到匹配的文章' : '暂无文章'}
+            {selectedCategories.size > 0 ? '没有匹配的文章' : '暂无文章'}
           </h3>
           <p className='text-gray-600 dark:text-gray-400 mb-6'>
             {selectedCategories.size > 0
