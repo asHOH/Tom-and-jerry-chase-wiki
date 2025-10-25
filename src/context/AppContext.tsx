@@ -1,10 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useEffect } from 'react';
 import { EditModeProvider } from './EditModeContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { useNavigation } from '@/lib/useNavigation';
-import { proxy, subscribe, useSnapshot } from 'valtio';
+import { proxy, useSnapshot } from 'valtio';
 
 interface AppContextType {
   isDetailedView: boolean;
@@ -12,8 +11,6 @@ interface AppContextType {
   handleSelectCard: (cardId: string, fromCharacterId?: string) => void;
   toggleDetailedView: () => void;
 }
-
-const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const isDetailedViewStore = proxy({ isDetailedView: false });
 
@@ -24,7 +21,9 @@ if (typeof localStorage !== 'undefined') {
   isDetailedViewStore.isDetailedView = isDetailedViewStored;
 }
 
-export const AppProvider = ({ children }: { children: ReactNode }) => {
+export const AppProvider = EditModeProvider;
+
+export const useAppContext = () => {
   const { navigate } = useNavigation();
   const { isDetailedView } = useSnapshot(isDetailedViewStore);
 
@@ -46,36 +45,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const toggleDetailedView = () => {
-    isDetailedViewStore.isDetailedView = !isDetailedViewStore.isDetailedView;
+    const originalIsDetailedView = isDetailedViewStore.isDetailedView;
+    isDetailedViewStore.isDetailedView = !originalIsDetailedView;
+    localStorage.setItem('isDetailedView', JSON.stringify(!originalIsDetailedView));
   };
 
-  useEffect(() => {
-    const unsubscribe = subscribe(isDetailedViewStore, () => {
-      localStorage.setItem('isDetailedView', JSON.stringify(isDetailedViewStore.isDetailedView));
-    });
-    return unsubscribe;
-  }, []);
-
-  return (
-    <EditModeProvider>
-      <AppContext.Provider
-        value={{
-          isDetailedView,
-          handleSelectCharacter,
-          handleSelectCard,
-          toggleDetailedView,
-        }}
-      >
-        {children}
-      </AppContext.Provider>
-    </EditModeProvider>
-  );
-};
-
-export const useAppContext = () => {
-  const context = useContext(AppContext);
-  if (context === undefined) {
-    throw new Error('useAppContext must be used within an AppProvider');
-  }
-  return context;
+  return {
+    isDetailedView,
+    toggleDetailedView,
+    handleSelectCard,
+    handleSelectCharacter,
+  } satisfies AppContextType;
 };
