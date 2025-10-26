@@ -72,7 +72,7 @@ interface KnowledgeCardSectionProps {
   onRemoveGroup: (topIndex: number, innerIndex?: number) => void;
 }
 
-export type ViewMode = 'compact' | 'flat' | 'tree' | 'tree-folded';
+export type ViewMode = 'compact' | 'flat' | 'tree' | 'tree-folded' | 'hybrid';
 
 /** Flat knowledge card group component - renders a simple string[] group */
 function KnowledgeCardGroupFlat({
@@ -324,8 +324,13 @@ export function KnowledgeCardGroupDisplay({
   isDarkMode: boolean;
 }) {
   const isSqueezedView = viewMode === 'compact';
-  const isTreeView = viewMode === 'tree' || viewMode === 'tree-folded';
+  const isTreeView =
+    viewMode === 'tree' ||
+    viewMode === 'compact' ||
+    viewMode === 'tree-folded' ||
+    viewMode === 'hybrid';
   const isFoldedMode = viewMode === 'tree-folded';
+  const isHybridMode = viewMode === 'hybrid';
 
   if (isTreeView) {
     // Tree mode: show tree structure with max cost
@@ -370,6 +375,7 @@ export function KnowledgeCardGroupDisplay({
               isOptionalCard={(cardId) => cardId === 'C-狡诈' && hasAnyOptional}
               isFoldedMode={isFoldedMode}
               isDarkMode={isDarkMode}
+              isHybridMode={isHybridMode}
             />
           </div>
 
@@ -512,7 +518,10 @@ export default function KnowledgeCardSection({
   }, [viewMode]);
 
   useEffect(() => {
-    if (!hasTreeStructure && (viewMode === 'tree' || viewMode === 'tree-folded')) {
+    if (
+      !hasTreeStructure &&
+      (viewMode === 'tree' || viewMode === 'tree-folded' || viewMode === 'hybrid')
+    ) {
       setViewMode('flat');
     }
   }, [hasTreeStructure, viewMode]);
@@ -602,7 +611,7 @@ export default function KnowledgeCardSection({
 
   const cycleViewMode = () => {
     const availableModes: ViewMode[] = hasTreeStructure
-      ? ['tree', 'tree-folded', 'flat', 'compact']
+      ? ['tree', 'tree-folded', 'hybrid', 'flat', 'compact']
       : ['flat', 'compact'];
 
     setViewMode((prev) => {
@@ -623,6 +632,7 @@ export default function KnowledgeCardSection({
   const getViewModeLabel = () => {
     if (viewMode === 'tree') return '树状视图';
     if (viewMode === 'tree-folded') return '折叠树状视图';
+    if (viewMode === 'hybrid') return '混合视图';
     if (viewMode === 'flat') return hasTreeStructure ? '扁平视图' : '图片视图';
     return '紧凑视图';
   };

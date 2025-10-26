@@ -18,6 +18,7 @@ interface TreeCardDisplayProps {
   isOptionalCard: (cardId: string) => boolean;
   isFoldedMode?: boolean;
   isDarkMode?: boolean;
+  isHybridMode?: boolean;
 }
 
 interface CardDisplayProps {
@@ -30,6 +31,8 @@ interface CardDisplayProps {
   imageBasePath: string;
   isOptional: boolean;
   isDarkMode: boolean;
+  isHybridMode?: boolean;
+  depth: number;
 }
 
 const CardDisplay: React.FC<CardDisplayProps> = ({
@@ -42,13 +45,18 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
   imageBasePath,
   isOptional,
   isDarkMode,
+  isHybridMode,
+  depth,
 }) => {
   'use no memo';
   const cardName = cardId.split('-')[1]!;
   const cardRank = getCardRank(cardId);
   const rankColors = getCardRankColors(cardRank, false, isDarkMode);
 
-  if (isSqueezedView) {
+  // In hybrid mode, show tags for branches (depth > 0), images for root (depth === 0)
+  const shouldUseTags = isSqueezedView || (isHybridMode && depth > 0);
+
+  if (shouldUseTags) {
     return (
       <GotoLink key={cardId} name={cardName} className='no-underline' asPreviewOnly>
         <span
@@ -196,6 +204,8 @@ const TreeNodeDisplay: React.FC<
         imageBasePath={props.imageBasePath}
         isOptional={isOptional}
         isDarkMode={isDarkMode}
+        isHybridMode={props.isHybridMode ?? false}
+        depth={depth}
       />
     );
   }
