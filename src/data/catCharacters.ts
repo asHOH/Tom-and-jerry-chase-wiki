@@ -1,6 +1,6 @@
 import { AssetManager } from '../lib/assetManager';
 import { processCharacters } from '../lib/skillIdUtils';
-import type { CharacterDefinition, PartialCharacterDefinition } from './types';
+import { CardGroupType, type CharacterDefinition, type PartialCharacterDefinition } from './types';
 
 const catCharacterDefinitions: Record<string, CharacterDefinition | PartialCharacterDefinition> = {
   /* ----------------------------------- 汤姆 ----------------------------------- */
@@ -3093,7 +3093,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         description: '以乘胜+蓄势为核心，以天堂火箭为主要淘汰手段。',
         groups: [
           {
-            cards: ['S-乘胜追击', 'S-蓄势一击', 'S-知识渊博', [true, 'C-猫是液体', 'C-狡诈']],
+            cards: [
+              'S-乘胜追击',
+              'S-蓄势一击',
+              'S-知识渊博',
+              [CardGroupType.Or, 'C-猫是液体', 'C-狡诈'],
+            ],
             description:
               '以{乘胜追击}{蓄势一击}为核心，利用提供的高移速和高攻击力快速击倒老鼠，绑上天堂火箭巩固优势。不需要{猫是液体}时可换为{狡诈}。',
           },
@@ -3557,8 +3562,14 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
             cards: [
               'S-蓄势一击',
               'A-穷追猛打',
-              [true, 'S-屈打成招', 'A-熊熊燃烧'],
-              [true, 'A-加大火力', 'A-细心', 'B-皮糙肉厚', [false, 'B-攻其不备', 'C-猫是液体']],
+              [CardGroupType.Or, 'S-屈打成招', 'A-熊熊燃烧'],
+              [
+                CardGroupType.Or,
+                'A-加大火力',
+                'A-细心',
+                'B-皮糙肉厚',
+                [CardGroupType.And, 'B-攻其不备', 'C-猫是液体'],
+              ],
             ],
             description:
               '以{蓄势一击}为主的卡组，可用于大部分情况，{穷追猛打}开局找节奏，{蓄势一击}补伤害。{熊熊燃烧}提高火箭燃烧效率，也可以替换为{屈打成招}，牺牲火箭燃烧效率换取更强的拦截能力，也能提供滚雪球能力，但容错较低，一方面可能导致火箭燃烧太慢拖慢节奏，另一方面鼠方支援快或者两边支援会让{屈打成招}效果大打折扣。剩下4/5费可以选择性的换{加大火力}进一步提高火箭燃烧效率；换{皮糙肉厚}应对高频伤害的阵容；换{猫是液体}应对管道较多的地图；若是习惯{细心}也可以换上。',
@@ -4886,7 +4897,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         contributor: 'qianligongchanjuan',
       },
       {
-        cards: [[true, 'S-击晕', 'S-蓄势一击'], 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
+        cards: [[CardGroupType.Or, 'S-击晕', 'S-蓄势一击'], 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
         description:
           '有{击晕}{蓄势一击}两个变种。推荐新手带，下限较高。开局提前布局放夹子，可以有效克制{幸运}，同时提高守火箭能力。对面选出多个破夹能力强的角色时慎用。',
       },
@@ -5184,7 +5195,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         contributor: 'xiaotian',
       },
       {
-        cards: ['S-乘胜追击', 'S-暴怒', 'A-熊熊燃烧', [true, 'C-猫是液体', 'C-狡诈']],
+        cards: ['S-乘胜追击', 'S-暴怒', 'A-熊熊燃烧', [CardGroupType.Or, 'C-猫是液体', 'C-狡诈']],
         description:
           '推荐在森林牧场使用。也可把{猫是液体}换为{狡诈}，在御门酒店使用。{乘胜追击}增加移速，防止被拉扯。本卡组缺点在于开局节奏不好找，不过在森林牧场中可以采七色花弥补这点。',
         contributor: 'xiaotian',
@@ -5195,7 +5206,12 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         contributor: 'xiaotian',
       },
       {
-        cards: ['S-暴怒', 'A-熊熊燃烧', 'A-穷追猛打', [true, 'A-加大火力', 'A-细心', 'A-心灵手巧']],
+        cards: [
+          'S-暴怒',
+          'A-熊熊燃烧',
+          'A-穷追猛打',
+          [CardGroupType.Or, 'A-加大火力', 'A-细心', 'A-心灵手巧'],
+        ],
         description:
           '如玉的基础卡组。如玉被动提供的“坚毅”状态使她无需虚弱即可享受{暴怒}效果，{暴怒}提供的可观攻击增伤又能让如玉更容易造成敌方虚弱，从而退出“坚毅”状态，适配性不错。可根据需要将{加大火力}换为其他知识卡，例如{细心}或{心灵手巧}。',
       },

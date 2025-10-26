@@ -2,7 +2,7 @@
  * Utility functions for knowledge card calculations and display logic
  */
 
-import type { CardGroup } from '@/data/types';
+import type { CardGroup, CardGroupType } from '@/data/types';
 
 // Constants for optional card rules
 const OPTIONAL_CARD_ID = 'C-狡诈';
@@ -35,7 +35,7 @@ export function flattenCardGroup(cards: readonly CardGroup[]): string[][] {
     return restCombinations;
   }
 
-  const [isOr, ...groupCards] = first as readonly [boolean, ...CardGroup[]];
+  const [isOr, ...groupCards] = first as readonly [CardGroupType, ...CardGroup[]];
   let groupCombinations: string[][];
 
   if (isOr) {

@@ -41,11 +41,11 @@ const cardGroupHasTreeStructure = (card: unknown): boolean => {
   }
 
   return (card as readonly unknown[]).some((item, index) => {
-    if (index === 0 && typeof item === 'boolean') {
+    if (index === 0 && typeof item === 'number') {
       return true;
     }
 
-    if (typeof item === 'boolean') {
+    if (typeof item === 'number') {
       return false;
     }
 
