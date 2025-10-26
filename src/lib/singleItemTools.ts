@@ -65,3 +65,41 @@ export const getSingleItemImageUrl = (singleItem: SingleItem): string => {
 
   return R || '/images/icons/cat faction.png';
 };
+
+export const getSingleItemFactionId = (singleItem: SingleItem): FactionId | undefined => {
+  const findFactionId = (singleItem: SingleItem): FactionId | undefined => {
+    if (singleItem.factionId !== undefined) {
+      return singleItem.factionId;
+    } else if (singleItem.type === 'character') {
+      return characters[singleItem.name]?.factionId;
+    } else if (singleItem.type === 'knowledgeCard') {
+      return cards[singleItem.name]?.factionId;
+    } else if (singleItem.type == 'specialSkill') {
+      {
+        const allSpecialSkills = Object.values({ ...specialSkills.cat, ...specialSkills.mouse });
+        return allSpecialSkills.find((specialSkill) => specialSkill.name === singleItem.name)
+          ?.factionId;
+      }
+    } else if (singleItem.type === 'item') {
+      return items[singleItem.name]?.factionId;
+    } else if (singleItem.type == 'skill') {
+      const owner = Object.values(characters).find((c) =>
+        c.skills.some((skill) => skill.name === singleItem.name)
+      );
+      return owner?.factionId;
+    }
+    return undefined;
+  };
+  const findEntity = (singleItem: SingleItem) => {
+    const allEntities = { ...entities.cat, ...entities.mouse };
+    return allEntities[singleItem.name];
+  };
+  if (singleItem.type !== 'entity') {
+    return findFactionId(singleItem);
+  } else {
+    const entity = findEntity(singleItem);
+    return entity !== undefined
+      ? entity.factionId || (entity.owner !== undefined ? findFactionId(entity.owner) : undefined)
+      : undefined;
+  }
+};

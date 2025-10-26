@@ -9,8 +9,7 @@ export const getCatEntityImageUrl = (name: string, specialImageUrl: string | und
 const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   手型枪: {
     entitytype: '投射物',
-    characterName: '汤姆',
-    skillname: '手型枪',
+    owner: { name: '手型枪', type: 'skill' },
     move: true,
     gravity: false,
     collsion: false,
@@ -23,8 +22,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   煎蛋: {
     entitytype: '投射物',
-    characterName: '汤姆',
-    skillname: '平底锅',
+    owner: { name: '平底锅', type: 'skill' },
     aliases: ['胡椒粉', '胡椒罐'],
     move: true,
     gravity: true,
@@ -36,8 +34,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   旋转桶盖: {
     entitytype: '投射物',
-    characterName: '布奇',
-    skillname: '旋转桶盖',
+    owner: { name: '旋转桶盖', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
@@ -49,24 +46,22 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   托普斯分身: {
     entitytype: 'NPC',
-    characterName: '托普斯',
-    skillname: '双重猫格',
+    owner: { name: '双重猫格', type: 'skill' },
     aliases: ['分身', '弟弟'],
     move: true,
     gravity: true,
     collsion: true,
     ignore: ['道具'],
     description:
-      '分身爪刀伤害提高，爪刀CD减少，免疫碎片和老鼠夹，且[继承托普斯的部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和托普斯叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加](包括受到部分环境伤害时)。分身存在期间托普斯获得额外技能，点击可指挥分身出击或跟随（有CD）。托普斯再次使用主动技能可与分身换位（有CD）。托普斯[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。',
+      '分身爪刀伤害提高，爪刀CD减少，免疫碎片和老鼠夹，且[继承托普斯的部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和托普斯叠加（如"捕鼠夹"的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如"熊熊燃烧"等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加](包括受到部分环境伤害时)。分身存在期间托普斯获得额外技能，点击可指挥分身出击或跟随（有CD）。托普斯再次使用主动技能可与分身换位（有CD）。托普斯[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。',
     detailedDescription:
-      '其[与托普斯相貌相同](装扮、昵称、Hp条显示的方式和托普斯完全一致)。分身爪刀伤害提高15，爪刀CD减少至3.2秒，免疫碎片和老鼠夹，且[继承托普斯的部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和托普斯叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加20](包括受到部分环境伤害时)。分身存在期间托普斯获得额外技能，点击可指挥分身出击或跟随（CD：5秒）。托普斯再次使用主动技能可与分身换位（有CD，与技能等级有关，与技能本身的冷却无关）。托普斯[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。\n\n升级效果：分身的存在时间随等级提高而增加，Lv.3时[永久存在](只会因Hp归零而消失)。Lv.2换位时回复Hp，且移速提高20%、交互速度提高25%。Lv.3如果分身在本体附近，本体受到的[眩晕控制](包括大部分眩晕，另外还能免疫尼宝的鱼钩；不包括其它控制，如斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
+      '其[与托普斯相貌相同](装扮、昵称、Hp条显示的方式和托普斯完全一致)。分身爪刀伤害提高15，爪刀CD减少至3.2秒，免疫碎片和老鼠夹，且[继承托普斯的部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和托普斯叠加（如"捕鼠夹"的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如"熊熊燃烧"等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加20](包括受到部分环境伤害时)。分身存在期间托普斯获得额外技能，点击可指挥分身出击或跟随（CD：5秒）。托普斯再次使用主动技能可与分身换位（有CD，与技能等级有关，与技能本身的冷却无关）。托普斯[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。\n\n升级效果：分身的存在时间随等级提高而增加，Lv.3时[永久存在](只会因Hp归零而消失)。Lv.2换位时回复Hp，且移速提高20%、交互速度提高25%。Lv.3如果分身在本体附近，本体受到的[眩晕控制](包括大部分眩晕，另外还能免疫尼宝的鱼钩；不包括其它控制，如斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
     create: '由托普斯-双重猫格召唤。',
     entityAttributesAsCharacter: { type: 'cat', factionBelong: 'cat' },
   },
   泡泡: {
     entitytype: '召唤物',
-    characterName: '托普斯',
-    skillname: '泡泡棒',
+    owner: { name: '泡泡棒', type: 'skill' },
     move: true,
     gravity: false,
     collsion: true,
@@ -80,8 +75,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   垃圾桶: {
     entitytype: '召唤物',
-    characterName: '莱特宁',
-    skillname: '垃圾桶',
+    owner: { name: '垃圾桶', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
@@ -94,8 +88,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   咸鱼: {
     entitytype: '召唤物',
-    characterName: '莱特宁',
-    skillname: '咸鱼',
+    owner: { name: '咸鱼', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
@@ -107,8 +100,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   斗牛: {
     entitytype: '召唤物',
-    characterName: '牛仔汤姆',
-    skillname: '斗牛',
+    owner: { name: '斗牛', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
@@ -121,8 +113,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   小仙人掌球: {
     entitytype: '投射物',
-    characterName: '牛仔汤姆',
-    skillname: '仙人掌弹弓',
+    owner: { name: '仙人掌弹弓', type: 'skill' },
     move: true,
     gravity: true,
     collsion: false,
@@ -133,8 +124,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   大仙人掌球: {
     entitytype: '投射物',
-    characterName: '牛仔汤姆',
-    skillname: '仙人掌弹弓',
+    owner: { name: '仙人掌弹弓', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
@@ -146,8 +136,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   飞吻: {
     entitytype: '投射物',
-    characterName: '图多盖洛',
-    skillname: '魅惑之吻',
+    owner: { name: '魅惑之吻', type: 'skill' },
     move: true,
     gravity: false,
     collsion: true,
@@ -161,8 +150,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   香水区域: {
     entitytype: '召唤物',
-    characterName: '图多盖洛',
-    skillname: '魅力香水',
+    owner: { name: '魅力香水', type: 'skill' },
     move: true,
     gravity: false,
     collsion: false,
@@ -175,8 +163,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   皇家火炮: {
     entitytype: '召唤物',
-    characterName: '侍卫汤姆',
-    skillname: '皇家火炮',
+    owner: { name: '皇家火炮', type: 'skill' },
     move: false,
     gravity: false,
     collsion: false,
@@ -188,8 +175,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   炮弹: {
     entitytype: '投射物',
-    characterName: '侍卫汤姆',
-    skillname: '皇家火炮',
+    owner: { name: '皇家火炮', type: 'skill' },
     move: true,
     gravity: false,
     collsion: false,
@@ -200,8 +186,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   汽水罐: {
     entitytype: '投射物',
-    characterName: '图茨',
-    skillname: '汽水罐',
+    owner: { name: '汽水罐', type: 'skill' },
     move: true,
     gravity: false,
     collsion: false,
@@ -215,22 +200,20 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   //ToDo: add 汽水冰面
   胡椒粉罐头: {
     entitytype: ['道具类', '投射物'],
-    characterName: '米特',
-    skillname: '胡椒粉罐头',
+    owner: { name: '胡椒粉罐头', type: 'skill' },
     aliases: ['胡椒粉', '胡椒罐'],
     move: true,
     gravity: true,
     collsion: true,
     description:
-      '米特将其拿在手中时持续受到轻微伤害，并因此获得“刺激”状态，增加移速和跳跃速度。再次使用技能将投掷胡椒粉、造成伤害并形成胡椒粉烟雾，持续对范围内角色造成伤害。米特在烟雾中也会获得“刺激”状态。',
+      '米特将其拿在手中时持续受到轻微伤害，并因此获得"刺激"状态，增加移速和跳跃速度。再次使用技能将投掷胡椒粉、造成伤害并形成胡椒粉烟雾，持续对范围内角色造成伤害。米特在烟雾中也会获得"刺激"状态。',
     detailedDescription:
-      '米特将其拿在手中时持续受到轻微伤害，并因此获得“刺激”状态，移速和跳跃高度提高20%。。再次使用技能将投掷胡椒粉、直接命中会造成30伤害，命中或落地后破碎并形成胡椒粉烟雾，持续20秒，[每1/1/0.5秒对范围内角色造成5伤害](不会破米特的护盾)、在停止接触后会残留约3秒。米特在烟雾中也会获得“刺激”状态。Lv.3时，米特在“刺激”状态下获得50%减伤并提高绑火箭速度50%。',
+      '米特将其拿在手中时持续受到轻微伤害，并因此获得"刺激"状态，移速和跳跃高度提高20%。。再次使用技能将投掷胡椒粉、直接命中会造成30伤害，命中或落地后破碎并形成胡椒粉烟雾，持续20秒，[每1/1/0.5秒对范围内角色造成5伤害](不会破米特的护盾)、在停止接触后会残留约3秒。米特在烟雾中也会获得"刺激"状态。Lv.3时，米特在"刺激"状态下获得50%减伤并提高绑火箭速度50%。',
     create: '通过米特-胡椒粉罐头召唤。',
   },
   饭盒: {
     entitytype: '召唤物',
-    characterName: '米特',
-    skillname: '饭盒陷阱',
+    owner: { name: '饭盒陷阱', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
@@ -242,16 +225,14 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   食物: {
     entitytype: '召唤物',
-    characterName: '米特',
-    skillname: '饭盒陷阱',
+    owner: { name: '饭盒陷阱', type: 'skill' },
     //ToDo: add missing information
     description: '米特触碰后会获得持续Hp恢复效果。',
     create: 'Lv.2以上的{饭盒}爆炸时生成。',
   },
   套索: {
     entitytype: '投射物',
-    characterName: '塔拉',
-    skillname: '牛仔鞭索',
+    owner: { name: '牛仔鞭索', type: 'skill' },
     move: true,
     gravity: true,
     collsion: false,
@@ -263,8 +244,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   //ToDo?: add 剑盾
   天空扶梯: {
     entitytype: '召唤物',
-    characterName: '库博',
-    skillname: '虚幻梦影',
+    owner: { name: '虚幻梦影', type: 'skill' },
     aliases: ['天梯'],
     move: false,
     gravity: true,
@@ -278,8 +258,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   天堂火箭: {
     entitytype: '道具类',
-    characterName: '库博',
-    skillname: '虚幻梦影',
+    owner: { name: '虚幻梦影', type: 'skill' },
     aliases: ['天火'],
     move: false,
     gravity: false,
@@ -287,14 +266,13 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     description:
       '能绑上老鼠的虚影，[拥有强制放飞机制](300秒倒计时，结束时直接淘汰对应老鼠)。虚影被救援时，改为绑上救援者的虚影，救援所需时间较长，救援位置较普通火箭[偏下](如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。在对应老鼠被绑上地面火箭或进入墙缝期后，倒计时速度会加快。',
     detailedDescription:
-      '放飞倒计时固定为300秒，绑上老鼠时改为绑上对应虚影，老鼠本体会传送到随机洞口；虚影被救援时，改为绑上救援者的虚影；[救援天堂火箭](读条显示为“破坏火箭”)的所需时间固定并且较长，救援位置较普通火箭[偏下](救援时站在地面；如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。兔子先生无法对天堂火箭下达救援指令。倒计时结束时，[直接淘汰虚影对应的老鼠](钻入机械鼠中的老鼠也会被放飞；钻入盔甲人或乾坤袋中的老鼠暂时无法被放飞；表演者杰瑞Lv.3被动只在同时也被绑在地面火箭时才触发；天使祝福无法祝福虚影，也无法复活因天堂火箭而被放飞的老鼠)。天堂火箭当虚影对应老鼠被绑上地面火箭时，[地面火箭倒计时停止](倒计时速度归零；仍会因老鼠被绑上火箭而减少引线时间，此时火箭引线时间降为0时也不会起飞；会因挣扎、鼓舞Lv.3等效果而增加读秒)，天堂火箭倒计时速度提高到原先的7倍；进入墙缝期后，天堂火箭倒计时速度提高到原先的2倍；若二者同时触发则取最高值。天堂火箭不受[其他绝大部分机制](会受到鼓舞Lv.3的影响（增加读秒的效果对本体和虚影分别计算，可重复计算，即同时鼓舞虚影和本体则-20秒）；除此之外不受绑火箭或火箭燃烧速度变化的影响，包括自身被动技能Lv.2，知识卡-加大火力/熊熊燃烧，技能-炸药桶/爱之花洒/友情庇护/兔子大表哥/侠义相助/Lv.3沙包拳头/风格骤变Lv.3/共鸣Lv.2/滑步踢/乾坤袋/蓝图/梦中乐园的影响)影响，但会影响{穷追猛打}(绑上天堂火箭时，穷追猛打效果立刻结束)。',
+      '放飞倒计时固定为300秒，绑上老鼠时改为绑上对应虚影，老鼠本体会传送到随机洞口；虚影被救援时，改为绑上救援者的虚影；[救援天堂火箭](读条显示为"破坏火箭")的所需时间固定并且较长，救援位置较普通火箭[偏下](救援时站在地面；如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。兔子先生无法对天堂火箭下达救援指令。倒计时结束时，[直接淘汰虚影对应的老鼠](钻入机械鼠中的老鼠也会被放飞；钻入盔甲人或乾坤袋中的老鼠暂时无法被放飞；表演者杰瑞Lv.3被动只在同时也被绑在地面火箭时才触发；天使祝福无法祝福虚影，也无法复活因天堂火箭而被放飞的老鼠)。天堂火箭当虚影对应老鼠被绑上地面火箭时，[地面火箭倒计时停止](倒计时速度归零；仍会因老鼠被绑上火箭而减少引线时间，此时火箭引线时间降为0时也不会起飞；会因挣扎、鼓舞Lv.3等效果而增加读秒)，天堂火箭倒计时速度提高到原先的7倍；进入墙缝期后，天堂火箭倒计时速度提高到原先的2倍；若二者同时触发则取最高值。天堂火箭不受[其他绝大部分机制](会受到鼓舞Lv.3的影响（增加读秒的效果对本体和虚影分别计算，可重复计算，即同时鼓舞虚影和本体则-20秒）；除此之外不受绑火箭或火箭燃烧速度变化的影响，包括自身被动技能Lv.2，知识卡-加大火力/熊熊燃烧，技能-炸药桶/爱之花洒/友情庇护/兔子大表哥/侠义相助/Lv.3沙包拳头/风格骤变Lv.3/共鸣Lv.2/滑步踢/乾坤袋/蓝图/梦中乐园的影响)影响，但会影响{穷追猛打}(绑上天堂火箭时，穷追猛打效果立刻结束)。',
     create: '在库博-虚幻梦影对应的天堂中自动生成2个。',
     specialImageUrl: '/images/items/火箭.png', //ToDo: add this entity's image
   },
   追求者: {
     entitytype: 'NPC',
-    characterName: '凯特',
-    skillname: '追求者出击',
+    owner: { name: '追求者出击', type: 'skill' },
     aliases: ['舔狗'],
     move: true,
     gravity: false,
@@ -307,8 +285,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   百科全书: {
     entitytype: ['投射物', '召唤物'],
-    characterName: '凯特',
-    skillname: '知识即力量',
+    owner: { name: '知识即力量', type: 'skill' },
     aliases: ['书', '书籍'],
     move: true,
     gravity: true,
@@ -322,8 +299,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   瑜伽球: {
     entitytype: '投射物',
-    characterName: '苏蕊',
-    skillname: '瑜伽球',
+    owner: { name: '瑜伽球', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
@@ -336,8 +312,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   项坠: {
     entitytype: '投射物',
-    characterName: '斯飞',
-    skillname: '猎',
+    owner: { name: '猎', type: 'skill' },
     move: true,
     gravity: false,
     collsion: true,
@@ -347,8 +322,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   轨道: {
     entitytype: '指示物',
-    characterName: '恶魔汤姆',
-    skillname: '迷乱列车',
+    owner: { name: '迷乱列车', type: 'skill' },
     move: false,
     gravity: false,
     collsion: false,
@@ -361,8 +335,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   列车: {
     entitytype: '召唤物',
-    characterName: '恶魔汤姆',
-    skillname: '迷乱列车',
+    owner: { name: '迷乱列车', type: 'skill' },
     move: true,
     gravity: false,
     collsion: false,
@@ -374,8 +347,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   洞穴: {
     entitytype: '召唤物',
-    characterName: '兔八哥',
-    skillname: '狡兔三窟',
+    owner: { name: '狡兔三窟', type: 'skill' },
     move: false,
     gravity: false,
     collsion: false,
@@ -386,8 +358,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   胡萝卜飞镖: {
     entitytype: '投射物',
-    characterName: '兔八哥',
-    skillname: '胡萝卜',
+    owner: { name: '胡萝卜', type: 'skill' },
     move: true,
     gravity: true,
     collsion: false,
@@ -400,22 +371,20 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   巨型胡萝卜: {
     entitytype: '召唤物',
-    characterName: '兔八哥',
-    skillname: '胡萝卜',
+    owner: { name: '胡萝卜', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
     ignore: ['道具'],
     description:
-      '出现时砸晕范围内敌人并造成伤害，巨型胡萝卜周围老鼠大幅度降低移速和推奶酪速度，在洞口附近时会阻碍奶酪推进，巨型胡萝卜会存在一段时间，老鼠可以通过交互吃掉巨型胡萝卜。兔八哥存在“胜利”（详见{我，兔八哥}）时，将消耗1层状态造成额外伤害并将奶酪冲出洞口（最后一块奶酪只能被冲出一次）。',
+      '出现时砸晕范围内敌人并造成伤害，巨型胡萝卜周围老鼠大幅度降低移速和推奶酪速度，在洞口附近时会阻碍奶酪推进，巨型胡萝卜会存在一段时间，老鼠可以通过交互吃掉巨型胡萝卜。兔八哥存在"胜利"（详见{我，兔八哥}）时，将消耗1层状态造成额外伤害并将奶酪冲出洞口（最后一块奶酪只能被冲出一次）。',
     detailedDescription:
-      '巨型胡萝卜生成时对命中的敌方造成25伤害并眩晕1.6秒；随后，以巨型胡萝卜为中心周围450×350范围内的敌方移速降低10%，推速降低15%。在洞口附近时[敌方无法进行推奶酪交互](会提示"有物体遮挡"；已经在进行的推奶酪交互不会中断)，老鼠可以通过交互吃掉巨型胡萝卜，吃掉巨型胡萝卜共需2秒，巨型胡萝卜存在9秒。兔八哥存在“胜利”（详见{我，兔八哥}）时，将消耗1层状态[额外造成50伤害](与原本的伤害独立结算，即：若有1层盾将造成50伤害并眩晕1.6秒，若有2层盾将破盾)并[将奶酪冲出洞口](将已丢入洞口但暂未推入的奶酪以固定角度和初速度弹出，但会保留该洞口的推入进度)（最后一块奶酪只能被冲出一次）。',
+      '巨型胡萝卜生成时对命中的敌方造成25伤害并眩晕1.6秒；随后，以巨型胡萝卜为中心周围450×350范围内的敌方移速降低10%，推速降低15%。在洞口附近时[敌方无法进行推奶酪交互](会提示"有物体遮挡"；已经在进行的推奶酪交互不会中断)，老鼠可以通过交互吃掉巨型胡萝卜，吃掉巨型胡萝卜共需2秒，巨型胡萝卜存在9秒。兔八哥存在"胜利"（详见{我，兔八哥}）时，将消耗1层状态[额外造成50伤害](与原本的伤害独立结算，即：若有1层盾将造成50伤害并眩晕1.6秒，若有2层盾将破盾)并[将奶酪冲出洞口](将已丢入洞口但暂未推入的奶酪以固定角度和初速度弹出，但会保留该洞口的推入进度)（最后一块奶酪只能被冲出一次）。',
     create: '由兔八哥-胡萝卜选择巨型胡萝卜模式时召唤。',
   },
   飓风: {
     entitytype: '投射物',
-    characterName: '追风汤姆',
-    skillname: '追风双翼',
+    owner: { name: '追风双翼', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
@@ -428,8 +397,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   铁砧: {
     entitytype: '投射物',
-    characterName: '追风汤姆',
-    skillname: '追风双翼',
+    owner: { name: '追风双翼', type: 'skill' },
     move: true,
     gravity: true,
     collsion: true,
@@ -441,15 +409,14 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   },
   旋转的花枪: {
     entitytype: '投射物',
-    characterName: '如玉',
-    skillname: '掷花枪',
+    owner: { name: '掷花枪', type: 'skill' },
     move: true,
     gravity: false,
     collsion: false,
     description:
-      '对碰到的老鼠造成少量伤害。花枪飞行一段时间后或如玉再次点击技能时折返回她身边，[折返时也会造成伤害](老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若折返时命中花枪折返前命中过的目标，如玉可点按["花枪反击"键](该按键位置和大小可进行调整)触发“花枪反击”（详见{如玉}）。',
+      '对碰到的老鼠造成少量伤害。花枪飞行一段时间后或如玉再次点击技能时折返回她身边，[折返时也会造成伤害](老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若折返时命中花枪折返前命中过的目标，如玉可点按["花枪反击"键](该按键位置和大小可进行调整)触发"花枪反击"（详见{如玉}）。',
     detailedDescription:
-      '花枪沿直线飞行，飞行速度约1900，对[碰到](碰撞面积为圆形，半径约150)的老鼠造成[5伤害](不受攻击增伤影响)。花枪飞行1.1秒后或在1秒内再次技能时[折返回如玉身边](改为向如玉方向飞行，碰到如玉或累计飞行8.1秒后消失)，[折返时也会造成5伤害](不受攻击增伤影响；老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若[折返时命中花枪折返前命中过的目标](包括持有护盾、无敌，或是虚弱的目标，甚至包括火箭起飞时待复活的目标———这会导致如玉瞬移到对方的复活位置进行花枪反击)，可在1.6秒内点按["花枪反击"键](该按键位置和大小可进行调整)对其触发“花枪反击”（详见{如玉}）。',
+      '花枪沿直线飞行，飞行速度约1900，对[碰到](碰撞面积为圆形，半径约150)的老鼠造成[5伤害](不受攻击增伤影响)。花枪飞行1.1秒后或在1秒内再次技能时[折返回如玉身边](改为向如玉方向飞行，碰到如玉或累计飞行8.1秒后消失)，[折返时也会造成5伤害](不受攻击增伤影响；老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若[折返时命中花枪折返前命中过的目标](包括持有护盾、无敌，或是虚弱的目标，甚至包括火箭起飞时待复活的目标———这会导致如玉瞬移到对方的复活位置进行花枪反击)，可在1.6秒内点按["花枪反击"键](该按键位置和大小可进行调整)对其触发"花枪反击"（详见{如玉}）。',
     create: '由如玉-掷花枪召唤并投掷。',
   },
 };
@@ -460,7 +427,6 @@ const catEntitiesWithImages: Record<string, Entity> = Object.fromEntries(
     {
       ...entity,
       name: entityName,
-      factionId: 'cat',
       imageUrl: getCatEntityImageUrl(entityName, entity.specialImageUrl),
     },
   ])

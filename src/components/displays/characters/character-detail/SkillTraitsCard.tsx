@@ -12,7 +12,7 @@ interface SkillTraitsCardProps {
 
 export default function SkillTraitsCard({ skill }: SkillTraitsCardProps) {
   const OwnEntities = Object.values({ ...entities.cat, ...entities.mouse }).filter(
-    (entity) => entity.skillname === skill.name
+    (entity) => entity.owner?.type === 'skill' && entity.owner.name === skill.name
   );
   const NumberOfOwnTraits: number[] = [skill, ...OwnEntities].map((a, key) => {
     return filterTraitsBySingleItem({ name: a.name, type: key === 0 ? 'skill' : 'entity' }).length;

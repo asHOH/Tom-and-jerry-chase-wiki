@@ -307,8 +307,8 @@ export type Entitytypelist =
 
 export type EntityDefinition = {
   entitytype: Entitytypelist | Entitytypelist[]; //type of entity
-  characterName: string; //which character does this entity belong to
-  skillname?: string; //which skill does this entity belong to
+  owner?: SingleItem;
+  factionId?: FactionId; //若未填写该项，则在显示时继承owner的此属性（需使用getSingleItemFactionId函数）
   aliases?: string[]; // (entities') Alternative names for search
   move?: boolean; //if entity can move (by itself)
   gravity?: boolean; //if entity can be influenced by gravity
@@ -325,7 +325,7 @@ export type EntityDefinition = {
   entityAttributesAsCharacter?: ItemAttributesAsCharacter;
 };
 
-export type Entity = EntityDefinition & { name: string; factionId?: FactionId; imageUrl: string };
+export type Entity = EntityDefinition & { name: string; imageUrl: string };
 
 export type Bufftypelist = '常规类' | '全局类' | '技能类';
 export type Buffinfluencelist = '正面' | '负面';

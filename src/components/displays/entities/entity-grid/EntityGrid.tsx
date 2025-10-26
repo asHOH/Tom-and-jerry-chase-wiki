@@ -14,6 +14,7 @@ import FilterRow from '@/components/ui/FilterRow';
 import { getPositioningTagColors } from '@/lib/design-system';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import Tooltip from '@/components/ui/Tooltip';
+import getEntityFactionId from '../lib/getEntityFactionId';
 
 const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
   '道具类',
@@ -58,7 +59,8 @@ export default function EntityClient({ description }: Props) {
       const isCat = selectedFactions.includes('cat');
       const isMouse = selectedFactions.includes('mouse');
       factionMatch =
-        (isCat && entity.factionId === 'cat') || (isMouse && entity.factionId === 'mouse');
+        (isCat && getEntityFactionId(entity) === 'cat') ||
+        (isMouse && getEntityFactionId(entity) === 'mouse');
     }
     return typeMatch && factionMatch;
   });

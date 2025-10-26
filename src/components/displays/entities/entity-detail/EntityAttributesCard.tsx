@@ -1,7 +1,6 @@
 'use client';
 
 import BaseCard from '@/components/ui/BaseCard';
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Entity } from '@/data/types';
@@ -12,13 +11,20 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import Tooltip from '../../../ui/Tooltip';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
+import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
+import Image from '@/components/Image';
+import getEntityFactionId from '../lib/getEntityFactionId';
 
 export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
   const { isDetailedView: isDetailed } = useAppContext();
   const spacing = designTokens.spacing;
+
   if (!entity) return null;
+
+  const factionId = getEntityFactionId(entity);
+
   function putTypeTagOn(entity: Entity) {
     if (typeof entity.entitytype === 'string') {
       return (
@@ -77,7 +83,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
               </h1>
               <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
                 (衍生物
-                {entity.factionId === 'cat' ? '·猫' : entity.factionId === 'mouse' ? '·鼠' : ''})
+                {factionId === 'cat' ? '·猫' : factionId === 'mouse' ? '·鼠' : ''})
               </h1>
               {entity.aliases !== undefined && (
                 <h1
@@ -108,7 +114,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
               {entity.name}{' '}
               <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
                 (衍生物
-                {entity.factionId === 'cat' ? '·猫' : entity.factionId === 'mouse' ? '·鼠' : ''})
+                {factionId === 'cat' ? '·猫' : factionId === 'mouse' ? '·鼠' : ''})
               </span>
             </h1>
           </div>
@@ -139,20 +145,28 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
           <span className={`text-sm whitespace-pre`}>类型: </span>
           {putTypeTagOn(entity)}
         </div>
-        {!!entity.factionId && !!entity.characterName && (
-          <span className={`text-sm whitespace-pre`}>
+        {!!entity.owner && (
+          <span className={`text-sm flex items-center`}>
             {'归属者：'}
-            <span className='text-indigo-700 dark:text-indigo-400'>
-              <TextWithHoverTooltips text={`{${entity.characterName}}`} />
-            </span>
-            {!!entity.skillname ? (
-              <>
-                {' → '}
-                <span className='text-orange-600 dark:text-orange-400'>
-                  <TextWithHoverTooltips text={`{${entity.skillname}}`} />
-                </span>
-              </>
-            ) : null}
+            <li
+              key={entity.name}
+              className={`flex items-center rounded-lg transition-colors hover:-translate-y-1 px-2 bg-green-50 dark:bg-green-900/30 border-1 border-green-200 dark:border-green-800`}
+            >
+              <a
+                href={getSingleItemHref(entity.owner)}
+                className='flex items-center gap-2 w-full'
+                tabIndex={0}
+              >
+                <Image
+                  src={getSingleItemImageUrl(entity.owner)}
+                  alt={`${entity.owner.name}图标`}
+                  className='w-9 h-9 object-contain'
+                  width={90}
+                  height={90}
+                />
+                <span className='text-sm dark:text-white truncate'>{entity.owner.name}</span>
+              </a>
+            </li>
           </span>
         )}
         {/*itemAttributesAsCharacter*/}
