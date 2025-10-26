@@ -469,8 +469,8 @@ export function KnowledgeCardGroupDisplay({
               getCardRank={getCardRank}
               imageBasePath={imageBasePath}
               descriptionPath={descriptionPath}
-              contributor={subIndex === 0 ? contributor : undefined}
-              contributorInformation={subIndex === 0 ? contributorInformation : undefined}
+              contributor={contributor}
+              contributorInformation={contributorInformation}
               isDarkMode={isDarkMode}
             />
             {subIndex < flattenedCombinations.length - 1 && (
