@@ -72,7 +72,7 @@ interface KnowledgeCardSectionProps {
   onRemoveGroup: (topIndex: number, innerIndex?: number) => void;
 }
 
-export type ViewMode = 'compact' | 'flat' | 'tree' | 'tree-folded' | 'hybrid';
+export type ViewMode = 'compact' | 'tree' | 'hybrid';
 
 /** Flat knowledge card group component - renders a simple string[] group */
 function KnowledgeCardGroupFlat({
@@ -327,9 +327,9 @@ export function KnowledgeCardGroupDisplay({
   const isTreeView =
     viewMode === 'tree' ||
     viewMode === 'compact' ||
-    viewMode === 'tree-folded' ||
+    // viewMode === 'tree-folded' ||
     viewMode === 'hybrid';
-  const isFoldedMode = viewMode === 'tree-folded';
+  // const isFoldedMode = viewMode === 'tree-folded';
   const isHybridMode = viewMode === 'hybrid';
 
   if (isTreeView) {
@@ -373,7 +373,7 @@ export function KnowledgeCardGroupDisplay({
               getCardRank={getCardRank}
               imageBasePath={imageBasePath}
               isOptionalCard={(cardId) => cardId === 'C-狡诈' && hasAnyOptional}
-              isFoldedMode={isFoldedMode}
+              isFoldedMode={false}
               isDarkMode={isDarkMode}
               isHybridMode={isHybridMode}
             />
@@ -502,7 +502,7 @@ export default function KnowledgeCardSection({
   const [viewMode, setViewMode] = useState<ViewMode>(
     () =>
       ((typeof localStorage != 'undefined' && localStorage.getItem('view-mode')) ||
-        'tree-folded') as ViewMode
+        ('tree' as const)) as ViewMode
   );
   const hasTreeStructure = useMemo(() => {
     return knowledgeCardGroups.some((group) => {
@@ -518,11 +518,8 @@ export default function KnowledgeCardSection({
   }, [viewMode]);
 
   useEffect(() => {
-    if (
-      !hasTreeStructure &&
-      (viewMode === 'tree' || viewMode === 'tree-folded' || viewMode === 'hybrid')
-    ) {
-      setViewMode('flat');
+    if (!hasTreeStructure && viewMode === 'hybrid' /* || viewMode === 'tree-folded' */) {
+      setViewMode('tree');
     }
   }, [hasTreeStructure, viewMode]);
 
@@ -611,8 +608,8 @@ export default function KnowledgeCardSection({
 
   const cycleViewMode = () => {
     const availableModes: ViewMode[] = hasTreeStructure
-      ? ['tree', 'tree-folded', 'hybrid', 'flat', 'compact']
-      : ['flat', 'compact'];
+      ? ['tree', 'hybrid', 'compact']
+      : ['tree', 'compact'];
 
     setViewMode((prev) => {
       if (availableModes.length === 0) {
@@ -630,10 +627,10 @@ export default function KnowledgeCardSection({
   };
 
   const getViewModeLabel = () => {
-    if (viewMode === 'tree') return '树状视图';
-    if (viewMode === 'tree-folded') return '折叠树状视图';
+    if (viewMode === 'tree') return '图片视图';
+    // if (viewMode === 'tree-folded') return '折叠树状视图';
     if (viewMode === 'hybrid') return '混合视图';
-    if (viewMode === 'flat') return hasTreeStructure ? '扁平视图' : '图片视图';
+    // if (viewMode === 'flat') return hasTreeStructure ? '扁平视图' : '图片视图';
     return '紧凑视图';
   };
 
