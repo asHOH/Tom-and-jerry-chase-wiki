@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>道具生成器</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f7f7fa;
+        --card: #ffffff;
+        --border: #d7d7e3;
+        --text: #1c1c28;
+        --muted: #5a6072;
+        --primary: #315efb;
+        --primary-text: #ffffff;
+        --danger: #d93025;
+        --shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111318;
+          --card: #1c1f24;
+          --border: #2a2e36;
+          --text: #f5f6fb;
+          --muted: #a0a5b5;
+          --primary: #7295ff;
+          --primary-text: #0b1228;
+          --danger: #ff6b6b;
+          --shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .container {
+        max-width: 1048px;
+        margin: 0 auto;
+        padding: 32px 20px 96px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 24px;
+        border-radius: 20px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      button {
+        appearance: none;
+        border: none;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+
+      button.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--primary-text);
+      }
+
+      button.ghost {
+        background: transparent;
+      }
+
+      button.danger {
+        background: transparent;
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      button:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
+      }
+
+      .item-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .item-card:not(.collapsed):hover {
+        transform: translateY(-2px);
+      }
+
+      .item-card.has-error {
+        border-color: var(--danger);
+      }
+
+      .card-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      .card-title {
+        font-weight: 600;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(49, 94, 251, 0.12);
+        color: var(--primary);
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .card-body {
+        padding: 20px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      @media (min-width: 720px) {
+        .grid.two {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 960px) {
+        .grid.two {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .field label {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .field small {
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      input[type='text'],
+      input[type='number'],
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.02);
+        font-size: 0.95rem;
+        color: var(--text);
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+        font-family: inherit;
+      }
+
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(49, 94, 251, 0.16);
+      }
+
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .export-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .export-card h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      #exportOutput {
+        font-family: 'Fira Code', 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+        min-height: 180px;
+        white-space: pre;
+      }
+
+      .status-text {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .collapsed .card-body {
+        display: none;
+      }
+
+      .collapsed .card-header {
+        border-bottom: none;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        background: var(--text);
+        color: var(--card);
+        font-size: 0.9rem;
+        display: none;
+        z-index: 20;
+      }
+
+      .toast.show {
+        display: block;
+        animation: fadeInOut 2.4s ease forwards;
+      }
+
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        8%,
+        82% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+      }
+
+      .optional-group {
+        padding: 18px;
+        border-radius: 16px;
+        border: 1px dashed var(--border);
+        background: rgba(0, 0, 0, 0.02);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .optional-group h3 {
+        margin: 0;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 0.75rem;
+        background: rgba(26, 86, 219, 0.14);
+        color: var(--primary);
+      }
+
+      footer {
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--muted);
+        padding-bottom: 36px;
+      }
+
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 64px 16px;
+        text-align: center;
+        border-radius: 20px;
+        border: 1px dashed var(--border);
+        color: var(--muted);
+      }
+
+      .empty-state strong {
+        font-size: 1.05rem;
+        color: var(--text);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>道具生成器</h1>
+        <p>
+          编辑多个道具，导出代码片段提交给开发人员。所有数据仅保存在本地。
+        </p>
+        <div class="toolbar">
+          <button id="addItem" class="primary" type="button">新增道具</button>
+          <button id="expandAll" type="button">全部展开</button>
+          <button id="collapseAll" type="button">全部收起</button>
+          <button id="resetAll" class="danger" type="button">清空全部</button>
+          <span id="stats" class="status-text"></span>
+        </div>
+      </header>
+
+      <div id="itemsContainer" class="stack"></div>
+
+      <section id="emptyState" class="empty-state" hidden>
+        <button id="emptyAdd" class="primary" type="button">添加新道具</button>
+      </section>
+
+      <section class="export-card">
+        <h2>导出结果</h2>
+        <div class="field">
+          <label for="exportOutput">导出代码片段</label>
+          <textarea id="exportOutput" readonly spellcheck="false"></textarea>
+        </div>
+        <div class="toolbar">
+          <button id="copyBtn" class="primary" type="button">复制到剪贴板</button>
+          <button id="downloadBtn" type="button">下载为 TXT</button>
+          <span id="exportStatus" class="status-text"></span>
+        </div>
+      </section>
+    </div>
+
+    <template id="itemTemplate">
+      <article class="item-card" data-id="">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="badge">道具</span>
+            <span data-role="title">未命名道具</span>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="ghost" data-action="toggle">折叠</button>
+            <button type="button" class="ghost" data-action="duplicate">复制</button>
+            <button type="button" class="danger" data-action="delete">删除</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="stack">
+            <div class="grid two">
+              <div class="field">
+                <label for="name">道具名称 *</label>
+                <input
+                  data-field="name"
+                  type="text"
+                  inputmode="text"
+                  placeholder="例如：盘子"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="field">
+                <label>道具类型 *</label>
+                <select data-field="itemtype">
+                  <option value="投掷类">投掷类</option>
+                  <option value="手持类">手持类</option>
+                  <option value="物件类">物件类</option>
+                  <option value="食物类">食物类</option>
+                  <option value="流程类">流程类</option>
+                  <option value="特殊类">特殊类</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>来源 *</label>
+                <select data-field="itemsource">
+                  <option value="常规道具">常规道具</option>
+                  <option value="衍生道具">衍生道具</option>
+                  <option value="地图道具">地图道具</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>阵营归属</label>
+                <select data-field="factionId">
+                  <option value="">（可选）</option>
+                  <option value="cat">cat</option>
+                  <option value="mouse">mouse</option>
+                </select>
+                <small>留空表示该字段不会导出。</small>
+              </div>
+              <div class="field">
+                <label>别名列表</label>
+                <input
+                  data-field="aliasesInput"
+                  type="text"
+                  placeholder="使用逗号或换行分隔多个别名"
+                />
+                <small>示例：圆盘子, 盘子</small>
+              </div>
+              <div class="field">
+                <label>忽略碰撞对象</label>
+                <input data-field="ignoreInput" type="text" placeholder="使用逗号或换行分隔" />
+              </div>
+            </div>
+
+            <div class="optional-group">
+              <h3>数值</h3>
+              <div class="grid two">
+                <div class="field">
+                  <label>伤害</label>
+                  <input
+                    data-field="damage"
+                    data-type="number"
+                    type="number"
+                    step="0.1"
+                    placeholder="例如：50"
+                  />
+                </div>
+                <div class="field">
+                  <label>破墙伤害</label>
+                  <input
+                    data-field="walldamage"
+                    data-type="number"
+                    type="number"
+                    step="0.1"
+                    placeholder="例如：6"
+                  />
+                </div>
+                <div class="field">
+                  <label>商店价格</label>
+                  <input
+                    data-field="price"
+                    data-type="number"
+                    type="number"
+                    step="1"
+                    placeholder="例如：500"
+                  />
+                </div>
+                <div class="field">
+                  <label>商店CD</label>
+                  <input
+                    data-field="storeCD"
+                    data-type="number"
+                    type="number"
+                    step="1"
+                    placeholder="单位：秒"
+                  />
+                </div>
+                <div class="field">
+                  <label>（猫）命中获得经验值</label>
+                  <input
+                    data-field="exp"
+                    data-type="number"
+                    type="number"
+                    step="1"
+                    placeholder="例如：200"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="optional-group">
+              <h3>布尔字段</h3>
+              <div class="grid two">
+                <div class="field">
+                  <label>商店可购买</label>
+                  <select data-field="store" data-type="boolean">
+                    <option value="">（未设置）</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>（鼠）共享商店CD</label>
+                  <select data-field="teamCD" data-type="boolean">
+                    <option value="">（未设置）</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>会移动</label>
+                  <select data-field="move" data-type="boolean">
+                    <option value="">（未设置）</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>受重力影响</label>
+                  <select data-field="gravity" data-type="boolean">
+                    <option value="">（未设置）</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>有碰撞体积</label>
+                  <select data-field="collsion" data-type="boolean">
+                    <option value="">（未设置）</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="optional-group">
+              <h3>文本描述</h3>
+              <div class="grid">
+                <div class="field">
+                  <label>简明描述</label>
+                  <textarea data-field="description" placeholder="简明描述"></textarea>
+                </div>
+                <div class="field">
+                  <label>详细描述</label>
+                  <textarea data-field="detailedDescription" placeholder="详细描述"></textarea>
+                </div>
+                <div class="field">
+                  <label>产生方式</label>
+                  <textarea data-field="create" placeholder="产生方式"></textarea>
+                </div>
+                <div class="field">
+                  <label>详细产生方式</label>
+                  <textarea data-field="detailedCreate" placeholder="详细产生方式"></textarea>
+                </div>
+                <div class="field">
+                  <label>解锁时间</label>
+                  <input data-field="unlocktime" type="text" placeholder="例如：墙缝期 03:30" />
+                </div>
+              </div>
+            </div>
+
+            <div class="optional-group">
+              <h3>附加代码 <span class="pill">请保持 TypeScript 语法</span></h3>
+              <div class="field">
+                <label>额外字段（可选）</label>
+                <textarea
+                  data-field="extraCode"
+                  placeholder="例如：itemAttributesAsCharacter: { type: 'cat', factionBelong: 'cat' },"
+                ></textarea>
+                <small>代码会原样导出并自动缩进。</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      const items = [];
+      const itemsContainer = document.getElementById('itemsContainer');
+      const exportOutput = document.getElementById('exportOutput');
+      const exportStatus = document.getElementById('exportStatus');
+      const stats = document.getElementById('stats');
+      const toast = document.getElementById('toast');
+      const emptyState = document.getElementById('emptyState');
+      const STORAGE_KEY = 'tjwiki-item-maker-v1';
+
+      const booleanFields = ['store', 'teamCD', 'move', 'gravity', 'collsion'];
+      const numberFields = ['damage', 'walldamage', 'price', 'storeCD', 'exp'];
+      const textFields = [
+        'description',
+        'detailedDescription',
+        'create',
+        'detailedCreate',
+        'unlocktime',
+      ];
+
+      const defaultValues = {
+        name: '',
+        itemtype: '投掷类',
+        itemsource: '常规道具',
+        factionId: '',
+        aliasesInput: '',
+        ignoreInput: '',
+        damage: '',
+        walldamage: '',
+        price: '',
+        storeCD: '',
+        exp: '',
+        description: '',
+        detailedDescription: '',
+        create: '',
+        detailedCreate: '',
+        unlocktime: '',
+        store: null,
+        teamCD: null,
+        move: null,
+        gravity: null,
+        collsion: null,
+        extraCode: '',
+      };
+
+      function generateId() {
+        if (window.crypto && crypto.randomUUID) {
+          return crypto.randomUUID();
+        }
+        return 'id-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.remove('show');
+        void toast.offsetWidth;
+        toast.classList.add('show');
+      }
+
+      function addItem(initial = {}, locator) {
+        const item = { id: generateId(), ...structuredClone(defaultValues), ...initial };
+        items.push(item);
+        renderItemCard(item, locator);
+        persistState();
+        updateUI();
+        return item;
+      }
+
+      function renderItemCard(item, locator) {
+        const template = document.getElementById('itemTemplate');
+        const fragment = template.content.cloneNode(true);
+        const card = fragment.querySelector('.item-card');
+        card.dataset.id = item.id;
+
+        card.querySelector('[data-role="title"]').textContent = item.name
+          ? item.name
+          : '未命名道具';
+
+        card.querySelectorAll('[data-field]').forEach((el) => {
+          const field = el.dataset.field;
+          const value = item[field];
+          if (booleanFields.includes(field)) {
+            el.value = value === true ? 'true' : value === false ? 'false' : '';
+          } else if (numberFields.includes(field)) {
+            el.value = value !== '' && value !== null && value !== undefined ? value : '';
+          } else {
+            el.value = value ?? '';
+          }
+        });
+
+        if (locator) {
+          itemsContainer.insertBefore(fragment, locator);
+        } else {
+          itemsContainer.appendChild(fragment);
+        }
+      }
+
+      function getItemById(id) {
+        return items.find((item) => item.id === id);
+      }
+
+      function removeItem(id) {
+        const index = items.findIndex((item) => item.id === id);
+        if (index === -1) return;
+        items.splice(index, 1);
+        const card = itemsContainer.querySelector(`.item-card[data-id="${id}"]`);
+        card?.remove();
+        persistState();
+        updateUI();
+      }
+
+      function duplicateItem(id) {
+        const source = getItemById(id);
+        if (!source) return;
+        const clone = structuredClone(source);
+        clone.id = generateId();
+        if (clone.name) {
+          clone.name = `${clone.name} 副本`;
+        }
+        const anchor = itemsContainer.querySelector(`.item-card[data-id="${id}"]`);
+        addItem(clone, anchor?.nextSibling ?? null);
+        showToast('已复制道具');
+      }
+
+      function toggleCard(id) {
+        const card = itemsContainer.querySelector(`.item-card[data-id="${id}"]`);
+        if (!card) return;
+        card.classList.toggle('collapsed');
+      }
+
+      function collapseAll(state) {
+        itemsContainer.querySelectorAll('.item-card').forEach((card) => {
+          card.classList.toggle('collapsed', state);
+        });
+      }
+
+      function handleFieldChange(target) {
+        const card = target.closest('.item-card');
+        if (!card) return;
+        const id = card.dataset.id;
+        const item = getItemById(id);
+        if (!item) return;
+        const field = target.dataset.field;
+        const type = target.dataset.type;
+        let value = target.value;
+
+        if (type === 'boolean') {
+          if (value === 'true') value = true;
+          else if (value === 'false') value = false;
+          else value = null;
+        } else if (type === 'number') {
+          if (value === '' || value === null) {
+            value = '';
+          } else {
+            const parsed = Number(value);
+            value = Number.isNaN(parsed) ? '' : parsed;
+          }
+        }
+
+        item[field] = value;
+
+        if (field === 'name') {
+          const title = card.querySelector('[data-role="title"]');
+          title.textContent = value ? value : '未命名道具';
+          card.classList.toggle('has-error', !value);
+        }
+
+        persistState();
+        updateUI();
+      }
+
+      function parseList(raw) {
+        if (!raw) return [];
+        return raw
+          .split(/[\n,，]/)
+          .map((token) => token.trim())
+          .filter(Boolean);
+      }
+
+      function escapeString(value) {
+        return value
+          .replace(/\\/g, '\\\\')
+          .replace(/'/g, "\\'")
+          .replace(/\r\n|\r|\n/g, '\\n');
+      }
+
+      function formatString(value) {
+        return `'${escapeString(value)}'`;
+      }
+
+      function formatConstString(value) {
+        return `'${escapeString(value)}' as const`;
+      }
+
+      function formatArray(list) {
+        if (!list.length) return '';
+        return `[${list.map((item) => formatString(item)).join(', ')}]`;
+      }
+
+      function needsQuotes(name) {
+        return !/^[$A-Za-z_\p{Letter}][\w\p{Letter}]*$/u.test(name);
+      }
+
+      function buildSnippet() {
+        if (!items.length) return '';
+        const indent = '  ';
+        const inner = '    ';
+
+        return items
+          .map((item) => {
+            const name = item.name.trim();
+            if (!name) return null;
+            const key = needsQuotes(name) ? `'${escapeString(name)}'` : name;
+            const lines = [];
+
+            if (item.itemtype) lines.push(`${inner}itemtype: ${formatConstString(item.itemtype)},`);
+            if (item.itemsource)
+              lines.push(`${inner}itemsource: ${formatConstString(item.itemsource)},`);
+
+            if (item.factionId) {
+              lines.push(`${inner}factionId: ${formatConstString(item.factionId)},`);
+            }
+
+            const aliases = parseList(item.aliasesInput);
+            if (aliases.length) {
+              lines.push(`${inner}aliases: ${formatArray(aliases)},`);
+            }
+
+            const ignoreList = parseList(item.ignoreInput);
+            if (ignoreList.length) {
+              lines.push(`${inner}ignore: ${formatArray(ignoreList)},`);
+            }
+
+            numberFields.forEach((field) => {
+              const value = item[field];
+              if (value !== '' && value !== null && value !== undefined) {
+                lines.push(`${inner}${field}: ${value},`);
+              }
+            });
+
+            textFields.forEach((field) => {
+              const value = item[field];
+              if (value) {
+                lines.push(`${inner}${field}: ${formatString(value)},`);
+              }
+            });
+
+            booleanFields.forEach((field) => {
+              const value = item[field];
+              if (value === true || value === false) {
+                lines.push(`${inner}${field}: ${value},`);
+              }
+            });
+
+            if (item.extraCode.trim()) {
+              item.extraCode.split(/\r?\n/).forEach((line) => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+                lines.push(`${inner}${trimmed}`);
+              });
+            }
+
+            const body = lines.length ? `\n${lines.join('\n')}\n${indent}` : '';
+            return `${indent}${key}: {${body}},`;
+          })
+          .filter(Boolean)
+          .join('\n\n');
+      }
+
+      function updateUI() {
+        const snippet = buildSnippet();
+        exportOutput.value = snippet;
+        const total = items.length;
+        const missing = items.filter((item) => !item.name.trim()).length;
+
+        if (!total) {
+          stats.textContent = '';
+        } else {
+          stats.textContent = `共 ${total} 个条目，其中 ${missing} 个未命名`;
+        }
+
+        exportStatus.textContent = snippet
+          ? `已生成 ${snippet.split('\n').length} 行代码`
+          : '无可导出内容';
+        emptyState.hidden = total !== 0;
+
+        itemsContainer.querySelectorAll('.item-card').forEach((card) => {
+          const item = getItemById(card.dataset.id);
+          if (!item) return;
+          card.classList.toggle('has-error', !item.name.trim());
+        });
+      }
+
+      function persistState() {
+        const payload = items.map(({ id, ...rest }) => ({ id, ...rest }));
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (_) {
+          /* 忽略存储异常 */
+        }
+      }
+
+      function hydrateState() {
+        let restored = null;
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) restored = JSON.parse(raw);
+        } catch (_) {
+          restored = null;
+        }
+        if (Array.isArray(restored) && restored.length) {
+          restored.forEach((item) => addItem(item));
+        } else {
+          addItem();
+        }
+      }
+
+      itemsContainer.addEventListener('input', (event) => {
+        const target = event.target;
+        if (target.matches('[data-field]')) {
+          handleFieldChange(target);
+        }
+      });
+
+      itemsContainer.addEventListener('change', (event) => {
+        const target = event.target;
+        if (target.matches('[data-field]')) {
+          handleFieldChange(target);
+        }
+      });
+
+      itemsContainer.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const card = button.closest('.item-card');
+        if (!card) return;
+        const id = card.dataset.id;
+        const action = button.dataset.action;
+        if (action === 'delete') {
+          if (confirm('确认删除该道具吗？')) {
+            removeItem(id);
+            showToast('已删除道具');
+          }
+        } else if (action === 'toggle') {
+          toggleCard(id);
+        } else if (action === 'duplicate') {
+          duplicateItem(id);
+        }
+      });
+
+      document.getElementById('addItem').addEventListener('click', () => {
+        addItem();
+        showToast('已新增道具');
+      });
+
+      document.getElementById('emptyAdd').addEventListener('click', () => {
+        addItem();
+        showToast('已新增道具');
+      });
+
+      document.getElementById('expandAll').addEventListener('click', () => {
+        collapseAll(false);
+      });
+
+      document.getElementById('collapseAll').addEventListener('click', () => {
+        collapseAll(true);
+      });
+
+      document.getElementById('resetAll').addEventListener('click', () => {
+        if (!items.length) return;
+        if (!confirm('确认清空所有道具吗？此操作无法撤销。')) return;
+        items.length = 0;
+        itemsContainer.innerHTML = '';
+        persistState();
+        updateUI();
+        showToast('已清空');
+      });
+
+      document.getElementById('copyBtn').addEventListener('click', async () => {
+        const snippet = exportOutput.value.trim();
+        if (!snippet) {
+          showToast('没有可复制的内容');
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(snippet);
+          showToast('已复制到剪贴板');
+        } catch (_) {
+          exportOutput.select();
+          document.execCommand('copy');
+          showToast('已复制（回退模式）');
+        }
+      });
+
+      document.getElementById('downloadBtn').addEventListener('click', () => {
+        const snippet = exportOutput.value.trim();
+        if (!snippet) {
+          showToast('没有可导出的内容');
+          return;
+        }
+        const blob = new Blob([snippet], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const timestamp = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const filename = `tjwiki-items-${timestamp.getFullYear()}${pad(timestamp.getMonth() + 1)}${pad(timestamp.getDate())}-${pad(timestamp.getHours())}${pad(timestamp.getMinutes())}.txt`;
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast('已下载 TXT 文件');
+      });
+
+      hydrateState();
+      updateUI();
+    </script>
+  </body>
+</html>
