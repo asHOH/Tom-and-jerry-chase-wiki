@@ -54,11 +54,11 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
         <div className='space-y-4'>
           {entity.skills
             .map((skill) => {
-              const R: Skill & { colddown?: number } = { ...skill, id: entity.characterName };
+              const R: Skill & { colddown?: number } = { ...skill, id: skill.type };
               return R;
             })
             .map<React.ReactNode>((skill: DeepReadonly<Skill & { colddown?: number }>, index) => (
-              <EntitySkillCard key={skill.id + skill.type} skill={skill} skillIndex={index} />
+              <EntitySkillCard key={skill.id} skill={skill} skillIndex={index} />
             ))}
         </div>
       ),
