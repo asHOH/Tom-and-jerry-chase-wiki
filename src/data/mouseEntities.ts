@@ -295,6 +295,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '爱心之吻', type: 'skill' },
     move: true,
     gravity: false,
+    collsion: ['墙壁', '地面'],
     description:
       '释放后飘向最近的队友，队友被爱心触碰后与雪梨建立友好关系，持续恢复Hp；友好关系持续20秒后，同伴额外获得全面的强化效果，同时免疫反向和失明，直到友好关系中断。友好关系期间，雪梨可通过特殊技能按键[远程治疗同伴](每次建立关系只可使用一次，可被打断。CD：5秒)，且若雪梨隐身，则双方都隐身。',
     detailedDescription:
@@ -438,7 +439,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '比萨斜塔', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: ['墙壁'],
+    collsion: ['角色', '墙壁'],
     description: '出现时弹飞碰到的敌方；存在期间阻挡角色通行。',
     detailedDescription:
       '斜塔出现时弹飞碰到的敌方，使其[以850的速度被击退，并眩晕1.5秒](正常情况下最终位移距离1275，若弹飞过程中眩晕结束则停止弹飞。可破盾，可击飞跳舞中的苏蕊)。[斜塔与墙壁和地板类似，塔顶可站立，塔身会阻挡道路](朝右的斜塔允许鼠方从右往左通过；空中释放时概率出现无法站立的"飘塔")。斜塔存在3.5/3.5/6秒后崩毁。',
@@ -526,12 +527,13 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     entitytype: ['平台类', '召唤物'],
     owner: { name: '御风剑舞', type: 'skill' },
     aliases: ['风墙'],
+    collsion: ['角色'],
     move: false,
     gravity: false,
     description:
-      '[敌方会被风墙阻挡，无法进出风墙](位于风墙内的敌方仍可通过部分传送及强制位移类技能离开，如莱特宁-瞬移闪击，库博-虚幻梦影)。',
+      '[敌方会被风墙阻挡，无法进出风墙](位于风墙内的敌方仍可通过部分传送及强制位移类技能离开，如莱特宁-瞬移闪击，库博-虚幻梦影)。风墙不会与友方角色产生碰撞。',
     detailedDescription:
-      '风墙大小500*500，持续3/3/4.5秒。[敌方会被风墙阻挡，无法进出风墙](位于风墙内的敌方仍可通过部分传送及强制位移类技能离开，如莱特宁-瞬移闪击，库博-虚幻梦影)。风墙对所有角色造成判定干扰，如猫的爪刀、拍子无法穿过风墙，风墙卡位时老鼠不能推奶酪。小跳风可将正在绑火箭的猫挤出火箭从而强行阻止猫绑火箭。Lv.2及以上时，在风墙中心半径850范围内老鼠虚弱时间减少5秒。Lv.3时，屏障内猫咪将无法使用技能和道具。',
+      '风墙大小500*500，持续3/3/4.5秒。[敌方会被风墙阻挡，无法进出风墙](位于风墙内的敌方仍可通过部分传送及强制位移类技能离开，如莱特宁-瞬移闪击，库博-虚幻梦影)。风墙不会与友方角色产生碰撞。风墙对所有角色造成判定干扰，如猫的爪刀、拍子无法穿过风墙，风墙卡位时老鼠不能推奶酪。小跳风可将正在绑火箭的猫挤出火箭从而强行阻止猫绑火箭。Lv.2及以上时，在风墙中心半径850范围内老鼠虚弱时间减少5秒。Lv.3时，屏障内猫咪将无法使用技能和道具。',
     create: '由剑客莉莉-御风剑舞召唤。',
   },
   剑气: {
@@ -960,7 +962,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '蘸水笔', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '释放后向莱恩的朝向方向滚动，产生阻挡并对触碰的敌方造成伤害、并击落道具。' +
       figureDescription,
@@ -974,7 +976,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '蘸水笔', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '释放后向莱恩的朝向方向**弹跳（横向速度比圆形慢）**，产生阻挡并对触碰的敌方造成**更高**伤害、并击落道具。' +
       figureDescription,
@@ -1017,7 +1019,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['正方形'],
     move: true,
     gravity: false,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '停留在生成位置，可被推动，可作为平台或墙壁使用，被爪刀攻击后消失。' + figureDescription,
     detailedDescription:
@@ -1031,7 +1033,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['正方形'],
     move: true,
     gravity: false,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '停留在生成位置，可被推动，可作为平台或墙壁使用，被爪刀攻击后消失。**会反弹碰到的敌方**。' +
       figureDescription,

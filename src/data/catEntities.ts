@@ -75,7 +75,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '垃圾桶', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '阻挡道路，可被推动且被猫推动时的力度更大，可被爪刀打飞，受到4次攻击后会摧毁。垃圾桶的异味会使老鼠受到减速和伤害。由此造成伤害时会减少爪刀CD。',
     detailedDescription:
