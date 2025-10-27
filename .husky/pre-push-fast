@@ -9,6 +9,13 @@ if ! npx eslint --cache --max-warnings=0 "src/**/*.{js,jsx,ts,tsx}" > /dev/null 
   exit 1
 fi
 
+# Ensure public HTML files stay formatted
+echo "🧹 Checking public HTML formatting..."
+if ! npx prettier --check "public/**/*.html"; then
+  echo "❌ Prettier formatting issues found in public HTML files"
+  exit 1
+fi
+
 # Run type-check and changed tests in parallel
 echo "🏃‍♂️ Running type-check and tests on changed files..."
 
