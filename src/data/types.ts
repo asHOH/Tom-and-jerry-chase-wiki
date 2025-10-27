@@ -253,6 +253,11 @@ export type SpecialSkill = SpecialSkillDefinition & {
   imageUrl: string;
 };
 
+export type PhysicalAttributes = {
+  move?: boolean;
+  gravity?: boolean;
+  collsion?: string[];
+};
 export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '特殊类'; //list of items' types
 export type Itemsourcelist = '常规道具' | '衍生道具' | '地图道具'; //list of items' source
 
@@ -286,13 +291,8 @@ export type ItemDefinition = {
   teamCD?: boolean; //if item's CD in store is team shared
   exp?: number; //(cat) get exp when item hit mouse
 
-  move?: boolean; //copied from entity
-  gravity?: boolean; //copied from entity
-  collsion?: boolean; //copied from entity
-  ignore?: string[]; //copied from entity
-
   itemAttributesAsCharacter?: ItemAttributesAsCharacter;
-};
+} & PhysicalAttributes;
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
 
@@ -310,10 +310,6 @@ export type EntityDefinition = {
   owner?: SingleItem;
   factionId?: FactionId; //若未填写该项，则在显示时继承owner的此属性（需使用getSingleItemFactionId函数）
   aliases?: string[]; // (entities') Alternative names for search
-  move?: boolean; //if entity can move (by itself)
-  gravity?: boolean; //if entity can be influenced by gravity
-  collsion?: boolean; //if entity have collsion box
-  ignore?: string[]; //(if 'collsion: true')which object does this entity ignore collsion
   description?: string;
   detailedDescription?: string;
   create?: string; //the way of items create
@@ -323,7 +319,7 @@ export type EntityDefinition = {
   specialImageUrl?: string; //(interim) use other image instead of entity's missing image
 
   entityAttributesAsCharacter?: ItemAttributesAsCharacter;
-};
+} & PhysicalAttributes;
 
 export type Entity = EntityDefinition & { name: string; imageUrl: string };
 

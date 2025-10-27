@@ -279,30 +279,37 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                   重力影响
                 </span>
               )}
-              {entity.collsion !== undefined && (
-                <span className={`text-sm whitespace-pre`}>
-                  {entity.collsion === true ? (
-                    <>
-                      <span className={`text-orange-600 dark:text-orange-400`}>会</span>
-                      产生碰撞
-                      {!!entity.ignore ? (
+              <span className={`text-sm whitespace-pre`}>
+                {!!entity.collsion ? (
+                  <>
+                    <span className={`text-orange-600 dark:text-orange-400`}>会</span>与
+                    {entity.collsion.map((string, key, array) => {
+                      return (
                         <>
-                          ，但不与
-                          <span className='text-fuchsia-600 dark:text-fuchsia-400'>
-                            {(entity.ignore ?? []).filter(Boolean).join(', ')}
+                          <span
+                            className={
+                              string === '角色'
+                                ? 'text-red-600 dark:text-red-500'
+                                : string === '道具'
+                                  ? 'text-indigo-700 dark:text-indigo-400'
+                                  : 'text-fuchsia-600 dark:text-fuchsia-400'
+                            }
+                          >
+                            {string}
                           </span>
-                          碰撞
+                          {key < array.length - 1 ? '、' : ''}
                         </>
-                      ) : null}
-                    </>
-                  ) : (
-                    <>
-                      <span className={`text-indigo-700 dark:text-indigo-400`}>不会</span>
-                      产生碰撞
-                    </>
-                  )}
-                </span>
-              )}
+                      );
+                    })}
+                    产生碰撞
+                  </>
+                ) : (
+                  <>
+                    <span className={`text-indigo-700 dark:text-indigo-400`}>不会</span>
+                    产生碰撞
+                  </>
+                )}
+              </span>
             </div>
           </div>
         )}

@@ -266,30 +266,37 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   重力影响
                 </span>
               )}
-              {item.collsion !== undefined && (
-                <span className={`text-sm whitespace-pre`}>
-                  {item.collsion === true ? (
-                    <>
-                      <span className={`text-orange-600 dark:text-orange-400`}>会</span>
-                      产生碰撞
-                      {!!item.ignore ? (
+              <span className={`text-sm whitespace-pre`}>
+                {!!item.collsion ? (
+                  <>
+                    <span className={`text-orange-600 dark:text-orange-400`}>会</span>与
+                    {item.collsion.map((string, key, array) => {
+                      return (
                         <>
-                          ，但不与
-                          <span className='text-fuchsia-600 dark:text-fuchsia-400'>
-                            {(item.ignore ?? []).filter(Boolean).join(', ')}
+                          <span
+                            className={
+                              string === '角色'
+                                ? 'text-red-600 dark:text-red-500'
+                                : string === '道具'
+                                  ? 'text-indigo-700 dark:text-indigo-400'
+                                  : 'text-fuchsia-600 dark:text-fuchsia-400'
+                            }
+                          >
+                            {string}
                           </span>
-                          碰撞
+                          {key < array.length - 1 ? '、' : ''}
                         </>
-                      ) : null}
-                    </>
-                  ) : (
-                    <>
-                      <span className={`text-indigo-700 dark:text-indigo-400`}>不会</span>
-                      产生碰撞
-                    </>
-                  )}
-                </span>
-              )}
+                      );
+                    })}
+                    产生碰撞
+                  </>
+                ) : (
+                  <>
+                    <span className={`text-indigo-700 dark:text-indigo-400`}>不会</span>
+                    产生碰撞
+                  </>
+                )}
+              </span>
             </div>
           </div>
         )}
@@ -331,9 +338,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   <span className={`text-sm whitespace-pre`}>无购买CD</span>
                 ) : (
                   <span className={`text-sm whitespace-pre`}>
-                    {'购买CD '}
+                    {'购买CD：'}
                     <span className='text-indigo-700 dark:text-indigo-400'>{item.storeCD}</span>
-                    {' 秒'}
+                    {'秒'}
                   </span>
                 )}
                 {item?.teamCD === true && (

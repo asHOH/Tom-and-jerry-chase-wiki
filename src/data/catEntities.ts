@@ -12,7 +12,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '手型枪', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: false,
     description:
       '水平飞出、飞回，对命中的老鼠造成少量伤害、将其抓回并眩晕。如果拉回过程[遇到障碍](包括墙壁、叉子的阻挡，或是某些高低差地形)，则额外造成高额伤害。',
     detailedDescription:
@@ -26,7 +25,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['胡椒粉', '胡椒罐'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description: '对命中的老鼠造成伤害和致盲，并降低其救援速度。',
     detailedDescription:
       '对命中的老鼠造成[15伤害](可受攻击增伤加成)，并附加5秒煎蛋失明和55%救援减速效果。',
@@ -37,7 +36,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '旋转桶盖', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description: '伤害并眩晕命中的敌方；友方再次碰到桶盖时将其拾取，使自身受到的伤害降低一段时间。',
     detailedDescription:
       '对命中的敌方造成[55](基础伤害30+布奇攻击增伤25，同时也能受到其他来源的攻击增伤加成)伤害并眩晕1.5秒；友方再次碰到桶盖时将其拾取，使自身受到的伤害降低20，持续6秒。桶盖被投掷时的初速度较快，会被道具和墙壁反弹。Lv.3时的桶盖飞行速度增加；捡到桶盖会获得[霸体](免疫虚弱和绝大多数控制效果)。',
@@ -50,8 +49,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['分身', '弟弟'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '分身爪刀伤害提高，爪刀CD减少，免疫碎片和老鼠夹，且[继承托普斯的部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和托普斯叠加（如"捕鼠夹"的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如"熊熊燃烧"等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加](包括受到部分环境伤害时)。分身存在期间托普斯获得额外技能，点击可指挥分身出击或跟随（有CD）。托普斯再次使用主动技能可与分身换位（有CD）。托普斯[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。',
     detailedDescription:
@@ -64,8 +62,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '泡泡棒', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description:
       '[鼠方碰到泡泡时会被困住](若有护盾则消耗一层护盾)，需通过挣脱才能离开。[泡泡存在一段时间后消失](有老鼠在其内被困住时则不会自然消失)，可以提前被道具砸破。泡泡被砸破或因挣脱破碎时，对周围的老鼠造成伤害和短暂的爆炸眩晕。',
     detailedDescription:
@@ -78,7 +75,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '垃圾桶', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '阻挡道路，可被推动且被猫推动时的力度更大，可被爪刀打飞，受到4次攻击后会摧毁。垃圾桶的异味会使老鼠受到减速和伤害。由此造成伤害时会减少爪刀CD。',
     detailedDescription:
@@ -91,7 +88,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '咸鱼', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '鼠方踩到后会受到小幅全属性减益。莱特宁爪刀命中[带有咸鱼效果的敌方](包括虚弱老鼠)时，将重置瞬移闪击CD、减少爪刀CD，并回复Hp。瞬移闪击将优先追踪带有咸鱼效果的敌方；手中有老鼠时，则优先追踪最近的咸鱼。',
     detailedDescription:
@@ -103,8 +100,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '斗牛', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '斗牛会来回冲撞，破坏[部分道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)，并对老鼠造成伤害和[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
     detailedDescription:
@@ -116,7 +112,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '仙人掌弹弓', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: false,
     description: '命中时造成伤害和受伤状态、并获得老鼠的小地图位置。',
     detailedDescription:
       '命中时造成26伤害和受伤状态、获得老鼠的小地图位置4.85秒，同时牛仔汤姆获得持续5.85秒的12%加速。小仙人掌球最多存在1.5秒。',
@@ -127,7 +122,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '仙人掌弹弓', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '在碰触实体时爆炸，对周围的敌方造成伤害和眩晕，同时分裂成10颗{小仙人掌球}飞向不同方向。',
     detailedDescription:
@@ -139,8 +134,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '魅惑之吻', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description:
       '飞吻将锁定并追踪附近的老鼠，持续一段时间后消失，也可被护盾、无敌、虚弱抵消，被[部分地形](包括门、厚墙壁、地面等)阻挡。命中老鼠后，其移动、跳跃、搬动奶酪等行为期间会受到持续伤害；受到其他[伤害或部分控制效果](包括爪刀攻击（指甲油外刀除外）、碎片的僵直、夹子、虚弱、部分变身效果（包括变身饮料效果）等，不包括香水反向、烟雾失明、场景物-轮胎造成的击退等)才能解除被吻效果。',
     detailedDescription:
@@ -153,7 +147,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '魅力香水', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: false,
     description:
       '图多盖洛在香水内获得增益，敌方在香水内的基础属性下降。香水区域重叠时持续时间会少量减少。香水区域可被部分受力效果影响而弹飞，沿指定方向飞出地图外。',
     detailedDescription:
@@ -166,7 +159,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '皇家火炮', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '侍卫汤姆可以拖动技能键远程操纵火炮发射{炮弹}，命中时对老鼠造成眩晕和伤害，同时侍卫汤姆获得大幅加速和护盾。火炮可射击数次，有内置CD。',
     detailedDescription:
@@ -178,7 +170,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '皇家火炮', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: false,
     description: '命中时对老鼠造成眩晕和伤害，同时侍卫汤姆获得大幅加速和护盾。',
     detailedDescription:
       '命中时对老鼠造成0.56秒眩晕和[50伤害](不受攻击增伤加成)、移除其[部分增益](隐身、兴奋、远视；天宫图香炉的远视；除了尼宝三级翻滚和魔术师三级卡牌以外的技能与被动隐身)；同时侍卫汤姆加速49%并获得两层护盾，效果持续2.96秒。Lv.3时，对命中的老鼠额外施加减速、禁用其技能和道具键3.5秒。',
@@ -189,7 +180,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '汽水罐', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: false,
     description:
       '汽水罐直线行进到终点后改为做旋转运动，持续20秒。盘旋的汽水罐在{喵喵叫}范围内时将会提高运动速度和半径。汽水罐命中老鼠或另一个汽水罐时，对小范围内所有老鼠造成少量伤害和冰冻。',
     detailedDescription:
@@ -204,7 +194,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['胡椒粉', '胡椒罐'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '米特将其拿在手中时持续受到轻微伤害，并因此获得"刺激"状态，增加移速和跳跃速度。再次使用技能将投掷胡椒粉、造成伤害并形成胡椒粉烟雾，持续对范围内角色造成伤害。米特在烟雾中也会获得"刺激"状态。',
     detailedDescription:
@@ -216,7 +206,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '饭盒陷阱', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '被老鼠踩中或被砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速。',
     detailedDescription:
@@ -235,7 +225,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '牛仔鞭索', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: false,
     description: '若套中老鼠，对老鼠造成伤害和减速；再次点击按钮使塔拉位移向该老鼠位置。',
     detailedDescription:
       '套索存在时间0.75秒，存在时间内最大飞行距离为1750，对套中的老鼠造成[30伤害](受其他攻击增伤影响)并减速20%；在使用技能后进入2.9秒技能读条（若未套中老鼠则提前结束读条），套中老鼠后可再次点击技能，塔拉将[以1850的速度位移向该老鼠位置](位移期间获得无法选中效果，位移时间最多4.9秒，超过时间将会被直接传送至老鼠旁边)。当塔拉用技能位移到老鼠旁边时或套中老鼠4.9秒后，解除[套索效果](包括老鼠受到的减速效果，以及塔拉与老鼠之间连接的套绳贴图效果)。Lv.2及以上的套索命中敌方时，[对其造成2.9秒眩晕](本技能造成伤害与造成眩晕的时机不同，所以即便该老鼠因该次伤害而进入"铁血"状态，也仍会受到后续的眩晕影响)，并使塔拉的移速提高18.5%，持续5秒。',
@@ -248,8 +237,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['天梯'],
     move: false,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '在地面时：任何角色均可与其交互进入天堂，最多同时存在2个。\n在天堂时：猫咪与其交互可获知所有老鼠的位置，并任意选择房间传送；老鼠则可传送到随机洞口。',
     detailedDescription:
@@ -262,7 +250,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['天火'],
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '能绑上老鼠的虚影，[拥有强制放飞机制](300秒倒计时，结束时直接淘汰对应老鼠)。虚影被救援时，改为绑上救援者的虚影，救援所需时间较长，救援位置较普通火箭[偏下](如果火箭下有捕鼠夹，会导致踩夹)。已被绑上天堂火箭的老鼠无法进行天堂火箭救援。在对应老鼠被绑上地面火箭或进入墙缝期后，倒计时速度会加快。',
     detailedDescription:
@@ -276,7 +263,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['舔狗'],
     move: true,
     gravity: false,
-    collsion: false,
     description:
       '奔跑时对碰触的老鼠造成伤害。当{百科全书}在凯特附近闭合时，追求者会快速冲向书籍将其捡起并送还凯特。',
     detailedDescription:
@@ -289,7 +275,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['书', '书籍'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '命中时造成伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍返还部分冷却并将老鼠直接抓在手中。当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。',
     detailedDescription:
@@ -302,8 +288,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '瑜伽球', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description: '苏蕊再次使用技能使其膨胀，膨胀的瞬间对周围的敌方造成伤害和眩晕，并弹飞对方。',
     detailedDescription:
       '苏蕊再次使用技能使瑜伽球膨胀，膨胀的瞬间对周围的敌方造成30伤害和1.5/1.5/2.5秒眩晕，[眩晕期间对方会被弹飞](弹飞距离取决于眩晕时间)。可存储2次。',
@@ -315,8 +300,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '猎', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description: '用于标示斯飞即将飞去的位置。',
     create: '由斯飞-猎召唤并投掷。',
   },
@@ -325,7 +309,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '迷乱列车', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '轨道以技能释放的位置为中点生成，但方向随机。轨道生成完毕后出现{列车}，对被撞击的敌人施加伤害，眩晕和击退效果。',
     detailedDescription:
@@ -338,7 +321,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '迷乱列车', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: false,
     description: '沿{轨道}首端冲撞至末端，对被撞击的敌人施加伤害，眩晕和击退效果。',
     detailedDescription:
       '进行1.8秒的冲撞，沿{轨道}首端冲撞至末端，对被撞击的敌人施加伤害，并造成眩晕和击退效果。冲撞完成后重新生成下一段列车，重复数次。被冲撞过的老鼠短时间内获得冲撞免疫效果（免疫列车冲撞带来的伤害和控制，但被撞击仍会造成小幅度位移）。\n\n升级效果：Lv.2列车经过恶魔汤姆会使恶魔汤姆获得一层护盾。撞击老鼠会使恶魔汤姆移速提高15%，[爪刀CD固定降低3.5秒](空刀CD由命中时的CD乘角色内置的空刀返还CD比例得到)。',
@@ -350,7 +332,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '狡兔三窟', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description: '敌方触碰洞穴时会受到伤害并眩晕一段时间，随后洞穴消失。',
     detailedDescription:
       '洞穴持续11.5秒（出现的第1秒没有贴图），敌方触碰洞穴时会受到25伤害和1.5秒眩晕，随后洞穴消失。',
@@ -361,7 +342,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '胡萝卜', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: false,
     description:
       '命中敌方造成伤害并减速。分为常规和追踪两种行动方式，追踪状态下的胡萝卜飞镖不受重力影响。',
     detailedDescription:
@@ -374,8 +354,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '胡萝卜', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '出现时砸晕范围内敌人并造成伤害，巨型胡萝卜周围老鼠大幅度降低移速和推奶酪速度，在洞口附近时会阻碍奶酪推进，巨型胡萝卜会存在一段时间，老鼠可以通过交互吃掉巨型胡萝卜。兔八哥存在"胜利"（详见{我，兔八哥}）时，将消耗1层状态造成额外伤害并将奶酪冲出洞口（最后一块奶酪只能被冲出一次）。',
     detailedDescription:
@@ -387,8 +366,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '追风双翼', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '对敌方造成少量伤害和击退。击退期间对触碰到的[所有单位](包括追风汤姆)造成少量伤害，对敌方额外造成眩晕效果。',
     detailedDescription:
@@ -400,8 +378,7 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '追风双翼', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description: '砸中敌方造成少量伤害和短暂眩晕。',
     detailedDescription:
       '铁砧下落1.6秒或命中后对附近敌方造成小范围的[18/18/30伤害和1.2秒眩晕](铁砧不享受攻击力加成；老鼠被铁砧眩晕期间及其效果结束后1秒内不会再受到铁砧效果)。\n\n当追风汤姆手中有老鼠时，会优先[扔出老鼠](扔需要消耗一次技能)，使其回复60血，并自动绑上碰到的火箭，但会被其他敌方单位以及部分可被攻击的[中立生物](如森林牧场的鸭爸爸、鸭妈妈)阻挡，攻击效果等于铁砧，且在铁砧命中或提前结束时同样会给予老鼠铁砧效果；老鼠在被扔出期间可使用技能和道具、进行交互、[免疫伤害](追风的俯冲伤害除外)，但不免疫控制，且不可自主逃离。',
@@ -412,7 +389,6 @@ const catEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '掷花枪', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: false,
     description:
       '对碰到的老鼠造成少量伤害。花枪飞行一段时间后或如玉再次点击技能时折返回她身边，[折返时也会造成伤害](老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若折返时命中花枪折返前命中过的目标，如玉可点按["花枪反击"键](该按键位置和大小可进行调整)触发"花枪反击"（详见{如玉}）。',
     detailedDescription:

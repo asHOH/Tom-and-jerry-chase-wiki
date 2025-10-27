@@ -17,7 +17,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '鸟哨', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: false,
     description:
       '金丝雀会来回盘旋，持续向下方投掷{鸟哨鞭炮}，轰炸一段时间后自行飞离。同一房间内最多只能有1只由鸟哨召唤的金丝雀。',
     detailedDescription:
@@ -30,8 +29,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['炸弹', '鸟哨炸弹'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description:
       '命中敌方时爆炸，造成伤害和眩晕，被命中的目标短暂免疫该道具效果；掉落一定时间后也会自行爆炸。',
     detailedDescription:
@@ -43,7 +41,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '烟雾弹', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '烟雾会遮蔽敌方视野，使其无法看到烟雾背后的情况，且无法查看小地图；对我方则是半透明的。',
     detailedDescription:
@@ -55,8 +52,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '视觉干扰器', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description: '干扰器落地时，使小范围内的友方老鼠获得短暂隐身。',
     detailedDescription:
       '干扰器落地时，使小范围内的友方老鼠获得3.5秒隐身。Lv.1干扰器提供的隐身会被部分交互行为破除。Lv.2干扰器提供的隐身不再会被交互破除，且能免疫香水反向、烟雾失明、魅力香水烟雾的效果。Lv.3干扰器提供的隐身附带移速提高20%的效果。',
@@ -67,8 +63,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '飞翔金币', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description:
       '金币命中敌方造成眩晕，被命中的敌方短暂免疫该道具效果。金币不会因虚弱而从手中掉落。',
     detailedDescription:
@@ -81,7 +76,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['桶', '炸药桶'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '延迟数秒后爆炸，对周围造成不分敌我的伤害和眩晕，对墙缝造成伤害，并炸毁范围内的火箭。猫咪可以通过交互拆除火药桶，老鼠可以通过交互推动火药桶。',
     detailedDescription:
@@ -94,8 +89,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '舰艇火炮', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: true,
-    ignore: ['平台'],
+    collsion: ['道具', '墙壁', '地面'],
     description:
       '老鼠可通过交互键进入火炮，通过投掷键发射自身，对碰到的敌方造成伤害与眩晕，碰到绑在火箭上的队友时自动进行救援交互。火炮内不会被投掷道具及部分技能命中。若火炮内老鼠进入虚弱，则火炮会提前消失。同一房间最多出现两个火炮。火炮持续数秒后消失。火炮会在小地图上全程暴露位置。',
     detailedDescription:
@@ -107,8 +101,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方攻击增伤提高一段时间。被碰触若干次后获得强化，之后碰触的友方额外使墙缝增伤提高，并免疫受伤。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -120,8 +113,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方救援速度短暂提高。被碰触若干次后获得强化，之后碰触的友方额外获得瞬息救援能力（碰触火箭自动救援成功）。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -133,8 +125,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方解除虚弱，且Hp低于上限的30%时获得短暂恢复效果。被碰触若干次后获得强化，之后碰触的友方额外获得一层护盾。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -146,8 +137,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方隐藏自身在敌方小地图上的位置一段时间。被碰触若干次后获得强化，之后碰触的友方额外短暂获知猫的位置。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -159,8 +149,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方短暂提高跳跃高度。被碰触若干次后获得强化，之后碰触的友方获得二段跳状态。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -173,7 +162,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['炮', '炮弹'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '直接命中敌方或墙缝时造成一段伤害，命中后爆炸再对一定范围内敌方和墙缝造成伤害和眩晕。爆炸产生的冲击波可以炸飞老鼠夹、叉子等道具。',
     detailedDescription:
@@ -186,7 +175,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['地雷', '隐形雷'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '被放置一小段时间后进入隐身状态，敌方靠近时现身，并在短暂延迟后飞向敌方并爆炸，对小范围内的敌方造成伤害和眩晕，对墙缝造成伤害，对范围内所有角色产生小幅度的爆炸击退效果。感应雷被道具击中会原地倒计时并爆炸。感应雷30秒后自然消失。',
     detailedDescription:
@@ -198,8 +187,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '头盔', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description: '期间{无敌}，但惯性增大；小范围内的队友也{无敌}，但{禁用技能}。',
     detailedDescription:
       '期间{无敌}，但惯性增大、移速降低3.5%、跳跃速度降低15%；小范围内的队友也{无敌}，但{禁用技能}。3级头盔可以[更灵活地移动](不再受惯性影响，不会降低移速和跳跃速度)。\n注：该效果属于{1类变身}（详见"变身"的效果描述）。',
@@ -212,8 +200,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['长矛'],
     move: true,
     gravity: false,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description:
       '对触碰的敌方造成伤害和控制效果，可携带触碰的1名友方角色和1个指定道具，以及再次使用技能的剑客泰菲一同飞行。长枪的速度和部分特性可随蓄力时间改变。携带的易碎道具碰到敌方自动产生投掷效果。',
     detailedDescription:
@@ -226,7 +213,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['仙人掌'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '被猫咪踩踏时消失，并对其造成短暂硬直，使其移速降低且每秒受到伤害，减速效果可叠加；被老鼠踩踏数次后消失；存在较长时间后会自然消失。同一角色踩踏有内置CD。',
     detailedDescription:
@@ -238,7 +225,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '仙人掌', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '被猫咪踩踏时消失，并对其造成短暂硬直，使其移速降低且每秒受到伤害，减速效果可叠加；被老鼠踩踏数次后消失；存在较长时间后会自然消失。同一角色踩踏有内置CD。',
     detailedDescription:
@@ -250,7 +237,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '地狱裂隙', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description: '用于标记恶魔杰瑞传送回的位置，技能结束后自然消失。',
     create: '恶魔杰瑞-地狱裂隙在使用时自动生成。',
   },
@@ -260,7 +246,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['传送门', '地狱之门'],
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '两个恶魔之门间会建立连接，友方可与其交互，被传送并获得一种随机强化效果，效果持续时间随恶魔之门间的距离增大而增大（有下限和上限）；敌方碰到恶魔之门后会被强制传送（短时间内不会重复触发）；处于被投掷状态的道具碰到恶魔之门也会被传送。恶魔之门持续一定时间后消失，进行传送会使恶魔之门的持续时间减少。',
     detailedDescription:
@@ -273,8 +258,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['蓝恶魔', '蓝色小恶魔'],
     move: true,
     gravity: false,
-    collsion: true,
-    ignore: ['道具', '平台', '墙壁'],
+    collsion: ['地面'],
     description:
       '被投掷后留在原地，范围内出现敌方时自动飞向对方，命中时造成少量伤害，并短暂禁用敌方的技能和道具键。',
     detailedDescription:
@@ -287,8 +271,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['红恶魔', '红色小恶魔'],
     move: true,
     gravity: false,
-    collsion: true,
-    ignore: ['道具', '平台', '墙壁'],
+    collsion: ['地面'],
     description: '被投掷后沿直线飞行，命中时造成少量伤害，并使敌方向背对方向击退一段距离。',
     detailedDescription:
       '被投掷后沿直线飞行，命中时造成20伤害，并使敌方向背对方向击退一段距离，击退期间无法移动。红色小淘气造成的伤害以被投掷者为伤害来源，可受其攻击增伤影响。',
@@ -300,7 +283,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['绿恶魔', '绿色小恶魔'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '具有{高尔夫球}的特点，但伤害更低，且有比高尔夫球有更大的弹性。被恶魔泰菲投掷时，命中敌方不会消耗恶魔泰菲的黑暗印记。',
     detailedDescription:
@@ -312,7 +295,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '爱心之吻', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: false,
     description:
       '释放后飘向最近的队友，队友被爱心触碰后与雪梨建立友好关系，持续恢复Hp；友好关系持续20秒后，同伴额外获得全面的强化效果，同时免疫反向和失明，直到友好关系中断。友好关系期间，雪梨可通过特殊技能按键[远程治疗同伴](每次建立关系只可使用一次，可被打断。CD：5秒)，且若雪梨隐身，则双方都隐身。',
     detailedDescription:
@@ -324,7 +306,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '爱之花洒', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '范围内的队友持续恢复Hp并解除反向和失明，还能浇灭鞭炮、熄灭火箭、对敌方和道具产生推力、减速敌方。花洒存在一段时间后消失。',
     detailedDescription:
@@ -337,8 +318,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '爱心花束', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description:
       '花束为命中的友方回复Hp，并弹向最近的另一个友方。若首先命中的友方已建立友好关系，则双方额外回复Hp，且双方各获得一个一次性传送技能（点击技能后立刻飞向同伴，传送期间获得无法被任何道具、技能命中；友好关系解除时该技能同步失效）。若已建立友好关系，但花束首先命中的不是友好关系的友方，则与之建立友好关系并获得传送技能、之前的友好关系消失。',
     detailedDescription:
@@ -350,7 +330,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '丘比特之箭', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: false,
     description: '命中友方为其回复一定Hp并提高移速；命中敌方造成伤害。',
     detailedDescription:
       '命中友方为其回复25/25/50Hp且移速提高10%，持续1.6秒；命中敌方造成[30/30/55](基础伤害25/25/50+天使杰瑞攻击增伤5，同时也能受到其他来源的攻击增伤加成)伤害。弓箭受到重力，但速度大小不变，只改变方向（不受外力时，箭的竖直速度逐渐增大而水平速度逐渐减小，并非严格的抛物线）。弓箭可被鞭炮影响而改变飞行轨迹。',
@@ -361,7 +340,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '丘比特之箭', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: false,
     description: '命中友方为其回复更多Hp并提高移速，命中敌方造成更高伤害和眩晕。',
     detailedDescription:
       '命中友方为其回复50/50/99Hp和1.6秒的5%加速；命中敌方造成[55/55/105](基础伤害50/50/100+天使杰瑞攻击增伤5，同时也能受到其他来源的攻击增伤加成)伤害和1.4秒眩晕（无视苏蕊的跳舞，但不打断跳舞或队友的跟随；无视天使汤姆二级被动的霸体，且可救下队友）。弓箭受到重力，但速度大小不变，只改变方向（不受外力时，箭的竖直速度逐渐增大而水平速度逐渐减小，并非严格的抛物线）。弓箭可被鞭炮影响而改变飞行轨迹。Lv.3蓄力箭命中虚弱友方老鼠会解除其虚弱状态。',
@@ -372,7 +350,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '止戈雷云', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '雷云内敌方移速和伤害降低。如果敌方在雷云中做出[攻击行为](爪刀、道具、技能)则会被雷劈（有一定延迟），受到[电击伤害](电击伤害会使目标感电，每层感电使受到的电击伤害增加，可叠加)。',
     detailedDescription:
@@ -386,7 +363,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['红牌', '红色纸牌'],
     move: true,
     gravity: true,
-    collsion: false,
     description:
       '可穿墙且被投掷时的初速度较高，命中目标被强制传送一段距离且改变朝向，立刻受到伤害并掉落手中道具，然后禁用技能且移速降低一段时间。',
     detailedDescription:
@@ -399,7 +375,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['黄牌', '黄色纸牌'],
     move: true,
     gravity: true,
-    collsion: false,
     description:
       '可穿墙且被投掷时的初速度较高，命中目标被强制传送一段距离且改变朝向，获得间歇性的反向+高额移速，持续一段时间。',
     detailedDescription:
@@ -412,7 +387,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['蓝牌', '蓝色纸牌'],
     move: true,
     gravity: true,
-    collsion: false,
     description:
       '可穿墙且被投掷时的初速度较高，命中目标被强制传送一段距离且改变朝向，获得一段时间的失重状态且降低跳跃速度，但可在空中进行跳跃。',
     detailedDescription:
@@ -425,8 +399,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['小兔子'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '魔术师可对其下达救援、搬奶酪、推奶酪、拾取、投掷、治疗或跟随指令。兔子继承魔术师的部分效果。详见{魔术师}技能描述。',
     create: '通过魔术师-兔子先生召唤.',
@@ -446,8 +419,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['大兔子', '兔表哥', '蛋白兔'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '魔术师可对其下达举火箭、指卧撑或保镖指令。兔表哥被卡牌命中时会储存该效果，并在通过技能出拳命中猫咪时对其附加。详见{魔术师}技能描述。',
     create: '通过魔术师-兔子大表哥召唤。',
@@ -466,8 +438,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '比萨斜塔', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: true,
-    ignore: ['平台', '地面', '墙壁'],
+    collsion: ['墙壁'],
     description: '出现时弹飞碰到的敌方；存在期间阻挡角色通行。',
     detailedDescription:
       '斜塔出现时弹飞碰到的敌方，使其[以850的速度被击退，并眩晕1.5秒](正常情况下最终位移距离1275，若弹飞过程中眩晕结束则停止弹飞。可破盾，可击飞跳舞中的苏蕊)。[斜塔与墙壁和地板类似，塔顶可站立，塔身会阻挡道路](朝右的斜塔允许鼠方从右往左通过；空中释放时概率出现无法站立的"飘塔")。斜塔存在3.5/3.5/6秒后崩毁。',
@@ -479,8 +450,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['披萨饼', '大饼'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '老鼠可通过交互键骑乘并一同移动，滚动的披萨撞到敌方时破碎，对撞到的敌方和在披萨上驾驶的老鼠造成伤害和[眩晕](可掉落道具和老鼠)，并生成{披萨块}，老鼠碰到后会缓慢恢复Hp。披萨块存在一定时间后消失；披萨存在一定时间后也会自然破碎，但不生成披萨块。',
     detailedDescription:
@@ -493,8 +463,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '意式披萨', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '老鼠碰到后会缓慢恢复Hp。披萨块存在一定时间后消失。Lv.2及以上的披萨块可以解除一些不良状态。',
     detailedDescription:
@@ -507,7 +476,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['足球'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '命中敌方时造成"强光耀眼"状态（受到伤害，并且[失明](除自身所在位置以外的大部分区域被黑暗笼罩)，降低交互速度，再次受到来自拿坡里鼠的伤害会眩晕2秒（眩晕有8秒内置CD））。足球存在时间与蓄力时间有关。足球可以反复弹跳。',
     detailedDescription:
@@ -520,8 +489,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['分身'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description: '分身会自由走动，被击倒时使敌方短暂失明。',
     detailedDescription:
       '分身存在6.9/6.9/11.9秒，被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。分身Hp上限为25并[按比例继承本体Hp](如本体Hp为24，分身Hp将为8.33)、继承角色Hp恢复速度、不继承本体状态和知识卡、免疫捕鼠夹；Hp归零或持续时间结束时将原地消失；会在地图内四处走动，可能会钻管道；若半径800范围内出现猫咪，分身会尝试远离之。Lv.3分身存在期间，侦探泰菲可以再次点击技能键与分身换位（CD：5秒），但爬梯子、被眩晕时无法换位。',
@@ -533,8 +501,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '追踪饮料', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '一旦印记与猫咪处在同一个房间，印记会召唤1个[模拟侦探泰菲或队友外形](只包括存活的鼠方队友)的{饮料分身}。分身被击倒时使敌方短暂失明。存在{侦探泰菲分身}或{饮料分身}时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。',
     detailedDescription:
@@ -547,8 +514,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['分身'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '饮料分身会[模拟侦探泰菲或队友外形](只包括存活的鼠方队友)，会自由走动，被击倒时使敌方短暂失明。',
     detailedDescription:
@@ -562,7 +528,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['风墙'],
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '[敌方会被风墙阻挡，无法进出风墙](位于风墙内的敌方仍可通过部分传送及强制位移类技能离开，如莱特宁-瞬移闪击，库博-虚幻梦影)。',
     detailedDescription:
@@ -574,8 +539,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '幻影剑气', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '剑气击中角色和部分墙壁可反弹一次，再次击中时剑气消失；击中平台形成{幻影}，剑客莉莉再次点击技能按钮可传送至幻影处。剑气击中敌方将造成伤害和减速；击中友方将给予移速、救援及跳跃高度提升，且其在此期间可用额外技能键瞬移至幻影处。',
     detailedDescription:
@@ -585,10 +549,8 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
   幻影: {
     entitytype: '指示物',
     owner: { name: '幻影剑气', type: 'skill' },
-    ignore: ['剑气幻影'],
     move: false,
     gravity: false,
-    collsion: false,
     description: '用于标记技能传送的位置，5秒后自然消失。',
     create: '由[剑气]落地时召唤。',
   },
@@ -597,8 +559,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '藤蔓', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: true,
-    ignore: ['平台', '地面'],
+    collsion: ['墙壁'],
     description:
       '藤蔓顶端会生成平台和{藤蔓纸盒}。藤蔓可攀爬，且被友方攀爬的速度大幅提高。敌方登上藤蔓顶端时受到1秒减速效果，且其在藤蔓顶端跳跃时会使藤蔓持续时间减少。',
     detailedDescription:
@@ -610,7 +571,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '藤蔓', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description: '与{大纸盒}类似，但只会开出部分投掷物或{奶酪}。',
     detailedDescription:
       '与{大纸盒}类似，但只会开出以下8种道具：{盘子}、{扁盘}、{玻璃杯}、{碗}、{叉子}、{高尔夫球}、{灰花瓶}、{奶酪}。携带"美食家"知识卡时，改为开出{牛奶}或{蛋糕}，与{小纸盒}/{大纸盒}共计次数。',
@@ -623,8 +584,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '军团战车', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '战车拥有独立Hp，且持有{霸体}（免疫{虚弱}和大部分控制状态，但不免疫{禁用技能}）。乘坐战车期间可以使用"投掷战矛"（替代原本的武器技能）和原本的主动技能，但无法交互、使用道具或回复Hp。当战车Hp归零、持续时间结束、蒙金奇主动脱离时，战车进入自毁倒计时，期间{禁用主动、武器技能}，结束时爆炸对范围内所有单位造成伤害和{爆炸}，对未脱离战车的蒙金奇造成极高伤害。',
     detailedDescription:
@@ -662,8 +622,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '军团战车', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description: '有自毁倒计时，结束时爆炸对范围内所有单位造成伤害和{爆炸}。',
     detailedDescription: '有自毁倒计时，结束时爆炸对范围内所有单位造成{75}伤害和2秒{爆炸}。',
     create: '蒙金奇与{战车}分离后生成。',
@@ -674,7 +633,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['矛', '长矛'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description: '命中敌方或墙缝造成伤害。',
     detailedDescription:
       '命中敌方造成[30伤害](无法受到攻击增伤加成)，命中墙缝造成[5伤害](无法受到攻击增伤加成)，可触发{投掷命中效果}（{追风}除外）。',
@@ -685,7 +644,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '尼宝的朋友', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '朋友持续一段时间后消失。尼宝可使用技能使附近的朋友向尼宝扔出{鱼钩}。鱼钩碰到道具会携带之；碰到角色会将其勾回，并救下猫咪手中的老鼠。',
     detailedDescription:
@@ -698,7 +656,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['钩子'],
     move: true,
     gravity: false,
-    collsion: false,
     description: '鱼钩碰到道具会携带之；碰到角色会将其勾回，并救下猫咪手中的老鼠。',
     detailedDescription:
       '鱼钩碰到道具会携带之，碰撞猫咪时造成相应效果；碰到角色会将其勾回，并救下[猫咪](包括部分护盾、霸体状态下的猫咪)手中的老鼠。',
@@ -710,7 +667,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['电球'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '命中敌方造成电击伤害和眩晕（电击伤害会对目标附加感电，使受到的电击伤害增加，可叠加）。可二次充能。',
     detailedDescription:
@@ -723,7 +680,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['电球'],
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '效果与小电球相同：命中敌方造成电击伤害和眩晕（电击伤害会对目标附加感电，使受到的电击伤害增加，可叠加）。可二次充能。',
     detailedDescription:
@@ -735,7 +692,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '能源装置', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '可被朵朵碰触，解除虚弱并恢复Hp和电量，且对周围造成电击伤害和眩晕；也可被其他老鼠拾取和投掷，命中敌方时破碎并造成电击伤害和眩晕（电击伤害会对目标附加感电，使受到的电击伤害增加，可叠加）。电池存在一定时间后自行消失。',
     detailedDescription:
@@ -748,7 +705,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['镜子'],
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '[所有角色](包括敌方角色)均可与魔镜交互，消耗三颗星星获得随机道具、或消耗六颗星星传送至任意房间。',
     detailedDescription:
@@ -760,7 +716,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '魔镜召唤咒', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: false,
     description: '[角色未手持道具时](机器鼠则为未拾取道具时)可通过交互键将其拾取，直接获得经验。',
     create: '用{魔镜}许愿时有概率出现。',
     specialImageUrl: '/images/items/经验蛋糕.png',
@@ -770,7 +725,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '仙女棒', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: false,
     description:
       '对命中者施加对应的效果，根据召唤时消耗的星星数获得不同特性：\n1星：队友隐身；猫咪受到伤害并减速\n2星：队友获得二段跳效果；猫咪同1星\n4星：队友缓慢恢复Hp；猫咪同1星\n6星：队友变为{小星星}，免疫虚弱和眩晕；猫咪同1星\n8星：对队友无效；猫咪变为{大星星}、手上的老鼠掉落',
     detailedDescription:
@@ -782,8 +736,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '仙女棒', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具}。小星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}。',
     detailedDescription:
@@ -809,8 +762,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '仙女棒', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}。大星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}。大星星拥有比普通猫咪更大的体型。大星星拥有爪刀，爪刀判定范围与附加效果不受影响。',
     detailedDescription:
@@ -837,7 +789,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '仙女棒', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: false,
     description: '对命中者造成伤害和微弱减速。',
     detailedDescription:
       '对命中者造成{20}的[无视护盾的伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)和10%减速，持续2秒',
@@ -849,7 +800,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '记录美好瞬间', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description: '用于标记被拍照者将传送回的位置，技能结束后自然消失。',
     create: '由米可-记录美好瞬间在被拍摄者所在位置生成。',
   },
@@ -859,7 +809,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['分金符', '符', '纸符'],
     move: true,
     gravity: true,
-    collsion: false,
     description: '命中敌方造成伤害，并扣除一定局内金币。可穿墙且被投掷时的初速度较高。',
     detailedDescription:
       '命中敌方造成50伤害，并扣除500局内金币。被投掷时无前摇，可穿墙且被投掷时的初速度较高，可触发投掷类知识卡和特技：{缴械}、{投手}、{追风}、{精准投射}、{干扰投掷}、{勇气投掷}。',
@@ -871,7 +820,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['分金符', '符', '纸符'],
     move: true,
     gravity: true,
-    collsion: false,
     description: '命中敌方造成伤害和短暂定身状态。可穿墙且被投掷时的初速度较高。',
     detailedDescription:
       '命中敌方造成30伤害和2秒定身状态（无法移动、交互、使用道具或技能，且自身完全失重）。可穿墙且被投掷时的初速度较高，可触发投掷类知识卡和特技：{缴械}、{投手}、{追风}、{精准投射}、{干扰投掷}、{勇气投掷}。',
@@ -885,8 +833,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['胖呆呆', '袋子'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '地面'],
     description:
       '未落地时可命中猫咪造成减速，或命中墙缝造成伤害；落地后生成乾坤袋(召唤物)。霜月再次使用技能时，乾坤袋(召唤物)变回乾坤袋(道具)，并飞向霜月。',
     detailedDescription:
@@ -899,8 +846,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['胖呆呆', '袋子'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '小地图会显示位置。常态持有{霸体}，受到两次伤害后会进入20秒{猫虚弱}（Hp恢复速度为0.1/秒）。拥有吞噬和激励两个技能，且老鼠可与其进行融合。\n融合：属于{变身}。老鼠[与乾坤袋融合](融合后该老鼠状态栏和小地图的头像会变为胖呆呆)，融合后可操纵乾坤袋移动、跳跃、[进行部分交互](开/关门，抱起队友，钻少数管道等)、释放技能。可抱起队友并通过投掷将其扔出，命中敌方造成伤害和眩晕。无法主动拾取道具。',
     detailedDescription:
@@ -955,7 +901,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '喜剧之王', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description: '命中敌方造成极少量伤害和减速。',
     detailedDescription:
       '命中敌方造成2.5伤害并在2.5秒内降低10%移速，可触发投掷类知识卡和特技：{缴械}、{投手}、{追风}、{精准投射}、{干扰投掷}、{勇气投掷}。',
@@ -966,8 +912,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '蓝图', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '地面'],
     description:
       '落地后生成一张{蓝图(召唤物)(衍生物)}。接触蓝图(召唤物)的{火箭}变为{线条火箭}（燃烧速度减半），猫咪[隐身状态暂时失效](离开蓝图时恢复)且受到伤害时会短暂变为线条猫（有内置CD），并使手中老鼠掉落。莱恩再次使用技能或持续较长时间后收回蓝图。\n线条猫：只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。' +
       figureDescription,
@@ -981,7 +926,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '蓝图', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description:
       '接触蓝图(召唤物)的{火箭}变为{线条火箭}（燃烧速度减半），猫咪[隐身状态暂时失效](离开蓝图时恢复)且受到伤害时会短暂变为线条猫（有内置CD），并使手中老鼠掉落。莱恩再次使用技能或持续较长时间后收回蓝图。\n线条猫：线条猫：只可使用移动、跳跃和爪刀，但受到的伤害和[受控时间](包括虚弱时间)减少50%，爪刀CD减少40%。' +
       figureDescription,
@@ -995,8 +939,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '蓝图', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}；变身期间只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减少。变身结束后一段时间内{免疫线条猫效果}。',
     detailedDescription:
@@ -1008,8 +951,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '蓝图', type: 'skill' },
     move: false,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description: '与{火箭}的特性类似，但引线燃烧速度减半。',
     create: '接触{蓝图(召唤物)(衍生物)}的{火箭}变为{线条火箭}，离开范围时恢复。',
   },
@@ -1018,7 +960,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '蘸水笔', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '释放后向莱恩的朝向方向滚动，产生阻挡并对触碰的敌方造成伤害、并击落道具。' +
       figureDescription,
@@ -1032,7 +974,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '蘸水笔', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '释放后向莱恩的朝向方向**弹跳（横向速度比圆形慢）**，产生阻挡并对触碰的敌方造成**更高**伤害、并击落道具。' +
       figureDescription,
@@ -1047,8 +989,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['三角形'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description: '对踩中的敌方造成少量伤害，并降低移速和绑火箭速度。' + figureDescription,
     detailedDescription:
       '对踩中的敌方造成[15伤害](不受攻击增伤影响)、12.5%减速和绑火箭速度下降35%，持续7秒；被敌方踩中或持续10秒后消失。' +
@@ -1061,8 +1002,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['三角形'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '对踩中的敌方造成少量伤害，并降低移速和绑火箭速度。**踩中后将飞出3个普通三角**。' +
       figureDescription,
@@ -1077,7 +1017,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['正方形'],
     move: true,
     gravity: false,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '停留在生成位置，可被推动，可作为平台或墙壁使用，被爪刀攻击后消失。' + figureDescription,
     detailedDescription:
@@ -1091,7 +1031,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['正方形'],
     move: true,
     gravity: false,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description:
       '停留在生成位置，可被推动，可作为平台或墙壁使用，被爪刀攻击后消失。**会反弹碰到的敌方**。' +
       figureDescription,
@@ -1106,8 +1046,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['毛线团'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具', '平台'],
+    collsion: ['墙壁', '地面'],
     description:
       '{毛线球}与{梦游杰瑞}通过{毛线}连接。毛线球与敌方碰撞时使其受到减速，拉出的毛线也能使敌方受到减速。毛线球分为抛出、滞留和收回三个阶段。1.抛出：抛出毛线球，无视平台，会被敌方或墙壁反弹，坠落至地面时进入滞留状态；2.滞留：暂时不移动；3.收回：沿着毛线的轨迹进行移动，带回自身碰到的部分道具（有数量上限）。',
     detailedDescription:
@@ -1119,7 +1058,6 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '毛线球', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: false,
     description: '{毛线球}与{梦游杰瑞}通过{毛线}连接。踩到毛线的敌方会受到极少量伤害并被减速。',
     detailedDescription:
       '{毛线球}与{梦游杰瑞}通过{毛线}连接。[毛线随梦游杰瑞移动逐渐拉长，且会按规律打结](毛线球在落地前会被墙壁及敌方角色反弹，在落地后立刻与梦游杰瑞所在位置形成第一根毛线连接并打结，随后每隔一段时间以最新的打结处与梦游杰瑞实际位置为两端点形成一道连接并打结，然后若新生成的连接与上一个连接之间的夹角接近0°或180°、且上一个连接的连接对象不为毛线球、且上一个连接的长度不等于0，则清除这两道连接之间的打结，重新生成一个更长的连接。毛线球和已打结的部分不会因隐身药水隐藏)，踩到毛线的敌方会受到2.5伤害并在2.5秒内降低10%移速。',
@@ -1131,8 +1069,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     factionId: 'mouse',
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '持有{霸体}但无法进行部分交互，且受到伤害（部分伤害除外）时会自爆并弹出驾驶员，若被猫咪击毁则会为其提供额外经验值。',
     detailedDescription:
@@ -1185,7 +1122,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     owner: { name: '机器鼠', type: 'entity' },
     move: true,
     gravity: true,
-    collsion: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
     description: '对命中的敌方造成{减速}，对命中的墙缝造成伤害。',
     detailedDescription: '对命中的敌方造成{减速}，对命中的墙缝造成2伤害。',
     create: '由{机器鼠(衍生物)}使用主动技能发射。',
@@ -1197,8 +1134,7 @@ const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
     aliases: ['比例鼠', '肌肉鼠', '肌肉杰瑞'],
     move: true,
     gravity: true,
-    collsion: true,
-    ignore: ['道具'],
+    collsion: ['墙壁', '平台', '地面'],
     description:
       '{无敌}，但无法进行交互（开、关门除外）或使用技能、道具；可以进机械鼠；可使用道具键发起攻击，对猫咪造成伤害和减速，对墙缝造成伤害。',
     detailedDescription:
