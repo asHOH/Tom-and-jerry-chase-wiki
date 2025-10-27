@@ -153,6 +153,9 @@
     ],
     "{*.{json,css,md,mdx},!(templates|.next|out|coverage)/**/*.{json,css,md,mdx}}": [
       "prettier --write --ignore-unknown"
+    ],
+    "public/**/*.html": [
+      "prettier --write --ignore-unknown"
     ]
   },
   "depcheck": {
