@@ -559,6 +559,6 @@ export const contributors: Contributor[] = [
   {
     id: 'rumeng',
     name: '如梦',
-    roles: [{ type: RoleType.ArtProvider }],
+    roles: [{ type: RoleType.DataTester, isMinor: true }],
   },
 ];
