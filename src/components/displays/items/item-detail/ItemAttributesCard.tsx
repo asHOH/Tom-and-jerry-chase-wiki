@@ -272,7 +272,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                     <span className={`text-orange-600 dark:text-orange-400`}>会</span>与
                     {item.collsion.map((string, key, array) => {
                       return (
-                        <>
+                        <span key={key}>
                           <span
                             className={
                               string === '角色'
@@ -285,7 +285,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                             {string}
                           </span>
                           {key < array.length - 1 ? '、' : ''}
-                        </>
+                        </span>
                       );
                     })}
                     产生碰撞
