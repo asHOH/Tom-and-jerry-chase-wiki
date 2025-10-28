@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import clsx from 'clsx';
 import FilterLabel from './FilterLabel';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 export type FilterRowProps<T extends string | number> = {
   label: string;
@@ -40,9 +41,15 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
     ariaLabel,
     isDarkMode,
   } = props;
+  const isMobile = useMobile();
 
   return (
-    <div className={clsx(`flex justify-center items-center gap-2 mt-4`, className)}>
+    <div
+      className={clsx(
+        `flex justify-center items-center gap-2 ${isMobile ? 'mt-1' : 'mt-4'}`,
+        className
+      )}
+    >
       <FilterLabel displayMode='inline'>{label}</FilterLabel>
       <FilterLabel displayMode='block'>筛选:</FilterLabel>
       {/* <div className='w-full md:w-32 text-left'>

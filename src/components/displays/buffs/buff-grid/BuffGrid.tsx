@@ -25,57 +25,32 @@ export default function BuffClient({ description }: Props) {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const filteredBuffs = Object.values(buffs)
-    .filter((buff: Buff) => !buff.unuseImage)
-    .filter((buff: Buff) => {
-      const globalMatch =
-        selectedGlobal.length === 0 ||
-        (selectedGlobal.includes('全局') && buff.global) ||
-        (selectedGlobal.includes('个人') && !buff.global);
+  const filteredBuffs = Object.values(buffs).filter((buff: Buff) => {
+    const globalMatch =
+      selectedGlobal.length === 0 ||
+      (selectedGlobal.includes('全局') && buff.global) ||
+      (selectedGlobal.includes('个人') && !buff.global);
 
-      let influenceMatch = true;
-      if (selectedInfluences.length > 0) {
-        // "其它" means buffs with no influence restriction
-        const isNone = selectedInfluences.includes('其它');
-        const isBuff = selectedInfluences.includes('正面');
-        const isDebuff = selectedInfluences.includes('负面');
-        influenceMatch =
-          (isNone && buff.isbuff == undefined) ||
-          (isBuff && buff.isbuff === true) ||
-          (isDebuff && buff.isbuff === false);
-      }
+    let influenceMatch = true;
+    if (selectedInfluences.length > 0) {
+      // "其它" means buffs with no influence restriction
+      const isNone = selectedInfluences.includes('其它');
+      const isBuff = selectedInfluences.includes('正面');
+      const isDebuff = selectedInfluences.includes('负面');
+      influenceMatch =
+        (isNone && buff.isbuff == undefined) ||
+        (isBuff && buff.isbuff === true) ||
+        (isDebuff && buff.isbuff === false);
+    }
 
-      return globalMatch && influenceMatch;
-    });
-
-  const unuseImageFilteredBuffs = Object.values(buffs)
-    .filter((buff: Buff) => buff.unuseImage)
-    .filter((buff: Buff) => {
-      const globalMatch =
-        selectedGlobal.length === 0 ||
-        (selectedGlobal.includes('全局') && buff.global) ||
-        (selectedGlobal.includes('个人') && !buff.global);
-
-      let influenceMatch = true;
-      if (selectedInfluences.length > 0) {
-        // "其它" means buffs with no influence restriction
-        const isNone = selectedInfluences.includes('其它');
-        const isBuff = selectedInfluences.includes('正面');
-        const isDebuff = selectedInfluences.includes('负面');
-        influenceMatch =
-          (isNone && buff.isbuff == undefined) ||
-          (isBuff && buff.isbuff === true) ||
-          (isDebuff && buff.isbuff === false);
-      }
-
-      return globalMatch && influenceMatch;
-    });
+    return globalMatch && influenceMatch;
+  });
 
   return (
     <div
       className={
         isMobile
-          ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
+          ? 'w-full mx-auto space-y-1 dark:text-slate-200'
           : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
       }
     >
@@ -83,10 +58,10 @@ export default function BuffClient({ description }: Props) {
         className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
       >
         <PageTitle>状态和效果</PageTitle>
-        {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
+        <PageDescription>{description ?? ''}</PageDescription>
         {/* Filter Controls */}
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+        <div className='mx-auto w-full max-w-2xl md:px-2'>
           {/* 效果筛选 */}
           <FilterRow<'正面' | '负面' | '其它'>
             label='效果筛选:'
@@ -140,29 +115,12 @@ export default function BuffClient({ description }: Props) {
         </div>
       </header>
       <div
-        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-4'} mt-8`}
+        className={`auto-fit-grid w-full grid-container grid !gap-2 ${isMobile ? 'mt-2' : 'mt-8'}`}
         style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '120px' : '150px'}, 1fr))`,
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
         }}
       >
         {filteredBuffs.map((buff) => (
-          <div
-            key={buff.name}
-            className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'
-          >
-            <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
-              <BuffCardDisplay buff={buff} />
-            </Link>
-          </div>
-        ))}
-      </div>
-      <div
-        className='auto-fit-grid grid-container grid gap-4 mt-4'
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '240px' : '300px'}, 1fr))`,
-        }}
-      >
-        {unuseImageFilteredBuffs.map((buff) => (
           <div
             key={buff.name}
             className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'

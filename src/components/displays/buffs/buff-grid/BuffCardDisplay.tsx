@@ -1,10 +1,10 @@
 import { Buff } from '@/data/types';
-import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import { designTokens, getBuffGlobalColors, getBuffIsBuffColors } from '@/lib/design-tokens';
+import Image from '@/components/Image';
 
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
@@ -12,49 +12,53 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
 
   return (
     <BaseCard variant='item' aria-label={`查看${buff.name}效果详情`}>
-      {!buff.unuseImage && (
-        <GameImage
-          src={buff.imageUrl}
-          alt={`${buff.name}效果图标`}
-          size='ITEM_CARD'
-          className='hover:scale-105'
-          style={isMobile ? { height: '8rem' } : {}}
-        />
-      )}
       <div
-        className={`${isMobile ? 'pb-2' : 'px-3 pb-3'} pt-1 text-center w-full ${buff.unuseImage && `border border-dashed border-blue-500`}`}
+        className={`${isMobile ? 'pb-1.5' : 'pb-3'} pt-1 flex justify-center items-center text-center w-full border border-dashed border-blue-500`}
       >
-        <h3
-          className={`${isMobile && buff.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
-          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
-        >
-          {buff.name}
-        </h3>
-        <div
-          className={`flex flex-wrap justify-center items-center ${isMobile ? 'gap-0.5' : 'gap-1.5'} text-sm text-gray-600 dark:text-gray-300`}
-          role='group'
-          aria-label='状态属性'
-        >
-          {/* 正面/负面标签 */}
-          {buff.isbuff !== undefined && (
-            <Tag
-              size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
-              margin='compact'
-              colorStyles={getBuffIsBuffColors(buff.isbuff, isDarkMode)}
-            >
-              {buff.isbuff ? '正面' : '负面'}
-            </Tag>
-          )}
-          {/* 全局标签 */}
-          {buff.global === true && (
-            <Tag
-              size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
-              margin='compact'
-              colorStyles={getBuffGlobalColors(buff.global || false, isDarkMode)}
-            >
-              全局
-            </Tag>
-          )}
+        {!buff.unuseImage && (
+          <Image
+            src={buff.imageUrl}
+            alt={`${buff.name}效果图标`}
+            className='w-12 h-12 object-contain'
+            width={90}
+            height={90}
+          />
+        )}
+        <div className={`ml-1.5 justify-center items-center text-center`}>
+          <h3
+            className={`${buff.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
+            style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+          >
+            {buff.name}
+          </h3>
+          <div
+            className={`flex ${buff.unuseImage && 'justify-center'} items-center gap-0.5 text-sm text-gray-600 dark:text-gray-300`}
+            role='group'
+            aria-label='状态属性'
+          >
+            {/* 正面/负面标签 */}
+            {buff.isbuff !== undefined && (
+              <Tag
+                size='xs'
+                margin='compact'
+                colorStyles={getBuffIsBuffColors(buff.isbuff, isDarkMode)}
+                className='whitespace-nowrap'
+              >
+                {buff.isbuff ? '正面' : '负面'}
+              </Tag>
+            )}
+            {/* 全局标签 */}
+            {buff.global === true && (
+              <Tag
+                size='xs'
+                margin='compact'
+                colorStyles={getBuffGlobalColors(buff.global || false, isDarkMode)}
+                className='whitespace-nowrap'
+              >
+                全局
+              </Tag>
+            )}
+          </div>
         </div>
       </div>
     </BaseCard>
