@@ -7,9 +7,8 @@ import { Buff } from '@/data/types';
 import {
   designTokens,
   componentTokens,
-  getBuffTypeColors,
-  getBuffInfluenceColors,
-  getBuffClassColors,
+  getBuffGlobalColors,
+  getBuffIsBuffColors,
 } from '@/lib/design-tokens';
 import GameImage from '@/components/ui/GameImage';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
@@ -26,7 +25,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const avilableAliases = (buff.aliases ?? [])
     .filter((i) => i[0] !== '#')
     .map((i) => {
-      return i[0] === '%' ? i.replace(/[%\^\$\.\*\+\?\[\]\(\)\{\}\\]/g, '') : i; //移除“%”和部分常用元字符
+      return i[0] === '%' ? i.replace(/[%\^\$\.\*\+\?\[\]\(\)\{\}\\]/g, '') : i; //移除"%"和部分常用元字符
     });
 
   const avilableRelate = (buff.relate ?? []).filter(Boolean);
@@ -60,9 +59,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
               >
                 {buff.name}{' '}
               </h1>
-              <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
-                ({buff.buffclass})
-              </h1>
+              {/* 删除 buffclass 显示 */}
               {avilableAliases.length > 0 && (
                 <h1
                   className={`text-xs text-gray-400 dark:text-gray-500 ${isMobile ? '' : 'mt-2'}`}
@@ -88,12 +85,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
               paddingTop: spacing.xs,
             }}
           >
-            <h1 className='text-3xl font-bold dark:text-white'>
-              {buff.name}{' '}
-              <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                ({buff.buffclass})
-              </span>
-            </h1>
+            <h1 className='text-3xl font-bold dark:text-white'>{buff.name} </h1>
           </div>
           {avilableAliases.length > 0 && (
             <div
@@ -120,29 +112,26 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       >
         <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
           <span className={`text-sm whitespace-pre`}>类型: </span>
-          <Tag
-            size='sm'
-            margin='compact'
-            colorStyles={getBuffTypeColors(buff.bufftype, isDarkMode)}
-          >
-            {buff.bufftype}
-          </Tag>
-          {buff.buffinfluence !== undefined && (
+          {/* 使用 isbuff 属性 */}
+          {buff.isbuff !== undefined && (
             <Tag
               size='sm'
               margin='compact'
-              colorStyles={getBuffInfluenceColors(buff.buffinfluence || '', isDarkMode)}
+              colorStyles={getBuffIsBuffColors(buff.isbuff, isDarkMode)}
             >
-              {buff.buffinfluence}
+              {buff.isbuff ? '正面' : '负面'}
             </Tag>
           )}
-          <Tag
-            size='sm'
-            margin='compact'
-            colorStyles={getBuffClassColors(buff.buffclass, isDarkMode)}
-          >
-            {buff.buffclass}
-          </Tag>
+          {/* 使用 global 属性 */}
+          {buff.global === true && (
+            <Tag
+              size='sm'
+              margin='compact'
+              colorStyles={getBuffGlobalColors(buff.global || false, isDarkMode)}
+            >
+              全局
+            </Tag>
+          )}
         </div>
 
         {(buff.duration !== undefined ||
@@ -160,10 +149,8 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                 <span className={`text-sm whitespace-pre`}>
                   {buff.duration === 'disposable' ? (
                     <>
-                      该{buff.buffclass}为
-                      <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>
-                        一次性{buff.buffclass}
-                      </span>
+                      该效果为
+                      <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>一次性效果</span>
                     </>
                   ) : (
                     <>

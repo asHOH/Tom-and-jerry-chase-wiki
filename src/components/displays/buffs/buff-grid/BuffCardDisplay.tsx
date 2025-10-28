@@ -2,10 +2,9 @@ import { Buff } from '@/data/types';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { getBuffTypeColors, getBuffInfluenceColors, getBuffClassColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
-import { designTokens } from '@/lib/design-tokens';
+import { designTokens, getBuffGlobalColors, getBuffIsBuffColors } from '@/lib/design-tokens';
 
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
@@ -36,29 +35,26 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           role='group'
           aria-label='状态属性'
         >
-          <Tag
-            size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
-            margin='compact'
-            colorStyles={getBuffTypeColors(buff.bufftype, isDarkMode)}
-          >
-            {buff.bufftype}
-          </Tag>
-          {buff.buffinfluence !== undefined && (
+          {/* 正面/负面标签 */}
+          {buff.isbuff !== undefined && (
             <Tag
               size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
               margin='compact'
-              colorStyles={getBuffInfluenceColors(buff.buffinfluence || '', isDarkMode)}
+              colorStyles={getBuffIsBuffColors(buff.isbuff, isDarkMode)}
             >
-              {buff.buffinfluence}
+              {buff.isbuff ? '正面' : '负面'}
             </Tag>
           )}
-          <Tag
-            size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
-            margin='compact'
-            colorStyles={getBuffClassColors(buff.buffclass, isDarkMode)}
-          >
-            {buff.buffclass}
-          </Tag>
+          {/* 全局标签 */}
+          {buff.global === true && (
+            <Tag
+              size={isMobile && buff.unuseImage !== true ? 'xxs' : 'xs'}
+              margin='compact'
+              colorStyles={getBuffGlobalColors(buff.global || false, isDarkMode)}
+            >
+              全局
+            </Tag>
+          )}
         </div>
       </div>
     </BaseCard>

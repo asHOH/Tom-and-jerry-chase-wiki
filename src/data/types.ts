@@ -323,14 +323,10 @@ export type EntityDefinition = {
 
 export type Entity = EntityDefinition & { name: string; imageUrl: string };
 
-export type Bufftypelist = '常规类' | '全局类' | '技能类';
-export type Buffinfluencelist = '正面' | '负面';
-export type Buffclasslist = '状态' | '效果';
-
 export type BuffDefinition = {
-  bufftype: Bufftypelist;
-  buffinfluence?: Buffinfluencelist;
-  buffclass: Buffclasslist; //状态：是一或多种效果的结合；效果：有特定作用，具有单一和不可再分性，是状态的基础组成部分，也可单独作为状态使用
+  global?: boolean; //个人/全局
+  isbuff?: boolean; //正面/负面/不分类
+  target?: string; //作用对象
 
   aliases?: string[]; //支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
   duration?: number | 'infinite' | 'disposable'; // duration of buff.

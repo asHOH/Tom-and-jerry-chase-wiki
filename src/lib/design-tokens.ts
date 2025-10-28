@@ -934,30 +934,11 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
 };
 
 /**
- * Buff type color utility
+ * Buff
  */
-export const getBuffInfluenceColors = (buffinfluence: string, isDarkMode: boolean) => {
-  const buffTypeColorMap: Record<string, 'high' | 'veryLow'> = {
-    正面: 'veryLow',
-    负面: 'high',
-  };
-  const buffType = buffTypeColorMap[buffinfluence] || 'medium';
-  //复用cost的colors
-  const colorScheme = designTokens.colors.cost[buffType] || designTokens.colors.skillTypes.passive;
-  return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
-  };
-};
-export const getBuffTypeColors = (bufftype: string, isDarkMode: boolean) => {
-  const buffTypeColorMap: Record<string, 'level1' | 'level2' | 'level3'> = {
-    常规类: 'level1',
-    全局类: 'level3',
-    特殊类: 'level2',
-  };
-  const buffType = buffTypeColorMap[bufftype] || 'level2';
-  //复用skillLevels的colors
+export const getBuffGlobalColors = (isGlobal: boolean, isDarkMode: boolean) => {
+  // 复用原有的类型映射关系
+  const buffType = isGlobal ? 'level3' : 'level1'; // 全局类对应原来的 level3，非全局对应 level1
   const colorScheme =
     designTokens.colors.skillLevels[buffType] || designTokens.colors.skillTypes.passive;
   return {
@@ -966,14 +947,11 @@ export const getBuffTypeColors = (bufftype: string, isDarkMode: boolean) => {
       isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
   };
 };
-export const getBuffClassColors = (buffinfluence: string, isDarkMode: boolean) => {
-  const buffTypeColorMap: Record<string, 'S' | 'A'> = {
-    状态: 'S',
-    效果: 'A',
-  };
-  const buffType = buffTypeColorMap[buffinfluence] || 'default';
-  //复用rank的colors
-  const colorScheme = designTokens.colors.rank[buffType] || designTokens.colors.skillTypes.passive;
+
+export const getBuffIsBuffColors = (isBuff: boolean, isDarkMode: boolean) => {
+  // 复用原有的影响映射关系
+  const buffType = isBuff ? 'veryLow' : 'high'; // 正面对应原来的 veryLow，负面对应 high
+  const colorScheme = designTokens.colors.cost[buffType] || designTokens.colors.skillTypes.passive;
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
     backgroundColor:
