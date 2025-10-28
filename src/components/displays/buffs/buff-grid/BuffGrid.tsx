@@ -10,18 +10,18 @@ import { useState } from 'react';
 import type { Buff } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { getPositioningTagColors } from '@/lib/design-system';
+import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 
 // 更新选项以匹配新属性
 const GLOBAL_OPTIONS = ['全局', '个人'] as const;
-const INFLUENCE_OPTIONS = ['正面', '负面', '其它'] as const;
+const INFLUENCE_OPTIONS = ['正面', '负面', '特殊'] as const;
 
 type Props = { description?: string };
 
 export default function BuffClient({ description }: Props) {
   // Multi-select state for filters
   const [selectedGlobal, setSelectedGlobal] = useState<('全局' | '个人')[]>([]);
-  const [selectedInfluences, setSelectedInfluences] = useState<('正面' | '负面' | '其它')[]>([]);
+  const [selectedInfluences, setSelectedInfluences] = useState<('正面' | '负面' | '特殊')[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
@@ -33,14 +33,14 @@ export default function BuffClient({ description }: Props) {
 
     let influenceMatch = true;
     if (selectedInfluences.length > 0) {
-      // "其它" means buffs with no influence restriction
-      const isNone = selectedInfluences.includes('其它');
+      // "特殊" means buffs with no influence restriction
+      const isNone = selectedInfluences.includes('特殊');
       const isBuff = selectedInfluences.includes('正面');
       const isDebuff = selectedInfluences.includes('负面');
       influenceMatch =
-        (isNone && buff.isbuff == undefined) ||
-        (isBuff && buff.isbuff === true) ||
-        (isDebuff && buff.isbuff === false);
+        (isNone && buff.type === '特殊') ||
+        (isBuff && buff.type === '正面') ||
+        (isDebuff && buff.type === '负面');
     }
 
     return globalMatch && influenceMatch;
@@ -63,7 +63,7 @@ export default function BuffClient({ description }: Props) {
         {/* Filters wrapper */}
         <div className='mx-auto w-full max-w-2xl md:px-2'>
           {/* 效果筛选 */}
-          <FilterRow<'正面' | '负面' | '其它'>
+          <FilterRow<'正面' | '负面' | '特殊'>
             label='效果筛选:'
             options={INFLUENCE_OPTIONS}
             isActive={(f) => selectedInfluences.includes(f)}
@@ -73,19 +73,7 @@ export default function BuffClient({ description }: Props) {
               )
             }
             getOptionLabel={(f) => f}
-            getButtonStyle={(f, active) =>
-              active
-                ? f === '其它'
-                  ? { backgroundColor: '#e6d5f7', color: '#8b5cf6' }
-                  : getPositioningTagColors(
-                      { 正面: '救援', 负面: '干扰' }[f],
-                      false,
-                      false,
-                      'mouse',
-                      isDarkMode
-                    )
-                : undefined
-            }
+            getButtonStyle={(f, active) => (active ? getBuffTypeColors(f, isDarkMode) : undefined)}
             isDarkMode={isDarkMode}
           />
           {/* 全局筛选 */}
@@ -99,18 +87,9 @@ export default function BuffClient({ description }: Props) {
               )
             }
             //Use PositioningTagColors to avoid creating new colorStyles
-            getButtonStyle={(name, active) => {
-              const isActive = active;
-              const tagColors = getPositioningTagColors(
-                { 全局: '干扰', 个人: '辅助' }[name],
-                false,
-                false,
-                'mouse',
-                isDarkMode
-              );
-              return isActive ? { ...tagColors } : undefined;
-            }}
-            isDarkMode={isDarkMode}
+            getButtonStyle={(f, active) =>
+              active ? getBuffGlobalColors(f === '全局', isDarkMode) : undefined
+            }
           />
         </div>
       </header>

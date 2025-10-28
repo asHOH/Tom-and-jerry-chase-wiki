@@ -3,7 +3,7 @@ import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
-import { designTokens, getBuffGlobalColors, getBuffIsBuffColors } from '@/lib/design-tokens';
+import { designTokens, getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import Image from '@/components/Image';
 
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
@@ -13,7 +13,14 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   return (
     <BaseCard variant='item' aria-label={`查看${buff.name}效果详情`}>
       <div
-        className={`${isMobile ? 'pb-1.5' : 'pb-3'} pt-1 flex justify-center items-center text-center w-full border border-dashed border-blue-500`}
+        className={`${isMobile ? 'pb-1.5' : 'pb-3'} pt-1 flex justify-center items-center text-center w-full border border-dotted 
+        ${
+          buff.type === '正面'
+            ? 'border-green-300 dark:border-green-800'
+            : buff.type === '负面'
+              ? 'border-red-300 dark:border-red-800'
+              : 'border-yellow-300 dark:border-yellow-800'
+        }`}
       >
         {!buff.unuseImage && (
           <Image
@@ -37,16 +44,14 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
             aria-label='状态属性'
           >
             {/* 正面/负面标签 */}
-            {buff.isbuff !== undefined && (
-              <Tag
-                size='xs'
-                margin='compact'
-                colorStyles={getBuffIsBuffColors(buff.isbuff, isDarkMode)}
-                className='whitespace-nowrap'
-              >
-                {buff.isbuff ? '正面' : '负面'}
-              </Tag>
-            )}
+            <Tag
+              size='xs'
+              margin='compact'
+              colorStyles={getBuffTypeColors(buff.type, isDarkMode)}
+              className='whitespace-nowrap'
+            >
+              {buff.type}
+            </Tag>
             {/* 全局标签 */}
             {buff.global === true && (
               <Tag

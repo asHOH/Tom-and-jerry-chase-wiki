@@ -1,4 +1,4 @@
-import type { FactionId } from '@/data/types';
+import type { buffTypelist, FactionId } from '@/data/types';
 
 // Returned style for positioning tag colors
 export type PositioningTagColorStyle =
@@ -937,10 +937,8 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
  * Buff
  */
 export const getBuffGlobalColors = (isGlobal: boolean, isDarkMode: boolean) => {
-  // 复用原有的类型映射关系
-  const buffType = isGlobal ? 'level3' : 'level1'; // 全局类对应原来的 level3，非全局对应 level1
-  const colorScheme =
-    designTokens.colors.skillLevels[buffType] || designTokens.colors.skillTypes.passive;
+  const buffType = isGlobal ? 'medium' : 'veryLow';
+  const colorScheme = designTokens.colors.cost[buffType] || designTokens.colors.skillTypes.passive;
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
     backgroundColor:
@@ -948,9 +946,8 @@ export const getBuffGlobalColors = (isGlobal: boolean, isDarkMode: boolean) => {
   };
 };
 
-export const getBuffIsBuffColors = (isBuff: boolean, isDarkMode: boolean) => {
-  // 复用原有的影响映射关系
-  const buffType = isBuff ? 'veryLow' : 'high'; // 正面对应原来的 veryLow，负面对应 high
+export const getBuffTypeColors = (type: buffTypelist, isDarkMode: boolean) => {
+  const buffType = type === '正面' ? 'veryLow' : type === '负面' ? 'high' : 'low';
   const colorScheme = designTokens.colors.cost[buffType] || designTokens.colors.skillTypes.passive;
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,

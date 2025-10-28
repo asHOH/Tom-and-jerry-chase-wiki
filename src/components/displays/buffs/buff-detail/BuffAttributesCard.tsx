@@ -8,7 +8,7 @@ import {
   designTokens,
   componentTokens,
   getBuffGlobalColors,
-  getBuffIsBuffColors,
+  getBuffTypeColors,
 } from '@/lib/design-tokens';
 import GameImage from '@/components/ui/GameImage';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
@@ -112,16 +112,10 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       >
         <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
           <span className={`text-sm whitespace-pre`}>类型: </span>
-          {/* 使用 isbuff 属性 */}
-          {buff.isbuff !== undefined && (
-            <Tag
-              size='sm'
-              margin='compact'
-              colorStyles={getBuffIsBuffColors(buff.isbuff, isDarkMode)}
-            >
-              {buff.isbuff ? '正面' : '负面'}
-            </Tag>
-          )}
+          {/* 使用 type 属性 */}
+          <Tag size='sm' margin='compact' colorStyles={getBuffTypeColors(buff.type, isDarkMode)}>
+            {buff.type}
+          </Tag>
           {/* 使用 global 属性 */}
           {buff.global === true && (
             <Tag

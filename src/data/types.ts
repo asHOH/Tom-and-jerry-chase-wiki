@@ -323,9 +323,11 @@ export type EntityDefinition = {
 
 export type Entity = EntityDefinition & { name: string; imageUrl: string };
 
+export type buffTypelist = '正面' | '负面' | '特殊';
+
 export type BuffDefinition = {
+  type: buffTypelist;
   global?: boolean; //个人/全局
-  isbuff?: boolean; //正面/负面/不分类
   target?: string; //作用对象
 
   aliases?: string[]; //支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
