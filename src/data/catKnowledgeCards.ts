@@ -45,7 +45,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'S',
     cost: 7,
     description: '爪刀对老鼠造成**短暂**的眩晕。',
-    detailedDescription: '猫咪掌握了独特的攻击手法，爪刀对老鼠造成**短暂**的眩晕。',
+    detailedDescription: '猫咪掌握了独特的攻击手法，爪刀对老鼠造成伤害后，附加**短暂**的眩晕。',
     levels: [
       { level: 1, description: '击晕**0.8**秒。' },
       { level: 2, description: '击晕**0.9**秒。' },
