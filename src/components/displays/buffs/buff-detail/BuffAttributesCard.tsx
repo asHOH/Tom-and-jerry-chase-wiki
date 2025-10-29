@@ -56,7 +56,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
               >
                 {buff.name}{' '}
               </h1>
-              {/* 删除 buffclass 显示 */}
+              <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>(状态/效果)</h1>
               {avilableAliases.length > 0 && (
                 <h1
                   className={`text-xs text-gray-400 dark:text-gray-500 ${isMobile ? '' : 'mt-2'}`}
@@ -82,7 +82,12 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
               paddingTop: spacing.xs,
             }}
           >
-            <h1 className='text-3xl font-bold dark:text-white'>{buff.name} </h1>
+            <h1 className='text-3xl font-bold dark:text-white'>
+              {buff.name}
+              <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
+                (状态/效果)
+              </span>{' '}
+            </h1>
           </div>
           {avilableAliases.length > 0 && (
             <div
@@ -134,33 +139,23 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                 gridTemplateColumns: `repeat(1, minmax(80px, 1fr))`,
               }}
             >
+              {!!buff.target && (
+                <span className={`text-sm`}>
+                  作用对象：
+                  <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>{buff.target}</span>
+                </span>
+              )}
               {buff.duration !== undefined && (
                 <span className={`text-sm whitespace-pre`}>
-                  {buff.duration === 'disposable' ? (
-                    <>
-                      该效果为
-                      <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>一次性效果</span>
-                    </>
-                  ) : (
-                    <>
-                      持续时间：
-                      <span className={`text-indigo-700 dark:text-indigo-400`}>
-                        {buff.duration === 'infinite' ? '无限' : `${buff.duration}秒`}
-                      </span>
-                    </>
-                  )}
+                  持续时间：
+                  <span className={`text-indigo-700 dark:text-indigo-400`}>{buff.duration}</span>
+                  {typeof buff.duration === 'number' ? ' 秒' : ''}
                 </span>
               )}
               {buff.failure !== undefined && (
                 <span className={`text-sm`}>
                   中止条件：
                   <span className={`text-orange-600 dark:text-orange-400`}>{buff.failure}</span>
-                </span>
-              )}
-              {!!buff.target && (
-                <span className={`text-sm`}>
-                  作用对象：
-                  <span className={`text-orange-600 dark:text-orange-400`}>{buff.target}</span>
                 </span>
               )}
             </div>

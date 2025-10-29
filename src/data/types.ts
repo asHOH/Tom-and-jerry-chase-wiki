@@ -330,7 +330,7 @@ export type BuffDefinition = {
   global?: boolean; //个人/全局
 
   aliases?: string[]; //支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
-  duration?: number | 'infinite' | 'disposable'; // duration of buff.
+  duration?: number | string; // duration of buff.
   failure?: string; //failure conditions of buff
   target?: string; //作用对象
   source?: SingleItem[];

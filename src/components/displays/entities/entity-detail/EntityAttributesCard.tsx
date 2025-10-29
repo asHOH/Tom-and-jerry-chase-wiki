@@ -11,9 +11,8 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import Tooltip from '../../../ui/Tooltip';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
-import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
-import Image from '@/components/Image';
 import getEntityFactionId from '../lib/getEntityFactionId';
+import SingleItemButton from '@/components/ui/SingleItemButton';
 
 export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const [isDarkMode] = useDarkMode();
@@ -148,25 +147,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
         {!!entity.owner && (
           <span className={`text-sm flex items-center`}>
             {'归属者：'}
-            <li
-              key={entity.name}
-              className={`flex items-center rounded-lg transition-colors hover:-translate-y-1 px-2 bg-green-50 dark:bg-green-900/30 border-1 border-green-200 dark:border-green-800`}
-            >
-              <a
-                href={getSingleItemHref(entity.owner)}
-                className='flex items-center gap-2 w-full'
-                tabIndex={0}
-              >
-                <Image
-                  src={getSingleItemImageUrl(entity.owner)}
-                  alt={`${entity.owner.name}图标`}
-                  className='w-9 h-9 object-contain'
-                  width={90}
-                  height={90}
-                />
-                <span className='text-sm dark:text-white truncate'>{entity.owner.name}</span>
-              </a>
-            </li>
+            <SingleItemButton singleItem={entity.owner} />
           </span>
         )}
         {/*itemAttributesAsCharacter*/}
