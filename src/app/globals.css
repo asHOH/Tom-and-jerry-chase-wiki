@@ -18,8 +18,13 @@ body {
 
 /* Refine article heading scale for better balance on desktop */
 .prose :where(h1):not(:where([class~='not-prose'] *)) {
-  font-size: 2.125rem;
-  line-height: 2.5rem;
+  font-size: 2.375rem;
+  line-height: 2.875rem;
+}
+
+.prose :where(h2):not(:where([class~='not-prose'] *)) {
+  font-size: 2rem;
+  line-height: 2.375rem;
 }
 
 /* Focus styles for accessibility */
