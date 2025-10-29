@@ -14,7 +14,6 @@ import GameImage from '@/components/ui/GameImage';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import { useMobile } from '@/hooks/useMediaQuery';
 import {} from '@/lib/design-tokens';
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 
 export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
@@ -27,8 +26,6 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
     .map((i) => {
       return i[0] === '%' ? i.replace(/[%\^\$\.\*\+\?\[\]\(\)\{\}\\]/g, '') : i; //移除"%"和部分常用元字符
     });
-
-  const avilableRelate = (buff.relate ?? []).filter(Boolean);
 
   return (
     <BaseCard variant='details'>
@@ -128,9 +125,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
           )}
         </div>
 
-        {(buff.duration !== undefined ||
-          buff.failure !== undefined ||
-          buff.relate !== undefined) && (
+        {(buff.duration !== undefined || buff.failure !== undefined) && (
           <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
             <span className='text-lg font-bold whitespace-pre'>基础信息</span>
             <div
@@ -162,15 +157,10 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                   <span className={`text-orange-600 dark:text-orange-400`}>{buff.failure}</span>
                 </span>
               )}
-              {avilableRelate.length > 0 && (
+              {!!buff.target && (
                 <span className={`text-sm`}>
-                  相关效果：
-                  {avilableRelate.map((name, index) => (
-                    <span className={`text-indigo-700 dark:text-indigo-400`} key={index}>
-                      <TextWithHoverTooltips text={`{${name}}`} />
-                      {index === avilableRelate.length - 1 ? '' : '、'}
-                    </span>
-                  ))}
+                  作用对象：
+                  <span className={`text-orange-600 dark:text-orange-400`}>{buff.target}</span>
                 </span>
               )}
             </div>

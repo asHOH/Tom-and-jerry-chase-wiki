@@ -328,17 +328,15 @@ export type buffTypelist = '正面' | '负面' | '特殊';
 export type BuffDefinition = {
   type: buffTypelist;
   global?: boolean; //个人/全局
-  target?: string; //作用对象
 
   aliases?: string[]; //支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
   duration?: number | 'infinite' | 'disposable'; // duration of buff.
   failure?: string; //failure conditions of buff
-  relate?: string[]; //组成某状态的相关效果列表
+  target?: string; //作用对象
+  source?: SingleItem[];
 
   description?: string;
   detailedDescription?: string;
-  source?: string; //source of buff.
-  detailedSource?: string;
   stack?: string; // the stacking way in two or more buffs
   detailedStack?: string;
 

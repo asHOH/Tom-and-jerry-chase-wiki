@@ -24,12 +24,6 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
         value: buff.description,
         detailedValue: buff.detailedDescription,
       },
-      {
-        key: 'source',
-        title: '效果来源',
-        value: buff.source,
-        detailedValue: buff.detailedSource,
-      },
       buff.stack === undefined
         ? null
         : {
