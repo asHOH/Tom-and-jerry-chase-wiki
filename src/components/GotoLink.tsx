@@ -280,7 +280,7 @@ export default function GotoLink({
             align='center'
             sideOffset={8}
             className='z-50 pointer-events-none'
-            style={{ width: 'clamp(320px, 50vw, 640px)' }}
+            style={{ width: 'clamp(300px, 60vw, 720px)' }}
             ref={contentRef}
           >
             {previewContent}
