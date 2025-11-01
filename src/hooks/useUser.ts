@@ -22,47 +22,52 @@ const applyUserData = (data: UserType, { allowEmpty = false }: { allowEmpty?: bo
   Object.assign(userObject, data);
 };
 
-export const UserProvider = ({
-  children,
-  initialValue,
-}: {
-  children: ReactNode;
-  initialValue: Promise<UserType>;
-}) => {
-  'use no memo';
-  const initialUser = use(initialValue);
-  const hasAppliedInitial = useRef(false);
-  if (!hasAppliedInitial.current) {
-    applyUserData(initialUser, { allowEmpty: true });
-    hasAppliedInitial.current = true;
-  }
-  useEffect(() => {
-    applyUserData(initialUser, { allowEmpty: true });
-  });
-  useEffect(() => {
-    (async () => {
-      applyUserData(await initialValue, { allowEmpty: true });
-      const clientUser = await getUserData();
-      const shouldAllowEmpty = !userObject.nickname && !userObject.role;
-      applyUserData(clientUser, { allowEmpty: shouldAllowEmpty });
-    })();
-  }, [initialValue]);
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event) => {
-      const clientUser = await getUserData();
-      const shouldAllowEmpty = event === 'SIGNED_OUT';
-      applyUserData(clientUser, { allowEmpty: shouldAllowEmpty });
-    });
-    return () => {
-      subscription.unsubscribe();
+export const UserProvider = process.env.NEXT_PUBLIC_DISABLE_ARTICLES
+  ? ({ children }: { children: ReactNode; initialValue: Promise<UserType> }) => {
+      return children;
+    }
+  : ({ children, initialValue }: { children: ReactNode; initialValue: Promise<UserType> }) => {
+      'use no memo';
+      const initialUser = use(initialValue);
+      const hasAppliedInitial = useRef(false);
+      if (!hasAppliedInitial.current) {
+        applyUserData(initialUser, { allowEmpty: true });
+        hasAppliedInitial.current = true;
+      }
+      useEffect(() => {
+        applyUserData(initialUser, { allowEmpty: true });
+      });
+      useEffect(() => {
+        (async () => {
+          applyUserData(await initialValue, { allowEmpty: true });
+          const clientUser = await getUserData();
+          const shouldAllowEmpty = !userObject.nickname && !userObject.role;
+          applyUserData(clientUser, { allowEmpty: shouldAllowEmpty });
+        })();
+      }, [initialValue]);
+      useEffect(() => {
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange(async (event) => {
+          const clientUser = await getUserData();
+          const shouldAllowEmpty = event === 'SIGNED_OUT';
+          applyUserData(clientUser, { allowEmpty: shouldAllowEmpty });
+        });
+        return () => {
+          subscription.unsubscribe();
+        };
+      }, []);
+      return children;
     };
-  }, []);
-  return children;
-};
 
 export async function getUserData() {
+  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+    return {
+      role: null,
+      nickname: null,
+    };
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

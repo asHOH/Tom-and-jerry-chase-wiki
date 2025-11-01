@@ -4,6 +4,10 @@ import { Database } from '@/data/database.types';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+  throw new Error('Missing env.SUPABASE_SERVICE_ROLE_KEY');
+}
+
 if (!supabaseUrl) {
   throw new Error('Missing env.NEXT_PUBLIC_SUPABASE_URL');
 }

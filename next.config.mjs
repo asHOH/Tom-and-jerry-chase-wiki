@@ -86,16 +86,42 @@ const withMDX = createMDX({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  typescript: {
+    ignoreBuildErrors: !!process.env.NEXT_PUBLIC_DISABLE_ARTICLES,
+  },
   env: {
     NEXT_PUBLIC_BUILD_TIMESTAMP: new Date().toISOString(),
   },
   async rewrites() {
-    return [
+    const rewriteContents = [
       {
         source: '/version.json',
         destination: '/api/version',
       },
     ];
+
+    if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+      rewriteContents.push(
+        { source: '/api/articles', destination: '/404' },
+        { source: '/api/articles/:path*', destination: '/404' },
+        { source: '/api/admin', destination: '/404' },
+        { source: '/api/admin/:path*', destination: '/404' },
+        { source: '/api/auth', destination: '/404' },
+        { source: '/api/auth/:path*', destination: '/404' },
+        { source: '/api/moderation', destination: '/404' },
+        { source: '/api/moderation/:path*', destination: '/404' },
+        { source: '/api/site-images', destination: '/404' },
+        { source: '/api/site-images/:path*', destination: '/404' },
+        { source: '/api/uploads', destination: '/404' },
+        { source: '/api/uploads/:path*', destination: '/404' },
+        { source: '/articles', destination: '/404' },
+        { source: '/articles/:path*', destination: '/404' },
+        { source: '/admin', destination: '/404' },
+        { source: '/admin/:path*', destination: '/404' }
+      );
+    }
+
+    return rewriteContents;
   },
   async headers() {
     return [
