@@ -1,15 +1,15 @@
-import React, { Suspense } from 'react';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import { GameDataManager } from '@/lib/dataManager';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
-import { generatePageMetadata, ArticleStructuredData } from '@/lib/metadataUtils';
-import CharacterDocs from './CharacterDocs';
+import { GameDataManager } from '@/lib/dataManager';
 import { getTutorialPage } from '@/lib/docUtils';
+import { ArticleStructuredData, generatePageMetadata } from '@/lib/metadataUtils';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import CharacterArticle from './CharacterArticle';
+import CharacterDocs from './CharacterDocs';
 
 // Revalidate once per 8 hours to keep docs fresh
 export const revalidate = 28800;

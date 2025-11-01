@@ -1,8 +1,8 @@
 'use client';
 
 import { useNavigation } from '@/lib/useNavigation';
-import React, { ReactNode, useState } from 'react';
 import clsx from 'clsx';
+import { ReactNode, useState } from 'react';
 
 export default function CharacterSection({
   title,

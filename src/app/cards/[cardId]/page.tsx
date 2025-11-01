@@ -1,12 +1,11 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import { cards } from '@/data';
-import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
+import { cards } from '@/data';
 import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
 
 export const dynamic = 'force-static';
 

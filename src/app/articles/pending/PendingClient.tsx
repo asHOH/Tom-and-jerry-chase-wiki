@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
+import clsx from 'clsx';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
 import useSWR from 'swr';
-import clsx from 'clsx';
 
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
+import { CheckBadgeIcon, ClockIcon, CloseIcon, EyeIcon } from '@/components/icons/CommonIcons';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { useUser } from '@/hooks/useUser';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
-import { CheckBadgeIcon, CloseIcon, ClockIcon, EyeIcon } from '@/components/icons/CommonIcons';
+import { useUser } from '@/hooks/useUser';
 
 /**
  * Represents a unified article submission.

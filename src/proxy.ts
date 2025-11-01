@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Block Baidu Browser (Android) by UA, allow force continue
   const ua = request.headers.get('user-agent')?.toLowerCase() || '';
   const isBaiduAndroid =

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import PageTitle from '@/components/ui/PageTitle';
@@ -100,7 +100,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
         if (b.name === '其他类型' && a.name !== '其他类型') return -1;
         return 0;
       });
-  }, [data?.categories]);
+  }, [data.categories]);
 
   const categoryOptions = useMemo<string[]>(
     () => categoriesForFilter.map((category) => category.id),

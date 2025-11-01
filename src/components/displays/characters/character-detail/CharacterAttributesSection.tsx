@@ -1,10 +1,9 @@
-import React from 'react';
-import AttributeDisplay from './AttributeDisplay';
-import { FactionId } from '@/data/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { useSnapshot } from 'valtio';
 import { characters } from '@/data';
+import { FactionId } from '@/data/types';
+import { useSnapshot } from 'valtio';
+import AttributeDisplay from './AttributeDisplay';
 
 interface CharacterAttribute {
   label: string;

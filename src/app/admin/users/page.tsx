@@ -1,6 +1,5 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { notFound } from 'next/navigation';
 import UserManagementPanelClient from './UserManagementPanelClient';
 
 const UserManagementPanel = async () => {

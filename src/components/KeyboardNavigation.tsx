@@ -17,7 +17,7 @@ export default function KeyboardNavigation() {
   const router = useRouter();
 
   useEffect(() => {
-    function handler(this: Window, e: KeyboardEvent) {
+    function handler(e: KeyboardEvent) {
       if (e.key !== 'Backspace') return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (isEditableElement(e.target)) return;

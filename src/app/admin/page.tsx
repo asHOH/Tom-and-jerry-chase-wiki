@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import useSWR from 'swr';
-import { Database } from '@/data/database.types';
-import UserManagement from '@/components/displays/admin/UserManagement';
 import CategoryManagement from '@/components/displays/admin/CategoryManagement';
+import UserManagement from '@/components/displays/admin/UserManagement';
+import { Database } from '@/data/database.types';
 import { useUser } from '@/hooks/useUser';
 import { notFound } from 'next/navigation';
+import { useState } from 'react';
+import useSWR from 'swr';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 

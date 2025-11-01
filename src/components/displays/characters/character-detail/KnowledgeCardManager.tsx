@@ -1,11 +1,10 @@
 'use client';
 
-import React from 'react';
+import { useLocalCharacter } from '@/context/EditModeContext';
 import { characters } from '@/data'; // Import Character type
 import type { FactionId, KnowledgeCardGroup } from '@/data/types';
-import KnowledgeCardSection from './KnowledgeCardSection';
-import { useLocalCharacter } from '@/context/EditModeContext';
 import { useSnapshot } from 'valtio';
+import KnowledgeCardSection from './KnowledgeCardSection';
 
 interface KnowledgeCardManagerProps {
   factionId: FactionId;

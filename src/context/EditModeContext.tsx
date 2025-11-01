@@ -1,10 +1,10 @@
 'use client';
 
 import { characters, factions } from '@/data';
-import { proxy, subscribe } from 'valtio';
 import { GameDataManager } from '@/lib/dataManager';
 import { usePathname } from 'next/navigation';
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { proxy, subscribe } from 'valtio';
 
 interface EditModeContextType {
   isEditMode: boolean;

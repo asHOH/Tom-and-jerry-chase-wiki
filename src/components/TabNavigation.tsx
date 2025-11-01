@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import SearchBar from './ui/SearchBar';
-import Tooltip from './ui/Tooltip';
 import { useAppContext } from '@/context/AppContext';
-import clsx from 'clsx';
-import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
-import { supabase } from '@/lib/supabase/client';
-import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
-import { UserCircleIcon } from '@/components/icons/CommonIcons';
+import { useUser } from '@/hooks/useUser';
+import { supabase } from '@/lib/supabase/client';
+import clsx from 'clsx';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
+import SearchBar from './ui/SearchBar';
+import Tooltip from './ui/Tooltip';
 
 // Helper function for button styling
 const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {

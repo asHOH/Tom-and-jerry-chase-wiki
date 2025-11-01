@@ -1,12 +1,11 @@
-import React from 'react';
+import { render, screen } from '@testing-library/react';
 import {
-  renderTextWithHighlights,
+  extractItemKeyActions,
   formatTextWithEnhancedMarkdown,
   hasTextPattern,
-  extractItemKeyActions,
   normalizeText,
+  renderTextWithHighlights,
 } from '../textUtils';
-import { render, screen } from '@testing-library/react';
 
 describe('textUtils', () => {
   describe('renderTextWithHighlights', () => {

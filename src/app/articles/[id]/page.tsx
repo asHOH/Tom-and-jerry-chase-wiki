@@ -64,6 +64,7 @@ export default async function ArticlePage({
 }) {
   const { id } = await params;
   const { version } = await searchParams;
+  let response;
 
   try {
     // Increment view count
@@ -128,24 +129,24 @@ export default async function ArticlePage({
     }
 
     // Combine the data
-    const response = {
+    response = {
       article: {
         ...article,
         latest_version: latestVersion,
       },
     };
-
-    return (
-      <AppProvider>
-        <EditModeProvider>
-          <TabNavigationWrapper showDetailToggle={false}>
-            <ArticleClient article={response.article} />
-          </TabNavigationWrapper>
-        </EditModeProvider>
-      </AppProvider>
-    );
   } catch (err) {
     console.error('API error:', err);
     notFound();
   }
+
+  return (
+    <AppProvider>
+      <EditModeProvider>
+        <TabNavigationWrapper showDetailToggle={false}>
+          <ArticleClient article={response.article} />
+        </TabNavigationWrapper>
+      </EditModeProvider>
+    </AppProvider>
+  );
 }

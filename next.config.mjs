@@ -1,7 +1,6 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import withPWA from 'next-pwa';
-import remarkGfm from 'remark-gfm';
 import { cspHeaderValue } from './csp.config.mjs';
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -79,7 +78,7 @@ const withPwa = withPWA({
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: ['remark-gfm'],
   },
 });
 
@@ -191,11 +190,8 @@ const nextConfig = {
     }
     return config;
   },
-  experimental: {
-    reactCompiler: {
-      panicThreshold: 'CRITICAL_ERRORS',
-      compilationMode: 'annotation',
-    },
+  reactCompiler: {
+    compilationMode: 'annotation',
   },
 };
 

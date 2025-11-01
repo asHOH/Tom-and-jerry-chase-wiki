@@ -1,4 +1,3 @@
-import React from 'react';
 import { AppProvider } from '@/context/AppContext';
 import UserCharacterPageClient from './UserCharacterPageClient';
 
