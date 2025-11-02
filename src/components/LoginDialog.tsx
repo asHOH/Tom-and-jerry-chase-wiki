@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import CaptchaComponent from './CaptchaComponent';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { CloseIcon } from '@/components/icons/CommonIcons';
+import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 
 type LoginDialogProps = {
   onClose: () => void;
@@ -26,6 +27,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const [token, setToken] = useState<string | null>(null);
 
   const [isUsernameCorrect, setIsUsernameCorrect] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength | null>(null);
 
   useEffect(() => {
     convertToPinyin(username).then((pinyin) => {
@@ -35,6 +37,15 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       );
     });
   }, [username]);
+
+  // Check password strength when in register step
+  useEffect(() => {
+    if (step === 'register' && password) {
+      checkPasswordStrength(password).then(setPasswordStrength);
+    } else {
+      setPasswordStrength(null);
+    }
+  }, [password, step]);
 
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -192,6 +203,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoFocus
+              autoComplete='current-password'
             />
           </>
         );
@@ -218,7 +230,42 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
               className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete='new-password'
             />
+            {password && passwordStrength && (
+              <div className='mt-2'>
+                <div className='flex items-center gap-2'>
+                  <div className='flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden'>
+                    <div
+                      className={clsx('h-full transition-all duration-300', {
+                        'bg-red-500': passwordStrength.strength <= 1,
+                        'bg-orange-500': passwordStrength.strength === 2,
+                        'bg-green-500': passwordStrength.strength === 3,
+                        'bg-emerald-600': passwordStrength.strength === 4,
+                      })}
+                      style={{ width: `${(passwordStrength.strength / 4) * 100}%` }}
+                    />
+                  </div>
+                  <span
+                    className={clsx('text-xs font-medium', {
+                      'text-red-500': passwordStrength.strength <= 1,
+                      'text-orange-500': passwordStrength.strength === 2,
+                      'text-green-500': passwordStrength.strength === 3,
+                      'text-emerald-600': passwordStrength.strength === 4,
+                    })}
+                  >
+                    {passwordStrength.strength === 0 && '无效'}
+                    {passwordStrength.strength === 1 && '弱'}
+                    {passwordStrength.strength === 2 && '一般'}
+                    {passwordStrength.strength === 3 && '良好'}
+                    {passwordStrength.strength === 4 && '很强'}
+                  </span>
+                </div>
+                <p className='text-xs text-gray-600 dark:text-gray-400 mt-1'>
+                  {passwordStrength.reason}
+                </p>
+              </div>
+            )}
           </>
         );
       case 'username':
@@ -285,7 +332,14 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
 
           <button
             type='submit'
-            disabled={isLoading || !isUsernameCorrect}
+            disabled={
+              isLoading ||
+              !isUsernameCorrect ||
+              (step === 'register' &&
+                !!password &&
+                !!passwordStrength &&
+                passwordStrength.strength <= 1)
+            }
             className='w-full p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 flex items-center justify-center disabled:cursor-not-allowed'
           >
             {isLoading ? (

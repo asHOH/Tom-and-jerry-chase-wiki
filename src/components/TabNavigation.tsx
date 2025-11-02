@@ -119,6 +119,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         setSignOutError(error.message || '退出登录失败，请稍后再试');
         return;
       }
+      console.log('User signed out successfully');
       clearUserData();
       setUserDropdownOpen(false);
     } catch (e) {

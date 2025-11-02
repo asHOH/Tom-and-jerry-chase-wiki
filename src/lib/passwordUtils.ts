@@ -33,25 +33,6 @@ export async function checkPasswordStrength(password: string): Promise<PasswordS
     Boolean
   ).length;
 
-  const commonPatterns = [
-    /^123+/,
-    /^abc+/i,
-    /password/i,
-    /qwerty/i,
-    /(.)\1{2,}/,
-    /^[a-z]+$/i,
-    /^\d+$/,
-  ];
-
-  const hasCommonPattern = commonPatterns.some((pattern) => pattern.test(password));
-
-  if (hasCommonPattern) {
-    return {
-      strength: 1,
-      reason: '密码包含常见模式，请使用更复杂的组合',
-    };
-  }
-
   const isPwned = await checkHaveIBeenPwned(password);
   if (isPwned) {
     return {
@@ -125,6 +106,10 @@ export async function checkPasswordStrength(password: string): Promise<PasswordS
 }
 
 async function checkHaveIBeenPwned(password: string): Promise<boolean> {
+  if (typeof document !== 'undefined') {
+    // Avoid running in browser environments
+    return false;
+  }
   try {
     const sha1Hash = crypto.createHash('sha1').update(password).digest('hex').toUpperCase();
     const prefix = sha1Hash.substring(0, 5);
