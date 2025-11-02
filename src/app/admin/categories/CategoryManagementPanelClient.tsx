@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import { Database } from '@/data/database.types';
+import { useEffect, useState } from 'react';
 type Category = Database['public']['Tables']['categories']['Row'];
 
 const visibilityLabel = (v: Category['default_visibility']) => {

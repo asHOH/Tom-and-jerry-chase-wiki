@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useState } from 'react';
 import useSWR from 'swr';
 
-import PageTitle from '@/components/ui/PageTitle';
+import { ClockIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { useUser } from '@/hooks/useUser';
+import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
-import { ClockIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
+import { useUser } from '@/hooks/useUser';
 
 interface ArticleVersion {
   id: string;

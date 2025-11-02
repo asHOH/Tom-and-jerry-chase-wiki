@@ -1,10 +1,10 @@
-import React from 'react';
-import { Skill } from '@/data/types';
-import CollapseCard from '@/components/ui/CollapseCard';
-import { filterTraitsBySingleItem } from '../../traits/shared/SingleItemTraitsText';
-import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
 import AccordionCard from '@/components/ui/AccordionCard';
+import CollapseCard from '@/components/ui/CollapseCard';
 import { entities } from '@/data';
+import { Skill } from '@/data/types';
+import SingleItemTraitsText, {
+  filterTraitsBySingleItem,
+} from '../../traits/shared/SingleItemTraitsText';
 
 interface SkillTraitsCardProps {
   skill: Skill;

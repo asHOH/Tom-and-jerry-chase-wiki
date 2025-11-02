@@ -3,6 +3,10 @@ import { cookies } from 'next/headers';
 import type { Database } from '@/data/database.types';
 
 export async function createClient() {
+  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+    return void 0 as never;
+  }
+
   const cookieStore = await cookies();
 
   return createServerClient<Database>(

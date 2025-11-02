@@ -30,6 +30,7 @@ import {
 import { Contributor, contributors } from '@/data/contributors';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import TreeCardDisplay from './TreeCardDisplay';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 const cardGroupHasTreeStructure = (card: unknown): boolean => {
   if (typeof card === 'string') {
@@ -332,6 +333,8 @@ export function KnowledgeCardGroupDisplay({
   // const isFoldedMode = viewMode === 'tree-folded';
   const isHybridMode = viewMode === 'hybrid';
 
+  const isMobile = useMobile();
+
   if (isTreeView) {
     // Tree mode: show tree structure with max cost
     const maxCost = calculateMaxCostForTree(group, getCardCost);
@@ -373,7 +376,7 @@ export function KnowledgeCardGroupDisplay({
               getCardRank={getCardRank}
               imageBasePath={imageBasePath}
               isOptionalCard={(cardId) => cardId === 'C-狡诈' && hasAnyOptional}
-              isFoldedMode={false}
+              isFoldedMode={isMobile}
               isDarkMode={isDarkMode}
               isHybridMode={isHybridMode}
             />

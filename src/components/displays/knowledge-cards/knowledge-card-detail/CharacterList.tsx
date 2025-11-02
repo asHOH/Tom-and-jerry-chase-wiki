@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import Image from '@/components/Image';
+import Link from 'next/link';
 
 interface Character {
   id: string;
@@ -32,7 +32,7 @@ export default function CharacterList({ characters, showList }: CharacterListPro
             key={character.id ?? ''}
             className='flex items-center p-2 rounded-lg transition-colors'
           >
-            <a
+            <Link
               href={`/characters/${character.id}`}
               className='flex items-center gap-2 lg:px-0.5 w-full rounded-lg duration-300 hover:bg-slate-100 dark:hover:bg-slate-700/60'
               tabIndex={0}
@@ -52,7 +52,7 @@ export default function CharacterList({ characters, showList }: CharacterListPro
                 )}
               </div>
               <span className='text-lg dark:text-white truncate'>{character.id}</span>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

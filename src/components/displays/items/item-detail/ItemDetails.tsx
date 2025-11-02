@@ -1,13 +1,12 @@
 'use client';
 
-import React from 'react';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { Item } from '@/data/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import ItemAttributesCard from './ItemAttributesCard';
 import DetailTraitsCard from '../../shared/DetailTraitsCard';
+import ItemAttributesCard from './ItemAttributesCard';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
   // Keyboard navigation

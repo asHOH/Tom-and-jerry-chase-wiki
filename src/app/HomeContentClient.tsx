@@ -35,7 +35,7 @@ export default function HomeContentClient({ description }: Props) {
       setShowLoginDialog(false);
     } else {
       setNotificationMessage('成功进入编辑模式，编辑模式下，修改只在本地保存');
-      if (!nickname) setShowLoginDialog(true);
+      if (!nickname && !process.env.NEXT_PUBLIC_DISABLE_ARTICLES) setShowLoginDialog(true);
     }
     setShowNotification(true);
     toggleEditMode();
@@ -70,7 +70,9 @@ export default function HomeContentClient({ description }: Props) {
     ariaLabel: i.id === 'items' ? '道具列表' : '衍生物列表',
   }));
 
-  const cardButtons = NAV_ITEMS.filter((i) => i.id === 'articles' || i.id === 'buffs').map((i) => ({
+  const cardButtons = NAV_ITEMS.filter(
+    (i) => (!process.env.NEXT_PUBLIC_DISABLE_ARTICLES && i.id === 'articles') || i.id === 'buffs'
+  ).map((i) => ({
     imageSrc: i.iconSrc,
     imageAlt: i.iconAlt,
     title: i.label,

@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function CreateDateDisplay({ createDate }: { createDate: string | null }) {
   if (!createDate) {
     return null;

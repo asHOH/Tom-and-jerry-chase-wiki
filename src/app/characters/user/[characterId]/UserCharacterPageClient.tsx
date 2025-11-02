@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { characters } from '@/data';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { characters } from '@/data';
 import { CharacterWithFaction } from '@/lib/types';
+import { useEffect, useState } from 'react';
 
 /**
  * This is the client component that contains the actual page logic.

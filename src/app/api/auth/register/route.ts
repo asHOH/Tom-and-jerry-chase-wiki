@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash, randomBytes, pbkdf2Sync } from 'crypto';
 import { TablesInsert } from '@/data/database.types';
-// We'll construct a server client bound to this response to attach cookies
 import { convertToPinyin } from '@/lib/pinyinUtils';
+import { checkPasswordStrength } from '@/lib/passwordUtils';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
@@ -36,6 +36,16 @@ export async function POST(request: NextRequest) {
 
     if (!password && process.env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH) {
       return NextResponse.json({ error: 'Password is required.' }, { status: 400 });
+    }
+
+    if (password) {
+      const strength = await checkPasswordStrength(password);
+      if (strength.strength <= 1) {
+        return NextResponse.json(
+          { error: `Password too weak: ${strength.reason}` },
+          { status: 400 }
+        );
+      }
     }
 
     const { data: existingByUsername, error: usernameLookupError } = await supabaseAdmin

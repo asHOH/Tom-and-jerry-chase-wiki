@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
-export async function POST(request: Request, { params }: { params: { versionId?: string } }) {
-  const versionId = params?.versionId;
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ versionId?: string }> }
+) {
+  const versionId = (await params)?.versionId;
 
   if (!versionId) {
     return NextResponse.json({ error: 'Missing version ID' }, { status: 400 });

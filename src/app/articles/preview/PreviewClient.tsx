@@ -1,15 +1,11 @@
 'use client';
 
-import React from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
-import PageTitle from '@/components/ui/PageTitle';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import {
   ClockIcon,
   EyeIcon,
@@ -17,6 +13,9 @@ import {
   PencilSquareIcon,
   UserCircleIcon,
 } from '@/components/icons/CommonIcons';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import PageTitle from '@/components/ui/PageTitle';
+import RichTextDisplay from '@/components/ui/RichTextDisplay';
 
 interface PreviewData {
   is_preview: boolean;

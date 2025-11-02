@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 import { useSpecifyTypeNavigation } from '@/lib/hooks/useSpecifyTypeNavigation';
 import { motion } from 'motion/react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff';
 

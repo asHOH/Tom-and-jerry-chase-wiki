@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import SearchBar from './ui/SearchBar';
-import Tooltip from './ui/Tooltip';
 import { useAppContext } from '@/context/AppContext';
-import clsx from 'clsx';
-import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
-import { supabase } from '@/lib/supabase/client';
-import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
-import { UserCircleIcon } from '@/components/icons/CommonIcons';
+import { useUser } from '@/hooks/useUser';
+import { supabase } from '@/lib/supabase/client';
+import clsx from 'clsx';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
+import SearchBar from './ui/SearchBar';
+import Tooltip from './ui/Tooltip';
 
 // Helper function for button styling
 const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {
@@ -119,6 +119,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         setSignOutError(error.message || '退出登录失败，请稍后再试');
         return;
       }
+      console.log('User signed out successfully');
       clearUserData();
       setUserDropdownOpen(false);
     } catch (e) {
@@ -139,7 +140,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         .slice()
         .sort((a, b) => +(items.indexOf(a) < activeIndex) - +(items.indexOf(b) < activeIndex))
     : items;
-  const primaryTabs = sortedTabs.slice(0, visibleCount);
+  const primaryTabs = sortedTabs
+    .slice(0, visibleCount)
+    .filter((tab) => !process.env.NEXT_PUBLIC_DISABLE_ARTICLES || tab.id !== 'articles');
   const overflowTabs = clampedCollapsed > 0 ? sortedTabs.slice(visibleCount) : [];
 
   const tabMinWidthClass = 'min-w-[40px]';
@@ -330,52 +333,57 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             </Tooltip>
           )}
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
-          {mounted && !!nickname && shouldDisplayUserSettings && (
-            <div className='relative'>
-              <Tooltip content='用户设置' className='border-none'>
-                <button
-                  type='button'
-                  aria-label='用户设置'
-                  className={clsx(getButtonClassName(false, userDropdownOpen), 'p-2')}
-                  onClick={() => setUserDropdownOpen((prev) => !prev)}
-                >
-                  <UserCircleIcon className='size-6' strokeWidth={1.5} />
-                </button>
-              </Tooltip>
-              {userDropdownOpen && (
-                <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md z-[99999]'>
-                  <ul>
-                    <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>你好，{nickname}</li>
-                    {(role == 'Coordinator' || role == 'Reviewer') && (
-                      <li className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'>
-                        <Link href='/admin/' className='block text-gray-800 dark:text-gray-200'>
-                          进入管理面板
-                        </Link>
+          {mounted &&
+            !!nickname &&
+            shouldDisplayUserSettings &&
+            !process.env.NEXT_PUBLIC_DISABLE_ARTICLES && (
+              <div className='relative'>
+                <Tooltip content='用户设置' className='border-none'>
+                  <button
+                    type='button'
+                    aria-label='用户设置'
+                    className={clsx(getButtonClassName(false, userDropdownOpen), 'p-2')}
+                    onClick={() => setUserDropdownOpen((prev) => !prev)}
+                  >
+                    <UserCircleIcon className='size-6' strokeWidth={1.5} />
+                  </button>
+                </Tooltip>
+                {userDropdownOpen && (
+                  <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md z-[99999]'>
+                    <ul>
+                      <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>
+                        你好，{nickname}
                       </li>
-                    )}
-                    {!!signOutError && (
-                      <li className='px-4 py-2 text-red-600 dark:text-red-400'>{signOutError}</li>
-                    )}
-                    <li>
-                      <button
-                        type='button'
-                        className={clsx(
-                          'w-full text-left px-4 py-2 cursor-pointer rounded-b-md text-gray-800 dark:text-gray-200',
-                          signingOut
-                            ? 'opacity-60 pointer-events-none bg-gray-100 dark:bg-slate-700'
-                            : 'hover:bg-gray-100 dark:hover:bg-slate-700'
-                        )}
-                        onClick={handleSignOut}
-                        disabled={signingOut}
-                      >
-                        {signingOut ? '正在退出…' : '退出登录'}
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
+                      {(role == 'Coordinator' || role == 'Reviewer') && (
+                        <li className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'>
+                          <Link href='/admin/' className='block text-gray-800 dark:text-gray-200'>
+                            进入管理面板
+                          </Link>
+                        </li>
+                      )}
+                      {!!signOutError && (
+                        <li className='px-4 py-2 text-red-600 dark:text-red-400'>{signOutError}</li>
+                      )}
+                      <li>
+                        <button
+                          type='button'
+                          className={clsx(
+                            'w-full text-left px-4 py-2 cursor-pointer rounded-b-md text-gray-800 dark:text-gray-200',
+                            signingOut
+                              ? 'opacity-60 pointer-events-none bg-gray-100 dark:bg-slate-700'
+                              : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                          )}
+                          onClick={handleSignOut}
+                          disabled={signingOut}
+                        >
+                          {signingOut ? '正在退出…' : '退出登录'}
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       </div>
     </div>

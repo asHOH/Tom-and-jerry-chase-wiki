@@ -6,6 +6,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 // Edge runtime warnings. Package version is pinned in package.json for stability.
 
 export async function updateSession(request: NextRequest) {
+  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+    return NextResponse.next({ request });
+  }
   type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
   const { createServerClient }: { createServerClient: CreateServerClient } = await import(
     // Deep import to avoid pulling createBrowserClient into the Edge bundle

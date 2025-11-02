@@ -1,13 +1,12 @@
 'use client';
 
-import React from 'react';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { Buff } from '@/data/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import BuffAttributesCard from './BuffAttributesCard';
 import DetailTraitsCard from '../../shared/DetailTraitsCard';
+import BuffAttributesCard from './BuffAttributesCard';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {

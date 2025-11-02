@@ -1,4 +1,3 @@
-import React from 'react';
 import { getContentWritersByCharacter } from '@/constants';
 
 interface ContentWriterDisplayProps {

@@ -1,12 +1,11 @@
 'use client';
 
-import React from 'react';
-import GameImage from '@/components/ui/GameImage';
-import { SpecialSkill } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
-import { designTokens, componentTokens } from '@/lib/design-tokens';
+import GameImage from '@/components/ui/GameImage';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
+import { SpecialSkill } from '@/data/types';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { componentTokens, designTokens } from '@/lib/design-tokens';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;

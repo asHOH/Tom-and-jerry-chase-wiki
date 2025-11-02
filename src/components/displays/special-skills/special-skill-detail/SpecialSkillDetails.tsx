@@ -1,15 +1,14 @@
 'use client';
 
-import React from 'react';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
-import { SpecialSkill } from '@/data/types';
 import { characters } from '@/data';
+import { SpecialSkill } from '@/data/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import CharacterList from '../../../displays/knowledge-cards/knowledge-card-detail/CharacterList';
-import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';
 import DetailTraitsCard from '../../shared/DetailTraitsCard';
+import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;

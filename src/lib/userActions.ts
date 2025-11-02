@@ -2,6 +2,13 @@
 import { createClient } from './supabase/server';
 
 export async function getUserData() {
+  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+    return {
+      role: null,
+      nickname: null,
+    };
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

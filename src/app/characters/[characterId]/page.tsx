@@ -1,16 +1,15 @@
-import React, { Suspense } from 'react';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import { GameDataManager } from '@/lib/dataManager';
 import CharacterDetailsClient from '@/app/characters/[characterId]/CharacterDetailsClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
-import { generatePageMetadata, ArticleStructuredData } from '@/lib/metadataUtils';
-import CharacterDocs from './CharacterDocs';
+import { GameDataManager } from '@/lib/dataManager';
 import { getTutorialPage } from '@/lib/docUtils';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { ArticleStructuredData, generatePageMetadata } from '@/lib/metadataUtils';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import CharacterArticle from './CharacterArticle';
+import CharacterDocs from './CharacterDocs';
 
 // Revalidate once per 8 hours to keep docs fresh
 export const revalidate = 28800;
@@ -86,6 +85,26 @@ export default async function CharacterPage({
     const characterMap = getCharacterMap();
     const character = characterMap[characterId];
     const docPage = await getTutorialPage(characterId);
+
+    if (!character) {
+      notFound();
+    }
+
+    if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+      return (
+        <AppProvider>
+          <EditModeProvider>
+            <TabNavigationWrapper showDetailToggle={true}>
+              <CharacterDetailsClient character={character}>
+                {!!docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
+              </CharacterDetailsClient>
+            </TabNavigationWrapper>
+          </EditModeProvider>
+        </AppProvider>
+      );
+    }
+
+    const { supabaseAdmin } = await import('@/lib/supabase/admin');
     const article = (
       docPage
         ? Promise.resolve(null)
@@ -123,10 +142,6 @@ export default async function CharacterPage({
         ? supabaseAdmin.rpc('increment_article_view_count', { p_article_id: result.id })
         : null
     );
-
-    if (!character) {
-      notFound();
-    }
 
     return (
       <AppProvider>

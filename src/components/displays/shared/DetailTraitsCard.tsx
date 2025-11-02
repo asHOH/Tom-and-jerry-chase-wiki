@@ -1,8 +1,8 @@
-import React from 'react';
-import { SingleItem } from '@/data/types';
 import CollapseCard from '@/components/ui/CollapseCard';
-import { filterTraitsBySingleItem } from '../traits/shared/SingleItemTraitsText';
-import SingleItemTraitsText from '../traits/shared/SingleItemTraitsText';
+import { SingleItem } from '@/data/types';
+import SingleItemTraitsText, {
+  filterTraitsBySingleItem,
+} from '../traits/shared/SingleItemTraitsText';
 
 interface DetailTraitsCardProps {
   singleItem: SingleItem;

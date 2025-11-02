@@ -22,6 +22,7 @@ const directives = {
     'https://hcaptcha.com',
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
+    'https://api.pwnedpasswords.com',
   ],
   'media-src': ["'self'"],
   'object-src': ['none'],

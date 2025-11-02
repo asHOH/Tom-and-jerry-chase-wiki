@@ -1,20 +1,19 @@
 'use client';
 
-import React from 'react';
-import { useSearchParams } from 'next/navigation';
 import Image from '@/components/Image';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
-import { renderTextWithHighlights } from '@/lib/textUtils';
-import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data'; // Import characters data
+import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
+import { flattenCardGroup } from '@/lib/knowledgeCardSectionUtils';
+import { renderTextWithHighlights } from '@/lib/textUtils';
+import { KnowledgeCardDetailsProps } from '@/lib/types';
+import { useSearchParams } from 'next/navigation';
+import DetailTraitsCard from '../../shared/DetailTraitsCard';
 import CharacterList from './CharacterList';
 import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';
-import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
-import { flattenCardGroup } from '@/lib/knowledgeCardSectionUtils';
-import DetailTraitsCard from '../../shared/DetailTraitsCard';
 
 export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps) {
   // Keyboard navigation

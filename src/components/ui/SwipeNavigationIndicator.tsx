@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
+import { AnimatePresence, motion } from 'motion/react';
 
 interface SwipeNavigationIndicatorProps {
   direction: 'left' | 'right' | null;

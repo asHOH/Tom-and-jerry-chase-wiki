@@ -1,19 +1,18 @@
 'use client';
 
-import React from 'react';
+import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { useMobile } from '@/hooks/useMediaQuery';
 import {
-  getCardRankColors,
-  getCardCostColors,
-  designTokens,
   componentTokens,
+  designTokens,
+  getCardCostColors,
+  getCardRankColors,
 } from '@/lib/design-tokens';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
+import BaseCard from '../../../ui/BaseCard';
 import GameImage from '../../../ui/GameImage';
 import Tag from '../../../ui/Tag';
-import BaseCard from '../../../ui/BaseCard';
-import { useDarkMode } from '@/context/DarkModeContext';
-import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
-import { useMobile } from '@/hooks/useMediaQuery';
 
 export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetailsProps) {
   const [isDarkMode] = useDarkMode();

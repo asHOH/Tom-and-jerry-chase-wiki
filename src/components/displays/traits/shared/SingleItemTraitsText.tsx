@@ -1,8 +1,7 @@
-import React from 'react';
-import { Trait, SingleItem } from '@/data/types';
-import traits from '@/data/traits';
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import { itemGroups } from '@/data';
+import traits from '@/data/traits';
+import { SingleItem, Trait } from '@/data/types';
+import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 
 const SingleItemType = (singleItem: SingleItem): string => {
   return {

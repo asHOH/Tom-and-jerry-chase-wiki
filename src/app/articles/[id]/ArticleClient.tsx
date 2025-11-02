@@ -1,13 +1,5 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
-import { useUser } from '@/hooks/useUser';
-import { useMobile } from '@/hooks/useMediaQuery';
-import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import {
   ClockIcon,
   EyeIcon,
@@ -15,6 +7,14 @@ import {
   PencilSquareIcon,
   UserCircleIcon,
 } from '@/components/icons/CommonIcons';
+import RichTextDisplay from '@/components/ui/RichTextDisplay';
+import { useMobile } from '@/hooks/useMediaQuery';
+import { useUser } from '@/hooks/useUser';
+import { format } from 'date-fns';
+import { zhCN } from 'date-fns/locale';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface ArticleData {
   id: string;
