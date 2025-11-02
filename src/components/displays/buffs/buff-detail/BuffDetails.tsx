@@ -21,7 +21,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
     [
       {
         key: 'description',
-        title: '效果介绍',
+        title: '作用效果',
         value: buff.description,
         detailedValue: buff.detailedDescription,
       },
@@ -29,18 +29,27 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
         ? null
         : {
             key: 'stack',
-            title: '同类效果叠加方式',
+            title: '叠加方式',
             value: buff.stack,
             detailedValue: buff.detailedStack,
           },
-      {
-        key: 'source',
-        title: '效果来源',
-        value: !!buff.source
-          ? `共收录 $${buff.source.length}$text-indigo-700 dark:text-indigo-400# 个 $${buff.name}$text-fuchsia-600 dark:text-fuchsia-400# 的相关来源，点击下方按钮即可跳转。`
-          : null,
-        detailedValue: null,
-      },
+      buff.source === undefined
+        ? buff.sourceDescription === undefined
+          ? null
+          : {
+              key: 'sourceDescription',
+              title: '具体来源',
+              value: buff.sourceDescription,
+              detailedValue: null,
+            }
+        : {
+            key: 'source',
+            title: '具体来源',
+            value:
+              (!!buff.sourceDescription ? buff.sourceDescription + '\n此外，' : '') +
+              `共收录 $${buff.source.length}$text-indigo-700 dark:text-indigo-400# 个 $${buff.name}$text-fuchsia-600 dark:text-fuchsia-400# 的相关来源，点击下方按钮即可跳转。`,
+            detailedValue: null,
+          },
     ] as const
   )
     .filter(<T,>(section: T | null): section is T => section !== null)

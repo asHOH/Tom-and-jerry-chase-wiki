@@ -562,7 +562,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     source: [
       { name: '牛仔吉他', type: 'skill' },
       { name: '最佳表演', type: 'skill' },
-      { name: '垃圾桶(衍生物)', type: 'entity' },
+      { name: '垃圾桶', type: 'entity' },
       { name: '胡椒粉罐头', type: 'entity' },
     ],
     unuseImage: true,
@@ -1044,6 +1044,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '使受到的电击伤害增加，可叠加。感电结束时获得{电免疫}，免疫电击伤害。感电持续期间接触部分水地形会触发电爆，提前结束感电效果并对周围所有角色造成{电击}和电击伤害。',
     detailedDescription:
       '使受到的电击伤害增加15，可叠加。感电结束时获得5秒{电免疫}，免疫电击伤害。感电持续期间接触[部分水地形](包括经典之家-洗碗池、夏日游轮-喷泉、游乐场-水城水域、森林牧场-湖泊/牛棚水槽等)会触发电爆，提前结束感电效果并对周围所有角色造成短暂{电击}和25电击伤害。',
+    sourceDescription: '受到电击类型的{伤害}时，自动获得感电效果。',
     stack: '可叠加，每次叠加时重置持续时间。',
     unuseImage: true,
   },
@@ -1053,6 +1054,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     target: '角色',
     duration: 4.9,
     description: '免疫电击和电击伤害。',
+    sourceDescription: '{感电}结束时，自动获得电免疫效果。',
     unuseImage: true,
   },
   交互速度提高: {
