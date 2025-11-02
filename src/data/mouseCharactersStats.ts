@@ -328,5 +328,16 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
     description:
       '杰瑞起初并不知道自己为何总是在奇怪的地方醒来。一天，他在梦中打包火腿时惊醒，而眼前是被毛线绑住的可怜汤姆。这时他才意识到自己似乎患上了严重的梦游症。“不要睡着，太危险了……” 梦游杰瑞一边干嚼咖啡豆。一边不断呢喃着，最终……沉沉地睡去。',
   },
+  鲍姆: {
+    //todo:完善信息
+    attackBoost: 0,
+    wallCrackDamageBoost: 999,
+    maxHp: 110,
+    hpRecovery: 999,
+    moveSpeed: 9999,
+    jumpHeight: 9999,
+    cheesePushSpeed: 999,
+    description: '请输入文本',
+  },
 };
 export default mouseCharactersStats;
