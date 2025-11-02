@@ -324,6 +324,7 @@ export type EntityDefinition = {
 export type Entity = EntityDefinition & { name: string; imageUrl: string };
 
 export type buffTypelist = '正面' | '负面' | '特殊';
+export type buffClasslist = '物理特性' | '伤害与回复' | '控制效果' | '全局效果' | '其它';
 
 export type BuffDefinition = {
   type: buffTypelist;
@@ -333,12 +334,13 @@ export type BuffDefinition = {
   duration?: number | string; // duration of buff.
   failure?: string; //failure conditions of buff
   target?: string; //作用对象
-  source?: SingleItem[];
 
   description?: string;
   detailedDescription?: string;
   stack?: string; // the stacking way in two or more buffs
   detailedStack?: string;
+  source?: SingleItem[];
+  sourceDescription?: string;
 
   unuseImage?: boolean; //show its image in grid.Default:false
   specialImageUrl?: string; //use other image instead of buff's image
