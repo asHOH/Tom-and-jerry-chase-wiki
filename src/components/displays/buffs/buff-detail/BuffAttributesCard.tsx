@@ -130,7 +130,9 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
           )}
         </div>
 
-        {(buff.duration !== undefined || buff.failure !== undefined) && (
+        {(buff.target !== undefined ||
+          buff.duration !== undefined ||
+          buff.failure !== undefined) && (
           <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
             <span className='text-lg font-bold whitespace-pre'>基础信息</span>
             <div
