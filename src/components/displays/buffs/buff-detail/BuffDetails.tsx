@@ -3,11 +3,12 @@
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
-import { Buff } from '@/data/types';
+import { Buff, SingleItem, SingleItemTypeChineseNameList } from '@/data/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
 import DetailTraitsCard from '../../shared/DetailTraitsCard';
 import BuffAttributesCard from './BuffAttributesCard';
 import SingleItemButton from '@/components/ui/SingleItemButton';
+import AccordionCard from '@/components/ui/AccordionCard';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
   // Keyboard navigation
@@ -15,6 +16,62 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
 
   const { isDetailedView } = useAppContext();
   if (!buff) return null;
+
+  function setSourceCard() {
+    if (!!buff.source && buff.source?.length >= 10) {
+      const filterSourceItemByType = Object.values(
+        buff.source.reduce(
+          (acc, item) => {
+            (acc[item.type] ||= []).push(item);
+            return acc;
+          },
+          {} as Record<string, SingleItem[]>
+        )
+      );
+      return (
+        <AccordionCard
+          items={filterSourceItemByType.map((singleItemList, key) => {
+            return {
+              id: String(key),
+              title: `${SingleItemTypeChineseNameList[singleItemList[0]?.type || 'character']}(${singleItemList.length})`,
+              children: (
+                <ul
+                  className='gap-2 mt-2 mx-2'
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                  }}
+                >
+                  {singleItemList.map((singleItem, key) => {
+                    return <SingleItemButton key={key} singleItem={singleItem} />;
+                  })}
+                </ul>
+              ),
+              activeColor: 'orange' as const,
+            };
+          })}
+          titleClassName='-mt-4'
+          size='xs'
+          defaultOpenId='0'
+        ></AccordionCard>
+      );
+    } else if (!!buff.source) {
+      return (
+        <ul
+          className='-mt-4 gap-2 w-full'
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+          }}
+        >
+          {buff.source.map((singleItem, key) => {
+            return <SingleItemButton key={key} singleItem={singleItem} />;
+          })}
+        </ul>
+      );
+    }
+    return null;
+  }
 
   const sections: DetailSection[] = (
     [
@@ -32,23 +89,23 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
             value: buff.stack,
             detailedValue: buff.detailedStack,
           },
-      buff.source === undefined
-        ? buff.sourceDescription === undefined
-          ? null
-          : {
-              key: 'sourceDescription',
-              title: '具体来源',
-              value: buff.sourceDescription,
-              detailedValue: null,
-            }
-        : {
+      !!buff.source
+        ? {
             key: 'source',
             title: '具体来源',
             value:
               (!!buff.sourceDescription ? buff.sourceDescription + '\n此外，' : '') +
               `共收录 $${buff.source.length}$text-indigo-700 dark:text-indigo-400# 个 $${buff.name}$text-fuchsia-600 dark:text-fuchsia-400# 的相关来源，点击下方按钮即可跳转。`,
             detailedValue: null,
-          },
+          }
+        : buff.sourceDescription !== undefined
+          ? {
+              key: 'sourceDescription',
+              title: '具体来源',
+              value: buff.sourceDescription,
+              detailedValue: null,
+            }
+          : null,
     ] as const
   )
     .filter(<T,>(section: T | null): section is T => section !== null)
@@ -66,19 +123,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
               <DetailTraitsCard singleItem={{ name: buff.name, type: 'buff' }} />
             </div>
           )}
-          {key === 'source' && !!buff.source && (
-            <ul
-              className='-mt-4 gap-2 w-full'
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-              }}
-            >
-              {buff.source.map((singleItem, key) => {
-                return <SingleItemButton key={key} singleItem={singleItem} />;
-              })}
-            </ul>
-          )}
+          {key === 'source' && setSourceCard()}
         </DetailTextSection>
       ),
     }));

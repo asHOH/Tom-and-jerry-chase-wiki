@@ -348,10 +348,27 @@ export type BuffDefinition = {
 
 export type Buff = BuffDefinition & { name: string; imageUrl: string };
 
+export type SingleItemTypeName =
+  | 'character'
+  | 'skill'
+  | 'knowledgeCard'
+  | 'specialSkill'
+  | 'item'
+  | 'entity'
+  | 'buff';
+export const SingleItemTypeChineseNameList = {
+  character: '角色',
+  skill: '技能',
+  knowledgeCard: '知识卡',
+  specialSkill: '特技',
+  item: '道具',
+  entity: '衍生物',
+  buff: '状态/效果',
+};
 //Create a group include similar items(or entites/buffs),so that can use navigation in one href
 export type SingleItem = {
   name: string;
-  type: 'character' | 'skill' | 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff';
+  type: SingleItemTypeName;
   factionId?: FactionId; //Just use to distinguish specialSkills 应急治疗/急速翻滚
 };
 
