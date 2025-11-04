@@ -506,9 +506,10 @@ export const contributors: Contributor[] = [
     ],
   },
   {
-    id: 'qianligongchanjuan',
-    name: '千里共婵娟',
-    description: 'S25全国第1追风汤姆，最高猫天梯排行榜第10',
+    id: 'rumengif',
+    name: '如梦if',
+    description:
+      'S25全国第1追风汤姆；S14全国第2马索尔，S21全国第2莱恩；曾用名“千里共婵娟”，b站id:9531918',
     roles: [
       {
         type: RoleType.ContentWriter,

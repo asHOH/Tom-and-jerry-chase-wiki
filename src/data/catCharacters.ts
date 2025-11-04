@@ -4894,7 +4894,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         cards: ['S-蓄势一击', 'S-屈打成招', 'A-熊熊燃烧', 'C-猫是液体'],
         description:
           '上限极高。{屈打成招}用于拦截救人和换绑进行拉扯，不怕隐身救援，找节奏能力很强，管道图效果更佳。缺点是续航较差，容错率极低，对熟练度要求很高。',
-        contributor: 'qianligongchanjuan',
+        contributor: 'rumengif',
       },
       {
         cards: [[CardGroupType.Or, 'S-击晕', 'S-蓄势一击'], 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
