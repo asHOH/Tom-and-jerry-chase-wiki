@@ -389,6 +389,37 @@
         font-size: 1.05rem;
         color: var(--text);
       }
+
+      dialog {
+        border: none;
+        border-radius: 20px;
+        padding: 0;
+        max-width: min(760px, 90vw);
+        width: min(760px, 90vw);
+      }
+
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.45);
+      }
+
+      .import-dialog {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 24px;
+        background: var(--card);
+        color: var(--text);
+      }
+
+      .import-dialog h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .import-dialog textarea {
+        min-height: 260px;
+        font-family: 'Fira Code', 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+      }
     </style>
   </head>
   <body>
@@ -401,6 +432,8 @@
           <button id="expandAll" type="button">全部展开</button>
           <button id="collapseAll" type="button">全部收起</button>
           <button id="resetAll" class="danger" type="button">清空全部</button>
+          <button id="importPaste" type="button">粘贴导入</button>
+          <button id="importFile" type="button">文件导入</button>
           <span id="stats" class="status-text"></span>
         </div>
       </header>
@@ -424,6 +457,24 @@
           <span id="exportStatus" class="status-text"></span>
         </div>
       </section>
+
+      <input id="importFileInput" type="file" accept=".ts,.tsx,.js,.jsx,.json,.txt" hidden />
+
+      <dialog id="importDialog">
+        <div class="import-dialog">
+          <h2>粘贴代码导入</h2>
+          <p class="status-text">支持直接粘贴实体定义或生成器导出的片段。</p>
+          <textarea
+            id="importTextarea"
+            spellcheck="false"
+            placeholder="将实体定义粘贴在此处"
+          ></textarea>
+          <div class="toolbar">
+            <button id="importCancel" type="button">取消</button>
+            <button id="importConfirm" type="button" class="primary">导入</button>
+          </div>
+        </div>
+      </dialog>
     </div>
 
     <template id="entityTemplate">
@@ -602,6 +653,14 @@
       const stats = document.getElementById('stats');
       const toast = document.getElementById('toast');
       const emptyState = document.getElementById('emptyState');
+      const importPasteBtn = document.getElementById('importPaste');
+      const importFileBtn = document.getElementById('importFile');
+      const importFileInput = document.getElementById('importFileInput');
+      const importDialog = document.getElementById('importDialog');
+      const importTextarea = document.getElementById('importTextarea');
+      const importConfirm = document.getElementById('importConfirm');
+      const importCancel = document.getElementById('importCancel');
+      let isBulkUpdating = false;
       const STORAGE_KEY = 'tjwiki-entity-maker-v1';
 
       const booleanFields = ['move', 'gravity'];
@@ -657,8 +716,10 @@
         entity.entitytype = normalizeEntityType(entity.entitytype);
         entities.push(entity);
         renderEntityCard(entity, locator);
-        persistState();
-        updateUI();
+        if (!isBulkUpdating) {
+          persistState();
+          updateUI();
+        }
         return entity;
       }
 
@@ -704,8 +765,10 @@
         entities.splice(index, 1);
         const card = entitiesContainer.querySelector(`.entity-card[data-id="${id}"]`);
         card?.remove();
-        persistState();
-        updateUI();
+        if (!isBulkUpdating) {
+          persistState();
+          updateUI();
+        }
       }
 
       function duplicateEntity(id) {
@@ -797,6 +860,395 @@
       function formatConstArray(list) {
         if (!list.length) return '';
         return `${formatArray(list)} as const`;
+      }
+
+      function serializeValue(value, depth = 0) {
+        if (value === undefined) {
+          return undefined;
+        }
+        if (typeof value === 'string') {
+          return `'${escapeString(value)}'`;
+        }
+        if (typeof value === 'number' || typeof value === 'boolean') {
+          return String(value);
+        }
+        if (value === null) {
+          return 'null';
+        }
+        const indent = '  '.repeat(depth);
+        const nextIndent = '  '.repeat(depth + 1);
+        if (Array.isArray(value)) {
+          if (!value.length) return '[]';
+          const items = value
+            .map((item) => serializeValue(item, depth + 1))
+            .filter((item) => item !== undefined);
+          if (!items.length) return '[]';
+          return `[\n${items.map((item) => `${nextIndent}${item}`).join(',\n')}\n${indent}]`;
+        }
+        if (typeof value === 'object') {
+          const entries = Object.entries(value)
+            .map(([key, val]) => {
+              const serialized = serializeValue(val, depth + 1);
+              if (serialized === undefined) return undefined;
+              return `${nextIndent}${key}: ${serialized}`;
+            })
+            .filter(Boolean);
+          if (!entries.length) return '{}';
+          return `{\n${entries.join(',\n')}\n${indent}}`;
+        }
+        return undefined;
+      }
+
+      function stripComments(source) {
+        let result = '';
+        let i = 0;
+        let inString = false;
+        let stringQuote = '';
+        let escaping = false;
+        while (i < source.length) {
+          const char = source[i];
+          if (inString) {
+            result += char;
+            if (escaping) {
+              escaping = false;
+            } else if (char === '\\') {
+              escaping = true;
+            } else if (char === stringQuote) {
+              inString = false;
+            }
+            i++;
+            continue;
+          }
+          if (char === "'" || char === '"' || char === '`') {
+            inString = true;
+            stringQuote = char;
+            result += char;
+            i++;
+            continue;
+          }
+          if (char === '/' && source[i + 1] === '/') {
+            i += 2;
+            while (i < source.length && source[i] !== '\n' && source[i] !== '\r') {
+              i++;
+            }
+            continue;
+          }
+          if (char === '/' && source[i + 1] === '*') {
+            i += 2;
+            while (i < source.length && !(source[i] === '*' && source[i + 1] === '/')) {
+              i++;
+            }
+            i += 2;
+            continue;
+          }
+          result += char;
+          i++;
+        }
+        return result;
+      }
+
+      function extractKeyBeforeBrace(source, braceIndex) {
+        let i = braceIndex - 1;
+        while (i >= 0 && /\s/.test(source[i])) {
+          i--;
+        }
+        if (i < 0 || source[i] !== ':') {
+          return null;
+        }
+        i--;
+        while (i >= 0 && /\s/.test(source[i])) {
+          i--;
+        }
+        if (i < 0) {
+          return null;
+        }
+        let end = i + 1;
+        let start = i;
+        const quote = source[i];
+        if (quote === '"' || quote === "'" || quote === '`') {
+          i--;
+          let escaped = false;
+          while (i >= 0) {
+            const char = source[i];
+            if (escaped) {
+              escaped = false;
+            } else if (char === '\\') {
+              escaped = true;
+            } else if (char === quote) {
+              start = i;
+              break;
+            }
+            i--;
+          }
+          if (source[start] !== quote) {
+            return null;
+          }
+          const raw = source.slice(start, end);
+          return raw.slice(1, -1);
+        }
+
+        while (start >= 0 && !/[,\{\}\(\)\[\]\s]/.test(source[start])) {
+          start--;
+        }
+        const raw = source.slice(start + 1, end);
+        const trimmed = raw.trim();
+        return trimmed || null;
+      }
+
+      function extractObjectLiteral(source) {
+        const eqIndex = source.indexOf('=');
+        let i = eqIndex !== -1 ? eqIndex + 1 : 0;
+        let start = -1;
+        let key = null;
+        let depth = 0;
+        let inString = false;
+        let stringQuote = '';
+        let escaping = false;
+        while (i < source.length) {
+          const char = source[i];
+          if (inString) {
+            if (escaping) {
+              escaping = false;
+            } else if (char === '\\') {
+              escaping = true;
+            } else if (char === stringQuote) {
+              inString = false;
+            }
+            i++;
+            continue;
+          }
+          if (char === "'" || char === '"' || char === '`') {
+            inString = true;
+            stringQuote = char;
+            i++;
+            continue;
+          }
+          if (char === '/' && source[i + 1] === '/') {
+            i += 2;
+            while (i < source.length && source[i] !== '\n' && source[i] !== '\r') {
+              i++;
+            }
+            continue;
+          }
+          if (char === '/' && source[i + 1] === '*') {
+            i += 2;
+            while (i < source.length && !(source[i] === '*' && source[i + 1] === '/')) {
+              i++;
+            }
+            i += 2;
+            continue;
+          }
+          if (char === '{') {
+            if (start === -1) start = i;
+            if (depth === 0) {
+              key = extractKeyBeforeBrace(source, i);
+            }
+            depth++;
+            i++;
+            continue;
+          }
+          if (char === '}') {
+            if (depth > 0) depth--;
+            i++;
+            if (depth === 0 && start !== -1) {
+              return { literal: source.slice(start, i), key };
+            }
+            continue;
+          }
+          i++;
+        }
+        return null;
+      }
+
+      function evaluateObjectLiteral(literal) {
+        const cleaned = stripComments(literal).replace(/\bas const\b/g, '');
+        try {
+          const codeToEval = '"use strict"; return (' + cleaned + ');';
+          const data = new Function(codeToEval)();
+          if (!data || typeof data !== 'object') {
+            throw new Error('对象解析结果无效');
+          }
+          return data;
+        } catch (error) {
+          console.error(error);
+          throw new Error('无法解析代码片段，请确认语法无误。');
+        }
+      }
+
+      function parseEntityDefinitions(raw) {
+        let code = raw.trim();
+        if (!code) {
+          throw new Error('导入内容为空');
+        }
+        const directObject = code.startsWith('{') && code.endsWith('}');
+        if (directObject) {
+          return evaluateObjectLiteral(code);
+        }
+
+        const normalized = code
+          .replace(/\bexport\s+default\b/g, '')
+          .replace(/\bexport\s+const\b/g, 'const')
+          .replace(/\bconst\s+([A-Za-z0-9_$]+)\s*:[^=]+=/g, 'const $1 =');
+
+        let literalInfo = extractObjectLiteral(normalized);
+        let literal = literalInfo ? literalInfo.literal : null;
+        const inferredKey = literalInfo?.key;
+        if (!literal) {
+          literal = code.trim();
+          if (!literal.startsWith('{')) {
+            literal = `{${literal}}`;
+          }
+          const parsedObject = evaluateObjectLiteral(literal);
+          return parsedObject;
+        }
+
+        const parsedObject = evaluateObjectLiteral(literal);
+
+        if (
+          inferredKey &&
+          parsedObject &&
+          typeof parsedObject === 'object' &&
+          !Array.isArray(parsedObject) &&
+          looksLikeEntityDefinition(parsedObject)
+        ) {
+          return { [inferredKey]: parsedObject };
+        }
+
+        return parsedObject;
+      }
+
+      function looksLikeEntityDefinition(obj) {
+        const knownKeys = [
+          'entitytype',
+          'owner',
+          'description',
+          'detailedDescription',
+          'create',
+          'detailedCreate',
+          'specialImageUrl',
+          'move',
+          'gravity',
+          'collsion',
+          'aliases',
+          'skills',
+          'entityAttributesAsCharacter',
+        ];
+
+        return knownKeys.some((key) => Object.prototype.hasOwnProperty.call(obj, key));
+      }
+
+      function transformDefinitionToInitial(name, definition) {
+        const entityTypes = normalizeEntityType(definition.entitytype);
+        const normalizedTypes = entityTypes.length
+          ? entityTypes
+          : structuredClone(defaultValues.entitytype);
+        const aliases = Array.isArray(definition.aliases) ? definition.aliases.filter(Boolean) : [];
+        const collisions = Array.isArray(definition.collsion)
+          ? definition.collsion.filter(Boolean)
+          : typeof definition.collsion === 'string' && definition.collsion.trim()
+            ? [definition.collsion.trim()]
+            : [];
+        const initial = {
+          name,
+          entitytype: normalizedTypes,
+          factionId: definition.factionId ?? '',
+          ownerName: definition.owner?.name ?? '',
+          ownerType: definition.owner?.type ?? '',
+          ownerFactionId: definition.owner?.factionId ?? '',
+          aliasesInput: aliases.join(', '),
+          collsionInput: collisions.join(', '),
+          description: definition.description ?? '',
+          detailedDescription: definition.detailedDescription ?? '',
+          create: definition.create ?? '',
+          detailedCreate: definition.detailedCreate ?? '',
+          specialImageUrl: definition.specialImageUrl ?? '',
+          move: typeof definition.move === 'boolean' ? definition.move : null,
+          gravity: typeof definition.gravity === 'boolean' ? definition.gravity : null,
+          extraCode: '',
+        };
+
+        const handledKeys = new Set([
+          'entitytype',
+          'owner',
+          'factionId',
+          'aliases',
+          'collsion',
+          'description',
+          'detailedDescription',
+          'create',
+          'detailedCreate',
+          'specialImageUrl',
+          'move',
+          'gravity',
+          'imageUrl',
+        ]);
+
+        const extraLines = Object.entries(definition)
+          .filter(([key, value]) => !handledKeys.has(key) && value !== undefined)
+          .map(([key, value]) => {
+            const serialized = serializeValue(value);
+            if (!serialized) return null;
+            return `${key}: ${serialized},`;
+          })
+          .filter(Boolean);
+
+        if (extraLines.length) {
+          initial.extraCode = extraLines.join('\n');
+        }
+
+        return initial;
+      }
+
+      function importEntitiesFromText(raw) {
+        let parsed;
+        try {
+          parsed = parseEntityDefinitions(raw);
+        } catch (error) {
+          console.error(error);
+          showToast((error && error.message) || '导入失败');
+          return;
+        }
+
+        const entries = Object.entries(parsed);
+        if (!entries.length) {
+          showToast('未找到任何实体定义');
+          return;
+        }
+
+        let count = 0;
+        isBulkUpdating = true;
+        try {
+          entries.forEach(([entityName, definition]) => {
+            if (!definition || typeof definition !== 'object') {
+              return;
+            }
+            const normalizedName = String(entityName);
+            const initial = transformDefinitionToInitial(normalizedName, definition);
+            const existing = entities.find(
+              (entity) => (entity.name ?? '').trim() === normalizedName.trim()
+            );
+            if (existing) {
+              removeEntity(existing.id);
+            }
+            addEntity(initial);
+            count++;
+          });
+        } finally {
+          isBulkUpdating = false;
+        }
+
+        if (!count) {
+          updateUI();
+          showToast('未找到可导入的实体定义');
+          return;
+        }
+
+        persistState();
+        updateUI();
+        if (importTextarea) {
+          importTextarea.value = '';
+        }
+        showToast(`已导入 ${count} 个实体`);
       }
 
       function needsQuotes(name) {
@@ -1032,6 +1484,72 @@
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         showToast('已下载 TXT 文件');
+      });
+
+      function openPasteDialog() {
+        if (importDialog && typeof importDialog.showModal === 'function') {
+          if (importTextarea) {
+            importTextarea.value = '';
+          }
+          importDialog.showModal();
+          requestAnimationFrame(() => importTextarea?.focus());
+        } else {
+          const raw = window.prompt('请粘贴实体定义代码：');
+          if (raw) {
+            importEntitiesFromText(raw);
+          }
+        }
+      }
+
+      importPasteBtn?.addEventListener('click', () => {
+        openPasteDialog();
+      });
+
+      importConfirm?.addEventListener('click', () => {
+        const raw = importTextarea?.value ?? '';
+        if (!raw.trim()) {
+          showToast('导入内容为空');
+          return;
+        }
+        if (importDialog?.open) {
+          importDialog.close();
+        }
+        importEntitiesFromText(raw);
+      });
+
+      importCancel?.addEventListener('click', () => {
+        if (importDialog?.open) {
+          importDialog.close();
+        }
+      });
+
+      importDialog?.addEventListener('close', () => {
+        if (importTextarea) {
+          importTextarea.value = '';
+        }
+      });
+
+      importFileBtn?.addEventListener('click', () => {
+        importFileInput?.click();
+      });
+
+      importFileInput?.addEventListener('change', async (event) => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement)) {
+          return;
+        }
+        const file = input.files && input.files[0];
+        if (!file) {
+          return;
+        }
+        try {
+          const text = await file.text();
+          importEntitiesFromText(text);
+        } catch (_) {
+          showToast('读取文件失败');
+        } finally {
+          input.value = '';
+        }
       });
 
       hydrateState();
