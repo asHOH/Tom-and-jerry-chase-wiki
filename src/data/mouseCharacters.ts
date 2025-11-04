@@ -2314,32 +2314,33 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         tagName: '后期',
         isMinor: false,
-        description: '地狱裂隙的护盾和三级被动使恶魔杰瑞在后期拥有较强存活能力。',
+        description: '在后期，{3级被动}和{地狱裂隙}的护盾能提供极强的存活能力。',
         additionalDescription: '',
       },
       {
         tagName: '奶酪',
         isMinor: true,
-        description: '一级被动增加推奶酪速度，但整体推速并不突出。',
+        description: '{1级被动}增加推速，但整体推速并不突出。',
         additionalDescription: '',
       },
       {
         tagName: '救援',
         isMinor: true,
         description:
-          '地狱裂隙提供的护盾，加速和传送有效提高了恶魔杰瑞救人成功率，后期可作为替补救人位。',
+          '{地狱裂隙}的护盾、加速和传送，配合{3级被动}，有效提高救人成功率，后期可作为替补救人位。',
         additionalDescription: '',
       },
       {
         tagName: '辅助',
         isMinor: true,
-        description: '恶魔之门可提供多种增益效果，并且可以强制传送敌方以及帮助我方队友逃生。',
-        additionalDescription: '辅助效果在车队中效果明显，单排效果较小。',
+        description: '{恶魔之门}可提供多种增益，并且可以强制传送猫咪和帮助队友逃生。',
+        additionalDescription: '辅助效果在车队中明显，单排效果较小。',
       },
       {
         tagName: '破局',
         isMinor: false,
-        description: '恶魔之门可将进行防守的猫咪直接传送走，阻止其防守奶酪。',
+        description:
+          '{恶魔之门}可将猫咪直接传送走，阻止其防守奶酪或墙缝；{3级被动}和{地狱裂隙}的护盾也能提供强推最后一块奶酪的能力。',
         additionalDescription: '',
       },
     ],
@@ -2348,7 +2349,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '地狱裂隙流',
         pattern: '011001222',
         weaponType: 'weapon1',
-        description: '传送被动流，若墙缝期7级则点三叉戟。',
+        description: '传送被动流，若墙缝期7级则点{三叉戟}。',
       },
       {
         id: '三叉戟流',
@@ -2359,32 +2360,18 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
     ],
     knowledgeCardGroups: [
       {
-        id: '编辑者推荐',
-        description: '',
-        groups: [
-          {
-            cards: ['S-舍己', 'S-铁血', 'B-夹不住我', 'C-救救我', 'C-不屈'],
-            description: '防守型猫以及没满20点时可用。',
-          },
-          {
-            cards: ['S-舍己', 'S-铁血', 'B-幸运', 'C-救救我'],
-            description: '幸运流。',
-          },
-        ],
-        defaultFolded: true,
-      },
-      {
-        id: '贡献者推荐',
+        id: '秋雨绵绵推荐',
         description:
-          '“恶杰定位很不清晰，可推可救可牵制，最大的优点就是后期自保。推荐和天杰打幸运体系，一直推奶酪，用幸运自救，没跑掉就给天使祝福，后期都是生存强的老鼠。”',
+          '“恶杰定位很不清晰，可推可救可牵制，最大的优点就是后期自保。推荐和天杰打幸运体系，一直推奶酪，用{幸运}自救，没跑掉就给{天使祝福}，后期都是生存强的老鼠。”',
         groups: [
           {
             cards: ['S-舍己', 'A-逃窜', 'A-泡泡浴', 'C-不屈', 'C-救救我'],
+            description: '后期生存卡组。由于无{铁血}，前期尽量不要撞猫。',
             contributor: 'qiuyumianmian',
           },
           {
             cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-救救我', 'C-不屈'],
-            description: '没幸运的卡组。',
+            description: '常规卡组。',
             contributor: 'qiuyumianmian',
           },
           {
@@ -2394,7 +2381,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             cards: ['S-舍己', 'A-逃窜', 'A-泡泡浴', 'B-破墙', 'C-不屈'],
-            description: '对抗图茨使用。',
+            description: '对抗图茨使用。由于无{铁血}，前期尽量不要撞猫。',
             contributor: 'qiuyumianmian',
           },
           {
@@ -2430,16 +2417,16 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 2,
-            description: '成功传送后额外获得一层护盾。',
+            description: '传送后额外获得一层护盾。',
             cooldown: 10,
-            detailedDescription: '成功传送后额外获得一层护盾；护盾和加速持续时间增加至4s。',
+            detailedDescription: '传送后额外获得一层护盾；护盾和加速持续时间增加至4s。',
           },
           {
             level: 3,
-            description: '技能持续时间延长，成功传送后额外获得两层护盾。',
+            description: '读条持续时间延长，传送后额外获得两层护盾。',
             cooldown: 10,
             detailedDescription:
-              '技能持续时间延长至14s，成功传送后额外获得两层护盾；护盾和加速持续时间增加至5s。',
+              '读条持续时间延长至14s，传送后额外获得两层护盾；护盾和加速持续时间增加至5s。',
           },
         ],
         cooldownTiming: '释放后',
@@ -2450,9 +2437,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         aliases: ['传送门', '流放门'],
         type: 'weapon1',
         description:
-          '召唤一个{恶魔之门}，同时技能进入读条，期间再次使用召唤另一个传送门。友方可与传送门交互，被传送并获得一种随机强化效果，效果持续时间随两传送门距离增大（有下限和上限）；敌方碰到传送门后会被强制传送（短时间内不会重复触发）；[处于被投掷状态的道具](被投掷且速度未降为0的道具)碰到传送门也会被传送。传送门持续一定时间后消失，[进行传送](包括投掷物传送，友方主动传送，敌方强制传送)会减少传送门的持续时间。',
+          '召唤一个{恶魔之门}，召唤后技能进入读条，期间再次使用召唤另一个传送门，存在一段时间后消失。友方可与传送门交互，被传送并[获得一种随机增益](效果持续时间随两传送门距离增大)；敌方碰到传送门后会被强制传送（短时间内不会重复触发）；[处于被投掷状态的道具](被投掷且速度未降为0的道具)碰到传送门也会被传送。[进行传送](包括投掷物传送，友方主动传送，敌方强制传送)会减少传送门的存在时间。',
         detailedDescription:
-          '召唤一个{恶魔之门}，成功召唤时技能进入读条，期间再次使用召唤另一个传送门。友方可与传送门交互，在前摇0.9秒后被传送并获得一种随机强化效果，效果持续时间随两传送门距离增大（有下限和上限）；敌方碰到传送门后会被强制传送（10秒内不会重复触发）；[处于被投掷状态的道具](被投掷且速度未降为0的道具)碰到传送门也会被传送。[进行传送](包括投掷物传送，友方主动传送，敌方强制传送)会使传送门的持续时间减少3秒（[自身首次和第二次传送例外](恶魔杰瑞与他的队友利用召唤的第一个传送门传送不减少持续时间，仅在使用第二个门传送时会减少持续时间)）。\n使用传送门的友方[随机获得以下8种增益中的一种](若此时已有增益则不再获得新增益，但如果随机到相同增益则重置持续时间)：\n1：主动技能CD减少70%；\n2：武器技能CD减少70%；\n3：推速提高100%；\n4：攻击增伤提升50；\n5：获得一层护盾（可以免疫铁血）；\n6：获得远视；\n7：获得隐身；\n8：Hp恢复增加5/s，移速提升20%，跳跃高度提升50%。',
+          '召唤一个{恶魔之门}，召唤后技能进入读条，期间再次使用召唤另一个传送门，存在一段时间后消失。友方可与传送门交互，在前摇0.9秒后被传送并[获得以下8种增益中的一种随机增益](效果持续时间随两传送门距离增大（有下限和上限）；若随机到相同增益则重置持续时间，不再获得新增益)：\n1：主动技能CD减少70%；\n2：武器技能CD减少70%；\n3：推速提高100%；\n4：攻击增伤提升50；\n5：获得一层护盾（可以免疫铁血结束后的虚弱）；\n6：获得远视；\n7：获得隐身；\n8：Hp恢复增加5/s，加速20%，跳跃高度提升50%。\n\n敌方碰到传送门后会被强制传送（10秒内不会重复触发）；[处于被投掷状态的道具](被投掷且速度未降为0的道具)碰到传送门也会被传送。[进行传送](包括投掷物传送，友方主动传送，敌方强制传送)会减少3秒传送门的存在时间（[自身首次和第二次传送例外](恶魔杰瑞与他的队友利用召唤的第一个传送门传送不减少存在时间，仅在使用第二个门传送时会减少存在时间)）。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: ['道具键*'],
@@ -2463,9 +2450,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         skillLevels: [
           {
             level: 1,
-            description: '技能读条时间为9秒，传送门持续时间为18秒。',
+            description: '技能读条时间为9秒，传送门存在时间为18秒。',
             detailedDescription:
-              '技能读条时间为9秒，传送门持续时间为18秒。友方穿过传送门获得的强化效果最低持续时间为15秒，最高为45秒。',
+              '技能读条时间为9秒，传送门存在时间为18秒。友方穿过传送门获得的增益最低持续时间为15秒，最高为45秒。',
             cooldown: 25,
           },
           {
@@ -2477,9 +2464,9 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           },
           {
             level: 3,
-            description: '友方穿过传送门获得的强化效果最低持续时间提升。',
+            description: '友方穿过传送门获得的增益最低持续时间提升。',
             cooldown: 25,
-            detailedDescription: '友方穿过传送门获得的强化效果最低持续时间提升至25秒。',
+            detailedDescription: '友方穿过传送门获得的增益最低持续时间提升至25秒。',
           },
         ],
         cooldownTiming: '释放后',
@@ -2498,14 +2485,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 2,
             description: '降低附近敌方的移速和跳跃高度。',
-            detailedDescription: '周围半径700内的敌方移速降低15%，跳跃高度降低15%。',
+            detailedDescription: '半径700范围内的敌方减速15%，跳跃高度降低15%。',
           },
           {
             level: 3,
             description:
-              '受到来自敌方的伤害后，免疫[下次受到](包括任意来源的效果，触发一次后消失)的大部分增益、减益效果。',
+              '受到来自敌方的伤害后，免疫下次受到的[大部分减益效果](包括少量特定增益)，触发一次后消失。',
             detailedDescription:
-              '受到来自敌方的伤害后，免疫[下次受到](包括任意来源的效果，触发一次后消失)的攻击和[大部分增益、减益效果/状态](无法免疫受伤状态，同时以下状态不会被免疫：食物和饮料增益、知识卡-无畏/逃之夭夭/逃窜效果)。',
+              '受到来自敌方的伤害后，免疫下次受到的[大部分减益效果/状态和少量特定增益](所有来源的效果均可免疫)，触发一次后消失。不免疫受伤状态、食物和饮料增益、知识卡-无畏/逃之夭夭/逃窜效果。',
           },
         ],
       },
@@ -2517,14 +2504,14 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         name: '应急治疗',
-        description: '应对高机动性猫时使用',
+        description: '应对高机动性猫时使用。',
       },
     ],
     aliases: ['恶杰'],
     counteredBy: [
       {
         id: '莱特宁',
-        description: '恶魔杰瑞两个技能均有较长前摇，被莱特宁三级闪现克制。',
+        description: '恶魔杰瑞两个技能均有较长前摇，被莱特宁3级闪现克制。',
         isMinor: false,
       },
       {
@@ -2535,7 +2522,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         id: '天使汤姆',
         description:
-          '天使汤姆飞行的高机动性克制恶魔杰瑞的拉扯，武器技能的道具（瓶子除外）可以无视恶魔杰瑞Lv.3被动，直接造成伤害。',
+          '天使汤姆飞行的高机动性克制恶魔杰瑞的拉扯，武器技能的道具（瓶子除外）可以无视恶魔杰瑞3级被动，直接造成伤害。',
         isMinor: true,
       },
     ],
@@ -2555,7 +2542,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
       {
         id: '图茨',
-        description: '恶魔杰瑞三级被动有概率免疫喵喵叫。',
+        description: '恶魔杰瑞3级被动有概率免疫喵喵叫。',
         isMinor: true,
       },
       {
