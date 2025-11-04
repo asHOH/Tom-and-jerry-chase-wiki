@@ -251,13 +251,16 @@ function KnowledgeCardGroupFlat({
       {!!contributor && !isEditMode && (
         <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
           <Tag
+            size='xs'
+            margin='micro'
+            className='opacity-80'
             colorStyles={
               isDarkMode
                 ? { background: '#334155', color: '#e0e7ef' }
                 : { background: '#e0e7ef', color: '#1e293b' }
             }
           >
-            卡组推荐者：
+            推荐人：
             {(contributorInformation?.description !== undefined && (
               <Tooltip content={contributorInformation.description}>
                 {contributorInformation.name}
@@ -420,13 +423,16 @@ export function KnowledgeCardGroupDisplay({
         {!!contributor && !isEditMode && (
           <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
             <Tag
+              size='xs'
+              margin='micro'
+              className='opacity-80'
               colorStyles={
                 isDarkMode
                   ? { background: '#334155', color: '#e0e7ef' }
                   : { background: '#e0e7ef', color: '#1e293b' }
               }
             >
-              卡组推荐者：
+              推荐人：
               {(contributorInformation?.description !== undefined && (
                 <Tooltip content={contributorInformation.description}>
                   {contributorInformation.name}
