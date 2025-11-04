@@ -25,6 +25,13 @@ if ! npx eslint --cache --max-warnings=0 "src/**/*.{js,jsx,ts,tsx}" > /dev/null 
   exit 1
 fi
 
+# Align with CI's Prettier check so formatting issues fail locally first
+echo "🧼 Checking Prettier formatting..."
+if ! npm run prettier:check; then
+  echo "❌ Prettier formatting issues found. Run 'npm run prettier:fix' to resolve."
+  exit 1
+fi
+
 # Ensure public HTML files stay formatted
 echo "🧹 Checking public HTML formatting..."
 if ! npx prettier --check "public/**/*.html"; then
