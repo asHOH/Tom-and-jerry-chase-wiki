@@ -484,7 +484,7 @@ export const contributors: Contributor[] = [
   {
     id: 'qiuyumianmian',
     name: '秋雨绵绵',
-    description: 'S24赛季全国第6恶魔杰瑞',
+    description: 'S24全国第6恶魔杰瑞',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -496,7 +496,7 @@ export const contributors: Contributor[] = [
   {
     id: 'wudimaohudawang',
     name: '无敌猫虎大王wy',
-    description: 'S25赛季全国第3恶魔汤姆',
+    description: 'S25全国第3恶魔汤姆',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -508,7 +508,7 @@ export const contributors: Contributor[] = [
   {
     id: 'qianligongchanjuan',
     name: '千里共婵娟',
-    description: 'S25赛季全国第1追风汤姆，最高猫天梯排行榜第10',
+    description: 'S25全国第1追风汤姆，最高猫天梯排行榜第10',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -521,7 +521,7 @@ export const contributors: Contributor[] = [
     id: 'xiaotian',
     name: '丷小天丷',
     description:
-      'S25赛季全国第6如玉；S19、20、21国服前十表演者·杰瑞，S22国一兔八哥、S23国五仙女鼠、国六莱恩、国三梦游杰瑞、S24国三兔八哥、国六莱恩，S25国十米可',
+      'S25全国第6如玉；S19、20、21全国前十表演者·杰瑞，S22全国第1兔八哥、S23全国第5仙女鼠、全国第6莱恩、全国第3梦游杰瑞、S24全国第3兔八哥、全国第6莱恩，S25全国第10米可',
     roles: [
       {
         type: RoleType.ContentWriter,
