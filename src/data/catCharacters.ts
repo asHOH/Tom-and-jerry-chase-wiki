@@ -957,8 +957,8 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       {
         tagName: '追击',
         isMinor: false,
-        description: '主动技能闪现老鼠。',
-        additionalDescription: '被动还可以减速老鼠并标记视野',
+        description: '{主动技能}闪现老鼠。',
+        additionalDescription: '{1级被动}还可以减速老鼠并标记视野。',
       },
       {
         tagName: '防守',
@@ -979,7 +979,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
         id: '垃圾桶',
         pattern: '101212020',
         weaponType: 'weapon1',
-        description: '可攻可防。',
+        description: '可攻可守。',
       },
       {
         id: '咸鱼',
@@ -999,7 +999,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
-        description: '管道用，若没21知识点可以去掉狡诈。',
+        description: '管道用，若没21知识点可以去掉{狡诈}。',
       },
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
