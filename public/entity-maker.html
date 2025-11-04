@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>衍生物生成器</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f7f7fa;
+        --card: #ffffff;
+        --border: #d7d7e3;
+        --text: #1c1c28;
+        --muted: #5a6072;
+        --primary: #315efb;
+        --primary-text: #ffffff;
+        --danger: #d93025;
+        --shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111318;
+          --card: #1c1f24;
+          --border: #2a2e36;
+          --text: #f5f6fb;
+          --muted: #a0a5b5;
+          --primary: #7295ff;
+          --primary-text: #0b1228;
+          --danger: #ff6b6b;
+          --shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .container {
+        max-width: 1048px;
+        margin: 0 auto;
+        padding: 32px 20px 96px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 24px;
+        border-radius: 20px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      button {
+        appearance: none;
+        border: none;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+
+      button.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--primary-text);
+      }
+
+      button.ghost {
+        background: transparent;
+      }
+
+      button.danger {
+        background: transparent;
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      button:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
+      }
+
+      .entity-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .entity-card:not(.collapsed):hover {
+        transform: translateY(-2px);
+      }
+
+      .entity-card.has-error {
+        border-color: var(--danger);
+      }
+
+      .card-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      .card-title {
+        font-weight: 600;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(49, 94, 251, 0.12);
+        color: var(--primary);
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .card-body {
+        padding: 20px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      @media (min-width: 720px) {
+        .grid.two {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 960px) {
+        .grid.two {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .field label {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .field small {
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      input[type='text'],
+      input[type='number'],
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.02);
+        font-size: 0.95rem;
+        color: var(--text);
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+        font-family: inherit;
+      }
+
+      select[multiple] {
+        min-height: 140px;
+      }
+
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(49, 94, 251, 0.16);
+      }
+
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .export-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .export-card h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      #exportOutput {
+        font-family: 'Fira Code', 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+        min-height: 180px;
+        white-space: pre;
+      }
+
+      .status-text {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .collapsed .card-body {
+        display: none;
+      }
+
+      .collapsed .card-header {
+        border-bottom: none;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        background: var(--text);
+        color: var(--card);
+        font-size: 0.9rem;
+        display: none;
+        z-index: 20;
+      }
+
+      .toast.show {
+        display: block;
+        animation: fadeInOut 2.4s ease forwards;
+      }
+
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        8%,
+        82% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+      }
+
+      .optional-group {
+        padding: 18px;
+        border-radius: 16px;
+        border: 1px dashed var(--border);
+        background: rgba(0, 0, 0, 0.02);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .optional-group h3 {
+        margin: 0;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 0.75rem;
+        background: rgba(26, 86, 219, 0.14);
+        color: var(--primary);
+      }
+
+      footer {
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--muted);
+        padding-bottom: 36px;
+      }
+
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 64px 16px;
+        text-align: center;
+        border-radius: 20px;
+        border: 1px dashed var(--border);
+        color: var(--muted);
+      }
+
+      .empty-state strong {
+        font-size: 1.05rem;
+        color: var(--text);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>实体生成器</h1>
+        <p>仿照道具生成器，快速编写实体定义。数据仅保存在本地浏览器。</p>
+        <div class="toolbar">
+          <button id="addEntity" class="primary" type="button">新增实体</button>
+          <button id="expandAll" type="button">全部展开</button>
+          <button id="collapseAll" type="button">全部收起</button>
+          <button id="resetAll" class="danger" type="button">清空全部</button>
+          <span id="stats" class="status-text"></span>
+        </div>
+      </header>
+
+      <div id="entitiesContainer" class="stack"></div>
+
+      <section id="emptyState" class="empty-state" hidden>
+        <strong>暂时没有实体</strong>
+        <button id="emptyAdd" class="primary" type="button">添加新实体</button>
+      </section>
+
+      <section class="export-card">
+        <h2>导出结果</h2>
+        <div class="field">
+          <label for="exportOutput">导出代码片段</label>
+          <textarea id="exportOutput" readonly spellcheck="false"></textarea>
+        </div>
+        <div class="toolbar">
+          <button id="copyBtn" class="primary" type="button">复制到剪贴板</button>
+          <button id="downloadBtn" type="button">下载为 TXT</button>
+          <span id="exportStatus" class="status-text"></span>
+        </div>
+      </section>
+    </div>
+
+    <template id="entityTemplate">
+      <article class="entity-card" data-id="">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="badge">实体</span>
+            <span data-role="title">未命名实体</span>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="ghost" data-action="toggle">折叠</button>
+            <button type="button" class="ghost" data-action="duplicate">复制</button>
+            <button type="button" class="danger" data-action="delete">删除</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="stack">
+            <div class="grid two">
+              <div class="field">
+                <label for="name">实体名称 *</label>
+                <input
+                  data-field="name"
+                  type="text"
+                  inputmode="text"
+                  placeholder="例如：煎蛋"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="field">
+                <label>实体类型 *</label>
+                <select data-field="entitytype" multiple size="7">
+                  <option value="道具类">道具类</option>
+                  <option value="投射物">投射物</option>
+                  <option value="召唤物">召唤物</option>
+                  <option value="平台类">平台类</option>
+                  <option value="NPC">NPC</option>
+                  <option value="变身类">变身类</option>
+                  <option value="指示物">指示物</option>
+                </select>
+                <small>按住 Ctrl 或 Shift 可多选；至少选择一个。</small>
+              </div>
+              <div class="field">
+                <label>阵营归属</label>
+                <select data-field="factionId">
+                  <option value="">（可选）</option>
+                  <option value="cat">cat</option>
+                  <option value="mouse">mouse</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>别名列表</label>
+                <input
+                  data-field="aliasesInput"
+                  type="text"
+                  placeholder="使用逗号或换行分隔多个别名"
+                />
+              </div>
+              <div class="field">
+                <label>碰撞对象</label>
+                <input
+                  data-field="collsionInput"
+                  type="text"
+                  placeholder="逗号或换行分隔，例如：道具, 墙壁, 平台"
+                />
+              </div>
+              <div class="field">
+                <label>特殊图片地址</label>
+                <input
+                  data-field="specialImageUrl"
+                  type="text"
+                  placeholder="例如：/images/catSkills/汤姆2-手型枪.png"
+                />
+              </div>
+            </div>
+
+            <div class="optional-group">
+              <h3>所有者信息</h3>
+              <div class="grid two">
+                <div class="field">
+                  <label>所有者条目名称</label>
+                  <input data-field="ownerName" type="text" placeholder="例如：手型枪" />
+                  <small>用于填充 owner.name。</small>
+                </div>
+                <div class="field">
+                  <label>所有者条目类型</label>
+                  <select data-field="ownerType">
+                    <option value="">（未设置）</option>
+                    <option value="character">character</option>
+                    <option value="skill">skill</option>
+                    <option value="knowledgeCard">knowledgeCard</option>
+                    <option value="specialSkill">specialSkill</option>
+                    <option value="item">item</option>
+                    <option value="entity">entity</option>
+                    <option value="buff">buff</option>
+                  </select>
+                  <small>与 owner.type 对应</small>
+                </div>
+                <div class="field">
+                  <label>所有者阵营</label>
+                  <select data-field="ownerFactionId">
+                    <option value="">（可选）</option>
+                    <option value="cat">cat</option>
+                    <option value="mouse">mouse</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="optional-group">
+              <h3>布尔字段</h3>
+              <div class="grid two">
+                <div class="field">
+                  <label>会移动</label>
+                  <select data-field="move" data-type="boolean">
+                    <option value="">（未设置）</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>受重力影响</label>
+                  <select data-field="gravity" data-type="boolean">
+                    <option value="">（未设置）</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="optional-group">
+              <h3>文本描述</h3>
+              <div class="grid">
+                <div class="field">
+                  <label>简明描述</label>
+                  <textarea data-field="description" placeholder="简明描述"></textarea>
+                </div>
+                <div class="field">
+                  <label>详细描述</label>
+                  <textarea data-field="detailedDescription" placeholder="详细描述"></textarea>
+                </div>
+                <div class="field">
+                  <label>产生方式</label>
+                  <textarea data-field="create" placeholder="产生方式"></textarea>
+                </div>
+                <div class="field">
+                  <label>详细产生方式</label>
+                  <textarea data-field="detailedCreate" placeholder="详细产生方式"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="optional-group">
+              <h3>附加代码 <span class="pill">请保持 TypeScript 语法</span></h3>
+              <div class="field">
+                <label>额外字段（可选）</label>
+                <textarea
+                  data-field="extraCode"
+                  placeholder="例如：entityAttributesAsCharacter: { type: 'cat', factionBelong: 'cat' },"
+                ></textarea>
+                <small>适用于 skills、entityAttributesAsCharacter 等复杂字段。</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      const entities = [];
+      const entitiesContainer = document.getElementById('entitiesContainer');
+      const exportOutput = document.getElementById('exportOutput');
+      const exportStatus = document.getElementById('exportStatus');
+      const stats = document.getElementById('stats');
+      const toast = document.getElementById('toast');
+      const emptyState = document.getElementById('emptyState');
+      const STORAGE_KEY = 'tjwiki-entity-maker-v1';
+
+      const booleanFields = ['move', 'gravity'];
+      const textFields = [
+        'description',
+        'detailedDescription',
+        'create',
+        'detailedCreate',
+        'specialImageUrl',
+      ];
+
+      const defaultValues = {
+        name: '',
+        entitytype: ['召唤物'],
+        factionId: '',
+        ownerName: '',
+        ownerType: '',
+        ownerFactionId: '',
+        aliasesInput: '',
+        collsionInput: '',
+        description: '',
+        detailedDescription: '',
+        create: '',
+        detailedCreate: '',
+        specialImageUrl: '',
+        move: null,
+        gravity: null,
+        extraCode: '',
+      };
+
+      function generateId() {
+        if (window.crypto && crypto.randomUUID) {
+          return crypto.randomUUID();
+        }
+        return 'id-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      }
+
+      function normalizeEntityType(raw) {
+        if (Array.isArray(raw)) return raw.filter(Boolean);
+        if (typeof raw === 'string' && raw.trim()) return [raw.trim()];
+        return [];
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.remove('show');
+        void toast.offsetWidth;
+        toast.classList.add('show');
+      }
+
+      function addEntity(initial = {}, locator) {
+        const entity = { id: generateId(), ...structuredClone(defaultValues), ...initial };
+        entity.entitytype = normalizeEntityType(entity.entitytype);
+        entities.push(entity);
+        renderEntityCard(entity, locator);
+        persistState();
+        updateUI();
+        return entity;
+      }
+
+      function renderEntityCard(entity, locator) {
+        const template = document.getElementById('entityTemplate');
+        const fragment = template.content.cloneNode(true);
+        const card = fragment.querySelector('.entity-card');
+        card.dataset.id = entity.id;
+
+        card.querySelector('[data-role="title"]').textContent = entity.name
+          ? entity.name
+          : '未命名实体';
+
+        card.querySelectorAll('[data-field]').forEach((el) => {
+          const field = el.dataset.field;
+          const value = entity[field];
+          if (field === 'entitytype' && el.multiple) {
+            const selectedValues = Array.isArray(value) ? value : [];
+            Array.from(el.options).forEach((option) => {
+              option.selected = selectedValues.includes(option.value);
+            });
+          } else if (booleanFields.includes(field)) {
+            el.value = value === true ? 'true' : value === false ? 'false' : '';
+          } else {
+            el.value = value ?? '';
+          }
+        });
+
+        if (locator) {
+          entitiesContainer.insertBefore(fragment, locator);
+        } else {
+          entitiesContainer.appendChild(fragment);
+        }
+      }
+
+      function getEntityById(id) {
+        return entities.find((entity) => entity.id === id);
+      }
+
+      function removeEntity(id) {
+        const index = entities.findIndex((entity) => entity.id === id);
+        if (index === -1) return;
+        entities.splice(index, 1);
+        const card = entitiesContainer.querySelector(`.entity-card[data-id="${id}"]`);
+        card?.remove();
+        persistState();
+        updateUI();
+      }
+
+      function duplicateEntity(id) {
+        const source = getEntityById(id);
+        if (!source) return;
+        const clone = structuredClone(source);
+        clone.id = generateId();
+        if (clone.name) {
+          clone.name = `${clone.name} 副本`;
+        }
+        const anchor = entitiesContainer.querySelector(`.entity-card[data-id="${id}"]`);
+        addEntity(clone, anchor?.nextSibling ?? null);
+        showToast('已复制实体');
+      }
+
+      function toggleCard(id) {
+        const card = entitiesContainer.querySelector(`.entity-card[data-id="${id}"]`);
+        if (!card) return;
+        card.classList.toggle('collapsed');
+      }
+
+      function collapseAll(state) {
+        entitiesContainer.querySelectorAll('.entity-card').forEach((card) => {
+          card.classList.toggle('collapsed', state);
+        });
+      }
+
+      function handleFieldChange(target) {
+        const card = target.closest('.entity-card');
+        if (!card) return;
+        const id = card.dataset.id;
+        const entity = getEntityById(id);
+        if (!entity) return;
+        const field = target.dataset.field;
+        const type = target.dataset.type;
+
+        if (field === 'entitytype' && target instanceof HTMLSelectElement && target.multiple) {
+          const selected = Array.from(target.selectedOptions).map((option) => option.value);
+          entity.entitytype = selected;
+        } else {
+          let value = target.value;
+
+          if (type === 'boolean') {
+            if (value === 'true') value = true;
+            else if (value === 'false') value = false;
+            else value = null;
+          }
+
+          entity[field] = value;
+        }
+
+        if (field === 'name') {
+          const title = card.querySelector('[data-role="title"]');
+          title.textContent = entity.name ? entity.name : '未命名实体';
+        }
+
+        persistState();
+        updateUI();
+      }
+
+      function parseList(raw) {
+        if (!raw) return [];
+        return raw
+          .split(/[\n,，]/)
+          .map((token) => token.trim())
+          .filter(Boolean);
+      }
+
+      function escapeString(value) {
+        return value
+          .replace(/\\/g, '\\\\')
+          .replace(/'/g, "\\'")
+          .replace(/\r\n|\r|\n/g, '\\n');
+      }
+
+      function formatString(value) {
+        return `'${escapeString(value)}'`;
+      }
+
+      function formatConstString(value) {
+        return `'${escapeString(value)}' as const`;
+      }
+
+      function formatArray(list) {
+        if (!list.length) return '';
+        return `[${list.map((item) => formatString(item)).join(', ')}]`;
+      }
+
+      function formatConstArray(list) {
+        if (!list.length) return '';
+        return `${formatArray(list)} as const`;
+      }
+
+      function needsQuotes(name) {
+        return !/^[$A-Za-z_\p{Letter}][\w\p{Letter}]*$/u.test(name);
+      }
+
+      function buildSnippet() {
+        if (!entities.length) return '';
+        const indent = '  ';
+        const inner = '    ';
+
+        return entities
+          .map((entity) => {
+            const name = entity.name.trim();
+            if (!name) return null;
+            const key = needsQuotes(name) ? `'${escapeString(name)}'` : name;
+            const lines = [];
+
+            const entityTypes = normalizeEntityType(entity.entitytype);
+            if (entityTypes.length === 1) {
+              lines.push(`${inner}entitytype: ${formatConstString(entityTypes[0])},`);
+            } else if (entityTypes.length > 1) {
+              lines.push(`${inner}entitytype: ${formatConstArray(entityTypes)},`);
+            }
+
+            if (entity.factionId) {
+              lines.push(`${inner}factionId: ${formatConstString(entity.factionId)},`);
+            }
+
+            const ownerName = (entity.ownerName ?? '').trim();
+            const ownerType = (entity.ownerType ?? '').trim();
+            const ownerFaction = (entity.ownerFactionId ?? '').trim();
+            const hasOwnerName = !!ownerName;
+            const hasOwnerType = !!ownerType;
+            if (hasOwnerName || hasOwnerType || ownerFaction) {
+              if (hasOwnerName && hasOwnerType) {
+                const ownerParts = [
+                  `name: ${formatString(ownerName)}`,
+                  `type: ${formatConstString(ownerType)}`,
+                ];
+                if (ownerFaction) {
+                  ownerParts.push(`factionId: ${formatConstString(ownerFaction)}`);
+                }
+                lines.push(`${inner}owner: { ${ownerParts.join(', ')} },`);
+              }
+            }
+
+            const aliases = parseList(entity.aliasesInput);
+            if (aliases.length) {
+              lines.push(`${inner}aliases: ${formatArray(aliases)},`);
+            }
+
+            const collisions = parseList(entity.collsionInput);
+            if (collisions.length) {
+              lines.push(`${inner}collsion: ${formatArray(collisions)},`);
+            }
+
+            textFields.forEach((field) => {
+              const value = entity[field];
+              if (value) {
+                lines.push(`${inner}${field}: ${formatString(value)},`);
+              }
+            });
+
+            booleanFields.forEach((field) => {
+              const value = entity[field];
+              if (value === true || value === false) {
+                lines.push(`${inner}${field}: ${value},`);
+              }
+            });
+
+            if (entity.extraCode.trim()) {
+              entity.extraCode.split(/\r?\n/).forEach((line) => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+                lines.push(`${inner}${trimmed}`);
+              });
+            }
+
+            const body = lines.length ? `\n${lines.join('\n')}\n${indent}` : '';
+            return `${indent}${key}: {${body}},`;
+          })
+          .filter(Boolean)
+          .join('\n\n');
+      }
+
+      function updateUI() {
+        const snippet = buildSnippet();
+        exportOutput.value = snippet;
+        const total = entities.length;
+        const missingName = entities.filter((entity) => !(entity.name ?? '').trim()).length;
+
+        if (!total) {
+          stats.textContent = '';
+        } else {
+          stats.textContent = `共 ${total} 个实体，其中 ${missingName} 个未命名`;
+        }
+
+        exportStatus.textContent = snippet
+          ? `已生成 ${snippet.split('\n').length} 行代码`
+          : '无可导出内容';
+        emptyState.hidden = total !== 0;
+
+        entitiesContainer.querySelectorAll('.entity-card').forEach((card) => {
+          const entity = getEntityById(card.dataset.id);
+          if (!entity) return;
+          const nameMissing = !(entity.name ?? '').trim();
+          const typeMissing = !normalizeEntityType(entity.entitytype).length;
+          const ownerName = (entity.ownerName ?? '').trim();
+          const ownerType = (entity.ownerType ?? '').trim();
+          const ownerIncomplete = (ownerName && !ownerType) || (!ownerName && ownerType);
+          card.classList.toggle('has-error', nameMissing || typeMissing || ownerIncomplete);
+        });
+      }
+
+      function persistState() {
+        const payload = entities.map(({ id, ...rest }) => ({ id, ...rest }));
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (_) {
+          /* 忽略存储异常 */
+        }
+      }
+
+      function hydrateState() {
+        let restored = null;
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) restored = JSON.parse(raw);
+        } catch (_) {
+          restored = null;
+        }
+        if (Array.isArray(restored) && restored.length) {
+          restored.forEach((entity) => addEntity(entity));
+        } else {
+          addEntity();
+        }
+      }
+
+      entitiesContainer.addEventListener('input', (event) => {
+        const target = event.target;
+        if (target.matches('[data-field]')) {
+          handleFieldChange(target);
+        }
+      });
+
+      entitiesContainer.addEventListener('change', (event) => {
+        const target = event.target;
+        if (target.matches('[data-field]')) {
+          handleFieldChange(target);
+        }
+      });
+
+      entitiesContainer.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const card = button.closest('.entity-card');
+        if (!card) return;
+        const id = card.dataset.id;
+        const action = button.dataset.action;
+        if (action === 'delete') {
+          if (confirm('确认删除该实体吗？')) {
+            removeEntity(id);
+            showToast('已删除实体');
+          }
+        } else if (action === 'toggle') {
+          toggleCard(id);
+        } else if (action === 'duplicate') {
+          duplicateEntity(id);
+        }
+      });
+
+      document.getElementById('addEntity').addEventListener('click', () => {
+        addEntity();
+        showToast('已新增实体');
+      });
+
+      document.getElementById('emptyAdd').addEventListener('click', () => {
+        addEntity();
+        showToast('已新增实体');
+      });
+
+      document.getElementById('expandAll').addEventListener('click', () => {
+        collapseAll(false);
+      });
+
+      document.getElementById('collapseAll').addEventListener('click', () => {
+        collapseAll(true);
+      });
+
+      document.getElementById('resetAll').addEventListener('click', () => {
+        if (!entities.length) return;
+        if (!confirm('确认清空所有实体吗？此操作无法撤销。')) return;
+        entities.length = 0;
+        entitiesContainer.innerHTML = '';
+        persistState();
+        updateUI();
+        showToast('已清空');
+      });
+
+      document.getElementById('copyBtn').addEventListener('click', async () => {
+        const snippet = exportOutput.value.trim();
+        if (!snippet) {
+          showToast('没有可复制的内容');
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(snippet);
+          showToast('已复制到剪贴板');
+        } catch (_) {
+          exportOutput.select();
+          document.execCommand('copy');
+          showToast('已复制（回退模式）');
+        }
+      });
+
+      document.getElementById('downloadBtn').addEventListener('click', () => {
+        const snippet = exportOutput.value.trim();
+        if (!snippet) {
+          showToast('没有可导出的内容');
+          return;
+        }
+        const blob = new Blob([snippet], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const timestamp = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const filename = `tjwiki-entities-${timestamp.getFullYear()}${pad(timestamp.getMonth() + 1)}${pad(timestamp.getDate())}-${pad(timestamp.getHours())}${pad(timestamp.getMinutes())}.txt`;
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast('已下载 TXT 文件');
+      });
+
+      hydrateState();
+      updateUI();
+    </script>
+  </body>
+</html>
