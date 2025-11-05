@@ -487,6 +487,7 @@
           </div>
           <div class="card-actions">
             <button type="button" class="ghost" data-action="toggle">折叠</button>
+            <button type="button" class="ghost" data-action="export">导出</button>
             <button type="button" class="ghost" data-action="duplicate">复制</button>
             <button type="button" class="danger" data-action="delete">删除</button>
           </div>
@@ -750,11 +751,23 @@
           }
         });
 
+        updateToggleButtonLabel(card);
         if (locator) {
           entitiesContainer.insertBefore(fragment, locator);
         } else {
           entitiesContainer.appendChild(fragment);
         }
+      }
+
+      function updateToggleButtonLabel(card) {
+        if (!card) {
+          return;
+        }
+        const toggleButton = card.querySelector('button[data-action="toggle"]');
+        if (!toggleButton) {
+          return;
+        }
+        toggleButton.textContent = card.classList.contains('collapsed') ? '展开' : '折叠';
       }
 
       function getEntityById(id) {
@@ -790,11 +803,13 @@
         const card = entitiesContainer.querySelector(`.entity-card[data-id="${id}"]`);
         if (!card) return;
         card.classList.toggle('collapsed');
+        updateToggleButtonLabel(card);
       }
 
       function collapseAll(state) {
         entitiesContainer.querySelectorAll('.entity-card').forEach((card) => {
           card.classList.toggle('collapsed', state);
+          updateToggleButtonLabel(card);
         });
       }
 
@@ -1257,84 +1272,124 @@
         return !/^[$A-Za-z_\p{Letter}][\w\p{Letter}]*$/u.test(name);
       }
 
+      function buildEntityEntry(entity, options = {}) {
+        const { indent = 2, trailingComma = true } = options;
+        const name = (entity.name ?? '').trim();
+        if (!name) {
+          return null;
+        }
+        const indentStr = ' '.repeat(indent);
+        const innerIndent = ' '.repeat(indent + 2);
+        const key = needsQuotes(name) ? `'${escapeString(name)}'` : name;
+        const lines = [];
+
+        const entityTypes = normalizeEntityType(entity.entitytype);
+        if (entityTypes.length === 1) {
+          lines.push(`${innerIndent}entitytype: ${formatConstString(entityTypes[0])},`);
+        } else if (entityTypes.length > 1) {
+          lines.push(`${innerIndent}entitytype: ${formatConstArray(entityTypes)},`);
+        }
+
+        if (entity.factionId) {
+          lines.push(`${innerIndent}factionId: ${formatConstString(entity.factionId)},`);
+        }
+
+        const ownerName = (entity.ownerName ?? '').trim();
+        const ownerType = (entity.ownerType ?? '').trim();
+        const ownerFaction = (entity.ownerFactionId ?? '').trim();
+        const hasOwnerName = !!ownerName;
+        const hasOwnerType = !!ownerType;
+        if (hasOwnerName || hasOwnerType || ownerFaction) {
+          if (hasOwnerName && hasOwnerType) {
+            const ownerParts = [
+              `name: ${formatString(ownerName)}`,
+              `type: ${formatConstString(ownerType)}`,
+            ];
+            if (ownerFaction) {
+              ownerParts.push(`factionId: ${formatConstString(ownerFaction)}`);
+            }
+            lines.push(`${innerIndent}owner: { ${ownerParts.join(', ')} },`);
+          }
+        }
+
+        const aliases = parseList(entity.aliasesInput);
+        if (aliases.length) {
+          lines.push(`${innerIndent}aliases: ${formatArray(aliases)},`);
+        }
+
+        const collisions = parseList(entity.collsionInput);
+        if (collisions.length) {
+          lines.push(`${innerIndent}collsion: ${formatArray(collisions)},`);
+        }
+
+        textFields.forEach((field) => {
+          const value = entity[field];
+          if (value) {
+            lines.push(`${innerIndent}${field}: ${formatString(value)},`);
+          }
+        });
+
+        booleanFields.forEach((field) => {
+          const value = entity[field];
+          if (value === true || value === false) {
+            lines.push(`${innerIndent}${field}: ${value},`);
+          }
+        });
+
+        const extraCode = entity.extraCode ?? '';
+        if (extraCode.trim()) {
+          extraCode.split(/\r?\n/).forEach((line) => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+            lines.push(`${innerIndent}${trimmed}`);
+          });
+        }
+
+        const body = lines.length ? `\n${lines.join('\n')}\n${indentStr}` : '';
+        const suffix = trailingComma ? ',' : '';
+        return `${indentStr}${key}: {${body}}${suffix}`;
+      }
+
       function buildSnippet() {
         if (!entities.length) return '';
-        const indent = '  ';
-        const inner = '    ';
-
         return entities
-          .map((entity) => {
-            const name = entity.name.trim();
-            if (!name) return null;
-            const key = needsQuotes(name) ? `'${escapeString(name)}'` : name;
-            const lines = [];
-
-            const entityTypes = normalizeEntityType(entity.entitytype);
-            if (entityTypes.length === 1) {
-              lines.push(`${inner}entitytype: ${formatConstString(entityTypes[0])},`);
-            } else if (entityTypes.length > 1) {
-              lines.push(`${inner}entitytype: ${formatConstArray(entityTypes)},`);
-            }
-
-            if (entity.factionId) {
-              lines.push(`${inner}factionId: ${formatConstString(entity.factionId)},`);
-            }
-
-            const ownerName = (entity.ownerName ?? '').trim();
-            const ownerType = (entity.ownerType ?? '').trim();
-            const ownerFaction = (entity.ownerFactionId ?? '').trim();
-            const hasOwnerName = !!ownerName;
-            const hasOwnerType = !!ownerType;
-            if (hasOwnerName || hasOwnerType || ownerFaction) {
-              if (hasOwnerName && hasOwnerType) {
-                const ownerParts = [
-                  `name: ${formatString(ownerName)}`,
-                  `type: ${formatConstString(ownerType)}`,
-                ];
-                if (ownerFaction) {
-                  ownerParts.push(`factionId: ${formatConstString(ownerFaction)}`);
-                }
-                lines.push(`${inner}owner: { ${ownerParts.join(', ')} },`);
-              }
-            }
-
-            const aliases = parseList(entity.aliasesInput);
-            if (aliases.length) {
-              lines.push(`${inner}aliases: ${formatArray(aliases)},`);
-            }
-
-            const collisions = parseList(entity.collsionInput);
-            if (collisions.length) {
-              lines.push(`${inner}collsion: ${formatArray(collisions)},`);
-            }
-
-            textFields.forEach((field) => {
-              const value = entity[field];
-              if (value) {
-                lines.push(`${inner}${field}: ${formatString(value)},`);
-              }
-            });
-
-            booleanFields.forEach((field) => {
-              const value = entity[field];
-              if (value === true || value === false) {
-                lines.push(`${inner}${field}: ${value},`);
-              }
-            });
-
-            if (entity.extraCode.trim()) {
-              entity.extraCode.split(/\r?\n/).forEach((line) => {
-                const trimmed = line.trim();
-                if (!trimmed) return;
-                lines.push(`${inner}${trimmed}`);
-              });
-            }
-
-            const body = lines.length ? `\n${lines.join('\n')}\n${indent}` : '';
-            return `${indent}${key}: {${body}},`;
-          })
+          .map((entity) => buildEntityEntry(entity, { indent: 2, trailingComma: true }))
           .filter(Boolean)
           .join('\n\n');
+      }
+
+      async function exportSingleEntity(entity) {
+        const snippet = buildEntityEntry(entity, { indent: 2, trailingComma: true });
+        if (!snippet) {
+          showToast('实体名称为空，无法导出');
+          return;
+        }
+        const payload = `${snippet}\n`;
+        const displayName = (entity.name ?? '').trim() || '实体';
+        let success = false;
+        try {
+          await navigator.clipboard.writeText(payload);
+          success = true;
+        } catch (_) {
+          let fallback = null;
+          try {
+            fallback = document.createElement('textarea');
+            fallback.value = payload;
+            fallback.style.position = 'fixed';
+            fallback.style.opacity = '0';
+            document.body.appendChild(fallback);
+            fallback.focus();
+            fallback.select();
+            success = document.execCommand('copy');
+          } catch (_) {
+            success = false;
+          } finally {
+            if (fallback && fallback.parentNode) {
+              fallback.parentNode.removeChild(fallback);
+            }
+          }
+        }
+        showToast(success ? `已导出 ${displayName}` : '导出失败，请重试');
       }
 
       function updateUI() {
@@ -1420,6 +1475,10 @@
           toggleCard(id);
         } else if (action === 'duplicate') {
           duplicateEntity(id);
+        } else if (action === 'export') {
+          const entity = getEntityById(id);
+          if (!entity) return;
+          void exportSingleEntity(entity);
         }
       });
 
