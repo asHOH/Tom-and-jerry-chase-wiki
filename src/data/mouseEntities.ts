@@ -11,7 +11,7 @@ export const getMouseEntityImageUrl = (
 const figureDescription: string =
   '\n\n{莱恩}在{蓝图(召唤物)(衍生物)}上绘制图形（包括{圆形}、{三角}、{方块}及各自的强化图形）时，两种图形碰撞可合成其他老鼠的技能衍生物。\n蓝图合成配方：\n△+○={1级火药桶}\n△+□={1级爱之花洒}\n○+□={1级隐形感应雷}\n○+○={1级意式披萨}\n△+△={2级藤蔓}\n□+□={1级烟雾弹}';
 
-const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
+export const mouseEntitiesDefinitions: Record<string, EntityDefinition> = {
   鸟哨金丝雀: {
     entitytype: 'NPC',
     owner: { name: '鸟哨', type: 'skill' },

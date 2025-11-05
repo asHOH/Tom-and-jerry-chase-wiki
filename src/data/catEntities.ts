@@ -6,7 +6,7 @@ export const getCatEntityImageUrl = (name: string, specialImageUrl: string | und
   return `/images/catEntities/${encodeURIComponent(name)}.png`;
 };
 
-const catEntitiesDefinitions: Record<string, EntityDefinition> = {
+export const catEntitiesDefinitions: Record<string, EntityDefinition> = {
   手型枪: {
     entitytype: '投射物',
     owner: { name: '手型枪', type: 'skill' },
