@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>衍生物生成器</title>
+    <title>衍生物编辑器</title>
     <style>
       :root {
         color-scheme: light dark;
@@ -425,16 +425,16 @@
   <body>
     <div class="container">
       <header>
-        <h1>实体生成器</h1>
-        <p>仿照道具生成器，快速编写实体定义。数据仅保存在本地浏览器。</p>
+        <h1>衍生物编辑器</h1>
+        <p>编写或修改衍生物定义。数据仅保存在本地浏览器。暂时只支持导入单个衍生物。</p>
         <div class="toolbar">
-          <button id="addEntity" class="primary" type="button">新增实体</button>
+          <button id="addEntity" class="primary" type="button">新增衍生物</button>
           <button id="expandAll" type="button">全部展开</button>
           <button id="collapseAll" type="button">全部收起</button>
           <button id="resetAll" class="danger" type="button">清空全部</button>
           <button id="importPaste" type="button">粘贴导入</button>
           <button id="importFile" type="button">文件导入</button>
-          <button id="importExisting" type="button">导入站内全部实体</button>
+          <button id="importExisting" type="button">导入站内全部衍生物</button>
           <span id="stats" class="status-text"></span>
         </div>
       </header>
@@ -442,8 +442,8 @@
       <div id="entitiesContainer" class="stack"></div>
 
       <section id="emptyState" class="empty-state" hidden>
-        <strong>暂时没有实体</strong>
-        <button id="emptyAdd" class="primary" type="button">添加新实体</button>
+        <strong>暂时没有衍生物</strong>
+        <button id="emptyAdd" class="primary" type="button">添加新衍生物</button>
       </section>
 
       <section class="export-card">
@@ -464,11 +464,11 @@
       <dialog id="importDialog">
         <div class="import-dialog">
           <h2>粘贴代码导入</h2>
-          <p class="status-text">支持直接粘贴实体定义或生成器导出的片段。</p>
+          <p class="status-text">支持直接粘贴衍生物定义或编辑器导出的片段。</p>
           <textarea
             id="importTextarea"
             spellcheck="false"
-            placeholder="将实体定义粘贴在此处"
+            placeholder="将衍生物定义粘贴在此处"
           ></textarea>
           <div class="toolbar">
             <button id="importCancel" type="button">取消</button>
@@ -482,12 +482,12 @@
       <article class="entity-card" data-id="">
         <div class="card-header">
           <div class="card-title">
-            <span class="badge">实体</span>
-            <span data-role="title">未命名实体</span>
+            <span class="badge">衍生物</span>
+            <span data-role="title">未命名衍生物</span>
           </div>
           <div class="card-actions">
             <button type="button" class="ghost" data-action="toggle">折叠</button>
-            <button type="button" class="ghost" data-action="export">导出</button>
+            <button type="button" class="ghost" data-action="export">剪切板导出</button>
             <button type="button" class="ghost" data-action="duplicate">复制</button>
             <button type="button" class="danger" data-action="delete">删除</button>
           </div>
@@ -496,7 +496,7 @@
           <div class="stack">
             <div class="grid two">
               <div class="field">
-                <label for="name">实体名称 *</label>
+                <label for="name">衍生物名称 *</label>
                 <input
                   data-field="name"
                   type="text"
@@ -506,8 +506,8 @@
                 />
               </div>
               <div class="field">
-                <label>实体类型 *</label>
-                <select data-field="entitytype" multiple size="7">
+                <label>衍生物类型 *</label>
+                <select data-field="entitytype" multiple>
                   <option value="道具类">道具类</option>
                   <option value="投射物">投射物</option>
                   <option value="召唤物">召唤物</option>
@@ -516,39 +516,20 @@
                   <option value="变身类">变身类</option>
                   <option value="指示物">指示物</option>
                 </select>
-                <small>按住 Ctrl 或 Shift 可多选；至少选择一个。</small>
+                <small>可多选；至少选择一个；电脑端按住 Ctrl 或 Shift 进行多选。</small>
               </div>
               <div class="field">
                 <label>阵营归属</label>
                 <select data-field="factionId">
                   <option value="">（可选）</option>
-                  <option value="cat">cat</option>
-                  <option value="mouse">mouse</option>
+                  <option value="cat">猫阵营</option>
+                  <option value="mouse">鼠阵营</option>
                 </select>
+                <small>可不填，不填写时将继承所有者的阵营信息。</small>
               </div>
               <div class="field">
                 <label>别名列表</label>
-                <input
-                  data-field="aliasesInput"
-                  type="text"
-                  placeholder="使用逗号或换行分隔多个别名"
-                />
-              </div>
-              <div class="field">
-                <label>碰撞对象</label>
-                <input
-                  data-field="collsionInput"
-                  type="text"
-                  placeholder="逗号或换行分隔，例如：道具, 墙壁, 平台"
-                />
-              </div>
-              <div class="field">
-                <label>特殊图片地址</label>
-                <input
-                  data-field="specialImageUrl"
-                  type="text"
-                  placeholder="例如：/images/catSkills/汤姆2-手型枪.png"
-                />
+                <input data-field="aliasesInput" type="text" placeholder="使用逗号分隔多个别名" />
               </div>
             </div>
 
@@ -556,53 +537,63 @@
               <h3>所有者信息</h3>
               <div class="grid two">
                 <div class="field">
-                  <label>所有者条目名称</label>
+                  <label>所有者名称</label>
                   <input data-field="ownerName" type="text" placeholder="例如：手型枪" />
-                  <small>用于填充 owner.name。</small>
                 </div>
                 <div class="field">
-                  <label>所有者条目类型</label>
+                  <label>所有者类别</label>
                   <select data-field="ownerType">
                     <option value="">（未设置）</option>
-                    <option value="character">character</option>
-                    <option value="skill">skill</option>
-                    <option value="knowledgeCard">knowledgeCard</option>
-                    <option value="specialSkill">specialSkill</option>
-                    <option value="item">item</option>
-                    <option value="entity">entity</option>
-                    <option value="buff">buff</option>
+                    <option value="character">角色</option>
+                    <option value="skill">角色-技能</option>
+                    <option value="knowledgeCard">知识卡</option>
+                    <option value="specialSkill">特技</option>
+                    <option value="item">道具</option>
+                    <option value="entity">衍生物</option>
+                    <option value="buff">状态</option>
                   </select>
-                  <small>与 owner.type 对应</small>
                 </div>
                 <div class="field">
                   <label>所有者阵营</label>
                   <select data-field="ownerFactionId">
                     <option value="">（可选）</option>
-                    <option value="cat">cat</option>
-                    <option value="mouse">mouse</option>
+                    <option value="cat">猫阵营</option>
+                    <option value="mouse">鼠阵营</option>
                   </select>
+                  <small>用于区分同名特技。其余情况可不填，会自动检索阵营信息。</small>
                 </div>
               </div>
             </div>
 
             <div class="optional-group">
-              <h3>布尔字段</h3>
+              <h3>移动信息</h3>
               <div class="grid two">
                 <div class="field">
                   <label>会移动</label>
                   <select data-field="move" data-type="boolean">
                     <option value="">（未设置）</option>
-                    <option value="true">true</option>
-                    <option value="false">false</option>
+                    <option value="true">是</option>
+                    <option value="false">否</option>
                   </select>
+                  <small>若物体可主动运动或可被其它效果被动推动，则填“是”，反之则填“否”。</small>
                 </div>
                 <div class="field">
                   <label>受重力影响</label>
                   <select data-field="gravity" data-type="boolean">
                     <option value="">（未设置）</option>
-                    <option value="true">true</option>
-                    <option value="false">false</option>
+                    <option value="true">是</option>
+                    <option value="false">否</option>
                   </select>
+                  <small>若物体悬空时会自行下坠，则填“是”，反之则填“否”。</small>
+                </div>
+                <div class="field">
+                  <label>碰撞对象</label>
+                  <input
+                    data-field="collsionInput"
+                    type="text"
+                    placeholder="逗号或换行分隔，例如：道具, 墙壁, 平台"
+                  />
+                  <small>建议按顺序填写以下符合条件的内容：角色，道具, 墙壁, 平台，地面。</small>
                 </div>
               </div>
             </div>
@@ -612,19 +603,28 @@
               <div class="grid">
                 <div class="field">
                   <label>简明描述</label>
-                  <textarea data-field="description" placeholder="简明描述"></textarea>
+                  <textarea
+                    data-field="description"
+                    placeholder="支持特殊文本语法，包括[]()添加注释，{}添加站内链接等。下同"
+                  ></textarea>
                 </div>
                 <div class="field">
                   <label>详细描述</label>
-                  <textarea data-field="detailedDescription" placeholder="详细描述"></textarea>
+                  <textarea
+                    data-field="detailedDescription"
+                    placeholder="可不填，默认与简明描述相同。"
+                  ></textarea>
                 </div>
                 <div class="field">
-                  <label>产生方式</label>
-                  <textarea data-field="create" placeholder="产生方式"></textarea>
+                  <label>简明产生方式</label>
+                  <textarea data-field="create"></textarea>
                 </div>
                 <div class="field">
                   <label>详细产生方式</label>
-                  <textarea data-field="detailedCreate" placeholder="详细产生方式"></textarea>
+                  <textarea
+                    data-field="detailedCreate"
+                    placeholder="可不填，默认与简明产生方式相同。"
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -635,9 +635,8 @@
                 <label>额外字段（可选）</label>
                 <textarea
                   data-field="extraCode"
-                  placeholder="例如：entityAttributesAsCharacter: { type: 'cat', factionBelong: 'cat' },"
+                  placeholder="用于添加衍生物技能或特殊属性等复杂字段，可不填。"
                 ></textarea>
-                <small>适用于 skills、entityAttributesAsCharacter 等复杂字段。</small>
               </div>
             </div>
           </div>
@@ -667,13 +666,7 @@
       const STORAGE_KEY = 'tjwiki-entity-maker-v1';
 
       const booleanFields = ['move', 'gravity'];
-      const textFields = [
-        'description',
-        'detailedDescription',
-        'create',
-        'detailedCreate',
-        'specialImageUrl',
-      ];
+      const textFields = ['description', 'detailedDescription', 'create', 'detailedCreate'];
 
       const defaultValues = {
         name: '',
@@ -688,7 +681,6 @@
         detailedDescription: '',
         create: '',
         detailedCreate: '',
-        specialImageUrl: '',
         move: null,
         gravity: null,
         extraCode: '',
@@ -734,7 +726,7 @@
 
         card.querySelector('[data-role="title"]').textContent = entity.name
           ? entity.name
-          : '未命名实体';
+          : '未命名衍生物';
 
         card.querySelectorAll('[data-field]').forEach((el) => {
           const field = el.dataset.field;
@@ -796,7 +788,7 @@
         }
         const anchor = entitiesContainer.querySelector(`.entity-card[data-id="${id}"]`);
         addEntity(clone, anchor?.nextSibling ?? null);
-        showToast('已复制实体');
+        showToast('已复制衍生物');
       }
 
       function toggleCard(id) {
@@ -839,7 +831,7 @@
 
         if (field === 'name') {
           const title = card.querySelector('[data-role="title"]');
-          title.textContent = entity.name ? entity.name : '未命名实体';
+          title.textContent = entity.name ? entity.name : '未命名衍生物';
         }
 
         persistState();
@@ -1142,7 +1134,6 @@
           'detailedDescription',
           'create',
           'detailedCreate',
-          'specialImageUrl',
           'move',
           'gravity',
           'collsion',
@@ -1178,7 +1169,6 @@
           detailedDescription: definition.detailedDescription ?? '',
           create: definition.create ?? '',
           detailedCreate: definition.detailedCreate ?? '',
-          specialImageUrl: definition.specialImageUrl ?? '',
           move: typeof definition.move === 'boolean' ? definition.move : null,
           gravity: typeof definition.gravity === 'boolean' ? definition.gravity : null,
           extraCode: '',
@@ -1194,7 +1184,6 @@
           'detailedDescription',
           'create',
           'detailedCreate',
-          'specialImageUrl',
           'move',
           'gravity',
           'imageUrl',
@@ -1228,7 +1217,7 @@
 
         const entries = Object.entries(parsed);
         if (!entries.length) {
-          showToast('未找到任何实体定义');
+          showToast('未找到任何衍生物定义');
           return;
         }
 
@@ -1256,7 +1245,7 @@
 
         if (!count) {
           updateUI();
-          showToast('未找到可导入的实体定义');
+          showToast('未找到可导入的衍生物定义');
           return;
         }
 
@@ -1265,7 +1254,7 @@
         if (importTextarea) {
           importTextarea.value = '';
         }
-        showToast(`已导入 ${count} 个实体`);
+        showToast(`已导入 ${count} 个衍生物`);
       }
 
       function needsQuotes(name) {
@@ -1361,11 +1350,11 @@
       async function exportSingleEntity(entity) {
         const snippet = buildEntityEntry(entity, { indent: 2, trailingComma: true });
         if (!snippet) {
-          showToast('实体名称为空，无法导出');
+          showToast('衍生物名称为空，无法导出');
           return;
         }
         const payload = `${snippet}\n`;
-        const displayName = (entity.name ?? '').trim() || '实体';
+        const displayName = (entity.name ?? '').trim() || '衍生物';
         let success = false;
         try {
           await navigator.clipboard.writeText(payload);
@@ -1401,7 +1390,7 @@
         if (!total) {
           stats.textContent = '';
         } else {
-          stats.textContent = `共 ${total} 个实体，其中 ${missingName} 个未命名`;
+          stats.textContent = `共 ${total} 个衍生物，其中 ${missingName} 个未命名`;
         }
 
         exportStatus.textContent = snippet
@@ -1467,9 +1456,9 @@
         const id = card.dataset.id;
         const action = button.dataset.action;
         if (action === 'delete') {
-          if (confirm('确认删除该实体吗？')) {
+          if (confirm('确认删除该衍生物吗？')) {
             removeEntity(id);
-            showToast('已删除实体');
+            showToast('已删除衍生物');
           }
         } else if (action === 'toggle') {
           toggleCard(id);
@@ -1484,12 +1473,12 @@
 
       document.getElementById('addEntity').addEventListener('click', () => {
         addEntity();
-        showToast('已新增实体');
+        showToast('已新增衍生物');
       });
 
       document.getElementById('emptyAdd').addEventListener('click', () => {
         addEntity();
-        showToast('已新增实体');
+        showToast('已新增衍生物');
       });
 
       document.getElementById('expandAll').addEventListener('click', () => {
@@ -1502,7 +1491,7 @@
 
       document.getElementById('resetAll').addEventListener('click', () => {
         if (!entities.length) return;
-        if (!confirm('确认清空所有实体吗？此操作无法撤销。')) return;
+        if (!confirm('确认清空所有衍生物吗？此操作无法撤销。')) return;
         entities.length = 0;
         entitiesContainer.innerHTML = '';
         persistState();
@@ -1585,7 +1574,7 @@
           importDialog.showModal();
           requestAnimationFrame(() => importTextarea?.focus());
         } else {
-          const raw = window.prompt('请粘贴实体定义代码：');
+          const raw = window.prompt('请粘贴衍生物定义代码：');
           if (raw) {
             importEntitiesFromText(raw);
           }
