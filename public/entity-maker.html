@@ -434,6 +434,7 @@
           <button id="resetAll" class="danger" type="button">清空全部</button>
           <button id="importPaste" type="button">粘贴导入</button>
           <button id="importFile" type="button">文件导入</button>
+          <button id="importExisting" type="button">导入站内全部实体</button>
           <span id="stats" class="status-text"></span>
         </div>
       </header>
@@ -655,6 +656,7 @@
       const emptyState = document.getElementById('emptyState');
       const importPasteBtn = document.getElementById('importPaste');
       const importFileBtn = document.getElementById('importFile');
+      const importExistingBtn = document.getElementById('importExisting');
       const importFileInput = document.getElementById('importFileInput');
       const importDialog = document.getElementById('importDialog');
       const importTextarea = document.getElementById('importTextarea');
@@ -1486,6 +1488,36 @@
         showToast('已下载 TXT 文件');
       });
 
+      async function importAllEntitiesFromSite() {
+        if (!importExistingBtn || importExistingBtn.dataset.loading === 'true') {
+          return;
+        }
+        const originalLabel = importExistingBtn.textContent ?? '';
+        importExistingBtn.dataset.loading = 'true';
+        importExistingBtn.disabled = true;
+        importExistingBtn.textContent = '导入中...';
+        try {
+          const response = await fetch('/api/entities/export', { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error(`请求失败 (${response.status})`);
+          }
+          const payload = await response.json();
+          const definitions = payload?.entities;
+          if (!definitions || typeof definitions !== 'object') {
+            throw new Error('返回数据格式异常');
+          }
+          importEntitiesFromText(JSON.stringify(definitions, null, 2));
+        } catch (error) {
+          console.error(error);
+          const message = error instanceof Error ? error.message : '未知错误';
+          showToast(`导入失败: ${message}`);
+        } finally {
+          importExistingBtn.disabled = false;
+          importExistingBtn.textContent = originalLabel;
+          delete importExistingBtn.dataset.loading;
+        }
+      }
+
       function openPasteDialog() {
         if (importDialog && typeof importDialog.showModal === 'function') {
           if (importTextarea) {
@@ -1527,6 +1559,10 @@
         if (importTextarea) {
           importTextarea.value = '';
         }
+      });
+
+      importExistingBtn?.addEventListener('click', () => {
+        void importAllEntitiesFromSite();
       });
 
       importFileBtn?.addEventListener('click', () => {
