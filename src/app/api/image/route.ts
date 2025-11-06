@@ -17,7 +17,10 @@ export async function GET(request: NextRequest) {
   const publicDir = path.resolve(process.cwd(), 'public');
 
   // Sanitize and resolve the requested path
-  const sanitizedSrc = path.normalize(src).replace(/^(\.\.[/\\])+/, '');
+  const sanitizedSrc = path
+    .normalize(src)
+    .replace(/^([/\\])+/, '')
+    .replace(/^((\.\.)[/\\])+/, '');
   const fullOriginalPath = path.resolve(publicDir, sanitizedSrc);
 
   // Validate that the resolved path is within the public directory

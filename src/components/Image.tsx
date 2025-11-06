@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import NextImage, { ImageProps, ImageLoaderProps } from 'next/image';
 
 const customImageLoader = ({ src }: ImageLoaderProps) => {
@@ -6,10 +7,10 @@ const customImageLoader = ({ src }: ImageLoaderProps) => {
   return `/api/image/?src=${encodeURIComponent(src)}&t=${process.env.NODE_ENV == 'development' ? '' : process.env.NEXT_PUBLIC_BUILD_TIMESTAMP}`;
 };
 
-const Image = (props: ImageProps) => {
-  return <NextImage loader={customImageLoader} {...props} />;
-};
+const Image = forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
+  return <NextImage loader={customImageLoader} ref={ref} {...props} />;
+});
 
-void Image;
+Image.displayName = 'Image';
 
-export default NextImage;
+export default Image;
