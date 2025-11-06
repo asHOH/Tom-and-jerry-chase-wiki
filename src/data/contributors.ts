@@ -531,6 +531,18 @@ export const contributors: Contributor[] = [
       },
     ],
   },
+  {
+    id: 'sunny',
+    name: 'sunny',
+    description: 'S24全国第10米可',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['米可'],
+        isMinor: true,
+      },
+    ],
+  },
   // TODO: Add 米特技巧 contributor
   // TODO：Add 库博知识卡推荐 contributor
   {

@@ -1044,11 +1044,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: false,
       },
       {
-        id: '蒙金奇',
-        description: '国王杰瑞的强化救援战旗配合蒙金奇的战车可以实现稳救。',
-        isMinor: false,
-      },
-      {
         id: '表演者•杰瑞',
         description: '国王杰瑞的强化救援战旗配合表演者•杰瑞的梦幻舞步可以实现稳救。',
         isMinor: false,
@@ -2520,6 +2515,11 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         isMinor: false,
       },
       {
+        id: '图茨',
+        description: '恶魔杰瑞的护盾会被喵喵叫快速击破，因此缺乏自保手段。',
+        isMinor: true,
+      },
+      {
         id: '天使汤姆',
         description:
           '天使汤姆飞行的高机动性克制恶魔杰瑞的拉扯，武器技能的道具（瓶子除外）可以无视恶魔杰瑞3级被动，直接造成伤害。',
@@ -2539,11 +2539,6 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
         id: '恶魔汤姆',
         description: '恶魔杰瑞武器技能可以将恶魔汤姆传送走，克制其死守。',
         isMinor: false,
-      },
-      {
-        id: '图茨',
-        description: '恶魔杰瑞3级被动有概率免疫喵喵叫。',
-        isMinor: true,
       },
       {
         id: '苏蕊',
@@ -5593,11 +5588,13 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
           {
             level: 1,
             description: '',
+            detailedDescription: '单次位移距离为330。',
             cooldown: 18,
           },
           {
             level: 2,
             description: '位移距离和速度提升。',
+            detailedDescription: '单次位移距离提高至400，用时不变。',
             cooldown: 18,
           },
           {
@@ -6530,6 +6527,32 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'S-缴械'],
         description: '没有21知识量时可选择携带。',
+      },
+      {
+        id: 'sunny推荐',
+        description:
+          '以下三套卡组本质是在无21知识量情况下，舍弃铁血换取更高上限的卡组方案，不推荐新手及有21知识量的玩家使用。',
+        groups: [
+          {
+            cards: ['S-舍己', 'B-幸运', 'C-脱身', 'C-不屈', 'C-救救我'],
+            contributor: 'sunny',
+            description:
+              '适用于无21知识点且单排的情况下，或队伍内缺少稳救时自保使用。幸运脱身可用于应对前期穷追针对米可的打法（由于米可在中低血量的情况下被死追时自保能力趋近于无，所以脱身提供的血量为必要），在猫没有提前布双夹的意识的情况下打米特以外的猫米可基本可以通过幸运脱身换取一次前中期火箭容错（只要能开出采访就能拖延很长一段时间），不屈用于保后期强度。',
+          },
+          {
+            cards: ['S-舍己', 'A-逃窜', 'C-不屈', 'B-应激反应', 'C-救救我'],
+            contributor: 'sunny',
+            description:
+              '适用于无21知识点且多排的情况下，或队伍中有强稳救/队伍构筑为三保一时使用，以及打如玉时作为对策卡组使用。逃窜应激可以让米可在挨打后获得非常客观的爆发移速，加上后期残局不屈提供的常态移速与米可三被提供的爆发移速基本可以做到挨一刀就飞走，同时由于如玉的爪刀不带有控制且击倒满血米可能力有限的情况下可以在挨刀后利用非常高的爆发移速迅速拉开与猫的距离逃走。',
+          },
+          {
+            cards: ['S-舍己', 'B-幸运', 'C-脱身', 'C-不屈', 'A-祝愿'],
+            contributor: 'sunny',
+            description:
+              '仅适用于以天使为核心的幸运流，舍己用于配合米可的救人能力救天使，幸运脱身保证前期生存，祝愿用于配合天使换取飞掉之后的团队收益，不屈保证后期强度。',
+          },
+        ],
+        defaultFolded: true,
       },
     ],
     skills: [

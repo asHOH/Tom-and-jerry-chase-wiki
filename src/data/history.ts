@@ -4071,6 +4071,7 @@ export const historyData: GameHistory = [
               { name: '魔术师', changeType: ChangeType.BUFF },
               { name: '玛丽', changeType: ChangeType.BUFF },
               { name: '汤姆', changeType: ChangeType.NERF },
+              { name: '追风汤姆', changeType: ChangeType.NERF },
               { name: '马索尔', changeType: ChangeType.NERF },
               { name: '剑客泰菲', changeType: ChangeType.NERF },
               { name: '恶魔杰瑞', changeType: ChangeType.ADJUSTMENT },
