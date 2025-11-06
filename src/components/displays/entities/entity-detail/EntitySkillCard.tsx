@@ -17,7 +17,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
 
 interface SkillCardProps {
-  skill: DeepReadonly<Skill & { colddown?: number }>;
+  skill: DeepReadonly<Skill & { cooldown?: number }>;
   skillIndex: number;
 }
 
@@ -25,7 +25,7 @@ function SkillDescriptionPrefix({
   skill,
   level,
 }: {
-  skill: DeepReadonly<Skill & { colddown?: number }>;
+  skill: DeepReadonly<Skill & { cooldown?: number }>;
   level: number;
 }) {
   if (level == 1) return null;
@@ -54,7 +54,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
 
   const getCooldownProperty = () => {
     if (!skill.skillLevels.some((level: SkillLevel) => level.cooldown))
-      return skill.colddown ? `CD: ${skill.colddown} 秒` : null;
+      return skill.cooldown ? `CD: ${skill.cooldown} 秒` : null;
 
     const cooldowns = skill.skillLevels.map((level: SkillLevel) => level.cooldown || '-');
     const uniqueCooldowns = Array.from(new Set(cooldowns));

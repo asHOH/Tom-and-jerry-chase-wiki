@@ -306,17 +306,17 @@ export type Entitytypelist =
   | '指示物';
 
 export type EntityDefinition = {
-  entitytype: Entitytypelist | Entitytypelist[]; //type of entity
+  entitytype: Entitytypelist | Entitytypelist[]; // type of entity
   owner?: SingleItem;
-  factionId?: FactionId; //若未填写该项，则在显示时继承owner的此属性（需使用getSingleItemFactionId函数）
+  factionId?: FactionId; // 若未填写该项，则在显示时继承owner的此属性（需使用getSingleItemFactionId函数）
   aliases?: string[]; // (entities') Alternative names for search
   description?: string;
   detailedDescription?: string;
-  create?: string; //the way of items create
+  create?: string; // the way items are created
   detailedCreate?: string;
 
-  skills?: (SkillDefinition & { colddown?: number })[]; //
-  specialImageUrl?: string; //(interim) use other image instead of entity's missing image
+  skills?: (SkillDefinition & { cooldown?: number })[]; // cooldown: optional fallback CD when level data omits cooldown
+  specialImageUrl?: string; // (interim) use other image instead of entity's missing image
 
   entityAttributesAsCharacter?: ItemAttributesAsCharacter;
 } & PhysicalAttributes;
@@ -328,12 +328,12 @@ export type buffClasslist = '物理特性' | '伤害与回复' | '控制效果' 
 
 export type BuffDefinition = {
   type: buffTypelist;
-  global?: boolean; //个人/全局
+  global?: boolean; // 个人/全局
 
-  aliases?: string[]; //支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
+  aliases?: string[]; // 支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
   duration?: number | string; // duration of buff.
-  failure?: string; //failure conditions of buff
-  target?: string; //作用对象
+  failure?: string; // failure conditions of buff
+  target?: string; // 作用对象
 
   description?: string;
   detailedDescription?: string;
@@ -342,8 +342,8 @@ export type BuffDefinition = {
   source?: SingleItem[];
   sourceDescription?: string;
 
-  unuseImage?: boolean; //show its image in grid.Default:false
-  specialImageUrl?: string; //use other image instead of buff's image
+  unuseImage?: boolean; // show its image in grid. Default: false
+  specialImageUrl?: string; // use other image instead of buff's image
 };
 
 export type Buff = BuffDefinition & { name: string; imageUrl: string };
@@ -365,11 +365,11 @@ export const SingleItemTypeChineseNameList = {
   entity: '衍生物',
   buff: '状态/效果',
 };
-//Create a group include similar items(or entites/buffs),so that can use navigation in one href
+// Create a group include similar items(or entites/buffs), so that can use navigation in one href
 export type SingleItem = {
   name: string;
   type: SingleItemTypeName;
-  factionId?: FactionId; //Just use to distinguish specialSkills 应急治疗/急速翻滚
+  factionId?: FactionId; // Just use to distinguish specialSkills 应急治疗/急速翻滚
 };
 
 export type ItemGroupDefinition = {
@@ -378,10 +378,10 @@ export type ItemGroupDefinition = {
 
   group: SingleItem[];
 
-  specialImageUrl?: string; //use other image
+  specialImageUrl?: string; // use other image
 };
 
-export type ItemGroup = ItemGroupDefinition & { name: string }; //no imageUrl
+export type ItemGroup = ItemGroupDefinition & { name: string }; // no imageUrl
 
 /**
  * Defines the type of balance change applied.
