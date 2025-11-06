@@ -16,7 +16,7 @@ import {
   convertCancelableSkillToDisplayText,
 } from '@/lib/skillUtils';
 import { AssetManager } from '@/lib/assetManager';
-import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';

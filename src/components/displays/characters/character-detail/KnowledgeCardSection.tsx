@@ -13,7 +13,7 @@ import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
 import EditableField from '@/components/ui/EditableField';
 import { getCardRankColors } from '@/lib/design-tokens';
 import GotoLink from '@/components/GotoLink';
-import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { characters } from '@/data';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -310,7 +310,7 @@ export function KnowledgeCardGroupDisplay({
   contributorInformation,
   isDarkMode,
 }: {
-  group: readonly CardGroup[];
+  group: DeepReadonly<CardGroup[]>;
   index: number;
   description: string | undefined;
   isEditMode: boolean;
@@ -327,6 +327,7 @@ export function KnowledgeCardGroupDisplay({
   contributorInformation: Contributor | undefined;
   isDarkMode: boolean;
 }) {
+  const normalizedGroup = group as unknown as readonly CardGroup[];
   const isSqueezedView = viewMode === 'compact';
   const isTreeView =
     viewMode === 'tree' ||
@@ -340,11 +341,11 @@ export function KnowledgeCardGroupDisplay({
 
   if (isTreeView) {
     // Tree mode: show tree structure with max cost
-    const maxCost = calculateMaxCostForTree(group, getCardCost);
-    const treeStructure = buildTreeStructure(group);
+    const maxCost = calculateMaxCostForTree(normalizedGroup, getCardCost);
+    const treeStructure = buildTreeStructure(normalizedGroup);
 
     // For optional card handling in tree view
-    const allFlatCombinations = flattenCardGroup(group);
+    const allFlatCombinations = flattenCardGroup(normalizedGroup);
     const hasAnyOptional = allFlatCombinations.some((combo) =>
       combo.some((cardId) => cardId === 'C-狡诈')
     );
@@ -458,7 +459,7 @@ export function KnowledgeCardGroupDisplay({
     );
   } else {
     // Flat mode: flatten and render multiple groups
-    const flattenedCombinations = flattenCardGroup(group);
+    const flattenedCombinations = flattenCardGroup(normalizedGroup);
 
     return (
       <>
@@ -604,12 +605,12 @@ export default function KnowledgeCardSection({
       initialSelectedCards = [];
     } else if (currentTarget.innerIndex === undefined && 'cards' in top) {
       // Flatten for editing
-      const flattened = flattenCardGroup(top.cards);
+      const flattened = flattenCardGroup(top.cards as unknown as readonly CardGroup[]);
       initialSelectedCards = flattened[0] || [];
     } else if (!('cards' in top) && 'groups' in top && currentTarget.innerIndex !== undefined) {
       const inner = top.groups[currentTarget.innerIndex];
       if (inner) {
-        const flattened = flattenCardGroup(inner.cards);
+        const flattened = flattenCardGroup(inner.cards as unknown as readonly CardGroup[]);
         initialSelectedCards = flattened[0] || [];
       }
     }

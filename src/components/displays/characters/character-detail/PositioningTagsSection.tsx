@@ -12,7 +12,7 @@ import type { FactionId } from '@/data/types';
 import { useAppContext } from '@/context/AppContext';
 import { CharacterWithFaction } from '@/lib/types';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
-import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
 import Image from '@/components/Image';

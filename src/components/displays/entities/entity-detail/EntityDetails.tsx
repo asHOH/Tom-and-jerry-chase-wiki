@@ -6,7 +6,7 @@ import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { Entity, Skill } from '@/data/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
-import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import EntityAttributesCard from './EntityAttributesCard';
 import EntitySkillCard from './EntitySkillCard';
 import DetailTraitsCard from '../../shared/DetailTraitsCard';

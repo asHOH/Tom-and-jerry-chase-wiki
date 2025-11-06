@@ -16,7 +16,7 @@ import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import SkillAllocationSection from './SkillAllocationSection';
 import { useCharacterActions } from './useCharacterActions';
 import ContentWriterDisplay from './ContentWriterDisplay';
-import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import CharacterRelationDisplay from './CharacterRelationDisplay';
 import CharacterSectionIndex from './CharacterSectionIndex';
 import SpecialSkillsSection from './SpecialSkillsSection';

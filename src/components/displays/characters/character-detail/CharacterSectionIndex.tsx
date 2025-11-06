@@ -3,7 +3,7 @@ import { characters } from '@/data';
 import { useSnapshot } from 'valtio';
 import { useState, useMemo } from 'react';
 import type { Skill } from '@/data/types';
-import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { useScrollSpy } from '@/lib/useScrollSpy';
 import clsx from 'clsx';
 

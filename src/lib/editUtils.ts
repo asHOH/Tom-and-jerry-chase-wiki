@@ -2,7 +2,7 @@ import { characters, FactionId, factions, Skill } from '@/data';
 import { AssetManager } from './assetManager';
 import { CharacterWithFaction } from './types';
 import json5 from 'json5';
-import { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import mouseCharactersStats from '@/data/mouseCharactersStats';
 import { GameDataManager } from './dataManager';
 

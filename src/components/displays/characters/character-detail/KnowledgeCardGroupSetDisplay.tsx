@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { KnowledgeCardGroupSet } from '@/data/types';
 import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardSection';
-import type { DeepReadonly } from 'next/dist/shared/lib/deep-readonly';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
