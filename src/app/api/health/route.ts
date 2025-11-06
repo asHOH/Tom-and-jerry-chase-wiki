@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
 // Simple health check endpoint that handles OPTIONS properly
 export async function GET() {
-  return NextResponse.json({ status: 'ok', timestamp: new Date().toISOString() });
+  return NextResponse.json(
+    { status: 'ok', timestamp: new Date().toISOString() },
+    {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+      },
+    }
+  );
 }
 
 export async function OPTIONS() {
@@ -12,6 +21,7 @@ export async function OPTIONS() {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Cache-Control': 'public, max-age=86400, must-revalidate',
     },
   });
 }

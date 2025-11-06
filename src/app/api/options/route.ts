@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
 // Handle OPTIONS requests that might be coming from Vercel Analytics
 export async function OPTIONS() {
   return new NextResponse(null, {
@@ -9,6 +11,7 @@ export async function OPTIONS() {
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
       'Access-Control-Max-Age': '86400',
+      'Cache-Control': 'public, max-age=86400, must-revalidate',
       Vary: 'Origin',
     },
   });
@@ -16,8 +19,15 @@ export async function OPTIONS() {
 
 // Also handle GET in case it's needed
 export async function GET() {
-  return NextResponse.json({
-    message: 'OPTIONS endpoint for CORS preflight requests',
-    timestamp: new Date().toISOString(),
-  });
+  return NextResponse.json(
+    {
+      message: 'OPTIONS endpoint for CORS preflight requests',
+      timestamp: new Date().toISOString(),
+    },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=300, must-revalidate',
+      },
+    }
+  );
 }
