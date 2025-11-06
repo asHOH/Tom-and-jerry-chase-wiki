@@ -2,7 +2,7 @@ import { AssetManager } from '../lib/assetManager';
 import { processCharacters } from '../lib/skillIdUtils';
 import { CardGroupType, type CharacterDefinition, type PartialCharacterDefinition } from './types';
 
-const catCharacterDefinitions: Record<string, CharacterDefinition | PartialCharacterDefinition> = {
+const catCharacterDefinitions = {
   /* ----------------------------------- 汤姆 ----------------------------------- */
   汤姆: {
     description:
@@ -5414,7 +5414,7 @@ const catCharacterDefinitions: Record<string, CharacterDefinition | PartialChara
       },
     ],
   },
-};
+} as const satisfies Readonly<Record<string, CharacterDefinition | PartialCharacterDefinition>>;
 
 // Process character definitions to assign IDs and process skills
 export const catCharacters = processCharacters(catCharacterDefinitions);

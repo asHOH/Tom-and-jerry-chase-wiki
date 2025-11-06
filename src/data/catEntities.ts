@@ -6,7 +6,7 @@ export const getCatEntityImageUrl = (name: string, specialImageUrl: string | und
   return `/images/catEntities/${encodeURIComponent(name)}.png`;
 };
 
-export const catEntitiesDefinitions: Record<string, EntityDefinition> = {
+export const catEntitiesDefinitions = {
   手型枪: {
     entitytype: '投射物',
     owner: { name: '手型枪', type: 'skill' },
@@ -395,17 +395,19 @@ export const catEntitiesDefinitions: Record<string, EntityDefinition> = {
       '花枪沿直线飞行，飞行速度约1900，对[碰到](碰撞面积为圆形，半径约150)的老鼠造成[5伤害](不受攻击增伤影响)。花枪飞行1.1秒后或在1秒内再次技能时[折返回如玉身边](改为向如玉方向飞行，碰到如玉或累计飞行8.1秒后消失)，[折返时也会造成5伤害](不受攻击增伤影响；老鼠进入花枪范围至离开前只会受到一次伤害，因此折返开始时恰好处于花枪范围内的老鼠不会受到二次伤害)，若[折返时命中花枪折返前命中过的目标](包括持有护盾、无敌，或是虚弱的目标，甚至包括火箭起飞时待复活的目标———这会导致如玉瞬移到对方的复活位置进行花枪反击)，可在1.6秒内点按["花枪反击"键](该按键位置和大小可进行调整)对其触发"花枪反击"（详见{如玉}）。',
     create: '由如玉-掷花枪召唤并投掷。',
   },
-};
+} as const satisfies Readonly<Record<string, EntityDefinition>>;
 
 const catEntitiesWithImages: Record<string, Entity> = Object.fromEntries(
-  Object.entries(catEntitiesDefinitions).map(([entityName, entity]) => [
-    entityName,
-    {
-      ...entity,
-      name: entityName,
-      imageUrl: getCatEntityImageUrl(entityName, entity.specialImageUrl),
-    },
-  ])
+  (Object.entries(catEntitiesDefinitions) as Array<[string, EntityDefinition]>).map(
+    ([entityName, entity]) => [
+      entityName,
+      {
+        ...entity,
+        name: entityName,
+        imageUrl: getCatEntityImageUrl(entityName, entity.specialImageUrl),
+      },
+    ]
+  )
 );
 
 export default catEntitiesWithImages;

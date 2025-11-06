@@ -2,7 +2,7 @@ import { AssetManager } from '../lib/assetManager';
 import { processCharacters } from '../lib/skillIdUtils';
 import { CardGroupType, type CharacterDefinition } from './types';
 
-const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
+const mouseCharacterDefinitions = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
   杰瑞: {
     description: '一只古灵精怪的小老鼠，总喜欢戏弄汤姆，和汤姆是一对欢喜冤家。',
@@ -7522,7 +7522,7 @@ const mouseCharacterDefinitions: Record<string, CharacterDefinition> = {
       },
     ],
   },
-};
+} as const satisfies Readonly<Record<string, CharacterDefinition>>;
 
 // Process character definitions to assign IDs and process skills
 export const mouseCharacters = processCharacters(mouseCharacterDefinitions);
