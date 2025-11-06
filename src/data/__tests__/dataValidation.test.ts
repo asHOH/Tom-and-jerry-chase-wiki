@@ -1,5 +1,12 @@
 import { characters, cardData, factions } from '../../data';
-import { Character, Card, Skill } from '../../data/types';
+import {
+  Character,
+  Card,
+  Skill,
+  CardGroup,
+  KnowledgeCardGroup,
+  KnowledgeCardGroupSet,
+} from '../../data/types';
 
 describe('Data Validation', () => {
   describe('Characters Data', () => {
@@ -114,6 +121,30 @@ describe('Data Validation', () => {
         });
       });
     });
+
+    it('should have compilable regex aliases', () => {
+      const invalidAliases: Array<{ cardId: string; alias: string; error: string }> = [];
+
+      cardsArray.forEach((card: Card) => {
+        (card.aliases ?? []).forEach((alias) => {
+          if (alias.startsWith('#') || alias.startsWith('%')) {
+            const pattern = alias.slice(1);
+
+            try {
+              new RegExp(pattern);
+            } catch (error) {
+              invalidAliases.push({
+                cardId: card.id,
+                alias,
+                error: (error as Error).message,
+              });
+            }
+          }
+        });
+      });
+
+      expect(invalidAliases).toEqual([]);
+    });
   });
 
   describe('Factions Data', () => {
@@ -158,6 +189,67 @@ describe('Data Validation', () => {
       const cardIds = Object.keys(cardData);
       const uniqueIds = Array.from(new Set(cardIds));
       expect(cardIds.length).toBe(uniqueIds.length);
+    });
+
+    it('should reference existing cards in character knowledge card groups', () => {
+      const characterList = Object.values(characters);
+      const validCardIds = new Set(Object.keys(cardData));
+      const missingReferences: Array<{ characterId: string; cardId: string }> = [];
+
+      const isKnowledgeCardGroupSet = (value: unknown): value is KnowledgeCardGroupSet =>
+        typeof value === 'object' &&
+        value !== null &&
+        Array.isArray((value as KnowledgeCardGroupSet).groups);
+
+      const isKnowledgeCardGroup = (value: unknown): value is KnowledgeCardGroup =>
+        typeof value === 'object' &&
+        value !== null &&
+        Array.isArray((value as KnowledgeCardGroup).cards);
+
+      const collectCardIdsFromCardGroup = (group: CardGroup): string[] => {
+        if (typeof group === 'string') {
+          return [group];
+        }
+
+        const nestedGroups = group.slice(1) as CardGroup[];
+        return nestedGroups.flatMap((nestedGroup) => collectCardIdsFromCardGroup(nestedGroup));
+      };
+
+      const collectCardIdsFromEntry = (
+        entry: KnowledgeCardGroup | KnowledgeCardGroupSet
+      ): string[] => {
+        if (isKnowledgeCardGroupSet(entry)) {
+          return entry.groups.flatMap((group) => collectCardIdsFromEntry(group));
+        }
+
+        if (isKnowledgeCardGroup(entry)) {
+          return entry.cards.flatMap((group) => collectCardIdsFromCardGroup(group));
+        }
+
+        return [];
+      };
+
+      const resolveCardId = (rawId: string): string | undefined => {
+        const trimmed = rawId.trim();
+        const parts = trimmed.split('-');
+        const candidates = parts.length > 1 ? [trimmed, parts.slice(1).join('-')] : [trimmed];
+        return candidates.find((candidate) => validCardIds.has(candidate));
+      };
+
+      characterList.forEach((character) => {
+        const references = character.knowledgeCardGroups.flatMap((entry) =>
+          collectCardIdsFromEntry(entry)
+        );
+
+        references.forEach((cardId) => {
+          const resolved = resolveCardId(cardId);
+          if (!resolved) {
+            missingReferences.push({ characterId: character.id, cardId });
+          }
+        });
+      });
+
+      expect(missingReferences).toEqual([]);
     });
   });
 });
