@@ -1,6 +1,13 @@
 import { GameDataManager } from '@/lib/dataManager';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import {
+  GoogleGenAI,
+  FunctionDeclaration,
+  FunctionCallingConfigMode,
+  HarmCategory,
+  HarmBlockThreshold,
+} from '@google/genai';
 
 // Define the structure of a message part, including function calls and responses
 // Based on Gemini's API structure
@@ -28,12 +35,24 @@ type Content = {
 const characters = Object.values(GameDataManager.getCharacters());
 const cards = Object.values(GameDataManager.getCards());
 
-// Gemini safety settings - configured to the strictest level
+// Gemini safety settings - configured to the strictest level using SDK enums
 const safetySettings = [
-  { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_LOW_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_LOW_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_LOW_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_LOW_AND_ABOVE' },
+  {
+    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
 ];
 
 const systemInstructionText = `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
@@ -251,35 +270,21 @@ export type Card = {
 \`\`\`
 `;
 
-// System prompt to define the agent's persona and instructions
-const systemInstruction = {
-  role: 'model',
-  parts: [
-    {
-      text: systemInstructionText,
-    },
-  ],
-};
-
-// Tool definition for fetching character data
-const getDataTool = {
-  functionDeclarations: [
-    {
-      name: 'getData',
-      description:
-        'Get data for a specific Tom and Jerry: Chase character, such as faction, skills, or description.',
-      parameters: {
-        type: 'OBJECT',
-        properties: {
-          name: {
-            type: 'STRING',
-            description: 'The name of the character to get data for.',
-          },
-        },
-        required: ['name'],
+// Tool definition for fetching character data using Google GenAI SDK format
+const getDataDeclaration: FunctionDeclaration = {
+  name: 'getData',
+  description:
+    'Get data for a specific Tom and Jerry: Chase character, such as faction, skills, or description.',
+  parametersJsonSchema: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        description: 'The name of the character to get data for.',
       },
     },
-  ],
+    required: ['name'],
+  },
 };
 
 /**
@@ -315,7 +320,7 @@ async function getData({ name }: { name: string }) {
   return { error: `Item "${name}" not found.` };
 }
 
-// Main POST handler for the chat API
+// Main POST handler for the chat API using Google GenAI SDK
 export async function POST(req: NextRequest) {
   try {
     const { messages }: { messages: Content[] } = await req.json();
@@ -330,103 +335,113 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const getGeminiUrl = () =>
-      `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+    // Initialize Google GenAI SDK
+    const ai = new GoogleGenAI({ apiKey });
 
     const currentMessages: Content[] = [...messages];
     const MAX_TOOL_CALLS = 5; // Safety break to prevent infinite loops
 
     for (let i = 0; i < MAX_TOOL_CALLS; i++) {
-      const requestBody = {
-        contents: currentMessages,
-        tools: [getDataTool],
-        safetySettings,
-        systemInstruction,
-      };
+      console.log(`Loop ${i + 1} - Sending request with ${currentMessages.length} messages`);
 
-      console.log(`Loop ${i + 1} - Request body:`, JSON.stringify(requestBody, null, 2));
-
-      const response = await fetch(getGeminiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-        signal: req.signal,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`API call failed in loop ${i + 1}:`, errorText);
-        return new NextResponse(
-          JSON.stringify({ error: 'Gemini API call failed', details: errorText }),
-          { status: response.status }
-        );
-      }
-
-      const responseJson = await response.json();
-      console.log(`Loop ${i + 1} - API response:`, JSON.stringify(responseJson, null, 2));
-
-      const candidate = responseJson.candidates?.[0];
-
-      if (!candidate) {
-        console.error('No candidate in response:', responseJson);
-        return new NextResponse(JSON.stringify({ error: 'No response candidate from Gemini' }), {
-          status: 500,
+      try {
+        // Use SDK's generateContent with automatic function calling
+        const response = await ai.models.generateContent({
+          model: modelName,
+          contents: currentMessages,
+          config: {
+            tools: [{ functionDeclarations: [getDataDeclaration] }],
+            toolConfig: {
+              functionCallingConfig: {
+                mode: FunctionCallingConfigMode.AUTO,
+              },
+            },
+            safetySettings,
+            systemInstruction: systemInstructionText,
+          },
         });
-      }
 
-      const functionCallPart = candidate.content?.parts?.find((part: Part) => part.functionCall);
+        console.log(`Loop ${i + 1} - Response received`);
 
-      if (functionCallPart?.functionCall) {
-        console.log('Function call detected:', functionCallPart.functionCall);
-        const { name, args } = functionCallPart.functionCall;
+        // Check if the model wants to call a function
+        if (response.functionCalls && response.functionCalls.length > 0) {
+          console.log('Function calls detected:', response.functionCalls);
 
-        if (name === 'getData') {
-          const toolResult = await getData(args as { name: string });
-          console.log('Tool result:', toolResult);
+          // Process each function call
+          for (const functionCall of response.functionCalls) {
+            if (functionCall.name === 'getData') {
+              const toolResult = await getData((functionCall.args || {}) as { name: string });
+              console.log('Tool result:', toolResult);
 
-          // Append the model's function call and the tool's response to the history
-          currentMessages.push(
-            { role: 'model', parts: [functionCallPart] },
-            {
-              role: 'user',
-              parts: [
-                {
-                  functionResponse: {
-                    name: 'getData',
-                    response: { name: 'getData', content: toolResult },
+              // Append the model's function call to the history
+              currentMessages.push({
+                role: 'model',
+                parts: [
+                  {
+                    functionCall: {
+                      name: functionCall.name,
+                      args: functionCall.args || {},
+                    },
                   },
-                },
-              ],
+                ],
+              });
+
+              // Append the function response to the history
+              currentMessages.push({
+                role: 'user',
+                parts: [
+                  {
+                    functionResponse: {
+                      name: 'getData',
+                      response: { name: 'getData', content: toolResult },
+                    },
+                  },
+                ],
+              });
+            } else {
+              console.error('Unsupported tool call:', functionCall.name);
+              return new NextResponse(
+                JSON.stringify({ error: `Unsupported tool call: ${functionCall.name}` }),
+                { status: 400 }
+              );
             }
-          );
+          }
           // Continue the loop to send the tool result back to the model
         } else {
-          console.error('Unsupported tool call:', name);
-          return new NextResponse(JSON.stringify({ error: `Unsupported tool call: ${name}` }), {
-            status: 400,
-          });
-        }
-      } else {
-        // No function call, so it must be a text response. We're done.
-        const partsArray = candidate.content?.parts ?? [];
-        const text = partsArray.map((part: Part) => part.text ?? '').join('') || '';
-        console.log('Final text response:', text);
+          // No function call, we have a final text response
+          const text = response.text || '';
+          console.log('Final text response:', text);
 
-        return new NextResponse(
-          JSON.stringify({
-            text,
-            candidates: responseJson.candidates,
-          }),
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+          return new NextResponse(
+            JSON.stringify({
+              text,
+              candidates: response.candidates,
+            }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+        }
+      } catch (apiError) {
+        // Handle SDK-specific errors
+        console.error(`API call failed in loop ${i + 1}:`, apiError);
+
+        if (apiError instanceof Error) {
+          return new NextResponse(
+            JSON.stringify({
+              error: 'Gemini API call failed',
+              details: apiError.message,
+            }),
+            { status: 500 }
+          );
+        }
+        throw apiError;
       }
     }
 
-    // If the loop finishes, it means the maximum number of tool calls was reached.
+    // If the loop finishes, it means the maximum number of tool calls was reached
     console.error('Maximum number of tool calls reached.');
     return new NextResponse(
       JSON.stringify({ error: 'Maximum number of tool calls reached. Please try again.' }),
@@ -435,7 +450,6 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       console.log('Request was aborted by the client.');
-      // Return an empty response to signify abortion
       return new NextResponse('', { status: 204 });
     }
     console.error('Chat API error:', error);
