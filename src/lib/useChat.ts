@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { GameDataManager } from '@/lib/dataManager';
+import { cards, characters } from '@/data';
+import { snapshot } from 'valtio';
 
 // Type definition for a message part, consistent with the API
 type Part = {
@@ -56,35 +57,25 @@ function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number
   }) as T;
 }
 
-// Client-side getData implementation
-async function clientGetData({ name }: { name: string }) {
-  const characters = Object.values(GameDataManager.getCharacters());
-  const cards = Object.values(GameDataManager.getCards());
+// Client-side code execution implementation
+// Executes JavaScript code with characters and cards objects in scope
+async function executeCode({ code }: { code: string }) {
+  try {
+    // Create a function that executes the code with characters and cards in scope
+    // Using Function constructor to safely execute code in a controlled context
+    const executorFunction = new Function('characters', 'cards', code);
 
-  // Try exact character id or alias
-  const character =
-    characters.find((c) => c.id === name) ?? characters.find((c) => c.aliases?.includes(name));
-  if (character) {
-    return { character };
+    // Execute the code and return the result
+    const result = executorFunction(snapshot(characters), snapshot(cards));
+
+    return result;
+  } catch (error) {
+    // Return error information if code execution fails
+    return {
+      error: 'Code execution failed',
+      details: error instanceof Error ? error.message : String(error),
+    };
   }
-
-  // Normalize card name: allow "A-加大火力" style inputs
-  const rankPrefixMatch = String(name).match(/^[SABC]-(.+)$/);
-  const normalized = rankPrefixMatch?.[1]?.trim() ?? name;
-
-  // Try exact card id first
-  const cardById = cards.find((card) => card.id === normalized);
-  if (cardById) {
-    return { card: cardById };
-  }
-
-  // Try fuzzy card match by id equality with original input as fallback
-  const cardByOriginal = cards.find((card) => card.id === name);
-  if (cardByOriginal) {
-    return { card: cardByOriginal };
-  }
-
-  return { error: `Item "${name}" not found.` };
 }
 
 /**
@@ -130,12 +121,12 @@ export function useChat(message?: string, debounceMs = 500) {
       // Execute each function call and collect results
       const functionResponses: Part[] = [];
       for (const functionCall of functionCalls) {
-        if (functionCall.name === 'getData') {
-          const toolResult = await clientGetData(functionCall.args as { name: string });
+        if (functionCall.name === 'executeCode') {
+          const toolResult = await executeCode(functionCall.args as { code: string });
           functionResponses.push({
             functionResponse: {
-              name: 'getData',
-              response: { name: 'getData', content: toolResult },
+              name: 'executeCode',
+              response: { name: 'executeCode', content: toolResult },
             },
           });
         }

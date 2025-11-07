@@ -32,9 +32,6 @@ type Content = {
   parts: Part[];
 };
 
-const characters = Object.values(GameDataManager.getCharacters());
-const cards = Object.values(GameDataManager.getCards());
-
 // Gemini safety settings - configured to the strictest level using SDK enums
 const safetySettings = [
   {
@@ -57,30 +54,39 @@ const safetySettings = [
 
 const systemInstructionText = `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
 Your purpose is to provide accurate information about characters, skills, knowledge cards, and other game elements.
-When a user asks for information about a specific character or knowledge card, use the 'getData' tool to retrieve the most up-to-date details.
-Be friendly, concise, and focus on answering the user's question based on the data provided by the tool.
+When a user asks for information, use the 'executeCode' tool to query the game database using JavaScript code.
+Be friendly, concise, and focus on answering the user's question based on the data retrieved.
 If the user asks about something outside of characters or game data, politely inform them that your expertise is limited to Tom and Jerry: Chase game information.
-If the user's prompt consists of only a character's name, use the getData tool to retrieve information and provide a brief introduction of that character.
+If the user's prompt consists of only a character's name, use the executeCode tool to retrieve information and provide a brief introduction of that character.
 You MUST respond in simplified Chinese in plain text without any markdown formatting, HTML tags, or special characters. 
 
 For requests that are harmful, unethical, inappropriate, your only response MUST be: "我无法提供帮助。" Do not apologize or provide any explanation.
 
-# Tool Usage: getData
+# Tool Usage: executeCode
 
 **1. Purpose:**
-The getData tool is your primary source for all character-specific information in Tom and Jerry: Chase. It connects to the game's database to retrieve the latest, most accurate details.
+The executeCode tool allows you to run JavaScript code to query the game database. You have direct access to two objects in the execution context:
+- \`characters\`: An object where keys are character IDs (Chinese names) and values are Character objects
+- \`cards\`: An object where keys are card IDs (Chinese names) and values are Card objects
 
 **2. When to Use It:**
-You **must** call this tool whenever a user's query is about a specific character or knowledge card. You have access to the following characters: ${JSON.stringify(characters.map(({ id, aliases }) => ({ id, aliases })))} and the following cards: ${JSON.stringify(cards.map(({ id, rank }) => ({ id, rank })))}.
+You **must** call this tool whenever a user's query requires accessing game data. Available characters: ${JSON.stringify(Object.keys(GameDataManager.getCharacters()))} and cards: ${JSON.stringify(Object.keys(GameDataManager.getCards()))}.
 
 **3. How to Use It:**
-The tool takes the character's Chinese name as an input. For example: getData(name="汤姆"). The name MUST match exactly with the character or knowledge card's name or one of their aliases or the format \`\${rank}-\${name}\`. 
+Write JavaScript code that accesses the characters or cards objects and returns the desired data. The code must include a \`return\` statement with the result.
+
+**Examples:**
+- Get a specific character: \`return characters["汤姆"]\`
+- Get a specific card: \`return cards["乘胜追击"]\`
+- Get characters sorted by HP: \`return Object.values(characters).sort((a,b) => a.maxHp - b.maxHp).map(char => ({id: char.id, maxHp: char.maxHp}))\`
+- Find characters by faction: \`return Object.values(characters).filter(c => c.factionId === "cat").map(c => c.id)\`
+- Search by alias: \`return Object.values(characters).find(c => c.id === "汤姆" || c.aliases?.includes("汤姆"))\`
 
 **4. Data Reliance:**
-Your response **must be based exclusively** on the data returned by the getData tool. Do not add information from other sources or make assumptions. If the tool does not provide a specific piece of information the user asked for, you should state that the information is not available in your database.
+Your response **must be based exclusively** on the data returned by the executeCode tool. Do not add information from other sources or make assumptions. If the tool does not provide a specific piece of information the user asked for, you should state that the information is not available in your database.
 
 **5. Return Type:**
-The tool's return type is a JSON object \` { character: CharacterDefinition } | { card: Card } \`.  Below are the detailed TypeScript type definitions for \`CharacterDefinition\`, with each field's meaning explained via comments.
+The tool returns whatever your JavaScript code returns. Typically this will be a Character object, Card object, or an array/object containing the queried data. Below are the detailed TypeScript type definitions for reference:
 
 \`\`\`typescript
 // The unique identifier for a character's faction.
@@ -249,6 +255,12 @@ type CharacterDefinition = {
   collaborators?: CharacterRelationItem[]; // Characters this character has good synergy with.
 };
 
+export type Character = CharacterDefinition & {
+  id: string; // Chinese name (e.g., '汤姆')
+  factionId?: FactionId; // Optional in base definition, will be assigned in bulk
+  skills: Skill[]; // Processed skills with IDs
+};
+
 // Card-related types
 export type CardRank = 'C' | 'B' | 'A' | 'S';
 
@@ -270,55 +282,23 @@ export type Card = {
 \`\`\`
 `;
 
-// Tool definition for fetching character data using Google GenAI SDK format
-const getDataDeclaration: FunctionDeclaration = {
-  name: 'getData',
+// Tool definition for executing JavaScript code to query game data
+const executeCodeDeclaration: FunctionDeclaration = {
+  name: 'executeCode',
   description:
-    'Get data for a specific Tom and Jerry: Chase character, such as faction, skills, or description.',
+    'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to `characters` (object with character IDs as keys) and `cards` (object with card IDs as keys) objects.',
   parametersJsonSchema: {
     type: 'object',
     properties: {
-      name: {
+      code: {
         type: 'string',
-        description: 'The name of the character to get data for.',
+        description:
+          'JavaScript code to execute. Must include a return statement. Available variables: characters (object), cards (object). Example: return characters["汤姆"]',
       },
     },
-    required: ['name'],
+    required: ['code'],
   },
 };
-
-/**
- * Placeholder for the actual tool implementation.
- * The user will replace this with the real data fetching logic.
- */
-async function getData({ name }: { name: string }) {
-  console.log(`Tool called: getData for "${name}"`);
-
-  // Try exact character id or alias
-  const character =
-    characters.find((c) => c.id === name) ?? characters.find((c) => c.aliases?.includes(name));
-  if (character) {
-    return { character };
-  }
-
-  // Normalize card name: allow "A-加大火力" style inputs
-  const rankPrefixMatch = String(name).match(/^[SABC]-(.+)$/);
-  const normalized = rankPrefixMatch?.[1]?.trim() ?? name;
-
-  // Try exact card id first
-  const cardById = cards.find((card) => card.id === normalized);
-  if (cardById) {
-    return { card: cardById };
-  }
-
-  // Try fuzzy card match by id equality with original input as fallback
-  const cardByOriginal = cards.find((card) => card.id === name);
-  if (cardByOriginal) {
-    return { card: cardByOriginal };
-  }
-
-  return { error: `Item "${name}" not found.` };
-}
 
 // Main POST handler for the chat API - returns function calls for client to execute
 export async function POST(req: NextRequest) {
@@ -344,7 +324,7 @@ export async function POST(req: NextRequest) {
         model: modelName,
         contents: messages,
         config: {
-          tools: [{ functionDeclarations: [getDataDeclaration] }],
+          tools: [{ functionDeclarations: [executeCodeDeclaration] }],
           toolConfig: {
             functionCallingConfig: {
               mode: FunctionCallingConfigMode.AUTO,
@@ -421,6 +401,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-// Export getData function for client-side tool calls
-export { getData };
