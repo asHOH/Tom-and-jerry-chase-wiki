@@ -320,7 +320,7 @@ async function getData({ name }: { name: string }) {
   return { error: `Item "${name}" not found.` };
 }
 
-// Main POST handler for the chat API using Google GenAI SDK
+// Main POST handler for the chat API - returns function calls for client to execute
 export async function POST(req: NextRequest) {
   try {
     const { messages }: { messages: Content[] } = await req.json();
@@ -338,115 +338,76 @@ export async function POST(req: NextRequest) {
     // Initialize Google GenAI SDK
     const ai = new GoogleGenAI({ apiKey });
 
-    const currentMessages: Content[] = [...messages];
-    const MAX_TOOL_CALLS = 5; // Safety break to prevent infinite loops
-
-    for (let i = 0; i < MAX_TOOL_CALLS; i++) {
-      console.log(`Loop ${i + 1} - Sending request with ${currentMessages.length} messages`);
-
-      try {
-        // Use SDK's generateContent with automatic function calling
-        const response = await ai.models.generateContent({
-          model: modelName,
-          contents: currentMessages,
-          config: {
-            tools: [{ functionDeclarations: [getDataDeclaration] }],
-            toolConfig: {
-              functionCallingConfig: {
-                mode: FunctionCallingConfigMode.AUTO,
-              },
+    try {
+      // Use SDK's generateContent with automatic function calling
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: messages,
+        config: {
+          tools: [{ functionDeclarations: [getDataDeclaration] }],
+          toolConfig: {
+            functionCallingConfig: {
+              mode: FunctionCallingConfigMode.AUTO,
             },
-            safetySettings,
-            systemInstruction: systemInstructionText,
           },
-        });
+          safetySettings,
+          systemInstruction: systemInstructionText,
+        },
+      });
 
-        console.log(`Loop ${i + 1} - Response received`);
+      console.log('Response received');
 
-        // Check if the model wants to call a function
-        if (response.functionCalls && response.functionCalls.length > 0) {
-          console.log('Function calls detected:', response.functionCalls);
+      // Check if the model wants to call a function
+      if (response.functionCalls && response.functionCalls.length > 0) {
+        console.log('Function calls detected:', response.functionCalls);
 
-          // Process each function call
-          for (const functionCall of response.functionCalls) {
-            if (functionCall.name === 'getData') {
-              const toolResult = await getData((functionCall.args || {}) as { name: string });
-              console.log('Tool result:', toolResult);
-
-              // Append the model's function call to the history
-              currentMessages.push({
-                role: 'model',
-                parts: [
-                  {
-                    functionCall: {
-                      name: functionCall.name,
-                      args: functionCall.args || {},
-                    },
-                  },
-                ],
-              });
-
-              // Append the function response to the history
-              currentMessages.push({
-                role: 'user',
-                parts: [
-                  {
-                    functionResponse: {
-                      name: 'getData',
-                      response: { name: 'getData', content: toolResult },
-                    },
-                  },
-                ],
-              });
-            } else {
-              console.error('Unsupported tool call:', functionCall.name);
-              return new NextResponse(
-                JSON.stringify({ error: `Unsupported tool call: ${functionCall.name}` }),
-                { status: 400 }
-              );
-            }
+        // Return function calls to client for execution
+        return new NextResponse(
+          JSON.stringify({
+            requiresAction: true,
+            functionCalls: response.functionCalls.map((fc) => ({
+              name: fc.name,
+              args: fc.args || {},
+            })),
+          }),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           }
-          // Continue the loop to send the tool result back to the model
-        } else {
-          // No function call, we have a final text response
-          const text = response.text || '';
-          console.log('Final text response:', text);
+        );
+      } else {
+        // No function call, we have a final text response
+        const text = response.text || '';
+        console.log('Final text response:', text);
 
-          return new NextResponse(
-            JSON.stringify({
-              text,
-              candidates: response.candidates,
-            }),
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-        }
-      } catch (apiError) {
-        // Handle SDK-specific errors
-        console.error(`API call failed in loop ${i + 1}:`, apiError);
-
-        if (apiError instanceof Error) {
-          return new NextResponse(
-            JSON.stringify({
-              error: 'Gemini API call failed',
-              details: apiError.message,
-            }),
-            { status: 500 }
-          );
-        }
-        throw apiError;
+        return new NextResponse(
+          JSON.stringify({
+            text,
+            candidates: response.candidates,
+          }),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
       }
-    }
+    } catch (apiError) {
+      // Handle SDK-specific errors
+      console.error('API call failed:', apiError);
 
-    // If the loop finishes, it means the maximum number of tool calls was reached
-    console.error('Maximum number of tool calls reached.');
-    return new NextResponse(
-      JSON.stringify({ error: 'Maximum number of tool calls reached. Please try again.' }),
-      { status: 500 }
-    );
+      if (apiError instanceof Error) {
+        return new NextResponse(
+          JSON.stringify({
+            error: 'Gemini API call failed',
+            details: apiError.message,
+          }),
+          { status: 500 }
+        );
+      }
+      throw apiError;
+    }
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       console.log('Request was aborted by the client.');
@@ -460,3 +421,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// Export getData function for client-side tool calls
+export { getData };
