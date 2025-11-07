@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { cards, characters } from '@/data';
+import { cards, characters, specialSkills, items, entities, buffs, itemGroups } from '@/data';
 import { snapshot } from 'valtio';
 
 // Type definition for a message part, consistent with the API
@@ -58,15 +58,32 @@ function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number
 }
 
 // Client-side code execution implementation
-// Executes JavaScript code with characters and cards objects in scope
+// Executes JavaScript code with game data objects in scope
 async function executeCode({ code }: { code: string }) {
   try {
-    // Create a function that executes the code with characters and cards in scope
+    // Create a function that executes the code with all game data in scope
     // Using Function constructor to safely execute code in a controlled context
-    const executorFunction = new Function('characters', 'cards', code);
+    const executorFunction = new Function(
+      'characters',
+      'cards',
+      'specialSkills',
+      'items',
+      'entities',
+      'buffs',
+      'itemGroups',
+      code
+    );
 
     // Execute the code and return the result
-    const result = executorFunction(snapshot(characters), snapshot(cards));
+    const result = executorFunction(
+      snapshot(characters),
+      snapshot(cards),
+      snapshot(specialSkills),
+      snapshot(items),
+      snapshot(entities),
+      snapshot(buffs),
+      snapshot(itemGroups)
+    );
 
     return result;
   } catch (error) {

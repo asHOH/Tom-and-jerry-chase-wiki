@@ -1,4 +1,3 @@
-import { GameDataManager } from '@/lib/dataManager';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import {
@@ -65,22 +64,30 @@ For requests that are harmful, unethical, inappropriate, your only response MUST
 # Tool Usage: executeCode
 
 **1. Purpose:**
-The executeCode tool allows you to run JavaScript code to query the game database. You have direct access to two objects in the execution context:
-- \`characters\`: An object where keys are character IDs (Chinese names) and values are Character objects
-- \`cards\`: An object where keys are card IDs (Chinese names) and values are Card objects
+The executeCode tool allows you to run JavaScript code to query the game database. You have direct access to these objects in the execution context:
+- \`characters\`: Record<string, Character> - Character data indexed by Chinese names
+- \`cards\`: Record<string, Card> - Knowledge card data indexed by Chinese names
+- \`specialSkills\`: { cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill> } - Special skills for each faction
+- \`items\`: Record<string, Item> - Game items indexed by Chinese names
+- \`entities\`: { cat: Record<string, Entity>, mouse: Record<string, Entity> } - Entities (summons, projectiles) for each faction
+- \`buffs\`: Record<string, Buff> - Status effects/buffs indexed by Chinese names
+- \`itemGroups\`: Record<string, ItemGroup> - Groups of related items
 
 **2. When to Use It:**
-You **must** call this tool whenever a user's query requires accessing game data. Available characters: ${JSON.stringify(Object.keys(GameDataManager.getCharacters()))} and cards: ${JSON.stringify(Object.keys(GameDataManager.getCards()))}.
+You **must** call this tool whenever a user's query requires accessing game data.
 
 **3. How to Use It:**
-Write JavaScript code that accesses the characters or cards objects and returns the desired data. The code must include a \`return\` statement with the result.
+Write JavaScript code that accesses the available objects and returns the desired data. The code must include a \`return\` statement with the result.
 
 **Examples:**
-- Get a specific character: \`return characters["汤姆"]\`
-- Get a specific card: \`return cards["乘胜追击"]\`
-- Get characters sorted by HP: \`return Object.values(characters).sort((a,b) => a.maxHp - b.maxHp).map(char => ({id: char.id, maxHp: char.maxHp}))\`
-- Find characters by faction: \`return Object.values(characters).filter(c => c.factionId === "cat").map(c => c.id)\`
-- Search by alias: \`return Object.values(characters).find(c => c.id === "汤姆" || c.aliases?.includes("汤姆"))\`
+- Get a character: \`return characters["汤姆"]\`
+- Get a card: \`return cards["乘胜追击"]\`
+- Get cat special skills: \`return Object.values(specialSkills.cat)\`
+- Get an item: \`return items["火箭"]\`
+- Get cat entities: \`return Object.values(entities.cat)\`
+- Get a buff: \`return buffs["眩晕"]\`
+- Sort characters by HP: \`return Object.values(characters).sort((a,b) => a.maxHp - b.maxHp).map(c => ({id: c.id, maxHp: c.maxHp}))\`
+- Filter by faction: \`return Object.values(characters).filter(c => c.factionId === "cat").map(c => c.id)\`
 
 **4. Data Reliance:**
 Your response **must be based exclusively** on the data returned by the executeCode tool. Do not add information from other sources or make assumptions. If the tool does not provide a specific piece of information the user asked for, you should state that the information is not available in your database.
@@ -286,14 +293,14 @@ export type Card = {
 const executeCodeDeclaration: FunctionDeclaration = {
   name: 'executeCode',
   description:
-    'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to `characters` (object with character IDs as keys) and `cards` (object with card IDs as keys) objects.',
+    'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to multiple game data objects including characters, cards, specialSkills, items, entities, buffs, and itemGroups.',
   parametersJsonSchema: {
     type: 'object',
     properties: {
       code: {
         type: 'string',
         description:
-          'JavaScript code to execute. Must include a return statement. Available variables: characters (object), cards (object). Example: return characters["汤姆"]',
+          'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>). Examples: return characters["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]',
       },
     },
     required: ['code'],
