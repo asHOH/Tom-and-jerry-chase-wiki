@@ -455,7 +455,8 @@ const mouseCharacterDefinitions = {
         id: '降落伞（剑汤）',
         pattern: '1200[12][12]0',
         weaponType: 'weapon1',
-        description: '打剑汤推荐加点。',
+        description:
+          '打剑汤推荐加点。罗宾汉杰瑞{2级被动}可解除{骑士连斩}的控制效果，随后可接{降落伞}免疫伤害。',
       },
       {
         id: '登山飞镐',
