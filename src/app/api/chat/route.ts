@@ -160,6 +160,7 @@ type SkillLevel = {
   description: string; // A description of the effects at this level.
   detailedDescription?: string; // An optional, more detailed description.
   cooldown?: number; // The skill's cooldown time in seconds at this level.
+  charges?: number; // Number of charges the skill can store at this level
 };
 
 // The complete definition of a character's skill.
@@ -221,6 +222,7 @@ type CharacterRelationItem = {
 // The main data structure for a single character.
 type CharacterDefinition = {
   description: string; // The character's in-game biography or description.
+  imageUrl?: string; // Image URL for the character (auto-generated).
   aliases?: string[]; // Alternative names for the character, used for searching.
 
   // --- Base Character Attributes ---
@@ -233,6 +235,8 @@ type CharacterDefinition = {
   // --- Cat-Specific Attributes ---
   clawKnifeCdHit?: number; // Cooldown of the basic claw attack on a successful hit.
   clawKnifeCdUnhit?: number; // Cooldown of the basic claw attack on a miss.
+  specialClawKnifeCdHit?: number; // Cooldown of the special claw attack on a successful hit.
+  specialClawKnifeCdUnhit?: number; // Cooldown of the special claw attack on a miss.
   clawKnifeRange?: number; // The range of the basic claw attack.
   initialItem?: string; // The item the cat starts the match with, "老鼠夹" if unspecified.
 
@@ -257,7 +261,7 @@ type CharacterDefinition = {
   counteredByKnowledgeCards?: CharacterRelationItem[]; // Matchups where the opponent's knowledge cards are a disadvantage.
   counteredBySpecialSkills?: CharacterRelationItem[]; // Matchups where the opponent's special skills are a disadvantage.
 
-  counteredEachOther?: CharacterRelationItem[]; // Charaters this character has different relation with (in different time periods within the game),or both parties have low fault tolerance rates.
+  counterEachOther?: CharacterRelationItem[]; // Characters this character has different relation with (in different time periods within the game), or both parties have low fault tolerance rates.
 
   collaborators?: CharacterRelationItem[]; // Characters this character has good synergy with.
 };
@@ -277,6 +281,8 @@ export type CardLevel = {
   detailedDescription?: string;
 };
 
+export type CardPriority = '3级质变' | '提升明显' | '提升较小' | '几乎无提升' | '本身无用';
+
 export type Card = {
   id: string; // Chinese name without rank prefix (e.g., '乘胜追击')
   factionId?: FactionId; // Optional in base definition, will be assigned in bulk
@@ -284,7 +290,86 @@ export type Card = {
   cost: number;
   description: string;
   detailedDescription?: string;
+  imageUrl?: string; // Image URL for the card (auto-generated).
   levels: CardLevel[]; // Each knowledge card has 3 levels
+  priority?: CardPriority; // Priority rating for the card
+  aliases?: string[]; // Alternative names for searching
+};
+
+// Special Skill type
+export type SpecialSkill = {
+  name: string; // Chinese name of the special skill
+  factionId: FactionId; // Which faction this special skill belongs to
+  cooldown: number; // Cooldown time in seconds
+  aliases?: string[]; // Alternative names for searching
+  description?: string; // Basic description
+  detailedDescription?: string; // Detailed description
+  adviceDescription?: string; // Usage advice
+  imageUrl: string; // Image URL for the special skill icon
+};
+
+// Item type
+export type Item = {
+  name: string; // Chinese name of the item
+  imageUrl: string; // Image URL for the item
+  itemtype: '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '特殊类'; // Type of item
+  itemsource: '常规道具' | '衍生道具' | '地图道具'; // Source of item
+  damage?: number; // Damage dealt by the item
+  walldamage?: number; // Damage to wall joints
+  factionId?: FactionId; // Which faction the item belongs to
+  aliases?: string[]; // Alternative names
+  description?: string; // Basic description
+  detailedDescription?: string; // Detailed description
+  create?: string; // How the item is created
+  detailedCreate?: string; // Detailed creation info
+  store?: boolean; // Can be purchased in store
+  price?: number; // Store price
+  unlocktime?: string; // When unlocked in store
+  storeCD?: number; // Store cooldown
+  teamCD?: boolean; // Team-shared cooldown
+  exp?: number; // EXP gained when hitting mouse (for cats)
+};
+
+// Entity type (summons, projectiles, platforms, etc.)
+export type Entity = {
+  name: string; // Chinese name of the entity
+  imageUrl: string; // Image URL for the entity
+  entitytype: '道具类' | '投射物' | '召唤物' | '平台类' | 'NPC' | '变身类' | '指示物' | ('道具类' | '投射物' | '召唤物' | '平台类' | 'NPC' | '变身类' | '指示物')[]; // Type(s) of entity
+  owner?: { name: string; type: string }; // What creates this entity
+  factionId?: FactionId; // Which faction the entity belongs to
+  aliases?: string[]; // Alternative names
+  description?: string; // Basic description
+  detailedDescription?: string; // Detailed description
+  create?: string; // How the entity is created
+  detailedCreate?: string; // Detailed creation info
+  skills?: SkillDefinition[]; // Skills the entity can use
+};
+
+// Buff type (status effects)
+export type Buff = {
+  name: string; // Chinese name of the buff/debuff
+  imageUrl: string; // Image URL for the buff icon
+  type: '正面' | '负面' | '特殊'; // Positive, negative, or special
+  global?: boolean; // Personal or global effect
+  aliases?: string[]; // Alternative names
+  duration?: number | string; // Duration of the buff
+  failure?: string; // Conditions for buff to end
+  target?: string; // Who/what is affected
+  description?: string; // Basic description
+  detailedDescription?: string; // Detailed description
+  stack?: string; // How multiple instances stack
+  detailedStack?: string; // Detailed stacking info
+  source?: { name: string; type: string }[]; // What causes this buff
+  sourceDescription?: string; // Description of sources
+};
+
+// ItemGroup type (groups of related items)
+export type ItemGroup = {
+  name: string; // Name of the item group
+  aliases?: string[]; // Alternative names
+  description?: string; // Description of the group
+  group: { name: string; type: string; factionId?: FactionId }[]; // Items in the group
+  specialImageUrl?: string; // Custom image URL
 };
 \`\`\`
 `;

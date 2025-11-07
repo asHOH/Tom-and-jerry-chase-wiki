@@ -77,12 +77,12 @@ async function executeCode({ code }: { code: string }) {
     // Execute the code and return the result
     const result = executorFunction(
       snapshot(characters),
-      snapshot(cards),
-      snapshot(specialSkills),
-      snapshot(items),
-      snapshot(entities),
-      snapshot(buffs),
-      snapshot(itemGroups)
+      cards,
+      specialSkills,
+      items,
+      entities,
+      buffs,
+      itemGroups
     );
 
     return result;
