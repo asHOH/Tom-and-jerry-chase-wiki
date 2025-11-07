@@ -58,41 +58,89 @@ function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number
 }
 
 // Client-side code execution implementation
-// Executes JavaScript code with game data objects in scope
-async function executeCode({ code }: { code: string }) {
-  try {
-    // Create a function that executes the code with all game data in scope
-    // Using Function constructor to safely execute code in a controlled context
-    const executorFunction = new Function(
-      'characters',
-      'cards',
-      'specialSkills',
-      'items',
-      'entities',
-      'buffs',
-      'itemGroups',
-      code
-    );
+// Executes JavaScript code in a sandboxed iframe for security
+async function executeCode({ code }: { code: string }): Promise<unknown> {
+  return new Promise((resolve) => {
+    try {
+      const nonce = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16);
+      const csp = `default-src 'none'; script-src 'nonce-${nonce}';`;
+      // Create a sandboxed iframe for isolated code execution
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src =
+        'data:text/html;charset=utf-8,' +
+        encodeURIComponent(
+          `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <meta http-equiv="Content-Security-Policy" content="${csp}">
+                <script nonce="${nonce}">
+                  try {
+                    // Receive data from parent
+                    var characters = ${JSON.stringify(snapshot(characters))};
+                    var cards = ${JSON.stringify(cards)};
+                    var specialSkills = ${JSON.stringify(specialSkills)};
+                    var items = ${JSON.stringify(items)};
+                    var entities = ${JSON.stringify(entities)};
+                    var buffs = ${JSON.stringify(buffs)};
+                    var itemGroups = ${JSON.stringify(itemGroups)};
 
-    // Execute the code and return the result
-    const result = executorFunction(
-      snapshot(characters),
-      cards,
-      specialSkills,
-      items,
-      entities,
-      buffs,
-      itemGroups
-    );
+                    // Execute the user code
+                    var result = (function() {
+                      ${code}
+                    })();
 
-    return result;
-  } catch (error) {
-    // Return error information if code execution fails
-    return {
-      error: 'Code execution failed',
-      details: error instanceof Error ? error.message : String(error),
-    };
-  }
+                    // Send result back to parent
+                    window.parent.postMessage(result, '*');
+                  } catch (error) {
+                    // Send error back to parent
+                    window.parent.postMessage({
+                      error: 'Code execution failed',
+                      details: error instanceof Error ? error.message : String(error)
+                    }, '*');
+                  }
+                </script>
+              </head>
+              <body></body>
+            </html>
+          `
+        );
+      iframe.setAttribute('sandbox', 'allow-scripts');
+      document.body.appendChild(iframe);
+
+      // Set up message handler to receive result from iframe
+      const messageHandler = (event: MessageEvent) => {
+        // Verify the message is from our iframe
+        if (event.source === iframe.contentWindow) {
+          window.removeEventListener('message', messageHandler);
+          document.body.removeChild(iframe);
+          resolve(event.data);
+        }
+      };
+
+      window.addEventListener('message', messageHandler);
+
+      // Set timeout to prevent hanging
+      setTimeout(() => {
+        window.removeEventListener('message', messageHandler);
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+        resolve({
+          error: 'Code execution timeout',
+          details: 'Execution exceeded 5 seconds',
+        });
+      }, 5000);
+    } catch (error) {
+      // Return error information if setup fails
+      resolve({
+        error: 'Code execution setup failed',
+        details: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
 }
 
 /**
