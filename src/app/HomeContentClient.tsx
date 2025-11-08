@@ -14,6 +14,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
 import { NAV_ITEMS } from '@/constants/navigation';
+import ChangeLogs from '@/components/ui/ChangeLogs';
 
 type Props = { description: string };
 
@@ -108,6 +109,7 @@ export default function HomeContentClient({ description }: Props) {
           </div>
           <VersionDisplay />
           <FeedbackSection ref={feedbackSectionRef} />
+          <ChangeLogs />
         </div>
       </div>
 

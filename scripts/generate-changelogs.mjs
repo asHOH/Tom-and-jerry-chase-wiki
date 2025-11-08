@@ -107,8 +107,9 @@ ${TYPE_DEFINITIONS}
 12. **重要：message 字段必须使用中文**
 
 **示例输入：**
-a468007|2025-11-08 16:02:55 +0800|fix(ai): fix the issue of tool call timeout|3swordman
-c64f41b|2025-11-08 11:35:18 +0800|feat(ai): add history support|3swordman
+c1c79d3|2025-11-08 13:00:00 +0800|feat(character,images): add 鲍姆 information|ConductorJerry
+9c8a5b5|2025-11-08 12:00:00 +0800|fix(GotoLink): adjust width for preview content|asHOH
+a468007|2025-11-08 11:00:00 +0800|fix(ai): fix the issue of tool call timeout|3swordman
 d123456|2025-11-08 10:00:00 +0800|Merge pull request #123|asHOH
 e789012|2025-11-08 09:00:00 +0800|chore(deps): bump some-package|dependabot[bot]
 
@@ -118,16 +119,25 @@ e789012|2025-11-08 09:00:00 +0800|chore(deps): bump some-package|dependabot[bot]
     "date": "2025-11-08",
     "changes": [
       {
+        "type": "feat",
+        "scope": "character,images",
+        "message": "添加角色鲍姆的图片数据",
+        "hash": "c1c79d3",
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "GotoLink",
+        "message": "调整预览内容的宽度",
+        "hash": "9c8a5b5",
+        "author": "asHOH"
+      },
+      {
         "type": "fix",
         "scope": "ai",
         "message": "修复工具调用超时问题",
-        "hash": "a468007"
-      },
-      {
-        "type": "feat",
-        "scope": "ai",
-        "message": "添加历史记录支持",
-        "hash": "c64f41b"
+        "hash": "a468007",
+        "author": "3swordman"
       }
     ]
   }

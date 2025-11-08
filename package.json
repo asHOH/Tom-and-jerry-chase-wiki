@@ -28,7 +28,6 @@
     "dev": "next dev",
     "build": "node scripts/run-image-optimization.cjs && node scripts/generate-doc-pages.mjs && node scripts/generate-changelogs.mjs && next build",
     "build:skip-images": "node scripts/generate-doc-pages.mjs && node scripts/generate-changelogs.mjs && next build",
-    "generate:changelogs": "node scripts/generate-changelogs.mjs",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
