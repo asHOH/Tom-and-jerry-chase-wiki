@@ -1,0 +1,132 @@
+[
+  {
+    "date": "2025-11-08",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "ai",
+        "message": "add history support and entity alias mappings",
+        "hash": "c64f41b"
+      },
+      {
+        "type": "fix",
+        "scope": "ai",
+        "message": "fix the issue of tool call timeout",
+        "hash": "a468007"
+      },
+      {
+        "type": "fix",
+        "scope": "ai",
+        "message": "update systemInstructionText to document all available data objects with their types",
+        "hash": "e28e955"
+      },
+      {
+        "type": "feat",
+        "scope": "ai",
+        "message": "add imports for most game data (specialSkills, items, entities, buffs, itemGroups)",
+        "hash": "1cd0c53"
+      },
+      {
+        "type": "chore",
+        "scope": "ai",
+        "message": "execute code in an iframe to improve security",
+        "hash": "70b38a3"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-07",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "ai",
+        "message": "replace getData function with executeCode",
+        "hash": "9b48892"
+      },
+      {
+        "type": "refactor",
+        "scope": "ai",
+        "message": "move tool call logic to the frontend",
+        "hash": "009e21f"
+      },
+      {
+        "type": "refactor",
+        "scope": "ai",
+        "message": "use @google/genai instead of rest api",
+        "hash": "5f8ffb1"
+      },
+      {
+        "type": "docs",
+        "scope": "buffs",
+        "message": "change some descriptions",
+        "hash": "48fdd34"
+      },
+      {
+        "type": "docs",
+        "scope": "contributors",
+        "message": "fix a mistake",
+        "hash": "4cdadd2"
+      },
+      {
+        "type": "fix",
+        "scope": "context",
+        "message": "defer detailed view hydration",
+        "hash": "3ce819e"
+      },
+      {
+        "type": "fix",
+        "scope": "Entities",
+        "message": "rename misspelled colddown to cooldown",
+        "hash": "dad9d9f"
+      },
+      {
+        "type": "test",
+        "scope": "data",
+        "message": "validate knowledge card alias regexes and character knowledge card references",
+        "hash": "8931c90"
+      },
+      {
+        "type": "refactor",
+        "scope": "data",
+        "message": "enforce readonly character and entity maps",
+        "hash": "4e506e5"
+      },
+      {
+        "type": "refactor",
+        "scope": "types",
+        "message": "replace Next DeepReadonly with local utility",
+        "hash": "155d0ed"
+      },
+      {
+        "type": "fix",
+        "scope": "images",
+        "message": "route Image through custom loader",
+        "hash": "63cbc76"
+      },
+      {
+        "type": "perf",
+        "scope": "api",
+        "message": "run health, export, options routes on edge with cache headers",
+        "hash": "dd69b16"
+      },
+      {
+        "type": "chore",
+        "scope": "security",
+        "message": "remove deprecated X-XSS-Protection and add HSTS, Referrer-Policy, and Permissions-Policy",
+        "hash": "d04b58e"
+      },
+      {
+        "type": "chore",
+        "scope": "robots",
+        "message": "add meta noindex to maker pages and disallow them in robots.txt",
+        "hash": "b626a09"
+      },
+      {
+        "type": "chore",
+        "scope": "next",
+        "message": "sync TypeScript config with Next.js defaults",
+        "hash": "9c3433c"
+      }
+    ]
+  }
+]
