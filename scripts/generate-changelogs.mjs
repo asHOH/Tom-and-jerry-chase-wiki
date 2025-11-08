@@ -31,7 +31,8 @@ dotenv.config({ path: '.env.local', quiet: true });
 dotenv.config({ quiet: true });
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-2.5-pro';
+// const GEMINI_MODEL = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
 
 if (!GEMINI_API_KEY) {
   console.error('Error: GEMINI_API_KEY not found in environment');
@@ -105,6 +106,104 @@ ${TYPE_DEFINITIONS}
 10. 如果提交不遵循常规格式，将其分类为 'other'
 11. 保持描述简洁且用户友好
 12. **重要：message 字段必须使用中文**
+13. **重要：scope 字段必须按照映射示例生成，如果不在示例中，则根据原始 scope 的清晰程度，选择翻译或不翻译（不翻译即去掉 scope 字段）；如果映射的结果为空（比如原始 scope 为 dev），则舍掉这条提交记录**
+
+**scope 映射示例：**
+- characters -> 角色信息
+- character-editor -> 编辑模式
+- mouseCharacters -> 鼠方角色
+- articles -> 文章功能
+- catCharacters -> 猫方角色
+- images -> 图片
+- items -> 道具
+- entities -> 衍生物
+- contributors -> 贡献者清单
+- buffs -> 状态和效果
+- TabNavigation -> 导航栏
+- search -> 搜索
+- ui -> 界面
+- CharacterRelationDisplay -> 角色关系
+- edit -> 编辑模式
+- data -> 数据
+- special-skills -> 特技
+- knowledge-cards -> 知识卡
+- ai -> ai
+- CharacterGrid -> 角色列表
+- docs -> 文档
+- RichTextEditor -> 富文本编辑器
+- navigation -> 导航栏
+- dev -> 
+- SkillCard -> 角色技能
+- KnowledgeCardGrid -> 知识卡列表
+- design-tokens -> 设计令牌
+- SkillAllocationDisplay -> 技能加点显示
+- KnowledgeCardSection -> 角色的推荐知识卡
+- DisclaimerText -> 首页的网站说明
+- feedback -> 反馈建议
+- ci -> ci
+- types -> 代码类型
+- readme -> 
+- dark-mode -> 暗色模式
+- CharacterDetails -> 角色详情
+- templates -> 数据模板（已废弃）
+- security -> 网站安全
+- offline -> 离线模式
+- build -> 构建
+- traits -> 特性（交互关系）
+- tooltip -> 工具提示
+- copilot-instructions -> 
+- TextWithHoverTooltips -> 工具提示
+- version -> 版本控制
+- template -> 模板（已废弃）
+- config -> 配置
+- Tooltip -> 工具提示
+- README -> 
+- version-checker -> 版本检查器
+- sw -> Service Worker
+- quick-jump -> 快速跳转
+- deploy -> 网站部署
+- catKnowledgeCards -> 猫方知识卡
+- GotoLink -> 快速跳转连接
+- GameImage -> 图片显示
+- CharacterSection -> 角色详情
+- metadata -> 元信息
+- VersionChecker -> 版本检查器
+- ItemDetails -> 道具详情
+- BuffGrid -> 状态和效果列表
+- BuffDetails -> 状态和效果的详情
+- versioning -> 版本
+- tests -> 测试
+- test -> 测试
+- specialSkills -> 特技
+- seo -> 搜索引擎优化
+- item-details -> 道具详情
+- hooks -> 提交钩子或React Hooks
+- homepage -> 首页
+- history -> 年鉴
+- goto -> 快速跳转
+- css -> 样式
+- compatibility -> 浏览器兼容性
+- character-detail -> 角色详情
+- analytics -> 网站分析
+- ServiceWorker -> Service Worker
+- SEO -> 搜索引擎优化
+- PreviewCard -> \`{...}\`的预览卡片
+- KnowledgeCardDetails -> 知识卡详情
+- ItemAttributesCard -> 道具属性卡片
+- EntityDetails -> 衍生物详情
+- CharacterImport -> 角色导入（编辑模式）
+- ArticlesClient -> 文章列表
+- tooltipUtils -> 工具提示
+- routing -> 路由
+- responsive -> 移动端兼容
+- mouse-characters -> 鼠方角色
+- loading -> 页面加载优化
+- layout -> 布局
+- knowledge-card-details -> 知识卡详情
+- knowledge-card -> 知识卡
+- image -> 图片
+- husky -> 
+- entity-maker -> 衍生物编辑器
 
 **示例输入：**
 c1c79d3|2025-11-08 13:00:00 +0800|feat(character,images): add 鲍姆 information|ConductorJerry
@@ -120,14 +219,14 @@ e789012|2025-11-08 09:00:00 +0800|chore(deps): bump some-package|dependabot[bot]
     "changes": [
       {
         "type": "feat",
-        "scope": "character,images",
+        "scope": "角色信息,图片",
         "message": "添加角色鲍姆的图片数据",
         "hash": "c1c79d3",
         "author": "ConductorJerry"
       },
       {
         "type": "fix",
-        "scope": "GotoLink",
+        "scope": "快速跳转连接",
         "message": "调整预览内容的宽度",
         "hash": "9c8a5b5",
         "author": "asHOH"
@@ -192,39 +291,76 @@ async function generateChangelogs(commits) {
         topK: 20,
         maxOutputTokens: 16384,
         responseMimeType: 'application/json',
+        responseJsonSchema: {
+          $schema: 'http://json-schema.org/draft-07/schema#',
+          title: 'ChangeLogs',
+          description:
+            'Root type for the changelog data. Represents an array of changelogs grouped by date.',
+          type: 'array',
+          items: {
+            type: 'object',
+            description: 'Changelogs grouped by date.',
+            properties: {
+              date: {
+                type: 'string',
+                format: 'date',
+                description: 'ISO date string (YYYY-MM-DD).',
+              },
+              changes: {
+                type: 'array',
+                description: 'List of changes for this day.',
+                items: {
+                  type: 'object',
+                  description: 'Represents a single change entry.',
+                  properties: {
+                    type: {
+                      type: 'string',
+                      description: 'Type of change made in a commit.',
+                      enum: [
+                        'feat',
+                        'fix',
+                        'docs',
+                        'style',
+                        'refactor',
+                        'perf',
+                        'test',
+                        'chore',
+                        'revert',
+                        'other',
+                      ],
+                    },
+                    scope: {
+                      type: 'string',
+                      description: "The scope of the change (e.g., 'ai', 'ui', 'data').",
+                    },
+                    message: {
+                      type: 'string',
+                      description: 'Brief description of the change.',
+                    },
+                    breaking: {
+                      type: 'boolean',
+                      description: 'Whether this is a breaking change.',
+                    },
+                    hash: {
+                      type: 'string',
+                      description: 'Git commit hash (short format).',
+                    },
+                    author: {
+                      type: 'string',
+                      description: 'Commit author.',
+                    },
+                  },
+                  required: ['type', 'message', 'hash'],
+                },
+              },
+            },
+            required: ['date', 'changes'],
+          },
+        },
         seed: 42, // Fixed seed for reproducible output
       },
     });
-
-    // Extract text from response
-    let text = '';
-    if (response.candidates && response.candidates[0]) {
-      const candidate = response.candidates[0];
-      if (candidate.content && candidate.content.parts) {
-        text = candidate.content.parts.map((part) => part.text || '').join('');
-      }
-    }
-
-    // Fallback to response.text if available
-    if (!text && response.text) {
-      text = response.text;
-    }
-
-    if (!text) {
-      throw new Error('Empty response from API');
-    }
-
-    console.log('Response length:', text.length, 'characters');
-
-    // Parse JSON response
-    let jsonText = text.trim();
-
-    // Remove markdown code blocks if present
-    if (jsonText.startsWith('```')) {
-      jsonText = jsonText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
-    }
-
-    const changelogs = JSON.parse(jsonText);
+    const changelogs = JSON.parse(response.text);
 
     // Validate structure
     if (!Array.isArray(changelogs)) {
