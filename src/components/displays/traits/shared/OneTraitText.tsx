@@ -1,6 +1,13 @@
 import { itemGroups } from '@/data';
 import { SingleItem, SingleItemOrGroup, Trait, SingleItemTypeChineseNameList } from '@/data/types';
 
+type TraitGroupItem = SingleItemOrGroup | SingleItemOrGroup[];
+type TraitGroup = TraitGroupItem[];
+type TraitSpecialCase = NonNullable<Trait['spacialCase']>[number];
+
+const isItemGroup = (value: SingleItemOrGroup): value is { name: string; type: 'itemGroup' } =>
+  value.type === 'itemGroup';
+
 const getSingleItemNameWithColorText = (singleItemOrGroup: SingleItemOrGroup): string => {
   const SingleItemTypeChineseName =
     singleItemOrGroup.type === 'itemGroup'
@@ -83,48 +90,57 @@ const traitDirectlyContainsSingleItem = (trait: Trait, singleItem: SingleItem): 
 };
 
 // 辅助函数：检查spacialCase中是否包含指定的SingleItem
-const spacialCaseContainsSingleItem = (spacialCase: any, singleItem: SingleItem): boolean => {
-  return spacialCase.group.some((groupItem: any) => {
+const spacialCaseContainsSingleItem = (
+  spacialCase: TraitSpecialCase,
+  singleItem: SingleItem
+): boolean => {
+  return spacialCase.group.some((groupItem) => {
     if (Array.isArray(groupItem)) {
-      return groupItem.some((item: any) => {
-        if (item.type === 'itemGroup') {
-          return itemGroups[item.name]?.group.some((childrenItem: any) => {
+      return groupItem.some((item) => {
+        if (isItemGroup(item)) {
+          return itemGroups[item.name]?.group.some((childrenItem) => {
             return (
               singleItem.name === childrenItem.name &&
               singleItem.type === childrenItem.type &&
               compareFactionId(singleItem.factionId, childrenItem.factionId)
             );
           });
-        } else {
-          return (
-            singleItem.name === item.name &&
-            singleItem.type === item.type &&
-            compareFactionId(singleItem.factionId, item.factionId)
-          );
         }
+
+        return (
+          singleItem.name === item.name &&
+          singleItem.type === item.type &&
+          compareFactionId(singleItem.factionId, item.factionId)
+        );
       });
-    } else if (groupItem.type === 'itemGroup') {
+    }
+
+    if (isItemGroup(groupItem)) {
       const group = itemGroups[groupItem.name]?.group;
       return (
         group?.some(
-          (item: any) =>
+          (item) =>
             singleItem.name === item.name &&
             singleItem.type === item.type &&
             compareFactionId(singleItem.factionId, item.factionId)
         ) || false
       );
-    } else {
-      return (
-        groupItem.name === singleItem.name &&
-        groupItem.type === singleItem.type &&
-        compareFactionId(singleItem.factionId, groupItem.factionId)
-      );
     }
+
+    return (
+      groupItem.name === singleItem.name &&
+      groupItem.type === singleItem.type &&
+      compareFactionId(singleItem.factionId, groupItem.factionId)
+    );
   });
 };
 
 // 辅助函数：格式化整个group的显示
-const formatWholeGroup = (group: any[], description: string, isMinor: boolean = false): string => {
+const formatWholeGroup = (
+  group: TraitGroup,
+  description: string,
+  isMinor: boolean = false
+): string => {
   const itemNames: string[] = [];
 
   group.forEach((groupItem) => {
@@ -147,13 +163,12 @@ const formatWholeGroup = (group: any[], description: string, isMinor: boolean = 
 
 // 辅助函数：使用排除逻辑格式化文本
 const formatWithExclusion = (
-  group: any[],
+  group: TraitGroup,
   description: string,
   singleItem: SingleItem,
   isMinor: boolean = false
 ): string => {
   const itemNames: string[] = [];
-  const printName: string[] = [singleItem.name]; // 最终显示时只会显示最后一个名称
 
   group.forEach((groupItem) => {
     if (Array.isArray(groupItem)) {
@@ -166,7 +181,6 @@ const formatWithExclusion = (
               singleItem.type === childrenItem.type &&
               compareFactionId(singleItem.factionId, childrenItem.factionId)
             ) {
-              printName.push(item.name);
               return true;
             }
             return false;
@@ -204,7 +218,6 @@ const formatWithExclusion = (
           itemNames.push(getSingleItemNameWithColorText(groupItem));
         } else {
           // 如果包含目标，则在最终输出时以该组合的name替代原本SingleItem的name
-          printName.push(getSingleItemNameWithColorText(groupItem));
         }
       }
     } else {

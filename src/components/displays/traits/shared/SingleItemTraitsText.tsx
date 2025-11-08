@@ -111,8 +111,8 @@ export default function SingleItemTraitsText({
   const filteredTraits = filterTraitsBySingleItem(singleItem);
 
   // 新增：如果searchBuff为true，检索相关的buff
-  let buffRelatedTraits: Trait[] = [];
-  let buffItems: SingleItem[] = [];
+  const buffRelatedTraits: Trait[] = [];
+  const buffItems: SingleItem[] = [];
 
   if (searchBuff) {
     // 查找所有source包含当前singleItem的buff
