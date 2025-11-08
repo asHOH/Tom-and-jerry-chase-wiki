@@ -7,6 +7,8 @@ import {
   HarmCategory,
   HarmBlockThreshold,
 } from '@google/genai';
+import { characters, cards, specialSkills, items, entities, buffs, itemGroups } from '@/data';
+import { historyData } from '@/data/history';
 
 // Define the structure of a message part, including function calls and responses
 // Based on Gemini's API structure
@@ -51,8 +53,46 @@ const safetySettings = [
   },
 ];
 
+// Helper function to build alias mapping text
+function buildAliasMap<T extends { aliases?: string[] }>(
+  data: Record<string, T> | { cat: Record<string, T>; mouse: Record<string, T> },
+  entityType: string
+): string {
+  const maps: string[] = [];
+  const processRecord = (record: Record<string, T>, prefix = '') => {
+    Object.entries(record).forEach(([name, item]) => {
+      if (item.aliases && item.aliases.length > 0) {
+        maps.push(`  ${prefix}${name}: ${item.aliases.join(', ')}`);
+      }
+    });
+  };
+
+  if ('cat' in data && 'mouse' in data) {
+    processRecord(data.cat as Record<string, T>, '[猫] ');
+    processRecord(data.mouse as Record<string, T>, '[鼠] ');
+  } else {
+    processRecord(data as Record<string, T>);
+  }
+
+  return maps.length > 0 ? `\n${entityType} Name-Alias Mapping:\n${maps.join('\n')}` : '';
+}
+
+// Build alias mappings
+const characterAliases = buildAliasMap(characters, 'Characters');
+const cardAliases = buildAliasMap(cards, 'Knowledge Cards');
+const specialSkillAliases = buildAliasMap(specialSkills, 'Special Skills');
+const itemAliases = buildAliasMap(items, 'Items');
+const entityAliases = buildAliasMap(entities, 'Entities');
+const buffAliases = buildAliasMap(buffs, 'Buffs');
+const itemGroupAliases = buildAliasMap(itemGroups, 'Item Groups');
+
+// Verify historyData is available (used in executeCode context)
+if (historyData.length === 0) {
+  console.warn('Warning: historyData is empty');
+}
+
 const systemInstructionText = `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
-Your purpose is to provide accurate information about characters, skills, knowledge cards, and other game elements.
+Your purpose is to provide accurate information about characters, skills, knowledge cards, game history, and other game elements.
 When a user asks for information, use the 'executeCode' tool to query the game database using JavaScript code.
 Be friendly, concise, and focus on answering the user's question based on the data retrieved.
 If the user asks about something outside of characters or game data, politely inform them that your expertise is limited to Tom and Jerry: Chase game information.
@@ -72,25 +112,32 @@ The executeCode tool allows you to run JavaScript code to query the game databas
 - \`entities\`: { cat: Record<string, Entity>, mouse: Record<string, Entity> } - Entities (summons, projectiles) for each faction
 - \`buffs\`: Record<string, Buff> - Status effects/buffs indexed by Chinese names
 - \`itemGroups\`: Record<string, ItemGroup> - Groups of related items
+- \`historyData\`: GameHistory - Game's historical timeline data with yearly events, balance changes, and new content
 
 **2. When to Use It:**
 You **must** call this tool whenever a user's query requires accessing game data.
 
 **3. How to Use It:**
 Write JavaScript code that accesses the available objects and returns the desired data. The code must include a \`return\` statement with the result.
+Many entities have an \`aliases\` field containing alternative names for searching. When searching by name or alias, check both the primary name (object key) and the aliases array.
 
 **Examples:**
-- Get a character: \`return characters["汤姆"]\`
-- Get a card: \`return cards["乘胜追击"]\`
-- Get cat special skills: \`return Object.values(specialSkills.cat)\`
-- Get an item: \`return items["火箭"]\`
-- Get cat entities: \`return Object.values(entities.cat)\`
-- Get a buff: \`return buffs["眩晕"]\`
+- Get a character by name or aliases: \`return characters["汤姆"]\` or search by alias
+- Get a card by name or aliases: \`return cards["乘胜追击"]\` or search by alias
+- Get cat special skills by name or aliases: \`return Object.values(specialSkills.cat)\` or search by alias
+- Get an item by name or aliases: \`return items["火箭"]\` or search by alias
+- Get cat entities by name or aliases: \`return Object.values(entities.cat)\` or search by alias
+- Get a buff by name or aliases: \`return buffs["眩晕"]\` or search by alias
+- Get history events: \`return historyData.find(y => y.year === 2020)?.events\`
+- Get balance changes for a character: \`return historyData.flatMap(y => y.events.filter(e => e.details.balance?.characterChanges?.some(c => c.name === "汤姆")))\`
 - Sort characters by HP: \`return Object.values(characters).sort((a,b) => a.maxHp - b.maxHp).map(c => ({id: c.id, maxHp: c.maxHp}))\`
 - Filter by faction: \`return Object.values(characters).filter(c => c.factionId === "cat").map(c => c.id)\`
 
 **4. Data Reliance:**
 Your response **must be based exclusively** on the data returned by the executeCode tool. Do not add information from other sources or make assumptions. If the tool does not provide a specific piece of information the user asked for, you should state that the information is not available in your database.
+
+# Entity Name-Alias Mappings
+The following entities have aliases for alternative names. Use these mappings when users query by alternative names:${characterAliases}${cardAliases}${specialSkillAliases}${itemAliases}${entityAliases}${buffAliases}${itemGroupAliases}
 
 **5. Return Type:**
 The tool returns whatever your JavaScript code returns. Typically this will be a Character object, Card object, or an array/object containing the queried data. Below are the detailed TypeScript type definitions for reference:
@@ -273,15 +320,15 @@ export type Character = CharacterDefinition & {
 };
 
 // Card-related types
-export type CardRank = 'C' | 'B' | 'A' | 'S';
+type CardRank = 'C' | 'B' | 'A' | 'S';
 
-export type CardLevel = {
+type CardLevel = {
   level: number;
   description: string;
   detailedDescription?: string;
 };
 
-export type CardPriority = '3级质变' | '提升明显' | '提升较小' | '几乎无提升' | '本身无用';
+type CardPriority = '3级质变' | '提升明显' | '提升较小' | '几乎无提升' | '本身无用';
 
 export type Card = {
   id: string; // Chinese name without rank prefix (e.g., '乘胜追击')
@@ -371,6 +418,72 @@ export type ItemGroup = {
   group: { name: string; type: string; factionId?: FactionId }[]; // Items in the group
   specialImageUrl?: string; // Custom image URL
 };
+
+// GameHistory type
+/**
+ * Defines the type of balance change applied.
+ */
+export enum ChangeType {
+  BUFF = '加强',
+  NERF = '削弱',
+  ADJUSTMENT = '调整',
+  REWORK = '重做',
+}
+
+/**
+ * Represents a detailed balance change for a specific game entity.
+ */
+interface BalanceChange {
+  name: string;
+  changeType: ChangeType;
+}
+
+/**
+ * Details for new content added to the game.
+ */
+interface ContentDetails {
+  newCharacters?: string[];
+  newItems?: string[];
+  newSecondWeapons?: \`\${string}-\${string}\`[]; // \${character}-\${weapon}
+  newKnowledgeCards?: string[];
+}
+
+/**
+ * Details for balance changes affecting various game elements.
+ * This structure is now more detailed.
+ */
+interface BalanceDetails {
+  characterChanges?: BalanceChange[];
+  knowledgeCardChanges?: BalanceChange[];
+  itemChanges?: BalanceChange[];
+}
+
+/**
+ * Represents a single, dated event in the game's history.
+ */
+interface TimelineEvent {
+  date: \`\${number}.\${number}\` | \`\${number}.\${number}-\${'次年' | ''}\${number}.\${number}\`; // e.g., "7.24" or "12.25-次年1.1"
+  description: string;
+  details: {
+    content?: ContentDetails;
+    balance?: BalanceDetails;
+    milestone?: string; // e,g., "游戏上线", "周年庆"
+    testPhaseInfo?: string; // e.g. "公测", "共研服"
+  };
+}
+
+/**
+ * Contains all the timeline events for a specific year.
+ */
+interface YearData {
+  year: number; // e.g., "2020"
+  events: TimelineEvent[];
+}
+
+/**
+ * The complete, structured history of the game.
+ */
+export type GameHistory = YearData[];
 \`\`\`
 `;
 
@@ -378,14 +491,14 @@ export type ItemGroup = {
 const executeCodeDeclaration: FunctionDeclaration = {
   name: 'executeCode',
   description:
-    'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to multiple game data objects including characters, cards, specialSkills, items, entities, buffs, and itemGroups.',
+    'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to multiple game data objects including characters, cards, specialSkills, items, entities, buffs, itemGroups, and historyData.',
   parametersJsonSchema: {
     type: 'object',
     properties: {
       code: {
         type: 'string',
         description:
-          'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>). Examples: return characters["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]',
+          'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>), historyData (GameHistory). Examples: return characters["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]; return historyData.find(y => y.year === 2020)',
       },
     },
     required: ['code'],

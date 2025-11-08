@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { cards, characters, specialSkills, items, entities, buffs, itemGroups } from '@/data';
+import { historyData } from '@/data/history';
 import { snapshot } from 'valtio';
 
 // Type definition for a message part, consistent with the API
@@ -86,7 +87,7 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
                     var entities = ${JSON.stringify(entities)};
                     var buffs = ${JSON.stringify(buffs)};
                     var itemGroups = ${JSON.stringify(itemGroups)};
-
+                    var historyData = ${JSON.stringify(historyData)};
                     // Execute the user code
                     var result = (function() {
                       ${code}
@@ -115,7 +116,7 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
         // Verify the message is from our iframe
         if (event.source === iframe.contentWindow) {
           window.removeEventListener('message', messageHandler);
-          document.body.removeChild(iframe);
+          // document.body.removeChild(iframe);
           resolve(event.data);
         }
       };
@@ -126,7 +127,7 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
       setTimeout(() => {
         window.removeEventListener('message', messageHandler);
         if (document.body.contains(iframe)) {
-          document.body.removeChild(iframe);
+          // document.body.removeChild(iframe);
         }
         resolve({
           error: 'Code execution timeout',
