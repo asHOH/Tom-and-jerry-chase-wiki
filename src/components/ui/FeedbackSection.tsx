@@ -86,20 +86,18 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
   return (
     <>
       {/* Feedback Button */}
-      <div className='mt-6 flex justify-center'>
-        <button
-          type='button'
-          onClick={() => setIsFeedbackOpen(true)}
-          className='px-6 py-4 flex flex-col items-center justify-center gap-2 text-center min-w-[180px] bg-gray-200 text-gray-800 shadow-md rounded-md border-none focus:outline-none dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900 dark:border-gray-700 transition-colors duration-200'
-          aria-label='反馈建议'
-        >
-          <div className='flex items-center gap-3'>
-            <ChatBubbleIcon className='w-8 h-8' strokeWidth={2} />
-            <span className='text-2xl font-bold whitespace-nowrap'>反馈建议</span>
-          </div>
-          <div className='text-sm text-gray-500 mt-1 dark:text-gray-400'>提交建议或报告问题</div>
-        </button>
-      </div>
+      <button
+        type='button'
+        onClick={() => setIsFeedbackOpen(true)}
+        className='px-6 py-4 flex flex-col items-center justify-center gap-2 text-center min-w-[180px] bg-gray-200 text-gray-800 shadow-md rounded-md border-none focus:outline-none dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900 dark:border-gray-700 transition-colors duration-200'
+        aria-label='反馈建议'
+      >
+        <div className='flex items-center gap-3'>
+          <ChatBubbleIcon className='w-8 h-8' strokeWidth={2} />
+          <span className='text-2xl font-bold whitespace-nowrap'>反馈建议</span>
+        </div>
+        <div className='text-sm text-gray-500 mt-1 dark:text-gray-400'>提交建议或报告问题</div>
+      </button>
 
       {/* Feedback Modal */}
       {isFeedbackOpen && (
@@ -112,7 +110,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
           />
 
           <div
-            className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-1/2 md:max-w-2xl md:min-w-[28rem] md:h-auto md:max-h-[80vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'
+            className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-1/2 md:max-w-2xl md:min-w-md md:h-auto md:max-h-[80vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'
             onDoubleClick={(e) => e.stopPropagation()}
             role='dialog'
             aria-modal='true'

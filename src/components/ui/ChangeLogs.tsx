@@ -1,7 +1,9 @@
+'use client';
+
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
 import { contributors } from '@/data/contributors';
 
-// Type color mapping
 const typeColors: Record<ChangeType, string> = {
   feat: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
   fix: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
@@ -15,7 +17,6 @@ const typeColors: Record<ChangeType, string> = {
   other: 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-400',
 };
 
-// Type labels in Chinese
 const typeLabels: Record<ChangeType, string> = {
   feat: '新功能',
   fix: '修复',
@@ -29,81 +30,126 @@ const typeLabels: Record<ChangeType, string> = {
   other: '其他',
 };
 
-export default function ChangeLogs() {
-  'use memo';
+export interface ChangeLogsRef {
+  openChangeLogs: () => void;
+  isOpen: () => boolean;
+}
+
+const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
+  const [isChangeLogsOpen, setIsChangeLogsOpen] = useState(false);
+  const [expandedDates, setExpandedDates] = useState<Set<string>>(new Set());
+
+  useImperativeHandle(ref, () => ({
+    openChangeLogs: () => setIsChangeLogsOpen(true),
+    isOpen: () => isChangeLogsOpen,
+  }));
+
+  const toggleDate = (date: string) => {
+    setExpandedDates((prev) => {
+      const next = new Set(prev);
+      if (next.has(date)) {
+        next.delete(date);
+      } else {
+        next.add(date);
+      }
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (!isChangeLogsOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsChangeLogsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isChangeLogsOpen]);
 
   if (!changeLogs || changeLogs.length === 0) {
-    return (
-      <div className='rounded-lg border border-gray-200 bg-white p-6 text-center dark:border-gray-700 dark:bg-gray-800'>
-        <p className='text-gray-500 dark:text-gray-400'>暂无更新日志</p>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className='space-y-6'>
-      {changeLogs.map((dailyLog) => (
-        <div
-          key={dailyLog.date}
-          className='rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800'
-        >
-          {/* Date Header */}
-          <div className='border-b border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/50'>
-            <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
-              {new Date(dailyLog.date).toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                weekday: 'long',
-              })}
-            </h3>
-            <p className='text-sm text-gray-500 dark:text-gray-400'>
-              共 {dailyLog.changes.length} 项更改
-            </p>
-          </div>
+    <>
+      {/* ChangeLogs Button */}
+      <button
+        type='button'
+        onClick={() => setIsChangeLogsOpen(true)}
+        className='px-6 py-4 flex flex-col items-center justify-center gap-2 text-center min-w-[180px] bg-gray-200 text-gray-800 shadow-md rounded-md border-none focus:outline-none dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900 dark:border-gray-700 transition-colors duration-200'
+        aria-label='更新日志'
+      >
+        <div className='flex items-center gap-3'>
+          <svg
+            className='w-8 h-8'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
+            />
+          </svg>
+          <span className='text-2xl font-bold whitespace-nowrap'>更新日志</span>
+        </div>
+        <div className='text-sm text-gray-500 mt-1 dark:text-gray-400'>查看网站更新历史</div>
+      </button>
 
-          {/* Changes List */}
-          <div className='divide-y divide-gray-100 dark:divide-gray-700'>
-            {dailyLog.changes.map((change) => (
-              <div
-                key={change.hash}
-                className='px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-900/30'
+      {/* ChangeLogs Modal */}
+      {isChangeLogsOpen && (
+        <>
+          <div
+            className='fixed inset-0 bg-gray-900/30 backdrop-blur-sm z-40'
+            onClick={() => setIsChangeLogsOpen(false)}
+            onDoubleClick={(e) => e.stopPropagation()}
+            aria-hidden='true'
+          />
+
+          <div
+            className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-4/5 md:max-w-4xl md:min-w-md md:h-auto md:max-h-[85vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden flex flex-col'
+            onDoubleClick={(e) => e.stopPropagation()}
+            role='dialog'
+            aria-modal='true'
+            aria-labelledby='changelogs-title'
+          >
+            <div className='flex justify-between items-center p-6 border-b border-gray-300 dark:border-gray-700'>
+              <h3
+                id='changelogs-title'
+                className='text-2xl font-bold text-gray-900 dark:text-gray-100'
               >
-                <div className='flex items-start gap-3'>
-                  {/* Type Badge */}
-                  <span
-                    className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColors[change.type]}`}
-                  >
-                    {typeLabels[change.type]}
-                  </span>
+                更新日志
+              </h3>
+              <button
+                type='button'
+                onClick={() => setIsChangeLogsOpen(false)}
+                className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                aria-label='关闭更新日志'
+              >
+                ✕
+              </button>
+            </div>
 
-                  {/* Content */}
-                  <div className='min-w-0 flex-1'>
-                    <div className='flex items-baseline gap-2'>
-                      {/* Scope */}
-                      {change.scope && (
-                        <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                          {change.scope}:
-                        </span>
-                      )}
-
-                      {/* Message */}
-                      <p className='text-sm text-gray-900 dark:text-gray-100'>{change.message}</p>
-
-                      {/* Breaking Change Badge */}
-                      {change.breaking && (
-                        <span className='inline-flex items-center rounded bg-red-600 px-1.5 py-0.5 text-xs font-bold text-white'>
-                          破坏性
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Hash and Author */}
-                    <div className='mt-1 flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400'>
-                      {change.author && (
-                        <span className='flex items-center gap-1'>
+            <div className='overflow-y-auto flex-1 p-6'>
+              <div className='space-y-3'>
+                {changeLogs.map((dailyLog) => {
+                  const isExpanded = expandedDates.has(dailyLog.date);
+                  return (
+                    <div
+                      key={dailyLog.date}
+                      className='rounded-lg border border-gray-300 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 overflow-hidden'
+                    >
+                      <button
+                        onClick={() => toggleDate(dailyLog.date)}
+                        className='w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors'
+                        aria-expanded={isExpanded}
+                      >
+                        <div className='flex items-center gap-3'>
                           <svg
-                            className='h-3 w-3'
+                            className={`h-5 w-5 text-gray-600 dark:text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
                             fill='none'
                             stroke='currentColor'
                             viewBox='0 0 24 24'
@@ -112,21 +158,89 @@ export default function ChangeLogs() {
                               strokeLinecap='round'
                               strokeLinejoin='round'
                               strokeWidth={2}
-                              d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                              d='M9 5l7 7-7 7'
                             />
                           </svg>
-                          {contributors.find(({ id }) => change.author === id)?.name ||
-                            change.author}
+                          <h4 className='text-base font-semibold text-gray-900 dark:text-gray-100'>
+                            {new Date(dailyLog.date).toLocaleDateString('zh-CN', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </h4>
+                        </div>
+                        <span className='text-sm text-gray-600 dark:text-gray-400'>
+                          {dailyLog.changes.length} 项更改
                         </span>
+                      </button>
+
+                      {isExpanded && (
+                        <div className='border-t border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30'>
+                          <div className='divide-y divide-gray-200 dark:divide-gray-700'>
+                            {dailyLog.changes.map((change) => (
+                              <div key={change.hash} className='px-4 py-3'>
+                                <div className='flex items-start gap-3'>
+                                  <span
+                                    className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColors[change.type]}`}
+                                  >
+                                    {typeLabels[change.type]}
+                                  </span>
+
+                                  <div className='min-w-0 flex-1'>
+                                    <div className='flex flex-wrap items-baseline gap-2'>
+                                      {change.scope && (
+                                        <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
+                                          {change.scope}:
+                                        </span>
+                                      )}
+                                      <p className='text-sm text-gray-900 dark:text-gray-100'>
+                                        {change.message}
+                                      </p>
+                                      {change.breaking && (
+                                        <span className='inline-flex items-center rounded bg-red-600 px-1.5 py-0.5 text-xs font-bold text-white'>
+                                          破坏性
+                                        </span>
+                                      )}
+                                    </div>
+
+                                    {change.author && (
+                                      <div className='mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400'>
+                                        <svg
+                                          className='h-3 w-3'
+                                          fill='none'
+                                          stroke='currentColor'
+                                          viewBox='0 0 24 24'
+                                        >
+                                          <path
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            strokeWidth={2}
+                                            d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                                          />
+                                        </svg>
+                                        {contributors.find(({ id }) => change.author === id)
+                                          ?.name || change.author}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       )}
                     </div>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        </>
+      )}
+    </>
   );
-}
+});
+
+ChangeLogs.displayName = 'ChangeLogs';
+
+export default ChangeLogs;
