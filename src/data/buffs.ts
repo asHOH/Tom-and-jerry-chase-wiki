@@ -41,6 +41,9 @@ const commonStack =
 const oneOnlyStack = '在未特殊注明时，同名效果重复获得改为刷新持续时间，同类效果只会生效一个。';
 const multiplicationStack =
   '可[乘算](先各自+100%后再乘算，最终结果再-100%，例如：两个提高50%的效果等价于一个提高125%的效果)叠加。';
+
+const shieldDifference =
+  '\n\n持有{护盾}、{无敌}、{免控}、{霸体}、{绝对霸体}均可以免疫$后续受到的$text-bold#大多数控制效果，它们的鉴别点是：\n护盾：周身会出现护盾特效；有层数限制，可能有时间限制，可抵消伤害、虚弱和大多数软控制(例如禁用技能等）。\n无敌：周身会出现护盾特效；有时间限制，可免疫的控制效果范围与{护盾}完全一致。\n免控：周身可能会出现恢复或减伤的特效；有时间限制，通常不免疫伤害、虚弱和大多数软控制。此外，部分免控会免疫{隐身}。\n霸体：周身可能会出现恢复或减伤的特效；有时间限制，能免疫伤害、虚弱，部分霸体可免疫一部分软控制。此外，部分霸体会免疫{隐身}。\n绝对霸体：周身通常不会出现特效；有时间限制，免疫绝大多数负面效果，其免疫范围要比普通霸体广泛；但同时也会免疫{隐身}、{二段跳}等正面效果。';
 //--------------------数据区---------------------/
 const buffDefinitions: Record<string, BuffDefinition> = {
   //--------------------移动与跳跃---------------------/
@@ -1026,7 +1029,6 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       { name: '击退', type: 'buff' },
     ],
   },
-  //20251107 在本注释以上的部分已完成补全
   硬直: {
     type: '负面',
     global: false,
@@ -1150,12 +1152,25 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     target: '角色',
     duration: '不固定',
     description:
-      '抵消受到的负面状态/效果，每次抵消均会消耗护盾层数，层数耗尽时护盾消失。部分护盾在抵挡指定类型的负面状态时不消耗层数。',
+      '抵消受到的绝大多数负面状态/效果，每次成功抵消均会消耗护盾层数，层数耗尽时护盾消失。部分护盾在抵挡指定类型的负面状态时不消耗层数。该状态不会解除获得该状态前已受到的控制效果。持有该效果时，周身会出现护盾特效。',
+    detailedDescription:
+      '抵消受到的绝大多数负面状态/效果，每次成功抵消均会消耗护盾层数，层数耗尽时护盾消失。部分护盾在抵挡指定类型的负面状态时不消耗层数。该状态不会解除获得该状态前已受到的控制效果。持有该效果时，周身会出现护盾特效。' +
+      shieldDifference,
     stack: commonStack + '护盾效果有各自的优先级，优先消耗优先级靠前的护盾。',
     source: [
       { name: '护盾饮料', type: 'item' },
       { name: '护佑', type: 'knowledgeCard' },
+      { name: '回家', type: 'knowledgeCard' },
+      { name: '皇家火炮', type: 'skill' },
+      { name: '迷乱列车', type: 'skill' },
       { name: '威严光盾', type: 'skill' },
+      { name: '勇者无惧', type: 'skill' },
+      { name: '天使祝福', type: 'skill' },
+      { name: '野生体格', type: 'skill' },
+      { name: '小情绪', type: 'skill' },
+      { name: '幻风礼服', type: 'skill' },
+      { name: '守护战旗', type: 'entity' },
+      { name: '恶魔之门', type: 'entity' },
     ],
     unuseImage: true,
   },
@@ -1164,28 +1179,55 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     global: false,
     target: '角色',
     duration: '不固定',
-    description: '免疫绝大多数负面状态。该效果与{护盾}类似，但持续时间固定。',
+    description:
+      '抵消受到的绝大多数负面状态/效果。该状态不会解除获得该状态前已受到的控制效果。持有该效果时，周身会出现护盾特效，与{护盾}类似。',
+    detailedDescription:
+      '抵消受到的绝大多数负面状态/效果。该状态不会解除获得该状态前已受到的控制效果。持有该效果时，周身会出现护盾特效，与{护盾}类似。' +
+      shieldDifference,
     stack: commonStack,
     source: [
+      { name: '无畏', type: 'knowledgeCard' },
+      { name: '舍己', type: 'knowledgeCard' },
+      { name: '冰冻保鲜', type: 'specialSkill' },
       { name: '发怒冲刺', type: 'skill' },
+      { name: '牛仔鞭索', type: 'skill' },
       { name: '国王权杖', type: 'skill' },
+      { name: '老牛仔', type: 'skill' },
+      { name: '攻无不克', type: 'skill' },
+      { name: '猫虚弱', type: 'buff' },
     ],
     unuseImage: true,
   },
-  绝对无敌: {
+  免控: {
     type: '正面',
     global: false,
     target: '角色',
     duration: '不固定',
+    aliases: ['弱霸体', '免疫控制'],
     description:
-      '免疫绝大多数正面/负面状态。该效果的免疫范围要大于普通的{无敌}，且通常没有护盾特效。',
+      '免疫部分负面状态/效果，[通常](部分免疫虚弱但不免疫伤害的效果也会被归类为“免控”，而非“霸体”)$不$text-bond#包括{伤害}或{虚弱}。[不同免控效果免疫的范围不同](推测这是因为免控实际上由"白名单"实现，在这个名单上的状态均会被免疫，而不同免控的白名单差异很大)。该状态不会解除获得该状态前已受到的控制效果。持有该效果时，周身可能会出现恢复或减伤的特效，但仅仅只是借用特效，实际效果无关。',
+    detailedDescription:
+      '免疫部分负面状态/效果，[通常](部分免疫虚弱但不免疫伤害的效果也会被归类为“免控”，而非“霸体”)$不$text-bond#包括{伤害}或{虚弱}。[不同免控效果免疫的范围不同](推测这是因为免控实际上由"白名单"实现，在这个名单上的状态均会被免疫，而不同免控的白名单差异很大)。该状态不会解除获得该状态前已受到的控制效果。持有该效果时，周身可能会出现恢复或减伤的特效，但仅仅只是借用特效，实际效果无关。' +
+      shieldDifference,
     stack: commonStack,
     source: [
-      { name: '横冲直撞', type: 'skill' },
+      { name: '律动时间', type: 'skill' },
+      { name: '天使强化', type: 'skill' },
       { name: '狂', type: 'skill' },
-      { name: '降落伞', type: 'skill' },
-      { name: '格挡之剑', type: 'skill' },
-      { name: '勇气冲刺', type: 'skill' },
+      { name: '狂欢时刻', type: 'skill' },
+      { name: '追风状态', type: 'skill' },
+      { name: '登山飞镐', type: 'skill' },
+      { name: '剑舞华尔兹', type: 'skill' },
+      { name: '圆滚滚', type: 'skill' },
+      { name: '西部风情', type: 'skill' },
+      { name: '天使翅膀', type: 'skill' },
+      { name: '弹力圆球', type: 'skill' },
+      { name: '怒气喷发', type: 'skill' },
+      { name: '勇往直前', type: 'skill' },
+      { name: '灵活跳跃', type: 'skill' },
+      { name: '说出你的故事', type: 'skill' },
+      { name: '滑步踢', type: 'skill' },
+      { name: '梦幻舞步', type: 'skill' },
     ],
     unuseImage: true,
   },
@@ -1196,21 +1238,39 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     duration: '不固定',
     aliases: ['强霸体'],
     description:
-      '免疫绝大多数负面状态/效果，包括{伤害}和{虚弱}，但有时也会免疫{隐身}。[不同霸体效果免疫的范围不同](推测这是因为霸体的免疫实际上由"白名单"实现，在这个名单上的状态均会被免疫，而不同霸体的白名单差异很大)。',
+      '免疫绝大多数负面状态/效果，包括{伤害}和{虚弱}，但有时也会免疫{隐身}。[不同霸体效果免疫的范围不同](推测这是因为霸体的免疫实际上由"白名单"实现，在这个名单上的状态均会被免疫，而不同霸体的白名单差异很大)。该状态不会解除获得该状态前已受到的控制效果。持有该效果时，周身可能会出现恢复或减伤的特效，但仅仅只是借用特效，实际效果无关。',
+    detailedDescription:
+      '免疫绝大多数负面状态/效果，包括{伤害}和{虚弱}，但有时也会免疫{隐身}。[不同霸体效果免疫的范围不同](推测这是因为霸体的免疫实际上由"白名单"实现，在这个名单上的状态均会被免疫，而不同霸体的白名单差异很大)。该状态不会解除获得该状态前已受到的控制效果。持有该效果时，周身可能会出现恢复或减伤的特效，但仅仅只是借用特效，实际效果无关。' +
+      shieldDifference,
     stack: commonStack,
-    source: [{ name: '绝地反击', type: 'specialSkill' }],
+    source: [
+      { name: '绝地反击', type: 'specialSkill' },
+      { name: '魅力甲油', type: 'skill' },
+      { name: '野性迸发', type: 'skill' },
+      { name: '心思缜密', type: 'skill' },
+      { name: '旋转桶盖', type: 'entity' },
+    ],
     unuseImage: true,
   },
-  免控: {
+  绝对霸体: {
     type: '正面',
     global: false,
     target: '角色',
     duration: '不固定',
-    aliases: ['弱霸体', '免疫控制'],
     description:
-      '免疫部分负面状态/效果（未特别标注时，不包括{伤害}或{虚弱}）。[不同免控效果免疫的范围不同](推测这是因为免控实际上由"白名单"实现，在这个名单上的状态均会被免疫，而不同免控的白名单差异很大)。',
+      '免疫几乎全部的负面状态/效果，但同时也会免疫部分正面状态/效果。该状态不会解除获得该状态前已受到的控制效果。',
+    detailedDescription:
+      '免疫几乎全部的负面状态/效果，但同时也会免疫部分正面状态/效果。该状态不会解除获得该状态前已受到的控制效果。' +
+      shieldDifference,
     stack: commonStack,
-    source: [{ name: '西部风情', type: 'skill' }],
+    source: [
+      { name: '横冲直撞', type: 'skill' },
+      { name: '骑士连斩', type: 'skill' },
+      { name: '狂', type: 'skill' },
+      { name: '降落伞', type: 'skill' },
+      { name: '格挡之剑', type: 'skill' },
+      { name: '勇气冲刺', type: 'skill' },
+    ],
     unuseImage: true,
   },
   减控: {
@@ -1219,16 +1279,17 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     target: '角色',
     duration: '不固定',
     description:
-      '减少部分负面状态的持续时间（未特别标注时，不包括或{虚弱}）。若目标身上已有负面状态，则该状态的剩余时间会立刻被重新计算。',
+      '减少{眩晕}及类似状态的持续时间（未特别标注时，不包括{虚弱}及大多数[软控制](包括减速、禁用技能等)）。少部分减控状态附带检查机制：若获得减控时，角色身上已有可被减少时间的负面状态，则该状态的剩余时间会立刻被重新计算。',
     stack: '待测试',
     source: [
       { name: '随机应变', type: 'skill' },
       { name: '骄傲的学霸', type: 'skill' },
       { name: '西部风情', type: 'skill' },
       { name: '机械身躯', type: 'skill' },
+      { name: '连控保护', type: 'buff' },
     ],
     unuseImage: true,
-  }, //TODO:ADD 解除控制 免疫虚弱
+  }, //20251109 自此之上的部分已完成返修。TODO:ADD 解除控制 免疫虚弱
   控制转移: {
     type: '正面',
     global: false,
