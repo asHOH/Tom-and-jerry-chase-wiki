@@ -350,35 +350,23 @@ const traits: Trait[] = [
     group: [
       { name: '警戒', type: 'skill' },
       [
-        { name: '护盾饮料', type: 'item' },
-        { name: '护佑', type: 'knowledgeCard' },
-        { name: '回家', type: 'knowledgeCard' },
-        { name: '威严光盾', type: 'skill' },
-        { name: '守护战旗', type: 'entity' },
-        { name: '勇者无惧', type: 'skill' },
-        { name: '天使祝福', type: 'skill' },
-        { name: '小情绪', type: 'skill' },
-        { name: '幻风礼服', type: 'skill' },
+        { name: '护盾', type: 'buff' },
+        { name: '无敌', type: 'buff' },
       ],
     ],
-    description: '警戒能清除大部分护盾效果。',
-  },
-  {
-    group: [
-      { name: '警戒', type: 'skill' },
-      { name: '鼠方护盾类无敌效果', type: 'itemGroup' },
+    description: '警戒能清除大部分护盾效果，以及有“护盾”特效的无敌效果。',
+    spacialCase: [
+      {
+        group: [
+          { name: '警戒', type: 'skill' },
+          [
+            { name: '恶魔之门', type: 'entity' },
+            { name: '野生体格', type: 'skill' },
+          ],
+        ],
+        description: '警戒无法清除由2级野生体格或恶魔之门（友方使用时）提供的护盾。',
+      },
     ],
-    description: `警戒能清除有“护盾”特效的无敌效果。`,
-  },
-  {
-    group: [
-      { name: '警戒', type: 'skill' },
-      [
-        { name: '恶魔之门', type: 'entity' },
-        { name: '野生体格', type: 'skill' },
-      ],
-    ],
-    description: '警戒无法清除由2级野生体格或恶魔之门（友方使用时）提供的护盾。',
   },
   {
     group: [

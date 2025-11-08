@@ -363,7 +363,7 @@ export const SingleItemTypeChineseNameList = {
   specialSkill: '特技',
   item: '道具',
   entity: '衍生物',
-  buff: '状态/效果',
+  buff: '状态',
 };
 // Create a group include similar items(or entites/buffs), so that can use navigation in one href
 export type SingleItem = {
@@ -448,12 +448,12 @@ interface YearData {
  */
 export type GameHistory = YearData[];
 
+export type SingleItemOrGroup = SingleItem | { name: string; type: 'itemGroup' };
 export type Trait = {
   description: string;
-  group: (
-    | SingleItem
-    | { name: string; type: 'itemGroup' }
-    | (SingleItem | { name: string; type: 'itemGroup' })[]
-  )[];
-  isMinor?: boolean;
+  group: (SingleItemOrGroup | SingleItemOrGroup[])[];
+  spacialCase?: {
+    description: string;
+    group: (SingleItemOrGroup | SingleItemOrGroup[])[];
+  }[];
 };
