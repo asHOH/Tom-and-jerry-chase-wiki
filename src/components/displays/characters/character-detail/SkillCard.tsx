@@ -129,7 +129,7 @@ export default function SkillCard({
 
   const createBooleanCheckbox = (
     label: string,
-    property: 'canMoveWhileUsing' | 'canUseInAir' | 'canHitInPipe',
+    property: 'canMoveWhileUsing' | 'canUseInAir' | 'canHitInPipe' | 'causesWoundedState',
     trueText: string,
     falseText: string
   ) => {
@@ -243,6 +243,12 @@ export default function SkillCard({
       properties.push(
         createBooleanCheckbox('移动释放', 'canMoveWhileUsing', '可移动释放', '不可移动释放'),
         createBooleanCheckbox('空中释放', 'canUseInAir', '可空中释放', '不可空中释放'),
+        createBooleanCheckbox(
+          '造成受伤状态',
+          'causesWoundedState',
+          '可造成受伤状态',
+          '不可造成受伤状态'
+        ),
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
             const specialOptions = ['不可主动打断'] as const;
@@ -590,6 +596,7 @@ export default function SkillCard({
     } else {
       if (skill.canMoveWhileUsing) properties.push('移动释放');
       if (skill.canUseInAir) properties.push('空中释放');
+      if (skill.causesWoundedState) properties.push('可造成受伤状态');
       if (skill.type !== 'passive') {
         // Combine forecast with cancelableSkill (optional fields)
         const forecastBase =

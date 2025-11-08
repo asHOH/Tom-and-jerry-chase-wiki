@@ -78,6 +78,7 @@ export type SkillDefinition = {
   canUseInAir?: boolean; // 空中释放
   cancelableSkill?: CancelableSkillType; // 可取消释放
   cancelableAftercast?: CancelableAftercastType; // 可取消后摇
+  causesWoundedState?: boolean; // 造成受伤状态
   forecast?: number; // 前摇（秒）
   aftercast?: number; // 后摇（秒）
   canHitInPipe?: boolean; // 可击中管道中的角色
