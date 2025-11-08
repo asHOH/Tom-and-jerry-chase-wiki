@@ -116,7 +116,7 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
         // Verify the message is from our iframe
         if (event.source === iframe.contentWindow) {
           window.removeEventListener('message', messageHandler);
-          // document.body.removeChild(iframe);
+          document.body.removeChild(iframe);
           resolve(event.data);
         }
       };
@@ -127,13 +127,13 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
       setTimeout(() => {
         window.removeEventListener('message', messageHandler);
         if (document.body.contains(iframe)) {
-          // document.body.removeChild(iframe);
+          document.body.removeChild(iframe);
         }
         resolve({
           error: 'Code execution timeout',
-          details: 'Execution exceeded 5 seconds',
+          details: 'Execution exceeded 10 seconds',
         });
-      }, 5000);
+      }, 10000);
     } catch (error) {
       // Return error information if setup fails
       resolve({
