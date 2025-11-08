@@ -10,6 +10,97 @@ import { getCardRankColors } from '@/lib/design-tokens';
 import Tag from '@/components/ui/Tag';
 import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
 
+const nameBlacklist = ['破墙', '捕鼠夹', '爪刀', '迅', '三叉戟', '绝地反击', '追风', '兔子'];
+
+function preprocessText(text: string, currentCharacterName?: string | undefined): string {
+  // If text already contains curly braces, return as-is
+  if (text.includes('{') || text.includes('}') || text.includes('《') || text.includes('》')) {
+    return text;
+  }
+
+  // Get all character names and sort by length (longest first)
+  const names = [
+    ...Object.keys(characters),
+    ...Object.values(characters)
+      .map((c) => c.aliases ?? [])
+      .flat(),
+    ...Object.keys(cards),
+    ...Object.values(cards)
+      .map((c) => c.aliases ?? [])
+      .flat(),
+    // ...Object.values(characters)
+    //   .map((c) => c.skills.map((s) => s.name))
+    //   .flat(),
+    // ...Object.values(characters)
+    //   .map((c) => c.skills.map((s) => s.aliases ?? []))
+    //   .flat()
+    //   .flat(),
+  ]
+    .filter((name) => !nameBlacklist.includes(name))
+    .sort((a, b) => b.length - a.length);
+
+  let result = text;
+
+  const currentCharacterNames = [
+    currentCharacterName!,
+    characters[currentCharacterName ?? '']?.aliases ?? [],
+    // characters[currentCharacterName ?? '']?.skills?.map((value) => value.name) ?? [],
+    // characters[currentCharacterName ?? '']?.skills?.map((value) => value.aliases ?? []).flat() ??
+    [],
+  ].flat();
+
+  // Track positions that have been wrapped to avoid overlaps
+  const processedRanges: Array<{ start: number; end: number }> = [];
+
+  for (const name of names) {
+    let searchIndex = 0;
+
+    while (true) {
+      const index = result.indexOf(name, searchIndex);
+      if (index === -1) break;
+
+      // Check if this position overlaps with already processed ranges
+      const overlaps = processedRanges.some(
+        (range) => index < range.end && index + name.length > range.start
+      );
+
+      if (!overlaps) {
+        if (currentCharacterNames.includes(name)) {
+          processedRanges.push({
+            start: index,
+            end: index + name.length,
+          });
+          searchIndex = index + name.length;
+        } else {
+          // Wrap the character name with curly braces
+          result =
+            result.substring(0, index) + '{' + name + '}' + result.substring(index + name.length);
+
+          // Track this range (accounting for the added braces)
+          processedRanges.push({
+            start: index,
+            end: index + name.length + 2, // +2 for the braces
+          });
+
+          // Update ranges after this insertion
+          processedRanges.forEach((range) => {
+            if (range.start > index) {
+              range.start += 2;
+              range.end += 2;
+            }
+          });
+
+          searchIndex = index + name.length + 2;
+        }
+      } else {
+        searchIndex = index + 1;
+      }
+    }
+  }
+
+  return result;
+}
+
 /**
  * Parse and render text with class styling for patterns like $text$className#
  * The text between $ symbols will be styled using the full className after the second $ until #
@@ -359,14 +450,15 @@ interface TextWithHoverTooltipsProps {
 
 const emptyObject = proxy({ attackBoost: 0 });
 
-export default function TextWithHoverTooltips({ text }: TextWithHoverTooltipsProps) {
+export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTooltipsProps) {
   const [isDarkMode] = useDarkMode();
-  const highlightedParts = renderTextWithHighlights(text); // Handles **bold**
   const intermediateParts: (string | React.ReactElement)[] = [];
   const localCharacterCtx = useLocalCharacter();
   const currentCharacterId = localCharacterCtx.characterId;
   const rawLocalCharacter = characters[currentCharacterId];
   const localCharacter = useSnapshot(rawLocalCharacter ?? emptyObject);
+  const text = preprocessText(rawText, currentCharacterId);
+  const highlightedParts = renderTextWithHighlights(text); // Handles **bold**
 
   // First pass: Handle [visible text](tooltip content)
   highlightedParts.forEach((part, index) => {
