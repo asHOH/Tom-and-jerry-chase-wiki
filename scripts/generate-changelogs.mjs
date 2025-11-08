@@ -27,8 +27,8 @@ import { GoogleGenAI } from '@google/genai';
 
 // Do NOT change the path
 // Load environment variables from .env.local or .env
-dotenv.config({ path: '.env.local' });
-dotenv.config();
+dotenv.config({ path: '.env.local', quiet: true });
+dotenv.config({ quiet: true });
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
@@ -82,52 +82,60 @@ export type ChangeLogs = DailyChangelog[];
 `.trim();
 
 // Prompt for the AI to convert git logs to changelog format
-const SYSTEM_PROMPT = `You are a changelog generator. Convert git commit logs into structured changelog entries.
+const SYSTEM_PROMPT = `你是一个更新日志生成器。将 git 提交日志转换为结构化的更新日志条目。
 
-**Output Format:**
-You MUST respond with ONLY a valid JSON array, no additional text, markdown formatting, or code blocks.
-The JSON should be an array of DailyChangelog objects with this exact TypeScript structure:
+**输出格式：**
+你必须仅返回一个有效的 JSON 数组，不要包含任何其他文本、markdown 格式或代码块。
+JSON 应该是一个 DailyChangelog 对象数组，具有以下确切的 TypeScript 结构：
 
 ${TYPE_DEFINITIONS}
 
-**Conversion Rules:**
-1. Group commits by date (YYYY-MM-DD format)
-2. Extract the type from conventional commit format (feat, fix, docs, etc.)
-3. Extract the scope from parentheses if present
-4. Use the commit message as the change description
-5. Mark breaking changes if the commit has "BREAKING CHANGE" or "!" in the type
-6. Include the short git hash (first 7 characters)
-7. Sort dates in descending order (newest first)
-8. Within each day, sort by type priority: feat > fix > perf > refactor > docs > style > test > chore > other
-9. If a commit doesn't follow conventional format, classify it as 'other'
-10. Keep descriptions concise and user-friendly
+**转换规则：**
+1. **过滤提交：跳过以下提交，不要包含在输出中：**
+   - 合并提交（消息包含 "Merge"、"merge"、"合并" 等）
+   - 作者为 "dependabot[bot]" 的提交
+2. 按日期（YYYY-MM-DD 格式）对提交进行分组
+3. 从常规提交格式（feat、fix、docs 等）中提取类型
+4. 如果存在，从括号中提取范围
+5. 将提交消息翻译成简洁的中文描述作为更改说明
+6. 如果提交中有 "BREAKING CHANGE" 或类型中有 "!"，则标记为破坏性更改
+7. 包含短 git 哈希（前 7 个字符）
+8. 按降序排列日期（最新的在前）
+9. **在每一天内，按提交时间排序（最新的在前）**
+10. 如果提交不遵循常规格式，将其分类为 'other'
+11. 保持描述简洁且用户友好
+12. **重要：message 字段必须使用中文**
 
-**Example Input:**
-a468007|2025-11-08 16:02:55 +0800|fix(ai): fix the issue of tool call timeout
-c64f41b|2025-11-08 11:35:18 +0800|feat(ai): add history support
+**示例输入：**
+a468007|2025-11-08 16:02:55 +0800|fix(ai): fix the issue of tool call timeout|3swordman
+c64f41b|2025-11-08 11:35:18 +0800|feat(ai): add history support|3swordman
+d123456|2025-11-08 10:00:00 +0800|Merge pull request #123|asHOH
+e789012|2025-11-08 09:00:00 +0800|chore(deps): bump some-package|dependabot[bot]
 
-**Example Output:**
+**示例输出：**
 [
   {
     "date": "2025-11-08",
     "changes": [
       {
-        "type": "feat",
-        "scope": "ai",
-        "message": "add history support",
-        "hash": "c64f41b"
-      },
-      {
         "type": "fix",
         "scope": "ai",
-        "message": "fix the issue of tool call timeout",
+        "message": "修复工具调用超时问题",
         "hash": "a468007"
+      },
+      {
+        "type": "feat",
+        "scope": "ai",
+        "message": "添加历史记录支持",
+        "hash": "c64f41b"
       }
     ]
   }
 ]
 
-Respond ONLY with the JSON array, no other text.`;
+注意：合并提交和 dependabot 的提交已被过滤，更改按时间排序（最新的在前）。
+
+仅返回 JSON 数组，不要包含其他文本。`;
 
 /**
  * Get git commits from the past 7 days
@@ -172,14 +180,31 @@ async function generateChangelogs(commits) {
         temperature: 0.1,
         topP: 0.95,
         topK: 20,
-        maxOutputTokens: 8192,
+        maxOutputTokens: 16384,
         responseMimeType: 'application/json',
         seed: 42, // Fixed seed for reproducible output
       },
     });
 
-    const text = response.text || '';
-    console.log('Raw response:', text.substring(0, 200));
+    // Extract text from response
+    let text = '';
+    if (response.candidates && response.candidates[0]) {
+      const candidate = response.candidates[0];
+      if (candidate.content && candidate.content.parts) {
+        text = candidate.content.parts.map((part) => part.text || '').join('');
+      }
+    }
+
+    // Fallback to response.text if available
+    if (!text && response.text) {
+      text = response.text;
+    }
+
+    if (!text) {
+      throw new Error('Empty response from API');
+    }
+
+    console.log('Response length:', text.length, 'characters');
 
     // Parse JSON response
     let jsonText = text.trim();
