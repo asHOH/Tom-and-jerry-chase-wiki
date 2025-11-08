@@ -6,6 +6,7 @@ import { DisclaimerText } from '@/components/DisclaimerText';
 import { VersionDisplay } from '@/components/VersionDisplay';
 import NotificationTooltip from '@/components/ui/NotificationTooltip';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
+import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import HomePageSection from '@/components/ui/HomePageSection';
 import PageTitle from '@/components/ui/PageTitle';
 import PageDescription from '@/components/ui/PageDescription';
@@ -23,12 +24,13 @@ export default function HomeContentClient({ description }: Props) {
   const [notificationMessage, setNotificationMessage] = useState('');
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
+  const changeLogsRef = useRef<ChangeLogsRef>(null);
   const { nickname } = useUser();
   const isMobile = useMobile();
 
   const handleEditModeToggle = () => {
-    if (feedbackSectionRef.current?.isOpen?.()) {
-      return; // Do nothing if feedback modal is open
+    if (feedbackSectionRef.current?.isOpen?.() || changeLogsRef.current?.isOpen?.()) {
+      return; // Do nothing if feedback or changelog modal is open
     }
     if (isEditMode) {
       setNotificationMessage('成功退出编辑模式');
@@ -107,7 +109,10 @@ export default function HomeContentClient({ description }: Props) {
             <DisclaimerText onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
           </div>
           <VersionDisplay />
-          <FeedbackSection ref={feedbackSectionRef} />
+          <div className='mt-6 flex flex-wrap justify-center gap-4'>
+            <FeedbackSection ref={feedbackSectionRef} />
+            <ChangeLogs ref={changeLogsRef} />
+          </div>
         </div>
       </div>
 

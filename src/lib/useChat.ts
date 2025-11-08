@@ -1,5 +1,7 @@
-import { useState, useMemo, useEffect } from 'react';
-import useSWR from 'swr';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { cards, characters, specialSkills, items, entities, buffs, itemGroups } from '@/data';
+import { historyData } from '@/data/history';
+import { snapshot } from 'valtio';
 
 // Type definition for a message part, consistent with the API
 type Part = {
@@ -8,6 +10,13 @@ type Part = {
     name: string;
     args: Record<string, unknown>;
   };
+  functionResponse?: {
+    name: string;
+    response: {
+      name: string;
+      content: unknown;
+    };
+  };
 };
 
 // Type definition for a message, consistent with the API
@@ -15,6 +24,27 @@ export type Message = {
   role: 'user' | 'model';
   parts: Part[];
 };
+
+// Type for function calls returned by the API
+type FunctionCall = {
+  name: string;
+  args: Record<string, unknown>;
+};
+
+// Type for API response
+type ApiResponse =
+  | {
+      requiresAction: true;
+      functionCalls: FunctionCall[];
+    }
+  | {
+      text: string;
+      candidates?: unknown[];
+    }
+  | {
+      error: string;
+      details?: string;
+    };
 
 // Debounce utility to delay function execution
 function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number): T {
@@ -28,30 +58,94 @@ function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number
   }) as T;
 }
 
-// The fetcher function for useSWR that handles the API call
-async function sendRequest(key: string) {
-  const [, messagesJson] = key.split('|');
-  if (!messagesJson) return null;
+// Client-side code execution implementation
+// Executes JavaScript code in a sandboxed iframe for security
+async function executeCode({ code }: { code: string }): Promise<unknown> {
+  return new Promise((resolve) => {
+    try {
+      const nonce = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16);
+      const csp = `default-src 'none'; script-src 'nonce-${nonce}';`;
+      // Create a sandboxed iframe for isolated code execution
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src =
+        'data:text/html;charset=utf-8,' +
+        encodeURIComponent(
+          `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <meta http-equiv="Content-Security-Policy" content="${csp}">
+                <script nonce="${nonce}">
+                  try {
+                    // Receive data from parent
+                    var characters = ${JSON.stringify(snapshot(characters))};
+                    var cards = ${JSON.stringify(cards)};
+                    var specialSkills = ${JSON.stringify(specialSkills)};
+                    var items = ${JSON.stringify(items)};
+                    var entities = ${JSON.stringify(entities)};
+                    var buffs = ${JSON.stringify(buffs)};
+                    var itemGroups = ${JSON.stringify(itemGroups)};
+                    var historyData = ${JSON.stringify(historyData)};
+                    // Execute the user code
+                    var result = (function() {
+                      ${code}
+                    })();
 
-  const messages = JSON.parse(messagesJson);
+                    // Send result back to parent
+                    window.parent.postMessage(result, '*');
+                  } catch (error) {
+                    // Send error back to parent
+                    window.parent.postMessage({
+                      error: 'Code execution failed',
+                      details: error instanceof Error ? error.message : String(error)
+                    }, '*');
+                  }
+                </script>
+              </head>
+              <body></body>
+            </html>
+          `
+        );
+      iframe.setAttribute('sandbox', 'allow-scripts');
+      document.body.appendChild(iframe);
 
-  const response = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages }),
+      // Set up message handler to receive result from iframe
+      const messageHandler = (event: MessageEvent) => {
+        // Verify the message is from our iframe
+        if (event.source === iframe.contentWindow) {
+          window.removeEventListener('message', messageHandler);
+          document.body.removeChild(iframe);
+          resolve(event.data);
+        }
+      };
+
+      window.addEventListener('message', messageHandler);
+
+      // Set timeout to prevent hanging
+      setTimeout(() => {
+        window.removeEventListener('message', messageHandler);
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+        resolve({
+          error: 'Code execution timeout',
+          details: 'Execution exceeded 10 seconds',
+        });
+      }, 10000);
+    } catch (error) {
+      // Return error information if setup fails
+      resolve({
+        error: 'Code execution setup failed',
+        details: error instanceof Error ? error.message : String(error),
+      });
+    }
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`API request failed: ${errorText}`);
-  }
-
-  const data = await response.json();
-  return data;
 }
 
 /**
- * A hook for managing a single chat request with the Gemini API.
+ * A hook for managing multi-round chat requests with client-side tool calling.
  *
  * @param message The message to send to the chat API.
  * @param debounceMs The debounce delay in milliseconds for sending messages.
@@ -59,6 +153,11 @@ async function sendRequest(key: string) {
  */
 export function useChat(message?: string, debounceMs = 500) {
   const [debouncedMessage, setDebouncedMessage] = useState<string | undefined>(message);
+  const [responseText, setResponseText] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const currentRequestIdRef = useRef<number>(0);
 
   // Debounce the message updates
   const debouncedSetMessage = useMemo(() => {
@@ -69,26 +168,161 @@ export function useChat(message?: string, debounceMs = 500) {
     debouncedSetMessage(message);
   }, [message, debouncedSetMessage]);
 
-  // Create SWR key with only the current message (single round request)
-  const swrKey = useMemo(() => {
-    if (!debouncedMessage?.trim() || !process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) return null;
+  // Execute tool calls and return updated messages
+  const executeFunctionCalls = useCallback(
+    async (functionCalls: FunctionCall[], currentMessages: Message[]): Promise<Message[]> => {
+      const updatedMessages = [...currentMessages];
 
-    const singleMessage: Message = { role: 'user', parts: [{ text: debouncedMessage }] };
-    return `chat|${JSON.stringify([singleMessage])}`;
-  }, [debouncedMessage]);
+      // Add model's function call to history
+      updatedMessages.push({
+        role: 'model',
+        parts: functionCalls.map((fc) => ({
+          functionCall: {
+            name: fc.name,
+            args: fc.args,
+          },
+        })),
+      });
 
-  const {
-    data: responseData,
-    isLoading,
-    error,
-  } = useSWR(swrKey, sendRequest, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    dedupingInterval: 0,
-  });
+      // Execute each function call and collect results
+      const functionResponses: Part[] = [];
+      for (const functionCall of functionCalls) {
+        if (functionCall.name === 'executeCode') {
+          const toolResult = await executeCode(functionCall.args as { code: string });
+          functionResponses.push({
+            functionResponse: {
+              name: 'executeCode',
+              response: { name: 'executeCode', content: toolResult },
+            },
+          });
+        }
+      }
 
-  // Extract the response text
-  const responseText = responseData?.text || '';
+      // Add function responses to history
+      updatedMessages.push({
+        role: 'user',
+        parts: functionResponses,
+      });
+
+      return updatedMessages;
+    },
+    []
+  );
+
+  // Main request function with multi-round support
+  const sendRequest = useCallback(
+    async (requestId: number, initialMessage: string) => {
+      if (!process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) {
+        return;
+      }
+
+      const MAX_ROUNDS = 5; // Safety limit for multi-round requests
+      let messages: Message[] = [{ role: 'user', parts: [{ text: initialMessage }] }];
+
+      for (let round = 0; round < MAX_ROUNDS; round++) {
+        // Check if this request is still current
+        if (currentRequestIdRef.current !== requestId) {
+          console.log('Request cancelled, newer request in progress');
+          return;
+        }
+
+        try {
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages }),
+            signal: abortControllerRef.current!.signal,
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`API request failed: ${errorText}`);
+          }
+
+          const data: ApiResponse = await response.json();
+
+          // Check for errors
+          if ('error' in data) {
+            throw new Error(data.details || data.error);
+          }
+
+          // Check if function calls are required
+          if ('requiresAction' in data && data.requiresAction) {
+            console.log(`Round ${round + 1}: Function calls required`, data.functionCalls);
+            // Execute function calls and update messages
+            messages = await executeFunctionCalls(data.functionCalls, messages);
+            // Continue loop for next round
+            continue;
+          }
+
+          // Final text response received
+          if ('text' in data) {
+            // Only update if this request is still current
+            if (currentRequestIdRef.current === requestId) {
+              setResponseText(data.text);
+              setIsLoading(false);
+              setError(null);
+            }
+            return;
+          }
+        } catch (err) {
+          if (err instanceof Error && err.name === 'AbortError') {
+            console.log('Request aborted');
+            return;
+          }
+          // Only update error if this request is still current
+          if (currentRequestIdRef.current === requestId) {
+            setError(err instanceof Error ? err : new Error('Unknown error'));
+            setIsLoading(false);
+          }
+          return;
+        }
+      }
+
+      // If we've reached here, max rounds exceeded
+      if (currentRequestIdRef.current === requestId) {
+        setError(new Error('Maximum number of conversation rounds reached'));
+        setIsLoading(false);
+      }
+    },
+    [executeFunctionCalls]
+  );
+
+  // Effect to trigger request when debounced message changes
+  useEffect(() => {
+    if (!debouncedMessage?.trim() || !process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) {
+      setResponseText('');
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
+
+    // Cancel previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller
+    abortControllerRef.current = new AbortController();
+
+    // Increment request ID
+    const requestId = ++currentRequestIdRef.current;
+
+    // Reset state
+    setResponseText('');
+    setIsLoading(true);
+    setError(null);
+
+    // Start request
+    sendRequest(requestId, debouncedMessage);
+
+    // Cleanup function
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [debouncedMessage, sendRequest]);
 
   return process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL
     ? {

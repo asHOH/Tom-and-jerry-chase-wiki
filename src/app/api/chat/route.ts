@@ -1,6 +1,14 @@
-import { GameDataManager } from '@/lib/dataManager';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import {
+  GoogleGenAI,
+  FunctionDeclaration,
+  FunctionCallingConfigMode,
+  HarmCategory,
+  HarmBlockThreshold,
+} from '@google/genai';
+import { characters, cards, specialSkills, items, entities, buffs, itemGroups } from '@/data';
+import { historyData } from '@/data/history';
 
 // Define the structure of a message part, including function calls and responses
 // Based on Gemini's API structure
@@ -25,43 +33,114 @@ type Content = {
   parts: Part[];
 };
 
-const characters = Object.values(GameDataManager.getCharacters());
-const cards = Object.values(GameDataManager.getCards());
-
-// Gemini safety settings - configured to the strictest level
+// Gemini safety settings - configured to the strictest level using SDK enums
 const safetySettings = [
-  { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_LOW_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_LOW_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_LOW_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_LOW_AND_ABOVE' },
+  {
+    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
 ];
 
+// Helper function to build alias mapping text
+function buildAliasMap<T extends { aliases?: string[] }>(
+  data: Record<string, T> | { cat: Record<string, T>; mouse: Record<string, T> },
+  entityType: string
+): string {
+  const maps: string[] = [];
+  const processRecord = (record: Record<string, T>, prefix = '') => {
+    Object.entries(record).forEach(([name, item]) => {
+      if (item.aliases && item.aliases.length > 0) {
+        maps.push(`  ${prefix}${name}: ${item.aliases.join(', ')}`);
+      }
+    });
+  };
+
+  if ('cat' in data && 'mouse' in data) {
+    processRecord(data.cat as Record<string, T>, '[猫] ');
+    processRecord(data.mouse as Record<string, T>, '[鼠] ');
+  } else {
+    processRecord(data as Record<string, T>);
+  }
+
+  return maps.length > 0 ? `\n${entityType} Name-Alias Mapping:\n${maps.join('\n')}` : '';
+}
+
+// Build alias mappings
+const characterAliases = buildAliasMap(characters, 'Characters');
+const cardAliases = buildAliasMap(cards, 'Knowledge Cards');
+const specialSkillAliases = buildAliasMap(specialSkills, 'Special Skills');
+const itemAliases = buildAliasMap(items, 'Items');
+const entityAliases = buildAliasMap(entities, 'Entities');
+const buffAliases = buildAliasMap(buffs, 'Buffs');
+const itemGroupAliases = buildAliasMap(itemGroups, 'Item Groups');
+
+// Verify historyData is available (used in executeCode context)
+if (historyData.length === 0) {
+  console.warn('Warning: historyData is empty');
+}
+
 const systemInstructionText = `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
-Your purpose is to provide accurate information about characters, skills, knowledge cards, and other game elements.
-When a user asks for information about a specific character or knowledge card, use the 'getData' tool to retrieve the most up-to-date details.
-Be friendly, concise, and focus on answering the user's question based on the data provided by the tool.
+Your purpose is to provide accurate information about characters, skills, knowledge cards, game history, and other game elements.
+When a user asks for information, use the 'executeCode' tool to query the game database using JavaScript code.
+Be friendly, concise, and focus on answering the user's question based on the data retrieved.
 If the user asks about something outside of characters or game data, politely inform them that your expertise is limited to Tom and Jerry: Chase game information.
-If the user's prompt consists of only a character's name, use the getData tool to retrieve information and provide a brief introduction of that character.
+If the user's prompt consists of only a character's name, use the executeCode tool to retrieve information and provide a brief introduction of that character.
 You MUST respond in simplified Chinese in plain text without any markdown formatting, HTML tags, or special characters. 
 
 For requests that are harmful, unethical, inappropriate, your only response MUST be: "我无法提供帮助。" Do not apologize or provide any explanation.
 
-# Tool Usage: getData
+# Tool Usage: executeCode
 
 **1. Purpose:**
-The getData tool is your primary source for all character-specific information in Tom and Jerry: Chase. It connects to the game's database to retrieve the latest, most accurate details.
+The executeCode tool allows you to run JavaScript code to query the game database. You have direct access to these objects in the execution context:
+- \`characters\`: Record<string, Character> - Character data indexed by Chinese names
+- \`cards\`: Record<string, Card> - Knowledge card data indexed by Chinese names
+- \`specialSkills\`: { cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill> } - Special skills for each faction
+- \`items\`: Record<string, Item> - Game items indexed by Chinese names
+- \`entities\`: { cat: Record<string, Entity>, mouse: Record<string, Entity> } - Entities (summons, projectiles) for each faction
+- \`buffs\`: Record<string, Buff> - Status effects/buffs indexed by Chinese names
+- \`itemGroups\`: Record<string, ItemGroup> - Groups of related items
+- \`historyData\`: GameHistory - Game's historical timeline data with yearly events, balance changes, and new content
 
 **2. When to Use It:**
-You **must** call this tool whenever a user's query is about a specific character or knowledge card. You have access to the following characters: ${JSON.stringify(characters.map(({ id, aliases }) => ({ id, aliases })))} and the following cards: ${JSON.stringify(cards.map(({ id, rank }) => ({ id, rank })))}.
+You **must** call this tool whenever a user's query requires accessing game data.
 
 **3. How to Use It:**
-The tool takes the character's Chinese name as an input. For example: getData(name="汤姆"). The name MUST match exactly with the character or knowledge card's name or one of their aliases or the format \`\${rank}-\${name}\`. 
+Write JavaScript code that accesses the available objects and returns the desired data. The code must include a \`return\` statement with the result.
+Many entities have an \`aliases\` field containing alternative names for searching. When searching by name or alias, check both the primary name (object key) and the aliases array.
+
+**Examples:**
+- Get a character by name or aliases: \`return characters["汤姆"]\` or search by alias
+- Get a card by name or aliases: \`return cards["乘胜追击"]\` or search by alias
+- Get cat special skills by name or aliases: \`return Object.values(specialSkills.cat)\` or search by alias
+- Get an item by name or aliases: \`return items["火箭"]\` or search by alias
+- Get cat entities by name or aliases: \`return Object.values(entities.cat)\` or search by alias
+- Get a buff by name or aliases: \`return buffs["眩晕"]\` or search by alias
+- Get history events: \`return historyData.find(y => y.year === 2020)?.events\`
+- Get balance changes for a character: \`return historyData.flatMap(y => y.events.filter(e => e.details.balance?.characterChanges?.some(c => c.name === "汤姆")))\`
+- Sort characters by HP: \`return Object.values(characters).sort((a,b) => a.maxHp - b.maxHp).map(c => ({id: c.id, maxHp: c.maxHp}))\`
+- Filter by faction: \`return Object.values(characters).filter(c => c.factionId === "cat").map(c => c.id)\`
 
 **4. Data Reliance:**
-Your response **must be based exclusively** on the data returned by the getData tool. Do not add information from other sources or make assumptions. If the tool does not provide a specific piece of information the user asked for, you should state that the information is not available in your database.
+Your response **must be based exclusively** on the data returned by the executeCode tool. Do not add information from other sources or make assumptions. If the tool does not provide a specific piece of information the user asked for, you should state that the information is not available in your database.
+
+# Entity Name-Alias Mappings
+The following entities have aliases for alternative names. Use these mappings when users query by alternative names:${characterAliases}${cardAliases}${specialSkillAliases}${itemAliases}${entityAliases}${buffAliases}${itemGroupAliases}
 
 **5. Return Type:**
-The tool's return type is a JSON object \` { character: CharacterDefinition } | { card: Card } \`.  Below are the detailed TypeScript type definitions for \`CharacterDefinition\`, with each field's meaning explained via comments.
+The tool returns whatever your JavaScript code returns. Typically this will be a Character object, Card object, or an array/object containing the queried data. Below are the detailed TypeScript type definitions for reference:
 
 \`\`\`typescript
 // The unique identifier for a character's faction.
@@ -128,6 +207,7 @@ type SkillLevel = {
   description: string; // A description of the effects at this level.
   detailedDescription?: string; // An optional, more detailed description.
   cooldown?: number; // The skill's cooldown time in seconds at this level.
+  charges?: number; // Number of charges the skill can store at this level
 };
 
 // The complete definition of a character's skill.
@@ -189,6 +269,7 @@ type CharacterRelationItem = {
 // The main data structure for a single character.
 type CharacterDefinition = {
   description: string; // The character's in-game biography or description.
+  imageUrl?: string; // Image URL for the character (auto-generated).
   aliases?: string[]; // Alternative names for the character, used for searching.
 
   // --- Base Character Attributes ---
@@ -201,6 +282,8 @@ type CharacterDefinition = {
   // --- Cat-Specific Attributes ---
   clawKnifeCdHit?: number; // Cooldown of the basic claw attack on a successful hit.
   clawKnifeCdUnhit?: number; // Cooldown of the basic claw attack on a miss.
+  specialClawKnifeCdHit?: number; // Cooldown of the special claw attack on a successful hit.
+  specialClawKnifeCdUnhit?: number; // Cooldown of the special claw attack on a miss.
   clawKnifeRange?: number; // The range of the basic claw attack.
   initialItem?: string; // The item the cat starts the match with, "老鼠夹" if unspecified.
 
@@ -225,19 +308,27 @@ type CharacterDefinition = {
   counteredByKnowledgeCards?: CharacterRelationItem[]; // Matchups where the opponent's knowledge cards are a disadvantage.
   counteredBySpecialSkills?: CharacterRelationItem[]; // Matchups where the opponent's special skills are a disadvantage.
 
-  counteredEachOther?: CharacterRelationItem[]; // Charaters this character has different relation with (in different time periods within the game),or both parties have low fault tolerance rates.
+  counterEachOther?: CharacterRelationItem[]; // Characters this character has different relation with (in different time periods within the game), or both parties have low fault tolerance rates.
 
   collaborators?: CharacterRelationItem[]; // Characters this character has good synergy with.
 };
 
-// Card-related types
-export type CardRank = 'C' | 'B' | 'A' | 'S';
+export type Character = CharacterDefinition & {
+  id: string; // Chinese name (e.g., '汤姆')
+  factionId?: FactionId; // Optional in base definition, will be assigned in bulk
+  skills: Skill[]; // Processed skills with IDs
+};
 
-export type CardLevel = {
+// Card-related types
+type CardRank = 'C' | 'B' | 'A' | 'S';
+
+type CardLevel = {
   level: number;
   description: string;
   detailedDescription?: string;
 };
+
+type CardPriority = '3级质变' | '提升明显' | '提升较小' | '几乎无提升' | '本身无用';
 
 export type Card = {
   id: string; // Chinese name without rank prefix (e.g., '乘胜追击')
@@ -246,76 +337,175 @@ export type Card = {
   cost: number;
   description: string;
   detailedDescription?: string;
+  imageUrl?: string; // Image URL for the card (auto-generated).
   levels: CardLevel[]; // Each knowledge card has 3 levels
+  priority?: CardPriority; // Priority rating for the card
+  aliases?: string[]; // Alternative names for searching
 };
+
+// Special Skill type
+export type SpecialSkill = {
+  name: string; // Chinese name of the special skill
+  factionId: FactionId; // Which faction this special skill belongs to
+  cooldown: number; // Cooldown time in seconds
+  aliases?: string[]; // Alternative names for searching
+  description?: string; // Basic description
+  detailedDescription?: string; // Detailed description
+  adviceDescription?: string; // Usage advice
+  imageUrl: string; // Image URL for the special skill icon
+};
+
+// Item type
+export type Item = {
+  name: string; // Chinese name of the item
+  imageUrl: string; // Image URL for the item
+  itemtype: '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '特殊类'; // Type of item
+  itemsource: '常规道具' | '衍生道具' | '地图道具'; // Source of item
+  damage?: number; // Damage dealt by the item
+  walldamage?: number; // Damage to wall joints
+  factionId?: FactionId; // Which faction the item belongs to
+  aliases?: string[]; // Alternative names
+  description?: string; // Basic description
+  detailedDescription?: string; // Detailed description
+  create?: string; // How the item is created
+  detailedCreate?: string; // Detailed creation info
+  store?: boolean; // Can be purchased in store
+  price?: number; // Store price
+  unlocktime?: string; // When unlocked in store
+  storeCD?: number; // Store cooldown
+  teamCD?: boolean; // Team-shared cooldown
+  exp?: number; // EXP gained when hitting mouse (for cats)
+};
+
+// Entity type (summons, projectiles, platforms, etc.)
+export type Entity = {
+  name: string; // Chinese name of the entity
+  imageUrl: string; // Image URL for the entity
+  entitytype: '道具类' | '投射物' | '召唤物' | '平台类' | 'NPC' | '变身类' | '指示物' | ('道具类' | '投射物' | '召唤物' | '平台类' | 'NPC' | '变身类' | '指示物')[]; // Type(s) of entity
+  owner?: { name: string; type: string }; // What creates this entity
+  factionId?: FactionId; // Which faction the entity belongs to
+  aliases?: string[]; // Alternative names
+  description?: string; // Basic description
+  detailedDescription?: string; // Detailed description
+  create?: string; // How the entity is created
+  detailedCreate?: string; // Detailed creation info
+  skills?: SkillDefinition[]; // Skills the entity can use
+};
+
+// Buff type (status effects)
+export type Buff = {
+  name: string; // Chinese name of the buff/debuff
+  imageUrl: string; // Image URL for the buff icon
+  type: '正面' | '负面' | '特殊'; // Positive, negative, or special
+  global?: boolean; // Personal or global effect
+  aliases?: string[]; // Alternative names
+  duration?: number | string; // Duration of the buff
+  failure?: string; // Conditions for buff to end
+  target?: string; // Who/what is affected
+  description?: string; // Basic description
+  detailedDescription?: string; // Detailed description
+  stack?: string; // How multiple instances stack
+  detailedStack?: string; // Detailed stacking info
+  source?: { name: string; type: string }[]; // What causes this buff
+  sourceDescription?: string; // Description of sources
+};
+
+// ItemGroup type (groups of related items)
+export type ItemGroup = {
+  name: string; // Name of the item group
+  aliases?: string[]; // Alternative names
+  description?: string; // Description of the group
+  group: { name: string; type: string; factionId?: FactionId }[]; // Items in the group
+  specialImageUrl?: string; // Custom image URL
+};
+
+// GameHistory type
+/**
+ * Defines the type of balance change applied.
+ */
+export enum ChangeType {
+  BUFF = '加强',
+  NERF = '削弱',
+  ADJUSTMENT = '调整',
+  REWORK = '重做',
+}
+
+/**
+ * Represents a detailed balance change for a specific game entity.
+ */
+interface BalanceChange {
+  name: string;
+  changeType: ChangeType;
+}
+
+/**
+ * Details for new content added to the game.
+ */
+interface ContentDetails {
+  newCharacters?: string[];
+  newItems?: string[];
+  newSecondWeapons?: \`\${string}-\${string}\`[]; // \${character}-\${weapon}
+  newKnowledgeCards?: string[];
+}
+
+/**
+ * Details for balance changes affecting various game elements.
+ * This structure is now more detailed.
+ */
+interface BalanceDetails {
+  characterChanges?: BalanceChange[];
+  knowledgeCardChanges?: BalanceChange[];
+  itemChanges?: BalanceChange[];
+}
+
+/**
+ * Represents a single, dated event in the game's history.
+ */
+interface TimelineEvent {
+  date: \`\${number}.\${number}\` | \`\${number}.\${number}-\${'次年' | ''}\${number}.\${number}\`; // e.g., "7.24" or "12.25-次年1.1"
+  description: string;
+  details: {
+    content?: ContentDetails;
+    balance?: BalanceDetails;
+    milestone?: string; // e,g., "游戏上线", "周年庆"
+    testPhaseInfo?: string; // e.g. "公测", "共研服"
+  };
+}
+
+/**
+ * Contains all the timeline events for a specific year.
+ */
+interface YearData {
+  year: number; // e.g., "2020"
+  events: TimelineEvent[];
+}
+
+/**
+ * The complete, structured history of the game.
+ */
+export type GameHistory = YearData[];
 \`\`\`
 `;
 
-// System prompt to define the agent's persona and instructions
-const systemInstruction = {
-  role: 'model',
-  parts: [
-    {
-      text: systemInstructionText,
-    },
-  ],
-};
-
-// Tool definition for fetching character data
-const getDataTool = {
-  functionDeclarations: [
-    {
-      name: 'getData',
-      description:
-        'Get data for a specific Tom and Jerry: Chase character, such as faction, skills, or description.',
-      parameters: {
-        type: 'OBJECT',
-        properties: {
-          name: {
-            type: 'STRING',
-            description: 'The name of the character to get data for.',
-          },
-        },
-        required: ['name'],
+// Tool definition for executing JavaScript code to query game data
+const executeCodeDeclaration: FunctionDeclaration = {
+  name: 'executeCode',
+  description:
+    'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to multiple game data objects including characters, cards, specialSkills, items, entities, buffs, itemGroups, and historyData.',
+  parametersJsonSchema: {
+    type: 'object',
+    properties: {
+      code: {
+        type: 'string',
+        description:
+          'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>), historyData (GameHistory). Examples: return characters["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]; return historyData.find(y => y.year === 2020)',
       },
     },
-  ],
+    required: ['code'],
+  },
 };
 
-/**
- * Placeholder for the actual tool implementation.
- * The user will replace this with the real data fetching logic.
- */
-async function getData({ name }: { name: string }) {
-  console.log(`Tool called: getData for "${name}"`);
-
-  // Try exact character id or alias
-  const character =
-    characters.find((c) => c.id === name) ?? characters.find((c) => c.aliases?.includes(name));
-  if (character) {
-    return { character };
-  }
-
-  // Normalize card name: allow "A-加大火力" style inputs
-  const rankPrefixMatch = String(name).match(/^[SABC]-(.+)$/);
-  const normalized = rankPrefixMatch?.[1]?.trim() ?? name;
-
-  // Try exact card id first
-  const cardById = cards.find((card) => card.id === normalized);
-  if (cardById) {
-    return { card: cardById };
-  }
-
-  // Try fuzzy card match by id equality with original input as fallback
-  const cardByOriginal = cards.find((card) => card.id === name);
-  if (cardByOriginal) {
-    return { card: cardByOriginal };
-  }
-
-  return { error: `Item "${name}" not found.` };
-}
-
-// Main POST handler for the chat API
+// Main POST handler for the chat API - returns function calls for client to execute
 export async function POST(req: NextRequest) {
   try {
     const { messages }: { messages: Content[] } = await req.json();
@@ -330,92 +520,56 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const getGeminiUrl = () =>
-      `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+    // Initialize Google GenAI SDK
+    const ai = new GoogleGenAI({ apiKey });
 
-    const currentMessages: Content[] = [...messages];
-    const MAX_TOOL_CALLS = 5; // Safety break to prevent infinite loops
-
-    for (let i = 0; i < MAX_TOOL_CALLS; i++) {
-      const requestBody = {
-        contents: currentMessages,
-        tools: [getDataTool],
-        safetySettings,
-        systemInstruction,
-      };
-
-      console.log(`Loop ${i + 1} - Request body:`, JSON.stringify(requestBody, null, 2));
-
-      const response = await fetch(getGeminiUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-        signal: req.signal,
+    try {
+      // Use SDK's generateContent with automatic function calling
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: messages,
+        config: {
+          tools: [{ functionDeclarations: [executeCodeDeclaration] }],
+          toolConfig: {
+            functionCallingConfig: {
+              mode: FunctionCallingConfigMode.AUTO,
+            },
+          },
+          safetySettings,
+          systemInstruction: systemInstructionText,
+        },
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`API call failed in loop ${i + 1}:`, errorText);
+      console.log('Response received');
+
+      // Check if the model wants to call a function
+      if (response.functionCalls && response.functionCalls.length > 0) {
+        console.log('Function calls detected:', response.functionCalls);
+
+        // Return function calls to client for execution
         return new NextResponse(
-          JSON.stringify({ error: 'Gemini API call failed', details: errorText }),
-          { status: response.status }
+          JSON.stringify({
+            requiresAction: true,
+            functionCalls: response.functionCalls.map((fc) => ({
+              name: fc.name,
+              args: fc.args || {},
+            })),
+          }),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
         );
-      }
-
-      const responseJson = await response.json();
-      console.log(`Loop ${i + 1} - API response:`, JSON.stringify(responseJson, null, 2));
-
-      const candidate = responseJson.candidates?.[0];
-
-      if (!candidate) {
-        console.error('No candidate in response:', responseJson);
-        return new NextResponse(JSON.stringify({ error: 'No response candidate from Gemini' }), {
-          status: 500,
-        });
-      }
-
-      const functionCallPart = candidate.content?.parts?.find((part: Part) => part.functionCall);
-
-      if (functionCallPart?.functionCall) {
-        console.log('Function call detected:', functionCallPart.functionCall);
-        const { name, args } = functionCallPart.functionCall;
-
-        if (name === 'getData') {
-          const toolResult = await getData(args as { name: string });
-          console.log('Tool result:', toolResult);
-
-          // Append the model's function call and the tool's response to the history
-          currentMessages.push(
-            { role: 'model', parts: [functionCallPart] },
-            {
-              role: 'user',
-              parts: [
-                {
-                  functionResponse: {
-                    name: 'getData',
-                    response: { name: 'getData', content: toolResult },
-                  },
-                },
-              ],
-            }
-          );
-          // Continue the loop to send the tool result back to the model
-        } else {
-          console.error('Unsupported tool call:', name);
-          return new NextResponse(JSON.stringify({ error: `Unsupported tool call: ${name}` }), {
-            status: 400,
-          });
-        }
       } else {
-        // No function call, so it must be a text response. We're done.
-        const partsArray = candidate.content?.parts ?? [];
-        const text = partsArray.map((part: Part) => part.text ?? '').join('') || '';
+        // No function call, we have a final text response
+        const text = response.text || '';
         console.log('Final text response:', text);
 
         return new NextResponse(
           JSON.stringify({
             text,
-            candidates: responseJson.candidates,
+            candidates: response.candidates,
           }),
           {
             headers: {
@@ -424,18 +578,24 @@ export async function POST(req: NextRequest) {
           }
         );
       }
-    }
+    } catch (apiError) {
+      // Handle SDK-specific errors
+      console.error('API call failed:', apiError);
 
-    // If the loop finishes, it means the maximum number of tool calls was reached.
-    console.error('Maximum number of tool calls reached.');
-    return new NextResponse(
-      JSON.stringify({ error: 'Maximum number of tool calls reached. Please try again.' }),
-      { status: 500 }
-    );
+      if (apiError instanceof Error) {
+        return new NextResponse(
+          JSON.stringify({
+            error: 'Gemini API call failed',
+            details: apiError.message,
+          }),
+          { status: 500 }
+        );
+      }
+      throw apiError;
+    }
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       console.log('Request was aborted by the client.');
-      // Return an empty response to signify abortion
       return new NextResponse('', { status: 204 });
     }
     console.error('Chat API error:', error);

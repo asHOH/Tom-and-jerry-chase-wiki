@@ -29,6 +29,7 @@ const directives = {
   'frame-src': [
     "'self'",
     'about:',
+    'data:',
     'https://vercel.live',
     'https://hcaptcha.com',
     'https://*.hcaptcha.com',
