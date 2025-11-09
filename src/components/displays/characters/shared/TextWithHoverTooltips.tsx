@@ -10,7 +10,18 @@ import { getCardRankColors } from '@/lib/design-tokens';
 import Tag from '@/components/ui/Tag';
 import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
 
-const nameBlacklist = ['破墙', '捕鼠夹', '爪刀', '迅', '三叉戟', '绝地反击', '追风', '兔子'];
+const nameBlacklist = [
+  '破墙',
+  '捕鼠夹',
+  '爪刀',
+  '迅',
+  '三叉戟',
+  '绝地反击',
+  '追风',
+  '兔子',
+  '大表哥',
+  '相助',
+];
 
 function preprocessText(text: string, currentCharacterName?: string | undefined): string {
   // If text already contains curly braces, return as-is

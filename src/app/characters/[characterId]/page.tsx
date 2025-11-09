@@ -115,7 +115,12 @@ export default async function CharacterPage({
               'title',
               [characterId]
                 .concat(character?.aliases ?? [])
-                .map((name) => `萌新专区角色教学，${name}`)
+                .flatMap((name) => [
+                  `${name}攻略修复版`,
+                  `${name}一武攻略修复版`,
+                  `${name}二武攻略修复版`,
+                  `萌新专区角色教学，${name}`,
+                ])
             )
             .limit(1)
             .single()
