@@ -243,12 +243,14 @@ export default function SkillCard({
       properties.push(
         createBooleanCheckbox('移动释放', 'canMoveWhileUsing', '可移动释放', '不可移动释放'),
         createBooleanCheckbox('空中释放', 'canUseInAir', '可空中释放', '不可空中释放'),
-        createBooleanCheckbox(
-          '造成受伤状态',
-          'causesWoundedState',
-          '可造成受伤状态',
-          '不可造成受伤状态'
-        ),
+        localCharacter.factionId == 'cat'
+          ? createBooleanCheckbox(
+              '造成受伤状态',
+              'causesWoundedState',
+              '可造成受伤状态',
+              '不可造成受伤状态'
+            )
+          : undefined,
         <div className='flex flex-wrap gap-1 items-center'>
           {(() => {
             const specialOptions = ['不可主动打断'] as const;
