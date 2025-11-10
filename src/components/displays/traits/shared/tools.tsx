@@ -32,9 +32,10 @@ const checkOneItem = (
   groupItem: SingleItemOrGroup,
   singleItem: SingleItem,
   singleItemFactionId?: FactionId,
-  excludeFactionId: FactionId | undefined = undefined
+  excludeFactionId: FactionId | undefined = undefined,
+  noGroup: boolean = false
 ): boolean => {
-  if (groupItem.type === 'itemGroup') {
+  if (!noGroup && groupItem.type === 'itemGroup') {
     return (
       itemGroups[groupItem.name]?.group.some(
         (item) =>
@@ -65,7 +66,8 @@ export const checkItemMatchesGroup = (
   groupItem: SingleItemOrGroup | SingleItemOrGroup[],
   singleItem: SingleItem,
   excludeFactionId: FactionId | undefined = undefined,
-  checkMode: 'default' | 'hard' = 'default'
+  checkMode: 'default' | 'hard' = 'default',
+  noGroup: boolean = false
 ): boolean => {
   const singleItemFactionId = getSingleItemFactionId(singleItem);
 
@@ -77,9 +79,9 @@ export const checkItemMatchesGroup = (
   //常规索引
   const matchItem = Array.isArray(groupItem)
     ? groupItem.find((item) =>
-        checkOneItem(item, singleItem, singleItemFactionId, excludeFactionId)
+        checkOneItem(item, singleItem, singleItemFactionId, excludeFactionId, noGroup)
       )
-    : checkOneItem(groupItem, singleItem, singleItemFactionId, excludeFactionId);
+    : checkOneItem(groupItem, singleItem, singleItemFactionId, excludeFactionId, noGroup);
   if (matchItem !== undefined) {
     return !!matchItem;
   }
@@ -94,11 +96,15 @@ export const checkItemMatchesGroup = (
  * @param trait - 要检查的Trait
  * @param singleItem - 要匹配的对象（该函数会自动寻找并匹配factionId）
  * @param checkMode - 筛选模式（default或hard），若选用hard模式，则会改为将所给singleItem的factionId作为excludeFactionId属性的考虑内容
+ * @param noGroup - 若为true，则不对任何itemGroup进行拆解
+ * @param noSpacialCase - 若为true，则不对SpacialCase的内容进行查找
  */
 export const checkItemMatchesTrait = (
   trait: Trait,
   singleItem: SingleItem,
-  checkMode: 'default' | 'hard' = 'default'
+  checkMode: 'default' | 'hard' = 'default',
+  noGroup: boolean = false,
+  noSpacialCase: boolean = false
 ): boolean => {
   const singleItemFactionId = getSingleItemFactionId(singleItem);
   // hard模式：直接检查singleItem的FactionId与excludeFactionId是否一致，若一致则跳过后续内容
@@ -110,11 +116,11 @@ export const checkItemMatchesTrait = (
   }
 
   // 优先检查spacialCase
-  if (trait.spacialCase && trait.spacialCase.length > 0) {
+  if (!noSpacialCase && trait.spacialCase && trait.spacialCase.length > 0) {
     for (const sc of trait.spacialCase) {
       if (
         sc.group.some((groupItem) =>
-          checkItemMatchesGroup(groupItem, singleItem, trait.excludeFactionId)
+          checkItemMatchesGroup(groupItem, singleItem, trait.excludeFactionId, 'default', noGroup)
         )
       ) {
         return true;
@@ -124,7 +130,7 @@ export const checkItemMatchesTrait = (
 
   // 如果没有在spacialCase中找到，检查原始group
   return trait.group.some((groupItem) =>
-    checkItemMatchesGroup(groupItem, singleItem, trait.excludeFactionId)
+    checkItemMatchesGroup(groupItem, singleItem, trait.excludeFactionId, 'default', noGroup)
   );
 };
 

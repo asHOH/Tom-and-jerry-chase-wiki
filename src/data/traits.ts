@@ -32,21 +32,10 @@ const traits: Trait[] = [
   {
     group: [
       { name: '发怒冲刺', type: 'skill' },
-      [
-        { name: '尼宝的朋友', type: 'entity' },
-        { name: '鱼钩', type: 'entity' },
-      ],
-    ],
-    description: '发怒冲刺期间依然会被鱼钩牵引，但不会掉落手中老鼠。',
-  },
-  {
-    group: [
-      { name: '发怒冲刺', type: 'skill' },
       { name: '星星', type: 'entity' },
       { name: '大星星', type: 'entity' },
     ],
-    description:
-      '汤姆在发怒冲刺期间免疫被8星命中导致的变身效果，但仍会因被1/2/4/6星命中而受到伤害。',
+    description: '发怒冲刺期间免疫被8星命中导致的变身效果，但仍会因被1/2/4/6星命中而受到伤害。',
   },
   {
     group: [
@@ -54,7 +43,7 @@ const traits: Trait[] = [
       { name: '蓝图(投射物)', type: 'entity' },
       { name: '线条猫', type: 'entity' },
     ],
-    description: '汤姆在发怒冲刺期间免疫被3级蓝图直接命中导致的变身效果。',
+    description: '发怒冲刺期间免疫被3级蓝图直接命中导致的变身效果。',
   },
   {
     group: [
@@ -378,6 +367,7 @@ const traits: Trait[] = [
         description: '警戒无法清除由2级野生体格或恶魔之门（友方使用时）提供的护盾。',
       },
     ],
+    excludeFactionId: 'cat',
   },
   {
     group: [
@@ -600,7 +590,7 @@ const traits: Trait[] = [
       { name: '旋刃剑舞', type: 'skill' },
       [
         { name: '鼠方护盾效果', type: 'itemGroup' },
-        { name: '鼠方霸体效果', type: 'itemGroup' },
+        { name: '免控', type: 'buff' },
         { name: '鼠方无敌效果', type: 'itemGroup' },
         { name: '鼠方变身效果', type: 'itemGroup' },
         { name: '捣蛋鬼', type: 'skill' },
@@ -788,6 +778,58 @@ const traits: Trait[] = [
   //----------------------------------音乐家杰瑞--------------------------------------/
   //----------------------------------蒙金奇------------------------------------------/
   //----------------------------------尼宝--------------------------------------------/
+  {
+    group: [
+      [
+        { name: '尼宝的朋友', type: 'entity' },
+        { name: '鱼钩', type: 'entity' },
+      ],
+      [
+        { name: '护盾', type: 'buff' },
+        { name: '无敌', type: 'buff' },
+        { name: '免控', type: 'buff' },
+        { name: '霸体', type: 'buff' },
+        { name: '绝对霸体', type: 'buff' },
+      ],
+    ],
+    description: '鱼钩的控制和掉落老鼠的效果无视绝大多数的护盾、无敌、霸体等效果。',
+    spacialCase: [
+      {
+        group: [
+          { name: '发怒冲刺', type: 'skill' },
+          [
+            { name: '尼宝的朋友', type: 'entity' },
+            { name: '鱼钩', type: 'entity' },
+          ],
+        ],
+        description: '发怒冲刺[生效](不包括前摇)期间依然会被鱼钩牵引，但不会掉落手中老鼠。',
+      },
+    ],
+    excludeFactionId: 'mouse',
+  },
+  {
+    group: [
+      [
+        { name: '尼宝的朋友', type: 'entity' },
+        { name: '鱼钩', type: 'entity' },
+      ],
+      { name: '免控相关效果', type: 'itemGroup' },
+    ],
+    description: '鱼钩的控制和掉落老鼠的效果无视绝大多数的护盾、无敌、霸体等效果。',
+    spacialCase: [
+      {
+        group: [
+          { name: '发怒冲刺', type: 'skill' },
+          [
+            { name: '尼宝的朋友', type: 'entity' },
+            { name: '鱼钩', type: 'entity' },
+          ],
+        ],
+        description: '发怒冲刺[生效](不包括前摇)期间依然会被鱼钩牵引，但不会掉落手中老鼠。',
+      },
+    ],
+    excludeFactionId: 'mouse',
+  },
   //----------------------------------朵朵--------------------------------------------/
   //----------------------------------仙女鼠------------------------------------------/
   //----------------------------------米可--------------------------------------------/

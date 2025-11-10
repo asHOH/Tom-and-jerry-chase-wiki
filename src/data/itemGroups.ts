@@ -360,6 +360,16 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
       { name: '鼠虚弱', type: 'buff' },
     ],
   },
+  免控相关效果: {
+    group: [
+      { name: '护盾', type: 'buff' },
+      { name: '无敌', type: 'buff' },
+      { name: '免控', type: 'buff' },
+      { name: '霸体', type: 'buff' },
+      { name: '绝对霸体', type: 'buff' },
+    ],
+    description: '鱼钩的控制和掉落老鼠的效果无视绝大多数的护盾、无敌、霸体等效果。',
+  },
 };
 
 const ItemsWithoutImages: Record<string, ItemGroup> = Object.fromEntries(

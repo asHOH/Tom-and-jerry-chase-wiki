@@ -7,13 +7,7 @@ import {
   FactionId,
   TraitGroup,
 } from '@/data/types';
-import { getSingleItemFactionId } from '@/lib/singleItemTools';
-import {
-  checkItemMatchesGroup,
-  checkItemMatchesTrait,
-  compareFactionId,
-  searchBuffBySingleItem,
-} from './tools';
+import { checkItemMatchesGroup, checkItemMatchesTrait, searchBuffBySingleItem } from './tools';
 
 // 辅助函数：为singleItemOrGroup生成符合要求的链接文本，包括颜色信息
 const getSingleItemNameWithColorText = (singleItemOrGroup: SingleItemOrGroup): string => {
@@ -26,23 +20,6 @@ const getSingleItemNameWithColorText = (singleItemOrGroup: SingleItemOrGroup): s
       ? 'text-orange-600 dark:text-orange-400'
       : 'text-blue-700 dark:text-blue-400';
   return `{$${singleItemOrGroup.name}$${textColor}#(${SingleItemTypeChineseName})}`;
-};
-
-// 辅助函数：检查Trait中是否直接包含指定的SingleItem（注意：不包括数组或itemGroup拆解）
-const traitDirectlyContainsSingleItem = (trait: Trait, singleItem: SingleItem): boolean => {
-  const singleItemFactionId = getSingleItemFactionId(singleItem);
-
-  return trait.group.some((groupItem) => {
-    // 排除数组和itemGroup，只检查直接的单体SingleItem
-    if (!Array.isArray(groupItem) && groupItem.type !== 'itemGroup') {
-      return (
-        groupItem.name === singleItem.name &&
-        groupItem.type === singleItem.type &&
-        compareFactionId(singleItemFactionId, getSingleItemFactionId(groupItem))
-      );
-    }
-    return false;
-  });
 };
 
 // 辅助函数：生成Trait的完整group的显示文本。isMinor属性决定最终文本的前缀类型
@@ -80,19 +57,27 @@ const formatWithExclusion = (
   isMinor: boolean = false
 ): string => {
   const itemNames: string[] = [];
-  const printName: string[] = [singleItem.name]; // 最终显示时只会显示最后一个名称
+  const printItem: SingleItemOrGroup[] = [singleItem]; // 最终显示时只会显示最后一个名称
 
   group.forEach((groupItem) => {
     if (Array.isArray(groupItem)) {
-      // 对于数组类型，检查是否包含目标singleItem。对itemGroup需进行拆解，且若查找到目标则更改printName
+      // 对于数组类型，检查是否包含目标singleItem。对itemGroup需进行拆解，且若查找到目标则更改printItem
       const containsTarget = checkItemMatchesGroup(groupItem, singleItem, excludeFactionId);
 
       if (!containsTarget) {
-        // 如果不包含目标，保留整个数组，反之则整个删去
+        // 如果不包含目标，保留整个数组
         const arrayItemNames = groupItem
           .map((item) => getSingleItemNameWithColorText(item))
           .join('/');
         itemNames.push(arrayItemNames);
+      } else {
+        // 如果包含目标，则需查找到具体是哪个对象，将其加入PrintItem
+        for (let item of groupItem) {
+          if (checkItemMatchesGroup(item, singleItem, excludeFactionId)) {
+            printItem.push(item);
+            break;
+          }
+        }
       }
     } else if (groupItem.type === 'itemGroup') {
       // 对于组合，先判断能否查找到对应组合内容，若无对应目标则整个删去
@@ -106,7 +91,7 @@ const formatWithExclusion = (
           itemNames.push(getSingleItemNameWithColorText(groupItem));
         } else {
           // 如果包含目标，则在最终输出时以该组合的name替代原本SingleItem的name
-          printName.push(groupItem.name);
+          printItem.push(groupItem);
         }
       }
     } else {
@@ -122,7 +107,7 @@ const formatWithExclusion = (
     return `${singleItem.name}：${description}`;
   } else {
     const namesString = itemNames.join('、');
-    return `${isMinor ? ' └─' : ' • '}${getSingleItemNameWithColorText(singleItem)} 与 ${namesString}：${description}`;
+    return `${isMinor ? ' └─' : ' • '}${getSingleItemNameWithColorText(printItem[printItem.length - 1]!)} 与 ${namesString}：${description}`;
   }
 };
 
@@ -135,7 +120,7 @@ const getTraitTextWithSingleItem = (
   if (!!trait.spacialCase && trait.spacialCase.length > 0) {
     const results: string[] = [];
     //若所给singleItem直接存在于外部Trait，则生成主描述，反之则不生成主描述（非拆解）
-    const isMinor: boolean = traitDirectlyContainsSingleItem(trait, singleItem);
+    const isMinor: boolean = checkItemMatchesTrait(trait, singleItem, 'default', true, true);
     if (isMinor) {
       results.push(
         formatWithExclusion(trait.group, trait.description, singleItem, trait.excludeFactionId)
