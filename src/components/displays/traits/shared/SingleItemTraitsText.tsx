@@ -1,93 +1,12 @@
-import { itemGroups } from '@/data';
-import traits from '@/data/traits';
 import { SingleItem, Trait } from '@/data/types';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
-// 导入buffs数据
-import buffs from '@/data/buffs'; // 请根据实际路径调整
-// 导入OneTraitText函数
+import buffs from '@/data/buffs';
+import { filterTraitsBySingleItem } from './filterTraitsBySingleItem';
 import { OneTraitText } from './OneTraitText';
+import { getSingleItemFactionId } from '@/lib/singleItemTools';
+import { compareFactionId } from './tools';
 
-// 辅助函数：比较两个SingleItem的factionId
-const compareFactionId = (
-  factionId1: string | undefined,
-  factionId2: string | undefined
-): boolean => {
-  // 如果任一factionId为undefined，视为相等
-  if (factionId1 === undefined || factionId2 === undefined) {
-    return true;
-  }
-  // 如果都有实际值，则比较是否相等
-  return factionId1 === factionId2;
-};
-
-export const filterTraitsBySingleItem = (singleItem: SingleItem): Trait[] => {
-  return traits.filter((trait) => {
-    // 优先检查spacialCase
-    if (trait.spacialCase && trait.spacialCase.length > 0) {
-      for (const sc of trait.spacialCase) {
-        if (
-          sc.group.some((groupItem) => {
-            if (Array.isArray(groupItem)) {
-              return groupItem.some(
-                (item) =>
-                  singleItem.name === item.name &&
-                  singleItem.type === item.type &&
-                  compareFactionId(singleItem.factionId, item.factionId)
-              );
-            } else if (groupItem.type === 'itemGroup') {
-              return itemGroups[groupItem.name]?.group.some(
-                (item) =>
-                  singleItem.name === item.name &&
-                  singleItem.type === item.type &&
-                  compareFactionId(singleItem.factionId, item.factionId)
-              );
-            } else {
-              return (
-                groupItem.name === singleItem.name &&
-                groupItem.type === singleItem.type &&
-                compareFactionId(singleItem.factionId, groupItem.factionId)
-              );
-            }
-          })
-        ) {
-          return true;
-        }
-      }
-    }
-
-    // 如果没有在spacialCase中找到，检查原始group
-    return trait.group.some((groupItem) => {
-      if (Array.isArray(groupItem)) {
-        return groupItem.some(
-          (item) =>
-            singleItem.name === item.name &&
-            singleItem.type === item.type &&
-            compareFactionId(singleItem.factionId, item.factionId)
-        );
-      } else if (groupItem.type === 'itemGroup') {
-        return itemGroups[groupItem.name]?.group.some(
-          (item) =>
-            singleItem.name === item.name &&
-            singleItem.type === item.type &&
-            compareFactionId(singleItem.factionId, item.factionId)
-        );
-      } else {
-        return (
-          groupItem.name === singleItem.name &&
-          groupItem.type === singleItem.type &&
-          compareFactionId(singleItem.factionId, groupItem.factionId)
-        );
-      }
-    });
-  });
-};
-
-interface SingleItemTraitsTextProps {
-  singleItem: SingleItem;
-  searchBuff?: boolean; // 新增的searchBuff属性
-}
-
-// 辅助函数：根据Trait的内容生成唯一标识符
+// 辅助函数：根据Trait的内容生成唯一标识符，用于去重
 const getTraitKey = (trait: Trait): string => {
   // 使用Trait的描述和组内容生成唯一key
   const groupKey = trait.group
@@ -103,39 +22,48 @@ const getTraitKey = (trait: Trait): string => {
   return `${trait.description}|${groupKey}`;
 };
 
+interface SingleItemTraitsTextProps {
+  singleItem: SingleItem;
+  searchBuff?: boolean;
+}
+
+//主函数 - 根据SingleItem生成所需文本。searchBuff决定是否需要拆解并筛选buff的来源
 export default function SingleItemTraitsText({
   singleItem,
-  searchBuff = true, // 默认值为true
+  searchBuff = true,
 }: SingleItemTraitsTextProps) {
+  const singleItemFactionId = getSingleItemFactionId(singleItem);
+
   // 第1步：引用先前的函数，筛选包含该SingleItem的Trait
   const filteredTraits = filterTraitsBySingleItem(singleItem);
 
-  // 新增：如果searchBuff为true，检索相关的buff
+  // 新增：如果searchBuff为true，检索相关的buff// 修复后的代码
   const buffRelatedTraits: Trait[] = [];
-  const buffItems: SingleItem[] = [];
+  const buffItems: SingleItem[] = []; // 这个数组需要被正确填充
 
   if (searchBuff) {
-    // 查找所有source包含当前singleItem的buff
     Object.values(buffs).forEach((buff) => {
       if (
-        buff.source &&
+        !!buff.source &&
         buff.source.some(
           (sourceItem) =>
             sourceItem.name === singleItem.name &&
             sourceItem.type === singleItem.type &&
-            compareFactionId(singleItem.factionId, sourceItem.factionId)
+            compareFactionId(singleItemFactionId, getSingleItemFactionId(sourceItem))
         )
       ) {
         // 创建buff对应的SingleItem
         const buffItem: SingleItem = {
           name: buff.name,
           type: 'buff',
-          // 如果有其他必要属性，请根据实际情况添加
+          ...(singleItemFactionId !== undefined && { factionId: singleItemFactionId }), //赋予buff额外的factionId属性，以支持filterTraitsBySingleItem的hard模式排除
         };
+
+        // 重要：将buffItem添加到buffItems数组中
         buffItems.push(buffItem);
 
         // 检索该buff相关的trait
-        const buffTraits = filterTraitsBySingleItem(buffItem);
+        const buffTraits = filterTraitsBySingleItem(buffItem, 'hard');
         buffRelatedTraits.push(...buffTraits);
       }
     });

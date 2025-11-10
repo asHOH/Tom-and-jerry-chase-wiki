@@ -142,19 +142,30 @@ const traits: Trait[] = [
   {
     group: [
       { name: '捕虫网', type: 'skill' },
-      { name: '鼠方霸体效果', type: 'itemGroup' },
-    ],
-    description: `捕虫网可以网住持有霸体的老鼠。`,
-  },
-  {
-    group: [
-      { name: '捕虫网', type: 'skill' },
       [
-        { name: '降落伞', type: 'skill' },
-        { name: '格挡之剑', type: 'skill' },
+        { name: '免控', type: 'buff' },
+        { name: '霸体', type: 'buff' },
+        { name: '绝对霸体', type: 'buff' },
       ],
     ],
-    description: '捕虫网无法网住此类无敌期间的老鼠。',
+    description: `捕虫网可以网住处于免控、霸体状态的老鼠。`,
+    spacialCase: [
+      {
+        group: [
+          { name: '捕虫网', type: 'skill' },
+          { name: '降落伞', type: 'skill' },
+        ],
+        description: '捕虫网无法网住降落伞期间的罗宾汉杰瑞。',
+      },
+      {
+        group: [
+          { name: '捕虫网', type: 'skill' },
+          { name: '格挡之剑', type: 'skill' },
+        ],
+        description: '捕虫网无法网住格挡期间的剑客杰瑞。',
+      },
+    ],
+    excludeFactionId: 'cat',
   },
   {
     group: [
@@ -406,27 +417,27 @@ const traits: Trait[] = [
   {
     group: [
       { name: '炮弹', type: 'entity' },
-      [
-        { name: '隐身饮料', type: 'item' },
-        { name: '隐身', type: 'skill' },
-        { name: '分身大师', type: 'skill' },
-        { name: '星星', type: 'entity' },
-        { name: '魔咒强身', type: 'skill' },
-      ],
+      { name: '隐身', type: 'buff' },
     ],
     description:
       '炮弹命中敌方时，会清除大部分隐身效果，包括：隐身饮料、太空堡垒科研舱、部分技能（隐身、分身大师、星星（1星）、2级魔咒强身）提供的隐身。',
-  },
-  {
-    group: [
-      { name: '炮弹', type: 'entity' },
-      [
-        { name: '黄色卡牌', type: 'entity' },
-        { name: '灵活跳跃', type: 'skill' },
-      ],
+    spacialCase: [
+      {
+        group: [
+          { name: '炮弹', type: 'entity' },
+          { name: '黄色卡牌', type: 'entity' },
+        ],
+        description: '炮弹命中不会清除由3级的黄色卡牌提供的隐身。',
+      },
+      {
+        group: [
+          { name: '炮弹', type: 'entity' },
+          { name: '灵活跳跃', type: 'skill' },
+        ],
+        description: '炮弹命中不会清由3级灵活跳跃提供的隐身。',
+      },
     ],
-    description:
-      '炮弹命中敌方时，不会清除此类隐身效果，包括：由3级奇思妙想-黄色卡牌、3级灵活跳跃提供的隐身。',
+    excludeFactionId: 'cat',
   },
   {
     group: [

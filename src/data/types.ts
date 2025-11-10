@@ -450,11 +450,14 @@ interface YearData {
 export type GameHistory = YearData[];
 
 export type SingleItemOrGroup = SingleItem | { name: string; type: 'itemGroup' };
+export type TraitGroupItem = SingleItemOrGroup | SingleItemOrGroup[];
+export type TraitGroup = TraitGroupItem[];
 export type Trait = {
   description: string;
-  group: (SingleItemOrGroup | SingleItemOrGroup[])[];
+  group: TraitGroup;
   spacialCase?: {
     description: string;
-    group: (SingleItemOrGroup | SingleItemOrGroup[])[];
+    group: TraitGroup;
   }[];
+  excludeFactionId?: FactionId;
 };

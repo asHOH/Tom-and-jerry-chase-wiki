@@ -30,7 +30,7 @@ import CreateDateDisplay from './CreateDateDisplay';
 import CharacterHistoryDisplay from './CharacterHistoryDisplay';
 import CollapseCard from '@/components/ui/CollapseCard';
 import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
-import { filterTraitsBySingleItem } from '../../traits/shared/SingleItemTraitsText';
+import { filterTraitsBySingleItem } from '../../traits/shared/filterTraitsBySingleItem';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;

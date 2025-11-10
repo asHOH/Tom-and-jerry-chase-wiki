@@ -1,13 +1,16 @@
 import { itemGroups } from '@/data';
-import { SingleItem, SingleItemOrGroup, Trait, SingleItemTypeChineseNameList } from '@/data/types';
+import {
+  SingleItem,
+  SingleItemOrGroup,
+  Trait,
+  SingleItemTypeChineseNameList,
+  FactionId,
+  TraitGroup,
+} from '@/data/types';
+import { getSingleItemFactionId } from '@/lib/singleItemTools';
+import { checkItemMatchesGroup, checkItemMatchesTrait, compareFactionId } from './tools';
 
-type TraitGroupItem = SingleItemOrGroup | SingleItemOrGroup[];
-type TraitGroup = TraitGroupItem[];
-type TraitSpecialCase = NonNullable<Trait['spacialCase']>[number];
-
-const isItemGroup = (value: SingleItemOrGroup): value is { name: string; type: 'itemGroup' } =>
-  value.type === 'itemGroup';
-
+// 辅助函数：为singleItemOrGroup生成符合要求的链接文本，包括颜色信息
 const getSingleItemNameWithColorText = (singleItemOrGroup: SingleItemOrGroup): string => {
   const SingleItemTypeChineseName =
     singleItemOrGroup.type === 'itemGroup'
@@ -20,122 +23,24 @@ const getSingleItemNameWithColorText = (singleItemOrGroup: SingleItemOrGroup): s
   return `{$${singleItemOrGroup.name}$${textColor}#(${SingleItemTypeChineseName})}`;
 };
 
-// 辅助函数：比较两个SingleItem的factionId
-const compareFactionId = (
-  factionId1: string | undefined,
-  factionId2: string | undefined
-): boolean => {
-  // 如果任一factionId为undefined，视为相等
-  if (factionId1 === undefined || factionId2 === undefined) {
-    return true;
-  }
-  // 如果都有实际值，则比较是否相等
-  return factionId1 === factionId2;
-};
-
-// 辅助函数：检查Trait中是否包含指定的SingleItem
-const traitContainsSingleItem = (trait: Trait, singleItem: SingleItem): boolean => {
-  return trait.group.some((groupItem) => {
-    if (Array.isArray(groupItem)) {
-      return groupItem.some((item) => {
-        if (item.type === 'itemGroup') {
-          return itemGroups[item.name]?.group.some((childrenItem) => {
-            return (
-              singleItem.name === childrenItem.name &&
-              singleItem.type === childrenItem.type &&
-              compareFactionId(singleItem.factionId, childrenItem.factionId)
-            );
-          });
-        } else {
-          return (
-            singleItem.name === item.name &&
-            singleItem.type === item.type &&
-            compareFactionId(singleItem.factionId, item.factionId)
-          );
-        }
-      });
-    } else if (groupItem.type === 'itemGroup') {
-      const group = itemGroups[groupItem.name]?.group;
-      return (
-        group?.some(
-          (item) =>
-            singleItem.name === item.name &&
-            singleItem.type === item.type &&
-            compareFactionId(singleItem.factionId, item.factionId)
-        ) || false
-      );
-    } else {
-      return (
-        groupItem.name === singleItem.name &&
-        groupItem.type === singleItem.type &&
-        compareFactionId(singleItem.factionId, groupItem.factionId)
-      );
-    }
-  });
-};
-
-// 辅助函数：检查Trait中是否直接包含指定的SingleItem（不包括数组或itemGroup拆解）
+// 辅助函数：检查Trait中是否直接包含指定的SingleItem（注意：不包括数组或itemGroup拆解）
 const traitDirectlyContainsSingleItem = (trait: Trait, singleItem: SingleItem): boolean => {
+  const singleItemFactionId = getSingleItemFactionId(singleItem);
+
   return trait.group.some((groupItem) => {
     // 排除数组和itemGroup，只检查直接的单体SingleItem
     if (!Array.isArray(groupItem) && groupItem.type !== 'itemGroup') {
       return (
         groupItem.name === singleItem.name &&
         groupItem.type === singleItem.type &&
-        compareFactionId(singleItem.factionId, groupItem.factionId)
+        compareFactionId(singleItemFactionId, getSingleItemFactionId(groupItem))
       );
     }
     return false;
   });
 };
 
-// 辅助函数：检查spacialCase中是否包含指定的SingleItem
-const spacialCaseContainsSingleItem = (
-  spacialCase: TraitSpecialCase,
-  singleItem: SingleItem
-): boolean => {
-  return spacialCase.group.some((groupItem) => {
-    if (Array.isArray(groupItem)) {
-      return groupItem.some((item) => {
-        if (isItemGroup(item)) {
-          return itemGroups[item.name]?.group.some((childrenItem) => {
-            return (
-              singleItem.name === childrenItem.name &&
-              singleItem.type === childrenItem.type &&
-              compareFactionId(singleItem.factionId, childrenItem.factionId)
-            );
-          });
-        }
-
-        return (
-          singleItem.name === item.name &&
-          singleItem.type === item.type &&
-          compareFactionId(singleItem.factionId, item.factionId)
-        );
-      });
-    }
-
-    if (isItemGroup(groupItem)) {
-      const group = itemGroups[groupItem.name]?.group;
-      return (
-        group?.some(
-          (item) =>
-            singleItem.name === item.name &&
-            singleItem.type === item.type &&
-            compareFactionId(singleItem.factionId, item.factionId)
-        ) || false
-      );
-    }
-
-    return (
-      groupItem.name === singleItem.name &&
-      groupItem.type === singleItem.type &&
-      compareFactionId(singleItem.factionId, groupItem.factionId)
-    );
-  });
-};
-
-// 辅助函数：格式化整个group的显示
+// 辅助函数：生成Trait的完整group的显示文本。isMinor属性决定最终文本的前缀类型
 const formatWholeGroup = (
   group: TraitGroup,
   description: string,
@@ -161,38 +66,21 @@ const formatWholeGroup = (
   return `${isMinor ? ' └─' : ' • '}${namesString}：${description}`;
 };
 
-// 辅助函数：使用排除逻辑格式化文本
+// 辅助函数：生成Trait的基于singleItem为主内容的group的显示文本。isMinor属性决定最终文本的前缀类型
 const formatWithExclusion = (
   group: TraitGroup,
   description: string,
   singleItem: SingleItem,
+  excludeFactionId?: FactionId | undefined,
   isMinor: boolean = false
 ): string => {
   const itemNames: string[] = [];
+  const printName: string[] = [singleItem.name]; // 最终显示时只会显示最后一个名称
 
   group.forEach((groupItem) => {
     if (Array.isArray(groupItem)) {
       // 对于数组类型，检查是否包含目标singleItem。对itemGroup需进行拆解，且若查找到目标则更改printName
-      const containsTarget = groupItem.some((item) => {
-        if (item.type === 'itemGroup') {
-          return itemGroups[item.name]?.group.some((childrenItem) => {
-            if (
-              singleItem.name === childrenItem.name &&
-              singleItem.type === childrenItem.type &&
-              compareFactionId(singleItem.factionId, childrenItem.factionId)
-            ) {
-              return true;
-            }
-            return false;
-          });
-        } else {
-          return (
-            singleItem.name === item.name &&
-            singleItem.type === item.type &&
-            compareFactionId(singleItem.factionId, item.factionId)
-          );
-        }
-      });
+      const containsTarget = checkItemMatchesGroup(groupItem, singleItem, excludeFactionId);
 
       if (!containsTarget) {
         // 如果不包含目标，保留整个数组，反之则整个删去
@@ -206,29 +94,19 @@ const formatWithExclusion = (
       const group = itemGroups[groupItem.name]?.group;
       if (group !== undefined) {
         // 然后检查是否包含目标singleItem
-        const containsTarget = group.some(
-          (item) =>
-            singleItem.name === item.name &&
-            singleItem.type === item.type &&
-            compareFactionId(singleItem.factionId, item.factionId)
-        );
+        const containsTarget = checkItemMatchesGroup(group, singleItem, excludeFactionId);
 
         if (!containsTarget) {
           // 如果不包含目标，则输出组合名
           itemNames.push(getSingleItemNameWithColorText(groupItem));
         } else {
           // 如果包含目标，则在最终输出时以该组合的name替代原本SingleItem的name
+          printName.push(groupItem.name);
         }
       }
     } else {
       // 对于单个SingleItem，如果不是目标SingleItem，则保留
-      if (
-        !(
-          groupItem.name === singleItem.name &&
-          groupItem.type === singleItem.type &&
-          compareFactionId(singleItem.factionId, groupItem.factionId)
-        )
-      ) {
+      if (!checkItemMatchesGroup(groupItem, singleItem, excludeFactionId)) {
         itemNames.push(getSingleItemNameWithColorText(groupItem));
       }
     }
@@ -243,7 +121,7 @@ const formatWithExclusion = (
   }
 };
 
-// 新函数：输入单条Trait以及一个可选的SingleItem，输出该Trait应当显示的文本
+// 主函数：输入单条Trait以及一个可选的SingleItem，输出该Trait应当显示的文本
 export const OneTraitText = (trait: Trait, singleItem?: SingleItem): string | string[] => {
   // 如果没有传入singleItem
   if (!singleItem) {
@@ -263,27 +141,40 @@ export const OneTraitText = (trait: Trait, singleItem?: SingleItem): string | st
   }
 
   // 如果传入了singleItem，优先检查spacialCase
-  if (trait.spacialCase && trait.spacialCase.length > 0) {
+  if (!!trait.spacialCase && trait.spacialCase.length > 0) {
+    const results: string[] = [];
+    //若所给singleItem直接存在于外部Trait，则生成主描述，反之则为副函数（非拆解）
+    const isMinor: boolean = traitDirectlyContainsSingleItem(trait, singleItem);
+    if (isMinor) {
+      results.push(
+        formatWithExclusion(trait.group, trait.description, singleItem, trait.excludeFactionId)
+      );
+    }
+    //遍历每个spacialCase，录入
     for (const sc of trait.spacialCase) {
-      if (spacialCaseContainsSingleItem(sc, singleItem)) {
-        // 如果在spacialCase中找到，检查外部Trait是否也直接包含该singleItem
-        if (traitDirectlyContainsSingleItem(trait, singleItem)) {
-          // 如果外部Trait也直接包含，返回两段文本
-          return [
-            formatWithExclusion(trait.group, trait.description, singleItem),
-            formatWithExclusion(sc.group, sc.description, singleItem, true),
-          ];
-        } else {
-          // 如果外部Trait不直接包含，只返回spacialCase的文本
-          return formatWithExclusion(sc.group, sc.description, singleItem);
-        }
+      if (
+        checkItemMatchesTrait(
+          {
+            ...sc,
+            ...(trait.excludeFactionId !== undefined && {
+              excludeFactionId: trait.excludeFactionId,
+            }),
+          } as Trait, //将内部sc作为单独的Trait进行索引，并对其额外赋予外部的excludeFactionId属性
+          singleItem
+        )
+      ) {
+        results.push(
+          formatWithExclusion(sc.group, sc.description, singleItem, trait.excludeFactionId, isMinor)
+        );
       }
     }
+
+    if (results.length > 0) return results;
   }
 
   // 如果在spacialCase中没找到，检查原始Trait
-  if (traitContainsSingleItem(trait, singleItem)) {
-    return formatWithExclusion(trait.group, trait.description, singleItem);
+  if (checkItemMatchesTrait(trait, singleItem)) {
+    return formatWithExclusion(trait.group, trait.description, singleItem, trait.excludeFactionId);
   }
 
   // 如果都没找到，返回整个group

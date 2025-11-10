@@ -1,8 +1,7 @@
 import CollapseCard from '@/components/ui/CollapseCard';
 import { SingleItem } from '@/data/types';
-import SingleItemTraitsText, {
-  filterTraitsBySingleItem,
-} from '../traits/shared/SingleItemTraitsText';
+import SingleItemTraitsText from '../traits/shared/SingleItemTraitsText';
+import { filterTraitsBySingleItem } from '../traits/shared/filterTraitsBySingleItem';
 
 interface DetailTraitsCardProps {
   singleItem: SingleItem;
