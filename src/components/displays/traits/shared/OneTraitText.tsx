@@ -8,7 +8,12 @@ import {
   TraitGroup,
 } from '@/data/types';
 import { getSingleItemFactionId } from '@/lib/singleItemTools';
-import { checkItemMatchesGroup, checkItemMatchesTrait, compareFactionId } from './tools';
+import {
+  checkItemMatchesGroup,
+  checkItemMatchesTrait,
+  compareFactionId,
+  searchBuffBySingleItem,
+} from './tools';
 
 // 辅助函数：为singleItemOrGroup生成符合要求的链接文本，包括颜色信息
 const getSingleItemNameWithColorText = (singleItemOrGroup: SingleItemOrGroup): string => {
@@ -121,29 +126,15 @@ const formatWithExclusion = (
   }
 };
 
-// 主函数：输入单条Trait以及一个可选的SingleItem，输出该Trait应当显示的文本
-export const OneTraitText = (trait: Trait, singleItem?: SingleItem): string | string[] => {
-  // 如果没有传入singleItem
-  if (!singleItem) {
-    const results: string[] = [];
-
-    // 为原始Trait生成文本
-    results.push(formatWholeGroup(trait.group, trait.description));
-
-    // 如果有spacialCase，为每个spacialCase生成文本
-    if (trait.spacialCase && trait.spacialCase.length > 0) {
-      trait.spacialCase.forEach((sc) => {
-        results.push(formatWholeGroup(sc.group, sc.description, true));
-      });
-    }
-
-    return results;
-  }
-
+// 辅助函数：查找并生成单个singleItem的文本
+const getTraitTextWithSingleItem = (
+  trait: Trait,
+  singleItem: SingleItem
+): string | string[] | null => {
   // 如果传入了singleItem，优先检查spacialCase
   if (!!trait.spacialCase && trait.spacialCase.length > 0) {
     const results: string[] = [];
-    //若所给singleItem直接存在于外部Trait，则生成主描述，反之则为副函数（非拆解）
+    //若所给singleItem直接存在于外部Trait，则生成主描述，反之则不生成主描述（非拆解）
     const isMinor: boolean = traitDirectlyContainsSingleItem(trait, singleItem);
     if (isMinor) {
       results.push(
@@ -175,6 +166,48 @@ export const OneTraitText = (trait: Trait, singleItem?: SingleItem): string | st
   // 如果在spacialCase中没找到，检查原始Trait
   if (checkItemMatchesTrait(trait, singleItem)) {
     return formatWithExclusion(trait.group, trait.description, singleItem, trait.excludeFactionId);
+  }
+
+  return null;
+};
+
+// 主函数：输入单条Trait以及一个可选的SingleItem，输出该Trait应当显示的文本
+export const OneTraitText = (
+  trait: Trait,
+  singleItem?: SingleItem,
+  searchBuff: boolean = true
+): string | string[] => {
+  // 如果没有传入singleItem
+  if (!singleItem) {
+    const results: string[] = [];
+
+    // 为原始Trait生成文本
+    results.push(formatWholeGroup(trait.group, trait.description));
+
+    // 如果有spacialCase，为每个spacialCase生成文本
+    if (trait.spacialCase && trait.spacialCase.length > 0) {
+      trait.spacialCase.forEach((sc) => {
+        results.push(formatWholeGroup(sc.group, sc.description, true));
+      });
+    }
+
+    return results;
+  }
+
+  // 处理singleItem的情况
+  const singleItemResult = getTraitTextWithSingleItem(trait, singleItem);
+  if (singleItemResult !== null) {
+    return singleItemResult;
+  }
+
+  // 以全部buff作为内容，继续查找
+  if (searchBuff) {
+    for (let buffItem of searchBuffBySingleItem(singleItem)) {
+      const buffItemResult = getTraitTextWithSingleItem(trait, buffItem);
+      if (buffItemResult !== null) {
+        return buffItemResult;
+      }
+    }
   }
 
   // 如果都没找到，返回整个group

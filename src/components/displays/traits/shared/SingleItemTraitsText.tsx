@@ -1,26 +1,7 @@
-import { SingleItem, Trait } from '@/data/types';
+import { SingleItem } from '@/data/types';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
-import buffs from '@/data/buffs';
 import { filterTraitsBySingleItem } from './filterTraitsBySingleItem';
 import { OneTraitText } from './OneTraitText';
-import { getSingleItemFactionId } from '@/lib/singleItemTools';
-import { compareFactionId } from './tools';
-
-// 辅助函数：根据Trait的内容生成唯一标识符，用于去重
-const getTraitKey = (trait: Trait): string => {
-  // 使用Trait的描述和组内容生成唯一key
-  const groupKey = trait.group
-    .map((item) => {
-      if (Array.isArray(item)) {
-        return `[${item.map((i) => `${i.name}:${i.type}`).join(',')}]`;
-      } else {
-        return `${item.name}:${item.type}`;
-      }
-    })
-    .join('|');
-
-  return `${trait.description}|${groupKey}`;
-};
 
 interface SingleItemTraitsTextProps {
   singleItem: SingleItem;
@@ -32,69 +13,8 @@ export default function SingleItemTraitsText({
   singleItem,
   searchBuff = true,
 }: SingleItemTraitsTextProps) {
-  const singleItemFactionId = getSingleItemFactionId(singleItem);
-
-  // 第1步：引用先前的函数，筛选包含该SingleItem的Trait
-  const filteredTraits = filterTraitsBySingleItem(singleItem);
-
-  // 新增：如果searchBuff为true，检索相关的buff// 修复后的代码
-  const buffRelatedTraits: Trait[] = [];
-  const buffItems: SingleItem[] = []; // 这个数组需要被正确填充
-
-  if (searchBuff) {
-    Object.values(buffs).forEach((buff) => {
-      if (
-        !!buff.source &&
-        buff.source.some(
-          (sourceItem) =>
-            sourceItem.name === singleItem.name &&
-            sourceItem.type === singleItem.type &&
-            compareFactionId(singleItemFactionId, getSingleItemFactionId(sourceItem))
-        )
-      ) {
-        // 创建buff对应的SingleItem
-        const buffItem: SingleItem = {
-          name: buff.name,
-          type: 'buff',
-          ...(singleItemFactionId !== undefined && { factionId: singleItemFactionId }), //赋予buff额外的factionId属性，以支持filterTraitsBySingleItem的hard模式排除
-        };
-
-        // 重要：将buffItem添加到buffItems数组中
-        buffItems.push(buffItem);
-
-        // 检索该buff相关的trait
-        const buffTraits = filterTraitsBySingleItem(buffItem, 'hard');
-        buffRelatedTraits.push(...buffTraits);
-      }
-    });
-  }
-
-  // 分别对原生trait和buff相关trait去重
-  const baseTraits: Trait[] = [];
-  const baseSeenKeys = new Set<string>();
-
-  filteredTraits.forEach((trait) => {
-    const key = getTraitKey(trait);
-    if (!baseSeenKeys.has(key)) {
-      baseSeenKeys.add(key);
-      baseTraits.push(trait);
-    }
-  });
-
-  const buffTraits: Trait[] = [];
-  const buffSeenKeys = new Set<string>();
-
-  buffRelatedTraits.forEach((trait) => {
-    const key = getTraitKey(trait);
-    // 排除已经在原生trait中出现的trait
-    if (!baseSeenKeys.has(key) && !buffSeenKeys.has(key)) {
-      buffSeenKeys.add(key);
-      buffTraits.push(trait);
-    }
-  });
-
-  // 合并trait，原生trait在前，buff相关trait在后
-  const allTraits = [...baseTraits, ...buffTraits];
+  // 第1步：筛选包含该SingleItem的Trait
+  const allTraits = filterTraitsBySingleItem(singleItem, 'default', searchBuff);
 
   if (allTraits.length === 0) {
     return (
@@ -106,18 +26,8 @@ export default function SingleItemTraitsText({
   const result: string[] = [];
 
   allTraits.forEach((trait) => {
-    // 判断当前trait是来自原生singleItem还是buff
-    const isFromBuff = buffTraits.includes(trait);
-    const currentItem = isFromBuff
-      ? buffItems.find((buffItem) =>
-          filterTraitsBySingleItem(buffItem).some((t) => getTraitKey(t) === getTraitKey(trait))
-        )
-      : singleItem;
-
-    if (!currentItem) return;
-
     // 使用导入的函数生成文本
-    const textResult = OneTraitText(trait, currentItem);
+    const textResult = OneTraitText(trait, singleItem);
 
     // 处理OneTraitText返回的结果（可能是字符串或字符串数组）
     if (Array.isArray(textResult)) {

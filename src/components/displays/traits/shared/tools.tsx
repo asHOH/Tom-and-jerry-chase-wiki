@@ -1,6 +1,7 @@
 import { itemGroups } from '@/data';
 import { SingleItem, SingleItemOrGroup, FactionId, Trait } from '@/data/types';
 import { getSingleItemFactionId } from '@/lib/singleItemTools';
+import buffs from '@/data/buffs';
 
 // 导出-辅助函数：判断两个factionId是否相同，默认会将undefined视作任意一种factionId，若采用严格模式则双方必须均不为undefined
 export const compareFactionId = (
@@ -125,4 +126,35 @@ export const checkItemMatchesTrait = (
   return trait.group.some((groupItem) =>
     checkItemMatchesGroup(groupItem, singleItem, trait.excludeFactionId)
   );
+};
+
+//辅助函数-根据SingleItem查找buff
+/**
+ *@param singleItem - 被查找的对象
+ */
+export const searchBuffBySingleItem = (singleItem: SingleItem): SingleItem[] => {
+  const buffItems: SingleItem[] = [];
+  const singleItemFactionId = getSingleItemFactionId(singleItem);
+  Object.values(buffs).forEach((buff) => {
+    if (
+      !!buff.source &&
+      buff.source.some(
+        (sourceItem) =>
+          sourceItem.name === singleItem.name &&
+          sourceItem.type === singleItem.type &&
+          compareFactionId(singleItemFactionId, getSingleItemFactionId(sourceItem))
+      )
+    ) {
+      // 创建buff对应的SingleItem
+      const buffItem: SingleItem = {
+        name: buff.name,
+        type: 'buff',
+        ...(singleItemFactionId !== undefined && { factionId: singleItemFactionId }), //赋予buff额外的factionId属性，以支持hard模式排除
+      };
+
+      // 重要：将buffItem添加到buffItems数组中
+      buffItems.push(buffItem);
+    }
+  });
+  return buffItems;
 };
