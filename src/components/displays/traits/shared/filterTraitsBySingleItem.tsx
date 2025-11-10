@@ -31,7 +31,7 @@ export const filterTraitsBySingleItem = (
   checkMode: 'default' | 'hard' = 'default',
   searchBuff: boolean = true
 ): Trait[] => {
-  const filteredTraits = traits.filter((trait) =>
+  const filteredTraits = Object.values(traits).filter((trait) =>
     checkItemMatchesTrait(trait, singleItem, checkMode)
   );
   if (!searchBuff) return filteredTraits;

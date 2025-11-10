@@ -36,69 +36,7 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
       { name: '力大无穷', type: 'skill' },
     ],
   },
-  //鼠方效果组。注：恶魔杰瑞3被、米雪儿武器技能、梦游杰瑞主动技能未被收录在以下组合中，检查信息是否有缺漏时注意这些技能
-  鼠方护盾效果: {
-    description:
-      '包括：护盾饮料、护佑、回家、威严光盾、国王战旗-守护战旗、3级勇者无惧、恶魔之门（友方使用时）、2级天使祝福、2级野生体格、小情绪、3级幻风礼服提供的护盾。每层护盾均能免疫1次负面效果。',
-    group: [
-      { name: '护盾饮料', type: 'item' },
-      { name: '护佑', type: 'knowledgeCard' },
-      { name: '回家', type: 'knowledgeCard' },
-      { name: '威严光盾', type: 'skill' },
-      { name: '守护战旗', type: 'entity' },
-      { name: '勇者无惧', type: 'skill' },
-      { name: '恶魔之门', type: 'entity' },
-      { name: '天使祝福', type: 'skill' },
-      { name: '野生体格', type: 'skill' },
-      { name: '小情绪', type: 'skill' },
-      { name: '幻风礼服', type: 'skill' },
-    ],
-  },
-  鼠方霸体效果: {
-    description:
-      '包括：3级登山飞镐、2级剑舞华尔兹、2级圆滚滚、2级西部风情、3级天使翅膀、2级弹力圆球、2级怒气喷发、勇往直前、2级灵活跳跃、说出你的故事、滑步踢、梦幻舞步。\n另：本词条所指的“霸体”只包括能够免疫控制效果但不免疫伤害的“霸体”状态，不包括会免疫伤害的“无敌”、以及部分变身效果。',
-    group: [
-      { name: '登山飞镐', type: 'skill' },
-      { name: '剑舞华尔兹', type: 'skill' },
-      { name: '圆滚滚', type: 'skill' },
-      { name: '西部风情', type: 'skill' },
-      { name: '天使翅膀', type: 'skill' },
-      { name: '弹力圆球', type: 'skill' },
-      { name: '怒气喷发', type: 'skill' },
-      { name: '勇往直前', type: 'skill' },
-      { name: '灵活跳跃', type: 'skill' },
-      { name: '说出你的故事', type: 'skill' },
-      { name: '滑步踢', type: 'skill' },
-      { name: '梦幻舞步', type: 'skill' },
-    ],
-  },
-  鼠方无敌效果: {
-    description:
-      '包括：无畏、舍己、冰冻保鲜、降落伞、国王权杖、格挡之剑、勇气冲刺、3级老牛仔、2级攻无不克提供的无敌。无敌能免疫绝大多数伤害和控制效果。\n另：本词条所指的“无敌”不包括由变身提供的无敌，如需查阅相关信息，请见{鼠方变身效果}。此外，无敌的显示特效各有不同，如需查阅形象与“护盾”接近的无敌效果，请见{鼠方护盾类无敌效果}。', //不包括由变身提供的无敌
-    group: [
-      { name: '无畏', type: 'knowledgeCard' },
-      { name: '舍己', type: 'knowledgeCard' },
-      { name: '冰冻保鲜', type: 'specialSkill' },
-      { name: '降落伞', type: 'skill' },
-      { name: '国王权杖', type: 'skill' },
-      { name: '格挡之剑', type: 'skill' },
-      { name: '勇气冲刺', type: 'skill' },
-      { name: '老牛仔', type: 'skill' },
-      { name: '攻无不克', type: 'skill' },
-    ],
-  },
-  鼠方护盾类无敌效果: {
-    description:
-      '包括：无畏、舍己、冰冻保鲜、国王权杖、3级老牛仔、2级攻无不克提供的无敌。此类无敌在特效上显示为护盾，特性也与护盾相似。', //只包括表现形式为“护盾”的无敌，是前一个组合的子集
-    group: [
-      { name: '无畏', type: 'knowledgeCard' },
-      { name: '舍己', type: 'knowledgeCard' },
-      { name: '冰冻保鲜', type: 'specialSkill' },
-      { name: '国王权杖', type: 'skill' },
-      { name: '老牛仔', type: 'skill' },
-      { name: '攻无不克', type: 'skill' },
-    ],
-  },
+  //变身相关效果待迁移
   鼠方变身效果: {
     description: '包括：头盔、战车、小星星、乾坤袋(NPC)（融合）、比利鼠、机器鼠。',
     group: [
