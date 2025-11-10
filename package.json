@@ -124,7 +124,7 @@
     "cross-env": "^10.1.0",
     "depcheck": "^1.4.7",
     "dotenv": "^17.2.3",
-    "eslint": "^9.39.0",
+    "eslint": "^9.39.1",
     "eslint-config-next": "16.0.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest-dom": "^5.5.0",
@@ -142,7 +142,7 @@
     "sharp": "^0.34.4",
     "storybook": "^9.1.10",
     "supabase": "^2.55.10",
-    "tailwindcss": "^4.1.16",
+    "tailwindcss": "^4.1.17",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
