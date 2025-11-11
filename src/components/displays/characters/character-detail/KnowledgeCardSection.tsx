@@ -273,7 +273,8 @@ function KnowledgeCardGroupFlat({
 
       {!isEditMode &&
         characters[characterId]?.factionId == 'mouse' &&
-        (!cards.includes('C-救救我') || !cards.includes('S-铁血')) && (
+        (!cards.includes('C-救救我') ||
+          (!cards.includes('S-舍己') && !cards.includes('S-无畏'))) && (
           <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
             <Tag
               size='xs'
@@ -285,7 +286,7 @@ function KnowledgeCardGroupFlat({
                   : { background: '#fef2f2', color: '#dc2626' }
               }
             >
-              该卡组无铁血或救救我，新手须谨慎使用
+              该卡组无救援卡或救救我，新手须谨慎使用
             </Tag>
           </div>
         )}
@@ -466,7 +467,10 @@ export function KnowledgeCardGroupDisplay({
         {!isEditMode &&
           characters[characterId]?.factionId == 'mouse' &&
           allFlatCombinations.reduce(
-            (prev, combo) => !combo.includes('C-救救我') || !combo.includes('S-铁血') || prev,
+            (prev, combo) =>
+              !combo.includes('C-救救我') ||
+              (!combo.includes('S-舍己') && !combo.includes('S-无畏')) ||
+              prev,
             false
           ) && (
             <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
@@ -480,7 +484,7 @@ export function KnowledgeCardGroupDisplay({
                     : { background: '#fef2f2', color: '#dc2626' }
                 }
               >
-                该卡组无铁血或救救我，新手须谨慎使用
+                该卡组无救援卡或救救我，新手须谨慎使用
               </Tag>
             </div>
           )}
