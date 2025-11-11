@@ -1,26 +1,19 @@
 import { Trait } from './types';
 
-/*//用于直接引用itemGroups的值（与type=itemGroup效果类似，但这种方式实际显示时会将它们拆开，并且支持与[]嵌套一次）
-const getGroup = (name: string): SingleItem[] => itemGroups[name]?.group || [];
-const getDescription = (name: string): string => itemGroups[name]?.description || '';*/
-
 const traits: Record<string, Trait> = {
   /**
    * 格式说明：
-   * 一条特性包括group，description和isMinor（可选）。其中group由若干个singleItem（即{name,type,factionId?}）组成，isMinor在显示上暂无区别
+   * 一条特性包括group，description和isMinor（可选）。其中group由若干个singleItem（即{name,type,factionId?}）组成
    * 可以用[]框选数个singleItem形成singleItem[]，代表"或"，也就是"其中之一"。[]最多嵌套一层。
    * type='itemGroup'时，代表加入组合，组合会在索引时进行拆解并对每个内容单独判断归属（与[]嵌套类似），在显示时只显示名称。组合可与[]进行嵌套，最多一层
-   * 也可以用本文件顶部给出的两个函数达到类似的效果
+   * 现已支持对type='buff'的拆解，会拆解其来源，逻辑与itemGroup类似
+   * 附加格式1：spacialCase可添加特例，用于覆盖itemGroup或buff拆解而来的对象的文本。显示规则为：特例的相关文本会优先被匹配，若成功匹配中特例，则在后续匹配本体时不会拆解itemGroup和buff，反之则正常拆解。
+   * 附加格式2：excludeFactionId用于在拆解itemGroup和buff时针对性删除'cat'或'mouse'阵营的拆解结果
    *
    * 填写说明：
    * singleItem的name不要用别名，否则会出现索引问题
    * factionId仅用于区分特技里的两个急速翻滚/应急治疗，平时不需要填写
-   * 目前不建议在条目内包含buff，因为buff的归类暂时不太稳定
-   * 善用[]格式，以此更好地区分主次或是复用文案
-   * 文件内分类原则：group内有明确的角色/技能/有持有者的衍生物时，归属到它所属者之一的条目下即可，优先归类到与该特性相关度更高的所属者条目下。如果不确定是否已收录，可以在网站上查看一下有没有相关信息，或在文件内查找，避免重复
-   *
-   * 程序维护说明：
-   * 该文件的数据存储格式与其它data不同，不是record格式（因为特性不需要命名）*/
+   * */
   //----------------------------------汤姆--------------------------------------------/
   汤姆1: {
     group: [
@@ -31,26 +24,22 @@ const traits: Record<string, Trait> = {
   },
   汤姆2: {
     group: [
+      [
+        { name: '蓝图(投射物)', type: 'entity' },
+        { name: '线条猫', type: 'entity' },
+      ],
       { name: '发怒冲刺', type: 'skill' },
-      { name: '星星', type: 'entity' },
-      { name: '大星星', type: 'entity' },
     ],
-    description: '发怒冲刺期间免疫被8星命中导致的变身效果，但仍会因被1/2/4/6星命中而受到伤害。',
-  },
-  汤姆3: {
-    group: [
-      { name: '发怒冲刺', type: 'skill' },
-      { name: '蓝图(投射物)', type: 'entity' },
-      { name: '线条猫', type: 'entity' },
-    ],
-    description: '发怒冲刺期间免疫被3级蓝图直接命中导致的变身效果。',
+    description: '发怒冲刺期间不会因被3级蓝图直接命中而导致变身为线条猫。',
   },
   汤姆4: {
     group: [
       { name: '发怒冲刺', type: 'skill' },
       { name: '星星', type: 'entity' },
-      { name: '蓝图(召唤物)', type: 'entity' },
-      { name: '线条猫', type: 'entity' },
+      [
+        { name: '蓝图(召唤物)', type: 'entity' },
+        { name: '线条猫', type: 'entity' },
+      ],
     ],
     description: '发怒冲刺期间在蓝图内受到伤害（例如被1/2/4/6星命中）依然会变身为线条猫。',
   },
@@ -540,7 +529,7 @@ const traits: Record<string, Trait> = {
     description: `骑士连斩冲刺命中持有护盾的老鼠能解锁第二段，且能无视护盾将其挑飞并连斩，连斩伤害无视护盾直接对角色本身造成伤害，若角色因此虚弱则消耗1层护盾免疫此次虚弱。`,
     excludeFactionId: 'cat',
   },
-  剑客汤姆45: {
+  剑客汤姆5: {
     group: [
       { name: '骑士连斩', type: 'skill' },
       { name: '无敌', type: 'buff' },
@@ -548,20 +537,26 @@ const traits: Record<string, Trait> = {
     description: `骑士连斩冲刺命中无敌期间的老鼠无法解锁第二段，但可借助命中其它目标解锁的二段技能将其挑飞，连斩伤害无视无敌直接对角色本身造成伤害，但无敌持续期间角色不会因此虚弱。`,
     spacialCase: [
       {
-        group: [{ name: '骑士连斩', type: 'skill' }, [{ name: '冰冻保鲜', type: 'specialSkill' }]],
+        group: [
+          { name: '骑士连斩', type: 'skill' },
+          { name: '冰冻保鲜', type: 'specialSkill' },
+        ],
         description: `骑士连斩冲刺命中冰冻保鲜期间的老鼠能解锁第二段，但无法将其挑飞。`,
       },
     ],
     excludeFactionId: 'cat',
   },
-  剑客汤姆5: {
+  剑客汤姆6: {
     group: [
       { name: '骑士连斩', type: 'skill' },
-      { name: '免控', type: 'buff' },
-      { name: '霸体', type: 'buff' },
-      { name: '绝对霸体', type: 'buff' },
+      [
+        { name: '免控', type: 'buff' },
+        { name: '霸体', type: 'buff' },
+        { name: '绝对霸体', type: 'buff' },
+      ],
     ],
     description: `骑士连斩冲刺命中持有霸体的老鼠能解锁第二段，但无法将其挑飞。`,
+    excludeFactionId: 'cat',
   },
   剑客汤姆7: {
     group: [
@@ -570,14 +565,14 @@ const traits: Record<string, Trait> = {
     ],
     description: `骑士连斩冲刺命中变身期间的老鼠能解锁第二段，但无法将其挑飞。`,
   },
-  剑客汤姆9: {
+  剑客汤姆8: {
     group: [
       { name: '剑盾防御', type: 'skill' },
       { name: '远视饮料', type: 'item' },
     ],
     description: '剑盾防御生效期间会移除其它大部分远视效果。',
   },
-  剑客汤姆10: {
+  剑客汤姆9: {
     group: [
       { name: '旋刃剑舞', type: 'skill' },
       [
@@ -588,6 +583,7 @@ const traits: Record<string, Trait> = {
       ],
     ],
     description: `旋刃剑舞第一段无法被任何状态免疫。`,
+    excludeFactionId: 'cat',
   },
   //----------------------------------库博--------------------------------------------/
   库博1: {
@@ -792,6 +788,42 @@ const traits: Record<string, Trait> = {
   },
   //----------------------------------朵朵--------------------------------------------/
   //----------------------------------仙女鼠------------------------------------------/
+  仙女鼠1: {
+    group: [
+      [
+        { name: '星星', type: 'entity' },
+        { name: '大星星', type: 'entity' },
+      ],
+      [
+        { name: '护盾', type: 'buff' },
+        { name: '无敌', type: 'buff' },
+      ],
+    ],
+    description: '护盾效果无法免疫星星的伤害或变身效果。',
+    spacialCase: [
+      {
+        group: [
+          [
+            { name: '星星', type: 'entity' },
+            { name: '大星星', type: 'entity' },
+          ],
+          { name: '发怒冲刺', type: 'skill' },
+        ],
+        description: '发怒冲刺期间不会变身为大星星，但仍会受到被1/2/4/6星命中导致的伤害。',
+      },
+      {
+        group: [
+          [
+            { name: '星星', type: 'entity' },
+            { name: '大星星', type: 'entity' },
+          ],
+          { name: '狂欢时刻', type: 'skill' },
+        ],
+        description: '狂欢时刻期间不会变身为大星星，但仍会受到被1/2/4/6星命中导致的伤害。',
+      },
+    ],
+    excludeFactionId: 'mouse',
+  },
   //----------------------------------米可--------------------------------------------/
   //----------------------------------霜月--------------------------------------------/
   //----------------------------------表演者•杰瑞-------------------------------------/
@@ -809,7 +841,7 @@ const traits: Record<string, Trait> = {
       { name: '狗骨头', type: 'item' },
       { name: '长枪', type: 'entity' },
       { name: '沙包拳头', type: 'skill' },
-    ], //TODO:ADD 眩晕
+    ],
     description:
       '此类道具/技能造成的眩晕无法共存，角色处于由这些来源导致的眩晕时，免疫其它来自这些来源的眩晕。（注："长枪"指2级长枪蓄力超过2/3但未到最大值时的眩晕，"沙包拳头"指游龙拳击退撞到道具导致的额外眩晕）',
   },
