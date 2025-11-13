@@ -128,6 +128,13 @@ function KnowledgeCardGroupFlat({
   const shouldWarnMissingRescueSkill = !isEditMode && isMouseFaction && !hasRescueSkill;
   const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && !hasJiuJiuWo;
   const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && !hasTieXue;
+  const missingWarnings: string[] = [];
+  if (shouldWarnMissingTieXue) missingWarnings.push('无铁血');
+  if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
+  if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
+  const warningMessage = missingWarnings.length
+    ? `该卡组${missingWarnings.join('、')}，慎用`
+    : null;
   const warningTagStyles = isDarkMode
     ? { background: '#dc2626', color: '#fef2f2' }
     : { background: '#fef2f2', color: '#dc2626' };
@@ -281,38 +288,16 @@ function KnowledgeCardGroupFlat({
         </div>
       )}
 
-      {(shouldWarnMissingRescueSkill || shouldWarnMissingJiuJiuWo || shouldWarnMissingTieXue) && (
-        <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14 flex flex-col gap-1'>
-          {shouldWarnMissingRescueSkill && (
-            <Tag
-              size='xs'
-              margin='micro'
-              className='opacity-80 items-center gap-1'
-              colorStyles={warningTagStyles}
-            >
-              该卡组无救援卡，慎用
-            </Tag>
-          )}
-          {shouldWarnMissingJiuJiuWo && (
-            <Tag
-              size='xs'
-              margin='micro'
-              className='opacity-80 items-center gap-1'
-              colorStyles={warningTagStyles}
-            >
-              该卡组无救救我，慎用
-            </Tag>
-          )}
-          {shouldWarnMissingTieXue && (
-            <Tag
-              size='xs'
-              margin='micro'
-              className='opacity-80 items-center gap-1'
-              colorStyles={warningTagStyles}
-            >
-              该卡组无铁血，慎用
-            </Tag>
-          )}
+      {warningMessage && (
+        <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14'>
+          <Tag
+            size='xs'
+            margin='micro'
+            className='opacity-80 items-center gap-1'
+            colorStyles={warningTagStyles}
+          >
+            {warningMessage}
+          </Tag>
         </div>
       )}
 
@@ -403,6 +388,13 @@ export function KnowledgeCardGroupDisplay({
     const shouldWarnMissingRescueSkill = !isEditMode && isMouseFaction && lacksRescueSkill;
     const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && lacksJiuJiuWo;
     const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && lacksTieXue;
+    const missingWarnings: string[] = [];
+    if (shouldWarnMissingTieXue) missingWarnings.push('无铁血');
+    if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
+    if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
+    const warningMessage = missingWarnings.length
+      ? `该卡组${missingWarnings.join('、')}，慎用`
+      : null;
     const warningTagStyles = isDarkMode
       ? { background: '#dc2626', color: '#fef2f2' }
       : { background: '#fef2f2', color: '#dc2626' };
@@ -501,38 +493,16 @@ export function KnowledgeCardGroupDisplay({
           </div>
         )}
 
-        {(shouldWarnMissingRescueSkill || shouldWarnMissingJiuJiuWo || shouldWarnMissingTieXue) && (
-          <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14 flex flex-col gap-1'>
-            {shouldWarnMissingRescueSkill && (
-              <Tag
-                size='xs'
-                margin='micro'
-                className='opacity-80 flex items-center gap-1'
-                colorStyles={warningTagStyles}
-              >
-                该卡组无救援卡，慎用
-              </Tag>
-            )}
-            {shouldWarnMissingJiuJiuWo && (
-              <Tag
-                size='xs'
-                margin='micro'
-                className='opacity-80 flex items-center gap-1'
-                colorStyles={warningTagStyles}
-              >
-                该卡组无救救我，慎用
-              </Tag>
-            )}
-            {shouldWarnMissingTieXue && (
-              <Tag
-                size='xs'
-                margin='micro'
-                className='opacity-80 flex items-center gap-1'
-                colorStyles={warningTagStyles}
-              >
-                该卡组无铁血，慎用
-              </Tag>
-            )}
+        {warningMessage && (
+          <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14'>
+            <Tag
+              size='xs'
+              margin='micro'
+              className='opacity-80 flex items-center gap-1'
+              colorStyles={warningTagStyles}
+            >
+              {warningMessage}
+            </Tag>
           </div>
         )}
 
