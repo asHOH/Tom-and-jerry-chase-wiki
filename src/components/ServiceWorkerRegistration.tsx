@@ -75,9 +75,14 @@ export const ServiceWorkerRegistration: React.FC = () => {
 
       window.addEventListener('load', async () => {
         try {
-          const swResponse = await fetch('/sw.js', { method: 'HEAD' });
+          const swResponse = await fetch('/sw.js', {
+            method: 'GET',
+            cache: 'no-store',
+          });
 
-          if (!swResponse.ok) {
+          const isJavaScript = swResponse.headers.get('content-type')?.includes('javascript');
+
+          if (!swResponse.ok || !isJavaScript) {
             console.warn(
               'Skipping service worker registration: /sw.js returned',
               swResponse.status
@@ -86,6 +91,11 @@ export const ServiceWorkerRegistration: React.FC = () => {
             // Ensure previously installed workers do not keep intercepting requests
             const registrations = await navigator.serviceWorker.getRegistrations();
             await Promise.all(registrations.map((existing) => existing.unregister()));
+
+            if ('caches' in window) {
+              const cacheKeys = await caches.keys();
+              await Promise.all(cacheKeys.map((cacheKey) => caches.delete(cacheKey)));
+            }
 
             setNotification({
               show: true,
