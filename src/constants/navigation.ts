@@ -120,10 +120,10 @@ export const MECHANICS_NAV_ITEMS: readonly NavItem[] = [
     iconAlt: '属性排行图标',
   },
   {
-    id: 'special-skill-advices',
-    label: '特技推荐',
-    href: '/special-skills/advice',
-    iconSrc: '/images//catSpecialSkills/绝地反击.png',
-    iconAlt: '特技推荐图标',
+    id: 'traitCollection',
+    label: '特性大全',
+    href: '/mechanics/traitCollection',
+    iconSrc: '/images//mouseSkills/莱恩2-蘸水笔.png',
+    iconAlt: '特性大全图标',
   },
 ];

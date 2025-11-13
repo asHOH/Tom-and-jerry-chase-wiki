@@ -9,12 +9,12 @@ import clsx from 'clsx';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import Link from 'next/link';
 
-interface CharacterRankingGridProps {
+interface MechanicsNavigationProps {
   children?: React.ReactNode;
   description?: string;
 }
 
-export default function CharacterRankingGrid({ children, description }: CharacterRankingGridProps) {
+export default function MechanicsNavigation({ children, description }: MechanicsNavigationProps) {
   const isMobile = useMobile();
   const { isActive } = useNavigationTabs();
   const isTabActive = (tabPath: string) => isActive(tabPath);
