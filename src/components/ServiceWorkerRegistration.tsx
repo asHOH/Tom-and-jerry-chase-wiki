@@ -75,6 +75,27 @@ export const ServiceWorkerRegistration: React.FC = () => {
 
       window.addEventListener('load', async () => {
         try {
+          const swResponse = await fetch('/sw.js', { method: 'HEAD' });
+
+          if (!swResponse.ok) {
+            console.warn(
+              'Skipping service worker registration: /sw.js returned',
+              swResponse.status
+            );
+
+            // Ensure previously installed workers do not keep intercepting requests
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map((existing) => existing.unregister()));
+
+            setNotification({
+              show: true,
+              message: '当前环境暂未启用离线缓存功能',
+              type: 'info',
+            });
+
+            return;
+          }
+
           const registration = await navigator.serviceWorker.register('/sw.js', {
             scope: '/',
             updateViaCache: 'none', // Always check for SW updates
