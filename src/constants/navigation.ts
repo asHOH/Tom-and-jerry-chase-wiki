@@ -63,4 +63,43 @@ export const NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/icons/article.png',
     iconAlt: '文章图标',
   },
+  {
+    id: 'tools',
+    label: '工具',
+    href: '/tools',
+    iconSrc: '/images/entitySkills/空置道具键.png',
+    iconAlt: '工具图标',
+  },
+];
+
+export const TOOL_NAV_ITEMS: readonly NavItem[] = [
+  {
+    id: 'ranks',
+    label: '属性排行',
+    href: '/ranks',
+    iconSrc: '/images/items/奶酪.png',
+    iconAlt: '属性排行图标',
+  },
+  {
+    id: 'special-skill-advices',
+    label: '特技推荐',
+    href: '/special-skills/advice',
+    iconSrc: '/images//catSpecialSkills/绝地反击.png',
+    iconAlt: '特技推荐图标',
+  },
+  //以下为编辑模式专用工具，正常情况不显示
+  {
+    id: 'item-maker',
+    label: '道具编辑器',
+    href: '/item-maker.html',
+    iconSrc: '/images/icons/item.png',
+    iconAlt: '道具编辑器图标',
+  },
+  {
+    id: 'entity-maker',
+    label: '衍生物编辑器',
+    href: '/entity-maker.html',
+    iconSrc: '/images/icons/entity.png',
+    iconAlt: '衍生物编辑器图标',
+  },
 ];

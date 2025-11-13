@@ -83,6 +83,15 @@ export default function HomeContentClient({ description }: Props) {
     ariaLabel: i.id === 'articles' ? '社区文章列表' : '状态列表',
   }));
 
+  const Buttons5 = NAV_ITEMS.filter((i) => i.id === 'tools').map((i) => ({
+    imageSrc: i.iconSrc,
+    imageAlt: i.iconAlt,
+    title: i.label,
+    description: i.id === 'tools' ? '网站工具栏' : '',
+    href: i.href,
+    ariaLabel: i.id === 'tools' ? '网站工具栏' : '',
+  }));
+
   return (
     <TabNavigationWrapper showDetailToggle={false}>
       <div className='space-y-8'>
@@ -95,6 +104,7 @@ export default function HomeContentClient({ description }: Props) {
         <HomePageSection title='更多内容' buttons={prepareButtons} />
         <HomePageSection buttons={itemButtons} />
         <HomePageSection buttons={cardButtons} />
+        <HomePageSection buttons={Buttons5} />
 
         {/* Division line before 网站说明 */}
         <div className='mt-24 px-2 sm:px-4'>
