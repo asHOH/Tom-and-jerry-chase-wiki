@@ -265,41 +265,40 @@ function KnowledgeCardGroupFlat({
         )}
       </div>
 
-      {!!contributor && !isEditMode && (
-        <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
-          <Tag
-            size='xs'
-            margin='micro'
-            className='opacity-80'
-            colorStyles={
-              isDarkMode
-                ? { background: '#334155', color: '#e0e7ef' }
-                : { background: '#e0e7ef', color: '#1e293b' }
-            }
-          >
-            推荐人：
-            {(contributorInformation?.description !== undefined && (
-              <Tooltip content={contributorInformation.description}>
-                {contributorInformation.name}
-              </Tooltip>
-            )) ||
-              contributor}
-          </Tag>
+      {(!isEditMode && contributor) || warningMessage ? (
+        <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14 flex flex-wrap gap-1 items-center'>
+          {!!contributor && !isEditMode && (
+            <Tag
+              size='xs'
+              margin='micro'
+              className='opacity-80'
+              colorStyles={
+                isDarkMode
+                  ? { background: '#334155', color: '#e0e7ef' }
+                  : { background: '#e0e7ef', color: '#1e293b' }
+              }
+            >
+              推荐人：
+              {(contributorInformation?.description !== undefined && (
+                <Tooltip content={contributorInformation.description}>
+                  {contributorInformation.name}
+                </Tooltip>
+              )) ||
+                contributor}
+            </Tag>
+          )}
+          {warningMessage && (
+            <Tag
+              size='xs'
+              margin='micro'
+              className='opacity-80 items-center gap-1'
+              colorStyles={warningTagStyles}
+            >
+              {warningMessage}
+            </Tag>
+          )}
         </div>
-      )}
-
-      {warningMessage && (
-        <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14'>
-          <Tag
-            size='xs'
-            margin='micro'
-            className='opacity-80 items-center gap-1'
-            colorStyles={warningTagStyles}
-          >
-            {warningMessage}
-          </Tag>
-        </div>
-      )}
+      ) : null}
 
       {(!!description || isEditMode) && (
         <div
@@ -470,41 +469,40 @@ export function KnowledgeCardGroupDisplay({
           )}
         </div>
 
-        {!!contributor && !isEditMode && (
-          <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
-            <Tag
-              size='xs'
-              margin='micro'
-              className='opacity-80'
-              colorStyles={
-                isDarkMode
-                  ? { background: '#334155', color: '#e0e7ef' }
-                  : { background: '#e0e7ef', color: '#1e293b' }
-              }
-            >
-              推荐人：
-              {(contributorInformation?.description !== undefined && (
-                <Tooltip content={contributorInformation.description}>
-                  {contributorInformation.name}
-                </Tooltip>
-              )) ||
-                contributor}
-            </Tag>
+        {(!isEditMode && contributor) || warningMessage ? (
+          <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14 flex flex-wrap gap-1 items-center'>
+            {!!contributor && !isEditMode && (
+              <Tag
+                size='xs'
+                margin='micro'
+                className='opacity-80'
+                colorStyles={
+                  isDarkMode
+                    ? { background: '#334155', color: '#e0e7ef' }
+                    : { background: '#e0e7ef', color: '#1e293b' }
+                }
+              >
+                推荐人：
+                {(contributorInformation?.description !== undefined && (
+                  <Tooltip content={contributorInformation.description}>
+                    {contributorInformation.name}
+                  </Tooltip>
+                )) ||
+                  contributor}
+              </Tag>
+            )}
+            {warningMessage && (
+              <Tag
+                size='xs'
+                margin='micro'
+                className='opacity-80 flex items-center gap-1'
+                colorStyles={warningTagStyles}
+              >
+                {warningMessage}
+              </Tag>
+            )}
           </div>
-        )}
-
-        {warningMessage && (
-          <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14'>
-            <Tag
-              size='xs'
-              margin='micro'
-              className='opacity-80 flex items-center gap-1'
-              colorStyles={warningTagStyles}
-            >
-              {warningMessage}
-            </Tag>
-          </div>
-        )}
+        ) : null}
 
         {(!!description || isEditMode) && (
           <div className='bg-gray-50 dark:bg-slate-700/50 p-2 sm:p-3 rounded-lg ml-11 sm:ml-12 md:ml-13 lg:ml-14'>
