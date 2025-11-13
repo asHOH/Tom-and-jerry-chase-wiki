@@ -6,7 +6,7 @@ import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import MechanicsSection from '@/components/displays/mechanics/mechanicsSection';
 
-const DESCRIPTION = '在地图中散落的各式各样的道具——猫鼠相互对抗的关键机制';
+const DESCRIPTION = '详细介绍游戏内全部的局内机制';
 const sectionChineseNameList: Record<string, string> = { traitCollection: '特性大全' };
 
 // Generate static params for all special skills
