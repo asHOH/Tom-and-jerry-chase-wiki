@@ -263,6 +263,23 @@ function getGitCommits() {
   }
 }
 
+// Convert error-like values into a readable string for logs
+function formatError(error) {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return String(error);
+  }
+}
+
 /**
  * Generate changelogs using Gemini AI
  */
@@ -369,7 +386,7 @@ async function generateChangelogs(commits) {
 
     return changelogs;
   } catch (error) {
-    console.error('Error generating changelogs:', error.message);
+    console.error('Error generating changelogs:', formatError(error));
     throw error;
   }
 }
@@ -389,7 +406,16 @@ async function main() {
 
   console.log(`Found ${commits.split('\n').length} commits`);
 
-  const changelogs = await generateChangelogs(commits);
+  let changelogs;
+
+  try {
+    changelogs = await generateChangelogs(commits);
+  } catch (error) {
+    console.warn('Warning: Failed to generate changelogs with Gemini. Skipping changelog update.');
+    console.warn(`Details: ${formatError(error)}`);
+    console.warn('Tip: Re-run scripts/generate-changelogs.mjs once the Gemini service recovers.');
+    return;
+  }
 
   // Ensure output directory exists
   const outDir = path.join(process.cwd(), 'src', 'data', 'generated');
