@@ -64,6 +64,13 @@ export const NAV_ITEMS: readonly NavItem[] = [
     iconAlt: '文章图标',
   },
   {
+    id: 'mechanics',
+    label: '机制',
+    href: '/mechanics',
+    iconSrc: '/images/mouseEntities/线条火箭.png',
+    iconAlt: '机制图标',
+  },
+  {
     id: 'tools',
     label: '工具',
     href: '/tools',
@@ -101,5 +108,22 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     href: '/entity-maker.html',
     iconSrc: '/images/icons/entity.png',
     iconAlt: '衍生物编辑器图标',
+  },
+];
+
+export const MECHANICS_NAV_ITEMS: readonly NavItem[] = [
+  {
+    id: 'ranks',
+    label: '属性排行',
+    href: '/mechanics',
+    iconSrc: '/images/items/奶酪.png',
+    iconAlt: '属性排行图标',
+  },
+  {
+    id: 'special-skill-advices',
+    label: '特技推荐',
+    href: '/special-skills/advice',
+    iconSrc: '/images//catSpecialSkills/绝地反击.png',
+    iconAlt: '特技推荐图标',
   },
 ];

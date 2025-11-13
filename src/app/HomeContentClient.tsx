@@ -78,18 +78,18 @@ export default function HomeContentClient({ description }: Props) {
     imageSrc: i.iconSrc,
     imageAlt: i.iconAlt,
     title: i.label,
-    description: i.id === 'articles' ? '社区文章列表' : '状态列表',
+    description: i.id === 'articles' ? '社区文章列表' : '状态效果列表',
     href: i.href,
-    ariaLabel: i.id === 'articles' ? '社区文章列表' : '状态列表',
+    ariaLabel: i.id === 'articles' ? '社区文章列表' : '状态效果列表',
   }));
 
-  const Buttons5 = NAV_ITEMS.filter((i) => i.id === 'tools').map((i) => ({
+  const Buttons5 = NAV_ITEMS.filter((i) => i.id === 'mechanics' || i.id === 'tools').map((i) => ({
     imageSrc: i.iconSrc,
     imageAlt: i.iconAlt,
     title: i.label,
-    description: i.id === 'tools' ? '网站工具栏' : '',
+    description: i.id === 'mechanics' ? '局内机制列表' : '便捷工具栏',
     href: i.href,
-    ariaLabel: i.id === 'tools' ? '网站工具栏' : '',
+    ariaLabel: i.id === 'mechanics' ? '局内机制列表' : '便捷工具栏',
   }));
 
   return (
