@@ -1,4 +1,6 @@
-export default function StructuredData({ data }: { data: unknown }) {
+'use server';
+
+export default async function StructuredData({ data }: { data: unknown }) {
   return (
     <script
       type='application/ld+json'

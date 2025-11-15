@@ -6,6 +6,8 @@ import { generateArticleMetadata } from '@/lib/metadataUtils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
+import { Article, WithContext } from 'schema-dts';
+import StructuredData from '@/components/StructuredData';
 
 export const dynamic = 'force-static';
 
@@ -14,6 +16,27 @@ export function generateStaticParams() {
   return Object.keys(cards).map((cardId) => ({
     cardId: cardId, // Don't encode here - Next.js will handle it
   }));
+}
+
+function generateStructuredData(cardId: string): WithContext<Article> | null {
+  const card = cards[cardId];
+
+  if (!card) {
+    return null;
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${card.id} - 猫鼠wiki`,
+    description: card.description,
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://tjwiki.com/cards/${encodeURIComponent(cardId)}`,
+    },
+  };
 }
 
 export async function generateMetadata({
@@ -35,18 +58,6 @@ export async function generateMetadata({
     keywords: [card.id, '知识卡'],
     canonicalUrl: `https://tjwiki.com/cards/${encodeURIComponent(cardId)}`,
     imageUrl: card.imageUrl,
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'Article',
-      headline: `${card.id} - 猫鼠wiki`,
-      description: card.description,
-      author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-      publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-      mainEntityOfPage: {
-        '@type': 'WebPage',
-        '@id': `https://tjwiki.com/cards/${encodeURIComponent(cardId)}`,
-      },
-    },
   });
 }
 
@@ -66,6 +77,7 @@ export default async function CardPage({ params }: { params: Promise<{ cardId: s
     <AppProvider>
       <EditModeProvider>
         <TabNavigationWrapper showDetailToggle={true}>
+          <StructuredData data={generateStructuredData(cardId)} />
           <KnowledgeCardDetailsClient card={card} />
         </TabNavigationWrapper>
       </EditModeProvider>

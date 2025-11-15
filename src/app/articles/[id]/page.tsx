@@ -6,6 +6,12 @@ import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import { notFound } from 'next/navigation';
+import StructuredData from '@/components/StructuredData';
+
+const stripHtml = (html: string | null) => {
+  if (!html) return '';
+  return html.replace(/<[^>]*>?/gm, '');
+};
 
 export async function generateMetadata({
   params,
@@ -33,11 +39,6 @@ export async function generateMetadata({
     .limit(1)
     .single();
 
-  const stripHtml = (html: string | null) => {
-    if (!html) return '';
-    return html.replace(/<[^>]*>?/gm, '');
-  };
-
   const description = stripHtml(latestVersion!.content).substring(0, 150) || article.title;
 
   const canonicalUrl = `https://tjwiki.com/articles/${id}`;
@@ -47,11 +48,6 @@ export async function generateMetadata({
     description: description,
     keywords: ['文章', article.title],
     canonicalUrl,
-    structuredData: buildArticleStructuredData({
-      title: article.title,
-      description: description,
-      canonicalUrl,
-    }),
   });
 }
 
@@ -144,6 +140,15 @@ export default async function ArticlePage({
     <AppProvider>
       <EditModeProvider>
         <TabNavigationWrapper showDetailToggle={false}>
+          <StructuredData
+            data={buildArticleStructuredData({
+              title: response.article.title,
+              description:
+                stripHtml(response.article.latest_version!.content).substring(0, 150) ||
+                response.article.title,
+              canonicalUrl: `https://tjwiki.com/articles/${id}`,
+            })}
+          />
           <ArticleClient article={response.article} />
         </TabNavigationWrapper>
       </EditModeProvider>
