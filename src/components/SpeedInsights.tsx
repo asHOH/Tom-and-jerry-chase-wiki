@@ -1,13 +1,13 @@
 'use client';
 
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { isVercelDeployment } from '@/lib/platform';
 
 export function SpeedInsightsComponent() {
   const isProduction = process.env.NODE_ENV === 'production';
-  const isVercel = process.env.VERCEL === '1';
 
-  // Don't load speed insights in development or if not on Vercel
-  if (!isProduction || !isVercel) {
+  // Only load Speed Insights for Vercel production deployments
+  if (!isProduction || !isVercelDeployment()) {
     return null;
   }
 
