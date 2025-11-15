@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { SITE_SHORT_NAME, DEFAULT_KEYWORDS } from '@/constants/seo';
-import { WithContext, Article } from 'schema-dts';
 
 interface PageMetadata {
   title: string;
@@ -70,28 +69,5 @@ export function generateArticleMetadata({
       type: 'article',
       images,
     },
-  };
-}
-
-export function buildArticleStructuredData({
-  title,
-  description,
-  canonicalUrl,
-  inLanguage = 'zh-CN',
-}: {
-  title: string;
-  description: string;
-  canonicalUrl: string;
-  inLanguage?: string;
-}): WithContext<Article> {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: title,
-    description,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
-    inLanguage,
   };
 }

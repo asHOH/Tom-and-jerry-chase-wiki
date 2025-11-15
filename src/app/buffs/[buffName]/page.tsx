@@ -29,12 +29,13 @@ function generateStructuredData(buffName: string): WithContext<Article> | null {
     '@type': 'Article',
     headline: `${buff.name} - 猫鼠wiki`,
     description: desc,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `https://tjwiki.com/buffs/${encodeURIComponent(buffName)}`,
     },
+    image: buff.imageUrl,
   };
 }
 

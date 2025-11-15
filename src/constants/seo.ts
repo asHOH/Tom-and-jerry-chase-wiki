@@ -1,8 +1,16 @@
 import type { Metadata } from 'next';
 import { DISCLAIMER_TEXT } from '@/constants';
+import { WebSite, WithContext } from 'schema-dts';
 
 export const SITE_NAME = '猫和老鼠手游wiki';
 export const SITE_SHORT_NAME = '猫鼠wiki';
+export const SITE_ALTERNATE_NAME = [
+  SITE_SHORT_NAME,
+  '猫和老鼠手游百科',
+  '猫鼠百科',
+  'Tom and Jerry Chase Wiki',
+  'tjwiki.com',
+];
 export const SITE_URL = 'https://tjwiki.com';
 export const SITE_LANG = 'zh-CN';
 export const SITE_LOCALE = 'zh_CN';
@@ -57,12 +65,12 @@ export const defaultMetadata: Metadata = {
   },
 };
 
-export function getSiteJsonLd() {
+export function getSiteJsonLd(): WithContext<WebSite> {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
-    alternateName: SITE_SHORT_NAME,
+    alternateName: SITE_ALTERNATE_NAME,
     description: `${SITE_NAME} - ${SITE_TAGLINE}`,
     url: SITE_URL,
     inLanguage: SITE_LANG,

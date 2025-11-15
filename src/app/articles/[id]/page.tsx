@@ -1,17 +1,48 @@
 import { Metadata } from 'next';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { generateArticleMetadata, buildArticleStructuredData } from '@/lib/metadataUtils';
+import { generateArticleMetadata } from '@/lib/metadataUtils';
 import ArticleClient from './ArticleClient';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import { notFound } from 'next/navigation';
 import StructuredData from '@/components/StructuredData';
+import { Article, WithContext } from 'schema-dts';
 
 const stripHtml = (html: string | null) => {
   if (!html) return '';
   return html.replace(/<[^>]*>?/gm, '');
 };
+function buildArticleStructuredData({
+  title,
+  description,
+  author,
+  dateModified,
+  datePublished,
+  canonicalUrl,
+  inLanguage = 'zh-CN',
+}: {
+  title: string;
+  description: string;
+  author: string;
+  dateModified: string;
+  datePublished: string;
+  canonicalUrl: string;
+  inLanguage?: string;
+}): WithContext<Article> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    author: { '@type': 'Person', name: author },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    dateModified,
+    datePublished,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
+    inLanguage,
+  };
+}
 
 export async function generateMetadata({
   params,
@@ -143,10 +174,13 @@ export default async function ArticlePage({
           <StructuredData
             data={buildArticleStructuredData({
               title: response.article.title,
+              author: response.article.users_public_view.nickname!,
               description:
                 stripHtml(response.article.latest_version!.content).substring(0, 150) ||
                 response.article.title,
               canonicalUrl: `https://tjwiki.com/articles/${id}`,
+              dateModified: response.article.latest_version!.created_at!,
+              datePublished: response.article.created_at,
             })}
           />
           <ArticleClient article={response.article} />

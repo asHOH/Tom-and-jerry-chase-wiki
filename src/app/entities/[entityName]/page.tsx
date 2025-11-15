@@ -25,8 +25,8 @@ function generateStructuredData(entityName: string): WithContext<Article> {
     '@type': 'Article',
     headline: `${entity.name} - 猫鼠wiki`,
     description: desc,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `https://tjwiki.com/entities/${encodeURIComponent(entityName)}`,

@@ -30,8 +30,9 @@ function generateStructuredData(cardId: string): WithContext<Article> | null {
     '@type': 'Article',
     headline: `${card.id} - 猫鼠wiki`,
     description: card.description,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    image: card.imageUrl,
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `https://tjwiki.com/cards/${encodeURIComponent(cardId)}`,
