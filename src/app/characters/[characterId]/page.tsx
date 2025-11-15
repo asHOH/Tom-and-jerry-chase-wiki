@@ -57,6 +57,7 @@ function generateStructuredData(characterId: string): WithContext<Article> | nul
       '@id': `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
     },
     inLanguage: 'zh-CN',
+    image: character.imageUrl,
   };
 }
 

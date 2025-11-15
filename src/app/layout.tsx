@@ -11,7 +11,7 @@ import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
 import { ClientProviders } from '@/components/ClientProviders';
 
-import { defaultMetadata, getSiteJsonLd } from '@/constants/seo';
+import { defaultMetadata } from '@/constants/seo';
 import { cspHeaderValue } from '@/constants/csp';
 import './globals.css';
 import { DarkModeProvider } from '@/context/DarkModeContext';
@@ -42,10 +42,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
       <body className={inter.className}>
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(getSiteJsonLd()) }}
-        />
         <ErrorBoundary>
           <KeyboardNavigation />
           <OfflineIndicator />

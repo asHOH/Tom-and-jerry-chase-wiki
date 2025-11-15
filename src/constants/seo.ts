@@ -16,7 +16,7 @@ export const SITE_LANG = 'zh-CN';
 export const SITE_LOCALE = 'zh_CN';
 export const DEFAULT_IMAGE = '/icon.png';
 export const SITE_TAGLINE =
-  '萌新友好的维基百科网站，涵盖角色属性、技能、加点、克制关系、知识卡、特技、道具等，更多功能正持续开发中';
+  '萌新友好的猫鼠手游维基百科网站，涵盖角色属性、技能、加点、克制关系、知识卡、特技、道具等，更多功能正持续开发中';
 
 export const DEFAULT_DESCRIPTION = `${SITE_NAME} - ${SITE_TAGLINE}。${DISCLAIMER_TEXT}`;
 export const DEFAULT_KEYWORDS = [
@@ -43,6 +43,12 @@ export const defaultMetadata: Metadata = {
     googleBot: 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1',
   },
   alternates: { canonical: SITE_URL, languages: { 'zh-CN': SITE_URL, 'x-default': SITE_URL } },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: SITE_SHORT_NAME,
+    startupImage: DEFAULT_IMAGE,
+  },
   openGraph: {
     type: 'website',
     locale: SITE_LOCALE,
@@ -62,6 +68,12 @@ export const defaultMetadata: Metadata = {
     icon: DEFAULT_IMAGE,
     shortcut: '/favicon.ico',
     apple: DEFAULT_IMAGE,
+  },
+  other: {
+    'application-name': SITE_NAME,
+    'msapplication-TileColor': '#1e293b',
+    'msapplication-TileImage': DEFAULT_IMAGE,
+    'apple-mobile-web-app-capable': 'yes',
   },
 };
 
