@@ -1,58 +1,16 @@
 import { Metadata } from 'next';
 import { SITE_SHORT_NAME, DEFAULT_KEYWORDS } from '@/constants/seo';
+import { WithContext, Article, CollectionPage } from 'schema-dts';
 
-// Basic structure for Schema.org data
-interface BaseStructuredData {
-  '@context': 'https://schema.org';
-  '@type': string;
-  inLanguage?: string;
-}
+/**
+ * @deprecated Use `WithContext<CollectionPage>` directly instead.
+ */
+export type CollectionPageStructuredData = WithContext<CollectionPage>;
 
-// Specific type for list items in a collection
-interface ListItem {
-  '@type': 'ListItem';
-  position: number;
-  name: string;
-  url: string;
-}
-
-// Type for an ItemList in a collection page
-interface ItemList {
-  '@type': 'ItemList';
-  numberOfItems: number;
-  itemListElement: ListItem[];
-}
-
-// Type for CollectionPage structured data
-export interface CollectionPageStructuredData extends BaseStructuredData {
-  '@type': 'CollectionPage';
-  name: string;
-  description: string;
-  url: string;
-  mainEntity: ItemList;
-}
-
-// Type for an organization (e.g., author or publisher)
-interface Organization {
-  '@type': 'Organization';
-  name: string;
-}
-
-// Type for a WebPage entity
-interface WebPage {
-  '@type': 'WebPage';
-  '@id': string;
-}
-
-// Type for Article structured data
-export interface ArticleStructuredData extends BaseStructuredData {
-  '@type': 'Article';
-  headline: string;
-  description: string;
-  author: Organization;
-  publisher: Organization;
-  mainEntityOfPage: WebPage;
-}
+/**
+ * @deprecated Use `WithContext<Article>` directly instead.
+ */
+export type ArticleStructuredData = WithContext<Article>;
 
 // Union type for all supported structured data formats
 type StructuredData = CollectionPageStructuredData | ArticleStructuredData;

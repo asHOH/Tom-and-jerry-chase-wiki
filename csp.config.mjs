@@ -27,7 +27,7 @@ const directives = {
     'wss://*.pusher.com',
   ],
   'media-src': ["'self'"],
-  'object-src': ['none'],
+  'object-src': ["'none'"],
   'frame-src': [
     "'self'",
     'about:',
@@ -48,7 +48,7 @@ const directives = {
   'form-action': ["'self'"],
   'base-uri': ["'self'"],
   'worker-src': ["'self'", 'blob:'],
-  'frame-ancestors': ['none'],
+  'frame-ancestors': ["'none'"],
 };
 
 function serializeCsp(map) {
