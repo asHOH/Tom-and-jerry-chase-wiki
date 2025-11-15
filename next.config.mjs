@@ -1,7 +1,7 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import withPWA from 'next-pwa';
-import { cspHeaderValue } from './csp.config.mjs';
+import { buildCspHeader } from './csp.config.mjs';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -82,6 +82,17 @@ const withMDX = createMDX({
   },
 });
 
+const shouldIncludeVercelAnalytics = () => {
+  const override = process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS;
+  if (override === '0') {
+    return false;
+  }
+  if (override === '1') {
+    return true;
+  }
+  return process.env.VERCEL === '1' && process.env.NODE_ENV === 'production';
+};
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
@@ -149,7 +160,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: cspHeaderValue,
+            value: buildCspHeader({ includeVercelAnalytics: shouldIncludeVercelAnalytics() }),
           },
         ],
       },

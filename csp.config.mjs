@@ -4,20 +4,15 @@ const directives = {
     "'self'",
     "'unsafe-inline'",
     "'unsafe-eval'",
-    'https://vercel.live',
-    'https://va.vercel-scripts.com',
     'https://hcaptcha.com',
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
   ],
   'style-src': ["'self'", "'unsafe-inline'", 'https://hcaptcha.com', 'https://*.hcaptcha.com'],
-  'img-src': ["'self'", 'data:', 'https://vitals.vercel-insights.com', 'https://*.supabase.co'],
+  'img-src': ["'self'", 'data:', 'https://*.supabase.co'],
   'font-src': ["'self'"],
   'connect-src': [
     "'self'",
-    'https://vitals.vercel-insights.com',
-    'https://vercel-analytics.com',
-    'https://vercel.live',
     '*.supabase.co',
     'https://hcaptcha.com',
     'https://*.hcaptcha.com',
@@ -32,7 +27,6 @@ const directives = {
     "'self'",
     'about:',
     'data:',
-    'https://vercel.live',
     'https://hcaptcha.com',
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
@@ -40,7 +34,6 @@ const directives = {
   'child-src': [
     "'self'",
     'about:',
-    'https://vercel.live',
     'https://hcaptcha.com',
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
@@ -68,6 +61,25 @@ export function extendCsp(additionalDirectives = {}) {
     merged[key] = Array.from(base);
   }
   return serializeCsp(merged);
+}
+
+const vercelAnalyticsDirectives = {
+  'script-src': ['https://vercel.live', 'https://va.vercel-scripts.com'],
+  'img-src': ['https://vitals.vercel-insights.com'],
+  'connect-src': [
+    'https://vitals.vercel-insights.com',
+    'https://vercel-analytics.com',
+    'https://vercel.live',
+  ],
+  'frame-src': ['https://vercel.live'],
+  'child-src': ['https://vercel.live'],
+};
+
+export function buildCspHeader({ includeVercelAnalytics = false } = {}) {
+  if (includeVercelAnalytics) {
+    return extendCsp(vercelAnalyticsDirectives);
+  }
+  return cspHeaderValue;
 }
 
 export default cspHeaderValue;

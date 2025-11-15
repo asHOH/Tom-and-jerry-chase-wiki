@@ -8,11 +8,11 @@ import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
+import { getRuntimeCspHeader } from '@/lib/csp';
 import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
 import { ClientProviders } from '@/components/ClientProviders';
 
 import { defaultMetadata } from '@/constants/seo';
-import { cspHeaderValue } from '@/constants/csp';
 import './globals.css';
 import { DarkModeProvider } from '@/context/DarkModeContext';
 import { getDarkModeFromCookie } from '@/lib/darkModeActions';
@@ -37,7 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
         <meta name='referrer' content='strict-origin-when-cross-origin' />
-        <meta httpEquiv='Content-Security-Policy' content={cspHeaderValue} />
+        <meta httpEquiv='Content-Security-Policy' content={getRuntimeCspHeader()} />
         <meta name='format-detection' content='telephone=no, date=no, email=no, address=no' />
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
