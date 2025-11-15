@@ -60,7 +60,7 @@
 
 - **Node.js**: `>=20.0.0`
 - **npm**: `>=10.0.0`
-- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN` (后续计划在环境变量缺失时做兼容)
+- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`,`NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS`（设为 `0` 强制禁用或 `1` 强制启用Vercel Analytics；默认仅在 Vercel 生产环境启用）、`APP_PUBLIC_HOST`（用于跨子域 Cookie，与生产域名保持一致）。
 
 ### 开发步骤
 
@@ -107,6 +107,19 @@ npm run test:ci         # CI 优化测试
 npm run clean           # 清理构建产物
 npm run analyze         # 包分析
 ```
+
+## ☁️ 非 Vercel 部署指南
+
+1. **环境变量**
+   - 需要在构建阶段注入 `COMMIT_SHA`（或 `DEPLOY_COMMIT_SHA`）以保证 `/api/version` 返回准确版本信息。
+   - 使用 `DEPLOYMENT_ENVIRONMENT`（可选值 `development`/`preview`/`production`）标记运行环境；如不设置将回退为 `NODE_ENV`。
+   - 将 `APP_PUBLIC_HOST` 设置为生产域名（例如 `wiki.example.com`）以确保深色模式 Cookie 覆盖所有子域。
+   - 默认不加载 Vercel Analytics/Speed Insights。可将 `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` 设为 `1` 以继续使用（需确保 CSP/CORS 放行相应域名）。
+
+2. **安全头与缓存策略**
+   - `next.config.mjs` 已在运行时发送核心安全头（CSP、HSTS 等），请在目标平台（如 Netlify、Cloudflare、Nginx）继续配置静态资源头信息，保持与 `vercel.json` 一致的缓存策略。
+
+> 如果你在特定平台部署成功，欢迎分享经验。
 
 ## 🤝 一起完善这个项目吧
 
