@@ -50,6 +50,7 @@ function generateStructuredData(characterId: string): WithContext<Article> | nul
     publisher: {
       '@type': 'Organization',
       name: '猫和老鼠手游wiki',
+      url: 'https://tjwiki.com',
     },
     mainEntityOfPage: {
       '@type': 'WebPage',

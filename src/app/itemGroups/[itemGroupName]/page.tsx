@@ -24,8 +24,9 @@ function generateStructuredData(itemGroupName: string) {
     '@type': 'Article',
     headline: `${itemGroup.name} - 猫鼠wiki`,
     description: desc,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    image: getItemGroupImageUrl(itemGroup),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `https://tjwiki.com/itemGroups/${encodeURIComponent(itemGroupName)}`,
