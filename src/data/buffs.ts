@@ -1379,7 +1379,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     source: [{ name: '猛攻', type: 'knowledgeCard' }],
     unuseImage: true,
   },
-  立即减少技能冷却: {
+  立即减少技能CD: {
     type: '正面',
     global: false,
     target: '角色',
@@ -1390,23 +1390,23 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '固定值效果生效数值等于固定值，百分比效果分为两种：“根据当前冷却”或“根据最大冷却”，效果取决于具体技能。',
     unuseImage: true,
   },
-  技能冷却缩减: {
+  技能CD缩短: {
     type: '正面',
     global: false,
     target: '角色',
     duration: '不固定',
     description:
-      '使角色正在冷却的技能（通常只包括主动和武器技能）冷却倒计时加速，或使释放技能时进入的冷却缩减一定数值。',
+      '使角色正在冷却的技能（通常只包括主动和武器技能）冷却倒计时加速，或使释放技能时进入的CD缩短一定数值。',
     stack: '不同效果的生效时机与生效方式各不相同，取决于具体技能。同类效果可叠加。',
     unuseImage: true,
   },
-  技能冷却增加: {
+  技能CD延长: {
     type: '正面',
     global: false,
     target: '角色',
     duration: '不固定',
     description:
-      '使角色正在冷却的技能（通常只包括主动和武器技能）冷却倒计时减速，或使释放技能时进入的冷却增加一定数值。',
+      '使角色正在冷却的技能（通常只包括主动和武器技能）冷却倒计时减速，或使释放技能时进入的CD延长一定数值。',
     stack: '不同效果的生效时机与生效方式各不相同，取决于具体技能。同类效果可叠加。',
     unuseImage: true,
   },
@@ -1417,7 +1417,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     duration: '不固定',
     aliases: ['无法使用技能', '禁用技能键', '沉默'],
     description:
-      '使角色无法使用技能，通常包括主动技能、武器技能、[额外技能](此处也包括通过“花枪反击”键释放的额外技能)以及特技，有特殊标注时除外。该效果不影响技能冷却。\n该状态会在对应键位上显示"禁止"图标以作提示（有特别注明时除外）。\n不同技能的判定时机略有不同，少部分有前摇的技能会在前摇结束后再次进行判定，若此时处于禁用技能效果期间，则技能仍然会被打断并返还CD。',
+      '使角色无法使用技能，通常包括主动技能、武器技能、[额外技能](此处也包括通过“花枪反击”键释放的额外技能)以及特技，有特殊标注时除外。该效果不影响技能CD。\n该状态会在对应键位上显示"禁止"图标以作提示（有特别注明时除外）。\n不同技能的判定时机略有不同，少部分有前摇的技能会在前摇结束后再次进行判定，若此时处于禁用技能效果期间，则技能仍然会被打断并返还CD。',
     stack: oneOnlyStack,
     source: [
       { name: '猛攻', type: 'knowledgeCard' },
@@ -1427,43 +1427,43 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
     unuseImage: true,
   },
-  更改爪刀冷却: {
+  更改爪刀CD: {
     type: '特殊',
     global: false,
     target: '猫角色',
     duration: '不固定',
     description: '使猫角色的爪刀基础CD更改。',
     stack:
-      '该效果会更改爪刀的基础冷却，会作为基础速度带入{爪刀冷却缩减}和{爪刀冷却增加}的计算公式中。同类效果只会生效一个，具体取决于生效优先级先后。',
+      '该效果会更改爪刀的基础CD，会作为基础速度带入{爪刀CD缩短}和{爪刀CD延长}的计算公式中。同类效果只会生效一个，具体取决于生效优先级先后。',
     unuseImage: true,
   },
-  立即减少爪刀冷却: {
+  立即减少爪刀CD: {
     type: '正面',
     global: false,
     target: '猫角色',
     duration: '一次性',
-    description: '使猫角色正在冷却的爪刀立即减少一定冷却。',
+    description: '使猫角色正在冷却的爪刀立即减少一定CD。',
     stack: '立即生效，不参与计算。',
     unuseImage: true,
   },
-  爪刀冷却缩减: {
+  爪刀CD缩短: {
     ...{
       type: '正面',
       global: false,
       target: '猫角色',
       duration: '不固定',
-      description: '使猫角色释放爪刀时进入的冷却缩减一定固定值或百分比数值。',
+      description: '使猫角色释放爪刀时进入的CD缩短一定固定值或百分比数值。',
       unuseImage: true,
     },
     ...interactionStack,
   },
-  爪刀冷却增加: {
+  爪刀CD延长: {
     ...{
       type: '负面',
       global: false,
       target: '角色',
       duration: '不固定',
-      description: '使猫角色释放爪刀时进入的冷却增加一定固定值或百分比数值。',
+      description: '使猫角色释放爪刀时进入的CD延长一定固定值或百分比数值。',
       unuseImage: true,
     },
     ...interactionStack,

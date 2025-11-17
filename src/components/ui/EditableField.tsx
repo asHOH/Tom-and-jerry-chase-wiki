@@ -141,7 +141,7 @@ function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagName
     if (path.includes('.tagName') && (path.includes('PositioningTags') || path.includes('Tags')))
       return true;
 
-    // 技能等级冷却时间
+    // 技能等级CD
     if (path.includes('.cooldown') && path.includes('skillLevels.')) return true;
 
     return false;

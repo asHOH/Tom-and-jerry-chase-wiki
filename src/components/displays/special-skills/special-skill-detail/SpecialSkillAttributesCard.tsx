@@ -107,7 +107,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
       >
         <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
           <span className={`text-sm whitespace-pre`}>
-            {'冷却时间：'}
+            {'CD：'}
             <span className='text-indigo-700 dark:text-indigo-400'>{skill.cooldown}</span>
             {' 秒'}
           </span>

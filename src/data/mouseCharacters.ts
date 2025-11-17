@@ -393,7 +393,7 @@ const mouseCharacterDefinitions = {
             level: 1,
             description: '每隔一段时间，在小地图上感知猫的位置。',
             detailedDescription:
-              '每隔45秒，在小地图上感知猫的位置，持续3秒。升级该技能时直接进入冷却，不触发效果。',
+              '每隔45秒，在小地图上感知猫的位置，持续3秒。升级该技能时直接进入CD，不触发效果。',
           },
           {
             level: 2,
@@ -3196,7 +3196,7 @@ const mouseCharacterDefinitions = {
             level: 3,
             description: '受到来自猫咪的伤害时，短暂禁用其[所有技能](包括特技)。',
             detailedDescription:
-              '受到来自猫咪的伤害时，禁用其[所有技能](包括特技)4秒。（[CD：10秒](和Lv.1效果不共享冷却)）',
+              '受到来自猫咪的伤害时，禁用其[所有技能](包括特技)4秒。（[CD：10秒](和Lv.1效果不共享CD)）',
           },
         ],
       },
@@ -4266,7 +4266,7 @@ const mouseCharacterDefinitions = {
       {
         id: '罗宾汉泰菲',
         description:
-          '罗宾汉泰菲与拿坡里鼠的高频控制能互相弥补冷却，提高容错。罗菲还能利用圆球与斜塔的碰撞，快速碰撞破墙。',
+          '罗宾汉泰菲与拿坡里鼠的高频控制能互相弥补CD，提高容错。罗菲还能利用圆球与斜塔的碰撞，快速碰撞破墙。',
         isMinor: false,
       },
       {
@@ -4825,7 +4825,7 @@ const mouseCharacterDefinitions = {
     collaborators: [
       {
         id: '航海士杰瑞',
-        description: '航海士杰瑞与罗菲的控制能互相弥补冷却。罗菲还能提供航海士杰瑞急需的恢复能力。',
+        description: '航海士杰瑞与罗菲的控制能互相弥补CD。罗菲还能提供航海士杰瑞急需的恢复能力。',
         isMinor: false,
       },
       {
@@ -4837,18 +4837,18 @@ const mouseCharacterDefinitions = {
       {
         id: '牛仔杰瑞',
         description:
-          '牛仔杰瑞与罗菲的控制能互相弥补冷却。罗菲还能提供恢复，发挥牛仔杰瑞的Hp上限优势。',
+          '牛仔杰瑞与罗菲的控制能互相弥补CD。罗菲还能提供恢复，发挥牛仔杰瑞的Hp上限优势。',
         isMinor: false,
       },
       {
         id: '剑客莉莉',
         description:
-          '剑客莉莉与罗菲的控制能互相弥补冷却。罗菲还能提供恢复，发挥剑客莉莉的Hp上限优势，并触发她的Lv.1被动。',
+          '剑客莉莉与罗菲的控制能互相弥补CD。罗菲还能提供恢复，发挥剑客莉莉的Hp上限优势，并触发她的Lv.1被动。',
         isMinor: false,
       },
       {
         id: '米可',
-        description: '米可与罗菲的控制能互相弥补冷却。罗菲还能提供米可相对匮乏的恢复能力。',
+        description: '米可与罗菲的控制能互相弥补CD。罗菲还能提供米可相对匮乏的恢复能力。',
         isMinor: false,
       },
       {
