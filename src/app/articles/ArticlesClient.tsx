@@ -153,7 +153,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
     return arr;
   })();
 
-  const pageSize = 20;
+  const pageSize = 18;
   const clientTotalPages = Math.max(1, Math.ceil(sortedArticles.length / pageSize));
   const clampedPage = Math.min(currentPage, clientTotalPages);
   const startIndex = (clampedPage - 1) * pageSize;
