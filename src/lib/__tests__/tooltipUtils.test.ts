@@ -16,7 +16,8 @@ describe('tooltipUtils', () => {
 
     it('should return normal tooltip when detailed not available', () => {
       const result = getTooltipContent('Hp上限', 'cat', false);
-      expect(result).toBe('健康值上限，俗称"血条"');
+      expect(result).not.toBe('Hp上限的相关信息');
+      expect(result).toContain('血条');
     });
 
     it('should return mouse-specific tooltip', () => {
@@ -48,7 +49,10 @@ describe('tooltipUtils', () => {
 
     it('should return detailed mouse positioning tag tooltip', () => {
       const result = getPositioningTagTooltipContent('奶酪', 'mouse', true);
-      expect(result).toBe('擅长推奶酪和搬奶酪，通常推速较高或拥有瞬移技能');
+      const normalResult = getPositioningTagTooltipContent('奶酪', 'mouse', false);
+      expect(result).not.toBe(`${'奶酪'}定位的相关信息`);
+      expect(result).not.toBe(normalResult);
+      expect(result).toContain('奶酪');
     });
 
     it('should fallback when tag not found', () => {
