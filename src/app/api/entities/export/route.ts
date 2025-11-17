@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
 import { catEntitiesDefinitions } from '@/data/catEntities';
 import { mouseEntitiesDefinitions } from '@/data/mouseEntities';
-import { apiRouteRuntime } from '@/lib/runtime';
 
 export const dynamic = 'force-static';
 export const revalidate = 3600;
-export const runtime = apiRouteRuntime;
+export const runtime = 'edge';
 
 export function GET() {
   const combined = {

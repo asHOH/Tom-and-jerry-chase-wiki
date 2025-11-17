@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { apiRouteRuntime } from '@/lib/runtime';
 
-export const runtime = apiRouteRuntime;
+export const runtime = 'edge';
 
 // Simple health check endpoint that handles OPTIONS properly
 export async function GET() {

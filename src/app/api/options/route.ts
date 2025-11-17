@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { apiRouteRuntime } from '@/lib/runtime';
 
-export const runtime = apiRouteRuntime;
+export const runtime = 'edge';
 
 // Handle OPTIONS requests that might be coming from Vercel Analytics
 export async function OPTIONS() {
