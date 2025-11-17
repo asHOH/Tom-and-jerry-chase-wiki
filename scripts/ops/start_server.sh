@@ -5,6 +5,12 @@ REPO_URL="https://githubfast.com/asHOH/Tom-and-jerry-chase-wiki.git"
 TARGET_BRANCH="develop"
 ENV_FILE=".env.production"
 
+declare -ra RUNTIME_PATCH_TARGETS=(
+  "src/app/api/health/route.ts"
+  "src/app/api/options/route.ts"
+  "src/app/api/entities/export/route.ts"
+)
+
 # Function to run a command with timeout and retries for git.
 run_with_retry() {
   local start_time=$SECONDS
@@ -120,18 +126,57 @@ BUILD_HASH_FILE=".next/.build_hash"
 CURRENT_HASH=$(git rev-parse HEAD)
 LAST_BUILD_HASH=""
 if [ -f "$BUILD_HASH_FILE" ]; then
-  LAST_BUILD_HASH=$(cat "$BUILD_HASH_FILE")
+  LAST_BUILD_HASH=$(tr -d '\r\n' < "$BUILD_HASH_FILE")
 fi
 
 if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
-  echo "Code has changed since last build. Building application..."
-  npm run set-runtime:node
-  if npm run build; then
-    echo "✅ Build successful."
-    mkdir -p .next && echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
+  runtime_only_change=false
+  if [ -n "$LAST_BUILD_HASH" ] && git cat-file -e "${LAST_BUILD_HASH}^{commit}" >/dev/null 2>&1; then
+    runtime_only_change=true
+    while IFS= read -r file; do
+      if [ -z "$file" ]; then
+        continue
+      fi
+      match=false
+      for target in "${RUNTIME_PATCH_TARGETS[@]}"; do
+        if [ "$file" = "$target" ]; then
+          match=true
+          break
+        fi
+      done
+      if [ "$match" = false ]; then
+        runtime_only_change=false
+        break
+      fi
+    done < <(git diff --name-only "$LAST_BUILD_HASH" "$CURRENT_HASH")
+  fi
+
+  if [ "$runtime_only_change" = true ]; then
+    if [ -f "$BUILD_HASH_FILE" ] && [ -f ".next/BUILD_ID" ]; then
+      echo "Only API runtime flag changes detected since last build. Reusing existing build output."
+      mkdir -p "$(dirname "$BUILD_HASH_FILE")"
+      echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
+    else
+      echo "Runtime-only changes detected but no reusable build artifacts found. Building application..."
+      npm run set-runtime:node
+      if npm run build; then
+        echo "✅ Build successful."
+        mkdir -p .next && echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
+      else
+        echo "❌ Fatal: Build failed. Cannot start server."
+        exit 1
+      fi
+    fi
   else
-    echo "❌ Fatal: Build failed. Cannot start server."
-    exit 1
+    echo "Code has changed since last build. Building application..."
+    npm run set-runtime:node
+    if npm run build; then
+      echo "✅ Build successful."
+      mkdir -p .next && echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
+    else
+      echo "❌ Fatal: Build failed. Cannot start server."
+      exit 1
+    fi
   fi
 else
   echo "No code changes detected. Skipping build."
