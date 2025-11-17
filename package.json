@@ -27,6 +27,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/run-image-optimization.cjs && node scripts/generate-doc-pages.mjs && node scripts/generate-changelogs.mjs && next build --webpack",
+    "set-runtime:edge": "node scripts/set-api-runtime.mjs edge",
+    "set-runtime:node": "node scripts/set-api-runtime.mjs nodejs",
     "build:skip-images": "node scripts/generate-doc-pages.mjs && node scripts/generate-changelogs.mjs && next build --webpack",
     "start": "next start",
     "lint": "eslint .",
