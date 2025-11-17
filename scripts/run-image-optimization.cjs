@@ -68,8 +68,32 @@ function convertImage(filePath) {
   }
   console.log(`Found ${allImages.length} images to process.`);
 
+  const milestonePercents = [0.2, 0.4, 0.6, 0.8, 1];
+  let processedCount = 0;
+  let nextMilestoneIndex = 0;
+
   // 2. Create an array of conversion promises for all images
-  const conversionTasks = allImages.map(convertImage);
+  const conversionTasks = allImages.map((imagePath) =>
+    convertImage(imagePath).then((result) => {
+      processedCount++;
+      const progress = processedCount / allImages.length;
+
+      while (
+        nextMilestoneIndex < milestonePercents.length &&
+        progress >= milestonePercents[nextMilestoneIndex]
+      ) {
+        const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
+        console.log(
+          `Progress: processed ${processedCount}/${allImages.length} images (${Math.round(
+            milestonePercents[nextMilestoneIndex] * 100
+          )}%) in ${elapsedSeconds}s`
+        );
+        nextMilestoneIndex++;
+      }
+
+      return result;
+    })
+  );
 
   // 3. Execute all conversion tasks in parallel
   const results = await Promise.all(conversionTasks);
