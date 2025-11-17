@@ -29,36 +29,27 @@ function preprocessText(text: string, currentCharacterName?: string | undefined)
     return text;
   }
 
-  // Get all character names and sort by length (longest first)
-  const names = [
+  // Collect canonical names (exclude aliases) and sort by length (longest first)
+  const canonicalCharacterNames = [
     ...Object.keys(characters),
-    ...Object.values(characters)
-      .map((c) => c.aliases ?? [])
-      .flat(),
+    ...Object.values(characters).map((character) => character.id),
+  ].filter((name): name is string => typeof name === 'string' && name.length > 0);
+
+  const canonicalCardNames = [
     ...Object.keys(cards),
-    ...Object.values(cards)
-      .map((c) => c.aliases ?? [])
-      .flat(),
-    // ...Object.values(characters)
-    //   .map((c) => c.skills.map((s) => s.name))
-    //   .flat(),
-    // ...Object.values(characters)
-    //   .map((c) => c.skills.map((s) => s.aliases ?? []))
-    //   .flat()
-    //   .flat(),
-  ]
+    ...Object.values(cards).map((card) => card.id),
+  ].filter((name): name is string => typeof name === 'string' && name.length > 0);
+
+  const names = Array.from(new Set([...canonicalCharacterNames, ...canonicalCardNames]))
     .filter((name) => !nameBlacklist.includes(name))
     .sort((a, b) => b.length - a.length);
 
   let result = text;
 
-  const currentCharacterNames = [
-    currentCharacterName!,
-    characters[currentCharacterName ?? '']?.aliases ?? [],
-    // characters[currentCharacterName ?? '']?.skills?.map((value) => value.name) ?? [],
-    // characters[currentCharacterName ?? '']?.skills?.map((value) => value.aliases ?? []).flat() ??
-    [],
-  ].flat();
+  const currentCharacter = currentCharacterName ? characters[currentCharacterName] : undefined;
+  const currentCharacterNames = [currentCharacterName, currentCharacter?.id].filter(
+    (name): name is string => typeof name === 'string' && name.length > 0
+  );
 
   // Track positions that have been wrapped to avoid overlaps
   const processedRanges: Array<{ start: number; end: number }> = [];
