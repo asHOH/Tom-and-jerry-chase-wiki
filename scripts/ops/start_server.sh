@@ -2,6 +2,7 @@
 
 REPO_DIR="Tom-and-jerry-chase-wiki"
 REPO_URL="https://githubfast.com/asHOH/Tom-and-jerry-chase-wiki.git"
+TARGET_BRANCH="develop"
 ENV_FILE=".env.production"
 
 # Function to run a command with timeout and retries for git.
@@ -25,7 +26,7 @@ run_with_retry() {
 # 1. Clone or update the repository.
 if [ ! -d "$REPO_DIR/.git" ]; then
   echo "Cloning repository..."
-  if ! run_with_retry git clone "$REPO_URL"; then
+  if ! run_with_retry git clone --branch "$TARGET_BRANCH" --single-branch "$REPO_URL"; then
     echo "❌ Fatal: Initial clone failed. Cannot continue."
     exit 1
   fi
@@ -33,9 +34,9 @@ if [ ! -d "$REPO_DIR/.git" ]; then
 else
   echo "Repository exists. Attempting to update..."
   cd "$REPO_DIR"
-  if run_with_retry git fetch origin; then
+  if run_with_retry git fetch origin "$TARGET_BRANCH"; then
     echo "Update successful. Resetting to the latest version."
-    git reset --hard origin/main
+    git reset --hard "origin/$TARGET_BRANCH"
   else
     echo "Could not update from remote. Starting server with existing local code."
   fi
