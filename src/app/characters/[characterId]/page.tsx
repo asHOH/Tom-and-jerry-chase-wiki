@@ -4,12 +4,16 @@ import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import { GameDataManager } from '@/lib/dataManager';
 import { getTutorialPage } from '@/lib/docUtils';
-import { ArticleStructuredData, generatePageMetadata } from '@/lib/metadataUtils';
+import { generatePageMetadata } from '@/lib/metadataUtils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import CharacterArticle from './CharacterArticle';
 import CharacterDocs from './CharacterDocs';
+import { Article, WithContext } from 'schema-dts';
+import { characters } from '@/data';
+import { getContentWritersByCharacter } from '@/constants';
+import StructuredData from '@/components/StructuredData';
 
 // Revalidate once per 8 hours to keep docs fresh
 export const revalidate = 28800;
@@ -28,6 +32,35 @@ export function generateStaticParams() {
   return Object.keys(characterMap).map((id) => ({ characterId: id }));
 }
 
+function generateStructuredData(characterId: string): WithContext<Article> | null {
+  const character = characters[characterId];
+  const author = getContentWritersByCharacter(characterId).map((author) => ({
+    '@type': 'Person' as const,
+    name: author,
+  }));
+  if (!character) {
+    return null;
+  }
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${characterId} - 猫鼠wiki`,
+    description: character.description,
+    author,
+    publisher: {
+      '@type': 'Organization',
+      name: '猫和老鼠手游wiki',
+      url: 'https://tjwiki.com',
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
+    },
+    inLanguage: 'zh-CN',
+    image: character.imageUrl,
+  };
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -42,32 +75,11 @@ export async function generateMetadata({
     return {};
   }
 
-  const structuredData: ArticleStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: `${character.id} - 猫鼠wiki`,
-    description: `${character.id}详细信息 - 属性、技能、加点、知识卡推荐`,
-    author: {
-      '@type': 'Organization',
-      name: '猫和老鼠手游wiki',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: '猫和老鼠手游wiki',
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
-    },
-    inLanguage: 'zh-CN',
-  };
-
   return generatePageMetadata({
     title: character.id,
-    description: `${character.id}详细信息 - 属性、技能、加点、知识卡推荐`,
+    description: character.description,
     keywords: [character.id],
     canonicalUrl: `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
-    structuredData,
   });
 }
 
@@ -152,6 +164,7 @@ export default async function CharacterPage({
       <AppProvider>
         <EditModeProvider>
           <TabNavigationWrapper showDetailToggle={true}>
+            <StructuredData data={generateStructuredData(characterId)} />
             <CharacterDetailsClient character={character}>
               {!!docPage ? (
                 <CharacterDocs docPage={docPage}></CharacterDocs>

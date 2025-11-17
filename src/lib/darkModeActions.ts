@@ -1,6 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { getCookieDomain, getDeploymentHostname } from '@/lib/server/host';
 
 /**
  * Server action to read the dark mode state from cookies
@@ -25,12 +26,17 @@ export async function setDarkModeInCookie(isDarkMode: boolean): Promise<void> {
   const cookieStore = await cookies();
 
   // Get the root domain by removing subdomain (matching client-side logic)
-  const hostname = process.env.VERCEL_URL || 'localhost';
-  const rootDomain = hostname.split('.').slice(-2).join('.');
+  const hostname = await getDeploymentHostname();
+  const domain = getCookieDomain(hostname);
 
-  cookieStore.set('darkMode', String(isDarkMode), {
+  const cookieOptions: Parameters<typeof cookieStore.set>[2] = {
     path: '/',
-    domain: hostname === 'localhost' ? undefined : `.${rootDomain}`,
     sameSite: 'lax',
-  });
+  };
+
+  if (domain) {
+    cookieOptions.domain = domain;
+  }
+
+  cookieStore.set('darkMode', String(isDarkMode), cookieOptions);
 }

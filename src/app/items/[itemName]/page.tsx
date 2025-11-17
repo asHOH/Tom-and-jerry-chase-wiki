@@ -6,12 +6,31 @@ import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { generateArticleMetadata } from '@/lib/metadataUtils';
+import StructuredData from '@/components/StructuredData';
 
 // Generate static params for all special skills
 export function generateStaticParams() {
   return Object.keys(items).map((itemName) => ({
     itemName,
   }));
+}
+
+function generateStructuredData(itemName: string) {
+  const item = items[itemName]!;
+  const desc = item.description ?? `${item.name}详细信息`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${item.name} - 猫鼠wiki`,
+    description: desc,
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    image: item.imageUrl,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://tjwiki.com/items/${encodeURIComponent(itemName)}`,
+    },
+  };
 }
 
 export async function generateMetadata({
@@ -33,18 +52,6 @@ export async function generateMetadata({
     keywords: [item.name, '道具'],
     canonicalUrl: `https://tjwiki.com/items/${encodeURIComponent(itemName)}`,
     imageUrl: item.imageUrl,
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'Article',
-      headline: `${item.name} - 猫鼠wiki`,
-      description: desc,
-      author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-      publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-      mainEntityOfPage: {
-        '@type': 'WebPage',
-        '@id': `https://tjwiki.com/items/${encodeURIComponent(itemName)}`,
-      },
-    },
   });
 }
 
@@ -64,6 +71,7 @@ export default async function SpecialSkillDetailPage({
     <AppProvider>
       <EditModeProvider>
         <TabNavigationWrapper showDetailToggle={true}>
+          <StructuredData data={generateStructuredData(itemName)} />
           <ItemDetailClient item={item} />
         </TabNavigationWrapper>
       </EditModeProvider>

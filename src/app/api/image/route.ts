@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs/promises';
 
+export const runtime = 'nodejs';
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
@@ -21,10 +23,15 @@ export async function GET(request: NextRequest) {
     .normalize(src)
     .replace(/^([/\\])+/, '')
     .replace(/^((\.\.)[/\\])+/, '');
-  const fullOriginalPath = path.resolve(publicDir, sanitizedSrc);
+  const fullOriginalPath = path.join(publicDir, sanitizedSrc);
 
   // Validate that the resolved path is within the public directory
-  if (!fullOriginalPath.startsWith(publicDir + path.sep) && fullOriginalPath !== publicDir) {
+  const normalizedFullPath = path.normalize(fullOriginalPath);
+  const normalizedPublicDir = path.normalize(publicDir) + path.sep;
+  if (
+    normalizedFullPath !== path.normalize(publicDir) &&
+    !normalizedFullPath.startsWith(normalizedPublicDir)
+  ) {
     return new NextResponse('Invalid file path', { status: 403 });
   }
 
@@ -77,14 +84,7 @@ export async function GET(request: NextRequest) {
       headers.set('Cache-Control', 'private, max-age=2592000, immutable'); // use private because the response type is not shared
     }
 
-    const stream = new ReadableStream({
-      start(controller) {
-        controller.enqueue(imageBuffer);
-        controller.close();
-      },
-    });
-
-    return new NextResponse(stream, { headers });
+    return new NextResponse(imageBuffer, { headers });
   } catch (error: unknown) {
     if (
       typeof error === 'object' &&

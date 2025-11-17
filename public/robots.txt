@@ -1,6 +1,5 @@
 User-agent: *
-Disallow: /entity-maker.html
-Disallow: /item-maker.html
 Allow: /
 
 Sitemap: https://tjwiki.com/sitemap.xml
+Sitemap: https://tjwiki.com/articles/sitemap.xml

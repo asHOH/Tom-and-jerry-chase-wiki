@@ -5,4 +5,4 @@
 // If stronger typing is needed later we can add a local declaration file.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore – importing from .mjs for shared constant reuse
-export { cspDirectives, cspHeaderValue, extendCsp } from '../../csp.config.mjs';
+export { cspDirectives, cspHeaderValue, extendCsp, buildCspHeader } from '../../csp.config.mjs';

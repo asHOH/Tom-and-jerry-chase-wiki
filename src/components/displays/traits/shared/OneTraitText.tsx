@@ -72,7 +72,7 @@ const formatWithExclusion = (
         itemNames.push(arrayItemNames);
       } else {
         // 如果包含目标，则需查找到具体是哪个对象，将其加入PrintItem
-        for (let item of groupItem) {
+        for (const item of groupItem) {
           if (checkItemMatchesGroup(item, singleItem, excludeFactionId)) {
             printItem.push(item);
             break;
@@ -187,7 +187,7 @@ export const OneTraitText = (
 
   // 以全部buff作为内容，继续查找
   if (searchBuff) {
-    for (let buffItem of searchBuffBySingleItem(singleItem)) {
+    for (const buffItem of searchBuffBySingleItem(singleItem)) {
       const buffItemResult = getTraitTextWithSingleItem(trait, buffItem);
       if (buffItemResult !== null) {
         return buffItemResult;

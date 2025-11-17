@@ -7,6 +7,8 @@ import { AppProvider } from '@/context/AppContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { Article, WithContext } from 'schema-dts';
+import StructuredData from '@/components/StructuredData';
 
 type CatSkill = (typeof specialSkills)['cat'][string];
 type MouseSkill = (typeof specialSkills)['mouse'][string];
@@ -39,6 +41,32 @@ export function generateStaticParams() {
   );
 }
 
+function generateStructuredData(
+  factionId: FactionId,
+  skillId: string
+): WithContext<Article> | null {
+  const skill = getSkill(factionId, skillId);
+
+  if (!skill) {
+    return null;
+  }
+
+  const desc = skill.description ?? `${skill.name}技能详情`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${skill.name} - 猫鼠wiki`,
+    description: desc,
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    image: skill.imageUrl,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://tjwiki.com/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
+    },
+  };
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -64,18 +92,6 @@ export async function generateMetadata({
     keywords: [skill.name, '特殊技能'],
     canonicalUrl: `https://tjwiki.com/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
     imageUrl: skill.imageUrl,
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'Article',
-      headline: `${skill.name} - 猫鼠wiki`,
-      description: desc,
-      author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-      publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-      mainEntityOfPage: {
-        '@type': 'WebPage',
-        '@id': `https://tjwiki.com/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
-      },
-    },
   });
 }
 
@@ -101,6 +117,7 @@ export default async function SpecialSkillDetailPage({
     <AppProvider>
       <EditModeProvider>
         <TabNavigationWrapper showDetailToggle={true}>
+          <StructuredData data={generateStructuredData(factionId, skillId)} />
           <SpecialSkillDetailClient skill={skill} />
         </TabNavigationWrapper>
       </EditModeProvider>

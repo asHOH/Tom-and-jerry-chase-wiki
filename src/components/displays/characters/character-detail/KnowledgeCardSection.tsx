@@ -121,6 +121,23 @@ function KnowledgeCardGroupFlat({
     costInfo.hasOptionalCard,
     costInfo.totalCost
   );
+  const isMouseFaction = characters[characterId]?.factionId === 'mouse';
+  const hasJiuJiuWo = cards.includes('C-救救我');
+  const hasRescueSkill = cards.includes('S-舍己') || cards.includes('S-无畏');
+  const hasTieXue = cards.includes('S-铁血');
+  const shouldWarnMissingRescueSkill = !isEditMode && isMouseFaction && !hasRescueSkill;
+  const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && !hasJiuJiuWo;
+  const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && !hasTieXue;
+  const missingWarnings: string[] = [];
+  if (shouldWarnMissingTieXue) missingWarnings.push('无铁血');
+  if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
+  if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
+  const warningMessage = missingWarnings.length
+    ? `该卡组${missingWarnings.join('、')}，慎用`
+    : null;
+  const warningTagStyles = isDarkMode
+    ? { background: '#dc2626', color: '#fef2f2' }
+    : { background: '#fef2f2', color: '#dc2626' };
 
   return (
     <div
@@ -248,48 +265,40 @@ function KnowledgeCardGroupFlat({
         )}
       </div>
 
-      {!!contributor && !isEditMode && (
-        <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
-          <Tag
-            size='xs'
-            margin='micro'
-            className='opacity-80'
-            colorStyles={
-              isDarkMode
-                ? { background: '#334155', color: '#e0e7ef' }
-                : { background: '#e0e7ef', color: '#1e293b' }
-            }
-          >
-            推荐人：
-            {(contributorInformation?.description !== undefined && (
-              <Tooltip content={contributorInformation.description}>
-                {contributorInformation.name}
-              </Tooltip>
-            )) ||
-              contributor}
-          </Tag>
-        </div>
-      )}
-
-      {!isEditMode &&
-        characters[characterId]?.factionId == 'mouse' &&
-        (!cards.includes('C-救救我') ||
-          (!cards.includes('S-舍己') && !cards.includes('S-无畏'))) && (
-          <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
+      {(!isEditMode && contributor) || warningMessage ? (
+        <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14 flex flex-wrap gap-1 items-center'>
+          {!!contributor && !isEditMode && (
+            <Tag
+              size='xs'
+              margin='micro'
+              className='opacity-80'
+              colorStyles={
+                isDarkMode
+                  ? { background: '#334155', color: '#e0e7ef' }
+                  : { background: '#e0e7ef', color: '#1e293b' }
+              }
+            >
+              推荐人：
+              {(contributorInformation?.description !== undefined && (
+                <Tooltip content={contributorInformation.description}>
+                  {contributorInformation.name}
+                </Tooltip>
+              )) ||
+                contributor}
+            </Tag>
+          )}
+          {warningMessage && (
             <Tag
               size='xs'
               margin='micro'
               className='opacity-80 items-center gap-1'
-              colorStyles={
-                isDarkMode
-                  ? { background: '#dc2626', color: '#fef2f2' }
-                  : { background: '#fef2f2', color: '#dc2626' }
-              }
+              colorStyles={warningTagStyles}
             >
-              该卡组无救援卡或救救我，新手须谨慎使用
+              {warningMessage}
             </Tag>
-          </div>
-        )}
+          )}
+        </div>
+      ) : null}
 
       {(!!description || isEditMode) && (
         <div
@@ -358,6 +367,7 @@ export function KnowledgeCardGroupDisplay({
   const isHybridMode = viewMode === 'hybrid';
 
   const isMobile = useMobile();
+  const isMouseFaction = characters[characterId]?.factionId === 'mouse';
 
   if (isTreeView) {
     // Tree mode: show tree structure with max cost
@@ -369,6 +379,24 @@ export function KnowledgeCardGroupDisplay({
     const hasAnyOptional = allFlatCombinations.some((combo) =>
       combo.some((cardId) => cardId === 'C-狡诈')
     );
+    const lacksRescueSkill = allFlatCombinations.some(
+      (combo) => !combo.includes('S-舍己') && !combo.includes('S-无畏')
+    );
+    const lacksJiuJiuWo = allFlatCombinations.some((combo) => !combo.includes('C-救救我'));
+    const lacksTieXue = allFlatCombinations.some((combo) => !combo.includes('S-铁血'));
+    const shouldWarnMissingRescueSkill = !isEditMode && isMouseFaction && lacksRescueSkill;
+    const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && lacksJiuJiuWo;
+    const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && lacksTieXue;
+    const missingWarnings: string[] = [];
+    if (shouldWarnMissingTieXue) missingWarnings.push('无铁血');
+    if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
+    if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
+    const warningMessage = missingWarnings.length
+      ? `该卡组${missingWarnings.join('、')}，慎用`
+      : null;
+    const warningTagStyles = isDarkMode
+      ? { background: '#dc2626', color: '#fef2f2' }
+      : { background: '#fef2f2', color: '#dc2626' };
 
     const { containerClass, tooltipContent } = getKnowledgeCardCostStyles(
       maxCost,
@@ -441,53 +469,40 @@ export function KnowledgeCardGroupDisplay({
           )}
         </div>
 
-        {!!contributor && !isEditMode && (
-          <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
-            <Tag
-              size='xs'
-              margin='micro'
-              className='opacity-80'
-              colorStyles={
-                isDarkMode
-                  ? { background: '#334155', color: '#e0e7ef' }
-                  : { background: '#e0e7ef', color: '#1e293b' }
-              }
-            >
-              推荐人：
-              {(contributorInformation?.description !== undefined && (
-                <Tooltip content={contributorInformation.description}>
-                  {contributorInformation.name}
-                </Tooltip>
-              )) ||
-                contributor}
-            </Tag>
-          </div>
-        )}
-
-        {!isEditMode &&
-          characters[characterId]?.factionId == 'mouse' &&
-          allFlatCombinations.reduce(
-            (prev, combo) =>
-              !combo.includes('C-救救我') ||
-              (!combo.includes('S-舍己') && !combo.includes('S-无畏')) ||
-              prev,
-            false
-          ) && (
-            <div className={'ml-11 sm:ml-12 md:ml-13 lg:ml-14'}>
+        {(!isEditMode && contributor) || warningMessage ? (
+          <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14 flex flex-wrap gap-1 items-center'>
+            {!!contributor && !isEditMode && (
+              <Tag
+                size='xs'
+                margin='micro'
+                className='opacity-80'
+                colorStyles={
+                  isDarkMode
+                    ? { background: '#334155', color: '#e0e7ef' }
+                    : { background: '#e0e7ef', color: '#1e293b' }
+                }
+              >
+                推荐人：
+                {(contributorInformation?.description !== undefined && (
+                  <Tooltip content={contributorInformation.description}>
+                    {contributorInformation.name}
+                  </Tooltip>
+                )) ||
+                  contributor}
+              </Tag>
+            )}
+            {warningMessage && (
               <Tag
                 size='xs'
                 margin='micro'
                 className='opacity-80 flex items-center gap-1'
-                colorStyles={
-                  isDarkMode
-                    ? { background: '#dc2626', color: '#fef2f2' }
-                    : { background: '#fef2f2', color: '#dc2626' }
-                }
+                colorStyles={warningTagStyles}
               >
-                该卡组无救援卡或救救我，新手须谨慎使用
+                {warningMessage}
               </Tag>
-            </div>
-          )}
+            )}
+          </div>
+        ) : null}
 
         {(!!description || isEditMode) && (
           <div className='bg-gray-50 dark:bg-slate-700/50 p-2 sm:p-3 rounded-lg ml-11 sm:ml-12 md:ml-13 lg:ml-14'>
