@@ -7,12 +7,10 @@ import { OneTraitText } from '../../traits/shared/OneTraitText';
 import PageDescription from '@/components/ui/PageDescription';
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 
-interface TraitCollsionProps {}
-
 const processStrings = (input: string | string[]): string =>
   Array.isArray(input) ? input.join('\n') : input;
 
-export default function TraitCollsion({}: TraitCollsionProps) {
+export default function TraitCollsion() {
   const allTraits = Object.values(traits);
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -137,7 +135,9 @@ export default function TraitCollsion({}: TraitCollsionProps) {
 
       {/* 页面跳转输入框 */}
       <div className='flex justify-center items-center space-x-2 mb-8'>
-        <span className='text-sm'>跳转到:</span>
+        <label htmlFor='trait-page-input' className='text-sm'>
+          跳转到:
+        </label>
         <input
           type='number'
           min='1'
@@ -146,6 +146,7 @@ export default function TraitCollsion({}: TraitCollsionProps) {
           onChange={handlePageInputChange}
           onBlur={handlePageInputSubmit}
           onKeyPress={handlePageInputKeyPress}
+          id='trait-page-input'
           className='w-16 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-center hide-spinner'
         />
         <span className='text-sm'>页</span>
