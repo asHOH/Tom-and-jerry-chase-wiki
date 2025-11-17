@@ -5,19 +5,6 @@
 
 import type { FactionId } from '@/data/types';
 
-// Property label mappings for tooltips
-const propertyTooltipsFallback: Record<string, string> = {
-  Hp上限: '健康值上限，俗称"血条"',
-  Hp恢复: '每秒恢复的健康值',
-  移速: '移动速度（经典之家客厅长度为4680）',
-  跳跃: '跳跃高度（猫的跳跃高度为420）',
-  攻击增伤: '对其他角色的伤害加成',
-  爪刀CD: '爪刀冷却时间 (未命中/命中)',
-  爪刀范围: '爪刀攻击范围',
-  推速: '推奶酪速度',
-  墙缝增伤: '对墙缝的伤害加成（墙缝基础血量为100）',
-};
-
 // Faction-specific tooltips
 const propertyTooltips = {
   cat: {
@@ -151,7 +138,6 @@ export const getTooltipContent = (
   // Fallback to normal tooltip
   return (
     factionTooltips.normal[property as keyof typeof factionTooltips.normal] ||
-    propertyTooltipsFallback[property as keyof typeof propertyTooltipsFallback] ||
     `${property}的相关信息`
   );
 };
