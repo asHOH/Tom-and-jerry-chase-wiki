@@ -26,9 +26,17 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
     imageSrc: i.iconSrc,
     imageAlt: i.iconAlt,
     title: i.label,
-    description: i.id === 'ranks' ? '按顺序排列并查看各角色属性值' : '便捷查看各特技推荐信息',
+    description: i.id === 'ranks' ? '排列并查看角色属性值' : '便捷查看各特技推荐信息',
     href: i.href,
-    ariaLabel: i.id === 'ranks' ? '按顺序排列并查看各角色属性值' : '便捷查看各特技推荐信息',
+    ariaLabel: i.id === 'ranks' ? '排列并查看角色属性值' : '便捷查看各特技推荐信息',
+  }));
+  const Buttons2 = TOOL_NAV_ITEMS.filter((i) => i.id === 'traitCollection').map((i) => ({
+    imageSrc: i.iconSrc,
+    imageAlt: i.iconAlt,
+    title: i.label,
+    description: i.id === 'traitCollection' ? '便捷查看已收录的全部特性' : '',
+    href: i.href,
+    ariaLabel: i.id === 'traitCollection' ? '便捷查看已收录的全部特性' : '',
   }));
   const EditButtons = TOOL_NAV_ITEMS.filter(
     (i) => i.id === 'item-maker' || i.id === 'entity-maker'
@@ -63,6 +71,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       </header>
 
       <HomePageSection buttons={Buttons} />
+      <HomePageSection buttons={Buttons2} />
       {isEditMode ? <HomePageSection title={'编辑工具'} buttons={EditButtons} /> : null}
 
       <div className='mt-24 px-2 sm:px-4'>

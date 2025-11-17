@@ -63,13 +63,13 @@ export const NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/icons/article.png',
     iconAlt: '文章图标',
   },
-  {
+  /*{
     id: 'mechanics',
     label: '机制',
     href: '/mechanics',
     iconSrc: '/images/mouseEntities/线条火箭.png',
     iconAlt: '机制图标',
-  },
+  },*/
   {
     id: 'tools',
     label: '工具',
@@ -94,6 +94,14 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images//catSpecialSkills/绝地反击.png',
     iconAlt: '特技推荐图标',
   },
+  //临时将特性入口放置于工具栏中，日后修改
+  {
+    id: 'traitCollection',
+    label: '特性大全',
+    href: '/mechanics/traitCollection',
+    iconSrc: '/images//mouseSkills/莱恩2-蘸水笔.png',
+    iconAlt: '特性大全图标',
+  },
   //以下为编辑模式专用工具，正常情况不显示
   {
     id: 'item-maker',
@@ -112,13 +120,6 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
 ];
 
 export const MECHANICS_NAV_ITEMS: readonly NavItem[] = [
-  {
-    id: 'ranks',
-    label: '属性排行',
-    href: '/mechanics',
-    iconSrc: '/images/items/奶酪.png',
-    iconAlt: '属性排行图标',
-  },
   {
     id: 'traitCollection',
     label: '特性大全',

@@ -5,8 +5,9 @@ import { EditModeProvider } from '@/context/EditModeContext';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import MechanicsSection from '@/components/displays/mechanics/mechanicsSection';
+import { notFound } from 'next/navigation';
 
-const DESCRIPTION = '详细介绍游戏内全部的局内机制';
+const DESCRIPTION = '详细介绍游戏内的局内机制（该界面建设中）';
 const sectionChineseNameList: Record<string, string> = { traitCollection: '特性大全' };
 
 // Generate static params for all special skills
@@ -22,6 +23,10 @@ export async function generateMetadata({
   params: Promise<{ sectionName: string }>;
 }): Promise<Metadata> {
   const sectionName = decodeURIComponent((await params).sectionName);
+  const isEffectiveSection = mechanicsSectionsList.find((name) => name === sectionName);
+  if (!isEffectiveSection) {
+    return {};
+  }
   const sectionChineseName = sectionChineseNameList[sectionName] || '局内机制';
 
   return generateArticleMetadata({
@@ -29,19 +34,6 @@ export async function generateMetadata({
     description: DESCRIPTION,
     keywords: [sectionChineseName],
     canonicalUrl: `https://tjwiki.com/mechanics/${encodeURIComponent(sectionName)}`,
-    //imageUrl:
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'Article',
-      headline: `${sectionChineseName} - 猫鼠wiki`,
-      description: DESCRIPTION,
-      author: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-      publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki' },
-      mainEntityOfPage: {
-        '@type': 'WebPage',
-        '@id': `https://tjwiki.com/mechanics/${encodeURIComponent(sectionName)}`,
-      },
-    },
   });
 }
 
@@ -51,6 +43,10 @@ export default async function SpecialSkillDetailPage({
   params: Promise<{ sectionName: string }>;
 }) {
   const sectionName = decodeURIComponent((await params).sectionName);
+  const isEffectiveSection = mechanicsSectionsList.find((name) => name === sectionName);
+  if (!isEffectiveSection) {
+    notFound();
+  }
 
   return (
     <AppProvider>
