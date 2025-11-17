@@ -152,7 +152,8 @@
   "overrides": {
     "trim-newlines": "^3.0.1",
     "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2"
+    "@types/react-dom": "19.2.2",
+    "js-yaml": "^4.1.1"
   },
   "lint-staged": {
     "{*.{js,jsx,ts,tsx,mjs,cjs},!(templates|.next|out|coverage)/**/*.{js,jsx,ts,tsx,mjs,cjs}}": [
