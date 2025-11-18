@@ -53,6 +53,13 @@ body {
   color: #ffe460;
 }
 
+.article-content
+  :where(h1 strong, h2 strong, h3 strong, h4 strong, h1 em, h2 em, h3 em, h4 em):not(
+    :where([class~='not-prose'] *)
+  ) {
+  color: currentColor;
+}
+
 /* Focus styles for accessibility */
 *:focus-visible {
   outline: 2px solid #3b82f6;
