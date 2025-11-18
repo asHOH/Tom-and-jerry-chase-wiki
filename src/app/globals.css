@@ -38,11 +38,11 @@ body {
 }
 
 .dark .article-content :where(h1):not(:where([class~='not-prose'] *)) {
-  color: #ff7085;
+  color: #e872ff;
 }
 
 .dark .article-content :where(h2):not(:where([class~='not-prose'] *)) {
-  color: #ff91a1;
+  color: #ff95fa;
 }
 
 .dark .article-content :where(h3):not(:where([class~='not-prose'] *)) {
