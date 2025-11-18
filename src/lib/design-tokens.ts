@@ -513,9 +513,6 @@ export const componentTokens = {
       textAlign: 'center' as const,
       flex: 1,
       minWidth: '11.25rem', // 180px
-      backgroundColor: designTokens.colors.faction.background,
-      color: designTokens.colors.faction.text,
-      boxShadow: designTokens.shadows.card,
     },
 
     mobile: {
@@ -545,10 +542,35 @@ export const componentTokens = {
     },
 
     hover: {
-      backgroundColor: designTokens.colors.faction.hover,
-      color: designTokens.colors.faction.hoverText,
-      boxShadow: designTokens.shadows.cardHover,
       transform: 'translateY(-2px)',
+    },
+    theme: {
+      light: {
+        base: {
+          backgroundColor: designTokens.colors.faction.background,
+          color: designTokens.colors.faction.text,
+          boxShadow: designTokens.shadows.card,
+        },
+        descriptionColor: designTokens.colors.faction.textSecondary,
+        hover: {
+          backgroundColor: designTokens.colors.faction.hover,
+          color: designTokens.colors.faction.hoverText,
+          boxShadow: designTokens.shadows.cardHover,
+        },
+      },
+      dark: {
+        base: {
+          backgroundColor: designTokens.colors.faction.dark.background,
+          color: designTokens.colors.faction.dark.text,
+          boxShadow: designTokens.shadows.dark.card,
+        },
+        descriptionColor: designTokens.colors.faction.dark.textSecondary,
+        hover: {
+          backgroundColor: designTokens.colors.faction.dark.hover,
+          color: designTokens.colors.faction.dark.hoverText,
+          boxShadow: designTokens.shadows.dark.cardHover,
+        },
+      },
     },
   },
   factionButtonContainer: {

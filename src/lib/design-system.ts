@@ -44,21 +44,17 @@ export {
  * Create hover styles for interactive elements
  */
 export const createHoverStyles = (baseStyles: React.CSSProperties, isDarkMode: boolean) => {
-  const factionColors = designTokens.colors.faction;
-  const hoverBg = isDarkMode ? factionColors.dark.hover : factionColors.hover;
-  const hoverText = isDarkMode ? factionColors.dark.hoverText : factionColors.hoverText;
-  const cardHoverShadow = isDarkMode
-    ? designTokens.shadows.dark.cardHover
-    : designTokens.shadows.cardHover;
+  const factionTheme = isDarkMode
+    ? componentTokens.factionButton.theme.dark
+    : componentTokens.factionButton.theme.light;
+  const hoverTransform = componentTokens.factionButton.hover?.transform;
 
   return {
-    base: baseStyles,
+    base: { ...baseStyles, ...factionTheme.base },
     hover: {
       ...baseStyles,
-      backgroundColor: hoverBg,
-      color: hoverText,
-      boxShadow: cardHoverShadow,
-      transform: 'translateY(-2px)',
+      ...factionTheme.hover,
+      ...(hoverTransform ? { transform: hoverTransform } : {}),
     },
   };
 };
@@ -157,14 +153,13 @@ export const createButtonStyles = (
   };
 
   switch (variant) {
-    case 'faction':
-      const factionColors = designTokens.colors.faction;
-      return {
-        ...createStyleFromTokens(componentTokens.factionButton.base),
-        backgroundColor: isDarkMode ? factionColors.dark.background : factionColors.background,
-        color: isDarkMode ? factionColors.dark.text : factionColors.text,
-        boxShadow: isDarkMode ? designTokens.shadows.dark.card : designTokens.shadows.card,
-      };
+    case 'faction': {
+      const structuralBase = createStyleFromTokens(componentTokens.factionButton.base);
+      const factionTheme = isDarkMode
+        ? componentTokens.factionButton.theme.dark
+        : componentTokens.factionButton.theme.light;
+      return { ...structuralBase, ...factionTheme.base };
+    }
     case 'primary':
       const primaryColors = designTokens.colors.primary;
       return {
