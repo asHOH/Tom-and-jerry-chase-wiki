@@ -1,8 +1,6 @@
 'use client';
 
 import clsx from 'clsx';
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
@@ -13,6 +11,7 @@ import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { useUser } from '@/hooks/useUser';
+import { formatArticleDate } from '@/lib/dateUtils';
 
 /**
  * Represents a unified article submission.
@@ -325,10 +324,7 @@ export default function PendingClient() {
                   </div>
 
                   <div className='text-sm text-gray-600 dark:text-gray-400 mb-4'>
-                    提交时间:{' '}
-                    {format(new Date(submission.created_at), 'yyyy年MM月dd日 HH:mm', {
-                      locale: zhCN,
-                    })}
+                    提交时间: {formatArticleDate(submission.created_at)}
                   </div>
 
                   <div className='bg-gray-50 dark:bg-gray-800 rounded-lg p-4'>

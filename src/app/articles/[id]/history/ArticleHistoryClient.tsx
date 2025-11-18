@@ -1,7 +1,5 @@
 'use client';
 
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -13,6 +11,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { useUser } from '@/hooks/useUser';
+import { formatArticleDate } from '@/lib/dateUtils';
 
 interface ArticleVersion {
   id: string;
@@ -218,11 +217,7 @@ export default function ArticleHistoryClient() {
 
                   <div className='flex items-center gap-2'>
                     <ClockIcon className='size-4' strokeWidth={1.5} />
-                    <span>
-                      {format(new Date(version.created_at), 'yyyy年MM月dd日 HH:mm', {
-                        locale: zhCN,
-                      })}
-                    </span>
+                    <span>{formatArticleDate(version.created_at)}</span>
                   </div>
                 </div>
 

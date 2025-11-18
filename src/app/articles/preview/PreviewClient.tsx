@@ -1,7 +1,5 @@
 'use client';
 
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
@@ -16,6 +14,7 @@ import {
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
+import { formatArticleDate } from '@/lib/dateUtils';
 
 interface PreviewData {
   is_preview: boolean;
@@ -181,12 +180,7 @@ export default function PreviewClient() {
 
             <div className='flex items-center gap-2'>
               <ClockIcon className='size-4' strokeWidth={1.5} />
-              <span>
-                编辑时间:{' '}
-                {format(new Date(data.article.version.created_at), 'yyyy年MM月dd日 HH:mm', {
-                  locale: zhCN,
-                })}
-              </span>
+              <span>编辑时间: {formatArticleDate(data.article.version.created_at)}</span>
             </div>
           </div>
 

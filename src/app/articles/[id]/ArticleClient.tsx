@@ -10,9 +10,8 @@ import {
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
+import { formatArticleDate } from '@/lib/dateUtils';
 import { toChineseNumeral } from '@/lib/textUtils';
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -297,10 +296,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
 
                 <div className='flex items-center gap-2'>
                   <ClockIcon className='size-4' strokeWidth={1.5} />
-                  <span>
-                    创建于:{' '}
-                    {format(new Date(article.created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })}
-                  </span>
+                  <span>创建于: {formatArticleDate(article.created_at)}</span>
                 </div>
 
                 <div className='flex items-center gap-2'>
@@ -314,14 +310,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
                     <PencilSquareIcon className='size-4' strokeWidth={1.5} />
 
                     <span>
-                      最后编辑:{' '}
-                      {format(
-                        new Date(article.latest_version.created_at!),
-                        'yyyy年MM月dd日 HH:mm',
-                        {
-                          locale: zhCN,
-                        }
-                      )}
+                      最后编辑: {formatArticleDate(article.latest_version.created_at!)}
                       {article.latest_version.users_public_view?.nickname &&
                         ` 由 ${article.latest_version.users_public_view.nickname}`}
                     </span>
