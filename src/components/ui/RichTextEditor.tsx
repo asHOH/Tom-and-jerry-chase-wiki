@@ -453,13 +453,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
 
   return (
-    <div className='border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 overflow-hidden'>
+    <div className='border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 overflow-hidden flex flex-col max-h-[90vh]'>
       <Toolbar
         state={toolbarState}
         commands={commands}
         mode={viewMode}
         onModeChange={handleModeChange}
         isUploadingImage={isUploadingImage}
+        className='flex-none z-10'
       />
       <ImagePickerModal
         isOpen={showImagePicker}
@@ -470,31 +471,33 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         allowedSourcesDescription={allowedImageSourcesText}
         refreshLibraryKey={libraryRefreshKey}
       />
-      {viewMode === 'rich' ? (
-        <EditorContent editor={editor} />
-      ) : (
-        <textarea
-          value={rawContent}
-          onChange={(e) => {
-            const value = e.target.value;
-            if (viewMode === 'wiki') {
-              setRawContent(value);
-              const convertedHTML = stripDisallowedImages(wikiTextToHTML(value));
-              onChange?.(convertedHTML);
-            } else {
-              const sanitizedHtml = stripDisallowedImages(value);
-              setRawContent(sanitizedHtml);
-              onChange?.(sanitizedHtml);
-            }
-          }}
-          className={clsx(
-            'w-full h-full p-6 min-h-[400px] bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100',
-            'font-mono text-sm focus:outline-none',
-            className
-          )}
-          aria-label={viewMode === 'wiki' ? 'WikiText editor' : 'HTML editor'}
-        />
-      )}
+      <div className='flex-1 overflow-y-auto min-h-0'>
+        {viewMode === 'rich' ? (
+          <EditorContent editor={editor} />
+        ) : (
+          <textarea
+            value={rawContent}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (viewMode === 'wiki') {
+                setRawContent(value);
+                const convertedHTML = stripDisallowedImages(wikiTextToHTML(value));
+                onChange?.(convertedHTML);
+              } else {
+                const sanitizedHtml = stripDisallowedImages(value);
+                setRawContent(sanitizedHtml);
+                onChange?.(sanitizedHtml);
+              }
+            }}
+            className={clsx(
+              'w-full h-full p-6 min-h-[400px] bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100',
+              'font-mono text-sm focus:outline-none resize-none',
+              className
+            )}
+            aria-label={viewMode === 'wiki' ? 'WikiText editor' : 'HTML editor'}
+          />
+        )}
+      </div>
     </div>
   );
 };
