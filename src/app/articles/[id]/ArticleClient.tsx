@@ -10,6 +10,7 @@ import {
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
+import { toChineseNumeral } from '@/lib/textUtils';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import Link from 'next/link';
@@ -38,6 +39,7 @@ interface TocItem {
   id: string;
   text: string;
   level: number;
+  prefix: string;
 }
 
 // const fetcher = (url: string) =>
@@ -62,6 +64,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
+  const [showAutoNumbering, setShowAutoNumbering] = useState(false);
 
   const articleContent = useMemo(
     () => article.latest_version?.content ?? '',
@@ -105,6 +108,12 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
         return currentCount ? `${baseId}-${currentCount}` : baseId;
       };
 
+      const minLevel = headingElements.reduce(
+        (min, h) => Math.min(min, Number(h.tagName.substring(1))),
+        6
+      );
+      const counters: number[] = [0, 0, 0, 0, 0, 0];
+
       const generatedItems = headingElements
         .map((heading, index) => {
           const rawText = heading.textContent?.trim() ?? '';
@@ -113,12 +122,37 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
           }
 
           const level = Number(heading.tagName.substring(1));
+          const relativeLevel = level - minLevel;
+
+          // Reset deeper levels
+          for (let i = relativeLevel + 1; i < counters.length; i++) {
+            counters[i] = 0;
+          }
+          // Increment current level
+          if (relativeLevel >= 0 && relativeLevel < counters.length) {
+            counters[relativeLevel] = (counters[relativeLevel] || 0) + 1;
+          }
+
+          let prefix = '';
+          if (relativeLevel === 0) {
+            prefix = `${toChineseNumeral(counters[0] || 0)}、`;
+          } else if (relativeLevel === 1) {
+            prefix = `${counters[1] || 0}`;
+          } else if (relativeLevel >= 2) {
+            const parts = [];
+            for (let i = 1; i <= relativeLevel; i++) {
+              parts.push(counters[i] || 0);
+            }
+            prefix = parts.join('.');
+          }
+
           const existingId = heading.id.trim();
           const id = existingId || mapHeadingToId(rawText, index);
           heading.id = id;
           heading.classList.add('scroll-mt-24');
+          heading.setAttribute('data-heading-prefix', prefix);
 
-          return { id, text: rawText, level } satisfies TocItem;
+          return { id, text: rawText, level, prefix } satisfies TocItem;
         })
         .filter((item): item is TocItem => Boolean(item));
 
@@ -215,6 +249,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
                     : 'text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-300'
                 }`}
               >
+                {showAutoNumbering && <span className='mr-1 opacity-70'>{item.prefix}</span>}
                 {item.text}
               </a>
             </li>
@@ -296,12 +331,24 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
 
               {/* Action Buttons */}
               <div className='mt-4 flex flex-wrap gap-3 pt-4 border-t border-gray-200 dark:border-gray-700'>
+                <button
+                  onClick={() => setShowAutoNumbering(!showAutoNumbering)}
+                  type='button'
+                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
+                    showAutoNumbering
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  {showAutoNumbering ? '隐藏编号' : '自动编号'}
+                </button>
+
                 <Link
                   href={`/articles/${articleId}/history`}
                   className='inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 >
                   <ClockIcon className='size-4' strokeWidth={1.5} />
-                  查看历史版本
+                  历史版本
                 </Link>
 
                 {canEdit && (
@@ -332,11 +379,20 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
           <div
             ref={contentRef}
             className={
-              isMobile
+              (isMobile
                 ? ''
-                : 'rounded-lg border border-transparent p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40'
+                : 'rounded-lg border border-transparent p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40') +
+              (showAutoNumbering ? ' article-content-auto-numbered' : '')
             }
           >
+            <style jsx global>{`
+              .article-content-auto-numbered [data-heading-prefix]::before {
+                content: attr(data-heading-prefix) ' ';
+                margin-right: 0.5em;
+                font-weight: normal;
+                opacity: 0.8;
+              }
+            `}</style>
             <RichTextDisplay content={article.latest_version?.content} />
           </div>
 
