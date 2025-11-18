@@ -41,6 +41,110 @@ interface TocItem {
   prefix: string;
 }
 
+const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const removeLeadingCharactersFromHeading = (heading: HTMLHeadingElement, count: number) => {
+  if (!count) {
+    return;
+  }
+  const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT, null);
+  let remaining = count;
+
+  while (remaining > 0) {
+    const node = walker.nextNode() as Text | null;
+    if (!node) {
+      break;
+    }
+    const text = node.textContent ?? '';
+    if (!text.length) {
+      continue;
+    }
+    if (text.length <= remaining) {
+      node.textContent = '';
+      remaining -= text.length;
+    } else {
+      node.textContent = text.slice(remaining);
+      remaining = 0;
+    }
+  }
+  heading.normalize();
+};
+
+const buildHeadingPrefixMatchers = (prefix: string, numericTokens: number[]): RegExp[] => {
+  const candidates = new Set<string>();
+  const trimmedPrefix = prefix.trim();
+  if (trimmedPrefix) {
+    candidates.add(trimmedPrefix);
+  }
+  if (trimmedPrefix.endsWith('、') || trimmedPrefix.endsWith('.')) {
+    candidates.add(trimmedPrefix.slice(0, -1).trim());
+  }
+
+  if (numericTokens.length) {
+    const numericSequence = numericTokens.join('.');
+    candidates.add(numericSequence);
+    candidates.add(`${numericSequence}.`);
+    candidates.add(`${numericSequence}、`);
+  }
+
+  if (numericTokens.length === 1) {
+    const chinese = toChineseNumeral(numericTokens[0] ?? 0);
+    if (chinese) {
+      candidates.add(chinese);
+      candidates.add(`${chinese}、`);
+      candidates.add(`${chinese}.`);
+    }
+  }
+
+  const matchers: RegExp[] = [];
+  candidates.forEach((candidate) => {
+    if (!candidate) {
+      return;
+    }
+    const escaped = escapeRegExp(candidate);
+    if (!escaped) {
+      return;
+    }
+    matchers.push(new RegExp(`^${escaped}(?:[\\s、.:-]+)?`));
+  });
+
+  if (numericTokens.length > 1) {
+    const sequence = numericTokens.map((token) => escapeRegExp(String(token))).join('[\\s、.:-]+');
+    matchers.push(new RegExp(`^${sequence}(?:[\\s、.:-]+)?`));
+  }
+
+  return matchers;
+};
+
+const stripExistingHeadingNumbering = (
+  heading: HTMLHeadingElement,
+  rawText: string,
+  prefix: string,
+  numericTokens: number[]
+): string => {
+  if (!rawText.trim()) {
+    return rawText;
+  }
+  const leadingWhitespaceMatch = rawText.match(/^\s+/);
+  const leadingWhitespaceLength = leadingWhitespaceMatch?.[0]?.length ?? 0;
+  const trimmed = rawText.slice(leadingWhitespaceLength);
+  if (!trimmed) {
+    return rawText.trim();
+  }
+
+  const matchers = buildHeadingPrefixMatchers(prefix, numericTokens);
+  for (const matcher of matchers) {
+    const match = trimmed.match(matcher);
+    if (match?.[0]) {
+      const removeLength = leadingWhitespaceLength + match[0].length;
+      removeLeadingCharactersFromHeading(heading, removeLength);
+      return (heading.textContent ?? '').trim();
+    }
+  }
+
+  return rawText.trim();
+};
+
 // const fetcher = (url: string) =>
 //   fetch(url).then((res) => {
 //     if (!res.ok) {
@@ -115,6 +219,15 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
 
       const generatedItems = headingElements
         .map((heading, index) => {
+          const originalHtmlAttr = heading.getAttribute('data-heading-original-html');
+          if (originalHtmlAttr) {
+            if (heading.innerHTML !== originalHtmlAttr) {
+              heading.innerHTML = originalHtmlAttr;
+            }
+          } else {
+            heading.setAttribute('data-heading-original-html', heading.innerHTML);
+          }
+
           const rawText = heading.textContent?.trim() ?? '';
           if (!rawText) {
             return null;
@@ -149,9 +262,20 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
           const id = existingId || mapHeadingToId(rawText, index);
           heading.id = id;
           heading.classList.add('scroll-mt-24');
-          heading.setAttribute('data-heading-prefix', prefix);
+          let headingText = rawText;
 
-          return { id, text: rawText, level, prefix } satisfies TocItem;
+          if (showAutoNumbering) {
+            const numericTokens =
+              relativeLevel === 0
+                ? [counters[0] || 0]
+                : counters.slice(1, relativeLevel + 1).map((value) => value || 0);
+            heading.setAttribute('data-heading-prefix', prefix);
+            headingText = stripExistingHeadingNumbering(heading, rawText, prefix, numericTokens);
+          } else {
+            heading.removeAttribute('data-heading-prefix');
+          }
+
+          return { id, text: headingText, level, prefix } satisfies TocItem;
         })
         .filter((item): item is TocItem => Boolean(item));
 
@@ -187,7 +311,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
     observer.observe(container, { childList: true, subtree: true, characterData: true });
 
     return () => observer.disconnect();
-  }, [articleContent]);
+  }, [articleContent, showAutoNumbering]);
 
   useEffect(() => {
     if (!tocItems.length) {
