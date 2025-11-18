@@ -74,6 +74,52 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [libraryRefreshKey, setLibraryRefreshKey] = useState(0);
 
+  const uploadImageFile = useCallback(async (file: File) => {
+    if (!RTE_IMAGE_ALLOWED_MIME_TYPES.includes(file.type)) {
+      throw new Error('仅支持上传 PNG、JPEG、WEBP、AVIF 或 GIF 图片');
+    }
+    if (file.size > RTE_IMAGE_MAX_BYTES) {
+      throw new Error(
+        `图片大小需小于 ${formatBytes(RTE_IMAGE_MAX_BYTES)}，当前为 ${formatBytes(file.size)}`
+      );
+    }
+
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    setIsUploadingImage(true);
+
+    try {
+      const response = await fetch('/api/uploads/rte-image', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        try {
+          const payload = JSON.parse(text) as { error?: string };
+          throw new Error(payload.error || '上传失败');
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            throw new Error(text || '上传失败');
+          }
+          throw error;
+        }
+      }
+      const result = (await response.json()) as { publicUrl?: string };
+      if (!result?.publicUrl) {
+        throw new Error('上传失败，未返回图片地址');
+      }
+      const normalized = normalizeHostedImageUrl(result.publicUrl);
+      if (!normalized) {
+        throw new Error('上传的图片地址未通过安全校验');
+      }
+      setLibraryRefreshKey((key) => key + 1);
+      return normalized;
+    } finally {
+      setIsUploadingImage(false);
+    }
+  }, []);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -288,52 +334,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const allowedImageSourcesText = useMemo(() => describeAllowedImageSources(), []);
 
-  const uploadImageFile = useCallback(async (file: File) => {
-    if (!RTE_IMAGE_ALLOWED_MIME_TYPES.includes(file.type)) {
-      throw new Error('仅支持上传 PNG、JPEG、WEBP、AVIF 或 GIF 图片');
-    }
-    if (file.size > RTE_IMAGE_MAX_BYTES) {
-      throw new Error(
-        `图片大小需小于 ${formatBytes(RTE_IMAGE_MAX_BYTES)}，当前为 ${formatBytes(file.size)}`
-      );
-    }
-
-    const formData = new FormData();
-    formData.append('file', file, file.name);
-    setIsUploadingImage(true);
-
-    try {
-      const response = await fetch('/api/uploads/rte-image', {
-        method: 'POST',
-        body: formData,
-      });
-      if (!response.ok) {
-        const text = await response.text();
-        try {
-          const payload = JSON.parse(text) as { error?: string };
-          throw new Error(payload.error || '上传失败');
-        } catch (error) {
-          if (error instanceof SyntaxError) {
-            throw new Error(text || '上传失败');
-          }
-          throw error;
-        }
-      }
-      const result = (await response.json()) as { publicUrl?: string };
-      if (!result?.publicUrl) {
-        throw new Error('上传失败，未返回图片地址');
-      }
-      const normalized = normalizeHostedImageUrl(result.publicUrl);
-      if (!normalized) {
-        throw new Error('上传的图片地址未通过安全校验');
-      }
-      setLibraryRefreshKey((key) => key + 1);
-      return normalized;
-    } finally {
-      setIsUploadingImage(false);
-    }
-  }, []);
-
   const addImage = useCallback(() => {
     if (!editor) return;
     setShowImagePicker(true);
@@ -363,6 +363,71 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   }, [editor]);
+
+  const handlePastedImages = useCallback(
+    async (files: File[]) => {
+      if (!editor || files.length === 0) return;
+      for (const file of files) {
+        try {
+          const imageUrl = await uploadImageFile(file);
+          editor.chain().focus().setImage({ src: imageUrl }).run();
+        } catch (error) {
+          const message = error instanceof Error ? error.message : '图片上传失败，请稍后重试。';
+          window.alert(message);
+          break;
+        }
+      }
+    },
+    [editor, uploadImageFile]
+  );
+
+  const handlePaste = useCallback(
+    (event: React.ClipboardEvent<HTMLDivElement>) => {
+      if (viewMode !== 'rich' || !editor) return;
+      const clipboardData = event.clipboardData;
+      if (!clipboardData) return;
+
+      const candidateFiles: File[] = [];
+
+      if (clipboardData.items && clipboardData.items.length > 0) {
+        for (const item of Array.from(clipboardData.items)) {
+          if (item.kind !== 'file') continue;
+          const file = item.getAsFile();
+          if (file) {
+            candidateFiles.push(file);
+          }
+        }
+      }
+
+      if (candidateFiles.length === 0 && clipboardData.files && clipboardData.files.length > 0) {
+        candidateFiles.push(...Array.from(clipboardData.files));
+      }
+
+      const imageFiles = candidateFiles.filter((file) => file.type.startsWith('image/'));
+      if (imageFiles.length === 0) return;
+
+      event.preventDefault();
+
+      const allowedImages = imageFiles.filter((file) =>
+        RTE_IMAGE_ALLOWED_MIME_TYPES.includes(file.type)
+      );
+      const disallowedImages = imageFiles.filter(
+        (file) => !RTE_IMAGE_ALLOWED_MIME_TYPES.includes(file.type)
+      );
+
+      if (allowedImages.length === 0) {
+        window.alert('仅支持粘贴 PNG、JPEG、WEBP、AVIF 或 GIF 图片。');
+        return;
+      }
+
+      void handlePastedImages(allowedImages);
+
+      if (disallowedImages.length > 0) {
+        window.alert('部分图片格式不受支持，仅处理了 PNG、JPEG、WEBP、AVIF 或 GIF 图片。');
+      }
+    },
+    [editor, handlePastedImages, viewMode]
+  );
 
   const commands: ToolbarCommands = {
     toggleBold: useCallback(() => editor?.chain().focus().toggleBold().run(), [editor]),
@@ -473,7 +538,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       />
       <div className='flex-1 overflow-y-auto min-h-0'>
         {viewMode === 'rich' ? (
-          <EditorContent editor={editor} />
+          <EditorContent editor={editor} onPaste={handlePaste} />
         ) : (
           <textarea
             value={rawContent}
