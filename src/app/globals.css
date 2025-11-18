@@ -16,38 +16,29 @@ body {
   position: relative;
 }
 
-/* Refine article heading scale for better balance on desktop */
-.prose :where(h1):not(:where([class~='not-prose'] *)) {
-  font-size: 2.375rem;
-  line-height: 2.875rem;
-}
+/* Refine article heading colors */
 
-.prose :where(h2):not(:where([class~='not-prose'] *)) {
-  font-size: 2rem;
-  line-height: 2.375rem;
-}
-
-.article-content :where(h1):not(:where([class~='not-prose'] *)) {
+.article-content :where(h2):not(:where([class~='not-prose'] *)) {
   color: #841c92;
 }
 
-.article-content :where(h2):not(:where([class~='not-prose'] *)) {
+.article-content :where(h3):not(:where([class~='not-prose'] *)) {
   color: #0c3a9f;
 }
 
-.article-content :where(h3):not(:where([class~='not-prose'] *)) {
+.article-content :where(h4):not(:where([class~='not-prose'] *)) {
   color: #1369d3;
 }
 
-.dark .article-content :where(h1):not(:where([class~='not-prose'] *)) {
+.dark .article-content :where(h2):not(:where([class~='not-prose'] *)) {
   color: #ff91a1;
 }
 
-.dark .article-content :where(h2):not(:where([class~='not-prose'] *)) {
+.dark .article-content :where(h3):not(:where([class~='not-prose'] *)) {
   color: #ffbc75;
 }
 
-.dark .article-content :where(h3):not(:where([class~='not-prose'] *)) {
+.dark .article-content :where(h4):not(:where([class~='not-prose'] *)) {
   color: #ffe460;
 }
 
