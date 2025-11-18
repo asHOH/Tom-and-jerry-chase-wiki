@@ -197,6 +197,30 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
         return;
       }
 
+      const levelCounts: Record<number, number> = {};
+      headingElements.forEach((heading) => {
+        const level = Number(heading.tagName.substring(1));
+        if (!Number.isNaN(level)) {
+          levelCounts[level] = (levelCounts[level] ?? 0) + 1;
+        }
+      });
+
+      const shouldSkipSingleH1 = (levelCounts[1] ?? 0) === 1;
+      const targetHeadings = shouldSkipSingleH1
+        ? headingElements.filter((heading) => heading.tagName.toUpperCase() !== 'H1')
+        : headingElements;
+
+      if (!targetHeadings.length) {
+        setTocItems((prev) => {
+          if (!prev.length) {
+            return prev;
+          }
+          return [];
+        });
+        setActiveHeadingId((prev) => (prev ? '' : prev));
+        return;
+      }
+
       const slugCounts: Record<string, number> = {};
       const mapHeadingToId = (text: string, fallbackIndex: number) => {
         const normalizedText = text
@@ -211,13 +235,13 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
         return currentCount ? `${baseId}-${currentCount}` : baseId;
       };
 
-      const minLevel = headingElements.reduce(
-        (min, h) => Math.min(min, Number(h.tagName.substring(1))),
-        6
-      );
+      const minLevel = targetHeadings.reduce((min, h) => {
+        const level = Number(h.tagName.substring(1));
+        return Number.isNaN(level) ? min : Math.min(min, level);
+      }, 6);
       const counters: number[] = [0, 0, 0, 0, 0, 0];
 
-      const generatedItems = headingElements
+      const generatedItems = targetHeadings
         .map((heading, index) => {
           const originalHtmlAttr = heading.getAttribute('data-heading-original-html');
           if (originalHtmlAttr) {
