@@ -1,31 +1,30 @@
 # Project Information
 
-This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠手游). The site provides comprehensive data and tools for players to look up character information, knowledge cards, and game mechanics.
+A fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠手游). The site provides comprehensive data and tools for players to look up character information, knowledge cards, and game mechanics.
 
 - **Name**: Tom and Jerry Chase Wiki
 - **Type**: Next.js application
 - **Framework**: Next.js 16 with App Router architecture
-- **React**: React 19 with TypeScript for type safety
-- **Deployment**: Vercel
+- **React**: React 19 with TypeScript
+- **Production Deployment**: Container (run as next server; links to https://www.tjwiki.com through cloudflare tunnel)
+- **Development Deployment**: Vercel (https://dev.tjwiki.com)
 - **Language**: Chinese (zh-CN)
 - **Architecture**: Hybrid client/server rendering (Next.js)
-- **Target Audience**: Chinese-speaking players of the Tom and Jerry Chase mobile game
+- **Target Audience**: Chinese players of the Tom and Jerry Chase game
 
 ## Core Features
 
-- **Character Database**: Detailed information about cat and mouse characters including stats, skills, and recommended builds
+- **Characters**: Detailed information about cat and mouse characters including stats, skills, and recommended builds
 - **Knowledge Cards**: Complete database of knowledge cards with effects and filtering capabilities
 - **Search & Filter**: Advanced search and filtering system with Chinese pinyin support
-- **Skill Point Calculator**: Tools for optimizing character skill allocations
 - **Progressive Web App**: Offline-capable PWA with caching for mobile users
 
 ## Key Principles
 
-- **Data Accuracy**: Precise character stats and skill descriptions are critical
-- **Performance**: Fast loading and responsive design for mobile gaming scenarios
+- **Data Accuracy**: Precise character stats and skill descriptions
+- **Performance**: Fast loading and responsive design for mobile users (70%+ mobile traffic)
 - **Accessibility**: Clean, intuitive interface that works well on mobile devices
-- **Community-Driven**: Open source project welcoming contributions from the gaming community
-- **Compatibility**: Ensure backward compatibility of import characters function in EditMode
+- **Community-Driven**: Open source project welcoming contributions from visitors
 
 # Technology Stack
 
@@ -49,7 +48,7 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫�
 
 ## Development Tools
 
-- **ESLint** with Next.js, Testing Library, and Storybook plugins
+- **ESLint** for code quality
 - **Prettier** for code formatting (single quotes, 100 char width)
 - **Husky** for git hooks with pre-commit, pre-push validation
 - **Depcheck**, **bundlesize**, and custom scripts for build hygiene
@@ -58,11 +57,10 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫�
 
 - **Jest** with jsdom environment
 - **React Testing Library** for component testing
-- **Storybook** for component development and documentation
+- **Storybook** for component documentation (rarely used)
 
 ## Build & Deployment
 
-- **Vercel** for hosting and deployment
 - **PWA** capabilities with next-pwa and service worker
 - **Image optimization**: `scripts/run-image-optimization.cjs` runs before builds
 - **MDX** support for documentation via `@next/mdx`
@@ -72,9 +70,8 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫�
 - **Docs index generator**: `scripts/generate-doc-pages.mjs` runs during `npm run build` to produce `src/data/generated/docPages.(json|ts)`. Import the typed TS (`docPages.ts`) from runtime code; avoid `fs` in RSC.
 - **Edge-safe middleware**: Supabase session update dynamically deep-imports `createServerClient` from `@supabase/ssr/dist/module/createServerClient.js` to avoid Edge runtime Node API warnings. `@supabase/ssr` is pinned to `0.7.0`.
 
-## Performance & Analytics
+## Performance
 
-- **Vercel Analytics** and **Speed Insights**
 - Image optimization and caching strategies
 - Runtime caching for offline functionality
 
@@ -85,7 +82,6 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫�
 - `npm run lint` — run ESLint
 - `npm run type-check` — run TypeScript in no-emit mode
 - `npm test` — run Jest test suite
-- `npm run storybook` — start Storybook locally
 
 # Supabase Integration
 
@@ -221,20 +217,19 @@ This is a fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫�
 - Use meaningful variable/function names over comments
 - Add comments only for: complex logic, non-obvious algorithms, or public APIs
 
-## Command Line Syntax
+## Command Line Preferences
 
-- Use PowerShell syntax: `;` instead of `&&`, etc.
+- Prefer PowerShell.
 
 # Code Standards
 
-- Follow existing patterns
+- Follow existing patterns, but tell me if the existing pattern is bad
 - Ensure TypeScript strict mode compliance
 - Write features with least net code increase
-- Avoid inline scripts/styles and use build-time bundling for CSP compliance (though not required)
-- Evaluate the code to ensure best practices before and after editing
+- Avoid inline scripts/styles
 - Optimize for static delivery and client-side hydration
 
-# Things to do After Editing (important!)
+# Things to do After Editing (IMPORTANT!)
 
 - Run these commands to ensure code quality:
 
@@ -243,4 +238,5 @@ npm run lint            # Run ESLint
 npm run type-check      # TypeScript type checking
 ```
 
+- Evaluate the code changes to ensure best practices
 - Write a draft commit message with `feat|fix|docs|style|refactor|perf|test|chore(scope): ...` as a reference.
