@@ -5,6 +5,81 @@ export type PositioningTagColorStyle =
   | { color: string; backgroundColor: string; borderColor?: string }
   | { color: string; background: string; borderColor?: string };
 
+const sharedPositioningTagPalettes = {
+  crimson: {
+    text: '#dc2626',
+    background: '#fee2e2',
+    border: '#fca5a5',
+    container: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-200',
+    dark: {
+      text: '#f87171',
+      background: '#7f1d1d',
+      border: '#dc2626',
+      container: 'bg-gradient-to-r from-red-900 to-red-950 border border-red-800',
+    },
+  },
+  azure: {
+    text: '#2563eb',
+    background: '#dbeafe',
+    border: '#93c5fd',
+    container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200',
+    dark: {
+      text: '#60a5fa',
+      background: '#1e3a8a',
+      border: '#2563eb',
+      container: 'bg-gradient-to-r from-blue-900 to-blue-950 border border-blue-800',
+    },
+  },
+  violet: {
+    text: '#9333ea',
+    background: '#e9d5ff',
+    border: '#c4b5fd',
+    container: 'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200',
+    dark: {
+      text: '#c4b5fd',
+      background: '#581c87',
+      border: '#9333ea',
+      container: 'bg-gradient-to-r from-purple-900 to-purple-950 border border-purple-800',
+    },
+  },
+  russet: {
+    text: '#9a3412',
+    background: '#fee5d3',
+    border: '#ea580c',
+    container: 'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300',
+    dark: {
+      text: '#fdbf74',
+      background: '#7c2d12',
+      border: '#ea580c',
+      container: 'bg-gradient-to-r from-orange-900 to-orange-950 border border-orange-800',
+    },
+  },
+  amber: {
+    text: '#d97706',
+    background: '#fef3c7',
+    border: '#fcd34d',
+    container: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200',
+    dark: {
+      text: '#fcd34d',
+      background: '#78350f',
+      border: '#d97706',
+      container: 'bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800',
+    },
+  },
+  deepGray: {
+    text: '#111111',
+    background: '#dbdee3',
+    border: '#ffffff',
+    container: 'bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200',
+    dark: {
+      text: '#eeeeee',
+      background: '#4b5563',
+      border: '#000000',
+      container: 'bg-gradient-to-r from-gray-600 to-gray-650 border border-gray-700',
+    },
+  },
+} as const;
+
 export const designTokens = {
   spacing: {
     xxxxxxs: '0.1875rem', // 3px
@@ -246,42 +321,9 @@ export const designTokens = {
     // Positioning tag colors
     positioningTags: {
       // Cat tags
-      attack: {
-        text: '#dc2626', // red-600
-        background: '#fee2e2', // red-100
-        border: '#fca5a5', // red-300
-        container: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-200',
-        dark: {
-          text: '#f87171', // red-400
-          background: '#7f1d1d', // red-900
-          border: '#dc2626', // red-600
-          container: 'bg-gradient-to-r from-red-900 to-red-950 border border-red-800',
-        },
-      },
-      defense: {
-        text: '#2563eb', // blue-600
-        background: '#dbeafe', // blue-100
-        border: '#93c5fd', // blue-300
-        container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200',
-        dark: {
-          text: '#60a5fa', // blue-400
-          background: '#1e3a8a', // blue-900
-          border: '#2563eb', // blue-600
-          container: 'bg-gradient-to-r from-blue-900 to-blue-950 border border-blue-800',
-        },
-      },
-      chase: {
-        text: '#9a3412', // orange-800 (deeper reddish brown)
-        background: '#fee5d3', // orange-175 equivalent (lighter background)
-        border: '#ea580c', // orange-600 (reddish brown border)
-        container: 'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300',
-        dark: {
-          text: '#fdbf74', // orange-300
-          background: '#7c2d12', // orange-900
-          border: '#ea580c', // orange-600
-          container: 'bg-gradient-to-r from-orange-900 to-orange-950 border border-orange-800',
-        },
-      },
+      attack: sharedPositioningTagPalettes.crimson,
+      defense: sharedPositioningTagPalettes.azure,
+      chase: sharedPositioningTagPalettes.russet,
       speedrun: {
         text: '#16a34a', // green-600
         background: '#dcfce7', // green-100
@@ -294,79 +336,13 @@ export const designTokens = {
           container: 'bg-gradient-to-r from-green-900 to-green-950 border border-green-800',
         },
       },
-      fight: {
-        text: '#9333ea', // purple-600
-        background: '#e9d5ff', // purple-100
-        border: '#c4b5fd', // purple-300
-        container: 'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200',
-        dark: {
-          text: '#c4b5fd', // purple-300
-          background: '#581c87', // purple-900
-          border: '#9333ea', // purple-600
-          container: 'bg-gradient-to-r from-purple-900 to-purple-950 border border-purple-800',
-        },
-      },
-      lateGame: {
-        text: '#4338ca', // indigo-600
-        background: '#e0e7ff', // indigo-100
-        border: '#a5b4fc', // indigo-300
-        container: 'bg-gradient-to-r from-indigo-50 to-indigo-100 border border-indigo-200',
-        dark: {
-          text: '#a5b4fc', // indigo-300
-          background: '#3730a3', // indigo-900
-          border: '#4338ca', // indigo-600
-          container: 'bg-gradient-to-r from-indigo-900 to-indigo-950 border border-indigo-800',
-        },
-      },
-      comeback: {
-        text: '#d97706', // amber-600
-        background: '#fef3c7', // amber-100
-        border: '#fcd34d', // amber-300
-        container: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200',
-        dark: {
-          text: '#fcd34d', // amber-300
-          background: '#78350f', // amber-900
-          border: '#d97706', // amber-600
-          container: 'bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800',
-        },
-      },
+      fight: sharedPositioningTagPalettes.violet,
+      lateGame: sharedPositioningTagPalettes.deepGray,
+      comeback: sharedPositioningTagPalettes.amber,
       // Mouse tags
-      cheese: {
-        text: '#d97706', // amber-600
-        background: '#fef3c7', // amber-100
-        border: '#fcd34d', // amber-300
-        container: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200',
-        dark: {
-          text: '#fcd34d', // amber-300
-          background: '#78350f', // amber-900
-          border: '#d97706', // amber-600
-          container: 'bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800',
-        },
-      },
-      disrupt: {
-        text: '#dc2626', // red-600
-        background: '#fee2e2', // red-100
-        border: '#fca5a5', // red-300
-        container: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-200',
-        dark: {
-          text: '#f87171', // red-400
-          background: '#7f1d1d', // red-900
-          border: '#dc2626', // red-600
-          container: 'bg-gradient-to-r from-red-900 to-red-950 border border-red-800',
-        },
-      },
-      support: {
-        text: '#2563eb', // blue-600
-        background: '#dbeafe', // blue-100
-        border: '#93c5fd', // blue-300
-        container: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200',
-        dark: {
-          text: '#60a5fa', // blue-400
-          background: '#1e3a8a', // blue-900
-          border: '#2563eb', // blue-600
-          container: 'bg-gradient-to-r from-blue-900 to-blue-950 border border-blue-800',
-        },
-      },
+      cheese: sharedPositioningTagPalettes.amber,
+      disrupt: sharedPositioningTagPalettes.crimson,
+      support: sharedPositioningTagPalettes.azure,
       rescue: {
         text: '#059669', // emerald-600
         background: '#d1fae5', // emerald-100
@@ -379,43 +355,10 @@ export const designTokens = {
           container: 'bg-gradient-to-r from-emerald-900 to-emerald-950 border border-emerald-800',
         },
       },
-      breakthrough: {
-        text: '#9333ea', // purple-600
-        background: '#e9d5ff', // purple-100
-        border: '#c4b5fd', // purple-300
-        container: 'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200',
-        dark: {
-          text: '#c4b5fd', // purple-300
-          background: '#581c87', // purple-900
-          border: '#9333ea', // purple-600
-          container: 'bg-gradient-to-r from-purple-900 to-purple-950 border border-purple-800',
-        },
-      },
-      wallBreak: {
-        text: '#9a3412', // orange-800 (deeper reddish brown)
-        background: '#fee5d3', // orange-175 equivalent (lighter background)
-        border: '#ea580c', // orange-600 (reddish brown border)
-        container: 'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300',
-        dark: {
-          text: '#fdbf74', // orange-300
-          background: '#7c2d12', // orange-900
-          border: '#ea580c', // orange-600
-          container: 'bg-gradient-to-r from-orange-900 to-orange-950 border border-orange-800',
-        },
-      },
+      breakthrough: sharedPositioningTagPalettes.violet,
+      wallBreak: sharedPositioningTagPalettes.russet,
       // Shared tags (mouse variant)
-      lateGameMouse: {
-        text: '#0d9488', // teal-600
-        background: '#ccfbf1', // teal-100
-        border: '#5eead4', // teal-300
-        container: 'bg-gradient-to-r from-teal-50 to-teal-100 border border-teal-200',
-        dark: {
-          text: '#5eead4', // teal-300
-          background: '#0f766e', // teal-900
-          border: '#0d9488', // teal-600
-          container: 'bg-gradient-to-r from-teal-900 to-teal-950 border border-teal-800',
-        },
-      },
+      lateGameMouse: sharedPositioningTagPalettes.deepGray,
       // Minor tags
       minor: {
         text: '#4b5563', // gray-600
@@ -528,6 +471,28 @@ export const designTokens = {
       'background-color 300ms ease, color 300ms ease, transform 300ms ease, box-shadow 300ms ease',
   },
 } as const;
+
+const positioningTagNameMap: Record<string, keyof typeof designTokens.colors.positioningTags> = {
+  进攻: 'attack',
+  防守: 'defense',
+  追击: 'chase',
+  速通: 'speedrun',
+  打架: 'fight',
+  翻盘: 'comeback',
+  奶酪: 'cheese',
+  干扰: 'disrupt',
+  辅助: 'support',
+  救援: 'rescue',
+  破局: 'breakthrough',
+  砸墙: 'wallBreak',
+};
+
+const resolvePositioningTagKey = (tagName: string, faction: FactionId) => {
+  if (tagName === '后期') {
+    return faction === 'mouse' ? 'lateGameMouse' : 'lateGame';
+  }
+  return positioningTagNameMap[tagName];
+};
 
 export const componentTokens = {
   factionButton: {
@@ -792,24 +757,7 @@ export const getPositioningTagColors = (
   faction: FactionId,
   isDarkMode: boolean
 ): PositioningTagColorStyle => {
-  // Map Chinese tag names to design token keys
-  const tagMapping: Record<string, keyof typeof designTokens.colors.positioningTags> = {
-    进攻: 'attack',
-    防守: 'defense',
-    追击: 'chase',
-    速通: 'speedrun',
-    打架: 'fight',
-    后期: faction === 'mouse' ? 'lateGameMouse' : 'lateGame',
-    翻盘: 'comeback',
-    奶酪: 'cheese',
-    干扰: 'disrupt',
-    辅助: 'support',
-    救援: 'rescue',
-    破局: 'breakthrough',
-    砸墙: 'wallBreak',
-  };
-
-  const tagKey = tagMapping[tagName];
+  const tagKey = resolvePositioningTagKey(tagName, faction);
   const colorScheme = tagKey
     ? designTokens.colors.positioningTags[tagKey]
     : designTokens.colors.positioningTags.minor;
@@ -1074,24 +1022,7 @@ export const getPositioningTagContainerColor = (
   faction: FactionId,
   isDarkMode: boolean
 ): string => {
-  // Map Chinese tag names to design token keys
-  const tagMapping: Record<string, keyof typeof designTokens.colors.positioningTags> = {
-    进攻: 'attack',
-    防守: 'defense',
-    追击: 'chase',
-    速通: 'speedrun',
-    打架: 'fight',
-    后期: faction === 'mouse' ? 'lateGameMouse' : 'lateGame',
-    翻盘: 'comeback',
-    奶酪: 'cheese',
-    干扰: 'disrupt',
-    辅助: 'support',
-    救援: 'rescue',
-    破局: 'breakthrough',
-    砸墙: 'wallBreak',
-  };
-
-  const tagKey = tagMapping[tagName];
+  const tagKey = resolvePositioningTagKey(tagName, faction);
   const colorScheme = tagKey
     ? designTokens.colors.positioningTags[tagKey]
     : designTokens.colors.positioningTags.minor;
