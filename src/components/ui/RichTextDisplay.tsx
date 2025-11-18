@@ -59,6 +59,7 @@ export default memo(function RichTextDisplay({
       className={clsx(
         `prose prose-lg max-w-none dark:prose-invert prose-blue
           prose-headings:text-gray-900 dark:prose-headings:text-gray-100
+          prose-h4:text-xl prose-h4:font-semibold prose-h4:mt-6 prose-h4:mb-3
           prose-p:text-gray-700 dark:prose-p:text-gray-300
           prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
           prose-strong:text-gray-900 dark:prose-strong:text-gray-100

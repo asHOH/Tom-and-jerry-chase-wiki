@@ -35,6 +35,7 @@ export function sanitizeHTML(
       'a',
       'h2',
       'h3',
+      'h4',
       'ul',
       'ol',
       'li',

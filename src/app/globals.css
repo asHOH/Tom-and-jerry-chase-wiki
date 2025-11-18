@@ -16,7 +16,11 @@ body {
   position: relative;
 }
 
-/* Refine article heading colors */
+/* Article heading palette */
+
+.article-content :where(h1):not(:where([class~='not-prose'] *)) {
+  color: #b300cb;
+}
 
 .article-content :where(h2):not(:where([class~='not-prose'] *)) {
   color: #841c92;
@@ -28,6 +32,13 @@ body {
 
 .article-content :where(h4):not(:where([class~='not-prose'] *)) {
   color: #1369d3;
+  font-size: 1.375rem;
+  line-height: 1.8rem;
+  font-weight: 600;
+}
+
+.dark .article-content :where(h1):not(:where([class~='not-prose'] *)) {
+  color: #ff7085;
 }
 
 .dark .article-content :where(h2):not(:where([class~='not-prose'] *)) {
