@@ -45,7 +45,7 @@ export interface ToolbarCommands {
   toggleUnderline(): void;
   toggleStrike(): void;
   toggleInlineCode(): void;
-  toggleHeading(level: 1 | 2 | 3): void;
+  toggleHeading(level: 2 | 3 | 4): void;
   toggleBulletList(): void;
   toggleOrderedList(): void;
   setTextAlign(alignment: 'left' | 'center' | 'right'): void;
@@ -178,17 +178,9 @@ export const Toolbar = React.memo(function Toolbar({
 
         <div className='flex items-center gap-1'>
           <ToolbarButton
-            onClick={() => commands.toggleHeading(1)}
-            isActive={state.headingLevel === 1}
-            title='标题 1 (Ctrl+Alt+1)'
-            mode={mode}
-          >
-            H1
-          </ToolbarButton>
-          <ToolbarButton
             onClick={() => commands.toggleHeading(2)}
             isActive={state.headingLevel === 2}
-            title='标题 2 (Ctrl+Alt+2)'
+            title='二级标题 (Ctrl+Alt+2) （注：实际是顶级标题，因为“一级标题”是文章标题）'
             mode={mode}
           >
             H2
@@ -196,10 +188,18 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton
             onClick={() => commands.toggleHeading(3)}
             isActive={state.headingLevel === 3}
-            title='标题 3 (Ctrl+Alt+3)'
+            title='三级标题 (Ctrl+Alt+3)'
             mode={mode}
           >
             H3
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => commands.toggleHeading(4)}
+            isActive={state.headingLevel === 4}
+            title='四级标题 (Ctrl+Alt+4)'
+            mode={mode}
+          >
+            H4
           </ToolbarButton>
         </div>
 

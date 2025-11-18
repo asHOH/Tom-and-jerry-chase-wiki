@@ -154,7 +154,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     let raf = 0 as number;
     const compute = (): ToolbarState => {
       let headingLevel: ToolbarState['headingLevel'] = null;
-      for (const level of [1, 2, 3] as const) {
+      for (const level of [2, 3, 4] as const) {
         if (editor.isActive('heading', { level })) {
           headingLevel = level;
           break;
@@ -371,7 +371,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     toggleStrike: useCallback(() => editor?.chain().focus().toggleStrike().run(), [editor]),
     toggleInlineCode: useCallback(() => editor?.chain().focus().toggleCode().run(), [editor]),
     toggleHeading: useCallback(
-      (level: 1 | 2 | 3) => editor?.chain().focus().toggleHeading({ level }).run(),
+      (level: 2 | 3 | 4) => editor?.chain().focus().toggleHeading({ level }).run(),
       [editor]
     ),
     toggleBulletList: useCallback(() => editor?.chain().focus().toggleBulletList().run(), [editor]),
