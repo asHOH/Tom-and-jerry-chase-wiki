@@ -1,4 +1,4 @@
-import { differenceInCalendarDays, format, isSameMonth, isSameYear } from 'date-fns';
+import { differenceInCalendarDays, format, isSameYear } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 
 export type DateInput = string | number | Date;
@@ -23,10 +23,6 @@ export function formatArticleDate(value: DateInput) {
   }
 
   if (isSameYear(date, now)) {
-    if (isSameMonth(date, now)) {
-      return `本月${format(date, 'dd日', { locale: zhCN })} ${timePart}`;
-    }
-
     return `${format(date, 'MM月dd日', { locale: zhCN })} ${timePart}`;
   }
 
