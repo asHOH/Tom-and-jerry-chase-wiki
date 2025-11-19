@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 import { CacheDebugPanel } from '@/components/CacheDebugPanel';
@@ -21,7 +21,10 @@ import KeyboardNavigation from '@/components/KeyboardNavigation';
 import { UserProvider } from '@/hooks/useUser';
 import { getUserData } from '@/lib/userActions';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = localFont({
+  src: '../../public/fonts/inter/InterVariable.woff2',
+  display: 'swap',
+});
 
 export const metadata: Metadata = defaultMetadata;
 
