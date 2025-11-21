@@ -7,6 +7,7 @@ const directives = {
     'https://hcaptcha.com',
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
+    'https://static.cloudflareinsights.com',
   ],
   'style-src': ["'self'", "'unsafe-inline'", 'https://hcaptcha.com', 'https://*.hcaptcha.com'],
   'img-src': ["'self'", 'data:', 'https://*.supabase.co'],
