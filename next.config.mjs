@@ -22,6 +22,13 @@ const withPwa = withPWA({
   // More conservative runtime caching
   runtimeCaching: [
     {
+      urlPattern: /^https?:\/\/[^/]+\/api\/version.*$/,
+      handler: 'NetworkOnly',
+      options: {
+        cacheName: 'version-check',
+      },
+    },
+    {
       urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
       handler: 'StaleWhileRevalidate',
       options: {
