@@ -5,7 +5,7 @@ import path from 'node:path';
 
 async function main() {
   const root = process.cwd();
-  const docsDir = path.join(root, 'src', 'app', 'docs');
+  const docsDir = path.join(root, 'src', 'app', '(main)', 'docs');
   const outDir = path.join(root, 'src', 'data', 'generated');
   const outFile = path.join(outDir, 'docPages.json');
 
