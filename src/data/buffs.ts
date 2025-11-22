@@ -533,7 +533,6 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       { name: '蓝花瓶', type: 'item' },
       { name: '遥控器', type: 'item' },
       { name: '苍蝇拍', type: 'item' },
-      { name: '泡泡机', type: 'item' },
       { name: '拳套盒', type: 'item' },
       { name: '电风扇', type: 'item' },
       { name: '狗骨头', type: 'item' },
@@ -581,6 +580,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       { name: '记录美好瞬间', type: 'skill' },
       { name: '柠檬旋风', type: 'skill' },
       { name: '子弹', type: 'entity' },
+      { name: '猫咪泡泡', type: 'entity' },
+      { name: '墙缝泡泡', type: 'entity' },
       { name: '手型枪', type: 'entity' },
       { name: '煎蛋', type: 'entity' },
       { name: '旋转桶盖', type: 'entity' },
@@ -1076,6 +1077,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       { name: '小鞭炮', type: 'item' },
       { name: '鞭炮束', type: 'item' },
       { name: '感同身受', type: 'skill' },
+      { name: '猫咪泡泡', type: 'entity' },
+      { name: '墙缝泡泡', type: 'entity' },
       { name: '炮弹', type: 'entity' },
       { name: '追求者', type: 'entity' },
       { name: '鸟哨鞭炮', type: 'entity' },
@@ -1141,9 +1144,24 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     stack: '角色同时最多只会被一个物件夹住。当角色处于眩晕等状态时，无法进行挣扎操作。',
     source: [
       { name: '老鼠夹', type: 'item' },
+      { name: '打开的老鼠夹', type: 'entity' },
       { name: '泡泡', type: 'entity' },
       { name: '百科全书', type: 'entity' },
     ],
+    unuseImage: true,
+  },
+  滑行: {
+    type: '负面',
+    global: false,
+    target: '角色',
+    duration: '不固定',
+    failure: '与滑行物停止接触后解除',
+    aliases: ['#夹住'],
+    description:
+      '沿滑行物向角色面朝方向移动，期间无法转向、跳跃。滑行会会打断部分动作（例如技能前后摇等）。',
+    stack:
+      '与冰面等滑行物接触时立刻强制进入滑行状态。（部分护盾、无敌等效果可免疫滑行，通常不会消耗护盾层数）',
+    source: [{ name: '冰面', type: 'entity' }],
     unuseImage: true,
   },
   护盾: {
@@ -1322,6 +1340,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       { name: '香水美人', type: 'skill' },
       { name: '感同身受', type: 'skill' },
       { name: '香风折扇', type: 'skill' },
+      { name: '香水烟雾', type: 'entity' },
       { name: '黄色卡牌', type: 'entity' },
     ],
     unuseImage: true,
@@ -1341,6 +1360,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       { name: '感同身受', type: 'skill' },
       { name: '世界波', type: 'skill' },
       { name: '香风折扇', type: 'skill' },
+      { name: '胡椒烟雾', type: 'entity' },
       { name: '煎蛋', type: 'entity' },
     ],
     unuseImage: true,
@@ -1608,7 +1628,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     global: false,
     target: '角色',
     duration: '不固定',
-    description: '使自身不会因被看到而显示在敌方的小地图上，同时开关门不产生声音和特效提示。',
+    description:
+      '不会因被看到而显示在敌方的小地图上；开关门不产生声音和特效提示；猫咪与敌方处于同一房间时不会引起对方的胆怯动作。',
     stack:
       oneOnlyStack + '通常情况下，{隐藏位置}生效优先级高于{暴露位置}，后者生效优先级又高于{隐匿}。',
     source: [
