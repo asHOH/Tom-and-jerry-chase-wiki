@@ -399,6 +399,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
       '自然刷新，但每个房间初始最多刷新一个。墙缝刷新时必然在其附近刷新1个水果盘。或通过商店等途径获得。',
     detailedCreate:
       '自然刷新，但每个房间初始最多刷新一个。墙缝刷新时[必然在其附近刷新1个水果盘](御门酒店-走廊房间中的果盘会刷在礼品盒中。另外，部分地图中的果盘刷点可能无法攻击到墙缝)。或通过商店等途径获得。',
+    exp: 0,
     store: true,
     price: 3200,
     storeCD: 180,
@@ -735,47 +736,6 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     gravity: true,
     collsion: ['道具', '墙壁', '平台', '地面'],
   },
-  碎片: {
-    itemtype: '投掷类' as const,
-    itemsource: '衍生道具' as const,
-    description: '角色踩到碎片会短暂硬直，之后一段时间内免疫碎片效果。',
-    detailedDescription:
-      '角色踩到碎片会硬直1s，之后3.1秒内[免疫碎片效果](不会受到碎片效果，期间踩到碎片也不会令其消失)。\n\n不同道具形成的碎片的特性相同，但外观、大小、形状、碰撞体积并不相同。',
-    create: '盘子/扁盘/玻璃杯/碗/灰花瓶/蓝花瓶命中地面时生成。',
-    move: true,
-    gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
-  },
-  果子: {
-    itemtype: '投掷类' as const,
-    itemsource: '衍生道具' as const,
-    damage: 0,
-    walldamage: 0.5,
-    description:
-      '命中敌方造成高额减速，命中墙缝造成伤害。果盘投出的每轮果子中的后9个果子无法受到{破墙}的加成。',
-    detailedDescription:
-      '命中敌方造成高额减速，命中墙缝造成[0.5](受墙缝增伤影响)伤害。果盘投出的每轮果子中的后9个果子无法受到{破墙}的加成。',
-    create: '使用果盘时自动被投出。',
-    exp: 0,
-    move: true,
-    gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
-  },
-  子弹: {
-    itemtype: '投掷类' as const,
-    itemsource: '衍生道具' as const,
-    damage: 50,
-    walldamage: 6,
-    description: '对命中的敌方造成伤害和高额减速效果，对命中的墙缝造成伤害。',
-    detailedDescription:
-      '对命中的敌方造成[50伤害](受攻击增伤影响)和高额减速效果，对命中的墙缝造成6伤害。',
-    create: '使用玩具枪时被射出。',
-    exp: 100,
-    move: true,
-    gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
-  },
-  //ToDo：add 机械鼠&机械猫
   /* ----------------------------------- 地图道具 ----------------------------------- */
   狗骨头: {
     itemtype: '投掷类' as const,

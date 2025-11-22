@@ -24,7 +24,7 @@ const ITEM_TYPE_OPTIONS: Itemtypelist[] = [
   '流程类',
   '特殊类',
 ];
-const ITEM_SOURCE_OPTIONS: Itemsourcelist[] = ['常规道具', '衍生道具', '地图道具'];
+const ITEM_SOURCE_OPTIONS: Itemsourcelist[] = ['常规道具', '地图道具'];
 
 export default function ItemClient({ description }: Props) {
   // Multi-select state for filters

@@ -260,7 +260,7 @@ export const renderTextWithTooltips = (
         visibleText = String(base + boost);
         tooltipContent =
           boost === 0
-            ? `同时也享受其他来源的攻击增伤加成`
+            ? `基础伤害${base}，同时也享受其他来源的攻击增伤加成`
             : `基础伤害${base}+角色增伤${boost}，同时也享受其他来源的攻击增伤加成`;
       } else {
         visibleText = contentForTooltip;
@@ -272,9 +272,9 @@ export const renderTextWithTooltips = (
         const totalWallCrackDamage = parseFloat(visibleText as string);
         const baseWallCrackDamage =
           Math.round((totalWallCrackDamage - wallCrackDamageBoost) * 10) / 10;
-        tooltipContent = `基础墙缝伤害${baseWallCrackDamage}+角色墙缝增伤${wallCrackDamageBoost}`;
+        tooltipContent = `基础墙缝伤害${baseWallCrackDamage}+角色墙缝增伤${wallCrackDamageBoost}，同时也享受其他来源的墙缝增伤加成`;
       } else {
-        tooltipContent = `墙缝伤害${visibleText}`;
+        tooltipContent = `基础墙缝伤害${visibleText}，同时也享受其他来源的墙缝增伤加成`;
       }
     } else {
       // Use the extracted baseName for further processing
@@ -415,7 +415,7 @@ export const renderTextWithTooltips = (
       const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
       tooltipContent =
         attackBoost === 0
-          ? `同时也享受其他来源的攻击增伤加成`
+          ? `基础伤害${baseAttack}，同时也享受其他来源的攻击增伤加成`
           : `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也享受其他来源的攻击增伤加成`;
 
       parts.push(

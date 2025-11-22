@@ -1,5 +1,7 @@
 import { Entity, EntityDefinition } from './types';
 
+//维护说明：由道具衍生的衍生物被划分至此文件范围内
+
 //(interim) use other image instead of missing image
 export const getCatEntityImageUrl = (name: string, specialImageUrl: string | undefined): string => {
   if (!!specialImageUrl) return specialImageUrl;
@@ -7,6 +9,41 @@ export const getCatEntityImageUrl = (name: string, specialImageUrl: string | und
 };
 
 export const catEntitiesDefinitions = {
+  //-------------------------------衍生道具-------------------------------------//
+  碎片: {
+    entitytype: ['道具类', '召唤物'],
+    description: '角色踩到碎片会短暂{硬直}，之后一段时间内免疫碎片效果。',
+    detailedDescription:
+      '角色踩到碎片会{硬直}1秒，之后3.1秒内[免疫碎片效果](不会受到碎片效果，期间踩到碎片也不会令其消失)。\n\n不同道具形成的碎片的特性相同，但外观、大小、形状、碰撞体积并不相同。',
+    create:
+      '{易碎道具}在未命中角色或墙缝的情况下破碎时生成。其中，{非控制易碎道具}破碎产生2个碎片，{花瓶}破碎产生4个碎片。',
+    move: true,
+    gravity: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
+  },
+  果子: {
+    entitytype: ['道具类', '投射物'],
+    owner: { name: '水果盘', type: 'item' },
+    description:
+      '命中敌方造成高额减速，命中墙缝造成少量伤害。\n果盘投出的每轮果子中的后9个果子无法受到{破墙}的加成。',
+    detailedDescription:
+      '命中敌方造成高额减速（不造成伤害），命中墙缝造成{_0.5}伤害。\n果盘投出的每轮果子中的后9个果子无法受到{破墙}的加成。',
+    create: '角色与水果盘交互时被投出。果盘每投出10个果子会进入10秒CD。',
+    move: true,
+    gravity: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
+  },
+  子弹: {
+    entitytype: ['道具类', '投射物'],
+    owner: { name: '玩具枪', type: 'item' },
+    description: '命中敌方造成伤害和高额减速，命中墙缝造成伤害。',
+    detailedDescription: '命中敌方造成{50}伤害和高额减速，命中墙缝造成{_6}伤害。',
+    create: '角色使用玩具枪时被射出。每把玩具枪可射出5发子弹。',
+    move: true,
+    gravity: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
+  },
+  //-------------------------------猫道具-------------------------------------//
   手型枪: {
     entitytype: '投射物',
     owner: { name: '手型枪', type: 'skill' },
