@@ -406,7 +406,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     teamCD: true,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collsion: ['墙壁', '平台', '地面'],
   },
   冰桶: {
     itemtype: '物件类' as const,
@@ -723,6 +723,17 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     move: true,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
+  },
+  灭火器: {
+    itemtype: '特殊类' as const,
+    itemsource: '常规道具' as const,
+    description: '使用后进入1.5秒倒计时，倒计时结束后向上发射，会携带碰到的角色短暂飞行。',
+    detailedDescription:
+      '娱乐性道具。与其交互或被其它投掷道具击中后进入1.5秒倒计时，倒计时结束后向上发射，会顶飞碰到的道具并{牵引}碰到的角色一同飞天，碰到地图上方墙壁后消失并释放烟花特效。牵引无视大部分护盾、无敌等类似效果。',
+    create: '只在高级学业以下的地图中刷新。',
+    move: true,
+    gravity: true,
+    collsion: ['道具', '墙壁', '平台', '地面'],
   },
   碎片: {
     itemtype: '投掷类' as const,
