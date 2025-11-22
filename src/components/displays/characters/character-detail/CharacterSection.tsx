@@ -36,7 +36,7 @@ export default function CharacterSection({
   return (
     <div
       className={clsx(
-        'transition-all',
+        'transition-all flex flex-col',
         isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in',
         isOpen ? 'mb-8' : 'mb-0'
       )}

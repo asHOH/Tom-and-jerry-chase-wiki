@@ -170,7 +170,10 @@ export default async function CharacterPage({
                 <CharacterDocs docPage={docPage}></CharacterDocs>
               ) : (
                 <Suspense fallback={null}>
-                  <CharacterArticle content={articleContent} />
+                  <CharacterArticle
+                    content={articleContent}
+                    authors={getContentWritersByCharacter(characterId)}
+                  />
                 </Suspense>
               )}
             </CharacterDetailsClient>
