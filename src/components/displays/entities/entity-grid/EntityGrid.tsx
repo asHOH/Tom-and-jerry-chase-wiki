@@ -31,8 +31,8 @@ type Props = { description?: string };
 export default function EntityClient({ description }: Props) {
   // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<Entitytypelist[]>([]);
-  // Faction: 'cat', 'mouse'
-  const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse')[]>([]);
+  // Faction: 'cat', 'mouse', 'other'
+  const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse' | 'other')[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
@@ -58,9 +58,13 @@ export default function EntityClient({ description }: Props) {
     if (selectedFactions.length > 0) {
       const isCat = selectedFactions.includes('cat');
       const isMouse = selectedFactions.includes('mouse');
+      const isOther = selectedFactions.includes('other');
+      const entityFaction = getEntityFactionId(entity);
+
       factionMatch =
-        (isCat && getEntityFactionId(entity) === 'cat') ||
-        (isMouse && getEntityFactionId(entity) === 'mouse');
+        (isCat && entityFaction === 'cat') ||
+        (isMouse && entityFaction === 'mouse') ||
+        (isOther && entityFaction !== 'cat' && entityFaction !== 'mouse');
     }
     return typeMatch && factionMatch;
   });
@@ -123,21 +127,34 @@ export default function EntityClient({ description }: Props) {
           />
 
           {/* 阵营筛选 */}
-          <FilterRow<'cat' | 'mouse'>
+          <FilterRow<'cat' | 'mouse' | 'other'>
             label='阵营筛选:'
-            options={['cat', 'mouse']}
+            options={['cat', 'mouse', 'other']}
             isActive={(f) => selectedFactions.includes(f)}
             onToggle={(f) =>
               setSelectedFactions((prev) =>
                 prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
               )
             }
-            getOptionLabel={(f) =>
-              isMobile ? (f === 'cat' ? '猫阵营' : '鼠阵营') : f === 'cat' ? '猫阵营' : '鼠阵营'
-            }
-            getButtonStyle={(f, active) =>
-              active ? getFactionButtonColors(f, isDarkMode) : undefined
-            }
+            getOptionLabel={(f) => {
+              if (isMobile) {
+                return f === 'cat' ? '猫阵营' : f === 'mouse' ? '鼠阵营' : '其它';
+              }
+              return f === 'cat' ? '猫阵营' : f === 'mouse' ? '鼠阵营' : '其它';
+            }}
+            getButtonStyle={(f, active) => {
+              if (f === 'other') {
+                // 为"其它"阵营定义样式
+                return active
+                  ? {
+                      backgroundColor: isDarkMode ? '#6b7280' : '#9ca3af',
+                      color: isDarkMode ? '#f3f4f6' : '#1f2937',
+                      borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+                    }
+                  : undefined;
+              }
+              return active ? getFactionButtonColors(f, isDarkMode) : undefined;
+            }}
             isDarkMode={isDarkMode}
           />
         </div>
