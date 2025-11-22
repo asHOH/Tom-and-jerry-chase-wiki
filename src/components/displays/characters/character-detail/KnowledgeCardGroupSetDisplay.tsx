@@ -27,6 +27,7 @@ interface KnowledgeCardGroupSetDisplayProps {
   getCardCost: (cardId: string) => number;
   getCardRank: (cardId: string) => string;
   imageBasePath: string;
+  getCardPriority: (cardId: string) => string | undefined;
 }
 
 const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> = ({
@@ -43,6 +44,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
   getCardCost,
   getCardRank,
   imageBasePath,
+  getCardPriority,
 }) => {
   const { isDetailedView } = useAppContext();
   const [isDarkMode] = useDarkMode();
@@ -163,6 +165,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
                   (a) => a.id === group.contributor || a.name === group.contributor
                 )}
                 isDarkMode={isDarkMode}
+                getCardPriority={getCardPriority}
               />
             ))}
           </div>

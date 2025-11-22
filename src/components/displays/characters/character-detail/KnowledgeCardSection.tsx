@@ -93,6 +93,7 @@ function KnowledgeCardGroupFlat({
   contributor,
   contributorInformation,
   isDarkMode,
+  getCardPriority,
 }: {
   cards: readonly string[];
   index: number;
@@ -110,6 +111,7 @@ function KnowledgeCardGroupFlat({
   contributor: string | undefined;
   contributorInformation: Contributor | undefined;
   isDarkMode: boolean;
+  getCardPriority: (cardId: string) => string | undefined;
 }) {
   if (cards.length === 0 && !isEditMode) {
     return null;
@@ -128,13 +130,24 @@ function KnowledgeCardGroupFlat({
   const shouldWarnMissingRescueSkill = !isEditMode && isMouseFaction && !hasRescueSkill;
   const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && !hasJiuJiuWo;
   const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && !hasTieXue;
+
+  const highPriorityCards = cards.filter((cardId) => {
+    const priority = getCardPriority(cardId);
+    return priority === '3级质变';
+  });
+
   const missingWarnings: string[] = [];
   if (shouldWarnMissingTieXue) missingWarnings.push('无铁血');
   if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
   if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
-  const warningMessage = missingWarnings.length
-    ? `该卡组${missingWarnings.join('、')}，慎用`
-    : null;
+
+  let warningMessage = missingWarnings.length ? `该卡组${missingWarnings.join('、')}，慎用` : null;
+
+  if (highPriorityCards.length > 0 && !isEditMode) {
+    const cardNames = highPriorityCards.map((id) => id.split('-')[1]).join('、');
+    const priorityWarning = `${cardNames}建议3级佩戴`;
+    warningMessage = warningMessage ? `${warningMessage}；${priorityWarning}` : priorityWarning;
+  }
   const warningTagStyles = isDarkMode
     ? { background: '#dc2626', color: '#fef2f2' }
     : { background: '#fef2f2', color: '#dc2626' };
@@ -338,6 +351,7 @@ export function KnowledgeCardGroupDisplay({
   contributor,
   contributorInformation,
   isDarkMode,
+  getCardPriority,
 }: {
   group: DeepReadonly<CardGroup[]>;
   index: number;
@@ -355,6 +369,7 @@ export function KnowledgeCardGroupDisplay({
   contributor: string | undefined;
   contributorInformation: Contributor | undefined;
   isDarkMode: boolean;
+  getCardPriority: (cardId: string) => string | undefined;
 }) {
   const normalizedGroup = group as unknown as readonly CardGroup[];
   const isSqueezedView = viewMode === 'compact';
@@ -387,13 +402,27 @@ export function KnowledgeCardGroupDisplay({
     const shouldWarnMissingRescueSkill = !isEditMode && isMouseFaction && lacksRescueSkill;
     const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && lacksJiuJiuWo;
     const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && lacksTieXue;
+
+    const uniqueCards = Array.from(new Set(allFlatCombinations.flat()));
+    const highPriorityCards = uniqueCards.filter((cardId) => {
+      const priority = getCardPriority(cardId);
+      return priority === '3级质变';
+    });
+
     const missingWarnings: string[] = [];
     if (shouldWarnMissingTieXue) missingWarnings.push('无铁血');
     if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
     if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
-    const warningMessage = missingWarnings.length
+
+    let warningMessage = missingWarnings.length
       ? `该卡组${missingWarnings.join('、')}，慎用`
       : null;
+
+    if (highPriorityCards.length > 0 && !isEditMode) {
+      const cardNames = highPriorityCards.map((id) => id.split('-')[1]).join('、');
+      const priorityWarning = `${cardNames}建议3级或高等级佩戴`;
+      warningMessage = warningMessage ? `${warningMessage}；${priorityWarning}` : priorityWarning;
+    }
     const warningTagStyles = isDarkMode
       ? { background: '#dc2626', color: '#fef2f2' }
       : { background: '#fef2f2', color: '#dc2626' };
@@ -542,6 +571,7 @@ export function KnowledgeCardGroupDisplay({
               contributor={contributor}
               contributorInformation={contributorInformation}
               isDarkMode={isDarkMode}
+              getCardPriority={getCardPriority}
             />
             {subIndex < flattenedCombinations.length - 1 && (
               <div className='border-t border-gray-300 dark:border-slate-600 my-2'></div>
@@ -611,6 +641,15 @@ export default function KnowledgeCardSection({
     const cardData =
       factionId === 'cat' ? catKnowledgeCards[cardName] : mouseKnowledgeCards[cardName];
     return cardData?.rank ?? 'C';
+  };
+
+  const getCardPriority = (cardId: string) => {
+    const cardName = cardId.split('-')[1];
+    if (!cardName) return undefined;
+
+    const cardData =
+      factionId === 'cat' ? catKnowledgeCards[cardName] : mouseKnowledgeCards[cardName];
+    return cardData?.priority;
   };
 
   const persistGroupCards = (
@@ -828,6 +867,7 @@ export default function KnowledgeCardSection({
                     (a) => a.id === group.contributor || a.name === group.contributor
                   )}
                   isDarkMode={isDarkMode}
+                  getCardPriority={getCardPriority}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
                   <div className='border-t border-gray-200 dark:border-slate-700 my-4'></div>
@@ -849,6 +889,7 @@ export default function KnowledgeCardSection({
                   getCardCost={getCardCost}
                   getCardRank={getCardRank}
                   imageBasePath={imageBasePath}
+                  getCardPriority={getCardPriority}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
                   <div className='border-t border-gray-200 dark:border-slate-700 my-4'></div>
