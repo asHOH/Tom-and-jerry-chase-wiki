@@ -1066,7 +1066,7 @@ export const getEntityTypeColors = (entitytype: string, isDarkMode: boolean) => 
     string,
     'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese' | 'lateGameMouse'
   > = {
-    道具类: 'rescue',
+    拾取物: 'rescue',
     投射物: 'support',
     召唤物: 'breakthrough',
     平台类: 'wallBreak',

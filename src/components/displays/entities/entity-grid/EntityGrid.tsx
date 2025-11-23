@@ -17,7 +17,7 @@ import Tooltip from '@/components/ui/Tooltip';
 import getEntityFactionId from '../lib/getEntityFactionId';
 
 const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
-  '道具类',
+  '拾取物',
   '投射物',
   '召唤物',
   'NPC',
@@ -99,7 +99,7 @@ export default function EntityClient({ description }: Props) {
               const isActive = active;
               const tagColors = getPositioningTagColors(
                 {
-                  道具类: '救援',
+                  拾取物: '救援',
                   投射物: '辅助',
                   召唤物: '破局',
                   NPC: '干扰',

@@ -11,7 +11,7 @@ export const getCatEntityImageUrl = (name: string, specialImageUrl: string | und
 export const catEntitiesDefinitions = {
   //-------------------------------衍生道具-------------------------------------//
   果子: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: '投射物',
     owner: { name: '水果盘', type: 'item' },
     description:
       '命中敌方造成高额减速，命中墙缝造成少量伤害。\n果盘投出的每轮果子中的后9个果子无法受到{破墙}的加成。',
@@ -23,7 +23,7 @@ export const catEntitiesDefinitions = {
     collsion: ['道具', '墙壁', '平台', '地面'],
   },
   子弹: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: '投射物',
     owner: { name: '玩具枪', type: 'item' },
     description: '命中敌方造成伤害和高额减速，命中墙缝造成伤害。',
     detailedDescription: '命中敌方造成{50}伤害和高额减速，命中墙缝造成{_6}伤害。',
@@ -33,7 +33,7 @@ export const catEntitiesDefinitions = {
     collsion: ['道具', '墙壁', '平台', '地面'],
   },
   碎片: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     description: '角色踩到碎片会短暂{硬直}，之后一段时间内免疫碎片效果。',
     detailedDescription:
       '角色踩到碎片会{硬直}1秒，之后3.1秒内[免疫碎片效果](不会受到碎片效果，期间踩到碎片也不会令其消失)。\n\n不同道具形成的碎片的特性相同，但外观、大小、形状、碰撞体积并不相同。',
@@ -44,7 +44,7 @@ export const catEntitiesDefinitions = {
     collsion: ['道具', '墙壁', '平台', '地面'],
   },
   香水烟雾: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '香水瓶', type: 'item' },
     description:
       '使接触的角色{反向}。存在60秒或累计被角色接触5次后消失。若角色在接触后一直未离开该区域，则在经过较长时间后会再次触发接触效果。进入部分水地形中立刻清除香水反向效果。',
@@ -54,7 +54,7 @@ export const catEntitiesDefinitions = {
     collsion: ['墙壁', '平台', '地面'],
   },
   胡椒烟雾: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '胡椒瓶', type: 'item' },
     description:
       '使接触的角色{失明}。存在60秒或累计被角色接触5次后消失。若角色在接触后一直未离开该区域，则在经过较长时间后会再次触发接触效果。进入部分水地形中立刻清除香水反向效果。',
@@ -64,7 +64,7 @@ export const catEntitiesDefinitions = {
     collsion: ['墙壁', '平台', '地面'],
   },
   烂番茄: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '番茄', type: 'item' },
     description: '对碰触及待在其中的角色施加可叠加的减速，该效果的施加无视部分状态。',
     detailedDescription:
@@ -75,7 +75,7 @@ export const catEntitiesDefinitions = {
     collsion: ['墙壁', '平台', '地面'],
   },
   冰面: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '冰块', type: 'item' },
     aliases: ['水面', '水潭'],
     description:
@@ -88,7 +88,7 @@ export const catEntitiesDefinitions = {
     collsion: ['道具', '墙壁', '平台', '地面'],
   },
   面粉烟雾: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '面粉袋', type: 'item' },
     description:
       '[遮挡小范围视野](自身图层优先级高于绝大多数角色和道具，包括角色名，因此具有遮挡效果)，并使触碰的角色获得{隐匿}。进入部分水地形中立刻清除该隐匿效果。面粉烟雾持续较长时间后消失。',
@@ -100,7 +100,7 @@ export const catEntitiesDefinitions = {
     collsion: ['道具', '墙壁', '平台', '地面'],
   },
   带电残骸: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '电风扇', type: 'item' },
     aliases: ['电风扇残骸'],
     description:
@@ -112,7 +112,7 @@ export const catEntitiesDefinitions = {
     collsion: ['墙壁', '平台', '地面'],
   },
   打开的老鼠夹: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '老鼠夹', type: 'item' },
     aliases: ['打开的夹子'],
     description:
@@ -367,7 +367,7 @@ export const catEntitiesDefinitions = {
   },
   //ToDo: add 汽水冰面
   胡椒粉罐头: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '胡椒粉罐头', type: 'skill' },
     aliases: ['胡椒粉', '胡椒罐'],
     move: true,
@@ -423,7 +423,7 @@ export const catEntitiesDefinitions = {
     create: '通过库博-虚幻梦影召唤。',
   },
   天堂火箭: {
-    entitytype: '道具类',
+    entitytype: '召唤物',
     owner: { name: '虚幻梦影', type: 'skill' },
     aliases: ['天火'],
     move: false,

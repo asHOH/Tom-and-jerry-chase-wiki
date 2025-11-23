@@ -298,7 +298,7 @@ export type ItemDefinition = {
 export type Item = ItemDefinition & { name: string; imageUrl: string };
 
 export type Entitytypelist =
-  | '道具类'
+  | '拾取物'
   | '投射物'
   | '召唤物'
   | '平台类'

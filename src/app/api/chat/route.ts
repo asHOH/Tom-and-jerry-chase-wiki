@@ -381,7 +381,7 @@ export type Item = {
 export type Entity = {
   name: string; // Chinese name of the entity
   imageUrl: string; // Image URL for the entity
-  entitytype: '道具类' | '投射物' | '召唤物' | '平台类' | 'NPC' | '变身类' | '指示物' | ('道具类' | '投射物' | '召唤物' | '平台类' | 'NPC' | '变身类' | '指示物')[]; // Type(s) of entity
+  entitytype: '拾取物' | '投射物' | '召唤物' | '平台类' | 'NPC' | '变身类' | '指示物' | ('拾取物' | '投射物' | '召唤物' | '平台类' | 'NPC' | '变身类' | '指示物')[]; // Type(s) of entity
   owner?: { name: string; type: string }; // What creates this entity
   factionId?: FactionId; // Which faction the entity belongs to
   aliases?: string[]; // Alternative names

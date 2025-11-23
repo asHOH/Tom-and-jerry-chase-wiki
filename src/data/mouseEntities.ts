@@ -59,7 +59,7 @@ export const mouseEntitiesDefinitions = {
     create: '由侦探杰瑞-视觉干扰器召唤。',
   },
   金币: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '飞翔金币', type: 'skill' },
     move: true,
     gravity: true,
@@ -253,7 +253,7 @@ export const mouseEntitiesDefinitions = {
     create: '由恶魔杰瑞-三叉戟召唤。',
   },
   蓝色小淘气: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '小淘气', type: 'skill' },
     aliases: ['蓝恶魔', '蓝色小恶魔'],
     move: true,
@@ -266,7 +266,7 @@ export const mouseEntitiesDefinitions = {
     create: '通过恶魔泰菲-小淘气转化{盘子}/{扁盘}/{玻璃杯}/{碗}获得。',
   },
   红色小淘气: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '小淘气', type: 'skill' },
     aliases: ['红恶魔', '红色小恶魔'],
     move: true,
@@ -278,7 +278,7 @@ export const mouseEntitiesDefinitions = {
     create: '通过恶魔泰菲-小淘气转化{冰块}/{灰花瓶}/{蓝花瓶}获得。',
   },
   绿色小淘气: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '小淘气', type: 'skill' },
     aliases: ['绿恶魔', '绿色小恶魔'],
     move: true,
@@ -359,7 +359,7 @@ export const mouseEntitiesDefinitions = {
     specialImageUrl: '/images/mouseSkills/天使杰瑞3-止戈雷云.png', //ToDo: add this entity's image
   },
   红色卡牌: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '奇思妙想', type: 'skill' },
     aliases: ['红牌', '红色纸牌'],
     move: true,
@@ -371,7 +371,7 @@ export const mouseEntitiesDefinitions = {
     create: '通过魔术师-奇思妙想召唤，或通过魔术师-魔术戏法Lv.1效果自动生成。',
   },
   黄色卡牌: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '奇思妙想', type: 'skill' },
     aliases: ['黄牌', '黄色纸牌'],
     move: true,
@@ -383,7 +383,7 @@ export const mouseEntitiesDefinitions = {
     create: '通过魔术师-奇思妙想召唤，或通过魔术师-魔术戏法Lv.1效果自动生成。',
   },
   蓝色卡牌: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '奇思妙想', type: 'skill' },
     aliases: ['蓝牌', '蓝色纸牌'],
     move: true,
@@ -569,7 +569,7 @@ export const mouseEntitiesDefinitions = {
     create: '由罗宾汉泰菲-藤蔓召唤。',
   },
   藤蔓纸盒: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '藤蔓', type: 'skill' },
     move: true,
     gravity: true,
@@ -664,7 +664,7 @@ export const mouseEntitiesDefinitions = {
     create: '由{尼宝的朋友(衍生物)}掷出。',
   },
   小电球: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '强能灌注', type: 'skill' },
     aliases: ['电球'],
     move: true,
@@ -677,7 +677,7 @@ export const mouseEntitiesDefinitions = {
     create: '通过朵朵-强能灌注Lv.3在非过载状态下召唤。',
   },
   大电球: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '强能灌注', type: 'skill' },
     aliases: ['电球'],
     move: true,
@@ -690,7 +690,7 @@ export const mouseEntitiesDefinitions = {
     create: '通过朵朵-强能灌注Lv.3在过载状态下召唤。',
   },
   电池: {
-    entitytype: ['道具类', '投射物'],
+    entitytype: ['拾取物', '投射物'],
     owner: { name: '能源装置', type: 'skill' },
     move: true,
     gravity: true,
@@ -714,7 +714,7 @@ export const mouseEntitiesDefinitions = {
     create: '由仙女鼠-魔镜召唤咒召唤。',
   },
   魔镜经验蛋糕: {
-    entitytype: ['道具类', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '魔镜召唤咒', type: 'skill' },
     move: true,
     gravity: true,
@@ -949,7 +949,7 @@ export const mouseEntitiesDefinitions = {
     create: '猫咪在{蓝图}内受到伤害时自动变身。',
   },
   线条火箭: {
-    entitytype: '道具类',
+    entitytype: '召唤物',
     owner: { name: '蓝图', type: 'skill' },
     move: false,
     gravity: true,
