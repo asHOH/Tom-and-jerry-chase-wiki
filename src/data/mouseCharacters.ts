@@ -6475,7 +6475,7 @@ const mouseCharacterDefinitions = {
     attackBoost: 10,
     hpRecovery: 2.5,
     moveSpeed: 640,
-    jumpHeight: 0,
+    jumpHeight: 400,
     cheesePushSpeed: 3.25,
     wallCrackDamageBoost: 1,
     mousePositioningTags: [
@@ -7522,6 +7522,141 @@ const mouseCharacterDefinitions = {
         isMinor: false,
       },
     ],
+  },
+
+  /* ----------------------------------- 鲍姆 ----------------------------------- */
+  鲍姆: {
+    description:
+      '名为鲍姆的小白鼠，是从实验室出逃的实验鼠之一，身上装有强大的炸药，任何小碰撞或摔倒都有可能引发爆炸。因此，他们大多小心翼翼，生怕引发意外。不过，鲍姆与众不同。他性格捉摸不透，脑中充满跳跃的想法，手里拿着能引发小爆炸的羊角锤，乐于为新生活增添一些乐趣。别觉得他的行为奇怪，那都是他从实验室外的老鼠身上学来的。',
+    maxHp: 110,
+    attackBoost: 0,
+    hpRecovery: 2.5,
+    moveSpeed: 640,
+    jumpHeight: 400,
+    cheesePushSpeed: 3.5,
+    wallCrackDamageBoost: 1,
+    mousePositioningTags: [
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '主动技能能频繁造成爆炸，干扰敌方或短暂炸毁火箭。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '救援',
+        isMinor: true,
+        description: '主动技能炸毁火箭可救下队友。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '常规配卡',
+        pattern: '12210[0012]',
+        weaponType: 'weapon1',
+        description:
+          '2级武器技能提供续航，建议优先点出；3级主动、3级武器、1~3级被动技能效果不强，可酌情加点。',
+        additionaldescription: '',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: [[CardGroupType.Or, 'S-无畏', 'S-舍己'], 'S-铁血', 'A-逃窜', 'C-救救我'],
+        description: '常规配卡，泛用性强，兼具自保和救援能力，可根据需要选择无畏或舍己。',
+      },
+    ],
+    skills: [
+      {
+        name: 'BOOM!!',
+        type: 'active',
+        description:
+          '进入危险和安全来回切换的不稳定状态，初始为危险状态，每3秒切换一次。\n危险状态：受到伤害会产生爆炸区域，然后退出不稳定状态。爆炸区域持续2秒，进入该区域的敌方受到2秒{爆炸}，进入该区域的友方被弹开，并{炸毁}位于该区域的{火箭}，该火箭5秒后恢复。\n安全状态：移速提高，受到攻击会减少进入危险状态的间隔。',
+        detailedDescription: '',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: '无后摇',
+        skillLevels: [
+          {
+            level: 1,
+            description: '不稳定状态持续20秒。',
+            cooldown: 20,
+          },
+          {
+            level: 2,
+            description: '不稳定状态持续时间提高。爆炸区域可弹开附近的部分道具。',
+            cooldown: 20,
+          },
+          {
+            level: 3,
+            description: '危险和安全状态的切换间隔缩短，爆炸可对墙缝造成一定伤害。',
+            cooldown: 20,
+          },
+        ],
+      },
+      {
+        name: '羊角锤',
+        aliases: ['锤子'],
+        type: 'weapon1',
+        description:
+          '本技能可选择对自身或前方释放，通过外置轮盘切换技能状态。\n打自身：对自身造成微量伤害，可用于触发主动技能的爆炸或加速切换。\n打前方：对范围内敌方造成少量伤害，并使敌方[强制使用爪刀](该效果无视敌方身上的护盾、无敌、缴械等效果；若敌方处于眩晕、虚弱等动作状态期间则不会出刀)。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: ['道具键*'],
+        cancelableAftercast: ['道具键*'],
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            cooldown: 3,
+          },
+          {
+            level: 2,
+            description:
+              '打自身可[提高Hp上限并恢复一定Hp](若在锤击前自身剩余Hp不足以抵消锤击伤害，则会先进入虚弱再恢复Hp)，提高上限的效果可叠加3层。打前方会减少敌方强制爪刀的伤害。',
+            cooldown: 3,
+          },
+          {
+            level: 3,
+            description: '打前方造成的伤害提高。',
+            cooldown: 3,
+          },
+        ],
+      },
+      {
+        name: '自爆行动',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '',
+            detailedDescription: '',
+          },
+          {
+            level: 2,
+            description: '减少爆炸的初始倒计时。',
+          },
+          {
+            level: 3,
+            description: '每次跳跃会减少更多倒计时。',
+          },
+        ],
+        description:
+          '鲍姆进入虚弱时会产生倒计时，倒计时结束时在自身所在位置产生一个爆炸区域，效果取决于当前被动技能等级，与相应等级的主动技能效果相同。虚弱期间每次跳跃均会减少自爆倒计时，成功自爆/被抓起/解除虚弱时结束倒计时。',
+      },
+    ],
+    specialSkills: [
+      {
+        name: '绝处逢生',
+        description: '提高生存能力。可配合被动技能进一步提高生存能力。',
+      },
+      {
+        name: '干扰投掷',
+        description: '配合主动技能，提高干扰能力。',
+      },
+    ],
+    aliases: ['棍姆'],
+    counteredBy: [],
   },
 } as const satisfies Readonly<Record<string, CharacterDefinition>>;
 

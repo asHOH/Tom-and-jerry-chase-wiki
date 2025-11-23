@@ -329,15 +329,15 @@ const mouseCharactersStats: Record<string, Partial<CharacterDefinition>> = {
       '杰瑞起初并不知道自己为何总是在奇怪的地方醒来。一天，他在梦中打包火腿时惊醒，而眼前是被毛线绑住的可怜汤姆。这时他才意识到自己似乎患上了严重的梦游症。“不要睡着，太危险了……” 梦游杰瑞一边干嚼咖啡豆。一边不断呢喃着，最终……沉沉地睡去。',
   },
   鲍姆: {
-    //todo:完善信息
     attackBoost: 0,
-    wallCrackDamageBoost: 999,
+    wallCrackDamageBoost: 1,
     maxHp: 110,
-    hpRecovery: 999,
-    moveSpeed: 9999,
-    jumpHeight: 9999,
-    cheesePushSpeed: 999,
-    description: '请输入文本',
+    hpRecovery: 2.5,
+    moveSpeed: 640,
+    jumpHeight: 400,
+    cheesePushSpeed: 3.5,
+    description:
+      '名为鲍姆的小白鼠，是从实验室出逃的实验鼠之一，身上装有强大的炸药，任何小碰撞或摔倒都有可能引发爆炸。因此，他们大多小心翼翼，生怕引发意外。不过，鲍姆与众不同。他性格捉摸不透，脑中充满跳跃的想法，手里拿着能引发小爆炸的羊角锤，乐于为新生活增添一些乐趣。别觉得他的行为奇怪，那都是他从实验室外的老鼠身上学来的。',
   },
 };
 export default mouseCharactersStats;
