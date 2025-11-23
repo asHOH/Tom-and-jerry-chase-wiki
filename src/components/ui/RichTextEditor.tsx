@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useToast } from '@/context/ToastContext';
 import { EditorContent } from '@tiptap/react';
 import clsx from 'clsx';
 
@@ -16,6 +17,7 @@ import { useRTEImageUpload } from '@/hooks/useRTEImageUpload';
 import { useRTEToolbarState } from '@/hooks/useRTEToolbarState';
 
 import ImagePickerModal from './RichTextEditor/ImagePickerModal';
+import LinkDialog from './RichTextEditor/LinkDialog';
 import Toolbar, { ToolbarCommands } from './RichTextEditor/Toolbar';
 import { LoadingSpinnerIcon } from './RichTextEditorIcons';
 
@@ -41,8 +43,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [viewMode, setViewMode] = useState<'rich' | 'wiki' | 'html'>('rich');
   const [rawContent, setRawContent] = useState(initialHtml);
   const [showImagePicker, setShowImagePicker] = useState(false);
+  const [showLinkDialog, setShowLinkDialog] = useState(false);
 
   const { isUploadingImage, libraryRefreshKey, uploadImageFile } = useRTEImageUpload();
+  const { error: showError } = useToast();
 
   const editor = useRTEConfiguration({
     initialHtml,
@@ -79,26 +83,31 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     (url: string) => {
       const normalized = normalizeHostedImageUrl(url) ?? (url.startsWith('/') ? url : null);
       if (!normalized) {
-        window.alert('选取的图片地址未通过安全校验，请联系管理员。');
+        showError('选取的图片地址未通过安全校验，请联系管理员。');
         return;
       }
       editor?.chain().focus().setImage({ src: normalized }).run();
       setShowImagePicker(false);
     },
-    [editor]
+    [editor, showError]
   );
 
   const addLink = useCallback(() => {
     if (!editor) return;
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('链接地址', previousUrl);
-    if (url === null) return;
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
-    }
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    setShowLinkDialog(true);
   }, [editor]);
+
+  const handleLinkSubmit = useCallback(
+    (url: string) => {
+      if (!editor) return;
+      if (url === '') {
+        editor.chain().focus().extendMarkRange('link').unsetLink().run();
+        return;
+      }
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    },
+    [editor]
+  );
 
   const handlePastedImages = useCallback(
     async (files: File[]) => {
@@ -107,9 +116,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         try {
           const imageUrl = await uploadImageFile(file);
           editor.chain().focus().setImage({ src: imageUrl }).run();
-        } catch (error) {
-          const message = error instanceof Error ? error.message : '图片上传失败，请稍后重试。';
-          window.alert(message);
+        } catch {
+          // Error is already handled in useRTEImageUpload
           break;
         }
       }
@@ -152,17 +160,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       );
 
       if (allowedImages.length === 0) {
-        window.alert('仅支持粘贴 PNG、JPEG、WEBP、AVIF 或 GIF 图片。');
+        showError('仅支持粘贴 PNG、JPEG、WEBP、AVIF 或 GIF 图片。');
         return;
       }
 
       void handlePastedImages(allowedImages);
 
       if (disallowedImages.length > 0) {
-        window.alert('部分图片格式不受支持，仅处理了 PNG、JPEG、WEBP、AVIF 或 GIF 图片。');
+        showError('部分图片格式不受支持，仅处理了 PNG、JPEG、WEBP、AVIF 或 GIF 图片。');
       }
     },
-    [editor, handlePastedImages, viewMode]
+    [editor, handlePastedImages, viewMode, showError]
   );
 
   const commands: ToolbarCommands = {
@@ -271,6 +279,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         isUploading={isUploadingImage}
         allowedSourcesDescription={allowedImageSourcesText}
         refreshLibraryKey={libraryRefreshKey}
+      />
+      <LinkDialog
+        isOpen={showLinkDialog}
+        onClose={() => setShowLinkDialog(false)}
+        onSubmit={handleLinkSubmit}
+        initialUrl={editor?.getAttributes('link').href}
       />
       <div className='min-h-0 flex-1 overflow-y-auto'>
         {viewMode === 'rich' ? (
