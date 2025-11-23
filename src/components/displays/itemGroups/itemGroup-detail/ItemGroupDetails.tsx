@@ -1,13 +1,15 @@
 'use client';
 
-import Link from '@/components/Link';
-import SingleItemCardDisplay from './SingleItemCardDisplay';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
 import type { ItemGroup } from '@/data/types';
-import { useMobile } from '@/hooks/useMediaQuery';
+
 import { getSingleItemHref } from '@/lib/singleItemTools';
+import { useMobile } from '@/hooks/useMediaQuery';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
+import Link from '@/components/Link';
+
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
+import SingleItemCardDisplay from './SingleItemCardDisplay';
 
 export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup }) {
   // Multi-select state for filters
@@ -17,12 +19,12 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
     <div
       className={
         isMobile
-          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
-          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
+          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
       }
     >
       <header
-        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>{itemGroup.name}</PageTitle>
         <PageDescription>
@@ -30,7 +32,7 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
         </PageDescription>
       </header>
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        className='auto-fit-grid grid-container mt-8 grid gap-4'
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
         }}
@@ -38,7 +40,7 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
         {itemGroup.group.map((singleItem) => (
           <div
             key={singleItem.name}
-            className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'
+            className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
           >
             <Link href={getSingleItemHref(singleItem)} className='block'>
               <SingleItemCardDisplay singleItem={singleItem} />

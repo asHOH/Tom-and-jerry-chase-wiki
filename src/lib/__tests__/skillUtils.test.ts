@@ -1,5 +1,5 @@
-import { AssetManager } from '../assetManager';
 import type { Skill } from '../../data/types';
+import { AssetManager } from '../assetManager';
 
 describe('skillUtils', () => {
   const mockSkill: Skill = {

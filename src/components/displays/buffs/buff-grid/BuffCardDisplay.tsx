@@ -1,9 +1,10 @@
-import { Buff } from '@/data/types';
-import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { Buff } from '@/data/types';
+
+import { designTokens, getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
-import { designTokens, getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
+import Tag from '@/components/ui/Tag';
 import Image from '@/components/Image';
 
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
@@ -13,8 +14,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   return (
     <BaseCard variant='item' aria-label={`查看${buff.name}效果详情`}>
       <div
-        className={`${isMobile ? 'pb-1.5' : 'pb-3'} pt-1 flex justify-center items-center text-center w-full border border-dotted 
-        ${
+        className={`${isMobile ? 'pb-1.5' : 'pb-3'} flex w-full items-center justify-center border border-dotted pt-1 text-center ${
           buff.type === '正面'
             ? 'border-green-300 dark:border-green-800'
             : buff.type === '负面'
@@ -26,14 +26,14 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           <Image
             src={buff.imageUrl}
             alt={`${buff.name}效果图标`}
-            className='w-12 h-12 object-contain'
+            className='h-12 w-12 object-contain'
             width={90}
             height={90}
           />
         )}
-        <div className={`ml-1.5 justify-center items-center text-center`}>
+        <div className={`ml-1.5 items-center justify-center text-center`}>
           <h3
-            className={`${buff.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
+            className={`${buff.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 font-bold text-gray-800 dark:text-white`}
             style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
           >
             {buff.name}

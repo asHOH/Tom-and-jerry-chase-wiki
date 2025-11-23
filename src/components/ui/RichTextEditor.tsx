@@ -1,16 +1,16 @@
-import { Table } from '@tiptap/extension-table';
-import TableRow from '@tiptap/extension-table-row';
-import TableHeader from '@tiptap/extension-table-header';
-import TableCell from '@tiptap/extension-table-cell';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { EditorContent, useEditor } from '@tiptap/react';
-import type { Node as PMNode } from '@tiptap/pm/model';
-import StarterKit from '@tiptap/starter-kit';
-import TextAlign from '@tiptap/extension-text-align';
-import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import { Table } from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
+import TextAlign from '@tiptap/extension-text-align';
+import type { Node as PMNode } from '@tiptap/pm/model';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import clsx from 'clsx';
-import { htmlToWikiText, wikiTextToHTML } from '@/lib/richTextUtils';
+
 import { cleanHTMLForExport } from '@/lib/richtext/htmlTransforms';
 import {
   describeAllowedImageSources,
@@ -19,9 +19,11 @@ import {
   RTE_IMAGE_MAX_BYTES,
   stripDisallowedImages,
 } from '@/lib/richtext/imagePolicy';
+import { htmlToWikiText, wikiTextToHTML } from '@/lib/richTextUtils';
+
+import ImagePickerModal from './RichTextEditor/ImagePickerModal';
 import Toolbar, { ToolbarCommands, ToolbarState } from './RichTextEditor/Toolbar';
 import { LoadingSpinnerIcon } from './RichTextEditorIcons';
-import ImagePickerModal from './RichTextEditor/ImagePickerModal';
 
 interface RichTextEditorProps {
   content?: string;
@@ -508,8 +510,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   if (!editor) {
     return (
-      <div className='border border-gray-300 dark:border-gray-600 rounded-lg'>
-        <div className='p-6 flex items-center justify-center text-gray-500 dark:text-gray-400'>
+      <div className='rounded-lg border border-gray-300 dark:border-gray-600'>
+        <div className='flex items-center justify-center p-6 text-gray-500 dark:text-gray-400'>
           <LoadingSpinnerIcon />
           加载编辑器...
         </div>
@@ -518,14 +520,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
 
   return (
-    <div className='border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 overflow-hidden flex flex-col max-h-[90vh]'>
+    <div className='flex max-h-[90vh] flex-col overflow-hidden rounded-lg border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900'>
       <Toolbar
         state={toolbarState}
         commands={commands}
         mode={viewMode}
         onModeChange={handleModeChange}
         isUploadingImage={isUploadingImage}
-        className='flex-none z-10'
+        className='z-10 flex-none'
       />
       <ImagePickerModal
         isOpen={showImagePicker}
@@ -536,7 +538,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         allowedSourcesDescription={allowedImageSourcesText}
         refreshLibraryKey={libraryRefreshKey}
       />
-      <div className='flex-1 overflow-y-auto min-h-0'>
+      <div className='min-h-0 flex-1 overflow-y-auto'>
         {viewMode === 'rich' ? (
           <EditorContent editor={editor} onPaste={handlePaste} />
         ) : (
@@ -555,8 +557,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               }
             }}
             className={clsx(
-              'w-full h-full p-6 min-h-[400px] bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100',
-              'font-mono text-sm focus:outline-none resize-none',
+              'h-full min-h-[400px] w-full bg-gray-50 p-6 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+              'resize-none font-mono text-sm focus:outline-none',
               className
             )}
             aria-label={viewMode === 'wiki' ? 'WikiText editor' : 'HTML editor'}

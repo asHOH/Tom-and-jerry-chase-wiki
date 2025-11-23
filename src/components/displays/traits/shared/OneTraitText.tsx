@@ -1,12 +1,13 @@
 import { itemGroups } from '@/data';
 import {
+  FactionId,
   SingleItem,
   SingleItemOrGroup,
-  Trait,
   SingleItemTypeChineseNameList,
-  FactionId,
+  Trait,
   TraitGroup,
 } from '@/data/types';
+
 import { checkItemMatchesGroup, checkItemMatchesTrait, searchBuffBySingleItem } from './tools';
 
 // 辅助函数：为singleItemOrGroup生成符合要求的链接文本，包括颜色信息

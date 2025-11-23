@@ -1,7 +1,9 @@
-import CollapseCard from '@/components/ui/CollapseCard';
 import { SingleItem } from '@/data/types';
-import SingleItemTraitsText from '../traits/shared/SingleItemTraitsText';
+
+import CollapseCard from '@/components/ui/CollapseCard';
+
 import { filterTraitsBySingleItem } from '../traits/shared/filterTraitsBySingleItem';
+import SingleItemTraitsText from '../traits/shared/SingleItemTraitsText';
 
 interface DetailTraitsCardProps {
   singleItem: SingleItem;
@@ -13,7 +15,7 @@ export default function DetailTraitsCard({ singleItem }: DetailTraitsCardProps) 
       title={`  ${singleItem.name}的相关互动特性(${filterTraitsBySingleItem(singleItem).length})`}
       size='xs'
       color='lime'
-      className='pb-1 px-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
+      className='rounded-md border-x-1 border-b-1 border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
     >
       <SingleItemTraitsText singleItem={singleItem} />
     </CollapseCard>

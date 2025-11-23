@@ -1,10 +1,11 @@
+import { createHash, pbkdf2Sync, randomBytes } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/admin';
-import { createHash, randomBytes, pbkdf2Sync } from 'crypto';
 import { TablesInsert } from '@/data/database.types';
-import { convertToPinyin } from '@/lib/pinyinUtils';
-import { checkPasswordStrength } from '@/lib/passwordUtils';
+
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
+import { checkPasswordStrength } from '@/lib/passwordUtils';
+import { convertToPinyin } from '@/lib/pinyinUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');

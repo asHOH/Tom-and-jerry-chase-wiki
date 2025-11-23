@@ -1,18 +1,20 @@
 'use client';
 
-import Link from '@/components/Link';
-import ItemCardDisplay from './ItemCardDisplay';
-import { items } from '@/data';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import FilterRow from '@/components/ui/FilterRow';
 import { useState } from 'react';
-import type { Itemtypelist, Itemsourcelist, Item } from '@/data/types';
-import { useMobile } from '@/hooks/useMediaQuery';
-import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { items } from '@/data';
+import type { Item, Itemsourcelist, Itemtypelist } from '@/data/types';
+
+import { getFactionButtonColors } from '@/lib/design-system';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { useMobile } from '@/hooks/useMediaQuery';
+import FilterRow from '@/components/ui/FilterRow';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
+import Link from '@/components/Link';
+
+import ItemCardDisplay from './ItemCardDisplay';
 
 type Props = { description?: string };
 
@@ -59,17 +61,17 @@ export default function ItemClient({ description }: Props) {
     <div
       className={
         isMobile
-          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
-          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
+          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
       }
     >
       <header
-        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>道具</PageTitle>
         {!isMobile && <PageDescription>{description}</PageDescription>}
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           {/* 类型筛选 */}
           <FilterRow<Itemtypelist>
             label='类型筛选:'
@@ -89,7 +91,7 @@ export default function ItemClient({ description }: Props) {
               <Tooltip
                 key={String(tag)}
                 content={getSpecifyTypePositioningTagTooltipContent(tag, 'item')}
-                className='border-none cursor-pointer'
+                className='cursor-pointer border-none'
               >
                 {button}
               </Tooltip>
@@ -115,7 +117,7 @@ export default function ItemClient({ description }: Props) {
               <Tooltip
                 key={String(tag)}
                 content={getSpecifyTypePositioningTagTooltipContent(tag, 'item')}
-                className='border-none cursor-pointer'
+                className='cursor-pointer border-none'
               >
                 {button}
               </Tooltip>
@@ -157,7 +159,7 @@ export default function ItemClient({ description }: Props) {
         </div>
       </header>
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        className='auto-fit-grid grid-container mt-8 grid gap-4'
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
         }}
@@ -165,7 +167,7 @@ export default function ItemClient({ description }: Props) {
         {filteredItems.map((item) => (
           <div
             key={item.name}
-            className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'
+            className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
           >
             <Link href={`/items/${encodeURIComponent(item.name)}`} className='block'>
               <ItemCardDisplay item={item} />

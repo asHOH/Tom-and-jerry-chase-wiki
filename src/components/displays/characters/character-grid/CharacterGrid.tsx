@@ -1,25 +1,26 @@
 'use client';
 
 import { useMemo } from 'react';
+import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
+import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode } from '@/context/EditModeContext';
+import { characters as allCharacters, FactionId, PositioningTagName } from '@/data';
+
+import { getAvatarFilterColors, getPositioningTagColors } from '@/lib/design-tokens';
+import { getOriginalCharacterIds } from '@/lib/editUtils';
+import { useFilterState } from '@/lib/filterUtils';
+import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { FactionCharactersProps } from '@/lib/types';
+import { useMobile } from '@/hooks/useMediaQuery';
+import FilterRow from '@/components/ui/FilterRow';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
+import Tooltip from '@/components/ui/Tooltip';
+
+import CharacterCreate from './CharacterCreate';
 import CharacterDisplay from './CharacterDisplay';
 import CharacterImport from './CharacterImport';
-import { FactionCharactersProps } from '@/lib/types';
-import { FactionId, PositioningTagName } from '@/data';
-import { useFilterState } from '@/lib/filterUtils';
-import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
-import Tooltip from '@/components/ui/Tooltip';
-import FilterRow from '@/components/ui/FilterRow';
-import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
-import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext';
-import { getOriginalCharacterIds } from '@/lib/editUtils';
-import { characters as allCharacters } from '@/data';
-import CharacterCreate from './CharacterCreate';
-import { getPositioningTagColors, getAvatarFilterColors } from '@/lib/design-tokens';
-import { useDarkMode } from '@/context/DarkModeContext';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import { useMobile } from '@/hooks/useMediaQuery';
 
 export default function CharacterGrid({ faction }: FactionCharactersProps) {
   const { isDetailedView: isDetailed } = useAppContext();
@@ -139,16 +140,16 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
       className={
         isMobile
           ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
-          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
       }
     >
       <header
-        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>{faction.name}</PageTitle>
         {!isMobile && <PageDescription>{faction.description}</PageDescription>}
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow
             label='定位筛选:'
             options={uniquePositioningTags as readonly PositioningTagName[]}
@@ -163,7 +164,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                   faction.id as FactionId,
                   isDetailed
                 )}
-                className='border-none cursor-pointer'
+                className='cursor-pointer border-none'
               >
                 {button}
               </Tooltip>

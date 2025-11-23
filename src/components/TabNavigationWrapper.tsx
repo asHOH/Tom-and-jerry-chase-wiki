@@ -1,4 +1,5 @@
 import React from 'react';
+
 import TabNavigation from './TabNavigation';
 
 type NavigationWrapperProps = {

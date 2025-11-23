@@ -1,4 +1,4 @@
-import { GameHistory, ChangeType } from './types';
+import { ChangeType, GameHistory } from './types';
 
 export const historyData: GameHistory = [
   {

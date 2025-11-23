@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, ReactNode, use, useRef } from 'react';
+import { ReactNode, use, useEffect, useRef } from 'react';
 import { proxy, useSnapshot } from 'valtio';
+
 import { supabase } from '@/lib/supabase/client';
 
 type UserType = { role: string | null; nickname: string | null };

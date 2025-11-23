@@ -1,8 +1,9 @@
 'use client';
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
-import { useSpecifyTypeNavigation } from '@/hooks/useSpecifyTypeNavigation';
 import { motion } from 'motion/react';
+
+import { useSpecifyTypeNavigation } from '@/hooks/useSpecifyTypeNavigation';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff';
 
@@ -34,22 +35,22 @@ export default function SpecifyTypeNavigationButtons({
       <motion.button
         onClick={navigateToPrevious}
         disabled={!previousTarget}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
           previousTarget
-            ? 'bg-blue-500 hover:bg-blue-600 text-white'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400'
+            ? 'bg-blue-500 text-white hover:bg-blue-600'
+            : 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
         }`}
         whileHover={previousTarget ? { scale: 1.05 } : {}}
         whileTap={previousTarget ? { scale: 0.95 } : {}}
       >
-        <ChevronLeftIcon className='w-4 h-4' />
+        <ChevronLeftIcon className='h-4 w-4' />
         <span className='hidden sm:inline'>
           {previousTarget ? previousTarget.target : '上一个'}
         </span>
       </motion.button>
 
       {/* Target Counter */}
-      <div className='text-sm text-gray-600 dark:text-gray-400 px-2'>
+      <div className='px-2 text-sm text-gray-600 dark:text-gray-400'>
         {currentIndex + 1} / {totals}
       </div>
 
@@ -57,16 +58,16 @@ export default function SpecifyTypeNavigationButtons({
       <motion.button
         onClick={navigateToNext}
         disabled={!nextTarget}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
           nextTarget
-            ? 'bg-blue-500 hover:bg-blue-600 text-white'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400'
+            ? 'bg-blue-500 text-white hover:bg-blue-600'
+            : 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
         }`}
         whileHover={nextTarget ? { scale: 1.05 } : {}}
         whileTap={nextTarget ? { scale: 0.95 } : {}}
       >
         <span className='hidden sm:inline'>{nextTarget ? nextTarget.target : '下一个'}</span>
-        <ChevronRightIcon className='w-4 h-4' />
+        <ChevronRightIcon className='h-4 w-4' />
       </motion.button>
     </div>
   );

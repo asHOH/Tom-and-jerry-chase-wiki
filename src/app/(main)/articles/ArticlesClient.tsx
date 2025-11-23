@@ -1,19 +1,19 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import Link from '@/components/Link';
+import { useDarkMode } from '@/context/DarkModeContext';
 
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import FilterRow from '@/components/ui/FilterRow';
-import BaseCard from '@/components/ui/BaseCard';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { useUser } from '@/hooks/useUser';
 import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useUser } from '@/hooks/useUser';
+import BaseCard from '@/components/ui/BaseCard';
+import FilterRow from '@/components/ui/FilterRow';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
+import Link from '@/components/Link';
 
 const monthDayFormatter = new Intl.DateTimeFormat('zh-CN', {
   timeZone: 'Asia/Shanghai',
@@ -188,12 +188,12 @@ export default function ArticlesClient({ articles: data, description }: Articles
     }
 
     return (
-      <div className='flex items-center justify-center gap-2 mt-8'>
+      <div className='mt-8 flex items-center justify-center gap-2'>
         <button
           type='button'
           onClick={() => setCurrentPage(currentPage - 1)}
           disabled={currentPage <= 1}
-          className='px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+          className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
         >
           上一页
         </button>
@@ -203,7 +203,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
             <button
               type='button'
               onClick={() => setCurrentPage(1)}
-              className='px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
+              className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
             >
               1
             </button>
@@ -216,10 +216,10 @@ export default function ArticlesClient({ articles: data, description }: Articles
             type='button'
             key={page}
             onClick={() => setCurrentPage(page)}
-            className={`px-3 py-2 text-sm rounded-lg transition-colors ${
+            className={`rounded-lg px-3 py-2 text-sm transition-colors ${
               page === currentPage
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             {page}
@@ -232,7 +232,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
             <button
               type='button'
               onClick={() => setCurrentPage(clientTotalPages)}
-              className='px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
+              className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
             >
               {clientTotalPages}
             </button>
@@ -243,7 +243,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
           type='button'
           onClick={() => setCurrentPage(currentPage + 1)}
           disabled={currentPage >= clientTotalPages}
-          className='px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+          className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
         >
           下一页
         </button>
@@ -254,7 +254,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
   if (loading && !data) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='flex min-h-[400px] items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
       </div>
@@ -264,16 +264,16 @@ export default function ArticlesClient({ articles: data, description }: Articles
   if (error) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <BaseCard className='text-center py-12'>
-          <div className='text-6xl mb-4'>🚫</div>
-          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
+        <BaseCard className='py-12 text-center'>
+          <div className='mb-4 text-6xl'>🚫</div>
+          <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             加载文章列表失败
           </h2>
-          <p className='text-gray-600 dark:text-gray-400 mb-6'>请稍后重试或联系管理员</p>
+          <p className='mb-6 text-gray-600 dark:text-gray-400'>请稍后重试或联系管理员</p>
           <button
             type='button'
             onClick={() => mutate()}
-            className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+            className='inline-flex items-center rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
           >
             重试
           </button>
@@ -285,7 +285,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
     <div className={isMobile ? 'space-y-2 dark:text-slate-200' : 'space-y-8 dark:text-slate-200'}>
       {/* Header */}
       <header
-        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>文章列表</PageTitle>
         {!isMobile && description && <PageDescription>{description}</PageDescription>}
@@ -317,14 +317,14 @@ export default function ArticlesClient({ articles: data, description }: Articles
               )}
             />
             {selectedCategories.size > 0 && (
-              <div className={isMobile ? 'flex justify-center mt-2' : 'flex justify-center mt-4'}>
+              <div className={isMobile ? 'mt-2 flex justify-center' : 'mt-4 flex justify-center'}>
                 <button
                   type='button'
                   onClick={() => {
                     clearCategoryFilters();
                     setCurrentPage(1);
                   }}
-                  className='filter-button px-3 py-2 rounded-md font-medium transition-all duration-200 text-sm cursor-pointer border-none bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30'
+                  className='filter-button cursor-pointer rounded-md border-none bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-all duration-200 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30'
                 >
                   清除筛选
                 </button>
@@ -366,9 +366,9 @@ export default function ArticlesClient({ articles: data, description }: Articles
 
         {/* Stats and Quick Actions */}
         <div
-          className={`flex flex-col sm:flex-row sm:items-center sm:justify-between ${isMobile ? 'gap-2 mt-4 px-2' : 'gap-4 mt-8 px-4'}`}
+          className={`flex flex-col sm:flex-row sm:items-center sm:justify-between ${isMobile ? 'mt-4 gap-2 px-2' : 'mt-8 gap-4 px-4'}`}
         >
-          <div className='text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left'>
+          <div className='text-center text-sm text-gray-600 sm:text-left dark:text-gray-400'>
             共 {filteredArticles.length} 篇文章
             {selectedCategories.size > 0 && (
               <span className='block sm:inline'>
@@ -389,7 +389,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
               <>
                 <Link
                   href='/articles/pending'
-                  className='inline-flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-all duration-200 text-sm'
+                  className='inline-flex items-center gap-2 rounded-lg bg-yellow-600 px-4 py-2 text-sm text-white transition-all duration-200 hover:bg-yellow-700'
                 >
                   <ClockIcon className='size-4' strokeWidth={1.5} />
                   待审核
@@ -397,7 +397,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
 
                 <Link
                   href='/articles/new'
-                  className='inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 text-sm'
+                  className='inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition-all duration-200 hover:bg-blue-700'
                 >
                   <PlusIcon className='size-4' strokeWidth={1.5} aria-hidden='true' />
                   新建文章
@@ -406,7 +406,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
             ) : (
               <a
                 href='http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=k06ydVKmTrT3BV8fYX8zOeve10bXcxR0&authKey=Dqg2BaUpTZVCaSDyRcFPeovGCDtwjpyAbNLPaoss0p3gmWO3sQe9pncD5uk1dZNO&noverify=0&group_code=615882730'
-                className='text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700'
+                className='rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400'
               >
                 💡 若想发布文章，请进群咨询
               </a>
@@ -421,12 +421,12 @@ export default function ArticlesClient({ articles: data, description }: Articles
           <LoadingSpinner size='lg' />
         </div>
       ) : filteredArticles.length === 0 ? (
-        <div className='text-center py-12 px-4'>
-          <div className='text-6xl mb-4'>📄</div>
-          <h3 className='text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+        <div className='px-4 py-12 text-center'>
+          <div className='mb-4 text-6xl'>📄</div>
+          <h3 className='mb-2 text-xl font-semibold text-gray-800 dark:text-gray-200'>
             {selectedCategories.size > 0 ? '没有匹配的文章' : '暂无文章'}
           </h3>
-          <p className='text-gray-600 dark:text-gray-400 mb-6'>
+          <p className='mb-6 text-gray-600 dark:text-gray-400'>
             {selectedCategories.size > 0
               ? '尝试调整搜索条件或筛选器'
               : '成为第一个创建文章的人吧！'}
@@ -439,7 +439,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                   clearCategoryFilters();
                   setCurrentPage(1);
                 }}
-                className='px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200'
+                className='rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-all duration-200 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               >
                 清除筛选
               </button>
@@ -447,7 +447,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
             {userRole && (
               <Link
                 href='/articles/new'
-                className='px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200'
+                className='rounded-lg bg-blue-600 px-6 py-2 text-white transition-all duration-200 hover:bg-blue-700'
               >
                 创建文章
               </Link>
@@ -456,7 +456,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
         </div>
       ) : (
         <div
-          className={`auto-fit-grid grid-container grid ${!isMobile && 'gap-6 mt-8 px-4'}`}
+          className={`auto-fit-grid grid-container grid ${!isMobile && 'mt-8 gap-6 px-4'}`}
           style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}
         >
           {visibleArticles.map((article) => {
@@ -470,14 +470,14 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 className='character-card shover:shadow-lg transform transition-transform! hover:-translate-y-1'
                 href={`/articles/${article.id}`}
               >
-                <div className='px-4 pt-2 pb-5 flex flex-col h-full text-left'>
-                  <h3 className='text-xl font-bold mb-2 dark:text-white line-clamp-2'>
+                <div className='flex h-full flex-col px-4 pt-2 pb-5 text-left'>
+                  <h3 className='mb-2 line-clamp-2 text-xl font-bold dark:text-white'>
                     {article.title}
                   </h3>
 
-                  <div className='flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mb-3'>
+                  <div className='mb-3 flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400'>
                     <span>作者: {article.users_public_view?.nickname || '未知'}</span>
-                    <span className='px-2 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded text-xs'>
+                    <span className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'>
                       {article.categories?.name || '未分类'}
                     </span>
                   </div>
@@ -485,7 +485,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                   <RichTextDisplay content={latestVersion?.content} preview />
 
                   <div className='mt-auto flex'>
-                    <div className='flex flex-col items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-3'>
+                    <div className='mb-3 flex flex-col items-center justify-between text-xs text-gray-600 dark:text-gray-400'>
                       <span>发布: {formatMonthDay(article.created_at)}</span>
                       {latestVersion && (
                         <span>更新: {formatMonthDay(latestVersion.created_at)}</span>
@@ -493,12 +493,12 @@ export default function ArticlesClient({ articles: data, description }: Articles
                       <span>浏览: {article.view_count ?? 0}</span>
                     </div>
 
-                    <object className='ml-auto my-auto'>
+                    <object className='my-auto ml-auto'>
                       <div className='flex items-center gap-2'>
                         <div className='flex-1' />
                         <Link
                           href={`/articles/${article.id}/history`}
-                          className='px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 text-sm'
+                          className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-all duration-200 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                           title='查看历史版本'
                         >
                           <ClockIcon className='size-4' strokeWidth={1.5} />

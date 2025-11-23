@@ -1,13 +1,16 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+
 import '@testing-library/jest-dom';
-import SkillAllocationDisplay from '../SkillAllocationDisplay';
-import { EditModeProvider } from '../../../../../context/EditModeContext';
-import type { SkillAllocation } from '../../../../../data/types';
-import type { CharacterWithFaction } from '../../../../../lib/types';
-import * as skillAllocationUtils from '../../../../../lib/skillAllocationUtils';
-import { characters } from '../../../../../data';
+
 import { proxy } from 'valtio';
+
+import { EditModeProvider } from '../../../../../context/EditModeContext';
+import { characters } from '../../../../../data';
+import type { SkillAllocation } from '../../../../../data/types';
+import * as skillAllocationUtils from '../../../../../lib/skillAllocationUtils';
+import type { CharacterWithFaction } from '../../../../../lib/types';
+import SkillAllocationDisplay from '../SkillAllocationDisplay';
 
 // Mock the skillAllocationUtils module
 jest.mock('../../../../../lib/skillAllocationUtils', () => ({

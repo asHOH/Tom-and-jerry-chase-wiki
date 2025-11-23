@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import PageTitle from '@/components/ui/PageTitle';
+import { useEffect, useRef, useState } from 'react';
 import traits from '@/data/traits';
-import { OneTraitText } from '../../traits/shared/OneTraitText';
+
 import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
+
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
+import { OneTraitText } from '../../traits/shared/OneTraitText';
 
 const processStrings = (input: string | string[]): string =>
   Array.isArray(input) ? input.join('\n') : input;
@@ -70,8 +72,8 @@ export default function TraitCollsion() {
   };
 
   return (
-    <div ref={topRef} className={'max-w-6xl mx-auto pt-4 space-y-2 dark:text-slate-200'}>
-      <header className={'text-center space-y-2 mb-2 px-2'}>
+    <div ref={topRef} className={'mx-auto max-w-6xl space-y-2 pt-4 dark:text-slate-200'}>
+      <header className={'mb-2 space-y-2 px-2 text-center'}>
         <PageTitle>特性大全</PageTitle>
         <PageDescription>
           <TextWithHoverTooltips
@@ -82,7 +84,7 @@ export default function TraitCollsion() {
       </header>
 
       <div className='grid items-center justify-center'>
-        <div className='px-2 py-3 mt-3 mb-6 text-sm font-normal gap-4 flex flex-col flex-wrap bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none rounded-lg border-1 border-dashed border-gray-400 dark:border-gray-600'>
+        <div className='mt-3 mb-6 flex flex-col flex-wrap gap-4 rounded-lg border-1 border-dashed border-gray-400 bg-gradient-to-br from-white to-gray-50 px-2 py-3 text-sm font-normal dark:border-gray-600 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none'>
           {currentPageTraits.map((trait, index) => (
             <div key={startIndex + index} className='text-base whitespace-pre-wrap'>
               <TextWithHoverTooltips
@@ -97,18 +99,18 @@ export default function TraitCollsion() {
       </div>
 
       {/* 分页控件 */}
-      <div className='flex justify-center items-center space-x-4 mt-8 mb-4'>
+      <div className='mt-8 mb-4 flex items-center justify-center space-x-4'>
         <button
           onClick={goToFirstPage}
           disabled={currentPage === 1}
-          className='px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
+          className='rounded bg-gray-200 px-3 py-1 text-sm transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600'
         >
           首页
         </button>
         <button
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          className='px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
+          className='rounded bg-gray-200 px-3 py-1 text-sm transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600'
         >
           上一页
         </button>
@@ -120,21 +122,21 @@ export default function TraitCollsion() {
         <button
           onClick={goToNextPage}
           disabled={currentPage === totalPages}
-          className='px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
+          className='rounded bg-gray-200 px-3 py-1 text-sm transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600'
         >
           下一页
         </button>
         <button
           onClick={goToLastPage}
           disabled={currentPage === totalPages}
-          className='px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
+          className='rounded bg-gray-200 px-3 py-1 text-sm transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600'
         >
           末页
         </button>
       </div>
 
       {/* 页面跳转输入框 */}
-      <div className='flex justify-center items-center space-x-2 mb-8'>
+      <div className='mb-8 flex items-center justify-center space-x-2'>
         <label htmlFor='trait-page-input' className='text-sm'>
           跳转到:
         </label>
@@ -147,7 +149,7 @@ export default function TraitCollsion() {
           onBlur={handlePageInputSubmit}
           onKeyPress={handlePageInputKeyPress}
           id='trait-page-input'
-          className='w-16 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-center hide-spinner'
+          className='hide-spinner w-16 rounded border border-gray-300 bg-white px-2 py-1 text-center text-sm dark:border-gray-600 dark:bg-gray-700'
         />
         <span className='text-sm'>页</span>
       </div>

@@ -1,17 +1,17 @@
 'use client';
 
-import clsx from 'clsx';
-import Link from '@/components/Link';
 import { useMemo, useState } from 'react';
+import clsx from 'clsx';
 import useSWR from 'swr';
 
-import { CheckBadgeIcon, ClockIcon, CloseIcon, EyeIcon } from '@/components/icons/CommonIcons';
+import { formatArticleDate } from '@/lib/dateUtils';
+import { useUser } from '@/hooks/useUser';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
-import { useUser } from '@/hooks/useUser';
-import { formatArticleDate } from '@/lib/dateUtils';
+import { CheckBadgeIcon, ClockIcon, CloseIcon, EyeIcon } from '@/components/icons/CommonIcons';
+import Link from '@/components/Link';
 
 /**
  * Represents a unified article submission.
@@ -157,7 +157,7 @@ export default function PendingClient() {
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
     return (
       <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
+        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.color}`}
       >
         {config.text}
       </span>
@@ -173,7 +173,7 @@ export default function PendingClient() {
   if (loading) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='flex min-h-[400px] items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
       </div>
@@ -183,21 +183,21 @@ export default function PendingClient() {
   if (error) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <div className='text-center py-12'>
-          <div className='text-6xl mb-4'>🚫</div>
-          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
+        <div className='py-12 text-center'>
+          <div className='mb-4 text-6xl'>🚫</div>
+          <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error.status === 403 || error.status === 401
               ? '您没有权限访问此页面'
               : '加载待审核内容失败'}
           </h2>
-          <p className='text-gray-600 dark:text-gray-400 mb-6'>
+          <p className='mb-6 text-gray-600 dark:text-gray-400'>
             {userRole === 'Contributor'
               ? '您可以查看自己的待审核提交，但不能进行审核操作'
               : '请检查您的登录状态或联系管理员获取相应权限'}
           </p>
           <Link
             href='/articles'
-            className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+            className='inline-flex items-center rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
           >
             返回文章列表
           </Link>
@@ -208,7 +208,7 @@ export default function PendingClient() {
 
   return (
     <div className='space-y-8 dark:text-slate-200'>
-      <header className='text-center space-y-2 mb-8 px-4'>
+      <header className='mb-8 space-y-2 px-4 text-center'>
         <PageTitle>{canModerate ? '内容审核' : '待审核内容'}</PageTitle>
         <PageDescription>
           {canModerate ? '管理待审核的文章提交' : '查看您的待审核提交'}
@@ -217,7 +217,7 @@ export default function PendingClient() {
 
       <div className='mb-6'>
         <div className='p-6'>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+          <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
             <div className='flex items-center gap-4'>
               <div className='text-sm text-gray-600 dark:text-gray-400'>
                 共 {data?.count || 0} 个待处理项目
@@ -233,10 +233,10 @@ export default function PendingClient() {
               <button
                 onClick={() => setFilter('all')}
                 className={clsx(
-                  'px-3 py-1.5 text-sm rounded-lg transition-colors',
+                  'rounded-lg px-3 py-1.5 text-sm transition-colors',
                   filter === 'all'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 )}
               >
                 全部
@@ -244,10 +244,10 @@ export default function PendingClient() {
               <button
                 onClick={() => setFilter('pending')}
                 className={clsx(
-                  'px-3 py-1.5 text-sm rounded-lg transition-colors',
+                  'rounded-lg px-3 py-1.5 text-sm transition-colors',
                   filter === 'pending'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 )}
               >
                 待审核
@@ -255,10 +255,10 @@ export default function PendingClient() {
               <button
                 onClick={() => setFilter('rejected')}
                 className={clsx(
-                  'px-3 py-1.5 text-sm rounded-lg transition-colors',
+                  'rounded-lg px-3 py-1.5 text-sm transition-colors',
                   filter === 'rejected'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 )}
               >
                 已拒绝
@@ -266,7 +266,7 @@ export default function PendingClient() {
 
               <button
                 onClick={() => mutate()}
-                className='px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors ml-2'
+                className='ml-2 rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               >
                 刷新
               </button>
@@ -276,28 +276,28 @@ export default function PendingClient() {
       </div>
 
       {filteredSubmissions.length === 0 ? (
-        <div className='text-center py-12'>
-          <div className='text-6xl mb-4'>📝</div>
-          <h3 className='text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+        <div className='py-12 text-center'>
+          <div className='mb-4 text-6xl'>📝</div>
+          <h3 className='mb-2 text-xl font-semibold text-gray-800 dark:text-gray-200'>
             {filter === 'all'
               ? '暂无待处理项目'
               : filter === 'pending'
                 ? '暂无待审核项目'
                 : '暂无已拒绝项目'}
           </h3>
-          <p className='text-gray-600 dark:text-gray-400 mb-4'>
+          <p className='mb-4 text-gray-600 dark:text-gray-400'>
             {filter === 'all' ? '所有提交都已处理完成' : '尝试切换其他筛选条件查看更多内容'}
           </p>
           <div className='flex flex-wrap justify-center gap-3'>
             <Link
               href='/articles'
-              className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+              className='inline-flex items-center rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
             >
               返回文章列表
             </Link>
             <button
               onClick={() => mutate()}
-              className='inline-flex items-center px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
+              className='inline-flex items-center rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
             >
               刷新
             </button>
@@ -307,11 +307,11 @@ export default function PendingClient() {
         <div className='space-y-4'>
           {filteredSubmissions.map((submission) => (
             <div key={submission.version_id} className='p-6'>
-              <div className='flex flex-col lg:flex-row lg:items-start gap-6'>
+              <div className='flex flex-col gap-6 lg:flex-row lg:items-start'>
                 <div className='flex-1'>
-                  <div className='flex items-start justify-between mb-4'>
+                  <div className='mb-4 flex items-start justify-between'>
                     <div>
-                      <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2'>
+                      <h3 className='mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100'>
                         {submission.title}
                       </h3>
                       <div className='flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400'>
@@ -323,11 +323,11 @@ export default function PendingClient() {
                     {getStatusBadge(submission.status)}
                   </div>
 
-                  <div className='text-sm text-gray-600 dark:text-gray-400 mb-4'>
+                  <div className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
                     提交时间: {formatArticleDate(submission.created_at)}
                   </div>
 
-                  <div className='bg-gray-50 dark:bg-gray-800 rounded-lg p-4'>
+                  <div className='rounded-lg bg-gray-50 p-4 dark:bg-gray-800'>
                     <RichTextDisplay content={submission.content} preview />
                   </div>
                 </div>
@@ -337,7 +337,7 @@ export default function PendingClient() {
                     href={`/articles/preview?token=${
                       submission.preview_token || submission.version_id
                     }`}
-                    className='inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-colors text-sm'
+                    className='inline-flex items-center justify-center gap-2 rounded-lg bg-blue-100 px-4 py-2 text-sm text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40'
                   >
                     <EyeIcon className='size-4' strokeWidth={1.5} />
                     预览内容
@@ -348,7 +348,7 @@ export default function PendingClient() {
                       <button
                         onClick={() => handleModerationAction(submission.version_id, 'approve')}
                         disabled={processingVersions.has(submission.version_id)}
-                        className='inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm'
+                        className='inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50'
                       >
                         {processingVersions.has(submission.version_id) ? (
                           <LoadingSpinner size='sm' />
@@ -361,7 +361,7 @@ export default function PendingClient() {
                       <button
                         onClick={() => handleModerationAction(submission.version_id, 'reject')}
                         disabled={processingVersions.has(submission.version_id)}
-                        className='inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm'
+                        className='inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50'
                       >
                         {processingVersions.has(submission.version_id) ? (
                           <LoadingSpinner size='sm' />
@@ -376,7 +376,7 @@ export default function PendingClient() {
                   {!canModerate && (
                     <Link
                       href={`/articles/${submission.article_id}/edit`}
-                      className='inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm'
+                      className='inline-flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                     >
                       继续编辑
                     </Link>
@@ -384,7 +384,7 @@ export default function PendingClient() {
 
                   <Link
                     href={`/articles/${submission.article_id}/history`}
-                    className='inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm'
+                    className='inline-flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                   >
                     <ClockIcon className='size-4' strokeWidth={1.5} />
                     查看历史
@@ -400,7 +400,7 @@ export default function PendingClient() {
         <div className='flex flex-wrap justify-center gap-3'>
           <Link
             href='/articles'
-            className='px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors'
+            className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
           >
             返回文章列表
           </Link>
@@ -408,7 +408,7 @@ export default function PendingClient() {
           {canModerate && (
             <Link
               href='/admin/users'
-              className='px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors'
+              className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
             >
               用户管理
             </Link>

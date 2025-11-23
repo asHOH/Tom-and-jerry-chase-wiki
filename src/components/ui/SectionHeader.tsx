@@ -9,8 +9,8 @@ interface SectionHeaderProps {
 
 export default function SectionHeader({ title, children }: SectionHeaderProps) {
   return (
-    <div className='flex justify-between items-center mb-3'>
-      <h2 className='text-2xl font-bold dark:text-white py-2'>{title}</h2>
+    <div className='mb-3 flex items-center justify-between'>
+      <h2 className='py-2 text-2xl font-bold dark:text-white'>{title}</h2>
       {children}
     </div>
   );

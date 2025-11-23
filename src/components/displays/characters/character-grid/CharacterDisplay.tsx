@@ -1,19 +1,21 @@
 'use client';
 
 import { useMemo } from 'react';
-import { getPositioningTagColors } from '@/lib/design-tokens';
-import { CharacterDisplayProps } from '@/lib/types';
-import type { FactionId } from '@/data/types';
-import GameImage from '../../../ui/GameImage';
-import Tag from '../../../ui/Tag';
-import BaseCard from '../../../ui/BaseCard';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
-import Image from '@/components/Image';
+import type { FactionId } from '@/data/types';
 import clsx from 'clsx';
+
 import { GameDataManager } from '@/lib/dataManager';
+import { getPositioningTagColors } from '@/lib/design-tokens';
+import { CharacterDisplayProps } from '@/lib/types';
+import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import Image from '@/components/Image';
+
+import BaseCard from '../../../ui/BaseCard';
+import GameImage from '../../../ui/GameImage';
+import Tag from '../../../ui/Tag';
 
 export default function CharacterDisplay({
   id,
@@ -43,7 +45,7 @@ export default function CharacterDisplay({
       aria-label={`查看${name}角色详情`}
       className={clsx(
         isEntryCard &&
-          'opacity-60 border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50'
+          'border-2 border-dashed border-slate-300 bg-slate-50 opacity-60 dark:border-slate-600 dark:bg-slate-800/50'
       )}
     >
       <GameImage
@@ -56,7 +58,7 @@ export default function CharacterDisplay({
       />
       <div className={`${isMobile ? 'pb-3' : 'px-4 pb-5'} pt-1 text-center`}>
         <h2
-          className={`${isMobile ? 'text-lg' : 'text-xl mb-2'} font-bold dark:text-white`}
+          className={`${isMobile ? 'text-lg' : 'mb-2 text-xl'} font-bold dark:text-white`}
           style={{ whiteSpace: 'pre' }}
         >
           {name}
@@ -89,7 +91,7 @@ export default function CharacterDisplay({
                     {tag.tagName}
                   </Tag>
                   {weaponImageUrl && (
-                    <div className='absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 flex items-center justify-center'>
+                    <div className='absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'>
                       <Image
                         src={weaponImageUrl}
                         alt={`武器${tag.weapon}`}

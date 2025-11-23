@@ -1,9 +1,12 @@
 'use client';
 
-import Link from '@/components/Link';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
+import { formatArticleDate } from '@/lib/dateUtils';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import PageTitle from '@/components/ui/PageTitle';
+import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import {
   ClockIcon,
   EyeIcon,
@@ -11,10 +14,7 @@ import {
   PencilSquareIcon,
   UserCircleIcon,
 } from '@/components/icons/CommonIcons';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import PageTitle from '@/components/ui/PageTitle';
-import RichTextDisplay from '@/components/ui/RichTextDisplay';
-import { formatArticleDate } from '@/lib/dateUtils';
+import Link from '@/components/Link';
 
 interface PreviewData {
   is_preview: boolean;
@@ -64,7 +64,7 @@ export default function PreviewClient() {
   if (loading) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='flex min-h-[400px] items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
       </div>
@@ -74,17 +74,17 @@ export default function PreviewClient() {
   if (error || !data) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <div className='text-center py-12'>
-          <div className='text-6xl mb-4'>🔗</div>
-          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
+        <div className='py-12 text-center'>
+          <div className='mb-4 text-6xl'>🔗</div>
+          <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error ? '加载预览失败' : '预览不可用'}
           </h2>
-          <p className='text-gray-600 dark:text-gray-400 mb-6'>
+          <p className='mb-6 text-gray-600 dark:text-gray-400'>
             此预览链接可能无效、已过期或文章已被删除
           </p>
           <Link
             href='/'
-            className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+            className='inline-flex items-center rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
           >
             返回首页
           </Link>
@@ -123,11 +123,11 @@ export default function PreviewClient() {
   const statusInfo = getStatusInfo(data.article.version.status);
 
   return (
-    <div className='container mx-auto px-4 py-8 max-w-4xl'>
+    <div className='container mx-auto max-w-4xl px-4 py-8'>
       {/* Preview Banner */}
       <div className='mb-6'>
         <div
-          className={`p-4 border-l-4 ${
+          className={`border-l-4 p-4 ${
             statusInfo.color.includes('yellow')
               ? 'border-yellow-400'
               : statusInfo.color.includes('green')
@@ -139,13 +139,13 @@ export default function PreviewClient() {
         >
           <div className='flex items-start justify-between'>
             <div className='flex-1'>
-              <div className='flex items-center gap-3 mb-2'>
+              <div className='mb-2 flex items-center gap-3'>
                 <EyeIcon className='size-5 text-orange-500' strokeWidth={1.5} />
                 <span className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
                   文章预览
                 </span>
                 <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusInfo.color}`}
+                  className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${statusInfo.color}`}
                 >
                   {statusInfo.text}
                 </span>
@@ -186,10 +186,10 @@ export default function PreviewClient() {
 
           {/* Quick Actions */}
           {data.article.version.status === 'approved' && (
-            <div className='mt-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
+            <div className='mt-4 border-t border-gray-200 pt-4 dark:border-gray-700'>
               <Link
                 href={`/articles/${data.article.id}`}
-                className='inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+                className='inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -219,7 +219,7 @@ export default function PreviewClient() {
 
       {/* Footer Notice */}
       <div className='mt-8 text-center'>
-        <div className='p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800'>
+        <div className='border border-orange-200 bg-orange-50 p-4 dark:border-orange-800 dark:bg-orange-900/20'>
           <div className='flex items-center justify-center gap-2 text-sm text-orange-800 dark:text-orange-300'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -239,17 +239,17 @@ export default function PreviewClient() {
           </div>
         </div>
 
-        <div className='flex flex-wrap justify-center gap-3 mt-6'>
+        <div className='mt-6 flex flex-wrap justify-center gap-3'>
           <Link
             href='/'
-            className='px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors'
+            className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
           >
             返回首页
           </Link>
 
           <Link
             href='/articles'
-            className='px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors'
+            className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
           >
             浏览文章
           </Link>

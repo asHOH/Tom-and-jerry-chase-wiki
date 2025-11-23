@@ -1,6 +1,6 @@
 import { getDocPages } from '@/lib/docUtils';
-import StyledMDX from '@/components/ui/StyledMDX';
 import DocsSidebar from '@/components/ui/DocsSidebar';
+import StyledMDX from '@/components/ui/StyledMDX';
 
 export default async function DocsLayout({ children }: { children: React.ReactNode }) {
   const docPages = await getDocPages();

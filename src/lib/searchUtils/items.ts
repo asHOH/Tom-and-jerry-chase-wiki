@@ -1,8 +1,8 @@
 // Item search logic
 
 import { items } from '@/data';
-import { convertToPinyin } from '../pinyinUtils';
 
+import { convertToPinyin } from '../pinyinUtils';
 import type { SearchResult } from './types';
 
 export async function* searchItems(

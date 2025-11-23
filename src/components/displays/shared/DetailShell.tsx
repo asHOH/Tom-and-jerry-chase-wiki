@@ -2,8 +2,9 @@
 
 import React from 'react';
 import clsx from 'clsx';
-import SectionHeader from '@/components/ui/SectionHeader';
+
 import { designTokens } from '@/lib/design-tokens';
+import SectionHeader from '@/components/ui/SectionHeader';
 
 type CardVariant = 'default' | 'ghost' | 'none';
 
@@ -123,7 +124,7 @@ export function DetailShell({
         </div>
         <div
           {...rightColumnProps}
-          className={clsx('md:w-2/3 space-y-3', rightColumnProps?.className)}
+          className={clsx('space-y-3 md:w-2/3', rightColumnProps?.className)}
           style={rightStyle}
         >
           {sections.map((section, index) => {

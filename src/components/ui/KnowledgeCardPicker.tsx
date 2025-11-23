@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { catKnowledgeCards } from '@/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
 import { Card, FactionId } from '@/data/types';
-import Image from '@/components/Image';
-import Tooltip from './Tooltip';
-import { useMobile } from '@/hooks/useMediaQuery';
 import clsx from 'clsx';
+
+import { useMobile } from '@/hooks/useMediaQuery';
+import Image from '@/components/Image';
+
+import Tooltip from './Tooltip';
 
 interface KnowledgeCardPickerProps {
   isOpen: boolean;
@@ -62,13 +64,13 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
     : 'w-full max-w-3xl max-h-[80vh] rounded-lg';
 
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
+    <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black'>
       <div
-        className={clsx('bg-white dark:bg-slate-800 p-6 shadow-xl flex flex-col', pickerClasses)}
+        className={clsx('flex flex-col bg-white p-6 shadow-xl dark:bg-slate-800', pickerClasses)}
       >
-        <h2 className='text-2xl font-bold mb-4 text-gray-900 dark:text-white'>选择知识卡</h2>
+        <h2 className='mb-4 text-2xl font-bold text-gray-900 dark:text-white'>选择知识卡</h2>
         <div className='flex-grow overflow-y-auto'>
-          <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4'>
+          <div className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7'>
             {Object.values(allCards).map((card: Card) => {
               const cardIdWithRank = `${card.rank}-${card.id}`;
               const isSelected = selectedCards.includes(cardIdWithRank);
@@ -77,9 +79,9 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
                   <div
                     onClick={() => handleCardClick(cardIdWithRank)}
                     className={clsx(
-                      'relative w-full aspect-square cursor-pointer border-4 rounded-lg transition-all duration-200',
+                      'relative aspect-square w-full cursor-pointer rounded-lg border-4 transition-all duration-200',
                       isSelected
-                        ? 'border-blue-500 dark:border-blue-400 scale-105'
+                        ? 'scale-105 border-blue-500 dark:border-blue-400'
                         : 'border-transparent'
                     )}
                   >
@@ -90,7 +92,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
                       className='object-contain'
                     />
                     {isSelected && (
-                      <div className='absolute top-0 right-0 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-lg font-bold'>
+                      <div className='absolute top-0 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-lg font-bold text-white'>
                         ✓
                       </div>
                     )}
@@ -100,26 +102,26 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
             })}
           </div>
         </div>
-        <div className='mt-4 pt-4 border-t border-gray-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4'>
-          <div className='text-center sm:text-left text-gray-800 dark:text-gray-200'>
+        <div className='mt-4 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-4 sm:flex-row dark:border-slate-700'>
+          <div className='text-center text-gray-800 sm:text-left dark:text-gray-200'>
             <span className='font-bold'>总知识量: {totalCost}</span>
             {totalCost > 21 && (
-              <span className='text-red-500 dark:text-red-400 ml-2'>(超出限制!)</span>
+              <span className='ml-2 text-red-500 dark:text-red-400'>(超出限制!)</span>
             )}
             {totalCost === 21 && (
-              <span className='text-amber-500 dark:text-amber-400 ml-2'>(需开启+1上限)</span>
+              <span className='ml-2 text-amber-500 dark:text-amber-400'>(需开启+1上限)</span>
             )}
           </div>
           <div className='flex w-full sm:w-auto'>
             <button
               onClick={onClose}
-              className='flex-1 sm:flex-none px-4 py-2 mr-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 dark:bg-slate-600 dark:text-gray-200 dark:hover:bg-slate-500'
+              className='mr-2 flex-1 rounded bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400 sm:flex-none dark:bg-slate-600 dark:text-gray-200 dark:hover:bg-slate-500'
             >
               取消
             </button>
             <button
               onClick={handleSave}
-              className='flex-1 sm:flex-none px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
+              className='flex-1 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 sm:flex-none dark:bg-blue-600 dark:hover:bg-blue-700'
             >
               保存
             </button>

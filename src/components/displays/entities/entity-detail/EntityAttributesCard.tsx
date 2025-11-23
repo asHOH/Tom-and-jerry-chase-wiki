@@ -1,18 +1,20 @@
 'use client';
 
-import BaseCard from '@/components/ui/BaseCard';
-import Tag from '@/components/ui/Tag';
+import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Entity } from '@/data/types';
-import { designTokens, componentTokens, getEntityTypeColors } from '@/lib/design-tokens';
-import GameImage from '@/components/ui/GameImage';
-import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
-import { useMobile } from '@/hooks/useMediaQuery';
-import Tooltip from '../../../ui/Tooltip';
+
+import { componentTokens, designTokens, getEntityTypeColors } from '@/lib/design-tokens';
 import { getTooltipContent } from '@/lib/tooltipUtils';
-import { useAppContext } from '@/context/AppContext';
-import getEntityFactionId from '../lib/getEntityFactionId';
+import { useMobile } from '@/hooks/useMediaQuery';
+import BaseCard from '@/components/ui/BaseCard';
+import GameImage from '@/components/ui/GameImage';
 import SingleItemButton from '@/components/ui/SingleItemButton';
+import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
+import Tag from '@/components/ui/Tag';
+
+import Tooltip from '../../../ui/Tooltip';
+import getEntityFactionId from '../lib/getEntityFactionId';
 
 export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const [isDarkMode] = useDarkMode();
@@ -132,7 +134,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
       )}
       {/*------Item Attributes------*/}
       <div
-        className='grid items-center border-t border-gray-300 dark:border-gray-600 gap-1'
+        className='grid items-center gap-1 border-t border-gray-300 dark:border-gray-600'
         style={{
           marginLeft: spacing.md,
           marginRight: spacing.md,
@@ -140,19 +142,19 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
           paddingBottom: spacing.xxxxxs,
         }}
       >
-        <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
+        <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
           <span className={`text-sm whitespace-pre`}>类型: </span>
           {putTypeTagOn(entity)}
         </div>
         {!!entity.owner && (
-          <span className={`text-sm flex items-center`}>
+          <span className={`flex items-center text-sm`}>
             {'归属者：'}
             <SingleItemButton singleItem={entity.owner} />
           </span>
         )}
         {/*itemAttributesAsCharacter*/}
         {entity.entityAttributesAsCharacter !== undefined && (
-          <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+          <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
             <span className='text-sm font-bold'>
               该衍生物特性与<span className={`text-fuchsia-600 dark:text-fuchsia-400`}>角色</span>
               类似，可看作
@@ -173,7 +175,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
               )}
             </span>
             <div
-              className='auto-fill-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+              className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
               style={{
                 gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
               }}
@@ -231,10 +233,10 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
         {(entity.move !== undefined ||
           entity.gravity !== undefined ||
           entity.collsion !== undefined) && (
-          <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+          <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
             <span className='text-lg font-bold whitespace-pre'>移动信息</span>
             <div
-              className='auto-fill-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+              className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
               style={{
                 gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
                 gridTemplateRows: 'repeat(2,1fr)',
@@ -298,7 +300,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
 
       {/*Navigation */}
       <div
-        className='flex items-center flex-wrap border-t text-sm border-gray-300 dark:border-gray-600'
+        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
         style={{
           gap: spacing.sm,
           marginLeft: spacing.md,

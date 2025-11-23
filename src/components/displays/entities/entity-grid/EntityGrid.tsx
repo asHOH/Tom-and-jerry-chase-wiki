@@ -1,20 +1,21 @@
 'use client';
 
-import Link from '@/components/Link';
-import EntityCardDisplay from './EntityCardDisplay';
-import { entities } from '@/data';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
 import { useState } from 'react';
-import type { Entitytypelist, Entity } from '@/data/types';
-import { useMobile } from '@/hooks/useMediaQuery';
-import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
-import FilterRow from '@/components/ui/FilterRow';
-import { getPositioningTagColors } from '@/lib/design-system';
+import { entities } from '@/data';
+import type { Entity, Entitytypelist } from '@/data/types';
+
+import { getFactionButtonColors, getPositioningTagColors } from '@/lib/design-system';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { useMobile } from '@/hooks/useMediaQuery';
+import FilterRow from '@/components/ui/FilterRow';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
+import Link from '@/components/Link';
+
 import getEntityFactionId from '../lib/getEntityFactionId';
+import EntityCardDisplay from './EntityCardDisplay';
 
 const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
   '道具类',
@@ -74,16 +75,16 @@ export default function EntityClient({ description }: Props) {
       className={
         isMobile
           ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
-          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
       }
     >
       <header
-        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>衍生物</PageTitle>
         {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           {/* 类型筛选 */}
           <FilterRow<Entitytypelist>
             label='类型筛选:'
@@ -119,7 +120,7 @@ export default function EntityClient({ description }: Props) {
               <Tooltip
                 key={String(tag)}
                 content={getSpecifyTypePositioningTagTooltipContent(tag, 'entity')}
-                className='border-none cursor-pointer'
+                className='cursor-pointer border-none'
               >
                 {button}
               </Tooltip>
@@ -168,7 +169,7 @@ export default function EntityClient({ description }: Props) {
         {filteredEntities.map((entity) => (
           <div
             key={entity.name}
-            className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'
+            className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
           >
             <Link href={`/entities/${encodeURIComponent(entity.name)}`} className='block'>
               <EntityCardDisplay entity={entity} />

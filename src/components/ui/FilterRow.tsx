@@ -1,7 +1,9 @@
 import React, { ReactNode } from 'react';
 import clsx from 'clsx';
-import FilterLabel from './FilterLabel';
+
 import { useMobile } from '@/hooks/useMediaQuery';
+
+import FilterLabel from './FilterLabel';
 
 export type FilterRowProps<T extends string | number> = {
   label: string;
@@ -46,7 +48,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
   return (
     <div
       className={clsx(
-        `flex justify-center items-center gap-2 ${isMobile ? 'mt-1' : 'mt-4'}`,
+        `flex items-center justify-center gap-2 ${isMobile ? 'mt-1' : 'mt-4'}`,
         className
       )}
     >
@@ -74,7 +76,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                 type='button'
                 onClick={() => onToggle(opt as T)}
                 className={clsx(
-                  'filter-button px-3 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out text-sm cursor-pointer border-none',
+                  'filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out',
                   getButtonClassName?.(opt as T, active)
                 )}
                 style={finalStyle}

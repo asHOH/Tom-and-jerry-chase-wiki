@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import NotificationTooltip from './ui/NotificationTooltip';
 
 export const ServiceWorkerRegistration: React.FC = () => {

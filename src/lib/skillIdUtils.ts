@@ -3,11 +3,11 @@
  */
 
 import type {
-  SkillDefinition,
-  Skill,
-  CharacterDefinition,
   Character,
+  CharacterDefinition,
   PartialCharacterDefinition,
+  Skill,
+  SkillDefinition,
 } from '../data/types';
 
 /**

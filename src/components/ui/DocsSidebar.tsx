@@ -1,11 +1,12 @@
 'use client';
 
-import Link from '@/components/Link';
-import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
+
 import { DocPage } from '@/lib/docUtils';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '@/components/icons/CommonIcons';
-import clsx from 'clsx';
+import Link from '@/components/Link';
 
 interface DocsSidebarProps {
   docPages: DocPage[];
@@ -24,14 +25,14 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
       {/* Mobile menu button */}
       <button
         onClick={toggleSidebar}
-        className='lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-md'
+        className='fixed top-4 left-4 z-50 rounded-md border border-gray-200 bg-white p-2 shadow-md lg:hidden dark:border-slate-700 dark:bg-slate-800'
         aria-label='Toggle sidebar'
       >
         {isOpen ? (
-          <CloseIcon className='w-6 h-6 text-gray-600 dark:text-gray-300' />
+          <CloseIcon className='h-6 w-6 text-gray-600 dark:text-gray-300' />
         ) : (
           <svg
-            className='w-6 h-6 text-gray-600 dark:text-gray-300'
+            className='h-6 w-6 text-gray-600 dark:text-gray-300'
             fill='none'
             stroke='currentColor'
             viewBox='0 0 24 24'
@@ -49,7 +50,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
       {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className='lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50'
+          className='bg-opacity-50 fixed inset-0 z-40 bg-black lg:hidden'
           onClick={toggleSidebar}
         />
       )}
@@ -57,15 +58,15 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
       {/* Sidebar */}
       <aside
         className={clsx(
-          'fixed lg:static inset-y-0 left-0 z-40 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700',
+          'fixed inset-y-0 left-0 z-40 border-r border-gray-200 bg-white lg:static dark:border-slate-700 dark:bg-slate-800',
           'transform transition-all duration-300 ease-in-out lg:block',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           isCollapsed ? 'lg:w-16' : 'w-full sm:w-80 lg:w-64'
         )}
       >
-        <div className='flex flex-col h-full'>
+        <div className='flex h-full flex-col'>
           {/* Header */}
-          <div className='p-6 border-b border-gray-200 dark:border-slate-700 relative'>
+          <div className='relative border-b border-gray-200 p-6 dark:border-slate-700'>
             {!isCollapsed && (
               <>
                 <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>文档</h2>
@@ -77,15 +78,15 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
             <button
               onClick={toggleCollapse}
               className={clsx(
-                'hidden lg:flex absolute top-6 right-4 p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors',
-                isCollapsed && 'left-4 right-auto'
+                'absolute top-6 right-4 hidden rounded-md p-1 text-gray-400 transition-colors hover:text-gray-600 lg:flex dark:hover:text-gray-300',
+                isCollapsed && 'right-auto left-4'
               )}
               aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {isCollapsed ? (
-                <ChevronRightIcon className='w-4 h-4' />
+                <ChevronRightIcon className='h-4 w-4' />
               ) : (
-                <ChevronLeftIcon className='w-4 h-4' />
+                <ChevronLeftIcon className='h-4 w-4' />
               )}
             </button>
           </div>
@@ -98,16 +99,16 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                 href='/docs'
                 className={clsx(
                   'flex items-center rounded-md text-sm font-medium transition-colors',
-                  isCollapsed ? 'px-2 py-2 justify-center' : 'px-3 py-2',
+                  isCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2',
                   pathname === '/docs'
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-l-4 border-blue-500'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
+                    ? 'border-l-4 border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
+                    : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-slate-700'
                 )}
                 onClick={() => setIsOpen(false)}
                 title={isCollapsed ? 'Overview' : undefined}
               >
                 <svg
-                  className={clsx('w-4 h-4 flex-shrink-0', !isCollapsed && 'mr-3')}
+                  className={clsx('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')}
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
@@ -132,7 +133,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
               {docPages.length > 0 && (
                 <div className='pt-4'>
                   {!isCollapsed && (
-                    <h3 className='px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2'>
+                    <h3 className='mb-2 px-3 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400'>
                       Pages
                     </h3>
                   )}
@@ -145,16 +146,16 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                           href={page.path}
                           className={clsx(
                             'flex items-center rounded-md text-sm font-medium transition-colors',
-                            isCollapsed ? 'px-2 py-2 justify-center' : 'px-3 py-2',
+                            isCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2',
                             isActive
-                              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-l-4 border-blue-500'
-                              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
+                              ? 'border-l-4 border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
+                              : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-slate-700'
                           )}
                           onClick={() => setIsOpen(false)}
                           title={isCollapsed ? page.title : undefined}
                         >
                           <svg
-                            className={clsx('w-4 h-4 flex-shrink-0', !isCollapsed && 'mr-3')}
+                            className={clsx('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')}
                             fill='none'
                             stroke='currentColor'
                             viewBox='0 0 24 24'
@@ -178,10 +179,10 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
 
           {/* Footer */}
           {!isCollapsed && (
-            <div className='p-4 border-t border-gray-200 dark:border-slate-700'>
-              <div className='text-xs text-gray-500 dark:text-gray-400 space-y-1'>
+            <div className='border-t border-gray-200 p-4 dark:border-slate-700'>
+              <div className='space-y-1 text-xs text-gray-500 dark:text-gray-400'>
                 <p className='flex items-center'>
-                  <svg className='w-3 h-3 mr-1' fill='currentColor' viewBox='0 0 20 20'>
+                  <svg className='mr-1 h-3 w-3' fill='currentColor' viewBox='0 0 20 20'>
                     <path d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' />
                   </svg>
                   {docPages.length}个页面

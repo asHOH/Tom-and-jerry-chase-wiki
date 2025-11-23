@@ -19,11 +19,11 @@
  *   - Each day contains changes grouped by commit type
  *   - TypeScript types available in src/data/generated/changeLogs.ts
  */
+import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
-import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
+import dotenv from 'dotenv';
 
 // Do NOT change the path
 // Load environment variables from .env.local or .env

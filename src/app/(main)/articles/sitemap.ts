@@ -1,5 +1,6 @@
-import { supabaseAdmin } from '@/lib/supabase/admin';
 import { MetadataRoute } from 'next';
+
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://tjwiki.com';

@@ -1,19 +1,20 @@
 'use client';
 
-import GameImage from '@/components/ui/GameImage';
-import { specialSkills } from '@/data';
-import type { FactionId, SpecialSkill } from '@/data/types';
 import { useState } from 'react';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import BaseCard from '@/components/ui/BaseCard';
-import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
-import FilterRow from '@/components/ui/FilterRow';
+import { characters, specialSkills } from '@/data';
+import type { FactionId, SpecialSkill } from '@/data/types';
+
+import { getFactionButtonColors } from '@/lib/design-system';
 import { designTokens } from '@/lib/design-tokens';
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
-import { characters } from '@/data';
 import { CharacterWithFaction } from '@/lib/types';
+import BaseCard from '@/components/ui/BaseCard';
+import FilterRow from '@/components/ui/FilterRow';
+import GameImage from '@/components/ui/GameImage';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
+
+import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import AdviceCharacterList from './AdviceCharacterList';
 
 // Filter characters
@@ -78,12 +79,12 @@ export default function SpecialSkillAdviceClient() {
     : allSkills;
 
   return (
-    <div className='max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'>
-      <header className='text-center space-y-4 mb-8 px-4'>
+    <div className='mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'>
+      <header className='mb-8 space-y-4 px-4 text-center'>
         <PageTitle>特技推荐</PageTitle>
         <PageDescription>根据各特技的应用场合和克制关系，选择最合适的特技</PageDescription>
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow<'cat' | 'mouse'>
             label='阵营筛选:'
             options={['cat', 'mouse']}
@@ -97,13 +98,13 @@ export default function SpecialSkillAdviceClient() {
           />
         </div>
       </header>
-      <div className='auto-fit-grid grid-container grid gap-4 mt-8'>
+      <div className='auto-fit-grid grid-container mt-8 grid gap-4'>
         {filteredSkills.map((skill) => (
           <div
             key={skill.factionId + skill.name}
-            className='character-card transform transition-transform flex flex-col md:flex-row card dark:bg-slate-800 dark:border-slate-700'
+            className='character-card card flex transform flex-col transition-transform md:flex-row dark:border-slate-700 dark:bg-slate-800'
           >
-            <div className='md:w-1/5 '>
+            <div className='md:w-1/5'>
               <BaseCard
                 variant='item'
                 href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(
@@ -136,7 +137,7 @@ export default function SpecialSkillAdviceClient() {
               {skill.adviceDescription !== undefined && (
                 <div>
                   <p
-                    className='text-black dark:text-gray-200 text-lg'
+                    className='text-lg text-black dark:text-gray-200'
                     style={{
                       paddingTop: designTokens.spacing.sm,
                       paddingBottom: designTokens.spacing.sm,
@@ -150,8 +151,8 @@ export default function SpecialSkillAdviceClient() {
               {/*counteredBy*/}
               {(allCounteredBy(skill)[0].length != 0 || allCounteredBy(skill)[1].length != 0) && (
                 <div>
-                  <span className='font-semibold text-sm text-blue-700 dark:text-blue-300 flex items-center gap-1'>
-                    <span className='w-5 h-5 bg-blue-200 rounded-full flex items-center justify-center mr-1'>
+                  <span className='flex items-center gap-1 text-sm font-semibold text-blue-700 dark:text-blue-300'>
+                    <span className='mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-200'>
                       <svg
                         width='16'
                         height='16'
@@ -184,8 +185,8 @@ export default function SpecialSkillAdviceClient() {
               {/*counters*/}
               {(allCounters(skill)[0].length != 0 || allCounters(skill)[1].length != 0) && (
                 <div>
-                  <span className='font-semibold text-sm text-red-700 dark:text-red-300 flex items-center gap-1'>
-                    <span className='w-5 h-5 bg-red-200 rounded-full flex items-center justify-center mr-1'>
+                  <span className='flex items-center gap-1 text-sm font-semibold text-red-700 dark:text-red-300'>
+                    <span className='mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-200'>
                       <svg
                         width='16'
                         height='16'
@@ -218,8 +219,8 @@ export default function SpecialSkillAdviceClient() {
               {/*users*/}
               {allUsers(skill).length != 0 && (
                 <div>
-                  <span className='font-semibold text-sm text-green-700 dark:text-green-300 flex items-center gap-1'>
-                    <span className='w-5 h-5 bg-green-200 rounded-full flex items-center justify-center mr-1'>
+                  <span className='flex items-center gap-1 text-sm font-semibold text-green-700 dark:text-green-300'>
+                    <span className='mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-200'>
                       <svg
                         width='16'
                         height='16'

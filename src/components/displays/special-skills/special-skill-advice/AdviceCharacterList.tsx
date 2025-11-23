@@ -33,7 +33,7 @@ export default function AdviceCharacterList({
   const useSmallGrid = characters.length + isMinorCharacters.length > 8;
 
   return (
-    <div className='rounded-xl bg-white dark:bg-slate-800 shadow-sm px-2 py-3'>
+    <div className='rounded-xl bg-white px-2 py-3 shadow-sm dark:bg-slate-800'>
       <ul
         className='gap-4'
         style={{
@@ -46,22 +46,22 @@ export default function AdviceCharacterList({
         {characters.map((character) => (
           <li
             key={character.id ?? ''}
-            className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:-translate-y-1 ${classNameColors[color]}`}
+            className={`flex items-center gap-3 rounded-lg p-3 transition-colors hover:-translate-y-1 ${classNameColors[color]}`}
           >
             <a
               href={`/characters/${character.id}`}
-              className='flex items-center gap-2 w-full'
+              className='flex w-full items-center gap-2'
               tabIndex={0}
             >
               <Image
                 src={character.imageUrl!}
                 alt={character.id!}
-                className='w-12 h-12'
+                className='h-12 w-12'
                 width={90}
                 height={90}
               />
               {!useSmallGrid && (
-                <span className='text-lg dark:text-white truncate'>{character.id}</span>
+                <span className='truncate text-lg dark:text-white'>{character.id}</span>
               )}
             </a>
           </li>
@@ -69,22 +69,22 @@ export default function AdviceCharacterList({
         {isMinorCharacters.map((character) => (
           <li
             key={character.id ?? ''}
-            className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:-translate-y-1 opacity-60 ${classNameColors[color]}`}
+            className={`flex items-center gap-3 rounded-lg p-3 opacity-60 transition-colors hover:-translate-y-1 ${classNameColors[color]}`}
           >
             <a
               href={`/characters/${character.id}`}
-              className='flex items-center gap-2 w-full opacity-80'
+              className='flex w-full items-center gap-2 opacity-80'
               tabIndex={0}
             >
               <Image
                 src={character.imageUrl!}
                 alt={character.id!}
-                className='w-10 h-10'
+                className='h-10 w-10'
                 width={40}
                 height={40}
               />
               {!useSmallGrid && (
-                <span className='text-lg dark:text-white truncate'>{character.id}</span>
+                <span className='truncate text-lg dark:text-white'>{character.id}</span>
               )}
             </a>
           </li>

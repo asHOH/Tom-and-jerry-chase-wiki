@@ -1,10 +1,12 @@
-import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { factions, factionData } from '@/data';
-import CharacterGridClient from './CharacterGridClient';
+import { notFound } from 'next/navigation';
+import { factionData, factions } from '@/data';
+import { CollectionPage, WithContext } from 'schema-dts';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
-import { CollectionPage, WithContext } from 'schema-dts';
+
+import CharacterGridClient from './CharacterGridClient';
 
 export const dynamic = 'force-static';
 

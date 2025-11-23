@@ -1,6 +1,6 @@
+import { usePathname } from 'next/navigation';
 import { NAV_ITEMS } from '@/constants/navigation';
 import { characters } from '@/data';
-import { usePathname } from 'next/navigation';
 
 export function useNavigationTabs() {
   const pathname = usePathname();

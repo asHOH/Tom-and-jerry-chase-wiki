@@ -1,6 +1,7 @@
 'use server';
 
-import { redirect, notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+
 import { getGotoResult } from '@/lib/gotoUtils';
 
 export default async function GotoPage({

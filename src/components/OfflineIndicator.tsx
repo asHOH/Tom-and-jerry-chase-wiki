@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import NotificationTooltip from './ui/NotificationTooltip';
 
 export const OfflineIndicator: React.FC = () => {
@@ -76,9 +77,9 @@ export const OfflineIndicator: React.FC = () => {
       {' '}
       {/* Persistent offline indicator - positioned below navigation bar */}
       {!isOnline && (
-        <div className='fixed left-0 right-0 bg-gray-600 text-gray-100 px-4 py-2 text-sm font-medium z-[9998] offline-banner'>
+        <div className='offline-banner fixed right-0 left-0 z-[9998] bg-gray-600 px-4 py-2 text-sm font-medium text-gray-100'>
           <div className='flex items-center justify-center space-x-2'>
-            <div className='w-2 h-2 bg-gray-300 rounded-full animate-pulse'></div>
+            <div className='h-2 w-2 animate-pulse rounded-full bg-gray-300'></div>
             <span>您正在离线浏览 - 仅显示已缓存的内容</span>
           </div>
         </div>

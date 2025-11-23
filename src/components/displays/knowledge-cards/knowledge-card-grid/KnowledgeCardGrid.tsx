@@ -1,22 +1,23 @@
 'use client';
 
-import KnowledgeCardDisplay from './KnowledgeCardDisplay';
-import { getCardRankColors } from '@/lib/design-tokens';
-import { getFactionButtonColors } from '@/lib/design-system';
-import type { FactionId } from '@/data/types';
-
-import { sortCardsByRank } from '@/lib/sortingUtils';
-import { useFilterState, createRankFilter, RANK_OPTIONS } from '@/lib/filterUtils';
-import CostRangeSlider from '../../../ui/CostRangeSlider';
 import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import clsx from 'clsx';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { cards } from '@/data';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import FilterRow from '@/components/ui/FilterRow';
+import type { FactionId } from '@/data/types';
+import clsx from 'clsx';
+
+import { getFactionButtonColors } from '@/lib/design-system';
+import { getCardRankColors } from '@/lib/design-tokens';
+import { createRankFilter, RANK_OPTIONS, useFilterState } from '@/lib/filterUtils';
+import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import FilterRow from '@/components/ui/FilterRow';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
+
+import CostRangeSlider from '../../../ui/CostRangeSlider';
+import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 
 type Props = { description?: string };
 
@@ -48,17 +49,17 @@ export default function KnowledgeCardGrid({ description }: Props) {
     <div
       className={
         isMobile
-          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
-          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
+          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
       }
     >
       <header
-        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>知识卡</PageTitle>
         {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow<FactionId>
             label='阵营筛选:'
             options={['cat', 'mouse'] as const}
@@ -84,14 +85,14 @@ export default function KnowledgeCardGrid({ description }: Props) {
           />
 
           {/* Cost Filter Controls styled like FilterRow */}
-          <div className='filter-section flex flex-col md:flex-row md:items-center gap-2 md:gap-4'>
-            <div className='label-col w-full md:w-32 text-left'>
+          <div className='filter-section flex flex-col gap-2 md:flex-row md:items-center md:gap-4'>
+            <div className='label-col w-full text-left md:w-32'>
               <div className='font-medium'>费用筛选:</div>
             </div>
-            <div className='w-full min-w-0 flex justify-center'>
+            <div className='flex w-full min-w-0 justify-center'>
               <div
                 className={clsx(
-                  'flex w-full max-w-md items-center px-2 rounded-lg bg-transparent',
+                  'flex w-full max-w-md items-center rounded-lg bg-transparent px-2',
                   isDarkMode ? 'text-gray-300' : 'text-gray-700'
                 )}
                 aria-label='费用筛选'
@@ -109,7 +110,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
         </div>
       </header>
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        className='auto-fit-grid grid-container mt-8 grid gap-4'
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '160px'}, 1fr))`,
         }}

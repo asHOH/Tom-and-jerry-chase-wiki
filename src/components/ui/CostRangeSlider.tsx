@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { getCardCostColors } from '@/lib/design-tokens';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
+
+import { getCardCostColors } from '@/lib/design-tokens';
 
 interface CostRangeSliderProps {
   min: number;
@@ -178,20 +179,20 @@ export default function CostRangeSlider({
     <div className={clsx('relative w-full', className)}>
       <div
         ref={sliderRef}
-        className='relative w-full h-8'
+        className='relative h-8 w-full'
         onMouseDown={handleTrackClick}
         onTouchStart={handleTrackClick}
         style={{ touchAction: 'pan-y' }}
       >
         {/* Track segments with cost colors */}
-        <div className='absolute top-1/2 transform -translate-y-1/2 w-[83%] left-[8.5%] h-2 rounded-full overflow-hidden flex pointer-events-none'>
+        <div className='pointer-events-none absolute top-1/2 left-[8.5%] flex h-2 w-[83%] -translate-y-1/2 transform overflow-hidden rounded-full'>
           {Array.from({ length: max - min }, (_, i) => {
             const segmentStart = min + i;
             const segmentEnd = min + i + 1;
             return (
               <div
                 key={i}
-                className='flex-1 border-r border-white border-opacity-50 last:border-r-0'
+                className='border-opacity-50 flex-1 border-r border-white last:border-r-0'
                 style={getSegmentStyle(segmentStart, segmentEnd)}
               />
             );
@@ -200,7 +201,7 @@ export default function CostRangeSlider({
 
         {/* Handle 1 */}
         <div
-          className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10'
+          className='absolute top-1/2 z-10 h-6 w-6 -translate-x-1/2 -translate-y-1/2 transform cursor-grab rounded-full border-2 border-white shadow-lg active:cursor-grabbing'
           style={{
             left: `${getPositionPercentage(handlePositions[0])}%`,
             backgroundColor: getCardCostColors(handlePositions[0], false, isDarkMode)
@@ -219,7 +220,7 @@ export default function CostRangeSlider({
 
         {/* Handle 2 */}
         <div
-          className='absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-grab active:cursor-grabbing z-10'
+          className='absolute top-1/2 z-10 h-6 w-6 -translate-x-1/2 -translate-y-1/2 transform cursor-grab rounded-full border-2 border-white shadow-lg active:cursor-grabbing'
           style={{
             left: `${getPositionPercentage(handlePositions[1])}%`,
             backgroundColor: getCardCostColors(handlePositions[1], false, isDarkMode)
@@ -238,7 +239,7 @@ export default function CostRangeSlider({
       </div>
 
       {/* Cost labels */}
-      <div className='flex justify-between mt-0.5 text-xs text-gray-500 dark:text-gray-400 select-none'>
+      <div className='mt-0.5 flex justify-between text-xs text-gray-500 select-none dark:text-gray-400'>
         {Array.from({ length: max - min + 1 }, (_, i) => {
           const cost = min + i;
           const isInRange = cost >= minValue && cost <= maxValue;
@@ -246,10 +247,10 @@ export default function CostRangeSlider({
             <span
               key={cost}
               className={clsx(
-                'flex-1 text-center transition-all duration-150 cursor-default',
+                'flex-1 cursor-default text-center transition-all duration-150',
                 isInRange
-                  ? 'text-gray-700 dark:text-gray-300 text-xs font-medium'
-                  : 'text-gray-400 dark:text-gray-500 text-[10px] font-normal'
+                  ? 'text-xs font-medium text-gray-700 dark:text-gray-300'
+                  : 'text-[10px] font-normal text-gray-400 dark:text-gray-500'
               )}
             >
               {cost}

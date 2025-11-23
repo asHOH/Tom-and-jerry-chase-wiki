@@ -1,5 +1,6 @@
-import { designTokens, componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 import clsx from 'clsx';
+
+import { componentTokens, createStyleFromTokens, designTokens } from '@/lib/design-tokens';
 import Link from '@/components/Link';
 
 type BaseCardProps = {
@@ -84,7 +85,7 @@ export default function BaseCard({
   const content = (
     <div
       className={clsx(
-        'bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none flex-1',
+        'flex-1 bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none',
         className
       )}
       {...cardProps}

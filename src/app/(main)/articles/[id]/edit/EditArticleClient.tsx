@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from '@/components/Link';
+import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import useSWR from 'swr';
 
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useUser } from '@/hooks/useUser';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
 import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
-import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
+import Link from '@/components/Link';
 
 interface Article {
   id: string;
@@ -159,7 +159,7 @@ const EditArticleClient: React.FC = () => {
   if (isLoading) {
     return (
       <div className='space-y-8 dark:text-slate-200'>
-        <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='flex min-h-[400px] items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
       </div>
@@ -174,7 +174,7 @@ const EditArticleClient: React.FC = () => {
   return (
     <div className='space-y-8 dark:text-slate-200'>
       {/* Header */}
-      <header className='text-center space-y-4 mb-8 px-4'>
+      <header className='mb-8 space-y-4 px-4 text-center'>
         <PageTitle>编辑文章</PageTitle>
         <PageDescription>修改和完善您的文章内容</PageDescription>
 
@@ -182,7 +182,7 @@ const EditArticleClient: React.FC = () => {
         <div className='flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400'>
           <Link
             href='/articles'
-            className='hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
+            className='transition-colors hover:text-blue-600 dark:hover:text-blue-400'
           >
             文章列表
           </Link>
@@ -195,7 +195,7 @@ const EditArticleClient: React.FC = () => {
           </svg>
           <Link
             href={`/articles/${id}`}
-            className='hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
+            className='transition-colors hover:text-blue-600 dark:hover:text-blue-400'
           >
             文章详情
           </Link>

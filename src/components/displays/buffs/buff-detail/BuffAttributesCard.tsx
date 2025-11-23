@@ -1,19 +1,21 @@
 'use client';
 
-import BaseCard from '@/components/ui/BaseCard';
-import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
+
 import {
-  designTokens,
   componentTokens,
+  designTokens,
   getBuffGlobalColors,
   getBuffTypeColors,
 } from '@/lib/design-tokens';
+import { useMobile } from '@/hooks/useMediaQuery';
+import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
-import { useMobile } from '@/hooks/useMediaQuery';
-import {} from '@/lib/design-tokens';
+import Tag from '@/components/ui/Tag';
+
+import '@/lib/design-tokens';
 
 export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
@@ -104,7 +106,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       )}
       {/*------Item Attributes------*/}
       <div
-        className='grid items-center border-t border-gray-300 dark:border-gray-600 gap-1'
+        className='grid items-center gap-1 border-t border-gray-300 dark:border-gray-600'
         style={{
           marginLeft: spacing.md,
           marginRight: spacing.md,
@@ -112,7 +114,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
           paddingBottom: spacing.xxxxxs,
         }}
       >
-        <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
+        <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
           <span className={`text-sm whitespace-pre`}>类型: </span>
           {/* 使用 type 属性 */}
           <Tag size='sm' margin='compact' colorStyles={getBuffTypeColors(buff.type, isDarkMode)}>
@@ -133,10 +135,10 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
         {(buff.target !== undefined ||
           buff.duration !== undefined ||
           buff.failure !== undefined) && (
-          <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+          <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
             <span className='text-lg font-bold whitespace-pre'>基础信息</span>
             <div
-              className='auto-fill-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+              className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
               style={{
                 gridTemplateColumns: `repeat(1, minmax(80px, 1fr))`,
               }}
@@ -167,7 +169,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
 
       {/*Navigation */}
       <div
-        className='flex items-center flex-wrap border-t text-sm border-gray-300 dark:border-gray-600'
+        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
         style={{
           gap: spacing.sm,
           marginLeft: spacing.md,

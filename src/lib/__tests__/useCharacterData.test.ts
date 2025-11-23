@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
-import { useCharacterData } from '../../hooks/useCharacterData';
 import useSWR from 'swr';
+
+import { useCharacterData } from '../../hooks/useCharacterData';
 
 // Mock SWR
 jest.mock('swr');

@@ -1,9 +1,11 @@
-import AccordionCard from '@/components/ui/AccordionCard';
-import CollapseCard from '@/components/ui/CollapseCard';
 import { entities } from '@/data';
 import { Skill } from '@/data/types';
-import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
+
+import AccordionCard from '@/components/ui/AccordionCard';
+import CollapseCard from '@/components/ui/CollapseCard';
+
 import { filterTraitsBySingleItem } from '../../traits/shared/filterTraitsBySingleItem';
+import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
 
 interface SkillTraitsCardProps {
   skill: Skill;
@@ -29,7 +31,7 @@ export default function SkillTraitsCard({ skill }: SkillTraitsCardProps) {
     <CollapseCard
       title={`${skill.name}${OwnEntities.length > 0 ? '及其衍生物' : ''}的相关互动特性(${NumberOfOwnTraits.reduce((a, b) => a + b)})`}
       size='xs'
-      className='pb-1 px-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
+      className='rounded-md border-x-1 border-b-1 border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
       titleClassName='pl-3'
       color='lime'
     >
@@ -38,7 +40,7 @@ export default function SkillTraitsCard({ skill }: SkillTraitsCardProps) {
           <SingleItemTraitsText singleItem={{ name: skill.name, type: 'skill' }} />
         </div>
       ) : (
-        <div className='mx-2 mb-2 mt-0.5'>
+        <div className='mx-2 mt-0.5 mb-2'>
           <AccordionCard
             items={[
               {

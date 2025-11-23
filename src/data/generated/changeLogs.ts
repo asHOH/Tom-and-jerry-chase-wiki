@@ -1,3 +1,6 @@
+// Import the generated JSON
+import changeLogsData from './changeLogs.json';
+
 /**
  * 提交中所做的更改类型
  * Type of change made in a commit
@@ -41,8 +44,5 @@ export interface DailyChangelog {
  * Root type for the changelog data
  */
 export type ChangeLogs = DailyChangelog[];
-
-// Import the generated JSON
-import changeLogsData from './changeLogs.json';
 
 export const changeLogs = changeLogsData as ChangeLogs;

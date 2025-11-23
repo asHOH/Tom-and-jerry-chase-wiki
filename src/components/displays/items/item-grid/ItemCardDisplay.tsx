@@ -1,14 +1,15 @@
-import { Item } from '@/data/types';
-import GameImage from '@/components/ui/GameImage';
-import Tag from '@/components/ui/Tag';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { Item } from '@/data/types';
+
 import {
-  getItemTypeColors,
+  designTokens,
   getItemSourceColors /* , getCardCostColors */,
+  getItemTypeColors,
 } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
-import { designTokens } from '@/lib/design-tokens';
+import GameImage from '@/components/ui/GameImage';
+import Tag from '@/components/ui/Tag';
 
 export default function ItemCardDisplay({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
@@ -27,15 +28,15 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
         className='hover:scale-105'
         style={isMobile ? { height: '8rem' } : {}}
       />
-      <div className='px-3 pt-1 pb-3 text-center w-full'>
+      <div className='w-full px-3 pt-1 pb-3 text-center'>
         <h3
-          className={`${isMobile && item.name.length >= 6 ? 'text-md' : 'text-lg'} font-bold text-gray-800 dark:text-white mb-1`}
+          className={`${isMobile && item.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 font-bold text-gray-800 dark:text-white`}
           style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
         >
           {item.name}
         </h3>
         <div
-          className='flex flex-wrap justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
+          className='flex flex-wrap items-center justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'
           aria-label='道具属性'
         >

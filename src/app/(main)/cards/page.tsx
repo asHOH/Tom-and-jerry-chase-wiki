@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
-import KnowledgeCardClient from './KnowledgeCardClient';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import KnowledgeCardClient from './KnowledgeCardClient';
 
 export const dynamic = 'force-static';
 

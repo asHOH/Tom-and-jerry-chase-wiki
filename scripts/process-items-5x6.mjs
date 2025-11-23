@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // Pad PNGs in public/images/items to 5:6 by enlarging canvas only.
 // Keeps original image bottom-center on a transparent background.
-
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';

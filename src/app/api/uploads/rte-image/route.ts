@@ -1,10 +1,8 @@
 import { Buffer } from 'node:buffer';
-import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
 import { extname } from 'node:path';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { supabaseAdmin } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
 import {
   normalizeHostedImageUrl,
   RTE_IMAGE_ALLOWED_MIME_TYPES,
@@ -12,6 +10,8 @@ import {
   RTE_IMAGE_MAX_BYTES,
   RTE_IMAGE_PUBLIC_BASE,
 } from '@/lib/richtext/imagePolicy';
+import { supabaseAdmin } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
 
 const MAX_LIBRARY_LIMIT = 60;
 const LIST_PAGE_SIZE = 100;

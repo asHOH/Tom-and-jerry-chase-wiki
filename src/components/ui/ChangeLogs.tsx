@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { contributors } from '@/data/contributors';
+import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
 
 const typeColors: Record<ChangeType, string> = {
   feat: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
@@ -77,12 +77,12 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
       <button
         type='button'
         onClick={() => setIsChangeLogsOpen(true)}
-        className='px-6 py-4 flex flex-col items-center justify-center gap-2 text-center min-w-[180px] bg-gray-200 text-gray-800 shadow-md rounded-md border-none focus:outline-none dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900 dark:border-gray-700 transition-colors duration-200'
+        className='flex min-w-[180px] flex-col items-center justify-center gap-2 rounded-md border-none bg-gray-200 px-6 py-4 text-center text-gray-800 shadow-md transition-colors duration-200 focus:outline-none dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'
         aria-label='更新日志'
       >
         <div className='flex items-center gap-3'>
           <svg
-            className='w-8 h-8'
+            className='h-8 w-8'
             fill='none'
             stroke='currentColor'
             viewBox='0 0 24 24'
@@ -96,27 +96,27 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
           </svg>
           <span className='text-2xl font-bold whitespace-nowrap'>更新日志</span>
         </div>
-        <div className='text-sm text-gray-500 mt-1 dark:text-gray-400'>查看网站更新历史</div>
+        <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>查看网站更新历史</div>
       </button>
 
       {/* ChangeLogs Modal */}
       {isChangeLogsOpen && (
         <>
           <div
-            className='fixed inset-0 bg-gray-900/30 backdrop-blur-sm z-40'
+            className='fixed inset-0 z-40 bg-gray-900/30 backdrop-blur-sm'
             onClick={() => setIsChangeLogsOpen(false)}
             onDoubleClick={(e) => e.stopPropagation()}
             aria-hidden='true'
           />
 
           <div
-            className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-4/5 md:max-w-4xl md:min-w-md md:h-auto md:max-h-[85vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden flex flex-col'
+            className='fixed inset-5 z-50 flex flex-col overflow-hidden rounded-lg bg-white shadow-xl md:inset-auto md:top-1/2 md:left-1/2 md:h-auto md:max-h-[85vh] md:w-4/5 md:max-w-4xl md:min-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:transform dark:bg-gray-800'
             onDoubleClick={(e) => e.stopPropagation()}
             role='dialog'
             aria-modal='true'
             aria-labelledby='changelogs-title'
           >
-            <div className='flex justify-between items-center p-6 border-b border-gray-300 dark:border-gray-700'>
+            <div className='flex items-center justify-between border-b border-gray-300 p-6 dark:border-gray-700'>
               <h3
                 id='changelogs-title'
                 className='text-2xl font-bold text-gray-900 dark:text-gray-100'
@@ -133,23 +133,23 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
               </button>
             </div>
 
-            <div className='overflow-y-auto flex-1 p-6'>
+            <div className='flex-1 overflow-y-auto p-6'>
               <div className='space-y-3'>
                 {changeLogs.map((dailyLog) => {
                   const isExpanded = expandedDates.has(dailyLog.date);
                   return (
                     <div
                       key={dailyLog.date}
-                      className='rounded-lg border border-gray-300 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 overflow-hidden'
+                      className='overflow-hidden rounded-lg border border-gray-300 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800'
                     >
                       <button
                         onClick={() => toggleDate(dailyLog.date)}
-                        className='w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors'
+                        className='flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/50'
                         aria-expanded={isExpanded}
                       >
                         <div className='flex items-center gap-3'>
                           <svg
-                            className={`h-5 w-5 text-gray-600 dark:text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                            className={`h-5 w-5 text-gray-600 transition-transform dark:text-gray-400 ${isExpanded ? 'rotate-90' : ''}`}
                             fill='none'
                             stroke='currentColor'
                             viewBox='0 0 24 24'
@@ -175,7 +175,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                       </button>
 
                       {isExpanded && (
-                        <div className='border-t border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30'>
+                        <div className='border-t border-gray-300 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-900/30'>
                           <div className='divide-y divide-gray-200 dark:divide-gray-700'>
                             {dailyLog.changes.map((change) => (
                               <div key={change.hash} className='px-4 py-3'>

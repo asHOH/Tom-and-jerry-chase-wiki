@@ -1,19 +1,20 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { DisclaimerText } from '@/components/DisclaimerText';
-import { VersionDisplay } from '@/components/VersionDisplay';
-import NotificationTooltip from '@/components/ui/NotificationTooltip';
-import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
-import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
-import HomePageSection from '@/components/ui/HomePageSection';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import LoginDialog from '@/components/LoginDialog';
+import { useRef, useState } from 'react';
+import { NAV_ITEMS } from '@/constants/navigation';
+import { useEditMode } from '@/context/EditModeContext';
+
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
-import { useEditMode } from '@/context/EditModeContext';
-import { NAV_ITEMS } from '@/constants/navigation';
+import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
+import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
+import HomePageSection from '@/components/ui/HomePageSection';
+import NotificationTooltip from '@/components/ui/NotificationTooltip';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
+import { DisclaimerText } from '@/components/DisclaimerText';
+import LoginDialog from '@/components/LoginDialog';
+import { VersionDisplay } from '@/components/VersionDisplay';
 
 type Props = { description: string };
 
@@ -93,7 +94,7 @@ export default function HomeContentClient({ description }: Props) {
 
   return (
     <div className='space-y-8'>
-      <header className='text-center space-y-2'>
+      <header className='space-y-2 text-center'>
         <PageTitle>猫和老鼠手游wiki</PageTitle>
         <PageDescription>{description}</PageDescription>
       </header>
@@ -106,14 +107,14 @@ export default function HomeContentClient({ description }: Props) {
 
       {/* Division line before 网站说明 */}
       <div className='mt-24 px-2 sm:px-4'>
-        <div className='max-w-4xl mx-auto'>
-          <div className='h-px bg-gray-300 dark:bg-gray-700 w-full'></div>
+        <div className='mx-auto max-w-4xl'>
+          <div className='h-px w-full bg-gray-300 dark:bg-gray-700'></div>
         </div>
       </div>
 
-      <div className='mt-8 text-center px-2 sm:px-4' onDoubleClick={handleEditModeToggle}>
-        <h2 className='text-3xl font-bold mb-2 py-2 dark:text-white'>网站说明</h2>
-        <div className='max-w-2xl mx-auto text-gray-600 dark:text-gray-300 px-2 sm:px-4 py-3'>
+      <div className='mt-8 px-2 text-center sm:px-4' onDoubleClick={handleEditModeToggle}>
+        <h2 className='mb-2 py-2 text-3xl font-bold dark:text-white'>网站说明</h2>
+        <div className='mx-auto max-w-2xl px-2 py-3 text-gray-600 sm:px-4 dark:text-gray-300'>
           <DisclaimerText onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
         </div>
         <VersionDisplay />

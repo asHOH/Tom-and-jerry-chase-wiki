@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
-import BuffClient from './BuffGridClient';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import BuffClient from './BuffGridClient';
 
 export const dynamic = 'force-static';
 

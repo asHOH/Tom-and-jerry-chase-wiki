@@ -1,7 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+
 import { navigate as navigateUtil } from '../lib/navigationUtils';
 
 /**

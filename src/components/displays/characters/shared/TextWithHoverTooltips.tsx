@@ -1,14 +1,16 @@
 import React from 'react';
-import Tooltip from '../../../ui/Tooltip';
-import { renderTextWithHighlights } from '../../../../lib/textUtils';
-import { useLocalCharacter } from '@/context/EditModeContext';
-import { characters, cards } from '@/data';
-import { proxy, useSnapshot } from 'valtio';
-import GotoLink from '@/components/GotoLink';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { useLocalCharacter } from '@/context/EditModeContext';
+import { cards, characters } from '@/data';
+import { proxy, useSnapshot } from 'valtio';
+
 import { getCardRankColors } from '@/lib/design-tokens';
-import Tag from '@/components/ui/Tag';
 import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
+import Tag from '@/components/ui/Tag';
+import GotoLink from '@/components/GotoLink';
+
+import { renderTextWithHighlights } from '../../../../lib/textUtils';
+import Tooltip from '../../../ui/Tooltip';
 
 const nameBlacklist = [
   '破墙',
@@ -385,7 +387,7 @@ export const renderTextWithTooltips = (
                 size='sm'
                 margin='micro'
                 role='link'
-                className='ml-0.75 mr-0.5'
+                className='mr-0.5 ml-0.75'
               >
                 {contentForTooltip}
               </Tag>

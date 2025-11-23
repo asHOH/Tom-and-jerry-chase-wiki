@@ -25,14 +25,14 @@ export function Skeleton({
   return (
     <div
       className={clsx(
-        'bg-gray-200 dark:bg-gray-700 relative overflow-hidden',
+        'relative overflow-hidden bg-gray-200 dark:bg-gray-700',
         rounded && 'rounded',
         animate && 'animate-pulse',
         className
       )}
       style={style}
     >
-      {animate && <div className='absolute inset-0 skeleton-shimmer'></div>}
+      {animate && <div className='skeleton-shimmer absolute inset-0'></div>}
     </div>
   );
 }
@@ -75,9 +75,9 @@ export function SkeletonCharacterCard({ animate = true }: { animate?: boolean })
       <Skeleton className='h-48 w-full' animate={animate} />
 
       {/* Character info */}
-      <div className='px-6 pt-1 pb-6 text-center space-y-2'>
+      <div className='space-y-2 px-6 pt-1 pb-6 text-center'>
         {/* Character name */}
-        <Skeleton className='h-6 w-3/4 mx-auto' animate={animate} />
+        <Skeleton className='mx-auto h-6 w-3/4' animate={animate} />
 
         {/* Tags */}
         <div className='flex justify-center gap-1'>
@@ -102,7 +102,7 @@ export function SkeletonKnowledgeCard({ animate = true }: { animate?: boolean })
       <Skeleton className='h-4 w-full' animate={animate} />
 
       {/* Card cost */}
-      <Skeleton className='h-3 w-1/2 mx-auto' animate={animate} />
+      <Skeleton className='mx-auto h-3 w-1/2' animate={animate} />
     </div>
   );
 }
@@ -112,20 +112,20 @@ export function SkeletonKnowledgeCard({ animate = true }: { animate?: boolean })
  */
 export function SkeletonCharacterDetail({ animate = true }: { animate?: boolean }) {
   return (
-    <div className='max-w-4xl mx-auto p-6 space-y-8'>
+    <div className='mx-auto max-w-4xl space-y-8 p-6'>
       <div className='animate-pulse'>
         {/* Header */}
-        <div className='text-center space-y-4 mb-8'>
-          <Skeleton className='h-12 w-1/2 mx-auto' animate={animate} />
-          <Skeleton className='h-6 w-3/4 mx-auto' animate={animate} />
+        <div className='mb-8 space-y-4 text-center'>
+          <Skeleton className='mx-auto h-12 w-1/2' animate={animate} />
+          <Skeleton className='mx-auto h-6 w-3/4' animate={animate} />
         </div>
 
         {/* Character image and basic info */}
-        <div className='flex flex-col md:flex-row gap-8 mb-8'>
+        <div className='mb-8 flex flex-col gap-8 md:flex-row'>
           <div className='md:w-1/3'>
-            <Skeleton className='aspect-square w-full max-w-sm mx-auto' animate={animate} />
+            <Skeleton className='mx-auto aspect-square w-full max-w-sm' animate={animate} />
           </div>
-          <div className='md:w-2/3 space-y-4'>
+          <div className='space-y-4 md:w-2/3'>
             <SkeletonText lines={3} animate={animate} />
             <div className='grid grid-cols-2 gap-4'>
               {Array.from({ length: 6 }).map((_, i) => (
@@ -142,11 +142,11 @@ export function SkeletonCharacterDetail({ animate = true }: { animate?: boolean 
         <div className='space-y-6'>
           <Skeleton className='h-8 w-32' animate={animate} />
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className='border rounded-lg p-4 space-y-4'>
+            <div key={i} className='space-y-4 rounded-lg border p-4'>
               <div className='flex items-center gap-4'>
                 <Skeleton className='h-12 w-12' animate={animate} />
                 <div className='flex-1'>
-                  <Skeleton className='h-6 w-32 mb-2' animate={animate} />
+                  <Skeleton className='mb-2 h-6 w-32' animate={animate} />
                   <SkeletonText lines={2} animate={animate} />
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { BouncingDots, SpinningBars, RippleAnimation } from './LoadingAnimations';
+
+import { BouncingDots, RippleAnimation, SpinningBars } from './LoadingAnimations';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -38,7 +39,7 @@ export default function LoadingSpinner({
       {message && (
         <span
           className={clsx(
-            'text-gray-600 dark:text-gray-300 animate-fadeInUp',
+            'animate-fadeInUp text-gray-600 dark:text-gray-300',
             textSizeClasses[size]
           )}
         >

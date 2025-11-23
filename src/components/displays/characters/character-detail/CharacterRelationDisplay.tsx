@@ -1,22 +1,24 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import Image from '@/components/Image';
-import { cards, FactionId, specialSkills } from '@/data';
-import { AssetManager } from '@/lib/assetManager';
-import { CharacterRelationItem } from '@/data/types';
-import { characters } from '@/data';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { useSnapshot } from 'valtio';
-import { setNestedProperty } from '@/lib/editUtils';
-import EditableField from '@/components/ui/EditableField';
+import { cards, characters, FactionId, specialSkills } from '@/data';
+import { CharacterRelationItem } from '@/data/types';
 import clsx from 'clsx';
+import { useSnapshot } from 'valtio';
+
+import { AssetManager } from '@/lib/assetManager';
+import { getCharacterRelation } from '@/lib/characterRelationUtils';
+import { setNestedProperty } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
+import EditableField from '@/components/ui/EditableField';
+import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
+
+import { HappyFaceIcon, HeartIcon, NeutralFaceIcon, SadFaceIcon } from './CharacterRelationIcons';
 import KnowledgeCardSelector from './KnowledgeCardSelector';
 import SpecialSkillSelector from './SpecialSkillSelector';
-import { HappyFaceIcon, NeutralFaceIcon, SadFaceIcon, HeartIcon } from './CharacterRelationIcons';
-import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 type Props = {
   id: string;
@@ -303,7 +305,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
       <div
         key={item.key}
         className={clsx(
-          'flex flex-row items-center gap-3 p-2 rounded-lg',
+          'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
           !isEditMode && themeClasses.interactive,
           item.isMinor && 'opacity-60'
@@ -323,9 +325,9 @@ const RelationSection: React.FC<RelationSectionProps> = ({
           alt={item.id}
           width={40}
           height={40}
-          className='w-10 h-10 rounded-full object-cover'
+          className='h-10 w-10 rounded-full object-cover'
         />
-        <div className='flex flex-col flex-1'>
+        <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
             {isEditMode && item.showEditable ? (
@@ -346,13 +348,13 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               tag='span'
               path={item.editablePath!}
               initialValue={item.description || ''}
-              className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
               onSave={item.onUpdateDescription!}
             />
           ) : (
             !isEditMode &&
             item.description && (
-              <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
                 {item.description}
               </span>
             )
@@ -362,10 +364,10 @@ const RelationSection: React.FC<RelationSectionProps> = ({
           <button
             type='button'
             onClick={item.onRemove}
-            className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
             aria-label={item.getRemoveLabel?.()}
           >
-            <TrashIcon className='w-4 h-4' aria-hidden='true' />
+            <TrashIcon className='h-4 w-4' aria-hidden='true' />
           </button>
         )}
       </div>
@@ -383,7 +385,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
       <div
         key={item.key}
         className={clsx(
-          'flex flex-row items-center gap-3 p-2 rounded-lg',
+          'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
           !isEditMode && themeClasses.interactive,
           item.isMinor && 'opacity-60'
@@ -399,8 +401,8 @@ const RelationSection: React.FC<RelationSectionProps> = ({
           }
         }}
       >
-        <Image src={item.imageUrl} alt={item.id} width={32} height={40} className='w-8 h-10 mx-1' />
-        <div className='flex flex-col flex-1'>
+        <Image src={item.imageUrl} alt={item.id} width={32} height={40} className='mx-1 h-10 w-8' />
+        <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
             {isEditMode ? (
@@ -421,12 +423,12 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               tag='span'
               path={item.editablePath}
               initialValue={item.description || ''}
-              className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
               onSave={item.onUpdateDescription}
             />
           ) : (
             item.description && (
-              <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
                 {item.description}
               </span>
             )
@@ -435,14 +437,14 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         {isEditMode && (
           <button
             type='button'
-            className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
             aria-label={item.removeLabel}
             onClick={(e) => {
               e.stopPropagation();
               item.onRemove();
             }}
           >
-            <TrashIcon className='w-4 h-4' aria-hidden='true' />
+            <TrashIcon className='h-4 w-4' aria-hidden='true' />
           </button>
         )}
       </div>
@@ -460,7 +462,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
       <div
         key={item.key}
         className={clsx(
-          'flex flex-row items-center gap-3 p-2 rounded-lg',
+          'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
           !isEditMode && themeClasses.interactive,
           item.isMinor && 'opacity-60'
@@ -482,14 +484,14 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             alt={item.id}
             width={40}
             height={40}
-            className='w-10 h-10 rounded-full object-cover'
+            className='h-10 w-10 rounded-full object-cover'
           />
         ) : (
-          <span className='w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 text-xs'>
+          <span className='flex h-10 w-10 items-center justify-center rounded-full bg-pink-200 text-xs text-pink-600'>
             ?
           </span>
         )}
-        <div className='flex flex-col flex-1'>
+        <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
             {isEditMode ? (
@@ -510,12 +512,12 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               tag='span'
               path={item.editablePath}
               initialValue={item.description || ''}
-              className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'
+              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
               onSave={item.onUpdateDescription}
             />
           ) : (
             item.description && (
-              <span className='text-[11px] text-gray-500 dark:text-gray-400 mt-1 text-left'>
+              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
                 {item.description}
               </span>
             )
@@ -524,14 +526,14 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         {isEditMode && (
           <button
             type='button'
-            className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
             aria-label={item.removeLabel}
             onClick={(e) => {
               e.stopPropagation();
               item.onRemove();
             }}
           >
-            <TrashIcon className='w-4 h-4' aria-hidden='true' />
+            <TrashIcon className='h-4 w-4' aria-hidden='true' />
           </button>
         )}
       </div>
@@ -542,11 +544,11 @@ const RelationSection: React.FC<RelationSectionProps> = ({
     <div>
       <div className='flex items-center justify-between'>
         <span
-          className={clsx('font-semibold text-sm flex items-center gap-1', themeClasses.headerText)}
+          className={clsx('flex items-center gap-1 text-sm font-semibold', themeClasses.headerText)}
         >
           <span
             className={clsx(
-              'w-5 h-5 rounded-full flex items-center justify-center mr-1',
+              'mr-1 flex h-5 w-5 items-center justify-center rounded-full',
               themeClasses.iconBg
             )}
           >
@@ -556,7 +558,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         </span>
         {isEditMode && selectors}
       </div>
-      <div className='grid grid-cols-1 gap-y-3 mt-2'>
+      <div className='mt-2 grid grid-cols-1 gap-y-3'>
         {!isEditMode && items.length === 0 ? (
           <span className='text-xs text-gray-400'>{emptyLabel}</span>
         ) : (
@@ -679,20 +681,20 @@ function CharacterSelector({
       <button
         type='button'
         onClick={() => setIsOpen(!isOpen)}
-        className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
         aria-label={`添加${relationType}关系`}
       >
-        <PlusIcon className='w-4 h-4' aria-hidden='true' />
+        <PlusIcon className='h-4 w-4' aria-hidden='true' />
       </button>
 
       {isOpen && (
-        <div className='absolute top-full right-0 mt-1 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto'>
+        <div className='absolute top-full right-0 z-50 mt-1 max-h-60 w-56 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800'>
           {availableCharacters.map((char) => (
             <button
               key={char.id}
               type='button'
               onClick={() => handleSelect(char.id)}
-              className='w-full text-left px-3 py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3'
+              className='flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700'
               aria-label={`选择${char.id}`}
             >
               <Image
@@ -706,7 +708,7 @@ function CharacterSelector({
                 alt={char.id}
                 width={28}
                 height={28}
-                className='w-7 h-7 rounded-full object-cover'
+                className='h-7 w-7 rounded-full object-cover'
               />
               <span className='text-gray-700 dark:text-gray-300'>{char.id}</span>
             </button>
@@ -717,7 +719,6 @@ function CharacterSelector({
   );
 }
 
-import { getCharacterRelation } from '@/lib/characterRelationUtils';
 const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
@@ -1032,7 +1033,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   );
 
   return (
-    <div className='flex gap-6 items-start bg-gray-50 dark:bg-slate-800/50 p-4 rounded-lg shadow'>
+    <div className='flex items-start gap-6 rounded-lg bg-gray-50 p-4 shadow dark:bg-slate-800/50'>
       <div className='flex flex-1 flex-col gap-4'>
         {visibleSections.map((section) => (
           <RelationSection

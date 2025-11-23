@@ -1,4 +1,4 @@
-import type { Skill, FactionId, SkillType } from '@/data/types';
+import type { FactionId, Skill, SkillType } from '@/data/types';
 
 /**
  * Centralized asset manager for generating image URLs

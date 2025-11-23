@@ -1,4 +1,5 @@
 import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
+
 import Tooltip from '@/components/ui/Tooltip';
 
 interface DisclaimerTextProps {
@@ -16,12 +17,12 @@ const renderCreatorLinks = (creatorIds: readonly string[]) => {
           target='_blank'
           rel='nofollow noopener noreferrer'
           aria-label={`${CREATORS[creatorId]?.name ?? creatorId}（在新标签页打开）`}
-          className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline whitespace-pre-wrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
+          className='rounded-[2px] whitespace-pre-wrap text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
         >
           {CREATORS[creatorId]?.name ?? creatorId}
         </a>
       ) : (
-        <span className='text-gray-700 dark:text-gray-300 whitespace-pre-wrap'>
+        <span className='whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
           {CREATORS[creatorId]?.name ?? creatorId}
         </span>
       )}
@@ -47,10 +48,10 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             target='_blank'
             rel='nofollow noopener noreferrer'
             aria-label={`${PROJECT_INFO.title}（在新标签页打开）`}
-            className='inline-flex items-center gap-1 align-middle text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
+            className='inline-flex items-center gap-1 rounded-[2px] align-middle font-medium text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
           >
             <svg
-              className='w-4 h-4'
+              className='h-4 w-4'
               fill='currentColor'
               viewBox='0 0 20 20'
               xmlns='http://www.w3.org/2000/svg'
@@ -69,7 +70,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
             <button
               type='button'
               onClick={onFeedbackClick}
-              className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer bg-transparent border-none p-0 font-inherit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
+              className='font-inherit cursor-pointer rounded-[2px] border-none bg-transparent p-0 text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
             >
               {PROJECT_INFO.descriptionParts.feedbackLink}
             </button>
@@ -119,7 +120,7 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
               target='_blank'
               rel='nofollow noopener noreferrer'
               aria-label={`${license.shortName}（在新标签页打开）`}
-              className='text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-[2px]'
+              className='rounded-[2px] text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
             >
               {license.shortName}
             </a>{' '}

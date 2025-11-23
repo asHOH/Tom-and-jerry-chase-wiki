@@ -1,10 +1,12 @@
 import { Metadata } from 'next';
-import { supabaseAdmin } from '@/lib/supabase/admin';
-import { generateArticleMetadata } from '@/lib/metadataUtils';
-import ArticleClient from './ArticleClient';
 import { notFound } from 'next/navigation';
-import StructuredData from '@/components/StructuredData';
 import { Article, WithContext } from 'schema-dts';
+
+import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
+import StructuredData from '@/components/StructuredData';
+
+import ArticleClient from './ArticleClient';
 
 const stripHtml = (html: string | null) => {
   if (!html) return '';

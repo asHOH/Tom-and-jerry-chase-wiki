@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import Image from '@/components/Image';
-import GotoLink from '@/components/GotoLink';
-import Tag from '@/components/ui/Tag';
-import { getCardRankColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
+
+import { getCardRankColors } from '@/lib/design-tokens';
 import type { TreeNode } from '@/lib/knowledgeCardSectionUtils';
+import Tag from '@/components/ui/Tag';
+import GotoLink from '@/components/GotoLink';
+import Image from '@/components/Image';
 
 interface TreeCardDisplayProps {
   tree: TreeNode[];
@@ -86,7 +87,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
     <GotoLink key={cardId} name={cardName} className='no-underline' asPreviewOnly hideImagePreview>
       <div
         className={clsx(
-          'relative w-20 h-20 sm:w-24 sm:h-24 cursor-pointer transition-transform duration-200 hover:scale-105',
+          'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
           isOptional && 'opacity-50'
         )}
         onClick={() => {
@@ -131,7 +132,7 @@ const OrGroupDisplay: React.FC<
     if (!selectedChild) return null;
 
     return (
-      <div className='flex flex-col gap-2 items-center'>
+      <div className='flex flex-col items-center gap-2'>
         <TreeNodeDisplay
           node={selectedChild}
           depth={depth + 1}
@@ -140,22 +141,22 @@ const OrGroupDisplay: React.FC<
         />
         {/* Navigation bar */}
         {childrenCount > 1 && (
-          <div className='flex items-center gap-2 bg-gray-100 dark:bg-slate-700 rounded-md px-3 py-1.5'>
+          <div className='flex items-center gap-2 rounded-md bg-gray-100 px-3 py-1.5 dark:bg-slate-700'>
             <button
               type='button'
               onClick={() => handleNavigate('prev')}
-              className='text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
+              className='text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
               aria-label='上一个选项'
             >
               ←
             </button>
-            <span className='text-xs text-gray-600 dark:text-gray-400 font-medium'>
+            <span className='text-xs font-medium text-gray-600 dark:text-gray-400'>
               {validSelectedIndex + 1} / {childrenCount}
             </span>
             <button
               type='button'
               onClick={() => handleNavigate('next')}
-              className='text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
+              className='text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
               aria-label='下一个选项'
             >
               →
@@ -168,7 +169,7 @@ const OrGroupDisplay: React.FC<
 
   // Normal mode: Render children in a vertical column
   return (
-    <div className='flex flex-col gap-1 items-center'>
+    <div className='flex flex-col items-center gap-1'>
       {nodes.map((child, index) => (
         <TreeNodeDisplay
           key={index}

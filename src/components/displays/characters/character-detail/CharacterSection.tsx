@@ -1,8 +1,9 @@
 'use client';
 
-import { useNavigation } from '@/hooks/useNavigation';
-import clsx from 'clsx';
 import { ReactNode, useState } from 'react';
+import clsx from 'clsx';
+
+import { useNavigation } from '@/hooks/useNavigation';
 
 export default function CharacterSection({
   title,
@@ -36,7 +37,7 @@ export default function CharacterSection({
   return (
     <div
       className={clsx(
-        'transition-all flex flex-col',
+        'flex flex-col transition-all',
         isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in',
         isOpen ? 'mb-8' : 'mb-0'
       )}
@@ -45,7 +46,7 @@ export default function CharacterSection({
       <button
         type='button'
         aria-label={isOpen ? `折叠${title}` : `展开${title}`}
-        className='flex items-center justify-between w-full text-2xl font-bold px-2 py-3 mb-1 focus:outline-none cursor-pointer dark:text-white'
+        className='mb-1 flex w-full cursor-pointer items-center justify-between px-2 py-3 text-2xl font-bold focus:outline-none dark:text-white'
         onClick={toggleOpen}
       >
         <h3>{title}</h3>
@@ -67,7 +68,7 @@ export default function CharacterSection({
         ) : (
           <svg
             className={clsx(
-              'w-6 h-6 transform transition-transform duration-200 ease-out',
+              'h-6 w-6 transform transition-transform duration-200 ease-out',
               isOpen ? 'rotate-0' : '-rotate-90'
             )}
             fill='none'

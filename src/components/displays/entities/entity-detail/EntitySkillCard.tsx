@@ -1,20 +1,22 @@
 'use client';
 
 import React from 'react';
-import Image from '@/components/Image';
-import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
-import TextWithItemKeyTooltips from '../../characters/shared/TextWithItemKeyTooltips';
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
-import { Skill, SkillLevel } from '@/data/types';
 import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { Skill, SkillLevel } from '@/data/types';
+import clsx from 'clsx';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import {
   convertCancelableAftercastToDisplayText,
   convertCancelableSkillToDisplayText,
 } from '@/lib/skillUtils';
-import type { DeepReadonly } from '@/types/deep-readonly';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useMobile } from '@/hooks/useMediaQuery';
-import clsx from 'clsx';
+import Image from '@/components/Image';
+
+import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
+import TextWithItemKeyTooltips from '../../characters/shared/TextWithItemKeyTooltips';
 
 interface SkillCardProps {
   skill: DeepReadonly<Skill & { cooldown?: number }>;
@@ -149,11 +151,11 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
   const hasProperties = properties.length > 0;
 
   return (
-    <div className='card p-6! dark:bg-slate-800 dark:border-slate-700'>
-      <div className='flex justify-between items-start'>
+    <div className='card p-6! dark:border-slate-700 dark:bg-slate-800'>
+      <div className='flex items-start justify-between'>
         {skill.imageUrl && (
-          <div className='flex-shrink-0 mr-6'>
-            <div className='relative w-16 h-16 rounded-full border-2 overflow-hidden border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700'>
+          <div className='mr-6 flex-shrink-0'>
+            <div className='relative h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 bg-white dark:border-gray-600 dark:bg-slate-700'>
               <Image
                 src={skill.imageUrl}
                 alt={skill.name}
@@ -169,7 +171,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
                 <button
                   type='button'
                   onClick={() => window.open(skill.videoUrl, '_blank', 'noopener,noreferrer')}
-                  className='text-blue-600 dark:text-blue-300 text-xs px-2 py-1 hover:underline bg-blue-50 dark:bg-blue-900/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors block w-full text-center'
+                  className='block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
                 >
                   查看视频
                 </button>
@@ -179,14 +181,14 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
         )}
 
         <div className='flex-1'>
-          <div className='flex justify-between items-center'>
-            <h3 className='text-xl font-bold px-2 py-2 dark:text-white'>
+          <div className='flex items-center justify-between'>
+            <h3 className='px-2 py-2 text-xl font-bold dark:text-white'>
               {getSkillTypeLabel(skill.type)} · {skill.name}
             </h3>
           </div>
 
           {hasProperties && (
-            <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2'>
+            <div className='mt-1 px-2 text-sm text-gray-500 dark:text-gray-400'>
               {properties.map((prop, index) => (
                 <React.Fragment key={index}>
                   {index > 0 && ' · '}
@@ -198,7 +200,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
 
           {'description' in skill && (
             <div className='mt-3 px-2'>
-              <div className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
+              <div className='py-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
                 <TextWithHoverTooltips
                   text={
                     (isDetailed && skill.detailedDescription?.trim()
@@ -213,7 +215,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
       </div>
 
       <div className='mt-6'>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
           {skill.skillLevels
             .filter((level: SkillLevel) => {
               // Hide Lv.1 if: 1) mobile layout, 2) edit mode off, 3) description is empty for current detailed mode
@@ -230,7 +232,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
               <div
                 key={`${skill.id}-${level.level}`}
                 className={clsx(
-                  'p-4 rounded dark:text-gray-300',
+                  'rounded p-4 dark:text-gray-300',
                   getSkillLevelContainerColor(level.level, isDarkMode)
                 )}
               >

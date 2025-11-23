@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import NextImage, { ImageProps, ImageLoaderProps } from 'next/image';
+import NextImage, { ImageLoaderProps, ImageProps } from 'next/image';
 
 const customImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
   const params = new URLSearchParams();

@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
-import { convertToPinyin } from '@/lib/pinyinUtils';
+import { NextRequest, NextResponse } from 'next/server';
+
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
+import { convertToPinyin } from '@/lib/pinyinUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');

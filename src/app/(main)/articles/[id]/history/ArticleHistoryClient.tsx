@@ -1,17 +1,17 @@
 'use client';
 
-import Link from '@/components/Link';
-import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 
-import { ClockIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
+import { formatArticleDate } from '@/lib/dateUtils';
+import { useUser } from '@/hooks/useUser';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
-import { useUser } from '@/hooks/useUser';
-import { formatArticleDate } from '@/lib/dateUtils';
+import { ClockIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
+import Link from '@/components/Link';
 
 interface ArticleVersion {
   id: string;
@@ -85,7 +85,7 @@ export default function ArticleHistoryClient() {
 
     return (
       <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
+        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.color}`}
       >
         {config.text}
       </span>
@@ -97,7 +97,7 @@ export default function ArticleHistoryClient() {
   if (loading) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <div className='flex items-center justify-center min-h-[400px]'>
+        <div className='flex min-h-[400px] items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
       </div>
@@ -107,15 +107,15 @@ export default function ArticleHistoryClient() {
   if (error || !data) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <BaseCard className='text-center py-12'>
-          <div className='text-6xl mb-4'>📚</div>
-          <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2'>
+        <BaseCard className='py-12 text-center'>
+          <div className='mb-4 text-6xl'>📚</div>
+          <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error ? '加载历史版本失败' : '历史版本未找到'}
           </h2>
-          <p className='text-gray-600 dark:text-gray-400 mb-6'>无法加载此文章的历史版本</p>
+          <p className='mb-6 text-gray-600 dark:text-gray-400'>无法加载此文章的历史版本</p>
           <Link
             href={`/articles/${articleId}`}
-            className='inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+            className='inline-flex items-center rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
           >
             返回文章
           </Link>
@@ -125,7 +125,7 @@ export default function ArticleHistoryClient() {
   }
 
   return (
-    <div className='container mx-auto px-4 py-8 max-w-6xl'>
+    <div className='container mx-auto max-w-6xl px-4 py-8'>
       {/* Header */}
       <header className='mb-8 text-center'>
         {/* <div className='flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4'>
@@ -157,12 +157,12 @@ export default function ArticleHistoryClient() {
             <div className='flex gap-3'>
               <button
                 onClick={() => setSelectedVersions([])}
-                className='px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors'
+                className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
               >
                 清除选择
               </button>
               <button
-                className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+                className='rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700'
                 onClick={() => {
                   // TODO: Implement diff viewer
                   alert('差异比较功能即将推出');
@@ -181,14 +181,14 @@ export default function ArticleHistoryClient() {
           <div key={version.id} className='p-6'>
             <div className='flex items-start justify-between'>
               <div className='flex-1'>
-                <div className='flex items-center gap-4 mb-3'>
+                <div className='mb-3 flex items-center gap-4'>
                   <div className='flex items-center gap-2'>
                     {/* Version Selection Checkbox */}
                     <input
                       type='checkbox'
                       checked={selectedVersions.includes(version.id)}
                       onChange={() => handleVersionSelect(version.id)}
-                      className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                      className='h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
                       disabled={
                         !selectedVersions.includes(version.id) && selectedVersions.length >= 2
                       }
@@ -203,13 +203,13 @@ export default function ArticleHistoryClient() {
                   {getStatusBadge(version.status)}
 
                   {index === 0 && version.status === 'approved' && (
-                    <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'>
+                    <span className='inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'>
                       当前版本
                     </span>
                   )}
                 </div>
 
-                <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400 mb-4'>
+                <div className='mb-4 flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
                   <div className='flex items-center gap-2'>
                     <UserCircleIcon className='size-4' strokeWidth={1.5} />
                     <span>编辑者: {version.users?.nickname || '未知用户'}</span>
@@ -222,16 +222,16 @@ export default function ArticleHistoryClient() {
                 </div>
 
                 {/* Content Preview */}
-                <div className='text-gray-700 dark:text-gray-300 text-sm'>
+                <div className='text-sm text-gray-700 dark:text-gray-300'>
                   <RichTextDisplay content={version.content} preview />
                 </div>
               </div>
 
               {/* Actions */}
-              <div className='flex flex-col gap-2 ml-4'>
+              <div className='ml-4 flex flex-col gap-2'>
                 <Link
                   href={`/articles/${articleId}?version=${version.id}`}
-                  className='px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-center'
+                  className='rounded bg-gray-100 px-3 py-1.5 text-center text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 >
                   查看完整版本
                 </Link>
@@ -262,7 +262,7 @@ export default function ArticleHistoryClient() {
                         }
                       }
                     }}
-                    className='px-3 py-1.5 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors text-center'
+                    className='rounded bg-red-100 px-3 py-1.5 text-center text-sm text-red-700 transition-colors hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40'
                   >
                     撤销版本
                   </button>
@@ -278,14 +278,14 @@ export default function ArticleHistoryClient() {
         <div className='flex flex-wrap justify-center gap-3'>
           <Link
             href={`/articles/${articleId}`}
-            className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+            className='rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700'
           >
             返回文章
           </Link>
 
           <Link
             href='/articles'
-            className='px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors'
+            className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
           >
             浏览更多文章
           </Link>

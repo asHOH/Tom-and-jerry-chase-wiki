@@ -1,8 +1,9 @@
 'use client';
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
-import { useCharacterNavigation } from '@/hooks/useCharacterNavigation';
 import { motion } from 'motion/react';
+
+import { useCharacterNavigation } from '@/hooks/useCharacterNavigation';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 interface CharacterNavigationButtonsProps {
   currentCharacterId: string;
@@ -28,22 +29,22 @@ export default function CharacterNavigationButtons({
       <motion.button
         onClick={navigateToPrevious}
         disabled={!previousCharacter}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
           previousCharacter
-            ? 'bg-blue-500 hover:bg-blue-600 text-white'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400'
+            ? 'bg-blue-500 text-white hover:bg-blue-600'
+            : 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
         }`}
         whileHover={previousCharacter ? { scale: 1.05 } : {}}
         whileTap={previousCharacter ? { scale: 0.95 } : {}}
       >
-        <ChevronLeftIcon className='w-4 h-4' />
+        <ChevronLeftIcon className='h-4 w-4' />
         <span className='hidden sm:inline'>
           {previousCharacter ? previousCharacter.character?.id : '上一个'}
         </span>
       </motion.button>
 
       {/* Character Counter */}
-      <div className='text-sm text-gray-600 dark:text-gray-400 px-2'>
+      <div className='px-2 text-sm text-gray-600 dark:text-gray-400'>
         {currentIndex + 1} / {totalCharacters}
       </div>
 
@@ -51,10 +52,10 @@ export default function CharacterNavigationButtons({
       <motion.button
         onClick={navigateToNext}
         disabled={!nextCharacter}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
           nextCharacter
-            ? 'bg-blue-500 hover:bg-blue-600 text-white'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400'
+            ? 'bg-blue-500 text-white hover:bg-blue-600'
+            : 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
         }`}
         whileHover={nextCharacter ? { scale: 1.05 } : {}}
         whileTap={nextCharacter ? { scale: 0.95 } : {}}
@@ -62,7 +63,7 @@ export default function CharacterNavigationButtons({
         <span className='hidden sm:inline'>
           {nextCharacter ? nextCharacter.character?.id : '下一个'}
         </span>
-        <ChevronRightIcon className='w-4 h-4' />
+        <ChevronRightIcon className='h-4 w-4' />
       </motion.button>
     </div>
   );

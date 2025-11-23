@@ -1,8 +1,8 @@
 import { convertToPinyin } from '../pinyinUtils';
 import { searchCards } from './cards';
 import { searchCharacters } from './character';
-import { searchSpecialSkills } from './specialSkills';
 import { searchItems } from './items';
+import { searchSpecialSkills } from './specialSkills';
 import { SearchResult } from './types';
 
 // Search configuration constants

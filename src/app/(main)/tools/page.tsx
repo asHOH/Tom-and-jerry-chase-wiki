@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
-import ToolGridClient from './ToolGridClient';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import ToolGridClient from './ToolGridClient';
 
 export const dynamic = 'force-static';
 

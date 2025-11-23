@@ -1,6 +1,8 @@
-import PendingClient from './PendingClient';
 import { Metadata } from 'next';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import PendingClient from './PendingClient';
 
 export const metadata: Metadata = {
   ...generatePageMetadata({

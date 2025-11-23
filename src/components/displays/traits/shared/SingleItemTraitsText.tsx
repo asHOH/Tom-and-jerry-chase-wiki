@@ -1,4 +1,5 @@
 import { SingleItem } from '@/data/types';
+
 import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import { filterTraitsBySingleItem } from './filterTraitsBySingleItem';
 import { OneTraitText } from './OneTraitText';

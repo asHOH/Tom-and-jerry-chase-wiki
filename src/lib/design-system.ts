@@ -11,8 +11,9 @@
  * All legacy compatibility functions have been removed as of June 1, 2025.
  */
 
-import { designTokens, componentTokens, createStyleFromTokens } from './design-tokens';
 import type { FactionId } from '@/data/types';
+
+import { componentTokens, createStyleFromTokens, designTokens } from './design-tokens';
 
 // Re-export design tokens for easy access
 export { designTokens, componentTokens, createStyleFromTokens };

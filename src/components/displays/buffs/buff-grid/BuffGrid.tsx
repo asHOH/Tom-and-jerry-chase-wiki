@@ -1,16 +1,18 @@
 'use client';
 
-import Link from '@/components/Link';
-import BuffCardDisplay from './BuffCardDisplay';
-import { buffs } from '@/data';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import FilterRow from '@/components/ui/FilterRow';
 import { useState } from 'react';
-import type { Buff } from '@/data/types';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { buffs } from '@/data';
+import type { Buff } from '@/data/types';
+
 import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
+import { useMobile } from '@/hooks/useMediaQuery';
+import FilterRow from '@/components/ui/FilterRow';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
+import Link from '@/components/Link';
+
+import BuffCardDisplay from './BuffCardDisplay';
 
 // 更新选项以匹配新属性
 const GLOBAL_OPTIONS = ['全局', '个人'] as const;
@@ -50,12 +52,12 @@ export default function BuffClient({ description }: Props) {
     <div
       className={
         isMobile
-          ? 'w-full mx-auto space-y-1 dark:text-slate-200'
-          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+          ? 'mx-auto w-full space-y-1 dark:text-slate-200'
+          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
       }
     >
       <header
-        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>状态和效果</PageTitle>
         <PageDescription>{description ?? ''}</PageDescription>
@@ -94,7 +96,7 @@ export default function BuffClient({ description }: Props) {
         </div>
       </header>
       <div
-        className={`auto-fit-grid w-full grid-container grid !gap-2 ${isMobile ? 'mt-2' : 'mt-8'}`}
+        className={`auto-fit-grid grid-container grid w-full gap-2! ${isMobile ? 'mt-2' : 'mt-8'}`}
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
         }}
@@ -102,7 +104,7 @@ export default function BuffClient({ description }: Props) {
         {filteredBuffs.map((buff) => (
           <div
             key={buff.name}
-            className='character-card transform transition-transform hover:-translate-y-1 overflow-hidden rounded-lg'
+            className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
           >
             <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
               <BuffCardDisplay buff={buff} />

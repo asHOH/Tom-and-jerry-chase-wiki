@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash } from 'crypto';
-import { verifyCaptchaToken, generateCaptchaProof } from '@/lib/captchaUtils';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { generateCaptchaProof, verifyCaptchaToken } from '@/lib/captchaUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 // Helper function to hash the username
 // In a real-world scenario, ensure this matches the hashing strategy used during user creation.

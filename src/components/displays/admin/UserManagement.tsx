@@ -77,7 +77,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
     <>
       {message && (
         <div
-          className={`mb-4 p-3 rounded ${
+          className={`mb-4 rounded p-3 ${
             message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
           }`}
         >
@@ -89,36 +89,36 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
       )}
 
       {modalOpen && selectedUser && (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
-          <div className='bg-white p-6 rounded shadow-lg max-w-md w-full mx-4'>
-            <h2 className='text-xl font-bold mb-4'>编辑用户</h2>
-            <label className='block mb-2'>
+        <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black'>
+          <div className='mx-4 w-full max-w-md rounded bg-white p-6 shadow-lg'>
+            <h2 className='mb-4 text-xl font-bold'>编辑用户</h2>
+            <label className='mb-2 block'>
               昵称:
               <input
                 type='text'
-                className='border border-gray-300 px-2 py-1 w-full mt-1 rounded'
+                className='mt-1 w-full rounded border border-gray-300 px-2 py-1'
                 defaultValue={selectedUser.nickname}
                 id='nickname'
               />
             </label>
-            <label className='block mb-4'>
+            <label className='mb-4 block'>
               密码:
               <input
                 type='password'
-                className='border border-gray-300 px-2 py-1 w-full mt-1 rounded'
+                className='mt-1 w-full rounded border border-gray-300 px-2 py-1'
                 placeholder='留空则不修改密码'
                 id='password'
               />
             </label>
             <div className='flex justify-end gap-2'>
               <button
-                className='bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded'
+                className='rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600'
                 onClick={handleCloseModal}
               >
                 取消
               </button>
               <button
-                className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded'
+                className='rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600'
                 onClick={() => {
                   const nicknameInput = document.getElementById('nickname') as HTMLInputElement;
                   const passwordInput = document.getElementById('password') as HTMLInputElement;
@@ -132,8 +132,8 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
         </div>
       )}
 
-      <div className='bg-white shadow rounded p-4'>
-        <div className='flex items-center justify-between mb-4'>
+      <div className='rounded bg-white p-4 shadow'>
+        <div className='mb-4 flex items-center justify-between'>
           <h2 className='text-xl font-semibold'>用户管理</h2>
           <div className='text-sm text-gray-600'>{users.length} 个用户</div>
         </div>
@@ -147,13 +147,13 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                 <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>操作</th>
               </tr>
             </thead>
-            <tbody className='bg-white divide-y divide-gray-200'>
+            <tbody className='divide-y divide-gray-200 bg-white'>
               {users.map((user) => (
                 <tr key={user.id}>
                   <td className='px-4 py-3 text-sm text-gray-800'>{user.nickname}</td>
                   <td className='px-4 py-3 text-sm text-gray-600'>
                     <select
-                      className='border border-gray-300 px-2 py-1 rounded'
+                      className='rounded border border-gray-300 px-2 py-1'
                       value={user.role}
                       onChange={(e) => {
                         const newRole = e.target.value;
@@ -167,7 +167,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                   </td>
                   <td className='px-4 py-3 text-sm'>
                     <button
-                      className='bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded'
+                      className='rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600'
                       onClick={() => handleOpenModal(user)}
                     >
                       编辑

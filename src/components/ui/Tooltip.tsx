@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import clsx from 'clsx';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import clsx from 'clsx';
 
 interface TooltipProps {
   children: React.ReactNode;
@@ -42,7 +42,7 @@ export default function Tooltip({
   const trigger = (
     <span
       className={clsx(
-        'cursor-help border-b border-dotted border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-400 transition-colors',
+        'cursor-help border-b border-dotted border-gray-400 transition-colors hover:border-gray-600 dark:border-gray-500 dark:hover:border-gray-400',
         className
       )}
     >
@@ -74,7 +74,7 @@ export default function Tooltip({
             align='center'
             sideOffset={8}
             collisionPadding={{ top: 92, bottom: 8, left: 8, right: 8 }}
-            className='z-[10000] px-3 py-2 text-sm text-white bg-gray-800 dark:bg-black dark:text-gray-200 rounded-md shadow-lg max-w-xs break-words whitespace-pre-wrap'
+            className='z-[10000] max-w-xs rounded-md bg-gray-800 px-3 py-2 text-sm break-words whitespace-pre-wrap text-white shadow-lg dark:bg-black dark:text-gray-200'
           >
             {content}
             <TooltipPrimitive.Arrow

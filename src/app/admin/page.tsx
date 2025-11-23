@@ -1,12 +1,13 @@
 'use client';
 
+import { useState } from 'react';
+import { notFound } from 'next/navigation';
+import { Database } from '@/data/database.types';
+import useSWR from 'swr';
+
+import { useUser } from '@/hooks/useUser';
 import CategoryManagement from '@/components/displays/admin/CategoryManagement';
 import UserManagement from '@/components/displays/admin/UserManagement';
-import { Database } from '@/data/database.types';
-import { useUser } from '@/hooks/useUser';
-import { notFound } from 'next/navigation';
-import { useState } from 'react';
-import useSWR from 'swr';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 
@@ -59,15 +60,15 @@ const AdminPanel = () => {
   }
 
   return (
-    <div className='p-6 max-w-6xl mx-auto'>
-      <h1 className='text-3xl font-bold mb-6'>管理面板</h1>
+    <div className='mx-auto max-w-6xl p-6'>
+      <h1 className='mb-6 text-3xl font-bold'>管理面板</h1>
 
       {/* Tab Navigation */}
-      <div className='flex border-b border-gray-200 mb-6'>
+      <div className='mb-6 flex border-b border-gray-200'>
         {enableUserAccess && (
           <button
             onClick={() => setActiveTab('users')}
-            className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+            className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === 'users'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -78,7 +79,7 @@ const AdminPanel = () => {
         )}
         <button
           onClick={() => setActiveTab('categories')}
-          className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+          className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
             activeTab === 'categories'
               ? 'border-blue-500 text-blue-600'
               : 'border-transparent text-gray-500 hover:text-gray-700'

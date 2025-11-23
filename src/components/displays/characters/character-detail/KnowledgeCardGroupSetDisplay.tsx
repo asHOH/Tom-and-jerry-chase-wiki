@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import type { KnowledgeCardGroupSet } from '@/data/types';
-import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardSection';
-import type { DeepReadonly } from '@/types/deep-readonly';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
-import clsx from 'clsx';
 import { contributors } from '@/data/contributors';
+import type { KnowledgeCardGroupSet } from '@/data/types';
+import clsx from 'clsx';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
 import EditableField from '@/components/ui/EditableField';
 import { TrashIcon } from '@/components/icons/CommonIcons';
+
+import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardSection';
 
 interface KnowledgeCardGroupSetDisplayProps {
   groupSet: DeepReadonly<KnowledgeCardGroupSet>;
@@ -69,7 +71,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
           type='button'
           aria-label={isOpen ? `折叠${groupSet.id}` : `展开${groupSet.id}`}
           className={clsx(
-            'flex-1 text-left text-2xl font-bold py-1 focus:outline-none dark:text-white',
+            'flex-1 py-1 text-left text-2xl font-bold focus:outline-none dark:text-white',
             { 'cursor-pointer': !isEditMode }
           )}
           {...(isEditMode ? {} : { onClick: toggleOpen })}
@@ -87,14 +89,14 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
           <div className='flex gap-2'>
             <div className='flex items-center gap-1 text-xs'>
               <span className='text-xs text-gray-400 dark:text-gray-500'>显示方式:</span>
-              <label className='flex items-center gap-1 cursor-pointer'>
+              <label className='flex cursor-pointer items-center gap-1'>
                 <input
                   type='checkbox'
                   checked={groupSet.defaultFolded}
                   onChange={() => {
                     onEditGroupSetMetadata(topIndex, 'defaultFolded', !groupSet.defaultFolded);
                   }}
-                  className='w-3 h-3'
+                  className='h-3 w-3'
                 />
                 <span className='font-bold'>
                   {groupSet.defaultFolded ? '默认折叠' : '默认展开'}
@@ -105,9 +107,9 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
               type='button'
               aria-label='移除知识卡组集合'
               onClick={() => onRemoveGroup(topIndex)}
-              className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
             >
-              <TrashIcon className='w-4 h-4' aria-hidden='true' />
+              <TrashIcon className='h-4 w-4' aria-hidden='true' />
             </button>
           </div>
         )}

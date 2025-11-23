@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import BaseCard from '../../../ui/BaseCard';
+import { FactionId } from '@/data';
+
 import { componentTokens, designTokens } from '@/lib/design-tokens';
 import { handleCharacterIdChange } from '@/lib/editUtils';
-import { usePathname } from 'next/navigation';
-import { FactionId } from '@/data';
-import { useAppContext } from '@/context/AppContext';
 import { PlusIcon } from '@/components/icons/CommonIcons';
+
+import BaseCard from '../../../ui/BaseCard';
 
 export default function CharacterCreate() {
   const { width, height } = componentTokens.image.dimensions.CHARACTER_CARD;
@@ -79,14 +81,14 @@ export default function CharacterCreate() {
       {!showInput ? (
         <>
           <div
-            className='w-full bg-gray-200 dark:bg-slate-700 relative overflow-hidden mb-4 flex items-center justify-center'
+            className='relative mb-4 flex w-full items-center justify-center overflow-hidden bg-gray-200 dark:bg-slate-700'
             style={{
               height: containerHeight,
               borderRadius: componentTokens.image.container.borderRadius,
             }}
           >
             <PlusIcon
-              className='text-gray-500 dark:text-gray-400 hover:scale-105'
+              className='text-gray-500 hover:scale-105 dark:text-gray-400'
               style={{
                 width,
                 height,
@@ -99,19 +101,19 @@ export default function CharacterCreate() {
             />
           </div>
           <div className='px-6 pt-1 pb-6 text-center'>
-            <h2 className='text-xl font-bold mb-2 dark:text-white'>创建角色</h2>
+            <h2 className='mb-2 text-xl font-bold dark:text-white'>创建角色</h2>
           </div>
         </>
       ) : (
         <div
-          className='flex flex-col items-stretch justify-center w-full p-4'
+          className='flex w-full flex-col items-stretch justify-center p-4'
           style={{ height: containerHeight }}
         >
-          <p className='text-center mb-4 dark:text-gray-200'>请输入角色名称:</p>
+          <p className='mb-4 text-center dark:text-gray-200'>请输入角色名称:</p>
           <input
             ref={inputRef}
             type='text'
-            className='w-full border border-gray-400 dark:border-gray-600 p-2 rounded dark:bg-slate-700 dark:text-gray-200'
+            className='w-full rounded border border-gray-400 p-2 dark:border-gray-600 dark:bg-slate-700 dark:text-gray-200'
             placeholder='角色名称'
             value={characterName}
             onChange={(e) => setCharacterName(e.target.value)}
@@ -127,12 +129,12 @@ export default function CharacterCreate() {
               }
             }}
           />
-          <div className='flex justify-end mt-4'>
+          <div className='mt-4 flex justify-end'>
             <button
               type='button'
               data-submit-button='true'
               aria-label='确认创建角色'
-              className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2 dark:bg-blue-600 dark:hover:bg-blue-700'
+              className='mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
               onClick={handleSubmit}
               disabled={!characterName.trim()}
             >
@@ -141,7 +143,7 @@ export default function CharacterCreate() {
             <button
               type='button'
               aria-label='取消创建角色'
-              className='bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded dark:bg-slate-600 dark:hover:bg-slate-500 dark:text-gray-200'
+              className='rounded bg-gray-200 px-4 py-2 font-bold text-black hover:bg-gray-300 dark:bg-slate-600 dark:text-gray-200 dark:hover:bg-slate-500'
               onClick={() => {
                 setShowInput(false);
                 setCharacterName('');

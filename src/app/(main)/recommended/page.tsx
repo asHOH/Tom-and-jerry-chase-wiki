@@ -1,5 +1,6 @@
-import RecommendedPageClient from './RecommendedPageClient';
 import { Metadata } from 'next';
+
+import RecommendedPageClient from './RecommendedPageClient';
 
 export const metadata: Metadata = {
   title: '阵容推荐 - 猫鼠wiki',

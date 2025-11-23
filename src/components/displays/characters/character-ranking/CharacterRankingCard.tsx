@@ -1,12 +1,13 @@
 'use client';
 
 import { memo } from 'react';
-import { RankedCharacter, getRankDisplayName } from '@/lib/characterRankingUtils';
-import Image from '@/components/Image';
-import { getCardRankColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
+
+import { getRankDisplayName, RankedCharacter } from '@/lib/characterRankingUtils';
+import { getCardRankColors } from '@/lib/design-tokens';
 import BaseCard from '@/components/ui/BaseCard';
 import Tag from '@/components/ui/Tag';
+import Image from '@/components/Image';
 
 interface CharacterRankingCardProps {
   rankedCharacter: RankedCharacter;
@@ -45,13 +46,13 @@ function CharacterRankingCard({
     >
       {/* Character Image */}
       <div className='flex justify-center pt-4'>
-        <div className='w-20 h-20'>
+        <div className='h-20 w-20'>
           <Image
             src={character.imageUrl || `/images/${character.factionId}s/${character.id}.png`}
             alt={`${character.id}角色图标`}
             width={80}
             height={80}
-            className='object-cover hover:scale-105 transition-transform duration-200'
+            className='object-cover transition-transform duration-200 hover:scale-105'
             priority={priority}
           />
         </div>
@@ -59,11 +60,11 @@ function CharacterRankingCard({
 
       <div className='mt-4 px-3 pt-1 pb-3 text-center'>
         {/* Character Name */}
-        <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-2'>{character.id}</h3>
+        <h3 className='mb-2 text-lg font-bold text-gray-800 dark:text-white'>{character.id}</h3>
 
         {/* Rank and Value Tags */}
         <div
-          className='flex justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
+          className='flex items-center justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'
           aria-label='角色排名信息'
         >

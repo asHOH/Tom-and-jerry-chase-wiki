@@ -1,16 +1,17 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Image from '@/components/Image';
-import { motion } from 'motion/react';
-import clsx from 'clsx';
-import { performSearch, SearchResult } from '@/lib/searchUtils';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import { isOriginalCharacter } from '@/lib/editUtils';
 import { useEditMode } from '@/context/EditModeContext';
-import { useNavigation } from '@/hooks/useNavigation';
+import clsx from 'clsx';
+import { motion } from 'motion/react';
+
+import { isOriginalCharacter } from '@/lib/editUtils';
+import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useChat } from '@/hooks/useChat';
+import { useNavigation } from '@/hooks/useNavigation';
 import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
 
 type SearchDialogProps = {
   onClose: () => void;
@@ -59,7 +60,7 @@ const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => 
     parts.push(
       <span
         key={matchIndex} // Using matchIndex as key, assuming it's unique enough for this context
-        className='bg-yellow-300 dark:bg-yellow-600 text-black dark:text-white rounded px-0.5'
+        className='rounded bg-yellow-300 px-0.5 text-black dark:bg-yellow-600 dark:text-white'
       >
         {processedText.substring(matchIndex, matchIndex + query.length)}
       </span>
@@ -258,7 +259,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   return (
     <motion.div
       className={clsx(
-        'fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center z-50',
+        'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
         isMobile && 'p-0'
       )}
       initial='hidden'
@@ -270,10 +271,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
       <motion.div
         ref={dialogRef}
         className={clsx(
-          'bg-white dark:bg-gray-800 shadow-xl p-4 relative',
+          'relative bg-white p-4 shadow-xl dark:bg-gray-800',
           isMobile
-            ? 'w-full h-full rounded-none flex flex-col'
-            : 'rounded-lg w-full max-w-md mx-auto'
+            ? 'flex h-full w-full flex-col rounded-none'
+            : 'mx-auto w-full max-w-md rounded-lg'
         )}
         variants={dialogVariants} // Apply dialog animation
         transition={{ duration: 0.2 }}
@@ -287,7 +288,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           <CloseIcon className='h-6 w-6' />
         </button>
         <div className='mb-4 pr-8'>
-          <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-1'>搜索</h2>
+          <h2 className='mb-1 text-xl font-bold text-gray-900 dark:text-white'>搜索</h2>
           {(searchResults.length > 0 ||
             (searchQuery.length > 1 && (aiResponseText || isChatLoading))) && (
             <span className='text-sm text-gray-500 dark:text-gray-400'>
@@ -299,13 +300,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           <input
             type='text'
             placeholder='搜索角色或知识卡...'
-            className='w-full p-2 pl-10 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400'
+            className='w-full rounded-md border border-gray-300 p-2 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             autoFocus
             ref={searchInputRef}
           />
-          <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+          <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
             <SearchIcon
               className='h-5 w-5 text-gray-400 dark:text-gray-500'
               decorative={false}
@@ -320,7 +321,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             <motion.ul
               ref={resultsListRef}
               className={clsx(
-                'overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md',
+                'overflow-y-auto rounded-md border border-gray-300 dark:border-gray-600',
                 isMobile ? 'flex-1' : 'max-h-60'
               )}
               initial='hidden'
@@ -346,24 +347,24 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                 >
                   <div
                     className={clsx(
-                      'flex items-start p-3 bg-blue-50 dark:bg-blue-900/20',
+                      'flex items-start bg-blue-50 p-3 dark:bg-blue-900/20',
                       highlightedIndex === 0 && 'bg-blue-100 dark:bg-blue-900/40'
                     )}
                     onMouseEnter={() => setHighlightedIndex(0)}
                   >
-                    <div className='flex-shrink-0 mr-3'>
-                      <div className='w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center'>
-                        <ChatBubbleIcon className='w-4 h-4 text-white' strokeWidth={2} />
+                    <div className='mr-3 flex-shrink-0'>
+                      <div className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 dark:bg-blue-600'>
+                        <ChatBubbleIcon className='h-4 w-4 text-white' strokeWidth={2} />
                       </div>
                     </div>
-                    <div className='flex-1 min-w-0'>
-                      <div className='text-sm font-medium text-blue-700 dark:text-blue-300 mb-1'>
+                    <div className='min-w-0 flex-1'>
+                      <div className='mb-1 text-sm font-medium text-blue-700 dark:text-blue-300'>
                         AI 助手回答
                       </div>
                       <div className='text-sm text-gray-700 dark:text-gray-300'>
                         {isChatLoading ? (
                           <div className='flex items-center'>
-                            <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2'></div>
+                            <div className='mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-blue-500'></div>
                             正在生成回答...
                           </div>
                         ) : chatError ? (
@@ -384,7 +385,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                 <motion.li
                   // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
                   key={`${result.type}-${result.id}-${result.name}-${result.factionId}`}
-                  className='border-b border-gray-200 dark:border-gray-700 last:border-b-0'
+                  className='border-b border-gray-200 last:border-b-0 dark:border-gray-700'
                   variants={{
                     hidden: { opacity: 0, y: 10 },
                     visible: { opacity: 1, y: 0 },
@@ -395,7 +396,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                     type='button'
                     onClick={() => handleResultClick(result)}
                     className={clsx(
-                      'flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left',
+                      'flex w-full items-center p-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700',
                       highlightedIndex === (searchQuery.length > 1 ? index + 1 : index) &&
                         'bg-gray-100 dark:bg-gray-700'
                     )}
@@ -410,15 +411,15 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                         alt={result.id ?? result.name ?? ''}
                         width={32}
                         height={32}
-                        className='object-cover mr-3'
+                        className='mr-3 object-cover'
                       />
                     )}
-                    <span className='text-gray-900 dark:text-white whitespace-nowrap'>
+                    <span className='whitespace-nowrap text-gray-900 dark:text-white'>
                       {'id' in result ? result.id : 'name' in result ? result.name : ''}{' '}
                       {/* ({result.type === 'character' ? '角色' : '知识卡'}) */}
                     </span>
                     {result.matchContext && (
-                      <span className='ml-2 text-gray-500 dark:text-gray-400 text-sm truncate'>
+                      <span className='ml-2 truncate text-sm text-gray-500 dark:text-gray-400'>
                         {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
                       </span>
                     )}
@@ -431,7 +432,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         {searchQuery.length > 0 &&
           searchResults.length === 0 &&
           !(aiResponseText || isChatLoading) && (
-            <div className='p-2 text-gray-500 dark:text-gray-400 pr-8'>无结果</div>
+            <div className='p-2 pr-8 text-gray-500 dark:text-gray-400'>无结果</div>
           )}
       </motion.div>
     </motion.div>

@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
-import { mechanicsSectionsList } from '@/components/displays/mechanics/sections';
+import { notFound } from 'next/navigation';
+
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import MechanicsSection from '@/components/displays/mechanics/mechanicsSection';
-import { notFound } from 'next/navigation';
+import { mechanicsSectionsList } from '@/components/displays/mechanics/sections';
 
 const DESCRIPTION = '详细介绍游戏内的局内机制（该界面建设中）';
 const sectionChineseNameList: Record<string, string> = { traitCollection: '特性大全' };

@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
-import SpecialSkillAdviceClient from './SpecialSkillAdviceClient';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import SpecialSkillAdviceClient from './SpecialSkillAdviceClient';
 
 export const dynamic = 'force-static';
 

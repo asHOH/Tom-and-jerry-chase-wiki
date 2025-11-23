@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { stripDisallowedImages } from './imagePolicy';
 
 export function cleanHTMLForExport(html: string): string {
@@ -26,8 +28,6 @@ export function cleanHTMLForExport(html: string): string {
     .trim();
   return out;
 }
-
-import { useMemo } from 'react';
 
 export function useCleanExport(html: string): string {
   return useMemo(() => cleanHTMLForExport(html), [html]);

@@ -1,6 +1,6 @@
-import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import type { Database } from '@/data/database.types';
+import { createServerClient } from '@supabase/ssr';
 
 export async function createClient() {
   if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {

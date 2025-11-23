@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+
 import NotificationTooltip from './ui/NotificationTooltip';
 
 interface VersionInfo {
@@ -368,13 +369,13 @@ export const VersionChecker: React.FC = () => {
     <>
       {/* Debug Panel - Only in development */}
       {process.env.NODE_ENV === 'development' && showDebugPanel && (
-        <div className='fixed top-20 right-4 bg-gray-800 text-white px-3 py-2 rounded text-xs font-mono z-40 max-w-xs shadow-lg border border-gray-600'>
-          <div className='flex justify-between items-center mb-2'>
+        <div className='fixed top-20 right-4 z-40 max-w-xs rounded border border-gray-600 bg-gray-800 px-3 py-2 font-mono text-xs text-white shadow-lg'>
+          <div className='mb-2 flex items-center justify-between'>
             <div className='text-sm font-bold'>版本检查器</div>
             <button
               type='button'
               onClick={() => setShowDebugPanel(false)}
-              className='text-gray-400 hover:text-white text-lg leading-none'
+              className='text-lg leading-none text-gray-400 hover:text-white'
               title='关闭调试面板'
             >
               ×
@@ -394,7 +395,7 @@ export const VersionChecker: React.FC = () => {
         <button
           type='button'
           onClick={() => setShowDebugPanel(true)}
-          className='fixed top-20 right-4 bg-gray-800 text-white px-2 py-1 rounded text-xs font-mono z-40 hover:bg-gray-700'
+          className='fixed top-20 right-4 z-40 rounded bg-gray-800 px-2 py-1 font-mono text-xs text-white hover:bg-gray-700'
           title='显示调试面板'
         >
           调试

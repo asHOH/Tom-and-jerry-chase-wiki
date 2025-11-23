@@ -1,11 +1,13 @@
 'use client';
 
-import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
-import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data';
 import { SpecialSkill } from '@/data/types';
+
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
+import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
+import DetailTextSection from '@/components/displays/shared/DetailTextSection';
+
 import CharacterList from '../../../displays/knowledge-cards/knowledge-card-detail/CharacterList';
 import DetailTraitsCard from '../../shared/DetailTraitsCard';
 import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';

@@ -1,5 +1,7 @@
-import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
+
+import { createClient } from '@/lib/supabase/server';
+
 import UserManagementPanelClient from './UserManagementPanelClient';
 
 const UserManagementPanel = async () => {

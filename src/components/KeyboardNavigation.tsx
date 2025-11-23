@@ -1,6 +1,7 @@
 'use client';
-import { useRouter } from 'next/navigation';
+
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 function isEditableElement(el: EventTarget | null): boolean {
   if (!(el instanceof HTMLElement)) return false;

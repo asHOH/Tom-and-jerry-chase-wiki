@@ -1,6 +1,7 @@
-import { getHistory } from '@/lib/historyUtils';
 import { useMemo, useState } from 'react';
 import { ChangeType } from '@/data/types';
+
+import { getHistory } from '@/lib/historyUtils';
 
 export default function CharacterHistoryDisplay({
   name,
@@ -49,17 +50,17 @@ export default function CharacterHistoryDisplay({
   }
 
   return (
-    <div className='text-xs text-gray-400 dark:text-gray-500 mt-2'>
+    <div className='mt-2 text-xs text-gray-400 dark:text-gray-500'>
       <button
         type='button'
         onClick={() => setIsExpanded(!isExpanded)}
-        className='flex items-center gap-1 hover:text-gray-600 dark:hover:text-gray-300 transition-colors'
+        className='flex items-center gap-1 transition-colors hover:text-gray-600 dark:hover:text-gray-300'
         aria-expanded={isExpanded}
       >
         <span>角色历史记录</span>
         <svg
           xmlns='http://www.w3.org/2000/svg'
-          className={`w-3 h-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          className={`h-3 w-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
           fill='none'
           viewBox='0 0 24 24'
           stroke='currentColor'

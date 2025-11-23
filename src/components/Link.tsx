@@ -1,8 +1,9 @@
 'use client';
 
-import NextLink, { LinkProps as NextLinkProps } from 'next/link';
-import { useNavigation } from '@/hooks/useNavigation';
 import React from 'react';
+import NextLink, { LinkProps as NextLinkProps } from 'next/link';
+
+import { useNavigation } from '@/hooks/useNavigation';
 
 type LinkProps = NextLinkProps &
   Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {

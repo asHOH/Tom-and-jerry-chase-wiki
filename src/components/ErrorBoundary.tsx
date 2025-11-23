@@ -98,13 +98,13 @@ export function ErrorDisplay({
 
   return (
     <div
-      className={`flex flex-col items-center justify-center py-12 px-6 text-center ${className}`}
+      className={`flex flex-col items-center justify-center px-6 py-12 text-center ${className}`}
     >
       <div className='max-w-md space-y-4'>
         {/* Error icon */}
-        <div className='mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center'>
+        <div className='mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20'>
           <svg
-            className='w-8 h-8 text-red-600 dark:text-red-400'
+            className='h-8 w-8 text-red-600 dark:text-red-400'
             fill='none'
             stroke='currentColor'
             viewBox='0 0 24 24'
@@ -126,18 +126,18 @@ export function ErrorDisplay({
         </div>
 
         {/* Actions */}
-        <div className='flex flex-col sm:flex-row gap-3 justify-center'>
+        <div className='flex flex-col justify-center gap-3 sm:flex-row'>
           {onRetry && (
             <button
               onClick={onRetry}
-              className='px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+              className='rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none'
             >
               重试
             </button>
           )}
           <button
             onClick={() => window.location.reload()}
-            className='px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2'
+            className='rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none'
           >
             刷新页面
           </button>
@@ -149,7 +149,7 @@ export function ErrorDisplay({
             <summary className='cursor-pointer text-sm text-gray-500 hover:text-gray-700'>
               错误详情 (开发模式)
             </summary>
-            <pre className='mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-auto'>
+            <pre className='mt-2 overflow-auto rounded bg-gray-100 p-3 text-xs dark:bg-gray-800'>
               {error.stack}
             </pre>
           </details>

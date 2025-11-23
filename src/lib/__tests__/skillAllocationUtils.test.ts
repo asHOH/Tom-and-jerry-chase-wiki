@@ -1,6 +1,6 @@
 import {
-  validateSkillAllocationPattern,
   parseSkillAllocationPattern,
+  validateSkillAllocationPattern,
 } from '../skillAllocationUtils';
 
 describe('skillAllocationUtils', () => {

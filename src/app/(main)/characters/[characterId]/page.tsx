@@ -1,16 +1,18 @@
-import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
+import { Suspense } from 'react';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { getContentWritersByCharacter } from '@/constants';
+import { characters } from '@/data';
+import { Article, WithContext } from 'schema-dts';
+
 import { GameDataManager } from '@/lib/dataManager';
 import { getTutorialPage } from '@/lib/docUtils';
 import { generatePageMetadata } from '@/lib/metadataUtils';
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
+import StructuredData from '@/components/StructuredData';
+import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
+
 import CharacterArticle from './CharacterArticle';
 import CharacterDocs from './CharacterDocs';
-import { Article, WithContext } from 'schema-dts';
-import { characters } from '@/data';
-import { getContentWritersByCharacter } from '@/constants';
-import StructuredData from '@/components/StructuredData';
 
 // Revalidate once per 8 hours to keep docs fresh
 export const revalidate = 28800;

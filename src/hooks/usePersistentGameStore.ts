@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { subscribe } from 'valtio';
 import { characters, factions } from '@/data';
+import { subscribe } from 'valtio';
 
 export function usePersistentGameStore() {
   return;

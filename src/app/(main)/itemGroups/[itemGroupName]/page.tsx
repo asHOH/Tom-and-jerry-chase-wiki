@@ -1,10 +1,12 @@
-import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { itemGroups } from '@/data';
-import ItemGroupDetailClient from './ItemGroupDetailsClient';
+
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import { getItemGroupImageUrl } from '@/components/displays/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 import StructuredData from '@/components/StructuredData';
+
+import ItemGroupDetailClient from './ItemGroupDetailsClient';
 
 // Generate static params for all special skills
 export function generateStaticParams() {
