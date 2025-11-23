@@ -23,8 +23,6 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
       pathname.startsWith('/items/')) &&
     pathname.split('/').length > 3;
 
-  console.log({ showDetailToggle });
-
   return (
     <EditModeProvider>
       <TabNavigationWrapper showDetailToggle={showDetailToggle}>{children}</TabNavigationWrapper>
