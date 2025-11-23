@@ -214,7 +214,7 @@ const TreeNodeDisplay: React.FC<
   if (node.type === 'and-group' && node.children) {
     return (
       <div
-        className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'gap-2')}
+        className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'sm:gap-1')}
       >
         {node.children.map((child, index) => (
           <TreeNodeDisplay
@@ -243,7 +243,9 @@ const TreeCardDisplay: React.FC<TreeCardDisplayProps> = (props) => {
   const [isDarkMode] = useDarkMode();
 
   return (
-    <div className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'gap-2')}>
+    <div
+      className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'sm:gap-1')}
+    >
       {props.tree.map((node, index) => (
         <TreeNodeDisplay
           key={index}
