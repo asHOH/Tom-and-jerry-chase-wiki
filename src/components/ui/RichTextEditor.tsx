@@ -1,13 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
-import { Table } from '@tiptap/extension-table';
-import TableCell from '@tiptap/extension-table-cell';
-import TableHeader from '@tiptap/extension-table-header';
-import TableRow from '@tiptap/extension-table-row';
-import TextAlign from '@tiptap/extension-text-align';
-import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { EditorContent } from '@tiptap/react';
 import clsx from 'clsx';
 
 import { cleanHTMLForExport } from '@/lib/richtext/htmlTransforms';
@@ -15,14 +7,16 @@ import {
   describeAllowedImageSources,
   normalizeHostedImageUrl,
   RTE_IMAGE_ALLOWED_MIME_TYPES,
-  RTE_IMAGE_MAX_BYTES,
   stripDisallowedImages,
 } from '@/lib/richtext/imagePolicy';
 import { transposeTable as transposeTableUtil } from '@/lib/richtext/tableUtils';
 import { htmlToWikiText, wikiTextToHTML } from '@/lib/richTextUtils';
+import { useRTEConfiguration } from '@/hooks/useRTEConfiguration';
+import { useRTEImageUpload } from '@/hooks/useRTEImageUpload';
+import { useRTEToolbarState } from '@/hooks/useRTEToolbarState';
 
 import ImagePickerModal from './RichTextEditor/ImagePickerModal';
-import Toolbar, { ToolbarCommands, ToolbarState } from './RichTextEditor/Toolbar';
+import Toolbar, { ToolbarCommands } from './RichTextEditor/Toolbar';
 import { LoadingSpinnerIcon } from './RichTextEditorIcons';
 
 interface RichTextEditorProps {
@@ -30,16 +24,6 @@ interface RichTextEditorProps {
   onChange?: (content: string) => void;
   placeholder?: string;
   className?: string;
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes >= 1024 * 1024) {
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  }
-  if (bytes >= 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
-  }
-  return `${bytes} B`;
 }
 
 // inline Toolbar removed; using decoupled Toolbar component
@@ -56,135 +40,18 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const [viewMode, setViewMode] = useState<'rich' | 'wiki' | 'html'>('rich');
   const [rawContent, setRawContent] = useState(initialHtml);
-  const [toolbarState, setToolbarState] = useState<ToolbarState>({
-    bold: false,
-    italic: false,
-    underline: false,
-    strike: false,
-    code: false,
-    headingLevel: null,
-    bulletList: false,
-    orderedList: false,
-    textAlign: null,
-    blockquote: false,
-    codeBlock: false,
-    canUndo: false,
-    canRedo: false,
-    inTable: false,
-  });
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
-  const [libraryRefreshKey, setLibraryRefreshKey] = useState(0);
 
-  const uploadImageFile = useCallback(async (file: File) => {
-    if (!RTE_IMAGE_ALLOWED_MIME_TYPES.includes(file.type)) {
-      throw new Error('仅支持上传 PNG、JPEG、WEBP、AVIF 或 GIF 图片');
-    }
-    if (file.size > RTE_IMAGE_MAX_BYTES) {
-      throw new Error(
-        `图片大小需小于 ${formatBytes(RTE_IMAGE_MAX_BYTES)}，当前为 ${formatBytes(file.size)}`
-      );
-    }
+  const { isUploadingImage, libraryRefreshKey, uploadImageFile } = useRTEImageUpload();
 
-    const formData = new FormData();
-    formData.append('file', file, file.name);
-    setIsUploadingImage(true);
-
-    try {
-      const response = await fetch('/api/uploads/rte-image', {
-        method: 'POST',
-        body: formData,
-      });
-      if (!response.ok) {
-        const text = await response.text();
-        try {
-          const payload = JSON.parse(text) as { error?: string };
-          throw new Error(payload.error || '上传失败');
-        } catch (error) {
-          if (error instanceof SyntaxError) {
-            throw new Error(text || '上传失败');
-          }
-          throw error;
-        }
-      }
-      const result = (await response.json()) as { publicUrl?: string };
-      if (!result?.publicUrl) {
-        throw new Error('上传失败，未返回图片地址');
-      }
-      const normalized = normalizeHostedImageUrl(result.publicUrl);
-      if (!normalized) {
-        throw new Error('上传的图片地址未通过安全校验');
-      }
-      setLibraryRefreshKey((key) => key + 1);
-      return normalized;
-    } finally {
-      setIsUploadingImage(false);
-    }
-  }, []);
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        // Exclude extensions we want to configure separately
-        link: false,
-      }),
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class:
-            'text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300',
-        },
-      }),
-      Image.configure({
-        HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg',
-        },
-      }),
-      // Table support to preserve and edit tables in rich mode
-      Table.configure({
-        resizable: true,
-        lastColumnResizable: true,
-        allowTableNodeSelection: true,
-      }),
-      TableRow,
-      TableHeader,
-      TableCell,
-    ],
-    content: initialHtml,
-    immediatelyRender: false,
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      const sanitized = stripDisallowedImages(html);
-      if (sanitized !== html) {
-        editor.commands.setContent(sanitized, { emitUpdate: false });
-      }
-      onChange?.(sanitized);
-    },
-    editorProps: {
-      attributes: {
-        class: clsx(
-          'prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none',
-          'dark:prose-invert',
-          'focus:outline-none',
-          'p-6 min-h-[400px]',
-          'text-gray-900 dark:text-gray-100',
-          className
-        ),
-      },
-    },
+  const editor = useRTEConfiguration({
+    initialHtml,
+    content: sanitizedContent || sanitizedPlaceholder || '',
+    onChange,
+    className,
   });
 
-  useEffect(() => {
-    if (!editor) return;
-    const target = sanitizedContent || sanitizedPlaceholder || '';
-    const current = stripDisallowedImages(editor.getHTML());
-    if (target !== current) {
-      editor.commands.setContent(target, { emitUpdate: true });
-    }
-  }, [editor, sanitizedContent, sanitizedPlaceholder]);
+  const toolbarState = useRTEToolbarState(editor);
 
   useEffect(() => {
     const target = sanitizedContent || sanitizedPlaceholder || '';
@@ -195,56 +62,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       setRawContent((prev) => (prev === target ? prev : target));
     }
   }, [sanitizedContent, sanitizedPlaceholder, viewMode]);
-
-  // derive toolbar state on selection/transaction changes
-  useEffect(() => {
-    if (!editor) return;
-    let raf = 0 as number;
-    const compute = (): ToolbarState => {
-      let headingLevel: ToolbarState['headingLevel'] = null;
-      for (const level of [2, 3, 4] as const) {
-        if (editor.isActive('heading', { level })) {
-          headingLevel = level;
-          break;
-        }
-      }
-      let textAlign: ToolbarState['textAlign'] = null;
-      if (editor.isActive({ textAlign: 'left' })) textAlign = 'left';
-      else if (editor.isActive({ textAlign: 'center' })) textAlign = 'center';
-      else if (editor.isActive({ textAlign: 'right' })) textAlign = 'right';
-      return {
-        bold: editor.isActive('bold'),
-        italic: editor.isActive('italic'),
-        underline: editor.isActive('underline'),
-        strike: editor.isActive('strike'),
-        code: editor.isActive('code'),
-        headingLevel,
-        bulletList: editor.isActive('bulletList'),
-        orderedList: editor.isActive('orderedList'),
-        textAlign,
-        blockquote: editor.isActive('blockquote'),
-        codeBlock: editor.isActive('codeBlock'),
-        canUndo: editor.can().undo(),
-        canRedo: editor.can().redo(),
-        inTable:
-          editor.isActive('table') ||
-          editor.isActive('tableCell') ||
-          editor.isActive('tableHeader'),
-      };
-    };
-    const update = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => setToolbarState(compute()));
-    };
-    editor.on('selectionUpdate', update);
-    editor.on('transaction', update);
-    update();
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      editor.off('selectionUpdate', update);
-      editor.off('transaction', update);
-    };
-  }, [editor]);
 
   // commands bound to editor
   const transposeTable = useCallback(() => {
