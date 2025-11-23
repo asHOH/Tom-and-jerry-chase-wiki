@@ -143,16 +143,21 @@ function KnowledgeCardGroupFlat({
   if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
   if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
 
-  let warningMessage = missingWarnings.length ? `该卡组${missingWarnings.join('、')}，慎用` : null;
-
-  if (highPriorityCards.length > 0 && !isEditMode) {
-    const cardNames = highPriorityCards.map((id) => id.split('-')[1]).join('、');
-    const priorityWarning = `${cardNames}建议3级佩戴`;
-    warningMessage = warningMessage ? `${warningMessage}；${priorityWarning}` : priorityWarning;
-  }
+  const missingWarningMessage = missingWarnings.length
+    ? `该卡组${missingWarnings.join('、')}，慎用`
+    : null;
+  const priorityWarning =
+    highPriorityCards.length > 0 && !isEditMode
+      ? `${highPriorityCards.map((id) => id.split('-')[1]).join('、')}建议3级佩戴`
+      : null;
   const warningTagStyles = isDarkMode
     ? { background: '#dc2626', color: '#fef2f2' }
     : { background: '#fef2f2', color: '#dc2626' };
+  const priorityTagStyles = isDarkMode
+    ? { background: '#92400e', color: '#fff7ed' }
+    : { background: '#fef3c7', color: '#92400e' };
+  const shouldShowMetaRow =
+    (!isEditMode && contributor) || missingWarningMessage || priorityWarning;
 
   return (
     <div
@@ -280,7 +285,7 @@ function KnowledgeCardGroupFlat({
         )}
       </div>
 
-      {(!isEditMode && contributor) || warningMessage ? (
+      {shouldShowMetaRow ? (
         <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
           {!!contributor && !isEditMode && (
             <Tag
@@ -302,14 +307,24 @@ function KnowledgeCardGroupFlat({
                 contributor}
             </Tag>
           )}
-          {warningMessage && (
+          {missingWarningMessage && (
             <Tag
               size='xs'
               margin='micro'
               className='items-center gap-1 opacity-80'
               colorStyles={warningTagStyles}
             >
-              {warningMessage}
+              {missingWarningMessage}
+            </Tag>
+          )}
+          {priorityWarning && (
+            <Tag
+              size='xs'
+              margin='micro'
+              className='items-center gap-1 opacity-80'
+              colorStyles={priorityTagStyles}
+            >
+              {priorityWarning}
             </Tag>
           )}
         </div>
@@ -416,18 +431,21 @@ export function KnowledgeCardGroupDisplay({
     if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
     if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
 
-    let warningMessage = missingWarnings.length
+    const missingWarningMessage = missingWarnings.length
       ? `该卡组${missingWarnings.join('、')}，慎用`
       : null;
-
-    if (highPriorityCards.length > 0 && !isEditMode) {
-      const cardNames = highPriorityCards.map((id) => id.split('-')[1]).join('、');
-      const priorityWarning = `${cardNames}建议3级或高等级佩戴`;
-      warningMessage = warningMessage ? `${warningMessage}；${priorityWarning}` : priorityWarning;
-    }
+    const priorityWarning =
+      highPriorityCards.length > 0 && !isEditMode
+        ? `${highPriorityCards.map((id) => id.split('-')[1]).join('、')}建议3级或高等级佩戴`
+        : null;
     const warningTagStyles = isDarkMode
       ? { background: '#dc2626', color: '#fef2f2' }
       : { background: '#fef2f2', color: '#dc2626' };
+    const priorityTagStyles = isDarkMode
+      ? { background: '#92400e', color: '#fff7ed' }
+      : { background: '#fef3c7', color: '#92400e' };
+    const shouldShowMetaRow =
+      (!isEditMode && contributor) || missingWarningMessage || priorityWarning;
 
     const { containerClass, tooltipContent } = getKnowledgeCardCostStyles(
       maxCost,
@@ -500,7 +518,7 @@ export function KnowledgeCardGroupDisplay({
           )}
         </div>
 
-        {(!isEditMode && contributor) || warningMessage ? (
+        {shouldShowMetaRow ? (
           <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
             {!!contributor && !isEditMode && (
               <Tag
@@ -522,14 +540,24 @@ export function KnowledgeCardGroupDisplay({
                   contributor}
               </Tag>
             )}
-            {warningMessage && (
+            {missingWarningMessage && (
               <Tag
                 size='xs'
                 margin='micro'
                 className='flex items-center gap-1 opacity-80'
                 colorStyles={warningTagStyles}
               >
-                {warningMessage}
+                {missingWarningMessage}
+              </Tag>
+            )}
+            {priorityWarning && (
+              <Tag
+                size='xs'
+                margin='micro'
+                className='flex items-center gap-1 opacity-80'
+                colorStyles={priorityTagStyles}
+              >
+                {priorityWarning}
               </Tag>
             )}
           </div>
