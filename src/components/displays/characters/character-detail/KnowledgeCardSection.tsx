@@ -67,6 +67,151 @@ const isKnowledgeCardGroupSet = (
   group: DeepReadonly<KnowledgeCardGroup | KnowledgeCardGroupSet>
 ): group is DeepReadonly<KnowledgeCardGroupSet> => 'groups' in group;
 
+const getWarningTagStyles = (isDarkMode: boolean) =>
+  isDarkMode
+    ? { background: '#dc2626', color: '#fef2f2' }
+    : { background: '#fef2f2', color: '#dc2626' };
+
+const getPriorityTagStyles = (isDarkMode: boolean) =>
+  isDarkMode
+    ? { background: '#92400e', color: '#fff7ed' }
+    : { background: '#fef3c7', color: '#92400e' };
+
+interface WarningMessagesInput {
+  warnTieXue: boolean;
+  warnJiuJiuWo: boolean;
+  warnRescue: boolean;
+  highPriorityCardNames: string[];
+  isEditMode: boolean;
+}
+
+const buildWarningMessages = ({
+  warnTieXue,
+  warnJiuJiuWo,
+  warnRescue,
+  highPriorityCardNames,
+  isEditMode,
+}: WarningMessagesInput) => {
+  const missingWarnings: string[] = [];
+  if (warnTieXue) missingWarnings.push('无铁血');
+  if (warnJiuJiuWo) missingWarnings.push('无救救我');
+  if (warnRescue) missingWarnings.push('无救援卡');
+
+  const missingWarningMessage = missingWarnings.length
+    ? `该卡组${missingWarnings.join('、')}，慎用`
+    : null;
+  const priorityWarning =
+    highPriorityCardNames.length > 0 && !isEditMode
+      ? `${highPriorityCardNames.join('、')}建议3级佩戴`
+      : null;
+
+  return { missingWarningMessage, priorityWarning };
+};
+
+interface GroupMetaRowProps {
+  contributor: string | undefined;
+  contributorInformation: Contributor | undefined;
+  isEditMode: boolean;
+  isDarkMode: boolean;
+  missingWarningMessage: string | null;
+  priorityWarning: string | null;
+}
+
+const GroupMetaRow = ({
+  contributor,
+  contributorInformation,
+  isEditMode,
+  isDarkMode,
+  missingWarningMessage,
+  priorityWarning,
+}: GroupMetaRowProps) => {
+  const shouldShowContributor = !!contributor && !isEditMode;
+  if (!shouldShowContributor && !missingWarningMessage && !priorityWarning) {
+    return null;
+  }
+
+  const warningTagStyles = getWarningTagStyles(isDarkMode);
+  const priorityTagStyles = getPriorityTagStyles(isDarkMode);
+
+  return (
+    <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
+      {shouldShowContributor && (
+        <Tag
+          size='xs'
+          margin='micro'
+          className='opacity-80'
+          colorStyles={
+            isDarkMode
+              ? { background: '#334155', color: '#e0e7ef' }
+              : { background: '#e0e7ef', color: '#1e293b' }
+          }
+        >
+          推荐人：
+          {(contributorInformation?.description !== undefined && (
+            <Tooltip content={contributorInformation.description}>
+              {contributorInformation.name}
+            </Tooltip>
+          )) ||
+            contributor}
+        </Tag>
+      )}
+      {missingWarningMessage && (
+        <Tag
+          size='xs'
+          margin='micro'
+          className='items-center gap-1 opacity-80'
+          colorStyles={warningTagStyles}
+        >
+          {missingWarningMessage}
+        </Tag>
+      )}
+      {priorityWarning && (
+        <Tag
+          size='xs'
+          margin='micro'
+          className='items-center gap-1 opacity-80'
+          colorStyles={priorityTagStyles}
+        >
+          {priorityWarning}
+        </Tag>
+      )}
+    </div>
+  );
+};
+
+interface GroupDescriptionBlockProps {
+  description: string | undefined;
+  isEditMode: boolean;
+  descriptionPath: string;
+}
+
+const GroupDescriptionBlock = ({
+  description,
+  isEditMode,
+  descriptionPath,
+}: GroupDescriptionBlockProps) => {
+  if (!description && !isEditMode) {
+    return null;
+  }
+
+  return (
+    <div
+      className={clsx(
+        'rounded-lg bg-gray-50 p-2 sm:p-3 dark:bg-slate-700/50',
+        'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
+      )}
+    >
+      <EditableField
+        tag='div'
+        path={descriptionPath}
+        initialValue={description ?? ''}
+        className='text-sm text-gray-700 dark:text-gray-300'
+        enableEdit={isEditMode}
+      />
+    </div>
+  );
+};
+
 interface KnowledgeCardSectionProps {
   knowledgeCardGroups: DeepReadonly<(KnowledgeCardGroup | KnowledgeCardGroupSet)[]>;
   factionId: FactionId;
@@ -137,27 +282,16 @@ function KnowledgeCardGroupFlat({
     const priority = getCardPriority(cardId);
     return priority === '3级质变';
   });
-
-  const missingWarnings: string[] = [];
-  if (shouldWarnMissingTieXue) missingWarnings.push('无铁血');
-  if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
-  if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
-
-  const missingWarningMessage = missingWarnings.length
-    ? `该卡组${missingWarnings.join('、')}，慎用`
-    : null;
-  const priorityWarning =
-    highPriorityCards.length > 0 && !isEditMode
-      ? `${highPriorityCards.map((id) => id.split('-')[1]).join('、')}建议3级佩戴`
-      : null;
-  const warningTagStyles = isDarkMode
-    ? { background: '#dc2626', color: '#fef2f2' }
-    : { background: '#fef2f2', color: '#dc2626' };
-  const priorityTagStyles = isDarkMode
-    ? { background: '#92400e', color: '#fff7ed' }
-    : { background: '#fef3c7', color: '#92400e' };
-  const shouldShowMetaRow =
-    (!isEditMode && contributor) || missingWarningMessage || priorityWarning;
+  const highPriorityCardNames = highPriorityCards
+    .map((id) => id.split('-')[1])
+    .filter((name): name is string => Boolean(name));
+  const { missingWarningMessage, priorityWarning } = buildWarningMessages({
+    warnTieXue: shouldWarnMissingTieXue,
+    warnJiuJiuWo: shouldWarnMissingJiuJiuWo,
+    warnRescue: shouldWarnMissingRescueSkill,
+    highPriorityCardNames,
+    isEditMode,
+  });
 
   return (
     <div
@@ -285,67 +419,20 @@ function KnowledgeCardGroupFlat({
         )}
       </div>
 
-      {shouldShowMetaRow ? (
-        <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
-          {!!contributor && !isEditMode && (
-            <Tag
-              size='xs'
-              margin='micro'
-              className='opacity-80'
-              colorStyles={
-                isDarkMode
-                  ? { background: '#334155', color: '#e0e7ef' }
-                  : { background: '#e0e7ef', color: '#1e293b' }
-              }
-            >
-              推荐人：
-              {(contributorInformation?.description !== undefined && (
-                <Tooltip content={contributorInformation.description}>
-                  {contributorInformation.name}
-                </Tooltip>
-              )) ||
-                contributor}
-            </Tag>
-          )}
-          {missingWarningMessage && (
-            <Tag
-              size='xs'
-              margin='micro'
-              className='items-center gap-1 opacity-80'
-              colorStyles={warningTagStyles}
-            >
-              {missingWarningMessage}
-            </Tag>
-          )}
-          {priorityWarning && (
-            <Tag
-              size='xs'
-              margin='micro'
-              className='items-center gap-1 opacity-80'
-              colorStyles={priorityTagStyles}
-            >
-              {priorityWarning}
-            </Tag>
-          )}
-        </div>
-      ) : null}
+      <GroupMetaRow
+        contributor={contributor}
+        contributorInformation={contributorInformation}
+        isEditMode={isEditMode}
+        isDarkMode={isDarkMode}
+        missingWarningMessage={missingWarningMessage}
+        priorityWarning={priorityWarning}
+      />
 
-      {(!!description || isEditMode) && (
-        <div
-          className={clsx(
-            'rounded-lg bg-gray-50 p-2 sm:p-3 dark:bg-slate-700/50',
-            'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
-          )}
-        >
-          <EditableField
-            tag='div'
-            path={descriptionPath}
-            initialValue={description ?? ''}
-            className='text-sm text-gray-700 dark:text-gray-300'
-            enableEdit={isEditMode}
-          />
-        </div>
-      )}
+      <GroupDescriptionBlock
+        description={description}
+        isEditMode={isEditMode}
+        descriptionPath={descriptionPath}
+      />
     </div>
   );
 }
@@ -425,27 +512,17 @@ export function KnowledgeCardGroupDisplay({
       const priority = getCardPriority(cardId);
       return priority === '3级质变';
     });
+    const highPriorityCardNames = highPriorityCards
+      .map((id) => id.split('-')[1])
+      .filter((name): name is string => Boolean(name));
 
-    const missingWarnings: string[] = [];
-    if (shouldWarnMissingTieXue) missingWarnings.push('无铁血');
-    if (shouldWarnMissingJiuJiuWo) missingWarnings.push('无救救我');
-    if (shouldWarnMissingRescueSkill) missingWarnings.push('无救援卡');
-
-    const missingWarningMessage = missingWarnings.length
-      ? `该卡组${missingWarnings.join('、')}，慎用`
-      : null;
-    const priorityWarning =
-      highPriorityCards.length > 0 && !isEditMode
-        ? `${highPriorityCards.map((id) => id.split('-')[1]).join('、')}建议3级或高等级佩戴`
-        : null;
-    const warningTagStyles = isDarkMode
-      ? { background: '#dc2626', color: '#fef2f2' }
-      : { background: '#fef2f2', color: '#dc2626' };
-    const priorityTagStyles = isDarkMode
-      ? { background: '#92400e', color: '#fff7ed' }
-      : { background: '#fef3c7', color: '#92400e' };
-    const shouldShowMetaRow =
-      (!isEditMode && contributor) || missingWarningMessage || priorityWarning;
+    const { missingWarningMessage, priorityWarning } = buildWarningMessages({
+      warnTieXue: shouldWarnMissingTieXue,
+      warnJiuJiuWo: shouldWarnMissingJiuJiuWo,
+      warnRescue: shouldWarnMissingRescueSkill,
+      highPriorityCardNames,
+      isEditMode,
+    });
 
     const { containerClass, tooltipContent } = getKnowledgeCardCostStyles(
       maxCost,
@@ -518,62 +595,20 @@ export function KnowledgeCardGroupDisplay({
           )}
         </div>
 
-        {shouldShowMetaRow ? (
-          <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
-            {!!contributor && !isEditMode && (
-              <Tag
-                size='xs'
-                margin='micro'
-                className='opacity-80'
-                colorStyles={
-                  isDarkMode
-                    ? { background: '#334155', color: '#e0e7ef' }
-                    : { background: '#e0e7ef', color: '#1e293b' }
-                }
-              >
-                推荐人：
-                {(contributorInformation?.description !== undefined && (
-                  <Tooltip content={contributorInformation.description}>
-                    {contributorInformation.name}
-                  </Tooltip>
-                )) ||
-                  contributor}
-              </Tag>
-            )}
-            {missingWarningMessage && (
-              <Tag
-                size='xs'
-                margin='micro'
-                className='flex items-center gap-1 opacity-80'
-                colorStyles={warningTagStyles}
-              >
-                {missingWarningMessage}
-              </Tag>
-            )}
-            {priorityWarning && (
-              <Tag
-                size='xs'
-                margin='micro'
-                className='flex items-center gap-1 opacity-80'
-                colorStyles={priorityTagStyles}
-              >
-                {priorityWarning}
-              </Tag>
-            )}
-          </div>
-        ) : null}
+        <GroupMetaRow
+          contributor={contributor}
+          contributorInformation={contributorInformation}
+          isEditMode={isEditMode}
+          isDarkMode={isDarkMode}
+          missingWarningMessage={missingWarningMessage}
+          priorityWarning={priorityWarning}
+        />
 
-        {(!!description || isEditMode) && (
-          <div className='ml-11 rounded-lg bg-gray-50 p-2 sm:ml-12 sm:p-3 md:ml-13 lg:ml-14 dark:bg-slate-700/50'>
-            <EditableField
-              tag='div'
-              path={descriptionPath}
-              initialValue={description ?? ''}
-              className='text-sm text-gray-700 dark:text-gray-300'
-              enableEdit={isEditMode}
-            />
-          </div>
-        )}
+        <GroupDescriptionBlock
+          description={description}
+          isEditMode={isEditMode}
+          descriptionPath={descriptionPath}
+        />
       </div>
     );
   } else {
