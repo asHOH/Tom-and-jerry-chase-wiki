@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
 import { convertToPinyin } from '@/lib/pinyinUtils';
+import { verifyCaptchaProof } from '@/lib/captchaUtils';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
@@ -23,10 +24,14 @@ function stringTimingSafeEqual(a: string, b: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, password } = await request.json();
+    const { username, password, captchaToken } = await request.json();
 
     if (!username || typeof username !== 'string') {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
+    }
+
+    if (!verifyCaptchaProof(captchaToken, username)) {
+      return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
     }
 
     const usernameHash = hashUsername(username);

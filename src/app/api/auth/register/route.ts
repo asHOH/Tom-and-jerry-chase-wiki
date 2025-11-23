@@ -4,6 +4,7 @@ import { createHash, randomBytes, pbkdf2Sync } from 'crypto';
 import { TablesInsert } from '@/data/database.types';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
+import { verifyCaptchaProof } from '@/lib/captchaUtils';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
@@ -15,10 +16,14 @@ const hashPassword = (password: string, salt: string) => {
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, nickname, password } = await request.json();
+    const { username, nickname, password, captchaToken } = await request.json();
 
     if (!username || typeof username !== 'string' || !nickname || typeof nickname !== 'string') {
       return NextResponse.json({ error: 'Username and nickname are required' }, { status: 400 });
+    }
+
+    if (!verifyCaptchaProof(captchaToken, username)) {
+      return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
     }
 
     const usernamePinyin = await convertToPinyin(username);
