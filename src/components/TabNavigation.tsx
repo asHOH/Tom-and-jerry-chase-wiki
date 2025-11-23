@@ -8,7 +8,7 @@ import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { supabase } from '@/lib/supabase/client';
 import clsx from 'clsx';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';

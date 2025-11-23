@@ -12,7 +12,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { toChineseNumeral } from '@/lib/textUtils';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/Link';
 import BuffCardDisplay from './BuffCardDisplay';
 import { buffs } from '@/data';
 import PageTitle from '@/components/ui/PageTitle';

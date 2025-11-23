@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { getDocPages } from '@/lib/docUtils';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 

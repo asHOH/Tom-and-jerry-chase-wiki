@@ -5,7 +5,7 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 import useSWR from 'swr';
 import PreviewCard, { GotoPreviewCardProps } from './ui/PreviewCard';
 import type { CategoryHint } from '@/lib/types';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
 type GotoLinkProps = {

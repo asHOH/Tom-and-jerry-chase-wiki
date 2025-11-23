@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 

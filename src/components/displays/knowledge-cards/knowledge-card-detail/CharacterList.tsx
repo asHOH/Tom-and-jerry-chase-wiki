@@ -1,7 +1,7 @@
 'use client';
 
 import Image from '@/components/Image';
-import Link from 'next/link';
+import Link from '@/components/Link';
 
 interface Character {
   id: string;

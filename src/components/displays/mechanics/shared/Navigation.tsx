@@ -7,7 +7,7 @@ import { MECHANICS_NAV_ITEMS } from '@/constants/navigation';
 import Image from '@/components/Image';
 import clsx from 'clsx';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
-import Link from 'next/link';
+import Link from '@/components/Link';
 
 interface MechanicsNavigationProps {
   children?: React.ReactNode;

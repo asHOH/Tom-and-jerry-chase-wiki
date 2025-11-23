@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import Tooltip from '../../../ui/Tooltip';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import type { FactionId } from '@/data/types';

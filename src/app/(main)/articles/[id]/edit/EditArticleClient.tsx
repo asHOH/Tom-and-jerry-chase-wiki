@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import useSWR from 'swr';
 
 import PageTitle from '@/components/ui/PageTitle';

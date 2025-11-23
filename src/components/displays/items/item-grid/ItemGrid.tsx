@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/Link';
 import ItemCardDisplay from './ItemCardDisplay';
 import { items } from '@/data';
 import PageTitle from '@/components/ui/PageTitle';

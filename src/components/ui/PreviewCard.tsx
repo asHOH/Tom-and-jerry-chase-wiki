@@ -1,7 +1,7 @@
 // GotoPreviewCard.tsx
 import BaseCard from './BaseCard';
 import clsx from 'clsx';
-import Link from 'next/link';
+import Link from '@/components/Link';
 import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 import Tag from './Tag';
 import { getTypeLabelColors } from '@/lib/design-tokens';

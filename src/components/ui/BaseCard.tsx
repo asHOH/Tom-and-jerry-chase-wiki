@@ -1,6 +1,6 @@
 import { designTokens, componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
 import clsx from 'clsx';
-import Link from 'next/link';
+import Link from '@/components/Link';
 
 type BaseCardProps = {
   children: React.ReactNode;
