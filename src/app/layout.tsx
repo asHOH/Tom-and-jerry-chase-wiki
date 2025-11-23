@@ -4,15 +4,11 @@ import { defaultMetadata } from '@/constants/seo';
 
 import { getRuntimeCspHeader } from '@/lib/csp';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
-import { CacheDebugPanel } from '@/components/CacheDebugPanel';
 import { ClientProviders } from '@/components/ClientProviders';
 import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
-import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
-import { VersionChecker } from '@/components/VersionChecker';
 
 import './globals.css';
 
@@ -50,7 +46,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={inter.className}>
         <ErrorBoundary>
           <KeyboardNavigation />
-          <OfflineIndicator />
           <DynamicFaviconEditBadge />
           <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
             <UserProvider initialValue={getUserData()}>
@@ -61,9 +56,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </main>
         </ErrorBoundary>
         <PerformanceMonitor />
-        <ServiceWorkerRegistration />
-        <CacheDebugPanel />
-        <VersionChecker />
         <SpeedInsightsComponent />
         <AnalyticsComponent />
       </body>
