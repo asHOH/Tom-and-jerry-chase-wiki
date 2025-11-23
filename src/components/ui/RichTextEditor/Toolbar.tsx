@@ -8,10 +8,8 @@ import {
   BlockquoteIcon,
   BoldIcon,
   BulletListIcon,
-  CodeBlockIcon,
   HorizontalRuleIcon,
   ImageIcon,
-  InlineCodeIcon,
   ItalicIcon,
   LinkIcon,
   LoadingSpinnerIcon,
@@ -165,14 +163,6 @@ export const Toolbar = React.memo(function Toolbar({
           >
             <StrikethroughIcon />
           </ToolbarButton>
-          <ToolbarButton
-            onClick={commands.toggleInlineCode}
-            isActive={!!state.code}
-            title='行内代码 (Ctrl+E)'
-            mode={mode}
-          >
-            <InlineCodeIcon />
-          </ToolbarButton>
         </div>
 
         <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
@@ -325,14 +315,6 @@ export const Toolbar = React.memo(function Toolbar({
             mode={mode}
           >
             <BlockquoteIcon />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={commands.toggleCodeBlock}
-            isActive={!!state.codeBlock}
-            title='代码块 (Ctrl+Alt+C)'
-            mode={mode}
-          >
-            <CodeBlockIcon />
           </ToolbarButton>
           <ToolbarButton onClick={commands.insertHorizontalRule} title='插入分隔线' mode={mode}>
             <HorizontalRuleIcon />

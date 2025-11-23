@@ -47,16 +47,16 @@ export const StrikethroughIcon = React.memo<IconProps>(({ className = 'size-4', 
 ));
 StrikethroughIcon.displayName = 'StrikethroughIcon';
 
-export const InlineCodeIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => (
-  <SvgIcon className={className} viewBox='0 0 20 20' fill='currentColor' stroke='none' {...rest}>
-    <path
-      fillRule='evenodd'
-      d='M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z'
-      clipRule='evenodd'
-    />
-  </SvgIcon>
-));
-InlineCodeIcon.displayName = 'InlineCodeIcon';
+// export const InlineCodeIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => (
+//   <SvgIcon className={className} viewBox='0 0 20 20' fill='currentColor' stroke='none' {...rest}>
+//     <path
+//       fillRule='evenodd'
+//       d='M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z'
+//       clipRule='evenodd'
+//     />
+//   </SvgIcon>
+// ));
+// InlineCodeIcon.displayName = 'InlineCodeIcon';
 
 // List icons
 export const BulletListIcon = React.memo<IconProps>(({ className = 'w-4 h-4', ...rest }) => (
@@ -145,19 +145,19 @@ export const BlockquoteIcon = React.memo<IconProps>(({ className = 'size-4', ...
 ));
 BlockquoteIcon.displayName = 'BlockquoteIcon';
 
-export const CodeBlockIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => (
-  <SvgIcon className={className} viewBox='0 0 20 20' fill='none' stroke='currentColor' {...rest}>
-    <rect x='0.3' y='1.5' width='19.4' height='17' rx='2' strokeWidth={1} />
-    <path
-      fillRule='evenodd'
-      d='M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z'
-      clipRule='evenodd'
-      stroke='none'
-      fill='currentColor'
-    />
-  </SvgIcon>
-));
-CodeBlockIcon.displayName = 'CodeBlockIcon';
+// export const CodeBlockIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => (
+//   <SvgIcon className={className} viewBox='0 0 20 20' fill='none' stroke='currentColor' {...rest}>
+//     <rect x='0.3' y='1.5' width='19.4' height='17' rx='2' strokeWidth={1} />
+//     <path
+//       fillRule='evenodd'
+//       d='M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z'
+//       clipRule='evenodd'
+//       stroke='none'
+//       fill='currentColor'
+//     />
+//   </SvgIcon>
+// ));
+// CodeBlockIcon.displayName = 'CodeBlockIcon';
 
 export const LinkIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => (
   <SvgIcon className={className} strokeWidth={2} {...rest}>
