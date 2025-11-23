@@ -1,4 +1,5 @@
 import { getStarredItemKeyTooltipContent } from '@/lib/tooltipUtils';
+
 import Tooltip from '../../../ui/Tooltip';
 
 interface TextWithItemKeyTooltipsProps {

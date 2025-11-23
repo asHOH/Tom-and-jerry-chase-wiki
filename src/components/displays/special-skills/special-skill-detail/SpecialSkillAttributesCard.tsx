@@ -1,11 +1,12 @@
 'use client';
 
+import { SpecialSkill } from '@/data/types';
+
+import { componentTokens, designTokens } from '@/lib/design-tokens';
+import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
-import { SpecialSkill } from '@/data/types';
-import { useMobile } from '@/hooks/useMediaQuery';
-import { componentTokens, designTokens } from '@/lib/design-tokens';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;
@@ -97,7 +98,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
 
       {/*------Item Attributes------*/}
       <div
-        className='grid items-center border-t border-gray-300 dark:border-gray-600 gap-1'
+        className='grid items-center gap-1 border-t border-gray-300 dark:border-gray-600'
         style={{
           marginLeft: spacing.md,
           marginRight: spacing.md,
@@ -105,7 +106,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
           paddingBottom: spacing.xxxxxs,
         }}
       >
-        <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
+        <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
           <span className={`text-sm whitespace-pre`}>
             {'CD：'}
             <span className='text-indigo-700 dark:text-indigo-400'>{skill.cooldown}</span>
@@ -116,7 +117,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
 
       {/*Navigation */}
       <div
-        className='flex items-center flex-wrap border-t text-sm border-gray-300 dark:border-gray-600'
+        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
         style={{
           gap: spacing.sm,
           marginLeft: spacing.md,

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
-import { CharacterRankingGrid } from '@/components/displays/characters';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { CharacterRankingGrid } from '@/components/displays/characters';
 
 export const dynamic = 'force-static';
 
@@ -17,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RanksPage() {
   return (
-    <div className='max-w-7xl mx-auto p-6 space-y-6' style={{ paddingTop: '80px' }}>
+    <div className='mx-auto max-w-7xl space-y-6 p-6' style={{ paddingTop: '80px' }}>
       <CharacterRankingGrid description={DESCRIPTION} />
     </div>
   );

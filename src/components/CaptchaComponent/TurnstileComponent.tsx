@@ -1,5 +1,5 @@
-import { Turnstile } from '@marsidev/react-turnstile';
 import { Component } from 'react';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default class TurnstileComponent extends Component<{
   onVerify: (token: string) => void;

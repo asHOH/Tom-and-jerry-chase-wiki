@@ -3,6 +3,7 @@ import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { characters } from '@/data';
 import { FactionId } from '@/data/types';
 import { useSnapshot } from 'valtio';
+
 import AttributeDisplay from './AttributeDisplay';
 
 interface CharacterAttribute {
@@ -148,7 +149,7 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
             factionId={factionId}
             isDetailed={isDetailed}
             path='attackBoost'
-            className='text-sm text-amber-600 dark:text-amber-400 py-1'
+            className='py-1 text-sm text-amber-600 dark:text-amber-400'
           />
         )}
     </div>

@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { characters } from '@/data';
-import { mouseCharactersWithImages } from '@/data/mouseCharacters';
 import { catCharactersWithImages } from '@/data/catCharacters';
+import { mouseCharactersWithImages } from '@/data/mouseCharacters';
 
 export const useCharacterNavigation = (currentCharacterId: string) => {
   const router = useRouter();

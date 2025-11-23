@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/admin';
-import { requireRole } from '@/lib/auth/requireRole';
 import { pbkdf2Sync, randomBytes } from 'crypto';
+import { NextResponse } from 'next/server';
+
+import { requireRole } from '@/lib/auth/requireRole';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const hashPassword = (password: string, salt: string) =>
   pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');

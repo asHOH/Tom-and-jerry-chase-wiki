@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+
 import { requireRole } from '@/lib/auth/requireRole';
 
 export async function POST(request: Request) {

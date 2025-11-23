@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 import type { Database } from '@/data/database.types';
+
+import { createClient } from '@/lib/supabase/server';
 
 export type Role = Database['public']['Enums']['role_type'];
 

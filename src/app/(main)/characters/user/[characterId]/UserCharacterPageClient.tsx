@@ -1,10 +1,11 @@
 'use client';
 
-import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
+import { useEffect, useState } from 'react';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { characters } from '@/data';
+
 import { CharacterWithFaction } from '@/lib/types';
-import { useEffect, useState } from 'react';
+import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
 
 /**
  * This is the client component that contains the actual page logic.

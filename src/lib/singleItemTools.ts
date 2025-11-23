@@ -1,5 +1,5 @@
-import { SingleItem, FactionId } from '@/data/types';
 import { buffs, cards, characters, entities, items, specialSkills } from '@/data';
+import { FactionId, SingleItem } from '@/data/types';
 
 export const getSingleItemHref = (singleItem: SingleItem): string => {
   let R: string | undefined;

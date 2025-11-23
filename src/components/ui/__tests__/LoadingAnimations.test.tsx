@@ -1,14 +1,15 @@
 /* eslint-disable testing-library/no-container */
 /* eslint-disable testing-library/no-node-access */
 import { render } from '@testing-library/react';
+
 import {
   BouncingDots,
+  ProgressBar,
   PulsingCircle,
   RippleAnimation,
   SpinningBars,
-  WaveAnimation,
   TypingDots,
-  ProgressBar,
+  WaveAnimation,
 } from '../LoadingAnimations';
 
 describe('LoadingAnimations', () => {

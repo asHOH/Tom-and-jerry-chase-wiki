@@ -1,14 +1,15 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { FactionId } from '@/data/types';
+
 import {
-  PropertyInfo,
   getPropertiesForFaction,
+  PropertyInfo,
   RankableProperty,
 } from '@/lib/characterRankingUtils';
-import { FactionId } from '@/data/types';
 import { getFactionButtonColors } from '@/lib/design-system';
-import { useDarkMode } from '@/context/DarkModeContext';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
 
@@ -50,7 +51,7 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
 
   // Helper to render label with tooltip
   const propertyLabel = (p: PropertyInfo) => (
-    <Tooltip content={p.description} className='border-none cursor-pointer'>
+    <Tooltip content={p.description} className='cursor-pointer border-none'>
       {p.label}
     </Tooltip>
   );
@@ -59,9 +60,9 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
 
   return (
     <div className='space-y-8 dark:text-slate-200'>
-      <header className='text-center space-y-4 mb-8 px-4'>
+      <header className='mb-8 space-y-4 px-4 text-center'>
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           {/* 通用属性 */}
           <FilterRow<RankableProperty>
             label='通用属性:'

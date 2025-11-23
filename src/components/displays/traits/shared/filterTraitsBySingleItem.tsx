@@ -1,7 +1,7 @@
-import { searchBuffBySingleItem } from './tools';
 import traits from '@/data/traits';
 import { SingleItem, Trait } from '@/data/types';
-import { checkItemMatchesTrait } from './tools';
+
+import { checkItemMatchesTrait, searchBuffBySingleItem } from './tools';
 
 // 辅助函数：根据Trait的内容生成唯一标识符，用于去重
 const getTraitKey = (trait: Trait): string => {

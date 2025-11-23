@@ -1,5 +1,13 @@
 'use client';
 
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useParams } from 'next/navigation';
+
+import { formatArticleDate } from '@/lib/dateUtils';
+import { toChineseNumeral } from '@/lib/textUtils';
+import { useMobile } from '@/hooks/useMediaQuery';
+import { useUser } from '@/hooks/useUser';
+import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import {
   ClockIcon,
   EyeIcon,
@@ -7,14 +15,7 @@ import {
   PencilSquareIcon,
   UserCircleIcon,
 } from '@/components/icons/CommonIcons';
-import RichTextDisplay from '@/components/ui/RichTextDisplay';
-import { useMobile } from '@/hooks/useMediaQuery';
-import { useUser } from '@/hooks/useUser';
-import { formatArticleDate } from '@/lib/dateUtils';
-import { toChineseNumeral } from '@/lib/textUtils';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from '@/components/Link';
 
 interface ArticleData {
   id: string;
@@ -410,7 +411,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
     <div className={`container mx-auto ${isMobile ? 'px-1 py-2' : 'px-6 py-8'} max-w-6xl`}>
       <div className='flex flex-col lg:flex-row lg:items-start lg:gap-10'>
         {hasToc && (
-          <aside className='sticky top-24 hidden h-max max-h-[75vh] overflow-auto rounded-lg border border-gray-200 bg-white/60 p-4 shadow-sm backdrop-blur dark:border-gray-700 dark:bg-gray-900/40 lg:block lg:w-64'>
+          <aside className='sticky top-24 hidden h-max max-h-[75vh] overflow-auto rounded-lg border border-gray-200 bg-white/60 p-4 shadow-sm backdrop-blur lg:block lg:w-64 dark:border-gray-700 dark:bg-gray-900/40'>
             {renderTocList('text-left')}
           </aside>
         )}
@@ -419,7 +420,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
           {/* Header */}
           <div className='mb-8 flex flex-col'>
             <header className='text-center'>
-              <h1 className={`${titleSize} font-bold text-blue-600 dark:text-blue-400 py-3`}>
+              <h1 className={`${titleSize} py-3 font-bold text-blue-600 dark:text-blue-400`}>
                 {article.title}
               </h1>
             </header>
@@ -467,7 +468,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
               </div>
 
               {/* Action Buttons */}
-              <div className='mt-4 flex flex-wrap gap-3 pt-4 border-t border-gray-200 dark:border-gray-700'>
+              <div className='mt-4 flex flex-wrap gap-3 border-t border-gray-200 pt-4 dark:border-gray-700'>
                 <button
                   onClick={() => setShowAutoNumbering(!showAutoNumbering)}
                   type='button'
@@ -502,7 +503,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
           </div>
 
           {hasToc && (
-            <div className='mb-6 rounded-lg border border-gray-200 bg-white/70 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900/40 lg:hidden'>
+            <div className='mb-6 rounded-lg border border-gray-200 bg-white/70 p-4 shadow-sm lg:hidden dark:border-gray-700 dark:bg-gray-900/40'>
               <details open>
                 <summary className='cursor-pointer text-sm font-semibold text-gray-800 dark:text-gray-200'>
                   目录
@@ -519,7 +520,7 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
               isMobile
                 ? ''
                 : 'rounded-lg border border-transparent p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40'
-            }${showAutoNumbering ? ' article-content-auto-numbered' : ''}`}
+            }${showAutoNumbering ? 'article-content-auto-numbered' : ''}`}
           >
             <style jsx global>{`
               .article-content-auto-numbered [data-heading-prefix]::before {

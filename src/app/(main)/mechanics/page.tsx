@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
-import MechanicsClient from './MechanicsClient';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import MechanicsClient from './MechanicsClient';
 
 export const dynamic = 'force-static';
 

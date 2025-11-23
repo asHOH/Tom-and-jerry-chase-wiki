@@ -1,5 +1,5 @@
-import useSWR from 'swr';
 import { FactionId } from '@/data/types';
+import useSWR from 'swr';
 
 /**
  * Hook for lazy loading character data by faction using dynamic imports

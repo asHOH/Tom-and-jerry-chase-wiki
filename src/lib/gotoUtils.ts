@@ -1,7 +1,9 @@
 // Utility for resolving goto targets by name
 
 import { buffs, type Skill } from '@/data';
-import type { GotoResult, CategoryHint } from '@/lib/types';
+
+import type { CategoryHint, GotoResult } from '@/lib/types';
+
 import { ensureGotoIndex, normalizeCategoryHint, normalizeName } from './gotoIndex';
 
 /**

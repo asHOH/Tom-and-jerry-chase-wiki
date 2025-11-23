@@ -1,15 +1,17 @@
 'use client';
 
 import React from 'react';
-import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
-import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { Entity, Skill } from '@/data/types';
-import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
+
 import type { DeepReadonly } from '@/types/deep-readonly';
+import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
+import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
+import DetailTextSection from '@/components/displays/shared/DetailTextSection';
+
+import DetailTraitsCard from '../../shared/DetailTraitsCard';
 import EntityAttributesCard from './EntityAttributesCard';
 import EntitySkillCard from './EntitySkillCard';
-import DetailTraitsCard from '../../shared/DetailTraitsCard';
 
 export default function EntityDetailClient({ entity }: { entity: Entity }) {
   // Keyboard navigation

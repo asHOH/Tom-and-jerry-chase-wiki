@@ -1,4 +1,4 @@
-import { CatPositioningTagName, MousePositioningTagName, FactionId } from '@/data/types';
+import { CatPositioningTagName, FactionId, MousePositioningTagName } from '@/data/types';
 
 // Define display sequences for positioning tags
 export const CAT_POSITIONING_TAG_SEQUENCE: CatPositioningTagName[] = [

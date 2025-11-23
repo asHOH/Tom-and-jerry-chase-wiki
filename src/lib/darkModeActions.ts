@@ -1,6 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
+
 import { getCookieDomain, getDeploymentHostname } from '@/lib/server/host';
 
 /**

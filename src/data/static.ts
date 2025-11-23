@@ -1,8 +1,9 @@
 import { GameDataManager } from '@/lib/dataManager';
-import catSpecialSkillsWithImages from './catSpecialSkills';
-import mouseSpecialSkillsWithImages from './mouseSpecialSkills';
+
 import catEntitiesWithImages from './catEntities';
+import catSpecialSkillsWithImages from './catSpecialSkills';
 import mouseEntitiesWithImages from './mouseEntities';
+import mouseSpecialSkillsWithImages from './mouseSpecialSkills';
 
 export const { factionData, characterData, cardData } = GameDataManager.getRawData();
 

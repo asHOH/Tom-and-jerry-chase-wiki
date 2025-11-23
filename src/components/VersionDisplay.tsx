@@ -1,4 +1,5 @@
 'use client';
+
 import useSWR from 'swr';
 
 interface VersionInfo {
@@ -38,7 +39,7 @@ export const VersionDisplay: React.FC = () => {
   };
 
   return (
-    <p className='text-sm text-gray-500 mt-2'>
+    <p className='mt-2 text-sm text-gray-500'>
       版本：{formatVersionTime(versionInfo.buildTime, versionInfo.environment)}
     </p>
   );

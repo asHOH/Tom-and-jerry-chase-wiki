@@ -1,9 +1,9 @@
 import { catCharactersWithImages } from '@/data/catCharacters';
-import { mouseCharactersWithImages } from '@/data/mouseCharacters';
 import { catCardsWithImages } from '@/data/catKnowledgeCards';
-import { mouseCardsWithImages } from '@/data/mouseKnowledgeCards';
-import { FactionId, Faction, Character, Card, PositioningTag } from '@/data/types';
 import { historyData } from '@/data/history';
+import { mouseCharactersWithImages } from '@/data/mouseCharacters';
+import { mouseCardsWithImages } from '@/data/mouseKnowledgeCards';
+import { Card, Character, Faction, FactionId, PositioningTag } from '@/data/types';
 
 // Raw data aggregation
 const rawCharacterData = {

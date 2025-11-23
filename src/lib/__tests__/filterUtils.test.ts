@@ -1,9 +1,9 @@
 import {
-  filterByRank,
+  applyMultipleFilters,
   filterByCostRange,
   filterByFaction,
+  filterByRank,
   filterByTextSearch,
-  applyMultipleFilters,
 } from '../filterUtils';
 
 describe('filterUtils', () => {

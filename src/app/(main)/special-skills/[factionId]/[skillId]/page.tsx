@@ -1,11 +1,13 @@
-import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { specialSkills } from '@/data';
 import type { FactionId } from '@/data/types';
-import SpecialSkillDetailClient from './SpecialSkillDetailClient';
-import { generateArticleMetadata } from '@/lib/metadataUtils';
 import { Article, WithContext } from 'schema-dts';
+
+import { generateArticleMetadata } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
+
+import SpecialSkillDetailClient from './SpecialSkillDetailClient';
 
 type CatSkill = (typeof specialSkills)['cat'][string];
 type MouseSkill = (typeof specialSkills)['mouse'][string];

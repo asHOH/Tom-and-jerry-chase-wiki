@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { SITE_SHORT_NAME, DEFAULT_KEYWORDS } from '@/constants/seo';
+import { DEFAULT_KEYWORDS, SITE_SHORT_NAME } from '@/constants/seo';
 
 interface PageMetadata {
   title: string;

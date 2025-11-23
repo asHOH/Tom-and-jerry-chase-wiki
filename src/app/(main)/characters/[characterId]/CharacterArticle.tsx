@@ -1,9 +1,10 @@
 'use client';
 
-import CharacterSection from '@/components/displays/characters/character-detail/CharacterSection';
-import StyledMDX from '@/components/ui/StyledMDX';
-import { sanitizeHTML } from '@/lib/xssUtils';
 import { use, useLayoutEffect, useState } from 'react';
+
+import { sanitizeHTML } from '@/lib/xssUtils';
+import StyledMDX from '@/components/ui/StyledMDX';
+import CharacterSection from '@/components/displays/characters/character-detail/CharacterSection';
 
 export default function CharacterDocs({
   content,
@@ -25,7 +26,7 @@ export default function CharacterDocs({
   return result && displayContent ? (
     <CharacterSection title='操作技巧' to={`/articles/${encodeURIComponent(result.id!)}`}>
       {authors.length > 0 && (
-        <div className='text-sm text-gray-500 dark:text-gray-400 mx-2 mb-2'>
+        <div className='mx-2 mb-2 text-sm text-gray-500 dark:text-gray-400'>
           作者：{authors.join('、')}
         </div>
       )}

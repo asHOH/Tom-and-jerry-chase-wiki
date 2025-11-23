@@ -1,8 +1,8 @@
 // Special skill search logic
 
 import { specialSkills } from '@/data';
-import { convertToPinyin } from '../pinyinUtils';
 
+import { convertToPinyin } from '../pinyinUtils';
 import type { SearchResult } from './types';
 
 export async function* searchSpecialSkills(

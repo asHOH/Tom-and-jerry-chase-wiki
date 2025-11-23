@@ -1,7 +1,8 @@
 'use server';
-import CharacterSection from '@/components/displays/characters/character-detail/CharacterSection';
-import StyledMDX from '@/components/ui/StyledMDX';
+
 import { DocPage } from '@/lib/docUtils';
+import StyledMDX from '@/components/ui/StyledMDX';
+import CharacterSection from '@/components/displays/characters/character-detail/CharacterSection';
 
 function EmptyH1() {
   return null;

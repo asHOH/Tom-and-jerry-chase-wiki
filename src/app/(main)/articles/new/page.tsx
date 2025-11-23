@@ -1,6 +1,8 @@
-import NewArticleClient from './NewArticleClient';
 import { Metadata } from 'next';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import NewArticleClient from './NewArticleClient';
 
 export const metadata: Metadata = {
   ...generatePageMetadata({

@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
-import EntityClient from './EntityGridClient';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import EntityClient from './EntityGridClient';
 
 export const dynamic = 'force-static';
 

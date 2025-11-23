@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
-import { generatePageMetadata } from '@/lib/metadataUtils';
-import HomeContentClient from './HomeContentClient';
-import StructuredData from '@/components/StructuredData';
 import { getSiteJsonLd } from '@/constants/seo';
+
+import { generatePageMetadata } from '@/lib/metadataUtils';
+import StructuredData from '@/components/StructuredData';
+
+import HomeContentClient from './HomeContentClient';
 
 const DESCRIPTION = '查询猫和老鼠手游的角色、道具、知识卡等信息。';
 

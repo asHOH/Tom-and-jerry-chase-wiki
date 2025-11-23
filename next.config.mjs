@@ -1,6 +1,7 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import withPWA from 'next-pwa';
+
 import { buildCspHeader } from './csp.config.mjs';
 
 const withBundleAnalyzer = bundleAnalyzer({

@@ -1,16 +1,18 @@
 'use client';
 
-import { UserCircleIcon } from '@/components/icons/CommonIcons';
-import Image from '@/components/Image';
+import { useCallback, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import clsx from 'clsx';
+
+import { supabase } from '@/lib/supabase/client';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
-import { supabase } from '@/lib/supabase/client';
-import clsx from 'clsx';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { UserCircleIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
+import Link from '@/components/Link';
+
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import SearchBar from './ui/SearchBar';
 import Tooltip from './ui/Tooltip';
@@ -157,8 +159,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     pathname === '/' || pathname === '' || pathname.startsWith('/articles');
 
   return (
-    <div className='fixed top-0 left-0 right-0 bg-white shadow-md z-50 w-full py-2 dark:bg-slate-900 dark:shadow-lg'>
-      <div className='flex justify-between items-center max-w-screen-xl mx-auto px-4 gap-4'>
+    <div className='fixed top-0 right-0 left-0 z-50 w-full bg-white py-2 shadow-md dark:bg-slate-900 dark:shadow-lg'>
+      <div className='mx-auto flex max-w-screen-xl items-center justify-between gap-4 px-4'>
         {/* Left-aligned navigation buttons */}
         <div className={clsx('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
           <Tooltip content='首页' className='border-none'>
@@ -184,7 +186,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <span className='sr-only lg:hidden'>首页</span>
               {isEditMode && (
                 <span
-                  className='pointer-events-none absolute -bottom-0.5 -right-0.5 inline-flex h-[12px] w-[12px] items-center justify-center rounded-full bg-amber-500 text-[9px] leading-none text-white ring-2 ring-white dark:ring-slate-900 md:h-[14px] md:w-[14px] md:text-[10px]'
+                  className='pointer-events-none absolute -right-0.5 -bottom-0.5 inline-flex h-[12px] w-[12px] items-center justify-center rounded-full bg-amber-500 text-[9px] leading-none text-white ring-2 ring-white md:h-[14px] md:w-[14px] md:text-[10px] dark:ring-slate-900'
                   aria-hidden
                 >
                   ✎
@@ -243,7 +245,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               {overflowOpen && (
                 <div
                   className={clsx(
-                    'absolute mt-2 min-w-[140px] rounded-md bg-white shadow-lg dark:bg-slate-800 z-[9999]',
+                    'absolute z-[9999] mt-2 min-w-[140px] rounded-md bg-white shadow-lg dark:bg-slate-800',
                     dropdownAlignmentClass
                   )}
                 >
@@ -290,24 +292,24 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             >
               <div
                 className={clsx(
-                  'relative flex min-h-[40px] cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 dark:bg-slate-800 dark:border-gray-600 md:min-h-[44px]'
+                  'relative flex min-h-[40px] cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 md:min-h-[44px] dark:border-gray-600 dark:bg-slate-800'
                 )}
                 onClick={toggleDetailedView}
               >
                 {/* Background slider */}
                 <div
                   className={clsx(
-                    'absolute top-1 bottom-1 rounded-md shadow-sm transition-all duration-200 ease-out w-[calc(50%-4px)]',
+                    'absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-md shadow-sm transition-all duration-200 ease-out',
                     isDetailedView
-                      ? 'left-1 transform translate-x-full bg-orange-100 dark:bg-orange-900'
-                      : 'left-1 transform translate-x-0 bg-blue-100 dark:bg-blue-900'
+                      ? 'left-1 translate-x-full transform bg-orange-100 dark:bg-orange-900'
+                      : 'left-1 translate-x-0 transform bg-blue-100 dark:bg-blue-900'
                   )}
                 />
 
                 {/* Simple option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
+                    'relative z-10 flex items-center justify-center px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
                     !isDetailedView
                       ? 'text-blue-600 dark:text-blue-400'
                       : 'text-gray-500 dark:text-gray-500'
@@ -320,7 +322,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 {/* Detailed option */}
                 <div
                   className={clsx(
-                    'relative z-10 flex items-center justify-center whitespace-nowrap px-2 py-1 text-xs font-medium transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
+                    'relative z-10 flex items-center justify-center px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
                     isDetailedView
                       ? 'text-orange-600 dark:text-orange-400'
                       : 'text-gray-500 dark:text-gray-500'
@@ -349,13 +351,13 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   </button>
                 </Tooltip>
                 {userDropdownOpen && (
-                  <div className='absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 shadow-lg rounded-md z-[99999]'>
+                  <div className='absolute right-0 z-[99999] mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-slate-800'>
                     <ul>
                       <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>
                         你好，{nickname}
                       </li>
                       {(role == 'Coordinator' || role == 'Reviewer') && (
-                        <li className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer'>
+                        <li className='cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700'>
                           <Link href='/admin/' className='block text-gray-800 dark:text-gray-200'>
                             进入管理面板
                           </Link>
@@ -368,9 +370,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         <button
                           type='button'
                           className={clsx(
-                            'w-full text-left px-4 py-2 cursor-pointer rounded-b-md text-gray-800 dark:text-gray-200',
+                            'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-gray-800 dark:text-gray-200',
                             signingOut
-                              ? 'opacity-60 pointer-events-none bg-gray-100 dark:bg-slate-700'
+                              ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
                               : 'hover:bg-gray-100 dark:hover:bg-slate-700'
                           )}
                           onClick={handleSignOut}

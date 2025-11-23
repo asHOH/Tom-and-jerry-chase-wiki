@@ -1,6 +1,7 @@
 'use client';
 
 import { Analytics } from '@vercel/analytics/next';
+
 import { isVercelAnalyticsEnabled } from '@/lib/platform';
 
 export function AnalyticsComponent() {

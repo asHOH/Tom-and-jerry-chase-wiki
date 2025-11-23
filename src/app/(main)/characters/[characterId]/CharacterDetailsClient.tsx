@@ -1,17 +1,18 @@
 'use client';
 
-import { CharacterDetails } from '@/components/displays/characters/character-detail';
-import { CharacterDetailsProps } from '@/lib/types';
+import { useCallback, useEffect, useState } from 'react';
+import { useEditMode } from '@/context/EditModeContext';
 import { characters } from '@/data';
-import { useEffect, useState, useCallback } from 'react';
-import OnboardingTutorial from '@/components/OnboardingTutorial';
+import { proxy } from 'valtio';
+
 import {
   hasUserSeenCharacterDetailsTutorial,
   resetCharacterDetailsTutorial,
 } from '@/lib/tutorialUtils';
-import { useEditMode } from '@/context/EditModeContext';
-import { useKeyboardNavigation } from '@/lib/hooks/useKeyboardNavigation';
-import { proxy } from 'valtio';
+import { CharacterDetailsProps } from '@/lib/types';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import { CharacterDetails } from '@/components/displays/characters/character-detail';
+import OnboardingTutorial from '@/components/OnboardingTutorial';
 
 const syncCharacterStoreEntry = (
   characterId: string,

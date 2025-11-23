@@ -1,13 +1,14 @@
-import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { CharacterRankingGrid } from '@/components/displays/characters';
+import { notFound } from 'next/navigation';
+import { FactionId } from '@/data/types';
+
 import {
-  RANKABLE_PROPERTIES,
   getPropertyInfo,
+  RANKABLE_PROPERTIES,
   RankableProperty,
 } from '@/lib/characterRankingUtils';
-import { FactionId } from '@/data/types';
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { CharacterRankingGrid } from '@/components/displays/characters';
 
 export const dynamic = 'force-static';
 
@@ -63,7 +64,7 @@ export default async function PropertyRankPage({ params, searchParams }: PagePro
   }
 
   return (
-    <div className='max-w-7xl mx-auto p-6 space-y-6' style={{ paddingTop: '80px' }}>
+    <div className='mx-auto max-w-7xl space-y-6 p-6' style={{ paddingTop: '80px' }}>
       <CharacterRankingGrid initialProperty={property} />
     </div>
   );

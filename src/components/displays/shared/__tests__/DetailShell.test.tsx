@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+
 import { DetailSection, DetailShell } from '../DetailShell';
 
 describe('DetailShell', () => {

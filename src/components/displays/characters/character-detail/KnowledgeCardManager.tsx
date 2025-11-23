@@ -4,6 +4,7 @@ import { useLocalCharacter } from '@/context/EditModeContext';
 import { characters } from '@/data'; // Import Character type
 import type { FactionId, KnowledgeCardGroup } from '@/data/types';
 import { useSnapshot } from 'valtio';
+
 import KnowledgeCardSection from './KnowledgeCardSection';
 
 interface KnowledgeCardManagerProps {

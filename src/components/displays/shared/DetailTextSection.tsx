@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
+
+import { designTokens } from '@/lib/design-tokens';
 import SectionHeader from '@/components/ui/SectionHeader';
 import TextWithHoverTooltips from '@/components/displays/characters/shared/TextWithHoverTooltips';
-import { designTokens } from '@/lib/design-tokens';
 
 type DetailTextSectionProps = {
   title: string;
@@ -39,11 +40,11 @@ export function DetailTextSection({
     <div>
       <SectionHeader title={title}>{headerContent}</SectionHeader>
       <div
-        className='card dark:bg-slate-800 dark:border-slate-700 mb-8'
+        className='card mb-8 dark:border-slate-700 dark:bg-slate-800'
         style={{ padding: spacing.md }}
       >
         <p
-          className='text-black dark:text-gray-200 text-lg'
+          className='text-lg text-black dark:text-gray-200'
           style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs, whiteSpace: 'pre-wrap' }}
         >
           <TextWithHoverTooltips text={displayText} />

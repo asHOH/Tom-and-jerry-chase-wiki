@@ -1,25 +1,27 @@
 'use client';
 
-import React, { useMemo, useCallback } from 'react';
-import Image from '@/components/Image';
-import { SkillAllocation, FactionId } from '@/data/types';
+import React, { useCallback, useMemo } from 'react';
+import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { characters } from '@/data';
+import { FactionId, SkillAllocation } from '@/data/types';
+import clsx from 'clsx';
+import { useSnapshot } from 'valtio';
+
+import { getSkillLevelColors } from '@/lib/design-tokens';
 import {
-  safeParseSkillAllocationPattern,
-  validateSkillAllocationPattern,
   getSkillAllocationImageUrl,
   ParsedSkillLevel,
+  safeParseSkillAllocationPattern,
+  validateSkillAllocationPattern,
 } from '@/lib/skillAllocationUtils';
-import { getSkillLevelColors } from '@/lib/design-tokens';
-import Tooltip from '../../../ui/Tooltip';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import EditableField from '@/components/ui/EditableField';
-import { useAppContext } from '@/context/AppContext';
-import { useSnapshot } from 'valtio';
-import { characters } from '@/data';
-import { useDarkMode } from '@/context/DarkModeContext';
-import clsx from 'clsx';
 import TextWithHoverTooltips from '@/components/displays/characters/shared/TextWithHoverTooltips';
 import { TrashIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
+
+import Tooltip from '../../../ui/Tooltip';
 
 // Type for processed skill levels with current level information
 type ProcessedSkillLevel = ParsedSkillLevel & {
@@ -150,13 +152,13 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       } as React.CSSProperties;
 
       const iconElement = (
-        <div className={clsx('relative w-10 h-10', !isDelayed && 'rounded-full')} style={baseStyle}>
+        <div className={clsx('relative h-10 w-10', !isDelayed && 'rounded-full')} style={baseStyle}>
           <Image
             src={imageUrl}
             alt={skill?.name || `技能${skillType}`}
             width={34}
             height={34}
-            className='w-full h-full object-contain'
+            className='h-full w-full object-contain'
             style={{ padding: '6px' }}
           />
 
@@ -165,7 +167,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               // Square-style 3-segment edge for 留加点 (delayed) skills
               // Starts at top-middle and each level covers 1/3 of total perimeter
               <svg
-                className='absolute inset-0 pointer-events-none overflow-visible'
+                className='pointer-events-none absolute inset-0 overflow-visible'
                 viewBox='0 0 40 40'
                 width={40}
                 height={40}
@@ -276,7 +278,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
             ) : (
               // Circular 3-segment edge for normal skills
               <svg
-                className='absolute inset-0 pointer-events-none overflow-visible'
+                className='pointer-events-none absolute inset-0 overflow-visible'
                 viewBox='0 0 40 40'
                 width={40}
                 height={40}
@@ -334,13 +336,13 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
             ))}
 
           {hasNegativeEffect && (
-            <div className='absolute -top-[5px] -right-[5px] w-4 h-4 pointer-events-none z-10'>
+            <div className='pointer-events-none absolute -top-[5px] -right-[5px] z-10 h-4 w-4'>
               <Image
                 src='/images/misc/禁止.png'
                 alt='负面效果'
                 width={16}
                 height={16}
-                className='w-full h-full object-contain'
+                className='h-full w-full object-contain'
                 priority={false} // Lower priority for overlay icons
               />
             </div>
@@ -448,16 +450,16 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       if (!isLastLevelInGroup) {
         // Within parallel group -> straight lines
         return (
-          <div className='absolute left-10 top-3 w-4 h-auto' style={startAdjustStyle}>
-            <div className='w-full h-px bg-gray-400 dark:bg-gray-600'></div>
-            <div className='w-full h-px bg-gray-400 dark:bg-gray-600 mt-7'></div>
+          <div className='absolute top-3 left-10 h-auto w-4' style={startAdjustStyle}>
+            <div className='h-px w-full bg-gray-400 dark:bg-gray-600'></div>
+            <div className='mt-7 h-px w-full bg-gray-400 dark:bg-gray-600'></div>
           </div>
         );
       } else if (isLastLevelInGroup && nextGroup?.isParallelGroup) {
         // Parallel to parallel (different groups) -> converge then diverge
         return (
-          <div className='absolute left-7 top-3 w-10 h-7' style={startAdjustStyle}>
-            <svg className='w-full h-full overflow-visible' viewBox='0 0 40 28'>
+          <div className='absolute top-3 left-7 h-7 w-10' style={startAdjustStyle}>
+            <svg className='h-full w-full overflow-visible' viewBox='0 0 40 28'>
               {/* Converging lines from current group */}
               <path
                 d='M11 0 Q16.5 4 16 14'
@@ -494,8 +496,8 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       } else if (isLastLevelInGroup && nextGroup) {
         // Parallel to single -> converge
         return (
-          <div className='absolute left-10 top-3 w-4 h-7' style={startAdjustStyle}>
-            <svg className='w-full h-full' viewBox='0 0 16 28'>
+          <div className='absolute top-3 left-10 h-7 w-4' style={startAdjustStyle}>
+            <svg className='h-full w-full' viewBox='0 0 16 28'>
               <path
                 d='M0 0 Q8 0 16 14'
                 fill='none'
@@ -520,10 +522,10 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         return (
           // The top-[7px] value centers the divergence point vertically with the single 40px icon.
           <div
-            className='absolute left-8 top-[7px] w-4 h-7 [transform:scaleX(-1)]'
+            className='absolute top-[7px] left-8 h-7 w-4 [transform:scaleX(-1)]'
             style={startAdjustStyle}
           >
-            <svg className='w-full h-full' viewBox='0 0 16 28'>
+            <svg className='h-full w-full' viewBox='0 0 16 28'>
               <path
                 d='M0 1 Q8 1 16 14'
                 fill='none'
@@ -545,7 +547,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         // Single to single -> straight line
         return (
           <div
-            className='absolute left-10 top-5 w-4 h-px bg-gray-400 dark:bg-gray-600'
+            className='absolute top-5 left-10 h-px w-4 bg-gray-400 dark:bg-gray-600'
             style={startAdjustStyle}
           ></div>
         );
@@ -563,16 +565,16 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   return (
     <div className='space-y-3'>
       <div className='flex gap-4'>
-        <div className='w-1/6 flex-shrink-0 flex flex-col'>
+        <div className='flex w-1/6 flex-shrink-0 flex-col'>
           {isEditMode ? (
             <EditableField
               tag='h4'
               path={`skillAllocations.${index}.id`}
               initialValue={allocation.id}
-              className='font-bold text-gray-800 dark:text-gray-200 text-lg leading-tight'
+              className='text-lg leading-tight font-bold text-gray-800 dark:text-gray-200'
             />
           ) : (
-            <h4 className='font-bold text-gray-800 dark:text-gray-200 text-lg leading-tight'>
+            <h4 className='text-lg leading-tight font-bold text-gray-800 dark:text-gray-200'>
               {allocation.id}
             </h4>
           )}
@@ -581,7 +583,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               tag='p'
               path={`skillAllocations.${index}.pattern`}
               initialValue={allocation.pattern}
-              className='text-gray-500 dark:text-gray-400 text-sm'
+              className='text-sm text-gray-500 dark:text-gray-400'
               data-tutorial-id='skill-allocation-edit'
             />
           )}
@@ -589,11 +591,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         <div className='flex-1'>
           {/* Show validation errors if pattern is invalid */}
           {!patternValidation.isValid && (
-            <div className='mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg'>
+            <div className='mb-3 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20'>
               <div className='flex items-start gap-2'>
-                <div className='flex-shrink-0 w-5 h-5 mt-0.5'>
+                <div className='mt-0.5 h-5 w-5 flex-shrink-0'>
                   <svg
-                    className='w-5 h-5 text-red-500 dark:text-red-400'
+                    className='h-5 w-5 text-red-500 dark:text-red-400'
                     fill='currentColor'
                     viewBox='0 0 20 20'
                   >
@@ -605,16 +607,16 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                   </svg>
                 </div>
                 <div className='flex-1'>
-                  <h4 className='text-sm font-medium text-red-800 dark:text-red-200 mb-1'>
+                  <h4 className='mb-1 text-sm font-medium text-red-800 dark:text-red-200'>
                     加点方案格式错误
                   </h4>
-                  <div className='text-sm text-red-700 dark:text-red-300 space-y-1'>
+                  <div className='space-y-1 text-sm text-red-700 dark:text-red-300'>
                     {patternValidation.errors.map((error, errorIndex) => (
                       <div key={errorIndex}>{error.message}</div>
                     ))}
                   </div>
                   {patternValidation.warnings.length > 0 && (
-                    <div className='mt-2 text-sm text-yellow-700 dark:text-yellow-300 space-y-1'>
+                    <div className='mt-2 space-y-1 text-sm text-yellow-700 dark:text-yellow-300'>
                       {patternValidation.warnings.map((warning, warningIndex) => (
                         <div key={warningIndex}>⚠️ {warning.message}</div>
                       ))}
@@ -630,14 +632,14 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
 
           {/* Show parsed skill allocation or fallback message */}
           {patternValidation.isValid && levelGroups.length > 0 ? (
-            <div className='flex flex-wrap items-start gap-2 gap-y-6 md:gap-y-4 mb-2'>
+            <div className='mb-2 flex flex-wrap items-start gap-2 gap-y-6 md:gap-y-4'>
               {levelGroups.map((group, groupIndex) => (
                 <div key={groupIndex} className='relative flex flex-col items-center'>
                   {group.isParallelGroup ? (
                     <>
-                      <div className='flex gap-1 justify-center mb-3 h-4'>
+                      <div className='mb-3 flex h-4 justify-center gap-1'>
                         {group.levels.map((level, levelIndex) => (
-                          <div key={levelIndex} className='w-10 flex flex-col items-center'>
+                          <div key={levelIndex} className='flex w-10 flex-col items-center'>
                             <span className='text-xs text-gray-500 dark:text-gray-400'>
                               {
                                 !level.hasNegativeEffect
@@ -648,11 +650,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                           </div>
                         ))}
                       </div>
-                      <div className='relative h-12 flex gap-1 justify-center'>
+                      <div className='relative flex h-12 justify-center gap-1'>
                         {group.levels.map((level, levelIndex) => (
                           <div
                             key={levelIndex}
-                            className='relative w-10 flex flex-col justify-center'
+                            className='relative flex w-10 flex-col justify-center'
                           >
                             {renderConnectionLine(groupIndex, levelIndex, group, true)}
                             <div className='absolute' style={{ top: '-7px' }}>
@@ -679,7 +681,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                     </>
                   ) : (
                     <>
-                      <span className='text-xs text-gray-500 dark:text-gray-400 mb-4 h-4'>
+                      <span className='mb-4 h-4 text-xs text-gray-500 dark:text-gray-400'>
                         {
                           !group.levels[0]!.hasNegativeEffect
                             ? `Lv.${group.characterLevel}`
@@ -702,7 +704,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
             </div>
           ) : (
             !patternValidation.isValid && (
-              <div className='text-center text-gray-500 dark:text-gray-400 py-4'>
+              <div className='py-4 text-center text-gray-500 dark:text-gray-400'>
                 无法显示加点方案，请检查格式
               </div>
             )
@@ -714,25 +716,25 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               type='button'
               aria-label='移除技能加点'
               onClick={() => onRemove(allocation.id)}
-              className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
             >
-              <TrashIcon className='w-4 h-4' aria-hidden='true' />
+              <TrashIcon className='h-4 w-4' aria-hidden='true' />
             </button>
           </div>
         )}
       </div>
       {shouldShowDescriptionBlock && (
-        <div className='bg-gray-50 dark:bg-slate-800/50 p-3 rounded-lg'>
+        <div className='rounded-lg bg-gray-50 p-3 dark:bg-slate-800/50'>
           {isEditMode ? (
             <EditableField
               tag='p'
               path={`skillAllocations.${index}.description`}
               initialValue={allocation.description!}
-              className='text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap'
+              className='text-sm whitespace-pre-wrap text-gray-700 dark:text-gray-300'
             />
           ) : (
             hasDescription && (
-              <p className='text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap'>
+              <p className='text-sm whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
                 <TextWithHoverTooltips text={allocation.description!} />
               </p>
             )
@@ -742,7 +744,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               tag='p'
               path={`skillAllocations.${index}.additionaldescription`}
               initialValue={allocation.additionaldescription!}
-              className='text-sm text-gray-600 dark:text-gray-400 mt-2 pl-3 border-l-2 border-blue-200 dark:border-blue-700 whitespace-pre-wrap'
+              className='mt-2 border-l-2 border-blue-200 pl-3 text-sm whitespace-pre-wrap text-gray-600 dark:border-blue-700 dark:text-gray-400'
             />
           )}
         </div>

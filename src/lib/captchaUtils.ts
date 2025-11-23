@@ -1,3 +1,5 @@
+import { createHmac, timingSafeEqual } from 'crypto';
+
 export async function verifyCaptchaToken(token: string | null | undefined): Promise<boolean> {
   const provider = process.env.NEXT_PUBLIC_CAPTCHA_PROVIDER;
   const secretKey = process.env.CAPTCHA_SECRET_KEY;
@@ -42,4 +44,37 @@ export async function verifyCaptchaToken(token: string | null | undefined): Prom
   }
 
   return true;
+}
+
+export function generateCaptchaProof(username: string): string {
+  const secret: string =
+    process.env.CAPTCHA_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const timestamp = Date.now();
+  const payload = `${username}:${timestamp}`;
+  const signature = createHmac('sha256', secret).update(payload).digest('hex');
+  return `${payload}:${signature}`;
+}
+
+export function verifyCaptchaProof(token: string, username: string): boolean {
+  if (!token) return false;
+  const parts = token.split(':');
+  if (parts.length !== 3) return false;
+
+  const [tokenUsername, timestampStr, signature] = parts;
+  if (tokenUsername !== username) return false;
+  if (!timestampStr || !signature) return false;
+
+  const timestamp = parseInt(timestampStr, 10);
+  if (isNaN(timestamp)) return false;
+
+  // Token expires in 10 minutes
+  if (Date.now() - timestamp > 10 * 60 * 1000) return false;
+
+  const secret: string =
+    process.env.CAPTCHA_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const payload = `${username}:${timestamp}`;
+  const expectedSignature = createHmac('sha256', secret).update(payload).digest('hex');
+  if (expectedSignature.length != signature.length) return false;
+
+  return timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(signature));
 }

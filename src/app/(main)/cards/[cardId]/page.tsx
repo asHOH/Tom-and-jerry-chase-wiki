@@ -1,10 +1,12 @@
-import { cards } from '@/data';
-import { generateArticleMetadata } from '@/lib/metadataUtils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
+import { cards } from '@/data';
 import { Article, WithContext } from 'schema-dts';
+
+import { generateArticleMetadata } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
+
+import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
 
 export const dynamic = 'force-static';
 

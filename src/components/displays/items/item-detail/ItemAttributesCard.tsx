@@ -1,20 +1,23 @@
 'use client';
 
-import BaseCard from '@/components/ui/BaseCard';
-import Tag from '@/components/ui/Tag';
+import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
-import { designTokens, componentTokens } from '@/lib/design-tokens';
+
+import {
+  componentTokens,
+  designTokens,
+  getItemSourceColors /* , getCardCostColors */,
+  getItemTypeColors,
+} from '@/lib/design-tokens';
+import { getTooltipContent } from '@/lib/tooltipUtils';
+import { useMobile } from '@/hooks/useMediaQuery';
+import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
-import { useMobile } from '@/hooks/useMediaQuery';
-import {
-  getItemTypeColors,
-  getItemSourceColors /* , getCardCostColors */,
-} from '@/lib/design-tokens';
+import Tag from '@/components/ui/Tag';
+
 import Tooltip from '../../../ui/Tooltip';
-import { getTooltipContent } from '@/lib/tooltipUtils';
-import { useAppContext } from '@/context/AppContext';
 
 export default function ItemAttributesCard({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
@@ -102,7 +105,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
       )}
       {/*------Item Attributes------*/}
       <div
-        className='grid items-center border-t border-gray-300 dark:border-gray-600 gap-1'
+        className='grid items-center gap-1 border-t border-gray-300 dark:border-gray-600'
         style={{
           marginLeft: spacing.md,
           marginRight: spacing.md,
@@ -110,7 +113,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
           paddingBottom: spacing.xxxxxs,
         }}
       >
-        <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
+        <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
           <span className={`text-sm whitespace-pre`}>类型: </span>
           <Tag
             size='sm'
@@ -129,7 +132,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
         </div>
         {(item?.damage !== undefined || item?.walldamage !== undefined) && (
           <div
-            className='auto-fill-grid grid-container grid text-sm font-normal items-center justify-center gap-1'
+            className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
             style={{
               gridTemplateColumns: `repeat(2, minmax(40px, 1fr))`,
             }}
@@ -160,7 +163,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
           ))}
         {/*itemAttributesAsCharacter*/}
         {item.itemAttributesAsCharacter !== undefined && (
-          <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+          <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
             <span className='text-sm font-bold'>
               该道具特性与<span className={`text-fuchsia-600 dark:text-fuchsia-400`}>角色</span>
               类似，可看作
@@ -181,7 +184,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               )}
             </span>
             <div
-              className='auto-fill-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+              className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
               style={{
                 gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
               }}
@@ -237,10 +240,10 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
           </div>
         )}
         {(item.move !== undefined || item.gravity !== undefined || item.collsion !== undefined) && (
-          <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+          <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
             <span className='text-lg font-bold whitespace-pre'>移动信息</span>
             <div
-              className='auto-fill-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+              className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
               style={{
                 gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
                 gridTemplateRows: 'repeat(2,1fr)',
@@ -302,18 +305,18 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
         )}
         {item?.store !== undefined &&
           (item.store !== true ? (
-            <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre text-red-600 dark:text-red-500'>
                 局内商店不售
               </span>
             </div>
           ) : (
-            <div className='border-t border-gray-300 dark:border-gray-600 pt-1'>
+            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre text-green-600 dark:text-green-500'>
                 局内商店有售
               </span>
               <div
-                className='auto-fill-grid grid-container grid text-sm font-normal gap-1 items-center justify-center'
+                className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
                 style={{
                   gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
                   gridTemplateRows: 'repeat(2,1fr)',
@@ -355,7 +358,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
 
       {/*Navigation */}
       <div
-        className='flex items-center flex-wrap border-t text-sm border-gray-300 dark:border-gray-600'
+        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
         style={{
           gap: spacing.sm,
           marginLeft: spacing.md,

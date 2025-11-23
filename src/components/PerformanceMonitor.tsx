@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import { measurePageLoad } from '@/lib/performance';
 
 export const PerformanceMonitor: React.FC = () => {

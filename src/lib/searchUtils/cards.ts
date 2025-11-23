@@ -1,8 +1,8 @@
 // Character search logic extracted from searchUtils.ts
 
 import { cards } from '@/data';
-import { convertToPinyin } from '../pinyinUtils';
 
+import { convertToPinyin } from '../pinyinUtils';
 import type { SearchResult } from './types';
 
 export async function* searchCards(

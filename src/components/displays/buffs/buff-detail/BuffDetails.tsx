@@ -1,14 +1,16 @@
 'use client';
 
-import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
-import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { Buff, SingleItem, SingleItemTypeChineseNameList } from '@/data/types';
-import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
+
+import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
+import AccordionCard from '@/components/ui/AccordionCard';
+import SingleItemButton from '@/components/ui/SingleItemButton';
+import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
+import DetailTextSection from '@/components/displays/shared/DetailTextSection';
+
 import DetailTraitsCard from '../../shared/DetailTraitsCard';
 import BuffAttributesCard from './BuffAttributesCard';
-import SingleItemButton from '@/components/ui/SingleItemButton';
-import AccordionCard from '@/components/ui/AccordionCard';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
   // Keyboard navigation
@@ -36,7 +38,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
               title: `${SingleItemTypeChineseNameList[singleItemList[0]?.type || 'character']}(${singleItemList.length})`,
               children: (
                 <ul
-                  className='gap-2 mt-2 mx-2'
+                  className='mx-2 mt-2 gap-2'
                   style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
@@ -58,7 +60,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
     } else if (!!buff.source) {
       return (
         <ul
-          className='-mt-4 gap-2 w-full'
+          className='-mt-4 w-full gap-2'
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',

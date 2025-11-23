@@ -1,25 +1,28 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { defaultMetadata } from '@/constants/seo';
+
+import { getRuntimeCspHeader } from '@/lib/csp';
+import { AnalyticsComponent } from '@/components/AnalyticsComponent';
+import { CacheDebugPanel } from '@/components/CacheDebugPanel';
+import { ClientProviders } from '@/components/ClientProviders';
+import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
-import { CacheDebugPanel } from '@/components/CacheDebugPanel';
-import { VersionChecker } from '@/components/VersionChecker';
-import { OfflineIndicator } from '@/components/OfflineIndicator';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
-import { AnalyticsComponent } from '@/components/AnalyticsComponent';
-import { getRuntimeCspHeader } from '@/lib/csp';
-import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
-import { ClientProviders } from '@/components/ClientProviders';
+import { VersionChecker } from '@/components/VersionChecker';
 
-import { defaultMetadata } from '@/constants/seo';
 import './globals.css';
+
 import { DarkModeProvider } from '@/context/DarkModeContext';
-import { getDarkModeFromCookie } from '@/lib/darkModeActions';
 import clsx from 'clsx';
-import KeyboardNavigation from '@/components/KeyboardNavigation';
-import { UserProvider } from '@/hooks/useUser';
+
+import { getDarkModeFromCookie } from '@/lib/darkModeActions';
 import { getUserData } from '@/lib/userActions';
+import { UserProvider } from '@/hooks/useUser';
+import KeyboardNavigation from '@/components/KeyboardNavigation';
 
 const inter = localFont({
   src: '../../public/fonts/inter/InterVariable.woff2',
@@ -49,7 +52,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <KeyboardNavigation />
           <OfflineIndicator />
           <DynamicFaviconEditBadge />
-          <main className='min-h-screen bg-gray-100 dark:bg-slate-900 relative pt-0'>
+          <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
             <UserProvider initialValue={getUserData()}>
               <DarkModeProvider initialValue={isDarkMode}>
                 <ClientProviders>{children}</ClientProviders>

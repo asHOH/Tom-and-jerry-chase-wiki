@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/data/database.types';
+
+import { supabase } from '@/lib/supabase/client';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 
@@ -134,7 +135,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
     <>
       {message && (
         <div
-          className={`mb-4 p-3 rounded ${
+          className={`mb-4 rounded p-3 ${
             message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
           }`}
         >
@@ -145,15 +146,15 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
         </div>
       )}
 
-      <div className='mb-6 bg-white shadow rounded p-4'>
-        <h2 className='text-xl font-semibold mb-3'>创建新分类</h2>
-        <div className='flex flex-col sm:flex-row sm:items-center gap-3'>
+      <div className='mb-6 rounded bg-white p-4 shadow'>
+        <h2 className='mb-3 text-xl font-semibold'>创建新分类</h2>
+        <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
           <input
             type='text'
             placeholder='分类名称'
             value={newCategory.name}
             onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-            className='border p-2 rounded flex-1'
+            className='flex-1 rounded border p-2'
           />
           <select
             value={newCategory.parent_category_id ?? ''}
@@ -163,7 +164,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 parent_category_id: e.target.value === '' ? undefined : (e.target.value as string),
               })
             }
-            className='border p-2 rounded'
+            className='rounded border p-2'
           >
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
@@ -179,7 +180,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 default_visibility: e.target.value as Category['default_visibility'],
               })
             }
-            className='border p-2 rounded'
+            className='rounded border p-2'
           >
             <option value='approved'>修改直接通过</option>
             <option value='pending'>修改需要审核</option>
@@ -187,7 +188,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
           </select>
           <button
             onClick={handleCreateCategory}
-            className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded'
+            className='rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
             disabled={loading}
           >
             创建
@@ -195,8 +196,8 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
         </div>
       </div>
 
-      <div className='bg-white shadow rounded p-4'>
-        <div className='flex items-center justify-between mb-3'>
+      <div className='rounded bg-white p-4 shadow'>
+        <div className='mb-3 flex items-center justify-between'>
           <h2 className='text-xl font-semibold'>现有分类</h2>
           <div className='text-sm text-gray-600'>
             {loading ? '加载中...' : `${categories.length} 个分类`}
@@ -215,7 +216,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>操作</th>
               </tr>
             </thead>
-            <tbody className='bg-white divide-y divide-gray-200'>
+            <tbody className='divide-y divide-gray-200 bg-white'>
               {categories.map((category) => (
                 <tr key={category.id}>
                   <td className='px-4 py-3 text-sm text-gray-800'>{category.name}</td>
@@ -229,14 +230,14 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                     <div className='flex gap-2'>
                       <button
                         onClick={() => setEditingCategory(category)}
-                        className='bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded'
+                        className='rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600'
                       >
                         编辑
                       </button>
                       {category.name !== '根分类' && (
                         <button
                           onClick={() => handleDeleteCategory(category.id)}
-                          className='bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded'
+                          className='rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700'
                         >
                           删除
                         </button>
@@ -258,15 +259,15 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
       </div>
 
       {editingCategory && (
-        <div className='mt-6 bg-white shadow rounded p-4'>
-          <h2 className='text-xl font-semibold mb-3'>编辑分类</h2>
-          <div className='flex flex-col sm:flex-row sm:items-center gap-3'>
+        <div className='mt-6 rounded bg-white p-4 shadow'>
+          <h2 className='mb-3 text-xl font-semibold'>编辑分类</h2>
+          <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
             <input
               type='text'
               placeholder='分类名称'
               value={editingCategory.name ?? ''}
               onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
-              className='border p-2 rounded flex-1'
+              className='flex-1 rounded border p-2'
             />
             {editingCategory.name != '根分类' && (
               <select
@@ -277,7 +278,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                     parent_category_id: e.target.value === '' ? null : (e.target.value as string),
                   }))
                 }
-                className='border p-2 rounded'
+                className='rounded border p-2'
               >
                 {categories
                   .filter((c) => c.id !== editingCategory.id) // avoid choosing itself as parent
@@ -296,7 +297,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                   default_visibility: e.target.value as Category['default_visibility'],
                 }))
               }
-              className='border p-2 rounded'
+              className='rounded border p-2'
             >
               <option value='approved'>修改直接通过</option>
               <option value='pending'>修改需要审核</option>
@@ -305,14 +306,14 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
             <div className='flex gap-2'>
               <button
                 onClick={handleEditCategory}
-                className='bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded'
+                className='rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700'
                 disabled={loading}
               >
                 保存
               </button>
               <button
                 onClick={() => setEditingCategory(null)}
-                className='bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded'
+                className='rounded bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400'
               >
                 取消
               </button>

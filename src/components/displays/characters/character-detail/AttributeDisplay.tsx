@@ -1,14 +1,16 @@
 import React, { Fragment } from 'react';
-import Link from 'next/link';
-import Tooltip from '../../../ui/Tooltip';
-import { getTooltipContent } from '@/lib/tooltipUtils';
-import type { FactionId } from '@/data/types';
-import EditableField from '@/components/ui/EditableField';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { useSnapshot } from 'valtio';
 import { characters } from '@/data';
+import type { FactionId } from '@/data/types';
+import { useSnapshot } from 'valtio';
+
 import { RANKABLE_PROPERTIES, RankableProperty } from '@/lib/characterRankingUtils';
+import { getTooltipContent } from '@/lib/tooltipUtils';
+import EditableField from '@/components/ui/EditableField';
 import { PlusIcon } from '@/components/icons/CommonIcons';
+import Link from '@/components/Link';
+
+import Tooltip from '../../../ui/Tooltip';
 
 interface AttributeDisplayProps {
   label: string;
@@ -21,7 +23,7 @@ interface AttributeDisplayProps {
 }
 
 const GrayUnit = ({ children }: { children: React.ReactNode }) => (
-  <span className='text-gray-400 dark:text-gray-500 text-xs'>{children}</span>
+  <span className='text-xs text-gray-400 dark:text-gray-500'>{children}</span>
 );
 
 export default function AttributeDisplay({
@@ -52,7 +54,7 @@ export default function AttributeDisplay({
     !!href ? (
       <>
         {' '}
-        <Link href={href} className='hover:underline cursor-pointer'>
+        <Link href={href} className='cursor-pointer hover:underline'>
           <span>{val}</span>
         </Link>
         {sfx && <GrayUnit>{sfx}</GrayUnit>}
@@ -114,7 +116,7 @@ export default function AttributeDisplay({
         {' '}
         <Link
           href={`/ranks/clawKnifeCdUnhit?faction=cat`}
-          className='hover:underline cursor-pointer'
+          className='cursor-pointer hover:underline'
         >
           {localCharacter.clawKnifeCdUnhit}
         </Link>
@@ -122,7 +124,7 @@ export default function AttributeDisplay({
           <span className='italic'> ({localCharacter.specialClawKnifeCdUnhit})</span>
         )}
         <GrayUnit> / </GrayUnit>
-        <Link href={`/ranks/clawKnifeCdHit?faction=cat`} className='hover:underline cursor-pointer'>
+        <Link href={`/ranks/clawKnifeCdHit?faction=cat`} className='cursor-pointer hover:underline'>
           {localCharacter.clawKnifeCdHit}
         </Link>
         {!!localCharacter.specialClawKnifeCdHit && (
@@ -168,10 +170,10 @@ export default function AttributeDisplay({
             character.aliases.push('新别名');
           }
         }}
-        className='w-4 h-4 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700 ml-2'
+        className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
         key='new-weapon-button'
       >
-        <PlusIcon className='w-3 h-3' aria-hidden='true' />
+        <PlusIcon className='h-3 w-3' aria-hidden='true' />
       </button>
       {suffix && <GrayUnit>{suffix}</GrayUnit>}
     </>

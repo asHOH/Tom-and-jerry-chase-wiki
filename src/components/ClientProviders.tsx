@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+
 import { usePersistentGameStore } from '@/hooks/usePersistentGameStore';
 
 type ClientProvidersProps = { children: ReactNode };

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+
 import { useSpecifyTypeNavigation } from './useSpecifyTypeNavigation';
 
 type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff';

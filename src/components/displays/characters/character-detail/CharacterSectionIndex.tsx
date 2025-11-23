@@ -1,11 +1,12 @@
+import { useMemo, useState } from 'react';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import { characters } from '@/data';
-import { useSnapshot } from 'valtio';
-import { useState, useMemo } from 'react';
 import type { Skill } from '@/data/types';
-import type { DeepReadonly } from '@/types/deep-readonly';
-import { useScrollSpy } from '@/lib/useScrollSpy';
 import clsx from 'clsx';
+import { useSnapshot } from 'valtio';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { useScrollSpy } from '@/hooks/useScrollSpy';
 
 function CharacterSectionIndexItem({
   name,
@@ -20,9 +21,9 @@ function CharacterSectionIndexItem({
     <li>
       <a
         className={clsx(
-          'flex items-center gap-0.5 px-1 py-0.5 rounded transition-colors text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600',
+          'flex items-center gap-0.5 rounded px-1 py-0.5 text-sm transition-colors hover:underline focus:ring-2 focus:ring-blue-400 focus:outline-none dark:focus:ring-blue-600',
           isActive
-            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 font-medium'
+            ? 'bg-blue-100 font-medium text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
             : 'text-gray-700 dark:text-gray-200'
         )}
         href={`#${type}:${name}`}
@@ -66,8 +67,8 @@ export default function CharacterSectionIndex() {
   const shouldExpandSkills = skillsOpen || isSkillActive;
 
   return (
-    <nav className='w-full my-4' aria-label='角色详情索引'>
-      <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3'>目录</h3>
+    <nav className='my-4 w-full' aria-label='角色详情索引'>
+      <h3 className='mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200'>目录</h3>
       {/* Responsive: allow horizontal scroll on mobile if needed */}
       <ul className='flex flex-col gap-1'>
         <CharacterSectionIndexItem
@@ -83,7 +84,7 @@ export default function CharacterSectionIndex() {
             type='button'
             aria-label={skillsOpen ? '折叠技能描述' : '展开技能描述'}
             className={clsx(
-              'flex items-center justify-between w-full text-sm font-bold px-1 py-1 mb-1 focus:outline-none cursor-pointer transition-colors',
+              'mb-1 flex w-full cursor-pointer items-center justify-between px-1 py-1 text-sm font-bold transition-colors focus:outline-none',
               activeSection === 'Section:技能描述' || isSkillActive
                 ? 'text-blue-800 dark:text-blue-200'
                 : 'dark:text-white'
@@ -93,7 +94,7 @@ export default function CharacterSectionIndex() {
             <span>技能描述</span>
             <svg
               className={clsx(
-                'w-4 h-4 transform transition-transform duration-200 ease-out',
+                'h-4 w-4 transform transition-transform duration-200 ease-out',
                 shouldExpandSkills ? 'rotate-0' : '-rotate-90'
               )}
               fill='none'
@@ -118,7 +119,7 @@ export default function CharacterSectionIndex() {
             style={{ pointerEvents: shouldExpandSkills ? 'auto' : 'none' }}
             {...(!shouldExpandSkills && { 'aria-hidden': true })}
           >
-            <ul className='flex flex-col gap-0.5 ml-4'>
+            <ul className='ml-4 flex flex-col gap-0.5'>
               {character.skills.map((skill: DeepReadonly<Skill>) => (
                 <CharacterSectionIndexItem
                   key={skill.id}

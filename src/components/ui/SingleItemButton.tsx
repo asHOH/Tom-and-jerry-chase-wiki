@@ -1,8 +1,9 @@
-import { SingleItem } from '@/data/types';
-import Image from '@/components/Image';
-import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
-import { getTypeLabelColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { SingleItem } from '@/data/types';
+
+import { getTypeLabelColors } from '@/lib/design-tokens';
+import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
+import Image from '@/components/Image';
 
 interface SingleItemButtonProps {
   singleItem: SingleItem;
@@ -31,22 +32,22 @@ export default function SingleItemButton({ singleItem }: SingleItemButtonProps) 
   return (
     <li
       key={singleItem.name}
-      className={`flex items-center rounded-lg transition-colors hover:-translate-y-1 border-1 border-dotted overflow-hidden`}
+      className={`flex items-center overflow-hidden rounded-lg border-1 border-dotted transition-colors hover:-translate-y-1`}
       style={getSingleItemButtonColor(singleItem)}
     >
       <a
         href={getSingleItemHref(singleItem)}
-        className='flex items-center gap-2 w-full h-full px-2'
+        className='flex h-full w-full items-center gap-2 px-2'
         tabIndex={0}
       >
         <Image
           src={getSingleItemImageUrl(singleItem)}
           alt={`${singleItem.name}图标`}
-          className='w-10 h-10 object-contain py-0.5'
+          className='h-10 w-10 object-contain py-0.5'
           width={90}
           height={90}
         />
-        <span className='text-sm dark:text-white truncate'>{singleItem.name}</span>
+        <span className='truncate text-sm dark:text-white'>{singleItem.name}</span>
       </a>
     </li>
   );

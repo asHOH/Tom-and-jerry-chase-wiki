@@ -1,4 +1,5 @@
-import { Character, Card, SpecialSkill, Item } from '@/data/types';
+import { Card, Character, Item, SpecialSkill } from '@/data/types';
+
 export type SearchResult =
   | ({ type: 'character'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
       Character,

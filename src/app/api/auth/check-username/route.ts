@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createHash } from 'crypto';
-import { verifyCaptchaToken } from '@/lib/captchaUtils';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { generateCaptchaProof, verifyCaptchaToken } from '@/lib/captchaUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 // Helper function to hash the username
 // In a real-world scenario, ensure this matches the hashing strategy used during user creation.
@@ -21,6 +22,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
     }
 
+    const captchaProof = generateCaptchaProof(username);
+
     const usernameHash = hashUsername(username);
 
     // Query the users table to find a user with the matching username_hash
@@ -38,13 +41,13 @@ export async function POST(request: NextRequest) {
     }
 
     if (!user) {
-      return NextResponse.json({ status: 'not_exists' });
+      return NextResponse.json({ status: 'not_exists', captchaProof });
     }
 
     if (user.password_hash) {
-      return NextResponse.json({ status: 'exists_with_password' });
+      return NextResponse.json({ status: 'exists_with_password', captchaProof });
     } else {
-      return NextResponse.json({ status: 'exists_no_password' });
+      return NextResponse.json({ status: 'exists_no_password', captchaProof });
     }
   } catch (e) {
     console.error('Check-username error:', e);

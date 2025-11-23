@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'motion/react';
 import clsx from 'clsx';
-import CaptchaComponent from './CaptchaComponent';
+import { motion } from 'motion/react';
+
+import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { CloseIcon } from '@/components/icons/CommonIcons';
-import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
+
+import CaptchaComponent from './CaptchaComponent';
 
 type LoginDialogProps = {
   onClose: () => void;
@@ -25,6 +27,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [captchaProof, setCaptchaProof] = useState<string | null>(null);
 
   const [isUsernameCorrect, setIsUsernameCorrect] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength | null>(null);
@@ -70,10 +73,13 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       if (!response.ok) {
         throw new Error(data.error || '发生错误。');
       }
+      if (data.captchaProof) {
+        setCaptchaProof(data.captchaProof);
+      }
       switch (data.status) {
         case 'exists_no_password':
           // Auto-login for passwordless users
-          await handleLogin(true);
+          await handleLogin(true, data.captchaProof);
           break;
         case 'exists_with_password':
           setStep('password');
@@ -91,14 +97,18 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
     }
   };
 
-  const handleLogin = async (isPasswordless = false) => {
+  const handleLogin = async (isPasswordless = false, proof: string | null = null) => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password: isPasswordless ? undefined : password }),
+        body: JSON.stringify({
+          username,
+          password: isPasswordless ? undefined : password,
+          captchaToken: proof || captchaProof,
+        }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -129,14 +139,14 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, nickname, password }),
+        body: JSON.stringify({ username, nickname, password, captchaToken: captchaProof }),
       });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || '注册失败。');
       }
       // After successful registration, log the user in.
-      await handleLogin();
+      await handleLogin(false, captchaProof);
     } catch (err) {
       setError(err instanceof Error ? err.message : '发生未知错误。');
     } finally {
@@ -192,14 +202,14 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       case 'password':
         return (
           <>
-            <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-2'>输入密码</h2>
+            <h2 className='mb-2 text-xl font-bold text-gray-900 dark:text-white'>输入密码</h2>
             <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
               欢迎回来，<span className='font-semibold'>{username}</span>。
             </p>
             <input
               type='password'
               placeholder='密码'
-              className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
+              className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoFocus
@@ -210,14 +220,14 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       case 'register':
         return (
           <>
-            <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-2'>创建账户</h2>
+            <h2 className='mb-2 text-xl font-bold text-gray-900 dark:text-white'>创建账户</h2>
             <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
               用户名 <span className='font-semibold'>{username}</span> 未被占用。
             </p>
             <input
               type='text'
               placeholder='昵称'
-              className='w-full p-2 mb-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
+              className='mb-2 w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               autoFocus
@@ -227,7 +237,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
               placeholder={
                 process.env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH ? '密码' : '密码（可选）'
               }
-              className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
+              className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete='new-password'
@@ -235,7 +245,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             {password && passwordStrength && (
               <div className='mt-2'>
                 <div className='flex items-center gap-2'>
-                  <div className='flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden'>
+                  <div className='h-2 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700'>
                     <div
                       className={clsx('h-full transition-all duration-300', {
                         'bg-red-500': passwordStrength.strength <= 1,
@@ -261,7 +271,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
                     {passwordStrength.strength === 4 && '很强'}
                   </span>
                 </div>
-                <p className='text-xs text-gray-600 dark:text-gray-400 mt-1'>
+                <p className='mt-1 text-xs text-gray-600 dark:text-gray-400'>
                   {passwordStrength.reason}
                 </p>
               </div>
@@ -272,11 +282,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       default:
         return (
           <>
-            <h2 className='text-xl font-bold text-gray-900 dark:text-white mb-4'>登录或注册</h2>
+            <h2 className='mb-4 text-xl font-bold text-gray-900 dark:text-white'>登录或注册</h2>
             <input
               type='text'
               placeholder='用户名，支持汉字、拉丁字母、数字和._-+'
-              className='w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
+              className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoFocus
@@ -296,7 +306,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   return (
     <motion.div
       className={clsx(
-        'fixed inset-0 bg-gray-800/40 backdrop-blur-sm flex items-center justify-center z-50',
+        'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
         isMobile && 'p-0'
       )}
       initial='hidden'
@@ -308,10 +318,10 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       <motion.div
         ref={dialogRef}
         className={clsx(
-          'bg-white dark:bg-gray-800 shadow-xl p-6 relative',
+          'relative bg-white p-6 shadow-xl dark:bg-gray-800',
           isMobile
-            ? 'w-full h-full rounded-none flex flex-col'
-            : 'rounded-lg w-full max-w-sm mx-auto'
+            ? 'flex h-full w-full flex-col rounded-none'
+            : 'mx-auto w-full max-w-sm rounded-lg'
         )}
         variants={dialogVariants}
         transition={{ duration: 0.2 }}
@@ -328,7 +338,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
         <form onSubmit={handleSubmit}>
           <div className='mb-4'>{renderStep()}</div>
 
-          {error && <p className='text-red-500 text-sm mb-4'>{error}</p>}
+          {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
 
           <button
             type='submit'
@@ -340,11 +350,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
                 !!passwordStrength &&
                 passwordStrength.strength <= 1)
             }
-            className='w-full p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 flex items-center justify-center disabled:cursor-not-allowed'
+            className='flex w-full items-center justify-center rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400'
           >
             {isLoading ? (
               <svg
-                className='animate-spin h-5 w-5 text-white'
+                className='h-5 w-5 animate-spin text-white'
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'

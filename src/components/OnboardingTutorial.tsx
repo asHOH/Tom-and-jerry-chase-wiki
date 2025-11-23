@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+
 import {
-  TUTORIAL_STEPS,
   hasUserSeenCharacterDetailsTutorial,
   markCharacterDetailsTutorialAsSeen,
+  TUTORIAL_STEPS,
 } from '@/lib/tutorialUtils';
 
 interface OnboardingTutorialProps {
@@ -135,7 +136,7 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className='fixed inset-0 z-50 bg-black/25 flex items-center justify-center'
+          className='fixed inset-0 z-50 flex items-center justify-center bg-black/25'
         >
           {/* Spotlight Circle */}
           <motion.div
@@ -143,7 +144,7 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-            className='absolute rounded-lg border-4 border-blue-400 pointer-events-none'
+            className='pointer-events-none absolute rounded-lg border-4 border-blue-400'
             style={{
               width: spotlightWidth,
               height: spotlightHeight,
@@ -158,31 +159,31 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 20 }}
-            className='absolute bg-white text-gray-800 p-4 rounded-lg shadow-lg max-w-xs'
+            className='absolute max-w-xs rounded-lg bg-white p-4 text-gray-800 shadow-lg'
             style={{
               left: tooltipX,
               top: tooltipY,
               width: tooltipWidth,
             }}
           >
-            <p className='text-sm mb-2'>{currentStep.message}</p>
+            <p className='mb-2 text-sm'>{currentStep.message}</p>
             <div className='flex justify-end space-x-2'>
               <button
                 onClick={handleSkip}
-                className='px-3 py-1 text-sm rounded-md bg-gray-200 hover:bg-gray-300'
+                className='rounded-md bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300'
               >
                 跳过
               </button>
               <button
                 onClick={handleNext}
-                className='px-3 py-1 text-sm rounded-md bg-blue-500 text-white hover:bg-blue-600'
+                className='rounded-md bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600'
               >
                 {currentStepIndex === TUTORIAL_STEPS.length - 1 ? '完成' : '下一步'}
               </button>
             </div>
             {/* Arrow */}
             <motion.div
-              className='absolute w-0 h-0 border-l-[10px] border-r-[10px] border-b-[10px] border-l-transparent border-r-transparent border-b-white'
+              className='absolute h-0 w-0 border-r-[10px] border-b-[10px] border-l-[10px] border-r-transparent border-b-white border-l-transparent'
               style={{
                 left: targetRect.left + targetRect.width / 2 - tooltipX - 10, // Center arrow relative to target
                 top: currentStep.position === 'bottom' ? -10 : 'auto',

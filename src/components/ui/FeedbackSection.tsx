@@ -1,5 +1,7 @@
 'use client';
-import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
 
 export interface FeedbackSectionRef {
@@ -89,28 +91,28 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
       <button
         type='button'
         onClick={() => setIsFeedbackOpen(true)}
-        className='px-6 py-4 flex flex-col items-center justify-center gap-2 text-center min-w-[180px] bg-gray-200 text-gray-800 shadow-md rounded-md border-none focus:outline-none dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900 dark:border-gray-700 transition-colors duration-200'
+        className='flex min-w-[180px] flex-col items-center justify-center gap-2 rounded-md border-none bg-gray-200 px-6 py-4 text-center text-gray-800 shadow-md transition-colors duration-200 focus:outline-none dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'
         aria-label='反馈建议'
       >
         <div className='flex items-center gap-3'>
-          <ChatBubbleIcon className='w-8 h-8' strokeWidth={2} />
+          <ChatBubbleIcon className='h-8 w-8' strokeWidth={2} />
           <span className='text-2xl font-bold whitespace-nowrap'>反馈建议</span>
         </div>
-        <div className='text-sm text-gray-500 mt-1 dark:text-gray-400'>提交建议或报告问题</div>
+        <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>提交建议或报告问题</div>
       </button>
 
       {/* Feedback Modal */}
       {isFeedbackOpen && (
         <>
           <div
-            className='fixed inset-0 bg-gray-900/30 backdrop-blur-sm z-40'
+            className='fixed inset-0 z-40 bg-gray-900/30 backdrop-blur-sm'
             onClick={() => setIsFeedbackOpen(false)}
             onDoubleClick={(e) => e.stopPropagation()}
             aria-hidden='true'
           />
 
           <div
-            className='fixed inset-5 md:inset-auto md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:w-1/2 md:max-w-2xl md:min-w-md md:h-auto md:max-h-[80vh] z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden'
+            className='fixed inset-5 z-50 overflow-hidden rounded-lg bg-white shadow-xl md:inset-auto md:top-1/2 md:left-1/2 md:h-auto md:max-h-[80vh] md:w-1/2 md:max-w-2xl md:min-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:transform dark:bg-gray-800'
             onDoubleClick={(e) => e.stopPropagation()}
             role='dialog'
             aria-modal='true'
@@ -118,25 +120,25 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
           >
             {submitted ? (
               <div className='p-6 text-center' role='alert' aria-live='polite'>
-                <div className='text-4xl mb-4'>✅</div>
-                <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2'>
+                <div className='mb-4 text-4xl'>✅</div>
+                <h3 className='mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100'>
                   感谢您的反馈！
                 </h3>
-                <p className='text-gray-600 dark:text-gray-400 mb-4'>我们会认真考虑您的建议。</p>
+                <p className='mb-4 text-gray-600 dark:text-gray-400'>我们会认真考虑您的建议。</p>
                 <button
                   type='button'
                   onClick={() => {
                     setSubmitted(false);
                     setIsFeedbackOpen(false);
                   }}
-                  className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg'
+                  className='rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
                 >
                   关闭
                 </button>
               </div>
             ) : (
               <form onSubmit={handleFeedbackSubmit} className='p-6'>
-                <div className='flex justify-between items-center mb-4'>
+                <div className='mb-4 flex items-center justify-between'>
                   <h3
                     id='feedback-title'
                     className='text-lg font-semibold text-gray-900 dark:text-gray-100'
@@ -154,7 +156,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                 </div>
 
                 {/* QQ Group Info */}
-                <div className='mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700'>
+                <div className='mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-700 dark:bg-blue-900/20'>
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center space-x-2'>
                       <span className='text-lg'>💬</span>
@@ -170,7 +172,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                     <button
                       type='button'
                       onClick={handleQQGroupClick}
-                      className='text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded'
+                      className='rounded bg-blue-600 px-2 py-1 text-xs text-white hover:bg-blue-700'
                     >
                       加入
                     </button>
@@ -178,7 +180,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                 </div>
                 <div className='space-y-4'>
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+                    <label className='mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300'>
                       反馈类型
                     </label>
                     <select
@@ -186,7 +188,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                       onChange={(e) =>
                         setFeedbackFormData({ ...feedbackFormData, type: e.target.value })
                       }
-                      className='w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                      className='w-full rounded-lg border border-gray-300 bg-white p-2 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100'
                       aria-label='反馈类型'
                       title='选择反馈类型'
                     >
@@ -198,7 +200,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                   </div>
 
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+                    <label className='mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300'>
                       详细描述
                     </label>
                     <textarea
@@ -208,7 +210,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                         setFeedbackFormData({ ...feedbackFormData, content: e.target.value })
                       }
                       placeholder='请详细描述您的建议或遇到的问题...'
-                      className='w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 h-32 resize-none'
+                      className='h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-3 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100'
                       required
                     />
                   </div>
@@ -249,7 +251,7 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                         setFeedbackFormData({ ...feedbackFormData, contact: e.target.value })
                       }
                       placeholder={isAnonymous ? '已匿名' : '请填写QQ号或其他联系方式，便于回复'}
-                      className='w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 disabled:bg-gray-100 disabled:text-gray-400 disabled:dark:bg-gray-700/60 disabled:dark:text-gray-500'
+                      className='w-full rounded-lg border border-gray-300 bg-white p-2 text-gray-900 disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 disabled:dark:bg-gray-700/60 disabled:dark:text-gray-500'
                       disabled={isAnonymous}
                       aria-disabled={isAnonymous}
                       aria-describedby='contact-help'
@@ -268,11 +270,11 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                   </div>
                 </div>
 
-                <div className='flex space-x-3 mt-6'>
+                <div className='mt-6 flex space-x-3'>
                   <button
                     type='button'
                     onClick={() => setIsFeedbackOpen(false)}
-                    className='flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700'
+                    className='flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
                   >
                     取消
                   </button>
@@ -283,14 +285,14 @@ const FeedbackSection = forwardRef<FeedbackSectionRef>((_props, ref) => {
                       !feedbackFormData.content.trim() ||
                       (!isAnonymous && !feedbackFormData.contact.trim())
                     }
-                    className='flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg'
+                    className='flex-1 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400'
                   >
                     {isSubmitting ? '提交中...' : '提交反馈'}
                   </button>
                 </div>
 
-                <div className='mt-4 pt-3 border-t border-gray-200 dark:border-gray-600'>
-                  <p className='text-xs text-gray-500 dark:text-gray-400 text-center'>
+                <div className='mt-4 border-t border-gray-200 pt-3 dark:border-gray-600'>
+                  <p className='text-center text-xs text-gray-500 dark:text-gray-400'>
                     感谢您帮助改进猫和老鼠手游百科！
                   </p>
                 </div>

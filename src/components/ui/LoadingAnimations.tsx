@@ -43,7 +43,7 @@ export function PulsingCircle({ size = 'md', className = '' }: LoadingAnimationP
     <div className={clsx('flex items-center justify-center', className)}>
       <div
         className={clsx(
-          'bg-blue-500 dark:bg-blue-400 rounded-full animate-pulse',
+          'animate-pulse rounded-full bg-blue-500 dark:bg-blue-400',
           sizeClasses[size]
         )}
       ></div>
@@ -64,8 +64,8 @@ export function RippleAnimation({ size = 'md', className = '' }: LoadingAnimatio
   return (
     <div className={clsx('relative flex items-center justify-center', className)}>
       <div className={clsx('relative', sizeClasses[size])}>
-        <div className='absolute inset-0 rounded-full border-2 border-blue-500 dark:border-blue-400 animate-ping'></div>
-        <div className='absolute inset-2 rounded-full border-2 border-blue-500 dark:border-blue-400 animate-ping [animation-delay:0.2s]'></div>
+        <div className='absolute inset-0 animate-ping rounded-full border-2 border-blue-500 dark:border-blue-400'></div>
+        <div className='absolute inset-2 animate-ping rounded-full border-2 border-blue-500 [animation-delay:0.2s] dark:border-blue-400'></div>
         <div className='absolute inset-4 rounded-full bg-blue-500 dark:bg-blue-400'></div>
       </div>
     </div>
@@ -85,7 +85,7 @@ export function SpinningBars({ size = 'md', className = '' }: LoadingAnimationPr
   return (
     <div className={clsx('flex items-center justify-center', className)}>
       <div className={clsx('relative', sizeClasses[size])}>
-        <div className='absolute inset-0 border-2 border-blue-500 dark:border-blue-400 border-t-transparent rounded-full animate-spin'></div>
+        <div className='absolute inset-0 animate-spin rounded-full border-2 border-blue-500 border-t-transparent dark:border-blue-400'></div>
       </div>
     </div>
   );
@@ -142,7 +142,7 @@ export function WaveAnimation({ size = 'md', className = '' }: LoadingAnimationP
 export function SkeletonShimmer({ className = '' }: { className?: string }) {
   return (
     <div className={clsx('animate-pulse', className)}>
-      <div className='bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 bg-[length:200%_100%] animate-[shimmer_2s_infinite] rounded'></div>
+      <div className='animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%] dark:from-gray-700 dark:via-gray-600 dark:to-gray-700'></div>
     </div>
   );
 }
@@ -196,10 +196,10 @@ export function ProgressBar({
   className?: string;
 }) {
   return (
-    <div className={clsx('w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2', className)}>
+    <div className={clsx('h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700', className)}>
       <div
         className={clsx(
-          'h-2 bg-blue-500 dark:bg-blue-400 rounded-full transition-all duration-300',
+          'h-2 rounded-full bg-blue-500 transition-all duration-300 dark:bg-blue-400',
           animated && 'animate-pulse'
         )}
         style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}

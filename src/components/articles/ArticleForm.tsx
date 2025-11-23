@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
+import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import clsx from 'clsx';
 
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 import { CheckBadgeIcon, CloseIcon } from '@/components/icons/CommonIcons';
-import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 
 export interface CategoryOption {
   id: string;
@@ -54,11 +54,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   const isSaveDisabled = isSubmitting || !title.trim() || !category || !content;
 
   return (
-    <div className='max-w-4xl mx-auto px-4'>
+    <div className='mx-auto max-w-4xl px-4'>
       {(errorMessage || successMessage) && (
         <>
           {errorMessage && (
-            <BaseCard className='mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'>
+            <BaseCard className='mb-6 border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20'>
               <div className='flex items-center gap-3'>
                 <svg
                   className='size-5 text-red-600 dark:text-red-400'
@@ -76,7 +76,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             </BaseCard>
           )}
           {successMessage && (
-            <BaseCard className='mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'>
+            <BaseCard className='mb-6 border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20'>
               <div className='flex items-center gap-3'>
                 <svg
                   className='size-5 text-green-600 dark:text-green-400'
@@ -111,7 +111,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder='请保证标题清晰准确'
-              className='w-full px-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+              className='w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-lg text-gray-900 placeholder-gray-500 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400'
               disabled={isSubmitting}
             />
           </div>
@@ -133,7 +133,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 id='category'
                 value={category}
                 onChange={(e) => onCategoryChange(e.target.value)}
-                className='w-full px-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
+                className='w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-lg text-gray-900 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
                 disabled={isSubmitting}
               >
                 <option value=''>请选择分类</option>
@@ -157,17 +157,17 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             />
           </div>
 
-          <div className='flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200 dark:border-gray-700'>
+          <div className='flex flex-col gap-4 border-t border-gray-200 pt-6 sm:flex-row dark:border-gray-700'>
             <button
               type='button'
               onClick={onSave}
               disabled={isSaveDisabled}
               className={clsx(
-                'flex-1 sm:flex-none inline-flex items-center justify-center gap-3 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+                'inline-flex flex-1 items-center justify-center gap-3 rounded-lg px-8 py-4 text-lg font-semibold transition-all duration-200 sm:flex-none',
+                'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
                 isSaveDisabled
-                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white transform hover:scale-105 shadow-lg hover:shadow-xl'
+                  ? 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400'
+                  : 'transform bg-blue-600 text-white shadow-lg hover:scale-105 hover:bg-blue-700 hover:shadow-xl'
               )}
             >
               {isSubmitting ? (
@@ -187,7 +187,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               type='button'
               onClick={onCancel}
               disabled={isSubmitting}
-              className='flex-1 sm:flex-none inline-flex items-center justify-center gap-3 px-8 py-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold text-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2'
+              className='inline-flex flex-1 items-center justify-center gap-3 rounded-lg bg-gray-100 px-8 py-4 text-lg font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none sm:flex-none dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
             >
               <CloseIcon className='size-5' />
               取消

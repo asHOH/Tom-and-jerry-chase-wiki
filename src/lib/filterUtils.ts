@@ -3,7 +3,7 @@
  * Consolidates filter logic used across grid components
  */
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 /**
  * Generic filter state management hook

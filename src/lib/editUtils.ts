@@ -1,10 +1,12 @@
 import { characters, FactionId, factions, Skill } from '@/data';
-import { AssetManager } from './assetManager';
-import { CharacterWithFaction } from './types';
-import json5 from 'json5';
-import type { DeepReadonly } from '@/types/deep-readonly';
 import mouseCharactersStats from '@/data/mouseCharactersStats';
+import json5 from 'json5';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
+
+import { AssetManager } from './assetManager';
 import { GameDataManager } from './dataManager';
+import { CharacterWithFaction } from './types';
 
 /**
  * Deeply assigns the values of source object to the target object.

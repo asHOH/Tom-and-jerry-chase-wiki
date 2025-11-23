@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
-import ItemGroupClient from './ItemGroupGridClient';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import ItemGroupClient from './ItemGroupGridClient';
 
 export const dynamic = 'force-static';
 

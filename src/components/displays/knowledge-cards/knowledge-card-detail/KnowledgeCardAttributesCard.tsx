@@ -1,8 +1,7 @@
 'use client';
 
-import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useMobile } from '@/hooks/useMediaQuery';
+
 import {
   componentTokens,
   designTokens,
@@ -10,6 +9,9 @@ import {
   getCardRankColors,
 } from '@/lib/design-tokens';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
+import { useMobile } from '@/hooks/useMediaQuery';
+import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
+
 import BaseCard from '../../../ui/BaseCard';
 import GameImage from '../../../ui/GameImage';
 import Tag from '../../../ui/Tag';
@@ -102,7 +104,7 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
 
       {/* Card attributes section */}
       <div
-        className='grid items-center border-t border-gray-300 dark:border-gray-600 gap-1'
+        className='grid items-center gap-1 border-t border-gray-300 dark:border-gray-600'
         style={{
           marginLeft: spacing.md,
           marginRight: spacing.md,
@@ -110,7 +112,7 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
           paddingBottom: spacing.xxxxxs,
         }}
       >
-        <div className='text-sm font-normal gap-1 flex flex-wrap items-center'>
+        <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
           <span className={`text-sm whitespace-pre`}>类型：</span>
           <Tag colorStyles={rankColors} size='sm'>
             等级: {card.rank}
@@ -129,7 +131,7 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
 
       {/*Navigation */}
       <div
-        className='flex items-center flex-wrap border-t text-sm border-gray-300 dark:border-gray-600'
+        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
         style={{
           gap: spacing.sm,
           marginLeft: spacing.md,

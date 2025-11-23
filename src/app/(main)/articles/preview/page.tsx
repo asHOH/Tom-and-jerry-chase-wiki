@@ -1,6 +1,8 @@
-import PreviewClient from './PreviewClient';
 import { Metadata } from 'next';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
+
+import PreviewClient from './PreviewClient';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '文章预览 - 猫鼠wiki',

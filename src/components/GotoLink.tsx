@@ -2,11 +2,13 @@
 'use client';
 
 import React, { useEffect, useId, useRef, useState } from 'react';
-import useSWR from 'swr';
-import PreviewCard, { GotoPreviewCardProps } from './ui/PreviewCard';
-import type { CategoryHint } from '@/lib/types';
-import Link from 'next/link';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import useSWR from 'swr';
+
+import type { CategoryHint } from '@/lib/types';
+import Link from '@/components/Link';
+
+import PreviewCard, { GotoPreviewCardProps } from './ui/PreviewCard';
 
 type GotoLinkProps = {
   name: string;
@@ -141,12 +143,12 @@ export default function GotoLink({
   }, [data?.url]);
 
   const basePreviewContent = isLoading ? (
-    <div className='w-full p-4 flex flex-row items-start bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md animate-pulse'>
-      <div className='w-24 h-24 flex-shrink-0 bg-gray-200 dark:bg-gray-700 rounded-lg mr-4' />
-      <div className='flex flex-col flex-1 space-y-2'>
-        <div className='h-4 w-1/3 bg-gray-200 dark:bg-gray-700 rounded' />
-        <div className='h-6 w-1/2 bg-gray-200 dark:bg-gray-700 rounded' />
-        <div className='h-3 w-2/5 bg-gray-200 dark:bg-gray-700 rounded' />
+    <div className='flex w-full animate-pulse flex-row items-start rounded-lg bg-gray-100 p-4 shadow-md dark:bg-gray-800'>
+      <div className='mr-4 h-24 w-24 flex-shrink-0 rounded-lg bg-gray-200 dark:bg-gray-700' />
+      <div className='flex flex-1 flex-col space-y-2'>
+        <div className='h-4 w-1/3 rounded bg-gray-200 dark:bg-gray-700' />
+        <div className='h-6 w-1/2 rounded bg-gray-200 dark:bg-gray-700' />
+        <div className='h-3 w-2/5 rounded bg-gray-200 dark:bg-gray-700' />
       </div>
     </div>
   ) : data ? (
@@ -157,8 +159,8 @@ export default function GotoLink({
       className='w-full max-w-none'
     />
   ) : (
-    <div className='w-full p-4 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md'>
-      <div className='text-gray-400 text-lg'>未找到&ldquo;{name}&rdquo;的跳转目标</div>
+    <div className='flex w-full flex-col items-center justify-center rounded-lg bg-gray-100 p-4 shadow-md dark:bg-gray-800'>
+      <div className='text-lg text-gray-400'>未找到&ldquo;{name}&rdquo;的跳转目标</div>
     </div>
   );
 
@@ -169,7 +171,7 @@ export default function GotoLink({
       <div className='space-y-2'>
         {basePreviewContent}
         <div className='flex justify-center'>
-          <span className='text-xs text-gray-600 dark:text-gray-200 text-center select-none bg-gray-100/95 dark:bg-gray-800/90 px-3 py-1 rounded-md shadow-sm'>
+          <span className='rounded-md bg-gray-100/95 px-3 py-1 text-center text-xs text-gray-600 shadow-sm select-none dark:bg-gray-800/90 dark:text-gray-200'>
             双击跳转到对应页面
           </span>
         </div>
@@ -279,7 +281,7 @@ export default function GotoLink({
             side='bottom'
             align='center'
             sideOffset={8}
-            className='z-50 pointer-events-none'
+            className='pointer-events-none z-50'
             style={{ width: 'clamp(300px, 60vw, 720px)' }}
             ref={contentRef}
           >

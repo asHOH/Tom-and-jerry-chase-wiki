@@ -74,35 +74,35 @@ const UserManagementPanelClient = () => {
   return (
     <>
       {modalOpen && (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center'>
-          <div className='bg-white p-6 rounded shadow-lg'>
-            <h2 className='text-xl font-bold mb-4'>编辑用户</h2>
-            <label className='block mb-2'>
+        <div className='bg-opacity-50 fixed inset-0 flex items-center justify-center bg-black'>
+          <div className='rounded bg-white p-6 shadow-lg'>
+            <h2 className='mb-4 text-xl font-bold'>编辑用户</h2>
+            <label className='mb-2 block'>
               昵称:
               <input
                 type='text'
-                className='border border-gray-300 px-2 py-1 w-full'
+                className='w-full border border-gray-300 px-2 py-1'
                 defaultValue={selectedUser?.nickname}
                 id='nickname'
               />
             </label>
-            <label className='block mb-4'>
+            <label className='mb-4 block'>
               密码:
               <input
                 type='password'
-                className='border border-gray-300 px-2 py-1 w-full'
+                className='w-full border border-gray-300 px-2 py-1'
                 id='password'
               />
             </label>
             <div className='flex justify-end'>
               <button
-                className='bg-gray-500 text-white px-4 py-2 rounded mr-2'
+                className='mr-2 rounded bg-gray-500 px-4 py-2 text-white'
                 onClick={handleCloseModal}
               >
                 取消
               </button>
               <button
-                className='bg-blue-500 text-white px-4 py-2 rounded'
+                className='rounded bg-blue-500 px-4 py-2 text-white'
                 onClick={() =>
                   handleUpdateUser(
                     (document.getElementById('nickname') as HTMLInputElement).value,
@@ -117,8 +117,8 @@ const UserManagementPanelClient = () => {
         </div>
       )}
       <div className='p-6'>
-        <h1 className='text-2xl font-bold mb-4'>User Management Panel</h1>
-        <table className='table-auto w-full border-collapse border border-gray-300'>
+        <h1 className='mb-4 text-2xl font-bold'>User Management Panel</h1>
+        <table className='w-full table-auto border-collapse border border-gray-300'>
           <thead>
             <tr>
               <th className='border border-gray-300 px-4 py-2'>昵称</th>
@@ -166,7 +166,7 @@ const UserManagementPanelClient = () => {
                 <td className='border border-gray-300 px-4 py-2'>
                   <button
                     type='button'
-                    className='bg-blue-500 text-white px-2 py-1 rounded'
+                    className='rounded bg-blue-500 px-2 py-1 text-white'
                     onClick={() => handleOpenModal(user)}
                   >
                     编辑

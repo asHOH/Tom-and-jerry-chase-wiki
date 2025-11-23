@@ -1,23 +1,25 @@
 import React, { useCallback } from 'react';
-import Tag from '../../../ui/Tag';
-import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design-tokens';
-import EditableField from '@/components/ui/EditableField';
-import Tooltip from '@/components/ui/Tooltip';
-import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { sortPositioningTags } from '@/constants/positioningTagSequences';
+import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { useSnapshot } from 'valtio';
-import { setNestedProperty } from '@/lib/editUtils';
 import { characters, PositioningTag } from '@/data';
 import type { FactionId } from '@/data/types';
-import { useAppContext } from '@/context/AppContext';
-import { CharacterWithFaction } from '@/lib/types';
-import { sortPositioningTags } from '@/constants/positioningTagSequences';
-import type { DeepReadonly } from '@/types/deep-readonly';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
-import Image from '@/components/Image';
 import clsx from 'clsx';
+import { useSnapshot } from 'valtio';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design-tokens';
+import { setNestedProperty } from '@/lib/editUtils';
+import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { CharacterWithFaction } from '@/lib/types';
+import { getWeaponSkillImageUrl } from '@/lib/weaponUtils';
+import EditableField from '@/components/ui/EditableField';
+import Tooltip from '@/components/ui/Tooltip';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
+
+import Tag from '../../../ui/Tag';
 
 // Helper function to get available tag names based on faction
 function getAvailableTagNames(factionId: FactionId): string[] {
@@ -44,7 +46,7 @@ function TagNameDropdown({
     <select
       value={currentValue}
       onChange={(e) => onSelect(e.target.value)}
-      className='bg-transparent border-none outline-none text-inherit font-inherit cursor-pointer'
+      className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
       aria-label='选择标签名称'
     >
       {availableTags.map((tagName) => (
@@ -93,7 +95,7 @@ function WeaponDropdown({
           onSelect(parseInt(value) as 1 | 2);
         }
       }}
-      className='bg-transparent border-none outline-none text-inherit font-inherit cursor-pointer text-xs'
+      className='font-inherit cursor-pointer border-none bg-transparent text-xs text-inherit outline-none'
       aria-label='选择武器'
     >
       <option value=''>无武器</option>
@@ -228,8 +230,8 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   if ((!tags || tags.length === 0) && !isEditMode) return null;
 
   return (
-    <div className='mt-6 pt-4 border-t border-gray-200 dark:border-gray-700'>
-      <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3'>定位</h3>
+    <div className='mt-6 border-t border-gray-200 pt-4 dark:border-gray-700'>
+      <h3 className='mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200'>定位</h3>
       <div className='space-y-3'>
         {sortedTags.map((tag, index) => {
           // Find the original index in the unsorted array for edit operations
@@ -248,7 +250,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                 getPositioningTagContainerColor(tag.tagName, tag.isMinor, factionId, isDarkMode)
               )}
             >
-              <div className='flex items-center gap-2 mb-2'>
+              <div className='mb-2 flex items-center gap-2'>
                 <div className='relative'>
                   <Tag
                     colorStyles={getPositioningTagColors(
@@ -279,7 +281,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                     )}
                   </Tag>
                   {'weapon' in tag && !isEditMode && !!tag.weapon && (
-                    <div className='absolute -top-1 -right-1 w-5 h-5 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 flex items-center justify-center'>
+                    <div className='absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'>
                       {(() => {
                         const weaponImageUrl = getWeaponSkillImageUrl(
                           characterId,
@@ -303,7 +305,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   <>
                     <button
                       type='button'
-                      className='text-xs text-gray-500 dark:text-gray-400 cursor-pointer'
+                      className='cursor-pointer text-xs text-gray-500 dark:text-gray-400'
                       onClick={() => toggleIsMinor(originalIndex)}
                       aria-label={`切换为${tag.isMinor ? '主要' : '次要'}标签`}
                     >
@@ -327,9 +329,9 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                     type='button'
                     aria-label='移除定位标签'
                     onClick={() => handleRemovePositioningTags(originalIndex)}
-                    className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                    className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
                   >
-                    <TrashIcon className='w-4 h-4' aria-hidden='true' />
+                    <TrashIcon className='h-4 w-4' aria-hidden='true' />
                   </button>
                 )}
               </div>
@@ -337,7 +339,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                 tag='p'
                 path={`${tagsKey}.${originalIndex}.description`}
                 initialValue={tag.description}
-                className='text-sm text-gray-700 dark:text-gray-300 mb-1 whitespace-pre-wrap'
+                className='mb-1 text-sm whitespace-pre-wrap text-gray-700 dark:text-gray-300'
                 onSave={(newValue) => handleUpdate(originalIndex, newValue, 'description')}
               />
               {isDetailed && tag.additionalDescription && (
@@ -346,7 +348,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   path={`${tagsKey}.${originalIndex}.additionalDescription`}
                   initialValue={tag.additionalDescription}
                   className={clsx(
-                    'text-sm text-gray-600 dark:text-gray-400 mt-2 pl-3 border-l-2 whitespace-pre-wrap',
+                    'mt-2 border-l-2 pl-3 text-sm whitespace-pre-wrap text-gray-600 dark:text-gray-400',
                     borderColor
                   )}
                   onSave={(newValue) =>
@@ -363,9 +365,9 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
               type='button'
               aria-label='添加定位标签'
               onClick={handleAddPositioningTags}
-              className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+              className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
             >
-              <PlusIcon className='w-4 h-4' aria-hidden='true' />
+              <PlusIcon className='h-4 w-4' aria-hidden='true' />
             </button>
           </div>
         )}

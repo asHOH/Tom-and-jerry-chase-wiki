@@ -1,12 +1,13 @@
 'use client';
-/* eslint-disable @next/next/no-img-element */
 
+/* eslint-disable @next/next/no-img-element */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { createPortal } from 'react-dom';
 import clsx from 'clsx';
+import { createPortal } from 'react-dom';
+
+import { RTE_IMAGE_ALLOWED_MIME_TYPES, RTE_IMAGE_MAX_BYTES } from '@/lib/richtext/imagePolicy';
 
 import { LoadingSpinnerIcon } from '../RichTextEditorIcons';
-import { RTE_IMAGE_ALLOWED_MIME_TYPES, RTE_IMAGE_MAX_BYTES } from '@/lib/richtext/imagePolicy';
 
 const TABS = [
   { id: 'upload', label: '上传新图片' },
@@ -250,7 +251,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       type='button'
       onClick={() => setActiveTab(id)}
       className={clsx(
-        'px-4 py-2 text-sm font-medium rounded-md transition-colors duration-150',
+        'rounded-md px-4 py-2 text-sm font-medium transition-colors duration-150',
         activeTab === id
           ? 'bg-blue-600 text-white shadow-sm'
           : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
@@ -263,15 +264,15 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
 
   const renderUploadTab = () => (
     <div className='space-y-4'>
-      <div className='rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 p-6 text-center'>
-        <p className='text-base font-semibold text-gray-900 dark:text-gray-100 mb-2'>上传新图片</p>
-        <p className='text-sm text-gray-600 dark:text-gray-400 mb-4'>
+      <div className='rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center dark:border-gray-600 dark:bg-gray-800'>
+        <p className='mb-2 text-base font-semibold text-gray-900 dark:text-gray-100'>上传新图片</p>
+        <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
           {IMAGE_EXT_HINT}，单张不超过 {formatBytesForDisplay(RTE_IMAGE_MAX_BYTES)}。
         </p>
-        <label className='inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed'>
+        <label className='inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60'>
           {isUploading ? (
             <>
-              <LoadingSpinnerIcon className='animate-spin mr-2 size-4' /> 上传中...
+              <LoadingSpinnerIcon className='mr-2 size-4 animate-spin' /> 上传中...
             </>
           ) : (
             '选择文件上传'
@@ -288,14 +289,14 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           <p className='mt-3 text-sm text-red-600 dark:text-red-400'>{uploadError}</p>
         )}
       </div>
-      <div className='rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900'>
+      <div className='rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900'>
         <p className='text-sm text-gray-700 dark:text-gray-300'>
           若已知图片 URL，可直接粘贴（仅支持站内/网站数据库的 URL）：
         </p>
         <div className='mt-2 flex gap-2'>
           <input
             type='text'
-            className='flex-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-xs leading-snug text-gray-900 dark:text-gray-100 placeholder:text-[11px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-xs leading-snug text-gray-900 placeholder:text-[11px] focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
             placeholder={allowedSourcesDescription}
             value={manualInput}
             onChange={(event) => setManualInput(event.target.value)}
@@ -308,7 +309,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           />
           <button
             type='button'
-            className='px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold disabled:opacity-60'
+            className='rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60'
             onClick={handleManualSubmit}
             disabled={!manualInput.trim()}
           >
@@ -324,7 +325,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       <div className='flex items-center justify-between gap-2'>
         <input
           type='search'
-          className='flex-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+          className='flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
           placeholder='搜索文件名'
           value={librarySearchTerm}
           onChange={(event) => setLibrarySearchTerm(event.target.value)}
@@ -332,7 +333,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         <button
           type='button'
           onClick={fetchLibraryItems}
-          className='px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+          className='rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800'
         >
           刷新
         </button>
@@ -340,32 +341,32 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       {libraryError && <p className='text-sm text-red-600 dark:text-red-400'>{libraryError}</p>}
       {libraryLoading ? (
         <div className='flex items-center justify-center py-10 text-gray-500 dark:text-gray-400'>
-          <LoadingSpinnerIcon className='animate-spin mr-2 size-5' /> 加载中...
+          <LoadingSpinnerIcon className='mr-2 size-5 animate-spin' /> 加载中...
         </div>
       ) : filteredLibraryItems.length === 0 ? (
         <div className='py-10 text-center text-sm text-gray-500 dark:text-gray-400'>
           暂无图片，请先上传。
         </div>
       ) : (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[360px] overflow-y-auto pr-1'>
+        <div className='grid max-h-[360px] grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3'>
           {filteredLibraryItems.map((item) => (
             <button
               type='button'
               key={item.path}
-              className='group rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden text-left hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='group overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-sm hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900'
               onClick={() => handleSupabaseSelect(item)}
             >
-              <div className='relative w-full aspect-video bg-gray-100 dark:bg-gray-800 overflow-hidden'>
+              <div className='relative aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-800'>
                 <img
                   src={item.publicUrl}
                   alt={item.name}
-                  className='w-full h-full object-cover transition-transform duration-200 group-hover:scale-[1.02]'
+                  className='h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]'
                   loading='lazy'
                   referrerPolicy='no-referrer'
                 />
               </div>
-              <div className='p-3 space-y-1'>
-                <p className='text-sm font-medium text-gray-900 dark:text-gray-100 truncate'>
+              <div className='space-y-1 p-3'>
+                <p className='truncate text-sm font-medium text-gray-900 dark:text-gray-100'>
                   {item.name}
                 </p>
                 <p className='text-xs text-gray-500 dark:text-gray-400'>
@@ -396,7 +397,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           <button
             type='button'
             onClick={() => fetchSiteEntries('')}
-            className='px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800'
+            className='rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800'
           >
             回到根目录
           </button>
@@ -404,7 +405,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
             type='button'
             onClick={handleNavigateUp}
             disabled={!siteParentPath && siteParentPath !== ''}
-            className='px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed'
+            className='rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:hover:bg-gray-800'
           >
             返回上一级
           </button>
@@ -413,27 +414,27 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       {siteError && <p className='text-sm text-red-600 dark:text-red-400'>{siteError}</p>}
       {siteLoading ? (
         <div className='flex items-center justify-center py-10 text-gray-500 dark:text-gray-400'>
-          <LoadingSpinnerIcon className='animate-spin mr-2 size-5' /> 加载中...
+          <LoadingSpinnerIcon className='mr-2 size-5 animate-spin' /> 加载中...
         </div>
       ) : siteEntries.length === 0 ? (
         <div className='py-10 text-center text-sm text-gray-500 dark:text-gray-400'>
           该目录下暂无可用图片。
         </div>
       ) : (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[360px] overflow-y-auto pr-1'>
+        <div className='grid max-h-[360px] grid-cols-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3'>
           {siteEntries.map((entry) => (
             <button
               type='button'
               key={entry.path}
               onClick={() => handleSiteEntryClick(entry)}
-              className='flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-left hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2 text-left hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900'
             >
               {entry.type === 'directory' ? (
                 <div className='flex h-12 w-12 items-center justify-center rounded-md bg-blue-50 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300'>
                   📁
                 </div>
               ) : (
-                <div className='h-12 w-12 overflow-hidden rounded-md bg-gray-100 dark:bg-gray-800 flex items-center justify-center'>
+                <div className='flex h-12 w-12 items-center justify-center overflow-hidden rounded-md bg-gray-100 dark:bg-gray-800'>
                   <img
                     src={entry.publicPath ?? ''}
                     alt={entry.name}
@@ -442,11 +443,11 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
                   />
                 </div>
               )}
-              <div className='flex-1 min-w-0'>
-                <p className='text-sm font-medium text-gray-900 dark:text-gray-100 truncate'>
+              <div className='min-w-0 flex-1'>
+                <p className='truncate text-sm font-medium text-gray-900 dark:text-gray-100'>
                   {entry.name}
                 </p>
-                <p className='text-xs text-gray-500 dark:text-gray-400 truncate'>
+                <p className='truncate text-xs text-gray-500 dark:text-gray-400'>
                   {entry.type === 'directory'
                     ? '目录'
                     : (entry.publicPath?.replace(/^\//, '') ?? '文件')}
@@ -468,10 +469,10 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       <div
         role='dialog'
         aria-modal='true'
-        className='relative z-10 w-full max-w-4xl rounded-lg bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-700'
+        className='relative z-10 w-full max-w-4xl rounded-lg border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900'
         onClick={(event) => event.stopPropagation()}
       >
-        <div className='flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4'>
+        <div className='flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700'>
           <div>
             <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>插入图片</h2>
           </div>
@@ -484,7 +485,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
             ✕
           </button>
         </div>
-        <div className='px-6 py-4 space-y-4'>
+        <div className='space-y-4 px-6 py-4'>
           <div className='flex flex-wrap gap-2'>
             {TABS.map((tab) => (
               <TabButton key={tab.id} id={tab.id} label={tab.label} />
@@ -494,11 +495,11 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           {activeTab === 'library' && renderLibraryTab()}
           {activeTab === 'site' && renderSiteTab()}
         </div>
-        <div className='border-t border-gray-200 dark:border-gray-700 px-6 py-3 flex justify-end'>
+        <div className='flex justify-end border-t border-gray-200 px-6 py-3 dark:border-gray-700'>
           <button
             type='button'
             onClick={onClose}
-            className='px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+            className='rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800'
           >
             关闭
           </button>

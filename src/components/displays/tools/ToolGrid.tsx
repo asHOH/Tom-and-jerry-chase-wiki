@@ -1,14 +1,15 @@
 'use client';
 
-import { useMobile } from '@/hooks/useMediaQuery';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import { TOOL_NAV_ITEMS } from '@/constants/navigation';
-import HomePageSection from '@/components/ui/HomePageSection';
-import { useEditMode } from '@/context/EditModeContext';
-import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
-import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import { useRef } from 'react';
+import { TOOL_NAV_ITEMS } from '@/constants/navigation';
+import { useEditMode } from '@/context/EditModeContext';
+
+import { useMobile } from '@/hooks/useMediaQuery';
+import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
+import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
+import HomePageSection from '@/components/ui/HomePageSection';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
 
 interface CharacterRankingGridProps {
   description?: string;
@@ -59,12 +60,12 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
     <div
       className={
         isMobile
-          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
-          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
+          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
       }
     >
       <header
-        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>工具栏</PageTitle>
         <PageDescription>{description}</PageDescription>
@@ -75,12 +76,12 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       {isEditMode ? <HomePageSection title={'编辑工具'} buttons={EditButtons} /> : null}
 
       <div className='mt-24 px-2 sm:px-4'>
-        <div className='max-w-4xl mx-auto'>
-          <div className='h-px bg-gray-300 dark:bg-gray-700 w-full'></div>
+        <div className='mx-auto max-w-4xl'>
+          <div className='h-px w-full bg-gray-300 dark:bg-gray-700'></div>
         </div>
       </div>
-      <div className='mt-8 text-center px-2 sm:px-4'>
-        <h2 className='text-3xl font-bold mb-10 py-3 text-gray-800 dark:text-white'>网站工具</h2>
+      <div className='mt-8 px-2 text-center sm:px-4'>
+        <h2 className='mb-10 py-3 text-3xl font-bold text-gray-800 dark:text-white'>网站工具</h2>
         <div className='mt-6 flex flex-wrap justify-center gap-4'>
           <FeedbackSection ref={feedbackSectionRef} />
           <ChangeLogs ref={changeLogsRef} />

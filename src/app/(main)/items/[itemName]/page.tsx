@@ -1,9 +1,11 @@
-import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { items } from '@/data';
-import ItemDetailClient from './ItemDetailsClient';
+
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
+
+import ItemDetailClient from './ItemDetailsClient';
 
 // Generate static params for all special skills
 export function generateStaticParams() {

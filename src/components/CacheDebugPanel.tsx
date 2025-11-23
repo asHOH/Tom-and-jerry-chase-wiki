@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import NotificationTooltip from './ui/NotificationTooltip';
 
 export const CacheDebugPanel: React.FC = () => {
@@ -62,8 +63,8 @@ export const CacheDebugPanel: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className='fixed top-4 right-4 bg-black bg-opacity-90 text-white p-4 rounded-lg z-50 max-w-sm'>
-      <div className='flex justify-between items-center mb-2'>
+    <div className='bg-opacity-90 fixed top-4 right-4 z-50 max-w-sm rounded-lg bg-black p-4 text-white'>
+      <div className='mb-2 flex items-center justify-between'>
         <h3 className='font-bold'>Cache Debug Panel</h3>
         <button
           type='button'
@@ -73,13 +74,13 @@ export const CacheDebugPanel: React.FC = () => {
           ✕
         </button>
       </div>
-      <div className='text-xs space-y-2'>
+      <div className='space-y-2 text-xs'>
         <div>
           <strong>Active Caches:</strong>
           {cacheInfo.length === 0 ? (
             <div>None</div>
           ) : (
-            <ul className='list-disc list-inside'>
+            <ul className='list-inside list-disc'>
               {cacheInfo.map((name) => (
                 <li key={name}>{name}</li>
               ))}
@@ -90,21 +91,21 @@ export const CacheDebugPanel: React.FC = () => {
           <button
             type='button'
             onClick={clearAllCaches}
-            className='w-full bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-xs'
+            className='w-full rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700'
           >
             Clear All Caches
           </button>
           <button
             type='button'
             onClick={forceReload}
-            className='w-full bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-xs'
+            className='w-full rounded bg-blue-600 px-2 py-1 text-xs hover:bg-blue-700'
           >
             Force Reload
           </button>
           <button
             type='button'
             onClick={getCacheInfo}
-            className='w-full bg-gray-600 hover:bg-gray-700 px-2 py-1 rounded text-xs'
+            className='w-full rounded bg-gray-600 px-2 py-1 text-xs hover:bg-gray-700'
           >
             Refresh Cache Info
           </button>

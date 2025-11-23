@@ -1,6 +1,7 @@
+import { CSSProperties, useState } from 'react';
+
+import { componentTokens, designTokens } from '@/lib/design-tokens';
 import Image from '@/components/Image';
-import { useState, CSSProperties } from 'react';
-import { designTokens, componentTokens } from '@/lib/design-tokens';
 
 type ImageSize = keyof typeof componentTokens.image.dimensions;
 
@@ -67,7 +68,7 @@ export default function GameImage({
 
   return (
     <div
-      className='w-full bg-gray-200 dark:bg-slate-700 relative overflow-hidden mb-3'
+      className='relative mb-3 w-full overflow-hidden bg-gray-200 dark:bg-slate-700'
       style={{
         ...{
           height: containerHeight,
@@ -76,7 +77,7 @@ export default function GameImage({
         ...style,
       }}
     >
-      <div className='flex items-center justify-center h-full p-2'>
+      <div className='flex h-full items-center justify-center p-2'>
         <Image
           src={src}
           alt={alt}

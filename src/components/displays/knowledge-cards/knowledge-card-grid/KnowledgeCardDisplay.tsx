@@ -1,10 +1,12 @@
-import { getCardRankColors, getCardCostColors } from '@/lib/design-tokens';
+import { useDarkMode } from '@/context/DarkModeContext';
+
+import { getCardCostColors, getCardRankColors } from '@/lib/design-tokens';
 import { KnowledgeCardDisplayProps } from '@/lib/types';
+import { useMobile } from '@/hooks/useMediaQuery';
+
+import BaseCard from '../../../ui/BaseCard';
 import GameImage from '../../../ui/GameImage';
 import Tag from '../../../ui/Tag';
-import BaseCard from '../../../ui/BaseCard';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { useMobile } from '@/hooks/useMediaQuery';
 
 export default function KnowledgeCardDisplay({
   id,
@@ -35,9 +37,9 @@ export default function KnowledgeCardDisplay({
         style={isMobile ? { height: '8rem' } : {}}
       />
       <div className='px-3 pt-1 pb-3 text-center'>
-        <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-1'>{name}</h3>
+        <h3 className='mb-1 text-lg font-bold text-gray-800 dark:text-white'>{name}</h3>
         <div
-          className='flex justify-center items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
+          className='flex items-center justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'
           aria-label='卡片属性'
         >

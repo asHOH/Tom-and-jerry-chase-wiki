@@ -1,26 +1,28 @@
 'use client';
 
-import React, { useState, Fragment } from 'react';
-import Image from '@/components/Image';
-import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
-import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
-import { Skill, SkillLevel } from '@/data/types';
-import EditableField from '@/components/ui/EditableField';
-import { useEditMode } from '@/context/EditModeContext';
-import { useSnapshot } from 'valtio';
+import React, { Fragment, useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { characters } from '@/data';
-import { CharacterWithFaction } from '@/lib/types';
+import { Skill, SkillLevel } from '@/data/types';
+import clsx from 'clsx';
+import { useSnapshot } from 'valtio';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { AssetManager } from '@/lib/assetManager';
+import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import {
   convertCancelableAftercastToDisplayText,
   convertCancelableSkillToDisplayText,
 } from '@/lib/skillUtils';
-import { AssetManager } from '@/lib/assetManager';
-import type { DeepReadonly } from '@/types/deep-readonly';
-import { useDarkMode } from '@/context/DarkModeContext';
+import { CharacterWithFaction } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
-import clsx from 'clsx';
+import EditableField from '@/components/ui/EditableField';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
+
+import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
 import SkillTraitsCard from './SkillTraitsCard';
 
 interface SkillCardProps {
@@ -138,14 +140,14 @@ export default function SkillCard({
     return (
       <div className='flex items-center gap-1 text-xs'>
         <span className='text-xs text-gray-400 dark:text-gray-500'>{label}:</span>
-        <label className='flex items-center gap-1 cursor-pointer'>
+        <label className='flex cursor-pointer items-center gap-1'>
           <input
             type='checkbox'
             checked={skill[property] ?? false}
             onChange={(e) => {
               skillRef[property] = e.target.checked;
             }}
-            className='w-3 h-3'
+            className='h-3 w-3'
           />
           <span className='font-bold'>{skill[property] ? trueText : falseText}</span>
         </label>
@@ -167,7 +169,7 @@ export default function SkillCard({
         <span className='text-xs text-gray-400 dark:text-gray-500'>{label}:</span>
         <div className='flex flex-wrap gap-1'>
           {options.map((option) => (
-            <label key={option} className='flex items-center gap-1 cursor-pointer'>
+            <label key={option} className='flex cursor-pointer items-center gap-1'>
               <input
                 type='radio'
                 name={`${property}-${skillIndex}`}
@@ -175,7 +177,7 @@ export default function SkillCard({
                 onChange={() => {
                   (skillRef[property] as T) = option;
                 }}
-                className='w-3 h-3'
+                className='h-3 w-3'
               />
               <span className={clsx({ 'font-bold': currentValue === option })}>{option}</span>
             </label>
@@ -196,7 +198,7 @@ export default function SkillCard({
 
     if (isEditMode && skill.type !== 'passive') {
       properties.push(
-        <div className='text-xs text-gray-400 dark:text-gray-500 flex'>
+        <div className='flex text-xs text-gray-400 dark:text-gray-500'>
           别名：
           {skill.aliases &&
             skill.aliases.map((alias, index) => (
@@ -231,10 +233,10 @@ export default function SkillCard({
                 skill.aliases.push('新别名');
               }
             }}
-            className='w-4 h-4 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700 ml-2'
+            className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
             key='new-weapon-button'
           >
-            <PlusIcon className='w-3 h-3' aria-hidden='true' />
+            <PlusIcon className='h-3 w-3' aria-hidden='true' />
           </button>
         </div>
       );
@@ -251,7 +253,7 @@ export default function SkillCard({
               '不可造成受伤状态'
             )
           : undefined,
-        <div className='flex flex-wrap gap-1 items-center'>
+        <div className='flex flex-wrap items-center gap-1'>
           {(() => {
             const specialOptions = ['不可主动打断'] as const;
             const cancelableOptions = [
@@ -293,7 +295,7 @@ export default function SkillCard({
                     />
                     <span className='text-xs text-gray-400 dark:text-gray-500'>秒</span>
                   </div>
-                  <label className='flex items-center gap-1 cursor-pointer'>
+                  <label className='flex cursor-pointer items-center gap-1'>
                     <input
                       type='checkbox'
                       checked={skill.forecast === 0}
@@ -306,7 +308,7 @@ export default function SkillCard({
                           delete s.cancelableSkill;
                         }
                       }}
-                      className='w-3 h-3'
+                      className='h-3 w-3'
                     />
                     <span className={clsx({ 'font-bold': skill.forecast === 0 })}>无前摇</span>
                   </label>
@@ -319,7 +321,7 @@ export default function SkillCard({
                         className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
                       >
                         {specialOptions.map((option) => (
-                          <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                          <label key={option} className='flex cursor-pointer items-center gap-1'>
                             <input
                               type='checkbox'
                               disabled={disabled}
@@ -332,7 +334,7 @@ export default function SkillCard({
                                   delete skill.cancelableSkill;
                                 }
                               }}
-                              className='w-3 h-3'
+                              className='h-3 w-3'
                             />
                             <span
                               className={clsx(skill.cancelableSkill == option ? 'font-bold' : '')}
@@ -347,7 +349,7 @@ export default function SkillCard({
                       >
                         <span className='text-xs text-gray-400 dark:text-gray-500'>可被</span>
                         {cancelableOptions.map((option) => (
-                          <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                          <label key={option} className='flex cursor-pointer items-center gap-1'>
                             <input
                               type='checkbox'
                               disabled={disabled}
@@ -385,7 +387,7 @@ export default function SkillCard({
                                   }
                                 }
                               }}
-                              className='w-3 h-3'
+                              className='h-3 w-3'
                             />
                             <span
                               className={clsx({
@@ -405,7 +407,7 @@ export default function SkillCard({
             );
           })()}
         </div>,
-        <div className='flex flex-wrap gap-1 items-center'>
+        <div className='flex flex-wrap items-center gap-1'>
           {(() => {
             const specialOptions = ['不可取消'] as const;
             const cancelableOptions = [
@@ -447,7 +449,7 @@ export default function SkillCard({
                     />
                     <span className='text-xs text-gray-400 dark:text-gray-500'>秒</span>
                   </div>
-                  <label className='flex items-center gap-1 cursor-pointer'>
+                  <label className='flex cursor-pointer items-center gap-1'>
                     <input
                       type='checkbox'
                       checked={skill.aftercast === 0}
@@ -460,7 +462,7 @@ export default function SkillCard({
                           delete s.cancelableAftercast;
                         }
                       }}
-                      className='w-3 h-3'
+                      className='h-3 w-3'
                     />
                     <span className={clsx({ 'font-bold': skill.aftercast === 0 })}>无后摇</span>
                   </label>
@@ -473,7 +475,7 @@ export default function SkillCard({
                         className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
                       >
                         {specialOptions.map((option) => (
-                          <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                          <label key={option} className='flex cursor-pointer items-center gap-1'>
                             <input
                               type='checkbox'
                               disabled={disabled}
@@ -486,7 +488,7 @@ export default function SkillCard({
                                   delete skill.cancelableAftercast;
                                 }
                               }}
-                              className='w-3 h-3'
+                              className='h-3 w-3'
                             />
                             <span
                               className={clsx({ 'font-bold': skill.cancelableAftercast == option })}
@@ -501,7 +503,7 @@ export default function SkillCard({
                       >
                         <span className='text-xs text-gray-400 dark:text-gray-500'>可被</span>
                         {cancelableOptions.map((option) => (
-                          <label key={option} className='flex items-center gap-1 cursor-pointer'>
+                          <label key={option} className='flex cursor-pointer items-center gap-1'>
                             <input
                               type='checkbox'
                               disabled={disabled}
@@ -556,7 +558,7 @@ export default function SkillCard({
                                   // If it was already undefined, do nothing
                                 }
                               }}
-                              className='w-3 h-3'
+                              className='h-3 w-3'
                             />
                             <span
                               className={clsx({
@@ -666,12 +668,12 @@ export default function SkillCard({
 
   return (
     <div
-      className={`card ${isMobile ? 'px-4! py-6!' : 'p-6!'} dark:bg-slate-800 dark:border-slate-700`}
+      className={`card ${isMobile ? 'px-4! py-6!' : 'p-6!'} dark:border-slate-700 dark:bg-slate-800`}
     >
       <div className='flex items-start'>
         {skill.imageUrl && (
           <div className={`flex-shrink-0 ${isMobile ? 'mr-2' : 'mr-6'}`}>
-            <div className='relative w-16 h-16 rounded-full border-2 overflow-hidden border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700'>
+            <div className='relative h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 bg-white dark:border-gray-600 dark:bg-slate-700'>
               <Image
                 src={skill.imageUrl}
                 alt={skill.name}
@@ -687,10 +689,10 @@ export default function SkillCard({
                   type='button'
                   onClick={() => setShowVideoAddress(!showVideoAddress)}
                   className={clsx(
-                    'text-xs px-2 py-1 rounded-md block w-full text-center transition-colors',
+                    'block w-full rounded-md px-2 py-1 text-center text-xs transition-colors',
                     skill.videoUrl
-                      ? 'text-blue-600 hover:underline bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
-                      : 'text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900'
+                      ? 'bg-blue-50 text-blue-600 hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+                      : 'bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900'
                   )}
                   data-tutorial-id='skill-video-url-edit'
                 >
@@ -699,7 +701,7 @@ export default function SkillCard({
                 {showVideoAddress && (
                   <EditableField
                     tag='div'
-                    className='text-blue-600 dark:text-blue-300 text-xs px-2 py-1 hover:underline bg-blue-50 dark:bg-blue-900/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors block w-full text-center wrap-anywhere mt-2'
+                    className='mt-2 block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs wrap-anywhere text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
                     path={`skills.${skillIndex}.videoUrl`}
                     initialValue={skill.videoUrl ?? '输入视频网址'}
                     onSave={(newValue) => {
@@ -723,7 +725,7 @@ export default function SkillCard({
                 <button
                   type='button'
                   onClick={() => window.open(skill.videoUrl, '_blank', 'noopener,noreferrer')}
-                  className='text-blue-600 dark:text-blue-300 text-xs px-2 py-1 hover:underline bg-blue-50 dark:bg-blue-900/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors block w-full text-center'
+                  className='block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
                 >
                   查看视频
                 </button>
@@ -734,8 +736,8 @@ export default function SkillCard({
         {/*电脑版*/}
         {!isMobile && (
           <div className='flex-1'>
-            <div className='flex justify-between items-center'>
-              <h3 className='text-xl font-bold px-2 py-2 dark:text-white'>
+            <div className='flex items-center justify-between'>
+              <h3 className='px-2 py-2 text-xl font-bold dark:text-white'>
                 {getSkillTypeLabel(skill.type)} ·{' '}
                 <EditableField
                   tag='span'
@@ -768,15 +770,15 @@ export default function SkillCard({
                     }
                     removeSkill(characters[characterId]!);
                   }}
-                  className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                  className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
                 >
-                  <TrashIcon className='w-4 h-4' aria-hidden='true' />
+                  <TrashIcon className='h-4 w-4' aria-hidden='true' />
                 </button>
               )}
             </div>
 
             {hasProperties && (
-              <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2'>
+              <div className='mt-1 px-2 text-sm text-gray-500 dark:text-gray-400'>
                 {properties.map((prop, index) => (
                   <React.Fragment key={index}>
                     {index > 0 && !isEditMode && ' · '}
@@ -788,7 +790,7 @@ export default function SkillCard({
 
             {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
               <div className='mt-3 px-2'>
-                <div className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
+                <div className='py-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
                   <EditableField
                     initialValue={
                       (isDetailed && skill.detailedDescription?.trim()
@@ -807,8 +809,8 @@ export default function SkillCard({
         {/*手机版-标题栏*/}
         {isMobile && (
           <div className='flex-1'>
-            <div className='flex justify-between items-center'>
-              <h3 className='text-xl font-bold px-2 dark:text-white'>
+            <div className='flex items-center justify-between'>
+              <h3 className='px-2 text-xl font-bold dark:text-white'>
                 {getSkillTypeLabel(skill.type)} ·{' '}
                 <EditableField
                   tag='span'
@@ -841,15 +843,15 @@ export default function SkillCard({
                     }
                     removeSkill(characters[characterId]!);
                   }}
-                  className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                  className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
                 >
-                  <TrashIcon className='w-4 h-4' aria-hidden='true' />
+                  <TrashIcon className='h-4 w-4' aria-hidden='true' />
                 </button>
               )}
             </div>
 
             {!isEditMode && hasProperties && (
-              <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2'>
+              <div className='mt-1 px-2 text-sm text-gray-500 dark:text-gray-400'>
                 {properties.map((prop, index) => (
                   <React.Fragment key={index}>
                     {index > 0 && !isEditMode && ' · '}
@@ -866,7 +868,7 @@ export default function SkillCard({
       {isMobile && (
         <div className='flex-1'>
           {isEditMode && hasProperties && (
-            <div className='text-sm text-gray-500 dark:text-gray-400 mt-1 px-2 divide-y divide-dashed divide-gray-300'>
+            <div className='mt-1 divide-y divide-dashed divide-gray-300 px-2 text-sm text-gray-500 dark:text-gray-400'>
               {properties.map((prop, index) => (
                 <React.Fragment key={index}>
                   {index > 0 && !isEditMode && ' · '}
@@ -877,7 +879,7 @@ export default function SkillCard({
           )}
           {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
             <div className='mt-3 px-2'>
-              <div className='text-gray-700 dark:text-gray-300 py-2 whitespace-pre-wrap'>
+              <div className='py-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
                 <EditableField
                   initialValue={
                     (isDetailed && skill.detailedDescription?.trim()
@@ -895,7 +897,7 @@ export default function SkillCard({
       )}
 
       <div className='mt-6'>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
           {skill.skillLevels
             .filter((level: SkillLevel) => {
               // Hide Lv.1 if: 1) mobile layout, 2) edit mode off, 3) description is empty for current detailed mode
@@ -912,7 +914,7 @@ export default function SkillCard({
               <div
                 key={`${skill.id}-${level.level}`}
                 className={clsx(
-                  'p-4 rounded dark:text-gray-300',
+                  'rounded p-4 dark:text-gray-300',
                   getSkillLevelContainerColor(level.level, isDarkMode)
                 )}
               >

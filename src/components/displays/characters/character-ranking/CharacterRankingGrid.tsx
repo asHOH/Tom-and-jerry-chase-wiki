@@ -1,21 +1,23 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { characters } from '@/data';
-import {
-  RankableProperty,
-  rankCharactersByProperty,
-  getPropertyInfo,
-  getCharactersWithProperty,
-} from '@/lib/characterRankingUtils';
-import { FactionId } from '@/data/types';
-import CharacterRankingCard from './CharacterRankingCard';
-import PropertySelector from './PropertySelector';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
 import { useSearchParams } from 'next/navigation';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { characters } from '@/data';
+import { FactionId } from '@/data/types';
+
+import {
+  getCharactersWithProperty,
+  getPropertyInfo,
+  RankableProperty,
+  rankCharactersByProperty,
+} from '@/lib/characterRankingUtils';
 import { getCardRankColors } from '@/lib/design-tokens';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
+
+import CharacterRankingCard from './CharacterRankingCard';
+import PropertySelector from './PropertySelector';
 
 interface CharacterRankingGridProps {
   initialProperty?: RankableProperty;
@@ -129,7 +131,7 @@ export default function CharacterRankingGrid({
   if (!selectedProperty) {
     return (
       <div className='space-y-8'>
-        <header className='text-center space-y-4 mb-8 px-4'>
+        <header className='mb-8 space-y-4 px-4 text-center'>
           <PageTitle>角色属性排行榜</PageTitle>
           <PageDescription>
             {description ?? ''}
@@ -137,7 +139,7 @@ export default function CharacterRankingGrid({
           </PageDescription>
         </header>
 
-        <div className='max-w-4xl mx-auto px-4'>
+        <div className='mx-auto max-w-4xl px-4'>
           <PropertySelector
             currentProperty={selectedProperty}
             factionId={factionId}
@@ -151,12 +153,12 @@ export default function CharacterRankingGrid({
   if (rankedCharacters.length === 0) {
     return (
       <div className='space-y-8'>
-        <header className='text-center space-y-4 mb-8 px-4'>
+        <header className='mb-8 space-y-4 px-4 text-center'>
           <PageTitle>角色属性排行榜</PageTitle>
           <PageDescription>没有角色拥有此属性</PageDescription>
         </header>
 
-        <div className='max-w-4xl mx-auto px-4'>
+        <div className='mx-auto max-w-4xl px-4'>
           <PropertySelector
             currentProperty={selectedProperty}
             factionId={factionId}
@@ -169,7 +171,7 @@ export default function CharacterRankingGrid({
 
   return (
     <div className='space-y-8'>
-      <header className='text-center space-y-4 mb-8 px-4'>
+      <header className='mb-8 space-y-4 px-4 text-center'>
         <PageTitle>
           {propertyInfo?.label}排行榜
           {factionId && ` - ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}`}
@@ -177,7 +179,7 @@ export default function CharacterRankingGrid({
         <PageDescription>
           {propertyInfo?.description}
           {charactersWithProperty.length > 0 && (
-            <span className='block mt-2 text-sm text-gray-600 dark:text-gray-400'>
+            <span className='mt-2 block text-sm text-gray-600 dark:text-gray-400'>
               共 {charactersWithProperty.length} 个角色拥有此属性
               {propertyInfo?.higherIsBetter === false && ' (数值越低越好)'}
             </span>
@@ -186,7 +188,7 @@ export default function CharacterRankingGrid({
       </header>
 
       {/* Property Selector */}
-      <div className='max-w-4xl mx-auto px-4'>
+      <div className='mx-auto max-w-4xl px-4'>
         <PropertySelector
           currentProperty={selectedProperty}
           factionId={factionId}
@@ -196,7 +198,7 @@ export default function CharacterRankingGrid({
 
       {/* Rankings Grid */}
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        className='auto-fit-grid grid-container mt-8 grid gap-4'
         style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}
       >
         {rankedCharacters.map((rankedCharacter, index) => (
@@ -219,14 +221,14 @@ export default function CharacterRankingGrid({
       {rankedCharacters.length > 0 &&
         rankedCharacters[0] &&
         rankedCharacters[rankedCharacters.length - 1] && (
-          <div className='max-w-4xl mx-auto px-4 pt-8 border-t border-gray-200 dark:border-gray-700'>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-center'>
+          <div className='mx-auto max-w-4xl border-t border-gray-200 px-4 pt-8 dark:border-gray-700'>
+            <div className='grid grid-cols-1 gap-4 text-center md:grid-cols-3'>
               {/* Highest -> S rank colors with soft background */}
               {(() => {
                 const s = getCardRankColors('S', false, isDarkMode);
                 return (
                   <div
-                    className='p-4 rounded-lg'
+                    className='rounded-lg p-4'
                     style={{ backgroundColor: softBackground(s.backgroundColor as string, 0.15) }}
                   >
                     <div className='text-2xl font-bold' style={{ color: s.color }}>
@@ -244,7 +246,7 @@ export default function CharacterRankingGrid({
                 const c = getCardRankColors('C', false, isDarkMode);
                 return (
                   <div
-                    className='p-4 rounded-lg'
+                    className='rounded-lg p-4'
                     style={{ backgroundColor: softBackground(c.backgroundColor as string, 0.15) }}
                   >
                     <div className='text-2xl font-bold' style={{ color: c.color }}>
@@ -262,7 +264,7 @@ export default function CharacterRankingGrid({
                 const b = getCardRankColors('B', false, isDarkMode);
                 return (
                   <div
-                    className='p-4 rounded-lg'
+                    className='rounded-lg p-4'
                     style={{ backgroundColor: softBackground(b.backgroundColor as string, 0.15) }}
                   >
                     <div className='text-2xl font-bold' style={{ color: b.color }}>

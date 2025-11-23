@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
+
 import {
-  BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-  StrikethroughIcon,
-  InlineCodeIcon,
-  BulletListIcon,
-  OrderedListIcon,
-  AlignLeftIcon,
   AlignCenterIcon,
+  AlignLeftIcon,
   AlignRightIcon,
   BlockquoteIcon,
+  BoldIcon,
+  BulletListIcon,
   CodeBlockIcon,
-  LinkIcon,
-  ImageIcon,
   HorizontalRuleIcon,
-  UndoIcon,
-  RedoIcon,
+  ImageIcon,
+  InlineCodeIcon,
+  ItalicIcon,
+  LinkIcon,
   LoadingSpinnerIcon,
+  OrderedListIcon,
+  RedoIcon,
+  StrikethroughIcon,
+  UnderlineIcon,
+  UndoIcon,
 } from '../RichTextEditorIcons';
 import ViewModeToggle, { EditorViewMode } from './ViewModeToggle';
 
@@ -98,13 +99,13 @@ const ToolbarButton = React.memo(function ToolbarButton({
       disabled={disabled || mode !== 'rich'}
       title={title}
       className={clsx(
-        'inline-flex h-8 items-center justify-center p-2 rounded-md border transition-all duration-200 text-sm font-medium',
+        'inline-flex h-8 items-center justify-center rounded-md border p-2 text-sm font-medium transition-all duration-200',
         'hover:bg-gray-100 dark:hover:bg-gray-700',
-        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
+        'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none',
+        'disabled:cursor-not-allowed disabled:opacity-50',
         isActive
-          ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300'
-          : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
+          ? 'border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-600 dark:bg-blue-900/30 dark:text-blue-300'
+          : 'border-gray-300 bg-white text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300'
       )}
     >
       {children}
@@ -126,7 +127,7 @@ export const Toolbar = React.memo(function Toolbar({
   return (
     <div
       className={clsx(
-        'border-b border-gray-300 dark:border-gray-600 p-3 bg-gray-50 dark:bg-gray-800/50',
+        'border-b border-gray-300 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-800/50',
         className
       )}
     >
@@ -174,7 +175,7 @@ export const Toolbar = React.memo(function Toolbar({
           </ToolbarButton>
         </div>
 
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+        <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
 
         <div className='flex items-center gap-1'>
           <ToolbarButton
@@ -203,7 +204,7 @@ export const Toolbar = React.memo(function Toolbar({
           </ToolbarButton>
         </div>
 
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+        <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
 
         <div className='flex items-center gap-1'>
           <ToolbarButton
@@ -224,7 +225,7 @@ export const Toolbar = React.memo(function Toolbar({
           </ToolbarButton>
         </div>
 
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+        <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
 
         <div className='flex items-center gap-1'>
           <ToolbarButton
@@ -253,7 +254,7 @@ export const Toolbar = React.memo(function Toolbar({
           </ToolbarButton>
         </div>
 
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+        <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
 
         <div className='flex items-center gap-1'>
           <ToolbarButton onClick={commands.insertTable} title='插入表格 (3x3)' mode={mode}>
@@ -265,17 +266,17 @@ export const Toolbar = React.memo(function Toolbar({
             title={showTableTools ? '收起表格工具' : '展开表格工具'}
             aria-pressed={showTableTools}
             className={clsx(
-              'p-1 rounded',
-              'bg-transparent border-0',
+              'rounded p-1',
+              'border-0 bg-transparent',
               'hover:bg-gray-100 dark:hover:bg-gray-700',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1'
+              'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none'
             )}
           >
             <svg
               viewBox='0 0 20 20'
               fill='currentColor'
               className={clsx(
-                'w-4 h-4 transition-transform',
+                'h-4 w-4 transition-transform',
                 showTableTools ? 'rotate-90' : 'rotate-0'
               )}
               aria-hidden='true'
@@ -314,7 +315,7 @@ export const Toolbar = React.memo(function Toolbar({
           )}
         </div>
 
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+        <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
 
         <div className='flex items-center gap-1'>
           <ToolbarButton
@@ -346,14 +347,14 @@ export const Toolbar = React.memo(function Toolbar({
             disabled={!!isUploadingImage}
           >
             {isUploadingImage ? (
-              <LoadingSpinnerIcon className='animate-spin size-4' />
+              <LoadingSpinnerIcon className='size-4 animate-spin' />
             ) : (
               <ImageIcon />
             )}
           </ToolbarButton>
         </div>
 
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+        <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
 
         <div className='flex items-center gap-1'>
           <ToolbarButton
@@ -374,7 +375,7 @@ export const Toolbar = React.memo(function Toolbar({
           </ToolbarButton>
         </div>
 
-        <div className='w-px h-6 bg-gray-300 dark:bg-gray-600' />
+        <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
 
         <ViewModeToggle
           mode={mode}

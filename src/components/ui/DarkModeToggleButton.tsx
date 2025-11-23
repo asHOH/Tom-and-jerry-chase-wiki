@@ -1,6 +1,6 @@
 import { useDarkMode } from '@/context/DarkModeContext';
-import { motion } from 'motion/react';
 import clsx from 'clsx';
+import { motion } from 'motion/react';
 
 export function DarkModeToggleButton() {
   const [isDarkMode, toggleDarkMode] = useDarkMode(); // dark: class can also be used directly
@@ -9,7 +9,7 @@ export function DarkModeToggleButton() {
       type='button'
       onClick={toggleDarkMode}
       className={clsx(
-        'flex h-10 w-10 items-center justify-center rounded-md border-none bg-gray-200 p-2 text-gray-900 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:min-h-[44px] lg:h-11 lg:w-11 lg:p-2.5',
+        'flex h-10 w-10 items-center justify-center rounded-md border-none bg-gray-200 p-2 text-gray-900 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 md:min-h-[44px] lg:h-11 lg:w-11 lg:p-2.5 focus-visible:dark:outline-blue-300',
         'dark:bg-slate-700 dark:text-gray-200',
         'cursor-pointer'
       )}

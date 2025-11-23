@@ -1,7 +1,9 @@
-import ArticlesClient from './ArticlesClient';
 import { Metadata } from 'next';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+
+import ArticlesClient from './ArticlesClient';
 
 export const dynamic = 'force-dynamic';
 

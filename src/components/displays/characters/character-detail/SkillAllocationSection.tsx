@@ -1,15 +1,16 @@
 'use client';
 
-import React from 'react';
-import SkillAllocationDisplay from './SkillAllocationDisplay';
-import CharacterSection from './CharacterSection';
+import React, { useCallback } from 'react';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { useCallback } from 'react';
-import { setNestedProperty } from '@/lib/editUtils';
-import { SkillAllocation, FactionId } from '@/data/types';
 import { characters } from '@/data';
+import { FactionId, SkillAllocation } from '@/data/types';
 import { useSnapshot } from 'valtio';
+
+import { setNestedProperty } from '@/lib/editUtils';
 import { PlusIcon } from '@/components/icons/CommonIcons';
+
+import CharacterSection from './CharacterSection';
+import SkillAllocationDisplay from './SkillAllocationDisplay';
 
 export const useSkillAllocationManagement = () => {
   const { characterId } = useLocalCharacter();
@@ -69,7 +70,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
             ? skillAllocations.map((allocation, index) => (
                 <div
                   key={allocation.id || `allocation-${index}`}
-                  className='card dark:bg-slate-800 dark:border-slate-700 p-4'
+                  className='card p-4 dark:border-slate-700 dark:bg-slate-800'
                 >
                   <SkillAllocationDisplay
                     allocation={allocation}
@@ -80,7 +81,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
                 </div>
               ))
             : isEditMode && (
-                <div className='card dark:bg-slate-800 dark:border-slate-700 p-4 text-center text-gray-500 dark:text-gray-400'>
+                <div className='card p-4 text-center text-gray-500 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-400'>
                   暂无推荐加点。点击下方按钮添加。
                 </div>
               )}
@@ -90,9 +91,9 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
                 type='button'
                 aria-label='添加技能加点'
                 onClick={handleAddSkillAllocation}
-                className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+                className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
               >
-                <PlusIcon className='w-4 h-4' aria-hidden='true' />
+                <PlusIcon className='h-4 w-4' aria-hidden='true' />
               </button>
             </div>
           )}

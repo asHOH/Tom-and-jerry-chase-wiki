@@ -1,16 +1,17 @@
 'use client';
 
-import GameImage from '@/components/ui/GameImage';
+import { useState } from 'react';
+import { useDarkMode } from '@/context/DarkModeContext';
 import { specialSkills } from '@/data';
 import type { FactionId } from '@/data/types';
-import { useState } from 'react';
-import PageTitle from '@/components/ui/PageTitle';
-import PageDescription from '@/components/ui/PageDescription';
-import BaseCard from '@/components/ui/BaseCard';
+
 import { getFactionButtonColors } from '@/lib/design-system';
-import { useDarkMode } from '@/context/DarkModeContext';
-import FilterRow from '@/components/ui/FilterRow';
 import { useMobile } from '@/hooks/useMediaQuery';
+import BaseCard from '@/components/ui/BaseCard';
+import FilterRow from '@/components/ui/FilterRow';
+import GameImage from '@/components/ui/GameImage';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
 
 const allSkills = [...Object.values(specialSkills.cat), ...Object.values(specialSkills.mouse)];
 
@@ -30,17 +31,17 @@ export default function SpecialSkillClient({ description }: Props) {
     <div
       className={
         isMobile
-          ? 'max-w-3xl mx-auto p-2 space-y-2 dark:text-slate-200'
-          : 'max-w-6xl mx-auto p-6 space-y-8 dark:text-slate-200'
+          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
+          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
       }
     >
       <header
-        className={isMobile ? 'text-center space-y-2 mb-4 px-2' : 'text-center space-y-4 mb-8 px-4'}
+        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>特技</PageTitle>
         {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
         {/* Filters wrapper */}
-        <div className='space-y-0 mx-auto w-full max-w-2xl md:px-2'>
+        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow<'cat' | 'mouse'>
             label='阵营筛选:'
             options={['cat', 'mouse']}
@@ -55,7 +56,7 @@ export default function SpecialSkillClient({ description }: Props) {
         </div>
       </header>
       <div
-        className='auto-fit-grid grid-container grid gap-4 mt-8'
+        className='auto-fit-grid grid-container mt-8 grid gap-4'
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
         }}

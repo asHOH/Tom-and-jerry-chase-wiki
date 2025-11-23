@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { cards } from '@/data';
-import Image from '@/components/Image';
 import { CharacterRelationItem } from '@/data/types';
+
 import { PlusIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
 
 type Props = {
   selected: CharacterRelationItem[];
@@ -34,24 +35,24 @@ const KnowledgeCardSelector: React.FC<Props> = ({ selected, onSelect, factionId 
       <button
         type='button'
         onClick={() => setIsOpen(!isOpen)}
-        className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
         aria-label='添加知识卡'
       >
-        <PlusIcon className='w-4 h-4' aria-hidden='true' />
+        <PlusIcon className='h-4 w-4' aria-hidden='true' />
       </button>
 
       {isOpen && (
-        <div className='absolute top-full right-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto'>
+        <div className='absolute top-full right-0 z-50 mt-1 max-h-48 w-48 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800'>
           {availableCards.map(({ id: name, imageUrl }) => (
             <button
               key={name}
               type='button'
               onClick={() => handleSelect(name)}
-              className='w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2'
+              className='flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700'
               aria-label={`选择知识卡 ${name}`}
             >
               {imageUrl && (
-                <Image src={imageUrl} alt={name} width={20} height={20} className='w-5 h-5' />
+                <Image src={imageUrl} alt={name} width={20} height={20} className='h-5 w-5' />
               )}
               <span className='text-gray-700 dark:text-gray-300'>{name}</span>
             </button>

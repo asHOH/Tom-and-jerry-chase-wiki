@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 
 type CollapseCardProps = {
@@ -52,7 +51,7 @@ export default function CollapseCard({
         type='button'
         onClick={() => setIsExpanded(!isExpanded)}
         className={clsx(
-          'flex items-center justify-between w-full font-bold px-1 py-1 focus:outline-none cursor-pointer text-black dark:text-white',
+          'flex w-full cursor-pointer items-center justify-between px-1 py-1 font-bold text-black focus:outline-none dark:text-white',
           titleColor,
           titleClassName
         )}
@@ -83,10 +82,10 @@ export default function CollapseCard({
       {/* 动画容器 */}
       <div
         className={clsx(
-          'transform transition-all duration-100 ease-in-out overflow-hidden text-black dark:text-white',
+          'transform overflow-hidden text-black transition-all duration-100 ease-in-out dark:text-white',
           isExpanded
-            ? 'max-h-[5000px] opacity-100 translate-y-0'
-            : 'max-h-0 opacity-0 -translate-y-2'
+            ? 'max-h-[5000px] translate-y-0 opacity-100'
+            : 'max-h-0 -translate-y-2 opacity-0'
         )}
       >
         <div

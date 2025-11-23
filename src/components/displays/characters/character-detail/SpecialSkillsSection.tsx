@@ -1,11 +1,12 @@
-import EditableField from '@/components/ui/EditableField';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { characters, specialSkills } from '@/data';
-import Image from '@/components/Image';
-import Link from 'next/link';
 import { useSnapshot } from 'valtio';
+
+import EditableField from '@/components/ui/EditableField';
 import TextWithHoverTooltips from '@/components/displays/characters/shared/TextWithHoverTooltips';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
+import Link from '@/components/Link';
 
 export default function SpecialSkillsSection() {
   'use no memo';
@@ -15,7 +16,7 @@ export default function SpecialSkillsSection() {
   if (!character.specialSkills?.length && !isEditMode) return null;
   return (
     <div>
-      <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3'>
+      <h3 className='mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200'>
         {isEditMode ? (
           '推荐特技'
         ) : (
@@ -31,7 +32,7 @@ export default function SpecialSkillsSection() {
           return (
             <li
               key={skill.name + '-' + index}
-              className='w-full p-3 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
+              className='w-full rounded-md bg-gray-100 p-3 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'
             >
               <div className='flex items-start gap-3'>
                 {/* Left: Icon (clickable) */}
@@ -47,14 +48,14 @@ export default function SpecialSkillsSection() {
                   <Image
                     src={specialSkill?.imageUrl ?? '/images/misc/%E7%A6%81%E6%AD%A2.png'}
                     alt={skill.name}
-                    className='w-8 h-8 rounded-full'
+                    className='h-8 w-8 rounded-full'
                     width={32}
                     height={32}
                   />
                 </Link>
 
                 {/* Right: Title and Description stacked */}
-                <div className='flex-1 min-w-0'>
+                <div className='min-w-0 flex-1'>
                   <div className='flex items-center gap-2'>
                     <Link
                       href={`/special-skills/${character.factionId}/${skill.name}`}
@@ -69,7 +70,7 @@ export default function SpecialSkillsSection() {
                         tag='span'
                         initialValue={skill.name}
                         path={`specialSkills.${index}.name`}
-                        className='font-bold text-base dark:text-white'
+                        className='text-base font-bold dark:text-white'
                       />
                     </Link>
 
@@ -78,14 +79,14 @@ export default function SpecialSkillsSection() {
                         type='button'
                         aria-label='移除特技'
                         onClick={() => characters[characterId]!.specialSkills!.splice(index, 1)}
-                        className='w-8 h-8 flex items-center justify-center ml-auto bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                        className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
                       >
-                        <TrashIcon className='w-4 h-4' aria-hidden='true' />
+                        <TrashIcon className='h-4 w-4' aria-hidden='true' />
                       </button>
                     )}
                   </div>
 
-                  <div className='mt-1 text-sm text-gray-500 dark:text-gray-300 whitespace-pre-wrap break-words'>
+                  <div className='mt-1 text-sm break-words whitespace-pre-wrap text-gray-500 dark:text-gray-300'>
                     {isEditMode ? (
                       <EditableField
                         tag='div'
@@ -117,9 +118,9 @@ export default function SpecialSkillsSection() {
                 description: '',
               });
             }}
-            className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+            className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
           >
-            <PlusIcon className='w-4 h-4' aria-hidden='true' />
+            <PlusIcon className='h-4 w-4' aria-hidden='true' />
           </button>
         </div>
       )}

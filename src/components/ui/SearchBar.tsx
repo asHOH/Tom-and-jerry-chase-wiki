@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import clsx from 'clsx';
 import { AnimatePresence } from 'motion/react'; // Import AnimatePresence
-import SearchDialog from './SearchDialog'; // Import the new SearchDialog component
-import Tooltip from './Tooltip';
+
 import { useMobile } from '@/hooks/useMediaQuery';
 import { SearchIcon } from '@/components/icons/CommonIcons';
-import clsx from 'clsx';
+
+import SearchDialog from './SearchDialog'; // Import the new SearchDialog component
+import Tooltip from './Tooltip';
 
 const SearchBar: React.FC<object> = () => {
   const isMobile = useMobile();
@@ -49,9 +51,9 @@ const SearchBar: React.FC<object> = () => {
           className={clsx(
             'rounded-md bg-gray-200 text-gray-900',
             'dark:bg-slate-700 dark:text-gray-200',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400',
-            'flex items-center justify-center border-none cursor-pointer transition-colors',
-            isMobile ? 'p-2 w-[40px] h-[40px]' : 'p-2 w-11 h-11'
+            'focus:ring-2 focus:ring-blue-500 focus:outline-none dark:focus:ring-blue-400',
+            'flex cursor-pointer items-center justify-center border-none transition-colors',
+            isMobile ? 'h-[40px] w-[40px] p-2' : 'h-11 w-11 p-2'
           )}
         >
           {/* Search icon */}

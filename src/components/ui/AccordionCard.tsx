@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 
 type AccordionItem = {
@@ -84,7 +83,7 @@ export default function AccordionCard({
       {/* 标题按钮容器 - 水平滚动布局 */}
       <div
         className={clsx(
-          'flex overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100',
+          'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 flex overflow-x-auto',
           'dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800',
           titleClassName
         )}
@@ -103,7 +102,7 @@ export default function AccordionCard({
               type='button'
               onClick={() => toggleItem(item.id)}
               className={clsx(
-                'flex-1 flex items-center justify-center font-bold px-1 py-1 focus:outline-none cursor-pointer text-black dark:text-white',
+                'flex flex-1 cursor-pointer items-center justify-center px-1 py-1 font-bold text-black focus:outline-none dark:text-white',
                 'whitespace-nowrap transition-all duration-200',
                 titleColor,
                 isExpanded && 'italic underline'

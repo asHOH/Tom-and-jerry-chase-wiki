@@ -1,12 +1,14 @@
 // GotoPreviewCard.tsx
-import BaseCard from './BaseCard';
-import clsx from 'clsx';
-import Link from 'next/link';
-import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
-import Tag from './Tag';
-import { getTypeLabelColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data';
+import clsx from 'clsx';
+
+import { getTypeLabelColors } from '@/lib/design-tokens';
+import Link from '@/components/Link';
+
+import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
+import BaseCard from './BaseCard';
+import Tag from './Tag';
 
 export type GotoPreviewCardProps = {
   url: string;
@@ -69,7 +71,7 @@ export default function PreviewCard({
   const content = (
     <BaseCard
       className={clsx(
-        'flex flex-row items-start p-4 md:p-5 lg:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer',
+        'flex w-full max-w-xs cursor-pointer flex-row items-start p-4 shadow-md transition-shadow duration-200 hover:shadow-lg sm:max-w-sm md:max-w-md md:p-5 lg:max-w-lg lg:p-6',
         className
       )}
       variant='details'
@@ -77,18 +79,18 @@ export default function PreviewCard({
       tabIndex={-1}
     >
       {!hideImage && imageUrl ? (
-        <div className='w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 flex-shrink-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mr-4'>
+        <div className='mr-4 flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100 md:h-28 md:w-28 lg:h-32 lg:w-32 dark:bg-gray-800'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageUrl}
             alt={name}
-            className='object-contain w-full h-full'
+            className='h-full w-full object-contain'
             loading='lazy'
             draggable={false}
           />
         </div>
       ) : null}
-      <div className='flex flex-col items-start w-0 flex-1'>
+      <div className='flex w-0 flex-1 flex-col items-start'>
         {!hideImage && imageUrl ? (
           <>
             <Tag
@@ -99,14 +101,14 @@ export default function PreviewCard({
             >
               {type === 'character' ? characterTypeLabel : typeLabels[type] || type}
             </Tag>
-            <div className='mb-1 w-full flex items-baseline min-w-0' title={name}>
-              <span className='font-bold text-lg text-gray-900 dark:text-gray-100 truncate min-w-0'>
+            <div className='mb-1 flex w-full min-w-0 items-baseline' title={name}>
+              <span className='min-w-0 truncate text-lg font-bold text-gray-900 dark:text-gray-100'>
                 {typeof skillLevel === 'number' && type === 'character-skill'
                   ? `${skillLevel}级 ${name}`
                   : name}
               </span>
               {ownerSuffix && (
-                <span className='text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap'>
+                <span className='text-sm whitespace-nowrap text-gray-500 dark:text-gray-400'>
                   {'\u00A0\u00A0'}
                   {ownerSuffix}
                 </span>
@@ -114,20 +116,20 @@ export default function PreviewCard({
             </div>
           </>
         ) : (
-          <div className='flex items-center gap-2 w-full mb-1'>
-            <div className='flex items-center gap-2 flex-shrink-0'>
+          <div className='mb-1 flex w-full items-center gap-2'>
+            <div className='flex flex-shrink-0 items-center gap-2'>
               <Tag colorStyles={typeTokenStyles(type, isDarkMode)} size='xs' margin='compact'>
                 {type === 'character' ? characterTypeLabel : typeLabels[type] || type}
               </Tag>
             </div>
-            <div className='flex-1 min-w-0 flex items-baseline' title={name}>
-              <span className='font-bold text-lg text-gray-900 dark:text-gray-100 truncate min-w-0'>
+            <div className='flex min-w-0 flex-1 items-baseline' title={name}>
+              <span className='min-w-0 truncate text-lg font-bold text-gray-900 dark:text-gray-100'>
                 {typeof skillLevel === 'number' && type === 'character-skill'
                   ? `${skillLevel}级 ${name}`
                   : name}
               </span>
               {ownerSuffix && (
-                <span className='text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap'>
+                <span className='text-sm whitespace-nowrap text-gray-500 dark:text-gray-400'>
                   {'\u00A0\u00A0'}
                   {ownerSuffix}
                 </span>
@@ -140,7 +142,7 @@ export default function PreviewCard({
             if (!description) return null;
             return (
               <div
-                className='text-sm text-gray-600 dark:text-gray-300 line-clamp-3 w-full'
+                className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
                 title={description}
               >
                 <TextWithHoverTooltips text={description} />
@@ -156,7 +158,7 @@ export default function PreviewCard({
             if (!text) return null;
             return (
               <div
-                className='text-sm text-gray-600 dark:text-gray-300 line-clamp-3 w-full'
+                className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
                 title={text}
               >
                 <TextWithHoverTooltips text={text} />
@@ -173,7 +175,7 @@ export default function PreviewCard({
           if (!composed) return null;
           return (
             <div
-              className='text-sm text-gray-600 dark:text-gray-300 line-clamp-3 w-full'
+              className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
               title={composed}
             >
               <TextWithHoverTooltips text={composed} />

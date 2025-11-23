@@ -1,36 +1,37 @@
 'use client';
 
-import React from 'react';
-import Image from '@/components/Image';
-import { CharacterDetailsProps } from '@/lib/types';
-import { Skill } from '@/data/types';
-import PositioningTagsSection from './PositioningTagsSection';
-import CharacterAttributesSection from './CharacterAttributesSection';
-import SkillCard from './SkillCard';
-import KnowledgeCardManager from './KnowledgeCardManager';
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react'; // smaller bundle size than framer-motion
-import EditableField from '@/components/ui/EditableField';
-import CharacterSection from './CharacterSection';
-import { EditModeContext, useEditMode } from '@/context/EditModeContext';
-import SkillAllocationSection from './SkillAllocationSection';
-import { useCharacterActions } from './useCharacterActions';
-import ContentWriterDisplay from './ContentWriterDisplay';
-import type { DeepReadonly } from '@/types/deep-readonly';
-import CharacterRelationDisplay from './CharacterRelationDisplay';
-import CharacterSectionIndex from './CharacterSectionIndex';
-import SpecialSkillsSection from './SpecialSkillsSection';
-import { useSnapshot } from 'valtio';
+import React, { useEffect, useState } from 'react';
+import { EditModeContext, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { characters } from '@/data';
-import { useLocalCharacter } from '@/context/EditModeContext';
-import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
+import { Skill } from '@/data/types';
+import { AnimatePresence, motion } from 'motion/react'; // smaller bundle size than framer-motion
+
+import { useSnapshot } from 'valtio';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { CharacterDetailsProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
-import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
-import CreateDateDisplay from './CreateDateDisplay';
-import CharacterHistoryDisplay from './CharacterHistoryDisplay';
+import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import CollapseCard from '@/components/ui/CollapseCard';
-import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
+import EditableField from '@/components/ui/EditableField';
+import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
+
 import { filterTraitsBySingleItem } from '../../traits/shared/filterTraitsBySingleItem';
+import SingleItemTraitsText from '../../traits/shared/SingleItemTraitsText';
+import CharacterAttributesSection from './CharacterAttributesSection';
+import CharacterHistoryDisplay from './CharacterHistoryDisplay';
+import CharacterRelationDisplay from './CharacterRelationDisplay';
+import CharacterSection from './CharacterSection';
+import CharacterSectionIndex from './CharacterSectionIndex';
+import ContentWriterDisplay from './ContentWriterDisplay';
+import CreateDateDisplay from './CreateDateDisplay';
+import KnowledgeCardManager from './KnowledgeCardManager';
+import PositioningTagsSection from './PositioningTagsSection';
+import SkillAllocationSection from './SkillAllocationSection';
+import SkillCard from './SkillCard';
+import SpecialSkillsSection from './SpecialSkillsSection';
+import { useCharacterActions } from './useCharacterActions';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;
@@ -76,13 +77,13 @@ export default function CharacterDetails({
       }}
     >
       <div className='space-y-8'>
-        <div className='flex flex-col md:flex-row gap-8'>
+        <div className='flex flex-col gap-8 md:flex-row'>
           <div className='md:w-1/3'>
-            <div className='card h-full dark:bg-slate-800 dark:border-slate-700 overflow-hidden'>
+            <div className='card h-full overflow-hidden dark:border-slate-700 dark:bg-slate-800'>
               {(isEditMode || !isMobile) && (
                 <>
-                  <div className='h-64 bg-gray-200 dark:bg-slate-700 rounded-t-lg relative mb-4 image-container -mx-4 -mt-4'>
-                    <div className='flex items-center justify-center h-full p-3'>
+                  <div className='image-container relative -mx-4 -mt-4 mb-4 h-64 rounded-t-lg bg-gray-200 dark:bg-slate-700'>
+                    <div className='flex h-full items-center justify-center p-3'>
                       <Image
                         src={localCharacter.imageUrl}
                         alt={character.id}
@@ -98,7 +99,7 @@ export default function CharacterDetails({
                       />
                     </div>
                   </div>
-                  <h1 className='text-3xl font-bold py-2 flex items-center justify-between dark:text-white'>
+                  <h1 className='flex items-center justify-between py-2 text-3xl font-bold dark:text-white'>
                     <div>
                       <EditableField
                         tag='span'
@@ -112,12 +113,12 @@ export default function CharacterDetails({
                       </span>
                     </div>
                     {isEditMode && (
-                      <div className='flex rounded-md overflow-hidden border border-gray-300 dark:border-gray-600'>
+                      <div className='flex overflow-hidden rounded-md border border-gray-300 dark:border-gray-600'>
                         <button
                           type='button'
                           aria-label='教程'
                           onClick={onTutorialTrigger}
-                          className='w-8 h-8 bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-400 flex items-center justify-center'
+                          className='focus:ring-opacity-50 flex h-8 w-8 items-center justify-center bg-green-500 text-white hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:outline-none dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-400'
                           data-tutorial-id='character-tutorial'
                         >
                           <svg
@@ -126,7 +127,7 @@ export default function CharacterDetails({
                             viewBox='0 0 24 24'
                             strokeWidth={1.5}
                             stroke='currentColor'
-                            className='w-5 h-5'
+                            className='h-5 w-5'
                           >
                             <path strokeLinecap='round' strokeLinejoin='round' d='M12 6v6l4 2' />
                             <circle
@@ -143,7 +144,7 @@ export default function CharacterDetails({
                           type='button'
                           aria-label='预览'
                           onClick={() => setIsLocalEditMode(!isLocalEditMode)}
-                          className='w-8 h-8 bg-purple-500 text-white hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 dark:bg-purple-700 dark:hover:bg-purple-800 dark:focus:ring-purple-400 flex items-center justify-center border-l border-gray-300 dark:border-gray-600'
+                          className='focus:ring-opacity-50 flex h-8 w-8 items-center justify-center border-l border-gray-300 bg-purple-500 text-white hover:bg-purple-600 focus:ring-2 focus:ring-purple-500 focus:outline-none dark:border-gray-600 dark:bg-purple-700 dark:hover:bg-purple-800 dark:focus:ring-purple-400'
                           data-tutorial-id='character-preview'
                         >
                           <svg
@@ -176,14 +177,14 @@ export default function CharacterDetails({
                               setTimeout(() => setCopyMessage(''), 2000);
                             }
                           }}
-                          className='w-8 h-8 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400 flex items-center justify-center rounded-r-md'
+                          className='focus:ring-opacity-50 flex h-8 w-8 items-center justify-center rounded-r-md bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400'
                           data-tutorial-id='character-export'
                         >
                           {copyMessage === 'saving' && (
                             // Save icon
                             <svg
                               xmlns='http://www.w3.org/2000/svg'
-                              className='w-5 h-5 animate-spin'
+                              className='h-5 w-5 animate-spin'
                               fill='none'
                               viewBox='0 0 24 24'
                               stroke='currentColor'
@@ -207,7 +208,7 @@ export default function CharacterDetails({
                             // Success icon
                             <svg
                               xmlns='http://www.w3.org/2000/svg'
-                              className='w-5 h-5 text-green-400'
+                              className='h-5 w-5 text-green-400'
                               fill='none'
                               viewBox='0 0 24 24'
                               stroke='currentColor'
@@ -222,7 +223,7 @@ export default function CharacterDetails({
                           )}
                           {copyMessage === 'error' && (
                             // Error icon
-                            <CloseIcon className='w-5 h-5 text-red-500' strokeWidth={3} />
+                            <CloseIcon className='h-5 w-5 text-red-500' strokeWidth={3} />
                           )}
                           {!copyMessage && (
                             // Download icon
@@ -232,7 +233,7 @@ export default function CharacterDetails({
                               viewBox='0 0 24 24'
                               strokeWidth={1.5}
                               stroke='currentColor'
-                              className='w-4 h-4'
+                              className='h-4 w-4'
                             >
                               <path
                                 strokeLinecap='round'
@@ -261,8 +262,8 @@ export default function CharacterDetails({
                       gridTemplateColumns: `5rem repeat(auto-fit, minmax(1px,1fr))`,
                     }}
                   >
-                    <div className='bg-gray-200 dark:bg-slate-700 rounded-tl-lg relative image-container -ml-4 -mt-4'>
-                      <div className='flex items-center justify-center h-full'>
+                    <div className='image-container relative -mt-4 -ml-4 rounded-tl-lg bg-gray-200 dark:bg-slate-700'>
+                      <div className='flex h-full items-center justify-center'>
                         <Image
                           src={localCharacter.imageUrl}
                           alt={character.id}
@@ -299,7 +300,7 @@ export default function CharacterDetails({
                 tag='p'
                 path='description'
                 initialValue={localCharacter.description}
-                className='text-gray-700 dark:text-gray-300 mt-2 py-1 whitespace-pre-wrap'
+                className='mt-2 py-1 whitespace-pre-wrap text-gray-700 dark:text-gray-300'
               />
 
               <div className='mt-6 space-y-3'>
@@ -314,7 +315,7 @@ export default function CharacterDetails({
                 </div>
 
                 {/* Character Navigation */}
-                <div className='pt-4 border-t border-gray-200 dark:border-gray-700'>
+                <div className='border-t border-gray-200 pt-4 dark:border-gray-700'>
                   <CharacterNavigationButtons currentCharacterId={localCharacter.id} />
                 </div>
               </div>
@@ -350,10 +351,10 @@ export default function CharacterDetails({
                           type='button'
                           aria-label='添加第二武器'
                           onClick={addSecondWeapon}
-                          className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+                          className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
                           key='new-weapon-button'
                         >
-                          <PlusIcon className='w-4 h-4' aria-hidden='true' />
+                          <PlusIcon className='h-4 w-4' aria-hidden='true' />
                         </button>
                       ) : null
                     );
@@ -362,7 +363,7 @@ export default function CharacterDetails({
                   <CollapseCard
                     title={`${character.id}角色自身的相关互动特性(${filterTraitsBySingleItem({ name: character.id, type: 'character' }).length})`}
                     size='xs'
-                    className='pb-1 px-1 border-x-1 border-b-1 border-gray-300 dark:border-gray-700 rounded-md whitespace-pre-wrap'
+                    className='rounded-md border-x-1 border-b-1 border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
                     titleClassName='pl-3'
                   >
                     <SingleItemTraitsText singleItem={{ name: character.id, type: 'character' }} />
@@ -383,7 +384,7 @@ export default function CharacterDetails({
           <motion.button
             aria-label='返回顶部'
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className='fixed z-50 bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg p-3 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400'
+            className='fixed right-6 bottom-6 z-50 rounded-full bg-blue-600 p-3 text-white shadow-lg transition-colors duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none'
             style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -392,7 +393,7 @@ export default function CharacterDetails({
           >
             <svg
               xmlns='http://www.w3.org/2000/svg'
-              className='w-6 h-6'
+              className='h-6 w-6'
               fill='none'
               viewBox='0 0 24 24'
               stroke='currentColor'

@@ -1,36 +1,38 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import Image from '@/components/Image';
-import Tooltip from '@/components/ui/Tooltip';
-import CharacterSection from './CharacterSection';
-import type { KnowledgeCardGroup, KnowledgeCardGroupSet, FactionId, CardGroup } from '@/data/types';
-import { useAppContext } from '../../../../context/AppContext';
-import { catKnowledgeCards } from '@/data/catKnowledgeCards';
-import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
-import { useEditMode } from '@/context/EditModeContext';
-import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
-import EditableField from '@/components/ui/EditableField';
-import { getCardRankColors } from '@/lib/design-tokens';
-import GotoLink from '@/components/GotoLink';
-import type { DeepReadonly } from '@/types/deep-readonly';
-import { characters } from '@/data';
-import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
 import { useDarkMode } from '@/context/DarkModeContext';
-import clsx from 'clsx';
-import Tag from '@/components/ui/Tag';
-import {
-  calculateKnowledgeCardCosts,
-  isCardOptional,
-  getKnowledgeCardCostStyles,
-  flattenCardGroup,
-  calculateMaxCostForTree,
-  buildTreeStructure,
-} from '@/lib/knowledgeCardSectionUtils';
+import { useEditMode } from '@/context/EditModeContext';
+import { characters } from '@/data';
+import { catKnowledgeCards } from '@/data/catKnowledgeCards';
 import { Contributor, contributors } from '@/data/contributors';
-import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
-import TreeCardDisplay from './TreeCardDisplay';
+import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
+import type { CardGroup, FactionId, KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
+import clsx from 'clsx';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { getCardRankColors } from '@/lib/design-tokens';
+import {
+  buildTreeStructure,
+  calculateKnowledgeCardCosts,
+  calculateMaxCostForTree,
+  flattenCardGroup,
+  getKnowledgeCardCostStyles,
+  isCardOptional,
+} from '@/lib/knowledgeCardSectionUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import EditableField from '@/components/ui/EditableField';
+import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
+import Tag from '@/components/ui/Tag';
+import Tooltip from '@/components/ui/Tooltip';
+import GotoLink from '@/components/GotoLink';
+import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
+
+import { useAppContext } from '../../../../context/AppContext';
+import CharacterSection from './CharacterSection';
+import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
+import TreeCardDisplay from './TreeCardDisplay';
 
 const cardGroupHasTreeStructure = (card: unknown): boolean => {
   if (typeof card === 'string') {
@@ -168,7 +170,7 @@ function KnowledgeCardGroupFlat({
         <Tooltip content={tooltipContent} className='border-none'>
           <div
             className={clsx(
-              'flex-shrink-0 w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold',
+              'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold',
               containerClass
             )}
           >
@@ -178,7 +180,7 @@ function KnowledgeCardGroupFlat({
 
         <div
           className={clsx(
-            'flex flex-1 min-w-0',
+            'flex min-w-0 flex-1',
             isSqueezedView ? 'flex-wrap gap-1' : 'flex-wrap gap-0 sm:gap-0.5 md:gap-1 lg:gap-2'
           )}
         >
@@ -223,7 +225,7 @@ function KnowledgeCardGroupFlat({
                 >
                   <div
                     className={clsx(
-                      'relative w-20 h-20 sm:w-24 sm:h-24 cursor-pointer transition-transform duration-200 hover:scale-105',
+                      'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
                       isOptional && 'opacity-50'
                     )}
                     onClick={() => {
@@ -249,7 +251,7 @@ function KnowledgeCardGroupFlat({
               type='button'
               aria-label='编辑知识卡组'
               onClick={() => handleEditClick(index)}
-              className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
+              className='flex h-8 w-8 items-center justify-center rounded-md bg-blue-500 text-xs text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -257,7 +259,7 @@ function KnowledgeCardGroupFlat({
                 viewBox='0 0 24 24'
                 strokeWidth='2'
                 stroke='currentColor'
-                className='w-4 h-4'
+                className='h-4 w-4'
               >
                 <path
                   strokeLinecap='round'
@@ -270,16 +272,16 @@ function KnowledgeCardGroupFlat({
               type='button'
               aria-label='移除知识卡组'
               onClick={() => onRemoveGroup(index)}
-              className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
             >
-              <TrashIcon className='w-4 h-4' aria-hidden='true' />
+              <TrashIcon className='h-4 w-4' aria-hidden='true' />
             </button>
           </div>
         )}
       </div>
 
       {(!isEditMode && contributor) || warningMessage ? (
-        <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14 flex flex-wrap gap-1 items-center'>
+        <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
           {!!contributor && !isEditMode && (
             <Tag
               size='xs'
@@ -304,7 +306,7 @@ function KnowledgeCardGroupFlat({
             <Tag
               size='xs'
               margin='micro'
-              className='opacity-80 items-center gap-1'
+              className='items-center gap-1 opacity-80'
               colorStyles={warningTagStyles}
             >
               {warningMessage}
@@ -316,7 +318,7 @@ function KnowledgeCardGroupFlat({
       {(!!description || isEditMode) && (
         <div
           className={clsx(
-            'bg-gray-50 dark:bg-slate-700/50 p-2 sm:p-3 rounded-lg',
+            'rounded-lg bg-gray-50 p-2 sm:p-3 dark:bg-slate-700/50',
             'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
           )}
         >
@@ -435,11 +437,11 @@ export function KnowledgeCardGroupDisplay({
 
     return (
       <div className='flex flex-col space-y-2'>
-        <div className='flex gap-0.5 sm:gap-1 md:gap-2 lg:gap-4 items-start'>
+        <div className='flex items-start gap-0.5 sm:gap-1 md:gap-2 lg:gap-4'>
           <Tooltip content={tooltipContent} className='border-none'>
             <div
               className={clsx(
-                'flex-shrink-0 w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold',
+                'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold',
                 containerClass
               )}
             >
@@ -447,7 +449,7 @@ export function KnowledgeCardGroupDisplay({
             </div>
           </Tooltip>
 
-          <div className='flex flex-1 min-w-0'>
+          <div className='flex min-w-0 flex-1'>
             <TreeCardDisplay
               tree={treeStructure}
               isEditMode={isEditMode}
@@ -469,7 +471,7 @@ export function KnowledgeCardGroupDisplay({
                 type='button'
                 aria-label='编辑知识卡组'
                 onClick={() => handleEditClick(index)}
-                className='w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-md text-xs hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
+                className='flex h-8 w-8 items-center justify-center rounded-md bg-blue-500 text-xs text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -477,7 +479,7 @@ export function KnowledgeCardGroupDisplay({
                   viewBox='0 0 24 24'
                   strokeWidth='2'
                   stroke='currentColor'
-                  className='w-4 h-4'
+                  className='h-4 w-4'
                 >
                   <path
                     strokeLinecap='round'
@@ -490,16 +492,16 @@ export function KnowledgeCardGroupDisplay({
                 type='button'
                 aria-label='移除知识卡组'
                 onClick={() => onRemoveGroup(index)}
-                className='w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-md text-xs hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
               >
-                <TrashIcon className='w-4 h-4' aria-hidden='true' />
+                <TrashIcon className='h-4 w-4' aria-hidden='true' />
               </button>
             </div>
           )}
         </div>
 
         {(!isEditMode && contributor) || warningMessage ? (
-          <div className='ml-11 sm:ml-12 md:ml-13 lg:ml-14 flex flex-wrap gap-1 items-center'>
+          <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
             {!!contributor && !isEditMode && (
               <Tag
                 size='xs'
@@ -524,7 +526,7 @@ export function KnowledgeCardGroupDisplay({
               <Tag
                 size='xs'
                 margin='micro'
-                className='opacity-80 flex items-center gap-1'
+                className='flex items-center gap-1 opacity-80'
                 colorStyles={warningTagStyles}
               >
                 {warningMessage}
@@ -534,7 +536,7 @@ export function KnowledgeCardGroupDisplay({
         ) : null}
 
         {(!!description || isEditMode) && (
-          <div className='bg-gray-50 dark:bg-slate-700/50 p-2 sm:p-3 rounded-lg ml-11 sm:ml-12 md:ml-13 lg:ml-14'>
+          <div className='ml-11 rounded-lg bg-gray-50 p-2 sm:ml-12 sm:p-3 md:ml-13 lg:ml-14 dark:bg-slate-700/50'>
             <EditableField
               tag='div'
               path={descriptionPath}
@@ -574,7 +576,7 @@ export function KnowledgeCardGroupDisplay({
               getCardPriority={getCardPriority}
             />
             {subIndex < flattenedCombinations.length - 1 && (
-              <div className='border-t border-gray-300 dark:border-slate-600 my-2'></div>
+              <div className='my-2 border-t border-gray-300 dark:border-slate-600'></div>
             )}
           </React.Fragment>
         ))}
@@ -762,8 +764,8 @@ export default function KnowledgeCardSection({
       return (
         <div>
           <CharacterSection title='推荐知识卡组'>
-            <div className='card dark:bg-slate-800 dark:border-slate-700 p-4 space-y-3'>
-              <div className='flex justify-between items-center mb-4'>
+            <div className='card space-y-3 p-4 dark:border-slate-700 dark:bg-slate-800'>
+              <div className='mb-4 flex items-center justify-between'>
                 <button
                   type='button'
                   onClick={cycleViewMode}
@@ -792,9 +794,9 @@ export default function KnowledgeCardSection({
                   type='button'
                   aria-label='添加知识卡组'
                   onClick={onCreateGroup}
-                  className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+                  className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
                 >
-                  <PlusIcon className='w-4 h-4' aria-hidden='true' />
+                  <PlusIcon className='h-4 w-4' aria-hidden='true' />
                 </button>
               </div>
             </div>
@@ -808,8 +810,8 @@ export default function KnowledgeCardSection({
   return (
     <div>
       <CharacterSection title='推荐知识卡组'>
-        <div className='card dark:bg-slate-800 dark:border-slate-700 p-4 space-y-3'>
-          <div className='flex justify-between items-center mb-4'>
+        <div className='card space-y-3 p-4 dark:border-slate-700 dark:bg-slate-800'>
+          <div className='mb-4 flex items-center justify-between'>
             <button
               type='button'
               onClick={cycleViewMode}
@@ -839,9 +841,9 @@ export default function KnowledgeCardSection({
                 type='button'
                 aria-label='添加知识卡组'
                 onClick={onCreateGroup}
-                className='w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-md text-xs hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+                className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
               >
-                <PlusIcon className='w-4 h-4' aria-hidden='true' />
+                <PlusIcon className='h-4 w-4' aria-hidden='true' />
               </button>
             )}
           </div>
@@ -870,7 +872,7 @@ export default function KnowledgeCardSection({
                   getCardPriority={getCardPriority}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
-                  <div className='border-t border-gray-200 dark:border-slate-700 my-4'></div>
+                  <div className='my-4 border-t border-gray-200 dark:border-slate-700'></div>
                 )}
               </React.Fragment>
             ) : (
@@ -892,7 +894,7 @@ export default function KnowledgeCardSection({
                   getCardPriority={getCardPriority}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
-                  <div className='border-t border-gray-200 dark:border-slate-700 my-4'></div>
+                  <div className='my-4 border-t border-gray-200 dark:border-slate-700'></div>
                 )}
               </React.Fragment>
             )

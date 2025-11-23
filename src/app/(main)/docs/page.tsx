@@ -1,15 +1,15 @@
-import Link from 'next/link';
 import { getDocPages } from '@/lib/docUtils';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
+import Link from '@/components/Link';
 
 export default async function DocsIndexPage() {
   const docPages = await getDocPages();
 
   return (
     <div className='space-y-8'>
-      <div className='text-center space-y-4'>
+      <div className='space-y-4 text-center'>
         <h1 className='text-4xl font-bold text-gray-900 dark:text-gray-100'>文档</h1>
-        <p className='text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
+        <p className='mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-400'>
           欢迎来到猫和老鼠手游维基文档。浏览下面的指南和资源。
         </p>
       </div>
@@ -20,15 +20,15 @@ export default async function DocsIndexPage() {
             <Link
               key={page.slug}
               href={page.path}
-              className='group block p-6 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-200 hover:shadow-md dark:hover:shadow-slate-900/20 no-underline'
+              className='group block rounded-lg border border-gray-200 bg-white p-6 no-underline transition-all duration-200 hover:border-blue-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-500 dark:hover:shadow-slate-900/20'
             >
               <div className='space-y-3'>
-                <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors'>
+                <h2 className='text-xl font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-gray-100 dark:group-hover:text-blue-400'>
                   {page.title}
                 </h2>
                 <div className='flex items-center text-sm text-gray-500 dark:text-gray-400'>
                   <svg
-                    className='w-4 h-4 mr-2'
+                    className='mr-2 h-4 w-4'
                     fill='none'
                     stroke='currentColor'
                     viewBox='0 0 24 24'
@@ -43,19 +43,19 @@ export default async function DocsIndexPage() {
                   </svg>
                   /docs/{page.slug}
                 </div>
-                <div className='flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors'>
+                <div className='flex items-center text-sm font-medium text-blue-600 transition-colors group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300'>
                   阅读更多
-                  <ChevronRightIcon className='w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform' />
+                  <ChevronRightIcon className='ml-1 h-4 w-4 transform transition-transform group-hover:translate-x-1' />
                 </div>
               </div>
             </Link>
           ))}
         </div>
       ) : (
-        <div className='text-center py-12'>
-          <div className='text-gray-500 dark:text-gray-400 space-y-2'>
+        <div className='py-12 text-center'>
+          <div className='space-y-2 text-gray-500 dark:text-gray-400'>
             <svg
-              className='w-16 h-16 mx-auto text-gray-300 dark:text-gray-600'
+              className='mx-auto h-16 w-16 text-gray-300 dark:text-gray-600'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'

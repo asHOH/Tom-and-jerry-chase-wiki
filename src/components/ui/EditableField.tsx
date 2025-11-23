@@ -1,13 +1,15 @@
 /* eslint-disable react-hooks/refs */
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useEditMode, useLocalCharacter } from '../../context/EditModeContext';
-import { characters } from '@/data/index';
-import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
+import { characters } from '@/data/index';
+
 import { getNestedProperty, handleChange } from '@/lib/editUtils';
 import { CharacterWithFaction } from '@/lib/types';
+
+import { useEditMode, useLocalCharacter } from '../../context/EditModeContext';
+import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 
 type Key<T> = T extends object
   ? {

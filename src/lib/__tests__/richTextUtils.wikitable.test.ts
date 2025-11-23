@@ -1,4 +1,4 @@
-import { wikiTextToHTML, htmlToWikiText } from '../richTextUtils';
+import { htmlToWikiText, wikiTextToHTML } from '../richTextUtils';
 
 describe('WikiTable Support', () => {
   const sampleWikiTable = `{| class="wikitable"

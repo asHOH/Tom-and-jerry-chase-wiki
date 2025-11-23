@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+
 import HCaptchaComponent from './HCaptchaComponent';
 import NoOpComponent from './NoOpComponent';
 import TurnstileComponent from './TurnstileComponent';

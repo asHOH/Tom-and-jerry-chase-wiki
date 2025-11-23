@@ -1,10 +1,10 @@
 import {
-  getTooltipContent,
-  getPositioningTagTooltipContent,
   extractItemKeyActions,
-  hasItemKeyPatterns,
-  getAvailableProperties,
   getAvailablePositioningTags,
+  getAvailableProperties,
+  getPositioningTagTooltipContent,
+  getTooltipContent,
+  hasItemKeyPatterns,
 } from '../tooltipUtils';
 
 describe('tooltipUtils', () => {

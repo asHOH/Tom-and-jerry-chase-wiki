@@ -1,11 +1,12 @@
 import React from 'react';
 import clsx from 'clsx';
+
 import LoadingSpinner from './LoadingSpinner';
 import {
   Skeleton,
   SkeletonCharacterCard,
-  SkeletonKnowledgeCard,
   SkeletonCharacterDetail,
+  SkeletonKnowledgeCard,
 } from './Skeleton';
 
 interface LoadingStateProps {
@@ -49,13 +50,13 @@ export default function LoadingState({
       return (
         <div className={clsx('space-y-8', className)}>
           {/* Header skeleton */}
-          <div className='text-center space-y-4'>
-            <Skeleton className='h-12 w-1/2 mx-auto' animate={animate} />
-            <Skeleton className='h-6 w-3/4 mx-auto' animate={animate} />
+          <div className='space-y-4 text-center'>
+            <Skeleton className='mx-auto h-12 w-1/2' animate={animate} />
+            <Skeleton className='mx-auto h-6 w-3/4' animate={animate} />
           </div>
 
           {/* Filter skeleton */}
-          <div className='flex justify-center items-center gap-4'>
+          <div className='flex items-center justify-center gap-4'>
             <Skeleton className='h-6 w-20' animate={animate} />
             <div className='flex gap-2'>
               {Array.from({ length: 4 }).map((_, i) => (
@@ -65,7 +66,7 @@ export default function LoadingState({
           </div>
 
           {/* Character grid skeleton */}
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8'>
+          <div className='grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
             {Array.from({ length: count }).map((_, i) => (
               <div key={i} className={`animate-fadeInUp grid-item-${(i % 8) + 1}`}>
                 <SkeletonCharacterCard animate={animate} />
@@ -74,7 +75,7 @@ export default function LoadingState({
           </div>
 
           {/* Loading indicator */}
-          <div className='flex justify-center items-center py-4'>
+          <div className='flex items-center justify-center py-4'>
             <LoadingSpinner size='sm' message={message} />
           </div>
         </div>
@@ -84,14 +85,14 @@ export default function LoadingState({
       return (
         <div className={clsx('space-y-8', className)}>
           {/* Header skeleton */}
-          <div className='text-center space-y-4'>
-            <Skeleton className='h-12 w-1/2 mx-auto' animate={animate} />
-            <Skeleton className='h-6 w-3/4 mx-auto' animate={animate} />
+          <div className='space-y-4 text-center'>
+            <Skeleton className='mx-auto h-12 w-1/2' animate={animate} />
+            <Skeleton className='mx-auto h-6 w-3/4' animate={animate} />
           </div>
 
           {/* Filter controls skeleton */}
           <div className='space-y-4'>
-            <div className='flex justify-center items-center gap-4'>
+            <div className='flex items-center justify-center gap-4'>
               <Skeleton className='h-6 w-16' animate={animate} />
               <div className='flex gap-2'>
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -101,14 +102,14 @@ export default function LoadingState({
             </div>
 
             {/* Cost range slider skeleton */}
-            <div className='flex justify-center items-center gap-4'>
+            <div className='flex items-center justify-center gap-4'>
               <Skeleton className='h-6 w-16' animate={animate} />
               <Skeleton className='h-6 w-48' animate={animate} />
             </div>
           </div>
 
           {/* Knowledge card grid skeleton */}
-          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4'>
+          <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
             {Array.from({ length: count }).map((_, i) => (
               <div key={i} className={`animate-slideInLeft grid-item-${(i % 8) + 1}`}>
                 <SkeletonKnowledgeCard animate={animate} />
@@ -117,7 +118,7 @@ export default function LoadingState({
           </div>
 
           {/* Loading indicator */}
-          <div className='flex justify-center items-center py-4'>
+          <div className='flex items-center justify-center py-4'>
             <LoadingSpinner size='sm' message={message} />
           </div>
         </div>
@@ -152,7 +153,7 @@ export function PageLoadingState({
   children?: React.ReactNode;
 }) {
   return (
-    <div className='max-w-6xl mx-auto p-6 space-y-6' style={{ paddingTop: '80px' }}>
+    <div className='mx-auto max-w-6xl space-y-6 p-6' style={{ paddingTop: '80px' }}>
       <div className='animate-pulse'>
         {children || <LoadingState type={type} message={message} />}
       </div>

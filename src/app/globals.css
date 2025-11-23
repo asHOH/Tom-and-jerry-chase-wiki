@@ -1,7 +1,7 @@
 @import 'tailwindcss/theme.css';
 @import 'tailwindcss/preflight.css';
 @import 'tailwindcss/utilities.css';
-@plugin "@tailwindcss/typography";
+@plugin '@tailwindcss/typography';
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
@@ -85,11 +85,11 @@ img {
 }
 
 .card {
-  @apply bg-white dark:bg-slate-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4;
+  @apply rounded-lg bg-white p-4 shadow-md transition-all duration-300 hover:shadow-lg dark:bg-slate-800;
 }
 
 .btn {
-  @apply px-4 py-2 rounded-md font-medium transition-colors;
+  @apply rounded-md px-4 py-2 font-medium transition-colors;
 }
 
 .btn-primary {
