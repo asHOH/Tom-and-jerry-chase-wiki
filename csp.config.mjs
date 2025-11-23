@@ -21,6 +21,7 @@ const directives = {
     'https://api.pwnedpasswords.com',
     'https://*.pusher.com',
     'wss://*.pusher.com',
+    'https://static.cloudflareinsights.com',
   ],
   'media-src': ["'self'"],
   'object-src': ["'none'"],
