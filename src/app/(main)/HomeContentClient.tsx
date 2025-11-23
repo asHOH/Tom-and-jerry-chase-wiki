@@ -3,13 +3,13 @@
 import { useRef, useState } from 'react';
 import { NAV_ITEMS } from '@/constants/navigation';
 import { useEditMode } from '@/context/EditModeContext';
+import { useToast } from '@/context/ToastContext';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/HomePageSection';
-import NotificationTooltip from '@/components/ui/NotificationTooltip';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import { DisclaimerText } from '@/components/DisclaimerText';
@@ -20,8 +20,7 @@ type Props = { description: string };
 
 export default function HomeContentClient({ description }: Props) {
   const { toggleEditMode, isEditMode } = useEditMode();
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState('');
+  const { success, info } = useToast();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
   const changeLogsRef = useRef<ChangeLogsRef>(null);
@@ -33,13 +32,12 @@ export default function HomeContentClient({ description }: Props) {
       return; // Do nothing if feedback or changelog modal is open
     }
     if (isEditMode) {
-      setNotificationMessage('成功退出编辑模式');
+      success('成功退出编辑模式', 3000);
       setShowLoginDialog(false);
     } else {
-      setNotificationMessage('成功进入编辑模式，编辑模式下，修改只在本地保存');
+      info('成功进入编辑模式，编辑模式下，修改只在本地保存', 4000);
       if (!nickname && !process.env.NEXT_PUBLIC_DISABLE_ARTICLES) setShowLoginDialog(true);
     }
-    setShowNotification(true);
     toggleEditMode();
   };
 
@@ -123,14 +121,6 @@ export default function HomeContentClient({ description }: Props) {
           <ChangeLogs ref={changeLogsRef} />
         </div>
       </div>
-
-      <NotificationTooltip
-        message={notificationMessage}
-        show={showNotification}
-        onHide={() => setShowNotification(false)}
-        type={isEditMode ? 'success' : 'info'}
-        duration={isEditMode ? 3000 : 4000}
-      />
 
       {isEditMode && showLoginDialog && (
         <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />

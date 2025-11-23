@@ -1,30 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-
-import NotificationTooltip from './ui/NotificationTooltip';
+import { useEffect, useRef, useState } from 'react';
+import { useToast } from '@/context/ToastContext';
 
 export const OfflineIndicator: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean | null>(null); // null for SSR
-  const [showNotification, setShowNotification] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasOfflineRef = useRef(false);
-
-  const clearNotificationTimeout = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-  }, []);
-
-  const setNotificationTimeout = useCallback(() => {
-    clearNotificationTimeout();
-    setShowNotification(true);
-    timeoutRef.current = setTimeout(() => {
-      setShowNotification(false);
-      timeoutRef.current = null;
-    }, 4000);
-  }, [clearNotificationTimeout]);
+  const { success, warning } = useToast();
 
   useEffect(() => {
     // Initialize online status on client side only
@@ -35,7 +17,7 @@ export const OfflineIndicator: React.FC = () => {
     const handleOnline = () => {
       setIsOnline(true);
       if (wasOfflineRef.current) {
-        setNotificationTimeout();
+        success('已重新连接到网络');
       }
       wasOfflineRef.current = false;
     };
@@ -43,7 +25,7 @@ export const OfflineIndicator: React.FC = () => {
     const handleOffline = () => {
       setIsOnline(false);
       wasOfflineRef.current = true;
-      setNotificationTimeout();
+      warning('已断开网络连接 - 您仍可以浏览已缓存的页面和数据');
     };
 
     window.addEventListener('online', handleOnline);
@@ -52,9 +34,8 @@ export const OfflineIndicator: React.FC = () => {
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      clearNotificationTimeout();
     };
-  }, [setNotificationTimeout, clearNotificationTimeout]);
+  }, [success, warning]);
 
   // Apply body class when offline
   useEffect(() => {
@@ -70,7 +51,7 @@ export const OfflineIndicator: React.FC = () => {
   // Don't render anything during SSR or initial hydration
   if (isOnline === null) return null;
 
-  if (!showNotification && isOnline) return null;
+  if (isOnline) return null;
 
   return (
     <>
@@ -84,14 +65,6 @@ export const OfflineIndicator: React.FC = () => {
           </div>
         </div>
       )}
-      {/* Notification using unified NotificationTooltip */}
-      <NotificationTooltip
-        show={showNotification}
-        message={isOnline ? '已重新连接到网络' : '已断开网络连接 - 您仍可以浏览已缓存的页面和数据'}
-        type={isOnline ? 'success' : 'warning'}
-        onHide={() => setShowNotification(false)}
-        duration={4000}
-      />
     </>
   );
 };

@@ -1,8 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-import NotificationTooltip from './ui/NotificationTooltip';
+import { useToast } from '@/context/ToastContext';
 
 interface VersionInfo {
   version: string;
@@ -33,8 +32,8 @@ const fetchVersionInfo = async (): Promise<VersionInfo> => {
 
 export const VersionChecker: React.FC = () => {
   const [hasMounted, setHasMounted] = useState(false);
-  const [showUpdateNotice, setShowUpdateNotice] = useState(false);
   const [currentVersion, setCurrentVersion] = useState<string | null>(null);
+  const { info } = useToast();
   // Persist the latest seen version across reloads to avoid duplicate prompts
   const LATEST_SEEN_VERSION_KEY = 'tjcw.latestSeenVersion';
   const [latestSeenVersion, setLatestSeenVersion] = useState<string | null>(null);
@@ -46,7 +45,6 @@ export const VersionChecker: React.FC = () => {
     error: string | null;
     retryCount: number;
   }>({ status: 'loading', lastCheck: null, error: null, retryCount: 0 });
-  const [notificationMessage, setNotificationMessage] = useState('');
   const [isOnline, setIsOnline] = useState(true);
 
   // Request deduplication state
@@ -261,8 +259,7 @@ export const VersionChecker: React.FC = () => {
         console.log(
           `Version update detected (${source}): ${currentVersion} → ${versionInfo.version}`
         );
-        setNotificationMessage(`正在更新到最新版本 ${versionInfo.version}...`);
-        setShowUpdateNotice(true);
+        info(`正在更新到最新版本 ${versionInfo.version}...`);
         hasPendingUpdateRef.current = true;
 
         // Update service worker if available
@@ -340,6 +337,7 @@ export const VersionChecker: React.FC = () => {
     lastVersionResponse.timestamp,
     persistLatestSeenVersion,
     shouldAnnounceVersion,
+    info,
   ]);
 
   // Listen for service worker updates (fallback method)
@@ -349,8 +347,7 @@ export const VersionChecker: React.FC = () => {
         // Only react to controller changes if we know an update is pending
         if (!hasPendingUpdateRef.current) return;
 
-        setNotificationMessage('检测到新版本，正在更新...');
-        setShowUpdateNotice(true);
+        info('检测到新版本，正在更新...');
         scheduleReload(2000);
       };
 
@@ -363,7 +360,7 @@ export const VersionChecker: React.FC = () => {
 
     // Return empty cleanup function if service worker not available
     return () => {};
-  }, [showUpdateNotice]);
+  }, [info]);
 
   return hasMounted ? (
     <>
@@ -401,15 +398,6 @@ export const VersionChecker: React.FC = () => {
           调试
         </button>
       )}
-
-      {/* Update Notice */}
-      <NotificationTooltip
-        message={notificationMessage}
-        show={showUpdateNotice}
-        onHide={() => setShowUpdateNotice(false)}
-        duration={3000}
-        type='info'
-      />
     </>
   ) : null;
 };

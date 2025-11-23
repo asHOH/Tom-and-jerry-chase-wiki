@@ -1,17 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-import NotificationTooltip from './ui/NotificationTooltip';
+import { useToast } from '@/context/ToastContext';
 
 export const CacheDebugPanel: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [cacheInfo, setCacheInfo] = useState<string[]>([]);
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState('');
-  const [notificationType, setNotificationType] = useState<
-    'success' | 'info' | 'warning' | 'error'
-  >('success');
+  const { success } = useToast();
 
   const getCacheInfo = async () => {
     if ('caches' in window) {
@@ -40,7 +35,7 @@ export const CacheDebugPanel: React.FC = () => {
       const cacheNames = await caches.keys();
       await Promise.all(cacheNames.map((name) => caches.delete(name)));
       setCacheInfo([]);
-      showNotificationMessage('缓存已清除！页面即将刷新。', 'success');
+      success('缓存已清除！页面即将刷新。');
       // Delay reload to show notification
       setTimeout(() => window.location.reload(), 1500);
     }
@@ -49,15 +44,6 @@ export const CacheDebugPanel: React.FC = () => {
   const forceReload = () => {
     // Force reload with cache bypass
     window.location.reload();
-  };
-
-  const showNotificationMessage = (
-    message: string,
-    type: 'success' | 'info' | 'warning' | 'error'
-  ) => {
-    setNotificationMessage(message);
-    setNotificationType(type);
-    setShowNotification(true);
   };
 
   if (!isVisible) return null;
@@ -112,14 +98,6 @@ export const CacheDebugPanel: React.FC = () => {
         </div>
         <div className='text-xs text-gray-300'>Press Ctrl+Shift+D to toggle</div>
       </div>
-      {showNotification && (
-        <NotificationTooltip
-          show={showNotification}
-          type={notificationType}
-          message={notificationMessage}
-          onHide={() => setShowNotification(false)}
-        />
-      )}
     </div>
   );
 };

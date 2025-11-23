@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { useToast } from '@/context/ToastContext';
 import { characters, FactionId, factions } from '@/data';
 import json5 from 'json5';
 import { proxy } from 'valtio';
@@ -15,7 +16,6 @@ import { processCharacters } from '@/lib/skillIdUtils';
 import { CharacterWithFaction } from '@/lib/types';
 
 import BaseCard from '../../../ui/BaseCard';
-import NotificationTooltip from '../../../ui/NotificationTooltip';
 
 function handleUploadedData(
   data: string,
@@ -153,11 +153,9 @@ export default function CharacterImport() {
 
   const { isEditMode } = useEditMode();
   const { handleSelectCharacter } = useAppContext();
+  const { success } = useToast();
   const [showImportOptions, setShowImportOptions] = useState(false);
   const [showPasteInput, setShowPasteInput] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState('');
-  const [importedCharacterNames, setImportedCharacterNames] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const params = useParams();
   const factionId = params?.factionId as FactionId;
@@ -165,22 +163,17 @@ export default function CharacterImport() {
   const handleImportSuccess = (names: string[]) => {
     // Create the notification message
     const message = `成功导入${names.map((name, index) => `${index > 0 ? '、' : ''}${name}`).join('')}，即将打开页面开始编辑...`;
-    setNotificationMessage(message);
-    setImportedCharacterNames(names);
-    setShowNotification(true);
-  };
+    success(message, 1500);
 
-  const handleNotificationHide = () => {
-    setShowNotification(false);
-    // Navigate to the first imported character when notification hides
-    if (importedCharacterNames.length > 0) {
-      const firstCharacterName = importedCharacterNames[0];
-      if (firstCharacterName) {
-        handleSelectCharacter(firstCharacterName);
+    // Navigate to the first imported character after a delay
+    setTimeout(() => {
+      if (names.length > 0) {
+        const firstCharacterName = names[0];
+        if (firstCharacterName) {
+          handleSelectCharacter(firstCharacterName);
+        }
       }
-    }
-    // Clear the imported names after navigation
-    setImportedCharacterNames([]);
+    }, 1500);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,15 +329,6 @@ export default function CharacterImport() {
           />
         )}
       </BaseCard>
-
-      {/* Import Success Notification */}
-      <NotificationTooltip
-        message={notificationMessage}
-        show={showNotification}
-        onHide={handleNotificationHide}
-        duration={1500}
-        type='success'
-      />
     </>
   );
 }
