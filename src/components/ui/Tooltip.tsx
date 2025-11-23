@@ -9,6 +9,7 @@ interface TooltipProps {
   content: React.ReactNode;
   className?: string;
   disabled?: boolean;
+  asChild?: boolean;
 }
 
 export default function Tooltip({
@@ -16,9 +17,11 @@ export default function Tooltip({
   content,
   className = '',
   disabled = false,
+  asChild = false,
 }: TooltipProps) {
   const [open, setOpen] = React.useState<boolean>(false);
   const [isHoverOnly, setIsHoverOnly] = React.useState<boolean>(false);
+  const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
@@ -39,7 +42,23 @@ export default function Tooltip({
     return () => mediaQuery.removeListener(updateHoverState);
   }, []);
 
-  const trigger = (
+  const handleTouchStart = () => {
+    if (isHoverOnly || disabled) return;
+    longPressTimerRef.current = setTimeout(() => {
+      setOpen(true);
+    }, 500);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+
+  const trigger = asChild ? (
+    children
+  ) : (
     <span
       className={clsx(
         'cursor-help border-b border-dotted border-gray-400 transition-colors hover:border-gray-600 dark:border-gray-500 dark:hover:border-gray-400',
@@ -51,20 +70,25 @@ export default function Tooltip({
   );
 
   if (disabled) {
-    return trigger;
+    return <>{trigger}</>;
   }
 
   return (
-    <TooltipPrimitive.Provider delayDuration={0}>
+    <TooltipPrimitive.Provider delayDuration={300}>
       <TooltipPrimitive.Root open={open} onOpenChange={setOpen}>
         <TooltipPrimitive.Trigger
           asChild
           onClick={(e) => {
-            if (!isHoverOnly) {
+            // Only intercept click for non-interactive triggers (when not asChild)
+            // For buttons (asChild=true), we let the click pass through
+            if (!isHoverOnly && !asChild) {
               e.preventDefault();
               setOpen((prev) => !prev);
             }
           }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchMove={handleTouchEnd}
         >
           {trigger}
         </TooltipPrimitive.Trigger>
