@@ -102,7 +102,7 @@ const buildWarningMessages = ({
     : null;
   const priorityWarning =
     highPriorityCardNames.length > 0 && !isEditMode
-      ? `${highPriorityCardNames.join('、')}建议3级佩戴`
+      ? `${highPriorityCardNames.join('、')}建议升到三级再佩戴`
       : null;
 
   return { missingWarningMessage, priorityWarning };
