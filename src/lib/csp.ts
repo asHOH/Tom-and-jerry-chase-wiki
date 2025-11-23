@@ -5,5 +5,7 @@ import { buildCspHeader } from '@/../csp.config.mjs';
 import { isVercelAnalyticsEnabled } from '@/lib/platform';
 
 export function getRuntimeCspHeader(): string {
-  return buildCspHeader({ includeVercelAnalytics: isVercelAnalyticsEnabled() });
+  const csp = buildCspHeader({ includeVercelAnalytics: isVercelAnalyticsEnabled() });
+  // frame-ancestors is ignored in <meta> tags and causes console warnings
+  return csp.replace(/frame-ancestors[^;]+;?/g, '').trim();
 }
