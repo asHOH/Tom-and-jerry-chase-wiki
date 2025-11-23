@@ -19,6 +19,7 @@ import {
   UnderlineIcon,
   UndoIcon,
 } from '../RichTextEditorIcons';
+import Tooltip from '../Tooltip';
 import ViewModeToggle, { EditorViewMode } from './ViewModeToggle';
 
 export interface ToolbarState {
@@ -90,12 +91,11 @@ const ToolbarButton = React.memo(function ToolbarButton({
   title?: string;
   mode: EditorViewMode;
 }) {
-  return (
+  const button = (
     <button
       type='button'
       onClick={onClick}
       disabled={disabled || mode !== 'rich'}
-      title={title}
       className={clsx(
         'inline-flex h-8 items-center justify-center rounded-md border p-2 text-sm font-medium transition-all duration-200',
         'hover:bg-gray-100 dark:hover:bg-gray-700',
@@ -109,6 +109,16 @@ const ToolbarButton = React.memo(function ToolbarButton({
       {children}
     </button>
   );
+
+  if (title) {
+    return (
+      <Tooltip content={title} asChild>
+        {button}
+      </Tooltip>
+    );
+  }
+
+  return button;
 });
 
 export const Toolbar = React.memo(function Toolbar({
@@ -250,30 +260,32 @@ export const Toolbar = React.memo(function Toolbar({
           <ToolbarButton onClick={commands.insertTable} title='插入表格 (3x3)' mode={mode}>
             表格
           </ToolbarButton>
-          <button
-            type='button'
-            onClick={() => setShowTableTools((v) => !v)}
-            title={showTableTools ? '收起表格工具' : '展开表格工具'}
-            aria-pressed={showTableTools}
-            className={clsx(
-              'rounded p-1',
-              'border-0 bg-transparent',
-              'hover:bg-gray-100 dark:hover:bg-gray-700',
-              'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none'
-            )}
-          >
-            <svg
-              viewBox='0 0 20 20'
-              fill='currentColor'
+          <Tooltip content={showTableTools ? '收起表格工具' : '展开表格工具'} asChild>
+            <button
+              type='button'
+              onClick={() => setShowTableTools((v) => !v)}
+              aria-pressed={showTableTools}
+              aria-label={showTableTools ? '收起表格工具' : '展开表格工具'}
               className={clsx(
-                'h-4 w-4 transition-transform',
-                showTableTools ? 'rotate-90' : 'rotate-0'
+                'rounded p-1',
+                'border-0 bg-transparent',
+                'hover:bg-gray-100 dark:hover:bg-gray-700',
+                'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none'
               )}
-              aria-hidden='true'
             >
-              <path d='M7.21 14.77a.75.75 0 01.02-1.06L10.94 10 7.23 6.29a.75.75 0 111.06-1.06l4.24 4.24a.75.75 0 010 1.06L8.29 14.77a.75.75 0 01-1.08-.02z' />
-            </svg>
-          </button>
+              <svg
+                viewBox='0 0 20 20'
+                fill='currentColor'
+                className={clsx(
+                  'h-4 w-4 transition-transform',
+                  showTableTools ? 'rotate-90' : 'rotate-0'
+                )}
+                aria-hidden='true'
+              >
+                <path d='M7.21 14.77a.75.75 0 01.02-1.06L10.94 10 7.23 6.29a.75.75 0 111.06-1.06l4.24 4.24a.75.75 0 010 1.06L8.29 14.77a.75.75 0 01-1.08-.02z' />
+              </svg>
+            </button>
+          </Tooltip>
           {showTableTools && (
             <>
               <ToolbarButton onClick={commands.toggleHeaderRow} title='开关表头行' mode={mode}>
