@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
-import { useCharacterNavigation } from '@/lib/hooks/useCharacterNavigation';
+import { useCharacterNavigation } from '@/hooks/useCharacterNavigation';
 import { motion } from 'motion/react';
 
 interface CharacterNavigationButtonsProps {

@@ -12,7 +12,7 @@ import { useSnapshot } from 'valtio';
 import { setNestedProperty } from '@/lib/editUtils';
 import EditableField from '@/components/ui/EditableField';
 import clsx from 'clsx';
-import { useNavigation } from '@/lib/useNavigation';
+import { useNavigation } from '@/hooks/useNavigation';
 import KnowledgeCardSelector from './KnowledgeCardSelector';
 import SpecialSkillSelector from './SpecialSkillSelector';
 import { HappyFaceIcon, NeutralFaceIcon, SadFaceIcon, HeartIcon } from './CharacterRelationIcons';

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
-import { navigate as navigateUtil } from './navigationUtils';
+import { navigate as navigateUtil } from '../lib/navigationUtils';
 
 /**
  * Custom hook for handling offline-aware navigation

@@ -8,8 +8,8 @@ import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useAppContext } from '@/context/AppContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { useEditMode } from '@/context/EditModeContext';
-import { useNavigation } from '@/lib/useNavigation';
-import { useChat } from '@/lib/useChat';
+import { useNavigation } from '@/hooks/useNavigation';
+import { useChat } from '@/hooks/useChat';
 import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
 
 type SearchDialogProps = {

@@ -4,7 +4,7 @@ import { useSnapshot } from 'valtio';
 import { useState, useMemo } from 'react';
 import type { Skill } from '@/data/types';
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { useScrollSpy } from '@/lib/useScrollSpy';
+import { useScrollSpy } from '@/hooks/useScrollSpy';
 import clsx from 'clsx';
 
 function CharacterSectionIndexItem({

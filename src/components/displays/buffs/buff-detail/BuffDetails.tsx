@@ -4,7 +4,7 @@ import DetailShell, { DetailSection } from '@/components/displays/shared/DetailS
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import { useAppContext } from '@/context/AppContext';
 import { Buff, SingleItem, SingleItemTypeChineseNameList } from '@/data/types';
-import { useSpecifyTypeKeyboardNavigation } from '@/lib/hooks/useSpecifyTypeKeyboardNavigation';
+import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import DetailTraitsCard from '../../shared/DetailTraitsCard';
 import BuffAttributesCard from './BuffAttributesCard';
 import SingleItemButton from '@/components/ui/SingleItemButton';

@@ -1,7 +1,7 @@
 'use client';
 
 import { isOriginalCharacter } from '@/lib/editUtils';
-import { useNavigation } from '@/lib/useNavigation';
+import { useNavigation } from '@/hooks/useNavigation';
 import { proxy, useSnapshot } from 'valtio';
 import { useEffect } from 'react';
 

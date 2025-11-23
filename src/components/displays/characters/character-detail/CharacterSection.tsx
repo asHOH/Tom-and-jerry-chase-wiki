@@ -1,6 +1,6 @@
 'use client';
 
-import { useNavigation } from '@/lib/useNavigation';
+import { useNavigation } from '@/hooks/useNavigation';
 import clsx from 'clsx';
 import { ReactNode, useState } from 'react';
 

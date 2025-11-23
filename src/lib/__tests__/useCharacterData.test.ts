@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { useCharacterData } from '../useCharacterData';
+import { useCharacterData } from '../../hooks/useCharacterData';
 import useSWR from 'swr';
 
 // Mock SWR

@@ -10,7 +10,7 @@ import {
   resetCharacterDetailsTutorial,
 } from '@/lib/tutorialUtils';
 import { useEditMode } from '@/context/EditModeContext';
-import { useKeyboardNavigation } from '@/lib/hooks/useKeyboardNavigation';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { proxy } from 'valtio';
 
 const syncCharacterStoreEntry = (
