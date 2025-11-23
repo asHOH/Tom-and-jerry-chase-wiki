@@ -1,8 +1,5 @@
 import { Metadata } from 'next';
 import KnowledgeCardClient from './KnowledgeCardClient';
-import TabNavigationWrapper from '@/components/TabNavigationWrapper';
-import { AppProvider } from '@/context/AppContext';
-import { EditModeProvider } from '@/context/EditModeContext';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
@@ -17,13 +14,5 @@ export const metadata: Metadata = generatePageMetadata({
 });
 
 export default function CardsPage() {
-  return (
-    <AppProvider>
-      <EditModeProvider>
-        <TabNavigationWrapper showDetailToggle={false}>
-          <KnowledgeCardClient description={DESCRIPTION} />
-        </TabNavigationWrapper>
-      </EditModeProvider>
-    </AppProvider>
-  );
+  return <KnowledgeCardClient description={DESCRIPTION} />;
 }

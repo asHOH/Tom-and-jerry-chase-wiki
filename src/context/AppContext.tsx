@@ -1,6 +1,5 @@
 'use client';
 
-import { EditModeProvider } from './EditModeContext';
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { useNavigation } from '@/lib/useNavigation';
 import { proxy, useSnapshot } from 'valtio';
@@ -16,8 +15,6 @@ interface AppContextType {
 const isDetailedViewStore = proxy({ isDetailedView: false });
 
 let detailedViewInitialized = false;
-
-export const AppProvider = EditModeProvider;
 
 export const useAppContext = () => {
   const { navigate } = useNavigation();
