@@ -32,14 +32,14 @@ const mouseCharacterDefinitions = {
         id: '大铁锤',
         pattern: '0[12]112200',
         weaponType: 'weapon1',
-        description: '加点灵活，如需自保则开局优先一级鼓舞；需要搬奶酪则四级优先二被。',
+        description: '加点灵活，如需自保则开局优先一级鼓舞；需要搬奶酪则四级优先2级被动。',
         additionaldescription: '',
       },
       {
         id: '鸟哨',
         pattern: '0[13]113300',
         weaponType: 'weapon2',
-        description: '加点灵活，如需自保则开局优先一级鼓舞；需要搬奶酪则四级优先二被。',
+        description: '加点灵活，如需自保则开局优先一级鼓舞；需要搬奶酪则四级优先2级被动。',
         additionaldescription: '',
       },
     ],
@@ -3850,7 +3850,7 @@ const mouseCharacterDefinitions = {
       {
         tagName: '辅助',
         isMinor: true,
-        description: '二被动和琴可为队友加推速和回复Hp。',
+        description: '2级被动和琴可为队友加推速和回复Hp。',
         additionalDescription: '',
       },
     ],
@@ -4596,7 +4596,7 @@ const mouseCharacterDefinitions = {
     countersSpecialSkills: [
       {
         id: '绝地反击',
-        description: '风墙的干扰无法被绝地反击免疫，且莉莉二被动命中霸体敌方也能触发。',
+        description: '风墙的干扰无法被绝地反击免疫，且莉莉2级被动命中霸体敌方也能触发。',
         isMinor: true,
       },
     ],
@@ -5841,7 +5841,7 @@ const mouseCharacterDefinitions = {
       {
         tagName: '砸墙',
         isMinor: true,
-        description: '二被提供超高墙缝增伤，配合果盘蒸发墙缝，一套就能打掉一半Hp。',
+        description: '2级被动提供超高墙缝增伤，配合果盘蒸发墙缝，一套就能打掉一半Hp。',
         additionalDescription: '触发条件较为苛刻，且需要与队友有一定沟通。',
       },
     ],
@@ -6198,7 +6198,7 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '冰冻保鲜',
-        description: '二被可无敌救人。',
+        description: '2级被动可无敌救人。',
       },
       {
         name: '魔术漂浮',
@@ -6258,12 +6258,12 @@ const mouseCharacterDefinitions = {
       },
       {
         id: '剑客汤姆',
-        description: '全面克制，二被减控防连招，三被断连斩，高伤克皮糙，且控制多。',
+        description: '全面克制，2级被动减控防连招，三被断连斩，高伤克皮糙，且控制多。',
         isMinor: false,
       },
       {
         id: '苏蕊',
-        description: '过载加伤可快速多次击倒二被苏蕊。',
+        description: '过载加伤可快速多次击倒2级被动苏蕊。',
         isMinor: true,
       },
     ],

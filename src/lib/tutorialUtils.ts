@@ -10,7 +10,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     id: 'skill-allocation-edit',
     targetSelector: '[data-tutorial-id="skill-allocation-edit"]',
     message:
-      '加点序列。0123分别表示被动、主动、一武、二武。中括号表示平行加点，即需要根据实际情况抉择加点顺序；小括号表示需要留加点（如莉莉、罗菲二被）；减号表示一般不升这级（如苏蕊三级跳舞）。示例：01(0)1[10]22-2',
+      '加点序列。0123分别表示被动、主动、一武、二武。中括号表示平行加点，即需要根据实际情况抉择加点顺序；小括号表示需要留加点（如莉莉、罗菲2级被动）；减号表示一般不升这级（如苏蕊三级跳舞）。示例：01(0)1[10]22-2',
     position: 'bottom',
   },
   {
