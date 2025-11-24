@@ -3827,7 +3827,7 @@ const catCharacterDefinitions = {
       {
         id: '尼宝',
         description:
-          '尼宝的翻滚救援不好拦截，虽然跳舞可以在一定程度上克制钩子，但尼宝可以选择优先被动，放弃钩子，这会让尼宝更快3被提高生存能力。',
+          '尼宝的翻滚救援不好拦截，虽然跳舞可以在一定程度上克制钩子，但尼宝可以选择优先被动、放弃钩子、更早点出3级被动提高生存能力。',
         isMinor: false,
       },
     ],
@@ -4953,7 +4953,7 @@ const catCharacterDefinitions = {
         pattern: '122112000',
         weaponType: 'weapon1',
         description:
-          '点出二级武器之后，点出三级俯冲。俯冲的自动索敌对萌新比较友好，而且三级时减少CD，大大提高容错率。',
+          '点出2级武器之后，点出3级俯冲。俯冲的自动索敌对萌新比较友好，而且3级时减少CD，大大提高容错率。',
       },
     ],
     knowledgeCardGroups: [
