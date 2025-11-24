@@ -2053,7 +2053,7 @@ const catCharacterDefinitions = {
       {
         tagName: '翻盘',
         isMinor: false,
-        description: '三被动减控免死，三级炮有一定强度，有一定的翻盘能力',
+        description: '3级被动减控免死，3级炮有一定强度，有一定的翻盘能力',
         additionalDescription: '',
       },
       {
@@ -4647,7 +4647,7 @@ const catCharacterDefinitions = {
       {
         tagName: '后期',
         isMinor: false,
-        description: '三被主动宣战效果，不然老鼠不容易被兔子宣战。',
+        description: '3级被动主动宣战。',
         additionalDescription: '',
       },
       {
@@ -4946,7 +4946,7 @@ const catCharacterDefinitions = {
         pattern: '212000211',
         weaponType: 'weapon1',
         description:
-          '先点出二级武器，提高守火箭能力；三被提高容错和赶路能力；三级武器增加的伤害可以稍微削减知识卡“不屈”增加的血量带来的反制能力',
+          '先点出2级武器，提高守火箭能力；3级被动提高容错和赶路能力；3级武器增加的伤害可以稍微削减不屈增加的血量带来的反制能力',
       },
       {
         id: '适合萌新',
@@ -5204,7 +5204,7 @@ const catCharacterDefinitions = {
       {
         id: '恶魔杰瑞',
         description:
-          '恶杰前期对战追风比较白板，但后期的三被和三级主动使其自保极强，且具有较强救援能力。',
+          '恶杰前期对战追风比较白板，但后期的3级被动和3级主动使其自保极强，且具有较强救援能力。',
         isMinor: false,
       },
     ],

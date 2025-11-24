@@ -781,7 +781,7 @@ const mouseCharacterDefinitions = {
       {
         tagName: '砸墙',
         isMinor: false,
-        description: '拥有高额的基础破墙数值，三被进一步增强破墙能力。',
+        description: '拥有高额的基础破墙数值，3级被动进一步增强破墙能力。',
         additionalDescription: '火药桶也能对墙缝造成巨大破坏。',
       },
       {
@@ -1727,7 +1727,7 @@ const mouseCharacterDefinitions = {
       },
       {
         id: '塔拉',
-        description: '视野较大，三被有霸体，远程炮不好发挥。',
+        description: '视野较大，3级被动有霸体，远程炮不好发挥。',
         isMinor: true,
       },
       {
@@ -2075,7 +2075,7 @@ const mouseCharacterDefinitions = {
         id: '一般情况',
         pattern: '022110021',
         weaponType: 'weapon1',
-        description: '优先二级琴补推，随后出仙人掌加强干扰能力，再点三被加强整体眩晕能力。',
+        description: '优先二级琴补推，随后出仙人掌加强干扰能力，再点3级被动加强整体眩晕能力。',
       },
       {
         id: '主琴主被',
@@ -3860,7 +3860,7 @@ const mouseCharacterDefinitions = {
         pattern: '0110(0)1222',
         weaponType: 'weapon1',
         description:
-          '6级后留加点升三被，铁血期间可点出三被，三级魔音眩晕时间长但击退少，根据需要自己加点。',
+          '6级后留加点升3级被动，铁血期间可点出3级被动，三级魔音眩晕时间长但击退少，根据需要自己加点。',
       },
       {
         id: '打架队',
@@ -5158,7 +5158,7 @@ const mouseCharacterDefinitions = {
         pattern: '120022[10]1',
         weaponType: 'weapon1',
         description:
-          '八级时，顺风三被，逆风二级传送；二人残局优先三级传送；六级可留点随时二级传送。',
+          '八级时，顺风3级被动，逆风二级传送；二人残局优先三级传送；六级可留点随时二级传送。',
         additionaldescription: '',
       },
     ],
@@ -5692,7 +5692,7 @@ const mouseCharacterDefinitions = {
         pattern: '120022011',
         weaponType: 'weapon1',
         description:
-          '对于冲撞难以造成效果的猫（如图多，苏蕊，追风），六级优先三被；墙缝期优先点车。',
+          '对于冲撞难以造成效果的猫（如图多，苏蕊，追风），六级优先3级被动；墙缝期优先点车。',
         additionaldescription: '如果猫携带了猛攻知识卡，可以考虑优先二级车。，',
       },
     ],
@@ -6214,7 +6214,7 @@ const mouseCharacterDefinitions = {
       },
       {
         id: '图多盖洛',
-        description: '三级指甲油长时间霸体，三被流血。',
+        description: '三级指甲油长时间霸体，3级被动流血。',
         isMinor: false,
       },
       {
@@ -6258,7 +6258,7 @@ const mouseCharacterDefinitions = {
       },
       {
         id: '剑客汤姆',
-        description: '全面克制，2级被动减控防连招，三被断连斩，高伤克皮糙，且控制多。',
+        description: '全面克制，2级被动减控防连招，3级被动断连斩，高伤克皮糙，且控制多。',
         isMinor: false,
       },
       {
@@ -6270,7 +6270,7 @@ const mouseCharacterDefinitions = {
     countersKnowledgeCards: [
       {
         id: '蓄势一击',
-        description: '三被使蓄势加伤无法正常打出，且会对猫自己造成控制。',
+        description: '3级被动使蓄势加伤无法正常打出，且会对猫自己造成控制。',
         isMinor: false,
       },
       {
@@ -6546,7 +6546,7 @@ const mouseCharacterDefinitions = {
             cards: ['S-舍己', 'A-逃窜', 'C-不屈', 'B-应激反应', 'C-救救我'],
             contributor: 'sunny',
             description:
-              '适用于无21知识点且多排的情况下，或队伍中有强稳救/队伍构筑为三保一时使用，以及打如玉时作为对策卡组使用。逃窜应激可以让米可在挨打后获得非常客观的爆发移速，加上后期残局不屈提供的常态移速与米可三被提供的爆发移速基本可以做到挨一刀就飞走，同时由于如玉的爪刀不带有控制且击倒满血米可能力有限的情况下可以在挨刀后利用非常高的爆发移速迅速拉开与猫的距离逃走。',
+              '适用于无21知识点且多排的情况下，或队伍中有强稳救/队伍构筑为三保一时使用，以及打如玉时作为对策卡组使用。逃窜应激可以让米可在挨打后获得非常客观的爆发移速，加上后期残局不屈提供的常态移速与米可3级被动提供的爆发移速基本可以做到挨一刀就飞走，同时由于如玉的爪刀不带有控制且击倒满血米可能力有限的情况下可以在挨刀后利用非常高的爆发移速迅速拉开与猫的距离逃走。',
           },
           {
             cards: ['S-舍己', 'B-幸运', 'C-脱身', 'C-不屈', 'A-祝愿'],
@@ -7130,7 +7130,7 @@ const mouseCharacterDefinitions = {
       {
         tagName: '辅助',
         isMinor: true,
-        description: '圆形可以使猫手中道具掉落，三被减少队友技能CD。',
+        description: '圆形可以使猫手中道具掉落，3级被动减少队友技能CD。',
         additionalDescription: '',
       },
       {
