@@ -49,7 +49,7 @@ const catCharacterDefinitions = {
         pattern: '131[3300]01',
         weaponType: 'weapon2',
         description: '非常顺风的时候可以考虑先点被动再点锅。',
-        additionaldescription: '如果血量告急，也可以考虑先点一被回血。',
+        additionaldescription: '如果血量告急，也可以考虑先点1级被动回血。',
       },
     ],
     knowledgeCardGroups: [
@@ -627,7 +627,7 @@ const catCharacterDefinitions = {
       {
         tagName: '防守',
         isMinor: true,
-        description: '分身提供反隐和霸体，配合一被和击晕，可以高效守火箭或奶酪。',
+        description: '分身提供反隐和霸体，配合1级被动和击晕，可以高效守火箭或奶酪。',
         additionalDescription: '',
       },
       {
@@ -915,7 +915,7 @@ const catCharacterDefinitions = {
       {
         id: '牛仔杰瑞',
         description:
-          '牛仔杰瑞的干扰在托普斯没有三级分身时影响较大，同时琴和仙人掌的干扰也容易击倒分身，一被配合冰冻保鲜的救援也不好拦截。',
+          '牛仔杰瑞的干扰在托普斯没有三级分身时影响较大，同时琴和仙人掌的干扰也容易击倒分身，1级被动配合冰冻保鲜的救援也不好拦截。',
         isMinor: true,
       },
     ],
@@ -2059,7 +2059,7 @@ const catCharacterDefinitions = {
       {
         tagName: '追击',
         isMinor: false,
-        description: '一被动加速，炮打中后加速，警戒能看到老鼠位置。',
+        description: '1级被动加速，炮打中后加速，警戒能看到老鼠位置。',
         additionalDescription: '',
       },
       {
@@ -2873,7 +2873,7 @@ const catCharacterDefinitions = {
     counteredBy: [
       {
         id: '牛仔杰瑞',
-        description: '牛仔杰瑞一被减控、移速高，不好抓。',
+        description: '牛仔杰瑞1级被动减控、移速高，不好抓。',
         isMinor: false,
       },
     ],
@@ -4052,7 +4052,7 @@ const catCharacterDefinitions = {
       },
       {
         id: '表演者•杰瑞',
-        description: '一被配合铁血，即可以强救队友，也可以消耗天汤飞行导致不好吸火箭。',
+        description: '1级被动配合铁血，既可以强救队友，也可以消耗天汤飞行导致不好吸火箭。',
         isMinor: false,
       },
       {
@@ -4998,7 +4998,7 @@ const catCharacterDefinitions = {
       {
         id: '表演者•杰瑞',
         description:
-          '飓风能让触发一被和铁血的表演者无法换下火箭上的队友，且追风伤害手段多，能很快破掉表演者的跳舞，从而强杀。表演者的柠檬旋风释放较笨重，很难命中飞行追风，实战难以打出理论效果。',
+          '飓风能让触发1级被动和铁血的表演者无法换下火箭上的队友，且追风伤害手段多，能很快破掉表演者的跳舞，从而强杀。表演者的柠檬旋风释放较笨重，很难命中飞行追风，实战难以打出理论效果。',
         isMinor: false,
       },
     ],
@@ -5135,12 +5135,13 @@ const catCharacterDefinitions = {
       {
         id: '天使杰瑞',
         description:
-          '天使杰瑞一被和三被让追汤无法快速拿刀，雷云减伤可以放大追汤缺伤害的缺点，打团也很强。祝福可以一定程度上反制追汤飞行强上火箭；同时追汤缺伤害，不易处理复活体。',
+          '天使杰瑞1级被动和3级被动让追汤无法快速拿刀，雷云减伤可以放大追汤缺伤害的缺点，打团也很强。祝福可以一定程度上反制追汤飞行强上火箭；同时追汤缺伤害，不易处理复活体。',
         isMinor: false,
       },
       {
         id: '牛仔杰瑞',
-        description: '一被提升自保能力，二级琴和二被进一步提升自保并且具有副推副救能力',
+        description:
+          '牛仔杰瑞的1级被动提升自保，二级琴和二被进一步提升自保并且具有副推副救能力，追风汤姆难以将其击倒。',
         isMinor: true,
       },
       {

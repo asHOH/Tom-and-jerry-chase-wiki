@@ -775,7 +775,8 @@ const mouseCharacterDefinitions = {
         tagName: '干扰',
         isMinor: false,
         description: '金币和火药桶能有效拦截猫咪上火箭、抓队友。',
-        additionalDescription: '火炮也能连控猫咪，一被的减速配合知识卡投手可以让很多猫追不上老鼠。',
+        additionalDescription:
+          '火炮也能连控猫咪，1级被动的减速配合知识卡投手可以让很多猫追不上老鼠。',
       },
       {
         tagName: '砸墙',
@@ -812,7 +813,7 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
         description:
-          '打怕减速的猫咪，投手和一被叠加后能让猫咪难以追上老鼠。（待翻新，有意提供知识卡可填写反馈建议）',
+          '打怕减速的猫咪，投手和1级被动叠加后能让猫咪难以追上老鼠。（待翻新，有意提供知识卡可填写反馈建议）',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
@@ -2093,7 +2094,7 @@ const mouseCharacterDefinitions = {
     knowledgeCardGroups: [
       {
         cards: ['S-舍己', 'S-铁血', 'S-回家', 'C-救救我'],
-        description: '牛仔杰瑞一被免疫碎片，防止回家护盾被碎片打破，进一步提高后期生存能力。',
+        description: '1级被动免疫碎片，防止回家护盾被碎片打破，进一步提高后期生存能力。',
         contributor: 'qiuyumianmian',
       },
       {
@@ -2219,7 +2220,7 @@ const mouseCharacterDefinitions = {
       {
         name: '冰冻保鲜',
         description:
-          '一被配合冰冻保鲜可以有一秒多的无敌，部分情况下可以挡致命伤害，同时可以强救，但不好走。',
+          '1级被动配合冰冻保鲜可以有一秒多的无敌，部分情况下可以挡致命伤害，同时可以强救，但不好走。',
       },
       {
         name: '魔术漂浮',
@@ -3219,7 +3220,7 @@ const mouseCharacterDefinitions = {
       },
     ],
     countersSpecialSkills: [
-      { id: '我生气了！', description: '天使杰瑞一被动能封锁爪刀。', isMinor: false },
+      { id: '我生气了！', description: '天使杰瑞1级被动能封锁爪刀。', isMinor: false },
     ],
   },
 
@@ -4053,7 +4054,7 @@ const mouseCharacterDefinitions = {
       },
       {
         id: '牛仔杰瑞',
-        description: '牛仔控住可接弹琴，一被提供的经验可以助他活到后期。',
+        description: '牛仔控住可接弹琴，1级被动提供的经验可以助他活到后期。',
         isMinor: false,
       },
     ],
@@ -4589,8 +4590,8 @@ const mouseCharacterDefinitions = {
       },
     ],
     specialSkills: [
-      { name: '干扰投掷', description: '干扰投掷能提高干扰能力，还能配合风墙拖延更长时间。' },
-      { name: '应急治疗', description: '应急治疗提高续航能力，并且能更方便地触发一被动。' },
+      { name: '干扰投掷', description: '提高干扰能力，还能配合风墙拖延更长时间。' },
+      { name: '应急治疗', description: '提高续航能力，并且能更方便地触发1级被动。' },
     ],
     countersSpecialSkills: [
       {
@@ -7145,7 +7146,7 @@ const mouseCharacterDefinitions = {
         pattern: '12[12]20001',
         weaponType: 'weapon1',
         description:
-          '四级后，如果有队友在火箭上则点主动减慢火箭燃烧；其余情况皆点武器，七级点一被提高自保。',
+          '四级后，如果有队友在火箭上则点主动减慢火箭燃烧；其余情况皆点武器，七级点1级被动提高自保。',
         additionaldescription: '',
       },
       {
