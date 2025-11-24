@@ -133,7 +133,7 @@
     "eslint-plugin-jest-dom": "^5.5.0",
     "eslint-plugin-sonarjs": "^3.0.5",
     "eslint-plugin-storybook": "^9.1.10",
-    "eslint-plugin-testing-library": "^7.13.3",
+    "eslint-plugin-testing-library": "^7.13.5",
     "eslint-plugin-unused-imports": "^4.3.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
