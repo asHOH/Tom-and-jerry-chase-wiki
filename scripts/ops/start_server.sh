@@ -106,10 +106,13 @@ echo "Ensuring correct Node.js version is installed..."
 nvm install
 
 # 6. Install dependencies with a retry loop.
+echo "Configuring npm registry mirror..."
+npm config set registry https://registry.npmmirror.com/
+
 echo "Installing/updating project dependencies..."
 for i in {1..3}; do
   echo "Attempt $i of 3..."
-  if npm i; then
+  if npm npm ci --omit=dev; then
     echo "✅ Dependencies installed successfully."
     break
   fi
