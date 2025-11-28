@@ -36,6 +36,29 @@ export const mouseEntitiesDefinitions = {
       '命中敌方时造成[55伤害](不受攻击增伤影响)和2秒爆炸眩晕，可触发投掷类知识卡和特技：{缴械}、{投手}、{追风}、{精准投射}、{干扰投掷}、{勇气投掷}，并会获得300商店金钱，但被命中的目标在眩晕期间及眩晕结束后1秒内免疫该道具效果。掉落一定时间后也会自行爆炸，不造成伤害和眩晕。其外观酷似小鞭炮，但无法被拾取、不会攻击友方、也不会造成范围伤害。',
     create: '由杰瑞-鸟哨召唤的{鸟哨金丝雀}进行投掷。',
   },
+  鼠片: {
+    entitytype: '变身类',
+    owner: { name: '杰瑞', type: 'character' },
+    aliases: ['华夫饼杰瑞', '鼠饼'],
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description:
+      '进入和解除该状态期间进入短暂{眩晕}。变身期间移速增加。变身期间无法使用技能、道具，也无法进行大部分交互，可以使用交互键进行“嘲讽”，使用后会做出趣味动作。',
+    create: '属于彩蛋，只会在高级学业以下的地图触发。杰瑞被{苍蝇拍}命中时，有一定概率变身为鼠片。',
+    skills: [
+      {
+        name: '解除变身',
+        type: 'passive',
+        description: '提前退出变身状态（仍会受到解除变身时的眩晕）。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        skillLevels: [],
+        imageUrl: '/images/catSkills/被动-猫.png',
+      },
+    ],
+  },
   烟雾: {
     entitytype: '召唤物',
     owner: { name: '烟雾弹', type: 'skill' },
@@ -182,6 +205,51 @@ export const mouseEntitiesDefinitions = {
       '被放置一小段时间后进入隐身状态，敌方靠近时现身，并在1.5秒延迟后飞向敌方并爆炸，对小范围内的敌方造成[55/55/85](基础伤害50/50/80+泰菲攻击增伤5，同时也会受到其它来源的破坏增伤影响)伤害和1.9秒爆炸眩晕，对墙缝造成[5.5/5.5/15.5](基础伤害5/5/15+泰菲破坏增伤0.5，同时也会受到其它来源的破坏增伤影响)伤害，对范围内所有角色产生小幅度的爆炸击退效果。感应雷被道具击中会原地倒计时并爆炸。感应雷30秒后自然消失。Lv.2感应雷可击落敌方手中的老鼠和道具。感应雷造成的伤害可受攻击增伤和墙缝增伤影响。',
     create: '由泰菲-隐形感应雷技能召唤。也可以通过{莱恩}-{蘸水笔}在蓝图上以○+□配方合成。',
   },
+  泰菲球: {
+    entitytype: '变身类',
+    owner: { name: '杰瑞', type: 'character' },
+    aliases: ['球形泰菲'],
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description:
+      '进入和解除该状态期间进入短暂{眩晕}。变身期间获得额外技能。变身期间无法使用道具，也无法进行大部分交互，可以使用交互键进行“嘲讽”，使用后会做出趣味动作。',
+    create:
+      '属于彩蛋，只会在高级学业以下的地图触发。{泰菲类角色}饮用{牛奶}后，有$极低$text-bold#概率变身为泰菲球。',
+    skills: [
+      {
+        name: '滚动',
+        type: 'active',
+        description:
+          '泰菲球开始滚动（[无效果](该彩蛋触发概率过低，暂未进行系统测试，可能存在谬误)，只替换角色动作）。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        skillLevels: [],
+        imageUrl: '/images/mouseSkills/泰菲1-圆滚滚.png',
+      },
+      {
+        name: '冲撞',
+        type: 'weapon1',
+        description: '泰菲球使用额头向前发起短距离冲撞，对命中的敌方造成小幅减速。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        skillLevels: [],
+        imageUrl: '/images/mouseSkills/罗宾汉泰菲1-弹力圆球.png',
+      },
+      {
+        name: '解除变身',
+        type: 'passive',
+        description: '提前退出变身状态（仍会受到解除变身时的眩晕）。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '无前摇',
+        skillLevels: [],
+        imageUrl: '/images/catSkills/被动-猫.png',
+      },
+    ],
+  },
   头盔: {
     entitytype: '变身类',
     owner: { name: '头盔', type: 'skill' },
@@ -192,7 +260,6 @@ export const mouseEntitiesDefinitions = {
     detailedDescription:
       '期间{无敌}，但惯性增大、移速降低3.5%、跳跃速度降低15%；小范围内的队友也{无敌}，但{禁用技能}。3级头盔可以[更灵活地移动](不再受惯性影响，不会降低移速和跳跃速度)。\n注：该效果属于{1类变身}（详见"变身"的效果描述）。',
     create: '由剑客泰菲-头盔召唤。',
-    specialImageUrl: '/images/mouseSkills/剑客泰菲2-头盔.png', //ToDo: add this entity's image
   },
   长枪: {
     entitytype: '投射物',
@@ -743,8 +810,7 @@ export const mouseEntitiesDefinitions = {
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具}。小星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}。',
     detailedDescription:
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具}。小星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}；小星星移速665。变身持续5.9秒。\n注：该效果属于{1类变身}（详见"变身"的效果描述）。',
-    create: '仙女鼠消耗6颗星星召唤的{星星}命中友方老鼠时{变身}。',
-    specialImageUrl: '/images/mouseSkills/仙女鼠2-仙女棒.png', //ToDo: add this entity's image,
+    create: '仙女鼠消耗6颗星星召唤的{星星}命中友方老鼠时，令其变身。',
     skills: [
       {
         name: '星星翻滚',
@@ -769,8 +835,7 @@ export const mouseEntitiesDefinitions = {
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}。大星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}。大星星拥有比普通猫咪更大的体型。大星星拥有爪刀，爪刀判定范围与附加效果不受影响。',
     detailedDescription:
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}。大星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}；大星星移速725。大星星拥有比普通猫咪更大的体型。大星星拥有爪刀，爪刀判定范围与附加效果不受影响。\n注：该效果属于{1类变身}（详见"变身"的效果描述）。',
-    create: '仙女鼠消耗8颗星星召唤的{星星}命中敌方猫咪时{变身}。',
-    specialImageUrl: '/images/mouseSkills/仙女鼠2-仙女棒.png', //ToDo: add this entity's image,
+    create: '仙女鼠消耗8颗星星召唤的{星星}命中敌方猫咪时，令其变身。',
     skills: [
       {
         name: '吐星星',
@@ -1142,7 +1207,7 @@ export const mouseEntitiesDefinitions = {
     detailedDescription:
       '{无敌}，但无法进行交互（开、关门除外）或使用技能、道具；可以进机器鼠；可使用道具键发起攻击，对猫咪造成伤害和减速，对墙缝造成伤害。\n注：该效果属于{1类变身}（详见"变身"的效果描述）。\n\n相关贴图彩蛋：所有{泰菲类角色}会改为变身为大泰菲，有着圆滚滚的大肚子，攻击时使用肚皮撞击敌方；当且仅当场上存在{恶魔杰瑞}和皮肤为"神秘博士（未染色）"的{恶魔汤姆}时，恶魔杰瑞会改为变身为绿色比利鼠，在原本比利鼠的基础上变得通体发绿，且有一对恶魔犄角。',
     create:
-      '鼠方角色饮用{变身饮料}时，或在饮用{神秘饮料}时随机到变身饮料效果时会变身为比利鼠，持续25秒。此外{小情绪}也能将队友变为比利鼠，且技能伤害和体型更大。',
+      '鼠方角色饮用{变身饮料}时，或在饮用{神秘饮料}并随机到变身饮料效果时会变身为比利鼠，持续25秒。此外{小情绪}也能将队友变为比利鼠，且技能伤害和体型更大。',
     skills: [
       {
         name: '拍击',
