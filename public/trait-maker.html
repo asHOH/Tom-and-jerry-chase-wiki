@@ -1,0 +1,2149 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>特性编辑器</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f7f7fa;
+        --card: #ffffff;
+        --border: #d7d7e3;
+        --text: #1c1c28;
+        --muted: #5a6072;
+        --primary: #315efb;
+        --primary-text: #ffffff;
+        --danger: #d93025;
+        --success: #0d8b68;
+        --warning: #e6a23c;
+        --shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111318;
+          --card: #1c1f24;
+          --border: #2a2e36;
+          --text: #f5f6fb;
+          --muted: #a0a5b5;
+          --primary: #7295ff;
+          --primary-text: #0b1228;
+          --danger: #ff6b6b;
+          --success: #2dd4a0;
+          --warning: #e6c23c;
+          --shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .container {
+        max-width: 1048px;
+        margin: 0 auto;
+        padding: 32px 20px 96px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 24px;
+        border-radius: 20px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      button {
+        appearance: none;
+        border: none;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+
+      button.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--primary-text);
+      }
+
+      button.ghost {
+        background: transparent;
+      }
+
+      button.danger {
+        background: transparent;
+        border-color: var(--danger);
+        color: var(--danger);
+      }
+
+      button.success {
+        background: transparent;
+        border-color: var(--success);
+        color: var(--success);
+      }
+
+      button.warning {
+        background: transparent;
+        border-color: var(--warning);
+        color: var(--warning);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      button:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
+      }
+
+      .trait-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .trait-card:not(.collapsed):hover {
+        transform: translateY(-2px);
+      }
+
+      .trait-card.has-error {
+        border-color: var(--danger);
+      }
+
+      .card-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      .card-title {
+        font-weight: 600;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(49, 94, 251, 0.12);
+        color: var(--primary);
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .badge.success {
+        background: rgba(13, 139, 104, 0.12);
+        color: var(--success);
+      }
+
+      .badge.warning {
+        background: rgba(230, 162, 60, 0.12);
+        color: var(--warning);
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .card-body {
+        padding: 20px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      @media (min-width: 720px) {
+        .grid.two {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid.three {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .grid.four {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 960px) {
+        .grid.two {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .grid.three {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .grid.four {
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .field label {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .field small {
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      input[type='text'],
+      input[type='number'],
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.02);
+        font-size: 0.95rem;
+        color: var(--text);
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+        font-family: inherit;
+      }
+
+      select[multiple] {
+        min-height: 140px;
+      }
+
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(49, 94, 251, 0.16);
+      }
+
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .export-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .export-card h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      #exportOutput {
+        font-family: 'Fira Code', 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+        min-height: 180px;
+        white-space: pre;
+      }
+
+      .status-text {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .collapsed .card-body {
+        display: none;
+      }
+
+      .collapsed .card-header {
+        border-bottom: none;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        background: var(--text);
+        color: var(--card);
+        font-size: 0.9rem;
+        display: none;
+        z-index: 20;
+      }
+
+      .toast.show {
+        display: block;
+        animation: fadeInOut 2.4s ease forwards;
+      }
+
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        8%,
+        82% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+      }
+
+      .optional-group {
+        padding: 18px;
+        border-radius: 16px;
+        border: 1px dashed var(--border);
+        background: rgba(0, 0, 0, 0.02);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .optional-group h3 {
+        margin: 0;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 0.75rem;
+        background: rgba(26, 86, 219, 0.14);
+        color: var(--primary);
+      }
+
+      footer {
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--muted);
+        padding-bottom: 36px;
+      }
+
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 64px 16px;
+        text-align: center;
+        border-radius: 20px;
+        border: 1px dashed var(--border);
+        color: var(--muted);
+      }
+
+      .empty-state strong {
+        font-size: 1.05rem;
+        color: var(--text);
+      }
+
+      dialog {
+        border: none;
+        border-radius: 20px;
+        padding: 0;
+        max-width: min(760px, 90vw);
+        width: min(760px, 90vw);
+      }
+
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.45);
+      }
+
+      .import-dialog {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 24px;
+        background: var(--card);
+        color: var(--text);
+      }
+
+      .import-dialog h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .import-dialog textarea {
+        min-height: 260px;
+        font-family: 'Fira Code', 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+      }
+
+      .item-group {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      .item-group-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .item-group-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .item-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: var(--card);
+        border: 1px solid var(--border);
+      }
+
+      .item-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .item-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .group-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: rgba(49, 94, 251, 0.1);
+        color: var(--primary);
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .add-item-form {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 8px; /* 减小与下方显示框的距离 */
+      }
+
+      .special-case {
+        border: 1px solid var(--success);
+        border-radius: 12px;
+        padding: 16px;
+        background: rgba(13, 139, 104, 0.05);
+        margin-bottom: 16px;
+      }
+
+      .special-case:last-child {
+        margin-bottom: 0;
+      }
+
+      .special-case-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .special-case-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--success);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .special-case-body {
+        padding: 0;
+      }
+
+      .group-container {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: rgba(0, 0, 0, 0.01);
+      }
+
+      .group-container:last-child {
+        margin-bottom: 0;
+      }
+
+      .group-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .group-header .group-badge {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+      }
+
+      .compact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 8px;
+      }
+
+      .compact-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        font-size: 0.85rem;
+      }
+
+      .compact-item-name {
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+      }
+
+      .compact-item-type {
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      .compact-item-faction {
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      .compact-item-controls {
+        display: flex;
+        gap: 4px;
+      }
+
+      .compact-item-controls button {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 12px;
+        align-items: end;
+      }
+
+      .form-row .field {
+        flex: 1;
+      }
+
+      .form-row .field:last-child {
+        flex: 0 0 auto;
+      }
+
+      /* 新增样式 */
+      .field-with-comment {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .field-comment {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-top: -2px;
+      }
+
+      .compact-item-group-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .compact-item-group-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 8px;
+        border-radius: 6px;
+        background: rgba(49, 94, 251, 0.1);
+        color: var(--primary);
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      .compact-item-controls .danger {
+        font-size: 1rem; /* 增大删除按钮的叉号 */
+        font-weight: bold;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>特性编辑器</h1>
+        <p>编写或修改特性定义。数据仅保存在本地浏览器。支持导入.txt和.ts格式文件。</p>
+        <div class="toolbar">
+          <button id="addTrait" class="primary" type="button">新增特性</button>
+          <button id="expandAll" type="button">全部展开</button>
+          <button id="collapseAll" type="button">全部收起</button>
+          <button id="resetAll" class="danger" type="button">清空全部</button>
+          <button id="importPaste" type="button">粘贴导入</button>
+          <button id="importFile" type="button">文件导入</button>
+          <span id="stats" class="status-text"></span>
+        </div>
+      </header>
+
+      <div id="traitsContainer" class="stack"></div>
+
+      <section id="emptyState" class="empty-state" hidden>
+        <strong>暂时没有特性</strong>
+        <button id="emptyAdd" class="primary" type="button">添加新特性</button>
+      </section>
+
+      <section class="export-card">
+        <h2>导出结果</h2>
+        <div class="field">
+          <label for="exportOutput">导出代码片段</label>
+          <textarea id="exportOutput" readonly spellcheck="false"></textarea>
+        </div>
+        <div class="toolbar">
+          <button id="copyBtn" class="primary" type="button">复制到剪贴板</button>
+          <button id="downloadBtn" type="button">下载为 TXT</button>
+          <span id="exportStatus" class="status-text"></span>
+        </div>
+      </section>
+
+      <input id="importFileInput" type="file" accept=".ts,.txt" hidden />
+
+      <dialog id="importDialog">
+        <div class="import-dialog">
+          <h2>粘贴代码导入</h2>
+          <p class="status-text">支持直接粘贴特性定义或编辑器导出的片段。</p>
+          <textarea
+            id="importTextarea"
+            spellcheck="false"
+            placeholder="将特性定义粘贴在此处，例如：
+汤姆1: {
+  group: [
+    { name: '发怒冲刺', type: 'skill' },
+    { name: '番茄', type: 'item' },
+  ],
+  description: '发怒冲刺无法解除番茄带来的减速效果。',
+},"
+          ></textarea>
+          <div class="toolbar">
+            <button id="importCancel" type="button">取消</button>
+            <button id="importConfirm" type="button" class="primary">导入</button>
+          </div>
+        </div>
+      </dialog>
+    </div>
+
+    <template id="traitTemplate">
+      <article class="trait-card" data-id="">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="badge">特性</span>
+            <span data-role="title">未命名特性</span>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="ghost" data-action="toggle">折叠</button>
+            <button type="button" class="ghost" data-action="export">剪切板导出</button>
+            <button type="button" class="ghost" data-action="duplicate">复制</button>
+            <button type="button" class="danger" data-action="delete">删除</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="stack">
+            <div class="two grid">
+              <div class="field">
+                <label for="name">特性名称 *</label>
+                <input
+                  data-field="name"
+                  type="text"
+                  inputmode="text"
+                  placeholder="例如：范围伤害"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="field">
+                <label>排除阵营</label>
+                <select data-field="excludeFactionId">
+                  <option value="">（无排除）</option>
+                  <option value="cat">猫阵营</option>
+                  <option value="mouse">鼠阵营</option>
+                </select>
+                <div class="field-comment">仅用于排除物件组中的指定类型内容</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>特性描述 *</label>
+              <textarea
+                data-field="description"
+                placeholder="描述该特性的效果"
+                style="min-height: 80px"
+              ></textarea>
+            </div>
+
+            <div class="optional-group">
+              <h3>成员组</h3>
+
+              <div class="add-item-form">
+                <div class="form-row">
+                  <div class="field">
+                    <label>成员名称 *</label>
+                    <input data-role="item-name" type="text" placeholder="例如：汤姆" />
+                  </div>
+                  <div class="field">
+                    <label>成员类型 *</label>
+                    <select data-role="item-type">
+                      <option value="character">角色</option>
+                      <option value="skill">技能</option>
+                      <option value="knowledgeCard">知识卡</option>
+                      <option value="specialSkill">特技</option>
+                      <option value="item">道具</option>
+                      <option value="entity">衍生物</option>
+                      <option value="buff">状态</option>
+                      <option value="itemGroup">物件组</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>阵营</label>
+                    <select data-role="item-faction">
+                      <option value="">（可选）</option>
+                      <option value="cat">猫阵营</option>
+                      <option value="mouse">鼠阵营</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>组别</label>
+                    <input data-role="item-group-id" type="number" min="1" value="1" />
+                  </div>
+                  <div class="field">
+                    <label>&nbsp;</label>
+                    <button type="button" class="primary" data-action="add-item">添加成员</button>
+                  </div>
+                </div>
+                <div class="field-comment">
+                  注释：阵营用于区分同类型同名内容（例如应急治疗特技）；组别用于归类同类内容，同组别内容之间为“或”关系，满足其一即可
+                </div>
+              </div>
+
+              <div class="item-group" data-role="group-container">
+                <!-- 动态添加的物件会在这里 -->
+              </div>
+            </div>
+
+            <div class="optional-group">
+              <h3>特殊情况</h3>
+
+              <div data-role="special-cases-container">
+                <!-- 动态添加的特殊情况会在这里 -->
+              </div>
+              <div class="toolbar">
+                <button type="button" class="success" data-action="add-special-case">
+                  添加特殊情况
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <template id="compactItemTemplate">
+      <div class="compact-item" data-item-index="">
+        <div class="compact-item-name" data-role="item-name">未命名成员</div>
+        <div class="compact-item-type" data-role="item-type"></div>
+        <div class="compact-item-faction" data-role="item-faction"></div>
+        <input type="hidden" data-field="name" value="" />
+        <input type="hidden" data-field="type" value="" />
+        <input type="hidden" data-field="factionId" value="" />
+        <input type="hidden" data-field="groupId" value="1" />
+        <div class="compact-item-controls">
+          <button type="button" class="danger ghost" data-action="remove-item" title="删除">
+            ×
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <template id="specialCaseTemplate">
+      <div class="special-case" data-special-index="">
+        <div class="special-case-header">
+          <div class="special-case-title">
+            <span class="badge success">特殊情况</span>
+            <span data-role="special-title">未命名特殊情况</span>
+          </div>
+          <div class="card-actions">
+            <button type="button" class="danger ghost" data-action="remove-special-case">
+              删除
+            </button>
+          </div>
+        </div>
+        <div class="special-case-body">
+          <div class="stack">
+            <div class="field">
+              <label>特殊情况描述</label>
+              <textarea
+                data-field="description"
+                placeholder="描述该特殊情况的触发条件和效果"
+                style="min-height: 80px"
+              ></textarea>
+            </div>
+
+            <div class="optional-group">
+              <h3>成员组</h3>
+
+              <div class="add-item-form">
+                <div class="form-row">
+                  <div class="field">
+                    <label>成员名称 *</label>
+                    <input data-role="special-item-name" type="text" placeholder="例如：汤姆" />
+                  </div>
+                  <div class="field">
+                    <label>成员类型 *</label>
+                    <select data-role="special-item-type">
+                      <option value="character">角色</option>
+                      <option value="skill">技能</option>
+                      <option value="knowledgeCard">知识卡</option>
+                      <option value="specialSkill">特技</option>
+                      <option value="item">道具</option>
+                      <option value="entity">衍生物</option>
+                      <option value="buff">状态</option>
+                      <option value="itemGroup">物件组</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>阵营</label>
+                    <select data-role="special-item-faction">
+                      <option value="">（可选）</option>
+                      <option value="cat">猫阵营</option>
+                      <option value="mouse">鼠阵营</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>组别编号</label>
+                    <input data-role="special-item-group-id" type="number" min="1" value="1" />
+                  </div>
+                  <div class="field">
+                    <label>&nbsp;</label>
+                    <button type="button" class="primary" data-action="add-special-item">
+                      添加成员
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="item-group" data-role="special-group-container">
+                <!-- 动态添加的物件会在这里 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      const traits = [];
+      const traitsContainer = document.getElementById('traitsContainer');
+      const exportOutput = document.getElementById('exportOutput');
+      const exportStatus = document.getElementById('exportStatus');
+      const stats = document.getElementById('stats');
+      const toast = document.getElementById('toast');
+      const emptyState = document.getElementById('emptyState');
+      const importPasteBtn = document.getElementById('importPaste');
+      const importFileBtn = document.getElementById('importFile');
+      const importFileInput = document.getElementById('importFileInput');
+      const importDialog = document.getElementById('importDialog');
+      const importTextarea = document.getElementById('importTextarea');
+      const importConfirm = document.getElementById('importConfirm');
+      const importCancel = document.getElementById('importCancel');
+      let isBulkUpdating = false;
+      const STORAGE_KEY = 'tjwiki-trait-maker-v1';
+
+      const defaultValues = {
+        name: '',
+        description: '',
+        group: [],
+        spacialCase: [],
+        excludeFactionId: '',
+      };
+
+      // 物件类型中文名映射
+      const itemTypeNames = {
+        character: '角色',
+        skill: '技能',
+        knowledgeCard: '知识卡',
+        specialSkill: '特技',
+        item: '道具',
+        entity: '衍生物',
+        buff: '状态',
+        itemGroup: '物件组',
+      };
+
+      function generateId() {
+        if (window.crypto && crypto.randomUUID) {
+          return crypto.randomUUID();
+        }
+        return 'id-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.remove('show');
+        void toast.offsetWidth;
+        toast.classList.add('show');
+      }
+
+      function addTrait(initial = {}, locator) {
+        const trait = { id: generateId(), ...structuredClone(defaultValues), ...initial };
+        traits.push(trait);
+        renderTraitCard(trait, locator);
+        if (!isBulkUpdating) {
+          persistState();
+          updateUI();
+        }
+        return trait;
+      }
+
+      function renderTraitCard(trait, locator) {
+        const template = document.getElementById('traitTemplate');
+        const fragment = template.content.cloneNode(true);
+        const card = fragment.querySelector('.trait-card');
+        card.dataset.id = trait.id;
+
+        card.querySelector('[data-role="title"]').textContent = trait.name
+          ? trait.name
+          : '未命名特性';
+
+        // 设置基本字段
+        card.querySelectorAll('[data-field]').forEach((el) => {
+          const field = el.dataset.field;
+          const value = trait[field] ?? '';
+          el.value = value;
+        });
+
+        // 渲染主组
+        const groupContainer = card.querySelector('[data-role="group-container"]');
+        renderGroupItems(groupContainer, trait.group || [], trait.id);
+
+        // 渲染特殊情况
+        const specialCasesContainer = card.querySelector('[data-role="special-cases-container"]');
+        renderSpecialCases(specialCasesContainer, trait.spacialCase || [], trait.id);
+
+        updateToggleButtonLabel(card);
+
+        // 绑定事件
+        bindCardEvents(card, trait.id);
+
+        if (locator) {
+          traitsContainer.insertBefore(fragment, locator);
+        } else {
+          traitsContainer.appendChild(fragment);
+        }
+      }
+
+      function bindCardEvents(card, traitId) {
+        // 绑定添加物件按钮事件
+        const addItemBtn = card.querySelector('[data-action="add-item"]');
+        const addSpecialCaseBtn = card.querySelector('[data-action="add-special-case"]');
+
+        if (addItemBtn) {
+          addItemBtn.onclick = () => {
+            addItemFromForm(traitId, 'main');
+          };
+        }
+
+        if (addSpecialCaseBtn) {
+          addSpecialCaseBtn.onclick = () => {
+            addSpecialCase(traitId);
+          };
+        }
+      }
+
+      function addItemFromForm(traitId, groupType = 'main', caseIndex = null) {
+        const trait = getTraitById(traitId);
+        if (!trait) return;
+
+        let nameInput, typeSelect, factionSelect, groupIdInput;
+
+        if (groupType === 'main') {
+          nameInput = document.querySelector(
+            `.trait-card[data-id="${traitId}"] [data-role="item-name"]`
+          );
+          typeSelect = document.querySelector(
+            `.trait-card[data-id="${traitId}"] [data-role="item-type"]`
+          );
+          factionSelect = document.querySelector(
+            `.trait-card[data-id="${traitId}"] [data-role="item-faction"]`
+          );
+          groupIdInput = document.querySelector(
+            `.trait-card[data-id="${traitId}"] [data-role="item-group-id"]`
+          );
+        } else if (groupType === 'special' && caseIndex !== null) {
+          const specialCaseElement = document.querySelector(
+            `.trait-card[data-id="${traitId}"] .special-case[data-special-index="${caseIndex}"]`
+          );
+          if (!specialCaseElement) return;
+
+          nameInput = specialCaseElement.querySelector('[data-role="special-item-name"]');
+          typeSelect = specialCaseElement.querySelector('[data-role="special-item-type"]');
+          factionSelect = specialCaseElement.querySelector('[data-role="special-item-faction"]');
+          groupIdInput = specialCaseElement.querySelector('[data-role="special-item-group-id"]');
+        } else {
+          return;
+        }
+
+        if (!nameInput || !typeSelect || !groupIdInput) return;
+
+        const name = nameInput.value.trim();
+        const type = typeSelect.value;
+        const factionId = factionSelect ? factionSelect.value : '';
+        const groupId = parseInt(groupIdInput.value) || 1; // 改为从1开始
+
+        if (!name) {
+          showToast('请输入成员名称');
+          return;
+        }
+
+        const item = {
+          name,
+          type,
+          factionId: factionId || undefined,
+          groupId,
+        };
+
+        if (groupType === 'main') {
+          if (!trait.group) trait.group = [];
+          trait.group.push(item);
+        } else if (groupType === 'special' && caseIndex !== null) {
+          if (!trait.spacialCase[caseIndex]) return;
+          if (!trait.spacialCase[caseIndex].group) trait.spacialCase[caseIndex].group = [];
+          trait.spacialCase[caseIndex].group.push(item);
+        }
+
+        // 自动增加组别编号
+        groupIdInput.value = groupId + 1;
+
+        // 清空表单（保留组别编号）
+        nameInput.value = '';
+        if (factionSelect) factionSelect.value = '';
+
+        persistState();
+        updateTraitCard(traitId);
+        showToast('已添加成员');
+      }
+
+      function renderGroupItems(container, items, traitId, groupType = 'main', caseIndex = null) {
+        container.innerHTML = '';
+
+        if (!items || !items.length) {
+          const emptyMsg = document.createElement('div');
+          emptyMsg.textContent = '暂无成员';
+          emptyMsg.style.color = 'var(--muted)';
+          emptyMsg.style.fontStyle = 'italic';
+          emptyMsg.style.textAlign = 'center';
+          emptyMsg.style.padding = '20px';
+          container.appendChild(emptyMsg);
+          return;
+        }
+
+        // 按组别分组
+        const groups = {};
+        items.forEach((item, index) => {
+          const groupId = item.groupId || 1; // 改为从1开始
+          if (!groups[groupId]) {
+            groups[groupId] = [];
+          }
+          groups[groupId].push({ ...item, index });
+        });
+
+        // 按组别编号排序
+        const sortedGroupIds = Object.keys(groups)
+          .map(Number)
+          .sort((a, b) => a - b);
+
+        sortedGroupIds.forEach((groupId) => {
+          const groupItems = groups[groupId];
+
+          // 创建组容器
+          const groupContainer = document.createElement('div');
+          groupContainer.className = 'group-container';
+
+          // 创建紧凑网格容器
+          const compactGrid = document.createElement('div');
+          compactGrid.className = 'compact-grid';
+
+          // 添加组标题到网格中
+          const groupHeader = document.createElement('div');
+          groupHeader.className = 'compact-item-group-header';
+
+          const groupBadge = document.createElement('span');
+          groupBadge.className = 'compact-item-group-badge';
+          groupBadge.textContent = `组别 ${groupId}`;
+
+          groupHeader.appendChild(groupBadge);
+          compactGrid.appendChild(groupHeader);
+
+          groupItems.forEach(({ name, type, factionId, groupId, index }) => {
+            const itemTemplate = document.getElementById('compactItemTemplate');
+            const itemFragment = itemTemplate.content.cloneNode(true);
+            const itemElement = itemFragment.querySelector('.compact-item');
+            itemElement.dataset.itemIndex = index;
+
+            itemElement.querySelector('[data-role="item-name"]').textContent = name;
+            itemElement.querySelector('[data-role="item-type"]').textContent =
+              itemTypeNames[type] || type;
+
+            if (factionId) {
+              itemElement.querySelector('[data-role="item-faction"]').textContent =
+                factionId === 'cat' ? '猫' : '鼠';
+            } else {
+              itemElement.querySelector('[data-role="item-faction"]').textContent = '';
+            }
+
+            // 设置隐藏字段的值
+            itemElement.querySelector('[data-field="name"]').value = name;
+            itemElement.querySelector('[data-field="type"]').value = type;
+            itemElement.querySelector('[data-field="factionId"]').value = factionId || '';
+            itemElement.querySelector('[data-field="groupId"]').value = groupId;
+
+            const removeBtn = itemFragment.querySelector('[data-action="remove-item"]');
+            removeBtn.addEventListener('click', () => {
+              if (confirm('确认删除这个成员吗？')) {
+                removeGroupItem(traitId, index, groupType, caseIndex);
+              }
+            });
+
+            compactGrid.appendChild(itemFragment);
+          });
+
+          groupContainer.appendChild(compactGrid);
+          container.appendChild(groupContainer);
+        });
+      }
+
+      function renderSpecialCases(container, specialCases, traitId) {
+        container.innerHTML = '';
+        specialCases.forEach((specialCase, caseIndex) => {
+          const caseTemplate = document.getElementById('specialCaseTemplate');
+          const caseFragment = caseTemplate.content.cloneNode(true);
+          const caseElement = caseFragment.querySelector('.special-case');
+          caseElement.dataset.specialIndex = caseIndex;
+
+          // 设置特殊情况标题
+          const description = specialCase.description || '未描述的特殊情况';
+          caseElement.querySelector('[data-role="special-title"]').textContent =
+            description.length > 30 ? description.substring(0, 30) + '...' : description;
+
+          // 设置特殊情况描述
+          caseElement.querySelector('[data-field="description"]').value =
+            specialCase.description || '';
+
+          // 渲染特殊情况组
+          const groupContainer = caseElement.querySelector('[data-role="special-group-container"]');
+          renderGroupItems(groupContainer, specialCase.group || [], traitId, 'special', caseIndex);
+
+          // 绑定删除按钮事件
+          const removeBtn = caseFragment.querySelector('[data-action="remove-special-case"]');
+          removeBtn.addEventListener('click', () => {
+            if (confirm('确认删除这个特殊情况吗？')) {
+              removeSpecialCase(traitId, caseIndex);
+            }
+          });
+
+          // 绑定特殊情况内的添加按钮
+          const addSpecialItemBtn = caseElement.querySelector('[data-action="add-special-item"]');
+          if (addSpecialItemBtn) {
+            addSpecialItemBtn.onclick = () => {
+              addItemFromForm(traitId, 'special', caseIndex);
+            };
+          }
+
+          // 绑定特殊情况描述变化事件
+          const descriptionField = caseElement.querySelector('[data-field="description"]');
+          descriptionField.addEventListener('input', () => {
+            handleSpecialCaseFieldChange(traitId, caseIndex, 'description', descriptionField.value);
+          });
+
+          container.appendChild(caseFragment);
+        });
+      }
+
+      function handleSpecialCaseFieldChange(traitId, caseIndex, field, value) {
+        const trait = getTraitById(traitId);
+        if (!trait || !trait.spacialCase || !trait.spacialCase[caseIndex]) return;
+
+        trait.spacialCase[caseIndex][field] = value;
+
+        // 更新特殊情况标题
+        const caseElement = document.querySelector(
+          `.trait-card[data-id="${traitId}"] .special-case[data-special-index="${caseIndex}"]`
+        );
+        if (caseElement) {
+          const titleElement = caseElement.querySelector('[data-role="special-title"]');
+          const displayText =
+            value.length > 30 ? value.substring(0, 30) + '...' : value || '未描述的特殊情况';
+          titleElement.textContent = displayText;
+        }
+
+        persistState();
+      }
+
+      function removeGroupItem(traitId, index, groupType = 'main', caseIndex = null) {
+        const trait = getTraitById(traitId);
+        if (!trait) return;
+
+        let targetArray;
+        if (groupType === 'main') {
+          targetArray = trait.group;
+        } else if (groupType === 'special' && caseIndex !== null) {
+          if (!trait.spacialCase[caseIndex]) return;
+          targetArray = trait.spacialCase[caseIndex].group;
+        } else {
+          return;
+        }
+
+        targetArray.splice(index, 1);
+        persistState();
+        updateTraitCard(traitId);
+        showToast('已删除成员');
+      }
+
+      function addSpecialCase(traitId) {
+        const trait = getTraitById(traitId);
+        if (!trait) return;
+
+        if (!trait.spacialCase) {
+          trait.spacialCase = [];
+        }
+
+        const newSpecialCase = {
+          description: '',
+          group: [],
+        };
+
+        trait.spacialCase.push(newSpecialCase);
+        persistState();
+        updateTraitCard(traitId);
+        showToast('已添加特殊情况');
+      }
+
+      function removeSpecialCase(traitId, caseIndex) {
+        const trait = getTraitById(traitId);
+        if (!trait || !trait.spacialCase) return;
+
+        trait.spacialCase.splice(caseIndex, 1);
+        persistState();
+        updateTraitCard(traitId);
+        showToast('已删除特殊情况');
+      }
+
+      function updateTraitCard(traitId) {
+        const card = traitsContainer.querySelector(`.trait-card[data-id="${traitId}"]`);
+        if (!card) return;
+
+        const trait = getTraitById(traitId);
+        if (!trait) return;
+
+        // 重新渲染组和特殊情况
+        const groupContainer = card.querySelector('[data-role="group-container"]');
+        const specialCasesContainer = card.querySelector('[data-role="special-cases-container"]');
+
+        if (groupContainer) {
+          renderGroupItems(groupContainer, trait.group || [], traitId);
+        }
+
+        if (specialCasesContainer) {
+          renderSpecialCases(specialCasesContainer, trait.spacialCase || [], traitId);
+        }
+
+        // 重新绑定事件
+        bindCardEvents(card, traitId);
+      }
+
+      function updateToggleButtonLabel(card) {
+        if (!card) {
+          return;
+        }
+        const toggleButton = card.querySelector('button[data-action="toggle"]');
+        if (!toggleButton) {
+          return;
+        }
+        toggleButton.textContent = card.classList.contains('collapsed') ? '展开' : '折叠';
+      }
+
+      function getTraitById(id) {
+        return traits.find((trait) => trait.id === id);
+      }
+
+      function removeTrait(id) {
+        const index = traits.findIndex((trait) => trait.id === id);
+        if (index === -1) return;
+        traits.splice(index, 1);
+        const card = traitsContainer.querySelector(`.trait-card[data-id="${id}"]`);
+        card?.remove();
+        if (!isBulkUpdating) {
+          persistState();
+          updateUI();
+        }
+      }
+
+      function duplicateTrait(id) {
+        const source = getTraitById(id);
+        if (!source) return;
+        const clone = structuredClone(source);
+        clone.id = generateId();
+        if (clone.name) {
+          clone.name = `${clone.name} 副本`;
+        }
+        const anchor = traitsContainer.querySelector(`.trait-card[data-id="${id}"]`);
+        addTrait(clone, anchor?.nextSibling ?? null);
+        showToast('已复制特性');
+      }
+
+      function toggleCard(id) {
+        const card = traitsContainer.querySelector(`.trait-card[data-id="${id}"]`);
+        if (!card) return;
+        card.classList.toggle('collapsed');
+        updateToggleButtonLabel(card);
+      }
+
+      function collapseAll(state) {
+        traitsContainer.querySelectorAll('.trait-card').forEach((card) => {
+          card.classList.toggle('collapsed', state);
+          updateToggleButtonLabel(card);
+        });
+      }
+
+      function handleFieldChange(target) {
+        const card = target.closest('.trait-card');
+        if (!card) return;
+        const id = card.dataset.id;
+        const trait = getTraitById(id);
+        if (!trait) return;
+        const field = target.dataset.field;
+
+        trait[field] = target.value;
+
+        if (field === 'name') {
+          const title = card.querySelector('[data-role="title"]');
+          title.textContent = trait.name ? trait.name : '未命名特性';
+        }
+
+        persistState();
+        updateUI();
+      }
+
+      function escapeString(value) {
+        return value
+          .replace(/\\/g, '\\\\')
+          .replace(/'/g, "\\'")
+          .replace(/\r\n|\r|\n/g, '\\n');
+      }
+
+      function formatString(value) {
+        return `'${escapeString(value)}'`;
+      }
+
+      function buildGroupStructure(items) {
+        if (!items || !items.length) return '[]';
+
+        // 按组别分组
+        const groups = {};
+        items.forEach((item) => {
+          const groupId = item.groupId || 1; // 改为从1开始
+          if (!groups[groupId]) {
+            groups[groupId] = [];
+          }
+          groups[groupId].push(item);
+        });
+
+        // 按组别编号排序
+        const sortedGroupIds = Object.keys(groups)
+          .map(Number)
+          .sort((a, b) => a - b);
+
+        // 构建嵌套结构
+        const result = [];
+        sortedGroupIds.forEach((groupId) => {
+          const groupItems = groups[groupId];
+          if (groupId === 1) {
+            // 组别1的物件直接平铺
+            groupItems.forEach((item) => {
+              result.push(buildSingleItem(item));
+            });
+          } else {
+            // 其他组别的物件放在子数组中
+            const subArray = groupItems.map((item) => buildSingleItem(item));
+            result.push(`[${subArray.join(',\n')}]`);
+          }
+        });
+
+        return `[\n${result.join(',\n')}\n]`;
+      }
+
+      function buildSingleItem(item) {
+        if (!item.name || !item.type) return null;
+
+        if (item.type === 'itemGroup') {
+          // 物件组
+          return `{ name: ${formatString(item.name)}, type: 'itemGroup' }`;
+        } else {
+          // 单个物件
+          const parts = [`name: ${formatString(item.name)}`, `type: '${item.type}'`];
+          if (item.factionId) {
+            parts.push(`factionId: '${item.factionId}'`);
+          }
+          return `{ ${parts.join(', ')} }`;
+        }
+      }
+
+      function buildTraitEntry(trait, options = {}) {
+        const { indent = 2, trailingComma = true } = options;
+        const name = (trait.name ?? '').trim();
+        if (!name) {
+          return null;
+        }
+        const indentStr = ' '.repeat(indent);
+        const innerIndent = ' '.repeat(indent + 2);
+        const key = /^[$A-Za-z_\p{Letter}][\w\p{Letter}]*$/u.test(name)
+          ? name
+          : `'${escapeString(name)}'`;
+        const lines = [];
+
+        // 描述
+        if (trait.description) {
+          lines.push(`${innerIndent}description: ${formatString(trait.description)},`);
+        }
+
+        // 主组
+        const groupStructure = buildGroupStructure(trait.group || []);
+        if (groupStructure !== '[]') {
+          lines.push(`${innerIndent}group: ${groupStructure},`);
+        }
+
+        // 特殊情况
+        const specialCases = (trait.spacialCase || [])
+          .map((specialCase) => {
+            const caseGroupStructure = buildGroupStructure(specialCase.group || []);
+            if (caseGroupStructure === '[]' && !specialCase.description) return null;
+
+            const caseLines = [];
+            if (specialCase.description) {
+              caseLines.push(`description: ${formatString(specialCase.description)}`);
+            }
+            if (caseGroupStructure !== '[]') {
+              caseLines.push(`group: ${caseGroupStructure}`);
+            }
+            return `{\n${caseLines.join(',\n')}\n${innerIndent}}`;
+          })
+          .filter(Boolean);
+
+        if (specialCases.length) {
+          lines.push(`${innerIndent}spacialCase: [\n${specialCases.join(',\n')}\n${innerIndent}],`);
+        }
+
+        // 排除阵营
+        if (trait.excludeFactionId) {
+          lines.push(`${innerIndent}excludeFactionId: '${trait.excludeFactionId}',`);
+        }
+
+        const body = lines.length ? `\n${lines.join('\n')}\n${indentStr}` : '';
+        const suffix = trailingComma ? ',' : '';
+        return `${indentStr}${key}: {${body}}${suffix}`;
+      }
+
+      function buildSnippet() {
+        if (!traits.length) return '';
+        return traits
+          .map((trait) => buildTraitEntry(trait, { indent: 2, trailingComma: true }))
+          .filter(Boolean)
+          .join('\n\n');
+      }
+
+      async function exportSingleTrait(trait) {
+        const snippet = buildTraitEntry(trait, { indent: 2, trailingComma: true });
+        if (!snippet) {
+          showToast('特性名称为空，无法导出');
+          return;
+        }
+        const payload = `${snippet}\n`;
+        const displayName = (trait.name ?? '').trim() || '特性';
+        let success = false;
+        try {
+          await navigator.clipboard.writeText(payload);
+          success = true;
+        } catch (_) {
+          let fallback = null;
+          try {
+            fallback = document.createElement('textarea');
+            fallback.value = payload;
+            fallback.style.position = 'fixed';
+            fallback.style.opacity = '0';
+            document.body.appendChild(fallback);
+            fallback.focus();
+            fallback.select();
+            success = document.execCommand('copy');
+          } catch (_) {
+            success = false;
+          } finally {
+            if (fallback && fallback.parentNode) {
+              fallback.parentNode.removeChild(fallback);
+            }
+          }
+        }
+        showToast(success ? `已导出 ${displayName}` : '导出失败，请重试');
+      }
+
+      function updateUI() {
+        const snippet = buildSnippet();
+        exportOutput.value = snippet;
+        const total = traits.length;
+        const missingName = traits.filter((trait) => !(trait.name ?? '').trim()).length;
+
+        if (!total) {
+          stats.textContent = '';
+        } else {
+          stats.textContent = `共 ${total} 个特性，其中 ${missingName} 个未命名`;
+        }
+
+        exportStatus.textContent = snippet
+          ? `已生成 ${snippet.split('\n').length} 行代码`
+          : '无可导出内容';
+        emptyState.hidden = total !== 0;
+
+        traitsContainer.querySelectorAll('.trait-card').forEach((card) => {
+          const trait = getTraitById(card.dataset.id);
+          if (!trait) return;
+          const nameMissing = !(trait.name ?? '').trim();
+          const descriptionMissing = !(trait.description ?? '').trim();
+          const groupEmpty = !trait.group || trait.group.length === 0;
+          card.classList.toggle('has-error', nameMissing || descriptionMissing || groupEmpty);
+        });
+      }
+
+      function persistState() {
+        const payload = traits.map(({ id, ...rest }) => ({ id, ...rest }));
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (_) {
+          /* 忽略存储异常 */
+        }
+      }
+
+      function hydrateState() {
+        let restored = null;
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) restored = JSON.parse(raw);
+        } catch (_) {
+          restored = null;
+        }
+        if (Array.isArray(restored) && restored.length) {
+          restored.forEach((trait) => addTrait(trait));
+        } else {
+          addTrait();
+        }
+      }
+
+      // 辅助函数：去除注释
+      function stripComments(source) {
+        let result = '';
+        let i = 0;
+        let inString = false;
+        let stringQuote = '';
+        let escaping = false;
+        while (i < source.length) {
+          const char = source[i];
+          if (inString) {
+            result += char;
+            if (escaping) {
+              escaping = false;
+            } else if (char === '\\') {
+              escaping = true;
+            } else if (char === stringQuote) {
+              inString = false;
+            }
+            i++;
+            continue;
+          }
+          if (char === "'" || char === '"' || char === '`') {
+            inString = true;
+            stringQuote = char;
+            result += char;
+            i++;
+            continue;
+          }
+          if (char === '/' && source[i + 1] === '/') {
+            i += 2;
+            while (i < source.length && source[i] !== '\n' && source[i] !== '\r') {
+              i++;
+            }
+            continue;
+          }
+          if (char === '/' && source[i + 1] === '*') {
+            i += 2;
+            while (i < source.length && !(source[i] === '*' && source[i + 1] === '/')) {
+              i++;
+            }
+            i += 2;
+            continue;
+          }
+          result += char;
+          i++;
+        }
+        return result;
+      }
+
+      // 辅助函数：提取对象字面量
+      function extractObjectLiteral(source) {
+        const eqIndex = source.indexOf('=');
+        let i = eqIndex !== -1 ? eqIndex + 1 : 0;
+        let start = -1;
+        let depth = 0;
+        let inString = false;
+        let stringQuote = '';
+        let escaping = false;
+        while (i < source.length) {
+          const char = source[i];
+          if (inString) {
+            if (escaping) {
+              escaping = false;
+            } else if (char === '\\') {
+              escaping = true;
+            } else if (char === stringQuote) {
+              inString = false;
+            }
+            i++;
+            continue;
+          }
+          if (char === "'" || char === '"' || char === '`') {
+            inString = true;
+            stringQuote = char;
+            i++;
+            continue;
+          }
+          if (char === '/' && source[i + 1] === '/') {
+            i += 2;
+            while (i < source.length && source[i] !== '\n' && source[i] !== '\r') {
+              i++;
+            }
+            continue;
+          }
+          if (char === '/' && source[i + 1] === '*') {
+            i += 2;
+            while (i < source.length && !(source[i] === '*' && source[i + 1] === '/')) {
+              i++;
+            }
+            i += 2;
+            continue;
+          }
+          if (char === '{') {
+            if (start === -1) start = i;
+            depth++;
+            i++;
+            continue;
+          }
+          if (char === '}') {
+            if (depth > 0) depth--;
+            i++;
+            if (depth === 0 && start !== -1) {
+              return source.slice(start, i);
+            }
+            continue;
+          }
+          i++;
+        }
+        return null;
+      }
+
+      // 解析特性定义
+      function parseTraitDefinitions(raw) {
+        let code = raw.trim();
+        if (!code) {
+          throw new Error('导入内容为空');
+        }
+
+        // 尝试直接解析为对象
+        try {
+          // 如果是完整的对象，直接返回
+          if (code.startsWith('{') && code.endsWith('}')) {
+            const cleaned = stripComments(code);
+            const codeToEval = '"use strict"; return (' + cleaned + ');';
+            return new Function(codeToEval)();
+          }
+
+          // 如果包含多个特性定义（如范例格式）
+          // 包裹在大括号中，使其成为有效的对象
+          if (!code.startsWith('{')) {
+            code = '{' + code + '}';
+          }
+
+          const cleaned = stripComments(code);
+          const codeToEval = '"use strict"; return (' + cleaned + ');';
+          const data = new Function(codeToEval)();
+
+          if (!data || typeof data !== 'object') {
+            throw new Error('对象解析结果无效');
+          }
+
+          return data;
+        } catch (error) {
+          console.error(error);
+          throw new Error('无法解析代码片段，请确认语法无误。');
+        }
+      }
+
+      // 判断是否为特性定义
+      function looksLikeTraitDefinition(obj) {
+        const knownKeys = ['description', 'group', 'spacialCase', 'excludeFactionId'];
+        return knownKeys.some((key) => Object.prototype.hasOwnProperty.call(obj, key));
+      }
+
+      // 转换导入数据为编辑器格式
+      function transformDefinitionToInitial(name, definition) {
+        const initial = {
+          name,
+          description: definition.description || '',
+          group: [],
+          spacialCase: [],
+          excludeFactionId: definition.excludeFactionId || '',
+        };
+
+        // 转换主组
+        if (definition.group && Array.isArray(definition.group)) {
+          definition.group.forEach((item) => {
+            if (Array.isArray(item)) {
+              // 嵌套组
+              const groupId =
+                initial.group.length > 0 ? Math.max(...initial.group.map((i) => i.groupId)) + 1 : 1;
+
+              item.forEach((subItem) => {
+                if (typeof subItem === 'object' && subItem !== null) {
+                  initial.group.push({
+                    name: subItem.name || '',
+                    type: subItem.type || 'character',
+                    factionId: subItem.factionId || '',
+                    groupId: groupId,
+                  });
+                }
+              });
+            } else if (typeof item === 'object' && item !== null) {
+              // 单个物件或物件组
+              initial.group.push({
+                name: item.name || '',
+                type: item.type || 'character',
+                factionId: item.factionId || '',
+                groupId: 1, // 改为从1开始
+              });
+            }
+          });
+        }
+
+        // 转换特殊情况
+        if (definition.spacialCase && Array.isArray(definition.spacialCase)) {
+          definition.spacialCase.forEach((specialCase) => {
+            if (typeof specialCase === 'object' && specialCase !== null) {
+              const transformedSpecialCase = {
+                description: specialCase.description || '',
+                group: [],
+              };
+
+              // 转换特殊情况中的组
+              if (specialCase.group && Array.isArray(specialCase.group)) {
+                specialCase.group.forEach((item) => {
+                  if (Array.isArray(item)) {
+                    // 嵌套组
+                    const groupId =
+                      transformedSpecialCase.group.length > 0
+                        ? Math.max(...transformedSpecialCase.group.map((i) => i.groupId)) + 1
+                        : 1;
+
+                    item.forEach((subItem) => {
+                      if (typeof subItem === 'object' && subItem !== null) {
+                        transformedSpecialCase.group.push({
+                          name: subItem.name || '',
+                          type: subItem.type || 'character',
+                          factionId: subItem.factionId || '',
+                          groupId: groupId,
+                        });
+                      }
+                    });
+                  } else if (typeof item === 'object' && item !== null) {
+                    // 单个物件或物件组
+                    transformedSpecialCase.group.push({
+                      name: item.name || '',
+                      type: item.type || 'character',
+                      factionId: item.factionId || '',
+                      groupId: 1, // 改为从1开始
+                    });
+                  }
+                });
+              }
+
+              initial.spacialCase.push(transformedSpecialCase);
+            }
+          });
+        }
+
+        return initial;
+      }
+
+      // 导入特性函数
+      function importTraitsFromText(raw) {
+        let parsed;
+        try {
+          parsed = parseTraitDefinitions(raw);
+        } catch (error) {
+          console.error(error);
+          showToast((error && error.message) || '导入失败');
+          return;
+        }
+
+        // 检查是否需要确认覆盖
+        const hasExistingTraits = traits.length > 0;
+        if (hasExistingTraits && !confirm('导入将覆盖当前所有特性，是否继续？')) {
+          return;
+        }
+
+        const entries = Object.entries(parsed);
+        if (!entries.length) {
+          showToast('未找到任何特性定义');
+          return;
+        }
+
+        let count = 0;
+        isBulkUpdating = true;
+
+        // 清空现有特性
+        traits.length = 0;
+        traitsContainer.innerHTML = '';
+
+        try {
+          entries.forEach(([traitName, definition]) => {
+            if (!definition || typeof definition !== 'object') {
+              return;
+            }
+
+            // 检查是否为特性定义
+            if (!looksLikeTraitDefinition(definition)) {
+              return;
+            }
+
+            const normalizedName = String(traitName);
+            const initial = transformDefinitionToInitial(normalizedName, definition);
+            addTrait(initial);
+            count++;
+          });
+        } finally {
+          isBulkUpdating = false;
+        }
+
+        if (!count) {
+          updateUI();
+          showToast('未找到可导入的特性定义');
+          return;
+        }
+
+        persistState();
+        updateUI();
+        if (importTextarea) {
+          importTextarea.value = '';
+        }
+        showToast(`已导入 ${count} 个特性`);
+      }
+
+      // 事件监听
+      traitsContainer.addEventListener('input', (event) => {
+        const target = event.target;
+        if (target.matches('[data-field]')) {
+          handleFieldChange(target);
+        }
+      });
+
+      traitsContainer.addEventListener('change', (event) => {
+        const target = event.target;
+        if (target.matches('[data-field]')) {
+          handleFieldChange(target);
+        }
+      });
+
+      traitsContainer.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const card = button.closest('.trait-card');
+        if (!card) return;
+        const id = card.dataset.id;
+        const action = button.dataset.action;
+        if (action === 'delete') {
+          if (confirm('确认删除该特性吗？')) {
+            removeTrait(id);
+            showToast('已删除特性');
+          }
+        } else if (action === 'toggle') {
+          toggleCard(id);
+        } else if (action === 'duplicate') {
+          duplicateTrait(id);
+        } else if (action === 'export') {
+          const trait = getTraitById(id);
+          if (!trait) return;
+          void exportSingleTrait(trait);
+        }
+      });
+
+      document.getElementById('addTrait').addEventListener('click', () => {
+        addTrait();
+        showToast('已新增特性');
+      });
+
+      document.getElementById('emptyAdd').addEventListener('click', () => {
+        addTrait();
+        showToast('已新增特性');
+      });
+
+      document.getElementById('expandAll').addEventListener('click', () => {
+        collapseAll(false);
+      });
+
+      document.getElementById('collapseAll').addEventListener('click', () => {
+        collapseAll(true);
+      });
+
+      document.getElementById('resetAll').addEventListener('click', () => {
+        if (!traits.length) return;
+        if (!confirm('确认清空所有特性吗？此操作无法撤销。')) return;
+        traits.length = 0;
+        traitsContainer.innerHTML = '';
+        persistState();
+        updateUI();
+        showToast('已清空');
+      });
+
+      document.getElementById('copyBtn').addEventListener('click', async () => {
+        const snippet = exportOutput.value.trim();
+        if (!snippet) {
+          showToast('没有可复制的内容');
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(snippet);
+          showToast('已复制到剪贴板');
+        } catch (_) {
+          exportOutput.select();
+          document.execCommand('copy');
+          showToast('已复制（回退模式）');
+        }
+      });
+
+      document.getElementById('downloadBtn').addEventListener('click', () => {
+        const snippet = exportOutput.value.trim();
+        if (!snippet) {
+          showToast('没有可导出的内容');
+          return;
+        }
+        const blob = new Blob([snippet], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const timestamp = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const filename = `tjwiki-traits-${timestamp.getFullYear()}${pad(timestamp.getMonth() + 1)}${pad(timestamp.getDate())}-${pad(timestamp.getHours())}${pad(timestamp.getMinutes())}.txt`;
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast('已下载 TXT 文件');
+      });
+
+      function openPasteDialog() {
+        if (importDialog && typeof importDialog.showModal === 'function') {
+          if (importTextarea) {
+            importTextarea.value = '';
+          }
+          importDialog.showModal();
+          requestAnimationFrame(() => importTextarea?.focus());
+        } else {
+          const raw = window.prompt('请粘贴特性定义代码：');
+          if (raw) {
+            importTraitsFromText(raw);
+          }
+        }
+      }
+
+      importPasteBtn?.addEventListener('click', () => {
+        openPasteDialog();
+      });
+
+      importConfirm?.addEventListener('click', () => {
+        const raw = importTextarea?.value ?? '';
+        if (!raw.trim()) {
+          showToast('导入内容为空');
+          return;
+        }
+        if (importDialog?.open) {
+          importDialog.close();
+        }
+        importTraitsFromText(raw);
+      });
+
+      importCancel?.addEventListener('click', () => {
+        if (importDialog?.open) {
+          importDialog.close();
+        }
+      });
+
+      importDialog?.addEventListener('close', () => {
+        if (importTextarea) {
+          importTextarea.value = '';
+        }
+      });
+
+      importFileBtn?.addEventListener('click', () => {
+        importFileInput?.click();
+      });
+
+      importFileInput?.addEventListener('change', async (event) => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement)) {
+          return;
+        }
+        const file = input.files && input.files[0];
+        if (!file) {
+          return;
+        }
+
+        // 检查是否需要确认覆盖
+        const hasExistingTraits = traits.length > 0;
+        if (hasExistingTraits && !confirm('导入将覆盖当前所有特性，是否继续？')) {
+          input.value = '';
+          return;
+        }
+
+        try {
+          const text = await file.text();
+          importTraitsFromText(text);
+        } catch (_) {
+          showToast('读取文件失败');
+        } finally {
+          input.value = '';
+        }
+      });
+
+      hydrateState();
+      updateUI();
+    </script>
+  </body>
+</html>

@@ -117,6 +117,13 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/icons/entity.png',
     iconAlt: '衍生物编辑器图标',
   },
+  {
+    id: 'trait-maker',
+    label: '特性编辑器',
+    href: '/trait-maker.html',
+    iconSrc: '/images//mouseSkills/莱恩2-蘸水笔.png',
+    iconAlt: '特性编辑器图标',
+  },
 ];
 
 export const MECHANICS_NAV_ITEMS: readonly NavItem[] = [

@@ -55,6 +55,14 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
         ? '编辑道具信息，导出代码片段提交给开发人员'
         : '编辑衍生物信息，导出代码片段提交给开发人员',
   }));
+  const EditButtons2 = TOOL_NAV_ITEMS.filter((i) => i.id === 'trait-maker').map((i) => ({
+    imageSrc: i.iconSrc,
+    imageAlt: i.iconAlt,
+    title: i.label,
+    description: i.id === 'trait-maker' ? '编辑特性信息，导出代码片段提交给开发人员' : '',
+    href: i.href,
+    ariaLabel: i.id === 'trait-maker' ? '编辑特性信息，导出代码片段提交给开发人员' : '',
+  }));
 
   return (
     <div
@@ -74,6 +82,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       <HomePageSection buttons={Buttons} />
       <HomePageSection buttons={Buttons2} />
       {isEditMode ? <HomePageSection title={'编辑工具'} buttons={EditButtons} /> : null}
+      {isEditMode ? <HomePageSection buttons={EditButtons2} /> : null}
 
       <div className='mt-24 px-2 sm:px-4'>
         <div className='mx-auto max-w-4xl'>
