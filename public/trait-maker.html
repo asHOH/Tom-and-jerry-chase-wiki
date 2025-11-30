@@ -658,7 +658,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-bottom: 6px;
+        margin-bottom: 4px; /* 从6px改为4px，缩短间距 */
       }
 
       .compact-item-group-badge {
@@ -681,6 +681,72 @@
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      /* 响应式布局优化 */
+      @media (max-width: 768px) {
+        .form-row {
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .form-row .field {
+          flex: 1 1 calc(50% - 8px);
+          min-width: 120px;
+        }
+
+        .form-row .field:last-child {
+          flex: 1 1 100%;
+          margin-top: 8px;
+        }
+
+        .form-row .field:last-child button {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .form-row .field {
+          flex: 1 1 100%;
+        }
+
+        .toolbar {
+          gap: 8px;
+        }
+
+        .toolbar button {
+          padding: 8px 12px;
+          font-size: 0.85rem;
+        }
+
+        .card-actions {
+          gap: 4px;
+        }
+
+        .card-actions button {
+          padding: 6px 10px;
+          font-size: 0.85rem;
+        }
+
+        .compact-grid {
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+          gap: 6px;
+        }
+
+        .grid.two {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+      }
+
+      /* 优化组容器间距 */
+      .group-container {
+        padding: 8px 10px; /* 减小内边距 */
+        margin-bottom: 8px; /* 减小底部边距 */
+      }
+
+      .compact-item-group-header {
+        margin-bottom: 2px; /* 进一步缩短组别标签与内容的间距 */
       }
     </style>
   </head>
@@ -769,7 +835,7 @@
                   data-field="name"
                   type="text"
                   inputmode="text"
-                  placeholder="例如：范围伤害"
+                  placeholder="仅作标识，可随意填写，例：汤姆1"
                   autocomplete="off"
                 />
               </div>
@@ -833,7 +899,7 @@
                   </div>
                 </div>
                 <div class="field-comment">
-                  注释：阵营用于区分同类型同名内容（例如应急治疗特技）；组别用于归类同类内容，同组别内容之间为“或”关系，满足其一即可
+                  注释：阵营用于区分同类型同名内容（例如应急治疗特技）；组别用于归类同类内容，同组别内容之间为"或"关系，满足其一即可
                 </div>
               </div>
 
@@ -955,6 +1021,7 @@
     <div id="toast" class="toast"></div>
 
     <script>
+      // ... JavaScript 代码保持不变 ...
       const traits = [];
       const traitsContainer = document.getElementById('traitsContainer');
       const exportOutput = document.getElementById('exportOutput');
