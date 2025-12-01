@@ -2,25 +2,29 @@
 
 import PageDescription from '@/components/ui/PageDescription';
 
-import { mechanicsSectionsList } from './sections';
-import TraitCollsion from './sections/TraitCollection';
-import MechanicsNavigation from './shared/Navigation';
+import { mechanicsSections, mechanicsSectionsList } from './sections';
+import MechanicsNavigation from './shared/MechanicsNavigation';
 
 interface MechanicsSectionProps {
-  sectionName?: string;
+  sectionName?: keyof typeof mechanicsSections;
   description?: string;
 }
 
 export default function MechanicsSection({ sectionName, description }: MechanicsSectionProps) {
-  const effectiveSection = mechanicsSectionsList.some((Name) => Name === sectionName);
+  // 检查是否为有效的模块名称
+  const isEffectiveSection = sectionName && mechanicsSectionsList.includes(sectionName);
+
+  // 根据 sectionName 获取对应的组件
+  const SectionComponent = sectionName && mechanicsSections[sectionName];
+
   return (
     <MechanicsNavigation description={description || ''}>
-      {!effectiveSection && (
+      {!isEffectiveSection && (
         <header className={'space-y-2 p-2 text-center'}>
           <PageDescription>（点击上方列表按钮，选择界面进行查看）</PageDescription>
         </header>
       )}
-      {sectionName === 'traitCollection' && <TraitCollsion></TraitCollsion>}
+      {SectionComponent && <SectionComponent />}
     </MechanicsNavigation>
   );
 }
