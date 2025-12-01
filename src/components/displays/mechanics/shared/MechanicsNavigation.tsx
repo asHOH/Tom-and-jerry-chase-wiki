@@ -1,6 +1,5 @@
 'use client';
 
-import { MECHANICS_NAV_ITEMS } from '@/constants/navigation';
 import clsx from 'clsx';
 
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -9,6 +8,8 @@ import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
+
+import { MECHANICS_NAV_ITEMS } from '../sections';
 
 interface MechanicsNavigationProps {
   children?: React.ReactNode;

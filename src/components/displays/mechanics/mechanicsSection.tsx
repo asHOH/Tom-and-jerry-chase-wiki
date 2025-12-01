@@ -2,11 +2,11 @@
 
 import PageDescription from '@/components/ui/PageDescription';
 
-import { mechanicsSections, mechanicsSectionsList } from './sections';
+import { mechanicsSections, mechanicsSectionsList, type SectionName } from './sections';
 import MechanicsNavigation from './shared/MechanicsNavigation';
 
 interface MechanicsSectionProps {
-  sectionName?: keyof typeof mechanicsSections;
+  sectionName?: SectionName;
   description?: string;
 }
 

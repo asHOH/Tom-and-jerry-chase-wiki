@@ -125,13 +125,3 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconAlt: '特性编辑器图标',
   },
 ];
-
-export const MECHANICS_NAV_ITEMS: readonly NavItem[] = [
-  {
-    id: 'traitCollection',
-    label: '特性大全',
-    href: '/mechanics/traitCollection',
-    iconSrc: '/images//mouseSkills/莱恩2-蘸水笔.png',
-    iconAlt: '特性大全图标',
-  },
-];
