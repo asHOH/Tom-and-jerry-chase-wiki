@@ -1,4 +1,4 @@
-import type { buffTypelist, FactionId } from '@/data/types';
+import type { buffTypelist, FactionId, SkillType } from '@/data/types';
 
 // Returned style for positioning tag colors
 export type PositioningTagColorStyle =
@@ -840,7 +840,7 @@ export const getItemTypeColors = (itemtype: string, isDarkMode: boolean) => {
     手持类: 'violet',
     物件类: 'azure',
     食物类: 'amber',
-    流程类: 'russet',
+    流程类: 'indigo',
     其它: 'deepGray',
   };
 
@@ -935,7 +935,7 @@ export const getAvatarFilterColors = (
 
 // Skill type utility functions
 export const getSkillTypeColors = (
-  skillType: 'passive' | 'active' | 'weapon1' | 'weapon2',
+  skillType: SkillType,
   includeBorder: boolean,
   isDarkMode: boolean
 ) => {
@@ -952,10 +952,7 @@ export const getSkillTypeColors = (
   };
 };
 
-export const getSkillTypeContainerColor = (
-  skillType: 'passive' | 'active' | 'weapon1' | 'weapon2',
-  isDarkMode: boolean
-): string => {
+export const getSkillTypeContainerColor = (skillType: SkillType, isDarkMode: boolean): string => {
   const colorScheme =
     designTokens.colors.skillTypes[skillType] || designTokens.colors.skillTypes.passive;
 

@@ -5,6 +5,7 @@
 
 import { ReactNode } from 'react';
 import { Card, Character, FactionId, PositioningTag, PositioningTagName } from '@/data';
+import { SkillType } from '@/data/types';
 
 // Extended types with faction information (used in components)
 export type CharacterWithFaction = Character & {
@@ -96,7 +97,7 @@ export type GotoResult = {
   ownerFactionId?: FactionId; // For character skills (owner's faction)
   // Leveled skill metadata
   skillLevel?: number; // When query specified like "2级技能名"
-  skillType?: 'passive' | 'active' | 'weapon1' | 'weapon2';
+  skillType?: SkillType;
   skillLevelDescription?: string; // Description for that level, if any
 };
 
