@@ -66,6 +66,18 @@ const sharedPositioningTagPalettes = {
       container: 'bg-gradient-to-r from-amber-900 to-amber-950 border border-amber-800',
     },
   },
+  emerald: {
+    text: '#059669',
+    background: '#d1fae5',
+    border: '#6ee7b7',
+    container: 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200',
+    dark: {
+      text: '#34d399',
+      background: '#064e3b',
+      border: '#059669',
+      container: 'bg-gradient-to-r from-emerald-900 to-emerald-950 border border-emerald-800',
+    },
+  },
   deepGray: {
     text: '#111111',
     background: '#dbdee3',
@@ -330,18 +342,7 @@ export const designTokens = {
       attack: sharedPositioningTagPalettes.crimson,
       defense: sharedPositioningTagPalettes.azure,
       chase: sharedPositioningTagPalettes.russet,
-      speedrun: {
-        text: '#16a34a', // green-600
-        background: '#dcfce7', // green-100
-        border: '#86efac', // green-300
-        container: 'bg-gradient-to-r from-green-50 to-green-100 border border-green-200',
-        dark: {
-          text: '#86efac', // green-300
-          background: '#065f46', // green-900
-          border: '#16a34a', // green-600
-          container: 'bg-gradient-to-r from-green-900 to-green-950 border border-green-800',
-        },
-      },
+      speedrun: sharedPositioningTagPalettes.emerald,
       fight: sharedPositioningTagPalettes.violet,
       lateGame: sharedPositioningTagPalettes.deepGray,
       comeback: sharedPositioningTagPalettes.amber,
@@ -349,18 +350,7 @@ export const designTokens = {
       cheese: sharedPositioningTagPalettes.amber,
       disrupt: sharedPositioningTagPalettes.crimson,
       support: sharedPositioningTagPalettes.azure,
-      rescue: {
-        text: '#059669', // emerald-600
-        background: '#d1fae5', // emerald-100
-        border: '#6ee7b7', // emerald-300
-        container: 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200',
-        dark: {
-          text: '#34d399', // emerald-400
-          background: '#064e3b', // emerald-900
-          border: '#059669', // emerald-600
-          container: 'bg-gradient-to-r from-emerald-900 to-emerald-950 border border-emerald-800',
-        },
-      },
+      rescue: sharedPositioningTagPalettes.emerald,
       breakthrough: sharedPositioningTagPalettes.violet,
       wallBreak: sharedPositioningTagPalettes.russet,
       // Shared tags (mouse variant)
