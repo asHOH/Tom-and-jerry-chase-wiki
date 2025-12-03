@@ -72,7 +72,7 @@ const sharedPositioningTagPalettes = {
     border: '#ffffff',
     container: 'bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200',
     dark: {
-      text: '#eeeeee',
+      text: '#dbdee3',
       background: '#4b5563',
       border: '#000000',
       container: 'bg-gradient-to-r from-gray-600 to-gray-650 border border-gray-700',
