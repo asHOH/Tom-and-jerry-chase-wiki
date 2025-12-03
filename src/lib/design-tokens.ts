@@ -119,12 +119,18 @@ export const designTokens = {
     // Centralized faction filter palettes (used for faction filter buttons)
     factions: {
       cat: {
-        light: { background: '#fef9c3', text: '#b45309' }, // yellow-100 bg, yellow-800 text
-        dark: { background: '#fbbf24', text: '#000000' }, // yellow-400 bg, black text
+        light: { background: '#E0F2FF', text: '#0369A1' },
+        dark: { background: '#024D72', text: '#09AFFF' },
       },
       mouse: {
-        light: { background: '#e0f2fe', text: '#0369a1' }, // sky-100 bg, sky-800 text
-        dark: { background: '#38bdf8', text: '#000000' }, // sky-400 bg, black text
+        light: {
+          background: sharedPositioningTagPalettes.russet.background,
+          text: sharedPositioningTagPalettes.russet.text,
+        },
+        dark: {
+          background: sharedPositioningTagPalettes.russet.dark.background,
+          text: sharedPositioningTagPalettes.russet.dark.text,
+        },
       },
     },
 
@@ -937,21 +943,16 @@ export const getAvatarFilterColors = (
   option: '杰瑞' | '泰菲' | '汤姆' | '其他',
   isDarkMode: boolean
 ): { color: string; backgroundColor: string } => {
-  // 杰瑞: 复用“砸墙”定位标签的配色
-  if (option === '杰瑞') {
-    const c = designTokens.colors.positioningTags.wallBreak;
-    const light = { text: c.text, bg: c.background };
-    const dark = c.dark ? { text: c.dark.text, bg: c.dark.background } : light;
-    const theme = isDarkMode ? dark : light;
-    return { color: theme.text, backgroundColor: theme.bg };
+  // 杰瑞和汤姆复用 faction colors
+  if (option === '杰瑞' || option === '汤姆') {
+    const factionKey = option === '杰瑞' ? 'mouse' : 'cat';
+    const c = designTokens.colors.factions[factionKey];
+    const theme = isDarkMode ? c.dark : c.light;
+    return { color: theme.text, backgroundColor: theme.background };
   }
 
   // 其他选项采用固定配色
   const palette = {
-    汤姆: {
-      light: { bg: '#E0F2FF', text: '#0369A1' },
-      dark: { bg: '#024D72', text: '#09AFFF' },
-    },
     泰菲: {
       light: { bg: '#D8DBF8', text: '#4453AA' },
       dark: { bg: '#4453AA', text: '#D7DAF9' },
@@ -962,7 +963,7 @@ export const getAvatarFilterColors = (
     },
   } as const;
 
-  const scheme = palette[option];
+  const scheme = palette[option as keyof typeof palette];
   const theme = isDarkMode ? scheme.dark : scheme.light;
   return { color: theme.text, backgroundColor: theme.bg };
 };
