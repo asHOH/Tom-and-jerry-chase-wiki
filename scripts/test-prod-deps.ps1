@@ -17,9 +17,9 @@ Write-Host "`n📦 Step 1: Installing all dependencies..." -ForegroundColor Cyan
 npm install
 if ($LASTEXITCODE -ne 0) { Write-Error "npm install failed"; exit 1 }
 
-# 2. Build the application
+# 2. Build the application (skip images to save time)
 Write-Host "`n🏗️  Step 2: Building the application..." -ForegroundColor Cyan
-npm run build
+npm run build:skip-images
 if ($LASTEXITCODE -ne 0) { Write-Error "Build failed"; exit 1 }
 
 # 3. Reinstall only production dependencies (cleaner than prune)
