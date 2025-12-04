@@ -26,10 +26,11 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/run-image-optimization.cjs && node scripts/generate-doc-pages.mjs && node scripts/generate-changelogs.mjs && next build --webpack",
+    "build": "node scripts/run-image-optimization.cjs && node scripts/generate-doc-pages.mjs && next build --webpack",
+    "generate:changelogs": "node scripts/generate-changelogs.mjs",
     "set-runtime:edge": "node scripts/set-api-runtime.mjs edge",
     "set-runtime:node": "node scripts/set-api-runtime.mjs nodejs",
-    "build:skip-images": "node scripts/generate-doc-pages.mjs && node scripts/generate-changelogs.mjs && next build --webpack",
+    "build:skip-images": "node scripts/generate-doc-pages.mjs && next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
