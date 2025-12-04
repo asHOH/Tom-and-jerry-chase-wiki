@@ -1,12 +1,21 @@
-import bundleAnalyzer from '@next/bundle-analyzer';
+import { createRequire } from 'module';
 import createMDX from '@next/mdx';
 import withPWA from 'next-pwa';
 
 import { buildCspHeader } from './csp.config.mjs';
 
-const withBundleAnalyzer = bundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
-});
+const require = createRequire(import.meta.url);
+
+let withBundleAnalyzer;
+try {
+  const bundleAnalyzer = require('@next/bundle-analyzer');
+  withBundleAnalyzer = bundleAnalyzer({
+    enabled: process.env.ANALYZE === 'true',
+  });
+} catch {
+  // Fallback if @next/bundle-analyzer is not installed (e.g. in production test)
+  withBundleAnalyzer = (config) => config;
+}
 
 const withPwa = withPWA({
   dest: 'public',
