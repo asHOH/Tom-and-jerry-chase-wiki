@@ -130,6 +130,7 @@ done
 # 7. Build the application only if code has changed.
 BUILD_HASH_FILE=".next/.build_hash"
 CURRENT_HASH=$(git rev-parse HEAD)
+export COMMIT_SHA="$CURRENT_HASH"
 LAST_BUILD_HASH=""
 if [ -f "$BUILD_HASH_FILE" ]; then
   LAST_BUILD_HASH=$(tr -d '\r\n' < "$BUILD_HASH_FILE")
