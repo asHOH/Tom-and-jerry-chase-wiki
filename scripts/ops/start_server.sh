@@ -115,7 +115,7 @@ npm config set registry https://registry.npmmirror.com/
 echo "Installing/updating project dependencies..."
 for i in {1..3}; do
   echo "Attempt $i of 3..."
-  if npm install --verbose; then
+  if npm install --verbose --omit=dev --ignore-scripts; then
     echo "✅ Dependencies installed successfully."
     break
   fi
