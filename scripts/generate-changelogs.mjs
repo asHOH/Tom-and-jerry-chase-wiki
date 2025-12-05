@@ -247,14 +247,32 @@ e789012|2025-11-08 09:00:00 +0800|chore(deps): bump some-package|dependabot[bot]
 仅返回 JSON 数组，不要包含其他文本。`;
 
 /**
- * Get git commits from the past 7 days
+ * Get git commits since a specific hash or from the past 7 days
  */
-function getGitCommits() {
+function getGitCommits(lastHash) {
   try {
-    const output = execSync(
-      'git log --since="7 days ago" --pretty=format:"%h|%cd|%s|%an" --date=iso',
-      { encoding: 'utf-8', cwd: process.cwd() }
-    );
+    let range = '--since="7 days ago"';
+
+    if (lastHash) {
+      try {
+        // Check if the hash exists in the current repository
+        execSync(`git rev-parse ${lastHash}`, { stdio: 'ignore', cwd: process.cwd() });
+        // If it exists, get commits from that hash to HEAD
+        range = `${lastHash}..HEAD`;
+        console.log(`Fetching commits since ${lastHash}...`);
+      } catch {
+        console.warn(
+          `Warning: Last commit hash ${lastHash} not found. Falling back to 7 days ago.`
+        );
+      }
+    } else {
+      console.log('No previous changelog found. Fetching commits from the past 7 days...');
+    }
+
+    const output = execSync(`git log ${range} --pretty=format:"%h|%cd|%s|%an" --date=iso`, {
+      encoding: 'utf-8',
+      cwd: process.cwd(),
+    });
 
     return output.trim();
   } catch (error) {
@@ -395,42 +413,94 @@ async function generateChangelogs(commits) {
  * Main function
  */
 async function main() {
-  console.log('Fetching git commits from the past 7 days...');
-
-  const commits = getGitCommits();
-
-  if (!commits) {
-    console.log('No commits found in the past 7 days');
-    return;
-  }
-
-  console.log(`Found ${commits.split('\n').length} commits`);
-
-  let changelogs;
-
-  try {
-    changelogs = await generateChangelogs(commits);
-  } catch (error) {
-    console.warn('Warning: Failed to generate changelogs with Gemini. Skipping changelog update.');
-    console.warn(`Details: ${formatError(error)}`);
-    console.warn('Tip: Re-run scripts/generate-changelogs.mjs once the Gemini service recovers.');
-    return;
-  }
-
-  // Ensure output directory exists
   const outDir = path.join(process.cwd(), 'src', 'data', 'generated');
   const outFile = path.join(outDir, 'changeLogs.json');
 
+  let existingChangelogs = [];
+  let lastHash = null;
+
+  // Try to read existing changelogs
+  try {
+    const data = await fs.readFile(outFile, 'utf-8');
+    existingChangelogs = JSON.parse(data);
+
+    // Find the latest commit hash from the existing logs
+    // Assuming the logs are sorted by date descending, and changes within date are sorted by time descending
+    if (Array.isArray(existingChangelogs) && existingChangelogs.length > 0) {
+      // Check the first day's changes
+      const latestDay = existingChangelogs[0];
+      if (latestDay.changes && latestDay.changes.length > 0) {
+        lastHash = latestDay.changes[0].hash;
+        console.log(`Found latest existing commit: ${lastHash} (${latestDay.date})`);
+      }
+    }
+  } catch {
+    // File doesn't exist or is invalid, start fresh
+    console.log('No valid existing changelog file found. Starting fresh.');
+  }
+
+  const commits = getGitCommits(lastHash);
+
+  if (!commits) {
+    console.log('No new commits found.');
+    return;
+  }
+
+  console.log(`Found ${commits.split('\n').length} new commits`);
+
+  let newChangelogs;
+
+  try {
+    newChangelogs = await generateChangelogs(commits);
+  } catch (error) {
+    console.warn('Warning: Failed to generate changelogs with Gemini. Skipping changelog update.');
+    console.warn(`Details: ${formatError(error)}`);
+    return;
+  }
+
+  // Merge new changelogs with existing ones
+  const mergedChangelogs = [...existingChangelogs];
+
+  // Iterate through new changelogs (which are sorted by date descending)
+  // Since we want to merge them into existing logs
+  for (const newDay of newChangelogs) {
+    const existingDayIndex = mergedChangelogs.findIndex((d) => d.date === newDay.date);
+
+    if (existingDayIndex !== -1) {
+      // Day exists, merge changes
+      // Filter out any duplicates just in case (though git log range should prevent this)
+      const existingChanges = mergedChangelogs[existingDayIndex].changes;
+      const existingHashes = new Set(existingChanges.map((c) => c.hash));
+
+      const uniqueNewChanges = newDay.changes.filter((c) => !existingHashes.has(c.hash));
+
+      if (uniqueNewChanges.length > 0) {
+        // Prepend new changes since they are newer
+        mergedChangelogs[existingDayIndex].changes = [...uniqueNewChanges, ...existingChanges];
+      }
+    } else {
+      // Day doesn't exist, insert it
+      mergedChangelogs.push(newDay);
+    }
+  }
+
+  // Sort by date descending
+  mergedChangelogs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  // Ensure output directory exists
   await fs.mkdir(outDir, { recursive: true });
 
   // Write JSON file
-  await fs.writeFile(outFile, JSON.stringify(changelogs, null, 2) + '\n', 'utf-8');
+  await fs.writeFile(outFile, JSON.stringify(mergedChangelogs, null, 2) + '\n', 'utf-8');
 
-  console.log(`✓ Changelogs written to ${outFile}`);
-  console.log(`✓ Generated ${changelogs.length} days of changelogs`);
+  console.log(`✓ Changelogs updated in ${outFile}`);
+
+  // Count new changes
+  const newChangesCount = newChangelogs.reduce((sum, day) => sum + day.changes.length, 0);
+  console.log(`✓ Added ${newChangesCount} new changes`);
 
   // Count total changes
-  const totalChanges = changelogs.reduce((sum, day) => sum + day.changes.length, 0);
+  const totalChanges = mergedChangelogs.reduce((sum, day) => sum + day.changes.length, 0);
   console.log(`✓ Total changes: ${totalChanges}`);
 }
 

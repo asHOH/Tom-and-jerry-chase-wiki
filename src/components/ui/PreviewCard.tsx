@@ -1,6 +1,7 @@
 // GotoPreviewCard.tsx
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data';
+import type { SkillType } from '@/data/types';
 import clsx from 'clsx';
 
 import { getTypeLabelColors } from '@/lib/design-tokens';
@@ -22,7 +23,7 @@ export type GotoPreviewCardProps = {
   ownerName?: string;
   ownerFactionId?: FactionId;
   skillLevel?: number;
-  skillType?: 'passive' | 'active' | 'weapon1' | 'weapon2';
+  skillType?: SkillType;
   skillLevelDescription?: string;
   clickable?: boolean; // when false, render preview as non-anchor to avoid nested <a>
 };

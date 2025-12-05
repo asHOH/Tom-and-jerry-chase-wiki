@@ -41,10 +41,10 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
           aria-label='道具属性'
         >
           <Tag size='xs' margin='compact' colorStyles={typeColors}>
-            {isMobile ? item.itemtype.slice(0, 2) : item.itemtype}
+            {item.itemtype.slice(0, 2)}
           </Tag>
           <Tag size='xs' margin='compact' colorStyles={sourceColors}>
-            {isMobile ? item.itemsource.slice(0, 2) : item.itemsource}
+            {item.itemsource.slice(0, 2)}
           </Tag>
           {/* {typeof item.damage === 'number' && (
             <Tag size='xs' variant='compact' colorStyles={damageColors}>

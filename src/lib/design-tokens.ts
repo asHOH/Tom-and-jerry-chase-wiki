@@ -1,4 +1,4 @@
-import type { buffTypelist, FactionId } from '@/data/types';
+import type { buffTypelist, FactionId, SkillType } from '@/data/types';
 
 // Returned style for positioning tag colors
 export type PositioningTagColorStyle =
@@ -72,10 +72,58 @@ const sharedPositioningTagPalettes = {
     border: '#ffffff',
     container: 'bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200',
     dark: {
-      text: '#eeeeee',
+      text: '#dbdee3',
       background: '#4b5563',
       border: '#000000',
       container: 'bg-gradient-to-r from-gray-600 to-gray-650 border border-gray-700',
+    },
+  },
+  emerald: {
+    text: '#059669', // emerald-600
+    background: '#d1fae5', // emerald-100
+    border: '#6ee7b7', // emerald-300
+    container: 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200',
+    dark: {
+      text: '#34d399', // emerald-400
+      background: '#064e3b', // emerald-900
+      border: '#059669', // emerald-600
+      container: 'bg-gradient-to-r from-emerald-900 to-emerald-950 border border-emerald-800',
+    },
+  },
+  pink: {
+    text: '#db2777', // pink-600
+    background: '#fce7f3', // pink-100
+    border: '#f472b6', // pink-400
+    container: 'bg-gradient-to-r from-pink-50 to-pink-100 border border-pink-200',
+    dark: {
+      text: '#f9a8d4', // pink-300
+      background: '#831843', // pink-900
+      border: '#db2777', // pink-600
+      container: 'bg-gradient-to-r from-pink-900 to-pink-950 border border-pink-800',
+    },
+  },
+  indigo: {
+    text: '#4f46e5', // indigo-600
+    background: '#e0e7ff', // indigo-100
+    border: '#818cf8', // indigo-400
+    container: 'bg-gradient-to-r from-indigo-50 to-indigo-100 border border-indigo-200',
+    dark: {
+      text: '#a5b4fc', // indigo-300
+      background: '#312e81', // indigo-900
+      border: '#4f46e5', // indigo-600
+      container: 'bg-gradient-to-r from-indigo-900 to-indigo-950 border border-indigo-800',
+    },
+  },
+  rose: {
+    text: '#e11d48', // rose-600
+    background: '#ffe4e6', // rose-100
+    border: '#fb7185', // rose-400
+    container: 'bg-gradient-to-r from-rose-50 to-rose-100 border border-rose-200',
+    dark: {
+      text: '#fda4af', // rose-300
+      background: '#881337', // rose-900
+      border: '#e11d48', // rose-600
+      container: 'bg-gradient-to-r from-rose-900 to-rose-950 border border-rose-800',
     },
   },
 } as const;
@@ -119,12 +167,18 @@ export const designTokens = {
     // Centralized faction filter palettes (used for faction filter buttons)
     factions: {
       cat: {
-        light: { background: '#fef9c3', text: '#b45309' }, // yellow-100 bg, yellow-800 text
-        dark: { background: '#fbbf24', text: '#000000' }, // yellow-400 bg, black text
+        light: { background: '#E0F2FF', text: '#0369A1' },
+        dark: { background: '#024D72', text: '#09AFFF' },
       },
       mouse: {
-        light: { background: '#e0f2fe', text: '#0369a1' }, // sky-100 bg, sky-800 text
-        dark: { background: '#38bdf8', text: '#000000' }, // sky-400 bg, black text
+        light: {
+          background: sharedPositioningTagPalettes.russet.background,
+          text: sharedPositioningTagPalettes.russet.text,
+        },
+        dark: {
+          background: sharedPositioningTagPalettes.russet.dark.background,
+          text: sharedPositioningTagPalettes.russet.dark.text,
+        },
       },
     },
 
@@ -324,18 +378,7 @@ export const designTokens = {
       attack: sharedPositioningTagPalettes.crimson,
       defense: sharedPositioningTagPalettes.azure,
       chase: sharedPositioningTagPalettes.russet,
-      speedrun: {
-        text: '#16a34a', // green-600
-        background: '#dcfce7', // green-100
-        border: '#86efac', // green-300
-        container: 'bg-gradient-to-r from-green-50 to-green-100 border border-green-200',
-        dark: {
-          text: '#86efac', // green-300
-          background: '#065f46', // green-900
-          border: '#16a34a', // green-600
-          container: 'bg-gradient-to-r from-green-900 to-green-950 border border-green-800',
-        },
-      },
+      speedrun: sharedPositioningTagPalettes.emerald,
       fight: sharedPositioningTagPalettes.violet,
       lateGame: sharedPositioningTagPalettes.deepGray,
       comeback: sharedPositioningTagPalettes.amber,
@@ -343,18 +386,7 @@ export const designTokens = {
       cheese: sharedPositioningTagPalettes.amber,
       disrupt: sharedPositioningTagPalettes.crimson,
       support: sharedPositioningTagPalettes.azure,
-      rescue: {
-        text: '#059669', // emerald-600
-        background: '#d1fae5', // emerald-100
-        border: '#6ee7b7', // emerald-300
-        container: 'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200',
-        dark: {
-          text: '#34d399', // emerald-400
-          background: '#064e3b', // emerald-900
-          border: '#059669', // emerald-600
-          container: 'bg-gradient-to-r from-emerald-900 to-emerald-950 border border-emerald-800',
-        },
-      },
+      rescue: sharedPositioningTagPalettes.emerald,
       breakthrough: sharedPositioningTagPalettes.violet,
       wallBreak: sharedPositioningTagPalettes.russet,
       // Shared tags (mouse variant)
@@ -705,70 +737,27 @@ export const getCardCostColors = (cost: number, includeBorder: boolean, isDarkMo
 
 // Type label utility (for preview badges like 角色/知识卡)
 export const getTypeLabelColors = (type: string, isDarkMode = false) => {
-  const map: Record<
-    string,
-    {
-      text: string;
-      background: string;
-      dark: { text: string; background: string };
-    }
-  > = {
-    character: {
-      text: '#1D4ED8',
-      background: '#DBEAFE',
-      dark: { text: '#60A5FA', background: '#1E3A8A' },
-    }, // blue-700 on blue-100 | dark: blue-400 on blue-900
-    card: {
-      text: '#A16207',
-      background: '#FEF9C3',
-      dark: { text: '#C4B5FD', background: '#581C87' },
-    }, // yellow-700 | dark: purple-300 on purple-900
-    item: {
-      text: '#15803D',
-      background: '#DCFCE7',
-      dark: { text: '#34D399', background: '#064E3B' },
-    }, // green-700 | dark: emerald-400 on emerald-900
-    entity: {
-      text: '#C2410C',
-      background: '#FFEDD5',
-      dark: { text: '#FDBA74', background: '#7C2D12' },
-    }, // orange-700 | dark: orange-300 on orange-900
-    'special-skill-cat': {
-      text: '#BE185D',
-      background: '#FCE7F3',
-      dark: { text: '#F9A8D4', background: '#831843' },
-    }, // pink-700 | dark: pink-300 on pink-900
-    'special-skill-mouse': {
-      text: '#6D28D9',
-      background: '#EDE9FE',
-      dark: { text: '#C4B5FD', background: '#4C1D95' },
-    }, // purple-700 | dark: violet-300 on violet-900
-    doc: {
-      text: '#374151',
-      background: '#F3F4F6',
-      dark: { text: '#9CA3AF', background: '#1F2937' },
-    }, // gray-700 | dark: gray-400 on gray-800
-    'character-skill': {
-      text: '#4338CA',
-      background: '#E0E7FF',
-      dark: { text: '#A5B4FC', background: '#3730A3' },
-    }, // indigo-700 | dark: indigo-300 on indigo-900
-    buff: {
-      text: '#a16207',
-      background: '#fef9c3',
-      dark: { text: '#facc15', background: '#854d0e' },
-    }, // yellow-700 | dark: yellow-400 on yellow-800
-    itemGroup: {
-      text: '#be123c',
-      background: '#ffe4e6',
-      dark: { text: '#fda4af', background: '#881337' },
-    }, // rose-700 | dark: rose-300 on rose-900
+  const map: Record<string, keyof typeof sharedPositioningTagPalettes> = {
+    character: 'azure',
+    card: 'amber',
+    item: 'emerald',
+    entity: 'russet',
+    'special-skill-cat': 'pink',
+    'special-skill-mouse': 'violet',
+    doc: 'deepGray',
+    'character-skill': 'indigo',
+    buff: 'amber',
+    itemGroup: 'rose',
   };
 
-  const scheme = map[type] ?? map.doc!;
-  return isDarkMode
-    ? { color: scheme.dark.text, backgroundColor: scheme.dark.background }
-    : { color: scheme.text, backgroundColor: scheme.background };
+  const paletteKey = map[type] || 'deepGray';
+  const palette = sharedPositioningTagPalettes[paletteKey];
+  const theme = isDarkMode && palette.dark ? palette.dark : palette;
+
+  return {
+    color: theme.text,
+    backgroundColor: theme.background,
+  };
 };
 
 // Positioning tag utility functions
@@ -846,21 +835,22 @@ export const getPositioningTagColors = (
  * Item type color utility
  */
 export const getItemTypeColors = (itemtype: string, isDarkMode: boolean) => {
-  const itemTypeColorMap: Record<string, 'weapon1' | 'weapon2' | 'active' | 'passive'> = {
-    投掷类: 'weapon1',
-    手持类: 'weapon2',
-    物件类: 'active',
-    食物类: 'passive',
-    流程类: 'passive',
-    其它: 'passive',
+  const itemTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
+    投掷类: 'emerald',
+    手持类: 'violet',
+    物件类: 'azure',
+    食物类: 'amber',
+    流程类: 'indigo',
+    其它: 'deepGray',
   };
-  const skillType = itemTypeColorMap[itemtype] || 'passive';
-  const colorScheme =
-    designTokens.colors.skillTypes[skillType] || designTokens.colors.skillTypes.passive;
+
+  const paletteKey = itemTypePaletteMap[itemtype] || 'deepGray';
+  const palette = sharedPositioningTagPalettes[paletteKey];
+  const theme = isDarkMode && palette.dark ? palette.dark : palette;
+
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    color: theme.text,
+    backgroundColor: theme.background,
   };
 };
 
@@ -868,38 +858,19 @@ export const getItemTypeColors = (itemtype: string, isDarkMode: boolean) => {
  * Item source color utility
  */
 export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => {
-  const itemSourceColorMap: Record<
-    string,
-    { color: string; backgroundColor: string; darkColor: string; darkBackgroundColor: string }
-  > = {
-    常规道具: {
-      color: designTokens.colors.primary[600],
-      backgroundColor: designTokens.colors.primary[50],
-      darkColor: designTokens.colors.primary.dark[500],
-      darkBackgroundColor: designTokens.colors.primary.dark[50],
-    },
-    地图道具: {
-      color: designTokens.colors.gray[600],
-      backgroundColor: designTokens.colors.gray[100],
-      darkColor: designTokens.colors.gray.dark[800],
-      darkBackgroundColor: designTokens.colors.gray.dark[100],
-    },
-    技能道具: {
-      color: designTokens.colors.rank.A.text,
-      backgroundColor: designTokens.colors.rank.A.background,
-      darkColor: designTokens.colors.rank.A.dark.text,
-      darkBackgroundColor: designTokens.colors.rank.A.dark.background,
-    },
+  const itemSourcePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
+    常规道具: 'azure',
+    地图道具: 'russet',
+    技能道具: 'violet',
   };
-  const colorSet = itemSourceColorMap[itemsource] || {
-    color: designTokens.colors.gray[600],
-    backgroundColor: designTokens.colors.gray[100],
-    darkColor: designTokens.colors.gray.dark[800],
-    darkBackgroundColor: designTokens.colors.gray.dark[100],
-  };
+
+  const paletteKey = itemSourcePaletteMap[itemsource] || 'deepGray';
+  const palette = sharedPositioningTagPalettes[paletteKey];
+  const theme = isDarkMode && palette.dark ? palette.dark : palette;
+
   return {
-    color: isDarkMode ? colorSet.darkColor : colorSet.color,
-    backgroundColor: isDarkMode ? colorSet.darkBackgroundColor : colorSet.backgroundColor,
+    color: theme.text,
+    backgroundColor: theme.background,
   };
 };
 
@@ -937,21 +908,16 @@ export const getAvatarFilterColors = (
   option: '杰瑞' | '泰菲' | '汤姆' | '其他',
   isDarkMode: boolean
 ): { color: string; backgroundColor: string } => {
-  // 杰瑞: 复用“砸墙”定位标签的配色
-  if (option === '杰瑞') {
-    const c = designTokens.colors.positioningTags.wallBreak;
-    const light = { text: c.text, bg: c.background };
-    const dark = c.dark ? { text: c.dark.text, bg: c.dark.background } : light;
-    const theme = isDarkMode ? dark : light;
-    return { color: theme.text, backgroundColor: theme.bg };
+  // 杰瑞和汤姆复用 faction colors
+  if (option === '杰瑞' || option === '汤姆') {
+    const factionKey = option === '杰瑞' ? 'mouse' : 'cat';
+    const c = designTokens.colors.factions[factionKey];
+    const theme = isDarkMode ? c.dark : c.light;
+    return { color: theme.text, backgroundColor: theme.background };
   }
 
   // 其他选项采用固定配色
   const palette = {
-    汤姆: {
-      light: { bg: '#E0F2FF', text: '#0369A1' },
-      dark: { bg: '#024D72', text: '#09AFFF' },
-    },
     泰菲: {
       light: { bg: '#D8DBF8', text: '#4453AA' },
       dark: { bg: '#4453AA', text: '#D7DAF9' },
@@ -962,14 +928,14 @@ export const getAvatarFilterColors = (
     },
   } as const;
 
-  const scheme = palette[option];
+  const scheme = palette[option as keyof typeof palette];
   const theme = isDarkMode ? scheme.dark : scheme.light;
   return { color: theme.text, backgroundColor: theme.bg };
 };
 
 // Skill type utility functions
 export const getSkillTypeColors = (
-  skillType: 'passive' | 'active' | 'weapon1' | 'weapon2',
+  skillType: SkillType,
   includeBorder: boolean,
   isDarkMode: boolean
 ) => {
@@ -986,10 +952,7 @@ export const getSkillTypeColors = (
   };
 };
 
-export const getSkillTypeContainerColor = (
-  skillType: 'passive' | 'active' | 'weapon1' | 'weapon2',
-  isDarkMode: boolean
-): string => {
+export const getSkillTypeContainerColor = (skillType: SkillType, isDarkMode: boolean): string => {
   const colorScheme =
     designTokens.colors.skillTypes[skillType] || designTokens.colors.skillTypes.passive;
 

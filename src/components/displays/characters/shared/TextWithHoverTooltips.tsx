@@ -2,6 +2,7 @@ import React from 'react';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import { cards, characters } from '@/data';
+import type { SkillType } from '@/data/types';
 import { proxy, useSnapshot } from 'valtio';
 
 import { getCardRankColors } from '@/lib/design-tokens';
@@ -303,8 +304,7 @@ export const renderTextWithTooltips = (
       // Consolidated leveled-skill patterns
       if (currentCharacterId) {
         const owner = characters[currentCharacterId as keyof typeof characters];
-        type TSkill = 'passive' | 'active' | 'weapon1' | 'weapon2';
-        const leveledPatterns: Array<{ regex: RegExp; type: TSkill }> = [
+        const leveledPatterns: Array<{ regex: RegExp; type: SkillType }> = [
           { regex: /^(\d+)级被动$/, type: 'passive' },
           { regex: /^(\d+)级主动$/, type: 'active' },
           { regex: /^(\d+)级(?:武器|一武)$/, type: 'weapon1' },
