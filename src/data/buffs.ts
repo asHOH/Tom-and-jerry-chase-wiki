@@ -346,6 +346,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     type: '特殊',
     global: false,
     target: '角色',
+    aliases: ['保持速度'],
     duration: '不固定',
     description:
       '使角色保持当前[$实际速度$font-bold#](包括横向和/或纵向速度，二者独立判定)，直到下一次[主动改变移动状态](角色有三种移动状态：向左移动，向右移动，静止。角色可以通过操作键改变该状态。当角色处于眩晕等无法移动的状态时，由于无法主动改变移动状态，因此速度保持状态会一直持续下去)。该状态持续期间，角色实际速度不因转向等操作而改变，但会因遇到斜面或从空中坠落等原因改变。该效果可看做一种极为特殊的{眩晕}。',
@@ -357,6 +358,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     type: '特殊',
     global: false,
     target: '角色',
+    aliases: ['重置速度'],
     duration: '不固定',
     description:
       '使角色的[$实际速度$font-bold#](包括横向和/或纵向速度，二者独立判定)重置为0或某个特定值。',
