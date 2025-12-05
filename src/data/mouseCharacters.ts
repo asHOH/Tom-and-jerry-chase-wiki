@@ -7547,24 +7547,41 @@ const mouseCharacterDefinitions = {
       {
         tagName: '救援',
         isMinor: true,
-        description: '主动技能炸毁火箭可救下队友。',
+        description: '主动技能炸毁火箭可救下队友，但救人之后自己难以逃跑。',
         additionalDescription: '',
       },
     ],
     skillAllocations: [
       {
-        id: '常规配卡',
-        pattern: '12210[0012]',
+        id: '加点方案1',
+        pattern: '122110002',
+        weaponType: 'weapon1',
+        description: '常规加点',
+      },
+      {
+        id: '加点方案2',
+        pattern: '122011002',
         weaponType: 'weapon1',
         description:
-          '2级武器技能提供续航，建议优先点出；3级主动、3级武器、1~3级被动技能效果不强，可酌情加点。',
-        additionaldescription: '',
+          '打苏蕊专用，苏蕊跳舞状态击倒鲍姆后可以触发鲍姆被动，并且即使被绑上火箭仍可爆炸。',
       },
     ],
     knowledgeCardGroups: [
       {
-        cards: [[CardGroupType.Or, 'S-无畏', 'S-舍己'], 'S-铁血', 'A-逃窜', 'C-救救我'],
-        description: '常规配卡，泛用性强，兼具自保和救援能力，可根据需要选择无畏或舍己。',
+        cards: ['S-舍己', 'S-铁血', 'B-夹不住我', 'B-孤军奋战', 'C-救救我'],
+        description: '常规卡组。',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'A-逃窜', 'C-救救我'],
+        description: '无畏流派常规卡，新上手鲍姆或对抗米特、图多盖洛等猫咪时可用。',
+      } /*
+      {
+        cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
+        description: '缴械命中敌方后使用羊角锤击打敌方不会使敌方出刀',
+      },*/,
+      {
+        cards: ['S-舍己', 'S-铁血', 'B-幸运', 'C-救救我'],
+        description: '幸运流派卡组。',
       },
     ],
     skills: [
@@ -7573,7 +7590,8 @@ const mouseCharacterDefinitions = {
         type: 'active',
         description:
           '进入危险和安全来回切换的不稳定状态，初始为危险状态，每3秒切换一次。\n危险状态：受到伤害会产生爆炸区域，然后退出不稳定状态。爆炸区域持续2秒，进入该区域的敌方受到2秒{爆炸}，进入该区域的友方被弹开，并{炸毁}位于该区域的{火箭}，该火箭5秒后恢复。\n安全状态：移速提高，受到攻击会减少进入危险状态的间隔。',
-        detailedDescription: '',
+        detailedDescription:
+          '进入危险和安全来回切换的不稳定状态，初始为危险状态，每3秒切换一次。\n危险状态：受到伤害会产生爆炸区域，然后退出不稳定状态。爆炸区域持续2秒，进入该区域的敌方受到2秒{爆炸}，进入该区域的友方被弹开，并{炸毁}位于该区域的{火箭}，该火箭5秒后恢复。\n安全状态：移速提高，受到攻击会减少进入危险状态的间隔。\n\n爆炸产生的爆炸区域范围内的敌方如果使用特技绝地反击解控后再次走入爆炸区域会再次受到控制，爆炸效果还会打断队友的技能释放和购买道具。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -7588,11 +7606,13 @@ const mouseCharacterDefinitions = {
             level: 2,
             description: '不稳定状态持续时间提高。爆炸区域可弹开附近的部分道具。',
             cooldown: 20,
+            detailedDescription: '不稳定状态持续时间提高至30秒。爆炸区域可弹开附近的部分道具。',
           },
           {
             level: 3,
             description: '危险和安全状态的切换间隔缩短，爆炸可对墙缝造成一定伤害。',
             cooldown: 20,
+            detailedDescription: '危险和安全状态的切换间隔缩短至2秒，爆炸可对墙缝造成一定伤害。',
           },
         ],
       },
@@ -7622,6 +7642,7 @@ const mouseCharacterDefinitions = {
             level: 3,
             description: '打前方造成的伤害提高。',
             cooldown: 3,
+            detailedDescription: '打前方造成的伤害提高至42HP。',
           },
         ],
       },
@@ -7637,14 +7658,16 @@ const mouseCharacterDefinitions = {
           {
             level: 2,
             description: '减少爆炸的初始倒计时。',
+            detailedDescription: '爆炸的初始倒计时减为6秒。',
           },
           {
             level: 3,
             description: '每次跳跃会减少更多倒计时。',
+            detailedDescription: '每次跳跃会减少2秒倒计时。',
           },
         ],
         description:
-          '鲍姆进入虚弱时会产生倒计时，倒计时结束时在自身所在位置产生一个爆炸区域，效果取决于当前被动技能等级，与相应等级的主动技能效果相同。虚弱期间每次跳跃均会减少自爆倒计时，成功自爆/被抓起/解除虚弱时结束倒计时。',
+          '鲍姆进入虚弱时会产生倒计时，倒计时结束时在自身所在位置产生一个爆炸区域，[效果取决于当前被动技能等级](即便鲍姆未点出三级主动技能，而是点出三级被动，爆炸也仍会对墙缝造成伤害)，与相应等级的主动技能效果相同。虚弱期间每次跳跃均会减少自爆倒计时，成功自爆/被抓起/解除虚弱时结束倒计时。',
       },
     ],
     specialSkills: [
@@ -7653,12 +7676,77 @@ const mouseCharacterDefinitions = {
         description: '提高生存能力。可配合被动技能进一步提高生存能力。',
       },
       {
-        name: '干扰投掷',
-        description: '配合主动技能，提高干扰能力。',
+        name: '魔术漂浮',
+        description: '两个技能均可打断漂浮释放，提高灵活性。',
       },
     ],
     aliases: ['棍姆'],
-    counteredBy: [],
+    counteredBy: [
+      {
+        id: '图多盖洛',
+        description: '霸体免疫鲍姆爆炸控制。',
+        isMinor: false,
+      },
+      {
+        id: '苏蕊',
+        description: '苏蕊跳舞霸体后几乎完全不受鲍姆爆炸的影响。',
+        isMinor: false,
+      },
+      {
+        id: '汤姆',
+        description: '主动技能无敌使鲍姆爆炸无法造成有效干扰。',
+        isMinor: false,
+      },
+    ],
+    counters: [
+      {
+        id: '如玉',
+        description: '鲍姆爆炸无法触发如玉反击。',
+        isMinor: false,
+      },
+      {
+        id: '剑客汤姆',
+        description: '鲍姆本身具备较强干扰能力，且剑客汤姆没有霸体上火箭困难。',
+        isMinor: true,
+      },
+    ],
+    countersSpecialSkills: [
+      {
+        id: '绝地反击',
+        description: '鲍姆的爆炸一定程度上限制了绝地反击的解控，但如果提前使用则可完全免疫爆炸。',
+        isMinor: true,
+      },
+    ],
+    counterEachOther: [
+      {
+        id: '图茨',
+        description: '鲍姆爆炸会打断喵喵叫，但前提条件是鲍姆需要近身攻击图茨。',
+        isMinor: false,
+      },
+      {
+        id: '兔八哥',
+        description: '鲍姆爆炸无法使兔八哥被动宣战，但一旦被宣战鲍姆又很难逃脱。',
+        isMinor: false,
+      },
+      {
+        id: '托普斯',
+        description: '二者克制关系主要取决于托普斯操作水平和与分身是否保持距离。',
+        isMinor: true,
+      },
+    ],
+    collaborators: [
+      {
+        id: '剑客莉莉',
+        description:
+          '鲍姆救援后自保差不好走，可以通过剑客莉莉风墙掩护其撤退；莉莉救援时鲍姆也可提供干扰效果。',
+        isMinor: false,
+      },
+      {
+        id: '米可',
+        description: '鲍姆救援后可通过米可拍照撤退。',
+        isMinor: true,
+      },
+    ],
   },
 } as const satisfies Readonly<Record<string, CharacterDefinition>>;
 
