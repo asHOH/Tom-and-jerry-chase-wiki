@@ -3,14 +3,17 @@ import { notFound } from 'next/navigation';
 
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import MechanicsSection from '@/components/displays/mechanics/mechanicsSection';
-import { mechanicsSectionsList } from '@/components/displays/mechanics/sections';
+import {
+  mechanicsSectionsList,
+  NAV_ITEM_CONFIGS,
+  type SectionName,
+} from '@/components/displays/mechanics/sections';
 
 const DESCRIPTION = '详细介绍游戏内的局内机制（该界面建设中）';
-const sectionChineseNameList: Record<string, string> = { traitCollection: '特性大全' };
 
-// Generate static params for all special skills
+// Generate static params for all mechanics sections
 export function generateStaticParams() {
-  return Object.keys(mechanicsSectionsList).map((sectionName) => ({
+  return mechanicsSectionsList.map((sectionName) => ({
     sectionName,
   }));
 }
@@ -21,11 +24,14 @@ export async function generateMetadata({
   params: Promise<{ sectionName: string }>;
 }): Promise<Metadata> {
   const sectionName = decodeURIComponent((await params).sectionName);
-  const isEffectiveSection = mechanicsSectionsList.find((name) => name === sectionName);
+  const isEffectiveSection = mechanicsSectionsList.includes(sectionName as SectionName);
   if (!isEffectiveSection) {
     return {};
   }
-  const sectionChineseName = sectionChineseNameList[sectionName] || '局内机制';
+
+  // 从 NAV_ITEM_CONFIGS 中查找对应的中文名称
+  const sectionConfig = NAV_ITEM_CONFIGS.find((config) => config.id === sectionName);
+  const sectionChineseName = sectionConfig?.label || '局内机制';
 
   return generateArticleMetadata({
     title: sectionChineseName,
@@ -35,16 +41,19 @@ export async function generateMetadata({
   });
 }
 
-export default async function SpecialSkillDetailPage({
+export default async function MechanicsDetailPage({
   params,
 }: {
   params: Promise<{ sectionName: string }>;
 }) {
   const sectionName = decodeURIComponent((await params).sectionName);
-  const isEffectiveSection = mechanicsSectionsList.find((name) => name === sectionName);
+  const isEffectiveSection = mechanicsSectionsList.includes(sectionName as SectionName);
   if (!isEffectiveSection) {
     notFound();
   }
 
-  return <MechanicsSection sectionName={sectionName} description={DESCRIPTION} />;
+  // 将 sectionName 转换为 SectionName 类型
+  const typedSectionName = sectionName as SectionName;
+
+  return <MechanicsSection sectionName={typedSectionName} description={DESCRIPTION} />;
 }
