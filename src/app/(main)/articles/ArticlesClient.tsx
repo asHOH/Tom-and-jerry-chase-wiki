@@ -1,17 +1,20 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { useToast } from '@/context/ToastContext';
 
 import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useUser } from '@/hooks/useUser';
 import BaseCard from '@/components/ui/BaseCard';
 import FilterRow from '@/components/ui/FilterRow';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
+import { SkeletonArticleCard } from '@/components/ui/Skeleton';
 import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
@@ -81,6 +84,10 @@ export default function ArticlesClient({ articles: data, description }: Articles
   const { role: userRole } = useUser();
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { info } = useToast();
+  const articlesGridRef = useRef<HTMLDivElement>(null);
 
   // Use centralized filter state management
   const {
@@ -88,6 +95,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
     toggleFilter: toggleCategoryFilter,
     hasFilter: hasCategoryFilter,
     clearFilters: clearCategoryFilters,
+    setFilters: setCategoryFilters,
   } = useFilterState<string>();
 
   const categoriesForFilter = useMemo<Category[]>(() => {
@@ -107,27 +115,61 @@ export default function ArticlesClient({ articles: data, description }: Articles
     [categoriesForFilter]
   );
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortBy, setSortBy] = useState<'created_at' | 'title' | 'view_count'>('created_at');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  // Initialize state from URL params
+  const [currentPage, setCurrentPage] = useState(() => {
+    const page = searchParams.get('page');
+    return page ? Math.max(1, parseInt(page, 10) || 1) : 1;
+  });
+  const [sortBy, setSortBy] = useState<'created_at' | 'title' | 'view_count'>(() => {
+    const sort = searchParams.get('sort');
+    if (sort === 'title' || sort === 'view_count') return sort;
+    return 'created_at';
+  });
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(() => {
+    const order = searchParams.get('order');
+    return order === 'asc' ? 'asc' : 'desc';
+  });
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // const params = new URLSearchParams({
-  //   // Fetch all articles once to enable client-side filtering/pagination
-  //   limit: '9999',
-  // });
+  // Initialize category filters from URL on mount
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    if (categoryParam) {
+      const categoryIds = categoryParam.split(',').filter(Boolean);
+      if (categoryIds.length > 0) {
+        setCategoryFilters(new Set(categoryIds));
+      }
+    }
+    setIsInitialized(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Do not append category to params; filter on client
+  // Sync state to URL
+  const updateURL = useCallback(
+    (params: { page?: number; sort?: string; order?: string; category?: string }) => {
+      const newParams = new URLSearchParams(searchParams.toString());
 
-  // const {
-  //   data,
-  //   error,
-  //   isLoading: loading,
-  //   mutate,
-  // } = useSWR<ArticlesData>(`/api/articles?${params.toString()}`, fetcher);
+      if (params.page !== undefined) {
+        if (params.page === 1) newParams.delete('page');
+        else newParams.set('page', String(params.page));
+      }
+      if (params.sort !== undefined) {
+        if (params.sort === 'created_at') newParams.delete('sort');
+        else newParams.set('sort', params.sort);
+      }
+      if (params.order !== undefined) {
+        if (params.order === 'desc') newParams.delete('order');
+        else newParams.set('order', params.order);
+      }
+      if (params.category !== undefined) {
+        if (!params.category) newParams.delete('category');
+        else newParams.set('category', params.category);
+      }
 
-  const loading = false;
-  const error = null;
-  function mutate() {}
+      const queryString = newParams.toString();
+      router.replace(queryString ? `?${queryString}` : '/articles', { scroll: false });
+    },
+    [router, searchParams]
+  );
 
   const filteredArticles = (() => {
     if (!data?.articles) return [] as Article[];
@@ -168,19 +210,107 @@ export default function ArticlesClient({ articles: data, description }: Articles
   useEffect(() => {
     if (currentPage > clientTotalPages) {
       setCurrentPage(1);
+      updateURL({ page: 1 });
     }
-  }, [clientTotalPages, currentPage]);
+  }, [clientTotalPages, currentPage, updateURL]);
 
-  const handleCategoryToggle = (categoryId: string) => {
-    toggleCategoryFilter(categoryId);
-    setCurrentPage(1); // Reset to first page when filtering
-  };
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      if (newPage >= 1 && newPage <= clientTotalPages) {
+        setCurrentPage(newPage);
+        updateURL({ page: newPage });
+        // Scroll to top of articles grid for better UX
+        articlesGridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    },
+    [clientTotalPages, updateURL]
+  );
 
-  const handleSortChange = (newSortBy: 'created_at' | 'title', newSortOrder: 'asc' | 'desc') => {
-    setSortBy(newSortBy);
-    setSortOrder(newSortOrder);
-    setCurrentPage(1); // Reset to first page when sorting
-  };
+  const handleCategoryToggle = useCallback(
+    (categoryId: string) => {
+      toggleCategoryFilter(categoryId);
+      setCurrentPage(1);
+      // Update URL with new category state
+      const newCategories = new Set(selectedCategories);
+      if (newCategories.has(categoryId)) {
+        newCategories.delete(categoryId);
+      } else {
+        newCategories.add(categoryId);
+      }
+      updateURL({
+        page: 1,
+        category: Array.from(newCategories).join(','),
+      });
+    },
+    [toggleCategoryFilter, selectedCategories, updateURL]
+  );
+
+  const handleClearFilters = useCallback(() => {
+    clearCategoryFilters();
+    setCurrentPage(1);
+    updateURL({ page: 1, category: '' });
+    info('已清除所有筛选条件');
+  }, [clearCategoryFilters, updateURL, info]);
+
+  const handleSortChange = useCallback(
+    (newSortBy: 'created_at' | 'title' | 'view_count', newSortOrder: 'asc' | 'desc') => {
+      setSortBy(newSortBy);
+      setSortOrder(newSortOrder);
+      setCurrentPage(1);
+      updateURL({ page: 1, sort: newSortBy, order: newSortOrder });
+    },
+    [updateURL]
+  );
+
+  // Swipe gesture for mobile pagination - returns ref to attach to swipeable element
+  const swipeContainerRef = useSwipeGesture({
+    onSwipeLeft: () => {
+      if (currentPage < clientTotalPages) {
+        handlePageChange(currentPage + 1);
+      }
+    },
+    onSwipeRight: () => {
+      if (currentPage > 1) {
+        handlePageChange(currentPage - 1);
+      }
+    },
+    disabled: !isMobile || clientTotalPages <= 1,
+    threshold: 80,
+  });
+
+  // Keyboard navigation for pagination
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      ) {
+        return;
+      }
+
+      if (e.key === 'ArrowLeft' && currentPage > 1) {
+        e.preventDefault();
+        handlePageChange(currentPage - 1);
+      } else if (e.key === 'ArrowRight' && currentPage < clientTotalPages) {
+        e.preventDefault();
+        handlePageChange(currentPage + 1);
+      } else if (e.key === 'Escape' && selectedCategories.size > 0) {
+        e.preventDefault();
+        handleClearFilters();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [
+    currentPage,
+    clientTotalPages,
+    handlePageChange,
+    selectedCategories.size,
+    handleClearFilters,
+  ]);
 
   const renderPagination = () => {
     if (!data || clientTotalPages <= 1) return null;
@@ -193,97 +323,120 @@ export default function ArticlesClient({ articles: data, description }: Articles
       pages.push(i);
     }
 
+    const paginationButtonBase =
+      'rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900';
+
     return (
-      <div className='mt-8 flex items-center justify-center gap-2'>
-        <button
-          type='button'
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage <= 1}
-          className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-        >
-          上一页
-        </button>
+      <div className='mt-8 flex flex-col items-center gap-4'>
+        {/* Page indicator */}
+        <div className='text-sm text-gray-600 dark:text-gray-400'>
+          第 {currentPage} 页，共 {clientTotalPages} 页
+          {!isMobile && (
+            <span className='ml-2 text-xs text-gray-400 dark:text-gray-500'>
+              (← → 键翻页{selectedCategories.size > 0 ? '，Esc 清除筛选' : ''})
+            </span>
+          )}
+        </div>
 
-        {startPage > 1 && (
-          <>
-            <button
-              type='button'
-              onClick={() => setCurrentPage(1)}
-              className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-            >
-              1
-            </button>
-            {startPage > 2 && <span className='px-2 text-gray-500'>...</span>}
-          </>
-        )}
-
-        {pages.map((page) => (
+        <div className='flex items-center gap-2'>
           <button
             type='button'
-            key={page}
-            onClick={() => setCurrentPage(page)}
-            className={`rounded-lg px-3 py-2 text-sm transition-colors ${
-              page === currentPage
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-            }`}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage <= 1}
+            aria-label='上一页'
+            className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
           >
-            {page}
+            上一页
           </button>
-        ))}
 
-        {endPage < clientTotalPages && (
-          <>
-            {endPage < clientTotalPages - 1 && <span className='px-2 text-gray-500'>...</span>}
+          {startPage > 1 && (
+            <>
+              <button
+                type='button'
+                onClick={() => handlePageChange(1)}
+                aria-label='第 1 页'
+                className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
+              >
+                1
+              </button>
+              {startPage > 2 && (
+                <span className='px-2 text-gray-500' aria-hidden='true'>
+                  ...
+                </span>
+              )}
+            </>
+          )}
+
+          {pages.map((page) => (
             <button
               type='button'
-              onClick={() => setCurrentPage(clientTotalPages)}
-              className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              key={page}
+              onClick={() => handlePageChange(page)}
+              aria-label={`第 ${page} 页`}
+              aria-current={page === currentPage ? 'page' : undefined}
+              className={`${paginationButtonBase} ${
+                page === currentPage
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              }`}
             >
-              {clientTotalPages}
+              {page}
             </button>
-          </>
-        )}
+          ))}
 
-        <button
-          type='button'
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage >= clientTotalPages}
-          className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-        >
-          下一页
-        </button>
+          {endPage < clientTotalPages && (
+            <>
+              {endPage < clientTotalPages - 1 && (
+                <span className='px-2 text-gray-500' aria-hidden='true'>
+                  ...
+                </span>
+              )}
+              <button
+                type='button'
+                onClick={() => handlePageChange(clientTotalPages)}
+                aria-label={`第 ${clientTotalPages} 页`}
+                className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
+              >
+                {clientTotalPages}
+              </button>
+            </>
+          )}
+
+          <button
+            type='button'
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage >= clientTotalPages}
+            aria-label='下一页'
+            className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
+          >
+            下一页
+          </button>
+        </div>
+
+        {/* Mobile swipe hint */}
+        {isMobile && clientTotalPages > 1 && (
+          <p className='text-xs text-gray-400 dark:text-gray-500'>👆 左右滑动翻页</p>
+        )}
       </div>
     );
   };
 
-  if (loading && !data) {
+  // Show skeleton while initializing from URL params
+  if (!isInitialized) {
     return (
-      <div className='container mx-auto px-4 py-8'>
-        <div className='flex min-h-[400px] items-center justify-center'>
-          <LoadingSpinner size='lg' />
+      <div className='space-y-8 dark:text-slate-200'>
+        <header className='mb-8 space-y-4 px-4 text-center'>
+          <PageTitle>文章列表</PageTitle>
+          {description && <PageDescription>{description}</PageDescription>}
+        </header>
+        <div
+          className='mt-8 grid gap-6 px-4'
+          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}
+        >
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonArticleCard key={i} />
+          ))}
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className='container mx-auto px-4 py-8'>
-        <BaseCard className='py-12 text-center'>
-          <div className='mb-4 text-6xl'>🚫</div>
-          <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
-            加载文章列表失败
-          </h2>
-          <p className='mb-6 text-gray-600 dark:text-gray-400'>请稍后重试或联系管理员</p>
-          <button
-            type='button'
-            onClick={() => mutate()}
-            className='inline-flex items-center rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
-          >
-            重试
-          </button>
-        </BaseCard>
       </div>
     );
   }
@@ -326,11 +479,8 @@ export default function ArticlesClient({ articles: data, description }: Articles
               <div className={isMobile ? 'mt-2 flex justify-center' : 'mt-4 flex justify-center'}>
                 <button
                   type='button'
-                  onClick={() => {
-                    clearCategoryFilters();
-                    setCurrentPage(1);
-                  }}
-                  className='filter-button cursor-pointer rounded-md border-none bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-all duration-200 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30'
+                  onClick={handleClearFilters}
+                  className='filter-button cursor-pointer rounded-md border-none bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-all duration-200 hover:bg-red-200 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 dark:focus:ring-offset-gray-900'
                 >
                   清除筛选
                 </button>
@@ -347,8 +497,8 @@ export default function ArticlesClient({ articles: data, description }: Articles
             'created_at-asc',
             'title-asc',
             'title-desc',
-            'view_count-asc',
             'view_count-desc',
+            'view_count-asc',
           ]}
           isActive={(opt) => `${sortBy}-${sortOrder}` === opt}
           onToggle={(opt) => {
@@ -432,12 +582,14 @@ export default function ArticlesClient({ articles: data, description }: Articles
         </div>
       </header>
 
+      {/* Screen reader announcement for filter results */}
+      <div aria-live='polite' aria-atomic='true' className='sr-only'>
+        {filteredArticles.length} 篇文章
+        {selectedCategories.size > 0 && `，已筛选 ${selectedCategories.size} 个分类`}
+      </div>
+
       {/* Articles List */}
-      {loading ? (
-        <div className='flex items-center justify-center py-12'>
-          <LoadingSpinner size='lg' />
-        </div>
-      ) : filteredArticles.length === 0 ? (
+      {filteredArticles.length === 0 ? (
         <div className='px-4 py-12 text-center'>
           <div className='mb-4 text-6xl'>📄</div>
           <h3 className='mb-2 text-xl font-semibold text-gray-800 dark:text-gray-200'>
@@ -452,11 +604,8 @@ export default function ArticlesClient({ articles: data, description }: Articles
             {selectedCategories.size > 0 && (
               <button
                 type='button'
-                onClick={() => {
-                  clearCategoryFilters();
-                  setCurrentPage(1);
-                }}
-                className='rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-all duration-200 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                onClick={handleClearFilters}
+                className='rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-all duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900'
               >
                 清除筛选
               </button>
@@ -473,6 +622,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
         </div>
       ) : (
         <div
+          ref={isMobile ? (swipeContainerRef as React.RefObject<HTMLDivElement>) : articlesGridRef}
           className={`auto-fit-grid grid-container grid ${!isMobile && 'mt-8 gap-6 px-4'}`}
           style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}
         >
@@ -482,7 +632,6 @@ export default function ArticlesClient({ articles: data, description }: Articles
               <BaseCard
                 key={article.id}
                 variant='character'
-                role='button'
                 aria-label={`查看文章 ${article.title}`}
                 className='character-card shover:shadow-lg transform transition-transform! hover:-translate-y-1'
                 href={`/articles/${article.id}`}

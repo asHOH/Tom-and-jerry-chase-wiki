@@ -108,6 +108,37 @@ export function SkeletonKnowledgeCard({ animate = true }: { animate?: boolean })
 }
 
 /**
+ * Skeleton for article card
+ */
+export function SkeletonArticleCard({ animate = true }: { animate?: boolean }) {
+  return (
+    <div className='space-y-3 rounded-lg border border-gray-200 bg-white px-4 pt-2 pb-5 dark:border-gray-700 dark:bg-gray-800'>
+      {/* Article title */}
+      <Skeleton className='h-7 w-3/4' animate={animate} />
+
+      {/* Author and category */}
+      <div className='flex items-center gap-3'>
+        <Skeleton className='h-4 w-20' animate={animate} />
+        <Skeleton className='h-6 w-16 rounded' animate={animate} />
+      </div>
+
+      {/* Content preview */}
+      <SkeletonText lines={3} animate={animate} />
+
+      {/* Metadata and actions */}
+      <div className='flex items-center justify-between pt-2'>
+        <div className='space-y-1'>
+          <Skeleton className='h-3 w-24' animate={animate} />
+          <Skeleton className='h-3 w-24' animate={animate} />
+          <Skeleton className='h-3 w-16' animate={animate} />
+        </div>
+        <Skeleton className='h-8 w-8 rounded-lg' animate={animate} />
+      </div>
+    </div>
+  );
+}
+
+/**
  * Skeleton for character detail page
  */
 export function SkeletonCharacterDetail({ animate = true }: { animate?: boolean }) {

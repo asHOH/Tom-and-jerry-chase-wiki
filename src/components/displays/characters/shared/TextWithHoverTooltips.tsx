@@ -50,9 +50,11 @@ function preprocessText(text: string, currentCharacterName?: string | undefined)
   let result = text;
 
   const currentCharacter = currentCharacterName ? characters[currentCharacterName] : undefined;
-  const currentCharacterNames = [currentCharacterName, currentCharacter?.id].filter(
-    (name): name is string => typeof name === 'string' && name.length > 0
-  );
+  const currentCharacterNames = [
+    currentCharacterName,
+    currentCharacter?.id,
+    ...(currentCharacter?.aliases ?? []),
+  ].filter((name): name is string => typeof name === 'string' && name.length > 0);
 
   // Track positions that have been wrapped to avoid overlaps
   const processedRanges: Array<{ start: number; end: number }> = [];
