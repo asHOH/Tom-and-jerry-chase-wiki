@@ -108,7 +108,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
   );
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortBy, setSortBy] = useState<'created_at' | 'title'>('created_at');
+  const [sortBy, setSortBy] = useState<'created_at' | 'title' | 'view_count'>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   // const params = new URLSearchParams({
@@ -148,6 +148,12 @@ export default function ArticlesClient({ articles: data, description }: Articles
         const at = a.title || '';
         const bt = b.title || '';
         return sortOrder === 'asc' ? at.localeCompare(bt, 'zh-CN') : bt.localeCompare(at, 'zh-CN');
+      });
+    } else if (sortBy === 'view_count') {
+      arr.sort((a, b) => {
+        const at = a.view_count || 0;
+        const bt = b.view_count || 0;
+        return sortOrder === 'asc' ? at - bt : bt - at;
       });
     }
     return arr;
@@ -336,7 +342,14 @@ export default function ArticlesClient({ articles: data, description }: Articles
         {/* Sort Controls */}
         <FilterRow
           label='排序方式:'
-          options={['created_at-desc', 'created_at-asc', 'title-asc', 'title-desc']}
+          options={[
+            'created_at-desc',
+            'created_at-asc',
+            'title-asc',
+            'title-desc',
+            'view_count-asc',
+            'view_count-desc',
+          ]}
           isActive={(opt) => `${sortBy}-${sortOrder}` === opt}
           onToggle={(opt) => {
             const [newSortBy, newSortOrder] = opt.split('-') as [
@@ -354,7 +367,11 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 ? '最早发布'
                 : opt === 'title-asc'
                   ? '标题 A-Z'
-                  : '标题 Z-A'
+                  : opt === 'title-desc'
+                    ? '标题 Z-A'
+                    : opt === 'view_count-asc'
+                      ? '浏览量最少'
+                      : '浏览量最多'
           }
           getButtonClassName={(opt, active) => (
             void opt,

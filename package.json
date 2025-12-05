@@ -35,9 +35,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:staged": "eslint --fix --max-warnings=0",
-    "prettier:check": "prettier --check .",
-    "prettier:fix": "prettier --write .",
-    "prettier:staged": "prettier --write --ignore-unknown",
+    "prettier:check": "prettier --check . --cache",
+    "prettier:fix": "prettier --write . --cache",
+    "prettier:staged": "prettier --write --ignore-unknown --cache",
     "format": "npm run prettier:fix && npm run lint:fix",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
@@ -160,14 +160,14 @@
   },
   "lint-staged": {
     "{*.{js,jsx,ts,tsx,mjs,cjs},!(templates|.next|out|coverage)/**/*.{js,jsx,ts,tsx,mjs,cjs}}": [
-      "prettier --write --ignore-unknown",
+      "prettier --write --ignore-unknown --cache",
       "eslint --fix --max-warnings=0 --cache --no-warn-ignored"
     ],
     "{*.{json,css,md,mdx},!(templates|.next|out|coverage)/**/*.{json,css,md,mdx}}": [
-      "prettier --write --ignore-unknown"
+      "prettier --write --ignore-unknown --cache"
     ],
     "public/**/*.html": [
-      "prettier --write --ignore-unknown"
+      "prettier --write --ignore-unknown --cache"
     ]
   },
   "depcheck": {
