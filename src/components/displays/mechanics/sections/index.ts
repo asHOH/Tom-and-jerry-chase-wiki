@@ -1,4 +1,4 @@
-import Attributes from './Attributes';
+import Object from './Object';
 import TraitCollection from './TraitCollection';
 
 //与navigation.ts的格式相同，日后有需要可以合并
@@ -12,7 +12,7 @@ export type NavItem = {
 
 // 定义所有可用的模块组件
 export const mechanicsSections = {
-  attributes: Attributes,
+  object: Object,
   traitCollection: TraitCollection,
   // 在此处添加新的模块
   // newSection: NewSectionComponent,
@@ -28,10 +28,10 @@ interface NavItemConfig extends Omit<NavItem, 'id' | 'href'> {
 
 export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
   {
-    id: 'attributes',
-    label: '属性系统',
-    iconSrc: '/images/path/to/attributes-icon.png', // 请替换为实际路径
-    iconAlt: '属性系统图标',
+    id: 'object',
+    label: '物体',
+    iconSrc: '/images/mouseEntities/方块.png',
+    iconAlt: '物体图标',
   },
   {
     id: 'traitCollection',
