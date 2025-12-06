@@ -23,19 +23,13 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
 
   const SECTIONS = [
     {
-      items: ['ranks', 'special-skill-advices'],
-    },
-    {
-      items: ['traitCollection'],
+      title: '查询工具',
+      items: ['ranks', 'special-skill-advices', 'traitCollection'],
     },
     {
       title: '编辑工具',
       condition: isEditMode,
-      items: ['item-maker', 'entity-maker'],
-    },
-    {
-      condition: isEditMode,
-      items: ['trait-maker'],
+      items: ['item-maker', 'entity-maker', 'trait-maker'],
     },
   ];
 

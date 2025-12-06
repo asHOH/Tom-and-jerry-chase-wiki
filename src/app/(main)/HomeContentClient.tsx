@@ -52,13 +52,15 @@ export default function HomeContentClient({ description }: Props) {
       items: [{ id: 'mouse' }, { id: 'cat' }],
     },
     {
-      title: '更多内容',
+      title: '备战',
       items: [{ id: 'cards' }, { id: 'special-skills' }],
     },
     {
+      title: '物品',
       items: [{ id: 'items' }, { id: 'entities' }],
     },
     {
+      title: '资料',
       items: [
         { id: 'buffs' },
         {
