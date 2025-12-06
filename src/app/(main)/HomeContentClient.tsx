@@ -41,54 +41,64 @@ export default function HomeContentClient({ description }: Props) {
     toggleEditMode();
   };
 
-  const characterButtons = NAV_ITEMS.filter((i) => i.id === 'cat' || i.id === 'mouse').map((i) => ({
-    imageSrc: i.iconSrc,
-    imageAlt: i.iconAlt,
-    title: i.label,
-    description: i.id === 'cat' ? '猫阵营角色列表' : '鼠阵营角色列表',
-    href: i.href,
-    ariaLabel: i.id === 'cat' ? '猫阵营角色列表' : '鼠阵营角色列表',
-  }));
+  type SectionItem = {
+    id: string;
+    description: string;
+    condition?: boolean;
+  };
 
-  const prepareButtons = NAV_ITEMS.filter((i) => i.id === 'cards' || i.id === 'special-skills').map(
-    (i) => ({
-      imageSrc: i.iconSrc,
-      imageAlt: i.iconAlt,
-      title: i.label,
-      description: i.id === 'cards' ? '知识卡列表' : '特技列表',
-      href: i.href,
-      ariaLabel: i.id === 'cards' ? '知识卡列表' : '特技列表',
-    })
-  );
+  const SECTIONS: { title?: string; items: SectionItem[] }[] = [
+    {
+      title: '角色',
+      items: [
+        { id: 'mouse', description: '鼠阵营角色列表' },
+        { id: 'cat', description: '猫阵营角色列表' },
+      ],
+    },
+    {
+      title: '更多内容',
+      items: [
+        { id: 'cards', description: '知识卡列表' },
+        { id: 'special-skills', description: '特技列表' },
+      ],
+    },
+    {
+      items: [
+        { id: 'items', description: '道具列表' },
+        { id: 'entities', description: '衍生物列表' },
+      ],
+    },
+    {
+      items: [
+        { id: 'buffs', description: '状态效果列表' },
+        {
+          id: 'articles',
+          description: '社区文章列表',
+          condition: !process.env.NEXT_PUBLIC_DISABLE_ARTICLES,
+        },
+        { id: 'mechanics', description: '局内机制列表' },
+        { id: 'tools', description: '便捷工具栏' },
+      ],
+    },
+  ];
 
-  const itemButtons = NAV_ITEMS.filter((i) => i.id === 'items' || i.id === 'entities').map((i) => ({
-    imageSrc: i.iconSrc,
-    imageAlt: i.iconAlt,
-    title: i.label,
-    description: i.id === 'items' ? '道具列表' : '衍生物列表',
-    href: i.href,
-    ariaLabel: i.id === 'items' ? '道具列表' : '衍生物列表',
-  }));
-
-  const cardButtons = NAV_ITEMS.filter(
-    (i) => (!process.env.NEXT_PUBLIC_DISABLE_ARTICLES && i.id === 'articles') || i.id === 'buffs'
-  ).map((i) => ({
-    imageSrc: i.iconSrc,
-    imageAlt: i.iconAlt,
-    title: i.label,
-    description: i.id === 'articles' ? '社区文章列表' : '状态效果列表',
-    href: i.href,
-    ariaLabel: i.id === 'articles' ? '社区文章列表' : '状态效果列表',
-  }));
-
-  const Buttons5 = NAV_ITEMS.filter((i) => i.id === 'mechanics' || i.id === 'tools').map((i) => ({
-    imageSrc: i.iconSrc,
-    imageAlt: i.iconAlt,
-    title: i.label,
-    description: i.id === 'mechanics' ? '局内机制列表' : '便捷工具栏',
-    href: i.href,
-    ariaLabel: i.id === 'mechanics' ? '局内机制列表' : '便捷工具栏',
-  }));
+  const getSectionButtons = (items: SectionItem[]) => {
+    return items
+      .filter((item) => item.condition !== false)
+      .map((item) => {
+        const navItem = NAV_ITEMS.find((n) => n.id === item.id);
+        if (!navItem) return null;
+        return {
+          imageSrc: navItem.iconSrc,
+          imageAlt: navItem.iconAlt,
+          title: navItem.label,
+          description: item.description,
+          href: navItem.href,
+          ariaLabel: item.description,
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+  };
 
   return (
     <div className='space-y-8'>
@@ -97,11 +107,12 @@ export default function HomeContentClient({ description }: Props) {
         <PageDescription>{description}</PageDescription>
       </header>
 
-      <HomePageSection title='角色' buttons={characterButtons} />
-      <HomePageSection title='更多内容' buttons={prepareButtons} />
-      <HomePageSection buttons={itemButtons} />
-      <HomePageSection buttons={cardButtons} />
-      <HomePageSection buttons={Buttons5} />
+      {SECTIONS.map((section, index) => {
+        const buttons = getSectionButtons(section.items);
+        if (buttons.length === 0) return null;
+        const props = section.title ? { title: section.title } : {};
+        return <HomePageSection key={index} {...props} buttons={buttons} />;
+      })}
 
       {/* Division line before 网站说明 */}
       <div className='mt-24 px-2 sm:px-4'>

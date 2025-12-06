@@ -10,7 +10,7 @@ export function FactionButtonGroup({ children, className = '' }: FactionButtonGr
   return (
     <div
       className={clsx(
-        'mx-auto flex w-full max-w-[700px] flex-row justify-center gap-3 md:gap-4',
+        'mx-auto flex w-full max-w-[700px] flex-row flex-wrap justify-center gap-3 md:gap-4',
         className
       )}
     >
