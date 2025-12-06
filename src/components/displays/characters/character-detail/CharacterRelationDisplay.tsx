@@ -323,9 +323,9 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <Image
           src={item.imageSrc}
           alt={item.id}
-          width={40}
-          height={40}
-          className='h-10 w-10 rounded-full object-cover'
+          width={60}
+          height={60}
+          className='h-10 w-10 object-contain'
         />
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
