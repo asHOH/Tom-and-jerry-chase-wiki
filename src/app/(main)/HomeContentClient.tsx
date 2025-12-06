@@ -43,41 +43,30 @@ export default function HomeContentClient({ description }: Props) {
 
   type SectionItem = {
     id: string;
-    description: string;
     condition?: boolean;
   };
 
   const SECTIONS: { title?: string; items: SectionItem[] }[] = [
     {
       title: '角色',
-      items: [
-        { id: 'mouse', description: '鼠阵营角色列表' },
-        { id: 'cat', description: '猫阵营角色列表' },
-      ],
+      items: [{ id: 'mouse' }, { id: 'cat' }],
     },
     {
       title: '更多内容',
-      items: [
-        { id: 'cards', description: '知识卡列表' },
-        { id: 'special-skills', description: '特技列表' },
-      ],
+      items: [{ id: 'cards' }, { id: 'special-skills' }],
+    },
+    {
+      items: [{ id: 'items' }, { id: 'entities' }],
     },
     {
       items: [
-        { id: 'items', description: '道具列表' },
-        { id: 'entities', description: '衍生物列表' },
-      ],
-    },
-    {
-      items: [
-        { id: 'buffs', description: '状态效果列表' },
+        { id: 'buffs' },
         {
           id: 'articles',
-          description: '社区文章列表',
           condition: !process.env.NEXT_PUBLIC_DISABLE_ARTICLES,
         },
-        { id: 'mechanics', description: '局内机制列表' },
-        { id: 'tools', description: '便捷工具栏' },
+        { id: 'mechanics' },
+        { id: 'tools' },
       ],
     },
   ];
@@ -92,9 +81,9 @@ export default function HomeContentClient({ description }: Props) {
           imageSrc: navItem.iconSrc,
           imageAlt: navItem.iconAlt,
           title: navItem.label,
-          description: item.description,
+          description: navItem.description,
           href: navItem.href,
-          ariaLabel: item.description,
+          ariaLabel: navItem.description,
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);

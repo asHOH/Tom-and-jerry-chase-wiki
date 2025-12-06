@@ -21,48 +21,40 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
   const changeLogsRef = useRef<ChangeLogsRef>(null);
 
-  const Buttons = TOOL_NAV_ITEMS.filter(
-    (i) => i.id === 'ranks' || i.id === 'special-skill-advices'
-  ).map((i) => ({
-    imageSrc: i.iconSrc,
-    imageAlt: i.iconAlt,
-    title: i.label,
-    description: i.id === 'ranks' ? '排列并查看角色属性值' : '便捷查看各特技推荐信息',
-    href: i.href,
-    ariaLabel: i.id === 'ranks' ? '排列并查看角色属性值' : '便捷查看各特技推荐信息',
-  }));
-  const Buttons2 = TOOL_NAV_ITEMS.filter((i) => i.id === 'traitCollection').map((i) => ({
-    imageSrc: i.iconSrc,
-    imageAlt: i.iconAlt,
-    title: i.label,
-    description: i.id === 'traitCollection' ? '便捷查看已收录的全部特性' : '',
-    href: i.href,
-    ariaLabel: i.id === 'traitCollection' ? '便捷查看已收录的全部特性' : '',
-  }));
-  const EditButtons = TOOL_NAV_ITEMS.filter(
-    (i) => i.id === 'item-maker' || i.id === 'entity-maker'
-  ).map((i) => ({
-    imageSrc: i.iconSrc,
-    imageAlt: i.iconAlt,
-    title: i.label,
-    description:
-      i.id === 'item-maker'
-        ? '编辑道具信息，导出代码片段提交给开发人员'
-        : '编辑衍生物信息，导出代码片段提交给开发人员',
-    href: i.href,
-    ariaLabel:
-      i.id === 'item-maker'
-        ? '编辑道具信息，导出代码片段提交给开发人员'
-        : '编辑衍生物信息，导出代码片段提交给开发人员',
-  }));
-  const EditButtons2 = TOOL_NAV_ITEMS.filter((i) => i.id === 'trait-maker').map((i) => ({
-    imageSrc: i.iconSrc,
-    imageAlt: i.iconAlt,
-    title: i.label,
-    description: i.id === 'trait-maker' ? '编辑特性信息，导出代码片段提交给开发人员' : '',
-    href: i.href,
-    ariaLabel: i.id === 'trait-maker' ? '编辑特性信息，导出代码片段提交给开发人员' : '',
-  }));
+  const SECTIONS = [
+    {
+      items: ['ranks', 'special-skill-advices'],
+    },
+    {
+      items: ['traitCollection'],
+    },
+    {
+      title: '编辑工具',
+      condition: isEditMode,
+      items: ['item-maker', 'entity-maker'],
+    },
+    {
+      condition: isEditMode,
+      items: ['trait-maker'],
+    },
+  ];
+
+  const getSectionButtons = (items: string[]) => {
+    return items
+      .map((id) => {
+        const navItem = TOOL_NAV_ITEMS.find((n) => n.id === id);
+        if (!navItem) return null;
+        return {
+          imageSrc: navItem.iconSrc,
+          imageAlt: navItem.iconAlt,
+          title: navItem.label,
+          description: navItem.description,
+          href: navItem.href,
+          ariaLabel: navItem.description,
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+  };
 
   return (
     <div
@@ -79,10 +71,13 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
         <PageDescription>{description}</PageDescription>
       </header>
 
-      <HomePageSection buttons={Buttons} />
-      <HomePageSection buttons={Buttons2} />
-      {isEditMode ? <HomePageSection title={'编辑工具'} buttons={EditButtons} /> : null}
-      {isEditMode ? <HomePageSection buttons={EditButtons2} /> : null}
+      {SECTIONS.map((section, index) => {
+        if (section.condition === false) return null;
+        const buttons = getSectionButtons(section.items);
+        if (buttons.length === 0) return null;
+        const props = section.title ? { title: section.title } : {};
+        return <HomePageSection key={index} {...props} buttons={buttons} />;
+      })}
 
       <div className='mt-24 px-2 sm:px-4'>
         <div className='mx-auto max-w-4xl'>
