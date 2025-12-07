@@ -138,6 +138,39 @@ export type Database = {
           },
         ];
       };
+      feedback: {
+        Row: {
+          id: string;
+          type: string;
+          content: string;
+          contact: string | null;
+          user_agent: string | null;
+          ip_address: string | null;
+          status: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          type: string;
+          content: string;
+          contact?: string | null;
+          user_agent?: string | null;
+          ip_address?: string | null;
+          status?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          type?: string;
+          content?: string;
+          contact?: string | null;
+          user_agent?: string | null;
+          ip_address?: string | null;
+          status?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       users: {
         Row: {
           id: string;

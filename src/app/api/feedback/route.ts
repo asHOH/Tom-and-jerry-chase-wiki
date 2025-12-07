@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { supabaseAdmin } from '@/lib/supabase/admin';
+
 interface FeedbackData {
   type: string;
   content: string;
@@ -32,6 +34,29 @@ export async function POST(request: NextRequest) {
       userAgent: request.headers.get('user-agent') || 'Unknown',
       ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'Unknown',
     };
+
+    // Save to Supabase Database
+    if (supabaseAdmin) {
+      try {
+        const { error: dbError } = await supabaseAdmin.from('feedback').insert({
+          type: feedbackData.type,
+          content: feedbackData.content,
+          contact: feedbackData.contact,
+          user_agent: feedbackData.userAgent,
+          ip_address: feedbackData.ip,
+        });
+
+        if (dbError) {
+          console.error('❌ Failed to save feedback to database:', dbError);
+        } else {
+          console.log('✅ Feedback saved to database');
+        }
+      } catch (dbErr) {
+        console.error('❌ Unexpected error saving to database:', dbErr);
+      }
+    } else {
+      console.warn('⚠️ supabaseAdmin is not available, skipping database save.');
+    }
 
     // Send feedback via email (test in development too)
     try {
