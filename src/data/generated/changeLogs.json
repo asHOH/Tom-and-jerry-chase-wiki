@@ -1,5 +1,341 @@
 [
   {
+    "date": "2025-11-20",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "字体",
+        "message": "使用本地字体以避免在服务器启动时下载",
+        "breaking": false,
+        "hashes": ["95fc468e"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-19",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "富文本编辑器",
+        "message": "允许粘贴图片",
+        "breaking": false,
+        "hashes": ["feceb781"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "移除旧的 createMinorTagGradient 函数",
+        "breaking": false,
+        "hashes": ["e968ac41"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "去重悬停样式和主题结构",
+        "breaking": false,
+        "hashes": ["f871952d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "集中共享定位标签颜色；将双方的“后期”标签颜色调整为灰色",
+        "breaking": false,
+        "hashes": ["0cddaaab"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "样式",
+        "message": "修复当标题带有粗体/斜体等装饰时颜色跳过的问题",
+        "breaking": false,
+        "hashes": ["f9fa9883"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "样式",
+        "message": "更新暗色模式下的标题颜色，避免过于刺眼",
+        "breaking": false,
+        "hashes": ["c4803e12"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "样式",
+        "message": "添加 H4 支持；为 H1 添加颜色",
+        "breaking": false,
+        "hashes": ["86564ace"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "富文本编辑器",
+        "message": "提供 H2/H3/H4 而不是 H1/H2/H3",
+        "breaking": false,
+        "hashes": ["ae649bf5"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章列表",
+        "message": "生成目录时跳过单独的 H1 标题",
+        "breaking": false,
+        "hashes": ["e6520a96"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "样式",
+        "message": "移除对 H1 的支持",
+        "breaking": false,
+        "hashes": ["7fa285ac"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章列表",
+        "message": "提供标题颜色",
+        "breaking": false,
+        "hashes": ["efeee203"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章列表",
+        "message": "对已编号的标题正确处理自动编号",
+        "breaking": false,
+        "hashes": ["9c1958ca"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "移除日期的特定月份格式",
+        "breaking": false,
+        "hashes": ["c939d12f"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "数据",
+        "message": "简化日期的显示",
+        "breaking": false,
+        "hashes": ["91ce1d04"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章列表",
+        "message": "为目录和标题添加自动编号功能",
+        "breaking": false,
+        "hashes": ["2c2d52f5"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "图片",
+        "message": "更新 favicon 和图标图片以获得更好的宽高比",
+        "breaking": false,
+        "hashes": ["9fcc4a7a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "富文本编辑器",
+        "message": "为文本区域添加滚动条，以便使用工具栏",
+        "breaking": false,
+        "hashes": ["d6a70bc1"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-18",
+    "changes": [
+      {
+        "type": "test",
+        "scope": "tooltip",
+        "message": "重写tooltip的测试",
+        "breaking": false,
+        "hashes": ["b2f1bcd5"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "特性列表",
+        "message": "移除未使用的属性并为页面输入添加标签",
+        "breaking": false,
+        "hashes": ["98df65bd"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章列表",
+        "message": "将单页文章数从 20 减少到 18",
+        "breaking": false,
+        "hashes": ["ed67a243"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-17",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "更新如玉的克制关系",
+        "breaking": false,
+        "hashes": ["e4028291"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "特性列表",
+        "message": "临时更改入口",
+        "breaking": false,
+        "hashes": ["f4512529"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "工具提示",
+        "message": "生成跳转链接时不再匹配别名",
+        "breaking": false,
+        "hashes": ["2f8ccb1b"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "注释",
+        "message": "使一些基础属性的注释更清晰",
+        "breaking": false,
+        "hashes": ["e527f903"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "注释",
+        "message": "移除未使用的属性注释回退映射",
+        "breaking": false,
+        "hashes": ["4ba0ae83"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "措辞",
+        "message": "将 冷却/缩减/增加 替换为 CD/缩短/延长",
+        "breaking": false,
+        "hashes": ["b252ff5e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "措辞",
+        "message": "将 机械鼠 替换为 机器鼠",
+        "breaking": false,
+        "hashes": ["07123b09"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "构建",
+        "message": "添加运行时补丁目标白名单，以避免在仅运行时更改时重新构建",
+        "breaking": false,
+        "hashes": ["8c78f34a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "构建",
+        "message": "将 js-yaml 覆盖为已修补的 4.1.1",
+        "breaking": false,
+        "hashes": ["20fd52a3"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "构建",
+        "message": "指定目标分支",
+        "breaking": false,
+        "hashes": ["a2fc4d51"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "构建",
+        "message": "添加 start_server.sh 脚本用于 Nodejs 环境中的服务器设置",
+        "breaking": false,
+        "hashes": ["e7461dca"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "构建",
+        "message": "添加脚本以设置边缘和 nodejs 的 API 运行时",
+        "breaking": false,
+        "hashes": ["aab7970b"],
+        "author": "asHOH"
+      },
+      {
+        "type": "other",
+        "message": "Revert \"fix(runtime): replace hardcoded runtime with dynamic apiRouteRuntime\"",
+        "breaking": false,
+        "hashes": ["408542c5"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-16",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "构建",
+        "message": "用动态 apiRouteRuntime 替换硬编码的运行时",
+        "breaking": false,
+        "hashes": ["5b92b0b8"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "网站安全",
+        "message": "根据平台构建 CSP",
+        "breaking": false,
+        "hashes": ["3b6b3a08"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "暗色模式",
+        "message": "增强 cookie 处理以使用动态域名和主机名检索",
+        "breaking": false,
+        "hashes": ["e828c55f"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "版本控制",
+        "message": "调整路由以优先考虑与提供商无关的提交/环境变量；规范化多个托管上下文；当构建元数据丢失时发出警告",
+        "breaking": false,
+        "hashes": ["ffcaabcf"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "analytics",
+        "message": "添加 isVercelDeployment 检查以用于生产分析加载；添加 isVercelDeployment 辅助函数",
+        "breaking": false,
+        "hashes": ["a13d8893"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
     "date": "2025-11-15",
     "changes": [
       {
