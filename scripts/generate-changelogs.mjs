@@ -235,7 +235,7 @@ function parseCommits(rawOutput) {
 /**
  * Get git commits since a specific hash or from the past 7 days
  */
-function getGitCommits(lastHash) {
+function getGitCommits(lastHash, untilDate) {
   try {
     let range = '--since="7 days ago"';
 
@@ -255,7 +255,16 @@ function getGitCommits(lastHash) {
       console.log('No previous changelog found. Fetching commits from the past 7 days...');
     }
 
-    const output = execSync(`git log ${range} --pretty=format:"%h|%cd|%s|%an" --date=iso`, {
+    let cmd = `git log ${range} --pretty=format:"%h|%cd|%s|%an" --date=iso`;
+
+    if (untilDate) {
+      // Format YYYYMMDD to YYYY-MM-DD if needed
+      const formattedDate = untilDate.replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3');
+      cmd += ` --until="${formattedDate}"`;
+      console.log(`Filtering commits until ${formattedDate}`);
+    }
+
+    const output = execSync(cmd, {
       encoding: 'utf-8',
       cwd: process.cwd(),
     });
@@ -282,6 +291,58 @@ function formatError(error) {
   } catch {
     return String(error);
   }
+}
+
+/**
+ * Generate changelogs without AI (fallback)
+ */
+function generateFallbackChangelogs(commits) {
+  console.log('Generating changelogs without AI (fallback mode)...');
+  const changesByDate = {};
+
+  for (const commit of commits) {
+    const date = commit.date.split(' ')[0]; // YYYY-MM-DD
+
+    // Parse conventional commit
+    // feat(scope): message
+    const match = commit.message.match(/^(\w+)(?:\(([^)]+)\))?(!?):\s*(.+)$/);
+
+    let type = 'other';
+    let scope = undefined;
+    let message = commit.message;
+    let breaking = false;
+
+    if (match) {
+      type = match[1];
+      scope = match[2];
+      breaking = match[3] === '!' || commit.message.includes('BREAKING CHANGE');
+      message = match[4];
+    }
+
+    if (!changesByDate[date]) {
+      changesByDate[date] = [];
+    }
+
+    changesByDate[date].push({
+      type,
+      scope,
+      message,
+      breaking,
+      hashes: [commit.hash],
+      author: commit.author,
+    });
+  }
+
+  // Convert to array
+  const result = Object.keys(changesByDate).map((date) => ({
+    date,
+    changes: changesByDate[date],
+  }));
+
+  // Sort days descending
+  result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  return result;
 }
 
 /**
@@ -423,6 +484,11 @@ async function generateChangelogs(commits) {
  * Main function
  */
 async function main() {
+  const args = process.argv.slice(2);
+  const dateArg = args.find((arg) => arg.startsWith('--date='));
+  const untilDate = dateArg ? dateArg.split('=')[1] : null;
+  const noAi = args.includes('--no-ai');
+
   const outDir = path.join(process.cwd(), 'src', 'data', 'generated');
   const outFile = path.join(outDir, 'changeLogs.json');
 
@@ -452,7 +518,7 @@ async function main() {
     console.log('No valid existing changelog file found. Starting fresh.');
   }
 
-  const rawCommits = getGitCommits(lastHash);
+  const rawCommits = getGitCommits(lastHash, untilDate);
 
   if (!rawCommits) {
     console.log('No new commits found.');
@@ -469,12 +535,18 @@ async function main() {
 
   let newChangelogs;
 
-  try {
-    newChangelogs = await generateChangelogs(parsedCommits);
-  } catch (error) {
-    console.warn('Warning: Failed to generate changelogs with Gemini. Skipping changelog update.');
-    console.warn(`Details: ${formatError(error)}`);
-    return;
+  if (noAi) {
+    newChangelogs = generateFallbackChangelogs(parsedCommits);
+  } else {
+    try {
+      newChangelogs = await generateChangelogs(parsedCommits);
+    } catch (error) {
+      console.warn(
+        'Warning: Failed to generate changelogs with Gemini. Skipping changelog update.'
+      );
+      console.warn(`Details: ${formatError(error)}`);
+      return;
+    }
   }
 
   // Merge new changelogs with existing ones
