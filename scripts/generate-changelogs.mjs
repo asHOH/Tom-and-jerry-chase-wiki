@@ -83,32 +83,33 @@ ${TYPE_DEFINITIONS}
 5. **合并具有相似目的或属于同一逻辑更改的连续提交**
 6. **hashes 字段必须是包含该组中所有提交哈希的数组**
 7. 如果提交不遵循常规格式，将其分类为 'other'
-8. 保持描述简洁且用户友好
-9. **重要：message 字段必须使用中文**
-10. **重要：scope 字段必须按照映射示例生成，如果不在示例中，则根据原始 scope 的清晰程度，选择翻译或不翻译（不翻译即去掉 scope 字段）；如果映射的结果为空（比如原始 scope 为 dev），则舍掉这条提交记录**
+8. **重要：message 字段必须使用中文**
+9. **重要：scope 字段必须按照映射示例生成，如果不在示例中，则根据原始 scope 的清晰程度，选择翻译或不翻译（不翻译即去掉 scope 字段）；如果映射的结果为空（比如原始 scope 为 dev），则舍掉这条提交记录**
 
 **scope 映射示例：**
 - characters -> 角色信息
 - character-editor -> 编辑模式
 - mouseCharacters -> 鼠方角色
-- articles -> 文章功能
 - catCharacters -> 猫方角色
+- CharacterRelationDisplay -> 角色关系
+- CharacterGrid -> 角色列表
+- CharacterDetails -> 角色详情
+- CharacterSection -> 角色详情
+- articles -> 文章功能
 - images -> 图片
 - items -> 道具
 - entities -> 衍生物
 - contributors -> 贡献者清单
-- buffs -> 状态和效果
+- buffs -> 状态
 - TabNavigation -> 导航栏
 - search -> 搜索
 - ui -> 界面
 - design-tokens -> 界面
-- CharacterRelationDisplay -> 角色关系
 - edit -> 编辑模式
 - data -> 数据
 - special-skills -> 特技
 - knowledge-cards -> 知识卡
 - ai -> ai
-- CharacterGrid -> 角色列表
 - docs -> 文档
 - RichTextEditor -> 富文本编辑器
 - navigation -> 导航栏
@@ -119,7 +120,6 @@ ${TYPE_DEFINITIONS}
 - DisclaimerText -> 首页的网站说明
 - feedback -> 反馈建议
 - dark-mode -> 暗色模式
-- CharacterDetails -> 角色详情
 - security -> 网站安全
 - offline -> 离线模式
 - build -> 构建
@@ -133,9 +133,7 @@ ${TYPE_DEFINITIONS}
 - deploy -> 网站部署
 - catKnowledgeCards -> 猫方知识卡
 - GameImage -> 图片显示
-- CharacterSection -> 角色详情
 - metadata -> 元信息
-- VersionChecker -> 版本检查器
 - ItemDetails -> 道具详情
 - BuffGrid -> 状态列表
 - BuffDetails -> 状态详情
@@ -149,22 +147,19 @@ ${TYPE_DEFINITIONS}
 - GotoLink -> 快速跳转
 - css -> 样式
 - compatibility -> 浏览器兼容性
-- character-detail -> 角色详情
 - sw -> Service Worker
 - ServiceWorker -> Service Worker
 - SEO -> 搜索引擎优化
 - PreviewCard -> 预览卡片
 - KnowledgeCardDetails -> 知识卡详情
+- knowledge-card -> 知识卡
 - ItemAttributesCard -> 道具属性卡片
 - EntityDetails -> 衍生物详情
 - ArticlesClient -> 文章列表
 - routing -> 路由
-- responsive -> 移动端兼容
-- mouse-characters -> 鼠方角色
+- responsive -> 移动端
 - loading -> 页面加载优化
 - layout -> 布局
-- knowledge-card-details -> 知识卡详情
-- knowledge-card -> 知识卡
 - image -> 图片
 - entity-maker -> 衍生物编辑器
 - dev -> 
