@@ -282,8 +282,8 @@
         "author": "asHOH"
       },
       {
-        "type": "other",
-        "message": "Revert \"fix(runtime): replace hardcoded runtime with dynamic apiRouteRuntime\"",
+        "type": "revert",
+        "message": "撤销“用动态 apiRouteRuntime 替换硬编码的运行时”",
         "breaking": false,
         "hashes": ["408542c5"],
         "author": "asHOH"

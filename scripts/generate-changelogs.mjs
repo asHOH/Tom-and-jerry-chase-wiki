@@ -314,6 +314,9 @@ function generateFallbackChangelogs(commits) {
       scope = match[2];
       breaking = match[3] === '!' || commit.message.includes('BREAKING CHANGE');
       message = match[4];
+    } else if (commit.message.startsWith('Revert "')) {
+      type = 'revert';
+      message = commit.message;
     }
 
     if (!changesByDate[date]) {
