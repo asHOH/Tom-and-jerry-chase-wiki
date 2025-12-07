@@ -31,8 +31,7 @@ dotenv.config({ path: '.env.local', quiet: true });
 dotenv.config({ quiet: true });
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = 'gemini-2.5-pro';
-// const GEMINI_MODEL = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
+const GEMINI_MODEL = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
 
 if (!GEMINI_API_KEY) {
   console.error('Error: GEMINI_API_KEY not found in environment');
