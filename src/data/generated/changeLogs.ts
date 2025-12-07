@@ -26,7 +26,8 @@ export interface ChangeEntry {
   scope?: string; // 更改的范围（例如 'ai'、'ui'、'data'）(The scope of the change)
   message: string; // 更改的简要描述（中文）(Brief description of the change in Chinese)
   breaking?: boolean; // 是否为破坏性更改 (Whether this is a breaking change)
-  hash: string; // Git 提交哈希（短格式）(Git commit hash - short)
+  hashes?: string[]; // Git 提交哈希数组（短格式）(Git commit hashes - short)
+  hash?: string; // 兼容旧数据 (Legacy support)
   author?: string; // 提交作者 (Commit author)
 }
 

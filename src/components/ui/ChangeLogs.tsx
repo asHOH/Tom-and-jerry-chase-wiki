@@ -177,55 +177,63 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                       {isExpanded && (
                         <div className='border-t border-gray-300 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-900/30'>
                           <div className='divide-y divide-gray-200 dark:divide-gray-700'>
-                            {dailyLog.changes.map((change) => (
-                              <div key={change.hash} className='px-4 py-3'>
-                                <div className='flex items-start gap-3'>
-                                  <span
-                                    className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColors[change.type]}`}
-                                  >
-                                    {typeLabels[change.type]}
-                                  </span>
+                            {dailyLog.changes.map((change) => {
+                              const key = change.hashes ? change.hashes.join('-') : change.hash;
+                              return (
+                                <div key={key} className='px-4 py-3'>
+                                  <div className='flex items-start gap-3'>
+                                    <span
+                                      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColors[change.type]}`}
+                                    >
+                                      {typeLabels[change.type]}
+                                    </span>
 
-                                  <div className='min-w-0 flex-1'>
-                                    <div className='flex flex-wrap items-baseline gap-2'>
-                                      {change.scope && (
-                                        <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                                          {change.scope}:
-                                        </span>
-                                      )}
-                                      <p className='text-sm text-gray-900 dark:text-gray-100'>
-                                        {change.message}
-                                      </p>
-                                      {change.breaking && (
-                                        <span className='inline-flex items-center rounded bg-red-600 px-1.5 py-0.5 text-xs font-bold text-white'>
-                                          破坏性
-                                        </span>
+                                    <div className='min-w-0 flex-1'>
+                                      <div className='flex flex-wrap items-baseline gap-2'>
+                                        {change.scope && (
+                                          <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
+                                            {change.scope}:
+                                          </span>
+                                        )}
+                                        <p className='text-sm text-gray-900 dark:text-gray-100'>
+                                          {change.message}
+                                        </p>
+                                        {change.breaking && (
+                                          <span className='inline-flex items-center rounded bg-red-600 px-1.5 py-0.5 text-xs font-bold text-white'>
+                                            破坏性
+                                          </span>
+                                        )}
+                                      </div>
+
+                                      {change.author && (
+                                        <div className='mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400'>
+                                          <svg
+                                            className='h-3 w-3'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            viewBox='0 0 24 24'
+                                          >
+                                            <path
+                                              strokeLinecap='round'
+                                              strokeLinejoin='round'
+                                              strokeWidth={2}
+                                              d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                                            />
+                                          </svg>
+                                          {change.author.split(', ').map((author, index, array) => (
+                                            <span key={author}>
+                                              {contributors.find(({ id }) => author === id)?.name ||
+                                                author}
+                                              {index < array.length - 1 ? ', ' : ''}
+                                            </span>
+                                          ))}
+                                        </div>
                                       )}
                                     </div>
-
-                                    {change.author && (
-                                      <div className='mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400'>
-                                        <svg
-                                          className='h-3 w-3'
-                                          fill='none'
-                                          stroke='currentColor'
-                                          viewBox='0 0 24 24'
-                                        >
-                                          <path
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            strokeWidth={2}
-                                            d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
-                                          />
-                                        </svg>
-                                        {contributors.find(({ id }) => change.author === id)
-                                          ?.name || change.author}
-                                      </div>
-                                    )}
                                   </div>
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                       )}

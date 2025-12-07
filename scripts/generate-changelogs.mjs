@@ -63,7 +63,7 @@ export interface AIChangeEntry {
   scope?: string;           // The scope of the change (e.g., 'ai', 'ui', 'data')
   message: string;          // Brief description of the change in Chinese
   breaking?: boolean;       // Whether this is a breaking change
-  hash: string;             // Git commit hash (short)
+  hashes: string[];         // Array of git commit hashes (short)
 }
 `.trim();
 
@@ -80,11 +80,12 @@ ${TYPE_DEFINITIONS}
 2. 如果存在，从括号中提取范围
 3. 将提交消息翻译成简洁的中文描述作为更改说明
 4. 如果提交中有 "BREAKING CHANGE" 或类型中有 "!"，则标记为破坏性更改
-5. 包含短 git 哈希
-6. 如果提交不遵循常规格式，将其分类为 'other'
-7. 保持描述简洁且用户友好
-8. **重要：message 字段必须使用中文**
-9. **重要：scope 字段必须按照映射示例生成，如果不在示例中，则根据原始 scope 的清晰程度，选择翻译或不翻译（不翻译即去掉 scope 字段）；如果映射的结果为空（比如原始 scope 为 dev），则舍掉这条提交记录**
+5. **合并具有相似目的或属于同一逻辑更改的连续提交**
+6. **hashes 字段必须是包含该组中所有提交哈希的数组**
+7. 如果提交不遵循常规格式，将其分类为 'other'
+8. 保持描述简洁且用户友好
+9. **重要：message 字段必须使用中文**
+10. **重要：scope 字段必须按照映射示例生成，如果不在示例中，则根据原始 scope 的清晰程度，选择翻译或不翻译（不翻译即去掉 scope 字段）；如果映射的结果为空（比如原始 scope 为 dev），则舍掉这条提交记录**
 
 **scope 映射示例：**
 - characters -> 角色信息
@@ -178,22 +179,23 @@ ${TYPE_DEFINITIONS}
 - \`{...}\`Utils -> 
 
 **示例输入：**
-c1c79d3|feat(character,images): add 鲍姆 information
-9c8a5b5|fix(GotoLink): adjust width for preview content
+c1c79d3|feat(character): add 鲍姆 basic info
+9c8a5b5|feat(character): add 鲍姆 images
+a468007|fix(ai): fix timeout
 
 **示例输出：**
 [
   {
     "type": "feat",
-    "scope": "角色信息,图片",
-    "message": "添加角色鲍姆的图片数据",
-    "hash": "c1c79d3"
+    "scope": "角色信息",
+    "message": "添加角色鲍姆的基础信息和图片",
+    "hashes": ["c1c79d3", "9c8a5b5"]
   },
   {
     "type": "fix",
-    "scope": "快速跳转连接",
-    "message": "调整预览内容的宽度",
-    "hash": "9c8a5b5"
+    "scope": "ai",
+    "message": "修复超时问题",
+    "hashes": ["a468007"]
   }
 ]
 
@@ -349,12 +351,13 @@ async function generateChangelogs(commits) {
                 type: 'boolean',
                 description: 'Whether this is a breaking change.',
               },
-              hash: {
-                type: 'string',
-                description: 'Git commit hash (short format).',
+              hashes: {
+                type: 'array',
+                description: 'Array of git commit hashes (short format).',
+                items: { type: 'string' },
               },
             },
-            required: ['type', 'message', 'hash'],
+            required: ['type', 'message', 'hashes'],
           },
         },
         seed: 42, // Fixed seed for reproducible output
@@ -368,15 +371,23 @@ async function generateChangelogs(commits) {
     }
 
     // Merge AI results with original commit data (date, author) and group by date
-    const aiChangesMap = new Map(aiChanges.map((c) => [c.hash, c]));
+    const commitMap = new Map(commits.map((c) => [c.hash, c]));
     const changesByDate = {};
 
-    for (const commit of commits) {
-      const aiChange = aiChangesMap.get(commit.hash);
-      if (!aiChange) continue;
+    for (const aiChange of aiChanges) {
+      // Find original commits
+      const groupCommits = aiChange.hashes.map((h) => commitMap.get(h)).filter((c) => c);
 
-      // Extract date (YYYY-MM-DD) from ISO string (e.g., 2025-11-08 13:00:00 +0800)
-      const date = commit.date.split(' ')[0];
+      if (groupCommits.length === 0) continue;
+
+      // Use the date of the newest commit (first in the list usually, but let's sort to be sure)
+      // Commits are strings "YYYY-MM-DD ...". Lexicographical sort works for ISO date part.
+      groupCommits.sort((a, b) => b.date.localeCompare(a.date));
+      const primaryCommit = groupCommits[0];
+      const date = primaryCommit.date.split(' ')[0];
+
+      // Authors
+      const authors = [...new Set(groupCommits.map((c) => c.author))].join(', ');
 
       if (!changesByDate[date]) {
         changesByDate[date] = [];
@@ -387,8 +398,8 @@ async function generateChangelogs(commits) {
         scope: aiChange.scope,
         message: aiChange.message,
         breaking: aiChange.breaking,
-        hash: commit.hash,
-        author: commit.author,
+        hashes: aiChange.hashes,
+        author: authors,
       });
     }
 
@@ -429,7 +440,12 @@ async function main() {
       // Check the first day's changes
       const latestDay = existingChangelogs[0];
       if (latestDay.changes && latestDay.changes.length > 0) {
-        lastHash = latestDay.changes[0].hash;
+        const latestChange = latestDay.changes[0];
+        if (Array.isArray(latestChange.hashes) && latestChange.hashes.length > 0) {
+          lastHash = latestChange.hashes[0];
+        } else if (latestChange.hash) {
+          lastHash = latestChange.hash;
+        }
         console.log(`Found latest existing commit: ${lastHash} (${latestDay.date})`);
       }
     }
@@ -475,9 +491,21 @@ async function main() {
       // Day exists, merge changes
       // Filter out any duplicates just in case (though git log range should prevent this)
       const existingChanges = mergedChangelogs[existingDayIndex].changes;
-      const existingHashes = new Set(existingChanges.map((c) => c.hash));
 
-      const uniqueNewChanges = newDay.changes.filter((c) => !existingHashes.has(c.hash));
+      // Collect all existing hashes for deduplication
+      const existingHashes = new Set();
+      existingChanges.forEach((c) => {
+        if (Array.isArray(c.hashes)) {
+          c.hashes.forEach((h) => existingHashes.add(h));
+        } else if (c.hash) {
+          existingHashes.add(c.hash);
+        }
+      });
+
+      const uniqueNewChanges = newDay.changes.filter((c) => {
+        // Check if ANY of the new hashes exist in existing hashes
+        return !c.hashes.some((h) => existingHashes.has(h));
+      });
 
       if (uniqueNewChanges.length > 0) {
         // Prepend new changes since they are newer
