@@ -1,7 +1,92 @@
 [
   {
+    "date": "2025-11-09",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "鼠方角色, 角色的推荐知识卡",
+        "message": "对没有“救救我”、“救援卡”或“铁血”的推荐知识卡组增加提示",
+        "breaking": false,
+        "hashes": ["2d125970", "33919a79"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式, 角色技能",
+        "message": "为鼠方角色隐藏“造成受伤状态”复选框",
+        "breaking": false,
+        "hashes": ["94e53acd"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "放宽游戏攻略文章标题匹配模式（以便在角色详情页显示“人教A版数学选必二”的文章）",
+        "breaking": false,
+        "hashes": ["46eed095"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "特性",
+        "message": "加强特性文本辅助函数的类型检查",
+        "breaking": false,
+        "hashes": ["883b9780"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "自动为部分文本添加 {...}（可能会导致一些问题）",
+        "breaking": false,
+        "hashes": ["b204620a"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "猫方角色",
+        "message": "为技能添加新字段 `造成受伤状态`",
+        "breaking": false,
+        "hashes": ["37d62537"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "修改部分描述",
+        "breaking": false,
+        "hashes": ["c778a5b3"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
     "date": "2025-11-08",
     "changes": [
+      {
+        "type": "feat",
+        "scope": "更新日志",
+        "message": "优化界面",
+        "breaking": false,
+        "hashes": ["a5902b97"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "更新日志",
+        "message": "使范围更具体",
+        "breaking": false,
+        "hashes": ["c3021811"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "特性, 类型, 特性显示",
+        "message": "重构部分代码；支持在特性中添加 specialCase 属性",
+        "breaking": false,
+        "hashes": ["885781ed"],
+        "author": "ConductorJerry"
+      },
       {
         "type": "feat",
         "message": "为更新日志添加基础脚本和基础界面",
@@ -41,6 +126,22 @@
   {
     "date": "2025-11-07",
     "changes": [
+      {
+        "type": "feat",
+        "scope": "特性显示",
+        "message": "支持在文本下方添加相关状态特性",
+        "breaking": false,
+        "hashes": ["233d07a2"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "修改部分描述",
+        "breaking": false,
+        "hashes": ["a6b746ad"],
+        "author": "ConductorJerry"
+      },
       {
         "type": "refactor",
         "scope": "ai",
