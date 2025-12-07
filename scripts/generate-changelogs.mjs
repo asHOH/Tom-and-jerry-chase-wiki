@@ -31,7 +31,8 @@ dotenv.config({ path: '.env.local', quiet: true });
 dotenv.config({ quiet: true });
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-2.5-flash';
+// const GEMINI_MODEL = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
 
 if (!GEMINI_API_KEY) {
   console.error('Error: GEMINI_API_KEY not found in environment');
@@ -51,7 +52,6 @@ export type ChangeType =
   | 'refactor'  // Code refactoring
   | 'perf'      // Performance improvements
   | 'test'      // Test additions or modifications
-  | 'chore'     // Build process or auxiliary tool changes
   | 'revert'    // Revert previous commit
   | 'other';    // Other changes
 
@@ -81,18 +81,18 @@ export interface DailyChangelog {
 export type ChangeLogs = DailyChangelog[];
 `.trim();
 
-// Prompt for the AI to convert git logs to changelog format
 const SYSTEM_PROMPT = `你是一个更新日志生成器。将 git 提交日志转换为结构化的更新日志条目。
 
 **输出格式：**
-你必须仅返回一个有效的 JSON 数组，不要包含任何其他文本、markdown 格式或代码块。
+你必须仅返回一个 JSON 数组，不要包含任何其他文本、markdown 格式或代码块。
 JSON 应该是一个 DailyChangelog 对象数组，具有以下确切的 TypeScript 结构：
 
 ${TYPE_DEFINITIONS}
 
 **转换规则：**
 1. **过滤提交：跳过以下提交，不要包含在输出中：**
-   - 合并提交（消息包含 "Merge"、"merge"、"合并" 等）
+   - 合并提交（消息包含"Merge"、"merge"等）
+   - 杂务提交（消息包含"chore"等）
    - 作者为 "dependabot[bot]" 的提交
 2. 按日期（YYYY-MM-DD 格式）对提交进行分组
 3. 从常规提交格式（feat、fix、docs 等）中提取类型
@@ -121,6 +121,7 @@ ${TYPE_DEFINITIONS}
 - TabNavigation -> 导航栏
 - search -> 搜索
 - ui -> 界面
+- design-tokens -> 界面
 - CharacterRelationDisplay -> 角色关系
 - edit -> 编辑模式
 - data -> 数据
@@ -131,68 +132,52 @@ ${TYPE_DEFINITIONS}
 - docs -> 文档
 - RichTextEditor -> 富文本编辑器
 - navigation -> 导航栏
-- dev -> 
 - SkillCard -> 角色技能
 - KnowledgeCardGrid -> 知识卡列表
-- design-tokens -> 设计令牌
 - SkillAllocationDisplay -> 技能加点显示
 - KnowledgeCardSection -> 角色的推荐知识卡
 - DisclaimerText -> 首页的网站说明
 - feedback -> 反馈建议
-- ci -> ci
-- types -> 代码类型
-- readme -> 
 - dark-mode -> 暗色模式
 - CharacterDetails -> 角色详情
-- templates -> 数据模板（已废弃）
 - security -> 网站安全
 - offline -> 离线模式
 - build -> 构建
-- traits -> 特性（交互关系）
+- traits -> 特性
 - tooltip -> 工具提示
-- copilot-instructions -> 
 - TextWithHoverTooltips -> 工具提示
 - version -> 版本控制
-- template -> 模板（已废弃）
+- versioning -> 版本控制
 - config -> 配置
-- Tooltip -> 工具提示
-- README -> 
 - version-checker -> 版本检查器
-- sw -> Service Worker
-- quick-jump -> 快速跳转
 - deploy -> 网站部署
 - catKnowledgeCards -> 猫方知识卡
-- GotoLink -> 快速跳转连接
 - GameImage -> 图片显示
 - CharacterSection -> 角色详情
 - metadata -> 元信息
 - VersionChecker -> 版本检查器
 - ItemDetails -> 道具详情
-- BuffGrid -> 状态和效果列表
-- BuffDetails -> 状态和效果的详情
-- versioning -> 版本
-- tests -> 测试
+- BuffGrid -> 状态列表
+- BuffDetails -> 状态详情
 - test -> 测试
 - specialSkills -> 特技
-- seo -> 搜索引擎优化
 - item-details -> 道具详情
-- hooks -> 提交钩子或React Hooks
 - homepage -> 首页
 - history -> 年鉴
+- quick-jump -> 快速跳转
 - goto -> 快速跳转
+- GotoLink -> 快速跳转
 - css -> 样式
 - compatibility -> 浏览器兼容性
 - character-detail -> 角色详情
-- analytics -> 网站分析
+- sw -> Service Worker
 - ServiceWorker -> Service Worker
 - SEO -> 搜索引擎优化
-- PreviewCard -> \`{...}\`的预览卡片
+- PreviewCard -> 预览卡片
 - KnowledgeCardDetails -> 知识卡详情
 - ItemAttributesCard -> 道具属性卡片
 - EntityDetails -> 衍生物详情
-- CharacterImport -> 角色导入（编辑模式）
 - ArticlesClient -> 文章列表
-- tooltipUtils -> 工具提示
 - routing -> 路由
 - responsive -> 移动端兼容
 - mouse-characters -> 鼠方角色
@@ -201,8 +186,17 @@ ${TYPE_DEFINITIONS}
 - knowledge-card-details -> 知识卡详情
 - knowledge-card -> 知识卡
 - image -> 图片
-- husky -> 
 - entity-maker -> 衍生物编辑器
+- dev -> 
+- hooks -> 
+- analytics -> 
+- ci -> 
+- types -> 
+- readme -> 
+- copilot-instructions -> 
+- generate-changelogs -> 
+- husky -> 
+- \`{...}\`Utils -> 
 
 **示例输入：**
 c1c79d3|2025-11-08 13:00:00 +0800|feat(character,images): add 鲍姆 information|ConductorJerry
