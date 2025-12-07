@@ -18,7 +18,7 @@
       {
         "type": "feat",
         "scope": "ai",
-        "message": "为 AI 添加历史记录支持和衍生物别名映射",
+        "message": "为 AI 添加历史记录、支持和衍生物别名映射",
         "author": "3swordman",
         "hashes": ["c64f41b"]
       },
@@ -64,7 +64,7 @@
       },
       {
         "type": "docs",
-        "scope": "状态和效果",
+        "scope": "状态",
         "message": "修改部分描述",
         "author": "ConductorJerry",
         "hashes": ["48fdd34"]
@@ -78,7 +78,7 @@
       },
       {
         "type": "fix",
-        "message": "延迟详情视图的水合作用",
+        "message": "延迟详情视图的水合",
         "author": "asHOH",
         "hashes": ["3ce819e"]
       },
@@ -141,7 +141,7 @@
     "date": "2025-11-05",
     "changes": [
       {
-        "type": "refactor",
+        "type": "docs",
         "scope": "衍生物编辑器",
         "message": "修改部分文本和按钮",
         "author": "ConductorJerry",
@@ -149,21 +149,21 @@
       },
       {
         "type": "docs",
-        "scope": "状态和效果",
+        "scope": "状态",
         "message": "修改部分描述",
         "author": "ConductorJerry",
         "hashes": ["2a05423"]
       },
       {
         "type": "feat",
-        "scope": "衍生物",
-        "message": "为每个衍生物添加导出按钮；重构代码片段生成器；折叠卡片现在显示“展开”而非“折叠”",
+        "scope": "衍生物编辑器",
+        "message": "为每个衍生物添加导出按钮",
         "author": "asHOH",
         "hashes": ["ab18feb"]
       },
       {
         "type": "feat",
-        "scope": "衍生物",
+        "scope": "衍生物编辑器",
         "message": "在衍生物编辑器中添加“全部导入”功能",
         "author": "asHOH",
         "hashes": ["9afabf0"]
@@ -203,6 +203,7 @@
       },
       {
         "type": "docs",
+        "scope": "赞助者",
         "message": "将“追风汤姆”添加到赞助者列表",
         "author": "asHOH",
         "hashes": ["ade25ec"]
@@ -235,8 +236,8 @@
     "changes": [
       {
         "type": "feat",
-        "scope": "状态和效果的详情",
-        "message": "当来源数量超过10个时，使用折叠卡片显示",
+        "scope": "状态详情",
+        "message": "当来源数量超过10个时，折叠显示",
         "author": "ConductorJerry",
         "hashes": ["5aaf8a0"]
       }
@@ -247,8 +248,8 @@
     "changes": [
       {
         "type": "feat",
-        "scope": "角色信息,图片",
-        "message": "添加角色鲍姆的信息",
+        "scope": "角色信息",
+        "message": "添加鲍姆的信息和图片",
         "author": "ConductorJerry",
         "hashes": ["c1c79d3"]
       },
@@ -263,7 +264,7 @@
         "scope": "文章功能",
         "message": "增加弱密码检测功能",
         "author": "3swordman",
-        "hashes": ["e6637d3"]
+        "hashes": ["e6637d3", "c23c34a"]
       },
       {
         "type": "fix",
@@ -271,12 +272,6 @@
         "message": "修正 API 路由的参数类型",
         "author": "3swordman",
         "hashes": ["affa81c"]
-      },
-      {
-        "type": "feat",
-        "message": "添加密码强度验证器",
-        "author": "3swordman",
-        "hashes": ["c23c34a"]
       },
       {
         "type": "fix",
