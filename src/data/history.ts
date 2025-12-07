@@ -4578,6 +4578,15 @@ export const historyData: GameHistory = [
         description: '更新魔镜皮肤“青龙令”。',
         details: {},
       },
+      {
+        date: '10.23',
+        description: '新角色“鲍姆”上线，并推出其伴生皮肤“科学怪鼠”。',
+        details: {
+          content: {
+            newCharacters: ['鲍姆'],
+          },
+        },
+      },
     ],
   },
 ];
