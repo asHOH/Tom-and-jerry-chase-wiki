@@ -56,56 +56,35 @@ export type ChangeType =
   | 'other';    // Other changes
 
 /**
- * Represents a single change entry
+ * Represents a single change entry processed by AI
  */
-export interface ChangeEntry {
+export interface AIChangeEntry {
   type: ChangeType;
   scope?: string;           // The scope of the change (e.g., 'ai', 'ui', 'data')
-  message: string;          // Brief description of the change
+  message: string;          // Brief description of the change in Chinese
   breaking?: boolean;       // Whether this is a breaking change
   hash: string;             // Git commit hash (short)
-  author?: string;          // Commit author
 }
-
-/**
- * Changelogs grouped by date
- */
-export interface DailyChangelog {
-  date: string;             // ISO date string (YYYY-MM-DD)
-  changes: ChangeEntry[];   // List of changes for this day
-}
-
-/**
- * Root type for the changelog data
- */
-export type ChangeLogs = DailyChangelog[];
 `.trim();
 
 const SYSTEM_PROMPT = `你是一个更新日志生成器。将 git 提交日志转换为结构化的更新日志条目。
 
 **输出格式：**
-你必须仅返回一个 JSON 数组，不要包含任何其他文本、markdown 格式或代码块。
-JSON 应该是一个 DailyChangelog 对象数组，具有以下确切的 TypeScript 结构：
+你必须仅返回一个 JSON 数组，不要包含任何其他文本。
+JSON 应该是一个 AIChangeEntry 对象数组，具有以下确切的 TypeScript 结构：
 
 ${TYPE_DEFINITIONS}
 
 **转换规则：**
-1. **过滤提交：跳过以下提交，不要包含在输出中：**
-   - 合并提交（消息包含"Merge"、"merge"等）
-   - 杂务提交（消息包含"chore"等）
-   - 作者为 "dependabot[bot]" 的提交
-2. 按日期（YYYY-MM-DD 格式）对提交进行分组
-3. 从常规提交格式（feat、fix、docs 等）中提取类型
-4. 如果存在，从括号中提取范围
-5. 将提交消息翻译成简洁的中文描述作为更改说明
-6. 如果提交中有 "BREAKING CHANGE" 或类型中有 "!"，则标记为破坏性更改
-7. 包含短 git 哈希（前 7 个字符）
-8. 按降序排列日期（最新的在前）
-9. **在每一天内，按提交时间排序（最新的在前）**
-10. 如果提交不遵循常规格式，将其分类为 'other'
-11. 保持描述简洁且用户友好
-12. **重要：message 字段必须使用中文**
-13. **重要：scope 字段必须按照映射示例生成，如果不在示例中，则根据原始 scope 的清晰程度，选择翻译或不翻译（不翻译即去掉 scope 字段）；如果映射的结果为空（比如原始 scope 为 dev），则舍掉这条提交记录**
+1. 从常规提交格式（feat、fix、docs 等）中提取类型
+2. 如果存在，从括号中提取范围
+3. 将提交消息翻译成简洁的中文描述作为更改说明
+4. 如果提交中有 "BREAKING CHANGE" 或类型中有 "!"，则标记为破坏性更改
+5. 包含短 git 哈希
+6. 如果提交不遵循常规格式，将其分类为 'other'
+7. 保持描述简洁且用户友好
+8. **重要：message 字段必须使用中文**
+9. **重要：scope 字段必须按照映射示例生成，如果不在示例中，则根据原始 scope 的清晰程度，选择翻译或不翻译（不翻译即去掉 scope 字段）；如果映射的结果为空（比如原始 scope 为 dev），则舍掉这条提交记录**
 
 **scope 映射示例：**
 - characters -> 角色信息
@@ -199,45 +178,57 @@ ${TYPE_DEFINITIONS}
 - \`{...}\`Utils -> 
 
 **示例输入：**
-c1c79d3|2025-11-08 13:00:00 +0800|feat(character,images): add 鲍姆 information|ConductorJerry
-9c8a5b5|2025-11-08 12:00:00 +0800|fix(GotoLink): adjust width for preview content|asHOH
-a468007|2025-11-08 11:00:00 +0800|fix(ai): fix the issue of tool call timeout|3swordman
-d123456|2025-11-08 10:00:00 +0800|Merge pull request #123|asHOH
-e789012|2025-11-08 09:00:00 +0800|chore(deps): bump some-package|dependabot[bot]
+c1c79d3|feat(character,images): add 鲍姆 information
+9c8a5b5|fix(GotoLink): adjust width for preview content
 
 **示例输出：**
 [
   {
-    "date": "2025-11-08",
-    "changes": [
-      {
-        "type": "feat",
-        "scope": "角色信息,图片",
-        "message": "添加角色鲍姆的图片数据",
-        "hash": "c1c79d3",
-        "author": "ConductorJerry"
-      },
-      {
-        "type": "fix",
-        "scope": "快速跳转连接",
-        "message": "调整预览内容的宽度",
-        "hash": "9c8a5b5",
-        "author": "asHOH"
-      },
-      {
-        "type": "fix",
-        "scope": "ai",
-        "message": "修复工具调用超时问题",
-        "hash": "a468007",
-        "author": "3swordman"
-      }
-    ]
+    "type": "feat",
+    "scope": "角色信息,图片",
+    "message": "添加角色鲍姆的图片数据",
+    "hash": "c1c79d3"
+  },
+  {
+    "type": "fix",
+    "scope": "快速跳转连接",
+    "message": "调整预览内容的宽度",
+    "hash": "9c8a5b5"
   }
 ]
 
-注意：合并提交和 dependabot 的提交已被过滤，更改按时间排序（最新的在前）。
-
 仅返回 JSON 数组，不要包含其他文本。`;
+
+/**
+ * Parse git log output into structured objects and filter unwanted commits
+ */
+function parseCommits(rawOutput) {
+  if (!rawOutput) return [];
+
+  return rawOutput
+    .split('\n')
+    .map((line) => {
+      const parts = line.split('|');
+      if (parts.length < 4) return null;
+      const hash = parts[0];
+      const date = parts[1];
+      const author = parts[parts.length - 1];
+      const message = parts.slice(2, parts.length - 1).join('|');
+      return { hash, date, message, author };
+    })
+    .filter((c) => c !== null)
+    .filter((commit) => {
+      if (!commit.message) return false;
+      const msg = commit.message.toLowerCase();
+      // Filter merge commits
+      if (msg.includes('merge')) return false;
+      // Filter chore commits
+      if (msg.startsWith('chore')) return false;
+      // Filter dependabot
+      if (commit.author === 'dependabot[bot]') return false;
+      return true;
+    });
+}
 
 /**
  * Get git commits since a specific hash or from the past 7 days
@@ -299,6 +290,9 @@ async function generateChangelogs(commits) {
 
   console.log('Generating changelogs with Gemini...');
 
+  // Prepare input for AI: hash|message
+  const commitsInput = commits.map((c) => `${c.hash}|${c.message}`).join('\n');
+
   try {
     const response = await ai.models.generateContent({
       model: GEMINI_MODEL,
@@ -307,7 +301,7 @@ async function generateChangelogs(commits) {
           role: 'user',
           parts: [
             {
-              text: `Convert these git commits to changelog format:\n\n${commits}`,
+              text: `Convert these git commits to changelog format:\n\n${commitsInput}`,
             },
           ],
         },
@@ -322,80 +316,92 @@ async function generateChangelogs(commits) {
         responseJsonSchema: {
           $schema: 'http://json-schema.org/draft-07/schema#',
           title: 'ChangeLogs',
-          description:
-            'Root type for the changelog data. Represents an array of changelogs grouped by date.',
+          description: 'List of processed changes.',
           type: 'array',
           items: {
             type: 'object',
-            description: 'Changelogs grouped by date.',
+            description: 'Represents a single change entry processed by AI.',
             properties: {
-              date: {
+              type: {
                 type: 'string',
-                format: 'date',
-                description: 'ISO date string (YYYY-MM-DD).',
+                description: 'Type of change made in a commit.',
+                enum: [
+                  'feat',
+                  'fix',
+                  'docs',
+                  'style',
+                  'refactor',
+                  'perf',
+                  'test',
+                  'revert',
+                  'other',
+                ],
               },
-              changes: {
-                type: 'array',
-                description: 'List of changes for this day.',
-                items: {
-                  type: 'object',
-                  description: 'Represents a single change entry.',
-                  properties: {
-                    type: {
-                      type: 'string',
-                      description: 'Type of change made in a commit.',
-                      enum: [
-                        'feat',
-                        'fix',
-                        'docs',
-                        'style',
-                        'refactor',
-                        'perf',
-                        'test',
-                        'chore',
-                        'revert',
-                        'other',
-                      ],
-                    },
-                    scope: {
-                      type: 'string',
-                      description: "The scope of the change (e.g., 'ai', 'ui', 'data').",
-                    },
-                    message: {
-                      type: 'string',
-                      description: 'Brief description of the change.',
-                    },
-                    breaking: {
-                      type: 'boolean',
-                      description: 'Whether this is a breaking change.',
-                    },
-                    hash: {
-                      type: 'string',
-                      description: 'Git commit hash (short format).',
-                    },
-                    author: {
-                      type: 'string',
-                      description: 'Commit author.',
-                    },
-                  },
-                  required: ['type', 'message', 'hash'],
-                },
+              scope: {
+                type: 'string',
+                description: "The scope of the change (e.g., 'ai', 'ui', 'data').",
+              },
+              message: {
+                type: 'string',
+                description: 'Brief description of the change in Chinese.',
+              },
+              breaking: {
+                type: 'boolean',
+                description: 'Whether this is a breaking change.',
+              },
+              hash: {
+                type: 'string',
+                description: 'Git commit hash (short format).',
               },
             },
-            required: ['date', 'changes'],
+            required: ['type', 'message', 'hash'],
           },
         },
         seed: 42, // Fixed seed for reproducible output
       },
     });
-    const changelogs = JSON.parse(response.text);
+    const aiChanges = JSON.parse(response.text);
 
     // Validate structure
-    if (!Array.isArray(changelogs)) {
+    if (!Array.isArray(aiChanges)) {
       throw new Error('Response is not an array');
     }
 
-    return changelogs;
+    // Merge AI results with original commit data (date, author) and group by date
+    const aiChangesMap = new Map(aiChanges.map((c) => [c.hash, c]));
+    const changesByDate = {};
+
+    for (const commit of commits) {
+      const aiChange = aiChangesMap.get(commit.hash);
+      if (!aiChange) continue;
+
+      // Extract date (YYYY-MM-DD) from ISO string (e.g., 2025-11-08 13:00:00 +0800)
+      const date = commit.date.split(' ')[0];
+
+      if (!changesByDate[date]) {
+        changesByDate[date] = [];
+      }
+
+      changesByDate[date].push({
+        type: aiChange.type,
+        scope: aiChange.scope,
+        message: aiChange.message,
+        breaking: aiChange.breaking,
+        hash: commit.hash,
+        author: commit.author,
+      });
+    }
+
+    // Convert to array
+    const result = Object.keys(changesByDate).map((date) => ({
+      date,
+      changes: changesByDate[date],
+    }));
+
+    // Sort days descending
+    result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    return result;
   } catch (error) {
     console.error('Error generating changelogs:', formatError(error));
     throw error;
@@ -432,19 +438,25 @@ async function main() {
     console.log('No valid existing changelog file found. Starting fresh.');
   }
 
-  const commits = getGitCommits(lastHash);
+  const rawCommits = getGitCommits(lastHash);
 
-  if (!commits) {
+  if (!rawCommits) {
     console.log('No new commits found.');
     return;
   }
 
-  console.log(`Found ${commits.split('\n').length} new commits`);
+  const parsedCommits = parseCommits(rawCommits);
+  console.log(`Found ${parsedCommits.length} relevant commits`);
+
+  if (parsedCommits.length === 0) {
+    console.log('No relevant commits to process.');
+    return;
+  }
 
   let newChangelogs;
 
   try {
-    newChangelogs = await generateChangelogs(commits);
+    newChangelogs = await generateChangelogs(parsedCommits);
   } catch (error) {
     console.warn('Warning: Failed to generate changelogs with Gemini. Skipping changelog update.');
     console.warn(`Details: ${formatError(error)}`);
