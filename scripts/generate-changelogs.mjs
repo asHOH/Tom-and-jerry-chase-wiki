@@ -443,8 +443,6 @@ async function main() {
         const latestChange = latestDay.changes[0];
         if (Array.isArray(latestChange.hashes) && latestChange.hashes.length > 0) {
           lastHash = latestChange.hashes[0];
-        } else if (latestChange.hash) {
-          lastHash = latestChange.hash;
         }
         console.log(`Found latest existing commit: ${lastHash} (${latestDay.date})`);
       }
@@ -497,8 +495,6 @@ async function main() {
       existingChanges.forEach((c) => {
         if (Array.isArray(c.hashes)) {
           c.hashes.forEach((h) => existingHashes.add(h));
-        } else if (c.hash) {
-          existingHashes.add(c.hash);
         }
       });
 

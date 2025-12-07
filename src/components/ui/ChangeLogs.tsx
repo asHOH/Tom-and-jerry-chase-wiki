@@ -178,7 +178,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                         <div className='border-t border-gray-300 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-900/30'>
                           <div className='divide-y divide-gray-200 dark:divide-gray-700'>
                             {dailyLog.changes.map((change) => {
-                              const key = change.hashes ? change.hashes.join('-') : change.hash;
+                              const key = change.hashes.join('-');
                               return (
                                 <div key={key} className='px-4 py-3'>
                                   <div className='flex items-start gap-3'>

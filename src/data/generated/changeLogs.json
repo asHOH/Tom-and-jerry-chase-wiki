@@ -5,55 +5,55 @@
       {
         "type": "feat",
         "message": "为更新日志添加基础界面",
-        "hash": "dd32322",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["dd32322"]
       },
       {
         "type": "feat",
         "message": "添加使用 Gemini AI 生成更新日志的脚本",
-        "hash": "2c6ed4e",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["2c6ed4e"]
       },
       {
         "type": "feat",
         "message": "为更新日志添加基础脚本",
-        "hash": "8c055e7",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["8c055e7"]
       },
       {
         "type": "fix",
         "scope": "ai",
         "message": "修复工具调用超时的问题",
-        "hash": "a468007",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["a468007"]
       },
       {
         "type": "feat",
         "scope": "ai",
         "message": "为 AI 添加历史记录支持和衍生物别名映射",
-        "hash": "c64f41b",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["c64f41b"]
       },
       {
         "type": "chore",
         "scope": "ai",
         "message": "在 iframe 中执行代码以提高安全性",
-        "hash": "70b38a3",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["70b38a3"]
       },
       {
         "type": "fix",
         "scope": "ai",
         "message": "更新系统指令，以包含所有可用数据对象及其类型",
-        "hash": "e28e955",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["e28e955"]
       },
       {
         "type": "feat",
         "scope": "ai",
         "message": "为 AI 添加大部分游戏数据的导入（特技、道具、衍生物、状态、道具组）",
-        "hash": "1cd0c53",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["1cd0c53"]
       }
     ]
   },
@@ -64,102 +64,102 @@
         "type": "refactor",
         "scope": "ai",
         "message": "将 `getData` 函数替换为 `executeCode`",
-        "hash": "9b48892",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["9b48892"]
       },
       {
         "type": "refactor",
         "scope": "ai",
         "message": "将工具调用逻辑移至前端",
-        "hash": "009e21f",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["009e21f"]
       },
       {
         "type": "refactor",
         "scope": "ai",
         "message": "使用 @google/genai 替代 REST API",
-        "hash": "5f8ffb1",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["5f8ffb1"]
       },
       {
         "type": "docs",
         "scope": "状态和效果",
         "message": "修改部分描述",
-        "hash": "48fdd34",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["48fdd34"]
       },
       {
         "type": "docs",
         "scope": "贡献者清单",
         "message": "修正一个错误",
-        "hash": "4cdadd2",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["4cdadd2"]
       },
       {
         "type": "fix",
         "message": "延迟详情视图的水合作用",
-        "hash": "3ce819e",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["3ce819e"]
       },
       {
         "type": "chore",
         "scope": "网站安全",
         "message": "移除废弃的 X-XSS-Protection 响应头，并添加 HSTS、Referrer-Policy 和 Permissions-Policy",
-        "hash": "d04b58e",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["d04b58e"]
       },
       {
         "type": "fix",
         "scope": "衍生物",
         "message": "将拼写错误的 \"colddown\" 重命名为 \"cooldown\"",
-        "hash": "dad9d9f",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["dad9d9f"]
       },
       {
         "type": "test",
         "scope": "数据",
         "message": "验证知识卡别名正则表达式和角色知识卡引用",
-        "hash": "8931c90",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["8931c90"]
       },
       {
         "type": "refactor",
         "scope": "数据",
         "message": "强制角色和衍生物映射为只读",
-        "hash": "4e506e5",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["4e506e5"]
       },
       {
         "type": "perf",
         "message": "在边缘节点上运行健康检查、导出和选项路由，并添加缓存头",
-        "hash": "dd69b16",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["dd69b16"]
       },
       {
         "type": "chore",
         "message": "为编辑器页面添加 noindex 元标签，并在 robots.txt 中禁止抓取",
-        "hash": "b626a09",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["b626a09"]
       },
       {
         "type": "refactor",
         "scope": "代码类型",
         "message": "使用本地工具函数替换 Next.js 的 DeepReadonly 类型",
-        "hash": "155d0ed",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["155d0ed"]
       },
       {
         "type": "fix",
         "scope": "图片",
         "message": "通过自定义加载器处理图片路由",
-        "hash": "63cbc76",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["63cbc76"]
       },
       {
         "type": "chore",
         "message": "将 TypeScript 配置与 Next.js 默认值同步",
-        "hash": "9c3433c",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["9c3433c"]
       }
     ]
   },
@@ -170,8 +170,8 @@
         "type": "docs",
         "scope": "数据",
         "message": "修改部分描述",
-        "hash": "cc7dc29",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["cc7dc29"]
       }
     ]
   },
@@ -182,56 +182,56 @@
         "type": "refactor",
         "scope": "衍生物编辑器",
         "message": "修改部分文本和按钮",
-        "hash": "e24a0cf",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["e24a0cf"]
       },
       {
         "type": "docs",
         "scope": "状态和效果",
         "message": "修改部分描述",
-        "hash": "2a05423",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["2a05423"]
       },
       {
         "type": "feat",
         "scope": "衍生物",
         "message": "为每个衍生物添加导出按钮；重构代码片段生成器；折叠卡片现在显示“展开”而非“折叠”",
-        "hash": "ab18feb",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["ab18feb"]
       },
       {
         "type": "feat",
         "scope": "衍生物",
         "message": "在衍生物编辑器中添加“全部导入”功能",
-        "hash": "9afabf0",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["9afabf0"]
       },
       {
         "type": "docs",
         "scope": "猫方角色",
         "message": "微调角色莱特宁的描述",
-        "hash": "a2c41b8",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["a2c41b8"]
       },
       {
         "type": "docs",
         "scope": "鼠方角色",
         "message": "微调角色恶魔杰瑞的描述",
-        "hash": "58c5afd",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["58c5afd"]
       },
       {
         "type": "style",
         "scope": "角色的推荐知识卡",
         "message": "使贡献者标签不那么引人注目",
-        "hash": "f95f70c",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["f95f70c"]
       },
       {
         "type": "chore",
         "message": "使提交前代码格式化检查与持续集成保持一致",
-        "hash": "3ba3f11",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["3ba3f11"]
       }
     ]
   },
@@ -242,42 +242,42 @@
         "type": "feat",
         "scope": "衍生物编辑器",
         "message": "添加粘贴/文件导入和解析功能",
-        "hash": "9579a00",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["9579a00"]
       },
       {
         "type": "docs",
         "message": "将“追风汤姆”添加到赞助者列表",
-        "hash": "ade25ec",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["ade25ec"]
       },
       {
         "type": "feat",
         "scope": "衍生物编辑器",
         "message": "添加衍生物生成器页面",
-        "hash": "03ba4a6",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["03ba4a6"]
       },
       {
         "type": "docs",
         "scope": "贡献者清单",
         "message": "更新贡献者“千里共婵娟”为“如梦if”",
-        "hash": "7a8aae2",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["7a8aae2"]
       },
       {
         "type": "docs",
         "scope": "贡献者清单",
         "message": "统一贡献者描述格式",
-        "hash": "962580d",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["962580d"]
       },
       {
         "type": "docs",
         "scope": "鼠方角色",
         "message": "微调角色蒙金奇的描述",
-        "hash": "719e29c",
-        "author": "asHOH"
+        "author": "asHOH",
+        "hashes": ["719e29c"]
       }
     ]
   },
@@ -288,8 +288,8 @@
         "type": "feat",
         "scope": "状态和效果的详情",
         "message": "当来源数量超过10个时，使用折叠卡片显示",
-        "hash": "5aaf8a0",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["5aaf8a0"]
       }
     ]
   },
@@ -300,74 +300,74 @@
         "type": "feat",
         "scope": "角色信息,图片",
         "message": "添加角色鲍姆的信息",
-        "hash": "c1c79d3",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["c1c79d3"]
       },
       {
         "type": "fix",
         "message": "修复一个小错误",
-        "hash": "d5bbf02",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["d5bbf02"]
       },
       {
         "type": "fix",
         "scope": "状态和效果的详情",
         "message": "修复合并冲突",
-        "hash": "b5ae425",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["b5ae425"]
       },
       {
         "type": "refactor",
         "scope": "状态和效果的详情",
         "message": "适配新的数据类型",
-        "hash": "5c3a7ad",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["5c3a7ad"]
       },
       {
         "type": "refactor",
         "scope": "状态和效果",
         "message": "修改描述和部分类型",
-        "hash": "3785b80",
-        "author": "ConductorJerry"
+        "author": "ConductorJerry",
+        "hashes": ["3785b80"]
       },
       {
         "type": "feat",
         "scope": "文章功能",
         "message": "增加弱密码检测功能",
-        "hash": "e6637d3",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["e6637d3"]
       },
       {
         "type": "fix",
         "scope": "文章功能",
         "message": "修正 API 路由的参数类型",
-        "hash": "affa81c",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["affa81c"]
       },
       {
         "type": "feat",
         "message": "添加与 HIBP API 集成的密码强度验证器",
-        "hash": "c23c34a",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["c23c34a"]
       },
       {
         "type": "fix",
         "scope": "知识卡",
         "message": "在角色列表中使用链接组件",
-        "hash": "9e18607",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["9e18607"]
       },
       {
         "type": "chore",
         "message": "修复一个安全漏洞",
-        "hash": "c94aed5",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["c94aed5"]
       },
       {
         "type": "chore",
         "message": "将 Next.js 版本从 15.5.6 升级到 16.0.1",
-        "hash": "06f887c",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["06f887c"]
       }
     ]
   },
@@ -378,8 +378,8 @@
         "type": "feat",
         "scope": "角色信息",
         "message": "在移动端为推荐知识卡显示折叠视图",
-        "hash": "0759a08",
-        "author": "3swordman"
+        "author": "3swordman",
+        "hashes": ["0759a08"]
       }
     ]
   }
