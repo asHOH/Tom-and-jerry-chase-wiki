@@ -37,7 +37,9 @@ export interface ChangeLogsRef {
 
 const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
   const [isChangeLogsOpen, setIsChangeLogsOpen] = useState(false);
-  const [expandedDates, setExpandedDates] = useState<Set<string>>(new Set());
+  const [expandedDates, setExpandedDates] = useState<Set<string>>(
+    new Set(changeLogs?.map((log) => log.date) || [])
+  );
   const [expandedMinorDates, setExpandedMinorDates] = useState<Set<string>>(new Set());
 
   useImperativeHandle(ref, () => ({
