@@ -124,8 +124,10 @@ ${TYPE_DEFINITIONS}
 - offline -> 离线模式
 - build -> 构建
 - traits -> 特性
-- tooltip -> 工具提示
-- TextWithHoverTooltips -> 工具提示
+- tooltip -> 注释
+- TextWithHoverTooltips -> 注释
+- phrasing -> 措辞
+- wording -> 措辞
 - version -> 版本控制
 - versioning -> 版本控制
 - config -> 配置
@@ -168,10 +170,10 @@ ${TYPE_DEFINITIONS}
 - ci -> 
 - types -> 
 - readme -> 
+- copilot -> 
 - copilot-instructions -> 
 - generate-changelogs -> 
 - husky -> 
-- \`{...}\`Utils -> 
 
 **示例输入：**
 c1c79d3|feat(character): add 鲍姆 basic info
