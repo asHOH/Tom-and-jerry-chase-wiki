@@ -822,45 +822,15 @@
           <div class="card-actions">
             <button type="button" class="ghost" data-action="toggle">折叠</button>
             <button type="button" class="ghost" data-action="export">剪切板导出</button>
+            <button type="button" class="ghost" data-action="export-file">导出为文件</button>
             <button type="button" class="ghost" data-action="duplicate">复制</button>
             <button type="button" class="danger" data-action="delete">删除</button>
           </div>
         </div>
         <div class="card-body">
           <div class="stack">
-            <div class="two grid">
-              <div class="field">
-                <label for="name">特性名称 *</label>
-                <input
-                  data-field="name"
-                  type="text"
-                  inputmode="text"
-                  placeholder="仅作标识，可随意填写，例：汤姆1"
-                  autocomplete="off"
-                />
-              </div>
-              <div class="field">
-                <label>排除阵营</label>
-                <select data-field="excludeFactionId">
-                  <option value="">（无排除）</option>
-                  <option value="cat">猫阵营</option>
-                  <option value="mouse">鼠阵营</option>
-                </select>
-                <div class="field-comment">仅用于排除物件组中的指定类型内容</div>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>特性描述 *</label>
-              <textarea
-                data-field="description"
-                placeholder="描述该特性的效果"
-                style="min-height: 80px"
-              ></textarea>
-            </div>
-
             <div class="optional-group">
-              <h3>成员组</h3>
+              <h3>相关成员</h3>
 
               <div class="add-item-form">
                 <div class="form-row">
@@ -882,7 +852,7 @@
                     </select>
                   </div>
                   <div class="field">
-                    <label>阵营</label>
+                    <label>成员阵营</label>
                     <select data-role="item-faction">
                       <option value="">（可选）</option>
                       <option value="cat">猫阵营</option>
@@ -899,12 +869,43 @@
                   </div>
                 </div>
                 <div class="field-comment">
-                  注释：阵营用于区分同类型同名内容（例如应急治疗特技）；组别用于归类同类内容，同组别内容之间为"或"关系，满足其一即可
+                  阵营用于区分同类型同名内容（例如猫/鼠方应急治疗特技），其余情况可不填写；组别用于描述成员之间的逻辑关系，同一组别内的内容会归类为同类内容，彼此为"或"关系
                 </div>
               </div>
 
               <div class="item-group" data-role="group-container">
                 <!-- 动态添加的物件会在这里 -->
+              </div>
+            </div>
+            <div class="field">
+              <label>特性描述 *</label>
+              <textarea
+                data-field="description"
+                placeholder="描述该特性的效果"
+                style="min-height: 80px"
+              ></textarea>
+            </div>
+            <div class="two grid">
+              <div class="field">
+                <label for="name">特性名称 *</label>
+                <input
+                  data-field="name"
+                  type="text"
+                  inputmode="text"
+                  placeholder="仅作标识，可随意填写"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="field">
+                <label>排除复合项目中的指定阵营元素</label>
+                <select data-field="excludeFactionId">
+                  <option value="">（无排除）</option>
+                  <option value="cat">猫阵营</option>
+                  <option value="mouse">鼠阵营</option>
+                </select>
+                <div class="field-comment">
+                  用于精准排除“物件组”或“状态”关联项中的某些内容。该项对单个物件无影响
+                </div>
               </div>
             </div>
 
@@ -957,17 +958,8 @@
         </div>
         <div class="special-case-body">
           <div class="stack">
-            <div class="field">
-              <label>特殊情况描述</label>
-              <textarea
-                data-field="description"
-                placeholder="描述该特殊情况的触发条件和效果"
-                style="min-height: 80px"
-              ></textarea>
-            </div>
-
             <div class="optional-group">
-              <h3>成员组</h3>
+              <h3>相关成员</h3>
 
               <div class="add-item-form">
                 <div class="form-row">
@@ -989,7 +981,7 @@
                     </select>
                   </div>
                   <div class="field">
-                    <label>阵营</label>
+                    <label>成员阵营</label>
                     <select data-role="special-item-faction">
                       <option value="">（可选）</option>
                       <option value="cat">猫阵营</option>
@@ -1013,6 +1005,15 @@
                 <!-- 动态添加的物件会在这里 -->
               </div>
             </div>
+
+            <div class="field">
+              <label>特殊情况描述</label>
+              <textarea
+                data-field="description"
+                placeholder="描述该特殊情况的触发条件和效果"
+                style="min-height: 80px"
+              ></textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -1021,7 +1022,6 @@
     <div id="toast" class="toast"></div>
 
     <script>
-      // ... JavaScript 代码保持不变 ...
       const traits = [];
       const traitsContainer = document.getElementById('traitsContainer');
       const exportOutput = document.getElementById('exportOutput');
@@ -1674,6 +1674,32 @@
         showToast(success ? `已导出 ${displayName}` : '导出失败，请重试');
       }
 
+      // 导出单个特性为文件
+      function exportTraitToFile(trait) {
+        const snippet = buildTraitEntry(trait, { indent: 2, trailingComma: false });
+        if (!snippet) {
+          showToast('特性名称为空，无法导出');
+          return;
+        }
+
+        const blob = new Blob([snippet], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const timestamp = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const displayName = (trait.name ?? '').trim() || '未命名特性';
+        const safeName = displayName.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_');
+        const filename = `特性_${safeName}_${timestamp.getFullYear()}${pad(timestamp.getMonth() + 1)}${pad(timestamp.getDate())}-${pad(timestamp.getHours())}${pad(timestamp.getMinutes())}.txt`;
+
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast(`已导出 ${displayName} 为文件`);
+      }
+
       function updateUI() {
         const snippet = buildSnippet();
         exportOutput.value = snippet;
@@ -2067,6 +2093,10 @@
           const trait = getTraitById(id);
           if (!trait) return;
           void exportSingleTrait(trait);
+        } else if (action === 'export-file') {
+          const trait = getTraitById(id);
+          if (!trait) return;
+          exportTraitToFile(trait);
         }
       });
 
