@@ -1,5 +1,230 @@
 [
   {
+    "date": "2025-11-15",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "PWA支持",
+        "message": "在 iOS 设备上启用 PWA 支持",
+        "breaking": false,
+        "hashes": ["b1c2313d"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "搜索引擎优化",
+        "message": "优化结构化数据",
+        "breaking": false,
+        "hashes": ["0e468aec"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "搜索引擎优化",
+        "message": "添加并使用 StructuredData 组件",
+        "breaking": false,
+        "hashes": ["5b0702a9", "8199742d"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-14",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "搜索引擎优化",
+        "message": "完成文章站点地图并将其添加到 robots.txt",
+        "breaking": false,
+        "hashes": ["2140556c", "9a5a6462"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "构建",
+        "message": "强制生产构建通过 webpack 运行，以便 next-pwa 执行并重新生成 sw.js",
+        "breaking": false,
+        "hashes": ["9a438311"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "Service Worker",
+        "message": "增强 Service Worker 注册，增加内容类型检查和缓存清理",
+        "breaking": false,
+        "hashes": ["77850e16"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "Service Worker",
+        "message": "添加 Service Worker 注册检查和离线缓存通知",
+        "breaking": false,
+        "hashes": ["70069cf5"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "路由",
+        "message": "改进图片 API 中的路径验证和响应处理",
+        "breaking": false,
+        "hashes": ["e5111cfd"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "网站安全",
+        "message": "添加 pusher 域名以启用 Vercel Live",
+        "breaking": false,
+        "hashes": ["363857a7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "图片显示",
+        "message": "填充空白的自定义图片加载器（无法想象这个项目之前是如何在没有明显错误的情况下运行的！）",
+        "breaking": false,
+        "hashes": ["f83d3184"],
+        "author": "asHOH"
+      },
+      {
+        "type": "style",
+        "scope": "知识卡",
+        "message": "将贡献者和警告信息放在同一行",
+        "breaking": false,
+        "hashes": ["1883ce7c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "style",
+        "scope": "角色的推荐知识卡",
+        "message": "将缺失卡片的警告合并为一个",
+        "breaking": false,
+        "hashes": ["59a100d2"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "角色的推荐知识卡",
+        "message": "添加缺失“铁血”的警告；并对其进行分类",
+        "breaking": false,
+        "hashes": ["f97f68fe"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-13",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "特性显示",
+        "message": "使用 const 代替 let 以修复 lint 警告",
+        "breaking": false,
+        "hashes": ["3230cb19"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "更新日志",
+        "message": "添加错误处理",
+        "breaking": false,
+        "hashes": ["cc52125a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "特性列表",
+        "message": "为 TraitCollection 组件添加分页",
+        "breaking": false,
+        "hashes": ["b2ac0af7"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "游戏机制, 特性列表",
+        "message": "创建特性列表页面",
+        "breaking": false,
+        "hashes": ["f67a22dd"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "游戏机制",
+        "message": "创建机制页面并添加机制导航",
+        "breaking": false,
+        "hashes": ["2130760f"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "工具",
+        "message": "创建工具页面并添加工具导航",
+        "breaking": false,
+        "hashes": ["4d0873c8"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-11",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "MERGING",
+        "message": "修复冲突",
+        "breaking": false,
+        "hashes": ["30df7ad6"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "特性",
+        "message": "修改部分特性",
+        "breaking": false,
+        "hashes": ["693ce8f9"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-10",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "特性",
+        "message": "将数据类型从 Array 更改为 Record",
+        "breaking": false,
+        "hashes": ["3736e575"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "特性显示",
+        "message": "修复错误的 printName",
+        "breaking": false,
+        "hashes": ["a2aba682"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "scope": "特性显示",
+        "message": "支持属性 'searchBuff'",
+        "breaking": false,
+        "hashes": ["11a286c3"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "scope": "特性",
+        "message": "支持属性 trait.excludeFactionId",
+        "breaking": false,
+        "hashes": ["956ccb0e"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
     "date": "2025-11-09",
     "changes": [
       {
@@ -37,7 +262,7 @@
       {
         "type": "feat",
         "scope": "角色信息",
-        "message": "自动为部分文本添加 {...}（可能会导致一些问题）",
+        "message": "自动为部分文本添加跳转链接（可能会导致一些问题）",
         "breaking": false,
         "hashes": ["b204620a"],
         "author": "3swordman"
