@@ -4,21 +4,9 @@
     "changes": [
       {
         "type": "feat",
-        "message": "为更新日志添加基础界面",
+        "message": "为更新日志添加基础脚本和基础界面",
         "author": "3swordman",
-        "hashes": ["dd32322"]
-      },
-      {
-        "type": "feat",
-        "message": "添加使用 Gemini AI 生成更新日志的脚本",
-        "author": "3swordman",
-        "hashes": ["2c6ed4e"]
-      },
-      {
-        "type": "feat",
-        "message": "为更新日志添加基础脚本",
-        "author": "3swordman",
-        "hashes": ["8c055e7"]
+        "hashes": ["8c055e7", "2c6ed4e", "dd32322"]
       },
       {
         "type": "fix",
@@ -33,13 +21,6 @@
         "message": "为 AI 添加历史记录支持和衍生物别名映射",
         "author": "3swordman",
         "hashes": ["c64f41b"]
-      },
-      {
-        "type": "chore",
-        "scope": "ai",
-        "message": "在 iframe 中执行代码以提高安全性",
-        "author": "3swordman",
-        "hashes": ["70b38a3"]
       },
       {
         "type": "fix",
@@ -102,13 +83,6 @@
         "hashes": ["3ce819e"]
       },
       {
-        "type": "chore",
-        "scope": "网站安全",
-        "message": "移除废弃的 X-XSS-Protection 响应头，并添加 HSTS、Referrer-Policy 和 Permissions-Policy",
-        "author": "asHOH",
-        "hashes": ["d04b58e"]
-      },
-      {
         "type": "fix",
         "scope": "衍生物",
         "message": "将拼写错误的 \"colddown\" 重命名为 \"cooldown\"",
@@ -136,12 +110,6 @@
         "hashes": ["dd69b16"]
       },
       {
-        "type": "chore",
-        "message": "为编辑器页面添加 noindex 元标签，并在 robots.txt 中禁止抓取",
-        "author": "asHOH",
-        "hashes": ["b626a09"]
-      },
-      {
         "type": "refactor",
         "scope": "代码类型",
         "message": "使用本地工具函数替换 Next.js 的 DeepReadonly 类型",
@@ -154,12 +122,6 @@
         "message": "通过自定义加载器处理图片路由",
         "author": "asHOH",
         "hashes": ["63cbc76"]
-      },
-      {
-        "type": "chore",
-        "message": "将 TypeScript 配置与 Next.js 默认值同步",
-        "author": "asHOH",
-        "hashes": ["9c3433c"]
       }
     ]
   },
@@ -209,14 +171,14 @@
       {
         "type": "docs",
         "scope": "猫方角色",
-        "message": "微调角色莱特宁的描述",
+        "message": "微调莱特宁的描述",
         "author": "asHOH",
         "hashes": ["a2c41b8"]
       },
       {
         "type": "docs",
         "scope": "鼠方角色",
-        "message": "微调角色恶魔杰瑞的描述",
+        "message": "微调恶魔杰瑞的描述",
         "author": "asHOH",
         "hashes": ["58c5afd"]
       },
@@ -226,12 +188,6 @@
         "message": "使贡献者标签不那么引人注目",
         "author": "asHOH",
         "hashes": ["f95f70c"]
-      },
-      {
-        "type": "chore",
-        "message": "使提交前代码格式化检查与持续集成保持一致",
-        "author": "asHOH",
-        "hashes": ["3ba3f11"]
       }
     ]
   },
@@ -241,22 +197,15 @@
       {
         "type": "feat",
         "scope": "衍生物编辑器",
-        "message": "添加粘贴/文件导入和解析功能",
+        "message": "添加衍生物生成器页面",
         "author": "asHOH",
-        "hashes": ["9579a00"]
+        "hashes": ["03ba4a6", "9579a00"]
       },
       {
         "type": "docs",
         "message": "将“追风汤姆”添加到赞助者列表",
         "author": "asHOH",
         "hashes": ["ade25ec"]
-      },
-      {
-        "type": "feat",
-        "scope": "衍生物编辑器",
-        "message": "添加衍生物生成器页面",
-        "author": "asHOH",
-        "hashes": ["03ba4a6"]
       },
       {
         "type": "docs",
@@ -310,27 +259,6 @@
         "hashes": ["d5bbf02"]
       },
       {
-        "type": "fix",
-        "scope": "状态和效果的详情",
-        "message": "修复合并冲突",
-        "author": "ConductorJerry",
-        "hashes": ["b5ae425"]
-      },
-      {
-        "type": "refactor",
-        "scope": "状态和效果的详情",
-        "message": "适配新的数据类型",
-        "author": "ConductorJerry",
-        "hashes": ["5c3a7ad"]
-      },
-      {
-        "type": "refactor",
-        "scope": "状态和效果",
-        "message": "修改描述和部分类型",
-        "author": "ConductorJerry",
-        "hashes": ["3785b80"]
-      },
-      {
         "type": "feat",
         "scope": "文章功能",
         "message": "增加弱密码检测功能",
@@ -346,7 +274,7 @@
       },
       {
         "type": "feat",
-        "message": "添加与 HIBP API 集成的密码强度验证器",
+        "message": "添加密码强度验证器",
         "author": "3swordman",
         "hashes": ["c23c34a"]
       },
@@ -356,18 +284,6 @@
         "message": "在角色列表中使用链接组件",
         "author": "3swordman",
         "hashes": ["9e18607"]
-      },
-      {
-        "type": "chore",
-        "message": "修复一个安全漏洞",
-        "author": "3swordman",
-        "hashes": ["c94aed5"]
-      },
-      {
-        "type": "chore",
-        "message": "将 Next.js 版本从 15.5.6 升级到 16.0.1",
-        "author": "3swordman",
-        "hashes": ["06f887c"]
       }
     ]
   },
