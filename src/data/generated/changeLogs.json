@@ -1,5 +1,386 @@
 [
   {
+    "date": "2025-12-08",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新表演者·杰瑞的梦幻舞步、免控、霸体、绝对霸体描述",
+        "breaking": false,
+        "hashes": ["99f9195c"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "更新日志",
+        "message": "补充截至11月25日的更新日志",
+        "breaking": false,
+        "hashes": ["09dd329e", "7ccaa523", "8cc01901", "e4e28015"],
+        "author": "asHOH"
+      },
+      {
+        "type": "style",
+        "scope": "更新日志",
+        "message": "仅在非当前年份显示年份；默认展开所有日期",
+        "breaking": false,
+        "hashes": ["3695c8c9", "05b4364d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "更新日志",
+        "message": "支持 revert 提交信息；更新系统提示词",
+        "breaking": false,
+        "hashes": ["ca17d3e4", "e04f859d", "437ca6e3"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "更新日志",
+        "message": "支持按日期筛选提交，并添加无 AI 生成的回退模式",
+        "breaking": false,
+        "hashes": ["e9c8c943"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "反馈建议",
+        "message": "将反馈保存到数据库作为备份",
+        "breaking": false,
+        "hashes": ["e33f91a5"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-07",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "更新日志",
+        "message": "更新现有的更新日志",
+        "breaking": false,
+        "hashes": ["29243429", "bde8fc54"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "更新日志",
+        "message": "最小化除 feat、docs 和 style 之外的更改显示",
+        "breaking": false,
+        "hashes": ["66645053"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "更新日志",
+        "message": "迁移哈希处理以使用哈希数组",
+        "breaking": false,
+        "hashes": ["69685b2c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "机制",
+        "message": "将 MDXContent 包裹在 StyledMDX 中以正确应用样式",
+        "breaking": false,
+        "hashes": ["d3027e86"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "贡献者清单, 年鉴",
+        "message": "添加鲍姆的贡献者和发布时间",
+        "breaking": false,
+        "hashes": ["39d69251"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "更新日志",
+        "message": "将提交过滤、排序和作者处理改为代码实现",
+        "breaking": false,
+        "hashes": ["4293021b"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "更新日志",
+        "message": "更新 Gemini 模型为 'gemini-2.5-flash' 并优化生成规则",
+        "breaking": false,
+        "hashes": ["dd6c2893", "c2c9f88a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "补充缺失的知识卡组描述；修正错误的链接文本；添加布奇-3级力大无穷特性",
+        "breaking": false,
+        "hashes": ["a95ca319"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "特性编辑器",
+        "message": "修改部分 UI 和文本",
+        "breaking": false,
+        "hashes": ["c471d1d8"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "特性",
+        "message": "添加 2 个新特性",
+        "breaking": false,
+        "hashes": ["683188bf"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "首页",
+        "message": "更新章节标题",
+        "breaking": false,
+        "hashes": ["6f35722f"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-06",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "首页, 工具, 导航栏",
+        "message": "精简章节项目；重组章节按钮布局；去重代码逻辑",
+        "breaking": false,
+        "hashes": ["4d7adf04", "7abe069d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "依赖",
+        "message": "更新 @next/mdx, next, react 和 eslint-config-next 以修复安全问题",
+        "breaking": false,
+        "hashes": ["70f1a51a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "角色关系",
+        "message": "提高角色图片的清晰度",
+        "breaking": false,
+        "hashes": ["8a45d414"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-05",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "机制",
+        "message": "修复 sectionName 类型错误并使用动态配置",
+        "breaking": false,
+        "hashes": ["c6753c78"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "鼠方角色",
+        "message": "更新杰瑞、侦探杰瑞、罗宾汉杰瑞、航海士杰瑞的描述",
+        "breaking": false,
+        "hashes": ["12c605e5"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "更新鲍姆的描述",
+        "breaking": false,
+        "hashes": ["5edf1dd0"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "数据库",
+        "message": "推送数据库迁移",
+        "breaking": false,
+        "hashes": ["2ef4aad3"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "机制",
+        "message": "新增文章“物体”",
+        "breaking": false,
+        "hashes": ["ae762576"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "依赖",
+        "message": "添加 babel-plugin-react-compiler",
+        "breaking": false,
+        "hashes": ["88383b4a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "perf",
+        "scope": "构建",
+        "message": "调整构建脚本顺序以更早发现错误",
+        "breaking": false,
+        "hashes": ["6689f341"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "开发",
+        "message": "更新 start_server.sh 中的 npm install 命令以忽略开发依赖和脚本",
+        "breaking": false,
+        "hashes": ["b3c1cf15"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "更新日志",
+        "message": "从构建步骤中移除更新日志生成；扩大生成范围",
+        "breaking": false,
+        "hashes": ["b86bd3d2"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-03",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "类型",
+        "message": "使用 SkillType 替换字符串字面量",
+        "breaking": false,
+        "hashes": ["abb3f80e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "简化 getTypeLabelColors；使用共享调色板简化道具类型/来源颜色映射",
+        "breaking": false,
+        "hashes": ["ccbb9779", "1e4ad774"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "更新阵营颜色并重构复用逻辑",
+        "breaking": false,
+        "hashes": ["f0b51b96"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "道具",
+        "message": "简化道具类型和来源显示",
+        "breaking": false,
+        "hashes": ["25e08d75"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-01",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "机制",
+        "message": "自动生成导航项并验证配置；通过 index.ts 自动注册机制章节",
+        "breaking": false,
+        "hashes": ["40e82b91", "c8c0e8f2"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-30",
+    "changes": [
+      {
+        "type": "perf",
+        "scope": "数据库",
+        "message": "为 article_versions.status 添加索引；优化数据库性能和 RLS 策略",
+        "breaking": false,
+        "hashes": ["b6ec6f79", "53f64a0f"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "特性编辑器",
+        "message": "适配移动端界面",
+        "breaking": false,
+        "hashes": ["b167433b"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "数据库",
+        "message": "确保仅在策略存在时删除；保护函数搜索路径",
+        "breaking": false,
+        "hashes": ["39fe673d", "2563ae5e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "特性编辑器",
+        "message": "创建特性编辑器 trait-maker.html",
+        "breaking": false,
+        "hashes": ["5a72f96f"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-29",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "添加雷云的图片；修复泰菲球的归属",
+        "breaking": false,
+        "hashes": ["73ccd694", "d71b7094"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "为图茨/米特文本添加汽水冰面/胡椒罐头烟雾的链接",
+        "breaking": false,
+        "hashes": ["031f8c74"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "文档",
+        "message": "追风汤姆不再能移动果盘",
+        "breaking": false,
+        "hashes": ["f2f7ebbe"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2025-11-28",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "补全缺失图片；添加7个新衍生物（汽水冰面、胡椒罐头烟雾、管道猫等）",
+        "breaking": false,
+        "hashes": ["ed11b1a3"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
     "date": "2025-11-25",
     "changes": [
       {
