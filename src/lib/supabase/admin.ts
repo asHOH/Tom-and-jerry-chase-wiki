@@ -1,6 +1,8 @@
 import { Database } from '@/data/database.types';
 import { createClient } from '@supabase/supabase-js';
 
+import { fetchWithRetry } from './fetch-retry';
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -9,4 +11,8 @@ const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 export const supabaseAdmin =
   process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !supabaseServiceRoleKey
     ? (void 0 as never)
-    : createClient<Database>(supabaseUrl!, supabaseServiceRoleKey);
+    : createClient<Database>(supabaseUrl!, supabaseServiceRoleKey, {
+        global: {
+          fetch: fetchWithRetry,
+        },
+      });

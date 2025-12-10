@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { fetchWithRetry } from './fetch-retry';
+
 // Maintainer note:
 // We dynamically deep-import createServerClient from @supabase/ssr to prevent the Edge
 // bundle from including browser/realtime code (which relies on Node APIs). This avoids
@@ -35,6 +37,9 @@ export async function updateSession(request: NextRequest) {
             supabaseResponse.cookies.set(name, value, options)
           );
         },
+      },
+      global: {
+        fetch: fetchWithRetry,
       },
     }
   );

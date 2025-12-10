@@ -2,6 +2,8 @@ import { cookies } from 'next/headers';
 import type { Database } from '@/data/database.types';
 import { createServerClient } from '@supabase/ssr';
 
+import { fetchWithRetry } from './fetch-retry';
+
 export async function createClient() {
   if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return void 0 as never;
@@ -28,6 +30,9 @@ export async function createClient() {
             // user sessions.
           }
         },
+      },
+      global: {
+        fetch: fetchWithRetry,
       },
     }
   );
