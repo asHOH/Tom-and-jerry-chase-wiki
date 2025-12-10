@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -13,8 +14,22 @@ export async function GET(request: NextRequest) {
 
   const offset = (page - 1) * limit;
 
+  const supabase = supabaseAdmin || (await createClient());
+
+  if (!supabase) {
+    return NextResponse.json({
+      articles: [],
+      total_count: 0,
+      current_page: 1,
+      total_pages: 0,
+      categories: [],
+      has_next: false,
+      has_prev: false,
+    });
+  }
+
   try {
-    let query = supabaseAdmin
+    let query = supabase
       .from('articles')
       .select(
         `
@@ -65,7 +80,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get total count for pagination
-    let countQuery = supabaseAdmin
+    let countQuery = supabase
       .from('articles')
       .select('id, article_versions_public_view!inner(id)', { count: 'exact', head: true })
       .eq('article_versions_public_view.status', 'approved');
@@ -85,7 +100,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get categories for filter options
-    const { data: categories, error: categoriesError } = await supabaseAdmin
+    const { data: categories, error: categoriesError } = await supabase
       .from('categories')
       .select('id, name')
       .order('name');

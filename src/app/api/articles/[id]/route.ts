@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   void request;
@@ -10,9 +11,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json({ error: 'Missing article ID' }, { status: 400 });
   }
 
+  const supabase = supabaseAdmin || (await createClient());
+
+  if (!supabase) {
+    return NextResponse.json({ error: 'Articles disabled' }, { status: 404 });
+  }
+
   try {
     // Increment view count
-    const { error: incrementError } = await supabaseAdmin.rpc('increment_article_view_count', {
+    const { error: incrementError } = await supabase.rpc('increment_article_view_count', {
       p_article_id: id,
     });
 
@@ -22,7 +29,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Get the article basic info
-    const { data: article, error: articleError } = await supabaseAdmin
+    const { data: article, error: articleError } = await supabase
       .from('articles')
       .select(
         `
@@ -45,7 +52,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Get the latest approved version with editor info
-    const { data: latestVersion, error: versionError } = await supabaseAdmin
+    const { data: latestVersion, error: versionError } = await supabase
       .from('article_versions_public_view')
       .select(
         `
