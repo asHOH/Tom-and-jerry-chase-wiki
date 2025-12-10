@@ -10,6 +10,7 @@ import { useUser } from '@/hooks/useUser';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/HomePageSection';
+import OfficialSitesDisplay from '@/components/ui/OfficialSitesDisplay';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import { DisclaimerText } from '@/components/DisclaimerText';
@@ -124,6 +125,17 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         <div className='mt-6 flex flex-wrap justify-center gap-4'>
           <FeedbackSection ref={feedbackSectionRef} />
           <ChangeLogs ref={changeLogsRef} />
+        </div>
+
+        <div className='mt-12 px-2 sm:px-4'>
+          <div className='mx-auto max-w-4xl'>
+            <div className='h-px w-full bg-gray-300 dark:bg-gray-700'></div>
+          </div>
+        </div>
+
+        <div className='mt-8'>
+          <h2 className='mb-6 text-2xl font-bold dark:text-white'>站点列表</h2>
+          <OfficialSitesDisplay />
         </div>
       </div>
 
