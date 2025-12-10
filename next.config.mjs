@@ -113,7 +113,8 @@ const shouldIncludeVercelAnalytics = () => {
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   typescript: {
-    ignoreBuildErrors: !!process.env.NEXT_PUBLIC_DISABLE_ARTICLES,
+    ignoreBuildErrors:
+      !!process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
   env: {
     NEXT_PUBLIC_BUILD_TIMESTAMP: new Date().toISOString(),
@@ -126,7 +127,7 @@ const nextConfig = {
       },
     ];
 
-    if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+    if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       rewriteContents.push(
         { source: '/api/articles', destination: '/404' },
         { source: '/api/articles/:path*', destination: '/404' },

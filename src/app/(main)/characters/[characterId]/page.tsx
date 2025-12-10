@@ -101,7 +101,7 @@ export default async function CharacterPage({
       notFound();
     }
 
-    if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+    if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       return (
         <CharacterDetailsClient character={character}>
           {!!docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}

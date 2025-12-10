@@ -6,7 +6,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 // Edge runtime warnings. Package version is pinned in package.json for stability.
 
 export async function updateSession(request: NextRequest) {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.next({ request });
   }
   type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];

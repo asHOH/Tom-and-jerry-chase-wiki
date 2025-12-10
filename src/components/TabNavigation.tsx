@@ -144,7 +144,12 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     : items;
   const primaryTabs = sortedTabs
     .slice(0, visibleCount)
-    .filter((tab) => !process.env.NEXT_PUBLIC_DISABLE_ARTICLES || tab.id !== 'articles');
+    .filter(
+      (tab) =>
+        (!process.env.NEXT_PUBLIC_DISABLE_ARTICLES &&
+          !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) ||
+        tab.id !== 'articles'
+    );
   const overflowTabs = clampedCollapsed > 0 ? sortedTabs.slice(visibleCount) : [];
 
   const tabMinWidthClass = 'min-w-[40px]';
@@ -338,7 +343,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           {mounted &&
             !!nickname &&
             shouldDisplayUserSettings &&
-            !process.env.NEXT_PUBLIC_DISABLE_ARTICLES && (
+            !process.env.NEXT_PUBLIC_DISABLE_ARTICLES &&
+            !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && (
               <div className='relative'>
                 <Tooltip content='用户设置' className='border-none'>
                   <button

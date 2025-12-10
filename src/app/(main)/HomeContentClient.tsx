@@ -16,9 +16,9 @@ import { DisclaimerText } from '@/components/DisclaimerText';
 import LoginDialog from '@/components/LoginDialog';
 import { VersionDisplay } from '@/components/VersionDisplay';
 
-type Props = { description: string };
+type Props = { description: string; hasServiceKey: boolean };
 
-export default function HomeContentClient({ description }: Props) {
+export default function HomeContentClient({ description, hasServiceKey }: Props) {
   const { toggleEditMode, isEditMode } = useEditMode();
   const { success, info } = useToast();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
@@ -36,7 +36,8 @@ export default function HomeContentClient({ description }: Props) {
       setShowLoginDialog(false);
     } else {
       info('成功进入编辑模式，编辑模式下，修改只在本地保存', 4000);
-      if (!nickname && !process.env.NEXT_PUBLIC_DISABLE_ARTICLES) setShowLoginDialog(true);
+      if (!nickname && !process.env.NEXT_PUBLIC_DISABLE_ARTICLES && hasServiceKey)
+        setShowLoginDialog(true);
     }
     toggleEditMode();
   };
@@ -65,7 +66,9 @@ export default function HomeContentClient({ description }: Props) {
         { id: 'buffs' },
         {
           id: 'articles',
-          condition: !process.env.NEXT_PUBLIC_DISABLE_ARTICLES,
+          condition:
+            !process.env.NEXT_PUBLIC_DISABLE_ARTICLES &&
+            !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
         },
         { id: 'mechanics' },
         { id: 'tools' },

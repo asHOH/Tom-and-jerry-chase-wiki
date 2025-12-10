@@ -19,7 +19,10 @@ export default function Home() {
   return (
     <>
       <StructuredData data={getSiteJsonLd()} />
-      <HomeContentClient description={DESCRIPTION} />
+      <HomeContentClient
+        description={DESCRIPTION}
+        hasServiceKey={!!process.env.SUPABASE_SERVICE_ROLE_KEY}
+      />
     </>
   );
 }

@@ -3,7 +3,7 @@ import type { Database } from '@/data/database.types';
 import { createServerClient } from '@supabase/ssr';
 
 export async function createClient() {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return void 0 as never;
   }
 

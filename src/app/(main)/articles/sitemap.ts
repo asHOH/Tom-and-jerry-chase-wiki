@@ -5,7 +5,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://tjwiki.com';
 
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES) {
+  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
   }
 
