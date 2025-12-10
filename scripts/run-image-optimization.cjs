@@ -37,19 +37,57 @@ async function findImageFiles(dir) {
  * @param {string} filePath The full path to the image file.
  * @returns {Promise<void[]>} A promise that resolves when both conversions are settled.
  */
-function convertImage(filePath) {
+async function convertImage(filePath) {
   const baseName = path.basename(filePath, path.extname(filePath));
   const dirName = path.dirname(filePath);
+  const webpPath = path.join(dirName, `${baseName}.webp`);
+  const avifPath = path.join(dirName, `${baseName}.avif`);
+
+  let shouldConvertWebP = true;
+  let shouldConvertAvif = true;
+
+  try {
+    const sourceStats = await fs.stat(filePath);
+
+    try {
+      const webpStats = await fs.stat(webpPath);
+      if (webpStats.mtime > sourceStats.mtime) {
+        shouldConvertWebP = false;
+      }
+    } catch {
+      // WebP doesn't exist or error reading stats, proceed with conversion
+    }
+
+    try {
+      const avifStats = await fs.stat(avifPath);
+      if (avifStats.mtime > sourceStats.mtime) {
+        shouldConvertAvif = false;
+      }
+    } catch {
+      // AVIF doesn't exist or error reading stats, proceed with conversion
+    }
+  } catch (err) {
+    console.error(`Error reading stats for ${filePath}:`, err);
+  }
 
   // Define conversion tasks for this image
-  const conversions = [
-    sharp(filePath)
-      .webp({ quality: 80 })
-      .toFile(path.join(dirName, `${baseName}.webp`)),
-    sharp(filePath)
-      .avif({ quality: 70, effort: 4 }) // 'effort' can be tuned (0-9), lower is faster
-      .toFile(path.join(dirName, `${baseName}.avif`)),
-  ];
+  const conversions = [];
+
+  if (shouldConvertWebP) {
+    conversions.push(sharp(filePath).webp({ quality: 80 }).toFile(webpPath));
+  } else {
+    conversions.push(Promise.resolve({ skipped: true }));
+  }
+
+  if (shouldConvertAvif) {
+    conversions.push(
+      sharp(filePath)
+        .avif({ quality: 70, effort: 4 }) // 'effort' can be tuned (0-9), lower is faster
+        .toFile(avifPath)
+    );
+  } else {
+    conversions.push(Promise.resolve({ skipped: true }));
+  }
 
   // Return a promise that settles when both conversions for this image are done
   return Promise.allSettled(conversions);
