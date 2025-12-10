@@ -1,24 +1,26 @@
 import { forwardRef } from 'react';
-import NextImage, { ImageLoaderProps, ImageProps } from 'next/image';
-
-const customImageLoader = ({ src, width, quality }: ImageLoaderProps) => {
-  const params = new URLSearchParams();
-  params.set('src', src);
-  if (typeof width === 'number') {
-    params.set('w', String(width));
-  }
-  if (typeof quality === 'number') {
-    params.set('q', String(quality));
-  }
-  if (process.env.NODE_ENV !== 'development' && process.env.NEXT_PUBLIC_BUILD_TIMESTAMP) {
-    params.set('t', process.env.NEXT_PUBLIC_BUILD_TIMESTAMP);
-  }
-
-  return `/api/image?${params.toString()}`;
-};
+import NextImage, { ImageProps } from 'next/image';
 
 const Image = forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
-  return <NextImage loader={customImageLoader} ref={ref} {...props} />;
+  const { src, ...rest } = props;
+
+  // If src is not a string (e.g. imported image object) or is external, use default NextImage
+  if (typeof src !== 'string' || src.startsWith('http') || src.startsWith('//')) {
+    return <NextImage ref={ref} src={src} {...rest} />;
+  }
+
+  // For local images, use picture tag with AVIF/WebP sources
+  // We assume the build script has generated .avif and .webp versions
+  const lastDotIndex = src.lastIndexOf('.');
+  const srcWithoutExt = lastDotIndex !== -1 ? src.substring(0, lastDotIndex) : src;
+
+  return (
+    <picture>
+      <source srcSet={`${srcWithoutExt}.avif`} type='image/avif' />
+      <source srcSet={`${srcWithoutExt}.webp`} type='image/webp' />
+      <NextImage ref={ref} src={src} unoptimized {...rest} />
+    </picture>
+  );
 });
 
 Image.displayName = 'Image';
