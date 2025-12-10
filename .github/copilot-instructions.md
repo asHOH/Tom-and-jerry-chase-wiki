@@ -1,6 +1,6 @@
 # Project Information
 
-A fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠手游). The site provides comprehensive data and tools for players to look up character information, knowledge cards, and game mechanics.
+A wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠手游). The site provides comprehensive data and tools for players to look up character information, knowledge cards, and game mechanics.
 
 - **Name**: Tom and Jerry Chase Wiki
 - **Type**: Next.js application
@@ -14,17 +14,16 @@ A fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠�
 
 ## Core Features
 
-- **Characters**: Detailed information about cat and mouse characters including stats, skills, and recommended builds
-- **Knowledge Cards**: Complete database of knowledge cards with effects and filtering capabilities
+- **Characters**: Detailed information about cat/mouse characters, knowledge cards, special skills, items, entities and status
+- **Community Articles**: Community-written articles stored at supabase
 - **Search & Filter**: Advanced search and filtering system with Chinese pinyin support
 - **Progressive Web App**: Offline-capable PWA with caching for mobile users
 
 ## Key Principles
 
-- **Data Accuracy**: Precise character stats and skill descriptions
 - **Performance**: Fast loading and responsive design for mobile users (70%+ mobile traffic)
-- **Accessibility**: Clean, intuitive interface that works well on mobile devices
-- **Community-Driven**: Open source project welcoming contributions from visitors
+- **Accessibility**: Clean, intuitive crossplatform interface
+- **Community-Driven**: Open source project welcoming visitor contributions
 
 # Technology Stack
 
@@ -35,18 +34,17 @@ A fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠�
 
 ## Styling & UI
 
+- Responsive design with mobile-first approach
 - **Tailwind CSS 4** for utility-first styling
 - Custom design system with predefined color schemes for game elements
-- Responsive design with mobile-first approach
 
 ## State Management & Data
 
 - **Valtio** for reactive state management
 - **SWR** for data fetching and caching
-- **Immer** for immutable state updates
 - Static TypeScript data files for game content
 
-## Development Tools
+## Dev Tools
 
 - **ESLint** for code quality
 - **Prettier** for code formatting (single quotes, 100 char width)
@@ -68,7 +66,7 @@ A fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠�
   - Characters detail uses ISR (`export const revalidate = 28800`).
   - Items and special-skills pages are SSG using static TS data. `characters/user/*` remains dynamic.
 - **Docs index generator**: `scripts/generate-doc-pages.mjs` runs during `npm run build` to produce `src/data/generated/docPages.(json|ts)`. Import the typed TS (`docPages.ts`) from runtime code; avoid `fs` in RSC.
-- **Edge-safe middleware**: Supabase session update dynamically deep-imports `createServerClient` from `@supabase/ssr/dist/module/createServerClient.js` to avoid Edge runtime Node API warnings. `@supabase/ssr` is pinned to `0.7.0`.
+- **Edge-safe middleware**: Supabase session update dynamically deep-imports `createServerClient` from `@supabase/ssr/dist/module/createServerClient.js` to avoid Edge runtime Node API warnings.
 
 ## Performance
 
@@ -116,18 +114,13 @@ A fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠�
   - Ensure RLS policies match usage: public reads rely on views with restricted columns; writes/moderation go through SQL functions (RPCs) with server-side checks.
 
 - **Environment Variables**:
-  - Required: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`.
-  - Optional feature gates: `NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH` (forces password on register/login rules).
+  - Required: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`.
+  - Optional: `SUPABASE_SERVICE_ROLE_KEY` (for write privilege), `NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH` (forces password on register/login rules).
 
 - **Security Notes**:
   - Never import `supabaseAdmin` in client bundles. Keep service key server-only.
   - Prefer server client (`createClient()` in route handlers) for any operation touching auth cookies or requiring session context; the global middleware keeps cookies fresh.
   - Use RPCs for privileged mutations so that logic and authorization live in the database; check roles in handlers before calling RPCs.
-
-- **Dev Checklist**:
-  - Add env vars in Vercel/Local `.env.local`.
-  - Verify middleware runs (auth cookie refresh) and CSP `connect-src` allows `*.supabase.co` (configured in `app/layout.tsx`).
-  - Run `npm run lint` and `npm run type-check` to validate DB types usage.
 
 # Project Structure
 
@@ -202,7 +195,7 @@ A fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠�
 
 ## Import Conventions
 
-- Use `@/` path alias for `src/` directory
+- Use `@/` alias for `src/` directory
 - Group imports: external libraries, internal modules, relative imports
 - Prefer named exports over default exports for utilities
 
@@ -229,13 +222,13 @@ A fan-made wiki website for the mobile game "Tom and Jerry Chase" (猫和老鼠�
 - Avoid inline scripts/styles
 - Optimize for static delivery and client-side hydration
 
-# Things to do After Editing (IMPORTANT!)
+# To-dos After Editing (IMPORTANT!)
 
 - Run these commands to ensure code quality:
 
 ```Powershell
-npm run lint            # Run ESLint
-npm run type-check      # TypeScript type checking
+npm run lint
+npm run type-check
 ```
 
 - Evaluate the code changes to ensure best practices
