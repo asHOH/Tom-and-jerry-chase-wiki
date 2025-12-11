@@ -54,7 +54,7 @@ export default function CharacterDisplay({
         size='CHARACTER_CARD'
         className='hover:scale-105'
         priority={priority}
-        style={isMobile ? { height: '8rem' } : {}}
+        style={isMobile ? { height: '10rem' } : {}}
       />
       <div className={`${isMobile ? 'pb-3' : 'px-4 pb-5'} pt-1 text-center`}>
         <h2
