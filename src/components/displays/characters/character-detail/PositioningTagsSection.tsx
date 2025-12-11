@@ -241,6 +241,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
               t.isMinor === tag.isMinor &&
               t.description === tag.description
           );
+          const hasWeapon = 'weapon' in tag && !!tag.weapon;
 
           return (
             <div
@@ -280,8 +281,8 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                       </Tooltip>
                     )}
                   </Tag>
-                  {'weapon' in tag && !isEditMode && !!tag.weapon && (
-                    <div className='absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'>
+                  {hasWeapon && !isEditMode && (
+                    <div className='absolute top-1/2 -right-6 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'>
                       {(() => {
                         const weaponImageUrl = getWeaponSkillImageUrl(
                           characterId,
@@ -292,8 +293,8 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                           <Image
                             src={weaponImageUrl}
                             alt={`武器${tag.weapon}`}
-                            width={14}
-                            height={14}
+                            width={18}
+                            height={18}
                             className='rounded-sm'
                           />
                         ) : null;
@@ -321,7 +322,14 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   </>
                 ) : (
                   tag.isMinor && (
-                    <span className='text-xs text-gray-500 dark:text-gray-400'>(次要)</span>
+                    <span
+                      className={clsx(
+                        'text-xs text-gray-500 dark:text-gray-400',
+                        hasWeapon && 'pl-6'
+                      )}
+                    >
+                      (次要)
+                    </span>
                   )
                 )}
                 {isEditMode && (

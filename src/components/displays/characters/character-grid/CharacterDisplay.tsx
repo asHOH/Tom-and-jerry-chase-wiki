@@ -56,7 +56,7 @@ export default function CharacterDisplay({
         priority={priority}
         style={isMobile ? { height: '10rem' } : {}}
       />
-      <div className={`${isMobile ? 'pb-3' : 'px-4 pb-5'} pt-1 text-center`}>
+      <div className={`${isMobile ? 'pb-3' : 'px-3 pb-5'} pt-1 text-center`}>
         <h2
           className={`${isMobile ? 'text-lg' : 'mb-2 text-xl'} font-bold dark:text-white`}
           style={{ whiteSpace: 'pre' }}
@@ -91,12 +91,12 @@ export default function CharacterDisplay({
                     {tag.tagName}
                   </Tag>
                   {weaponImageUrl && (
-                    <div className='absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'>
+                    <div className='absolute -top-2 -right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border border-gray-300 bg-white/40 dark:border-gray-600 dark:bg-gray-800/40'>
                       <Image
                         src={weaponImageUrl}
                         alt={`武器${tag.weapon}`}
-                        width={12}
-                        height={12}
+                        width={14}
+                        height={14}
                         className='rounded-sm'
                       />
                     </div>
