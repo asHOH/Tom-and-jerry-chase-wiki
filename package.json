@@ -97,7 +97,7 @@
     "jsondiffpatch": "^0.7.3",
     "lowlight": "^3.3.0",
     "motion": "12.23.24",
-    "next": "^16.0.7",
+    "next": "^16.0.10",
     "next-pwa": "^5.6.0",
     "pinyin-pro": "^3.27.0",
     "react": "^19.2.1",
