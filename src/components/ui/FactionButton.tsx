@@ -40,8 +40,7 @@ export function FactionButton({
               alt={imageAlt || title || ''}
               width={36}
               height={36}
-              style={{ height: '36px', width: 'auto' }}
-              className='flex-shrink-0 object-contain md:h-10 md:w-auto'
+              className='h-9 w-auto flex-shrink-0 object-contain md:h-10'
               priority={priority}
             />
           </div>

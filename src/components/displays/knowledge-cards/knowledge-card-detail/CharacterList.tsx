@@ -20,13 +20,7 @@ export default function CharacterList({ characters, showList }: CharacterListPro
 
   return (
     <div className='rounded-xl bg-white px-2 py-3 shadow-sm dark:bg-slate-800'>
-      <ul
-        className='gap-1'
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(175px, 1fr))',
-        }}
-      >
+      <ul className='grid [grid-template-columns:repeat(auto-fit,minmax(175px,1fr))] gap-1'>
         {characters.map((character) => (
           <li
             key={character.id ?? ''}

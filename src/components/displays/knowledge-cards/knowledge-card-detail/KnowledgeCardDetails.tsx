@@ -97,8 +97,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                     alt={fromCharacter.id}
                     width={40}
                     height={40}
-                    className='rounded-full object-cover'
-                    style={{ height: '40px', width: 'auto' }}
+                    className='h-10 w-auto rounded-full object-cover'
                   />
                 )}
               </button>
