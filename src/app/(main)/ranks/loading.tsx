@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className='mx-auto max-w-7xl space-y-8 p-6' style={{ paddingTop: '80px' }}>
+    <div className='mx-auto max-w-7xl space-y-8 p-6 pt-20'>
       <div className='animate-pulse'>
         {/* Header skeleton */}
         <div className='mb-8 space-y-4 px-4 text-center'>
@@ -32,10 +32,7 @@ export default function Loading() {
 
         {/* Rankings grid skeleton */}
         <div className='mx-auto max-w-6xl px-4'>
-          <div
-            className='grid gap-6'
-            style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}
-          >
+          <div className='grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-6'>
             {Array.from({ length: 12 }).map((_, i) => (
               <div
                 key={i}

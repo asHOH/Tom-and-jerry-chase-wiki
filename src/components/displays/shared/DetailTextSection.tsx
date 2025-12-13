@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import { designTokens } from '@/lib/design-tokens';
 import SectionHeader from '@/components/ui/SectionHeader';
 import TextWithHoverTooltips from '@/components/displays/characters/shared/TextWithHoverTooltips';
 
@@ -25,7 +24,6 @@ export function DetailTextSection({
   headerContent,
   children,
 }: DetailTextSectionProps) {
-  const spacing = designTokens.spacing;
   const displayText = (() => {
     if (isDetailedView && detailedValue) {
       return detailedValue;
@@ -39,14 +37,8 @@ export function DetailTextSection({
   return (
     <div>
       <SectionHeader title={title}>{headerContent}</SectionHeader>
-      <div
-        className='card mb-8 dark:border-slate-700 dark:bg-slate-800'
-        style={{ padding: spacing.md }}
-      >
-        <p
-          className='text-lg text-black dark:text-gray-200'
-          style={{ paddingTop: spacing.xs, paddingBottom: spacing.xs, whiteSpace: 'pre-wrap' }}
-        >
+      <div className='card mb-8 p-4 dark:border-slate-700 dark:bg-slate-800'>
+        <p className='py-2 text-lg whitespace-pre-wrap text-black dark:text-gray-200'>
           <TextWithHoverTooltips text={displayText} />
         </p>
         {children ? <div className='mt-4'>{children}</div> : null}
