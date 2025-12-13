@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/asHOH/Tom-and-jerry-chase-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/asHOH/Tom-and-jerry-chase-wiki/actions/workflows/ci.yml)
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)](https://tjwiki.com)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FasHOH%2FTom-and-jerry-chase-wiki&env=NEXT_PUBLIC_DISABLE_ARTICLES,NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL,NEXT_TELEMETRY_DISABLED&envDefaults=%7B%22NEXT_PUBLIC_DISABLE_ARTICLES%22%3A%221%22%2C%22NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL%22%3A%221%22%2C%22NEXT_TELEMETRY_DISABLED%22%3A%221%22%7D&envDescription=The%20environmental%20values%20disable%20some%20features.&project-name=tjwiki&repository-name=tjwiki&demo-title=%E7%8C%AB%E5%92%8C%E8%80%81%E9%BC%A0%E6%89%8B%E6%B8%B8%E7%99%BE%E7%A7%91&demo-description=%E7%8C%AB%E5%92%8C%E8%80%81%E9%BC%A0%E6%89%8B%E6%B8%B8wiki%20-%20%E6%8F%90%E4%BE%9B%E8%AF%A6%E7%BB%86%E7%9A%84%E8%A7%92%E8%89%B2%E5%B1%9E%E6%80%A7%E3%80%81%E6%8A%80%E8%83%BD%E3%80%81%E5%8A%A0%E7%82%B9%E3%80%81%E7%9F%A5%E8%AF%86%E5%8D%A1%E6%9F%A5%E8%AF%A2%E6%8E%A8%E8%8D%90%E7%AD%89%E6%95%B0%E6%8D%AE%E5%92%8C%E6%94%BB%E7%95%A5&demo-url=https%3A%2F%2Ftjwiki.com&demo-image=https%3A%2F%2Ftjwiki.com%2Ficon.png)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![QQ群](https://img.shields.io/badge/QQ群-615882730-brightgreen?logo=tencentqq&logoColor=white)](https://qun.qq.com/universal-share/share?ac=1&authKey=%2BgPPblp3JfnQP2o3BI5PO1NmwvsNciCCaVCtSI9T6RAbv6yV2QHzzjz6gwY%2Bva9U&busi_data=eyJncm91cENvZGUiOiI2MTU4ODI3MzAiLCJ0b2tlbiI6Ijg3Ym9kMk9HTUVFTnJSU25GU2JCdWJoNEwxNGNOUlhWMGgvK3lMTWRGdy80Z0FnaUd4Yy9LYkZsYUJ5ZStTbUgiLCJ1aW4iOiIyOTAxODMzMjI1In0%3D&data=0yzCZAnaW0ZOxf01YibLkPBLkN17DRX2fS1NGi5Nndx2Qq2DMFDdWr1pxH3J8F9RefUGjWh_Zel5Rfjy-dPZ2A&svctype=4&tempid=h5_group_info)
@@ -55,6 +56,10 @@
 - **认证与数据**: [Supabase](https://supabase.com/) (Auth、Postgres、RPC)
 
 ## 💻 本地开发
+
+## 🚢 部署
+
+部署教程（含 Docker / Vercel / Cloudflare Tunnel / 公网 IP + 80/443）见 [DEPLOY.md](DEPLOY.md)。
 
 ### 环境要求
 
@@ -126,7 +131,7 @@ npm run analyze         # 包分析
 - **构建镜像**：`docker compose build`（Dockerfile 内运行 `next build --webpack && node scripts/run-image-optimization.cjs`，跳过文档生成但保留图片优化）。
 - **启动服务**：`docker compose up -d`，访问 <http://localhost:3000>。
 - **默认环境**：镜像内已设置 `NEXT_PUBLIC_DISABLE_ARTICLES=1`、`NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1`，未设置 Supabase、验证码、Resend 相关变量。
-- **可选环境**：如需设置域名或区分环境，可在 `docker-compose.yml` 中覆盖 `APP_PUBLIC_HOST`、`DEPLOYMENT_ENVIRONMENT`，或在运行时添加其他 `NEXT_PUBLIC_*` 变量（自行确认是否需要开启文章/邮箱）。
+- **可选环境**：如需设置域名、端口或公网访问方式，建议直接参考部署教程 [DEPLOY.md](DEPLOY.md)。
 - **端口/网络**：容器监听 `0.0.0.0:3000`，如需映射到其它端口请调整 `docker-compose.yml` 的 `ports`。
 
 ## 🤝 一起完善这个项目吧
@@ -135,19 +140,21 @@ npm run analyze         # 包分析
 
 **方法二** - 直接贡献代码
 
-1.  **Fork** 本仓库。
-2.  基于 `develop` 分支创建新的feature分支，并进行开发:
-    ```bash
-    git checkout develop
-    git checkout -b feature/your-feature-name
-    ```
-3.  提交 Pull Request 到 `develop` 分支。提交前，建议运行本地检查以确保代码质量：
-    - **Windows (PowerShell)**: `.\test-github-workflows.ps1`
-    - **macOS/Linux**: `./test-github-workflows.bash`
+1. **Fork** 本仓库。
+2. 基于 `develop` 分支创建新的 feature 分支，并进行开发:
+
+   ```bash
+   git checkout develop
+   git checkout -b feature/your-feature-name
+   ```
+
+3. 提交 Pull Request 到 `develop` 分支。提交前，建议运行本地检查以确保代码质量：
+   - **Windows (PowerShell)**: `.\test-github-workflows.ps1`
+   - **macOS/Linux**: `./test-github-workflows.bash`
 
 ## 📁 项目结构
 
-```
+```text
 .
 ├── .github/            # GitHub Actions 工作流与模板
 ├── .husky/             # Git 钩子配置
