@@ -1,0 +1,115 @@
+.git
+.gitignore
+node_modules
+.next
+out
+coverage
+supabase/.branches
+.vscode
+.husky
+.jest-cache
+.tmp
+.temp
+.tsbuildinfo
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+.env*
+scripts/temp
+# Dependencies
+/node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage/
+.nyc_output/
+*.lcov
+
+# Production
+/.next/
+/out/
+/build/
+
+# Environment variables
+.env*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+.tsbuildinfo
+next-env.d.ts
+
+# Caches
+.eslintcache
+.jest-cache
+.next/cache/
+
+# Turbo
+.turbo/
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+
+# Vercel
+.vercel
+
+# Storybook
+.storybook
+storybook-static
+src/stories
+
+# Package files
+*.tgz
+*.tar.gz
+
+# Other
+dist/
+.tmp/
+.temp/
+tmp/
+pnpm-lock.yaml
+.gemini/
+GEMINI.md
+.codex/
+implementation_plan.md
+implementation_notes.md
+
+# Personal git workflow helpers
+/git-helpers/
+
+# Test artifacts and coverage reports
+.nyc_output/
+coverage/
+*.lcov
+
+# Build analysis files
+.next/analyze/
+bundle-analyzer-report.html
+
+# Performance monitoring
+.lighthouseci/
+
+# PWA generated files
+public/sw.js
+public/workbox-*.js
+public/fallback-*.js
+public/version.json
+
+# Generated images
+public/images/*/*.webp
+public/images/*/*.avif

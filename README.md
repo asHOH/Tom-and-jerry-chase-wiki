@@ -121,6 +121,14 @@ npm run analyze         # 包分析
 
 > 如果你在特定平台部署成功，欢迎分享经验。
 
+## 🐋 Docker 部署（默认关闭文章/反馈，跳过文档生成）
+
+- **构建镜像**：`docker compose build`（Dockerfile 内运行 `next build --webpack && node scripts/run-image-optimization.cjs`，跳过文档生成但保留图片优化）。
+- **启动服务**：`docker compose up -d`，访问 <http://localhost:3000>。
+- **默认环境**：镜像内已设置 `NEXT_PUBLIC_DISABLE_ARTICLES=1`、`NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1`，未设置 Supabase、验证码、Resend 相关变量。
+- **可选环境**：如需设置域名或区分环境，可在 `docker-compose.yml` 中覆盖 `APP_PUBLIC_HOST`、`DEPLOYMENT_ENVIRONMENT`，或在运行时添加其他 `NEXT_PUBLIC_*` 变量（自行确认是否需要开启文章/邮箱）。
+- **端口/网络**：容器监听 `0.0.0.0:3000`，如需映射到其它端口请调整 `docker-compose.yml` 的 `ports`。
+
 ## 🤝 一起完善这个项目吧
 
 **方法一** - 加入[QQ交流群](#-社区交流)

@@ -3,7 +3,6 @@ import nextTs from 'eslint-config-next/typescript';
 import prettier from 'eslint-config-prettier/flat';
 import jestDom from 'eslint-plugin-jest-dom';
 // import sonarjs from 'eslint-plugin-sonarjs';
-import storybook from 'eslint-plugin-storybook';
 import testingLibrary from 'eslint-plugin-testing-library';
 import unusedImports from 'eslint-plugin-unused-imports';
 
@@ -57,11 +56,6 @@ const eslintConfig = [
       ...testingLibrary.configs.react.rules,
       ...jestDom.configs['flat/recommended'].rules,
     },
-  },
-  {
-    files: ['*.stories.@(ts|tsx|js|jsx|mjs|cjs)'],
-    plugins: { storybook },
-    rules: storybook.configs.recommended.rules,
   },
   {
     files: ['*.cjs'],
