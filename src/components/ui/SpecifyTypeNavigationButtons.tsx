@@ -44,9 +44,7 @@ export default function SpecifyTypeNavigationButtons({
         whileTap={previousTarget ? { scale: 0.95 } : {}}
       >
         <ChevronLeftIcon className='h-4 w-4' />
-        <span className='hidden sm:inline'>
-          {previousTarget ? previousTarget.target : '上一个'}
-        </span>
+        <span className='inline'>{previousTarget ? previousTarget.target : '上一个'}</span>
       </motion.button>
 
       {/* Target Counter */}
@@ -66,7 +64,7 @@ export default function SpecifyTypeNavigationButtons({
         whileHover={nextTarget ? { scale: 1.05 } : {}}
         whileTap={nextTarget ? { scale: 0.95 } : {}}
       >
-        <span className='hidden sm:inline'>{nextTarget ? nextTarget.target : '下一个'}</span>
+        <span className='inline'>{nextTarget ? nextTarget.target : '下一个'}</span>
         <ChevronRightIcon className='h-4 w-4' />
       </motion.button>
     </div>
