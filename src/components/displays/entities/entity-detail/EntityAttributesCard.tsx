@@ -9,6 +9,7 @@ import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
+import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
@@ -299,18 +300,9 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
       </div>
 
       {/*Navigation */}
-      <div
-        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
-        style={{
-          gap: spacing.sm,
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xs,
-          paddingBottom: spacing.md,
-        }}
-      >
+      <NavigationButtonsRow>
         <SpecifyTypeNavigationButtons currentId={entity.name} specifyType='entity' />
-      </div>
+      </NavigationButtonsRow>
     </BaseCard>
   );
 }

@@ -14,6 +14,7 @@ import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
+import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 
@@ -357,18 +358,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
       </div>
 
       {/*Navigation */}
-      <div
-        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
-        style={{
-          gap: spacing.sm,
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xs,
-          paddingBottom: spacing.md,
-        }}
-      >
+      <NavigationButtonsRow>
         <SpecifyTypeNavigationButtons currentId={item.name} specifyType='item' />
-      </div>
+      </NavigationButtonsRow>
     </BaseCard>
   );
 }

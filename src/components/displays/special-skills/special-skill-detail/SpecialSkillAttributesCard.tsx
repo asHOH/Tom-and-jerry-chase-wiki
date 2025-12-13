@@ -6,6 +6,7 @@ import { componentTokens, designTokens } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
+import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 
 interface SpecialSkillDetailClientProps {
@@ -116,22 +117,13 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
       </div>
 
       {/*Navigation */}
-      <div
-        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
-        style={{
-          gap: spacing.sm,
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xs,
-          paddingBottom: spacing.md,
-        }}
-      >
+      <NavigationButtonsRow>
         <SpecifyTypeNavigationButtons
           currentId={skill.name}
           specifyType='specialSkill'
           under={skill.factionId == 'cat' ? false : true}
         />
-      </div>
+      </NavigationButtonsRow>
     </BaseCard>
   );
 }

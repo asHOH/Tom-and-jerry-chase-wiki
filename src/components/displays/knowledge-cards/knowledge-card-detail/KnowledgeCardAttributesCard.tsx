@@ -10,6 +10,7 @@ import {
 } from '@/lib/design-tokens';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
+import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 
 import BaseCard from '../../../ui/BaseCard';
@@ -130,18 +131,9 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
       </div>
 
       {/*Navigation */}
-      <div
-        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
-        style={{
-          gap: spacing.sm,
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xs,
-          paddingBottom: spacing.md,
-        }}
-      >
+      <NavigationButtonsRow>
         <SpecifyTypeNavigationButtons currentId={card.id} specifyType='knowledgeCard' />
-      </div>
+      </NavigationButtonsRow>
     </BaseCard>
   );
 }
