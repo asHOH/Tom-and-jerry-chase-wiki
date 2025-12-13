@@ -101,7 +101,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
       {!isMobile && (
         <div
           style={{
-            paddingBottom: spacing.xxxxxs,
+            paddingBottom: spacing.xs4,
           }}
         >
           <GameImage src={entity.imageUrl} alt={entity.name} size={'CARD_DETAILS'} />
@@ -139,8 +139,8 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
         style={{
           marginLeft: spacing.md,
           marginRight: spacing.md,
-          paddingTop: spacing.xxxxxs,
-          paddingBottom: spacing.xxxxxs,
+          paddingTop: spacing.xs4,
+          paddingBottom: spacing.xs4,
         }}
       >
         <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>

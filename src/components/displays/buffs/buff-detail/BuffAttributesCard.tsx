@@ -74,7 +74,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       {!isMobile && (
         <div
           style={{
-            paddingBottom: spacing.xxxxxs,
+            paddingBottom: spacing.xs4,
           }}
         >
           <GameImage src={buff.imageUrl} alt={buff.name} size={'CARD_DETAILS'} />
@@ -111,8 +111,8 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
         style={{
           marginLeft: spacing.md,
           marginRight: spacing.md,
-          paddingTop: spacing.xxxxxs,
-          paddingBottom: spacing.xxxxxs,
+          paddingTop: spacing.xs4,
+          paddingBottom: spacing.xs4,
         }}
       >
         <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>

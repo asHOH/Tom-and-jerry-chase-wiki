@@ -130,11 +130,11 @@ const sharedPositioningTagPalettes = {
 
 export const designTokens = {
   spacing: {
-    xxxxxxs: '0.1875rem', // 3px
-    xxxxxs: '0.25rem', // 4px (1 unit)
-    xxxxs: '0.3125rem', // 5px
-    xxxs: '0.375rem', // 6px
-    xxs: '0.4375rem', // 7px
+    xs3: '0.1875rem', // 3px
+    xs4: '0.25rem', // 4px (1 unit)
+    xs5: '0.3125rem', // 5px
+    xs6: '0.375rem', // 6px
+    xs7: '0.4375rem', // 7px
     xs: '0.5rem', // 8px
     sm: '0.75rem', // 12px
     md: '1rem', // 16px
@@ -631,21 +631,21 @@ export const componentTokens = {
   // Tag component tokens
   tag: {
     base: {
-      padding: `${designTokens.spacing.xxxs} ${designTokens.spacing.xs}`, // 6px 8px
+      padding: `${designTokens.spacing.xs6} ${designTokens.spacing.xs}`, // 6px 8px
       borderRadius: designTokens.radius.sm,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: 'none',
     },
     compact: {
-      padding: `${designTokens.spacing.xxxxs} ${designTokens.spacing.xxs}`, // 5px 7px
+      padding: `${designTokens.spacing.xs5} ${designTokens.spacing.xs7}`, // 5px 7px
       borderRadius: designTokens.radius.sm,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: 'none',
     },
     micro: {
-      padding: `${designTokens.spacing.xxxxxxs} ${designTokens.spacing.xxxxxs}`, // 3px 4px
+      padding: `${designTokens.spacing.xs3} ${designTokens.spacing.xs4}`, // 3px 4px
       borderRadius: designTokens.radius.sm,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',

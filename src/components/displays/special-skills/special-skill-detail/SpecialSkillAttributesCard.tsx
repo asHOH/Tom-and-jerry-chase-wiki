@@ -65,7 +65,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
       {!isMobile && (
         <div
           style={{
-            paddingBottom: spacing.xxxxxs,
+            paddingBottom: spacing.xs4,
           }}
         >
           <GameImage src={skill.imageUrl} alt={skill.name} size={'CARD_DETAILS'} />
@@ -103,8 +103,8 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
         style={{
           marginLeft: spacing.md,
           marginRight: spacing.md,
-          paddingTop: spacing.xxxxxs,
-          paddingBottom: spacing.xxxxxs,
+          paddingTop: spacing.xs4,
+          paddingBottom: spacing.xs4,
         }}
       >
         <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
