@@ -250,7 +250,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
                   : character.mousePositioningTags) || []
               }
               factionId={faction.id}
-              priority={index < 4}
+              preload={index < 4}
             />
           </div>
         ))}

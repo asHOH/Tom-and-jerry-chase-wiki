@@ -14,8 +14,8 @@ export default function KnowledgeCardDisplay({
   rank,
   cost,
   imageUrl,
-  priority = false,
-}: KnowledgeCardDisplayProps & { priority?: boolean }) {
+  preload = false,
+}: KnowledgeCardDisplayProps & { preload?: boolean }) {
   const [isDarkMode] = useDarkMode();
   const rankColors = getCardRankColors(rank, false, isDarkMode);
   const costColors = getCardCostColors(cost, false, isDarkMode);
@@ -33,7 +33,7 @@ export default function KnowledgeCardDisplay({
         alt={`${name}知识卡图标`}
         size='KNOWLEDGECARD_CARD'
         className='hover:scale-105'
-        priority={priority}
+        preload={preload}
         style={isMobile ? { height: '8rem' } : {}}
       />
       <div className='px-3 pt-1 pb-3 text-center'>

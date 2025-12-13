@@ -35,7 +35,7 @@ const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => 
             description={button.description}
             href={button.href}
             ariaLabel={button.ariaLabel}
-            priority
+            preload
           />
         ))}
       </FactionButtonGroup>

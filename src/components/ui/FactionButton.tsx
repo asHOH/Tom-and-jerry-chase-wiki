@@ -15,7 +15,7 @@ export interface FactionButtonProps {
   ariaLabel: string;
   className?: string;
 
-  priority?: boolean;
+  preload?: boolean;
 }
 
 export function FactionButton({
@@ -28,7 +28,7 @@ export function FactionButton({
   onClick,
   ariaLabel,
   className,
-  priority = false,
+  preload = false,
 }: FactionButtonProps) {
   const buttonContent = (
     <>
@@ -41,7 +41,7 @@ export function FactionButton({
               width={36}
               height={36}
               className='h-9 w-auto flex-shrink-0 object-contain md:h-10'
-              priority={priority}
+              preload={preload}
             />
           </div>
         ) : (

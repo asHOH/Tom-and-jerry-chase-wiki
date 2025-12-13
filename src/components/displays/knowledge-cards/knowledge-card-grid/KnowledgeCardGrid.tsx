@@ -127,7 +127,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
               cost={card.cost}
               imageUrl={card.imageUrl}
               onClick={handleSelectCard}
-              priority={index < 6}
+              preload={index < 6}
             />
           </div>
         ))}

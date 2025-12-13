@@ -13,13 +13,13 @@ interface CharacterRankingCardProps {
   rankedCharacter: RankedCharacter;
   // This controls the color only
   rankGroupIndex?: number | undefined;
-  priority?: boolean;
+  preload?: boolean;
 }
 
 function CharacterRankingCard({
   rankedCharacter,
   rankGroupIndex,
-  priority = false,
+  preload = false,
 }: CharacterRankingCardProps) {
   const { character, rank, formattedValue } = rankedCharacter;
   const [isDarkMode] = useDarkMode();
@@ -53,7 +53,7 @@ function CharacterRankingCard({
             width={80}
             height={80}
             className='object-cover transition-transform duration-200 hover:scale-105'
-            priority={priority}
+            preload={preload}
           />
         </div>
       </div>

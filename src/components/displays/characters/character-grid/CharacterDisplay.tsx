@@ -23,9 +23,9 @@ export default function CharacterDisplay({
   imageUrl,
   positioningTags,
   factionId,
-  priority = false,
+  preload = false,
   isEntryCard = false, // Add the new prop
-}: CharacterDisplayProps & { priority?: boolean; isEntryCard?: boolean }) {
+}: CharacterDisplayProps & { preload?: boolean; isEntryCard?: boolean }) {
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
 
@@ -53,7 +53,7 @@ export default function CharacterDisplay({
         alt={`${name}`}
         size='CHARACTER_CARD'
         className='hover:scale-105'
-        priority={priority}
+        preload={preload}
         style={isMobile ? { height: '10rem' } : {}}
       />
       <div className={`${isMobile ? 'pb-3' : 'px-3 pb-5'} pt-1 text-center`}>

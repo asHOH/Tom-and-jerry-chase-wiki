@@ -343,7 +343,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
                 width={16}
                 height={16}
                 className='h-full w-full object-contain'
-                priority={false} // Lower priority for overlay icons
+                preload={false} // Lower priority for overlay icons
               />
             </div>
           )}

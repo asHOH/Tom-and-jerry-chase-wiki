@@ -211,7 +211,7 @@ export default function CharacterRankingGrid({
               {...(rankGroupIndexById[rankedCharacter.character.id]
                 ? { rankGroupIndex: rankGroupIndexById[rankedCharacter.character.id] }
                 : {})}
-              priority={index < 6} // Prioritize loading for top 6 characters
+              preload={index < 6} // Prioritize loading for top 6 characters
             />
           </div>
         ))}

@@ -10,7 +10,7 @@ type GameImageProps = {
   alt: string;
   size: ImageSize;
   className?: string;
-  priority?: boolean;
+  preload?: boolean;
   sizes?: string;
   onLoad?: () => void;
   onError?: () => void;
@@ -22,7 +22,7 @@ export default function GameImage({
   alt,
   size,
   className = '',
-  priority = false,
+  preload = false,
   sizes,
   onLoad,
   onError,
@@ -83,10 +83,10 @@ export default function GameImage({
           alt={alt}
           width={width}
           height={height}
-          priority={priority}
+          preload={preload}
           placeholder='empty'
           sizes={optimizedSizes}
-          loading={priority ? 'eager' : 'lazy'}
+          loading={preload ? 'eager' : 'lazy'}
           onLoad={handleImageLoad}
           onError={onError}
           style={{

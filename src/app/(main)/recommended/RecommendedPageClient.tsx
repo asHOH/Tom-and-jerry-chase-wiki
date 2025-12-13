@@ -181,7 +181,7 @@ export default function RecommendedPageClient() {
                     imageUrl={cat.imageUrl}
                     positioningTags={cat.catPositioningTags || []}
                     factionId='cat'
-                    priority={index < 3}
+                    preload={index < 3}
                   />
                 </div>
               </div>
