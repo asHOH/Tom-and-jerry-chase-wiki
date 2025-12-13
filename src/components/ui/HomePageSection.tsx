@@ -23,7 +23,7 @@ const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => 
   return (
     <div className='mt-16 flex flex-col items-center px-2 md:px-4'>
       {title !== undefined && (
-        <h2 className='mb-10 py-3 text-3xl font-bold text-gray-800 dark:text-white'>{title}</h2>
+        <h2 className='mb-4 py-3 text-3xl font-bold text-gray-800 dark:text-white'>{title}</h2>
       )}
       <FactionButtonGroup>
         {buttons.map((button, index) => (

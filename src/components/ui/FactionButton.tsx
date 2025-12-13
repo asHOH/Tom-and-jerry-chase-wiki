@@ -32,7 +32,7 @@ export function FactionButton({
 }: FactionButtonProps) {
   const buttonContent = (
     <>
-      <div className='flex flex-col items-center gap-2 md:flex-row md:gap-3'>
+      <div className='flex flex-col flex-row items-center gap-2 md:gap-3'>
         {imageSrc ? (
           <div className='text-xl md:text-2xl'>
             <Image
