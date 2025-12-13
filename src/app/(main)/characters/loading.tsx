@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className='mx-auto max-w-4xl space-y-6 p-6' style={{ paddingTop: '80px' }}>
+    <div className='mx-auto max-w-4xl space-y-6 p-6 pt-20'>
       <div className='animate-pulse'>
         {/* Back link skeleton */}
         <div className='mb-6 h-4 w-24 rounded bg-gray-200 dark:bg-gray-700'></div>
