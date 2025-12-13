@@ -148,6 +148,10 @@ const nextConfig = {
       );
     }
 
+    if (process.env.NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL === '1') {
+      rewriteContents.push({ source: '/api/feedback', destination: '/404' });
+    }
+
     return rewriteContents;
   },
   async headers() {
