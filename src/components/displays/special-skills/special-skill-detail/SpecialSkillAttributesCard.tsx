@@ -2,7 +2,6 @@
 
 import { SpecialSkill } from '@/data/types';
 
-import { componentTokens, designTokens } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
@@ -14,7 +13,6 @@ interface SpecialSkillDetailClientProps {
 
 export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetailClientProps) {
   const isMobile = useMobile();
-  const spacing = designTokens.spacing;
 
   if (!skill) return null;
 
@@ -24,36 +22,22 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
       {isMobile && (
         <div>
           <div
-            className={`auto-fit-grid grid-container grid`}
-            style={{
-              gridTemplateColumns: `5rem repeat(auto-fit, minmax(1px,1fr))`,
-            }}
+            className='auto-fit-grid grid-container grid'
+            style={{ gridTemplateColumns: '5rem repeat(auto-fit, minmax(1px,1fr))' }}
           >
             <GameImage
               src={skill.imageUrl}
               alt={skill.name}
               size={'CARD_DETAILS'}
-              style={{
-                height: isMobile ? '6rem' : undefined,
-                borderRadius: componentTokens.image.container.borderRadius.replace(/ .*? /, ' 0 '),
-              }}
+              className='h-24 rounded-tl-lg'
             />
             <div>
-              <h1
-                className='text-2xl font-bold dark:text-white'
-                style={{
-                  paddingTop: spacing.xs,
-                }}
-              >
-                {skill.name}{' '}
-              </h1>
+              <h1 className='pt-2 text-2xl font-bold dark:text-white'>{skill.name} </h1>
               <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
                 (特技{skill.factionId === 'cat' ? '·猫' : skill.factionId === 'mouse' ? '·鼠' : ''})
               </h1>
               {skill.aliases !== undefined && (
-                <h1
-                  className={`text-xs text-gray-400 dark:text-gray-500 ${isMobile ? '' : 'mt-2'}`}
-                >
+                <h1 className='text-xs text-gray-400 dark:text-gray-500'>
                   别名: {(skill.aliases ?? []).filter(Boolean).join('、')}
                 </h1>
               )}
@@ -62,19 +46,9 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
         </div>
       )}
       {!isMobile && (
-        <div
-          style={{
-            paddingBottom: spacing.xxxxxs,
-          }}
-        >
+        <div className='pb-1'>
           <GameImage src={skill.imageUrl} alt={skill.name} size={'CARD_DETAILS'} />
-          <div
-            style={{
-              paddingLeft: spacing.md,
-              paddingRight: spacing.md,
-              paddingTop: spacing.xs,
-            }}
-          >
+          <div className='px-4 pt-2'>
             <h1 className='text-3xl font-bold dark:text-white'>
               {skill.name}{' '}
               <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
@@ -83,13 +57,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
             </h1>
           </div>
           {skill.aliases !== undefined && (
-            <div
-              className='text-sm text-gray-400 dark:text-gray-500'
-              style={{
-                marginLeft: spacing.md,
-                marginRight: spacing.md,
-              }}
-            >
+            <div className='mx-4 text-sm text-gray-400 dark:text-gray-500'>
               别名: {(skill.aliases ?? []).filter(Boolean).join('、')}
             </div>
           )}
@@ -97,17 +65,9 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
       )}
 
       {/*------Item Attributes------*/}
-      <div
-        className='grid items-center gap-1 border-t border-gray-300 dark:border-gray-600'
-        style={{
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xxxxxs,
-          paddingBottom: spacing.xxxxxs,
-        }}
-      >
+      <div className='mx-4 grid items-center gap-1 border-t border-gray-300 py-1 dark:border-gray-600'>
         <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
-          <span className={`text-sm whitespace-pre`}>
+          <span className='text-sm whitespace-pre'>
             {'CD：'}
             <span className='text-indigo-700 dark:text-indigo-400'>{skill.cooldown}</span>
             {' 秒'}
@@ -116,16 +76,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
       </div>
 
       {/*Navigation */}
-      <div
-        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
-        style={{
-          gap: spacing.sm,
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xs,
-          paddingBottom: spacing.md,
-        }}
-      >
+      <div className='mx-4 flex flex-wrap items-center gap-3 border-t border-gray-300 pt-2 pb-4 text-sm dark:border-gray-600'>
         <SpecifyTypeNavigationButtons
           currentId={skill.name}
           specifyType='specialSkill'

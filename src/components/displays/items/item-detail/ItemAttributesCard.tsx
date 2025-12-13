@@ -4,12 +4,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
 
-import {
-  componentTokens,
-  designTokens,
-  getItemSourceColors /* , getCardCostColors */,
-  getItemTypeColors,
-} from '@/lib/design-tokens';
+import { getItemSourceColors, getItemTypeColors } from '@/lib/design-tokens';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
@@ -23,7 +18,6 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
   const { isDetailedView: isDetailed } = useAppContext();
-  const spacing = designTokens.spacing;
   if (!item) return null;
 
   return (
@@ -32,36 +26,22 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
       {isMobile && (
         <div>
           <div
-            className={`auto-fit-grid grid-container grid`}
-            style={{
-              gridTemplateColumns: `5rem repeat(auto-fit, minmax(1px,1fr))`,
-            }}
+            className='auto-fit-grid grid-container grid'
+            style={{ gridTemplateColumns: '5rem repeat(auto-fit, minmax(1px,1fr))' }}
           >
             <GameImage
               src={item.imageUrl}
               alt={item.name}
               size={'CARD_DETAILS'}
-              style={{
-                height: isMobile ? '6rem' : undefined,
-                borderRadius: componentTokens.image.container.borderRadius.replace(/ .*? /, ' 0 '),
-              }}
+              className='h-24 rounded-tl-lg'
             />
             <div>
-              <h1
-                className='text-2xl font-bold dark:text-white'
-                style={{
-                  paddingTop: spacing.xs,
-                }}
-              >
-                {item.name}{' '}
-              </h1>
+              <h1 className='pt-2 text-2xl font-bold dark:text-white'>{item.name} </h1>
               <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
                 (道具{item.factionId === 'cat' ? '·猫' : item.factionId === 'mouse' ? '·鼠' : ''})
               </h1>
               {item.aliases !== undefined && (
-                <h1
-                  className={`text-xs text-gray-400 dark:text-gray-500 ${isMobile ? '' : 'mt-2'}`}
-                >
+                <h1 className='text-xs text-gray-400 dark:text-gray-500'>
                   别名: {(item.aliases ?? []).filter(Boolean).join('、')}
                 </h1>
               )}
@@ -70,19 +50,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
         </div>
       )}
       {!isMobile && (
-        <div
-          style={{
-            paddingBottom: spacing.xxxxxs,
-          }}
-        >
+        <div className='pb-1'>
           <GameImage src={item.imageUrl} alt={item.name} size={'CARD_DETAILS'} />
-          <div
-            style={{
-              paddingLeft: spacing.md,
-              paddingRight: spacing.md,
-              paddingTop: spacing.xs,
-            }}
-          >
+          <div className='px-4 pt-2'>
             <h1 className='text-3xl font-bold dark:text-white'>
               {item.name}{' '}
               <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
@@ -91,30 +61,16 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             </h1>
           </div>
           {item.aliases !== undefined && (
-            <div
-              className='text-sm text-gray-400 dark:text-gray-500'
-              style={{
-                marginLeft: spacing.md,
-                marginRight: spacing.md,
-              }}
-            >
+            <div className='mx-4 text-sm text-gray-400 dark:text-gray-500'>
               别名: {(item.aliases ?? []).filter(Boolean).join('、')}
             </div>
           )}
         </div>
       )}
       {/*------Item Attributes------*/}
-      <div
-        className='grid items-center gap-1 border-t border-gray-300 dark:border-gray-600'
-        style={{
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xxxxxs,
-          paddingBottom: spacing.xxxxxs,
-        }}
-      >
+      <div className='mx-4 grid items-center gap-1 border-t border-gray-300 py-1 dark:border-gray-600'>
         <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
-          <span className={`text-sm whitespace-pre`}>类型: </span>
+          <span className='text-sm whitespace-pre'>类型: </span>
           <Tag
             size='sm'
             margin='compact'
@@ -133,17 +89,15 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
         {(item?.damage !== undefined || item?.walldamage !== undefined) && (
           <div
             className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-            style={{
-              gridTemplateColumns: `repeat(2, minmax(40px, 1fr))`,
-            }}
+            style={{ gridTemplateColumns: 'repeat(2, minmax(40px, 1fr))' }}
           >
-            <span className={`text-sm whitespace-pre`}>
+            <span className='text-sm whitespace-pre'>
               伤害：
               <span className='text-red-600 dark:text-red-400'>
                 {item.damage === undefined ? '--' : item.damage}
               </span>
             </span>
-            <span className={`text-sm whitespace-pre`}>
+            <span className='text-sm whitespace-pre'>
               破墙伤害：
               <span className='text-yellow-700 dark:text-yellow-500'>
                 {item.walldamage === undefined ? '--' : item.walldamage}
@@ -153,9 +107,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
         )}
         {item?.exp != undefined &&
           (item.exp == 0 ? (
-            <span className={`text-sm whitespace-pre`}>(猫)命中不获得经验</span>
+            <span className='text-sm whitespace-pre'>(猫)命中不获得经验</span>
           ) : (
-            <span className={`text-sm whitespace-pre`}>
+            <span className='text-sm whitespace-pre'>
               {'(猫)命中获得 '}
               <span className='text-indigo-700 dark:text-indigo-400'>{item.exp}</span>
               {' 经验'}
@@ -165,29 +119,27 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
         {item.itemAttributesAsCharacter !== undefined && (
           <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
             <span className='text-sm font-bold'>
-              该道具特性与<span className={`text-fuchsia-600 dark:text-fuchsia-400`}>角色</span>
+              该道具特性与<span className='text-fuchsia-600 dark:text-fuchsia-400'>角色</span>
               类似，可看作
               {item.itemAttributesAsCharacter.factionBelong === 'cat' ? (
-                <span className={`text-sky-600 dark:text-sky-400`}>猫阵营</span>
+                <span className='text-sky-600 dark:text-sky-400'>猫阵营</span>
               ) : item.itemAttributesAsCharacter.factionBelong === 'mouse' ? (
-                <span className={`text-amber-700 dark:text-amber-600`}>鼠阵营</span>
+                <span className='text-amber-700 dark:text-amber-600'>鼠阵营</span>
               ) : (
-                <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>第三阵营</span>
+                <span className='text-fuchsia-600 dark:text-fuchsia-400'>第三阵营</span>
               )}
               的
               {item.itemAttributesAsCharacter.type === 'cat' ? (
-                <span className={`text-sky-600 dark:text-sky-400`}>猫角色</span>
+                <span className='text-sky-600 dark:text-sky-400'>猫角色</span>
               ) : item.itemAttributesAsCharacter.type === 'mouse' ? (
-                <span className={`text-amber-700 dark:text-amber-600`}>鼠角色</span>
+                <span className='text-amber-700 dark:text-amber-600'>鼠角色</span>
               ) : (
-                <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>特殊角色</span>
+                <span className='text-fuchsia-600 dark:text-fuchsia-400'>特殊角色</span>
               )}
             </span>
             <div
               className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-              style={{
-                gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
-              }}
+              style={{ gridTemplateColumns: 'repeat(2, minmax(80px, 1fr))' }}
             >
               {[
                 item.itemAttributesAsCharacter.maxHp === undefined
@@ -222,7 +174,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                     },
               ].map(({ title, text }) =>
                 title === null ? null : (
-                  <span className={`text-sm whitespace-pre`} key={title}>
+                  <span className='text-sm whitespace-pre' key={title}>
                     <Tooltip
                       content={getTooltipContent(
                         title,
@@ -245,34 +197,34 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             <div
               className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
               style={{
-                gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
+                gridTemplateColumns: 'repeat(2, minmax(80px, 1fr))',
                 gridTemplateRows: 'repeat(2,1fr)',
               }}
             >
               {item.move !== undefined && (
-                <span className={`text-sm whitespace-pre`}>
+                <span className='text-sm whitespace-pre'>
                   {item.move === true ? (
-                    <span className={`text-green-600 dark:text-green-500`}>可</span>
+                    <span className='text-green-600 dark:text-green-500'>可</span>
                   ) : (
-                    <span className={`text-red-600 dark:text-red-500`}>不可</span>
+                    <span className='text-red-600 dark:text-red-500'>不可</span>
                   )}
                   移动
                 </span>
               )}
               {item.gravity !== undefined && (
-                <span className={`text-sm whitespace-pre`}>
+                <span className='text-sm whitespace-pre'>
                   {item.gravity === true ? (
-                    <span className={`text-orange-600 dark:text-orange-400`}>会受</span>
+                    <span className='text-orange-600 dark:text-orange-400'>会受</span>
                   ) : (
-                    <span className={`text-indigo-700 dark:text-indigo-400`}>不受</span>
+                    <span className='text-indigo-700 dark:text-indigo-400'>不受</span>
                   )}
                   重力影响
                 </span>
               )}
-              <span className={`text-sm whitespace-pre`}>
+              <span className='text-sm whitespace-pre'>
                 {!!item.collsion ? (
                   <>
-                    <span className={`text-orange-600 dark:text-orange-400`}>会</span>与
+                    <span className='text-orange-600 dark:text-orange-400'>会</span>与
                     {item.collsion.map((string, key, array) => {
                       return (
                         <span key={key}>
@@ -295,7 +247,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   </>
                 ) : (
                   <>
-                    <span className={`text-indigo-700 dark:text-indigo-400`}>不会</span>
+                    <span className='text-indigo-700 dark:text-indigo-400'>不会</span>
                     产生碰撞
                   </>
                 )}
@@ -318,29 +270,29 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               <div
                 className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
                 style={{
-                  gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
+                  gridTemplateColumns: 'repeat(2, minmax(80px, 1fr))',
                   gridTemplateRows: 'repeat(2,1fr)',
                 }}
               >
                 {
-                  <span className={`text-sm whitespace-pre`}>
+                  <span className='text-sm whitespace-pre'>
                     售价：
                     <span className='text-orange-600 dark:text-orange-400'>{item?.price || 0}</span>
                   </span>
                 }
                 {item?.unlocktime === undefined ? (
-                  <span className={`text-sm whitespace-pre`}>初始解锁</span>
+                  <span className='text-sm whitespace-pre'>初始解锁</span>
                 ) : (
-                  <span className={`text-sm whitespace-pre`}>
+                  <span className='text-sm whitespace-pre'>
                     {'于'}
                     <span className='text-indigo-700 dark:text-indigo-400'>{item.unlocktime}</span>
                     {'解锁'}
                   </span>
                 )}
                 {item?.storeCD === undefined ? (
-                  <span className={`text-sm whitespace-pre`}>无购买CD</span>
+                  <span className='text-sm whitespace-pre'>无购买CD</span>
                 ) : (
-                  <span className={`text-sm whitespace-pre`}>
+                  <span className='text-sm whitespace-pre'>
                     {'购买CD：'}
                     <span className='text-indigo-700 dark:text-indigo-400'>{item.storeCD}</span>
                     {'秒'}
@@ -357,16 +309,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
       </div>
 
       {/*Navigation */}
-      <div
-        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
-        style={{
-          gap: spacing.sm,
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xs,
-          paddingBottom: spacing.md,
-        }}
-      >
+      <div className='mx-4 flex flex-wrap items-center gap-3 border-t border-gray-300 pt-2 pb-4 text-sm dark:border-gray-600'>
         <SpecifyTypeNavigationButtons currentId={item.name} specifyType='item' />
       </div>
     </BaseCard>

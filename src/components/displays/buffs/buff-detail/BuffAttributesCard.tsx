@@ -3,12 +3,7 @@
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
 
-import {
-  componentTokens,
-  designTokens,
-  getBuffGlobalColors,
-  getBuffTypeColors,
-} from '@/lib/design-tokens';
+import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
@@ -20,7 +15,6 @@ import '@/lib/design-tokens';
 export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
-  const spacing = designTokens.spacing;
   if (!buff) return null;
 
   const avilableAliases = (buff.aliases ?? [])
@@ -35,34 +29,20 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       {isMobile && (
         <div>
           <div
-            className={`auto-fit-grid grid-container grid`}
-            style={{
-              gridTemplateColumns: `5rem repeat(auto-fit, minmax(1px,1fr))`,
-            }}
+            className='auto-fit-grid grid-container grid'
+            style={{ gridTemplateColumns: '5rem repeat(auto-fit, minmax(1px,1fr))' }}
           >
             <GameImage
               src={buff.imageUrl}
               alt={buff.name}
               size={'CARD_DETAILS'}
-              style={{
-                height: isMobile ? '6rem' : undefined,
-                borderRadius: componentTokens.image.container.borderRadius.replace(/ .*? /, ' 0 '),
-              }}
+              className='h-24 rounded-tl-lg'
             />
             <div>
-              <h1
-                className='text-2xl font-bold dark:text-white'
-                style={{
-                  paddingTop: spacing.xs,
-                }}
-              >
-                {buff.name}{' '}
-              </h1>
+              <h1 className='pt-2 text-2xl font-bold dark:text-white'>{buff.name} </h1>
               <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>(状态/效果)</h1>
               {avilableAliases.length > 0 && (
-                <h1
-                  className={`text-xs text-gray-400 dark:text-gray-500 ${isMobile ? '' : 'mt-2'}`}
-                >
+                <h1 className='text-xs text-gray-400 dark:text-gray-500'>
                   别名: {avilableAliases.filter(Boolean).join('、')}
                 </h1>
               )}
@@ -71,19 +51,9 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
         </div>
       )}
       {!isMobile && (
-        <div
-          style={{
-            paddingBottom: spacing.xxxxxs,
-          }}
-        >
+        <div className='pb-1'>
           <GameImage src={buff.imageUrl} alt={buff.name} size={'CARD_DETAILS'} />
-          <div
-            style={{
-              paddingLeft: spacing.md,
-              paddingRight: spacing.md,
-              paddingTop: spacing.xs,
-            }}
-          >
+          <div className='px-4 pt-2'>
             <h1 className='text-3xl font-bold dark:text-white'>
               {buff.name}
               <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
@@ -92,30 +62,16 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
             </h1>
           </div>
           {avilableAliases.length > 0 && (
-            <div
-              className='text-sm text-gray-400 dark:text-gray-500'
-              style={{
-                marginLeft: spacing.md,
-                marginRight: spacing.md,
-              }}
-            >
+            <div className='mx-4 text-sm text-gray-400 dark:text-gray-500'>
               别名: {avilableAliases.filter(Boolean).join('、')}
             </div>
           )}
         </div>
       )}
       {/*------Item Attributes------*/}
-      <div
-        className='grid items-center gap-1 border-t border-gray-300 dark:border-gray-600'
-        style={{
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xxxxxs,
-          paddingBottom: spacing.xxxxxs,
-        }}
-      >
+      <div className='mx-4 grid items-center gap-1 border-t border-gray-300 py-1 dark:border-gray-600'>
         <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
-          <span className={`text-sm whitespace-pre`}>类型: </span>
+          <span className='text-sm whitespace-pre'>类型: </span>
           {/* 使用 type 属性 */}
           <Tag size='sm' margin='compact' colorStyles={getBuffTypeColors(buff.type, isDarkMode)}>
             {buff.type}
@@ -139,27 +95,25 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
             <span className='text-lg font-bold whitespace-pre'>基础信息</span>
             <div
               className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-              style={{
-                gridTemplateColumns: `repeat(1, minmax(80px, 1fr))`,
-              }}
+              style={{ gridTemplateColumns: 'repeat(1, minmax(80px, 1fr))' }}
             >
               {!!buff.target && (
-                <span className={`text-sm`}>
+                <span className='text-sm'>
                   作用对象：
-                  <span className={`text-fuchsia-600 dark:text-fuchsia-400`}>{buff.target}</span>
+                  <span className='text-fuchsia-600 dark:text-fuchsia-400'>{buff.target}</span>
                 </span>
               )}
               {buff.duration !== undefined && (
-                <span className={`text-sm whitespace-pre`}>
+                <span className='text-sm whitespace-pre'>
                   持续时间：
-                  <span className={`text-indigo-700 dark:text-indigo-400`}>{buff.duration}</span>
+                  <span className='text-indigo-700 dark:text-indigo-400'>{buff.duration}</span>
                   {typeof buff.duration === 'number' ? ' 秒' : ''}
                 </span>
               )}
               {buff.failure !== undefined && (
-                <span className={`text-sm`}>
+                <span className='text-sm'>
                   中止条件：
-                  <span className={`text-orange-600 dark:text-orange-400`}>{buff.failure}</span>
+                  <span className='text-orange-600 dark:text-orange-400'>{buff.failure}</span>
                 </span>
               )}
             </div>
@@ -168,16 +122,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       </div>
 
       {/*Navigation */}
-      <div
-        className='flex flex-wrap items-center border-t border-gray-300 text-sm dark:border-gray-600'
-        style={{
-          gap: spacing.sm,
-          marginLeft: spacing.md,
-          marginRight: spacing.md,
-          paddingTop: spacing.xs,
-          paddingBottom: spacing.md,
-        }}
-      >
+      <div className='mx-4 flex flex-wrap items-center gap-3 border-t border-gray-300 pt-2 pb-4 text-sm dark:border-gray-600'>
         <SpecifyTypeNavigationButtons currentId={buff.name} specifyType='buff' />
       </div>
     </BaseCard>
