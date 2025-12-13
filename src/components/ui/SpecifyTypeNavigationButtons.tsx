@@ -29,42 +29,45 @@ export default function SpecifyTypeNavigationButtons({
   const { previousTarget, nextTarget, navigateToPrevious, navigateToNext, currentIndex, totals } =
     useSpecifyTypeNavigation(currentId, specifyType, under);
 
+  const baseButtonClasses = 'flex items-center gap-1 rounded-lg px-3 py-2 transition-colors border';
+  const enabledButtonClasses =
+    'bg-gray-100 text-gray-900 border-gray-300 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700';
+  const disabledButtonClasses =
+    'cursor-not-allowed bg-gray-200 text-gray-500 border-gray-300 dark:bg-gray-700 dark:text-gray-500 dark:border-gray-700';
+
   return (
-    <div className={`flex items-center justify-between gap-4 ${className}`}>
+    <div className={`flex items-center justify-between gap-3 ${className}`}>
       {/* Previous Target Button */}
       <motion.button
         onClick={navigateToPrevious}
         disabled={!previousTarget}
-        className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
-          previousTarget
-            ? 'bg-blue-500 text-white hover:bg-blue-600'
-            : 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+        className={`${baseButtonClasses} ${
+          previousTarget ? enabledButtonClasses : `${disabledButtonClasses}`
         }`}
         whileHover={previousTarget ? { scale: 1.05 } : {}}
         whileTap={previousTarget ? { scale: 0.95 } : {}}
       >
         <ChevronLeftIcon className='h-4 w-4' />
-        <span className='inline'>{previousTarget ? previousTarget.target : '上一个'}</span>
+        <span className='inline'>{previousTarget?.target ?? ''}</span>
       </motion.button>
 
       {/* Target Counter */}
-      <div className='px-2 text-sm text-gray-600 dark:text-gray-400'>
-        {currentIndex + 1} / {totals}
+      <div className='flex items-baseline gap-1 text-sm text-gray-600 dark:text-gray-400'>
+        <span className='font-medium'>{currentIndex + 1}</span>
+        <span className='text-xs text-gray-400 dark:text-gray-500'>/{totals}</span>
       </div>
 
       {/* Next Target Button */}
       <motion.button
         onClick={navigateToNext}
         disabled={!nextTarget}
-        className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
-          nextTarget
-            ? 'bg-blue-500 text-white hover:bg-blue-600'
-            : 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+        className={`${baseButtonClasses} ${
+          nextTarget ? enabledButtonClasses : `${disabledButtonClasses}`
         }`}
         whileHover={nextTarget ? { scale: 1.05 } : {}}
         whileTap={nextTarget ? { scale: 0.95 } : {}}
       >
-        <span className='inline'>{nextTarget ? nextTarget.target : '下一个'}</span>
+        <span className='inline'>{nextTarget?.target ?? ''}</span>
         <ChevronRightIcon className='h-4 w-4' />
       </motion.button>
     </div>
