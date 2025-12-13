@@ -151,8 +151,8 @@ npm run analyze         # 包分析
    ```
 
 3. 提交 Pull Request 到 `develop` 分支。提交前，建议运行本地检查以确保代码质量：
-   - **Windows (PowerShell)**: `.\test-github-workflows.ps1`
-   - **macOS/Linux**: `./test-github-workflows.bash`
+   - **Windows (PowerShell)**: `.\scripts\test-github-workflows.ps1`
+   - **macOS/Linux**: `./scripts/test-github-workflows.bash`
 
 ## 📁 项目结构
 
