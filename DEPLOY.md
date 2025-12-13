@@ -2,6 +2,10 @@
 
 有 Vercel 账号可以不用看这篇，直接点击这个按钮：[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FasHOH%2FTom-and-jerry-chase-wiki&env=NEXT_PUBLIC_DISABLE_ARTICLES,NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL,NEXT_TELEMETRY_DISABLED&envDefaults=%7B%22NEXT_PUBLIC_DISABLE_ARTICLES%22%3A%221%22%2C%22NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL%22%3A%221%22%2C%22NEXT_TELEMETRY_DISABLED%22%3A%221%22%7D&envDescription=The%20environmental%20values%20disable%20some%20features.&project-name=tjwiki&repository-name=tjwiki&demo-title=%E7%8C%AB%E5%92%8C%E8%80%81%E9%BC%A0%E6%89%8B%E6%B8%B8%E7%99%BE%E7%A7%91&demo-description=%E7%8C%AB%E5%92%8C%E8%80%81%E9%BC%A0%E6%89%8B%E6%B8%B8wiki%20-%20%E6%8F%90%E4%BE%9B%E8%AF%A6%E7%BB%86%E7%9A%84%E8%A7%92%E8%89%B2%E5%B1%9E%E6%80%A7%E3%80%81%E6%8A%80%E8%83%BD%E3%80%81%E5%8A%A0%E7%82%B9%E3%80%81%E7%9F%A5%E8%AF%86%E5%8D%A1%E6%9F%A5%E8%AF%A2%E6%8E%A8%E8%8D%90%E7%AD%89%E6%95%B0%E6%8D%AE%E5%92%8C%E6%94%BB%E7%95%A5&demo-url=https%3A%2F%2Ftjwiki.com&demo-image=https%3A%2F%2Ftjwiki.com%2Ficon.png)，然后一路下一步，即可在 Vercel 上部署服务。
 
+Netlify 也一样：[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https%3A%2F%2Fgithub.com%2FasHOH%2FTom-and-jerry-chase-wiki#NEXT_PUBLIC_DISABLE_ARTICLES=1&NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1&NEXT_TELEMETRY_DISABLED=1&branch=develop)。
+
+<!-- TODO: Add button for cloudflare worker -->
+
 如果你不使用这种 serverless 服务，你还可以选择这两种自部署的方式，两种都会使服务在 3000 端口运行：
 
 - Docker
