@@ -158,11 +158,11 @@
     "js-yaml": "^4.1.1"
   },
   "lint-staged": {
-    "{*.{js,jsx,ts,tsx,mjs,cjs},!(templates|.next|out|coverage)/**/*.{js,jsx,ts,tsx,mjs,cjs}}": [
-      "prettier --write --ignore-unknown --cache",
-      "eslint --fix --max-warnings=0 --cache --no-warn-ignored"
+    "**/*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "eslint --fix --max-warnings=0 --cache --no-warn-ignored",
+      "prettier --write --ignore-unknown --cache"
     ],
-    "{*.{json,css,md,mdx},!(templates|.next|out|coverage)/**/*.{json,css,md,mdx}}": [
+    "**/*.{json,css,md,mdx}": [
       "prettier --write --ignore-unknown --cache"
     ],
     "public/**/*.html": [

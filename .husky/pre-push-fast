@@ -4,7 +4,7 @@ echo "🚀 Running fast pre-push checks (development mode)..."
 
 # Quick lint check first (fail fast)
 echo "⚡ Quick lint check..."
-if ! npx eslint --cache --max-warnings=0 "src/**/*.{js,jsx,ts,tsx}" > /dev/null 2>&1; then
+if ! npx eslint --cache --max-warnings=0 "." > /dev/null 2>&1; then
   echo "❌ ESLint errors found. Fix them before pushing."
   exit 1
 fi
