@@ -15,7 +15,7 @@ export default function SingleItemCardDisplay({ singleItem }: { singleItem: Sing
         src={getSingleItemImageUrl(singleItem)}
         alt={`${singleItem.name}道具图标`}
         size='ITEM_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-32' : ''}`}
+        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
       />
       <div className='w-full px-3 pt-1 pb-3 text-center'>
         <h3

@@ -45,7 +45,7 @@ export default function EntityCardDisplay({ entity }: { entity: Entity }) {
         src={entity.imageUrl}
         alt={`${entity.name}衍生物图标`}
         size='ITEM_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-32' : ''}`}
+        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
       />
       <div className={`${isMobile ? '' : 'px-3'} w-full pt-1 pb-3 text-center`}>
         <h3
