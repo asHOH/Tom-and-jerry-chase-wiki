@@ -7,7 +7,7 @@ import { KnowledgeCardDetailsProps } from '@/lib/types';
 // Dynamic import for KnowledgeCardDetails component
 const KnowledgeCardDetails = dynamic(
   () =>
-    import('@/components/displays/knowledge-cards').then((mod) => ({
+    import('@/features/knowledge-cards/components').then((mod) => ({
       default: mod.KnowledgeCardDetails,
     })),
   {

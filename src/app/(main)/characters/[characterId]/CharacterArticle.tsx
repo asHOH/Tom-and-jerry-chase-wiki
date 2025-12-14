@@ -1,10 +1,10 @@
 'use client';
 
 import { use, useLayoutEffect, useState } from 'react';
+import CharacterSection from '@/features/characters/components/character-detail/CharacterSection';
 
 import { sanitizeHTML } from '@/lib/xssUtils';
 import StyledMDX from '@/components/ui/StyledMDX';
-import CharacterSection from '@/components/displays/characters/character-detail/CharacterSection';
 
 export default function CharacterDocs({
   content,

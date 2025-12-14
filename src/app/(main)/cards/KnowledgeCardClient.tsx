@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 type Props = { description?: string };
 
 const KnowledgeCardGrid = dynamic<Props>(
-  () => import('@/components/displays/knowledge-cards/knowledge-card-grid/KnowledgeCardGrid'),
+  () => import('@/features/knowledge-cards/components/knowledge-card-grid/KnowledgeCardGrid'),
   {
     loading: () => (
       <div className='mx-auto max-w-6xl space-y-6 p-6'>

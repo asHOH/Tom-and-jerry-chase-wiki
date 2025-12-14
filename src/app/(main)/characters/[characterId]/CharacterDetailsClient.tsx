@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useEditMode } from '@/context/EditModeContext';
 import { characters } from '@/data';
+import { CharacterDetails } from '@/features/characters/components/character-detail';
 import { proxy } from 'valtio';
 
 import {
@@ -11,7 +12,6 @@ import {
 } from '@/lib/tutorialUtils';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
-import { CharacterDetails } from '@/components/displays/characters/character-detail';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 
 const syncCharacterStoreEntry = (

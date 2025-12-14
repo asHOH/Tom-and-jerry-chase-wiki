@@ -9,10 +9,10 @@ import {
   type Skill,
 } from '@/data';
 import type { ItemGroupDefinition } from '@/data/types';
+import { getDocPages } from '@/features/articles/utils/docs';
+import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 
-import { getDocPages } from '@/lib/docUtils';
 import { CATEGORY_HINTS, type CategoryHint, type GotoResult } from '@/lib/types';
-import { getItemGroupImageUrl } from '@/components/displays/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 
 type Kind =
   | 'character'

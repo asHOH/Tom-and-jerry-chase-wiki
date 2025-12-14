@@ -1,6 +1,6 @@
 import { SingleItem } from '@/data/types';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import { filterTraitsBySingleItem } from './filterTraitsBySingleItem';
 import { OneTraitText } from './OneTraitText';
 

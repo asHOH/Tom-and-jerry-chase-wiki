@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { catKnowledgeCards } from '@/data/catKnowledgeCards';
-import { mouseKnowledgeCards } from '@/data/mouseKnowledgeCards';
 import { Card, FactionId } from '@/data/types';
+import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
+import { mouseKnowledgeCards } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
 import clsx from 'clsx';
 
 import { useMobile } from '@/hooks/useMediaQuery';

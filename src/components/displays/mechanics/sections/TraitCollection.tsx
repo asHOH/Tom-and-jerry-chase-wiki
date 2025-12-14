@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import traits from '@/data/traits';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
 import { OneTraitText } from '../../traits/shared/OneTraitText';
 
 const processStrings = (input: string | string[]): string =>

@@ -1,4 +1,5 @@
-import { getDocPages } from '@/lib/docUtils';
+import { getDocPages } from '@/features/articles/utils/docs';
+
 import DocsSidebar from '@/components/ui/DocsSidebar';
 import StyledMDX from '@/components/ui/StyledMDX';
 

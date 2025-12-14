@@ -2,12 +2,12 @@
 
 import React, { useMemo, useState } from 'react';
 import { characters } from '@/data';
+import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
+import { getCharacterRelation } from '@/features/characters/utils/relations';
 
 import { AssetManager } from '@/lib/assetManager';
-import { getCharacterRelation } from '@/lib/characterRelationUtils';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import CharacterDisplay from '@/components/displays/characters/character-grid/CharacterDisplay';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 

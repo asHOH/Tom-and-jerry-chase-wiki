@@ -8,7 +8,7 @@ import LoadingState from '@/components/ui/LoadingState';
 // Dynamic import for CharacterGrid component
 const CharacterGrid = dynamic(
   () =>
-    import('@/components/displays/characters').then((mod) => ({
+    import('@/features/characters/components').then((mod) => ({
       default: mod.CharacterGrid,
     })),
   {

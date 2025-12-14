@@ -1,5 +1,5 @@
 import { characters, FactionId, factions, Skill } from '@/data';
-import mouseCharactersStats from '@/data/mouseCharactersStats';
+import mouseCharactersStats from '@/features/characters/data/mouseCharactersStats';
 import json5 from 'json5';
 
 import type { DeepReadonly } from '@/types/deep-readonly';

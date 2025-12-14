@@ -4,19 +4,18 @@ import React from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Skill, SkillLevel } from '@/data/types';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
+import TextWithItemKeyTooltips from '@/features/characters/components/shared/TextWithItemKeyTooltips';
+import {
+  convertCancelableAftercastToDisplayText,
+  convertCancelableSkillToDisplayText,
+} from '@/features/characters/utils/skills';
 import clsx from 'clsx';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
-import {
-  convertCancelableAftercastToDisplayText,
-  convertCancelableSkillToDisplayText,
-} from '@/lib/skillUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import Image from '@/components/Image';
-
-import TextWithHoverTooltips from '../../characters/shared/TextWithHoverTooltips';
-import TextWithItemKeyTooltips from '../../characters/shared/TextWithItemKeyTooltips';
 
 interface SkillCardProps {
   skill: DeepReadonly<Skill & { cooldown?: number }>;

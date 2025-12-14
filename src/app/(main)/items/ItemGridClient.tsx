@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 type Props = { description?: string };
 
 const ItemGridClient = dynamic<Props>(
-  () => import('@/components/displays/items/item-grid/ItemGrid'),
+  () => import('@/features/items/components/item-grid/ItemGrid'),
   {
     loading: () => (
       <div className='mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'>

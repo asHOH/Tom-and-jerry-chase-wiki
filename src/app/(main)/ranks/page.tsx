@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
+import { CharacterRankingGrid } from '@/features/characters/components';
+import { RankableProperty } from '@/features/characters/utils/ranking';
 
-import { RankableProperty } from '@/lib/characterRankingUtils';
 import { generatePageMetadata } from '@/lib/metadataUtils';
-import { CharacterRankingGrid } from '@/components/displays/characters';
 
 export const dynamic = 'force-static';
 

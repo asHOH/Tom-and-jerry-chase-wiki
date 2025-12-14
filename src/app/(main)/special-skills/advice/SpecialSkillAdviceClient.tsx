@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 
 const SpecialSkillAdviceClient = dynamic(
-  () => import('@/components/displays/special-skills/special-skill-advice/SpecialSkillAdvice'),
+  () => import('@/features/special-skills/components/special-skill-advice/SpecialSkillAdvice'),
   {
     loading: () => (
       <div className='mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'>

@@ -1,9 +1,9 @@
-import { catCharactersWithImages } from '@/data/catCharacters';
-import { catCardsWithImages } from '@/data/catKnowledgeCards';
 import { historyData } from '@/data/history';
-import { mouseCharactersWithImages } from '@/data/mouseCharacters';
-import { mouseCardsWithImages } from '@/data/mouseKnowledgeCards';
 import { Card, Character, Faction, FactionId, PositioningTag } from '@/data/types';
+import { catCharactersWithImages } from '@/features/characters/data/catCharacters';
+import { mouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
+import { catCardsWithImages } from '@/features/knowledge-cards/data/catKnowledgeCards';
+import { mouseCardsWithImages } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
 
 // Raw data aggregation
 const rawCharacterData = {

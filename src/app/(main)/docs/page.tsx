@@ -1,4 +1,5 @@
-import { getDocPages } from '@/lib/docUtils';
+import { getDocPages } from '@/features/articles/utils/docs';
+
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 

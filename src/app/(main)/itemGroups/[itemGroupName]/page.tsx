@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { itemGroups } from '@/data';
+import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 
 import { generateArticleMetadata } from '@/lib/metadataUtils';
-import { getItemGroupImageUrl } from '@/components/displays/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 import StructuredData from '@/components/StructuredData';
 
 import ItemGroupDetailClient from './ItemGroupDetailsClient';

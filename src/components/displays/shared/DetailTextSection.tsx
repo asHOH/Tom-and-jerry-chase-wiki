@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 
 import SectionHeader from '@/components/ui/SectionHeader';
-import TextWithHoverTooltips from '@/components/displays/characters/shared/TextWithHoverTooltips';
 
 type DetailTextSectionProps = {
   title: string;

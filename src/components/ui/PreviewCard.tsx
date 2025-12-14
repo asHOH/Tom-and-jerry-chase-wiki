@@ -2,12 +2,12 @@
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data';
 import type { SkillType } from '@/data/types';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import clsx from 'clsx';
 
 import { getTypeLabelColors } from '@/lib/design-tokens';
 import Link from '@/components/Link';
 
-import TextWithHoverTooltips from '../displays/characters/shared/TextWithHoverTooltips';
 import BaseCard from './BaseCard';
 import Tag from './Tag';
 

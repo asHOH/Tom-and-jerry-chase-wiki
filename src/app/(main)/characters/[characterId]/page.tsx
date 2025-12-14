@@ -3,10 +3,10 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getContentWritersByCharacter } from '@/constants';
 import { characters } from '@/data';
+import { getTutorialPage } from '@/features/articles/utils/docs';
 import { Article, WithContext } from 'schema-dts';
 
 import { GameDataManager } from '@/lib/dataManager';
-import { getTutorialPage } from '@/lib/docUtils';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';

@@ -1,14 +1,14 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { FactionId } from '@/data/types';
-
+import { CharacterRankingGrid } from '@/features/characters/components';
 import {
   getPropertyInfo,
   RANKABLE_PROPERTIES,
   RankableProperty,
-} from '@/lib/characterRankingUtils';
+} from '@/features/characters/utils/ranking';
+
 import { generatePageMetadata } from '@/lib/metadataUtils';
-import { CharacterRankingGrid } from '@/components/displays/characters';
 
 export const dynamic = 'force-static';
 

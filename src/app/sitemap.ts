@@ -1,8 +1,7 @@
 import { MetadataRoute } from 'next';
 import { buffs, cards, characters, entities, items, specialSkills } from '@/data';
 import docPages from '@/data/generated/docPages.json';
-
-import { RANKABLE_PROPERTIES } from '@/lib/characterRankingUtils';
+import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
 
 export const dynamic = 'force-static';
 

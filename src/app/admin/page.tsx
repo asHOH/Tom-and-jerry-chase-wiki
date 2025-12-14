@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { notFound } from 'next/navigation';
 import { Database } from '@/data/database.types';
+import CategoryManagement from '@/features/admin/components/CategoryManagement';
+import UserManagement from '@/features/admin/components/UserManagement';
 import useSWR from 'swr';
 
 import { useUser } from '@/hooks/useUser';
-import CategoryManagement from '@/components/displays/admin/CategoryManagement';
-import UserManagement from '@/components/displays/admin/UserManagement';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 
