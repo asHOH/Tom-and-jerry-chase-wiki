@@ -36,5 +36,5 @@ export function useMediaQuery(query: string): boolean {
  * Consistent with Tailwind's md: breakpoint
  */
 export function useMobile(): boolean {
-  return useMediaQuery('(max-width: 767px)');
+  return useMediaQuery('(max-width: 768px)');
 }
