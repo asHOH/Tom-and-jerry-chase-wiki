@@ -1,5 +1,182 @@
 [
   {
+    "date": "2025-12-14",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "移除多处组件的内联样式，并整合到类名中",
+        "hashes": ["b0badcc2", "8045a074", "7dec32c8", "ba0d1dd8"],
+        "author": "asHOH, copilot-swe-agent[bot]"
+      },
+      {
+        "type": "fix",
+        "scope": "移动端",
+        "message": "更新断点以匹配 Tailwind 的 md: 断点",
+        "hashes": ["17718d31"],
+        "author": "asHOH"
+      },
+      {
+        "type": "style",
+        "scope": "角色列表",
+        "message": "略微减小非移动端表格列宽",
+        "hashes": ["effc31f0"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "图片",
+        "message": "'priority' 属性替换为 'preload' 以避免弃用问题",
+        "hashes": ["c0ea73d1"],
+        "author": "asHOH"
+      },
+      {
+        "type": "style",
+        "scope": "首页",
+        "message": "调整首页布局",
+        "hashes": ["a2ccd42d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "提取共享组件，重命名间距设计令牌，优化组件结构",
+        "hashes": ["7145466b", "0b31c61e", "88d0397a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "style",
+        "scope": "导航",
+        "message": "改进导航按钮的颜色和样式",
+        "hashes": ["0d89e312"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "导航",
+        "message": "确保在小屏幕宽度下，下一项/上一项名称始终可见",
+        "hashes": ["e4093477"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-13",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "网站部署",
+        "message": "添加一键部署按钮、详细部署指南和 Vercel 部署功能；新增 Docker 文件以优化部署",
+        "hashes": ["c88a4327", "af205026", "24d0ef67"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "反馈建议",
+        "message": "允许禁用反馈功能",
+        "hashes": ["414c5038"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "图片",
+        "message": "允许切换图片优化功能",
+        "hashes": ["98cd3ce3"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-12",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "优化用户体验（URL状态、可访问性和手势）；添加新的排序方法",
+        "hashes": ["ab193bde", "b4c6ee0f"],
+        "author": "3swordman"
+      },
+      {
+        "type": "style",
+        "scope": "角色详情",
+        "message": "放大武器图标并调整移动端图片高度",
+        "hashes": ["ef8480a3", "3644ca26"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-11",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "为 Supabase 连接添加错误处理和重试机制",
+        "hashes": ["d17bcfc8"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "首页",
+        "message": "在首页添加官方网站显示",
+        "hashes": ["a60925ff"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-10",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "添加文章功能切换，并进行 Supabase 密钥验证",
+        "hashes": ["7782cc00"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "添加回退逻辑，在 supabaseAdmin 不可用时使用标准 createClient()",
+        "hashes": ["c3d43907"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "图片",
+        "message": "更新道具图片宽高比；调整泡泡颜色",
+        "hashes": ["0fb31e46"],
+        "author": "asHOH"
+      },
+      {
+        "type": "perf",
+        "scope": "图片",
+        "message": "简化图片加载逻辑并移除自定义加载器",
+        "hashes": ["6618ceba"],
+        "author": "asHOH"
+      },
+      {
+        "type": "perf",
+        "scope": "构建",
+        "message": "优化图片时跳过已存在的文件",
+        "hashes": ["91b78cf1"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-09",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "文档",
+        "message": "添加截至今的更新日志",
+        "hashes": ["15fbc760"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
     "date": "2025-12-08",
     "changes": [
       {
