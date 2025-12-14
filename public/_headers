@@ -1,6 +1,21 @@
 # Netlify headers configuration
 /*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; img-src 'self' data: https://*.supabase.co; font-src 'self'; connect-src 'self' *.supabase.co https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com https://api.pwnedpasswords.com https://*.pusher.com wss://*.pusher.com https://static.cloudflareinsights.com; media-src 'self'; object-src 'none'; frame-src 'self' about: data: https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; child-src 'self' about: https://hcaptcha.com https://*.hcaptcha.com https://challenges.cloudflare.com; form-action 'self'; base-uri 'self'; worker-src 'self' blob:; frame-ancestors 'none'
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
+
+/version.json
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/sw.js
+  Cache-Control: public, max-age=0
+
+/images/*
+  Cache-Control: public, max-age=2592000
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
