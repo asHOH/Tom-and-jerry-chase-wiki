@@ -32,13 +32,6 @@ if ! npm run prettier:check; then
   exit 1
 fi
 
-# Ensure public HTML files stay formatted
-echo "🧹 Checking public HTML formatting..."
-if ! npx prettier --check "public/**/*.html"; then
-  echo "❌ Prettier formatting issues found in public HTML files"
-  exit 1
-fi
-
 # Run type-check and tests in parallel
 if [ "$RUN_MODE" = "full" ]; then
   echo "🏃‍♂️ Running type-check and ALL tests in parallel..."
