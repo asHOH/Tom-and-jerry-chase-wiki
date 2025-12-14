@@ -52,14 +52,12 @@ export default function CharacterDisplay({
         src={imageUrl}
         alt={`${name}`}
         size='CHARACTER_CARD'
-        className='hover:scale-105'
+        className={`hover:scale-105 ${isMobile ? 'h-40' : ''}`}
         preload={preload}
-        style={isMobile ? { height: '10rem' } : {}}
       />
       <div className={`${isMobile ? 'pb-3' : 'px-3 pb-5'} pt-1 text-center`}>
         <h2
-          className={`${isMobile ? 'text-lg' : 'mb-2 text-xl'} font-bold dark:text-white`}
-          style={{ whiteSpace: 'pre' }}
+          className={`${isMobile ? 'text-lg' : 'mb-2 text-xl'} font-bold whitespace-pre dark:text-white`}
         >
           {name}
         </h2>

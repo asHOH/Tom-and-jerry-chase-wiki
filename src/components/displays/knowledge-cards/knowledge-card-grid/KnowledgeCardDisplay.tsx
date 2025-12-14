@@ -32,9 +32,8 @@ export default function KnowledgeCardDisplay({
         src={imageUrl}
         alt={`${name}知识卡图标`}
         size='KNOWLEDGECARD_CARD'
-        className='hover:scale-105'
+        className={`hover:scale-105 ${isMobile ? 'h-32' : ''}`}
         preload={preload}
-        style={isMobile ? { height: '8rem' } : {}}
       />
       <div className='px-3 pt-1 pb-3 text-center'>
         <h3 className='mb-1 text-lg font-bold text-gray-800 dark:text-white'>{name}</h3>
