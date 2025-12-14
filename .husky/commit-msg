@@ -8,7 +8,7 @@ if echo "$commit_msg" | grep -qE "^(Merge|Revert)"; then
 fi
 
 # Regular commit message validation
-commit_regex='^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?: .{1,80}'
+commit_regex='^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?!?: .{1,80}'
 
 if ! echo "$commit_msg" | grep -qE "$commit_regex"; then
     echo "❌ Invalid commit message format!"
