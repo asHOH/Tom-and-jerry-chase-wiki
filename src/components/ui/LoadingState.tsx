@@ -153,7 +153,7 @@ export function PageLoadingState({
   children?: React.ReactNode;
 }) {
   return (
-    <div className='mx-auto max-w-6xl space-y-6 p-6' style={{ paddingTop: '80px' }}>
+    <div className='mx-auto max-w-6xl space-y-6 p-6 pt-20'>
       <div className='animate-pulse'>
         {children || <LoadingState type={type} message={message} />}
       </div>

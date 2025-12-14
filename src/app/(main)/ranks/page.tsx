@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RanksPage() {
   return (
-    <div className='mx-auto max-w-7xl space-y-6 p-6' style={{ paddingTop: '80px' }}>
+    <div className='mx-auto max-w-7xl space-y-6 p-6'>
       <CharacterRankingGrid description={DESCRIPTION} />
     </div>
   );

@@ -679,8 +679,7 @@ export default function SkillCard({
                 alt={skill.name}
                 fill
                 sizes='64px'
-                className='object-contain'
-                style={{ padding: '8px' }}
+                className='object-contain p-2'
               />
             </div>
             {isEditMode && (
