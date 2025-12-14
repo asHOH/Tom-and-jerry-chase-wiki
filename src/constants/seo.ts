@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import { DISCLAIMER_TEXT } from '@/constants';
 import { WebSite, WithContext } from 'schema-dts';
+
+import { DISCLAIMER_TEXT } from '@/constants';
 
 export const SITE_NAME = '猫和老鼠手游wiki';
 export const SITE_SHORT_NAME = '猫鼠wiki';

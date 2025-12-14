@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { notFound } from 'next/navigation';
-import { Database } from '@/data/database.types';
-import CategoryManagement from '@/features/admin/components/CategoryManagement';
-import UserManagement from '@/features/admin/components/UserManagement';
 import useSWR from 'swr';
 
 import { useUser } from '@/hooks/useUser';
+import { Database } from '@/data/database.types';
+import CategoryManagement from '@/features/admin/components/CategoryManagement';
+import UserManagement from '@/features/admin/components/UserManagement';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 

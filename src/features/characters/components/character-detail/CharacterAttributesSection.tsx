@@ -1,8 +1,9 @@
+import { useSnapshot } from 'valtio';
+
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data';
 import { FactionId } from '@/data/types';
-import { useSnapshot } from 'valtio';
+import { characters } from '@/data';
 
 import AttributeDisplay from './AttributeDisplay';
 

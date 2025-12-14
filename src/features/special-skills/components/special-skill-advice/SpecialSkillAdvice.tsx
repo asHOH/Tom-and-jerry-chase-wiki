@@ -1,19 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { characters, specialSkills } from '@/data';
-import type { FactionId, SpecialSkill } from '@/data/types';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 
 import { getFactionButtonColors } from '@/lib/design-system';
 import { designTokens } from '@/lib/design-tokens';
 import { CharacterWithFaction } from '@/lib/types';
+import { useDarkMode } from '@/context/DarkModeContext';
+import type { FactionId, SpecialSkill } from '@/data/types';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import BaseCard from '@/components/ui/BaseCard';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
+import { characters, specialSkills } from '@/data';
 
 import AdviceCharacterList from './AdviceCharacterList';
 

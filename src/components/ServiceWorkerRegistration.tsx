@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import { useToast } from '@/context/ToastContext';
 
 export const ServiceWorkerRegistration: React.FC = () => {

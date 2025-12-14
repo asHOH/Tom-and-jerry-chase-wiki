@@ -1,9 +1,8 @@
 'use client';
 
-import { useDarkMode } from '@/context/DarkModeContext';
-
 import { getCardCostColors, getCardRankColors } from '@/lib/design-tokens';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
+import { useDarkMode } from '@/context/DarkModeContext';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';

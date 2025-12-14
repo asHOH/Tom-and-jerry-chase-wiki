@@ -1,9 +1,8 @@
 'use client';
 
+import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { Buff, SingleItem, SingleItemTypeChineseNameList } from '@/data/types';
-
-import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import AccordionCard from '@/components/ui/AccordionCard';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';

@@ -1,20 +1,20 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { cards, characters, FactionId, specialSkills } from '@/data';
-import { CharacterRelationItem } from '@/data/types';
-import { getCharacterRelation } from '@/features/characters/utils/relations';
 import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { setNestedProperty } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
+import { useAppContext } from '@/context/AppContext';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { CharacterRelationItem } from '@/data/types';
+import { getCharacterRelation } from '@/features/characters/utils/relations';
 import EditableField from '@/components/ui/EditableField';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { cards, characters, FactionId, specialSkills } from '@/data';
 
 import { HappyFaceIcon, HeartIcon, NeutralFaceIcon, SadFaceIcon } from './CharacterRelationIcons';
 import KnowledgeCardSelector from './KnowledgeCardSelector';

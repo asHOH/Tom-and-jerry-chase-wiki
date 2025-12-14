@@ -1,17 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { specialSkills } from '@/data';
-import type { FactionId } from '@/data/types';
 
 import { getFactionButtonColors } from '@/lib/design-system';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useDarkMode } from '@/context/DarkModeContext';
+import type { FactionId } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
+import { specialSkills } from '@/data';
 
 const allSkills = [...Object.values(specialSkills.cat), ...Object.values(specialSkills.mouse)];
 

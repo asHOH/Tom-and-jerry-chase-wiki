@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { characters } from '@/data';
-import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
-import { getCharacterRelation } from '@/features/characters/utils/relations';
 
 import { AssetManager } from '@/lib/assetManager';
+import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
+import { getCharacterRelation } from '@/features/characters/utils/relations';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { characters } from '@/data';
 
 export default function RecommendedPageClient() {
   const [selectedMice, setSelectedMice] = useState<(string | null)[]>([null, null, null, null]);

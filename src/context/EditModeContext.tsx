@@ -2,10 +2,10 @@
 
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { characters, factions } from '@/data';
 import { proxy, subscribe } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
+import { characters, factions } from '@/data';
 
 interface EditModeContextType {
   isEditMode: boolean;

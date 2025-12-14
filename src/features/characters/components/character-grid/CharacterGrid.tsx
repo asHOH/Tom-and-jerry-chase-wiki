@@ -1,11 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
-import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode } from '@/context/EditModeContext';
-import { characters as allCharacters, FactionId, PositioningTagName } from '@/data';
 
 import { getAvatarFilterColors, getPositioningTagColors } from '@/lib/design-tokens';
 import { getOriginalCharacterIds } from '@/lib/editUtils';
@@ -13,10 +8,15 @@ import { useFilterState } from '@/lib/filterUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { FactionCharactersProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode } from '@/context/EditModeContext';
+import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
+import { characters as allCharacters, FactionId, PositioningTagName } from '@/data';
 
 import CharacterCreate from './CharacterCreate';
 import CharacterDisplay from './CharacterDisplay';

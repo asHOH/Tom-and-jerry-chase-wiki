@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext';
 import clsx from 'clsx';
 import { motion } from 'motion/react';
 
@@ -10,6 +8,8 @@ import { isOriginalCharacter } from '@/lib/editUtils';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useChat } from '@/hooks/useChat';
 import { useNavigation } from '@/hooks/useNavigation';
+import { useAppContext } from '@/context/AppContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 

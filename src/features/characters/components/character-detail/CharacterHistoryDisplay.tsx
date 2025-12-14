@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { ChangeType } from '@/data/types';
 
 import { getHistory } from '@/lib/historyUtils';
+import { ChangeType } from '@/data/types';
 
 export default function CharacterHistoryDisplay({
   name,

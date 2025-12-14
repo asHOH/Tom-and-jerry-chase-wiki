@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import clsx from 'clsx';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { contributors } from '@/data/contributors';
 import type { KnowledgeCardGroupSet } from '@/data/types';
-import clsx from 'clsx';
-
-import type { DeepReadonly } from '@/types/deep-readonly';
 import EditableField from '@/components/ui/EditableField';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 

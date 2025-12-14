@@ -1,12 +1,12 @@
 // GotoPreviewCard.tsx
-import { useDarkMode } from '@/context/DarkModeContext';
-import type { FactionId } from '@/data';
-import type { SkillType } from '@/data/types';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import clsx from 'clsx';
 
 import { getTypeLabelColors } from '@/lib/design-tokens';
+import { useDarkMode } from '@/context/DarkModeContext';
+import type { SkillType } from '@/data/types';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import Link from '@/components/Link';
+import type { FactionId } from '@/data';
 
 import BaseCard from './BaseCard';
 import Tag from './Tag';

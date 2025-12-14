@@ -1,11 +1,4 @@
 import React, { useCallback } from 'react';
-import { sortPositioningTags } from '@/constants/positioningTagSequences';
-import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { characters, PositioningTag } from '@/data';
-import type { FactionId } from '@/data/types';
-import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
@@ -14,11 +7,18 @@ import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/
 import { setNestedProperty } from '@/lib/editUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterWithFaction } from '@/lib/types';
+import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { sortPositioningTags } from '@/constants/positioningTagSequences';
+import type { FactionId } from '@/data/types';
+import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import EditableField from '@/components/ui/EditableField';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { characters, PositioningTag } from '@/data';
 
 // Helper function to get available tag names based on faction
 function getAvailableTagNames(factionId: FactionId): string[] {

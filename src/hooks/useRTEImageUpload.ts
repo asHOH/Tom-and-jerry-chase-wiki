@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
-import { useToast } from '@/context/ToastContext';
 
 import {
   normalizeHostedImageUrl,
   RTE_IMAGE_ALLOWED_MIME_TYPES,
   RTE_IMAGE_MAX_BYTES,
 } from '@/lib/richtext/imagePolicy';
+import { useToast } from '@/context/ToastContext';
 
 function formatBytes(bytes: number): string {
   if (bytes >= 1024 * 1024) {

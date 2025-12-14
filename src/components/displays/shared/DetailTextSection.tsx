@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import SectionHeader from '@/components/ui/SectionHeader';
 
 type DetailTextSectionProps = {

@@ -1,18 +1,18 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useAppContext } from '@/context/AppContext';
-import { characters } from '@/data'; // Import characters data
-import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
-import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
 
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
+import { useAppContext } from '@/context/AppContext';
+import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
+import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 import DetailTraitsCard from '@/components/displays/shared/DetailTraitsCard';
 import Image from '@/components/Image';
+import { characters } from '@/data'; // Import characters data
 
 import CharacterList from './CharacterList';
 import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';

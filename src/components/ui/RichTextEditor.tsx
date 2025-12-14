@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useToast } from '@/context/ToastContext';
 import { EditorContent } from '@tiptap/react';
 import clsx from 'clsx';
 
@@ -15,6 +14,7 @@ import { htmlToWikiText, wikiTextToHTML } from '@/lib/richTextUtils';
 import { useRTEConfiguration } from '@/hooks/useRTEConfiguration';
 import { useRTEImageUpload } from '@/hooks/useRTEImageUpload';
 import { useRTEToolbarState } from '@/hooks/useRTEToolbarState';
+import { useToast } from '@/context/ToastContext';
 
 import ImagePickerModal from './RichTextEditor/ImagePickerModal';
 import LinkDialog from './RichTextEditor/LinkDialog';

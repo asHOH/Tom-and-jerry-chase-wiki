@@ -1,9 +1,8 @@
 'use client';
 
+import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
-
-import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';

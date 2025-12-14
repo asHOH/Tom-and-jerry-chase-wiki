@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useCallback } from 'react';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data';
-import { FactionId, SkillAllocation } from '@/data/types';
 import { useSnapshot } from 'valtio';
 
 import { setNestedProperty } from '@/lib/editUtils';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { FactionId, SkillAllocation } from '@/data/types';
 import { PlusIcon } from '@/components/icons/CommonIcons';
+import { characters } from '@/data';
 
 import CharacterSection from './CharacterSection';
 import SkillAllocationDisplay from './SkillAllocationDisplay';

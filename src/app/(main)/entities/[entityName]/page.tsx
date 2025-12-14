@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { entities } from '@/data';
 import { Article, WithContext } from 'schema-dts';
 
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
+import { entities } from '@/data';
 
 import EntityDetailClient from './EntityDetailsClient';
 

@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
 
 import { getCardCostColors } from '@/lib/design-tokens';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 interface CostRangeSliderProps {
   min: number;

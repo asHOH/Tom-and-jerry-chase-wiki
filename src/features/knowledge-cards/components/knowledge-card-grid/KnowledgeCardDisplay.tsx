@@ -1,8 +1,7 @@
-import { useDarkMode } from '@/context/DarkModeContext';
-
 import { getCardCostColors, getCardRankColors } from '@/lib/design-tokens';
 import { KnowledgeCardDisplayProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useDarkMode } from '@/context/DarkModeContext';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';

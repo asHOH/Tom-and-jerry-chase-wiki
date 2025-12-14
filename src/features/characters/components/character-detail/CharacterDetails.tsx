@@ -1,9 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { EditModeContext, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data';
-import { Skill } from '@/data/types';
 import { AnimatePresence, motion } from 'motion/react'; // smaller bundle size than framer-motion
 
 import { useSnapshot } from 'valtio';
@@ -11,6 +8,8 @@ import { useSnapshot } from 'valtio';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { EditModeContext, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { Skill } from '@/data/types';
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import CollapseCard from '@/components/ui/CollapseCard';
 import EditableField from '@/components/ui/EditableField';
@@ -18,6 +17,7 @@ import { filterTraitsBySingleItem } from '@/components/displays/traits/shared/fi
 import SingleItemTraitsText from '@/components/displays/traits/shared/SingleItemTraitsText';
 import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { characters } from '@/data';
 
 import CharacterAttributesSection from './CharacterAttributesSection';
 import CharacterHistoryDisplay from './CharacterHistoryDisplay';

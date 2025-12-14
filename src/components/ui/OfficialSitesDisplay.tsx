@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { OFFICIAL_SITES } from '@/data/officialSites';
 
 const HIDDEN_SITE_HASH = '8a421bd68f71baf196bb5272a38aff89675310595276fd957ee73167f5017a00';

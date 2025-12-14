@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
-import { historyData } from '@/data/history';
 import { snapshot } from 'valtio';
+
+import { historyData } from '@/data/history';
+import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
 
 // Type definition for a message part, consistent with the API
 type Part = {

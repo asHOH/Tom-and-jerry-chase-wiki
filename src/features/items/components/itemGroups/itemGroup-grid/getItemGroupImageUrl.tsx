@@ -1,6 +1,5 @@
-import { ItemGroupDefinition } from '@/data/types';
-
 import { getSingleItemImageUrl } from '@/lib/singleItemTools';
+import { ItemGroupDefinition } from '@/data/types';
 
 export const getItemGroupImageUrl = (group: ItemGroupDefinition): string => {
   if (!!group.specialImageUrl) return group.specialImageUrl;

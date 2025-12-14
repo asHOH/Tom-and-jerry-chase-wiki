@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { defaultMetadata } from '@/constants/seo';
 
 import { getRuntimeCspHeader } from '@/lib/csp';
+import { defaultMetadata } from '@/constants/seo';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 import { ClientProviders } from '@/components/ClientProviders';
 import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
@@ -12,12 +12,12 @@ import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 
 import './globals.css';
 
-import { DarkModeProvider } from '@/context/DarkModeContext';
 import clsx from 'clsx';
 
 import { getDarkModeFromCookie } from '@/lib/darkModeActions';
 import { getUserData } from '@/lib/userActions';
 import { UserProvider } from '@/hooks/useUser';
+import { DarkModeProvider } from '@/context/DarkModeContext';
 import KeyboardNavigation from '@/components/KeyboardNavigation';
 
 const inter = localFont({

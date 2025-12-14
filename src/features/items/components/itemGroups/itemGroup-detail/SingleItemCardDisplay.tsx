@@ -1,8 +1,7 @@
-import { SingleItem } from '@/data/types';
-
 import { designTokens } from '@/lib/design-tokens';
 import { getSingleItemImageUrl } from '@/lib/singleItemTools';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { SingleItem } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
 

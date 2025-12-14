@@ -1,11 +1,10 @@
+import { AssetManager } from '@/lib/assetManager';
 import {
   CardGroupType,
   type CharacterDefinition,
   type PartialCharacterDefinition,
 } from '@/data/types';
 import { processCharacters } from '@/features/characters/utils/skillId';
-
-import { AssetManager } from '@/lib/assetManager';
 
 const catCharacterDefinitions = {
   /* ----------------------------------- 汤姆 ----------------------------------- */

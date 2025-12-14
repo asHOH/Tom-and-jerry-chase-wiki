@@ -1,8 +1,7 @@
 // Utility functions for skill-related operations
 
-import type { CancelableAftercastType, CancelableSkillType } from '@/data/types';
-
 import type { DeepReadonly } from '@/types/deep-readonly';
+import type { CancelableAftercastType, CancelableSkillType } from '@/data/types';
 
 export function convertCancelableSkillToDisplayText(
   skill: DeepReadonly<CancelableSkillType> | undefined

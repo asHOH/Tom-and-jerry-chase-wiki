@@ -1,5 +1,4 @@
 import { SingleItem } from '@/data/types';
-
 import CollapseCard from '@/components/ui/CollapseCard';
 
 import { filterTraitsBySingleItem } from '../traits/shared/filterTraitsBySingleItem';

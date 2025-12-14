@@ -1,8 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore – reuse shared CSP config authored as .mjs
-import { buildCspHeader } from '@/../csp.config.mjs';
-
 import { isVercelAnalyticsEnabled } from '@/lib/platform';
+import { buildCspHeader } from '@/../csp.config.mjs';
 
 export function getRuntimeCspHeader(): string {
   const csp = buildCspHeader({ includeVercelAnalytics: isVercelAnalyticsEnabled() });

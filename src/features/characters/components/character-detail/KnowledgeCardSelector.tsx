@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { cards } from '@/data';
-import { CharacterRelationItem } from '@/data/types';
 
+import { CharacterRelationItem } from '@/data/types';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { cards } from '@/data';
 
 type Props = {
   selected: CharacterRelationItem[];

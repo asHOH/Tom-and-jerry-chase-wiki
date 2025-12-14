@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { factionData, factions } from '@/data';
 import { CollectionPage, WithContext } from 'schema-dts';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
+import { factionData, factions } from '@/data';
 
 import CharacterGridClient from './CharacterGridClient';
 

@@ -1,4 +1,3 @@
-import { itemGroups } from '@/data';
 import {
   FactionId,
   SingleItem,
@@ -7,6 +6,7 @@ import {
   Trait,
   TraitGroup,
 } from '@/data/types';
+import { itemGroups } from '@/data';
 
 import { checkItemMatchesGroup, checkItemMatchesTrait, searchBuffBySingleItem } from './tools';
 

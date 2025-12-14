@@ -1,9 +1,10 @@
 'use client';
 
-import { useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data'; // Import Character type
-import type { FactionId, KnowledgeCardGroup } from '@/data/types';
 import { useSnapshot } from 'valtio';
+
+import { useLocalCharacter } from '@/context/EditModeContext';
+import type { FactionId, KnowledgeCardGroup } from '@/data/types';
+import { characters } from '@/data'; // Import Character type
 
 import KnowledgeCardSection from './KnowledgeCardSection';
 

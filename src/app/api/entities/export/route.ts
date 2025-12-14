@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+
 import { catEntitiesDefinitions } from '@/data/catEntities';
 import { mouseEntitiesDefinitions } from '@/data/mouseEntities';
 

@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext';
 import clsx from 'clsx';
 
 import { supabase } from '@/lib/supabase/client';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
+import { useAppContext } from '@/context/AppContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';

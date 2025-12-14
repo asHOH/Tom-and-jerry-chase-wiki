@@ -1,9 +1,9 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { ToastProvider } from '@/context/ToastContext';
 
 import { usePersistentGameStore } from '@/hooks/usePersistentGameStore';
+import { ToastProvider } from '@/context/ToastContext';
 
 import { CacheDebugPanel } from './CacheDebugPanel';
 import { OfflineIndicator } from './OfflineIndicator';

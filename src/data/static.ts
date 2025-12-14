@@ -1,7 +1,6 @@
+import { GameDataManager } from '@/lib/dataManager';
 import catSpecialSkillsWithImages from '@/features/special-skills/data/catSpecialSkills';
 import mouseSpecialSkillsWithImages from '@/features/special-skills/data/mouseSpecialSkills';
-
-import { GameDataManager } from '@/lib/dataManager';
 
 import catEntitiesWithImages from './catEntities';
 import mouseEntitiesWithImages from './mouseEntities';

@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { DocPage } from '@/features/articles/utils/docs';
 import clsx from 'clsx';
 
+import { DocPage } from '@/features/articles/utils/docs';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 

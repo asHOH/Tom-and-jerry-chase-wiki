@@ -1,6 +1,7 @@
-import { useDarkMode } from '@/context/DarkModeContext';
 import clsx from 'clsx';
 import { motion } from 'motion/react';
+
+import { useDarkMode } from '@/context/DarkModeContext';
 
 export function DarkModeToggleButton() {
   const [isDarkMode, toggleDarkMode] = useDarkMode(); // dark: class can also be used directly

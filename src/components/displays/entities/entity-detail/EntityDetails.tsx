@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { Entity, Skill } from '@/data/types';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
+import { useAppContext } from '@/context/AppContext';
+import { Entity, Skill } from '@/data/types';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
 

@@ -1,18 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { entities } from '@/data';
-import type { Entity, Entitytypelist } from '@/data/types';
 
 import { getFactionButtonColors, getPositioningTagColors } from '@/lib/design-system';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useDarkMode } from '@/context/DarkModeContext';
+import type { Entity, Entitytypelist } from '@/data/types';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from '@/components/Link';
+import { entities } from '@/data';
 
 import getEntityFactionId from '../lib/getEntityFactionId';
 import EntityCardDisplay from './EntityCardDisplay';

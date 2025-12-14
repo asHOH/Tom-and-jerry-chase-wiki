@@ -1,16 +1,16 @@
 import React from 'react';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { useLocalCharacter } from '@/context/EditModeContext';
-import { cards, characters } from '@/data';
-import type { SkillType } from '@/data/types';
 import { proxy, useSnapshot } from 'valtio';
 
 import { getCardRankColors } from '@/lib/design-tokens';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { useLocalCharacter } from '@/context/EditModeContext';
+import type { SkillType } from '@/data/types';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
+import { cards, characters } from '@/data';
 
 const nameBlacklist = [
   '破墙',

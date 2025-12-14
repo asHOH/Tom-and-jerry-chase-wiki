@@ -3,12 +3,12 @@ import { render, screen } from '@testing-library/react';
 
 import '@testing-library/jest-dom';
 
-import { EditModeProvider } from '@/context/EditModeContext';
-import { characters } from '@/data';
-import type { SkillAllocation } from '@/data/types';
 import { proxy } from 'valtio';
 
 import type { CharacterWithFaction } from '@/lib/types';
+import { EditModeProvider } from '@/context/EditModeContext';
+import type { SkillAllocation } from '@/data/types';
+import { characters } from '@/data';
 
 import * as skillAllocationUtils from '../../../utils/skillAllocation';
 import SkillAllocationDisplay from '../SkillAllocationDisplay';

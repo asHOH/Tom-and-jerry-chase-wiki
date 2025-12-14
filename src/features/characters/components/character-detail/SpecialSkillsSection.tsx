@@ -1,12 +1,12 @@
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { characters, specialSkills } from '@/data';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import { useSnapshot } from 'valtio';
 
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import EditableField from '@/components/ui/EditableField';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
+import { characters, specialSkills } from '@/data';
 
 export default function SpecialSkillsSection() {
   'use no memo';

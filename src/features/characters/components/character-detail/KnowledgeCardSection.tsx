@@ -1,10 +1,14 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import clsx from 'clsx';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { getCardRankColors } from '@/lib/design-tokens';
+import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters } from '@/data';
 import { Contributor, contributors } from '@/data/contributors';
 import type { CardGroup, FactionId, KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
@@ -17,11 +21,6 @@ import {
   getKnowledgeCardCostStyles,
   isCardOptional,
 } from '@/features/knowledge-cards/utils/sections';
-import clsx from 'clsx';
-
-import type { DeepReadonly } from '@/types/deep-readonly';
-import { getCardRankColors } from '@/lib/design-tokens';
-import { useMobile } from '@/hooks/useMediaQuery';
 import EditableField from '@/components/ui/EditableField';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
 import Tag from '@/components/ui/Tag';
@@ -29,6 +28,7 @@ import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { characters } from '@/data';
 
 import CharacterSection from './CharacterSection';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';

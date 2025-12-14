@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+
 import traits from '@/data/traits';
 import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
-
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 

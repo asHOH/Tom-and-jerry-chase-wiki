@@ -1,7 +1,6 @@
+import { AssetManager } from '@/lib/assetManager';
 import { CardGroupType, type CharacterDefinition } from '@/data/types';
 import { processCharacters } from '@/features/characters/utils/skillId';
-
-import { AssetManager } from '@/lib/assetManager';
 
 const mouseCharacterDefinitions = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */

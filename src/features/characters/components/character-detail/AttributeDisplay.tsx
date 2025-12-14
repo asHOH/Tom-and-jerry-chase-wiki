@@ -1,15 +1,15 @@
 import React, { Fragment } from 'react';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data';
-import type { FactionId } from '@/data/types';
-import { RANKABLE_PROPERTIES, RankableProperty } from '@/features/characters/utils/ranking';
 import { useSnapshot } from 'valtio';
 
 import { getTooltipContent } from '@/lib/tooltipUtils';
+import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import type { FactionId } from '@/data/types';
+import { RANKABLE_PROPERTIES, RankableProperty } from '@/features/characters/utils/ranking';
 import EditableField from '@/components/ui/EditableField';
 import Tooltip from '@/components/ui/Tooltip';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
+import { characters } from '@/data';
 
 interface AttributeDisplayProps {
   label: string;

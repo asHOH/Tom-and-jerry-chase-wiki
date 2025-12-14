@@ -1,6 +1,5 @@
-import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
-
 import Tooltip from '@/components/ui/Tooltip';
+import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
 
 interface DisclaimerTextProps {
   onFeedbackClick?: () => void;

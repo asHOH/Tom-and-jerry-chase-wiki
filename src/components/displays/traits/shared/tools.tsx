@@ -1,8 +1,7 @@
-import { itemGroups } from '@/data';
+import { getSingleItemFactionId } from '@/lib/singleItemTools';
 import buffs from '@/data/buffs';
 import { FactionId, SingleItem, SingleItemOrGroup, Trait } from '@/data/types';
-
-import { getSingleItemFactionId } from '@/lib/singleItemTools';
+import { itemGroups } from '@/data';
 
 // 导出-辅助函数：判断两个factionId是否相同，默认会将undefined视作任意一种factionId，若采用严格模式则双方必须均不为undefined
 export const compareFactionId = (

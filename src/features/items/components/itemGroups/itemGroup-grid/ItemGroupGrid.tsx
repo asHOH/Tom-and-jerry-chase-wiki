@@ -1,11 +1,10 @@
 'use client';
 
-import { itemGroups } from '@/data';
-
 import { useMobile } from '@/hooks/useMediaQuery';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Link from '@/components/Link';
+import { itemGroups } from '@/data';
 
 import ItemGroupCardDisplay from './ItemGroupCardDisplay';
 

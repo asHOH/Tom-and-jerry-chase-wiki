@@ -1,7 +1,6 @@
-import { characters } from '@/data';
-import type { FactionId, Skill } from '@/data/types';
-
 import { AssetManager } from '@/lib/assetManager';
+import type { FactionId, Skill } from '@/data/types';
+import { characters } from '@/data';
 
 /**
  * Get weapon skill image URL for a character

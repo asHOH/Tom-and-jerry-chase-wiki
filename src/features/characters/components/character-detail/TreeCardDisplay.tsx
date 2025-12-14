@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useDarkMode } from '@/context/DarkModeContext';
-import type { TreeNode } from '@/features/knowledge-cards/utils/sections';
 import clsx from 'clsx';
 
 import { getCardRankColors } from '@/lib/design-tokens';
+import { useDarkMode } from '@/context/DarkModeContext';
+import type { TreeNode } from '@/features/knowledge-cards/utils/sections';
 import Tag from '@/components/ui/Tag';
 import GotoLink from '@/components/GotoLink';
 import Image from '@/components/Image';

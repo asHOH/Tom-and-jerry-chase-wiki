@@ -1,6 +1,5 @@
-import { Entity, FactionId } from '@/data/types';
-
 import { getSingleItemFactionId } from '@/lib/singleItemTools';
+import { Entity, FactionId } from '@/data/types';
 
 export default function getEntityFactionId(entity: Entity): FactionId | undefined {
   return (

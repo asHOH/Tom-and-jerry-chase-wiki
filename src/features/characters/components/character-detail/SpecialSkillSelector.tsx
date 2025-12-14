@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FactionId, specialSkills } from '@/data';
-import { CharacterRelationItem } from '@/data/types';
 
+import { CharacterRelationItem } from '@/data/types';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { FactionId, specialSkills } from '@/data';
 
 type Props = {
   selected: CharacterRelationItem[];

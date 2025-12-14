@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+
 import { useToast } from '@/context/ToastContext';
 
 export const OfflineIndicator: React.FC = () => {

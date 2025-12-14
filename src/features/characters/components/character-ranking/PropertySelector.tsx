@@ -1,6 +1,8 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
+
+import { getFactionButtonColors } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { FactionId } from '@/data/types';
 import {
@@ -8,8 +10,6 @@ import {
   PropertyInfo,
   RankableProperty,
 } from '@/features/characters/utils/ranking';
-
-import { getFactionButtonColors } from '@/lib/design-system';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
 

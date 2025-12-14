@@ -1,10 +1,13 @@
 'use client';
 
 import React, { useCallback, useMemo } from 'react';
+import clsx from 'clsx';
+import { useSnapshot } from 'valtio';
+
+import { getSkillLevelColors } from '@/lib/design-tokens';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data';
 import { FactionId, SkillAllocation } from '@/data/types';
 import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import {
@@ -13,14 +16,11 @@ import {
   safeParseSkillAllocationPattern,
   validateSkillAllocationPattern,
 } from '@/features/characters/utils/skillAllocation';
-import clsx from 'clsx';
-import { useSnapshot } from 'valtio';
-
-import { getSkillLevelColors } from '@/lib/design-tokens';
 import EditableField from '@/components/ui/EditableField';
 import Tooltip from '@/components/ui/Tooltip';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { characters } from '@/data';
 
 // Type for processed skill levels with current level information
 type ProcessedSkillLevel = ParsedSkillLevel & {

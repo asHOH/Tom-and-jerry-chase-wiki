@@ -1,10 +1,10 @@
 'use client';
 
 import { memo } from 'react';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { getRankDisplayName, RankedCharacter } from '@/features/characters/utils/ranking';
 
 import { getCardRankColors } from '@/lib/design-tokens';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { getRankDisplayName, RankedCharacter } from '@/features/characters/utils/ranking';
 import BaseCard from '@/components/ui/BaseCard';
 import Tag from '@/components/ui/Tag';
 import Image from '@/components/Image';

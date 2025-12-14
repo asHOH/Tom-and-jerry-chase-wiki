@@ -4,8 +4,9 @@
  */
 
 import { ReactNode } from 'react';
-import { Card, Character, FactionId, PositioningTag, PositioningTagName } from '@/data';
+
 import { SkillType } from '@/data/types';
+import { Card, Character, FactionId, PositioningTag, PositioningTagName } from '@/data';
 
 // Extended types with faction information (used in components)
 export type CharacterWithFaction = Character & {

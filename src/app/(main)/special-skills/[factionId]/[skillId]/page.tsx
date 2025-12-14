@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { specialSkills } from '@/data';
-import type { FactionId } from '@/data/types';
 import { Article, WithContext } from 'schema-dts';
 
 import { generateArticleMetadata } from '@/lib/metadataUtils';
+import type { FactionId } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
+import { specialSkills } from '@/data';
 
 import SpecialSkillDetailClient from './SpecialSkillDetailClient';
 

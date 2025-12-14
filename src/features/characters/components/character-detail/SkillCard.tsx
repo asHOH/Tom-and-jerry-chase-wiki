@@ -1,15 +1,6 @@
 'use client';
 
 import React, { Fragment, useState } from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode } from '@/context/EditModeContext';
-import { characters } from '@/data';
-import { Skill, SkillLevel } from '@/data/types';
-import {
-  convertCancelableAftercastToDisplayText,
-  convertCancelableSkillToDisplayText,
-} from '@/features/characters/utils/skills';
 import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
@@ -18,9 +9,18 @@ import { AssetManager } from '@/lib/assetManager';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
 import { CharacterWithFaction } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode } from '@/context/EditModeContext';
+import { Skill, SkillLevel } from '@/data/types';
+import {
+  convertCancelableAftercastToDisplayText,
+  convertCancelableSkillToDisplayText,
+} from '@/features/characters/utils/skills';
 import EditableField from '@/components/ui/EditableField';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { characters } from '@/data';
 
 import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
 import SkillTraitsCard from './SkillTraitsCard';

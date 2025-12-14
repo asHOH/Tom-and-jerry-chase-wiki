@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Card, FactionId } from '@/data/types';
-import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
-import { mouseKnowledgeCards } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
 import clsx from 'clsx';
 
 import { useMobile } from '@/hooks/useMediaQuery';
+import { Card, FactionId } from '@/data/types';
+import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
+import { mouseKnowledgeCards } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
 import Image from '@/components/Image';
 
 import Tooltip from './Tooltip';

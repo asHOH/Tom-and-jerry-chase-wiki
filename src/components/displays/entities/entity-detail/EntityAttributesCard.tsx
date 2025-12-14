@@ -1,11 +1,10 @@
 'use client';
 
+import { getEntityTypeColors } from '@/lib/design-tokens';
+import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Entity } from '@/data/types';
-
-import { getEntityTypeColors } from '@/lib/design-tokens';
-import { getTooltipContent } from '@/lib/tooltipUtils';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';

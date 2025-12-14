@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { items } from '@/data';
 
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
+import { items } from '@/data';
 
 import ItemDetailClient from './ItemDetailsClient';
 

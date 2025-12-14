@@ -1,3 +1,7 @@
+import { CATEGORY_HINTS, type CategoryHint, type GotoResult } from '@/lib/types';
+import type { ItemGroupDefinition } from '@/data/types';
+import { getDocPages } from '@/features/articles/utils/docs';
+import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 import {
   buffs,
   cards,
@@ -8,11 +12,6 @@ import {
   specialSkills,
   type Skill,
 } from '@/data';
-import type { ItemGroupDefinition } from '@/data/types';
-import { getDocPages } from '@/features/articles/utils/docs';
-import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
-
-import { CATEGORY_HINTS, type CategoryHint, type GotoResult } from '@/lib/types';
 
 type Kind =
   | 'character'

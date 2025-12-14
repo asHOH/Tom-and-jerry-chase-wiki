@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+
 import packageJson from '@/../package.json';
 
 // Server start time for development (when this module loads)

@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+
+import { getCardRankColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { characters } from '@/data';
 import { FactionId } from '@/data/types';
 import {
   getCharactersWithProperty,
@@ -11,10 +12,9 @@ import {
   RankableProperty,
   rankCharactersByProperty,
 } from '@/features/characters/utils/ranking';
-
-import { getCardRankColors } from '@/lib/design-tokens';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
+import { characters } from '@/data';
 
 import CharacterRankingCard from './CharacterRankingCard';
 import PropertySelector from './PropertySelector';

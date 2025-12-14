@@ -1,10 +1,9 @@
 'use client';
 
-import type { ItemGroup } from '@/data/types';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
-
 import { getSingleItemHref } from '@/lib/singleItemTools';
 import { useMobile } from '@/hooks/useMediaQuery';
+import type { ItemGroup } from '@/data/types';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Link from '@/components/Link';

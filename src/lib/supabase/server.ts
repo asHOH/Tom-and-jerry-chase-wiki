@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
-import type { Database } from '@/data/database.types';
 import { createServerClient } from '@supabase/ssr';
+
+import type { Database } from '@/data/database.types';
 
 import { fetchWithRetry } from './fetch-retry';
 

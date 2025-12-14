@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
-import ArticlesClient from '@/features/articles/components/ArticlesClient';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import ArticlesClient from '@/features/articles/components/ArticlesClient';
 
 export const dynamic = 'force-dynamic';
 

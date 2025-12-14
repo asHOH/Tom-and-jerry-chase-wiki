@@ -1,6 +1,11 @@
 'use client';
 
 import React from 'react';
+import clsx from 'clsx';
+
+import type { DeepReadonly } from '@/types/deep-readonly';
+import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
+import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Skill, SkillLevel } from '@/data/types';
@@ -10,11 +15,6 @@ import {
   convertCancelableAftercastToDisplayText,
   convertCancelableSkillToDisplayText,
 } from '@/features/characters/utils/skills';
-import clsx from 'clsx';
-
-import type { DeepReadonly } from '@/types/deep-readonly';
-import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
-import { useMobile } from '@/hooks/useMediaQuery';
 import Image from '@/components/Image';
 
 interface SkillCardProps {

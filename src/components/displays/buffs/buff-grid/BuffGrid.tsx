@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { buffs } from '@/data';
-import type { Buff } from '@/data/types';
 
 import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useDarkMode } from '@/context/DarkModeContext';
+import type { Buff } from '@/data/types';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Link from '@/components/Link';
+import { buffs } from '@/data';
 
 import BuffCardDisplay from './BuffCardDisplay';
 

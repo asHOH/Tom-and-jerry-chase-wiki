@@ -1,8 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { EditModeProvider } from '@/context/EditModeContext';
 
+import { EditModeProvider } from '@/context/EditModeContext';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 
 export default function GlobalLayout({ children }: { children: React.ReactNode }) {

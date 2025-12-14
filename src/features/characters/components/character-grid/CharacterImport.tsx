@@ -2,11 +2,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext';
-import { useToast } from '@/context/ToastContext';
-import { characters, FactionId, factions } from '@/data';
-import { processCharacters } from '@/features/characters/utils/skillId';
 import json5 from 'json5';
 import { proxy } from 'valtio';
 
@@ -14,7 +9,12 @@ import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
 import { componentTokens, designTokens } from '@/lib/design-tokens';
 import { CharacterWithFaction } from '@/lib/types';
+import { useAppContext } from '@/context/AppContext';
+import { useEditMode } from '@/context/EditModeContext';
+import { useToast } from '@/context/ToastContext';
+import { processCharacters } from '@/features/characters/utils/skillId';
 import BaseCard from '@/components/ui/BaseCard';
+import { characters, FactionId, factions } from '@/data';
 
 function handleUploadedData(
   data: string,

@@ -1,11 +1,11 @@
-import { useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data';
-import type { Skill } from '@/data/types';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
+import { useLocalCharacter } from '@/context/EditModeContext';
+import type { Skill } from '@/data/types';
+import { characters } from '@/data';
 
 export function useCharacterActions() {
   const { characterId } = useLocalCharacter();

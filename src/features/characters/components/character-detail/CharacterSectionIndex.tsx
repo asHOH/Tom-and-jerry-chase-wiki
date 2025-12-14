@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
-import { useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data';
-import type { Skill } from '@/data/types';
 import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
+import { useLocalCharacter } from '@/context/EditModeContext';
+import type { Skill } from '@/data/types';
+import { characters } from '@/data';
 
 function CharacterSectionIndexItem({
   name,

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { Database } from '@/data/database.types';
 
 type Category = Database['public']['Tables']['categories']['Row'];

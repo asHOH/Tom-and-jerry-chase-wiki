@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Database } from '@/data/database.types';
 
 import { supabase } from '@/lib/supabase/client';
+import { Database } from '@/data/database.types';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 

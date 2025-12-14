@@ -1,16 +1,16 @@
 'use client';
 
 import { useMemo } from 'react';
-import { sortPositioningTags } from '@/constants/positioningTagSequences';
-import { useDarkMode } from '@/context/DarkModeContext';
-import type { FactionId } from '@/data/types';
-import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import clsx from 'clsx';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { getPositioningTagColors } from '@/lib/design-tokens';
 import { CharacterDisplayProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { sortPositioningTags } from '@/constants/positioningTagSequences';
+import type { FactionId } from '@/data/types';
+import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';

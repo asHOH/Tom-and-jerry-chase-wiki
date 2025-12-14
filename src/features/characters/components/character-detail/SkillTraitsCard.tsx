@@ -1,10 +1,9 @@
-import { entities } from '@/data';
 import { Skill } from '@/data/types';
-
 import AccordionCard from '@/components/ui/AccordionCard';
 import CollapseCard from '@/components/ui/CollapseCard';
 import { filterTraitsBySingleItem } from '@/components/displays/traits/shared/filterTraitsBySingleItem';
 import SingleItemTraitsText from '@/components/displays/traits/shared/SingleItemTraitsText';
+import { entities } from '@/data';
 
 interface SkillTraitsCardProps {
   skill: Skill;

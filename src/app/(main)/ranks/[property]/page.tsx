@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+
+import { generatePageMetadata } from '@/lib/metadataUtils';
 import { FactionId } from '@/data/types';
 import { CharacterRankingGrid } from '@/features/characters/components';
 import {
@@ -7,8 +9,6 @@ import {
   RANKABLE_PROPERTIES,
   RankableProperty,
 } from '@/features/characters/utils/ranking';
-
-import { generatePageMetadata } from '@/lib/metadataUtils';
 
 export const dynamic = 'force-static';
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import { getSiteJsonLd } from '@/constants/seo';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { getSiteJsonLd } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 
 import HomeContentClient from './HomeContentClient';

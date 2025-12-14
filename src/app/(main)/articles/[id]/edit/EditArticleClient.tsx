@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import useSWR from 'swr';
 
 import { useUser } from '@/hooks/useUser';
+import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';

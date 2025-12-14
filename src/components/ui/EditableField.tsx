@@ -2,12 +2,12 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { characters } from '@/data/index';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 
 import { getNestedProperty, handleChange } from '@/lib/editUtils';
 import { CharacterWithFaction } from '@/lib/types';
+import { useAppContext } from '@/context/AppContext';
+import { characters } from '@/data/index';
+import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 
 import { useEditMode, useLocalCharacter } from '../../context/EditModeContext';
 

@@ -1,12 +1,12 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { NAV_ITEMS } from '@/constants/navigation';
-import { useEditMode } from '@/context/EditModeContext';
-import { useToast } from '@/context/ToastContext';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
+import { useEditMode } from '@/context/EditModeContext';
+import { useToast } from '@/context/ToastContext';
+import { NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/HomePageSection';

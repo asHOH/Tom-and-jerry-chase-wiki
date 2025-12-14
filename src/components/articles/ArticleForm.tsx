@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import clsx from 'clsx';
 
+import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RichTextEditor from '@/components/ui/RichTextEditor';

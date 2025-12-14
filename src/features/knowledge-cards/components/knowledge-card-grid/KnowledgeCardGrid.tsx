@@ -1,10 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { cards } from '@/data';
-import type { FactionId } from '@/data/types';
 import clsx from 'clsx';
 
 import { getFactionButtonColors } from '@/lib/design-system';
@@ -12,10 +8,14 @@ import { getCardRankColors } from '@/lib/design-tokens';
 import { createRankFilter, RANK_OPTIONS, useFilterState } from '@/lib/filterUtils';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
+import type { FactionId } from '@/data/types';
 import CostRangeSlider from '@/components/ui/CostRangeSlider';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
+import { cards } from '@/data';
 
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 

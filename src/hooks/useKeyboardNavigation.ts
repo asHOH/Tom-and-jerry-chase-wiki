@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+
 import { useCharacterNavigation } from '@/features/characters/hooks/useCharacterNavigation';
 
 export const useKeyboardNavigation = (currentCharacterId: string, disabled = false) => {

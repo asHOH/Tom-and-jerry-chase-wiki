@@ -1,6 +1,4 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
-import { historyData } from '@/data/history';
 import {
   FunctionCallingConfigMode,
   FunctionDeclaration,
@@ -8,6 +6,9 @@ import {
   HarmBlockThreshold,
   HarmCategory,
 } from '@google/genai';
+
+import { historyData } from '@/data/history';
+import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
 
 // Define the structure of a message part, including function calls and responses
 // Based on Gemini's API structure

@@ -2,14 +2,14 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext';
-import { FactionId } from '@/data';
 
 import { componentTokens, designTokens } from '@/lib/design-tokens';
 import { handleCharacterIdChange } from '@/lib/editUtils';
+import { useAppContext } from '@/context/AppContext';
+import { useEditMode } from '@/context/EditModeContext';
 import BaseCard from '@/components/ui/BaseCard';
 import { PlusIcon } from '@/components/icons/CommonIcons';
+import { FactionId } from '@/data';
 
 export default function CharacterCreate() {
   const { width, height } = componentTokens.image.dimensions.CHARACTER_CARD;

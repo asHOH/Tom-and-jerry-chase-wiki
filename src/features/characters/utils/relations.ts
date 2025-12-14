@@ -1,5 +1,5 @@
-import { characters } from '@/data';
 import { CharacterRelation } from '@/data/types';
+import { characters } from '@/data';
 
 export function getCharacterRelation(id: string): CharacterRelation {
   const char = characters[id];

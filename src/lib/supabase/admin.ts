@@ -1,5 +1,6 @@
-import { Database } from '@/data/database.types';
 import { createClient } from '@supabase/supabase-js';
+
+import { Database } from '@/data/database.types';
 
 import { fetchWithRetry } from './fetch-retry';
 

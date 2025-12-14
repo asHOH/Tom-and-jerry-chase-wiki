@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { buffs } from '@/data';
 import { Article, WithContext } from 'schema-dts';
 
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
+import { buffs } from '@/data';
 
 import BuffDetailClient from './BuffDetailsClient';
 

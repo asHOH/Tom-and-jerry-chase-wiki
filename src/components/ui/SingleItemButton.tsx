@@ -1,8 +1,7 @@
-import { useDarkMode } from '@/context/DarkModeContext';
-import { SingleItem } from '@/data/types';
-
 import { getTypeLabelColors } from '@/lib/design-tokens';
 import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { SingleItem } from '@/data/types';
 import Image from '@/components/Image';
 
 interface SingleItemButtonProps {
