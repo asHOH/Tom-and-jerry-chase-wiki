@@ -42,7 +42,12 @@ export default function AttributesCardLayout({
       <BaseCard variant='details'>
         {isMobile ? (
           <div>
-            <div className='auto-fit-grid grid-container grid [grid-template-columns:5rem_repeat(auto-fit,minmax(1px,1fr))]'>
+            <div
+              className='auto-fit-grid grid-container grid'
+              style={{
+                gridTemplateColumns: `5rem repeat(auto-fit, minmax(1px,1fr))`,
+              }}
+            >
               <GameImage
                 src={imageUrl}
                 alt={alt}
