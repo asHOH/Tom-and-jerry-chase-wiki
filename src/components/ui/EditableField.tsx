@@ -37,10 +37,8 @@ type Key<T> = T extends object
  * @param {T} initialValue The initial value of the field. Can be a string or a number.
  * @param {((newValue: string) => void) | undefined} [onSave] Optional function to invoke to replace default behavior.
  */
-interface EditableFieldProps<T, TagName extends keyof HTMLElementTagNameMap> extends Omit<
-  React.HTMLAttributes<HTMLElementTagNameMap[TagName]>,
-  'children'
-> {
+interface EditableFieldProps<T, TagName extends keyof HTMLElementTagNameMap>
+  extends Omit<React.HTMLAttributes<HTMLElementTagNameMap[TagName]>, 'children'> {
   tag: TagName;
   path: Key<CharacterWithFaction> | (string & {}); // e.g., 'character.id', 'character.description'
   initialValue: T;

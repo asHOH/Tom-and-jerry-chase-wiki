@@ -12,12 +12,14 @@ export function useCharacterData(factionId: FactionId) {
     async () => {
       // Dynamic import - this creates separate chunks for each faction
       if (factionId === 'cat') {
-        const { catCharactersWithImages } =
-          await import('@/features/characters/data/catCharacters');
+        const { catCharactersWithImages } = await import(
+          '@/features/characters/data/catCharacters'
+        );
         return catCharactersWithImages;
       } else {
-        const { mouseCharactersWithImages } =
-          await import('@/features/characters/data/mouseCharacters');
+        const { mouseCharactersWithImages } = await import(
+          '@/features/characters/data/mouseCharacters'
+        );
         return mouseCharactersWithImages;
       }
     },
