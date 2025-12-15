@@ -24,3 +24,5 @@ export const entities = {
 export { default as buffs } from './buffs';
 
 export { default as itemGroups } from '@/features/items/data/itemGroups';
+
+export { default as maps } from './maps';

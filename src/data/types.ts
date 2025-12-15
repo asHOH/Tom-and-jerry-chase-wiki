@@ -461,3 +461,24 @@ export type Trait = {
   }[];
   excludeFactionId?: FactionId;
 };
+
+export type mapTypes = '常规地图' | '娱乐地图' | '广场地图';
+export type studyLevel = '见习学业' | '高级学业' | '特级学业' | '大师学业';
+export type MapDefinition = {
+  aliases?: string[];
+  mapSkin?: string[]; //地图换肤变种名
+  type: mapTypes;
+  size?: '大' | '中' | '小';
+  studyLevelUnlock?: studyLevel;
+  roomCount?: number; //只计入有名称的房间，不计彩蛋房、过渡房间
+  pipeCount?: number; //只计入常规管道，不计彩蛋房管道，且双向管道只计一个
+  doorCount?: number; //只计入传统木门，不计自动门、玉清宫大门
+  hiddenRoom?: boolean; //是否有彩蛋房，默认无
+  randomizedRoom?: boolean; //是否存在会在游戏生成时随机产生变种的房间，默认无
+  supportedModes?: string[]; //可出现此地图的模式
+
+  unuseImage?: boolean; // Default: false
+  specialImageUrl?: string;
+};
+
+export type Map = MapDefinition & { name: string; imageUrl: string };

@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import { useSpecifyTypeNavigation } from '@/hooks/useSpecifyTypeNavigation';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
-type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff';
+type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff' | 'map';
 
 interface TargetNavigationButtonsProps {
   currentId: string;

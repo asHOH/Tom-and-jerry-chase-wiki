@@ -116,6 +116,12 @@ const entityPositioningTagTooltips = {
   指示物: '不与其它物体互动，也几乎不产生效果，仅做指示用',
 };
 
+const mapPositioningTagTooltips = {
+  常规地图: '在匹配等经典模式中会出现的地图',
+  娱乐地图: '只在部分休闲模式中出现的地图',
+  广场地图: '只在“猫鼠广场”中出现的地图',
+};
+
 /**
  * Get tooltip content with fallback logic for character properties
  * @param property - Property name to get tooltip for
@@ -168,11 +174,12 @@ export const getPositioningTagTooltipContent = (
 
 export const getSpecifyTypePositioningTagTooltipContent = (
   tagName: string,
-  type: 'item' | 'entity'
+  type: 'item' | 'entity' | 'map'
 ): string => {
   const tooltips = {
     item: itemPositioningTagTooltips,
     entity: entityPositioningTagTooltips,
+    map: mapPositioningTagTooltips,
   }[type];
 
   if (tooltips[tagName as keyof typeof tooltips]) {

@@ -1046,3 +1046,65 @@ export const getEntityTypeColors = (entitytype: string, isDarkMode: boolean) => 
       isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
   };
 };
+
+/**
+ * Map type color utility
+ */
+export const getMapTypeColors = (mapType: string, isDarkMode: boolean) => {
+  const mapTypeColorMap: Record<
+    string,
+    'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese' | 'lateGameMouse'
+  > = {
+    常规地图: 'cheese',
+    娱乐地图: 'breakthrough',
+    广场地图: 'wallBreak',
+  };
+  const skillType = mapTypeColorMap[mapType] || 'lateGameMouse';
+  const colorScheme =
+    designTokens.colors.positioningTags[skillType] || designTokens.colors.skillTypes.passive;
+  return {
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+  };
+};
+
+export const getMapSizeColors = (size: string, isDarkMode: boolean) => {
+  const sizeColorMap: Record<
+    string,
+    'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese' | 'lateGameMouse'
+  > = {
+    小: 'rescue',
+    中: 'support',
+    大: 'disrupt',
+  };
+  const skillType = sizeColorMap[size] || 'lateGameMouse';
+  const colorScheme =
+    designTokens.colors.positioningTags[skillType] || designTokens.colors.skillTypes.passive;
+
+  return {
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+  };
+};
+
+export const getMapLevelColors = (level: string, isDarkMode: boolean) => {
+  const levelColorMap: Record<string, 'C' | 'B' | 'A' | 'S'> = {
+    见习学业: 'C',
+    高级学业: 'B',
+    特级学业: 'A',
+    大师学业: 'S',
+  };
+  const skillType = levelColorMap[level] || 'C';
+  const colorScheme = designTokens.colors.rank[skillType] || designTokens.colors.skillTypes.passive;
+
+  return {
+    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
+    backgroundColor:
+      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+  };
+};
