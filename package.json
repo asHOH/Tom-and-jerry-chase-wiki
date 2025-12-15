@@ -121,7 +121,7 @@
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
     "@types/mdx": "^2.0.13",
-    "@types/node": "^24.10.1",
+    "@types/node": "^25.0.2",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@types/semver": "^7.7.1",
