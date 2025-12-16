@@ -10,9 +10,19 @@ interface SkillTraitsCardProps {
 }
 
 export default function SkillTraitsCard({ skill }: SkillTraitsCardProps) {
-  const OwnEntities = Object.values({ ...entities.cat, ...entities.mouse }).filter(
-    (entity) => entity.owner?.type === 'skill' && entity.owner.name === skill.name
-  );
+  const OwnEntities = Object.values({ ...entities.cat, ...entities.mouse }).filter((entity) => {
+    const owner = entity.owner;
+
+    if (!owner) return false; // 如果 owner 不存在，直接返回 false
+
+    // 处理数组情况
+    if (Array.isArray(owner)) {
+      return owner.some((item) => item?.type === 'skill' && item?.name === skill.name);
+    }
+
+    // 处理单个对象情况（保持原有逻辑）
+    return owner?.type === 'skill' && owner?.name === skill.name;
+  });
   const NumberOfOwnTraits: number[] = [skill, ...OwnEntities].map((a, key) => {
     return filterTraitsBySingleItem({ name: a.name, type: key === 0 ? 'skill' : 'entity' }).length;
   });
