@@ -207,7 +207,14 @@ export const mouseEntitiesDefinitions = {
   },
   泰菲球: {
     entitytype: '变身类',
-    owner: { name: '泰菲', type: 'character' },
+    owner: [
+      { name: '泰菲', type: 'character' },
+      { name: '剑客泰菲', type: 'character' },
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '天使泰菲', type: 'character' },
+      { name: '侦探泰菲', type: 'character' },
+      { name: '罗宾汉泰菲', type: 'character' },
+    ],
     aliases: ['球形泰菲'],
     move: true,
     gravity: true,

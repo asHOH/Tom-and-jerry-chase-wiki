@@ -34,6 +34,14 @@ export const catEntitiesDefinitions = {
   },
   碎片: {
     entitytype: '召唤物',
+    owner: [
+      { name: '盘子', type: 'item' },
+      { name: '扁盘', type: 'item' },
+      { name: '玻璃杯', type: 'item' },
+      { name: '碗', type: 'item' },
+      { name: '灰花瓶', type: 'item' },
+      { name: '蓝花瓶', type: 'item' },
+    ],
     description: '角色踩到碎片会短暂{硬直}，之后一段时间内免疫碎片效果。',
     detailedDescription:
       '角色踩到碎片会{硬直}1秒，之后3.1秒内[免疫碎片效果](不会受到碎片效果，期间踩到碎片也不会令其消失)。\n\n不同道具形成的碎片的特性相同，但外观、大小、形状、碰撞体积并不相同。',
