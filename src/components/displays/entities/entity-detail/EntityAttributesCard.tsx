@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react'; // 移除 useMemo 导入
+
 import { getEntityTypeColors } from '@/lib/design-tokens';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
@@ -14,13 +16,101 @@ import AttributesCardLayout from '@/components/displays/shared/AttributesCardLay
 
 import getEntityFactionId from '../lib/getEntityFactionId';
 
+// 提取箭头SVG组件到函数外部
+const ArrowIcon = ({ expanded }: { expanded: boolean }) => (
+  <div className={`transition-transform duration-300 ${expanded ? 'rotate-90' : 'rotate-0'}`}>
+    <svg
+      className='h-5 w-5'
+      fill='none'
+      stroke='currentColor'
+      strokeWidth='2.5'
+      viewBox='0 0 24 24'
+      xmlns='http://www.w3.org/2000/svg'
+    >
+      <path strokeLinecap='round' strokeLinejoin='round' d='M9 5l7 7-7 7' />
+    </svg>
+  </div>
+);
+
 export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
+  const [expandedOwners, setExpandedOwners] = useState(false);
 
   if (!entity) return null;
 
   const factionId = getEntityFactionId(entity);
+
+  // 将renderOwners改为普通函数
+  function renderOwners() {
+    if (!entity.owner) return null;
+
+    // 如果是数组
+    if (Array.isArray(entity.owner)) {
+      const owners = entity.owner;
+
+      // 空数组不显示
+      if (owners.length === 0) {
+        return null;
+      }
+
+      // 只有一个元素时按原方式显示
+      if (owners.length === 1) {
+        return (
+          <span className='flex items-center text-sm'>
+            {'归属者：'}
+            {owners[0] !== undefined ? <SingleItemButton singleItem={owners[0]} /> : null}
+          </span>
+        );
+      }
+
+      // 多个元素时
+      const firstOwner = owners[0];
+
+      return (
+        <div className='flex flex-col gap-2 text-sm'>
+          <div className='flex items-center'>
+            <span className='mr-2 whitespace-nowrap'>归属者：</span>
+            <div className='flex flex-wrap items-center gap-1'>
+              {firstOwner !== undefined ? <SingleItemButton singleItem={firstOwner} /> : null}
+              <button
+                onClick={() => setExpandedOwners(!expandedOwners)}
+                className='ml-1 flex items-center justify-center rounded-full p-1.5 transition-all duration-300 hover:bg-gray-100 focus:ring-2 focus:ring-gray-300 focus:outline-none dark:hover:bg-gray-800 dark:focus:ring-gray-600'
+                aria-label={expandedOwners ? '折叠所有者列表' : '展开所有者列表'}
+              >
+                <ArrowIcon expanded={expandedOwners} />
+              </button>
+            </div>
+          </div>
+
+          {/* 展开的剩余所有者列表 */}
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              expandedOwners ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div
+              className={`flex flex-wrap gap-2 pt-1 transition-opacity duration-300 ${
+                expandedOwners ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              {owners.map((owner, index) => (
+                <SingleItemButton key={index} singleItem={owner} size='small' />
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 如果是单个元素
+    return (
+      <span className='flex items-center text-sm'>
+        {'归属者：'}
+        <SingleItemButton singleItem={entity.owner} />
+      </span>
+    );
+  }
 
   function putTypeTagOn(entity: Entity) {
     if (typeof entity.entitytype === 'string') {
@@ -62,12 +152,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             <span className='text-sm whitespace-pre'>类型: </span>
             {putTypeTagOn(entity)}
           </div>
-          {!!entity.owner && (
-            <span className='flex items-center text-sm'>
-              {'归属者：'}
-              <SingleItemButton singleItem={entity.owner} />
-            </span>
-          )}
+          {renderOwners()}
           {entity.entityAttributesAsCharacter !== undefined && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-sm font-bold'>

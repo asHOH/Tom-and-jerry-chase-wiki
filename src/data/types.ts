@@ -308,7 +308,7 @@ export type Entitytypelist =
 
 export type EntityDefinition = {
   entitytype: Entitytypelist | Entitytypelist[]; // type of entity
-  owner?: SingleItem;
+  owner?: SingleItem | SingleItem[];
   factionId?: FactionId; // 若未填写该项，则在显示时继承owner的此属性（需使用getSingleItemFactionId函数）
   aliases?: string[]; // (entities') Alternative names for search
   description?: string;
