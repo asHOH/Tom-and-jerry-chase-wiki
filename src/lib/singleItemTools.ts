@@ -1,4 +1,5 @@
 import { FactionId, SingleItem } from '@/data/types';
+import getEntityFactionId from '@/components/displays/entities/lib/getEntityFactionId';
 import { buffs, cards, characters, entities, items, specialSkills } from '@/data';
 
 export const getSingleItemHref = (singleItem: SingleItem): string => {
@@ -98,8 +99,6 @@ export const getSingleItemFactionId = (singleItem: SingleItem): FactionId | unde
     return findFactionId(singleItem);
   } else {
     const entity = findEntity(singleItem);
-    return entity !== undefined
-      ? entity.factionId || (entity.owner !== undefined ? findFactionId(entity.owner) : undefined)
-      : undefined;
+    return entity !== undefined ? getEntityFactionId(entity) : undefined;
   }
 };
