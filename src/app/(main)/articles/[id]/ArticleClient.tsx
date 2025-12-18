@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
+import clsx from 'clsx';
 
 import { formatArticleDate } from '@/lib/dateUtils';
 import { toChineseNumeral } from '@/lib/textUtils';
@@ -516,11 +517,12 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
           {/* Article Content */}
           <div
             ref={contentRef}
-            className={`article-content ${
-              isMobile
-                ? ''
-                : 'rounded-lg border border-transparent p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40'
-            }${showAutoNumbering ? 'article-content-auto-numbered' : ''}`}
+            className={clsx(
+              'article-content',
+              !isMobile &&
+                'rounded-lg border border-transparent p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40',
+              showAutoNumbering && 'article-content-auto-numbered'
+            )}
           >
             <style jsx global>{`
               .article-content-auto-numbered [data-heading-prefix]::before {
