@@ -145,7 +145,7 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "rimraf": "^6.1.2",
     "schema-dts": "^1.1.5",
-    "storybook": "^10.1.4",
+    "storybook": "^10.1.10",
     "supabase": "^2.65.6",
     "tailwindcss": "^4.1.18",
     "ts-node": "^10.9.2",
