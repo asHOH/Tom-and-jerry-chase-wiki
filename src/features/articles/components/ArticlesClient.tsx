@@ -9,14 +9,17 @@ import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useUser } from '@/hooks/useUser';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useToast } from '@/context/ToastContext';
+import { Article, ArticlesData, Category } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
-import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { SkeletonArticleCard } from '@/components/ui/Skeleton';
 import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
+
+import ArticleFilters from './ArticleFilters';
+import ArticlePagination from './ArticlePagination';
 
 const monthDayFormatter = new Intl.DateTimeFormat('zh-CN', {
   timeZone: 'Asia/Shanghai',
@@ -40,40 +43,6 @@ const formatMonthDay = (value: string | null | undefined) => {
   }
   return `${month}月${day}日`;
 };
-
-interface Article {
-  id: string;
-  title: string;
-  created_at: string;
-  author_id: string;
-  category_id: string;
-  view_count?: number;
-  categories: { id: string; name: string };
-  users_public_view: { nickname: string };
-  latest_approved_version: Array<{
-    id: string | null;
-    content: string | null;
-    created_at: string | null;
-    status: string | null;
-    editor_id: string | null;
-    users_public_view: { nickname: string } | null;
-  }>;
-}
-
-interface Category {
-  id: string;
-  name: string;
-}
-
-interface ArticlesData {
-  articles: Article[];
-  // total_count: number;
-  // current_page: number;
-  // total_pages: number;
-  categories: Category[];
-  // has_next: boolean;
-  // has_prev: boolean;
-}
 
 interface ArticlesClientProps {
   articles: ArticlesData;
@@ -312,115 +281,6 @@ export default function ArticlesClient({ articles: data, description }: Articles
     handleClearFilters,
   ]);
 
-  const renderPagination = () => {
-    if (!data || clientTotalPages <= 1) return null;
-
-    const pages = [];
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(clientTotalPages, currentPage + 2);
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    const paginationButtonBase =
-      'rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900';
-
-    return (
-      <div className='mt-8 flex flex-col items-center gap-4'>
-        {/* Page indicator */}
-        <div className='text-sm text-gray-600 dark:text-gray-400'>
-          第 {currentPage} 页，共 {clientTotalPages} 页
-          {!isMobile && (
-            <span className='ml-2 text-xs text-gray-400 dark:text-gray-500'>
-              (← → 键翻页{selectedCategories.size > 0 ? '，Esc 清除筛选' : ''})
-            </span>
-          )}
-        </div>
-
-        <div className='flex items-center gap-2'>
-          <button
-            type='button'
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage <= 1}
-            aria-label='上一页'
-            className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
-          >
-            上一页
-          </button>
-
-          {startPage > 1 && (
-            <>
-              <button
-                type='button'
-                onClick={() => handlePageChange(1)}
-                aria-label='第 1 页'
-                className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
-              >
-                1
-              </button>
-              {startPage > 2 && (
-                <span className='px-2 text-gray-500' aria-hidden='true'>
-                  ...
-                </span>
-              )}
-            </>
-          )}
-
-          {pages.map((page) => (
-            <button
-              type='button'
-              key={page}
-              onClick={() => handlePageChange(page)}
-              aria-label={`第 ${page} 页`}
-              aria-current={page === currentPage ? 'page' : undefined}
-              className={`${paginationButtonBase} ${
-                page === currentPage
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-
-          {endPage < clientTotalPages && (
-            <>
-              {endPage < clientTotalPages - 1 && (
-                <span className='px-2 text-gray-500' aria-hidden='true'>
-                  ...
-                </span>
-              )}
-              <button
-                type='button'
-                onClick={() => handlePageChange(clientTotalPages)}
-                aria-label={`第 ${clientTotalPages} 页`}
-                className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
-              >
-                {clientTotalPages}
-              </button>
-            </>
-          )}
-
-          <button
-            type='button'
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage >= clientTotalPages}
-            aria-label='下一页'
-            className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
-          >
-            下一页
-          </button>
-        </div>
-
-        {/* Mobile swipe hint */}
-        {isMobile && clientTotalPages > 1 && (
-          <p className='text-xs text-gray-400 dark:text-gray-500'>👆 左右滑动翻页</p>
-        )}
-      </div>
-    );
-  };
-
   // Show skeleton while initializing from URL params
   if (!isInitialized) {
     return (
@@ -449,86 +309,18 @@ export default function ArticlesClient({ articles: data, description }: Articles
         <PageTitle>文章列表</PageTitle>
         {!isMobile && description && <PageDescription>{description}</PageDescription>}
 
-        {/* Category Filter Controls */}
-        {categoriesForFilter.length > 0 && (
-          <>
-            <FilterRow
-              label='分类筛选:'
-              options={categoryOptions}
-              isActive={(id) => hasCategoryFilter(String(id))}
-              onToggle={(id) => {
-                handleCategoryToggle(String(id));
-              }}
-              ariaLabel='categories'
-              isDarkMode={isDarkMode}
-              getOptionLabel={(id) => {
-                const categoryId = String(id);
-                return (
-                  categoriesForFilter.find((category) => category.id === categoryId)?.name ??
-                  categoryId
-                );
-              }}
-              getButtonClassName={(id, active) => (
-                void id,
-                active
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-              )}
-            />
-            {selectedCategories.size > 0 && (
-              <div className={isMobile ? 'mt-2 flex justify-center' : 'mt-4 flex justify-center'}>
-                <button
-                  type='button'
-                  onClick={handleClearFilters}
-                  className='filter-button cursor-pointer rounded-md border-none bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-all duration-200 hover:bg-red-200 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 dark:focus:ring-offset-gray-900'
-                >
-                  清除筛选
-                </button>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Sort Controls */}
-        <FilterRow
-          label='排序方式:'
-          options={[
-            'created_at-desc',
-            'created_at-asc',
-            'title-asc',
-            'title-desc',
-            'view_count-desc',
-            'view_count-asc',
-          ]}
-          isActive={(opt) => `${sortBy}-${sortOrder}` === opt}
-          onToggle={(opt) => {
-            const [newSortBy, newSortOrder] = opt.split('-') as [
-              'created_at' | 'title',
-              'asc' | 'desc',
-            ];
-            handleSortChange(newSortBy, newSortOrder);
-          }}
-          ariaLabel='sort'
+        <ArticleFilters
+          categoriesForFilter={categoriesForFilter}
+          categoryOptions={categoryOptions}
+          selectedCategories={selectedCategories}
+          hasCategoryFilter={hasCategoryFilter}
+          handleCategoryToggle={handleCategoryToggle}
+          handleClearFilters={handleClearFilters}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          handleSortChange={handleSortChange}
           isDarkMode={isDarkMode}
-          getOptionLabel={(opt) =>
-            opt === 'created_at-desc'
-              ? '最近发布'
-              : opt === 'created_at-asc'
-                ? '最早发布'
-                : opt === 'title-asc'
-                  ? '标题 A-Z'
-                  : opt === 'title-desc'
-                    ? '标题 Z-A'
-                    : opt === 'view_count-asc'
-                      ? '浏览量最少'
-                      : '浏览量最多'
-          }
-          getButtonClassName={(opt, active) => (
-            void opt,
-            active
-              ? 'bg-green-600 text-white hover:bg-green-700'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-          )}
+          isMobile={isMobile}
         />
 
         {/* Stats and Quick Actions */}
@@ -680,7 +472,13 @@ export default function ArticlesClient({ articles: data, description }: Articles
       )}
 
       {/* Pagination */}
-      {renderPagination()}
+      <ArticlePagination
+        currentPage={currentPage}
+        clientTotalPages={clientTotalPages}
+        handlePageChange={handlePageChange}
+        isMobile={isMobile}
+        selectedCategories={selectedCategories}
+      />
     </div>
   );
 }
