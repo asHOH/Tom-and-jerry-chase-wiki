@@ -27,6 +27,10 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       items: ['ranks', 'special-skill-advices', 'traitCollection'],
     },
     {
+      title: '建设中界面',
+      items: ['mechanics', 'maps', 'fixtures'],
+    },
+    {
       title: '编辑工具',
       condition: isEditMode,
       items: ['item-maker', 'entity-maker', 'trait-maker'],

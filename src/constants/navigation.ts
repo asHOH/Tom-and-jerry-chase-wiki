@@ -116,6 +116,31 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images//mouseSkills/莱恩2-蘸水笔.png',
     iconAlt: '特性大全图标',
   },
+  //建设中界面
+  {
+    id: 'mechanics',
+    label: '机制',
+    description: '游戏机制简述',
+    href: '/mechanics',
+    iconSrc: '/images//catSpecialSkills/绝地反击.png',
+    iconAlt: '机制图标',
+  },
+  {
+    id: 'maps',
+    label: '地图',
+    description: '地图列表',
+    href: '/maps',
+    iconSrc: '/images//catSpecialSkills/绝地反击.png',
+    iconAlt: '地图图标',
+  },
+  {
+    id: 'fixtures',
+    label: '地图组件',
+    description: '地图组件列表',
+    href: '/fixtures',
+    iconSrc: '/images//catSpecialSkills/绝地反击.png',
+    iconAlt: '地图组件图标',
+  },
   //以下为编辑模式专用工具，正常情况不显示
   {
     id: 'item-maker',
