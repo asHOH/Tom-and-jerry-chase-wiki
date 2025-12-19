@@ -500,3 +500,32 @@ export type FixtureDefinition = {
 } & PhysicalAttributes;
 
 export type Fixture = FixtureDefinition & { name: string; imageUrl: string };
+
+export interface Article {
+  id: string;
+  title: string;
+  created_at: string;
+  author_id: string;
+  category_id: string;
+  view_count?: number;
+  categories: { id: string; name: string };
+  users_public_view: { nickname: string };
+  latest_approved_version: Array<{
+    id: string | null;
+    content: string | null;
+    created_at: string | null;
+    status: string | null;
+    editor_id: string | null;
+    users_public_view: { nickname: string } | null;
+  }>;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+}
+
+export interface ArticlesData {
+  articles: Article[];
+  categories: Category[];
+}

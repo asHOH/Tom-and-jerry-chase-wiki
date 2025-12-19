@@ -96,7 +96,7 @@
     "json5": "^2.2.3",
     "jsondiffpatch": "^0.7.3",
     "lowlight": "^3.3.0",
-    "motion": "12.23.25",
+    "motion": "^12.23.26",
     "next": "^16.0.7",
     "next-pwa": "^5.6.0",
     "pinyin-pro": "^3.27.0",
@@ -121,9 +121,9 @@
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
     "@types/mdx": "^2.0.13",
-    "@types/node": "^24.10.1",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "@types/semver": "^7.7.1",
     "baseline-browser-mapping": "^2.9.4",
     "cross-env": "^10.1.0",
@@ -153,8 +153,6 @@
   },
   "overrides": {
     "trim-newlines": "^3.0.1",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2",
     "js-yaml": "^4.1.1"
   },
   "lint-staged": {
