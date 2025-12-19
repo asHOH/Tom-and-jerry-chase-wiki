@@ -1,7 +1,4 @@
-import {
-  parseSkillAllocationPattern,
-  validateSkillAllocationPattern,
-} from '@/features/characters/utils/skillAllocation';
+import { parseSkillAllocationPattern, validateSkillAllocationPattern } from './skillAllocation';
 
 describe('skillAllocationUtils', () => {
   describe('validateSkillAllocationPattern', () => {

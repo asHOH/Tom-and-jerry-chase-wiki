@@ -1,8 +1,6 @@
-/* eslint-disable testing-library/no-container */
-/* eslint-disable testing-library/no-node-access */
 import { render, screen } from '@testing-library/react';
 
-import LoadingState, { PageLoadingState } from '../LoadingState';
+import LoadingState, { PageLoadingState } from './LoadingState';
 
 describe('LoadingState', () => {
   it('renders spinner type by default', () => {

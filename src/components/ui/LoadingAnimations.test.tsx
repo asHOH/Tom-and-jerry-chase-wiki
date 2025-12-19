@@ -1,5 +1,3 @@
-/* eslint-disable testing-library/no-container */
-/* eslint-disable testing-library/no-node-access */
 import { render } from '@testing-library/react';
 
 import {
@@ -10,7 +8,7 @@ import {
   SpinningBars,
   TypingDots,
   WaveAnimation,
-} from '../LoadingAnimations';
+} from './LoadingAnimations';
 
 describe('LoadingAnimations', () => {
   describe('BouncingDots', () => {

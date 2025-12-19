@@ -1,4 +1,4 @@
-import { cardData, characters, factions } from '../../data';
+import { cardData, characters, factions } from '.';
 import {
   Card,
   CardGroup,
@@ -6,7 +6,7 @@ import {
   KnowledgeCardGroup,
   KnowledgeCardGroupSet,
   Skill,
-} from '../../data/types';
+} from './types';
 
 describe('Data Validation', () => {
   describe('Characters Data', () => {

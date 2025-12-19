@@ -6,7 +6,7 @@ import {
   hasTextPattern,
   normalizeText,
   renderTextWithHighlights,
-} from '../textUtils';
+} from './textUtils';
 
 describe('textUtils', () => {
   describe('renderTextWithHighlights', () => {

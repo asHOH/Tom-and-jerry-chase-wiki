@@ -5,7 +5,7 @@ import {
   getPositioningTagTooltipContent,
   getTooltipContent,
   hasItemKeyPatterns,
-} from '../tooltipUtils';
+} from './tooltipUtils';
 
 describe('tooltipUtils', () => {
   describe('getTooltipContent', () => {

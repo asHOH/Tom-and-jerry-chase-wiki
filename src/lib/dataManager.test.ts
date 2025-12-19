@@ -1,4 +1,4 @@
-import { GameDataManager } from '../dataManager';
+import { GameDataManager } from './dataManager';
 
 describe('GameDataManager', () => {
   describe('getFactions', () => {

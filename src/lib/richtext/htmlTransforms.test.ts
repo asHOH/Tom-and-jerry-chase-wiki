@@ -1,4 +1,4 @@
-import { cleanHTMLForExport } from '@/lib/richtext/htmlTransforms';
+import { cleanHTMLForExport } from './htmlTransforms';
 
 describe('cleanHTMLForExport', () => {
   it('removes colgroup and inline styles on table', () => {

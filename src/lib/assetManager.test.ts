@@ -1,7 +1,7 @@
-import type { Skill } from '../../data/types';
-import { AssetManager } from '../assetManager';
+import type { Skill } from '../data/types';
+import { AssetManager } from './assetManager';
 
-describe('skillUtils', () => {
+describe('AssetManager', () => {
   const mockSkill: Skill = {
     id: 'tom-active',
     name: '发怒冲刺',

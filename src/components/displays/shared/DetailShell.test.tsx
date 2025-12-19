@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { DetailSection, DetailShell } from '../DetailShell';
+import { DetailSection, DetailShell } from './DetailShell';
 
 describe('DetailShell', () => {
   it('renders left column and default sections', () => {

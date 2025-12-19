@@ -4,7 +4,7 @@ import {
   filterByFaction,
   filterByRank,
   filterByTextSearch,
-} from '../filterUtils';
+} from './filterUtils';
 
 describe('filterUtils', () => {
   describe('filterByRank', () => {
