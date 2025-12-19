@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 type Props = { description?: string };
 
 const EntityGridClient = dynamic<Props>(
-  () => import('@/components/displays/entities/entity-grid/EntityGrid'),
+  () => import('@/features/entities/entity-grid/EntityGrid'),
   {
     loading: () => (
       <div className='mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'>

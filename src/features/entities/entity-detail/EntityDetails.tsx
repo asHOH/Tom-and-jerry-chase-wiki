@@ -8,8 +8,8 @@ import { useAppContext } from '@/context/AppContext';
 import { Entity, Skill } from '@/data/types';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
+import DetailTraitsCard from '@/components/displays/shared/DetailTraitsCard';
 
-import DetailTraitsCard from '../../shared/DetailTraitsCard';
 import EntityAttributesCard from './EntityAttributesCard';
 import EntitySkillCard from './EntitySkillCard';
 

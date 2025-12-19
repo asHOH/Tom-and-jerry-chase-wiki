@@ -6,8 +6,7 @@ import traits from '@/data/traits';
 import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-
-import { OneTraitText } from '../../traits/shared/OneTraitText';
+import { OneTraitText } from '@/components/displays/traits/shared/OneTraitText';
 
 const processStrings = (input: string | string[]): string =>
   Array.isArray(input) ? input.join('\n') : input;

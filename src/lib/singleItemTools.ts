@@ -1,5 +1,5 @@
 import { FactionId, SingleItem } from '@/data/types';
-import getEntityFactionId from '@/components/displays/entities/lib/getEntityFactionId';
+import getEntityFactionId from '@/features/entities/lib/getEntityFactionId';
 import { buffs, cards, characters, entities, items, specialSkills } from '@/data';
 
 export const getSingleItemHref = (singleItem: SingleItem): string => {

@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 type Props = { description?: string };
 
-const MapGridClient = dynamic<Props>(() => import('@/components/displays/maps/map-grid/MapGrid'), {
+const MapGridClient = dynamic<Props>(() => import('@/features/maps/map-grid/MapGrid'), {
   loading: () => (
     <div className='mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'>
       <header className='mb-8 space-y-4 px-4 text-center'>

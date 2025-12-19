@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 
 const EntityDetailsClient = dynamic(
-  () => import('@/components/displays/entities/entity-detail/EntityDetails'),
+  () => import('@/features/entities/entity-detail/EntityDetails'),
   {
     loading: () => (
       <div className='mx-auto flex min-h-[300px] max-w-3xl flex-col gap-8 p-8'>

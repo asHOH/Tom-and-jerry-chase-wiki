@@ -7,8 +7,8 @@ import AccordionCard from '@/components/ui/AccordionCard';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
 import DetailTextSection from '@/components/displays/shared/DetailTextSection';
+import DetailTraitsCard from '@/components/displays/shared/DetailTraitsCard';
 
-import DetailTraitsCard from '../../shared/DetailTraitsCard';
 import BuffAttributesCard from './BuffAttributesCard';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
