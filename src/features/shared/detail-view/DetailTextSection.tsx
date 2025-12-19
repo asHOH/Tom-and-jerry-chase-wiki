@@ -2,8 +2,9 @@
 
 import React from 'react';
 
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import SectionHeader from '@/components/ui/SectionHeader';
+
+import TextWithHoverTooltips from '../components/TextWithHoverTooltips';
 
 type DetailTextSectionProps = {
   title: string;

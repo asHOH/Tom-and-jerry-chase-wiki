@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import traits from '@/data/traits';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
+import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { OneTraitText } from '@/features/shared/traits/OneTraitText';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';

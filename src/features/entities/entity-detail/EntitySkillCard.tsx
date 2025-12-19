@@ -9,12 +9,12 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Skill, SkillLevel } from '@/data/types';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
-import TextWithItemKeyTooltips from '@/features/characters/components/shared/TextWithItemKeyTooltips';
 import {
   convertCancelableAftercastToDisplayText,
   convertCancelableSkillToDisplayText,
 } from '@/features/characters/utils/skills';
+import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
+import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
 import Image from '@/components/Image';
 
 interface SkillCardProps {

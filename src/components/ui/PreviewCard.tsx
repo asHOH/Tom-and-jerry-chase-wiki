@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { getTypeLabelColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { SkillType } from '@/data/types';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
+import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import Link from '@/components/Link';
 import type { FactionId } from '@/data';
 

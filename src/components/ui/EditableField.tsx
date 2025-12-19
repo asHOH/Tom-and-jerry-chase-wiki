@@ -7,7 +7,7 @@ import { getNestedProperty, handleChange } from '@/lib/editUtils';
 import { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { characters } from '@/data/index';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
+import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 
 import { useEditMode, useLocalCharacter } from '../../context/EditModeContext';
 

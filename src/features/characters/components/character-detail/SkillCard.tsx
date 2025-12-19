@@ -17,12 +17,12 @@ import {
   convertCancelableAftercastToDisplayText,
   convertCancelableSkillToDisplayText,
 } from '@/features/characters/utils/skills';
+import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
 import EditableField from '@/components/ui/EditableField';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
 
-import TextWithItemKeyTooltips from '../shared/TextWithItemKeyTooltips';
 import SkillTraitsCard from './SkillTraitsCard';
 
 interface SkillCardProps {

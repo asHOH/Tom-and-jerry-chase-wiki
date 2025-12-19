@@ -9,13 +9,13 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { FactionId, SkillAllocation } from '@/data/types';
-import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
 import {
   getSkillAllocationImageUrl,
   ParsedSkillLevel,
   safeParseSkillAllocationPattern,
   validateSkillAllocationPattern,
 } from '@/features/characters/utils/skillAllocation';
+import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import EditableField from '@/components/ui/EditableField';
 import Tooltip from '@/components/ui/Tooltip';
 import { TrashIcon } from '@/components/icons/CommonIcons';
