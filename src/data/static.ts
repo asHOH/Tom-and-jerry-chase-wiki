@@ -26,3 +26,5 @@ export { default as buffs } from './buffs';
 export { default as itemGroups } from '@/features/items/data/itemGroups';
 
 export { default as maps } from './maps';
+
+export { default as fixtures } from '@/features/fixtures/data/fixtures';

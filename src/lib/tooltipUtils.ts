@@ -122,6 +122,17 @@ const mapPositioningTagTooltips = {
   广场地图: '只在“猫鼠广场”中出现的地图',
 };
 
+const fixturePositioningTagTooltips = {
+  平台类: '无法移动，可承载其它物体，且允许可穿墙物体穿过自身',
+  地面类: '无法移动，可承载其它物体，不允许部分可穿墙物体穿过自身',
+  墙壁类: '无法移动，会阻挡其它物体，不允许部分可穿墙物体穿过自身',
+  物件类: '通常不与其它物体发生碰撞，具有各式各样的效果。部分物件可以被推动',
+  NPC: '具有与角色相近的外形或部分特性，由非玩家操纵',
+  可交互: '角色靠近/碰触该物体后，可通过交互键进行交互',
+  通用组件: '在绝大多数地图都会出现的组件',
+  地图特色组件: '只会在部分地图出现的组件，具有更加特殊的效果',
+};
+
 /**
  * Get tooltip content with fallback logic for character properties
  * @param property - Property name to get tooltip for
@@ -174,12 +185,13 @@ export const getPositioningTagTooltipContent = (
 
 export const getSpecifyTypePositioningTagTooltipContent = (
   tagName: string,
-  type: 'item' | 'entity' | 'map'
+  type: 'item' | 'entity' | 'map' | 'fixture'
 ): string => {
   const tooltips = {
     item: itemPositioningTagTooltips,
     entity: entityPositioningTagTooltips,
     map: mapPositioningTagTooltips,
+    fixture: fixturePositioningTagTooltips,
   }[type];
 
   if (tooltips[tagName as keyof typeof tooltips]) {

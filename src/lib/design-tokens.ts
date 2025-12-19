@@ -1108,3 +1108,45 @@ export const getMapLevelColors = (level: string, isDarkMode: boolean) => {
     borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
   };
 };
+
+/**
+ * Fixture type color utility
+ */
+export const getFixtureTypeColors = (fixtureType: string, isDarkMode: boolean) => {
+  const fixtureTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
+    平台类: 'emerald',
+    地面类: 'violet',
+    墙壁类: 'azure',
+    物件类: 'amber',
+    NPC: 'crimson',
+    可交互: 'pink',
+  };
+
+  const paletteKey = fixtureTypePaletteMap[fixtureType] || 'deepGray';
+  const palette = sharedPositioningTagPalettes[paletteKey];
+  const theme = isDarkMode && palette.dark ? palette.dark : palette;
+
+  return {
+    color: theme.text,
+    backgroundColor: theme.background,
+  };
+};
+
+/**
+ * Fixture source color utility
+ */
+export const getFixtureSourceColors = (fixtureSource: string, isDarkMode: boolean) => {
+  const fixtureSourcePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
+    通用组件: 'azure',
+    地图特色组件: 'russet',
+  };
+
+  const paletteKey = fixtureSourcePaletteMap[fixtureSource] || 'deepGray';
+  const palette = sharedPositioningTagPalettes[paletteKey];
+  const theme = isDarkMode && palette.dark ? palette.dark : palette;
+
+  return {
+    color: theme.text,
+    backgroundColor: theme.background,
+  };
+};

@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation';
 import { createRankFilter, useFilterState } from '@/lib/filterUtils';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import type { FactionId } from '@/data/types';
-import { buffs, cards, entities, items, maps, specialSkills } from '@/data';
+import { buffs, cards, entities, fixtures, items, maps, specialSkills } from '@/data';
 
-type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff' | 'map';
+type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff' | 'map' | 'fixture';
 
 /**
  * Navigation for knowledgeCards,specialSkills,items,entities
@@ -59,6 +59,9 @@ export const useSpecifyTypeNavigation = (
     map: useMemo(() => {
       return Object.keys(maps);
     }, []),
+    fixture: useMemo(() => {
+      return Object.keys(fixtures);
+    }, []),
   };
 
   //Get specifyType's Ids
@@ -105,6 +108,7 @@ export const useSpecifyTypeNavigation = (
       entity: 'entities',
       buff: 'buffs',
       map: 'maps',
+      fixture: 'fixtures',
     };
   }, []);
 
