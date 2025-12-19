@@ -5,11 +5,11 @@ import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Fixture } from '@/data/types';
+import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
-import AttributesCardLayout from '@/components/displays/shared/AttributesCardLayout';
 
 export default function FixtureAttributesCard({ fixture }: { fixture: Fixture }) {
   const [isDarkMode] = useDarkMode();

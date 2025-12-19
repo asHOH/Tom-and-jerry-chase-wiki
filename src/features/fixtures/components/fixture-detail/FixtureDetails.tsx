@@ -3,10 +3,10 @@
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { Fixture } from '@/data/types';
-import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
-import DetailTextSection from '@/components/displays/shared/DetailTextSection';
+import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
+import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 
-//import DetailTraitsCard from '@/components/displays/shared/DetailTraitsCard';
+//import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 
 import FixtureAttributesCard from './FixtureAttributesCard';
 

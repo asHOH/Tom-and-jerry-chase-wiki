@@ -3,8 +3,8 @@
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { Map } from '@/data/types';
-import DetailShell, { DetailSection } from '@/components/displays/shared/DetailShell';
-import DetailTextSection from '@/components/displays/shared/DetailTextSection';
+import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
+import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 
 import MapAttributesCard from './MapAttributesCard';
 

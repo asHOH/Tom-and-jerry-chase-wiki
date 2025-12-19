@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 
 import traits from '@/data/traits';
 import TextWithHoverTooltips from '@/features/characters/components/shared/TextWithHoverTooltips';
+import { OneTraitText } from '@/features/shared/traits/OneTraitText';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { OneTraitText } from '@/components/displays/traits/shared/OneTraitText';
 
 const processStrings = (input: string | string[]): string =>
   Array.isArray(input) ? input.join('\n') : input;

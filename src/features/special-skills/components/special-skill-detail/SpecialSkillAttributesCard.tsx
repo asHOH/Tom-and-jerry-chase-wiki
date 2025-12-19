@@ -1,9 +1,9 @@
 'use client';
 
 import { SpecialSkill } from '@/data/types';
+import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
-import AttributesCardLayout from '@/components/displays/shared/AttributesCardLayout';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;

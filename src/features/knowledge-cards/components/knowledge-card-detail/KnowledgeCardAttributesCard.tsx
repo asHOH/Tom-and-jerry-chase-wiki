@@ -3,10 +3,10 @@
 import { getCardCostColors, getCardRankColors } from '@/lib/design-tokens';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
+import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import AttributesCardLayout from '@/components/displays/shared/AttributesCardLayout';
 
 export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetailsProps) {
   const [isDarkMode] = useDarkMode();
