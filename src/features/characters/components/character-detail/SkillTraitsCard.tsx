@@ -1,6 +1,6 @@
 import { Skill } from '@/data/types';
+import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
 import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsBySingleItem';
-import SingleItemTraitsText from '@/features/shared/traits/SingleItemTraitsText';
 import AccordionCard from '@/components/ui/AccordionCard';
 import CollapseCard from '@/components/ui/CollapseCard';
 import { entities } from '@/data';

@@ -1,8 +1,8 @@
 import { SingleItem } from '@/data/types';
-import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 
-import { filterTraitsBySingleItem } from './filterTraitsBySingleItem';
-import { OneTraitText } from './OneTraitText';
+import { filterTraitsBySingleItem } from '../traits/filterTraitsBySingleItem';
+import { OneTraitText } from '../traits/OneTraitText';
+import TextWithHoverTooltips from './TextWithHoverTooltips';
 
 interface SingleItemTraitsTextProps {
   singleItem: SingleItem;
