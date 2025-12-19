@@ -88,7 +88,9 @@ export type GotoResult = {
     | 'doc'
     | 'character-skill'
     | 'buff'
-    | 'itemGroup';
+    | 'itemGroup'
+    | 'map'
+    | 'fixture';
   name: string;
   description: string | undefined;
   imageUrl: string | undefined;
@@ -103,7 +105,18 @@ export type GotoResult = {
 };
 
 // Narrowed category hints used to disambiguate goto targets
-export const CATEGORY_HINTS = ['知识卡', '特技', '道具', '衍生物', '技能', '状态', '组合'] as const;
+export const CATEGORY_HINTS = [
+  '知识卡',
+  '特技',
+  '道具',
+  '衍生物',
+  '技能',
+  '状态',
+  '组合',
+  '地图',
+  '地图组件',
+  '场景物', //same as 地图组件
+] as const;
 export type CategoryHint = (typeof CATEGORY_HINTS)[number];
 
 // Generic callback types

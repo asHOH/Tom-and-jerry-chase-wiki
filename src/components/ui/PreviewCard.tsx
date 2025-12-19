@@ -39,6 +39,8 @@ const typeLabels: Record<string, string> = {
   'character-skill': '技能',
   buff: '状态',
   itemGroup: '组合',
+  map: '地图',
+  fixture: '地图组件',
 };
 
 const typeTokenStyles = (type: string, isDarkMode: boolean) => getTypeLabelColors(type, isDarkMode);

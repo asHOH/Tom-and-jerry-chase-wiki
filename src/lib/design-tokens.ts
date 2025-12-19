@@ -748,6 +748,8 @@ export const getTypeLabelColors = (type: string, isDarkMode = false) => {
     'character-skill': 'indigo',
     buff: 'amber',
     itemGroup: 'rose',
+    map: 'crimson',
+    fixture: 'crimson',
   };
 
   const paletteKey = map[type] || 'deepGray';

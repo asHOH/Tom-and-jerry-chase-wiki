@@ -12,7 +12,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     collsion: ['道具', '角色'],
     description:
-      '平台不会移动，可以承载位于其上方的物体，不会与左/右/下方的物体产生碰撞。与地面的区别在于，平台允许被可穿墙物体穿越。',
+      '平台不会移动，可以承载位于其上方的物体，不会与左/右/下方的物体产生碰撞。与{地面}和{经典之家I}的区别在于，平台允许被可穿墙物体穿越。',
   },
   地面: {
     type: '地面类',

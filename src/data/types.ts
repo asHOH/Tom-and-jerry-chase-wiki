@@ -477,6 +477,9 @@ export type MapDefinition = {
   randomizedRoom?: boolean; //是否存在会在游戏生成时随机产生变种的房间，默认无
   supportedModes?: string[]; //可出现此地图的模式
 
+  description?: string;
+  detailedDescription?: string;
+
   unuseImage?: boolean; // Default: false
   specialImageUrl?: string;
 };

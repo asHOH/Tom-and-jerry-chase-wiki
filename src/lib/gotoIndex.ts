@@ -7,8 +7,10 @@ import {
   cards,
   characters,
   entities,
+  fixtures,
   itemGroups,
   items,
+  maps,
   specialSkills,
   type Skill,
 } from '@/data';
@@ -24,7 +26,9 @@ type Kind =
   | 'special-skill-cat'
   | 'special-skill-mouse'
   | 'doc'
-  | 'character-skill';
+  | 'character-skill'
+  | 'map'
+  | 'fixture';
 
 export type IndexEntry = {
   kind: Kind;
@@ -63,17 +67,19 @@ export function normalizeCategoryHint(raw?: string): CategoryHint | undefined {
 }
 
 const PRIORITY: Record<Kind, { name: number; alias: number }> = {
-  character: { name: 1, alias: 11 },
-  itemGroup: { name: 2, alias: 12 },
+  character: { name: 1, alias: 13 },
+  itemGroup: { name: 2, alias: 14 },
   card: { name: 3, alias: 99 }, // no alias search for cards in current behavior
-  'entity-cat': { name: 4, alias: 13 },
-  'entity-mouse': { name: 5, alias: 14 },
-  item: { name: 6, alias: 15 },
+  'entity-cat': { name: 4, alias: 15 },
+  'entity-mouse': { name: 5, alias: 16 },
+  item: { name: 6, alias: 17 },
   buff: { name: 7, alias: 98 }, // alias handled via fuzzy later, not here
-  'special-skill-cat': { name: 8, alias: 16 },
-  'special-skill-mouse': { name: 9, alias: 17 },
-  doc: { name: 10, alias: 10 },
-  'character-skill': { name: 18, alias: 18 }, // skills resolved after alias matches
+  'special-skill-cat': { name: 8, alias: 18 },
+  'special-skill-mouse': { name: 9, alias: 19 },
+  map: { name: 10, alias: 24 },
+  fixture: { name: 11, alias: 25 },
+  doc: { name: 12, alias: 12 },
+  'character-skill': { name: 20, alias: 20 }, // skills resolved after alias matches
 };
 
 function push(map: Map<string, IndexEntry[]>, key: string, entry: IndexEntry) {
@@ -310,6 +316,52 @@ async function buildGotoIndex(): Promise<GotoIndex> {
       push(byName, normalizeName(a), {
         kind: 'special-skill-mouse',
         priority: PRIORITY['special-skill-mouse'].alias,
+        goto,
+      });
+    }
+  }
+
+  // Maps
+  for (const [name, it] of Object.entries(maps)) {
+    const goto: GotoResult = {
+      url: `/maps/${encodeURIComponent(name)}`,
+      type: 'map',
+      name: it.name,
+      description: it.description,
+      imageUrl: it.imageUrl,
+    };
+    push(byName, normalizeName(name), {
+      kind: 'map',
+      priority: PRIORITY.map.name,
+      goto,
+    });
+    for (const a of it.aliases ?? []) {
+      push(byName, normalizeName(a), {
+        kind: 'map',
+        priority: PRIORITY.map.alias,
+        goto,
+      });
+    }
+  }
+
+  // Fixtures
+  for (const [name, it] of Object.entries(fixtures)) {
+    const goto: GotoResult = {
+      url: `/fixtures/${encodeURIComponent(name)}`,
+      type: 'fixture',
+      name: it.name,
+      description: it.description,
+      imageUrl: it.imageUrl,
+    };
+    push(byName, normalizeName(name), {
+      kind: 'fixture',
+      priority: PRIORITY.fixture.name,
+      goto,
+    });
+    for (const a of it.aliases ?? []) {
+      push(byName, normalizeName(a), {
+        kind: 'fixture',
+        priority: PRIORITY.fixture.alias,
         goto,
       });
     }

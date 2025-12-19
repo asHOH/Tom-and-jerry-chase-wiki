@@ -28,6 +28,9 @@ export async function getGotoResult(
     if (hint === '道具')
       return (c: K) => c.kind === 'item' || c.kind === 'entity-cat' || c.kind === 'entity-mouse';
     if (hint === '衍生物') return (c: K) => c.kind === 'entity-cat' || c.kind === 'entity-mouse';
+    if (hint === '地图') return (c: K) => c.kind === 'map';
+    if (hint === '地图组件') return (c: K) => c.kind === 'fixture';
+    if (hint === '场景物') return (c: K) => c.kind === 'fixture';
     return undefined;
   };
   // Parse skill level prefix like "2级技能名"

@@ -49,7 +49,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
       imageUrl={fixture.imageUrl}
       alt={fixture.name}
       title={fixture.name}
-      subtitle='(物件)'
+      subtitle='(地图组件)'
       aliases={fixture.aliases}
       attributes={
         <>
