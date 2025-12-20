@@ -14,7 +14,15 @@ export default async function GotoPage({
   const name = decodeURIComponent((await params).name);
   const sp = await searchParams;
   const category = typeof sp.category === 'string' ? sp.category : undefined;
-  const result = await getGotoResult(name, category);
+  const rawDescMode =
+    typeof sp.descMode === 'string'
+      ? sp.descMode
+      : typeof sp.skillDesc === 'string'
+        ? sp.skillDesc
+        : undefined;
+  const descMode =
+    rawDescMode === 'description' || rawDescMode === 'detailed' ? rawDescMode : undefined;
+  const result = await getGotoResult(name, category, descMode ? { descMode } : undefined);
   if (result) {
     redirect(result.url);
   }

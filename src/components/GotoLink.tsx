@@ -17,6 +17,7 @@ type GotoLinkProps = {
   asPreviewOnly?: boolean; // when true, do not navigate; only show preview tooltip
   hideImagePreview?: boolean; // when true, hide image in preview content
   categoryHint?: CategoryHint; // optional type/category hint to disambiguate targets
+  descMode?: 'description' | 'detailed'; // for skill descriptions/level descriptions in previews
 };
 
 export default function GotoLink({
@@ -26,6 +27,7 @@ export default function GotoLink({
   asPreviewOnly = false,
   hideImagePreview = false,
   categoryHint,
+  descMode,
 }: GotoLinkProps) {
   const [open, setOpen] = useState(false);
   const [isTouchEnvironment, setIsTouchEnvironment] = useState(false);
@@ -123,18 +125,20 @@ export default function GotoLink({
     return null;
   };
 
+  const queryString = (() => {
+    const sp = new URLSearchParams();
+    if (categoryHint) sp.set('category', categoryHint);
+    if (descMode) sp.set('descMode', descMode);
+    const qs = sp.toString();
+    return qs ? `?${qs}` : '';
+  })();
+
   const { data, isLoading } = useSWR<GotoPreviewCardProps | null>(
-    open
-      ? `/api/goto/${encodeURIComponent(name)}${
-          categoryHint ? `?category=${encodeURIComponent(categoryHint)}` : ''
-        }`
-      : null,
+    open ? `/api/goto/${encodeURIComponent(name)}${queryString}` : null,
     fetcher
   );
 
-  const [url, setURL] = useState<string>(
-    `/goto/${encodeURIComponent(name)}${categoryHint ? `?category=${encodeURIComponent(categoryHint)}` : ''}`
-  );
+  const [url, setURL] = useState<string>(`/goto/${encodeURIComponent(name)}${queryString}`);
 
   useEffect(() => {
     if (data?.url) {
@@ -144,7 +148,7 @@ export default function GotoLink({
 
   const basePreviewContent = isLoading ? (
     <div className='flex w-full animate-pulse flex-row items-start rounded-lg bg-gray-100 p-4 shadow-md dark:bg-gray-800'>
-      <div className='mr-4 h-24 w-24 flex-shrink-0 rounded-lg bg-gray-200 dark:bg-gray-700' />
+      <div className='mr-4 h-24 w-24 shrink-0 rounded-lg bg-gray-200 dark:bg-gray-700' />
       <div className='flex flex-1 flex-col space-y-2'>
         <div className='h-4 w-1/3 rounded bg-gray-200 dark:bg-gray-700' />
         <div className='h-6 w-1/2 rounded bg-gray-200 dark:bg-gray-700' />

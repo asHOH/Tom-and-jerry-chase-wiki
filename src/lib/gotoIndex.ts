@@ -101,10 +101,11 @@ async function buildGotoIndex(): Promise<GotoIndex> {
 
   // Characters
   for (const [id, c] of Object.entries(characters)) {
+    const characterDisplayName = c.id === id ? c.id : `${c.id}（${id}）`;
     const base: GotoResult = {
       url: `/characters/${encodeURIComponent(id)}`,
       type: 'character',
-      name: c.id,
+      name: characterDisplayName,
       description: c.description,
       imageUrl: c.imageUrl,
       ...(c.factionId ? { factionId: c.factionId } : {}),
@@ -130,7 +131,7 @@ async function buildGotoIndex(): Promise<GotoIndex> {
         name: s.name,
         description: s.description,
         imageUrl: s.imageUrl,
-        ownerName: c.id,
+        ownerName: characterDisplayName,
         ...(c.factionId ? { ownerFactionId: c.factionId } : {}),
       };
       const entryBase: IndexEntry = {
