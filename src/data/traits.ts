@@ -804,6 +804,79 @@ const traits: Record<string, Trait> = {
     description: '瑜伽球的伤害和控制不会触发恶魔杰瑞3级被动，亦无法被其免疫。',
     group: [{ name: '瑜伽球', type: 'entity' }, [{ name: '捣蛋鬼', type: 'skill' }]],
   },
+  '20251220-01': {
+    description: '在高级学业以下地图中，汤姆使用经典之家阁楼-庭院管道时，有一定概率变身为管道猫。',
+    group: [{ name: '汤姆', type: 'character' }, [{ name: '管道猫', type: 'entity' }]],
+  },
+
+  '20251220-02': {
+    description:
+      '在高级学业以下地图中，布奇被经典之家-挡板或雪夜古堡-长柄斧砸中时，有一定概率变身为板凳猫。',
+    group: [{ name: '布奇', type: 'character' }, [{ name: '板凳猫', type: 'entity' }]],
+  },
+
+  '20251220-03': {
+    description:
+      '在高级学业以下地图中，莱特宁被经典之家-挡板或雪夜古堡-长柄斧砸中时，有一定概率变身为弹簧猫。',
+    group: [{ name: '莱特宁', type: 'character' }, [{ name: '弹簧猫', type: 'entity' }]],
+  },
+
+  '20251220-04': {
+    description: '在高级学业以下地图中，杰瑞被{苍蝇拍}命中时，有一定概率变身为鼠片。',
+    group: [{ name: '杰瑞', type: 'character' }, [{ name: '鼠片', type: 'entity' }]],
+  },
+
+  '20251220-05': {
+    description: '在高级学业以下地图中，泰菲类角色饮用{牛奶}后，有极低概率变身为泰菲球。',
+    group: [{ name: '泰菲类角色', type: 'itemGroup' }, [{ name: '泰菲球', type: 'character' }]],
+  },
+
+  '20251220-06': {
+    description:
+      '变身比利鼠时，所有{泰菲类角色}会改为变身为大泰菲，有着圆滚滚的大肚子，攻击时使用肚皮撞击敌方。',
+    group: [{ name: '泰菲类角色', type: 'itemGroup' }, [{ name: '比利鼠', type: 'entity' }]],
+  },
+
+  '20251220-07': {
+    description:
+      '当且仅当场上存在恶魔杰瑞和皮肤为"神秘博士（未染色）"的恶魔汤姆时，恶魔杰瑞会改为变身为绿色比利鼠，在原本比利鼠的基础上变得通体发绿，且有一对恶魔犄角。',
+    group: [
+      { name: '恶魔杰瑞', type: 'character' },
+      [{ name: '恶魔汤姆', type: 'character' }],
+      [{ name: '比利鼠', type: 'entity' }],
+    ],
+  },
+
+  '20251220-08': {
+    description: '仙女鼠1星提供的隐身效果可以使电量条立即充满。',
+    group: [{ name: '星星', type: 'entity' }, [{ name: '能源装置', type: 'skill' }]],
+  },
+
+  '20251220-09': {
+    description: '西部风情无法命中部分衍生物类角色。',
+    group: [
+      { name: '西部风情', type: 'skill' },
+      [
+        { name: '乾坤袋', type: 'entity' },
+        { name: '兔子先生', type: 'entity' },
+        { name: '兔子大表哥', type: 'entity' },
+        { name: '机器鼠', type: 'entity' },
+      ],
+    ],
+  },
+
+  '20251220-10': {
+    description: '爆炸/闪电/弹簧仙人球无法命中部分衍生物类角色。',
+    group: [
+      { name: '牛仔的礼物', type: 'skill' },
+      [
+        { name: '乾坤袋', type: 'entity' },
+        { name: '兔子先生', type: 'entity' },
+        { name: '兔子大表哥', type: 'entity' },
+        { name: '机器鼠', type: 'entity' },
+      ],
+    ],
+  },
 };
 
 export default traits;
