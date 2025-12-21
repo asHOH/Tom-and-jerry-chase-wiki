@@ -1,0 +1,19 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.tjwiki.twa",
+      "sha256_cert_fingerprints": [
+        "83:54:72:3D:13:65:CB:75:D2:A1:B1:ED:0F:3A:6C:B0:A3:81:92:95:09:AE:60:7A:AC:08:FB:B9:89:B7:BB:BB"
+      ]
+    }
+  },
+  {
+    "relation": ["check_validation"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.tjwiki.twa"
+    }
+  }
+]
