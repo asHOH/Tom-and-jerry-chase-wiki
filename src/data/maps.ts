@@ -13,7 +13,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     studyLevelUnlock: '见习学业',
     roomCount: 8,
     pipeCount: 2,
-    doorCount: 6,
+    doorCount: 7,
     supportedModes: ['匹配模式', '天梯模式', '黄金钥匙赛', '特工行动', '克隆大作战', '自定义地图'],
     randomizedRoom: true,
     specialImageUrl: '/images/maps/经典之家.png',
@@ -24,7 +24,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     studyLevelUnlock: '见习学业',
     roomCount: 8,
     pipeCount: 2,
-    doorCount: 6,
+    doorCount: 7,
     supportedModes: ['匹配模式', '天梯模式', '黄金钥匙赛', '特工行动', '克隆大作战', '自定义地图'],
     randomizedRoom: true,
     specialImageUrl: '/images/maps/经典之家.png',
@@ -76,7 +76,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     size: '小',
     studyLevelUnlock: '高级学业',
     roomCount: 15,
-    pipeCount: 2,
+    pipeCount: 4,
     doorCount: 5,
     supportedModes: ['匹配模式', '天梯模式', '黄金钥匙赛', '特工行动', '克隆大作战', '自定义地图'],
     specialImageUrl: '/images/maps/雪夜古堡.png',
@@ -106,7 +106,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     size: '中',
     studyLevelUnlock: '特级学业',
     roomCount: 9,
-    pipeCount: 0,
+    pipeCount: 1,
     supportedModes: [
       '匹配模式',
       '天梯模式',
@@ -144,7 +144,6 @@ const mapDefinitions: Record<string, MapDefinition> = {
     roomCount: 10,
     pipeCount: 2,
     supportedModes: ['匹配模式', '天梯模式', '黄金钥匙赛', '特工行动', '克隆大作战', '自定义地图'],
-    hiddenRoom: true,
     unuseImage: true, //ToDo: Add Map Image
   },
   太空堡垒III: {
@@ -163,7 +162,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     studyLevelUnlock: '大师学业',
     roomCount: 5,
     pipeCount: 1,
-    supportedModes: ['匹配模式', '天梯模式', '黄金钥匙赛', '特工行动', '克隆大作战'],
+    supportedModes: ['匹配模式', '天梯模式'],
     unuseImage: true, //ToDo: Add Map Image
   },
   森林牧场: {
@@ -171,15 +170,8 @@ const mapDefinitions: Record<string, MapDefinition> = {
     size: '大',
     studyLevelUnlock: '大师学业',
     roomCount: 5,
-    pipeCount: 2,
-    supportedModes: [
-      '匹配模式',
-      '天梯模式',
-      '黄金钥匙赛',
-      '特工行动',
-      '克隆大作战',
-      '5V5团队奶酪赛',
-    ],
+    pipeCount: 3,
+    supportedModes: ['匹配模式', '天梯模式', '黄金钥匙赛', '克隆大作战', '5V5团队奶酪赛'],
     hiddenRoom: true,
     unuseImage: true, //ToDo: Add Map Image
   },
@@ -261,7 +253,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     supportedModes: ['烟花大作战'],
     unuseImage: true, //ToDo: Add Map Image
   },
-  沙滩排球: {
+  阳光沙滩: {
     type: '娱乐地图',
     size: '小',
     roomCount: 1,
@@ -276,6 +268,15 @@ const mapDefinitions: Record<string, MapDefinition> = {
     pipeCount: 1,
     supportedModes: ['装饰树大作战'],
     unuseImage: true, //ToDo: Add Map Image
+  },
+  家之典经: {
+    type: '常规地图',
+    size: '小',
+    roomCount: 8,
+    pipeCount: 2,
+    doorCount: 7,
+    supportedModes: ['多元乱斗'],
+    specialImageUrl: '/images/maps/经典之家.png',
   },
   '经典之家-谁是外星人': {
     type: '娱乐地图',
