@@ -5,3 +5,4 @@ export { default as PositioningTagsSection } from './PositioningTagsSection';
 export { default as SkillCard } from './SkillCard';
 export { default as SkillAllocationDisplay } from './SkillAllocationDisplay';
 export { default as ContentWriterDisplay } from './ContentWriterDisplay';
+export { default as WinRatesDisplay } from './WinRatesDisplay';

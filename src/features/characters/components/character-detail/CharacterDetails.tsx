@@ -32,6 +32,7 @@ import SkillAllocationSection from './SkillAllocationSection';
 import SkillCard from './SkillCard';
 import SpecialSkillsSection from './SpecialSkillsSection';
 import { useCharacterActions } from './useCharacterActions';
+import WinRatesDisplay from './WinRatesDisplay';
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;
@@ -252,6 +253,7 @@ export default function CharacterDetails({
                     name={localCharacter.id}
                     aliases={localCharacter.aliases || []}
                   />
+                  <WinRatesDisplay characterName={localCharacter.id} />
                 </>
               )}
               {!isEditMode && isMobile && (
@@ -292,6 +294,7 @@ export default function CharacterDetails({
                         name={localCharacter.id}
                         aliases={localCharacter.aliases || []}
                       />
+                      <WinRatesDisplay characterName={localCharacter.id} />
                     </div>
                   </div>
                 </div>

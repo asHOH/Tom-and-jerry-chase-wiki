@@ -1,13 +1,13 @@
-type Faction = '猫' | '鼠';
+export type Faction = '猫' | '鼠';
 
-interface CharacterRow {
+export interface CharacterRow {
   character: string;
   pickRate: string;
   winRate: string;
   banRate?: string;
 }
 
-interface WinRateSummaryRow {
+export interface WinRateSummaryRow {
   rank: string;
   teamType: string;
   percent?: string;
@@ -15,20 +15,20 @@ interface WinRateSummaryRow {
   mouseWin: string;
 }
 
-interface CharacterTable {
+export interface CharacterTable {
   rank: string;
   faction?: Faction;
   rows: CharacterRow[];
 }
 
-interface SummaryTable {
+export interface SummaryTable {
   rank: string;
   rows: WinRateSummaryRow[];
 }
 
-type TableEntry = CharacterTable | SummaryTable;
+export type TableEntry = CharacterTable | SummaryTable;
 
-interface WinRatesEntry {
+export interface WinRatesEntry {
   timeRange?: string;
   description?: string;
   winRateSummary?: WinRateSummaryRow[];
@@ -41,7 +41,7 @@ const winRatesData: WinRatesEntry[] = [
     timeRange: '2025.4.30-2025.5.25',
     tables: [
       {
-        rank: '酷炫铂金 (Cool Platinum)',
+        rank: '酷炫铂金',
         faction: '鼠',
         rows: [
           { character: '大表哥', pickRate: '0.56%', winRate: '49.39%', banRate: '9.8%' },
@@ -80,7 +80,7 @@ const winRatesData: WinRatesEntry[] = [
         ],
       },
       {
-        rank: '酷炫铂金 (Cool Platinum)',
+        rank: '酷炫铂金',
         faction: '猫',
         rows: [
           { character: '恶魔汤姆', pickRate: '4.20%', winRate: '69.33%', banRate: '3.3%' },
@@ -105,7 +105,7 @@ const winRatesData: WinRatesEntry[] = [
         ],
       },
       {
-        rank: '霸气钻石 (Domineering Diamond)',
+        rank: '霸气钻石',
         faction: '鼠',
         rows: [
           { character: '大表哥', pickRate: '1.18%', winRate: '50.15%', banRate: '10.2%' },
@@ -144,7 +144,7 @@ const winRatesData: WinRatesEntry[] = [
         ],
       },
       {
-        rank: '霸气钻石 (Domineering Diamond)',
+        rank: '霸气钻石',
         faction: '猫',
         rows: [
           { character: '恶魔汤姆', pickRate: '5.26%', winRate: '68.91%', banRate: '3.3%' },
@@ -169,7 +169,7 @@ const winRatesData: WinRatesEntry[] = [
         ],
       },
       {
-        rank: '至尊传奇 (Supreme Legend)',
+        rank: '至尊传奇',
         faction: '鼠',
         rows: [
           { character: '大表哥', pickRate: '1.91%', winRate: '52.19%', banRate: '28.5%' },
@@ -208,7 +208,7 @@ const winRatesData: WinRatesEntry[] = [
         ],
       },
       {
-        rank: '至尊传奇 (Supreme Legend)',
+        rank: '至尊传奇',
         faction: '猫',
         rows: [
           { character: '天使汤姆', pickRate: '1.48%', winRate: '62.51%', banRate: '86.1%' },
@@ -233,7 +233,7 @@ const winRatesData: WinRatesEntry[] = [
         ],
       },
       {
-        rank: '无敌猫鼠皇 (Invincible Emperor)',
+        rank: '无敌猫鼠皇',
         faction: '鼠',
         rows: [
           { character: '大表哥', pickRate: '2.85%', winRate: '54.04%', banRate: '49.9%' },
@@ -272,7 +272,7 @@ const winRatesData: WinRatesEntry[] = [
         ],
       },
       {
-        rank: '无敌猫鼠皇 (Invincible Emperor)',
+        rank: '无敌猫鼠皇',
         faction: '猫',
         rows: [
           { character: '托普斯', pickRate: '5.54%', winRate: '55.65%', banRate: '5.2%' },
@@ -882,5 +882,47 @@ const winRatesData: WinRatesEntry[] = [
     ],
   },
 ];
+
+export interface CharacterWinRateEntry {
+  timeRange: string;
+  rank: string;
+  faction?: Faction;
+  pickRate: string;
+  winRate: string;
+  banRate?: string;
+}
+
+export function getCharacterWinRates(characterName: string): CharacterWinRateEntry[] {
+  const results: CharacterWinRateEntry[] = [];
+
+  for (const entry of winRatesData) {
+    const timeRange = entry.timeRange || entry.description || '未知';
+
+    const allTables = [...(entry.tables || []), ...(entry.characterTables || [])];
+
+    for (const table of allTables) {
+      if ('rows' in table && table.rows.length > 0) {
+        const firstRow = table.rows[0];
+        if (firstRow && 'character' in firstRow) {
+          const charTable = table as CharacterTable;
+          for (const row of charTable.rows) {
+            if (row.character === characterName) {
+              results.push({
+                timeRange,
+                rank: charTable.rank,
+                ...(charTable.faction && { faction: charTable.faction }),
+                pickRate: row.pickRate,
+                winRate: row.winRate,
+                ...(row.banRate && { banRate: row.banRate }),
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return results;
+}
 
 export default winRatesData;
