@@ -147,7 +147,7 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>{faction.name}</PageTitle>
-        {!isMobile && <PageDescription>{faction.description}</PageDescription>}
+        <PageDescription>{faction.description}</PageDescription>
         {/* Filters wrapper */}
         <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow

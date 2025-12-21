@@ -16,7 +16,7 @@ export function generateStaticParams() {
 
 function generateStructuredData(mapName: string) {
   const map = maps[mapName]!;
-  const desc = /*map.description ??*/ `${map.name}详细信息`;
+  const desc = map.description ?? `${map.name}详细信息`;
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -44,7 +44,7 @@ export async function generateMetadata({
     return {};
   }
 
-  const desc = /*map.description ??*/ `${map.name}详细信息`;
+  const desc = map.description ?? `${map.name}详细信息`;
   return generateArticleMetadata({
     title: map.name,
     description: desc,

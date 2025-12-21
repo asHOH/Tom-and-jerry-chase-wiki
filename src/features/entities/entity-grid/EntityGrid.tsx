@@ -82,7 +82,7 @@ export default function EntityClient({ description }: Props) {
         className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>衍生物</PageTitle>
-        {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
+        <PageDescription>{description ?? ''}</PageDescription>
         {/* Filters wrapper */}
         <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           {/* 类型筛选 */}

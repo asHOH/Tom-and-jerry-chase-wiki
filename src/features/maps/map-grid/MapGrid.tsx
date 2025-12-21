@@ -60,7 +60,7 @@ export default function MapClient({ description }: Props) {
         className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>地图</PageTitle>
-        {!isMobile && <PageDescription>{description ?? ''}</PageDescription>}
+        <PageDescription>{description ?? ''}</PageDescription>
         {/* 筛选器包装器 */}
         <div className='mx-auto w-full max-w-2xl space-y-4 md:px-2'>
           {/* 类型筛选 */}

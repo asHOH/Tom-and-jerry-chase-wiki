@@ -307,7 +307,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
         className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
       >
         <PageTitle>文章列表</PageTitle>
-        {!isMobile && description && <PageDescription>{description}</PageDescription>}
+        {description && <PageDescription>{description}</PageDescription>}
 
         <ArticleFilters
           categoriesForFilter={categoriesForFilter}
