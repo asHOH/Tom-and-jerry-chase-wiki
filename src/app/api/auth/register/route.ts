@@ -143,8 +143,9 @@ export async function POST(request: NextRequest) {
 
     // After successful registration, sign in the user and attach cookies to response
     type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
-    const { createServerClient }: { createServerClient: CreateServerClient } =
-      await import('@supabase/ssr/dist/module/createServerClient.js');
+    const { createServerClient }: { createServerClient: CreateServerClient } = await import(
+      '@supabase/ssr/dist/module/createServerClient.js'
+    );
     const response = NextResponse.json({ message: 'User created successfully' }, { status: 201 });
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
