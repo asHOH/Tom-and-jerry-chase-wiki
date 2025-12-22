@@ -85,7 +85,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
     label: '工具',
     description: '便捷工具栏',
     href: '/tools',
-    iconSrc: '/images/entitySkills/空置道具键.png',
+    iconSrc: '/images/entitySkills/%E7%A9%BA%E7%BD%AE%E9%81%93%E5%85%B7%E9%94%AE.png',
     iconAlt: '工具图标',
   },
 ];
@@ -96,7 +96,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     label: '属性排行',
     description: '排列并查看角色属性值',
     href: '/ranks',
-    iconSrc: '/images/items/奶酪.png',
+    iconSrc: '/images/items/%E5%A5%B6%E9%85%AA.png',
     iconAlt: '属性排行图标',
   },
   {
@@ -104,7 +104,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     label: '特技推荐',
     description: '便捷查看各特技推荐信息',
     href: '/special-skills/advice',
-    iconSrc: '/images//catSpecialSkills/绝地反击.png',
+    iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
     iconAlt: '特技推荐图标',
   },
   //临时将特性入口放置于工具栏中，日后修改
@@ -113,7 +113,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     label: '特性大全',
     description: '便捷查看已收录的全部特性',
     href: '/mechanics/traitCollection',
-    iconSrc: '/images//mouseSkills/莱恩2-蘸水笔.png',
+    iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
     iconAlt: '特性大全图标',
   },
   //建设中界面
@@ -122,7 +122,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     label: '机制',
     description: '游戏机制简述',
     href: '/mechanics',
-    iconSrc: '/images//catSpecialSkills/绝地反击.png',
+    iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
     iconAlt: '机制图标',
   },
   {
@@ -130,7 +130,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     label: '地图',
     description: '地图列表',
     href: '/maps',
-    iconSrc: '/images//catSpecialSkills/绝地反击.png',
+    iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
     iconAlt: '地图图标',
   },
   {
@@ -138,7 +138,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     label: '地图组件',
     description: '地图组件列表',
     href: '/fixtures',
-    iconSrc: '/images//catSpecialSkills/绝地反击.png',
+    iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
     iconAlt: '地图组件图标',
   },
   //以下为编辑模式专用工具，正常情况不显示
@@ -163,7 +163,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     label: '特性编辑器',
     description: '编辑特性信息，导出代码片段提交给开发人员',
     href: '/trait-maker.html',
-    iconSrc: '/images//mouseSkills/莱恩2-蘸水笔.png',
+    iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
     iconAlt: '特性编辑器图标',
   },
 ];

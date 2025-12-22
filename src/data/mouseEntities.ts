@@ -1228,7 +1228,7 @@ export const mouseEntitiesDefinitions = {
         cancelableAftercast: '不可取消',
         cooldownTiming: '前摇前',
         skillLevels: [],
-        imageUrl: '/images/entitySkills/空置道具键.png',
+        imageUrl: '/images/entitySkills/%E7%A9%BA%E7%BD%AE%E9%81%93%E5%85%B7%E9%94%AE.png',
       },
     ],
   },
