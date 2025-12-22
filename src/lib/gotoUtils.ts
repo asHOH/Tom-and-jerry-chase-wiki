@@ -35,6 +35,8 @@ export async function getGotoResult(
     if (hint === '地图') return (c: K) => c.kind === 'map';
     if (hint === '地图组件') return (c: K) => c.kind === 'fixture';
     if (hint === '场景物') return (c: K) => c.kind === 'fixture';
+    if (hint === '游戏模式') return (c: K) => c.kind === 'mode';
+    if (hint === '模式') return (c: K) => c.kind === 'mode';
     return undefined;
   };
   const compact = (input: string): string =>

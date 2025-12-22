@@ -750,6 +750,7 @@ export const getTypeLabelColors = (type: string, isDarkMode = false) => {
     itemGroup: 'rose',
     map: 'crimson',
     fixture: 'crimson',
+    mode: 'amber',
   };
 
   const paletteKey = map[type] || 'deepGray';

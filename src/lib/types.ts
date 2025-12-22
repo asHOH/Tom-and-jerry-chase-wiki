@@ -90,7 +90,8 @@ export type GotoResult = {
     | 'buff'
     | 'itemGroup'
     | 'map'
-    | 'fixture';
+    | 'fixture'
+    | 'mode';
   name: string;
   description: string | undefined;
   imageUrl: string | undefined;
@@ -115,7 +116,9 @@ export const CATEGORY_HINTS = [
   '组合',
   '地图',
   '地图组件',
-  '场景物', //same as 地图组件
+  '场景物', //regarded as 地图组件
+  '游戏模式',
+  '模式', //regarded as 地图组件
 ] as const;
 export type CategoryHint = (typeof CATEGORY_HINTS)[number];
 
