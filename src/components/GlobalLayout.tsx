@@ -20,7 +20,10 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
       pathname.startsWith('/special-skills/') ||
       pathname.startsWith('/entities/') ||
       pathname.startsWith('/buffs/') ||
-      pathname.startsWith('/items/')) &&
+      pathname.startsWith('/items/') ||
+      pathname.startsWith('/maps/') ||
+      pathname.startsWith('/fixtures/') ||
+      pathname.startsWith('/modes/')) &&
     pathname.split('/').length > 3;
 
   return (
