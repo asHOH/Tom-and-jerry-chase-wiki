@@ -93,8 +93,19 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
       condition: factionId === 'cat' && !!character.clawKnifeCdHit && !!character.clawKnifeCdUnhit,
     },
     {
+      label: '攻击增伤',
+      value: character.attackBoost || 0,
+      condition:
+        (factionId === 'cat' &&
+          character.attackBoost !== undefined &&
+          character.attackBoost !== 0) ||
+        isEditMode,
+      className: 'text-sm text-amber-600 dark:text-amber-400 py-1',
+      path: `attackBoost`,
+    },
+    {
       label: '初始道具',
-      value: character.initialItem as string,
+      value: (character.initialItem as string) || '老鼠夹',
       condition:
         factionId === 'cat' && !!character.initialItem && character.initialItem !== '老鼠夹',
       className: 'text-sm text-amber-600 dark:text-amber-400 py-1',
@@ -102,9 +113,25 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
     },
   ];
 
+  const specificAttributes: CharacterAttribute[] = [
+    {
+      label: '性别',
+      value: character.gender === 'female' ? '女' : '男',
+      condition: !!character.gender,
+      path: `gender`,
+    },
+    {
+      label: '英文名',
+      value: character.EnglishName || '',
+      condition: !!character.EnglishName,
+      path: `EnglishName`,
+    },
+  ];
+
   const allAttributes = [
     ...commonAttributes,
     ...(factionId === 'mouse' ? mouseAttributes : catAttributes),
+    ...specificAttributes,
   ];
 
   const visibleAttributes = allAttributes.filter((attr) => attr.condition);
@@ -142,7 +169,7 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
         );
       })}
 
-      {factionId === 'cat' &&
+      {/*{factionId === 'cat' &&
         ((character.attackBoost !== undefined && character.attackBoost !== 0) || isEditMode) && (
           <AttributeDisplay
             label='攻击增伤'
@@ -152,7 +179,7 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
             path='attackBoost'
             className='py-1 text-sm text-amber-600 dark:text-amber-400'
           />
-        )}
+        )}*/}
     </div>
   );
 }

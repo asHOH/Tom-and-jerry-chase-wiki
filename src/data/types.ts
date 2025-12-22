@@ -191,6 +191,10 @@ export type CharacterDefinition = {
   counterEachOther?: CharacterRelationItem[];
 
   collaborators?: CharacterRelationItem[];
+
+  //specific attributes
+  gender?: 'male' | 'female';
+  EnglishName?: string;
 };
 
 export type CharacterRelation = {

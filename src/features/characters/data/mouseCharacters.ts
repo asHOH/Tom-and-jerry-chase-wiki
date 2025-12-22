@@ -13,6 +13,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 5,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Jerry',
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -225,6 +227,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 5.75,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Detective Jerry',
 
     mousePositioningTags: [
       {
@@ -423,6 +427,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 4.5,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Robin Hood Jerry',
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -776,6 +782,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 3.25,
     wallCrackDamageBoost: 1.5,
+    gender: 'male',
+    EnglishName: 'Pirate Jerry',
 
     mousePositioningTags: [
       {
@@ -995,6 +1003,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 3.75,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'King Jerry',
     mousePositioningTags: [
       {
         tagName: '救援',
@@ -1209,6 +1219,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 3,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Mouseketeer Jerry',
     mousePositioningTags: [
       {
         tagName: '干扰',
@@ -1455,6 +1467,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 4.75,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Tuffy',
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -1787,6 +1801,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 3,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Mouseketeer Tuffy',
     mousePositioningTags: [
       {
         tagName: '救援',
@@ -2058,6 +2074,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 4,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Cowboy Jerry',
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -2318,6 +2336,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 3.75,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Devil Jerry',
     mousePositioningTags: [
       {
         tagName: '后期',
@@ -2577,6 +2597,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 4.5,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Devil Tuffy',
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -2789,6 +2811,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 4.75,
     wallCrackDamageBoost: 0.5,
+    gender: 'female',
+    EnglishName: 'Cherie',
     mousePositioningTags: [
       {
         tagName: '辅助',
@@ -3003,6 +3027,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 420,
     cheesePushSpeed: 4.5,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Angel Jerry',
     mousePositioningTags: [
       {
         tagName: '辅助',
@@ -3244,6 +3270,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 4.25,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Angel Tuffy',
     mousePositioningTags: [
       {
         tagName: '辅助',
@@ -3521,6 +3549,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 0.5,
     wallCrackDamageBoost: 0,
+    gender: 'male',
+    EnglishName: 'Magician',
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -3843,6 +3873,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 3.5,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Pecos',
     mousePositioningTags: [
       {
         tagName: '干扰',
@@ -4080,6 +4112,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 4.25,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Topo',
     mousePositioningTags: [
       {
         tagName: '干扰',
@@ -4321,6 +4355,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 5.75,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Detective Tuffy',
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -4467,6 +4503,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 3.25,
     wallCrackDamageBoost: 1,
+    gender: 'female',
+    EnglishName: 'Mouseketeer Lilli',
     mousePositioningTags: [
       {
         tagName: '救援',
@@ -4624,6 +4662,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 4.75,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Robin Hood Tuffy',
     mousePositioningTags: [
       {
         tagName: '干扰',
@@ -4970,6 +5010,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 4.25,
     wallCrackDamageBoost: 1,
+    gender: 'female',
+    EnglishName: 'Marie',
     mousePositioningTags: [
       {
         tagName: '辅助',
@@ -5136,6 +5178,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 0.75,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Muscles',
     mousePositioningTags: [
       {
         tagName: '救援',
@@ -5340,6 +5384,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 3.75,
     wallCrackDamageBoost: 1,
+    gender: 'female',
+    EnglishName: 'Michelle',
     mousePositioningTags: [
       {
         tagName: '辅助',
@@ -5483,6 +5529,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 3.5,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Conductor Jerry',
     mousePositioningTags: [
       {
         tagName: '救援',
@@ -5681,6 +5729,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 3,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Guardsman',
     mousePositioningTags: [
       {
         tagName: '破局',
@@ -5841,6 +5891,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 3.5,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Nipper',
     mousePositioningTags: [
       {
         tagName: '救援',
@@ -6034,6 +6086,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 3,
     wallCrackDamageBoost: 1,
+    gender: 'female',
+    EnglishName: 'Dodo',
     mousePositioningTags: [
       {
         tagName: '干扰',
@@ -6322,6 +6376,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 3.5,
     wallCrackDamageBoost: 1,
+    gender: 'female',
+    EnglishName: 'Fairy Godmother',
     mousePositioningTags: [
       {
         tagName: '干扰',
@@ -6490,6 +6546,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 3.25,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Miko',
     mousePositioningTags: [
       {
         tagName: '干扰',
@@ -6763,6 +6821,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 3,
     wallCrackDamageBoost: 1,
+    gender: 'female',
+    EnglishName: 'Celeste',
     mousePositioningTags: [
       {
         tagName: '干扰',
@@ -6967,6 +7027,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 3.25,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Performer Jerry',
     mousePositioningTags: [
       {
         tagName: '救援',
@@ -7135,6 +7197,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 3.5,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Line',
     mousePositioningTags: [
       {
         tagName: '辅助',
@@ -7328,6 +7392,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 380,
     cheesePushSpeed: 4.25,
     wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: 'Sleepwalker Jerry',
     mousePositioningTags: [
       {
         tagName: '奶酪',
@@ -7546,6 +7612,8 @@ const mouseCharacterDefinitions = {
     jumpHeight: 400,
     cheesePushSpeed: 3.5,
     wallCrackDamageBoost: 1,
+    gender: 'male',
+    EnglishName: 'Baum',
     mousePositioningTags: [
       {
         tagName: '干扰',

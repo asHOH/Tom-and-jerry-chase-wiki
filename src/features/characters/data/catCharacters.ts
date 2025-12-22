@@ -19,6 +19,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 4.5,
     clawKnifeCdUnhit: 2.25,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Tom',
     catPositioningTags: [
       {
         tagName: '进攻',
@@ -307,6 +309,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 6,
     clawKnifeCdUnhit: 4.8,
     clawKnifeRange: 280,
+    gender: 'male',
+    EnglishName: 'Butch',
     catPositioningTags: [
       {
         tagName: '防守',
@@ -615,6 +619,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.5,
     clawKnifeRange: 220,
+    gender: 'male',
+    EnglishName: 'Topsy',
     catPositioningTags: [
       {
         tagName: '追击',
@@ -959,6 +965,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 6.5,
     clawKnifeCdUnhit: 4.55,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Lightning',
     catPositioningTags: [
       {
         tagName: '追击',
@@ -1221,6 +1229,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.5,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Cowboy Tom',
     catPositioningTags: [
       {
         tagName: '进攻',
@@ -1697,6 +1707,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 3.5,
     clawKnifeCdUnhit: 3.5,
     clawKnifeRange: 300,
+    gender: 'female',
+    EnglishName: 'Toodles Galore',
     catPositioningTags: [
       {
         tagName: '防守',
@@ -2054,6 +2066,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 5.5,
     clawKnifeCdUnhit: 2.2,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Guard Tom',
     catPositioningTags: [
       {
         tagName: '翻盘',
@@ -2291,6 +2305,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 2.5,
     clawKnifeCdUnhit: 2,
     clawKnifeRange: 200,
+    gender: 'female',
+    EnglishName: 'Toots',
     catPositioningTags: [
       {
         tagName: '防守',
@@ -2537,6 +2553,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 5.5,
     clawKnifeCdUnhit: 3.3,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Meathead',
     catPositioningTags: [
       {
         tagName: '防守',
@@ -2721,6 +2739,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 4,
     clawKnifeRange: 300,
+    gender: 'female',
+    EnglishName: 'Tara',
     catPositioningTags: [
       {
         tagName: '速通',
@@ -2927,6 +2947,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 8,
     clawKnifeCdUnhit: 2.64,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Musketeer Tom',
     catPositioningTags: [
       {
         tagName: '进攻',
@@ -3152,6 +3174,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 1.65,
     clawKnifeRange: 220,
+    gender: 'male',
+    EnglishName: 'Cooper',
     catPositioningTags: [
       {
         tagName: '追击',
@@ -3403,6 +3427,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.5,
     clawKnifeRange: 300,
+    gender: 'female',
+    EnglishName: 'Kate',
     catPositioningTags: [
       {
         tagName: '进攻',
@@ -3628,6 +3654,8 @@ const catCharacterDefinitions = {
     specialClawKnifeCdUnhit: 6,
     clawKnifeRange: 280,
     initialItem: '鞭炮束',
+    gender: 'female',
+    EnglishName: 'Zuri',
     catPositioningTags: [
       {
         tagName: '进攻',
@@ -3888,6 +3916,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 8,
     clawKnifeCdUnhit: 4,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Angel Tom',
     catPositioningTags: [
       {
         tagName: '打架',
@@ -4169,6 +4199,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 4,
     clawKnifeCdUnhit: 3.1,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Syrus',
     catPositioningTags: [
       {
         tagName: '追击',
@@ -4455,6 +4487,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 6,
     clawKnifeCdUnhit: 3,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Devil Tom',
     catPositioningTags: [
       {
         tagName: '防守',
@@ -4507,7 +4541,7 @@ const catCharacterDefinitions = {
       },
       {
         name: '蓄力重击',
-        description: '造成控制的手段较多，可趁使用重击。',
+        description: '造成控制的手段较多，可趁机使用重击。',
       },
     ],
     skills: [
@@ -4680,6 +4714,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 2.5,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Bugs Bunny',
     catPositioningTags: [
       {
         tagName: '后期',
@@ -4955,6 +4991,8 @@ const catCharacterDefinitions = {
     clawKnifeCdHit: 7,
     clawKnifeCdUnhit: 3.85,
     clawKnifeRange: 300,
+    gender: 'male',
+    EnglishName: 'Wind Chaser Tom',
     catPositioningTags: [
       {
         tagName: '速通',
@@ -5260,6 +5298,8 @@ const catCharacterDefinitions = {
     clawKnifeCdUnhit: 4,
     clawKnifeRange: 270,
     initialItem: '鞭炮束',
+    gender: 'female',
+    EnglishName: 'Jade',
     catPositioningTags: [
       {
         tagName: '打架',
