@@ -7,7 +7,6 @@ import { modes } from '@/data';
 
 import ModeDetailClient from './ModeDetailsClient';
 
-// Generate static params for all special skills
 export function generateStaticParams() {
   return Object.keys(modes).map((modeName) => ({
     modeName,
@@ -54,7 +53,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function SpecialSkillDetailPage({
+export default async function ModeDetailPage({
   params,
 }: {
   params: Promise<{ modeName: string }>;

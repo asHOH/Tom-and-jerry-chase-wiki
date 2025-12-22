@@ -8,7 +8,6 @@ import { itemGroups } from '@/data';
 
 import ItemGroupDetailClient from './ItemGroupDetailsClient';
 
-// Generate static params for all special skills
 export function generateStaticParams() {
   return Object.keys(itemGroups).map((itemGroupName) => ({
     itemGroupName,
@@ -55,7 +54,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function SpecialSkillDetailPage({
+export default async function ItemGroupDetailPage({
   params,
 }: {
   params: Promise<{ itemGroupName: string }>;

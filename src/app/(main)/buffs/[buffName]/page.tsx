@@ -8,7 +8,6 @@ import { buffs } from '@/data';
 
 import BuffDetailClient from './BuffDetailsClient';
 
-// Generate static params for all special skills
 export function generateStaticParams() {
   return Object.keys(buffs).map((buffName) => ({
     buffName,
@@ -60,7 +59,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function SpecialSkillDetailPage({
+export default async function BuffDetailPage({
   params,
 }: {
   params: Promise<{ buffName: string }>;

@@ -7,7 +7,6 @@ import { maps } from '@/data';
 
 import MapDetailClient from './MapDetailsClient';
 
-// Generate static params for all special skills
 export function generateStaticParams() {
   return Object.keys(maps).map((mapName) => ({
     mapName,
@@ -27,7 +26,7 @@ function generateStructuredData(mapName: string) {
     image: map.imageUrl,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tjwiki.com/items/${encodeURIComponent(mapName)}`,
+      '@id': `https://tjwiki.com/maps/${encodeURIComponent(mapName)}`,
     },
   };
 }
@@ -48,17 +47,13 @@ export async function generateMetadata({
   return generateArticleMetadata({
     title: map.name,
     description: desc,
-    keywords: [map.name, '道具'],
-    canonicalUrl: `https://tjwiki.com/items/${encodeURIComponent(mapName)}`,
+    keywords: [map.name, '地图'],
+    canonicalUrl: `https://tjwiki.com/maps/${encodeURIComponent(mapName)}`,
     imageUrl: map.imageUrl,
   });
 }
 
-export default async function SpecialSkillDetailPage({
-  params,
-}: {
-  params: Promise<{ mapName: string }>;
-}) {
+export default async function MapDetailPage({ params }: { params: Promise<{ mapName: string }> }) {
   const mapName = decodeURIComponent((await params).mapName);
   const map = maps[mapName];
 

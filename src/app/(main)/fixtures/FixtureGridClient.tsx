@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 type Props = { description?: string };
 
-const ItemGridClient = dynamic<Props>(
+const FixtureGridClient = dynamic<Props>(
   () => import('@/features/fixtures/components/fixture-grid/FixtureGrid'),
   {
     loading: () => (
@@ -32,4 +32,4 @@ const ItemGridClient = dynamic<Props>(
   }
 );
 
-export default ItemGridClient;
+export default FixtureGridClient;

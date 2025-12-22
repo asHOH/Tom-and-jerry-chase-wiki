@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
-const ItemDetailsClient = dynamic(() => import('@/features/maps/map-detail/MapDetails'), {
+const MapDetailsClient = dynamic(() => import('@/features/maps/map-detail/MapDetails'), {
   loading: () => (
     <div className='mx-auto flex min-h-[300px] max-w-3xl flex-col gap-8 p-8'>
       <div className='flex flex-col gap-8 md:flex-row'>
@@ -24,4 +24,4 @@ const ItemDetailsClient = dynamic(() => import('@/features/maps/map-detail/MapDe
   ssr: false,
 });
 
-export default ItemDetailsClient;
+export default MapDetailsClient;

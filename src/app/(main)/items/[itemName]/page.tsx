@@ -7,7 +7,6 @@ import { items } from '@/data';
 
 import ItemDetailClient from './ItemDetailsClient';
 
-// Generate static params for all special skills
 export function generateStaticParams() {
   return Object.keys(items).map((itemName) => ({
     itemName,
@@ -54,7 +53,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function SpecialSkillDetailPage({
+export default async function ItemDetailPage({
   params,
 }: {
   params: Promise<{ itemName: string }>;

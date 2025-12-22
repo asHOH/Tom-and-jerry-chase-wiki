@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 type Props = { description?: string };
 
-const ItemGridClient = dynamic<Props>(
+const ModeGridClient = dynamic<Props>(
   () => import('@/features/modes/components/mode-grid/ModeGrid'),
   {
     loading: () => (
@@ -32,4 +32,4 @@ const ItemGridClient = dynamic<Props>(
   }
 );
 
-export default ItemGridClient;
+export default ModeGridClient;

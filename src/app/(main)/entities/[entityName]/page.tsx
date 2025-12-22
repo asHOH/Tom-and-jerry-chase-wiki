@@ -8,7 +8,6 @@ import { entities } from '@/data';
 
 import EntityDetailClient from './EntityDetailsClient';
 
-// Generate static params for all special skills
 export function generateStaticParams() {
   return Object.keys(entities).map((entityName) => ({
     entityName,
@@ -33,7 +32,6 @@ function generateStructuredData(entityName: string): WithContext<Article> {
   };
 }
 
-//以下代码复制自Item，由于entities的数据结构与items不同故增加了allentities用于拆解，不知是否合适
 const allentities = { ...entities['cat'], ...entities['mouse'] };
 export async function generateMetadata({
   params,
@@ -57,7 +55,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function SpecialSkillDetailPage({
+export default async function EntityDetailPage({
   params,
 }: {
   params: Promise<{ entityName: string }>;

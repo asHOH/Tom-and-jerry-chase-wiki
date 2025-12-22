@@ -7,7 +7,6 @@ import { fixtures } from '@/data';
 
 import FixtureDetailClient from './FixtureDetailsClient';
 
-// Generate static params for all special skills
 export function generateStaticParams() {
   return Object.keys(fixtures).map((fixtureName) => ({
     fixtureName,
@@ -54,7 +53,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function SpecialSkillDetailPage({
+export default async function FixtureDetailPage({
   params,
 }: {
   params: Promise<{ fixtureName: string }>;
