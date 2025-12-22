@@ -2,7 +2,15 @@ import { useEffect } from 'react';
 
 import { useSpecifyTypeNavigation } from './useSpecifyTypeNavigation';
 
-type typelist = 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff' | 'map' | 'fixture';
+type typelist =
+  | 'knowledgeCard'
+  | 'specialSkill'
+  | 'item'
+  | 'entity'
+  | 'buff'
+  | 'map'
+  | 'fixture'
+  | 'mode';
 
 /**
  * Navigation for knowledgeCards,specialSkills,items,entities

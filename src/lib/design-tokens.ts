@@ -1152,3 +1152,23 @@ export const getFixtureSourceColors = (fixtureSource: string, isDarkMode: boolea
     backgroundColor: theme.background,
   };
 };
+
+/**
+ * Mode type color utility
+ */
+export const getModeTypeColors = (modeType: string, isDarkMode: boolean) => {
+  const modeTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
+    经典模式: 'emerald',
+    休闲模式: 'violet',
+    特殊模式: 'azure',
+  };
+
+  const paletteKey = modeTypePaletteMap[modeType] || 'deepGray';
+  const palette = sharedPositioningTagPalettes[paletteKey];
+  const theme = isDarkMode && palette.dark ? palette.dark : palette;
+
+  return {
+    color: theme.text,
+    backgroundColor: theme.background,
+  };
+};

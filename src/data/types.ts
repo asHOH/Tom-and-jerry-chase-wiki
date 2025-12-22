@@ -533,3 +533,15 @@ export interface ArticlesData {
   articles: Article[];
   categories: Category[];
 }
+
+export type ModeTypeList = '经典模式' | '休闲模式' | '特殊模式';
+
+export type ModeDefinition = {
+  type: ModeTypeList;
+  aliases?: string[];
+  openingTime?: string;
+  description?: string;
+  detailedDescription?: string;
+};
+
+export type Mode = ModeDefinition & { name: string; imageUrl: string };
