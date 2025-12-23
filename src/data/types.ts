@@ -360,7 +360,10 @@ export type SingleItemTypeName =
   | 'specialSkill'
   | 'item'
   | 'entity'
-  | 'buff';
+  | 'buff'
+  | 'map'
+  | 'fixture'
+  | 'mode';
 export const SingleItemTypeChineseNameList = {
   character: '角色',
   skill: '技能',
@@ -369,6 +372,9 @@ export const SingleItemTypeChineseNameList = {
   item: '道具',
   entity: '衍生物',
   buff: '状态',
+  map: '地图',
+  fixture: '地图组件',
+  mode: '游戏模式',
 };
 // Create a group include similar items(or entites/buffs), so that can use navigation in one href
 export type SingleItem = {

@@ -16,16 +16,12 @@ export default function SingleItemButton({ singleItem, size = 'default' }: Singl
 
   function getSingleItemButtonColor(singleItem: SingleItem) {
     const getOriginalKey = (key: string): string => {
-      const keyMap: Record<string, string> = {
-        character: 'character',
+      const SpecificKeyMap: Record<string, string> = {
         skill: 'character-skill',
         knowledgeCard: 'card',
         specialSkill: 'special-skill-cat',
-        item: 'item',
-        entity: 'entity',
-        buff: 'buff',
       };
-      return keyMap[key] || key;
+      return SpecificKeyMap[key] || key;
     };
     const typeColorStyles = getTypeLabelColors(getOriginalKey(singleItem.type), isDarkMode);
     return { ...typeColorStyles, borderColor: typeColorStyles.color };

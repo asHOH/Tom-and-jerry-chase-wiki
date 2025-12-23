@@ -1,6 +1,16 @@
 import { FactionId, SingleItem } from '@/data/types';
 import getEntityFactionId from '@/features/entities/lib/getEntityFactionId';
-import { buffs, cards, characters, entities, items, specialSkills } from '@/data';
+import {
+  buffs,
+  cards,
+  characters,
+  entities,
+  fixtures,
+  items,
+  maps,
+  modes,
+  specialSkills,
+} from '@/data';
 
 export const getSingleItemHref = (singleItem: SingleItem): string => {
   let R: string | undefined;
@@ -20,6 +30,12 @@ export const getSingleItemHref = (singleItem: SingleItem): string => {
     R = `/entities/${singleItem.name}`;
   } else if (singleItem.type == 'buff') {
     R = `/buffs/${singleItem.name}`;
+  } else if (singleItem.type == 'map') {
+    R = `/maps/${singleItem.name}`;
+  } else if (singleItem.type == 'fixture') {
+    R = `/fixtures/${singleItem.name}`;
+  } else if (singleItem.type == 'mode') {
+    R = `/modes/${singleItem.name}`;
   } else if (singleItem.type == 'skill') {
     const skill = Object.values(characters)
       .flatMap((c) => c.skills)
@@ -57,6 +73,12 @@ export const getSingleItemImageUrl = (singleItem: SingleItem): string => {
     R = allEntities[singleItem.name]?.imageUrl;
   } else if (singleItem.type == 'buff') {
     R = buffs[singleItem.name]?.imageUrl;
+  } else if (singleItem.type == 'map') {
+    R = maps[singleItem.name]?.imageUrl;
+  } else if (singleItem.type == 'fixture') {
+    R = fixtures[singleItem.name]?.imageUrl;
+  } else if (singleItem.type == 'mode') {
+    R = modes[singleItem.name]?.imageUrl;
   } else if (singleItem.type == 'skill') {
     const skill = Object.values(characters)
       .flatMap((c) => c.skills)
@@ -95,6 +117,7 @@ export const getSingleItemFactionId = (singleItem: SingleItem): FactionId | unde
     const allEntities = { ...entities.cat, ...entities.mouse };
     return allEntities[singleItem.name];
   };
+
   if (singleItem.type !== 'entity') {
     return findFactionId(singleItem);
   } else {
