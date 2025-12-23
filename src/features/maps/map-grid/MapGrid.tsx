@@ -24,7 +24,7 @@ export default function MapClient({ description }: Props) {
   // 多选筛选状态
   const [selectedTypes, setSelectedTypes] = useState<mapTypes[]>([]);
   // 地图大小筛选 - 改为小、中、大的顺序
-  const [selectedSizes, setSelectedSizes] = useState<('小' | '中' | '大')[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<('微型' | '小型' | '中型' | '大型')[]>([]);
   // 解锁等级筛选 - 增加"其它"选项
   const [selectedLevels, setSelectedLevels] = useState<
     ('见习学业' | '高级学业' | '特级学业' | '大师学业' | '其它')[]
@@ -92,9 +92,9 @@ export default function MapClient({ description }: Props) {
           />
 
           {/* 大小筛选 - 改为小、中、大的顺序 */}
-          <FilterRow<'小' | '中' | '大'>
-            label='地图大小:'
-            options={['小', '中', '大']}
+          <FilterRow<'微型' | '小型' | '中型' | '大型'>
+            label='地图规模:'
+            options={['微型', '小型', '中型', '大型']}
             isActive={(size) => selectedSizes.includes(size)}
             onToggle={(size) =>
               setSelectedSizes((prev) =>

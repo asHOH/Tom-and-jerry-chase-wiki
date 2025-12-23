@@ -83,7 +83,7 @@ export default function CollapsibleItems({
           {title && <span className='mr-2 whitespace-nowrap'>{title}</span>}
           <div className='flex flex-wrap items-center gap-1'>
             {firstItem !== undefined ? <SingleItemButton singleItem={firstItem} /> : null}
-            {'等…'}
+            {`…(${itemsArray.length})`}
             <button
               onClick={() => setExpanded(!expanded)}
               className='ml-1 flex items-center justify-center rounded-full p-1.5 transition-all duration-300 hover:bg-gray-100 focus:ring-2 focus:ring-gray-300 focus:outline-none dark:hover:bg-gray-800 dark:focus:ring-gray-600'

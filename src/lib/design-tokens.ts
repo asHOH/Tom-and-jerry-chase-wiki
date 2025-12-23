@@ -1074,23 +1074,19 @@ export const getMapTypeColors = (mapType: string, isDarkMode: boolean) => {
 };
 
 export const getMapSizeColors = (size: string, isDarkMode: boolean) => {
-  const sizeColorMap: Record<
-    string,
-    'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese' | 'lateGameMouse'
-  > = {
-    小: 'rescue',
-    中: 'support',
-    大: 'disrupt',
+  const sizeColorMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
+    微型: 'amber',
+    小型: 'emerald',
+    中型: 'indigo',
+    大型: 'crimson',
   };
-  const skillType = sizeColorMap[size] || 'lateGameMouse';
-  const colorScheme =
-    designTokens.colors.positioningTags[skillType] || designTokens.colors.skillTypes.passive;
+  const paletteKey = sizeColorMap[size] || 'deepGray';
+  const palette = sharedPositioningTagPalettes[paletteKey];
+  const theme = isDarkMode && palette.dark ? palette.dark : palette;
 
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
-    borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
+    color: theme.text,
+    backgroundColor: theme.background,
   };
 };
 

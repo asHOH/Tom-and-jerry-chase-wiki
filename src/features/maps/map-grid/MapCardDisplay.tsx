@@ -15,22 +15,6 @@ export default function MapCardDisplay({ map }: { map: Map }) {
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
 
-  // 根据地图大小获取标签文本
-  const getSizeTagText = () => {
-    if (!map.size) return '';
-
-    switch (map.size) {
-      case '大':
-        return '大型';
-      case '中':
-        return '中型';
-      case '小':
-        return '小型';
-      default:
-        return map.size;
-    }
-  };
-
   return (
     <BaseCard variant='item' aria-label={`查看${map.name}地图详情`}>
       <GameImage
@@ -59,7 +43,7 @@ export default function MapCardDisplay({ map }: { map: Map }) {
           {/* 地图大小标签（如果有） */}
           {map.size && (
             <Tag size='sm' margin='compact' colorStyles={getMapSizeColors(map.size, isDarkMode)}>
-              {getSizeTagText()}
+              {map.size}
             </Tag>
           )}
 
