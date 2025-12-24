@@ -548,8 +548,11 @@ export type ModeDefinition = {
   type: ModeTypeList;
   aliases?: string[];
   openingTime?: string;
-  description?: string;
+  format?: string;
+  description?: string; //用于放置游戏内的背景故事相关文案
   detailedDescription?: string;
+  rules?: string;
+  detailedRules?: string;
 };
 
 export type Mode = ModeDefinition & { name: string; imageUrl: string };
