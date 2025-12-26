@@ -6,9 +6,10 @@ Netlify 也一样：[![Deploy to Netlify](https://www.netlify.com/img/deploy/but
 
 <!-- TODO: Add button for cloudflare worker -->
 
-如果你不使用这种 serverless 服务，你还可以选择这两种自部署的方式，两种都会使服务在 3000 端口运行：
+如果不使用这种 serverless 服务，还可以选择这三种自部署的方式，都会使服务在 3000 端口运行：
 
 - Docker
+- 自动化运维脚本 (Linux 推荐)
 - 手动运行 npm
 
 另外可以通过以下两种可选方式来使你的服务能在外网访问：
@@ -64,7 +65,32 @@ docker compose build
 docker compose up -d
 ```
 
-## 方法二 手动构建
+## 方法二 自动化运维脚本 (Linux 推荐)
+
+`scripts/ops/start_server.sh` 是为 Linux 生产环境设计的自动化脚本，主站就在用此脚本维护。特点：
+
+- **环境配置**: 自动安装 NVM 与 Node.js；自动切换 npm 镜像源（npmmirror/官方）
+- **智能更新**: Git 拉取防超时、断点续传；仅在代码变更时增量构建
+- **一键启动**: 自动处理环境变量加载与服务启动
+
+### 使用方法
+
+1. 下载脚本：
+
+   ```bash
+   mkdir -p ~/tjwiki-ops
+   cd ~/tjwiki-ops
+   wget https://raw.githubusercontent.com/asHOH/Tom-and-jerry-chase-wiki/develop/scripts/ops/start_server.sh
+   chmod +x start_server.sh
+   ```
+
+2. 运行脚本：
+   ```bash
+   ./start_server.sh
+   ```
+   首次运行会克隆仓库到 `Tom-and-jerry-chase-wiki` 目录，并生成 `.env.production` 模板文件。请按提示填入环境变量后再次运行。
+
+## 方法三 手动构建
 
 ### 第 1 步 安装 Node.js
 
@@ -102,6 +128,19 @@ npm run build
 ```bash
 npm run start
 ```
+
+## 进阶配置 (非 Vercel 部署)
+
+如需更高级的功能（版本显示、深色模式 Cookie 跨域、Analytics），请参考以下配置：
+
+1. **环境变量**
+   - 在构建阶段注入 `COMMIT_SHA`（或 `DEPLOY_COMMIT_SHA`）以保证 `/api/version` 返回准确版本信息。
+   - `DEPLOYMENT_ENVIRONMENT`（可选值 `development`/`preview`/`production`）标记运行环境；如不设置将回退为 `NODE_ENV`。
+   - 将 `APP_PUBLIC_HOST` 设置为生产域名（例如 `wiki.example.com`）以确保深色模式 Cookie 覆盖所有子域。
+   - 默认不加载 Vercel Analytics/Speed Insights。若需使用，将 `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` 设为 `1`。
+
+2. **安全头与缓存策略**
+   - `next.config.mjs` 已在运行时发送核心安全头（CSP、HSTS 等），请在目标平台（如 Netlify、Cloudflare、Nginx）继续配置静态资源头信息，保持与 `vercel.json` 一致的缓存策略。
 
 ## 可选 让别人用域名访问
 
