@@ -553,6 +553,9 @@ export type ModeDefinition = {
   detailedDescription?: string;
   rules?: string;
   detailedRules?: string;
+
+  unuseImage?: boolean; // Default: false
+  specialImageUrl?: string;
 };
 
 export type Mode = ModeDefinition & { name: string; imageUrl: string };
