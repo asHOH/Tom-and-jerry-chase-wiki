@@ -6,24 +6,28 @@ export async function fetchWithRetry(input: RequestInfo | URL, init?: RequestIni
   let lastError: unknown;
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+    // Use AbortSignal.any to merge user signal and timeout signal
+    const signal = init?.signal
+      ? AbortSignal.any([init.signal, controller.signal])
+      : controller.signal;
+
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-      // Preserve existing signal if possible, but we need to handle our timeout
-      // If init.signal aborts, fetch aborts. If our timeout fires, fetch aborts.
-      // We can't easily merge signals without 'abort-controller' package or recent Node.js features,
-      // but for this specific timeout error fix, controlling the timeout explicitly is key.
-
       const response = await fetch(input, {
         ...init,
-        signal: controller.signal,
+        signal,
       });
 
-      clearTimeout(timeoutId);
       return response;
     } catch (error: unknown) {
       lastError = error;
+
+      // If the user aborted, do not retry
+      if (init?.signal?.aborted) {
+        throw error;
+      }
 
       const err = error as Error & { cause?: { code?: string; name?: string } };
       const isTimeout = err.name === 'AbortError' || err.cause?.name === 'ConnectTimeoutError';
@@ -41,6 +45,8 @@ export async function fetchWithRetry(input: RequestInfo | URL, init?: RequestIni
       }
 
       throw error;
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
