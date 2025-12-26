@@ -1,7 +1,385 @@
 [
   {
+    "date": "2025-12-27",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "部署脚本",
+        "message": "更新 Linux 自动化部署脚本 start_server.sh 并添加使用说明",
+        "hashes": ["92fce054"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-26",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "图片",
+        "message": "更新鼠方和猫方角色的图片",
+        "hashes": ["0b2a5152"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "地图",
+        "message": "添加默认描述",
+        "hashes": ["1b28e354"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "玩法模式, 地图",
+        "message": "添加新图片",
+        "hashes": ["d6ddb290"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-24",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "玩法模式",
+        "message": "添加新数据",
+        "hashes": ["f25d90cf"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-23",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "地图",
+        "message": "优化界面显示内容",
+        "hashes": ["6bd16646"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "scope": "衍生物详情",
+        "message": "从 EntityAttributesCard 中提取 SingleItemAccordionCard 组件",
+        "hashes": ["c3b0faad"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "单项数据",
+        "message": "支持3种新类型（地图、地图组件、玩法模式）",
+        "hashes": ["614a06b5"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-22",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "快速跳转",
+        "message": "支持玩法模式",
+        "hashes": ["3de56585"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "全局布局",
+        "message": "更新详情切换显示",
+        "hashes": ["df405299"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "style",
+        "scope": "应用",
+        "message": "重命名部分命名错误的函数",
+        "hashes": ["b4ed2124"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "玩法模式",
+        "message": "创建玩法模式的类型定义和页面",
+        "hashes": ["8cd4619f"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "提示框",
+        "message": "添加挂载状态以防止过早渲染",
+        "hashes": ["6d25a3b8"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "导航栏, 鼠方衍生物",
+        "message": "对图片 URL 进行编码",
+        "hashes": ["be2aac7a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "官方网站",
+        "message": "更新描述",
+        "hashes": ["925eed6d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "添加2个新属性（性别、英文名）",
+        "hashes": ["f1310d03"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色, 猫方衍生物",
+        "message": "添加塔拉二武信息",
+        "hashes": ["5d50e7f0"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-21",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "页面描述",
+        "message": "在移动端显示页面描述",
+        "hashes": ["3536df29"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "地图",
+        "message": "修复部分错误",
+        "hashes": ["99f5c0a7"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "添加并显示胜率数据",
+        "hashes": ["d7fe888d", "a3b8463d"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-20",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "特性",
+        "message": "添加10个新特性",
+        "hashes": ["eb13eae4"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "数据",
+        "message": "更新部分数据",
+        "hashes": ["27bdef45"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "快速跳转",
+        "message": "为 API 添加更多跳转模式",
+        "hashes": ["0bbdd809"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "单项特性文本",
+        "message": "移动 SingleItemTraitsText 组件位置",
+        "hashes": ["d302286f"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "共享组件",
+        "message": "将工具提示组件从角色移动到共享组件",
+        "hashes": ["e3fc1e5a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "将共享显示和特性组件迁移到 features/shared",
+        "breaking": true,
+        "hashes": ["e37e3e91"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "将功能显示组件迁移到基于功能的架构",
+        "breaking": true,
+        "hashes": ["bcadee83"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "PWA",
+        "message": "移除未使用的 PWA hook",
+        "hashes": ["191afc1b"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-19",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "工具",
+        "message": "添加机制、地图、地图组件的阵营按钮",
+        "hashes": ["ae951a61"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "快速跳转",
+        "message": "支持地图和地图组件",
+        "hashes": ["7ad2c946"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "地图组件",
+        "message": "创建地图组件的类型定义和页面",
+        "hashes": ["9a32c102"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "文章",
+        "message": "使用 clsx 确保 'article-content-auto-numbered' 类的有效性",
+        "hashes": ["2f81f126"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "文章功能",
+        "message": "从 ArticlesClient 中提取类型定义、筛选逻辑和分页逻辑",
+        "hashes": ["6056b080"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-16",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "单项工具",
+        "message": "支持新类型",
+        "hashes": ["d61d336a"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "支持新类型",
+        "hashes": ["05005efb"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "角色技能",
+        "message": "更新实体所属者筛选",
+        "hashes": ["c4f797f5"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "更新碎片和泰菲球的所属者",
+        "hashes": ["6a79bda1"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "衍生物",
+        "message": "允许实体有多个所属者",
+        "hashes": ["84cd9720"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "修复移动端图片样式",
+        "hashes": ["033a2dac"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-15",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "地图",
+        "message": "创建地图的文件和页面",
+        "hashes": ["cc049086"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "构建",
+        "message": "扩展 husky 钩子范围并修复 lint-staged 顺序",
+        "hashes": ["da58d2a4"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "构建",
+        "message": "允许提交信息格式中包含可选的感叹号",
+        "hashes": ["e9cc2878"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "迁移到功能优先架构",
+        "breaking": true,
+        "hashes": ["8c0f61a1"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
     "date": "2025-12-14",
     "changes": [
+      {
+        "type": "fix",
+        "scope": "图片",
+        "message": "为图片类添加 width auto 类",
+        "hashes": ["843a41e4"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "属性排行",
+        "message": "添加初始属性显示",
+        "hashes": ["a1460a56"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "移除行内的内边距样式",
+        "hashes": ["341f0586"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "更新日志",
+        "message": "添加截至今的更新日志",
+        "hashes": ["fd4e6942"],
+        "author": "asHOH"
+      },
       {
         "type": "refactor",
         "scope": "界面",
@@ -183,7 +561,6 @@
         "type": "docs",
         "scope": "角色信息",
         "message": "更新表演者·杰瑞的梦幻舞步、免控、霸体、绝对霸体描述",
-        "breaking": false,
         "hashes": ["99f9195c"],
         "author": "ConductorJerry"
       },
@@ -191,7 +568,6 @@
         "type": "docs",
         "scope": "更新日志",
         "message": "补充截至11月25日的更新日志",
-        "breaking": false,
         "hashes": ["09dd329e", "7ccaa523", "8cc01901", "e4e28015"],
         "author": "asHOH"
       },
@@ -199,7 +575,6 @@
         "type": "style",
         "scope": "更新日志",
         "message": "仅在非当前年份显示年份；默认展开所有日期",
-        "breaking": false,
         "hashes": ["3695c8c9", "05b4364d"],
         "author": "asHOH"
       },
@@ -207,7 +582,6 @@
         "type": "fix",
         "scope": "更新日志",
         "message": "支持 revert 提交信息；更新系统提示词",
-        "breaking": false,
         "hashes": ["ca17d3e4", "e04f859d", "437ca6e3"],
         "author": "asHOH"
       },
@@ -215,7 +589,6 @@
         "type": "feat",
         "scope": "更新日志",
         "message": "支持按日期筛选提交，并添加无 AI 生成的回退模式",
-        "breaking": false,
         "hashes": ["e9c8c943"],
         "author": "asHOH"
       },
@@ -223,7 +596,6 @@
         "type": "feat",
         "scope": "反馈建议",
         "message": "将反馈保存到数据库作为备份",
-        "breaking": false,
         "hashes": ["e33f91a5"],
         "author": "asHOH"
       }
@@ -236,7 +608,6 @@
         "type": "docs",
         "scope": "更新日志",
         "message": "更新现有的更新日志",
-        "breaking": false,
         "hashes": ["29243429", "bde8fc54"],
         "author": "asHOH"
       },
@@ -244,7 +615,6 @@
         "type": "feat",
         "scope": "更新日志",
         "message": "最小化除 feat、docs 和 style 之外的更改显示",
-        "breaking": false,
         "hashes": ["66645053"],
         "author": "asHOH"
       },
@@ -252,7 +622,6 @@
         "type": "refactor",
         "scope": "更新日志",
         "message": "迁移哈希处理以使用哈希数组",
-        "breaking": false,
         "hashes": ["69685b2c"],
         "author": "asHOH"
       },
@@ -260,7 +629,6 @@
         "type": "fix",
         "scope": "机制",
         "message": "将 MDXContent 包裹在 StyledMDX 中以正确应用样式",
-        "breaking": false,
         "hashes": ["d3027e86"],
         "author": "asHOH"
       },
@@ -268,7 +636,6 @@
         "type": "docs",
         "scope": "贡献者清单, 年鉴",
         "message": "添加鲍姆的贡献者和发布时间",
-        "breaking": false,
         "hashes": ["39d69251"],
         "author": "ConductorJerry"
       },
@@ -276,7 +643,6 @@
         "type": "feat",
         "scope": "更新日志",
         "message": "将提交过滤、排序和作者处理改为代码实现",
-        "breaking": false,
         "hashes": ["4293021b"],
         "author": "asHOH"
       },
@@ -284,7 +650,6 @@
         "type": "fix",
         "scope": "更新日志",
         "message": "更新 Gemini 模型为 'gemini-2.5-flash' 并优化生成规则",
-        "breaking": false,
         "hashes": ["dd6c2893", "c2c9f88a"],
         "author": "asHOH"
       },
@@ -292,7 +657,6 @@
         "type": "docs",
         "scope": "角色信息",
         "message": "补充缺失的知识卡组描述；修正错误的链接文本；添加布奇-3级力大无穷特性",
-        "breaking": false,
         "hashes": ["a95ca319"],
         "author": "ConductorJerry"
       },
@@ -300,7 +664,6 @@
         "type": "feat",
         "scope": "特性编辑器",
         "message": "修改部分 UI 和文本",
-        "breaking": false,
         "hashes": ["c471d1d8"],
         "author": "ConductorJerry"
       },
@@ -308,7 +671,6 @@
         "type": "docs",
         "scope": "特性",
         "message": "添加 2 个新特性",
-        "breaking": false,
         "hashes": ["683188bf"],
         "author": "ConductorJerry"
       },
@@ -316,7 +678,6 @@
         "type": "docs",
         "scope": "首页",
         "message": "更新章节标题",
-        "breaking": false,
         "hashes": ["6f35722f"],
         "author": "asHOH"
       }
@@ -329,7 +690,6 @@
         "type": "refactor",
         "scope": "首页, 工具, 导航栏",
         "message": "精简章节项目；重组章节按钮布局；去重代码逻辑",
-        "breaking": false,
         "hashes": ["4d7adf04", "7abe069d"],
         "author": "asHOH"
       },
@@ -337,7 +697,6 @@
         "type": "fix",
         "scope": "依赖",
         "message": "更新 @next/mdx, next, react 和 eslint-config-next 以修复安全问题",
-        "breaking": false,
         "hashes": ["70f1a51a"],
         "author": "asHOH"
       },
@@ -345,7 +704,6 @@
         "type": "fix",
         "scope": "角色关系",
         "message": "提高角色图片的清晰度",
-        "breaking": false,
         "hashes": ["8a45d414"],
         "author": "ConductorJerry"
       }
@@ -358,7 +716,6 @@
         "type": "fix",
         "scope": "机制",
         "message": "修复 sectionName 类型错误并使用动态配置",
-        "breaking": false,
         "hashes": ["c6753c78"],
         "author": "ConductorJerry"
       },
@@ -366,7 +723,6 @@
         "type": "docs",
         "scope": "鼠方角色",
         "message": "更新杰瑞、侦探杰瑞、罗宾汉杰瑞、航海士杰瑞的描述",
-        "breaking": false,
         "hashes": ["12c605e5"],
         "author": "ConductorJerry"
       },
@@ -374,7 +730,6 @@
         "type": "docs",
         "scope": "猫方角色",
         "message": "更新鲍姆的描述",
-        "breaking": false,
         "hashes": ["5edf1dd0"],
         "author": "ConductorJerry"
       },
@@ -382,7 +737,6 @@
         "type": "fix",
         "scope": "数据库",
         "message": "推送数据库迁移",
-        "breaking": false,
         "hashes": ["2ef4aad3"],
         "author": "3swordman"
       },
@@ -390,7 +744,6 @@
         "type": "feat",
         "scope": "机制",
         "message": "新增文章“物体”",
-        "breaking": false,
         "hashes": ["ae762576"],
         "author": "ConductorJerry"
       },
@@ -398,7 +751,6 @@
         "type": "fix",
         "scope": "依赖",
         "message": "添加 babel-plugin-react-compiler",
-        "breaking": false,
         "hashes": ["88383b4a"],
         "author": "asHOH"
       },
@@ -406,7 +758,6 @@
         "type": "perf",
         "scope": "构建",
         "message": "调整构建脚本顺序以更早发现错误",
-        "breaking": false,
         "hashes": ["6689f341"],
         "author": "asHOH"
       },
@@ -414,7 +765,6 @@
         "type": "fix",
         "scope": "开发",
         "message": "更新 start_server.sh 中的 npm install 命令以忽略开发依赖和脚本",
-        "breaking": false,
         "hashes": ["b3c1cf15"],
         "author": "asHOH"
       },
@@ -422,7 +772,6 @@
         "type": "feat",
         "scope": "更新日志",
         "message": "从构建步骤中移除更新日志生成；扩大生成范围",
-        "breaking": false,
         "hashes": ["b86bd3d2"],
         "author": "asHOH"
       }
@@ -435,7 +784,6 @@
         "type": "refactor",
         "scope": "类型",
         "message": "使用 SkillType 替换字符串字面量",
-        "breaking": false,
         "hashes": ["abb3f80e"],
         "author": "asHOH"
       },
@@ -443,7 +791,6 @@
         "type": "refactor",
         "scope": "界面",
         "message": "简化 getTypeLabelColors；使用共享调色板简化道具类型/来源颜色映射",
-        "breaking": false,
         "hashes": ["ccbb9779", "1e4ad774"],
         "author": "asHOH"
       },
@@ -451,7 +798,6 @@
         "type": "fix",
         "scope": "界面",
         "message": "更新阵营颜色并重构复用逻辑",
-        "breaking": false,
         "hashes": ["f0b51b96"],
         "author": "asHOH"
       },
@@ -459,7 +805,6 @@
         "type": "docs",
         "scope": "道具",
         "message": "简化道具类型和来源显示",
-        "breaking": false,
         "hashes": ["25e08d75"],
         "author": "asHOH"
       }
@@ -472,7 +817,6 @@
         "type": "refactor",
         "scope": "机制",
         "message": "自动生成导航项并验证配置；通过 index.ts 自动注册机制章节",
-        "breaking": false,
         "hashes": ["40e82b91", "c8c0e8f2"],
         "author": "ConductorJerry"
       }
@@ -485,7 +829,6 @@
         "type": "perf",
         "scope": "数据库",
         "message": "为 article_versions.status 添加索引；优化数据库性能和 RLS 策略",
-        "breaking": false,
         "hashes": ["b6ec6f79", "53f64a0f"],
         "author": "asHOH"
       },
@@ -493,7 +836,6 @@
         "type": "fix",
         "scope": "特性编辑器",
         "message": "适配移动端界面",
-        "breaking": false,
         "hashes": ["b167433b"],
         "author": "ConductorJerry"
       },
@@ -501,7 +843,6 @@
         "type": "fix",
         "scope": "数据库",
         "message": "确保仅在策略存在时删除；保护函数搜索路径",
-        "breaking": false,
         "hashes": ["39fe673d", "2563ae5e"],
         "author": "asHOH"
       },
@@ -509,7 +850,6 @@
         "type": "feat",
         "scope": "特性编辑器",
         "message": "创建特性编辑器 trait-maker.html",
-        "breaking": false,
         "hashes": ["5a72f96f"],
         "author": "ConductorJerry"
       }
@@ -522,7 +862,6 @@
         "type": "docs",
         "scope": "衍生物",
         "message": "添加雷云的图片；修复泰菲球的归属",
-        "breaking": false,
         "hashes": ["73ccd694", "d71b7094"],
         "author": "ConductorJerry"
       },
@@ -530,7 +869,6 @@
         "type": "docs",
         "scope": "角色信息",
         "message": "为图茨/米特文本添加汽水冰面/胡椒罐头烟雾的链接",
-        "breaking": false,
         "hashes": ["031f8c74"],
         "author": "ConductorJerry"
       },
@@ -538,7 +876,6 @@
         "type": "docs",
         "scope": "文档",
         "message": "追风汤姆不再能移动果盘",
-        "breaking": false,
         "hashes": ["f2f7ebbe"],
         "author": "3swordman"
       }
@@ -551,7 +888,6 @@
         "type": "docs",
         "scope": "衍生物",
         "message": "补全缺失图片；添加7个新衍生物（汽水冰面、胡椒罐头烟雾、管道猫等）",
-        "breaking": false,
         "hashes": ["ed11b1a3"],
         "author": "ConductorJerry"
       }

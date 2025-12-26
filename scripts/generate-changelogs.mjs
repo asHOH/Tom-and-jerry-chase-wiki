@@ -95,6 +95,7 @@ ${TYPE_DEFINITIONS}
 - CharacterGrid -> 角色列表
 - CharacterDetails -> 角色详情
 - CharacterSection -> 角色详情
+- RankPage -> 属性排行
 - articles -> 文章功能
 - images -> 图片
 - items -> 道具
