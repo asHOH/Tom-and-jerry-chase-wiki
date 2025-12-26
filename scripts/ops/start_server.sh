@@ -7,22 +7,29 @@ REPO_URL="https://github.com/asHOH/Tom-and-jerry-chase-wiki.git"
 TARGET_BRANCH="develop"
 ENV_FILE=".env.production"
 
-# Function to run a command with timeout and retries for git.
+# Function to run a command with retries for git.
+# Uses git's internal lowSpeedLimit/lowSpeedTime to handle stalls instead of hard timeouts.
 run_with_retry() {
-  local start_time=$SECONDS
-  local cmd_timeout=10
-  local total_timeout=30
+  local max_attempts=5
+  local attempt=1
 
-  while true; do
-    timeout $cmd_timeout "$@" && return 0
-    local elapsed_time=$((SECONDS - start_time))
-    if [ $elapsed_time -ge $total_timeout ]; then
-      echo "⚠️  Warning: Command failed after $total_timeout seconds. Giving up."
-      return 1
+  # Configure git to abort if speed drops below 1KB/s for 60 seconds
+  git config --global http.lowSpeedLimit 1000
+  git config --global http.lowSpeedTime 60
+
+  while [ $attempt -le $max_attempts ]; do
+    echo "Attempt $attempt of $max_attempts..."
+    if "$@"; then
+      return 0
     fi
-    echo "Command failed or timed out. Retrying in 2 seconds..."
-    sleep 2
+
+    echo "Command failed. Retrying in 5 seconds..."
+    sleep 5
+    ((attempt++))
   done
+
+  echo "⚠️  Warning: Command failed after $max_attempts attempts. Giving up."
+  return 1
 }
 
 # 1. Clone or update the repository.
@@ -102,30 +109,26 @@ echo "Ensuring correct Node.js version is installed..."
 nvm install
 
 # 6. Install dependencies with a retry loop.
-
-# Resolve the npm binary that belongs to the Node version nvm just activated
-NODE_BIN="$(command -v node)"
-NPM_BIN="$(dirname "$NODE_BIN")/npm"
-
-echo "Using node: $NODE_BIN"
-echo "Using npm:  $NPM_BIN"
-
-# Sanity check
-"$NPM_BIN" -v || { echo "❌ Fatal: npm not runnable"; exit 1; }
-
-# Set China mirror for npm packages
-# echo "Configuring npm registry mirror..."
-# "$NPM_BIN" config set registry https://registry.npmmirror.com/
-"$NPM_BIN" config set registry https://registry.npmjs.org/
-
 echo "Installing/updating project dependencies..."
+
 for i in {1..3}; do
   echo "Attempt $i of 3..."
+
+  # Smart Mirror Switching: Use CN mirror for first attempt, official for retries
+  if [ $i -eq 1 ]; then
+    echo "Using npmmirror.com for first attempt..."
+    npm config set registry https://registry.npmmirror.com/
+  else
+    echo "Falling back to registry.npmjs.org..."
+    npm config set registry https://registry.npmjs.org/
+  fi
+
   # recommended for prod to avoid supabase CLI postinstall
-  if "$NPM_BIN" i --ignore-scripts; then
+  if npm install --ignore-scripts; then
     echo "✅ Dependencies installed successfully."
     break
   fi
+
   if [ $i -eq 3 ]; then
     echo "❌ Fatal: npm install failed after 3 attempts. Cannot start server."
     exit 1
