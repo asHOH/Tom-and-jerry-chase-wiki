@@ -1,15 +1,11 @@
 #!/bin/bash
 
 REPO_DIR="Tom-and-jerry-chase-wiki"
-REPO_URL="https://githubfast.com/asHOH/Tom-and-jerry-chase-wiki.git"
+REPO_URL="https://github.com/asHOH/Tom-and-jerry-chase-wiki.git"
+# Alternative URL if you need mirroring
+# REPO_URL="https://githubfast.com/asHOH/Tom-and-jerry-chase-wiki.git"
 TARGET_BRANCH="develop"
 ENV_FILE=".env.production"
-
-declare -ra RUNTIME_PATCH_TARGETS=(
-  "src/app/api/health/route.ts"
-  "src/app/api/options/route.ts"
-  "src/app/api/entities/export/route.ts"
-)
 
 # Function to run a command with timeout and retries for git.
 run_with_retry() {
@@ -106,16 +102,27 @@ echo "Ensuring correct Node.js version is installed..."
 nvm install
 
 # 6. Install dependencies with a retry loop.
-echo "Using npm version: $(npm -v)"
+
+# Resolve the npm binary that belongs to the Node version nvm just activated
+NODE_BIN="$(command -v node)"
+NPM_BIN="$(dirname "$NODE_BIN")/npm"
+
+echo "Using node: $NODE_BIN"
+echo "Using npm:  $NPM_BIN"
+
+# Sanity check
+"$NPM_BIN" -v || { echo "❌ Fatal: npm not runnable"; exit 1; }
 
 # Set China mirror for npm packages
-echo "Configuring npm registry mirror..."
-npm config set registry https://registry.npmmirror.com/
+# echo "Configuring npm registry mirror..."
+# "$NPM_BIN" config set registry https://registry.npmmirror.com/
+"$NPM_BIN" config set registry https://registry.npmjs.org/
 
 echo "Installing/updating project dependencies..."
 for i in {1..3}; do
   echo "Attempt $i of 3..."
-  if npm install --verbose --ignore-scripts; then
+  # recommended for prod to avoid supabase CLI postinstall
+  if "$NPM_BIN" i --ignore-scripts; then
     echo "✅ Dependencies installed successfully."
     break
   fi
@@ -127,63 +134,25 @@ for i in {1..3}; do
   sleep 2
 done
 
+
 # 7. Build the application only if code has changed.
 BUILD_HASH_FILE=".next/.build_hash"
 CURRENT_HASH=$(git rev-parse HEAD)
 export COMMIT_SHA="$CURRENT_HASH"
 LAST_BUILD_HASH=""
 if [ -f "$BUILD_HASH_FILE" ]; then
-  LAST_BUILD_HASH=$(tr -d '\r\n' < "$BUILD_HASH_FILE")
+  LAST_BUILD_HASH=$(cat "$BUILD_HASH_FILE")
 fi
 
 if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
-  runtime_only_change=false
-  if [ -n "$LAST_BUILD_HASH" ] && git cat-file -e "${LAST_BUILD_HASH}^{commit}" >/dev/null 2>&1; then
-    runtime_only_change=true
-    while IFS= read -r file; do
-      if [ -z "$file" ]; then
-        continue
-      fi
-      match=false
-      for target in "${RUNTIME_PATCH_TARGETS[@]}"; do
-        if [ "$file" = "$target" ]; then
-          match=true
-          break
-        fi
-      done
-      if [ "$match" = false ]; then
-        runtime_only_change=false
-        break
-      fi
-    done < <(git diff --name-only "$LAST_BUILD_HASH" "$CURRENT_HASH")
-  fi
-
-  if [ "$runtime_only_change" = true ]; then
-    if [ -f "$BUILD_HASH_FILE" ] && [ -f ".next/BUILD_ID" ]; then
-      echo "Only API runtime flag changes detected since last build. Reusing existing build output."
-      mkdir -p "$(dirname "$BUILD_HASH_FILE")"
-      echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
-    else
-      echo "Runtime-only changes detected but no reusable build artifacts found. Building application..."
-      npm run set-runtime:node
-      if npm run build; then
-        echo "✅ Build successful."
-        mkdir -p .next && echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
-      else
-        echo "❌ Fatal: Build failed. Cannot start server."
-        exit 1
-      fi
-    fi
+  echo "Code has changed since last build. Building application..."
+  npm run set-runtime:node
+  if npm run build; then
+    echo "✅ Build successful."
+    mkdir -p .next && echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
   else
-    echo "Code has changed since last build. Building application..."
-    npm run set-runtime:node
-    if npm run build; then
-      echo "✅ Build successful."
-      mkdir -p .next && echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
-    else
-      echo "❌ Fatal: Build failed. Cannot start server."
-      exit 1
-    fi
+    echo "❌ Fatal: Build failed. Cannot start server."
+    exit 1
   fi
 else
   echo "No code changes detected. Skipping build."
