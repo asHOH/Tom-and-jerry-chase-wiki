@@ -26,6 +26,7 @@ async function getArticles() {
           view_count,
           author_id,
           category_id,
+          character_id,
           categories (
             id,
             name

@@ -519,6 +519,7 @@ export interface Article {
   created_at: string;
   author_id: string;
   category_id: string;
+  character_id?: string | null;
   view_count?: number;
   categories: { id: string; name: string };
   users_public_view: { nickname: string };

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import { AssetManager } from '@/lib/assetManager';
 import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
@@ -16,7 +17,9 @@ import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { SkeletonArticleCard } from '@/components/ui/Skeleton';
 import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
 import Link from '@/components/Link';
+import { characters } from '@/data';
 
 import ArticleFilters from './ArticleFilters';
 import ArticlePagination from './ArticlePagination';
@@ -420,6 +423,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
         >
           {visibleArticles.map((article) => {
             const latestVersion = article.latest_approved_version[0];
+            const boundCharacter = article.character_id ? characters[article.character_id] : null;
             return (
               <BaseCard
                 key={article.id}
@@ -429,6 +433,25 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 href={`/articles/${article.id}`}
               >
                 <div className='flex h-full flex-col px-4 py-3 text-left'>
+                  {/* Character badge for game strategy articles */}
+                  {boundCharacter && (
+                    <div className='mb-2 flex items-center gap-2'>
+                      <Image
+                        src={AssetManager.getCharacterImageUrl(
+                          boundCharacter.id,
+                          boundCharacter.factionId ?? 'cat'
+                        )}
+                        alt={boundCharacter.id}
+                        width={32}
+                        height={32}
+                        className='h-8 w-8 rounded-full object-cover ring-2 ring-blue-400 dark:ring-blue-500'
+                      />
+                      <span className='text-sm font-medium text-blue-600 dark:text-blue-400'>
+                        {boundCharacter.id}攻略
+                      </span>
+                    </div>
+                  )}
+
                   <h3 className='mb-2 line-clamp-2 text-xl font-bold dark:text-white'>
                     {article.title}
                   </h3>
