@@ -16,6 +16,10 @@ type AccordionProps = {
   titleClassName?: string;
   defaultOpenId?: string;
   size?: 'xs' | 'md' | 'sm';
+  buttonClassName?: string;
+  activeButtonClassName?: string;
+  contentContainerClassName?: string;
+  contentPanelClassName?: string;
 };
 
 /**
@@ -43,6 +47,10 @@ export default function AccordionCard({
   titleClassName,
   defaultOpenId,
   size,
+  buttonClassName,
+  activeButtonClassName,
+  contentContainerClassName,
+  contentPanelClassName,
 }: AccordionProps) {
   const text = { xs: 'sm', md: 'xl mx-1', sm: '2xl mx-2' }[size || 'sm'];
   const [openItems, setOpenItems] = useState<Set<string>>(
@@ -105,7 +113,9 @@ export default function AccordionCard({
                 'flex flex-1 cursor-pointer items-center justify-center px-1 py-1 font-bold text-black focus:outline-none dark:text-white',
                 'whitespace-nowrap transition-all duration-200',
                 titleColor,
-                isExpanded && 'italic underline'
+                isExpanded && 'italic underline',
+                buttonClassName,
+                isExpanded && activeButtonClassName
               )}
               aria-expanded={isExpanded}
             >
@@ -116,12 +126,15 @@ export default function AccordionCard({
       </div>
 
       {/* 内容面板区域 */}
-      <div>
+      <div className={contentContainerClassName}>
         {items.map((item) => {
           const isExpanded = openItems.has(item.id);
           return (
             isExpanded && (
-              <div key={`content-${item.id}`} className={item.className}>
+              <div
+                key={`content-${item.id}`}
+                className={clsx(contentPanelClassName, item.className)}
+              >
                 {item.children}
               </div>
             )

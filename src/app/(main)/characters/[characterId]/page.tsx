@@ -111,49 +111,80 @@ export default async function CharacterPage({
 
     const { supabaseAdmin } = await import('@/lib/supabase/admin');
 
-    // Query articles by character_id (game strategy articles bound to this character)
-    const article = (
-      docPage
-        ? Promise.resolve(null)
-        : supabaseAdmin
-            .from('articles')
-            .select('id, users_public_view(nickname)')
-            .eq('character_id', characterId)
-            .limit(1)
-            .single()
-    ).then((result) => result?.data ?? null);
+    type CharacterArticleMetaRow = {
+      id: string;
+      title: string;
+      users_public_view: { nickname: string | null } | null;
+    };
+
+    type CharacterArticleVersionRow = {
+      article_id: string | null;
+      content: string | null;
+      created_at: string | null;
+    };
+
+    const articles = docPage
+      ? Promise.resolve([] as CharacterArticleMetaRow[])
+      : supabaseAdmin
+          .from('articles')
+          .select('id, title, users_public_view!author_id(nickname)')
+          .eq('character_id', characterId)
+          .order('created_at', { ascending: false })
+          .then((result) => (result?.data ?? []) as CharacterArticleMetaRow[]);
 
     const articleContent = Promise.resolve(
-      article.then((data) =>
-        data
-          ? supabaseAdmin
-              .from('article_versions_public_view')
-              .select('content, users_public_view(nickname)')
-              .eq('article_id', data.id)
-              .eq('status', 'approved')
-              .order('created_at', { ascending: false })
-              .limit(1)
-              .single()
-              .then((result) => ({
-                content: result?.data?.content ?? null,
-                id: data.id,
-                // Collect unique author nicknames: article author + version editor
-                authors: Array.from(
-                  new Set(
-                    [
-                      (data.users_public_view as { nickname: string } | null)?.nickname,
-                      (result?.data?.users_public_view as { nickname: string } | null)?.nickname,
-                    ].filter(Boolean) as string[]
-                  )
-                ),
-              }))
-          : null
-      )
+      articles.then(async (items) => {
+        if (!items || items.length === 0) {
+          return [];
+        }
+
+        const articleIds = items.map((item) => item.id);
+
+        const { data: versions } = await supabaseAdmin
+          .from('article_versions_public_view')
+          .select('article_id, content, created_at')
+          .in('article_id', articleIds)
+          .eq('status', 'approved')
+          .order('created_at', { ascending: false });
+
+        const latestByArticleId = new Map<
+          string,
+          {
+            content: string | null;
+          }
+        >();
+
+        for (const version of (versions ?? []) as CharacterArticleVersionRow[]) {
+          if (!version.article_id) continue;
+          if (!latestByArticleId.has(version.article_id)) {
+            latestByArticleId.set(version.article_id, {
+              content: version.content ?? null,
+            });
+          }
+        }
+
+        return items
+          .map((item) => {
+            const latest = latestByArticleId.get(item.id);
+            const authorNickname =
+              (item.users_public_view as { nickname: string | null } | null)?.nickname ?? null;
+            const authors = authorNickname ? [authorNickname] : [];
+
+            return {
+              id: item.id,
+              title: item.title,
+              content: latest?.content ?? null,
+              authors,
+            };
+          })
+          .filter((item) => Boolean(item.content));
+      })
     );
 
+    // Keep existing behavior: the first visible embedded article counts as a view.
     articleContent.then((result) =>
-      result?.id
-        ? supabaseAdmin.rpc('increment_article_view_count', { p_article_id: result.id })
+      result?.[0]?.id
+        ? supabaseAdmin.rpc('increment_article_view_count', { p_article_id: result[0].id })
         : null
     );
 

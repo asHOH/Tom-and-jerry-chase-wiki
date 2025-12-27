@@ -83,9 +83,7 @@ export default function CollapseCard({
       <div
         className={clsx(
           'transform overflow-hidden text-black transition-all duration-100 ease-in-out dark:text-white',
-          isExpanded
-            ? 'max-h-[5000px] translate-y-0 opacity-100'
-            : 'max-h-0 -translate-y-2 opacity-0'
+          isExpanded ? 'max-h-9999 translate-y-0 opacity-100' : 'max-h-0 -translate-y-2 opacity-0'
         )}
       >
         <div
