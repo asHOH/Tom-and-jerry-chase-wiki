@@ -10,6 +10,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   经典之家I: {
     type: '常规地图',
     size: '小型',
+    aliases: ['经典1'],
     studyLevelUnlock: '见习学业',
     changeWithStudyLevel: true,
     roomCount: 8,
@@ -29,7 +30,8 @@ const mapDefinitions: Record<string, MapDefinition> = {
   },
   经典之家II: {
     type: '常规地图',
-    size: '小型',
+    size: '中型',
+    aliases: ['经典2'],
     studyLevelUnlock: '见习学业',
     changeWithStudyLevel: true,
     roomCount: 8,
@@ -49,7 +51,8 @@ const mapDefinitions: Record<string, MapDefinition> = {
   },
   经典之家III: {
     type: '常规地图',
-    size: '小型',
+    size: '中型',
+    aliases: ['经典3'],
     studyLevelUnlock: '见习学业',
     changeWithStudyLevel: true,
     roomCount: 8,
@@ -69,7 +72,8 @@ const mapDefinitions: Record<string, MapDefinition> = {
   },
   雪夜古堡I: {
     type: '常规地图',
-    size: '小型',
+    size: '中型',
+    aliases: ['雪堡1', '古堡1'],
     studyLevelUnlock: '高级学业',
     roomCount: 8,
     pipeCount: 2,
@@ -90,7 +94,8 @@ const mapDefinitions: Record<string, MapDefinition> = {
   },
   雪夜古堡II: {
     type: '常规地图',
-    size: '小型',
+    size: '中型',
+    aliases: ['雪堡2', '古堡2'],
     studyLevelUnlock: '高级学业',
     roomCount: 8,
     pipeCount: 2,
@@ -110,7 +115,8 @@ const mapDefinitions: Record<string, MapDefinition> = {
   },
   雪夜古堡III: {
     type: '常规地图',
-    size: '小型',
+    size: '大型',
+    aliases: ['雪堡3', '古堡3', '双古堡'],
     studyLevelUnlock: '高级学业',
     roomCount: 15,
     pipeCount: 4,
@@ -130,6 +136,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   夏日游轮I: {
     type: '常规地图',
     size: '中型',
+    aliases: ['游轮1'],
     studyLevelUnlock: '特级学业',
     roomCount: 9,
     pipeCount: 1,
@@ -148,6 +155,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   夏日游轮II: {
     type: '常规地图',
     size: '中型',
+    aliases: ['游轮2'],
     studyLevelUnlock: '特级学业',
     roomCount: 9,
     pipeCount: 0,
@@ -166,6 +174,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   夏日游轮III: {
     type: '常规地图',
     size: '中型',
+    aliases: ['游轮3'],
     studyLevelUnlock: '特级学业',
     roomCount: 9,
     pipeCount: 1,
@@ -185,6 +194,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   太空堡垒I: {
     type: '常规地图',
     size: '中型',
+    aliases: ['太空1', '堡垒1'],
     studyLevelUnlock: '特级学业',
     roomCount: 9,
     pipeCount: 0,
@@ -204,6 +214,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   太空堡垒II: {
     type: '常规地图',
     size: '中型',
+    aliases: ['太空2', '堡垒2'],
     studyLevelUnlock: '特级学业',
     roomCount: 10,
     pipeCount: 2,
@@ -220,7 +231,8 @@ const mapDefinitions: Record<string, MapDefinition> = {
   },
   太空堡垒III: {
     type: '常规地图',
-    size: '中型',
+    size: '大型',
+    aliases: ['太空3', '堡垒3'],
     studyLevelUnlock: '特级学业',
     roomCount: 9,
     pipeCount: 2,
@@ -248,6 +260,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   森林牧场: {
     type: '常规地图',
     size: '大型',
+    aliases: ['牧场'],
     studyLevelUnlock: '大师学业',
     roomCount: 5,
     pipeCount: 3,
@@ -282,6 +295,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   御门酒店: {
     type: '常规地图',
     size: '大型',
+    aliases: ['酒店'],
     studyLevelUnlock: '大师学业',
     roomCount: 7,
     pipeCount: 1,
@@ -298,6 +312,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   天宫: {
     type: '常规地图',
     size: '大型',
+    aliases: ['老天宫'],
     studyLevelUnlock: '大师学业',
     roomCount: 5,
     pipeCount: 1,
@@ -305,7 +320,8 @@ const mapDefinitions: Record<string, MapDefinition> = {
   },
   '天宫-云上': {
     type: '常规地图',
-    size: '中型',
+    size: '小型',
+    aliases: ['新天宫'],
     studyLevelUnlock: '大师学业',
     roomCount: 5,
     pipeCount: 2,
@@ -359,7 +375,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     specialImageUrl: '/images/maps/经典之家.png',
   },
   '5V5大都会': {
-    type: '常规地图',
+    type: '娱乐地图',
     size: '大型',
     studyLevelUnlock: '大师学业',
     roomCount: 7,
@@ -369,7 +385,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     specialImageUrl: '/images/maps/大都会.png',
   },
   家之典经: {
-    type: '常规地图',
+    type: '娱乐地图',
     size: '微型',
     roomCount: 8,
     pipeCount: 2,
