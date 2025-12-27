@@ -114,6 +114,7 @@ export default async function ArticlePage({
           author_id,
           created_at,
           view_count,
+          character_id,
           categories(name),
           users_public_view!author_id(nickname)
         `

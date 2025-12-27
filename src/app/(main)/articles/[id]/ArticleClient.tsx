@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import clsx from 'clsx';
 
+import { AssetManager } from '@/lib/assetManager';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { toChineseNumeral } from '@/lib/textUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -16,7 +17,9 @@ import {
   PencilSquareIcon,
   UserCircleIcon,
 } from '@/components/icons/CommonIcons';
+import Image from '@/components/Image';
 import Link from '@/components/Link';
+import { characters } from '@/data';
 
 interface ArticleData {
   id: string;
@@ -25,6 +28,7 @@ interface ArticleData {
   author_id: string;
   created_at: string;
   view_count?: number;
+  character_id?: string | null;
   categories: { name: string };
   users_public_view: { nickname: string | null } | null;
   latest_version: {
@@ -379,6 +383,9 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
     return tocItems.reduce((minLevel, item) => Math.min(minLevel, item.level), firstLevel);
   }, [tocItems]);
 
+  // Get bound character info if this is a game strategy article
+  const boundCharacter = article.character_id ? characters[article.character_id] : null;
+
   const renderTocList = (itemClassName: string, showHeadingLabel = true) => (
     <nav aria-label='文章目录'>
       {showHeadingLabel && (
@@ -443,6 +450,27 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
 
                   <span>分类: {article.categories?.name || '未分类'}</span>
                 </div>
+
+                {boundCharacter && (
+                  <Link
+                    href={`/characters/${encodeURIComponent(boundCharacter.id)}`}
+                    className='flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-1.5 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50'
+                  >
+                    <Image
+                      src={AssetManager.getCharacterImageUrl(
+                        boundCharacter.id,
+                        boundCharacter.factionId ?? 'cat'
+                      )}
+                      alt={boundCharacter.id}
+                      width={24}
+                      height={24}
+                      className='h-6 w-6 rounded-full object-cover ring-1 ring-blue-400 dark:ring-blue-500'
+                    />
+                    <span className='text-sm font-medium text-blue-600 dark:text-blue-400'>
+                      查看{boundCharacter.id}详情
+                    </span>
+                  </Link>
+                )}
 
                 <div className='flex items-center gap-2'>
                   <ClockIcon className='size-4' strokeWidth={1.5} />
