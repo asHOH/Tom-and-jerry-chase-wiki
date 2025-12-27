@@ -110,25 +110,33 @@ export default async function CharacterPage({
     }
 
     const { supabaseAdmin } = await import('@/lib/supabase/admin');
+    const allNames = [characterId].concat(character?.aliases ?? []);
+    // Single-name patterns
+    const singleNamePatterns = allNames.flatMap((name) => [
+      `${name}攻略修复版`,
+      `${name}一武攻略修复版`,
+      `${name}二武攻略修复版`,
+      `萌新专区角色教学，${name}`,
+      `${name}萌新专区角色教学`,
+      `萌新向${name}攻略`,
+      `${name}新手学习指导建议及常规打法思路`,
+      `${name}优势图与劣势图`,
+    ]);
+    const dualNamePatterns = allNames.flatMap((first) =>
+      allNames
+        .filter((second) => second !== first)
+        .flatMap((second) => [
+          `${first}（${second}）萌新专区角色教学）`,
+          `${first}（${second}）萌新专区角色教学`,
+          `萌新向${first}（${second}）攻略`,
+        ])
+    );
+    const articleTitles = [...singleNamePatterns, ...dualNamePatterns];
+
     const article = (
       docPage
         ? Promise.resolve(null)
-        : supabaseAdmin
-            .from('articles')
-            .select('id')
-            .in(
-              'title',
-              [characterId]
-                .concat(character?.aliases ?? [])
-                .flatMap((name) => [
-                  `${name}攻略修复版`,
-                  `${name}一武攻略修复版`,
-                  `${name}二武攻略修复版`,
-                  `萌新专区角色教学，${name}`,
-                ])
-            )
-            .limit(1)
-            .single()
+        : supabaseAdmin.from('articles').select('id').in('title', articleTitles).limit(1).single()
     ).then((result) => result?.data ?? null);
 
     const articleContent = Promise.resolve(
