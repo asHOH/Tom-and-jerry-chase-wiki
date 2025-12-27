@@ -19,6 +19,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
   const title = body?.title;
   const category = body?.category;
   const content = body?.content;
+  const character_id = body?.character_id ?? null;
 
   if (!id || !title || !category || !content) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -46,6 +47,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       p_title: title,
       p_content: content,
       p_category_id: category,
+      p_character_id: character_id,
     });
 
     if (error) {

@@ -14,7 +14,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id?:
     const { data, error } = await supabaseAdmin
       .from('articles')
       .select(
-        'id, title, category_id, created_at, article_versions(content, editor_id, status, created_at)'
+        'id, title, category_id, character_id, created_at, article_versions(content, editor_id, status, created_at)'
       )
       .eq('id', id)
       .single();

@@ -5,6 +5,7 @@ import clsx from 'clsx';
 
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import BaseCard from '@/components/ui/BaseCard';
+import { ArticleCharacterSelector } from '@/components/ui/CharacterSelector';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 import { CheckBadgeIcon, CloseIcon } from '@/components/icons/CommonIcons';
@@ -31,6 +32,10 @@ interface ArticleFormProps {
   errorMessage?: string | null;
   successMessage?: string | null;
   contentPlaceholder?: string;
+  // Character selector props for game strategy articles
+  showCharacterSelector?: boolean;
+  characterId?: string | null;
+  onCharacterChange?: (characterId: string | null) => void;
 }
 
 const ArticleForm: React.FC<ArticleFormProps> = ({
@@ -50,8 +55,16 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   errorMessage,
   successMessage,
   contentPlaceholder,
+  showCharacterSelector = false,
+  characterId,
+  onCharacterChange,
 }) => {
-  const isSaveDisabled = isSubmitting || !title.trim() || !category || !content;
+  const isSaveDisabled =
+    isSubmitting ||
+    !title.trim() ||
+    !category ||
+    !content ||
+    (showCharacterSelector && !characterId);
 
   return (
     <div className='mx-auto max-w-4xl px-4'>
@@ -145,6 +158,23 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               </select>
             )}
           </div>
+
+          {/* Character Selector for Game Strategy Articles */}
+          {showCharacterSelector && (
+            <div className='space-y-2'>
+              <label className='block text-lg font-semibold text-gray-900 dark:text-gray-100'>
+                关联角色 <span className='text-red-500'>*</span>
+              </label>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>
+                角色攻略文章需要选择一个关联角色
+              </p>
+              <ArticleCharacterSelector
+                selectedCharacterId={characterId ?? null}
+                onSelect={onCharacterChange ?? (() => {})}
+                disabled={isSubmitting}
+              />
+            </div>
+          )}
 
           <div className='space-y-2'>
             <label className='block text-lg font-semibold text-gray-900 dark:text-gray-100'>

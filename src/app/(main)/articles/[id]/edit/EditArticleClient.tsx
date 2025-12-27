@@ -46,6 +46,7 @@ interface ArticleInfo {
   article: {
     title: string;
     category_id: string;
+    character_id: string | null;
     article_versions: Array<{ content: string }>;
   };
 }
@@ -60,6 +61,7 @@ const EditArticleClient: React.FC = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
+  const [characterId, setCharacterId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -72,6 +74,15 @@ const EditArticleClient: React.FC = () => {
   const categories: Category[] = categoriesData?.categories || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
 
+  // Check if selected category is "角色攻略" (game strategy) - requires character binding
+  const isGameStrategyCategory = (categoryId: string): boolean => {
+    if (!categoryId || categories.length === 0) return false;
+    const selectedCat = categories.find((c) => c.id === categoryId);
+    return selectedCat?.name === '角色攻略';
+  };
+
+  const showCharacterSelector = isGameStrategyCategory(category);
+
   const { data: articleData, error: articleError } = useSWR<ArticleInfo>(
     id && userRole ? `/api/articles/${id}/info` : null,
     fetcher
@@ -81,6 +92,7 @@ const EditArticleClient: React.FC = () => {
     if (articleData) {
       setTitle(articleData.article.title);
       setCategory(articleData.article.category_id);
+      setCharacterId(articleData.article.character_id);
       setPlaceholder(articleData.article.article_versions[0]?.content || '');
     }
   }, [articleData]);
@@ -93,6 +105,14 @@ const EditArticleClient: React.FC = () => {
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
+  };
+
+  const handleCategoryChange = (newCategory: string) => {
+    setCategory(newCategory);
+    // Clear character selection if switching away from game strategy category
+    if (!isGameStrategyCategory(newCategory)) {
+      setCharacterId(null);
+    }
   };
 
   const isContentEmpty = (html: string) => {
@@ -117,6 +137,11 @@ const EditArticleClient: React.FC = () => {
       return;
     }
 
+    if (showCharacterSelector && !characterId) {
+      setError('角色攻略文章需要选择一个关联角色');
+      return;
+    }
+
     if (isContentEmpty(content)) {
       setError('请输入文章内容');
       return;
@@ -129,7 +154,12 @@ const EditArticleClient: React.FC = () => {
       const response = await fetch(`/api/articles/${id}/edit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title.trim(), category, content }),
+        body: JSON.stringify({
+          title: title.trim(),
+          category,
+          content,
+          character_id: showCharacterSelector ? characterId : null,
+        }),
       });
 
       if (response.ok) {
@@ -215,7 +245,7 @@ const EditArticleClient: React.FC = () => {
         title={title}
         onTitleChange={setTitle}
         category={category}
-        onCategoryChange={setCategory}
+        onCategoryChange={handleCategoryChange}
         content={content}
         onContentChange={handleContentChange}
         categories={categories.filter((cat) => cat.name != '根分类')}
@@ -228,6 +258,9 @@ const EditArticleClient: React.FC = () => {
         errorMessage={error || articleError?.message || categoriesError?.message || null}
         successMessage={success}
         contentPlaceholder={placeholder}
+        showCharacterSelector={showCharacterSelector}
+        characterId={characterId}
+        onCharacterChange={setCharacterId}
       />
     </div>
   );

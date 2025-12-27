@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { title, category, content } = await req.json();
+  const { title, category, content, character_id } = await req.json();
 
   if (!title || !category || !content) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -27,6 +27,7 @@ export async function POST(req: Request) {
         title,
         category_id: category,
         author_id: user.id,
+        character_id: character_id || null,
       })
       .select('id')
       .single();

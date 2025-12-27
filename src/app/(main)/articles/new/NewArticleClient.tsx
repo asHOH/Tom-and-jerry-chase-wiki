@@ -51,6 +51,7 @@ const NewArticleClient: React.FC = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
+  const [characterId, setCharacterId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,6 +64,15 @@ const NewArticleClient: React.FC = () => {
   const categories: Category[] =
     categoriesData?.categories.filter((category) => category.name != '根分类') || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
+
+  // Check if selected category is "角色攻略" (game strategy) - requires character binding
+  const isGameStrategyCategory = (categoryId: string): boolean => {
+    if (!categoryId || categories.length === 0) return false;
+    const selectedCat = categories.find((c) => c.id === categoryId);
+    return selectedCat?.name === '角色攻略';
+  };
+
+  const showCharacterSelector = isGameStrategyCategory(category);
 
   const isContentEmpty = (html: string) => {
     if (!html) return true;
@@ -91,6 +101,14 @@ const NewArticleClient: React.FC = () => {
     setContent(newContent);
   };
 
+  const handleCategoryChange = (newCategory: string) => {
+    setCategory(newCategory);
+    // Clear character selection if switching away from game strategy category
+    if (!isGameStrategyCategory(newCategory)) {
+      setCharacterId(null);
+    }
+  };
+
   const handleSave = async () => {
     if (!title.trim()) {
       setError('请输入文章标题');
@@ -99,6 +117,11 @@ const NewArticleClient: React.FC = () => {
 
     if (!category) {
       setError('请选择文章分类');
+      return;
+    }
+
+    if (showCharacterSelector && !characterId) {
+      setError('角色攻略文章需要选择一个关联角色');
       return;
     }
 
@@ -114,7 +137,12 @@ const NewArticleClient: React.FC = () => {
       const response = await fetch('/api/articles/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title.trim(), category, content }),
+        body: JSON.stringify({
+          title: title.trim(),
+          category,
+          content,
+          character_id: showCharacterSelector ? characterId : null,
+        }),
       });
 
       if (response.ok) {
@@ -185,7 +213,7 @@ const NewArticleClient: React.FC = () => {
         title={title}
         onTitleChange={setTitle}
         category={category}
-        onCategoryChange={setCategory}
+        onCategoryChange={handleCategoryChange}
         content={content}
         onContentChange={handleContentChange}
         categories={categories}
@@ -198,6 +226,9 @@ const NewArticleClient: React.FC = () => {
         errorMessage={error || categoriesError?.message || null}
         successMessage={success}
         contentPlaceholder={ARTICLE_EDITOR_PLACEHOLDER}
+        showCharacterSelector={showCharacterSelector}
+        characterId={characterId}
+        onCharacterChange={setCharacterId}
       />
     </div>
   );

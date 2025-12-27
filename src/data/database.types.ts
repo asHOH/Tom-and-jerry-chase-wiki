@@ -60,10 +60,50 @@ export type Database = {
           },
         ];
       };
+      article_versions_archive: {
+        Row: {
+          archived_at: string | null;
+          archived_by: string | null;
+          article_id: string | null;
+          content: string;
+          created_at: string | null;
+          editor_id: string | null;
+          id: number;
+          original_id: string;
+          preview_token: string | null;
+          status: Database['public']['Enums']['version_status'];
+        };
+        Insert: {
+          archived_at?: string | null;
+          archived_by?: string | null;
+          article_id?: string | null;
+          content: string;
+          created_at?: string | null;
+          editor_id?: string | null;
+          id?: never;
+          original_id: string;
+          preview_token?: string | null;
+          status: Database['public']['Enums']['version_status'];
+        };
+        Update: {
+          archived_at?: string | null;
+          archived_by?: string | null;
+          article_id?: string | null;
+          content?: string;
+          created_at?: string | null;
+          editor_id?: string | null;
+          id?: never;
+          original_id?: string;
+          preview_token?: string | null;
+          status?: Database['public']['Enums']['version_status'];
+        };
+        Relationships: [];
+      };
       articles: {
         Row: {
           author_id: string;
           category_id: string;
+          character_id: string | null;
           created_at: string;
           id: string;
           title: string;
@@ -72,6 +112,7 @@ export type Database = {
         Insert: {
           author_id: string;
           category_id: string;
+          character_id?: string | null;
           created_at?: string;
           id?: string;
           title: string;
@@ -80,6 +121,7 @@ export type Database = {
         Update: {
           author_id?: string;
           category_id?: string;
+          character_id?: string | null;
           created_at?: string;
           id?: string;
           title?: string;
@@ -140,34 +182,34 @@ export type Database = {
       };
       feedback: {
         Row: {
-          id: string;
-          type: string;
-          content: string;
           contact: string | null;
-          user_agent: string | null;
+          content: string;
+          created_at: string;
+          id: string;
           ip_address: string | null;
           status: string;
-          created_at: string;
+          type: string;
+          user_agent: string | null;
         };
         Insert: {
-          id?: string;
-          type: string;
-          content: string;
           contact?: string | null;
-          user_agent?: string | null;
+          content: string;
+          created_at?: string;
+          id?: string;
           ip_address?: string | null;
           status?: string;
-          created_at?: string;
+          type: string;
+          user_agent?: string | null;
         };
         Update: {
-          id?: string;
-          type?: string;
-          content?: string;
           contact?: string | null;
-          user_agent?: string | null;
+          content?: string;
+          created_at?: string;
+          id?: string;
           ip_address?: string | null;
           status?: string;
-          created_at?: string;
+          type?: string;
+          user_agent?: string | null;
         };
         Relationships: [];
       };
@@ -278,14 +320,8 @@ export type Database = {
         };
         Returns: string;
       };
-      delete_category: {
-        Args: { _id: string };
-        Returns: undefined;
-      };
-      generate_salt: {
-        Args: Record<PropertyKey, never>;
-        Returns: string;
-      };
+      delete_category: { Args: { _id: string }; Returns: undefined };
+      generate_salt: { Args: never; Returns: string };
       get_article_version_by_preview: {
         Args: { p_token: string };
         Returns: {
@@ -297,9 +333,15 @@ export type Database = {
           preview_token: string;
           status: Database['public']['Enums']['version_status'];
         }[];
+        SetofOptions: {
+          from: '*';
+          to: 'article_versions';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       get_categories: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: {
           default_visibility: Database['public']['Enums']['version_status'];
           id: string;
@@ -308,7 +350,7 @@ export type Database = {
         }[];
       };
       get_pending_versions_for_moderation: {
-        Args: Record<PropertyKey, never>;
+        Args: never;
         Returns: {
           article_id: string;
           article_title: string;
@@ -334,6 +376,10 @@ export type Database = {
         Args: { p_article_id: string };
         Returns: undefined;
       };
+      is_game_strategy_category: {
+        Args: { p_category_id: string };
+        Returns: boolean;
+      };
       reject_article_version: {
         Args: { p_version_id: string };
         Returns: undefined;
@@ -342,15 +388,18 @@ export type Database = {
         Args: { p_version_id: string };
         Returns: undefined;
       };
-      submit_article: {
-        Args: {
-          p_article_id: string;
-          p_category_id: string;
-          p_content: string;
-          p_title: string;
-        };
-        Returns: undefined;
-      };
+      submit_article:
+        | { Args: never; Returns: undefined }
+        | {
+            Args: {
+              p_article_id: string;
+              p_category_id: string;
+              p_character_id?: string;
+              p_content: string;
+              p_title: string;
+            };
+            Returns: undefined;
+          };
       update_category: {
         Args: {
           _default_visibility?: Database['public']['Enums']['version_status'];
