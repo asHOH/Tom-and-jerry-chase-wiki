@@ -428,22 +428,29 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 className='character-card shover:shadow-lg transform transition-transform! hover:-translate-y-1'
                 href={`/articles/${article.id}`}
               >
-                <div className='flex h-full flex-col px-4 pt-2 pb-5 text-left'>
+                <div className='flex h-full flex-col px-4 py-3 text-left'>
                   <h3 className='mb-2 line-clamp-2 text-xl font-bold dark:text-white'>
                     {article.title}
                   </h3>
 
                   <div className='mb-3 flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400'>
                     <span>作者: {article.users_public_view?.nickname || '未知'}</span>
-                    <span className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'>
+                    <span
+                      className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-800/50'
+                      onClick={(ev) => {
+                        ev.preventDefault();
+                        setCategoryFilters(new Set([article.category_id]));
+                      }}
+                      role='button'
+                    >
                       {article.categories?.name || '未分类'}
                     </span>
                   </div>
 
                   <RichTextDisplay content={latestVersion?.content} preview />
 
-                  <div className='mt-auto flex'>
-                    <div className='mb-3 flex flex-col items-center justify-between text-xs text-gray-600 dark:text-gray-400'>
+                  <div className='mt-auto mb-2 flex'>
+                    <div className='flex flex-col items-center justify-between text-xs text-gray-600 dark:text-gray-400'>
                       <span>发布: {formatMonthDay(article.created_at)}</span>
                       {latestVersion && (
                         <span>更新: {formatMonthDay(latestVersion.created_at)}</span>
