@@ -110,33 +110,17 @@ export default async function CharacterPage({
     }
 
     const { supabaseAdmin } = await import('@/lib/supabase/admin');
-    const allNames = [characterId].concat(character?.aliases ?? []);
-    // Single-name patterns
-    const singleNamePatterns = allNames.flatMap((name) => [
-      `${name}攻略修复版`,
-      `${name}一武攻略修复版`,
-      `${name}二武攻略修复版`,
-      `萌新专区角色教学，${name}`,
-      `${name}萌新专区角色教学`,
-      `萌新向${name}攻略`,
-      `${name}新手学习指导建议及常规打法思路`,
-      `${name}优势图与劣势图`,
-    ]);
-    const dualNamePatterns = allNames.flatMap((first) =>
-      allNames
-        .filter((second) => second !== first)
-        .flatMap((second) => [
-          `${first}（${second}）萌新专区角色教学）`,
-          `${first}（${second}）萌新专区角色教学`,
-          `萌新向${first}（${second}）攻略`,
-        ])
-    );
-    const articleTitles = [...singleNamePatterns, ...dualNamePatterns];
 
+    // Query articles by character_id (game strategy articles bound to this character)
     const article = (
       docPage
         ? Promise.resolve(null)
-        : supabaseAdmin.from('articles').select('id').in('title', articleTitles).limit(1).single()
+        : supabaseAdmin
+            .from('articles')
+            .select('id, users_public_view(nickname)')
+            .eq('character_id', characterId)
+            .limit(1)
+            .single()
     ).then((result) => result?.data ?? null);
 
     const articleContent = Promise.resolve(
@@ -144,13 +128,25 @@ export default async function CharacterPage({
         data
           ? supabaseAdmin
               .from('article_versions_public_view')
-              .select('content')
+              .select('content, users_public_view(nickname)')
               .eq('article_id', data.id)
               .eq('status', 'approved')
               .order('created_at', { ascending: false })
               .limit(1)
               .single()
-              .then((result) => ({ content: result?.data?.content ?? null, id: data.id }))
+              .then((result) => ({
+                content: result?.data?.content ?? null,
+                id: data.id,
+                // Collect unique author nicknames: article author + version editor
+                authors: Array.from(
+                  new Set(
+                    [
+                      (data.users_public_view as { nickname: string } | null)?.nickname,
+                      (result?.data?.users_public_view as { nickname: string } | null)?.nickname,
+                    ].filter(Boolean) as string[]
+                  )
+                ),
+              }))
           : null
       )
     );
@@ -169,10 +165,7 @@ export default async function CharacterPage({
             <CharacterDocs docPage={docPage}></CharacterDocs>
           ) : (
             <Suspense fallback={null}>
-              <CharacterArticle
-                content={articleContent}
-                authors={getContentWritersByCharacter(characterId)}
-              />
+              <CharacterArticle content={articleContent} />
             </Suspense>
           )}
         </CharacterDetailsClient>

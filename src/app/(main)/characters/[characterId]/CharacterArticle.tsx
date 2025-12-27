@@ -8,13 +8,12 @@ import StyledMDX from '@/components/ui/StyledMDX';
 
 export default function CharacterArticle({
   content,
-  authors,
 }: {
   content: Promise<{
     id: string | null;
     content: string | null;
+    authors: string[];
   } | null>;
-  authors: string[];
 }) {
   const result = use(content);
 
@@ -22,6 +21,8 @@ export default function CharacterArticle({
   useLayoutEffect(() => {
     if (result?.content) setDisplayContent(sanitizeHTML(result.content, { removeH1: true }));
   }, [result]);
+
+  const authors = result?.authors ?? [];
 
   return result && displayContent ? (
     <CharacterSection title='操作技巧' to={`/articles/${encodeURIComponent(result.id!)}`}>
