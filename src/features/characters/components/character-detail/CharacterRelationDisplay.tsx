@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
@@ -12,7 +12,8 @@ import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { CharacterRelationItem } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 import EditableField from '@/components/ui/EditableField';
-import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import { CharacterSelector } from '@/components/ui/CharacterSelector';
+import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { cards, characters, FactionId, specialSkills } from '@/data';
 
@@ -628,95 +629,6 @@ function useRelationEditor(characterId: string, key: RelationCollectionKey) {
   );
 
   return { handleUpdate, handleAdd, handleRemove, toggleIsMinor };
-}
-
-// Character selection component for adding relations
-function CharacterSelector({
-  currentCharacterId,
-  factionId,
-  relationType,
-  existingRelations,
-  onSelect,
-}: {
-  currentCharacterId: string;
-  factionId: FactionId;
-  relationType: RelationKey;
-  existingRelations: CharacterRelationItem[];
-  onSelect: (characterId: string) => void;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Get available characters based on relation type
-  const availableCharacters = React.useMemo(() => {
-    const allCharacters = Object.values(characters);
-
-    // Filter based on relation type
-    let filteredCharacters = allCharacters;
-    if (relationType === 'collaborators') {
-      // Collaborators: same faction (mouse only)
-      filteredCharacters = allCharacters.filter((char) => char.factionId === factionId);
-    } else {
-      // Counters/counteredBy/counterEachOther: opposite faction
-      filteredCharacters = allCharacters.filter((char) => char.factionId !== factionId);
-    }
-
-    // Exclude current character and existing relations
-    const existingIds = existingRelations.map((r) => r.id);
-    return filteredCharacters.filter(
-      (char) => char.id !== currentCharacterId && !existingIds.includes(char.id)
-    );
-  }, [currentCharacterId, factionId, relationType, existingRelations]);
-
-  const handleSelect = (characterId: string) => {
-    onSelect(characterId);
-    setIsOpen(false);
-  };
-
-  if (availableCharacters.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className='relative inline-block'>
-      <button
-        type='button'
-        onClick={() => setIsOpen(!isOpen)}
-        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
-        aria-label={`添加${relationType}关系`}
-      >
-        <PlusIcon className='h-4 w-4' aria-hidden='true' />
-      </button>
-
-      {isOpen && (
-        <div className='absolute top-full right-0 z-50 mt-1 max-h-60 w-56 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800'>
-          {availableCharacters.map((char) => (
-            <button
-              key={char.id}
-              type='button'
-              onClick={() => handleSelect(char.id)}
-              className='flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700'
-              aria-label={`选择${char.id}`}
-            >
-              <Image
-                src={
-                  relationType === 'collaborators'
-                    ? AssetManager.getCharacterImageUrl(char.id, 'mouse')
-                    : factionId === 'cat'
-                      ? AssetManager.getCharacterImageUrl(char.id, 'mouse')
-                      : AssetManager.getCharacterImageUrl(char.id, 'cat')
-                }
-                alt={char.id}
-                width={28}
-                height={28}
-                className='h-7 w-7 rounded-full object-cover'
-              />
-              <span className='text-gray-700 dark:text-gray-300'>{char.id}</span>
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 }
 
 const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {

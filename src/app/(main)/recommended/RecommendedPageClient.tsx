@@ -1,20 +1,17 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { AssetManager } from '@/lib/assetManager';
 import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
+import { CharacterSlotsSelector } from '@/components/ui/CharacterSelector';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
-import Image from '@/components/Image';
 import { characters } from '@/data';
 
 export default function RecommendedPageClient() {
   const [selectedMice, setSelectedMice] = useState<(string | null)[]>([null, null, null, null]);
-  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
-  const [activeSlotIndex, setActiveSlotIndex] = useState<number | null>(null);
 
   const allMice = useMemo(() => {
     return Object.values(characters).filter((c) => c.factionId === 'mouse');
@@ -23,28 +20,6 @@ export default function RecommendedPageClient() {
   const allCats = useMemo(() => {
     return Object.values(characters).filter((c) => c.factionId === 'cat');
   }, []);
-
-  const handleSlotClick = (index: number) => {
-    setActiveSlotIndex(index);
-    setIsSelectorOpen(true);
-  };
-
-  const handleSelectMouse = (mouseId: string) => {
-    if (activeSlotIndex !== null) {
-      const newSelected = [...selectedMice];
-      newSelected[activeSlotIndex] = mouseId;
-      setSelectedMice(newSelected);
-      setIsSelectorOpen(false);
-      setActiveSlotIndex(null);
-    }
-  };
-
-  const handleRemoveMouse = (e: React.MouseEvent, index: number) => {
-    e.stopPropagation();
-    const newSelected = [...selectedMice];
-    newSelected[index] = null;
-    setSelectedMice(newSelected);
-  };
 
   const recommendedCats = useMemo(() => {
     const activeMice = selectedMice.filter((id): id is string => id !== null);
@@ -86,83 +61,13 @@ export default function RecommendedPageClient() {
       </header>
 
       {/* Mouse Selector */}
-      <div className='mb-12 flex flex-wrap justify-center gap-4 dark:text-slate-200'>
-        {selectedMice.map((mouseId, index) => (
-          <div
-            key={index}
-            onClick={() => handleSlotClick(index)}
-            className={`relative flex h-24 w-24 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 ${mouseId ? 'border-solid border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'} `}
-          >
-            {mouseId ? (
-              <>
-                <Image
-                  src={AssetManager.getCharacterImageUrl(mouseId, 'mouse')}
-                  alt={mouseId}
-                  width={80}
-                  height={80}
-                  className='h-20 w-20 object-contain'
-                />
-                <button
-                  onClick={(e) => handleRemoveMouse(e, index)}
-                  className='absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600'
-                >
-                  <TrashIcon className='h-3 w-3' />
-                </button>
-                <div className='absolute right-0 bottom-1 left-0 truncate px-1 text-center text-xs font-medium text-gray-700 dark:text-gray-300'>
-                  {mouseId}
-                </div>
-              </>
-            ) : (
-              <PlusIcon className='h-8 w-8 text-gray-400' />
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Selector Modal */}
-      {isSelectorOpen && (
-        <div
-          className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'
-          onClick={() => setIsSelectorOpen(false)}
-        >
-          <div
-            className='flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-xl dark:bg-slate-800'
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className='flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700'>
-              <h3 className='text-lg font-semibold'>选择老鼠角色</h3>
-              <button
-                onClick={() => setIsSelectorOpen(false)}
-                className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              >
-                ✕
-              </button>
-            </div>
-            <div className='grid grid-cols-4 gap-4 overflow-y-auto p-4 sm:grid-cols-5 md:grid-cols-6'>
-              {allMice.map((mouse) => {
-                const isSelected = selectedMice.includes(mouse.id);
-                return (
-                  <button
-                    key={mouse.id}
-                    onClick={() => !isSelected && handleSelectMouse(mouse.id)}
-                    disabled={isSelected}
-                    className={`flex flex-col items-center gap-2 rounded-lg p-2 transition-colors ${isSelected ? 'cursor-not-allowed opacity-50 grayscale' : 'hover:bg-gray-100 dark:hover:bg-gray-700'} `}
-                  >
-                    <Image
-                      src={AssetManager.getCharacterImageUrl(mouse.id, 'mouse')}
-                      alt={mouse.id}
-                      width={48}
-                      height={48}
-                      className='h-12 w-12 object-contain'
-                    />
-                    <span className='text-center text-xs'>{mouse.id}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
+      <CharacterSlotsSelector
+        title='选择老鼠角色'
+        characters={allMice}
+        selectedIds={selectedMice}
+        onSelectedIdsChange={(next) => setSelectedMice(next)}
+        getCharacterImageUrl={(characterId) => AssetManager.getCharacterImageUrl(characterId, 'mouse')}
+      />
 
       {/* Recommendations */}
       {recommendedCats.length > 0 && (
