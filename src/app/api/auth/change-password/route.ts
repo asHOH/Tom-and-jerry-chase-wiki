@@ -1,0 +1,112 @@
+import { pbkdf2Sync, randomBytes, timingSafeEqual } from 'crypto';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { checkPasswordStrength } from '@/lib/passwordUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
+
+const hashPassword = (password: string, salt: string) =>
+  pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+
+function stringTimingSafeEqual(a: string, b: string): boolean {
+  const bufA = Buffer.from(a, 'utf16le');
+  const bufB = Buffer.from(b, 'utf16le');
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: '需要先登录。' }, { status: 401 });
+    }
+
+    const body = (await request.json()) as unknown;
+    const { oldPassword, newPassword } = (body ?? {}) as {
+      oldPassword?: unknown;
+      newPassword?: unknown;
+    };
+
+    if (!newPassword || typeof newPassword !== 'string') {
+      return NextResponse.json({ error: '新密码不能为空。' }, { status: 400 });
+    }
+
+    const strength = await checkPasswordStrength(newPassword);
+    if (strength.strength <= 1) {
+      return NextResponse.json({ error: `密码强度不足：${strength.reason}` }, { status: 400 });
+    }
+
+    const { data: current, error: fetchError } = await supabaseAdmin
+      .from('users')
+      .select('password_hash, salt')
+      .eq('id', user.id)
+      .single();
+
+    if (fetchError || !current) {
+      console.error('Failed to fetch current user credentials:', fetchError);
+      return NextResponse.json({ error: '获取用户信息失败。' }, { status: 500 });
+    }
+
+    const previousPasswordHash = current.password_hash ?? '';
+    const previousSalt = current.salt;
+    const hasExistingPassword = !!previousPasswordHash;
+
+    if (hasExistingPassword) {
+      if (!oldPassword || typeof oldPassword !== 'string') {
+        return NextResponse.json({ error: '请输入旧密码。' }, { status: 400 });
+      }
+      const providedHash = hashPassword(oldPassword, previousSalt);
+      if (!stringTimingSafeEqual(providedHash, previousPasswordHash)) {
+        return NextResponse.json({ error: '旧密码不正确。' }, { status: 401 });
+      }
+    }
+
+    if (hasExistingPassword && typeof oldPassword === 'string' && oldPassword === newPassword) {
+      return NextResponse.json({ error: '新密码不能与旧密码相同。' }, { status: 400 });
+    }
+
+    const nextSalt = randomBytes(16).toString('hex');
+    const nextPasswordHash = hashPassword(newPassword, nextSalt);
+
+    const { error: updateError } = await supabaseAdmin
+      .from('users')
+      .update({ password_hash: nextPasswordHash, salt: nextSalt })
+      .eq('id', user.id);
+
+    if (updateError) {
+      console.error('Failed to update custom user password hash:', updateError);
+      return NextResponse.json({ error: '修改密码失败。' }, { status: 500 });
+    }
+
+    const { error: supabaseAuthUpdateError } = await supabaseAdmin.auth.admin.updateUserById(
+      user.id,
+      { password: newPassword }
+    );
+
+    if (supabaseAuthUpdateError) {
+      console.error('Failed to update supabase auth password:', supabaseAuthUpdateError);
+
+      const { error: revertError } = await supabaseAdmin
+        .from('users')
+        .update({ password_hash: previousPasswordHash, salt: previousSalt })
+        .eq('id', user.id);
+
+      if (revertError) {
+        console.error('Failed to revert custom user password hash:', revertError);
+      }
+
+      return NextResponse.json({ error: '修改密码失败。' }, { status: 500 });
+    }
+
+    return NextResponse.json({ message: '密码修改成功。' });
+  } catch (e) {
+    console.error('Change-password error:', e);
+    return NextResponse.json({ error: '发生未知错误。' }, { status: 500 });
+  }
+}

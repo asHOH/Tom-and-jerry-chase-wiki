@@ -10,6 +10,7 @@ import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import { UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
@@ -45,6 +46,7 @@ const USER_BUTTON_WIDTH = 44;
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [overflowOpen, setOverflowOpen] = useState(false);
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
@@ -112,6 +114,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     setOverflowOpen(false);
     setUserDropdownOpen(false);
   }, [pathname, navigatingTo]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    if (!userDropdownOpen) return;
+    const onDocClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      if (target.closest('[data-user-dropdown-root]')) return;
+      setUserDropdownOpen(false);
+    };
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
+  }, [mounted, userDropdownOpen]);
 
   const isTabActive = (tabPath: string) => isActive(tabPath);
 
@@ -353,7 +368,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             shouldDisplayUserSettings &&
             !process.env.NEXT_PUBLIC_DISABLE_ARTICLES &&
             !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && (
-              <div className='relative'>
+              <div className='relative' data-user-dropdown-root>
                 <Tooltip content='用户设置' className='border-none'>
                   <button
                     type='button'
@@ -369,6 +384,18 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                     <ul>
                       <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>
                         你好，{nickname}
+                      </li>
+                      <li>
+                        <button
+                          type='button'
+                          className='w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                          onClick={() => {
+                            setUserDropdownOpen(false);
+                            setChangePasswordOpen(true);
+                          }}
+                        >
+                          修改密码
+                        </button>
                       </li>
                       {(role == 'Coordinator' || role == 'Reviewer') && (
                         <li className='cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700'>
@@ -402,6 +429,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             )}
         </div>
       </div>
+
+      {changePasswordOpen && <ChangePasswordDialog onClose={() => setChangePasswordOpen(false)} />}
     </div>
   );
 }
