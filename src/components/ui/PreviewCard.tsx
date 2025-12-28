@@ -2,6 +2,7 @@
 import clsx from 'clsx';
 
 import { getTypeLabelColors } from '@/lib/design-tokens';
+import type { GotoDisambiguationCandidate } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { SkillType } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
@@ -17,6 +18,7 @@ export type GotoPreviewCardProps = {
   name: string;
   description?: string;
   imageUrl?: string;
+  candidates?: GotoDisambiguationCandidate[];
   className?: string;
   hideImage?: boolean;
   factionId?: FactionId;
@@ -53,6 +55,7 @@ export default function PreviewCard({
   name,
   description,
   imageUrl,
+  candidates,
   className = '',
   hideImage = false,
   factionId,
@@ -73,6 +76,33 @@ export default function PreviewCard({
     type === 'character-skill' && ownerName
       ? `（${ownerFactionId ? factionLabel(ownerFactionId) + '‐' : ''}${ownerName}）`
       : undefined;
+
+  const disambiguationList =
+    type === 'disambiguation' && Array.isArray(candidates) && candidates.length > 0 ? (
+      <div className='mt-2 w-full text-sm text-gray-700 dark:text-gray-300'>
+        <div className='mb-1'>{name}可能指：</div>
+        <ul className='list-inside list-disc space-y-1'>
+          {candidates.map((c) => (
+            <li key={`${c.type}@@${c.url}`} className='leading-relaxed'>
+              {clickable ? (
+                <span>
+                  {c.name}（{c.categoryLabel}）
+                </span>
+              ) : (
+                <Link
+                  href={c.url}
+                  className='underline decoration-solid decoration-1 underline-offset-2'
+                  aria-label={`前往：${c.name}（${c.categoryLabel}）`}
+                >
+                  {c.name}（{c.categoryLabel}）
+                </Link>
+              )}
+              <span className='text-gray-600 dark:text-gray-400'>，{c.kindDescription}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : null;
   const content = (
     <BaseCard
       className={clsx(
@@ -142,51 +172,53 @@ export default function PreviewCard({
             </div>
           </div>
         )}
-        {(() => {
-          if (type !== 'character-skill') {
-            if (!description) return null;
-            return (
-              <div
-                className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
-                title={description}
-              >
-                <TextWithHoverTooltips text={description} />
-              </div>
-            );
-          }
-          // character-skill description composition for level
-          if (skillType === 'passive') {
-            const text =
-              skillLevelDescription && skillLevelDescription.trim().length > 0
-                ? skillLevelDescription
-                : description || '';
-            if (!text) return null;
-            return (
-              <div
-                className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
-                title={text}
-              >
-                <TextWithHoverTooltips text={text} />
-              </div>
-            );
-          }
-          // non-passive: base description + optional level line
-          const base = description || '';
-          const levelLine =
-            skillLevelDescription && String(skillLevel ?? '').length > 0
-              ? `\nLv. ${skillLevel}: ${skillLevelDescription}`
-              : '';
-          const composed = `${base}${levelLine}`.trim();
-          if (!composed) return null;
-          return (
-            <div
-              className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
-              title={composed}
-            >
-              <TextWithHoverTooltips text={composed} />
-            </div>
-          );
-        })()}
+        {type === 'disambiguation' && disambiguationList
+          ? disambiguationList
+          : (() => {
+              if (type !== 'character-skill') {
+                if (!description) return null;
+                return (
+                  <div
+                    className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
+                    title={description}
+                  >
+                    <TextWithHoverTooltips text={description} />
+                  </div>
+                );
+              }
+              // character-skill description composition for level
+              if (skillType === 'passive') {
+                const text =
+                  skillLevelDescription && skillLevelDescription.trim().length > 0
+                    ? skillLevelDescription
+                    : description || '';
+                if (!text) return null;
+                return (
+                  <div
+                    className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
+                    title={text}
+                  >
+                    <TextWithHoverTooltips text={text} />
+                  </div>
+                );
+              }
+              // non-passive: base description + optional level line
+              const base = description || '';
+              const levelLine =
+                skillLevelDescription && String(skillLevel ?? '').length > 0
+                  ? `\nLv. ${skillLevel}: ${skillLevelDescription}`
+                  : '';
+              const composed = `${base}${levelLine}`.trim();
+              if (!composed) return null;
+              return (
+                <div
+                  className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
+                  title={composed}
+                >
+                  <TextWithHoverTooltips text={composed} />
+                </div>
+              );
+            })()}
       </div>
     </BaseCard>
   );

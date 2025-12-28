@@ -111,6 +111,7 @@ export default function GotoLink({
         name: result.name,
         description: result.description ?? '',
         imageUrl: result.imageUrl ?? '',
+        ...(Array.isArray(result.candidates) ? { candidates: result.candidates } : {}),
         className: '',
         ...(result.factionId ? { factionId: result.factionId } : {}),
         ...(result.ownerName ? { ownerName: result.ownerName } : {}),

@@ -189,6 +189,7 @@ async function buildGotoIndex(): Promise<GotoIndex> {
       name: card.id,
       description: card.description,
       imageUrl: card.imageUrl,
+      ...(card.factionId ? { factionId: card.factionId } : {}),
     };
     push(byName, normalizeName(id), {
       kind: 'card',

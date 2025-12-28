@@ -205,9 +205,19 @@ export async function getGotoResult(
     return out;
   })();
 
-  const kindLabel = (kind: string): { categoryLabel: string; kindDescription: string } => {
-    if (kind === 'character') return { categoryLabel: '角色', kindDescription: '角色' };
-    if (kind === 'card') return { categoryLabel: '知识卡', kindDescription: '知识卡' };
+  const factionLabel = (factionId?: string): '猫' | '鼠' | undefined =>
+    factionId === 'cat' ? '猫' : factionId === 'mouse' ? '鼠' : undefined;
+
+  const kindLabel = (
+    entry: (typeof deduped)[number]
+  ): { categoryLabel: string; kindDescription: string } => {
+    const f = factionLabel((entry.goto as { factionId?: string }).factionId);
+    const kind = entry.kind;
+
+    if (kind === 'character')
+      return { categoryLabel: '角色', kindDescription: f ? `${f}角色` : '角色' };
+    if (kind === 'card')
+      return { categoryLabel: '知识卡', kindDescription: f ? `${f}知识卡` : '知识卡' };
     if (kind === 'item') return { categoryLabel: '道具', kindDescription: '道具' };
     if (kind === 'itemGroup') return { categoryLabel: '组合', kindDescription: '组合' };
     if (kind === 'buff') return { categoryLabel: '状态', kindDescription: '状态' };
@@ -229,7 +239,7 @@ export async function getGotoResult(
   const toDisambiguationCandidate = (
     entry: (typeof deduped)[number]
   ): GotoDisambiguationCandidate => {
-    const { categoryLabel, kindDescription } = kindLabel(entry.kind);
+    const { categoryLabel, kindDescription } = kindLabel(entry);
     return {
       url: entry.goto.url,
       type: entry.goto.type,
@@ -241,6 +251,10 @@ export async function getGotoResult(
 
   if (deduped.length >= 2) {
     const firstImage = deduped[0]?.goto.imageUrl;
+    const disambiguationCandidates = deduped.map(toDisambiguationCandidate);
+    const bulletLines = disambiguationCandidates
+      .map((c) => `- ${c.name}（${c.categoryLabel}），${c.kindDescription}`)
+      .join('\n');
     const disambiguationUrl = (() => {
       const sp = new URLSearchParams();
       if (normalizedCategory) sp.set('category', normalizedCategory);
@@ -251,9 +265,9 @@ export async function getGotoResult(
       url: disambiguationUrl,
       type: 'disambiguation',
       name: rawName,
-      description: `${rawName}可能指：`,
+      description: `${rawName}可能指：\n${bulletLines}`,
       ...(firstImage ? { imageUrl: firstImage } : {}),
-      candidates: deduped.map(toDisambiguationCandidate),
+      candidates: disambiguationCandidates,
     };
     return disambiguation;
   }

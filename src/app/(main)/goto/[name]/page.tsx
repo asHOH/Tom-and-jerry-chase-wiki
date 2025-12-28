@@ -3,6 +3,8 @@
 import { notFound, redirect } from 'next/navigation';
 
 import { getGotoResult } from '@/lib/gotoUtils';
+import PageDescription from '@/components/ui/PageDescription';
+import PageTitle from '@/components/ui/PageTitle';
 import Link from '@/components/Link';
 
 export default async function GotoPage({
@@ -33,10 +35,11 @@ export default async function GotoPage({
 
   return (
     <main className='mx-auto w-full max-w-3xl px-4 py-6 sm:px-6'>
-      <h1 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>
-        {result.name}可能指：
-      </h1>
-      <ul className='mt-4 list-inside list-disc space-y-2 text-base text-gray-800 dark:text-gray-200'>
+      <header className='text-center'>
+        <PageTitle>{result.name}</PageTitle>
+        <PageDescription>{result.name}可能指：</PageDescription>
+      </header>
+      <ul className='mt-4 list-inside list-disc space-y-2 rounded-lg bg-white/60 p-4 text-lg text-gray-800 shadow-sm dark:bg-slate-900/40 dark:text-gray-200'>
         {result.candidates.map((c) => (
           <li key={`${c.type}@@${c.url}`}>
             <Link
