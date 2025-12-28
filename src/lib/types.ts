@@ -137,11 +137,17 @@ export type GotoResponse = GotoResult | GotoDisambiguationResult;
 // Narrowed category hints used to disambiguate goto targets
 export const CATEGORY_HINTS = [
   '知识卡',
+  '猫知识卡',
+  '鼠知识卡',
   '特技',
   '猫特技',
   '鼠特技',
+  '猫角色',
+  '鼠角色',
   '道具',
   '衍生物',
+  '猫衍生物',
+  '鼠衍生物',
   '技能',
   '状态',
   '组合',

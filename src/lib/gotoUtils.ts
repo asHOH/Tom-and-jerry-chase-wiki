@@ -48,19 +48,25 @@ export async function getGotoResult(
   const normalizedCategory = normalizeCategoryHint(templateCategory ?? category);
   const descMode = options?.descMode ?? 'detailed';
   const categoryPredicate = (hint?: CategoryHint) => {
-    type K = { kind: string };
+    type K = { kind: string; goto?: { factionId?: string } };
     if (!hint) return undefined as undefined | ((c: K) => boolean);
     if (hint === '组合') return (c: K) => c.kind === 'itemGroup';
     if (hint === '知识卡') return (c: K) => c.kind === 'card';
+    if (hint === '猫知识卡') return (c: K) => c.kind === 'card' && c.goto?.factionId === 'cat';
+    if (hint === '鼠知识卡') return (c: K) => c.kind === 'card' && c.goto?.factionId === 'mouse';
     if (hint === '状态') return (c: K) => c.kind === 'buff';
     if (hint === '特技')
       return (c: K) => c.kind === 'special-skill-cat' || c.kind === 'special-skill-mouse';
     if (hint === '猫特技') return (c: K) => c.kind === 'special-skill-cat';
     if (hint === '鼠特技') return (c: K) => c.kind === 'special-skill-mouse';
+    if (hint === '猫角色') return (c: K) => c.kind === 'character' && c.goto?.factionId === 'cat';
+    if (hint === '鼠角色') return (c: K) => c.kind === 'character' && c.goto?.factionId === 'mouse';
     if (hint === '技能') return (c: K) => c.kind === 'character-skill';
     if (hint === '道具')
       return (c: K) => c.kind === 'item' || c.kind === 'entity-cat' || c.kind === 'entity-mouse';
     if (hint === '衍生物') return (c: K) => c.kind === 'entity-cat' || c.kind === 'entity-mouse';
+    if (hint === '猫衍生物') return (c: K) => c.kind === 'entity-cat';
+    if (hint === '鼠衍生物') return (c: K) => c.kind === 'entity-mouse';
     if (hint === '地图') return (c: K) => c.kind === 'map';
     if (hint === '地图组件') return (c: K) => c.kind === 'fixture';
     if (hint === '场景物') return (c: K) => c.kind === 'fixture';
@@ -215,9 +221,9 @@ export async function getGotoResult(
     const kind = entry.kind;
 
     if (kind === 'character')
-      return { categoryLabel: '角色', kindDescription: f ? `${f}角色` : '角色' };
+      return { categoryLabel: f ? `${f}角色` : '角色', kindDescription: '角色' };
     if (kind === 'card')
-      return { categoryLabel: '知识卡', kindDescription: f ? `${f}知识卡` : '知识卡' };
+      return { categoryLabel: f ? `${f}知识卡` : '知识卡', kindDescription: '知识卡' };
     if (kind === 'item') return { categoryLabel: '道具', kindDescription: '道具' };
     if (kind === 'itemGroup') return { categoryLabel: '组合', kindDescription: '组合' };
     if (kind === 'buff') return { categoryLabel: '状态', kindDescription: '状态' };
