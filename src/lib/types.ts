@@ -105,10 +105,32 @@ export type GotoResult = {
   skillLevelDescription?: string; // Description for that level, if any
 };
 
+export type GotoDisambiguationCandidate = {
+  url: string;
+  type: GotoResult['type'];
+  name: string;
+  // Display helpers for disambiguation lists (built-in on the server)
+  categoryLabel: CategoryHint | string;
+  kindDescription: string;
+};
+
+export type GotoDisambiguationResult = {
+  url: string; // points to /goto/:id
+  type: 'disambiguation';
+  name: string; // the ambiguous base name
+  description: string;
+  imageUrl?: string; // first candidate's imageUrl for API consumers
+  candidates: GotoDisambiguationCandidate[];
+};
+
+export type GotoResponse = GotoResult | GotoDisambiguationResult;
+
 // Narrowed category hints used to disambiguate goto targets
 export const CATEGORY_HINTS = [
   '知识卡',
   '特技',
+  '猫特技',
+  '鼠特技',
   '道具',
   '衍生物',
   '技能',

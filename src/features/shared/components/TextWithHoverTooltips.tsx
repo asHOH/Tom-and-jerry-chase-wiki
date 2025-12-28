@@ -145,18 +145,18 @@ export const renderTextWithClasses = (text: string): (string | React.ReactElemen
 };
 
 /**
- * Check if a string has balanced parentheses and ends with ')'
- * @param text - Text to check
- * @returns Whether the text has balanced parentheses and ends with ')'
+ * Check if a string has balanced parentheses and ends with ')' or '）'
+ * Supports both ASCII () and full-width （）.
  */
 const hasBalancedParentheses = (text: string): boolean => {
   let balance = 0;
   for (let i = 0; i < text.length; i++) {
-    if (text[i] === '(') balance++;
-    if (text[i] === ')') balance--;
-    if (balance < 0) return false; // Unbalanced closing parenthesis
+    const ch = text[i];
+    if (ch === '(' || ch === '（') balance++;
+    if (ch === ')' || ch === '）') balance--;
+    if (balance < 0) return false;
   }
-  return balance === 0 && text.endsWith(')');
+  return balance === 0 && (text.endsWith(')') || text.endsWith('）'));
 };
 
 /**
@@ -169,7 +169,7 @@ const extractBaseNameAndCategoryHint = (
 ): { baseName: string; categoryHint: string | null } => {
   // Check if content has balanced parentheses and ends with ')'
   if (hasBalancedParentheses(content)) {
-    const lastOpenParen = content.lastIndexOf('(');
+    const lastOpenParen = Math.max(content.lastIndexOf('('), content.lastIndexOf('（'));
     if (lastOpenParen !== -1) {
       const baseName = content.substring(0, lastOpenParen).trim();
       const categoryHint = content.substring(lastOpenParen + 1, content.length - 1).trim();

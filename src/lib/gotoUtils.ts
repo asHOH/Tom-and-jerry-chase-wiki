@@ -1,6 +1,12 @@
 // Utility for resolving goto targets by name
 
-import type { CategoryHint, GotoResult } from '@/lib/types';
+import type {
+  CategoryHint,
+  GotoDisambiguationCandidate,
+  GotoDisambiguationResult,
+  GotoResponse,
+  GotoResult,
+} from '@/lib/types';
 import { buffs, characters, type Skill } from '@/data';
 
 import { ensureGotoIndex, normalizeCategoryHint, normalizeName } from './gotoIndex';
@@ -17,8 +23,29 @@ export async function getGotoResult(
   options?: {
     descMode?: 'description' | 'detailed';
   }
-): Promise<GotoResult | null> {
-  const normalizedCategory = normalizeCategoryHint(category);
+): Promise<GotoResponse | null> {
+  const parseTrailingCategoryTemplate = (
+    input: string
+  ): { baseName: string; categoryHint?: CategoryHint } => {
+    const trimmed = input.trim();
+    if (!trimmed) return { baseName: input };
+
+    // Support both ASCII (...) and full-width （...）. Only parse a trailing pair.
+    const m = /^(.*?)[\s]*[（(]([^（）()]+)[)）]\s*$/.exec(trimmed);
+    if (!m) return { baseName: input };
+
+    const baseName = (m[1] ?? '').trim();
+    const hintRaw = (m[2] ?? '').trim();
+    const hint = normalizeCategoryHint(hintRaw);
+    if (!baseName) return { baseName: input };
+    if (!hint) return { baseName };
+    return { baseName, categoryHint: hint };
+  };
+
+  const { baseName: templateBaseName, categoryHint: templateCategory } =
+    parseTrailingCategoryTemplate(name);
+
+  const normalizedCategory = normalizeCategoryHint(templateCategory ?? category);
   const descMode = options?.descMode ?? 'detailed';
   const categoryPredicate = (hint?: CategoryHint) => {
     type K = { kind: string };
@@ -28,6 +55,8 @@ export async function getGotoResult(
     if (hint === '状态') return (c: K) => c.kind === 'buff';
     if (hint === '特技')
       return (c: K) => c.kind === 'special-skill-cat' || c.kind === 'special-skill-mouse';
+    if (hint === '猫特技') return (c: K) => c.kind === 'special-skill-cat';
+    if (hint === '鼠特技') return (c: K) => c.kind === 'special-skill-mouse';
     if (hint === '技能') return (c: K) => c.kind === 'character-skill';
     if (hint === '道具')
       return (c: K) => c.kind === 'item' || c.kind === 'entity-cat' || c.kind === 'entity-mouse';
@@ -81,8 +110,8 @@ export async function getGotoResult(
 
   // Parse skill level prefix like "2级技能名" / "一级技能名" (only 1/2, 一/二)
   let skillLevelRequested: number | null = null;
-  let rawName = name;
-  const levelMatch = /^([12一二])级(.+)$/.exec(name.trim());
+  let rawName = templateBaseName;
+  const levelMatch = /^([12一二])级(.+)$/.exec(rawName.trim());
   if (levelMatch && levelMatch[1] && levelMatch[2]) {
     const parsed = parseOneTwo(levelMatch[1]);
     if (parsed) {
@@ -159,10 +188,77 @@ export async function getGotoResult(
   const { byName } = await ensureGotoIndex();
   const key = normalizeName(rawName);
   const candidates = byName.get(key) ?? [];
+
   const pred = categoryPredicate(normalizedCategory);
   const filtered = pred ? candidates.filter(pred as (c: { kind: string }) => boolean) : candidates;
+  const pool = filtered.length > 0 ? filtered : candidates;
 
-  const chosen = filtered[0] ?? candidates[0];
+  const deduped = (() => {
+    const seen = new Set<string>();
+    const out: typeof pool = [];
+    for (const c of pool) {
+      const k = `${c.kind}@@${c.goto.url}`;
+      if (seen.has(k)) continue;
+      seen.add(k);
+      out.push(c);
+    }
+    return out;
+  })();
+
+  const kindLabel = (kind: string): { categoryLabel: string; kindDescription: string } => {
+    if (kind === 'character') return { categoryLabel: '角色', kindDescription: '角色' };
+    if (kind === 'card') return { categoryLabel: '知识卡', kindDescription: '知识卡' };
+    if (kind === 'item') return { categoryLabel: '道具', kindDescription: '道具' };
+    if (kind === 'itemGroup') return { categoryLabel: '组合', kindDescription: '组合' };
+    if (kind === 'buff') return { categoryLabel: '状态', kindDescription: '状态' };
+    if (kind === 'special-skill-cat')
+      return { categoryLabel: '猫特技', kindDescription: '猫方特技' };
+    if (kind === 'special-skill-mouse')
+      return { categoryLabel: '鼠特技', kindDescription: '鼠方特技' };
+    if (kind === 'character-skill') return { categoryLabel: '技能', kindDescription: '角色技能' };
+    if (kind === 'entity-cat') return { categoryLabel: '衍生物', kindDescription: '猫方衍生物' };
+    if (kind === 'entity-mouse') return { categoryLabel: '衍生物', kindDescription: '鼠方衍生物' };
+    if (kind === 'map') return { categoryLabel: '地图', kindDescription: '地图' };
+    if (kind === 'fixture')
+      return { categoryLabel: '地图组件', kindDescription: '地图组件/场景物' };
+    if (kind === 'mode') return { categoryLabel: '游戏模式', kindDescription: '游戏模式' };
+    if (kind === 'doc') return { categoryLabel: '文档', kindDescription: '文档' };
+    return { categoryLabel: kind, kindDescription: kind };
+  };
+
+  const toDisambiguationCandidate = (
+    entry: (typeof deduped)[number]
+  ): GotoDisambiguationCandidate => {
+    const { categoryLabel, kindDescription } = kindLabel(entry.kind);
+    return {
+      url: entry.goto.url,
+      type: entry.goto.type,
+      name: entry.goto.name,
+      categoryLabel,
+      kindDescription,
+    };
+  };
+
+  if (deduped.length >= 2) {
+    const firstImage = deduped[0]?.goto.imageUrl;
+    const disambiguationUrl = (() => {
+      const sp = new URLSearchParams();
+      if (normalizedCategory) sp.set('category', normalizedCategory);
+      const qs = sp.toString();
+      return `/goto/${encodeURIComponent(rawName)}${qs ? `?${qs}` : ''}`;
+    })();
+    const disambiguation: GotoDisambiguationResult = {
+      url: disambiguationUrl,
+      type: 'disambiguation',
+      name: rawName,
+      description: `${rawName}可能指：`,
+      ...(firstImage ? { imageUrl: firstImage } : {}),
+      candidates: deduped.map(toDisambiguationCandidate),
+    };
+    return disambiguation;
+  }
+
+  const chosen = deduped[0];
   if (chosen) {
     if (chosen.kind === 'character-skill') {
       const maybeOverrideSkillDescription = (): string | undefined => {

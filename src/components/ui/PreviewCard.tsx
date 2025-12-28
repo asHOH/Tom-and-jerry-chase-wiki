@@ -35,6 +35,7 @@ const typeLabels: Record<string, string> = {
   entity: '衍生物',
   'special-skill-cat': '猫特技',
   'special-skill-mouse': '鼠特技',
+  disambiguation: '消歧义',
   doc: '文档',
   'character-skill': '技能',
   buff: '状态',
@@ -121,7 +122,7 @@ export default function PreviewCard({
           </>
         ) : (
           <div className='mb-1 flex w-full items-center gap-2'>
-            <div className='flex flex-shrink-0 items-center gap-2'>
+            <div className='flex shrink-0 items-center gap-2'>
               <Tag colorStyles={typeTokenStyles(type, isDarkMode)} size='xs' margin='compact'>
                 {type === 'character' ? characterTypeLabel : typeLabels[type] || type}
               </Tag>
