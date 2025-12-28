@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
 
 const hashPassword = (password: string, salt: string) =>
   pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
@@ -17,7 +16,29 @@ function stringTimingSafeEqual(a: string, b: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
+    const { createServerClient }: { createServerClient: CreateServerClient } =
+      await import('@supabase/ssr/dist/module/createServerClient.js');
+
+    // Bind cookie writes to the response so password updates don't log out the current session.
+    const response = NextResponse.json({ message: '密码修改成功。' });
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            );
+          },
+        },
+      }
+    );
+
     const {
       data: { user },
       error: authError,
@@ -84,10 +105,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '修改密码失败。' }, { status: 500 });
     }
 
-    const { error: supabaseAuthUpdateError } = await supabaseAdmin.auth.admin.updateUserById(
-      user.id,
-      { password: newPassword }
-    );
+    // Update Supabase Auth password for the current user.
+    // Using the session-bound client ensures the current session stays alive via refreshed cookies.
+    const { error: supabaseAuthUpdateError } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
 
     if (supabaseAuthUpdateError) {
       console.error('Failed to update supabase auth password:', supabaseAuthUpdateError);
@@ -104,7 +126,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '修改密码失败。' }, { status: 500 });
     }
 
-    return NextResponse.json({ message: '密码修改成功。' });
+    // Invalidate other sessions while keeping the current one.
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session?.access_token) {
+      console.error('Failed to get current session after password update:', sessionError);
+      // Return the response anyway so any cookie updates are applied.
+      return response;
+    }
+
+    const { error: signOutOthersError } = await supabaseAdmin.auth.admin.signOut(
+      session.access_token,
+      'others'
+    );
+
+    if (signOutOthersError) {
+      console.error('Failed to sign out other sessions:', signOutOthersError);
+      // Keep current session even if the "logout other sessions" step fails.
+      return response;
+    }
+
+    return response;
   } catch (e) {
     console.error('Change-password error:', e);
     return NextResponse.json({ error: '发生未知错误。' }, { status: 500 });

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { useToast } from '@/context/ToastContext';
@@ -11,6 +12,7 @@ type ChangePasswordDialogProps = {
 };
 
 export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogProps) {
+  const router = useRouter();
   const { success, error: showError } = useToast();
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +66,7 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
         throw new Error(data.error || '修改密码失败。');
       }
       success(data.message || '密码修改成功。');
+      router.refresh();
       onClose();
     } catch (e) {
       const message = e instanceof Error ? e.message : '修改密码失败。';
@@ -76,7 +79,7 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
 
   return (
     <div
-      className='fixed inset-0 z-[100000] flex items-center justify-center bg-black/50 p-4'
+      className='fixed inset-0 z-100000 flex items-center justify-center bg-black/50 p-4'
       role='dialog'
       aria-modal='true'
       aria-label='修改密码'
