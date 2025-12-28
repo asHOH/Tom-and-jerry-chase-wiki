@@ -494,6 +494,8 @@ export type MapDefinition = {
 
   unuseImage?: boolean; // Default: false
   specialImageUrl?: string;
+
+  mapImageUrl?: string;
 };
 
 export type Map = MapDefinition & { name: string; imageUrl: string };

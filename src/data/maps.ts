@@ -409,9 +409,16 @@ const mapsWithImages: Record<string, Map> = Object.fromEntries(
       ...map,
       name: mapName,
       imageUrl: getMapImageUrl(mapName, map),
-      description: !!map.description
-        ? map.description
-        : `${mapName}是一张${map.size}的${map.type}${map.studyLevelUnlock ? `，解锁于${map.studyLevelUnlock}` : ''}${map.roomCount ? `，有${map.roomCount}个房间` : ''}${map.pipeCount ? `，有${map.pipeCount}个管道` : ''}${map.doorCount ? `，有${map.doorCount}个传统木门` : ''}${map.hiddenRoomCount ? `，有${map.hiddenRoomCount}个被隐藏的彩蛋区域` : ''}${map.randomizedRoomCount ? `，有${map.randomizedRoomCount}个房间的地形会随机发生变化` : ''}。`,
+      //为常规地图添加缩略图地址
+      mapImageUrl:
+        map.mapImageUrl === undefined && map.type === '常规地图'
+          ? `/images/maps/${encodeURIComponent(mapName + '-地图')}.png`
+          : map.mapImageUrl || '',
+      //为地图添加默认描述
+      description:
+        map.description === undefined
+          ? `${mapName}是一张${map.size}的${map.type}${map.studyLevelUnlock ? `，解锁于${map.studyLevelUnlock}` : ''}${map.roomCount ? `，有${map.roomCount}个房间` : ''}${map.pipeCount ? `，有${map.pipeCount}个管道` : ''}${map.doorCount ? `，有${map.doorCount}个传统木门` : ''}${map.hiddenRoomCount ? `，有${map.hiddenRoomCount}个被隐藏的彩蛋区域` : ''}${map.randomizedRoomCount ? `，有${map.randomizedRoomCount}个房间的地形会随机发生变化` : ''}。`
+          : map.description,
     },
   ])
 );
