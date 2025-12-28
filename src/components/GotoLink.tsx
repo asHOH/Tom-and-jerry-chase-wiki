@@ -12,6 +12,8 @@ import PreviewCard, { GotoPreviewCardProps } from './ui/PreviewCard';
 
 type GotoLinkProps = {
   name: string;
+  href?: string; // optional explicit target; useful for disambiguation candidates
+  prefetchedPreview?: GotoPreviewCardProps; // optional preview payload to avoid extra fetch
   className?: string;
   children: React.ReactNode;
   asPreviewOnly?: boolean; // when true, do not navigate; only show preview tooltip
@@ -22,6 +24,8 @@ type GotoLinkProps = {
 
 export default function GotoLink({
   name,
+  href,
+  prefetchedPreview,
   className,
   children,
   asPreviewOnly = false,
@@ -134,18 +138,29 @@ export default function GotoLink({
     return qs ? `?${qs}` : '';
   })();
 
-  const { data, isLoading } = useSWR<GotoPreviewCardProps | null>(
-    open ? `/api/goto/${encodeURIComponent(name)}${queryString}` : null,
+  const swrKey = prefetchedPreview
+    ? null
+    : open
+      ? `/api/goto/${encodeURIComponent(name)}${queryString}`
+      : null;
+  const { data: swrData, isLoading: swrIsLoading } = useSWR<GotoPreviewCardProps | null>(
+    swrKey,
     fetcher
   );
+  const data = prefetchedPreview ?? swrData;
+  const isLoading = prefetchedPreview ? false : swrIsLoading;
 
-  const [url, setURL] = useState<string>(`/goto/${encodeURIComponent(name)}${queryString}`);
+  const [url, setURL] = useState<string>(href ?? `/goto/${encodeURIComponent(name)}${queryString}`);
 
   useEffect(() => {
+    if (href) {
+      setURL(href);
+      return;
+    }
     if (data?.url) {
       setURL(data.url);
     }
-  }, [data?.url]);
+  }, [data?.url, href]);
 
   const basePreviewContent = isLoading ? (
     <div className='flex w-full animate-pulse flex-row items-start rounded-lg bg-gray-100 p-4 shadow-md dark:bg-gray-800'>

@@ -112,6 +112,15 @@ export type GotoDisambiguationCandidate = {
   // Display helpers for disambiguation lists (built-in on the server)
   categoryLabel: CategoryHint | string;
   kindDescription: string;
+  // Optional preview metadata (best-effort)
+  description?: string;
+  imageUrl?: string;
+  factionId?: FactionId;
+  ownerName?: string;
+  ownerFactionId?: FactionId;
+  skillLevel?: number;
+  skillType?: SkillType;
+  skillLevelDescription?: string;
 };
 
 export type GotoDisambiguationResult = {

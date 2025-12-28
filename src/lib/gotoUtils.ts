@@ -240,12 +240,23 @@ export async function getGotoResult(
     entry: (typeof deduped)[number]
   ): GotoDisambiguationCandidate => {
     const { categoryLabel, kindDescription } = kindLabel(entry);
+    const gotoFactionId = (entry.goto as { factionId?: unknown }).factionId;
+    const gotoOwnerFactionId = (entry.goto as { ownerFactionId?: unknown }).ownerFactionId;
     return {
       url: entry.goto.url,
       type: entry.goto.type,
       name: entry.goto.name,
       categoryLabel,
       kindDescription,
+      ...(entry.goto.description ? { description: entry.goto.description } : {}),
+      ...(entry.goto.imageUrl ? { imageUrl: entry.goto.imageUrl } : {}),
+      ...(gotoFactionId === 'cat' || gotoFactionId === 'mouse' ? { factionId: gotoFactionId } : {}),
+      ...((entry.goto as { ownerName?: string }).ownerName
+        ? { ownerName: (entry.goto as { ownerName?: string }).ownerName }
+        : {}),
+      ...(gotoOwnerFactionId === 'cat' || gotoOwnerFactionId === 'mouse'
+        ? { ownerFactionId: gotoOwnerFactionId }
+        : {}),
     };
   };
 
