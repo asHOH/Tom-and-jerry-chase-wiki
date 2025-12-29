@@ -485,12 +485,12 @@ export type MapDefinition = {
   pipeCount?: number; //只计入常规管道，不计彩蛋房管道，且双向管道只计一个
   doorCount?: number; //只计入传统木门，不计自动门、玉清宫大门
   hiddenRoomCount?: number; //彩蛋房间数量，默认为0个
-  randomizedRoomCount?: number; //在游戏开始时随机改变地形的房间数量，默认为0个
+  randomizedRoom?: boolean; //地形是否会随机改变
   supportedModes?: string[]; //可出现此地图的模式
   changeWithMode?: boolean; //地形是否随模式改变。不考虑道具刷新规律等
 
   description?: string;
-  detailedDescription?: string;
+  detailedDescription?: string; //暂不使用
 
   unuseImage?: boolean; // Default: false
   specialImageUrl?: string;

@@ -54,7 +54,11 @@ export default function MapAttributesCard({ map }: { map: Map }) {
             >
               {map.roomCount !== undefined && (
                 <span className='text-sm whitespace-pre'>
-                  <Tooltip content={'地图中的房间数。只计入有名称的房间，不计彩蛋房、过渡房间'}>
+                  <Tooltip
+                    content={
+                      '地图中的房间数。只计入主房间，不计彩蛋房、过渡房间。房间目前根据鼠害怕表情、侍卫警戒、传送点的不同，出现了三种不同的定义分歧，目前正在讨论具体分类方法，因此本数据仅供参考'
+                    }
+                  >
                     房间数
                   </Tooltip>
                   ：<span className='text-indigo-700 dark:text-indigo-400'>{map.roomCount}</span>
@@ -96,14 +100,9 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                   个被隐藏的彩蛋区域
                 </span>
               )}
-              {map.randomizedRoomCount !== undefined && map.randomizedRoomCount > 0 && (
-                <span className='text-sm whitespace-pre'>
-                  该地图有
-                  <span className='text-red-600 dark:text-red-500'>
-                    {' '}
-                    {map.randomizedRoomCount}{' '}
-                  </span>
-                  个房间的地形会随机发生变化
+              {map.randomizedRoom === true && (
+                <span className='text-sm whitespace-pre text-fuchsia-600 dark:text-fuchsia-400'>
+                  该地图的部分地形会随机发生变化
                 </span>
               )}
               {map.changeWithStudyLevel === true && (
