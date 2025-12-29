@@ -4,6 +4,10 @@
 @plugin '@tailwindcss/typography';
 @custom-variant dark (&:where(.dark, .dark *));
 
+.dark {
+  color-scheme: dark;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 240, 240, 240;
