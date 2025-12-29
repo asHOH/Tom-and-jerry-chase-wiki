@@ -476,7 +476,7 @@ export type mapTypes = '常规地图' | '娱乐地图' | '广场地图';
 export type studyLevel = '见习学业' | '高级学业' | '特级学业' | '大师学业';
 export type MapDefinition = {
   aliases?: string[];
-  mapSkin?: string[]; //地图换肤变种名
+  mapSkin?: { name: string; imageUrl: string; description: string }[]; //地图换肤变种名
   type: mapTypes;
   size?: '微型' | '小型' | '中型' | '大型';
   studyLevelUnlock?: studyLevel;

@@ -1,7 +1,7 @@
 import { Map, MapDefinition } from './types';
 
 export const getMapImageUrl = (name: string, map: MapDefinition): string => {
-  if (!!map.specialImageUrl) return map.specialImageUrl;
+  if (!!map.specialImageUrl) return encodeURI(map.specialImageUrl);
   if (map.unuseImage) return `/images/icons/cat faction.png`;
   return `/images/maps/${encodeURIComponent(name)}.png`;
 };
@@ -27,6 +27,32 @@ const mapDefinitions: Record<string, MapDefinition> = {
     ],
     randomizedRoomCount: 1,
     specialImageUrl: '/images/maps/经典之家.png',
+    mapSkin: [
+      {
+        name: '经典之家I（樱花）',
+        imageUrl: '/images/maps/经典之家（樱花）.png',
+        description:
+          '常驻地图皮肤，可由地图冠名者自由更换。\n该换肤会改变小推车、吊灯等组件的外观。',
+      },
+      {
+        name: '经典之家I（圣诞）',
+        imageUrl: '/images/maps/经典之家（圣诞）.png',
+        description:
+          '限时地图皮肤，有时会在圣诞节前后返场，返场时本地图自动更换为此皮肤，同时无法再更换为其它皮肤。',
+      },
+      {
+        name: '经典之家I（国风）',
+        imageUrl: '/images/maps/经典之家（国风）.png',
+        description:
+          '限时地图皮肤，有时会在春节前后返场，返场时本地图会自动应用此皮肤，同时无法再更换为其它皮肤。\n该换肤会改变部分道具和地图组件外观。',
+      },
+      {
+        name: '经典之家I（虎丘）',
+        imageUrl: '/images/maps/经典之家（虎丘）.png',
+        description:
+          '限时地图皮肤，极少返场，返场时本地图会自动应用此皮肤，同时无法再更换为其它皮肤。\n该换肤会改变部分道具和地图组件外观。',
+      },
+    ],
   },
   经典之家II: {
     type: '常规地图',
@@ -48,6 +74,14 @@ const mapDefinitions: Record<string, MapDefinition> = {
     ],
     randomizedRoomCount: 1,
     specialImageUrl: '/images/maps/经典之家.png',
+    mapSkin: [
+      {
+        name: '经典之家II（樱花）',
+        imageUrl: '/images/maps/经典之家（樱花）.png',
+        description:
+          '常驻地图皮肤，可由地图冠名者自由更换。\n该换肤会改变小推车、吊灯等组件的外观。',
+      },
+    ],
   },
   经典之家III: {
     type: '常规地图',
@@ -69,6 +103,14 @@ const mapDefinitions: Record<string, MapDefinition> = {
     ],
     randomizedRoomCount: 1,
     specialImageUrl: '/images/maps/经典之家.png',
+    mapSkin: [
+      {
+        name: '经典之家III（樱花）',
+        imageUrl: '/images/maps/经典之家（樱花）.png',
+        description:
+          '常驻地图皮肤，可由地图冠名者自由更换。\n该换肤会改变小推车、吊灯等组件的外观。',
+      },
+    ],
   },
   雪夜古堡I: {
     type: '常规地图',
@@ -91,6 +133,20 @@ const mapDefinitions: Record<string, MapDefinition> = {
     hiddenRoomCount: 1,
     randomizedRoomCount: 1,
     specialImageUrl: '/images/maps/雪夜古堡.png',
+    mapSkin: [
+      {
+        name: '夏日古堡I',
+        imageUrl: '/images/maps/夏日古堡.png',
+        description:
+          '常驻地图皮肤，可由地图冠名者自由更换。\n该换肤会删除木门遮挡视野的效果，删除钟楼区域两根遮挡视野的柱子。',
+      },
+      {
+        name: '雪夜古堡I（万圣）',
+        imageUrl: '/images/maps/雪夜古堡（万圣）.png',
+        description:
+          '限时地图皮肤，有时会在万圣节前后返场，返场时本地图会自动应用此皮肤，同时无法再更换为其它皮肤。',
+      },
+    ],
   },
   雪夜古堡II: {
     type: '常规地图',
@@ -210,6 +266,14 @@ const mapDefinitions: Record<string, MapDefinition> = {
     ],
     hiddenRoomCount: 1,
     specialImageUrl: '/images/maps/太空堡垒.png',
+    mapSkin: [
+      {
+        name: '星海堡垒I',
+        imageUrl: '/images/maps/星海堡垒.png',
+        description:
+          '常驻地图皮肤，可由地图冠名者自由更换，在创意玩法中会自动应用此皮肤（无法更换）。\n该换肤会改变部分房间名称。',
+      },
+    ],
   },
   太空堡垒II: {
     type: '常规地图',
@@ -228,6 +292,14 @@ const mapDefinitions: Record<string, MapDefinition> = {
       '创意玩法',
     ],
     specialImageUrl: '/images/maps/太空堡垒.png',
+    mapSkin: [
+      {
+        name: '星海堡垒II',
+        imageUrl: '/images/maps/星海堡垒.png',
+        description:
+          '常驻地图皮肤，可由地图冠名者自由更换，在创意玩法中会自动应用此皮肤（无法更换）。\n该换肤会改变部分房间名称。',
+      },
+    ],
   },
   太空堡垒III: {
     type: '常规地图',
@@ -248,6 +320,14 @@ const mapDefinitions: Record<string, MapDefinition> = {
     changeWithMode: true,
     hiddenRoomCount: 1,
     specialImageUrl: '/images/maps/太空堡垒.png',
+    mapSkin: [
+      {
+        name: '星海堡垒III',
+        imageUrl: '/images/maps/星海堡垒.png',
+        description:
+          '常驻地图皮肤，可由地图冠名者自由更换，在创意玩法中会自动应用此皮肤（无法更换）。\n该换肤会改变部分房间名称。',
+      },
+    ],
   },
   游乐场: {
     type: '常规地图',
@@ -274,6 +354,14 @@ const mapDefinitions: Record<string, MapDefinition> = {
       '房间',
     ],
     hiddenRoomCount: 1,
+    mapSkin: [
+      {
+        name: '玩具王国',
+        imageUrl: '/images/maps/玩具王国.png',
+        description:
+          '常驻地图皮肤，可由地图冠名者自由更换。\n该换肤会改变部分房间名称，删除原湖底区域的部分竖向墙壁。',
+      },
+    ],
   },
   大都会: {
     type: '常规地图',
@@ -317,6 +405,13 @@ const mapDefinitions: Record<string, MapDefinition> = {
     roomCount: 5,
     pipeCount: 1,
     supportedModes: ['经典奶酪赛', '天梯', '黄金钥匙赛', '特工行动', '克隆大作战', '房间'],
+    mapSkin: [
+      {
+        name: '天宫（战损）',
+        imageUrl: '/images/maps/天宫（战损）.png',
+        description: '常驻地图皮肤，可由地图冠名者自由更换。',
+      },
+    ],
   },
   '天宫-云上': {
     type: '常规地图',
@@ -419,6 +514,17 @@ const mapsWithImages: Record<string, Map> = Object.fromEntries(
         map.description === undefined
           ? `${mapName}是一张${map.size}的${map.type}${map.studyLevelUnlock ? `，解锁于${map.studyLevelUnlock}` : ''}${map.roomCount ? `，有${map.roomCount}个房间` : ''}${map.pipeCount ? `，有${map.pipeCount}个管道` : ''}${map.doorCount ? `，有${map.doorCount}个传统木门` : ''}${map.hiddenRoomCount ? `，有${map.hiddenRoomCount}个被隐藏的彩蛋区域` : ''}${map.randomizedRoomCount ? `，有${map.randomizedRoomCount}个房间的地形会随机发生变化` : ''}。`
           : map.description,
+      //更正地图皮肤的imageUrl
+      mapSkin:
+        map.mapSkin !== undefined
+          ? map.mapSkin.map((mapSkin) => {
+              return {
+                name: mapSkin.name,
+                imageUrl: encodeURI(mapSkin.imageUrl),
+                description: mapSkin.description,
+              };
+            })
+          : [],
     },
   ])
 );

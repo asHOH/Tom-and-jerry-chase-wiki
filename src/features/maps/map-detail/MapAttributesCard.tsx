@@ -9,6 +9,7 @@ import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
+import Image from '@/components/Image';
 
 export default function MapAttributesCard({ map }: { map: Map }) {
   const [isDarkMode] = useDarkMode();
@@ -62,11 +63,25 @@ export default function MapAttributesCard({ map }: { map: Map }) {
               {map.pipeCount !== undefined && (
                 <span className='text-sm whitespace-pre'>
                   <Tooltip
-                    content={'地图中的管道组数。只计入常规管道，不计彩蛋房管道，且双向管道只计一个'}
+                    content={
+                      '地图中的管道组数。只计入常规管道，不计彩蛋房管道，且双向管道只计一个。对于管道较多的地图，可考虑携带知识卡-猫是液体'
+                    }
                   >
                     管道数
                   </Tooltip>
                   ：<span className='text-indigo-700 dark:text-indigo-400'>{map.pipeCount}</span>
+                </span>
+              )}
+              {map.doorCount !== undefined && map.doorCount > 0 && (
+                <span className='text-sm whitespace-pre'>
+                  <Tooltip
+                    content={
+                      '地图中的木门数。只计入传统木门，不计自动门等特殊门。对于木门较多的地图，可考虑携带知识卡-闭门羹'
+                    }
+                  >
+                    木门数
+                  </Tooltip>
+                  ：<span className='text-indigo-700 dark:text-indigo-400'>{map.doorCount}</span>
                 </span>
               )}
             </div>
@@ -74,13 +89,6 @@ export default function MapAttributesCard({ map }: { map: Map }) {
               className='auto-fill-grid grid-container mt-1 grid items-center justify-center gap-1 text-sm font-normal'
               style={{ gridTemplateColumns: `repeat(1, minmax(80px, 1fr))` }}
             >
-              {map.doorCount !== undefined && map.doorCount > 0 && (
-                <span className='text-sm whitespace-pre'>
-                  该地图有
-                  <span className='text-indigo-700 dark:text-indigo-400'> {map.doorCount} </span>
-                  扇传统木门
-                </span>
-              )}
               {map.hiddenRoomCount !== undefined && map.hiddenRoomCount > 0 && (
                 <span className='text-sm whitespace-pre'>
                   该地图有
@@ -125,14 +133,39 @@ export default function MapAttributesCard({ map }: { map: Map }) {
           )}
 
           {map.mapSkin && map.mapSkin.length > 0 && (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <div className='border-t border-gray-300 py-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>地图换肤</span>
-              <div className='mt-1'>
-                <span className='flex items-center text-sm'>
-                  <span className='text-indigo-700 dark:text-indigo-400'>
-                    {map.mapSkin.join('、')}
-                  </span>
-                </span>
+              <div className='mt-1 flex flex-col gap-2'>
+                {map.mapSkin.map((singleMapSkin, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={
+                        isDarkMode
+                          ? 'rounded-lg border border-indigo-800 bg-gradient-to-r from-indigo-900 to-indigo-950 p-2'
+                          : 'rounded-lg border border-indigo-200 bg-gradient-to-r from-indigo-50 to-indigo-100 p-2'
+                      }
+                    >
+                      <div className='flex items-center gap-2'>
+                        <Image
+                          src={singleMapSkin.imageUrl}
+                          alt={`${singleMapSkin.name}图标`}
+                          className='h-16 w-16 object-contain py-0.5'
+                          width={90}
+                          height={90}
+                        />
+                        <div className='flex flex-col'>
+                          <span className='text-base font-bold dark:text-white'>
+                            {singleMapSkin.name}
+                          </span>
+                          <span className='mt-1 text-xs break-words whitespace-pre-wrap text-gray-500 dark:text-gray-300'>
+                            {singleMapSkin.description}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
