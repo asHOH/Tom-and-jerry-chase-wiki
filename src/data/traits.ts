@@ -25,7 +25,7 @@ const traits: Record<string, Trait> = {
   汤姆2: {
     group: [
       [
-        { name: '蓝图(投射物)', type: 'entity' },
+        { name: '蓝图-投射物', type: 'entity' },
         { name: '线条猫', type: 'entity' },
       ],
       { name: '发怒冲刺', type: 'skill' },
@@ -37,7 +37,7 @@ const traits: Record<string, Trait> = {
       { name: '发怒冲刺', type: 'skill' },
       { name: '星星', type: 'entity' },
       [
-        { name: '蓝图(召唤物)', type: 'entity' },
+        { name: '蓝图', type: 'entity' },
         { name: '线条猫', type: 'entity' },
       ],
     ],
@@ -270,11 +270,11 @@ const traits: Record<string, Trait> = {
       [
         { name: '鞭炮', type: 'itemGroup' },
         { name: '火药桶', type: 'entity' },
-        { name: '火箭筒', type: 'entity' },
+        { name: '火箭炮', type: 'entity' },
       ],
     ],
     description:
-      '爆炸带有受力效果，因此鞭炮、火药桶、火箭筒的爆炸效果可以将香水区域炸飞（沿直线飞出场外）。',
+      '爆炸带有受力效果，因此鞭炮、火药桶、火箭炮的爆炸效果可以将香水区域炸飞（沿直线飞出场外）。',
   },
   图多盖洛4: {
     group: [
@@ -434,7 +434,7 @@ const traits: Record<string, Trait> = {
   塔拉1: {
     group: [
       { name: '西部情谊', type: 'skill' },
-      { name: '乾坤袋(NPC)', type: 'entity' },
+      { name: '乾坤袋', type: 'entity' },
     ],
     description: '西部情谊无法命中乾坤袋。',
   },
@@ -485,7 +485,7 @@ const traits: Record<string, Trait> = {
   塔拉7: {
     group: [
       { name: '心思缜密', type: 'skill' },
-      { name: '乾坤袋(NPC)', type: 'entity' },
+      { name: '乾坤袋', type: 'entity' },
     ],
     description: '命中乾坤袋也可以触发3级心思缜密的效果。',
   },
@@ -631,7 +631,7 @@ const traits: Record<string, Trait> = {
   库博8: {
     group: [
       { name: '天堂火箭', type: 'entity' },
-      { name: '乾坤袋(NPC)', type: 'entity' },
+      { name: '乾坤袋', type: 'entity' },
     ],
     description: '与乾坤袋融合的老鼠暂时不会因天堂火箭效果而被放飞，但在解除该状态的瞬间会被放飞。',
   },
@@ -706,7 +706,7 @@ const traits: Record<string, Trait> = {
         { name: '花洒', type: 'entity' },
         { name: '沙包拳头', type: 'skill' },
         { name: '滑步踢', type: 'skill' },
-        { name: '乾坤袋(NPC)', type: 'entity' },
+        { name: '乾坤袋', type: 'entity' },
       ],
     ],
     description: '天堂火箭无法熄灭，也不会移动。',

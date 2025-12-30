@@ -1114,10 +1114,10 @@ export const getMapLevelColors = (level: string, isDarkMode: boolean) => {
 export const getFixtureTypeColors = (fixtureType: string, isDarkMode: boolean) => {
   const fixtureTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     平台类: 'emerald',
-    地面类: 'violet',
     墙壁类: 'azure',
     物件类: 'amber',
     NPC: 'crimson',
+    流程类: 'violet',
     可交互: 'pink',
   };
 
