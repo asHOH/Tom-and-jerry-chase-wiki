@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
 import { supabase } from '@/lib/supabase/client';
+import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
@@ -35,7 +36,10 @@ type TabNavigationProps = {
   showDetailToggle?: boolean;
 };
 
-const STACK_COLLAPSE_WIDTHS = [494, 454, 414, 374, 334, 294, 254] as const;
+const MOBILE_STACK_COLLAPSE_WIDTHS = [624, 580, 536, 492, 448, 404, 360, 316, 272, 228] as const;
+
+const DESKTOP_STACK_COLLAPSE_WIDTHS = [9999, 1310, 1180, 1050, 764] as const;
+
 const DETAIL_TOGGLE_WIDTH = 56;
 const USER_BUTTON_WIDTH = 44;
 
@@ -52,6 +56,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const { nickname, role, clearData: clearUserData } = useUser();
   const { isEditMode } = useEditMode();
   const { items, isActive } = useNavigationTabs();
+  const isMobile = useMobile();
 
   useEffect(() => {
     setMounted(true);
@@ -59,6 +64,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
   const evaluateCollapsedCount = useCallback(() => {
     if (typeof window === 'undefined') return;
+
     const width = window.innerWidth;
     const extraWidth =
       (showDetailToggle ? DETAIL_TOGGLE_WIDTH : 0) + (!!nickname ? USER_BUTTON_WIDTH : 0);
@@ -66,8 +72,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     const total = items.length;
     let nextCollapsed = 0;
 
-    for (let index = 0; index < STACK_COLLAPSE_WIDTHS.length; index += 1) {
-      const threshold = STACK_COLLAPSE_WIDTHS[index]!;
+    const collapseWidths = isMobile ? MOBILE_STACK_COLLAPSE_WIDTHS : DESKTOP_STACK_COLLAPSE_WIDTHS;
+
+    for (let index = 0; index < collapseWidths.length; index += 1) {
+      const threshold = collapseWidths[index]!;
       if (adjustedWidth < threshold) {
         const collapseSize = Math.min(total, index + 2);
         nextCollapsed = Math.max(nextCollapsed, collapseSize);
@@ -78,7 +86,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     if (nextCollapsed === 0) {
       setOverflowOpen((prev) => (prev ? false : prev));
     }
-  }, [items, nickname, showDetailToggle]);
+  }, [items, nickname, showDetailToggle, isMobile]);
 
   useEffect(() => {
     if (!mounted) return;
