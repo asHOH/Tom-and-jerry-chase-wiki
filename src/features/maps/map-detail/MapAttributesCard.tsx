@@ -146,13 +146,16 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                       }
                     >
                       <div className='flex items-center gap-2'>
-                        <Image
-                          src={singleMapSkin.imageUrl}
-                          alt={`${singleMapSkin.name}图标`}
-                          className='h-16 w-16 object-contain py-0.5'
-                          width={90}
-                          height={90}
-                        />
+                        <div className='flex-shrink-0'>
+                          <Image
+                            src={singleMapSkin.imageUrl}
+                            alt={`${singleMapSkin.name}图标`}
+                            className='h-16 w-16 object-contain py-0.5'
+                            width={90}
+                            height={90}
+                            priority={index === 0}
+                          />
+                        </div>
                         <div className='flex flex-col'>
                           <span className='text-base font-bold dark:text-white'>
                             {singleMapSkin.name}
