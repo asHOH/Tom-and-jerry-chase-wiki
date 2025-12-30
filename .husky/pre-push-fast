@@ -1,23 +1,39 @@
 #!/bin/sh
 
-echo "🚀 Running fast pre-push checks (development mode)..."
+echo "[pre-push-fast] Running fast pre-push checks (development mode)..."
+
+# Ensure README acknowledgments stay in sync when contributors change
+if git rev-parse --abbrev-ref --symbolic-full-name @{u} > /dev/null 2>&1; then
+  DIFF_RANGE="@{u}..HEAD"
+else
+  DIFF_RANGE="HEAD"
+fi
+
+if git diff --name-only "$DIFF_RANGE" | grep -q "src/data/contributors.ts"; then
+  echo "[pre-push-fast] Contributors data changed; syncing README acknowledgments..."
+  npm run update-readme
+  if ! git diff --quiet README.md; then
+    echo "[pre-push-fast] README updated. Please add it to your commit (e.g., git add README.md && git commit --amend) before pushing."
+    exit 1
+  fi
+fi
 
 # Quick lint check first (fail fast)
-echo "⚡ Quick lint check..."
+echo "[pre-push-fast] Quick lint check..."
 if ! npx eslint --cache --max-warnings=0 "." > /dev/null 2>&1; then
-  echo "❌ ESLint errors found. Fix them before pushing."
+  echo "[pre-push-fast] ESLint errors found. Fix them before pushing."
   exit 1
 fi
 
 # Ensure public HTML files stay formatted
-echo "🧹 Checking public HTML formatting..."
+echo "[pre-push-fast] Checking public HTML formatting..."
 if ! npx prettier --check "public/**/*.html"; then
-  echo "❌ Prettier formatting issues found in public HTML files"
+  echo "[pre-push-fast] Prettier formatting issues found in public HTML files"
   exit 1
 fi
 
 # Run type-check and changed tests in parallel
-echo "🏃‍♂️ Running type-check and tests on changed files..."
+echo "[pre-push-fast] Running type-check and tests on changed files..."
 
 # Start both processes in background
 npm run type-check &
@@ -35,13 +51,13 @@ TEST_EXIT=$?
 
 # Check results
 if [ $TYPE_CHECK_EXIT -ne 0 ]; then
-  echo "❌ TypeScript type check failed"
+  echo "[pre-push-fast] TypeScript type check failed"
   exit 1
 fi
 
 if [ $TEST_EXIT -ne 0 ]; then
-  echo "❌ Tests failed"
+  echo "[pre-push-fast] Tests failed"
   exit 1
 fi
 
-echo "✅ Fast pre-push checks passed!"
+echo "[pre-push-fast] Fast pre-push checks passed!"

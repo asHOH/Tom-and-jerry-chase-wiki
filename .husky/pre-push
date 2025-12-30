@@ -4,37 +4,53 @@
 CURRENT_BRANCH=$(git branch --show-current)
 MAIN_BRANCHES="main|master|production|prod"
 
-# Check if we're on a main branch or force full mode
+# Choose run mode
 if [ "$FORCE_FULL_PREPUSH" = "true" ] || echo "$CURRENT_BRANCH" | grep -qE "^($MAIN_BRANCHES)$"; then
   if [ "$FORCE_FULL_PREPUSH" = "true" ]; then
-    echo "🔍 Running FULL pre-push checks (forced via FORCE_FULL_PREPUSH)..."
+    echo "[pre-push] Running FULL checks (forced via FORCE_FULL_PREPUSH)..."
   else
-    echo "🔍 Running FULL pre-push checks (on $CURRENT_BRANCH branch)..."
+    echo "[pre-push] Running FULL checks (on $CURRENT_BRANCH branch)..."
   fi
   RUN_MODE="full"
 else
-  echo "🚀 Running FAST pre-push checks (on $CURRENT_BRANCH branch)..."
-  echo "💡 Full checks will run when pushing to main/master"
+  echo "[pre-push] Running FAST checks (on $CURRENT_BRANCH branch)..."
+  echo "[pre-push] Full checks will run when pushing to main/master"
   RUN_MODE="fast"
 fi
 
+# Ensure README acknowledgments stay in sync when contributors change
+if git rev-parse --abbrev-ref --symbolic-full-name @{u} > /dev/null 2>&1; then
+  DIFF_RANGE="@{u}..HEAD"
+else
+  DIFF_RANGE="HEAD"
+fi
+
+if git diff --name-only "$DIFF_RANGE" | grep -q "src/data/contributors.ts"; then
+  echo "[pre-push] Contributors data changed; syncing README acknowledgments..."
+  npm run update-readme
+  if ! git diff --quiet README.md; then
+    echo "[pre-push] README updated. Please add it to your commit (e.g., git add README.md && git commit --amend) before pushing."
+    exit 1
+  fi
+fi
+
 # Quick lint check first (fail fast for both modes)
-echo "⚡ Quick lint check..."
+echo "[pre-push] Quick lint check..."
 if ! npx eslint --cache --max-warnings=0 "." > /dev/null 2>&1; then
-  echo "❌ ESLint errors found. Fix them before pushing."
+  echo "[pre-push] ESLint errors found. Fix them before pushing."
   exit 1
 fi
 
 # Align with CI's Prettier check so formatting issues fail locally first
-echo "🧼 Checking Prettier formatting..."
+echo "[pre-push] Checking Prettier formatting..."
 if ! npm run prettier:check; then
-  echo "❌ Prettier formatting issues found. Run 'npm run prettier:fix' to resolve."
+  echo "[pre-push] Prettier formatting issues found. Run 'npm run prettier:fix' to resolve."
   exit 1
 fi
 
 # Run type-check and tests in parallel
 if [ "$RUN_MODE" = "full" ]; then
-  echo "🏃‍♂️ Running type-check and ALL tests in parallel..."
+  echo "[pre-push] Running type-check and ALL tests in parallel..."
   
   # Start both processes in background
   npm run type-check &
@@ -43,7 +59,7 @@ if [ "$RUN_MODE" = "full" ]; then
   npm run test:ci &
   TEST_PID=$!
 else
-  echo "🏃‍♂️ Running type-check and tests on CHANGED files..."
+  echo "[pre-push] Running type-check and tests on CHANGED files..."
   
   # Start both processes in background
   npm run type-check &
@@ -62,18 +78,18 @@ TEST_EXIT=$?
 
 # Check results
 if [ $TYPE_CHECK_EXIT -ne 0 ]; then
-  echo "❌ TypeScript type check failed"
+  echo "[pre-push] TypeScript type check failed"
   exit 1
 fi
 
 if [ $TEST_EXIT -ne 0 ]; then
-  echo "❌ Tests failed"
+  echo "[pre-push] Tests failed"
   exit 1
 fi
 
 if [ "$RUN_MODE" = "full" ]; then
-  echo "✅ All pre-push checks passed! Ready for $CURRENT_BRANCH"
+  echo "[pre-push] All pre-push checks passed! Ready for $CURRENT_BRANCH"
 else
-  echo "✅ Fast pre-push checks passed! ($CURRENT_BRANCH branch)"
-  echo "💡 Use 'git push --no-verify' to skip all checks"
+  echo "[pre-push] Fast pre-push checks passed! ($CURRENT_BRANCH branch)"
+  echo "[pre-push] Use 'git push --no-verify' to skip all checks"
 fi
