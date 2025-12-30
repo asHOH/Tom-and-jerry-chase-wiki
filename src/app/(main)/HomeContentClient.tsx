@@ -64,6 +64,8 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
     {
       title: '资料',
       items: [
+        { id: 'maps' },
+        { id: 'modes' },
         { id: 'buffs' },
         {
           id: 'articles',

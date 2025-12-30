@@ -72,6 +72,22 @@ export const NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/icons/article.png',
     iconAlt: '文章图标',
   },
+  {
+    id: 'maps',
+    label: '地图',
+    description: '地图列表',
+    href: '/maps',
+    iconSrc: '/images/icons/map.png',
+    iconAlt: '地图图标',
+  },
+  {
+    id: 'modes',
+    label: '模式',
+    description: '游戏模式列表',
+    href: '/modes',
+    iconSrc: '/images/icons/mode.png',
+    iconAlt: '模式图标',
+  },
   /*{
     id: 'mechanics',
     label: '机制',
@@ -126,28 +142,12 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconAlt: '机制图标',
   },
   {
-    id: 'maps',
-    label: '地图',
-    description: '地图列表',
-    href: '/maps',
-    iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
-    iconAlt: '地图图标',
-  },
-  {
     id: 'fixtures',
     label: '地图组件',
     description: '地图组件列表',
     href: '/fixtures',
     iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
     iconAlt: '地图组件图标',
-  },
-  {
-    id: 'modes',
-    label: '游戏模式',
-    description: '游戏模式列表',
-    href: '/modes',
-    iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
-    iconAlt: '游戏模式图标',
   },
   //以下为编辑模式专用工具，正常情况不显示
   {
