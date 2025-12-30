@@ -1,9 +1,4 @@
-import {
-  designTokens,
-  getMapLevelColors,
-  getMapSizeColors,
-  getMapTypeColors,
-} from '@/lib/design-tokens';
+import { designTokens, getMapSizeColors, getMapTypeColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Map } from '@/data/types';
@@ -21,17 +16,18 @@ export default function MapCardDisplay({ map }: { map: Map }) {
         src={map.imageUrl}
         alt={`${map.name}地图预览`}
         size='ITEM_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-48 w-auto' : 'h-64 w-auto'}`}
+        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
       />
-      <div className={`${isMobile ? '' : 'px-3'} w-full pt-2 pb-4 text-center`}>
+      <div className={`${isMobile ? '' : 'px-3'} w-full pt-1 pb-3 text-center`}>
         <h3
-          className={`${isMobile && map.name.length >= 6 ? 'text-lg' : 'text-xl'} mb-2 font-bold text-gray-800 dark:text-white`}
-          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+          className={`${isMobile && map.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} truncate overflow-hidden font-bold whitespace-nowrap text-gray-800 dark:text-white`}
+          style={{ height: designTokens.spacing.lg }}
+          title={map.name}
         >
           {map.name}
         </h3>
         <div
-          className='flex flex-wrap justify-center gap-2 text-sm text-gray-600 dark:text-gray-300'
+          className='modes-center flex flex-wrap justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
           role='group'
           aria-label='地图属性'
         >
@@ -44,17 +40,6 @@ export default function MapCardDisplay({ map }: { map: Map }) {
           {map.size && (
             <Tag size='sm' margin='compact' colorStyles={getMapSizeColors(map.size, isDarkMode)}>
               {map.size}
-            </Tag>
-          )}
-
-          {/* 解锁等级标签（如果有） */}
-          {map.studyLevelUnlock && (
-            <Tag
-              size='sm'
-              margin='compact'
-              colorStyles={getMapLevelColors(map.studyLevelUnlock, isDarkMode)}
-            >
-              {map.studyLevelUnlock}
             </Tag>
           )}
         </div>

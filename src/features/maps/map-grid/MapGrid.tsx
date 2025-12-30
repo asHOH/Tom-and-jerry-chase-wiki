@@ -52,7 +52,7 @@ export default function MapClient({ description }: Props) {
     <div
       className={
         isMobile
-          ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
+          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
           : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
       }
     >
@@ -62,7 +62,7 @@ export default function MapClient({ description }: Props) {
         <PageTitle>地图</PageTitle>
         <PageDescription>{description ?? ''}</PageDescription>
         {/* 筛选器包装器 */}
-        <div className='mx-auto w-full max-w-2xl space-y-4 md:px-2'>
+        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           {/* 类型筛选 */}
           <FilterRow<mapTypes>
             label='地图类型:'
@@ -127,15 +127,15 @@ export default function MapClient({ description }: Props) {
         </div>
       </header>
       <div
-        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-6'} mt-8`}
+        className='auto-fit-grid grid-container mt-8 grid gap-4'
         style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '240px' : '300px'}, 1fr))`,
+          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
         }}
       >
         {filteredMaps.map((map) => (
           <div
             key={map.name}
-            className='map-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1 hover:shadow-xl'
+            className='map-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
           >
             <Link href={`/maps/${encodeURIComponent(map.name)}`} className='block'>
               <MapCardDisplay map={map} />
