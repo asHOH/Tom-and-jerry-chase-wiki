@@ -192,6 +192,11 @@ export type CharacterDefinition = {
 
   collaborators?: CharacterRelationItem[];
 
+  advantageMaps?: CharacterRelationItem[];
+  advantageModes?: CharacterRelationItem[];
+  disadvantageMaps?: CharacterRelationItem[];
+  disadvantageModes?: CharacterRelationItem[];
+
   //specific attributes
   gender?: 'male' | 'female';
   EnglishName?: string;
@@ -209,6 +214,11 @@ export type CharacterRelation = {
   counterEachOther: CharacterRelationItem[];
 
   collaborators: CharacterRelationItem[];
+
+  advantageMaps?: CharacterRelationItem[];
+  advantageModes?: CharacterRelationItem[];
+  disadvantageMaps?: CharacterRelationItem[];
+  disadvantageModes?: CharacterRelationItem[];
 };
 
 export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDefinition>;

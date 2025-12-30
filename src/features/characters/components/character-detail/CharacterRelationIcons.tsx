@@ -125,3 +125,78 @@ export const HeartIcon = ({ size = 16, decorative = false, title, ...props }: Ic
     </svg>
   );
 };
+// 在 CharacterRelationIcons.tsx 中恢复最初的设计
+export const AdvantageIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+  const { ['aria-label']: ariaLabelProp, ...rest } = props;
+  const ariaLabel = ariaLabelProp ?? 'advantage';
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox='0 0 20 20' // 最初的设计使用 20x20
+      fill='currentColor'
+      xmlns='http://www.w3.org/2000/svg'
+      focusable='false'
+      {...getSvgAriaProps(decorative, ariaLabel, title)}
+      {...rest}
+    >
+      {title ? <title>{title}</title> : null}
+      <path
+        fillRule='evenodd'
+        clipRule='evenodd'
+        d='M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z'
+      />
+    </svg>
+  );
+};
+
+export const DisadvantageIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+  const { ['aria-label']: ariaLabelProp, ...rest } = props;
+  const ariaLabel = ariaLabelProp ?? 'disadvantage';
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox='0 0 20 20' // 最初的设计使用 20x20
+      fill='currentColor'
+      xmlns='http://www.w3.org/2000/svg'
+      focusable='false'
+      {...getSvgAriaProps(decorative, ariaLabel, title)}
+      {...rest}
+    >
+      {title ? <title>{title}</title> : null}
+      <path
+        fillRule='evenodd'
+        clipRule='evenodd'
+        d='M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586l-4.293-4.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z'
+      />
+    </svg>
+  );
+};
+
+export const MapIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+  const { ['aria-label']: ariaLabelProp, ...rest } = props;
+  const ariaLabel = ariaLabelProp ?? 'map';
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox='0 0 20 20' // 最初的设计使用 20x20
+      fill='currentColor'
+      xmlns='http://www.w3.org/2000/svg'
+      focusable='false'
+      {...getSvgAriaProps(decorative, ariaLabel, title)}
+      {...rest}
+    >
+      {title ? <title>{title}</title> : null}
+      <path
+        fillRule='evenodd'
+        clipRule='evenodd'
+        d='M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293A1 1 0 0118 6v10a1 1 0 01-.293.707L14 14.586V1.586l3.707 1.707z'
+      />
+    </svg>
+  );
+};

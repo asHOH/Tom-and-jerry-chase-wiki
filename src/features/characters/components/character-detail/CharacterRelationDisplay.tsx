@@ -11,14 +11,24 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { CharacterRelationItem } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
-import EditableField from '@/components/ui/EditableField';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
+import EditableField from '@/components/ui/EditableField';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { cards, characters, FactionId, specialSkills } from '@/data';
+import { cards, characters, FactionId, maps, modes, specialSkills } from '@/data';
 
-import { HappyFaceIcon, HeartIcon, NeutralFaceIcon, SadFaceIcon } from './CharacterRelationIcons';
+import {
+  AdvantageIcon,
+  DisadvantageIcon,
+  HappyFaceIcon,
+  HeartIcon,
+  MapIcon,
+  NeutralFaceIcon,
+  SadFaceIcon,
+} from './CharacterRelationIcons';
 import KnowledgeCardSelector from './KnowledgeCardSelector';
+import MapSelector from './MapSelector';
+import ModeSelector from './ModeSelector';
 import SpecialSkillSelector from './SpecialSkillSelector';
 
 type Props = {
@@ -26,18 +36,21 @@ type Props = {
   factionId: FactionId;
 };
 
-// Lightweight generic hook to manage character relation arrays
 type RelationKey = 'counters' | 'counteredBy' | 'counterEachOther' | 'collaborators';
 type ExtraRelationKey =
   | 'countersKnowledgeCards'
   | 'counteredByKnowledgeCards'
   | 'countersSpecialSkills'
-  | 'counteredBySpecialSkills';
+  | 'counteredBySpecialSkills'
+  | 'advantageMaps'
+  | 'advantageModes'
+  | 'disadvantageMaps'
+  | 'disadvantageModes';
 
 type RelationCollectionKey = RelationKey | ExtraRelationKey;
 type RelationCollections = Partial<Record<RelationCollectionKey, readonly CharacterRelationItem[]>>;
 
-type RelationTheme = 'blue' | 'amber' | 'red' | 'green';
+type RelationTheme = 'blue' | 'amber' | 'red' | 'green' | 'purple' | 'orange';
 
 type RelationThemeClasses = {
   headerText: string;
@@ -93,6 +106,28 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
     badge:
       'text-[10px] px-1 py-0.5 bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-200 rounded-full',
   },
+  purple: {
+    headerText: 'text-purple-700 dark:text-purple-300',
+    iconBg: 'bg-purple-200',
+    itemBg: 'bg-purple-50 dark:bg-purple-900/30',
+    interactive:
+      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800/40 focus:outline-none focus:ring-2 focus:ring-purple-400 active:scale-95',
+    toggle:
+      'text-[10px] px-1 py-0.5 bg-purple-200 dark:bg-purple-700 text-purple-800 dark:text-purple-200 rounded-full hover:bg-purple-300 dark:hover:bg-purple-600 cursor-pointer',
+    badge:
+      'text-[10px] px-1 py-0.5 bg-purple-200 dark:bg-purple-700 text-purple-800 dark:text-purple-200 rounded-full',
+  },
+  orange: {
+    headerText: 'text-orange-700 dark:text-orange-300',
+    iconBg: 'bg-orange-200',
+    itemBg: 'bg-orange-50 dark:bg-orange-900/30',
+    interactive:
+      'cursor-pointer transition-shadow hover:shadow-lg hover:bg-orange-100 dark:hover:bg-orange-800/40 focus:outline-none focus:ring-2 focus:ring-orange-400 active:scale-95',
+    toggle:
+      'text-[10px] px-1 py-0.5 bg-orange-200 dark:bg-orange-700 text-orange-800 dark:text-orange-200 rounded-full hover:bg-orange-300 dark:hover:bg-orange-600 cursor-pointer',
+    badge:
+      'text-[10px] px-1 py-0.5 bg-orange-200 dark:bg-orange-700 text-orange-800 dark:text-orange-200 rounded-full',
+  },
 };
 
 type CharacterDisplayItem = {
@@ -147,10 +182,46 @@ type SpecialSkillDisplayItem = {
   removeLabel: string;
 };
 
+type MapDisplayItem = {
+  type: 'map';
+  key: string;
+  id: string;
+  description: string;
+  isMinor: boolean;
+  imageUrl?: string;
+  ariaLabel: string;
+  onNavigate: () => void;
+  editablePath: string;
+  onUpdateDescription: (value: string) => void;
+  onToggleMinor: () => void;
+  getToggleLabel: (currentIsMinor: boolean) => string;
+  onRemove: () => void;
+  removeLabel: string;
+};
+
+type ModeDisplayItem = {
+  type: 'mode';
+  key: string;
+  id: string;
+  description: string;
+  isMinor: boolean;
+  imageUrl?: string;
+  ariaLabel: string;
+  onNavigate: () => void;
+  editablePath: string;
+  onUpdateDescription: (value: string) => void;
+  onToggleMinor: () => void;
+  getToggleLabel: (currentIsMinor: boolean) => string;
+  onRemove: () => void;
+  removeLabel: string;
+};
+
 type RelationDisplayItem =
   | CharacterDisplayItem
   | KnowledgeCardDisplayItem
-  | SpecialSkillDisplayItem;
+  | SpecialSkillDisplayItem
+  | MapDisplayItem
+  | ModeDisplayItem;
 
 type RelationSectionConfig = {
   key: string;
@@ -271,6 +342,60 @@ const buildSpecialSkillItems = (
       onRemove: () => hook.handleRemove(idx),
       removeLabel: `移除特技 ${skill.id}`,
     } satisfies SpecialSkillDisplayItem;
+  });
+
+const buildMapItems = (
+  items: readonly CharacterRelationItem[] | undefined,
+  descriptionPathPrefix: ExtraRelationKey,
+  hook: ReturnType<typeof useRelationEditor>,
+  navigateToMap: (id: string) => void
+): MapDisplayItem[] =>
+  toArray(items).map((map, idx) => {
+    const mapObj = maps[map.id];
+    return {
+      type: 'map',
+      key: `map-${map.id}`,
+      id: map.id,
+      description: map.description ?? '',
+      isMinor: !!map.isMinor,
+      ...(mapObj?.imageUrl ? { imageUrl: mapObj.imageUrl } : {}),
+      ariaLabel: `跳转到地图 ${map.id}`,
+      onNavigate: () => navigateToMap(map.id),
+      editablePath: `${descriptionPathPrefix}.${idx}.description`,
+      onUpdateDescription: (value: string) => hook.handleUpdate(idx, 'description', value),
+      onToggleMinor: () => hook.toggleIsMinor(idx),
+      getToggleLabel: (currentIsMinor) =>
+        `切换${map.id}的地图关系为${currentIsMinor ? '主要' : '次要'}`,
+      onRemove: () => hook.handleRemove(idx),
+      removeLabel: `移除地图 ${map.id}`,
+    } satisfies MapDisplayItem;
+  });
+
+const buildModeItems = (
+  items: readonly CharacterRelationItem[] | undefined,
+  descriptionPathPrefix: ExtraRelationKey,
+  hook: ReturnType<typeof useRelationEditor>,
+  navigateToMode: (id: string) => void
+): ModeDisplayItem[] =>
+  toArray(items).map((mode, idx) => {
+    const modeObj = modes[mode.id];
+    return {
+      type: 'mode',
+      key: `mode-${mode.id}`,
+      id: mode.id,
+      description: mode.description ?? '',
+      isMinor: !!mode.isMinor,
+      ...(modeObj?.imageUrl ? { imageUrl: modeObj.imageUrl } : {}),
+      ariaLabel: `跳转到模式 ${mode.id}`,
+      onNavigate: () => navigateToMode(mode.id),
+      editablePath: `${descriptionPathPrefix}.${idx}.description`,
+      onUpdateDescription: (value: string) => hook.handleUpdate(idx, 'description', value),
+      onToggleMinor: () => hook.toggleIsMinor(idx),
+      getToggleLabel: (currentIsMinor) =>
+        `切换${mode.id}的模式关系为${currentIsMinor ? '主要' : '次要'}`,
+      onRemove: () => hook.handleRemove(idx),
+      removeLabel: `移除模式 ${mode.id}`,
+    } satisfies ModeDisplayItem;
   });
 
 type RelationSectionProps = {
@@ -541,6 +666,184 @@ const RelationSection: React.FC<RelationSectionProps> = ({
     );
   };
 
+  const renderMapItem = (item: MapDisplayItem) => {
+    const handleClick = () => {
+      if (!isEditMode) {
+        item.onNavigate();
+      }
+    };
+
+    return (
+      <div
+        key={item.key}
+        className={clsx(
+          'flex flex-row items-center gap-3 rounded-lg p-2',
+          themeClasses.itemBg,
+          !isEditMode && themeClasses.interactive,
+          item.isMinor && 'opacity-60'
+        )}
+        role={!isEditMode ? 'button' : undefined}
+        tabIndex={!isEditMode ? 0 : undefined}
+        aria-label={item.ariaLabel}
+        onClick={handleClick}
+        onKeyDown={(e) => {
+          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            item.onNavigate();
+          }
+        }}
+      >
+        {item.imageUrl ? (
+          <Image
+            src={item.imageUrl}
+            alt={item.id}
+            width={40}
+            height={40}
+            className='h-10 w-10 rounded-lg object-cover'
+          />
+        ) : (
+          <span className='flex h-10 w-10 items-center justify-center rounded-lg bg-blue-200 text-xs text-blue-600'>
+            地图
+          </span>
+        )}
+        <div className='flex flex-1 flex-col'>
+          <div className='flex items-center gap-1'>
+            <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
+            {isEditMode ? (
+              <button
+                type='button'
+                onClick={item.onToggleMinor}
+                className={themeClasses.toggle}
+                aria-label={item.getToggleLabel(!!item.isMinor)}
+              >
+                {item.isMinor ? '次要' : '主要'}
+              </button>
+            ) : (
+              item.isMinor && <span className={themeClasses.badge}>次要</span>
+            )}
+          </div>
+          {isEditMode ? (
+            <EditableField
+              tag='span'
+              path={item.editablePath}
+              initialValue={item.description || ''}
+              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+              onSave={item.onUpdateDescription}
+            />
+          ) : (
+            item.description && (
+              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
+                {item.description}
+              </span>
+            )
+          )}
+        </div>
+        {isEditMode && (
+          <button
+            type='button'
+            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+            aria-label={item.removeLabel}
+            onClick={(e) => {
+              e.stopPropagation();
+              item.onRemove();
+            }}
+          >
+            <TrashIcon className='h-4 w-4' aria-hidden='true' />
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  const renderModeItem = (item: ModeDisplayItem) => {
+    const handleClick = () => {
+      if (!isEditMode) {
+        item.onNavigate();
+      }
+    };
+
+    return (
+      <div
+        key={item.key}
+        className={clsx(
+          'flex flex-row items-center gap-3 rounded-lg p-2',
+          themeClasses.itemBg,
+          !isEditMode && themeClasses.interactive,
+          item.isMinor && 'opacity-60'
+        )}
+        role={!isEditMode ? 'button' : undefined}
+        tabIndex={!isEditMode ? 0 : undefined}
+        aria-label={item.ariaLabel}
+        onClick={handleClick}
+        onKeyDown={(e) => {
+          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            item.onNavigate();
+          }
+        }}
+      >
+        {item.imageUrl ? (
+          <Image
+            src={item.imageUrl}
+            alt={item.id}
+            width={40}
+            height={40}
+            className='h-10 w-10 rounded-lg object-cover'
+          />
+        ) : (
+          <span className='flex h-10 w-10 items-center justify-center rounded-lg bg-purple-200 text-xs text-purple-600'>
+            模式
+          </span>
+        )}
+        <div className='flex flex-1 flex-col'>
+          <div className='flex items-center gap-1'>
+            <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
+            {isEditMode ? (
+              <button
+                type='button'
+                onClick={item.onToggleMinor}
+                className={themeClasses.toggle}
+                aria-label={item.getToggleLabel(!!item.isMinor)}
+              >
+                {item.isMinor ? '次要' : '主要'}
+              </button>
+            ) : (
+              item.isMinor && <span className={themeClasses.badge}>次要</span>
+            )}
+          </div>
+          {isEditMode ? (
+            <EditableField
+              tag='span'
+              path={item.editablePath}
+              initialValue={item.description || ''}
+              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+              onSave={item.onUpdateDescription}
+            />
+          ) : (
+            item.description && (
+              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
+                {item.description}
+              </span>
+            )
+          )}
+        </div>
+        {isEditMode && (
+          <button
+            type='button'
+            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+            aria-label={item.removeLabel}
+            onClick={(e) => {
+              e.stopPropagation();
+              item.onRemove();
+            }}
+          >
+            <TrashIcon className='h-4 w-4' aria-hidden='true' />
+          </button>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className='flex items-center justify-between'>
@@ -570,7 +873,16 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             if (item.type === 'knowledgeCard') {
               return renderKnowledgeCardItem(item);
             }
-            return renderSpecialSkillItem(item);
+            if (item.type === 'specialSkill') {
+              return renderSpecialSkillItem(item);
+            }
+            if (item.type === 'map') {
+              return renderMapItem(item);
+            }
+            if (item.type === 'mode') {
+              return renderModeItem(item);
+            }
+            return null;
           })
         )}
       </div>
@@ -644,7 +956,6 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
 
-  // Get hooks for managing relations
   const countersHook = useRelationEditor(id, 'counters');
   const counteredByHook = useRelationEditor(id, 'counteredBy');
   const counterEachOtherHook = useRelationEditor(id, 'counterEachOther');
@@ -654,6 +965,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const counteredByKnowledgeCardsHook = useRelationEditor(id, 'counteredByKnowledgeCards');
   const countersSpecialSkillsHook = useRelationEditor(id, 'countersSpecialSkills');
   const counteredBySpecialSkillsHook = useRelationEditor(id, 'counteredBySpecialSkills');
+
+  const advantageMapsHook = useRelationEditor(id, 'advantageMaps');
+  const advantageModesHook = useRelationEditor(id, 'advantageModes');
+  const disadvantageMapsHook = useRelationEditor(id, 'disadvantageMaps');
+  const disadvantageModesHook = useRelationEditor(id, 'disadvantageModes');
 
   const oppositeFactionId = factionId === 'cat' ? 'mouse' : 'cat';
 
@@ -808,6 +1124,65 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
     [char.collaborators, collaboratorsHook, handleSelectCharacter, localCharacter.collaborators]
   );
 
+  const advantageMapsItems = React.useMemo(
+    () =>
+      sortByImportance(
+        buildMapItems(localCharacter.advantageMaps, 'advantageMaps', advantageMapsHook, (mapId) =>
+          navigate(`/maps/${encodeURIComponent(mapId)}`)
+        )
+      ),
+    [localCharacter.advantageMaps, advantageMapsHook, navigate]
+  );
+
+  const advantageModesItems = React.useMemo(
+    () =>
+      sortByImportance(
+        buildModeItems(
+          localCharacter.advantageModes,
+          'advantageModes',
+          advantageModesHook,
+          (modeId) => navigate(`/modes/${encodeURIComponent(modeId)}`)
+        )
+      ),
+    [localCharacter.advantageModes, advantageModesHook, navigate]
+  );
+
+  const disadvantageMapsItems = React.useMemo(
+    () =>
+      sortByImportance(
+        buildMapItems(
+          localCharacter.disadvantageMaps,
+          'disadvantageMaps',
+          disadvantageMapsHook,
+          (mapId) => navigate(`/maps/${encodeURIComponent(mapId)}`)
+        )
+      ),
+    [localCharacter.disadvantageMaps, disadvantageMapsHook, navigate]
+  );
+
+  const disadvantageModesItems = React.useMemo(
+    () =>
+      sortByImportance(
+        buildModeItems(
+          localCharacter.disadvantageModes,
+          'disadvantageModes',
+          disadvantageModesHook,
+          (modeId) => navigate(`/modes/${encodeURIComponent(modeId)}`)
+        )
+      ),
+    [localCharacter.disadvantageModes, disadvantageModesHook, navigate]
+  );
+
+  const advantageItems = React.useMemo(
+    () => sortByImportance([...advantageMapsItems, ...advantageModesItems]),
+    [advantageMapsItems, advantageModesItems]
+  );
+
+  const disadvantageItems = React.useMemo(
+    () => sortByImportance([...disadvantageMapsItems, ...disadvantageModesItems]),
+    [disadvantageMapsItems, disadvantageModesItems]
+  );
+
   const sectionConfigs: RelationSectionConfig[] = React.useMemo(
     () => [
       {
@@ -913,6 +1288,62 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           ) : undefined,
         show: factionId === 'mouse',
       },
+      {
+        key: 'advantage',
+        theme: 'orange',
+        title: `${id}的优势地图/模式`,
+        icon: (
+          <div className='flex items-center justify-center'>
+            <AdvantageIcon size={12} aria-hidden='true' />
+            <MapIcon size={12} aria-hidden='true' />
+          </div>
+        ),
+        items: advantageItems,
+        selectors: isEditMode && (
+          <div className='flex gap-2'>
+            <MapSelector
+              selected={Array.from(localCharacter.advantageMaps ?? [])}
+              onSelect={(mapName) => advantageMapsHook.handleAdd(mapName as string, '新增优势描述')}
+            />
+            <ModeSelector
+              selected={Array.from(localCharacter.advantageModes ?? [])}
+              onSelect={(modeName) =>
+                advantageModesHook.handleAdd(modeName as string, '新增优势描述')
+              }
+            />
+          </div>
+        ),
+        show: isEditMode || advantageItems.length > 0,
+      },
+      {
+        key: 'disadvantage',
+        theme: 'purple',
+        title: `${id}的劣势地图/模式`,
+        icon: (
+          <div className='flex items-center justify-center'>
+            <DisadvantageIcon size={12} aria-hidden='true' />
+            <MapIcon size={12} aria-hidden='true' />
+          </div>
+        ),
+        items: disadvantageItems,
+        selectors: isEditMode && (
+          <div className='flex gap-2'>
+            <MapSelector
+              selected={Array.from(localCharacter.disadvantageMaps ?? [])}
+              onSelect={(mapName) =>
+                disadvantageMapsHook.handleAdd(mapName as string, '新增劣势描述')
+              }
+            />
+            <ModeSelector
+              selected={Array.from(localCharacter.disadvantageModes ?? [])}
+              onSelect={(modeName) =>
+                disadvantageModesHook.handleAdd(modeName as string, '新增劣势描述')
+              }
+            />
+          </div>
+        ),
+        show: isEditMode || disadvantageItems.length > 0,
+      },
     ],
     [
       char.collaborators,
@@ -934,8 +1365,18 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       localCharacter.countersSpecialSkills,
       localCharacter.counteredByKnowledgeCards,
       localCharacter.counteredBySpecialSkills,
+      localCharacter.advantageMaps,
+      localCharacter.advantageModes,
+      localCharacter.disadvantageMaps,
+      localCharacter.disadvantageModes,
       collaboratorItems,
       sharedSelectorRelations,
+      advantageMapsHook,
+      advantageModesHook,
+      disadvantageMapsHook,
+      disadvantageModesHook,
+      advantageItems,
+      disadvantageItems,
     ]
   );
 

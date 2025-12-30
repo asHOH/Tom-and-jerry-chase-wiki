@@ -13,6 +13,10 @@ export function getCharacterRelation(id: string): CharacterRelation {
       counteredByKnowledgeCards: [],
       counterEachOther: [],
       counteredBySpecialSkills: [],
+      advantageMaps: [],
+      advantageModes: [],
+      disadvantageMaps: [],
+      disadvantageModes: [],
     };
   }
 
@@ -91,5 +95,9 @@ export function getCharacterRelation(id: string): CharacterRelation {
     counteredBySpecialSkills: char.counteredBySpecialSkills || [],
     counterEachOther: mergedCounterEachOther,
     collaborators: mergedCollaborators,
+    advantageMaps: char.advantageMaps || [],
+    advantageModes: char.advantageModes || [],
+    disadvantageMaps: char.disadvantageMaps || [],
+    disadvantageModes: char.disadvantageModes || [],
   };
 }
