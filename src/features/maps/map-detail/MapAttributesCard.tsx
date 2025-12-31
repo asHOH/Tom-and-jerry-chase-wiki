@@ -1,5 +1,7 @@
 'use client';
 
+import { useSnapshot } from 'valtio';
+
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalMap } from '@/context/EditModeContext';
@@ -21,11 +23,16 @@ export default function MapAttributesCard({ map }: { map: Map }) {
   const { mapName } = useLocalMap();
   const ed = editable('maps');
 
+  const mapsSnapshot = useSnapshot(mapsEdit);
+  const modesSnapshot = useSnapshot(modesEdit);
   if (!map) return null;
 
   const rawMap = mapsEdit[mapName];
-  const availableModeOptions = Object.keys(modesEdit);
-  const activeSupportedModes = Array.isArray(rawMap?.supportedModes) ? rawMap.supportedModes : [];
+  const effectiveMap = isEditMode ? (mapsSnapshot[mapName] ?? map) : map;
+  const availableModeOptions = Object.keys(modesSnapshot);
+  const activeSupportedModes = Array.isArray(effectiveMap?.supportedModes)
+    ? effectiveMap.supportedModes
+    : [];
 
   return (
     <AttributesCardLayout
@@ -38,8 +45,8 @@ export default function MapAttributesCard({ map }: { map: Map }) {
         isEditMode ? (
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-            {(rawMap?.aliases ?? map.aliases ?? []).length > 0 ? (
-              (rawMap?.aliases ?? map.aliases ?? []).map((alias, index, arr) => (
+            {(effectiveMap.aliases ?? map.aliases ?? []).length > 0 ? (
+              (effectiveMap.aliases ?? map.aliases ?? []).map((alias, index, arr) => (
                 <span key={`${alias}-${index}`} className='inline-flex items-center'>
                   <ed.span
                     initialValue={alias || '<无内容>'}
@@ -83,21 +90,29 @@ export default function MapAttributesCard({ map }: { map: Map }) {
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型：</span>
-            <Tag size='sm' margin='compact' colorStyles={getMapTypeColors(map.type, isDarkMode)}>
-              <ed.span path='type' initialValue={map.type ?? '<无内容>'} isSingleLine />
+            <Tag
+              size='sm'
+              margin='compact'
+              colorStyles={getMapTypeColors(effectiveMap.type, isDarkMode)}
+            >
+              <ed.span path='type' initialValue={effectiveMap.type ?? '<无内容>'} isSingleLine />
             </Tag>
-            {!isEditMode && map.size && (
-              <Tag size='sm' margin='compact' colorStyles={getMapSizeColors(map.size, isDarkMode)}>
-                {map.size}
-              </Tag>
-            )}
-            {!isEditMode && map.studyLevelUnlock && (
+            {!isEditMode && effectiveMap.size && (
               <Tag
                 size='sm'
                 margin='compact'
-                colorStyles={getMapLevelColors(map.studyLevelUnlock, isDarkMode)}
+                colorStyles={getMapSizeColors(effectiveMap.size, isDarkMode)}
               >
-                {map.studyLevelUnlock}
+                {effectiveMap.size}
+              </Tag>
+            )}
+            {!isEditMode && effectiveMap.studyLevelUnlock && (
+              <Tag
+                size='sm'
+                margin='compact'
+                colorStyles={getMapLevelColors(effectiveMap.studyLevelUnlock, isDarkMode)}
+              >
+                {effectiveMap.studyLevelUnlock}
               </Tag>
             )}
           </div>
@@ -107,7 +122,11 @@ export default function MapAttributesCard({ map }: { map: Map }) {
               <span className='text-sm whitespace-pre'>
                 规模：
                 <span className='text-indigo-700 dark:text-indigo-400'>
-                  <ed.span path='size' initialValue={map.size ?? '<无内容>'} isSingleLine />
+                  <ed.span
+                    path='size'
+                    initialValue={effectiveMap.size ?? '<无内容>'}
+                    isSingleLine
+                  />
                 </span>
               </span>
               <span className='text-sm whitespace-pre'>
@@ -115,7 +134,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                 <span className='text-indigo-700 dark:text-indigo-400'>
                   <ed.span
                     path='studyLevelUnlock'
-                    initialValue={map.studyLevelUnlock ?? '<无内容>'}
+                    initialValue={effectiveMap.studyLevelUnlock ?? '<无内容>'}
                     isSingleLine
                   />
                 </span>
@@ -142,7 +161,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                   <span className='text-indigo-700 dark:text-indigo-400'>
                     <ed.span
                       path='roomCount'
-                      initialValue={map.roomCount ?? '<无内容>'}
+                      initialValue={effectiveMap.roomCount ?? '<无内容>'}
                       valueType='number'
                       isSingleLine
                     />
@@ -162,7 +181,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                   <span className='text-indigo-700 dark:text-indigo-400'>
                     <ed.span
                       path='pipeCount'
-                      initialValue={map.pipeCount ?? '<无内容>'}
+                      initialValue={effectiveMap.pipeCount ?? '<无内容>'}
                       valueType='number'
                       isSingleLine
                     />
@@ -182,7 +201,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                   <span className='text-indigo-700 dark:text-indigo-400'>
                     <ed.span
                       path='doorCount'
-                      initialValue={map.doorCount ?? '<无内容>'}
+                      initialValue={effectiveMap.doorCount ?? '<无内容>'}
                       valueType='number'
                       isSingleLine
                     />
@@ -201,7 +220,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                     {' '}
                     <ed.span
                       path='hiddenRoomCount'
-                      initialValue={map.hiddenRoomCount ?? '<无内容>'}
+                      initialValue={effectiveMap.hiddenRoomCount ?? '<无内容>'}
                       valueType='number'
                       isSingleLine
                     />{' '}
@@ -214,7 +233,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                   <label className='flex cursor-pointer items-center gap-1 text-xs'>
                     <input
                       type='checkbox'
-                      checked={rawMap?.randomizedRoom ?? false}
+                      checked={effectiveMap.randomizedRoom ?? false}
                       onChange={(e) => {
                         if (!rawMap) return;
                         rawMap.randomizedRoom = e.target.checked;
@@ -228,7 +247,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                   <label className='flex cursor-pointer items-center gap-1 text-xs'>
                     <input
                       type='checkbox'
-                      checked={rawMap?.changeWithStudyLevel ?? false}
+                      checked={effectiveMap.changeWithStudyLevel ?? false}
                       onChange={(e) => {
                         if (!rawMap) return;
                         rawMap.changeWithStudyLevel = e.target.checked;
@@ -242,7 +261,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                   <label className='flex cursor-pointer items-center gap-1 text-xs'>
                     <input
                       type='checkbox'
-                      checked={rawMap?.changeWithMode ?? false}
+                      checked={effectiveMap.changeWithMode ?? false}
                       onChange={(e) => {
                         if (!rawMap) return;
                         rawMap.changeWithMode = e.target.checked;
@@ -256,17 +275,17 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                 </div>
               ) : (
                 <>
-                  {map.randomizedRoom === true && (
+                  {effectiveMap.randomizedRoom === true && (
                     <span className='text-sm whitespace-pre text-fuchsia-600 dark:text-fuchsia-400'>
                       该地图的部分地形会随机发生变化
                     </span>
                   )}
-                  {map.changeWithStudyLevel === true && (
+                  {effectiveMap.changeWithStudyLevel === true && (
                     <span className='text-sm whitespace-pre text-fuchsia-600 dark:text-fuchsia-400'>
                       该地图的部分地形会随学业等级提升而变化
                     </span>
                   )}
-                  {map.changeWithMode === true && (
+                  {effectiveMap.changeWithMode === true && (
                     <span className='text-sm whitespace-pre text-fuchsia-600 dark:text-fuchsia-400'>
                       该地图的部分地形在部分模式中会发生变化
                     </span>
@@ -288,7 +307,10 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                         checked={activeSupportedModes.includes(opt)}
                         onChange={(e) => {
                           if (!rawMap) return;
-                          const next = new Set(activeSupportedModes);
+                          const current = Array.isArray(rawMap.supportedModes)
+                            ? rawMap.supportedModes
+                            : [];
+                          const next = new Set(current);
                           if (e.target.checked) next.add(opt);
                           else next.delete(opt);
                           const arr = Array.from(next);
@@ -307,7 +329,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
               ) : (
                 <div className='mt-1'>
                   <SingleItemAccordionCard
-                    items={(map.supportedModes ?? []).map((str) => {
+                    items={(effectiveMap.supportedModes ?? []).map((str) => {
                       return { name: str, type: 'mode' } as SingleItem;
                     })}
                   />

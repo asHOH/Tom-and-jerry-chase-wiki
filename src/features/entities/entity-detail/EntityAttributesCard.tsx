@@ -1,5 +1,7 @@
 'use client';
 
+import { useSnapshot } from 'valtio';
+
 import { getEntityTypeColors } from '@/lib/design-tokens';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
@@ -25,28 +27,36 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const { entityName } = useLocalEntity();
   const ed = editable('entities');
 
+  const entitiesSnapshot = useSnapshot(entitiesEdit);
   if (!entity) return null;
 
   const rawEntity = entitiesEdit[entityName];
+  const effectiveEntity = (
+    isEditMode ? (entitiesSnapshot[entityName] ?? entity) : entity
+  ) as Entity;
 
   const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
-  const activeCollision = Array.isArray(rawEntity?.collsion) ? rawEntity.collsion : [];
+  const activeCollision = Array.isArray(effectiveEntity?.collsion) ? effectiveEntity.collsion : [];
 
   const factionId = getEntityFactionId(entity);
 
-  function putTypeTagOn(entity: Entity) {
-    if (typeof entity.entitytype === 'string') {
+  function putTypeTagOn(currentEntity: Entity) {
+    if (typeof currentEntity.entitytype === 'string') {
       return (
         <Tag
           size='sm'
           margin='compact'
-          colorStyles={getEntityTypeColors(entity.entitytype, isDarkMode)}
+          colorStyles={getEntityTypeColors(currentEntity.entitytype, isDarkMode)}
         >
-          <ed.span path='entitytype' initialValue={entity.entitytype ?? '<无内容>'} isSingleLine />
+          <ed.span
+            path='entitytype'
+            initialValue={currentEntity.entitytype ?? '<无内容>'}
+            isSingleLine
+          />
         </Tag>
       );
     } else {
-      return entity.entitytype.map((type) => {
+      return currentEntity.entitytype.map((type) => {
         return (
           <Tag
             size='sm'
@@ -72,8 +82,8 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
         isEditMode ? (
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-            {(rawEntity?.aliases ?? entity.aliases ?? []).length > 0 ? (
-              (rawEntity?.aliases ?? entity.aliases ?? []).map((alias, index, arr) => (
+            {(effectiveEntity.aliases ?? entity.aliases ?? []).length > 0 ? (
+              (effectiveEntity.aliases ?? entity.aliases ?? []).map((alias, index, arr) => (
                 <span key={`${alias}-${index}`} className='inline-flex items-center'>
                   <ed.span
                     initialValue={alias || '<无内容>'}
@@ -117,29 +127,29 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型: </span>
-            {putTypeTagOn(entity)}
+            {putTypeTagOn(effectiveEntity)}
           </div>
-          {entity.owner && (
+          {effectiveEntity.owner && (
             <div className='flex items-center gap-2 text-sm'>
-              <SingleItemAccordionCard items={entity.owner} title='归属者：' />
+              <SingleItemAccordionCard items={effectiveEntity.owner} title='归属者：' />
             </div>
           )}
-          {entity.entityAttributesAsCharacter !== undefined && (
+          {effectiveEntity.entityAttributesAsCharacter !== undefined && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-sm font-bold'>
                 该衍生物特性与<span className='text-fuchsia-600 dark:text-fuchsia-400'>角色</span>
                 类似，可看作
-                {entity.entityAttributesAsCharacter.factionBelong === 'cat' ? (
+                {effectiveEntity.entityAttributesAsCharacter.factionBelong === 'cat' ? (
                   <span className='text-sky-600 dark:text-sky-400'>猫阵营</span>
-                ) : entity.entityAttributesAsCharacter.factionBelong === 'mouse' ? (
+                ) : effectiveEntity.entityAttributesAsCharacter.factionBelong === 'mouse' ? (
                   <span className='text-amber-700 dark:text-amber-600'>鼠阵营</span>
                 ) : (
                   <span className='text-fuchsia-600 dark:text-fuchsia-400'>第三阵营</span>
                 )}
                 的
-                {entity.entityAttributesAsCharacter.type === 'cat' ? (
+                {effectiveEntity.entityAttributesAsCharacter.type === 'cat' ? (
                   <span className='text-sky-600 dark:text-sky-400'>猫角色</span>
-                ) : entity.entityAttributesAsCharacter.type === 'mouse' ? (
+                ) : effectiveEntity.entityAttributesAsCharacter.type === 'mouse' ? (
                   <span className='text-amber-700 dark:text-amber-600'>鼠角色</span>
                 ) : (
                   <span className='text-fuchsia-600 dark:text-fuchsia-400'>特殊角色</span>
@@ -150,35 +160,35 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                 style={{ gridTemplateColumns: `repeat(2, minmax(80px, 1fr))` }}
               >
                 {[
-                  entity.entityAttributesAsCharacter.maxHp === undefined
+                  effectiveEntity.entityAttributesAsCharacter.maxHp === undefined
                     ? { title: null, text: null }
                     : {
                         title: 'Hp上限',
-                        text: entity.entityAttributesAsCharacter.maxHp,
+                        text: effectiveEntity.entityAttributesAsCharacter.maxHp,
                       },
-                  entity.entityAttributesAsCharacter.hpRecovery === undefined
+                  effectiveEntity.entityAttributesAsCharacter.hpRecovery === undefined
                     ? { title: null, text: null }
                     : {
                         title: 'Hp恢复',
-                        text: entity.entityAttributesAsCharacter.hpRecovery,
+                        text: effectiveEntity.entityAttributesAsCharacter.hpRecovery,
                       },
-                  entity.entityAttributesAsCharacter.moveSpeed === undefined
+                  effectiveEntity.entityAttributesAsCharacter.moveSpeed === undefined
                     ? { title: null, text: null }
                     : {
                         title: '移速',
-                        text: entity.entityAttributesAsCharacter.moveSpeed,
+                        text: effectiveEntity.entityAttributesAsCharacter.moveSpeed,
                       },
-                  entity.entityAttributesAsCharacter.jumpHeight === undefined
+                  effectiveEntity.entityAttributesAsCharacter.jumpHeight === undefined
                     ? { title: null, text: null }
                     : {
                         title: '跳跃',
-                        text: entity.entityAttributesAsCharacter.jumpHeight,
+                        text: effectiveEntity.entityAttributesAsCharacter.jumpHeight,
                       },
-                  entity.entityAttributesAsCharacter.attackBoost === undefined
+                  effectiveEntity.entityAttributesAsCharacter.attackBoost === undefined
                     ? { title: null, text: null }
                     : {
                         title: '攻击增伤',
-                        text: entity.entityAttributesAsCharacter.attackBoost,
+                        text: effectiveEntity.entityAttributesAsCharacter.attackBoost,
                       },
                 ].map(({ title, text }) =>
                   title === null ? null : (
@@ -186,7 +196,9 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                       <Tooltip
                         content={getTooltipContent(
                           title,
-                          entity.entityAttributesAsCharacter?.type === 'cat' ? 'cat' : 'mouse',
+                          effectiveEntity.entityAttributesAsCharacter?.type === 'cat'
+                            ? 'cat'
+                            : 'mouse',
                           isDetailed
                         )}
                       >
@@ -218,9 +230,9 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             </div>
           )}
           {(isEditMode ||
-            entity.move !== undefined ||
-            entity.gravity !== undefined ||
-            entity.collsion !== undefined) && (
+            effectiveEntity.move !== undefined ||
+            effectiveEntity.gravity !== undefined ||
+            effectiveEntity.collsion !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>移动信息</span>
               <div
@@ -237,7 +249,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                       <label className='flex cursor-pointer items-center gap-1'>
                         <input
                           type='checkbox'
-                          checked={rawEntity?.move ?? false}
+                          checked={effectiveEntity.move ?? false}
                           onChange={(e) => {
                             if (!rawEntity) return;
                             rawEntity.move = e.target.checked;
@@ -245,7 +257,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                           className='h-3 w-3'
                         />
                         <span className='font-bold'>
-                          {(rawEntity?.move ?? false) ? '可移动' : '不可移动'}
+                          {(effectiveEntity.move ?? false) ? '可移动' : '不可移动'}
                         </span>
                       </label>
                     </div>
@@ -254,7 +266,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                       <label className='flex cursor-pointer items-center gap-1'>
                         <input
                           type='checkbox'
-                          checked={rawEntity?.gravity ?? false}
+                          checked={effectiveEntity.gravity ?? false}
                           onChange={(e) => {
                             if (!rawEntity) return;
                             rawEntity.gravity = e.target.checked;
@@ -262,7 +274,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                           className='h-3 w-3'
                         />
                         <span className='font-bold'>
-                          {(rawEntity?.gravity ?? false) ? '会受重力影响' : '不受重力影响'}
+                          {(effectiveEntity.gravity ?? false) ? '会受重力影响' : '不受重力影响'}
                         </span>
                       </label>
                     </div>
@@ -275,7 +287,10 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                             checked={activeCollision.includes(opt)}
                             onChange={(e) => {
                               if (!rawEntity) return;
-                              const next = new Set(activeCollision);
+                              const current = Array.isArray(rawEntity.collsion)
+                                ? rawEntity.collsion
+                                : [];
+                              const next = new Set(current);
                               if (e.target.checked) next.add(opt);
                               else next.delete(opt);
                               const arr = Array.from(next);
@@ -294,9 +309,9 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                   </>
                 ) : (
                   <>
-                    {entity.move !== undefined && (
+                    {effectiveEntity.move !== undefined && (
                       <span className='text-sm whitespace-pre'>
-                        {entity.move === true ? (
+                        {effectiveEntity.move === true ? (
                           <span className='text-green-600 dark:text-green-500'>可</span>
                         ) : (
                           <span className='text-red-600 dark:text-red-500'>不可</span>
@@ -304,9 +319,9 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                         移动
                       </span>
                     )}
-                    {entity.gravity !== undefined && (
+                    {effectiveEntity.gravity !== undefined && (
                       <span className='text-sm whitespace-pre'>
-                        {entity.gravity === true ? (
+                        {effectiveEntity.gravity === true ? (
                           <span className='text-orange-600 dark:text-orange-400'>会受</span>
                         ) : (
                           <span className='text-indigo-700 dark:text-indigo-400'>不受</span>
@@ -315,10 +330,10 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                       </span>
                     )}
                     <span className='text-sm whitespace-pre'>
-                      {!!entity.collsion ? (
+                      {!!effectiveEntity.collsion ? (
                         <>
                           <span className='text-orange-600 dark:text-orange-400'>会</span>与
-                          {entity.collsion.map((string, key, array) => {
+                          {effectiveEntity.collsion.map((string, key, array) => {
                             return (
                               <span key={key}>
                                 <span

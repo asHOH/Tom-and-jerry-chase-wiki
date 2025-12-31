@@ -1,5 +1,7 @@
 'use client';
 
+import { useSnapshot } from 'valtio';
+
 import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalBuff } from '@/context/EditModeContext';
@@ -19,9 +21,12 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const { isEditMode } = useEditMode();
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
+
+  const buffsSnapshot = useSnapshot(buffsEdit);
   if (!buff) return null;
 
   const rawBuff = buffsEdit[buffName];
+  const effectiveBuff = isEditMode ? (buffsSnapshot[buffName] ?? buff) : buff;
 
   const avilableAliases = (buff.aliases ?? [])
     .filter((i) => i && i[0] !== '#')
@@ -32,8 +37,8 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const aliasesEditor = isEditMode ? (
     <div className='flex items-center gap-1'>
       <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-      {(rawBuff?.aliases ?? buff.aliases ?? []).length > 0 ? (
-        (rawBuff?.aliases ?? buff.aliases ?? []).map((alias, index, arr) => (
+      {(effectiveBuff.aliases ?? buff.aliases ?? []).length > 0 ? (
+        (effectiveBuff.aliases ?? buff.aliases ?? []).map((alias, index, arr) => (
           <span key={`${alias}-${index}`} className='inline-flex items-center'>
             <ed.span
               initialValue={alias || '<无内容>'}
@@ -85,8 +90,12 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型: </span>
-            <Tag size='sm' margin='compact' colorStyles={getBuffTypeColors(buff.type, isDarkMode)}>
-              <ed.span path='type' initialValue={buff.type ?? '<无内容>'} isSingleLine />
+            <Tag
+              size='sm'
+              margin='compact'
+              colorStyles={getBuffTypeColors(effectiveBuff.type, isDarkMode)}
+            >
+              <ed.span path='type' initialValue={effectiveBuff.type ?? '<无内容>'} isSingleLine />
             </Tag>
             {isEditMode ? (
               <div className='flex items-center gap-1 text-xs'>
@@ -94,7 +103,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                 <label className='flex cursor-pointer items-center gap-1'>
                   <input
                     type='checkbox'
-                    checked={rawBuff?.global ?? false}
+                    checked={effectiveBuff.global ?? false}
                     onChange={(e) => {
                       if (!rawBuff) return;
                       rawBuff.global = e.target.checked;
@@ -102,15 +111,15 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                     className='h-3 w-3'
                   />
                   <span className='font-bold'>
-                    {(rawBuff?.global ?? false) ? '全局' : '非全局'}
+                    {(effectiveBuff.global ?? false) ? '全局' : '非全局'}
                   </span>
                 </label>
               </div>
-            ) : buff.global === true ? (
+            ) : effectiveBuff.global === true ? (
               <Tag
                 size='sm'
                 margin='compact'
-                colorStyles={getBuffGlobalColors(buff.global || false, isDarkMode)}
+                colorStyles={getBuffGlobalColors(effectiveBuff.global || false, isDarkMode)}
               >
                 全局
               </Tag>
@@ -118,48 +127,48 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
           </div>
 
           {(isEditMode ||
-            buff.target !== undefined ||
-            buff.duration !== undefined ||
-            buff.failure !== undefined) && (
+            effectiveBuff.target !== undefined ||
+            effectiveBuff.duration !== undefined ||
+            effectiveBuff.failure !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>基础信息</span>
               <div
                 className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
                 style={{ gridTemplateColumns: `repeat(1, minmax(80px, 1fr))` }}
               >
-                {(isEditMode || !!buff.target) && (
+                {(isEditMode || !!effectiveBuff.target) && (
                   <span className='text-sm'>
                     作用对象：
                     <span className='text-fuchsia-600 dark:text-fuchsia-400'>
                       <ed.span
                         path='target'
-                        initialValue={buff.target ?? '<无内容>'}
+                        initialValue={effectiveBuff.target ?? '<无内容>'}
                         isSingleLine
                       />
                     </span>
                   </span>
                 )}
-                {(isEditMode || buff.duration !== undefined) && (
+                {(isEditMode || effectiveBuff.duration !== undefined) && (
                   <span className='text-sm whitespace-pre'>
                     持续时间：
                     <span className='text-indigo-700 dark:text-indigo-400'>
                       <ed.span
                         path='duration'
-                        initialValue={buff.duration ?? '<无内容>'}
-                        valueType={typeof buff.duration === 'number' ? 'number' : 'string'}
+                        initialValue={effectiveBuff.duration ?? '<无内容>'}
+                        valueType={typeof effectiveBuff.duration === 'number' ? 'number' : 'string'}
                         isSingleLine
                       />
                     </span>
-                    {typeof buff.duration === 'number' ? ' 秒' : ''}
+                    {typeof effectiveBuff.duration === 'number' ? ' 秒' : ''}
                   </span>
                 )}
-                {(isEditMode || buff.failure !== undefined) && (
+                {(isEditMode || effectiveBuff.failure !== undefined) && (
                   <span className='text-sm'>
                     中止条件：
                     <span className='text-orange-600 dark:text-orange-400'>
                       <ed.span
                         path='failure'
-                        initialValue={buff.failure ?? '<无内容>'}
+                        initialValue={effectiveBuff.failure ?? '<无内容>'}
                         isSingleLine
                       />
                     </span>

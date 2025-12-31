@@ -1,5 +1,7 @@
 'use client';
 
+import { useSnapshot } from 'valtio';
+
 import {
   getItemSourceColors /* , getCardCostColors */,
   getItemTypeColors,
@@ -24,18 +26,20 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
   const { isEditMode } = useEditMode();
   const { itemName } = useLocalItem();
   const ed = editable('items');
+  const itemsSnapshot = useSnapshot(itemsEdit);
   if (!item) return null;
 
   const rawItem = itemsEdit[itemName];
+  const effectiveItem = isEditMode ? (itemsSnapshot[itemName] ?? item) : item;
 
   const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
-  const activeCollision = Array.isArray(rawItem?.collsion) ? rawItem.collsion : [];
+  const activeCollision = Array.isArray(effectiveItem?.collsion) ? effectiveItem.collsion : [];
 
   const aliasesEditor = isEditMode ? (
     <div className='flex items-center gap-1'>
       <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-      {(rawItem?.aliases ?? item.aliases ?? []).length > 0 ? (
-        (rawItem?.aliases ?? item.aliases ?? []).map((alias, index, arr) => (
+      {(effectiveItem.aliases ?? item.aliases ?? []).length > 0 ? (
+        (effectiveItem.aliases ?? item.aliases ?? []).map((alias, index, arr) => (
           <span key={`${alias}-${index}`} className='inline-flex items-center'>
             <ed.span
               initialValue={alias || '<无内容>'}
@@ -90,23 +94,29 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             <Tag
               size='sm'
               margin='compact'
-              colorStyles={getItemTypeColors(item?.itemtype || '', isDarkMode)}
+              colorStyles={getItemTypeColors(effectiveItem?.itemtype || '', isDarkMode)}
             >
-              <ed.span path='itemtype' initialValue={item.itemtype ?? '<无内容>'} isSingleLine />
+              <ed.span
+                path='itemtype'
+                initialValue={effectiveItem.itemtype ?? '<无内容>'}
+                isSingleLine
+              />
             </Tag>
             <Tag
               size='sm'
               margin='compact'
-              colorStyles={getItemSourceColors(item?.itemsource || '', isDarkMode)}
+              colorStyles={getItemSourceColors(effectiveItem?.itemsource || '', isDarkMode)}
             >
               <ed.span
                 path='itemsource'
-                initialValue={item.itemsource ?? '<无内容>'}
+                initialValue={effectiveItem.itemsource ?? '<无内容>'}
                 isSingleLine
               />
             </Tag>
           </div>
-          {(isEditMode || item?.damage !== undefined || item?.walldamage !== undefined) && (
+          {(isEditMode ||
+            effectiveItem?.damage !== undefined ||
+            effectiveItem?.walldamage !== undefined) && (
             <div
               className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
               style={{ gridTemplateColumns: `repeat(2, minmax(40px, 1fr))` }}
@@ -116,7 +126,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                 <span className='text-red-600 dark:text-red-400'>
                   <ed.span
                     path='damage'
-                    initialValue={item.damage ?? '<无内容>'}
+                    initialValue={effectiveItem.damage ?? '<无内容>'}
                     valueType='number'
                     isSingleLine
                   />
@@ -127,7 +137,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                 <span className='text-yellow-700 dark:text-yellow-500'>
                   <ed.span
                     path='walldamage'
-                    initialValue={item.walldamage ?? '<无内容>'}
+                    initialValue={effectiveItem.walldamage ?? '<无内容>'}
                     valueType='number'
                     isSingleLine
                   />
@@ -141,40 +151,40 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               <span className='text-indigo-700 dark:text-indigo-400'>
                 <ed.span
                   path='exp'
-                  initialValue={item.exp ?? '<无内容>'}
+                  initialValue={effectiveItem.exp ?? '<无内容>'}
                   valueType='number'
                   isSingleLine
                 />
               </span>
               {' 经验'}
             </span>
-          ) : item?.exp != undefined ? (
-            item.exp == 0 ? (
+          ) : effectiveItem?.exp != undefined ? (
+            effectiveItem.exp == 0 ? (
               <span className='text-sm whitespace-pre'>(猫)命中不获得经验</span>
             ) : (
               <span className='text-sm whitespace-pre'>
                 {'(猫)命中获得 '}
-                <span className='text-indigo-700 dark:text-indigo-400'>{item.exp}</span>
+                <span className='text-indigo-700 dark:text-indigo-400'>{effectiveItem.exp}</span>
                 {' 经验'}
               </span>
             )
           ) : null}
-          {item.itemAttributesAsCharacter !== undefined && (
+          {effectiveItem.itemAttributesAsCharacter !== undefined && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-sm font-bold'>
                 该道具特性与<span className='text-fuchsia-600 dark:text-fuchsia-400'>角色</span>
                 类似，可看作
-                {item.itemAttributesAsCharacter.factionBelong === 'cat' ? (
+                {effectiveItem.itemAttributesAsCharacter.factionBelong === 'cat' ? (
                   <span className='text-sky-600 dark:text-sky-400'>猫阵营</span>
-                ) : item.itemAttributesAsCharacter.factionBelong === 'mouse' ? (
+                ) : effectiveItem.itemAttributesAsCharacter.factionBelong === 'mouse' ? (
                   <span className='text-amber-700 dark:text-amber-600'>鼠阵营</span>
                 ) : (
                   <span className='text-fuchsia-600 dark:text-fuchsia-400'>第三阵营</span>
                 )}
                 的
-                {item.itemAttributesAsCharacter.type === 'cat' ? (
+                {effectiveItem.itemAttributesAsCharacter.type === 'cat' ? (
                   <span className='text-sky-600 dark:text-sky-400'>猫角色</span>
-                ) : item.itemAttributesAsCharacter.type === 'mouse' ? (
+                ) : effectiveItem.itemAttributesAsCharacter.type === 'mouse' ? (
                   <span className='text-amber-700 dark:text-amber-600'>鼠角色</span>
                 ) : (
                   <span className='text-fuchsia-600 dark:text-fuchsia-400'>特殊角色</span>
@@ -185,35 +195,35 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                 style={{ gridTemplateColumns: `repeat(2, minmax(80px, 1fr))` }}
               >
                 {[
-                  item.itemAttributesAsCharacter.maxHp === undefined
+                  effectiveItem.itemAttributesAsCharacter.maxHp === undefined
                     ? { title: null, text: null }
                     : {
                         title: 'Hp上限',
-                        text: item.itemAttributesAsCharacter.maxHp,
+                        text: effectiveItem.itemAttributesAsCharacter.maxHp,
                       },
-                  item.itemAttributesAsCharacter.hpRecovery === undefined
+                  effectiveItem.itemAttributesAsCharacter.hpRecovery === undefined
                     ? { title: null, text: null }
                     : {
                         title: 'Hp恢复',
-                        text: item.itemAttributesAsCharacter.hpRecovery,
+                        text: effectiveItem.itemAttributesAsCharacter.hpRecovery,
                       },
-                  item.itemAttributesAsCharacter.moveSpeed === undefined
+                  effectiveItem.itemAttributesAsCharacter.moveSpeed === undefined
                     ? { title: null, text: null }
                     : {
                         title: '移速',
-                        text: item.itemAttributesAsCharacter.moveSpeed,
+                        text: effectiveItem.itemAttributesAsCharacter.moveSpeed,
                       },
-                  item.itemAttributesAsCharacter.jumpHeight === undefined
+                  effectiveItem.itemAttributesAsCharacter.jumpHeight === undefined
                     ? { title: null, text: null }
                     : {
                         title: '跳跃',
-                        text: item.itemAttributesAsCharacter.jumpHeight,
+                        text: effectiveItem.itemAttributesAsCharacter.jumpHeight,
                       },
-                  item.itemAttributesAsCharacter.attackBoost === undefined
+                  effectiveItem.itemAttributesAsCharacter.attackBoost === undefined
                     ? { title: null, text: null }
                     : {
                         title: '攻击增伤',
-                        text: item.itemAttributesAsCharacter.attackBoost,
+                        text: effectiveItem.itemAttributesAsCharacter.attackBoost,
                       },
                 ].map(({ title, text }) =>
                   title === null ? null : (
@@ -221,7 +231,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                       <Tooltip
                         content={getTooltipContent(
                           title,
-                          item.itemAttributesAsCharacter?.type === 'cat' ? 'cat' : 'mouse',
+                          effectiveItem.itemAttributesAsCharacter?.type === 'cat' ? 'cat' : 'mouse',
                           isDetailed
                         )}
                       >
@@ -235,9 +245,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             </div>
           )}
           {(isEditMode ||
-            item.move !== undefined ||
-            item.gravity !== undefined ||
-            item.collsion !== undefined) && (
+            effectiveItem.move !== undefined ||
+            effectiveItem.gravity !== undefined ||
+            effectiveItem.collsion !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>移动信息</span>
               <div
@@ -254,7 +264,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                       <label className='flex cursor-pointer items-center gap-1'>
                         <input
                           type='checkbox'
-                          checked={rawItem?.move ?? false}
+                          checked={effectiveItem.move ?? false}
                           onChange={(e) => {
                             if (!rawItem) return;
                             rawItem.move = e.target.checked;
@@ -262,7 +272,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                           className='h-3 w-3'
                         />
                         <span className='font-bold'>
-                          {(rawItem?.move ?? false) ? '可移动' : '不可移动'}
+                          {(effectiveItem.move ?? false) ? '可移动' : '不可移动'}
                         </span>
                       </label>
                     </div>
@@ -271,7 +281,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                       <label className='flex cursor-pointer items-center gap-1'>
                         <input
                           type='checkbox'
-                          checked={rawItem?.gravity ?? false}
+                          checked={effectiveItem.gravity ?? false}
                           onChange={(e) => {
                             if (!rawItem) return;
                             rawItem.gravity = e.target.checked;
@@ -279,7 +289,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                           className='h-3 w-3'
                         />
                         <span className='font-bold'>
-                          {(rawItem?.gravity ?? false) ? '会受重力影响' : '不受重力影响'}
+                          {(effectiveItem.gravity ?? false) ? '会受重力影响' : '不受重力影响'}
                         </span>
                       </label>
                     </div>
@@ -292,7 +302,10 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                             checked={activeCollision.includes(opt)}
                             onChange={(e) => {
                               if (!rawItem) return;
-                              const next = new Set(activeCollision);
+                              const current = Array.isArray(rawItem.collsion)
+                                ? rawItem.collsion
+                                : [];
+                              const next = new Set(current);
                               if (e.target.checked) next.add(opt);
                               else next.delete(opt);
                               const arr = Array.from(next);
@@ -311,9 +324,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   </>
                 ) : (
                   <>
-                    {item.move !== undefined && (
+                    {effectiveItem.move !== undefined && (
                       <span className='text-sm whitespace-pre'>
-                        {item.move === true ? (
+                        {effectiveItem.move === true ? (
                           <span className='text-green-600 dark:text-green-500'>可</span>
                         ) : (
                           <span className='text-red-600 dark:text-red-500'>不可</span>
@@ -321,9 +334,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                         移动
                       </span>
                     )}
-                    {item.gravity !== undefined && (
+                    {effectiveItem.gravity !== undefined && (
                       <span className='text-sm whitespace-pre'>
-                        {item.gravity === true ? (
+                        {effectiveItem.gravity === true ? (
                           <span className='text-orange-600 dark:text-orange-400'>会受</span>
                         ) : (
                           <span className='text-indigo-700 dark:text-indigo-400'>不受</span>
@@ -332,10 +345,10 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                       </span>
                     )}
                     <span className='text-sm whitespace-pre'>
-                      {!!item.collsion ? (
+                      {!!effectiveItem.collsion ? (
                         <>
                           <span className='text-orange-600 dark:text-orange-400'>会</span>与
-                          {item.collsion.map((string, key, array) => {
+                          {effectiveItem.collsion.map((string, key, array) => {
                             return (
                               <span key={key}>
                                 <span
@@ -367,7 +380,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               </div>
             </div>
           )}
-          {(isEditMode || item?.store !== undefined) && (
+          {(isEditMode || effectiveItem?.store !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               {isEditMode ? (
                 <div className='flex items-center gap-2'>
@@ -375,17 +388,19 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   <label className='flex cursor-pointer items-center gap-1 text-xs'>
                     <input
                       type='checkbox'
-                      checked={rawItem?.store ?? false}
+                      checked={effectiveItem.store ?? false}
                       onChange={(e) => {
                         if (!rawItem) return;
                         rawItem.store = e.target.checked;
                       }}
                       className='h-3 w-3'
                     />
-                    <span className='font-bold'>{(rawItem?.store ?? false) ? '有售' : '不售'}</span>
+                    <span className='font-bold'>
+                      {(effectiveItem.store ?? false) ? '有售' : '不售'}
+                    </span>
                   </label>
                 </div>
-              ) : item.store !== true ? (
+              ) : effectiveItem.store !== true ? (
                 <span className='text-lg font-bold whitespace-pre text-red-600 dark:text-red-500'>
                   局内商店不售
                 </span>
@@ -395,7 +410,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                 </span>
               )}
 
-              {(isEditMode ? (rawItem?.store ?? false) : item.store === true) && (
+              {(isEditMode ? (effectiveItem.store ?? false) : effectiveItem.store === true) && (
                 <div
                   className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
                   style={{
@@ -408,7 +423,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                     <span className='text-orange-600 dark:text-orange-400'>
                       <ed.span
                         path='price'
-                        initialValue={item.price ?? '<无内容>'}
+                        initialValue={effectiveItem.price ?? '<无内容>'}
                         valueType='number'
                         isSingleLine
                       />
@@ -419,7 +434,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                     <span className='text-indigo-700 dark:text-indigo-400'>
                       <ed.span
                         path='unlocktime'
-                        initialValue={item.unlocktime ?? '<无内容>'}
+                        initialValue={effectiveItem.unlocktime ?? '<无内容>'}
                         isSingleLine
                       />
                     </span>
@@ -429,7 +444,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                     <span className='text-indigo-700 dark:text-indigo-400'>
                       <ed.span
                         path='storeCD'
-                        initialValue={item.storeCD ?? '<无内容>'}
+                        initialValue={effectiveItem.storeCD ?? '<无内容>'}
                         valueType='number'
                         isSingleLine
                       />
@@ -440,7 +455,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                     <label className='flex cursor-pointer items-center gap-1 text-sm whitespace-pre text-fuchsia-600 dark:text-fuchsia-400'>
                       <input
                         type='checkbox'
-                        checked={rawItem?.teamCD ?? false}
+                        checked={effectiveItem.teamCD ?? false}
                         onChange={(e) => {
                           if (!rawItem) return;
                           rawItem.teamCD = e.target.checked;
@@ -449,7 +464,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                       />
                       <span className='font-bold'>(鼠)团队共享CD</span>
                     </label>
-                  ) : item?.teamCD === true ? (
+                  ) : effectiveItem?.teamCD === true ? (
                     <span className='text-sm whitespace-pre text-fuchsia-600 dark:text-fuchsia-400'>
                       (鼠)团队共享CD
                     </span>

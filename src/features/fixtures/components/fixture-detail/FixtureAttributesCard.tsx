@@ -1,5 +1,7 @@
 'use client';
 
+import { useSnapshot } from 'valtio';
+
 import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design-tokens';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
@@ -22,26 +24,32 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
   const { fixtureName } = useLocalFixture();
   const ed = editable('fixtures');
 
+  const fixturesSnapshot = useSnapshot(fixturesEdit);
   if (!fixture) return null;
 
   const rawFixture = fixturesEdit[fixtureName];
+  const effectiveFixture = (
+    isEditMode ? (fixturesSnapshot[fixtureName] ?? fixture) : fixture
+  ) as Fixture;
 
   const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
-  const activeCollision = Array.isArray(rawFixture?.collsion) ? rawFixture.collsion : [];
+  const activeCollision = Array.isArray(effectiveFixture?.collsion)
+    ? effectiveFixture.collsion
+    : [];
 
-  function putTypeTagOn(fixture: Fixture) {
-    if (typeof fixture.type === 'string') {
+  function putTypeTagOn(currentFixture: Fixture) {
+    if (typeof currentFixture.type === 'string') {
       return (
         <Tag
           size='sm'
           margin='compact'
-          colorStyles={getFixtureTypeColors(fixture.type, isDarkMode)}
+          colorStyles={getFixtureTypeColors(currentFixture.type, isDarkMode)}
         >
-          {fixture.type}
+          {currentFixture.type}
         </Tag>
       );
     } else {
-      return fixture.type.map((type) => {
+      return currentFixture.type.map((type) => {
         return (
           <Tag
             size='sm'
@@ -67,8 +75,8 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
         isEditMode ? (
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-            {(rawFixture?.aliases ?? fixture.aliases ?? []).length > 0 ? (
-              (rawFixture?.aliases ?? fixture.aliases ?? []).map((alias, index, arr) => (
+            {(effectiveFixture.aliases ?? fixture.aliases ?? []).length > 0 ? (
+              (effectiveFixture.aliases ?? fixture.aliases ?? []).map((alias, index, arr) => (
                 <span key={`${alias}-${index}`} className='inline-flex items-center'>
                   <ed.span
                     initialValue={alias || '<无内容>'}
@@ -112,18 +120,22 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型: </span>
-            {putTypeTagOn(fixture)}
-            {fixture.source && (
+            {putTypeTagOn(effectiveFixture)}
+            {effectiveFixture.source && (
               <Tag
                 size='sm'
                 margin='compact'
-                colorStyles={getFixtureSourceColors(fixture.source, isDarkMode)}
+                colorStyles={getFixtureSourceColors(effectiveFixture.source, isDarkMode)}
               >
-                <ed.span path='source' initialValue={fixture.source ?? '<无内容>'} isSingleLine />
+                <ed.span
+                  path='source'
+                  initialValue={effectiveFixture.source ?? '<无内容>'}
+                  isSingleLine
+                />
               </Tag>
             )}
           </div>
-          {isEditMode && !fixture.source && (
+          {isEditMode && !effectiveFixture.source && (
             <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
               <span className='text-sm whitespace-pre'>来源: </span>
               <span className='text-indigo-700 dark:text-indigo-400'>
@@ -131,22 +143,22 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
               </span>
             </div>
           )}
-          {fixture.fixtureAttributesAsCharacter !== undefined && (
+          {effectiveFixture.fixtureAttributesAsCharacter !== undefined && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-sm font-bold'>
                 该物件特性与<span className='text-fuchsia-600 dark:text-fuchsia-400'>角色</span>
                 类似，可看作
-                {fixture.fixtureAttributesAsCharacter.factionBelong === 'cat' ? (
+                {effectiveFixture.fixtureAttributesAsCharacter.factionBelong === 'cat' ? (
                   <span className='text-sky-600 dark:text-sky-400'>猫阵营</span>
-                ) : fixture.fixtureAttributesAsCharacter.factionBelong === 'mouse' ? (
+                ) : effectiveFixture.fixtureAttributesAsCharacter.factionBelong === 'mouse' ? (
                   <span className='text-amber-700 dark:text-amber-600'>鼠阵营</span>
                 ) : (
                   <span className='text-fuchsia-600 dark:text-fuchsia-400'>第三阵营</span>
                 )}
                 的
-                {fixture.fixtureAttributesAsCharacter.type === 'cat' ? (
+                {effectiveFixture.fixtureAttributesAsCharacter.type === 'cat' ? (
                   <span className='text-sky-600 dark:text-sky-400'>猫角色</span>
-                ) : fixture.fixtureAttributesAsCharacter.type === 'mouse' ? (
+                ) : effectiveFixture.fixtureAttributesAsCharacter.type === 'mouse' ? (
                   <span className='text-amber-700 dark:text-amber-600'>鼠角色</span>
                 ) : (
                   <span className='text-fuchsia-600 dark:text-fuchsia-400'>特殊角色</span>
@@ -157,35 +169,35 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                 style={{ gridTemplateColumns: `repeat(2, minmax(80px, 1fr))` }}
               >
                 {[
-                  fixture.fixtureAttributesAsCharacter.maxHp === undefined
+                  effectiveFixture.fixtureAttributesAsCharacter.maxHp === undefined
                     ? { title: null, text: null }
                     : {
                         title: 'Hp上限',
-                        text: fixture.fixtureAttributesAsCharacter.maxHp,
+                        text: effectiveFixture.fixtureAttributesAsCharacter.maxHp,
                       },
-                  fixture.fixtureAttributesAsCharacter.hpRecovery === undefined
+                  effectiveFixture.fixtureAttributesAsCharacter.hpRecovery === undefined
                     ? { title: null, text: null }
                     : {
                         title: 'Hp恢复',
-                        text: fixture.fixtureAttributesAsCharacter.hpRecovery,
+                        text: effectiveFixture.fixtureAttributesAsCharacter.hpRecovery,
                       },
-                  fixture.fixtureAttributesAsCharacter.moveSpeed === undefined
+                  effectiveFixture.fixtureAttributesAsCharacter.moveSpeed === undefined
                     ? { title: null, text: null }
                     : {
                         title: '移速',
-                        text: fixture.fixtureAttributesAsCharacter.moveSpeed,
+                        text: effectiveFixture.fixtureAttributesAsCharacter.moveSpeed,
                       },
-                  fixture.fixtureAttributesAsCharacter.jumpHeight === undefined
+                  effectiveFixture.fixtureAttributesAsCharacter.jumpHeight === undefined
                     ? { title: null, text: null }
                     : {
                         title: '跳跃',
-                        text: fixture.fixtureAttributesAsCharacter.jumpHeight,
+                        text: effectiveFixture.fixtureAttributesAsCharacter.jumpHeight,
                       },
-                  fixture.fixtureAttributesAsCharacter.attackBoost === undefined
+                  effectiveFixture.fixtureAttributesAsCharacter.attackBoost === undefined
                     ? { title: null, text: null }
                     : {
                         title: '攻击增伤',
-                        text: fixture.fixtureAttributesAsCharacter.attackBoost,
+                        text: effectiveFixture.fixtureAttributesAsCharacter.attackBoost,
                       },
                 ].map(({ title, text }) =>
                   title === null ? null : (
@@ -193,7 +205,9 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                       <Tooltip
                         content={getTooltipContent(
                           title,
-                          fixture.fixtureAttributesAsCharacter?.type === 'cat' ? 'cat' : 'mouse',
+                          effectiveFixture.fixtureAttributesAsCharacter?.type === 'cat'
+                            ? 'cat'
+                            : 'mouse',
                           isDetailed
                         )}
                       >
@@ -207,9 +221,9 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             </div>
           )}
           {(isEditMode ||
-            fixture.move !== undefined ||
-            fixture.gravity !== undefined ||
-            fixture.collsion !== undefined) && (
+            effectiveFixture.move !== undefined ||
+            effectiveFixture.gravity !== undefined ||
+            effectiveFixture.collsion !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>移动信息</span>
               <div
@@ -226,7 +240,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                       <label className='flex cursor-pointer items-center gap-1'>
                         <input
                           type='checkbox'
-                          checked={rawFixture?.move ?? false}
+                          checked={effectiveFixture.move ?? false}
                           onChange={(e) => {
                             if (!rawFixture) return;
                             rawFixture.move = e.target.checked;
@@ -234,7 +248,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                           className='h-3 w-3'
                         />
                         <span className='font-bold'>
-                          {(rawFixture?.move ?? false) ? '可移动' : '不可移动'}
+                          {(effectiveFixture.move ?? false) ? '可移动' : '不可移动'}
                         </span>
                       </label>
                     </div>
@@ -243,7 +257,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                       <label className='flex cursor-pointer items-center gap-1'>
                         <input
                           type='checkbox'
-                          checked={rawFixture?.gravity ?? false}
+                          checked={effectiveFixture.gravity ?? false}
                           onChange={(e) => {
                             if (!rawFixture) return;
                             rawFixture.gravity = e.target.checked;
@@ -251,7 +265,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                           className='h-3 w-3'
                         />
                         <span className='font-bold'>
-                          {(rawFixture?.gravity ?? false) ? '会受重力影响' : '不受重力影响'}
+                          {(effectiveFixture.gravity ?? false) ? '会受重力影响' : '不受重力影响'}
                         </span>
                       </label>
                     </div>
@@ -264,7 +278,10 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                             checked={activeCollision.includes(opt)}
                             onChange={(e) => {
                               if (!rawFixture) return;
-                              const next = new Set(activeCollision);
+                              const current = Array.isArray(rawFixture.collsion)
+                                ? rawFixture.collsion
+                                : [];
+                              const next = new Set(current);
                               if (e.target.checked) next.add(opt);
                               else next.delete(opt);
                               const arr = Array.from(next);
@@ -283,9 +300,9 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                   </>
                 ) : (
                   <>
-                    {fixture.move !== undefined && (
+                    {effectiveFixture.move !== undefined && (
                       <span className='text-sm whitespace-pre'>
-                        {fixture.move === true ? (
+                        {effectiveFixture.move === true ? (
                           <span className='text-green-600 dark:text-green-500'>可</span>
                         ) : (
                           <span className='text-red-600 dark:text-red-500'>不可</span>
@@ -293,9 +310,9 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                         移动
                       </span>
                     )}
-                    {fixture.gravity !== undefined && (
+                    {effectiveFixture.gravity !== undefined && (
                       <span className='text-sm whitespace-pre'>
-                        {fixture.gravity === true ? (
+                        {effectiveFixture.gravity === true ? (
                           <span className='text-orange-600 dark:text-orange-400'>会受</span>
                         ) : (
                           <span className='text-indigo-700 dark:text-indigo-400'>不受</span>
@@ -304,10 +321,10 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                       </span>
                     )}
                     <span className='text-sm whitespace-pre'>
-                      {!!fixture.collsion ? (
+                      {!!effectiveFixture.collsion ? (
                         <>
                           <span className='text-orange-600 dark:text-orange-400'>会</span>与
-                          {fixture.collsion.map((string, key, array) => {
+                          {effectiveFixture.collsion.map((string, key, array) => {
                             return (
                               <span key={key}>
                                 <span
