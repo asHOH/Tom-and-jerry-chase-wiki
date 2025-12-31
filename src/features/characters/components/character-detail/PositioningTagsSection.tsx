@@ -13,12 +13,14 @@ import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import type { FactionId } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
-import EditableField from '@/components/ui/EditableField';
+import { editable } from '@/components/ui/editable';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters, PositioningTag } from '@/data';
+
+const e = editable('characters');
 
 // Helper function to get available tag names based on faction
 function getAvailableTagNames(factionId: FactionId): string[] {
@@ -342,16 +344,14 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   </button>
                 )}
               </div>
-              <EditableField
-                tag='p'
+              <e.p
                 path={`${tagsKey}.${originalIndex}.description`}
                 initialValue={tag.description}
                 className='mb-1 text-sm whitespace-pre-wrap text-gray-700 dark:text-gray-300'
                 onSave={(newValue) => handleUpdate(originalIndex, newValue, 'description')}
               />
               {isDetailed && tag.additionalDescription && (
-                <EditableField
-                  tag='p'
+                <e.p
                   path={`${tagsKey}.${originalIndex}.additionalDescription`}
                   initialValue={tag.additionalDescription}
                   className={clsx(

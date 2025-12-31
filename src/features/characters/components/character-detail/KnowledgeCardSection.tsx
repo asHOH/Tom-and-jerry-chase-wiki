@@ -21,7 +21,7 @@ import {
   getKnowledgeCardCostStyles,
   isCardOptional,
 } from '@/features/knowledge-cards/utils/sections';
-import EditableField from '@/components/ui/EditableField';
+import { editable } from '@/components/ui/editable';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
@@ -33,6 +33,8 @@ import { characters } from '@/data';
 import CharacterSection from './CharacterSection';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
 import TreeCardDisplay from './TreeCardDisplay';
+
+const e = editable('characters');
 
 const cardGroupHasTreeStructure = (card: unknown): boolean => {
   if (typeof card === 'string') {
@@ -201,8 +203,7 @@ const GroupDescriptionBlock = ({
         'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
       )}
     >
-      <EditableField
-        tag='div'
+      <e.div
         path={descriptionPath}
         initialValue={description ?? ''}
         className='text-sm text-gray-700 dark:text-gray-300'

@@ -12,7 +12,7 @@ import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { CharacterRelationItem } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
-import EditableField from '@/components/ui/EditableField';
+import { editable } from '@/components/ui/editable';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { cards, characters, FactionId, maps, modes, specialSkills } from '@/data';
@@ -30,6 +30,8 @@ import KnowledgeCardSelector from './KnowledgeCardSelector';
 import MapSelector from './MapSelector';
 import ModeSelector from './ModeSelector';
 import SpecialSkillSelector from './SpecialSkillSelector';
+
+const e = editable('characters');
 
 type Props = {
   id: string;
@@ -470,8 +472,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )}
           </div>
           {isEditMode && item.showEditable ? (
-            <EditableField
-              tag='span'
+            <e.span
               path={item.editablePath!}
               initialValue={item.description || ''}
               className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
@@ -545,8 +546,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )}
           </div>
           {isEditMode ? (
-            <EditableField
-              tag='span'
+            <e.span
               path={item.editablePath}
               initialValue={item.description || ''}
               className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
@@ -634,8 +634,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )}
           </div>
           {isEditMode ? (
-            <EditableField
-              tag='span'
+            <e.span
               path={item.editablePath}
               initialValue={item.description || ''}
               className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
@@ -723,8 +722,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )}
           </div>
           {isEditMode ? (
-            <EditableField
-              tag='span'
+            <e.span
               path={item.editablePath}
               initialValue={item.description || ''}
               className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
@@ -812,8 +810,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )}
           </div>
           {isEditMode ? (
-            <EditableField
-              tag='span'
+            <e.span
               path={item.editablePath}
               initialValue={item.description || ''}
               className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'

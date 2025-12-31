@@ -16,11 +16,13 @@ import {
   validateSkillAllocationPattern,
 } from '@/features/characters/utils/skillAllocation';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
-import EditableField from '@/components/ui/EditableField';
+import { editable } from '@/components/ui/editable';
 import Tooltip from '@/components/ui/Tooltip';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
+
+const e = editable('characters');
 
 // Type for processed skill levels with current level information
 type ProcessedSkillLevel = ParsedSkillLevel & {
@@ -565,8 +567,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       <div className='flex gap-4'>
         <div className='flex w-1/6 flex-shrink-0 flex-col'>
           {isEditMode ? (
-            <EditableField
-              tag='h4'
+            <e.h4
               path={`skillAllocations.${index}.id`}
               initialValue={allocation.id}
               isSingleLine={true}
@@ -578,8 +579,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
             </h4>
           )}
           {isEditMode && (
-            <EditableField
-              tag='p'
+            <e.p
               path={`skillAllocations.${index}.pattern`}
               initialValue={allocation.pattern}
               isSingleLine={true}
@@ -726,8 +726,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       {shouldShowDescriptionBlock && (
         <div className='rounded-lg bg-gray-50 p-3 dark:bg-slate-800/50'>
           {isEditMode ? (
-            <EditableField
-              tag='p'
+            <e.p
               path={`skillAllocations.${index}.description`}
               initialValue={allocation.description!}
               className='text-sm whitespace-pre-wrap text-gray-700 dark:text-gray-300'
@@ -740,8 +739,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
             )
           )}
           {hasAdditionalDescription && (
-            <EditableField
-              tag='p'
+            <e.p
               path={`skillAllocations.${index}.additionaldescription`}
               initialValue={allocation.additionaldescription!}
               className='mt-2 border-l-2 border-blue-200 pl-3 text-sm whitespace-pre-wrap text-gray-600 dark:border-blue-700 dark:text-gray-400'

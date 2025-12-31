@@ -6,10 +6,12 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { contributors } from '@/data/contributors';
 import type { KnowledgeCardGroupSet } from '@/data/types';
-import EditableField from '@/components/ui/EditableField';
+import { editable } from '@/components/ui/editable';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 
 import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardSection';
+
+const e = editable('characters');
 
 interface KnowledgeCardGroupSetDisplayProps {
   groupSet: DeepReadonly<KnowledgeCardGroupSet>;
@@ -76,8 +78,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
           )}
           {...(isEditMode ? {} : { onClick: toggleOpen })}
         >
-          <EditableField
-            tag='h3'
+          <e.h3
             path={`knowledgeCardGroups.${topIndex}.id`}
             initialValue={groupSet.id}
             onSave={(v) => onEditGroupSetMetadata(topIndex, 'id', v)}
@@ -125,8 +126,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
         {...(!isOpen && { 'aria-hidden': true })}
       >
         <div className='mb-6 rounded-lg p-4'>
-          <EditableField
-            tag='div'
+          <e.div
             path={`knowledgeCardGroups.${topIndex}.${
               isDetailedView ? 'detailedDescription' : 'description'
             }`}

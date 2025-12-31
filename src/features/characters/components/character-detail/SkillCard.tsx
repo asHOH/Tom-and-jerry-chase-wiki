@@ -18,12 +18,14 @@ import {
   convertCancelableSkillToDisplayText,
 } from '@/features/characters/utils/skills';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
-import EditableField from '@/components/ui/EditableField';
+import { editable } from '@/components/ui/editable';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
 
 import SkillTraitsCard from './SkillTraitsCard';
+
+const e = editable('characters');
 
 interface SkillCardProps {
   skill: DeepReadonly<Skill>;
@@ -93,8 +95,7 @@ export default function SkillCard({
       cooldowns.map((i, index) => (
         <React.Fragment key={index}>
           {index != 0 ? '/' : ''}
-          <EditableField
-            tag='span'
+          <e.span
             path={`skills.${skillIndex}.skillLevels.${index}.cooldown`}
             initialValue={i}
             isSingleLine={true}
@@ -120,8 +121,7 @@ export default function SkillCard({
       charges.map((i, index) => (
         <React.Fragment key={index}>
           {index != 0 ? '/' : ''}
-          <EditableField
-            tag='span'
+          <e.span
             path={`skills.${skillIndex}.skillLevels.${index}.charges`}
             initialValue={i}
             isSingleLine={true}
@@ -205,8 +205,7 @@ export default function SkillCard({
           {skill.aliases &&
             skill.aliases.map((alias, index) => (
               <Fragment key={alias}>
-                <EditableField
-                  tag='span'
+                <e.span
                   initialValue={alias}
                   path={`skills.${skillIndex}.aliases.${index}`}
                   isSingleLine={true}
@@ -283,8 +282,7 @@ export default function SkillCard({
                 <div className='flex items-center gap-2 text-xs'>
                   <div className='flex items-center gap-1'>
                     <span className='text-xs text-gray-400 dark:text-gray-500'>前摇:</span>
-                    <EditableField
-                      tag='span'
+                    <e.span
                       path={`skills.${skillIndex}.forecast`}
                       initialValue={skill.forecast ?? ''}
                       isSingleLine={true}
@@ -438,8 +436,7 @@ export default function SkillCard({
                 <div className='flex items-center gap-2 text-xs'>
                   <div className='flex items-center gap-1'>
                     <span className='text-xs text-gray-400 dark:text-gray-500'>后摇:</span>
-                    <EditableField
-                      tag='span'
+                    <e.span
                       path={`skills.${skillIndex}.aftercast`}
                       initialValue={skill.aftercast ?? ''}
                       isSingleLine={true}
@@ -703,8 +700,7 @@ export default function SkillCard({
                   {showVideoAddress ? '隐藏视频地址' : skill.videoUrl ? '查看视频' : '无视频'}
                 </button>
                 {showVideoAddress && (
-                  <EditableField
-                    tag='div'
+                  <e.div
                     className='mt-2 block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs wrap-anywhere text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
                     path={`skills.${skillIndex}.videoUrl`}
                     initialValue={skill.videoUrl ?? '输入视频网址'}
@@ -743,8 +739,7 @@ export default function SkillCard({
             <div className='flex items-center justify-between'>
               <h3 className='px-2 py-2 text-xl font-bold dark:text-white'>
                 {getSkillTypeLabel(skill.type)} ·{' '}
-                <EditableField
-                  tag='span'
+                <e.span
                   id={`Skill:${skill.name}`}
                   path={`skills.${skillIndex}.name`}
                   initialValue={skill.name}
@@ -796,14 +791,13 @@ export default function SkillCard({
             {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
               <div className='mt-3 px-2'>
                 <div className='py-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
-                  <EditableField
+                  <e.span
                     initialValue={
                       (isDetailed && skill.detailedDescription?.trim()
                         ? skill.detailedDescription
                         : skill.description) ?? '<无内容>'
                     }
                     path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
-                    tag='span'
                     data-tutorial-id='skill-description-edit'
                   />
                 </div>
@@ -817,8 +811,7 @@ export default function SkillCard({
             <div className='flex items-center justify-between'>
               <h3 className='px-2 text-xl font-bold dark:text-white'>
                 {getSkillTypeLabel(skill.type)} ·{' '}
-                <EditableField
-                  tag='span'
+                <e.span
                   id={`Skill:${skill.name}`}
                   path={`skills.${skillIndex}.name`}
                   initialValue={skill.name}
@@ -886,14 +879,13 @@ export default function SkillCard({
           {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
             <div className='mt-3 px-2'>
               <div className='py-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
-                <EditableField
+                <e.span
                   initialValue={
                     (isDetailed && skill.detailedDescription?.trim()
                       ? skill.detailedDescription
                       : skill.description) ?? '<无内容>'
                   }
                   path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
-                  tag='span'
                   data-tutorial-id='skill-description-edit'
                 />
               </div>
@@ -932,13 +924,12 @@ export default function SkillCard({
                     Lv.{level.level}:
                   </span>{' '}
                   <SkillDescriptionPrefix skill={skill} level={level.level} />
-                  <EditableField
+                  <e.span
                     initialValue={
                       isDetailed && level.detailedDescription?.trim()
                         ? level.detailedDescription
                         : level.description
                     }
-                    tag='span'
                     path={`skills.${skillIndex}.skillLevels.${level.level - 1}.${isDetailed ? 'detailedDescription' : 'description'}`}
                   />
                 </p>

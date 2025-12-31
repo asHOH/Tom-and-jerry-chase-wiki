@@ -14,7 +14,7 @@ import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsT
 import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsBySingleItem';
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import CollapseCard from '@/components/ui/CollapseCard';
-import EditableField from '@/components/ui/EditableField';
+import { editable } from '@/components/ui/editable';
 import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
@@ -33,6 +33,8 @@ import SkillCard from './SkillCard';
 import SpecialSkillsSection from './SpecialSkillsSection';
 import { useCharacterActions } from './useCharacterActions';
 import WinRatesDisplay from './WinRatesDisplay';
+
+const e = editable('characters');
 
 interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
   onTutorialTrigger?: () => void;
@@ -102,8 +104,7 @@ export default function CharacterDetails({
                   </div>
                   <h1 className='flex items-center justify-between py-2 text-3xl font-bold dark:text-white'>
                     <div>
-                      <EditableField
-                        tag='span'
+                      <e.span
                         path='id'
                         initialValue={localCharacter.id}
                         className='inline'
@@ -299,8 +300,7 @@ export default function CharacterDetails({
                   </div>
                 </div>
               )}
-              <EditableField
-                tag='p'
+              <e.p
                 path='description'
                 initialValue={localCharacter.description}
                 className='mt-2 py-1 whitespace-pre-wrap text-gray-700 dark:text-gray-300'

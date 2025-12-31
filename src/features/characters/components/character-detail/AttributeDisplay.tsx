@@ -5,11 +5,13 @@ import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
 import { RANKABLE_PROPERTIES, RankableProperty } from '@/features/characters/utils/ranking';
-import EditableField from '@/components/ui/EditableField';
+import { editable } from '@/components/ui/editable';
 import Tooltip from '@/components/ui/Tooltip';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 import { characters } from '@/data';
+
+const e = editable('characters');
 
 interface AttributeDisplayProps {
   label: string;
@@ -70,8 +72,7 @@ export default function AttributeDisplay({
     isEditMode ? (
       <>
         {' '}
-        <EditableField
-          tag='span'
+        <e.span
           path='clawKnifeCdUnhit'
           initialValue={localCharacter.clawKnifeCdUnhit || 0}
           className='inline'
@@ -79,8 +80,7 @@ export default function AttributeDisplay({
         <span className='italic'>
           {' '}
           (
-          <EditableField
-            tag='span'
+          <e.span
             path='specialClawKnifeCdUnhit'
             initialValue={
               localCharacter.specialClawKnifeCdUnhit || localCharacter.clawKnifeCdUnhit || 0
@@ -89,8 +89,7 @@ export default function AttributeDisplay({
           )
         </span>
         <GrayUnit> / </GrayUnit>
-        <EditableField
-          tag='span'
+        <e.span
           path='clawKnifeCdHit'
           initialValue={localCharacter.clawKnifeCdHit || 0}
           className='inline'
@@ -98,8 +97,7 @@ export default function AttributeDisplay({
         <span className='italic'>
           {' '}
           (
-          <EditableField
-            tag='span'
+          <e.span
             path='specialClawKnifeCdHit'
             initialValue={
               localCharacter.specialClawKnifeCdHit || localCharacter.clawKnifeCdHit || 0
@@ -139,8 +137,7 @@ export default function AttributeDisplay({
       {' '}
       {(localCharacter.aliases ?? []).map((alias, index) => (
         <Fragment key={alias}>
-          <EditableField
-            tag='span'
+          <e.span
             initialValue={alias}
             path={`aliases.${index}`}
             onSave={(newValue) => {
@@ -184,7 +181,7 @@ export default function AttributeDisplay({
       {path && isEditMode ? (
         <>
           {' '}
-          <EditableField tag='span' path={path} initialValue={value} className='inline' />
+          <e.span path={path} initialValue={value} className='inline' />
           {suffix && <GrayUnit>{suffix}</GrayUnit>}
         </>
       ) : label === '爪刀CD' && isEditMode ? (

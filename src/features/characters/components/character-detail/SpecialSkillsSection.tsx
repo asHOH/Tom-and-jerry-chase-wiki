@@ -2,11 +2,13 @@ import { useSnapshot } from 'valtio';
 
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
-import EditableField from '@/components/ui/EditableField';
+import { editable } from '@/components/ui/editable';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 import { characters, specialSkills } from '@/data';
+
+const e = editable('characters');
 
 export default function SpecialSkillsSection() {
   'use no memo';
@@ -66,8 +68,7 @@ export default function SpecialSkillsSection() {
                       }}
                       className='max-w-full'
                     >
-                      <EditableField
-                        tag='span'
+                      <e.span
                         initialValue={skill.name}
                         path={`specialSkills.${index}.name`}
                         className='text-base font-bold dark:text-white'
@@ -88,8 +89,7 @@ export default function SpecialSkillsSection() {
 
                   <div className='mt-1 text-sm break-words whitespace-pre-wrap text-gray-500 dark:text-gray-300'>
                     {isEditMode ? (
-                      <EditableField
-                        tag='div'
+                      <e.div
                         initialValue={skill.description}
                         path={`specialSkills.${index}.description`}
                         className='text-sm text-gray-500 dark:text-gray-300'
