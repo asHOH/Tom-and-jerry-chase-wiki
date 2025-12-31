@@ -6,6 +6,12 @@ import { proxy, subscribe } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
 import {
+  actionsFromValtioOps,
+  appendActionHistoryEntry,
+  getActionsStorageKey,
+  isRecordingSuppressed,
+} from '@/lib/edit/diffUtils';
+import {
   buffs,
   buffsEdit,
   cardsEdit,
@@ -61,12 +67,24 @@ const entityRegistry = new Map<string, Record<string, unknown>>([
  * @returns Unsubscribe function
  */
 function syncEntityToLocalStorage(entityType: string, entity: Record<string, unknown>): () => void {
-  return subscribe(entity, () => {
+  const actionsStorageKey = getActionsStorageKey(entityType);
+
+  return subscribe(entity, (ops) => {
     try {
       localStorage.setItem(entityType, JSON.stringify(entity));
     } catch (error) {
       console.error(`Failed to sync ${entityType} to localStorage:`, error);
     }
+
+    // Avoid double-logging when actions are applied programmatically via the diff utils.
+    if (isRecordingSuppressed(actionsStorageKey)) {
+      return;
+    }
+
+    const actions = actionsFromValtioOps(ops);
+
+    if (actions.length === 0) return;
+    appendActionHistoryEntry(actionsStorageKey, actions.length === 1 ? actions[0]! : actions);
   });
 }
 
@@ -114,6 +132,7 @@ function clearEntitiesFromStorage(): void {
   Array.from(entityRegistry.entries()).forEach(([entityType]) => {
     try {
       localStorage.removeItem(entityType);
+      localStorage.removeItem(getActionsStorageKey(entityType));
     } catch (error) {
       console.error(`Failed to clear ${entityType} from localStorage:`, error);
     }
