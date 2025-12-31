@@ -1,4 +1,4 @@
-import type { buffTypelist, FactionId, SkillType } from '@/data/types';
+import type { buffTypelist, FactionId } from '@/data/types';
 
 // Returned style for positioning tag colors
 export type PositioningTagColorStyle =
@@ -934,32 +934,6 @@ export const getAvatarFilterColors = (
   const scheme = palette[option as keyof typeof palette];
   const theme = isDarkMode ? scheme.dark : scheme.light;
   return { color: theme.text, backgroundColor: theme.bg };
-};
-
-// Skill type utility functions
-export const getSkillTypeColors = (
-  skillType: SkillType,
-  includeBorder: boolean,
-  isDarkMode: boolean
-) => {
-  const colorScheme =
-    designTokens.colors.skillTypes[skillType] || designTokens.colors.skillTypes.passive;
-
-  return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
-    ...(includeBorder && {
-      borderColor: isDarkMode && colorScheme.dark ? colorScheme.dark.border : colorScheme.border,
-    }),
-  };
-};
-
-export const getSkillTypeContainerColor = (skillType: SkillType, isDarkMode: boolean): string => {
-  const colorScheme =
-    designTokens.colors.skillTypes[skillType] || designTokens.colors.skillTypes.passive;
-
-  return isDarkMode && colorScheme.dark ? colorScheme.dark.container : colorScheme.container;
 };
 
 // Skill level utility functions
