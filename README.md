@@ -67,7 +67,7 @@
 
 - **Node.js**: `>=20.0.0`
 - **npm**: `>=10.0.0`
-- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`,`NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS`（设为 `0` 强制禁用或 `1` 强制启用Vercel Analytics；默认仅在 Vercel 生产环境启用）、`APP_PUBLIC_HOST`（用于跨子域 Cookie，与生产域名保持一致）。
+- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`,`NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS`（设为 `0` 强制禁用或 `1` 强制启用Vercel Analytics；默认仅在 Vercel 生产环境启用）。
 
 ### 开发步骤
 

@@ -70,7 +70,6 @@ CAPTCHA_SECRET_KEY=<YOUR_PRODUCTION_CAPTCHA_SECRET_KEY>
 NEXT_PUBLIC_GEMINI_CHAT_MODEL=gemini-2.5-flash
 GEMINI_API_KEY=<YOUR_PRODUCTION_GEMINI_API_KEY>
 NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS=0
-APP_PUBLIC_HOST=<YOUR_PUBLIC_DOMAIN_OR_IP>
 EOF
   echo "✅ Template '$ENV_FILE' created."
   echo "🛑 Please edit the file with your production secrets and run this script again."

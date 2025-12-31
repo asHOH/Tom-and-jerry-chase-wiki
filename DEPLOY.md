@@ -136,7 +136,6 @@ npm run start
 1. **环境变量**
    - 在构建阶段注入 `COMMIT_SHA`（或 `DEPLOY_COMMIT_SHA`）以保证 `/api/version` 返回准确版本信息。
    - `DEPLOYMENT_ENVIRONMENT`（可选值 `development`/`preview`/`production`）标记运行环境；如不设置将回退为 `NODE_ENV`。
-   - 将 `APP_PUBLIC_HOST` 设置为生产域名（例如 `wiki.example.com`）以确保深色模式 Cookie 覆盖所有子域。
    - 默认不加载 Vercel Analytics/Speed Insights。若需使用，将 `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` 设为 `1`。
 
 2. **安全头与缓存策略**
