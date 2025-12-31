@@ -496,9 +496,7 @@ export function KnowledgeCardGroupDisplay({
 
     // For optional card handling in tree view
     const allFlatCombinations = flattenCardGroup(normalizedGroup);
-    const hasAnyOptional = allFlatCombinations.some((combo) =>
-      combo.some((cardId) => cardId === 'C-狡诈')
-    );
+    const hasAnyOptional = allFlatCombinations.some((combo) => combo.includes('C-狡诈'));
     const lacksRescueSkill = allFlatCombinations.some(
       (combo) => !combo.includes('S-舍己') && !combo.includes('S-无畏')
     );

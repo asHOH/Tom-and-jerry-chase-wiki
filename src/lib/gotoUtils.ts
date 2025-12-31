@@ -1,5 +1,9 @@
 // Utility for resolving goto targets by name
 
+import compact from 'lodash-es/compact';
+import orderBy from 'lodash-es/orderBy';
+import uniqBy from 'lodash-es/uniqBy';
+
 import type {
   CategoryHint,
   GotoDisambiguationCandidate,
@@ -74,7 +78,7 @@ export async function getGotoResult(
     if (hint === '模式') return (c: K) => c.kind === 'mode';
     return undefined;
   };
-  const compact = (input: string): string =>
+  const compactName = (input: string): string =>
     normalizeName(input)
       .replace(/[\s\-_:：·•—–/\\、,，.。()（）\[\]{}【】「」'"“”]+/g, '')
       .trim();
@@ -128,14 +132,12 @@ export async function getGotoResult(
 
   // Owner + skill composite patterns, owner-skill always wins.
   // Examples: 汤姆无敌 / 汤姆主动技能 / 汤姆一被 / 汤姆一武 / 汤姆二武
-  const compactQuery = compact(rawName);
+  const compactQuery = compactName(rawName);
   if (compactQuery) {
     type OwnerToken = { token: string; ownerId: string };
     let bestOwner: OwnerToken | null = null;
     for (const [ownerId, c] of Object.entries(characters)) {
-      const candidates = [ownerId, c.id, ...(c.aliases ?? [])]
-        .map((t) => compact(t))
-        .filter(Boolean);
+      const candidates = compact([ownerId, c.id, ...(c.aliases ?? [])].map((t) => compactName(t)));
       for (const token of candidates) {
         if (!compactQuery.startsWith(token)) continue;
         if (!bestOwner || token.length > bestOwner.token.length) {
@@ -157,8 +159,8 @@ export async function getGotoResult(
           resolvedSkill = skills.find((s) => s.type === slot) ?? null;
         } else {
           resolvedSkill =
-            skills.find((s) => compact(s.name) === rest) ??
-            skills.find((s) => (s.aliases ?? []).some((a) => compact(a) === rest)) ??
+            skills.find((s) => compactName(s.name) === rest) ??
+            skills.find((s) => (s.aliases ?? []).some((a) => compactName(a) === rest)) ??
             null;
         }
 
@@ -199,17 +201,17 @@ export async function getGotoResult(
   const filtered = pred ? candidates.filter(pred as (c: { kind: string }) => boolean) : candidates;
   const pool = filtered.length > 0 ? filtered : candidates;
 
-  const deduped = (() => {
-    const seen = new Set<string>();
-    const out: typeof pool = [];
-    for (const c of pool) {
-      const k = `${c.kind}@@${c.goto.url}`;
-      if (seen.has(k)) continue;
-      seen.add(k);
-      out.push(c);
-    }
-    return out;
-  })();
+  const sortedPool = orderBy(
+    pool,
+    [
+      () => (normalizedCategory ? 1 : 0),
+      (c) => (c.goto as { name?: string }).name ?? '',
+      (c) => c.goto.url,
+    ],
+    ['desc', 'asc', 'asc']
+  );
+
+  const deduped = uniqBy(sortedPool, (c) => `${c.kind}@@${c.goto.url}`);
 
   const factionLabel = (factionId?: string): '猫' | '鼠' | undefined =>
     factionId === 'cat' ? '猫' : factionId === 'mouse' ? '鼠' : undefined;
