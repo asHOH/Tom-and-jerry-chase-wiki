@@ -45,36 +45,6 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
 
   const [showTutorial, setShowTutorial] = useState(false);
 
-  // Touch gesture navigation
-  // const { previousCharacter, nextCharacter, navigateToPrevious, navigateToNext } =
-  //   useCharacterNavigation(character.id);
-
-  // const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
-
-  // const swipeRef = useSwipeGesture({
-  //   onSwipeLeft: () => {
-  //     if (nextCharacter) {
-  //       setSwipeDirection('right');
-  //       setTimeout(() => {
-  //         navigateToNext();
-  //         setSwipeDirection(null);
-  //       }, 200);
-  //     }
-  //   },
-  //   onSwipeRight: () => {
-  //     if (previousCharacter) {
-  //       setSwipeDirection('left');
-  //       setTimeout(() => {
-  //         navigateToPrevious();
-  //         setSwipeDirection(null);
-  //       }, 200);
-  //     }
-  //   },
-  //   threshold: 50,
-  //   velocityThreshold: 0.3,
-  //   disabled: isEditMode, // Disable swipe in edit mode to avoid conflicts
-  // });
-
   // Keyboard navigation
   useKeyboardNavigation(character.id, isEditMode);
 
@@ -97,22 +67,11 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
 
   return (
     <>
-      <div /* ref={swipeRef as React.RefObject<HTMLDivElement>} */ className='min-h-screen'>
+      <div className='min-h-screen'>
         <CharacterDetails character={character} onTutorialTrigger={handleTutorialTrigger}>
           {props.children}
         </CharacterDetails>
       </div>
-
-      {/* <SwipeNavigationIndicator
-        direction={swipeDirection}
-        characterName={
-          swipeDirection === 'left'
-            ? previousCharacter?.character?.id
-            : swipeDirection === 'right'
-              ? nextCharacter?.character?.id
-              : undefined
-        }
-      /> */}
 
       {showTutorial && <OnboardingTutorial onClose={handleTutorialClose} isEnabled={isEditMode} />}
     </>
