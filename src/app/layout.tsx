@@ -9,6 +9,7 @@ import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
+import NextTopLoader from 'nextjs-toploader';
 
 import './globals.css';
 
@@ -44,6 +45,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
       <body className={inter.className}>
+        <NextTopLoader
+          color='#2563eb'
+          height={2}
+          shadow={false}
+          showForHashAnchor={false}
+          showSpinner={false}
+          zIndex={10050}
+        />
         <ErrorBoundary>
           <KeyboardNavigation />
           <DynamicFaviconEditBadge />
