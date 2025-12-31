@@ -4,12 +4,14 @@ import { getCardCostColors, getCardRankColors } from '@/lib/design-tokens';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
+import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 
 export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetailsProps) {
   const [isDarkMode] = useDarkMode();
+  const ed = editable('cards');
 
   const rankColors = getCardRankColors(card.rank, true, isDarkMode);
   const costColors = getCardCostColors(card.cost, true, isDarkMode);
@@ -26,16 +28,18 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型：</span>
             <Tag colorStyles={rankColors} size='sm'>
-              等级: {card.rank}
+              等级: <ed.span path='rank' initialValue={card.rank} isSingleLine />
             </Tag>
             <Tag colorStyles={costColors} size='sm'>
-              费用: {card.cost}
+              费用: <ed.span path='cost' initialValue={card.cost} isSingleLine />
             </Tag>
           </div>
           {card.priority && (
             <span className='text-sm whitespace-pre'>
               {'升级优先级：'}
-              <span className='text-fuchsia-600 dark:text-fuchsia-400'>{card.priority}</span>
+              <span className='text-fuchsia-600 dark:text-fuchsia-400'>
+                <ed.span path='priority' initialValue={card.priority} isSingleLine />
+              </span>
             </span>
           )}
         </>

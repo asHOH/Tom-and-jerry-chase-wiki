@@ -1,13 +1,13 @@
-/* eslint-disable react-hooks/refs */
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { proxy, useSnapshot } from 'valtio';
 
-import { getNestedProperty, handleChange } from '@/lib/editUtils';
-import type { CharacterWithFaction } from '@/lib/types';
+import { getNestedProperty, handleChange, setNestedProperty } from '@/lib/editUtils';
+import type { CharacterWithFaction, KnowledgeCardWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { characters } from '@/data/index';
+import { useEditMode, useLocalCard, useLocalCharacter } from '@/context/EditModeContext';
+import { cardsEdit, characters } from '@/data/index';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 
 type Key<T> = T extends object
@@ -20,9 +20,10 @@ type Key<T> = T extends object
     }[keyof T & string]
   : never;
 
-type EditableScope = 'characters';
+type EditableScope = 'characters' | 'cards';
 
 type EditableCharactersPath = Key<CharacterWithFaction> | (string & {});
+type EditableCardsPath = Key<KnowledgeCardWithFaction> | (string & {});
 
 type IntrinsicTagName = keyof HTMLElementTagNameMap;
 
@@ -30,7 +31,7 @@ type EditableFieldProps<TagName extends IntrinsicTagName> = Omit<
   React.ComponentPropsWithoutRef<TagName>,
   'children'
 > & {
-  path: EditableCharactersPath;
+  path: EditableCharactersPath | EditableCardsPath;
   initialValue: string | number;
   onSave?: ((newValue: string) => void) | undefined;
   factionId?: string | undefined;
@@ -42,32 +43,29 @@ type EditableElementsProxy = {
   [TagName in IntrinsicTagName]: React.FC<EditableFieldProps<TagName>>;
 };
 
-function EditableCharactersField<TagName extends IntrinsicTagName>({
-  tag,
-  path,
-  initialValue,
-  onSave,
-  factionId,
-  isSingleLine = false,
-  enableEdit = true,
-  ...rest
-}: EditableFieldProps<TagName> & { tag: TagName }) {
-  'use no memo';
-  const { isEditMode } = useEditMode();
+const emptyObject = proxy({});
 
+function useInlineEditableContent(opts: {
+  initialValue: string | number;
+  isSingleLine: boolean;
+  onSave?: ((newValue: string) => void) | undefined;
+  enableEdit: boolean;
+  readStoredValue: () => string | number | undefined;
+  writeValue: (trimmed: string) => void;
+}) {
+  const { initialValue, isSingleLine, onSave, enableEdit, readStoredValue, writeValue } = opts;
+
+  const { isEditMode } = useEditMode();
   const [content, setContent] = useState<string | number>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
-  const { characterId } = useLocalCharacter();
-  const localCharacter = characters[characterId];
-  const { handleSelectCharacter } = useAppContext();
+
+  const setNodeRef = useCallback((node: HTMLElement | null) => {
+    contentRef.current = node;
+  }, []);
 
   useEffect(() => {
     try {
-      if (!localCharacter) {
-        setContent(initialValue);
-        return;
-      }
-      const storedValue = getNestedProperty<string | number>(localCharacter, path);
+      const storedValue = readStoredValue();
       if (typeof storedValue === 'string' || typeof storedValue === 'number') {
         setContent(storedValue);
       } else {
@@ -77,7 +75,7 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
       console.error('Failed to read stored editable value', e);
       setContent(initialValue);
     }
-  }, [path, initialValue, localCharacter]);
+  }, [initialValue, readStoredValue]);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -85,43 +83,34 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
     }
   }, [content]);
 
-  const handleBlurRef = useRef<() => void>(() => {});
+  const handleBlur = useCallback(() => {
+    if (!contentRef.current) return;
+    if (contentRef.current.textContent === String(content)) return;
 
-  handleBlurRef.current = () => {
-    if (contentRef.current && contentRef.current.textContent !== String(content)) {
-      const newContentStr = contentRef.current.textContent || '';
+    const newContentStr = contentRef.current.textContent || '';
 
-      if (typeof initialValue === 'number') {
-        const parsedFloat = parseFloat(newContentStr);
-        if (isNaN(parsedFloat)) {
-          contentRef.current.textContent = String(content) || '<无内容>';
-          return;
-        }
-      }
-
-      if (typeof initialValue === 'string') {
-        setContent(newContentStr);
-      } else {
-        setContent(parseFloat(newContentStr));
-      }
-
-      if (onSave) {
-        onSave(newContentStr.trim());
-      } else {
-        if (localCharacter) {
-          handleChange(
-            initialValue,
-            newContentStr.trim(),
-            `${localCharacter.id}.${path}`,
-            factionId || localCharacter.factionId || undefined,
-            handleSelectCharacter
-          );
-        }
+    if (typeof initialValue === 'number') {
+      const parsedFloat = parseFloat(newContentStr);
+      if (isNaN(parsedFloat)) {
+        contentRef.current.textContent = String(content) || '<无内容>';
+        return;
       }
     }
-  };
 
-  const handleBlur = useCallback(() => handleBlurRef.current(), []);
+    if (typeof initialValue === 'string') {
+      setContent(newContentStr);
+    } else {
+      setContent(parseFloat(newContentStr));
+    }
+
+    const trimmed = newContentStr.trim();
+    if (onSave) {
+      onSave(trimmed);
+      return;
+    }
+
+    writeValue(trimmed);
+  }, [content, initialValue, onSave, writeValue]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
@@ -136,7 +125,50 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
     [isSingleLine]
   );
 
-  if (isEditMode && enableEdit) {
+  return {
+    isEditMode: isEditMode && enableEdit,
+    content,
+    setNodeRef,
+    handleBlur,
+    handleKeyDown,
+  };
+}
+
+function EditableCharactersField<TagName extends IntrinsicTagName>({
+  tag,
+  path,
+  initialValue,
+  onSave,
+  factionId,
+  isSingleLine = false,
+  enableEdit = true,
+  ...rest
+}: EditableFieldProps<TagName> & { tag: TagName }) {
+  'use no memo';
+  const { characterId } = useLocalCharacter();
+  const rawLocalCharacter = characters[characterId];
+  const localCharacterSnapshot = useSnapshot(rawLocalCharacter ?? emptyObject);
+  const { handleSelectCharacter } = useAppContext();
+
+  const { isEditMode, content, setNodeRef, handleBlur, handleKeyDown } = useInlineEditableContent({
+    initialValue,
+    isSingleLine,
+    onSave,
+    enableEdit,
+    readStoredValue: () => getNestedProperty(localCharacterSnapshot, path),
+    writeValue: (trimmed) => {
+      if (!rawLocalCharacter) return;
+      handleChange(
+        initialValue,
+        trimmed,
+        `${rawLocalCharacter.id}.${path}`,
+        factionId || rawLocalCharacter.factionId || undefined,
+        handleSelectCharacter
+      );
+    },
+  });
+
+  if (isEditMode) {
     return React.createElement(
       tag,
       {
@@ -144,7 +176,64 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
         suppressContentEditableWarning: true,
         onBlur: handleBlur,
         onKeyDown: handleKeyDown,
-        ref: contentRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
+        ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
+        ...(rest as React.ComponentPropsWithoutRef<TagName>),
+      },
+      String(content) || '<无内容>'
+    );
+  }
+
+  return React.createElement(
+    tag,
+    rest as React.ComponentPropsWithoutRef<TagName>,
+    <TextWithHoverTooltips text={String(initialValue)} />
+  );
+}
+
+function EditableCardsField<TagName extends IntrinsicTagName>({
+  tag,
+  path,
+  initialValue,
+  onSave,
+  isSingleLine = false,
+  enableEdit = true,
+  ...rest
+}: EditableFieldProps<TagName> & { tag: TagName }) {
+  'use no memo';
+  const { cardId } = useLocalCard();
+  const rawLocalCard = cardsEdit[cardId];
+  const localCardSnapshot = useSnapshot(rawLocalCard ?? emptyObject);
+
+  const { isEditMode, content, setNodeRef, handleBlur, handleKeyDown } = useInlineEditableContent({
+    initialValue,
+    isSingleLine,
+    onSave,
+    enableEdit,
+    readStoredValue: () => getNestedProperty(localCardSnapshot, path as string),
+    writeValue: (trimmed) => {
+      console.log({ trimmed, rawLocalCard, cardId });
+      if (!rawLocalCard || !cardId) return;
+
+      // Knowledge card `id` is also the record key and route segment; avoid accidental breakage.
+      if ((path as string) === 'id') {
+        console.warn('Editing knowledge card id is not supported in local edit mode yet.');
+        return;
+      }
+
+      const finalValue = typeof initialValue === 'number' ? parseFloat(trimmed) : trimmed;
+      setNestedProperty(cardsEdit, `${cardId}.${path as string}`, finalValue);
+    },
+  });
+
+  if (isEditMode) {
+    return React.createElement(
+      tag,
+      {
+        contentEditable: 'plaintext-only',
+        suppressContentEditableWarning: true,
+        onBlur: handleBlur,
+        onKeyDown: handleKeyDown,
+        ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
         ...(rest as React.ComponentPropsWithoutRef<TagName>),
       },
       String(content) || '<无内容>'
@@ -162,7 +251,9 @@ const EDITABLE_PROXY_CACHE = new Map<EditableScope, EditableElementsProxy>();
 
 const RESERVED_PROXY_KEYS = new Set<string>(['then', 'catch', 'finally', 'toString', 'valueOf']);
 
-export function editable(scope: 'characters'): EditableElementsProxy {
+export function editable(scope: 'characters'): EditableElementsProxy;
+export function editable(scope: 'cards'): EditableElementsProxy;
+export function editable(scope: EditableScope): EditableElementsProxy {
   const existing = EDITABLE_PROXY_CACHE.get(scope);
   if (existing) return existing;
 
@@ -178,8 +269,10 @@ export function editable(scope: 'characters'): EditableElementsProxy {
 
       const Tag = prop as IntrinsicTagName;
 
+      const Field = scope === 'characters' ? EditableCharactersField : EditableCardsField;
+
       const Component: React.FC<EditableFieldProps<IntrinsicTagName>> = (props) => (
-        <EditableCharactersField tag={Tag} {...(props as EditableFieldProps<typeof Tag>)} />
+        <Field tag={Tag} {...(props as EditableFieldProps<typeof Tag>)} />
       );
 
       Component.displayName = `editable(${scope}).${prop}`;

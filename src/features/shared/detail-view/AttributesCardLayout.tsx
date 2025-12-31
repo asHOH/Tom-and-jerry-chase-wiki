@@ -12,7 +12,7 @@ interface AttributesCardLayoutProps {
   alt: string;
   title: ReactNode;
   subtitle?: ReactNode | undefined;
-  aliases?: string[] | undefined;
+  aliases?: readonly string[] | undefined;
   aliasLabel?: string | undefined;
   attributes: ReactNode;
   navigation?: ReactNode | undefined;

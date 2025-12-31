@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { proxy, subscribe } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
-import { characters, factions } from '@/data';
+import { cardsEdit, characters, factions } from '@/data';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -23,6 +23,7 @@ export const EditModeContext = createContext<EditModeContextType | undefined>(un
 const entityRegistry = new Map<string, Record<string, unknown>>([
   ['characters', characters],
   ['factions', factions],
+  ['cards', cardsEdit],
 ]);
 
 /**
@@ -102,6 +103,7 @@ function restoreEntitiesToCanonical(): void {
   const original = {
     characters: GameDataManager.getCharacters(),
     factions: GameDataManager.getFactions(),
+    cards: GameDataManager.getCards(),
   };
 
   Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
@@ -121,6 +123,13 @@ function restoreEntitiesToCanonical(): void {
       });
       Object.entries(original.factions).forEach(([key, value]) => {
         entity[key] = value;
+      });
+    } else if (entityType === 'cards' && original.cards) {
+      Object.keys(entity).forEach((key) => {
+        delete entity[key];
+      });
+      Object.entries(original.cards).forEach(([key, value]) => {
+        entity[key] = proxy(value);
       });
     }
   });
@@ -214,4 +223,15 @@ export const useLocalCharacter = () => {
   const pathParts = path.split('/');
   const characterId = decodeURIComponent(pathParts[pathParts.length - 2] || '');
   return { characterId };
+};
+
+/**
+ * Hook to get the current card ID from the URL path.
+ * Assumes the card page route structure: /cards/[cardId]
+ */
+export const useLocalCard = () => {
+  const path = usePathname();
+  const pathParts = path.split('/');
+  const cardId = decodeURIComponent(pathParts[pathParts.length - 1] || '');
+  return { cardId };
 };

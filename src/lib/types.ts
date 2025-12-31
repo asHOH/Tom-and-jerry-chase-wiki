@@ -4,6 +4,7 @@
  */
 
 import { ReactNode } from 'react';
+import type { Snapshot } from 'valtio';
 
 import { SkillType } from '@/data/types';
 import { Card, Character, FactionId, PositioningTag, PositioningTagName } from '@/data';
@@ -38,7 +39,7 @@ export type CharacterDisplayProps = {
 };
 
 export type KnowledgeCardDetailsProps = {
-  card: KnowledgeCardWithFaction;
+  card: KnowledgeCardWithFaction | Snapshot<KnowledgeCardWithFaction>;
   isDetailedView?: boolean;
 };
 

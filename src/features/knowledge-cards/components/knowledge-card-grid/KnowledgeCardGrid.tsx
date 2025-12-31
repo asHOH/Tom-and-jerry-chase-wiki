@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import clsx from 'clsx';
+import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design-system';
 import { getCardRankColors } from '@/lib/design-tokens';
@@ -10,18 +11,21 @@ import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
 import CostRangeSlider from '@/components/ui/CostRangeSlider';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { cards } from '@/data';
+import { cards, cardsEdit } from '@/data';
 
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 
 type Props = { description?: string };
 
 export default function KnowledgeCardGrid({ description }: Props) {
+  const { isEditMode } = useEditMode();
+  const cardsEditSnapshot = useSnapshot(cardsEdit);
   // Use centralized filter state management for ranks
   const {
     selectedFilters: selectedRanks,
@@ -37,9 +41,11 @@ export default function KnowledgeCardGrid({ description }: Props) {
 
   const { handleSelectCard } = useAppContext();
 
+  const sourceCards = isEditMode ? cardsEditSnapshot : cards;
+
   // Filter and sort cards using centralized utilities
   const filteredAndSortedCards = sortCardsByRank(
-    Object.values(cards)
+    Object.values(sourceCards)
       .filter(createRankFilter(selectedRanks))
       .filter((card) => card.cost >= costRange[0] && card.cost <= costRange[1])
       .filter((card) => !selectedFaction || card.factionId === selectedFaction)

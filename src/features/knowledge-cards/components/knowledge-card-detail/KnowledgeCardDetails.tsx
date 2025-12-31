@@ -1,25 +1,37 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { useSnapshot } from 'valtio';
 
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
+import { useEditMode, useLocalCard } from '@/context/EditModeContext';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import { editable } from '@/components/ui/editable';
 import Image from '@/components/Image';
-import { characters } from '@/data'; // Import characters data
+import { cardsEdit, characters } from '@/data'; // Import characters data
 
 import CharacterList from './CharacterList';
 import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';
 
 export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps) {
+  const { isEditMode } = useEditMode();
+  const { cardId } = useLocalCard();
+  const ed = editable('cards');
+
+  const cardsEditSnapshot = useSnapshot(cardsEdit);
+
+  const effectiveCard =
+    isEditMode && cardId && cardsEditSnapshot[cardId] ? cardsEditSnapshot[cardId] : card;
+
   // Keyboard navigation
-  useSpecifyTypeKeyboardNavigation(card.id, 'knowledgeCard');
+  useSpecifyTypeKeyboardNavigation(effectiveCard.id, 'knowledgeCard');
 
   const { isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
@@ -34,9 +46,9 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
     if ('cards' in group && Array.isArray(group.cards)) {
       // Flatten the CardGroup[] to get all possible card combinations
       const allCombinations = flattenCardGroup(group.cards);
-      const cardId = `${card.rank}-${card.id}`;
+      const cardKey = `${effectiveCard.rank}-${effectiveCard.id}`;
       // Check if any combination contains this card
-      return allCombinations.some((combo) => combo.includes(cardId));
+      return allCombinations.some((combo) => combo.includes(cardKey));
     }
     if ('groups' in group && Array.isArray(group.groups)) {
       return group.groups.some(groupContainsCard);
@@ -46,20 +58,20 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
 
   const usedCharacters = Object.values(characters).filter(
     (character) =>
-      character.factionId === card.factionId &&
+      character.factionId === effectiveCard.factionId &&
       character.knowledgeCardGroups?.some(groupContainsCard)
   );
 
   const unusedCharacters = Object.values(characters).filter(
     (character) =>
-      character.factionId === card.factionId &&
+      character.factionId === effectiveCard.factionId &&
       !character.knowledgeCardGroups?.some(groupContainsCard)
   );
 
   const displayUsedCharacters = usedCharacters.length <= unusedCharacters.length;
 
   // Generate faction-specific title
-  const factionName = card.factionId === 'cat' ? '猫方' : '鼠方';
+  const factionName = effectiveCard.factionId === 'cat' ? '猫方' : '鼠方';
 
   const getCharacterSectionTitle = () => {
     if (usedCharacters.length === 0) {
@@ -79,16 +91,28 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
       render: () => (
         <DetailTextSection
           title='知识卡效果'
-          value={card.description ?? null}
-          detailedValue={card.detailedDescription ?? null}
+          value={effectiveCard.description ?? null}
+          detailedValue={effectiveCard.detailedDescription ?? null}
           isDetailedView={isDetailedView}
+          renderValue={
+            isEditMode ? (
+              <ed.span
+                path={isDetailedView ? 'detailedDescription' : 'description'}
+                initialValue={
+                  isDetailedView
+                    ? (effectiveCard.detailedDescription ?? effectiveCard.description ?? '')
+                    : (effectiveCard.description ?? '')
+                }
+              />
+            ) : undefined
+          }
           headerContent={
             fromCharacter ? (
               <button
                 type='button'
                 aria-label={`返回 ${fromCharacter.id}`}
                 onClick={() => handleSelectCharacter(fromCharacterId!)}
-                className='text-md flex items-center gap-2 rounded-full rounded-r-lg border border-blue-200 bg-blue-50 py-1.5 pr-2 pl-4 font-bold text-blue-700 shadow-sm transition-all duration-200 hover:translate-x-[-5px] hover:border-blue-500 hover:bg-blue-500 hover:text-white dark:border-blue-700 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white'
+                className='text-md flex items-center gap-2 rounded-full rounded-r-lg border border-blue-200 bg-blue-50 py-1.5 pr-2 pl-4 font-bold text-blue-700 shadow-sm transition-all duration-200 hover:-translate-x-1.25 hover:border-blue-500 hover:bg-blue-500 hover:text-white dark:border-blue-700 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white'
               >
                 ← 返回 {fromCharacter.id}
                 {fromCharacter.imageUrl && (
@@ -105,24 +129,39 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
           }
         >
           <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-            {card.levels.map((level) => (
+            {effectiveCard.levels.map((level, index) => (
               <div
-                key={`${card.id}-${level.level}`}
+                key={`${effectiveCard.id}-${level.level}`}
                 className='rounded bg-gray-100 p-4 dark:bg-slate-700'
               >
                 <p className='px-2 py-1 text-black dark:text-gray-200'>
                   <span className='font-bold'>Lv.{level.level}:</span>{' '}
-                  {renderTextWithHighlights(
-                    isDetailedView && level.detailedDescription
-                      ? level.detailedDescription
-                      : level.description
+                  {isEditMode ? (
+                    <ed.span
+                      path={
+                        isDetailedView
+                          ? (`levels.${index}.detailedDescription` as const)
+                          : (`levels.${index}.description` as const)
+                      }
+                      initialValue={
+                        isDetailedView
+                          ? (level.detailedDescription ?? level.description)
+                          : level.description
+                      }
+                    />
+                  ) : (
+                    renderTextWithHighlights(
+                      isDetailedView && level.detailedDescription
+                        ? level.detailedDescription
+                        : level.description
+                    )
                   )}
                 </p>
               </div>
             ))}
           </div>
           <div className='mt-4'>
-            <DetailTraitsCard singleItem={{ name: card.id, type: 'knowledgeCard' }} />
+            <DetailTraitsCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
           </div>
         </DetailTextSection>
       ),
@@ -141,7 +180,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
 
   return (
     <DetailShell
-      leftColumn={<KnowledgeCardAttributesCard card={card} />}
+      leftColumn={<KnowledgeCardAttributesCard card={effectiveCard} />}
       sections={sections}
       rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
     />

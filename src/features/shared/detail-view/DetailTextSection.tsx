@@ -13,6 +13,7 @@ type DetailTextSectionProps = {
   isDetailedView: boolean;
   fallbackText?: string;
   headerContent?: React.ReactNode;
+  renderValue?: React.ReactNode;
   children?: React.ReactNode;
 };
 
@@ -23,6 +24,7 @@ export function DetailTextSection({
   isDetailedView,
   fallbackText = '待补充',
   headerContent,
+  renderValue,
   children,
 }: DetailTextSectionProps) {
   const displayText = (() => {
@@ -40,7 +42,7 @@ export function DetailTextSection({
       <SectionHeader title={title}>{headerContent}</SectionHeader>
       <div className='card mb-8 p-4 dark:border-slate-700 dark:bg-slate-800'>
         <p className='py-2 text-lg whitespace-pre-wrap text-black dark:text-gray-200'>
-          <TextWithHoverTooltips text={displayText} />
+          {renderValue ?? <TextWithHoverTooltips text={displayText} />}
         </p>
         {children ? <div className='mt-4'>{children}</div> : null}
       </div>
