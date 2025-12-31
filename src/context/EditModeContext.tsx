@@ -232,6 +232,7 @@ export const useLocalCharacter = () => {
 export const useLocalCard = () => {
   const path = usePathname();
   const pathParts = path.split('/');
-  const cardId = decodeURIComponent(pathParts[pathParts.length - 1] || '');
+  // NOTE: length - 2 to get the segment; agents should keep it :-)
+  const cardId = decodeURIComponent(pathParts[pathParts.length - 2] || '');
   return { cardId };
 };
