@@ -4,7 +4,7 @@ import { FactionId, SingleItem, SingleItemOrGroup, Trait } from '@/data/types';
 import { itemGroups } from '@/data';
 
 // 导出-辅助函数：判断两个factionId是否相同，默认会将undefined视作任意一种factionId，若采用严格模式则双方必须均不为undefined
-export const compareFactionId = (
+const compareFactionId = (
   factionId1: FactionId | undefined,
   factionId2: FactionId | undefined,
   checkMode: 'default' | 'hard' = 'default'
@@ -18,7 +18,7 @@ export const compareFactionId = (
 };
 
 // 导出-辅助函数：检查某个SingleItem的factionId是否在需要排除的范围内
-export const shouldExcludeItemGroupItem = (
+const shouldExcludeItemGroupItem = (
   item: SingleItem,
   excludeFactionId?: FactionId | undefined
 ): boolean => {

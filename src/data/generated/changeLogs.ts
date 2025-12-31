@@ -21,7 +21,7 @@ export type ChangeType =
  * 表示单个更改条目
  * Represents a single change entry
  */
-export interface ChangeEntry {
+interface ChangeEntry {
   type: ChangeType;
   scope?: string; // 更改的范围（例如 'ai'、'ui'、'data'）(The scope of the change)
   message: string; // 更改的简要描述（中文）(Brief description of the change in Chinese)
@@ -34,7 +34,7 @@ export interface ChangeEntry {
  * 按日期分组的更新日志
  * Changelogs grouped by date
  */
-export interface DailyChangelog {
+interface DailyChangelog {
   date: string; // ISO 日期字符串（YYYY-MM-DD）(ISO date string)
   changes: ChangeEntry[]; // 当天的更改列表 (List of changes for this day)
 }
@@ -43,6 +43,6 @@ export interface DailyChangelog {
  * 更新日志数据的根类型
  * Root type for the changelog data
  */
-export type ChangeLogs = DailyChangelog[];
+type ChangeLogs = DailyChangelog[];
 
 export const changeLogs = changeLogsData as ChangeLogs;

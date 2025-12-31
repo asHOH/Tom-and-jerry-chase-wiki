@@ -7,7 +7,7 @@ export interface CharacterRow {
   banRate?: string;
 }
 
-export interface WinRateSummaryRow {
+interface WinRateSummaryRow {
   rank: string;
   teamType: string;
   percent?: string;
@@ -21,14 +21,14 @@ export interface CharacterTable {
   rows: CharacterRow[];
 }
 
-export interface SummaryTable {
+interface SummaryTable {
   rank: string;
   rows: WinRateSummaryRow[];
 }
 
-export type TableEntry = CharacterTable | SummaryTable;
+type TableEntry = CharacterTable | SummaryTable;
 
-export interface WinRatesEntry {
+interface WinRatesEntry {
   timeRange?: string;
   description?: string;
   winRateSummary?: WinRateSummaryRow[];
@@ -924,5 +924,3 @@ export function getCharacterWinRates(characterName: string): CharacterWinRateEnt
 
   return results;
 }
-
-export default winRatesData;

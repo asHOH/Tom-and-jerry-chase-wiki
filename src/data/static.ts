@@ -5,7 +5,7 @@ import mouseSpecialSkillsWithImages from '@/features/special-skills/data/mouseSp
 import catEntitiesWithImages from './catEntities';
 import mouseEntitiesWithImages from './mouseEntities';
 
-export const { factionData, characterData, cardData } = GameDataManager.getRawData();
+export const { factionData, cardData } = GameDataManager.getRawData();
 
 export const cards = GameDataManager.getCards();
 

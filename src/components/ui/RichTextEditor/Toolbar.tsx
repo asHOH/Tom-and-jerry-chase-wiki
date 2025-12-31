@@ -66,7 +66,7 @@ export interface ToolbarCommands {
   redo(): void;
 }
 
-export interface ToolbarProps {
+interface ToolbarProps {
   state: ToolbarState;
   commands: ToolbarCommands;
   mode: EditorViewMode;
@@ -121,7 +121,7 @@ const ToolbarButton = React.memo(function ToolbarButton({
   return button;
 });
 
-export const Toolbar = React.memo(function Toolbar({
+const Toolbar = React.memo(function Toolbar({
   state,
   commands,
   mode,

@@ -138,7 +138,7 @@ export function isCardOptional(
 /**
  * Generate tooltip content for knowledge card cost display
  */
-export function getKnowledgeCardTooltipContent(
+function getKnowledgeCardTooltipContent(
   displayCost: number,
   hasOptionalCard: boolean,
   actualCost: number

@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 
-export interface FactionButtonProps {
+interface FactionButtonProps {
   emoji?: string;
   imageSrc?: string;
   imageAlt?: string;
@@ -18,7 +18,7 @@ export interface FactionButtonProps {
   preload?: boolean;
 }
 
-export function FactionButton({
+function FactionButton({
   emoji,
   imageSrc,
   imageAlt,

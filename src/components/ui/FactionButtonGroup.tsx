@@ -1,12 +1,12 @@
 import React from 'react';
 import clsx from 'clsx';
 
-export interface FactionButtonGroupProps {
+interface FactionButtonGroupProps {
   children: React.ReactNode;
   className?: string;
 }
 
-export function FactionButtonGroup({ children, className = '' }: FactionButtonGroupProps) {
+function FactionButtonGroup({ children, className = '' }: FactionButtonGroupProps) {
   return (
     <div
       className={clsx(

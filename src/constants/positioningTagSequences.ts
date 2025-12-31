@@ -1,7 +1,7 @@
 import { CatPositioningTagName, FactionId, MousePositioningTagName } from '@/data/types';
 
 // Define display sequences for positioning tags
-export const CAT_POSITIONING_TAG_SEQUENCE: CatPositioningTagName[] = [
+const CAT_POSITIONING_TAG_SEQUENCE: CatPositioningTagName[] = [
   '进攻',
   '防守',
   '追击',
@@ -11,7 +11,7 @@ export const CAT_POSITIONING_TAG_SEQUENCE: CatPositioningTagName[] = [
   '翻盘',
 ];
 
-export const MOUSE_POSITIONING_TAG_SEQUENCE: MousePositioningTagName[] = [
+const MOUSE_POSITIONING_TAG_SEQUENCE: MousePositioningTagName[] = [
   '奶酪',
   '干扰',
   '救援',
@@ -24,7 +24,7 @@ export const MOUSE_POSITIONING_TAG_SEQUENCE: MousePositioningTagName[] = [
 /**
  * Get the display sequence for a specific tag within its faction
  */
-export function getPositioningTagSequence(tagName: string, factionId: FactionId): number {
+function getPositioningTagSequence(tagName: string, factionId: FactionId): number {
   if (factionId === 'cat') {
     const index = CAT_POSITIONING_TAG_SEQUENCE.indexOf(tagName as CatPositioningTagName);
     return index === -1 ? 999 : index;

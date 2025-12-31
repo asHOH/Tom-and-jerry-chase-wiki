@@ -1,4 +1,4 @@
-export interface TutorialStep {
+interface TutorialStep {
   id: string;
   targetSelector: string;
   message: string;

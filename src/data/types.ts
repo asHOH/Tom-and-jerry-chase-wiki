@@ -43,7 +43,7 @@ export type SkillAllocation = {
 
 // Skill types - both for definitions and final processed skills
 export type SkillType = 'active' | 'weapon1' | 'weapon2' | 'passive';
-export type CancellableKeyType =
+type CancellableKeyType =
   | '道具键'
   | '道具键*'
   | '跳跃键'
@@ -268,7 +268,7 @@ export type SpecialSkill = SpecialSkillDefinition & {
   imageUrl: string;
 };
 
-export type PhysicalAttributes = {
+type PhysicalAttributes = {
   move?: boolean;
   gravity?: boolean;
   collsion?: string[];
@@ -339,7 +339,6 @@ export type EntityDefinition = {
 export type Entity = EntityDefinition & { name: string; imageUrl: string };
 
 export type buffTypelist = '正面' | '负面' | '特殊';
-export type buffClasslist = '物理特性' | '伤害与回复' | '控制效果' | '全局效果' | '其它';
 
 export type BuffDefinition = {
   type: buffTypelist;
@@ -470,7 +469,7 @@ interface YearData {
 export type GameHistory = YearData[];
 
 export type SingleItemOrGroup = SingleItem | { name: string; type: 'itemGroup' };
-export type TraitGroupItem = SingleItemOrGroup | SingleItemOrGroup[];
+type TraitGroupItem = SingleItemOrGroup | SingleItemOrGroup[];
 export type TraitGroup = TraitGroupItem[];
 export type Trait = {
   description: string;

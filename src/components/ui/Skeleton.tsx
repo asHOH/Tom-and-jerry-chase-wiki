@@ -40,7 +40,7 @@ export function Skeleton({
 /**
  * Skeleton for text content
  */
-export function SkeletonText({
+function SkeletonText({
   lines = 1,
   className = '',
   animate = true,

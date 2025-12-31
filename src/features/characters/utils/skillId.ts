@@ -16,7 +16,7 @@ import type {
  * @param skills - Array of skill definitions
  * @returns Skills array with IDs automatically assigned
  */
-export function processSkillsWithIds(
+function processSkillsWithIds(
   characterName: string,
   skills: ReadonlyArray<SkillDefinition>
 ): Skill[] {

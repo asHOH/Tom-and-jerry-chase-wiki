@@ -114,7 +114,7 @@ function preprocessText(text: string, currentCharacterName?: string | undefined)
  * @param text - Text to parse and add classes to
  * @returns JSX elements with class-styled portions
  */
-export const renderTextWithClasses = (text: string): (string | React.ReactElement)[] => {
+const renderTextWithClasses = (text: string): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
   let lastIndex = 0;
   const classPattern = /\$([^$]+)\$([^#]+)#?/g;
@@ -188,7 +188,7 @@ const extractBaseNameAndCategoryHint = (
  * @param text - Text to parse and add tooltips to
  * @returns JSX elements with tooltip-enabled portions
  */
-export const renderTextWithTooltips = (
+const renderTextWithTooltips = (
   text: string,
   attackBoost: number | null,
   index: number,

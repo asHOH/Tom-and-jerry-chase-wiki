@@ -53,7 +53,7 @@ const DEFAULT_CARD_PADDING = {
   padding: designTokens.spacing.lg,
 };
 
-export function DetailShell({
+function DetailShell({
   leftColumn,
   sections,
   gap = designTokens.spacing.xl,

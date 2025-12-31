@@ -7848,7 +7848,7 @@ const mouseCharacterDefinitions = {
 } as const satisfies Readonly<Record<string, CharacterDefinition>>;
 
 // Process character definitions to assign IDs and process skills
-export const mouseCharacters = processCharacters(mouseCharacterDefinitions);
+const mouseCharacters = processCharacters(mouseCharacterDefinitions);
 
 // Generate characters with faction ID and image URLs applied in bulk
 export const mouseCharactersWithImages = Object.fromEntries(

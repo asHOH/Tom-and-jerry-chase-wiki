@@ -1,4 +1,4 @@
-export interface OfficialSite {
+interface OfficialSite {
   url: string;
   label: string;
   description: string;

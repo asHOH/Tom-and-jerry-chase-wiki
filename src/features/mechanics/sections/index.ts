@@ -2,7 +2,7 @@ import Object from './Object';
 import TraitCollection from './TraitCollection';
 
 //与navigation.ts的格式相同，日后有需要可以合并
-export type NavItem = {
+type NavItem = {
   id: string;
   label: string;
   href: string;

@@ -192,7 +192,7 @@ export function rankCharactersByProperty(
 /**
  * Format property value for display
  */
-export function formatPropertyValue(value: number, propertyInfo: PropertyInfo): string {
+function formatPropertyValue(value: number, propertyInfo: PropertyInfo): string {
   const formattedNumber = value % 1 === 0 ? value.toString() : value.toFixed(1);
   return propertyInfo.unit ? `${formattedNumber}${propertyInfo.unit}` : formattedNumber;
 }

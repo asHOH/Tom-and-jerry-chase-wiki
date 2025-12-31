@@ -17,7 +17,7 @@ type DetailTextSectionProps = {
   children?: React.ReactNode;
 };
 
-export function DetailTextSection({
+function DetailTextSection({
   title,
   value,
   detailedValue,

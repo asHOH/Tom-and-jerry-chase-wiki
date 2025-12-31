@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 export type ToastType = 'success' | 'info' | 'warning' | 'error';
 
-export interface ToastProps {
+interface ToastProps {
   id: string;
   message: string;
   type?: ToastType;

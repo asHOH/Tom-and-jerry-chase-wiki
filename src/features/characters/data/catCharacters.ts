@@ -5669,7 +5669,7 @@ const catCharacterDefinitions = {
 } as const satisfies Readonly<Record<string, CharacterDefinition | PartialCharacterDefinition>>;
 
 // Process character definitions to assign IDs and process skills
-export const catCharacters = processCharacters(catCharacterDefinitions);
+const catCharacters = processCharacters(catCharacterDefinitions);
 
 // Generate characters with faction ID and image URLs applied in bulk
 export const catCharactersWithImages = Object.fromEntries(

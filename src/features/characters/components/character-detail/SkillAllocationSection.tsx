@@ -12,7 +12,7 @@ import { characters } from '@/data';
 import CharacterSection from './CharacterSection';
 import SkillAllocationDisplay from './SkillAllocationDisplay';
 
-export const useSkillAllocationManagement = () => {
+const useSkillAllocationManagement = () => {
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
   const handleSaveChanges = useCallback(

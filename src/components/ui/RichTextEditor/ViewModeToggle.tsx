@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 export type EditorViewMode = 'rich' | 'wiki' | 'html';
 
-export interface ViewModeToggleProps {
+interface ViewModeToggleProps {
   mode: EditorViewMode;
   onChange: (mode: EditorViewMode) => void;
   disabled?: boolean;
@@ -12,7 +12,7 @@ export interface ViewModeToggleProps {
   hideWiki?: boolean;
 }
 
-export const ViewModeToggle = React.memo(function ViewModeToggle({
+const ViewModeToggle = React.memo(function ViewModeToggle({
   mode,
   onChange,
   disabled,
