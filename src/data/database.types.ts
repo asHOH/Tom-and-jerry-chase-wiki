@@ -213,6 +213,74 @@ export type Database = {
         };
         Relationships: [];
       };
+      game_data_actions: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          entity_type: string;
+          entry: Json;
+          id: string;
+          is_public: boolean;
+          rejection_reason: string | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          status: Database['public']['Enums']['game_data_action_status'];
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          entity_type: string;
+          entry: Json;
+          id?: string;
+          is_public?: boolean;
+          rejection_reason?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status: Database['public']['Enums']['game_data_action_status'];
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          entity_type?: string;
+          entry?: Json;
+          id?: string;
+          is_public?: boolean;
+          rejection_reason?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: Database['public']['Enums']['game_data_action_status'];
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'game_data_actions_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'game_data_actions_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'users_public_view';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'game_data_actions_reviewed_by_fkey';
+            columns: ['reviewed_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'game_data_actions_reviewed_by_fkey';
+            columns: ['reviewed_by'];
+            isOneToOne: false;
+            referencedRelation: 'users_public_view';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       users: {
         Row: {
           id: string;
@@ -312,6 +380,10 @@ export type Database = {
         Args: { p_version_id: string };
         Returns: undefined;
       };
+      approve_game_data_action: {
+        Args: { p_action_id: string };
+        Returns: undefined;
+      };
       create_category: {
         Args: {
           _default_visibility?: Database['public']['Enums']['version_status'];
@@ -349,6 +421,23 @@ export type Database = {
           parent_category_id: string;
         }[];
       };
+      get_pending_game_data_actions: {
+        Args: never;
+        Returns: {
+          action_id: string;
+          created_at: string;
+          created_by: string;
+          created_by_nickname: string;
+          entity_type: string;
+          entry: Json;
+          is_public: boolean;
+          rejection_reason: string;
+          reviewed_at: string;
+          reviewed_by: string;
+          reviewed_by_nickname: string;
+          status: Database['public']['Enums']['game_data_action_status'];
+        }[];
+      };
       get_pending_versions_for_moderation: {
         Args: never;
         Returns: {
@@ -380,8 +469,20 @@ export type Database = {
         Args: { p_category_id: string };
         Returns: boolean;
       };
+      publish_game_data_actions: {
+        Args: { p_entity_type: string; p_entries: Json };
+        Returns: {
+          id: string;
+          is_public: boolean;
+          status: Database['public']['Enums']['game_data_action_status'];
+        }[];
+      };
       reject_article_version: {
         Args: { p_version_id: string };
+        Returns: undefined;
+      };
+      reject_game_data_action: {
+        Args: { p_action_id: string; p_reason?: string };
         Returns: undefined;
       };
       revoke_article_version: {
@@ -421,6 +522,7 @@ export type Database = {
       };
     };
     Enums: {
+      game_data_action_status: 'pending' | 'approved' | 'rejected';
       role_type: 'Contributor' | 'Reviewer' | 'Coordinator';
       version_status: 'pending' | 'approved' | 'rejected' | 'revoked';
     };
@@ -548,6 +650,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      game_data_action_status: ['pending', 'approved', 'rejected'],
       role_type: ['Contributor', 'Reviewer', 'Coordinator'],
       version_status: ['pending', 'approved', 'rejected', 'revoked'],
     },
