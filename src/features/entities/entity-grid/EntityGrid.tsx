@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-import { getFactionButtonColors, getPositioningTagColors } from '@/lib/design-system';
+import { getFactionButtonColors } from '@/lib/design-system';
+import { getPositioningTagColors } from '@/lib/design-tokens';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';

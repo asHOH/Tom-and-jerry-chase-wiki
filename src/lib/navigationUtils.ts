@@ -8,7 +8,7 @@
  * @param targetPath - The path to check
  * @returns Promise<boolean> - true if cached, false if not
  */
-export const isPageCached = async (targetPath: string): Promise<boolean> => {
+const isPageCached = async (targetPath: string): Promise<boolean> => {
   if (!('caches' in window)) {
     return false;
   }
@@ -90,16 +90,3 @@ export const navigate = async (
  * @param targetPath - The path that was blocked
  * @param customMessage - Optional custom message
  */
-export const dispatchNavigationBlocked = (targetPath: string, customMessage?: string): void => {
-  const decodedPath = decodeURIComponent(targetPath);
-  const message = customMessage || `页面 "${decodedPath}" 未缓存，请在联网时访问`;
-
-  window.dispatchEvent(
-    new CustomEvent('offline-navigation-blocked', {
-      detail: {
-        targetPath,
-        message,
-      },
-    })
-  );
-};

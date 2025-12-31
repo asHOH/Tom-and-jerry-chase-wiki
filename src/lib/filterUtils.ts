@@ -150,20 +150,6 @@ export const createRankFilter =
   };
 
 /**
- * Create a cost range filter function
- * @param minCost - Minimum cost
- * @param maxCost - Maximum cost
- * @returns Filter function
- */
-export const createCostFilter =
-  (minCost?: number, maxCost?: number) =>
-  <T extends { cost: number }>(item: T): boolean => {
-    if (minCost !== undefined && item.cost < minCost) return false;
-    if (maxCost !== undefined && item.cost > maxCost) return false;
-    return true;
-  };
-
-/**
  * Predefined rank options for UI components
  */
 export const RANK_OPTIONS = ['S', 'A', 'B', 'C'] as const;

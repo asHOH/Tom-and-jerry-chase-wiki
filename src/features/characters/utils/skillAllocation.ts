@@ -252,22 +252,6 @@ export const safeParseSkillAllocationPattern = (pattern: string): ParsedSkillLev
   }
 };
 
-/* Get skill type display name */
-export const getSkillTypeDisplayName = (skillTypeNum: '0' | '1' | '2' | '3'): string => {
-  switch (skillTypeNum) {
-    case '0':
-      return '被动';
-    case '1':
-      return '主动';
-    case '2':
-      return '武器1';
-    case '3':
-      return '武器2';
-    default:
-      return '';
-  }
-};
-
 /* Get skill image URL from the skill data */
 export const getSkillAllocationImageUrl = (
   characterName: string,

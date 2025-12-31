@@ -7,7 +7,7 @@ import { ReactNode } from 'react';
 import type { Snapshot } from 'valtio';
 
 import { SkillType } from '@/data/types';
-import { Card, Character, FactionId, PositioningTag, PositioningTagName } from '@/data';
+import { Card, Character, FactionId, PositioningTag } from '@/data';
 
 // Extended types with faction information (used in components)
 export type CharacterWithFaction = Character & {
@@ -46,20 +46,6 @@ export type KnowledgeCardDetailsProps = {
 export type CharacterDetailsProps = {
   character: CharacterWithFaction;
   children?: ReactNode;
-};
-
-// Faction types for grid displays
-export type FactionWithKnowledgeCards = {
-  id: string;
-  name: string;
-  description: string;
-  cards: Array<{
-    id: string;
-    name: string;
-    rank: string;
-    cost: number;
-    imageUrl: string;
-  }>;
 };
 
 export type FactionWithCharacters = {
@@ -159,32 +145,3 @@ export const CATEGORY_HINTS = [
   '模式', //regarded as 地图组件
 ] as const;
 export type CategoryHint = (typeof CATEGORY_HINTS)[number];
-
-// Generic callback types
-export type CharacterSelectionHandler = (characterId: string) => void;
-export type KnowledgeCardSelectionHandler = (cardId: string) => void;
-
-// Base card types for filtering/sorting
-export type BaseKnowledgeCard = {
-  id: string;
-  name: string;
-  rank: string;
-  cost: number;
-  imageUrl: string;
-};
-
-export type BaseCharacter = {
-  id: string;
-  name: string;
-  imageUrl: string;
-  positioningTags: PositioningTag[];
-};
-
-// Filter types
-export type CharacterFilterOptions = {
-  positioningTags: PositioningTagName[];
-};
-
-export type CharacterFilterState = {
-  selectedPositioningTags: PositioningTagName[];
-};

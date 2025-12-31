@@ -137,17 +137,6 @@ export function WaveAnimation({ size = 'md', className = '' }: LoadingAnimationP
 }
 
 /**
- * Skeleton shimmer animation
- */
-export function SkeletonShimmer({ className = '' }: { className?: string }) {
-  return (
-    <div className={clsx('animate-pulse', className)}>
-      <div className='animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%] dark:from-gray-700 dark:via-gray-600 dark:to-gray-700'></div>
-    </div>
-  );
-}
-
-/**
  * Typing dots animation
  */
 export function TypingDots({ size = 'md', className = '' }: LoadingAnimationProps) {
