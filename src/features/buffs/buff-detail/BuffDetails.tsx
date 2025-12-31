@@ -1,27 +1,40 @@
 'use client';
 
+import { useSnapshot } from 'valtio';
+
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
+import { useEditMode, useLocalBuff } from '@/context/EditModeContext';
 import { Buff, SingleItem, SingleItemTypeChineseNameList } from '@/data/types';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import AccordionCard from '@/components/ui/AccordionCard';
+import { editable } from '@/components/ui/editable';
 import SingleItemButton from '@/components/ui/SingleItemButton';
+import { buffsEdit } from '@/data';
 
 import BuffAttributesCard from './BuffAttributesCard';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
+  const { isEditMode } = useEditMode();
+  const { buffName } = useLocalBuff();
+  const ed = editable('buffs');
+
+  const rawLocalBuff = buffsEdit[buffName];
+  const localBuffSnapshot = useSnapshot(rawLocalBuff ?? ({} as Buff));
+  const effectiveBuff = isEditMode && rawLocalBuff ? (localBuffSnapshot as Buff) : buff;
+
   // Keyboard navigation
-  useSpecifyTypeKeyboardNavigation(buff.name, 'buff');
+  useSpecifyTypeKeyboardNavigation(effectiveBuff.name, 'buff');
 
   const { isDetailedView } = useAppContext();
-  if (!buff) return null;
+  if (!effectiveBuff) return null;
 
   function setSourceCard() {
-    if (!!buff.source && buff.source?.length >= 10) {
+    if (!!effectiveBuff.source && effectiveBuff.source?.length >= 10) {
       const filterSourceItemByType = Object.values(
-        buff.source.reduce(
+        effectiveBuff.source.reduce(
           (acc, item) => {
             (acc[item.type] ||= []).push(item);
             return acc;
@@ -56,7 +69,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
           defaultOpenId='0'
         ></AccordionCard>
       );
-    } else if (!!buff.source) {
+    } else if (!!effectiveBuff.source) {
       return (
         <ul
           className='-mt-4 w-full gap-2'
@@ -65,7 +78,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
             gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
           }}
         >
-          {buff.source.map((singleItem, key) => {
+          {effectiveBuff.source.map((singleItem, key) => {
             return <SingleItemButton key={key} singleItem={singleItem} />;
           })}
         </ul>
@@ -79,31 +92,33 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
       {
         key: 'description',
         title: '作用效果',
-        value: buff.description,
-        detailedValue: buff.detailedDescription,
+        value: effectiveBuff.description,
+        detailedValue: effectiveBuff.detailedDescription,
       },
-      buff.stack === undefined
+      effectiveBuff.stack === undefined
         ? null
         : {
             key: 'stack',
             title: '叠加方式',
-            value: buff.stack,
-            detailedValue: buff.detailedStack,
+            value: effectiveBuff.stack,
+            detailedValue: effectiveBuff.detailedStack,
           },
-      !!buff.source
+      !!effectiveBuff.source
         ? {
             key: 'source',
             title: '具体来源',
             value:
-              (!!buff.sourceDescription ? buff.sourceDescription + '\n此外，' : '') +
-              `共收录 $${buff.source.length}$text-indigo-700 dark:text-indigo-400# 个 $${buff.name}$text-fuchsia-600 dark:text-fuchsia-400# 的相关来源，点击下方按钮即可跳转。`,
+              (!!effectiveBuff.sourceDescription
+                ? effectiveBuff.sourceDescription + '\n此外，'
+                : '') +
+              `共收录 $${effectiveBuff.source.length}$text-indigo-700 dark:text-indigo-400# 个 $${effectiveBuff.name}$text-fuchsia-600 dark:text-fuchsia-400# 的相关来源，点击下方按钮即可跳转。`,
             detailedValue: null,
           }
-        : buff.sourceDescription !== undefined
+        : effectiveBuff.sourceDescription !== undefined
           ? {
               key: 'sourceDescription',
               title: '具体来源',
-              value: buff.sourceDescription,
+              value: effectiveBuff.sourceDescription,
               detailedValue: null,
             }
           : null,
@@ -118,10 +133,29 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
           value={value}
           detailedValue={detailedValue}
           isDetailedView={isDetailedView}
+          renderValue={
+            isEditMode &&
+            (key === 'description' || key === 'stack' || key === 'sourceDescription') ? (
+              <ed.span
+                path={
+                  key === 'description'
+                    ? isDetailedView
+                      ? 'detailedDescription'
+                      : 'description'
+                    : key === 'stack'
+                      ? isDetailedView
+                        ? 'detailedStack'
+                        : 'stack'
+                      : 'sourceDescription'
+                }
+                initialValue={String(value ?? '')}
+              />
+            ) : undefined
+          }
         >
           {key === 'description' && (
             <div className='-mt-4'>
-              <DetailTraitsCard singleItem={{ name: buff.name, type: 'buff' }} />
+              <DetailTraitsCard singleItem={{ name: effectiveBuff.name, type: 'buff' }} />
             </div>
           )}
           {key === 'source' && setSourceCard()}
@@ -131,7 +165,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
 
   return (
     <DetailShell
-      leftColumn={<BuffAttributesCard buff={buff} />}
+      leftColumn={<BuffAttributesCard buff={effectiveBuff} />}
       sections={sections}
       rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
     />

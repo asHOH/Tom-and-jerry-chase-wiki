@@ -6,8 +6,29 @@ import { proxy, useSnapshot } from 'valtio';
 import { getNestedProperty, handleChange, setNestedProperty } from '@/lib/editUtils';
 import type { CharacterWithFaction, KnowledgeCardWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalCard, useLocalCharacter } from '@/context/EditModeContext';
-import { cardsEdit, characters } from '@/data/index';
+import {
+  useEditMode,
+  useLocalBuff,
+  useLocalCard,
+  useLocalCharacter,
+  useLocalEntity,
+  useLocalFixture,
+  useLocalItem,
+  useLocalMap,
+  useLocalMode,
+  useLocalSpecialSkill,
+} from '@/context/EditModeContext';
+import {
+  buffsEdit,
+  cardsEdit,
+  characters,
+  entitiesEdit,
+  fixturesEdit,
+  itemsEdit,
+  mapsEdit,
+  modesEdit,
+  specialSkillsEdit,
+} from '@/data/index';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 
 type Key<T> = T extends object
@@ -20,7 +41,16 @@ type Key<T> = T extends object
     }[keyof T & string]
   : never;
 
-type EditableScope = 'characters' | 'cards';
+type EditableScope =
+  | 'characters'
+  | 'cards'
+  | 'entities'
+  | 'buffs'
+  | 'items'
+  | 'fixtures'
+  | 'maps'
+  | 'modes'
+  | 'specialSkills';
 
 type EditableCharactersPath = Key<CharacterWithFaction> | (string & {});
 type EditableCardsPath = Key<KnowledgeCardWithFaction> | (string & {});
@@ -31,7 +61,7 @@ type EditableFieldProps<TagName extends IntrinsicTagName> = Omit<
   React.ComponentPropsWithoutRef<TagName>,
   'children'
 > & {
-  path: EditableCharactersPath | EditableCardsPath;
+  path: EditableCharactersPath | EditableCardsPath | (string & {});
   initialValue: string | number;
   onSave?: ((newValue: string) => void) | undefined;
   factionId?: string | undefined;
@@ -247,12 +277,222 @@ function EditableCardsField<TagName extends IntrinsicTagName>({
   );
 }
 
+function EditableRecordField<TagName extends IntrinsicTagName>({
+  tag,
+  path,
+  initialValue,
+  onSave,
+  isSingleLine = false,
+  enableEdit = true,
+  scope,
+  ...rest
+}: EditableFieldProps<TagName> & {
+  tag: TagName;
+  scope: Exclude<EditableScope, 'characters' | 'cards'>;
+}) {
+  'use no memo';
+
+  const { entityName } = useLocalEntity();
+  const { buffName } = useLocalBuff();
+  const { itemName } = useLocalItem();
+  const { fixtureName } = useLocalFixture();
+  const { mapName } = useLocalMap();
+  const { modeName } = useLocalMode();
+  const { factionId, skillId } = useLocalSpecialSkill();
+
+  const rawEntity = entitiesEdit[entityName];
+  const rawBuff = buffsEdit[buffName];
+  const rawItem = itemsEdit[itemName];
+  const rawFixture = fixturesEdit[fixtureName];
+  const rawMap = mapsEdit[mapName];
+  const rawMode = modesEdit[modeName];
+
+  const rawSpecialSkill =
+    factionId === 'cat'
+      ? specialSkillsEdit.cat[skillId]
+      : factionId === 'mouse'
+        ? specialSkillsEdit.mouse[skillId]
+        : undefined;
+
+  const entitySnapshot = useSnapshot(rawEntity ?? emptyObject);
+  const buffSnapshot = useSnapshot(rawBuff ?? emptyObject);
+  const itemSnapshot = useSnapshot(rawItem ?? emptyObject);
+  const fixtureSnapshot = useSnapshot(rawFixture ?? emptyObject);
+  const mapSnapshot = useSnapshot(rawMap ?? emptyObject);
+  const modeSnapshot = useSnapshot(rawMode ?? emptyObject);
+  const specialSkillSnapshot = useSnapshot(rawSpecialSkill ?? emptyObject);
+
+  const readStoredValue = useCallback((): string | number | undefined => {
+    switch (scope) {
+      case 'entities':
+        return getNestedProperty(entitySnapshot, path as string);
+      case 'buffs':
+        return getNestedProperty(buffSnapshot, path as string);
+      case 'items':
+        return getNestedProperty(itemSnapshot, path as string);
+      case 'fixtures':
+        return getNestedProperty(fixtureSnapshot, path as string);
+      case 'maps':
+        return getNestedProperty(mapSnapshot, path as string);
+      case 'modes':
+        return getNestedProperty(modeSnapshot, path as string);
+      case 'specialSkills':
+        return getNestedProperty(specialSkillSnapshot, path as string);
+      default:
+        return undefined;
+    }
+  }, [
+    scope,
+    path,
+    entitySnapshot,
+    buffSnapshot,
+    itemSnapshot,
+    fixtureSnapshot,
+    mapSnapshot,
+    modeSnapshot,
+    specialSkillSnapshot,
+  ]);
+
+  const writeValue = useCallback(
+    (trimmed: string) => {
+      // Avoid breaking route segment keys (these entities are keyed by name/skillId).
+      if ((path as string) === 'name' || (path as string) === 'id') {
+        console.warn(`Editing ${String(path)} is not supported in local edit mode yet.`);
+        return;
+      }
+
+      const finalValue = typeof initialValue === 'number' ? parseFloat(trimmed) : trimmed;
+
+      switch (scope) {
+        case 'entities': {
+          if (!entityName || !rawEntity) return;
+          setNestedProperty(
+            entitiesEdit as unknown as Record<string, unknown>,
+            `${entityName}.${path as string}`,
+            finalValue
+          );
+          break;
+        }
+        case 'buffs': {
+          if (!buffName || !rawBuff) return;
+          setNestedProperty(
+            buffsEdit as unknown as Record<string, unknown>,
+            `${buffName}.${path as string}`,
+            finalValue
+          );
+          break;
+        }
+        case 'items': {
+          if (!itemName || !rawItem) return;
+          setNestedProperty(
+            itemsEdit as unknown as Record<string, unknown>,
+            `${itemName}.${path as string}`,
+            finalValue
+          );
+          break;
+        }
+        case 'fixtures': {
+          if (!fixtureName || !rawFixture) return;
+          setNestedProperty(
+            fixturesEdit as unknown as Record<string, unknown>,
+            `${fixtureName}.${path as string}`,
+            finalValue
+          );
+          break;
+        }
+        case 'maps': {
+          if (!mapName || !rawMap) return;
+          setNestedProperty(
+            mapsEdit as unknown as Record<string, unknown>,
+            `${mapName}.${path as string}`,
+            finalValue
+          );
+          break;
+        }
+        case 'modes': {
+          if (!modeName || !rawMode) return;
+          setNestedProperty(
+            modesEdit as unknown as Record<string, unknown>,
+            `${modeName}.${path as string}`,
+            finalValue
+          );
+          break;
+        }
+        case 'specialSkills': {
+          if (!factionId || !skillId || !rawSpecialSkill) return;
+          setNestedProperty(
+            specialSkillsEdit as unknown as Record<string, unknown>,
+            `${factionId}.${skillId}.${path as string}`,
+            finalValue
+          );
+          break;
+        }
+        default:
+          break;
+      }
+    },
+    [
+      scope,
+      path,
+      initialValue,
+      entityName,
+      rawEntity,
+      buffName,
+      rawBuff,
+      itemName,
+      rawItem,
+      fixtureName,
+      rawFixture,
+      mapName,
+      rawMap,
+      modeName,
+      rawMode,
+      factionId,
+      skillId,
+      rawSpecialSkill,
+    ]
+  );
+
+  const { isEditMode, content, setNodeRef, handleBlur, handleKeyDown } = useInlineEditableContent({
+    initialValue,
+    isSingleLine,
+    onSave,
+    enableEdit,
+    readStoredValue,
+    writeValue,
+  });
+
+  if (isEditMode) {
+    return React.createElement(
+      tag,
+      {
+        contentEditable: 'plaintext-only',
+        suppressContentEditableWarning: true,
+        onBlur: handleBlur,
+        onKeyDown: handleKeyDown,
+        ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
+        ...(rest as React.ComponentPropsWithoutRef<TagName>),
+      },
+      String(content) || '<无内容>'
+    );
+  }
+
+  return React.createElement(
+    tag,
+    rest as React.ComponentPropsWithoutRef<TagName>,
+    <TextWithHoverTooltips text={String(initialValue)} />
+  );
+}
+
 const EDITABLE_PROXY_CACHE = new Map<EditableScope, EditableElementsProxy>();
 
 const RESERVED_PROXY_KEYS = new Set<string>(['then', 'catch', 'finally', 'toString', 'valueOf']);
 
 export function editable(scope: 'characters'): EditableElementsProxy;
 export function editable(scope: 'cards'): EditableElementsProxy;
+export function editable(
+  scope: Exclude<EditableScope, 'characters' | 'cards'>
+): EditableElementsProxy;
 export function editable(scope: EditableScope): EditableElementsProxy {
   const existing = EDITABLE_PROXY_CACHE.get(scope);
   if (existing) return existing;
@@ -269,10 +509,16 @@ export function editable(scope: EditableScope): EditableElementsProxy {
 
       const Tag = prop as IntrinsicTagName;
 
-      const Field = scope === 'characters' ? EditableCharactersField : EditableCardsField;
+      const Field =
+        scope === 'characters'
+          ? EditableCharactersField
+          : scope === 'cards'
+            ? EditableCardsField
+            : EditableRecordField;
 
       const Component: React.FC<EditableFieldProps<IntrinsicTagName>> = (props) => (
-        <Field tag={Tag} {...(props as EditableFieldProps<typeof Tag>)} />
+        // @ts-expect-error - internal generic routing by scope
+        <Field tag={Tag} scope={scope} {...(props as EditableFieldProps<typeof Tag>)} />
       );
 
       Component.displayName = `editable(${scope}).${prop}`;

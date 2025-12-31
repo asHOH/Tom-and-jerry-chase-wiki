@@ -5,7 +5,25 @@ import { usePathname } from 'next/navigation';
 import { proxy, subscribe } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
-import { cardsEdit, characters, factions } from '@/data';
+import {
+  buffs,
+  buffsEdit,
+  cardsEdit,
+  characters,
+  entities,
+  entitiesEdit,
+  factions,
+  fixtures,
+  fixturesEdit,
+  items,
+  itemsEdit,
+  maps,
+  mapsEdit,
+  modes,
+  modesEdit,
+  specialSkills,
+  specialSkillsEdit,
+} from '@/data';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -24,6 +42,13 @@ const entityRegistry = new Map<string, Record<string, unknown>>([
   ['characters', characters],
   ['factions', factions],
   ['cards', cardsEdit],
+  ['entities', entitiesEdit as unknown as Record<string, unknown>],
+  ['buffs', buffsEdit as unknown as Record<string, unknown>],
+  ['items', itemsEdit as unknown as Record<string, unknown>],
+  ['fixtures', fixturesEdit as unknown as Record<string, unknown>],
+  ['maps', mapsEdit as unknown as Record<string, unknown>],
+  ['modes', modesEdit as unknown as Record<string, unknown>],
+  ['specialSkills', specialSkillsEdit as unknown as Record<string, unknown>],
 ]);
 
 /**
@@ -131,6 +156,71 @@ function restoreEntitiesToCanonical(): void {
       Object.entries(original.cards).forEach(([key, value]) => {
         entity[key] = proxy(value);
       });
+    } else if (entityType === 'entities') {
+      const canonical = { ...entities.cat, ...entities.mouse } as Record<string, unknown>;
+      Object.keys(entity).forEach((key) => {
+        delete entity[key];
+      });
+      Object.entries(canonical).forEach(([key, value]) => {
+        entity[key] = proxy(value as Record<string, unknown>);
+      });
+    } else if (entityType === 'buffs') {
+      Object.keys(entity).forEach((key) => {
+        delete entity[key];
+      });
+      Object.entries(buffs as Record<string, unknown>).forEach(([key, value]) => {
+        entity[key] = proxy(value as Record<string, unknown>);
+      });
+    } else if (entityType === 'items') {
+      Object.keys(entity).forEach((key) => {
+        delete entity[key];
+      });
+      Object.entries(items as Record<string, unknown>).forEach(([key, value]) => {
+        entity[key] = proxy(value as Record<string, unknown>);
+      });
+    } else if (entityType === 'fixtures') {
+      Object.keys(entity).forEach((key) => {
+        delete entity[key];
+      });
+      Object.entries(fixtures as Record<string, unknown>).forEach(([key, value]) => {
+        entity[key] = proxy(value as Record<string, unknown>);
+      });
+    } else if (entityType === 'maps') {
+      Object.keys(entity).forEach((key) => {
+        delete entity[key];
+      });
+      Object.entries(maps as Record<string, unknown>).forEach(([key, value]) => {
+        entity[key] = proxy(value as Record<string, unknown>);
+      });
+    } else if (entityType === 'modes') {
+      Object.keys(entity).forEach((key) => {
+        delete entity[key];
+      });
+      Object.entries(modes as Record<string, unknown>).forEach(([key, value]) => {
+        entity[key] = proxy(value as Record<string, unknown>);
+      });
+    } else if (entityType === 'specialSkills') {
+      const root = entity as unknown as {
+        cat?: Record<string, unknown>;
+        mouse?: Record<string, unknown>;
+      };
+
+      if (!root.cat) root.cat = {};
+      if (!root.mouse) root.mouse = {};
+
+      Object.keys(root.cat).forEach((key) => {
+        delete root.cat![key];
+      });
+      Object.keys(root.mouse).forEach((key) => {
+        delete root.mouse![key];
+      });
+
+      Object.entries(specialSkills.cat as Record<string, unknown>).forEach(([key, value]) => {
+        root.cat![key] = proxy(value as Record<string, unknown>);
+      });
+      Object.entries(specialSkills.mouse as Record<string, unknown>).forEach(([key, value]) => {
+        root.mouse![key] = proxy(value as Record<string, unknown>);
+      });
     }
   });
 
@@ -235,4 +325,54 @@ export const useLocalCard = () => {
   // NOTE: length - 2 to get the segment; agents should keep it :-)
   const cardId = decodeURIComponent(pathParts[pathParts.length - 2] || '');
   return { cardId };
+};
+
+export const useLocalEntity = () => {
+  const path = usePathname();
+  const pathParts = path.split('/');
+  const entityName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  return { entityName };
+};
+
+export const useLocalBuff = () => {
+  const path = usePathname();
+  const pathParts = path.split('/');
+  const buffName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  return { buffName };
+};
+
+export const useLocalItem = () => {
+  const path = usePathname();
+  const pathParts = path.split('/');
+  const itemName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  return { itemName };
+};
+
+export const useLocalFixture = () => {
+  const path = usePathname();
+  const pathParts = path.split('/');
+  const fixtureName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  return { fixtureName };
+};
+
+export const useLocalMap = () => {
+  const path = usePathname();
+  const pathParts = path.split('/');
+  const mapName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  return { mapName };
+};
+
+export const useLocalMode = () => {
+  const path = usePathname();
+  const pathParts = path.split('/');
+  const modeName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  return { modeName };
+};
+
+export const useLocalSpecialSkill = () => {
+  const path = usePathname();
+  const pathParts = path.split('/');
+  const skillId = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const factionId = decodeURIComponent(pathParts[pathParts.length - 3] || '');
+  return { factionId, skillId };
 };

@@ -1,34 +1,59 @@
 'use client';
 
+import { useSnapshot } from 'valtio';
+
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
+import { useEditMode, useLocalMode } from '@/context/EditModeContext';
 import { Mode } from '@/data/types';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import { editable } from '@/components/ui/editable';
+import { modesEdit } from '@/data';
 
 //import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 
 import ModeAttributesCard from './ModeAttributesCard';
 
 export default function ModeDetailClient({ mode }: { mode: Mode }) {
+  const { isEditMode } = useEditMode();
+  const { modeName } = useLocalMode();
+  const ed = editable('modes');
+
+  const rawLocalMode = modesEdit[modeName];
+  const localModeSnapshot = useSnapshot(rawLocalMode ?? ({} as Mode));
+  const effectiveMode = isEditMode && rawLocalMode ? (localModeSnapshot as Mode) : mode;
+
   // Keyboard navigation
-  useSpecifyTypeKeyboardNavigation(mode.name, 'mode');
+  useSpecifyTypeKeyboardNavigation(effectiveMode.name, 'mode');
 
   const { isDetailedView } = useAppContext();
-  if (!mode) return null;
+  if (!effectiveMode) return null;
 
   const sections: DetailSection[] = [
-    ...(mode.description !== undefined
+    ...(effectiveMode.description !== undefined
       ? [
           {
             key: 'description',
             render: () => (
               <DetailTextSection
                 title='模式背景'
-                value={mode.description ?? null}
-                detailedValue={mode.detailedDescription ?? null}
+                value={effectiveMode.description ?? null}
+                detailedValue={effectiveMode.detailedDescription ?? null}
                 isDetailedView={isDetailedView}
+                renderValue={
+                  isEditMode ? (
+                    <ed.span
+                      path={isDetailedView ? 'detailedDescription' : 'description'}
+                      initialValue={
+                        isDetailedView
+                          ? (effectiveMode.detailedDescription ?? effectiveMode.description ?? '')
+                          : (effectiveMode.description ?? '')
+                      }
+                    />
+                  ) : undefined
+                }
               ></DetailTextSection>
             ),
           },
@@ -39,12 +64,24 @@ export default function ModeDetailClient({ mode }: { mode: Mode }) {
       render: () => (
         <DetailTextSection
           title='模式规则'
-          value={mode.rules ?? null}
-          detailedValue={mode.detailedRules ?? null}
+          value={effectiveMode.rules ?? null}
+          detailedValue={effectiveMode.detailedRules ?? null}
           isDetailedView={isDetailedView}
+          renderValue={
+            isEditMode ? (
+              <ed.span
+                path={isDetailedView ? 'detailedRules' : 'rules'}
+                initialValue={
+                  isDetailedView
+                    ? (effectiveMode.detailedRules ?? effectiveMode.rules ?? '')
+                    : (effectiveMode.rules ?? '')
+                }
+              />
+            ) : undefined
+          }
         >
           <div className='-mt-4'>
-            <DetailTraitsCard singleItem={{ name: mode.name, type: 'mode' }} />
+            <DetailTraitsCard singleItem={{ name: effectiveMode.name, type: 'mode' }} />
           </div>
         </DetailTextSection>
       ),
@@ -53,7 +90,7 @@ export default function ModeDetailClient({ mode }: { mode: Mode }) {
 
   return (
     <DetailShell
-      leftColumn={<ModeAttributesCard mode={mode} />}
+      leftColumn={<ModeAttributesCard mode={effectiveMode} />}
       sections={sections}
       rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
     />

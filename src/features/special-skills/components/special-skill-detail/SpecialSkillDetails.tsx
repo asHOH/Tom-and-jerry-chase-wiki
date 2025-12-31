@@ -1,13 +1,17 @@
 'use client';
 
+import { useSnapshot } from 'valtio';
+
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
+import { useEditMode, useLocalSpecialSkill } from '@/context/EditModeContext';
 import { SpecialSkill } from '@/data/types';
 import CharacterList from '@/features/knowledge-cards/components/knowledge-card-detail/CharacterList';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
-import { characters } from '@/data';
+import { editable } from '@/components/ui/editable';
+import { characters, specialSkillsEdit } from '@/data';
 
 import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';
 
@@ -16,31 +20,45 @@ interface SpecialSkillDetailClientProps {
 }
 
 export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailClientProps) {
+  const { isEditMode } = useEditMode();
+  const { factionId, skillId } = useLocalSpecialSkill();
+  const ed = editable('specialSkills');
+
+  const rawLocalSkill =
+    factionId === 'cat'
+      ? specialSkillsEdit.cat[skillId]
+      : factionId === 'mouse'
+        ? specialSkillsEdit.mouse[skillId]
+        : undefined;
+  const localSkillSnapshot = useSnapshot(rawLocalSkill ?? ({} as SpecialSkill));
+  const effectiveSkill = isEditMode && rawLocalSkill ? (localSkillSnapshot as SpecialSkill) : skill;
+
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(
-    skill.name,
+    effectiveSkill.name,
     'specialSkill',
-    skill.factionId == 'cat' ? false : true
+    effectiveSkill.factionId == 'cat' ? false : true
   );
 
   const { isDetailedView } = useAppContext();
-  // use useSnapshot if edit mode for special skill is supported
+  if (!effectiveSkill) return null;
+
   const usedCharacters = Object.values(characters).filter(
     (character) =>
-      character.specialSkills?.some((s) => s.name === skill.name) &&
-      character.factionId === skill.factionId
+      character.specialSkills?.some((s) => s.name === effectiveSkill.name) &&
+      character.factionId === effectiveSkill.factionId
   );
 
   const unusedCharacters = Object.values(characters).filter(
     (character) =>
-      !character.specialSkills?.some((s) => s.name === skill.name) &&
-      character.factionId === skill.factionId
+      !character.specialSkills?.some((s) => s.name === effectiveSkill.name) &&
+      character.factionId === effectiveSkill.factionId
   );
 
   const displayUsedCharacters = usedCharacters.length <= unusedCharacters.length;
 
   // Generate faction-specific title
-  const factionName = skill.factionId === 'cat' ? '猫方' : '鼠方';
+  const factionName = effectiveSkill.factionId === 'cat' ? '猫方' : '鼠方';
 
   const getCharacterSectionTitle = () => {
     if (usedCharacters.length === 0) {
@@ -54,21 +72,35 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
     }
   };
 
-  if (!skill) return null;
-
   const sections: DetailSection[] = [
     {
       key: 'description',
       render: () => (
         <DetailTextSection
           title='技能描述'
-          value={skill.description ?? null}
-          detailedValue={skill.detailedDescription ?? null}
+          value={effectiveSkill.description ?? null}
+          detailedValue={effectiveSkill.detailedDescription ?? null}
           isDetailedView={isDetailedView}
+          renderValue={
+            isEditMode ? (
+              <ed.span
+                path={isDetailedView ? 'detailedDescription' : 'description'}
+                initialValue={
+                  isDetailedView
+                    ? (effectiveSkill.detailedDescription ?? effectiveSkill.description ?? '')
+                    : (effectiveSkill.description ?? '')
+                }
+              />
+            ) : undefined
+          }
         >
           <div className='-mt-4'>
             <DetailTraitsCard
-              singleItem={{ name: skill.name, type: 'specialSkill', factionId: skill.factionId }}
+              singleItem={{
+                name: effectiveSkill.name,
+                type: 'specialSkill',
+                factionId: effectiveSkill.factionId,
+              }}
             />
           </div>
         </DetailTextSection>
@@ -88,7 +120,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
 
   return (
     <DetailShell
-      leftColumn={<SpecialSkillAttributesCard skill={skill} />}
+      leftColumn={<SpecialSkillAttributesCard skill={effectiveSkill} />}
       sections={sections}
       rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
     />

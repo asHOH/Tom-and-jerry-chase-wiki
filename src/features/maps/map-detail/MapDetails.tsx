@@ -1,19 +1,31 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
+import { useEditMode, useLocalMap } from '@/context/EditModeContext';
 import { Map as MapType } from '@/data/types';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import { editable } from '@/components/ui/editable';
 import Image from '@/components/Image';
+import { mapsEdit } from '@/data';
 
 import MapAttributesCard from './MapAttributesCard';
 
 export default function MapDetailClient({ map }: { map: MapType }) {
+  const { isEditMode } = useEditMode();
+  const { mapName } = useLocalMap();
+  const ed = editable('maps');
+
+  const rawLocalMap = mapsEdit[mapName];
+  const localMapSnapshot = useSnapshot(rawLocalMap ?? ({} as MapType));
+  const effectiveMap = isEditMode && rawLocalMap ? (localMapSnapshot as MapType) : map;
+
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -21,7 +33,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
   const modalBackgroundRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobile();
 
-  useSpecifyTypeKeyboardNavigation(map.name, 'map');
+  useSpecifyTypeKeyboardNavigation(effectiveMap.name, 'map');
   const { isDetailedView } = useAppContext();
 
   // 处理图片加载完成事件
@@ -57,7 +69,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
     };
   }, [isFullScreen]);
 
-  if (!map) return null;
+  if (!effectiveMap) return null;
 
   const sections: DetailSection[] = [
     {
@@ -65,19 +77,31 @@ export default function MapDetailClient({ map }: { map: MapType }) {
       render: () => (
         <DetailTextSection
           title='地图描述'
-          value={map.description ?? null}
-          detailedValue={map.detailedDescription ?? null}
+          value={effectiveMap.description ?? null}
+          detailedValue={effectiveMap.detailedDescription ?? null}
           isDetailedView={isDetailedView}
+          renderValue={
+            isEditMode ? (
+              <ed.span
+                path={isDetailedView ? 'detailedDescription' : 'description'}
+                initialValue={
+                  isDetailedView
+                    ? (effectiveMap.detailedDescription ?? effectiveMap.description ?? '')
+                    : (effectiveMap.description ?? '')
+                }
+              />
+            ) : undefined
+          }
         >
           <div className='-mt-4'>
-            <DetailTraitsCard singleItem={{ name: map.name, type: 'map' }} />
+            <DetailTraitsCard singleItem={{ name: effectiveMap.name, type: 'map' }} />
           </div>
         </DetailTextSection>
       ),
     },
   ];
 
-  if (!!map.mapImageUrl) {
+  if (!!effectiveMap.mapImageUrl) {
     sections.push({
       title: '地图预览',
       cardOptions: { variant: 'none' },
@@ -112,7 +136,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
             }}
           >
             <Image
-              src={map.mapImageUrl}
+              src={effectiveMap.mapImageUrl}
               alt={'地图缩略图'}
               fill
               placeholder='empty'
@@ -139,7 +163,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
   return (
     <>
       <DetailShell
-        leftColumn={<MapAttributesCard map={map} />}
+        leftColumn={<MapAttributesCard map={effectiveMap} />}
         sections={sections}
         rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
       />
@@ -193,7 +217,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
             }}
           >
             <Image
-              src={map.mapImageUrl || ''}
+              src={effectiveMap.mapImageUrl || ''}
               alt={'地图全屏预览'}
               fill
               className='object-contain'
