@@ -1,6 +1,6 @@
 import { Buff, BuffDefinition } from './types';
 
-export const getBuffImageUrl = (name: string, buff: BuffDefinition): string => {
+const getBuffImageUrl = (name: string, buff: BuffDefinition): string => {
   if (!!buff.specialImageUrl) return buff.specialImageUrl;
   if (buff.unuseImage)
     return `/images/buffs/default-${buff.type === '负面' ? 'debuff' : 'buff'}.png`;

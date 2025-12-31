@@ -1,6 +1,6 @@
 import { SpecialSkill, SpecialSkillDefinition } from '@/data/types';
 
-export const getMouseSpecialSkillImageUrl = (name: string): string => {
+const getMouseSpecialSkillImageUrl = (name: string): string => {
   return `/images/mouseSpecialSkills/${encodeURIComponent(name)}.png`;
 };
 

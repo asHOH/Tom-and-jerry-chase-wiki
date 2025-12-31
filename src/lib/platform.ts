@@ -1,4 +1,4 @@
-export function isVercelDeployment(): boolean {
+function isVercelDeployment(): boolean {
   return process.env.VERCEL === '1';
 }
 

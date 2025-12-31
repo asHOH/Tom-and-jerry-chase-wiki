@@ -19,16 +19,7 @@ import { componentTokens, createStyleFromTokens, designTokens } from './design-t
 export { designTokens, componentTokens, createStyleFromTokens };
 
 // Re-export utility functions
-export {
-  getCardRankColors,
-  getCardCostColors,
-  getPositioningTagColors,
-  getPositioningTagContainerColor,
-  getSkillTypeColors,
-  getSkillTypeContainerColor,
-  getSkillLevelColors,
-  getSkillLevelContainerColor,
-} from './design-tokens';
+export { getPositioningTagColors, getPositioningTagContainerColor } from './design-tokens';
 
 /**
  * Design System Utilities

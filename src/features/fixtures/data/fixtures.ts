@@ -1,6 +1,6 @@
 import { Fixture, FixtureDefinition } from '@/data/types';
 
-export const getFixtureImageUrl = (name: string): string => {
+const getFixtureImageUrl = (name: string): string => {
   return `/images/fixtures/${encodeURIComponent(name)}.png`;
 };
 

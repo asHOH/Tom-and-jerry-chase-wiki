@@ -1,6 +1,6 @@
 import { Item, ItemDefinition } from '@/data/types';
 
-export const getItemImageUrl = (name: string): string => {
+const getItemImageUrl = (name: string): string => {
   return `/images/items/${encodeURIComponent(name)}.png`;
 };
 

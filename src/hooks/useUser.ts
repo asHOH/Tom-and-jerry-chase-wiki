@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase/client';
 
 type UserType = { role: string | null; nickname: string | null };
 
-export const userObject = proxy<UserType & { clearData: () => void }>({
+const userObject = proxy<UserType & { clearData: () => void }>({
   role: null,
   nickname: null,
   clearData() {
@@ -62,7 +62,7 @@ export const UserProvider =
         return children;
       };
 
-export async function getUserData() {
+async function getUserData() {
   if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return {
       role: null,

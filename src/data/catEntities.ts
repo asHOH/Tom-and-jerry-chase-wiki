@@ -3,7 +3,7 @@ import { Entity, EntityDefinition } from './types';
 //维护说明：由道具衍生的衍生物被划分至此文件范围内
 
 //(interim) use other image instead of missing image
-export const getCatEntityImageUrl = (name: string, specialImageUrl: string | undefined): string => {
+const getCatEntityImageUrl = (name: string, specialImageUrl: string | undefined): string => {
   if (!!specialImageUrl) return specialImageUrl;
   return `/images/catEntities/${encodeURIComponent(name)}.png`;
 };

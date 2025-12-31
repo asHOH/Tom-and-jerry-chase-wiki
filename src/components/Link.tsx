@@ -10,7 +10,7 @@ type LinkProps = NextLinkProps &
     children: React.ReactNode;
   };
 
-export const Link = ({ href, onClick, replace, ...props }: LinkProps) => {
+const Link = ({ href, onClick, replace, ...props }: LinkProps) => {
   const { navigate } = useNavigation();
 
   const handleClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {

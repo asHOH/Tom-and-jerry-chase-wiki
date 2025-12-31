@@ -89,21 +89,6 @@ function syncEntityToLocalStorage(entityType: string, entity: Record<string, unk
 }
 
 /**
- * Registers a new entity type for edit mode.
- * Enables Edit Mode to support custom entity types like knowledge cards, items, etc.
- *
- * @param entityType The name of the entity type
- * @param entity The proxy object for this entity type
- *
- * @example
- * const knowledgeCards = proxy({ ...data });
- * registerEntity('knowledgeCards', knowledgeCards);
- */
-export function registerEntity(entityType: string, entity: Record<string, unknown>): void {
-  entityRegistry.set(entityType, entity);
-}
-
-/**
  * Loads all registered entities from localStorage.
  * Called when entering edit mode to restore previous session.
  */

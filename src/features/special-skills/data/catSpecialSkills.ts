@@ -1,6 +1,6 @@
 import { SpecialSkill, SpecialSkillDefinition } from '@/data/types';
 
-export const getCatSpecialSkillImageUrl = (name: string): string => {
+const getCatSpecialSkillImageUrl = (name: string): string => {
   return `/images/catSpecialSkills/${encodeURIComponent(name)}.png`;
 };
 

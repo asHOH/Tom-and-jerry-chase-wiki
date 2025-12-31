@@ -1,9 +1,6 @@
 import { Entity, EntityDefinition } from './types';
 
-export const getMouseEntityImageUrl = (
-  name: string,
-  specialImageUrl: string | undefined
-): string => {
+const getMouseEntityImageUrl = (name: string, specialImageUrl: string | undefined): string => {
   if (!!specialImageUrl) return specialImageUrl;
   return `/images/mouseEntities/${encodeURIComponent(name)}.png`;
 };

@@ -3,23 +3,23 @@ import { WebSite, WithContext } from 'schema-dts';
 
 import { DISCLAIMER_TEXT } from '@/constants';
 
-export const SITE_NAME = '猫和老鼠手游wiki';
+const SITE_NAME = '猫和老鼠手游wiki';
 export const SITE_SHORT_NAME = '猫鼠wiki';
-export const SITE_ALTERNATE_NAME = [
+const SITE_ALTERNATE_NAME = [
   SITE_SHORT_NAME,
   '猫和老鼠手游百科',
   '猫鼠百科',
   'Tom and Jerry Chase Wiki',
   'tjwiki.com',
 ];
-export const SITE_URL = 'https://tjwiki.com';
-export const SITE_LANG = 'zh-CN';
-export const SITE_LOCALE = 'zh_CN';
-export const DEFAULT_IMAGE = '/icon.png';
-export const SITE_TAGLINE =
+const SITE_URL = 'https://tjwiki.com';
+const SITE_LANG = 'zh-CN';
+const SITE_LOCALE = 'zh_CN';
+const DEFAULT_IMAGE = '/icon.png';
+const SITE_TAGLINE =
   '萌新友好的猫鼠手游维基百科网站，涵盖角色属性、技能、加点、克制关系、知识卡、特技、道具等，更多功能正持续开发中';
 
-export const DEFAULT_DESCRIPTION = `${SITE_NAME} - ${SITE_TAGLINE}。${DISCLAIMER_TEXT}`;
+const DEFAULT_DESCRIPTION = `${SITE_NAME} - ${SITE_TAGLINE}。${DISCLAIMER_TEXT}`;
 export const DEFAULT_KEYWORDS = [
   '猫和老鼠手游',
   'wiki',

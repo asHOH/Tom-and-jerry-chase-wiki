@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -71,7 +71,7 @@ export class ErrorBoundary extends Component<Props, State> {
 /**
  * Error display component with retry functionality
  */
-export function ErrorDisplay({
+function ErrorDisplay({
   error,
   onRetry,
   title = '加载失败',
@@ -157,40 +157,4 @@ export function ErrorDisplay({
       </div>
     </div>
   );
-}
-
-/**
- * Hook for handling loading states with error boundaries
- */
-export function useLoadingState() {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<Error | null>(null);
-
-  const startLoading = React.useCallback(() => {
-    setIsLoading(true);
-    setError(null);
-  }, []);
-
-  const stopLoading = React.useCallback(() => {
-    setIsLoading(false);
-  }, []);
-
-  const setLoadingError = React.useCallback((error: Error) => {
-    setIsLoading(false);
-    setError(error);
-  }, []);
-
-  const retry = React.useCallback(() => {
-    setError(null);
-    setIsLoading(false);
-  }, []);
-
-  return {
-    isLoading,
-    error,
-    startLoading,
-    stopLoading,
-    setLoadingError,
-    retry,
-  };
 }
