@@ -4,21 +4,33 @@ import { getEntityTypeColors } from '@/lib/design-tokens';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode, useLocalEntity } from '@/context/EditModeContext';
 import { Entity } from '@/data/types';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
+import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
+import { PlusIcon } from '@/components/icons/CommonIcons';
+import { entitiesEdit } from '@/data';
 
 import getEntityFactionId from '../lib/getEntityFactionId';
 
 export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
+  const { isEditMode } = useEditMode();
+  const { entityName } = useLocalEntity();
+  const ed = editable('entities');
 
   if (!entity) return null;
+
+  const rawEntity = entitiesEdit[entityName];
+
+  const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
+  const activeCollision = Array.isArray(rawEntity?.collsion) ? rawEntity.collsion : [];
 
   const factionId = getEntityFactionId(entity);
 
@@ -30,7 +42,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
           margin='compact'
           colorStyles={getEntityTypeColors(entity.entitytype, isDarkMode)}
         >
-          {entity.entitytype}
+          <ed.span path='entitytype' initialValue={entity.entitytype ?? '<无内容>'} isSingleLine />
         </Tag>
       );
     } else {
@@ -55,7 +67,52 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
       alt={entity.name}
       title={entity.name}
       subtitle={`(衍生物${factionId === 'cat' ? '·猫' : factionId === 'mouse' ? '·鼠' : ''})`}
-      aliases={entity.aliases}
+      aliases={isEditMode ? undefined : entity.aliases}
+      aliasesContent={
+        isEditMode ? (
+          <div className='flex items-center gap-1'>
+            <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
+            {(rawEntity?.aliases ?? entity.aliases ?? []).length > 0 ? (
+              (rawEntity?.aliases ?? entity.aliases ?? []).map((alias, index, arr) => (
+                <span key={`${alias}-${index}`} className='inline-flex items-center'>
+                  <ed.span
+                    initialValue={alias || '<无内容>'}
+                    path={`aliases.${index}`}
+                    isSingleLine
+                    onSave={(newValue) => {
+                      if (!rawEntity) return;
+                      if (!rawEntity.aliases) rawEntity.aliases = [];
+                      const trimmed = newValue.trim();
+                      if (trimmed === '') {
+                        rawEntity.aliases = rawEntity.aliases.filter((_, i) => i !== index);
+                      } else {
+                        rawEntity.aliases[index] = trimmed;
+                      }
+                    }}
+                  />
+                  {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
+                </span>
+              ))
+            ) : (
+              <span>{'<无内容>'}</span>
+            )}
+            <button
+              type='button'
+              aria-label='添加别名'
+              onClick={() => {
+                if (!rawEntity) return;
+                if (!rawEntity.aliases) rawEntity.aliases = [];
+                if (!rawEntity.aliases.includes('新别名')) {
+                  rawEntity.aliases.push('新别名');
+                }
+              }}
+              className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+            >
+              <PlusIcon className='h-3 w-3' aria-hidden='true' />
+            </button>
+          </div>
+        ) : undefined
+      }
       attributes={
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
@@ -135,14 +192,33 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                       >
                         {title}
                       </Tooltip>
-                      ：<span className='text-indigo-700 dark:text-indigo-400'>{text}</span>
+                      ：
+                      <span className='text-indigo-700 dark:text-indigo-400'>
+                        <ed.span
+                          path={`entityAttributesAsCharacter.${
+                            title === 'Hp上限'
+                              ? 'maxHp'
+                              : title === 'Hp恢复'
+                                ? 'hpRecovery'
+                                : title === '移速'
+                                  ? 'moveSpeed'
+                                  : title === '跳跃'
+                                    ? 'jumpHeight'
+                                    : 'attackBoost'
+                          }`}
+                          initialValue={text ?? '<无内容>'}
+                          valueType='number'
+                          isSingleLine
+                        />
+                      </span>
                     </span>
                   )
                 )}
               </div>
             </div>
           )}
-          {(entity.move !== undefined ||
+          {(isEditMode ||
+            entity.move !== undefined ||
             entity.gravity !== undefined ||
             entity.collsion !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
@@ -154,57 +230,123 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                   gridTemplateRows: 'repeat(2,1fr)',
                 }}
               >
-                {entity.move !== undefined && (
-                  <span className='text-sm whitespace-pre'>
-                    {entity.move === true ? (
-                      <span className='text-green-600 dark:text-green-500'>可</span>
-                    ) : (
-                      <span className='text-red-600 dark:text-red-500'>不可</span>
-                    )}
-                    移动
-                  </span>
-                )}
-                {entity.gravity !== undefined && (
-                  <span className='text-sm whitespace-pre'>
-                    {entity.gravity === true ? (
-                      <span className='text-orange-600 dark:text-orange-400'>会受</span>
-                    ) : (
-                      <span className='text-indigo-700 dark:text-indigo-400'>不受</span>
-                    )}
-                    重力影响
-                  </span>
-                )}
-                <span className='text-sm whitespace-pre'>
-                  {!!entity.collsion ? (
-                    <>
-                      <span className='text-orange-600 dark:text-orange-400'>会</span>与
-                      {entity.collsion.map((string, key, array) => {
-                        return (
-                          <span key={key}>
-                            <span
-                              className={
-                                string === '角色'
-                                  ? 'text-red-600 dark:text-red-500'
-                                  : string === '道具'
-                                    ? 'text-indigo-700 dark:text-indigo-400'
-                                    : 'text-fuchsia-600 dark:text-fuchsia-400'
+                {isEditMode ? (
+                  <>
+                    <div className='flex items-center gap-1 text-xs'>
+                      <span className='text-xs text-gray-400 dark:text-gray-500'>移动:</span>
+                      <label className='flex cursor-pointer items-center gap-1'>
+                        <input
+                          type='checkbox'
+                          checked={rawEntity?.move ?? false}
+                          onChange={(e) => {
+                            if (!rawEntity) return;
+                            rawEntity.move = e.target.checked;
+                          }}
+                          className='h-3 w-3'
+                        />
+                        <span className='font-bold'>
+                          {(rawEntity?.move ?? false) ? '可移动' : '不可移动'}
+                        </span>
+                      </label>
+                    </div>
+                    <div className='flex items-center gap-1 text-xs'>
+                      <span className='text-xs text-gray-400 dark:text-gray-500'>重力:</span>
+                      <label className='flex cursor-pointer items-center gap-1'>
+                        <input
+                          type='checkbox'
+                          checked={rawEntity?.gravity ?? false}
+                          onChange={(e) => {
+                            if (!rawEntity) return;
+                            rawEntity.gravity = e.target.checked;
+                          }}
+                          className='h-3 w-3'
+                        />
+                        <span className='font-bold'>
+                          {(rawEntity?.gravity ?? false) ? '会受重力影响' : '不受重力影响'}
+                        </span>
+                      </label>
+                    </div>
+                    <div className='col-span-2 flex flex-wrap items-center gap-2 text-xs'>
+                      <span className='text-xs text-gray-400 dark:text-gray-500'>碰撞:</span>
+                      {collisionOptions.map((opt) => (
+                        <label key={opt} className='flex cursor-pointer items-center gap-1'>
+                          <input
+                            type='checkbox'
+                            checked={activeCollision.includes(opt)}
+                            onChange={(e) => {
+                              if (!rawEntity) return;
+                              const next = new Set(activeCollision);
+                              if (e.target.checked) next.add(opt);
+                              else next.delete(opt);
+                              const arr = Array.from(next);
+                              if (arr.length === 0) {
+                                delete rawEntity.collsion;
+                              } else {
+                                rawEntity.collsion = arr;
                               }
-                            >
-                              {string}
-                            </span>
-                            {key < array.length - 1 ? '、' : ''}
-                          </span>
-                        );
-                      })}
-                      产生碰撞
-                    </>
-                  ) : (
-                    <>
-                      <span className='text-indigo-700 dark:text-indigo-400'>不会</span>
-                      产生碰撞
-                    </>
-                  )}
-                </span>
+                            }}
+                            className='h-3 w-3'
+                          />
+                          <span className='font-bold'>{opt}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {entity.move !== undefined && (
+                      <span className='text-sm whitespace-pre'>
+                        {entity.move === true ? (
+                          <span className='text-green-600 dark:text-green-500'>可</span>
+                        ) : (
+                          <span className='text-red-600 dark:text-red-500'>不可</span>
+                        )}
+                        移动
+                      </span>
+                    )}
+                    {entity.gravity !== undefined && (
+                      <span className='text-sm whitespace-pre'>
+                        {entity.gravity === true ? (
+                          <span className='text-orange-600 dark:text-orange-400'>会受</span>
+                        ) : (
+                          <span className='text-indigo-700 dark:text-indigo-400'>不受</span>
+                        )}
+                        重力影响
+                      </span>
+                    )}
+                    <span className='text-sm whitespace-pre'>
+                      {!!entity.collsion ? (
+                        <>
+                          <span className='text-orange-600 dark:text-orange-400'>会</span>与
+                          {entity.collsion.map((string, key, array) => {
+                            return (
+                              <span key={key}>
+                                <span
+                                  className={
+                                    string === '角色'
+                                      ? 'text-red-600 dark:text-red-500'
+                                      : string === '道具'
+                                        ? 'text-indigo-700 dark:text-indigo-400'
+                                        : 'text-fuchsia-600 dark:text-fuchsia-400'
+                                  }
+                                >
+                                  {string}
+                                </span>
+                                {key < array.length - 1 ? '、' : ''}
+                              </span>
+                            );
+                          })}
+                          产生碰撞
+                        </>
+                      ) : (
+                        <>
+                          <span className='text-indigo-700 dark:text-indigo-400'>不会</span>
+                          产生碰撞
+                        </>
+                      )}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           )}

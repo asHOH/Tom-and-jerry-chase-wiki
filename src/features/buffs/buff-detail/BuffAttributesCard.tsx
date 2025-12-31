@@ -2,23 +2,76 @@
 
 import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode, useLocalBuff } from '@/context/EditModeContext';
 import { Buff } from '@/data/types';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
+import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
+import { PlusIcon } from '@/components/icons/CommonIcons';
+import { buffsEdit } from '@/data';
 
 import '@/lib/design-tokens';
 
 export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
+  const { isEditMode } = useEditMode();
+  const { buffName } = useLocalBuff();
+  const ed = editable('buffs');
   if (!buff) return null;
 
+  const rawBuff = buffsEdit[buffName];
+
   const avilableAliases = (buff.aliases ?? [])
-    .filter((i) => i[0] !== '#')
+    .filter((i) => i && i[0] !== '#')
     .map((i) => {
       return i[0] === '%' ? i.replace(/[%\^\$\.\*\+\?\[\]\(\)\{\}\\]/g, '') : i; //移除"%"和部分常用元字符
     });
+
+  const aliasesEditor = isEditMode ? (
+    <div className='flex items-center gap-1'>
+      <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
+      {(rawBuff?.aliases ?? buff.aliases ?? []).length > 0 ? (
+        (rawBuff?.aliases ?? buff.aliases ?? []).map((alias, index, arr) => (
+          <span key={`${alias}-${index}`} className='inline-flex items-center'>
+            <ed.span
+              initialValue={alias || '<无内容>'}
+              path={`aliases.${index}`}
+              isSingleLine
+              onSave={(newValue) => {
+                if (!rawBuff) return;
+                if (!rawBuff.aliases) rawBuff.aliases = [];
+                const trimmed = newValue.trim();
+                if (trimmed === '') {
+                  rawBuff.aliases = rawBuff.aliases.filter((_, i) => i !== index);
+                } else {
+                  rawBuff.aliases[index] = trimmed;
+                }
+              }}
+            />
+            {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
+          </span>
+        ))
+      ) : (
+        <span>{'<无内容>'}</span>
+      )}
+      <button
+        type='button'
+        aria-label='添加别名'
+        onClick={() => {
+          if (!rawBuff) return;
+          if (!rawBuff.aliases) rawBuff.aliases = [];
+          if (!rawBuff.aliases.includes('新别名')) {
+            rawBuff.aliases.push('新别名');
+          }
+        }}
+        className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+      >
+        <PlusIcon className='h-3 w-3' aria-hidden='true' />
+      </button>
+    </div>
+  ) : undefined;
 
   return (
     <AttributesCardLayout
@@ -26,15 +79,34 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       alt={buff.name}
       title={buff.name}
       subtitle='(状态/效果)'
-      aliases={avilableAliases}
+      aliases={isEditMode ? undefined : avilableAliases}
+      aliasesContent={aliasesEditor}
       attributes={
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型: </span>
             <Tag size='sm' margin='compact' colorStyles={getBuffTypeColors(buff.type, isDarkMode)}>
-              {buff.type}
+              <ed.span path='type' initialValue={buff.type ?? '<无内容>'} isSingleLine />
             </Tag>
-            {buff.global === true && (
+            {isEditMode ? (
+              <div className='flex items-center gap-1 text-xs'>
+                <span className='text-xs text-gray-400 dark:text-gray-500'>全局:</span>
+                <label className='flex cursor-pointer items-center gap-1'>
+                  <input
+                    type='checkbox'
+                    checked={rawBuff?.global ?? false}
+                    onChange={(e) => {
+                      if (!rawBuff) return;
+                      rawBuff.global = e.target.checked;
+                    }}
+                    className='h-3 w-3'
+                  />
+                  <span className='font-bold'>
+                    {(rawBuff?.global ?? false) ? '全局' : '非全局'}
+                  </span>
+                </label>
+              </div>
+            ) : buff.global === true ? (
               <Tag
                 size='sm'
                 margin='compact'
@@ -42,10 +114,11 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
               >
                 全局
               </Tag>
-            )}
+            ) : null}
           </div>
 
-          {(buff.target !== undefined ||
+          {(isEditMode ||
+            buff.target !== undefined ||
             buff.duration !== undefined ||
             buff.failure !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
@@ -54,23 +127,42 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                 className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
                 style={{ gridTemplateColumns: `repeat(1, minmax(80px, 1fr))` }}
               >
-                {!!buff.target && (
+                {(isEditMode || !!buff.target) && (
                   <span className='text-sm'>
                     作用对象：
-                    <span className='text-fuchsia-600 dark:text-fuchsia-400'>{buff.target}</span>
+                    <span className='text-fuchsia-600 dark:text-fuchsia-400'>
+                      <ed.span
+                        path='target'
+                        initialValue={buff.target ?? '<无内容>'}
+                        isSingleLine
+                      />
+                    </span>
                   </span>
                 )}
-                {buff.duration !== undefined && (
+                {(isEditMode || buff.duration !== undefined) && (
                   <span className='text-sm whitespace-pre'>
                     持续时间：
-                    <span className='text-indigo-700 dark:text-indigo-400'>{buff.duration}</span>
+                    <span className='text-indigo-700 dark:text-indigo-400'>
+                      <ed.span
+                        path='duration'
+                        initialValue={buff.duration ?? '<无内容>'}
+                        valueType={typeof buff.duration === 'number' ? 'number' : 'string'}
+                        isSingleLine
+                      />
+                    </span>
                     {typeof buff.duration === 'number' ? ' 秒' : ''}
                   </span>
                 )}
-                {buff.failure !== undefined && (
+                {(isEditMode || buff.failure !== undefined) && (
                   <span className='text-sm'>
                     中止条件：
-                    <span className='text-orange-600 dark:text-orange-400'>{buff.failure}</span>
+                    <span className='text-orange-600 dark:text-orange-400'>
+                      <ed.span
+                        path='failure'
+                        initialValue={buff.failure ?? '<无内容>'}
+                        isSingleLine
+                      />
+                    </span>
                   </span>
                 )}
               </div>

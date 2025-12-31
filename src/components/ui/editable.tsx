@@ -63,6 +63,7 @@ type EditableFieldProps<TagName extends IntrinsicTagName> = Omit<
 > & {
   path: EditableCharactersPath | EditableCardsPath | (string & {});
   initialValue: string | number;
+  valueType?: 'string' | 'number' | undefined;
   onSave?: ((newValue: string) => void) | undefined;
   factionId?: string | undefined;
   isSingleLine?: boolean;
@@ -77,13 +78,15 @@ const emptyObject = proxy({});
 
 function useInlineEditableContent(opts: {
   initialValue: string | number;
+  valueType: 'string' | 'number';
   isSingleLine: boolean;
   onSave?: ((newValue: string) => void) | undefined;
   enableEdit: boolean;
   readStoredValue: () => string | number | undefined;
-  writeValue: (trimmed: string) => void;
+  writeValue: (value: string | number) => void;
 }) {
-  const { initialValue, isSingleLine, onSave, enableEdit, readStoredValue, writeValue } = opts;
+  const { initialValue, valueType, isSingleLine, onSave, enableEdit, readStoredValue, writeValue } =
+    opts;
 
   const { isEditMode } = useEditMode();
   const [content, setContent] = useState<string | number>(initialValue);
@@ -119,28 +122,24 @@ function useInlineEditableContent(opts: {
 
     const newContentStr = contentRef.current.textContent || '';
 
-    if (typeof initialValue === 'number') {
-      const parsedFloat = parseFloat(newContentStr);
-      if (isNaN(parsedFloat)) {
+    const trimmed = newContentStr.trim();
+    const finalValue: string | number = valueType === 'number' ? parseFloat(trimmed) : trimmed;
+
+    if (valueType === 'number') {
+      if (typeof finalValue !== 'number' || Number.isNaN(finalValue)) {
         contentRef.current.textContent = String(content) || '<无内容>';
         return;
       }
     }
 
-    if (typeof initialValue === 'string') {
-      setContent(newContentStr);
-    } else {
-      setContent(parseFloat(newContentStr));
-    }
-
-    const trimmed = newContentStr.trim();
+    setContent(finalValue);
     if (onSave) {
       onSave(trimmed);
       return;
     }
 
-    writeValue(trimmed);
-  }, [content, initialValue, onSave, writeValue]);
+    writeValue(finalValue);
+  }, [content, onSave, valueType, writeValue]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
@@ -168,6 +167,7 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
   tag,
   path,
   initialValue,
+  valueType: valueTypeProp,
   onSave,
   factionId,
   isSingleLine = false,
@@ -180,17 +180,21 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
   const localCharacterSnapshot = useSnapshot(rawLocalCharacter ?? emptyObject);
   const { handleSelectCharacter } = useAppContext();
 
+  const valueType: 'string' | 'number' =
+    valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
+
   const { isEditMode, content, setNodeRef, handleBlur, handleKeyDown } = useInlineEditableContent({
     initialValue,
+    valueType,
     isSingleLine,
     onSave,
     enableEdit,
     readStoredValue: () => getNestedProperty(localCharacterSnapshot, path),
-    writeValue: (trimmed) => {
+    writeValue: (value) => {
       if (!rawLocalCharacter) return;
       handleChange(
-        initialValue,
-        trimmed,
+        valueType === 'number' ? (0 as unknown as typeof initialValue) : initialValue,
+        String(value),
         `${rawLocalCharacter.id}.${path}`,
         factionId || rawLocalCharacter.factionId || undefined,
         handleSelectCharacter
@@ -224,6 +228,7 @@ function EditableCardsField<TagName extends IntrinsicTagName>({
   tag,
   path,
   initialValue,
+  valueType: valueTypeProp,
   onSave,
   isSingleLine = false,
   enableEdit = true,
@@ -234,14 +239,17 @@ function EditableCardsField<TagName extends IntrinsicTagName>({
   const rawLocalCard = cardsEdit[cardId];
   const localCardSnapshot = useSnapshot(rawLocalCard ?? emptyObject);
 
+  const valueType: 'string' | 'number' =
+    valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
+
   const { isEditMode, content, setNodeRef, handleBlur, handleKeyDown } = useInlineEditableContent({
     initialValue,
+    valueType,
     isSingleLine,
     onSave,
     enableEdit,
     readStoredValue: () => getNestedProperty(localCardSnapshot, path as string),
-    writeValue: (trimmed) => {
-      console.log({ trimmed, rawLocalCard, cardId });
+    writeValue: (value) => {
       if (!rawLocalCard || !cardId) return;
 
       // Knowledge card `id` is also the record key and route segment; avoid accidental breakage.
@@ -250,8 +258,7 @@ function EditableCardsField<TagName extends IntrinsicTagName>({
         return;
       }
 
-      const finalValue = typeof initialValue === 'number' ? parseFloat(trimmed) : trimmed;
-      setNestedProperty(cardsEdit, `${cardId}.${path as string}`, finalValue);
+      setNestedProperty(cardsEdit, `${cardId}.${path as string}`, value);
     },
   });
 
@@ -281,6 +288,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
   tag,
   path,
   initialValue,
+  valueType: valueTypeProp,
   onSave,
   isSingleLine = false,
   enableEdit = true,
@@ -322,6 +330,9 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
   const modeSnapshot = useSnapshot(rawMode ?? emptyObject);
   const specialSkillSnapshot = useSnapshot(rawSpecialSkill ?? emptyObject);
 
+  const valueType: 'string' | 'number' =
+    valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
+
   const readStoredValue = useCallback((): string | number | undefined => {
     switch (scope) {
       case 'entities':
@@ -354,14 +365,12 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
   ]);
 
   const writeValue = useCallback(
-    (trimmed: string) => {
+    (value: string | number) => {
       // Avoid breaking route segment keys (these entities are keyed by name/skillId).
       if ((path as string) === 'name' || (path as string) === 'id') {
         console.warn(`Editing ${String(path)} is not supported in local edit mode yet.`);
         return;
       }
-
-      const finalValue = typeof initialValue === 'number' ? parseFloat(trimmed) : trimmed;
 
       switch (scope) {
         case 'entities': {
@@ -369,7 +378,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           setNestedProperty(
             entitiesEdit as unknown as Record<string, unknown>,
             `${entityName}.${path as string}`,
-            finalValue
+            value
           );
           break;
         }
@@ -378,7 +387,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           setNestedProperty(
             buffsEdit as unknown as Record<string, unknown>,
             `${buffName}.${path as string}`,
-            finalValue
+            value
           );
           break;
         }
@@ -387,7 +396,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           setNestedProperty(
             itemsEdit as unknown as Record<string, unknown>,
             `${itemName}.${path as string}`,
-            finalValue
+            value
           );
           break;
         }
@@ -396,7 +405,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           setNestedProperty(
             fixturesEdit as unknown as Record<string, unknown>,
             `${fixtureName}.${path as string}`,
-            finalValue
+            value
           );
           break;
         }
@@ -405,7 +414,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           setNestedProperty(
             mapsEdit as unknown as Record<string, unknown>,
             `${mapName}.${path as string}`,
-            finalValue
+            value
           );
           break;
         }
@@ -414,7 +423,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           setNestedProperty(
             modesEdit as unknown as Record<string, unknown>,
             `${modeName}.${path as string}`,
-            finalValue
+            value
           );
           break;
         }
@@ -423,7 +432,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           setNestedProperty(
             specialSkillsEdit as unknown as Record<string, unknown>,
             `${factionId}.${skillId}.${path as string}`,
-            finalValue
+            value
           );
           break;
         }
@@ -434,7 +443,6 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
     [
       scope,
       path,
-      initialValue,
       entityName,
       rawEntity,
       buffName,
@@ -455,6 +463,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
 
   const { isEditMode, content, setNodeRef, handleBlur, handleKeyDown } = useInlineEditableContent({
     initialValue,
+    valueType,
     isSingleLine,
     onSave,
     enableEdit,
