@@ -1,16 +1,9 @@
 'use client';
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import { toast } from 'sonner';
 
-import { Toast, ToastType } from '@/components/ui/Toast';
-
-interface ToastData {
-  id: string;
-  message: string;
-  type: ToastType;
-  duration?: number;
-}
+import { ToastType, ToastViewport } from '@/components/ui/Toast';
 
 interface ToastContextType {
   showToast: (message: string, type?: ToastType, duration?: number) => void;
@@ -23,20 +16,25 @@ interface ToastContextType {
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const [toasts, setToasts] = useState<ToastData[]>([]);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  }, []);
-
   const showToast = useCallback((message: string, type: ToastType = 'success', duration = 4000) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, { id, message, type, duration }]);
+    const options = { duration, dismissible: true, closeButton: false };
+
+    switch (type) {
+      case 'success':
+        toast.success(message, options);
+        break;
+      case 'error':
+        toast.error(message, options);
+        break;
+      case 'info':
+        toast.info(message, options);
+        break;
+      case 'warning':
+        toast.warning(message, options);
+        break;
+      default:
+        toast(message, options);
+    }
   }, []);
 
   const success = useCallback(
@@ -56,25 +54,15 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     [showToast]
   );
 
+  const contextValue = useMemo(
+    () => ({ showToast, success, error, info, warning }),
+    [error, info, showToast, success, warning]
+  );
+
   return (
-    <ToastContext.Provider value={{ showToast, success, error, info, warning }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
-      {mounted &&
-        createPortal(
-          <div className='pointer-events-none fixed right-0 bottom-0 z-[100] flex flex-col items-end p-4 sm:p-6'>
-            {toasts.map((toast) => (
-              <Toast
-                key={toast.id}
-                id={toast.id}
-                message={toast.message}
-                type={toast.type}
-                duration={toast.duration}
-                onClose={removeToast}
-              />
-            ))}
-          </div>,
-          document.body
-        )}
+      <ToastViewport />
     </ToastContext.Provider>
   );
 }
