@@ -112,6 +112,7 @@ const shouldIncludeVercelAnalytics = () => {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  transpilePackages: ['motion', 'pinyin-pro', 'valtio'],
   typescript: {
     ignoreBuildErrors:
       !!process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
