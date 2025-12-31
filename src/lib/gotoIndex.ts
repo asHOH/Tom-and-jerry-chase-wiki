@@ -1,3 +1,6 @@
+import orderBy from 'lodash-es/orderBy';
+import uniqBy from 'lodash-es/uniqBy';
+
 import { CATEGORY_HINTS, type CategoryHint, type GotoResult } from '@/lib/types';
 import type { ItemGroupDefinition } from '@/data/types';
 import { getDocPages } from '@/features/articles/utils/docs';
@@ -421,9 +424,19 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     }
   }
 
-  // Sort lists by priority to keep selection deterministic
-  byName.forEach((list) => {
-    (list as IndexEntry[]).sort((a: IndexEntry, b: IndexEntry) => a.priority - b.priority);
+  // Sort and deduplicate entries per key to keep selection deterministic
+  byName.forEach((list, key) => {
+    const deduped = uniqBy(list, (entry) => `${entry.kind}@@${entry.goto.url}`);
+    const sorted = orderBy(
+      deduped,
+      [
+        (entry) => entry.priority,
+        (entry) => (entry.goto.name ?? '').toString(),
+        (entry) => entry.goto.url,
+      ],
+      ['asc', 'asc', 'asc']
+    );
+    byName.set(key, sorted);
   });
 
   return { byName };
