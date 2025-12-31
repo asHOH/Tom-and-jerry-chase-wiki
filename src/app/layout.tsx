@@ -13,9 +13,6 @@ import NextTopLoader from 'nextjs-toploader';
 
 import './globals.css';
 
-import clsx from 'clsx';
-
-import { getDarkModeFromCookie } from '@/lib/darkModeActions';
 import { getUserData } from '@/lib/userActions';
 import { UserProvider } from '@/hooks/useUser';
 import { DarkModeProvider } from '@/context/DarkModeContext';
@@ -29,11 +26,10 @@ const inter = localFont({
 export const metadata: Metadata = defaultMetadata;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const isDarkMode = await getDarkModeFromCookie();
   return (
     <html
       lang='zh-CN'
-      className={clsx('bg-gray-100 dark:bg-slate-900', isDarkMode && 'dark')}
+      className='bg-gray-100 dark:bg-slate-900'
       data-scroll-behavior='smooth'
     >
       <head>
@@ -45,28 +41,28 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
       <body className={inter.className}>
-        <NextTopLoader
-          color='#2563eb'
-          height={2}
-          shadow={false}
-          showForHashAnchor={false}
-          showSpinner={false}
-          zIndex={10050}
-        />
-        <ErrorBoundary>
-          <KeyboardNavigation />
-          <DynamicFaviconEditBadge />
-          <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
-            <UserProvider initialValue={getUserData()}>
-              <DarkModeProvider initialValue={isDarkMode}>
+        <DarkModeProvider>
+          <NextTopLoader
+            color='#2563eb'
+            height={2}
+            shadow={false}
+            showForHashAnchor={false}
+            showSpinner={false}
+            zIndex={10050}
+          />
+          <ErrorBoundary>
+            <KeyboardNavigation />
+            <DynamicFaviconEditBadge />
+            <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
+              <UserProvider initialValue={getUserData()}>
                 <ClientProviders>{children}</ClientProviders>
-              </DarkModeProvider>
-            </UserProvider>
-          </main>
-        </ErrorBoundary>
-        <PerformanceMonitor />
-        <SpeedInsightsComponent />
-        <AnalyticsComponent />
+              </UserProvider>
+            </main>
+          </ErrorBoundary>
+          <PerformanceMonitor />
+          <SpeedInsightsComponent />
+          <AnalyticsComponent />
+        </DarkModeProvider>
       </body>
     </html>
   );

@@ -14,6 +14,13 @@
   --nav-z-index: 9999;
 }
 
+html,
+body {
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
