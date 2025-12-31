@@ -1,0 +1,21 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/app/**/{page,layout,not-found,error,loading,sitemap,robots,manifest,viewport}.ts*",
+    "src/lib/supabase/middleware.ts",
+    "src/app/api/**/*.ts",
+    "scripts/*.{mjs,cjs,js}"
+  ],
+  "project": ["src/**/*.{ts,tsx,js,jsx}", "scripts/**/*.{mjs,cjs,js}"],
+  "ignore": ["**/*.stories.tsx", "**/*.test.tsx"],
+  "ignoreDependencies": [
+    "@tailwindcss/typography",
+    "depcheck",
+    "eslint-config-next",
+    "rimraf",
+    "tailwindcss",
+    "postcss",
+    "supabase",
+    "bundlesize"
+  ]
+}
