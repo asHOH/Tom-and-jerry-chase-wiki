@@ -1,4 +1,5 @@
 import React from 'react';
+import uniq from 'lodash-es/uniq';
 import { proxy, useSnapshot } from 'valtio';
 
 import { getCardRankColors } from '@/lib/design-tokens';
@@ -42,7 +43,7 @@ function preprocessText(text: string, currentCharacterName?: string | undefined)
     ...Object.values(cards).map((card) => card.id),
   ].filter((name): name is string => typeof name === 'string' && name.length > 0);
 
-  const names = Array.from(new Set([...canonicalCharacterNames, ...canonicalCardNames]))
+  const names = uniq([...canonicalCharacterNames, ...canonicalCardNames])
     .filter((name) => !nameBlacklist.includes(name))
     .sort((a, b) => b.length - a.length);
 

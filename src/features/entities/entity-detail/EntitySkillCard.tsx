@@ -2,6 +2,7 @@
 
 import React from 'react';
 import clsx from 'clsx';
+import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
@@ -58,7 +59,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
       return skill.cooldown ? `CD: ${skill.cooldown} 秒` : null;
 
     const cooldowns = skill.skillLevels.map((level: SkillLevel) => level.cooldown || '-');
-    const uniqueCooldowns = Array.from(new Set(cooldowns));
+    const uniqueCooldowns = uniq(cooldowns);
 
     if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== '-') {
       return `CD: ${uniqueCooldowns[0]} 秒`;

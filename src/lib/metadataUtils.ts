@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import uniq from 'lodash-es/uniq';
 
 import { DEFAULT_KEYWORDS, SITE_SHORT_NAME } from '@/constants/seo';
 
@@ -16,7 +17,7 @@ export function generatePageMetadata({
   canonicalUrl,
 }: PageMetadata): Metadata {
   const fullTitle = title.includes(SITE_SHORT_NAME) ? title : `${title}`;
-  const mergedKeywords = Array.from(new Set([...(keywords || []), ...DEFAULT_KEYWORDS]));
+  const mergedKeywords = uniq([...(keywords || []), ...DEFAULT_KEYWORDS]);
   const metadata: Metadata = {
     title: fullTitle,
     description,

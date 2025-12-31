@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
+import some from 'lodash-es/some';
+import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { getCardRankColors } from '@/lib/design-tokens';
@@ -496,17 +498,18 @@ export function KnowledgeCardGroupDisplay({
 
     // For optional card handling in tree view
     const allFlatCombinations = flattenCardGroup(normalizedGroup);
-    const hasAnyOptional = allFlatCombinations.some((combo) => combo.includes('C-狡诈'));
-    const lacksRescueSkill = allFlatCombinations.some(
+    const hasAnyOptional = some(allFlatCombinations, (combo) => combo.includes('C-狡诈'));
+    const lacksRescueSkill = some(
+      allFlatCombinations,
       (combo) => !combo.includes('S-舍己') && !combo.includes('S-无畏')
     );
-    const lacksJiuJiuWo = allFlatCombinations.some((combo) => !combo.includes('C-救救我'));
-    const lacksTieXue = allFlatCombinations.some((combo) => !combo.includes('S-铁血'));
+    const lacksJiuJiuWo = some(allFlatCombinations, (combo) => !combo.includes('C-救救我'));
+    const lacksTieXue = some(allFlatCombinations, (combo) => !combo.includes('S-铁血'));
     const shouldWarnMissingRescueSkill = !isEditMode && isMouseFaction && lacksRescueSkill;
     const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && lacksJiuJiuWo;
     const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && lacksTieXue;
 
-    const uniqueCards = Array.from(new Set(allFlatCombinations.flat()));
+    const uniqueCards = uniq(allFlatCombinations.flat());
     const highPriorityCards = uniqueCards.filter((cardId) => {
       const priority = getCardPriority(cardId);
       return priority === '3级质变';

@@ -1,6 +1,7 @@
 'use client';
 
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import uniq from 'lodash-es/uniq';
 
 import { contributors } from '@/data/contributors';
 import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
@@ -268,16 +269,14 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                                   <div className='flex items-center gap-2'>
                                     <span>技术细节</span>
                                     <div className='flex gap-1'>
-                                      {Array.from(new Set(minorChanges.map((c) => c.type))).map(
-                                        (type) => (
-                                          <span
-                                            key={type}
-                                            className={`rounded-full px-1.5 py-0.5 text-[10px] ${typeColors[type]}`}
-                                          >
-                                            {typeLabels[type]}
-                                          </span>
-                                        )
-                                      )}
+                                      {uniq(minorChanges.map((c) => c.type)).map((type) => (
+                                        <span
+                                          key={type}
+                                          className={`rounded-full px-1.5 py-0.5 text-[10px] ${typeColors[type]}`}
+                                        >
+                                          {typeLabels[type]}
+                                        </span>
+                                      ))}
                                     </div>
                                   </div>
                                   <svg

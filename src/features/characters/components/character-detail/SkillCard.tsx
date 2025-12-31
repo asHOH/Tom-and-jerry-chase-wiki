@@ -2,6 +2,7 @@
 
 import React, { Fragment, useState } from 'react';
 import clsx from 'clsx';
+import uniq from 'lodash-es/uniq';
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
@@ -84,7 +85,7 @@ export default function SkillCard({
     if (!skill.skillLevels.some((level: SkillLevel) => level.cooldown)) return null;
 
     const cooldowns = skill.skillLevels.map((level: SkillLevel) => level.cooldown || '-');
-    const uniqueCooldowns = Array.from(new Set(cooldowns));
+    const uniqueCooldowns = uniq(cooldowns);
 
     if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== '-' && !isEditMode) {
       return `CD: ${uniqueCooldowns[0]} 秒`;
@@ -110,7 +111,7 @@ export default function SkillCard({
     if (skill.type == 'passive') return null;
 
     const charges = skill.skillLevels.map((level: SkillLevel) => level.charges || 1);
-    const uniqueCharges = Array.from(new Set(charges));
+    const uniqueCharges = uniq(charges);
     if (uniqueCharges.length === 1 && !isEditMode) {
       if (uniqueCharges[0] === 1) return null;
       return `技能存储次数: ${uniqueCharges[0]}`;
