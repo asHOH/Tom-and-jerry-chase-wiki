@@ -36,6 +36,7 @@ type Key<T> = T extends object
  * @param {string} path A dot-separated string representing the nested path to the value being edited (e.g., 'characterId.description'). This is used as a key for storing the edited value.
  * @param {T} initialValue The initial value of the field. Can be a string or a number.
  * @param {((newValue: string) => void) | undefined} [onSave] Optional function to invoke to replace default behavior.
+ * @param {boolean} [isSingleLine] Whether pressing Enter should blur the field (default: false).
  */
 interface EditableFieldProps<T, TagName extends keyof HTMLElementTagNameMap> extends Omit<
   React.HTMLAttributes<HTMLElementTagNameMap[TagName]>,
@@ -46,6 +47,7 @@ interface EditableFieldProps<T, TagName extends keyof HTMLElementTagNameMap> ext
   initialValue: T;
   onSave?: ((newValue: string) => void) | undefined;
   factionId?: string | undefined; // Optional faction ID for edit operations
+  isSingleLine?: boolean; // Whether pressing Enter should blur the field (default: false)
 }
 
 function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagNameMap>({
@@ -54,6 +56,7 @@ function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagName
   initialValue,
   onSave,
   factionId,
+  isSingleLine = false,
   ...rest // Capture all other props
 }: EditableFieldProps<T, TagName>) {
   'use no memo';
@@ -127,30 +130,6 @@ function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagName
 
   const handleBlur = useCallback(() => handleBlurRef.current(), []);
 
-  // 检查是否为单行字段
-  const isSingleLineField = useCallback((path: string): boolean => {
-    // 角色ID
-    if (path === 'id') return true;
-
-    // 技能名称
-    if (path.includes('.name') && path.includes('skills.')) return true;
-
-    // 技能加点方案ID
-    if (path.includes('.id') && path.includes('skillAllocations.')) return true;
-
-    // 技能加点方案模式
-    if (path.includes('.pattern') && path.includes('skillAllocations.')) return true;
-
-    // 定位标签名称
-    if (path.includes('.tagName') && (path.includes('PositioningTags') || path.includes('Tags')))
-      return true;
-
-    // 技能等级CD
-    if (path.includes('.cooldown') && path.includes('skillLevels.')) return true;
-
-    return false;
-  }, []);
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
       if (e.key === 'Escape') {
@@ -159,7 +138,7 @@ function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagName
         if (contentRef.current) {
           contentRef.current.blur();
         }
-      } else if (e.key === 'Enter' && isSingleLineField(path)) {
+      } else if (e.key === 'Enter' && isSingleLine) {
         // Enter键：单行字段失去焦点
         e.preventDefault();
         if (contentRef.current) {
@@ -167,7 +146,7 @@ function EditableFieldImplementation<T, TagName extends keyof HTMLElementTagName
         }
       }
     },
-    [path, isSingleLineField]
+    [isSingleLine]
   );
 
   return React.createElement(
@@ -190,6 +169,7 @@ function EditableField<T, TagName extends keyof HTMLElementTagNameMap>({
   initialValue,
   onSave,
   factionId,
+  isSingleLine = false,
   enableEdit = true,
   ...rest // Capture all other props
 }: EditableFieldProps<T, TagName> & { enableEdit?: boolean }) {
@@ -202,6 +182,7 @@ function EditableField<T, TagName extends keyof HTMLElementTagNameMap>({
       initialValue={initialValue}
       onSave={onSave}
       factionId={factionId}
+      isSingleLine={isSingleLine}
       {...rest} // Pass them down
     />
   ) : (

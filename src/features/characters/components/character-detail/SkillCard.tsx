@@ -97,6 +97,7 @@ export default function SkillCard({
             tag='span'
             path={`skills.${skillIndex}.skillLevels.${index}.cooldown`}
             initialValue={i}
+            isSingleLine={true}
           />
         </React.Fragment>
       )),
@@ -123,6 +124,7 @@ export default function SkillCard({
             tag='span'
             path={`skills.${skillIndex}.skillLevels.${index}.charges`}
             initialValue={i}
+            isSingleLine={true}
           />
         </React.Fragment>
       )),
@@ -207,6 +209,7 @@ export default function SkillCard({
                   tag='span'
                   initialValue={alias}
                   path={`skills.${skillIndex}.aliases.${index}`}
+                  isSingleLine={true}
                   onSave={(newValue) => {
                     const skill = characters[characterId]!.skills[skillIndex]!;
                     if (newValue.trim() === '') {
@@ -284,6 +287,7 @@ export default function SkillCard({
                       tag='span'
                       path={`skills.${skillIndex}.forecast`}
                       initialValue={skill.forecast ?? ''}
+                      isSingleLine={true}
                       onSave={(val) => {
                         const s = characters[characterId]!.skills[skillIndex]!;
                         const n = parseFloat(String(val).trim());
@@ -438,6 +442,7 @@ export default function SkillCard({
                       tag='span'
                       path={`skills.${skillIndex}.aftercast`}
                       initialValue={skill.aftercast ?? ''}
+                      isSingleLine={true}
                       onSave={(val) => {
                         const s = characters[characterId]!.skills[skillIndex]!;
                         const n = parseFloat(String(val).trim());
@@ -743,6 +748,7 @@ export default function SkillCard({
                   id={`Skill:${skill.name}`}
                   path={`skills.${skillIndex}.name`}
                   initialValue={skill.name}
+                  isSingleLine={true}
                   onSave={(newName) => {
                     // Update skill with new name and regenerate image URL
                     const factionId = localCharacter.factionId!;
@@ -816,6 +822,7 @@ export default function SkillCard({
                   id={`Skill:${skill.name}`}
                   path={`skills.${skillIndex}.name`}
                   initialValue={skill.name}
+                  isSingleLine={true}
                   onSave={(newName) => {
                     // Update skill with new name and regenerate image URL
                     const factionId = localCharacter.factionId!;

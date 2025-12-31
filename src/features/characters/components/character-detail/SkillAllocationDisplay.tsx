@@ -569,6 +569,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               tag='h4'
               path={`skillAllocations.${index}.id`}
               initialValue={allocation.id}
+              isSingleLine={true}
               className='text-lg leading-tight font-bold text-gray-800 dark:text-gray-200'
             />
           ) : (
@@ -581,6 +582,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
               tag='p'
               path={`skillAllocations.${index}.pattern`}
               initialValue={allocation.pattern}
+              isSingleLine={true}
               className='text-sm text-gray-500 dark:text-gray-400'
               data-tutorial-id='skill-allocation-edit'
             />
