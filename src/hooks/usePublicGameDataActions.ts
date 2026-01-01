@@ -63,9 +63,45 @@ function getTarget(entityType: string): Record<string, unknown> | null {
   }
 }
 
+const EDIT_MODE_KEY = 'isEditMode';
+const EDIT_MODE_ENABLED_AT_KEY = 'editmode:enabledAt';
+
+function readEditModeState(): { isEditMode: boolean; enabledAtMs: number | null } {
+  if (typeof window === 'undefined') return { isEditMode: false, enabledAtMs: null };
+
+  let isEditMode = false;
+  try {
+    const raw = window.localStorage.getItem(EDIT_MODE_KEY);
+    isEditMode = raw ? (JSON.parse(raw) as unknown) === true : false;
+  } catch {
+    isEditMode = false;
+  }
+
+  if (!isEditMode) return { isEditMode: false, enabledAtMs: null };
+
+  let enabledAtMs: number | null = null;
+  try {
+    const raw = window.localStorage.getItem(EDIT_MODE_ENABLED_AT_KEY);
+    const parsed = raw ? Number(raw) : NaN;
+    if (Number.isFinite(parsed) && parsed > 0) {
+      enabledAtMs = parsed;
+    } else {
+      const now = Date.now();
+      window.localStorage.setItem(EDIT_MODE_ENABLED_AT_KEY, String(now));
+      enabledAtMs = now;
+    }
+  } catch {
+    enabledAtMs = null;
+  }
+
+  return { isEditMode: true, enabledAtMs };
+}
+
 export function usePublicGameDataActions() {
   const [appliedCount, setAppliedCount] = useState(0);
   const appliedIdsRef = useRef<Set<string>>(new Set());
+
+  const [{ isEditMode, enabledAtMs }, setEditModeState] = useState(() => readEditModeState());
 
   const enabled =
     !process.env.NEXT_PUBLIC_DISABLE_ARTICLES && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -75,12 +111,52 @@ export function usePublicGameDataActions() {
   });
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const sync = () => setEditModeState(readEditModeState());
+    sync();
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === EDIT_MODE_KEY || e.key === EDIT_MODE_ENABLED_AT_KEY) {
+        sync();
+      }
+    };
+
+    const onCustom = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as unknown;
+        if (detail && typeof (detail as { isEditMode?: unknown }).isEditMode === 'boolean') {
+          sync();
+        }
+      } catch {
+        // ignore
+      }
+    };
+
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('editmode:changed', onCustom);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('editmode:changed', onCustom);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!data?.actions?.length) return;
+
+    // In edit mode, freeze public actions at the moment edit mode was enabled.
+    // This avoids remote updates overwriting local in-progress edits.
+    const cutoffMs = isEditMode && enabledAtMs ? enabledAtMs : Number.POSITIVE_INFINITY;
 
     let didApply = 0;
 
     for (const row of data.actions) {
       if (!row?.id || appliedIdsRef.current.has(row.id)) continue;
+
+      const createdAtMs = Date.parse(row.created_at);
+      if (Number.isFinite(createdAtMs) && createdAtMs > cutoffMs) {
+        continue;
+      }
 
       const target = getTarget(row.entity_type);
       if (!target) continue;
@@ -102,7 +178,7 @@ export function usePublicGameDataActions() {
       setAppliedCount((prev) => prev + didApply);
       GameDataManager.invalidate();
     }
-  }, [data]);
+  }, [data, enabledAtMs, isEditMode]);
 
   return { appliedCount };
 }

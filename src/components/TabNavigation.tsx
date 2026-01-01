@@ -13,7 +13,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
-import { UserCircleIcon } from '@/components/icons/CommonIcons';
+import { CheckBadgeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 
@@ -399,8 +399,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 className={clsx(getButtonClassName(publishingActions, false), 'px-2.5 lg:px-3.5')}
                 aria-label='发布本地改动'
               >
-                <span className='lg:hidden'>发布</span>
-                <span className='hidden lg:inline'>发布改动</span>
+                <span className='flex items-center gap-1.5'>
+                  <CheckBadgeIcon size={18} strokeWidth={1.8} />
+                  <span className='hidden lg:inline'>发布改动</span>
+                </span>
               </button>
             </Tooltip>
           )}

@@ -8,8 +8,11 @@ import { GameDataManager } from '@/lib/dataManager';
 import {
   actionsFromValtioOps,
   appendActionHistoryEntry,
+  applyActionEntry,
   getActionsStorageKey,
   isRecordingSuppressed,
+  readActionHistory,
+  withRecordingSuppressed,
 } from '@/lib/edit/diffUtils';
 import {
   buffs,
@@ -70,12 +73,6 @@ function syncEntityToLocalStorage(entityType: string, entity: Record<string, unk
   const actionsStorageKey = getActionsStorageKey(entityType);
 
   return subscribe(entity, (ops) => {
-    try {
-      localStorage.setItem(entityType, JSON.stringify(entity));
-    } catch (error) {
-      console.error(`Failed to sync ${entityType} to localStorage:`, error);
-    }
-
     // Avoid double-logging when actions are applied programmatically via the diff utils.
     if (isRecordingSuppressed(actionsStorageKey)) {
       return;
@@ -97,9 +94,16 @@ function loadEntitiesFromStorage(): void {
 
   Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
     try {
-      const stored = localStorage.getItem(entityType);
-      if (stored) {
-        Object.assign(entity, JSON.parse(stored));
+      // Rebuild local state by replaying stored actions onto the current in-memory canonical data.
+      // We intentionally do NOT persist full snapshots in localStorage.
+      const actionsStorageKey = getActionsStorageKey(entityType);
+      const history = readActionHistory(actionsStorageKey);
+      if (history.length > 0) {
+        withRecordingSuppressed(actionsStorageKey, () => {
+          for (const entry of history) {
+            applyActionEntry(entity, entry);
+          }
+        });
       }
     } catch (error) {
       console.error(`Failed to load ${entityType} from localStorage:`, error);
@@ -236,11 +240,30 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const EDIT_MODE_ENABLED_AT_KEY = 'editmode:enabledAt';
+
   // Initialize edit mode state from localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedEditMode = localStorage.getItem('isEditMode');
       setIsEditMode(storedEditMode ? JSON.parse(storedEditMode) : false);
+
+      // Ensure we have a stable cutoff timestamp for “enter edit mode” sessions.
+      // This is used to freeze public actions while edit mode is active.
+      try {
+        const parsed = storedEditMode ? (JSON.parse(storedEditMode) as unknown) : false;
+        const isStoredEditMode = parsed === true;
+        if (isStoredEditMode) {
+          const raw = localStorage.getItem(EDIT_MODE_ENABLED_AT_KEY);
+          const ms = raw ? Number(raw) : NaN;
+          if (!Number.isFinite(ms) || ms <= 0) {
+            localStorage.setItem(EDIT_MODE_ENABLED_AT_KEY, String(Date.now()));
+          }
+        }
+      } catch {
+        // ignore
+      }
+
       setHasInitialized(true);
     }
   }, []);
@@ -280,7 +303,21 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   }, [isEditMode, hasInitialized]);
 
   const toggleEditMode = (): void => {
-    setIsEditMode((prevMode) => !prevMode);
+    setIsEditMode((prevMode) => {
+      const nextMode = !prevMode;
+      if (typeof window !== 'undefined') {
+        try {
+          if (nextMode) {
+            localStorage.setItem(EDIT_MODE_ENABLED_AT_KEY, String(Date.now()));
+          } else {
+            localStorage.removeItem(EDIT_MODE_ENABLED_AT_KEY);
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return nextMode;
+    });
 
     // When turning OFF edit mode, restore original data
     if (isEditMode) {
