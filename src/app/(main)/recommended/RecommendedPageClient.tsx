@@ -8,10 +8,11 @@ import { getCharacterRelation } from '@/features/characters/utils/relations';
 import { CharacterSlotsSelector } from '@/components/ui/CharacterSelector';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { characters } from '@/data';
+import { characters, maps } from '@/data';
 
 export default function RecommendedPageClient() {
   const [selectedMice, setSelectedMice] = useState<(string | null)[]>([null, null, null, null]);
+  const [selectedMapName, setSelectedMapName] = useState<string>('');
 
   const allMice = useMemo(() => {
     return Object.values(characters).filter((c) => c.factionId === 'mouse');
@@ -19,6 +20,12 @@ export default function RecommendedPageClient() {
 
   const allCats = useMemo(() => {
     return Object.values(characters).filter((c) => c.factionId === 'cat');
+  }, []);
+
+  const classicCheeseMaps = useMemo(() => {
+    return Object.values(maps)
+      .filter((m) => (m.supportedModes ?? []).includes('经典奶酪赛'))
+      .sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
   }, []);
 
   const recommendedCats = useMemo(() => {
@@ -46,12 +53,28 @@ export default function RecommendedPageClient() {
         // getCharacterRelation already merges relations from both sides.
       });
 
+      if (selectedMapName) {
+        const advantageMapRelation = (relations.advantageMaps ?? []).find(
+          (r) => r.id === selectedMapName
+        );
+        if (advantageMapRelation) {
+          score += advantageMapRelation.isMinor ? 2 : 5;
+        }
+
+        const disadvantageMapRelation = (relations.disadvantageMaps ?? []).find(
+          (r) => r.id === selectedMapName
+        );
+        if (disadvantageMapRelation) {
+          score -= disadvantageMapRelation.isMinor ? 2 : 5;
+        }
+      }
+
       return { cat, score };
     });
 
     // Sort by score desc
     return scores.sort((a, b) => b.score - a.score).slice(0, 5);
-  }, [selectedMice, allCats]);
+  }, [selectedMice, allCats, selectedMapName]);
 
   return (
     <div className='min-h-screen'>
@@ -60,13 +83,38 @@ export default function RecommendedPageClient() {
         <PageDescription>选择对手的老鼠阵容，系统将为您推荐最佳的猫角色。</PageDescription>
       </header>
 
+      {/* Map Selector */}
+      <div className='mb-8 space-y-2'>
+        <div className='text-center text-sm font-semibold text-gray-900 dark:text-gray-100'>
+          选择地图（仅显示支持经典奶酪赛的地图）
+        </div>
+        <div className='mx-auto max-w-md px-4'>
+          <select
+            value={selectedMapName}
+            onChange={(e) => setSelectedMapName(e.target.value)}
+            className='w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
+            aria-label='选择地图（经典奶酪赛）'
+            title='选择地图（经典奶酪赛）'
+          >
+            <option value=''>不选择地图</option>
+            {classicCheeseMaps.map((m) => (
+              <option key={m.name} value={m.name}>
+                {m.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {/* Mouse Selector */}
       <CharacterSlotsSelector
         title='选择老鼠角色'
         characters={allMice}
         selectedIds={selectedMice}
         onSelectedIdsChange={(next) => setSelectedMice(next)}
-        getCharacterImageUrl={(characterId) => AssetManager.getCharacterImageUrl(characterId, 'mouse')}
+        getCharacterImageUrl={(characterId) =>
+          AssetManager.getCharacterImageUrl(characterId, 'mouse')
+        }
       />
 
       {/* Recommendations */}
