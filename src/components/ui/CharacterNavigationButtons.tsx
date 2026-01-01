@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 
 import { useCharacterNavigation } from '@/features/characters/hooks/useCharacterNavigation';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
@@ -26,7 +26,7 @@ export default function CharacterNavigationButtons({
   return (
     <div className={`flex items-center justify-between gap-4 ${className}`}>
       {/* Previous Character Button */}
-      <motion.button
+      <m.button
         onClick={navigateToPrevious}
         disabled={!previousCharacter}
         className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
@@ -41,7 +41,7 @@ export default function CharacterNavigationButtons({
         <span className='hidden sm:inline'>
           {previousCharacter ? previousCharacter.character?.id : '上一个'}
         </span>
-      </motion.button>
+      </m.button>
 
       {/* Character Counter */}
       <div className='px-2 text-sm text-gray-600 dark:text-gray-400'>
@@ -49,7 +49,7 @@ export default function CharacterNavigationButtons({
       </div>
 
       {/* Next Character Button */}
-      <motion.button
+      <m.button
         onClick={navigateToNext}
         disabled={!nextCharacter}
         className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
@@ -64,7 +64,7 @@ export default function CharacterNavigationButtons({
           {nextCharacter ? nextCharacter.character?.id : '下一个'}
         </span>
         <ChevronRightIcon className='h-4 w-4' />
-      </motion.button>
+      </m.button>
     </div>
   );
 }

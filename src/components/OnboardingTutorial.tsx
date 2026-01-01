@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 
 import {
   hasUserSeenCharacterDetailsTutorial,
@@ -132,14 +132,14 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className='fixed inset-0 z-50 flex items-center justify-center bg-black/25'
         >
           {/* Spotlight Circle */}
-          <motion.div
+          <m.div
             key={currentStep.id}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -154,7 +154,7 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
           />
 
           {/* Tutorial Message Box */}
-          <motion.div
+          <m.div
             key={`tooltip-${currentStep.id}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -182,8 +182,8 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
               </button>
             </div>
             {/* Arrow */}
-            <motion.div
-              className='absolute h-0 w-0 border-r-[10px] border-b-[10px] border-l-[10px] border-r-transparent border-b-white border-l-transparent'
+            <m.div
+              className='absolute h-0 w-0 border-r-10 border-b-10 border-l-10 border-r-transparent border-b-white border-l-transparent'
               style={{
                 left: targetRect.left + targetRect.width / 2 - tooltipX - 10, // Center arrow relative to target
                 top: currentStep.position === 'bottom' ? -10 : 'auto',
@@ -192,8 +192,8 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
                 transformOrigin: 'center center',
               }}
             />
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

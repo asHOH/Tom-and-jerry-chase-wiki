@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
@@ -304,7 +304,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   };
 
   return (
-    <motion.div
+    <m.div
       className={clsx(
         'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
         isMobile && 'p-0'
@@ -315,7 +315,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       variants={backdropVariants}
       transition={{ duration: 0.2 }}
     >
-      <motion.div
+      <m.div
         ref={dialogRef}
         className={clsx(
           'relative bg-white p-6 shadow-xl dark:bg-gray-800',
@@ -378,8 +378,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             )}
           </button>
         </form>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 };
 

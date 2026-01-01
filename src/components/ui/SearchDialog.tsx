@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
@@ -257,7 +257,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   }, [onClose]);
 
   return (
-    <motion.div
+    <m.div
       className={clsx(
         'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
         isMobile && 'p-0'
@@ -268,7 +268,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
       variants={backdropVariants} // Apply backdrop animation
       transition={{ duration: 0.2 }}
     >
-      <motion.div
+      <m.div
         ref={dialogRef}
         className={clsx(
           'relative bg-white p-4 shadow-xl dark:bg-gray-800',
@@ -318,7 +318,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         {searchQuery.length > 0 &&
           (searchResults.length > 0 ||
             (searchQuery.length > 1 && (aiResponseText || isChatLoading))) && (
-            <motion.ul
+            <m.ul
               ref={resultsListRef}
               className={clsx(
                 'overflow-y-auto rounded-md border border-gray-300 dark:border-gray-600',
@@ -336,7 +336,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             >
               {/* Chat result as first item */}
               {searchQuery.length > 1 && (aiResponseText || isChatLoading) && (
-                <motion.li
+                <m.li
                   key='chat-result'
                   className='border-b border-gray-200 dark:border-gray-700'
                   variants={{
@@ -352,7 +352,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                     )}
                     onMouseEnter={() => setHighlightedIndex(0)}
                   >
-                    <div className='mr-3 flex-shrink-0'>
+                    <div className='mr-3 shrink-0'>
                       <div className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 dark:bg-blue-600'>
                         <ChatBubbleIcon className='h-4 w-4 text-white' strokeWidth={2} />
                       </div>
@@ -377,12 +377,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                       </div>
                     </div>
                   </div>
-                </motion.li>
+                </m.li>
               )}
 
               {/* Regular search results */}
               {searchResults.map((result, index) => (
-                <motion.li
+                <m.li
                   // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
                   key={`${result.type}-${result.id}-${result.name}-${result.factionId}`}
                   className='border-b border-gray-200 last:border-b-0 dark:border-gray-700'
@@ -424,9 +424,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                       </span>
                     )}
                   </button>
-                </motion.li>
+                </m.li>
               ))}
-            </motion.ul>
+            </m.ul>
           )}
 
         {searchQuery.length > 0 &&
@@ -434,8 +434,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           !(aiResponseText || isChatLoading) && (
             <div className='p-2 pr-8 text-gray-500 dark:text-gray-400'>无结果</div>
           )}
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 
 import { useSpecifyTypeNavigation } from '@/hooks/useSpecifyTypeNavigation';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
@@ -46,7 +46,7 @@ export default function SpecifyTypeNavigationButtons({
   return (
     <div className={`flex items-center justify-between gap-3 ${className}`}>
       {/* Previous Target Button */}
-      <motion.button
+      <m.button
         onClick={navigateToPrevious}
         disabled={!previousTarget}
         className={`${baseButtonClasses} ${
@@ -57,7 +57,7 @@ export default function SpecifyTypeNavigationButtons({
       >
         <ChevronLeftIcon className='h-4 w-4' />
         <span className='inline'>{previousTarget?.target ?? ''}</span>
-      </motion.button>
+      </m.button>
 
       {/* Target Counter */}
       <div className='flex items-baseline gap-1 text-sm text-gray-600 dark:text-gray-400'>
@@ -66,7 +66,7 @@ export default function SpecifyTypeNavigationButtons({
       </div>
 
       {/* Next Target Button */}
-      <motion.button
+      <m.button
         onClick={navigateToNext}
         disabled={!nextTarget}
         className={`${baseButtonClasses} ${
@@ -77,7 +77,7 @@ export default function SpecifyTypeNavigationButtons({
       >
         <span className='inline'>{nextTarget?.target ?? ''}</span>
         <ChevronRightIcon className='h-4 w-4' />
-      </motion.button>
+      </m.button>
     </div>
   );
 }

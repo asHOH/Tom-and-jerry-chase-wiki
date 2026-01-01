@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react'; // smaller bundle size than framer-motion
+import { AnimatePresence, m } from 'motion/react'; // smaller bundle size than framer-motion
 
 import { useSnapshot } from 'valtio';
 
@@ -385,7 +385,7 @@ export default function CharacterDetails({
       {/* Go to Top Button */}
       <AnimatePresence>
         {showGoTop && (
-          <motion.button
+          <m.button
             aria-label='返回顶部'
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className='fixed right-6 bottom-6 z-50 rounded-full bg-blue-600 p-3 text-white shadow-lg transition-colors duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none'
@@ -405,7 +405,7 @@ export default function CharacterDetails({
             >
               <path strokeLinecap='round' strokeLinejoin='round' d='M5 15l7-7 7 7' />
             </svg>
-          </motion.button>
+          </m.button>
         )}
       </AnimatePresence>
     </EditModeContext>
