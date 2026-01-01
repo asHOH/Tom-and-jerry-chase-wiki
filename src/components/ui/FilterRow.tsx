@@ -67,7 +67,12 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
             const inactiveDefaults = isDarkMode
               ? { backgroundColor: '#23272f', color: '#6b7280' }
               : { backgroundColor: '#f3f4f6', color: '#9ca3af' };
-            const finalStyle = active ? provided : { ...inactiveDefaults, ...(provided || {}) };
+            const activeDefaults = isDarkMode
+              ? { backgroundColor: '#374151', color: '#e5e7eb' }
+              : { backgroundColor: '#e5e7eb', color: '#111827' };
+            const finalStyle = active
+              ? { ...activeDefaults, ...(provided || {}) }
+              : { ...inactiveDefaults, ...(provided || {}) };
             const labelNode = getOptionLabel ? getOptionLabel(opt as T, active) : String(opt);
             const button = (
               <button
