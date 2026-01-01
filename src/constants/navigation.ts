@@ -116,6 +116,14 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconAlt: '属性排行图标',
   },
   {
+    id: 'win-rates',
+    label: '胜率数据',
+    description: '查看角色在各段位的胜率、登场率和禁用率',
+    href: '/win-rates',
+    iconSrc: '/images/icons/cat faction.png',
+    iconAlt: '胜率数据图标',
+  },
+  {
     id: 'special-skill-advices',
     label: '特技推荐',
     description: '便捷查看各特技推荐信息',

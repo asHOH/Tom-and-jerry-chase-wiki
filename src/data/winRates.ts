@@ -48,7 +48,7 @@ interface WinRatesEntry {
   characterTables?: CharacterTable[];
 }
 
-const winRatesData: WinRatesEntry[] = [
+export const winRatesData: WinRatesEntry[] = [
   {
     timeRange: 'S26',
     winRateSummary: [

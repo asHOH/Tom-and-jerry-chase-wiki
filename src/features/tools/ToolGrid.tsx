@@ -24,7 +24,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
   const SECTIONS = [
     {
       title: '查询工具',
-      items: ['ranks', 'special-skill-advices', 'traitCollection'],
+      items: ['ranks', 'win-rates', 'special-skill-advices', 'traitCollection'],
     },
     {
       title: '建设中界面',
