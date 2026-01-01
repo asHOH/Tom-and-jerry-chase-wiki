@@ -75,7 +75,6 @@ export default function KnowledgeCardGrid({ description }: Props) {
             getButtonStyle={(opt, active) =>
               active ? getFactionButtonColors(opt, isDarkMode) : undefined
             }
-            isDarkMode={isDarkMode}
           />
 
           <FilterRow<string>
@@ -87,7 +86,6 @@ export default function KnowledgeCardGrid({ description }: Props) {
             getButtonStyle={(opt, active) =>
               active ? getCardRankColors(opt, false, isDarkMode) : undefined
             }
-            isDarkMode={isDarkMode}
           />
 
           {/* Cost Filter Controls styled like FilterRow */}

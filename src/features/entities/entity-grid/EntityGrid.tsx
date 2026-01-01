@@ -119,7 +119,6 @@ export default function EntityClient({ description }: Props) {
               );
               return isActive ? { ...tagColors } : undefined;
             }}
-            isDarkMode={isDarkMode}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -160,7 +159,6 @@ export default function EntityClient({ description }: Props) {
               }
               return active ? getFactionButtonColors(f, isDarkMode) : undefined;
             }}
-            isDarkMode={isDarkMode}
           />
         </div>
       </header>

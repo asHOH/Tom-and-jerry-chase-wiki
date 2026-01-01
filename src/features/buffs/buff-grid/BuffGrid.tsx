@@ -80,7 +80,6 @@ export default function BuffClient({ description }: Props) {
             }
             getOptionLabel={(f) => f}
             getButtonStyle={(f, active) => (active ? getBuffTypeColors(f, isDarkMode) : undefined)}
-            isDarkMode={isDarkMode}
           />
           {/* 全局筛选 */}
           <FilterRow<'全局' | '个人'>

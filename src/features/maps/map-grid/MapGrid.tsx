@@ -81,7 +81,6 @@ export default function MapClient({ description }: Props) {
                 return active ? getMapTypeColors(name, isDarkMode) : undefined;
               }
             }}
-            isDarkMode={isDarkMode}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -107,7 +106,6 @@ export default function MapClient({ description }: Props) {
             getButtonStyle={(size, active) => {
               return active ? getMapSizeColors(size, isDarkMode) : undefined;
             }}
-            isDarkMode={isDarkMode}
           />
 
           {/* 解锁等级筛选 - 增加"其它"选项 */}
@@ -124,7 +122,6 @@ export default function MapClient({ description }: Props) {
             getButtonStyle={(level, active) => {
               return active ? getMapLevelColors(level, isDarkMode) : undefined;
             }}
-            isDarkMode={isDarkMode}
           />
         </div>
       </header>

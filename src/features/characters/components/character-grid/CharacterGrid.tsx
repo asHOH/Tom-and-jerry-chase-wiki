@@ -155,7 +155,6 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
             options={uniquePositioningTags as readonly PositioningTagName[]}
             isActive={(tag) => hasPositioningTagFilter(tag as PositioningTagName)}
             onToggle={(tag) => togglePositioningTagFilter(tag as PositioningTagName)}
-            isDarkMode={isDarkMode}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -188,7 +187,6 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
             options={avatarOptions}
             isActive={(opt) => hasAvatar(opt)}
             onToggle={(opt) => toggleAvatar(opt)}
-            isDarkMode={isDarkMode}
             getButtonStyle={(opt) => {
               const isActive = hasAvatar(opt);
               const colors = getAvatarFilterColors(opt, isDarkMode);

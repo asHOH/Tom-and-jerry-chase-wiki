@@ -90,7 +90,6 @@ export default function ItemClient({ description }: Props) {
             getButtonStyle={(_, active) =>
               active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
             }
-            isDarkMode={isDarkMode}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -116,7 +115,6 @@ export default function ItemClient({ description }: Props) {
             getButtonStyle={(_, active) =>
               active ? { backgroundColor: '#10b981', color: '#fff' } : undefined
             }
-            isDarkMode={isDarkMode}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -158,7 +156,6 @@ export default function ItemClient({ description }: Props) {
                   : getFactionButtonColors(f as 'cat' | 'mouse', isDarkMode)
                 : undefined
             }
-            isDarkMode={isDarkMode}
           />
         </div>
       </header>

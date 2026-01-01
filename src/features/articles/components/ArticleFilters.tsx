@@ -18,7 +18,6 @@ interface ArticleFiltersProps {
   sortBy: SortBy;
   sortOrder: SortOrder;
   handleSortChange: (newSortBy: SortBy, newSortOrder: SortOrder) => void;
-  isDarkMode: boolean;
   isMobile: boolean;
 }
 
@@ -32,7 +31,6 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
   sortBy,
   sortOrder,
   handleSortChange,
-  isDarkMode,
   isMobile,
 }) => {
   return (
@@ -48,7 +46,6 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
               handleCategoryToggle(String(id));
             }}
             ariaLabel='categories'
-            isDarkMode={isDarkMode}
             getOptionLabel={(id) => {
               const categoryId = String(id);
               return (
@@ -97,7 +94,6 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
           handleSortChange(newSortBy, newSortOrder);
         }}
         ariaLabel='sort'
-        isDarkMode={isDarkMode}
         getOptionLabel={(opt) =>
           opt === 'created_at-desc'
             ? '最近发布'

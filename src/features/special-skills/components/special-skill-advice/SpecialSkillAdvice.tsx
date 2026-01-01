@@ -105,7 +105,6 @@ export default function SpecialSkillAdviceClient() {
             getButtonStyle={(f, active) =>
               active ? getFactionButtonColors(f, isDarkMode) : undefined
             }
-            isDarkMode={isDarkMode}
           />
         </div>
       </header>

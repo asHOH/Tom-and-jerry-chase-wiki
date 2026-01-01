@@ -5,7 +5,6 @@ import { useSnapshot } from 'valtio';
 
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
-import { useDarkMode } from '@/context/DarkModeContext';
 import type { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
@@ -34,7 +33,6 @@ export default function FixtureClient({ description }: Props) {
   const [selectedTypes, setSelectedTypes] = useState<FixtureTypeList[]>([]);
   const [selectedSources, setSelectedSources] = useState<FixtureSourceList[]>([]);
   const isMobile = useMobile();
-  const [isDarkMode] = useDarkMode();
 
   const fixturesSnapshot = useSnapshot(fixturesEdit);
   const filteredFixtures = Object.values(fixturesSnapshot as Record<string, Fixture>).filter(
@@ -89,7 +87,6 @@ export default function FixtureClient({ description }: Props) {
             getButtonStyle={(_, active) =>
               active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
             }
-            isDarkMode={isDarkMode}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}
@@ -115,7 +112,6 @@ export default function FixtureClient({ description }: Props) {
             getButtonStyle={(_, active) =>
               active ? { backgroundColor: '#10b981', color: '#fff' } : undefined
             }
-            isDarkMode={isDarkMode}
             renderOption={(tag, button) => (
               <Tooltip
                 key={String(tag)}

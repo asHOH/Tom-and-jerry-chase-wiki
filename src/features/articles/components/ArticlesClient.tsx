@@ -8,7 +8,6 @@ import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useUser } from '@/hooks/useUser';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useToast } from '@/context/ToastContext';
 import { Article, ArticlesData, Category } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
@@ -55,7 +54,6 @@ interface ArticlesClientProps {
 export default function ArticlesClient({ articles: data, description }: ArticlesClientProps) {
   const { role: userRole } = useUser();
   const isMobile = useMobile();
-  const [isDarkMode] = useDarkMode();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { info } = useToast();
@@ -322,7 +320,6 @@ export default function ArticlesClient({ articles: data, description }: Articles
           sortBy={sortBy}
           sortOrder={sortOrder}
           handleSortChange={handleSortChange}
-          isDarkMode={isDarkMode}
           isMobile={isMobile}
         />
 

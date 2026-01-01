@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import clsx from 'clsx';
 
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useDarkMode } from '@/context/DarkModeContext';
 
 import FilterLabel from './FilterLabel';
 
@@ -23,8 +24,6 @@ export type FilterRowProps<T extends string | number> = {
   innerClassName?: string | undefined;
   // Accessibility
   ariaLabel?: string | undefined;
-  // Theme
-  isDarkMode?: boolean | undefined;
 };
 
 export default function FilterRow<T extends string | number>(props: FilterRowProps<T>) {
@@ -41,9 +40,9 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
     className,
     innerClassName,
     ariaLabel,
-    isDarkMode,
   } = props;
   const isMobile = useMobile();
+  const [isDarkMode] = useDarkMode();
 
   return (
     <div

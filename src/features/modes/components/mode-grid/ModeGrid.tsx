@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { useMobile } from '@/hooks/useMediaQuery';
-import { useDarkMode } from '@/context/DarkModeContext';
 import type { Mode, ModeTypeList } from '@/data/types';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
@@ -22,7 +21,6 @@ export default function ModeClient({ description }: Props) {
   // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<ModeTypeList[]>([]);
   const isMobile = useMobile();
-  const [isDarkMode] = useDarkMode();
 
   const modesSnapshot = useSnapshot(modesEdit);
   const filteredModes = Object.values(modesSnapshot as Record<string, Mode>).filter(
@@ -72,7 +70,6 @@ export default function ModeClient({ description }: Props) {
             getButtonStyle={(_, active) =>
               active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
             }
-            isDarkMode={isDarkMode}
           />
         </div>
       </header>

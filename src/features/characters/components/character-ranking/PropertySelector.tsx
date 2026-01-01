@@ -74,7 +74,6 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
               return propertyLabel(p);
             }}
             getButtonStyle={(_, active) => (active ? getPropertyColors(true) : undefined)}
-            isDarkMode={isDarkMode}
           />
 
           {/* 阵营专属属性 */}
@@ -95,7 +94,6 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
                 return propertyLabel(p);
               }}
               getButtonStyle={(_, active) => (active ? getPropertyColors(true) : undefined)}
-              isDarkMode={isDarkMode}
             />
           )}
 
@@ -130,7 +128,6 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
                 ? factionId !== opt
                 : false
             }
-            isDarkMode={isDarkMode}
           />
         </div>
       </header>
