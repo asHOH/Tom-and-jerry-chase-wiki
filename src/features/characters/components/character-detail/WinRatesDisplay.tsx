@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import { CharacterWinRateEntry, getCharacterWinRates } from '@/data/winRates';
+import { characters } from '@/data';
 
 interface WinRatesDisplayProps {
   characterName: string;
@@ -11,7 +12,14 @@ interface WinRatesDisplayProps {
 export default function WinRatesDisplay({ characterName }: WinRatesDisplayProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const winRates = useMemo(() => getCharacterWinRates(characterName), [characterName]);
+  const winRates = useMemo(
+    () =>
+      getCharacterWinRates(
+        [characterName, ...(characters[characterName]?.aliases ?? [])],
+        characters[characterName]?.factionId
+      ),
+    [characterName]
+  );
 
   const groupedByTimeRange = useMemo(() => {
     const groups: Record<string, CharacterWinRateEntry[]> = {};
