@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { proxy, useSnapshot } from 'valtio';
+import { useLocalStorage } from 'usehooks-ts';
 
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
@@ -15,27 +16,17 @@ interface AppContextType {
 
 const isDetailedViewStore = proxy({ isDetailedView: false });
 
-let detailedViewInitialized = false;
-
 export const useAppContext = () => {
   const { navigate } = useNavigation();
+  const [storedDetailedView, setStoredDetailedView] = useLocalStorage<boolean>(
+    'isDetailedView',
+    false
+  );
   const { isDetailedView } = useSnapshot(isDetailedViewStore);
 
   useEffect(() => {
-    if (detailedViewInitialized || typeof window === 'undefined') {
-      return;
-    }
-    try {
-      const stored = localStorage.getItem('isDetailedView');
-      if (stored !== null) {
-        isDetailedViewStore.isDetailedView = JSON.parse(stored);
-      }
-    } catch {
-      // Ignore JSON parse/storage failures; default stays false for hydration stability.
-    } finally {
-      detailedViewInitialized = true;
-    }
-  }, []);
+    isDetailedViewStore.isDetailedView = storedDetailedView ?? false;
+  }, [storedDetailedView]);
 
   const handleSelectCharacter = (characterId: string) => {
     const isOriginal = isOriginalCharacter(characterId);
@@ -55,13 +46,11 @@ export const useAppContext = () => {
   };
 
   const toggleDetailedView = () => {
-    const originalIsDetailedView = isDetailedViewStore.isDetailedView;
-    isDetailedViewStore.isDetailedView = !originalIsDetailedView;
-    try {
-      localStorage.setItem('isDetailedView', JSON.stringify(!originalIsDetailedView));
-    } catch {
-      // Ignore storage failures to avoid disrupting UI toggle.
-    }
+    setStoredDetailedView((prev) => {
+      const next = !prev;
+      isDetailedViewStore.isDetailedView = next; // immediate update for UI responsiveness
+      return next;
+    });
   };
 
   return {
