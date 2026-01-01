@@ -22,8 +22,7 @@ export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
 
   const rawLocalFixture = fixturesEdit[fixtureName];
   const localFixtureSnapshot = useSnapshot(rawLocalFixture ?? ({} as Fixture));
-  const effectiveFixture =
-    isEditMode && rawLocalFixture ? (localFixtureSnapshot as Fixture) : fixture;
+  const effectiveFixture = rawLocalFixture ? (localFixtureSnapshot as Fixture) : fixture;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveFixture.name, 'fixture');

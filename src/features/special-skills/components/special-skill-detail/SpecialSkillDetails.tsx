@@ -31,7 +31,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
         ? specialSkillsEdit.mouse[skillId]
         : undefined;
   const localSkillSnapshot = useSnapshot(rawLocalSkill ?? ({} as SpecialSkill));
-  const effectiveSkill = isEditMode && rawLocalSkill ? (localSkillSnapshot as SpecialSkill) : skill;
+  const effectiveSkill = rawLocalSkill ? (localSkillSnapshot as SpecialSkill) : skill;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(

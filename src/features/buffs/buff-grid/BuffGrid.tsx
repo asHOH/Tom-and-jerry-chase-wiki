@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -10,7 +11,7 @@ import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Link from '@/components/Link';
-import { buffs } from '@/data';
+import { buffsEdit } from '@/data';
 
 import BuffCardDisplay from './BuffCardDisplay';
 
@@ -27,26 +28,29 @@ export default function BuffClient({ description }: Props) {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const filteredBuffs = Object.values(buffs).filter((buff: Buff) => {
-    const globalMatch =
-      selectedGlobal.length === 0 ||
-      (selectedGlobal.includes('全局') && buff.global) ||
-      (selectedGlobal.includes('个人') && !buff.global);
+  const buffsSnapshot = useSnapshot(buffsEdit);
+  const filteredBuffs = Object.values(buffsSnapshot as Record<string, Buff>).filter(
+    (buff: Buff) => {
+      const globalMatch =
+        selectedGlobal.length === 0 ||
+        (selectedGlobal.includes('全局') && buff.global) ||
+        (selectedGlobal.includes('个人') && !buff.global);
 
-    let influenceMatch = true;
-    if (selectedInfluences.length > 0) {
-      // "特殊" means buffs with no influence restriction
-      const isNone = selectedInfluences.includes('特殊');
-      const isBuff = selectedInfluences.includes('正面');
-      const isDebuff = selectedInfluences.includes('负面');
-      influenceMatch =
-        (isNone && buff.type === '特殊') ||
-        (isBuff && buff.type === '正面') ||
-        (isDebuff && buff.type === '负面');
+      let influenceMatch = true;
+      if (selectedInfluences.length > 0) {
+        // "特殊" means buffs with no influence restriction
+        const isNone = selectedInfluences.includes('特殊');
+        const isBuff = selectedInfluences.includes('正面');
+        const isDebuff = selectedInfluences.includes('负面');
+        influenceMatch =
+          (isNone && buff.type === '特殊') ||
+          (isBuff && buff.type === '正面') ||
+          (isDebuff && buff.type === '负面');
+      }
+
+      return globalMatch && influenceMatch;
     }
-
-    return globalMatch && influenceMatch;
-  });
+  );
 
   return (
     <div

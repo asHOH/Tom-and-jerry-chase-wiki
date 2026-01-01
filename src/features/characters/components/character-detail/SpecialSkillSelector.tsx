@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
-import { CharacterRelationItem } from '@/data/types';
+import { specialSkillsEdit } from '@/data/store';
+import { CharacterRelationItem, type FactionId } from '@/data/types';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { FactionId, specialSkills } from '@/data';
 
 type Props = {
   selected: CharacterRelationItem[];
@@ -16,9 +17,11 @@ type Props = {
 const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
+
   const oppositeFaction: FactionId = factionId === 'cat' ? 'mouse' : 'cat';
 
-  const availableSkills = Object.keys(specialSkills[oppositeFaction]).filter(
+  const availableSkills = Object.keys(specialSkillsSnapshot[oppositeFaction]).filter(
     (name) => !selected.some((selection) => selection.id == name)
   );
 
@@ -52,9 +55,9 @@ const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect }
               className='flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700'
               aria-label={`选择特技 ${name}`}
             >
-              {specialSkills[oppositeFaction][name]?.imageUrl && (
+              {specialSkillsSnapshot[oppositeFaction][name]?.imageUrl && (
                 <Image
-                  src={specialSkills[oppositeFaction][name].imageUrl}
+                  src={specialSkillsSnapshot[oppositeFaction][name].imageUrl}
                   alt={name}
                   width={20}
                   height={20}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design-tokens';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
@@ -12,7 +13,7 @@ import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from '@/components/Link';
-import { maps } from '@/data';
+import { mapsEdit } from '@/data';
 
 import MapCardDisplay from './MapCardDisplay';
 
@@ -32,7 +33,8 @@ export default function MapClient({ description }: Props) {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const filteredMaps = Object.values(maps).filter((map: Map) => {
+  const mapsSnapshot = useSnapshot(mapsEdit);
+  const filteredMaps = Object.values(mapsSnapshot as Record<string, Map>).filter((map: Map) => {
     // 类型筛选
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(map.type);
 

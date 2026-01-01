@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design-system';
 import { designTokens } from '@/lib/design-tokens';
@@ -13,12 +14,16 @@ import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { characters, specialSkills } from '@/data';
+import { characters, specialSkillsEdit } from '@/data';
 
 import AdviceCharacterList from './AdviceCharacterList';
 
+type SnapshotSpecialSkill = Omit<SpecialSkill, 'aliases'> & {
+  aliases?: readonly string[];
+};
+
 // Filter characters
-function allCounters(skill: SpecialSkill) {
+function allCounters(skill: SnapshotSpecialSkill) {
   const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
     (character) =>
       character.countersSpecialSkills?.some((s) => s.id === skill.name && s.isMinor === true) &&
@@ -31,7 +36,7 @@ function allCounters(skill: SpecialSkill) {
   );
   return { 0: UnIsMinor, 1: IsMinor };
 }
-function allCounteredBy(skill: SpecialSkill) {
+function allCounteredBy(skill: SnapshotSpecialSkill) {
   const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
     (character) =>
       character.counteredBySpecialSkills?.some((s) => s.id === skill.name && s.isMinor === true) &&
@@ -45,7 +50,7 @@ function allCounteredBy(skill: SpecialSkill) {
   return { 0: UnIsMinor, 1: IsMinor };
 }
 
-function allUsers(skill: SpecialSkill) {
+function allUsers(skill: SnapshotSpecialSkill) {
   const Return: CharacterWithFaction[] = Object.values(characters).filter(
     (character) =>
       character.specialSkills?.some((s) => s.name === skill.name) &&
@@ -54,7 +59,7 @@ function allUsers(skill: SpecialSkill) {
   return Return;
 }
 
-function userQuantity(skill: SpecialSkill) {
+function userQuantity(skill: SnapshotSpecialSkill) {
   return (
     allCounters(skill)[0].length +
     allCounters(skill)[1].length +
@@ -64,14 +69,20 @@ function userQuantity(skill: SpecialSkill) {
   );
 }
 
-const allSkills = [
-  ...Object.values(specialSkills.cat).sort((a, b) => userQuantity(b) - userQuantity(a)),
-  ...Object.values(specialSkills.mouse).sort((a, b) => userQuantity(b) - userQuantity(a)),
-];
-
 export default function SpecialSkillAdviceClient() {
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
+
+  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
+  const allSkills = useMemo(
+    () => [
+      ...Object.values(specialSkillsSnapshot.cat).sort((a, b) => userQuantity(b) - userQuantity(a)),
+      ...Object.values(specialSkillsSnapshot.mouse).sort(
+        (a, b) => userQuantity(b) - userQuantity(a)
+      ),
+    ],
+    [specialSkillsSnapshot]
+  );
 
   // Filter skills by faction if selected
   const filteredSkills = selectedFaction

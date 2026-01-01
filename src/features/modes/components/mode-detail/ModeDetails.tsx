@@ -23,7 +23,7 @@ export default function ModeDetailClient({ mode }: { mode: Mode }) {
 
   const rawLocalMode = modesEdit[modeName];
   const localModeSnapshot = useSnapshot(rawLocalMode ?? ({} as Mode));
-  const effectiveMode = isEditMode && rawLocalMode ? (localModeSnapshot as Mode) : mode;
+  const effectiveMode = rawLocalMode ? (localModeSnapshot as Mode) : mode;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveMode.name, 'mode');

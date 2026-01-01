@@ -26,7 +26,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   if (!buff) return null;
 
   const rawBuff = buffsEdit[buffName];
-  const effectiveBuff = isEditMode ? (buffsSnapshot[buffName] ?? buff) : buff;
+  const effectiveBuff = buffsSnapshot[buffName] ?? buff;
 
   const avilableAliases = (buff.aliases ?? [])
     .filter((i) => i && i[0] !== '#')

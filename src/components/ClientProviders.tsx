@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 
 import { usePersistentGameStore } from '@/hooks/usePersistentGameStore';
+import { usePublicGameDataActions } from '@/hooks/usePublicGameDataActions';
 import { ToastProvider } from '@/context/ToastContext';
 
 import { CacheDebugPanel } from './CacheDebugPanel';
@@ -14,6 +15,7 @@ type ClientProvidersProps = { children: ReactNode };
 
 export function ClientProviders({ children }: ClientProvidersProps) {
   usePersistentGameStore();
+  usePublicGameDataActions();
   return (
     <ToastProvider>
       {children}

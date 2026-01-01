@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design-system';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
@@ -12,7 +13,7 @@ import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from '@/components/Link';
-import { items } from '@/data';
+import { itemsEdit } from '@/data';
 
 import ItemCardDisplay from './ItemCardDisplay';
 
@@ -37,25 +38,28 @@ export default function ItemClient({ description }: Props) {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const filteredItems = Object.values(items).filter((item: Item) => {
-    // 类型筛选
-    const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(item.itemtype);
-    // 来源筛选
-    const sourceMatch = selectedSources.length === 0 || selectedSources.includes(item.itemsource);
-    // 阵营筛选
-    let factionMatch = true;
-    if (selectedFactions.length > 0) {
-      // "none" means items with no faction restriction (item.factionId is null/undefined/"none")
-      const isNone = selectedFactions.includes('none');
-      const isCat = selectedFactions.includes('cat');
-      const isMouse = selectedFactions.includes('mouse');
-      factionMatch =
-        (isNone && item.factionId == null) ||
-        (isCat && item.factionId === 'cat') ||
-        (isMouse && item.factionId === 'mouse');
+  const itemsSnapshot = useSnapshot(itemsEdit);
+  const filteredItems = Object.values(itemsSnapshot as Record<string, Item>).filter(
+    (item: Item) => {
+      // 类型筛选
+      const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(item.itemtype);
+      // 来源筛选
+      const sourceMatch = selectedSources.length === 0 || selectedSources.includes(item.itemsource);
+      // 阵营筛选
+      let factionMatch = true;
+      if (selectedFactions.length > 0) {
+        // "none" means items with no faction restriction (item.factionId is null/undefined/"none")
+        const isNone = selectedFactions.includes('none');
+        const isCat = selectedFactions.includes('cat');
+        const isMouse = selectedFactions.includes('mouse');
+        factionMatch =
+          (isNone && item.factionId == null) ||
+          (isCat && item.factionId === 'cat') ||
+          (isMouse && item.factionId === 'mouse');
+      }
+      return typeMatch && sourceMatch && factionMatch;
     }
-    return typeMatch && sourceMatch && factionMatch;
-  });
+  );
 
   return (
     <div

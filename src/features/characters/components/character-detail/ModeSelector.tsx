@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
+import { modesEdit } from '@/data/store';
 import { CharacterRelationItem } from '@/data/types';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { modes } from '@/data';
 
 type Props = {
   selected: CharacterRelationItem[];
@@ -15,7 +16,9 @@ type Props = {
 const ModeSelector: React.FC<Props> = ({ selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const availableModes = Object.values(modes).filter(
+  const modesSnapshot = useSnapshot(modesEdit);
+
+  const availableModes = Object.values(modesSnapshot).filter(
     ({ name }) => !selected.some((selection) => selection.id == name)
   );
 

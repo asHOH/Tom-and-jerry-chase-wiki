@@ -13,7 +13,7 @@ import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 import { PlusIcon } from '@/components/icons/CommonIcons';
-import { maps, mapsEdit, modesEdit } from '@/data';
+import { mapsEdit, modesEdit } from '@/data';
 
 export default function ModeAttributesCard({ mode }: { mode: Mode }) {
   const [isDarkMode] = useDarkMode();
@@ -23,7 +23,7 @@ export default function ModeAttributesCard({ mode }: { mode: Mode }) {
 
   const rawMode = modesEdit[modeName];
   const mapsSnapshot = useSnapshot(mapsEdit);
-  const mapsSource = isEditMode ? mapsSnapshot : maps;
+  const mapsSource = mapsSnapshot;
 
   function putTypeTagOn(mode: Mode) {
     return (
@@ -32,11 +32,7 @@ export default function ModeAttributesCard({ mode }: { mode: Mode }) {
       </Tag>
     );
   }
-  const supportedMaps = Object.values(maps)
-    .filter((map) => map.supportedModes?.includes(mode.name))
-    .map((map) => map.name);
-
-  const supportedMapsEffective = Object.values(mapsSource)
+  const supportedMaps = Object.values(mapsSource)
     .filter((map) => map.supportedModes?.includes(mode.name))
     .map((map) => map.name);
 
@@ -118,12 +114,12 @@ export default function ModeAttributesCard({ mode }: { mode: Mode }) {
               </span>
             </div>
           )}
-          {(isEditMode ? supportedMapsEffective.length > 0 : supportedMaps.length > 0) && (
+          {supportedMaps.length > 0 && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>支持地图</span>
               <div className='mt-1'>
                 <SingleItemAccordionCard
-                  items={(isEditMode ? supportedMapsEffective : supportedMaps).map((str) => {
+                  items={supportedMaps.map((str) => {
                     return { name: str, type: 'map' } as SingleItem;
                   })}
                 />

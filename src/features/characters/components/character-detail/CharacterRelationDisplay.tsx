@@ -9,13 +9,13 @@ import { setNestedProperty } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
-import { CharacterRelationItem } from '@/data/types';
+import { CharacterRelationItem, type FactionId } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 import { editable } from '@/components/ui/editable';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { cards, characters, FactionId, maps, modes, specialSkills } from '@/data';
+import { cards, characters, mapsEdit, modesEdit, specialSkillsEdit } from '@/data';
 
 import {
   AdvantageIcon,
@@ -323,10 +323,11 @@ const buildSpecialSkillItems = (
   descriptionPathPrefix: ExtraRelationKey,
   hook: ReturnType<typeof useRelationEditor>,
   navigateToSkill: (id: string) => void,
-  targetFaction: FactionId
+  targetFaction: FactionId,
+  specialSkillsData: Record<FactionId, Record<string, { imageUrl?: string }>>
 ): SpecialSkillDisplayItem[] =>
   toArray(items).map((skill, idx) => {
-    const skillObj = specialSkills[targetFaction]?.[skill.id];
+    const skillObj = specialSkillsData[targetFaction]?.[skill.id];
     return {
       type: 'specialSkill',
       key: `specialSkill-${skill.id}`,
@@ -350,10 +351,11 @@ const buildMapItems = (
   items: readonly CharacterRelationItem[] | undefined,
   descriptionPathPrefix: ExtraRelationKey,
   hook: ReturnType<typeof useRelationEditor>,
-  navigateToMap: (id: string) => void
+  navigateToMap: (id: string) => void,
+  mapsData: Record<string, { imageUrl?: string }>
 ): MapDisplayItem[] =>
   toArray(items).map((map, idx) => {
-    const mapObj = maps[map.id];
+    const mapObj = mapsData[map.id];
     return {
       type: 'map',
       key: `map-${map.id}`,
@@ -377,10 +379,11 @@ const buildModeItems = (
   items: readonly CharacterRelationItem[] | undefined,
   descriptionPathPrefix: ExtraRelationKey,
   hook: ReturnType<typeof useRelationEditor>,
-  navigateToMode: (id: string) => void
+  navigateToMode: (id: string) => void,
+  modesData: Record<string, { imageUrl?: string }>
 ): ModeDisplayItem[] =>
   toArray(items).map((mode, idx) => {
-    const modeObj = modes[mode.id];
+    const modeObj = modesData[mode.id];
     return {
       type: 'mode',
       key: `mode-${mode.id}`,
@@ -944,6 +947,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
+  const mapsSnapshot = useSnapshot(mapsEdit);
+  const modesSnapshot = useSnapshot(modesEdit);
+  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
   const getImageUrl = React.useCallback(
     (targetId: string) =>
       AssetManager.getCharacterImageUrl(targetId, factionId === 'cat' ? 'mouse' : 'cat'),
@@ -1005,7 +1011,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           countersSpecialSkillsHook,
           (skillId) =>
             navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
-          oppositeFactionId
+          oppositeFactionId,
+          specialSkillsSnapshot as unknown as Record<
+            FactionId,
+            Record<string, { imageUrl?: string }>
+          >
         ),
       ]),
     [
@@ -1018,6 +1028,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       localCharacter.counters,
       localCharacter.countersKnowledgeCards,
       localCharacter.countersSpecialSkills,
+      specialSkillsSnapshot,
       navigate,
       oppositeFactionId,
     ]
@@ -1081,7 +1092,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           counteredBySpecialSkillsHook,
           (skillId) =>
             navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
-          oppositeFactionId
+          oppositeFactionId,
+          specialSkillsSnapshot as unknown as Record<
+            FactionId,
+            Record<string, { imageUrl?: string }>
+          >
         ),
       ]),
     [
@@ -1094,6 +1109,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       localCharacter.counteredBy,
       localCharacter.counteredByKnowledgeCards,
       localCharacter.counteredBySpecialSkills,
+      specialSkillsSnapshot,
       navigate,
       oppositeFactionId,
     ]
@@ -1124,11 +1140,15 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const advantageMapsItems = React.useMemo(
     () =>
       sortByImportance(
-        buildMapItems(localCharacter.advantageMaps, 'advantageMaps', advantageMapsHook, (mapId) =>
-          navigate(`/maps/${encodeURIComponent(mapId)}`)
+        buildMapItems(
+          localCharacter.advantageMaps,
+          'advantageMaps',
+          advantageMapsHook,
+          (mapId) => navigate(`/maps/${encodeURIComponent(mapId)}`),
+          mapsSnapshot as unknown as Record<string, { imageUrl?: string }>
         )
       ),
-    [localCharacter.advantageMaps, advantageMapsHook, navigate]
+    [localCharacter.advantageMaps, advantageMapsHook, mapsSnapshot, navigate]
   );
 
   const advantageModesItems = React.useMemo(
@@ -1138,10 +1158,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           localCharacter.advantageModes,
           'advantageModes',
           advantageModesHook,
-          (modeId) => navigate(`/modes/${encodeURIComponent(modeId)}`)
+          (modeId) => navigate(`/modes/${encodeURIComponent(modeId)}`),
+          modesSnapshot as unknown as Record<string, { imageUrl?: string }>
         )
       ),
-    [localCharacter.advantageModes, advantageModesHook, navigate]
+    [localCharacter.advantageModes, advantageModesHook, modesSnapshot, navigate]
   );
 
   const disadvantageMapsItems = React.useMemo(
@@ -1151,10 +1172,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           localCharacter.disadvantageMaps,
           'disadvantageMaps',
           disadvantageMapsHook,
-          (mapId) => navigate(`/maps/${encodeURIComponent(mapId)}`)
+          (mapId) => navigate(`/maps/${encodeURIComponent(mapId)}`),
+          mapsSnapshot as unknown as Record<string, { imageUrl?: string }>
         )
       ),
-    [localCharacter.disadvantageMaps, disadvantageMapsHook, navigate]
+    [localCharacter.disadvantageMaps, disadvantageMapsHook, mapsSnapshot, navigate]
   );
 
   const disadvantageModesItems = React.useMemo(
@@ -1164,10 +1186,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           localCharacter.disadvantageModes,
           'disadvantageModes',
           disadvantageModesHook,
-          (modeId) => navigate(`/modes/${encodeURIComponent(modeId)}`)
+          (modeId) => navigate(`/modes/${encodeURIComponent(modeId)}`),
+          modesSnapshot as unknown as Record<string, { imageUrl?: string }>
         )
       ),
-    [localCharacter.disadvantageModes, disadvantageModesHook, navigate]
+    [localCharacter.disadvantageModes, disadvantageModesHook, modesSnapshot, navigate]
   );
 
   const advantageItems = React.useMemo(

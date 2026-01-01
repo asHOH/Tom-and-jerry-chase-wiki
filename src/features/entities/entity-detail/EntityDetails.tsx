@@ -24,7 +24,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
 
   const rawLocalEntity = entitiesEdit[entityName];
   const localEntitySnapshot = useSnapshot(rawLocalEntity ?? ({} as Entity));
-  const effectiveEntity = isEditMode && rawLocalEntity ? (localEntitySnapshot as Entity) : entity;
+  const effectiveEntity = rawLocalEntity ? (localEntitySnapshot as Entity) : entity;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveEntity.name, 'entity');

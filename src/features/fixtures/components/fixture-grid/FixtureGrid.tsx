@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -11,7 +12,7 @@ import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from '@/components/Link';
-import { fixtures } from '@/data';
+import { fixturesEdit } from '@/data';
 
 import FixtureCardDisplay from './FixtureCardDisplay';
 
@@ -35,25 +36,29 @@ export default function FixtureClient({ description }: Props) {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const filteredFixtures = Object.values(fixtures).filter((fixture: Fixture) => {
-    // 类型筛选 - 处理数组类型
-    let typeMatch = true;
-    if (selectedTypes.length > 0) {
-      if (Array.isArray(fixture.type)) {
-        // 如果fixture.type是数组，只要包含任一选中的类型就匹配
-        typeMatch = fixture.type.some((type) => selectedTypes.includes(type));
-      } else {
-        // 如果fixture.type是单个字符串，直接检查是否包含
-        typeMatch = selectedTypes.includes(fixture.type);
+  const fixturesSnapshot = useSnapshot(fixturesEdit);
+  const filteredFixtures = Object.values(fixturesSnapshot as Record<string, Fixture>).filter(
+    (fixture: Fixture) => {
+      // 类型筛选 - 处理数组类型
+      let typeMatch = true;
+      if (selectedTypes.length > 0) {
+        if (Array.isArray(fixture.type)) {
+          // 如果fixture.type是数组，只要包含任一选中的类型就匹配
+          typeMatch = fixture.type.some((type) => selectedTypes.includes(type));
+        } else {
+          // 如果fixture.type是单个字符串，直接检查是否包含
+          typeMatch = selectedTypes.includes(fixture.type);
+        }
       }
+
+      // 来源筛选
+      const sourceMatch =
+        selectedSources.length === 0 ||
+        (fixture.source && selectedSources.includes(fixture.source));
+
+      return typeMatch && sourceMatch;
     }
-
-    // 来源筛选
-    const sourceMatch =
-      selectedSources.length === 0 || (fixture.source && selectedSources.includes(fixture.source));
-
-    return typeMatch && sourceMatch;
-  });
+  );
 
   return (
     <div

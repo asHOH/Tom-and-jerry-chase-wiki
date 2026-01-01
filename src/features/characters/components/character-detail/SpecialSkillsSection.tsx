@@ -6,7 +6,7 @@ import { editable } from '@/components/ui/editable';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
-import { characters, specialSkills } from '@/data';
+import { characters, specialSkillsEdit } from '@/data';
 
 const e = editable('characters');
 
@@ -15,6 +15,7 @@ export default function SpecialSkillsSection() {
   const { characterId } = useLocalCharacter();
   const { isEditMode } = useEditMode();
   const character = useSnapshot(characters[characterId]!);
+  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
   if (!character.specialSkills?.length && !isEditMode) return null;
   return (
     <div>
@@ -29,7 +30,7 @@ export default function SpecialSkillsSection() {
       </h3>
       <ul className='flex flex-col items-center gap-2'>
         {(character.specialSkills ?? []).map((skill, index) => {
-          const specialSkill = specialSkills[character.factionId!][skill.name];
+          const specialSkill = specialSkillsSnapshot[character.factionId!][skill.name];
           if (!specialSkill && !isEditMode) return null;
           return (
             <li

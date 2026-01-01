@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
+import { mapsEdit } from '@/data/store';
 import { CharacterRelationItem } from '@/data/types';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { maps } from '@/data';
 
 type Props = {
   selected: CharacterRelationItem[];
@@ -15,7 +16,9 @@ type Props = {
 const MapSelector: React.FC<Props> = ({ selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const availableMaps = Object.values(maps).filter(
+  const mapsSnapshot = useSnapshot(mapsEdit);
+
+  const availableMaps = Object.values(mapsSnapshot).filter(
     ({ name }) => !selected.some((selection) => selection.id == name)
   );
 

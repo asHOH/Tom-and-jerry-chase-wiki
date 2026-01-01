@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -9,7 +10,7 @@ import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Link from '@/components/Link';
-import { modes } from '@/data';
+import { modesEdit } from '@/data';
 
 import ModeCardDisplay from './ModeCardDisplay';
 
@@ -23,21 +24,24 @@ export default function ModeClient({ description }: Props) {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const filteredModes = Object.values(modes).filter((mode: Mode) => {
-    // 类型筛选 - 处理数组类型
-    let typeMatch = true;
-    if (selectedTypes.length > 0) {
-      if (Array.isArray(mode.type)) {
-        // 如果mode.type是数组，只要包含任一选中的类型就匹配
-        typeMatch = mode.type.some((type) => selectedTypes.includes(type));
-      } else {
-        // 如果mode.type是单个字符串，直接检查是否包含
-        typeMatch = selectedTypes.includes(mode.type);
+  const modesSnapshot = useSnapshot(modesEdit);
+  const filteredModes = Object.values(modesSnapshot as Record<string, Mode>).filter(
+    (mode: Mode) => {
+      // 类型筛选 - 处理数组类型
+      let typeMatch = true;
+      if (selectedTypes.length > 0) {
+        if (Array.isArray(mode.type)) {
+          // 如果mode.type是数组，只要包含任一选中的类型就匹配
+          typeMatch = mode.type.some((type) => selectedTypes.includes(type));
+        } else {
+          // 如果mode.type是单个字符串，直接检查是否包含
+          typeMatch = selectedTypes.includes(mode.type);
+        }
       }
-    }
 
-    return typeMatch;
-  });
+      return typeMatch;
+    }
+  );
 
   return (
     <div

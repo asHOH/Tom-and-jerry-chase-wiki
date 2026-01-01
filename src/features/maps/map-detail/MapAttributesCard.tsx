@@ -28,7 +28,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
   if (!map) return null;
 
   const rawMap = mapsEdit[mapName];
-  const effectiveMap = isEditMode ? (mapsSnapshot[mapName] ?? map) : map;
+  const effectiveMap = mapsSnapshot[mapName] ?? map;
   const availableModeOptions = Object.keys(modesSnapshot);
   const activeSupportedModes = Array.isArray(effectiveMap?.supportedModes)
     ? effectiveMap.supportedModes

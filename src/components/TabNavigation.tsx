@@ -4,12 +4,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
+import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
 import { supabase } from '@/lib/supabase/client';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { useToast } from '@/context/ToastContext';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import { UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -53,12 +55,87 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [signOutError, setSignOutError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [collapsedCount, setCollapsedCount] = useState(0);
+  const [publishingActions, setPublishingActions] = useState(false);
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const { nickname, role, clearData: clearUserData } = useUser();
   const { isEditMode } = useEditMode();
+  const { success, error: errorToast, info } = useToast();
   const { items, isActive } = useNavigationTabs();
   const isMobile = useMobile();
+
+  const publishableEntityTypes = [
+    'characters',
+    'factions',
+    'cards',
+    'entities',
+    'buffs',
+    'items',
+    'fixtures',
+    'maps',
+    'modes',
+    'specialSkills',
+  ] as const;
+
+  const handlePublishActions = async () => {
+    if (publishingActions) return;
+
+    const enabled =
+      !process.env.NEXT_PUBLIC_DISABLE_ARTICLES && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!enabled) {
+      errorToast('当前环境未启用 Supabase，无法发布改动');
+      return;
+    }
+
+    if (typeof window === 'undefined') return;
+
+    const payloads = publishableEntityTypes
+      .map((entityType) => {
+        const storageKey = getActionsStorageKey(entityType);
+        const entries = readActionHistory(storageKey);
+        return { entityType, storageKey, entries };
+      })
+      .filter((p) => p.entries.length > 0);
+
+    const totalEntries = payloads.reduce((sum, p) => sum + p.entries.length, 0);
+
+    if (payloads.length === 0) {
+      info('没有可发布的本地改动记录');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `将发布 ${payloads.length} 类数据的 ${totalEntries} 条改动记录。\n\n提交后：\n- Contributor/匿名：默认进入待审核\n- Reviewer/Coordinator：默认直接公开\n\n继续吗？`
+    );
+
+    if (!confirmed) return;
+
+    setPublishingActions(true);
+    try {
+      for (const payload of payloads) {
+        const res = await fetch('/api/game-data-actions/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ entityType: payload.entityType, entries: payload.entries }),
+        });
+
+        if (!res.ok) {
+          const body = (await res.json().catch(() => null)) as { error?: string } | null;
+          throw new Error(body?.error || `发布失败（${payload.entityType}）`);
+        }
+
+        localStorage.removeItem(payload.storageKey);
+      }
+
+      success('改动已提交。若需公开，请等待审核/或由审核者批准。');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : '发布失败';
+      errorToast(msg);
+    } finally {
+      setPublishingActions(false);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -313,6 +390,20 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         {/* Right-aligned detailed/simple view toggle button, SearchBar, and User Settings */}
         <div className='flex items-center gap-1 md:gap-2 lg:gap-2.5'>
           {pathname === '/' || pathname === '' ? <SearchBar /> : <DarkModeToggleButton />}
+          {isEditMode && (
+            <Tooltip content='发布本地改动' className='border-none'>
+              <button
+                type='button'
+                onClick={handlePublishActions}
+                disabled={publishingActions}
+                className={clsx(getButtonClassName(publishingActions, false), 'px-2.5 lg:px-3.5')}
+                aria-label='发布本地改动'
+              >
+                <span className='lg:hidden'>发布</span>
+                <span className='hidden lg:inline'>发布改动</span>
+              </button>
+            </Tooltip>
+          )}
           {showDetailToggle && (
             <Tooltip
               content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}

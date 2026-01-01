@@ -30,7 +30,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
   if (!item) return null;
 
   const rawItem = itemsEdit[itemName];
-  const effectiveItem = isEditMode ? (itemsSnapshot[itemName] ?? item) : item;
+  const effectiveItem = itemsSnapshot[itemName] ?? item;
 
   const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
   const activeCollision = Array.isArray(effectiveItem?.collsion) ? effectiveItem.collsion : [];

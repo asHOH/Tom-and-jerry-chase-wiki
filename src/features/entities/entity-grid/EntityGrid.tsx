@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design-system';
 import { getPositioningTagColors } from '@/lib/design-tokens';
@@ -13,7 +14,7 @@ import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from '@/components/Link';
-import { entities } from '@/data';
+import { entitiesEdit } from '@/data';
 
 import getEntityFactionId from '../lib/getEntityFactionId';
 import EntityCardDisplay from './EntityCardDisplay';
@@ -51,25 +52,27 @@ export default function EntityClient({ description }: Props) {
     }
   }
 
-  const allentities = { ...entities['cat'], ...entities['mouse'] }; //connect two parts of entities
-  const filteredEntities = Object.values(allentities).filter((entity: Entity) => {
-    // 类型筛选
-    const typeMatch = selectedTypes.length === 0 || searchTypeIn(entity);
-    // 阵营筛选
-    let factionMatch = true;
-    if (selectedFactions.length > 0) {
-      const isCat = selectedFactions.includes('cat');
-      const isMouse = selectedFactions.includes('mouse');
-      const isOther = selectedFactions.includes('other');
-      const entityFaction = getEntityFactionId(entity);
+  const entitiesSnapshot = useSnapshot(entitiesEdit);
+  const filteredEntities = Object.values(entitiesSnapshot as Record<string, Entity>).filter(
+    (entity: Entity) => {
+      // 类型筛选
+      const typeMatch = selectedTypes.length === 0 || searchTypeIn(entity);
+      // 阵营筛选
+      let factionMatch = true;
+      if (selectedFactions.length > 0) {
+        const isCat = selectedFactions.includes('cat');
+        const isMouse = selectedFactions.includes('mouse');
+        const isOther = selectedFactions.includes('other');
+        const entityFaction = getEntityFactionId(entity);
 
-      factionMatch =
-        (isCat && entityFaction === 'cat') ||
-        (isMouse && entityFaction === 'mouse') ||
-        (isOther && entityFaction !== 'cat' && entityFaction !== 'mouse');
+        factionMatch =
+          (isCat && entityFaction === 'cat') ||
+          (isMouse && entityFaction === 'mouse') ||
+          (isOther && entityFaction !== 'cat' && entityFaction !== 'mouse');
+      }
+      return typeMatch && factionMatch;
     }
-    return typeMatch && factionMatch;
-  });
+  );
 
   return (
     <div

@@ -1,19 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design-system';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { specialSkillsEdit } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { specialSkills } from '@/data';
-
-const allSkills = [...Object.values(specialSkills.cat), ...Object.values(specialSkills.mouse)];
 
 type Props = { description?: string };
 
@@ -21,6 +20,12 @@ export default function SpecialSkillClient({ description }: Props) {
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
+
+  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
+  const allSkills = [
+    ...Object.values(specialSkillsSnapshot.cat),
+    ...Object.values(specialSkillsSnapshot.mouse),
+  ];
 
   // Filter skills by faction if selected
   const filteredSkills = selectedFaction
