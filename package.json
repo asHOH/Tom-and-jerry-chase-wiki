@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "@google/genai": "^1.31.0",
-    "@hcaptcha/react-hcaptcha": "^1.17.2",
+    "@hcaptcha/react-hcaptcha": "^1.17.3",
     "@marsidev/react-turnstile": "^1.4.1",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
@@ -106,7 +106,7 @@
     "sonner": "^2.0.7",
     "swr": "^2.3.7",
     "usehooks-ts": "^3.1.1",
-    "valtio": "^2.2.0",
+    "valtio": "^2.3.0",
     "zod": "^4.3.4"
   },
   "devDependencies": {
