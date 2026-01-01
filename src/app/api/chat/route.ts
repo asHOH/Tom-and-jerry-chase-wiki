@@ -7,6 +7,7 @@ import {
   HarmCategory,
 } from '@google/genai';
 
+import { chatMessagesSchema, formatZodError } from '@/lib/validation/schemas';
 import { historyData } from '@/data/history';
 import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
 
@@ -508,7 +509,14 @@ const executeCodeDeclaration: FunctionDeclaration = {
 // Main POST handler for the chat API - returns function calls for client to execute
 export async function POST(req: NextRequest) {
   try {
-    const { messages }: { messages: Content[] } = await req.json();
+    const parsed = chatMessagesSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Invalid request body', details: formatZodError(parsed.error) }),
+        { status: 400 }
+      );
+    }
+    const messages = parsed.data.messages as unknown as Content[];
     console.log('Received messages:', JSON.stringify(messages, null, 2));
 
     const apiKey = process.env.GEMINI_API_KEY;

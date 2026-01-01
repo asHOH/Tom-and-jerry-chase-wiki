@@ -30,6 +30,49 @@ export const articleEditPendingSchema = z.object({
   content: trimmedString,
 });
 
+export const feedbackSchema = z.object({
+  type: z.enum(['suggestion', 'bug', 'data', 'other']).default('other'),
+  content: trimmedString,
+  contact: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value && value.length > 0 ? value : undefined)),
+});
+
+const functionCallSchema = z.object({
+  name: trimmedString,
+  args: z.record(z.string(), z.any()).default({}),
+});
+
+const functionResponseSchema = z.object({
+  name: trimmedString,
+  response: z.object({
+    name: trimmedString,
+    content: z.any(),
+  }),
+});
+
+const partSchema = z
+  .object({
+    text: z.string().optional(),
+    functionCall: functionCallSchema.optional(),
+    functionResponse: functionResponseSchema.optional(),
+  })
+  .refine(
+    (part) => part.text || part.functionCall || part.functionResponse,
+    'Part must include text or function data'
+  );
+
+const contentSchema = z.object({
+  role: z.enum(['user', 'model']),
+  parts: z.array(partSchema).min(1),
+});
+
+export const chatMessagesSchema = z.object({
+  messages: z.array(contentSchema).min(1),
+});
+
 export const formatZodError = (error: z.ZodError) =>
   error.issues.map((issue) => ({
     path: issue.path.join('.') || 'root',

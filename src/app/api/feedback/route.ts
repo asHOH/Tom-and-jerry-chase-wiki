@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { feedbackSchema, formatZodError } from '@/lib/validation/schemas';
 
 interface FeedbackData {
   type: string;
@@ -13,12 +14,14 @@ interface FeedbackData {
 
 export async function POST(request: NextRequest) {
   try {
-    const { type, content, contact } = await request.json();
-
-    // Validate required fields
-    if (!content || content.trim().length === 0) {
-      return NextResponse.json({ error: '反馈内容不能为空' }, { status: 400 });
+    const parsed = feedbackSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: formatZodError(parsed.error) },
+        { status: 400 }
+      );
     }
+    const { type, content, contact } = parsed.data;
 
     // Get current timestamp
     const timestamp = new Date().toLocaleString('zh-CN', {
