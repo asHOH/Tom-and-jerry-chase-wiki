@@ -12,8 +12,8 @@ import {
 } from '@/lib/richtext/imagePolicy';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import { formatZodError, rteImageListQuerySchema } from '@/lib/validation/schemas';
 
-const MAX_LIBRARY_LIMIT = 60;
 const LIST_PAGE_SIZE = 100;
 
 type StorageEntry = {
@@ -81,14 +81,20 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const limitParam = Number.parseInt(searchParams.get('limit') ?? '30', 10);
-  const limit = Number.isFinite(limitParam)
-    ? Math.min(Math.max(limitParam, 1), MAX_LIBRARY_LIMIT)
-    : 30;
-  const scope = searchParams.get('scope') === 'all' ? 'all' : 'mine';
-  const searchTerm = searchParams.get('search')?.trim();
+  const parsed = rteImageListQuerySchema.safeParse({
+    limit: searchParams.get('limit') ?? undefined,
+    scope: searchParams.get('scope') ?? undefined,
+    search: searchParams.get('search') ?? undefined,
+  });
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Invalid query parameters', details: formatZodError(parsed.error) },
+      { status: 400 }
+    );
+  }
+  const { limit = 30, scope, search } = parsed.data;
 
-  const normalizedSearch = searchTerm ? searchTerm.toLowerCase() : null;
+  const normalizedSearch = search ? search.toLowerCase() : null;
   const prefixes = scope === 'mine' ? [user.id] : [''];
   const maxDepth = scope === 'mine' ? 2 : 3;
   const aggregated: Array<{ entry: StorageEntry; path: string }> = [];

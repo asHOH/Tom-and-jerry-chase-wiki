@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import {
+  articleRecordSchema,
+  articleVersionSchema,
+  formatZodError,
+} from '@/lib/validation/schemas';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   void request;
@@ -50,6 +55,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       console.error('Error fetching article:', articleError);
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
+    const parsedArticle = articleRecordSchema.safeParse(article);
+    if (!parsedArticle.success) {
+      console.error('Article payload validation failed', parsedArticle.error.format());
+      return NextResponse.json(
+        { error: 'Article data invalid', details: formatZodError(parsedArticle.error) },
+        { status: 500 }
+      );
+    }
 
     // Get the latest approved version with editor info
     const { data: latestVersion, error: versionError } = await supabase
@@ -73,12 +86,20 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       console.error('Error fetching latest version:', versionError);
       return NextResponse.json({ error: 'No approved version found' }, { status: 404 });
     }
+    const parsedVersion = articleVersionSchema.safeParse(latestVersion);
+    if (!parsedVersion.success) {
+      console.error('Article version payload validation failed', parsedVersion.error.format());
+      return NextResponse.json(
+        { error: 'Article version data invalid', details: formatZodError(parsedVersion.error) },
+        { status: 500 }
+      );
+    }
 
     // Combine the data
     const response = {
       article: {
-        ...article,
-        latest_version: latestVersion,
+        ...parsedArticle.data,
+        latest_version: parsedVersion.data,
       },
     };
 
