@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
-import { proxy, useSnapshot } from 'valtio';
+import { startTransition, useEffect } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
+import { proxy, useSnapshot } from 'valtio';
 
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
@@ -46,10 +46,22 @@ export const useAppContext = () => {
   };
 
   const toggleDetailedView = () => {
-    setStoredDetailedView((prev) => {
-      const next = !prev;
-      isDetailedViewStore.isDetailedView = next; // immediate update for UI responsiveness
-      return next;
+    const next = !isDetailedViewStore.isDetailedView;
+    // Immediate local update for responsive UI
+    isDetailedViewStore.isDetailedView = next;
+
+    // Defer storage persistence and downstream re-renders
+    startTransition(() => {
+      setStoredDetailedView(() => {
+        queueMicrotask(() => {
+          try {
+            localStorage.setItem('isDetailedView', JSON.stringify(next));
+          } catch {
+            // Ignore storage failures to avoid disrupting UI toggle
+          }
+        });
+        return next;
+      });
     });
   };
 
