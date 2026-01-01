@@ -10,6 +10,7 @@ import {
   appendActionHistoryEntry,
   applyActionEntry,
   getActionsStorageKey,
+  invertActionEntry,
   isRecordingSuppressed,
   readActionHistory,
   withRecordingSuppressed,
@@ -38,6 +39,7 @@ interface EditModeContextType {
   isEditMode: boolean;
   isLoading: boolean;
   toggleEditMode: () => void;
+  revokeLocalActions: (entityType: string) => void;
 }
 
 export const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
@@ -326,8 +328,38 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const revokeLocalActions = (entityType: string): void => {
+    if (typeof window === 'undefined') return;
+    const entity = entityRegistry.get(entityType);
+    if (!entity) return;
+
+    const actionsStorageKey = getActionsStorageKey(entityType);
+    const history = readActionHistory(actionsStorageKey);
+    if (history.length === 0) {
+      try {
+        window.localStorage.removeItem(actionsStorageKey);
+      } catch {
+        // ignore
+      }
+      return;
+    }
+
+    try {
+      withRecordingSuppressed(actionsStorageKey, () => {
+        for (let i = history.length - 1; i >= 0; i -= 1) {
+          const entry = history[i]!;
+          applyActionEntry(entity, invertActionEntry(entry));
+        }
+      });
+      window.localStorage.removeItem(actionsStorageKey);
+      GameDataManager.invalidate();
+    } catch (error) {
+      console.error(`Failed to revoke ${entityType} local actions:`, error);
+    }
+  };
+
   return (
-    <EditModeContext.Provider value={{ isEditMode, isLoading, toggleEditMode }}>
+    <EditModeContext.Provider value={{ isEditMode, isLoading, toggleEditMode, revokeLocalActions }}>
       {children}
     </EditModeContext.Provider>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, use, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 
 import { supabase } from '@/lib/supabase/client';
@@ -25,28 +25,27 @@ const applyUserData = (data: UserType, { allowEmpty = false }: { allowEmpty?: bo
 
 export const UserProvider =
   process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    ? ({ children }: { children: ReactNode; initialValue: Promise<UserType> }) => {
+    ? ({ children }: { children: ReactNode; initialValue: UserType }) => {
         return children;
       }
-    : ({ children, initialValue }: { children: ReactNode; initialValue: Promise<UserType> }) => {
-        'use no memo';
-        const initialUser = use(initialValue);
+    : ({ children, initialValue }: { children: ReactNode; initialValue: UserType }) => {
         const hasAppliedInitial = useRef(false);
         if (!hasAppliedInitial.current) {
-          applyUserData(initialUser, { allowEmpty: true });
+          applyUserData(initialValue, { allowEmpty: true });
           hasAppliedInitial.current = true;
         }
+
         useEffect(() => {
-          applyUserData(initialUser, { allowEmpty: true });
-        });
+          applyUserData(initialValue, { allowEmpty: true });
+        }, [initialValue]);
+
         useEffect(() => {
           (async () => {
-            applyUserData(await initialValue, { allowEmpty: true });
             const clientUser = await getUserData();
             const shouldAllowEmpty = !userObject.nickname && !userObject.role;
             applyUserData(clientUser, { allowEmpty: shouldAllowEmpty });
           })();
-        }, [initialValue]);
+        }, []);
         useEffect(() => {
           const {
             data: { subscription },
@@ -70,21 +69,23 @@ async function getUserData() {
     };
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const res = await fetch('/api/auth/me', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
 
-  if (!user) {
-    return {
-      role: null,
-      nickname: null,
-    };
+  if (!res.ok) {
+    return { role: null, nickname: null };
   }
 
-  const { data } = await supabase.from('users').select('role, nickname').eq('id', user.id).single();
+  const data = (await res.json().catch(() => null)) as {
+    role?: string | null;
+    nickname?: string | null;
+  } | null;
+
   return {
-    role: data?.role || null,
-    nickname: data?.nickname || null,
+    role: data?.role ?? null,
+    nickname: data?.nickname ?? null,
   };
 }
 

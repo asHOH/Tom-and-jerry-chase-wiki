@@ -77,6 +77,7 @@ export default function CharacterDetails({
         isEditMode: isEditMode && isLocalEditMode,
         isLoading: false,
         toggleEditMode: () => {},
+        revokeLocalActions: () => {},
       }}
     >
       <div className='space-y-8'>
@@ -366,7 +367,7 @@ export default function CharacterDetails({
                   <CollapseCard
                     title={`${character.id}角色自身的相关互动特性(${filterTraitsBySingleItem({ name: character.id, type: 'character' }).length})`}
                     size='xs'
-                    className='rounded-md border-x-1 border-b-1 border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
+                    className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
                     titleClassName='pl-3'
                   >
                     <SingleItemTraitsText singleItem={{ name: character.id, type: 'character' }} />

@@ -13,7 +13,13 @@ import NextTopLoader from 'nextjs-toploader';
 
 import './globals.css';
 
+<<<<<<< HEAD
 import { getUserData } from '@/lib/userActions';
+=======
+import clsx from 'clsx';
+
+import { getDarkModeFromCookie } from '@/lib/darkModeActions';
+>>>>>>> ab3a76c6 (feat(edit-mode): support changing game data via supabase)
 import { UserProvider } from '@/hooks/useUser';
 import { DarkModeProvider } from '@/context/DarkModeContext';
 import KeyboardNavigation from '@/components/KeyboardNavigation';
@@ -26,6 +32,11 @@ const inter = localFont({
 export const metadata: Metadata = defaultMetadata;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+<<<<<<< HEAD
+=======
+  const isDarkMode = await getDarkModeFromCookie();
+  const initialUser = { role: null, nickname: null };
+>>>>>>> ab3a76c6 (feat(edit-mode): support changing game data via supabase)
   return (
     <html
       lang='zh-CN'
@@ -41,6 +52,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
       <body className={inter.className}>
+<<<<<<< HEAD
         <DarkModeProvider>
           <NextTopLoader
             color='#2563eb'
@@ -55,6 +67,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <DynamicFaviconEditBadge />
             <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
               <UserProvider initialValue={getUserData()}>
+=======
+        <ErrorBoundary>
+          <KeyboardNavigation />
+          <DynamicFaviconEditBadge />
+          <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
+            <UserProvider initialValue={initialUser}>
+              <DarkModeProvider initialValue={isDarkMode}>
+>>>>>>> ab3a76c6 (feat(edit-mode): support changing game data via supabase)
                 <ClientProviders>{children}</ClientProviders>
               </UserProvider>
             </main>

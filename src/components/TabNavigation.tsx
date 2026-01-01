@@ -13,7 +13,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
-import { CheckBadgeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
+import { CheckBadgeIcon, TrashIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 
@@ -48,6 +48,7 @@ const USER_BUTTON_WIDTH = 44;
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [actionInfoOpen, setActionInfoOpen] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [overflowOpen, setOverflowOpen] = useState(false);
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
@@ -59,7 +60,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const { nickname, role, clearData: clearUserData } = useUser();
-  const { isEditMode } = useEditMode();
+  const { isEditMode, revokeLocalActions } = useEditMode();
   const { success, error: errorToast, info } = useToast();
   const { items, isActive } = useNavigationTabs();
   const isMobile = useMobile();
@@ -106,7 +107,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     }
 
     const confirmed = window.confirm(
-      `将发布 ${payloads.length} 类数据的 ${totalEntries} 条改动记录。\n\n提交后：\n- Contributor/匿名：默认进入待审核\n- Reviewer/Coordinator：默认直接公开\n\n继续吗？`
+      `将发布 ${payloads.length} 类数据的 ${totalEntries} 条改动记录。\n\n继续吗？`
     );
 
     if (!confirmed) return;
@@ -135,6 +136,38 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     } finally {
       setPublishingActions(false);
     }
+  };
+
+  const clearLocalActionHistories = () => {
+    if (typeof window === 'undefined') return;
+
+    const payloads = publishableEntityTypes
+      .map((entityType) => {
+        const storageKey = getActionsStorageKey(entityType);
+        const entries = readActionHistory(storageKey);
+        return { entityType, storageKey, entries };
+      })
+      .filter((p) => p.entries.length > 0);
+
+    const totalEntries = payloads.reduce((sum, p) => sum + p.entries.length, 0);
+
+    if (payloads.length === 0) {
+      info('没有本地改动记录可清空');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `将清空 ${payloads.length} 类数据的 ${totalEntries} 条本地改动记录。\n\n此操作不可撤销，继续吗？`
+    );
+    if (!confirmed) return;
+
+    for (const payload of payloads) {
+      if (isEditMode) {
+        revokeLocalActions(payload.entityType);
+      }
+      window.localStorage.removeItem(payload.storageKey);
+    }
+    success('已清空本地改动记录');
   };
 
   useEffect(() => {
@@ -190,6 +223,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     }
     setOverflowOpen(false);
     setUserDropdownOpen(false);
+    setActionInfoOpen(false);
   }, [pathname, navigatingTo]);
 
   useEffect(() => {
@@ -265,7 +299,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
   return (
     <div className='fixed top-0 right-0 left-0 z-50 w-full bg-white py-2 shadow-md dark:bg-slate-900 dark:shadow-lg'>
-      <div className='mx-auto flex max-w-screen-xl items-center justify-between gap-4 px-4'>
+      <div className='mx-auto flex max-w-7xl items-center justify-between gap-4 px-4'>
         {/* Left-aligned navigation buttons */}
         <div className={clsx('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
           <Tooltip content='首页' className='border-none'>
@@ -291,7 +325,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <span className='sr-only lg:hidden'>首页</span>
               {isEditMode && (
                 <span
-                  className='pointer-events-none absolute -right-0.5 -bottom-0.5 inline-flex h-[12px] w-[12px] items-center justify-center rounded-full bg-amber-500 text-[9px] leading-none text-white ring-2 ring-white md:h-[14px] md:w-[14px] md:text-[10px] dark:ring-slate-900'
+                  className='pointer-events-none absolute -right-0.5 -bottom-0.5 inline-flex h-3 w-3 items-center justify-center rounded-full bg-amber-500 text-[9px] leading-none text-white ring-2 ring-white md:h-3.5 md:w-3.5 md:text-[10px] dark:ring-slate-900'
                   aria-hidden
                 >
                   ✎
@@ -350,7 +384,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               {overflowOpen && (
                 <div
                   className={clsx(
-                    'absolute z-[9999] mt-2 min-w-[140px] rounded-md bg-white shadow-lg dark:bg-slate-800',
+                    'absolute z-9999 mt-2 min-w-35 rounded-md bg-white shadow-lg dark:bg-slate-800',
                     dropdownAlignmentClass
                   )}
                 >
@@ -374,7 +408,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                             alt={tab.iconAlt}
                             width={64}
                             height={64}
-                            className='h-6 w-6 flex-shrink-0 object-contain'
+                            className='h-6 w-6 shrink-0 object-contain'
                           />
                           <span>{tab.label}</span>
                         </Link>
@@ -390,22 +424,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         {/* Right-aligned detailed/simple view toggle button, SearchBar, and User Settings */}
         <div className='flex items-center gap-1 md:gap-2 lg:gap-2.5'>
           {pathname === '/' || pathname === '' ? <SearchBar /> : <DarkModeToggleButton />}
-          {isEditMode && (
-            <Tooltip content='发布本地改动' className='border-none'>
-              <button
-                type='button'
-                onClick={handlePublishActions}
-                disabled={publishingActions}
-                className={clsx(getButtonClassName(publishingActions, false), 'px-2.5 lg:px-3.5')}
-                aria-label='发布本地改动'
-              >
-                <span className='flex items-center gap-1.5'>
-                  <CheckBadgeIcon size={18} strokeWidth={1.8} />
-                  <span className='hidden lg:inline'>发布改动</span>
-                </span>
-              </button>
-            </Tooltip>
-          )}
           {showDetailToggle && (
             <Tooltip
               content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
@@ -413,7 +431,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             >
               <div
                 className={clsx(
-                  'relative flex min-h-[40px] cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 md:min-h-[44px] dark:border-gray-600 dark:bg-slate-800'
+                  'relative flex min-h-10 cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 md:min-h-11 dark:border-gray-600 dark:bg-slate-800'
                 )}
                 onClick={toggleDetailedView}
               >
@@ -473,7 +491,12 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   </button>
                 </Tooltip>
                 {userDropdownOpen && (
-                  <div className='absolute right-0 z-[99999] mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-slate-800'>
+                  <div
+                    className={clsx(
+                      'absolute right-0 z-99999 mt-2 rounded-md bg-white shadow-lg dark:bg-slate-800',
+                      actionInfoOpen ? 'w-96' : 'w-48'
+                    )}
+                  >
                     <ul>
                       <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>
                         你好，{nickname}
@@ -481,9 +504,103 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       <li>
                         <button
                           type='button'
+                          className={clsx(
+                            'w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                            actionInfoOpen && 'font-semibold'
+                          )}
+                          onClick={() => setActionInfoOpen((prev) => !prev)}
+                        >
+                          改动记录
+                        </button>
+                      </li>
+                      {actionInfoOpen && (
+                        <li className='border-b border-gray-100 px-4 py-3 text-sm text-gray-800 dark:border-slate-700 dark:text-gray-200'>
+                          {(() => {
+                            if (typeof window === 'undefined') return null;
+
+                            const payloads = publishableEntityTypes
+                              .map((entityType) => {
+                                const storageKey = getActionsStorageKey(entityType);
+                                const entries = readActionHistory(storageKey);
+                                return { entityType, storageKey, entries };
+                              })
+                              .filter((p) => p.entries.length > 0);
+
+                            const totalEntries = payloads.reduce(
+                              (sum, p) => sum + p.entries.length,
+                              0
+                            );
+
+                            return (
+                              <div className='space-y-2'>
+                                <div className='flex items-center justify-between gap-2'>
+                                  <div className='text-xs text-gray-600 dark:text-gray-400'>
+                                    共 {payloads.length} 类 / {totalEntries} 条
+                                    {isEditMode ? '（编辑模式中）' : ''}
+                                  </div>
+                                </div>
+                                <div className='flex flex-wrap items-center gap-2'>
+                                  <button
+                                    type='button'
+                                    onClick={handlePublishActions}
+                                    disabled={publishingActions || payloads.length === 0}
+                                    className={clsx(
+                                      'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
+                                      publishingActions || payloads.length === 0
+                                        ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
+                                        : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
+                                    )}
+                                    aria-label='发布本地改动'
+                                  >
+                                    <CheckBadgeIcon size={16} strokeWidth={1.8} />
+                                    发布
+                                  </button>
+                                  <button
+                                    type='button'
+                                    onClick={clearLocalActionHistories}
+                                    disabled={payloads.length === 0}
+                                    className={clsx(
+                                      'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
+                                      payloads.length === 0
+                                        ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
+                                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
+                                    )}
+                                    aria-label='清空本地改动记录'
+                                  >
+                                    <TrashIcon size={16} strokeWidth={1.8} />
+                                    清空
+                                  </button>
+                                </div>
+                                {payloads.length === 0 ? (
+                                  <div className='text-xs text-gray-600 dark:text-gray-400'>
+                                    暂无本地改动记录。
+                                  </div>
+                                ) : (
+                                  <div className='max-h-64 space-y-2 overflow-auto rounded-md bg-gray-50 p-2 text-xs dark:bg-slate-900'>
+                                    {payloads.map((p) => (
+                                      <details key={p.entityType} className='rounded-md'>
+                                        <summary className='cursor-pointer font-medium select-none'>
+                                          {p.entityType}（{p.entries.length}）
+                                        </summary>
+                                        <pre className='mt-2 text-[11px] wrap-break-word whitespace-pre-wrap text-gray-800 dark:text-gray-200'>
+                                          {JSON.stringify(p.entries, null, 2)}
+                                        </pre>
+                                      </details>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })()}
+                        </li>
+                      )}
+                      <li>
+                        <button
+                          type='button'
                           className='w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
                           onClick={() => {
                             setUserDropdownOpen(false);
+                            setActionInfoOpen(false);
                             setChangePasswordOpen(true);
                           }}
                         >

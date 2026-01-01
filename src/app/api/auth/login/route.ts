@@ -2,7 +2,6 @@ import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
-import { convertToPinyin } from '@/lib/pinyinUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const hashUsername = (username: string) => {
@@ -36,7 +35,6 @@ export async function POST(request: NextRequest) {
     }
 
     const usernameHash = hashUsername(username);
-    const usernamePinyin = await convertToPinyin(username);
     const passwordlessSecret = `pw-${usernameHash.slice(0, 32)}`;
 
     // Query the custom users table to find a user with the matching username_hash
@@ -58,6 +56,11 @@ export async function POST(request: NextRequest) {
 
     if (authUserError || !authUser) {
       console.error('Error fetching auth user:', authUserError);
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+
+    if (!authUser.email) {
+      console.error('Auth user missing email:', { userId: user.id });
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 
@@ -94,7 +97,7 @@ export async function POST(request: NextRequest) {
     );
 
     const { error: sessionError } = await supabase.auth.signInWithPassword({
-      email: `${usernamePinyin}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`,
+      email: authUser.email,
       password: password || passwordlessSecret,
     });
 
