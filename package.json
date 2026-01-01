@@ -56,9 +56,7 @@
     "cleanup-temp": "rimraf scripts/temp",
     "pre-push:force-fast": ".husky/pre-push-fast",
     "pre-push:force-full": "cross-env FORCE_FULL_PREPUSH=true .husky/pre-push",
-    "prepare": "husky",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20.3.0",
@@ -112,9 +110,6 @@
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@next/bundle-analyzer": "^16.1.1",
-    "@storybook/addon-docs": "^10.1.4",
-    "@storybook/addon-onboarding": "^10.1.4",
-    "@storybook/nextjs": "^10.1.4",
     "@tailwindcss/postcss": "^4.1.17",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/dom": "^10.4.1",
@@ -145,7 +140,6 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "rimraf": "^6.1.2",
     "schema-dts": "^1.1.5",
-    "storybook": "^10.1.4",
     "supabase": "^2.70.5",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"

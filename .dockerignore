@@ -68,11 +68,6 @@ next-env.d.ts
 # Vercel
 .vercel
 
-# Storybook
-.storybook
-storybook-static
-src/stories
-
 # Package files
 *.tgz
 *.tar.gz
