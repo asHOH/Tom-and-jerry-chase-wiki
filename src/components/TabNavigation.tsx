@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
 import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
 import { supabase } from '@/lib/supabase/client';
@@ -64,6 +65,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const { success, error: errorToast, info } = useToast();
   const { items, isActive } = useNavigationTabs();
   const isMobile = useMobile();
+  const shouldReduceMotion = useReducedMotion();
 
   const publishableEntityTypes = [
     'characters',
@@ -381,42 +383,52 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   ⋮
                 </button>
               </Tooltip>
-              {overflowOpen && (
-                <div
-                  className={clsx(
-                    'absolute z-9999 mt-2 min-w-35 rounded-md bg-white shadow-lg dark:bg-slate-800',
-                    dropdownAlignmentClass
-                  )}
-                >
-                  <ul className='py-1'>
-                    {overflowTabs.map((tab) => (
-                      <li key={tab.id}>
-                        <Link
-                          href={tab.href}
-                          className={clsx(
-                            'flex items-center gap-2 px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
-                            isTabActive(tab.href) && 'font-semibold'
-                          )}
-                          onClick={() => {
-                            if (navigatingTo === tab.href) return;
-                            setNavigatingTo(tab.href);
-                            setOverflowOpen(false);
-                          }}
-                        >
-                          <Image
-                            src={tab.iconSrc}
-                            alt={tab.iconAlt}
-                            width={64}
-                            height={64}
-                            className='h-6 w-6 shrink-0 object-contain'
-                          />
-                          <span>{tab.label}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <AnimatePresence initial={false}>
+                {overflowOpen && (
+                  <m.div
+                    key='tab-overflow-menu'
+                    className={clsx(
+                      'absolute z-9999 mt-2 min-w-35 rounded-md bg-white shadow-lg dark:bg-slate-800',
+                      dropdownAlignmentClass
+                    )}
+                    initial={
+                      shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
+                    }
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, scale: 0.98 }}
+                    transition={{ duration: 0.14, ease: 'easeOut' }}
+                    style={{ transformOrigin: 'top' }}
+                  >
+                    <ul className='py-1'>
+                      {overflowTabs.map((tab) => (
+                        <li key={tab.id}>
+                          <Link
+                            href={tab.href}
+                            className={clsx(
+                              'flex items-center gap-2 px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                              isTabActive(tab.href) && 'font-semibold'
+                            )}
+                            onClick={() => {
+                              if (navigatingTo === tab.href) return;
+                              setNavigatingTo(tab.href);
+                              setOverflowOpen(false);
+                            }}
+                          >
+                            <Image
+                              src={tab.iconSrc}
+                              alt={tab.iconAlt}
+                              width={64}
+                              height={64}
+                              className='h-6 w-6 shrink-0 object-contain'
+                            />
+                            <span>{tab.label}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </m.div>
+                )}
+              </AnimatePresence>
             </div>
           )}
         </div>
@@ -490,157 +502,190 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                     <UserCircleIcon className='size-6' strokeWidth={1.5} />
                   </button>
                 </Tooltip>
-                {userDropdownOpen && (
-                  <div
-                    className={clsx(
-                      'absolute right-0 z-99999 mt-2 rounded-md bg-white shadow-lg dark:bg-slate-800',
-                      actionInfoOpen ? 'w-96' : 'w-48'
-                    )}
-                  >
-                    <ul>
-                      <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>
-                        你好，{nickname}
-                      </li>
-                      <li>
-                        <button
-                          type='button'
-                          className={clsx(
-                            'w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
-                            actionInfoOpen && 'font-semibold'
-                          )}
-                          onClick={() => setActionInfoOpen((prev) => !prev)}
-                        >
-                          改动记录
-                        </button>
-                      </li>
-                      {actionInfoOpen && (
-                        <li className='border-b border-gray-100 px-4 py-3 text-sm text-gray-800 dark:border-slate-700 dark:text-gray-200'>
-                          {(() => {
-                            if (typeof window === 'undefined') return null;
-
-                            const payloads = publishableEntityTypes
-                              .map((entityType) => {
-                                const storageKey = getActionsStorageKey(entityType);
-                                const entries = readActionHistory(storageKey);
-                                return { entityType, storageKey, entries };
-                              })
-                              .filter((p) => p.entries.length > 0);
-
-                            const totalEntries = payloads.reduce(
-                              (sum, p) => sum + p.entries.length,
-                              0
-                            );
-
-                            return (
-                              <div className='space-y-2'>
-                                <div className='flex items-center justify-between gap-2'>
-                                  <div className='text-xs text-gray-600 dark:text-gray-400'>
-                                    共 {payloads.length} 类 / {totalEntries} 条
-                                    {isEditMode ? '（编辑模式中）' : ''}
-                                  </div>
-                                </div>
-                                <div className='flex flex-wrap items-center gap-2'>
-                                  <button
-                                    type='button'
-                                    onClick={handlePublishActions}
-                                    disabled={publishingActions || payloads.length === 0}
-                                    className={clsx(
-                                      'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
-                                      publishingActions || payloads.length === 0
-                                        ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
-                                        : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
-                                    )}
-                                    aria-label='发布本地改动'
-                                  >
-                                    <CheckBadgeIcon size={16} strokeWidth={1.8} />
-                                    发布
-                                  </button>
-                                  <button
-                                    type='button'
-                                    onClick={clearLocalActionHistories}
-                                    disabled={payloads.length === 0}
-                                    className={clsx(
-                                      'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
-                                      payloads.length === 0
-                                        ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
-                                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
-                                    )}
-                                    aria-label='清空本地改动记录'
-                                  >
-                                    <TrashIcon size={16} strokeWidth={1.8} />
-                                    清空
-                                  </button>
-                                </div>
-                                {payloads.length === 0 ? (
-                                  <div className='text-xs text-gray-600 dark:text-gray-400'>
-                                    暂无本地改动记录。
-                                  </div>
-                                ) : (
-                                  <div className='max-h-64 space-y-2 overflow-auto rounded-md bg-gray-50 p-2 text-xs dark:bg-slate-900'>
-                                    {payloads.map((p) => (
-                                      <details key={p.entityType} className='rounded-md'>
-                                        <summary className='cursor-pointer font-medium select-none'>
-                                          {p.entityType}（{p.entries.length}）
-                                        </summary>
-                                        <pre className='mt-2 text-[11px] wrap-break-word whitespace-pre-wrap text-gray-800 dark:text-gray-200'>
-                                          {JSON.stringify(p.entries, null, 2)}
-                                        </pre>
-                                      </details>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })()}
+                <AnimatePresence initial={false}>
+                  {userDropdownOpen && (
+                    <m.div
+                      key='user-settings-dropdown'
+                      className={clsx(
+                        'absolute right-0 z-99999 mt-2 rounded-md bg-white shadow-lg dark:bg-slate-800',
+                        actionInfoOpen ? 'w-96' : 'w-48'
+                      )}
+                      initial={
+                        shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
+                      }
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={
+                        shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, scale: 0.98 }
+                      }
+                      transition={{ duration: 0.14, ease: 'easeOut' }}
+                      style={{ transformOrigin: 'top right' }}
+                      layout={!shouldReduceMotion}
+                    >
+                      <ul>
+                        <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>
+                          你好，{nickname}
                         </li>
-                      )}
-                      <li>
-                        <button
-                          type='button'
-                          className='w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
-                          onClick={() => {
-                            setUserDropdownOpen(false);
-                            setActionInfoOpen(false);
-                            setChangePasswordOpen(true);
-                          }}
-                        >
-                          修改密码
-                        </button>
-                      </li>
-                      {(role == 'Coordinator' || role == 'Reviewer') && (
-                        <li className='cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700'>
-                          <Link href='/admin/' className='block text-gray-800 dark:text-gray-200'>
-                            进入管理面板
-                          </Link>
+                        <li>
+                          <button
+                            type='button'
+                            className={clsx(
+                              'w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                              actionInfoOpen && 'font-semibold'
+                            )}
+                            onClick={() => setActionInfoOpen((prev) => !prev)}
+                          >
+                            改动记录
+                          </button>
                         </li>
-                      )}
-                      {!!signOutError && (
-                        <li className='px-4 py-2 text-red-600 dark:text-red-400'>{signOutError}</li>
-                      )}
-                      <li>
-                        <button
-                          type='button'
-                          className={clsx(
-                            'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-gray-800 dark:text-gray-200',
-                            signingOut
-                              ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
-                              : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                        <AnimatePresence initial={false}>
+                          {actionInfoOpen && (
+                            <m.li
+                              key='user-actions-info'
+                              className='border-b border-gray-100 px-4 py-3 text-sm text-gray-800 dark:border-slate-700 dark:text-gray-200'
+                              initial={
+                                shouldReduceMotion
+                                  ? { opacity: 1, height: 'auto' }
+                                  : { opacity: 0, height: 0 }
+                              }
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                              transition={{ duration: 0.16, ease: 'easeOut' }}
+                              style={{ overflow: 'hidden' }}
+                            >
+                              {(() => {
+                                if (typeof window === 'undefined') return null;
+
+                                const payloads = publishableEntityTypes
+                                  .map((entityType) => {
+                                    const storageKey = getActionsStorageKey(entityType);
+                                    const entries = readActionHistory(storageKey);
+                                    return { entityType, storageKey, entries };
+                                  })
+                                  .filter((p) => p.entries.length > 0);
+
+                                const totalEntries = payloads.reduce(
+                                  (sum, p) => sum + p.entries.length,
+                                  0
+                                );
+
+                                return (
+                                  <div className='space-y-2'>
+                                    <div className='flex items-center justify-between gap-2'>
+                                      <div className='text-xs text-gray-600 dark:text-gray-400'>
+                                        共 {payloads.length} 类 / {totalEntries} 条
+                                        {isEditMode ? '（编辑模式中）' : ''}
+                                      </div>
+                                    </div>
+                                    <div className='flex flex-wrap items-center gap-2'>
+                                      <button
+                                        type='button'
+                                        onClick={handlePublishActions}
+                                        disabled={publishingActions || payloads.length === 0}
+                                        className={clsx(
+                                          'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
+                                          publishingActions || payloads.length === 0
+                                            ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
+                                            : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
+                                        )}
+                                        aria-label='发布本地改动'
+                                      >
+                                        <CheckBadgeIcon size={16} strokeWidth={1.8} />
+                                        发布
+                                      </button>
+                                      <button
+                                        type='button'
+                                        onClick={clearLocalActionHistories}
+                                        disabled={payloads.length === 0}
+                                        className={clsx(
+                                          'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
+                                          payloads.length === 0
+                                            ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
+                                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
+                                        )}
+                                        aria-label='清空本地改动记录'
+                                      >
+                                        <TrashIcon size={16} strokeWidth={1.8} />
+                                        清空
+                                      </button>
+                                    </div>
+                                    {payloads.length === 0 ? (
+                                      <div className='text-xs text-gray-600 dark:text-gray-400'>
+                                        暂无本地改动记录。
+                                      </div>
+                                    ) : (
+                                      <div className='max-h-64 space-y-2 overflow-auto rounded-md bg-gray-50 p-2 text-xs dark:bg-slate-900'>
+                                        {payloads.map((p) => (
+                                          <details key={p.entityType} className='rounded-md'>
+                                            <summary className='cursor-pointer font-medium select-none'>
+                                              {p.entityType}（{p.entries.length}）
+                                            </summary>
+                                            <pre className='mt-2 text-[11px] wrap-break-word whitespace-pre-wrap text-gray-800 dark:text-gray-200'>
+                                              {JSON.stringify(p.entries, null, 2)}
+                                            </pre>
+                                          </details>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })()}
+                            </m.li>
                           )}
-                          onClick={handleSignOut}
-                          disabled={signingOut}
-                        >
-                          {signingOut ? '正在退出…' : '退出登录'}
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                )}
+                        </AnimatePresence>
+                        <li>
+                          <button
+                            type='button'
+                            className='w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                            onClick={() => {
+                              setUserDropdownOpen(false);
+                              setActionInfoOpen(false);
+                              setChangePasswordOpen(true);
+                            }}
+                          >
+                            修改密码
+                          </button>
+                        </li>
+                        {(role == 'Coordinator' || role == 'Reviewer') && (
+                          <li className='cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700'>
+                            <Link href='/admin/' className='block text-gray-800 dark:text-gray-200'>
+                              进入管理面板
+                            </Link>
+                          </li>
+                        )}
+                        {!!signOutError && (
+                          <li className='px-4 py-2 text-red-600 dark:text-red-400'>
+                            {signOutError}
+                          </li>
+                        )}
+                        <li>
+                          <button
+                            type='button'
+                            className={clsx(
+                              'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-gray-800 dark:text-gray-200',
+                              signingOut
+                                ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
+                                : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                            )}
+                            onClick={handleSignOut}
+                            disabled={signingOut}
+                          >
+                            {signingOut ? '正在退出…' : '退出登录'}
+                          </button>
+                        </li>
+                      </ul>
+                    </m.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
         </div>
       </div>
 
-      {changePasswordOpen && <ChangePasswordDialog onClose={() => setChangePasswordOpen(false)} />}
+      <AnimatePresence initial={false}>
+        {changePasswordOpen && (
+          <ChangePasswordDialog onClose={() => setChangePasswordOpen(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

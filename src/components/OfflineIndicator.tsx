@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
 import { useToast } from '@/context/ToastContext';
 
@@ -8,6 +9,7 @@ export const OfflineIndicator: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean | null>(null); // null for SSR
   const wasOfflineRef = useRef(false);
   const { success, warning } = useToast();
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     // Initialize online status on client side only
@@ -52,20 +54,23 @@ export const OfflineIndicator: React.FC = () => {
   // Don't render anything during SSR or initial hydration
   if (isOnline === null) return null;
 
-  if (isOnline) return null;
-
   return (
-    <>
-      {' '}
-      {/* Persistent offline indicator - positioned below navigation bar */}
+    <AnimatePresence initial={false}>
       {!isOnline && (
-        <div className='offline-banner fixed right-0 left-0 z-[9998] bg-gray-600 px-4 py-2 text-sm font-medium text-gray-100'>
+        <m.div
+          key='offline-banner'
+          className='offline-banner fixed right-0 left-0 z-9998 bg-gray-600 px-4 py-2 text-sm font-medium text-gray-100'
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
+        >
           <div className='flex items-center justify-center space-x-2'>
             <div className='h-2 w-2 animate-pulse rounded-full bg-gray-300'></div>
             <span>您正在离线浏览 - 仅显示已缓存的内容</span>
           </div>
-        </div>
+        </m.div>
       )}
-    </>
+    </AnimatePresence>
   );
 };

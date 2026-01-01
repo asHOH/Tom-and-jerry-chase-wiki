@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { AnimatePresence } from 'motion/react';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
@@ -141,9 +142,11 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         </div>
       </div>
 
-      {isEditMode && showLoginDialog && (
-        <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
-      )}
+      <AnimatePresence initial={false}>
+        {isEditMode && showLoginDialog && (
+          <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

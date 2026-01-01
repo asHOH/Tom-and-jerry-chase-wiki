@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { m } from 'motion/react';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
@@ -20,6 +20,7 @@ type AuthStep = 'username' | 'password' | 'register';
 
 const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const router = useRouter();
+  const shouldReduceMotion = useReducedMotion();
   const [step, setStep] = useState<AuthStep>('username');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -336,7 +337,19 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
         </button>
 
         <form onSubmit={handleSubmit}>
-          <div className='mb-4'>{renderStep()}</div>
+          <div className='mb-4'>
+            <AnimatePresence mode='wait' initial={false}>
+              <m.div
+                key={step}
+                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                transition={{ duration: 0.16, ease: 'easeOut' }}
+              >
+                {renderStep()}
+              </m.div>
+            </AnimatePresence>
+          </div>
 
           {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
 

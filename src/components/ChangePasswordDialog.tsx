@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { m, useReducedMotion } from 'motion/react';
 
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { useToast } from '@/context/ToastContext';
@@ -15,6 +16,7 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
   const router = useRouter();
   const { success, error: showError } = useToast();
   const dialogRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -78,7 +80,7 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
   };
 
   return (
-    <div
+    <m.div
       className='fixed inset-0 z-100000 flex items-center justify-center bg-black/50 p-4'
       role='dialog'
       aria-modal='true'
@@ -86,10 +88,20 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0 }}
+      transition={{ duration: 0.16, ease: 'easeOut' }}
     >
-      <div
+      <m.div
         ref={dialogRef}
         className='w-full max-w-md rounded-lg bg-white p-4 shadow-lg dark:bg-slate-800'
+        initial={
+          shouldReduceMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.98 }
+        }
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.98 }}
+        transition={{ duration: 0.18, ease: 'easeOut' }}
       >
         <div className='mb-3 flex items-center justify-between'>
           <h2 className='text-lg font-bold text-gray-900 dark:text-white'>修改密码</h2>
@@ -148,7 +160,7 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
             {isLoading ? '提交中…' : '确认修改'}
           </button>
         </div>
-      </div>
-    </div>
+      </m.div>
+    </m.div>
   );
 }
