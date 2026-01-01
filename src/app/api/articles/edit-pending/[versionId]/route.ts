@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import { articleEditPendingSchema, formatZodError } from '@/lib/validation/schemas';
 
 export async function POST(
   request: Request,
@@ -22,14 +23,14 @@ export async function POST(
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
-  const body = await request.json().catch(() => null);
-  const title = body?.title;
-  const category = body?.category;
-  const content = body?.content;
-
-  if (!title || !category || !content) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  const parsed = articleEditPendingSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Invalid request body', details: formatZodError(parsed.error) },
+      { status: 400 }
+    );
   }
+  const { title, category, content } = parsed.data;
 
   try {
     // Get the article_id from the version.

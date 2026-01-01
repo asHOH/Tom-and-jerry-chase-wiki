@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import { articleSubmitSchema, formatZodError } from '@/lib/validation/schemas';
 
 export async function POST(req: Request) {
   const supabase = await createClient();
@@ -13,11 +14,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { title, category, content, character_id } = await req.json();
-
-  if (!title || !category || !content) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  const parsed = articleSubmitSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Invalid request body', details: formatZodError(parsed.error) },
+      { status: 400 }
+    );
   }
+  const { title, category, content, character_id } = parsed.data;
 
   try {
     // First, create the article and get its ID

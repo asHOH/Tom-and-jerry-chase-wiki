@@ -6,6 +6,7 @@ import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { TablesInsert } from '@/data/database.types';
+import { authRegisterSchema, formatZodError } from '@/lib/validation/schemas';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
@@ -17,11 +18,14 @@ const hashPassword = (password: string, salt: string) => {
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, nickname, password, captchaToken } = await request.json();
-
-    if (!username || typeof username !== 'string' || !nickname || typeof nickname !== 'string') {
-      return NextResponse.json({ error: 'Username and nickname are required' }, { status: 400 });
+    const parsed = authRegisterSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: formatZodError(parsed.error) },
+        { status: 400 }
+      );
     }
+    const { username, nickname, password, captchaToken } = parsed.data;
 
     if (!verifyCaptchaProof(captchaToken, username)) {
       return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
