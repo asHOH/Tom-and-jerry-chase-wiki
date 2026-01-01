@@ -1,34 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMediaQuery as useMediaQueryHook } from 'usehooks-ts';
 
 /**
- * Custom hook for responsive design breakpoints
- * @param query Media query string (e.g., '(max-width: 768px)')
- * @returns Boolean indicating if the media query matches
+ * Wrapper around usehooks-ts media query hook so we keep a single breakpoint helper.
  */
-function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const mediaQuery = window.matchMedia(query);
-
-    const handleChange = () => {
-      setMatches(mediaQuery.matches);
-    };
-
-    // Set initial value
-    handleChange();
-
-    // Listen for changes
-    mediaQuery.addEventListener('change', handleChange);
-
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [query]);
-
-  return matches;
+export function useMediaQuery(query: string): boolean {
+  return useMediaQueryHook(query);
 }
 
 /**
@@ -36,5 +14,5 @@ function useMediaQuery(query: string): boolean {
  * Consistent with Tailwind's md: breakpoint
  */
 export function useMobile(): boolean {
-  return useMediaQuery('(max-width: 768px)');
+  return useMediaQueryHook('(max-width: 768px)');
 }
