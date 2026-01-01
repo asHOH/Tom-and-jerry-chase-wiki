@@ -136,7 +136,9 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
       {message && (
         <div
           className={`mb-4 rounded p-3 ${
-            message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            message.type === 'success'
+              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
+              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
           }`}
         >
           {message.text}
@@ -146,15 +148,15 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
         </div>
       )}
 
-      <div className='mb-6 rounded bg-white p-4 shadow'>
-        <h2 className='mb-3 text-xl font-semibold'>创建新分类</h2>
+      <div className='mb-6 rounded bg-white p-4 shadow dark:bg-slate-800 dark:text-slate-200'>
+        <h2 className='mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100'>创建新分类</h2>
         <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
           <input
             type='text'
             placeholder='分类名称'
             value={newCategory.name}
             onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-            className='flex-1 rounded border p-2'
+            className='flex-1 rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
           />
           <select
             value={newCategory.parent_category_id ?? ''}
@@ -164,7 +166,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 parent_category_id: e.target.value === '' ? undefined : (e.target.value as string),
               })
             }
-            className='rounded border p-2'
+            className='rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
           >
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
@@ -180,7 +182,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 default_visibility: e.target.value as Category['default_visibility'],
               })
             }
-            className='rounded border p-2'
+            className='rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
           >
             <option value='approved'>修改直接通过</option>
             <option value='pending'>修改需要审核</option>
@@ -196,34 +198,42 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
         </div>
       </div>
 
-      <div className='rounded bg-white p-4 shadow'>
+      <div className='rounded bg-white p-4 shadow dark:bg-slate-800 dark:text-slate-200'>
         <div className='mb-3 flex items-center justify-between'>
-          <h2 className='text-xl font-semibold'>现有分类</h2>
-          <div className='text-sm text-gray-600'>
+          <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>现有分类</h2>
+          <div className='text-sm text-gray-600 dark:text-gray-400'>
             {loading ? '加载中...' : `${categories.length} 个分类`}
           </div>
         </div>
 
         <div className='overflow-x-auto'>
-          <table className='min-w-full divide-y divide-gray-200'>
-            <thead className='bg-gray-50'>
+          <table className='min-w-full divide-y divide-gray-200 dark:divide-slate-700'>
+            <thead className='bg-gray-50 dark:bg-slate-900/40'>
               <tr>
-                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>名称</th>
-                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>父分类</th>
-                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>
+                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
+                  名称
+                </th>
+                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
+                  父分类
+                </th>
+                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
                   默认可见性
                 </th>
-                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>操作</th>
+                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
+                  操作
+                </th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-200 bg-white'>
+            <tbody className='divide-y divide-gray-200 bg-white dark:divide-slate-700 dark:bg-slate-800'>
               {categories.map((category) => (
                 <tr key={category.id}>
-                  <td className='px-4 py-3 text-sm text-gray-800'>{category.name}</td>
-                  <td className='px-4 py-3 text-sm text-gray-600'>
+                  <td className='px-4 py-3 text-sm text-gray-800 dark:text-slate-100'>
+                    {category.name}
+                  </td>
+                  <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
                     {parentName(category.parent_category_id)}
                   </td>
-                  <td className='px-4 py-3 text-sm text-gray-600'>
+                  <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
                     {visibilityLabel(category.default_visibility)}
                   </td>
                   <td className='px-4 py-3 text-sm'>
@@ -248,7 +258,10 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
               ))}
               {categories.length === 0 && (
                 <tr>
-                  <td colSpan={4} className='px-4 py-6 text-center text-gray-500'>
+                  <td
+                    colSpan={4}
+                    className='px-4 py-6 text-center text-gray-500 dark:text-gray-400'
+                  >
                     暂无分类
                   </td>
                 </tr>

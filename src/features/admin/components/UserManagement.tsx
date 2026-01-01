@@ -78,7 +78,9 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
       {message && (
         <div
           className={`mb-4 rounded p-3 ${
-            message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            message.type === 'success'
+              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
+              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
           }`}
         >
           {message.text}
@@ -90,13 +92,13 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
 
       {modalOpen && selectedUser && (
         <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black'>
-          <div className='mx-4 w-full max-w-md rounded bg-white p-6 shadow-lg'>
-            <h2 className='mb-4 text-xl font-bold'>编辑用户</h2>
+          <div className='mx-4 w-full max-w-md rounded bg-white p-6 shadow-lg dark:bg-slate-800 dark:text-slate-100'>
+            <h2 className='mb-4 text-xl font-bold text-gray-900 dark:text-gray-100'>编辑用户</h2>
             <label className='mb-2 block'>
               昵称:
               <input
                 type='text'
-                className='mt-1 w-full rounded border border-gray-300 px-2 py-1'
+                className='mt-1 w-full rounded border border-gray-300 bg-white px-2 py-1 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
                 defaultValue={selectedUser.nickname}
                 id='nickname'
               />
@@ -105,7 +107,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
               密码:
               <input
                 type='password'
-                className='mt-1 w-full rounded border border-gray-300 px-2 py-1'
+                className='mt-1 w-full rounded border border-gray-300 bg-white px-2 py-1 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
                 placeholder='留空则不修改密码'
                 id='password'
               />
@@ -132,28 +134,36 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
         </div>
       )}
 
-      <div className='rounded bg-white p-4 shadow'>
+      <div className='rounded bg-white p-4 shadow dark:bg-slate-800 dark:text-slate-200'>
         <div className='mb-4 flex items-center justify-between'>
-          <h2 className='text-xl font-semibold'>用户管理</h2>
-          <div className='text-sm text-gray-600'>{users.length} 个用户</div>
+          <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>用户管理</h2>
+          <div className='text-sm text-gray-600 dark:text-gray-400'>{users.length} 个用户</div>
         </div>
 
         <div className='overflow-x-auto'>
-          <table className='min-w-full divide-y divide-gray-200'>
-            <thead className='bg-gray-50'>
+          <table className='min-w-full divide-y divide-gray-200 dark:divide-slate-700'>
+            <thead className='bg-gray-50 dark:bg-slate-900/40'>
               <tr>
-                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>昵称</th>
-                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>角色</th>
-                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700'>操作</th>
+                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
+                  昵称
+                </th>
+                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
+                  角色
+                </th>
+                <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
+                  操作
+                </th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-200 bg-white'>
+            <tbody className='divide-y divide-gray-200 bg-white dark:divide-slate-700 dark:bg-slate-800'>
               {users.map((user) => (
                 <tr key={user.id}>
-                  <td className='px-4 py-3 text-sm text-gray-800'>{user.nickname}</td>
-                  <td className='px-4 py-3 text-sm text-gray-600'>
+                  <td className='px-4 py-3 text-sm text-gray-800 dark:text-slate-100'>
+                    {user.nickname}
+                  </td>
+                  <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
                     <select
-                      className='rounded border border-gray-300 px-2 py-1'
+                      className='rounded border border-gray-300 bg-white px-2 py-1 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
                       value={user.role}
                       onChange={(e) => {
                         const newRole = e.target.value;
@@ -177,7 +187,10 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={3} className='px-4 py-6 text-center text-gray-500'>
+                  <td
+                    colSpan={3}
+                    className='px-4 py-6 text-center text-gray-500 dark:text-gray-400'
+                  >
                     暂无用户
                   </td>
                 </tr>

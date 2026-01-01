@@ -218,18 +218,18 @@ const AdminPanel = () => {
   };
 
   return (
-    <div className='mx-auto max-w-6xl p-6'>
-      <h1 className='mb-6 text-3xl font-bold'>管理面板</h1>
+    <div className='mx-auto max-w-6xl p-6 dark:text-slate-200'>
+      <h1 className='mb-6 text-3xl font-bold text-gray-900 dark:text-gray-100'>管理面板</h1>
 
       {/* Tab Navigation */}
-      <div className='mb-6 flex border-b border-gray-200'>
+      <div className='mb-6 flex border-b border-gray-200 dark:border-slate-700'>
         {enableUserAccess && (
           <button
             onClick={() => setActiveTab('users')}
             className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === 'users'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-300'
+                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
             用户管理
@@ -239,8 +239,8 @@ const AdminPanel = () => {
           onClick={() => setActiveTab('categories')}
           className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
             activeTab === 'categories'
-              ? 'border-blue-500 text-blue-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+              ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-300'
+              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
           }`}
         >
           分类管理
@@ -250,8 +250,8 @@ const AdminPanel = () => {
             onClick={() => setActiveTab('actions')}
             className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === 'actions'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-300'
+                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
             改动审核
@@ -271,19 +271,21 @@ const AdminPanel = () => {
       {enableActionModeration && activeTab === 'actions' && (
         <div className='space-y-4'>
           <div className='flex items-center justify-between'>
-            <h2 className='text-xl font-semibold'>待审核改动</h2>
-            <div className='text-sm text-gray-500'>共 {pendingActions.length} 条</div>
+            <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>待审核改动</h2>
+            <div className='text-sm text-gray-500 dark:text-gray-400'>
+              共 {pendingActions.length} 条
+            </div>
           </div>
 
-          <div className='flex flex-col gap-3 rounded-md border border-gray-200 bg-white p-4 md:flex-row md:items-center md:justify-between'>
+          <div className='flex flex-col gap-3 rounded-md border border-gray-200 bg-white p-4 md:flex-row md:items-center md:justify-between dark:border-slate-700 dark:bg-slate-800'>
             <div className='flex flex-wrap items-center gap-2'>
-              <label className='text-sm text-gray-600'>状态</label>
+              <label className='text-sm text-gray-600 dark:text-slate-300'>状态</label>
               <select
                 value={actionStatus}
                 onChange={(e) =>
                   setActionStatus(e.target.value as 'all' | 'pending' | 'approved' | 'rejected')
                 }
-                className='rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800'
+                className='rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
               >
                 <option value='pending'>待审核</option>
                 <option value='approved'>已批准</option>
@@ -291,11 +293,11 @@ const AdminPanel = () => {
                 <option value='all'>全部</option>
               </select>
 
-              <label className='text-sm text-gray-600'>实体类型</label>
+              <label className='text-sm text-gray-600 dark:text-slate-300'>实体类型</label>
               <select
                 value={actionEntityType}
                 onChange={(e) => setActionEntityType(e.target.value)}
-                className='rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800'
+                className='rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
               >
                 <option value='all'>全部</option>
                 {uniqueEntityTypes.map((t) => (
@@ -305,15 +307,15 @@ const AdminPanel = () => {
                 ))}
               </select>
 
-              <label className='ml-2 text-sm text-gray-600'>搜索</label>
+              <label className='ml-2 text-sm text-gray-600 dark:text-slate-300'>搜索</label>
               <input
                 value={actionQuery}
                 onChange={(e) => setActionQuery(e.target.value)}
                 placeholder='action_id / 类型 / 提交者'
-                className='w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 md:w-64'
+                className='w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 md:w-64 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
               />
 
-              <div className='text-sm text-gray-500'>
+              <div className='text-sm text-gray-500 dark:text-gray-400'>
                 显示 {filteredActions.length} / {pendingActions.length}
               </div>
             </div>
@@ -357,7 +359,7 @@ const AdminPanel = () => {
           </div>
 
           {pendingActions.length === 0 ? (
-            <div className='rounded-md border border-gray-200 bg-white p-4 text-gray-600'>
+            <div className='rounded-md border border-gray-200 bg-white p-4 text-gray-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'>
               暂无待审核改动
             </div>
           ) : (
@@ -365,19 +367,19 @@ const AdminPanel = () => {
               {filteredActions.map((submission) => (
                 <div
                   key={submission.action_id}
-                  className='rounded-md border border-gray-200 bg-white p-4'
+                  className='rounded-md border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800'
                 >
                   <div className='flex flex-wrap items-center justify-between gap-2'>
-                    <div className='text-sm text-gray-700'>
+                    <div className='text-sm text-gray-700 dark:text-slate-200'>
                       <span className='font-medium'>{submission.entity_type}</span>
-                      <span className='mx-2 text-gray-300'>·</span>
+                      <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
                       <span
                         className={
                           submission.status === 'pending'
-                            ? 'text-orange-700'
+                            ? 'text-orange-700 dark:text-orange-300'
                             : submission.status === 'approved'
-                              ? 'text-green-700'
-                              : 'text-red-700'
+                              ? 'text-green-700 dark:text-green-300'
+                              : 'text-red-700 dark:text-red-300'
                         }
                       >
                         {submission.status === 'pending'
@@ -386,23 +388,23 @@ const AdminPanel = () => {
                             ? '已批准'
                             : '已拒绝'}
                       </span>
-                      <span className='mx-2 text-gray-300'>·</span>
+                      <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
                       <span>
                         {submission.created_by_nickname
                           ? `由 ${submission.created_by_nickname} 提交`
                           : '匿名提交'}
                       </span>
-                      <span className='mx-2 text-gray-300'>·</span>
+                      <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
                       <span>{new Date(submission.created_at).toLocaleString()}</span>
                       {submission.status !== 'pending' && submission.reviewed_at && (
                         <>
-                          <span className='mx-2 text-gray-300'>·</span>
+                          <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
                           <span>
                             {submission.reviewed_by_nickname
                               ? `审核：${submission.reviewed_by_nickname}`
                               : '已审核'}
                           </span>
-                          <span className='mx-2 text-gray-300'>·</span>
+                          <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
                           <span>{new Date(submission.reviewed_at).toLocaleString()}</span>
                         </>
                       )}
@@ -469,7 +471,7 @@ const AdminPanel = () => {
                   {expandedActionIds.has(submission.action_id) && (
                     <div className='mt-3 space-y-2'>
                       <div className='flex flex-wrap items-center justify-between gap-2'>
-                        <div className='text-xs text-gray-500'>
+                        <div className='text-xs text-gray-500 dark:text-slate-400'>
                           action_id: {submission.action_id}
                         </div>
                         <button
@@ -491,18 +493,18 @@ const AdminPanel = () => {
                       </div>
 
                       {submission.status === 'rejected' && submission.rejection_reason && (
-                        <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800'>
+                        <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-900/30 dark:text-red-200'>
                           拒绝原因：{submission.rejection_reason}
                         </div>
                       )}
 
                       {submission.status === 'approved' && (
-                        <div className='rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700'>
+                        <div className='rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-200'>
                           是否已公开：{submission.is_public ? '是' : '否'}
                         </div>
                       )}
 
-                      <pre className='max-h-64 overflow-auto rounded bg-gray-50 p-3 text-xs text-gray-800'>
+                      <pre className='max-h-64 overflow-auto rounded bg-gray-50 p-3 text-xs text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
                         {JSON.stringify(submission.entry, null, 2)}
                       </pre>
                     </div>
