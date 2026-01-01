@@ -1,6 +1,8 @@
 import { getUntracked } from 'proxy-compare';
 import type { INTERNAL_Op } from 'valtio';
 
+import { actionHistorySchema } from '@/lib/validation/schemas';
+
 export type JsonPrimitive = string | number | boolean | null;
 
 export type DiffOp = 'set' | 'add' | 'delete';
@@ -288,8 +290,9 @@ export function readActionHistory(storageKey: string): ActionHistoryEntry[] {
   try {
     const raw = window.localStorage.getItem(storageKey);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as unknown;
-    return Array.isArray(parsed) ? (parsed as ActionHistoryEntry[]) : [];
+    const parsed = actionHistorySchema.safeParse(JSON.parse(raw));
+    if (!parsed.success) return [];
+    return parsed.data as ActionHistoryEntry[];
   } catch {
     return [];
   }

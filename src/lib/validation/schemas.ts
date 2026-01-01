@@ -73,6 +73,21 @@ export const chatMessagesSchema = z.object({
   messages: z.array(contentSchema).min(1),
 });
 
+export const entitySnapshotSchema = z.record(z.string(), z.unknown());
+
+const actionSchema = z.object({
+  op: z.enum(['set', 'add', 'delete']),
+  path: trimmedString,
+  oldValue: z.any(),
+  newValue: z.any(),
+});
+
+export const actionHistoryEntrySchema: z.ZodType<unknown> = z.lazy(() =>
+  z.union([actionSchema, z.array(actionSchema)])
+);
+
+export const actionHistorySchema = z.array(actionHistoryEntrySchema);
+
 const intFromString = (fallback: number, max: number) =>
   z
     .string()

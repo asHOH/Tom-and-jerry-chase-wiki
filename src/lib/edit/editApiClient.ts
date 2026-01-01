@@ -1,3 +1,5 @@
+import { entitySnapshotSchema } from '@/lib/validation/schemas';
+
 /**
  * API client abstraction for edit operations.
  * Provides a unified interface for editing any entity type.
@@ -127,11 +129,20 @@ export class EditApiClient {
   ): Promise<T | undefined> {
     try {
       const data = localStorage.getItem(entityType);
-      return data ? JSON.parse(data) : undefined;
+      if (!data) return undefined;
+
+      const parsed = entitySnapshotSchema.safeParse(JSON.parse(data));
+      if (!parsed.success) {
+        throw new Error(
+          `Invalid ${entityType} data in localStorage: ${parsed.error.issues
+            .map((issue) => issue.message)
+            .join(', ')}`
+        );
+      }
+      return parsed.data as T;
     } catch (error) {
-      throw new Error(
-        `Failed to load ${entityType} from localStorage: ${error instanceof Error ? error.message : String(error)}`
-      );
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to load ${entityType} from localStorage: ${message}`);
     }
   }
 
