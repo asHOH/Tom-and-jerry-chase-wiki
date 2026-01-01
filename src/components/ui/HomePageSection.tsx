@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useIntersectionObserver } from 'usehooks-ts';
 
 import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
@@ -20,8 +21,19 @@ interface HomePageSectionProps {
 }
 
 const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => {
+  const [sectionRef, isVisible] = useIntersectionObserver({
+    threshold: 0.1,
+    freezeOnceVisible: true,
+    rootMargin: '0px 0px -10% 0px',
+  });
+
   return (
-    <div className='mt-16 flex flex-col items-center px-2 md:px-4'>
+    <div
+      ref={sectionRef}
+      className={`mt-16 flex flex-col items-center px-2 transition-all duration-300 ease-out md:px-4 ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
+      }`}
+    >
       {title !== undefined && (
         <h2 className='mb-4 py-3 text-3xl font-bold text-gray-800 dark:text-white'>{title}</h2>
       )}
