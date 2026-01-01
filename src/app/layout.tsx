@@ -28,7 +28,12 @@ export const metadata: Metadata = defaultMetadata;
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const initialUser = await getUserData();
   return (
-    <html lang='zh-CN' className='bg-gray-100 dark:bg-slate-900' data-scroll-behavior='smooth'>
+    <html
+      lang='zh-CN'
+      className='bg-gray-100 dark:bg-slate-900'
+      data-scroll-behavior='smooth'
+      suppressHydrationWarning
+    >
       <head>
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
