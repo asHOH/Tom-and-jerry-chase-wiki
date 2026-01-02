@@ -18,7 +18,7 @@ if (process.env.ANALYZE === 'true') {
 
 const withPwa = withPWA({
   dest: 'public',
-  register: true,
+  register: false,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
   // Exclude problematic build files from precaching
