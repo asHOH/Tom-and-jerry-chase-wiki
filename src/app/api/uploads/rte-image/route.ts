@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { extname } from 'node:path';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { checkRateLimit } from '@/lib/rateLimit';
 import {
   normalizeHostedImageUrl,
   RTE_IMAGE_ALLOWED_MIME_TYPES,
@@ -71,6 +72,11 @@ async function collectFiles(
 }
 
 export async function GET(request: NextRequest) {
+  const rl = await checkRateLimit(request, 'read', 'uploads-rte-image-list');
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -157,6 +163,11 @@ function resolveExtension(uploadedFile: File | Blob): string {
 }
 
 export async function POST(request: Request) {
+  const rl = await checkRateLimit(request, 'write', 'uploads-rte-image-upload');
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

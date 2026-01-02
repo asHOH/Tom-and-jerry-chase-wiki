@@ -2,6 +2,7 @@ import { pbkdf2Sync, randomBytes, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { checkPasswordStrength } from '@/lib/passwordUtils';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const hashPassword = (password: string, salt: string) =>
@@ -16,6 +17,14 @@ function stringTimingSafeEqual(a: string, b: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = await checkRateLimit(request, 'auth', 'auth-change-password');
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers: rl.headers }
+      );
+    }
+
     type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
     const { createServerClient }: { createServerClient: CreateServerClient } =
       await import('@supabase/ssr/dist/module/createServerClient.js');

@@ -137,6 +137,7 @@ npm run start
    - 在构建阶段注入 `COMMIT_SHA`（或 `DEPLOY_COMMIT_SHA`）以保证 `/api/version` 返回准确版本信息。
    - `DEPLOYMENT_ENVIRONMENT`（可选值 `development`/`preview`/`production`）标记运行环境；如不设置将回退为 `NODE_ENV`。
    - 默认不加载 Vercel Analytics/Speed Insights。若需使用，将 `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` 设为 `1`。
+   - （可选，推荐）启用 API 防滥用限流：配置 `UPSTASH_REDIS_REST_URL` 与 `UPSTASH_REDIS_REST_TOKEN`（用于 `@upstash/redis` + `@upstash/ratelimit`）。未配置时将跳过限流。
 
 2. **安全头与缓存策略**
    - `next.config.mjs` 已在运行时发送核心安全头（CSP、HSTS 等），请在目标平台（如 Netlify、Cloudflare、Nginx）继续配置静态资源头信息，保持与 `vercel.json` 一致的缓存策略。

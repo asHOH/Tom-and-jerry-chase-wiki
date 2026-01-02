@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { authRegisterSchema, formatZodError } from '@/lib/validation/schemas';
 import { TablesInsert } from '@/data/database.types';
@@ -18,6 +19,14 @@ const hashPassword = (password: string, salt: string) => {
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = await checkRateLimit(request, 'auth', 'auth-register');
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers: rl.headers }
+      );
+    }
+
     const parsed = authRegisterSchema.safeParse(await request.json());
     if (!parsed.success) {
       return NextResponse.json(

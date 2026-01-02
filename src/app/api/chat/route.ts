@@ -7,6 +7,7 @@ import {
   HarmCategory,
 } from '@google/genai';
 
+import { checkRateLimit } from '@/lib/rateLimit';
 import { chatMessagesSchema, formatZodError } from '@/lib/validation/schemas';
 import { historyData } from '@/data/history';
 import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
@@ -509,6 +510,17 @@ const executeCodeDeclaration: FunctionDeclaration = {
 // Main POST handler for the chat API - returns function calls for client to execute
 export async function POST(req: NextRequest) {
   try {
+    const rl = await checkRateLimit(req, 'expensive', 'chat');
+    if (!rl.allowed) {
+      return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          ...rl.headers,
+        },
+      });
+    }
+
     const parsed = chatMessagesSchema.safeParse(await req.json());
     if (!parsed.success) {
       return new NextResponse(

@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { CACHE_TAGS } from '@/lib/cacheTags';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 
 export async function GET(request: NextRequest) {
+  const rl = await checkRateLimit(request, 'read', 'articles-list');
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
+  }
+
   const { searchParams } = new URL(request.url);
   const page = parseInt(searchParams.get('page') || '1');
   const limit = parseInt(searchParams.get('limit') || '18');

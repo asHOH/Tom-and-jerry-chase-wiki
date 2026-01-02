@@ -2,6 +2,7 @@ import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const hashUsername = (username: string) => {
@@ -24,6 +25,14 @@ function stringTimingSafeEqual(a: string, b: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = await checkRateLimit(request, 'auth', 'auth-login');
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers: rl.headers }
+      );
+    }
+
     const { username, password, captchaToken } = await request.json();
 
     if (!username || typeof username !== 'string') {

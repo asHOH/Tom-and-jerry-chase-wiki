@@ -2,6 +2,7 @@ import { createHash } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { generateCaptchaProof, verifyCaptchaToken } from '@/lib/captchaUtils';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 // Helper function to hash the username
@@ -12,6 +13,14 @@ const hashUsername = (username: string) => {
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = await checkRateLimit(request, 'auth', 'auth-check-username');
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers: rl.headers }
+      );
+    }
+
     const { username, token } = await request.json();
 
     if (!username || typeof username !== 'string') {

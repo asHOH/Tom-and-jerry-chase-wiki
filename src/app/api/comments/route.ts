@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { shouldAllowComment } from '../../../lib/comments/moderation';
+import { checkRateLimit } from '../../../lib/rateLimit';
 import { supabaseAdmin } from '../../../lib/supabase/admin';
 import { createClient } from '../../../lib/supabase/server';
 import {
@@ -50,6 +51,11 @@ async function getNicknamesByUserIds(userIds: string[]): Promise<Map<string, str
 export async function GET(req: Request) {
   if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json({ comments: [] as ApiComment[] });
+  }
+
+  const rl = await checkRateLimit(req, 'read', 'comments-get');
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
   }
 
   const url = new URL(req.url);
@@ -119,6 +125,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Comments are disabled' }, { status: 503 });
   }
 
+  const rl = await checkRateLimit(req, 'write', 'comments-post');
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -155,7 +166,7 @@ export async function POST(req: Request) {
       p_scope: scope,
       p_target_id: targetId,
       p_content: content,
-      p_parent_id: parentId ?? null,
+      ...(parentId ? { p_parent_id: parentId } : {}),
     });
 
     if (rpcError || !newId) {

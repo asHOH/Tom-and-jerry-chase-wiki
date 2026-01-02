@@ -2,11 +2,17 @@ import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 import { CACHE_TAGS } from '@/lib/cacheTags';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { articleSubmitSchema, formatZodError } from '@/lib/validation/schemas';
 
 export async function POST(req: Request) {
+  const rl = await checkRateLimit(req, 'write', 'articles-submit');
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

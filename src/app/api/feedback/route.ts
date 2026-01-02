@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { feedbackSchema, formatZodError } from '@/lib/validation/schemas';
 
@@ -14,6 +15,14 @@ interface FeedbackData {
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = await checkRateLimit(request, 'expensive', 'feedback');
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers: rl.headers }
+      );
+    }
+
     const parsed = feedbackSchema.safeParse(await request.json());
     if (!parsed.success) {
       return NextResponse.json(
