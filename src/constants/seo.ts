@@ -3,7 +3,7 @@ import { WebSite, WithContext } from 'schema-dts';
 
 import { DISCLAIMER_TEXT } from '@/constants';
 
-const SITE_NAME = '猫和老鼠手游wiki';
+export const SITE_NAME = '猫和老鼠手游wiki';
 export const SITE_SHORT_NAME = '猫鼠wiki';
 const SITE_ALTERNATE_NAME = [
   SITE_SHORT_NAME,
@@ -12,7 +12,7 @@ const SITE_ALTERNATE_NAME = [
   'Tom and Jerry Chase Wiki',
   'tjwiki.com',
 ];
-const SITE_URL = 'https://tjwiki.com';
+export const SITE_URL = 'https://tjwiki.com';
 const SITE_LANG = 'zh-CN';
 const SITE_LOCALE = 'zh_CN';
 const DEFAULT_IMAGE = '/icon.png';

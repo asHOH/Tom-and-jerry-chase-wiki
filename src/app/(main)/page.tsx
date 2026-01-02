@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { generatePageMetadata } from '@/lib/metadataUtils';
+import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { getSiteJsonLd } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 
@@ -12,7 +12,8 @@ export const dynamic = 'force-static';
 export const metadata: Metadata = generatePageMetadata({
   title: '猫和老鼠手游wiki',
   description: DESCRIPTION,
-  canonicalUrl: 'https://tjwiki.com/',
+  canonicalUrl: getCanonicalUrl('/'),
+  absoluteTitle: true,
 });
 
 export default function Home() {
