@@ -63,7 +63,7 @@ export async function generateMetadata({
   const canonicalUrl = `https://tjwiki.com/articles/${id}`;
 
   return generateArticleMetadata({
-    title: `${article.title} - 猫鼠wiki`,
+    title: article.title,
     description: description,
     keywords: ['文章', article.title],
     canonicalUrl,

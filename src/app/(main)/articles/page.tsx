@@ -9,7 +9,7 @@ export const revalidate = 60;
 const DESCRIPTION = '浏览其他爱好者的记录、思考和发现';
 
 export const metadata: Metadata = generatePageMetadata({
-  title: '文章列表 - 猫鼠wiki',
+  title: '文章列表',
   description: DESCRIPTION,
   keywords: ['文章', '攻略', '猫和老鼠', '手游'],
   canonicalUrl: 'https://tjwiki.com/articles',

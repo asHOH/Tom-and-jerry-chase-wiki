@@ -16,17 +16,17 @@ export function generatePageMetadata({
   keywords = [],
   canonicalUrl,
 }: PageMetadata): Metadata {
-  const fullTitle = title.includes(SITE_SHORT_NAME) ? title : `${title}`;
+  const cleanTitle = title.replace(` - ${SITE_SHORT_NAME}`, '');
   const mergedKeywords = uniq([...(keywords || []), ...DEFAULT_KEYWORDS]);
   const metadata: Metadata = {
-    title: fullTitle,
+    title: cleanTitle,
     description,
     keywords: mergedKeywords,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: fullTitle,
+      title: title.includes(SITE_SHORT_NAME) ? title : `${title} - ${SITE_SHORT_NAME}`,
       description,
       type: 'website',
     },

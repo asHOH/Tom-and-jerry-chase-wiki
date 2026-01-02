@@ -6,7 +6,7 @@ import NewArticleClient from './NewArticleClient';
 
 export const metadata: Metadata = {
   ...generatePageMetadata({
-    title: '创建新文章 - 猫鼠wiki',
+    title: '创建新文章',
     description: '创建新的猫和老鼠手游文章',
     keywords: ['新文章', '创建', '猫和老鼠', '手游'],
     canonicalUrl: 'https://tjwiki.com/articles/new',
