@@ -18,6 +18,7 @@ const PROFILE_CONFIG: Record<RateLimitProfile, ProfileConfig> = {
 };
 
 const ratelimitSingletons = new Map<RateLimitProfile, Ratelimit>();
+const cache = new Map();
 
 function getRatelimit(profile: RateLimitProfile): Ratelimit | null {
   const redis = getUpstashRedis();
@@ -35,7 +36,9 @@ function getRatelimit(profile: RateLimitProfile): Ratelimit | null {
     redis,
     limiter: Ratelimit.slidingWindow(config.limit, config.window),
     analytics: true,
+    enableProtection: true,
     prefix: 'tjcw:ratelimit',
+    ephemeralCache: cache,
   });
 
   ratelimitSingletons.set(profile, instance);
