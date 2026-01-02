@@ -366,23 +366,21 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           ))}
           {!!overflowTabs.length && (
             <div className='relative'>
-              <Tooltip content='更多分类' className='border-none'>
-                <button
-                  type='button'
-                  aria-label='更多分类'
-                  className={clsx(
-                    getButtonClassName(false, overflowOpen),
-                    tabMinWidthClass,
-                    'px-2 md:px-2.5 lg:px-3.5'
-                  )}
-                  onClick={() => {
-                    setOverflowOpen((prev) => !prev);
-                    setUserDropdownOpen(false);
-                  }}
-                >
-                  ⋮
-                </button>
-              </Tooltip>
+              <button
+                type='button'
+                aria-label='更多分类'
+                className={clsx(
+                  getButtonClassName(false, overflowOpen),
+                  tabMinWidthClass,
+                  'px-2 md:px-2.5 lg:px-3.5'
+                )}
+                onClick={() => {
+                  setOverflowOpen((prev) => !prev);
+                  setUserDropdownOpen(false);
+                }}
+              >
+                ⋮
+              </button>
               <AnimatePresence initial={false}>
                 {overflowOpen && (
                   <m.div
