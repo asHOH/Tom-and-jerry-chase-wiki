@@ -30,6 +30,30 @@ export const articleEditPendingSchema = z.object({
   content: trimmedString,
 });
 
+export const commentsListQuerySchema = z.object({
+  scope: z.enum(['articles']),
+  targetId: z.string().trim().uuid(),
+  limit: z
+    .string()
+    .trim()
+    .transform((val) => Number.parseInt(val, 10))
+    .pipe(z.number().int().min(1).max(50))
+    .catch(50)
+    .optional(),
+});
+
+export const createCommentSchema = z.object({
+  scope: z.enum(['articles']),
+  targetId: z.string().trim().uuid(),
+  parentId: z
+    .string()
+    .trim()
+    .uuid()
+    .optional()
+    .transform((value) => (value && value.length > 0 ? value : undefined)),
+  content: z.string().trim().min(1).max(2000),
+});
+
 export const feedbackSchema = z.object({
   type: z.enum(['suggestion', 'bug', 'data', 'other']).default('other'),
   content: trimmedString,

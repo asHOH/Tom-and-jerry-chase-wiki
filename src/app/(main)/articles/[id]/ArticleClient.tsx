@@ -10,6 +10,7 @@ import { toChineseNumeral } from '@/lib/textUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
+import CommentsSection from '@/components/comments/CommentsSection';
 import {
   ClockIcon,
   EyeIcon,
@@ -562,6 +563,8 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
             `}</style>
             <RichTextDisplay content={article.latest_version?.content} />
           </div>
+
+          <CommentsSection scope='articles' targetId={article.id} />
 
           {/* Footer Actions */}
           <div className='mt-8 text-center'>
