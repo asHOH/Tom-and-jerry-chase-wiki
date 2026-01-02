@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { CACHE_TAGS } from '@/lib/cacheTags';
+import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { supabaseServerPublic } from '@/lib/supabase/public';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   void request;
@@ -10,48 +13,72 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json({ error: 'Missing article ID' }, { status: 400 });
   }
 
+  const supabase =
+    (supabaseAdmin as unknown as typeof supabaseAdmin | undefined) ??
+    (supabaseServerPublic as unknown as typeof supabaseServerPublic | undefined);
+
+  if (!supabase) {
+    return NextResponse.json({ error: 'Articles disabled' }, { status: 404 });
+  }
+
   try {
-    // First, verify the article exists
-    const { data: article, error: articleError } = await supabaseAdmin
-      .from('articles')
-      .select('id, title')
-      .eq('id', id)
-      .single();
+    const response = await cached(
+      ['api', 'articles', id, 'history'],
+      async () => {
+        // First, verify the article exists
+        const { data: article, error: articleError } = await supabase
+          .from('articles')
+          .select('id, title, categories(name)')
+          .eq('id', id)
+          .single();
 
-    if (articleError) {
-      console.error('Error fetching article:', articleError);
-      return NextResponse.json({ error: 'Article not found' }, { status: 404 });
-    }
+        if (articleError || !article) {
+          console.error('Error fetching article:', articleError);
+          return { error: 'Article not found' } as const;
+        }
 
-    // Get all approved versions using the public view (RLS will filter)
-    const { data: versions, error: versionsError } = await supabaseAdmin
-      .from('article_versions_public_view')
-      .select(
-        `
-        id,
-        content,
-        created_at,
-        editor_id,
-        users(nickname)
-      `
-      )
-      .eq('article_id', id)
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false });
+        // Get all approved versions using the public view
+        const { data: versions, error: versionsError } = await supabase
+          .from('article_versions_public_view')
+          .select(
+            `
+              id,
+              content,
+              created_at,
+              editor_id,
+              status,
+              users:users_public_view!editor_id(nickname)
+            `
+          )
+          .eq('article_id', id)
+          .eq('status', 'approved')
+          .order('created_at', { ascending: false });
 
-    if (versionsError) {
-      console.error('Error fetching versions:', versionsError);
-      return NextResponse.json({ error: 'Failed to fetch article history' }, { status: 500 });
-    }
+        if (versionsError) {
+          console.error('Error fetching versions:', versionsError);
+          return { error: 'Failed to fetch article history' } as const;
+        }
 
-    const response = {
-      article: {
-        id: article.id,
-        title: article.title,
+        return {
+          article: {
+            id: article.id,
+            title: article.title,
+            categories: (article as unknown as { categories?: { name: string } }).categories,
+          },
+          versions: versions || [],
+          total_count: versions?.length || 0,
+        };
       },
-      versions: versions || [],
-      total_count: versions?.length || 0,
-    };
+      {
+        revalidate: 300,
+        tags: [CACHE_TAGS.article(id), CACHE_TAGS.articleVersions(id)],
+      }
+    );
+
+    if ('error' in response) {
+      const status = response.error === 'Article not found' ? 404 : 500;
+      return NextResponse.json(response, { status });
+    }
 
     return NextResponse.json(response, { status: 200 });
   } catch (err) {

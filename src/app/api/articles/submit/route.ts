@@ -1,5 +1,7 @@
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
+import { CACHE_TAGS } from '@/lib/cacheTags';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { articleSubmitSchema, formatZodError } from '@/lib/validation/schemas';
@@ -57,6 +59,12 @@ export async function POST(req: Request) {
       await supabaseAdmin.from('articles').delete().eq('id', newArticleId);
       return NextResponse.json({ error: 'Failed to submit article version' }, { status: 500 });
     }
+
+    // Mark lists and the new article as stale (SWR).
+    revalidateTag(CACHE_TAGS.articles, 'max');
+    revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
+    revalidateTag(CACHE_TAGS.article(newArticleId), 'max');
+    revalidateTag(CACHE_TAGS.articleVersions(newArticleId), 'max');
 
     return NextResponse.json({
       message: 'Article submitted successfully',

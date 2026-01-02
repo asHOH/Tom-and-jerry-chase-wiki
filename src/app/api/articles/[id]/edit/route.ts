@@ -1,5 +1,7 @@
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
+import { CACHE_TAGS } from '@/lib/cacheTags';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
@@ -54,6 +56,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       console.error('Supabase RPC error:', error);
       return NextResponse.json({ error: 'Failed to update article' }, { status: 500 });
     }
+
+    revalidateTag(CACHE_TAGS.article(id), 'max');
+    revalidateTag(CACHE_TAGS.articleVersions(id), 'max');
+    revalidateTag(CACHE_TAGS.articles, 'max');
+    revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
 
     return NextResponse.json({ message: 'Article updated successfully', data }, { status: 200 });
   } catch (err) {

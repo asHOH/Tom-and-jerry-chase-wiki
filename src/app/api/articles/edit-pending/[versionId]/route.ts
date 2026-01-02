@@ -1,5 +1,7 @@
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
+import { CACHE_TAGS } from '@/lib/cacheTags';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { articleEditPendingSchema, formatZodError } from '@/lib/validation/schemas';
@@ -78,6 +80,11 @@ export async function POST(
       }
       return NextResponse.json({ error: 'Failed to update pending article' }, { status: 500 });
     }
+
+    // Keep public caches reasonably fresh if/when this pending version becomes approved later.
+    revalidateTag(CACHE_TAGS.article(version.article_id), 'max');
+    revalidateTag(CACHE_TAGS.articleVersions(version.article_id), 'max');
+    revalidateTag(CACHE_TAGS.articles, 'max');
 
     return NextResponse.json({ message: 'Pending article updated successfully' }, { status: 200 });
   } catch (err) {
