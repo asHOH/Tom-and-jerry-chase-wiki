@@ -87,15 +87,15 @@ export async function POST(
 
       const articleId = (versionRow as { article_id?: string | null } | null)?.article_id ?? null;
       if (articleId) {
-        revalidateTag(CACHE_TAGS.article(articleId), { expire: 0 });
-        revalidateTag(CACHE_TAGS.articleVersions(articleId), { expire: 0 });
+        revalidateTag(CACHE_TAGS.article(articleId), 'max');
+        revalidateTag(CACHE_TAGS.articleVersions(articleId), 'max');
       }
     } catch (e) {
       console.error('Revalidation lookup error:', e);
     }
 
-    revalidateTag(CACHE_TAGS.articles, { expire: 0 });
-    revalidateTag(CACHE_TAGS.sitemapArticles, { expire: 0 });
+    revalidateTag(CACHE_TAGS.articles, 'max');
+    revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
 
     return NextResponse.json({
       message: `Article version successfully ${action}${action === 'approve' ? 'd' : action === 'reject' ? 'ed' : 'd'}`,

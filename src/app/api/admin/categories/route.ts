@@ -35,8 +35,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to create category' }, { status: 500 });
   }
 
-  revalidateTag(CACHE_TAGS.categories, { expire: 0 });
-  revalidateTag(CACHE_TAGS.articles, { expire: 0 });
+  revalidateTag(CACHE_TAGS.categories, 'max');
+  revalidateTag(CACHE_TAGS.articles, 'max');
   return NextResponse.json({ ok: true });
 }
 
@@ -60,8 +60,8 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to update category' }, { status: 500 });
   }
 
-  revalidateTag(CACHE_TAGS.categories, { expire: 0 });
-  revalidateTag(CACHE_TAGS.articles, { expire: 0 });
+  revalidateTag(CACHE_TAGS.categories, 'max');
+  revalidateTag(CACHE_TAGS.articles, 'max');
   return NextResponse.json({ ok: true });
 }
 
@@ -80,7 +80,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to delete category' }, { status: 500 });
   }
 
-  revalidateTag(CACHE_TAGS.categories, { expire: 0 });
-  revalidateTag(CACHE_TAGS.articles, { expire: 0 });
+  revalidateTag(CACHE_TAGS.categories, 'max');
+  revalidateTag(CACHE_TAGS.articles, 'max');
   return NextResponse.json({ ok: true });
 }
