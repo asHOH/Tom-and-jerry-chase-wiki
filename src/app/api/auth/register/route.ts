@@ -5,8 +5,8 @@ import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { TablesInsert } from '@/data/database.types';
 import { authRegisterSchema, formatZodError } from '@/lib/validation/schemas';
+import { TablesInsert } from '@/data/database.types';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
