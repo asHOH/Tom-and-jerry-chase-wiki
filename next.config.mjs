@@ -1,5 +1,5 @@
 import createMDX from '@next/mdx';
-import withPWA from 'next-pwa';
+import withPWAInit from '@ducanh2912/next-pwa';
 
 import { buildCspHeader } from './csp.config.mjs';
 
@@ -16,7 +16,7 @@ if (process.env.ANALYZE === 'true') {
   }
 }
 
-const withPwa = withPWA({
+const withPwa = withPWAInit({
   dest: 'public',
   register: false,
   skipWaiting: true,

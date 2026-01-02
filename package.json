@@ -63,6 +63,7 @@
     "npm": ">=10.0.0"
   },
   "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@google/genai": "^1.31.0",
     "@hcaptcha/react-hcaptcha": "^1.17.2",
     "@marsidev/react-turnstile": "^1.4.1",
@@ -96,7 +97,6 @@
     "lodash-es": "^4.17.22",
     "motion": "^12.23.26",
     "next": "^16.1.1",
-    "next-pwa": "^5.6.0",
     "next-themes": "^0.3.0",
     "nextjs-toploader": "^3.9.17",
     "pinyin-pro": "^3.27.0",
