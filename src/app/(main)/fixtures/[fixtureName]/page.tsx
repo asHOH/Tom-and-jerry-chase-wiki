@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
 import { fixtures } from '@/data';
 
@@ -19,7 +19,7 @@ function generateStructuredData(fixtureName: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${fixture.name} - 猫鼠wiki`,
+    headline: fixture.name,
     description: desc,
     author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
     publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
@@ -48,7 +48,7 @@ export async function generateMetadata({
     title: fixture.name,
     description: desc,
     keywords: [fixture.name, '道具'],
-    canonicalUrl: `https://tjwiki.com/fixtures/${encodeURIComponent(fixtureName)}`,
+    canonicalUrl: getCanonicalUrl(`/fixtures/${encodeURIComponent(fixtureName)}`),
     imageUrl: fixture.imageUrl,
   });
 }

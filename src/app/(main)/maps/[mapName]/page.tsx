@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
 import { maps } from '@/data';
 
@@ -19,7 +19,7 @@ function generateStructuredData(mapName: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${map.name} - 猫鼠wiki`,
+    headline: map.name,
     description: desc,
     author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
     publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
@@ -48,7 +48,7 @@ export async function generateMetadata({
     title: map.name,
     description: desc,
     keywords: [map.name, '地图'],
-    canonicalUrl: `https://tjwiki.com/maps/${encodeURIComponent(mapName)}`,
+    canonicalUrl: getCanonicalUrl(`/maps/${encodeURIComponent(mapName)}`),
     imageUrl: map.imageUrl,
   });
 }

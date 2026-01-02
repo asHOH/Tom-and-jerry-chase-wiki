@@ -1,18 +1,16 @@
 import { Metadata } from 'next';
 
-import { generatePageMetadata } from '@/lib/metadataUtils';
+import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 
 import NewArticleClient from './NewArticleClient';
 
-export const metadata: Metadata = {
-  ...generatePageMetadata({
-    title: '创建新文章',
-    description: '创建新的猫和老鼠手游文章',
-    keywords: ['新文章', '创建', '猫和老鼠', '手游'],
-    canonicalUrl: 'https://tjwiki.com/articles/new',
-  }),
+export const metadata: Metadata = generatePageMetadata({
+  title: '创建新文章',
+  description: '创建新的猫和老鼠手游文章',
+  keywords: ['新文章', '创建', '猫和老鼠', '手游'],
+  canonicalUrl: getCanonicalUrl('/articles/new'),
   robots: { index: false },
-};
+});
 
 export default function NewArticlePage() {
   return <NewArticleClient />;

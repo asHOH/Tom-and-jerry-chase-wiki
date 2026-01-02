@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
 import { getApprovedArticleVersion, getArticleBasicInfo } from '@/lib/articles/serverQueries';
-import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import StructuredData from '@/components/StructuredData';
 
@@ -60,7 +60,7 @@ export async function generateMetadata({
   const latestVersion = await getApprovedArticleVersion({ articleId: id });
   const description = stripHtml(latestVersion?.content ?? null).substring(0, 150) || article.title;
 
-  const canonicalUrl = `https://tjwiki.com/articles/${id}`;
+  const canonicalUrl = getCanonicalUrl(`/articles/${id}`);
 
   return generateArticleMetadata({
     title: article.title,
@@ -133,7 +133,7 @@ export default async function ArticlePage({
           description:
             stripHtml(response.article.latest_version?.content ?? null).substring(0, 150) ||
             response.article.title,
-          canonicalUrl: `https://tjwiki.com/articles/${id}`,
+          canonicalUrl: getCanonicalUrl(`/articles/${id}`),
           dateModified: response.article.latest_version?.created_at ?? response.article.created_at,
           datePublished: response.article.created_at,
         })}

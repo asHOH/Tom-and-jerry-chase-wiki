@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 import StructuredData from '@/components/StructuredData';
 import { itemGroups } from '@/data';
@@ -20,7 +20,7 @@ function generateStructuredData(itemGroupName: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${itemGroup.name} - 猫鼠wiki`,
+    headline: itemGroup.name,
     description: desc,
     author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
     publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
@@ -49,7 +49,7 @@ export async function generateMetadata({
     title: itemGroup.name,
     description: desc,
     keywords: [itemGroup.name, '组合'],
-    canonicalUrl: `https://tjwiki.com/itemGroups/${encodeURIComponent(itemGroupName)}`,
+    canonicalUrl: getCanonicalUrl(`/itemGroups/${encodeURIComponent(itemGroupName)}`),
     imageUrl: getItemGroupImageUrl(itemGroup),
   });
 }

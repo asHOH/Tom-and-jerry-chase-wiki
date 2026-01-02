@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
-import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import StructuredData from '@/components/StructuredData';
 import { entities } from '@/data';
 
@@ -21,7 +21,7 @@ function generateStructuredData(entityName: string): WithContext<Article> {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${entity.name} - 猫鼠wiki`,
+    headline: entity.name,
     description: desc,
     author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
     publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
@@ -50,7 +50,7 @@ export async function generateMetadata({
     title: entity.name,
     description: desc,
     keywords: [entity.name, '衍生物'],
-    canonicalUrl: `https://tjwiki.com/entities/${encodeURIComponent(entityName)}`,
+    canonicalUrl: getCanonicalUrl(`/entities/${encodeURIComponent(entityName)}`),
     imageUrl: entity.imageUrl,
   });
 }

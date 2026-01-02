@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
 import { GameDataManager } from '@/lib/dataManager';
-import { generatePageMetadata } from '@/lib/metadataUtils';
+import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { getTutorialPage } from '@/features/articles/utils/docs';
 import StructuredData from '@/components/StructuredData';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
@@ -43,7 +43,7 @@ function generateStructuredData(characterId: string): WithContext<Article> | nul
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${characterId} - 猫鼠wiki`,
+    headline: characterId,
     description: character.description,
     author,
     publisher: {
@@ -78,7 +78,7 @@ export async function generateMetadata({
     title: character.id,
     description: character.description,
     keywords: [character.id],
-    canonicalUrl: `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
+    canonicalUrl: getCanonicalUrl(`/characters/${encodeURIComponent(characterId)}`),
   });
 }
 

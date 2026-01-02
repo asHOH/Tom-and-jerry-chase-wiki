@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
-import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import type { FactionId } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
 import { specialSkills } from '@/data';
@@ -54,7 +54,7 @@ function generateStructuredData(
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${skill.name} - 猫鼠wiki`,
+    headline: skill.name,
     description: desc,
     author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
     publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
@@ -89,7 +89,9 @@ export async function generateMetadata({
     title: skill.name,
     description: desc,
     keywords: [skill.name, '特殊技能'],
-    canonicalUrl: `https://tjwiki.com/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
+    canonicalUrl: getCanonicalUrl(
+      `/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`
+    ),
     imageUrl: skill.imageUrl,
   });
 }
