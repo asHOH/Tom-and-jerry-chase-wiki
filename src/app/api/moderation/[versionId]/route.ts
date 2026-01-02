@@ -1,6 +1,8 @@
+import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { requireRole } from '@/lib/auth/requireRole';
+import { CACHE_TAGS } from '@/lib/cacheTags';
 
 export async function POST(
   request: NextRequest,
@@ -70,6 +72,30 @@ export async function POST(
 
       return NextResponse.json({ error: `Failed to ${action} article version` }, { status: 500 });
     }
+
+    // Best-effort: lookup article_id for targeted revalidation.
+    try {
+      const { data: versionRow, error: lookupError } = await supabase
+        .from('article_versions')
+        .select('article_id')
+        .eq('id', versionId)
+        .single();
+
+      if (lookupError) {
+        console.error('Failed to lookup article_id for revalidation:', lookupError);
+      }
+
+      const articleId = (versionRow as { article_id?: string | null } | null)?.article_id ?? null;
+      if (articleId) {
+        revalidateTag(CACHE_TAGS.article(articleId), { expire: 0 });
+        revalidateTag(CACHE_TAGS.articleVersions(articleId), { expire: 0 });
+      }
+    } catch (e) {
+      console.error('Revalidation lookup error:', e);
+    }
+
+    revalidateTag(CACHE_TAGS.articles, { expire: 0 });
+    revalidateTag(CACHE_TAGS.sitemapArticles, { expire: 0 });
 
     return NextResponse.json({
       message: `Article version successfully ${action}${action === 'approve' ? 'd' : action === 'reject' ? 'ed' : 'd'}`,

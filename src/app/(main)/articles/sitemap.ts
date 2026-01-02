@@ -1,6 +1,11 @@
 import { MetadataRoute } from 'next';
 
+import { CACHE_TAGS } from '@/lib/cacheTags';
+import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { supabaseServerPublic } from '@/lib/supabase/public';
+
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://tjwiki.com';
@@ -9,35 +14,49 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [];
   }
 
-  const { data: articlesWithVersions } = await supabaseAdmin
-    .from('articles')
-    .select('id, article_versions(created_at)')
-    .order('created_at', { ascending: false });
+  const supabase =
+    (supabaseAdmin as unknown as typeof supabaseAdmin | undefined) ??
+    (supabaseServerPublic as unknown as typeof supabaseServerPublic | undefined);
+  if (!supabase) return [];
 
-  const sitemap: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/articles`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.7,
+  return cached(
+    ['sitemap', 'articles'],
+    async () => {
+      const { data: articlesWithVersions } = await supabase
+        .from('articles')
+        .select('id, article_versions(created_at)')
+        .order('created_at', { ascending: false });
+
+      const sitemap: MetadataRoute.Sitemap = [
+        {
+          url: `${baseUrl}/articles`,
+          lastModified: new Date(),
+          changeFrequency: 'daily',
+          priority: 0.7,
+        },
+      ];
+
+      if (articlesWithVersions) {
+        articlesWithVersions.forEach((article) => {
+          const versions = article.article_versions as { created_at: string }[] | null;
+          const lastModified = versions?.length
+            ? new Date(Math.max(...versions.map((v) => new Date(v.created_at).getTime())))
+            : new Date();
+
+          sitemap.push({
+            url: `${baseUrl}/articles/${article.id}`,
+            lastModified,
+            changeFrequency: 'weekly',
+            priority: 0.5,
+          });
+        });
+      }
+
+      return sitemap;
     },
-  ];
-
-  if (articlesWithVersions) {
-    articlesWithVersions.forEach((article) => {
-      const versions = article.article_versions as { created_at: string }[] | null;
-      const lastModified = versions?.length
-        ? new Date(Math.max(...versions.map((v) => new Date(v.created_at).getTime())))
-        : new Date();
-
-      sitemap.push({
-        url: `${baseUrl}/articles/${article.id}`,
-        lastModified,
-        changeFrequency: 'weekly',
-        priority: 0.5,
-      });
-    });
-  }
-
-  return sitemap;
+    {
+      revalidate: 3600,
+      tags: [CACHE_TAGS.sitemapArticles, CACHE_TAGS.articles],
+    }
+  );
 }

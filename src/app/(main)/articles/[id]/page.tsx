@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import { getApprovedArticleVersion, getArticleBasicInfo } from '@/lib/articles/serverQueries';
 import { generateArticleMetadata } from '@/lib/metadataUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import StructuredData from '@/components/StructuredData';
@@ -50,26 +51,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
 
-  const { data: article } = await supabaseAdmin
-    .from('articles')
-    .select('id, title')
-    .eq('id', id)
-    .single();
+  const article = await getArticleBasicInfo(id);
 
   if (!article) {
     return {};
   }
 
-  const { data: latestVersion } = await supabaseAdmin
-    .from('article_versions_public_view')
-    .select('content')
-    .eq('article_id', id)
-    .eq('status', 'approved')
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
-
-  const description = stripHtml(latestVersion!.content).substring(0, 150) || article.title;
+  const latestVersion = await getApprovedArticleVersion({ articleId: id });
+  const description = stripHtml(latestVersion?.content ?? null).substring(0, 150) || article.title;
 
   const canonicalUrl = `https://tjwiki.com/articles/${id}`;
 
@@ -94,64 +83,32 @@ export default async function ArticlePage({
 
   try {
     // Increment view count
-    const { error: incrementError } = await supabaseAdmin.rpc('increment_article_view_count', {
-      p_article_id: id,
-    });
+    const adminClient = supabaseAdmin as unknown as typeof supabaseAdmin | undefined;
+    if (adminClient) {
+      const { error: incrementError } = await adminClient.rpc('increment_article_view_count', {
+        p_article_id: id,
+      });
 
-    if (incrementError) {
-      // Log the error but don't block the request
-      console.error('Error incrementing view count:', incrementError);
+      if (incrementError) {
+        // Log the error but don't block the request
+        console.error('Error incrementing view count:', incrementError);
+      }
     }
 
     // Get the article basic info
-    const { data: article, error: articleError } = await supabaseAdmin
-      .from('articles')
-      .select(
-        `
-          id,
-          title,
-          category_id,
-          author_id,
-          created_at,
-          view_count,
-          character_id,
-          categories(name),
-          users_public_view!author_id(nickname)
-        `
-      )
-      .eq('id', id)
-      .single();
+    const article = await getArticleBasicInfo(id);
 
-    if (articleError) {
-      console.error('Error fetching article:', articleError);
+    if (!article) {
       notFound();
     }
 
     // Get the latest approved version with editor info
-    let query = supabaseAdmin
-      .from('article_versions_public_view')
-      .select(
-        `
-          id, 
-          content, 
-          created_at, 
-          editor_id,
-          users_public_view!editor_id(nickname)
-        `
-      )
-      .eq('article_id', id)
-      .eq('status', 'approved');
+    const latestVersion = await getApprovedArticleVersion({
+      articleId: id,
+      ...(version ? { versionId: version } : {}),
+    });
 
-    if (version) {
-      query = query.eq('id', version);
-    } else {
-      query = query.order('created_at', { ascending: false });
-    }
-
-    const { data: latestVersion, error: versionError } = await query.limit(1).single();
-
-    if (versionError) {
-      console.error('Error fetching latest version:', versionError);
+    if (!latestVersion) {
       notFound();
     }
 
@@ -172,12 +129,12 @@ export default async function ArticlePage({
       <StructuredData
         data={buildArticleStructuredData({
           title: response.article.title,
-          author: response.article.users_public_view.nickname!,
+          author: response.article.users_public_view?.nickname || '匿名',
           description:
-            stripHtml(response.article.latest_version!.content).substring(0, 150) ||
+            stripHtml(response.article.latest_version?.content ?? null).substring(0, 150) ||
             response.article.title,
           canonicalUrl: `https://tjwiki.com/articles/${id}`,
-          dateModified: response.article.latest_version!.created_at!,
+          dateModified: response.article.latest_version?.created_at ?? response.article.created_at,
           datePublished: response.article.created_at,
         })}
       />

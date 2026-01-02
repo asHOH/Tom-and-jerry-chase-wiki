@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 
+import { getArticlesPageData } from '@/lib/articles/serverQueries';
 import { generatePageMetadata } from '@/lib/metadataUtils';
-import { supabaseAdmin } from '@/lib/supabase/admin';
 import ArticlesClient from '@/features/articles/components/ArticlesClient';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 const DESCRIPTION = '浏览其他爱好者的记录、思考和发现';
 
@@ -15,56 +15,6 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: 'https://tjwiki.com/articles',
 });
 
-async function getArticles() {
-  const { data: articles } = await supabaseAdmin
-    .from('articles')
-    .select(
-      `
-          id,
-          title,
-          created_at,
-          view_count,
-          author_id,
-          category_id,
-          character_id,
-          categories (
-            id,
-            name
-          ),
-          users_public_view:author_id (
-            nickname
-          ),
-          latest_approved_version:article_versions_public_view!inner (
-            id,
-            content,
-            created_at,
-            status,
-            editor_id,
-            users_public_view:editor_id (
-              nickname
-            )
-          )
-        `
-    )
-    .eq('article_versions_public_view.status', 'approved')
-    .order('created_at');
-
-  // Get categories for filter options
-  const { data: categories, error: categoriesError } = await supabaseAdmin
-    .from('categories')
-    .select('id, name')
-    .order('name');
-
-  if (categoriesError) {
-    console.error('Error fetching categories:', categoriesError);
-  }
-
-  return {
-    articles: articles || [],
-    categories: categories || [],
-  };
-}
-
 export default async function ArticlesPage() {
-  return <ArticlesClient articles={await getArticles()} description={DESCRIPTION} />;
+  return <ArticlesClient articles={await getArticlesPageData()} description={DESCRIPTION} />;
 }

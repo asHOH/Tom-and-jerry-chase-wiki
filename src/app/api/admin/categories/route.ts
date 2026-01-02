@@ -1,6 +1,8 @@
+import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { requireRole } from '@/lib/auth/requireRole';
+import { CACHE_TAGS } from '@/lib/cacheTags';
 
 export async function GET() {
   const guard = await requireRole(['Coordinator', 'Reviewer']);
@@ -32,6 +34,9 @@ export async function POST(request: NextRequest) {
   if (error) {
     return NextResponse.json({ error: 'Failed to create category' }, { status: 500 });
   }
+
+  revalidateTag(CACHE_TAGS.categories, { expire: 0 });
+  revalidateTag(CACHE_TAGS.articles, { expire: 0 });
   return NextResponse.json({ ok: true });
 }
 
@@ -54,6 +59,9 @@ export async function PUT(request: NextRequest) {
   if (error) {
     return NextResponse.json({ error: 'Failed to update category' }, { status: 500 });
   }
+
+  revalidateTag(CACHE_TAGS.categories, { expire: 0 });
+  revalidateTag(CACHE_TAGS.articles, { expire: 0 });
   return NextResponse.json({ ok: true });
 }
 
@@ -71,5 +79,8 @@ export async function DELETE(request: NextRequest) {
   if (error) {
     return NextResponse.json({ error: 'Failed to delete category' }, { status: 500 });
   }
+
+  revalidateTag(CACHE_TAGS.categories, { expire: 0 });
+  revalidateTag(CACHE_TAGS.articles, { expire: 0 });
   return NextResponse.json({ ok: true });
 }

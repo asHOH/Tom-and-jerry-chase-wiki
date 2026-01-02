@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 
@@ -5,7 +6,7 @@ import type { Database } from '@/data/database.types';
 
 import { fetchWithRetry } from './fetch-retry';
 
-export async function createClient() {
+async function _createClient() {
   if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return void 0 as never;
   }
@@ -38,3 +39,5 @@ export async function createClient() {
     }
   );
 }
+
+export const createClient = cache(_createClient);
