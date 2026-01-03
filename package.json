@@ -178,7 +178,7 @@
       "eslint --fix --max-warnings=0 --cache --no-warn-ignored",
       "prettier --write --ignore-unknown --cache"
     ],
-    "**/*.{json,css,md,mdx,html}": "prettier --write --ignore-unknown --cache"
+    "**/*.{json,css,md,mdx,html,yml,yaml}": "prettier --write --ignore-unknown --cache"
   },
   "depcheck": {
     "ignores": [
