@@ -1,7 +1,6 @@
 import { createHash, pbkdf2Sync, randomBytes } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { env } from '@/env';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
@@ -9,6 +8,7 @@ import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { authRegisterSchema, formatZodError } from '@/lib/validation/schemas';
 import { TablesInsert } from '@/data/database.types';
+import { env } from '@/env';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');

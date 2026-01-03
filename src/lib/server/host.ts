@@ -1,6 +1,11 @@
 import { headers } from 'next/headers';
 
-const HOST_ENV_KEYS = ['NEXT_PUBLIC_SITE_HOST', 'SITE_URL', 'NEXT_PUBLIC_SITE_URL', 'NEXT_PUBLIC_DOMAIN'];
+const HOST_ENV_KEYS = [
+  'NEXT_PUBLIC_SITE_HOST',
+  'SITE_URL',
+  'NEXT_PUBLIC_SITE_URL',
+  'NEXT_PUBLIC_DOMAIN',
+];
 
 const sanitize = (value?: string | null) => {
   if (!value) {

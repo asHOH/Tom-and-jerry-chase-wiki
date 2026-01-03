@@ -1,10 +1,10 @@
 import { MetadataRoute } from 'next';
 
-import { env } from '@/env';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServerPublic } from '@/lib/supabase/public';
+import { env } from '@/env';
 
 export const revalidate = 3600;
 

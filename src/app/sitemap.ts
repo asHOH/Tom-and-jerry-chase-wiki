@@ -1,9 +1,9 @@
 import { MetadataRoute } from 'next';
 
-import { env } from '@/env';
 import docPages from '@/data/generated/docPages.json';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
 import { buffs, cards, characters, entities, items, specialSkills } from '@/data';
+import { env } from '@/env';
 
 export const dynamic = 'force-static';
 

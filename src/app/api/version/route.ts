@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-import { env } from '@/env';
 import packageJson from '@/../package.json';
+import { env } from '@/env';
 
 // Server start time for development (when this module loads)
 const SERVER_START_TIME = new Date().toISOString();

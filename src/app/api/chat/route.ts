@@ -7,11 +7,11 @@ import {
   HarmCategory,
 } from '@google/genai';
 
-import { env } from '@/env';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { chatMessagesSchema, formatZodError } from '@/lib/validation/schemas';
 import { historyData } from '@/data/history';
 import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
+import { env } from '@/env';
 
 // Define the structure of a message part, including function calls and responses
 // Based on Gemini's API structure

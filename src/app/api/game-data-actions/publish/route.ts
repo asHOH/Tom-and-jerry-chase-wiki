@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-import { env } from '@/env';
 import { createClient } from '@/lib/supabase/server';
+import { env } from '@/env';
 
 type PublishBody = {
   entityType?: string;

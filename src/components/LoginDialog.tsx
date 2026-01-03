@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
-import { env } from '@/env';
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { CloseIcon } from '@/components/icons/CommonIcons';
+import { env } from '@/env';
 
 import CaptchaComponent from './CaptchaComponent';
 

@@ -2,8 +2,8 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-import { env } from '@/env';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
+import { env } from '@/env';
 
 export interface FeedbackSectionRef {
   openFeedback: () => void;

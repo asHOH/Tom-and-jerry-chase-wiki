@@ -1,10 +1,10 @@
 import { pbkdf2Sync, randomBytes, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { env } from '@/env';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { env } from '@/env';
 
 const hashPassword = (password: string, salt: string) =>
   pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');

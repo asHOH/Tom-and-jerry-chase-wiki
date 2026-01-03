@@ -5,8 +5,6 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
-import { env } from '@/env';
-
 import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
 import { supabase } from '@/lib/supabase/client';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -19,6 +17,7 @@ import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import { CheckBadgeIcon, TrashIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
+import { env } from '@/env';
 
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import SearchBar from './ui/SearchBar';
@@ -85,8 +84,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const handlePublishActions = async () => {
     if (publishingActions) return;
 
-    const enabled =
-      env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const enabled = env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!enabled) {
       errorToast('当前环境未启用 Supabase，无法发布改动');

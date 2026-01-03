@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-import { env } from '@/env';
 import { createClient } from '@/lib/supabase/server';
+import { env } from '@/env';
 
 export async function GET() {
   if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {

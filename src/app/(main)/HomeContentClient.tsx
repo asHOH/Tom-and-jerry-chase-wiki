@@ -3,7 +3,6 @@
 import { useRef, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
 
-import { env } from '@/env';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
@@ -18,6 +17,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import { DisclaimerText } from '@/components/DisclaimerText';
 import LoginDialog from '@/components/LoginDialog';
 import { VersionDisplay } from '@/components/VersionDisplay';
+import { env } from '@/env';
 
 type Props = { description: string; hasServiceKey: boolean };
 

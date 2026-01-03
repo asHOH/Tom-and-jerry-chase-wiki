@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-import { env } from '@/env';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { getSiteJsonLd } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
+import { env } from '@/env';
 
 import HomeContentClient from './HomeContentClient';
 

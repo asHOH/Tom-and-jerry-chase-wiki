@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
-import { env } from '@/env';
 import { GameDataManager } from '@/lib/dataManager';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { getTutorialPage } from '@/features/articles/utils/docs';
@@ -11,6 +10,7 @@ import StructuredData from '@/components/StructuredData';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
 import { getContentWritersByCharacter } from '@/constants';
 import { characters } from '@/data';
+import { env } from '@/env';
 
 import CharacterArticle from './CharacterArticle';
 import CharacterDocs from './CharacterDocs';

@@ -1,10 +1,10 @@
 import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { env } from '@/env';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { env } from '@/env';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
