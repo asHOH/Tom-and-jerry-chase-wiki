@@ -1,5 +1,7 @@
 'use client';
 
+import '../sentry.client.config';
+
 import type { ReactNode } from 'react';
 import { LazyMotion } from 'motion/react';
 
