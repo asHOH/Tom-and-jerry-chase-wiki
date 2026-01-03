@@ -22,6 +22,7 @@ const directives = {
     'https://*.pusher.com',
     'wss://*.pusher.com',
     'https://static.cloudflareinsights.com',
+    'https://*.sentry.io',
   ],
   'media-src': ["'self'"],
   'object-src': ["'none'"],
