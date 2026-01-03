@@ -1,6 +1,8 @@
 import { Component } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
 
+import { env } from '@/env';
+
 export default class TurnstileComponent extends Component<{
   onVerify: (token: string) => void;
 }> {
@@ -11,7 +13,7 @@ export default class TurnstileComponent extends Component<{
   render() {
     return (
       <Turnstile
-        siteKey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY!}
+        siteKey={env.NEXT_PUBLIC_CAPTCHA_SITE_KEY!}
         onSuccess={this.handleVerify}
         // options={{
         //   size: 'invisible',

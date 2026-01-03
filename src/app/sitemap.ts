@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 
+import { env } from '@/env';
 import docPages from '@/data/generated/docPages.json';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
 import { buffs, cards, characters, entities, items, specialSkills } from '@/data';
@@ -8,7 +9,9 @@ export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://tjwiki.com';
-  const buildTime = new Date(process.env.NEXT_PUBLIC_BUILD_TIMESTAMP!);
+  const buildTime = env.NEXT_PUBLIC_BUILD_TIMESTAMP
+    ? new Date(env.NEXT_PUBLIC_BUILD_TIMESTAMP)
+    : new Date();
 
   const charactersMap: MetadataRoute.Sitemap = Object.keys(characters).map((characterId) => ({
     url: `${baseUrl}/characters/${encodeURIComponent(characterId)}`,

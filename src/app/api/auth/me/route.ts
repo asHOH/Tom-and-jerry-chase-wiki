@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 
+import { env } from '@/env';
 import { createClient } from '@/lib/supabase/server';
 
 export async function GET() {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json({ role: null, nickname: null });
   }
 

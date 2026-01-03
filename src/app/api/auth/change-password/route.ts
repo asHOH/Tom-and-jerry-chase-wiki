@@ -1,6 +1,7 @@
 import { pbkdf2Sync, randomBytes, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { env } from '@/env';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
@@ -32,8 +33,8 @@ export async function POST(request: NextRequest) {
     // Bind cookie writes to the response so password updates don't log out the current session.
     const response = NextResponse.json({ message: '密码修改成功。' });
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      env.NEXT_PUBLIC_SUPABASE_URL!,
+      env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           getAll() {

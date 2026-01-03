@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import { env } from '@/env';
 import { GameDataManager } from '@/lib/dataManager';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { getTutorialPage } from '@/features/articles/utils/docs';
@@ -101,7 +102,7 @@ export default async function CharacterPage({
       notFound();
     }
 
-    if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       return (
         <CharacterDetailsClient character={character}>
           {!!docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}

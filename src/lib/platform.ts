@@ -1,9 +1,13 @@
+import 'server-only';
+
+import { env } from '@/env';
+
 function isVercelDeployment(): boolean {
-  return process.env.VERCEL === '1';
+  return env.VERCEL === '1';
 }
 
 export function isVercelAnalyticsEnabled(): boolean {
-  const override = process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS;
+  const override = env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS;
   if (override === '0') {
     return false;
   }

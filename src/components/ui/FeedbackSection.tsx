@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
+import { env } from '@/env';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
 
 export interface FeedbackSectionRef {
@@ -10,7 +11,7 @@ export interface FeedbackSectionRef {
 }
 
 const FeedbackSection =
-  process.env.NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL === '1'
+  env.NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL === '1'
     ? forwardRef<FeedbackSectionRef>(function FeedbackSection(_, ref) {
         useImperativeHandle(ref, () => ({
           openFeedback: () => null,

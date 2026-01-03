@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useRef } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 
 import { supabase } from '@/lib/supabase/client';
+import { env } from '@/env';
 
 type UserType = { role: string | null; nickname: string | null };
 
@@ -24,7 +25,7 @@ const applyUserData = (data: UserType, { allowEmpty = false }: { allowEmpty?: bo
 };
 
 export const UserProvider =
-  process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     ? ({ children }: { children: ReactNode; initialValue: UserType }) => {
         return children;
       }
@@ -62,7 +63,7 @@ export const UserProvider =
       };
 
 async function getUserData() {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return {
       role: null,
       nickname: null,

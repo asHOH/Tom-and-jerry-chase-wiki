@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
 
+import { env } from '@/env';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
@@ -38,7 +39,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
       setShowLoginDialog(false);
     } else {
       info('成功进入编辑模式，编辑模式下，修改只在本地保存', 4000);
-      if (!nickname && !process.env.NEXT_PUBLIC_DISABLE_ARTICLES && hasServiceKey)
+      if (!nickname && env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && hasServiceKey)
         setShowLoginDialog(true);
     }
     toggleEditMode();
@@ -71,8 +72,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         {
           id: 'articles',
           condition:
-            !process.env.NEXT_PUBLIC_DISABLE_ARTICLES &&
-            !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+            env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
         },
         { id: 'mechanics' },
         { id: 'tools' },

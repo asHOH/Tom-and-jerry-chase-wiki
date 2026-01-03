@@ -3,19 +3,20 @@ import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 
 import type { Database } from '@/data/database.types';
+import { env } from '@/env';
 
 import { fetchWithRetry } from './fetch-retry';
 
 async function _createClient() {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return void 0 as never;
   }
 
   const cookieStore = await cookies();
 
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.NEXT_PUBLIC_SUPABASE_URL!,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 
+import { env } from '@/env';
+
 import {
   AlignCenterIcon,
   AlignLeftIcon,
@@ -374,7 +376,7 @@ const Toolbar = React.memo(function Toolbar({
         <ViewModeToggle
           mode={mode}
           onChange={onModeChange}
-          hideWiki={hideWiki ?? (process.env.NEXT_PUBLIC_DISABLE_WIKITEXT_EDITOR ? true : false)}
+          hideWiki={hideWiki ?? (env.NEXT_PUBLIC_DISABLE_WIKITEXT_EDITOR === '1' ? true : false)}
         />
       </div>
     </div>

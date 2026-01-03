@@ -7,6 +7,7 @@ import {
   HarmCategory,
 } from '@google/genai';
 
+import { env } from '@/env';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { chatMessagesSchema, formatZodError } from '@/lib/validation/schemas';
 import { historyData } from '@/data/history';
@@ -93,7 +94,7 @@ if (historyData.length === 0) {
   console.warn('Warning: historyData is empty');
 }
 
-const systemInstructionText = `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
+const systemInstructionText = `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
 Your purpose is to provide accurate information about characters, skills, knowledge cards, game history, and other game elements.
 When a user asks for information, use the 'executeCode' tool to query the game database using JavaScript code.
 Be friendly, concise, and focus on answering the user's question based on the data retrieved.
@@ -531,8 +532,8 @@ export async function POST(req: NextRequest) {
     const messages = parsed.data.messages as unknown as Content[];
     console.log('Received messages:', JSON.stringify(messages, null, 2));
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    const modelName = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL;
+    const apiKey = env.GEMINI_API_KEY;
+    const modelName = env.NEXT_PUBLIC_GEMINI_CHAT_MODEL;
 
     if (!apiKey || !modelName) {
       return new NextResponse(JSON.stringify({ error: 'GEMINI_API_KEY is not set' }), {

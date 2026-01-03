@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { env } from '@/env';
+
 import { shouldAllowComment } from '../../../lib/comments/moderation';
 import { checkRateLimit } from '../../../lib/rateLimit';
 import { supabaseAdmin } from '../../../lib/supabase/admin';
@@ -49,7 +51,7 @@ async function getNicknamesByUserIds(userIds: string[]): Promise<Map<string, str
 }
 
 export async function GET(req: Request) {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json({ comments: [] as ApiComment[] });
   }
 
@@ -121,7 +123,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json({ error: 'Comments are disabled' }, { status: 503 });
   }
 

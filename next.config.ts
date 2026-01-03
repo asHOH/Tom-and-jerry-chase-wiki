@@ -1,94 +1,102 @@
-import createMDX from '@next/mdx';
 import withPWAInit from '@ducanh2912/next-pwa';
+import createMDX from '@next/mdx';
 
 import { buildCspHeader } from './csp.config.mjs';
 
-let withBundleAnalyzer = (config) => config;
+import './src/env';
+
+import { NextConfig } from 'next';
+
+let withBundleAnalyzer = (config: NextConfig) => config;
 
 if (process.env.ANALYZE === 'true') {
   try {
-    const mod = await import('@next/bundle-analyzer');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mod = require('@next/bundle-analyzer');
     withBundleAnalyzer = mod.default({
       enabled: true,
     });
   } catch (e) {
-    console.warn('Failed to load @next/bundle-analyzer:', e.message);
+    if (e instanceof Error) console.warn('Failed to load @next/bundle-analyzer:', e.message);
   }
 }
 
 const withPwa = withPWAInit({
   dest: 'public',
   register: false,
-  skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
   // Exclude problematic build files from precaching
-  buildExcludes: [
-    /middleware-manifest\.json$/,
-    /app-build-manifest\.json$/,
-    /server\/.*\.js$/,
-    /static\/chunks\/.*\.js\.map$/,
-  ],
-  // More conservative runtime caching
-  runtimeCaching: [
-    {
-      urlPattern: /^https?:\/\/[^/]+\/api\/version.*$/,
-      handler: 'NetworkOnly',
-      options: {
-        cacheName: 'version-check',
-      },
-    },
-    {
-      urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
-      handler: 'StaleWhileRevalidate',
-      options: {
-        cacheName: 'images',
-        expiration: {
-          maxEntries: 150,
-          maxAgeSeconds: 2592000, // 30 days (shorter than before)
-        },
-      },
-    },
-    {
-      urlPattern: /^https?.*\.(js|css)$/,
-      handler: 'StaleWhileRevalidate',
-      options: {
-        cacheName: 'static-resources',
-        expiration: {
-          maxEntries: 100,
-          maxAgeSeconds: 24 * 60 * 60, // 1 day
-        },
-      },
-    },
-    {
-      urlPattern: /^https?.*\/api\/.*$/,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'api-cache',
-        networkTimeoutSeconds: 3,
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 5 * 60, // 5 minutes
-        },
-      },
-    },
-    {
-      urlPattern: /^https?.*/,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'pages',
-        networkTimeoutSeconds: 3,
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 24 * 60 * 60, // 1 day
-        },
-      },
-    },
-  ],
+  // buildExcludes: [
+  //   /middleware-manifest\.json$/,
+  //   /app-build-manifest\.json$/,
+  //   /server\/.*\.js$/,
+  //   /static\/chunks\/.*\.js\.map$/,
+  // ],
   // Exclude files that might cause 404 errors
   publicExcludes: ['!version.json', '!noprecache/**/*', '!sw.js', '!workbox-*.js'],
   // Fallback for offline pages
   fallbacks: {
     document: '/offline/',
+  },
+  workboxOptions: {
+    skipWaiting: true,
+
+    // More conservative runtime caching
+    runtimeCaching: [
+      {
+        urlPattern: /^https?:\/\/[^/]+\/api\/version.*$/,
+        handler: 'NetworkOnly',
+        options: {
+          cacheName: 'version-check',
+        },
+      },
+      {
+        urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
+        handler: 'StaleWhileRevalidate',
+        options: {
+          cacheName: 'images',
+          expiration: {
+            maxEntries: 150,
+            maxAgeSeconds: 2592000, // 30 days (shorter than before)
+          },
+        },
+      },
+      {
+        urlPattern: /^https?.*\.(js|css)$/,
+        handler: 'StaleWhileRevalidate',
+        options: {
+          cacheName: 'static-resources',
+          expiration: {
+            maxEntries: 100,
+            maxAgeSeconds: 24 * 60 * 60, // 1 day
+          },
+        },
+      },
+      {
+        urlPattern: /^https?.*\/api\/.*$/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'api-cache',
+          networkTimeoutSeconds: 3,
+          expiration: {
+            maxEntries: 50,
+            maxAgeSeconds: 5 * 60, // 5 minutes
+          },
+        },
+      },
+      {
+        urlPattern: /^https?.*/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'pages',
+          networkTimeoutSeconds: 3,
+          expiration: {
+            maxEntries: 50,
+            maxAgeSeconds: 24 * 60 * 60, // 1 day
+          },
+        },
+      },
+    ],
   },
 });
 
@@ -109,8 +117,7 @@ const shouldIncludeVercelAnalytics = () => {
   return process.env.VERCEL === '1' && process.env.NODE_ENV === 'production';
 };
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   transpilePackages: ['motion', 'pinyin-pro', 'valtio'],
   typescript: {
@@ -208,7 +215,7 @@ const nextConfig = {
   trailingSlash: true,
   images: {
     // unoptimized: true,
-    formats: ['image/avif', 'image/webp'],
+    formats: ['image/avif' as const, 'image/webp' as const],
     minimumCacheTTL: 31536000, // 1 year
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
@@ -232,7 +239,7 @@ const nextConfig = {
     return config;
   },
   reactCompiler: {
-    compilationMode: 'annotation',
+    compilationMode: 'annotation' as const,
   },
 };
 

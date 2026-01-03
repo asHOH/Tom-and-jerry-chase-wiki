@@ -1,6 +1,7 @@
 import { createHash, pbkdf2Sync, randomBytes } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { env } from '@/env';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!password && process.env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH) {
+    if (!password && env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH === '1') {
       return NextResponse.json({ error: 'Password is required.' }, { status: 400 });
     }
 
@@ -112,7 +113,7 @@ export async function POST(request: NextRequest) {
     const salt = randomBytes(16).toString('hex');
     const passwordHash = password ? hashPassword(password, salt) : '';
 
-    const authUserEmail = `${usernamePinyin}@${process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`;
+    const authUserEmail = `${usernamePinyin}@${env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`;
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: authUserEmail,
       password: authPassword,
@@ -160,8 +161,8 @@ export async function POST(request: NextRequest) {
       await import('@supabase/ssr/dist/module/createServerClient.js');
     const response = NextResponse.json({ message: 'User created successfully' }, { status: 201 });
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      env.NEXT_PUBLIC_SUPABASE_URL!,
+      env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           getAll() {

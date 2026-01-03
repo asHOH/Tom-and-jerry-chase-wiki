@@ -2,10 +2,8 @@
 
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
-import { isVercelAnalyticsEnabled } from '@/lib/platform';
-
-export function SpeedInsightsComponent() {
-  if (!isVercelAnalyticsEnabled()) {
+export function SpeedInsightsComponent({ enabled }: { enabled?: boolean }) {
+  if (!enabled) {
     return null;
   }
 

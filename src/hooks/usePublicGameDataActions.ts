@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import useSWR from 'swr';
 
+import { env } from '@/env';
+
 import {
   buffsEdit,
   cardsEdit,
@@ -103,8 +105,7 @@ export function usePublicGameDataActions() {
 
   const [{ isEditMode, enabledAtMs }, setEditModeState] = useState(() => readEditModeState());
 
-  const enabled =
-    !process.env.NEXT_PUBLIC_DISABLE_ARTICLES && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const enabled = env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   const { data } = useSWR(enabled ? '/api/game-data-actions/public' : null, fetcher, {
     revalidateOnFocus: false,

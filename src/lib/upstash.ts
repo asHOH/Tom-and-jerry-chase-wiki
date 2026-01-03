@@ -1,9 +1,11 @@
 import { Redis } from '@upstash/redis';
 
+import { env } from '@/env';
+
 let redisSingleton: Redis | null | undefined;
 
 function hasUpstashEnv(): boolean {
-  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  return Boolean(env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN);
 }
 
 export function getUpstashRedis(): Redis | null {

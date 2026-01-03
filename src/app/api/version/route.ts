@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { env } from '@/env';
 import packageJson from '@/../package.json';
 
 // Server start time for development (when this module loads)
@@ -18,13 +19,13 @@ const sanitize = (value?: string | null) => {
 
 const resolveCommitSha = () => {
   const candidates = [
-    process.env.COMMIT_SHA,
-    process.env.DEPLOY_COMMIT_SHA,
-    process.env.NETLIFY_COMMIT_SHA,
-    process.env.CF_PAGES_COMMIT_SHA,
-    process.env.VERCEL_GIT_COMMIT_SHA,
-    process.env.GITHUB_SHA,
-    process.env.COMMIT_REF,
+    env.COMMIT_SHA,
+    env.DEPLOY_COMMIT_SHA,
+    env.NETLIFY_COMMIT_SHA,
+    env.CF_PAGES_COMMIT_SHA,
+    env.VERCEL_GIT_COMMIT_SHA,
+    env.GITHUB_SHA,
+    env.COMMIT_REF,
   ];
 
   for (const candidate of candidates) {
@@ -68,25 +69,25 @@ const normalizeDeploymentLabel = (value: string) => {
 // Detect deployment environment
 const getDeploymentEnvironment = () => {
   const manualEnv = sanitize(
-    process.env.DEPLOYMENT_ENVIRONMENT || process.env.DEPLOY_ENV || process.env.RUNTIME_ENVIRONMENT
+    env.DEPLOYMENT_ENVIRONMENT || env.DEPLOY_ENV || env.RUNTIME_ENVIRONMENT
   );
   if (manualEnv) {
     return normalizeDeploymentLabel(manualEnv);
   }
 
-  const vercelEnv = sanitize(process.env.VERCEL_ENV);
+  const vercelEnv = sanitize(env.VERCEL_ENV);
   if (vercelEnv) {
     return normalizeDeploymentLabel(vercelEnv);
   }
 
-  const netlifyContext = sanitize(process.env.CONTEXT || process.env.NETLIFY_CONTEXT);
+  const netlifyContext = sanitize(env.CONTEXT || env.NETLIFY_CONTEXT);
   if (netlifyContext) {
     return normalizeDeploymentLabel(netlifyContext);
   }
 
-  if (sanitize(process.env.CF_PAGES)) {
-    const branch = sanitize(process.env.CF_PAGES_BRANCH);
-    const productionBranch = sanitize(process.env.CF_PAGES_BASE_BRANCH);
+  if (sanitize(env.CF_PAGES)) {
+    const branch = sanitize(env.CF_PAGES_BRANCH);
+    const productionBranch = sanitize(env.CF_PAGES_BASE_BRANCH);
     if (branch && productionBranch) {
       return branch === productionBranch ? 'production' : 'preview';
     }
@@ -105,7 +106,7 @@ const getVersionTimestamp = (environment: string) => {
   }
 
   // For preview/production: use build-time environment variable
-  return process.env.NEXT_PUBLIC_BUILD_TIMESTAMP || SERVER_START_TIME;
+  return env.NEXT_PUBLIC_BUILD_TIMESTAMP || SERVER_START_TIME;
 };
 
 // Generate version info without shell commands

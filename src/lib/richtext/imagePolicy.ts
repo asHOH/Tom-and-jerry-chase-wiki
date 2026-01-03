@@ -1,11 +1,10 @@
+import { env } from '@/env';
+
 const DEFAULT_BUCKET = 'article-media';
 
-const envBucket =
-  process.env.SUPABASE_RTE_IMAGE_BUCKET ??
-  process.env.NEXT_PUBLIC_SUPABASE_RTE_IMAGE_BUCKET ??
-  DEFAULT_BUCKET;
+const envBucket = env.NEXT_PUBLIC_SUPABASE_RTE_IMAGE_BUCKET ?? DEFAULT_BUCKET;
 
-const rawSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const rawSupabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const normalizedSupabaseUrl = rawSupabaseUrl.replace(/\/$/, '');
 
 export const RTE_IMAGE_BUCKET = envBucket;

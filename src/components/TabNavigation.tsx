@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
+import { env } from '@/env';
+
 import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
 import { supabase } from '@/lib/supabase/client';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -84,7 +86,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     if (publishingActions) return;
 
     const enabled =
-      !process.env.NEXT_PUBLIC_DISABLE_ARTICLES && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!enabled) {
       errorToast('当前环境未启用 Supabase，无法发布改动');
@@ -282,8 +284,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     .slice(0, visibleCount)
     .filter(
       (tab) =>
-        (!process.env.NEXT_PUBLIC_DISABLE_ARTICLES &&
-          !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) ||
+        (env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY) ||
         tab.id !== 'articles'
     );
   const overflowTabs = clampedCollapsed > 0 ? sortedTabs.slice(visibleCount) : [];
@@ -487,8 +488,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           {mounted &&
             !!nickname &&
             shouldDisplayUserSettings &&
-            !process.env.NEXT_PUBLIC_DISABLE_ARTICLES &&
-            !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && (
+            env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' &&
+            !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY && (
               <div className='relative' data-user-dropdown-root>
                 <Tooltip content='用户设置' className='border-none'>
                   <button

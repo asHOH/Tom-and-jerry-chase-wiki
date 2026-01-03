@@ -1,9 +1,11 @@
 'use server';
 
+import { env } from '@/env';
+
 import { createClient } from './supabase/server';
 
 export async function getUserData() {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return {
       role: null,
       nickname: null,

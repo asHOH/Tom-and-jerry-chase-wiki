@@ -3,6 +3,7 @@ import { snapshot } from 'valtio';
 
 import { historyData } from '@/data/history';
 import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
+import { env } from '@/env';
 
 // Type definition for a message part, consistent with the API
 type Part = {
@@ -213,7 +214,7 @@ export function useChat(message?: string, debounceMs = 500) {
   // Main request function with multi-round support
   const sendRequest = useCallback(
     async (requestId: number, initialMessage: string) => {
-      if (!process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) {
+      if (!env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) {
         return;
       }
 
@@ -291,7 +292,7 @@ export function useChat(message?: string, debounceMs = 500) {
 
   // Effect to trigger request when debounced message changes
   useEffect(() => {
-    if (!debouncedMessage?.trim() || !process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) {
+    if (!debouncedMessage?.trim() || !env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) {
       setResponseText('');
       setIsLoading(false);
       setError(null);
@@ -325,7 +326,7 @@ export function useChat(message?: string, debounceMs = 500) {
     };
   }, [debouncedMessage, sendRequest]);
 
-  return process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL
+  return env.NEXT_PUBLIC_GEMINI_CHAT_MODEL
     ? {
         responseText,
         isLoading,

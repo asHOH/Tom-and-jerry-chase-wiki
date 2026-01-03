@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
+import { env } from '@/env';
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { CloseIcon } from '@/components/icons/CommonIcons';
@@ -130,7 +131,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       setError('昵称不能为空。');
       return;
     }
-    if (password.trim() === '' && process.env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH) {
+    if (password.trim() === '' && env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH === '1') {
       setError('密码不能为空。');
       return;
     }
@@ -236,7 +237,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             <input
               type='password'
               placeholder={
-                process.env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH ? '密码' : '密码（可选）'
+                env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH === '1' ? '密码' : '密码（可选）'
               }
               className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={password}

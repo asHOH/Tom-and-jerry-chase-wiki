@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { env } from '@/env';
+
 import { fetchWithRetry } from './fetch-retry';
 
 // Maintainer note:
@@ -8,7 +10,7 @@ import { fetchWithRetry } from './fetch-retry';
 // Edge runtime warnings. Package version is pinned in package.json for stability.
 
 export async function updateSession(request: NextRequest) {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.next({ request });
   }
   type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
@@ -21,8 +23,8 @@ export async function updateSession(request: NextRequest) {
   });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.NEXT_PUBLIC_SUPABASE_URL!,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {

@@ -1,8 +1,10 @@
 import { forwardRef } from 'react';
 import NextImage, { ImageProps } from 'next/image';
 
+import { env } from '@/env';
+
 const Image =
-  !process.env.NEXT_PUBLIC_DISABLE_IMAGE_OPTIMIZATION && process.env.NODE_ENV !== 'development'
+  env.NEXT_PUBLIC_DISABLE_IMAGE_OPTIMIZATION !== '1' && process.env.NODE_ENV !== 'development'
     ? forwardRef<HTMLImageElement, ImageProps>(function Image(props, ref) {
         const { src, ...rest } = props;
 

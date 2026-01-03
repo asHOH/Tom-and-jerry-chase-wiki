@@ -2,10 +2,8 @@
 
 import { Analytics } from '@vercel/analytics/next';
 
-import { isVercelAnalyticsEnabled } from '@/lib/platform';
-
-export function AnalyticsComponent() {
-  if (!isVercelAnalyticsEnabled()) {
+export function AnalyticsComponent({ enabled }: { enabled?: boolean }) {
+  if (!enabled) {
     return null;
   }
 

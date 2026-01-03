@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { env } from '@/env';
 import { createClient } from '@/lib/supabase/server';
 
 type PublishBody = {
@@ -8,7 +9,7 @@ type PublishBody = {
 };
 
 export async function POST(req: Request) {
-  if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json({ error: 'Supabase is disabled' }, { status: 501 });
   }
 

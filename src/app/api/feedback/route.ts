@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { env } from '@/env';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { feedbackSchema, formatZodError } from '@/lib/validation/schemas';
@@ -95,12 +96,12 @@ async function sendFeedbackEmail(feedbackData: FeedbackData) {
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: process.env.RESEND_FROM_EMAIL || 'feedback@resend.dev', // Use your domain or Resend's shared domain
-        to: [process.env.FEEDBACK_EMAIL || 'your-email@example.com'],
+        from: env.RESEND_FROM_EMAIL || 'feedback@resend.dev', // Use your domain or Resend's shared domain
+        to: [env.FEEDBACK_EMAIL || 'your-email@example.com'],
         subject: `[猫鼠Wiki] ${getFeedbackTypeText(feedbackData.type)}`,
         html: `
           <h2>用户反馈</h2>

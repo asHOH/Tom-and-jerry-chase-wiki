@@ -1,8 +1,10 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
+import { env } from '@/env';
+
 export async function verifyCaptchaToken(token: string | null | undefined): Promise<boolean> {
-  const provider = process.env.NEXT_PUBLIC_CAPTCHA_PROVIDER;
-  const secretKey = process.env.CAPTCHA_SECRET_KEY;
+  const provider = env.NEXT_PUBLIC_CAPTCHA_PROVIDER;
+  const secretKey = env.CAPTCHA_SECRET_KEY;
 
   // If captcha is disabled or not configured, do nothing.
   if (!provider || !secretKey) {
@@ -47,8 +49,7 @@ export async function verifyCaptchaToken(token: string | null | undefined): Prom
 }
 
 export function generateCaptchaProof(username: string): string {
-  const secret: string =
-    process.env.CAPTCHA_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const secret: string = env.CAPTCHA_SECRET_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
   const timestamp = Date.now();
   const payload = `${username}:${timestamp}`;
   const signature = createHmac('sha256', secret).update(payload).digest('hex');
@@ -70,8 +71,7 @@ export function verifyCaptchaProof(token: string, username: string): boolean {
   // Token expires in 10 minutes
   if (Date.now() - timestamp > 10 * 60 * 1000) return false;
 
-  const secret: string =
-    process.env.CAPTCHA_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const secret: string = env.CAPTCHA_SECRET_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
   const payload = `${username}:${timestamp}`;
   const expectedSignature = createHmac('sha256', secret).update(payload).digest('hex');
   if (expectedSignature.length != signature.length) return false;

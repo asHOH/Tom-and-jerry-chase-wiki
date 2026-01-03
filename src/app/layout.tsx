@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import NextTopLoader from 'nextjs-toploader';
 
 import { getRuntimeCspHeader } from '@/lib/csp';
+import { isVercelAnalyticsEnabled } from '@/lib/platform';
 import { defaultMetadata } from '@/constants/seo';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 import { ClientProviders } from '@/components/ClientProviders';
@@ -27,6 +28,7 @@ export const metadata: Metadata = defaultMetadata;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const initialUser = await getUserData();
+  const vercelAnalyticsEnabled = isVercelAnalyticsEnabled();
   return (
     <html
       lang='zh-CN'
@@ -62,8 +64,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </main>
           </ErrorBoundary>
           <PerformanceMonitor />
-          <SpeedInsightsComponent />
-          <AnalyticsComponent />
+          <SpeedInsightsComponent enabled={vercelAnalyticsEnabled} />
+          <AnalyticsComponent enabled={vercelAnalyticsEnabled} />
         </DarkModeProvider>
       </body>
     </html>

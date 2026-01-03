@@ -1,6 +1,7 @@
 import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { env } from '@/env';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
@@ -88,8 +89,8 @@ export async function POST(request: NextRequest) {
       await import('@supabase/ssr/dist/module/createServerClient.js');
     const response = NextResponse.json({ message: 'Login successful' });
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      env.NEXT_PUBLIC_SUPABASE_URL!,
+      env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           getAll() {
