@@ -16,6 +16,7 @@ import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { characters as allCharacters, FactionId, PositioningTagName } from '@/data';
 
 import CharacterCreate from './CharacterCreate';
@@ -135,6 +136,72 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
     });
   }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds, selectedAvatar]);
 
+  const cardNodes = useMemo(() => {
+    const nodes: React.ReactNode[] = [];
+
+    if (isEditMode) {
+      nodes.push(
+        <div
+          key='character-import'
+          className='character-card transform transition-transform hover:-translate-y-1'
+        >
+          <CharacterImport />
+        </div>
+      );
+
+      nodes.push(
+        <div
+          key='character-create'
+          className='character-card transform transition-transform hover:-translate-y-1'
+        >
+          <CharacterCreate />
+        </div>
+      );
+
+      originalCharacters.forEach((character) => {
+        nodes.push(
+          <div
+            key={`${character.id}-entry`}
+            className='character-card transform transition-transform hover:-translate-y-1'
+          >
+            <CharacterDisplay
+              id={character.id}
+              name={character.id}
+              imageUrl={character.imageUrl}
+              positioningTags={character.catPositioningTags || character.mousePositioningTags || []}
+              factionId={faction.id}
+              isEntryCard
+            />
+          </div>
+        );
+      });
+    }
+
+    filteredCharacters.forEach((character, index) => {
+      nodes.push(
+        <div
+          key={character.id}
+          className='character-card transform transition-transform hover:-translate-y-1'
+        >
+          <CharacterDisplay
+            id={character.id}
+            name={character.id}
+            imageUrl={character.imageUrl}
+            positioningTags={
+              (character.factionId === 'cat'
+                ? character.catPositioningTags
+                : character.mousePositioningTags) || []
+            }
+            factionId={faction.id}
+            preload={index < 4}
+          />
+        </div>
+      );
+    });
+
+    return nodes;
+  }, [filteredCharacters, faction.id, isEditMode, originalCharacters]);
+
   return (
     <div
       className={
@@ -199,60 +266,15 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         </div>
       </header>
 
-      <div
-        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-8'} mt-8`}
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '120px' : '200px'}, 1fr))`,
-        }}
-      >
-        {isEditMode && (
-          <div className='character-card transform transition-transform hover:-translate-y-1'>
-            <CharacterImport />
-          </div>
-        )}
-        {isEditMode && (
-          <div className='character-card transform transition-transform hover:-translate-y-1'>
-            <CharacterCreate />
-          </div>
-        )}
-        {isEditMode &&
-          originalCharacters.map((character) => (
-            <div
-              key={`${character.id}-entry`}
-              className='character-card transform transition-transform hover:-translate-y-1'
-            >
-              <CharacterDisplay
-                id={character.id}
-                name={character.id}
-                imageUrl={character.imageUrl}
-                positioningTags={
-                  character.catPositioningTags || character.mousePositioningTags || []
-                }
-                factionId={faction.id}
-                isEntryCard // This will be used for styling
-              />
-            </div>
-          ))}
-        {filteredCharacters.map((character, index) => (
-          <div
-            key={character.id}
-            className='character-card transform transition-transform hover:-translate-y-1'
-          >
-            <CharacterDisplay
-              id={character.id}
-              name={character.id} // Use id as name for consistency
-              imageUrl={character.imageUrl}
-              positioningTags={
-                (character.factionId === 'cat'
-                  ? character.catPositioningTags
-                  : character.mousePositioningTags) || []
-              }
-              factionId={faction.id}
-              preload={index < 4}
-            />
-          </div>
-        ))}
-      </div>
+      <VirtualGrid
+        items={cardNodes}
+        className='mt-8'
+        rowClassName='auto-fit-grid grid-container grid'
+        minItemWidth={isMobile ? 120 : 200}
+        gapPx={isMobile ? 12 : 32}
+        {...(isMobile ? { fixedColumns: 1 } : {})}
+        estimatedRowHeight={isMobile ? 270 : 340}
+      />
     </div>
   );
 }

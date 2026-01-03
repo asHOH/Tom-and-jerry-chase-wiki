@@ -73,6 +73,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@supabase/ssr": "0.8.0",
     "@supabase/supabase-js": "^2.89.0",
+    "@tanstack/react-virtual": "^3.13.14",
     "@tiptap/core": "3.14.0",
     "@tiptap/extension-image": "3.14.0",
     "@tiptap/extension-link": "3.14.0",
