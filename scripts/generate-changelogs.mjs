@@ -23,12 +23,10 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { GoogleGenAI } from '@google/genai';
-import dotenv from 'dotenv';
+import { loadEnvConfig } from '@next/env';
 
-// Do NOT change the path
-// Load environment variables from .env.local or .env
-dotenv.config({ path: '.env.local', quiet: true });
-dotenv.config({ quiet: true });
+const projectDir = process.cwd();
+loadEnvConfig(projectDir);
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-2.5-flash';
