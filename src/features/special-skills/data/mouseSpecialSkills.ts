@@ -40,10 +40,11 @@ const mouseSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     adviceDescription: '只适合**极少部分**老鼠。用于缩短部分技能CD。',
   },
   冰冻保鲜: {
-    cooldown: 80,
-    description: '获得一段时间的无敌和冰冻效果。',
+    cooldown: 75,
+    description:
+      '获得一段时间的无敌和冰冻效果。可再次点击技能提前结束该效果，任何方式结束技能都会失去无敌效果。',
     detailedDescription:
-      '获得2.45秒的无敌和冰冻效果（无敌和冰冻分别计时，冰冻时间可被部分减少控制时间的效果减短，但不会被霸体抵消）。',
+      '获得2.95秒的无敌和冰冻效果（冰冻时间可被部分减少控制时间的效果减短，不会被免控或霸体等效果抵消）。可再次点击技能提前结束该效果，且任何方式结束技能都会失去无敌效果。',
     adviceDescription:
       '只适合**少部分**老鼠，或用于对抗**少部分**猫咪。用于规避某些猫咪技能的效果，或是与部分减控类技能产生联动。',
   },
