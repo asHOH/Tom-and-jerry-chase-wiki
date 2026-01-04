@@ -2,7 +2,18 @@ import { MetadataRoute } from 'next';
 
 import docPages from '@/data/generated/docPages.json';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
-import { buffs, cards, characters, entities, items, specialSkills } from '@/data';
+import { mechanicsSectionsList } from '@/features/mechanics/sections';
+import {
+  buffs,
+  cards,
+  characters,
+  entities,
+  fixtures,
+  items,
+  maps,
+  modes,
+  specialSkills,
+} from '@/data';
 import { env } from '@/env';
 
 export const dynamic = 'force-static';
@@ -56,6 +67,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...Object.keys(entities.mouse),
   ].map((entityName) => ({
     url: `${baseUrl}/entities/${encodeURIComponent(entityName)}`,
+    lastModified: buildTime,
+    changeFrequency: 'monthly',
+    priority: 0.4,
+  }));
+
+  const mapsMap: MetadataRoute.Sitemap = Object.keys(maps).map((mapId) => ({
+    url: `${baseUrl}/maps/${encodeURIComponent(mapId)}`,
+    lastModified: buildTime,
+    changeFrequency: 'monthly',
+    priority: 0.4,
+  }));
+
+  const modesMap: MetadataRoute.Sitemap = Object.keys(modes).map((modeId) => ({
+    url: `${baseUrl}/modes/${encodeURIComponent(modeId)}`,
+    lastModified: buildTime,
+    changeFrequency: 'monthly',
+    priority: 0.4,
+  }));
+
+  const fixturesMap: MetadataRoute.Sitemap = Object.keys(fixtures).map((fixtureId) => ({
+    url: `${baseUrl}/fixtures/${encodeURIComponent(fixtureId)}`,
+    lastModified: buildTime,
+    changeFrequency: 'monthly',
+    priority: 0.4,
+  }));
+
+  const mechanicsMap: MetadataRoute.Sitemap = mechanicsSectionsList.map((section) => ({
+    url: `${baseUrl}/mechanics/${section}`,
     lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
@@ -142,6 +181,38 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     ...buffsMap,
+    // Maps
+    {
+      url: `${baseUrl}/maps`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    ...mapsMap,
+    // Modes
+    {
+      url: `${baseUrl}/modes`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    ...modesMap,
+    // Fixtures
+    {
+      url: `${baseUrl}/fixtures`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    ...fixturesMap,
+    // Mechanics
+    {
+      url: `${baseUrl}/mechanics`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    ...mechanicsMap,
     // Rankings
     {
       url: `${baseUrl}/ranks`,
@@ -164,6 +235,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: buildTime,
       changeFrequency: 'weekly',
       priority: 0.7,
+    },
+    // Other
+    {
+      url: `${baseUrl}/win-rates`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/recommended`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.6,
     },
   ];
 }
