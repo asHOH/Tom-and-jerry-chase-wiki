@@ -123,7 +123,9 @@ const nextConfig: NextConfig = {
   transpilePackages: ['motion', 'pinyin-pro', 'valtio'],
   typescript: {
     ignoreBuildErrors:
-      !!process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      process.env.SKIP_BUILD_CHECKS === 'true' ||
+      !!process.env.NEXT_PUBLIC_DISABLE_ARTICLES ||
+      !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
   env: {
     NEXT_PUBLIC_BUILD_TIMESTAMP: new Date().toISOString(),

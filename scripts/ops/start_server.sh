@@ -149,11 +149,30 @@ fi
 if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
   echo "Code has changed since last build. Building application..."
   npm run set-runtime:node
-  if npm run build; then
+
+  echo "Memory status before build:"
+  free -h 2>/dev/null || echo "Unable to check memory"
+
+  # Optimize Node.js memory usage for 4GB instance (leave ~1GB for OS/other)
+  # This prevents the OOM killer (Exit code 137) by forcing GC before hitting the limit.
+  export NODE_OPTIONS="--max-old-space-size=2560"
+  
+  # Skip heavy checks during production build on server (we check locally)
+  export SKIP_BUILD_CHECKS=true
+  export NEXT_TELEMETRY_DISABLED=1
+
+  npm run build
+  BUILD_EXIT_CODE=$?
+
+  if [ $BUILD_EXIT_CODE -eq 0 ]; then
     echo "✅ Build successful."
     mkdir -p .next && echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
   else
-    echo "❌ Fatal: Build failed. Cannot start server."
+    echo "❌ Fatal: Build failed with exit code $BUILD_EXIT_CODE."
+    if [ $BUILD_EXIT_CODE -eq 137 ]; then
+      echo "   (Exit code 137 usually indicates Out Of Memory)"
+    fi
+    echo "Cannot start server."
     exit 1
   fi
 else
