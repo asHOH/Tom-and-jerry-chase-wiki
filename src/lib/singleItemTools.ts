@@ -125,3 +125,28 @@ export const getSingleItemFactionId = (singleItem: SingleItem): FactionId | unde
     return entity !== undefined ? getEntityFactionId(entity) : undefined;
   }
 };
+
+export const compareSingleItem = (
+  singleItem1: SingleItem,
+  singleItem2: SingleItem,
+  checkMode: 'default' | 'hard' = 'default'
+): boolean => {
+  const compareFactionId = (
+    factionId1: FactionId | undefined,
+    factionId2: FactionId | undefined,
+    checkMode: 'default' | 'hard'
+  ): boolean => {
+    if (factionId1 === undefined || factionId2 === undefined) {
+      return checkMode === 'default' ? true : false;
+    }
+    return factionId1 === factionId2;
+  };
+  if (
+    singleItem1.type === singleItem2.type &&
+    singleItem1.name === singleItem2.name &&
+    compareFactionId(singleItem1.factionId, singleItem2.factionId, checkMode)
+  ) {
+    return true;
+  }
+  return false;
+};
