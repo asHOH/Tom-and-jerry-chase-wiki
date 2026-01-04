@@ -571,3 +571,61 @@ export type ModeDefinition = {
 };
 
 export type Mode = ModeDefinition & { name: string; imageUrl: string };
+
+/**
+ * Defines the type of data file change applied in the wiki.
+ */
+export enum WikiChangeType {
+  CREATE = '创建', //创建新界面
+  ADD = '添加', //为界面添加新内容
+  UPDATE = '更新', //更改已有内容的信息
+  REMOVE = '移除', //移除已有的内容
+  REWORK = '重制', //对界面进行大范围的调整
+}
+
+/**
+ * Represents a specific data change for a wiki item.
+ */
+export interface WikiChange {
+  item: SingleItem;
+  changeType: WikiChangeType;
+  description?: string;
+}
+
+/**
+ * Details for data changes organized by item type.
+ */
+export interface WikiChangeDetails {
+  // 常规变更记录
+  changes?: WikiChange[];
+  // 批量变更记录
+  batchChanges?: {
+    changes: WikiChange[]; // 包含的变更项
+    description?: string; // 若变更项无描述，应用此默认描述
+  }[];
+}
+
+/**
+ * Represents a single commit or update event in the wiki's data history.
+ */
+export interface WikiUpdateEvent {
+  date: `${number}.${number}` | `${number}.${number}-${'次年' | ''}${number}.${number}`; // e.g., "7.24" or "12.25-次年1.1"
+  description: string;
+
+  details: {
+    data?: WikiChangeDetails;
+  };
+}
+
+/**
+ * Contains all the data update events for a specific year.
+ */
+export interface WikiYearData {
+  year: number;
+  events: WikiUpdateEvent[];
+}
+
+/**
+ * The complete, structured history of wiki data changes.
+ */
+export type WikiDataHistory = WikiYearData[];
