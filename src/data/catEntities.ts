@@ -335,6 +335,7 @@ export const catEntitiesDefinitions = {
     collsion: ['道具', '墙壁', '平台', '地面'],
     description: '命中老鼠后产生与{咸鱼}相同的效果，命中其它物体则会直接消失。',
     create: '由莱特宁-咸鱼的二段技能掷出。',
+    specialImageUrl: '/images/catEntities/咸鱼.png',
   },
   弹簧猫: {
     entitytype: '变身类',
