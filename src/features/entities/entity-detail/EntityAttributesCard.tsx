@@ -8,6 +8,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalEntity } from '@/context/EditModeContext';
 import { Entity } from '@/data/types';
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
@@ -371,6 +372,9 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
         <NavigationButtonsRow>
           <SpecifyTypeNavigationButtons currentId={entity.name} specifyType='entity' />
         </NavigationButtonsRow>
+      }
+      wikiHistory={
+        <SingleItemWikiHistoryDisplay singleItem={{ name: entity.name, type: 'entity' }} />
       }
     />
   );

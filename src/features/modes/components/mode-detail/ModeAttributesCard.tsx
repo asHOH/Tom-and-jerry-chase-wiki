@@ -6,6 +6,7 @@ import { getModeTypeColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalMode } from '@/context/EditModeContext';
 import { Mode, SingleItem } from '@/data/types';
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
@@ -133,6 +134,7 @@ export default function ModeAttributesCard({ mode }: { mode: Mode }) {
           <SpecifyTypeNavigationButtons currentId={mode.name} specifyType='mode' />
         </NavigationButtonsRow>
       }
+      wikiHistory={<SingleItemWikiHistoryDisplay singleItem={{ name: mode.name, type: 'mode' }} />}
     />
   );
 }

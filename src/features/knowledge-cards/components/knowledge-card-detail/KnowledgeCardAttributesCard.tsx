@@ -4,6 +4,7 @@ import { getCardCostColors, getCardRankColors } from '@/lib/design-tokens';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalCard } from '@/context/EditModeContext';
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
@@ -117,6 +118,9 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
         <NavigationButtonsRow>
           <SpecifyTypeNavigationButtons currentId={card.id} specifyType='knowledgeCard' />
         </NavigationButtonsRow>
+      }
+      wikiHistory={
+        <SingleItemWikiHistoryDisplay singleItem={{ name: card.id, type: 'knowledgeCard' }} />
       }
     />
   );

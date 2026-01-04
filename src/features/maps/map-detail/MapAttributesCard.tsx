@@ -6,6 +6,7 @@ import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/des
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalMap } from '@/context/EditModeContext';
 import { Map, SingleItem } from '@/data/types';
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
@@ -385,6 +386,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
           <SpecifyTypeNavigationButtons currentId={map.name} specifyType='map' />
         </NavigationButtonsRow>
       }
+      wikiHistory={<SingleItemWikiHistoryDisplay singleItem={{ name: map.name, type: 'map' }} />}
     />
   );
 }

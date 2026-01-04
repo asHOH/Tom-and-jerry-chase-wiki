@@ -2,6 +2,7 @@
 
 import { useEditMode, useLocalSpecialSkill } from '@/context/EditModeContext';
 import { SpecialSkill } from '@/data/types';
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
@@ -102,6 +103,11 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
             under={skill.factionId == 'cat' ? false : true}
           />
         </NavigationButtonsRow>
+      }
+      wikiHistory={
+        <SingleItemWikiHistoryDisplay
+          singleItem={{ name: skill.name, type: 'specialSkill', factionId: skill.factionId }}
+        />
       }
     />
   );

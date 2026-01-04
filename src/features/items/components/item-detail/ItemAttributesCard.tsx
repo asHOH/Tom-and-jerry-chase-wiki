@@ -11,6 +11,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalItem } from '@/context/EditModeContext';
 import { Item } from '@/data/types';
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
@@ -480,6 +481,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
           <SpecifyTypeNavigationButtons currentId={item.name} specifyType='item' />
         </NavigationButtonsRow>
       }
+      wikiHistory={<SingleItemWikiHistoryDisplay singleItem={{ name: item.name, type: 'item' }} />}
     />
   );
 }

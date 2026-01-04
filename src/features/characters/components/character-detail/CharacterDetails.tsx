@@ -11,6 +11,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { Skill } from '@/data/types';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsBySingleItem';
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import CollapseCard from '@/components/ui/CollapseCard';
@@ -256,6 +257,9 @@ export default function CharacterDetails({
                     aliases={localCharacter.aliases || []}
                   />
                   <WinRatesDisplay characterName={localCharacter.id} />
+                  <SingleItemWikiHistoryDisplay
+                    singleItem={{ name: character.id, type: 'character' }}
+                  />
                 </>
               )}
               {!isEditMode && isMobile && (
@@ -297,6 +301,9 @@ export default function CharacterDetails({
                         aliases={localCharacter.aliases || []}
                       />
                       <WinRatesDisplay characterName={localCharacter.id} />
+                      <SingleItemWikiHistoryDisplay
+                        singleItem={{ name: character.id, type: 'character' }}
+                      />
                     </div>
                   </div>
                 </div>

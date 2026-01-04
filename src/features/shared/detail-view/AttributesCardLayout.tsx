@@ -17,6 +17,7 @@ interface AttributesCardLayoutProps {
   aliasesContent?: ReactNode | undefined;
   attributes: ReactNode;
   navigation?: ReactNode | undefined;
+  wikiHistory?: ReactNode | undefined;
 }
 
 export default function AttributesCardLayout({
@@ -29,6 +30,7 @@ export default function AttributesCardLayout({
   aliasesContent,
   attributes,
   navigation,
+  wikiHistory,
 }: AttributesCardLayoutProps) {
   const isMobile = useMobile();
   const spacing = designTokens.spacing;
@@ -79,6 +81,7 @@ export default function AttributesCardLayout({
                     {aliasesContent}
                   </div>
                 )}
+                {wikiHistory}
               </div>
             </div>
           </div>
@@ -105,6 +108,9 @@ export default function AttributesCardLayout({
                 {aliasesContent}
               </div>
             )}
+            <div className='mx-(--space-md) text-sm text-gray-400 dark:text-gray-500'>
+              {wikiHistory}
+            </div>
           </div>
         )}
 

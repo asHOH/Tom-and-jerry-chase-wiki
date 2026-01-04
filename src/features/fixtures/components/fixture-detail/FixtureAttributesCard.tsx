@@ -8,6 +8,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalFixture } from '@/context/EditModeContext';
 import { Fixture } from '@/data/types';
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
@@ -362,6 +363,9 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
         <NavigationButtonsRow>
           <SpecifyTypeNavigationButtons currentId={fixture.name} specifyType='fixture' />
         </NavigationButtonsRow>
+      }
+      wikiHistory={
+        <SingleItemWikiHistoryDisplay singleItem={{ name: fixture.name, type: 'fixture' }} />
       }
     />
   );

@@ -16,6 +16,8 @@ import { buffsEdit } from '@/data';
 
 import '@/lib/design-tokens';
 
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
+
 export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
@@ -184,6 +186,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
           <SpecifyTypeNavigationButtons currentId={buff.name} specifyType='buff' />
         </NavigationButtonsRow>
       }
+      wikiHistory={<SingleItemWikiHistoryDisplay singleItem={{ name: buff.name, type: 'buff' }} />}
     />
   );
 }

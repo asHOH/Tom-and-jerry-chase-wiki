@@ -18,6 +18,7 @@ import {
   convertCancelableAftercastToDisplayText,
   convertCancelableSkillToDisplayText,
 } from '@/features/characters/utils/skills';
+import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
 import { editable } from '@/components/ui/editable';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -758,6 +759,13 @@ export default function SkillCard({
                     );
                   }}
                 />
+                {!isEditMode && (
+                  <div className='font-normal'>
+                    <SingleItemWikiHistoryDisplay
+                      singleItem={{ name: skill.name, type: 'skill' }}
+                    />
+                  </div>
+                )}
               </h3>
               {isEditMode && skill.type == 'weapon2' && (
                 <button
@@ -867,6 +875,11 @@ export default function SkillCard({
       {/*手机版-主体栏*/}
       {isMobile && (
         <div className='flex-1'>
+          {!isEditMode && (
+            <div className='px-2'>
+              <SingleItemWikiHistoryDisplay singleItem={{ name: skill.name, type: 'skill' }} />
+            </div>
+          )}
           {isEditMode && hasProperties && (
             <div className='mt-1 divide-y divide-dashed divide-gray-300 px-2 text-sm text-gray-500 dark:text-gray-400'>
               {properties.map((prop, index) => (
