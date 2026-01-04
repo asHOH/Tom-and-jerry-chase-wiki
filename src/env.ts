@@ -9,8 +9,8 @@ export const env = createEnv({
 
     // Feedback email (Resend)
     RESEND_API_KEY: z.string().optional(),
-    FEEDBACK_EMAIL: z.string().email().optional(),
-    RESEND_FROM_EMAIL: z.string().email().optional(),
+    FEEDBACK_EMAIL: z.email().optional(),
+    RESEND_FROM_EMAIL: z.email().optional(),
 
     // Supabase
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
@@ -22,7 +22,7 @@ export const env = createEnv({
     GEMINI_API_KEY: z.string().optional(),
 
     // Rate Limit (Upstash)
-    UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+    UPSTASH_REDIS_REST_URL: z.url().optional(),
     UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 
     // Rich text editor
@@ -62,7 +62,7 @@ export const env = createEnv({
     NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH: binaryFlag,
 
     // Supabase
-    NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
+    NEXT_PUBLIC_SUPABASE_URL: z.url().optional(),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
     NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN: z.string().optional(),
     NEXT_PUBLIC_SUPABASE_RTE_IMAGE_BUCKET: z.string().optional(),

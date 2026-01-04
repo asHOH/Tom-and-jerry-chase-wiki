@@ -32,7 +32,7 @@ export const articleEditPendingSchema = z.object({
 
 export const commentsListQuerySchema = z.object({
   scope: z.enum(['articles']),
-  targetId: z.string().trim().uuid(),
+  targetId: z.uuid().trim(),
   limit: z
     .string()
     .trim()
@@ -44,11 +44,10 @@ export const commentsListQuerySchema = z.object({
 
 export const createCommentSchema = z.object({
   scope: z.enum(['articles']),
-  targetId: z.string().trim().uuid(),
+  targetId: z.uuid().trim(),
   parentId: z
-    .string()
-    .trim()
     .uuid()
+    .trim()
     .optional()
     .transform((value) => (value && value.length > 0 ? value : undefined)),
   content: z.string().trim().min(1).max(2000),
