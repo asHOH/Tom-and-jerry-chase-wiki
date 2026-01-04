@@ -4587,6 +4587,104 @@ export const historyData: GameHistory = [
           },
         },
       },
+      {
+        date: '10.30',
+        description:
+          '更新高定皮跳跳使者。\n更新皮肤高级定制系统。\n调整天梯巅峰对决UI。\n调整穿墙相关问题。',
+        details: {},
+      },
+      {
+        date: '11.6',
+        description: '更新魔镜皮梦中之国。',
+        details: {},
+      },
+      {
+        date: '11.13',
+        description:
+          '调整果盘。\n调整部分火箭、奶酪洞口、泡泡机刷新点位。\n更新精准交互系统、脱离卡点系统。\n更新独行标记系统。\n调整经典奶酪赛玩法准备期机制。',
+        details: {
+          balance: { itemChanges: [{ name: '果盘', changeType: ChangeType.ADJUSTMENT }] },
+        },
+      },
+      {
+        date: '11.20',
+        description: '调整脱离卡点系统。\n调整会员商城系统。\n调整玫瑰绅士的礼遇系统。',
+        details: {},
+      },
+      {
+        date: '11.20-12.2',
+        description: '第二届逆风起航奖评选，冠军朵朵。',
+        details: {},
+      },
+      {
+        date: '11.27',
+        description: '更新祈愿皮丰饶金穗。\n更新塔拉第二武器牛仔的礼物。',
+        details: {
+          content: {
+            newSecondWeapons: ['塔拉-牛仔的礼物'],
+          },
+        },
+      },
+      {
+        date: '12.4',
+        description: '更新魔镜皮“凯伊”。\n更新猫鼠前瞻资讯系统。',
+        details: {},
+      },
+      {
+        date: '12.11',
+        description: '更新猫鼠乐园新地图欢乐雪场。\n更新重拾信誉匹配模式系统。',
+        details: {},
+      },
+      {
+        date: '12.18',
+        description: '调整梦想祈愿系统。\n调整独行标记系统。',
+        details: {},
+      },
+      {
+        date: '12.25',
+        description:
+          '更新转盘皮白雪皇后，高定皮花开富贵。\n更新地图天宫·云上。\n调整皮肤高级定制系统。',
+        details: {},
+      },
+    ],
+  },
+  {
+    year: 2026,
+    events: [
+      {
+        date: '1.1',
+        description:
+          '更新魔镜皮冰上垂钓。\n加强天使泰菲、鲍姆、朵朵、杰瑞、凯特、剑客汤姆、图茨、布奇、泰菲，调整莱特宁、削弱侦探泰菲。\n调整番茄、冰块、碎片、变身饮料。\n加强护佑。\n调整冰冻保鲜。\n调整小黄鸭。\n调整部分果盘、泡泡机刷新点位。\n调整经典奶酪赛奶酪期机制。', //音乐家注：相较2026.1.3版本的年鉴，此处修复了日期（1.8→1.1），更改了泰菲和侦探泰菲的类型（调整→增强/削弱）
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '天使泰菲', changeType: ChangeType.BUFF },
+              { name: '鲍姆', changeType: ChangeType.BUFF },
+              { name: '朵朵', changeType: ChangeType.BUFF },
+              { name: '杰瑞', changeType: ChangeType.BUFF },
+              { name: '凯特', changeType: ChangeType.BUFF },
+              { name: '剑客汤姆', changeType: ChangeType.BUFF },
+              { name: '图茨', changeType: ChangeType.BUFF },
+              { name: '布奇', changeType: ChangeType.BUFF },
+              { name: '泰菲', changeType: ChangeType.BUFF },
+              { name: '莱特宁', changeType: ChangeType.ADJUSTMENT },
+              { name: '侦探泰菲', changeType: ChangeType.NERF },
+            ],
+            itemChanges: [
+              { name: '番茄', changeType: ChangeType.ADJUSTMENT },
+              { name: '冰块', changeType: ChangeType.ADJUSTMENT },
+              { name: '碎片', changeType: ChangeType.ADJUSTMENT },
+              { name: '变身饮料', changeType: ChangeType.ADJUSTMENT },
+            ],
+            knowledgeCardChanges: [{ name: '护佑', changeType: ChangeType.ADJUSTMENT }],
+          },
+        },
+      },
+      {
+        date: '1.9',
+        description: 'S27赛季开始。',
+        details: {},
+      },
     ],
   },
 ];
