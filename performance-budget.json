@@ -4,8 +4,8 @@
       "type": "bundle",
       "name": "client",
       "baseline": "101KB",
-      "budget": "150KB",
-      "warning": "140KB"
+      "budget": "120KB",
+      "warning": "110KB"
     },
     {
       "type": "initial",
@@ -14,8 +14,8 @@
     },
     {
       "type": "allScript",
-      "maximum": "230KB",
-      "warning": "210KB"
+      "maximum": "200KB",
+      "warning": "180KB"
     }
   ],
   "analytics": {

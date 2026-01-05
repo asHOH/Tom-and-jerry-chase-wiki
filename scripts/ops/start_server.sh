@@ -109,16 +109,6 @@ GEMINI_API_KEY=your_gemini_api_key_here
 UPSTASH_REDIS_REST_URL=https://example.upstash.io
 UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token_here
 
-# Sentry (Error Monitoring)
-# Get DSN from: Project Settings > Client Keys (DSN)
-NEXT_PUBLIC_SENTRY_DSN=https://examplePublicKey@o0.ingest.sentry.io/0
-# Get Auth Token from: User Settings > API > Auth Tokens (Scopes: project:releases, org:read)
-SENTRY_AUTH_TOKEN=your_sentry_auth_token_here
-# Organization Slug from: Organization Settings > General Settings
-SENTRY_ORG=your_organization_slug
-# Project Slug from: Project Settings > General Settings
-SENTRY_PROJECT=your_project_slug
-
 EOF
     echo "✅ Template '$ENV_FILE' created."
   fi

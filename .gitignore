@@ -93,6 +93,3 @@ public/version.json
 # Generated images
 public/images/*/*.webp
 public/images/*/*.avif
-
-# Sentry Config File
-.env.sentry-build-plugin

@@ -2,11 +2,11 @@
 
 import { useEffect } from 'react';
 import Error from 'next/error';
-import * as Sentry from '@sentry/nextjs';
 
 export default function GlobalError({ error }: { error: Error }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    // Log the error to an error reporting service
+    console.error(error);
   }, [error]);
 
   return (
