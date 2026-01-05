@@ -128,7 +128,9 @@ const nextConfig: NextConfig = {
       !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
   env: {
-    NEXT_PUBLIC_BUILD_TIMESTAMP: new Date().toISOString(),
+    // Use the commit timestamp if available (set by start_server.sh), otherwise fallback to build time
+    NEXT_PUBLIC_BUILD_TIMESTAMP:
+      process.env.NEXT_PUBLIC_BUILD_TIMESTAMP || new Date().toISOString(),
   },
   async rewrites() {
     const rewriteContents = [

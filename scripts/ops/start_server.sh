@@ -191,6 +191,8 @@ done
 BUILD_HASH_FILE=".next/.build_hash"
 CURRENT_HASH=$(git rev-parse HEAD)
 export COMMIT_SHA="$CURRENT_HASH"
+# Get the commit timestamp in ISO 8601 format
+export NEXT_PUBLIC_BUILD_TIMESTAMP=$(git show -s --format=%cI "$CURRENT_HASH")
 LAST_BUILD_HASH=""
 if [ -f "$BUILD_HASH_FILE" ]; then
   LAST_BUILD_HASH=$(cat "$BUILD_HASH_FILE")
