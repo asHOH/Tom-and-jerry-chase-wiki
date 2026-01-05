@@ -5,6 +5,10 @@ REPO_URL="https://github.com/asHOH/Tom-and-jerry-chase-wiki.git"
 # Alternative URL if you need mirroring
 # REPO_URL="https://githubfast.com/asHOH/Tom-and-jerry-chase-wiki.git"
 TARGET_BRANCH="develop"
+# Set this to a specific commit hash to deploy that version. Leave empty to deploy the latest.
+TARGET_COMMIT=""
+# Node.js memory limit in MB. Adjust based on server capacity (e.g., 2048 for 4GB RAM).
+NODE_MEMORY_LIMIT="2048"
 ENV_FILE=".env.production"
 
 # Function to run a command with retries for git.
@@ -44,8 +48,14 @@ else
   echo "Repository exists. Attempting to update..."
   cd "$REPO_DIR"
   if run_with_retry git fetch origin "$TARGET_BRANCH"; then
-    echo "Update successful. Resetting to the latest version."
-    git reset --hard "origin/$TARGET_BRANCH"
+    echo "Update successful."
+    if [ -n "$TARGET_COMMIT" ]; then
+      echo "⚠️ Resetting to specific commit: $TARGET_COMMIT"
+      git reset --hard "$TARGET_COMMIT"
+    else
+      echo "Resetting to the latest version."
+      git reset --hard "origin/$TARGET_BRANCH"
+    fi
   else
     echo "Could not update from remote. Starting server with existing local code."
   fi
@@ -153,9 +163,9 @@ if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
   echo "Memory status before build:"
   free -h 2>/dev/null || echo "Unable to check memory"
 
-  # Optimize Node.js memory usage for 4GB instance (leave ~1GB for OS/other)
-  # This prevents the OOM killer (Exit code 137) by forcing GC before hitting the limit.
-  export NODE_OPTIONS="--max-old-space-size=2560"
+  # Optimize Node.js memory usage
+  # Lowering to leave more room for OS and worker threads
+  export NODE_OPTIONS="--max-old-space-size=$NODE_MEMORY_LIMIT"
   
   # Skip heavy checks during production build on server (we check locally)
   export SKIP_BUILD_CHECKS=true
