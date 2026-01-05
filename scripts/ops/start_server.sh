@@ -63,26 +63,66 @@ fi
 
 # 2. Set up Production Environment Variables.
 if [ ! -f "$ENV_FILE" ]; then
-  echo "Production environment file '$ENV_FILE' not found. Creating a template..."
-  cat << EOF > "$ENV_FILE"
-# --- Production Environment Variables ---
-RESEND_API_KEY=<YOUR_PRODUCTION_RESEND_API_KEY>
-FEEDBACK_EMAIL=tyzhang0001+tjwiki@gmail.com
+  if [ -f ".env.example" ]; then
+    echo "Production environment file '$ENV_FILE' not found. Creating from .env.example..."
+    cp .env.example "$ENV_FILE"
+    echo "✅ Created '$ENV_FILE' from .env.example."
+  else
+    echo "Production environment file '$ENV_FILE' not found. Creating a template..."
+    cat << EOF > "$ENV_FILE"
+# Feedback Collection Configuration
+
+# Email Service (Resend)
+NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1
+RESEND_API_KEY=your_resend_api_key_here
+FEEDBACK_EMAIL=your-email@example.com
 RESEND_FROM_EMAIL=feedback@email.tjwiki.com
+
+# Analytics (set to 1 to force-enable, 0 to disable)
+# NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS=0
+
+# Disable Articles Feature (uncomment to disable)
+# NEXT_PUBLIC_DISABLE_ARTICLES=1
+
+# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=https://gehfogfxgbkwwwcamogj.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlaGZvZ2Z4Z2Jrd3d3Y2Ftb2dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMjYxMjgsImV4cCI6MjA3MDkwMjEyOH0.eDK3NqpJfYGnMcjlVEbes5K5gMzDy1HPQsC_Dm9dhng
-SUPABASE_SERVICE_ROLE_KEY=<YOUR_PRODUCTION_SUPABASE_SERVICE_KEY>
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
 NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN=email.tjwiki.com
-NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH=1
-NEXT_PUBLIC_CAPTCHA_PROVIDER=turnstile
-NEXT_PUBLIC_CAPTCHA_SITE_KEY=0x4AAAAAABu0eWybq5gJHhNE
-CAPTCHA_SECRET_KEY=<YOUR_PRODUCTION_CAPTCHA_SECRET_KEY>
+
+# Disable Wikitext Editor (uncomment to disable)
+# NEXT_PUBLIC_DISABLE_WIKITEXT_EDITOR=1
+
+# Enable Captcha for Pages ("hcaptcha" or "turnstile") (comment to disable)
+NEXT_PUBLIC_CAPTCHA_PROVIDER=hcaptcha
+NEXT_PUBLIC_CAPTCHA_SITE_KEY=your_hcaptcha_site_key_here
+CAPTCHA_SECRET_KEY=your_hcaptcha_secret_key_here
+
+# Chat Service (Gemini)
 NEXT_PUBLIC_GEMINI_CHAT_MODEL=gemini-2.5-flash
-GEMINI_API_KEY=<YOUR_PRODUCTION_GEMINI_API_KEY>
-NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS=0
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Image
+# NEXT_PUBLIC_DISABLE_IMAGE_OPTIMIZATION=1
+
+# Rate Limit
+UPSTASH_REDIS_REST_URL=https://example.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token_here
+
+# Sentry (Error Monitoring)
+# Get DSN from: Project Settings > Client Keys (DSN)
+NEXT_PUBLIC_SENTRY_DSN=https://examplePublicKey@o0.ingest.sentry.io/0
+# Get Auth Token from: User Settings > API > Auth Tokens (Scopes: project:releases, org:read)
+SENTRY_AUTH_TOKEN=your_sentry_auth_token_here
+# Organization Slug from: Organization Settings > General Settings
+SENTRY_ORG=your_organization_slug
+# Project Slug from: Project Settings > General Settings
+SENTRY_PROJECT=your_project_slug
+
 EOF
-  echo "✅ Template '$ENV_FILE' created."
-  echo "🛑 Please edit the file with your production secrets and run this script again."
+    echo "✅ Template '$ENV_FILE' created."
+  fi
+  echo "🛑 Please edit the file with production secrets and run this script again."
   exit 1
 fi
 
@@ -167,6 +207,11 @@ if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
   # Lowering to leave more room for OS and worker threads
   export NODE_OPTIONS="--max-old-space-size=$NODE_MEMORY_LIMIT"
   
+  # Limit concurrency to reduce memory usage
+  # This forces Next.js to use fewer workers for static generation and webpack
+  export NEXT_CPU_COUNT=1
+  export UV_THREADPOOL_SIZE=1
+
   # Skip heavy checks during production build on server (we check locally)
   export SKIP_BUILD_CHECKS=true
   export NEXT_TELEMETRY_DISABLED=1
@@ -191,4 +236,4 @@ fi
 
 # 8. Start the application.
 echo "Starting the application..."
-npm start
+cloudflared tunnel --config /workspace/cloudflared-config.yml run & npm start
