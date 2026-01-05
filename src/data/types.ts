@@ -307,6 +307,7 @@ export type ItemDefinition = {
   exp?: number; //(cat) get exp when item hit mouse
 
   itemAttributesAsCharacter?: ItemAttributesAsCharacter;
+  specialImageUrl?: string; // use other image instead of buff's image
 } & PhysicalAttributes;
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };

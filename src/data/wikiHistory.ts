@@ -194,6 +194,146 @@ export const wikiHistoryData: WikiDataHistory = [
           },
         },
       },
+      {
+        date: '1.5',
+        description: '更改部分信息。',
+        details: {
+          data: {
+            changes: [
+              {
+                item: { name: '兔八哥', type: 'character' },
+                changeType: WikiChangeType.REWORK,
+                description: '重制兔八哥的所有加点方案以及卡组信息，以适应当前版本。',
+              },
+              {
+                item: { name: '幻影剑气', type: 'skill' },
+                changeType: WikiChangeType.UPDATE,
+                description:
+                  '修正有关剑气反弹的相关描述（实际为剑气只有命中角色/小黄鸭时才能反弹），以及幻影传送的描述（传送技能初始不可用，幻影生成时才转为可用状态）。',
+              },
+              {
+                item: { name: '剑气', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description:
+                  '修正有关剑气反弹的相关描述（实际为剑气只有命中角色/小黄鸭时才能反弹），以及幻影传送的描述（传送技能初始不可用，幻影生成时才转为可用状态）。',
+              },
+              {
+                item: { name: '幻影', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description: '添加幻影传送的描述（传送技能初始不可用，幻影生成时才转为可用状态）。',
+              },
+              {
+                item: { name: '窝窝头', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '添加小熊猫拾取后提供的具体增益。',
+              },
+              {
+                item: { name: '竹笋', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '添加小熊猫拾取后提供的具体增益。',
+              },
+              {
+                item: { name: '萝卜墩', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '添加小熊猫拾取后提供的具体增益。',
+              },
+              {
+                item: { name: '火箭', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加鼠方救援所需的具体时间数据。',
+              },
+              {
+                item: { name: '受伤', type: 'buff' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加鼠方治疗所需的具体时间数据。',
+              },
+              {
+                item: { name: '鼠虚弱', type: 'buff' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加鼠方治疗所需的具体时间数据。',
+              },
+              {
+                item: { name: '炸毁', type: 'buff' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加修复火箭所需的具体时间数据。',
+              },
+              {
+                item: { name: '修理锤', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加每次使用所需的具体时间数据。',
+              },
+              {
+                item: { name: '黄金修理锤', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加每次使用所需的具体时间数据。',
+              },
+              {
+                item: { name: '猫虚弱', type: 'buff' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加虚弱的具体时长数据。',
+              },
+              {
+                item: { name: '冰桶', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加鼠方使用所需的具体时间数据，并调整了语序。',
+              },
+              {
+                item: { name: '鞭炮堆', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加鼠方使用所需的具体时间数据，并调整了语序。',
+              },
+              {
+                item: { name: '蛋糕', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '从本词条中分离出单独的蛋糕-旧版词条，因此调整了相关描述。',
+              },
+              {
+                item: { name: '蛋糕-旧版', type: 'item' },
+                changeType: WikiChangeType.CREATE,
+                description: '为旧版蛋糕创建单独界面，用以与新版蛋糕作区分。',
+              },
+              {
+                item: { name: '变身饮料', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加猫咪获得的跳跃高度提高的具体数值。',
+              },
+              {
+                item: { name: '奶酪', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加搬运奶酪时的负面效果的具体数值。',
+              },
+              {
+                item: { name: '拳套盒', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description:
+                  '在详细描述中添加猫咪受到伤害的具体数值（该数值实际与老鼠一致）；添加猫咪拆卸盒子的具体用时；添加老鼠推动盒子的具体速度。',
+              },
+              {
+                item: { name: '玩具枪', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加内置使用间隔的具体时间数据。',
+              },
+              {
+                item: { name: '狗骨头', type: 'item' },
+                changeType: WikiChangeType.UPDATE,
+                description:
+                  '在详细描述中添加每次命中造成的具体眩晕时长数据，添加小狗泰克为鼠方提供的具体推奶酪加速数据。',
+              },
+              {
+                item: { name: '泰克', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description: '在详细描述中添加小狗泰克为鼠方提供的具体推奶酪加速数据。',
+              },
+              {
+                item: { name: '泰菲', type: 'character' },
+                changeType: WikiChangeType.REWORK,
+                description:
+                  '根据新版泰菲的数据，更改了与部分角色的克制关系及相关描述；调整了部分技能文案的语序。',
+              },
+            ],
+          },
+        },
+      },
     ],
   },
 ];

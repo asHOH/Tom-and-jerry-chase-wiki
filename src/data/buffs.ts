@@ -1759,7 +1759,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     target: '角色',
     failure: '得到队友治疗后',
     description:
-      '自身[基础Hp恢复](不包括其它来源的恢复效果)强制归零，且{移速降低5%}。其它老鼠可通过交互键治疗受伤的老鼠，成功治疗时获得少量经验。',
+      '自身[基础Hp恢复](不包括其它来源的恢复效果)强制归零，且{移速降低5%}。其它老鼠可通过交互键治疗受伤的老鼠，治疗共需2.4秒（多名老鼠可合作进行治疗），治疗期间双方无法移动，成功治疗时获得少量经验。',
     stack: '角色虚弱期间不会再次受到虚弱效果，也不会重置虚弱时间。',
     unuseImage: true,
   },
@@ -1770,7 +1770,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     duration: 10,
     failure: '得到队友治疗后',
     description:
-      '禁用技能和道具，获得高额减速及跳跃高度降低，且可被{抓起}，持续10秒。其它老鼠可通过交互键治疗虚弱的老鼠，成功治疗时获得少量经验（不会解除{受伤}）。',
+      '禁用技能和道具，获得高额减速及跳跃高度降低，且可被{抓起}，持续10秒。其它老鼠可通过交互键治疗虚弱的老鼠，治疗共需2.4秒（多名老鼠可合作进行治疗），治疗期间双方无法移动，成功治疗时获得少量经验（不会解除{受伤}）。',
     stack: '角色虚弱期间不会再次受到虚弱效果，也不会重置虚弱时间。',
     source: [
       { name: '铁血', type: 'knowledgeCard' },
@@ -1782,8 +1782,9 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     type: '负面',
     global: false,
     target: '猫角色',
+    duration: 6.9,
     description:
-      '禁用技能和道具，无法移动、跳跃，获得50Hp/秒的{恢复}效果。该效果结束时获得1秒无敌。',
+      '禁用技能和道具，无法移动、跳跃，获得50Hp/秒的{恢复}效果，持续6.9秒。该效果结束时获得1秒无敌。',
     stack: '角色虚弱期间不会再次受到虚弱效果，也不会重置虚弱时间。',
     source: [{ name: '戏剧转折', type: 'skill' }],
     unuseImage: true,
@@ -1936,7 +1937,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     target: '火箭',
     aliases: ['炸毁火箭', '摧毁火箭'],
     description:
-      '直接摧毁{火箭}，并解救{被绑上火箭}的老鼠（会触发相关知识卡），被炸毁的火箭无法绑上老鼠；猫靠近火箭后可通过交互将其修复。',
+      '直接摧毁{火箭}，并解救{被绑上火箭}的老鼠（会触发相关知识卡），被炸毁的火箭无法绑上老鼠；猫靠近火箭后可通过交互将其修复，交互需要3秒。',
     source: [
       { name: '火药桶', type: 'entity' },
       { name: '共鸣', type: 'skill' },

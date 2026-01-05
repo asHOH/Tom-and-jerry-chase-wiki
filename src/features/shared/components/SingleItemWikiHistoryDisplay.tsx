@@ -75,7 +75,7 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
               </strong>
               {' - '}
               {entry.type}
-              {entry.description ? `: ${entry.description}` : ''}
+              {entry.description ? <div className='pre-wrap'>{`: ${entry.description}`}</div> : ''}
             </li>
           ))}
         </ul>
