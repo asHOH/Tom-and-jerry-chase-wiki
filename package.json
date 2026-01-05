@@ -136,7 +136,7 @@
     "eslint-config-next": "^16.1.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest-dom": "^5.5.0",
-    "eslint-plugin-testing-library": "^7.15.3",
+    "eslint-plugin-testing-library": "^7.15.4",
     "eslint-plugin-unused-imports": "^4.3.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
