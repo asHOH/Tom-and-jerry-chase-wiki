@@ -39,7 +39,7 @@ export default function GameImage({
 
   // Detect if this is a cat character image for larger display
   const isCatCharacter = src.includes('/images/cats/');
-  const maxHeight = isCatCharacter ? '90%' : '80%';
+  const maxHeight = isCatCharacter ? '100%' : '85%';
 
   // Optimize sizes attribute based on image size and usage
   const optimizedSizes =
@@ -47,7 +47,7 @@ export default function GameImage({
     (() => {
       switch (size) {
         case 'CARD_DETAILS':
-          return '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
+          return '(max-width: 768px) 200px, 320px';
         case 'CHARACTER_CARD':
           return '210px';
         case 'KNOWLEDGECARD_CARD':
