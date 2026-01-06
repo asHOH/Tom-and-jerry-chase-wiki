@@ -268,24 +268,27 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     }
   };
 
-  const totalTabs = items.length;
+  const isArticlesEnabled =
+    env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const renderItems = items.filter((tab) => isArticlesEnabled || tab.id !== 'articles');
+
+  const totalTabs = renderItems.length;
   const clampedCollapsed = Math.min(collapsedCount, totalTabs);
   const isCompactMode = clampedCollapsed > 0;
   const visibleCount = Math.max(totalTabs - clampedCollapsed, 0);
-  const activeIndex = items.findIndex((tab) => isTabActive(tab.href));
-  const sortedTabs = isCompactMode
-    ? items
-        .slice()
-        .sort((a, b) => +(items.indexOf(a) < activeIndex) - +(items.indexOf(b) < activeIndex))
-    : items;
-  const primaryTabs = sortedTabs
-    .slice(0, visibleCount)
-    .filter(
-      (tab) =>
-        (env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY) ||
-        tab.id !== 'articles'
-    );
-  const overflowTabs = clampedCollapsed > 0 ? sortedTabs.slice(visibleCount) : [];
+  const activeIndex = renderItems.findIndex((tab) => isTabActive(tab.href));
+
+  // Sliding window logic: preserve order, but shift window if active tab is hidden
+  let startIndex = 0;
+  if (activeIndex >= visibleCount) {
+    startIndex = activeIndex - visibleCount + 1;
+  }
+
+  const primaryTabs = renderItems.slice(startIndex, startIndex + visibleCount);
+  const overflowTabs = [
+    ...renderItems.slice(0, startIndex),
+    ...renderItems.slice(startIndex + visibleCount),
+  ];
 
   const tabMinWidthClass = 'min-w-[40px]';
   const homeButtonSizing = clsx('min-w-[40px]', !isCompactMode && 'lg:min-w-fit');
