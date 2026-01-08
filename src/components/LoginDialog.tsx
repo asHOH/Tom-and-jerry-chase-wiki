@@ -209,6 +209,16 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
               欢迎回来，<span className='font-semibold'>{username}</span>。
             </p>
             <input
+              type='text'
+              name='username'
+              autoComplete='username'
+              value={username}
+              className='hidden'
+              tabIndex={-1}
+              aria-hidden='true'
+              readOnly
+            />
+            <input
               type='password'
               placeholder='密码'
               className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
@@ -226,6 +236,16 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
               用户名 <span className='font-semibold'>{username}</span> 未被占用。
             </p>
+            <input
+              type='text'
+              name='username'
+              autoComplete='username'
+              value={username}
+              className='hidden'
+              tabIndex={-1}
+              aria-hidden='true'
+              readOnly
+            />
             <input
               type='text'
               placeholder='昵称'
