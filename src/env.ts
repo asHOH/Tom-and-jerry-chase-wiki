@@ -76,6 +76,9 @@ export const env = createEnv({
 
     // Build metadata
     NEXT_PUBLIC_BUILD_TIMESTAMP: z.string().optional(),
+
+    // Custom Site URL (for mirror deployments)
+    NEXT_PUBLIC_SITE_URL: z.url().optional(),
   },
 
   experimental__runtimeEnv: {
@@ -94,6 +97,7 @@ export const env = createEnv({
     NEXT_PUBLIC_CAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY,
     NEXT_PUBLIC_GEMINI_CHAT_MODEL: process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL,
     NEXT_PUBLIC_BUILD_TIMESTAMP: process.env.NEXT_PUBLIC_BUILD_TIMESTAMP,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
 
   skipValidation: process.env.SKIP_ENV_VALIDATION === '1',
