@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import FixtureClient from './FixtureGridClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '地图组件',
   description: DESCRIPTION,
   keywords: ['地图组件'],
-  canonicalUrl: 'https://tjwiki.com/fixtures',
+  canonicalUrl: `${SITE_URL}/fixtures`,
 });
 
 export default function FixturesPage() {

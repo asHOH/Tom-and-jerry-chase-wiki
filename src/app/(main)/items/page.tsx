@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import ItemClient from './ItemGridClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '道具',
   description: DESCRIPTION,
   keywords: ['道具'],
-  canonicalUrl: 'https://tjwiki.com/items',
+  canonicalUrl: `${SITE_URL}/items`,
 });
 
 export default function ItemsPage() {

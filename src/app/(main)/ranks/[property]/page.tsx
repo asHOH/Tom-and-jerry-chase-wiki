@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import { FactionId } from '@/data/types';
 import { CharacterRankingGrid } from '@/features/characters/components';
 import {
@@ -41,7 +42,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     title: `${propertyInfo.label}排行榜${factionSuffix}`,
     description: `查看猫和老鼠手游中所有角色在${propertyInfo.label}属性上的排名对比。${propertyInfo.description}`,
     keywords: [propertyInfo.label, '角色排行榜', '属性对比'],
-    canonicalUrl: `https://tjwiki.com/ranks/${resolvedParams.property}${factionId ? `?faction=${factionId}` : ''}`,
+    canonicalUrl: `${SITE_URL}/ranks/${resolvedParams.property}${factionId ? `?faction=${factionId}` : ''}`,
   });
 }
 

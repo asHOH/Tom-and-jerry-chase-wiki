@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import MechanicsClient from './MechanicsClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '局内机制',
   description: DESCRIPTION,
   keywords: ['局内机制'],
-  canonicalUrl: 'https://tjwiki.com/mechanics',
+  canonicalUrl: `${SITE_URL}/mechanics`,
 });
 
 export default function ToolPage() {

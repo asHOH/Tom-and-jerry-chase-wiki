@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 import { entities } from '@/data';
 
@@ -23,11 +24,11 @@ function generateStructuredData(entityName: string): WithContext<Article> {
     '@type': 'Article',
     headline: entity.name,
     description: desc,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tjwiki.com/entities/${encodeURIComponent(entityName)}`,
+      '@id': `${SITE_URL}/entities/${encodeURIComponent(entityName)}`,
     },
   };
 }

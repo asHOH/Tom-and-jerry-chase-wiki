@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { CollectionPage, WithContext } from 'schema-dts';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 import { factionData, factions } from '@/data';
 
@@ -29,7 +30,7 @@ function generateStructuredData(factionId: string): WithContext<CollectionPage> 
     '@type': 'CollectionPage',
     name: `${faction.name} - 猫鼠wiki`,
     description: faction.description,
-    url: `https://tjwiki.com/factions/${factionId}`,
+    url: `${SITE_URL}/factions/${factionId}`,
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: faction.characters.length,
@@ -37,7 +38,7 @@ function generateStructuredData(factionId: string): WithContext<CollectionPage> 
         '@type': 'ListItem',
         position: index + 1,
         name: character.id,
-        url: `https://tjwiki.com/characters/${character.id}`,
+        url: `${SITE_URL}/characters/${character.id}`,
       })),
     },
     inLanguage: 'zh-CN',
@@ -60,7 +61,7 @@ export async function generateMetadata({
     title: faction.name,
     description: faction.description,
     keywords: [faction.name],
-    canonicalUrl: `https://tjwiki.com/factions/${resolvedParams.factionId}`,
+    canonicalUrl: `${SITE_URL}/factions/${resolvedParams.factionId}`,
   });
 }
 

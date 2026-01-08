@@ -5,6 +5,7 @@ import { Article, WithContext } from 'schema-dts';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import { getTutorialPage } from '@/features/articles/utils/docs';
 import StructuredData from '@/components/StructuredData';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
@@ -50,11 +51,11 @@ function generateStructuredData(characterId: string): WithContext<Article> | nul
     publisher: {
       '@type': 'Organization',
       name: '猫和老鼠手游wiki',
-      url: 'https://tjwiki.com',
+      url: SITE_URL,
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tjwiki.com/characters/${encodeURIComponent(characterId)}`,
+      '@id': `${SITE_URL}/characters/${encodeURIComponent(characterId)}`,
     },
     inLanguage: 'zh-CN',
     image: character.imageUrl,

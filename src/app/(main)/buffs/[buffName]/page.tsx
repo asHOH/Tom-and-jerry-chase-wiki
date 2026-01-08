@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 import { buffs } from '@/data';
 
@@ -27,11 +28,11 @@ function generateStructuredData(buffName: string): WithContext<Article> | null {
     '@type': 'Article',
     headline: buff.name,
     description: desc,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tjwiki.com/buffs/${encodeURIComponent(buffName)}`,
+      '@id': `${SITE_URL}/buffs/${encodeURIComponent(buffName)}`,
     },
     image: buff.imageUrl,
   };

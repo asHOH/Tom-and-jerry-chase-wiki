@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import SpecialSkillClient from './SpecialSkillGridClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '特技',
   description: DESCRIPTION,
   keywords: ['特技'],
-  canonicalUrl: 'https://tjwiki.com/special-skills',
+  canonicalUrl: `${SITE_URL}/special-skills`,
 });
 
 export default function SpecialSkillsPage() {

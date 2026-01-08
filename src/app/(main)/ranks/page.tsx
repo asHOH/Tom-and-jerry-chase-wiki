@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import { CharacterRankingGrid } from '@/features/characters/components';
 import { RankableProperty } from '@/features/characters/utils/ranking';
 
@@ -14,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: '角色属性排行榜',
     description: DESCRIPTION,
     keywords: ['角色排行榜', '属性', '排名'],
-    canonicalUrl: 'https://tjwiki.com/ranks',
+    canonicalUrl: `${SITE_URL}/ranks`,
   });
 }
 

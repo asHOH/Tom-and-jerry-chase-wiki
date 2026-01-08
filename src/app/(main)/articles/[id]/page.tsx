@@ -5,6 +5,7 @@ import { Article, WithContext } from 'schema-dts';
 import { getApprovedArticleVersion, getArticleBasicInfo } from '@/lib/articles/serverQueries';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 
 import ArticleClient from './ArticleClient';
@@ -36,7 +37,7 @@ function buildArticleStructuredData({
     headline: title,
     description,
     author: { '@type': 'Person', name: author },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
     dateModified,
     datePublished,
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },

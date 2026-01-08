@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import ToolGridClient from './ToolGridClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '工具栏',
   description: DESCRIPTION,
   keywords: ['工具栏'],
-  canonicalUrl: 'https://tjwiki.com/tools',
+  canonicalUrl: `${SITE_URL}/tools`,
 });
 
 export default function ToolPage() {

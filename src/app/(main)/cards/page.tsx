@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import KnowledgeCardClient from './KnowledgeCardClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '知识卡',
   description: DESCRIPTION,
   keywords: ['知识卡'],
-  canonicalUrl: 'https://tjwiki.com/cards',
+  canonicalUrl: `${SITE_URL}/cards`,
 });
 
 export default function CardsPage() {

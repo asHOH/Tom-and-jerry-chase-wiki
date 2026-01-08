@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import WinRatesClient from './WinRatesClient';
 
@@ -13,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: '胜率数据统计',
     description: DESCRIPTION,
     keywords: ['胜率', '登场率', '禁用率', '角色数据', '赛季统计'],
-    canonicalUrl: 'https://tjwiki.com/win-rates',
+    canonicalUrl: `${SITE_URL}/win-rates`,
   });
 }
 

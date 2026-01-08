@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { generateArticleMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import MechanicsSection from '@/features/mechanics/mechanicsSection';
 import {
   mechanicsSectionsList,
@@ -37,7 +38,7 @@ export async function generateMetadata({
     title: sectionChineseName,
     description: DESCRIPTION,
     keywords: [sectionChineseName],
-    canonicalUrl: `https://tjwiki.com/mechanics/${encodeURIComponent(sectionName)}`,
+    canonicalUrl: `${SITE_URL}/mechanics/${encodeURIComponent(sectionName)}`,
   });
 }
 

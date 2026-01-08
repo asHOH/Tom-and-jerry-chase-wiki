@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import ItemGroupClient from './ItemGroupGridClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '组合',
   description: DESCRIPTION,
   keywords: ['组合'],
-  canonicalUrl: 'https://tjwiki.com/itemGroups',
+  canonicalUrl: `${SITE_URL}/itemGroups`,
 });
 
 export default function ItemGroupsPage() {

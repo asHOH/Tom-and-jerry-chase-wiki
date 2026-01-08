@@ -4,12 +4,13 @@ import { CACHE_TAGS } from '@/lib/cacheTags';
 import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServerPublic } from '@/lib/supabase/public';
+import { SITE_URL } from '@/constants/seo';
 import { env } from '@/env';
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://tjwiki.com';
+  const baseUrl = SITE_URL;
 
   if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];

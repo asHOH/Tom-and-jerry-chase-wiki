@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import type { FactionId } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
 import { specialSkills } from '@/data';
@@ -56,12 +57,12 @@ function generateStructuredData(
     '@type': 'Article',
     headline: skill.name,
     description: desc,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
     image: skill.imageUrl,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tjwiki.com/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
+      '@id': `${SITE_URL}/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
     },
   };
 }

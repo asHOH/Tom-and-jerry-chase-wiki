@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import MapClient from './MapGridClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '地图',
   description: DESCRIPTION,
   keywords: ['地图'],
-  canonicalUrl: 'https://tjwiki.com/maps',
+  canonicalUrl: `${SITE_URL}/maps`,
 });
 
 export default function ItemsPage() {

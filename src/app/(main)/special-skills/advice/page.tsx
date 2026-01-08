@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import SpecialSkillAdviceClient from './SpecialSkillAdviceClient';
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '特技推荐',
   description: '列出常用特技及特技克制关系，便于新手进行选择',
   keywords: ['特技'],
-  canonicalUrl: 'https://tjwiki.com/special-skills/advice',
+  canonicalUrl: `${SITE_URL}/special-skills/advice`,
 });
 
 export default function SpecialSkillsPage() {

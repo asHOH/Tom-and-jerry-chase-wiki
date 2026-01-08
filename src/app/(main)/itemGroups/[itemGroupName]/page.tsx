@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 import StructuredData from '@/components/StructuredData';
 import { itemGroups } from '@/data';
@@ -22,12 +23,12 @@ function generateStructuredData(itemGroupName: string) {
     '@type': 'Article',
     headline: itemGroup.name,
     description: desc,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
     image: getItemGroupImageUrl(itemGroup),
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tjwiki.com/itemGroups/${encodeURIComponent(itemGroupName)}`,
+      '@id': `${SITE_URL}/itemGroups/${encodeURIComponent(itemGroupName)}`,
     },
   };
 }

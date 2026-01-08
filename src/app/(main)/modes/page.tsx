@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import ModeClient from './ModeGridClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '游戏模式',
   description: DESCRIPTION,
   keywords: ['游戏模式'],
-  canonicalUrl: 'https://tjwiki.com/modes',
+  canonicalUrl: `${SITE_URL}/modes`,
 });
 
 export default function ModesPage() {

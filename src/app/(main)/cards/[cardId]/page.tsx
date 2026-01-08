@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 import { cards } from '@/data';
 
@@ -29,12 +30,12 @@ function generateStructuredData(cardId: string): WithContext<Article> | null {
     '@type': 'Article',
     headline: card.id,
     description: card.description,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: 'https://tjwiki.com' },
+    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
+    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
     image: card.imageUrl,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tjwiki.com/cards/${encodeURIComponent(cardId)}`,
+      '@id': `${SITE_URL}/cards/${encodeURIComponent(cardId)}`,
     },
   };
 }

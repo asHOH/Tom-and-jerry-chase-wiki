@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import EntityClient from './EntityGridClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '衍生物',
   description: DESCRIPTION,
   keywords: ['衍生物'],
-  canonicalUrl: 'https://tjwiki.com/entities',
+  canonicalUrl: `${SITE_URL}/entities`,
 });
 
 export default function EntitysPage() {

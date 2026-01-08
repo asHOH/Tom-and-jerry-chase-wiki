@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 
 import BuffClient from './BuffGridClient';
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = generatePageMetadata({
   title: '状态和效果',
   description: DESCRIPTION,
   keywords: ['状态', '效果', 'buffs', 'debuffs'],
-  canonicalUrl: 'https://tjwiki.com/buffs',
+  canonicalUrl: `${SITE_URL}/buffs`,
 });
 
 export default function BuffsPage() {
