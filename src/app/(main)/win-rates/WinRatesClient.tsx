@@ -34,6 +34,29 @@ interface WinRatesClientProps {
   description: string;
 }
 
+function escapeCsvCell(value: unknown): string {
+  const str = value == null ? '' : String(value);
+  const mustQuote = /[",\n\r]/.test(str);
+  const escaped = str.replace(/"/g, '""');
+  return mustQuote ? `"${escaped}"` : escaped;
+}
+
+function toCsv(rows: Array<Record<string, unknown>>, header: string[]): string {
+  const lines: string[] = [];
+  lines.push(header.map(escapeCsvCell).join(','));
+  for (const row of rows) {
+    lines.push(header.map((key) => escapeCsvCell(row[key])).join(','));
+  }
+  return lines.join('\n');
+}
+
+function sanitizeFileName(input: string): string {
+  return input
+    .replace(/[\\/:*?"<>|]/g, '_')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function parseRate(rate: string | undefined): number {
   if (!rate) return 0;
   return parseFloat(rate.replace('%', ''));
@@ -275,6 +298,67 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
 
   const showPercent = summaryData.some((s) => s.percent);
 
+  const handleExportCsv = () => {
+    const orderedColumns: Array<ColumnKey> = [
+      'rank',
+      'faction',
+      'character',
+      'pickRate',
+      'winRate',
+      'banRate',
+    ];
+
+    const header: string[] = ['No.'];
+    for (const col of orderedColumns) {
+      if (!isColVisible(col)) continue;
+      header.push(
+        col === 'rank'
+          ? '段位'
+          : col === 'faction'
+            ? '阵营'
+            : col === 'character'
+              ? '角色'
+              : col === 'pickRate'
+                ? '登场率'
+                : col === 'winRate'
+                  ? '胜率'
+                  : '禁用率'
+      );
+    }
+
+    const rows = displayRows.map((row) => {
+      const record: Record<string, unknown> = {
+        'No.': row.no,
+      };
+      if (isColVisible('rank')) record['段位'] = row.rank;
+      if (isColVisible('faction')) record['阵营'] = row.faction === 'cat' ? '猫阵营' : '鼠阵营';
+      if (isColVisible('character')) record['角色'] = row.character;
+      if (isColVisible('pickRate')) record['登场率'] = row.pickRate;
+      if (isColVisible('winRate')) record['胜率'] = row.winRate;
+      if (isColVisible('banRate')) record['禁用率'] = row.banRate;
+      return record;
+    });
+
+    const csv = `\uFEFF${toCsv(rows, header)}`;
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    const seasonLabel = seasons[selectedSeason] || '未知赛季';
+    const date = new Date();
+    const yyyy = String(date.getFullYear());
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const fileName = sanitizeFileName(`胜率数据_${seasonLabel}_${yyyy}-${mm}-${dd}.csv`);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div
       className={
@@ -337,6 +421,23 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
             }
             getButtonDisabled={(opt) => opt === 'character'}
           />
+
+          <div className={isMobile ? 'mt-2 flex justify-center' : 'mt-4 flex justify-center'}>
+            <button
+              type='button'
+              onClick={handleExportCsv}
+              disabled={displayRows.length === 0}
+              className='filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60'
+              style={
+                isDarkMode
+                  ? { backgroundColor: '#374151', color: '#e5e7eb' }
+                  : { backgroundColor: '#e5e7eb', color: '#111827' }
+              }
+              aria-label='导出当前表格为 CSV'
+            >
+              导出 CSV
+            </button>
+          </div>
         </div>
       </header>
 
