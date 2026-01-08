@@ -2,7 +2,7 @@ import { Mode, ModeDefinition } from '@/data/types';
 
 const getModeImageUrl = (name: string, mode: ModeDefinition): string => {
   if (!!mode.specialImageUrl) return mode.specialImageUrl;
-  if (mode.unuseImage) return `/images/icons/cat faction.png`;
+  if (mode.unuseImage) return `/images/icons/cat-faction.png`;
   return `/images/modes/${encodeURIComponent(name)}.png`;
 };
 

@@ -86,7 +86,7 @@ export const getSingleItemImageUrl = (singleItem: SingleItem): string => {
     R = skill?.imageUrl;
   }
 
-  return R || '/images/icons/cat faction.png';
+  return R || '/images/icons/cat-faction.png';
 };
 
 export const getSingleItemFactionId = (singleItem: SingleItem): FactionId | undefined => {

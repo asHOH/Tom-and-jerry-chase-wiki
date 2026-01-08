@@ -49,14 +49,14 @@ export default function manifest(): MetadataRoute.Manifest {
         short_name: '猫角色',
         description: '查看猫阵营角色信息',
         url: '/?tab=cat',
-        icons: [{ src: '/images/icons/cat faction.png', sizes: '96x96' }],
+        icons: [{ src: '/images/icons/cat-faction.png', sizes: '96x96' }],
       },
       {
         name: '鼠阵营角色',
         short_name: '鼠角色',
         description: '查看鼠阵营角色信息',
         url: '/?tab=mouse',
-        icons: [{ src: '/images/icons/mouse faction.png', sizes: '96x96' }],
+        icons: [{ src: '/images/icons/mouse-faction.png', sizes: '96x96' }],
       },
     ],
   };

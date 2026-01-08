@@ -2,7 +2,7 @@ import { Map, MapDefinition } from './types';
 
 const getMapImageUrl = (name: string, map: MapDefinition): string => {
   if (!!map.specialImageUrl) return encodeURI(map.specialImageUrl);
-  if (map.unuseImage) return `/images/icons/cat faction.png`;
+  if (map.unuseImage) return `/images/icons/cat-faction.png`;
   return `/images/maps/${encodeURIComponent(name)}.png`;
 };
 

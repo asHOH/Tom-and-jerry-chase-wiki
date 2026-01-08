@@ -13,7 +13,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
     label: '鼠阵营',
     description: '鼠阵营角色列表',
     href: '/factions/mouse',
-    iconSrc: '/images/icons/mouse faction.png',
+    iconSrc: '/images/icons/mouse-faction.png',
     iconAlt: '鼠阵营图标',
   },
   {
@@ -21,7 +21,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
     label: '猫阵营',
     description: '猫阵营角色列表',
     href: '/factions/cat',
-    iconSrc: '/images/icons/cat faction.png',
+    iconSrc: '/images/icons/cat-faction.png',
     iconAlt: '猫阵营图标',
   },
   {
@@ -29,7 +29,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
     label: '知识卡',
     description: '知识卡列表',
     href: '/cards',
-    iconSrc: '/images/icons/cat knowledge card.png',
+    iconSrc: '/images/icons/cat-knowledge-card.png',
     iconAlt: '知识卡图标',
   },
   {
@@ -120,7 +120,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     label: '胜率数据',
     description: '查看角色在各段位的胜率、登场率和禁用率',
     href: '/win-rates',
-    iconSrc: '/images/icons/cat faction.png',
+    iconSrc: '/images/icons/cat-faction.png',
     iconAlt: '胜率数据图标',
   },
   {
