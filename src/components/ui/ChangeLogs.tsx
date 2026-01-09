@@ -1,10 +1,11 @@
 'use client';
 
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import uniq from 'lodash-es/uniq';
 
 import { contributors } from '@/data/contributors';
 import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
+import { BaseDialog } from '@/components/ui/BaseDialog';
 
 const typeColors: Record<ChangeType, string> = {
   feat: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
@@ -74,17 +75,6 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
     });
   };
 
-  useEffect(() => {
-    if (!isChangeLogsOpen) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsChangeLogsOpen(false);
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isChangeLogsOpen]);
-
   if (!changeLogs || changeLogs.length === 0) {
     return null;
   }
@@ -145,7 +135,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
       <button
         type='button'
         onClick={() => setIsChangeLogsOpen(true)}
-        className='flex min-w-[180px] flex-col items-center justify-center gap-2 rounded-md border-none bg-gray-200 px-6 py-4 text-center text-gray-800 shadow-md transition-colors duration-200 focus:outline-none dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'
+        className='flex min-w-45 flex-col items-center justify-center gap-2 rounded-md border-none bg-gray-200 px-6 py-4 text-center text-gray-800 shadow-md transition-colors duration-200 focus:outline-none dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'
         aria-label='更新日志'
       >
         <div className='flex items-center gap-3'>
@@ -168,149 +158,134 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
       </button>
 
       {/* ChangeLogs Modal */}
-      {isChangeLogsOpen && (
-        <>
-          <div
-            className='fixed inset-0 z-40 bg-gray-900/30 backdrop-blur-sm'
+      <BaseDialog
+        open={isChangeLogsOpen}
+        onOpenChange={(nextOpen) => setIsChangeLogsOpen(nextOpen)}
+        ariaLabelledBy='changelogs-title'
+        panelClassName='flex flex-col md:h-auto md:max-h-[85vh] md:w-4/5 md:max-w-4xl md:min-w-md'
+      >
+        <div className='flex items-center justify-between border-b border-gray-300 p-6 dark:border-gray-700'>
+          <h3 id='changelogs-title' className='text-2xl font-bold text-gray-900 dark:text-gray-100'>
+            更新日志
+          </h3>
+          <button
+            type='button'
             onClick={() => setIsChangeLogsOpen(false)}
-            onDoubleClick={(e) => e.stopPropagation()}
-            aria-hidden='true'
-          />
-
-          <div
-            className='fixed inset-5 z-50 flex flex-col overflow-hidden rounded-lg bg-white shadow-xl md:inset-auto md:top-1/2 md:left-1/2 md:h-auto md:max-h-[85vh] md:w-4/5 md:max-w-4xl md:min-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:transform dark:bg-gray-800'
-            onDoubleClick={(e) => e.stopPropagation()}
-            role='dialog'
-            aria-modal='true'
-            aria-labelledby='changelogs-title'
+            className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+            aria-label='关闭更新日志'
           >
-            <div className='flex items-center justify-between border-b border-gray-300 p-6 dark:border-gray-700'>
-              <h3
-                id='changelogs-title'
-                className='text-2xl font-bold text-gray-900 dark:text-gray-100'
-              >
-                更新日志
-              </h3>
-              <button
-                type='button'
-                onClick={() => setIsChangeLogsOpen(false)}
-                className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                aria-label='关闭更新日志'
-              >
-                ✕
-              </button>
-            </div>
+            ✕
+          </button>
+        </div>
 
-            <div className='flex-1 overflow-y-auto p-6'>
-              <div className='space-y-3'>
-                {changeLogs.map((dailyLog) => {
-                  const isExpanded = expandedDates.has(dailyLog.date);
-                  const isMinorExpanded = expandedMinorDates.has(dailyLog.date);
+        <div className='flex-1 overflow-y-auto p-6'>
+          <div className='space-y-3'>
+            {changeLogs.map((dailyLog) => {
+              const isExpanded = expandedDates.has(dailyLog.date);
+              const isMinorExpanded = expandedMinorDates.has(dailyLog.date);
 
-                  const majorChanges = dailyLog.changes.filter((c) =>
-                    ['feat', 'docs', 'style'].includes(c.type)
-                  );
-                  const minorChanges = dailyLog.changes.filter(
-                    (c) => !['feat', 'docs', 'style'].includes(c.type)
-                  );
+              const majorChanges = dailyLog.changes.filter((c) =>
+                ['feat', 'docs', 'style'].includes(c.type)
+              );
+              const minorChanges = dailyLog.changes.filter(
+                (c) => !['feat', 'docs', 'style'].includes(c.type)
+              );
 
-                  return (
-                    <div
-                      key={dailyLog.date}
-                      className='overflow-hidden rounded-lg border border-gray-300 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800'
-                    >
-                      <button
-                        onClick={() => toggleDate(dailyLog.date)}
-                        className='flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/50'
-                        aria-expanded={isExpanded}
+              return (
+                <div
+                  key={dailyLog.date}
+                  className='overflow-hidden rounded-lg border border-gray-300 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800'
+                >
+                  <button
+                    onClick={() => toggleDate(dailyLog.date)}
+                    className='flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/50'
+                    aria-expanded={isExpanded}
+                  >
+                    <div className='flex items-center gap-3'>
+                      <svg
+                        className={`h-5 w-5 text-gray-600 transition-transform dark:text-gray-400 ${isExpanded ? 'rotate-90' : ''}`}
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
                       >
-                        <div className='flex items-center gap-3'>
-                          <svg
-                            className={`h-5 w-5 text-gray-600 transition-transform dark:text-gray-400 ${isExpanded ? 'rotate-90' : ''}`}
-                            fill='none'
-                            stroke='currentColor'
-                            viewBox='0 0 24 24'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M9 5l7 7-7 7'
-                            />
-                          </svg>
-                          <h4 className='text-base font-semibold text-gray-900 dark:text-gray-100'>
-                            {(() => {
-                              const date = new Date(dailyLog.date);
-                              const isCurrentYear = date.getFullYear() === new Date().getFullYear();
-                              return date.toLocaleDateString('zh-CN', {
-                                year: isCurrentYear ? undefined : 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                              });
-                            })()}
-                          </h4>
-                        </div>
-                        <span className='text-sm text-gray-600 dark:text-gray-400'>
-                          {dailyLog.changes.length} 项更改
-                        </span>
-                      </button>
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M9 5l7 7-7 7'
+                        />
+                      </svg>
+                      <h4 className='text-base font-semibold text-gray-900 dark:text-gray-100'>
+                        {(() => {
+                          const date = new Date(dailyLog.date);
+                          const isCurrentYear = date.getFullYear() === new Date().getFullYear();
+                          return date.toLocaleDateString('zh-CN', {
+                            year: isCurrentYear ? undefined : 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          });
+                        })()}
+                      </h4>
+                    </div>
+                    <span className='text-sm text-gray-600 dark:text-gray-400'>
+                      {dailyLog.changes.length} 项更改
+                    </span>
+                  </button>
 
-                      {isExpanded && (
-                        <div className='border-t border-gray-300 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-900/30'>
-                          <div className='divide-y divide-gray-200 dark:divide-gray-700'>
-                            {majorChanges.map(renderChange)}
+                  {isExpanded && (
+                    <div className='border-t border-gray-300 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-900/30'>
+                      <div className='divide-y divide-gray-200 dark:divide-gray-700'>
+                        {majorChanges.map(renderChange)}
 
-                            {minorChanges.length > 0 && (
-                              <div className='bg-gray-100/50 dark:bg-gray-900/50'>
-                                <button
-                                  onClick={(e) => toggleMinorDate(dailyLog.date, e)}
-                                  className='flex w-full items-center justify-between px-4 py-2 text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-200/50 dark:text-gray-400 dark:hover:bg-gray-800/50'
-                                >
-                                  <div className='flex items-center gap-2'>
-                                    <span>技术细节</span>
-                                    <div className='flex gap-1'>
-                                      {uniq(minorChanges.map((c) => c.type)).map((type) => (
-                                        <span
-                                          key={type}
-                                          className={`rounded-full px-1.5 py-0.5 text-[10px] ${typeColors[type]}`}
-                                        >
-                                          {typeLabels[type]}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <svg
-                                    className={`h-4 w-4 transition-transform ${isMinorExpanded ? 'rotate-180' : ''}`}
-                                    fill='none'
-                                    stroke='currentColor'
-                                    viewBox='0 0 24 24'
-                                  >
-                                    <path
-                                      strokeLinecap='round'
-                                      strokeLinejoin='round'
-                                      strokeWidth={2}
-                                      d='M19 9l-7 7-7-7'
-                                    />
-                                  </svg>
-                                </button>
-                                {isMinorExpanded && (
-                                  <div className='divide-y divide-gray-200 border-t border-gray-200 dark:divide-gray-700 dark:border-gray-700'>
-                                    {minorChanges.map(renderChange)}
-                                  </div>
-                                )}
+                        {minorChanges.length > 0 && (
+                          <div className='bg-gray-100/50 dark:bg-gray-900/50'>
+                            <button
+                              onClick={(e) => toggleMinorDate(dailyLog.date, e)}
+                              className='flex w-full items-center justify-between px-4 py-2 text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-200/50 dark:text-gray-400 dark:hover:bg-gray-800/50'
+                            >
+                              <div className='flex items-center gap-2'>
+                                <span>技术细节</span>
+                                <div className='flex gap-1'>
+                                  {uniq(minorChanges.map((c) => c.type)).map((type) => (
+                                    <span
+                                      key={type}
+                                      className={`rounded-full px-1.5 py-0.5 text-[10px] ${typeColors[type]}`}
+                                    >
+                                      {typeLabels[type]}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                              <svg
+                                className={`h-4 w-4 transition-transform ${isMinorExpanded ? 'rotate-180' : ''}`}
+                                fill='none'
+                                stroke='currentColor'
+                                viewBox='0 0 24 24'
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  strokeWidth={2}
+                                  d='M19 9l-7 7-7-7'
+                                />
+                              </svg>
+                            </button>
+                            {isMinorExpanded && (
+                              <div className='divide-y divide-gray-200 border-t border-gray-200 dark:divide-gray-700 dark:border-gray-700'>
+                                {minorChanges.map(renderChange)}
                               </div>
                             )}
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        </>
-      )}
+        </div>
+      </BaseDialog>
     </>
   );
 });
