@@ -6,7 +6,7 @@ import { getRuntimeCspHeader } from '@/lib/csp';
 import { isVercelAnalyticsEnabled } from '@/lib/platform';
 import { defaultMetadata } from '@/constants/seo';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
-import { ClientProviders } from '@/components/ClientProviders';
+import { ClientProvidersWithInitialData } from '@/components/ClientProvidersWithInitialData';
 import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
@@ -59,7 +59,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <DynamicFaviconEditBadge />
             <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
               <UserProvider initialValue={initialUser}>
-                <ClientProviders>{children}</ClientProviders>
+                <ClientProvidersWithInitialData>{children}</ClientProvidersWithInitialData>
               </UserProvider>
             </main>
           </ErrorBoundary>

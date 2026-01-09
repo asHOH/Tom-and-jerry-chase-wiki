@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import useSWR from 'swr';
 
+import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
+import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
 import { env } from '@/env';
 
 import {
@@ -24,13 +26,6 @@ import {
   withRecordingSuppressed,
   type ActionHistoryEntry,
 } from '../lib/edit/diffUtils';
-
-type PublicActionRow = {
-  id: string;
-  entity_type: string;
-  entry: ActionHistoryEntry;
-  created_at: string;
-};
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -98,8 +93,7 @@ function readEditModeState(): { isEditMode: boolean; enabledAtMs: number | null 
 
   return { isEditMode: true, enabledAtMs };
 }
-
-export function usePublicGameDataActions() {
+export function usePublicGameDataActions(options?: { initialPublicActions?: PublicActionRow[] }) {
   const [appliedCount, setAppliedCount] = useState(0);
   const appliedIdsRef = useRef<Set<string>>(new Set());
 
@@ -107,9 +101,18 @@ export function usePublicGameDataActions() {
 
   const enabled = env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  const { data } = useSWR(enabled ? '/api/game-data-actions/public' : null, fetcher, {
-    revalidateOnFocus: false,
-  });
+  const { data } = useSWR(
+    enabled ? '/api/game-data-actions/public' : null,
+    fetcher,
+    options?.initialPublicActions
+      ? {
+          revalidateOnFocus: false,
+          fallbackData: { actions: options.initialPublicActions },
+        }
+      : {
+          revalidateOnFocus: false,
+        }
+  );
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -164,9 +167,13 @@ export function usePublicGameDataActions() {
 
       const storageKey = getActionsStorageKey(row.entity_type);
 
+      const parsedEntry = actionHistoryEntrySchema.safeParse(row.entry);
+      if (!parsedEntry.success) continue;
+      const entry = parsedEntry.data as ActionHistoryEntry;
+
       try {
         withRecordingSuppressed(storageKey, () => {
-          applyActionEntry(target, row.entry);
+          applyActionEntry(target, entry);
         });
         appliedIdsRef.current.add(row.id);
         didApply += 1;
