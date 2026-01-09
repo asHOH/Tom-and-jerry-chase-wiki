@@ -7,6 +7,7 @@ import {
   HarmCategory,
 } from '@google/genai';
 
+import { getPublicGameDataActions } from '@/lib/gameData/publicActions';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { chatMessagesSchema, formatZodError } from '@/lib/validation/schemas';
 import { historyData } from '@/data/history';
@@ -81,20 +82,25 @@ function buildAliasMap<T extends { aliases?: string[] }>(
 }
 
 // Build alias mappings
-const characterAliases = buildAliasMap(characters, 'Characters');
-const cardAliases = buildAliasMap(cards, 'Knowledge Cards');
-const specialSkillAliases = buildAliasMap(specialSkills, 'Special Skills');
-const itemAliases = buildAliasMap(items, 'Items');
-const entityAliases = buildAliasMap(entities, 'Entities');
-const buffAliases = buildAliasMap(buffs, 'Buffs');
-const itemGroupAliases = buildAliasMap(itemGroups, 'Item Groups');
+async function buildSystemInstructionText(): Promise<string> {
+  // Side effect: this call applies public patches to the in-memory `@/data` stores.
+  // We intentionally do this *before* building alias maps so the system prompt stays in sync.
+  await getPublicGameDataActions();
 
-// Verify historyData is available (used in executeCode context)
-if (historyData.length === 0) {
-  console.warn('Warning: historyData is empty');
-}
+  const characterAliases = buildAliasMap(characters, 'Characters');
+  const cardAliases = buildAliasMap(cards, 'Knowledge Cards');
+  const specialSkillAliases = buildAliasMap(specialSkills, 'Special Skills');
+  const itemAliases = buildAliasMap(items, 'Items');
+  const entityAliases = buildAliasMap(entities, 'Entities');
+  const buffAliases = buildAliasMap(buffs, 'Buffs');
+  const itemGroupAliases = buildAliasMap(itemGroups, 'Item Groups');
 
-const systemInstructionText = `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
+  // Verify historyData is available (used in executeCode context)
+  if (historyData.length === 0) {
+    console.warn('Warning: historyData is empty');
+  }
+
+  return `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
 Your purpose is to provide accurate information about characters, skills, knowledge cards, game history, and other game elements.
 When a user asks for information, use the 'executeCode' tool to query the game database using JavaScript code.
 Be friendly, concise, and focus on answering the user's question based on the data retrieved.
@@ -489,6 +495,7 @@ interface YearData {
 export type GameHistory = YearData[];
 \`\`\`
 `;
+}
 
 // Tool definition for executing JavaScript code to query game data
 const executeCodeDeclaration: FunctionDeclaration = {
@@ -557,7 +564,7 @@ export async function POST(req: NextRequest) {
             },
           },
           safetySettings,
-          systemInstruction: systemInstructionText,
+          systemInstruction: await buildSystemInstructionText(),
         },
       });
 
