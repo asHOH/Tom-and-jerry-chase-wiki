@@ -11,6 +11,7 @@ import { CharacterTable, summarySymbol, winRatesData } from '@/data/winRates';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
+import Link from '@/components/Link';
 import { characters } from '@/data';
 
 type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
@@ -401,9 +402,9 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
             />
           )}
 
-          <FilterRow<ColumnKey>
+          <FilterRow<Exclude<ColumnKey, 'character'>>
             label='显示列:'
-            options={['rank', 'faction', 'character', 'pickRate', 'winRate', 'banRate']}
+            options={['rank', 'faction', 'pickRate', 'winRate', 'banRate']}
             isActive={(opt) => isColVisible(opt)}
             onToggle={(opt) => toggleVisibleColumn(opt)}
             getOptionLabel={(opt) =>
@@ -411,15 +412,12 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
                 ? '段位'
                 : opt === 'faction'
                   ? '阵营'
-                  : opt === 'character'
-                    ? '角色'
-                    : opt === 'pickRate'
-                      ? '登场率'
-                      : opt === 'winRate'
-                        ? '胜率'
-                        : '禁用率'
+                  : opt === 'pickRate'
+                    ? '登场率'
+                    : opt === 'winRate'
+                      ? '胜率'
+                      : '禁用率'
             }
-            getButtonDisabled={(opt) => opt === 'character'}
           />
 
           <div className={isMobile ? 'mt-2 flex justify-center' : 'mt-4 flex justify-center'}>
@@ -480,7 +478,11 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
                       </td>
                     )}
                     {isColVisible('character') && (
-                      <td className={`${cellClass} font-medium`}>{row.character}</td>
+                      <td className={`${cellClass} font-medium`}>
+                        <Link href={`/characters/${encodeURIComponent(row.character)}`}>
+                          {row.character}
+                        </Link>
+                      </td>
                     )}
                     {isColVisible('pickRate') && <td className={cellClass}>{row.pickRate}</td>}
                     {isColVisible('winRate') && (
