@@ -1,7 +1,583 @@
 [
   {
+    "date": "2026-01-09",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "改进服务端公共操作处理及加载逻辑",
+        "hashes": ["e3dfa9f0", "9732b97d"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "移除旧的鼠方属性数据，现在支持所有角色",
+        "hashes": ["411f73c4"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "修复 Hydration 错误，避免 Next.js 警告",
+        "hashes": ["de26e132"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "进一步改进胜率显示",
+        "hashes": ["d08c06ad"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "添加隐藏用户名输入框以优化密码管理器支持",
+        "hashes": ["4486895a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "图片",
+        "message": "重命名带空格的图标文件为连字符格式",
+        "hashes": ["4d7f7683"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-08",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "支持将胜率数据导出为 CSV",
+        "hashes": ["a711f9b8"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "搜索引擎优化",
+        "message": "支持配置自定义 URL",
+        "hashes": ["9840b274", "4a5eaabd"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-06",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "图片显示",
+        "message": "调整图片尺寸",
+        "hashes": ["1f4e3fd5"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "导航栏",
+        "message": "修复折叠行为",
+        "hashes": ["b713f390"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "配置",
+        "message": "显式列出所有客户端变量以修复开发环境 Hydration 错误",
+        "hashes": ["d0ffdedc"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "配置",
+        "message": "移除 Sentry",
+        "hashes": ["b85579ca"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-05",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "数据",
+        "message": "更新部分描述",
+        "hashes": ["c12487af"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "网站部署",
+        "message": "优化服务器启动脚本、构建时间戳及内存使用",
+        "hashes": ["f068a44d", "c4490a8d", "8f7546ad", "1de44a93"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "构建",
+        "message": "更新 gitignore 以包含构建产物",
+        "hashes": ["f70a5335"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "构建",
+        "message": "修复 MDX 模块声明导致的构建错误",
+        "hashes": ["6eee3712"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "配置",
+        "message": "添加 PWA 相关类型定义以改进类型检查",
+        "hashes": ["30596694"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "配置",
+        "message": "响应 Sentry SDK 警告添加 onRequestError 钩子",
+        "hashes": ["309c63ba"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "添加咸鱼-投射物图片链接",
+        "hashes": ["eec3ef3d"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-04",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "数据",
+        "message": "同步 2026.1.1 游戏更新",
+        "hashes": ["084330c5"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "年鉴",
+        "message": "创建历史记录组件并集成到详情页",
+        "hashes": ["c7ed91a3", "06f4a002"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "scope": "道具",
+        "message": "创建新的道具比较函数",
+        "hashes": ["e9399c15"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "scope": "配置",
+        "message": "解决环境变量和 Schema 的弃用警告",
+        "hashes": ["2e042365"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "搜索引擎优化",
+        "message": "实现原生 robots.ts 并扩展站点地图覆盖范围",
+        "hashes": ["ae7830c2"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "年鉴",
+        "message": "更新历史数据 (2025.10.30~2026.1.9)",
+        "hashes": ["ea6cc1d1"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "配置",
+        "message": "集成 Sentry 错误追踪并调整采样率",
+        "hashes": ["60621016", "d4e1071a", "356f15a1"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-03",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "配置",
+        "message": "使用 @t3-oss/env-nextjs 优化环境变量类型",
+        "hashes": ["768815bb"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "列表页使用虚拟滚动优化移动端体验",
+        "hashes": ["4c5f82a3"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "网站安全",
+        "message": "添加并改进速率限制 (Rate Limit)",
+        "hashes": ["42001f36", "1763823c"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "搜索引擎优化",
+        "message": "标准化元数据生成并修复首页标题重复",
+        "hashes": ["4b71acd8", "feed0004"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "元信息",
+        "message": "移除重复的站点名称后缀",
+        "hashes": ["b8b8906d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "导航栏",
+        "message": "移除溢出按钮的 Tooltip 组件",
+        "hashes": ["4d71a091"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-02",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "增加评论支持",
+        "hashes": ["fe0b7526"],
+        "author": "3swordman"
+      },
+      {
+        "type": "perf",
+        "scope": "文章功能",
+        "message": "优化 API 缓存策略",
+        "hashes": ["aca40e6e", "8a09e23b", "388657af"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "新增角色胜率页面并优化显示",
+        "hashes": ["84eddd49", "cf39d181", "875c6b33"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "推荐配置",
+        "message": "添加地图推荐支持",
+        "hashes": ["b7886745"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "动画",
+        "message": "添加部分动画效果并使用 LazyMotion 优化加载",
+        "hashes": ["e017278f", "9054676e"],
+        "author": "3swordman"
+      },
+      {
+        "type": "perf",
+        "scope": "界面",
+        "message": "优化详细模式切换的响应速度",
+        "hashes": ["40741c49"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "使用 useLocalStorage 钩子重构存储逻辑",
+        "hashes": ["8688cf05"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "首页",
+        "message": "实现首页可见性过渡动画",
+        "hashes": ["4d691aff"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "使用 usehooks-ts 处理媒体查询",
+        "hashes": ["3788fe2a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "数据",
+        "message": "增强数据校验（本地存储、上传、文章、反馈及注册）",
+        "hashes": ["d060fc64", "c21825c5", "4af2cf4f", "9a5fc90a"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-01",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "暗色模式",
+        "message": "改进暗色模式支持（状态、后台、Next-themes 集成）",
+        "hashes": ["a4272760", "132e2524", "1f145a9c", "eb10c17a"],
+        "author": "3swordman, asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "构建",
+        "message": "移除 Storybook",
+        "hashes": ["f11acb09"],
+        "author": "3swordman"
+      },
+      {
+        "type": "revert",
+        "message": "撤销“移除未使用函数”的操作",
+        "hashes": ["7caf4191"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "实现编辑模式系统（后端支持、数据修改、历史记录、多类型支持及仪表盘改进）",
+        "hashes": [
+          "20d18c90",
+          "6b112796",
+          "d74439fe",
+          "393c7863",
+          "2803dc41",
+          "d571bce2",
+          "ff88121a",
+          "13b4f632",
+          "91fc85e8",
+          "d817c1f9",
+          "6b1fcbbe",
+          "f3c7a9e2",
+          "fe82620c"
+        ],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "message": "移除 APP_PUBLIC_HOST 引用",
+        "hashes": ["0d62a1e9"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "界面",
+        "message": "集成 Sonner 以改进通知提示",
+        "hashes": ["be3d82c0"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "页面加载优化",
+        "message": "添加 TopLoader 以优化页面加载体验",
+        "hashes": ["98a96d63"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "清理未使用的函数、导出和组件",
+        "hashes": ["2bf56950", "cd68f481", "e580e007", "1bc1f130", "6eb8acc2"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "快速跳转",
+        "message": "修复索引排序和去重",
+        "hashes": ["b3af3d09"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "快速跳转",
+        "message": "使用 lodash-es 优化代码可读性",
+        "hashes": ["0f6ce947", "e5980c10"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-31",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "编辑模式",
+        "message": "重构角色编辑器字段组件",
+        "hashes": ["e2e9a1f6", "b63cd639", "0767c9c1"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "支持修改密码并保持会话",
+        "hashes": ["a6a3233a", "dd940785"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-30",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "地图",
+        "message": "修复地图皮肤图片尺寸",
+        "hashes": ["ab33f36b"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "地图",
+        "message": "优化地图列表性能",
+        "hashes": ["1a3d6bd4"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "导航栏",
+        "message": "优化导航栏折叠逻辑以防止溢出",
+        "hashes": ["16a24b73"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "导航栏",
+        "message": "添加地图和模式入口",
+        "hashes": ["5426ea24"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "重命名部分衍生物（火箭炮、蓝图、乾坤袋）",
+        "hashes": ["ceaad922"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新罗宾汉泰菲、牛仔汤姆、库博的角色关系",
+        "hashes": ["f77f04b0"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "支持添加优势地图或模式",
+        "hashes": ["15405623"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-29",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "地图",
+        "message": "更新部分地图描述、类型、尺寸和别名",
+        "hashes": ["9a05c1ad", "bea49a48"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "样式",
+        "message": "添加 color-scheme:dark 以改善暗色模式支持",
+        "hashes": ["0a64ea95"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "地图",
+        "message": "支持显示地图皮肤和详情页图片",
+        "hashes": ["a3e380e6", "47babe1b"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2025-12-28",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "数据",
+        "message": "添加部分设施的数据和图片",
+        "hashes": ["0a7f375c"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "快速跳转",
+        "message": "改进快速跳转（新增消歧义页面、阵营提示）",
+        "hashes": ["68f176e6", "2bea464d", "574d5f7b", "cbd1f95f"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
     "date": "2025-12-27",
     "changes": [
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "优化文章功能（角色关联、多文章支持、样式优化）",
+        "hashes": [
+          "74fb9733",
+          "72a3bff5",
+          "3f116539",
+          "c2d57978",
+          "6770bd40",
+          "84052d90",
+          "4a643f4c"
+        ],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色信息",
+        "message": "提取 CharacterSelector 组件",
+        "hashes": ["a79de338"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "图片",
+        "message": "提高模式图片的清晰度",
+        "hashes": ["9bebd8c9"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "scope": "数据",
+        "message": "改进请求重试机制的信号处理和超时管理",
+        "hashes": ["63c02488"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "文档",
+        "message": "更新更新日志",
+        "hashes": ["0f64afe2"],
+        "author": "asHOH"
+      },
       {
         "type": "fix",
         "scope": "部署脚本",

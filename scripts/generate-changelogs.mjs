@@ -9,6 +9,10 @@
  *
  * Usage:
  *   npm run generate:changelogs
+ *   node scripts/generate-changelogs.mjs --only-prompt
+ *   node scripts/generate-changelogs.mjs --print-prompt
+ *   node scripts/generate-changelogs.mjs --ai-json-stdin < ai-output.json
+ *   node scripts/generate-changelogs.mjs --stdin-json < ai-output.json
  *
  * Environment Variables (from .env or .env.example):
  *   - GEMINI_API_KEY: Your Gemini API key (required)
@@ -23,7 +27,9 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { GoogleGenAI } from '@google/genai';
-import { loadEnvConfig } from '@next/env';
+import nextEnv from '@next/env';
+
+const { loadEnvConfig } = nextEnv;
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
@@ -31,11 +37,6 @@ loadEnvConfig(projectDir);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-2.5-flash';
 // const GEMINI_MODEL = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
-
-if (!GEMINI_API_KEY) {
-  console.error('Error: GEMINI_API_KEY not found in environment');
-  process.exit(1);
-}
 
 // TypeScript type definitions for the output
 const TYPE_DEFINITIONS = `
@@ -231,7 +232,9 @@ function parseCommits(rawOutput) {
 /**
  * Get git commits since a specific hash or from the past 7 days
  */
-function getGitCommits(lastHash, untilDate) {
+function getGitCommits(lastHash, untilDate, options = {}) {
+  const { silent = false } = options;
+
   try {
     let range = '--since="7 days ago"';
 
@@ -241,14 +244,16 @@ function getGitCommits(lastHash, untilDate) {
         execSync(`git rev-parse ${lastHash}`, { stdio: 'ignore', cwd: process.cwd() });
         // If it exists, get commits from that hash to HEAD
         range = `${lastHash}..HEAD`;
-        console.log(`Fetching commits since ${lastHash}...`);
+        if (!silent) console.log(`Fetching commits since ${lastHash}...`);
       } catch {
-        console.warn(
-          `Warning: Last commit hash ${lastHash} not found. Falling back to 7 days ago.`
-        );
+        if (!silent)
+          console.warn(
+            `Warning: Last commit hash ${lastHash} not found. Falling back to 7 days ago.`
+          );
       }
     } else {
-      console.log('No previous changelog found. Fetching commits from the past 7 days...');
+      if (!silent)
+        console.log('No previous changelog found. Fetching commits from the past 7 days...');
     }
 
     let cmd = `git log ${range} --pretty=format:"%h|%cd|%s|%an" --date=iso`;
@@ -257,7 +262,7 @@ function getGitCommits(lastHash, untilDate) {
       // Format YYYYMMDD to YYYY-MM-DD if needed
       const formattedDate = untilDate.replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3');
       cmd += ` --until="${formattedDate}"`;
-      console.log(`Filtering commits until ${formattedDate}`);
+      if (!silent) console.log(`Filtering commits until ${formattedDate}`);
     }
 
     const output = execSync(cmd, {
@@ -287,6 +292,69 @@ function formatError(error) {
   } catch {
     return String(error);
   }
+}
+
+async function readStdinText() {
+  const chunks = [];
+  for await (const chunk of process.stdin) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk)));
+  }
+  return Buffer.concat(chunks).toString('utf-8');
+}
+
+function stripMarkdownCodeFences(input) {
+  const trimmed = input.trim();
+  const fenceMatch = trimmed.match(/^```(?:json)?\s*\n([\s\S]*?)\n```\s*$/i);
+  if (fenceMatch) return fenceMatch[1].trim();
+  return trimmed;
+}
+
+function parseAIChangesFromText(text) {
+  const cleaned = stripMarkdownCodeFences(text);
+  const parsed = JSON.parse(cleaned);
+  if (!Array.isArray(parsed)) {
+    throw new Error('stdin JSON is not an array');
+  }
+  return parsed;
+}
+
+function groupAIChangesByDate(aiChanges, commits) {
+  const commitMap = new Map(commits.map((c) => [c.hash, c]));
+  const changesByDate = {};
+
+  for (const aiChange of aiChanges) {
+    if (!aiChange || !Array.isArray(aiChange.hashes)) continue;
+
+    const groupCommits = aiChange.hashes.map((h) => commitMap.get(h)).filter((c) => c);
+    if (groupCommits.length === 0) continue;
+
+    groupCommits.sort((a, b) => b.date.localeCompare(a.date));
+    const primaryCommit = groupCommits[0];
+    const date = primaryCommit.date.split(' ')[0];
+
+    const authors = [...new Set(groupCommits.map((c) => c.author))].join(', ');
+
+    if (!changesByDate[date]) {
+      changesByDate[date] = [];
+    }
+
+    changesByDate[date].push({
+      type: aiChange.type,
+      scope: aiChange.scope,
+      message: aiChange.message,
+      breaking: aiChange.breaking,
+      hashes: aiChange.hashes,
+      author: authors,
+    });
+  }
+
+  const result = Object.keys(changesByDate).map((date) => ({
+    date,
+    changes: changesByDate[date],
+  }));
+
+  result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return result;
 }
 
 /**
@@ -348,6 +416,10 @@ function generateFallbackChangelogs(commits) {
  * Generate changelogs using Gemini AI
  */
 async function generateChangelogs(commits) {
+  if (!GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY not found in environment');
+  }
+
   const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
   console.log('Generating changelogs with Gemini...');
@@ -430,49 +502,7 @@ async function generateChangelogs(commits) {
       throw new Error('Response is not an array');
     }
 
-    // Merge AI results with original commit data (date, author) and group by date
-    const commitMap = new Map(commits.map((c) => [c.hash, c]));
-    const changesByDate = {};
-
-    for (const aiChange of aiChanges) {
-      // Find original commits
-      const groupCommits = aiChange.hashes.map((h) => commitMap.get(h)).filter((c) => c);
-
-      if (groupCommits.length === 0) continue;
-
-      // Use the date of the newest commit (first in the list usually, but let's sort to be sure)
-      // Commits are strings "YYYY-MM-DD ...". Lexicographical sort works for ISO date part.
-      groupCommits.sort((a, b) => b.date.localeCompare(a.date));
-      const primaryCommit = groupCommits[0];
-      const date = primaryCommit.date.split(' ')[0];
-
-      // Authors
-      const authors = [...new Set(groupCommits.map((c) => c.author))].join(', ');
-
-      if (!changesByDate[date]) {
-        changesByDate[date] = [];
-      }
-
-      changesByDate[date].push({
-        type: aiChange.type,
-        scope: aiChange.scope,
-        message: aiChange.message,
-        breaking: aiChange.breaking,
-        hashes: aiChange.hashes,
-        author: authors,
-      });
-    }
-
-    // Convert to array
-    const result = Object.keys(changesByDate).map((date) => ({
-      date,
-      changes: changesByDate[date],
-    }));
-
-    // Sort days descending
-    result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-    return result;
+    return groupAIChangesByDate(aiChanges, commits);
   } catch (error) {
     console.error('Error generating changelogs:', formatError(error));
     throw error;
@@ -487,6 +517,8 @@ async function main() {
   const dateArg = args.find((arg) => arg.startsWith('--date='));
   const untilDate = dateArg ? dateArg.split('=')[1] : null;
   const noAi = args.includes('--no-ai');
+  const onlyPrompt = args.includes('--only-prompt') || args.includes('--print-prompt');
+  const aiJsonStdin = args.includes('--ai-json-stdin') || args.includes('--stdin-json');
 
   const outDir = path.join(process.cwd(), 'src', 'data', 'generated');
   const outFile = path.join(outDir, 'changeLogs.json');
@@ -509,15 +541,16 @@ async function main() {
         if (Array.isArray(latestChange.hashes) && latestChange.hashes.length > 0) {
           lastHash = latestChange.hashes[0];
         }
-        console.log(`Found latest existing commit: ${lastHash} (${latestDay.date})`);
+        if (!onlyPrompt)
+          console.log(`Found latest existing commit: ${lastHash} (${latestDay.date})`);
       }
     }
   } catch {
     // File doesn't exist or is invalid, start fresh
-    console.log('No valid existing changelog file found. Starting fresh.');
+    if (!onlyPrompt) console.log('No valid existing changelog file found. Starting fresh.');
   }
 
-  const rawCommits = getGitCommits(lastHash, untilDate);
+  const rawCommits = getGitCommits(lastHash, untilDate, { silent: onlyPrompt });
 
   if (!rawCommits) {
     console.log('No new commits found.');
@@ -525,21 +558,65 @@ async function main() {
   }
 
   const parsedCommits = parseCommits(rawCommits);
-  console.log(`Found ${parsedCommits.length} relevant commits`);
+  if (!onlyPrompt) console.log(`Found ${parsedCommits.length} relevant commits`);
 
   if (parsedCommits.length === 0) {
     console.log('No relevant commits to process.');
     return;
   }
 
+  if (onlyPrompt) {
+    const commitsInput = parsedCommits.map((c) => `${c.hash}|${c.message}`).join('\n');
+    const userPrompt = `Convert these git commits to changelog format:\n\n${commitsInput}`;
+
+    // Print only the prompts needed to reproduce the request.
+    // Keep output machine-friendly so it can be copy/pasted into other clients.
+    process.stdout.write(
+      JSON.stringify(
+        {
+          model: GEMINI_MODEL,
+          systemInstruction: SYSTEM_PROMPT,
+          userPrompt,
+        },
+        null,
+        2
+      ) + '\n'
+    );
+    return;
+  }
+
   let newChangelogs;
 
-  if (noAi) {
+  if (aiJsonStdin) {
+    try {
+      const stdinText = await readStdinText();
+
+      if (!stdinText || !stdinText.trim()) {
+        console.error('Error: No stdin input received for --ai-json-stdin/--stdin-json');
+        process.exit(1);
+      }
+
+      const aiChanges = parseAIChangesFromText(stdinText);
+      newChangelogs = groupAIChangesByDate(aiChanges, parsedCommits);
+
+      if (!Array.isArray(newChangelogs) || newChangelogs.length === 0) {
+        console.warn('Warning: No changelog entries produced from stdin JSON.');
+        return;
+      }
+    } catch (error) {
+      console.error('Error: Failed to read/parse stdin JSON');
+      console.error(`Details: ${formatError(error)}`);
+      process.exit(1);
+    }
+  } else if (noAi) {
     newChangelogs = generateFallbackChangelogs(parsedCommits);
   } else {
     try {
       newChangelogs = await generateChangelogs(parsedCommits);
     } catch (error) {
+      if (!GEMINI_API_KEY) {
+        console.error('Error: GEMINI_API_KEY not found in environment');
+      }
       console.warn(
         'Warning: Failed to generate changelogs with Gemini. Skipping changelog update.'
       );
