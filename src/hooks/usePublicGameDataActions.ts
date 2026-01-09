@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import useSWR from 'swr';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
@@ -26,12 +25,6 @@ import {
   withRecordingSuppressed,
   type ActionHistoryEntry,
 } from '../lib/edit/diffUtils';
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return (await res.json()) as { actions: PublicActionRow[] };
-};
 
 function getTarget(entityType: string): Record<string, unknown> | null {
   switch (entityType) {
@@ -94,6 +87,7 @@ function readEditModeState(): { isEditMode: boolean; enabledAtMs: number | null 
   return { isEditMode: true, enabledAtMs };
 }
 export function usePublicGameDataActions(options?: { initialPublicActions?: PublicActionRow[] }) {
+  'use no memo';
   const [appliedCount, setAppliedCount] = useState(0);
   const appliedIdsRef = useRef<Set<string>>(new Set());
 
@@ -101,18 +95,7 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
 
   const enabled = env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  const { data } = useSWR(
-    enabled ? '/api/game-data-actions/public' : null,
-    fetcher,
-    options?.initialPublicActions
-      ? {
-          revalidateOnFocus: false,
-          fallbackData: { actions: options.initialPublicActions },
-        }
-      : {
-          revalidateOnFocus: false,
-        }
-  );
+  const actions = enabled ? options?.initialPublicActions : undefined;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -145,8 +128,8 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
     };
   }, []);
 
-  useEffect(() => {
-    if (!data?.actions?.length) return;
+  useLayoutEffect(() => {
+    if (!actions?.length) return;
 
     // In edit mode, freeze public actions at the moment edit mode was enabled.
     // This avoids remote updates overwriting local in-progress edits.
@@ -154,7 +137,7 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
 
     let didApply = 0;
 
-    for (const row of data.actions) {
+    for (const row of actions) {
       if (!row?.id || appliedIdsRef.current.has(row.id)) continue;
 
       const createdAtMs = Date.parse(row.created_at);
@@ -186,7 +169,7 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
       setAppliedCount((prev) => prev + didApply);
       GameDataManager.invalidate();
     }
-  }, [data, enabledAtMs, isEditMode]);
+  }, [actions, enabledAtMs, isEditMode]);
 
   return { appliedCount };
 }
