@@ -5700,7 +5700,7 @@ export const catCharactersWithImages = Object.fromEntries(
       ...character,
       factionId: 'cat' as const,
       storePurchaseTime:
-        character.storePurchaseTime ?? (catsWithLongStorePurchaseTime.has(characterId) ? 4.1 : 2.8),
+        character.storePurchaseTime ?? (catsWithLongStorePurchaseTime.has(characterId) ? 4.1 : 2.6),
       imageUrl: AssetManager.getCharacterImageUrl(characterId, 'cat'),
       skills: AssetManager.addSkillImageUrls(characterId, character.skills, 'cat'),
     },
