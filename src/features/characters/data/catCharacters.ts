@@ -5690,6 +5690,8 @@ const catCharacterDefinitions = {
 // Process character definitions to assign IDs and process skills
 const catCharacters = processCharacters(catCharacterDefinitions);
 
+const catsWithLongStorePurchaseTime = new Set(['如玉', '苏蕊', '斯飞']);
+
 // Generate characters with faction ID and image URLs applied in bulk
 export const catCharactersWithImages = Object.fromEntries(
   Object.entries(catCharacters).map(([characterId, character]) => [
@@ -5697,6 +5699,8 @@ export const catCharactersWithImages = Object.fromEntries(
     {
       ...character,
       factionId: 'cat' as const,
+      storePurchaseTime:
+        character.storePurchaseTime ?? (catsWithLongStorePurchaseTime.has(characterId) ? 4.1 : 2.8),
       imageUrl: AssetManager.getCharacterImageUrl(characterId, 'cat'),
       skills: AssetManager.addSkillImageUrls(characterId, character.skills, 'cat'),
     },

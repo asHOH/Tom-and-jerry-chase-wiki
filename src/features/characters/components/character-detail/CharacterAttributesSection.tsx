@@ -115,6 +115,13 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
 
   const specificAttributes: CharacterAttribute[] = [
     {
+      label: '商店购买道具时间',
+      value: character.storePurchaseTime || 0,
+      condition: factionId === 'cat' && !!character.storePurchaseTime,
+      path: `storePurchaseTime`,
+      suffix: ' s',
+    },
+    {
       label: '性别',
       value: character.gender === 'female' ? '女' : '男',
       condition: !!character.gender,

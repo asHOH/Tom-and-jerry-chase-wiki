@@ -159,6 +159,7 @@ export type CharacterDefinition = {
   specialClawKnifeCdUnhit?: number; // 特殊爪刀CD (未命中)
   clawKnifeRange?: number; // 爪刀范围
   initialItem?: string; // 初始道具
+  storePurchaseTime?: number; // 商店购买道具时间（秒）
 
   // Mouse-specific attributes
   cheesePushSpeed?: number; // 推速
