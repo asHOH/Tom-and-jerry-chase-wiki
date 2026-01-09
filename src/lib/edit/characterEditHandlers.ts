@@ -8,7 +8,6 @@ import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
 import { getNestedProperty } from '@/lib/edit/entityUtils';
 import { CharacterWithFaction } from '@/lib/types';
-import mouseCharactersStats from '@/features/characters/data/mouseCharactersStats';
 import { characters, FactionId, factions, Skill } from '@/data';
 
 /**
@@ -58,11 +57,6 @@ export function handleCharacterIdChange(
 
   // Enhance with validation
   const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId, factionId);
-
-  // Merge faction-specific stats if available
-  if (factionId === 'mouse' && newId in mouseCharactersStats) {
-    Object.assign(enhancedCharacter, mouseCharactersStats[newId]);
-  }
 
   characters[newId] = enhancedCharacter;
 
