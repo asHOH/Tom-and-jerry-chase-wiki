@@ -12,7 +12,9 @@ import UserManagement from '@/features/admin/components/UserManagement';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 type PendingGameDataAction =
-  Database['public']['Functions']['get_pending_game_data_actions']['Returns'][number];
+  Database['public']['Functions']['get_pending_game_data_actions']['Returns'][number] & {
+    message?: string | null;
+  };
 
 interface User {
   id: string;
@@ -467,6 +469,12 @@ const AdminPanel = () => {
                       )}
                     </div>
                   </div>
+                  {submission.message && (
+                    <div className='mt-3 rounded border border-blue-100 bg-blue-50 p-2 text-sm text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/30 dark:text-blue-200'>
+                      <span className='font-semibold'>留言：</span>
+                      {submission.message}
+                    </div>
+                  )}
 
                   {expandedActionIds.has(submission.action_id) && (
                     <div className='mt-3 space-y-2'>

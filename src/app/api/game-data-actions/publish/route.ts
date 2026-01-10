@@ -6,6 +6,7 @@ import { env } from '@/env';
 type PublishBody = {
   entityType?: string;
   entries?: unknown;
+  message?: string;
 };
 
 export async function POST(req: Request) {
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
 
   const entityType = typeof body.entityType === 'string' ? body.entityType.trim() : '';
   const entries = body.entries;
+  const message = typeof body.message === 'string' ? body.message.trim() : undefined;
 
   if (!entityType) {
     return NextResponse.json({ error: 'Missing entityType' }, { status: 400 });
@@ -37,6 +39,7 @@ export async function POST(req: Request) {
     const { data, error } = await supabase.rpc('publish_game_data_actions', {
       p_entity_type: entityType,
       p_entries: entries,
+      p_message: message,
     });
 
     if (error) {

@@ -4,9 +4,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { useSWRConfig } from 'swr';
 
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
+import { USER_API_KEY } from '@/hooks/useUser';
 import { CloseIcon } from '@/components/icons/CommonIcons';
 import { env } from '@/env';
 
@@ -21,6 +23,7 @@ type AuthStep = 'username' | 'password' | 'register';
 
 const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const router = useRouter();
+  const { mutate } = useSWRConfig();
   const shouldReduceMotion = useReducedMotion();
   const [step, setStep] = useState<AuthStep>('username');
   const [username, setUsername] = useState('');
@@ -118,6 +121,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       }
       // Server-side login sets HttpOnly cookies; refresh to reflect session client-side
       router.refresh();
+      await mutate(USER_API_KEY);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : '发生未知错误。');

@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useEffect } from 'react';
+import { startTransition, useLayoutEffect } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 import { proxy, useSnapshot } from 'valtio';
 
@@ -24,7 +24,7 @@ export const useAppContext = () => {
   );
   const { isDetailedView } = useSnapshot(isDetailedViewStore);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     isDetailedViewStore.isDetailedView = storedDetailedView ?? false;
   }, [storedDetailedView]);
 

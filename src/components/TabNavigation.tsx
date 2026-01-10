@@ -59,6 +59,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [mounted, setMounted] = useState(false);
   const [collapsedCount, setCollapsedCount] = useState(0);
   const [publishingActions, setPublishingActions] = useState(false);
+  const [publishMessage, setPublishMessage] = useState('');
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const { nickname, role, clearData: clearUserData } = useUser();
@@ -120,7 +121,11 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         const res = await fetch('/api/game-data-actions/publish', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ entityType: payload.entityType, entries: payload.entries }),
+          body: JSON.stringify({
+            entityType: payload.entityType,
+            entries: payload.entries,
+            message: publishMessage,
+          }),
         });
 
         if (!res.ok) {
@@ -137,6 +142,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
       errorToast(msg);
     } finally {
       setPublishingActions(false);
+      setPublishMessage('');
     }
   };
 
@@ -487,7 +493,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           )}
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
           {mounted &&
-            !!nickname &&
+            (!!nickname || isEditMode) &&
             shouldDisplayUserSettings &&
             env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' &&
             !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY && (
@@ -523,7 +529,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                     >
                       <ul>
                         <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>
-                          你好，{nickname}
+                          {nickname ? `你好，${nickname}` : '你好，访客'}
                         </li>
                         <li>
                           <button
@@ -575,6 +581,13 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                                         共 {payloads.length} 类 / {totalEntries} 条
                                         {isEditMode ? '（编辑模式中）' : ''}
                                       </div>
+                                      <textarea
+                                        className='w-full rounded-md border border-gray-300 p-2 text-xs text-gray-800 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-gray-200'
+                                        rows={2}
+                                        placeholder='选填：描述改动内容（如：修正了技能数值）'
+                                        value={publishMessage}
+                                        onChange={(e) => setPublishMessage(e.target.value)}
+                                      />
                                     </div>
                                     <div className='flex flex-wrap items-center gap-2'>
                                       <button
@@ -633,17 +646,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           )}
                         </AnimatePresence>
                         <li>
-                          <button
-                            type='button'
-                            className='w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
-                            onClick={() => {
-                              setUserDropdownOpen(false);
-                              setActionInfoOpen(false);
-                              setChangePasswordOpen(true);
-                            }}
-                          >
-                            修改密码
-                          </button>
+                          {!!nickname && (
+                            <button
+                              type='button'
+                              className='w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                              onClick={() => {
+                                setUserDropdownOpen(false);
+                                setActionInfoOpen(false);
+                                setChangePasswordOpen(true);
+                              }}
+                            >
+                              修改密码
+                            </button>
+                          )}
                         </li>
                         {(role == 'Coordinator' || role == 'Reviewer') && (
                           <li className='cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700'>
@@ -658,19 +673,21 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           </li>
                         )}
                         <li>
-                          <button
-                            type='button'
-                            className={clsx(
-                              'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-gray-800 dark:text-gray-200',
-                              signingOut
-                                ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
-                                : 'hover:bg-gray-100 dark:hover:bg-slate-700'
-                            )}
-                            onClick={handleSignOut}
-                            disabled={signingOut}
-                          >
-                            {signingOut ? '正在退出…' : '退出登录'}
-                          </button>
+                          {!!nickname && (
+                            <button
+                              type='button'
+                              className={clsx(
+                                'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-gray-800 dark:text-gray-200',
+                                signingOut
+                                  ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
+                                  : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                              )}
+                              onClick={handleSignOut}
+                              disabled={signingOut}
+                            >
+                              {signingOut ? '正在退出…' : '退出登录'}
+                            </button>
+                          )}
                         </li>
                       </ul>
                     </m.div>
