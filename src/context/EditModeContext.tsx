@@ -16,6 +16,8 @@ import {
   withRecordingSuppressed,
 } from '@/lib/edit/diffUtils';
 import {
+  achievements,
+  achievementsEdit,
   buffs,
   buffsEdit,
   cardsEdit,
@@ -50,6 +52,7 @@ export const EditModeContext = createContext<EditModeContextType | undefined>(un
  * without hardcoding specific imports.
  */
 const entityRegistry = new Map<string, Record<string, unknown>>([
+  ['achievements', achievementsEdit as unknown as Record<string, unknown>],
   ['characters', characters],
   ['factions', factions],
   ['cards', cardsEdit],
@@ -230,6 +233,14 @@ function restoreEntitiesToCanonical(): void {
       });
       Object.entries(specialSkills.mouse as Record<string, unknown>).forEach(([key, value]) => {
         root.mouse![key] = proxy(value as Record<string, unknown>);
+      });
+    } else if (entityType === 'achievements') {
+      Object.keys(entity).forEach((key) => {
+        delete entity[key];
+      });
+      console.log('Restoring achievements', achievements);
+      Object.entries(achievements as Record<string, unknown>).forEach(([key, value]) => {
+        entity[key] = proxy(value as Record<string, unknown>);
       });
     }
   });
@@ -448,4 +459,11 @@ export const useLocalSpecialSkill = () => {
   const skillId = decodeURIComponent(pathParts[pathParts.length - 2] || '');
   const factionId = decodeURIComponent(pathParts[pathParts.length - 3] || '');
   return { factionId, skillId };
+};
+
+export const useLocalAchievement = () => {
+  const path = usePathname();
+  const pathParts = path.split('/');
+  const achievementName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  return { achievementName };
 };

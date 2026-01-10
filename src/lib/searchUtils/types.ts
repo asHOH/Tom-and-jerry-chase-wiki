@@ -1,4 +1,4 @@
-import { Card, Character, Item, SpecialSkill } from '@/data/types';
+import { Achievement, Card, Character, Item, SpecialSkill } from '@/data/types';
 
 export type SearchResult =
   | ({ type: 'character'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
@@ -17,5 +17,9 @@ export type SearchResult =
     } & Pick<SpecialSkill, 'name' | 'imageUrl' | 'factionId'>)
   | ({ type: 'item'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
       Item,
+      'name' | 'imageUrl'
+    >)
+  | ({ type: 'achievement'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
+      Achievement,
       'name' | 'imageUrl'
     >);

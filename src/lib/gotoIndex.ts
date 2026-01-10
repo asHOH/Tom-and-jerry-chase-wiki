@@ -6,6 +6,7 @@ import type { ItemGroupDefinition } from '@/data/types';
 import { getDocPages } from '@/features/articles/utils/docs';
 import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 import {
+  achievements,
   buffs,
   cards,
   characters,
@@ -33,7 +34,8 @@ type Kind =
   | 'character-skill'
   | 'map'
   | 'fixture'
-  | 'mode';
+  | 'mode'
+  | 'achievement';
 
 export type IndexEntry = {
   kind: Kind;
@@ -86,6 +88,7 @@ const PRIORITY: Record<Kind, { name: number; alias: number }> = {
   mode: { name: 12, alias: 24 },
   doc: { name: 13, alias: 13 },
   'character-skill': { name: 21, alias: 21 }, // skills resolved after alias matches
+  achievement: { name: 22, alias: 22 },
 };
 
 function push(map: Map<string, IndexEntry[]>, key: string, entry: IndexEntry) {
@@ -393,6 +396,30 @@ async function buildGotoIndex(): Promise<GotoIndex> {
       push(byName, normalizeName(a), {
         kind: 'mode',
         priority: PRIORITY.mode.alias,
+        goto,
+      });
+    }
+  }
+
+  // Achievements
+  for (const [name, ach] of Object.entries(achievements)) {
+    const goto: GotoResult = {
+      url: `/achievements/${encodeURIComponent(name)}`,
+      type: 'achievement',
+      name: ach.name,
+      description: ach.description,
+      imageUrl: ach.imageUrl,
+      ...(ach.factionId ? { factionId: ach.factionId } : {}),
+    };
+    push(byName, normalizeName(name), {
+      kind: 'achievement',
+      priority: PRIORITY.achievement.name,
+      goto,
+    });
+    for (const a of ach.aliases ?? []) {
+      push(byName, normalizeName(a), {
+        kind: 'achievement',
+        priority: PRIORITY.achievement.alias,
         goto,
       });
     }

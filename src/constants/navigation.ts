@@ -88,6 +88,14 @@ export const NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/icons/mode.png',
     iconAlt: '模式图标',
   },
+  // {
+  //   id: 'achievements',
+  //   label: '对局成就',
+  //   description: '局内成就列表',
+  //   href: '/achievements',
+  //   iconSrc: '/images/icons/mode.png', // Temporary icon
+  //   iconAlt: '成就图标',
+  // },
   /*{
     id: 'mechanics',
     label: '机制',

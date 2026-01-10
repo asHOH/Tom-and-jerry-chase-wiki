@@ -8,11 +8,21 @@ import modesStatic from '@/features/modes/data/modes';
 import catSpecialSkillsStatic from '@/features/special-skills/data/catSpecialSkills';
 import mouseSpecialSkillsStatic from '@/features/special-skills/data/mouseSpecialSkills';
 
+import achievementsStatic from './achievements';
 import buffsStatic from './buffs';
 import catEntitiesStatic from './catEntities';
 import mapsStatic from './maps';
 import mouseEntitiesStatic from './mouseEntities';
-import type { Buff, Entity, Fixture, Item, Map as MapType, Mode, SpecialSkill } from './types';
+import type {
+  Achievement,
+  Buff,
+  Entity,
+  Fixture,
+  Item,
+  Map as MapType,
+  Mode,
+  SpecialSkill,
+} from './types';
 
 function proxyRecord<T extends Record<string, unknown>>(record: T): Record<string, unknown> {
   return Object.fromEntries(
@@ -69,3 +79,7 @@ export const specialSkillsEdit: {
   cat: proxy(proxyRecord(catSpecialSkillsStatic) as Record<string, SpecialSkill>),
   mouse: proxy(proxyRecord(mouseSpecialSkillsStatic) as Record<string, SpecialSkill>),
 });
+
+export const achievementsEdit: Record<string, Achievement> = proxy(
+  proxyRecord(achievementsStatic) as Record<string, Achievement>
+);

@@ -1,6 +1,7 @@
 import { FactionId, SingleItem } from '@/data/types';
 import getEntityFactionId from '@/features/entities/lib/getEntityFactionId';
 import {
+  achievements,
   buffs,
   cards,
   characters,
@@ -36,6 +37,8 @@ export const getSingleItemHref = (singleItem: SingleItem): string => {
     R = `/fixtures/${singleItem.name}`;
   } else if (singleItem.type == 'mode') {
     R = `/modes/${singleItem.name}`;
+  } else if (singleItem.type == 'achievement') {
+    R = `/achievements/${singleItem.name}`;
   } else if (singleItem.type == 'skill') {
     const skill = Object.values(characters)
       .flatMap((c) => c.skills)
@@ -79,6 +82,8 @@ export const getSingleItemImageUrl = (singleItem: SingleItem): string => {
     R = fixtures[singleItem.name]?.imageUrl;
   } else if (singleItem.type == 'mode') {
     R = modes[singleItem.name]?.imageUrl;
+  } else if (singleItem.type == 'achievement') {
+    R = achievements[singleItem.name]?.imageUrl;
   } else if (singleItem.type == 'skill') {
     const skill = Object.values(characters)
       .flatMap((c) => c.skills)
@@ -110,6 +115,8 @@ export const getSingleItemFactionId = (singleItem: SingleItem): FactionId | unde
         c.skills.some((skill) => skill.name === singleItem.name)
       );
       return owner?.factionId;
+    } else if (singleItem.type == 'achievement') {
+      return achievements[singleItem.name]?.factionId;
     }
     return undefined;
   };

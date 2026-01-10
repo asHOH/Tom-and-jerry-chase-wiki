@@ -78,7 +78,8 @@ export type GotoResult = {
     | 'itemGroup'
     | 'map'
     | 'fixture'
-    | 'mode';
+    | 'mode'
+    | 'achievement';
   name: string;
   description: string | undefined;
   imageUrl: string | undefined;
@@ -143,5 +144,6 @@ export const CATEGORY_HINTS = [
   '场景物', //regarded as 地图组件
   '游戏模式',
   '模式', //regarded as 地图组件
+  '对局成就',
 ] as const;
 export type CategoryHint = (typeof CATEGORY_HINTS)[number];

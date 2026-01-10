@@ -13,7 +13,8 @@ type typelist =
   | 'buff'
   | 'map'
   | 'fixture'
-  | 'mode';
+  | 'mode'
+  | 'achievement';
 
 interface TargetNavigationButtonsProps {
   currentId: string;

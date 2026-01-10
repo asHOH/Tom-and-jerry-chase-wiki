@@ -10,7 +10,8 @@ type typelist =
   | 'buff'
   | 'map'
   | 'fixture'
-  | 'mode';
+  | 'mode'
+  | 'achievement';
 
 /**
  * Navigation for knowledgeCards,specialSkills,items,entities

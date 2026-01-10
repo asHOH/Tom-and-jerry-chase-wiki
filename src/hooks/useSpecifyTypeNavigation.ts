@@ -4,7 +4,17 @@ import { useRouter } from 'next/navigation';
 import { createRankFilter, useFilterState } from '@/lib/filterUtils';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import type { FactionId } from '@/data/types';
-import { buffs, cards, entities, fixtures, items, maps, modes, specialSkills } from '@/data';
+import {
+  achievements,
+  buffs,
+  cards,
+  entities,
+  fixtures,
+  items,
+  maps,
+  modes,
+  specialSkills,
+} from '@/data';
 
 type typelist =
   | 'knowledgeCard'
@@ -14,7 +24,8 @@ type typelist =
   | 'buff'
   | 'map'
   | 'fixture'
-  | 'mode';
+  | 'mode'
+  | 'achievement';
 
 /**
  * Navigation for knowledgeCards,specialSkills,items,entities
@@ -73,6 +84,9 @@ export const useSpecifyTypeNavigation = (
     mode: useMemo(() => {
       return Object.keys(modes);
     }, []),
+    achievement: useMemo(() => {
+      return Object.keys(achievements);
+    }, []),
   };
 
   //Get specifyType's Ids
@@ -121,6 +135,7 @@ export const useSpecifyTypeNavigation = (
       map: 'maps',
       fixture: 'fixtures',
       mode: 'modes',
+      achievement: 'achievements',
     };
   }, []);
 

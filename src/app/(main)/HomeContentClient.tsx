@@ -68,6 +68,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
       items: [
         { id: 'maps' },
         { id: 'modes' },
+        // { id: 'achievements' },
         { id: 'buffs' },
         {
           id: 'articles',

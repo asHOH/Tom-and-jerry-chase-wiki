@@ -8,6 +8,7 @@ import type { CharacterWithFaction, KnowledgeCardWithFaction } from '@/lib/types
 import { useAppContext } from '@/context/AppContext';
 import {
   useEditMode,
+  useLocalAchievement,
   useLocalBuff,
   useLocalCard,
   useLocalCharacter,
@@ -19,6 +20,7 @@ import {
   useLocalSpecialSkill,
 } from '@/context/EditModeContext';
 import {
+  achievementsEdit,
   buffsEdit,
   cardsEdit,
   characters,
@@ -50,7 +52,8 @@ type EditableScope =
   | 'fixtures'
   | 'maps'
   | 'modes'
-  | 'specialSkills';
+  | 'specialSkills'
+  | 'achievements';
 
 type EditableCharactersPath = Key<CharacterWithFaction> | (string & {});
 type EditableCardsPath = Key<KnowledgeCardWithFaction> | (string & {});
@@ -301,6 +304,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
   'use no memo';
 
   const { entityName } = useLocalEntity();
+  const { achievementName } = useLocalAchievement();
   const { buffName } = useLocalBuff();
   const { itemName } = useLocalItem();
   const { fixtureName } = useLocalFixture();
@@ -309,6 +313,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
   const { factionId, skillId } = useLocalSpecialSkill();
 
   const rawEntity = entitiesEdit[entityName];
+  const rawAchievement = achievementsEdit[achievementName];
   const rawBuff = buffsEdit[buffName];
   const rawItem = itemsEdit[itemName];
   const rawFixture = fixturesEdit[fixtureName];
@@ -323,6 +328,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
         : undefined;
 
   const entitySnapshot = useSnapshot(rawEntity ?? emptyObject);
+  const achievementSnapshot = useSnapshot(rawAchievement ?? emptyObject);
   const buffSnapshot = useSnapshot(rawBuff ?? emptyObject);
   const itemSnapshot = useSnapshot(rawItem ?? emptyObject);
   const fixtureSnapshot = useSnapshot(rawFixture ?? emptyObject);
@@ -337,6 +343,8 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
     switch (scope) {
       case 'entities':
         return getNestedProperty(entitySnapshot, path as string);
+      case 'achievements':
+        return getNestedProperty(achievementSnapshot, path as string);
       case 'buffs':
         return getNestedProperty(buffSnapshot, path as string);
       case 'items':
@@ -356,6 +364,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
     scope,
     path,
     entitySnapshot,
+    achievementSnapshot,
     buffSnapshot,
     itemSnapshot,
     fixtureSnapshot,
@@ -378,6 +387,15 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           setNestedProperty(
             entitiesEdit as unknown as Record<string, unknown>,
             `${entityName}.${path as string}`,
+            value
+          );
+          break;
+        }
+        case 'achievements': {
+          if (!achievementName || !rawAchievement) return;
+          setNestedProperty(
+            achievementsEdit as unknown as Record<string, unknown>,
+            `${achievementName}.${path as string}`,
             value
           );
           break;
@@ -445,6 +463,8 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
       path,
       entityName,
       rawEntity,
+      achievementName,
+      rawAchievement,
       buffName,
       rawBuff,
       itemName,

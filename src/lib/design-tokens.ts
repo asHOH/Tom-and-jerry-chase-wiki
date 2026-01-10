@@ -751,6 +751,7 @@ export const getTypeLabelColors = (type: string, isDarkMode = false) => {
     map: 'crimson',
     fixture: 'crimson',
     mode: 'amber',
+    achievement: 'indigo',
   };
 
   const paletteKey = map[type] || 'deepGray';

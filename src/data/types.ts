@@ -374,7 +374,8 @@ export type SingleItemTypeName =
   | 'buff'
   | 'map'
   | 'fixture'
-  | 'mode';
+  | 'mode'
+  | 'achievement';
 export const SingleItemTypeChineseNameList = {
   character: '角色',
   skill: '技能',
@@ -386,6 +387,7 @@ export const SingleItemTypeChineseNameList = {
   map: '地图',
   fixture: '地图组件',
   mode: '游戏模式',
+  achievement: '对局成就',
 };
 // Create a group include similar items(or entites/buffs), so that can use navigation in one href
 export type SingleItem = {
@@ -573,6 +575,19 @@ export type ModeDefinition = {
 };
 
 export type Mode = ModeDefinition & { name: string; imageUrl: string };
+
+export type AchievementDefinition = {
+  factionId: FactionId;
+  description: string;
+  detailedDescription?: string;
+  imageUrl?: string; // We'll generate it automatically
+  aliases?: string[];
+
+  unuseImage?: boolean; // Default: false
+  specialImageUrl?: string;
+};
+
+export type Achievement = AchievementDefinition & { name: string; imageUrl: string };
 
 /**
  * Defines the type of data file change applied in the wiki.

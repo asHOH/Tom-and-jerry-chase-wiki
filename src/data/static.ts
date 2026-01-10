@@ -30,3 +30,5 @@ export { default as maps } from './maps';
 export { default as fixtures } from '@/features/fixtures/data/fixtures';
 
 export { default as modes } from '@/features/modes/data/modes';
+
+export { default as achievements } from './achievements';

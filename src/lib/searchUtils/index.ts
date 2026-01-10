@@ -1,4 +1,5 @@
 import { convertToPinyin } from '../pinyinUtils';
+import { searchAchievements } from './achievements';
 import { searchCards } from './cards';
 import { searchCharacters } from './character';
 import { searchItems } from './items';
@@ -77,6 +78,7 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     arrayFromAsync(searchCards(findMatchContext, lowerCaseQuery, pinyinQuery)),
     arrayFromAsync(searchSpecialSkills(findMatchContext, lowerCaseQuery, pinyinQuery)),
     arrayFromAsync(searchItems(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchAchievements(findMatchContext, lowerCaseQuery, pinyinQuery)),
   ]);
 
   // Limit results per type and sort by priority

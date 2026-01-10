@@ -76,6 +76,7 @@ export async function getGotoResult(
     if (hint === '场景物') return (c: K) => c.kind === 'fixture';
     if (hint === '游戏模式') return (c: K) => c.kind === 'mode';
     if (hint === '模式') return (c: K) => c.kind === 'mode';
+    if (hint === '对局成就') return (c: K) => c.kind === 'achievement';
     return undefined;
   };
   const compactName = (input: string): string =>
@@ -240,6 +241,7 @@ export async function getGotoResult(
     if (kind === 'fixture')
       return { categoryLabel: '地图组件', kindDescription: '地图组件/场景物' };
     if (kind === 'mode') return { categoryLabel: '游戏模式', kindDescription: '游戏模式' };
+    if (kind === 'achievement') return { categoryLabel: '对局成就', kindDescription: '对局成就' };
     if (kind === 'doc') return { categoryLabel: '文档', kindDescription: '文档' };
     return { categoryLabel: kind, kindDescription: kind };
   };
