@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 interface User {
   id: string;
   nickname: string;
-  role: string;
+  role: string | null;
 }
 
 interface UserManagementProps {
@@ -164,7 +164,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                   <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
                     <select
                       className='rounded border border-gray-300 bg-white px-2 py-1 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
-                      value={user.role}
+                      value={user.role ?? 'Contributor'}
                       onChange={(e) => {
                         const newRole = e.target.value;
                         handleRoleUpdate(user.id, newRole);
