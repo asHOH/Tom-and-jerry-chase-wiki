@@ -165,6 +165,14 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
     iconAlt: '地图组件图标',
   },
+  {
+    id: 'achievements',
+    label: '对局成就',
+    description: '局内成就列表',
+    href: '/achievements',
+    iconSrc: '/images/icons/mode.png', // Temporary icon
+    iconAlt: '成就图标',
+  },
   //以下为编辑模式专用工具，正常情况不显示
   {
     id: 'item-maker',

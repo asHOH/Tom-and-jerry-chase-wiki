@@ -28,7 +28,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
     },
     {
       title: '建设中界面',
-      items: ['mechanics', 'maps', 'fixtures', 'modes'],
+      items: ['mechanics', 'fixtures', 'achievements'],
     },
     {
       title: '编辑工具',
