@@ -1,11 +1,13 @@
+'use client';
+
 import { useMemo, useState } from 'react';
 
-import { getWikiHistory } from '@/lib/wikiHistoryUtils';
+import { useWikiHistory } from '@/hooks/useWikiHistory';
 import { SingleItem, WikiChangeType } from '@/data/types';
 
 export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleItem: SingleItem }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const history = useMemo(() => getWikiHistory([singleItem]), [singleItem]);
+  const history = useWikiHistory([singleItem]);
 
   const sortedHistory = useMemo(() => {
     return [...history].sort((a, b) => {
