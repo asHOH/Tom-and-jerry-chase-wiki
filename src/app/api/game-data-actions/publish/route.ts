@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     const { data, error } = await supabase.rpc('publish_game_data_actions', {
       p_entity_type: entityType,
       p_entries: entries,
-      p_message: message,
+      p_message: message!,
     });
 
     if (error) {

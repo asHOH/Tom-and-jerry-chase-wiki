@@ -283,6 +283,7 @@ export type Database = {
           entry: Json;
           id: string;
           is_public: boolean;
+          message: string | null;
           rejection_reason: string | null;
           reviewed_at: string | null;
           reviewed_by: string | null;
@@ -295,6 +296,7 @@ export type Database = {
           entry: Json;
           id?: string;
           is_public?: boolean;
+          message?: string | null;
           rejection_reason?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
@@ -307,6 +309,7 @@ export type Database = {
           entry?: Json;
           id?: string;
           is_public?: boolean;
+          message?: string | null;
           rejection_reason?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
@@ -564,6 +567,7 @@ export type Database = {
           entity_type: string;
           entry: Json;
           is_public: boolean;
+          message: string;
           rejection_reason: string;
           reviewed_at: string;
           reviewed_by: string;
@@ -603,7 +607,7 @@ export type Database = {
         Returns: boolean;
       };
       publish_game_data_actions: {
-        Args: { p_entity_type: string; p_entries: Json };
+        Args: { p_entity_type: string; p_entries: Json; p_message?: string };
         Returns: {
           id: string;
           is_public: boolean;
