@@ -6,7 +6,6 @@
 
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
-import { getNestedProperty } from '@/lib/edit/entityUtils';
 import { CharacterWithFaction } from '@/lib/types';
 import { characters, FactionId, factions, Skill } from '@/data';
 
@@ -80,35 +79,6 @@ export function handleCharacterIdChange(
 }
 
 /**
- * Handles skill name changes by regenerating the skill image URL.
- * Ensures image URLs stay in sync with skill names.
- *
- * @param path The path to the skill field
- * @param newName The new skill name
- * @param factionId The faction of the character owning this skill
- */
-export function handleCharacterSkillNameChange(
-  path: string,
-  newName: string,
-  factionId: FactionId
-): void {
-  const skillPath = path.split('.').slice(0, 3).join('.');
-  const skill = getNestedProperty<Skill>(characters, skillPath);
-
-  if (!skill) {
-    console.error('Skill not found at path:', skillPath);
-    return;
-  }
-
-  skill.name = newName;
-  skill.imageUrl = AssetManager.getSkillImageUrl(
-    skill.id.split('-')[0] || 'unknown',
-    skill,
-    factionId
-  );
-}
-
-/**
  * Ensures character object has all required fields with proper structure.
  * Validates faction ID, initializes skill arrays, regenerates URLs.
  *
@@ -117,7 +87,7 @@ export function handleCharacterSkillNameChange(
  * @param factionId Override faction ID (defaults to character.factionId)
  * @returns The validated and enhanced character
  */
-export function validateAndEnhanceCharacter(
+function validateAndEnhanceCharacter(
   character: unknown,
   characterId: string,
   factionId?: FactionId
@@ -165,39 +135,6 @@ export function validateAndEnhanceCharacter(
       skill.imageUrl = AssetManager.getSkillImageUrl(characterId, skill, validFactionId);
       skill.id = `${characterId}-${skill.type}`;
     });
-  }
-
-  return charObj as CharacterWithFaction;
-}
-
-/**
- * Ensures character object has proper structure with required fields.
- * Basic validation without full enhancement.
- *
- * @param character The character object to validate
- * @param characterId The character's ID
- * @returns The validated character
- */
-export function validateCharacterStructure(
-  character: unknown,
-  characterId: string
-): CharacterWithFaction {
-  if (!character || typeof character !== 'object') {
-    throw new Error(`Character ${characterId} not found or invalid`);
-  }
-
-  const charObj = character as Record<string, unknown>;
-
-  if (!charObj.id) {
-    charObj.id = characterId;
-  }
-
-  if (!charObj.faction) {
-    charObj.faction = charObj.factionId ? { id: charObj.factionId } : { id: 'unknown' };
-  }
-
-  if (!charObj.skills) {
-    charObj.skills = [];
   }
 
   return charObj as CharacterWithFaction;

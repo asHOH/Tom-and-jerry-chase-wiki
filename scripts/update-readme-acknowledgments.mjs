@@ -1,16 +1,18 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { createJiti } from 'jiti';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '..');
+const jiti = createJiti(import.meta.url);
 
 // Function to dynamically import contributors from compiled TypeScript
 async function importContributorsFromTS() {
   try {
     // Import from the compiled JS file
-    const contributorsModule = await import('./temp/contributors.js');
+    const contributorsModule = await jiti.import('../src/data/contributors.ts');
     const { contributors } = contributorsModule;
 
     console.log(

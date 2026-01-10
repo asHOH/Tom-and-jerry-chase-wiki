@@ -159,7 +159,3 @@ export const formatZodError = (error: z.ZodError) =>
     path: issue.path.join('.') || 'root',
     message: issue.message,
   }));
-
-export type AuthRegisterInput = z.infer<typeof authRegisterSchema>;
-export type ArticleSubmitInput = z.infer<typeof articleSubmitSchema>;
-export type ArticleEditPendingInput = z.infer<typeof articleEditPendingSchema>;

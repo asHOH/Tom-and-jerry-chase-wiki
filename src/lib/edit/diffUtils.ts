@@ -3,8 +3,6 @@ import type { INTERNAL_Op } from 'valtio';
 
 import { actionHistorySchema } from '@/lib/validation/schemas';
 
-export type JsonPrimitive = string | number | boolean | null;
-
 export type DiffOp = 'set' | 'add' | 'delete';
 
 export interface Action {
@@ -32,23 +30,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isArray(value: unknown): value is unknown[] {
   return Array.isArray(value);
-}
-
-function isPrimitive(value: unknown): value is JsonPrimitive {
-  return (
-    value === null ||
-    typeof value === 'string' ||
-    typeof value === 'number' ||
-    typeof value === 'boolean'
-  );
-}
-
-function joinPath(base: string, key: string): string {
-  return base ? `${base}.${key}` : key;
-}
-
-function hasOwn(obj: Record<string, unknown>, key: string): boolean {
-  return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
 type ValtioPath = Array<string | symbol>;
@@ -90,86 +71,6 @@ export function actionsFromValtioOps(ops: INTERNAL_Op[]): Action[] {
     // delete
     const prevValue = untrackIfPossible(op[2]);
     actions.push({ op: 'delete', path: pathString, oldValue: prevValue, newValue: undefined });
-  }
-
-  return actions;
-}
-
-/**
- * Produces a list of actions that transform `prev` into `next`.
- *
- * Notes:
- * - Arrays are treated as replace-at-path (single action) to keep behavior predictable.
- * - Objects are diffed per key; adds/deletes are represented with op 'add'/'delete'.
- */
-export function diffJson(prev: unknown, next: unknown, basePath = ''): Action[] {
-  if (Object.is(prev, next)) return [];
-
-  // If type changes, primitive changes, or arrays involved -> replace at path
-  if (isPrimitive(prev) || isPrimitive(next)) {
-    return [
-      {
-        op: 'set',
-        path: basePath,
-        oldValue: prev,
-        newValue: next,
-      },
-    ];
-  }
-
-  if (isArray(prev) || isArray(next)) {
-    return [
-      {
-        op: 'set',
-        path: basePath,
-        oldValue: prev,
-        newValue: next,
-      },
-    ];
-  }
-
-  if (!isRecord(prev) || !isRecord(next)) {
-    return [
-      {
-        op: 'set',
-        path: basePath,
-        oldValue: prev,
-        newValue: next,
-      },
-    ];
-  }
-
-  const actions: Action[] = [];
-  const seen = Object.create(null) as Record<string, true>;
-  for (const key of Object.keys(prev)) seen[key] = true;
-  for (const key of Object.keys(next)) seen[key] = true;
-
-  for (const key in seen) {
-    const childPath = joinPath(basePath, key);
-    const prevHas = hasOwn(prev, key);
-    const nextHas = hasOwn(next, key);
-
-    if (!prevHas && nextHas) {
-      actions.push({
-        op: 'add',
-        path: childPath,
-        oldValue: undefined,
-        newValue: next[key],
-      });
-      continue;
-    }
-
-    if (prevHas && !nextHas) {
-      actions.push({
-        op: 'delete',
-        path: childPath,
-        oldValue: prev[key],
-        newValue: undefined,
-      });
-      continue;
-    }
-
-    actions.push(...diffJson(prev[key], next[key], childPath));
   }
 
   return actions;
@@ -266,7 +167,7 @@ export function applyActionEntry(target: Record<string, unknown>, entry: ActionH
   applyAction(target, entry);
 }
 
-export function invertAction(action: Action): Action {
+function invertAction(action: Action): Action {
   if (action.op === 'add') {
     return { ...action, op: 'delete', oldValue: action.newValue, newValue: undefined };
   }
@@ -298,7 +199,7 @@ export function readActionHistory(storageKey: string): ActionHistoryEntry[] {
   }
 }
 
-export function writeActionHistory(storageKey: string, history: ActionHistoryEntry[]): void {
+function writeActionHistory(storageKey: string, history: ActionHistoryEntry[]): void {
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(storageKey, JSON.stringify(history));
@@ -326,20 +227,4 @@ export function withRecordingSuppressed<T>(storageKey: string, fn: () => T): T {
   } finally {
     suppressedRecordingKeys.delete(storageKey);
   }
-}
-
-/**
- * Applies an entry to the target and records it as an "applied" history entry.
- * Use this when replaying/importing a list of actions so the subscription-based
- * recorder doesn't double-log it.
- */
-export function applyAndRecordActionEntry(opts: {
-  target: Record<string, unknown>;
-  storageKey: string;
-  entry: ActionHistoryEntry;
-}): void {
-  withRecordingSuppressed(opts.storageKey, () => {
-    applyActionEntry(opts.target, opts.entry);
-  });
-  appendActionHistoryEntry(opts.storageKey, opts.entry);
 }

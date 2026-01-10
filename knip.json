@@ -7,7 +7,7 @@
     "scripts/*.{mjs,cjs,js}"
   ],
   "project": ["src/**/*.{ts,tsx,js,jsx}", "scripts/**/*.{mjs,cjs,js}"],
-  "ignore": ["**/*.stories.tsx", "**/*.test.tsx"],
+  "ignore": ["**/*.stories.tsx", "**/*.test.tsx", "src/data/database.types.ts"],
   "ignoreDependencies": [
     "@tailwindcss/typography",
     "depcheck",

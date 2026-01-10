@@ -45,7 +45,7 @@ function getRatelimit(profile: RateLimitProfile): Ratelimit | null {
   return instance;
 }
 
-export function getClientIp(request: Request | NextRequest): string {
+function getClientIp(request: Request | NextRequest): string {
   const headers = request.headers;
   const cf = headers.get('cf-connecting-ip');
   if (cf) {

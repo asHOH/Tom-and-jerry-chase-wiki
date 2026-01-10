@@ -5,7 +5,7 @@ const getAchievementImageUrl = (name: string, specialImageUrl: string | undefine
   return `/images/achievements/${encodeURIComponent(name)}.png`;
 };
 
-export const achievementDefinitions: Record<string, AchievementDefinition> = {};
+const achievementDefinitions: Record<string, AchievementDefinition> = {};
 
 const achievementsWithImages: Record<string, Achievement> = Object.fromEntries(
   (Object.entries(achievementDefinitions) as Array<[string, AchievementDefinition]>).map(

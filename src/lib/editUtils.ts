@@ -6,12 +6,9 @@ import { characters, type FactionId } from '@/data';
 import {
   getOriginalCharacterIds,
   handleCharacterIdChange,
-  handleCharacterSkillNameChange,
   isOriginalCharacter,
-  validateAndEnhanceCharacter,
-  validateCharacterStructure,
 } from './edit/characterEditHandlers';
-import { deepAssign, getNestedProperty, setNestedProperty, type Key } from './edit/entityUtils';
+import { getNestedProperty, setNestedProperty } from './edit/entityUtils';
 import { CharacterWithFaction } from './types';
 
 /**
@@ -21,17 +18,10 @@ import { CharacterWithFaction } from './types';
  * @param source The object from which values will be assigned.
  * @returns A new object with the merged properties.
  */
-export { deepAssign, getNestedProperty, setNestedProperty, Key };
+export { getNestedProperty, setNestedProperty };
 
 // Re-export character-specific handlers for backward compatibility
-export {
-  handleCharacterIdChange,
-  handleCharacterSkillNameChange as handleCharacterSkillIdChange,
-  validateAndEnhanceCharacter,
-  validateCharacterStructure,
-  getOriginalCharacterIds,
-  isOriginalCharacter,
-};
+export { handleCharacterIdChange, getOriginalCharacterIds, isOriginalCharacter };
 
 /**
  * Generic entity property change handler.

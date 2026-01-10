@@ -905,49 +905,6 @@ export interface CharacterWinRateEntry {
 }
 
 /**
- * Get the sort order for team types
- */
-function getTeamTypeOrder(teamType: string): number {
-  const order: Record<string, number> = {
-    总体: 0,
-    四排: 1,
-    三排: 2,
-    '双排*2': 3,
-    双排: 4,
-    路人: 5,
-  };
-  return order[teamType] ?? 999;
-}
-
-/**
- * Get the sort order for ranks
- */
-function getRankOrder(rank: Rank): number {
-  if (rank === summarySymbol) return -1;
-
-  const order: Record<string, number> = {
-    无敌猫鼠皇: 0,
-    皇2000分以上: 1,
-    '皇0分-皇2000分': 2,
-    至尊传奇: 3,
-    霸气钻石: 4,
-    酷炫铂金: 5,
-  };
-  return order[rank as string] ?? 999;
-}
-
-/**
- * Sort winRateSummary array by team type and rank
- */
-export function sortWinRateSummary(summary: WinRateSummaryRow[]): WinRateSummaryRow[] {
-  return [...summary].sort((a, b) => {
-    const rankDiff = getRankOrder(a.rank) - getRankOrder(b.rank);
-    if (rankDiff !== 0) return rankDiff;
-    return getTeamTypeOrder(a.teamType) - getTeamTypeOrder(b.teamType);
-  });
-}
-
-/**
  * Transform rank name based on faction
  */
 function transformRankByFaction(rank: string, factionId: 'cat' | 'mouse'): string {
