@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { requireRole } from '@/lib/auth/requireRole';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const ALLOWED_STATUSES = ['pending', 'approved', 'rejected', 'all'] as const;
 
@@ -10,17 +11,16 @@ export async function GET(request: NextRequest) {
   try {
     const guard = await requireRole(['Reviewer', 'Coordinator']);
     if ('error' in guard) return guard.error;
-    const { supabase } = guard;
 
     const { searchParams } = new URL(request.url);
     const statusParam = (searchParams.get('status') ?? 'all').trim() as AllowedStatus;
 
     const status: AllowedStatus = ALLOWED_STATUSES.includes(statusParam) ? statusParam : 'all';
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('game_data_actions')
       .select(
-        'id, created_at, created_by, entity_type, entry, is_public, rejection_reason, reviewed_at, reviewed_by, status'
+        'id, created_at, created_by, entity_type, entry, is_public, message, rejection_reason, reviewed_at, reviewed_by, status'
       )
       .order('created_at', { ascending: false });
 
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 
     const nicknameByUserId = new Map<string, string>();
     if (userIds.length > 0) {
-      const { data: users, error: usersError } = await supabase
+      const { data: users, error: usersError } = await supabaseAdmin
         .from('users_public_view')
         .select('id, nickname')
         .in('id', userIds);
@@ -76,6 +76,7 @@ export async function GET(request: NextRequest) {
         entity_type: row.entity_type,
         entry: row.entry,
         is_public: row.is_public,
+        message: row.message,
         rejection_reason: row.rejection_reason ?? '',
         reviewed_at: row.reviewed_at ?? '',
         reviewed_by: row.reviewed_by ?? '',

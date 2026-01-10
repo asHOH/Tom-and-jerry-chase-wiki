@@ -65,54 +65,105 @@ function applyEntitiesActionEntry(entry: ActionHistoryEntry): void {
   });
 }
 
+/**
+ * Parses and normalizes entry to an array of ActionHistoryEntry items.
+ * Supports both single entry and array of entries.
+ */
+function parseEntries(rawEntry: unknown): ActionHistoryEntry[] {
+  // Check if it's an array of entries (batch submission)
+  if (Array.isArray(rawEntry)) {
+    // First try to parse as array of ActionHistoryEntry items
+    const entries: ActionHistoryEntry[] = [];
+    let allValid = true;
+
+    for (const item of rawEntry) {
+      const parsed = actionHistoryEntrySchema.safeParse(item);
+      if (parsed.success) {
+        entries.push(parsed.data as ActionHistoryEntry);
+      } else {
+        allValid = false;
+        break;
+      }
+    }
+
+    if (allValid && entries.length > 0) {
+      return entries;
+    }
+
+    // Fall back to treating the whole array as a single ActionHistoryEntry (array of actions)
+    const singleParsed = actionHistoryEntrySchema.safeParse(rawEntry);
+    if (singleParsed.success) {
+      return [singleParsed.data as ActionHistoryEntry];
+    }
+
+    return [];
+  }
+
+  // Single entry
+  const parsed = actionHistoryEntrySchema.safeParse(rawEntry);
+  if (parsed.success) {
+    return [parsed.data as ActionHistoryEntry];
+  }
+
+  return [];
+}
+
+function applyEntryToTarget(entityType: string, entry: ActionHistoryEntry): boolean {
+  switch (entityType) {
+    case 'characters':
+      applyActionEntry(characters as unknown as Record<string, unknown>, entry);
+      break;
+    case 'factions':
+      applyActionEntry(factions as unknown as Record<string, unknown>, entry);
+      break;
+    case 'cards':
+      applyActionEntry(cards as unknown as Record<string, unknown>, entry);
+      applyActionEntry(cardsEdit as unknown as Record<string, unknown>, entry);
+      break;
+    case 'entities':
+      applyEntitiesActionEntry(entry);
+      break;
+    case 'buffs':
+      applyActionEntry(buffs as unknown as Record<string, unknown>, entry);
+      applyActionEntry(buffsEdit as unknown as Record<string, unknown>, entry);
+      break;
+    case 'items':
+      applyActionEntry(items as unknown as Record<string, unknown>, entry);
+      applyActionEntry(itemsEdit as unknown as Record<string, unknown>, entry);
+      break;
+    case 'fixtures':
+      applyActionEntry(fixtures as unknown as Record<string, unknown>, entry);
+      applyActionEntry(fixturesEdit as unknown as Record<string, unknown>, entry);
+      break;
+    case 'maps':
+      applyActionEntry(maps as unknown as Record<string, unknown>, entry);
+      applyActionEntry(mapsEdit as unknown as Record<string, unknown>, entry);
+      break;
+    case 'modes':
+      applyActionEntry(modes as unknown as Record<string, unknown>, entry);
+      applyActionEntry(modesEdit as unknown as Record<string, unknown>, entry);
+      break;
+    case 'specialSkills':
+      applyActionEntry(specialSkills as unknown as Record<string, unknown>, entry);
+      applyActionEntry(specialSkillsEdit as unknown as Record<string, unknown>, entry);
+      break;
+    default:
+      return false;
+  }
+  return true;
+}
+
 function applyPublicActionRowToServerData(row: PublicActionRow): boolean {
   if (!row?.id || appliedPublicActionIds.has(row.id)) return false;
 
-  const parsed = actionHistoryEntrySchema.safeParse(row.entry);
-  if (!parsed.success) return false;
-  const entry = parsed.data as ActionHistoryEntry;
+  const entries = parseEntries(row.entry);
+  if (entries.length === 0) return false;
 
   try {
-    switch (row.entity_type) {
-      case 'characters':
-        applyActionEntry(characters as unknown as Record<string, unknown>, entry);
-        break;
-      case 'factions':
-        applyActionEntry(factions as unknown as Record<string, unknown>, entry);
-        break;
-      case 'cards':
-        applyActionEntry(cards as unknown as Record<string, unknown>, entry);
-        applyActionEntry(cardsEdit as unknown as Record<string, unknown>, entry);
-        break;
-      case 'entities':
-        applyEntitiesActionEntry(entry);
-        break;
-      case 'buffs':
-        applyActionEntry(buffs as unknown as Record<string, unknown>, entry);
-        applyActionEntry(buffsEdit as unknown as Record<string, unknown>, entry);
-        break;
-      case 'items':
-        applyActionEntry(items as unknown as Record<string, unknown>, entry);
-        applyActionEntry(itemsEdit as unknown as Record<string, unknown>, entry);
-        break;
-      case 'fixtures':
-        applyActionEntry(fixtures as unknown as Record<string, unknown>, entry);
-        applyActionEntry(fixturesEdit as unknown as Record<string, unknown>, entry);
-        break;
-      case 'maps':
-        applyActionEntry(maps as unknown as Record<string, unknown>, entry);
-        applyActionEntry(mapsEdit as unknown as Record<string, unknown>, entry);
-        break;
-      case 'modes':
-        applyActionEntry(modes as unknown as Record<string, unknown>, entry);
-        applyActionEntry(modesEdit as unknown as Record<string, unknown>, entry);
-        break;
-      case 'specialSkills':
-        applyActionEntry(specialSkills as unknown as Record<string, unknown>, entry);
-        applyActionEntry(specialSkillsEdit as unknown as Record<string, unknown>, entry);
-        break;
-      default:
+    for (const entry of entries) {
+      if (!applyEntryToTarget(row.entity_type, entry)) {
         return false;
+      }
     }
 
     appliedPublicActionIds.add(row.id);

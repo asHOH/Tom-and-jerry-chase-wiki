@@ -86,6 +86,49 @@ function readEditModeState(): { isEditMode: boolean; enabledAtMs: number | null 
 
   return { isEditMode: true, enabledAtMs };
 }
+/**
+ * Parses and normalizes entry to an array of ActionHistoryEntry items.
+ * Supports both single entry and array of entries.
+ */
+function parseEntries(rawEntry: unknown): ActionHistoryEntry[] {
+  // Check if it's an array of entries (batch submission)
+  if (Array.isArray(rawEntry)) {
+    // First try to parse as array of ActionHistoryEntry items
+    const entries: ActionHistoryEntry[] = [];
+    let allValid = true;
+
+    for (const item of rawEntry) {
+      const parsed = actionHistoryEntrySchema.safeParse(item);
+      if (parsed.success) {
+        entries.push(parsed.data as ActionHistoryEntry);
+      } else {
+        allValid = false;
+        break;
+      }
+    }
+
+    if (allValid && entries.length > 0) {
+      return entries;
+    }
+
+    // Fall back to treating the whole array as a single ActionHistoryEntry (array of actions)
+    const singleParsed = actionHistoryEntrySchema.safeParse(rawEntry);
+    if (singleParsed.success) {
+      return [singleParsed.data as ActionHistoryEntry];
+    }
+
+    return [];
+  }
+
+  // Single entry
+  const parsed = actionHistoryEntrySchema.safeParse(rawEntry);
+  if (parsed.success) {
+    return [parsed.data as ActionHistoryEntry];
+  }
+
+  return [];
+}
+
 export function usePublicGameDataActions(options?: { initialPublicActions?: PublicActionRow[] }) {
   'use no memo';
   const [appliedCount, setAppliedCount] = useState(0);
@@ -135,7 +178,7 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
     // This avoids remote updates overwriting local in-progress edits.
     const cutoffMs = isEditMode && enabledAtMs ? enabledAtMs : Number.POSITIVE_INFINITY;
 
-    let didApply = 0;
+    let totalAppliedInThisPass = 0;
 
     for (const row of actions) {
       if (!row?.id || appliedIdsRef.current.has(row.id)) continue;
@@ -148,25 +191,25 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
       const target = getTarget(row.entity_type);
       if (!target) continue;
 
-      const storageKey = getActionsStorageKey(row.entity_type);
-
-      const parsedEntry = actionHistoryEntrySchema.safeParse(row.entry);
-      if (!parsedEntry.success) continue;
-      const entry = parsedEntry.data as ActionHistoryEntry;
+      const entries = parseEntries(row.entry);
+      if (entries.length === 0) continue;
 
       try {
+        const storageKey = getActionsStorageKey(row.entity_type);
         withRecordingSuppressed(storageKey, () => {
-          applyActionEntry(target, entry);
+          for (const entry of entries) {
+            applyActionEntry(target, entry);
+          }
         });
         appliedIdsRef.current.add(row.id);
-        didApply += 1;
+        totalAppliedInThisPass += 1;
       } catch (err) {
         console.error('Failed to apply public action:', row, err);
       }
     }
 
-    if (didApply > 0) {
-      setAppliedCount((prev) => prev + didApply);
+    if (totalAppliedInThisPass > 0) {
+      setAppliedCount((prev) => prev + totalAppliedInThisPass);
       GameDataManager.invalidate();
     }
   }, [actions, enabledAtMs, isEditMode]);

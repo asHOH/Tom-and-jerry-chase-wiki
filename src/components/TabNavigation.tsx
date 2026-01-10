@@ -117,22 +117,28 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
     setPublishingActions(true);
     try {
+      // Batch all actions into a single API call
+      const actions = payloads.map((p) => ({
+        entityType: p.entityType,
+        entries: p.entries,
+      }));
+
+      const res = await fetch('/api/game-data-actions/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actions,
+          message: publishMessage,
+        }),
+      });
+
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(body?.error || '发布失败');
+      }
+
+      // Clear all storage keys on success
       for (const payload of payloads) {
-        const res = await fetch('/api/game-data-actions/publish', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            entityType: payload.entityType,
-            entries: payload.entries,
-            message: publishMessage,
-          }),
-        });
-
-        if (!res.ok) {
-          const body = (await res.json().catch(() => null)) as { error?: string } | null;
-          throw new Error(body?.error || `发布失败（${payload.entityType}）`);
-        }
-
         localStorage.removeItem(payload.storageKey);
       }
 
