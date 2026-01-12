@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 
 import { useMobile } from '@/hooks/useMediaQuery';
-import { useEditMode } from '@/context/EditModeContext';
+/*import { useEditMode } from '@/context/EditModeContext';*/
 import { TOOL_NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
@@ -17,11 +17,15 @@ interface CharacterRankingGridProps {
 
 export default function CharacterRankingGrid({ description }: CharacterRankingGridProps) {
   const isMobile = useMobile();
-  const { isEditMode } = useEditMode();
+  /*const { isEditMode } = useEditMode();*/
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
   const changeLogsRef = useRef<ChangeLogsRef>(null);
 
   const SECTIONS = [
+    {
+      title: '使用指南',
+      items: ['usage-use', 'usage-edit'],
+    },
     {
       title: '查询工具',
       items: ['ranks', 'win-rates', 'special-skill-advices', 'traitCollection'],
@@ -30,11 +34,11 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       title: '建设中界面',
       items: ['mechanics', 'fixtures', 'achievements'],
     },
-    {
+    /*{
       title: '编辑工具',
       condition: isEditMode,
       items: ['item-maker', 'entity-maker', 'trait-maker'],
-    },
+    },*/
   ];
 
   const getSectionButtons = (items: string[]) => {
@@ -70,7 +74,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       </header>
 
       {SECTIONS.map((section, index) => {
-        if (section.condition === false) return null;
+        /*if (section.condition === false) return null;*/
         const buttons = getSectionButtons(section.items);
         if (buttons.length === 0) return null;
         const props = section.title ? { title: section.title } : {};

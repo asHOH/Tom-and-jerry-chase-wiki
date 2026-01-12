@@ -115,6 +115,24 @@ export const NAV_ITEMS: readonly NavItem[] = [
 ];
 
 export const TOOL_NAV_ITEMS: readonly NavItem[] = [
+  //使用指南
+  {
+    id: 'usage-use',
+    label: '网站使用指南',
+    description: '介绍wiki基础功能的使用',
+    href: '/usages/use',
+    iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A91-%E8%93%9D%E5%9B%BE.png',
+    iconAlt: '使用指南图标',
+  },
+  {
+    id: 'usage-edit',
+    label: '网站编辑指南',
+    description: '介绍wiki进阶功能的使用',
+    href: '/usages/edit',
+    iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
+    iconAlt: '编辑指南图标',
+  },
+  //查询工具
   {
     id: 'ranks',
     label: '属性排行',
