@@ -7,12 +7,12 @@ import UsagesClient from './UsagesClient';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION = '详细介绍游戏内全部的局内机制';
+const DESCRIPTION = '介绍本网站的功能及查阅方法';
 
 export const metadata: Metadata = generatePageMetadata({
-  title: '局内机制',
+  title: '使用指南',
   description: DESCRIPTION,
-  keywords: ['局内机制'],
+  keywords: ['使用指南'],
   canonicalUrl: `${SITE_URL}/usages`,
 });
 

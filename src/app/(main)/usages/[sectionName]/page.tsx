@@ -6,7 +6,7 @@ import { SITE_URL } from '@/constants/seo';
 import { NAV_ITEM_CONFIGS, usagesSectionsList, type SectionName } from '@/features/usages/sections';
 import UsagesSection from '@/features/usages/usagesSection';
 
-const DESCRIPTION = '详细介绍游戏内的局内机制（该界面建设中）';
+const DESCRIPTION = '介绍本网站的功能及查阅方法';
 
 // Generate static params for all usages sections
 export function generateStaticParams() {
@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   // 从 NAV_ITEM_CONFIGS 中查找对应的中文名称
   const sectionConfig = NAV_ITEM_CONFIGS.find((config) => config.id === sectionName);
-  const sectionChineseName = sectionConfig?.label || '局内机制';
+  const sectionChineseName = sectionConfig?.label || '使用指南';
 
   return generateArticleMetadata({
     title: sectionChineseName,
