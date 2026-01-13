@@ -348,14 +348,15 @@ export default function ArticlesClient({ articles: data, description }: Articles
           <div className='flex items-center justify-center gap-3'>
             {userRole ? (
               <>
-                <Link
-                  href='/articles/pending'
-                  className='inline-flex items-center gap-2 rounded-lg bg-yellow-600 px-4 py-2 text-sm text-white transition-all duration-200 hover:bg-yellow-700'
-                >
-                  <ClockIcon className='size-4' strokeWidth={1.5} />
-                  待审核
-                </Link>
-
+                {userRole !== 'Contributor' && (
+                  <Link
+                    href='/articles/pending'
+                    className='inline-flex items-center gap-2 rounded-lg bg-yellow-600 px-4 py-2 text-sm text-white transition-all duration-200 hover:bg-yellow-700'
+                  >
+                    <ClockIcon className='size-4' strokeWidth={1.5} />
+                    待审核
+                  </Link>
+                )}
                 <Link
                   href='/articles/new'
                   className='inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition-all duration-200 hover:bg-blue-700'
@@ -365,12 +366,12 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 </Link>
               </>
             ) : (
-              <a
-                href='http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=k06ydVKmTrT3BV8fYX8zOeve10bXcxR0&authKey=Dqg2BaUpTZVCaSDyRcFPeovGCDtwjpyAbNLPaoss0p3gmWO3sQe9pncD5uk1dZNO&noverify=0&group_code=615882730'
+              <Link
+                href='/usages/edit' /*'http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=k06ydVKmTrT3BV8fYX8zOeve10bXcxR0&authKey=Dqg2BaUpTZVCaSDyRcFPeovGCDtwjpyAbNLPaoss0p3gmWO3sQe9pncD5uk1dZNO&noverify=0&group_code=615882730'*/
                 className='rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400'
               >
-                💡 若想发布文章，请进群咨询
-              </a>
+                💡 登录后才可发表文章
+              </Link>
             )}
           </div>
         </div>
