@@ -117,7 +117,7 @@ ${TYPE_DEFINITIONS}
 - KnowledgeCardGrid -> 知识卡列表
 - SkillAllocationDisplay -> 技能加点显示
 - KnowledgeCardSection -> 角色的推荐知识卡
-- DisclaimerText -> 首页的网站说明
+- ProjectStatement -> 首页的网站说明
 - feedback -> 反馈建议
 - dark-mode -> 暗色模式
 - security -> 网站安全

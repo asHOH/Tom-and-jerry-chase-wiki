@@ -1,7 +1,8 @@
+import CollapseCard from '@/components/ui/CollapseCard';
 import Tooltip from '@/components/ui/Tooltip';
 import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
 
-interface DisclaimerTextProps {
+interface ProjectStatementProps {
   onFeedbackClick?: () => void;
 }
 
@@ -29,16 +30,16 @@ const renderCreatorLinks = (creatorIds: readonly string[]) => {
   ));
 };
 
-export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
+export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => {
   const [beforePrefix, beforeSuffixRaw] = PROJECT_INFO.descriptionParts.before.split('，') as [
     string,
     string?,
   ];
   const beforeSuffix = beforeSuffixRaw ?? '';
   return (
-    <>
+    <div className='space-y-4 text-left'>
       {/* Project information (inline repo link + icon, readable sentence) */}
-      <section className='mb-4' aria-label='项目信息'>
+      <section aria-label='项目信息'>
         <p className='text-gray-700 dark:text-gray-300'>
           本项目由{renderCreatorLinks([PROJECT_INFO.maintainerId])}维护，
           {beforePrefix}（
@@ -78,55 +79,62 @@ export const DisclaimerText = ({ onFeedbackClick }: DisclaimerTextProps) => {
           )}
           {PROJECT_INFO.descriptionParts.after}
         </p>
-      </section>
-
-      {/* Website nature and commitments */}
-      <section className='mb-4' aria-label='网站性质与承诺'>
-        <p>{DISCLAIMER_CONTENT.intro}</p>
-        <p>{DISCLAIMER_CONTENT.policy}</p>
+        <p className='mt-2 text-gray-700 dark:text-gray-300'>{DISCLAIMER_CONTENT.intro}</p>
+        <p className='mt-2 text-gray-700 dark:text-gray-300'>{DISCLAIMER_CONTENT.policy}</p>
       </section>
 
       {/* Acknowledgments */}
-      <section className='mb-4' aria-label='致谢'>
-        {Object.values(DISCLAIMER_CONTENT.acknowledgements).map((ack, index) => (
-          <p key={index} className={index > 0 ? 'mt-1' : undefined}>
-            {ack.prefix}
-            {renderCreatorLinks(ack.creators)}
-            {ack.suffix}
-          </p>
-        ))}
-      </section>
+      <CollapseCard title='致谢' size='xs' className='p-4 text-sm text-gray-700 dark:text-gray-300'>
+        <section aria-label='致谢详情'>
+          {Object.values(DISCLAIMER_CONTENT.acknowledgements).map((ack, index) => (
+            <p key={index} className={index > 0 ? 'mt-2' : undefined}>
+              {ack.prefix}
+              {renderCreatorLinks(ack.creators)}
+              {ack.suffix}
+            </p>
+          ))}
+        </section>
+      </CollapseCard>
 
-      {/* Copyright information based on DISCLAIMER_CONTENT.copyright */}
-      <section className='mb-4 text-sm leading-6' aria-label='版权说明'>
-        <p>
-          <Tooltip content='Tom and Jerry'>猫和老鼠</Tooltip>
-          角色版权归
-          <Tooltip content='Warner Bros. Entertainment Inc.'>华纳兄弟娱乐公司</Tooltip>
-          所有。游戏素材版权归网易猫和老鼠手游所有。
-        </p>
-        <p>{DISCLAIMER_CONTENT.takedownPolicy}</p>
-      </section>
+      {/* Real Disclaimers & Licenses */}
+      <CollapseCard
+        title='版权、许可与免责声明'
+        size='xs'
+        className='p-4 text-sm text-gray-700 dark:text-gray-300'
+      >
+        <div className='space-y-4'>
+          {/* Copyright information */}
+          <section aria-label='版权说明' className='leading-6'>
+            <p>
+              <Tooltip content='Tom and Jerry'>猫和老鼠</Tooltip>
+              角色版权归
+              <Tooltip content='Warner Bros. Entertainment Inc.'>华纳兄弟娱乐公司</Tooltip>
+              所有。游戏素材版权归网易猫和老鼠手游所有。
+            </p>
+            <p className='mt-1'>{DISCLAIMER_CONTENT.takedownPolicy}</p>
+          </section>
 
-      {/* License information */}
-      <section className='text-sm leading-6' aria-label='开源许可'>
-        <p>{LICENSE_INFO.description}</p>
-        {LICENSE_INFO.licenses.map((license) => (
-          <p key={license.shortName}>
-            {license.scope}使用{' '}
-            <a
-              href={license.url}
-              target='_blank'
-              rel='nofollow noopener noreferrer'
-              aria-label={`${license.shortName}（在新标签页打开）`}
-              className='rounded-[2px] text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
-            >
-              {license.shortName}
-            </a>{' '}
-            许可证，{license.additionalDescription}。
-          </p>
-        ))}
-      </section>
-    </>
+          {/* License information */}
+          <section aria-label='开源许可' className='leading-6'>
+            <p>{LICENSE_INFO.description}</p>
+            {LICENSE_INFO.licenses.map((license) => (
+              <p key={license.shortName} className='mt-1'>
+                {license.scope}使用{' '}
+                <a
+                  href={license.url}
+                  target='_blank'
+                  rel='nofollow noopener noreferrer'
+                  aria-label={`${license.shortName}（在新标签页打开）`}
+                  className='rounded-[2px] text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+                >
+                  {license.shortName}
+                </a>{' '}
+                许可证，{license.additionalDescription}。
+              </p>
+            ))}
+          </section>
+        </div>
+      </CollapseCard>
+    </div>
   );
 };

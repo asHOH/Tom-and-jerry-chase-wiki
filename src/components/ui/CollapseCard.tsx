@@ -34,7 +34,7 @@ export default function CollapseCard({
   const width = { xs: '15px', md: '25px', sm: '35px' }[size];
   const text = { xs: 'sm', md: 'xl ml-1', sm: '2xl ml-2' }[size];
   const titleColor = {
-    default: 'bg-gray-200 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700',
+    default: 'border-b border-gray-100 dark:border-gray-800',
     red: 'bg-red-200 dark:bg-red-900 border-2 border-red-300 dark:border-red-700',
     orange: 'bg-orange-200 dark:bg-orange-900 border-2 border-orange-300 dark:border-orange-700',
     yellow: 'bg-yellow-200 dark:bg-yellow-900 border-2 border-yellow-300 dark:border-yellow-700',
@@ -82,7 +82,7 @@ export default function CollapseCard({
       {/* 动画容器 */}
       <div
         className={clsx(
-          'transform overflow-hidden text-black transition-all duration-100 ease-in-out dark:text-white',
+          'transform overflow-hidden text-gray-700 transition-all duration-100 ease-in-out dark:text-gray-300',
           isExpanded ? 'max-h-9999 translate-y-0 opacity-100' : 'max-h-0 -translate-y-2 opacity-0'
         )}
       >
