@@ -272,7 +272,6 @@ export default function CharacterGrid({ faction }: FactionCharactersProps) {
         rowClassName='auto-fit-grid grid-container grid'
         minItemWidth={isMobile ? 120 : 200}
         gapPx={isMobile ? 12 : 32}
-        {...(isMobile ? { fixedColumns: 1 } : {})}
         estimatedRowHeight={isMobile ? 270 : 340}
       />
     </div>
