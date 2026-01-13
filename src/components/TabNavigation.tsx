@@ -581,20 +581,20 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                                 );
 
                                 return (
-                                  <div className='space-y-2'>
+                                  <div className='flex flex-col space-y-2'>
                                     <div className='flex items-center justify-between gap-2'>
                                       <div className='text-xs text-gray-600 dark:text-gray-400'>
                                         共 {payloads.length} 类 / {totalEntries} 条
                                         {isEditMode ? '（编辑模式中）' : ''}
                                       </div>
-                                      <textarea
-                                        className='w-full rounded-md border border-gray-300 p-2 text-xs text-gray-800 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-gray-200'
-                                        rows={2}
-                                        placeholder='选填：描述改动内容（如：修正了技能数值）'
-                                        value={publishMessage}
-                                        onChange={(e) => setPublishMessage(e.target.value)}
-                                      />
                                     </div>
+                                    <textarea
+                                      className='w-full rounded-md border border-gray-300 p-2 text-xs text-gray-800 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-gray-200'
+                                      rows={2}
+                                      placeholder='选填：描述改动内容（如：修正了技能数值）'
+                                      value={publishMessage}
+                                      onChange={(e) => setPublishMessage(e.target.value)}
+                                    />
                                     <div className='flex flex-wrap items-center gap-2'>
                                       <button
                                         type='button'
