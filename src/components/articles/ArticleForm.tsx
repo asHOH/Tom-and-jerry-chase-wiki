@@ -3,6 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 
+import { useMobile } from '@/hooks/useMediaQuery';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import BaseCard from '@/components/ui/BaseCard';
 import { ArticleCharacterSelector } from '@/components/ui/CharacterSelector';
@@ -59,6 +60,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   characterId,
   onCharacterChange,
 }) => {
+  const isMobile = useMobile();
   const isSaveDisabled =
     isSubmitting ||
     !title.trim() ||
@@ -67,11 +69,13 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
     (showCharacterSelector && !characterId);
 
   return (
-    <div className='mx-auto max-w-4xl px-4'>
+    <div className={`mx-auto max-w-4xl ${isMobile ? '' : 'px-4'}`}>
       {(errorMessage || successMessage) && (
         <>
           {errorMessage && (
-            <BaseCard className='mb-6 border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20'>
+            <BaseCard
+              className={`mb-6 border border-red-200 bg-red-50 ${isMobile ? '' : 'p-4'} dark:border-red-800 dark:bg-red-900/20`}
+            >
               <div className='flex items-center gap-3'>
                 <svg
                   className='size-5 text-red-600 dark:text-red-400'
@@ -89,7 +93,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             </BaseCard>
           )}
           {successMessage && (
-            <BaseCard className='mb-6 border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20'>
+            <BaseCard
+              className={`mb-6 border border-green-200 bg-green-50 ${isMobile ? '' : 'p-4'} dark:border-green-800 dark:bg-green-900/20`}
+            >
               <div className='flex items-center gap-3'>
                 <svg
                   className='size-5 text-green-600 dark:text-green-400'
@@ -109,7 +115,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
         </>
       )}
 
-      <div className='p-8'>
+      <div className={isMobile ? '' : 'p-8'}>
         <form onSubmit={(e) => e.preventDefault()} className='space-y-8'>
           <div className='space-y-2'>
             <label
@@ -124,7 +130,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder='请保证标题清晰准确'
-              className='w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-lg text-gray-900 placeholder-gray-500 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400'
+              className={`w-full rounded-lg border border-gray-300 bg-white ${isMobile ? '' : 'px-4'} py-3 text-lg text-gray-900 placeholder-gray-500 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400`}
               disabled={isSubmitting}
             />
           </div>
@@ -146,7 +152,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 id='category'
                 value={category}
                 onChange={(e) => onCategoryChange(e.target.value)}
-                className='w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-lg text-gray-900 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
+                className={`w-full rounded-lg border border-gray-300 bg-white ${isMobile ? '' : 'px-4'} py-3 text-lg text-gray-900 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100`}
                 disabled={isSubmitting}
               >
                 <option value=''>请选择分类</option>
@@ -193,11 +199,12 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               onClick={onSave}
               disabled={isSaveDisabled}
               className={clsx(
-                'inline-flex flex-1 items-center justify-center gap-3 rounded-lg px-8 py-4 text-lg font-semibold transition-all duration-200 sm:flex-none',
+                'inline-flex flex-1 items-center justify-center gap-3 rounded-lg py-4 text-lg font-semibold transition-all duration-200 sm:flex-none',
                 'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
                 isSaveDisabled
                   ? 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400'
-                  : 'transform bg-blue-600 text-white shadow-lg hover:scale-105 hover:bg-blue-700 hover:shadow-xl'
+                  : 'transform bg-blue-600 text-white shadow-lg hover:scale-105 hover:bg-blue-700 hover:shadow-xl',
+                isMobile ? '' : 'px-8'
               )}
             >
               {isSubmitting ? (
