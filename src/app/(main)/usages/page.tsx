@@ -7,7 +7,7 @@ import UsagesClient from './UsagesClient';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION = '介绍本网站的功能及查阅方法';
+const DESCRIPTION = '本网站的使用指南';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '使用指南',

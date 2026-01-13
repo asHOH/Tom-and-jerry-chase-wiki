@@ -7,7 +7,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { TOOL_NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
-import HomePageSection from '@/components/ui/HomePageSection';
+import HomePageSection from '@/components/ui/NavSection';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 

@@ -30,17 +30,20 @@ const NavigationButtons = ({ isMobile, isTabActive }: NavigationButtonsProps) =>
         <li
           key={index}
           className={clsx(
-            `flex items-center overflow-hidden rounded-lg border-1 border-dotted border-gray-500 transition-colors`,
-            !isTabActive(tab.href) && 'hover:-translate-y-1'
+            'faction-button transition-all duration-300',
+            'flex items-center overflow-hidden rounded-lg shadow-md',
+            isTabActive(tab.href)
+              ? 'bg-blue-600 text-white dark:bg-blue-700'
+              : 'bg-gray-200 hover:-translate-y-1 hover:bg-blue-600 hover:text-white dark:bg-slate-700 dark:hover:bg-blue-600'
           )}
         >
           <Link
             href={tab.href}
             className={clsx(
-              'flex w-full items-center py-1',
+              'flex w-full items-center py-1 transition-colors duration-300',
               isTabActive(tab.href)
-                ? 'pointer-events-none cursor-not-allowed bg-blue-600 text-white dark:bg-blue-700'
-                : 'bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600',
+                ? 'pointer-events-none cursor-not-allowed'
+                : 'text-gray-800 dark:text-gray-200 dark:hover:text-white',
               isMobile ? 'h-9 gap-1 px-1' : 'h-12 gap-2 px-2'
             )}
             tabIndex={0}
@@ -51,8 +54,14 @@ const NavigationButtons = ({ isMobile, isTabActive }: NavigationButtonsProps) =>
               className={`${isMobile ? 'h-7 w-7' : 'h-10 w-10'} object-contain py-0.5`}
               width={90}
               height={90}
-            />
-            <span className={`truncate ${isMobile ? 'text-xs' : 'text-sm'} dark:text-white`}>
+            />{' '}
+            <span
+              className={clsx(
+                'truncate',
+                isTabActive(tab.href) && 'text-white',
+                isMobile ? 'text-xs' : 'text-sm'
+              )}
+            >
               {tab.label}
             </span>
           </Link>

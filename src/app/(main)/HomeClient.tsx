@@ -10,12 +10,12 @@ import { useToast } from '@/context/ToastContext';
 import { NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
-import HomePageSection from '@/components/ui/HomePageSection';
+import HomePageSection from '@/components/ui/NavSection';
 import OfficialSitesDisplay from '@/components/ui/OfficialSitesDisplay';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { DisclaimerText } from '@/components/DisclaimerText';
 import LoginDialog from '@/components/LoginDialog';
+import { ProjectStatement } from '@/components/ProjectStatement';
 import { VersionDisplay } from '@/components/VersionDisplay';
 import { env } from '@/env';
 
@@ -123,7 +123,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
       <div className='mt-8 px-2 text-center sm:px-4' onDoubleClick={handleEditModeToggle}>
         <h2 className='mb-2 py-2 text-3xl font-bold dark:text-white'>网站说明</h2>
         <div className='mx-auto max-w-2xl px-2 py-3 text-gray-600 sm:px-4 dark:text-gray-300'>
-          <DisclaimerText onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
+          <ProjectStatement onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
         </div>
         <VersionDisplay />
         <div className='mt-6 flex flex-wrap justify-center gap-4'>
