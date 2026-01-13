@@ -6,7 +6,7 @@ import { SITE_URL } from '@/constants/seo';
 import { NAV_ITEM_CONFIGS, usagesSectionsList, type SectionName } from '@/features/usages/sections';
 import UsagesSection from '@/features/usages/usagesSection';
 
-const DESCRIPTION = '介绍本网站的功能及查阅方法';
+const DESCRIPTION = '本网站的使用指南';
 
 // Generate static params for all usages sections
 export function generateStaticParams() {
