@@ -42,17 +42,20 @@ export default function UsagesNavigation({ children, description }: UsagesNaviga
             <li
               key={index}
               className={clsx(
-                `flex items-center overflow-hidden rounded-lg border-1 border-dotted border-gray-500 transition-colors`,
-                !isTabActive(tab.href) && 'hover:-translate-y-1'
+                'faction-button transition-all duration-300',
+                'flex items-center overflow-hidden rounded-lg shadow-md',
+                isTabActive(tab.href)
+                  ? 'bg-blue-600 text-white dark:bg-blue-700'
+                  : 'bg-gray-200 hover:-translate-y-1 hover:bg-blue-600 hover:text-white dark:bg-slate-700 dark:hover:bg-blue-600'
               )}
             >
               <Link
                 href={tab.href}
                 className={clsx(
-                  'flex h-full w-full items-center gap-2 px-3 py-1',
+                  'flex h-full w-full items-center gap-2 px-3 py-1 transition-colors duration-300',
                   isTabActive(tab.href)
-                    ? 'pointer-events-none cursor-not-allowed bg-blue-600 text-white dark:bg-blue-700'
-                    : 'bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
+                    ? 'pointer-events-none cursor-not-allowed'
+                    : 'text-gray-800 dark:text-gray-200 dark:hover:text-white'
                 )}
                 tabIndex={0}
               >
@@ -63,7 +66,9 @@ export default function UsagesNavigation({ children, description }: UsagesNaviga
                   width={90}
                   height={90}
                 />
-                <span className='truncate text-base dark:text-white'>{tab.label}</span>
+                <span className={clsx('truncate text-base', isTabActive(tab.href) && 'text-white')}>
+                  {tab.label}
+                </span>
               </Link>
             </li>
           ))}
