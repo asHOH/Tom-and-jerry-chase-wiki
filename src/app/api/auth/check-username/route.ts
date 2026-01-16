@@ -35,6 +35,11 @@ export async function POST(request: NextRequest) {
 
     const usernameHash = hashUsername(username);
 
+    if (!supabaseAdmin) {
+      console.error('Supabase admin client is not configured (missing service role key).');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
+
     // Query the users table to find a user with the matching username_hash
     const { data: user, error } = await supabaseAdmin
       .from('users')
