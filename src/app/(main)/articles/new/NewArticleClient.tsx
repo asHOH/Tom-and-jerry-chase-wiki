@@ -141,7 +141,8 @@ const NewArticleClient: React.FC = () => {
           title: title.trim(),
           category,
           content,
-          character_id: showCharacterSelector ? characterId : null,
+          // Only send character_id when required to avoid schema rejection on null
+          character_id: showCharacterSelector ? characterId : undefined,
         }),
       });
 

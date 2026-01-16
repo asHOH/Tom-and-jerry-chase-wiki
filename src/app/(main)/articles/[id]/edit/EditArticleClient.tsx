@@ -158,7 +158,8 @@ const EditArticleClient: React.FC = () => {
           title: title.trim(),
           category,
           content,
-          character_id: showCharacterSelector ? characterId : null,
+          // Only include character_id when required; null triggers schema validation error
+          character_id: showCharacterSelector ? characterId : undefined,
         }),
       });
 
