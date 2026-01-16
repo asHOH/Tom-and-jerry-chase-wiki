@@ -19,6 +19,7 @@ interface ArticleVersion {
   created_at: string;
   editor_id: string;
   status: 'approved' | 'pending' | 'rejected' | 'revoked';
+  commit_message: string | null;
   users: { nickname: string };
 }
 
@@ -209,16 +210,25 @@ export default function ArticleHistoryClient() {
                   )}
                 </div>
 
-                <div className='mb-4 flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
-                  <div className='flex items-center gap-2'>
-                    <UserCircleIcon className='size-4' strokeWidth={1.5} />
-                    <span>编辑者: {version.users?.nickname || '未知用户'}</span>
+                <div className='mb-4 space-y-2'>
+                  <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
+                    <div className='flex items-center gap-2'>
+                      <UserCircleIcon className='size-4' strokeWidth={1.5} />
+                      <span>编辑者: {version.users?.nickname || '未知用户'}</span>
+                    </div>
+
+                    <div className='flex items-center gap-2'>
+                      <ClockIcon className='size-4' strokeWidth={1.5} />
+                      <span>{formatArticleDate(version.created_at)}</span>
+                    </div>
                   </div>
 
-                  <div className='flex items-center gap-2'>
-                    <ClockIcon className='size-4' strokeWidth={1.5} />
-                    <span>{formatArticleDate(version.created_at)}</span>
-                  </div>
+                  {version.commit_message && (
+                    <div className='rounded-md bg-blue-50 px-3 py-2 text-sm text-blue-900 dark:bg-blue-900/20 dark:text-blue-300'>
+                      <span className='font-medium'>提交说明: </span>
+                      {version.commit_message}
+                    </div>
+                  )}
                 </div>
 
                 {/* Content Preview */}

@@ -62,6 +62,7 @@ const EditArticleClient: React.FC = () => {
   const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
   const [characterId, setCharacterId] = useState<string | null>(null);
+  const [commitMessage, setCommitMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -147,6 +148,11 @@ const EditArticleClient: React.FC = () => {
       return;
     }
 
+    if (!commitMessage.trim()) {
+      setError('请输入提交说明');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       setError(null);
@@ -160,6 +166,7 @@ const EditArticleClient: React.FC = () => {
           content,
           // Only include character_id when required; null triggers schema validation error
           character_id: showCharacterSelector ? characterId : undefined,
+          commit_message: commitMessage.trim(),
         }),
       });
 
@@ -262,6 +269,9 @@ const EditArticleClient: React.FC = () => {
         showCharacterSelector={showCharacterSelector}
         characterId={characterId}
         onCharacterChange={setCharacterId}
+        commitMessage={commitMessage}
+        onCommitMessageChange={setCommitMessage}
+        showCommitMessage={true}
       />
     </div>
   );

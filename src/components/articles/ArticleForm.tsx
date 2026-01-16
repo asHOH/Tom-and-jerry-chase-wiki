@@ -37,6 +37,10 @@ interface ArticleFormProps {
   showCharacterSelector?: boolean;
   characterId?: string | null;
   onCharacterChange?: (characterId: string | null) => void;
+  // Commit message props
+  commitMessage?: string;
+  onCommitMessageChange?: (value: string) => void;
+  showCommitMessage?: boolean;
 }
 
 const ArticleForm: React.FC<ArticleFormProps> = ({
@@ -59,6 +63,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   showCharacterSelector = false,
   characterId,
   onCharacterChange,
+  commitMessage = '',
+  onCommitMessageChange,
+  showCommitMessage = false,
 }) => {
   const isMobile = useMobile();
   const isSaveDisabled =
@@ -192,6 +199,30 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               placeholder={contentPlaceholder ?? ARTICLE_EDITOR_PLACEHOLDER}
             />
           </div>
+
+          {/* Commit Message for Updates */}
+          {showCommitMessage && (
+            <div className='space-y-2'>
+              <label
+                htmlFor='commit-message'
+                className='block text-lg font-semibold text-gray-900 dark:text-gray-100'
+              >
+                提交说明 <span className='text-red-500'>*</span>
+              </label>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>
+                简要说明本次修改的内容或原因
+              </p>
+              <input
+                id='commit-message'
+                type='text'
+                value={commitMessage}
+                onChange={(e) => onCommitMessageChange?.(e.target.value)}
+                placeholder='例如：修正错别字、更新数据、补充说明等'
+                className={`w-full rounded-lg border border-gray-300 bg-white ${isMobile ? '' : 'px-4'} py-3 text-lg text-gray-900 placeholder-gray-500 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400`}
+                disabled={isSubmitting}
+              />
+            </div>
+          )}
 
           <div className='flex flex-col gap-4 border-t border-gray-200 pt-6 sm:flex-row dark:border-gray-700'>
             <button

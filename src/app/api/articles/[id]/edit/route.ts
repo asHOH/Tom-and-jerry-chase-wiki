@@ -22,9 +22,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
   const category = body?.category;
   const content = body?.content;
   const character_id = body?.character_id ?? null;
+  const commit_message = body?.commit_message;
 
   if (!id || !title || !category || !content) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  }
+
+  if (!commit_message || !commit_message.trim()) {
+    return NextResponse.json({ error: 'Commit message is required' }, { status: 400 });
   }
 
   try {
@@ -50,6 +55,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       p_content: content,
       p_category_id: category,
       p_character_id: character_id,
+      p_commit_message: commit_message.trim(),
     });
 
     if (error) {

@@ -52,6 +52,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
               created_at,
               editor_id,
               status,
+              commit_message,
               users:users_public_view!editor_id(nickname)
             `
           )

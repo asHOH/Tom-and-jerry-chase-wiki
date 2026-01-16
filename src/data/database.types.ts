@@ -11,6 +11,7 @@ export type Database = {
       article_versions: {
         Row: {
           article_id: string;
+          commit_message: string | null;
           content: string;
           created_at: string;
           editor_id: string;
@@ -20,6 +21,7 @@ export type Database = {
         };
         Insert: {
           article_id: string;
+          commit_message?: string | null;
           content: string;
           created_at?: string;
           editor_id: string;
@@ -29,6 +31,7 @@ export type Database = {
         };
         Update: {
           article_id?: string;
+          commit_message?: string | null;
           content?: string;
           created_at?: string;
           editor_id?: string;
@@ -378,6 +381,7 @@ export type Database = {
       article_versions_public_view: {
         Row: {
           article_id: string | null;
+          commit_message: string | null;
           content: string | null;
           created_at: string | null;
           editor_id: string | null;
@@ -386,6 +390,7 @@ export type Database = {
         };
         Insert: {
           article_id?: string | null;
+          commit_message?: string | null;
           content?: string | null;
           created_at?: string | null;
           editor_id?: string | null;
@@ -394,6 +399,7 @@ export type Database = {
         };
         Update: {
           article_id?: string | null;
+          commit_message?: string | null;
           content?: string | null;
           created_at?: string | null;
           editor_id?: string | null;
@@ -534,6 +540,7 @@ export type Database = {
         Args: { p_token: string };
         Returns: {
           article_id: string;
+          commit_message: string | null;
           content: string;
           created_at: string;
           editor_id: string;
@@ -581,6 +588,7 @@ export type Database = {
           article_id: string;
           article_title: string;
           category_name: string;
+          commit_message: string | null;
           content: string;
           created_at: string;
           editor_id: string;
@@ -633,6 +641,7 @@ export type Database = {
               p_article_id: string;
               p_category_id: string;
               p_character_id?: string;
+              p_commit_message?: string;
               p_content: string;
               p_title: string;
             };

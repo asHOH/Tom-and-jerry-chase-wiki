@@ -82,6 +82,7 @@ export async function GET(request: NextRequest) {
                 content: version.content,
                 status: version.status,
                 created_at: version.created_at,
+                commit_message: version.commit_message,
                 editor: editor || { id: version.editor_id, nickname: 'Unknown' },
               },
             },

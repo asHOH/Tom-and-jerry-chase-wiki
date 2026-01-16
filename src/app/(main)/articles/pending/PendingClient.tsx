@@ -29,6 +29,7 @@ interface Submission {
   created_at: string;
   category_name?: string;
   preview_token?: string;
+  commit_message?: string | null;
 }
 
 interface SubmissionsData {
@@ -323,8 +324,17 @@ export default function PendingClient() {
                     {getStatusBadge(submission.status)}
                   </div>
 
-                  <div className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
-                    提交时间: {formatArticleDate(submission.created_at)}
+                  <div className='mb-4 space-y-2'>
+                    <div className='text-sm text-gray-600 dark:text-gray-400'>
+                      提交时间: {formatArticleDate(submission.created_at)}
+                    </div>
+
+                    {submission.commit_message && (
+                      <div className='rounded-md bg-blue-50 px-3 py-2 text-sm text-blue-900 dark:bg-blue-900/20 dark:text-blue-300'>
+                        <span className='font-medium'>提交说明: </span>
+                        {submission.commit_message}
+                      </div>
+                    )}
                   </div>
 
                   <div className='rounded-lg bg-gray-50 p-4 dark:bg-gray-800'>

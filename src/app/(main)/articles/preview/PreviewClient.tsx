@@ -28,6 +28,7 @@ interface PreviewData {
       content: string;
       status: 'pending' | 'approved' | 'rejected' | 'revoked';
       created_at: string;
+      commit_message?: string | null;
       editor: {
         nickname: string;
       };
@@ -183,6 +184,14 @@ export default function PreviewClient() {
               <span>编辑时间: {formatArticleDate(data.article.version.created_at)}</span>
             </div>
           </div>
+
+          {/* Commit Message */}
+          {data.article.version.commit_message && (
+            <div className='mt-4 rounded-md bg-blue-50 px-4 py-3 text-sm text-blue-900 dark:bg-blue-900/20 dark:text-blue-300'>
+              <span className='font-medium'>提交说明: </span>
+              {data.article.version.commit_message}
+            </div>
+          )}
 
           {/* Quick Actions */}
           {data.article.version.status === 'approved' && (
