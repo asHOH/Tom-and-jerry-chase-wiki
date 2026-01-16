@@ -44,8 +44,10 @@ export async function POST(req: Request) {
   // Build list of actions to publish
   const actionList: ActionItem[] = [];
 
-  // Support new batch format: actions array
+  // Support new batch format: actions array (merge same entityType)
   if ('actions' in body) {
+    const grouped = new Map<string, Json[]>();
+
     for (const action of body.actions) {
       const entityType = typeof action.entityType === 'string' ? action.entityType.trim() : '';
       if (!entityType) {
@@ -57,8 +59,18 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
-      actionList.push({ entityType, entries: action.entries });
+
+      const existing = grouped.get(entityType);
+      if (existing) {
+        existing.push(...action.entries);
+      } else {
+        grouped.set(entityType, [...action.entries]);
+      }
     }
+
+    grouped.forEach((entries, entityType) => {
+      actionList.push({ entityType, entries });
+    });
   }
   // Legacy single-action format
   else if (body.entityType || body.entries) {

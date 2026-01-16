@@ -202,7 +202,7 @@ export async function getPublicGameDataActions(): Promise<PublicActionRow[]> {
       return data ?? [];
     },
     {
-      revalidate: 60,
+      revalidate: 600,
       tags: ['public-game-data-actions'],
     }
   );
