@@ -115,13 +115,11 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               />
             </Tag>
           </div>
-          {(isEditMode ||
-            effectiveItem?.damage !== undefined ||
-            effectiveItem?.walldamage !== undefined) && (
-            <div
-              className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-              style={{ gridTemplateColumns: `repeat(2, minmax(40px, 1fr))` }}
-            >
+          <div
+            className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
+            style={{ gridTemplateColumns: `repeat(2, minmax(40px, 1fr))` }}
+          >
+            {(isEditMode || effectiveItem?.damage !== undefined) && (
               <span className='text-sm whitespace-pre'>
                 伤害：
                 <span className='text-red-600 dark:text-red-400'>
@@ -133,6 +131,8 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   />
                 </span>
               </span>
+            )}
+            {(isEditMode || effectiveItem?.walldamage !== undefined) && (
               <span className='text-sm whitespace-pre'>
                 破墙伤害：
                 <span className='text-yellow-700 dark:text-yellow-500'>
@@ -144,8 +144,8 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   />
                 </span>
               </span>
-            </div>
-          )}
+            )}
+          </div>
           {isEditMode ? (
             <span className='text-sm whitespace-pre'>
               {'(猫)命中获得 '}
@@ -159,8 +159,8 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               </span>
               {' 经验'}
             </span>
-          ) : effectiveItem?.exp != undefined ? (
-            effectiveItem.exp == 0 ? (
+          ) : effectiveItem?.exp !== undefined ? (
+            effectiveItem.exp === 0 ? (
               <span className='text-sm whitespace-pre'>(猫)命中不获得经验</span>
             ) : (
               <span className='text-sm whitespace-pre'>
@@ -431,14 +431,20 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                     </span>
                   </span>
                   <span className='text-sm whitespace-pre'>
-                    {'解锁：'}
-                    <span className='text-indigo-700 dark:text-indigo-400'>
-                      <ed.span
-                        path='unlocktime'
-                        initialValue={effectiveItem.unlocktime ?? '<无内容>'}
-                        isSingleLine
-                      />
-                    </span>
+                    {!isEditMode && effectiveItem.unlocktime === undefined ? (
+                      <span className='text-indigo-700 dark:text-indigo-400'>初始解锁</span>
+                    ) : (
+                      <>
+                        {'解锁：'}
+                        <span className='text-indigo-700 dark:text-indigo-400'>
+                          <ed.span
+                            path='unlocktime'
+                            initialValue={effectiveItem.unlocktime ?? '<无内容>'}
+                            isSingleLine
+                          />
+                        </span>
+                      </>
+                    )}
                   </span>
                   <span className='text-sm whitespace-pre'>
                     {'购买CD：'}
