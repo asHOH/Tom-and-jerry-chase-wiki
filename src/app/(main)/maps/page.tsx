@@ -7,7 +7,7 @@ import MapClient from './MapGridClient';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION = '地图界面（建设中）';
+const DESCRIPTION = '收录游戏中各地图的信息';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '地图',
