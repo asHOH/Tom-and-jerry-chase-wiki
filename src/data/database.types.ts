@@ -588,7 +588,7 @@ export type Database = {
           article_id: string;
           article_title: string;
           category_name: string;
-          commit_message: string | null;
+          commit_message: string;
           content: string;
           created_at: string;
           editor_id: string;
@@ -634,19 +634,17 @@ export type Database = {
         Args: { p_version_id: string };
         Returns: undefined;
       };
-      submit_article:
-        | { Args: never; Returns: undefined }
-        | {
-            Args: {
-              p_article_id: string;
-              p_category_id: string;
-              p_character_id?: string;
-              p_commit_message?: string;
-              p_content: string;
-              p_title: string;
-            };
-            Returns: undefined;
-          };
+      submit_article: {
+        Args: {
+          p_article_id: string;
+          p_category_id: string;
+          p_character_id?: string;
+          p_commit_message?: string;
+          p_content: string;
+          p_title: string;
+        };
+        Returns: undefined;
+      };
       update_category: {
         Args: {
           _default_visibility?: Database['public']['Enums']['version_status'];

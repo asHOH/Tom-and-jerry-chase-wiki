@@ -57,6 +57,7 @@ export async function POST(req: Request) {
       p_title: title,
       p_content: content,
       p_category_id: category,
+      ...(character_id ? { p_character_id: character_id } : {}),
     });
 
     if (rpcError) {

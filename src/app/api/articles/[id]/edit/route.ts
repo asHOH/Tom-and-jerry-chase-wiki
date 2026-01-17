@@ -28,10 +28,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
-  if (!commit_message || !commit_message.trim()) {
-    return NextResponse.json({ error: 'Commit message is required' }, { status: 400 });
-  }
-
   try {
     const { data: article, error: articleError } = await supabaseAdmin
       .from('articles')
@@ -55,7 +51,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       p_content: content,
       p_category_id: category,
       p_character_id: character_id,
-      p_commit_message: commit_message.trim(),
+      p_commit_message: commit_message?.trim() || null,
     });
 
     if (error) {

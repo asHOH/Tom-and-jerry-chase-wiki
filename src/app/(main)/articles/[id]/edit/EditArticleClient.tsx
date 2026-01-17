@@ -148,11 +148,6 @@ const EditArticleClient: React.FC = () => {
       return;
     }
 
-    if (!commitMessage.trim()) {
-      setError('请输入提交说明');
-      return;
-    }
-
     try {
       setIsSubmitting(true);
       setError(null);
