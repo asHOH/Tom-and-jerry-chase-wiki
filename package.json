@@ -147,7 +147,7 @@
     "rimraf": "^6.1.2",
     "schema-dts": "^1.1.5",
     "storybook": "^10.1.4",
-    "supabase": "^2.65.6",
+    "supabase": "^2.72.8",
     "tailwindcss": "^4.1.18",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
