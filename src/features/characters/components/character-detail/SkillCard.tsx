@@ -20,12 +20,11 @@ import {
 } from '@/features/characters/utils/skills';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
+import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import { editable } from '@/components/ui/editable';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
-
-import SkillTraitsCard from './SkillTraitsCard';
 
 const e = editable('characters');
 
@@ -952,7 +951,7 @@ export default function SkillCard({
         </div>
       </div>
       <div className='mt-4'>
-        <SkillTraitsCard skill={skill as Skill} />
+        <DetailTraitsCard singleItem={{ name: skill.name, type: 'skill' }} />
       </div>
     </div>
   );
