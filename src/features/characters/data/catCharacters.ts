@@ -4801,24 +4801,46 @@ const catCharacterDefinitions = {
       },
       {
         id: '主点钻地',
-        pattern: '200111220',
+        pattern: '200121120',
         weaponType: 'weapon1',
         description:
-          '[平地火箭](指位于较长平地上的火箭，此类平地易使兔八哥钻地穿越并安全绑上火箭)较多时可用。',
+          '[平地火箭](指位于较长平地上的火箭，此类平地易使兔八哥钻地穿越并安全绑上火箭)较多时可用。对方有霜月/蒙金奇时不推荐使用。',
+      },
+      {
+        id: '主点被动',
+        pattern: '200102211',
+        weaponType: 'weapon1',
+        description: '推荐搭配 击晕+乘胜追击+熊熊燃烧 卡组使用。',
       },
     ],
     knowledgeCardGroups: [
       {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-反侦察'],
-        description: '无21点知识量时的卡组。有21点后可酌情将最后一张知识卡换成其它知识卡。',
+        description: '无21点知识量时的卡组。',
       },
       {
         cards: ['S-击晕', 'A-加大火力', 'C-猫是液体', 'A-细心', 'B-捕鼠夹'],
-        description: '推荐在森林牧场使用（雪夜古堡III也可酌情选用）。',
+        description: '推荐在森林牧场使用。有21后可以把捕鼠夹换成心灵手巧。',
       },
       {
         cards: ['A-熊熊燃烧', 'S-乘胜追击', 'S-击晕'],
         description: '仅推荐在御门酒店使用。',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-加大火力', 'A-心灵手巧'],
+        description: '在御门酒店或者阵容与地图都好找节奏时可使用。',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-加大火力', 'A-穷追猛打'],
+        description: '对面拦截能力不强时使用。',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-心灵手巧', 'A-穷追猛打'],
+        description: '对面拦截能力强时使用。',
+      },
+      {
+        cards: ['S-击晕', 'A-加大火力', 'A-细心', 'A-穷追猛打', 'C-猫是液体'],
+        description: '古堡3的卡组（经典之家也可酌情使用）。',
       },
     ],
     /*旧卡组：{
@@ -4961,39 +4983,59 @@ const catCharacterDefinitions = {
     ],
     counters: [
       {
-        id: '恶魔泰菲',
-        description: '兔八哥克制低Hp的老鼠。',
+        id: '剑客莉莉',
+        description:
+          '兔八哥二被和钻洞可以躲避莉莉的道具，使她无法触发二被导致难以救援；钻洞还可以从莉莉的一/二级风墙中逃出。',
         isMinor: false,
       },
       {
-        id: '泰菲',
-        description:
-          '兔八哥克制低Hp的老鼠，Lv.2被动可以避开火箭炮；不过泰菲的圆滚滚无敌效果可以躲胡萝卜飞镖。',
-        isMinor: true,
+        id: '朵朵',
+        description: '兔八哥二被可以躲掉充能道具，地洞给的减伤也可以防止被秒。',
+        isMinor: false,
+      },
+      {
+        id: '航海士杰瑞',
+        description: '航海士杰瑞道具少时守不住火箭，且金币被兔八哥二被克制。',
+        isMinor: false,
       },
       {
         id: '莱恩',
-        description: '兔八哥克制低Hp的老鼠，莱恩被宣战后更难受。',
+        description: '莱恩Hp较低，且因技能可宣战容错较低。',
+        isMinor: false,
+      },
+    ],
+    counterEachOther: [
+      {
+        id: '马索尔',
+        description:
+          '兔八哥空中放洞技巧可以防止马索尔闪现救援，但马索尔也可以提前拦截防止兔子上火箭。',
         isMinor: false,
       },
       {
-        id: '天使泰菲',
-        description: '兔八哥克制低Hp的老鼠，但天菲后期免死和反伤较难处理。',
-        isMinor: true,
+        id: '米可',
+        description: '米可前期不好救援，但后期高减伤加霸体很难被兔八哥击倒。',
+        isMinor: false,
       },
       {
-        id: '侦探泰菲',
-        description: '兔八哥克制低Hp的老鼠。',
+        id: '侦探杰瑞',
+        description: '侦探三级烟雾弹可强推，但兔子也可用洞反制。',
         isMinor: false,
       },
       {
         id: '罗宾汉泰菲',
-        description: '兔八哥克制低Hp的老鼠，但罗菲能反制兔八哥Lv.2被动。',
+        description: '罗菲技能控制多且可以无视二被，但Hp较低无技能不好跑。',
         isMinor: true,
       },
       {
-        id: '航海士杰瑞',
-        description: '兔八哥Lv.2被动可以躲金币，但躲不过火炮。',
+        id: '梦游杰瑞',
+        description:
+          '梦游杰瑞破局和推奶酪能力强，克制兔八哥的防守；但梦游杰瑞主动移动也会触发宣战。',
+        isMinor: true,
+      },
+      {
+        id: '仙女鼠',
+        description:
+          '仙女鼠被宣战后比较难受，但仙女鼠Lv.1被动克制胡萝卜飞镖，以及兔八哥Lv2被动不免疫星星。',
         isMinor: true,
       },
     ],
@@ -5009,25 +5051,28 @@ const catCharacterDefinitions = {
         isMinor: false,
       },
       {
-        id: '剑客莉莉',
-        description: '剑客莉莉提供稳定救援，克制兔八哥。',
+        id: '魔术师',
+        description: '兔子大表哥可以一直挡胡萝卜飞镖，还能将兔八哥从洞里顶出来。',
         isMinor: false,
       },
       {
-        id: '侦探杰瑞',
-        description: '侦探杰瑞破局和推奶酪能力强，克制兔八哥的防守。',
+        id: '霜月',
+        description: '霜月的滑铲和袋子使兔八哥难以绑火箭，且滑铲可以将兔子从洞中顶出来。',
         isMinor: false,
       },
       {
-        id: '梦游杰瑞',
-        description:
-          '梦游杰瑞破局和推奶酪能力强，克制兔八哥的防守；但梦游杰瑞主动移动也会触发宣战。',
+        id: '牛仔杰瑞',
+        description: '牛仔杰瑞二级吉他给的移速较快，可以躲过胡萝卜飞镖。',
+        isMinor: false,
+      },
+      {
+        id: '侦探泰菲',
+        description: '侦菲主动技能无前摇隐身和三级后的换位提供很强自保，兔八哥很难抓。',
         isMinor: true,
       },
       {
-        id: '仙女鼠',
-        description:
-          '仙女鼠被宣战后比较难受，但仙女鼠Lv.1被动克制胡萝卜飞镖，以及兔八哥Lv2被动不免疫星星。',
+        id: '蒙金奇',
+        description: '战车能帮队友挡胡萝卜飞镖，且冲撞可以将兔子从洞里撞出来。',
         isMinor: true,
       },
     ],
@@ -5043,6 +5088,11 @@ const catCharacterDefinitions = {
       {
         id: '冰冻保鲜',
         description: '冰冻保鲜可躲一波胡萝卜飞镖。',
+        isMinor: false,
+      },
+      {
+        id: '急速翻滚',
+        description: '翻滚给的加速可以有效的躲追踪萝卜。',
         isMinor: false,
       },
     ],

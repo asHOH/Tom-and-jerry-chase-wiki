@@ -665,11 +665,6 @@ const mouseCharacterDefinitions = {
         isMinor: false,
       },
       {
-        id: '兔八哥',
-        description: '罗宾汉杰瑞没有破局能力，打防守猫比较吃力，但伞和加速可以躲避一波萝卜。',
-        isMinor: true,
-      },
-      {
         id: '斯飞',
         description: '斯飞用电和主动技能这些眩晕型攻击可以抓住机会一套秒罗宾汉杰瑞。',
         isMinor: false,
@@ -713,6 +708,11 @@ const mouseCharacterDefinitions = {
         description:
           '罗宾汉杰瑞的解控和高机动性让牛汤难以将其抓住，特别是携带鞭子的牛汤。不过，罗宾汉也没有破局能力，打以防守为主的弹弓牛汤比较吃力。',
         isMinor: true,
+      },
+      {
+        id: '兔八哥',
+        description: '兔八哥萝卜可以被罗宾的伞躲避，且二段的加速也可很好的帮队友和自己躲萝卜。',
+        isMinor: false,
       },
     ],
     specialSkills: [
@@ -7831,7 +7831,8 @@ const mouseCharacterDefinitions = {
       },
       {
         id: '兔八哥',
-        description: '鲍姆爆炸无法使兔八哥被动宣战，但一旦被宣战鲍姆又很难逃脱。',
+        description:
+          '鲍姆爆炸可换下兔八哥手中的队友，且不会触发宣战，因此拦截和救援较强，但一旦被飞镖远程打中并宣战后就难以救援。',
         isMinor: false,
       },
       {
