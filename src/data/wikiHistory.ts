@@ -334,6 +334,71 @@ export const wikiHistoryData: WikiDataHistory = [
           },
         },
       },
+      {
+        date: '1.12',
+        description: '更改部分信息。',
+        details: {
+          data: {
+            changes: [
+              {
+                item: { name: '牛仔杰瑞', type: 'character' },
+                changeType: WikiChangeType.REMOVE,
+                description: '在推荐特技中移除了冰冻保鲜。',
+              },
+            ],
+          },
+        },
+      },
+      {
+        date: '1.16',
+        description: '更改部分信息。',
+        details: {
+          data: {
+            changes: [
+              {
+                item: { name: '恶魔汤姆', type: 'character' },
+                changeType: WikiChangeType.ADD,
+                description: '新增了一套19点的知识卡组。',
+              },
+            ],
+          },
+        },
+      },
+      {
+        date: '1.17',
+        description: '更改部分信息。',
+        details: {
+          data: {
+            changes: [
+              {
+                item: { name: '追风汤姆', type: 'character' },
+                changeType: WikiChangeType.ADD,
+                description: '新增了追风汤姆的适配地图相关描述。',
+              },
+            ],
+          },
+        },
+      },
+      {
+        date: '1.18',
+        description: '更改部分信息。',
+        details: {
+          data: {
+            changes: [
+              {
+                item: { name: '泰菲', type: 'character' },
+                changeType: WikiChangeType.ADD,
+                description: '新增了泰菲的第7套卡组。',
+              },
+              {
+                item: { name: '兔八哥', type: 'character' },
+                changeType: WikiChangeType.REWORK,
+                description: '大幅修改了兔八哥与其他角色的克制关系描述；增加新的卡组与加点方案。',
+              },
+            ],
+          },
+        },
+      },
     ],
   },
 ];
