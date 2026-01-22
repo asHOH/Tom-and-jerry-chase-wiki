@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import Script from 'next/script';
 import NextTopLoader from 'nextjs-toploader';
 
 import { getRuntimeCspHeader } from '@/lib/csp';
@@ -42,6 +43,59 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name='referrer' content='strict-origin-when-cross-origin' />
         <meta httpEquiv='Content-Security-Policy' content={getRuntimeCspHeader()} />
         <meta name='format-detection' content='telephone=no, date=no, email=no, address=no' />
+        {/* Polyfill for TransformStream for browsers that do not support it natively. Known issue with Safari 16. */}
+        <Script id='polyfill-transformstream' strategy='beforeInteractive'>
+          {`
+            (() => {
+              if (typeof TransformStream !== 'undefined') return;
+              try {
+                class SimpleTransformStream {
+                  readable;
+                  writable;
+
+                  constructor(transformer = {}) {
+                    const {
+                      start,
+                      transform = (chunk, controller) => controller?.enqueue?.(chunk),
+                      flush = (controller) => controller?.close?.(),
+                      readableStrategy,
+                      writableStrategy,
+                    } = transformer;
+
+                    let controllerRef;
+
+                    this.readable = new ReadableStream(
+                      {
+                        start(controller) {
+                          controllerRef = controller;
+                          return start?.(controller);
+                        },
+                      },
+                      readableStrategy
+                    );
+
+                    this.writable = new WritableStream(
+                      {
+                        write(chunk) {
+                          return transform(chunk, controllerRef);
+                        },
+                        close() {
+                          return flush(controllerRef);
+                        },
+                      },
+                      writableStrategy
+                    );
+                  }
+                }
+
+                // @ts-ignore
+                self.TransformStream = SimpleTransformStream;
+              } catch (err) {
+                // Swallow: if this fails, the page will still surface the original error.
+              }
+            })();
+          `}
+        </Script>
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
       <body className={inter.className}>
