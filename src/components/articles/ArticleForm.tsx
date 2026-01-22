@@ -68,12 +68,38 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   showCommitMessage = false,
 }) => {
   const isMobile = useMobile();
+  const typoPrefix = '修正笔误';
+  const typoPrefixWithComma = '修正笔误，';
+  const isTypoFixActive = showCommitMessage && commitMessage.trim().startsWith(typoPrefix);
   const isSaveDisabled =
     isSubmitting ||
     !title.trim() ||
     !category ||
     !content ||
-    (showCharacterSelector && !characterId);
+    (showCharacterSelector && !characterId) ||
+    (showCommitMessage && !commitMessage.trim());
+
+  const toggleTypoFixPrefix = () => {
+    if (!onCommitMessageChange) return;
+    const current = commitMessage ?? '';
+    const trimmed = current.trim();
+
+    if (!trimmed) {
+      onCommitMessageChange(typoPrefix);
+      return;
+    }
+
+    if (trimmed.startsWith(typoPrefix)) {
+      // Remove leading "修正笔误" or "修正笔误，" while preserving the rest
+      const withoutPrefix = trimmed.startsWith(typoPrefixWithComma)
+        ? trimmed.slice(typoPrefixWithComma.length)
+        : trimmed.slice(typoPrefix.length);
+      onCommitMessageChange(withoutPrefix.trimStart());
+      return;
+    }
+
+    onCommitMessageChange(`${typoPrefixWithComma}${trimmed}`);
+  };
 
   return (
     <div className={`mx-auto max-w-4xl ${isMobile ? '' : 'px-4'}`}>
@@ -203,21 +229,42 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
           {/* Commit Message for Updates */}
           {showCommitMessage && (
             <div className='space-y-2'>
-              <label
-                htmlFor='commit-message'
-                className='block text-lg font-semibold text-gray-900 dark:text-gray-100'
-              >
-                提交说明 <span className='text-red-500'>*</span>
-              </label>
-              <p className='text-sm text-gray-600 dark:text-gray-400'>
-                简要说明本次修改的内容或原因
-              </p>
+              <div className='flex items-center justify-between gap-3'>
+                <div>
+                  <label
+                    htmlFor='commit-message'
+                    className='block text-lg font-semibold text-gray-900 dark:text-gray-100'
+                  >
+                    提交说明 <span className='text-red-500'>*</span>
+                  </label>
+                  <p className='text-sm text-gray-600 dark:text-gray-400'>
+                    简要说明本次修改的内容或原因
+                  </p>
+                </div>
+
+                <button
+                  type='button'
+                  onClick={toggleTypoFixPrefix}
+                  disabled={isSubmitting || !onCommitMessageChange}
+                  className={clsx(
+                    'shrink-0 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
+                    isTypoFixActive
+                      ? 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-900/30 dark:text-blue-200'
+                      : 'border-gray-200 text-gray-700 hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-300 dark:hover:border-blue-400 dark:hover:text-blue-200',
+                    isSubmitting && 'cursor-not-allowed opacity-70'
+                  )}
+                  aria-pressed={isTypoFixActive}
+                >
+                  “修正笔误”
+                </button>
+              </div>
+
               <input
                 id='commit-message'
                 type='text'
                 value={commitMessage}
                 onChange={(e) => onCommitMessageChange?.(e.target.value)}
-                placeholder='例如：修正错别字、更新数据、补充说明等'
+                placeholder='如：修正笔误、更新数据、补充说明等'
                 className={`w-full rounded-lg border border-gray-300 bg-white ${isMobile ? '' : 'px-4'} py-3 text-lg text-gray-900 placeholder-gray-500 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400`}
                 disabled={isSubmitting}
               />
