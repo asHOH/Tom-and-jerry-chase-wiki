@@ -9,6 +9,7 @@ import BaseCard from '@/components/ui/BaseCard';
 import { ArticleCharacterSelector } from '@/components/ui/CharacterSelector';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RichTextEditor from '@/components/ui/RichTextEditor';
+import { ArticleLintNotice, getArticleLintResults } from '@/components/articles/ArticleLintNotice';
 import { CheckBadgeIcon, CloseIcon } from '@/components/icons/CommonIcons';
 
 export interface CategoryOption {
@@ -71,13 +72,16 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   const typoPrefix = '修正笔误';
   const typoPrefixWithComma = '修正笔误，';
   const isTypoFixActive = showCommitMessage && commitMessage.trim().startsWith(typoPrefix);
+  const lintResults = getArticleLintResults(title, content);
+  const hasLintError = lintResults.some((item) => item.severity === 'error');
   const isSaveDisabled =
     isSubmitting ||
     !title.trim() ||
     !category ||
     !content ||
     (showCharacterSelector && !characterId) ||
-    (showCommitMessage && !commitMessage.trim());
+    (showCommitMessage && !commitMessage.trim()) ||
+    hasLintError;
 
   const toggleTypoFixPrefix = () => {
     if (!onCommitMessageChange) return;
@@ -225,6 +229,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               placeholder={contentPlaceholder ?? ARTICLE_EDITOR_PLACEHOLDER}
             />
           </div>
+
+          {/* Lint notices (errors/warnings) */}
+          {lintResults.length > 0 && <ArticleLintNotice results={lintResults} />}
 
           {/* Commit Message for Updates */}
           {showCommitMessage && (
