@@ -398,16 +398,40 @@ export function htmlToWikiText(html: string): string {
 export function normalizeHeadingLevels(html: string): string {
   if (!html) return html;
 
-  const headingLevels = Array.from(html.matchAll(/<h([1-6])\b/gi)).map((match) => Number(match[1]));
-  if (!headingLevels.length) return html;
+  const headingMatches = Array.from(html.matchAll(/<h([1-6])\b[^>]*>/gi));
+  if (!headingMatches.length) return html;
 
-  const minLevel = Math.min(...headingLevels);
-  if (minLevel >= 2) return html;
+  const clampLevel = (level: number) => Math.min(Math.max(level, 2), 6);
 
-  const shift = 2 - minLevel;
+  const firstLevel = Number(headingMatches[0]?.[1] ?? 2);
+  const baseShift = 2 - firstLevel; // normalize first heading to H2
 
-  return html.replace(/<(\/?)h([1-6])(\b[^>]*)>/gi, (_match, slash, level, attrs) => {
-    const nextLevel = Math.min(Number(level) + shift, 6);
-    return `<${slash}h${nextLevel}${attrs}>`;
+  const normalizedLevels: number[] = [];
+  let prevLevel = clampLevel(firstLevel + baseShift);
+  normalizedLevels.push(prevLevel);
+
+  for (let i = 1; i < headingMatches.length; i += 1) {
+    const rawLevel = clampLevel(Number(headingMatches[i]?.[1] ?? 2) + baseShift);
+    let nextLevel = rawLevel;
+    if (nextLevel > prevLevel + 1) {
+      nextLevel = clampLevel(prevLevel + 1);
+    }
+    normalizedLevels.push(nextLevel);
+    prevLevel = nextLevel;
+  }
+
+  let headingIndex = 0;
+  const levelStack: number[] = [];
+
+  return html.replace(/<(\/?)h([1-6])(\b[^>]*)>/gi, (_match, slash, _level, attrs) => {
+    if (slash) {
+      const closingLevel = levelStack.pop() ?? clampLevel(Number(_level) + baseShift);
+      return `</h${closingLevel}>`;
+    }
+
+    const nextLevel = normalizedLevels[headingIndex] ?? clampLevel(Number(_level) + baseShift);
+    headingIndex += 1;
+    levelStack.push(nextLevel);
+    return `<h${nextLevel}${attrs}>`;
   });
 }

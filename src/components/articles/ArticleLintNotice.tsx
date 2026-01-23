@@ -54,15 +54,16 @@ export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results, o
                 <div key={item.id} className='leading-relaxed'>
                   <div className='flex items-start gap-2'>
                     <span className='flex-1'>{item.message}</span>
-                    {item.id === 'no-h1' && onFixHeadings && (
-                      <button
-                        type='button'
-                        onClick={onFixHeadings}
-                        className='shrink-0 rounded border border-current px-2 py-1 text-xs font-semibold transition hover:bg-white/20'
-                      >
-                        一键修复
-                      </button>
-                    )}
+                    {(item.id === 'no-h1' || item.id.startsWith('heading-order')) &&
+                      onFixHeadings && (
+                        <button
+                          type='button'
+                          onClick={onFixHeadings}
+                          className='shrink-0 rounded border border-current px-2 py-1 text-xs font-semibold transition hover:bg-white/20'
+                        >
+                          一键修复
+                        </button>
+                      )}
                   </div>
                 </div>
               ))}
@@ -99,16 +100,18 @@ export const getArticleLintResults = (title: string, content: string): ArticleLi
     });
   }
 
-  // Warning: overly long section headings (H2-H4) in content (limit ~12 汉字 / 24 ASCII)
-  const headingRegex = /<\s*h([2-4])[^>]*>([\s\S]*?)<\/\s*h\1\s*>/gi;
+  // Warning: overly long section headings (H2-H6) in content (limit ~12 汉字 / 24 ASCII)
+  const headingRegex = /<\s*h([2-6])[^>]*>([\s\S]*?)<\/\s*h\1\s*>/gi;
   const HEADING_LENGTH_LIMIT = 24;
   let headingMatch: RegExpExecArray | null;
   let headingIndex = 0;
+  const headingLevels: number[] = [];
   while ((headingMatch = headingRegex.exec(content))) {
     headingIndex += 1;
     const level = headingMatch?.[1];
     const rawHeading = headingMatch?.[2] ?? '';
     if (!rawHeading || !level) continue;
+    headingLevels.push(Number(level));
     const headingText = rawHeading
       .replace(/<[^>]+>/g, '')
       .replace(/&nbsp;/gi, ' ')
@@ -126,6 +129,54 @@ export const getArticleLintResults = (title: string, content: string): ArticleLi
         message: `H${level} 标题偏长（约 ${headingUnits} 字符）。建议控制在 12 个汉字或 24 个英文字符内。`,
       });
     }
+  }
+
+  // Warning: heading order/skip (e.g., H2 -> H4) and starting below H2
+  if (headingLevels.length) {
+    const [firstLevel] = headingLevels;
+    if (firstLevel !== undefined && firstLevel > 2) {
+      results.push({
+        id: 'heading-order-start',
+        severity: 'warning',
+        message: `首个标题应为 H2，当前为 H${firstLevel}。请从 H2 开始正文。`,
+      });
+    }
+
+    for (let i = 1; i < headingLevels.length; i += 1) {
+      const prev = headingLevels[i - 1];
+      const current = headingLevels[i];
+      if (typeof prev !== 'number' || typeof current !== 'number') continue;
+      if (current > prev + 1) {
+        results.push({
+          id: `heading-order-skip-${i + 1}`,
+          severity: 'warning',
+          message: `标题层级跳级：H${prev} → H${current}。建议使用 H${prev + 1}。`,
+        });
+        break;
+      }
+    }
+  }
+
+  // Warning: inline style attribute usage
+  if (/\sstyle\s*=\s*(['"]).*?\1/i.test(content)) {
+    results.push({
+      id: 'inline-style',
+      severity: 'warning',
+      message: '检测到内联样式（style=）。请移除内联样式，使用编辑器提供的格式或全局样式。',
+    });
+  }
+
+  // Error: forbidden blocks/tags
+  const forbiddenTags = Array.from(content.matchAll(/<(script|iframe|object|embed|style)\b/gi)).map(
+    (match) => match[1]?.toLowerCase() ?? ''
+  );
+  if (forbiddenTags.length) {
+    const uniqueTags = Array.from(new Set(forbiddenTags));
+    results.push({
+      id: 'forbidden-blocks',
+      severity: 'error',
+      message: `检测到禁止的嵌入或脚本标签：${uniqueTags.join(', ')}。请移除后再提交。`,
+    });
   }
 
   return results;
