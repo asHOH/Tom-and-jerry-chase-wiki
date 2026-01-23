@@ -3,6 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 
+import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import BaseCard from '@/components/ui/BaseCard';
@@ -103,6 +104,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
     }
 
     onCommitMessageChange(`${typoPrefixWithComma}${trimmed}`);
+  };
+
+  const handleNormalizeHeadings = () => {
+    const normalized = normalizeHeadingLevels(content);
+    onContentChange(normalized);
   };
 
   return (
@@ -231,7 +237,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
           </div>
 
           {/* Lint notices (errors/warnings) */}
-          {lintResults.length > 0 && <ArticleLintNotice results={lintResults} />}
+          {lintResults.length > 0 && (
+            <ArticleLintNotice results={lintResults} onFixHeadings={handleNormalizeHeadings} />
+          )}
 
           {/* Commit Message for Updates */}
           {showCommitMessage && (

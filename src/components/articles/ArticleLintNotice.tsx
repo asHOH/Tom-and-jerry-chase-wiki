@@ -11,6 +11,7 @@ export interface ArticleLintResult {
 
 interface ArticleLintNoticeProps {
   results: ArticleLintResult[];
+  onFixHeadings?: () => void;
 }
 
 const severityStyles: Record<ArticleLintSeverity, { container: string }> = {
@@ -24,7 +25,7 @@ const severityStyles: Record<ArticleLintSeverity, { container: string }> = {
   },
 };
 
-export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results }) => {
+export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results, onFixHeadings }) => {
   if (!results.length) return null;
 
   const grouped = results.reduce<Record<ArticleLintSeverity, ArticleLintResult[]>>(
@@ -51,7 +52,18 @@ export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results })
             <div className='space-y-1'>
               {items.map((item) => (
                 <div key={item.id} className='leading-relaxed'>
-                  {item.message}
+                  <div className='flex items-start gap-2'>
+                    <span className='flex-1'>{item.message}</span>
+                    {item.id === 'no-h1' && onFixHeadings && (
+                      <button
+                        type='button'
+                        onClick={onFixHeadings}
+                        className='shrink-0 rounded border border-current px-2 py-1 text-xs font-semibold transition hover:bg-white/20'
+                      >
+                        一键修复
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
