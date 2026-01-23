@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
+import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useUser } from '@/hooks/useUser';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -91,10 +92,14 @@ const EditArticleClient: React.FC = () => {
 
   useEffect(() => {
     if (articleData) {
+      const normalizedContent = normalizeHeadingLevels(
+        articleData.article.article_versions[0]?.content || ''
+      );
       setTitle(articleData.article.title);
       setCategory(articleData.article.category_id);
       setCharacterId(articleData.article.character_id);
-      setPlaceholder(articleData.article.article_versions[0]?.content || '');
+      setPlaceholder(normalizedContent);
+      setContent(normalizedContent);
     }
   }, [articleData]);
 

@@ -242,24 +242,28 @@ export function wikiTextToHTML(wikiText: string): string {
       continue;
     }
 
+    if (line.startsWith('= ') && line.endsWith(' =')) {
+      htmlLines.push(`<h1>${processInlines(line.substring(2, line.length - 2).trim())}</h1>`);
+      continue;
+    }
     if (line.startsWith('== ') && line.endsWith(' ==')) {
-      htmlLines.push(`<h1>${processInlines(line.substring(3, line.length - 3).trim())}</h1>`);
+      htmlLines.push(`<h2>${processInlines(line.substring(3, line.length - 3).trim())}</h2>`);
       continue;
     }
     if (line.startsWith('=== ') && line.endsWith(' ===')) {
-      htmlLines.push(`<h2>${processInlines(line.substring(4, line.length - 4).trim())}</h2>`);
+      htmlLines.push(`<h3>${processInlines(line.substring(4, line.length - 4).trim())}</h3>`);
       continue;
     }
     if (line.startsWith('==== ') && line.endsWith(' ====')) {
-      htmlLines.push(`<h3>${processInlines(line.substring(5, line.length - 5).trim())}</h3>`);
+      htmlLines.push(`<h4>${processInlines(line.substring(5, line.length - 5).trim())}</h4>`);
       continue;
     }
     if (line.startsWith('===== ') && line.endsWith(' =====')) {
-      htmlLines.push(`<h4>${processInlines(line.substring(6, line.length - 6).trim())}</h4>`);
+      htmlLines.push(`<h5>${processInlines(line.substring(6, line.length - 6).trim())}</h5>`);
       continue;
     }
     if (line.startsWith('====== ') && line.endsWith(' ======')) {
-      htmlLines.push(`<h5>${processInlines(line.substring(7, line.length - 7).trim())}</h5>`);
+      htmlLines.push(`<h6>${processInlines(line.substring(7, line.length - 7).trim())}</h6>`);
       continue;
     }
 
@@ -341,11 +345,12 @@ export function htmlToWikiText(html: string): string {
       .join('\n')}\n`;
   });
 
-  text = text.replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, '\n== $1 ==\n');
-  text = text.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, '\n=== $1 ===\n');
-  text = text.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, '\n==== $1 ====\n');
-  text = text.replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, '\n===== $1 =====\n');
-  text = text.replace(/<h5[^>]*>([\s\S]*?)<\/h5>/gi, '\n====== $1 ======\n');
+  text = text.replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, '\n= $1 =\n');
+  text = text.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, '\n== $1 ==\n');
+  text = text.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, '\n=== $1 ===\n');
+  text = text.replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, '\n==== $1 ====\n');
+  text = text.replace(/<h5[^>]*>([\s\S]*?)<\/h5>/gi, '\n===== $1 =====\n');
+  text = text.replace(/<h6[^>]*>([\s\S]*?)<\/h6>/gi, '\n====== $1 ======\n');
 
   const stack: string[] = [];
   text = text.replace(/<(ul|ol)[^>]*>|<\/(ul|ol)>|<li[^>]*>|<\/li>/gi, (tag) => {
@@ -388,4 +393,21 @@ export function htmlToWikiText(html: string): string {
   text = text.replace(/<[^>]+>/g, '').replace(/(\n\s*){3,}/g, '\n\n');
 
   return text.trim();
+}
+
+export function normalizeHeadingLevels(html: string): string {
+  if (!html) return html;
+
+  const headingLevels = Array.from(html.matchAll(/<h([1-6])\b/gi)).map((match) => Number(match[1]));
+  if (!headingLevels.length) return html;
+
+  const minLevel = Math.min(...headingLevels);
+  if (minLevel >= 2) return html;
+
+  const shift = 2 - minLevel;
+
+  return html.replace(/<(\/?)h([1-6])(\b[^>]*)>/gi, (_match, slash, level, attrs) => {
+    const nextLevel = Math.min(Number(level) + shift, 6);
+    return `<${slash}h${nextLevel}${attrs}>`;
+  });
 }
