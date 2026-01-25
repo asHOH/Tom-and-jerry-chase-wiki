@@ -28,13 +28,14 @@ const severityStyles: Record<ArticleLintSeverity, { container: string }> = {
 export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results, onFixHeadings }) => {
   if (!results.length) return null;
 
-  const grouped = results.reduce<Record<ArticleLintSeverity, ArticleLintResult[]>>(
-    (acc, cur) => {
-      acc[cur.severity].push(cur);
-      return acc;
-    },
-    { error: [], warning: [] }
-  );
+  const grouped: Record<ArticleLintSeverity, ArticleLintResult[]> = { error: [], warning: [] };
+  results.forEach((item) => {
+    if (item.severity === 'error' || item.severity === 'warning') {
+      grouped[item.severity].push(item);
+    }
+  });
+
+  if (!grouped.error.length && !grouped.warning.length) return null;
 
   return (
     <div className='space-y-3'>
