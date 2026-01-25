@@ -15,7 +15,6 @@
     "rimraf",
     "tailwindcss",
     "postcss",
-    "supabase",
-    "bundlesize"
+    "supabase"
   ]
 }
