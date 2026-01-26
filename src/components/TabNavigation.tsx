@@ -447,7 +447,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
         {/* Right-aligned detailed/simple view toggle button, SearchBar, and User Settings */}
         <div className='flex items-center gap-1 md:gap-2 lg:gap-2.5'>
-          {pathname === '/' || pathname === '' ? <SearchBar /> : <DarkModeToggleButton />}
+          {pathname === '/' || pathname === '' ? (
+            <>
+              <SearchBar />
+              <DarkModeToggleButton />
+            </>
+          ) : (
+            <DarkModeToggleButton />
+          )}
           {showDetailToggle && (
             <Tooltip
               content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
@@ -508,7 +515,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   <button
                     type='button'
                     aria-label='用户设置'
-                    className={clsx(getButtonClassName(false, userDropdownOpen), 'p-2')}
+                    className={clsx(getButtonClassName(false, userDropdownOpen))}
                     onClick={() => setUserDropdownOpen((prev) => !prev)}
                   >
                     <UserCircleIcon className='size-6' strokeWidth={1.5} />
@@ -551,104 +558,107 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         </li>
                         <AnimatePresence initial={false}>
                           {actionInfoOpen && (
-                            <m.li
-                              key='user-actions-info'
-                              className='border-b border-gray-100 px-4 py-3 text-sm text-gray-800 dark:border-slate-700 dark:text-gray-200'
-                              initial={
-                                shouldReduceMotion
-                                  ? { opacity: 1, height: 'auto' }
-                                  : { opacity: 0, height: 0 }
-                              }
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
-                              transition={{ duration: 0.16, ease: 'easeOut' }}
-                              style={{ overflow: 'hidden' }}
-                            >
-                              {(() => {
-                                if (typeof window === 'undefined') return null;
+                            <li key='user-actions-info' className='m-0 list-none p-0'>
+                              <m.div
+                                className='border-b border-gray-100 px-4 py-3 text-sm text-gray-800 dark:border-slate-700 dark:text-gray-200'
+                                initial={
+                                  shouldReduceMotion
+                                    ? { opacity: 1, height: 'auto' }
+                                    : { opacity: 0, height: 0 }
+                                }
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={
+                                  shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }
+                                }
+                                transition={{ duration: 0.16, ease: 'easeOut' }}
+                                style={{ overflow: 'hidden' }}
+                              >
+                                {(() => {
+                                  if (typeof window === 'undefined') return null;
 
-                                const payloads = publishableEntityTypes
-                                  .map((entityType) => {
-                                    const storageKey = getActionsStorageKey(entityType);
-                                    const entries = readActionHistory(storageKey);
-                                    return { entityType, storageKey, entries };
-                                  })
-                                  .filter((p) => p.entries.length > 0);
+                                  const payloads = publishableEntityTypes
+                                    .map((entityType) => {
+                                      const storageKey = getActionsStorageKey(entityType);
+                                      const entries = readActionHistory(storageKey);
+                                      return { entityType, storageKey, entries };
+                                    })
+                                    .filter((p) => p.entries.length > 0);
 
-                                const totalEntries = payloads.reduce(
-                                  (sum, p) => sum + p.entries.length,
-                                  0
-                                );
+                                  const totalEntries = payloads.reduce(
+                                    (sum, p) => sum + p.entries.length,
+                                    0
+                                  );
 
-                                return (
-                                  <div className='flex flex-col space-y-2'>
-                                    <div className='flex items-center justify-between gap-2'>
-                                      <div className='text-xs text-gray-600 dark:text-gray-400'>
-                                        共 {payloads.length} 类 / {totalEntries} 条
-                                        {isEditMode ? '（编辑模式中）' : ''}
+                                  return (
+                                    <div className='flex flex-col space-y-2'>
+                                      <div className='flex items-center justify-between gap-2'>
+                                        <div className='text-xs text-gray-600 dark:text-gray-400'>
+                                          共 {payloads.length} 类 / {totalEntries} 条
+                                          {isEditMode ? '（编辑模式中）' : ''}
+                                        </div>
                                       </div>
+                                      <textarea
+                                        className='w-full rounded-md border border-gray-300 p-2 text-xs text-gray-800 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-gray-200'
+                                        rows={2}
+                                        placeholder='选填：描述改动内容（如：修正了技能数值）'
+                                        value={publishMessage}
+                                        onChange={(e) => setPublishMessage(e.target.value)}
+                                      />
+                                      <div className='flex flex-wrap items-center gap-2'>
+                                        <button
+                                          type='button'
+                                          onClick={handlePublishActions}
+                                          disabled={publishingActions || payloads.length === 0}
+                                          className={clsx(
+                                            'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
+                                            publishingActions || payloads.length === 0
+                                              ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
+                                              : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
+                                          )}
+                                          aria-label='发布本地改动'
+                                        >
+                                          <CheckBadgeIcon size={16} strokeWidth={1.8} />
+                                          发布
+                                        </button>
+                                        <button
+                                          type='button'
+                                          onClick={clearLocalActionHistories}
+                                          disabled={payloads.length === 0}
+                                          className={clsx(
+                                            'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
+                                            payloads.length === 0
+                                              ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
+                                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
+                                          )}
+                                          aria-label='清空本地改动记录'
+                                        >
+                                          <TrashIcon size={16} strokeWidth={1.8} />
+                                          清空
+                                        </button>
+                                      </div>
+                                      {payloads.length === 0 ? (
+                                        <div className='text-xs text-gray-600 dark:text-gray-400'>
+                                          暂无本地改动记录。
+                                        </div>
+                                      ) : (
+                                        <div className='max-h-64 space-y-2 overflow-auto rounded-md bg-gray-50 p-2 text-xs dark:bg-slate-900'>
+                                          {payloads.map((p) => (
+                                            <details key={p.entityType} className='rounded-md'>
+                                              <summary className='cursor-pointer font-medium select-none'>
+                                                {p.entityType}（{p.entries.length}）
+                                              </summary>
+                                              <pre className='mt-2 text-[11px] wrap-break-word whitespace-pre-wrap text-gray-800 dark:text-gray-200'>
+                                                {JSON.stringify(p.entries, null, 2)}
+                                              </pre>
+                                            </details>
+                                          ))}
+                                        </div>
+                                      )}
                                     </div>
-                                    <textarea
-                                      className='w-full rounded-md border border-gray-300 p-2 text-xs text-gray-800 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-gray-200'
-                                      rows={2}
-                                      placeholder='选填：描述改动内容（如：修正了技能数值）'
-                                      value={publishMessage}
-                                      onChange={(e) => setPublishMessage(e.target.value)}
-                                    />
-                                    <div className='flex flex-wrap items-center gap-2'>
-                                      <button
-                                        type='button'
-                                        onClick={handlePublishActions}
-                                        disabled={publishingActions || payloads.length === 0}
-                                        className={clsx(
-                                          'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
-                                          publishingActions || payloads.length === 0
-                                            ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
-                                            : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
-                                        )}
-                                        aria-label='发布本地改动'
-                                      >
-                                        <CheckBadgeIcon size={16} strokeWidth={1.8} />
-                                        发布
-                                      </button>
-                                      <button
-                                        type='button'
-                                        onClick={clearLocalActionHistories}
-                                        disabled={payloads.length === 0}
-                                        className={clsx(
-                                          'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
-                                          payloads.length === 0
-                                            ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
-                                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
-                                        )}
-                                        aria-label='清空本地改动记录'
-                                      >
-                                        <TrashIcon size={16} strokeWidth={1.8} />
-                                        清空
-                                      </button>
-                                    </div>
-                                    {payloads.length === 0 ? (
-                                      <div className='text-xs text-gray-600 dark:text-gray-400'>
-                                        暂无本地改动记录。
-                                      </div>
-                                    ) : (
-                                      <div className='max-h-64 space-y-2 overflow-auto rounded-md bg-gray-50 p-2 text-xs dark:bg-slate-900'>
-                                        {payloads.map((p) => (
-                                          <details key={p.entityType} className='rounded-md'>
-                                            <summary className='cursor-pointer font-medium select-none'>
-                                              {p.entityType}（{p.entries.length}）
-                                            </summary>
-                                            <pre className='mt-2 text-[11px] wrap-break-word whitespace-pre-wrap text-gray-800 dark:text-gray-200'>
-                                              {JSON.stringify(p.entries, null, 2)}
-                                            </pre>
-                                          </details>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })()}
-                            </m.li>
+                                  );
+                                })()}
+                              </m.div>
+                            </li>
                           )}
                         </AnimatePresence>
                         <li>
