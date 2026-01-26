@@ -120,8 +120,13 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         </div>
       </div>
 
-      <div className='mt-8 px-2 text-center sm:px-4' onDoubleClick={handleEditModeToggle}>
-        <h2 className='mb-2 py-2 text-3xl font-bold dark:text-white'>网站说明</h2>
+      <div className='mt-8 px-2 text-center sm:px-4'>
+        <h2
+          className='mb-2 py-2 text-3xl font-bold dark:text-white'
+          onDoubleClick={handleEditModeToggle}
+        >
+          网站说明
+        </h2>
         <div className='mx-auto max-w-2xl px-2 py-3 text-gray-600 sm:px-4 dark:text-gray-300'>
           <ProjectStatement onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
         </div>
