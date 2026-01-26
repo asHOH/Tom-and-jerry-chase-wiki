@@ -26,6 +26,37 @@ const nameBlacklist = [
   '相助',
 ];
 
+type CharacterRecord = (typeof characters)[string];
+
+// Safely resolve character-linked expressions like foo.bar[0] without eval
+const resolveCharacterExpression = (
+  expr: string,
+  character?: CharacterRecord
+): unknown | undefined => {
+  if (!character) return undefined;
+  const trimmed = expr.trim().replace(/^:/, '');
+  // Only allow dotted/bracket paths with alphanumerics/underscore; no operators or calls
+  if (!/^[\w.$\[\]]+$/.test(trimmed)) return undefined;
+
+  const tokens: Array<string | number> = [];
+  const pathPattern = /([^.[\]]+)|(\[(\d+)\])/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = pathPattern.exec(trimmed)) !== null) {
+    if (match[1]) tokens.push(match[1]);
+    else if (match[3]) tokens.push(Number(match[3]));
+  }
+
+  let current: unknown = character;
+  for (const key of tokens) {
+    if (current == null || (typeof current !== 'object' && typeof current !== 'function')) {
+      return undefined;
+    }
+    current = (current as Record<string | number, unknown>)[key];
+  }
+  return current;
+};
+
 function preprocessText(text: string, currentCharacterName?: string | undefined): string {
   // If text already contains curly braces, return as-is
   if (text.includes('{') || text.includes('}') || text.includes('《') || text.includes('》')) {
@@ -361,13 +392,16 @@ const renderTextWithTooltips = (
       // If it's not a number or attack boost not available, try rendering as Knowledge Card tag
       if (!isNumericOnly || attackBoost == null) {
         if (contentForTooltip.startsWith(':')) {
-          parts.push(
-            new Function('$char', `with ($char) { return ${contentForTooltip.slice(1)}; }`)(
-              characters[currentCharacterId as keyof typeof characters]
-            )
-          );
-          lastIndex = tooltipPattern.lastIndex;
-          continue;
+          const currentCharacter: CharacterRecord | undefined =
+            currentCharacterId && currentCharacterId in characters
+              ? characters[currentCharacterId as keyof typeof characters]
+              : undefined;
+          const evaluated = resolveCharacterExpression(contentForTooltip, currentCharacter);
+          if (typeof evaluated === 'string' || typeof evaluated === 'number') {
+            parts.push(String(evaluated));
+            lastIndex = tooltipPattern.lastIndex;
+            continue;
+          }
         }
         const linkName = contentForTooltip;
         const card = cards[contentForTooltip as keyof typeof cards];

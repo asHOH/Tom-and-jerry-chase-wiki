@@ -3,7 +3,6 @@ const directives = {
   'script-src': [
     "'self'",
     "'unsafe-inline'",
-    "'unsafe-eval'",
     'https://hcaptcha.com',
     'https://*.hcaptcha.com',
     'https://challenges.cloudflare.com',
