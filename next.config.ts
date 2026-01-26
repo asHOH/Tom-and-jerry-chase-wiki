@@ -121,10 +121,7 @@ const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   transpilePackages: ['motion', 'pinyin-pro', 'valtio'],
   typescript: {
-    ignoreBuildErrors:
-      process.env.SKIP_BUILD_CHECKS === 'true' ||
-      !!process.env.NEXT_PUBLIC_DISABLE_ARTICLES ||
-      !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    ignoreBuildErrors: process.env.SKIP_BUILD_CHECKS === 'true',
   },
   env: {
     // Use the commit timestamp if available (set by start_server.sh), otherwise fallback to build time
