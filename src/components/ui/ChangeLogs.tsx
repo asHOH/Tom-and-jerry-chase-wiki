@@ -135,7 +135,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
       <button
         type='button'
         onClick={() => setIsChangeLogsOpen(true)}
-        className='flex min-w-45 flex-col items-center justify-center gap-2 rounded-md border-none bg-gray-200 px-6 py-4 text-center text-gray-800 shadow-md transition-colors duration-200 focus:outline-none dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'
+        className='faction-button flex min-w-45 flex-col items-center justify-center gap-2 rounded-md border-none bg-gray-200 px-6 py-4 text-center text-gray-800 shadow-md transition-colors duration-200 focus:outline-none dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'
         aria-label='更新日志'
       >
         <div className='flex items-center gap-3'>

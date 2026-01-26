@@ -74,7 +74,7 @@ export default function OfficialSitesDisplay() {
             href={site.url}
             target='_blank'
             rel='noopener noreferrer'
-            className={`flex min-w-[180px] flex-col items-center justify-center gap-2 rounded-md border-none px-6 py-4 text-center shadow-md transition-colors duration-200 focus:outline-none ${
+            className={`faction-button flex min-w-[180px] flex-col items-center justify-center gap-2 rounded-md border-none px-6 py-4 text-center shadow-md transition-colors duration-200 focus:outline-none ${
               active
                 ? 'bg-blue-100 text-blue-900 ring-2 ring-blue-500 dark:bg-blue-900/40 dark:text-blue-100 dark:ring-blue-400'
                 : 'bg-gray-200 text-gray-800 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'

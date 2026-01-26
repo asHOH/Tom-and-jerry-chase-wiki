@@ -281,7 +281,8 @@ body.offline-banner-visible .content-container {
 
 /* Faction button styles */
 /* Base styles for faction buttons */
-button.faction-button {
+button.faction-button,
+a.faction-button {
   position: relative;
   overflow: visible;
   transition:
@@ -292,19 +293,23 @@ button.faction-button {
 }
 
 /* Hover styles for faction buttons */
-button.faction-button:hover {
+button.faction-button:hover,
+a.faction-button:hover {
   background-color: #2563eb !important; /* Blue background on hover */
   color: white !important; /* White text on hover */
 }
 
 /* Ensure all child elements also change color on hover */
 button.faction-button:hover span,
-button.faction-button:hover div {
+button.faction-button:hover div,
+a.faction-button:hover span,
+a.faction-button:hover div {
   color: white !important;
 }
 
 /* Add a subtle shadow effect on hover */
-button.faction-button:hover {
+button.faction-button:hover,
+a.faction-button:hover {
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
   transform: translateY(-2px) !important;
 }
