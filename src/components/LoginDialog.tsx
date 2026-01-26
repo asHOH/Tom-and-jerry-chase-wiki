@@ -32,7 +32,6 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [captchaProof, setCaptchaProof] = useState<string | null>(null);
 
   const [isUsernameCorrect, setIsUsernameCorrect] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength | null>(null);
@@ -78,13 +77,10 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       if (!response.ok) {
         throw new Error(data.error || '发生错误。');
       }
-      if (data.captchaProof) {
-        setCaptchaProof(data.captchaProof);
-      }
       switch (data.status) {
         case 'exists_no_password':
           // Auto-login for passwordless users
-          await handleLogin(true, data.captchaProof);
+          await handleLogin(true);
           break;
         case 'exists_with_password':
           setStep('password');
@@ -102,7 +98,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
     }
   };
 
-  const handleLogin = async (isPasswordless = false, proof: string | null = null) => {
+  const handleLogin = async (isPasswordless = false) => {
+    if (!token) {
+      setError('请通过验证码。');
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -112,7 +112,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
         body: JSON.stringify({
           username,
           password: isPasswordless ? undefined : password,
-          captchaToken: proof || captchaProof,
+          captchaToken: token,
         }),
       });
       const data = await response.json();
@@ -139,20 +139,24 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       setError('密码不能为空。');
       return;
     }
+    if (!token) {
+      setError('请通过验证码。');
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, nickname, password, captchaToken: captchaProof }),
+        body: JSON.stringify({ username, nickname, password, captchaToken: token }),
       });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || '注册失败。');
       }
       // After successful registration, log the user in.
-      await handleLogin(false, captchaProof);
+      await handleLogin(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : '发生未知错误。');
     } finally {

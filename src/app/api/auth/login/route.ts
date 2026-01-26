@@ -1,7 +1,7 @@
 import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { verifyCaptchaProof } from '@/lib/captchaUtils';
+import { verifyCaptchaToken } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { env } from '@/env';
@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
     }
 
-    if (!verifyCaptchaProof(captchaToken, username)) {
+    const captchaVerified = await verifyCaptchaToken(captchaToken);
+    if (!captchaVerified) {
       return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
     }
 
