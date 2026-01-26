@@ -15,6 +15,9 @@ export const env = createEnv({
     // Supabase
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
 
+    // Debug
+    CHAT_DEBUG_LOG: binaryFlag,
+
     // Captcha
     CAPTCHA_SECRET_KEY: z.string().optional(),
 

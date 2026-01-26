@@ -57,6 +57,16 @@ const safetySettings = [
   },
 ];
 
+const debugLoggingEnabled = env.CHAT_DEBUG_LOG === '1';
+const logDebug = (message: string, detail?: unknown) => {
+  if (!debugLoggingEnabled) return;
+  if (detail === undefined) {
+    console.log(message);
+  } else {
+    console.log(message, detail);
+  }
+};
+
 // Helper function to build alias mapping text
 function buildAliasMap<T extends { aliases?: string[] }>(
   data: Record<string, T> | { cat: Record<string, T>; mouse: Record<string, T> },
@@ -537,7 +547,7 @@ export async function POST(req: NextRequest) {
       );
     }
     const messages = parsed.data.messages as unknown as Content[];
-    console.log('Received messages:', JSON.stringify(messages, null, 2));
+    logDebug('Received messages count:', messages.length);
 
     const apiKey = env.GEMINI_API_KEY;
     const modelName = env.NEXT_PUBLIC_GEMINI_CHAT_MODEL;
@@ -568,11 +578,11 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      console.log('Response received');
+      logDebug('Response received');
 
       // Check if the model wants to call a function
       if (response.functionCalls && response.functionCalls.length > 0) {
-        console.log('Function calls detected:', response.functionCalls);
+        logDebug('Function calls detected:', response.functionCalls.length);
 
         // Return function calls to client for execution
         return new NextResponse(
@@ -592,7 +602,7 @@ export async function POST(req: NextRequest) {
       } else {
         // No function call, we have a final text response
         const text = response.text || '';
-        console.log('Final text response:', text);
+        logDebug('Final text response (truncated):', text.slice(0, 200));
 
         return new NextResponse(
           JSON.stringify({
@@ -623,7 +633,7 @@ export async function POST(req: NextRequest) {
     }
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      console.log('Request was aborted by the client.');
+      logDebug('Request was aborted by the client.');
       return new NextResponse('', { status: 204 });
     }
     console.error('Chat API error:', error);
