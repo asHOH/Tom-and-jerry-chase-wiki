@@ -22,11 +22,11 @@
   - `src/lib/supabase/client.ts`: Browser client (singleton).
   - `src/lib/supabase/server.ts`: RSC/Route Handler client (cookies bridge).
   - `src/lib/supabase/admin.ts`: Service-role client (server-only, privileged).
-- **Auth**: Custom auth flow (SHA-256/PBKDF2). `src/middleware.ts` syncs sessions.
+- **Auth**: Custom auth flow (SHA-256/PBKDF2). `src/middleware.ts` syncs sessions. Captcha must be verified with provider on every auth route; captcha fails closed when secrets are missing.
 - **Data Flow**:
   - **Read**: Public views (`users_public_view`, `article_versions_public_view`).
   - **Write**: RPCs for mutations/moderation to enforce RLS/roles server-side.
-- **Security**: Never expose service key. Use `createClient()` in handlers for auth context.
+- **Security**: Never expose service key. Use `createClient()` in handlers for auth context. Passwords are mandatory. API CORS `Access-Control-Allow-Origin` is constrained to the site origin/Vercel URL. CSP `script-src` allows `unsafe-inline` for article rendering.
 
 # Structure
 
