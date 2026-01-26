@@ -13,6 +13,13 @@ const customJestConfig = {
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/*.(test|spec).{js,jsx,ts,tsx}',
   ],
+  // Transform ESM packages that ship untranspiled code
+  transformIgnorePatterns: ['node_modules/(?!(lodash-es|@t3-oss/env-nextjs)/)'],
+  moduleNameMapper: {
+    '^lodash-es$': 'lodash',
+    '^lodash-es/(.*)$': 'lodash/$1',
+    '^@t3-oss/env-nextjs$': '<rootDir>/test/__mocks__/t3-env-nextjs.ts',
+  },
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',

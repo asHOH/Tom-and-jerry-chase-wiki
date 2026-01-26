@@ -406,19 +406,11 @@ export function normalizeHeadingLevels(html: string): string {
   const firstLevel = Number(headingMatches[0]?.[1] ?? 2);
   const baseShift = 2 - firstLevel; // normalize first heading to H2
 
-  const normalizedLevels: number[] = [];
-  let prevLevel = clampLevel(firstLevel + baseShift);
-  normalizedLevels.push(prevLevel);
-
-  for (let i = 1; i < headingMatches.length; i += 1) {
-    const rawLevel = clampLevel(Number(headingMatches[i]?.[1] ?? 2) + baseShift);
-    let nextLevel = rawLevel;
-    if (nextLevel > prevLevel + 1) {
-      nextLevel = clampLevel(prevLevel + 1);
-    }
-    normalizedLevels.push(nextLevel);
-    prevLevel = nextLevel;
-  }
+  // Apply a consistent shift to every heading, clamped to the valid range
+  const normalizedLevels: number[] = headingMatches.map((match) => {
+    const level = Number(match?.[1] ?? 2);
+    return clampLevel(level + baseShift);
+  });
 
   let headingIndex = 0;
   const levelStack: number[] = [];
