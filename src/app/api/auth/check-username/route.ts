@@ -58,9 +58,9 @@ export async function POST(request: NextRequest) {
 
     if (user.password_hash) {
       return NextResponse.json({ status: 'exists_with_password' });
-    } else {
-      return NextResponse.json({ status: 'exists_no_password' });
     }
+
+    return NextResponse.json({ status: 'requires_password_reset' });
   } catch (e) {
     console.error('Check-username error:', e);
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });

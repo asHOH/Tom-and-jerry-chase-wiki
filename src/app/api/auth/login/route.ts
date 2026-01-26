@@ -46,7 +46,6 @@ export async function POST(request: NextRequest) {
     }
 
     const usernameHash = hashUsername(username);
-    const passwordlessSecret = `pw-${usernameHash.slice(0, 32)}`;
 
     // Query the custom users table to find a user with the matching username_hash
     const { data: user, error: userError } = await supabaseAdmin
@@ -75,14 +74,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 
-    if (user.password_hash) {
-      if (!password || typeof password !== 'string') {
-        return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
-      }
-      const providedPasswordHash = hashPassword(password, user.salt);
-      if (!stringTimingSafeEqual(providedPasswordHash, user.password_hash)) {
-        return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
-      }
+    if (!user.password_hash) {
+      return NextResponse.json(
+        { error: 'Password required. Please reset or contact support.' },
+        { status: 401 }
+      );
+    }
+
+    if (!password || typeof password !== 'string') {
+      return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
+    }
+    const providedPasswordHash = hashPassword(password, user.salt);
+    if (!stringTimingSafeEqual(providedPasswordHash, user.password_hash)) {
+      return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
     }
     // Password-based user is valid, create session and attach cookies to response
     type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
@@ -109,7 +113,7 @@ export async function POST(request: NextRequest) {
 
     const { error: sessionError } = await supabase.auth.signInWithPassword({
       email: authUser.email,
-      password: password || passwordlessSecret,
+      password,
     });
 
     if (sessionError) {

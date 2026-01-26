@@ -42,31 +42,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
     }
 
-    const usernamePinyin = await convertToPinyin(username);
-    const usernameHash = hashUsername(username);
-    const passwordlessSecret = `pw-${usernameHash.slice(0, 32)}`;
-    const authPassword = password || passwordlessSecret;
-
-    // Requirement 6.6: Nickname and username must not be the same for passwordless accounts
-    if (!password && username === nickname) {
-      return NextResponse.json(
-        { error: 'Username and nickname cannot be the same for passwordless accounts.' },
-        { status: 400 }
-      );
-    }
-
-    if (!password && env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH === '1') {
+    if (!password || password.trim() === '') {
       return NextResponse.json({ error: 'Password is required.' }, { status: 400 });
     }
 
-    if (password) {
-      const strength = await checkPasswordStrength(password);
-      if (strength.strength <= 1) {
-        return NextResponse.json(
-          { error: `Password too weak: ${strength.reason}` },
-          { status: 400 }
-        );
-      }
+    const usernamePinyin = await convertToPinyin(username);
+    const usernameHash = hashUsername(username);
+    const authPassword = password;
+
+    // Requirement 6.6: Nickname and username must not be the same for passwordless accounts
+    const strength = await checkPasswordStrength(password);
+    if (strength.strength <= 1) {
+      return NextResponse.json({ error: `Password too weak: ${strength.reason}` }, { status: 400 });
     }
 
     const { data: existingByUsername, error: usernameLookupError } = await supabaseAdmin

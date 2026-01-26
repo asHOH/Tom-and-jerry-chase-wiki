@@ -10,7 +10,6 @@ import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { USER_API_KEY } from '@/hooks/useUser';
 import { CloseIcon } from '@/components/icons/CommonIcons';
-import { env } from '@/env';
 
 import CaptchaComponent from './CaptchaComponent';
 
@@ -78,12 +77,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
         throw new Error(data.error || '发生错误。');
       }
       switch (data.status) {
-        case 'exists_no_password':
-          // Auto-login for passwordless users
-          await handleLogin(true);
-          break;
         case 'exists_with_password':
           setStep('password');
+          break;
+        case 'requires_password_reset':
+          setError('该账户需要重置密码，请联系支持或使用找回流程。');
           break;
         case 'not_exists':
           setStep('register');
@@ -135,7 +133,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       setError('昵称不能为空。');
       return;
     }
-    if (password.trim() === '' && env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH === '1') {
+    if (password.trim() === '') {
       setError('密码不能为空。');
       return;
     }
@@ -264,9 +262,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             />
             <input
               type='password'
-              placeholder={
-                env.NEXT_PUBLIC_DISABLE_NOPASSWD_USER_AUTH === '1' ? '密码' : '密码（可选）'
-              }
+              placeholder={'密码'}
               className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
