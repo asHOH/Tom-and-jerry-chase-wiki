@@ -98,7 +98,7 @@
     "json5": "^2.2.3",
     "lodash-es": "^4.17.22",
     "motion": "^12.23.26",
-    "next": "^16.1.1",
+    "next": "^16.1.6",
     "next-themes": "^0.3.0",
     "nextjs-toploader": "^3.9.17",
     "pinyin-pro": "^3.27.0",
