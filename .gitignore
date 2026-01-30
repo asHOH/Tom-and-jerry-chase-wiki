@@ -93,3 +93,8 @@ public/version.json
 # Generated images
 public/images/*/*.webp
 public/images/*/*.avif
+
+# Lockfiles from other package managers
+yarn.lock
+pnpm-lock.yaml
+bun.lock

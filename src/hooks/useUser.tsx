@@ -55,16 +55,25 @@ const AuthListener = () => {
   return null;
 };
 
+const MAX_CACHE_SIZE = 1024 * 1024; // 1MB limit to prevent performance issues
+const CACHE_KEY = 'swr-cache';
+
 const localStorageProvider = () => {
   // When initializing, we restore the data from `localStorage` into a map.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let initialEntries: Array<[string, any]> = [];
   if (typeof window !== 'undefined') {
     try {
-      const stored = localStorage.getItem('swr-cache');
+      const stored = localStorage.getItem(CACHE_KEY);
       if (stored) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        initialEntries = JSON.parse(stored) as Array<[string, any]>;
+        // Check size before parsing to avoid performance hit on corrupted/large data
+        if (stored.length > MAX_CACHE_SIZE) {
+          console.warn('SWR cache exceeds size limit, clearing');
+          localStorage.removeItem(CACHE_KEY);
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          initialEntries = JSON.parse(stored) as Array<[string, any]>;
+        }
       }
     } catch (error) {
       console.warn('Failed to restore SWR cache from localStorage', error);
@@ -78,10 +87,26 @@ const localStorageProvider = () => {
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', () => {
       try {
-        const appCache = JSON.stringify(Array.from(map.entries()));
-        localStorage.setItem('swr-cache', appCache);
+        const entries = Array.from(map.entries());
+        const appCache = JSON.stringify(entries);
+
+        // Enforce size limit: if too large, keep only recent entries
+        if (appCache.length > MAX_CACHE_SIZE && entries.length > 1) {
+          // Sort by recency (last item is most recent) and trim
+          const trimmed = entries.slice(-Math.max(1, Math.floor(entries.length / 2)));
+          const trimmedCache = JSON.stringify(trimmed);
+          localStorage.setItem(CACHE_KEY, trimmedCache);
+        } else {
+          localStorage.setItem(CACHE_KEY, appCache);
+        }
       } catch (error) {
         console.warn('Failed to save SWR cache to localStorage', error);
+        // Clear cache on quota exceeded
+        try {
+          localStorage.removeItem(CACHE_KEY);
+        } catch {
+          // Ignore cleanup errors
+        }
       }
     });
   }
