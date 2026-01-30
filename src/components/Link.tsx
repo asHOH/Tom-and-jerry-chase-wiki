@@ -4,13 +4,18 @@ import React from 'react';
 import NextLink, { LinkProps as NextLinkProps } from 'next/link';
 
 import { useNavigation } from '@/hooks/useNavigation';
+import { stripEditParam } from '@/hooks/useSearchParamEditMode';
+
+import { checkEditModeGuard } from './ui/EditModeGuard';
 
 type LinkProps = NextLinkProps &
   Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {
     children: React.ReactNode;
+    /** If true, preserves edit param when navigating (default: false) */
+    preserveEditParam?: boolean;
   };
 
-const Link = ({ href, onClick, replace, ...props }: LinkProps) => {
+const Link = ({ href, onClick, replace, preserveEditParam = false, ...props }: LinkProps) => {
   const { navigate } = useNavigation();
 
   const handleClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -47,6 +52,17 @@ const Link = ({ href, onClick, replace, ...props }: LinkProps) => {
           targetPath += `?${queryString}`;
         }
       }
+    }
+
+    // Strip edit param when navigating to different pages (unless preserveEditParam is true)
+    if (!preserveEditParam) {
+      targetPath = stripEditParam(targetPath);
+    }
+
+    // Check if edit mode guard is active and wants to intercept
+    const canNavigate = checkEditModeGuard(targetPath);
+    if (!canNavigate) {
+      return; // Guard will show modal and handle navigation
     }
 
     await navigate(targetPath, { replace: replace ?? false });

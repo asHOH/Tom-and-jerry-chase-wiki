@@ -1,7 +1,16 @@
 'use client';
 
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { proxy, subscribe } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
@@ -15,6 +24,12 @@ import {
   readActionHistory,
   withRecordingSuppressed,
 } from '@/lib/edit/diffUtils';
+import {
+  clearDraft,
+  formatDraftAge,
+  loadDraft,
+  saveDraft as saveDraftToStorage,
+} from '@/lib/edit/draftUtils';
 import {
   achievements,
   achievementsEdit,
@@ -37,10 +52,31 @@ import {
   specialSkillsEdit,
 } from '@/data';
 
+// Publishable entity types
+export const PUBLISHABLE_ENTITY_TYPES = [
+  'characters',
+  'factions',
+  'cards',
+  'entities',
+  'buffs',
+  'items',
+  'fixtures',
+  'maps',
+  'modes',
+  'specialSkills',
+  'achievements',
+] as const;
+
+export type PublishableEntityType = (typeof PUBLISHABLE_ENTITY_TYPES)[number];
+
 interface EditModeContextType {
+  /** Whether edit mode is active for the current page (from URL ?edit=1) */
   isEditMode: boolean;
+  /** Loading state during initialization */
   isLoading: boolean;
+  /** @deprecated Use exitEditMode or page-level controls instead */
   toggleEditMode: () => void;
+  /** Revoke local actions for a specific entity type */
   revokeLocalActions: (entityType: string) => void;
 }
 
@@ -48,8 +84,6 @@ export const EditModeContext = createContext<EditModeContextType | undefined>(un
 
 /**
  * Entity registry mapping entity types to their proxy objects.
- * Allows Edit Mode to work with any entity type (characters, factions, knowledge cards, etc.)
- * without hardcoding specific imports.
  */
 const entityRegistry = new Map<string, Record<string, unknown>>([
   ['achievements', achievementsEdit as unknown as Record<string, unknown>],
@@ -68,17 +102,11 @@ const entityRegistry = new Map<string, Record<string, unknown>>([
 /**
  * Centralized localStorage sync helper.
  * Subscribes to entity changes and persists them to localStorage.
- * Reduces duplication and provides a single point for sync logic.
- *
- * @param entityType The type of entity to sync
- * @param entity The proxy object to watch
- * @returns Unsubscribe function
  */
 function syncEntityToLocalStorage(entityType: string, entity: Record<string, unknown>): () => void {
   const actionsStorageKey = getActionsStorageKey(entityType);
 
   return subscribe(entity, (ops) => {
-    // Avoid double-logging when actions are applied programmatically via the diff utils.
     if (isRecordingSuppressed(actionsStorageKey)) {
       return;
     }
@@ -91,7 +119,7 @@ function syncEntityToLocalStorage(entityType: string, entity: Record<string, unk
 }
 
 /**
- * Loads all registered entities from localStorage.
+ * Loads all registered entities from localStorage action history.
  * Called when entering edit mode to restore previous session.
  */
 function loadEntitiesFromStorage(): void {
@@ -99,8 +127,6 @@ function loadEntitiesFromStorage(): void {
 
   Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
     try {
-      // Rebuild local state by replaying stored actions onto the current in-memory canonical data.
-      // We intentionally do NOT persist full snapshots in localStorage.
       const actionsStorageKey = getActionsStorageKey(entityType);
       const history = readActionHistory(actionsStorageKey);
       if (history.length > 0) {
@@ -117,10 +143,9 @@ function loadEntitiesFromStorage(): void {
 }
 
 /**
- * Clears all registered entities from localStorage.
- * Called when exiting edit mode.
+ * Clears all action histories from localStorage.
  */
-function clearEntitiesFromStorage(): void {
+function clearActionHistoriesFromStorage(): void {
   if (typeof localStorage === 'undefined') return;
 
   Array.from(entityRegistry.entries()).forEach(([entityType]) => {
@@ -135,7 +160,6 @@ function clearEntitiesFromStorage(): void {
 
 /**
  * Restores all registered entities to their original canonical state.
- * Called when exiting edit mode to discard unsaved changes.
  */
 function restoreEntitiesToCanonical(): void {
   const original = {
@@ -145,13 +169,10 @@ function restoreEntitiesToCanonical(): void {
   };
 
   Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-    // Only restore known types; custom types remain unchanged
     if (entityType === 'characters' && original.characters) {
-      // Clear current data
       Object.keys(entity).forEach((key) => {
         delete entity[key];
       });
-      // Restore original with proxies for nested objects
       Object.entries(original.characters).forEach(([key, value]) => {
         entity[key] = proxy(value);
       });
@@ -238,7 +259,6 @@ function restoreEntitiesToCanonical(): void {
       Object.keys(entity).forEach((key) => {
         delete entity[key];
       });
-      console.log('Restoring achievements', achievements);
       Object.entries(achievements as Record<string, unknown>).forEach(([key, value]) => {
         entity[key] = proxy(value as Record<string, unknown>);
       });
@@ -249,55 +269,32 @@ function restoreEntitiesToCanonical(): void {
 }
 
 export const EditModeProvider = ({ children }: { children: ReactNode }) => {
+  const searchParams = useSearchParams();
   const [hasInitialized, setHasInitialized] = useState(false);
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const previousEditModeRef = useRef<boolean>(false);
 
-  const EDIT_MODE_ENABLED_AT_KEY = 'editmode:enabledAt';
+  // Edit mode is now determined by URL param
+  const isEditMode = useMemo(() => {
+    return searchParams.get('edit') === '1';
+  }, [searchParams]);
 
-  // Initialize edit mode state from localStorage
+  // Initialize on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedEditMode = localStorage.getItem('isEditMode');
-      setIsEditMode(storedEditMode ? JSON.parse(storedEditMode) : false);
-
-      // Ensure we have a stable cutoff timestamp for “enter edit mode” sessions.
-      // This is used to freeze public actions while edit mode is active.
-      try {
-        const parsed = storedEditMode ? (JSON.parse(storedEditMode) as unknown) : false;
-        const isStoredEditMode = parsed === true;
-        if (isStoredEditMode) {
-          const raw = localStorage.getItem(EDIT_MODE_ENABLED_AT_KEY);
-          const ms = raw ? Number(raw) : NaN;
-          if (!Number.isFinite(ms) || ms <= 0) {
-            localStorage.setItem(EDIT_MODE_ENABLED_AT_KEY, String(Date.now()));
-          }
-        }
-      } catch {
-        // ignore
-      }
-
       setHasInitialized(true);
     }
   }, []);
-
-  // Persist edit mode state to localStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined' && hasInitialized) {
-      localStorage.setItem('isEditMode', JSON.stringify(isEditMode));
-      try {
-        window.dispatchEvent(new CustomEvent('editmode:changed', { detail: { isEditMode } }));
-      } catch (error) {
-        console.error('Failed to dispatch editmode:changed event:', error);
-      }
-    }
-  }, [isEditMode, hasInitialized]);
 
   // Set up entity syncing when edit mode is active
   useEffect(() => {
     if (!hasInitialized) return undefined;
 
-    if (isEditMode) {
+    const wasEditMode = previousEditModeRef.current;
+    previousEditModeRef.current = isEditMode;
+
+    if (isEditMode && !wasEditMode) {
+      // Entering edit mode - load from storage
       loadEntitiesFromStorage();
       setIsLoading(false);
 
@@ -310,36 +307,35 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
       return () => {
         unsubscribers.forEach((unsub) => unsub());
       };
+    } else if (!isEditMode && wasEditMode) {
+      // Exiting edit mode - handled by page-level controls
+      // Don't automatically clear here - let the page decide
+      setIsLoading(false);
+    } else if (isEditMode) {
+      // Already in edit mode, just set up subscriptions
+      setIsLoading(false);
+      const unsubscribers: Array<() => void> = [];
+      Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
+        unsubscribers.push(syncEntityToLocalStorage(entityType, entity));
+      });
+
+      return () => {
+        unsubscribers.forEach((unsub) => unsub());
+      };
     }
 
+    setIsLoading(false);
     return undefined;
   }, [isEditMode, hasInitialized]);
 
-  const toggleEditMode = (): void => {
-    setIsEditMode((prevMode) => {
-      const nextMode = !prevMode;
-      if (typeof window !== 'undefined') {
-        try {
-          if (nextMode) {
-            localStorage.setItem(EDIT_MODE_ENABLED_AT_KEY, String(Date.now()));
-          } else {
-            localStorage.removeItem(EDIT_MODE_ENABLED_AT_KEY);
-          }
-        } catch {
-          // ignore
-        }
-      }
-      return nextMode;
-    });
+  // Deprecated toggle - does nothing, kept for compatibility
+  const toggleEditMode = useCallback((): void => {
+    console.warn(
+      'toggleEditMode is deprecated. Use enterEditMode/exitEditMode from useSearchParamEditMode instead.'
+    );
+  }, []);
 
-    // When turning OFF edit mode, restore original data
-    if (isEditMode) {
-      clearEntitiesFromStorage();
-      restoreEntitiesToCanonical();
-    }
-  };
-
-  const revokeLocalActions = (entityType: string): void => {
+  const revokeLocalActions = useCallback((entityType: string): void => {
     if (typeof window === 'undefined') return;
     const entity = entityRegistry.get(entityType);
     if (!entity) return;
@@ -367,13 +363,19 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error(`Failed to revoke ${entityType} local actions:`, error);
     }
-  };
+  }, []);
 
-  return (
-    <EditModeContext.Provider value={{ isEditMode, isLoading, toggleEditMode, revokeLocalActions }}>
-      {children}
-    </EditModeContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      isEditMode,
+      isLoading,
+      toggleEditMode,
+      revokeLocalActions,
+    }),
+    [isEditMode, isLoading, toggleEditMode, revokeLocalActions]
   );
+
+  return <EditModeContext.Provider value={contextValue}>{children}</EditModeContext.Provider>;
 };
 
 export const useEditMode = () => {
@@ -384,14 +386,235 @@ export const useEditMode = () => {
   return context;
 };
 
+// ============================================================================
+// Page-level edit mode hook for pages that support editing
+// ============================================================================
+
+interface PageEditModeOptions {
+  entityType: PublishableEntityType;
+  entityId: string;
+  /** Toast function to show notifications */
+  showToast?: (message: string, duration?: number) => void;
+}
+
+interface PageEditModeResult {
+  isEditMode: boolean;
+  isDirty: boolean;
+  isPublishing: boolean;
+  draftInfo: { savedAt: number; actionCount: number } | null;
+  saveDraft: () => void;
+  discardChanges: () => void;
+  publishChanges: (message?: string) => Promise<boolean>;
+  getActionCount: () => number;
+}
+
 /**
- * Hook to get the current character ID from the URL path.
- * Assumes the character page route structure: /characters/[characterId]
- * @returns Object containing characterId
- *
- * @example
- * const { characterId } = useLocalCharacter();
+ * Hook for page-level edit mode management.
+ * Provides draft saving, publishing, and dirty state tracking for a specific entity.
  */
+export function usePageEditMode(options: PageEditModeOptions): PageEditModeResult {
+  const { entityType, entityId, showToast } = options;
+  const { isEditMode } = useEditMode();
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [_actionCountTrigger, setActionCountTrigger] = useState(0);
+  const draftLoadedRef = useRef(false);
+
+  // Load draft when entering edit mode
+  useEffect(() => {
+    if (!isEditMode || draftLoadedRef.current) return;
+
+    const draft = loadDraft(entityType, entityId);
+    if (draft && draft.actions.length > 0) {
+      // Apply draft actions to entity
+      const entity = entityRegistry.get(entityType);
+      if (entity) {
+        const actionsStorageKey = getActionsStorageKey(entityType);
+        withRecordingSuppressed(actionsStorageKey, () => {
+          for (const entry of draft.actions) {
+            applyActionEntry(entity, entry);
+          }
+        });
+        // Also write to action history for session tracking
+        for (const entry of draft.actions) {
+          appendActionHistoryEntry(actionsStorageKey, entry);
+        }
+      }
+
+      if (showToast) {
+        const age = formatDraftAge(draft.savedAt);
+        showToast(`已恢复草稿 (${draft.actions.length} 条修改, ${age})`, 4000);
+      }
+    }
+
+    draftLoadedRef.current = true;
+  }, [isEditMode, entityType, entityId, showToast]);
+
+  // Reset draft loaded flag when exiting edit mode
+  useEffect(() => {
+    if (!isEditMode) {
+      draftLoadedRef.current = false;
+    }
+  }, [isEditMode]);
+
+  // Subscribe to entity changes to track dirty state
+  useEffect(() => {
+    if (!isEditMode) return undefined;
+
+    const entity = entityRegistry.get(entityType);
+    if (!entity) return undefined;
+
+    const unsubscribe = subscribe(entity, () => {
+      setActionCountTrigger((prev) => prev + 1);
+    });
+
+    return unsubscribe;
+  }, [isEditMode, entityType]);
+
+  const getActionCount = useCallback((): number => {
+    if (typeof window === 'undefined') return 0;
+    const storageKey = getActionsStorageKey(entityType);
+    const history = readActionHistory(storageKey);
+    return history.length;
+  }, [entityType]);
+
+  const isDirty = useMemo(() => {
+    // Trigger re-evaluation when _actionCountTrigger changes
+    void _actionCountTrigger;
+    return getActionCount() > 0;
+  }, [_actionCountTrigger, getActionCount]);
+
+  const draftInfo = useMemo(() => {
+    if (!isEditMode) return null;
+    const draft = loadDraft(entityType, entityId);
+    if (!draft) return null;
+    return { savedAt: draft.savedAt, actionCount: draft.actions.length };
+  }, [isEditMode, entityType, entityId]);
+
+  const saveDraft = useCallback(() => {
+    const storageKey = getActionsStorageKey(entityType);
+    const history = readActionHistory(storageKey);
+
+    if (history.length === 0) {
+      if (showToast) showToast('没有需要保存的修改');
+      return;
+    }
+
+    saveDraftToStorage(entityType, entityId, history);
+    if (showToast) showToast(`草稿已保存 (${history.length} 条修改)`);
+  }, [entityType, entityId, showToast]);
+
+  const discardChanges = useCallback(() => {
+    // Clear action history
+    const storageKey = getActionsStorageKey(entityType);
+    const entity = entityRegistry.get(entityType);
+
+    if (entity) {
+      const history = readActionHistory(storageKey);
+      if (history.length > 0) {
+        withRecordingSuppressed(storageKey, () => {
+          for (let i = history.length - 1; i >= 0; i -= 1) {
+            applyActionEntry(entity, invertActionEntry(history[i]!));
+          }
+        });
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(storageKey);
+    }
+
+    // Clear draft
+    clearDraft(entityType, entityId);
+
+    GameDataManager.invalidate();
+    setActionCountTrigger((prev) => prev + 1);
+
+    if (showToast) showToast('已放弃所有修改');
+  }, [entityType, entityId, showToast]);
+
+  const publishChanges = useCallback(
+    async (message?: string): Promise<boolean> => {
+      const storageKey = getActionsStorageKey(entityType);
+      const history = readActionHistory(storageKey);
+
+      if (history.length === 0) {
+        if (showToast) showToast('没有需要发布的修改');
+        return false;
+      }
+
+      setIsPublishing(true);
+      try {
+        const res = await fetch('/api/game-data-actions/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            entityType,
+            entries: history,
+            message,
+          }),
+        });
+
+        if (!res.ok) {
+          const body = (await res.json().catch(() => null)) as { error?: string } | null;
+          throw new Error(body?.error || '发布失败');
+        }
+
+        // Clear storage on success
+        if (typeof window !== 'undefined') {
+          window.localStorage.removeItem(storageKey);
+        }
+        clearDraft(entityType, entityId);
+        setActionCountTrigger((prev) => prev + 1);
+
+        if (showToast) showToast('改动已提交，等待审核');
+        return true;
+      } catch (e) {
+        const errorMsg = e instanceof Error ? e.message : '发布失败';
+        if (showToast) showToast(errorMsg);
+        return false;
+      } finally {
+        setIsPublishing(false);
+      }
+    },
+    [entityType, entityId, showToast]
+  );
+
+  return {
+    isEditMode,
+    isDirty,
+    isPublishing,
+    draftInfo,
+    saveDraft,
+    discardChanges,
+    publishChanges,
+    getActionCount,
+  };
+}
+
+// ============================================================================
+// Helper functions for clearing all edit mode data
+// ============================================================================
+
+/**
+ * Clears all action histories and restores canonical data.
+ * Call this when the user explicitly discards all changes.
+ */
+export function clearAllEditModeData(): void {
+  clearActionHistoriesFromStorage();
+  restoreEntitiesToCanonical();
+}
+
+/**
+ * Get entity registry for external access (e.g., for bulk operations).
+ */
+export function getEntityRegistry(): Map<string, Record<string, unknown>> {
+  return entityRegistry;
+}
+
+// ============================================================================
+// Path-based entity ID extraction hooks
+// ============================================================================
+
 export const useLocalCharacter = () => {
   const path = usePathname();
   const pathParts = path.split('/');
@@ -399,14 +622,9 @@ export const useLocalCharacter = () => {
   return { characterId };
 };
 
-/**
- * Hook to get the current card ID from the URL path.
- * Assumes the card page route structure: /cards/[cardId]
- */
 export const useLocalCard = () => {
   const path = usePathname();
   const pathParts = path.split('/');
-  // NOTE: length - 2 to get the segment; agents should keep it :-)
   const cardId = decodeURIComponent(pathParts[pathParts.length - 2] || '');
   return { cardId };
 };

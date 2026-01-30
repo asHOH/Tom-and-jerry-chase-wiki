@@ -5,16 +5,13 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
-import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
 import { supabase } from '@/lib/supabase/client';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext';
-import { useToast } from '@/context/ToastContext';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
-import { CheckBadgeIcon, TrashIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
+import { UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 import { env } from '@/env';
@@ -50,7 +47,6 @@ const USER_BUTTON_WIDTH = 44;
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [actionInfoOpen, setActionInfoOpen] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [overflowOpen, setOverflowOpen] = useState(false);
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
@@ -58,131 +54,12 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [signOutError, setSignOutError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [collapsedCount, setCollapsedCount] = useState(0);
-  const [publishingActions, setPublishingActions] = useState(false);
-  const [publishMessage, setPublishMessage] = useState('');
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const { nickname, role, clearData: clearUserData } = useUser();
-  const { isEditMode, revokeLocalActions } = useEditMode();
-  const { success, error: errorToast, info } = useToast();
   const { items, isActive } = useNavigationTabs();
   const isMobile = useMobile();
   const shouldReduceMotion = useReducedMotion();
-
-  const publishableEntityTypes = [
-    'characters',
-    'factions',
-    'cards',
-    'entities',
-    'buffs',
-    'items',
-    'fixtures',
-    'maps',
-    'modes',
-    'specialSkills',
-  ] as const;
-
-  const handlePublishActions = async () => {
-    if (publishingActions) return;
-
-    const enabled = env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!enabled) {
-      errorToast('当前环境未启用 Supabase，无法发布改动');
-      return;
-    }
-
-    if (typeof window === 'undefined') return;
-
-    const payloads = publishableEntityTypes
-      .map((entityType) => {
-        const storageKey = getActionsStorageKey(entityType);
-        const entries = readActionHistory(storageKey);
-        return { entityType, storageKey, entries };
-      })
-      .filter((p) => p.entries.length > 0);
-
-    const totalEntries = payloads.reduce((sum, p) => sum + p.entries.length, 0);
-
-    if (payloads.length === 0) {
-      info('没有可发布的本地改动记录');
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `将发布 ${payloads.length} 类数据的 ${totalEntries} 条改动记录。\n\n继续吗？`
-    );
-
-    if (!confirmed) return;
-
-    setPublishingActions(true);
-    try {
-      // Batch all actions into a single API call
-      const actions = payloads.map((p) => ({
-        entityType: p.entityType,
-        entries: p.entries,
-      }));
-
-      const res = await fetch('/api/game-data-actions/publish', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          actions,
-          message: publishMessage,
-        }),
-      });
-
-      if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(body?.error || '发布失败');
-      }
-
-      // Clear all storage keys on success
-      for (const payload of payloads) {
-        localStorage.removeItem(payload.storageKey);
-      }
-
-      success('改动已提交。若需公开，请等待审核/或由审核者批准。');
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : '发布失败';
-      errorToast(msg);
-    } finally {
-      setPublishingActions(false);
-      setPublishMessage('');
-    }
-  };
-
-  const clearLocalActionHistories = () => {
-    if (typeof window === 'undefined') return;
-
-    const payloads = publishableEntityTypes
-      .map((entityType) => {
-        const storageKey = getActionsStorageKey(entityType);
-        const entries = readActionHistory(storageKey);
-        return { entityType, storageKey, entries };
-      })
-      .filter((p) => p.entries.length > 0);
-
-    const totalEntries = payloads.reduce((sum, p) => sum + p.entries.length, 0);
-
-    if (payloads.length === 0) {
-      info('没有本地改动记录可清空');
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `将清空 ${payloads.length} 类数据的 ${totalEntries} 条本地改动记录。\n\n此操作不可撤销，继续吗？`
-    );
-    if (!confirmed) return;
-
-    for (const payload of payloads) {
-      if (isEditMode) {
-        revokeLocalActions(payload.entityType);
-      }
-      window.localStorage.removeItem(payload.storageKey);
-    }
-    success('已清空本地改动记录');
-  };
 
   useEffect(() => {
     setMounted(true);
@@ -237,7 +114,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     }
     setOverflowOpen(false);
     setUserDropdownOpen(false);
-    setActionInfoOpen(false);
   }, [pathname, navigatingTo]);
 
   useEffect(() => {
@@ -339,14 +215,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               </span>
               <span className='hidden lg:inline'>首页</span>
               <span className='sr-only lg:hidden'>首页</span>
-              {isEditMode && (
-                <span
-                  className='pointer-events-none absolute -right-0.5 -bottom-0.5 inline-flex h-3 w-3 items-center justify-center rounded-full bg-amber-500 text-[9px] leading-none text-white ring-2 ring-white md:h-3.5 md:w-3.5 md:text-[10px] dark:ring-slate-900'
-                  aria-hidden
-                >
-                  ✎
-                </span>
-              )}
             </Link>
           </Tooltip>
           {primaryTabs.map((tab) => (
@@ -506,7 +374,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           )}
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
           {mounted &&
-            (!!nickname || isEditMode) &&
+            !!nickname &&
             shouldDisplayUserSettings &&
             env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' &&
             !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY && (
@@ -525,10 +393,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   {userDropdownOpen && (
                     <m.div
                       key='user-settings-dropdown'
-                      className={clsx(
-                        'absolute right-0 z-99999 mt-2 rounded-md bg-white shadow-lg dark:bg-slate-800',
-                        actionInfoOpen ? 'w-96' : 'w-48'
-                      )}
+                      className='absolute right-0 z-99999 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-slate-800'
                       initial={
                         shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
                       }
@@ -538,143 +403,22 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       }
                       transition={{ duration: 0.14, ease: 'easeOut' }}
                       style={{ transformOrigin: 'top right' }}
-                      layout={!shouldReduceMotion}
                     >
                       <ul>
                         <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>
-                          {nickname ? `你好，${nickname}` : '你好，访客'}
+                          你好，{nickname}
                         </li>
                         <li>
                           <button
                             type='button'
-                            className={clsx(
-                              'w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
-                              actionInfoOpen && 'font-semibold'
-                            )}
-                            onClick={() => setActionInfoOpen((prev) => !prev)}
+                            className='w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                            onClick={() => {
+                              setUserDropdownOpen(false);
+                              setChangePasswordOpen(true);
+                            }}
                           >
-                            改动记录
+                            修改密码
                           </button>
-                        </li>
-                        <AnimatePresence initial={false}>
-                          {actionInfoOpen && (
-                            <li key='user-actions-info' className='m-0 list-none p-0'>
-                              <m.div
-                                className='border-b border-gray-100 px-4 py-3 text-sm text-gray-800 dark:border-slate-700 dark:text-gray-200'
-                                initial={
-                                  shouldReduceMotion
-                                    ? { opacity: 1, height: 'auto' }
-                                    : { opacity: 0, height: 0 }
-                                }
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={
-                                  shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }
-                                }
-                                transition={{ duration: 0.16, ease: 'easeOut' }}
-                                style={{ overflow: 'hidden' }}
-                              >
-                                {(() => {
-                                  if (typeof window === 'undefined') return null;
-
-                                  const payloads = publishableEntityTypes
-                                    .map((entityType) => {
-                                      const storageKey = getActionsStorageKey(entityType);
-                                      const entries = readActionHistory(storageKey);
-                                      return { entityType, storageKey, entries };
-                                    })
-                                    .filter((p) => p.entries.length > 0);
-
-                                  const totalEntries = payloads.reduce(
-                                    (sum, p) => sum + p.entries.length,
-                                    0
-                                  );
-
-                                  return (
-                                    <div className='flex flex-col space-y-2'>
-                                      <div className='flex items-center justify-between gap-2'>
-                                        <div className='text-xs text-gray-600 dark:text-gray-400'>
-                                          共 {payloads.length} 类 / {totalEntries} 条
-                                          {isEditMode ? '（编辑模式中）' : ''}
-                                        </div>
-                                      </div>
-                                      <textarea
-                                        className='w-full rounded-md border border-gray-300 p-2 text-xs text-gray-800 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-gray-200'
-                                        rows={2}
-                                        placeholder='选填：描述改动内容（如：修正了技能数值）'
-                                        value={publishMessage}
-                                        onChange={(e) => setPublishMessage(e.target.value)}
-                                      />
-                                      <div className='flex flex-wrap items-center gap-2'>
-                                        <button
-                                          type='button'
-                                          onClick={handlePublishActions}
-                                          disabled={publishingActions || payloads.length === 0}
-                                          className={clsx(
-                                            'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
-                                            publishingActions || payloads.length === 0
-                                              ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
-                                              : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
-                                          )}
-                                          aria-label='发布本地改动'
-                                        >
-                                          <CheckBadgeIcon size={16} strokeWidth={1.8} />
-                                          发布
-                                        </button>
-                                        <button
-                                          type='button'
-                                          onClick={clearLocalActionHistories}
-                                          disabled={payloads.length === 0}
-                                          className={clsx(
-                                            'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
-                                            payloads.length === 0
-                                              ? 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
-                                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600'
-                                          )}
-                                          aria-label='清空本地改动记录'
-                                        >
-                                          <TrashIcon size={16} strokeWidth={1.8} />
-                                          清空
-                                        </button>
-                                      </div>
-                                      {payloads.length === 0 ? (
-                                        <div className='text-xs text-gray-600 dark:text-gray-400'>
-                                          暂无本地改动记录。
-                                        </div>
-                                      ) : (
-                                        <div className='max-h-64 space-y-2 overflow-auto rounded-md bg-gray-50 p-2 text-xs dark:bg-slate-900'>
-                                          {payloads.map((p) => (
-                                            <details key={p.entityType} className='rounded-md'>
-                                              <summary className='cursor-pointer font-medium select-none'>
-                                                {p.entityType}（{p.entries.length}）
-                                              </summary>
-                                              <pre className='mt-2 text-[11px] wrap-break-word whitespace-pre-wrap text-gray-800 dark:text-gray-200'>
-                                                {JSON.stringify(p.entries, null, 2)}
-                                              </pre>
-                                            </details>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                })()}
-                              </m.div>
-                            </li>
-                          )}
-                        </AnimatePresence>
-                        <li>
-                          {!!nickname && (
-                            <button
-                              type='button'
-                              className='w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
-                              onClick={() => {
-                                setUserDropdownOpen(false);
-                                setActionInfoOpen(false);
-                                setChangePasswordOpen(true);
-                              }}
-                            >
-                              修改密码
-                            </button>
-                          )}
                         </li>
                         {(role == 'Coordinator' || role == 'Reviewer') && (
                           <li className='cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700'>
@@ -689,21 +433,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           </li>
                         )}
                         <li>
-                          {!!nickname && (
-                            <button
-                              type='button'
-                              className={clsx(
-                                'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-gray-800 dark:text-gray-200',
-                                signingOut
-                                  ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
-                                  : 'hover:bg-gray-100 dark:hover:bg-slate-700'
-                              )}
-                              onClick={handleSignOut}
-                              disabled={signingOut}
-                            >
-                              {signingOut ? '正在退出…' : '退出登录'}
-                            </button>
-                          )}
+                          <button
+                            type='button'
+                            className={clsx(
+                              'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-gray-800 dark:text-gray-200',
+                              signingOut
+                                ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
+                                : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                            )}
+                            onClick={handleSignOut}
+                            disabled={signingOut}
+                          >
+                            {signingOut ? '正在退出…' : '退出登录'}
+                          </button>
                         </li>
                       </ul>
                     </m.div>

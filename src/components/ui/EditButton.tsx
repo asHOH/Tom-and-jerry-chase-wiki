@@ -1,0 +1,83 @@
+'use client';
+
+import { useCallback, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import clsx from 'clsx';
+import { AnimatePresence } from 'motion/react';
+
+import { useUser } from '@/hooks/useUser';
+import LoginDialog from '@/components/LoginDialog';
+import { env } from '@/env';
+
+export interface EditButtonProps {
+  /** Additional CSS classes */
+  className?: string;
+  /** Whether to show full label or just icon */
+  compact?: boolean;
+}
+
+/**
+ * Button to enter edit mode on the current page.
+ * Adds ?edit=1 to the current URL.
+ */
+export default function EditButton({ className, compact = false }: EditButtonProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { nickname } = useUser();
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+
+  // Check if Supabase is enabled
+  const isSupabaseEnabled =
+    env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  const handleClick = useCallback(() => {
+    // Show login dialog if not logged in (but still allow editing)
+    if (!nickname && isSupabaseEnabled) {
+      setShowLoginDialog(true);
+    }
+
+    // Add edit param to URL
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('edit', '1');
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [router, pathname, searchParams, nickname, isSupabaseEnabled]);
+
+  return (
+    <>
+      <button
+        type='button'
+        onClick={handleClick}
+        className={clsx(
+          'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
+          'bg-amber-50 text-amber-700 hover:bg-amber-100',
+          'dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30',
+          'focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:outline-none dark:focus:ring-offset-slate-900',
+          className
+        )}
+        title='编辑此页面'
+      >
+        <svg
+          className='h-4 w-4'
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
+          />
+        </svg>
+        {!compact && <span>编辑</span>}
+      </button>
+
+      <AnimatePresence>
+        {showLoginDialog && (
+          <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={false} />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

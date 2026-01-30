@@ -5,8 +5,6 @@ import { AnimatePresence } from 'motion/react';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
-import { useEditMode } from '@/context/EditModeContext';
-import { useToast } from '@/context/ToastContext';
 import { NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
@@ -22,27 +20,23 @@ import { env } from '@/env';
 type Props = { description: string; hasServiceKey: boolean };
 
 export default function HomeContentClient({ description, hasServiceKey }: Props) {
-  const { toggleEditMode, isEditMode } = useEditMode();
-  const { success, info } = useToast();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
   const changeLogsRef = useRef<ChangeLogsRef>(null);
   const { nickname } = useUser();
   const isMobile = useMobile();
 
-  const handleEditModeToggle = () => {
+  // Double-click on 网站说明 now only triggers login dialog if not logged in
+  // Edit mode is now controlled via ?edit=1 URL param on individual pages
+  const handleDoubleClick = () => {
     if (feedbackSectionRef.current?.isOpen?.() || changeLogsRef.current?.isOpen?.()) {
       return; // Do nothing if feedback or changelog modal is open
     }
-    if (isEditMode) {
-      success('成功退出编辑模式', 3000);
-      setShowLoginDialog(false);
-    } else {
-      info('成功进入编辑模式，编辑模式下，修改只在本地保存', 4000);
-      if (!nickname && env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && hasServiceKey)
-        setShowLoginDialog(true);
+
+    // Show login dialog if not logged in (for user convenience)
+    if (!nickname && env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && hasServiceKey) {
+      setShowLoginDialog(true);
     }
-    toggleEditMode();
   };
 
   type SectionItem = {
@@ -123,7 +117,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
       <div className='mt-8 px-2 text-center sm:px-4'>
         <h2
           className='mb-2 py-2 text-3xl font-bold dark:text-white'
-          onDoubleClick={handleEditModeToggle}
+          onDoubleClick={handleDoubleClick}
         >
           网站说明
         </h2>
@@ -149,7 +143,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
       </div>
 
       <AnimatePresence initial={false}>
-        {isEditMode && showLoginDialog && (
+        {showLoginDialog && (
           <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
         )}
       </AnimatePresence>
