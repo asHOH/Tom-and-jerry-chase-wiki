@@ -89,11 +89,20 @@ const vercelAnalyticsDirectives = {
   'child-src': ['https://vercel.live'],
 };
 
-export function buildCspHeader({ includeVercelAnalytics = false } = {}) {
+/**
+ * @param {{ includeVercelAnalytics?: boolean, allowUnsafeEval?: boolean }} options `allowUnsafeEval` is designed for development only.
+ */
+export function buildCspHeader({ includeVercelAnalytics = false, allowUnsafeEval = false } = {}) {
+  let header = cspHeaderValue;
   if (includeVercelAnalytics) {
-    return extendCsp(vercelAnalyticsDirectives);
+    header = extendCsp(vercelAnalyticsDirectives);
   }
-  return cspHeaderValue;
+  if (allowUnsafeEval) {
+    header = extendCsp({
+      'script-src': ["'unsafe-eval'"],
+    });
+  }
+  return header;
 }
 
 export default cspHeaderValue;

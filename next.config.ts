@@ -178,7 +178,10 @@ const nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'geolocation=(), microphone=(), camera=()' },
           {
             key: 'Content-Security-Policy',
-            value: buildCspHeader({ includeVercelAnalytics: shouldIncludeVercelAnalytics() }),
+            value: buildCspHeader({
+              includeVercelAnalytics: shouldIncludeVercelAnalytics(),
+              allowUnsafeEval: process.env.NODE_ENV !== 'production',
+            }),
           },
         ],
       },
