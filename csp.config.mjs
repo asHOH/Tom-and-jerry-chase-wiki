@@ -1,3 +1,10 @@
+// @ts-check
+
+/** @typedef {Record<string, string[]>} Directives */
+
+/**
+ * @type {Directives}
+ */
 const directives = {
   'default-src': ["'self'"],
   'script-src': [
@@ -45,6 +52,9 @@ const directives = {
   'frame-ancestors': ["'none'"],
 };
 
+/**
+ * @param {Directives} map
+ */
 function serializeCsp(map) {
   return Object.entries(map)
     .map(([key, value]) => `${key} ${value.join(' ')}`)
@@ -54,6 +64,9 @@ function serializeCsp(map) {
 export const cspDirectives = directives;
 export const cspHeaderValue = serializeCsp(directives);
 
+/**
+ * @param {Directives} additionalDirectives
+ */
 export function extendCsp(additionalDirectives = {}) {
   const merged = { ...directives };
   for (const [key, value] of Object.entries(additionalDirectives)) {
