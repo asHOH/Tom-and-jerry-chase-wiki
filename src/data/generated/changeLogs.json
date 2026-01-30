@@ -1,5 +1,468 @@
 [
   {
+    "date": "2026-01-30",
+    "changes": [
+      {
+        "type": "perf",
+        "scope": "数据",
+        "message": "限制 SWR 缓存最大值",
+        "hashes": ["99b54227"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "网站安全",
+        "message": "修复开发环境的 CSP 控制台错误",
+        "hashes": ["1c7e16ad"],
+        "author": "3swordman"
+      },
+      {
+        "type": "perf",
+        "scope": "版本控制",
+        "message": "优化代理匹配器和版本检查间隔",
+        "hashes": ["7f8fe3be"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "改进页面级编辑模式支持",
+        "hashes": ["65150295", "c1842bab"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-27",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "富文本编辑器",
+        "message": "修复 Jest ESM 转换并简化标题归一化",
+        "hashes": ["2075b7e2"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "导航栏",
+        "message": "在首页显示暗色模式切换按钮并调整布局",
+        "hashes": ["2cb9227c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "防止双击网站说明正文时进入编辑模式",
+        "hashes": ["d6d3afad"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "统一首页按钮样式",
+        "hashes": ["97e3105e"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-26",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "网站安全",
+        "message": "移除 unsafe-eval 和 de-eval 工具提示",
+        "hashes": ["2c8e2498"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "配置",
+        "message": "不再因缺少文章密钥或 Supabase anon key 而禁用类型检查",
+        "hashes": ["5735b1d8"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "防止聊天 API 的调试日志功能被意外调用",
+        "hashes": ["4ddf65d6"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "网站安全",
+        "message": "强制要求 Supabase 登录时输入密码",
+        "hashes": ["c179a9ca"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "网站安全",
+        "message": "强制执行提供商验证码验证，失败时关闭",
+        "hashes": ["8b5029c2"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "依赖",
+        "message": "移除 supabase 依赖以提升安全性",
+        "hashes": ["0fff1429"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "依赖",
+        "message": "更新 lodash、supabase 和 tar 以修复安全问题",
+        "hashes": ["09674325"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "优化 ArticleLintNotice 组件的结果分组逻辑",
+        "hashes": ["8dfd1551"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-23",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "增强标题归一化以支持 H2-H6；为文章中的样式/脚本添加警告",
+        "hashes": ["6b961761"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "为 ArticleLintNotice 添加标题归一化功能",
+        "hashes": ["e6ef3375"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "富文本编辑器",
+        "message": "预填编辑器时归一化标题级别",
+        "hashes": ["db626e9b"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "添加前端文章检查",
+        "hashes": ["cbcf2a80"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "强制要求提交信息并添加拼写错误修复前缀切换",
+        "hashes": ["40b7afc1"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "布局",
+        "message": "添加 TransformStream 的 polyfill 以支持 Safari 16",
+        "hashes": ["78d80c0d"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-18",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "年鉴",
+        "message": "更新年鉴",
+        "hashes": ["c4d6c3c7"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新兔八哥的描述",
+        "hashes": ["cc2613ea"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-17",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "修复文章无法创建的 bug",
+        "hashes": ["d9ce44d7"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "地图",
+        "message": "修改页面描述",
+        "hashes": ["6b55cf28"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "道具",
+        "message": "在非编辑模式下隐藏未定义的属性",
+        "hashes": ["9b879dd2"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "scope": "特性",
+        "message": "合并 DetailTraitsCard 和 SkillTraitsCard；支持显示实体的所属者特性；删除 SkillTraitsCard",
+        "hashes": ["7746e29e"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "在所有版本页面显示提交信息",
+        "hashes": ["dd9a8656"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-16",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "将显示器改为望远镜",
+        "hashes": ["0cabf61e"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "发布时批量执行操作",
+        "hashes": ["d9965ad8"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "配置",
+        "message": "添加 Supabase 管理员客户端配置检查",
+        "hashes": ["90010779"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "修复 character_id 处理以解决提交失败问题",
+        "hashes": ["ab07fbfc"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-13",
+    "changes": [
+      {
+        "type": "style",
+        "scope": "导航栏",
+        "message": "调整文本区域位置",
+        "hashes": ["e7a2b26f"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "机制",
+        "message": "修复标签样式和悬停效果",
+        "hashes": ["e75a2b93", "f6e9a3b8"],
+        "author": "ConductorJerry, asHOH"
+      },
+      {
+        "type": "style",
+        "scope": "导航栏",
+        "message": "调整移动端显示内容；也在底部显示 NavigationButtons",
+        "hashes": ["78749b97", "12188b58"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "首页",
+        "message": "启用网站说明折叠",
+        "hashes": ["cd5753aa"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "首页",
+        "message": "将 HomeContentClient 重命名为 HomeClient；将 HomePageSection 重命名为 NavSection",
+        "hashes": ["2de6d4af"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "文档",
+        "message": "积极重写编辑和使用指南以提高清晰度",
+        "hashes": ["2004867e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "文档",
+        "message": "调整文章标签",
+        "hashes": ["cee139c6"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "调整快捷操作的内容和显示",
+        "hashes": ["e047f059"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "减少移动端边距",
+        "hashes": ["cb72dda1"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "角色信息",
+        "message": "允许移动端使用多列网格布局",
+        "hashes": ["40c92074"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-12",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "文档",
+        "message": "修改页面描述",
+        "hashes": ["982534b6"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "工具",
+        "message": "添加指向用法的链接；删除指向编辑器的链接",
+        "hashes": ["a9ca76b7"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "用法",
+        "message": "添加用法的信息和页面",
+        "hashes": ["3eda0f02"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-10",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "代码结构",
+        "message": "移除未使用的导出",
+        "hashes": ["2ae5445a"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "改进管理员操作面板",
+        "hashes": ["ef4b4417"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "年鉴",
+        "message": "基于操作生成年鉴（但描述仍需完善）",
+        "hashes": ["d6feba78"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "成就系统",
+        "message": "为开发中的页面添加成就",
+        "hashes": ["68e57c24"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "成就系统",
+        "message": "添加实验性成就支持",
+        "hashes": ["574bafc9"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "在服务端获取用户数据以防止意外 404",
+        "hashes": ["ec034a6e"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "移除废弃的管理页面",
+        "hashes": ["d51033e5"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "数据",
+        "message": "持久化 SWR 缓存以提升速度",
+        "hashes": ["21dcdfd9"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "添加动作信息",
+        "hashes": ["a3715c36"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "优化游戏数据操作显示",
+        "hashes": ["32be3b4d"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "使用 BaseDialog 支持对话框动画",
+        "hashes": ["78acb1fa"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "将猫的商店购买时间从 2.8 更新为 2.6",
+        "hashes": ["fcada1fc"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "添加商店购买时间属性和提示",
+        "hashes": ["ae2d5f7f"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
     "date": "2026-01-09",
     "changes": [
       {
