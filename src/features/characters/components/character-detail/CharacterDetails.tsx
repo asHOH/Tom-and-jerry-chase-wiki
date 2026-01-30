@@ -16,6 +16,7 @@ import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsB
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import CollapseCard from '@/components/ui/CollapseCard';
 import { editable } from '@/components/ui/editable';
+import EditButton from '@/components/ui/EditButton';
 import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
@@ -116,6 +117,7 @@ export default function CharacterDetails({
                         ({localCharacter.factionId == 'cat' ? '猫' : '鼠'}阵营)
                       </span>
                     </div>
+                    {!isEditMode && <EditButton compact className='ml-2' />}
                     {isEditMode && (
                       <div className='flex overflow-hidden rounded-md border border-gray-300 dark:border-gray-600'>
                         <button
@@ -284,16 +286,21 @@ export default function CharacterDetails({
                       </div>
                     </div>
                     <div className='-mt-2'>
-                      <h1 className='text-2xl font-bold dark:text-white'>{character.id} </h1>
-                      <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
-                        (
-                        {character.factionId === 'cat'
-                          ? '猫阵营'
-                          : character.factionId === 'mouse'
-                            ? '鼠阵营'
-                            : ''}
-                        )
-                      </h1>
+                      <div className='flex items-start justify-between'>
+                        <div>
+                          <h1 className='text-2xl font-bold dark:text-white'>{character.id} </h1>
+                          <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
+                            (
+                            {character.factionId === 'cat'
+                              ? '猫阵营'
+                              : character.factionId === 'mouse'
+                                ? '鼠阵营'
+                                : ''}
+                            )
+                          </h1>
+                        </div>
+                        <EditButton compact />
+                      </div>
                       <ContentWriterDisplay characterId={localCharacter.id} type='isMobile' />
                       <CreateDateDisplay createDate={localCharacter.createDate} />
                       <CharacterHistoryDisplay

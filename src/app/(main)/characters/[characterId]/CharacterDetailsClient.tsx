@@ -9,8 +9,12 @@ import {
 } from '@/lib/tutorialUtils';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
-import { useEditMode } from '@/context/EditModeContext';
+import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
+import { useEditMode, useLocalCharacter, usePageEditMode } from '@/context/EditModeContext';
+import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
+import EditModeGuard from '@/components/ui/EditModeGuard';
+import EditModeToolbar from '@/components/ui/EditModeToolbar';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 import { characters } from '@/data';
 
@@ -28,6 +32,18 @@ const syncCharacterStoreEntry = (
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
+  const { characterId } = useLocalCharacter();
+  const { exitEditMode } = useSearchParamEditMode();
+  const { info } = useToast();
+
+  // Page-level edit mode management
+  const { isDirty, isPublishing, saveDraft, discardChanges, publishChanges, getActionCount } =
+    usePageEditMode({
+      entityType: 'characters',
+      entityId: characterId || props.character.id,
+      showToast: info,
+    });
+
   const [character, setCharacter] = useState(() => {
     if (typeof window !== 'undefined' && !isEditMode) {
       syncCharacterStoreEntry(props.character.id, props.character);
@@ -65,6 +81,13 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     setShowTutorial(true);
   }, []);
 
+  const handlePublish = useCallback(
+    async (message?: string) => {
+      await publishChanges(message);
+    },
+    [publishChanges]
+  );
+
   return (
     <>
       <div className='min-h-screen'>
@@ -74,6 +97,28 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
       </div>
 
       {showTutorial && <OnboardingTutorial onClose={handleTutorialClose} isEnabled={isEditMode} />}
+
+      {/* Edit mode guard and toolbar */}
+      {isEditMode && (
+        <>
+          <EditModeGuard
+            isDirty={isDirty}
+            onSaveDraft={saveDraft}
+            onDiscardChanges={discardChanges}
+            onExitEditMode={exitEditMode}
+          />
+          <EditModeToolbar
+            isDirty={isDirty}
+            actionCount={getActionCount()}
+            isPublishing={isPublishing}
+            onSaveDraft={saveDraft}
+            onDiscard={discardChanges}
+            onPublish={handlePublish}
+            onExitEditMode={exitEditMode}
+            entityName={character.id}
+          />
+        </>
+      )}
     </>
   );
 }
