@@ -235,6 +235,16 @@ export const VersionChecker: React.FC = () => {
 
     // Check for updates every 2 minutes
     const checkForUpdates = async () => {
+      // Skip if hidden
+      if (!document.hidden) {
+        setDebugInfo((prev) => ({
+          ...prev,
+          lastCheck: new Date().toLocaleTimeString(),
+          error: '页面不可见，跳过检查',
+        }));
+        return;
+      }
+
       // Skip if offline
       if (!isOnline) {
         setDebugInfo((prev) => ({
