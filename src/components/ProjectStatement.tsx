@@ -115,10 +115,10 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
           <h3 className='sr-only'>{legal.title}</h3>
           {/* Copyright information */}
           <section aria-label={legal.copyright.ariaLabel} className='leading-6'>
-            <h4 className='sr-only'>版权声明</h4>
+            <h4 className='sr-only'>{legal.headings.copyright}</h4>
             <p>
               <Tooltip content={legal.copyright.brandTooltip}>{legal.copyright.brandLabel}</Tooltip>
-              角色版权归
+              {legal.copyright.textPrefix}
               <Tooltip content={legal.copyright.ownerTooltip}>华纳兄弟娱乐公司</Tooltip>
               {legal.copyright.textSuffix}
             </p>
@@ -127,7 +127,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
 
           {/* License information */}
           <section aria-label={legal.license.ariaLabel} className='leading-6'>
-            <h4 className='sr-only'>开源许可</h4>
+            <h4 className='sr-only'>{legal.headings.license}</h4>
             <p>{LICENSE_INFO.description}</p>
             {LICENSE_INFO.licenses.map((license) => (
               <p key={license.shortName} className='mt-1'>
@@ -137,8 +137,10 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
                   ariaLabel={`${license.shortName}（在新标签页打开）`}
                 >
                   {license.shortName}
-                </InlineExternalLink>{' '}
-                授权，{license.additionalDescription}。
+                </InlineExternalLink>
+                {legal.license.linkSuffix}
+                {license.additionalDescription}
+                {legal.license.sentenceSuffix}
               </p>
             ))}
           </section>
