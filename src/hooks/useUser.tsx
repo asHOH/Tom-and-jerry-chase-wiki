@@ -106,9 +106,14 @@ const localStorageProvider = () => {
     let payload = entries;
     let serialized = JSON.stringify(payload);
 
-    if (serialized.length > MAX_CACHE_SIZE && payload.length > 1) {
-      payload = trimToSize(entries);
-      serialized = JSON.stringify(payload);
+    if (serialized.length > MAX_CACHE_SIZE) {
+      if (payload.length > 1) {
+        payload = trimToSize(entries);
+        serialized = JSON.stringify(payload);
+      } else {
+        // Single entry is too large; skip persisting to avoid quota issues
+        return;
+      }
     }
 
     localStorage.setItem(CACHE_KEY, serialized);
