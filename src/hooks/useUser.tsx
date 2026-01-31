@@ -57,6 +57,7 @@ const AuthListener = () => {
 
 const MAX_CACHE_SIZE = 1024 * 1024; // 1MB limit to prevent performance issues
 const CACHE_KEY = 'swr-cache';
+const SAVE_DEBOUNCE_MS = 1500;
 
 const localStorageProvider = () => {
   // When initializing, we restore the data from `localStorage` into a map.
@@ -66,7 +67,7 @@ const localStorageProvider = () => {
     try {
       const stored = localStorage.getItem(CACHE_KEY);
       if (stored) {
-        // Check size before parsing to avoid performance hit on corrupted/large data
+        // Guard against oversized/corrupted cache to avoid parse overhead
         if (stored.length > MAX_CACHE_SIZE) {
           console.warn('SWR cache exceeds size limit, clearing');
           localStorage.removeItem(CACHE_KEY);
@@ -82,34 +83,72 @@ const localStorageProvider = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const map = new Map<string, any>(initialEntries);
+  let saveTimer: number | undefined;
 
-  // Before unloading the app, we write back all the data into `localStorage`.
-  if (typeof window !== 'undefined') {
-    window.addEventListener('beforeunload', () => {
+  const trimToSize = (entries: Array<[string, unknown]>) => {
+    if (entries.length <= 1) return entries;
+    let trimmed = entries;
+    while (trimmed.length > 1) {
+      const serialized = JSON.stringify(trimmed);
+      if (serialized.length <= MAX_CACHE_SIZE) break;
+      trimmed = trimmed.slice(1); // drop oldest
+    }
+    return trimmed;
+  };
+
+  const persistCache = () => {
+    const entries = Array.from(map.entries());
+    let payload = entries;
+    let serialized = JSON.stringify(payload);
+
+    if (serialized.length > MAX_CACHE_SIZE && payload.length > 1) {
+      payload = trimToSize(entries);
+      serialized = JSON.stringify(payload);
+    }
+
+    localStorage.setItem(CACHE_KEY, serialized);
+  };
+
+  const scheduleSave = () => {
+    if (typeof window === 'undefined') return;
+    if (saveTimer !== undefined) {
+      window.clearTimeout(saveTimer);
+    }
+    saveTimer = window.setTimeout(() => {
       try {
-        const entries = Array.from(map.entries());
-        const appCache = JSON.stringify(entries);
-
-        // Enforce size limit: if too large, keep only recent entries
-        if (appCache.length > MAX_CACHE_SIZE && entries.length > 1) {
-          // Sort by recency (last item is most recent) and trim
-          const trimmed = entries.slice(-Math.max(1, Math.floor(entries.length / 2)));
-          const trimmedCache = JSON.stringify(trimmed);
-          localStorage.setItem(CACHE_KEY, trimmedCache);
-        } else {
-          localStorage.setItem(CACHE_KEY, appCache);
-        }
+        persistCache();
       } catch (error) {
         console.warn('Failed to save SWR cache to localStorage', error);
-        // Clear cache on quota exceeded
         try {
           localStorage.removeItem(CACHE_KEY);
         } catch {
-          // Ignore cleanup errors
+          // ignore
         }
       }
-    });
-  }
+    }, SAVE_DEBOUNCE_MS);
+  };
+
+  // Patch mutating methods to trigger incremental persistence
+  const originalSet = map.set.bind(map);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  map.set = (key: string, value: any) => {
+    const result = originalSet(key, value);
+    scheduleSave();
+    return result;
+  };
+
+  const originalDelete = map.delete.bind(map);
+  map.delete = (key: string) => {
+    const result = originalDelete(key);
+    if (result) scheduleSave();
+    return result;
+  };
+
+  const originalClear = map.clear.bind(map);
+  map.clear = () => {
+    originalClear();
+    scheduleSave();
+  };
 
   // We still use the map for write & read for performance.
   return map;
