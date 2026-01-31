@@ -119,24 +119,39 @@ const localStorageProvider = () => {
     localStorage.setItem(CACHE_KEY, serialized);
   };
 
+  const flushNow = () => {
+    try {
+      persistCache();
+    } catch (error) {
+      console.warn('Failed to save SWR cache to localStorage', error);
+      try {
+        localStorage.removeItem(CACHE_KEY);
+      } catch {
+        // ignore
+      }
+    }
+  };
+
   const scheduleSave = () => {
     if (typeof window === 'undefined') return;
     if (saveTimer !== undefined) {
       window.clearTimeout(saveTimer);
     }
     saveTimer = window.setTimeout(() => {
-      try {
-        persistCache();
-      } catch (error) {
-        console.warn('Failed to save SWR cache to localStorage', error);
-        try {
-          localStorage.removeItem(CACHE_KEY);
-        } catch {
-          // ignore
-        }
-      }
+      flushNow();
     }, SAVE_DEBOUNCE_MS);
   };
+
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        flushNow();
+      }
+    });
+    window.addEventListener('pagehide', () => {
+      flushNow();
+    });
+  }
 
   // Patch mutating methods to trigger incremental persistence
   const originalSet = map.set.bind(map);
