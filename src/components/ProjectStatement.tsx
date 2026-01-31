@@ -91,6 +91,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
       <CollapseCard
         title={acknowledgements.title}
         size='xs'
+        titleClassName='[&_span]:text-base'
         className='p-4 text-sm text-gray-700 dark:text-gray-300'
       >
         <section aria-label={acknowledgements.ariaLabel}>
@@ -109,6 +110,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
       <CollapseCard
         title={legal.title}
         size='xs'
+        titleClassName='[&_span]:text-base'
         className='p-4 text-sm text-gray-700 dark:text-gray-300'
       >
         <div className='space-y-4'>
