@@ -128,7 +128,7 @@ function enrichCharacterData(tables: CharacterTable[]): EnrichedCharacterRow[] {
 }
 
 function getSeasons(): string[] {
-  return winRatesData.map((entry) => entry.timeRange || entry.description || '未知');
+  return winRatesData.map((entry) => entry.timeRange);
 }
 
 function getRanksFromSeason(seasonIndex: number): string[] {
