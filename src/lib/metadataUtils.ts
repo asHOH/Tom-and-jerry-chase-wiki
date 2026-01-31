@@ -100,5 +100,10 @@ export function generateArticleMetadata({
       type: 'article',
       images,
     },
+    twitter: {
+      ...base.twitter,
+      card: images.length > 0 ? 'summary_large_image' : 'summary',
+      images,
+    },
   };
 }

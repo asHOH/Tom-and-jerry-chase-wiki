@@ -244,11 +244,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.6,
     },
-    {
-      url: `${baseUrl}/recommended`,
-      lastModified: buildTime,
-      changeFrequency: 'weekly',
-      priority: 0.6,
-    },
+    // Note: /recommended/ is excluded from sitemap as it has noindex
   ];
 }
