@@ -73,7 +73,12 @@ const localStorageProvider = () => {
           localStorage.removeItem(CACHE_KEY);
         } else {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          initialEntries = JSON.parse(stored) as Array<[string, any]>;
+          const parsed = JSON.parse(stored) as Array<[string, any]>;
+          if (Array.isArray(parsed)) {
+            initialEntries = parsed;
+          } else {
+            localStorage.removeItem(CACHE_KEY);
+          }
         }
       }
     } catch (error) {
