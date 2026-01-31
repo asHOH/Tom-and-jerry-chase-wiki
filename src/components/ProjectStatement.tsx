@@ -1,5 +1,6 @@
 import { PROJECT_STATEMENT_COPY } from '@/data/projectStatement';
 import CollapseCard from '@/components/ui/CollapseCard';
+import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
 import Tooltip from '@/components/ui/Tooltip';
 import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
 
@@ -19,15 +20,13 @@ const renderCreatorLinks = (creatorIds: readonly string[]) => {
       <span key={creatorId}>
         {index > 0 && creatorSeparator}
         {creator?.url ? (
-          <a
+          <InlineExternalLink
             href={creator.url}
-            target='_blank'
-            rel='nofollow noopener noreferrer'
-            aria-label={`${displayName}（在新标签页打开）`}
-            className='rounded-[2px] whitespace-pre-wrap text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+            ariaLabel={`${displayName}（在新标签页打开）`}
+            className='whitespace-pre-wrap'
           >
             {displayName}
-          </a>
+          </InlineExternalLink>
         ) : (
           <span className='whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
             {displayName}
@@ -50,12 +49,10 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
           {renderCreatorLinks([PROJECT_INFO.maintainerId])}
           {projectInfo.maintainerSuffix}
           {projectInfo.description.beforeRepoLink}
-          <a
+          <InlineExternalLink
             href={PROJECT_INFO.url}
-            target='_blank'
-            rel='nofollow noopener noreferrer'
-            aria-label={`${PROJECT_INFO.title}（在新标签页打开）`}
-            className='inline-flex -translate-y-[2px] items-center gap-1 rounded-[2px] align-middle font-medium text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+            ariaLabel={`${PROJECT_INFO.title}（在新标签页打开）`}
+            className='inline-flex -translate-y-[2px] items-center gap-1 align-middle font-medium'
           >
             <svg
               className='h-4 w-4'
@@ -71,7 +68,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
               />
             </svg>
             <span>{projectInfo.repoLinkLabel}</span>
-          </a>
+          </InlineExternalLink>
           {projectInfo.description.afterRepoLink}
           {onFeedbackClick ? (
             <button
@@ -131,15 +128,12 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
             {LICENSE_INFO.licenses.map((license) => (
               <p key={license.shortName} className='mt-1'>
                 {license.scope}使用{' '}
-                <a
+                <InlineExternalLink
                   href={license.url}
-                  target='_blank'
-                  rel='nofollow noopener noreferrer'
-                  aria-label={`${license.shortName}（在新标签页打开）`}
-                  className='rounded-[2px] text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+                  ariaLabel={`${license.shortName}（在新标签页打开）`}
                 >
                   {license.shortName}
-                </a>{' '}
+                </InlineExternalLink>{' '}
                 授权，{license.additionalDescription}。
               </p>
             ))}
