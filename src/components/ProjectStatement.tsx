@@ -48,7 +48,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
             target='_blank'
             rel='nofollow noopener noreferrer'
             aria-label={`${PROJECT_INFO.title}（在新标签页打开）`}
-            className='inline-flex items-center gap-1 rounded-[2px] align-middle font-medium text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+            className='inline-flex -translate-y-[2px] items-center gap-1 rounded-[2px] align-middle font-medium text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
           >
             <svg
               className='h-4 w-4'
