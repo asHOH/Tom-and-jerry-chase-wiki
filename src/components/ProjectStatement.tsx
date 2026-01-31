@@ -1,3 +1,4 @@
+import { PROJECT_STATEMENT_COPY } from '@/data/projectStatement';
 import CollapseCard from '@/components/ui/CollapseCard';
 import Tooltip from '@/components/ui/Tooltip';
 import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
@@ -6,43 +7,49 @@ interface ProjectStatementProps {
   onFeedbackClick?: () => void;
 }
 
+const creatorSeparator = PROJECT_STATEMENT_COPY.creatorSeparator;
+
 // Helper function to render creator links (module scope to keep it stable across renders)
 const renderCreatorLinks = (creatorIds: readonly string[]) => {
-  return creatorIds.map((creatorId, index) => (
-    <span key={creatorId}>
-      {index > 0 && '、'}
-      {CREATORS[creatorId]?.url ? (
-        <a
-          href={CREATORS[creatorId].url}
-          target='_blank'
-          rel='nofollow noopener noreferrer'
-          aria-label={`${CREATORS[creatorId]?.name ?? creatorId}（在新标签页打开）`}
-          className='rounded-[2px] whitespace-pre-wrap text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
-        >
-          {CREATORS[creatorId]?.name ?? creatorId}
-        </a>
-      ) : (
-        <span className='whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
-          {CREATORS[creatorId]?.name ?? creatorId}
-        </span>
-      )}
-    </span>
-  ));
+  return creatorIds.map((creatorId, index) => {
+    const creator = CREATORS[creatorId];
+    const displayName = creator?.name ?? creatorId;
+
+    return (
+      <span key={creatorId}>
+        {index > 0 && creatorSeparator}
+        {creator?.url ? (
+          <a
+            href={creator.url}
+            target='_blank'
+            rel='nofollow noopener noreferrer'
+            aria-label={`${displayName}（在新标签页打开）`}
+            className='rounded-[2px] whitespace-pre-wrap text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+          >
+            {displayName}
+          </a>
+        ) : (
+          <span className='whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
+            {displayName}
+          </span>
+        )}
+      </span>
+    );
+  });
 };
 
 export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => {
-  const [beforePrefix, beforeSuffixRaw] = PROJECT_INFO.descriptionParts.before.split('，') as [
-    string,
-    string?,
-  ];
-  const beforeSuffix = beforeSuffixRaw ?? '';
+  const { projectInfo, acknowledgements, legal } = PROJECT_STATEMENT_COPY;
+
   return (
     <div className='space-y-4 text-left'>
       {/* Project information (inline repo link + icon, readable sentence) */}
-      <section aria-label='项目信息'>
+      <section aria-label={projectInfo.ariaLabel}>
         <p className='text-gray-700 dark:text-gray-300'>
-          本项目由{renderCreatorLinks([PROJECT_INFO.maintainerId])}维护，
-          {beforePrefix}（
+          {projectInfo.maintainerPrefix}
+          {renderCreatorLinks([PROJECT_INFO.maintainerId])}
+          {projectInfo.maintainerSuffix}
+          {projectInfo.description.beforeRepoLink}
           <a
             href={PROJECT_INFO.url}
             target='_blank'
@@ -63,29 +70,33 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
                 clipRule='evenodd'
               />
             </svg>
-            <span>项目主页</span>
+            <span>{projectInfo.repoLinkLabel}</span>
           </a>
-          ） ，{beforeSuffix}
+          {projectInfo.description.afterRepoLink}
           {onFeedbackClick ? (
             <button
               type='button'
               onClick={onFeedbackClick}
               className='font-inherit cursor-pointer rounded-[2px] border-none bg-transparent p-0 text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
             >
-              {PROJECT_INFO.descriptionParts.feedbackLink}
+              {projectInfo.description.feedbackLinkText}
             </button>
           ) : (
-            PROJECT_INFO.descriptionParts.feedbackLink
+            projectInfo.description.feedbackLinkText
           )}
-          {PROJECT_INFO.descriptionParts.after}
+          {projectInfo.description.afterFeedback}
         </p>
         <p className='mt-2 text-gray-700 dark:text-gray-300'>{DISCLAIMER_CONTENT.intro}</p>
         <p className='mt-2 text-gray-700 dark:text-gray-300'>{DISCLAIMER_CONTENT.policy}</p>
       </section>
 
       {/* Acknowledgments */}
-      <CollapseCard title='致谢' size='xs' className='p-4 text-sm text-gray-700 dark:text-gray-300'>
-        <section aria-label='致谢详情'>
+      <CollapseCard
+        title={acknowledgements.title}
+        size='xs'
+        className='p-4 text-sm text-gray-700 dark:text-gray-300'
+      >
+        <section aria-label={acknowledgements.ariaLabel}>
           {Object.values(DISCLAIMER_CONTENT.acknowledgements).map((ack, index) => (
             <p key={index} className={index > 0 ? 'mt-2' : undefined}>
               {ack.prefix}
@@ -98,24 +109,24 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
 
       {/* Real Disclaimers & Licenses */}
       <CollapseCard
-        title='版权、许可与免责声明'
+        title={legal.title}
         size='xs'
         className='p-4 text-sm text-gray-700 dark:text-gray-300'
       >
         <div className='space-y-4'>
           {/* Copyright information */}
-          <section aria-label='版权说明' className='leading-6'>
+          <section aria-label={legal.copyright.ariaLabel} className='leading-6'>
             <p>
-              <Tooltip content='Tom and Jerry'>猫和老鼠</Tooltip>
+              <Tooltip content={legal.copyright.brandTooltip}>{legal.copyright.brandLabel}</Tooltip>
               角色版权归
-              <Tooltip content='Warner Bros. Entertainment Inc.'>华纳兄弟娱乐公司</Tooltip>
-              所有。游戏素材版权归网易猫和老鼠手游所有。
+              <Tooltip content={legal.copyright.ownerTooltip}>华纳兄弟娱乐公司</Tooltip>
+              {legal.copyright.textSuffix}
             </p>
             <p className='mt-1'>{DISCLAIMER_CONTENT.takedownPolicy}</p>
           </section>
 
           {/* License information */}
-          <section aria-label='开源许可' className='leading-6'>
+          <section aria-label={legal.license.ariaLabel} className='leading-6'>
             <p>{LICENSE_INFO.description}</p>
             {LICENSE_INFO.licenses.map((license) => (
               <p key={license.shortName} className='mt-1'>
@@ -129,7 +140,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
                 >
                   {license.shortName}
                 </a>{' '}
-                许可证，{license.additionalDescription}。
+                授权，{license.additionalDescription}。
               </p>
             ))}
           </section>
