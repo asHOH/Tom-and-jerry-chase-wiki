@@ -94,6 +94,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
         className='p-4 text-sm text-gray-700 dark:text-gray-300'
       >
         <section aria-label={acknowledgements.ariaLabel}>
+          <h3 className='sr-only'>{acknowledgements.title}</h3>
           {Object.values(DISCLAIMER_CONTENT.acknowledgements).map((ack, index) => (
             <p key={index} className={index > 0 ? 'mt-2' : undefined}>
               {ack.prefix}
@@ -111,8 +112,10 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
         className='p-4 text-sm text-gray-700 dark:text-gray-300'
       >
         <div className='space-y-4'>
+          <h3 className='sr-only'>{legal.title}</h3>
           {/* Copyright information */}
           <section aria-label={legal.copyright.ariaLabel} className='leading-6'>
+            <h4 className='sr-only'>版权声明</h4>
             <p>
               <Tooltip content={legal.copyright.brandTooltip}>{legal.copyright.brandLabel}</Tooltip>
               角色版权归
@@ -124,6 +127,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
 
           {/* License information */}
           <section aria-label={legal.license.ariaLabel} className='leading-6'>
+            <h4 className='sr-only'>开源许可</h4>
             <p>{LICENSE_INFO.description}</p>
             {LICENSE_INFO.licenses.map((license) => (
               <p key={license.shortName} className='mt-1'>
