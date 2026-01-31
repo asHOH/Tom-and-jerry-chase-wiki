@@ -1,5 +1,6 @@
-import withPWAInit from '@ducanh2912/next-pwa';
+import { spawnSync } from 'node:child_process';
 import createMDX from '@next/mdx';
+import withSerwistInit from '@serwist/next';
 
 import { buildCspHeader } from './csp.config.mjs';
 
@@ -21,83 +22,24 @@ if (process.env.ANALYZE === 'true') {
   }
 }
 
-const withPwa = withPWAInit({
-  dest: 'public',
-  register: false,
-  disable: process.env.NODE_ENV === 'development',
-  // Exclude problematic build files from precaching
-  // buildExcludes: [
-  //   /middleware-manifest\.json$/,
-  //   /app-build-manifest\.json$/,
-  //   /server\/.*\.js$/,
-  //   /static\/chunks\/.*\.js\.map$/,
-  // ],
-  // Exclude files that might cause 404 errors
-  publicExcludes: ['!version.json', '!noprecache/**/*', '!sw.js', '!workbox-*.js'],
-  // Fallback for offline pages
-  fallbacks: {
-    document: '/offline/',
-  },
-  workboxOptions: {
-    skipWaiting: true,
+// Get git revision for cache busting (falls back to UUID if git not available)
+const getRevision = (): string => {
+  try {
+    const result = spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' });
+    return result.stdout?.trim() || crypto.randomUUID();
+  } catch {
+    return crypto.randomUUID();
+  }
+};
 
-    // More conservative runtime caching
-    runtimeCaching: [
-      {
-        urlPattern: /^https?:\/\/[^/]+\/api\/version.*$/,
-        handler: 'NetworkOnly',
-        options: {
-          cacheName: 'version-check',
-        },
-      },
-      {
-        urlPattern: /^https?.*\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
-        handler: 'StaleWhileRevalidate',
-        options: {
-          cacheName: 'images',
-          expiration: {
-            maxEntries: 150,
-            maxAgeSeconds: 2592000, // 30 days (shorter than before)
-          },
-        },
-      },
-      {
-        urlPattern: /^https?.*\.(js|css)$/,
-        handler: 'StaleWhileRevalidate',
-        options: {
-          cacheName: 'static-resources',
-          expiration: {
-            maxEntries: 100,
-            maxAgeSeconds: 24 * 60 * 60, // 1 day
-          },
-        },
-      },
-      {
-        urlPattern: /^https?.*\/api\/.*$/,
-        handler: 'NetworkFirst',
-        options: {
-          cacheName: 'api-cache',
-          networkTimeoutSeconds: 3,
-          expiration: {
-            maxEntries: 50,
-            maxAgeSeconds: 5 * 60, // 5 minutes
-          },
-        },
-      },
-      {
-        urlPattern: /^https?.*/,
-        handler: 'NetworkFirst',
-        options: {
-          cacheName: 'pages',
-          networkTimeoutSeconds: 3,
-          expiration: {
-            maxEntries: 50,
-            maxAgeSeconds: 24 * 60 * 60, // 1 day
-          },
-        },
-      },
-    ],
-  },
+const revision = getRevision();
+
+const withSerwist = withSerwistInit({
+  swSrc: 'src/sw.ts',
+  swDest: 'public/sw.js',
+  disable: process.env.NODE_ENV === 'development',
+  // Precache the offline fallback page with revision for cache busting
+  additionalPrecacheEntries: [{ url: '/offline/', revision }],
 });
 
 const withMDX = createMDX({
@@ -120,6 +62,8 @@ const shouldIncludeVercelAnalytics = () => {
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   transpilePackages: ['motion', 'pinyin-pro', 'valtio'],
+  // Required for Serwist to work with Turbopack
+  serverExternalPackages: ['esbuild-wasm'],
   typescript: {
     ignoreBuildErrors: process.env.SKIP_BUILD_CHECKS === 'true',
   },
@@ -237,6 +181,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-const finalConfig = withBundleAnalyzer(withPwa(withMDX(nextConfig)));
+const finalConfig = withBundleAnalyzer(withSerwist(withMDX(nextConfig)));
 
 export default finalConfig;

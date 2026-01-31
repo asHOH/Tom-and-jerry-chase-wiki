@@ -29,8 +29,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "types": ["@ducanh2912/next-pwa/workbox"]
+    }
   },
   "include": [
     "**/*.ts",

@@ -82,9 +82,11 @@ bundle-analyzer-report.html
 # Performance monitoring
 .lighthouseci/
 
-# PWA generated files
+# PWA/Serwist generated files
 public/sw.js
 public/sw.js.map
+public/swe-worker-*.js
+public/swe-worker-*.js.map
 public/workbox-*.js
 public/workbox-*.js.map
 public/fallback-*.js
