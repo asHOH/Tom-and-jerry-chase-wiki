@@ -14,9 +14,9 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
     <BaseCard variant='item' aria-label={`查看${buff.name}效果详情`}>
       <div
         className={`${isMobile ? 'pb-1.5' : 'pb-3'} flex w-full items-center justify-center border border-dotted pt-1 text-center ${
-          buff.type === '正面'
+          buff.type.includes('正面')
             ? 'border-green-300 dark:border-green-800'
-            : buff.type === '负面'
+            : buff.type.includes('负面')
               ? 'border-red-300 dark:border-red-800'
               : 'border-yellow-300 dark:border-yellow-800'
         }`}

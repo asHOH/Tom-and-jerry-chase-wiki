@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
+import { getBuffTypeColors } from '@/lib/design-tokens';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
-import type { Buff } from '@/data/types';
+import type { Buff, buffTypelist } from '@/data/types';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
@@ -16,14 +16,12 @@ import { buffsEdit } from '@/data';
 import BuffCardDisplay from './BuffCardDisplay';
 
 // 更新选项以匹配新属性
-const GLOBAL_OPTIONS = ['全局', '个人'] as const;
 const INFLUENCE_OPTIONS = ['正面', '负面', '特殊'] as const;
 
 type Props = { description?: string };
 
 export default function BuffClient({ description }: Props) {
   // Multi-select state for filters
-  const [selectedGlobal, setSelectedGlobal] = useState<('全局' | '个人')[]>([]);
   const [selectedInfluences, setSelectedInfluences] = useState<('正面' | '负面' | '特殊')[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
@@ -31,11 +29,6 @@ export default function BuffClient({ description }: Props) {
   const buffsSnapshot = useSnapshot(buffsEdit);
   const filteredBuffs = Object.values(buffsSnapshot as Record<string, Buff>).filter(
     (buff: Buff) => {
-      const globalMatch =
-        selectedGlobal.length === 0 ||
-        (selectedGlobal.includes('全局') && buff.global) ||
-        (selectedGlobal.includes('个人') && !buff.global);
-
       let influenceMatch = true;
       if (selectedInfluences.length > 0) {
         // "特殊" means buffs with no influence restriction
@@ -43,12 +36,12 @@ export default function BuffClient({ description }: Props) {
         const isBuff = selectedInfluences.includes('正面');
         const isDebuff = selectedInfluences.includes('负面');
         influenceMatch =
-          (isNone && buff.type === '特殊') ||
-          (isBuff && buff.type === '正面') ||
-          (isDebuff && buff.type === '负面');
+          (isNone && buff.type.includes('特殊')) ||
+          (isBuff && buff.type.includes('正面')) ||
+          (isDebuff && buff.type.includes('负面'));
       }
 
-      return globalMatch && influenceMatch;
+      return influenceMatch;
     }
   );
 
@@ -79,21 +72,13 @@ export default function BuffClient({ description }: Props) {
               )
             }
             getOptionLabel={(f) => f}
-            getButtonStyle={(f, active) => (active ? getBuffTypeColors(f, isDarkMode) : undefined)}
-          />
-          {/* 全局筛选 */}
-          <FilterRow<'全局' | '个人'>
-            label='全局筛选:'
-            options={GLOBAL_OPTIONS}
-            isActive={(type) => selectedGlobal.includes(type)}
-            onToggle={(type) =>
-              setSelectedGlobal((prev) =>
-                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-              )
-            }
-            //Use PositioningTagColors to avoid creating new colorStyles
             getButtonStyle={(f, active) =>
-              active ? getBuffGlobalColors(f === '全局', isDarkMode) : undefined
+              active
+                ? getBuffTypeColors(
+                    { 正面: '正面效果', 负面: '负面效果', 特殊: '特殊效果' }[f] as buffTypelist,
+                    isDarkMode
+                  )
+                : undefined
             }
           />
         </div>

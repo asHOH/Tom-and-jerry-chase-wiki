@@ -2,6 +2,7 @@ import { proxy } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { CharacterWithFaction, FactionWithCharacters, KnowledgeCardWithFaction } from '@/lib/types';
+import buffsStatic from '@/features/buffs/data/buffs';
 import fixturesStatic from '@/features/fixtures/data/fixtures';
 import itemsStatic from '@/features/items/data/items';
 import modesStatic from '@/features/modes/data/modes';
@@ -9,7 +10,6 @@ import catSpecialSkillsStatic from '@/features/special-skills/data/catSpecialSki
 import mouseSpecialSkillsStatic from '@/features/special-skills/data/mouseSpecialSkills';
 
 import achievementsStatic from './achievements';
-import buffsStatic from './buffs';
 import catEntitiesStatic from './catEntities';
 import mapsStatic from './maps';
 import mouseEntitiesStatic from './mouseEntities';
