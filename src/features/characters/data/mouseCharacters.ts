@@ -7855,6 +7855,242 @@ const mouseCharacterDefinitions = {
       },
     ],
   },
+  /* ----------------------------------- 朝圣者泰菲 ----------------------------------- */
+  朝圣者泰菲: {
+    description:
+      '特意前来参与感恩节晚宴的小鼠，从朝圣者人偶身上拿走了塑料枪、带上朝圣者帽、在餐桌上嬉戏玩耍，但眼睛却紧盯着那热气腾腾的美味烤鸡。',
+    maxHp: 74,
+    attackBoost: 5,
+    hpRecovery: 1.5,
+    moveSpeed: 650,
+    jumpHeight: 380,
+    cheesePushSpeed: 5,
+    wallCrackDamageBoost: 0.5,
+    gender: 'male',
+    EnglishName: '',
+    mousePositioningTags: [
+      {
+        tagName: '干扰',
+        isMinor: false,
+        description: '武器技能搭配一级被动可提供高伤害，且打出的子弹若未命中敌方可以长时间回弹。',
+        additionalDescription: '',
+        weapon: 1,
+      },
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '本身基础推速较快，若队内无奶酪位一定程度上可作为补位奶酪位。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '破局',
+        isMinor: false,
+        description:
+          '武器技能可对猫造成较高伤害，主动技能可以吃掉插在地上的叉子，两技能均可对墙缝造成伤害。可在较大程度上抑制防守猫。',
+        additionalDescription: '',
+      },
+    ],
+    skillAllocations: [
+      {
+        id: '常规加点',
+        pattern: '12020011-2',
+        weaponType: 'weapon1',
+        description:
+          '常规加点，武器技能三级对墙缝造成伤害较低，用来攻击敌方收益更大，酌情考虑是否加点。',
+      },
+      {
+        id: '特殊加点1',
+        pattern: '120(1)20021',
+        weaponType: 'weapon1',
+        description: '对面为防守型猫且地图中夹子较多时酌情考虑提前点出2级主动技能清理捕鼠夹。',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-舍己', 'S-铁血', 'B-绝地反击', 'C-不屈', 'C-救救我'],
+        description: '常规卡组，武器技能发射的子弹可以继承绝地反击的增伤效果，可打出较高伤害。',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'A-逃窜', 'C-救救我'],
+        description: '打米特，图多盖洛时可带。',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'B-绝地反击', 'C-救救我'],
+        description: '无畏卡组，与第二套卡组作用相似。',
+      },
+    ],
+    skills: [
+      {
+        name: '丰收盛宴',
+        type: 'active',
+        description:
+          '使用技能后可吃掉部分道具，每吃掉一个道具武器技能可增加一个子弹并增加一格饱食度，当饱食度积累到四层时将转化为圆球形态，期间可对敌人造成伤害和减速，攻击命中敌方可恢复自身血量连续三次对敌方造成伤害会使地方眩晕，也可对墙缝造成伤害，期间若点击对应按钮或健康值耗尽或持续时间结束则会变回原状。',
+        detailedDescription:
+          '使用技能后可吃掉盘子、扁盘、碗、玻璃杯、小鞭炮、冰块、高尔夫球、叉子、香水瓶、胡椒粉、番茄、灰花瓶、蓝花瓶。每吃掉一个道具武器技能可增加一个子弹并增加一格饱食度，当饱食度积累到四层时将转化为圆球形态，期间可通过撞击敌人造成35点伤害和持续2.5秒10％的减速效果，敌方处于撞击造成的减速效果期间被连续撞击三次会进入眩晕状态，持续1.5秒。撞击可对墙缝造成3点伤害。期间若点击对应按钮或健康值耗尽或持续时间结束则会变回原状。\n注：可被吃掉的道具无论处于何种状态(如插在地上的叉子，滚动的盘子)均可被吃掉。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可主动打断',
+        skillLevels: [
+          {
+            level: 1,
+            description: '每次吃掉道具获得短暂加速并回复血量。',
+            detailedDescription: '每次吃掉道具获得5％加速，持续5秒。',
+            cooldown: 5,
+          },
+          {
+            level: 2,
+            description: '可以吃掉的道具增多。',
+            detailedDescription:
+              '可以吃掉小纸盒、大纸盒、未打开的拳套盒、未打开的捕鼠夹、布奇的垃圾桶盖、托普斯的泡泡、图多盖洛的香水气息、图茨的汽水罐、兔八哥的巨型胡萝卜、米特的饭盒、苏蕊的瑜伽球。',
+            cooldown: 5,
+          },
+          {
+            level: 3,
+            description: '圆球状态攻击敌方恢复的健康值增多。',
+            detailedDescription: '圆球状态攻击敌方恢复的健康值增多。',
+            cooldown: 5,
+          },
+        ],
+        cueRange: '全图可见',
+        forecast: 0.5,
+        aftercast: 0.2,
+        cancelableAftercast: ['移动键', '跳跃键', '道具键*'],
+      },
+      {
+        name: '玩具长长长枪',
+        aliases: [],
+        type: 'weapon1',
+        description:
+          '点击技能后可按移动键向各方向拖动拉长长枪枪管，再次点击技能即可射出子弹，可通过跳跃结束瞄准状态，若未发射子弹则不会进入技能冷却。子弹发射后可在房间内反弹直至存在时间结束。',
+        detailedDescription:
+          '点击技能后进入瞄准状态，期间可按移动键向各方向拖动拉长枪管(枪管变向转弯直径450单位距离)，枪管移速800单位距离每秒，最长可伸长4000单位距离。再次点击技能即可射出子弹，若未发射子弹则不会进入技能冷却。可点击跳跃键结束瞄准状态。子弹发射后可在房间内反弹直至存在时间结束。子弹若命中敌方头部，则敌方在2秒内免疫子弹伤害。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableSkill: '不可主动打断',
+        cancelableAftercast: '无后摇',
+        canHitInPipe: false,
+        skillLevels: [
+          {
+            level: 1,
+            description:
+              '子弹对敌方造成伤害和减速，若命中头部则会造成更高伤害并增加一枚子弹（每10秒触发一次）。',
+            detailedDescription:
+              '子弹命中敌方身体对敌方造成35伤害，爆头造成100伤害，子弹移速1500单位距离每秒，可存在25秒。',
+            cooldown: 30,
+            charges: 4,
+          },
+          {
+            level: 2,
+            description: '子弹命中敌方头部后一段时间内可对敌方造成持续伤害。',
+            detailedDescription:
+              '子弹命中猫头部后对猫造成9hp/秒的持续伤害，持续3秒\n注：只有命中猫头部才会造成持续伤害，命中敌方鼠头部只会提供爆头伤害。',
+            cooldown: 30,
+            charges: 4,
+          },
+          {
+            level: 3,
+            description: '子弹移速提升，子弹存在时间增加5秒。',
+            detailedDescription:
+              '子弹移速提升至1800单位长度每秒，存在时间增加至30秒，子弹命中墙缝可对墙缝造成3.5伤害。',
+            cooldown: 30,
+            charges: 4,
+          },
+        ],
+        cueRange: '全图可见',
+        cooldownTiming: '释放后',
+        forecast: 0.95,
+        aftercast: 0,
+      },
+      {
+        name: '朝圣瞭望',
+        type: 'passive',
+        skillLevels: [
+          {
+            level: 1,
+            description: '随与敌方距离逐渐增大，朝圣者泰菲对敌方造成的伤害将增加。',
+            detailedDescription:
+              '随与敌方距离逐渐增大，朝圣者泰菲对敌方造成的伤害将增加，最多可对敌方在原伤害基础上额外造成50％伤害。',
+          },
+          {
+            level: 2,
+            description: '自身站立不动一段时间后可扩大视野范围（无法与其他扩大视野效果叠加）。',
+            detailedDescription:
+              '自身站立不动一段时间后可扩大视野范围（无法与其他扩大视野效果叠加，如远视药水等）。',
+          },
+          {
+            level: 3,
+            description: '站立不动一段时间后，下次移动会短暂提升移动速度和跳跃高度。',
+            detailedDescription: '站立不动一段时间后，下次移动会短暂提升移动速度和跳跃高度。',
+          },
+        ],
+      },
+    ],
+    specialSkills: [
+      {
+        name: '魔术漂浮',
+        description: '灵活性高。',
+      },
+      {
+        name: '绝处逢生',
+        description: '大部分角色大部分情况可带。',
+      },
+    ],
+    aliases: ['朝菲', '圣菲'],
+    counteredBy: [
+      {
+        id: '汤姆',
+        description: '主动技能无敌可免疫朝圣者泰菲伤害。',
+        isMinor: false,
+      },
+      {
+        id: '如玉',
+        description:
+          '朝圣者泰菲子弹可以被如玉主动技能反向利用刷反击，且如玉被动适配暴怒，朝圣者泰菲的高伤极易被如玉反制。',
+        isMinor: false,
+      },
+      {
+        id: '图多盖洛',
+        description: '图多盖洛指甲油免死可有效削减朝圣者泰菲高伤对其的影响。',
+        isMinor: false,
+      },
+    ],
+    counteredByKnowledgeCards: [
+      {
+        id: '猛攻',
+        description:
+          '朝圣者泰菲处于圆球状态时获得猛攻效果期间无法撞击敌方，同时也无法主动取消圆球状态。',
+        isMinor: true,
+      },
+    ],
+    collaborators: [
+      {
+        id: '国王杰瑞',
+        description: '国王杰瑞战旗与朝圣者泰菲配合可打出极高伤害。',
+        isMinor: false,
+      },
+    ],
+    counters: [
+      {
+        id: '苏蕊',
+        description:
+          '朝圣者泰菲武器技能的高伤可对苏蕊造成有效伤害，虽然朝圣者泰菲血量较低易被苏蕊反杀，但仍更偏向于克制苏蕊。',
+        isMinor: true,
+      },
+      {
+        id: '图茨',
+        description:
+          '图茨本身血量偏低，朝圣者泰菲的高伤易使图茨快速被击倒，且图茨技能均无法对朝圣者泰菲伸出的枪管造成伤害。',
+        isMinor: false,
+      },
+    ],
+    counterEachOther: [
+      {
+        id: '布奇',
+        description: '二者均拥有较高伤害和较低血量，易击倒对方，但整体来看布奇仍略克朝圣者泰菲。',
+        isMinor: false,
+      },
+    ],
+  },
 } as const satisfies Readonly<Record<string, CharacterDefinition>>;
 
 // Process character definitions to assign IDs and process skills
