@@ -91,7 +91,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
     [
       {
         key: 'description',
-        title: '作用效果',
+        title: '详细介绍',
         value: effectiveBuff.description,
         detailedValue: effectiveBuff.detailedDescription,
       },
