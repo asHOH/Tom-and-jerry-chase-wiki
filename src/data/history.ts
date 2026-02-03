@@ -4685,6 +4685,15 @@ export const historyData: GameHistory = [
         description: 'S27赛季开始。',
         details: {},
       },
+      {
+        date: '1.29',
+        description: '新角色“朝圣者泰菲”上线，并推出其伴生皮肤“小号手”。',
+        details: {
+          content: {
+            newCharacters: ['朝圣者泰菲'],
+          },
+        },
+      },
     ],
   },
 ];

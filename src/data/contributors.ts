@@ -178,7 +178,7 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.ContentWriter,
-        characters: ['牛仔汤姆', '杰瑞', '恶魔汤姆', '恶魔杰瑞', '梦游杰瑞', '鲍姆'],
+        characters: ['牛仔汤姆', '杰瑞', '恶魔汤姆', '恶魔杰瑞', '梦游杰瑞', '鲍姆', '朝圣者泰菲'],
       },
     ],
   },
@@ -466,6 +466,16 @@ export const contributors: Contributor[] = [
       {
         type: RoleType.ContentWriter,
         characters: ['库博'],
+      },
+    ],
+  },
+  {
+    id: 'wucaibanlandeqian',
+    name: '五彩斑斓的铅',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['朝圣者泰菲'],
       },
     ],
   },
