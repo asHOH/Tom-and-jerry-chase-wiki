@@ -142,25 +142,6 @@ export default function BuffClient({ description }: Props) {
               </h1>
             </div>
           </div>
-          {nonClassBuffs.length > 0 && (
-            <div
-              className={`auto-fit-grid grid-container grid w-full gap-2! ${isMobile ? 'mt-2' : 'mt-8'}`}
-              style={{
-                gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
-              }}
-            >
-              {nonClassBuffs.map((buff) => (
-                <div
-                  key={buff.name}
-                  className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-                >
-                  <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
-                    <BuffCardDisplay buff={buff} />
-                  </Link>
-                </div>
-              ))}
-            </div>
-          )}
           {classGroups.length > 0 && (
             <div className={`${isMobile ? 'mt-2' : 'mt-8'} space-y-4`}>
               {classGroups.map((group) => (
@@ -193,6 +174,25 @@ export default function BuffClient({ description }: Props) {
               ))}
             </div>
           )}
+          {nonClassBuffs.length > 0 && (
+            <div
+              className={`auto-fit-grid grid-container grid w-full gap-2! ${isMobile ? 'mt-2' : 'mt-8'}`}
+              style={{
+                gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
+              }}
+            >
+              {nonClassBuffs.map((buff) => (
+                <div
+                  key={buff.name}
+                  className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
+                >
+                  <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
+                    <BuffCardDisplay buff={buff} />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </>
       )}
       {filteredEffects.length > 0 && (
@@ -207,25 +207,6 @@ export default function BuffClient({ description }: Props) {
               </h1>
             </div>
           </div>
-          {nonClassEffects.length > 0 && (
-            <div
-              className={`auto-fit-grid grid-container grid w-full gap-2! ${isMobile ? 'mt-2' : 'mt-8'}`}
-              style={{
-                gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
-              }}
-            >
-              {nonClassEffects.map((buff) => (
-                <div
-                  key={buff.name}
-                  className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-                >
-                  <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
-                    <BuffCardDisplay buff={buff} />
-                  </Link>
-                </div>
-              ))}
-            </div>
-          )}
           {effectClassGroups.length > 0 && (
             <div className={`${isMobile ? 'mt-2' : 'mt-8'} space-y-4`}>
               {effectClassGroups.map((group) => (
@@ -254,6 +235,25 @@ export default function BuffClient({ description }: Props) {
                       </div>
                     ))}
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {nonClassEffects.length > 0 && (
+            <div
+              className={`auto-fit-grid grid-container grid w-full gap-2! ${isMobile ? 'mt-2' : 'mt-8'}`}
+              style={{
+                gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
+              }}
+            >
+              {nonClassEffects.map((buff) => (
+                <div
+                  key={buff.name}
+                  className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
+                >
+                  <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
+                    <BuffCardDisplay buff={buff} />
+                  </Link>
                 </div>
               ))}
             </div>
