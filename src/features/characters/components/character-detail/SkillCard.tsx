@@ -20,6 +20,7 @@ import {
 } from '@/features/characters/utils/skills';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
+import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import { editable } from '@/components/ui/editable';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -950,8 +951,9 @@ export default function SkillCard({
             ))}
         </div>
       </div>
-      <div className='mt-4'>
+      <div className='mt-4 space-y-2'>
         <DetailTraitsCard singleItem={{ name: skill.name, type: 'skill' }} />
+        <DetailReverseCard singleItem={{ name: skill.name, type: 'skill' }} />
       </div>
     </div>
   );

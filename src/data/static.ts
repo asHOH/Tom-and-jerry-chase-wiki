@@ -21,7 +21,7 @@ export const entities = {
   mouse: mouseEntitiesWithImages,
 };
 
-export { default as buffs } from './buffs';
+export { default as buffs } from '@/features/buffs/data/buffs';
 
 export { default as itemGroups } from '@/features/items/data/itemGroups';
 

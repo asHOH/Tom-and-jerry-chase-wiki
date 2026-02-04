@@ -340,20 +340,29 @@ export type EntityDefinition = {
 
 export type Entity = EntityDefinition & { name: string; imageUrl: string };
 
-export type buffTypelist = '正面' | '负面' | '特殊';
+export type buffTypelist =
+  | '正面状态'
+  | '正面效果'
+  | '负面状态'
+  | '负面效果'
+  | '特殊状态'
+  | '特殊效果';
+export type buffTargetlist = '角色' | '道具' | '角色或道具' | '猫角色' | '鼠角色' | '火箭' | '奶酪';
 
 export type BuffDefinition = {
   type: buffTypelist;
+  class?: string; // 类名（如“眩晕”）。同类效果会集中显示
+
   global?: boolean; // 个人/全局
 
   aliases?: string[]; // 支持使用#或%前缀表示正则表达式进行模糊搜索，其中#前缀不会在详细描述界面显示
   duration?: number | string; // duration of buff.
   failure?: string; // failure conditions of buff
-  target?: string; // 作用对象
+  target?: buffTargetlist; // 作用对象
 
   description?: string;
   detailedDescription?: string;
-  stack?: string; // the stacking way in two or more buffs
+  stack?: string; // 叠加方式
   detailedStack?: string;
   source?: SingleItem[];
   sourceDescription?: string;

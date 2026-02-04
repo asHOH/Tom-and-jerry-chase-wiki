@@ -5,10 +5,11 @@ import { useSnapshot } from 'valtio';
 import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalBuff } from '@/context/EditModeContext';
-import { Buff } from '@/data/types';
+import { Buff, SingleItem } from '@/data/types';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
+import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 import { PlusIcon } from '@/components/icons/CommonIcons';
@@ -80,12 +81,18 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
     </div>
   ) : undefined;
 
+  const classFilter = !!buff.class
+    ? Object.values(buffsSnapshot)
+        .filter((b) => b.class === buff.class)
+        .map((buff) => buff.name)
+    : [];
+
   return (
     <AttributesCardLayout
       imageUrl={buff.imageUrl}
       alt={buff.name}
       title={buff.name}
-      subtitle='(状态/效果)'
+      subtitle={buff.type.includes('状态') ? '(状态)' : '(效果)'}
       aliases={isEditMode ? undefined : avilableAliases}
       aliasesContent={aliasesEditor}
       attributes={
@@ -176,6 +183,30 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                     </span>
                   </span>
                 )}
+                {(isEditMode || !!effectiveBuff.class) && (
+                  <span className='text-sm'>
+                    所属分类：
+                    <span className='text-fuchsia-600 dark:text-fuchsia-400'>
+                      <ed.span
+                        path='class'
+                        initialValue={effectiveBuff.class ?? '<无内容>'}
+                        isSingleLine
+                      />
+                    </span>
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+          {classFilter.length > 0 && (
+            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+              <span className='text-lg font-bold whitespace-pre'>[{buff.class}]类状态/效果</span>
+              <div className='mt-1'>
+                <SingleItemAccordionCard
+                  items={classFilter.map((str) => {
+                    return { name: str, type: 'buff' } as SingleItem;
+                  })}
+                />
               </div>
             </div>
           )}

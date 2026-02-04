@@ -1,9 +1,9 @@
-import { Buff, BuffDefinition } from './types';
+import { Buff, BuffDefinition } from '@/data/types';
 
 const getBuffImageUrl = (name: string, buff: BuffDefinition): string => {
   if (!!buff.specialImageUrl) return buff.specialImageUrl;
   if (buff.unuseImage)
-    return `/images/buffs/default-${buff.type === '负面' ? 'debuff' : 'buff'}.png`;
+    return `/images/buffs/default-${buff.type.includes('负面') ? 'debuff' : 'buff'}.png`;
   return `/images/buffs/${encodeURIComponent(name)}.png`;
 };
 
@@ -49,7 +49,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   //--------------------移动与跳跃---------------------/
   加速: {
     ...{
-      type: '正面',
+      type: '正面状态',
+      class: '移动',
       global: false,
       target: '角色',
       aliases: ['移速提高', '#^(?:移速(?:提高|增加|增大)|(?:提高|增加|增大)移速)$'],
@@ -163,7 +164,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   减速: {
     ...{
-      type: '负面',
+      type: '负面状态',
+      class: '移动',
       global: false,
       target: '角色',
       aliases: ['移速降低', '#^(?:移速(?:降低|减少|减小)|(?:降低|减少|减小)移速)$'],
@@ -241,7 +243,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   跳跃高度提高: {
     ...{
-      type: '正面',
+      type: '正面状态',
+      class: '跳跃',
       global: false,
       target: '角色',
       aliases: [
@@ -289,7 +292,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   跳跃高度降低: {
     ...{
-      type: '负面',
+      type: '负面状态',
+      class: '跳跃',
       global: false,
       target: '角色',
       aliases: [
@@ -315,7 +319,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   速度恒定: {
     ...{
-      type: '正面',
+      type: '正面状态',
+      class: '移动',
       global: false,
       target: '角色',
       duration: '不固定',
@@ -329,7 +334,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   速度下限锁定: {
     ...{
-      type: '正面',
+      type: '正面状态',
+      class: '移动',
       global: false,
       target: '角色',
       aliases: ['锁定速度下限'],
@@ -343,7 +349,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ...moveStack,
   },
   速度保持: {
-    type: '特殊',
+    type: '特殊状态',
+    class: '移动',
     global: false,
     target: '角色',
     aliases: ['保持速度'],
@@ -355,7 +362,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   速度重置: {
-    type: '特殊',
+    type: '特殊状态',
+    class: '移动',
     global: false,
     target: '角色',
     aliases: ['重置速度'],
@@ -367,7 +375,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   惯性保持: {
-    type: '特殊',
+    type: '特殊状态',
+    class: '移动',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -376,14 +385,15 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     source: [{ name: '头盔', type: 'entity' }],
     unuseImage: true,
   },
-  多段跳: {
-    type: '正面',
+  二段跳: {
+    type: '正面状态',
+    class: '跳跃',
     global: false,
     target: '角色',
-    aliases: ['二段跳', '三段跳', '额外跳跃'],
+    aliases: ['额外跳跃'],
     duration: '不固定',
-    description: '可以在空中额外进行数次跳跃。',
-    stack: '不可叠加，取额外跳跃段数更多者生效。',
+    description: '可以在空中额外进行一次跳跃。',
+    stack: '二段跳效果不可叠加，{三段跳}会覆盖二段跳的效果。',
     source: [
       { name: '二段跳', type: 'skill' },
       { name: '降落伞', type: 'skill' },
@@ -393,8 +403,20 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
     unuseImage: true,
   },
+  三段跳: {
+    type: '正面状态',
+    class: '跳跃',
+    global: false,
+    target: '角色',
+    duration: '不固定',
+    description: '可以在空中额外进行两次跳跃。',
+    stack: '三段跳效果不可叠加，且会覆盖{二段跳}的效果。',
+    source: [{ name: '二段跳', type: 'skill' }],
+    unuseImage: true,
+  },
   失重: {
-    type: '特殊',
+    type: '特殊状态',
+    class: '重力',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -411,7 +433,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   完全失重: {
-    type: '特殊',
+    type: '特殊状态',
+    class: '重力',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -428,7 +451,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   超重: {
-    type: '特殊',
+    type: '特殊状态',
+    class: '重力',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -440,7 +464,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   击退: {
-    type: '负面',
+    type: '负面状态',
+    class: '类眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -465,7 +490,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   牵引: {
-    type: '特殊',
+    type: '特殊状态',
+    class: '类眩晕',
     global: false,
     target: '角色或道具',
     aliases: ['鱼钩眩晕'],
@@ -486,7 +512,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   传送: {
-    type: '特殊',
+    type: '特殊效果',
+    class: '类眩晕',
     global: false,
     target: '角色或道具',
     duration: '一次性',
@@ -507,9 +534,9 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
     unuseImage: true,
   },
-  //--------------------伤害与回复---------------------/
   伤害: {
-    type: '负面',
+    type: '负面效果',
+    class: '伤害',
     global: false,
     target: '角色',
     duration: '一次性',
@@ -651,7 +678,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   持续伤害: {
-    type: '负面',
+    type: '负面状态',
+    class: '伤害更改',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -673,7 +701,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   攻击增伤: {
     ...{
-      type: '正面',
+      type: '正面状态',
+      class: '伤害更改',
       global: false,
       target: '角色',
       duration: '不固定',
@@ -717,7 +746,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   攻击减伤: {
     ...{
-      type: '负面',
+      type: '负面状态',
+      class: '伤害更改',
       global: false,
       target: '角色',
       duration: '不固定',
@@ -736,7 +766,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   受击增伤: {
     ...{
-      type: '负面',
+      type: '负面状态',
+      class: '伤害更改',
       global: false,
       target: '角色',
       duration: '不固定',
@@ -751,7 +782,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   受击减伤: {
     ...{
-      type: '正面',
+      type: '正面状态',
+      class: '伤害更改',
       global: false,
       target: '角色',
       duration: '不固定',
@@ -785,7 +817,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   伤害上限锁定: {
     ...{
-      type: '正面',
+      type: '正面状态',
+      class: '伤害更改',
       global: false,
       target: '角色',
       duration: '不固定',
@@ -798,7 +831,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     },
   },
   伤害转移: {
-    type: '正面',
+    type: '正面状态',
+    class: '伤害更改',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -819,7 +853,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   回复: {
-    type: '正面',
+    type: '正面效果',
+    class: '回复',
     global: false,
     target: '角色',
     aliases: ['瞬间回复', '瞬间恢复', '回血'],
@@ -868,7 +903,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   Hp上限提高: {
-    type: '正面',
+    type: '正面状态',
+    class: '回复',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -890,7 +926,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   恢复: {
-    type: '正面',
+    type: '正面状态',
+    class: '回复',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -941,7 +978,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   禁疗: {
-    type: '负面',
+    type: '负面状态',
+    class: '回复',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -955,7 +993,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   //--------------------控制与抵御控制---------------------/
   眩晕: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1033,7 +1072,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
   },
   硬直: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1052,7 +1092,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
   },
   冰冻: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1067,7 +1108,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
   },
   爆炸: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1091,7 +1133,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
   },
   电击: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1112,7 +1155,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
   },
   拍扁: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1123,7 +1167,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     source: [{ name: '苍蝇拍', type: 'item' }],
   },
   定身: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1135,7 +1180,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   夹住: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1153,7 +1199,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   滑行: {
-    type: '负面',
+    type: '负面状态',
+    class: '类眩晕',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1167,7 +1214,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   护盾: {
-    type: '正面',
+    type: '正面状态',
+    class: '防护',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1195,7 +1243,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   无敌: {
-    type: '正面',
+    type: '正面状态',
+    class: '防护',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1219,7 +1268,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   免控: {
-    type: '正面',
+    type: '正面状态',
+    class: '防护',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1252,7 +1302,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   霸体: {
-    type: '正面',
+    type: '正面状态',
+    class: '防护',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1273,7 +1324,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   绝对霸体: {
-    type: '正面',
+    type: '正面状态',
+    class: '防护',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1294,7 +1346,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   减控: {
-    type: '正面',
+    type: '正面状态',
+    class: '防护',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1309,9 +1362,10 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       { name: '连控保护', type: 'buff' },
     ],
     unuseImage: true,
-  }, //20251109 自此之上的部分已完成返修。TODO:ADD 解除控制 免疫虚弱
+  },
   控制转移: {
-    type: '正面',
+    type: '正面状态',
+    class: '防护',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1328,9 +1382,9 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
     unuseImage: true,
   },
-  //--------------------软控制---------------------/
   反向: {
-    type: '负面',
+    type: '负面状态',
+    class: '软控制',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1348,7 +1402,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   失明: {
-    type: '负面',
+    type: '负面状态',
+    class: '软控制',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1368,7 +1423,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   掉落手中道具: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '角色',
     duration: '一次性',
@@ -1381,7 +1436,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   掉落手中老鼠: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '猫角色',
     duration: '一次性',
@@ -1391,7 +1446,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   禁用道具: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1402,7 +1457,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   立即减少技能CD: {
-    type: '正面',
+    type: '正面效果',
     global: false,
     target: '角色',
     duration: '一次性',
@@ -1413,7 +1468,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   技能CD缩短: {
-    type: '正面',
+    type: '正面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1423,7 +1478,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   技能CD延长: {
-    type: '正面',
+    type: '正面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1433,7 +1488,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   禁用技能: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1450,7 +1505,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   更改爪刀CD: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '猫角色',
     duration: '不固定',
@@ -1460,7 +1515,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   立即减少爪刀CD: {
-    type: '正面',
+    type: '正面效果',
     global: false,
     target: '猫角色',
     duration: '一次性',
@@ -1470,7 +1525,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   爪刀CD缩短: {
     ...{
-      type: '正面',
+      type: '正面效果',
       global: false,
       target: '猫角色',
       duration: '不固定',
@@ -1481,7 +1536,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   爪刀CD延长: {
     ...{
-      type: '负面',
+      type: '负面效果',
       global: false,
       target: '角色',
       duration: '不固定',
@@ -1491,7 +1546,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ...interactionStack,
   },
   禁用爪刀: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1504,9 +1559,10 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       { name: '贵族礼仪', type: 'skill' },
     ],
     unuseImage: true,
-  }, //TODO:ADD 禁疗
+  },
   感电: {
-    type: '特殊',
+    type: '特殊状态',
+    class: '伤害更改',
     global: false,
     target: '角色',
     duration: 9.9,
@@ -1519,7 +1575,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   电免疫: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '角色',
     duration: 4.9,
@@ -1529,7 +1585,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   交互速度提高: {
     ...{
-      type: '正面',
+      type: '正面效果',
       global: false,
       target: '角色',
       duration: '不固定',
@@ -1545,7 +1601,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   交互速度降低: {
     ...{
-      type: '负面',
+      type: '负面效果',
       global: false,
       target: '角色',
       duration: '不固定',
@@ -1561,7 +1617,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   //--------------------其它特殊效果---------------------/
   变身: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1584,7 +1640,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   增大体型: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1593,7 +1649,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   视野范围提高: {
-    type: '正面',
+    type: '正面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1615,7 +1671,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   视野范围降低: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1626,7 +1682,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   隐匿: {
-    type: '正面',
+    type: '正面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1641,7 +1697,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   暴露位置: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1658,7 +1714,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   隐藏位置: {
-    type: '正面',
+    type: '正面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1670,7 +1726,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   模型半透明化: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1683,7 +1739,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   隐身: {
-    type: '正面',
+    type: '正面效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1701,7 +1757,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   虚化: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '角色',
     duration: '不固定',
@@ -1713,7 +1769,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   复活: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '角色',
     failure: 'Hp归零时',
@@ -1726,7 +1782,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   临时切换键位: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '角色',
     failure: '对应技能结束时',
@@ -1739,7 +1795,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   飞行: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '角色',
     failure: '对应技能结束时',
@@ -1754,7 +1810,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   //--------------------全局相关---------------------/
   受伤: {
-    type: '负面',
+    type: '负面状态',
+    class: '软控制',
     global: false,
     target: '角色',
     failure: '得到队友治疗后',
@@ -1764,7 +1821,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   鼠虚弱: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '鼠角色',
     duration: 10,
@@ -1779,7 +1837,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   猫虚弱: {
-    type: '负面',
+    type: '负面状态',
+    class: '眩晕',
     global: false,
     target: '猫角色',
     duration: 6.9,
@@ -1790,7 +1849,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   抓起: {
-    type: '负面',
+    type: '负面状态',
     global: false,
     target: '鼠角色',
     aliases: ['被抓起'],
@@ -1799,14 +1858,14 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   直接抓起: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '鼠角色',
     description: '猫咪使用爪刀命中可被直接抓起的老鼠时，会将其{抓起}。',
     unuseImage: true,
   }, //TODO:ADD 跳舞跟随
   绑上火箭: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '鼠角色',
     aliases: ['被绑上火箭'],
@@ -1815,7 +1874,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   }, //TODO:ADD 直接绑上火箭（？）
   放飞: {
-    type: '负面',
+    type: '负面效果',
     global: false,
     target: '鼠角色',
     aliases: ['被放飞'],
@@ -1824,7 +1883,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   伤害保护: {
-    type: '正面',
+    type: '正面效果',
     global: true,
     target: '猫角色',
     aliases: ['#伤害保护', '伤害保护机制'],
@@ -1840,7 +1899,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   连控保护: {
-    type: '正面',
+    type: '正面效果',
     global: true,
     target: '猫角色',
     aliases: ['#伤害保护'],
@@ -1852,7 +1911,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   队友的鼓励: {
-    type: '正面',
+    type: '正面效果',
     global: true,
     target: '鼠角色',
     failure: '所有友方均离开自身周围后',
@@ -1862,14 +1921,14 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   推奶酪减伤: {
-    type: '正面',
+    type: '正面效果',
     global: true,
     target: '鼠角色',
     description: '所有鼠角色推奶酪期间，都会获得12%的减伤。\n\n' + damageFormula,
     unuseImage: true,
   },
   全局推速降低: {
-    type: '负面',
+    type: '负面效果',
     global: true,
     target: '鼠角色',
     aliases: ['全局推奶酪减速'],
@@ -1880,7 +1939,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   全局推速提高: {
-    type: '正面',
+    type: '正面效果',
     global: true,
     target: '鼠角色',
     aliases: ['全局推奶酪加速'],
@@ -1892,7 +1951,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
   },
   //--------------------其它道具相关---------------------/
   燃烧速度提高: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '火箭',
     aliases: ['引线长度减少'],
@@ -1903,7 +1962,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   燃烧速度降低: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '火箭',
     aliases: ['引线长度增加'],
@@ -1917,7 +1976,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   熄灭: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '火箭',
     aliases: ['熄灭火箭'],
@@ -1932,7 +1991,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   炸毁: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '火箭',
     aliases: ['炸毁火箭', '摧毁火箭'],
@@ -1945,7 +2004,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   阻止火箭放飞: {
-    type: '特殊',
+    type: '特殊效果',
     global: false,
     target: '火箭',
     description:
@@ -1956,7 +2015,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       { name: '兔子大表哥', type: 'entity' },
     ],
     unuseImage: true,
-  }, //todo:补全墙缝，奶酪，特殊技能（带电）的状态效果
+  },
 };
 
 const buffsWithImages: Record<string, Buff> = Object.fromEntries(

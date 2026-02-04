@@ -892,7 +892,7 @@ export const getBuffGlobalColors = (isGlobal: boolean, isDarkMode: boolean) => {
 };
 
 export const getBuffTypeColors = (type: buffTypelist, isDarkMode: boolean) => {
-  const buffType = type === '正面' ? 'veryLow' : type === '负面' ? 'high' : 'low';
+  const buffType = type.includes('正面') ? 'veryLow' : type.includes('负面') ? 'high' : 'low';
   const colorScheme = designTokens.colors.cost[buffType] || designTokens.colors.skillTypes.passive;
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,

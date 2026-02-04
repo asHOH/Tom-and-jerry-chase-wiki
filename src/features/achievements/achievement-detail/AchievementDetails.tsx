@@ -7,6 +7,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalAchievement } from '@/context/EditModeContext';
 import { achievementsEdit } from '@/data/store';
 import { Achievement } from '@/data/types';
+import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
@@ -55,8 +56,11 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
             ) : undefined
           }
         >
-          <div className='-mt-4'>
+          <div className='-mt-4 space-y-2'>
             <DetailTraitsCard
+              singleItem={{ name: effectiveAchievement.name, type: 'achievement' }}
+            />
+            <DetailReverseCard
               singleItem={{ name: effectiveAchievement.name, type: 'achievement' }}
             />
           </div>
