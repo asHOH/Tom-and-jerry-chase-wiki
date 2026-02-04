@@ -5,12 +5,13 @@ import CollapseCard from '@/components/ui/CollapseCard';
 import { entities } from '@/data';
 
 import SingleItemReverseCard from '../components/SingleItemReverseCard';
+import TextWithHoverTooltips from '../components/TextWithHoverTooltips';
 
-interface DetailTraitsCardProps {
+interface DetailReverseCardProps {
   singleItem: SingleItem;
 }
 
-export default function DetailReverseCard({ singleItem }: DetailTraitsCardProps) {
+export default function DetailReverseCard({ singleItem }: DetailReverseCardProps) {
   const OwnEntities = Object.values({ ...entities.cat, ...entities.mouse }).filter((entity) => {
     const owner = entity.owner;
 
@@ -24,7 +25,7 @@ export default function DetailReverseCard({ singleItem }: DetailTraitsCardProps)
     // 处理单个对象情况（保持原有逻辑）
     return owner?.type === singleItem.type && owner?.name === singleItem.name;
   });
-  const NumberOfOwnTraits: number[] = [singleItem, ...OwnEntities].map((a, key) => {
+  const NumberOfOwnReverse: number[] = [singleItem, ...OwnEntities].map((a, key) => {
     return singleItemRreverse({
       name: a.name,
       type: key === 0 ? singleItem.type : 'entity',
@@ -34,7 +35,7 @@ export default function DetailReverseCard({ singleItem }: DetailTraitsCardProps)
   const OwnEntitiesItems = OwnEntities.map((entity, key) => {
     return {
       id: String(key + 1),
-      title: `${entity.name}${entity.name === singleItem.name ? '-衍生物' : ''}(${NumberOfOwnTraits[key + 1]})`,
+      title: `${entity.name}${entity.name === singleItem.name ? '-衍生物' : ''}(${NumberOfOwnReverse[key + 1]})`,
       children: <SingleItemReverseCard singleItem={{ name: entity.name, type: 'entity' }} />,
       activeColor: 'orange' as const,
     };
@@ -42,7 +43,7 @@ export default function DetailReverseCard({ singleItem }: DetailTraitsCardProps)
 
   return (
     <CollapseCard
-      title={`${singleItem.name}${OwnEntities.length > 0 ? '及其衍生物' : ''}的相关引用项(${NumberOfOwnTraits.reduce((a, b) => a + b)})`}
+      title={`${singleItem.name}${OwnEntities.length > 0 ? '及其衍生物' : ''}的相关引用项(${NumberOfOwnReverse.reduce((a, b) => a + b)})`}
       size='xs'
       className='rounded-md border-x-1 border-b-1 border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
       titleClassName='pl-3'
@@ -50,22 +51,27 @@ export default function DetailReverseCard({ singleItem }: DetailTraitsCardProps)
     >
       {OwnEntities.length === 0 ? (
         <div>
-          <SingleItemReverseCard singleItem={singleItem} />
+          {NumberOfOwnReverse[0] === 0 ? (
+            <TextWithHoverTooltips text='    $暂无任何引用本项的界面$italic text-gray-500 dark:text-gray-400 text-sm#' />
+          ) : (
+            <SingleItemReverseCard singleItem={singleItem} />
+          )}
         </div>
       ) : (
         <div className='mx-2 mt-0.5 mb-2'>
           <AccordionCard
+            titleClassName='mt-2'
             items={[
               {
                 id: '0',
-                title: `${singleItem.name}(${NumberOfOwnTraits[0]})`,
+                title: `${singleItem.name}(${NumberOfOwnReverse[0]})`,
                 children: <SingleItemReverseCard singleItem={singleItem} />,
                 activeColor: 'orange',
               },
               ...OwnEntitiesItems,
             ]}
             size='xs'
-            defaultOpenId={String(NumberOfOwnTraits.findIndex((number) => number > 0))}
+            defaultOpenId={String(NumberOfOwnReverse.findIndex((number) => number > 0))}
           ></AccordionCard>
         </div>
       )}
