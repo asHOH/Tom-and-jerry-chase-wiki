@@ -102,6 +102,7 @@ const catCharacterDefinitions = {
         cancelableAftercast: '无后摇',
         cooldownTiming: '前摇前',
         videoUrl: 'https://www.bilibili.com/video/BV1KcwbeXEHL?t=127.35',
+        cueRange: '随距离远近变化',
         skillLevels: [
           {
             level: 1,

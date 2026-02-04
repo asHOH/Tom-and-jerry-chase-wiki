@@ -83,7 +83,7 @@ export type SkillDefinition = {
   aftercast?: number; // 后摇（秒）
   canHitInPipe?: boolean; // 可击中管道中的角色
   cooldownTiming?: '前摇前' | '释放时' | '释放后'; // 进入CD时机
-  cueRange?: '全图可见' | '本房间可见' | '无音效'; // 技能音效的范围
+  cueRange?: '随距离远近变化' | '全图可见' | '本房间可见' | '无音效'; // 技能音效的范围
 
   skillLevels: SkillLevel[];
 };

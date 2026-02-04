@@ -596,7 +596,7 @@ export default function SkillCard({
         createRadioGroup(
           '技能音效',
           'cueRange',
-          ['全图可见', '本房间可见', '无音效'] as const,
+          ['随距离远近变化', '全图可见', '本房间可见', '无音效'] as const,
           '无音效'
         )
       );

@@ -7969,6 +7969,7 @@ const mouseCharacterDefinitions = {
         cancelableSkill: '不可主动打断',
         cancelableAftercast: '无后摇',
         canHitInPipe: false,
+        cueRange: '随距离远近变化',
         skillLevels: [
           {
             level: 1,
@@ -7996,7 +7997,6 @@ const mouseCharacterDefinitions = {
             charges: 4,
           },
         ],
-        cueRange: '全图可见',
         cooldownTiming: '释放后',
         forecast: 0.95,
         aftercast: 0,
