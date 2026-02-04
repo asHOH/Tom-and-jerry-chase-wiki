@@ -4,6 +4,8 @@
  * Can be used in conjunction with generic entity edit utilities.
  */
 
+import { proxy } from 'valtio';
+
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
 import { CharacterWithFaction } from '@/lib/types';
@@ -57,7 +59,7 @@ export function handleCharacterIdChange(
   // Enhance with validation
   const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId, factionId);
 
-  characters[newId] = enhancedCharacter;
+  characters[newId] = proxy(enhancedCharacter);
 
   // Update faction's character grid list
   const faction = factions[factionId];

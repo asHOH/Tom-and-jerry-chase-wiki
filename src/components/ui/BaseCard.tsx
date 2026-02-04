@@ -8,6 +8,7 @@ type BaseCardProps = {
   onClick?: () => void;
   className?: string;
   variant?: 'character' | 'item' | 'details';
+  preserveEditParam?: boolean;
   // Accessibility props
   role?: string;
   tabIndex?: number;
@@ -21,6 +22,7 @@ export default function BaseCard({
   onClick,
   className = '',
   variant = 'character',
+  preserveEditParam = false,
   role,
   tabIndex,
   onKeyDown,
@@ -95,7 +97,7 @@ export default function BaseCard({
   );
 
   return href ? (
-    <Link className='flex' href={href}>
+    <Link className='flex' href={href} preserveEditParam={preserveEditParam}>
       {content}
     </Link>
   ) : (

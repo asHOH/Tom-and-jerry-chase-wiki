@@ -35,11 +35,14 @@ export default function CharacterDisplay({
   }, [positioningTags, factionId]);
 
   const computedId = id in GameDataManager.getCharacters() ? id : `user/${id}`;
+  const isUserCharacter = computedId.startsWith('user/');
+  const href = isUserCharacter ? `/characters/${computedId}?edit=1` : `/characters/${computedId}`;
 
   return (
     <BaseCard
       variant='character'
-      href={`/characters/${computedId}`}
+      href={href}
+      preserveEditParam={isUserCharacter}
       role='button'
       aria-label={`查看${name}角色详情`}
       className={clsx(

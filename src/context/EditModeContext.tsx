@@ -23,6 +23,9 @@ import {
   isRecordingSuppressed,
   readActionHistory,
   withRecordingSuppressed,
+  writeActionHistory,
+  type Action,
+  type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
 import {
   clearDraft,
@@ -293,6 +296,19 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     const wasEditMode = previousEditModeRef.current;
     previousEditModeRef.current = isEditMode;
 
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem('isEditMode', JSON.stringify(isEditMode));
+        if (isEditMode && !wasEditMode) {
+          window.localStorage.setItem('editmode:enabledAt', String(Date.now()));
+        }
+      } catch {
+        // ignore storage failures
+      }
+
+      window.dispatchEvent(new CustomEvent('editmode:changed', { detail: { isEditMode } }));
+    }
+
     if (isEditMode && !wasEditMode) {
       // Entering edit mode - load from storage
       loadEntitiesFromStorage();
@@ -386,6 +402,61 @@ export const useEditMode = () => {
   return context;
 };
 
+function normalizeActionEntry(actions: Action[]): ActionHistoryEntry {
+  return actions.length === 1 ? actions[0]! : actions;
+}
+
+function matchesEntityAction(action: Action, entityId: string): boolean {
+  if (!entityId) return true;
+  return action.path === entityId || action.path.startsWith(`${entityId}.`);
+}
+
+function splitActionEntryByEntity(
+  entry: ActionHistoryEntry,
+  entityId: string
+): { matching: ActionHistoryEntry | null; remaining: ActionHistoryEntry | null } {
+  if (Array.isArray(entry)) {
+    const matching: Action[] = [];
+    const remaining: Action[] = [];
+
+    entry.forEach((action) => {
+      if (matchesEntityAction(action, entityId)) {
+        matching.push(action);
+      } else {
+        remaining.push(action);
+      }
+    });
+
+    return {
+      matching: matching.length > 0 ? normalizeActionEntry(matching) : null,
+      remaining: remaining.length > 0 ? normalizeActionEntry(remaining) : null,
+    };
+  }
+
+  if (matchesEntityAction(entry, entityId)) {
+    return { matching: entry, remaining: null };
+  }
+
+  return { matching: null, remaining: entry };
+}
+
+function splitActionHistoryByEntity(history: ActionHistoryEntry[], entityId: string) {
+  const matching: ActionHistoryEntry[] = [];
+  const remaining: ActionHistoryEntry[] = [];
+
+  history.forEach((entry) => {
+    const { matching: matchingEntry, remaining: remainingEntry } = splitActionEntryByEntity(
+      entry,
+      entityId
+    );
+
+    if (matchingEntry) matching.push(matchingEntry);
+    if (remainingEntry) remaining.push(remainingEntry);
+  });
+
+  return { matching, remaining };
+}
+
 // ============================================================================
 // Page-level edit mode hook for pages that support editing
 // ============================================================================
@@ -414,6 +485,7 @@ interface PageEditModeResult {
  */
 export function usePageEditMode(options: PageEditModeOptions): PageEditModeResult {
   const { entityType, entityId, showToast } = options;
+  const entityKey = entityId.trim();
   const { isEditMode } = useEditMode();
   const [isPublishing, setIsPublishing] = useState(false);
   const [_actionCountTrigger, setActionCountTrigger] = useState(0);
@@ -423,7 +495,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   useEffect(() => {
     if (!isEditMode || draftLoadedRef.current) return;
 
-    const draft = loadDraft(entityType, entityId);
+    const draft = loadDraft(entityType, entityKey);
     if (draft && draft.actions.length > 0) {
       // Apply draft actions to entity
       const entity = entityRegistry.get(entityType);
@@ -447,7 +519,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     }
 
     draftLoadedRef.current = true;
-  }, [isEditMode, entityType, entityId, showToast]);
+  }, [isEditMode, entityType, entityKey, showToast]);
 
   // Reset draft loaded flag when exiting edit mode
   useEffect(() => {
@@ -474,8 +546,8 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     if (typeof window === 'undefined') return 0;
     const storageKey = getActionsStorageKey(entityType);
     const history = readActionHistory(storageKey);
-    return history.length;
-  }, [entityType]);
+    return splitActionHistoryByEntity(history, entityKey).matching.length;
+  }, [entityType, entityKey]);
 
   const isDirty = useMemo(() => {
     // Trigger re-evaluation when _actionCountTrigger changes
@@ -485,23 +557,24 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
   const draftInfo = useMemo(() => {
     if (!isEditMode) return null;
-    const draft = loadDraft(entityType, entityId);
+    const draft = loadDraft(entityType, entityKey);
     if (!draft) return null;
     return { savedAt: draft.savedAt, actionCount: draft.actions.length };
-  }, [isEditMode, entityType, entityId]);
+  }, [isEditMode, entityType, entityKey]);
 
   const saveDraft = useCallback(() => {
     const storageKey = getActionsStorageKey(entityType);
     const history = readActionHistory(storageKey);
+    const { matching } = splitActionHistoryByEntity(history, entityKey);
 
-    if (history.length === 0) {
+    if (matching.length === 0) {
       if (showToast) showToast('没有需要保存的修改');
       return;
     }
 
-    saveDraftToStorage(entityType, entityId, history);
-    if (showToast) showToast(`草稿已保存 (${history.length} 条修改)`);
-  }, [entityType, entityId, showToast]);
+    saveDraftToStorage(entityType, entityKey, matching);
+    if (showToast) showToast(`草稿已保存 (${matching.length} 条修改)`);
+  }, [entityType, entityKey, showToast]);
 
   const discardChanges = useCallback(() => {
     // Clear action history
@@ -510,34 +583,41 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
     if (entity) {
       const history = readActionHistory(storageKey);
-      if (history.length > 0) {
+      const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
+
+      if (matching.length > 0) {
         withRecordingSuppressed(storageKey, () => {
-          for (let i = history.length - 1; i >= 0; i -= 1) {
-            applyActionEntry(entity, invertActionEntry(history[i]!));
+          for (let i = matching.length - 1; i >= 0; i -= 1) {
+            applyActionEntry(entity, invertActionEntry(matching[i]!));
           }
         });
       }
-    }
 
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(storageKey);
+      if (typeof window !== 'undefined') {
+        if (remaining.length === 0) {
+          window.localStorage.removeItem(storageKey);
+        } else {
+          writeActionHistory(storageKey, remaining);
+        }
+      }
     }
 
     // Clear draft
-    clearDraft(entityType, entityId);
+    clearDraft(entityType, entityKey);
 
     GameDataManager.invalidate();
     setActionCountTrigger((prev) => prev + 1);
 
     if (showToast) showToast('已放弃所有修改');
-  }, [entityType, entityId, showToast]);
+  }, [entityType, entityKey, showToast]);
 
   const publishChanges = useCallback(
     async (message?: string): Promise<boolean> => {
       const storageKey = getActionsStorageKey(entityType);
       const history = readActionHistory(storageKey);
+      const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
 
-      if (history.length === 0) {
+      if (matching.length === 0) {
         if (showToast) showToast('没有需要发布的修改');
         return false;
       }
@@ -549,7 +629,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             entityType,
-            entries: history,
+            entries: matching,
             message,
           }),
         });
@@ -561,9 +641,13 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
         // Clear storage on success
         if (typeof window !== 'undefined') {
-          window.localStorage.removeItem(storageKey);
+          if (remaining.length === 0) {
+            window.localStorage.removeItem(storageKey);
+          } else {
+            writeActionHistory(storageKey, remaining);
+          }
         }
-        clearDraft(entityType, entityId);
+        clearDraft(entityType, entityKey);
         setActionCountTrigger((prev) => prev + 1);
 
         if (showToast) showToast('改动已提交，等待审核');
@@ -576,7 +660,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setIsPublishing(false);
       }
     },
-    [entityType, entityId, showToast]
+    [entityType, entityKey, showToast]
   );
 
   return {

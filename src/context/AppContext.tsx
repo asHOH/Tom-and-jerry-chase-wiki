@@ -32,7 +32,7 @@ export const useAppContext = () => {
     const isOriginal = isOriginalCharacter(characterId);
     const targetPath = isOriginal
       ? `/characters/${encodeURIComponent(characterId)}`
-      : `/characters/user/${encodeURIComponent(characterId)}`;
+      : `/characters/user/${encodeURIComponent(characterId)}?edit=1`;
     navigate(targetPath);
   };
 

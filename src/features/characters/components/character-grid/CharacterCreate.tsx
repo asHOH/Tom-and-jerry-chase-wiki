@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation';
 
 import { componentTokens, designTokens } from '@/lib/design-tokens';
 import { handleCharacterIdChange } from '@/lib/editUtils';
+import type { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import BaseCard from '@/components/ui/BaseCard';
 import { PlusIcon } from '@/components/icons/CommonIcons';
-import { FactionId } from '@/data';
+import { characters, FactionId } from '@/data';
 
 export default function CharacterCreate() {
   const { width, height } = componentTokens.image.dimensions.CHARACTER_CARD;
@@ -30,17 +31,27 @@ export default function CharacterCreate() {
   }, [showInput]);
 
   const handleSubmit = () => {
-    if (characterName.trim()) {
-      handleCharacterIdChange(
-        factionId == 'cat' ? '汤姆' : '杰瑞',
-        characterName.trim(),
-        factionId,
-        handleSelectCharacter,
-        true
-      );
+    const trimmedName = characterName.trim();
+    if (!trimmedName) return;
+
+    if (characters[trimmedName]) {
+      handleSelectCharacter(trimmedName);
       setCharacterName('');
       setShowInput(false);
+      return;
     }
+
+    const templateId = factionId === 'cat' ? '汤姆' : '杰瑞';
+    handleCharacterIdChange(templateId, trimmedName, factionId, handleSelectCharacter, false);
+
+    const createdCharacter = characters[trimmedName] as CharacterWithFaction | undefined;
+    if (createdCharacter) {
+      createdCharacter.createDate = null;
+    }
+
+    handleSelectCharacter(trimmedName);
+    setCharacterName('');
+    setShowInput(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

@@ -199,7 +199,7 @@ export function readActionHistory(storageKey: string): ActionHistoryEntry[] {
   }
 }
 
-function writeActionHistory(storageKey: string, history: ActionHistoryEntry[]): void {
+export function writeActionHistory(storageKey: string, history: ActionHistoryEntry[]): void {
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(storageKey, JSON.stringify(history));
