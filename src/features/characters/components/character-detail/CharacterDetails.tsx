@@ -6,10 +6,12 @@ import { AnimatePresence, m } from 'motion/react'; // smaller bundle size than f
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import singleItemRreverse from '@/lib/singleItemReverse';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { Skill } from '@/data/types';
+import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsBySingleItem';
@@ -377,7 +379,7 @@ export default function CharacterDetails({
                       ) : null
                     );
                 })()}
-                <div>
+                <div className='space-y-2'>
                   <CollapseCard
                     title={`${character.id}角色自身的相关互动特性(${filterTraitsBySingleItem({ name: character.id, type: 'character' }).length})`}
                     size='xs'
@@ -385,6 +387,14 @@ export default function CharacterDetails({
                     titleClassName='pl-3'
                   >
                     <SingleItemTraitsText singleItem={{ name: character.id, type: 'character' }} />
+                  </CollapseCard>
+                  <CollapseCard
+                    title={`${character.id}角色自身的引用项(${singleItemRreverse({ name: character.id, type: 'character' }).length})`}
+                    size='xs'
+                    className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
+                    titleClassName='pl-3'
+                  >
+                    <SingleItemReverseCard singleItem={{ name: character.id, type: 'character' }} />
                   </CollapseCard>
                 </div>
               </div>

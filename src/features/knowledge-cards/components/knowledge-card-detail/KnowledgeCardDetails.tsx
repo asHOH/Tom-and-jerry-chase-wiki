@@ -10,6 +10,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalCard } from '@/context/EditModeContext';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
+import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
@@ -160,8 +161,9 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
               </div>
             ))}
           </div>
-          <div className='mt-4'>
+          <div className='mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
+            <DetailReverseCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
           </div>
         </DetailTextSection>
       ),

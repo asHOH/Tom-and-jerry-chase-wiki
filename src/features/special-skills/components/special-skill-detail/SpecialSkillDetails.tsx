@@ -7,6 +7,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalSpecialSkill } from '@/context/EditModeContext';
 import { SpecialSkill } from '@/data/types';
 import CharacterList from '@/features/knowledge-cards/components/knowledge-card-detail/CharacterList';
+import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
@@ -94,8 +95,15 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
             ) : undefined
           }
         >
-          <div className='-mt-4'>
+          <div className='-mt-4 space-y-2'>
             <DetailTraitsCard
+              singleItem={{
+                name: effectiveSkill.name,
+                type: 'specialSkill',
+                factionId: effectiveSkill.factionId,
+              }}
+            />
+            <DetailReverseCard
               singleItem={{
                 name: effectiveSkill.name,
                 type: 'specialSkill',
