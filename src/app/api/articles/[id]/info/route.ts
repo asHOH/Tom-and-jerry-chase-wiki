@@ -1,17 +1,21 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireRole } from '@/lib/auth/requireRole';
 
-export async function GET(request: Request, { params }: { params: Promise<{ id?: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id?: string }> }) {
   void request;
-  const { id } = await params;
-
-  if (!id) {
-    return NextResponse.json({ error: 'Missing article ID' }, { status: 400 });
-  }
-
   try {
-    const { data, error } = await supabaseAdmin
+    const guard = await requireRole(['Reviewer', 'Coordinator']);
+    if ('error' in guard) return guard.error;
+    const { supabase } = guard;
+
+    const { id } = await params;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Missing article ID' }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
       .from('articles')
       .select(
         'id, title, category_id, character_id, created_at, article_versions(content, editor_id, status, created_at)'
