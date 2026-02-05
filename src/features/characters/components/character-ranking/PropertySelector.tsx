@@ -38,17 +38,6 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
     router.push(url, { scroll: false });
   };
 
-  // Get property colors - use primary blue for active, following KnowledgeCardGrid style
-  const getPropertyColors = (isActive: boolean) => {
-    if (isActive) {
-      return {
-        color: isDarkMode ? '#ffffff' : '#ffffff',
-        backgroundColor: isDarkMode ? '#2563eb' : '#2563eb', // blue-600
-      };
-    }
-    return {}; // Return empty object for inactive buttons to use className styling
-  };
-
   // Helper to render label with tooltip
   const propertyLabel = (p: PropertyInfo) => (
     <Tooltip content={p.description} className='cursor-pointer border-none'>
@@ -73,7 +62,9 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
               const p = commonProperties.find((x) => x.key === opt)!;
               return propertyLabel(p);
             }}
-            getButtonStyle={(_, active) => (active ? getPropertyColors(true) : undefined)}
+            getButtonClassName={(_, active) =>
+              active ? 'bg-blue-600 text-white dark:bg-blue-600 dark:text-white' : ''
+            }
           />
 
           {/* 阵营专属属性 */}
@@ -93,7 +84,9 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
                 const p = factionSpecificProperties.find((x) => x.key === opt)!;
                 return propertyLabel(p);
               }}
-              getButtonStyle={(_, active) => (active ? getPropertyColors(true) : undefined)}
+              getButtonClassName={(_, active) =>
+                active ? 'bg-blue-600 text-white dark:bg-blue-600 dark:text-white' : ''
+              }
             />
           )}
 
@@ -116,12 +109,13 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
             getOptionLabel={(opt) =>
               opt === 'all' ? '全部角色' : opt === 'cat' ? '仅猫阵营' : '仅鼠阵营'
             }
+            getButtonClassName={(opt, active) =>
+              active && opt === 'all'
+                ? 'bg-gray-200 text-gray-700 dark:bg-gray-200 dark:text-gray-700'
+                : ''
+            }
             getButtonStyle={(opt, active) =>
-              active
-                ? opt === 'all'
-                  ? { backgroundColor: '#e5e7eb', color: '#374151' } // gray look for "all"
-                  : getFactionButtonColors(opt, isDarkMode)
-                : undefined
+              active && opt !== 'all' ? getFactionButtonColors(opt, isDarkMode) : undefined
             }
             getButtonDisabled={(opt) =>
               opt !== 'all' && factionSpecificProperties.some((p) => p.key === currentProperty)

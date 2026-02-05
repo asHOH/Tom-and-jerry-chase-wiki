@@ -962,41 +962,71 @@ export const getSkillLevelColors = (level: number, includeBorder: boolean, isDar
   };
 };
 
-export const getSkillLevelContainerColor = (level: number, isDarkMode: boolean): string => {
-  let colorScheme;
+const skillLevelContainerClasses: Record<1 | 2 | 3, string> = {
+  1: 'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-300 dark:from-blue-900 dark:to-blue-950 dark:border-blue-800',
+  2: 'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-300 dark:from-amber-900 dark:to-amber-950 dark:border-amber-800',
+  3: 'bg-gradient-to-r from-red-50 to-red-100 border border-red-300 dark:from-red-900 dark:to-red-950 dark:border-red-800',
+};
 
+export const getSkillLevelContainerColor = (level: number): string => {
   if (level === 1) {
-    colorScheme = designTokens.colors.skillLevels.level1;
-  } else if (level === 2) {
-    colorScheme = designTokens.colors.skillLevels.level2;
-  } else if (level === 3) {
-    colorScheme = designTokens.colors.skillLevels.level3;
-  } else {
-    // Default to level 1 colors for any other level
-    colorScheme = designTokens.colors.skillLevels.level1;
+    return skillLevelContainerClasses[1];
   }
+  if (level === 2) {
+    return skillLevelContainerClasses[2];
+  }
+  if (level === 3) {
+    return skillLevelContainerClasses[3];
+  }
+  return skillLevelContainerClasses[1];
+};
 
-  return isDarkMode && colorScheme.dark ? colorScheme.dark.container : colorScheme.container;
+const positioningTagContainerClasses: Record<
+  keyof typeof designTokens.colors.positioningTags,
+  string
+> = {
+  attack:
+    'bg-gradient-to-r from-red-50 to-red-100 border border-red-200 dark:from-red-900 dark:to-red-950 dark:border-red-800',
+  defense:
+    'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 dark:from-blue-900 dark:to-blue-950 dark:border-blue-800',
+  chase:
+    'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300 dark:from-orange-900 dark:to-orange-950 dark:border-orange-800',
+  speedrun:
+    'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 dark:from-emerald-900 dark:to-emerald-950 dark:border-emerald-800',
+  fight:
+    'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 dark:from-purple-900 dark:to-purple-950 dark:border-purple-800',
+  lateGame:
+    'bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200 dark:from-gray-600 dark:to-gray-650 dark:border-gray-700',
+  comeback:
+    'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 dark:from-amber-900 dark:to-amber-950 dark:border-amber-800',
+  cheese:
+    'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 dark:from-amber-900 dark:to-amber-950 dark:border-amber-800',
+  disrupt:
+    'bg-gradient-to-r from-red-50 to-red-100 border border-red-200 dark:from-red-900 dark:to-red-950 dark:border-red-800',
+  support:
+    'bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 dark:from-blue-900 dark:to-blue-950 dark:border-blue-800',
+  rescue:
+    'bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200 dark:from-emerald-900 dark:to-emerald-950 dark:border-emerald-800',
+  breakthrough:
+    'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 dark:from-purple-900 dark:to-purple-950 dark:border-purple-800',
+  wallBreak:
+    'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300 dark:from-orange-900 dark:to-orange-950 dark:border-orange-800',
+  lateGameMouse:
+    'bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200 dark:from-gray-600 dark:to-gray-650 dark:border-gray-700',
+  minor: 'bg-gray-50 border border-gray-100 dark:bg-slate-800/50 dark:border-slate-700',
 };
 
 export const getPositioningTagContainerColor = (
   tagName: string,
   isMinor: boolean,
-  faction: FactionId,
-  isDarkMode: boolean
+  faction: FactionId
 ): string => {
-  const tagKey = resolvePositioningTagKey(tagName, faction);
-  const colorScheme = tagKey
-    ? designTokens.colors.positioningTags[tagKey]
-    : designTokens.colors.positioningTags.minor;
-
   if (isMinor) {
-    return isDarkMode
-      ? 'bg-slate-800/50 border border-slate-700'
-      : 'bg-gray-50 border border-gray-100';
+    return positioningTagContainerClasses.minor;
   }
 
-  return isDarkMode && colorScheme.dark ? colorScheme.dark.container : colorScheme.container;
+  const tagKey = resolvePositioningTagKey(tagName, faction);
+  return positioningTagContainerClasses[tagKey ?? 'minor'];
 };
 
 /**

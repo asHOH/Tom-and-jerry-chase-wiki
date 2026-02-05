@@ -249,7 +249,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
               key={index}
               className={clsx(
                 'rounded-lg p-3',
-                getPositioningTagContainerColor(tag.tagName, tag.isMinor, factionId, isDarkMode)
+                getPositioningTagContainerColor(tag.tagName, tag.isMinor, factionId)
               )}
             >
               <div className='mb-2 flex items-center gap-2'>

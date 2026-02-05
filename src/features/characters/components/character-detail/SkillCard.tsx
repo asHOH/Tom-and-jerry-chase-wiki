@@ -927,7 +927,7 @@ export default function SkillCard({
                 key={`${skill.id}-${level.level}`}
                 className={clsx(
                   'rounded p-4 dark:text-gray-300',
-                  getSkillLevelContainerColor(level.level, isDarkMode)
+                  getSkillLevelContainerColor(level.level)
                 )}
               >
                 <p className='px-2 py-1 whitespace-pre-wrap'>

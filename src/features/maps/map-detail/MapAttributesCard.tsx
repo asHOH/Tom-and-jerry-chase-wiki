@@ -347,11 +347,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
                   return (
                     <div
                       key={index}
-                      className={
-                        isDarkMode
-                          ? 'rounded-lg border border-indigo-800 bg-linear-to-r from-indigo-900 to-indigo-950 p-2'
-                          : 'rounded-lg border border-indigo-200 bg-linear-to-r from-indigo-50 to-indigo-100 p-2'
-                      }
+                      className='rounded-lg border border-indigo-200 bg-linear-to-r from-indigo-50 to-indigo-100 p-2 dark:border-indigo-800 dark:from-indigo-900 dark:to-indigo-950'
                     >
                       <div className='flex items-center gap-2'>
                         <div className='shrink-0'>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design-system';
@@ -95,10 +94,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
             </div>
             <div className='flex w-full min-w-0 justify-center'>
               <div
-                className={clsx(
-                  'flex w-full max-w-md items-center rounded-lg bg-transparent px-2',
-                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
-                )}
+                className='flex w-full max-w-md items-center rounded-lg bg-transparent px-2 text-gray-700 dark:text-gray-300'
                 aria-label='费用筛选'
               >
                 <CostRangeSlider

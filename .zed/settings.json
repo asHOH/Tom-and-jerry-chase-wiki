@@ -1,0 +1,19 @@
+{
+  "languages": {
+    "JavaScript": {
+      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+    },
+    "TypeScript": {
+      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+    },
+    "TSX": {
+      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+    },
+    "JSON": {
+      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+    },
+    "JSONC": {
+      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+    }
+  }
+}

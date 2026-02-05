@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import clsx from 'clsx';
 
 import { useMobile } from '@/hooks/useMediaQuery';
-import { useDarkMode } from '@/context/DarkModeContext';
 
 import FilterLabel from './FilterLabel';
 
@@ -42,7 +41,6 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
     ariaLabel,
   } = props;
   const isMobile = useMobile();
-  const [isDarkMode] = useDarkMode();
 
   return (
     <div
@@ -64,15 +62,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
           {options.map((opt) => {
             const active = isActive(opt as T);
             const provided = getButtonStyle?.(opt as T, active);
-            const inactiveDefaults = isDarkMode
-              ? { backgroundColor: '#23272f', color: '#6b7280' }
-              : { backgroundColor: '#f3f4f6', color: '#9ca3af' };
-            const activeDefaults = isDarkMode
-              ? { backgroundColor: '#374151', color: '#e5e7eb' }
-              : { backgroundColor: '#e5e7eb', color: '#111827' };
-            const finalStyle = active
-              ? { ...activeDefaults, ...(provided || {}) }
-              : { ...inactiveDefaults, ...(provided || {}) };
+            const finalStyle = provided;
             const labelNode = getOptionLabel ? getOptionLabel(opt as T, active) : String(opt);
             const button = (
               <button
@@ -81,6 +71,9 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                 onClick={() => onToggle(opt as T)}
                 className={clsx(
                   'filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out',
+                  active
+                    ? 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
+                    : 'bg-gray-100 text-gray-400 dark:bg-slate-800 dark:text-gray-500',
                   getButtonClassName?.(opt as T, active)
                 )}
                 style={finalStyle}

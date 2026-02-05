@@ -148,17 +148,15 @@ export default function EntityClient({ description }: Props) {
             }}
             getButtonStyle={(f, active) => {
               if (f === 'other') {
-                // 为"其它"阵营定义样式
-                return active
-                  ? {
-                      backgroundColor: isDarkMode ? '#6b7280' : '#9ca3af',
-                      color: isDarkMode ? '#f3f4f6' : '#1f2937',
-                      borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
-                    }
-                  : undefined;
+                return undefined;
               }
               return active ? getFactionButtonColors(f, isDarkMode) : undefined;
             }}
+            getButtonClassName={(f, active) =>
+              active && f === 'other'
+                ? 'bg-gray-400 text-gray-800 border border-gray-400 dark:bg-gray-500 dark:text-gray-100 dark:border-gray-500'
+                : ''
+            }
           />
         </div>
       </header>
