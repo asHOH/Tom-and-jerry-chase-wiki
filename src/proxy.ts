@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { updateSession } from '@/lib/supabase/middleware';
 
+const IS_VERCEL = process.env.VERCEL === '1';
+const IS_VERCEL_PREVIEW = IS_VERCEL && process.env.VERCEL_ENV !== 'production';
+
+const applyNoIndex = (res: NextResponse) => {
+  if (IS_VERCEL_PREVIEW) {
+    res.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  }
+  return res;
+};
+
 export async function proxy(request: NextRequest) {
   // Block Baidu Browser (Android) by UA, allow force continue
   const ua = request.headers.get('user-agent')?.toLowerCase() || '';
@@ -43,18 +53,20 @@ export async function proxy(request: NextRequest) {
       </body>
       </html>
     `;
-    return new NextResponse(html, {
-      status: 403,
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-store',
-      },
-    });
+    return applyNoIndex(
+      new NextResponse(html, {
+        status: 403,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-store',
+        },
+      })
+    );
   }
 
   // If force_continue param is set, set cookie for future requests
   if (url.searchParams.get('force_continue') === '1') {
-    const res = NextResponse.next();
+    const res = applyNoIndex(NextResponse.next());
     res.cookies.set('force_continue', '1', { path: '/' });
     return res;
   }
@@ -63,7 +75,7 @@ export async function proxy(request: NextRequest) {
   const supabaseResponse = await updateSession(request);
 
   // Return the response from Supabase middleware, which includes updated cookies
-  return supabaseResponse;
+  return applyNoIndex(supabaseResponse as NextResponse);
 }
 
 export const config = {
