@@ -6,8 +6,6 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { articleEditPendingSchema, formatZodError } from '@/lib/validation/schemas';
 
-const SHOULD_REVALIDATE_TAGS = !process.env.VERCEL;
-
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ versionId?: string }> }
@@ -84,11 +82,9 @@ export async function POST(
     }
 
     // Keep public caches reasonably fresh if/when this pending version becomes approved later.
-    if (SHOULD_REVALIDATE_TAGS) {
-      revalidateTag(CACHE_TAGS.article(version.article_id), 'max');
-      revalidateTag(CACHE_TAGS.articleVersions(version.article_id), 'max');
-      revalidateTag(CACHE_TAGS.articles, 'max');
-    }
+    revalidateTag(CACHE_TAGS.article(version.article_id), 'max');
+    revalidateTag(CACHE_TAGS.articleVersions(version.article_id), 'max');
+    revalidateTag(CACHE_TAGS.articles, 'max');
 
     return NextResponse.json({ message: 'Pending article updated successfully' }, { status: 200 });
   } catch (err) {

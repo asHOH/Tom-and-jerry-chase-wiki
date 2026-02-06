@@ -7,8 +7,6 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { articleSubmitSchema, formatZodError } from '@/lib/validation/schemas';
 
-const SHOULD_REVALIDATE_TAGS = !process.env.VERCEL;
-
 export async function POST(req: Request) {
   const rl = await checkRateLimit(req, 'write', 'articles-submit');
   if (!rl.allowed) {
@@ -69,13 +67,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to submit article version' }, { status: 500 });
     }
 
-    // Avoid heavy cache invalidation on Vercel previews; keep full fan-out elsewhere.
-    if (SHOULD_REVALIDATE_TAGS) {
-      revalidateTag(CACHE_TAGS.articles, 'max');
-      revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
-      revalidateTag(CACHE_TAGS.article(newArticleId), 'max');
-      revalidateTag(CACHE_TAGS.articleVersions(newArticleId), 'max');
-    }
+    // Mark lists and the new article as stale (SWR).
+    revalidateTag(CACHE_TAGS.articles, 'max');
+    revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
+    revalidateTag(CACHE_TAGS.article(newArticleId), 'max');
+    revalidateTag(CACHE_TAGS.articleVersions(newArticleId), 'max');
 
     return NextResponse.json({
       message: 'Article submitted successfully',

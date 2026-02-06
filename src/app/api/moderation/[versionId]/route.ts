@@ -4,8 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth/requireRole';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 
-const SHOULD_REVALIDATE_TAGS = !process.env.VERCEL;
-
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ versionId: string }> }
@@ -88,7 +86,7 @@ export async function POST(
       }
 
       const articleId = (versionRow as { article_id?: string | null } | null)?.article_id ?? null;
-      if (articleId && SHOULD_REVALIDATE_TAGS) {
+      if (articleId) {
         revalidateTag(CACHE_TAGS.article(articleId), 'max');
         revalidateTag(CACHE_TAGS.articleVersions(articleId), 'max');
       }
@@ -96,10 +94,8 @@ export async function POST(
       console.error('Revalidation lookup error:', e);
     }
 
-    if (SHOULD_REVALIDATE_TAGS) {
-      revalidateTag(CACHE_TAGS.articles, 'max');
-      revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
-    }
+    revalidateTag(CACHE_TAGS.articles, 'max');
+    revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
 
     return NextResponse.json({
       message: `Article version successfully ${action}${action === 'approve' ? 'd' : action === 'reject' ? 'ed' : 'd'}`,
