@@ -6,6 +6,8 @@ import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 
+const REVALIDATE_SECONDS = process.env.VERCEL ? 1800 : 300;
+
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const rl = await checkRateLimit(request, 'read', 'articles-history');
   if (!rl.allowed) {
@@ -76,7 +78,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         };
       },
       {
-        revalidate: 300,
+        revalidate: REVALIDATE_SECONDS,
         tags: [CACHE_TAGS.article(id), CACHE_TAGS.articleVersions(id)],
       }
     );

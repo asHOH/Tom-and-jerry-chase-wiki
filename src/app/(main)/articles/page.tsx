@@ -4,7 +4,8 @@ import { getArticlesPageData } from '@/lib/articles/serverQueries';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import ArticlesClient from '@/features/articles/components/ArticlesClient';
 
-export const revalidate = 60;
+const REVALIDATE_SECONDS = process.env.VERCEL ? 1800 : 120;
+export const revalidate = REVALIDATE_SECONDS;
 
 const DESCRIPTION = '浏览其他爱好者的记录、思考和发现';
 
