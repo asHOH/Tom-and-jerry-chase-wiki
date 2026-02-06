@@ -11,8 +11,6 @@ import {
   formatZodError,
 } from '@/lib/validation/schemas';
 
-const REVALIDATE_SECONDS = process.env.VERCEL ? 1800 : 120;
-
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const rl = await checkRateLimit(request, 'read', 'articles-detail');
   if (!rl.allowed) {
@@ -120,7 +118,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         };
       },
       {
-        revalidate: REVALIDATE_SECONDS,
+        revalidate: 60,
         tags: [CACHE_TAGS.article(id), CACHE_TAGS.articleVersions(id), CACHE_TAGS.articles],
       }
     );

@@ -6,8 +6,6 @@ import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 
-const REVALIDATE_SECONDS = process.env.VERCEL ? 1800 : 60;
-
 export async function GET(request: NextRequest) {
   const rl = await checkRateLimit(request, 'read', 'articles-list');
   if (!rl.allowed) {
@@ -130,7 +128,7 @@ export async function GET(request: NextRequest) {
         };
       },
       {
-        revalidate: REVALIDATE_SECONDS,
+        revalidate: 30,
         tags: [CACHE_TAGS.articles, CACHE_TAGS.categories],
       }
     );

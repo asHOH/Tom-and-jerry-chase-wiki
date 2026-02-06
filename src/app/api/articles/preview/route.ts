@@ -4,8 +4,6 @@ import { CACHE_TAGS } from '@/lib/cacheTags';
 import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
-const REVALIDATE_SECONDS = process.env.VERCEL ? 1800 : 60;
-
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get('token');
@@ -97,7 +95,7 @@ export async function GET(request: NextRequest) {
         };
       },
       {
-        revalidate: REVALIDATE_SECONDS,
+        revalidate: 30,
         tags: [CACHE_TAGS.articles],
       }
     );
