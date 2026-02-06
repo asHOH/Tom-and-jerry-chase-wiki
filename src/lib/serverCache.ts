@@ -2,6 +2,8 @@ import 'server-only';
 
 import { unstable_cache } from 'next/cache';
 
+import { env } from '@/env';
+
 export type ServerCacheOptions = {
   revalidate?: number | false;
   tags?: string[];
@@ -24,6 +26,11 @@ export async function cached<T>(
   options?: ServerCacheOptions
 ): Promise<T> {
   const key = normalizeKeyParts(keyParts);
-  const wrapped = unstable_cache(fn, key, options);
+  const disableRevalidate = env.VERCEL === '1' && env.VERCEL_ENV === 'preview';
+  const normalizedOptions = disableRevalidate
+    ? { ...options, revalidate: false as const }
+    : options;
+
+  const wrapped = unstable_cache(fn, key, normalizedOptions);
   return wrapped();
 }
