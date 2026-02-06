@@ -1,4 +1,4 @@
-import characterRelations from './traits/characterRelations';
+import characterRelations from './characterRelations';
 import { Trait } from './types';
 
 const traits: Record<string, Trait> = {
