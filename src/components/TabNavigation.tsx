@@ -38,9 +38,9 @@ type TabNavigationProps = {
   showDetailToggle?: boolean;
 };
 
-const MOBILE_STACK_COLLAPSE_WIDTHS = [624, 580, 536, 492, 448, 404, 360, 316, 272, 228] as const;
+const MOBILE_STACK_COLLAPSE_WIDTHS = [724, 680, 636, 592, 548, 504, 460, 416, 372, 328] as const;
 
-const DESKTOP_STACK_COLLAPSE_WIDTHS = [9999, 1310, 1180, 1050, 764] as const;
+const DESKTOP_STACK_COLLAPSE_WIDTHS = [9999, 1410, 1280, 1150, 864] as const;
 
 const DETAIL_TOGGLE_WIDTH = 56;
 const USER_BUTTON_WIDTH = 44;
