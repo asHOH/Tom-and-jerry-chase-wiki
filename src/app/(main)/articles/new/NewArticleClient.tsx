@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
 import { useUser } from '@/hooks/useUser';
+import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageDescription from '@/components/ui/PageDescription';
@@ -47,6 +48,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const NewArticleClient: React.FC = () => {
   const router = useRouter();
   const { role: userRole } = useUser();
+  const { success: showSuccess, error: showError } = useToast();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -55,7 +57,6 @@ const NewArticleClient: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const { data: categoriesData, error: categoriesError } = useSWR<ArticlesData>(
     userRole ? '/api/articles?page=1&limit=1' : null,
@@ -147,17 +148,17 @@ const NewArticleClient: React.FC = () => {
       });
 
       if (response.ok) {
-        setSuccess('文章提交成功！正在跳转...');
+        showSuccess('文章提交成功！正在跳转...');
         setTimeout(() => {
           router.push('/articles');
         }, 2000);
       } else {
         const errorData = await response.json();
-        setError(errorData.message || '提交文章失败');
+        showError(errorData.message || '提交文章失败');
       }
     } catch (error) {
       console.error('Error submitting article:', error);
-      setError('提交文章时发生错误，请稍后重试');
+      showError('提交文章时发生错误，请稍后重试');
     } finally {
       setIsSubmitting(false);
     }
@@ -225,7 +226,6 @@ const NewArticleClient: React.FC = () => {
         submitLabel='提交文章'
         submittingLabel='提交中...'
         errorMessage={error || categoriesError?.message || null}
-        successMessage={success}
         contentPlaceholder={ARTICLE_EDITOR_PLACEHOLDER}
         showCharacterSelector={showCharacterSelector}
         characterId={characterId}

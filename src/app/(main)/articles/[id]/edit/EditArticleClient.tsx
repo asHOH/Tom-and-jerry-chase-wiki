@@ -6,6 +6,7 @@ import useSWR from 'swr';
 
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useUser } from '@/hooks/useUser';
+import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageDescription from '@/components/ui/PageDescription';
@@ -58,6 +59,7 @@ const EditArticleClient: React.FC = () => {
   const id = params?.id as string;
   const router = useRouter();
   const { role: userRole } = useUser();
+  const { success: showSuccess, error: showError } = useToast();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -66,7 +68,6 @@ const EditArticleClient: React.FC = () => {
   const [commitMessage, setCommitMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [placeholder, setPlaceholder] = useState('');
 
   const { data: categoriesData, error: categoriesError } = useSWR<ArticlesData>(
@@ -176,17 +177,17 @@ const EditArticleClient: React.FC = () => {
       });
 
       if (response.ok) {
-        setSuccess('文章更新成功！正在跳转...');
+        showSuccess('文章更新成功！正在跳转...');
         setTimeout(() => {
           router.push(`/articles/${id}`);
         }, 2000);
       } else {
         const errorData = await response.json();
-        setError(errorData.message || '更新文章失败');
+        showError(errorData.message || '更新文章失败');
       }
     } catch (error) {
       console.error('Error updating article:', error);
-      setError('更新文章时发生错误，请稍后重试');
+      showError('更新文章时发生错误，请稍后重试');
     } finally {
       setIsSubmitting(false);
     }
@@ -269,7 +270,6 @@ const EditArticleClient: React.FC = () => {
         submitLabel='更新文章'
         submittingLabel='更新中...'
         errorMessage={error || articleError?.message || categoriesError?.message || null}
-        successMessage={success}
         contentPlaceholder={placeholder}
         showCharacterSelector={showCharacterSelector}
         characterId={characterId}
