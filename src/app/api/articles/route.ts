@@ -7,7 +7,6 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 
 const REVALIDATE_SECONDS = process.env.VERCEL ? 1800 : 60;
-const CACHE_CONTROL_HEADER = `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${REVALIDATE_SECONDS}`;
 
 export async function GET(request: NextRequest) {
   const rl = await checkRateLimit(request, 'read', 'articles-list');
@@ -30,18 +29,15 @@ export async function GET(request: NextRequest) {
     (supabaseServerPublic as unknown as typeof supabaseServerPublic | undefined);
 
   if (!supabase) {
-    return NextResponse.json(
-      {
-        articles: [],
-        total_count: 0,
-        current_page: 1,
-        total_pages: 0,
-        categories: [],
-        has_next: false,
-        has_prev: false,
-      },
-      { headers: { 'Cache-Control': CACHE_CONTROL_HEADER } }
-    );
+    return NextResponse.json({
+      articles: [],
+      total_count: 0,
+      current_page: 1,
+      total_pages: 0,
+      categories: [],
+      has_next: false,
+      has_prev: false,
+    });
   }
 
   try {
@@ -139,7 +135,7 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    return NextResponse.json(payload, { headers: { 'Cache-Control': CACHE_CONTROL_HEADER } });
+    return NextResponse.json(payload);
   } catch (err) {
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

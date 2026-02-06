@@ -12,7 +12,6 @@ import {
 } from '@/lib/validation/schemas';
 
 const REVALIDATE_SECONDS = process.env.VERCEL ? 1800 : 120;
-const CACHE_CONTROL_HEADER = `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${REVALIDATE_SECONDS}`;
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const rl = await checkRateLimit(request, 'read', 'articles-detail');
@@ -131,16 +130,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         response.error === 'Article not found' || response.error === 'No approved version found'
           ? 404
           : 500;
-      return NextResponse.json(response, {
-        status,
-        headers: { 'Cache-Control': CACHE_CONTROL_HEADER },
-      });
+      return NextResponse.json(response, { status });
     }
 
-    return NextResponse.json(response, {
-      status: 200,
-      headers: { 'Cache-Control': CACHE_CONTROL_HEADER },
-    });
+    return NextResponse.json(response, { status: 200 });
   } catch (err) {
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
