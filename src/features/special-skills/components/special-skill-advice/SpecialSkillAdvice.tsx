@@ -8,6 +8,7 @@ import { designTokens } from '@/lib/design-tokens';
 import { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId, SpecialSkill } from '@/data/types';
+import { getSpecialSkillRelationSummary } from '@/features/characters/utils/relations';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import BaseCard from '@/components/ui/BaseCard';
 import FilterRow from '@/components/ui/FilterRow';
@@ -24,28 +25,28 @@ type SnapshotSpecialSkill = Omit<SpecialSkill, 'aliases'> & {
 
 // Filter characters
 function allCounters(skill: SnapshotSpecialSkill) {
-  const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
-    (character) =>
-      character.countersSpecialSkills?.some((s) => s.id === skill.name && s.isMinor === true) &&
-      character.factionId !== skill.factionId
+  const summary = getSpecialSkillRelationSummary(skill.name, skill.factionId);
+  const minorNames = new Set(summary.counters.minor);
+  const majorNames = new Set(summary.counters.major);
+
+  const IsMinor: CharacterWithFaction[] = Object.values(characters).filter((character) =>
+    minorNames.has(character.id)
   );
-  const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter(
-    (character) =>
-      character.countersSpecialSkills?.some((s) => s.id === skill.name && s.isMinor === false) &&
-      character.factionId !== skill.factionId
+  const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter((character) =>
+    majorNames.has(character.id)
   );
   return { 0: UnIsMinor, 1: IsMinor };
 }
 function allCounteredBy(skill: SnapshotSpecialSkill) {
-  const IsMinor: CharacterWithFaction[] = Object.values(characters).filter(
-    (character) =>
-      character.counteredBySpecialSkills?.some((s) => s.id === skill.name && s.isMinor === true) &&
-      character.factionId !== skill.factionId
+  const summary = getSpecialSkillRelationSummary(skill.name, skill.factionId);
+  const minorNames = new Set(summary.counteredBy.minor);
+  const majorNames = new Set(summary.counteredBy.major);
+
+  const IsMinor: CharacterWithFaction[] = Object.values(characters).filter((character) =>
+    minorNames.has(character.id)
   );
-  const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter(
-    (character) =>
-      character.counteredBySpecialSkills?.some((s) => s.id === skill.name && s.isMinor === false) &&
-      character.factionId !== skill.factionId
+  const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter((character) =>
+    majorNames.has(character.id)
   );
   return { 0: UnIsMinor, 1: IsMinor };
 }

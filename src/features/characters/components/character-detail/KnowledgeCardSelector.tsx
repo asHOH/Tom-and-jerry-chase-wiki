@@ -11,9 +11,10 @@ type Props = {
   selected: CharacterRelationItem[];
   onSelect: (cardName: string) => void;
   factionId: 'cat' | 'mouse';
+  disabled?: boolean;
 };
 
-const KnowledgeCardSelector: React.FC<Props> = ({ selected, onSelect, factionId }) => {
+const KnowledgeCardSelector: React.FC<Props> = ({ selected, onSelect, factionId, disabled }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const availableCards = Object.values(cards).filter(
@@ -34,9 +35,10 @@ const KnowledgeCardSelector: React.FC<Props> = ({ selected, onSelect, factionId 
     <div className='relative inline-block'>
       <button
         type='button'
-        onClick={() => setIsOpen(!isOpen)}
-        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-yellow-600 dark:hover:bg-yellow-700'
         aria-label='添加知识卡'
+        disabled={disabled}
       >
         <PlusIcon className='h-4 w-4' aria-hidden='true' />
       </button>

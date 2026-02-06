@@ -278,12 +278,6 @@ type SuggestedSpecialSkillItem = {
   description: string; // A description of why this skill is recommended.
 };
 
-// Describes the relationship (e.g., counter, synergy) with another character.
-type CharacterRelationItem = {
-  id: string; // The ID of the other character.
-  description?: string; // An explanation of the relationship.
-  isMinor: boolean; // True if the relationship is situational or less significant.
-};
 
 // The main data structure for a single character.
 type CharacterDefinition = {
@@ -319,17 +313,7 @@ type CharacterDefinition = {
   specialSkills?: SuggestedSpecialSkillItem[]; // Recommended special skills.
 
   // --- Matchup Information ---
-  counters?: CharacterRelationItem[]; // Characters this character is strong against.
-  countersKnowledgeCards?: CharacterRelationItem[]; // Matchups where specific knowledge cards give an advantage.
-  countersSpecialSkills?: CharacterRelationItem[]; // Matchups where specific special skills give an advantage.
-
-  counteredBy?: CharacterRelationItem[]; // Characters this character is weak against.
-  counteredByKnowledgeCards?: CharacterRelationItem[]; // Matchups where the opponent's knowledge cards are a disadvantage.
-  counteredBySpecialSkills?: CharacterRelationItem[]; // Matchups where the opponent's special skills are a disadvantage.
-
-  counterEachOther?: CharacterRelationItem[]; // Characters this character has different relation with (in different time periods within the game), or both parties have low fault tolerance rates.
-
-  collaborators?: CharacterRelationItem[]; // Characters this character has good synergy with.
+  // Relations are stored as traits with relation metadata; use trait utilities to query.
 };
 
 export type Character = CharacterDefinition & {

@@ -11,9 +11,10 @@ import Image from '@/components/Image';
 type Props = {
   selected: CharacterRelationItem[];
   onSelect: (mapName: string) => void;
+  disabled?: boolean;
 };
 
-const MapSelector: React.FC<Props> = ({ selected, onSelect }) => {
+const MapSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const mapsSnapshot = useSnapshot(mapsEdit);
@@ -35,9 +36,10 @@ const MapSelector: React.FC<Props> = ({ selected, onSelect }) => {
     <div className='relative inline-block'>
       <button
         type='button'
-        onClick={() => setIsOpen(!isOpen)}
-        className='flex h-8 w-8 items-center justify-center rounded-md bg-blue-500 text-xs text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className='flex h-8 w-8 items-center justify-center rounded-md bg-blue-500 text-xs text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-blue-600 dark:hover:bg-blue-700'
         aria-label='添加地图'
+        disabled={disabled}
       >
         <PlusIcon className='h-4 w-4' aria-hidden='true' />
       </button>

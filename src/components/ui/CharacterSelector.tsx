@@ -16,12 +16,14 @@ export function CharacterSelector({
   relationType,
   existingRelations,
   onSelect,
+  disabled = false,
 }: {
   currentCharacterId: string;
   factionId: FactionId;
   relationType: RelationKey;
   existingRelations: CharacterRelationItem[];
   onSelect: (characterId: string) => void;
+  disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -54,9 +56,10 @@ export function CharacterSelector({
     <div className='relative inline-block'>
       <button
         type='button'
-        onClick={() => setIsOpen(!isOpen)}
-        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400/60 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:focus-visible:ring-yellow-300/70'
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400/60 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:focus-visible:ring-yellow-300/70'
         aria-label={`添加${relationType}关系`}
+        disabled={disabled}
       >
         <PlusIcon className='h-4 w-4' aria-hidden='true' />
       </button>

@@ -1,3 +1,4 @@
+import characterRelations from './traits/characterRelations';
 import { Trait } from './types';
 
 const traits: Record<string, Trait> = {
@@ -877,6 +878,7 @@ const traits: Record<string, Trait> = {
       ],
     ],
   },
+  ...characterRelations,
 };
 
 export default traits;

@@ -1,21 +1,17 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
-import { setNestedProperty } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { CharacterRelationItem, type FactionId } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
-import { CharacterSelector } from '@/components/ui/CharacterSelector';
-import { editable } from '@/components/ui/editable';
-import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { cards, characters, mapsEdit, modesEdit, specialSkillsEdit } from '@/data';
+import { cards, mapsEdit, modesEdit, specialSkillsEdit } from '@/data';
 
 import {
   AdvantageIcon,
@@ -26,31 +22,11 @@ import {
   NeutralFaceIcon,
   SadFaceIcon,
 } from './CharacterRelationIcons';
-import KnowledgeCardSelector from './KnowledgeCardSelector';
-import MapSelector from './MapSelector';
-import ModeSelector from './ModeSelector';
-import SpecialSkillSelector from './SpecialSkillSelector';
-
-const e = editable('characters');
 
 type Props = {
   id: string;
   factionId: FactionId;
 };
-
-type RelationKey = 'counters' | 'counteredBy' | 'counterEachOther' | 'collaborators';
-type ExtraRelationKey =
-  | 'countersKnowledgeCards'
-  | 'counteredByKnowledgeCards'
-  | 'countersSpecialSkills'
-  | 'counteredBySpecialSkills'
-  | 'advantageMaps'
-  | 'advantageModes'
-  | 'disadvantageMaps'
-  | 'disadvantageModes';
-
-type RelationCollectionKey = RelationKey | ExtraRelationKey;
-type RelationCollections = Partial<Record<RelationCollectionKey, readonly CharacterRelationItem[]>>;
 
 type RelationTheme = 'blue' | 'amber' | 'red' | 'green' | 'purple' | 'orange';
 
@@ -142,12 +118,8 @@ type CharacterDisplayItem = {
   getAriaLabel: (isEditMode: boolean) => string;
   onNavigate: () => void;
   showEditable: boolean;
-  editablePath?: string;
-  onUpdateDescription?: (value: string) => void;
   onToggleMinor?: () => void;
   getToggleLabel?: (currentIsMinor: boolean) => string;
-  onRemove?: () => void;
-  getRemoveLabel?: () => string;
 };
 
 type KnowledgeCardDisplayItem = {
@@ -159,12 +131,8 @@ type KnowledgeCardDisplayItem = {
   imageUrl: string;
   ariaLabel: string;
   onNavigate: () => void;
-  editablePath: string;
-  onUpdateDescription: (value: string) => void;
   onToggleMinor: () => void;
   getToggleLabel: (currentIsMinor: boolean) => string;
-  onRemove: () => void;
-  removeLabel: string;
 };
 
 type SpecialSkillDisplayItem = {
@@ -176,12 +144,8 @@ type SpecialSkillDisplayItem = {
   imageUrl?: string;
   ariaLabel: string;
   onNavigate: () => void;
-  editablePath: string;
-  onUpdateDescription: (value: string) => void;
   onToggleMinor: () => void;
   getToggleLabel: (currentIsMinor: boolean) => string;
-  onRemove: () => void;
-  removeLabel: string;
 };
 
 type MapDisplayItem = {
@@ -193,12 +157,8 @@ type MapDisplayItem = {
   imageUrl?: string;
   ariaLabel: string;
   onNavigate: () => void;
-  editablePath: string;
-  onUpdateDescription: (value: string) => void;
   onToggleMinor: () => void;
   getToggleLabel: (currentIsMinor: boolean) => string;
-  onRemove: () => void;
-  removeLabel: string;
 };
 
 type ModeDisplayItem = {
@@ -210,12 +170,8 @@ type ModeDisplayItem = {
   imageUrl?: string;
   ariaLabel: string;
   onNavigate: () => void;
-  editablePath: string;
-  onUpdateDescription: (value: string) => void;
   onToggleMinor: () => void;
   getToggleLabel: (currentIsMinor: boolean) => string;
-  onRemove: () => void;
-  removeLabel: string;
 };
 
 type RelationDisplayItem =
@@ -233,6 +189,7 @@ type RelationSectionConfig = {
   items: RelationDisplayItem[];
   selectors?: React.ReactNode;
   show?: boolean;
+  showEditControls?: boolean;
 };
 
 const toArray = <T,>(value: readonly T[] | undefined | null): T[] =>
@@ -247,55 +204,33 @@ const sortByImportance = <T extends { isMinor?: boolean }>(items: T[]): T[] =>
   });
 
 const buildCharacterItems = (
-  relationKey: RelationKey,
   combined: readonly CharacterRelationItem[],
-  local: readonly CharacterRelationItem[] | undefined,
-  hook: ReturnType<typeof useRelationEditor>,
   getImageUrl: (id: string) => string,
   handleSelectCharacter: (id: string) => void,
-  ariaLabels: { view: (id: string) => string; edit: (id: string) => string },
-  toggleLabel: (id: string, isMinor: boolean) => string,
-  removeLabel: (id: string) => string
+  ariaLabels: { view: (id: string) => string; edit: (id: string) => string }
 ): CharacterDisplayItem[] => {
-  const localArray = toArray(local);
   return combined.map((item) => {
     const id = item.id;
-    const originalIndex = localArray.findIndex((localItem) => localItem.id === id);
-    const isDirectRelation = originalIndex !== -1;
-    const directRecord = localArray[originalIndex];
-    const currentIsMinor = !!(directRecord?.isMinor ?? item.isMinor);
-
     return {
       type: 'character',
       key: `character-${id}`,
       id,
       description: item.description ?? '',
-      isMinor: currentIsMinor,
+      isMinor: !!item.isMinor,
       imageSrc: getImageUrl(id),
       getAriaLabel: (isEditMode) => (isEditMode ? ariaLabels.edit(id) : ariaLabels.view(id)),
       onNavigate: () => handleSelectCharacter(id),
-      showEditable: isDirectRelation,
-      ...(isDirectRelation && {
-        editablePath: `${relationKey}.${originalIndex}.description`,
-        onUpdateDescription: (value: string) =>
-          hook.handleUpdate(originalIndex, 'description', value),
-        onToggleMinor: () => hook.toggleIsMinor(originalIndex),
-        getToggleLabel: (stateIsMinor: boolean) => toggleLabel(id, stateIsMinor),
-        onRemove: () => hook.handleRemove(originalIndex),
-        getRemoveLabel: () => removeLabel(id),
-      }),
+      showEditable: false,
     } satisfies CharacterDisplayItem;
   });
 };
 
 const buildKnowledgeCardItems = (
   items: readonly CharacterRelationItem[] | undefined,
-  descriptionPathPrefix: ExtraRelationKey,
-  hook: ReturnType<typeof useRelationEditor>,
   navigateToCard: (id: string) => void
 ): KnowledgeCardDisplayItem[] =>
   toArray(items)
-    .map((card, idx) => {
+    .map((card) => {
       const cardObj = cards[card.id];
       if (!cardObj) return null;
       return {
@@ -307,26 +242,20 @@ const buildKnowledgeCardItems = (
         imageUrl: cardObj.imageUrl,
         ariaLabel: `跳转到知识卡 ${card.id}`,
         onNavigate: () => navigateToCard(card.id),
-        editablePath: `${descriptionPathPrefix}.${idx}.description`,
-        onUpdateDescription: (value: string) => hook.handleUpdate(idx, 'description', value),
-        onToggleMinor: () => hook.toggleIsMinor(idx),
+        onToggleMinor: () => {},
         getToggleLabel: (currentIsMinor) =>
           `切换${card.id}的知识卡关系为${currentIsMinor ? '主要' : '次要'}`,
-        onRemove: () => hook.handleRemove(idx),
-        removeLabel: `移除知识卡 ${card.id}`,
       } satisfies KnowledgeCardDisplayItem;
     })
     .filter(Boolean) as KnowledgeCardDisplayItem[];
 
 const buildSpecialSkillItems = (
   items: readonly CharacterRelationItem[] | undefined,
-  descriptionPathPrefix: ExtraRelationKey,
-  hook: ReturnType<typeof useRelationEditor>,
   navigateToSkill: (id: string) => void,
   targetFaction: FactionId,
   specialSkillsData: Record<FactionId, Record<string, { imageUrl?: string }>>
 ): SpecialSkillDisplayItem[] =>
-  toArray(items).map((skill, idx) => {
+  toArray(items).map((skill) => {
     const skillObj = specialSkillsData[targetFaction]?.[skill.id];
     return {
       type: 'specialSkill',
@@ -337,24 +266,18 @@ const buildSpecialSkillItems = (
       ...(skillObj?.imageUrl ? { imageUrl: skillObj.imageUrl } : {}),
       ariaLabel: `跳转到特技 ${skill.id}`,
       onNavigate: () => navigateToSkill(skill.id),
-      editablePath: `${descriptionPathPrefix}.${idx}.description`,
-      onUpdateDescription: (value: string) => hook.handleUpdate(idx, 'description', value),
-      onToggleMinor: () => hook.toggleIsMinor(idx),
+      onToggleMinor: () => {},
       getToggleLabel: (currentIsMinor) =>
         `切换${skill.id}的特技关系为${currentIsMinor ? '主要' : '次要'}`,
-      onRemove: () => hook.handleRemove(idx),
-      removeLabel: `移除特技 ${skill.id}`,
     } satisfies SpecialSkillDisplayItem;
   });
 
 const buildMapItems = (
   items: readonly CharacterRelationItem[] | undefined,
-  descriptionPathPrefix: ExtraRelationKey,
-  hook: ReturnType<typeof useRelationEditor>,
   navigateToMap: (id: string) => void,
   mapsData: Record<string, { imageUrl?: string }>
 ): MapDisplayItem[] =>
-  toArray(items).map((map, idx) => {
+  toArray(items).map((map) => {
     const mapObj = mapsData[map.id];
     return {
       type: 'map',
@@ -365,24 +288,18 @@ const buildMapItems = (
       ...(mapObj?.imageUrl ? { imageUrl: mapObj.imageUrl } : {}),
       ariaLabel: `跳转到地图 ${map.id}`,
       onNavigate: () => navigateToMap(map.id),
-      editablePath: `${descriptionPathPrefix}.${idx}.description`,
-      onUpdateDescription: (value: string) => hook.handleUpdate(idx, 'description', value),
-      onToggleMinor: () => hook.toggleIsMinor(idx),
+      onToggleMinor: () => {},
       getToggleLabel: (currentIsMinor) =>
         `切换${map.id}的地图关系为${currentIsMinor ? '主要' : '次要'}`,
-      onRemove: () => hook.handleRemove(idx),
-      removeLabel: `移除地图 ${map.id}`,
     } satisfies MapDisplayItem;
   });
 
 const buildModeItems = (
   items: readonly CharacterRelationItem[] | undefined,
-  descriptionPathPrefix: ExtraRelationKey,
-  hook: ReturnType<typeof useRelationEditor>,
   navigateToMode: (id: string) => void,
   modesData: Record<string, { imageUrl?: string }>
 ): ModeDisplayItem[] =>
-  toArray(items).map((mode, idx) => {
+  toArray(items).map((mode) => {
     const modeObj = modesData[mode.id];
     return {
       type: 'mode',
@@ -393,13 +310,9 @@ const buildModeItems = (
       ...(modeObj?.imageUrl ? { imageUrl: modeObj.imageUrl } : {}),
       ariaLabel: `跳转到模式 ${mode.id}`,
       onNavigate: () => navigateToMode(mode.id),
-      editablePath: `${descriptionPathPrefix}.${idx}.description`,
-      onUpdateDescription: (value: string) => hook.handleUpdate(idx, 'description', value),
-      onToggleMinor: () => hook.toggleIsMinor(idx),
+      onToggleMinor: () => {},
       getToggleLabel: (currentIsMinor) =>
         `切换${mode.id}的模式关系为${currentIsMinor ? '主要' : '次要'}`,
-      onRemove: () => hook.handleRemove(idx),
-      removeLabel: `移除模式 ${mode.id}`,
     } satisfies ModeDisplayItem;
   });
 
@@ -410,6 +323,7 @@ type RelationSectionProps = {
   items: RelationDisplayItem[];
   selectors?: React.ReactNode;
   isEditMode: boolean;
+  showEditControls?: boolean;
   emptyLabel?: string;
 };
 
@@ -420,14 +334,16 @@ const RelationSection: React.FC<RelationSectionProps> = ({
   items,
   selectors,
   isEditMode,
+  showEditControls = false,
   emptyLabel = '无',
 }) => {
   const themeClasses = relationThemeClasses[theme];
+  const canEdit = isEditMode && showEditControls;
 
   const renderCharacterItem = (item: CharacterDisplayItem) => {
-    const ariaLabel = item.getAriaLabel(isEditMode);
+    const ariaLabel = item.getAriaLabel(canEdit);
     const handleClick = () => {
-      if (!isEditMode) {
+      if (!canEdit) {
         item.onNavigate();
       }
     };
@@ -438,14 +354,14 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         className={clsx(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
-          !isEditMode && themeClasses.interactive,
+          !canEdit && themeClasses.interactive,
           item.isMinor && 'opacity-60'
         )}
-        {...(!isEditMode && { role: 'button', tabIndex: 0 })}
+        {...(!canEdit && { role: 'button', tabIndex: 0 })}
         aria-label={ariaLabel}
         onClick={handleClick}
         onKeyDown={(e) => {
-          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+          if (!canEdit && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
             item.onNavigate();
           }
@@ -461,7 +377,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {isEditMode && item.showEditable ? (
+            {canEdit && item.showEditable ? (
               <button
                 type='button'
                 onClick={item.onToggleMinor}
@@ -471,42 +387,22 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
-              !isEditMode && item.isMinor && <span className={themeClasses.badge}>次要</span>
+              !canEdit && item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
           </div>
-          {isEditMode && item.showEditable ? (
-            <e.span
-              path={item.editablePath!}
-              initialValue={item.description || ''}
-              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
-              onSave={item.onUpdateDescription!}
-            />
-          ) : (
-            !isEditMode &&
-            item.description && (
-              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-                {item.description}
-              </span>
-            )
+          {!canEdit && item.description && (
+            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
+              {item.description}
+            </span>
           )}
         </div>
-        {isEditMode && item.showEditable && item.onRemove && (
-          <button
-            type='button'
-            onClick={item.onRemove}
-            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-            aria-label={item.getRemoveLabel?.()}
-          >
-            <TrashIcon className='h-4 w-4' aria-hidden='true' />
-          </button>
-        )}
       </div>
     );
   };
 
   const renderKnowledgeCardItem = (item: KnowledgeCardDisplayItem) => {
     const handleClick = () => {
-      if (!isEditMode) {
+      if (!canEdit) {
         item.onNavigate();
       }
     };
@@ -517,15 +413,15 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         className={clsx(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
-          !isEditMode && themeClasses.interactive,
+          !canEdit && themeClasses.interactive,
           item.isMinor && 'opacity-60'
         )}
-        role={!isEditMode ? 'button' : undefined}
-        tabIndex={!isEditMode ? 0 : undefined}
+        role={!canEdit ? 'button' : undefined}
+        tabIndex={!canEdit ? 0 : undefined}
         aria-label={item.ariaLabel}
         onClick={handleClick}
         onKeyDown={(e) => {
-          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+          if (!canEdit && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
             item.onNavigate();
           }
@@ -535,7 +431,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {isEditMode ? (
+            {canEdit ? (
               <button
                 type='button'
                 onClick={item.onToggleMinor}
@@ -548,13 +444,10 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
           </div>
-          {isEditMode ? (
-            <e.span
-              path={item.editablePath}
-              initialValue={item.description || ''}
-              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
-              onSave={item.onUpdateDescription}
-            />
+          {canEdit ? (
+            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
+              {item.description}
+            </span>
           ) : (
             item.description && (
               <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
@@ -563,26 +456,13 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )
           )}
         </div>
-        {isEditMode && (
-          <button
-            type='button'
-            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-            aria-label={item.removeLabel}
-            onClick={(e) => {
-              e.stopPropagation();
-              item.onRemove();
-            }}
-          >
-            <TrashIcon className='h-4 w-4' aria-hidden='true' />
-          </button>
-        )}
       </div>
     );
   };
 
   const renderSpecialSkillItem = (item: SpecialSkillDisplayItem) => {
     const handleClick = () => {
-      if (!isEditMode) {
+      if (!canEdit) {
         item.onNavigate();
       }
     };
@@ -593,15 +473,15 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         className={clsx(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
-          !isEditMode && themeClasses.interactive,
+          !canEdit && themeClasses.interactive,
           item.isMinor && 'opacity-60'
         )}
-        role={!isEditMode ? 'button' : undefined}
-        tabIndex={!isEditMode ? 0 : undefined}
+        role={!canEdit ? 'button' : undefined}
+        tabIndex={!canEdit ? 0 : undefined}
         aria-label={item.ariaLabel}
         onClick={handleClick}
         onKeyDown={(e) => {
-          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+          if (!canEdit && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
             item.onNavigate();
           }
@@ -623,7 +503,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {isEditMode ? (
+            {canEdit ? (
               <button
                 type='button'
                 onClick={item.onToggleMinor}
@@ -636,13 +516,10 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
           </div>
-          {isEditMode ? (
-            <e.span
-              path={item.editablePath}
-              initialValue={item.description || ''}
-              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
-              onSave={item.onUpdateDescription}
-            />
+          {canEdit ? (
+            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
+              {item.description}
+            </span>
           ) : (
             item.description && (
               <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
@@ -651,26 +528,13 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )
           )}
         </div>
-        {isEditMode && (
-          <button
-            type='button'
-            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-            aria-label={item.removeLabel}
-            onClick={(e) => {
-              e.stopPropagation();
-              item.onRemove();
-            }}
-          >
-            <TrashIcon className='h-4 w-4' aria-hidden='true' />
-          </button>
-        )}
       </div>
     );
   };
 
   const renderMapItem = (item: MapDisplayItem) => {
     const handleClick = () => {
-      if (!isEditMode) {
+      if (!canEdit) {
         item.onNavigate();
       }
     };
@@ -681,15 +545,15 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         className={clsx(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
-          !isEditMode && themeClasses.interactive,
+          !canEdit && themeClasses.interactive,
           item.isMinor && 'opacity-60'
         )}
-        role={!isEditMode ? 'button' : undefined}
-        tabIndex={!isEditMode ? 0 : undefined}
+        role={!canEdit ? 'button' : undefined}
+        tabIndex={!canEdit ? 0 : undefined}
         aria-label={item.ariaLabel}
         onClick={handleClick}
         onKeyDown={(e) => {
-          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+          if (!canEdit && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
             item.onNavigate();
           }
@@ -711,7 +575,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {isEditMode ? (
+            {canEdit ? (
               <button
                 type='button'
                 onClick={item.onToggleMinor}
@@ -724,13 +588,10 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
           </div>
-          {isEditMode ? (
-            <e.span
-              path={item.editablePath}
-              initialValue={item.description || ''}
-              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
-              onSave={item.onUpdateDescription}
-            />
+          {canEdit ? (
+            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
+              {item.description}
+            </span>
           ) : (
             item.description && (
               <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
@@ -739,26 +600,13 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )
           )}
         </div>
-        {isEditMode && (
-          <button
-            type='button'
-            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-            aria-label={item.removeLabel}
-            onClick={(e) => {
-              e.stopPropagation();
-              item.onRemove();
-            }}
-          >
-            <TrashIcon className='h-4 w-4' aria-hidden='true' />
-          </button>
-        )}
       </div>
     );
   };
 
   const renderModeItem = (item: ModeDisplayItem) => {
     const handleClick = () => {
-      if (!isEditMode) {
+      if (!canEdit) {
         item.onNavigate();
       }
     };
@@ -769,15 +617,15 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         className={clsx(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
-          !isEditMode && themeClasses.interactive,
+          !canEdit && themeClasses.interactive,
           item.isMinor && 'opacity-60'
         )}
-        role={!isEditMode ? 'button' : undefined}
-        tabIndex={!isEditMode ? 0 : undefined}
+        role={!canEdit ? 'button' : undefined}
+        tabIndex={!canEdit ? 0 : undefined}
         aria-label={item.ariaLabel}
         onClick={handleClick}
         onKeyDown={(e) => {
-          if (!isEditMode && (e.key === 'Enter' || e.key === ' ')) {
+          if (!canEdit && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
             item.onNavigate();
           }
@@ -799,7 +647,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {isEditMode ? (
+            {canEdit ? (
               <button
                 type='button'
                 onClick={item.onToggleMinor}
@@ -812,13 +660,10 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
           </div>
-          {isEditMode ? (
-            <e.span
-              path={item.editablePath}
-              initialValue={item.description || ''}
-              className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
-              onSave={item.onUpdateDescription}
-            />
+          {canEdit ? (
+            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
+              {item.description}
+            </span>
           ) : (
             item.description && (
               <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
@@ -827,19 +672,6 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )
           )}
         </div>
-        {isEditMode && (
-          <button
-            type='button'
-            className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-            aria-label={item.removeLabel}
-            onClick={(e) => {
-              e.stopPropagation();
-              item.onRemove();
-            }}
-          >
-            <TrashIcon className='h-4 w-4' aria-hidden='true' />
-          </button>
-        )}
       </div>
     );
   };
@@ -860,10 +692,10 @@ const RelationSection: React.FC<RelationSectionProps> = ({
           </span>
           {title}
         </span>
-        {isEditMode && selectors}
+        {canEdit && selectors}
       </div>
       <div className='mt-2 grid grid-cols-1 gap-y-3'>
-        {!isEditMode && items.length === 0 ? (
+        {!canEdit && items.length === 0 ? (
           <span className='text-xs text-gray-400'>{emptyLabel}</span>
         ) : (
           items.map((item) => {
@@ -890,63 +722,8 @@ const RelationSection: React.FC<RelationSectionProps> = ({
   );
 };
 
-function useRelationEditor(characterId: string, key: RelationCollectionKey) {
-  const localCharacter = useSnapshot(characters[characterId]!) as unknown as RelationCollections;
-
-  const update = useCallback(
-    (updated: CharacterRelationItem[]) => {
-      setNestedProperty(characters, `${characterId}.${key}`, updated);
-    },
-    [characterId, key]
-  );
-
-  const handleUpdate = useCallback(
-    (index: number, field: 'description' | 'isMinor', newValue: string | boolean) => {
-      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
-      const updated = current.map((item, i) =>
-        i === index ? { ...item, [field]: newValue } : item
-      );
-      update(updated);
-    },
-    [localCharacter, key, update]
-  );
-
-  const handleAdd = useCallback(
-    (relId: string, description: string = '', isMinor: boolean = false) => {
-      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
-      const newItem: CharacterRelationItem = { id: relId, description, isMinor };
-      update([...current, newItem]);
-    },
-    [localCharacter, key, update]
-  );
-
-  const handleRemove = useCallback(
-    (index: number) => {
-      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
-      const updated = current.filter((_, i) => i !== index);
-      update(updated);
-    },
-    [localCharacter, key, update]
-  );
-
-  const toggleIsMinor = useCallback(
-    (index: number) => {
-      const current = (localCharacter[key] ?? []) as readonly CharacterRelationItem[];
-      const updated = current.map((item, i) =>
-        i === index ? { ...item, isMinor: !item.isMinor } : item
-      );
-      update(updated);
-    },
-    [localCharacter, key, update]
-  );
-
-  return { handleUpdate, handleAdd, handleRemove, toggleIsMinor };
-}
-
 const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { isEditMode } = useEditMode();
-  const { characterId } = useLocalCharacter();
-  const localCharacter = useSnapshot(characters[characterId]!);
   const mapsSnapshot = useSnapshot(mapsEdit);
   const modesSnapshot = useSnapshot(modesEdit);
   const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
@@ -959,57 +736,21 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
 
-  const countersHook = useRelationEditor(id, 'counters');
-  const counteredByHook = useRelationEditor(id, 'counteredBy');
-  const counterEachOtherHook = useRelationEditor(id, 'counterEachOther');
-  const collaboratorsHook = useRelationEditor(id, 'collaborators');
-
-  const countersKnowledgeCardsHook = useRelationEditor(id, 'countersKnowledgeCards');
-  const counteredByKnowledgeCardsHook = useRelationEditor(id, 'counteredByKnowledgeCards');
-  const countersSpecialSkillsHook = useRelationEditor(id, 'countersSpecialSkills');
-  const counteredBySpecialSkillsHook = useRelationEditor(id, 'counteredBySpecialSkills');
-
-  const advantageMapsHook = useRelationEditor(id, 'advantageMaps');
-  const advantageModesHook = useRelationEditor(id, 'advantageModes');
-  const disadvantageMapsHook = useRelationEditor(id, 'disadvantageMaps');
-  const disadvantageModesHook = useRelationEditor(id, 'disadvantageModes');
-
   const oppositeFactionId = factionId === 'cat' ? 'mouse' : 'cat';
-
-  const sharedSelectorRelations = React.useMemo(
-    () => [...char.counters, ...char.counteredBy, ...char.counterEachOther],
-    [char.counters, char.counteredBy, char.counterEachOther]
-  );
 
   const countersItems = React.useMemo(
     () =>
       sortByImportance([
-        ...buildCharacterItems(
-          'counters',
-          char.counters,
-          localCharacter.counters,
-          countersHook,
-          getImageUrl,
-          handleSelectCharacter,
-          {
-            view: (targetId: string) => `选择角色 ${targetId}`,
-            edit: (targetId: string) => `克制 ${targetId} 的关系`,
-          },
-          (targetId: string, isMinor: boolean) =>
-            `切换${targetId}的克制关系为${isMinor ? '主要' : '次要'}`,
-          (targetId: string) => `移除${targetId}的克制关系`
-        ),
-        ...buildKnowledgeCardItems(
-          localCharacter.countersKnowledgeCards,
-          'countersKnowledgeCards',
-          countersKnowledgeCardsHook,
-          (cardId) => navigate(`/cards/${encodeURIComponent(cardId)}`)
+        ...buildCharacterItems(char.counters, getImageUrl, handleSelectCharacter, {
+          view: (targetId: string) => `选择角色 ${targetId}`,
+          edit: (targetId: string) => `克制 ${targetId} 的关系`,
+        }),
+        ...buildKnowledgeCardItems(char.countersKnowledgeCards, (cardId: string) =>
+          navigate(`/cards/${encodeURIComponent(cardId)}`)
         ),
         ...buildSpecialSkillItems(
-          localCharacter.countersSpecialSkills,
-          'countersSpecialSkills',
-          countersSpecialSkillsHook,
-          (skillId) =>
+          char.countersSpecialSkills,
+          (skillId: string) =>
             navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
           oppositeFactionId,
           specialSkillsSnapshot as unknown as Record<
@@ -1020,14 +761,10 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       ]),
     [
       char.counters,
-      countersHook,
-      countersKnowledgeCardsHook,
-      countersSpecialSkillsHook,
+      char.countersKnowledgeCards,
+      char.countersSpecialSkills,
       getImageUrl,
       handleSelectCharacter,
-      localCharacter.counters,
-      localCharacter.countersKnowledgeCards,
-      localCharacter.countersSpecialSkills,
       specialSkillsSnapshot,
       navigate,
       oppositeFactionId,
@@ -1037,60 +774,27 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const counterEachOtherItems = React.useMemo(
     () =>
       sortByImportance(
-        buildCharacterItems(
-          'counterEachOther',
-          char.counterEachOther,
-          localCharacter.counterEachOther,
-          counterEachOtherHook,
-          getImageUrl,
-          handleSelectCharacter,
-          {
-            view: (targetId: string) => `选择角色 ${targetId}`,
-            edit: (targetId: string) => `与 ${targetId} 互有克制的关系`,
-          },
-          (targetId: string, isMinor: boolean) =>
-            `切换${targetId}的互有克制关系为${isMinor ? '主要' : '次要'}`,
-          (targetId: string) => `移除${targetId}的互有克制关系`
-        )
+        buildCharacterItems(char.counterEachOther, getImageUrl, handleSelectCharacter, {
+          view: (targetId: string) => `选择角色 ${targetId}`,
+          edit: (targetId: string) => `与 ${targetId} 互有克制的关系`,
+        })
       ),
-    [
-      char.counterEachOther,
-      counterEachOtherHook,
-      getImageUrl,
-      handleSelectCharacter,
-      localCharacter.counterEachOther,
-    ]
+    [char.counterEachOther, getImageUrl, handleSelectCharacter]
   );
 
   const counteredByItems = React.useMemo(
     () =>
       sortByImportance([
-        ...buildCharacterItems(
-          'counteredBy',
-          char.counteredBy,
-          localCharacter.counteredBy,
-          counteredByHook,
-          getImageUrl,
-          handleSelectCharacter,
-          {
-            view: (targetId: string) => `选择角色 ${targetId}`,
-            edit: (targetId: string) => `被 ${targetId} 克制的关系`,
-          },
-          (targetId: string, isMinor: boolean) =>
-            `切换${targetId}的被克制关系为${isMinor ? '主要' : '次要'}`,
-          (targetId: string) => `移除${targetId}的被克制关系`
-        ),
-        ...buildKnowledgeCardItems(
-          localCharacter.counteredByKnowledgeCards,
-          'counteredByKnowledgeCards',
-          counteredByKnowledgeCardsHook,
-          (cardId) => navigate(`/cards/${encodeURIComponent(cardId)}`)
+        ...buildCharacterItems(char.counteredBy, getImageUrl, handleSelectCharacter, {
+          view: (targetId: string) => `选择角色 ${targetId}`,
+          edit: (targetId: string) => `被 ${targetId} 克制的关系`,
+        }),
+        ...buildKnowledgeCardItems(char.counteredByKnowledgeCards, (cardId: string) =>
+          navigate(`/cards/${encodeURIComponent(cardId)}`)
         ),
         ...buildSpecialSkillItems(
-          localCharacter.counteredBySpecialSkills,
-          'counteredBySpecialSkills',
-          counteredBySpecialSkillsHook,
-          (skillId) =>
+          char.counteredBySpecialSkills,
+          (skillId: string) =>
             navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
           oppositeFactionId,
           specialSkillsSnapshot as unknown as Record<
@@ -1101,14 +805,10 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       ]),
     [
       char.counteredBy,
-      counteredByHook,
-      counteredByKnowledgeCardsHook,
-      counteredBySpecialSkillsHook,
+      char.counteredByKnowledgeCards,
+      char.counteredBySpecialSkills,
       getImageUrl,
       handleSelectCharacter,
-      localCharacter.counteredBy,
-      localCharacter.counteredByKnowledgeCards,
-      localCharacter.counteredBySpecialSkills,
       specialSkillsSnapshot,
       navigate,
       oppositeFactionId,
@@ -1119,78 +819,64 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
     () =>
       sortByImportance(
         buildCharacterItems(
-          'collaborators',
           char.collaborators,
-          localCharacter.collaborators,
-          collaboratorsHook,
           (targetId: string) => AssetManager.getCharacterImageUrl(targetId, 'mouse'),
           handleSelectCharacter,
           {
             view: (targetId: string) => `选择角色 ${targetId}`,
             edit: (targetId: string) => `与 ${targetId} 的协作关系`,
-          },
-          (targetId: string, isMinor: boolean) =>
-            `切换${targetId}的协作关系为${isMinor ? '主要' : '次要'}`,
-          (targetId: string) => `移除${targetId}的协作关系`
+          }
         )
       ),
-    [char.collaborators, collaboratorsHook, handleSelectCharacter, localCharacter.collaborators]
+    [char.collaborators, handleSelectCharacter]
   );
 
   const advantageMapsItems = React.useMemo(
     () =>
       sortByImportance(
         buildMapItems(
-          localCharacter.advantageMaps,
-          'advantageMaps',
-          advantageMapsHook,
-          (mapId) => navigate(`/maps/${encodeURIComponent(mapId)}`),
+          char.advantageMaps,
+          (mapId: string) => navigate(`/maps/${encodeURIComponent(mapId)}`),
           mapsSnapshot as unknown as Record<string, { imageUrl?: string }>
         )
       ),
-    [localCharacter.advantageMaps, advantageMapsHook, mapsSnapshot, navigate]
+    [char.advantageMaps, mapsSnapshot, navigate]
   );
 
   const advantageModesItems = React.useMemo(
     () =>
       sortByImportance(
         buildModeItems(
-          localCharacter.advantageModes,
-          'advantageModes',
-          advantageModesHook,
-          (modeId) => navigate(`/modes/${encodeURIComponent(modeId)}`),
+          char.advantageModes,
+          (modeId: string) => navigate(`/modes/${encodeURIComponent(modeId)}`),
           modesSnapshot as unknown as Record<string, { imageUrl?: string }>
         )
       ),
-    [localCharacter.advantageModes, advantageModesHook, modesSnapshot, navigate]
+    [char.advantageModes, modesSnapshot, navigate]
   );
 
   const disadvantageMapsItems = React.useMemo(
     () =>
       sortByImportance(
         buildMapItems(
-          localCharacter.disadvantageMaps,
-          'disadvantageMaps',
-          disadvantageMapsHook,
-          (mapId) => navigate(`/maps/${encodeURIComponent(mapId)}`),
+          char.disadvantageMaps,
+          (mapId: string) => navigate(`/maps/${encodeURIComponent(mapId)}`),
           mapsSnapshot as unknown as Record<string, { imageUrl?: string }>
         )
       ),
-    [localCharacter.disadvantageMaps, disadvantageMapsHook, mapsSnapshot, navigate]
+    [char.disadvantageMaps, mapsSnapshot, navigate]
   );
 
   const disadvantageModesItems = React.useMemo(
     () =>
       sortByImportance(
         buildModeItems(
-          localCharacter.disadvantageModes,
-          'disadvantageModes',
-          disadvantageModesHook,
-          (modeId) => navigate(`/modes/${encodeURIComponent(modeId)}`),
+          char.disadvantageModes,
+          (modeId: string) => navigate(`/modes/${encodeURIComponent(modeId)}`),
           modesSnapshot as unknown as Record<string, { imageUrl?: string }>
         )
       ),
-    [localCharacter.disadvantageModes, disadvantageModesHook, modesSnapshot, navigate]
+    [char.disadvantageModes, modesSnapshot, navigate]
   );
 
   const advantageItems = React.useMemo(
@@ -1211,31 +897,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         title: `被${id}克制的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
         icon: <HappyFaceIcon aria-hidden='true' />,
         items: countersItems,
-        selectors: (
-          <div className='flex gap-2'>
-            <CharacterSelector
-              currentCharacterId={id}
-              factionId={factionId}
-              relationType='counters'
-              existingRelations={sharedSelectorRelations}
-              onSelect={(characterId) => countersHook.handleAdd(characterId, '新增关系描述')}
-            />
-            <KnowledgeCardSelector
-              selected={Array.from(localCharacter.countersKnowledgeCards ?? [])}
-              onSelect={(cardName) =>
-                countersKnowledgeCardsHook.handleAdd(cardName as string, '新增关系描述')
-              }
-              factionId={factionId == 'cat' ? 'mouse' : 'cat'}
-            />
-            <SpecialSkillSelector
-              selected={Array.from(localCharacter.countersSpecialSkills ?? [])}
-              factionId={factionId}
-              onSelect={(skillName) =>
-                countersSpecialSkillsHook.handleAdd(skillName as string, '新增关系描述')
-              }
-            />
-          </div>
-        ),
+        selectors: undefined,
+        show: true,
+        showEditControls: false,
       },
       {
         key: 'counterEachOther',
@@ -1243,20 +907,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         title: `与${id}互有克制的${factionId == 'cat' ? '老鼠' : '猫咪'}`,
         icon: <NeutralFaceIcon aria-hidden='true' />,
         items: counterEachOtherItems,
-        selectors: (
-          <div className='flex gap-2'>
-            <CharacterSelector
-              currentCharacterId={id}
-              factionId={factionId}
-              relationType='counterEachOther'
-              existingRelations={sharedSelectorRelations}
-              onSelect={(characterId) =>
-                counterEachOtherHook.handleAdd(characterId, '新增关系描述')
-              }
-            />
-          </div>
-        ),
-        show: isEditMode || counterEachOtherItems.length > 0,
+        selectors: undefined,
+        show: counterEachOtherItems.length > 0,
+        showEditControls: false,
       },
       {
         key: 'counteredBy',
@@ -1264,31 +917,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         title: `克制${id}的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
         icon: <SadFaceIcon aria-hidden='true' />,
         items: counteredByItems,
-        selectors: (
-          <div className='flex gap-2'>
-            <CharacterSelector
-              currentCharacterId={id}
-              factionId={factionId}
-              relationType='counteredBy'
-              existingRelations={sharedSelectorRelations}
-              onSelect={(characterId) => counteredByHook.handleAdd(characterId, '新增关系描述')}
-            />
-            <KnowledgeCardSelector
-              selected={Array.from(localCharacter.counteredByKnowledgeCards ?? [])}
-              onSelect={(cardName) =>
-                counteredByKnowledgeCardsHook.handleAdd(cardName as string, '新增关系描述')
-              }
-              factionId={factionId == 'cat' ? 'mouse' : 'cat'}
-            />
-            <SpecialSkillSelector
-              selected={Array.from(localCharacter.counteredBySpecialSkills ?? [])}
-              factionId={factionId}
-              onSelect={(skillName) =>
-                counteredBySpecialSkillsHook.handleAdd(skillName as string, '新增关系描述')
-              }
-            />
-          </div>
-        ),
+        selectors: undefined,
+        show: true,
+        showEditControls: false,
       },
       {
         key: 'collaborators',
@@ -1296,17 +927,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         title: `与${id}协作的老鼠`,
         icon: <HeartIcon aria-hidden='true' />,
         items: collaboratorItems,
-        selectors:
-          factionId === 'mouse' ? (
-            <CharacterSelector
-              currentCharacterId={id}
-              factionId={factionId}
-              relationType='collaborators'
-              existingRelations={char.collaborators}
-              onSelect={(characterId) => collaboratorsHook.handleAdd(characterId, '新增关系描述')}
-            />
-          ) : undefined,
+        selectors: undefined,
         show: factionId === 'mouse',
+        showEditControls: false,
       },
       {
         key: 'advantage',
@@ -1319,21 +942,9 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           </div>
         ),
         items: advantageItems,
-        selectors: isEditMode && (
-          <div className='flex gap-2'>
-            <MapSelector
-              selected={Array.from(localCharacter.advantageMaps ?? [])}
-              onSelect={(mapName) => advantageMapsHook.handleAdd(mapName as string, '新增优势描述')}
-            />
-            <ModeSelector
-              selected={Array.from(localCharacter.advantageModes ?? [])}
-              onSelect={(modeName) =>
-                advantageModesHook.handleAdd(modeName as string, '新增优势描述')
-              }
-            />
-          </div>
-        ),
-        show: isEditMode || advantageItems.length > 0,
+        selectors: undefined,
+        show: advantageItems.length > 0,
+        showEditControls: false,
       },
       {
         key: 'disadvantage',
@@ -1346,55 +957,18 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           </div>
         ),
         items: disadvantageItems,
-        selectors: isEditMode && (
-          <div className='flex gap-2'>
-            <MapSelector
-              selected={Array.from(localCharacter.disadvantageMaps ?? [])}
-              onSelect={(mapName) =>
-                disadvantageMapsHook.handleAdd(mapName as string, '新增劣势描述')
-              }
-            />
-            <ModeSelector
-              selected={Array.from(localCharacter.disadvantageModes ?? [])}
-              onSelect={(modeName) =>
-                disadvantageModesHook.handleAdd(modeName as string, '新增劣势描述')
-              }
-            />
-          </div>
-        ),
-        show: isEditMode || disadvantageItems.length > 0,
+        selectors: undefined,
+        show: disadvantageItems.length > 0,
+        showEditControls: false,
       },
     ],
     [
-      char.collaborators,
-      counterEachOtherHook,
       counterEachOtherItems,
-      counteredByHook,
       counteredByItems,
-      counteredByKnowledgeCardsHook,
-      counteredBySpecialSkillsHook,
-      countersHook,
       countersItems,
-      countersKnowledgeCardsHook,
-      countersSpecialSkillsHook,
-      collaboratorsHook,
       factionId,
       id,
-      isEditMode,
-      localCharacter.countersKnowledgeCards,
-      localCharacter.countersSpecialSkills,
-      localCharacter.counteredByKnowledgeCards,
-      localCharacter.counteredBySpecialSkills,
-      localCharacter.advantageMaps,
-      localCharacter.advantageModes,
-      localCharacter.disadvantageMaps,
-      localCharacter.disadvantageModes,
       collaboratorItems,
-      sharedSelectorRelations,
-      advantageMapsHook,
-      advantageModesHook,
-      disadvantageMapsHook,
-      disadvantageModesHook,
       advantageItems,
       disadvantageItems,
     ]
@@ -1417,6 +991,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
             items={section.items}
             selectors={section.selectors}
             isEditMode={isEditMode}
+            showEditControls={section.showEditControls ?? false}
           />
         ))}
       </div>

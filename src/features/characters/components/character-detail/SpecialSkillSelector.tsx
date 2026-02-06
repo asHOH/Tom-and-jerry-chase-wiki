@@ -12,9 +12,10 @@ type Props = {
   selected: CharacterRelationItem[];
   factionId: FactionId;
   onSelect: (skillName: string) => void;
+  disabled?: boolean;
 };
 
-const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect }) => {
+const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect, disabled }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
@@ -38,9 +39,10 @@ const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect }
     <div className='relative inline-block'>
       <button
         type='button'
-        onClick={() => setIsOpen(!isOpen)}
-        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-yellow-600 dark:hover:bg-yellow-700'
         aria-label='添加特技'
+        disabled={disabled}
       >
         <PlusIcon className='h-4 w-4' aria-hidden='true' />
       </button>

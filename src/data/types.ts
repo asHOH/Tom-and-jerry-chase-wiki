@@ -180,47 +180,12 @@ export type CharacterDefinition = {
   // special skill suggestions
   specialSkills?: SuggestedSpecialSkillItem[];
 
-  // character restraint information
-  counters?: CharacterRelationItem[];
-  countersKnowledgeCards?: CharacterRelationItem[];
-  countersSpecialSkills?: CharacterRelationItem[];
-
-  counteredBy?: CharacterRelationItem[];
-  counteredByKnowledgeCards?: CharacterRelationItem[];
-  counteredBySpecialSkills?: CharacterRelationItem[];
-
-  counterEachOther?: CharacterRelationItem[];
-
-  collaborators?: CharacterRelationItem[];
-
-  advantageMaps?: CharacterRelationItem[];
-  advantageModes?: CharacterRelationItem[];
-  disadvantageMaps?: CharacterRelationItem[];
-  disadvantageModes?: CharacterRelationItem[];
-
   //specific attributes
   gender?: 'male' | 'female';
   EnglishName?: string;
 };
 
-export type CharacterRelation = {
-  counters: CharacterRelationItem[];
-  countersKnowledgeCards: CharacterRelationItem[];
-  countersSpecialSkills: CharacterRelationItem[];
-
-  counteredBy: CharacterRelationItem[];
-  counteredByKnowledgeCards: CharacterRelationItem[];
-  counteredBySpecialSkills: CharacterRelationItem[];
-
-  counterEachOther: CharacterRelationItem[];
-
-  collaborators: CharacterRelationItem[];
-
-  advantageMaps?: CharacterRelationItem[];
-  advantageModes?: CharacterRelationItem[];
-  disadvantageMaps?: CharacterRelationItem[];
-  disadvantageModes?: CharacterRelationItem[];
-};
+export type CharacterRelation = Record<TraitRelationKind, CharacterRelationItem[]>;
 
 export type PartialCharacterDefinition = { hidden: true } & Partial<CharacterDefinition>;
 
@@ -484,9 +449,30 @@ export type GameHistory = YearData[];
 export type SingleItemOrGroup = SingleItem | { name: string; type: 'itemGroup' };
 type TraitGroupItem = SingleItemOrGroup | SingleItemOrGroup[];
 export type TraitGroup = TraitGroupItem[];
+export type TraitRelationKind =
+  | 'counters'
+  | 'counteredBy'
+  | 'counterEachOther'
+  | 'collaborators'
+  | 'countersKnowledgeCards'
+  | 'counteredByKnowledgeCards'
+  | 'countersSpecialSkills'
+  | 'counteredBySpecialSkills'
+  | 'advantageMaps'
+  | 'advantageModes'
+  | 'disadvantageMaps'
+  | 'disadvantageModes';
+export type TraitRelation = {
+  kind: TraitRelationKind;
+  subject: SingleItem;
+  target: SingleItem;
+  description?: string;
+  isMinor?: boolean;
+};
 export type Trait = {
   description: string;
   group: TraitGroup;
+  relation?: TraitRelation;
   spacialCase?: {
     description: string;
     group: TraitGroup;

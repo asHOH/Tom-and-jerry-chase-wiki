@@ -11,9 +11,10 @@ import Image from '@/components/Image';
 type Props = {
   selected: CharacterRelationItem[];
   onSelect: (modeName: string) => void;
+  disabled?: boolean;
 };
 
-const ModeSelector: React.FC<Props> = ({ selected, onSelect }) => {
+const ModeSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const modesSnapshot = useSnapshot(modesEdit);
@@ -35,9 +36,10 @@ const ModeSelector: React.FC<Props> = ({ selected, onSelect }) => {
     <div className='relative inline-block'>
       <button
         type='button'
-        onClick={() => setIsOpen(!isOpen)}
-        className='flex h-8 w-8 items-center justify-center rounded-md bg-purple-500 text-xs text-white hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700'
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className='flex h-8 w-8 items-center justify-center rounded-md bg-purple-500 text-xs text-white hover:bg-purple-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-purple-600 dark:hover:bg-purple-700'
         aria-label='添加模式'
+        disabled={disabled}
       >
         <PlusIcon className='h-4 w-4' aria-hidden='true' />
       </button>

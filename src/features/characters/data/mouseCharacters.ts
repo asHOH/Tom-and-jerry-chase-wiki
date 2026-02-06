@@ -211,7 +211,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['撅瑞'],
-    counteredBy: [],
   },
 
   /* ----------------------------------- 侦探杰瑞 ----------------------------------- */
@@ -648,73 +647,7 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['罗杰'],
-    counteredBy: [
-      {
-        id: '追风汤姆',
-        description: '追风的高机动性和眩晕可以反制罗宾汉杰瑞。',
-        isMinor: false,
-      },
-      {
-        id: '天使汤姆',
-        description: '天汤的高机动性和眩晕可以反制罗宾汉杰瑞。',
-        isMinor: false,
-      },
-      {
-        id: '恶魔汤姆',
-        description: '罗宾汉杰瑞没有破局能力，打防守猫比较吃力。',
-        isMinor: false,
-      },
-      {
-        id: '斯飞',
-        description: '斯飞用电和主动技能这些眩晕型攻击可以抓住机会一套秒罗宾汉杰瑞。',
-        isMinor: false,
-      },
-    ],
-    counters: [
-      {
-        id: '剑客汤姆',
-        description: '罗宾汉杰瑞利用Lv.2被动和降落伞可以脱离剑客汤姆的连斩。',
-        isMinor: false,
-      },
-      {
-        id: '图茨',
-        description: '罗宾汉杰瑞的降落伞和加速不怕图茨的喵喵叫和汽水罐。',
-        isMinor: false,
-      },
-      {
-        id: '布奇',
-        description:
-          '布奇冲撞可以被罗宾汉杰瑞二段跳或降落伞躲开；不过布奇的武器技能对罗宾汉杰瑞仍有威慑。',
-        isMinor: true,
-      },
-      {
-        id: '莱特宁',
-        description:
-          '罗宾汉杰瑞的降落伞和莱特宁闪现CD差不多，罗宾汉杰瑞听到闪现立马降落伞就能规避，且伞可以免疫垃圾桶伤害。',
-        isMinor: false,
-      },
-      {
-        id: '苏蕊',
-        description: '苏蕊跳舞时爪刀难以命中罗宾汉杰瑞，瑜伽球可以二段跳或伞躲开。',
-        isMinor: false,
-      },
-      {
-        id: '如玉',
-        description: '如玉花枪反击可以被罗宾汉杰瑞的降落伞躲避，且罗宾汉杰瑞很灵活难以追击。',
-        isMinor: false,
-      },
-      {
-        id: '牛仔汤姆',
-        description:
-          '罗宾汉杰瑞的解控和高机动性让牛汤难以将其抓住，特别是携带鞭子的牛汤。不过，罗宾汉也没有破局能力，打以防守为主的弹弓牛汤比较吃力。',
-        isMinor: true,
-      },
-      {
-        id: '兔八哥',
-        description: '兔八哥萝卜可以被罗宾的伞躲避，且二段的加速也可很好的帮队友和自己躲萝卜。',
-        isMinor: false,
-      },
-    ],
+
     specialSkills: [
       {
         name: '绝处逢生',
@@ -723,48 +656,6 @@ const mouseCharacterDefinitions = {
       {
         name: '应急治疗',
         description: '被追的过程可以用治疗增加容错。',
-      },
-    ],
-    countersKnowledgeCards: [
-      {
-        id: '捕鼠夹',
-        description:
-          'Lv.2被动受伤清除控制效果，包括夹子；捕鼠夹的伤害会立刻触发该效果，直接清理夹子。',
-        isMinor: false,
-      },
-    ],
-    counteredByKnowledgeCards: [
-      {
-        id: '击晕',
-        description: '用击晕可以抓住机会一套秒罗宾汉。',
-        isMinor: false,
-      },
-    ],
-    collaborators: [
-      {
-        id: '国王杰瑞',
-        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
-        isMinor: false,
-      },
-      {
-        id: '剑客泰菲',
-        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
-        isMinor: false,
-      },
-      {
-        id: '剑客莉莉',
-        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
-        isMinor: false,
-      },
-      {
-        id: '马索尔',
-        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
-        isMinor: false,
-      },
-      {
-        id: '尼宝',
-        description: '罗宾汉杰瑞的全图二段跳支援可以辅助救人位逃跑。',
-        isMinor: false,
       },
     ],
   },
@@ -976,20 +867,6 @@ const mouseCharacterDefinitions = {
       { name: '绝处逢生', description: '绝处逢生泛用性很高，在各场合均有不错发挥。' },
       { name: '干扰投掷', description: '干扰投掷能提高航海士杰瑞的干扰能力。' },
     ],
-    collaborators: [
-      {
-        id: '拿坡里鼠',
-        description: '航海士杰瑞和拿坡里鼠能相互补充控制，火药桶和斜塔还能一起守火箭。',
-        isMinor: true,
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '猫咪会利用绝地反击解除或免疫控制。',
-        isMinor: false,
-      },
-    ],
   },
 
   /* ----------------------------------- 国王杰瑞 ----------------------------------- */
@@ -1059,28 +936,7 @@ const mouseCharacterDefinitions = {
         description: '缴械可对猫咪进行干扰，进而保护队友或安全地进行火箭救援。',
       },
     ],
-    collaborators: [
-      {
-        id: '音乐家杰瑞',
-        description: '国王杰瑞的进攻战旗可以为音乐家杰瑞提供高额增伤。',
-        isMinor: false,
-      },
-      {
-        id: '表演者•杰瑞',
-        description: '国王杰瑞的强化救援战旗配合表演者•杰瑞的梦幻舞步可以实现稳救。',
-        isMinor: false,
-      },
-      {
-        id: '尼宝',
-        description: '国王杰瑞的强化救援战旗可以大幅降低尼宝使用灵活跳跃的救援难度。',
-        isMinor: true,
-      },
-      {
-        id: '泰菲',
-        description: '国王杰瑞的强化救援战旗配合泰菲的圆滚滚可以实现稳救。',
-        isMinor: true,
-      },
-    ],
+
     skills: [
       {
         name: '威严光盾',
@@ -1412,48 +1268,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['剑杰', '剑客杰猫'],
-    counters: [
-      {
-        id: '托普斯',
-        description: '二武和高伤都可以迅速消灭分身，需要注意二武不能主动戳到分身。',
-        isMinor: false,
-      },
-      {
-        id: '莱特宁',
-        description: '有效牵制习惯闪现接爪刀的莱特宁玩家。',
-        isMinor: true,
-      },
-      {
-        id: '如玉',
-        description: '格挡的无敌有效克制反击。',
-        isMinor: true,
-      },
-      {
-        id: '图茨',
-        description: '华尔兹无敌与格挡无敌可有效规避喵喵叫，高伤能快速击倒血脆的图茨。',
-        isMinor: false,
-      },
-    ],
-    counteredBy: [],
-    collaborators: [
-      {
-        id: '国王杰瑞',
-        description: '战旗的增益能使剑杰的输出能力进一步提升。',
-        isMinor: true,
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '蓄力重击',
-        description: '蓄力重击可以直接击倒高Hp老鼠。',
-        isMinor: true,
-      },
-      {
-        id: '绝地反击',
-        description: '猫咪会利用绝地反击解除或免疫控制。',
-        isMinor: true,
-      },
-    ],
   },
 
   /* ----------------------------------- 泰菲 ----------------------------------- */
@@ -1679,31 +1493,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    counters: [
-      {
-        id: '剑客汤姆',
-        description:
-          '剑汤的连招会被圆滚滚的无敌和解控死死克制，并且泰菲的角色模型矮，连斩很多情况无法锁定。',
-        isMinor: false,
-      },
-      {
-        id: '图茨',
-        description: '圆滚滚的无敌和解控克制喵喵叫，并且图茨的Hp上限低，被绝反克制。',
-        isMinor: false,
-      },
-      {
-        id: '莱特宁',
-        description:
-          '地雷的强制位移能带走垃圾桶，咸鱼可以被圆滚滚强行踩掉，莱特宁闪现过来泰菲也可以秒开圆滚滚躲避攻击。',
-        isMinor: false,
-      },
-      {
-        id: '如玉',
-        description:
-          '泰菲可以在花枪反击前摇时使用圆滚滚，即使被击中，也可以开圆滚滚解控，避免二次伤害。',
-        isMinor: true,
-      },
-    ],
+
     specialSkills: [
       {
         name: '魔术漂浮',
@@ -1730,73 +1520,8 @@ const mouseCharacterDefinitions = {
           '用于硬抗控制伤害流打法，适用相对来说控少伤多且伤害持续的猫（如兔八哥、布奇、如玉），冰保和圆滚滚的双重无敌可以抵挡绝大部分的灌伤和控制，并且能随时取消释放，防止被卡时间',
       },
     ],
-    counteredBy: [
-      {
-        id: '布奇',
-        description:
-          '布奇的基础伤害高，可一刀或一个道具秒满血泰菲，并且三级桶盖的霸体也在一定程度上限制了炮的发挥。',
-        isMinor: false,
-      },
-      {
-        id: '侍卫汤姆',
-        description:
-          '侍卫汤姆移速快，且在Lv.2被动加成下能一击击倒泰菲。并且侍卫视野大，远程火箭筒被克死，侍卫还能用火炮刷新护盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害。',
-        isMinor: false,
-      },
-      {
-        id: '米特',
-        description:
-          '米特的野性叠加到7层可以一刀秒泰菲，并且当手持胡椒粉抓着老鼠时，即使被火箭炮或地雷炸下来，残血老鼠也会被胡椒粉毒死，绑火箭的时候还有野性层数赋予的霸体。',
-        isMinor: false,
-      },
-      {
-        id: '塔拉',
-        description: '视野较大，3级被动有霸体，远程炮不好发挥。',
-        isMinor: true,
-      },
-      {
-        id: '苏蕊',
-        description: '苏蕊跳舞霸体对泰菲有很大压力。',
-        isMinor: true,
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '炮不能取消后摇，容易被霸体反杀。',
-        isMinor: true,
-      },
-    ],
-    counteredByKnowledgeCards: [
-      {
-        id: '皮糙肉厚',
-        description: '皮糙肉厚减伤导致绝反炮菲无法发挥伤害高的优势。',
-        isMinor: false,
-      },
-      {
-        id: '乾坤一掷',
-        description:
-          '有乾坤一掷加持下的猫扔一个基础伤害为50的道具就可以秒掉泰菲，但带乾坤一掷的猫很少，所以克制不明显。',
-        isMinor: true,
-      },
-    ],
-    collaborators: [
-      {
-        id: '航海士杰瑞',
-        description:
-          '感应雷可以中断交互动作，和火药桶可以相互配合，让猫难以绑上火箭，硬拖时间给队友机会。',
-        isMinor: false,
-      },
-    ],
+
     aliases: [],
-    counterEachOther: [
-      {
-        id: '追风汤姆',
-        description:
-          '追风飞行时机动性很强，使其很难被预警太长的地雷和炮命中。但泰菲的圆滚滚可以解控，强行打断追风技能造成的眩晕，使追风不易将其击倒',
-        isMinor: false,
-      },
-    ],
   },
   /* ----------------------------------- 剑客泰菲 ----------------------------------- */
   剑客泰菲: {
@@ -2011,19 +1736,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    collaborators: [
-      {
-        id: '音乐家杰瑞',
-        description:
-          '仅限长枪剑菲。长枪上的音乐家杰瑞释放礼服可让长枪强制位移，对猫造成极高爆发伤害。',
-        isMinor: true,
-      },
-      {
-        id: '剑客莉莉',
-        description: '剑客莉莉的低成本拦截可以帮助头盔撤离和协作长枪打连控。',
-        isMinor: false,
-      },
-    ],
+
     specialSkills: [
       {
         name: '魔术漂浮',
@@ -2036,38 +1749,6 @@ const mouseCharacterDefinitions = {
       {
         name: '干扰投掷',
         description: '和长枪形成连控。',
-      },
-    ],
-    counteredByKnowledgeCards: [
-      {
-        id: '屈打成招',
-        description: '可以提前拦截非高点的头盔，但是当前环境不大适合带该卡。',
-        isMinor: true,
-      },
-    ],
-    counteredBy: [
-      {
-        id: '剑客汤姆',
-        description:
-          '头盔未3级的时候可以有效拖延时间且震慑也可以加速放飞减少可能被剑菲救援的次数，但是后期难以反制且被长枪克制。',
-        isMinor: true,
-      },
-    ],
-    counters: [
-      {
-        id: '图茨',
-        description: '被头盔稳定救人断节奏且无法反制。',
-        isMinor: false,
-      },
-      {
-        id: '米特',
-        description: '自身相对强悍的保节奏能力被头盔完全克制。',
-        isMinor: false,
-      },
-      {
-        id: '苏蕊',
-        description: '大部分稳救都能断苏蕊的节奏。',
-        isMinor: false,
       },
     ],
   },
@@ -2265,71 +1946,6 @@ const mouseCharacterDefinitions = {
       {
         name: '干扰投掷',
         description: '增强干扰能力',
-      },
-    ],
-    counters: [
-      {
-        id: '莱特宁',
-        description:
-          '牛仔杰瑞可以通过弹琴解除莱特宁的被动标记、用仙人掌防止闪现刀，且莱特宁本身怕干扰、难以处理124Hp老鼠',
-        isMinor: false,
-      },
-      {
-        id: '库博',
-        description: '库博怕干扰，容易被牛仔杰瑞的僵直打掉蓄势，同时还会被传送点位的仙人掌拖延时间',
-        isMinor: false,
-      },
-      {
-        id: '侍卫汤姆',
-        description: '侍卫怕干扰，容易被牛仔杰瑞的僵直打掉蓄势',
-        isMinor: true,
-      },
-      {
-        id: '剑客汤姆',
-        description: '剑客汤姆怕干扰，不好上火箭，同时牛仔杰瑞的霸体免疫挑起',
-        isMinor: false,
-      },
-      {
-        id: '图茨',
-        description: '图茨怕干扰，不好处理火箭仙人掌，喵喵叫也会被仙人掌打断',
-        isMinor: true,
-      },
-      {
-        id: '米特',
-        description: '米特怕干扰，不好处理火箭仙人掌',
-        isMinor: false,
-      },
-    ],
-    counteredBy: [
-      {
-        id: '苏蕊',
-        description: '苏蕊跳舞时被控影响较小 而且可以绕过火箭下的仙人掌',
-        isMinor: false,
-      },
-      {
-        id: '托普斯',
-        description:
-          '托普斯的捕虫网无视牛仔杰瑞的霸体，同时托普斯三级分身在附近时拥有霸体，不会被控。',
-        isMinor: false,
-      },
-    ],
-    collaborators: [
-      {
-        id: '航海士杰瑞',
-        description: '牛仔软控配合海盗硬控',
-        isMinor: true,
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '蓄力重击',
-        description: '蓄力重击可以直接击倒高Hp老鼠。',
-        isMinor: true,
-      },
-      {
-        id: '绝地反击',
-        description: '猫咪会利用绝地反击解除或免疫控制。',
-        isMinor: true,
       },
     ],
   },
@@ -2544,54 +2160,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['恶杰'],
-    counteredBy: [
-      {
-        id: '莱特宁',
-        description: '恶魔杰瑞两个技能均有较长前摇，被莱特宁3级闪现克制。',
-        isMinor: false,
-      },
-      {
-        id: '侍卫汤姆',
-        description: '侍卫汤姆的警戒可消除恶魔杰瑞提供的增益效果。',
-        isMinor: false,
-      },
-      {
-        id: '图茨',
-        description: '恶魔杰瑞的护盾会被喵喵叫快速击破，因此缺乏自保手段。',
-        isMinor: true,
-      },
-      {
-        id: '天使汤姆',
-        description:
-          '天使汤姆飞行的高机动性克制恶魔杰瑞的拉扯，武器技能的道具（瓶子除外）可以无视恶魔杰瑞3级被动，直接造成伤害。',
-        isMinor: true,
-      },
-    ],
-    collaborators: [
-      {
-        id: '天使杰瑞',
-        description:
-          '天使杰瑞和恶魔杰瑞都属于后期角色，恶魔杰瑞被复活后的存活能力较强，恶魔为天使提供增益，天使为恶魔提供复活和雷云。',
-        isMinor: false,
-      },
-    ],
-    counters: [
-      {
-        id: '恶魔汤姆',
-        description: '恶魔杰瑞武器技能可以将恶魔汤姆传送走，克制其死守。',
-        isMinor: false,
-      },
-      {
-        id: '苏蕊',
-        description: '后期恶魔杰瑞可刷盾免疫苏蕊攻击，但较长前摇可能会被苏蕊反制。',
-        isMinor: true,
-      },
-      {
-        id: '图多盖洛',
-        description: '图多盖洛指甲油被后期恶魔杰瑞地狱裂隙克制。',
-        isMinor: true,
-      },
-    ],
   },
   /* ----------------------------------- 恶魔泰菲 ----------------------------------- */
   恶魔泰菲: {
@@ -2664,13 +2232,7 @@ const mouseCharacterDefinitions = {
         description: '没21点知识量时的推荐，缴械配合蓝色小淘气让猫变白板。',
       },
     ],
-    collaborators: [
-      {
-        id: '剑客莉莉',
-        description: '恶魔泰菲的蓝色小淘气可以显著降低剑客莉莉利用二级被动的救援难度。',
-        isMinor: true,
-      },
-    ],
+
     skills: [
       {
         name: '意念控制',
@@ -2782,21 +2344,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    counterEachOther: [
-      {
-        id: '牛仔汤姆',
-        description:
-          '恶魔泰菲小淘气召唤的蓝色小淘气能禁用技能，绿色小淘气配合Lv.3被动的极高攻击增伤能迅速击倒牛汤，被动提供的恢复与高移速能化解鞭子或仙人掌弹弓的消耗；但恶魔泰菲Hp上限低，牛仔汤姆弹弓爆发高，有机会瞬间击倒恶魔泰菲。',
-        isMinor: false,
-      },
-    ],
-    counteredBy: [
-      {
-        id: '库博',
-        description: '库博能一击击倒恶魔泰菲，还能在天堂看到恶魔泰菲，从而推断藏匿道具的位置。',
-        isMinor: false,
-      },
-    ],
+
     specialSkills: [
       {
         name: '魔术漂浮',
@@ -3255,17 +2803,6 @@ const mouseCharacterDefinitions = {
       },
       { name: '绝处逢生', description: '集自救恢复解控于一体，在各场合均有发挥。' },
     ],
-    collaborators: [
-      {
-        id: '仙女鼠',
-        description:
-          '天使杰瑞的Lv.2被动可以夺取猫身上的星星，供仙女鼠使用；雷云还能降低对方伤害，提高二者的容错率。但这一组合中的仙女鼠压力极大，很怕空技能和猛攻，相对来说操作和收益并不完全对等，慎用。',
-        isMinor: true,
-      },
-    ],
-    countersSpecialSkills: [
-      { id: '我生气了！', description: '天使杰瑞1级被动能封锁爪刀。', isMinor: false },
-    ],
   },
 
   /* ----------------------------------- 天使泰菲 ----------------------------------- */
@@ -3469,80 +3006,8 @@ const mouseCharacterDefinitions = {
         description: '配合减伤提高生存能力。',
       },
     ],
-    counters: [
-      {
-        id: '米特',
-        description: '天菲技能提供的减伤能大幅降低甚至免疫胡椒粉的伤害，还能反伤。',
-        isMinor: false,
-      },
-      {
-        id: '剑客汤姆',
-        description:
-          '天菲前期开启任意一个技能就能极大幅削减（无“穷追猛打”情况下的）剑客连斩的伤害，后期霸体让控制多伤害偏低的剑汤十分棘手，庇护还可以保队友，转移控制的效果还能让范围内的队友通过卡内刀/使用控制道具/直接脱离的方式中断剑汤连招。并且剑汤较惧怕“后期”定位的角色，墙缝期剑汤怕碎片怕满地道具怕高伤怕有自保和保队友能力的老鼠。并且剑汤前期一旦虚弱会导致乘胜层数减半，对局面影响很大，而天菲的翅膀反伤是个很好压血线的工具——哪怕把天菲刮死了，剑汤本身血条不多，容错也很低。不过天菲技能较为被动，确实有被高熟练度剑汤通过操作弥补克制关系的可能，还是要小心。',
-        isMinor: true,
-      },
-    ],
-    counteredBy: [
-      {
-        id: '托普斯',
-        description:
-          '托普斯的捕虫网能无视天菲的两个技能。哪怕是开启Lv.3友情庇护的天菲，也能被携带“我生气了！”特技的托普斯利用击晕和Lv.1被动进行连续控制，当成“提款机”。',
-        isMinor: false,
-      },
-      {
-        id: '图多盖洛',
-        description: '天菲既被香水死克，又被猛攻指甲油克制。',
-        isMinor: true,
-      },
-      {
-        id: '塔拉',
-        description:
-          '塔拉的超大视野逼迫天菲救人拦截方面提前开技能，蓄势重击克制翅膀流，拍子克制庇护流。',
-        isMinor: true,
-      },
-      {
-        id: '库博',
-        description:
-          '库博的被动和主动技能提供额外的攻击增伤，能击晕接道具秒天菲，或利用蓄势90*2的伤害打死三级翅膀的天菲。',
-        isMinor: false,
-      },
-    ],
-    collaborators: [
-      {
-        id: '雪梨',
-        description: '雪梨和天使泰菲的技能搭配能大幅提高生存能力。',
-        isMinor: false,
-      },
-      {
-        id: '米雪儿',
-        description: '米雪儿和天使泰菲的技能搭配能大幅提高生存能力。',
-        isMinor: true,
-      },
-      {
-        id: '魔术师',
-        description: '天使泰菲后期强力。魔术师二武器能提供大量经验，帮助到达后期。',
-        isMinor: false,
-      },
-      {
-        id: '佩克斯',
-        description: '天使泰菲后期强力。佩克斯能提供大量经验，帮助到达后期。',
-        isMinor: true,
-      },
-      {
-        id: '侦探杰瑞',
-        description: '侦探杰瑞的推奶酪和破局能力很强，推奶酪提供的经验能帮助天使泰菲到达后期。',
-        isMinor: true,
-      },
-    ],
+
     aliases: ['天菲', '天妃'],
-    counteredBySpecialSkills: [
-      {
-        id: '蓄力重击',
-        description:
-          '蓄力重击可以直接击倒天菲；不过天菲后期的三级庇护的免死效果持续期间能抗下蓄力重击。',
-        isMinor: true,
-      },
-    ],
   },
 
   /* ----------------------------------- 魔术师 ----------------------------------- */
@@ -3819,33 +3284,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    counters: [
-      {
-        id: '牛仔汤姆',
-        description:
-          '魔术师的主动技能获取的红牌可对牛汤造成干扰，在红牌命中后牛汤将无法使用技能，且正在释放前摇中的技能释放将会中断。兔子大表哥能挡住仙人掌弹弓，该技能Lv.3的免疫受伤效果还能克制牛汤的Lv.3被动。',
-        isMinor: false,
-      },
-      {
-        id: '侍卫汤姆',
-        description:
-          '兔子们的血量较高，能逼出侍卫汤姆的蓄势一击或蓄力重击。魔术师还能利用红牌封禁侍卫的技能，令其无法开炮。',
-        isMinor: true,
-      },
-      {
-        id: '塔拉',
-        description: '兔子们的血量较高，能逼出塔拉的蓄势一击或蓄力重击。',
-        isMinor: true,
-      },
-    ],
-    collaborators: [
-      {
-        id: '航海士杰瑞',
-        description:
-          '魔术师的卡牌和航海士杰瑞的金币可以相互弥补控制真空期，提高干扰能力。魔术师在干扰的同时还能推奶酪。',
-        isMinor: false,
-      },
-    ],
+
     specialSkills: [
       {
         name: '魔术漂浮',
@@ -3858,13 +3297,6 @@ const mouseCharacterDefinitions = {
       {
         name: '干扰投掷',
         description: '配合魔术卡牌提高干扰能力。',
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '蓄力重击',
-        description: '蓄力重击可以直接击倒魔术师的兔子。',
-        isMinor: true,
       },
     ],
   },
@@ -4034,79 +3466,6 @@ const mouseCharacterDefinitions = {
       },
       { name: '魔术漂浮', description: '魔术漂浮泛用性很高，在大部分场合均有发挥。' },
       { name: '绝处逢生', description: '绝处逢生泛用性很高，在大部分场合均有发挥。' },
-    ],
-    counters: [
-      {
-        id: '莱特宁',
-        description: '缺霸体不好上火箭，后期三级闪有一定反制能力。',
-        isMinor: false,
-      },
-      {
-        id: '米特',
-        description: '一个琴高伤害远击退还掉胡椒粉。',
-        isMinor: false,
-      },
-      {
-        id: '剑客汤姆',
-        description: '缺霸体不好上火箭，伤害还高。',
-        isMinor: false,
-      },
-      {
-        id: '苏蕊',
-        description: '击退和高伤有一定能力反制跳舞。',
-        isMinor: true,
-      },
-      {
-        id: '如玉',
-        description: '不能反击，124血还不容易打死。',
-        isMinor: false,
-      },
-      {
-        id: '汤姆',
-        description: '击退有一定能力反制无敌。',
-        isMinor: true,
-      },
-    ],
-    counteredBy: [
-      {
-        id: '图多盖洛',
-        description: '一直霸体和回复很克制，但武器技能可以突破防守，琴可以弹开香水。',
-        isMinor: true,
-      },
-      {
-        id: '库博',
-        description: '高伤、高回复和强机动性非常克制佩克斯。',
-        isMinor: false,
-      },
-      {
-        id: '天使汤姆',
-        description: '高伤、高回复和强机动性非常克制佩克斯。',
-        isMinor: false,
-      },
-      {
-        id: '斯飞',
-        description: '电可以抓住前摇绑上火箭。',
-        isMinor: true,
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '蓄力重击',
-        description: '蓄力重击可以直接击倒高Hp老鼠。',
-        isMinor: false,
-      },
-    ],
-    collaborators: [
-      {
-        id: '雪梨',
-        description: '可以为佩克斯提供续航。',
-        isMinor: false,
-      },
-      {
-        id: '牛仔杰瑞',
-        description: '牛仔控住可接弹琴，1级被动提供的经验可以助他活到后期。',
-        isMinor: false,
-      },
     ],
   },
   /* ----------------------------------- 拿坡里鼠 ----------------------------------- */
@@ -4309,47 +3668,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['小拿'],
-    counteredBy: [
-      {
-        id: '斯飞',
-        description: '斯飞的被动技能免疫足球失明效果。',
-        isMinor: false,
-      },
-    ],
-    collaborators: [
-      {
-        id: '罗宾汉泰菲',
-        description:
-          '罗宾汉泰菲与拿坡里鼠的高频控制能互相弥补CD，提高容错。罗菲还能利用圆球与斜塔的碰撞，快速碰撞破墙。',
-        isMinor: false,
-      },
-      {
-        id: '雪梨',
-        description: '骑乘披萨饼期间可通过花束快速位移，连带披萨饼一同移动，出其不意。',
-        isMinor: true,
-      },
-    ],
-    counters: [
-      {
-        id: '塔拉',
-        description: '斜塔能防止套索上火箭。',
-        isMinor: true,
-      },
-    ],
-    countersSpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '用塔使猫咪强制位移，防止绑上火箭。',
-        isMinor: true,
-      },
-    ],
-    counteredByKnowledgeCards: [
-      {
-        id: '皮糙肉厚',
-        description: '大幅度降低足球和披萨饼的伤害。',
-        isMinor: true,
-      },
-    ],
   },
   /* ----------------------------------- 侦探泰菲 ----------------------------------- */
   侦探泰菲: {
@@ -4649,13 +3967,6 @@ const mouseCharacterDefinitions = {
       { name: '干扰投掷', description: '提高干扰能力，还能配合风墙拖延更长时间。' },
       { name: '应急治疗', description: '提高续航能力，并且能更方便地触发1级被动。' },
     ],
-    countersSpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '风墙的干扰无法被绝地反击免疫，且莉莉2级被动命中霸体敌方也能触发。',
-        isMinor: true,
-      },
-    ],
   },
 
   /* ----------------------------------- 罗宾汉泰菲 ----------------------------------- */
@@ -4882,106 +4193,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    collaborators: [
-      {
-        id: '航海士杰瑞',
-        description: '航海士杰瑞与罗菲的控制能互相弥补CD。罗菲还能提供航海士杰瑞急需的恢复能力。',
-        isMinor: false,
-      },
-      {
-        id: '剑客杰瑞',
-        description:
-          '剑客杰瑞的伤害和罗菲的控制能互相弥补短板。罗菲还能提供恢复，发挥剑客杰瑞的Hp上限优势。',
-        isMinor: false,
-      },
-      {
-        id: '牛仔杰瑞',
-        description:
-          '牛仔杰瑞与罗菲的控制能互相弥补CD。罗菲还能提供恢复，发挥牛仔杰瑞的Hp上限优势。',
-        isMinor: false,
-      },
-      {
-        id: '剑客莉莉',
-        description:
-          '剑客莉莉与罗菲的控制能互相弥补CD。罗菲还能提供恢复，发挥剑客莉莉的Hp上限优势，并触发她的Lv.1被动。',
-        isMinor: false,
-      },
-      {
-        id: '米可',
-        description: '米可与罗菲的控制能互相弥补CD。罗菲还能提供米可相对匮乏的恢复能力。',
-        isMinor: false,
-      },
-      {
-        id: '天使杰瑞',
-        description: '罗菲能为天使杰瑞提供恢复，帮助其多次触发被动。',
-        isMinor: true,
-      },
-    ],
-    counters: [
-      {
-        id: '莱特宁',
-        description: '莱特宁缺乏霸体能力，可被罗菲连续控制。',
-        isMinor: false,
-      },
-      {
-        id: '牛仔汤姆',
-        description:
-          '牛仔汤姆缺乏霸体能力，并且机动性较差，可被罗菲连续控制或拉扯。罗菲的高低差爬树和高额恢复还克制弹弓和斗牛的远程消耗。牛仔汤姆只有利用弹弓的高爆发伤害才有机会主动击倒罗菲。',
-        isMinor: false,
-      },
-      {
-        id: '图茨',
-        description:
-          '图茨缺乏霸体能力，并且机动性较差，可被罗菲连续控制或拉扯，但要小心对方的绝地反击特技。',
-        isMinor: false,
-      },
-      {
-        id: '米特',
-        description:
-          '米特缺乏主动霸体能力，并且机动性较差，可被罗菲连续控制或拉扯。罗菲能用控制效果击落米特手中的胡椒瓶，还能为全队提供恢复，克制胡椒粉的持续伤害。但米特爪刀伤害高，被动还有禁疗效果，一定程度上也能反制罗菲。',
-        isMinor: false,
-      },
-      {
-        id: '剑客汤姆',
-        description: '剑客汤姆缺乏霸体能力，很容易被罗菲连续控制。',
-        isMinor: false,
-      },
-      {
-        id: '侍卫汤姆',
-        description:
-          '侍卫汤姆霸体减控能力间隔较长，所需等级较高，前期很容易被罗菲连续控制,且火炮的远程消耗可以被藤蔓的恢复化解。不过，侍卫汤姆移速快，Lv.2被动伤害高，超大的视野范围也能防范罗菲的偷袭，可以尝试抓住罗菲的破绽。',
-        isMinor: true,
-      },
-      {
-        id: '库博',
-        description:
-          '库博缺乏霸体能力，很容易被罗菲连续控制。罗菲的高机动性难以让库博抓住破绽。但库博主动和被动技能可提供高额攻击增伤和极强生存能力，不易被罗菲击倒，可以伺机偷袭罗菲。',
-        isMinor: true,
-      },
-      {
-        id: '斯飞',
-        description: '罗菲的圆球加投掷道具配合投手，可以暂时中断斯飞的疾冲状态，达到干扰效果。',
-        isMinor: true,
-      },
-    ],
-    counteredBy: [
-      {
-        id: '苏蕊',
-        description: '苏蕊跳舞提供霸体和攻击增伤，一定程度上能克制罗菲的控制。',
-        isMinor: false,
-      },
-      {
-        id: '恶魔汤姆',
-        description: '恶魔汤姆有霸体和护盾能力，不怕罗菲的圆球控制；迷乱列车还能克制圆球的霸体。',
-        isMinor: false,
-      },
-      {
-        id: '凯特',
-        description:
-          '凯特被动提供减控和攻击增伤，克制罗菲的控制。但凯特Hp不高，要小心被罗菲直接击倒。',
-        isMinor: true,
-      },
-    ],
+
     specialSkills: [
       {
         name: '干扰投掷',
@@ -4996,33 +4208,6 @@ const mouseCharacterDefinitions = {
         name: '魔术漂浮',
         description:
           '部分高低差较多的地图可考虑携带，补充容错。不过罗菲本身就有藤蔓和[圆球二段跳](在空中向上释放弹力圆球，达到类似二段跳的效果)，并不特别依赖漂浮。',
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '罗菲需要近距离接触猫咪才能干扰，一旦猫咪使用绝地反击就很容易形成反打。',
-        isMinor: false,
-      },
-    ],
-    advantageMaps: [
-      {
-        id: '夏日游轮I',
-        description:
-          '该地图在电影院左侧走廊处放置藤蔓可到达船长室，且猫咪难以攀爬（位置合适时无法攀爬）。',
-        isMinor: true,
-      },
-      {
-        id: '夏日游轮II',
-        description:
-          '该地图存在多处藤蔓点位（电影院左侧、船长室楼梯、厨房楼梯、锅炉房通风管等），可在不影响鼠方通行的情况下阻止猫方通过；存在多处墙缝点位（电影院、甲板、客舱）可让罗菲借助原生或藤蔓平台多次反弹，达到快速破墙的效果。',
-        isMinor: false,
-      },
-      {
-        id: '夏日游轮III',
-        description:
-          '该地图存在多处藤蔓点位（电影院左侧、船长室楼梯、厨房楼梯等），可在不影响鼠方通行的情况下阻止猫方通过；存在多处墙缝点位（电影院、甲板二、客舱）可让罗菲借助原生或藤蔓平台多次反弹，达到快速破墙的效果。',
-        isMinor: false,
       },
     ],
   },
@@ -5357,24 +4542,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    collaborators: [
-      {
-        id: '国王杰瑞',
-        description:
-          '国王杰瑞的救援战旗能为马索尔提供救援速度，守护战旗或国王权杖能提供护盾，辅助其稳定救援。',
-        isMinor: true,
-      },
-      {
-        id: '剑客莉莉',
-        description: '剑客莉莉的剑气能为马索尔提供回溯能力，帮助其救援后返回。',
-        isMinor: true,
-      },
-      {
-        id: '米可',
-        description: '米可的相机能为马索尔提供回溯能力，帮助其救援后返回。',
-        isMinor: true,
-      },
-    ],
+
     specialSkills: [
       {
         name: '魔术漂浮',
@@ -5392,13 +4560,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['大表哥', '小表弟'],
-    counteredBySpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '绝地反击能克制大表哥的拳头干扰，不过无法免疫升龙拳的击飞效果。',
-        isMinor: true,
-      },
-    ],
   },
 
   /* ----------------------------------- 米雪儿 ----------------------------------- */
@@ -5721,29 +4882,6 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    counteredByKnowledgeCards: [
-      {
-        id: '皮糙肉厚',
-        description: '皮糙肉厚减伤导致音乐家的多段伤害大幅减少。',
-        isMinor: false,
-      },
-    ],
-    countersSpecialSkills: [
-      {
-        id: '绝地反击',
-        description:
-          '音乐家能快速拆火箭，阻止猫咪霸体绑火箭。不过绝地反击能免疫共鸣眩晕，还是要小心。',
-        isMinor: true,
-      },
-    ],
-    counters: [
-      {
-        id: '莱特宁',
-        description:
-          '音乐家可以利用礼服撞开{垃圾桶}，避免莱特宁抓起老鼠后用垃圾桶鞭尸，而且由于莱特宁缺少控制手段，音乐家可以安全的使用礼服拆火箭。但由于莱特宁的高机动性还是得注意闪现爪刀和交互闪，防止被打死',
-        isMinor: true,
-      },
-    ],
   },
 
   /* ----------------------------------- 蒙金奇 ---------------------------------- */
@@ -5890,20 +5028,6 @@ const mouseCharacterDefinitions = {
               '每格士气值额外提供2%的移速和0.2/s的Hp恢复速度；士气自然增长速度提高。',
           },
         ],
-      },
-    ],
-    counteredByKnowledgeCards: [
-      {
-        id: '猛攻',
-        description: '猛攻能让乘坐战车的蒙金奇无法脱离，失去干扰能力的同时还可能被战车炸死。',
-        isMinor: false,
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '绝地反击能免疫眩晕，还会大幅降低冲撞的击退距离',
-        isMinor: false,
       },
     ],
   },
@@ -6068,37 +5192,6 @@ const mouseCharacterDefinitions = {
         name: '干扰投掷',
         description:
           '在无眩晕道具时提供一定的干扰能力，同时也能在一些情况下强换托普斯的网和剑客汤姆的旋。',
-      },
-    ],
-    counters: [
-      {
-        id: '斯飞',
-        description: '斯飞拦不住翻滚；但斯飞在“疾冲”状态下被勾，抓在手上老鼠的还是会被电。',
-        isMinor: true,
-      },
-      {
-        id: '牛仔汤姆',
-        description: '牛仔汤姆拦不住翻滚，也不好抓尼宝。另外尼宝往往携带逃窜，克制牛汤。',
-        isMinor: true,
-      },
-      {
-        id: '布奇',
-        description: '布奇拦不住翻滚，而且旋转桶盖霸体也免疫不了鱼钩。',
-        isMinor: false,
-      },
-    ],
-    collaborators: [
-      {
-        id: '剑客莉莉',
-        description: '可以配合泥巴救援后传送',
-        isMinor: true,
-      },
-    ],
-    countersSpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '钩子可以勾霸体猫手上的老鼠。',
-        isMinor: false,
       },
     ],
   },
@@ -6299,99 +5392,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['朵帝', '雷电法王', '电耗子'],
-    counteredBy: [
-      {
-        id: '牛仔汤姆',
-        description: '牛会撞碎电池。',
-        isMinor: true,
-      },
-      {
-        id: '图多盖洛',
-        description: '三级指甲油长时间霸体，3级被动流血。',
-        isMinor: false,
-      },
-      {
-        id: '天使汤姆',
-        description: '伤害高，被动霸体。',
-        isMinor: true,
-      },
-      {
-        id: '追风汤姆',
-        description: '飞行时难以命中。',
-        isMinor: true,
-      },
-      {
-        id: '如玉',
-        description: '充能的道具会触发反击，被动霸体使无效输出。',
-        isMinor: false,
-      },
-    ],
-    collaborators: [
-      {
-        id: '国王杰瑞',
-        description: '进一步增强输出。',
-        isMinor: false,
-      },
-      {
-        id: '航海士杰瑞',
-        description: '金币与火炮衔接控制。',
-        isMinor: true,
-      },
-      {
-        id: '罗宾汉泰菲',
-        description: '圆球衔接控制，藤蔓提供续航。',
-        isMinor: true,
-      },
-    ],
-    counters: [
-      {
-        id: '莱特宁',
-        description: '灌伤克制防守，后期自保与输出能力克制追击。',
-        isMinor: false,
-      },
-      {
-        id: '剑客汤姆',
-        description: '全面克制，2级被动减控防连招，3级被动断连斩，高伤克皮糙，且控制多。',
-        isMinor: false,
-      },
-      {
-        id: '苏蕊',
-        description: '过载加伤可快速多次击倒2级被动苏蕊。',
-        isMinor: true,
-      },
-    ],
-    countersKnowledgeCards: [
-      {
-        id: '蓄势一击',
-        description: '3级被动使蓄势加伤无法正常打出，且会对猫自己造成控制。',
-        isMinor: false,
-      },
-      {
-        id: '皮糙肉厚',
-        description: '单次输出高，可无视减伤输出。',
-        isMinor: true,
-      },
-    ],
-    countersSpecialSkills: [],
-    counteredByKnowledgeCards: [
-      {
-        id: '击晕',
-        description: '使充能道具掉落。',
-        isMinor: false,
-      },
-      {
-        id: '猛攻',
-        description: '使全面失去输出能力。',
-        isMinor: false,
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '绝地反击能暂时免疫朵朵的控制，但免疫不了伤害。',
-        isMinor: true,
-      },
-    ],
   },
   /* ----------------------------------- 仙女鼠 ----------------------------------- */
   仙女鼠: {
@@ -6558,9 +5558,6 @@ const mouseCharacterDefinitions = {
         name: '绝处逢生',
         description: '绝处逢生泛用性很高，在各场合均有不错发挥。',
       },
-    ],
-    countersSpecialSkills: [
-      { id: '绝地反击', description: '仙女鼠八星变身无视霸体效果。', isMinor: false },
     ],
   },
 
@@ -6755,55 +5752,7 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['记者'],
-    counters: [
-      {
-        id: '米特',
-        description:
-          '米可的减伤使胡椒粉难以造成伤害；照相机回溯可以舍己救人后不会因为胡椒粉而虚弱。',
-        isMinor: false,
-      },
-      {
-        id: '剑客汤姆',
-        description: '米可主动技能霸体、被动减伤，克制骑士连斩。',
-        isMinor: false,
-      },
-      {
-        id: '莱特宁',
-        description:
-          '莱特宁攻击手段有限，而米可有高额减伤，配上逃窜和特技治疗很难被击倒。回溯可以吸莱特宁闪现，且还可以给莱特宁拍照、闪现后回溯原位。',
-        isMinor: false,
-      },
-    ],
-    collaborators: [
-      {
-        id: '杰瑞',
-        description: '二级鼓舞可以在米可采访时帮米可回血和加速，提高续航。',
-        isMinor: true,
-      },
-      {
-        id: '雪梨',
-        description:
-          '雪梨可以帮米可回血，提高续航，配合米可三级被动很难被打死，也有了防止拍抓的能力。',
-        isMinor: false,
-      },
-      {
-        id: '音乐家杰瑞',
-        description: '主动技能协奏曲可以在米可采访时给米可回血和加速，提高续航。',
-        isMinor: false,
-      },
-    ],
-    counteredBy: [
-      {
-        id: '布奇',
-        description: '高伤害，容易击倒米可；虚弱起身无敌时间长，三级桶盖还有霸体。',
-        isMinor: false,
-      },
-      {
-        id: '苏蕊',
-        description: '苏蕊的霸体和高伤能有效克制米可。',
-        isMinor: false,
-      },
-    ],
+
     specialSkills: [
       {
         name: '应急治疗',
@@ -6816,25 +5765,6 @@ const mouseCharacterDefinitions = {
       {
         name: '勇气投掷',
         description: '用于缩短采访CD。',
-      },
-    ],
-    counteredByKnowledgeCards: [
-      {
-        id: '猛攻',
-        description: '猛攻能阻止米可曝光和回溯，且米可的霸体无法抵御猛攻的效果。',
-        isMinor: false,
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '蓄力重击',
-        description: '蓄力重击能直接秒掉高减伤米可，不过不太容易命中采访期间的米可。',
-        isMinor: true,
-      },
-      {
-        id: '绝地反击',
-        description: '绝地反击能免疫米可技能的眩晕，但无法免疫伤害及拍摄效果。',
-        isMinor: true,
       },
     ],
   },
@@ -7007,8 +5937,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    counters: [],
-    counteredBy: [],
+
     specialSkills: [
       {
         name: '魔术漂浮',
@@ -7021,25 +5950,6 @@ const mouseCharacterDefinitions = {
       {
         name: '勇气投掷',
         description: '减少滑铲CD便于守火箭。',
-      },
-    ],
-    collaborators: [
-      {
-        id: '航海士杰瑞',
-        description: '航海士杰瑞可拆掉火箭，便于霜月守火箭。',
-        isMinor: true,
-      },
-      {
-        id: '音乐家杰瑞',
-        description: '音乐家杰瑞可拆掉火箭，便于霜月守火箭。',
-        isMinor: true,
-      },
-    ],
-    countersSpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '霜月的乾坤袋吞噬无视霸体，滑步踢踢飞火箭也能阻止猫咪绑火箭',
-        isMinor: true,
       },
     ],
   },
@@ -7193,25 +6103,6 @@ const mouseCharacterDefinitions = {
               '被绑上15秒以下的火箭后，火箭引线会返回到15秒。被放飞后以“局外人”返场，Hp上限为624，且Hp以2/秒的速度降低，无法进行大部分交互，无法受到治疗，Hp清零时立即被放飞。返场期间可以用道具键投掷{柠檬}（造成2.5伤害并在2.5秒内降低10%移速，可触发{投掷命中效果})），内置CD2秒。与{库博}-{虚幻梦影}的天堂火箭[有特殊互动关系](表演者•杰瑞在只被绑上天堂火箭的时候不能触发复活，但如果表演者•杰瑞既被绑上天堂火箭又被绑上了普通火箭，那么引线燃烧完后仍然能触发复活)。',
           },
         ],
-      },
-    ],
-    counters: [
-      {
-        id: '图茨',
-        description: '柠檬的二级跳舞时，喵喵叫和汽水瓶都不能给柠檬叠加减速。',
-        isMinor: false,
-      },
-      {
-        id: '库博',
-        description: ' ',
-        isMinor: true,
-      },
-    ],
-    collaborators: [
-      {
-        id: '米雪儿',
-        description: '可以在表演者•杰瑞铁血的时候将其变为大老鼠，防止被抓。',
-        isMinor: true,
       },
     ],
   },
@@ -7383,29 +6274,6 @@ const mouseCharacterDefinitions = {
       {
         name: '绝处逢生',
         description: '猫被变为粉笔猫后无法抓起，可铁血拉远用自起',
-      },
-    ],
-    counters: [],
-    collaborators: [
-      {
-        id: '仙女鼠',
-        description:
-          '莱恩容易死，仙女鼠变六星提高下限，并且在遇到汤姆无敌强上火箭时，可强制造成伤害变线条，线条猫与八星一块干扰猫，使对面露出破绽。',
-        isMinor: false,
-      },
-    ],
-    countersSpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '霸体期间也能变线条猫，让猫不能稳上秒飞',
-        isMinor: true,
-      },
-    ],
-    counteredBySpecialSkills: [
-      {
-        id: '我生气了！',
-        description: '某些猫带此特技在缴械cd期间，可快速破圆和方块，快速接近无自保的莱恩。',
-        isMinor: true,
       },
     ],
   },
@@ -7584,50 +6452,6 @@ const mouseCharacterDefinitions = {
           '{香甜梦境}持续期间受到伤害带来的移速加成可拉开与猫咪的距离，可能可以通过本特技逃脱。',
       },
     ],
-    counteredBy: [
-      {
-        id: '莱特宁',
-        description: '梦游拉毛线时会被莱特宁3级闪现恐吓，莱特宁的垃圾桶还能略微反制梦游的破局。',
-        isMinor: true,
-      },
-    ],
-    collaborators: [
-      {
-        id: '剑客莉莉',
-        description: '莉莉的风墙可困住或阻挡猫，方便梦游安全地拉取毛线球。',
-        isMinor: true,
-      },
-      {
-        id: '仙女鼠',
-        description: '梦游在拉毛线时，仙女鼠给梦游丢六星不会让毛线消失，可以强行破局。',
-        isMinor: true,
-      },
-    ],
-    counters: [
-      {
-        id: '恶魔汤姆',
-        description: '梦游杰瑞毛线球特性克制恶魔汤姆火车死守。',
-        isMinor: false,
-      },
-      {
-        id: '剑客汤姆',
-        description:
-          '梦游在主动技能梦游期间免疫击晕，不会被剑汤用击晕和连斩直接击倒；但破除梦游状态后自保较为孱弱。',
-        isMinor: true,
-      },
-      {
-        id: '布奇',
-        description: '布奇冲撞会将奶酪撞出洞口，而每次奶酪被毛线球拉入洞口都会增加奶酪进度。',
-        isMinor: true,
-      },
-    ],
-    countersKnowledgeCards: [
-      {
-        id: '捕鼠夹',
-        description: '梦游杰瑞的香甜梦境可以直接解除该知识卡影响下的夹子的控制。',
-        isMinor: false,
-      },
-    ],
   },
 
   /* ----------------------------------- 鲍姆 ----------------------------------- */
@@ -7787,73 +6611,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['棍姆'],
-    counteredBy: [
-      {
-        id: '图多盖洛',
-        description: '霸体免疫鲍姆爆炸控制。',
-        isMinor: false,
-      },
-      {
-        id: '苏蕊',
-        description: '苏蕊跳舞霸体后几乎完全不受鲍姆爆炸的影响。',
-        isMinor: false,
-      },
-      {
-        id: '汤姆',
-        description: '主动技能无敌使鲍姆爆炸无法造成有效干扰。',
-        isMinor: false,
-      },
-    ],
-    counters: [
-      {
-        id: '如玉',
-        description: '鲍姆爆炸无法触发如玉反击。',
-        isMinor: false,
-      },
-      {
-        id: '剑客汤姆',
-        description: '鲍姆本身具备较强干扰能力，且剑客汤姆没有霸体上火箭困难。',
-        isMinor: true,
-      },
-    ],
-    countersSpecialSkills: [
-      {
-        id: '绝地反击',
-        description: '鲍姆的爆炸一定程度上限制了绝地反击的解控，但如果提前使用则可完全免疫爆炸。',
-        isMinor: true,
-      },
-    ],
-    counterEachOther: [
-      {
-        id: '图茨',
-        description: '鲍姆爆炸会打断喵喵叫，但前提条件是鲍姆需要近身攻击图茨。',
-        isMinor: false,
-      },
-      {
-        id: '兔八哥',
-        description:
-          '鲍姆爆炸可换下兔八哥手中的队友，且不会触发宣战，因此拦截和救援较强，但一旦被飞镖远程打中并宣战后就难以救援。',
-        isMinor: false,
-      },
-      {
-        id: '托普斯',
-        description: '二者克制关系主要取决于托普斯操作水平和与分身是否保持距离。',
-        isMinor: true,
-      },
-    ],
-    collaborators: [
-      {
-        id: '剑客莉莉',
-        description:
-          '鲍姆救援后自保差不好走，可以通过剑客莉莉风墙掩护其撤退；莉莉救援时鲍姆也可提供干扰效果。',
-        isMinor: false,
-      },
-      {
-        id: '米可',
-        description: '鲍姆救援后可通过米可拍照撤退。',
-        isMinor: true,
-      },
-    ],
   },
   /* ----------------------------------- 朝圣者泰菲 ----------------------------------- */
   朝圣者泰菲: {
@@ -8036,60 +6793,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['朝菲', '圣菲'],
-    counteredBy: [
-      {
-        id: '汤姆',
-        description: '主动技能无敌可免疫朝圣者泰菲伤害。',
-        isMinor: false,
-      },
-      {
-        id: '如玉',
-        description:
-          '朝圣者泰菲子弹可以被如玉主动技能反向利用刷反击，且如玉被动适配暴怒，朝圣者泰菲的高伤极易被如玉反制。',
-        isMinor: false,
-      },
-      {
-        id: '图多盖洛',
-        description: '图多盖洛指甲油免死可有效削减朝圣者泰菲高伤对其的影响。',
-        isMinor: false,
-      },
-    ],
-    counteredByKnowledgeCards: [
-      {
-        id: '猛攻',
-        description:
-          '朝圣者泰菲处于圆球状态时获得猛攻效果期间无法撞击敌方，同时也无法主动取消圆球状态。',
-        isMinor: true,
-      },
-    ],
-    collaborators: [
-      {
-        id: '国王杰瑞',
-        description: '国王杰瑞战旗与朝圣者泰菲配合可打出极高伤害。',
-        isMinor: false,
-      },
-    ],
-    counters: [
-      {
-        id: '苏蕊',
-        description:
-          '朝圣者泰菲武器技能的高伤可对苏蕊造成有效伤害，虽然朝圣者泰菲血量较低易被苏蕊反杀，但仍更偏向于克制苏蕊。',
-        isMinor: true,
-      },
-      {
-        id: '图茨',
-        description:
-          '图茨本身血量偏低，朝圣者泰菲的高伤易使图茨快速被击倒，且图茨技能均无法对朝圣者泰菲伸出的枪管造成伤害。',
-        isMinor: false,
-      },
-    ],
-    counterEachOther: [
-      {
-        id: '布奇',
-        description: '二者均拥有较高伤害和较低血量，易击倒对方，但整体来看布奇仍略克朝圣者泰菲。',
-        isMinor: false,
-      },
-    ],
   },
 } as const satisfies Readonly<Record<string, CharacterDefinition>>;
 
