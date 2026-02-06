@@ -236,7 +236,7 @@ export const VersionChecker: React.FC = () => {
     // Check for updates every 2 minutes
     const checkForUpdates = async () => {
       // Skip if hidden
-      if (!document.hidden) {
+      if (document.hidden) {
         setDebugInfo((prev) => ({
           ...prev,
           lastCheck: new Date().toLocaleTimeString(),
