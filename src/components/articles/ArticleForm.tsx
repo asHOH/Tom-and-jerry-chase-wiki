@@ -33,7 +33,6 @@ interface ArticleFormProps {
   submitLabel: string; // e.g., '提交文章' | '更新文章'
   submittingLabel: string; // e.g., '提交中...' | '更新中...'
   errorMessage?: string | null;
-  successMessage?: string | null;
   contentPlaceholder?: string;
   // Character selector props for game strategy articles
   showCharacterSelector?: boolean;
@@ -60,7 +59,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   submitLabel,
   submittingLabel,
   errorMessage,
-  successMessage,
   contentPlaceholder,
   showCharacterSelector = false,
   characterId,
@@ -113,49 +111,25 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
 
   return (
     <div className={`mx-auto max-w-4xl ${isMobile ? '' : 'px-4'}`}>
-      {(errorMessage || successMessage) && (
-        <>
-          {errorMessage && (
-            <BaseCard
-              className={`mb-6 border border-red-200 bg-red-50 ${isMobile ? '' : 'p-4'} dark:border-red-800 dark:bg-red-900/20`}
+      {errorMessage && (
+        <BaseCard
+          className={`mb-6 border border-red-200 bg-red-50 ${isMobile ? '' : 'p-4'} dark:border-red-800 dark:bg-red-900/20`}
+        >
+          <div className='flex items-center gap-3'>
+            <svg
+              className='size-5 text-red-600 dark:text-red-400'
+              fill='currentColor'
+              viewBox='0 0 20 20'
             >
-              <div className='flex items-center gap-3'>
-                <svg
-                  className='size-5 text-red-600 dark:text-red-400'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-                <p className='text-red-800 dark:text-red-200'>{errorMessage}</p>
-              </div>
-            </BaseCard>
-          )}
-          {successMessage && (
-            <BaseCard
-              className={`mb-6 border border-green-200 bg-green-50 ${isMobile ? '' : 'p-4'} dark:border-green-800 dark:bg-green-900/20`}
-            >
-              <div className='flex items-center gap-3'>
-                <svg
-                  className='size-5 text-green-600 dark:text-green-400'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-                <p className='text-green-800 dark:text-green-200'>{successMessage}</p>
-              </div>
-            </BaseCard>
-          )}
-        </>
+              <path
+                fillRule='evenodd'
+                d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                clipRule='evenodd'
+              />
+            </svg>
+            <p className='text-red-800 dark:text-red-200'>{errorMessage}</p>
+          </div>
+        </BaseCard>
       )}
 
       <div className={isMobile ? '' : 'p-8'}>
