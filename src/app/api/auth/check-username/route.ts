@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { verifyCaptchaToken } from '@/lib/captchaUtils';
+import { generateCaptchaProof, verifyCaptchaToken } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
@@ -31,6 +31,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
     }
 
+    const captchaProof = generateCaptchaProof(username);
+
     const usernameHash = hashUsername(username);
 
     if (!supabaseAdmin) {
@@ -53,11 +55,11 @@ export async function POST(request: NextRequest) {
     }
 
     if (!user) {
-      return NextResponse.json({ status: 'not_exists' });
+      return NextResponse.json({ status: 'not_exists', captchaProof });
     }
 
     if (user.password_hash) {
-      return NextResponse.json({ status: 'exists_with_password' });
+      return NextResponse.json({ status: 'exists_with_password', captchaProof });
     }
 
     return NextResponse.json({ status: 'requires_password_reset' });

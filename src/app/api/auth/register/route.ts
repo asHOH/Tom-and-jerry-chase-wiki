@@ -1,7 +1,7 @@
 import { createHash, pbkdf2Sync, randomBytes } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { verifyCaptchaToken } from '@/lib/captchaUtils';
+import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
@@ -37,8 +37,7 @@ export async function POST(request: NextRequest) {
     }
     const { username, nickname, password, captchaToken } = parsed.data;
 
-    const captchaVerified = await verifyCaptchaToken(captchaToken);
-    if (!captchaVerified) {
+    if (!verifyCaptchaProof(captchaToken, username)) {
       return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
     }
 
