@@ -5,6 +5,7 @@ import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const REVALIDATE_SECONDS = process.env.VERCEL ? 1800 : 60;
+const CACHE_CONTROL_HEADER = `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${REVALIDATE_SECONDS}`;
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -113,7 +114,10 @@ export async function GET(request: NextRequest) {
     }
 
     const { _tags: _unused, ...payload } = response as unknown as { _tags?: unknown };
-    return NextResponse.json(payload, { status: 200 });
+    return NextResponse.json(payload, {
+      status: 200,
+      headers: { 'Cache-Control': CACHE_CONTROL_HEADER },
+    });
   } catch (err) {
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -7,6 +7,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 
 const REVALIDATE_SECONDS = process.env.VERCEL ? 1800 : 300;
+const CACHE_CONTROL_HEADER = `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${REVALIDATE_SECONDS}`;
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const rl = await checkRateLimit(request, 'read', 'articles-history');
@@ -85,10 +86,16 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     if ('error' in response) {
       const status = response.error === 'Article not found' ? 404 : 500;
-      return NextResponse.json(response, { status });
+      return NextResponse.json(response, {
+        status,
+        headers: { 'Cache-Control': CACHE_CONTROL_HEADER },
+      });
     }
 
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response, {
+      status: 200,
+      headers: { 'Cache-Control': CACHE_CONTROL_HEADER },
+    });
   } catch (err) {
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
