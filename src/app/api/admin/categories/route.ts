@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth/requireRole';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 
+const SHOULD_REVALIDATE_TAGS = !process.env.VERCEL;
+
 export async function GET() {
   const guard = await requireRole(['Coordinator', 'Reviewer']);
   if ('error' in guard) return guard.error;
@@ -35,8 +37,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to create category' }, { status: 500 });
   }
 
-  revalidateTag(CACHE_TAGS.categories, 'max');
-  revalidateTag(CACHE_TAGS.articles, 'max');
+  if (SHOULD_REVALIDATE_TAGS) {
+    revalidateTag(CACHE_TAGS.categories, 'max');
+    revalidateTag(CACHE_TAGS.articles, 'max');
+  }
   return NextResponse.json({ ok: true });
 }
 
@@ -60,8 +64,10 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to update category' }, { status: 500 });
   }
 
-  revalidateTag(CACHE_TAGS.categories, 'max');
-  revalidateTag(CACHE_TAGS.articles, 'max');
+  if (SHOULD_REVALIDATE_TAGS) {
+    revalidateTag(CACHE_TAGS.categories, 'max');
+    revalidateTag(CACHE_TAGS.articles, 'max');
+  }
   return NextResponse.json({ ok: true });
 }
 
@@ -80,7 +86,9 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to delete category' }, { status: 500 });
   }
 
-  revalidateTag(CACHE_TAGS.categories, 'max');
-  revalidateTag(CACHE_TAGS.articles, 'max');
+  if (SHOULD_REVALIDATE_TAGS) {
+    revalidateTag(CACHE_TAGS.categories, 'max');
+    revalidateTag(CACHE_TAGS.articles, 'max');
+  }
   return NextResponse.json({ ok: true });
 }

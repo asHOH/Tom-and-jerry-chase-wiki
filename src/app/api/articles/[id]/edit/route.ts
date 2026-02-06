@@ -5,6 +5,8 @@ import { CACHE_TAGS } from '@/lib/cacheTags';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
+const SHOULD_REVALIDATE_TAGS = !process.env.VERCEL;
+
 export async function POST(request: Request, { params }: { params: Promise<{ id?: string }> }) {
   const id = (await params)?.id;
 
@@ -59,10 +61,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       return NextResponse.json({ error: 'Failed to update article' }, { status: 500 });
     }
 
-    revalidateTag(CACHE_TAGS.article(id), 'max');
-    revalidateTag(CACHE_TAGS.articleVersions(id), 'max');
-    revalidateTag(CACHE_TAGS.articles, 'max');
-    revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
+    if (SHOULD_REVALIDATE_TAGS) {
+      revalidateTag(CACHE_TAGS.article(id), 'max');
+      revalidateTag(CACHE_TAGS.articleVersions(id), 'max');
+      revalidateTag(CACHE_TAGS.articles, 'max');
+      revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
+    }
 
     return NextResponse.json({ message: 'Article updated successfully', data }, { status: 200 });
   } catch (err) {
