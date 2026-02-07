@@ -699,11 +699,11 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '蓄力重击',
-        description: '可补救缺伤害的短板。',
+        description: '弥补缺伤害的短板。',
       },
       {
         name: '绝地反击',
-        description: '适配所有缺霸体的猫。',
+        description: '弥补缺霸体的短板。',
       },
     ],
     skills: [
@@ -1102,7 +1102,7 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '技能与自身无霸体效果（推荐使用）。',
+        description: '弥补缺霸体的短板。',
       },
       {
         name: '蓄力重击',
@@ -1239,7 +1239,7 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '通用。',
+        description: '通用特技。',
       },
       {
         name: '蓄力重击',
@@ -1508,7 +1508,7 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '',
+        description: '通用特技。',
       },
     ],
     skills: [
@@ -1705,7 +1705,7 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '',
+        description: '弥补缺霸体的短板。',
       },
     ],
     skills: [
@@ -1905,11 +1905,11 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '',
+        description: '通用特技。',
       },
       {
         name: '应急治疗',
-        description: '',
+        description: '提高续航，防止被胡椒粉毒死。',
       },
     ],
     skills: [
@@ -2067,11 +2067,11 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '蓄力重击',
-        description: '',
+        description: '配合击晕或套索，提高伤害。',
       },
       {
         name: '绝地反击',
-        description: '',
+        description: '通用特技。',
       },
     ],
     skills: [
@@ -2295,7 +2295,7 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '',
+        description: '弥补缺霸体的短板。',
       },
     ],
     skills: [
@@ -2535,11 +2535,11 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '泛用性较高的特技，用于防范敌方的干扰。',
+        description: '弥补缺霸体的短板。',
       },
       {
         name: '蓄力重击',
-        description: '搭配击晕或捕鼠夹使用，补充伤害，快速击倒老鼠。',
+        description: '搭配击晕或捕鼠夹使用，补充伤害。',
       },
     ],
     skills: [
@@ -2710,11 +2710,11 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '通用',
+        description: '弥补缺霸体的短板。',
       },
       {
         name: '全垒打',
-        description: '配合全垒打的兴奋加速更快的消耗老鼠团队',
+        description: '两个技能都能享受攻击力加成，大幅提高伤害。',
       },
     ],
     skills: [
@@ -2941,7 +2941,7 @@ const catCharacterDefinitions = {
       {
         name: '急速翻滚',
         description:
-          '跳舞能提供霸体，所以对于特技霸体的要求降低。同时翻滚快速拉进距离，有利用打出出其不意的效果。',
+          '主动技能全程霸体，所以对于特技霸体的需求较低。翻滚能弥补机动性不足的短板，也能用于快速控位出刀。',
       },
     ],
     skills: [
@@ -3123,11 +3123,11 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '蓄力重击',
-        description: '配合飞行爪刀眩晕可以补伤害。',
+        description: '配合飞行爪刀眩晕补伤害。',
       },
       {
         name: '绝地反击',
-        description: '通用性高，前期过渡至2级被动，手绑能力提高。',
+        description: '用于前期过渡至2级被动，手绑能力提高。',
       },
     ],
     skills: [
@@ -3402,11 +3402,11 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '自身缺乏防御手段（推荐）',
+        description: '弥补缺霸体的短板。',
       },
       {
         name: '急速翻滚',
-        description: '再次加快速度与机动性',
+        description: '进一步提高速度与机动性。',
       },
     ],
   },
@@ -3699,7 +3699,7 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '泛用性极高的特技。',
+        description: '弥补缺霸体的短板。',
       },
       {
         name: '蓄力重击',
@@ -3896,12 +3896,11 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '适用于一般情况，用于残血强绑。',
+        description: '通用特技。',
       },
       {
         name: '蓄力重击',
-        description:
-          '推荐在对面选出魔术师时带，用于秒杀兔子大表哥，防止因为缺伤害导致处理不了兔子举秒飞而无法及时减员。',
+        description: '对策魔术师，用于秒杀举火箭的兔子大表哥。',
       },
       {
         name: '应急治疗',
@@ -4098,12 +4097,12 @@ const catCharacterDefinitions = {
     specialSkills: [
       {
         name: '绝地反击',
-        description: '增强如玉的打架和绑火箭能力。',
+        description: '通用特技。',
       },
-      { name: '急速翻滚', description: '增强如玉的机动性。' },
+      { name: '急速翻滚', description: '弥补机动性不足的短板。' },
       {
         name: '我生气了！',
-        description: '大幅缩短特殊爪刀CD，配合跳跃劈枪的超大攻击范围能产生不错的效果。',
+        description: '大幅缩短特殊爪刀CD，与跳跃劈枪的超大攻击范围配合很好。',
       },
     ],
     skills: [
