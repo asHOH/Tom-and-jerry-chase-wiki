@@ -207,7 +207,7 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '魔术漂浮',
-        description: '杰瑞所有技能均可中断漂浮，灵活性高。',
+        description: '所有技能均可主动中断漂浮，灵活性高。',
       },
     ],
     aliases: ['撅瑞'],
@@ -863,9 +863,9 @@ const mouseCharacterDefinitions = {
       },
     ],
     specialSkills: [
-      { name: '魔术漂浮', description: '魔术漂浮泛用性很高，在各场合均有不错发挥。' },
-      { name: '绝处逢生', description: '绝处逢生泛用性很高，在各场合均有不错发挥。' },
-      { name: '干扰投掷', description: '干扰投掷能提高航海士杰瑞的干扰能力。' },
+      { name: '魔术漂浮', description: '通用特技。' },
+      { name: '绝处逢生', description: '通用特技。' },
+      { name: '干扰投掷', description: '提高干扰能力。' },
     ],
   },
 
@@ -1059,8 +1059,8 @@ const mouseCharacterDefinitions = {
       },
     ],
     specialSkills: [
-      { name: '魔术漂浮', description: '魔术漂浮泛用性很高，在各场合均有不错发挥。' },
-      { name: '绝处逢生', description: '绝处逢生泛用性很高，在各场合均有不错发挥。' },
+      { name: '魔术漂浮', description: '通用特技。' },
+      { name: '绝处逢生', description: '通用特技。' },
     ],
   },
 
@@ -1497,27 +1497,28 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '用来打卡视野漂浮落炮，或踏空骗刀落炮。在空中的时候放地雷秒点漂浮防止猫卡落点',
+        description:
+          '用来打卡视野漂浮落炮，或踏空骗刀落炮。在空中的时候放地雷秒点漂浮防止猫卡落点。',
       },
       {
         name: '绝处逢生',
         description:
-          '用于硬抗控制伤害流打法，适用相对来说于控多伤少的猫（如剑汤、长爪托普斯），自起本身解控加快速回血配合圆滚滚的解控加无敌效果一共可以免疫两次硬控，并保证健康值充足，达到硬抗控制伤害的效果',
+          '用于硬抗控制伤害流打法，适用于控多伤少的猫（如剑汤、长爪托普斯）。自起解控加回血，配合圆滚滚的解控加无敌，一共可以免疫两次硬控，并保证Hp充足，硬抗控制伤害。',
       },
       {
         name: '应急治疗',
         description:
-          '{舍己}跳救{圆滚滚}后秒点治疗，用于续航，也可以用于防止被米特的胡椒粉毒死。配合被动使用效果很好',
+          '{舍己}跳救{圆滚滚}后秒点治疗，用于续航。也可用于防止被米特的胡椒粉毒死。配合被动效果很好。',
       },
       {
         name: '干扰投掷',
         description:
-          '用来打出干扰投掷接炮，提高炮命中率（注意不要手快点出无影炮），也可以先放{隐形感应雷}然后迅速用干扰投掷控住猫，大大增加地雷命中率，用于打机动性高、速度快导致炮和地雷不易命中的猫。',
+          '干扰投掷接炮，提高炮命中率（注意不要手快点出无影炮），也可以先放{隐形感应雷}然后迅速用干扰投掷控住猫，大大增加地雷命中率。用于打机动性高、速度快导致炮和地雷不易命中的猫。',
       },
       {
         name: '冰冻保鲜',
         description:
-          '用于硬抗控制伤害流打法，适用相对来说控少伤多且伤害持续的猫（如兔八哥、布奇、如玉），冰保和圆滚滚的双重无敌可以抵挡绝大部分的灌伤和控制，并且能随时取消释放，防止被卡时间',
+          '用于硬抗控制伤害流打法，适用于控少伤多且伤害持续的猫（如兔八哥、布奇、如玉）。冰冻保鲜和圆滚滚的双重无敌可以抵挡绝大部分的灌伤和控制，并且能随时取消释放，防止被卡时间。',
       },
     ],
 
@@ -1740,11 +1741,11 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '补充头盔高点救人能力和自保，也可以为长枪拉开身位蓄力。',
+        description: '补充后期头盔高点救人能力和自保，也可为长枪拉开身位蓄力。',
       },
       {
         name: '绝处逢生',
-        description: '能在头盔内回复大量生命，也可以提高长枪的低下限。',
+        description: '能在头盔内回复大量生命，也可提高长枪的低下限。',
       },
       {
         name: '干扰投掷',
@@ -1941,11 +1942,11 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '魔术漂浮',
-        description: '仙人掌和琴都可以主动取消漂浮，通用性强',
+        description: '所有技能均可主动中断漂浮，灵活性高。',
       },
       {
         name: '干扰投掷',
-        description: '增强干扰能力',
+        description: '提高干扰能力。',
       },
     ],
   },
@@ -2348,7 +2349,7 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '提高机动性。',
+        description: '通用特技。',
       },
       {
         name: '绝处逢生',
@@ -2568,7 +2569,7 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '泛用性很高的特技，在各场合均有发挥。',
+        description: '通用特技。',
       },
     ],
   },
@@ -3288,11 +3289,11 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '泛用性很高，提高机动性和自保能力。',
+        description: '通用特技。',
       },
       {
         name: '绝处逢生',
-        description: '泛用性很高，可用于回血、倒地自愈或清理捕鼠夹。',
+        description: '通用特技。',
       },
       {
         name: '干扰投掷',
@@ -3464,8 +3465,8 @@ const mouseCharacterDefinitions = {
         name: '干扰投掷',
         description: '干扰投掷能提高佩克斯的干扰能力，还能让主动技能更容易命中敌方。',
       },
-      { name: '魔术漂浮', description: '魔术漂浮泛用性很高，在大部分场合均有发挥。' },
-      { name: '绝处逢生', description: '绝处逢生泛用性很高，在大部分场合均有发挥。' },
+      { name: '魔术漂浮', description: '通用特技。' },
+      { name: '绝处逢生', description: '通用特技。' },
     ],
   },
   /* ----------------------------------- 拿坡里鼠 ----------------------------------- */
@@ -3813,7 +3814,7 @@ const mouseCharacterDefinitions = {
     ],
     specialSkills: [
       { name: '绝处逢生', description: '绝处逢生和隐身搭配能大幅提高生存能力，还能用来清理夹子。' },
-      { name: '魔术漂浮', description: '泛用性很高的特技，在大多数场合均有发挥。' },
+      { name: '魔术漂浮', description: '通用特技。' },
     ],
   },
 
@@ -4202,12 +4203,12 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '绝处逢生',
-        description: '在特定局势下使用，用于自起或清理捕鼠夹破局。',
+        description: '通用特技。',
       },
       {
         name: '魔术漂浮',
         description:
-          '部分高低差较多的地图可考虑携带，补充容错。不过罗菲本身就有藤蔓和[圆球二段跳](在空中向上释放弹力圆球，达到类似二段跳的效果)，并不特别依赖漂浮。',
+          '部分高低差较多的地图可考虑携带，补充容错。不过罗菲本身就有藤蔓和[圆球二段跳](在空中向上释放弹力圆球，达到二段跳的效果)，并不特别依赖漂浮。',
       },
     ],
   },
@@ -4371,11 +4372,11 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '魔术漂浮泛用性很高，在各场合均有发挥。',
+        description: '通用特技。',
       },
       {
         name: '干扰投掷',
-        description: '干扰投掷能提高玛丽的干扰能力和技能命中率。',
+        description: '提高干扰能力和技能命中率。',
       },
     ],
   },
@@ -4556,7 +4557,7 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '干扰投掷',
-        description: '干扰投掷提高马索尔的干扰能力和拳头命中率。',
+        description: '提高干扰能力和拳头命中率。',
       },
     ],
     aliases: ['大表哥', '小表弟'],
@@ -4703,7 +4704,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    specialSkills: [{ name: '魔术漂浮', description: '泛用性很高的特技，在各地图均有发挥。' }],
+    specialSkills: [{ name: '魔术漂浮', description: '通用特技。' }],
   },
 
   /* ----------------------------------- 音乐家杰瑞 ----------------------------------- */
@@ -5186,7 +5187,7 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '钩子可以主动取消漂浮，也方便更快的支援和救援后跑路。',
+        description: '钩子可以主动中断漂浮，也方便更快的支援和救援后跑路。',
       },
       {
         name: '干扰投掷',
@@ -5383,12 +5384,8 @@ const mouseCharacterDefinitions = {
         description: '道具起手的特技道具-过载电流-充能道具连招。',
       },
       {
-        name: '冰冻保鲜',
-        description: '2级被动可无敌救人。',
-      },
-      {
         name: '魔术漂浮',
-        description: '通用特技，增强自保。',
+        description: '通用特技。',
       },
     ],
     aliases: ['朵帝', '雷电法王', '电耗子'],
@@ -5552,11 +5549,11 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '魔术漂浮泛用性很高，在各场合均有不错发挥。',
+        description: '通用特技。',
       },
       {
         name: '绝处逢生',
-        description: '绝处逢生泛用性很高，在各场合均有不错发挥。',
+        description: '通用特技。',
       },
     ],
   },
@@ -5760,7 +5757,7 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '魔术漂浮',
-        description: '泛用性很高，提高机动性和自保能力。',
+        description: '通用特技。',
       },
       {
         name: '勇气投掷',
@@ -5941,7 +5938,7 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '漂浮空中可扔出多个符，且乾坤袋可终止漂浮。',
+        description: '漂浮空中可扔出多个符，且乾坤袋可主动中断漂浮。',
       },
       {
         name: '干扰投掷',
@@ -6265,15 +6262,15 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '拉到高点放方块使猫上不来，拖时间',
+        description: '拉到高点放方块使猫上不来，拖时间。',
       },
       {
         name: '急速翻滚',
-        description: '拉开距离，方块阻挡，快速逃跑',
+        description: '拉开距离，方块阻挡，快速逃跑。',
       },
       {
         name: '绝处逢生',
-        description: '猫被变为粉笔猫后无法抓起，可铁血拉远用自起',
+        description: '猫被变为粉笔猫后无法抓起，可铁血拉远用自起。',
       },
     ],
   },
@@ -6607,7 +6604,7 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '魔术漂浮',
-        description: '两个技能均可打断漂浮释放，提高灵活性。',
+        description: '两个技能均可主动中断漂浮，灵活性高。',
       },
     ],
     aliases: ['棍姆'],
@@ -6785,11 +6782,11 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '灵活性高。',
+        description: '通用特技。',
       },
       {
         name: '绝处逢生',
-        description: '大部分角色大部分情况可带。',
+        description: '通用特技。',
       },
     ],
     aliases: ['朝菲', '圣菲'],
