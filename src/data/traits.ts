@@ -719,6 +719,20 @@ const traits: Record<string, Trait> = {
     ],
     description: '绑上天堂火箭也会导致穷追猛打失效。',
   },
+  航海士杰瑞1: {
+    group: [
+      { name: '飞翔金币', type: 'skill' },
+      { name: '鼠虚弱', type: 'buff' },
+    ],
+    description: '航海士杰瑞持有金币时，进入虚弱状态后，金币不会掉落。',
+  },
+  魔术师1: {
+    group: [
+      { name: '奇思妙想', type: 'skill' },
+      { name: '鼠虚弱', type: 'buff' },
+    ],
+    description: '魔术师持有任意卡牌时，进入虚弱状态后，卡牌不会掉落。',
+  },
   尼宝1: {
     group: [
       [
@@ -878,6 +892,16 @@ const traits: Record<string, Trait> = {
       ],
     ],
   },
+
+  '20260207-01': {
+    description:
+      '如果老鼠在携带无畏完成救援时身上具有护盾效果，在老鼠获得“无畏”后，护盾不会被击破，伤害、负面效果等均会由”无畏”承担，在“无畏”结束时，若护盾没有超时消失，会消耗一层护盾抵消“无畏”的眩晕效果',
+    group: [
+      { name: '无畏', type: 'knowledgeCard' },
+      { name: '护盾', type: 'buff' },
+    ],
+  },
+
   ...characterRelations,
 };
 
