@@ -20,6 +20,16 @@ interface User {
   role: string | null;
 }
 
+interface SyncResult {
+  success: boolean;
+  prUrl?: string;
+  prNumber?: number;
+  branch?: string;
+  commits?: Array<{ actionId: string; commitSha: string; message: string }>;
+  failedActions?: Array<{ actionId: string; reason: string }>;
+  error?: string;
+}
+
 // Fetcher functions for SWR
 const fetchUsers = async (): Promise<User[]> => {
   const response = await fetch('/api/auth/fetch-users');
@@ -61,6 +71,9 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     'pending'
   );
   const [expandedActionIds, setExpandedActionIds] = useState<Set<string>>(() => new Set());
+  const [syncSelectedIds, setSyncSelectedIds] = useState<Set<string>>(() => new Set());
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
   const { success, error } = useToast();
 
   const enableUserAccess = user.role === 'Coordinator';
@@ -163,6 +176,11 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     [filteredActions]
   );
 
+  const syncableActions = useMemo(
+    () => filteredActions.filter((a) => a.status === 'approved' && a.is_public),
+    [filteredActions]
+  );
+
   const moderateMany = async (action: 'approve' | 'reject') => {
     if (moderatingId) return;
     if (actionableActions.length === 0) return;
@@ -198,6 +216,59 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
       else next.add(actionId);
       return next;
     });
+  };
+
+  const toggleSyncSelect = (actionId: string) => {
+    setSyncSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(actionId)) next.delete(actionId);
+      else next.add(actionId);
+      return next;
+    });
+  };
+
+  const toggleSyncSelectAll = () => {
+    if (syncSelectedIds.size === syncableActions.length && syncableActions.length > 0) {
+      setSyncSelectedIds(new Set());
+    } else {
+      setSyncSelectedIds(new Set(syncableActions.map((a) => a.action_id)));
+    }
+  };
+
+  const createSyncPR = async () => {
+    if (syncSelectedIds.size === 0 || syncing) return;
+
+    const confirmed = window.confirm(
+      `确认将选中的 ${syncSelectedIds.size} 条已批准改动同步到 GitHub 仓库？\n将创建一个新分支和 Pull Request。`
+    );
+    if (!confirmed) return;
+
+    setSyncing(true);
+    setSyncResult(null);
+
+    try {
+      const res = await fetch('/api/admin/sync-pr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actionIds: Array.from(syncSelectedIds) }),
+      });
+
+      const data = (await res.json()) as SyncResult;
+
+      if (!res.ok) {
+        throw new Error(data.error ?? '创建 PR 失败');
+      }
+
+      setSyncResult(data);
+      success(`PR 已创建：#${data.prNumber}`);
+      setSyncSelectedIds(new Set());
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : '创建 PR 失败';
+      error(msg);
+      setSyncResult({ success: false, error: msg });
+    } finally {
+      setSyncing(false);
+    }
   };
 
   return (
@@ -237,7 +308,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                 : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
-            改动审核
+            改动审核（含数据同步）
           </button>
         )}
       </div>
@@ -338,8 +409,105 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
               >
                 批量拒绝
               </button>
+              {syncableActions.length > 0 && (
+                <>
+                  <span className='mx-1 text-gray-300 dark:text-slate-600'>|</span>
+                  <button
+                    type='button'
+                    disabled={syncing}
+                    onClick={toggleSyncSelectAll}
+                    className={`rounded px-3 py-1 text-sm text-white ${
+                      syncing ? 'bg-purple-400 opacity-60' : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {syncSelectedIds.size === syncableActions.length ? '取消全选同步' : '全选同步'}
+                  </button>
+                  <button
+                    type='button'
+                    disabled={syncing || syncSelectedIds.size === 0}
+                    onClick={() => void createSyncPR()}
+                    className={`rounded px-3 py-1 text-sm text-white ${
+                      syncing || syncSelectedIds.size === 0
+                        ? 'bg-purple-400 opacity-60'
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {syncing ? '同步中...' : `同步到 GitHub (${syncSelectedIds.size})`}
+                  </button>
+                </>
+              )}
             </div>
           </div>
+
+          {/* Sync PR result */}
+          {syncResult && (
+            <div
+              className={`rounded-md border p-4 ${
+                syncResult.success
+                  ? 'border-green-200 bg-green-50 text-green-800 dark:border-green-900/50 dark:bg-green-900/30 dark:text-green-200'
+                  : 'border-red-200 bg-red-50 text-red-800 dark:border-red-900/50 dark:bg-red-900/30 dark:text-red-200'
+              }`}
+            >
+              {syncResult.success ? (
+                <div className='space-y-2'>
+                  <div className='font-semibold'>PR 创建成功</div>
+                  {syncResult.prUrl && (
+                    <div>
+                      <a
+                        href={syncResult.prUrl}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='underline hover:no-underline'
+                      >
+                        查看 Pull Request #{syncResult.prNumber}
+                      </a>
+                    </div>
+                  )}
+                  <div className='text-sm'>
+                    分支：{syncResult.branch} | 提交数：{syncResult.commits?.length ?? 0}
+                  </div>
+                  {syncResult.commits && syncResult.commits.length > 0 && (
+                    <details className='mt-2'>
+                      <summary className='cursor-pointer text-sm'>查看提交详情</summary>
+                      <ul className='mt-1 list-inside list-disc text-xs'>
+                        {syncResult.commits.map((c) => (
+                          <li key={c.commitSha}>
+                            <code>{c.commitSha.slice(0, 7)}</code> {c.message}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
+                  {syncResult.failedActions && syncResult.failedActions.length > 0 && (
+                    <details className='mt-2'>
+                      <summary className='cursor-pointer text-sm text-orange-700 dark:text-orange-300'>
+                        {syncResult.failedActions.length} 条改动未能同步
+                      </summary>
+                      <ul className='mt-1 list-inside list-disc text-xs'>
+                        {syncResult.failedActions.map((f) => (
+                          <li key={f.actionId}>
+                            {f.actionId}: {f.reason}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <span className='font-semibold'>失败：</span>
+                  {syncResult.error}
+                </div>
+              )}
+              <button
+                type='button'
+                onClick={() => setSyncResult(null)}
+                className='mt-2 text-sm underline'
+              >
+                关闭
+              </button>
+            </div>
+          )}
 
           {pendingActions.length === 0 ? (
             <div className='rounded-md border border-gray-200 bg-white p-4 text-gray-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'>
@@ -347,159 +515,184 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
             </div>
           ) : (
             <div className='space-y-3'>
-              {filteredActions.map((submission) => (
-                <div
-                  key={submission.action_id}
-                  className='rounded-md border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800'
-                >
-                  <div className='flex flex-wrap items-center justify-between gap-2'>
-                    <div className='text-sm text-gray-700 dark:text-slate-200'>
-                      <span className='font-medium'>{submission.entity_type}</span>
-                      <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
-                      <span
-                        className={
-                          submission.status === 'pending'
-                            ? 'text-orange-700 dark:text-orange-300'
+              {filteredActions.map((submission) => {
+                const isSyncable = submission.status === 'approved' && submission.is_public;
+                const isSyncChecked = syncSelectedIds.has(submission.action_id);
+
+                return (
+                  <div
+                    key={submission.action_id}
+                    className={`rounded-md border p-4 ${
+                      isSyncChecked
+                        ? 'border-purple-300 bg-purple-50 dark:border-purple-700 dark:bg-purple-900/20'
+                        : 'border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800'
+                    }`}
+                  >
+                    <div className='flex flex-wrap items-center justify-between gap-2'>
+                      <div className='flex items-center gap-2 text-sm text-gray-700 dark:text-slate-200'>
+                        {isSyncable && (
+                          <input
+                            type='checkbox'
+                            checked={isSyncChecked}
+                            onChange={() => toggleSyncSelect(submission.action_id)}
+                            disabled={syncing}
+                            className='h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500'
+                            title='选中以同步到 GitHub'
+                          />
+                        )}
+                        <span className='font-medium'>{submission.entity_type}</span>
+                        <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                        <span
+                          className={
+                            submission.status === 'pending'
+                              ? 'text-orange-700 dark:text-orange-300'
+                              : submission.status === 'approved'
+                                ? 'text-green-700 dark:text-green-300'
+                                : 'text-red-700 dark:text-red-300'
+                          }
+                        >
+                          {submission.status === 'pending'
+                            ? '待审核'
                             : submission.status === 'approved'
-                              ? 'text-green-700 dark:text-green-300'
-                              : 'text-red-700 dark:text-red-300'
-                        }
-                      >
-                        {submission.status === 'pending'
-                          ? '待审核'
-                          : submission.status === 'approved'
-                            ? '已批准'
-                            : '已拒绝'}
-                      </span>
-                      <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
-                      <span>
-                        {submission.created_by_nickname
-                          ? `由 ${submission.created_by_nickname} 提交`
-                          : '匿名提交'}
-                      </span>
-                      <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
-                      <span>{new Date(submission.created_at).toLocaleString()}</span>
-                      {submission.status !== 'pending' && submission.reviewed_at && (
-                        <>
-                          <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
-                          <span>
-                            {submission.reviewed_by_nickname
-                              ? `审核：${submission.reviewed_by_nickname}`
-                              : '已审核'}
-                          </span>
-                          <span className='mx-2 text-gray-300 dark:text-slate-600'>·</span>
-                          <span>{new Date(submission.reviewed_at).toLocaleString()}</span>
-                        </>
-                      )}
-                    </div>
+                              ? '已批准'
+                              : '已拒绝'}
+                        </span>
+                        <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                        <span>
+                          {submission.created_by_nickname
+                            ? `由 ${submission.created_by_nickname} 提交`
+                            : '匿名提交'}
+                        </span>
+                        <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                        <span>{new Date(submission.created_at).toLocaleString()}</span>
+                        {submission.status !== 'pending' && submission.reviewed_at && (
+                          <>
+                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                            <span>
+                              {submission.reviewed_by_nickname
+                                ? `审核：${submission.reviewed_by_nickname}`
+                                : '已审核'}
+                            </span>
+                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                            <span>{new Date(submission.reviewed_at).toLocaleString()}</span>
+                          </>
+                        )}
+                      </div>
 
-                    <div className='flex items-center gap-2'>
-                      <button
-                        type='button'
-                        disabled={!!moderatingId}
-                        onClick={() => void copyText(submission.action_id)}
-                        className={`rounded px-3 py-1 text-sm text-white ${
-                          moderatingId ? 'bg-gray-400 opacity-60' : 'bg-gray-600 hover:bg-gray-700'
-                        }`}
-                      >
-                        复制ID
-                      </button>
-                      <button
-                        type='button'
-                        disabled={!!moderatingId}
-                        onClick={() => toggleExpanded(submission.action_id)}
-                        className={`rounded px-3 py-1 text-sm text-white ${
-                          moderatingId ? 'bg-gray-400 opacity-60' : 'bg-blue-600 hover:bg-blue-700'
-                        }`}
-                      >
-                        {expandedActionIds.has(submission.action_id) ? '收起详情' : '展开详情'}
-                      </button>
-                      {submission.status === 'pending' && (
-                        <>
-                          <button
-                            type='button'
-                            disabled={!!moderatingId}
-                            onClick={() => {
-                              const ok = window.confirm('确认批准并公开该改动？');
-                              if (!ok) return;
-                              void moderateAction(submission.action_id, 'approve');
-                            }}
-                            className={`rounded px-3 py-1 text-sm text-white ${
-                              moderatingId
-                                ? 'bg-green-400 opacity-60'
-                                : 'bg-green-600 hover:bg-green-700'
-                            }`}
-                          >
-                            批准
-                          </button>
-                          <button
-                            type='button'
-                            disabled={!!moderatingId}
-                            onClick={() => {
-                              const ok = window.confirm('确认拒绝该改动？');
-                              if (!ok) return;
-                              void moderateAction(submission.action_id, 'reject');
-                            }}
-                            className={`rounded px-3 py-1 text-sm text-white ${
-                              moderatingId ? 'bg-red-400 opacity-60' : 'bg-red-600 hover:bg-red-700'
-                            }`}
-                          >
-                            拒绝
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  {submission.message && (
-                    <div className='mt-3 rounded border border-blue-100 bg-blue-50 p-2 text-sm text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/30 dark:text-blue-200'>
-                      <span className='font-semibold'>留言：</span>
-                      {submission.message}
-                    </div>
-                  )}
-
-                  {expandedActionIds.has(submission.action_id) && (
-                    <div className='mt-3 space-y-2'>
-                      <div className='flex flex-wrap items-center justify-between gap-2'>
-                        <div className='text-xs text-gray-500 dark:text-slate-400'>
-                          action_id: {submission.action_id}
-                        </div>
+                      <div className='flex items-center gap-2'>
                         <button
                           type='button'
                           disabled={!!moderatingId}
-                          onClick={() =>
-                            void copyText(
-                              JSON.stringify({ ...submission, entry: submission.entry }, null, 2)
-                            )
-                          }
+                          onClick={() => void copyText(submission.action_id)}
                           className={`rounded px-3 py-1 text-sm text-white ${
                             moderatingId
                               ? 'bg-gray-400 opacity-60'
                               : 'bg-gray-600 hover:bg-gray-700'
                           }`}
                         >
-                          复制JSON
+                          复制ID
                         </button>
+                        <button
+                          type='button'
+                          disabled={!!moderatingId}
+                          onClick={() => toggleExpanded(submission.action_id)}
+                          className={`rounded px-3 py-1 text-sm text-white ${
+                            moderatingId
+                              ? 'bg-gray-400 opacity-60'
+                              : 'bg-blue-600 hover:bg-blue-700'
+                          }`}
+                        >
+                          {expandedActionIds.has(submission.action_id) ? '收起详情' : '展开详情'}
+                        </button>
+                        {submission.status === 'pending' && (
+                          <>
+                            <button
+                              type='button'
+                              disabled={!!moderatingId}
+                              onClick={() => {
+                                const ok = window.confirm('确认批准并公开该改动？');
+                                if (!ok) return;
+                                void moderateAction(submission.action_id, 'approve');
+                              }}
+                              className={`rounded px-3 py-1 text-sm text-white ${
+                                moderatingId
+                                  ? 'bg-green-400 opacity-60'
+                                  : 'bg-green-600 hover:bg-green-700'
+                              }`}
+                            >
+                              批准
+                            </button>
+                            <button
+                              type='button'
+                              disabled={!!moderatingId}
+                              onClick={() => {
+                                const ok = window.confirm('确认拒绝该改动？');
+                                if (!ok) return;
+                                void moderateAction(submission.action_id, 'reject');
+                              }}
+                              className={`rounded px-3 py-1 text-sm text-white ${
+                                moderatingId
+                                  ? 'bg-red-400 opacity-60'
+                                  : 'bg-red-600 hover:bg-red-700'
+                              }`}
+                            >
+                              拒绝
+                            </button>
+                          </>
+                        )}
                       </div>
-
-                      {submission.status === 'rejected' && submission.rejection_reason && (
-                        <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-900/30 dark:text-red-200'>
-                          拒绝原因：{submission.rejection_reason}
-                        </div>
-                      )}
-
-                      {submission.status === 'approved' && (
-                        <div className='rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-200'>
-                          是否已公开：{submission.is_public ? '是' : '否'}
-                        </div>
-                      )}
-
-                      <pre className='max-h-64 overflow-auto rounded bg-gray-50 p-3 text-xs text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
-                        {JSON.stringify(submission.entry, null, 2)}
-                      </pre>
                     </div>
-                  )}
-                </div>
-              ))}
+                    {submission.message && (
+                      <div className='mt-3 rounded border border-blue-100 bg-blue-50 p-2 text-sm text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/30 dark:text-blue-200'>
+                        <span className='font-semibold'>留言：</span>
+                        {submission.message}
+                      </div>
+                    )}
+
+                    {expandedActionIds.has(submission.action_id) && (
+                      <div className='mt-3 space-y-2'>
+                        <div className='flex flex-wrap items-center justify-between gap-2'>
+                          <div className='text-xs text-gray-500 dark:text-slate-400'>
+                            action_id: {submission.action_id}
+                          </div>
+                          <button
+                            type='button'
+                            disabled={!!moderatingId}
+                            onClick={() =>
+                              void copyText(
+                                JSON.stringify({ ...submission, entry: submission.entry }, null, 2)
+                              )
+                            }
+                            className={`rounded px-3 py-1 text-sm text-white ${
+                              moderatingId
+                                ? 'bg-gray-400 opacity-60'
+                                : 'bg-gray-600 hover:bg-gray-700'
+                            }`}
+                          >
+                            复制JSON
+                          </button>
+                        </div>
+
+                        {submission.status === 'rejected' && submission.rejection_reason && (
+                          <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-900/30 dark:text-red-200'>
+                            拒绝原因：{submission.rejection_reason}
+                          </div>
+                        )}
+
+                        {submission.status === 'approved' && (
+                          <div className='rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-200'>
+                            是否已公开：{submission.is_public ? '是' : '否'}
+                          </div>
+                        )}
+
+                        <pre className='max-h-64 overflow-auto rounded bg-gray-50 p-3 text-xs text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
+                          {JSON.stringify(submission.entry, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
