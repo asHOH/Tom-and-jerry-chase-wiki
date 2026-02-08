@@ -187,7 +187,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             <MotionLink
               href='/'
               className={clsx(
-                getNavigationButtonClasses(navigatingTo === '/', isHomeActive()),
+                getNavigationButtonClasses(navigatingTo === '/', isHomeActive(), false, true),
                 'relative',
                 homeButtonSizing
               )}
@@ -201,6 +201,13 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
+              {isHomeActive() && (
+                <m.div
+                  layoutId='active-nav-pill'
+                  className='absolute inset-0 -z-10 rounded-md bg-blue-600 dark:bg-blue-700'
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                />
+              )}
               <HomeIcon className='size-6 lg:hidden' />
               <span className='hidden lg:inline'>首页</span>
               <span className='sr-only lg:hidden'>首页</span>
@@ -211,7 +218,12 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <MotionLink
                 href={tab.href}
                 className={clsx(
-                  getNavigationButtonClasses(navigatingTo === tab.href, isTabActive(tab.href)),
+                  getNavigationButtonClasses(
+                    navigatingTo === tab.href,
+                    isTabActive(tab.href),
+                    false,
+                    true
+                  ),
                   'gap-0 md:gap-1 lg:gap-2',
                   tabMinWidthClass
                 )}
@@ -225,6 +237,13 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
+                {isTabActive(tab.href) && (
+                  <m.div
+                    layoutId='active-nav-pill'
+                    className='absolute inset-0 -z-10 rounded-md bg-blue-600 dark:bg-blue-700'
+                    transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
                 <Image
                   src={tab.iconSrc}
                   alt={tab.iconAlt}

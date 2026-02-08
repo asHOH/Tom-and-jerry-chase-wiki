@@ -49,7 +49,8 @@ const navButtonThemes = {
 export function getNavigationButtonClasses(
   isNavigating: boolean,
   isActive: boolean,
-  isSquare: boolean = false
+  isSquare: boolean = false,
+  suppressActiveBackground: boolean = false
 ): string {
   const layout = isSquare
     ? 'flex h-10 w-10 items-center justify-center rounded-md border-none p-2 md:h-11 md:w-11 lg:p-2.5 transition-colors'
@@ -61,8 +62,8 @@ export function getNavigationButtonClasses(
   if (isNavigating) {
     state = navButtonThemes.navigating;
   } else if (isActive) {
-    state = navButtonThemes.active;
+    state = suppressActiveBackground ? 'text-white' : navButtonThemes.active;
   }
 
-  return clsx(layout, focus, state);
+  return clsx('relative z-10', layout, focus, state);
 }
