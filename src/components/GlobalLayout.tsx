@@ -1,12 +1,14 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
 import { EditModeProvider } from '@/context/EditModeContext';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
 
 export default function GlobalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const shouldReduceMotion = useReducedMotion();
 
   // Determine if the detailed toggle should be shown
   // It should be shown for character details and card details
@@ -28,7 +30,20 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
 
   return (
     <EditModeProvider>
-      <TabNavigationWrapper showDetailToggle={showDetailToggle}>{children}</TabNavigationWrapper>
+      <TabNavigationWrapper showDetailToggle={showDetailToggle}>
+        <AnimatePresence mode='wait' initial={false}>
+          <m.div
+            key={pathname}
+            initial={
+              shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -15, filter: 'blur(2px)' }
+            }
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: shouldReduceMotion ? 0.01 : 0.3, ease: 'easeOut' }}
+          >
+            {children}
+          </m.div>
+        </AnimatePresence>
+      </TabNavigationWrapper>
     </EditModeProvider>
   );
 }
