@@ -373,6 +373,87 @@ function findPathTarget(root: ts.ObjectLiteralExpression, pathParts: string[]): 
   return null;
 }
 
+function buildNestedValue(pathParts: string[], value: unknown): unknown {
+  if (pathParts.length === 0) return value;
+  const [head, ...rest] = pathParts;
+  const nextValue = buildNestedValue(rest, value);
+  if (head && /^[0-9]+$/.test(head)) {
+    const index = Number(head);
+    if (!Number.isInteger(index) || index < 0) return { [head]: nextValue };
+    const result: unknown[] = [];
+    result[index] = nextValue;
+    return result;
+  }
+  return { [head ?? '']: nextValue };
+}
+
+function findPathTargetForSet(
+  root: ts.ObjectLiteralExpression,
+  pathParts: string[],
+  value: unknown
+): { target: PathTarget; value: unknown } | null {
+  let current: ts.Expression = root;
+
+  for (let i = 0; i < pathParts.length; i++) {
+    const key = pathParts[i] ?? '';
+    const isLast = i === pathParts.length - 1;
+
+    if (ts.isObjectLiteralExpression(current)) {
+      const prop = findObjectProperty(current, key);
+      if (!prop) {
+        const nested = buildNestedValue(pathParts.slice(i + 1), value);
+        return { target: { parent: current, key }, value: nested };
+      }
+      const propValue = getPropertyValue(prop);
+      if (isLast) {
+        const target: PathTarget = { parent: current, key, propertyNode: prop };
+        if (propValue) target.valueNode = propValue;
+        return { target, value };
+      }
+      if (!propValue) return null;
+      const next = unwrapExpression(propValue);
+      if (!ts.isObjectLiteralExpression(next) && !ts.isArrayLiteralExpression(next)) {
+        const nested = buildNestedValue(pathParts.slice(i + 1), value);
+        return {
+          target: { parent: current, key, propertyNode: prop, valueNode: propValue },
+          value: nested,
+        };
+      }
+      current = next;
+      continue;
+    }
+
+    if (ts.isArrayLiteralExpression(current)) {
+      const index = Number(key);
+      if (!Number.isInteger(index) || index < 0) return null;
+      if (index > current.elements.length) return null;
+      const element = current.elements[index];
+      if (!element || ts.isOmittedExpression(element)) {
+        if (isLast) return { target: { parent: current, key }, value };
+        const nested = buildNestedValue(pathParts.slice(i + 1), value);
+        return { target: { parent: current, key }, value: nested };
+      }
+      if (isLast) {
+        return { target: { parent: current, key, valueNode: element as ts.Expression }, value };
+      }
+      const next = unwrapExpression(element as ts.Expression);
+      if (!ts.isObjectLiteralExpression(next) && !ts.isArrayLiteralExpression(next)) {
+        const nested = buildNestedValue(pathParts.slice(i + 1), value);
+        return {
+          target: { parent: current, key, valueNode: element as ts.Expression },
+          value: nested,
+        };
+      }
+      current = next;
+      continue;
+    }
+
+    return null;
+  }
+
+  return null;
+}
+
 function detectIndentUnit(content: string): string {
   const lines = content.split('\n');
   let minIndent: number | null = null;
@@ -582,10 +663,12 @@ function applyActionToFileContent(
     return deleteAtTarget(content, sourceFile, target);
   }
 
-  if (target.propertyNode && !target.valueNode) return null;
+  const resolved = findPathTargetForSet(rootObject, pathParts, action.newValue);
+  if (!resolved) return null;
+  if (resolved.target.propertyNode && !resolved.target.valueNode) return null;
 
   const indentUnit = detectIndentUnit(content);
-  return setAtTarget(content, sourceFile, target, action.newValue, indentUnit);
+  return setAtTarget(content, sourceFile, resolved.target, resolved.value, indentUnit);
 }
 
 function resolveActionPathForFile(
