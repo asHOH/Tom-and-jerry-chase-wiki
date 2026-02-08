@@ -2,8 +2,10 @@
 
 import React, { forwardRef } from 'react';
 import NextLink, { LinkProps as NextLinkProps } from 'next/link';
+import clsx from 'clsx';
 
 import { useNavigation } from '@/hooks/useNavigation';
+import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { stripEditParam } from '@/hooks/useSearchParamEditMode';
 
 import { checkEditModeGuard } from './ui/EditModeGuard';
@@ -18,6 +20,29 @@ type LinkProps = NextLinkProps &
 const Link = forwardRef<HTMLAnchorElement, LinkProps>(
   ({ href, onClick, replace, preserveEditParam = false, ...props }, ref) => {
     const { navigate } = useNavigation();
+    const { isNavigatingTo } = useNavigationProgress();
+
+    const resolveHref = (input: LinkProps['href']): string => {
+      if (typeof input === 'string') {
+        return input;
+      }
+      const { pathname, query } = input;
+      let targetPath = pathname || '';
+      if (query) {
+        const queryString =
+          typeof query === 'string'
+            ? query
+            : new URLSearchParams(query as Record<string, string>).toString();
+
+        if (queryString) {
+          targetPath += `?${queryString}`;
+        }
+      }
+      return targetPath;
+    };
+
+    const targetPath = resolveHref(href);
+    const isNavigating = isNavigatingTo(targetPath);
 
     const handleClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
       if (onClick) {
@@ -70,7 +95,19 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
     };
 
     return (
-      <NextLink href={href} onClick={handleClick} replace={replace ?? false} ref={ref} {...props} />
+      <NextLink
+        href={href}
+        onClick={handleClick}
+        replace={replace ?? false}
+        ref={ref}
+        aria-disabled={props['aria-disabled'] ?? isNavigating}
+        data-nav-loading={isNavigating || undefined}
+        className={clsx(
+          props.className,
+          isNavigating && 'pointer-events-none cursor-progress opacity-60'
+        )}
+        {...props}
+      />
     );
   }
 );

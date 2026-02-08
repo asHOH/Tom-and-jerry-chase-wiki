@@ -8,6 +8,7 @@ import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { getNavigationButtonClasses } from '@/lib/design-system';
 import { supabase } from '@/lib/supabase/client';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
@@ -38,7 +39,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [overflowOpen, setOverflowOpen] = useState(false);
-  const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -49,6 +49,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const { items, isActive } = useNavigationTabs();
   const isMobile = useMobile();
   const shouldReduceMotion = useReducedMotion();
+  const { isNavigatingTo } = useNavigationProgress();
 
   useEffect(() => {
     setMounted(true);
@@ -93,17 +94,11 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     return () => window.removeEventListener('resize', handleResize);
   }, [evaluateCollapsedCount]);
 
-  // Reset navigation state when pathname changes
+  // Reset overlay states when pathname changes
   useEffect(() => {
-    if (navigatingTo && pathname) {
-      // Check if the current pathname matches where we were navigating to
-      if (pathname === navigatingTo || pathname.startsWith(navigatingTo)) {
-        setNavigatingTo(null);
-      }
-    }
     setOverflowOpen(false);
     setUserDropdownOpen(false);
-  }, [pathname, navigatingTo]);
+  }, [pathname]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -187,17 +182,13 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             <MotionLink
               href='/'
               className={clsx(
-                getNavigationButtonClasses(navigatingTo === '/', isHomeActive(), false, true),
+                getNavigationButtonClasses(isNavigatingTo('/'), isHomeActive(), false, true),
                 'relative',
                 homeButtonSizing
               )}
               aria-label='首页'
-              onClick={() => {
-                if (navigatingTo === '/') return;
-                setNavigatingTo('/');
-              }}
-              tabIndex={navigatingTo === '/' ? -1 : 0}
-              aria-disabled={navigatingTo === '/'}
+              tabIndex={isNavigatingTo('/') ? -1 : 0}
+              aria-disabled={isNavigatingTo('/')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -219,7 +210,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 href={tab.href}
                 className={clsx(
                   getNavigationButtonClasses(
-                    navigatingTo === tab.href,
+                    isNavigatingTo(tab.href),
                     isTabActive(tab.href),
                     false,
                     true
@@ -228,12 +219,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   tabMinWidthClass
                 )}
                 aria-label={tab.label}
-                onClick={() => {
-                  if (navigatingTo === tab.href) return;
-                  setNavigatingTo(tab.href);
-                }}
-                tabIndex={navigatingTo === tab.href ? -1 : 0}
-                aria-disabled={navigatingTo === tab.href}
+                tabIndex={isNavigatingTo(tab.href) ? -1 : 0}
+                aria-disabled={isNavigatingTo(tab.href)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -297,8 +284,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                               isTabActive(tab.href) && 'font-semibold'
                             )}
                             onClick={() => {
-                              if (navigatingTo === tab.href) return;
-                              setNavigatingTo(tab.href);
                               setOverflowOpen(false);
                             }}
                           >
