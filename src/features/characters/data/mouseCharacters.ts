@@ -1270,256 +1270,279 @@ const mouseCharacterDefinitions = {
 
   /* ----------------------------------- 泰菲 ----------------------------------- */
   泰菲: {
-    description:
-      '可爱的小婴儿泰菲，总是将自己吃得圆滚滚的，他非常依赖叔叔杰瑞，火箭筒是他最爱的玩具。',
+    id: '泰菲',
     maxHp: 74,
-    attackBoost: 5,
-    hpRecovery: 2.5,
-    moveSpeed: 630,
-    jumpHeight: 380,
-    cheesePushSpeed: 4.75,
-    wallCrackDamageBoost: 0.5,
     gender: 'male',
-    EnglishName: 'Tuffy',
-    mousePositioningTags: [
-      {
-        tagName: '奶酪',
+    skills: [{
+        id: '泰菲-active',
+        name: '圆滚滚',
+        type: 'active',
+        aliases: ['无敌'],
+        cueRange: '全图可见',
+        forecast: 0,
+        imageUrl: '/images/mouseSkills/泰菲1-圆滚滚.png',
+        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=11.15',
+        canUseInAir: true,
+        description: '向前翻滚一段距离。本技能可在受到眩晕效果时释放，并立即解除该眩晕效果，但冷却时间会额外增加6秒。',
+        skillLevels: [{
+            level: 1,
+            cooldown: 12,
+            description: '',
+            detailedDescription: '向前翻滚1.1秒；期间速度提升70%。'
+          }, {
+            level: 2,
+            cooldown: 12,
+            description: '滚动时处于无敌状态；滚动结束后短暂提升跳跃高度。',
+            detailedDescription: '滚动时处于[无敌状态](无敌时间略少于滚动时间)；滚动结束后极短暂地提升跳跃高度。'
+          }, {
+            level: 3,
+            cooldown: 12,
+            description: '滚得更快更远。',
+            detailedDescription: '翻滚时间提升至1.4秒；期间速度提升增加至105%。'
+          }],
+        cancelableSkill: '无前摇',
+        canMoveWhileUsing: true,
+        cancelableAftercast: '无后摇'
+      }, {
+        id: '泰菲-weapon1',
+        name: '火箭筒',
+        type: 'weapon1',
+        aliases: ['炮'],
+        cueRange: '全图可见',
+        imageUrl: '/images/mouseSkills/泰菲2-火箭筒.png',
+        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=46.4',
+        canUseInAir: true,
+        description: '发射一枚{火箭炮}，直接命中敌方或墙缝时造成一段伤害，命中后爆炸对一定范围内敌方和墙缝造成伤害和眩晕。爆炸产生的冲击波可以炸飞老鼠夹、叉子等道具。',
+        skillLevels: [{
+            level: 1,
+            cooldown: 30,
+            description: '',
+            detailedDescription: '火箭炮直接命中造成{55}伤害，命中后爆炸造成{20}伤害和1.5秒爆炸眩晕。'
+          }, {
+            level: 2,
+            cooldown: 30,
+            description: '增加爆炸产生的伤害和眩晕时间。',
+            detailedDescription: '命中后产生的爆炸伤害提升至{35}；爆炸眩晕时间提升至2.1秒。'
+          }, {
+            level: 3,
+            charges: 2,
+            cooldown: 30,
+            description: ''
+          }],
+        canHitInPipe: false,
+        cancelableSkill: '不可主动打断',
+        canMoveWhileUsing: true,
+        cancelableAftercast: '不可取消',
+        detailedDescription: '发射一枚{火箭炮}，直接命中敌方时造成一段伤害，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)；直接命中墙缝时[随机造成4.5~9伤害](泰菲自身破坏增伤0.5+火箭炮基础伤害4~8.5，具体伤害量随机，同一位置出现的伤害也会有不同，具体成因不详)；命中敌方角色/墙壁/平台/其他道具后爆炸，对一定范围内敌方造成伤害和眩晕，对一定范围内墙缝[随机造成3.5~9伤害](泰菲自身破坏增伤0.5+爆炸冲击波基础伤害3~8.5，具体伤害量随机，同一位置出现的伤害也会有不同，具体成因不详)。先结算直接命中伤害，后结算爆炸伤害。爆炸产生的冲击波可以炸飞老鼠夹、叉子等道具。'
+      }, {
+        id: '泰菲-weapon2',
+        name: '隐形感应雷',
+        type: 'weapon2',
+        aliases: ['地雷', '雷'],
+        imageUrl: '/images/mouseSkills/泰菲3-隐形感应雷.png',
+        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=73.05',
+        canUseInAir: true,
+        description: '放下{感应雷}，一段时间后隐形，在敌方靠近时解除隐形，并在1.5秒后飞向敌方并爆炸，造成伤害和控制。',
+        skillLevels: [{
+            level: 1,
+            cooldown: 22,
+            description: '',
+            detailedDescription: '感应雷爆炸对敌方的伤害为{55}，对墙缝的伤害为{_5.5}。'
+          }, {
+            level: 2,
+            charges: 2,
+            cooldown: 22,
+            description: '雷可击落敌方手中的老鼠和道具。'
+          }, {
+            level: 3,
+            charges: 2,
+            cooldown: 22,
+            description: '提高感应雷对猫咪和墙缝的伤害。',
+            detailedDescription: '感应雷对敌方的伤害提高至{85}；对墙缝的伤害提高至{_15.5}。'
+          }],
+        cooldownTiming: '释放时',
+        cancelableSkill: ['道具键*'],
+        canMoveWhileUsing: true,
+        cancelableAftercast: '无后摇',
+        detailedDescription: '放下{感应雷}，一段时间后感应雷隐形。感应雷在敌方靠近时解除隐形，并在1.5秒后飞向敌方并爆炸，对周围的敌方和墙缝造成一定伤害、1.9秒爆炸眩晕和击退。爆炸也会弹飞老鼠，但不造成伤害。隐身状态的猫咪不会触发雷。雷被道具攻击后会在一段时间后原地爆炸。雷会在30秒后自然消失。'
+      }, {
+        id: '泰菲-passive',
+        name: '茁壮成长',
+        type: 'passive',
+        imageUrl: '/images/mouseSkills/被动-鼠.png',
+        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=25.85',
+        skillLevels: [{
+            level: 1,
+            description: '提高吃{食物}速度；{牛奶}加速生效期间，暂时提升25Hp上限。',
+            detailedDescription: '提高3%的吃{食物}速度；{牛奶}加速生效期间，暂时提升25Hp上限。'
+          }, {
+            level: 2,
+            description: '可以持续缓慢恢复Hp（受伤状态也触发）；推奶酪时不会因受到眩晕而打断；并在搬起奶酪、推奶酪、火箭救援时额外获得短暂的Hp恢复和减伤；吃食物速度增加。',
+            detailedDescription: '[获得2.5Hp/秒的恢复效果](与角色基础的Hp恢复效果不同，不会因受伤而失效)；推奶酪时免疫控制效果（不免疫强制位移）；在搬奶酪、推奶酪、火箭救援时获得25%减伤和[0.5Hp/秒的恢复效果](与角色基础的Hp恢复效果不同，不会因受伤而失效)；吃食物速度提升20%。'
+          }, {
+            level: 3,
+            description: '免疫部分爆炸；吃食物速度进一步增加。',
+            detailedDescription: '免疫鞭炮、泡泡等爆炸（不免疫{3级追求者出击}的爆炸以及太空堡垒的药水罐爆炸等）；吃食物速度提升增加至45%。'
+          }]
+      }],
+    aliases: ['塔菲'],
+    counters: [{
+        id: '剑客汤姆',
         isMinor: false,
-        description: '推速较快。',
-        additionalDescription: '有点矮子里面拔高个的意味，毕竟两个技能都跟奶酪没关系。',
-      },
-      {
-        tagName: '破局',
+        description: '剑汤的连招会被圆滚滚的无敌和解控死死克制，并且泰菲的角色模型矮，连斩很多情况无法锁定。'
+      }, {
+        id: '图茨',
+        isMinor: false,
+        description: '圆滚滚的无敌和解控克制喵喵叫，并且图茨的Hp上限低，被绝反克制。'
+      }, {
+        id: '莱特宁',
+        isMinor: false,
+        description: '地雷的强制位移能带走垃圾桶，咸鱼可以被圆滚滚强行踩掉，莱特宁闪现过来泰菲也可以秒开圆滚滚躲避攻击。'
+      }, {
+        id: '如玉',
         isMinor: true,
-        weapon: 1,
-        description: '火箭炮能炸开捕鼠夹和叉子。',
-        additionalDescription: '缺点是CD长，并且需要把控角度。',
-      },
-      {
-        tagName: '砸墙',
+        description: '泰菲可以在花枪反击前摇时使用圆滚滚，即使被击中，也可以开圆滚滚解控，避免二次伤害。'
+      }],
+    imageUrl: '/images/mice/泰菲.png',
+    factionId: 'mouse',
+    moveSpeed: 630,
+    hpRecovery: 2.5,
+    jumpHeight: 380,
+    EnglishName: 'Tuffy',
+    attackBoost: 5,
+    counteredBy: [{
+        id: '布奇',
+        isMinor: false,
+        description: '布奇的基础伤害高，可一刀或一个道具秒满血泰菲，并且三级桶盖的霸体也在一定程度上限制了炮的发挥。'
+      }, {
+        id: '侍卫汤姆',
+        isMinor: false,
+        description: '侍卫汤姆移速快，且在Lv.2被动加成下能一击击倒泰菲。并且侍卫视野大，远程火箭筒被克死，侍卫还能用火炮刷新护盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害。'
+      }, {
+        id: '米特',
+        isMinor: false,
+        description: '米特的野性叠加到7层可以一刀秒泰菲，并且当手持胡椒粉抓着老鼠时，即使被火箭炮或地雷炸下来，残血老鼠也会被胡椒粉毒死，绑火箭的时候还有野性层数赋予的霸体。'
+      }, {
+        id: '塔拉',
         isMinor: true,
-        description: '{武器技能}可以提供可观的砸墙伤害；{3级被动}能免疫鞭炮和泡泡。',
-        additionalDescription: '',
-      },
-    ],
-    skillAllocations: [
-      {
+        description: '视野较大，3级被动有霸体，远程炮不好发挥。'
+      }, {
+        id: '苏蕊',
+        isMinor: true,
+        description: '苏蕊跳舞霸体对泰菲有很大压力。'
+      }],
+    description: '可爱的小婴儿泰菲，总是将自己吃得圆滚滚的，他非常依赖叔叔杰瑞，火箭筒是他最爱的玩具。',
+    collaborators: [{
+        id: '航海士杰瑞',
+        isMinor: false,
+        description: '感应雷可以中断交互动作，和火药桶可以相互配合，让猫难以绑上火箭，硬拖时间给队友机会。'
+      }, {
+        id: '雪梨',
+        isMinor: false,
+        description: '雪梨的回血泰菲和泰菲的被动霸体减伤相互配合可以无压力推奶酪'
+      }],
+    specialSkills: [{
+        name: '魔术漂浮',
+        description: '用来打卡视野漂浮落炮，或踏空骗刀落炮。在空中的时候放地雷秒点漂浮防止猫卡落点'
+      }, {
+        name: '绝处逢生',
+        description: '用于硬抗控制伤害，适用相对来说于控多伤少的猫（如剑汤、长爪托普斯），自起本身解控加快速回血配合圆滚滚的解控加无敌效果一共可以免疫两次硬控，并保证健康值充足，达到硬抗控制伤害的效果'
+      }, {
+        name: '应急治疗',
+        description: '{舍己}跳救{圆滚滚}后秒点治疗，用于续航，也可以用于防止被米特的胡椒粉毒死。配合被动使用效果很好'
+      }, {
+        name: '干扰投掷',
+        description: '用来打出干扰投掷接炮，提高炮命中率（注意不要手快点出无影炮），也可以先放{隐形感应雷}然后迅速用干扰投掷控住猫，大大增加地雷命中率，用于打机动性高、速度快导致炮和地雷不易命中的猫。'
+      }, {
+        name: '冰冻保鲜',
+        description: '用于硬抗控制伤害，适用相对来说控少伤多且伤害持续的猫（如兔八哥、布奇、如玉），冰保和圆滚滚的双重无敌可以抵挡绝大部分的灌伤和控制，并且能随时取消释放，防止被卡时间'
+      }],
+    cheesePushSpeed: 4.75,
+    skillAllocations: [{
         id: '火箭筒1',
         pattern: '121220001',
         weaponType: 'weapon1',
         description: '',
-        additionaldescription:
-          '如果七级就进入墙缝战的话，可以考虑直接点出{3级圆滚滚}，毕竟墙缝期{1级被动}和{2级被动}几乎没用。',
-      },
-      {
+        additionaldescription: '如果七级就进入墙缝战的话，可以考虑直接点出{3级圆滚滚}，毕竟墙缝期{1级被动}和{2级被动}几乎没用。'
+      }, {
         id: '火箭筒2',
         pattern: '121000221',
         weaponType: 'weapon1',
-        description: '牵制能力降低，自保续航增强。',
-      },
-      {
+        description: '牵制能力降低，自保续航增强。'
+      }, {
         id: '隐形感应雷',
         pattern: '1313[30]001',
         weaponType: 'weapon2',
         description: '进墙缝期时再点{3级隐形感应雷}。',
-        additionaldescription: '',
-      },
-    ],
-    knowledgeCardGroups: [
-      {
+        additionaldescription: ''
+      }],
+    knowledgeCardGroups: [{
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'B-绝地反击', 'B-应激反应'],
-        description:
-          '高风险高收益卡组，卡残血触发{绝地反击}伤害高，与{应激反应}相互配合，适合打Hp上限低、不带{皮糙肉厚}的猫',
-      },
-      {
+        description: '高风险高收益卡组，卡残血触发{绝地反击}伤害高，与{应激反应}相互配合，适合打Hp上限低、不带{皮糙肉厚}的猫'
+      }, {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'C-吃货', 'C-不屈'],
-        description:
-          '低风险卡组，可以用于搭配牵制救援充足的阵容或者对抗防守类型的猫，带这套卡只用点{1级火箭筒}，优先点被动，利用有{吃货}加强下的{1级被动}加血和{2级被动}、{3级被动}快速回血加推奶酪减伤，可以强推，续航稳定，可抗三刀不死',
-      },
-      {
+        description: '低风险卡组，可以用于搭配牵制救援充足的阵容或者对抗防守类型的猫，带这套卡只用点{1级火箭筒}，优先点被动，利用有{吃货}加强下的{1级被动}加血和{2级被动}、{3级被动}快速回血加推奶酪减伤，可以强推，续航稳定，可抗三刀不死'
+      }, {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'S-缴械'],
-        description:
-          '用来打依赖爪刀或有无敌霸体技能的猫。{缴械}可以在一定程度上防止霸体反杀，特别是泰菲不能自主取消{火箭筒}的后摇，极其容易被霸体接爪刀反杀。因为炮能触发{缴械}，所以就限制了霸体卡后摇的发挥。',
-        detailedDescription: '',
-      },
-      {
+        description: '用来打依赖爪刀或有无敌霸体技能的猫。{缴械}可以在一定程度上防止霸体反杀，特别是泰菲不能自主取消{火箭筒}的后摇，极其容易被霸体接爪刀反杀。因为炮能触发{缴械}，所以就限制了霸体卡后摇的发挥。',
+        detailedDescription: ''
+      }, {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'C-不屈', 'B-精准投射'],
-        description: '精准流打法，牵制能力强，有{精准投射}在可以做到6秒一个无敌，{不屈}增加续航。',
-      },
-      {
+        description: '精准流打法，牵制能力强，有{精准投射}在可以做到6秒一个无敌，{不屈}增加续航。'
+      }, {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'A-投手', 'C-不屈'],
-        description: '减速卡，用来打速度快的猫，如斯飞。{投手}赋予猫的减速也能增加{感应雷}命中率。',
-      },
-      {
+        description: '减速卡，用来打速度快的猫，如斯飞。{投手}赋予猫的减速也能增加{感应雷}命中率。'
+      }, {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'A-逃窜', 'C-不屈'],
-        description:
-          '这套卡也是主点被动，用于牵制救援充足的阵容，{不屈}加{逃窜}再加被动，速度快，回血快，续航稳定，增加容错，缺点是{1级被动}加Hp上限的时间较少。',
-      },
-    ],
-    skills: [
-      {
-        name: '圆滚滚',
-        type: 'active',
-        description: '向前翻滚一段距离。可在被眩晕时释放，但CD会额外增加6秒。',
-        canMoveWhileUsing: true,
-        canUseInAir: true,
-        cancelableSkill: '无前摇',
-        cancelableAftercast: '无后摇',
-        forecast: 0,
-        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=11.15',
-        skillLevels: [
-          {
-            level: 1,
-            description: '',
-            detailedDescription: '向前翻滚1.1秒；期间速度提升70%。',
-            cooldown: 12,
-          },
-          {
-            level: 2,
-            description: '滚动时无敌；滚动后短暂提升跳跃高度。',
-            detailedDescription:
-              '滚动时[无敌](无敌时间略少于滚动时间)；滚动后极短暂地提升跳跃高度。',
-            cooldown: 12,
-          },
-          {
-            level: 3,
-            description: '滚得更快更远。',
-            detailedDescription: '翻滚时间提升至1.4秒；期间速度提升增加至105%。',
-            cooldown: 12,
-          },
-        ],
-        cueRange: '全图可见',
-      },
-      {
-        name: '火箭筒',
-        type: 'weapon1',
-        description:
-          '发射{火箭炮}，接触敌方/墙缝/墙壁/平台/其他道具后爆炸，对小范围内敌方和墙缝造成伤害和眩晕。爆炸可以炸飞老鼠夹、叉子等道具。',
-        detailedDescription:
-          '发射{火箭炮}，直接命中敌方时造成一段伤害，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)；直接命中墙缝时[随机造成4.5~9伤害](泰菲自身破坏增伤0.5+火箭炮基础伤害4~8.5，具体伤害量随机，同一位置出现的伤害也会有不同，具体成因不详)；命中敌方角色/墙壁/平台/其他道具后爆炸，对小范围内敌方造成伤害和眩晕，对一定范围内墙缝[随机造成3.5~9伤害](泰菲自身破坏增伤0.5+爆炸冲击波基础伤害3~8.5，具体伤害量随机，同一位置出现的伤害也会有不同，具体成因不详)。先结算直接命中伤害，后结算爆炸伤害。爆炸可以炸飞老鼠夹、叉子等道具。',
-        canMoveWhileUsing: true,
-        canUseInAir: true,
-        cancelableAftercast: '不可取消',
-        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=46.4',
-        skillLevels: [
-          {
-            level: 1,
-            description: '',
-            detailedDescription:
-              '火箭炮直接命中造成{55}伤害，命中后爆炸造成{20}伤害和1.5秒爆炸眩晕。',
-            cooldown: 30,
-          },
-          {
-            level: 2,
-            description: '提升爆炸的伤害和眩晕时间。',
-            detailedDescription: '爆炸伤害提升至{35}；爆炸眩晕时间延长至2.1秒。',
-            cooldown: 30,
-          },
-          {
-            level: 3,
-            description: '',
-            charges: 2,
-            cooldown: 30,
-          },
-        ],
-        aliases: ['炮'],
-        cancelableSkill: '不可主动打断',
-        canHitInPipe: false,
-        cueRange: '全图可见',
-      },
-      {
-        name: '隐形感应雷',
-        aliases: ['地雷'],
-        type: 'weapon2',
-        description:
-          '放下{感应雷}，一段时间后隐形。感应雷在敌方靠近时解除隐形，并在1.5秒后飞向敌方并爆炸，造成伤害和控制。',
-        detailedDescription:
-          '放下{感应雷}，一段时间后隐形。感应雷在敌方靠近时解除隐形，并在1.5秒后飞向敌方并爆炸，对周围的敌方和墙缝造成一定伤害、1.9秒爆炸眩晕和击退。爆炸也会弹飞老鼠，但不造成伤害。隐身状态的猫咪不会触发雷。雷被道具攻击后会在一段时间后原地爆炸。雷会在30秒后自然消失。',
-        canMoveWhileUsing: true,
-        canUseInAir: true,
-        cancelableSkill: ['道具键*'],
-        cancelableAftercast: '无后摇',
-        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=73.05',
-        skillLevels: [
-          {
-            level: 1,
-            description: '感应雷不会击落敌方手中的老鼠和道具。',
-            detailedDescription:
-              '感应雷不可击落敌方手中的老鼠和道具。感应雷爆炸对敌方的伤害为{55}，对墙缝的伤害为{_5.5}。',
-            cooldown: 22,
-          },
-          {
-            level: 2,
-            description: '感应雷可击落敌方手中的老鼠和道具。',
-            cooldown: 22,
-            charges: 2,
-          },
-          {
-            level: 3,
-            description: '提升感应雷对猫咪和墙缝的伤害。',
-            detailedDescription: '感应雷对敌方的伤害提升至{85}；对墙缝的伤害提升至{_15.5}。',
-            cooldown: 22,
-            charges: 2,
-          },
-        ],
-        cooldownTiming: '释放时',
-      },
-      {
-        name: '茁壮成长',
-        type: 'passive',
-        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=25.85',
-        skillLevels: [
-          {
-            level: 1,
-            description: '吃{食物}更快；{牛奶}加速生效期间，暂时提升25Hp上限。',
-            detailedDescription: '提高3%的吃{食物}速度；{牛奶}加速生效期间，暂时提升25Hp上限。',
-          },
-          {
-            level: 2,
-            description:
-              '可以持续缓慢恢复Hp（受伤状态也触发）；推奶酪时不会因受到眩晕而打断；并在搬起奶酪、推奶酪、火箭救援时额外获得短暂的Hp恢复和减伤；吃食物速度增加。',
-            detailedDescription:
-              '[获得2.5Hp/秒的恢复效果](与角色基础的Hp恢复效果不同，不会因受伤而失效)；推奶酪时免疫控制效果（不免疫强制位移）；在搬奶酪、推奶酪、火箭救援时获得35%减伤和[0.5Hp/秒的恢复效果](与角色基础的Hp恢复效果不同，不会因受伤而失效)；吃食物速度提升20%。',
-          },
-          {
-            level: 3,
-            description: '免疫部分爆炸；Hp恢复进一步提升；吃食物速度进一步增加。',
-            detailedDescription:
-              '免疫鞭炮、泡泡等爆炸（不免疫{3级追求者出击}的爆炸以及太空堡垒的药水罐爆炸等）；Hp恢复提升增加至5；吃食物速度提升增加至45%。',
-          },
-        ],
-      },
-    ],
-
-    specialSkills: [
-      {
-        name: '魔术漂浮',
-        description:
-          '用来打卡视野漂浮落炮，或踏空骗刀落炮。在空中的时候放地雷秒点漂浮防止猫卡落点。',
-      },
-      {
-        name: '绝处逢生',
-        description:
-          '用于硬抗控制伤害流打法，适用于控多伤少的猫（如剑汤、长爪托普斯）。自起解控加回血，配合圆滚滚的解控加无敌，一共可以免疫两次硬控，并保证Hp充足，硬抗控制伤害。',
-      },
-      {
-        name: '应急治疗',
-        description:
-          '{舍己}跳救{圆滚滚}后秒点治疗，用于续航。也可用于防止被米特的胡椒粉毒死。配合被动效果很好。',
-      },
-      {
-        name: '干扰投掷',
-        description:
-          '干扰投掷接炮，提高炮命中率（注意不要手快点出无影炮），也可以先放{隐形感应雷}然后迅速用干扰投掷控住猫，大大增加地雷命中率。用于打机动性高、速度快导致炮和地雷不易命中的猫。',
-      },
-      {
-        name: '冰冻保鲜',
-        description:
-          '用于硬抗控制伤害流打法，适用于控少伤多且伤害持续的猫（如兔八哥、布奇、如玉）。冰冻保鲜和圆滚滚的双重无敌可以抵挡绝大部分的灌伤和控制，并且能随时取消释放，防止被卡时间。',
-      },
-    ],
-
-    aliases: [],
+        description: '这套卡也是主点被动，用于牵制救援充足的阵容，{不屈}加{逃窜}再加被动，速度快，回血快，续航稳定，增加容错，缺点是{1级被动}加Hp上限的时间较少。'
+      }, {
+        cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'B-绝地反击', 'B-夹不住我'],
+        description: '本套卡组偏牵制与半救人位，牵制时可打架或打不过跑路，打架依靠泰菲低血量触发绝地反击，跑路即为打不过使用逃窜与翻滚跑路，与猫拉开距离而救人使用舍己使队友走掉（跳救+圆滚滚躲夹子），遇到黑鼠与侍卫不要玩了，且需要较高跳救技术。'
+      }],
+    mousePositioningTags: [{
+        weapon: 1,
+        isMinor: false,
+        tagName: '破局',
+        description: '火箭炮能炸开捕鼠夹和叉子。',
+        additionalDescription: '缺点是CD长，并且需要把控角度。'
+      }, {
+        weapon: 1,
+        isMinor: true,
+        tagName: '砸墙',
+        description: '火箭筒可以提供可观的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
+        additionalDescription: ''
+      }, {
+        weapon: 2,
+        isMinor: false,
+        tagName: '砸墙',
+        description: '用道具触发地雷可以提供一定的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
+        additionalDescription: ''
+      }, {
+        isMinor: false,
+        tagName: '奶酪',
+        description: '推速较快，且被动推奶酪有霸体和减伤，适合做主推或副推位。',
+        additionalDescription: ''
+      }, {
+        isMinor: true,
+        tagName: '干扰',
+        description: '远程火箭炮可以减少队友溜猫的压力；地雷可以进行威慑，逼迫猫离开地雷追踪爆炸范围或交技能进行防御',
+        additionalDescription: ''
+      }],
+    wallCrackDamageBoost: 0.5,
+    counteredBySpecialSkills: [{
+        id: '绝地反击',
+        isMinor: true,
+        description: '炮不能取消后摇，容易被霸体反杀。'
+      }],
+    counteredByKnowledgeCards: [{
+        id: '皮糙肉厚',
+        isMinor: false,
+        description: '皮糙肉厚减伤导致绝反炮菲无法发挥伤害高的优势。'
+      }, {
+        id: '乾坤一掷',
+        isMinor: true,
+        description: '有乾坤一掷加持下的猫扔一个基础伤害为50的道具就可以秒掉泰菲，但带乾坤一掷的猫很少，所以克制不明显。'
+      }]
   },
   /* ----------------------------------- 剑客泰菲 ----------------------------------- */
   剑客泰菲: {
