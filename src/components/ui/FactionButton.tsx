@@ -59,24 +59,20 @@ function FactionButton({
 
   if (href) {
     return (
-      <button
-        type='button'
+      <Link
+        href={href}
         aria-label={ariaLabel}
         className={clsx(
           'faction-button',
-          'flex min-w-[180px] flex-1 gap-1 text-center md:gap-2',
-          'rounded-md border-none bg-gray-200 text-gray-800 shadow-md focus:outline-none',
+          'flex min-w-[180px] flex-1 flex-col items-center justify-center gap-1 py-3 text-center md:gap-2',
+          'rounded-md border-none bg-gray-200 text-gray-800 shadow-md transition-colors',
+          'focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none',
           'dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900',
           className
         )}
       >
-        <Link
-          href={href}
-          className='flex flex-1 flex-col items-center justify-center gap-1 py-3 text-center md:gap-2'
-        >
-          {buttonContent}
-        </Link>
-      </button>
+        {buttonContent}
+      </Link>
     );
   }
 
@@ -89,7 +85,8 @@ function FactionButton({
         'faction-button',
         'py-3',
         'flex min-w-[180px] flex-1 flex-col items-center justify-center gap-1 text-center md:gap-2',
-        'rounded-md border-none bg-gray-200 text-gray-800 shadow-md focus:outline-none',
+        'rounded-md border-none bg-gray-200 text-gray-800 shadow-md transition-colors',
+        'focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none',
         'dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900',
         className
       )}
