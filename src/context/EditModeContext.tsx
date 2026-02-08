@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { proxy, subscribe } from 'valtio';
+import { proxy, subscribe, unstable_enableOp } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
 import {
@@ -69,6 +69,8 @@ export const PUBLISHABLE_ENTITY_TYPES = [
   'specialSkills',
   'achievements',
 ] as const;
+
+unstable_enableOp(true);
 
 export type PublishableEntityType = (typeof PUBLISHABLE_ENTITY_TYPES)[number];
 
