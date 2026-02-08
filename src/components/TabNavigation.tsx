@@ -22,7 +22,7 @@ import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import SearchBar from './ui/SearchBar';
 import Tooltip from './ui/Tooltip';
 
-const MotionLink = m(Link);
+const MotionLink = m.create(Link);
 
 type TabNavigationProps = {
   showDetailToggle?: boolean;
