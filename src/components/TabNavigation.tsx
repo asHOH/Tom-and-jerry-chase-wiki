@@ -11,7 +11,7 @@ import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
-import { UserCircleIcon } from '@/components/icons/CommonIcons';
+import { HomeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 import { env } from '@/env';
@@ -210,9 +210,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               tabIndex={navigatingTo === '/' ? -1 : 0}
               aria-disabled={navigatingTo === '/'}
             >
-              <span className='lg:hidden' aria-hidden='true'>
-                🏠
-              </span>
+              <HomeIcon className='size-6 lg:hidden' />
               <span className='hidden lg:inline'>首页</span>
               <span className='sr-only lg:hidden'>首页</span>
             </Link>
