@@ -4782,6 +4782,11 @@ const mouseCharacterDefinitions = {
         name: '急速翻滚',
         description: '音乐家在武器技能持续期间持有惯性，此时使用急速翻滚能快速位移。',
       },
+    
+      {
+        name: '魔术漂浮',
+        description: ''
+      }
     ],
     skills: [
       {
