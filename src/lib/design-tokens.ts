@@ -464,12 +464,12 @@ export const designTokens = {
 
   shadows: {
     card: '0 2px 6px rgba(0, 0, 0, 0.05)',
-    cardHover: '0 4px 12px rgba(37, 99, 235, 0.2)',
+    cardHover: '0 12px 24px rgba(37, 99, 235, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04)',
     button: '0 1px 3px rgba(0, 0, 0, 0.1)',
     navigation: '0 2px 4px rgba(0, 0, 0, 0.1)',
     dark: {
       card: '0 2px 6px rgba(0, 0, 0, 0.2)',
-      cardHover: '0 4px 12px rgba(37, 99, 235, 0.4)',
+      cardHover: '0 12px 32px rgba(37, 99, 235, 0.25), 0 8px 16px rgba(0, 0, 0, 0.2)',
       button: '0 1px 3px rgba(0, 0, 0, 0.2)',
       navigation: '0 2px 4px rgba(0, 0, 0, 0.2)',
     },
@@ -493,9 +493,9 @@ export const designTokens = {
   },
 
   transitions: {
-    fast: '150ms ease',
-    normal: '200ms ease',
-    slow: '300ms ease',
+    fast: '150ms cubic-bezier(0.4, 0, 0.2, 1)',
+    normal: '250ms cubic-bezier(0.4, 0, 0.2, 1)',
+    slow: '350ms cubic-bezier(0.4, 0, 0.2, 1)',
     colors: 'background-color 200ms ease, color 200ms ease',
     transform: 'transform 200ms ease',
     all: 'all 200ms ease',
