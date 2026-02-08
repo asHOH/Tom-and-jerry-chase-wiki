@@ -7,6 +7,7 @@ import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import BaseCard from '@/components/ui/BaseCard';
+import Button from '@/components/ui/Button';
 import { ArticleCharacterSelector } from '@/components/ui/CharacterSelector';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RichTextEditor from '@/components/ui/RichTextEditor';
@@ -261,41 +262,35 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
           )}
 
           <div className='flex flex-col gap-4 border-t border-gray-200 pt-6 sm:flex-row dark:border-gray-700'>
-            <button
+            <Button
               type='button'
               onClick={onSave}
               disabled={isSaveDisabled}
+              loading={isSubmitting}
+              variant='primary'
+              size='lg'
+              fullWidth
               className={clsx(
-                'inline-flex flex-1 items-center justify-center gap-3 rounded-lg py-4 text-lg font-semibold transition-all duration-200 sm:flex-none',
-                'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
-                isSaveDisabled
-                  ? 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400'
-                  : 'transform bg-blue-600 text-white shadow-lg hover:scale-105 hover:bg-blue-700 hover:shadow-xl',
-                isMobile ? '' : 'px-8'
+                'flex-1 shadow-lg transition-transform hover:scale-[1.02] hover:shadow-xl sm:flex-none',
+                !isMobile && 'px-8'
               )}
+              leadingIcon={!isSubmitting ? <CheckBadgeIcon className='size-5' /> : undefined}
             >
-              {isSubmitting ? (
-                <>
-                  <LoadingSpinner size='sm' />
-                  {submittingLabel}
-                </>
-              ) : (
-                <>
-                  <CheckBadgeIcon className='size-5' />
-                  {submitLabel}
-                </>
-              )}
-            </button>
+              {isSubmitting ? submittingLabel : submitLabel}
+            </Button>
 
-            <button
+            <Button
               type='button'
               onClick={onCancel}
               disabled={isSubmitting}
-              className='inline-flex flex-1 items-center justify-center gap-3 rounded-lg bg-gray-100 px-8 py-4 text-lg font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none sm:flex-none dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              variant='secondary'
+              size='lg'
+              fullWidth
+              className='flex-1 sm:flex-none'
+              leadingIcon={<CloseIcon className='size-5' />}
             >
-              <CloseIcon className='size-5' />
               取消
-            </button>
+            </Button>
           </div>
         </form>
       </div>

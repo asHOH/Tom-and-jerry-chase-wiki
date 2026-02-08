@@ -80,6 +80,21 @@ const navButtonThemes = {
   navigating: 'bg-gray-400 text-white cursor-not-allowed opacity-80 pointer-events-none',
 };
 
+const actionButtonVariants = {
+  primary:
+    'bg-blue-600 text-white shadow-sm hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600',
+  secondary:
+    'bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-200 dark:bg-slate-700 dark:text-gray-100 dark:hover:bg-slate-600 dark:border-slate-600',
+  ghost: 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+  danger: 'bg-red-600 text-white shadow-sm hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600',
+};
+
+const actionButtonSizes = {
+  sm: 'text-sm px-3 py-2 rounded-md',
+  md: 'text-base px-4 py-2.5 rounded-lg',
+  lg: 'text-lg px-5 py-3 rounded-lg',
+};
+
 // ============================================================================
 // Utility Functions
 // ============================================================================
@@ -576,4 +591,23 @@ export function getNavigationButtonClasses(
   }
 
   return clsx('relative z-10', layout, focus, state);
+}
+
+export type ActionButtonVariant = keyof typeof actionButtonVariants;
+export type ActionButtonSize = keyof typeof actionButtonSizes;
+
+export function getActionButtonClasses(
+  variant: ActionButtonVariant = 'primary',
+  size: ActionButtonSize = 'md',
+  options?: { fullWidth?: boolean; loading?: boolean }
+): string {
+  const base =
+    'inline-flex items-center justify-center gap-2 font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 disabled:cursor-not-allowed disabled:opacity-60';
+  return clsx(
+    base,
+    actionButtonVariants[variant],
+    actionButtonSizes[size],
+    options?.fullWidth && 'w-full',
+    options?.loading && 'cursor-progress'
+  );
 }

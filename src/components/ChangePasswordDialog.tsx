@@ -6,6 +6,7 @@ import { m, useReducedMotion } from 'motion/react';
 
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { useToast } from '@/context/ToastContext';
+import Button from '@/components/ui/Button';
 import { CloseIcon } from '@/components/icons/CommonIcons';
 
 type ChangePasswordDialogProps = {
@@ -147,18 +148,17 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
             )}
           </div>
 
-          <button
+          <Button
             type='button'
-            className={
-              isLoading
-                ? 'w-full rounded-md bg-gray-300 px-3 py-2 text-gray-700 opacity-70 dark:bg-slate-700 dark:text-gray-200'
-                : 'w-full rounded-md bg-blue-600 px-3 py-2 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800'
-            }
             onClick={submit}
+            loading={isLoading}
             disabled={isLoading}
+            variant='primary'
+            size='md'
+            fullWidth
           >
             {isLoading ? '提交中…' : '确认修改'}
-          </button>
+          </Button>
         </div>
       </m.div>
     </m.div>

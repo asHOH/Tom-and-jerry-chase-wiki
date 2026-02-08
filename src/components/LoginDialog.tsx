@@ -9,6 +9,7 @@ import { useSWRConfig } from 'swr';
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { USER_API_KEY } from '@/hooks/useUser';
+import Button from '@/components/ui/Button';
 import { CloseIcon } from '@/components/icons/CommonIcons';
 
 import CaptchaComponent from './CaptchaComponent';
@@ -374,8 +375,12 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
 
           {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
 
-          <button
+          <Button
             type='submit'
+            fullWidth
+            variant='primary'
+            size='md'
+            loading={isLoading}
             disabled={
               isLoading ||
               !isUsernameCorrect ||
@@ -384,33 +389,9 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
                 !!passwordStrength &&
                 passwordStrength.strength <= 1)
             }
-            className='flex w-full items-center justify-center rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400'
           >
-            {isLoading ? (
-              <svg
-                className='h-5 w-5 animate-spin text-white'
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-              >
-                <circle
-                  className='opacity-25'
-                  cx='12'
-                  cy='12'
-                  r='10'
-                  stroke='currentColor'
-                  strokeWidth='4'
-                ></circle>
-                <path
-                  className='opacity-75'
-                  fill='currentColor'
-                  d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                ></path>
-              </svg>
-            ) : (
-              '继续'
-            )}
-          </button>
+            继续
+          </Button>
         </form>
       </m.div>
     </m.div>

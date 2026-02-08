@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { BaseDialog } from '@/components/ui/BaseDialog';
+import Button from '@/components/ui/Button';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
 import { env } from '@/env';
 
@@ -263,24 +264,29 @@ const FeedbackSection =
                   </div>
 
                   <div className='mt-6 flex space-x-3'>
-                    <button
+                    <Button
                       type='button'
+                      variant='secondary'
+                      size='md'
+                      fullWidth
                       onClick={() => setIsFeedbackOpen(false)}
-                      className='flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
                     >
-                      取消
-                    </button>
-                    <button
+                      ??
+                    </Button>
+                    <Button
                       type='submit'
+                      variant='primary'
+                      size='md'
+                      fullWidth
+                      loading={isSubmitting}
                       disabled={
                         isSubmitting ||
                         !feedbackFormData.content.trim() ||
                         (!isAnonymous && !feedbackFormData.contact.trim())
                       }
-                      className='flex-1 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400'
                     >
-                      {isSubmitting ? '提交中...' : '提交反馈'}
-                    </button>
+                      {isSubmitting ? '提交中…' : '提交反馈'}
+                    </Button>
                   </div>
 
                   <div className='mt-4 border-t border-gray-200 pt-3 dark:border-gray-600'>

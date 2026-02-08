@@ -7,6 +7,7 @@ import { useMobile } from '../../hooks/useMediaQuery';
 import { useUser } from '../../hooks/useUser';
 import { formatArticleDate } from '../../lib/dateUtils';
 import LoginDialog from '../LoginDialog';
+import Button from '../ui/Button';
 import LoadingSpinner from '../ui/LoadingSpinner';
 
 type CommentScope = 'articles';
@@ -212,23 +213,27 @@ export default function CommentsSection({
 
         <div className='mt-3 flex items-center justify-end gap-2'>
           {!userRole ? (
-            <button
+            <Button
               type='button'
+              variant='primary'
+              size='sm'
               onClick={() => setShowLoginDialog(true)}
-              className='rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700'
             >
               登录
-            </button>
+            </Button>
           ) : null}
 
-          <button
+          <Button
             type='button'
             onClick={handleSubmit}
             disabled={!userRole || isSubmitting}
-            className='rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-60'
+            loading={isSubmitting}
+            variant='primary'
+            size='sm'
+            className='bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600'
           >
             {isSubmitting ? '发送中…' : '发表评论'}
-          </button>
+          </Button>
         </div>
       </div>
 
