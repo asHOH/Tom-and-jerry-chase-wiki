@@ -1,33 +1,73 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as ts from 'typescript';
 
 import { requireRole } from '@/lib/auth/requireRole';
 import type { Action } from '@/lib/edit/diffUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { PROJECT_INFO } from '@/constants';
+import { cards, characters, entities } from '@/data';
 import { env } from '@/env';
 
+type EntityFileConfig = {
+  path: string;
+  rootObject: string;
+  faction?: 'cat' | 'mouse';
+};
+
 /**
- * Maps entity_type to the source data file path(s) in the repository.
+ * Maps entity_type to data definition files and their root objects.
  * Paths are relative to the repository root.
  */
-const ENTITY_FILE_MAP: Record<string, string[]> = {
+const ENTITY_FILE_CONFIGS: Record<string, EntityFileConfig[]> = {
   characters: [
-    'src/features/characters/data/catCharacters.ts',
-    'src/features/characters/data/mouseCharacters.ts',
+    {
+      path: 'src/features/characters/data/catCharacters.ts',
+      rootObject: 'catCharacterDefinitions',
+      faction: 'cat',
+    },
+    {
+      path: 'src/features/characters/data/mouseCharacters.ts',
+      rootObject: 'mouseCharacterDefinitions',
+      faction: 'mouse',
+    },
   ],
   cards: [
-    'src/features/knowledge-cards/data/catKnowledgeCards.ts',
-    'src/features/knowledge-cards/data/mouseKnowledgeCards.ts',
+    {
+      path: 'src/features/knowledge-cards/data/catKnowledgeCards.ts',
+      rootObject: 'catKnowledgeCards',
+      faction: 'cat',
+    },
+    {
+      path: 'src/features/knowledge-cards/data/mouseKnowledgeCards.ts',
+      rootObject: 'mouseKnowledgeCards',
+      faction: 'mouse',
+    },
   ],
-  entities: ['src/data/catEntities.ts', 'src/data/mouseEntities.ts'],
-  buffs: ['src/features/buffs/data/buffs.ts'],
-  items: ['src/features/items/data/items.ts'],
-  fixtures: ['src/features/fixtures/data/fixtures.ts'],
-  maps: ['src/data/maps.ts'],
-  modes: ['src/features/modes/data/modes.ts'],
+  entities: [
+    { path: 'src/data/catEntities.ts', rootObject: 'catEntitiesDefinitions', faction: 'cat' },
+    {
+      path: 'src/data/mouseEntities.ts',
+      rootObject: 'mouseEntitiesDefinitions',
+      faction: 'mouse',
+    },
+  ],
+  buffs: [{ path: 'src/features/buffs/data/buffs.ts', rootObject: 'buffDefinitions' }],
+  items: [{ path: 'src/features/items/data/items.ts', rootObject: 'itemDefinitions' }],
+  fixtures: [{ path: 'src/features/fixtures/data/fixtures.ts', rootObject: 'FixtureDefinitions' }],
+  maps: [{ path: 'src/data/maps.ts', rootObject: 'mapDefinitions' }],
+  modes: [{ path: 'src/features/modes/data/modes.ts', rootObject: 'ModeDefinitions' }],
+  achievements: [{ path: 'src/data/achievements.ts', rootObject: 'achievementDefinitions' }],
   specialSkills: [
-    'src/features/special-skills/data/catSpecialSkills.ts',
-    'src/features/special-skills/data/mouseSpecialSkills.ts',
+    {
+      path: 'src/features/special-skills/data/catSpecialSkills.ts',
+      rootObject: 'catSpecialSkillDefinitions',
+      faction: 'cat',
+    },
+    {
+      path: 'src/features/special-skills/data/mouseSpecialSkills.ts',
+      rootObject: 'mouseSpecialSkillDefinitions',
+      faction: 'mouse',
+    },
   ],
 };
 
@@ -124,159 +164,440 @@ async function githubApi<T>(
   return res.json() as Promise<T>;
 }
 
-function getDataFilePaths(entityType: string): string[] {
-  return ENTITY_FILE_MAP[entityType] ?? [];
+function getDataFileConfigs(entityType: string): EntityFileConfig[] {
+  return ENTITY_FILE_CONFIGS[entityType] ?? [];
 }
 
-const SPECIAL_SKILL_FILE_BY_FACTION = {
-  cat: 'catSpecialSkills.ts',
-  mouse: 'mouseSpecialSkills.ts',
-} as const;
+function getCandidateFileConfigs(entityType: string, actionPath: string): EntityFileConfig[] {
+  const configs = getDataFileConfigs(entityType);
+  if (configs.length === 0) return [];
+  const parts = actionPath.split('.').filter(Boolean);
+  if (parts.length === 0) return configs;
+
+  if (entityType === 'specialSkills') {
+    const faction = parts[0];
+    if (faction === 'cat' || faction === 'mouse') {
+      const filtered = configs.filter((config) => config.faction === faction);
+      return filtered.length > 0 ? filtered : configs;
+    }
+    return configs;
+  }
+
+  if (entityType === 'characters') {
+    const characterId = parts[0];
+    if (!characterId) return configs;
+    const factionId = characters[characterId]?.factionId;
+    if (factionId === 'cat' || factionId === 'mouse') {
+      const filtered = configs.filter((config) => config.faction === factionId);
+      return filtered.length > 0 ? filtered : configs;
+    }
+  }
+
+  if (entityType === 'cards') {
+    const cardId = parts[0];
+    if (!cardId) return configs;
+    const factionId = cards[cardId]?.factionId;
+    if (factionId === 'cat' || factionId === 'mouse') {
+      const filtered = configs.filter((config) => config.faction === factionId);
+      return filtered.length > 0 ? filtered : configs;
+    }
+  }
+
+  if (entityType === 'entities') {
+    const entityName = parts[0];
+    if (!entityName) return configs;
+    const factionId = entities.cat?.[entityName]
+      ? 'cat'
+      : entities.mouse?.[entityName]
+        ? 'mouse'
+        : undefined;
+    if (factionId === 'cat' || factionId === 'mouse') {
+      const filtered = configs.filter((config) => config.faction === factionId);
+      return filtered.length > 0 ? filtered : configs;
+    }
+  }
+
+  return configs;
+}
+
+function resolveActionPathForConfig(
+  entityType: string,
+  actionPath: string,
+  config: EntityFileConfig
+): string {
+  if (!actionPath) return actionPath;
+  if (entityType !== 'specialSkills') return actionPath;
+
+  const parts = actionPath.split('.').filter(Boolean);
+  if (parts.length < 2) return actionPath;
+
+  const [faction, ...rest] = parts;
+  if (faction === 'cat' || faction === 'mouse') {
+    if (!config.faction || config.faction === faction) {
+      return rest.join('.');
+    }
+  }
+
+  return actionPath;
+}
+
+type PathTarget = {
+  parent: ts.ObjectLiteralExpression | ts.ArrayLiteralExpression;
+  key: string;
+  valueNode?: ts.Expression;
+  propertyNode?: ts.ObjectLiteralElementLike;
+};
+
+function unwrapExpression(expression: ts.Expression): ts.Expression {
+  let current = expression;
+  while (true) {
+    if (ts.isParenthesizedExpression(current)) {
+      current = current.expression;
+      continue;
+    }
+    if (ts.isAsExpression(current) || ts.isTypeAssertionExpression(current)) {
+      current = current.expression;
+      continue;
+    }
+    if (ts.isSatisfiesExpression(current)) {
+      current = current.expression;
+      continue;
+    }
+    if (ts.isNonNullExpression(current)) {
+      current = current.expression;
+      continue;
+    }
+    break;
+  }
+  return current;
+}
+
+function getPropertyNameText(name: ts.PropertyName): string | null {
+  if (ts.isIdentifier(name)) return name.text;
+  if (ts.isStringLiteral(name) || ts.isNumericLiteral(name)) return name.text;
+  return null;
+}
+
+function getPropertyValue(property: ts.ObjectLiteralElementLike): ts.Expression | null {
+  if (ts.isPropertyAssignment(property)) return property.initializer;
+  if (ts.isShorthandPropertyAssignment(property)) return property.name;
+  return null;
+}
+
+function findRootObjectLiteral(
+  sourceFile: ts.SourceFile,
+  rootObjectName: string
+): ts.ObjectLiteralExpression | null {
+  let found: ts.ObjectLiteralExpression | null = null;
+
+  const visit = (node: ts.Node) => {
+    if (found) return;
+    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name)) {
+      if (node.name.text === rootObjectName && node.initializer) {
+        const expr = unwrapExpression(node.initializer);
+        if (ts.isObjectLiteralExpression(expr)) {
+          found = expr;
+          return;
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+
+  visit(sourceFile);
+  return found;
+}
+
+function findObjectProperty(
+  objectLiteral: ts.ObjectLiteralExpression,
+  key: string
+): ts.ObjectLiteralElementLike | null {
+  for (const prop of objectLiteral.properties) {
+    if (
+      ts.isPropertyAssignment(prop) ||
+      ts.isShorthandPropertyAssignment(prop) ||
+      ts.isMethodDeclaration(prop)
+    ) {
+      const nameText = getPropertyNameText(prop.name);
+      if (nameText === key) return prop;
+    }
+  }
+  return null;
+}
+
+function findPathTarget(root: ts.ObjectLiteralExpression, pathParts: string[]): PathTarget | null {
+  let current: ts.Expression = root;
+
+  for (let i = 0; i < pathParts.length; i++) {
+    const key = pathParts[i]!;
+    const isLast = i === pathParts.length - 1;
+
+    if (ts.isObjectLiteralExpression(current)) {
+      const prop = findObjectProperty(current, key);
+      if (!prop) {
+        return isLast ? { parent: current, key } : null;
+      }
+      const value = getPropertyValue(prop);
+      if (isLast) {
+        const target: PathTarget = { parent: current, key, propertyNode: prop };
+        if (value) target.valueNode = value;
+        return target;
+      }
+      if (!value) return null;
+      const next = unwrapExpression(value);
+      if (!ts.isObjectLiteralExpression(next) && !ts.isArrayLiteralExpression(next)) return null;
+      current = next;
+      continue;
+    }
+
+    if (ts.isArrayLiteralExpression(current)) {
+      const index = Number(key);
+      if (!Number.isInteger(index) || index < 0) return null;
+      if (index > current.elements.length) return null;
+      const element = current.elements[index];
+      if (!element || ts.isOmittedExpression(element)) {
+        return isLast ? { parent: current, key } : null;
+      }
+      if (isLast) {
+        return { parent: current, key, valueNode: element as ts.Expression };
+      }
+      const next = unwrapExpression(element as ts.Expression);
+      if (!ts.isObjectLiteralExpression(next) && !ts.isArrayLiteralExpression(next)) return null;
+      current = next;
+      continue;
+    }
+
+    return null;
+  }
+
+  return null;
+}
+
+function detectIndentUnit(content: string): string {
+  const lines = content.split('\n');
+  let minIndent: number | null = null;
+
+  for (const line of lines) {
+    if (/^\t+\S/.test(line)) return '\t';
+    const match = line.match(/^( +)\S/);
+    if (!match) continue;
+    const indent = match[1];
+    if (!indent) continue;
+    const len = indent.length;
+    if (len === 0) continue;
+    if (minIndent === null || len < minIndent) minIndent = len;
+  }
+
+  return minIndent ? ' '.repeat(minIndent) : '  ';
+}
+
+function getIndentationAtPosition(content: string, pos: number): string {
+  const lineStart = content.lastIndexOf('\n', pos - 1) + 1;
+  const line = content.slice(lineStart, pos);
+  const match = line.match(/^[\t ]*/);
+  return match ? match[0] : '';
+}
+
+function escapeString(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+}
+
+function serializeObjectKey(key: string): string {
+  if (/^[$A-Z_][0-9A-Z_$]*$/i.test(key)) return key;
+  return `'${escapeString(key)}'`;
+}
+
+function serializeValue(value: unknown, indentUnit: string, baseIndent: string): string {
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
+  if (typeof value === 'string') return `'${escapeString(value)}'`;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) return '[]';
+    const nextIndent = baseIndent + indentUnit;
+    const items = value.map((item) => serializeValue(item, indentUnit, nextIndent));
+    return `[${items.join(', ')}]`;
+  }
+
+  if (typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>);
+    if (entries.length === 0) return '{}';
+    const nextIndent = baseIndent + indentUnit;
+    const lines = entries.map(
+      ([key, val]) =>
+        `${nextIndent}${serializeObjectKey(key)}: ${serializeValue(val, indentUnit, nextIndent)}`
+    );
+    return `{\n${lines.join(',\n')}\n${baseIndent}}`;
+  }
+
+  return String(value);
+}
+
+function replaceRange(content: string, start: number, end: number, replacement: string): string {
+  return content.slice(0, start) + replacement + content.slice(end);
+}
+
+function insertObjectProperty(
+  content: string,
+  sourceFile: ts.SourceFile,
+  objectLiteral: ts.ObjectLiteralExpression,
+  key: string,
+  value: unknown,
+  indentUnit: string
+): string | null {
+  const objectIndent = getIndentationAtPosition(content, objectLiteral.getStart(sourceFile));
+  const propertyIndent = objectIndent + indentUnit;
+  const serialized = serializeValue(value, indentUnit, propertyIndent);
+  const propertyText = `${serializeObjectKey(key)}: ${serialized}`;
+  const insertPos = objectLiteral.getEnd() - 1;
+
+  if (objectLiteral.properties.length === 0) {
+    const insertText = `\n${propertyIndent}${propertyText}\n${objectIndent}`;
+    return replaceRange(content, insertPos, insertPos, insertText);
+  }
+
+  const lastProp = objectLiteral.properties[objectLiteral.properties.length - 1];
+  if (!lastProp) return null;
+  const between = content.slice(lastProp.getEnd(), insertPos);
+  const needsComma = !between.includes(',');
+  const insertText = `${needsComma ? ',' : ''}\n${propertyIndent}${propertyText}\n${objectIndent}`;
+  return replaceRange(content, insertPos, insertPos, insertText);
+}
+
+function insertArrayElement(
+  content: string,
+  sourceFile: ts.SourceFile,
+  arrayLiteral: ts.ArrayLiteralExpression,
+  index: number,
+  value: unknown,
+  indentUnit: string
+): string | null {
+  if (index < 0 || index > arrayLiteral.elements.length) return null;
+
+  const arrayIndent = getIndentationAtPosition(content, arrayLiteral.getStart(sourceFile));
+  const elementIndent = arrayIndent + indentUnit;
+  const serialized = serializeValue(value, indentUnit, elementIndent);
+  const insertPos = arrayLiteral.getEnd() - 1;
+
+  if (arrayLiteral.elements.length === 0) {
+    const insertText = `\n${elementIndent}${serialized}\n${arrayIndent}`;
+    return replaceRange(content, insertPos, insertPos, insertText);
+  }
+
+  const lastElem = arrayLiteral.elements[arrayLiteral.elements.length - 1];
+  if (!lastElem) return null;
+  const between = content.slice(lastElem.getEnd(), insertPos);
+  const needsComma = !between.includes(',');
+  const insertText = `${needsComma ? ',' : ''}\n${elementIndent}${serialized}\n${arrayIndent}`;
+  return replaceRange(content, insertPos, insertPos, insertText);
+}
+
+function setAtTarget(
+  content: string,
+  sourceFile: ts.SourceFile,
+  target: PathTarget,
+  value: unknown,
+  indentUnit: string
+): string | null {
+  if (target.valueNode) {
+    const baseIndent = getIndentationAtPosition(content, target.valueNode.getStart(sourceFile));
+    const serialized = serializeValue(value, indentUnit, baseIndent);
+    return replaceRange(
+      content,
+      target.valueNode.getStart(sourceFile),
+      target.valueNode.getEnd(),
+      serialized
+    );
+  }
+
+  if (ts.isObjectLiteralExpression(target.parent)) {
+    return insertObjectProperty(content, sourceFile, target.parent, target.key, value, indentUnit);
+  }
+
+  if (ts.isArrayLiteralExpression(target.parent)) {
+    const index = Number(target.key);
+    if (!Number.isInteger(index)) return null;
+    return insertArrayElement(content, sourceFile, target.parent, index, value, indentUnit);
+  }
+
+  return null;
+}
+
+function deleteAtTarget(
+  content: string,
+  sourceFile: ts.SourceFile,
+  target: PathTarget
+): string | null {
+  if (ts.isObjectLiteralExpression(target.parent)) {
+    if (!target.propertyNode) return null;
+    const start = target.propertyNode.getStart(sourceFile);
+    let end = target.propertyNode.getEnd();
+    const after = content.slice(end, target.parent.getEnd());
+    const match = after.match(/^\s*,/);
+    if (match) end += match[0].length;
+    return replaceRange(content, start, end, '');
+  }
+
+  if (ts.isArrayLiteralExpression(target.parent)) {
+    if (!target.valueNode) return null;
+    const start = target.valueNode.getStart(sourceFile);
+    let end = target.valueNode.getEnd();
+    const after = content.slice(end, target.parent.getEnd());
+    const match = after.match(/^\s*,/);
+    if (match) end += match[0].length;
+    return replaceRange(content, start, end, '');
+  }
+
+  return null;
+}
+
+/**
+ * Apply a single Action to a TS source file's content string.
+ * Uses TypeScript AST traversal to locate the target path and update values.
+ * Returns the modified content, or null if the path couldn't be located.
+ */
+function applyActionToFileContent(
+  content: string,
+  action: Action,
+  config: EntityFileConfig
+): string | null {
+  const pathParts = action.path.split('.').filter(Boolean);
+  if (pathParts.length === 0) return null;
+
+  const sourceFile = ts.createSourceFile(
+    config.path,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS
+  );
+  const rootObject = findRootObjectLiteral(sourceFile, config.rootObject);
+  if (!rootObject) return null;
+
+  const target = findPathTarget(rootObject, pathParts);
+  if (!target) return null;
+
+  if (action.op === 'delete') {
+    return deleteAtTarget(content, sourceFile, target);
+  }
+
+  if (target.propertyNode && !target.valueNode) return null;
+
+  const indentUnit = detectIndentUnit(content);
+  return setAtTarget(content, sourceFile, target, action.newValue, indentUnit);
+}
 
 function resolveActionPathForFile(
   entityType: string,
   actionPath: string,
   filePath: string
 ): string {
-  if (entityType !== 'specialSkills') return actionPath;
-  if (!actionPath) return actionPath;
-
-  const parts = actionPath.split('.').filter(Boolean);
-  if (parts.length < 2) return actionPath;
-
-  const [faction, ...rest] = parts;
-  if (faction === 'cat' && filePath.endsWith(SPECIAL_SKILL_FILE_BY_FACTION.cat)) {
-    return rest.join('.');
-  }
-  if (faction === 'mouse' && filePath.endsWith(SPECIAL_SKILL_FILE_BY_FACTION.mouse)) {
-    return rest.join('.');
-  }
-
-  return actionPath;
-}
-
-/**
- * Apply a single Action to a TS source file's content string.
- * Uses heuristic text replacement for simple value changes.
- * Returns the modified content, or null if the path couldn't be located.
- */
-function applyActionToFileContent(content: string, action: Action): string | null {
-  const pathParts = action.path.split('.').filter(Boolean);
-  if (pathParts.length === 0) return null;
-
-  // For set/add ops: find the property in the TS source and update its value
-  // For delete: find the property and remove it
-  // This uses a heuristic regex approach for common TS data object patterns
-
-  if (action.op === 'delete') {
-    return applyDeleteToContent(content, pathParts);
-  }
-
-  // set or add
-  return applySetToContent(content, pathParts, action.newValue);
-}
-
-function escapeRegex(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function serializeValue(value: unknown, indent: string = '    '): string {
-  if (value === null) return 'null';
-  if (value === undefined) return 'undefined';
-  if (typeof value === 'string') {
-    // Use single quotes to match TS style, escape internal single quotes
-    const escaped = value.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
-    return `'${escaped}'`;
-  }
-  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
-  if (Array.isArray(value)) {
-    if (value.length === 0) return '[]';
-    const items = value.map((v) => serializeValue(v, indent + '  '));
-    return `[${items.join(', ')}]`;
-  }
-  if (typeof value === 'object') {
-    const entries = Object.entries(value as Record<string, unknown>);
-    if (entries.length === 0) return '{}';
-    const lines = entries.map(([k, v]) => `${indent}  ${k}: ${serializeValue(v, indent + '  ')}`);
-    return `{\n${lines.join(',\n')}\n${indent}}`;
-  }
-  return String(value);
-}
-
-function applySetToContent(content: string, pathParts: string[], newValue: unknown): string | null {
-  // Build a regex to find the deepest key and its value
-  // Strategy: locate the key in the nesting context
-  const lastKey = pathParts[pathParts.length - 1]!;
-  const serialized = serializeValue(newValue);
-
-  // Try to find a pattern like: `lastKey: <value>` or `'lastKey': <value>`
-  // We need context from parent keys to avoid false matches
-  let searchRegion = content;
-  let regionOffset = 0;
-
-  // Navigate through parent keys to narrow the search region
-  for (let i = 0; i < pathParts.length - 1; i++) {
-    const key = pathParts[i]!;
-    // Match key as either bare identifier or quoted string
-    const keyPattern = new RegExp(
-      `(?:^|[{,\\n])\\s*(?:${escapeRegex(key)}|'${escapeRegex(key)}'|"${escapeRegex(key)}")\\s*:`,
-      'm'
-    );
-    const match = keyPattern.exec(searchRegion);
-    if (!match) return null;
-
-    // Move past the key to find its value block
-    const afterKey = match.index! + match[0].length;
-    regionOffset += afterKey;
-    searchRegion = searchRegion.slice(afterKey);
-  }
-
-  // Now find the last key in the narrowed region
-  const keyPattern = new RegExp(
-    `((?:${escapeRegex(lastKey)}|'${escapeRegex(lastKey)}'|"${escapeRegex(lastKey)}")\\s*:\\s*)([^,}\\n]+(?:(?:\\{[^}]*\\}|\\[[^\\]]*\\])[^,}\\n]*)?)`,
-    'm'
-  );
-  const match = keyPattern.exec(searchRegion);
-  if (!match) return null;
-
-  const valueStart = regionOffset + match.index! + match[1]!.length;
-  const valueEnd = regionOffset + match.index! + match[0].length;
-
-  return content.slice(0, valueStart) + serialized + content.slice(valueEnd);
-}
-
-function applyDeleteToContent(content: string, pathParts: string[]): string | null {
-  const lastKey = pathParts[pathParts.length - 1]!;
-
-  let searchRegion = content;
-  let regionOffset = 0;
-
-  for (let i = 0; i < pathParts.length - 1; i++) {
-    const key = pathParts[i]!;
-    const keyPattern = new RegExp(
-      `(?:^|[{,\\n])\\s*(?:${escapeRegex(key)}|'${escapeRegex(key)}'|"${escapeRegex(key)}")\\s*:`,
-      'm'
-    );
-    const match = keyPattern.exec(searchRegion);
-    if (!match) return null;
-
-    const afterKey = match.index! + match[0].length;
-    regionOffset += afterKey;
-    searchRegion = searchRegion.slice(afterKey);
-  }
-
-  // Find the property line and remove it
-  const keyPattern = new RegExp(
-    `(\\s*(?:${escapeRegex(lastKey)}|'${escapeRegex(lastKey)}'|"${escapeRegex(lastKey)}")\\s*:[^,}\\n]+,?\\n?)`,
-    'm'
-  );
-  const match = keyPattern.exec(searchRegion);
-  if (!match) return null;
-
-  const removeStart = regionOffset + match.index!;
-  const removeEnd = regionOffset + match.index! + match[0].length;
-
-  return content.slice(0, removeStart) + content.slice(removeEnd);
+  const configs = getDataFileConfigs(entityType);
+  if (configs.length === 0) return actionPath;
+  const match = configs.find((config) => config.path === filePath);
+  if (!match) return actionPath;
+  return resolveActionPathForConfig(entityType, actionPath, match);
 }
 
 interface SyncRequestBody {
@@ -365,19 +686,20 @@ export async function POST(request: NextRequest) {
         continue;
       }
 
-      const filePaths = getDataFilePaths(actionRow.entity_type);
-      if (filePaths.length === 0) {
-        failedActions.push({
-          actionId: actionRow.id,
-          reason: `Unknown entity type: ${actionRow.entity_type}`,
-        });
-        continue;
-      }
-
       // Process each flat action as a separate commit
       for (const action of flatActions) {
         const commitMessage = formatCommitMessage(actionRow.entity_type, action);
         let committed = false;
+        const configs = getCandidateFileConfigs(actionRow.entity_type, action.path);
+        if (configs.length === 0) {
+          failedActions.push({
+            actionId: actionRow.id,
+            reason: `Unknown entity type: ${actionRow.entity_type}`,
+          });
+          continue;
+        }
+
+        const filePaths = configs.map((config) => config.path);
 
         // Try each file path until we find one where the path exists
         for (const filePath of filePaths) {
@@ -401,7 +723,9 @@ export async function POST(request: NextRequest) {
             );
             const actionToApply =
               resolvedPath === action.path ? action : { ...action, path: resolvedPath };
-            const modified = applyActionToFileContent(fileContent, actionToApply);
+            const config = configs.find((candidate) => candidate.path === filePath) ?? configs[0]!;
+            if (!config) continue;
+            const modified = applyActionToFileContent(fileContent, actionToApply, config);
             if (!modified || modified === fileContent) continue;
 
             // Create a blob with the new content
