@@ -3,7 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 
-import { designTokens } from '@/lib/design-tokens';
+import { designTokens } from '@/lib/design';
 import SectionHeader from '@/components/ui/SectionHeader';
 
 type CardVariant = 'default' | 'ghost' | 'none';

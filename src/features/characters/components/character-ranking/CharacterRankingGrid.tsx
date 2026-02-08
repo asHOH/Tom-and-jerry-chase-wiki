@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-import { getCardRankColors } from '@/lib/design-tokens';
+import { getCardRankColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { FactionId } from '@/data/types';
 import {

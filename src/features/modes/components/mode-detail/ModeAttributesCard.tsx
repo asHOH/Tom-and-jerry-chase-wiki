@@ -2,7 +2,7 @@
 
 import { useSnapshot } from 'valtio';
 
-import { getModeTypeColors } from '@/lib/design-tokens';
+import { getModeTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalMode } from '@/context/EditModeContext';
 import { Mode, SingleItem } from '@/data/types';

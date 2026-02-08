@@ -2,7 +2,7 @@
 
 import { useSnapshot } from 'valtio';
 
-import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
+import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalBuff } from '@/context/EditModeContext';
 import { Buff, SingleItem } from '@/data/types';
@@ -15,7 +15,7 @@ import Tag from '@/components/ui/Tag';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import { buffsEdit } from '@/data';
 
-import '@/lib/design-tokens';
+import '@/lib/design';
 
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 

@@ -1,7 +1,7 @@
 // GotoPreviewCard.tsx
 import clsx from 'clsx';
 
-import { getTypeLabelColors } from '@/lib/design-tokens';
+import { getTypeLabelColors } from '@/lib/design';
 import type { GotoDisambiguationCandidate } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { SkillType } from '@/data/types';

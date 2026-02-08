@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
+import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';

@@ -2,7 +2,7 @@
 
 import { ReactNode, type CSSProperties } from 'react';
 
-import { componentTokens, designTokens } from '@/lib/design-tokens';
+import { componentTokens, designTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';

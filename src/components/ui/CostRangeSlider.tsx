@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 
-import { getCardCostColors } from '@/lib/design-tokens';
+import { getCardCostColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 
 interface CostRangeSliderProps {

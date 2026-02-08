@@ -2,7 +2,7 @@
 
 import { useSnapshot } from 'valtio';
 
-import { getFactionButtonColors } from '@/lib/design-system';
+import { getFactionButtonColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalAchievement } from '@/context/EditModeContext';
 import { achievementsEdit } from '@/data/store';

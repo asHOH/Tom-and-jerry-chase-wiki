@@ -1,4 +1,4 @@
-import { designTokens } from '@/lib/design-tokens';
+import { designTokens } from '@/lib/design';
 import { getSingleItemImageUrl } from '@/lib/singleItemTools';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { SingleItem } from '@/data/types';

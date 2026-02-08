@@ -1,6 +1,6 @@
 'use client';
 
-import { getCardCostColors, getCardRankColors } from '@/lib/design-tokens';
+import { getCardCostColors, getCardRankColors } from '@/lib/design';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalCard } from '@/context/EditModeContext';

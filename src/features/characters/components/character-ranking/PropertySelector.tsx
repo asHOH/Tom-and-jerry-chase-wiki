@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { getFactionButtonColors } from '@/lib/design-system';
+import { getFactionButtonColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { FactionId } from '@/data/types';
 import {

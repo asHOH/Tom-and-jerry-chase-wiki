@@ -1,4 +1,4 @@
-import { designTokens, getFixtureTypeColors } from '@/lib/design-tokens';
+import { designTokens, getFixtureTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Fixture } from '@/data/types';

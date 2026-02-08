@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, m } from 'motion/react';
 
-import { getNavigationButtonClasses } from '@/lib/design-system';
+import { getNavigationButtonClasses } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { SearchIcon } from '@/components/icons/CommonIcons';
 

@@ -1,6 +1,6 @@
 import { CSSProperties, useState } from 'react';
 
-import { componentTokens, designTokens } from '@/lib/design-tokens';
+import { componentTokens, designTokens } from '@/lib/design';
 import Image from '@/components/Image';
 
 type ImageSize = keyof typeof componentTokens.image.dimensions;

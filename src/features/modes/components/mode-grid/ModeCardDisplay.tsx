@@ -1,4 +1,4 @@
-import { designTokens, getModeTypeColors } from '@/lib/design-tokens';
+import { designTokens, getModeTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Mode } from '@/data/types';

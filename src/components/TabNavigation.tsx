@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
-import { getNavigationButtonClasses } from '@/lib/design-system';
+import { getNavigationButtonClasses } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationProgress } from '@/hooks/useNavigationProgress';

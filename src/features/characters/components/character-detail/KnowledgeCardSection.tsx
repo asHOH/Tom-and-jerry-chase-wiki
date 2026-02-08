@@ -6,7 +6,7 @@ import some from 'lodash-es/some';
 import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { getCardRankColors } from '@/lib/design-tokens';
+import { getCardRankColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';

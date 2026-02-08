@@ -7,7 +7,7 @@ import { proxy } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
-import { componentTokens, designTokens } from '@/lib/design-tokens';
+import { componentTokens, designTokens } from '@/lib/design';
 import { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';

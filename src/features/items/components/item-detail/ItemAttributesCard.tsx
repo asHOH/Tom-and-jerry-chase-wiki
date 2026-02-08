@@ -2,10 +2,7 @@
 
 import { useSnapshot } from 'valtio';
 
-import {
-  getItemSourceColors /* , getCardCostColors */,
-  getItemTypeColors,
-} from '@/lib/design-tokens';
+import { getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';

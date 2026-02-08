@@ -3,8 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { getFactionButtonColors } from '@/lib/design-system';
-import { designTokens } from '@/lib/design-tokens';
+import { designTokens, getFactionButtonColors } from '@/lib/design';
 import { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId, SpecialSkill } from '@/data/types';

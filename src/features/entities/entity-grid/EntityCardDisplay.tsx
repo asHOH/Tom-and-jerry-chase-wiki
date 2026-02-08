@@ -1,4 +1,4 @@
-import { designTokens, getEntityTypeColors /* , getCardCostColors */ } from '@/lib/design-tokens';
+import { designTokens, getEntityTypeColors /* , getCardCostColors */ } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Entity } from '@/data/types';

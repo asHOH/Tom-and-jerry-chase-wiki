@@ -1,4 +1,4 @@
-import { designTokens, getMapSizeColors, getMapTypeColors } from '@/lib/design-tokens';
+import { designTokens, getMapSizeColors, getMapTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Map } from '@/data/types';

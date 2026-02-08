@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { getTypeLabelColors } from '@/lib/design-tokens';
+import { getTypeLabelColors } from '@/lib/design';
 import singleItemRreverse, { getCategorizedKeywords } from '@/lib/singleItemReverse';
 import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
 import { useMobile } from '@/hooks/useMediaQuery';

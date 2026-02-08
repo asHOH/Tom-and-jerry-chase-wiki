@@ -2,7 +2,7 @@ import {
   designTokens,
   getItemSourceColors /* , getCardCostColors */,
   getItemTypeColors,
-} from '@/lib/design-tokens';
+} from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';

@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
-import { componentTokens, designTokens } from '@/lib/design-tokens';
+import { componentTokens, designTokens } from '@/lib/design';
 import { handleCharacterIdChange } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';

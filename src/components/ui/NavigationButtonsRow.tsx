@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { designTokens } from '@/lib/design-tokens';
+import { designTokens } from '@/lib/design';
 
 type NavigationButtonsRowProps = {
   children: ReactNode;

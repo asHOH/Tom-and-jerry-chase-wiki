@@ -1,4 +1,4 @@
-import { getCardCostColors, getCardRankColors } from '@/lib/design-tokens';
+import { getCardCostColors, getCardRankColors } from '@/lib/design';
 import { KnowledgeCardDisplayProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';

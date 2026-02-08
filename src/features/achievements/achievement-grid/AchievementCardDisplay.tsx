@@ -1,5 +1,4 @@
-import { getFactionButtonColors } from '@/lib/design-system';
-import { designTokens } from '@/lib/design-tokens';
+import { designTokens, getFactionButtonColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Achievement } from '@/data/types';

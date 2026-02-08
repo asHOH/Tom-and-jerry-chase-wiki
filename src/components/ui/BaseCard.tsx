@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import { componentTokens, createStyleFromTokens, designTokens } from '@/lib/design-tokens';
+import { componentTokens, createStyleFromTokens, designTokens } from '@/lib/design';
 import Link from '@/components/Link';
 
 type BaseCardProps = {

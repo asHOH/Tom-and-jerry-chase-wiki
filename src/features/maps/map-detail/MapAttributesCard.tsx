@@ -2,7 +2,7 @@
 
 import { useSnapshot } from 'valtio';
 
-import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design-tokens';
+import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalMap } from '@/context/EditModeContext';
 import { Map, SingleItem } from '@/data/types';

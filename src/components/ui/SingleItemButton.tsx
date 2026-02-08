@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { getTypeLabelColors } from '@/lib/design-tokens';
+import { getTypeLabelColors } from '@/lib/design';
 import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { SingleItem } from '@/data/types';

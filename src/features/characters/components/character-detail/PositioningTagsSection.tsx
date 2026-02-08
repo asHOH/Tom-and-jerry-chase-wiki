@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design-tokens';
+import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design';
 import { setNestedProperty } from '@/lib/editUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterWithFaction } from '@/lib/types';

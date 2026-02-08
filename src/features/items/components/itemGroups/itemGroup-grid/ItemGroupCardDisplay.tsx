@@ -1,4 +1,4 @@
-import { designTokens } from '@/lib/design-tokens';
+import { designTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { ItemGroup } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';

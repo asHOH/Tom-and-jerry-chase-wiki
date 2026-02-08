@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import { getAvatarFilterColors, getPositioningTagColors } from '@/lib/design-tokens';
+import { getAvatarFilterColors, getPositioningTagColors } from '@/lib/design';
 import { getOriginalCharacterIds } from '@/lib/editUtils';
 import { useFilterState } from '@/lib/filterUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';

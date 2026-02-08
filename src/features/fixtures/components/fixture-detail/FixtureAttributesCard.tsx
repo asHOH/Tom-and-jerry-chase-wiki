@@ -2,7 +2,7 @@
 
 import { useSnapshot } from 'valtio';
 
-import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design-tokens';
+import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';

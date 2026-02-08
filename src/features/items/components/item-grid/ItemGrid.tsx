@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { getFactionButtonColors } from '@/lib/design-system';
+import { getFactionButtonColors } from '@/lib/design';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';

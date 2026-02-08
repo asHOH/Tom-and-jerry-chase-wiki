@@ -2,7 +2,7 @@
 
 import { useSnapshot } from 'valtio';
 
-import { getEntityTypeColors } from '@/lib/design-tokens';
+import { getEntityTypeColors } from '@/lib/design';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';

@@ -1,4 +1,4 @@
-import { componentTokens, createStyleFromTokens } from '@/lib/design-tokens';
+import { componentTokens, createStyleFromTokens } from '@/lib/design';
 
 type TagProps = {
   children: React.ReactNode;

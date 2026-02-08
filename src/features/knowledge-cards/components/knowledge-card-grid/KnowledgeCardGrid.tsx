@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { getFactionButtonColors } from '@/lib/design-system';
-import { getCardRankColors } from '@/lib/design-tokens';
+import { getCardRankColors, getFactionButtonColors } from '@/lib/design';
 import { createRankFilter, RANK_OPTIONS, useFilterState } from '@/lib/filterUtils';
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useMobile } from '@/hooks/useMediaQuery';

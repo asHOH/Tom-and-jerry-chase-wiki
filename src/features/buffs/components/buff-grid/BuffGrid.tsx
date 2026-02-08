@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { getBuffTypeColors } from '@/lib/design-tokens';
+import { getBuffTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Buff, buffTypelist } from '@/data/types';

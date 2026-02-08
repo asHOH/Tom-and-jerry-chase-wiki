@@ -7,7 +7,7 @@ import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { AssetManager } from '@/lib/assetManager';
-import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design-tokens';
+import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
 import { CharacterWithFaction } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';

@@ -1,4 +1,4 @@
-import { designTokens, getBuffGlobalColors, getBuffTypeColors } from '@/lib/design-tokens';
+import { designTokens, getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';

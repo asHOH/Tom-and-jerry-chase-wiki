@@ -2,7 +2,7 @@ import React from 'react';
 import uniq from 'lodash-es/uniq';
 import { proxy, useSnapshot } from 'valtio';
 
-import { getCardRankColors } from '@/lib/design-tokens';
+import { getCardRankColors } from '@/lib/design';
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';

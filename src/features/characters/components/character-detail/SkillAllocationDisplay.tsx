@@ -4,7 +4,7 @@ import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
-import { getSkillLevelColors } from '@/lib/design-tokens';
+import { getSkillLevelColors } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { getFactionButtonColors } from '@/lib/design-system';
+import { getFactionButtonColors } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';

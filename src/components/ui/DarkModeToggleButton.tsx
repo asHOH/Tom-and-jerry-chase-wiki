@@ -1,6 +1,6 @@
 import { m } from 'motion/react';
 
-import { getNavigationButtonClasses } from '@/lib/design-system';
+import { getNavigationButtonClasses } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 
 export function DarkModeToggleButton() {

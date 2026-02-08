@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import clsx from 'clsx';
 
 import { GameDataManager } from '@/lib/dataManager';
-import { getPositioningTagColors } from '@/lib/design-tokens';
+import { getPositioningTagColors } from '@/lib/design';
 import { CharacterDisplayProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
