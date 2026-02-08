@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { forwardRef } from 'react';
 import NextLink, { LinkProps as NextLinkProps } from 'next/link';
 
 import { useNavigation } from '@/hooks/useNavigation';
@@ -15,60 +15,66 @@ type LinkProps = NextLinkProps &
     preserveEditParam?: boolean;
   };
 
-const Link = ({ href, onClick, replace, preserveEditParam = false, ...props }: LinkProps) => {
-  const { navigate } = useNavigation();
+const Link = forwardRef<HTMLAnchorElement, LinkProps>(
+  ({ href, onClick, replace, preserveEditParam = false, ...props }, ref) => {
+    const { navigate } = useNavigation();
 
-  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    if (onClick) {
-      onClick(e);
-    }
+    const handleClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+      if (onClick) {
+        onClick(e);
+      }
 
-    if (e.defaultPrevented) {
-      return;
-    }
-    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
-      return;
-    }
+      if (e.defaultPrevented) {
+        return;
+      }
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+        return;
+      }
 
-    if (props.target === '_blank') {
-      return;
-    }
+      if (props.target === '_blank') {
+        return;
+      }
 
-    e.preventDefault();
+      e.preventDefault();
 
-    let targetPath: string;
-    if (typeof href === 'string') {
-      targetPath = href;
-    } else {
-      const { pathname, query } = href;
-      targetPath = pathname || '';
-      if (query) {
-        const queryString =
-          typeof query === 'string'
-            ? query
-            : new URLSearchParams(query as Record<string, string>).toString();
+      let targetPath: string;
+      if (typeof href === 'string') {
+        targetPath = href;
+      } else {
+        const { pathname, query } = href;
+        targetPath = pathname || '';
+        if (query) {
+          const queryString =
+            typeof query === 'string'
+              ? query
+              : new URLSearchParams(query as Record<string, string>).toString();
 
-        if (queryString) {
-          targetPath += `?${queryString}`;
+          if (queryString) {
+            targetPath += `?${queryString}`;
+          }
         }
       }
-    }
 
-    // Strip edit param when navigating to different pages (unless preserveEditParam is true)
-    if (!preserveEditParam) {
-      targetPath = stripEditParam(targetPath);
-    }
+      // Strip edit param when navigating to different pages (unless preserveEditParam is true)
+      if (!preserveEditParam) {
+        targetPath = stripEditParam(targetPath);
+      }
 
-    // Check if edit mode guard is active and wants to intercept
-    const canNavigate = checkEditModeGuard(targetPath);
-    if (!canNavigate) {
-      return; // Guard will show modal and handle navigation
-    }
+      // Check if edit mode guard is active and wants to intercept
+      const canNavigate = checkEditModeGuard(targetPath);
+      if (!canNavigate) {
+        return; // Guard will show modal and handle navigation
+      }
 
-    await navigate(targetPath, { replace: replace ?? false });
-  };
+      await navigate(targetPath, { replace: replace ?? false });
+    };
 
-  return <NextLink href={href} onClick={handleClick} replace={replace ?? false} {...props} />;
-};
+    return (
+      <NextLink href={href} onClick={handleClick} replace={replace ?? false} ref={ref} {...props} />
+    );
+  }
+);
+
+Link.displayName = 'Link';
 
 export default Link;

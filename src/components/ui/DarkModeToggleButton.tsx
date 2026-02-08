@@ -1,6 +1,6 @@
-import clsx from 'clsx';
 import { m } from 'motion/react';
 
+import { getNavigationButtonClasses } from '@/lib/design-system';
 import { useDarkMode } from '@/context/DarkModeContext';
 
 export function DarkModeToggleButton() {
@@ -9,14 +9,9 @@ export function DarkModeToggleButton() {
     <m.button
       type='button'
       onClick={toggleDarkMode}
-      className={clsx(
-        'flex h-10 w-10 items-center justify-center rounded-md border-none bg-gray-200 p-2 text-gray-900 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 md:min-h-11 lg:h-11 lg:w-11 lg:p-2.5 focus-visible:dark:outline-blue-300',
-        'dark:bg-slate-700 dark:text-gray-200',
-        'cursor-pointer'
-      )}
-      whileTap={{ scale: 0.85, rotate: 15 }}
-      whileHover={{ scale: 1.1 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className={getNavigationButtonClasses(false, false, true)}
+      whileTap={{ scale: 0.95, rotate: 15 }}
+      whileHover={{ scale: 1.05 }}
       aria-label='切换深色模式'
     >
       <svg

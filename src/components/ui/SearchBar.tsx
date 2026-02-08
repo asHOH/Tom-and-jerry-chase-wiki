@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import clsx from 'clsx';
-import { AnimatePresence } from 'motion/react'; // Import AnimatePresence
+import { AnimatePresence, m } from 'motion/react';
 
+import { getNavigationButtonClasses } from '@/lib/design-system';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { SearchIcon } from '@/components/icons/CommonIcons';
 
-import SearchDialog from './SearchDialog'; // Import the new SearchDialog component
+import SearchDialog from './SearchDialog';
 import Tooltip from './Tooltip';
 
 const SearchBar: React.FC<object> = () => {
@@ -44,21 +44,18 @@ const SearchBar: React.FC<object> = () => {
 
   return (
     <div>
-      <Tooltip content='搜索 (快捷键：/ )' className='border-none'>
-        <button
+      <Tooltip content='搜索 (快捷键：/ )' className='border-none' asChild>
+        <m.button
           type='button'
           onClick={handleOpenSearch}
-          className={clsx(
-            'rounded-md bg-gray-200 text-gray-900',
-            'dark:bg-slate-700 dark:text-gray-200',
-            'focus:ring-2 focus:ring-blue-500 focus:outline-none dark:focus:ring-blue-400',
-            'flex cursor-pointer items-center justify-center border-none transition-colors',
-            isMobile ? 'h-[40px] w-[40px] p-2' : 'h-11 w-11 p-2'
-          )}
+          className={getNavigationButtonClasses(false, false, true)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label='搜索'
         >
           {/* Search icon */}
-          <SearchIcon className='h-6 w-6 text-gray-900 dark:text-gray-200' />
-        </button>
+          <SearchIcon className='h-6 w-6 text-gray-900 dark:text-gray-200' strokeWidth={1.5} />
+        </m.button>
       </Tooltip>
 
       <AnimatePresence mode='wait'>

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
+import { getNavigationButtonClasses } from '@/lib/design-system';
 import { supabase } from '@/lib/supabase/client';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
@@ -20,19 +21,7 @@ import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import SearchBar from './ui/SearchBar';
 import Tooltip from './ui/Tooltip';
 
-// Helper function for button styling
-const getButtonClassName = (isNavigating: boolean, isActive: boolean) => {
-  const baseClasses =
-    'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 md:px-2.5 md:min-h-[44px] lg:px-3.5 lg:text-base';
-
-  const stateClasses = isNavigating
-    ? 'bg-gray-400 text-white cursor-not-allowed opacity-80 pointer-events-none'
-    : isActive
-      ? 'bg-blue-600 text-white dark:bg-blue-700'
-      : 'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600';
-
-  return clsx(baseClasses, stateClasses);
-};
+const MotionLink = m(Link);
 
 type TabNavigationProps = {
   showDetailToggle?: boolean;
@@ -195,10 +184,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         {/* Left-aligned navigation buttons */}
         <div className={clsx('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
           <Tooltip content='首页' className='border-none'>
-            <Link
+            <MotionLink
               href='/'
               className={clsx(
-                getButtonClassName(navigatingTo === '/', isHomeActive()),
+                getNavigationButtonClasses(navigatingTo === '/', isHomeActive()),
                 'relative',
                 homeButtonSizing
               )}
@@ -209,18 +198,20 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               }}
               tabIndex={navigatingTo === '/' ? -1 : 0}
               aria-disabled={navigatingTo === '/'}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <HomeIcon className='size-6 lg:hidden' />
               <span className='hidden lg:inline'>首页</span>
               <span className='sr-only lg:hidden'>首页</span>
-            </Link>
+            </MotionLink>
           </Tooltip>
           {primaryTabs.map((tab) => (
             <Tooltip key={tab.id} content={tab.label} className='border-none'>
-              <Link
+              <MotionLink
                 href={tab.href}
                 className={clsx(
-                  getButtonClassName(navigatingTo === tab.href, isTabActive(tab.href)),
+                  getNavigationButtonClasses(navigatingTo === tab.href, isTabActive(tab.href)),
                   'gap-0 md:gap-1 lg:gap-2',
                   tabMinWidthClass
                 )}
@@ -231,6 +222,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 }}
                 tabIndex={navigatingTo === tab.href ? -1 : 0}
                 aria-disabled={navigatingTo === tab.href}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Image
                   src={tab.iconSrc}
@@ -241,26 +234,24 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 />
                 <span className='hidden md:inline'>{tab.label}</span>
                 <span className='sr-only md:hidden'>{tab.label}</span>
-              </Link>
+              </MotionLink>
             </Tooltip>
           ))}
           {!!overflowTabs.length && (
             <div className='relative'>
-              <button
+              <m.button
                 type='button'
                 aria-label='更多分类'
-                className={clsx(
-                  getButtonClassName(false, overflowOpen),
-                  tabMinWidthClass,
-                  'px-2 md:px-2.5 lg:px-3.5'
-                )}
+                className={getNavigationButtonClasses(false, overflowOpen, true)}
                 onClick={() => {
                   setOverflowOpen((prev) => !prev);
                   setUserDropdownOpen(false);
                 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 ⋮
-              </button>
+              </m.button>
               <AnimatePresence initial={false}>
                 {overflowOpen && (
                   <m.div
@@ -283,7 +274,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           <Link
                             href={tab.href}
                             className={clsx(
-                              'flex items-center gap-2 px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                              'flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
                               isTabActive(tab.href) && 'font-semibold'
                             )}
                             onClick={() => {
@@ -378,14 +369,16 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY && (
               <div className='relative' data-user-dropdown-root>
                 <Tooltip content='用户设置' className='border-none'>
-                  <button
+                  <m.button
                     type='button'
                     aria-label='用户设置'
-                    className={clsx(getButtonClassName(false, userDropdownOpen))}
+                    className={getNavigationButtonClasses(false, userDropdownOpen, true)}
                     onClick={() => setUserDropdownOpen((prev) => !prev)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <UserCircleIcon className='size-6' strokeWidth={1.5} />
-                  </button>
+                  </m.button>
                 </Tooltip>
                 <AnimatePresence initial={false}>
                   {userDropdownOpen && (
@@ -402,14 +395,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       transition={{ duration: 0.14, ease: 'easeOut' }}
                       style={{ transformOrigin: 'top right' }}
                     >
-                      <ul>
-                        <li className='px-4 py-2 text-gray-800 dark:text-gray-200'>
+                      <ul className='py-1'>
+                        <li className='px-4 py-2 text-sm text-gray-800 dark:text-gray-200'>
                           你好，{nickname}
                         </li>
                         <li>
                           <button
                             type='button'
-                            className='w-full cursor-pointer px-4 py-2 text-left text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                            className='w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
                             onClick={() => {
                               setUserDropdownOpen(false);
                               setChangePasswordOpen(true);
@@ -419,14 +412,17 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           </button>
                         </li>
                         {(role == 'Coordinator' || role == 'Reviewer') && (
-                          <li className='cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700'>
-                            <Link href='/admin/' className='block text-gray-800 dark:text-gray-200'>
+                          <li>
+                            <Link
+                              href='/admin/'
+                              className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                            >
                               进入管理面板
                             </Link>
                           </li>
                         )}
                         {!!signOutError && (
-                          <li className='px-4 py-2 text-red-600 dark:text-red-400'>
+                          <li className='px-4 py-2 text-sm text-red-600 dark:text-red-400'>
                             {signOutError}
                           </li>
                         )}
@@ -434,7 +430,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           <button
                             type='button'
                             className={clsx(
-                              'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-gray-800 dark:text-gray-200',
+                              'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-sm text-gray-800 dark:text-gray-200',
                               signingOut
                                 ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
                                 : 'hover:bg-gray-100 dark:hover:bg-slate-700'

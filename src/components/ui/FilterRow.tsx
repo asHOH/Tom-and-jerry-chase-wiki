@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import clsx from 'clsx';
+import { m, MotionStyle } from 'motion/react';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 
@@ -65,7 +66,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
             const finalStyle = provided;
             const labelNode = getOptionLabel ? getOptionLabel(opt as T, active) : String(opt);
             const button = (
-              <button
+              <m.button
                 key={String(opt)}
                 type='button'
                 onClick={() => onToggle(opt as T)}
@@ -76,11 +77,13 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                     : 'bg-gray-100 text-gray-400 dark:bg-slate-800 dark:text-gray-500',
                   getButtonClassName?.(opt as T, active)
                 )}
-                style={finalStyle}
+                style={finalStyle as MotionStyle}
                 disabled={getButtonDisabled?.(opt as T, active)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {labelNode}
-              </button>
+              </m.button>
             );
             return renderOption ? renderOption(opt as T, button) : button;
           })}
