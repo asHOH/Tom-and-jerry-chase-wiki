@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { useMediaQuery } from 'usehooks-ts';
 
 import { getNavigationButtonClasses } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
@@ -48,6 +49,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const { nickname, role, clearData: clearUserData } = useUser();
   const { items, isActive } = useNavigationTabs();
   const isMobile = useMobile();
+  const isMd = useMediaQuery('(min-width: 768px)');
+  const isLg = useMediaQuery('(min-width: 1024px)');
   const shouldReduceMotion = useReducedMotion();
   const { isNavigatingTo } = useNavigationProgress();
 
@@ -178,7 +181,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
       <div className='mx-auto flex max-w-7xl items-center justify-between gap-4 px-4'>
         {/* Left-aligned navigation buttons */}
         <div className={clsx('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
-          <Tooltip content='首页' className='border-none'>
+          <Tooltip content='首页' className='border-none' disabled={isLg}>
             <MotionLink
               href='/'
               className={clsx(
@@ -205,7 +208,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             </MotionLink>
           </Tooltip>
           {primaryTabs.map((tab) => (
-            <Tooltip key={tab.id} content={tab.label} className='border-none'>
+            <Tooltip key={tab.id} content={tab.label} className='border-none' disabled={isMd}>
               <MotionLink
                 href={tab.href}
                 className={clsx(
