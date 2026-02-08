@@ -54,7 +54,7 @@ export default function CharacterDisplay({
         src={imageUrl}
         alt={`${name}`}
         size='CHARACTER_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-40 w-auto' : ''}`}
+        className={`group-hover:scale-105 ${isMobile ? 'h-40 w-auto' : ''}`}
         preload={preload}
       />
       <div className={`${isMobile ? 'pb-3' : 'px-3 pb-5'} pt-1 text-center`}>

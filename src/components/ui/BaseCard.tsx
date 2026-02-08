@@ -29,7 +29,7 @@ export default function BaseCard({
   href,
   'aria-label': ariaLabel,
 }: BaseCardProps) {
-  const isClickable = !!onClick;
+  const isClickable = !!onClick || !!href;
 
   const getVariantStyles = () => {
     const baseCardStyle = createStyleFromTokens(componentTokens.card.base);
@@ -57,6 +57,7 @@ export default function BaseCard({
           position: 'relative' as const,
           overflow: 'hidden',
           padding: 0,
+          transition: designTokens.transitions.hover,
         };
       case 'details':
         return {
@@ -87,7 +88,7 @@ export default function BaseCard({
   const content = (
     <div
       className={clsx(
-        'flex-1 bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none',
+        'group flex-1 bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none',
         className
       )}
       {...cardProps}
