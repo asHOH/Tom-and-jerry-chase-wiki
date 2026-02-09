@@ -4,13 +4,24 @@ import clsx from 'clsx';
 import LoadingSpinner from './LoadingSpinner';
 import {
   Skeleton,
+  SkeletonBuffCard,
   SkeletonCharacterCard,
   SkeletonCharacterDetail,
+  SkeletonDetailLayout,
+  SkeletonItemCard,
   SkeletonKnowledgeCard,
 } from './Skeleton';
 
 interface LoadingStateProps {
-  type?: 'spinner' | 'skeleton' | 'character-grid' | 'knowledge-cards' | 'character-detail';
+  type?:
+    | 'spinner'
+    | 'skeleton'
+    | 'character-grid'
+    | 'knowledge-cards'
+    | 'character-detail'
+    | 'item-grid'
+    | 'buff-grid'
+    | 'detail';
   message?: string;
   className?: string;
   count?: number; // For grid layouts
@@ -131,6 +142,77 @@ export default function LoadingState({
         </div>
       );
 
+    case 'detail':
+      return (
+        <div className={className}>
+          <SkeletonDetailLayout animate={animate} sectionCount={3} />
+        </div>
+      );
+
+    case 'item-grid':
+      return (
+        <div className={clsx('space-y-8', className)}>
+          {/* Header skeleton */}
+          <div className='space-y-4 text-center'>
+            <Skeleton className='mx-auto h-10 w-1/3' animate={animate} />
+            <Skeleton className='mx-auto h-5 w-2/3' animate={animate} />
+          </div>
+
+          {/* Filters skeleton */}
+          <div className='space-y-3'>
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className='flex flex-wrap items-center justify-center gap-2'>
+                <Skeleton className='h-6 w-20' animate={animate} />
+                <div className='flex flex-wrap gap-2'>
+                  {Array.from({ length: 4 }).map((_, j) => (
+                    <Skeleton key={j} className='h-8 w-16' animate={animate} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Item grid skeleton */}
+          <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
+            {Array.from({ length: count }).map((_, i) => (
+              <div key={i} className={`animate-fadeInUp grid-item-${(i % 8) + 1}`}>
+                <SkeletonItemCard animate={animate} tagCount={2} />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case 'buff-grid':
+      return (
+        <div className={clsx('space-y-8', className)}>
+          {/* Header skeleton */}
+          <div className='space-y-4 text-center'>
+            <Skeleton className='mx-auto h-10 w-1/3' animate={animate} />
+            <Skeleton className='mx-auto h-5 w-2/3' animate={animate} />
+          </div>
+
+          {/* Filters skeleton */}
+          <div className='flex items-center justify-center gap-4'>
+            <Skeleton className='h-6 w-20' animate={animate} />
+            <div className='flex flex-wrap gap-2'>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className='h-8 w-16' animate={animate} />
+              ))}
+            </div>
+          </div>
+
+          {/* Buff grid skeleton */}
+          <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
+            {Array.from({ length: count }).map((_, i) => (
+              <div key={i} className={`animate-fadeInUp grid-item-${(i % 8) + 1}`}>
+                <SkeletonBuffCard animate={animate} />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
     default:
       return (
         <div className={clsx(baseClasses, 'py-8', className)}>
@@ -153,10 +235,8 @@ export function PageLoadingState({
   children?: React.ReactNode;
 }) {
   return (
-    <div className='mx-auto max-w-6xl space-y-6 p-6 pt-20'>
-      <div className='animate-pulse'>
-        {children || <LoadingState type={type} message={message} />}
-      </div>
+    <div className='mx-auto max-w-6xl space-y-6 p-6'>
+      {children || <LoadingState type={type} message={message} />}
     </div>
   );
 }

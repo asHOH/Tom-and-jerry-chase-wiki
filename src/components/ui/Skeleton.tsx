@@ -108,6 +108,53 @@ export function SkeletonKnowledgeCard({ animate = true }: { animate?: boolean })
 }
 
 /**
+ * Skeleton for item-style card
+ */
+export function SkeletonItemCard({
+  animate = true,
+  tagCount = 2,
+}: {
+  animate?: boolean;
+  tagCount?: number;
+}) {
+  return (
+    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+      <Skeleton className='h-48 w-full rounded-none' animate={animate} />
+      <div className='space-y-2 px-3 pt-2 pb-4 text-center'>
+        <Skeleton className='mx-auto h-4 w-3/4' animate={animate} />
+        {tagCount > 0 && (
+          <div className='flex flex-wrap justify-center gap-2'>
+            {Array.from({ length: tagCount }).map((_, i) => (
+              <Skeleton key={i} className='h-4 w-12 rounded-full' animate={animate} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Skeleton for buff-style card
+ */
+export function SkeletonBuffCard({ animate = true }: { animate?: boolean }) {
+  return (
+    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+      <div className='flex items-center gap-3 border border-dotted border-gray-200 p-2 dark:border-slate-600'>
+        <Skeleton className='h-10 w-10 rounded' animate={animate} />
+        <div className='flex-1 space-y-2'>
+          <Skeleton className='h-4 w-3/4' animate={animate} />
+          <div className='flex gap-2'>
+            <Skeleton className='h-4 w-12 rounded-full' animate={animate} />
+            <Skeleton className='h-4 w-10 rounded-full' animate={animate} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
  * Skeleton for article card
  */
 export function SkeletonArticleCard({ animate = true }: { animate?: boolean }) {
@@ -142,44 +189,50 @@ export function SkeletonArticleCard({ animate = true }: { animate?: boolean }) {
  * Skeleton for character detail page
  */
 export function SkeletonCharacterDetail({ animate = true }: { animate?: boolean }) {
-  return (
-    <div className='mx-auto max-w-4xl space-y-8 p-6'>
-      <div className='animate-pulse'>
-        {/* Header */}
-        <div className='mb-8 space-y-4 text-center'>
-          <Skeleton className='mx-auto h-12 w-1/2' animate={animate} />
-          <Skeleton className='mx-auto h-6 w-3/4' animate={animate} />
-        </div>
+  return <SkeletonDetailLayout animate={animate} sectionCount={4} />;
+}
 
-        {/* Character image and basic info */}
-        <div className='mb-8 flex flex-col gap-8 md:flex-row'>
-          <div className='md:w-1/3'>
-            <Skeleton className='mx-auto aspect-square w-full max-w-sm' animate={animate} />
-          </div>
-          <div className='space-y-4 md:w-2/3'>
-            <SkeletonText lines={3} animate={animate} />
-            <div className='grid grid-cols-2 gap-4'>
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className='space-y-1'>
-                  <Skeleton className='h-4 w-16' animate={animate} />
-                  <Skeleton className='h-6 w-12' animate={animate} />
-                </div>
-              ))}
+/**
+ * Skeleton for detail pages
+ */
+export function SkeletonDetailLayout({
+  animate = true,
+  sectionCount = 3,
+  className = '',
+}: {
+  animate?: boolean;
+  sectionCount?: number;
+  className?: string;
+}) {
+  return (
+    <div className={clsx('space-y-8', className)}>
+      <div className='flex flex-col gap-8 md:flex-row'>
+        <div className='md:w-1/3'>
+          <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+            <Skeleton className='h-48 w-full rounded-none' animate={animate} />
+            <div className='space-y-3 px-4 py-4'>
+              <Skeleton className='h-6 w-3/4' animate={animate} />
+              <Skeleton className='h-4 w-1/2' animate={animate} />
+              <div className='flex flex-wrap gap-2'>
+                <Skeleton className='h-4 w-16 rounded-full' animate={animate} />
+                <Skeleton className='h-4 w-12 rounded-full' animate={animate} />
+              </div>
+              <div className='space-y-2 pt-2'>
+                <Skeleton className='h-3 w-full' animate={animate} />
+                <Skeleton className='h-3 w-5/6' animate={animate} />
+                <Skeleton className='h-3 w-2/3' animate={animate} />
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Skills section */}
-        <div className='space-y-6'>
-          <Skeleton className='h-8 w-32' animate={animate} />
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className='space-y-4 rounded-lg border p-4'>
-              <div className='flex items-center gap-4'>
-                <Skeleton className='h-12 w-12' animate={animate} />
-                <div className='flex-1'>
-                  <Skeleton className='mb-2 h-6 w-32' animate={animate} />
-                  <SkeletonText lines={2} animate={animate} />
-                </div>
+        <div className='space-y-6 md:w-2/3'>
+          {Array.from({ length: sectionCount }).map((_, i) => (
+            <div key={i} className='space-y-3'>
+              <Skeleton className='h-5 w-32' animate={animate} />
+              <div className='rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+                <Skeleton className='h-4 w-full' animate={animate} />
+                <Skeleton className='mt-2 h-4 w-5/6' animate={animate} />
+                <Skeleton className='mt-2 h-4 w-3/4' animate={animate} />
               </div>
             </div>
           ))}

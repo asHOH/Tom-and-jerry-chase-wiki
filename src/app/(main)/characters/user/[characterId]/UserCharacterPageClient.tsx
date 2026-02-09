@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { CharacterWithFaction } from '@/lib/types';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { PageLoadingState } from '@/components/ui/LoadingState';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
 import { characters } from '@/data';
 
@@ -28,7 +29,7 @@ export default function UserCharacterPageClient() {
   }, [characterId, isEditMode, isLoading]);
 
   if (isLoading || isCharacterLoading) {
-    return <div className='dark:text-white'>加载中...</div>;
+    return <PageLoadingState type='character-detail' message='加载角色详情中...' />;
   }
 
   // FIXME: i want to move the logic to another file

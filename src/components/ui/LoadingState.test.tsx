@@ -37,11 +37,40 @@ describe('LoadingState', () => {
     );
   });
 
+  it('renders item-grid type with correct elements', () => {
+    const { container } = render(<LoadingState type='item-grid' />);
+
+    const grid = container.querySelector('.grid');
+    expect(grid).toBeInTheDocument();
+    expect(grid).toHaveClass(
+      'grid-cols-2',
+      'sm:grid-cols-3',
+      'md:grid-cols-4',
+      'lg:grid-cols-5',
+      'xl:grid-cols-6'
+    );
+  });
+
+  it('renders buff-grid type with correct elements', () => {
+    const { container } = render(<LoadingState type='buff-grid' />);
+
+    const grid = container.querySelector('.grid');
+    expect(grid).toBeInTheDocument();
+    expect(grid).toHaveClass(
+      'grid-cols-2',
+      'sm:grid-cols-3',
+      'md:grid-cols-4',
+      'lg:grid-cols-5',
+      'xl:grid-cols-6'
+    );
+  });
+
   it('renders character-detail type', () => {
     const { container } = render(<LoadingState type='character-detail' />);
 
-    // Should have character detail skeleton structure
-    expect(container.querySelector('.max-w-4xl')).toBeInTheDocument();
+    // Should have character detail layout columns
+    expect(container.querySelector('.md\\:w-1\/3')).toBeInTheDocument();
+    expect(container.querySelector('.md\\:w-2\/3')).toBeInTheDocument();
   });
 
   it('renders skeleton type with custom count', () => {

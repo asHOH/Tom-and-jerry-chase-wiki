@@ -15,6 +15,7 @@ import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeGuard from '@/components/ui/EditModeGuard';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';
+import { PageLoadingState } from '@/components/ui/LoadingState';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 import { characters } from '@/data';
 
@@ -87,6 +88,10 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     },
     [publishChanges]
   );
+
+  if (!character) {
+    return <PageLoadingState type='character-detail' message='加载角色详情中...' />;
+  }
 
   return (
     <>
