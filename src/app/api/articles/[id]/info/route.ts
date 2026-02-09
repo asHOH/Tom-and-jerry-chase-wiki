@@ -5,7 +5,7 @@ import { requireRole } from '@/lib/auth/requireRole';
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id?: string }> }) {
   void request;
   try {
-    const guard = await requireRole(['Reviewer', 'Coordinator']);
+    const guard = await requireRole(['Contributor', 'Reviewer', 'Coordinator']);
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
 
