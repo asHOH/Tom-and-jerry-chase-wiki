@@ -69,7 +69,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
         className={clsx('flex flex-col bg-white p-6 shadow-xl dark:bg-slate-800', pickerClasses)}
       >
         <h2 className='mb-4 text-2xl font-bold text-gray-900 dark:text-white'>选择知识卡</h2>
-        <div className='flex-grow overflow-y-auto'>
+        <div className='min-h-0 flex-1 overflow-y-auto'>
           <div className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7'>
             {Object.values(allCards).map((card: Card) => {
               const cardIdWithRank = `${card.rank}-${card.id}`;
@@ -102,7 +102,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
             })}
           </div>
         </div>
-        <div className='mt-4 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-4 sm:flex-row dark:border-slate-700'>
+        <div className='mt-4 flex flex-none flex-col items-center justify-between gap-4 border-t border-gray-200 pt-4 sm:flex-row dark:border-slate-700'>
           <div className='text-center text-gray-800 sm:text-left dark:text-gray-200'>
             <span className='font-bold'>总知识量: {totalCost}</span>
             {totalCost > 21 && (
