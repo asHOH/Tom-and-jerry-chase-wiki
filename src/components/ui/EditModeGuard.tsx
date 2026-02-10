@@ -117,7 +117,9 @@ export default function EditModeGuard({
 
       // Navigate after saving
       if (pendingNavigation === 'back') {
-        window.history.back();
+        // We pushed a state to intercept the back button, so go back 2 steps
+        // to actually navigate to the previous page
+        window.history.go(-2);
       } else if (pendingNavigation) {
         router.push(pendingNavigation);
       }
@@ -135,7 +137,9 @@ export default function EditModeGuard({
 
     // Navigate after discarding
     if (pendingNavigation === 'back') {
-      window.history.back();
+      // We pushed a state to intercept the back button, so go back 2 steps
+      // to actually navigate to the previous page
+      window.history.go(-2);
     } else if (pendingNavigation) {
       router.push(pendingNavigation);
     }
