@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { createPortal } from 'react-dom';
 
 import { CheckBadgeIcon, CloseIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
@@ -71,7 +72,7 @@ export default function EditModeToolbar({
     onSaveDraft();
   };
 
-  return (
+  const toolbarContent = (
     <m.div
       className='fixed bottom-4 left-1/2 z-9999 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2'
       initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
@@ -231,4 +232,10 @@ export default function EditModeToolbar({
       </div>
     </m.div>
   );
+
+  if (typeof document !== 'undefined') {
+    return createPortal(toolbarContent, document.body);
+  }
+
+  return null;
 }
