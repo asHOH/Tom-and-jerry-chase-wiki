@@ -29,7 +29,7 @@ jest.mock('../../../../context/EditModeContext', () => ({
 }));
 
 // Mock the design-tokens module
-jest.mock('../../../../lib/design-tokens', () => ({
+jest.mock('../../../../lib/design/tokens', () => ({
   getSkillLevelColors: jest.fn(() => ({
     backgroundColor: '#f0f0f0',
     borderColor: '#333',

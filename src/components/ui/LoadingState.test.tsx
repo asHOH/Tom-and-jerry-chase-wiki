@@ -69,8 +69,8 @@ describe('LoadingState', () => {
     const { container } = render(<LoadingState type='character-detail' />);
 
     // Should have character detail layout columns
-    expect(container.querySelector('.md\\:w-1\/3')).toBeInTheDocument();
-    expect(container.querySelector('.md\\:w-2\/3')).toBeInTheDocument();
+    expect(container.querySelector('.md\\:w-1\\/3')).toBeInTheDocument();
+    expect(container.querySelector('.md\\:w-2\\/3')).toBeInTheDocument();
   });
 
   it('renders skeleton type with custom count', () => {
