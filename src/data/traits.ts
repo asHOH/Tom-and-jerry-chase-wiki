@@ -902,6 +902,56 @@ const traits: Record<string, Trait> = {
     ],
   },
 
+  '20260210-01': {
+    description: '遁地中的兔八哥不受恶魔传送门影响。',
+    group: [{ name: '狡兔三窟', type: 'skill' }, [{ name: '恶魔之门', type: 'entity' }]],
+  },
+
+  '20260210-02': {
+    description:
+      '猫咪处于大星星/粉笔猫变身期间会免疫其它变身效果。仙女鼠8星命中粉笔猫时仍会正常获得星星返还。',
+    group: [
+      [
+        { name: '大星星', type: 'entity' },
+        { name: '星星', type: 'entity' },
+      ],
+      { name: '线条猫', type: 'entity' },
+    ],
+  },
+
+  '20260210-03': {
+    description: '长枪无法对被老鼠夹夹住的猫咪造成伤害。',
+    group: [
+      { name: '打开的老鼠夹', type: 'entity' },
+      { name: '长枪', type: 'entity' },
+    ],
+  },
+
+  '20260210-04': {
+    description: '旋刃剑舞第1段释放期间，被风墙挤开时会被“反弹”，向反方向运动。',
+    group: [
+      { name: '旋刃剑舞', type: 'skill' },
+      { name: '风之屏障', type: 'entity' },
+    ],
+  },
+
+  '20260210-05': {
+    description: '果子已无法被恶魔之门传送。',
+    group: [
+      { name: '果子', type: 'entity' },
+      { name: '恶魔之门', type: 'entity' },
+    ],
+  },
+
+  '20260210-06': {
+    description:
+      '比利鼠仍会受到手型枪的控制效果。若比利鼠被3级手型枪命中，随后在眩晕期间被小泰克命中，则小泰克会将比利鼠抓起（与正常抓起虚弱老鼠的表现类似）。',
+    group: [
+      { name: '比利鼠', type: 'entity' },
+      { name: '手型枪', type: 'entity' },
+      { name: '泰克', type: 'entity' },
+    ],
+  },
   ...characterRelations,
 };
 
