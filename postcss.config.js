@@ -1,6 +1,10 @@
 module.exports = {
   plugins: {
     '@tailwindcss/postcss': {},
-    'postcss-preset-env': {},
+    'postcss-preset-env': {
+      features: {
+        'cascade-layers': false,
+      },
+    },
   },
 };
