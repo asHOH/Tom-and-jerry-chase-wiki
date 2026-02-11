@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import clsx from 'clsx';
+import { createPortal } from 'react-dom';
 
 import { AssetManager } from '@/lib/assetManager';
 import { formatArticleDate } from '@/lib/dateUtils';
@@ -175,9 +176,12 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
   const [showAutoNumbering, setShowAutoNumbering] = useState(false);
+  const [readingProgress, setReadingProgress] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   // Persist auto-numbering preference
   useEffect(() => {
+    setMounted(true);
     const saved = localStorage.getItem('wiki_auto_numbering_enabled');
     if (saved !== null) {
       setShowAutoNumbering(saved === 'true');
@@ -187,6 +191,18 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
   useEffect(() => {
     localStorage.setItem('wiki_auto_numbering_enabled', String(showAutoNumbering));
   }, [showAutoNumbering]);
+
+  useEffect(() => {
+    const updateProgress = () => {
+      const currentScroll = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        setReadingProgress((currentScroll / scrollHeight) * 100);
+      }
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    return () => window.removeEventListener('scroll', updateProgress);
+  }, []);
 
   const articleContent = useMemo(
     () => article.latest_version?.content ?? '',
@@ -472,6 +488,18 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
 
   return (
     <div className={`container mx-auto ${isMobile ? 'px-1 py-2' : 'px-6 py-8'} max-w-6xl`}>
+      {/* Reading Progress Bar - Teleported to body to escape transformed containers */}
+      {mounted &&
+        createPortal(
+          <div className='pointer-events-none fixed top-0 left-0 z-[9999] h-[2px] w-full bg-transparent'>
+            <div
+              className='h-full bg-blue-500/80 transition-all duration-150 ease-out dark:bg-blue-400/80'
+              style={{ width: `${readingProgress}%` }}
+            />
+          </div>,
+          document.body
+        )}
+
       <div className='flex flex-col lg:flex-row lg:items-start lg:gap-10'>
         {hasToc && (
           <aside className='sticky top-24 hidden h-max max-h-[75vh] overflow-auto rounded-lg border border-gray-200 bg-white/60 p-4 shadow-sm backdrop-blur lg:block lg:w-64 dark:border-gray-700 dark:bg-gray-900/40'>
