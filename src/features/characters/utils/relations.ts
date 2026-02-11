@@ -139,13 +139,24 @@ export function getCharacterRelation(id: string): CharacterRelation {
     collaboratorsFromOpponents
   );
 
-  return {
+  const merged = {
     ...traitRelations,
     counters: mergedCounters,
     counteredBy: mergedCounteredBy,
     counterEachOther: mergedCounterEachOther,
     collaborators: mergedCollaborators,
   };
+
+  const legacyRelations = characters[id] as Partial<CharacterRelation>;
+  const legacyKeys = Object.keys(defaultRelation) as Array<keyof CharacterRelation>;
+  legacyKeys.forEach((key) => {
+    const legacyItems = legacyRelations?.[key];
+    if (Array.isArray(legacyItems) && legacyItems.length > 0) {
+      merged[key] = mergeRelationItems(legacyItems, merged[key]);
+    }
+  });
+
+  return merged;
 }
 
 export const getSpecialSkillRelationSummary = (
