@@ -635,14 +635,6 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
               showAutoNumbering && 'article-content-auto-numbered'
             )}
           >
-            <style jsx global>{`
-              .article-content-auto-numbered [data-heading-prefix]::before {
-                content: attr(data-heading-prefix) ' ';
-                margin-right: 0.5em;
-                font-weight: normal;
-                opacity: 0.8;
-              }
-            `}</style>
             <RichTextDisplay content={article.latest_version?.content} />
           </div>
 

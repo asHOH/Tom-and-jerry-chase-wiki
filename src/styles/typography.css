@@ -115,3 +115,11 @@
   overflow-x: auto;
   margin: 1em 0;
 }
+
+/* Auto-numbered headings */
+.article-content-auto-numbered [data-heading-prefix]::before {
+  content: attr(data-heading-prefix) ' ';
+  margin-right: 0.125em;
+  font-weight: normal;
+  opacity: 0.8;
+}
