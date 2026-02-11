@@ -1,8 +1,7 @@
-import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { requireRole } from '@/lib/auth/requireRole';
-import { CACHE_TAGS } from '@/lib/cacheTags';
+import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 
 export async function POST(
   request: NextRequest,
@@ -87,15 +86,17 @@ export async function POST(
 
       const articleId = (versionRow as { article_id?: string | null } | null)?.article_id ?? null;
       if (articleId) {
-        revalidateTag(CACHE_TAGS.article(articleId), 'max');
-        revalidateTag(CACHE_TAGS.articleVersions(articleId), 'max');
+        // Nuke specific article versions to ensure fresh content
+        await invalidateCache(CACHE_TAGS.article(articleId), 'nuke');
+        await invalidateCache(CACHE_TAGS.articleVersions(articleId), 'nuke');
       }
     } catch (e) {
       console.error('Revalidation lookup error:', e);
     }
 
-    revalidateTag(CACHE_TAGS.articles, 'max');
-    revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
+    // Expire public lists (SWR strategy)
+    await invalidateCache(CACHE_TAGS.articles, 'expire');
+    await invalidateCache(CACHE_TAGS.sitemapArticles, 'expire');
 
     return NextResponse.json({
       message: `Article version successfully ${action}${action === 'approve' ? 'd' : action === 'reject' ? 'ed' : 'd'}`,

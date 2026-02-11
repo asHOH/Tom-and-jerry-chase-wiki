@@ -1,7 +1,6 @@
-import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
-import { CACHE_TAGS } from '@/lib/cacheTags';
+import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
@@ -67,11 +66,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to submit article version' }, { status: 500 });
     }
 
-    // Mark lists and the new article as stale (SWR).
-    revalidateTag(CACHE_TAGS.articles, 'max');
-    revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
-    revalidateTag(CACHE_TAGS.article(newArticleId), 'max');
-    revalidateTag(CACHE_TAGS.articleVersions(newArticleId), 'max');
+    // Next 16 Granular Cache Strategy:
+    // 1. Nuke specific article metadata so users see the new page immediately.
+    // 2. Expire lists so they update in background without blocking redirection.
+    await invalidateCache(CACHE_TAGS.article(newArticleId), 'nuke');
+    await invalidateCache(CACHE_TAGS.articleVersions(newArticleId), 'nuke');
+    await invalidateCache(CACHE_TAGS.articles, 'expire');
+    await invalidateCache(CACHE_TAGS.sitemapArticles, 'expire');
 
     return NextResponse.json({
       message: 'Article submitted successfully',
