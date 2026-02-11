@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import clsx from 'clsx';
 
@@ -181,14 +181,23 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
     [article.latest_version?.content]
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = contentRef.current;
     if (!container) {
       setTocItems([]);
       return;
     }
 
+    let isIterating = false;
+    let observer: MutationObserver | null = null;
+
     const generateTocItems = () => {
+      if (isIterating) return;
+      isIterating = true;
+
+      // Stop observing while we make changes
+      observer?.disconnect();
+
       const headingElements = Array.from(
         container.querySelectorAll<HTMLHeadingElement>('h1, h2, h3, h4, h5, h6')
       );
@@ -331,17 +340,21 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
           ? prev
           : (generatedItems[0]?.id ?? '')
       );
+
+      // Re-observe
+      if (container) {
+        observer?.observe(container, { childList: true, subtree: true, characterData: true });
+      }
+      isIterating = false;
     };
 
-    generateTocItems();
-
-    const observer = new MutationObserver(() => {
+    observer = new MutationObserver(() => {
       generateTocItems();
     });
 
-    observer.observe(container, { childList: true, subtree: true, characterData: true });
+    generateTocItems();
 
-    return () => observer.disconnect();
+    return () => observer?.disconnect();
   }, [articleContent, showAutoNumbering]);
 
   useEffect(() => {
