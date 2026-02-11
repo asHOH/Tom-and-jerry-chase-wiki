@@ -75,5 +75,5 @@ export const filterTraitsBySingleItem = (
   });
 
   // 合并trait，原生trait在前，buff相关trait在后
-  return [...baseTraits, ...buffTraits];
+  return [...baseTraits, ...buffTraits].filter((trait) => !trait.relation);
 };

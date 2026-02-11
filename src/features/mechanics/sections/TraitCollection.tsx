@@ -12,7 +12,7 @@ const processStrings = (input: string | string[]): string =>
   Array.isArray(input) ? input.join('\n') : input;
 
 export default function TraitCollsion() {
-  const allTraits = Object.values(traits);
+  const allTraits = Object.values(traits).filter((trait) => !trait.relation);
   const topRef = useRef<HTMLDivElement>(null);
 
   // 分页状态
