@@ -179,6 +179,10 @@ const nextConfig: NextConfig = {
   reactCompiler: {
     compilationMode: 'annotation' as const,
   },
+  experimental: {
+    // Enable typed routes for better navigation safety
+    typedRoutes: true,
+  },
 };
 
 const finalConfig = withBundleAnalyzer(withSerwist(withMDX(nextConfig)));
