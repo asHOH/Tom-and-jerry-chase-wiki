@@ -2,6 +2,8 @@
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 240, 240, 240;
   --nav-z-index: 9999;
+  --nav-height: 70px;
+  --offline-banner-height: 40px;
 }
 
 .dark {

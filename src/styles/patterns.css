@@ -95,7 +95,7 @@
 
 /* Styles for content to account for fixed navbar */
 .content-container {
-  padding-top: 70px !important; /* Account for navbar height */
+  padding-top: var(--nav-height) !important;
   margin-top: 0 !important;
   position: relative !important;
   z-index: 1 !important;
@@ -103,14 +103,14 @@
 
 /* When offline banner is visible, add extra padding */
 body.offline-banner-visible .content-container {
-  padding-top: 110px !important; /* navbar (70px) + offline banner (40px) */
+  padding-top: calc(var(--nav-height) + var(--offline-banner-height)) !important;
 }
 
 /* Offline indicator styles */
 .offline-banner {
-  top: 60px; /* Position below navigation bar */
+  top: calc(var(--nav-height) - 10px); /* Position below navigation bar */
 }
 
 body.offline-banner-visible main {
-  padding-top: 5.5rem; /* Account for nav bar (60px) + offline banner (2.5rem) */
+  padding-top: calc(var(--nav-height) + 2.5rem); /* nav + offline banner space */
 }
