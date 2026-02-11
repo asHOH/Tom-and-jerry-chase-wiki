@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react';
-import clsx from 'clsx';
 
 import type { buffTypelist, FactionId } from '@/data/types';
 
+import { cn } from './cn';
 import { designTokens, sharedPositioningTagPalettes } from './tokens';
 import type { PositioningTagColorStyle } from './types';
 
@@ -590,7 +590,7 @@ export function getNavigationButtonClasses(
     state = suppressActiveBackground ? 'text-white' : navButtonThemes.active;
   }
 
-  return clsx('relative z-10', layout, focus, state);
+  return cn('relative z-10', layout, focus, state);
 }
 
 export type ActionButtonVariant = keyof typeof actionButtonVariants;
@@ -603,7 +603,7 @@ export function getActionButtonClasses(
 ): string {
   const base =
     'inline-flex items-center justify-center gap-2 font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 disabled:cursor-not-allowed disabled:opacity-60';
-  return clsx(
+  return cn(
     base,
     actionButtonVariants[variant],
     actionButtonSizes[size],
