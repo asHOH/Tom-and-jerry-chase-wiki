@@ -385,6 +385,35 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [tocItems]);
 
+  // Handle initial hash scroll since IDs are generated client-side
+  const hasScrolledRef = useRef(false);
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+
+    if (
+      !hasScrolledRef.current &&
+      tocItems.length > 0 &&
+      typeof window !== 'undefined' &&
+      window.location.hash
+    ) {
+      const hashId = decodeURIComponent(window.location.hash.substring(1));
+      if (tocItems.some((item) => item.id === hashId)) {
+        const element = document.getElementById(hashId);
+        if (element) {
+          hasScrolledRef.current = true;
+          // Small delay to ensure layout has settled
+          timer = setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      }
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [tocItems]);
+
   const canEdit =
     userRole === 'Contributor' || userRole === 'Reviewer' || userRole === 'Coordinator';
   const titleSize = !isMobile ? 'text-4xl' : article.title.length <= 10 ? 'text-3xl' : 'text-2xl';
