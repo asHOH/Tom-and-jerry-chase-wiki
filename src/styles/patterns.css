@@ -1,0 +1,116 @@
+/* ===== DISPLAY OPTIMIZATIONS ===== */
+
+.auto-fit-grid {
+  /* CSS containment for better performance */
+  contain: layout style paint;
+  /* Optimize for transform animations */
+  will-change: transform;
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  /* Prevent layout thrashing during scroll */
+  overscroll-behavior: contain;
+}
+
+/* Character Card Performance Optimizations */
+.character-card {
+  /* CSS containment for individual cards */
+  contain: layout style;
+  /* Prevent layout thrashing */
+  backface-visibility: hidden;
+}
+
+/* Only optimize when actually hovering/interacting */
+.character-card:hover {
+  will-change: transform, box-shadow;
+}
+
+.character-card:not(:hover) {
+  will-change: auto;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  .auto-fit-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    /* Enhanced mobile scrolling */
+    overscroll-behavior: contain;
+    /* Reduce repaints during scroll without strict containment */
+    contain: layout style paint;
+  }
+
+  .character-card {
+    /* Optimize mobile touch interactions */
+    touch-action: manipulation;
+    /* Reduce mobile hover effects */
+    will-change: auto;
+  }
+
+  /* Disable hover effects on mobile to improve performance */
+  .character-card:hover {
+    transform: none;
+  }
+
+  /* Re-enable transform only for active/focus states on mobile */
+  .character-card:active,
+  .character-card:focus {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Grid container optimizations */
+.grid-container {
+  /* Optimize grid rendering */
+  contain: layout style;
+  /* Smooth grid animations */
+  will-change: contents;
+}
+
+/* Filter section performance */
+.filter-section {
+  /* Contain filter interactions */
+  contain: layout style;
+  /* Sticky positioning optimization */
+  will-change: transform;
+}
+
+/* Button performance optimizations */
+.filter-button,
+.character-card button {
+  /* Optimize button interactions */
+  contain: layout style paint;
+}
+
+/* Only optimize buttons when hovering */
+.filter-button:hover,
+.character-card button:hover {
+  will-change: background-color, color;
+}
+
+.filter-button:not(:hover),
+.character-card button:not(:hover) {
+  will-change: auto;
+}
+
+/* Styles for content to account for fixed navbar */
+.content-container {
+  padding-top: 70px !important; /* Account for navbar height */
+  margin-top: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* When offline banner is visible, add extra padding */
+body.offline-banner-visible .content-container {
+  padding-top: 110px !important; /* navbar (70px) + offline banner (40px) */
+}
+
+/* Offline indicator styles */
+.offline-banner {
+  top: 60px; /* Position below navigation bar */
+}
+
+body.offline-banner-visible main {
+  padding-top: 5.5rem; /* Account for nav bar (60px) + offline banner (2.5rem) */
+}

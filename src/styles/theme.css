@@ -1,0 +1,9 @@
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 240, 240, 240;
+  --nav-z-index: 9999;
+}
+
+.dark {
+  color-scheme: dark;
+}

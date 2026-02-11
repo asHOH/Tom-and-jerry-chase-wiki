@@ -1,0 +1,147 @@
+/* Legacy component classes (migrate to Tailwind/React where possible) */
+.card {
+  @apply rounded-lg bg-white p-4 shadow-md transition-all duration-300 hover:shadow-lg dark:bg-slate-800;
+}
+
+.btn {
+  @apply rounded-md px-4 py-2 font-medium transition-colors;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+}
+
+/* Responsive image constraints */
+.responsive-image {
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+/* Skill icon containers */
+.skill-icon {
+  width: 40px !important;
+  height: 40px !important;
+  overflow: hidden !important;
+}
+
+.skill-icon img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  padding: 4px !important;
+}
+
+/* Custom hover effects */
+.character-card-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.character-card-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(59, 130, 246, 0.05); /* Very light blue */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.character-card-container:hover::after {
+  opacity: 1;
+}
+
+/* Navigation bar styles */
+.navigation-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: var(--nav-z-index) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Faction button styles */
+/* Base styles for faction buttons */
+button.faction-button,
+a.faction-button {
+  position: relative;
+  overflow: visible;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease !important;
+}
+
+/* Hover styles for faction buttons */
+button.faction-button:hover,
+a.faction-button:hover {
+  background-color: #2563eb !important; /* Blue background on hover */
+  color: white !important; /* White text on hover */
+}
+
+/* Ensure all child elements also change color on hover */
+button.faction-button:hover span,
+button.faction-button:hover div,
+a.faction-button:hover span,
+a.faction-button:hover div {
+  color: white !important;
+}
+
+/* Add a subtle shadow effect on hover */
+button.faction-button:hover,
+a.faction-button:hover {
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Tooltip styles */
+.faction-button .tooltip {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s,
+    transform 0.3s;
+  transition-delay: 0s;
+}
+
+.faction-button:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 1000ms; /* 1 second delay before showing tooltip */
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition:
+    opacity 0.3s,
+    visibility 0.3s,
+    transform 0.3s;
+  transition-delay: 0ms;
+  transform: translate(-50%, calc(100% + 10px));
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 4px 4px 4px;
+  border-style: solid;
+  border-color: transparent transparent rgba(75, 85, 99, 0.7) transparent;
+}

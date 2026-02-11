@@ -1,0 +1,68 @@
+html,
+body {
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  position: relative;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default focus outline when focus-visible is available */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Prevent images from becoming too large */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Image container constraints */
+.image-container img {
+  object-fit: contain !important;
+  max-height: 85% !important;
+}
+
+/* Fix for Next.js error overlay CSS property ordering */
+[data-nextjs-call-stack-frame] {
+  display: block !important;
+  box-sizing: border-box !important;
+  padding: 6px 8px !important;
+  border-radius: var(--rounded-lg) !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Fix for development tools CSS property ordering and Safari support */
+.dev-tools-indicator-item {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Global override for any user-select properties missing vendor prefixes */
+*[style*='user-select'] {
+  -webkit-user-select: inherit !important;
+  -moz-user-select: inherit !important;
+  -ms-user-select: inherit !important;
+  user-select: inherit !important;
+}
