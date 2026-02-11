@@ -115,3 +115,13 @@
 .grid-item-8 {
   animation-delay: 0.8s;
 }
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer,
+  .animate-fadeInUp,
+  .animate-slideInLeft,
+  .animate-slideInRight {
+    animation: none !important;
+  }
+}
