@@ -176,6 +176,18 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
   const [showAutoNumbering, setShowAutoNumbering] = useState(false);
 
+  // Persist auto-numbering preference
+  useEffect(() => {
+    const saved = localStorage.getItem('wiki_auto_numbering_enabled');
+    if (saved !== null) {
+      setShowAutoNumbering(saved === 'true');
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('wiki_auto_numbering_enabled', String(showAutoNumbering));
+  }, [showAutoNumbering]);
+
   const articleContent = useMemo(
     () => article.latest_version?.content ?? '',
     [article.latest_version?.content]
