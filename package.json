@@ -34,6 +34,7 @@
     "build:skip-images": "node scripts/generate-doc-pages.mjs && next build --webpack",
     "start": "next start",
     "lint": "eslint . --cache",
+    "lint:fast": "oxlint",
     "lint:fix": "eslint . --fix --cache",
     "lint:staged": "eslint --fix --max-warnings=0 --cache",
     "prettier:check": "prettier --check . --cache",
@@ -145,6 +146,7 @@
     "jiti": "^2.6.1",
     "knip": "^5.82.1",
     "lint-staged": "^16.2.7",
+    "oxlint": "^1.46.0",
     "postcss": "^8.5.6",
     "postcss-preset-env": "^10.6.0",
     "prettier": "^3.8.1",
@@ -179,7 +181,7 @@
   ],
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,mjs,cjs}": [
-      "eslint --fix --max-warnings=0 --cache --no-warn-ignored",
+      "oxlint --deny-warnings",
       "prettier --write --ignore-unknown --cache"
     ],
     "**/*.{json,css,md,mdx,html,yml,yaml}": "prettier --write --ignore-unknown --cache"
