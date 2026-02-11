@@ -148,7 +148,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder='请保证标题清晰准确'
-              className={`w-full rounded-lg border border-gray-300 bg-white ${isMobile ? '' : 'px-4'} py-3 text-lg text-gray-900 placeholder-gray-500 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400`}
+              className={clsx('form-control', !isMobile && 'px-4')}
               disabled={isSubmitting}
             />
           </div>
@@ -170,7 +170,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 id='category'
                 value={category}
                 onChange={(e) => onCategoryChange(e.target.value)}
-                className={`w-full rounded-lg border border-gray-300 bg-white ${isMobile ? '' : 'px-4'} py-3 text-lg text-gray-900 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100`}
+                className={clsx('form-control', !isMobile && 'px-4')}
                 disabled={isSubmitting}
               >
                 <option value=''>请选择分类</option>
@@ -255,7 +255,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 value={commitMessage}
                 onChange={(e) => onCommitMessageChange?.(e.target.value)}
                 placeholder='如：修正笔误、更新数据、补充说明等'
-                className={`w-full rounded-lg border border-gray-300 bg-white ${isMobile ? '' : 'px-4'} py-3 text-lg text-gray-900 placeholder-gray-500 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400`}
+                className={clsx('form-control', !isMobile && 'px-4')}
                 disabled={isSubmitting}
               />
             </div>
