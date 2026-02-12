@@ -5,9 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence } from 'motion/react';
 
-import { useUser } from '@/hooks/useUser';
 import LoginDialog from '@/components/LoginDialog';
-import { env } from '@/env';
 
 export interface EditButtonProps {
   /** Additional CSS classes */
@@ -24,24 +22,14 @@ export default function EditButton({ className, compact = false }: EditButtonPro
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { nickname } = useUser();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
-  // Check if Supabase is enabled
-  const isSupabaseEnabled =
-    env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
   const handleClick = useCallback(() => {
-    // Show login dialog if not logged in (but still allow editing)
-    if (!nickname && isSupabaseEnabled) {
-      setShowLoginDialog(true);
-    }
-
     // Add edit param to URL
     const params = new URLSearchParams(searchParams.toString());
     params.set('edit', '1');
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  }, [router, pathname, searchParams, nickname, isSupabaseEnabled]);
+  }, [router, pathname, searchParams]);
 
   return (
     <>
