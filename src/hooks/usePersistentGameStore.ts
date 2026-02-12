@@ -7,6 +7,7 @@ import { entitySnapshotSchema } from '@/lib/validation/schemas';
 import { characters, factions } from '@/data';
 
 export function usePersistentGameStore() {
+  return;
   useEffect(() => {
     try {
       const charStr = localStorage.getItem('characters');

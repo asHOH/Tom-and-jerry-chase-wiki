@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
 
-import { formatDraftAge } from '@/lib/edit/draftUtils';
 import { CheckBadgeIcon, CloseIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 export interface EditModeToolbarProps {
@@ -14,7 +13,7 @@ export interface EditModeToolbarProps {
   /** Number of changes made */
   actionCount: number;
   /** Draft info for current entity */
-  draftInfo?: { savedAt: number; actionCount: number } | null;
+  draftInfo?: { actionCount: number } | null;
   /** Whether publish is in progress */
   isPublishing: boolean;
   /** Called when user clicks discard */
@@ -69,9 +68,7 @@ export default function EditModeToolbar({
     }
   };
 
-  const draftLabel = draftInfo
-    ? `草稿：${draftInfo.actionCount} 条修改 · ${formatDraftAge(draftInfo.savedAt)}`
-    : null;
+  const draftLabel = draftInfo ? `草稿：${draftInfo.actionCount} 条修改` : null;
 
   const toolbarContent = (
     <m.div

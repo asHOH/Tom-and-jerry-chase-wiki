@@ -27,12 +27,6 @@ import {
   type Action,
   type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
-import {
-  clearDraft,
-  formatDraftAge,
-  loadDraft,
-  saveDraft as saveDraftToStorage,
-} from '@/lib/edit/draftUtils';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import {
   achievements,
@@ -465,7 +459,7 @@ interface PageEditModeResult {
   isEditMode: boolean;
   isDirty: boolean;
   isPublishing: boolean;
-  draftInfo: { savedAt: number; actionCount: number } | null;
+  draftInfo: { actionCount: number } | null;
   discardChanges: () => void;
   publishChanges: (message?: string) => Promise<boolean>;
   getActionCount: () => number;
@@ -483,45 +477,6 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   const [_actionCountTrigger, setActionCountTrigger] = useState(0);
   const draftLoadedRef = useRef(false);
   const [draftInfo, setDraftInfo] = useState<PageEditModeResult['draftInfo']>(null);
-
-  // Load draft when entering edit mode
-  useEffect(() => {
-    if (!isEditMode || draftLoadedRef.current) return;
-
-    const draft = loadDraft(entityType, entityKey);
-    if (draft && draft.actions.length > 0) {
-      const actionsStorageKey = getActionsStorageKey(entityType);
-      const history = readActionHistory(actionsStorageKey);
-      const { matching } = splitActionHistoryByEntity(history, entityKey);
-
-      setDraftInfo({ savedAt: draft.savedAt, actionCount: draft.actions.length });
-
-      if (matching.length === 0) {
-        // Apply draft actions to entity
-        const entity = entityRegistry.get(entityType);
-        if (entity) {
-          withRecordingSuppressed(actionsStorageKey, () => {
-            for (const entry of draft.actions) {
-              applyActionEntry(entity, entry);
-            }
-          });
-          // Also write to action history for session tracking
-          for (const entry of draft.actions) {
-            appendActionHistoryEntry(actionsStorageKey, entry);
-          }
-        }
-
-        if (showToast) {
-          const age = formatDraftAge(draft.savedAt);
-          showToast(`已恢复草稿 (${draft.actions.length} 条修改, ${age})`, 4000);
-        }
-      }
-    } else {
-      setDraftInfo(null);
-    }
-
-    draftLoadedRef.current = true;
-  }, [isEditMode, entityType, entityKey, showToast]);
 
   // Reset draft loaded flag when exiting edit mode
   useEffect(() => {
@@ -562,19 +517,17 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
   useEffect(() => {
     if (!isEditMode) return;
-    if (!isDirty) return;
 
-    const storageKey = getActionsStorageKey(entityType);
-    const history = readActionHistory(storageKey);
-    const { matching } = splitActionHistoryByEntity(history, entityKey);
-
-    if (matching.length === 0) return;
-    saveDraftToStorage(entityType, entityKey, matching);
-    const savedDraft = loadDraft(entityType, entityKey);
-    if (savedDraft) {
-      setDraftInfo({ savedAt: savedDraft.savedAt, actionCount: savedDraft.actions.length });
+    const count = getActionCount();
+    if (!draftLoadedRef.current) {
+      if (count > 0 && showToast) {
+        showToast(`已恢复草稿 (${count} 条修改)`, 4000);
+      }
+      draftLoadedRef.current = true;
     }
-  }, [debouncedActionCount, entityType, entityKey, isDirty, isEditMode]);
+
+    setDraftInfo(count > 0 ? { actionCount: count } : null);
+  }, [debouncedActionCount, getActionCount, isEditMode, showToast]);
 
   const discardChanges = useCallback(() => {
     // Clear action history
@@ -602,8 +555,6 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       }
     }
 
-    // Clear draft
-    clearDraft(entityType, entityKey);
     setDraftInfo(null);
 
     GameDataManager.invalidate();
@@ -648,7 +599,6 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
             writeActionHistory(storageKey, remaining);
           }
         }
-        clearDraft(entityType, entityKey);
         setDraftInfo(null);
         setActionCountTrigger((prev) => prev + 1);
 
