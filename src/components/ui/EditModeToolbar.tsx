@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
 
+import { formatDraftAge } from '@/lib/edit/draftUtils';
 import { CheckBadgeIcon, CloseIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 export interface EditModeToolbarProps {
@@ -12,10 +13,10 @@ export interface EditModeToolbarProps {
   isDirty: boolean;
   /** Number of changes made */
   actionCount: number;
+  /** Draft info for current entity */
+  draftInfo?: { savedAt: number; actionCount: number } | null;
   /** Whether publish is in progress */
   isPublishing: boolean;
-  /** Called when user clicks save draft */
-  onSaveDraft: () => void;
   /** Called when user clicks discard */
   onDiscard: () => void;
   /** Called when user clicks publish */
@@ -29,8 +30,8 @@ export interface EditModeToolbarProps {
 export default function EditModeToolbar({
   isDirty,
   actionCount,
+  draftInfo = null,
   isPublishing,
-  onSaveDraft,
   onDiscard,
   onPublish,
   onExitEditMode,
@@ -68,9 +69,9 @@ export default function EditModeToolbar({
     }
   };
 
-  const handleSaveDraft = () => {
-    onSaveDraft();
-  };
+  const draftLabel = draftInfo
+    ? `草稿：${draftInfo.actionCount} 条修改 · ${formatDraftAge(draftInfo.savedAt)}`
+    : null;
 
   const toolbarContent = (
     <m.div
@@ -93,7 +94,7 @@ export default function EditModeToolbar({
             </span>
           </div>
           <span className='text-gray-500 dark:text-gray-400'>
-            {actionCount > 0 ? `${actionCount} 条修改` : '暂无修改'}
+            {draftLabel || (actionCount > 0 ? `${actionCount} 条修改` : '暂无修改')}
           </span>
         </div>
 
@@ -134,30 +135,6 @@ export default function EditModeToolbar({
 
         {/* Action buttons */}
         <div className='flex items-center gap-2'>
-          {/* Save Draft */}
-          <button
-            type='button'
-            onClick={handleSaveDraft}
-            disabled={!isDirty || isPublishing}
-            className={clsx(
-              'flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-              isDirty && !isPublishing
-                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
-                : 'cursor-not-allowed bg-gray-50 text-gray-400 dark:bg-slate-800 dark:text-gray-600'
-            )}
-            title='保存草稿'
-          >
-            <svg className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4'
-              />
-            </svg>
-            <span className='hidden sm:inline'>草稿</span>
-          </button>
-
           {/* Discard */}
           <button
             type='button'

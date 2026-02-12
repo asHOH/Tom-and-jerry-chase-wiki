@@ -8,8 +8,6 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { stripEditParam } from '@/hooks/useSearchParamEditMode';
 
-import { checkEditModeGuard } from './ui/EditModeGuard';
-
 type LinkProps = NextLinkProps &
   Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {
     children: React.ReactNode;
@@ -83,12 +81,6 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
       // Strip edit param when navigating to different pages (unless preserveEditParam is true)
       if (!preserveEditParam) {
         targetPath = stripEditParam(targetPath);
-      }
-
-      // Check if edit mode guard is active and wants to intercept
-      const canNavigate = checkEditModeGuard(targetPath);
-      if (!canNavigate) {
-        return; // Guard will show modal and handle navigation
       }
 
       await navigate(targetPath, { replace: replace ?? false });

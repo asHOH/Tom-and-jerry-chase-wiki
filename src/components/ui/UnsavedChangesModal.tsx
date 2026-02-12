@@ -9,7 +9,7 @@ import { CloseIcon } from '@/components/icons/CommonIcons';
 
 export interface UnsavedChangesModalProps {
   isOpen: boolean;
-  onSaveDraftAndLeave: () => void;
+  onAutoSaveAndLeave: () => void;
   onDiscardAndLeave: () => void;
   onCancel: () => void;
   isSaving?: boolean;
@@ -17,7 +17,7 @@ export interface UnsavedChangesModalProps {
 
 export default function UnsavedChangesModal({
   isOpen,
-  onSaveDraftAndLeave,
+  onAutoSaveAndLeave,
   onDiscardAndLeave,
   onCancel,
   isSaving = false,
@@ -146,7 +146,7 @@ export default function UnsavedChangesModal({
             <div className='flex flex-col gap-2'>
               <Button
                 type='button'
-                onClick={onSaveDraftAndLeave}
+                onClick={onAutoSaveAndLeave}
                 disabled={isSaving}
                 loading={isSaving}
                 variant='primary'
@@ -154,7 +154,7 @@ export default function UnsavedChangesModal({
                 fullWidth
                 className='gap-2'
               >
-                保存草稿并离开
+                自动保存并离开
               </Button>
 
               <Button

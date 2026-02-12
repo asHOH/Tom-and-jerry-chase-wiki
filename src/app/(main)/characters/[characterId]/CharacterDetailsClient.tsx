@@ -13,7 +13,6 @@ import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { useEditMode, useLocalCharacter, usePageEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
-import EditModeGuard from '@/components/ui/EditModeGuard';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
@@ -38,7 +37,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const { info } = useToast();
 
   // Page-level edit mode management
-  const { isDirty, isPublishing, saveDraft, discardChanges, publishChanges, getActionCount } =
+  const { isDirty, isPublishing, draftInfo, discardChanges, publishChanges, getActionCount } =
     usePageEditMode({
       entityType: 'characters',
       entityId: characterId || props.character.id,
@@ -103,24 +102,18 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
 
       {showTutorial && <OnboardingTutorial onClose={handleTutorialClose} isEnabled={false} />}
 
-      {/* Edit mode guard and toolbar */}
+      {/* Edit mode toolbar */}
       {isEditMode && (
         <>
-          <EditModeGuard
-            isDirty={isDirty}
-            onSaveDraft={saveDraft}
-            onDiscardChanges={discardChanges}
-            onExitEditMode={exitEditMode}
-          />
           <EditModeToolbar
             isDirty={isDirty}
             actionCount={getActionCount()}
             isPublishing={isPublishing}
-            onSaveDraft={saveDraft}
             onDiscard={discardChanges}
             onPublish={handlePublish}
             onExitEditMode={exitEditMode}
             entityName={character.id}
+            draftInfo={draftInfo}
           />
         </>
       )}

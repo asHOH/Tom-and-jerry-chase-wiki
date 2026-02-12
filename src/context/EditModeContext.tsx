@@ -33,6 +33,7 @@ import {
   loadDraft,
   saveDraft as saveDraftToStorage,
 } from '@/lib/edit/draftUtils';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import {
   achievements,
   achievementsEdit,
@@ -475,7 +476,6 @@ interface PageEditModeResult {
   isDirty: boolean;
   isPublishing: boolean;
   draftInfo: { savedAt: number; actionCount: number } | null;
-  saveDraft: () => void;
   discardChanges: () => void;
   publishChanges: (message?: string) => Promise<boolean>;
   getActionCount: () => number;
@@ -492,6 +492,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   const [isPublishing, setIsPublishing] = useState(false);
   const [_actionCountTrigger, setActionCountTrigger] = useState(0);
   const draftLoadedRef = useRef(false);
+  const [draftInfo, setDraftInfo] = useState<PageEditModeResult['draftInfo']>(null);
 
   // Load draft when entering edit mode
   useEffect(() => {
@@ -499,6 +500,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
     const draft = loadDraft(entityType, entityKey);
     if (draft && draft.actions.length > 0) {
+      setDraftInfo({ savedAt: draft.savedAt, actionCount: draft.actions.length });
       // Apply draft actions to entity
       const entity = entityRegistry.get(entityType);
       if (entity) {
@@ -520,6 +522,10 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       }
     }
 
+    if (!draft) {
+      setDraftInfo(null);
+    }
+
     draftLoadedRef.current = true;
   }, [isEditMode, entityType, entityKey, showToast]);
 
@@ -527,6 +533,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   useEffect(() => {
     if (!isEditMode) {
       draftLoadedRef.current = false;
+      setDraftInfo(null);
     }
   }, [isEditMode]);
 
@@ -557,26 +564,23 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     return getActionCount() > 0;
   }, [_actionCountTrigger, getActionCount]);
 
-  const draftInfo = useMemo(() => {
-    if (!isEditMode) return null;
-    const draft = loadDraft(entityType, entityKey);
-    if (!draft) return null;
-    return { savedAt: draft.savedAt, actionCount: draft.actions.length };
-  }, [isEditMode, entityType, entityKey]);
+  const debouncedActionCount = useDebouncedValue(_actionCountTrigger, 800);
 
-  const saveDraft = useCallback(() => {
+  useEffect(() => {
+    if (!isEditMode) return;
+    if (!isDirty) return;
+
     const storageKey = getActionsStorageKey(entityType);
     const history = readActionHistory(storageKey);
     const { matching } = splitActionHistoryByEntity(history, entityKey);
 
-    if (matching.length === 0) {
-      if (showToast) showToast('没有需要保存的修改');
-      return;
-    }
-
+    if (matching.length === 0) return;
     saveDraftToStorage(entityType, entityKey, matching);
-    if (showToast) showToast(`草稿已保存 (${matching.length} 条修改)`);
-  }, [entityType, entityKey, showToast]);
+    const savedDraft = loadDraft(entityType, entityKey);
+    if (savedDraft) {
+      setDraftInfo({ savedAt: savedDraft.savedAt, actionCount: savedDraft.actions.length });
+    }
+  }, [debouncedActionCount, entityType, entityKey, isDirty, isEditMode]);
 
   const discardChanges = useCallback(() => {
     // Clear action history
@@ -606,6 +610,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
     // Clear draft
     clearDraft(entityType, entityKey);
+    setDraftInfo(null);
 
     GameDataManager.invalidate();
     setActionCountTrigger((prev) => prev + 1);
@@ -650,6 +655,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           }
         }
         clearDraft(entityType, entityKey);
+        setDraftInfo(null);
         setActionCountTrigger((prev) => prev + 1);
 
         if (showToast) showToast('改动已提交，等待审核');
@@ -670,7 +676,6 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     isDirty,
     isPublishing,
     draftInfo,
-    saveDraft,
     discardChanges,
     publishChanges,
     getActionCount,
