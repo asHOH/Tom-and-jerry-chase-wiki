@@ -21,6 +21,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         'id, title, category_id, character_id, created_at, article_versions(content, editor_id, status, created_at)'
       )
       .eq('id', id)
+      .order('created_at', { foreignTable: 'article_versions', ascending: false })
+      .limit(1, { foreignTable: 'article_versions' })
       .single();
 
     if (error) {

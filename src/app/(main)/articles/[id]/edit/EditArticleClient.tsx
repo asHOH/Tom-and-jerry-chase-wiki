@@ -69,6 +69,7 @@ const EditArticleClient: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [placeholder, setPlaceholder] = useState('');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const { data: categoriesData, error: categoriesError } = useSWR<ArticlesData>(
     userRole ? '/api/articles?page=1&limit=1' : null,
@@ -92,7 +93,7 @@ const EditArticleClient: React.FC = () => {
   );
 
   useEffect(() => {
-    if (articleData) {
+    if (articleData && !isInitialized) {
       const normalizedContent = normalizeHeadingLevels(
         articleData.article.article_versions[0]?.content || ''
       );
@@ -101,8 +102,9 @@ const EditArticleClient: React.FC = () => {
       setCharacterId(articleData.article.character_id);
       setPlaceholder(normalizedContent);
       setContent(normalizedContent);
+      setIsInitialized(true);
     }
-  }, [articleData]);
+  }, [articleData, isInitialized]);
 
   useEffect(() => {
     if (!userRole) {
