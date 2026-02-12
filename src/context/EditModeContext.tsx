@@ -80,8 +80,6 @@ interface EditModeContextType {
   isEditMode: boolean;
   /** Loading state during initialization */
   isLoading: boolean;
-  /** @deprecated Use exitEditMode or page-level controls instead */
-  toggleEditMode: () => void;
   /** Revoke local actions for a specific entity type */
   revokeLocalActions: (entityType: string) => void;
 }
@@ -347,13 +345,6 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     return undefined;
   }, [isEditMode, hasInitialized]);
 
-  // Deprecated toggle - does nothing, kept for compatibility
-  const toggleEditMode = useCallback((): void => {
-    console.warn(
-      'toggleEditMode is deprecated. Use enterEditMode/exitEditMode from useSearchParamEditMode instead.'
-    );
-  }, []);
-
   const revokeLocalActions = useCallback((entityType: string): void => {
     if (typeof window === 'undefined') return;
     const entity = entityRegistry.get(entityType);
@@ -388,10 +379,9 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     () => ({
       isEditMode,
       isLoading,
-      toggleEditMode,
       revokeLocalActions,
     }),
-    [isEditMode, isLoading, toggleEditMode, revokeLocalActions]
+    [isEditMode, isLoading, revokeLocalActions]
   );
 
   return <EditModeContext.Provider value={contextValue}>{children}</EditModeContext.Provider>;
@@ -500,29 +490,33 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
     const draft = loadDraft(entityType, entityKey);
     if (draft && draft.actions.length > 0) {
+      const actionsStorageKey = getActionsStorageKey(entityType);
+      const history = readActionHistory(actionsStorageKey);
+      const { matching } = splitActionHistoryByEntity(history, entityKey);
+
       setDraftInfo({ savedAt: draft.savedAt, actionCount: draft.actions.length });
-      // Apply draft actions to entity
-      const entity = entityRegistry.get(entityType);
-      if (entity) {
-        const actionsStorageKey = getActionsStorageKey(entityType);
-        withRecordingSuppressed(actionsStorageKey, () => {
+
+      if (matching.length === 0) {
+        // Apply draft actions to entity
+        const entity = entityRegistry.get(entityType);
+        if (entity) {
+          withRecordingSuppressed(actionsStorageKey, () => {
+            for (const entry of draft.actions) {
+              applyActionEntry(entity, entry);
+            }
+          });
+          // Also write to action history for session tracking
           for (const entry of draft.actions) {
-            applyActionEntry(entity, entry);
+            appendActionHistoryEntry(actionsStorageKey, entry);
           }
-        });
-        // Also write to action history for session tracking
-        for (const entry of draft.actions) {
-          appendActionHistoryEntry(actionsStorageKey, entry);
+        }
+
+        if (showToast) {
+          const age = formatDraftAge(draft.savedAt);
+          showToast(`已恢复草稿 (${draft.actions.length} 条修改, ${age})`, 4000);
         }
       }
-
-      if (showToast) {
-        const age = formatDraftAge(draft.savedAt);
-        showToast(`已恢复草稿 (${draft.actions.length} 条修改, ${age})`, 4000);
-      }
-    }
-
-    if (!draft) {
+    } else {
       setDraftInfo(null);
     }
 

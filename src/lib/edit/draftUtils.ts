@@ -26,6 +26,7 @@ export function saveDraft(
   entityId: string,
   actions: ActionHistoryEntry[]
 ): void {
+  console.log('saveDraft');
   if (typeof window === 'undefined') return;
   if (actions.length === 0) return;
 
@@ -92,6 +93,7 @@ export function hasDraft(entityType: string, entityId: string): boolean {
  * Clears the draft for a specific entity from localStorage.
  */
 export function clearDraft(entityType: string, entityId: string): void {
+  console.log('clearDraft');
   if (typeof window === 'undefined') return;
 
   const key = getDraftStorageKey(entityType, entityId);

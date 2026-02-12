@@ -8,7 +8,6 @@ import { isVercelAnalyticsEnabled } from '@/lib/platform';
 import { defaultMetadata } from '@/constants/seo';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 import { ClientProvidersWithInitialData } from '@/components/ClientProvidersWithInitialData';
-import { DynamicFaviconEditBadge } from '@/components/DynamicFaviconEditBadge';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
@@ -18,6 +17,7 @@ import './globals.css';
 import { getUserData } from '@/lib/userActions';
 import { UserProvider } from '@/hooks/useUser';
 import { DarkModeProvider } from '@/context/DarkModeContext';
+import { EditModeProvider } from '@/context/EditModeContext';
 import KeyboardNavigation from '@/components/KeyboardNavigation';
 
 const inter = localFont({
@@ -110,10 +110,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           />
           <ErrorBoundary>
             <KeyboardNavigation />
-            <DynamicFaviconEditBadge />
             <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
               <UserProvider initialValue={initialUser}>
-                <ClientProvidersWithInitialData>{children}</ClientProvidersWithInitialData>
+                <EditModeProvider>
+                  <ClientProvidersWithInitialData>{children}</ClientProvidersWithInitialData>
+                </EditModeProvider>
               </UserProvider>
             </main>
           </ErrorBoundary>

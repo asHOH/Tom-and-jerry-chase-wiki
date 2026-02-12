@@ -1,46 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+
+import { useEditMode } from '@/context/EditModeContext';
 
 const BASE_ICON = '/icon.png';
 
 export function DynamicFaviconEditBadge() {
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const { isEditMode } = useEditMode();
   const linkId = 'dynamic-favicon-edit';
   const mountedRef = useRef(false);
+  console.log(isEditMode);
 
   useEffect(() => {
     mountedRef.current = true;
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = window.localStorage.getItem('isEditMode');
-        setIsEditMode(stored ? JSON.parse(stored) : false);
-      } catch {}
-
-      const onStorage = (e: StorageEvent) => {
-        if (e.key === 'isEditMode' && e.newValue !== e.oldValue) {
-          try {
-            setIsEditMode(e.newValue ? JSON.parse(e.newValue) : false);
-          } catch {}
-        }
-      };
-
-      const onCustom = (e: Event) => {
-        try {
-          const detail = (e as CustomEvent).detail;
-          if (typeof detail?.isEditMode === 'boolean') setIsEditMode(detail.isEditMode);
-        } catch {}
-      };
-
-      window.addEventListener('storage', onStorage);
-      window.addEventListener('editmode:changed', onCustom as EventListener);
-
-      return () => {
-        mountedRef.current = false;
-        window.removeEventListener('storage', onStorage);
-        window.removeEventListener('editmode:changed', onCustom as EventListener);
-      };
-    }
     return () => {
       mountedRef.current = false;
     };

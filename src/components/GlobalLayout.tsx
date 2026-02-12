@@ -3,8 +3,9 @@
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
-import { EditModeProvider } from '@/context/EditModeContext';
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
+
+import { DynamicFaviconEditBadge } from './DynamicFaviconEditBadge';
 
 export default function GlobalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -29,7 +30,8 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
     pathname.split('/').length > 3;
 
   return (
-    <EditModeProvider>
+    <>
+      <DynamicFaviconEditBadge />
       <TabNavigationWrapper showDetailToggle={showDetailToggle}>
         <AnimatePresence mode='wait' initial={false}>
           <m.div
@@ -44,6 +46,6 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
           </m.div>
         </AnimatePresence>
       </TabNavigationWrapper>
-    </EditModeProvider>
+    </>
   );
 }

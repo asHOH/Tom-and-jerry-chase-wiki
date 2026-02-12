@@ -80,7 +80,6 @@ export default function CharacterDetails({
       value={{
         isEditMode: isEditMode && isLocalEditMode,
         isLoading: false,
-        toggleEditMode: () => {},
         revokeLocalActions: () => {},
       }}
     >

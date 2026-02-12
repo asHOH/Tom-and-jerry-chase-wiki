@@ -9,7 +9,6 @@ import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useChat } from '@/hooks/useChat';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext';
 import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
@@ -85,7 +84,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const resultsListRef = useRef<HTMLUListElement>(null);
   const { handleSelectCard, handleSelectCharacter } = useAppContext();
-  const { isEditMode, toggleEditMode } = useEditMode();
   const { navigate } = useNavigation();
 
   // Use chat hook to get AI response for the search query
@@ -103,10 +101,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           if (isOriginalCharacter(result.id)) {
             handleSelectCharacter(result.id);
           } else {
-            // For non-original characters, enable edit mode if not already enabled and navigate to edit page
-            if (!isEditMode) {
-              toggleEditMode();
-            }
             // Navigate to the user character edit page
             handleSelectCharacter(result.id);
           }
@@ -125,7 +119,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
       setSearchResults([]); // Clear search results
       onClose(); // Close dialog after selection
     },
-    [handleSelectCharacter, handleSelectCard, navigate, isEditMode, toggleEditMode, onClose]
+    [handleSelectCharacter, handleSelectCard, navigate, onClose]
   );
 
   // Animation variants for the dialog
