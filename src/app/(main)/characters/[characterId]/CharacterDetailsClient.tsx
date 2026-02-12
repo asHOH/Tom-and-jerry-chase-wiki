@@ -101,7 +101,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
         </CharacterDetails>
       </div>
 
-      {showTutorial && <OnboardingTutorial onClose={handleTutorialClose} isEnabled={isEditMode} />}
+      {showTutorial && <OnboardingTutorial onClose={handleTutorialClose} isEnabled={false} />}
 
       {/* Edit mode guard and toolbar */}
       {isEditMode && (
