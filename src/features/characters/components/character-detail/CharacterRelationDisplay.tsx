@@ -5,13 +5,17 @@ import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
+import { setNestedProperty } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { CharacterRelationItem, type FactionId } from '@/data/types';
+import { CharacterRelationItem, type FactionId, type TraitRelationKind } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
+import { CharacterSelector } from '@/components/ui/CharacterSelector';
+import { editable } from '@/components/ui/editable';
+import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { cards, mapsEdit, modesEdit, specialSkillsEdit } from '@/data';
+import { cards, characters, mapsEdit, modesEdit, specialSkillsEdit } from '@/data';
 
 import {
   AdvantageIcon,
@@ -22,6 +26,10 @@ import {
   NeutralFaceIcon,
   SadFaceIcon,
 } from './CharacterRelationIcons';
+import KnowledgeCardSelector from './KnowledgeCardSelector';
+import MapSelector from './MapSelector';
+import ModeSelector from './ModeSelector';
+import SpecialSkillSelector from './SpecialSkillSelector';
 
 type Props = {
   id: string;
@@ -37,6 +45,121 @@ type RelationThemeClasses = {
   interactive: string;
   toggle: string;
   badge: string;
+};
+
+const e = editable('characters');
+
+const relationKinds: TraitRelationKind[] = [
+  'counters',
+  'counteredBy',
+  'counterEachOther',
+  'collaborators',
+  'countersKnowledgeCards',
+  'counteredByKnowledgeCards',
+  'countersSpecialSkills',
+  'counteredBySpecialSkills',
+  'advantageMaps',
+  'advantageModes',
+  'disadvantageMaps',
+  'disadvantageModes',
+];
+
+const getEditableCharacterRelations = (
+  characterId: string,
+  character?: Partial<Record<TraitRelationKind, CharacterRelationItem[]>>
+): Record<TraitRelationKind, CharacterRelationItem[]> => {
+  const characterRecord = character ?? characters[characterId];
+  const fromRelationIndex = getCharacterRelation(characterId);
+  if (!characterRecord) {
+    return fromRelationIndex;
+  }
+
+  const next = { ...fromRelationIndex } as Record<TraitRelationKind, CharacterRelationItem[]>;
+
+  relationKinds.forEach((kind) => {
+    const stored = (characterRecord as Partial<Record<TraitRelationKind, CharacterRelationItem[]>>)[
+      kind
+    ];
+    if (Array.isArray(stored)) {
+      next[kind] = stored.map((item) => ({
+        id: item.id,
+        description: item.description ?? '',
+        isMinor: !!item.isMinor,
+      }));
+    }
+  });
+
+  return next;
+};
+
+const updateRelationItems = (
+  characterId: string,
+  kind: TraitRelationKind,
+  items: CharacterRelationItem[]
+) => {
+  setNestedProperty(characters, `${characterId}.${kind}`, items);
+  if (characters[characterId]) {
+    (characters[characterId] as Record<string, unknown>)[kind] = items;
+  }
+};
+
+const updateRelationItem = (
+  characterId: string,
+  kind: TraitRelationKind,
+  itemId: string,
+  updater: (item: CharacterRelationItem) => CharacterRelationItem
+) => {
+  const current = getEditableCharacterRelations(characterId)[kind] ?? [];
+  updateRelationItems(
+    characterId,
+    kind,
+    current.map((item) => (item.id === itemId ? updater(item) : item))
+  );
+};
+
+const createRelationItem = (id: string): CharacterRelationItem => ({
+  id,
+  description: '',
+  isMinor: false,
+});
+
+const addRelationItem = (
+  characterId: string,
+  kind: TraitRelationKind,
+  item: CharacterRelationItem
+) => {
+  const current = getEditableCharacterRelations(characterId)[kind] ?? [];
+  if (current.some((existing) => existing.id === item.id)) return;
+  updateRelationItems(characterId, kind, [...current, item]);
+};
+
+const updateRelationDescription = (
+  characterId: string,
+  kind: TraitRelationKind,
+  itemId: string,
+  description: string
+) => {
+  const nextDescription = description.trim();
+  updateRelationItem(characterId, kind, itemId, (item) => ({
+    ...item,
+    description: nextDescription,
+  }));
+};
+
+const toggleRelationMinor = (characterId: string, kind: TraitRelationKind, itemId: string) => {
+  updateRelationItem(characterId, kind, itemId, (item) => ({
+    ...item,
+    isMinor: !item.isMinor,
+  }));
+};
+
+const removeRelationItem = (characterId: string, kind: TraitRelationKind, itemId: string) => {
+  const current = getEditableCharacterRelations(characterId)[kind] ?? [];
+  updateRelationItems(
+    characterId,
+    kind,
+    current.filter((item) => item.id !== itemId)
+  );
 };
 
 const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
@@ -108,70 +231,53 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
   },
 };
 
-type CharacterDisplayItem = {
-  type: 'character';
+type RelationDisplayBase = {
   key: string;
   id: string;
   description: string;
   isMinor: boolean;
+  isEditable: boolean;
+  descriptionPath?: string;
+  relationKind: TraitRelationKind;
+  onToggleMinor?: () => void;
+  getToggleLabel?: (currentIsMinor: boolean) => string;
+  onRemove?: () => void;
+  onUpdateDescription?: (description: string) => void;
+};
+
+type CharacterDisplayItem = RelationDisplayBase & {
+  type: 'character';
   imageSrc: string;
   getAriaLabel: (isEditMode: boolean) => string;
   onNavigate: () => void;
-  showEditable: boolean;
-  onToggleMinor?: () => void;
-  getToggleLabel?: (currentIsMinor: boolean) => string;
 };
 
-type KnowledgeCardDisplayItem = {
+type KnowledgeCardDisplayItem = RelationDisplayBase & {
   type: 'knowledgeCard';
-  key: string;
-  id: string;
-  description: string;
-  isMinor: boolean;
   imageUrl: string;
   ariaLabel: string;
   onNavigate: () => void;
-  onToggleMinor: () => void;
-  getToggleLabel: (currentIsMinor: boolean) => string;
 };
 
-type SpecialSkillDisplayItem = {
+type SpecialSkillDisplayItem = RelationDisplayBase & {
   type: 'specialSkill';
-  key: string;
-  id: string;
-  description: string;
-  isMinor: boolean;
   imageUrl?: string;
   ariaLabel: string;
   onNavigate: () => void;
-  onToggleMinor: () => void;
-  getToggleLabel: (currentIsMinor: boolean) => string;
 };
 
-type MapDisplayItem = {
+type MapDisplayItem = RelationDisplayBase & {
   type: 'map';
-  key: string;
-  id: string;
-  description: string;
-  isMinor: boolean;
   imageUrl?: string;
   ariaLabel: string;
   onNavigate: () => void;
-  onToggleMinor: () => void;
-  getToggleLabel: (currentIsMinor: boolean) => string;
 };
 
-type ModeDisplayItem = {
+type ModeDisplayItem = RelationDisplayBase & {
   type: 'mode';
-  key: string;
-  id: string;
-  description: string;
-  isMinor: boolean;
   imageUrl?: string;
   ariaLabel: string;
   onNavigate: () => void;
-  onToggleMinor: () => void;
-  getToggleLabel: (currentIsMinor: boolean) => string;
 };
 
 type RelationDisplayItem =
@@ -207,10 +313,19 @@ const buildCharacterItems = (
   combined: readonly CharacterRelationItem[],
   getImageUrl: (id: string) => string,
   handleSelectCharacter: (id: string) => void,
-  ariaLabels: { view: (id: string) => string; edit: (id: string) => string }
+  ariaLabels: { view: (id: string) => string; edit: (id: string) => string },
+  options: {
+    relationKind: TraitRelationKind;
+    isEditable: boolean;
+    getDescriptionPath?: (id: string) => string | undefined;
+    onToggleMinor?: (id: string) => void;
+    onRemove?: (id: string) => void;
+    onUpdateDescription?: (id: string, description: string) => void;
+  }
 ): CharacterDisplayItem[] => {
   return combined.map((item) => {
     const id = item.id;
+    const descriptionPath = options.getDescriptionPath?.(id);
     return {
       type: 'character',
       key: `character-${id}`,
@@ -220,19 +335,36 @@ const buildCharacterItems = (
       imageSrc: getImageUrl(id),
       getAriaLabel: (isEditMode) => (isEditMode ? ariaLabels.edit(id) : ariaLabels.view(id)),
       onNavigate: () => handleSelectCharacter(id),
-      showEditable: false,
+      isEditable: options.isEditable,
+      relationKind: options.relationKind,
+      ...(descriptionPath ? { descriptionPath } : {}),
+      ...(options.onToggleMinor ? { onToggleMinor: () => options.onToggleMinor?.(id) } : {}),
+      getToggleLabel: (currentIsMinor) => `切换${id}的关系为${currentIsMinor ? '主要' : '次要'}`,
+      ...(options.onRemove ? { onRemove: () => options.onRemove?.(id) } : {}),
+      ...(options.onUpdateDescription
+        ? { onUpdateDescription: (description) => options.onUpdateDescription?.(id, description) }
+        : {}),
     } satisfies CharacterDisplayItem;
   });
 };
 
 const buildKnowledgeCardItems = (
   items: readonly CharacterRelationItem[] | undefined,
-  navigateToCard: (id: string) => void
+  navigateToCard: (id: string) => void,
+  options: {
+    relationKind: TraitRelationKind;
+    isEditable: boolean;
+    getDescriptionPath?: (id: string) => string | undefined;
+    onToggleMinor?: (id: string) => void;
+    onRemove?: (id: string) => void;
+    onUpdateDescription?: (id: string, description: string) => void;
+  }
 ): KnowledgeCardDisplayItem[] =>
   toArray(items)
     .map((card) => {
       const cardObj = cards[card.id];
       if (!cardObj) return null;
+      const descriptionPath = options.getDescriptionPath?.(card.id);
       return {
         type: 'knowledgeCard',
         key: `knowledgeCard-${card.id}`,
@@ -242,9 +374,19 @@ const buildKnowledgeCardItems = (
         imageUrl: cardObj.imageUrl,
         ariaLabel: `跳转到知识卡 ${card.id}`,
         onNavigate: () => navigateToCard(card.id),
-        onToggleMinor: () => {},
+        isEditable: options.isEditable,
+        relationKind: options.relationKind,
+        ...(descriptionPath ? { descriptionPath } : {}),
+        ...(options.onToggleMinor ? { onToggleMinor: () => options.onToggleMinor?.(card.id) } : {}),
         getToggleLabel: (currentIsMinor) =>
           `切换${card.id}的知识卡关系为${currentIsMinor ? '主要' : '次要'}`,
+        ...(options.onRemove ? { onRemove: () => options.onRemove?.(card.id) } : {}),
+        ...(options.onUpdateDescription
+          ? {
+              onUpdateDescription: (description) =>
+                options.onUpdateDescription?.(card.id, description),
+            }
+          : {}),
       } satisfies KnowledgeCardDisplayItem;
     })
     .filter(Boolean) as KnowledgeCardDisplayItem[];
@@ -253,10 +395,19 @@ const buildSpecialSkillItems = (
   items: readonly CharacterRelationItem[] | undefined,
   navigateToSkill: (id: string) => void,
   targetFaction: FactionId,
-  specialSkillsData: Record<FactionId, Record<string, { imageUrl?: string }>>
+  specialSkillsData: Record<FactionId, Record<string, { imageUrl?: string }>>,
+  options: {
+    relationKind: TraitRelationKind;
+    isEditable: boolean;
+    getDescriptionPath?: (id: string) => string | undefined;
+    onToggleMinor?: (id: string) => void;
+    onRemove?: (id: string) => void;
+    onUpdateDescription?: (id: string, description: string) => void;
+  }
 ): SpecialSkillDisplayItem[] =>
   toArray(items).map((skill) => {
     const skillObj = specialSkillsData[targetFaction]?.[skill.id];
+    const descriptionPath = options.getDescriptionPath?.(skill.id);
     return {
       type: 'specialSkill',
       key: `specialSkill-${skill.id}`,
@@ -266,19 +417,38 @@ const buildSpecialSkillItems = (
       ...(skillObj?.imageUrl ? { imageUrl: skillObj.imageUrl } : {}),
       ariaLabel: `跳转到特技 ${skill.id}`,
       onNavigate: () => navigateToSkill(skill.id),
-      onToggleMinor: () => {},
+      isEditable: options.isEditable,
+      relationKind: options.relationKind,
+      ...(descriptionPath ? { descriptionPath } : {}),
+      ...(options.onToggleMinor ? { onToggleMinor: () => options.onToggleMinor?.(skill.id) } : {}),
       getToggleLabel: (currentIsMinor) =>
         `切换${skill.id}的特技关系为${currentIsMinor ? '主要' : '次要'}`,
+      ...(options.onRemove ? { onRemove: () => options.onRemove?.(skill.id) } : {}),
+      ...(options.onUpdateDescription
+        ? {
+            onUpdateDescription: (description) =>
+              options.onUpdateDescription?.(skill.id, description),
+          }
+        : {}),
     } satisfies SpecialSkillDisplayItem;
   });
 
 const buildMapItems = (
   items: readonly CharacterRelationItem[] | undefined,
   navigateToMap: (id: string) => void,
-  mapsData: Record<string, { imageUrl?: string }>
+  mapsData: Record<string, { imageUrl?: string }>,
+  options: {
+    relationKind: TraitRelationKind;
+    isEditable: boolean;
+    getDescriptionPath?: (id: string) => string | undefined;
+    onToggleMinor?: (id: string) => void;
+    onRemove?: (id: string) => void;
+    onUpdateDescription?: (id: string, description: string) => void;
+  }
 ): MapDisplayItem[] =>
   toArray(items).map((map) => {
     const mapObj = mapsData[map.id];
+    const descriptionPath = options.getDescriptionPath?.(map.id);
     return {
       type: 'map',
       key: `map-${map.id}`,
@@ -288,19 +458,38 @@ const buildMapItems = (
       ...(mapObj?.imageUrl ? { imageUrl: mapObj.imageUrl } : {}),
       ariaLabel: `跳转到地图 ${map.id}`,
       onNavigate: () => navigateToMap(map.id),
-      onToggleMinor: () => {},
+      isEditable: options.isEditable,
+      relationKind: options.relationKind,
+      ...(descriptionPath ? { descriptionPath } : {}),
+      ...(options.onToggleMinor ? { onToggleMinor: () => options.onToggleMinor?.(map.id) } : {}),
       getToggleLabel: (currentIsMinor) =>
         `切换${map.id}的地图关系为${currentIsMinor ? '主要' : '次要'}`,
+      ...(options.onRemove ? { onRemove: () => options.onRemove?.(map.id) } : {}),
+      ...(options.onUpdateDescription
+        ? {
+            onUpdateDescription: (description) =>
+              options.onUpdateDescription?.(map.id, description),
+          }
+        : {}),
     } satisfies MapDisplayItem;
   });
 
 const buildModeItems = (
   items: readonly CharacterRelationItem[] | undefined,
   navigateToMode: (id: string) => void,
-  modesData: Record<string, { imageUrl?: string }>
+  modesData: Record<string, { imageUrl?: string }>,
+  options: {
+    relationKind: TraitRelationKind;
+    isEditable: boolean;
+    getDescriptionPath?: (id: string) => string | undefined;
+    onToggleMinor?: (id: string) => void;
+    onRemove?: (id: string) => void;
+    onUpdateDescription?: (id: string, description: string) => void;
+  }
 ): ModeDisplayItem[] =>
   toArray(items).map((mode) => {
     const modeObj = modesData[mode.id];
+    const descriptionPath = options.getDescriptionPath?.(mode.id);
     return {
       type: 'mode',
       key: `mode-${mode.id}`,
@@ -310,9 +499,19 @@ const buildModeItems = (
       ...(modeObj?.imageUrl ? { imageUrl: modeObj.imageUrl } : {}),
       ariaLabel: `跳转到模式 ${mode.id}`,
       onNavigate: () => navigateToMode(mode.id),
-      onToggleMinor: () => {},
+      isEditable: options.isEditable,
+      relationKind: options.relationKind,
+      ...(descriptionPath ? { descriptionPath } : {}),
+      ...(options.onToggleMinor ? { onToggleMinor: () => options.onToggleMinor?.(mode.id) } : {}),
       getToggleLabel: (currentIsMinor) =>
         `切换${mode.id}的模式关系为${currentIsMinor ? '主要' : '次要'}`,
+      ...(options.onRemove ? { onRemove: () => options.onRemove?.(mode.id) } : {}),
+      ...(options.onUpdateDescription
+        ? {
+            onUpdateDescription: (description) =>
+              options.onUpdateDescription?.(mode.id, description),
+          }
+        : {}),
     } satisfies ModeDisplayItem;
   });
 
@@ -325,6 +524,7 @@ type RelationSectionProps = {
   isEditMode: boolean;
   showEditControls?: boolean;
   emptyLabel?: string;
+  canEditDescription?: boolean;
 };
 
 const RelationSection: React.FC<RelationSectionProps> = ({
@@ -336,6 +536,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
   isEditMode,
   showEditControls = false,
   emptyLabel = '无',
+  canEditDescription = true,
 }) => {
   const themeClasses = relationThemeClasses[theme];
   const canEdit = isEditMode && showEditControls;
@@ -377,23 +578,52 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {canEdit && item.showEditable ? (
+            {canEdit && item.isEditable && item.onToggleMinor ? (
               <button
                 type='button'
-                onClick={item.onToggleMinor}
+                onClick={() => item.onToggleMinor?.()}
                 className={themeClasses.toggle}
-                aria-label={item.getToggleLabel?.(!!item.isMinor)}
+                aria-label={item.getToggleLabel?.(!!item.isMinor) ?? '切换关系'}
               >
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
               !canEdit && item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
+            {canEdit && item.onRemove && (
+              <button
+                type='button'
+                aria-label='移除关系'
+                onClick={() => item.onRemove?.()}
+                className='ml-auto flex h-7 w-7 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              >
+                <TrashIcon className='h-3.5 w-3.5' aria-hidden='true' />
+              </button>
+            )}
           </div>
-          {!canEdit && item.description && (
-            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-              {item.description}
-            </span>
+          {canEdit && canEditDescription ? (
+            item.descriptionPath ? (
+              <e.span
+                path={`${item.descriptionPath}.description`}
+                initialValue={item.description}
+                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                onSave={(value) => item.onUpdateDescription?.(value)}
+              />
+            ) : (
+              <textarea
+                rows={2}
+                defaultValue={item.description}
+                onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
+                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                placeholder='补充关系描述'
+              />
+            )
+          ) : (
+            item.description && (
+              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
+                {item.description}
+              </span>
+            )
           )}
         </div>
       </div>
@@ -431,23 +661,46 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {canEdit ? (
+            {canEdit && item.onToggleMinor ? (
               <button
                 type='button'
-                onClick={item.onToggleMinor}
+                onClick={() => item.onToggleMinor?.()}
                 className={themeClasses.toggle}
-                aria-label={item.getToggleLabel(!!item.isMinor)}
+                aria-label={item.getToggleLabel?.(!!item.isMinor) ?? '切换关系'}
               >
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
               item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
+            {canEdit && item.onRemove && (
+              <button
+                type='button'
+                aria-label='移除关系'
+                onClick={() => item.onRemove?.()}
+                className='ml-auto flex h-7 w-7 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              >
+                <TrashIcon className='h-3.5 w-3.5' aria-hidden='true' />
+              </button>
+            )}
           </div>
-          {canEdit ? (
-            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-              {item.description}
-            </span>
+          {canEdit && canEditDescription ? (
+            item.descriptionPath ? (
+              <e.span
+                path={`${item.descriptionPath}.description`}
+                initialValue={item.description}
+                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                onSave={(value) => item.onUpdateDescription?.(value)}
+              />
+            ) : (
+              <textarea
+                rows={2}
+                defaultValue={item.description}
+                onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
+                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                placeholder='补充关系描述'
+              />
+            )
           ) : (
             item.description && (
               <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
@@ -503,23 +756,46 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {canEdit ? (
+            {canEdit && item.onToggleMinor ? (
               <button
                 type='button'
-                onClick={item.onToggleMinor}
+                onClick={() => item.onToggleMinor?.()}
                 className={themeClasses.toggle}
-                aria-label={item.getToggleLabel(!!item.isMinor)}
+                aria-label={item.getToggleLabel?.(!!item.isMinor) ?? '切换关系'}
               >
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
               item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
+            {canEdit && item.onRemove && (
+              <button
+                type='button'
+                aria-label='移除关系'
+                onClick={() => item.onRemove?.()}
+                className='ml-auto flex h-7 w-7 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              >
+                <TrashIcon className='h-3.5 w-3.5' aria-hidden='true' />
+              </button>
+            )}
           </div>
-          {canEdit ? (
-            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-              {item.description}
-            </span>
+          {canEdit && canEditDescription ? (
+            item.descriptionPath ? (
+              <e.span
+                path={`${item.descriptionPath}.description`}
+                initialValue={item.description}
+                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                onSave={(value) => item.onUpdateDescription?.(value)}
+              />
+            ) : (
+              <textarea
+                rows={2}
+                defaultValue={item.description}
+                onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
+                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                placeholder='补充关系描述'
+              />
+            )
           ) : (
             item.description && (
               <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
@@ -575,23 +851,46 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {canEdit ? (
+            {canEdit && item.onToggleMinor ? (
               <button
                 type='button'
-                onClick={item.onToggleMinor}
+                onClick={() => item.onToggleMinor?.()}
                 className={themeClasses.toggle}
-                aria-label={item.getToggleLabel(!!item.isMinor)}
+                aria-label={item.getToggleLabel?.(!!item.isMinor) ?? '切换关系'}
               >
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
               item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
+            {canEdit && item.onRemove && (
+              <button
+                type='button'
+                aria-label='移除关系'
+                onClick={() => item.onRemove?.()}
+                className='ml-auto flex h-7 w-7 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              >
+                <TrashIcon className='h-3.5 w-3.5' aria-hidden='true' />
+              </button>
+            )}
           </div>
-          {canEdit ? (
-            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-              {item.description}
-            </span>
+          {canEdit && canEditDescription ? (
+            item.descriptionPath ? (
+              <e.span
+                path={`${item.descriptionPath}.description`}
+                initialValue={item.description}
+                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                onSave={(value) => item.onUpdateDescription?.(value)}
+              />
+            ) : (
+              <textarea
+                rows={2}
+                defaultValue={item.description}
+                onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
+                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                placeholder='补充关系描述'
+              />
+            )
           ) : (
             item.description && (
               <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
@@ -647,23 +946,46 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
-            {canEdit ? (
+            {canEdit && item.onToggleMinor ? (
               <button
                 type='button'
-                onClick={item.onToggleMinor}
+                onClick={() => item.onToggleMinor?.()}
                 className={themeClasses.toggle}
-                aria-label={item.getToggleLabel(!!item.isMinor)}
+                aria-label={item.getToggleLabel?.(!!item.isMinor) ?? '切换关系'}
               >
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
               item.isMinor && <span className={themeClasses.badge}>次要</span>
             )}
+            {canEdit && item.onRemove && (
+              <button
+                type='button'
+                aria-label='移除关系'
+                onClick={() => item.onRemove?.()}
+                className='ml-auto flex h-7 w-7 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              >
+                <TrashIcon className='h-3.5 w-3.5' aria-hidden='true' />
+              </button>
+            )}
           </div>
-          {canEdit ? (
-            <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-              {item.description}
-            </span>
+          {canEdit && canEditDescription ? (
+            item.descriptionPath ? (
+              <e.span
+                path={`${item.descriptionPath}.description`}
+                initialValue={item.description}
+                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                onSave={(value) => item.onUpdateDescription?.(value)}
+              />
+            ) : (
+              <textarea
+                rows={2}
+                defaultValue={item.description}
+                onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
+                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                placeholder='补充关系描述'
+              />
+            )
           ) : (
             item.description && (
               <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
@@ -723,6 +1045,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
 };
 
 const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
+  'use no memo';
   const { isEditMode } = useEditMode();
   const mapsSnapshot = useSnapshot(mapsEdit);
   const modesSnapshot = useSnapshot(modesEdit);
@@ -732,252 +1055,432 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       AssetManager.getCharacterImageUrl(targetId, factionId === 'cat' ? 'mouse' : 'cat'),
     [factionId]
   );
-  const char = getCharacterRelation(id);
+  const characterSnapshot = useSnapshot(characters[id]!);
+  const char = getEditableCharacterRelations(
+    id,
+    characterSnapshot as Partial<Record<TraitRelationKind, CharacterRelationItem[]>>
+  );
   const { handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
 
   const oppositeFactionId = factionId === 'cat' ? 'mouse' : 'cat';
 
-  const countersItems = React.useMemo(
-    () =>
-      sortByImportance([
-        ...buildCharacterItems(char.counters, getImageUrl, handleSelectCharacter, {
-          view: (targetId: string) => `选择角色 ${targetId}`,
-          edit: (targetId: string) => `克制 ${targetId} 的关系`,
-        }),
-        ...buildKnowledgeCardItems(char.countersKnowledgeCards, (cardId: string) =>
-          navigate(`/cards/${encodeURIComponent(cardId)}`)
-        ),
-        ...buildSpecialSkillItems(
-          char.countersSpecialSkills,
-          (skillId: string) =>
-            navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
-          oppositeFactionId,
-          specialSkillsSnapshot as unknown as Record<
-            FactionId,
-            Record<string, { imageUrl?: string }>
-          >
-        ),
-      ]),
-    [
+  const countersItems = sortByImportance([
+    ...buildCharacterItems(
       char.counters,
+      getImageUrl,
+      handleSelectCharacter,
+      {
+        view: (targetId: string) => `选择角色 ${targetId}`,
+        edit: (targetId: string) => `克制 ${targetId} 的关系`,
+      },
+      {
+        relationKind: 'counters',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counters.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counters', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'counters', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'counters', itemId, description),
+      }
+    ),
+    ...buildKnowledgeCardItems(
       char.countersKnowledgeCards,
+      (cardId: string) => navigate(`/cards/${encodeURIComponent(cardId)}`),
+      {
+        relationKind: 'countersKnowledgeCards',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.countersKnowledgeCards.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'countersKnowledgeCards', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'countersKnowledgeCards', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'countersKnowledgeCards', itemId, description),
+      }
+    ),
+    ...buildSpecialSkillItems(
       char.countersSpecialSkills,
+      (skillId: string) =>
+        navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
+      oppositeFactionId,
+      specialSkillsSnapshot as unknown as Record<FactionId, Record<string, { imageUrl?: string }>>,
+      {
+        relationKind: 'countersSpecialSkills',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.countersSpecialSkills.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'countersSpecialSkills', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'countersSpecialSkills', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'countersSpecialSkills', itemId, description),
+      }
+    ),
+  ]);
+
+  const counterEachOtherItems = sortByImportance(
+    buildCharacterItems(
+      char.counterEachOther,
       getImageUrl,
       handleSelectCharacter,
-      specialSkillsSnapshot,
-      navigate,
-      oppositeFactionId,
-    ]
+      {
+        view: (targetId: string) => `选择角色 ${targetId}`,
+        edit: (targetId: string) => `与 ${targetId} 互有克制的关系`,
+      },
+      {
+        relationKind: 'counterEachOther',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counterEachOther.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counterEachOther', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'counterEachOther', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'counterEachOther', itemId, description),
+      }
+    )
   );
 
-  const counterEachOtherItems = React.useMemo(
-    () =>
-      sortByImportance(
-        buildCharacterItems(char.counterEachOther, getImageUrl, handleSelectCharacter, {
-          view: (targetId: string) => `选择角色 ${targetId}`,
-          edit: (targetId: string) => `与 ${targetId} 互有克制的关系`,
-        })
-      ),
-    [char.counterEachOther, getImageUrl, handleSelectCharacter]
-  );
-
-  const counteredByItems = React.useMemo(
-    () =>
-      sortByImportance([
-        ...buildCharacterItems(char.counteredBy, getImageUrl, handleSelectCharacter, {
-          view: (targetId: string) => `选择角色 ${targetId}`,
-          edit: (targetId: string) => `被 ${targetId} 克制的关系`,
-        }),
-        ...buildKnowledgeCardItems(char.counteredByKnowledgeCards, (cardId: string) =>
-          navigate(`/cards/${encodeURIComponent(cardId)}`)
-        ),
-        ...buildSpecialSkillItems(
-          char.counteredBySpecialSkills,
-          (skillId: string) =>
-            navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
-          oppositeFactionId,
-          specialSkillsSnapshot as unknown as Record<
-            FactionId,
-            Record<string, { imageUrl?: string }>
-          >
-        ),
-      ]),
-    [
+  const counteredByItems = sortByImportance([
+    ...buildCharacterItems(
       char.counteredBy,
-      char.counteredByKnowledgeCards,
-      char.counteredBySpecialSkills,
       getImageUrl,
       handleSelectCharacter,
-      specialSkillsSnapshot,
-      navigate,
+      {
+        view: (targetId: string) => `选择角色 ${targetId}`,
+        edit: (targetId: string) => `被 ${targetId} 克制的关系`,
+      },
+      {
+        relationKind: 'counteredBy',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counteredBy.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBy', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'counteredBy', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'counteredBy', itemId, description),
+      }
+    ),
+    ...buildKnowledgeCardItems(
+      char.counteredByKnowledgeCards,
+      (cardId: string) => navigate(`/cards/${encodeURIComponent(cardId)}`),
+      {
+        relationKind: 'counteredByKnowledgeCards',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counteredByKnowledgeCards.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredByKnowledgeCards', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'counteredByKnowledgeCards', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'counteredByKnowledgeCards', itemId, description),
+      }
+    ),
+    ...buildSpecialSkillItems(
+      char.counteredBySpecialSkills,
+      (skillId: string) =>
+        navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
       oppositeFactionId,
-    ]
-  );
-
-  const collaboratorItems = React.useMemo(
-    () =>
-      sortByImportance(
-        buildCharacterItems(
-          char.collaborators,
-          (targetId: string) => AssetManager.getCharacterImageUrl(targetId, 'mouse'),
-          handleSelectCharacter,
-          {
-            view: (targetId: string) => `选择角色 ${targetId}`,
-            edit: (targetId: string) => `与 ${targetId} 的协作关系`,
-          }
-        )
-      ),
-    [char.collaborators, handleSelectCharacter]
-  );
-
-  const advantageMapsItems = React.useMemo(
-    () =>
-      sortByImportance(
-        buildMapItems(
-          char.advantageMaps,
-          (mapId: string) => navigate(`/maps/${encodeURIComponent(mapId)}`),
-          mapsSnapshot as unknown as Record<string, { imageUrl?: string }>
-        )
-      ),
-    [char.advantageMaps, mapsSnapshot, navigate]
-  );
-
-  const advantageModesItems = React.useMemo(
-    () =>
-      sortByImportance(
-        buildModeItems(
-          char.advantageModes,
-          (modeId: string) => navigate(`/modes/${encodeURIComponent(modeId)}`),
-          modesSnapshot as unknown as Record<string, { imageUrl?: string }>
-        )
-      ),
-    [char.advantageModes, modesSnapshot, navigate]
-  );
-
-  const disadvantageMapsItems = React.useMemo(
-    () =>
-      sortByImportance(
-        buildMapItems(
-          char.disadvantageMaps,
-          (mapId: string) => navigate(`/maps/${encodeURIComponent(mapId)}`),
-          mapsSnapshot as unknown as Record<string, { imageUrl?: string }>
-        )
-      ),
-    [char.disadvantageMaps, mapsSnapshot, navigate]
-  );
-
-  const disadvantageModesItems = React.useMemo(
-    () =>
-      sortByImportance(
-        buildModeItems(
-          char.disadvantageModes,
-          (modeId: string) => navigate(`/modes/${encodeURIComponent(modeId)}`),
-          modesSnapshot as unknown as Record<string, { imageUrl?: string }>
-        )
-      ),
-    [char.disadvantageModes, modesSnapshot, navigate]
-  );
-
-  const advantageItems = React.useMemo(
-    () => sortByImportance([...advantageMapsItems, ...advantageModesItems]),
-    [advantageMapsItems, advantageModesItems]
-  );
-
-  const disadvantageItems = React.useMemo(
-    () => sortByImportance([...disadvantageMapsItems, ...disadvantageModesItems]),
-    [disadvantageMapsItems, disadvantageModesItems]
-  );
-
-  const sectionConfigs: RelationSectionConfig[] = React.useMemo(
-    () => [
+      specialSkillsSnapshot as unknown as Record<FactionId, Record<string, { imageUrl?: string }>>,
       {
-        key: 'counters',
-        theme: 'blue',
-        title: `被${id}克制的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
-        icon: <HappyFaceIcon aria-hidden='true' />,
-        items: countersItems,
-        selectors: undefined,
-        show: true,
-        showEditControls: false,
+        relationKind: 'counteredBySpecialSkills',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counteredBySpecialSkills.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBySpecialSkills', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'counteredBySpecialSkills', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'counteredBySpecialSkills', itemId, description),
+      }
+    ),
+  ]);
+
+  const collaboratorItems = sortByImportance(
+    buildCharacterItems(
+      char.collaborators,
+      (targetId: string) => AssetManager.getCharacterImageUrl(targetId, 'mouse'),
+      handleSelectCharacter,
+      {
+        view: (targetId: string) => `选择角色 ${targetId}`,
+        edit: (targetId: string) => `与 ${targetId} 的协作关系`,
       },
       {
-        key: 'counterEachOther',
-        theme: 'amber',
-        title: `与${id}互有克制的${factionId == 'cat' ? '老鼠' : '猫咪'}`,
-        icon: <NeutralFaceIcon aria-hidden='true' />,
-        items: counterEachOtherItems,
-        selectors: undefined,
-        show: counterEachOtherItems.length > 0,
-        showEditControls: false,
-      },
+        relationKind: 'collaborators',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.collaborators.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'collaborators', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'collaborators', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'collaborators', itemId, description),
+      }
+    )
+  );
+
+  const advantageMapsItems = sortByImportance(
+    buildMapItems(
+      char.advantageMaps,
+      (mapId: string) => navigate(`/maps/${encodeURIComponent(mapId)}`),
+      mapsSnapshot as unknown as Record<string, { imageUrl?: string }>,
       {
-        key: 'counteredBy',
-        theme: 'red',
-        title: `克制${id}的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
-        icon: <SadFaceIcon aria-hidden='true' />,
-        items: counteredByItems,
-        selectors: undefined,
-        show: true,
-        showEditControls: false,
-      },
+        relationKind: 'advantageMaps',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.advantageMaps.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'advantageMaps', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'advantageMaps', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'advantageMaps', itemId, description),
+      }
+    )
+  );
+
+  const advantageModesItems = sortByImportance(
+    buildModeItems(
+      char.advantageModes,
+      (modeId: string) => navigate(`/modes/${encodeURIComponent(modeId)}`),
+      modesSnapshot as unknown as Record<string, { imageUrl?: string }>,
       {
-        key: 'collaborators',
-        theme: 'green',
-        title: `与${id}协作的老鼠`,
-        icon: <HeartIcon aria-hidden='true' />,
-        items: collaboratorItems,
-        selectors: undefined,
-        show: factionId === 'mouse',
-        showEditControls: false,
-      },
+        relationKind: 'advantageModes',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.advantageModes.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'advantageModes', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'advantageModes', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'advantageModes', itemId, description),
+      }
+    )
+  );
+
+  const disadvantageMapsItems = sortByImportance(
+    buildMapItems(
+      char.disadvantageMaps,
+      (mapId: string) => navigate(`/maps/${encodeURIComponent(mapId)}`),
+      mapsSnapshot as unknown as Record<string, { imageUrl?: string }>,
       {
-        key: 'advantage',
-        theme: 'orange',
-        title: `${id}的优势地图/模式`,
-        icon: (
-          <div className='flex items-center justify-center'>
-            <AdvantageIcon size={12} aria-hidden='true' />
-            <MapIcon size={12} aria-hidden='true' />
+        relationKind: 'disadvantageMaps',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.disadvantageMaps.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'disadvantageMaps', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'disadvantageMaps', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'disadvantageMaps', itemId, description),
+      }
+    )
+  );
+
+  const disadvantageModesItems = sortByImportance(
+    buildModeItems(
+      char.disadvantageModes,
+      (modeId: string) => navigate(`/modes/${encodeURIComponent(modeId)}`),
+      modesSnapshot as unknown as Record<string, { imageUrl?: string }>,
+      {
+        relationKind: 'disadvantageModes',
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.disadvantageModes.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'disadvantageModes', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'disadvantageModes', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'disadvantageModes', itemId, description),
+      }
+    )
+  );
+
+  const advantageItems = sortByImportance([...advantageMapsItems, ...advantageModesItems]);
+
+  const disadvantageItems = sortByImportance([...disadvantageMapsItems, ...disadvantageModesItems]);
+
+  const sectionConfigs: RelationSectionConfig[] = [
+    {
+      key: 'counters',
+      theme: 'blue',
+      title: `被${id}克制的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
+      icon: <HappyFaceIcon aria-hidden='true' />,
+      items: countersItems,
+      selectors: (
+        <div className='flex items-center gap-2'>
+          <div title='添加角色'>
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='counters'
+              existingRelations={char.counters}
+              onSelect={(characterId: string) =>
+                addRelationItem(id, 'counters', createRelationItem(characterId))
+              }
+            />
           </div>
-        ),
-        items: advantageItems,
-        selectors: undefined,
-        show: advantageItems.length > 0,
-        showEditControls: false,
-      },
-      {
-        key: 'disadvantage',
-        theme: 'purple',
-        title: `${id}的劣势地图/模式`,
-        icon: (
-          <div className='flex items-center justify-center'>
-            <DisadvantageIcon size={12} aria-hidden='true' />
-            <MapIcon size={12} aria-hidden='true' />
+          <div title='添加知识卡'>
+            <KnowledgeCardSelector
+              selected={char.countersKnowledgeCards}
+              onSelect={(cardId) =>
+                addRelationItem(id, 'countersKnowledgeCards', createRelationItem(cardId))
+              }
+              factionId={oppositeFactionId}
+            />
           </div>
-        ),
-        items: disadvantageItems,
-        selectors: undefined,
-        show: disadvantageItems.length > 0,
-        showEditControls: false,
-      },
-    ],
-    [
-      counterEachOtherItems,
-      counteredByItems,
-      countersItems,
-      factionId,
-      id,
-      collaboratorItems,
-      advantageItems,
-      disadvantageItems,
-    ]
-  );
+          <div title='添加特技'>
+            <SpecialSkillSelector
+              selected={char.countersSpecialSkills}
+              factionId={factionId}
+              onSelect={(skillId) =>
+                addRelationItem(id, 'countersSpecialSkills', createRelationItem(skillId))
+              }
+            />
+          </div>
+        </div>
+      ),
+      show: true,
+      showEditControls: true,
+    },
+    {
+      key: 'counterEachOther',
+      theme: 'amber',
+      title: `与${id}互有克制的${factionId == 'cat' ? '老鼠' : '猫咪'}`,
+      icon: <NeutralFaceIcon aria-hidden='true' />,
+      items: counterEachOtherItems,
+      selectors: (
+        <div className='flex items-center gap-2'>
+          <div title='添加角色'>
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='counterEachOther'
+              existingRelations={char.counterEachOther}
+              onSelect={(characterId: string) =>
+                addRelationItem(id, 'counterEachOther', createRelationItem(characterId))
+              }
+            />
+          </div>
+        </div>
+      ),
+      show: isEditMode || counterEachOtherItems.length > 0,
+      showEditControls: true,
+    },
+    {
+      key: 'counteredBy',
+      theme: 'red',
+      title: `克制${id}的${factionId == 'cat' ? '老鼠' : '猫咪'}/知识卡/特技`,
+      icon: <SadFaceIcon aria-hidden='true' />,
+      items: counteredByItems,
+      selectors: (
+        <div className='flex items-center gap-2'>
+          <div title='添加角色'>
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='counteredBy'
+              existingRelations={char.counteredBy}
+              onSelect={(characterId: string) =>
+                addRelationItem(id, 'counteredBy', createRelationItem(characterId))
+              }
+            />
+          </div>
+          <div title='添加知识卡'>
+            <KnowledgeCardSelector
+              selected={char.counteredByKnowledgeCards}
+              onSelect={(cardId) =>
+                addRelationItem(id, 'counteredByKnowledgeCards', createRelationItem(cardId))
+              }
+              factionId={oppositeFactionId}
+            />
+          </div>
+          <div title='添加特技'>
+            <SpecialSkillSelector
+              selected={char.counteredBySpecialSkills}
+              factionId={factionId}
+              onSelect={(skillId) =>
+                addRelationItem(id, 'counteredBySpecialSkills', createRelationItem(skillId))
+              }
+            />
+          </div>
+        </div>
+      ),
+      show: true,
+      showEditControls: true,
+    },
+    {
+      key: 'collaborators',
+      theme: 'green',
+      title: `与${id}协作的老鼠`,
+      icon: <HeartIcon aria-hidden='true' />,
+      items: collaboratorItems,
+      selectors: (
+        <div className='flex items-center gap-2'>
+          <div title='添加角色'>
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='collaborators'
+              existingRelations={char.collaborators}
+              onSelect={(characterId: string) =>
+                addRelationItem(id, 'collaborators', createRelationItem(characterId))
+              }
+            />
+          </div>
+        </div>
+      ),
+      show: factionId === 'mouse',
+      showEditControls: true,
+    },
+    {
+      key: 'advantage',
+      theme: 'orange',
+      title: `${id}的优势地图/模式`,
+      icon: (
+        <div className='flex items-center justify-center'>
+          <AdvantageIcon size={12} aria-hidden='true' />
+          <MapIcon size={12} aria-hidden='true' />
+        </div>
+      ),
+      items: advantageItems,
+      selectors: (
+        <div className='flex items-center gap-2'>
+          <div title='添加地图'>
+            <MapSelector
+              selected={char.advantageMaps}
+              onSelect={(mapId) => addRelationItem(id, 'advantageMaps', createRelationItem(mapId))}
+            />
+          </div>
+          <div title='添加模式'>
+            <ModeSelector
+              selected={char.advantageModes}
+              onSelect={(modeId) =>
+                addRelationItem(id, 'advantageModes', createRelationItem(modeId))
+              }
+            />
+          </div>
+        </div>
+      ),
+      show: isEditMode || advantageItems.length > 0,
+      showEditControls: true,
+    },
+    {
+      key: 'disadvantage',
+      theme: 'purple',
+      title: `${id}的劣势地图/模式`,
+      icon: (
+        <div className='flex items-center justify-center'>
+          <DisadvantageIcon size={12} aria-hidden='true' />
+          <MapIcon size={12} aria-hidden='true' />
+        </div>
+      ),
+      items: disadvantageItems,
+      selectors: (
+        <div className='flex items-center gap-2'>
+          <div title='添加地图'>
+            <MapSelector
+              selected={char.disadvantageMaps}
+              onSelect={(mapId) =>
+                addRelationItem(id, 'disadvantageMaps', createRelationItem(mapId))
+              }
+            />
+          </div>
+          <div title='添加模式'>
+            <ModeSelector
+              selected={char.disadvantageModes}
+              onSelect={(modeId) =>
+                addRelationItem(id, 'disadvantageModes', createRelationItem(modeId))
+              }
+            />
+          </div>
+        </div>
+      ),
+      show: isEditMode || disadvantageItems.length > 0,
+      showEditControls: true,
+    },
+  ];
 
-  const visibleSections = React.useMemo(
-    () => sectionConfigs.filter((section) => section.show !== false),
-    [sectionConfigs]
-  );
+  const visibleSections = sectionConfigs.filter((section) => section.show !== false);
 
   return (
     <div className='flex items-start gap-6 rounded-lg bg-gray-50 p-4 shadow dark:bg-slate-800/50'>
