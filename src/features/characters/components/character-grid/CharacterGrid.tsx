@@ -1,7 +1,9 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useSnapshot } from 'valtio';
 
+import { GameDataManager } from '@/lib/dataManager';
 import { getAvatarFilterColors, getPositioningTagColors } from '@/lib/design';
 import { getOriginalCharacterIds } from '@/lib/editUtils';
 import { useFilterState } from '@/lib/filterUtils';
@@ -17,13 +19,17 @@ import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
-import { characters as allCharacters, FactionId, PositioningTagName } from '@/data';
+import { characters as allCharacters, characters, FactionId, PositioningTagName } from '@/data';
 
 import CharacterCreate from './CharacterCreate';
 import CharacterDisplay from './CharacterDisplay';
 import CharacterImport from './CharacterImport';
 
-export default function CharacterGrid({ faction }: FactionCharactersProps) {
+export default function CharacterGrid({ factionId }: FactionCharactersProps) {
+  const localCharacters = useSnapshot(characters);
+  const faction = useMemo(() => {
+    return GameDataManager.getFactionsWithCharacters(localCharacters)[factionId];
+  }, [localCharacters, factionId])!;
   const { isDetailedView: isDetailed } = useAppContext();
   const { isEditMode } = useEditMode();
   const [isDarkMode] = useDarkMode();

@@ -3,7 +3,7 @@ import { GameDataManager } from './dataManager';
 describe('GameDataManager', () => {
   describe('getFactions', () => {
     it('should return factions with characters', () => {
-      const factions = GameDataManager.getFactions();
+      const factions = GameDataManager.getFactionsWithCharacters(GameDataManager.getCharacters());
 
       expect(factions).toBeDefined();
       expect(Object.keys(factions)).toContain('cat');
@@ -97,8 +97,8 @@ describe('GameDataManager', () => {
 
   describe('data consistency', () => {
     it('should maintain data consistency between different methods', () => {
-      const factions = GameDataManager.getFactions();
       const characters = GameDataManager.getCharacters();
+      const factions = GameDataManager.getFactionsWithCharacters(characters);
 
       // Count characters in factions
       const catCharactersInFaction = factions['cat']?.characters?.length || 0;

@@ -2,10 +2,11 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { CollectionPage, WithContext } from 'schema-dts';
 
+import { GameDataManager } from '@/lib/dataManager';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
-import { factionData, factions } from '@/data';
+import { characters, factionData, FactionId } from '@/data';
 
 import CharacterGridClient from './CharacterGridClient';
 
@@ -19,7 +20,7 @@ export function generateStaticParams() {
 }
 
 function generateStructuredData(factionId: string): WithContext<CollectionPage> | null {
-  const faction = factions[factionId];
+  const faction = GameDataManager.getFactionsWithCharacters(characters)[factionId];
 
   if (!faction) {
     return null;
@@ -51,7 +52,7 @@ export async function generateMetadata({
   params: Promise<{ factionId: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const faction = factions[resolvedParams.factionId];
+  const faction = GameDataManager.getFactionsWithCharacters(characters)[resolvedParams.factionId];
 
   if (!faction) {
     return {};
@@ -67,7 +68,7 @@ export async function generateMetadata({
 
 export default async function FactionPage({ params }: { params: Promise<{ factionId: string }> }) {
   const resolvedParams = await params;
-  const faction = factions[resolvedParams.factionId];
+  const faction = GameDataManager.getFactionsWithCharacters(characters)[resolvedParams.factionId];
 
   if (!faction) {
     notFound();
@@ -76,7 +77,7 @@ export default async function FactionPage({ params }: { params: Promise<{ factio
   return (
     <>
       <StructuredData data={generateStructuredData(resolvedParams.factionId)} />
-      <CharacterGridClient faction={faction} />
+      <CharacterGridClient factionId={resolvedParams.factionId as FactionId} />
     </>
   );
 }

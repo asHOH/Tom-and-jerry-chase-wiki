@@ -37,7 +37,6 @@ import {
   characters,
   entities,
   entitiesEdit,
-  factions,
   fixtures,
   fixturesEdit,
   items,
@@ -86,7 +85,6 @@ export const EditModeContext = createContext<EditModeContextType | undefined>(un
 export const entityRegistry = new Map<string, Record<string, unknown>>([
   ['achievements', achievementsEdit as unknown as Record<string, unknown>],
   ['characters', characters],
-  ['factions', factions],
   ['cards', cardsEdit],
   ['entities', entitiesEdit as unknown as Record<string, unknown>],
   ['buffs', buffsEdit as unknown as Record<string, unknown>],
@@ -158,7 +156,6 @@ function clearActionHistoriesFromStorage(): void {
 function restoreEntitiesToCanonical(): void {
   const original = {
     characters: GameDataManager.getCharacters(),
-    factions: GameDataManager.getFactions(),
     cards: GameDataManager.getCards(),
   };
 
@@ -169,13 +166,6 @@ function restoreEntitiesToCanonical(): void {
       });
       Object.entries(original.characters).forEach(([key, value]) => {
         entity[key] = proxy(value);
-      });
-    } else if (entityType === 'factions' && original.factions) {
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(original.factions).forEach(([key, value]) => {
-        entity[key] = value;
       });
     } else if (entityType === 'cards' && original.cards) {
       Object.keys(entity).forEach((key) => {

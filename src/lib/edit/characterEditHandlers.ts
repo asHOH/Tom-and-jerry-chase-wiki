@@ -9,7 +9,7 @@ import { proxy } from 'valtio';
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
 import { CharacterWithFaction } from '@/lib/types';
-import { characters, FactionId, factions, Skill } from '@/data';
+import { characters, FactionId, Skill } from '@/data';
 
 /**
  * Handles character ID changes, including:
@@ -60,20 +60,6 @@ export function handleCharacterIdChange(
   const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId, factionId);
 
   characters[newId] = proxy(enhancedCharacter);
-
-  // Update faction's character grid list
-  const faction = factions[factionId];
-  if (faction && !faction.characters.some((c) => c.id === newId)) {
-    faction.characters.push({
-      id: enhancedCharacter.id,
-      name: enhancedCharacter.id,
-      imageUrl: enhancedCharacter.imageUrl,
-      positioningTags:
-        (factionId === 'cat'
-          ? enhancedCharacter.catPositioningTags
-          : enhancedCharacter.mousePositioningTags) || [],
-    });
-  }
 
   if (shouldNavigate) {
     handleSelectCharacter(newId);

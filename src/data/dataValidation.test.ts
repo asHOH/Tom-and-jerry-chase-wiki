@@ -1,4 +1,4 @@
-import { cardData, characters, factions } from '.';
+import { cardData, characters } from '.';
 import {
   Card,
   CardGroup,
@@ -147,38 +147,7 @@ describe('Data Validation', () => {
     });
   });
 
-  describe('Factions Data', () => {
-    it('should have both cat and mouse factions', () => {
-      expect(factions.cat).toBeDefined();
-      expect(factions.mouse).toBeDefined();
-    });
-
-    it('should have valid faction structure', () => {
-      Object.values(factions).forEach((faction) => {
-        expect(faction.id).toMatch(/^(cat|mouse)$/);
-        expect(faction.name).toBeDefined();
-        expect(faction.description).toBeDefined();
-        expect(Array.isArray(faction.characters)).toBe(true);
-      });
-    });
-
-    it('should have characters in each faction', () => {
-      expect(factions.cat!.characters.length).toBeGreaterThan(0);
-      expect(factions.mouse!.characters.length).toBeGreaterThan(0);
-    });
-  });
-
   describe('Data Consistency', () => {
-    it('should have consistent character IDs between characters and factions', () => {
-      const characterIds = Object.keys(characters);
-      const factionCharacterIds = [
-        ...factions.cat!.characters.map((c) => c.id),
-        ...factions.mouse!.characters.map((c) => c.id),
-      ];
-
-      expect(characterIds.sort()).toEqual(factionCharacterIds.sort());
-    });
-
     it('should have unique character IDs', () => {
       const characterIds = Object.keys(characters);
       const uniqueIds = Array.from(new Set(characterIds));

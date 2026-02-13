@@ -16,7 +16,6 @@ import {
   cardsEdit,
   characters,
   entities,
-  factions,
   fixtures,
   fixturesEdit,
   items,
@@ -114,7 +113,6 @@ function applyEntryToTarget(entityType: string, entry: ActionHistoryEntry): bool
       applyActionEntry(characters as unknown as Record<string, unknown>, entry);
       break;
     case 'factions':
-      applyActionEntry(factions as unknown as Record<string, unknown>, entry);
       break;
     case 'cards':
       applyActionEntry(cards as unknown as Record<string, unknown>, entry);

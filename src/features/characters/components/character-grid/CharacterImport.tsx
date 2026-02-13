@@ -14,7 +14,7 @@ import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { processCharacters } from '@/features/characters/utils/skillId';
 import BaseCard from '@/components/ui/BaseCard';
-import { characters, FactionId, factions } from '@/data';
+import { characters, FactionId } from '@/data';
 
 function handleUploadedData(
   data: string,
@@ -54,21 +54,6 @@ function handleUploadedData(
   for (const [id, value] of Object.entries(newCharacters)) {
     // Use proxies so sub-reads via useSnapshot work on nested structures
     characters[id] = proxy(value);
-  }
-
-  for (const character of Object.values(newCharacters)) {
-    const faction = factions[factionId]!.characters.find(({ id }) => id == character.id);
-    if (faction) {
-      faction.positioningTags =
-        character.catPositioningTags ?? character.mousePositioningTags ?? faction.positioningTags;
-    } else {
-      factions[factionId]!.characters.push({
-        id: character.id,
-        name: character.id,
-        imageUrl: AssetManager.getCharacterImageUrl(character.id, factionId),
-        positioningTags: character.catPositioningTags ?? character.mousePositioningTags ?? [],
-      });
-    }
   }
 
   // Trigger success callback - no reload needed, let's see if UI updates automatically

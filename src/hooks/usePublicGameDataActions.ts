@@ -11,7 +11,6 @@ import {
   cardsEdit,
   characters,
   entitiesEdit,
-  factions,
   fixturesEdit,
   itemsEdit,
   mapsEdit,
@@ -30,8 +29,6 @@ function getTarget(entityType: string): Record<string, unknown> | null {
   switch (entityType) {
     case 'characters':
       return characters as unknown as Record<string, unknown>;
-    case 'factions':
-      return factions as unknown as Record<string, unknown>;
     case 'cards':
       return cardsEdit as unknown as Record<string, unknown>;
     case 'entities':

@@ -61,7 +61,7 @@ export type FactionWithCharacters = {
 };
 
 export type FactionCharactersProps = {
-  faction: FactionWithCharacters;
+  factionId: FactionId;
 };
 export type GotoResult = {
   url: string;

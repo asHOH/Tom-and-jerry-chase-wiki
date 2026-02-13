@@ -69,7 +69,7 @@ const knowledgeGroupSetHasTreeStructure = (
 
 const isKnowledgeCardGroupSet = (
   group: DeepReadonly<KnowledgeCardGroup | KnowledgeCardGroupSet>
-): group is DeepReadonly<KnowledgeCardGroupSet> => 'groups' in group;
+): group is DeepReadonly<KnowledgeCardGroupSet> => group != undefined && 'groups' in group;
 
 const getWarningTagStyles = (isDarkMode: boolean) =>
   isDarkMode

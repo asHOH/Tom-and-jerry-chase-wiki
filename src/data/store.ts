@@ -1,7 +1,7 @@
 import { proxy } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
-import { CharacterWithFaction, FactionWithCharacters, KnowledgeCardWithFaction } from '@/lib/types';
+import { CharacterWithFaction, KnowledgeCardWithFaction } from '@/lib/types';
 import buffsStatic from '@/features/buffs/data/buffs';
 import fixturesStatic from '@/features/fixtures/data/fixtures';
 import itemsStatic from '@/features/items/data/items';
@@ -36,8 +36,6 @@ function proxyRecord<T extends Record<string, unknown>>(record: T): Record<strin
 export const characters: Record<string, CharacterWithFaction> = proxy(
   GameDataManager.getCharacters()
 );
-
-export const factions: Record<string, FactionWithCharacters> = proxy(GameDataManager.getFactions());
 
 // Knowledge cards are exported as a read-only static object in src/data/static.ts.
 // This proxy-backed store enables local-only edit mode, mirroring how characters are edited.

@@ -1,5 +1,6 @@
+import { DeepReadonly } from '@/types/deep-readonly';
 import { historyData } from '@/data/history';
-import { Card, Character, Faction, FactionId, PositioningTag } from '@/data/types';
+import { Card, Character, Faction, FactionId } from '@/data/types';
 import { catCharactersWithImages } from '@/features/characters/data/catCharacters';
 import { mouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
 import { catCardsWithImages } from '@/features/knowledge-cards/data/catKnowledgeCards';
@@ -66,7 +67,7 @@ function getCreateTime(name: string) {
  * Provides a clean interface for accessing processed game data
  */
 export class GameDataManager {
-  static getFactionsWithCharacters(characters: Record<string, Character>) {
+  static getFactionsWithCharacters(characters: DeepReadonly<Record<string, Character>>) {
     return Object.fromEntries(
       Object.entries(rawFactionData).map(([factionId, faction]) => {
         const factionCharacters = Object.values(characters)
@@ -112,20 +113,6 @@ export class GameDataManager {
       }
     >
   > | null = null;
-  private static _factionsCache: Readonly<
-    Record<
-      string,
-      Faction & {
-        characters: Array<{
-          id: string;
-          name: string;
-          imageUrl: string;
-          positioningTags: PositioningTag[];
-          createDate: string | null;
-        }>;
-      }
-    >
-  > | null = null;
 
   /**
    * Clear memoized caches. If no options provided, clears all.
@@ -135,42 +122,8 @@ export class GameDataManager {
     if (all || opts?.characters) {
       this._charactersCache = null;
       // Factions depend on characters; clear as well
-      this._factionsCache = null;
     }
     if (all || opts?.cards) this._cardsCache = null;
-    if (all || opts?.factions) this._factionsCache = null;
-  }
-
-  static getFactions(): Readonly<
-    Record<
-      string,
-      Faction & {
-        characters: Array<{
-          id: string;
-          name: string;
-          imageUrl: string;
-          positioningTags: PositioningTag[];
-          createDate: string | null;
-        }>;
-      }
-    >
-  > {
-    if (this._factionsCache) return this._factionsCache;
-    const characters = this.getCharacters();
-    const built = this.getFactionsWithCharacters(characters);
-    this._factionsCache = built as Record<
-      string,
-      Faction & {
-        characters: Array<{
-          id: string;
-          name: string;
-          imageUrl: string;
-          positioningTags: PositioningTag[];
-          createDate: string | null;
-        }>;
-      }
-    >;
-    return this._factionsCache!;
   }
 
   static getCharacters(): Readonly<
