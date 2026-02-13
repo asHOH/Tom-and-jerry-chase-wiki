@@ -3,6 +3,8 @@ import type { INTERNAL_Op } from 'valtio';
 
 import { actionHistorySchema } from '@/lib/validation/schemas';
 
+export const subscribers: Record<string, [() => void, () => void]> = {};
+
 export type DiffOp = 'set' | 'add' | 'delete';
 
 export interface Action {
@@ -214,17 +216,16 @@ export function appendActionHistoryEntry(storageKey: string, entry: ActionHistor
   writeActionHistory(storageKey, history);
 }
 
-const suppressedRecordingKeys = new Set<string>();
-
-export function isRecordingSuppressed(storageKey: string): boolean {
-  return suppressedRecordingKeys.has(storageKey);
-}
-
 export function withRecordingSuppressed<T>(storageKey: string, fn: () => T): T {
-  suppressedRecordingKeys.add(storageKey);
-  try {
+  console.log(subscribers, storageKey);
+  if (storageKey in subscribers) {
+    subscribers[storageKey]![1]();
+    try {
+      return fn();
+    } finally {
+      subscribers[storageKey]![0]();
+    }
+  } else {
     return fn();
-  } finally {
-    suppressedRecordingKeys.delete(storageKey);
   }
 }

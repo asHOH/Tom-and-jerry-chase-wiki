@@ -10,7 +10,6 @@ export function DynamicFaviconEditBadge() {
   const { isEditMode } = useEditMode();
   const linkId = 'dynamic-favicon-edit';
   const mountedRef = useRef(false);
-  console.log(isEditMode);
 
   useEffect(() => {
     mountedRef.current = true;

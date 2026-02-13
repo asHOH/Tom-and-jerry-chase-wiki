@@ -20,8 +20,8 @@ import {
   applyActionEntry,
   getActionsStorageKey,
   invertActionEntry,
-  isRecordingSuppressed,
   readActionHistory,
+  subscribers,
   withRecordingSuppressed,
   writeActionHistory,
   type Action,
@@ -83,7 +83,7 @@ export const EditModeContext = createContext<EditModeContextType | undefined>(un
 /**
  * Entity registry mapping entity types to their proxy objects.
  */
-const entityRegistry = new Map<string, Record<string, unknown>>([
+export const entityRegistry = new Map<string, Record<string, unknown>>([
   ['achievements', achievementsEdit as unknown as Record<string, unknown>],
   ['characters', characters],
   ['factions', factions],
@@ -105,10 +105,6 @@ function syncEntityToLocalStorage(entityType: string, entity: Record<string, unk
   const actionsStorageKey = getActionsStorageKey(entityType);
 
   return subscribe(entity, (ops) => {
-    if (isRecordingSuppressed(actionsStorageKey)) {
-      return;
-    }
-
     const actions = actionsFromValtioOps(ops);
 
     if (actions.length === 0) return;
@@ -310,13 +306,19 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
 
       // Subscribe to all registered entities
-      const unsubscribers: Array<() => void> = [];
       Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-        unsubscribers.push(syncEntityToLocalStorage(entityType, entity));
+        const key = getActionsStorageKey(entityType);
+        subscribers[key] = [
+          () => {
+            subscribers[key]![1] = syncEntityToLocalStorage(entityType, entity);
+          },
+          void 0 as unknown as () => void,
+        ];
+        subscribers[key][0]();
       });
 
       return () => {
-        unsubscribers.forEach((unsub) => unsub());
+        Object.values(subscribers).forEach(([, unsub]) => unsub());
       };
     } else if (!isEditMode && wasEditMode) {
       // Exiting edit mode - handled by page-level controls
@@ -325,13 +327,19 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     } else if (isEditMode) {
       // Already in edit mode, just set up subscriptions
       setIsLoading(false);
-      const unsubscribers: Array<() => void> = [];
       Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-        unsubscribers.push(syncEntityToLocalStorage(entityType, entity));
+        const key = getActionsStorageKey(entityType);
+        subscribers[key] = [
+          () => {
+            subscribers[key]![1] = syncEntityToLocalStorage(entityType, entity);
+          },
+          void 0 as unknown as () => void,
+        ];
+        subscribers[key][0]();
       });
 
       return () => {
-        unsubscribers.forEach((unsub) => unsub());
+        Object.values(subscribers).forEach(([, unsub]) => unsub());
       };
     }
 
@@ -537,9 +545,10 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     if (entity) {
       const history = readActionHistory(storageKey);
       const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
-
+      console.log(matching, remaining);
       if (matching.length > 0) {
         withRecordingSuppressed(storageKey, () => {
+          console.log(storageKey);
           for (let i = matching.length - 1; i >= 0; i -= 1) {
             applyActionEntry(entity, invertActionEntry(matching[i]!));
           }
