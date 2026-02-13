@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { createPortal } from 'react-dom';
 import { useSWRConfig } from 'swr';
 
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
@@ -326,76 +327,79 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
     }
   };
 
-  return (
-    <m.div
-      className={clsx(
-        'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
-        isMobile && 'p-0'
-      )}
-      initial='hidden'
-      animate='visible'
-      exit='exit'
-      variants={backdropVariants}
-      transition={{ duration: 0.2 }}
-    >
-      <m.div
-        ref={dialogRef}
-        className={clsx(
-          'relative bg-white p-6 shadow-xl dark:bg-gray-800',
-          isMobile
-            ? 'flex h-full w-full flex-col rounded-none'
-            : 'mx-auto w-full max-w-sm rounded-lg'
-        )}
-        variants={dialogVariants}
-        transition={{ duration: 0.2 }}
-      >
-        <button
-          type='button'
-          onClick={onClose}
-          className='absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-          aria-label='关闭对话框'
+  return document
+    ? createPortal(
+        <m.div
+          className={clsx(
+            'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
+            isMobile && 'p-0'
+          )}
+          initial='hidden'
+          animate='visible'
+          exit='exit'
+          variants={backdropVariants}
+          transition={{ duration: 0.2 }}
         >
-          <CloseIcon className='h-6 w-6' />
-        </button>
-
-        <form onSubmit={handleSubmit}>
-          <div className='mb-4'>
-            <AnimatePresence mode='wait' initial={false}>
-              <m.div
-                key={step}
-                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                transition={{ duration: 0.16, ease: 'easeOut' }}
-              >
-                {renderStep()}
-              </m.div>
-            </AnimatePresence>
-          </div>
-
-          {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
-
-          <Button
-            type='submit'
-            fullWidth
-            variant='primary'
-            size='md'
-            loading={isLoading}
-            disabled={
-              isLoading ||
-              !isUsernameCorrect ||
-              (step === 'register' &&
-                !!password &&
-                !!passwordStrength &&
-                passwordStrength.strength <= 1)
-            }
+          <m.div
+            ref={dialogRef}
+            className={clsx(
+              'relative bg-white p-6 shadow-xl dark:bg-gray-800',
+              isMobile
+                ? 'flex h-full w-full flex-col rounded-none'
+                : 'mx-auto w-full max-w-sm rounded-lg'
+            )}
+            variants={dialogVariants}
+            transition={{ duration: 0.2 }}
           >
-            继续
-          </Button>
-        </form>
-      </m.div>
-    </m.div>
-  );
+            <button
+              type='button'
+              onClick={onClose}
+              className='absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              aria-label='关闭对话框'
+            >
+              <CloseIcon className='h-6 w-6' />
+            </button>
+
+            <form onSubmit={handleSubmit}>
+              <div className='mb-4'>
+                <AnimatePresence mode='wait' initial={false}>
+                  <m.div
+                    key={step}
+                    initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                    transition={{ duration: 0.16, ease: 'easeOut' }}
+                  >
+                    {renderStep()}
+                  </m.div>
+                </AnimatePresence>
+              </div>
+
+              {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
+
+              <Button
+                type='submit'
+                fullWidth
+                variant='primary'
+                size='md'
+                loading={isLoading}
+                disabled={
+                  isLoading ||
+                  !isUsernameCorrect ||
+                  (step === 'register' &&
+                    !!password &&
+                    !!passwordStrength &&
+                    passwordStrength.strength <= 1)
+                }
+              >
+                继续
+              </Button>
+            </form>
+          </m.div>
+        </m.div>,
+        document.body
+      )
+    : null;
 };
 
 export default LoginDialog;

@@ -120,6 +120,18 @@ function setAtPath(target: Record<string, unknown>, path: string, value: unknown
 
   const last = parts[parts.length - 1]!;
   if (!isRecord(current) && !isArray(current)) return;
+  if (value === undefined) {
+    if (isArray(current)) {
+      const idx = Number(last);
+      if (Number.isInteger(idx)) {
+        current.splice(idx, 1);
+        return;
+      }
+    }
+    delete (current as Record<string, unknown>)[last];
+    return;
+  }
+
   (current as Record<string, unknown>)[last] = value;
 }
 
@@ -175,6 +187,9 @@ function invertAction(action: Action): Action {
   }
   if (action.op === 'delete') {
     return { ...action, op: 'add', oldValue: undefined, newValue: action.oldValue };
+  }
+  if (action.oldValue === undefined && action.newValue !== undefined) {
+    return { ...action, op: 'delete', oldValue: action.newValue, newValue: undefined };
   }
   return { ...action, oldValue: action.newValue, newValue: action.oldValue };
 }
