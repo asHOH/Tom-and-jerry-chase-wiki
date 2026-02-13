@@ -22,18 +22,16 @@ export function getNestedProperty<T = unknown>(
   if (!path) {
     return (obj as unknown as T) || undefined;
   }
-  return path
-    .split('.')
-    .reduce(
-      (acc: unknown, part: string) =>
-        acc &&
-        typeof acc === 'object' &&
-        typeof part === 'string' &&
-        part in (acc as Record<string, unknown>)
-          ? (acc as Record<string, unknown>)[part]
-          : undefined,
-      obj
-    ) as unknown as T;
+  return path.split('.').reduce((acc: unknown, part: string) => {
+    if (!acc || typeof acc !== 'object' || typeof part !== 'string') return undefined;
+    if (Array.isArray(acc) && /^[0-9]+$/.test(part)) {
+      const idx = Number(part);
+      return Number.isInteger(idx) ? (acc as unknown[])[idx] : undefined;
+    }
+    return part in (acc as Record<string, unknown>)
+      ? (acc as Record<string, unknown>)[part]
+      : undefined;
+  }, obj) as unknown as T;
 }
 
 /**
@@ -51,7 +49,7 @@ export function getNestedProperty<T = unknown>(
  */
 export function setNestedProperty<T>(obj: Record<string, unknown>, path: string, value: T): void {
   const parts = path.split('.');
-  let current: Record<string, unknown> = obj;
+  let current: unknown = obj;
   for (let i = 0; i < parts.length - 1; i++) {
     const part = parts[i];
     if (typeof current !== 'object' || current === null) {
@@ -60,14 +58,33 @@ export function setNestedProperty<T>(obj: Record<string, unknown>, path: string,
     if (typeof part !== 'string') {
       return;
     }
-    if (!(part in current) || typeof current[part] !== 'object' || current[part] === null) {
-      if (Number.isNaN(parseInt(part, 10))) current[part] = {};
-      else current[part] = [];
+    const container = current as Record<string, unknown>;
+    const existing = container[part];
+    if (existing === undefined || existing === null || typeof existing !== 'object') {
+      const nextKey = parts[i + 1] ?? '';
+      container[part] = /^[0-9]+$/.test(nextKey) ? [] : {};
     }
-    current = current[part] as Record<string, unknown>;
+    current = container[part];
   }
   const lastPart = parts[parts.length - 1];
   if (typeof current === 'object' && current !== null && typeof lastPart === 'string') {
-    current[lastPart] = value;
+    if (Array.isArray(current) && /^[0-9]+$/.test(lastPart)) {
+      const idx = Number(lastPart);
+      if (Number.isInteger(idx)) {
+        if (value === undefined) {
+          current.splice(idx, 1);
+        } else if (idx >= current.length) {
+          current.push(value as unknown);
+        } else {
+          current[idx] = value as unknown;
+        }
+        return;
+      }
+    }
+    if (value === undefined) {
+      delete (current as Record<string, unknown>)[lastPart];
+      return;
+    }
+    (current as Record<string, unknown>)[lastPart] = value;
   }
 }

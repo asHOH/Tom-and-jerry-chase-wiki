@@ -34,6 +34,10 @@ function isArray(value: unknown): value is unknown[] {
   return Array.isArray(value);
 }
 
+function isArrayIndex(value: string): boolean {
+  return /^[0-9]+$/.test(value);
+}
+
 type ValtioPath = Array<string | symbol>;
 
 function toPathString(path: ValtioPath): string | null {
@@ -84,9 +88,13 @@ function parsePath(path: string): string[] {
 }
 
 function ensureContainer(current: unknown, nextKey: string): Record<string, unknown> | unknown[] {
-  if (isArray(current) || isRecord(current)) return current;
-  // Heuristic: numeric -> array, else object
-  return /^[0-9]+$/.test(nextKey) ? [] : {};
+  const shouldBeArray = isArrayIndex(nextKey);
+  if (shouldBeArray) {
+    return isArray(current) ? current : [];
+  }
+  if (isRecord(current)) return current;
+  if (isArray(current)) return current;
+  return {};
 }
 
 function setAtPath(target: Record<string, unknown>, path: string, value: unknown): void {
@@ -110,7 +118,7 @@ function setAtPath(target: Record<string, unknown>, path: string, value: unknown
     const existing = container[key];
 
     if (existing === undefined || existing === null) {
-      container[key] = /^[0-9]+$/.test(nextKey) ? [] : {};
+      container[key] = isArrayIndex(nextKey) ? [] : {};
     } else {
       container[key] = ensureContainer(existing, nextKey);
     }
@@ -121,7 +129,7 @@ function setAtPath(target: Record<string, unknown>, path: string, value: unknown
   const last = parts[parts.length - 1]!;
   if (!isRecord(current) && !isArray(current)) return;
   if (value === undefined) {
-    if (isArray(current)) {
+    if (isArray(current) && isArrayIndex(last)) {
       const idx = Number(last);
       if (Number.isInteger(idx)) {
         current.splice(idx, 1);
@@ -149,7 +157,7 @@ function deleteAtPath(target: Record<string, unknown>, path: string): void {
   const last = parts[parts.length - 1]!;
   if (!isRecord(current) && !isArray(current)) return;
 
-  if (isArray(current)) {
+  if (isArray(current) && isArrayIndex(last)) {
     const idx = Number(last);
     if (Number.isInteger(idx)) {
       current.splice(idx, 1);
@@ -168,8 +176,54 @@ export function applyAction(target: Record<string, unknown>, action: Action): vo
     return;
   }
 
+  if (action.op === 'add') {
+    addAtPath(target, action.path, action.newValue);
+    return;
+  }
+
   // add/set both become assignments
   setAtPath(target, action.path, action.newValue);
+}
+
+function addAtPath(target: Record<string, unknown>, path: string, value: unknown): void {
+  if (value === undefined) return;
+
+  const parts = parsePath(path);
+  if (parts.length === 0) return;
+
+  let current: unknown = target;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const key = parts[i]!;
+    const nextKey = parts[i + 1] ?? '';
+
+    if (!isRecord(current) && !isArray(current)) {
+      return;
+    }
+
+    const container = current as Record<string, unknown>;
+    const existing = container[key];
+
+    if (existing === undefined || existing === null) {
+      container[key] = isArrayIndex(nextKey) ? [] : {};
+    } else {
+      container[key] = ensureContainer(existing, nextKey);
+    }
+
+    current = container[key];
+  }
+
+  const last = parts[parts.length - 1]!;
+  if (!isRecord(current) && !isArray(current)) return;
+
+  if (isArray(current) && isArrayIndex(last)) {
+    const idx = Number(last);
+    if (!Number.isInteger(idx) || idx < 0) return;
+    const insertIndex = Math.min(idx, current.length);
+    current.splice(insertIndex, 0, value);
+    return;
+  }
+
+  (current as Record<string, unknown>)[last] = value;
 }
 
 export function applyActionEntry(target: Record<string, unknown>, entry: ActionHistoryEntry): void {

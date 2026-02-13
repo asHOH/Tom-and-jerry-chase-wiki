@@ -559,18 +559,20 @@ function insertArrayElement(
   const arrayIndent = getIndentationAtPosition(content, arrayLiteral.getStart(sourceFile));
   const elementIndent = arrayIndent + indentUnit;
   const serialized = serializeValue(value, indentUnit, elementIndent);
-  const insertPos = arrayLiteral.getEnd() - 1;
 
-  if (arrayLiteral.elements.length === 0) {
-    const insertText = `\n${elementIndent}${serialized}\n${arrayIndent}`;
+  if (arrayLiteral.elements.length === 0 || index === arrayLiteral.elements.length) {
+    const insertPos = arrayLiteral.getEnd() - 1;
+    const insertText =
+      arrayLiteral.elements.length === 0
+        ? `\n${elementIndent}${serialized}\n${arrayIndent}`
+        : `,\n${elementIndent}${serialized}\n${arrayIndent}`;
     return replaceRange(content, insertPos, insertPos, insertText);
   }
 
-  const lastElem = arrayLiteral.elements[arrayLiteral.elements.length - 1];
-  if (!lastElem) return null;
-  const between = content.slice(lastElem.getEnd(), insertPos);
-  const needsComma = !between.includes(',');
-  const insertText = `${needsComma ? ',' : ''}\n${elementIndent}${serialized}\n${arrayIndent}`;
+  const targetElem = arrayLiteral.elements[index];
+  if (!targetElem || ts.isOmittedExpression(targetElem)) return null;
+  const insertPos = targetElem.getStart(sourceFile);
+  const insertText = `${serialized},\n${elementIndent}`;
   return replaceRange(content, insertPos, insertPos, insertText);
 }
 
@@ -581,6 +583,9 @@ function setAtTarget(
   value: unknown,
   indentUnit: string
 ): string | null {
+  if (value === undefined) {
+    return deleteAtTarget(content, sourceFile, target);
+  }
   if (target.valueNode) {
     const baseIndent = getIndentationAtPosition(content, target.valueNode.getStart(sourceFile));
     const serialized = serializeValue(value, indentUnit, baseIndent);
