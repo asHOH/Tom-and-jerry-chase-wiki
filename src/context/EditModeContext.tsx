@@ -64,17 +64,33 @@ export const PUBLISHABLE_ENTITY_TYPES = [
   'achievements',
 ] as const;
 
-unstable_enableOp(true);
-
 export type PublishableEntityType = (typeof PUBLISHABLE_ENTITY_TYPES)[number];
+
+const ENTITY_LABELS: Record<PublishableEntityType, string> = {
+  characters: '角色',
+  factions: '阵营',
+  cards: '知识卡',
+  entities: '衍生物',
+  buffs: '状态',
+  items: '道具',
+  fixtures: '地图组件',
+  maps: '地图',
+  modes: '模式',
+  specialSkills: '特技',
+  achievements: '成就',
+};
+
+function formatEntityLabel(entityType: PublishableEntityType): string {
+  return ENTITY_LABELS[entityType] ?? entityType;
+}
+
+unstable_enableOp(true);
 
 interface EditModeContextType {
   /** Whether edit mode is active for the current page (from URL ?edit=1) */
   isEditMode: boolean;
   /** Loading state during initialization */
   isLoading: boolean;
-  /** Revoke local actions for a specific entity type */
-  revokeLocalActions: (entityType: string) => void;
 }
 
 export const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
@@ -337,43 +353,12 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     return undefined;
   }, [isEditMode, hasInitialized]);
 
-  const revokeLocalActions = useCallback((entityType: string): void => {
-    if (typeof window === 'undefined') return;
-    const entity = entityRegistry.get(entityType);
-    if (!entity) return;
-
-    const actionsStorageKey = getActionsStorageKey(entityType);
-    const history = readActionHistory(actionsStorageKey);
-    if (history.length === 0) {
-      try {
-        window.localStorage.removeItem(actionsStorageKey);
-      } catch {
-        // ignore
-      }
-      return;
-    }
-
-    try {
-      withRecordingSuppressed(actionsStorageKey, () => {
-        for (let i = history.length - 1; i >= 0; i -= 1) {
-          const entry = history[i]!;
-          applyActionEntry(entity, invertActionEntry(entry));
-        }
-      });
-      window.localStorage.removeItem(actionsStorageKey);
-      GameDataManager.invalidate();
-    } catch (error) {
-      console.error(`Failed to revoke ${entityType} local actions:`, error);
-    }
-  }, []);
-
   const contextValue = useMemo(
     () => ({
       isEditMode,
       isLoading,
-      revokeLocalActions,
     }),
-    [isEditMode, isLoading, revokeLocalActions]
+    [isEditMode, isLoading]
   );
 
   return <EditModeContext.Provider value={contextValue}>{children}</EditModeContext.Provider>;
@@ -458,6 +443,7 @@ interface PageEditModeResult {
   isDirty: boolean;
   isPublishing: boolean;
   draftInfo: { actionCount: number } | null;
+  draftsSummary: { entityType: string; entityLabel: string; count: number }[];
   discardChanges: () => void;
   publishChanges: (message?: string) => Promise<boolean>;
   getActionCount: () => number;
@@ -475,12 +461,14 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   const [_actionCountTrigger, setActionCountTrigger] = useState(0);
   const draftLoadedRef = useRef(false);
   const [draftInfo, setDraftInfo] = useState<PageEditModeResult['draftInfo']>(null);
+  const [draftsSummary, setDraftsSummary] = useState<PageEditModeResult['draftsSummary']>([]);
 
   // Reset draft loaded flag when exiting edit mode
   useEffect(() => {
     if (!isEditMode) {
       draftLoadedRef.current = false;
       setDraftInfo(null);
+      setDraftsSummary([]);
     }
   }, [isEditMode]);
 
@@ -526,6 +514,24 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
     setDraftInfo(count > 0 ? { actionCount: count } : null);
   }, [debouncedActionCount, getActionCount, isEditMode, showToast]);
+
+  useEffect(() => {
+    if (!isEditMode) return;
+    if (typeof window === 'undefined') return;
+
+    const summary = PUBLISHABLE_ENTITY_TYPES.map((type) => {
+      const storageKey = getActionsStorageKey(type);
+      const history = readActionHistory(storageKey);
+      return { entityType: type, count: history.length };
+    })
+      .filter((item) => item.count > 0)
+      .map((item) => ({
+        ...item,
+        entityLabel: formatEntityLabel(item.entityType),
+      }));
+
+    setDraftsSummary(summary);
+  }, [debouncedActionCount, isEditMode]);
 
   const discardChanges = useCallback(() => {
     // Clear action history
@@ -619,6 +625,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     isDirty,
     isPublishing,
     draftInfo,
+    draftsSummary,
     discardChanges,
     publishChanges,
     getActionCount,

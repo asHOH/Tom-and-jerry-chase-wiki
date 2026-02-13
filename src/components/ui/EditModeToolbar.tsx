@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
 
-import { CheckBadgeIcon, CloseIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import { CheckBadgeIcon, CloseIcon, FolderIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 export interface EditModeToolbarProps {
   /** Whether there are unsaved changes */
@@ -14,6 +14,8 @@ export interface EditModeToolbarProps {
   actionCount: number;
   /** Draft info for current entity */
   draftInfo?: { actionCount: number } | null;
+  /** Summary of drafts for all entity types */
+  draftsSummary?: { entityType: string; entityLabel: string; count: number }[];
   /** Whether publish is in progress */
   isPublishing: boolean;
   /** Called when user clicks discard */
@@ -30,6 +32,7 @@ export default function EditModeToolbar({
   isDirty,
   actionCount,
   draftInfo = null,
+  draftsSummary = [],
   isPublishing,
   onDiscard,
   onPublish,
@@ -40,6 +43,7 @@ export default function EditModeToolbar({
   const [showMessageInput, setShowMessageInput] = useState(false);
   const [publishMessage, setPublishMessage] = useState('');
   const [isConfirmingDiscard, setIsConfirmingDiscard] = useState(false);
+  const [isDraftsOpen, setIsDraftsOpen] = useState(false);
 
   const handlePublish = async () => {
     if (showMessageInput) {
@@ -68,7 +72,25 @@ export default function EditModeToolbar({
     }
   };
 
+  useEffect(() => {
+    if (!isDraftsOpen) return;
+    const onDocClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      if (target.closest('[data-drafts-dropdown-root]')) return;
+      setIsDraftsOpen(false);
+    };
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
+  }, [isDraftsOpen]);
+
+  const totalDraftCount = useMemo(
+    () => draftsSummary.reduce((total, item) => total + item.count, 0),
+    [draftsSummary]
+  );
+
   const draftLabel = draftInfo ? `草稿：${draftInfo.actionCount} 条修改` : null;
+  const draftsButtonLabel = totalDraftCount > 0 ? `草稿(${totalDraftCount})` : '草稿';
 
   const toolbarContent = (
     <m.div
@@ -160,6 +182,61 @@ export default function EditModeToolbar({
               </>
             )}
           </button>
+
+          {/* Drafts dropdown */}
+          <div className='relative' data-drafts-dropdown-root>
+            <button
+              type='button'
+              onClick={() => setIsDraftsOpen((prev) => !prev)}
+              disabled={draftsSummary.length === 0}
+              className={clsx(
+                'flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                draftsSummary.length > 0
+                  ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-900/40'
+                  : 'cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-slate-700 dark:text-gray-500'
+              )}
+              aria-expanded={isDraftsOpen}
+              aria-haspopup='menu'
+              aria-label='查看草稿'
+              title={draftsSummary.length > 0 ? '查看全部草稿' : '暂无草稿'}
+            >
+              <FolderIcon size={16} strokeWidth={2} />
+              <span className='hidden sm:inline'>{draftsButtonLabel}</span>
+            </button>
+            <AnimatePresence initial={false}>
+              {isDraftsOpen && draftsSummary.length > 0 && (
+                <m.div
+                  key='drafts-dropdown'
+                  className='absolute bottom-full left-0 z-50 mb-2 w-56 overflow-hidden rounded-lg border border-amber-100 bg-white shadow-lg dark:border-amber-900/50 dark:bg-slate-800'
+                  initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 6, scale: 0.98 }}
+                  transition={{ duration: 0.14, ease: 'easeOut' }}
+                  style={{ transformOrigin: 'bottom left' }}
+                  role='menu'
+                >
+                  <div className='border-b border-amber-100 px-3 py-2 text-xs font-semibold text-amber-700 dark:border-amber-900/50 dark:text-amber-300'>
+                    当前草稿
+                  </div>
+                  <ul className='py-1'>
+                    {draftsSummary.map((item) => (
+                      <li
+                        key={item.entityType}
+                        className='px-3 py-2 text-sm text-gray-700 dark:text-gray-200'
+                      >
+                        <div className='flex items-center justify-between'>
+                          <span>{item.entityLabel}</span>
+                          <span className='text-amber-600 dark:text-amber-300'>
+                            {item.count} 条
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </m.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           {/* Spacer */}
           <div className='flex-1' />

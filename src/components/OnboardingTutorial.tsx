@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, m } from 'motion/react';
+import { createPortal } from 'react-dom';
 
 import {
   hasUserSeenCharacterDetailsTutorial,
@@ -129,74 +130,77 @@ const OnboardingTutorial: React.FC<OnboardingTutorialProps> = ({ onClose, isEnab
   tooltipX = Math.max(0, Math.min(tooltipX, window.innerWidth - tooltipWidth));
   tooltipY = Math.max(0, Math.min(tooltipY, window.innerHeight - tooltipHeight));
 
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <m.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className='fixed inset-0 z-50 flex items-center justify-center bg-black/25'
-        >
-          {/* Spotlight Circle */}
-          <m.div
-            key={currentStep.id}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-            className='pointer-events-none absolute rounded-lg border-4 border-blue-400'
-            style={{
-              width: spotlightWidth,
-              height: spotlightHeight,
-              left: spotlightX,
-              top: spotlightY,
-            }}
-          />
-
-          {/* Tutorial Message Box */}
-          <m.div
-            key={`tooltip-${currentStep.id}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 20 }}
-            className='absolute max-w-xs rounded-lg bg-white p-4 text-gray-800 shadow-lg'
-            style={{
-              left: tooltipX,
-              top: tooltipY,
-              width: tooltipWidth,
-            }}
-          >
-            <p className='mb-2 text-sm'>{currentStep.message}</p>
-            <div className='flex justify-end space-x-2'>
-              <button
-                onClick={handleSkip}
-                className='rounded-md bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300'
-              >
-                跳过
-              </button>
-              <button
-                onClick={handleNext}
-                className='rounded-md bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600'
-              >
-                {currentStepIndex === TUTORIAL_STEPS.length - 1 ? '完成' : '下一步'}
-              </button>
-            </div>
-            {/* Arrow */}
+  return document
+    ? createPortal(
+        <AnimatePresence>
+          {isVisible && (
             <m.div
-              className='absolute h-0 w-0 border-r-10 border-b-10 border-l-10 border-r-transparent border-b-white border-l-transparent'
-              style={{
-                left: targetRect.left + targetRect.width / 2 - tooltipX - 10, // Center arrow relative to target
-                top: currentStep.position === 'bottom' ? -10 : 'auto',
-                bottom: currentStep.position === 'top' ? -10 : 'auto',
-                transform: `rotate(${arrowRotation}deg)`,
-                transformOrigin: 'center center',
-              }}
-            />
-          </m.div>
-        </m.div>
-      )}
-    </AnimatePresence>
-  );
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className='fixed inset-0 z-50 flex items-center justify-center bg-black/25'
+            >
+              {/* Spotlight Circle */}
+              <m.div
+                key={currentStep.id}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                className='pointer-events-none absolute rounded-lg border-4 border-blue-400'
+                style={{
+                  width: spotlightWidth,
+                  height: spotlightHeight,
+                  left: spotlightX,
+                  top: spotlightY,
+                }}
+              />
+
+              {/* Tutorial Message Box */}
+              <m.div
+                key={`tooltip-${currentStep.id}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 20 }}
+                className='absolute max-w-xs rounded-lg bg-white p-4 text-gray-800 shadow-lg'
+                style={{
+                  left: tooltipX,
+                  top: tooltipY,
+                  width: tooltipWidth,
+                }}
+              >
+                <p className='mb-2 text-sm'>{currentStep.message}</p>
+                <div className='flex justify-end space-x-2'>
+                  <button
+                    onClick={handleSkip}
+                    className='rounded-md bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300'
+                  >
+                    跳过
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className='rounded-md bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600'
+                  >
+                    {currentStepIndex === TUTORIAL_STEPS.length - 1 ? '完成' : '下一步'}
+                  </button>
+                </div>
+                {/* Arrow */}
+                <m.div
+                  className='absolute h-0 w-0 border-r-10 border-b-10 border-l-10 border-r-transparent border-b-white border-l-transparent'
+                  style={{
+                    left: targetRect.left + targetRect.width / 2 - tooltipX - 10, // Center arrow relative to target
+                    top: currentStep.position === 'bottom' ? -10 : 'auto',
+                    bottom: currentStep.position === 'top' ? -10 : 'auto',
+                    transform: `rotate(${arrowRotation}deg)`,
+                    transformOrigin: 'center center',
+                  }}
+                />
+              </m.div>
+            </m.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )
+    : null;
 };
 
 export default OnboardingTutorial;

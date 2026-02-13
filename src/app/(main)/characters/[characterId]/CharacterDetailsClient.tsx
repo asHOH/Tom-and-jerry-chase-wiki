@@ -37,12 +37,19 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const { info } = useToast();
 
   // Page-level edit mode management
-  const { isDirty, isPublishing, draftInfo, discardChanges, publishChanges, getActionCount } =
-    usePageEditMode({
-      entityType: 'characters',
-      entityId: characterId || props.character.id,
-      showToast: info,
-    });
+  const {
+    isDirty,
+    isPublishing,
+    draftInfo,
+    draftsSummary,
+    discardChanges,
+    publishChanges,
+    getActionCount,
+  } = usePageEditMode({
+    entityType: 'characters',
+    entityId: characterId || props.character.id,
+    showToast: info,
+  });
 
   const [character, setCharacter] = useState(() => {
     if (typeof window !== 'undefined' && !isEditMode) {
@@ -100,7 +107,9 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
         </CharacterDetails>
       </div>
 
-      {showTutorial && <OnboardingTutorial onClose={handleTutorialClose} isEnabled={false} />}
+      {showTutorial && (
+        <OnboardingTutorial onClose={handleTutorialClose} isEnabled={showTutorial} />
+      )}
 
       {/* Edit mode toolbar */}
       {isEditMode && (
@@ -114,6 +123,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
             onExitEditMode={exitEditMode}
             entityName={character.id}
             draftInfo={draftInfo}
+            draftsSummary={draftsSummary}
           />
         </>
       )}
