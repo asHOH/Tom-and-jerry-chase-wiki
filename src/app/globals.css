@@ -1,4 +1,6 @@
 @import 'tailwindcss' source('..');
+@source not '../src/data/generated';
+@source not '../src/data';
 @source '../../public/offline.html';
 @source '../../public/trait-maker.html';
 @source '../../public/item-maker.html';
