@@ -1,6 +1,9 @@
-@import 'tailwindcss/theme.css';
-@import 'tailwindcss/preflight.css';
-@import 'tailwindcss/utilities.css';
+@import 'tailwindcss' source('..');
+@source '../../public/offline.html';
+@source '../../public/trait-maker.html';
+@source '../../public/item-maker.html';
+@source '../../public/entity-maker.html';
+@source '../../public/clear-cache.html';
 @plugin '@tailwindcss/typography';
 @custom-variant dark (&:where(.dark, .dark *));
 

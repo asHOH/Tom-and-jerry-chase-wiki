@@ -105,6 +105,21 @@ a.faction-button:hover {
   transform: translateY(-2px) !important;
 }
 
+/* Normalize faction button icon sizing (fallback if Tailwind utilities are missing) */
+button.faction-button img,
+a.faction-button img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  button.faction-button img,
+  a.faction-button img {
+    height: 40px;
+  }
+}
+
 /* Tooltip styles */
 .faction-button .tooltip {
   opacity: 0;
