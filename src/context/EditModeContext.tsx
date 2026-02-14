@@ -125,6 +125,36 @@ function syncEntityToLocalStorage(entityType: string, entity: Record<string, unk
   });
 }
 
+function setupEntitySubscribers(): void {
+  Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
+    const key = getActionsStorageKey(entityType);
+    const existing = subscribers[key];
+    const unsubscribe = existing?.[1];
+    if (typeof unsubscribe === 'function') {
+      unsubscribe();
+    }
+
+    subscribers[key] = [
+      () => {
+        subscribers[key]![1] = syncEntityToLocalStorage(entityType, entity);
+      },
+      void 0 as unknown as () => void,
+    ];
+    subscribers[key][0]();
+  });
+}
+
+function teardownSubscribers(): void {
+  Object.keys(subscribers).forEach((key) => {
+    const entry = subscribers[key];
+    const unsubscribe = entry?.[1];
+    if (typeof unsubscribe === 'function') {
+      unsubscribe();
+    }
+    delete subscribers[key];
+  });
+}
+
 /**
  * Loads all registered entities from localStorage action history.
  * Called when entering edit mode to restore previous session.
@@ -311,19 +341,10 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
 
       // Subscribe to all registered entities
-      Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-        const key = getActionsStorageKey(entityType);
-        subscribers[key] = [
-          () => {
-            subscribers[key]![1] = syncEntityToLocalStorage(entityType, entity);
-          },
-          void 0 as unknown as () => void,
-        ];
-        subscribers[key][0]();
-      });
+      setupEntitySubscribers();
 
       return () => {
-        Object.values(subscribers).forEach(([, unsub]) => unsub());
+        teardownSubscribers();
       };
     } else if (!isEditMode && wasEditMode) {
       // Exiting edit mode - handled by page-level controls
@@ -332,19 +353,10 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     } else if (isEditMode) {
       // Already in edit mode, just set up subscriptions
       setIsLoading(false);
-      Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-        const key = getActionsStorageKey(entityType);
-        subscribers[key] = [
-          () => {
-            subscribers[key]![1] = syncEntityToLocalStorage(entityType, entity);
-          },
-          void 0 as unknown as () => void,
-        ];
-        subscribers[key][0]();
-      });
+      setupEntitySubscribers();
 
       return () => {
-        Object.values(subscribers).forEach(([, unsub]) => unsub());
+        teardownSubscribers();
       };
     }
 
