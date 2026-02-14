@@ -120,7 +120,6 @@ function syncEntityToLocalStorage(entityType: string, entity: Record<string, unk
 
   return subscribe(entity, (ops) => {
     const actions = actionsFromValtioOps(ops);
-
     if (actions.length === 0) return;
     appendActionHistoryEntry(actionsStorageKey, actions.length === 1 ? actions[0]! : actions);
   });
@@ -444,7 +443,7 @@ interface PageEditModeResult {
   isPublishing: boolean;
   draftInfo: { actionCount: number } | null;
   draftsSummary: { entityType: string; entityLabel: string; count: number }[];
-  discardChanges: () => void;
+  discardChanges: (options?: { showToast?: boolean; suppressSync?: boolean }) => void;
   publishChanges: (message?: string) => Promise<boolean>;
   getActionCount: () => number;
 }
@@ -462,15 +461,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   const draftLoadedRef = useRef(false);
   const [draftInfo, setDraftInfo] = useState<PageEditModeResult['draftInfo']>(null);
   const [draftsSummary, setDraftsSummary] = useState<PageEditModeResult['draftsSummary']>([]);
-
-  // Reset draft loaded flag when exiting edit mode
-  useEffect(() => {
-    if (!isEditMode) {
-      draftLoadedRef.current = false;
-      setDraftInfo(null);
-      setDraftsSummary([]);
-    }
-  }, [isEditMode]);
+  const prevEditModeRef = useRef(isEditMode);
 
   // Subscribe to entity changes to track dirty state
   useEffect(() => {
@@ -533,40 +524,73 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     setDraftsSummary(summary);
   }, [debouncedActionCount, isEditMode]);
 
-  const discardChanges = useCallback(() => {
-    // Clear action history
-    const storageKey = getActionsStorageKey(entityType);
-    const entity = entityRegistry.get(entityType);
+  const discardChanges = useCallback(
+    (options?: { showToast?: boolean; suppressSync?: boolean }) => {
+      const { showToast: shouldShowToast = true, suppressSync = false } = options ?? {};
+      const storageKey = getActionsStorageKey(entityType);
+      const entity = entityRegistry.get(entityType);
 
-    if (entity) {
-      const history = readActionHistory(storageKey);
-      const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
-      console.log(matching, remaining);
-      if (matching.length > 0) {
-        withRecordingSuppressed(storageKey, () => {
-          console.log(storageKey);
+      if (entity) {
+        const history = readActionHistory(storageKey);
+        const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
+        const applyInversions = () => {
           for (let i = matching.length - 1; i >= 0; i -= 1) {
             applyActionEntry(entity, invertActionEntry(matching[i]!));
           }
-        });
-      }
+        };
 
-      if (typeof window !== 'undefined') {
-        if (remaining.length === 0) {
-          window.localStorage.removeItem(storageKey);
-        } else {
-          writeActionHistory(storageKey, remaining);
+        if (matching.length > 0) {
+          if (suppressSync) {
+            const storedSubscribers = subscribers[storageKey];
+            if (storedSubscribers) {
+              storedSubscribers[1]();
+              try {
+                applyInversions();
+              } finally {
+                if (isEditMode) storedSubscribers[0]();
+              }
+            } else {
+              applyInversions();
+            }
+          } else {
+            withRecordingSuppressed(storageKey, applyInversions);
+          }
+        }
+
+        if (typeof window !== 'undefined') {
+          if (remaining.length === 0) {
+            window.localStorage.removeItem(storageKey);
+          } else {
+            writeActionHistory(storageKey, remaining);
+          }
         }
       }
+
+      setDraftInfo(null);
+
+      GameDataManager.invalidate();
+      setActionCountTrigger((prev) => prev + 1);
+
+      if (shouldShowToast && showToast) showToast('已放弃所有修改');
+    },
+    [entityType, entityKey, isEditMode, showToast]
+  );
+
+  // Reset draft loaded flag when exiting edit mode
+  useEffect(() => {
+    const wasEditMode = prevEditModeRef.current;
+    prevEditModeRef.current = isEditMode;
+
+    if (!isEditMode) {
+      draftLoadedRef.current = false;
+      setDraftInfo(null);
+      setDraftsSummary([]);
+
+      if (wasEditMode) {
+        discardChanges({ showToast: false, suppressSync: true });
+      }
     }
-
-    setDraftInfo(null);
-
-    GameDataManager.invalidate();
-    setActionCountTrigger((prev) => prev + 1);
-
-    if (showToast) showToast('已放弃所有修改');
-  }, [entityType, entityKey, showToast]);
+  }, [isEditMode, discardChanges]);
 
   const publishChanges = useCallback(
     async (message?: string): Promise<boolean> => {

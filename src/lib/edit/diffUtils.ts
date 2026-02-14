@@ -1,3 +1,4 @@
+import isEqual from 'lodash-es/isEqual';
 import { getUntracked } from 'proxy-compare';
 import type { INTERNAL_Op } from 'valtio';
 
@@ -53,6 +54,32 @@ function untrackIfPossible(value: unknown): unknown {
   return value;
 }
 
+function isNoOpAction(action: Action): boolean {
+  if (!action.path) return true;
+  if (action.op === 'delete') return action.oldValue === undefined;
+  if (action.op === 'add') return action.newValue === undefined;
+  return isEqual(action.oldValue, action.newValue);
+}
+
+function filterActionEntry(entry: ActionHistoryEntry): ActionHistoryEntry | null {
+  if (Array.isArray(entry)) {
+    const filtered = entry.filter((action) => !isNoOpAction(action));
+    if (filtered.length === 0) return null;
+    return filtered.length === 1 ? filtered[0]! : filtered;
+  }
+
+  return isNoOpAction(entry) ? null : entry;
+}
+
+function filterActionHistory(history: ActionHistoryEntry[]): ActionHistoryEntry[] {
+  const filtered: ActionHistoryEntry[] = [];
+  for (const entry of history) {
+    const next = filterActionEntry(entry);
+    if (next) filtered.push(next);
+  }
+  return filtered;
+}
+
 /**
  * Convert Valtio internal ops to our stable Action format.
  *
@@ -79,7 +106,7 @@ export function actionsFromValtioOps(ops: INTERNAL_Op[]): Action[] {
     actions.push({ op: 'delete', path: pathString, oldValue: prevValue, newValue: undefined });
   }
 
-  return actions;
+  return actions.filter((action) => !isNoOpAction(action));
 }
 
 function parsePath(path: string): string[] {
@@ -264,7 +291,7 @@ export function readActionHistory(storageKey: string): ActionHistoryEntry[] {
     if (!raw) return [];
     const parsed = actionHistorySchema.safeParse(JSON.parse(raw));
     if (!parsed.success) return [];
-    return parsed.data as ActionHistoryEntry[];
+    return filterActionHistory(parsed.data as ActionHistoryEntry[]);
   } catch {
     return [];
   }
@@ -280,13 +307,14 @@ export function writeActionHistory(storageKey: string, history: ActionHistoryEnt
 }
 
 export function appendActionHistoryEntry(storageKey: string, entry: ActionHistoryEntry): void {
+  const filteredEntry = filterActionEntry(entry);
+  if (!filteredEntry) return;
   const history = readActionHistory(storageKey);
-  history.push(entry);
+  history.push(filteredEntry);
   writeActionHistory(storageKey, history);
 }
 
 export function withRecordingSuppressed<T>(storageKey: string, fn: () => T): T {
-  console.log(subscribers, storageKey);
   if (storageKey in subscribers) {
     subscribers[storageKey]![1]();
     try {

@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clear Cache</title>
+    <style>
+      #btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>清除网站数据</h1>
+    <button id="btn">点击以清除网站数据</button>
+    <script type="application/javascript">
+      /** @type {HTMLButtonElement} */ (window.btn).addEventListener('click', () => {
+        if (window.caches) {
+          caches.keys().then((names) => {
+            names.forEach((name) => {
+              caches.delete(name);
+            });
+          });
+        }
+        localStorage.clear();
+        sessionStorage.clear();
+        document.cookie.split(';').forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, '')
+            .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+        });
+        alert('网站数据已清除。');
+      });
+    </script>
+  </body>
+</html>
