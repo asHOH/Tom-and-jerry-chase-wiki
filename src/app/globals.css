@@ -1,6 +1,7 @@
 @import 'tailwindcss' source('..');
 @source not '../src/data/generated';
 @source not '../src/data';
+@source inline('{text-sm,text-xl,text-2xl,ml-1,ml-2,mx-1,mx-2}');
 @source '../../public/offline.html';
 @source '../../public/trait-maker.html';
 @source '../../public/item-maker.html';
