@@ -5,7 +5,7 @@ import { mouseEntitiesDefinitions } from '@/data/mouseEntities';
 
 export const dynamic = 'force-static';
 export const revalidate = 3600;
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export function GET() {
   const combined = {
