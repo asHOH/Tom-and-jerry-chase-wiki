@@ -4,11 +4,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { m } from 'motion/react';
 
+import { getTypeLabelColors } from '@/lib/design';
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useChat } from '@/hooks/useChat';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
+import { useDarkMode } from '@/context/DarkModeContext';
+import Tag from '@/components/ui/Tag';
 import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
@@ -85,6 +88,45 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   const resultsListRef = useRef<HTMLUListElement>(null);
   const { handleSelectCard, handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
+  const [isDarkMode] = useDarkMode();
+
+  const getResultLabel = (result: SearchResult): string => {
+    switch (result.type) {
+      case 'character':
+        return '角色';
+      case 'card':
+        return '知识卡';
+      case 'specialSkill':
+        return result.factionId === 'mouse' ? '鼠特技' : '猫特技';
+      case 'itemGroup':
+        return '组合';
+      case 'item':
+        return '道具';
+      case 'entity':
+        return '衍生物';
+      case 'buff':
+        return '状态';
+      case 'map':
+        return '地图';
+      case 'fixture':
+        return '地图组件';
+      case 'mode':
+        return '游戏模式';
+      case 'achievement':
+        return '对局成就';
+      case 'doc':
+        return '文档';
+      default:
+        return '结果';
+    }
+  };
+
+  const getTypeColorKey = (result: SearchResult): string => {
+    if (result.type === 'specialSkill') {
+      return result.factionId === 'mouse' ? 'special-skill-mouse' : 'special-skill-cat';
+    }
+    return result.type;
+  };
 
   // Use chat hook to get AI response for the search query
   const {
@@ -108,11 +150,41 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         case 'card':
           handleSelectCard(result.id);
           break;
+        case 'itemGroup':
+          navigate(`/itemGroups/${encodeURIComponent(result.name)}`);
+          break;
         case 'item':
-          navigate(`/items/${result.name}`);
+          navigate(`/items/${encodeURIComponent(result.name)}`);
+          break;
+        case 'entity':
+          navigate(`/entities/${encodeURIComponent(result.name)}`);
+          break;
+        case 'buff':
+          navigate(`/buffs/${encodeURIComponent(result.name)}`);
+          break;
+        case 'map':
+          navigate(`/maps/${encodeURIComponent(result.name)}`);
+          break;
+        case 'fixture':
+          navigate(`/fixtures/${encodeURIComponent(result.name)}`);
+          break;
+        case 'mode':
+          navigate(`/modes/${encodeURIComponent(result.name)}`);
           break;
         case 'specialSkill':
-          navigate(`/special-skills/${result.factionId}/${result.name}`);
+          navigate(
+            `/special-skills/${encodeURIComponent(result.factionId)}/${encodeURIComponent(
+              result.name
+            )}`
+          );
+          break;
+        case 'achievement':
+          navigate(`/achievements/${encodeURIComponent(result.name)}`);
+          break;
+        case 'doc':
+          navigate(result.path);
+          break;
+        default:
           break;
       }
       setSearchQuery(''); // Clear search query
@@ -293,7 +365,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         <div className='relative mb-4'>
           <input
             type='text'
-            placeholder='搜索角色或知识卡...'
+            placeholder='搜索角色、知识卡、道具、状态、地图、文档...'
             className='w-full rounded-md border border-gray-300 p-2 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -390,7 +462,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                     type='button'
                     onClick={() => handleResultClick(result)}
                     className={clsx(
-                      'flex w-full items-center p-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700',
+                      'flex w-full items-center gap-2 p-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700',
                       highlightedIndex === (searchQuery.length > 1 ? index + 1 : index) &&
                         'bg-gray-100 dark:bg-gray-700'
                     )}
@@ -408,12 +480,19 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                         className='mr-3 object-cover'
                       />
                     )}
-                    <span className='whitespace-nowrap text-gray-900 dark:text-white'>
+                    <span className='min-w-0 flex-1 truncate text-gray-900 dark:text-white'>
                       {'id' in result ? result.id : 'name' in result ? result.name : ''}{' '}
-                      {/* ({result.type === 'character' ? '角色' : '知识卡'}) */}
                     </span>
+                    <Tag
+                      colorStyles={getTypeLabelColors(getTypeColorKey(result), isDarkMode)}
+                      size='xs'
+                      margin='compact'
+                      className='shrink-0'
+                    >
+                      {getResultLabel(result)}
+                    </Tag>
                     {result.matchContext && (
-                      <span className='ml-2 truncate text-sm text-gray-500 dark:text-gray-400'>
+                      <span className='ml-2 hidden truncate text-sm text-gray-500 md:inline dark:text-gray-400'>
                         {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
                       </span>
                     )}

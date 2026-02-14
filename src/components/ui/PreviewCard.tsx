@@ -45,6 +45,7 @@ const typeLabels: Record<string, string> = {
   map: '地图',
   fixture: '地图组件',
   mode: '游戏模式',
+  achievement: '对局成就',
 };
 
 const typeTokenStyles = (type: string, isDarkMode: boolean) => getTypeLabelColors(type, isDarkMode);

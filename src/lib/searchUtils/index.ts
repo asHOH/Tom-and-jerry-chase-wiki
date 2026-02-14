@@ -1,8 +1,15 @@
 import { convertToPinyin } from '../pinyinUtils';
 import { searchAchievements } from './achievements';
+import { searchBuffs } from './buffs';
 import { searchCards } from './cards';
 import { searchCharacters } from './character';
+import { searchDocs } from './docs';
+import { searchEntities } from './entities';
+import { searchFixtures } from './fixtures';
+import { searchItemGroups } from './itemGroups';
 import { searchItems } from './items';
+import { searchMaps } from './maps';
+import { searchModes } from './modes';
 import { searchSpecialSkills } from './specialSkills';
 import { SearchResult } from './types';
 
@@ -77,8 +84,15 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     arrayFromAsync(searchCharacters(findMatchContext, lowerCaseQuery, pinyinQuery)),
     arrayFromAsync(searchCards(findMatchContext, lowerCaseQuery, pinyinQuery)),
     arrayFromAsync(searchSpecialSkills(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchItemGroups(findMatchContext, lowerCaseQuery, pinyinQuery)),
     arrayFromAsync(searchItems(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchEntities(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchBuffs(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchMaps(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchFixtures(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchModes(findMatchContext, lowerCaseQuery, pinyinQuery)),
     arrayFromAsync(searchAchievements(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchDocs(findMatchContext, lowerCaseQuery, pinyinQuery)),
   ]);
 
   // Limit results per type and sort by priority
