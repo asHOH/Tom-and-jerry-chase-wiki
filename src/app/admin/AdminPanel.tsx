@@ -181,6 +181,14 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     [filteredActions]
   );
 
+  const summarizeValue = (value: unknown): string => {
+    if (value === null || value === undefined) return '空';
+    if (typeof value === 'string') return value.length > 60 ? `${value.slice(0, 60)}…` : value;
+    if (Array.isArray(value)) return value.length === 0 ? '空' : `数组(${value.length})`;
+    if (typeof value === 'object') return `对象(${Object.keys(value as object).length}键)`;
+    return String(value);
+  };
+
   const moderateMany = async (action: 'approve' | 'reject') => {
     if (moderatingId) return;
     if (actionableActions.length === 0) return;
@@ -684,6 +692,71 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                             是否已公开：{submission.is_public ? '是' : '否'}
                           </div>
                         )}
+
+                        {/* Human-friendly preview of actions */}
+                        <div className='rounded border border-amber-100 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-100'>
+                          <div className='mb-2 font-semibold'>变更预览</div>
+                          <ul className='space-y-1'>
+                            {(Array.isArray(submission.entry)
+                              ? submission.entry
+                              : [submission.entry]
+                            )
+                              .filter((entry) => {
+                                if (!entry || typeof entry !== 'object') return true;
+                                const action = entry as { oldValue?: unknown; newValue?: unknown };
+                                const noOld =
+                                  action.oldValue === null || action.oldValue === undefined;
+                                const newIsEmptyArray =
+                                  Array.isArray(action.newValue) && action.newValue.length === 0;
+                                return !(noOld && newIsEmptyArray);
+                              })
+                              .map((entry, idx) => {
+                                if (!entry || typeof entry !== 'object') {
+                                  return (
+                                    <li
+                                      key={idx}
+                                      className='rounded bg-white/60 px-2 py-1 text-gray-700 dark:bg-slate-800/60 dark:text-slate-100'
+                                    >
+                                      非法记录
+                                    </li>
+                                  );
+                                }
+
+                                const action = entry as {
+                                  op?: string;
+                                  path?: string;
+                                  oldValue?: unknown;
+                                  newValue?: unknown;
+                                };
+                                const op = action.op ?? 'set';
+                                const path = action.path ?? '<无路径>';
+                                const oldSummary = summarizeValue(action.oldValue);
+                                const newSummary = summarizeValue(action.newValue);
+
+                                return (
+                                  <li
+                                    key={idx}
+                                    className='rounded bg-white/80 px-2 py-1 text-gray-800 shadow-sm ring-1 ring-amber-100 dark:bg-slate-800/60 dark:text-slate-100 dark:ring-amber-900/50'
+                                  >
+                                    <div className='flex flex-wrap items-center gap-2'>
+                                      <span className='rounded bg-amber-600 px-1.5 py-0.5 text-[11px] font-semibold text-white'>
+                                        {op.toUpperCase()}
+                                      </span>
+                                      <span className='font-medium'>{path}</span>
+                                    </div>
+                                    <div className='mt-1 grid grid-cols-1 gap-1 text-[11px] sm:grid-cols-2'>
+                                      <div className='truncate text-amber-700 dark:text-amber-200'>
+                                        旧：{oldSummary}
+                                      </div>
+                                      <div className='truncate text-green-700 dark:text-green-200'>
+                                        新：{newSummary}
+                                      </div>
+                                    </div>
+                                  </li>
+                                );
+                              })}
+                          </ul>
+                        </div>
 
                         <pre className='max-h-64 overflow-auto rounded bg-gray-50 p-3 text-xs text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
                           {JSON.stringify(submission.entry, null, 2)}
