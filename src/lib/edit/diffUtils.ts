@@ -328,13 +328,33 @@ export function withRecordingSuppressed<T>(storageKey: string, fn: () => T): T {
 }
 
 /**
- * Squash an action history so that only the last action per path remains.
- * - Keeps the original cross-path ordering for surviving actions.
- * - Drops no-ops where oldValue equals newValue.
- * - Does not mutate the input array.
+ * Squash an action history so that only the last `set` per path remains.
+ *
+ * Safety rules:
+ * - Always keep structural ops (`add`/`delete`) as-is.
+ * - Do not squash paths whose top-level segment has any structural change in the batch
+ *   (so array index shifts remain safe). Other paths can be squashed.
+ * - Drop no-op sets where oldValue === newValue.
  */
 export function squashActions(entries: ActionHistoryEntry[]): ActionHistoryEntry[] {
   if (entries.length === 0) return [];
+
+  const structuralRoots = new Set<string>();
+
+  const recordStructuralRoots = (action: Action) => {
+    if (action.op !== 'add' && action.op !== 'delete') return;
+    if (!action.path) return;
+    const root = action.path.split('.')[0] ?? '';
+    if (root) structuralRoots.add(root);
+  };
+
+  entries.forEach((entry) => {
+    if (Array.isArray(entry)) {
+      entry.forEach(recordStructuralRoots);
+    } else {
+      recordStructuralRoots(entry);
+    }
+  });
 
   type FlatItem = {
     action: Action;
@@ -360,9 +380,15 @@ export function squashActions(entries: ActionHistoryEntry[]): ActionHistoryEntry
 
   const latestByPath = new Map<string, number>();
   flat.forEach((item) => {
-    const path = item.action.path;
+    const { action, flatIndex: idx } = item;
+    const path = action.path;
     if (!path) return;
-    latestByPath.set(path, item.flatIndex);
+    const root = path.split('.')[0] ?? '';
+
+    // Only squash pure sets on roots with no structural changes
+    if (action.op === 'set' && !structuralRoots.has(root)) {
+      latestByPath.set(path, idx);
+    }
   });
 
   const grouped: Action[][] = entries.map(() => []);
@@ -371,10 +397,16 @@ export function squashActions(entries: ActionHistoryEntry[]): ActionHistoryEntry
     const { action, flatIndex: idx } = item;
     const path = action.path;
 
+    const root = path ? (path.split('.')[0] ?? '') : '';
+    const isStructural = action.op === 'add' || action.op === 'delete' || structuralRoots.has(root);
     const isLatestForPath = !path || latestByPath.get(path) === idx;
     const isNoOp = isEqual(action.oldValue, action.newValue);
 
-    if (isLatestForPath && !isNoOp) {
+    const shouldKeep =
+      isStructural ||
+      (action.op === 'set' && !structuralRoots.has(root) && isLatestForPath && !isNoOp);
+
+    if (shouldKeep) {
       const bucket = grouped[item.entryIndex] ?? [];
       bucket.push(action);
       grouped[item.entryIndex] = bucket;
