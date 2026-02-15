@@ -263,7 +263,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             </div>
           )}
 
-          <div className='flex flex-col gap-4 border-t border-gray-200 pt-6 sm:flex-row dark:border-gray-700'>
+          <div className='flex flex-col gap-4 border-t border-gray-200 pt-6 md:flex-row dark:border-gray-700'>
             <Button
               type='button'
               onClick={onSave}
@@ -271,7 +271,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               loading={isSubmitting}
               variant='primary'
               size='lg'
-              fullWidth
+              fullWidth={isMobile}
               className={clsx(
                 'flex-1 shadow-lg transition-transform hover:scale-[1.02] hover:shadow-xl sm:flex-none',
                 !isMobile && 'px-8'
@@ -287,7 +287,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               disabled={isSubmitting}
               variant='secondary'
               size='lg'
-              fullWidth
+              fullWidth={isMobile}
               className='flex-1 sm:flex-none'
               leadingIcon={<CloseIcon className='size-5' />}
             >
