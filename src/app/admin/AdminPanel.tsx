@@ -739,17 +739,20 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                                     className='rounded bg-white/80 px-2 py-1 text-gray-800 shadow-sm ring-1 ring-amber-100 dark:bg-slate-800/60 dark:text-slate-100 dark:ring-amber-900/50'
                                   >
                                     <div className='flex flex-wrap items-center gap-2'>
-                                      <span className='rounded bg-amber-600 px-1.5 py-0.5 text-[11px] font-semibold text-white'>
-                                        {op.toUpperCase()}
-                                      </span>
+                                      {op !== 'set' && (
+                                        <span className='rounded bg-amber-600 px-1.5 py-0.5 text-[11px] font-semibold text-white'>
+                                          {op.toUpperCase()}
+                                        </span>
+                                      )}
                                       <span className='font-medium'>{path}</span>
                                     </div>
-                                    <div className='mt-1 grid grid-cols-1 gap-1 text-[11px] sm:grid-cols-2'>
-                                      <div className='truncate text-amber-700 dark:text-amber-200'>
-                                        旧：{oldSummary}
+                                    <div className='mt-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1 text-[11px] text-gray-800 dark:text-slate-100'>
+                                      <div className='truncate text-gray-700 dark:text-slate-200'>
+                                        {oldSummary}
                                       </div>
+                                      <span className='text-gray-500 dark:text-slate-400'>→</span>
                                       <div className='truncate text-green-700 dark:text-green-200'>
-                                        新：{newSummary}
+                                        {newSummary}
                                       </div>
                                     </div>
                                   </li>
