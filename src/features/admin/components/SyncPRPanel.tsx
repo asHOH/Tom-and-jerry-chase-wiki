@@ -280,6 +280,7 @@ const SyncPRPanel: React.FC<SyncPRPanelProps> = ({ actions, onRefresh }) => {
                   type='checkbox'
                   checked={selectedIds.has(action.action_id)}
                   onChange={() => toggleSelect(action.action_id)}
+                  onClick={(e) => e.stopPropagation()}
                   disabled={syncing}
                   className='h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500'
                 />
