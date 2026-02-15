@@ -21,6 +21,7 @@ import {
   getActionsStorageKey,
   invertActionEntry,
   readActionHistory,
+  squashActions,
   subscribers,
   withRecordingSuppressed,
   writeActionHistory,
@@ -609,9 +610,20 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       const storageKey = getActionsStorageKey(entityType);
       const history = readActionHistory(storageKey);
       const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
+      const squashed = squashActions(matching);
 
-      if (matching.length === 0) {
+      if (squashed.length === 0) {
         if (showToast) showToast('没有需要发布的修改');
+
+        if (typeof window !== 'undefined') {
+          if (remaining.length === 0) {
+            window.localStorage.removeItem(storageKey);
+          } else {
+            writeActionHistory(storageKey, remaining);
+          }
+        }
+        setDraftInfo(null);
+        setActionCountTrigger((prev) => prev + 1);
         return false;
       }
 
@@ -622,7 +634,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             entityType,
-            entries: matching,
+            entries: squashed,
             message,
           }),
         });

@@ -326,3 +326,69 @@ export function withRecordingSuppressed<T>(storageKey: string, fn: () => T): T {
     return fn();
   }
 }
+
+/**
+ * Squash an action history so that only the last action per path remains.
+ * - Keeps the original cross-path ordering for surviving actions.
+ * - Drops no-ops where oldValue equals newValue.
+ * - Does not mutate the input array.
+ */
+export function squashActions(entries: ActionHistoryEntry[]): ActionHistoryEntry[] {
+  if (entries.length === 0) return [];
+
+  type FlatItem = {
+    action: Action;
+    entryIndex: number;
+    actionIndex: number;
+    flatIndex: number;
+  };
+
+  const flat: FlatItem[] = [];
+  let flatIndex = 0;
+
+  entries.forEach((entry, entryIndex) => {
+    if (Array.isArray(entry)) {
+      entry.forEach((action, actionIndex) => {
+        flat.push({ action, entryIndex, actionIndex, flatIndex });
+        flatIndex += 1;
+      });
+    } else {
+      flat.push({ action: entry, entryIndex, actionIndex: 0, flatIndex });
+      flatIndex += 1;
+    }
+  });
+
+  const latestByPath = new Map<string, number>();
+  flat.forEach((item) => {
+    const path = item.action.path;
+    if (!path) return;
+    latestByPath.set(path, item.flatIndex);
+  });
+
+  const grouped: Action[][] = entries.map(() => []);
+
+  flat.forEach((item) => {
+    const { action, flatIndex: idx } = item;
+    const path = action.path;
+
+    const isLatestForPath = !path || latestByPath.get(path) === idx;
+    const isNoOp = isEqual(action.oldValue, action.newValue);
+
+    if (isLatestForPath && !isNoOp) {
+      const bucket = grouped[item.entryIndex] ?? [];
+      bucket.push(action);
+      grouped[item.entryIndex] = bucket;
+    }
+  });
+
+  const result: ActionHistoryEntry[] = [];
+  grouped.forEach((actions) => {
+    if (actions.length === 1) {
+      result.push(actions[0]!);
+    } else if (actions.length > 1) {
+      result.push(actions);
+    }
+  });
+
+  return result;
+}
