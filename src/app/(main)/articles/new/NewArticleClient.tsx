@@ -13,35 +13,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
 import Link from '@/components/Link';
 
-interface Article {
-  id: string;
-  title: string;
-  created_at: string;
-  author_id: string;
-  category_id: string;
-  categories: { id: string; name: string };
-  users_public_view: { nickname: string };
-  latest_approved_version: Array<{
-    id: string;
-    content: string;
-    created_at: string;
-    status: string;
-    editor_id: string;
-    users_public_view: { nickname: string };
-  }>;
-}
-
 type Category = CategoryOption;
-
-interface ArticlesData {
-  articles: Article[];
-  total_count: number;
-  current_page: number;
-  total_pages: number;
-  categories: Category[];
-  has_next: boolean;
-  has_prev: boolean;
-}
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -74,8 +46,8 @@ const NewArticleClient: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: categoriesData, error: categoriesError } = useSWR<ArticlesData>(
-    userRole ? '/api/articles?page=1&limit=1' : null,
+  const { data: categoriesData, error: categoriesError } = useSWR<{ categories: Category[] }>(
+    userRole ? '/api/categories' : null,
     fetcher
   );
   const categories: Category[] =
