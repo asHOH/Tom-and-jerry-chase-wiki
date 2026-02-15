@@ -58,7 +58,7 @@ const EditArticleClient: React.FC = () => {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
-  const { role: userRole } = useUser();
+  const { role: userRole, isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
   const { success: showSuccess, error: showError } = useToast();
 
   const [title, setTitle] = useState('');
@@ -107,10 +107,10 @@ const EditArticleClient: React.FC = () => {
   }, [articleData, isInitialized]);
 
   useEffect(() => {
-    if (!userRole) {
+    if (!userRole && !isUserLoading && !isUserValidating) {
       router.push('/articles');
     }
-  }, [userRole, router]);
+  }, [userRole, isUserLoading, isUserValidating, router]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -199,7 +199,8 @@ const EditArticleClient: React.FC = () => {
     router.push(`/articles/${id}`);
   };
 
-  const isLoading = !!id && !articleData && !articleError;
+  const isArticleLoading = !!id && !articleData && !articleError;
+  const isLoading = isArticleLoading || isUserLoading || (isUserValidating && !userRole);
 
   // Loading state for user authentication and article data
   if (isLoading) {

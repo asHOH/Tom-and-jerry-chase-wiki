@@ -47,7 +47,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const NewArticleClient: React.FC = () => {
   const router = useRouter();
-  const { role: userRole } = useUser();
+  const { role: userRole, isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
   const { success: showSuccess, error: showError } = useToast();
 
   const [title, setTitle] = useState('');
@@ -55,7 +55,6 @@ const NewArticleClient: React.FC = () => {
   const [content, setContent] = useState('');
   const [characterId, setCharacterId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { data: categoriesData, error: categoriesError } = useSWR<ArticlesData>(
@@ -87,16 +86,10 @@ const NewArticleClient: React.FC = () => {
   };
 
   useEffect(() => {
-    // Give some time for the user data to load
-    const timer = setTimeout(() => {
-      setIsInitialized(true);
-      if (!userRole) {
-        router.push('/articles');
-      }
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [userRole, router]);
+    if (!userRole && !isUserLoading && !isUserValidating) {
+      router.push('/articles');
+    }
+  }, [userRole, isUserLoading, isUserValidating, router]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -169,7 +162,7 @@ const NewArticleClient: React.FC = () => {
   };
 
   // Loading state for user authentication
-  if (!isInitialized) {
+  if (isUserLoading || (isUserValidating && !userRole)) {
     return (
       <div className='space-y-8 dark:text-slate-200'>
         <div className='flex min-h-[400px] items-center justify-center'>

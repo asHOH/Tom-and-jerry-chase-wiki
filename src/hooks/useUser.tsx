@@ -199,7 +199,7 @@ export const UserProvider =
       };
 
 export const useUser = () => {
-  const { data, mutate } = useSWR<UserType>(USER_API_KEY, getUserData);
+  const { data, mutate, isLoading, isValidating } = useSWR<UserType>(USER_API_KEY, getUserData);
 
   const clearData = () => {
     mutate({ role: null, nickname: null }, false);
@@ -208,6 +208,8 @@ export const useUser = () => {
   return {
     role: data?.role ?? null,
     nickname: data?.nickname ?? null,
+    isLoading,
+    isValidating,
     mutate,
     clearData,
   };
