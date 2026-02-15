@@ -189,6 +189,63 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     return String(value);
   };
 
+  const diffIdArrays = (
+    oldValue: unknown,
+    newValue: unknown
+  ): {
+    added: string[];
+    removed: string[];
+    changed: Array<{ id: string; fields: string[] }>;
+    enabled: boolean;
+  } => {
+    if (!Array.isArray(oldValue) && !Array.isArray(newValue))
+      return { added: [], removed: [], changed: [], enabled: false };
+    const oldArr = Array.isArray(oldValue) ? oldValue : [];
+    const newArr = Array.isArray(newValue) ? newValue : [];
+    const oldMap = new Map<string, Record<string, unknown>>();
+    const newMap = new Map<string, Record<string, unknown>>();
+    for (const item of oldArr) {
+      if (item && typeof item === 'object' && typeof (item as { id?: unknown }).id === 'string') {
+        oldMap.set((item as { id: string }).id, item as Record<string, unknown>);
+      }
+    }
+    for (const item of newArr) {
+      if (item && typeof item === 'object' && typeof (item as { id?: unknown }).id === 'string') {
+        newMap.set((item as { id: string }).id, item as Record<string, unknown>);
+      }
+    }
+    if (oldMap.size === 0 && newMap.size === 0)
+      return { added: [], removed: [], changed: [], enabled: false };
+
+    const added: string[] = [];
+    const removed: string[] = [];
+    const changed: Array<{ id: string; fields: string[] }> = [];
+
+    for (const id of newMap.keys()) {
+      if (!oldMap.has(id)) added.push(id);
+    }
+    for (const id of oldMap.keys()) {
+      if (!newMap.has(id)) removed.push(id);
+    }
+    for (const id of newMap.keys()) {
+      const oldItem = oldMap.get(id);
+      const newItem = newMap.get(id);
+      if (!oldItem || !newItem) continue;
+      const fields = new Set([...Object.keys(oldItem), ...Object.keys(newItem)]);
+      const changedFields: string[] = [];
+      for (const key of fields) {
+        const ov = oldItem[key];
+        const nv = newItem[key];
+        if (JSON.stringify(ov) !== JSON.stringify(nv)) changedFields.push(key);
+      }
+      if (changedFields.length > 0) {
+        changed.push({ id, fields: changedFields });
+      }
+    }
+
+    return { added, removed, changed, enabled: true };
+  };
+
   const moderateMany = async (action: 'approve' | 'reject') => {
     if (moderatingId) return;
     if (actionableActions.length === 0) return;
@@ -732,6 +789,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                                 const path = action.path ?? '<无路径>';
                                 const oldSummary = summarizeValue(action.oldValue);
                                 const newSummary = summarizeValue(action.newValue);
+                                const idDiff = diffIdArrays(action.oldValue, action.newValue);
 
                                 return (
                                   <li
@@ -755,6 +813,36 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                                         {newSummary}
                                       </div>
                                     </div>
+                                    {idDiff.enabled &&
+                                      (idDiff.added.length > 0 ||
+                                        idDiff.removed.length > 0 ||
+                                        idDiff.changed.length > 0) && (
+                                        <div className='mt-1 space-y-1 text-[11px]'>
+                                          <div className='flex flex-wrap gap-2'>
+                                            {idDiff.added.length > 0 && (
+                                              <span className='rounded bg-green-100 px-1.5 py-0.5 text-green-700 dark:bg-green-900/40 dark:text-green-200'>
+                                                新增ID：{idDiff.added.join('、')}
+                                              </span>
+                                            )}
+                                            {idDiff.removed.length > 0 && (
+                                              <span className='rounded bg-red-100 px-1.5 py-0.5 text-red-700 dark:bg-red-900/40 dark:text-red-200'>
+                                                移除ID：{idDiff.removed.join('、')}
+                                              </span>
+                                            )}
+                                          </div>
+                                          {idDiff.changed.length > 0 && (
+                                            <div className='rounded bg-blue-50 px-2 py-1 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
+                                              变更字段：
+                                              {idDiff.changed.map((c, i) => (
+                                                <span key={c.id} className='ml-1'>
+                                                  {c.id}({c.fields.join('、')})
+                                                  {i < idDiff.changed.length - 1 ? '；' : ''}
+                                                </span>
+                                              ))}
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
                                   </li>
                                 );
                               })}
