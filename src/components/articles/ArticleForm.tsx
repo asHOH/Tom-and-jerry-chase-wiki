@@ -76,6 +76,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   const hasLintError = lintResults.some((item) => item.severity === 'error');
   const isSaveDisabled =
     isSubmitting ||
+    isLoadingCategories ||
+    (!!category && (categories.length === 0 || !categories.find((c) => c.id === category))) ||
     !title.trim() ||
     !category ||
     !content ||

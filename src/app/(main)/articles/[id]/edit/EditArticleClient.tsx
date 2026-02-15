@@ -136,6 +136,21 @@ const EditArticleClient: React.FC = () => {
   };
 
   const handleSave = async () => {
+    if (isLoadingCategories) {
+      return;
+    }
+
+    if (categories.length === 0) {
+      setError('无法加载分类信息，请刷新页面重试');
+      return;
+    }
+
+    const selectedCategory = categories.find((c) => c.id === category);
+    if (category && !selectedCategory) {
+      setError('未能匹配到所选分类，请刷新页面后重试');
+      return;
+    }
+
     if (!title.trim()) {
       setError('请输入文章标题');
       return;
