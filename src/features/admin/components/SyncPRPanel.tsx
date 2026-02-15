@@ -112,6 +112,7 @@ const SyncPRPanel: React.FC<SyncPRPanelProps> = ({ actions, onRefresh }) => {
       setResult(data);
       success(`PR 已创建：#${data.prNumber}`);
       setSelectedIds(new Set());
+      onRefresh();
     } catch (e) {
       const msg = e instanceof Error ? e.message : '创建 PR 失败';
       error(msg);
