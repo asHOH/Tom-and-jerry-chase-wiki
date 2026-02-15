@@ -96,10 +96,17 @@ const SyncPRPanel: React.FC<SyncPRPanelProps> = ({ actions, onRefresh }) => {
         body: JSON.stringify({ actionIds: Array.from(selectedIds) }),
       });
 
-      const data = (await res.json()) as SyncResult;
+      const rawText = await res.text();
+      let data: SyncResult | null = null;
+      try {
+        data = JSON.parse(rawText) as SyncResult;
+      } catch {
+        // ignore parse errors; fall back to text
+      }
 
-      if (!res.ok) {
-        throw new Error(data.error ?? '创建 PR 失败');
+      if (!res.ok || !data) {
+        const message = (data && data.error) || rawText || `创建 PR 失败（${res.status}）`;
+        throw new Error(message);
       }
 
       setResult(data);
