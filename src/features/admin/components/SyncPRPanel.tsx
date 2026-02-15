@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useToast } from '@/context/ToastContext';
 
@@ -36,6 +36,18 @@ const SyncPRPanel: React.FC<SyncPRPanelProps> = ({ actions, onRefresh }) => {
   const { success, error } = useToast();
 
   const approvedActions = useMemo(() => actions.filter((a) => a.is_public), [actions]);
+
+  // Drop selections that are no longer present after a data refresh.
+  useEffect(() => {
+    const validIds = new Set(approvedActions.map((a) => a.action_id));
+    setSelectedIds((prev) => {
+      const next = new Set<string>();
+      for (const id of prev) {
+        if (validIds.has(id)) next.add(id);
+      }
+      return next.size === prev.size ? prev : next;
+    });
+  }, [approvedActions]);
 
   const entityTypes = useMemo(() => {
     const set = new Set<string>();
