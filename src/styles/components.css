@@ -1,20 +1,3 @@
-/* Legacy component classes (migrate to Tailwind/React where possible) */
-.card {
-  @apply rounded-lg bg-white p-4 shadow-md transition-all duration-300 hover:shadow-lg dark:bg-slate-800;
-}
-
-.btn {
-  @apply rounded-md px-4 py-2 font-medium transition-colors;
-}
-
-.btn-primary {
-  @apply bg-blue-600 text-white hover:bg-blue-700;
-}
-
-.btn-secondary {
-  @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
-}
-
 /* Responsive image constraints */
 .responsive-image {
   max-width: 100% !important;
