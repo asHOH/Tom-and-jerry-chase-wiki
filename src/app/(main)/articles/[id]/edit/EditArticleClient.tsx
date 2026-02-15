@@ -52,7 +52,24 @@ interface ArticleInfo {
     article_versions: Array<{ content: string }>;
   };
 }
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) {
+    const error = new Error('An error occurred while fetching the data.') as Error & {
+      info?: unknown;
+      status?: number;
+    };
+    // Attach extra info to the error object.
+    try {
+      error.info = await res.json();
+    } catch {
+      error.info = { status: res.status };
+    }
+    error.status = res.status;
+    throw error;
+  }
+  return res.json();
+};
 
 const EditArticleClient: React.FC = () => {
   const params = useParams();
