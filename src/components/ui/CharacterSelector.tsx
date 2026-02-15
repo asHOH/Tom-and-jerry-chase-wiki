@@ -266,15 +266,21 @@ export function ArticleCharacterSelector({
 
   return (
     <div className='relative'>
-      <button
-        type='button'
+      <div
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        disabled={disabled}
         className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left text-lg transition-all duration-200 ${
           disabled
             ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500'
-            : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
+            : 'cursor-pointer border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
         }`}
+        role='button'
+        tabIndex={disabled ? -1 : 0}
+        onKeyDown={(e) => {
+          if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            setIsOpen(!isOpen);
+          }
+        }}
       >
         {selectedCharacter ? (
           <div className='flex items-center gap-3'>
@@ -320,7 +326,7 @@ export function ArticleCharacterSelector({
             <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
           </svg>
         </div>
-      </button>
+      </div>
 
       {isOpen && (
         <>
