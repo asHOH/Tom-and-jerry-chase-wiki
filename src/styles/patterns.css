@@ -93,6 +93,12 @@
   will-change: auto;
 }
 
+.filter-button:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.35);
+}
+
 /* Styles for content to account for fixed navbar */
 .content-container {
   padding-top: var(--nav-height) !important;
