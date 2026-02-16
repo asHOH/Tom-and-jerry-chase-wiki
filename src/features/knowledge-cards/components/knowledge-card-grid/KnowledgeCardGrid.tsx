@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getCardRankColors, getFactionButtonColors } from '@/lib/design';
@@ -37,6 +37,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
   // Cost range state with faction-specific initial values
   const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
+  const costLabelId = useId();
 
   const { handleSelectCard } = useAppContext();
 
@@ -88,9 +89,13 @@ export default function KnowledgeCardGrid({ description }: Props) {
           />
 
           {/* Cost Filter Controls styled like FilterRow */}
-          <div className='filter-section flex flex-col gap-2 md:flex-row md:items-center md:gap-4'>
+          <div
+            className='filter-section flex flex-col gap-2 md:flex-row md:items-center md:gap-4'
+            role='group'
+            aria-labelledby={costLabelId}
+          >
             <div className='label-col w-full text-left md:w-32'>
-              <FilterLabel full='费用筛选:' />
+              <FilterLabel id={costLabelId} full='费用筛选:' />
             </div>
             <div className='flex w-full min-w-0 justify-center'>
               <div

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useId } from 'react';
 import clsx from 'clsx';
 import { m, MotionStyle } from 'motion/react';
 
@@ -42,6 +42,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
     ariaLabel,
   } = props;
   const isMobile = useMobile();
+  const labelId = useId();
 
   return (
     <div
@@ -49,8 +50,10 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
         `flex items-center justify-center gap-2 ${isMobile ? 'mt-1' : 'mt-4'}`,
         className
       )}
+      role='group'
+      aria-labelledby={labelId}
     >
-      <FilterLabel full={label} />
+      <FilterLabel id={labelId} full={label} />
       {/* <div className='w-full md:w-32 text-left'>
         <div className='font-medium'>{label}</div>
       </div> */}

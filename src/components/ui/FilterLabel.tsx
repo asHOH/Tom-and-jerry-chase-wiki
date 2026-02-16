@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 type FilterLabelProps = {
+  id?: string;
   full: React.ReactNode;
   short?: React.ReactNode;
   className?: string;
@@ -19,13 +20,24 @@ const deriveShortLabel = (full: React.ReactNode, provided?: React.ReactNode) => 
   return withoutFilterWord.length > 0 ? withoutFilterWord : trimmed;
 };
 
-const FilterLabel: React.FC<FilterLabelProps> = ({ full, short, className }) => {
+const FilterLabel: React.FC<FilterLabelProps> = ({ id, full, short, className }) => {
   const shortLabel = deriveShortLabel(full, short);
+  const accessibleLabel =
+    typeof full === 'string' ? full : typeof shortLabel === 'string' ? shortLabel : undefined;
 
   return (
     <>
-      <span className={clsx(baseClasses, 'hidden sm:inline', className)}>{full}</span>
-      <span className={clsx(baseClasses, 'sm:hidden', className)}>{shortLabel}</span>
+      {accessibleLabel ? (
+        <span id={id} className='sr-only'>
+          {accessibleLabel}
+        </span>
+      ) : null}
+      <span className={clsx(baseClasses, 'hidden sm:inline', className)} aria-hidden='true'>
+        {full}
+      </span>
+      <span className={clsx(baseClasses, 'sm:hidden', className)} aria-hidden='true'>
+        {shortLabel}
+      </span>
     </>
   );
 };
