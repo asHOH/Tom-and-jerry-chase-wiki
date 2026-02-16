@@ -3,11 +3,17 @@ body {
   transition:
     background-color 0.5s ease,
     color 0.5s ease;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
+  font-family: var(--font-sans-stack);
+  line-height: 1.65;
+  letter-spacing: -0.01em;
   position: relative;
 }
 

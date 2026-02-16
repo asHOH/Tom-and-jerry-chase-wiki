@@ -4,6 +4,13 @@
   --nav-z-index: 9999;
   --nav-height: 70px;
   --offline-banner-height: 40px;
+  /* Typography stacks — allow user custom font via --font-sans from layout */
+  --font-sans-stack:
+    var(--font-sans), 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans SC',
+    'Helvetica Neue', Arial, sans-serif;
+  --font-display-stack:
+    var(--font-sans), 'LXGW WenKai', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC',
+    'Times New Roman', serif;
 }
 
 .dark {

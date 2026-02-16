@@ -35,7 +35,12 @@ const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => 
       }`}
     >
       {title !== undefined && (
-        <h2 className='mb-4 py-3 text-3xl font-bold text-gray-800 dark:text-white'>{title}</h2>
+        <h2
+          className='mb-4 py-3 text-3xl leading-tight font-bold tracking-tight text-gray-800 md:text-4xl dark:text-white'
+          style={{ fontFamily: 'var(--font-display-stack)' }}
+        >
+          {title}
+        </h2>
       )}
       <FactionButtonGroup>
         {buttons.map((button, index) => (

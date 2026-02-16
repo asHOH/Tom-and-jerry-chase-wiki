@@ -23,6 +23,7 @@ import KeyboardNavigation from '@/components/KeyboardNavigation';
 const inter = localFont({
   src: '../../public/fonts/inter/InterVariable.woff2',
   display: 'swap',
+  variable: '--font-sans',
 });
 
 export const metadata: Metadata = defaultMetadata;
@@ -98,7 +99,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </Script>
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} ${inter.variable}`}>
         <DarkModeProvider>
           <NextTopLoader
             color='#2563eb'
