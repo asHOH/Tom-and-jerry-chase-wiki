@@ -76,6 +76,8 @@ export const defaultMetadata: Metadata = {
     'msapplication-TileColor': '#1e293b',
     'msapplication-TileImage': DEFAULT_IMAGE,
     'apple-mobile-web-app-capable': 'yes',
+    renderer: 'webkit',
+    'X-UA-Compatible': 'IE=edge,chrome=1',
   },
 };
 
