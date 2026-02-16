@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Noto_Sans_SC } from 'next/font/google';
 import localFont from 'next/font/local';
 import Script from 'next/script';
 import NextTopLoader from 'nextjs-toploader';
@@ -24,6 +25,13 @@ const inter = localFont({
   src: '../../public/fonts/inter/InterVariable.woff2',
   display: 'swap',
   variable: '--font-sans',
+});
+
+const notoSansSC = Noto_Sans_SC({
+  subsets: ['latin', 'latin-ext'],
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-cjk',
 });
 
 export const metadata: Metadata = defaultMetadata;
@@ -99,7 +107,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </Script>
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
-      <body className={`${inter.className} ${inter.variable}`}>
+      <body className={`${inter.className} ${inter.variable} ${notoSansSC.variable}`}>
         <DarkModeProvider>
           <NextTopLoader
             color='#2563eb'
