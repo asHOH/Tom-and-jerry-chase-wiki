@@ -75,7 +75,8 @@ const localStorageProvider = () => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const parsed = JSON.parse(stored) as Array<[string, any]>;
           if (Array.isArray(parsed)) {
-            initialEntries = parsed;
+            // Filter out user data to avoid hydration mismatch with server-rendered HTML
+            initialEntries = parsed.filter(([key]) => key !== USER_API_KEY);
           } else {
             localStorage.removeItem(CACHE_KEY);
           }
