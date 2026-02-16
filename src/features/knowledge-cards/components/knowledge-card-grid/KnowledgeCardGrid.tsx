@@ -12,6 +12,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
 import CostRangeSlider from '@/components/ui/CostRangeSlider';
+import FilterLabel from '@/components/ui/FilterLabel';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
@@ -89,7 +90,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
           {/* Cost Filter Controls styled like FilterRow */}
           <div className='filter-section flex flex-col gap-2 md:flex-row md:items-center md:gap-4'>
             <div className='label-col w-full text-left md:w-32'>
-              <div className='font-medium'>费用筛选:</div>
+              <FilterLabel full='费用筛选:' />
             </div>
             <div className='flex w-full min-w-0 justify-center'>
               <div

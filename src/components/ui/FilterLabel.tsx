@@ -2,17 +2,32 @@ import React from 'react';
 import clsx from 'clsx';
 
 type FilterLabelProps = {
-  children: React.ReactNode;
-  displayMode: 'inline' | 'block';
+  full: React.ReactNode;
+  short?: React.ReactNode;
+  className?: string;
 };
 
-const FilterLabel: React.FC<FilterLabelProps> = ({ children, displayMode }) => {
-  const classes = clsx('text-lg font-medium text-gray-700 dark:text-gray-300', {
-    'hidden sm:inline': displayMode === 'inline',
-    'sm:hidden': displayMode === 'block',
-  });
+const baseClasses = 'text-lg font-medium text-gray-700 dark:text-gray-300';
 
-  return <span className={classes}>{children}</span>;
+const deriveShortLabel = (full: React.ReactNode, provided?: React.ReactNode) => {
+  if (provided !== undefined) return provided;
+  if (typeof full !== 'string') return full;
+
+  const trimmed = full.trim();
+  const withoutFilterWord = trimmed.replace('筛选', '').trim();
+
+  return withoutFilterWord.length > 0 ? withoutFilterWord : trimmed;
+};
+
+const FilterLabel: React.FC<FilterLabelProps> = ({ full, short, className }) => {
+  const shortLabel = deriveShortLabel(full, short);
+
+  return (
+    <>
+      <span className={clsx(baseClasses, 'hidden sm:inline', className)}>{full}</span>
+      <span className={clsx(baseClasses, 'sm:hidden', className)}>{shortLabel}</span>
+    </>
+  );
 };
 
 export default FilterLabel;

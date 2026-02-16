@@ -50,8 +50,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
         className
       )}
     >
-      <FilterLabel displayMode='inline'>{label}</FilterLabel>
-      <FilterLabel displayMode='block'>筛选:</FilterLabel>
+      <FilterLabel full={label} />
       {/* <div className='w-full md:w-32 text-left'>
         <div className='font-medium'>{label}</div>
       </div> */}
