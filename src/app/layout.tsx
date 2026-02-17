@@ -9,6 +9,7 @@ import { isVercelAnalyticsEnabled } from '@/lib/platform';
 import { defaultMetadata } from '@/constants/seo';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 import { ClientProvidersWithInitialData } from '@/components/ClientProvidersWithInitialData';
+import { DisableLinkPrefetch } from '@/components/DisableLinkPrefetch';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
@@ -39,6 +40,7 @@ export const metadata: Metadata = defaultMetadata;
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const initialUser = await getUserData();
   const vercelAnalyticsEnabled = isVercelAnalyticsEnabled();
+  const isVercel = process.env.VERCEL === '1';
   return (
     <html
       lang='zh-CN'
@@ -117,6 +119,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             showSpinner={false}
             zIndex={10050}
           />
+          {isVercel ? <DisableLinkPrefetch /> : null}
           <ErrorBoundary>
             <KeyboardNavigation />
             <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
