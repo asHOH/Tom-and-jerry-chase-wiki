@@ -63,7 +63,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
     const width = window.innerWidth;
     const extraWidth =
-      (showDetailToggle ? DETAIL_TOGGLE_WIDTH : 0) + (!!nickname ? USER_BUTTON_WIDTH : 0);
+      (showDetailToggle ? DETAIL_TOGGLE_WIDTH : 0) + (nickname ? USER_BUTTON_WIDTH : 0);
     const adjustedWidth = Math.max(width - extraWidth, 0);
     const total = items.length;
     let nextCollapsed = 0;
@@ -167,9 +167,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
   const tabMinWidthClass = 'min-w-[40px]';
   const homeButtonSizing = clsx('min-w-[40px]', !isCompactMode && 'lg:min-w-fit');
-  const tabIconClassName = clsx(
-    'h-6 object-contain md:h-7',
-    isCompactMode ? 'w-6 flex-shrink-0 md:w-7' : 'w-auto'
+  const tabIconWrapperClassName = clsx(
+    'flex size-6 items-center justify-center overflow-hidden md:size-7',
+    isCompactMode && 'shrink-0'
   );
   const shouldAlignLeft = showDetailToggle || !!nickname;
   const dropdownAlignmentClass = shouldAlignLeft ? 'left-0' : 'right-0';
@@ -234,13 +234,15 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-                <Image
-                  src={tab.iconSrc}
-                  alt={tab.iconAlt}
-                  width={64}
-                  height={64}
-                  className={tabIconClassName}
-                />
+                <span className={tabIconWrapperClassName}>
+                  <Image
+                    src={tab.iconSrc}
+                    alt={tab.iconAlt}
+                    width={64}
+                    height={64}
+                    className='h-full w-full object-contain'
+                  />
+                </span>
                 <span className='hidden md:inline'>{tab.label}</span>
                 <span className='sr-only md:hidden'>{tab.label}</span>
               </MotionLink>
