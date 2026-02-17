@@ -97,6 +97,7 @@ docker compose up -d
 ```bash
 curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 source ~/.nvm/nvm.sh
+# 请安装 20.3.0 以上版本
 nvm install 20
 ```
 
@@ -107,12 +108,45 @@ git clone https://github.com/asHOH/Tom-and-jerry-chase-wiki.git
 cd Tom-and-jerry-chase-wiki
 ```
 
-### 第 3 步 设置两项关闭开关
+### 第 3 步 设置环境变量
+
+创建 `.env.local` 文件，填入以下内容（请替换为实际值）：
 
 ```bash
 cat << EOF > .env.local
-export NEXT_PUBLIC_DISABLE_ARTICLES=1
-export NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1
+# ------------------------------
+# 1. 核心功能开关 (推荐默认)
+# ------------------------------
+
+# 关闭反馈功能
+NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1
+
+# 关闭文章功能 (设为 1 则无需配置 Supabase)
+NEXT_PUBLIC_DISABLE_ARTICLES=1
+
+# ------------------------------
+# 2. Supabase 配置 (可选)
+# ------------------------------
+# 仅当 NEXT_PUBLIC_DISABLE_ARTICLES=0 时需要配置。
+# 如需启用文章功能（只读），请联系本站维护者获取生产环境的 URL 和 ANON_KEY。
+
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# 服务端密钥 (考虑到安全风险，该密钥暂不开放)
+SUPABASE_SERVICE_ROLE_KEY=
+
+# 邮箱域名限制 (如需开放登录)
+NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN=email.tjwiki.com
+
+# ------------------------------
+# 3. 其他配置 (可选)
+# ------------------------------
+
+# 验证码服务 (防止滥用)
+# NEXT_PUBLIC_CAPTCHA_PROVIDER=hcaptcha
+# NEXT_PUBLIC_CAPTCHA_SITE_KEY=your_site_key
+# CAPTCHA_SECRET_KEY=your_secret_key
 EOF
 ```
 
@@ -120,6 +154,7 @@ EOF
 
 ```bash
 npm install
+# 内存较小请先运行: export NEXT_CPU_COUNT=1
 npm run build
 ```
 
