@@ -15,6 +15,7 @@ import SingleItemReverseCard from '@/features/shared/components/SingleItemRevers
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsBySingleItem';
+import Card from '@/components/ui/Card';
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import CollapseCard from '@/components/ui/CollapseCard';
 import { editable } from '@/components/ui/editable';
@@ -85,7 +86,7 @@ export default function CharacterDetails({
       <div className='space-y-8'>
         <div className='flex flex-col gap-8 md:flex-row'>
           <div className='md:w-1/3'>
-            <div className='card h-full overflow-hidden dark:border-slate-700 dark:bg-slate-800'>
+            <Card className='h-full overflow-hidden'>
               {(isEditMode || !isMobile) && (
                 <>
                   <div className='image-container relative -mx-4 -mt-4 mb-4 h-64 rounded-t-lg bg-gray-200 dark:bg-slate-700'>
@@ -337,7 +338,7 @@ export default function CharacterDetails({
                   <CharacterNavigationButtons currentCharacterId={localCharacter.id} />
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
 
           <div className='md:w-2/3'>

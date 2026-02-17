@@ -22,6 +22,7 @@ import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleIte
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -671,8 +672,8 @@ export default function SkillCard({
   const hasProperties = properties.length > 0;
 
   return (
-    <div
-      className={`card ${isMobile ? 'px-4! py-6!' : 'p-6!'} dark:border-slate-700 dark:bg-slate-800`}
+    <Card
+      className={`${isMobile ? 'px-4! py-6!' : 'p-6!'} dark:border-slate-700 dark:bg-slate-800`}
     >
       <div className='flex items-start'>
         {skill.imageUrl && (
@@ -955,6 +956,6 @@ export default function SkillCard({
         <DetailTraitsCard singleItem={{ name: skill.name, type: 'skill' }} />
         <DetailReverseCard singleItem={{ name: skill.name, type: 'skill' }} />
       </div>
-    </div>
+    </Card>
   );
 }

@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import Card from '@/components/ui/Card';
 import SectionHeader from '@/components/ui/SectionHeader';
 
 import TextWithHoverTooltips from '../components/TextWithHoverTooltips';
@@ -40,12 +41,12 @@ function DetailTextSection({
   return (
     <div>
       <SectionHeader title={title}>{headerContent}</SectionHeader>
-      <div className='card mb-8 p-4 dark:border-slate-700 dark:bg-slate-800'>
+      <Card className='mb-8 p-4'>
         <p className='py-2 text-lg whitespace-pre-wrap text-black dark:text-gray-200'>
           {renderValue ?? <TextWithHoverTooltips text={displayText} />}
         </p>
         {children ? <div className='mt-4'>{children}</div> : null}
-      </div>
+      </Card>
     </div>
   );
 }

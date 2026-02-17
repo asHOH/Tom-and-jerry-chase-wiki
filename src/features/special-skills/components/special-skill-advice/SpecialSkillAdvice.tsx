@@ -10,6 +10,7 @@ import type { FactionId, SpecialSkill } from '@/data/types';
 import { getSpecialSkillRelationSummary } from '@/features/characters/utils/relations';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import BaseCard from '@/components/ui/BaseCard';
+import Card from '@/components/ui/Card';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 import PageDescription from '@/components/ui/PageDescription';
@@ -110,9 +111,9 @@ export default function SpecialSkillAdviceClient() {
       </header>
       <div className='auto-fit-grid grid-container mt-8 grid gap-4'>
         {filteredSkills.map((skill) => (
-          <div
+          <Card
             key={skill.factionId + skill.name}
-            className='character-card card flex transform flex-col transition-transform md:flex-row dark:border-slate-700 dark:bg-slate-800'
+            className='character-card flex transform flex-col p-4 transition-transform hover:-translate-y-1 md:flex-row'
           >
             <div className='md:w-1/5'>
               <BaseCard
@@ -255,7 +256,7 @@ export default function SpecialSkillAdviceClient() {
                 </div>
               )}
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

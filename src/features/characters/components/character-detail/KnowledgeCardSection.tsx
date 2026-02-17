@@ -23,6 +23,7 @@ import {
   getKnowledgeCardCostStyles,
   isCardOptional,
 } from '@/features/knowledge-cards/utils/sections';
+import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
 import Tag from '@/components/ui/Tag';
@@ -829,7 +830,7 @@ export default function KnowledgeCardSection({
       return (
         <div>
           <CharacterSection title='推荐知识卡组'>
-            <div className='card space-y-3 p-4 dark:border-slate-700 dark:bg-slate-800'>
+            <Card className='space-y-3 p-4'>
               <div className='mb-4 flex items-center justify-between'>
                 <button
                   type='button'
@@ -864,7 +865,7 @@ export default function KnowledgeCardSection({
                   <PlusIcon className='h-4 w-4' aria-hidden='true' />
                 </button>
               </div>
-            </div>
+            </Card>
           </CharacterSection>
         </div>
       );
@@ -875,7 +876,7 @@ export default function KnowledgeCardSection({
   return (
     <div>
       <CharacterSection title='推荐知识卡组'>
-        <div className='card space-y-3 p-4 dark:border-slate-700 dark:bg-slate-800'>
+        <Card className='space-y-3 p-4'>
           <div className='mb-4 flex items-center justify-between'>
             <button
               type='button'
@@ -964,7 +965,7 @@ export default function KnowledgeCardSection({
               </React.Fragment>
             )
           )}
-        </div>
+        </Card>
       </CharacterSection>
       <KnowledgeCardPicker
         isOpen={isPickerOpen}

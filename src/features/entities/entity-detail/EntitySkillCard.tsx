@@ -16,6 +16,7 @@ import {
 } from '@/features/characters/utils/skills';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
+import Card from '@/components/ui/Card';
 import Image from '@/components/Image';
 
 interface SkillCardProps {
@@ -151,7 +152,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
   const hasProperties = properties.length > 0;
 
   return (
-    <div className='card p-6! dark:border-slate-700 dark:bg-slate-800'>
+    <Card className='p-6!'>
       <div className='flex items-start justify-between'>
         {skill.imageUrl && (
           <div className='mr-6 flex-shrink-0'>
@@ -255,6 +256,6 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
             ))}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

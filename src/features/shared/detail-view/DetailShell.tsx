@@ -4,6 +4,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { designTokens } from '@/lib/design';
+import Card from '@/components/ui/Card';
 import SectionHeader from '@/components/ui/SectionHeader';
 
 type CardVariant = 'default' | 'ghost' | 'none';
@@ -48,11 +49,6 @@ type DetailShellProps = {
   rightColumnProps?: SharedProps;
 };
 
-const DEFAULT_CARD_CLASSNAMES = 'card dark:bg-slate-800 dark:border-slate-700 mb-8';
-const DEFAULT_CARD_PADDING = {
-  padding: designTokens.spacing.lg,
-};
-
 function DetailShell({
   leftColumn,
   sections,
@@ -90,22 +86,37 @@ function DetailShell({
       return children;
     }
 
-    const cardClassName = clsx(
-      variant === 'default' && DEFAULT_CARD_CLASSNAMES,
-      variant === 'ghost' && 'rounded-lg border border-dashed border-slate-400/60 mb-8 p-6',
-      section.cardOptions?.className
-    );
+    if (variant === 'default') {
+      return (
+        <Card
+          className={clsx('mb-8', section.cardOptions?.className)}
+          style={{
+            padding: designTokens.spacing.lg,
+            ...section.cardOptions?.style,
+          }}
+          data-testid={section.cardOptions?.testId}
+        >
+          {children}
+        </Card>
+      );
+    }
 
-    const cardStyle = {
-      ...(variant === 'default' ? DEFAULT_CARD_PADDING : {}),
-      ...section.cardOptions?.style,
-    } satisfies React.CSSProperties;
+    if (variant === 'ghost') {
+      return (
+        <div
+          className={clsx(
+            'mb-8 rounded-lg border border-dashed border-slate-400/60 p-6',
+            section.cardOptions?.className
+          )}
+          style={section.cardOptions?.style}
+          data-testid={section.cardOptions?.testId}
+        >
+          {children}
+        </div>
+      );
+    }
 
-    return (
-      <div className={cardClassName} style={cardStyle} data-testid={section.cardOptions?.testId}>
-        {children}
-      </div>
-    );
+    return children;
   };
 
   return (

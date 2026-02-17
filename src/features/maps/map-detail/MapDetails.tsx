@@ -12,6 +12,7 @@ import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
 import Image from '@/components/Image';
 import { mapsEdit } from '@/data';
@@ -103,12 +104,12 @@ export default function MapDetailClient({ map }: { map: MapType }) {
     },
   ];
 
-  if (!!effectiveMap.mapImageUrl) {
+  if (effectiveMap.mapImageUrl) {
     sections.push({
       title: '地图预览',
       cardOptions: { variant: 'none' },
       content: (
-        <div className='card dark:border-slate-700 dark:bg-slate-800'>
+        <Card>
           {/* 图片容器 */}
           <div
             ref={imageRef}
@@ -154,10 +155,10 @@ export default function MapDetailClient({ map }: { map: MapType }) {
               </div>
             )}
             <div className='pointer-events-none absolute right-2 bottom-2 rounded bg-black/60 px-2 py-1 text-xs text-white opacity-80'>
-              {isMobile ? '点击放大' : '点击放大'}
+              点击放大
             </div>
           </div>
-        </div>
+        </Card>
       ),
     });
   }
@@ -203,7 +204,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
             onClick={() => setIsFullScreen(false)}
             aria-label='关闭全屏预览'
           >
-            ✕
+            ×
           </button>
 
           {/* 图片容器 */}
@@ -232,7 +233,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
             />
           </div>
 
-          {/* 提示信息 - 修改为仅提示关闭按钮和ESC键 */}
+          {/* 提示信息 - 仅提示关闭按钮和ESC键 */}
           <div className='absolute bottom-4 left-1/2 z-60 -translate-x-1/2 transform rounded-full bg-black/50 px-4 py-2 text-center text-sm whitespace-nowrap text-white/80'>
             点击关闭按钮{isMobile ? '' : '或按ESC键'}退出
           </div>

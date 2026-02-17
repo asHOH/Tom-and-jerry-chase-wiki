@@ -19,7 +19,7 @@ describe('DetailShell', () => {
     expect(screen.getByTestId('left-column')).toBeInTheDocument();
     expect(screen.getByText('简介')).toBeInTheDocument();
     expect(screen.getByTestId('default-section')).toBeInTheDocument();
-    expect(screen.getByTestId('default-card')).toHaveClass('card');
+    expect(screen.getByTestId('default-card')).toHaveClass('rounded-lg');
   });
 
   it('supports custom render sections and card variants', () => {

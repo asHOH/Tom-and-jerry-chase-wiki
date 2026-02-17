@@ -6,6 +6,7 @@ import { useSnapshot } from 'valtio';
 import { setNestedProperty } from '@/lib/editUtils';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { FactionId, SkillAllocation } from '@/data/types';
+import Card from '@/components/ui/Card';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import { characters } from '@/data';
 
@@ -68,22 +69,19 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
         <div className='space-y-3'>
           {skillAllocations && skillAllocations.length > 0
             ? skillAllocations.map((allocation, index) => (
-                <div
-                  key={allocation.id || `allocation-${index}`}
-                  className='card p-4 dark:border-slate-700 dark:bg-slate-800'
-                >
+                <Card key={allocation.id || `allocation-${index}`} className='p-4'>
                   <SkillAllocationDisplay
                     allocation={allocation}
                     factionId={factionId}
                     onRemove={handleRemoveSkillAllocation}
                     index={index}
                   />
-                </div>
+                </Card>
               ))
             : isEditMode && (
-                <div className='card p-4 text-center text-gray-500 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-400'>
+                <Card className='p-4 text-center text-gray-500 dark:text-gray-400'>
                   暂无推荐加点。点击下方按钮添加。
-                </div>
+                </Card>
               )}
           {isEditMode && (
             <div className='mt-4'>
