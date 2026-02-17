@@ -48,13 +48,13 @@
 
 ## 🛠️ 技术栈
 
-- **框架**: [Next.js 15](https://nextjs.org/) (App Router)
+- **框架**: [Next.js 16](https://nextjs.org/) (App Router) & [React 19](https://react.dev/)
 - **语言**: [TypeScript](https://www.typescriptlang.org/)
 - **样式**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **状态管理**: [Valtio](https://valtio.pmnd.rs/) & [SWR](https://swr.vercel.app/)
 - **测试**: [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/)
 - **部署**: [Vercel](https://vercel.com/)
-- **代码规范**: [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
+- **代码规范**: [ESLint](https://eslint.org/), [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) & [Prettier](https://prettier.io/)
 - **认证与数据**: [Supabase](https://supabase.com/) (Auth、Postgres、RPC)
 
 ## 💻 本地开发
@@ -65,7 +65,7 @@
 
 ### 环境要求
 
-- **Node.js**: `>=20.0.0`
+- **Node.js**: `>=20.3.0`
 - **npm**: `>=10.0.0`
 - **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`,`NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS`（设为 `0` 强制禁用或 `1` 强制启用Vercel Analytics；默认仅在 Vercel 生产环境启用）。
 
