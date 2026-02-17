@@ -81,9 +81,8 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      source: IS_VERCEL
-        ? '/((?!api|_next/static|_next/image|_next/data|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|sw.js|workbox-.*|swe-worker-.*|version.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|bmp|tiff|avif|js|css|mjs|json|txt|xml|map|mp4|webm|ogg|mp3|wav)$).*)'
-        : '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+      source:
+        '/((?!api|_next/static|_next/image|_next/data|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|sw.js|workbox-.*|swe-worker-.*|version.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|bmp|tiff|avif|js|css|mjs|json|txt|xml|map|mp4|webm|ogg|mp3|wav)$).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },
