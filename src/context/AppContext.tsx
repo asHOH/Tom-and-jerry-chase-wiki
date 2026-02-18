@@ -52,16 +52,7 @@ export const useAppContext = () => {
 
     // Defer storage persistence and downstream re-renders
     startTransition(() => {
-      setStoredDetailedView(() => {
-        queueMicrotask(() => {
-          try {
-            localStorage.setItem('isDetailedView', JSON.stringify(next));
-          } catch {
-            // Ignore storage failures to avoid disrupting UI toggle
-          }
-        });
-        return next;
-      });
+      setStoredDetailedView(next);
     });
   };
 
