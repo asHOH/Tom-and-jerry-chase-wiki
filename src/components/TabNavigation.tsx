@@ -95,10 +95,17 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const handleResize = () => evaluateCollapsedCount();
+    let rafId = 0;
+    const handleResize = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(evaluateCollapsedCount);
+    };
     evaluateCollapsedCount();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', handleResize);
+    };
   }, [evaluateCollapsedCount]);
 
   // Reset overlay states when pathname changes
