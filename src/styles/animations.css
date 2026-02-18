@@ -116,12 +116,38 @@
   animation-delay: 0.8s;
 }
 
+/* Attention dot: 3 gentle pulse cycles with rest gaps between them */
+@keyframes attention-pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  24% {
+    opacity: 0.5;
+    transform: scale(1.6);
+  }
+  48% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-attention-pulse {
+  animation: attention-pulse 2.5s ease-in-out 3;
+  animation-delay: 1.5s;
+}
+
 /* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .skeleton-shimmer,
   .animate-fadeInUp,
   .animate-slideInLeft,
-  .animate-slideInRight {
+  .animate-slideInRight,
+  .animate-attention-pulse {
     animation: none !important;
   }
 }

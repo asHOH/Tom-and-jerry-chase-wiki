@@ -8,6 +8,7 @@ import { useMediaQuery } from 'usehooks-ts';
 
 import { getNavigationButtonClasses } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
+import { useFeatureDiscovery } from '@/hooks/useFeatureDiscovery';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
@@ -19,6 +20,7 @@ import Image from '@/components/Image';
 import Link from '@/components/Link';
 import { env } from '@/env';
 
+import AttentionDot from './ui/AttentionDot';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import SearchBar from './ui/SearchBar';
 import Tooltip from './ui/Tooltip';
@@ -53,6 +55,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const isLg = useMediaQuery('(min-width: 1024px)');
   const shouldReduceMotion = useReducedMotion();
   const { isNavigatingTo } = useNavigationProgress();
+  const { shouldPrompt: showToggleHint, dismiss: dismissToggleHint } =
+    useFeatureDiscovery('detail_toggle');
 
   useEffect(() => {
     setMounted(true);
@@ -330,8 +334,16 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 className={clsx(
                   'relative flex min-h-10 cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 md:min-h-11 dark:border-gray-600 dark:bg-slate-800'
                 )}
-                onClick={toggleDetailedView}
+                onClick={() => {
+                  toggleDetailedView();
+                  if (showToggleHint) dismissToggleHint();
+                }}
               >
+                <AttentionDot
+                  visible={showToggleHint && showDetailToggle}
+                  color={isDetailedView ? 'orange' : 'blue'}
+                  className='-top-1 -right-1'
+                />
                 {/* Background slider */}
                 <div
                   className={clsx(
