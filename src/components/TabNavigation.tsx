@@ -127,6 +127,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     return () => document.removeEventListener('click', onDocClick);
   }, [mounted, userDropdownOpen]);
 
+  useEffect(() => {
+    if (!mounted) return;
+    if (!overflowOpen) return;
+    const onDocClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      if (target.closest('[data-overflow-root]')) return;
+      setOverflowOpen(false);
+    };
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
+  }, [mounted, overflowOpen]);
+
   const isTabActive = (tabPath: string) => isActive(tabPath);
 
   const isHomeActive = () => {
@@ -260,7 +273,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             </Tooltip>
           ))}
           {!!overflowTabs.length && (
-            <div className='relative'>
+            <div className='relative' data-overflow-root>
               <m.button
                 type='button'
                 aria-label='更多分类'
