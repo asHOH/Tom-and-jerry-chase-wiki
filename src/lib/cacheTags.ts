@@ -17,9 +17,15 @@ export const CACHE_TAGS = {
 export async function invalidateCache(tag: string, strategy: 'nuke' | 'expire' = 'nuke') {
   if (strategy === 'expire') {
     // updateTag marks the tag as stale for revalidation in the background.
-    updateTag(tag);
-  } else {
-    // revalidateTag('tag', 'max') purges the tag immediately.
-    revalidateTag(tag, 'max');
+    try {
+      updateTag(tag);
+      return;
+    } catch (err) {
+      // Route Handlers cannot call updateTag; fall back to hard revalidation.
+      console.warn('updateTag failed; falling back to revalidateTag', { tag, err });
+    }
   }
+
+  // revalidateTag('tag', 'max') purges the tag immediately.
+  await revalidateTag(tag, 'max');
 }
