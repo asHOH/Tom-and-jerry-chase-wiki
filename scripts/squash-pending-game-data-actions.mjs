@@ -31,9 +31,26 @@ const filterEntityType = entityTypeArg ? entityTypeArg.split('=')[1] : undefined
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
+function deepEqual(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return a === b;
+  if (typeof a !== typeof b) return false;
+  if (typeof a !== 'object') return false;
+  const isArrayA = Array.isArray(a);
+  const isArrayB = Array.isArray(b);
+  if (isArrayA !== isArrayB) return false;
+  if (isArrayA) {
+    if (a.length !== b.length) return false;
+    return a.every((v, i) => deepEqual(v, b[i]));
+  }
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((k) => Object.prototype.hasOwnProperty.call(b, k) && deepEqual(a[k], b[k]));
+}
+
 const isNoOp = (action) => {
-  // Shallow equality is fine for our storage size; mirrors client logic.
-  return JSON.stringify(action.oldValue) === JSON.stringify(action.newValue);
+  return deepEqual(action.oldValue, action.newValue);
 };
 
 // Squash logic aligned with client (structural-safe)
@@ -103,11 +120,28 @@ function toArray(value) {
   return Array.isArray(value) ? value : [value];
 }
 
-function extractRoot(entry) {
+function actionRoot(action) {
+  if (!action || typeof action.path !== 'string') return 'unknown';
+  return action.path.split('.')[0] || 'unknown';
+}
+
+function entryRoot(entry) {
   const pick = Array.isArray(entry) ? entry.find((a) => a?.path) : entry;
-  const path = pick?.path;
-  if (typeof path !== 'string') return 'unknown';
-  return path.split('.')[0] || 'unknown';
+  return actionRoot(pick);
+}
+
+/**
+ * Split a row's entries by root key so each group only contains entries
+ * for a single root. Returns Map<root, entry[]>.
+ */
+function splitEntriesByRoot(entries) {
+  const byRoot = new Map();
+  for (const entry of entries) {
+    const root = entryRoot(entry);
+    if (!byRoot.has(root)) byRoot.set(root, []);
+    byRoot.get(root).push(entry);
+  }
+  return byRoot;
 }
 
 // ---------------------------------------------
@@ -125,15 +159,24 @@ async function main() {
     process.exit(1);
   }
 
-  const groups = new Map(); // key => { rows: [] }
+  // Group by entity_type + author + root so each group is one user editing one root key.
+  // A single DB row that touches multiple roots gets split across groups;
+  // we track which row IDs contributed to each group so we can supersede them.
+  const groups = new Map(); // key => { items: [], rowIds: Set }
 
   for (const row of rows ?? []) {
     if (filterEntityType && row.entity_type !== filterEntityType) continue;
-    const entries = toArray(row.entry);
-    const root = extractRoot(entries[0]);
-    const key = `${row.entity_type}::${root}`;
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push({ row, entries });
+    const allEntries = toArray(row.entry);
+    const author = row.created_by ?? '__anon__';
+    const byRoot = splitEntriesByRoot(allEntries);
+
+    for (const [root, entries] of byRoot) {
+      const key = `${row.entity_type}::${author}::${root}`;
+      if (!groups.has(key)) groups.set(key, { items: [], rowIds: new Set() });
+      const group = groups.get(key);
+      group.items.push({ row, entries });
+      group.rowIds.add(row.id);
+    }
   }
 
   const groupEntries = [...groups.entries()].slice(0, groupLimit ?? groups.size);
@@ -143,15 +186,23 @@ async function main() {
     }`
   );
 
-  for (const [key, items] of groupEntries) {
-    const [entityType, root] = key.split('::');
+  // Track which row IDs have been superseded across groups (a single row
+  // split across multiple root-groups should only be rejected once all its
+  // groups have been processed).
+  const supersededIds = new Set();
+
+  for (const [key, { items, rowIds }] of groupEntries) {
+    const parts = key.split('::');
+    const entityType = parts[0];
+    const author = parts[1];
+    const root = parts.slice(2).join('::'); // root may theoretically contain '::'
     // build history in created order
     const history = items.flatMap(({ entries }) => entries);
     const squashed = squashActions(history);
     const delta = history.length - squashed.length;
 
     console.log(
-      `Group ${entityType}/${root}: rows=${items.length}, actions=${history.length} -> ${squashed.length} (saved ${delta})`
+      `Group ${entityType}/${root} by ${author}: rows=${items.length}, actions=${history.length} -> ${squashed.length} (saved ${delta})`
     );
 
     if (!isApply) continue;
@@ -160,6 +211,11 @@ async function main() {
       console.log('  Skipped insert (empty after squash)');
     } else {
       const first = items[0].row;
+      const messages = [...new Set(items.map((i) => i.row.message?.trim()).filter(Boolean))];
+      const combinedMessage =
+        messages.length > 0
+          ? `${messages.join('; ')} (auto-squashed)`
+          : 'auto-squashed pending batch';
       const { data: inserted, error: insertError } = await supabase
         .from('game_data_actions')
         .insert([
@@ -169,9 +225,7 @@ async function main() {
             status: 'pending',
             is_public: false,
             created_by: first.created_by ?? null,
-            message: `${first.message ?? ''}`.trim()
-              ? `${first.message} (auto-squashed)`
-              : 'auto-squashed pending batch',
+            message: combinedMessage,
           },
         ])
         .select('id')
@@ -182,21 +236,26 @@ async function main() {
         continue;
       }
 
-      const ids = items.map((item) => item.row.id);
-      const { error: updateError } = await supabase
-        .from('game_data_actions')
-        .update({
-          status: 'rejected',
-          rejection_reason: `Superseded by squash ${new Date().toISOString()}`,
-          is_public: false,
-        })
-        .in('id', ids);
+      for (const id of rowIds) supersededIds.add(id);
+      console.log(`  Inserted ${inserted?.id}, will supersede ${rowIds.size} rows`);
+    }
+  }
 
-      if (updateError) {
-        console.error('  Mark original rows failed:', updateError);
-      } else {
-        console.log(`  Inserted ${inserted?.id}, superseded ${ids.length} rows`);
-      }
+  if (isApply && supersededIds.size > 0) {
+    const ids = [...supersededIds];
+    const { error: updateError } = await supabase
+      .from('game_data_actions')
+      .update({
+        status: 'rejected',
+        rejection_reason: `Superseded by squash ${new Date().toISOString()}`,
+        is_public: false,
+      })
+      .in('id', ids);
+
+    if (updateError) {
+      console.error('Mark original rows failed:', updateError);
+    } else {
+      console.log(`Superseded ${ids.length} original rows`);
     }
   }
 }
