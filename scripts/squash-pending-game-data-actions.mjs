@@ -4,7 +4,7 @@
  * Squash pending game_data_actions rows to reduce duplicate SET spam.
  *
  * Usage:
- *   node scripts/squash-pending-game-data-actions.mjs [--apply] [--entity-type characters] [--limit 20]
+ *   node scripts/squash-pending-game-data-actions.mjs [--apply] [--entity-type=characters] [--limit=20]
  *
  * Default: dry-run (no writes).
  */
@@ -22,12 +22,21 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
   process.exit(1);
 }
 
-const argv = new Set(process.argv.slice(2));
-const isApply = argv.has('--apply');
-const limitArg = [...argv].find((a) => a.startsWith('--limit='));
-const entityTypeArg = [...argv].find((a) => a.startsWith('--entity-type='));
-const groupLimit = limitArg ? Number(limitArg.split('=')[1]) : undefined;
-const filterEntityType = entityTypeArg ? entityTypeArg.split('=')[1] : undefined;
+const rawArgs = process.argv.slice(2);
+const isApply = rawArgs.includes('--apply');
+
+function getArgValue(name) {
+  const eqArg = rawArgs.find((a) => a.startsWith(`${name}=`));
+  if (eqArg) return eqArg.split('=')[1];
+  const idx = rawArgs.indexOf(name);
+  if (idx !== -1 && idx + 1 < rawArgs.length && !rawArgs[idx + 1].startsWith('--')) {
+    return rawArgs[idx + 1];
+  }
+  return undefined;
+}
+
+const groupLimit = getArgValue('--limit') ? Number(getArgValue('--limit')) : undefined;
+const filterEntityType = getArgValue('--entity-type') || undefined;
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
@@ -53,7 +62,8 @@ const isNoOp = (action) => {
   return deepEqual(action.oldValue, action.newValue);
 };
 
-// Squash logic aligned with client (structural-safe)
+// Squash logic mirrored from src/lib/edit/diffUtils.ts squashActions().
+// Keep in sync with that function when modifying.
 function squashActions(entries) {
   if (!Array.isArray(entries) || entries.length === 0) return [];
 
@@ -243,19 +253,29 @@ async function main() {
 
   if (isApply && supersededIds.size > 0) {
     const ids = [...supersededIds];
-    const { error: updateError } = await supabase
+    // Only reject rows still pending — a reviewer may have approved/rejected
+    // some between our initial fetch and now.
+    const { data: updated, error: updateError } = await supabase
       .from('game_data_actions')
       .update({
         status: 'rejected',
         rejection_reason: `Superseded by squash ${new Date().toISOString()}`,
         is_public: false,
       })
-      .in('id', ids);
+      .eq('status', 'pending')
+      .in('id', ids)
+      .select('id');
 
     if (updateError) {
       console.error('Mark original rows failed:', updateError);
     } else {
-      console.log(`Superseded ${ids.length} original rows`);
+      const updatedCount = updated?.length ?? 0;
+      console.log(`Superseded ${updatedCount} of ${ids.length} original rows`);
+      if (updatedCount < ids.length) {
+        console.warn(
+          `  ${ids.length - updatedCount} row(s) were already approved/rejected and left untouched`
+        );
+      }
     }
   }
 }
