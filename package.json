@@ -135,7 +135,7 @@
     "@types/react-dom": "^19.2.3",
     "cross-env": "^10.1.0",
     "depcheck": "^1.4.7",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.1",
     "eslint-config-next": "^16.1.6",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest-dom": "^5.5.0",
