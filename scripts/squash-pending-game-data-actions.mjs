@@ -9,11 +9,15 @@
  * Default: dry-run (no writes).
  */
 import process from 'node:process';
+import nextEnv from '@next/env';
 import { createClient } from '@supabase/supabase-js';
 
 // ---------------------------------------------
 // Config & helpers
 // ---------------------------------------------
+const projectDir = new URL('..', import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1');
+nextEnv.loadEnvConfig(projectDir);
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
