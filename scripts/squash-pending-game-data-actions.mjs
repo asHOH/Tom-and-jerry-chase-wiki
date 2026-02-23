@@ -66,23 +66,35 @@ const isNoOp = (action) => {
   return deepEqual(action.oldValue, action.newValue);
 };
 
-// Squash logic mirrored from src/lib/edit/diffUtils.ts squashActions().
-// Keep in sync with that function when modifying.
+// Squash logic based on src/lib/edit/diffUtils.ts squashActions().
+// Refined: structural protection uses parent-path granularity instead of
+// root-level, so a delete on e.g. "X.specialSkills.4" only protects the
+// "X.specialSkills" subtree, not the entire "X" root.
 function squashActions(entries) {
   if (!Array.isArray(entries) || entries.length === 0) return [];
 
-  const structuralRoots = new Set();
-  const recordStructuralRoots = (action) => {
+  // Collect parent paths of add/delete ops as structural zones.
+  // Any set whose path falls within a structural zone is kept as-is.
+  const structuralParents = new Set();
+  const recordStructural = (action) => {
     if (!action || typeof action.path !== 'string') return;
     if (action.op === 'add' || action.op === 'delete') {
-      const root = action.path.split('.')[0] ?? '';
-      if (root) structuralRoots.add(root);
+      const parts = action.path.split('.');
+      const parent = parts.slice(0, -1).join('.');
+      if (parent) structuralParents.add(parent);
     }
   };
 
   for (const entry of entries) {
-    if (Array.isArray(entry)) entry.forEach(recordStructuralRoots);
-    else recordStructuralRoots(entry);
+    if (Array.isArray(entry)) entry.forEach(recordStructural);
+    else recordStructural(entry);
+  }
+
+  function isInStructuralZone(path) {
+    for (const parent of structuralParents) {
+      if (path === parent || path.startsWith(parent + '.')) return true;
+    }
+    return false;
   }
 
   const flat = [];
@@ -103,8 +115,7 @@ function squashActions(entries) {
   flat.forEach(({ action, flatIndex: idx }) => {
     const path = action?.path;
     if (!path) return;
-    const root = path.split('.')[0] ?? '';
-    if (action.op === 'set' && !structuralRoots.has(root)) {
+    if (action.op === 'set' && !isInStructuralZone(path)) {
       latestByPath.set(path, idx);
     }
   });
@@ -113,12 +124,11 @@ function squashActions(entries) {
   flat.forEach(({ action, entryIndex, flatIndex: idx }) => {
     if (!action) return;
     const path = action.path || '';
-    const root = path ? (path.split('.')[0] ?? '') : '';
-    const isStructural = action.op === 'add' || action.op === 'delete' || structuralRoots.has(root);
+    const isStructural = action.op === 'add' || action.op === 'delete' || isInStructuralZone(path);
     const isLatestForPath = !path || latestByPath.get(path) === idx;
     const keep =
       isStructural ||
-      (action.op === 'set' && !structuralRoots.has(root) && isLatestForPath && !isNoOp(action));
+      (action.op === 'set' && !isInStructuralZone(path) && isLatestForPath && !isNoOp(action));
     if (keep) grouped[entryIndex].push(action);
   });
 
