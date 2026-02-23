@@ -249,6 +249,7 @@ async function main() {
             status: 'pending',
             is_public: false,
             created_by: first.created_by ?? null,
+            created_at: first.created_at,
             message: combinedMessage,
           },
         ])
