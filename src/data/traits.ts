@@ -952,6 +952,38 @@ const traits: Record<string, Trait> = {
       { name: '泰克', type: 'entity' },
     ],
   },
+
+  '20260218-01': {
+    description: '兔子先生可触发捣蛋鬼Lv.1的效果。',
+    group: [
+      { name: '捣蛋鬼', type: 'skill' },
+      { name: '兔子先生', type: 'entity' },
+    ],
+  },
+
+  '20260220-01': {
+    description:
+      '当角色被斯派克抓住并丢出时，若角色被丢到碎片上可受到来自碎片的僵直而免疫斯派克的丢出造成的眩晕。',
+    group: [
+      { name: '斯派克', type: 'fixture' },
+      { name: '碎片', type: 'entity' },
+    ],
+  },
+
+  '20260220-02': {
+    description:
+      '被塔拉抓住并通过牛仔鞭索丢出的老鼠，碰到斜塔、方块或圆形时会停止飞行（与碰到墙壁的效果类似）。',
+    group: [
+      { name: '牛仔鞭索', type: 'skill' },
+      [
+        { name: '斜塔', type: 'entity' },
+        { name: '方块', type: 'entity' },
+        { name: '强化方块', type: 'entity' },
+        { name: '圆形', type: 'entity' },
+        { name: '强化圆形', type: 'entity' },
+      ],
+    ],
+  },
   ...characterRelations,
 };
 
