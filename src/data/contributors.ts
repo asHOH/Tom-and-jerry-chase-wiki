@@ -584,4 +584,9 @@ export const contributors: Contributor[] = [
     name: '如梦',
     roles: [{ type: RoleType.DataTester, isMinor: true }],
   },
+  {
+    id: 'wanzi',
+    name: '丸子',
+    roles: [{ type: RoleType.ArtProvider }],
+  },
 ];
