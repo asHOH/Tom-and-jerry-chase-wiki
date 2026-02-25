@@ -27,6 +27,8 @@ const defaultRelation: CharacterRelation = {
   disadvantageModes: [],
 };
 
+const relationKeys = Object.keys(defaultRelation) as Array<keyof CharacterRelation>;
+
 const toRelationItem = (
   relation: TraitRelation,
   useTarget: boolean,
@@ -45,6 +47,64 @@ const mergeRelationItems = (
   secondary: CharacterRelationItem[]
 ) => {
   return [...primary, ...secondary.filter((item) => !primary.some((p) => p.id === item.id))];
+};
+
+const normalizeLegacyItems = (
+  items: CharacterRelationItem[] | undefined
+): CharacterRelationItem[] => {
+  if (!Array.isArray(items)) return [];
+  return items.map((item) => ({
+    id: item.id,
+    description: item.description ?? '',
+    isMinor: !!item.isMinor,
+  }));
+};
+
+const createEmptyRelation = (): CharacterRelation =>
+  relationKeys.reduce((acc, key) => {
+    acc[key] = [];
+    return acc;
+  }, {} as CharacterRelation);
+
+const buildRelationsFromLegacy = (id: string): CharacterRelation => {
+  const legacy = createEmptyRelation();
+  const current = characters[id] as Partial<CharacterRelation> | undefined;
+
+  if (current) {
+    relationKeys.forEach((key) => {
+      const stored = current[key];
+      if (Array.isArray(stored)) {
+        legacy[key] = normalizeLegacyItems(stored);
+      }
+    });
+  }
+
+  const addInverse = (
+    source: CharacterRelationItem[] | undefined,
+    targetKey: keyof CharacterRelation,
+    otherId: string
+  ) => {
+    if (!Array.isArray(source)) return;
+    const matches = source.filter((item) => item.id === id);
+    if (matches.length === 0) return;
+    const inverseItems = matches.map((item) => ({
+      id: otherId,
+      description: item.description ?? '',
+      isMinor: !!item.isMinor,
+    }));
+    legacy[targetKey] = mergeRelationItems(legacy[targetKey], inverseItems);
+  };
+
+  Object.entries(characters).forEach(([otherId, other]) => {
+    if (otherId === id) return;
+    const otherLegacy = other as Partial<CharacterRelation>;
+    addInverse(otherLegacy.counters, 'counteredBy', otherId);
+    addInverse(otherLegacy.counteredBy, 'counters', otherId);
+    addInverse(otherLegacy.counterEachOther, 'counterEachOther', otherId);
+    addInverse(otherLegacy.collaborators, 'collaborators', otherId);
+  });
+
+  return legacy;
 };
 
 const buildRelationsFromTraits = (id: string): CharacterRelation => {
@@ -147,11 +207,10 @@ export function getCharacterRelation(id: string): CharacterRelation {
     collaborators: mergedCollaborators,
   };
 
-  const legacyRelations = characters[id] as Partial<CharacterRelation>;
-  const legacyKeys = Object.keys(defaultRelation) as Array<keyof CharacterRelation>;
-  legacyKeys.forEach((key) => {
-    const legacyItems = legacyRelations?.[key];
-    if (Array.isArray(legacyItems) && legacyItems.length > 0) {
+  const legacyRelations = buildRelationsFromLegacy(id);
+  relationKeys.forEach((key) => {
+    const legacyItems = legacyRelations[key];
+    if (legacyItems.length > 0) {
       merged[key] = mergeRelationItems(legacyItems, merged[key]);
     }
   });
