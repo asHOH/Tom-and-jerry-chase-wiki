@@ -1,5 +1,7 @@
 import { Entity, EntityDefinition } from './types';
 
+//维护说明：其它模式伴生的衍生物（例如星元角色）被划分至此文件范围内
+
 const getMouseEntityImageUrl = (name: string, specialImageUrl: string | undefined): string => {
   if (specialImageUrl !== undefined) return specialImageUrl;
   return `/images/mouseEntities/${encodeURIComponent(name)}.png`;
@@ -1313,6 +1315,254 @@ export const mouseEntitiesDefinitions = {
         imageUrl: '/images/entitySkills/%E7%A9%BA%E7%BD%AE%E9%81%93%E5%85%B7%E9%94%AE.png',
       },
     ],
+  },
+  肌肉汤姆: {
+    entitytype: '变身类',
+    owner: { name: '多元乱斗', type: 'mode' },
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description:
+      '挥动强壮的拳头，对敌人造成强烈的击飞效果，若敌方老鼠处于虚弱状态，将直接击飞到附近的火箭。\n属于猫方多元角色。可使用爪刀键进行普通攻击，CD为2秒。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
+    create: '猫咪在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
+    entityAttributesAsCharacter: {
+      type: 'cat',
+      factionBelong: 'cat',
+    },
+    skills: [
+      {
+        name: '硬汉猛击',
+        type: 'active',
+        description:
+          '对敌方造成高额伤害和强烈的击飞效果。若敌方老鼠处于虚弱状态，将直接击飞到附近的火箭。\n该技能可在局外升级。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cooldown: 3,
+        cancelableSkill: ['道具键'],
+        cancelableAftercast: ['道具键'],
+        cooldownTiming: '释放后',
+        skillLevels: [
+          { level: 1, description: '' },
+          { level: 2, description: '施放技能后获得短时间加速。' },
+          { level: 3, description: '施放技能后直接获得星星积分。' },
+        ],
+        imageUrl: '/images/entitySkills/硬汉猛击.png',
+      },
+    ],
+  },
+  肌肉杰瑞: {
+    entitytype: '变身类',
+    owner: { name: '多元乱斗', type: 'mode' },
+    move: false,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description:
+      '扔出哑铃，可对敌方造成短暂眩晕，在哑铃眩晕期间肌肉杰瑞的普通攻击命中将触发“摔打汤姆”效果。\n属于鼠方多元角色。可使用道具键进行普通攻击，CD为2秒，命中待推入的奶酪将立即将其推入一部分，命中{火箭}将积累1/3摧毁进度，摧毁进度满后将该火箭摧毁。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
+    create: '老鼠在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
+    entityAttributesAsCharacter: {
+      type: 'mouse',
+      factionBelong: 'mouse',
+    },
+    skills: [
+      {
+        name: '哑铃投掷',
+        type: 'active',
+        description:
+          '扔出哑铃，对敌方造成短暂眩晕，在哑铃眩晕期间肌肉杰瑞的普通攻击命中将触发“摔打汤姆”效果（使敌方被自身“抓起”，无法移动但可使用爪刀；短暂摔打后向面前丢出，落地造成高额伤害）。该技能在投掷的哑铃命中或消失后才进入冷却。\n该技能可在局外升级。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cancelableSkill: ['跳跃键'],
+        cancelableAftercast: ['跳跃键'],
+        cooldown: 2,
+        cooldownTiming: '释放后',
+        skillLevels: [
+          { level: 1, description: '' },
+          { level: 2, description: '摔打后获得短时间加速。' },
+          { level: 3, description: '摔打后直接获得星星积分。' },
+        ],
+        imageUrl: '/images/entitySkills/哑铃投掷.png',
+      },
+    ],
+  },
+  小象: {
+    entitytype: '变身类',
+    owner: { name: '多元乱斗', type: 'mode' },
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description:
+      '甩动鼻子发射水弹，放大敌方和友方。\n属于鼠方多元角色。可使用道具键进行普通攻击，CD为2秒，命中待推入的奶酪将立即将其推入一部分，命中{火箭}将积累1/3摧毁进度，摧毁进度满后将该火箭摧毁。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
+    create: '局外解锁后，老鼠在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
+    entityAttributesAsCharacter: {
+      type: 'mouse',
+      factionBelong: 'mouse',
+    },
+    skills: [
+      {
+        name: '水弹攻击',
+        type: 'active',
+        description:
+          '小象挥动鼻子甩出水弹，将[放大](即增大体型)命中的目标，对敌方造成伤害，并使其后续受到的伤害增加，并禁用技能一段时间；对友方则持续恢复Hp，提高移动速度。按住技能将连续施放3次。\n该技能可在局外升级。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cancelableAftercast: '无后摇',
+        cooldownTiming: '释放后',
+        skillLevels: [
+          { level: 1, description: '' },
+          { level: 2, description: '施放技能时获得短时间加速。' },
+          { level: 3, description: '施放技能时直接获得星星积分。' },
+        ],
+        imageUrl: '/images/entitySkills/水弹攻击.png',
+      },
+    ],
+  },
+  机甲汤姆: {
+    entitytype: '变身类',
+    owner: { name: '多元乱斗', type: 'mode' },
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description:
+      '发射激光，变小敌方和友方。\n属于猫方多元角色。可使用爪刀键进行普通攻击，CD为2秒。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
+    create: '局外解锁后，猫咪在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
+    entityAttributesAsCharacter: {
+      type: 'cat',
+      factionBelong: 'cat',
+    },
+    skills: [
+      {
+        name: '激光射击',
+        type: 'active',
+        description:
+          '长按技能选择方向，可在地面或是空中旋转施放激光，对敌方造成伤害，持续命中将[缩小](即减小体型)目标，并禁用技能一段时间；若是友方则会恢复Hp，并增加移动速度。本技能施放期间自身{完全失重}。\n该技能可在局外升级。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cooldown: 12,
+        cancelableAftercast: '无后摇',
+        cooldownTiming: '前摇前',
+        skillLevels: [
+          { level: 1, description: '' },
+          { level: 2, description: '施放激光时处于{无敌}状态。' },
+          { level: 3, description: '施放激光时直接获得星星积分。' },
+        ],
+        imageUrl: '/images/entitySkills/激光射击.png',
+      },
+    ],
+  },
+  兔霸哥: {
+    entitytype: '变身类',
+    owner: { name: '多元乱斗', type: 'mode' },
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description:
+      '自己逐渐膨胀后爆炸，对附近玩家造成眩晕，并掉落{大大胡萝卜}。自身解除变身时失去变身期间获得的部分星星积分，同时掉落3个{大大胡萝卜}。\n属于中立多元角色。可使用爪刀键进行普通攻击，CD为2秒，正常命中敌方角色时跳出2个{大大胡萝卜}，命中处于虚弱或因自身技能眩晕的角色时，将“啰嗦”对方，夺取其一定星星积分（该效果对每名角色有单独内置CD）。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。\n该角色为联动角色，不计入“伙伴星元力”。',
+    create: '局外解锁后，全体角色在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
+    entityAttributesAsCharacter: {
+      type: 'cat',
+      factionBelong: 'other',
+    },
+    skills: [
+      {
+        name: '兔霸哥的霸道',
+        type: 'active',
+        description:
+          '施放技能后，兔霸哥逐渐膨胀后爆炸，对附近的[所有玩家](包括敌方和友方玩家)都会造成眩晕并跳出2个{大大胡萝卜}，同时敌方会额外受到伤害。对处于该眩晕的玩家施放爪击，将“啰嗦”对方，夺取其一定星星积分（该效果对每名角色有单独内置CD）。\n该技能可在局外升级。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cooldown: 5,
+        cooldownTiming: '前摇前',
+        skillLevels: [
+          { level: 1, description: '' },
+          { level: 2, description: '膨胀爆炸后的移动速度提高。' },
+          { level: 3, description: '膨胀爆炸后直接获得星星积分。' },
+        ],
+        imageUrl: '/images/entitySkills/兔霸哥的霸道.png',
+      },
+    ],
+  },
+  斯派克: {
+    entitytype: '变身类',
+    owner: { name: '多元乱斗', type: 'mode' },
+    aliases: ['正气守护斯派克', '“正气守护”斯派克', '多元乱斗斯派克'],
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description:
+      '抓住坏人，扔出去。当游戏存在“正气守护”斯派克时，攻击别人会被视为“违纪”。斯派克可将违纪的敌方抓入狗窝。斯派克不会被{打开的老鼠夹}夹住。\n属于中立多元角色。可使用爪刀键进行普通攻击，CD为2秒。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
+    create: '局外解锁后，全体角色在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
+    entityAttributesAsCharacter: {
+      type: 'cat',
+      factionBelong: 'other',
+    },
+    skills: [
+      {
+        name: '正气守护',
+        type: 'active',
+        description:
+          '向前冲锋抓取碰到的敌人，并扔出去。若抓取的敌方处于“违纪”状态，则被扔出并落地后会被装入狗窝（即变身为“狗窝”，拥有独立Hp，需挣扎以解除变身，所有人都可以攻击狗窝获得大量星星积分）。当游戏存在“正气守护”斯派克时，攻击别人会被视为“违纪”。\n该技能可在局外升级。',
+        canMoveWhileUsing: true,
+        canUseInAir: true,
+        cooldown: 8,
+        cancelableSkill: '无前摇',
+        cancelableAftercast: ['跳跃键'],
+        cooldownTiming: '前摇前',
+        skillLevels: [
+          { level: 1, description: '' },
+          { level: 2, description: '冲锋时的移动速度大幅提高。' },
+          { level: 3, description: '冲锋时直接获得星星积分。' },
+        ],
+        imageUrl: '/images/entitySkills/正气守护.png',
+      },
+    ],
+  },
+  柠檬杰瑞: {
+    entitytype: '变身类',
+    owner: { name: '多元乱斗', type: 'mode' },
+    aliases: ['多元乱斗柠檬杰瑞'],
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description:
+      '看，有个柠檬！套住敌人形成柠檬表情。\n属于中立多元角色。可使用爪刀键进行普通攻击，CD为2秒，该角色普通攻击改为投掷柠檬，可拖动爪刀键选择投掷方向，柠檬命中敌方造成伤害和{反向}，并累计1层负面效果，满3层后使敌方被柠檬套中（可受到所有人攻击，无法使用技能，攻击变弱，受到的伤害增加，柠檬表情随Hp变化）。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
+    create: '局外解锁后，全体角色在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
+    entityAttributesAsCharacter: {
+      type: 'cat',
+      factionBelong: 'other',
+    },
+    skills: [
+      {
+        name: '超大柠檬',
+        type: 'active',
+        description:
+          '在面前一定距离的位置掉落超大柠檬，套住碰到的敌人形成柠檬表情（可受到所有人攻击，无法使用技能，攻击变弱，受到的伤害增加，柠檬表情随Hp变化）。\n该技能可在局外升级。',
+        canMoveWhileUsing: false,
+        canUseInAir: true,
+        cooldown: 5,
+        cancelableSkill: ['跳跃键'],
+        cancelableAftercast: ['跳跃键'],
+        cooldownTiming: '释放后',
+        skillLevels: [
+          { level: 1, description: '' },
+          { level: 2, description: '技能释放后移动速度提升一段时间。' },
+          { level: 3, description: '技能释放后直接获得星星积分。' },
+        ],
+        imageUrl: '/images/entitySkills/超大柠檬.png',
+      },
+    ],
+  },
+  大大胡萝卜: {
+    entitytype: '召唤物',
+    owner: [
+      { name: '多元乱斗', type: 'mode' },
+      { name: '兔八哥', type: 'character' },
+      { name: '兔霸哥', type: 'entity' },
+    ],
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+    description: '生成时向随机方向弹飞，落地并停止移动后可被拾取，立即使拾取者获得一定星星积分。',
+    create: '在{多元乱斗}中，{兔八哥}或{兔霸哥}的部分攻击命中敌方时，自动生成数个大大胡萝卜。',
   },
 } as const satisfies Readonly<Record<string, EntityDefinition>>;
 
