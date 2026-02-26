@@ -1,7 +1,7 @@
 import { Item, ItemDefinition } from '@/data/types';
 
 const getItemImageUrl = (name: string, specialImageUrl: string | undefined): string => {
-  if (!!specialImageUrl) return specialImageUrl;
+  if (specialImageUrl !== undefined) return specialImageUrl;
   return `/images/items/${encodeURIComponent(name)}.png`;
 };
 
@@ -829,6 +829,27 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     description:
       '可被玉兔拾取并吃掉，平息嫦娥的怒火，并为旁边的角色提供随机增益效果。鼠方可通过交互将其缓慢向一个方向推行。',
     create: '在天宫地图中的广寒宫固定位置刷新。',
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+  },
+  钥匙: {
+    itemtype: '手持类' as const,
+    itemsource: '地图道具' as const,
+    description: '手持钥匙时可与盔甲房门交互，开启通往彩蛋盔甲房的大门。',
+    create: '只在雪夜古堡-侍卫房顶端短平台刷新（包括{雪夜古堡I}、{雪夜古堡II}、{雪夜古堡III}）。',
+    move: true,
+    gravity: true,
+    collsion: ['墙壁', '平台', '地面'],
+  },
+  金钥匙: {
+    itemtype: '手持类' as const,
+    itemsource: '地图道具' as const,
+    factionId: 'mouse',
+    description:
+      '老鼠手持金钥匙时可与未开启的金洞交互，开启金洞。猫咪可以从小地图看到金钥匙的位置，且可与金钥匙交互，将其伪装为一个{小纸盒}或{大纸盒}（特性与常规纸盒类似，但不会被任何技能摧毁，且只会开出金钥匙）。',
+    create:
+      '在{黄金钥匙赛}或{多元乱斗}中，鼠方推入全部奶酪后，在地图[随机位置](实际每张地图有数个固定的刷新点，并非完全随机。这点与其它道具类似)刷新，其中多元乱斗会一次性刷新2把金钥匙。',
     move: true,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
