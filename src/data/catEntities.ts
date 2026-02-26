@@ -4,7 +4,7 @@ import { Entity, EntityDefinition } from './types';
 
 //(interim) use other image instead of missing image
 const getCatEntityImageUrl = (name: string, specialImageUrl: string | undefined): string => {
-  if (!!specialImageUrl) return specialImageUrl;
+  if (specialImageUrl !== undefined) return specialImageUrl;
   return `/images/catEntities/${encodeURIComponent(name)}.png`;
 };
 
@@ -455,7 +455,7 @@ export const catEntitiesDefinitions = {
     create: '由图茨-汽水罐召唤。',
   },
   汽水冰面: {
-    entitytype: '投射物',
+    entitytype: '召唤物',
     owner: { name: '汽水罐', type: 'skill' },
     move: true,
     gravity: false,
@@ -517,7 +517,7 @@ export const catEntitiesDefinitions = {
     create: '由塔拉-牛仔鞭索在手中没有老鼠时掷出。',
   },
   爆炸仙人球: {
-    entitytype: ['投射物', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '牛仔的礼物', type: 'skill' },
     move: false,
     gravity: false,
@@ -526,7 +526,7 @@ export const catEntitiesDefinitions = {
     create: '由塔拉-牛仔的礼物选择位置发射。',
   },
   闪电仙人球: {
-    entitytype: ['投射物', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '牛仔的礼物', type: 'skill' },
     move: false,
     gravity: false,
@@ -535,7 +535,7 @@ export const catEntitiesDefinitions = {
     create: '由塔拉-牛仔的礼物选择位置发射。',
   },
   弹簧仙人球: {
-    entitytype: ['投射物', '召唤物'],
+    entitytype: '召唤物',
     owner: { name: '牛仔的礼物', type: 'skill' },
     move: false,
     gravity: false,
@@ -570,7 +570,7 @@ export const catEntitiesDefinitions = {
     specialImageUrl: '/images/items/火箭.png',
   },
   追求者: {
-    entitytype: 'NPC',
+    entitytype: ['召唤物', 'NPC'],
     owner: { name: '追求者出击', type: 'skill' },
     aliases: ['舔狗'],
     move: true,
@@ -607,7 +607,7 @@ export const catEntitiesDefinitions = {
     create: '由苏蕊-瑜伽球召唤并投掷。',
   },
   项坠: {
-    entitytype: '投射物',
+    entitytype: ['投射物', '指示物'],
     owner: { name: '猎', type: 'skill' },
     move: true,
     gravity: false,

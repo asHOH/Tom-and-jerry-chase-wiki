@@ -19,6 +19,7 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
       { name: '天使泰菲', type: 'character' },
       { name: '侦探泰菲', type: 'character' },
       { name: '罗宾汉泰菲', type: 'character' },
+      { name: '朝圣者泰菲', type: 'character' },
     ],
   },
   投掷命中效果: {
