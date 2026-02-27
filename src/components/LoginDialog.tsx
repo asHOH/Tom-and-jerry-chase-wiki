@@ -29,6 +29,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const [step, setStep] = useState<AuthStep>('username');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -139,6 +140,14 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       setError('密码不能为空。');
       return;
     }
+    if (confirmPassword.trim() === '') {
+      setError('请再次输入密码。');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('两次输入的密码不一致。');
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -241,7 +250,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
               用户名 <span className='font-semibold'>{username}</span> 未被占用。
             </p>
             <input
-              type='text'
+              type='hidden'
               name='username'
               autoComplete='username'
               value={username}
@@ -260,10 +269,18 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
             />
             <input
               type='password'
-              placeholder={'密码'}
+              placeholder='密码'
               className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete='new-password'
+            />
+            <input
+              type='password'
+              placeholder='确认密码'
+              className='mt-2 w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               autoComplete='new-password'
             />
             {password && passwordStrength && (
@@ -271,22 +288,32 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
                 <div className='flex items-center gap-2'>
                   <div className='h-2 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700'>
                     <div
-                      className={clsx('h-full transition-all duration-300', {
-                        'bg-red-500': passwordStrength.strength <= 1,
-                        'bg-orange-500': passwordStrength.strength === 2,
-                        'bg-green-500': passwordStrength.strength === 3,
-                        'bg-emerald-600': passwordStrength.strength === 4,
-                      })}
+                      className={clsx(
+                        'h-full transition-all duration-300',
+                        password != confirmPassword
+                          ? 'bg-red-500'
+                          : {
+                              'bg-red-500': passwordStrength.strength <= 1,
+                              'bg-orange-500': passwordStrength.strength === 2,
+                              'bg-green-500': passwordStrength.strength === 3,
+                              'bg-emerald-600': passwordStrength.strength === 4,
+                            }
+                      )}
                       style={{ width: `${(passwordStrength.strength / 4) * 100}%` }}
                     />
                   </div>
                   <span
-                    className={clsx('text-xs font-medium', {
-                      'text-red-500': passwordStrength.strength <= 1,
-                      'text-orange-500': passwordStrength.strength === 2,
-                      'text-green-500': passwordStrength.strength === 3,
-                      'text-emerald-600': passwordStrength.strength === 4,
-                    })}
+                    className={clsx(
+                      'text-xs font-medium',
+                      password != confirmPassword
+                        ? 'text-red-500'
+                        : {
+                            'text-red-500': passwordStrength.strength <= 1,
+                            'text-orange-500': passwordStrength.strength === 2,
+                            'text-green-500': passwordStrength.strength === 3,
+                            'text-emerald-600': passwordStrength.strength === 4,
+                          }
+                    )}
                   >
                     {passwordStrength.strength === 0 && '无效'}
                     {passwordStrength.strength === 1 && '弱'}
@@ -296,7 +323,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
                   </span>
                 </div>
                 <p className='mt-1 text-xs text-gray-600 dark:text-gray-400'>
-                  {passwordStrength.reason}
+                  {password != confirmPassword ? '两次输入的密码不一致' : passwordStrength.reason}
                 </p>
               </div>
             )}
@@ -387,9 +414,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
                   isLoading ||
                   !isUsernameCorrect ||
                   (step === 'register' &&
-                    !!password &&
-                    !!passwordStrength &&
-                    passwordStrength.strength <= 1)
+                    ((!!password && !!passwordStrength && passwordStrength.strength <= 1) ||
+                      (!!password && !!confirmPassword && password !== confirmPassword)))
                 }
               >
                 继续
