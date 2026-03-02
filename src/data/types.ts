@@ -508,8 +508,15 @@ export type MapDefinition = {
 
 export type Map = MapDefinition & { name: string; imageUrl: string };
 
-export type FixtureTypeList = '平台类' | '地面类' | '墙壁类' | '物件类' | 'NPC' | '可交互';
-export type FixtureSourceList = '通用组件' | '地图特色组件'; //list of items' source
+export type FixtureTypeList =
+  | '平台类'
+  | '地面类'
+  | '墙壁类'
+  | '组件类'
+  | '物件类'
+  | 'NPC'
+  | '可交互';
+export type FixtureSourceList = '通用组件' | '地图组件' | '模式组件'; //list of items' source
 
 export type FixtureDefinition = {
   type: FixtureTypeList | FixtureTypeList[]; //type of items

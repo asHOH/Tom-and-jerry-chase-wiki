@@ -496,11 +496,12 @@ export const getMapLevelColors = (level: string, isDarkMode: boolean) => {
 export const getFixtureTypeColors = (fixtureType: string, isDarkMode: boolean) => {
   const fixtureTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
     平台类: 'emerald',
-    墙壁类: 'azure',
+    地面类: 'azure',
+    墙壁类: 'indigo',
+    组件类: 'russet',
     物件类: 'amber',
     NPC: 'crimson',
-    流程类: 'violet',
-    可交互: 'pink',
+    可交互: 'violet',
   };
 
   const paletteKey = fixtureTypePaletteMap[fixtureType] || 'deepGray';
@@ -518,8 +519,9 @@ export const getFixtureTypeColors = (fixtureType: string, isDarkMode: boolean) =
  */
 export const getFixtureSourceColors = (fixtureSource: string, isDarkMode: boolean) => {
   const fixtureSourcePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
-    通用组件: 'azure',
-    地图特色组件: 'russet',
+    通用组件: 'amber',
+    地图组件: 'violet',
+    模式组件: 'indigo',
   };
 
   const paletteKey = fixtureSourcePaletteMap[fixtureSource] || 'deepGray';

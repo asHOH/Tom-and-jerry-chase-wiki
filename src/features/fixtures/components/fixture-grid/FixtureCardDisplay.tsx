@@ -18,7 +18,11 @@ export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
           margin='compact'
           colorStyles={getFixtureTypeColors(fixture.type, isDarkMode)}
         >
-          {fixture.type}
+          {fixture.type === 'NPC'
+            ? 'NPC'
+            : fixture.type === '可交互'
+              ? '交互'
+              : fixture.type.slice(0, 2)}
         </Tag>
       );
     } else {
@@ -30,7 +34,7 @@ export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
             colorStyles={getFixtureTypeColors(type, isDarkMode)}
             key={type}
           >
-            {type}
+            {type === 'NPC' ? 'NPC' : type === '可交互' ? '交互' : type.slice(0, 2)}
           </Tag>
         );
       });

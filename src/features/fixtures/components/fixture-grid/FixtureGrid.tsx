@@ -21,12 +21,13 @@ const FIXTURE_TYPE_OPTIONS: FixtureTypeList[] = [
   '平台类',
   '地面类',
   '墙壁类',
+  '组件类',
   '物件类',
   'NPC',
   '可交互',
 ];
 
-const FIXTURE_SOURCE_OPTIONS: FixtureSourceList[] = ['通用组件', '地图特色组件'];
+const FIXTURE_SOURCE_OPTIONS: FixtureSourceList[] = ['通用组件', '地图组件', '模式组件'];
 
 export default function FixtureClient({ description }: Props) {
   // Multi-select state for filters
@@ -83,7 +84,7 @@ export default function FixtureClient({ description }: Props) {
                 prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
               )
             }
-            getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
+            getOptionLabel={(opt) => (isMobile ? opt.slice(0, 3) : opt)}
             getButtonStyle={(_, active) =>
               active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
             }
