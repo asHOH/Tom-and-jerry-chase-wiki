@@ -1,7 +1,955 @@
 [
   {
+    "date": "2026-03-02",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "地图组件",
+        "message": "修改了一些描述",
+        "hashes": ["2ef77b91"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "scope": "地图组件",
+        "message": "修改了部分夹具的类型和组件",
+        "hashes": ["35a27935"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-03-01",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "modes",
+        "message": "新增了两种模式",
+        "hashes": ["7afa89c1"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-27",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "register",
+        "message": "新增确认密码功能",
+        "hashes": ["8d64f7af"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-26",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "道具",
+        "message": "新增道具“钥匙”",
+        "hashes": ["153b89a7"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "新增衍生物“星元角色”",
+        "hashes": ["7c538739"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "新增图片URL",
+        "hashes": ["227ed896"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "图片",
+        "message": "新增图片，包括衍生物技能和朝圣者泰菲衍生物相关图片",
+        "hashes": ["2a27aa0b", "22197407", "167e93d6"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "数据",
+        "message": "更新朝圣者泰菲的文本并修改部分描述",
+        "hashes": ["4b25bf8a"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-25",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "图片",
+        "message": "更新图片",
+        "hashes": ["52c4cbf0"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-24",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "贡献者清单",
+        "message": "新增2位贡献者",
+        "hashes": ["fa9f80e2", "4725fabf"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "style",
+        "scope": "图片",
+        "message": "运行图片处理脚本 process-items-5x6.mjs",
+        "hashes": ["b8c8c0bc"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "图片",
+        "message": "更新部分图片",
+        "hashes": ["1a659cda"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "message": "修复数据操作合并相关问题：继承创建时间、优化结构保护逻辑、使用 nextEnv 加载环境变量、改进参数解析并处理竞态条件，以及调整分组键为 created_by + root。",
+        "hashes": ["091d74cc", "d9851663", "8f566430", "71f8cbf9", "51ed93fa", "f129965b", "f8484aaf", "f1640285", "e48abb7f", "fbdca941"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-23",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "特性",
+        "message": "新增3个特性文档",
+        "hashes": ["ff431e60"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "message": "当不允许更新标签时回退到重新验证",
+        "hashes": ["1cea32e5"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-19",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "导航栏",
+        "message": "点击外部时关闭折叠菜单/用户菜单",
+        "hashes": ["3f493994"],
+        "author": "asHOH"
+      },
+      {
+        "type": "perf",
+        "scope": "导航栏",
+        "message": "使用 rAF 节流调整大小处理程序",
+        "hashes": ["adfdde37"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "移除 AppContext 中冗余的 DetailedView 双重写入",
+        "hashes": ["b46b5054"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "导航栏",
+        "message": "用未读红点提示详情切换",
+        "hashes": ["b3804087"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-17",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "网站部署",
+        "message": "更新环境变量配置",
+        "hashes": ["0a8ce8f2"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文档",
+        "message": "更新框架版本；将 Oxlint 添加到代码标准",
+        "hashes": ["6deabecf"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "导航栏",
+        "message": "限制图标大小以获得更好对齐",
+        "hashes": ["6509c622"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "message": "缩小匹配器源并使其字面化以修复构建错误",
+        "hashes": ["aa63e1ed"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "路由",
+        "message": "添加 DisableLinkPrefetch 组件以禁用 Vercel 预取",
+        "hashes": ["db710deb"],
+        "author": "asHOH"
+      },
+      {
+        "type": "perf",
+        "message": "缩小 Vercel 匹配器以避免静态资源命中",
+        "hashes": ["f7ac59dd"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "猫方角色",
+        "message": "修正如玉在商店购买时间的描述",
+        "hashes": ["03ee246a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "auth",
+        "message": "通过忽略缓存的用户数据来防止水合不匹配",
+        "hashes": ["7b1852e5"],
+        "author": "asHOH"
+      },
+      {
+        "type": "style",
+        "scope": "font",
+        "message": "添加思源黑体并引入自定义字体栈优化排版",
+        "hashes": ["7ac1029a", "22cfaf06"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "filter-button",
+        "message": "为键盘导航添加 focus-visible 样式",
+        "hashes": ["ae6a2571"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "FilterLabel",
+        "message": "为筛选标签添加无障碍功能，并优化其命名和显示方式",
+        "hashes": ["059c0298", "e390d384"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-16",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "搜索引擎优化",
+        "message": "强制360/QQ浏览器使用Chromium内核",
+        "hashes": ["f9b48e5c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "captchaUtils",
+        "message": "为Turnstile验证添加错误处理",
+        "hashes": ["7daeb85a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "AdminPanel",
+        "message": "改进管理面板中操作变更的预览显示",
+        "hashes": ["f75e7ec0", "25f1853e", "f48812c9"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "squash-pending-game-data-actions",
+        "message": "添加Supabase管理脚本以合并待处理的游戏数据操作",
+        "hashes": ["0a40472a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "样式",
+        "message": "移除遗留组件",
+        "hashes": ["68e841e1"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "SyncPRPanel",
+        "message": "修复同步PR面板中的多项问题，包括创建PR后数据刷新、改进错误处理、在批准操作列表更改时清理选定ID，以及防止复选框重复点击",
+        "hashes": ["9210de2f", "68a138ef", "74df96c4", "90630717"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "确保操作发布前被合并",
+        "hashes": ["61a2c61f", "79a8d0ec"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-15",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "根据移动端状态调整按钮宽度",
+        "hashes": ["f1da7919"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "文章功能",
+        "message": "解耦文章分类获取与文章列表接口",
+        "hashes": ["4bb6fc1b"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "fetcher",
+        "message": "将文章API错误信息传递给SWR状态",
+        "hashes": ["f297d97e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "要求在提交前加载文章分类",
+        "hashes": ["29dff30d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "将外部容器从按钮改为div，消除非法嵌套",
+        "hashes": ["4df7e99b"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "auth",
+        "message": "在文章重定向前等待用户身份解析",
+        "hashes": ["11ba88dc"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "样式",
+        "message": "优化全局样式导入，并规范阵营按钮图标大小",
+        "hashes": ["5cb73018", "1fb3503d", "fc8f9078"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "路由",
+        "message": "将实体导出路由的运行时更改为Node.js，以解决与force-static的冲突",
+        "hashes": ["89e0988d"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-14",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "搜索",
+        "message": "增加对更多实体的支持",
+        "hashes": ["14b91a3d"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "修复了编辑模式中的多个问题，包括确保单一订阅者、优化保存逻辑、改进数组操作处理、修复登录对话框显示、知识卡组创建放弃按钮错误、教程错误、工具栏显示以及withRecordingSuppressed不生效的问题",
+        "hashes": ["96f01fd0", "f7461f48", "533ce59a", "7b64d46f", "cd63f8c6", "a48988b2"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-13",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "编辑模式",
+        "message": "重构编辑模式，移除draftUtils并简化逻辑",
+        "hashes": ["bf274cd0", "4878b6c1"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "移除EditModeGuard并实现自动保存功能",
+        "hashes": ["953ff50d"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-12",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "模式",
+        "message": "添加混沌大作战模式的信息",
+        "hashes": ["dd692f0d"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "修复编辑模式下登录弹窗、教程显示及工具栏层级问题",
+        "hashes": ["c58c6569", "ce67e759", "2798edb4"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "为角色关系添加编辑模式支持",
+        "hashes": ["e1d6315a"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "修复文章编辑器初始化逻辑和版本排序问题",
+        "hashes": ["f0253c79"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-11",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "缓存",
+        "message": "实现 Next.js 16 细粒度缓存失效",
+        "hashes": ["bffbc7fc"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "配置",
+        "message": "将 typedRoutes 移动到顶级配置",
+        "hashes": ["de28ce86"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "样式",
+        "message": "将导航栏和离线提示横幅高度进行样式标记化",
+        "hashes": ["919403c2"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "文章功能",
+        "message": "将文章标题编号和表单控件样式集中到 CSS 中，并减少自动索引的右边距",
+        "hashes": ["d5713a98", "339e1a35"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "添加阅读进度条",
+        "hashes": ["2533d453", "79293bd9"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "支持在本地存储中保存自动编号偏好设置",
+        "hashes": ["79293bd9"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "修复深层链接问题",
+        "hashes": ["d4cbbba3"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "消除切换自动编号时的闪烁",
+        "hashes": ["056b49f5"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "样式",
+        "message": "模块化 CSS 文件",
+        "hashes": ["df454ed7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "特性",
+        "message": "隐藏关系特性",
+        "hashes": ["ac119b52"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "兼容之前添加的角色关系编辑",
+        "hashes": ["3a723817"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "包管理",
+        "message": "更新 @isaacs/brace-expansion 到 5.0.1 以解决安全审计问题",
+        "hashes": ["8413eedd"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "角色关系生成",
+        "message": "移除重复的 fs 导入",
+        "hashes": ["580e13a0"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "路由",
+        "message": "启用类型化路由以提高导航安全性",
+        "hashes": ["17f86eb6"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "修复编辑模式下导航、工具栏显示和知识卡选择对话框溢出问题",
+        "hashes": ["caa13dae", "4912abfe", "284f020f"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-10",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "特性",
+        "message": "新增6个特性",
+        "hashes": ["dda96cac"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "测试",
+        "message": "修复测试错误",
+        "hashes": ["3924ba79"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "知识卡",
+        "message": "修复知识卡选择器样式问题",
+        "hashes": ["f0e42105"],
+        "author": "3swordman"
+      },
+      {
+        "type": "perf",
+        "scope": "样式",
+        "message": "禁用未使用的CSS样式",
+        "hashes": ["e375f630"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-09",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "页面加载优化",
+        "message": "优化页面加载动画",
+        "hashes": ["c7d2ca3f"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "修复贡献者文章编辑功能失效的问题",
+        "hashes": ["a1e53610"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "导航栏",
+        "message": "移除不必要的导航栏按钮提示",
+        "hashes": ["ffc3b418", "c252b947"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "新增 Button 组件并全局应用",
+        "hashes": ["85eeb674"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "界面",
+        "message": "优化页面过渡动画",
+        "hashes": ["589fef43"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "改进编辑模式下生成拉取请求的支持并新增同步到 GitHub 功能",
+        "hashes": ["77bcc04b", "cf67d86c", "62999397"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-08",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "将设计代币和系统拆分为模块化结构",
+        "hashes": ["e19b8c99"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "导航栏",
+        "message": "导航栏图标支持进度跟踪",
+        "hashes": ["bb91b91e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "解决按钮嵌套问题",
+        "hashes": ["4602ea16"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "导航栏",
+        "message": "为导航标签添加实验性的滑动动效",
+        "hashes": ["e7585e38"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "统一导航按钮的样式和动效行为",
+        "hashes": ["77fa0a4d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "导航栏",
+        "message": "将主页的 emoji 替换为 SVG 图标",
+        "hashes": ["eaacfdc7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "优化卡片悬停阴影和过渡时间",
+        "hashes": ["dce86c12", "ae1b3f46"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "修复编辑模式下操作始终为空的错误",
+        "hashes": ["601adb0e"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "鼠方角色",
+        "message": "优化杰瑞~泰菲的技能描述",
+        "hashes": ["485c0386", "28b265ad"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新猫方和鼠方角色的特技描述，提高清晰度和一致性",
+        "hashes": ["2f04761e", "0461ba68"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-07",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "特性",
+        "message": "添加部分特性说明",
+        "hashes": ["4614a1e6"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "服务器",
+        "message": "禁用预览环境的缓存并阻止其被索引",
+        "hashes": ["0bd1d2bb", "3f495ebb"],
+        "author": "asHOH"
+      },
+      {
+        "type": "revert",
+        "scope": "api",
+        "message": "回滚多项关于 API 缓存重新验证和 Cache-Control 头的修复",
+        "hashes": ["22af1f04", "45a1bc52", "bbf9b557"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "文章功能",
+        "message": "移除文章表单中未使用的成功消息处理",
+        "hashes": ["78f161f7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "style",
+        "scope": "文章功能",
+        "message": "更新编辑和新建文章中的通知样式",
+        "hashes": ["c1dea8eb"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "数据库",
+        "message": "允许更改文章分类",
+        "hashes": ["b9863bd7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "api",
+        "message": "为文章 API 响应添加 Cache-Control 头",
+        "hashes": ["40bc3c77"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "api",
+        "message": "优化 Vercel 环境下的缓存重新验证逻辑和时间设置",
+        "hashes": ["33fbd8c2", "68192b47"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-06",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "导航栏",
+        "message": "放宽导航栏图标区域",
+        "hashes": ["eeeec078"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "revert",
+        "scope": "auth",
+        "message": "回滚认证相关的验证码修复",
+        "hashes": ["34082311"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "版本控制",
+        "message": "修复版本检查逻辑错误",
+        "hashes": ["283a8aa5"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "特性",
+        "message": "将角色关系逻辑移动到特性模块，编辑模式暂不支持",
+        "hashes": ["8711baa1"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "暗色模式",
+        "message": "使用 dark: 类替代 isDarkMode + 动态类",
+        "hashes": ["3e085c2a"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-04",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "修改部分状态的类型和分类",
+        "hashes": ["f44156ee"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "ReverseCard",
+        "message": "新增反向链接功能",
+        "hashes": ["cd91c6be", "1e94062c", "ef3ee9ee"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "文章版本信息接口需要身份验证",
+        "hashes": ["2aa75dca"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "支持音效词条的“随距离远近变化”描述",
+        "hashes": ["5771aedf"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "新增实验性角色创建支持（通过手动访问 /factions/cat/?edit=1）（不稳定）",
+        "hashes": ["36b59421"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-03",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "状态",
+        "message": "重构状态相关功能，包括状态列表显示、适应新类型及文件迁移",
+        "hashes": ["7dbae919", "a0f86d72", "75dd3539", "fbf9233f"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "添加新角色朝圣者泰菲的详细信息",
+        "hashes": ["4a056080", "359707e3"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-02-01",
+    "changes": [
+      {
+        "type": "style",
+        "scope": "网站说明",
+        "message": "调整首页网站说明的副标题文字大小",
+        "hashes": ["62481d19"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "网站说明",
+        "message": "添加屏幕阅读器标题",
+        "hashes": ["35a56a86"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "网站说明",
+        "message": "优化文本结构，提取文本到数据文件",
+        "hashes": ["2e4dd0dd", "49cebe0c", "c3c96cdc"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "网站说明",
+        "message": "修复项目主页错位问题",
+        "hashes": ["a9b1fba1"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "swr",
+        "message": "增强 SWR 缓存持久性并优化自动保存",
+        "hashes": ["da4c2332", "a548a67d", "8b646455", "372eaab1"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-01-31",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "win-rates",
+        "message": "修复类型错误",
+        "hashes": ["1b83a254"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "pwa",
+        "message": "移除不再维护的 next-pwa，改用 serwist",
+        "hashes": ["326d91ca"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "搜索引擎优化",
+        "message": "从站点地图中移除 noindex 页面，并改进 Twitter 卡片显示",
+        "hashes": ["73fcd5cb"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
     "date": "2026-01-30",
     "changes": [
+      {
+        "type": "docs",
+        "scope": "win-rates",
+        "message": "修正胜率文档的时间范围",
+        "hashes": ["78cb0c2e"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "changelogs",
+        "message": "添加截至今日的更新日志",
+        "hashes": ["f430f099"],
+        "author": "3swordman"
+      },
       {
         "type": "perf",
         "scope": "数据",
@@ -1037,7 +1985,7 @@
       {
         "type": "docs",
         "scope": "文档",
-        "message": "更新更新日志",
+        "message": "添加截至今的更新日志",
         "hashes": ["0f64afe2"],
         "author": "asHOH"
       },
@@ -1606,7 +2554,7 @@
       {
         "type": "docs",
         "scope": "更新日志",
-        "message": "补充截至11月25日的更新日志",
+        "message": "添加截至11月25日的更新日志",
         "hashes": ["09dd329e", "7ccaa523", "8cc01901", "e4e28015"],
         "author": "asHOH"
       },
