@@ -513,7 +513,7 @@ export type FixtureTypeList =
   | '地面类'
   | '墙壁类'
   | '组件类'
-  | '物件类'
+  | '流程类'
   | 'NPC'
   | '可交互';
 export type FixtureSourceList = '通用组件' | '地图组件' | '模式组件'; //list of items' source

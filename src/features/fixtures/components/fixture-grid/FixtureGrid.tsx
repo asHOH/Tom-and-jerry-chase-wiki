@@ -22,7 +22,7 @@ const FIXTURE_TYPE_OPTIONS: FixtureTypeList[] = [
   '地面类',
   '墙壁类',
   '组件类',
-  '物件类',
+  '流程类',
   'NPC',
   '可交互',
 ];
