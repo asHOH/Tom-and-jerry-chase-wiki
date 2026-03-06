@@ -516,13 +516,14 @@ export type FixtureTypeList =
   | '流程类'
   | 'NPC'
   | '可交互';
-export type FixtureSourceList = '通用组件' | '地图组件' | '模式组件'; //list of items' source
+export type FixtureSourceList = '通用组件' | '地图组件' | '模式组件';
 
 export type FixtureDefinition = {
-  type: FixtureTypeList | FixtureTypeList[]; //type of items
+  type: FixtureTypeList | FixtureTypeList[];
   source: FixtureSourceList;
-  aliases?: string[]; // Alternative names for search
-  description?: string; // Basic description (optional, especially for passive skills)
+  aliases?: string[];
+  supportedMaps?: string[]; //会出现此物件的地图
+  description?: string;
   detailedDescription?: string;
 
   fixtureAttributesAsCharacter?: ItemAttributesAsCharacter;

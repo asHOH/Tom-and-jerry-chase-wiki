@@ -1,5 +1,70 @@
 import { Fixture, FixtureDefinition } from '@/data/types';
 
+const allMaps: string[] = [
+  '经典之家I',
+  '经典之家II',
+  '经典之家III',
+  '雪夜古堡I',
+  '雪夜古堡II',
+  '雪夜古堡III',
+  '夏日游轮I',
+  '夏日游轮II',
+  '夏日游轮III',
+  '太空堡垒I',
+  '太空堡垒II',
+  '太空堡垒III',
+  '游乐场',
+  '森林牧场',
+  '大都会',
+  '熊猫馆',
+  '御门酒店',
+  '天宫',
+  '天宫-云上',
+  '经典之家-疯狂奶酪赛',
+  '雪夜古堡-疯狂奶酪赛',
+  '金丝雀之家',
+  '熊猫馆-烟花大作战',
+  '阳光沙滩',
+  '后院',
+  '5V5大都会',
+  '家之典经',
+  '经典之家-谁是外星人',
+];
+
+const regularMaps: string[] = [
+  '经典之家I',
+  '经典之家II',
+  '经典之家III',
+  '雪夜古堡I',
+  '雪夜古堡II',
+  '雪夜古堡III',
+  '夏日游轮I',
+  '夏日游轮II',
+  '夏日游轮III',
+  '太空堡垒I',
+  '太空堡垒II',
+  '太空堡垒III',
+  '游乐场',
+  '森林牧场',
+  '大都会',
+  '熊猫馆',
+  '御门酒店',
+  '天宫',
+  '天宫-云上',
+];
+
+/*const entertainmentMaps: string[] = [
+  '经典之家-疯狂奶酪赛',
+  '雪夜古堡-疯狂奶酪赛',
+  '金丝雀之家',
+  '熊猫馆-烟花大作战',
+  '阳光沙滩',
+  '后院',
+  '5V5大都会',
+  '家之典经',
+  '经典之家-谁是外星人',
+];*/
+
 const getFixtureImageUrl = (name: string): string => {
   return `/images/fixtures/${encodeURIComponent(name)}.png`;
 };
@@ -12,6 +77,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: allMaps.filter((map) => map !== '阳光沙滩'),
     description:
       '平台不会移动，可承载物体。平台是构成大多数地形的基础。平台与{地面}类似，但更容易被穿越。',
     detailedDescription:
@@ -24,6 +90,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: allMaps,
     description:
       '地面不会移动，可承载物体。地面是构成房间底部及部分地形的基础。地面与{平台}类似，但更难被穿越。',
     detailedDescription:
@@ -36,6 +103,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: allMaps,
     description: '墙壁不会移动，会阻挡物体。墙壁是构成房间边界及部分地形的基础。',
     detailedDescription:
       '墙壁不会移动，可以阻挡各个方向的物体。墙壁是构成房间边界及部分地形的基础。\n[绝大部分](大都会-音乐厅的上方实际上没有天花板，诸如追风汤姆等角色可直接穿越天花板到达露天餐厅)“天花板”和某些"障碍物"具有墙壁的特性，实际上属于墙壁。',
@@ -47,8 +115,20 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: [
+      '夏日游轮II',
+      '夏日游轮III',
+      '太空堡垒I',
+      '太空堡垒II',
+      '太空堡垒III',
+      '游乐场',
+      '森林牧场',
+      '后院',
+    ],
     description:
       '斜向平台是具有一定角度的{平台}，所承载的物体会因重力而向下移动，除此之外与平台的特性相同。',
+    detailedDescription:
+      '斜向平台是具有一定角度的{平台}，所承载的物体会因重力而向下移动，除此之外与平台的特性相同。\n(本词条仅指代纯粹的“斜向平台”，不包括“斜向地面”及兼具多种特性的场景组件。如需查阅这部分信息，请前往对应词条查看)',
   },
   斜向地面: {
     type: '地面类',
@@ -57,8 +137,23 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '雪夜古堡I',
+      '夏日游轮I',
+      '夏日游轮II',
+      '夏日游轮III',
+      '熊猫馆',
+      '天宫',
+      '后院',
+      '家之典经',
+    ],
     description:
       '斜向地面是具有一定角度的{地面}，所承载的物体会因重力而向下移动，除此之外与地面的特性相同。',
+    detailedDescription:
+      '斜向地面是具有一定角度的{地面}，所承载的物体会因重力而向下移动，除此之外与地面的特性相同。\n(本词条仅指代纯粹的“斜向地面”，不包括“斜向平台”及兼具多种特性的场景组件。如需查阅这部分信息，请前往对应词条查看)',
   },
   弹性平台: {
     type: '平台类',
@@ -67,6 +162,15 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: [
+      ...regularMaps,
+      '经典之家-疯狂奶酪赛',
+      '金丝雀之家',
+      '熊猫馆-烟花大作战',
+      '5V5大都会',
+      '家之典经',
+      '经典之家-谁是外星人',
+    ],
     description:
       '弹性平台是具有“弹性”的{平台}，可反弹物体，且角色可借助弹性平台跳得更高，除此之外与平台的特性相同。',
     detailedDescription:
@@ -90,6 +194,17 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: [
+      '夏日游轮II',
+      '夏日游轮III',
+      '太空堡垒I',
+      '太空堡垒II',
+      '太空堡垒III',
+      '游乐场',
+      '大都会',
+      '天宫',
+      '5V5大都会',
+    ],
     description:
       '移动平台是会沿预定轨迹来回移动的{平台}，且会使[被自身直接承载的物体](即不包括通过其它物体而间接被自身承载的物体)与自身一同移动，除此之外与平台的特性相同。',
   },
@@ -100,6 +215,16 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: [
+      '雪夜古堡I',
+      '雪夜古堡II',
+      '雪夜古堡III',
+      '夏日游轮I',
+      '夏日游轮II',
+      '太空堡垒I',
+      '太空堡垒II',
+      '太空堡垒III',
+    ],
     description:
       '传送带是会将所承载物体向指定方向运送的{平台}，会使[被自身直接承载的物体](即不包括通过其它物体而间接被自身承载的物体)沿传送带运送方向移动，除此之外与地面的特性相同。',
   },
@@ -109,6 +234,14 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['门'],
     move: false,
     gravity: false,
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '雪夜古堡I',
+      '雪夜古堡II',
+      '雪夜古堡III',
+    ],
     description:
       '木门初始打开，角色可通过交互关闭/打开木门，关闭的木门与{墙壁}类似，木门累计被打开3次后破碎，破碎时{击退}附近的其他角色，且之后无法交互。',
     detailedDescription:
@@ -120,6 +253,14 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['攀爬区域', '可攀爬区域', '爬梯', '木梯子', '窗帘', '挂帘'],
     move: false,
     gravity: false,
+    supportedMaps: [
+      ...regularMaps,
+      '经典之家-疯狂奶酪赛',
+      '雪夜古堡-疯狂奶酪赛',
+      '后院',
+      '5V5大都会',
+      '家之典经',
+    ],
     description: '角色与梯子交互后将抓住梯子，长按交互键可向上攀爬，可通过跳跃离开梯子。',
     detailedDescription:
       '角色与梯子交互后将抓住梯子，抓住梯子期间无法移动、无法使用技能、可长按交互键向上攀爬、无法进行攀爬以外的交互、可通过跳跃离开梯子。\n\n一种快速爬梯的技巧：先按交互键抓住梯子，再按跳跃键起跳，随后再次抓住梯子，如此反复。该技巧被称作“飞龙在天”，被玩家广泛使用。',
@@ -129,10 +270,34 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '通用组件',
     move: false,
     gravity: false,
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '雪夜古堡I',
+      '雪夜古堡II',
+      '雪夜古堡III',
+      '夏日游轮I',
+      '夏日游轮III',
+      '太空堡垒I',
+      '太空堡垒II',
+      '太空堡垒III',
+      '游乐场',
+      '森林牧场',
+      '大都会',
+      '熊猫馆',
+      '御门酒店',
+      '天宫',
+      '天宫-云上',
+      '雪夜古堡-疯狂奶酪赛',
+      '后院',
+      '5V5大都会',
+      '家之典经',
+    ],
     description:
       '角色与管道交互后将钻入管道，一段时间后从另一侧钻出。管道有使用CD。管道分为单向/双向两类，单向管道仅有一侧可用，双向管道共用CD。管道会显示在放大后的小地图上。',
     detailedDescription:
-      '角色与管道交互后将钻入管道[（期间免疫大部分效果）](本质是虚化+不掉落道具的眩晕控制，且对部分解控类技能有特殊适配，因此在管道内无法使用技能/道具，且会被部分可命中虚化角色的技能（如爪刀、大铁锤等）命中)并[播放管道动画](本质是用动画覆盖玩家的游戏面板，并没有禁用按键，因此某些特殊情况下角色仍可进行部分操作)，在2.05秒后离开管道并{传送}到指定位置（通常是另一个管道处）。管道会显示在放大后的小地图上。\n管道被某名角色使用后，其他角色[通常](为防止携带“猫是液体”的猫咪长期占用管道交互，游戏内作了特殊适配：当携带该知识卡的猫咪短时间内多次使用管道时，管道的交互等待时间可能被重置，此时会出现其他角色可立刻钻管道的情况)需等待使用CD后才能再次使用。\n管道分为单向/双向两类，单向管道仅有一侧能使用，另一侧无管道或仅有管道贴图而无实际作用。双向管道实际为两个独立的管道组件，但共用使用CD。',
+      '角色与管道交互后将钻入管道[（期间免疫大部分效果）](本质是虚化+不掉落道具的眩晕控制，且对部分解控类技能有特殊适配，因此在管道内无法使用技能/道具，且会被部分可命中虚化角色的技能（如爪刀、大铁锤等）命中)并[播放管道动画](本质是用动画覆盖玩家的游戏面板，并没有禁用按键，因此某些特殊情况下角色仍可进行部分操作)，在2.05秒后离开管道并{传送}到指定位置（通常是另一个管道处）。管道会显示在放大后的小地图上。\n管道被某名角色使用后，其他角色[通常](为防止携带“猫是液体”的猫咪长期占用管道交互，游戏内作了特殊适配：当携带该知识卡的猫咪短时间内多次使用管道时，管道的交互等待时间可能被重置，此时会出现其他角色可立刻钻管道的情况)需等待使用CD后才能再次使用。\n管道分为单向/双向两类，单向管道仅有一侧能使用，另一侧无管道或仅有管道贴图而无实际作用。双向管道实际为两个独立的管道组件，但共用使用CD。\n太空堡垒的发射器、熊猫馆的站牌均属于管道的特殊变种。',
   },
   老鼠洞: {
     type: ['组件类', '流程类', '可交互'],
@@ -141,6 +306,13 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: true,
     collsion: ['地面'],
+    supportedMaps: [
+      ...regularMaps,
+      '经典之家-疯狂奶酪赛',
+      '雪夜古堡-疯狂奶酪赛',
+      '5V5大都会',
+      '家之典经',
+    ],
     description:
       '老鼠洞是鼠方“出生点”和游戏目标点。老鼠初始从洞口处出发，需将{奶酪}搬运至老鼠洞处并将其推入。已置入奶酪的老鼠洞及其推入进度会显示在小地图上，其它老鼠洞会显示在放大后的小地图上。',
     detailedDescription:
@@ -152,9 +324,16 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['墙洞'],
     move: false,
     gravity: true,
+    supportedMaps: [
+      ...regularMaps,
+      '经典之家-疯狂奶酪赛',
+      '雪夜古堡-疯狂奶酪赛',
+      '金丝雀之家',
+      '熊猫馆-烟花大作战',
+    ],
     description: '墙缝是鼠方逃离点。进入墙缝期后，鼠方需破坏墙缝才能逃脱。墙缝会显示在小地图上。',
     detailedDescription:
-      '墙缝是鼠方逃离点。墙缝会显示在小地图上。生成在空中的墙缝会自动落到{地面}上，随后固定位置。若墙缝生成时如果落在非永久平台（例如{斜塔}或{藤蔓}）上，会导致墙缝此后进入悬空状态。\n在{经典奶酪赛}等模式中，[奶酪期结束时](经典奶酪赛中的奶酪期与墙缝期之间增加了10秒间隔，因此会出现墙缝出现并隐形的情况。部分休闲模式中没有这个间隔，墙缝会正常出现)会立即在[随机位置](根据地图不同有数个预设位置，通常每个房间最多1个预设位置)生成[隐藏的墙缝](此时墙缝实际上已生成，但模型处于隐藏状态，正常情况下无法被攻击，极少数情况下可被部分效果攻击到)并显示在小地图上，墙缝期开始时墙缝现形并可进行破坏。墙缝初始拥有100Hp，Hp归零时被破开，随后老鼠可与其交互逃脱，累计逃脱2只老鼠即可胜利。\n在{疯狂奶酪赛}中，墙缝被鼠方一击即溃。',
+      '墙缝是鼠方逃离点。墙缝会显示在小地图上。生成在空中的墙缝会自动落到{地面}上，随后固定位置。若墙缝生成时如果落在非永久平台（例如{斜塔}或{藤蔓}）上，会导致墙缝此后进入悬空状态。\n在{经典奶酪赛}等模式中，[奶酪期结束时](经典奶酪赛中的奶酪期与墙缝期之间增加了10秒间隔，因此会出现墙缝出现并隐形的情况。部分休闲模式中没有这个间隔，墙缝会正常出现)会立即在[随机位置](根据地图不同有数个预设位置，通常每个房间最多1个预设位置)生成[隐藏的墙缝](此时墙缝实际上已生成，但模型处于隐藏状态，正常情况下无法被攻击，极少数情况下可被部分效果攻击到)并显示在小地图上，墙缝期开始时墙缝现形并可进行破坏。墙缝初始拥有100Hp，Hp归零时被破开，随后老鼠可与其交互逃脱，累计逃脱2只老鼠即可胜利。\n在{疯狂奶酪赛}中，墙缝被鼠方一击即溃。\n在{烟花大作战}中的鸟笼属于墙缝的超高Hp变种，可享受{铜墙}、{暴怒}等加成。',
   },
   桶: {
     type: ['组件类'],
@@ -162,16 +341,33 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['水桶', '木桶', '铁桶', '箩筐', '筐子', '黄桶', '棕桶', '铁皮桶', '拖把桶'],
     move: false,
     gravity: false,
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '夏日游轮I',
+      '夏日游轮II',
+      '熊猫馆',
+      '经典之家-疯狂奶酪赛',
+      '家之典经',
+    ],
     description:
       '角色可跳入桶中隐藏位置（躲藏期间仍能被正常命中），但躲藏较长时间后桶会开始左右摆动。',
     detailedDescription:
-      '角色可从上方跳进桶类物件中，隐藏自己的位置，且能够正常拾取道具、使用爪刀和部分技能，但仍会被爪刀、道具、技能等正常命中；角色单次在桶内躲藏超过10秒后，桶会开始左右摆动；角色从桶内跳出时，[极短时间内](通常情况下，角色只有进行大跳（即长按跳跃键）后才能在滞空时间后重新落入桶中，其余情况下都会因该间隔导致无法落回桶中)不会重新落入桶中。',
+      '角色可从上方跳进桶类物件中，隐藏自己的位置，且能够正常拾取道具、使用爪刀和部分技能，但仍会被爪刀、道具、技能等正常命中；角色单次在桶内躲藏超过10秒后，桶会开始左右摆动；角色从桶内跳出时，[极短时间内](通常情况下，角色只有进行大跳（即长按跳跃键）后才能在滞空时间后重新落入桶中，其余情况下都会因该间隔导致无法落回桶中)不会重新落入桶中。\n{小推车}与桶类似，但前者可以移动。',
   },
   侦查金丝雀: {
     type: 'NPC',
     source: '通用组件',
     move: true,
     gravity: false,
+    supportedMaps: [
+      ...regularMaps,
+      '经典之家-疯狂奶酪赛',
+      '雪夜古堡-疯狂奶酪赛',
+      '5V5大都会',
+      '家之典经',
+    ],
     description:
       '游戏开始时，侦查金丝雀会为鼠方侦查小地图的部分视野。侦查金丝雀及其路线会显示在小地图上。',
     detailedDescription:
@@ -183,6 +379,13 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['鸟包金丝雀', '空投金丝雀', '携带包裹的金丝雀'],
     move: true,
     gravity: false,
+    supportedMaps: [
+      ...regularMaps,
+      '经典之家-疯狂奶酪赛',
+      '雪夜古堡-疯狂奶酪赛',
+      '5V5大都会',
+      '家之典经',
+    ],
     description:
       '金丝雀每隔一段时间会携带包裹来回飞行，随后掉落{空投包裹}并离场。道具击中金丝雀有概率使其提前掉落包裹。金丝雀会显示在小地图上。',
     detailedDescription:
@@ -194,6 +397,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['鸭子', '小鸭子', '鸭皇', '鸭黄'],
     move: true,
     gravity: true,
+    supportedMaps: regularMaps, //[...regularMaps, ['5V5大都会', '家之典经']],
     description:
       '小黄鸭会在局内游荡，接触猫/鼠时提供一件对其阵营有益的道具（有内置CD）。小黄鸭会显示在放大后的小地图上。',
     detailedDescription:
@@ -205,6 +409,21 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['狗哥', '大狗', 'ch'],
     move: true,
     gravity: true,
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '雪夜古堡I',
+      '雪夜古堡II',
+      '雪夜古堡III',
+      '夏日游轮I',
+      '夏日游轮II',
+      '夏日游轮III',
+      '御门酒店',
+      '经典之家-疯狂奶酪赛',
+      '雪夜古堡-疯狂奶酪赛',
+      '家之典经',
+    ],
     description:
       '斯派克入睡一段时间/有角色经过自身时惊醒，睡醒后在房间内游荡，尝试抓住并丢出面前的角色。用道具攻击斯派克能令其眩晕，可掉落{狗骨头}。斯派克抓住角色/游荡较长时间后会重新入睡，一段时间内无法被惊醒。\n斯派克及其睡眠状态会显示在小地图上。',
     detailedDescription:
@@ -215,6 +434,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: true,
     gravity: true,
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '经典之家-疯狂奶酪赛', '家之典经'],
     description:
       '道具破碎会惊动女主人。女主人登场后会在房间内来回巡逻，发现老鼠时挥舞扫把，对面前的所有角色造成{眩晕}（该眩晕对同一角色有内置CD）。',
     detailedDescription:
@@ -227,6 +447,15 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '夏日游轮I',
+      '夏日游轮II',
+      '经典之家-疯狂奶酪赛',
+      '家之典经',
+    ],
     description:
       '冰箱初始关闭，角色可通过交互键打开/关闭冰箱。打开的冰箱会使附近角色减速并间歇性{冰冻}。',
     detailedDescription:
@@ -239,6 +468,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '经典之家-疯狂奶酪赛', '家之典经'],
     description:
       '烤箱初始关闭，角色可通过交互键打开/关闭烤箱。打开的烤箱会使附近角色加速但间歇性{硬直}。',
     detailedDescription:
@@ -251,6 +481,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description:
       '暖气片初始关闭，角色可通过交互键打开暖气片，一段时间后自行关闭。打开的暖气片会使附近角色间歇性{硬直}。',
     detailedDescription:
@@ -262,6 +493,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['水面'],
     move: false,
     gravity: false,
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description:
       '接触水潭的角色会进入{滑行}状态，直到离开水潭范围或被[部分障碍物](例如插在地上的叉子等)阻挡。',
   },
@@ -270,6 +502,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description:
       '轮胎会来回摆动，接触轮胎的角色会向轮胎运动方向被{击退}一段距离（同一角色短时间内不会被重复击退）。',
   },
@@ -279,6 +512,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['推车', '手推车', '婴儿车'],
     move: false,
     gravity: false,
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '雪夜古堡-疯狂奶酪赛', '家之典经'],
     description:
       '小推车可被推动，{击退}碰到的角色。角色可跳入小推车中隐藏位置（躲藏期间仍能被正常命中）（该特点与{桶}类似，但小推车不会因躲藏过久而晃动）。',
     detailedDescription:
@@ -291,6 +525,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '大都会', '5V5大都会', '家之典经'],
     description: '钢琴是一种特殊的{平台}，角色接触时会根据接触位置发出不同音调的音效。',
     detailedDescription:
       '钢琴是一种特殊的{平台}，角色接触时会根据接触位置发出不同音调的音效。\n在部分经典之家换皮地图中，钢琴会被替换为古筝，其音色也会发生变化。',
@@ -301,6 +536,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['收音机', '编钟'],
     move: false,
     gravity: false,
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description:
       '唱片机是一种娱乐物件。角色与唱片机交互后会播放音乐，一段时间内靠近唱片机的所有玩家的游戏背景音乐均会被替换为该音乐。\n在部分经典之家换皮地图中，唱片机会被替换为编钟，其音色也会发生变化。',
   },
@@ -311,6 +547,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '经典之家-疯狂奶酪赛', '家之典经'],
     description:
       '初始情况下提供落脚点和灯光。角色可将其打落，对碰到的其他角色造成伤害和眩晕，坠地后生成数个{碎片}。',
     detailedDescription:
@@ -321,10 +558,18 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '御门酒店',
+      '经典之家-疯狂奶酪赛',
+      '家之典经',
+    ],
     description:
       '开关初始开启。当开关关闭时，指定区域内的灯光消失。无灯光时，角色只能看到自身周围小范围视野。',
     detailedDescription:
-      '开关默认为开启状态。当开关关闭时，指定区域内的灯光将消失，此时角色只能看到自身周围小范围内的视野（与{失明}类似，但该状态对有灯光覆盖的区域的视野无影响，且并不会隐藏小地图）。\n开关与{吊灯}存在联动关系：当开关关闭时，未被击落的吊灯可以充当光源。',
+      '开关默认为开启状态。当开关关闭时，指定区域内的灯光将消失，此时角色只能看到自身周围小范围内的视野（与{失明}类似，但该状态对有灯光覆盖的区域的视野无影响，且并不会隐藏小地图）。\n开关与{吊灯}和台灯存在联动关系：当开关关闭时，灯可以充当光源。',
   },
   餐车: {
     type: ['平台类', '组件类'],
@@ -332,6 +577,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description: '餐车会来回移动，{击退}正面碰到的角色（对每名角色有内置CD）。',
     detailedDescription:
       '餐车会来回横向移动；餐车顶部具有{移动平台}的特性；餐车移动时会沿移动方向{击退}接触其正面的角色，对从背面接触的角色不受影响，且同一角色短时间内不会被重复击退。',
@@ -342,6 +588,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III'],
     description:
       '进入洗碗池内的角色会受到短暂{减速}和{跳跃高度降低}状态。洗碗池的左/右/下方与{墙壁}类似，无法被通过。',
   },
@@ -352,6 +599,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III'],
     description:
       '挡板一上一下成对出现，阻挡角色和道具。可推倒挡板并使另一侧挡板立起，{击退}并{眩晕}运动期间碰到的角色。挡板被交互数次后进入冷却。',
     detailedDescription:
@@ -364,6 +612,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description:
       '熨衣板周期性收起/落下，状态交替前会有短暂预警，交替时会对接触的角色造成{眩晕}，落下期间可以充当{平台}。',
     detailedDescription:
@@ -374,10 +623,18 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '金丝雀之家',
+      '熊猫馆-烟花大作战',
+      '家之典经',
+    ],
     description:
       '炸药堆可被点燃，较长时间后爆炸，使房间内角色受到伤害和{爆炸}状态，绑有老鼠且未熄灭的{火箭}立即起飞，其余未熄灭的火箭引线缩短。',
     detailedDescription:
-      '炸药堆可被角色通过交互点燃，也会在{鞭炮}、{火药桶}、{火箭炮}在自身附近爆炸时被点燃。点燃后的炸药堆进入30秒倒计时，倒计时结束时对同房间内的所有角色造成一定伤害和较长时间的{爆炸}状态，并使范围内所有已绑上老鼠且未熄灭的{火箭}立即起飞，其余未熄灭的火箭减少20秒放飞倒计时。',
+      '在{经典奶酪赛}等大多数模式中，炸药堆可被角色通过交互点燃，也会在{鞭炮}、{火药桶}、{火箭炮}在自身附近爆炸时被点燃。点燃后的炸药堆进入30秒倒计时，倒计时结束前3秒会对同房间所有角色发出文字预警提示，爆炸时对同房间内所有角色造成一定伤害和较长时间的{爆炸}状态，并使范围内所有已绑上老鼠且未熄灭的{火箭}立即起飞，其余未熄灭的火箭减少20秒放飞倒计时。\n在{烟花大作战}中，炸药堆爆炸前不会发出文字预警提示，爆炸不会对火箭产生影响。',
   },
   大炮: {
     type: ['组件类', '可交互'],
@@ -385,6 +642,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['加农炮', '庭院大炮'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III', '雪夜古堡-疯狂奶酪赛'],
     description:
       '角色可向大炮内填充道具（至多5个，每隔一段时间也会自动填充），可通过交互键调整大炮角度，可通过开火发射道具。大炮会发射双份道具（{高尔夫球}除外）。',
     detailedDescription:
@@ -396,6 +654,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['斧头', '斧子'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III', '雪夜古堡-疯狂奶酪赛'],
     description:
       '可通过交互推倒长柄斧，对击中的所有角色（包括自身）造成长时间{眩晕}（不掉落道具），随后在地面生成斧头区域（会使踩到的角色{硬直}）。',
     detailedDescription:
@@ -407,6 +666,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['道具生成处'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III', '雪夜古堡-疯狂奶酪赛'],
     description: '每隔一段时间，道具生成口会在原地生成一个随机道具。',
     detailedDescription:
       '每隔一段时间，道具生成口会在原地生成一个随机道具。\n\n以下为可生成道具列表：{盘子}、{扁盘}、{玻璃杯}、{碗}、{香水瓶}、{胡椒瓶}、{冰块}、{灰花瓶}、{蓝花瓶}、{小鞭炮}、{鞭炮束}、{高尔夫球}、{叉子}、{老鼠夹}、{苍蝇拍}、{遥控器}、{神秘饮料}。\n现版本道具生成口已不再生成{手枪}和{修理锤}。\n在{疯狂奶酪赛}中，道具生成口也会生成{奶酪}。',
@@ -417,6 +677,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['道具销毁处'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III', '雪夜古堡-疯狂奶酪赛'],
     description: '道具处于道具销毁口一段时间后将被销毁（部分特殊道具除外）。',
     detailedDescription:
       '指定范围内的道具处于道具销毁口一段时间后将被销毁。\n\n以下为可销毁道具列表：{盘子}、{扁盘}、{玻璃杯}、{碗}、{香水瓶}、{胡椒瓶}、{番茄}、{冰块}、{灰花瓶}、{蓝花瓶}、{小鞭炮}、{鞭炮束}、{高尔夫球}、{叉子}、{老鼠夹}、{苍蝇拍}、{遥控器}、{手枪}、{修理锤}、{黄金修理锤}、{远视饮料}、{隐身饮料}、{兴奋饮料}、{护盾饮料}、{变身饮料}、{神秘饮料}、{狗骨头}、{电池}。\n在{疯狂奶酪赛}中，道具销毁口的销毁等待时间延长，但会销毁{奶酪}。',
@@ -427,6 +688,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['熟睡的国王', '睡着的国王', '国王床'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     collsion: ['道具', '角色'],
     description:
       '碰撞及钟声会吵醒国王，国王被吵醒后会生气地吼叫，对同房间内的角色造成少量伤害和短暂{眩晕}（不掉落道具）（有内置CD）。',
@@ -439,6 +701,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     description: '角色可通过交互打开/关闭活板门，可通过活板门进入下层空间。',
     detailedDescription:
       '角色可通过与活板门左侧开关进行交互，打开/关闭活板门，该交互有5秒内置CD，且打开活板门有动作前/后摇（后摇可被跳跃键消除）。关闭状态的活板门可看作是上层的{地面}和下层的{天花板}，会阻挡上下层间的通行。',
@@ -449,6 +712,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['门', '盔甲房', '盔甲房门', '彩蛋房', '彩蛋房门'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     description: '使用{钥匙}可打开上锁的门，进入盔甲彩蛋房。彩蛋房内有一具{盔甲人}。',
     detailedDescription:
       '角色或{机器鼠}手持{钥匙}时，可与上锁的门交互，打开上锁的门。门被打开后，任何角色均可与门交互（有较短交互CD），传送至盔甲彩蛋房，该房间内有一具{盔甲人}和一扇用于返回的门。\n在{雪夜古堡III}中，两侧各有一扇上锁的门，它们通向同一个盔甲彩蛋房，离开该彩蛋房的门通向[右侧](最早版本为左侧，在某次更新后进行了更改)上锁的门所在位置。',
@@ -460,6 +724,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: true,
     gravity: true,
     collsion: ['平台', '地面', '墙壁'],
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     description:
       '角色可通过交互钻进并操控盔甲人移动和攻击。盔甲人的攻击会对面前角色造成一定伤害和强力控制效果。盔甲人可被攻击并击毁。',
     detailedDescription:
@@ -471,6 +736,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['盔甲人陷阱', '盔甲兵陷阱'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     description:
       '盔甲兵会周期性使用手中兵器进行下戳攻击，对命中的角色造成短暂{眩晕}（不掉落道具）。',
     detailedDescription:
@@ -482,6 +748,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['沙袋陷阱'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     description: '沙袋会周期性下坠攻击，对命中的角色造成{眩晕}（不掉落道具）。',
     detailedDescription: '沙袋会周期性下坠攻击，对命中的角色造成{眩晕}（不会使角色掉落手中道具）。',
   },
@@ -491,6 +758,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['流星锤陷阱'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     description:
       '流星锤会来回摆动，接触的角色会向流星锤运动方向被{击退}一段距离（同一角色短时间内不会被重复击退）。',
   },
@@ -500,6 +768,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['钟楼大钟', '钟', '巨钟'],
     move: false,
     gravity: false,
+    supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     description:
       '角色可通过交互拉响巨钟（有内置CD），使处于部分房间内的我方角色获得{加速}，敌方角色受到{硬直}或{眩晕}（不掉落道具），并唤醒{国王}。',
     detailedDescription:
@@ -511,6 +780,26 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['黄金老鼠洞'],
     move: false,
     gravity: true,
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '雪夜古堡I',
+      '雪夜古堡II',
+      '雪夜古堡III',
+      '夏日游轮I',
+      '夏日游轮II',
+      '夏日游轮III',
+      '太空堡垒I',
+      '太空堡垒II',
+      '太空堡垒III',
+      '森林牧场',
+      '熊猫馆',
+      '御门酒店',
+      '天宫',
+      '天宫-云上',
+      '家之典经',
+    ],
     description:
       '老鼠可使用{金钥匙}打开上锁的金洞，与打开的金洞交互可成功逃脱。猫咪可在小地图上看到金洞的位置。',
     detailedDescription:
@@ -522,6 +811,26 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['密道'],
     move: false,
     gravity: true,
+    supportedMaps: [
+      '经典之家I',
+      '经典之家II',
+      '经典之家III',
+      '雪夜古堡I',
+      '雪夜古堡II',
+      '雪夜古堡III',
+      '夏日游轮I',
+      '夏日游轮II',
+      '夏日游轮III',
+      '太空堡垒I',
+      '太空堡垒II',
+      '太空堡垒III',
+      '森林牧场',
+      '熊猫馆',
+      '御门酒店',
+      '天宫',
+      '天宫-云上',
+      '家之典经',
+    ],
     description: '老鼠与密道交互可成功逃脱。猫咪可在小地图上看到秘密通道的位置。',
     detailedDescription:
       '在{黄金钥匙赛}鼠方推入至少两块奶酪且被淘汰三只老鼠后，或在{多元乱斗}中被淘汰四只老鼠后，会在地图上生成1个秘密通道，作为鼠方的备用逃脱点。\n不处于[多元变身](为多元乱斗模式下的特殊状态，指角色变身为其它猫/鼠/星元角色时的状态)下的鼠方角色可与秘密通道交互以成功逃脱。\n猫咪可在小地图上看到秘密通道的位置。',

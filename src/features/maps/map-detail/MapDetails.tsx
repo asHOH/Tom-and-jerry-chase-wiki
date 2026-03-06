@@ -7,15 +7,16 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalMap } from '@/context/EditModeContext';
-import { Map as MapType } from '@/data/types';
+import { Map as MapType, SingleItem } from '@/data/types';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
+import SingleItemButton from '@/components/ui/SingleItemButton';
 import Image from '@/components/Image';
-import { mapsEdit } from '@/data';
+import { fixtures, mapsEdit } from '@/data';
 
 import MapAttributesCard from './MapAttributesCard';
 
@@ -37,6 +38,11 @@ export default function MapDetailClient({ map }: { map: MapType }) {
 
   useSpecifyTypeKeyboardNavigation(effectiveMap.name, 'map');
   const { isDetailedView } = useAppContext();
+
+  // 检索相关组件
+  const ownFixtures: string[] = Object.entries(fixtures)
+    .filter(([_, fixture]) => fixture.supportedMaps && fixture.supportedMaps.includes(map.name))
+    .map(([name, _]) => name);
 
   // 处理图片加载完成事件
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -103,7 +109,35 @@ export default function MapDetailClient({ map }: { map: MapType }) {
       ),
     },
   ];
-
+  if (ownFixtures.length > 0) {
+    sections.push({
+      key: 'fixtures',
+      render: () => (
+        <DetailTextSection
+          title='相关组件'
+          value={`共收录 $${ownFixtures.length}$text-indigo-700 dark:text-indigo-400# 个 $${effectiveMap.name}$text-fuchsia-600 dark:text-fuchsia-400# 存在的地图组件，点击下方按钮即可跳转。`}
+          isDetailedView={isDetailedView}
+        >
+          <ul
+            className='mx-2 mt-2 gap-2'
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+            }}
+          >
+            {ownFixtures.map((fixtureName, key) => {
+              return (
+                <SingleItemButton
+                  key={key}
+                  singleItem={{ name: fixtureName, type: 'fixture' } as SingleItem}
+                />
+              );
+            })}
+          </ul>
+        </DetailTextSection>
+      ),
+    });
+  }
   if (effectiveMap.mapImageUrl) {
     sections.push({
       title: '地图预览',
