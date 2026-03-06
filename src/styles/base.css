@@ -22,7 +22,7 @@ html {
 }
 
 /* Focus styles for accessibility */
-*:focus-visible {
+*:focus-visible:not(#search-input) {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
   border-radius: 4px;
