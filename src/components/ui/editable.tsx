@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 
-import { getNestedProperty, handleChange, setNestedProperty } from '@/lib/editUtils';
+import { getNestedProperty, handleCharacterIdChange, setNestedProperty } from '@/lib/editUtils';
 import type { CharacterWithFaction, KnowledgeCardWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import {
@@ -78,6 +78,15 @@ type EditableElementsProxy = {
 };
 
 const emptyObject = proxy({});
+const EMPTY_EDITABLE_PLACEHOLDER = '<无内容>';
+
+function createMissingEditableTargetError(
+  scope: EditableScope,
+  entityId: string,
+  path: string
+): Error {
+  return new Error(`Cannot edit ${scope}.${path} because "${entityId}" is not loaded.`);
+}
 
 function useInlineEditableContent(opts: {
   initialValue: string | number;
@@ -115,33 +124,39 @@ function useInlineEditableContent(opts: {
 
   useEffect(() => {
     if (contentRef.current) {
-      contentRef.current.textContent = String(content) || '<无内容>';
+      contentRef.current.textContent = String(content) || EMPTY_EDITABLE_PLACEHOLDER;
     }
   }, [content]);
 
   const handleBlur = useCallback(() => {
     if (!contentRef.current) return;
-    if (contentRef.current.textContent === String(content)) return;
+    const currentText = contentRef.current.textContent ?? '';
+    if (currentText === String(content)) return;
+    if (content === '' && currentText === EMPTY_EDITABLE_PLACEHOLDER) return;
 
-    const newContentStr = contentRef.current.textContent || '';
+    const newContentStr = currentText === EMPTY_EDITABLE_PLACEHOLDER ? '' : currentText;
 
     const trimmed = newContentStr.trim();
     const finalValue: string | number = valueType === 'number' ? parseFloat(trimmed) : trimmed;
 
     if (valueType === 'number') {
       if (typeof finalValue !== 'number' || Number.isNaN(finalValue)) {
-        contentRef.current.textContent = String(content) || '<无内容>';
+        contentRef.current.textContent = String(content) || EMPTY_EDITABLE_PLACEHOLDER;
         return;
       }
     }
 
-    setContent(finalValue);
-    if (onSave) {
-      onSave(trimmed);
-      return;
+    try {
+      if (onSave) {
+        onSave(trimmed);
+      } else {
+        writeValue(finalValue);
+      }
+      setContent(finalValue);
+    } catch (error) {
+      console.error('Failed to save editable value:', error);
+      contentRef.current.textContent = String(content) || EMPTY_EDITABLE_PLACEHOLDER;
     }
-
-    writeValue(finalValue);
   }, [content, onSave, valueType, writeValue]);
 
   const handleKeyDown = useCallback(
@@ -194,13 +209,37 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
     enableEdit,
     readStoredValue: () => getNestedProperty(localCharacterSnapshot, path),
     writeValue: (value) => {
-      if (!rawLocalCharacter) return;
-      handleChange(
-        valueType === 'number' ? (0 as unknown as typeof initialValue) : initialValue,
-        String(value),
+      if (!rawLocalCharacter || !characterId) {
+        throw createMissingEditableTargetError('characters', characterId || '<unknown>', path);
+      }
+
+      if ((path as string) === 'id') {
+        const resolvedFactionId =
+          factionId === 'cat' || factionId === 'mouse'
+            ? factionId
+            : rawLocalCharacter.factionId === 'cat' || rawLocalCharacter.factionId === 'mouse'
+              ? rawLocalCharacter.factionId
+              : undefined;
+        if (!resolvedFactionId) {
+          throw new Error(
+            `Cannot edit characters.id because "${rawLocalCharacter.id}" has no faction.`
+          );
+        }
+
+        handleCharacterIdChange(
+          rawLocalCharacter.id,
+          String(value),
+          resolvedFactionId,
+          handleSelectCharacter,
+          true
+        );
+        return;
+      }
+
+      setNestedProperty(
+        characters as unknown as Record<string, unknown>,
         `${rawLocalCharacter.id}.${path}`,
-        factionId || rawLocalCharacter.factionId || undefined,
-        handleSelectCharacter
+        value
       );
     },
   });
@@ -216,7 +255,7 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
         ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
         ...(rest as React.ComponentPropsWithoutRef<TagName>),
       },
-      String(content) || '<无内容>'
+      String(content) || EMPTY_EDITABLE_PLACEHOLDER
     );
   }
 
@@ -253,12 +292,13 @@ function EditableCardsField<TagName extends IntrinsicTagName>({
     enableEdit,
     readStoredValue: () => getNestedProperty(localCardSnapshot, path as string),
     writeValue: (value) => {
-      if (!rawLocalCard || !cardId) return;
+      if (!rawLocalCard || !cardId) {
+        throw createMissingEditableTargetError('cards', cardId || '<unknown>', path as string);
+      }
 
       // Knowledge card `id` is also the record key and route segment; avoid accidental breakage.
       if ((path as string) === 'id') {
-        console.warn('Editing knowledge card id is not supported in local edit mode yet.');
-        return;
+        throw new Error('Editing knowledge card id is not supported in local edit mode.');
       }
 
       setNestedProperty(cardsEdit, `${cardId}.${path as string}`, value);
@@ -276,7 +316,7 @@ function EditableCardsField<TagName extends IntrinsicTagName>({
         ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
         ...(rest as React.ComponentPropsWithoutRef<TagName>),
       },
-      String(content) || '<无内容>'
+      String(content) || EMPTY_EDITABLE_PLACEHOLDER
     );
   }
 
@@ -377,13 +417,20 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
     (value: string | number) => {
       // Avoid breaking route segment keys (these entities are keyed by name/skillId).
       if ((path as string) === 'name' || (path as string) === 'id') {
-        console.warn(`Editing ${String(path)} is not supported in local edit mode yet.`);
-        return;
+        throw new Error(
+          `Editing ${String(path)} is not supported for ${scope} in local edit mode.`
+        );
       }
 
       switch (scope) {
         case 'entities': {
-          if (!entityName || !rawEntity) return;
+          if (!entityName || !rawEntity) {
+            throw createMissingEditableTargetError(
+              scope,
+              entityName || '<unknown>',
+              path as string
+            );
+          }
           setNestedProperty(
             entitiesEdit as unknown as Record<string, unknown>,
             `${entityName}.${path as string}`,
@@ -392,7 +439,13 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           break;
         }
         case 'achievements': {
-          if (!achievementName || !rawAchievement) return;
+          if (!achievementName || !rawAchievement) {
+            throw createMissingEditableTargetError(
+              scope,
+              achievementName || '<unknown>',
+              path as string
+            );
+          }
           setNestedProperty(
             achievementsEdit as unknown as Record<string, unknown>,
             `${achievementName}.${path as string}`,
@@ -401,7 +454,9 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           break;
         }
         case 'buffs': {
-          if (!buffName || !rawBuff) return;
+          if (!buffName || !rawBuff) {
+            throw createMissingEditableTargetError(scope, buffName || '<unknown>', path as string);
+          }
           setNestedProperty(
             buffsEdit as unknown as Record<string, unknown>,
             `${buffName}.${path as string}`,
@@ -410,7 +465,9 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           break;
         }
         case 'items': {
-          if (!itemName || !rawItem) return;
+          if (!itemName || !rawItem) {
+            throw createMissingEditableTargetError(scope, itemName || '<unknown>', path as string);
+          }
           setNestedProperty(
             itemsEdit as unknown as Record<string, unknown>,
             `${itemName}.${path as string}`,
@@ -419,7 +476,13 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           break;
         }
         case 'fixtures': {
-          if (!fixtureName || !rawFixture) return;
+          if (!fixtureName || !rawFixture) {
+            throw createMissingEditableTargetError(
+              scope,
+              fixtureName || '<unknown>',
+              path as string
+            );
+          }
           setNestedProperty(
             fixturesEdit as unknown as Record<string, unknown>,
             `${fixtureName}.${path as string}`,
@@ -428,7 +491,9 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           break;
         }
         case 'maps': {
-          if (!mapName || !rawMap) return;
+          if (!mapName || !rawMap) {
+            throw createMissingEditableTargetError(scope, mapName || '<unknown>', path as string);
+          }
           setNestedProperty(
             mapsEdit as unknown as Record<string, unknown>,
             `${mapName}.${path as string}`,
@@ -437,7 +502,9 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           break;
         }
         case 'modes': {
-          if (!modeName || !rawMode) return;
+          if (!modeName || !rawMode) {
+            throw createMissingEditableTargetError(scope, modeName || '<unknown>', path as string);
+          }
           setNestedProperty(
             modesEdit as unknown as Record<string, unknown>,
             `${modeName}.${path as string}`,
@@ -446,7 +513,13 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
           break;
         }
         case 'specialSkills': {
-          if (!factionId || !skillId || !rawSpecialSkill) return;
+          if (!factionId || !skillId || !rawSpecialSkill) {
+            throw createMissingEditableTargetError(
+              scope,
+              `${factionId || '<unknown>'}.${skillId || '<unknown>'}`,
+              path as string
+            );
+          }
           setNestedProperty(
             specialSkillsEdit as unknown as Record<string, unknown>,
             `${factionId}.${skillId}.${path as string}`,
@@ -502,7 +575,7 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
         ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
         ...(rest as React.ComponentPropsWithoutRef<TagName>),
       },
-      String(content) || '<无内容>'
+      String(content) || EMPTY_EDITABLE_PLACEHOLDER
     );
   }
 

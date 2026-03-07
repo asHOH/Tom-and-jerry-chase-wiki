@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
@@ -21,7 +21,7 @@ export interface EditModeToolbarProps {
   /** Called when user clicks discard */
   onDiscard: () => void;
   /** Called when user clicks publish */
-  onPublish: (message?: string) => Promise<void>;
+  onPublish: (message?: string) => Promise<boolean>;
   /** Called when user wants to exit edit mode */
   onExitEditMode: () => void;
   /** Entity display name for better UX */
@@ -44,10 +44,20 @@ export default function EditModeToolbar({
   const [publishMessage, setPublishMessage] = useState('');
   const [isConfirmingDiscard, setIsConfirmingDiscard] = useState(false);
   const [isDraftsOpen, setIsDraftsOpen] = useState(false);
+  const discardResetTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (discardResetTimerRef.current !== null) {
+        window.clearTimeout(discardResetTimerRef.current);
+      }
+    };
+  }, []);
 
   const handlePublish = async () => {
     if (showMessageInput) {
-      await onPublish(publishMessage || undefined);
+      const didPublish = await onPublish(publishMessage || undefined);
+      if (!didPublish) return;
       setPublishMessage('');
       setShowMessageInput(false);
       onExitEditMode();
@@ -64,8 +74,13 @@ export default function EditModeToolbar({
         onExitEditMode();
       } else {
         setIsConfirmingDiscard(true);
-        // Auto-reset after 3 seconds
-        setTimeout(() => setIsConfirmingDiscard(false), 3000);
+        if (discardResetTimerRef.current !== null) {
+          window.clearTimeout(discardResetTimerRef.current);
+        }
+        discardResetTimerRef.current = window.setTimeout(() => {
+          setIsConfirmingDiscard(false);
+          discardResetTimerRef.current = null;
+        }, 3000);
       }
     } else {
       onExitEditMode();

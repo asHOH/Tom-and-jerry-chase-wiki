@@ -18,51 +18,65 @@ import { characters, FactionId, Skill } from '@/data';
  * - Updating faction character lists
  * - Optionally navigating to the new character
  *
- * @param path The full path including old character ID
+ * @param oldId The current character ID
  * @param newId The new character ID
  * @param factionId The faction this character belongs to
  * @param handleSelectCharacter Callback to navigate to new character
  * @param shouldNavigate Whether to navigate after creating new character
  */
 export function handleCharacterIdChange(
-  path: string,
+  oldId: string,
   newId: string,
   factionId: FactionId,
   handleSelectCharacter: (id: string) => void,
   shouldNavigate: boolean = false
 ): void {
-  const oldId = path.split('.')[0];
-  if (!oldId) {
-    console.error('Invalid path for character ID change:', path);
+  const normalizedOldId = oldId.trim();
+  const normalizedNewId = newId.trim();
+
+  if (!normalizedOldId) {
+    console.error('Invalid character ID for character rename:', oldId);
     return;
   }
 
-  const character = characters[oldId];
+  if (!normalizedNewId) {
+    console.error('Character ID cannot be empty');
+    return;
+  }
+
+  if (normalizedOldId === normalizedNewId) {
+    if (shouldNavigate) {
+      handleSelectCharacter(normalizedNewId);
+    }
+    return;
+  }
+
+  const character = characters[normalizedOldId];
   if (!character) {
-    console.error('Character not found:', oldId);
+    console.error('Character not found:', normalizedOldId);
     return;
   }
 
   // Don't create duplicate if ID already exists
-  if (characters[newId]) {
+  if (characters[normalizedNewId]) {
     if (shouldNavigate) {
-      handleSelectCharacter(newId);
+      handleSelectCharacter(normalizedNewId);
     }
     return;
   }
 
   // Create new character with updated ID and image URL
-  const newCharacter = JSON.parse(JSON.stringify(character)) as CharacterWithFaction;
-  newCharacter.id = newId;
-  newCharacter.imageUrl = AssetManager.getCharacterImageUrl(newId, factionId);
+  const newCharacter = structuredClone(character) as CharacterWithFaction;
+  newCharacter.id = normalizedNewId;
+  newCharacter.imageUrl = AssetManager.getCharacterImageUrl(normalizedNewId, factionId);
 
   // Enhance with validation
-  const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, newId, factionId);
+  const enhancedCharacter = validateAndEnhanceCharacter(newCharacter, normalizedNewId, factionId);
 
-  characters[newId] = proxy(enhancedCharacter);
+  characters[normalizedNewId] = proxy(enhancedCharacter);
 
   if (shouldNavigate) {
-    handleSelectCharacter(newId);
+    handleSelectCharacter(normalizedNewId);
   }
 }
 
@@ -135,9 +149,6 @@ function validateAndEnhanceCharacter(
  * @returns Array of original character IDs
  */
 export function getOriginalCharacterIds(): string[] {
-  if (typeof window === 'undefined') {
-    return Object.keys(characters);
-  }
   return Object.keys(GameDataManager.getCharacters());
 }
 
@@ -148,5 +159,5 @@ export function getOriginalCharacterIds(): string[] {
  * @returns True if character is original, false if created/modified in edit mode
  */
 export function isOriginalCharacter(characterId: string): boolean {
-  return getOriginalCharacterIds().includes(characterId);
+  return Object.prototype.hasOwnProperty.call(GameDataManager.getCharacters(), characterId);
 }

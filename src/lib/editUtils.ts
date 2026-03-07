@@ -1,7 +1,6 @@
 import json5 from 'json5';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { characters, type FactionId } from '@/data';
 
 import {
   getOriginalCharacterIds,
@@ -20,61 +19,7 @@ import { CharacterWithFaction } from './types';
  */
 export { getNestedProperty, setNestedProperty };
 
-// Re-export character-specific handlers for backward compatibility
 export { handleCharacterIdChange, getOriginalCharacterIds, isOriginalCharacter };
-
-/**
- * Generic entity property change handler.
- * Dispatches character ID changes to specialized handler, otherwise updates property directly.
- * Maintains backward compatibility with existing code.
- *
- * @param initialValue The initial value (for type inference)
- * @param newContentStr The new value as string
- * @param path The full path including entity ID
- * @param activeTab The active faction tab (for character context)
- * @param handleSelectCharacter Callback for navigation
- *
- * @deprecated Use characterEditHandlers directly for new code
- */
-export function handleChange<T>(
-  initialValue: T,
-  newContentStr: string,
-  path: string,
-  activeTab: string | undefined,
-  handleSelectCharacter: (id: string) => void
-): void {
-  const pathParts = path.split('.');
-  const entityId = pathParts[0];
-  const fieldName = pathParts[1];
-
-  // Check if this is a character ID change
-  if (fieldName === 'id' && entityId) {
-    const character = characters[entityId];
-    if (!character) {
-      console.error('Character not found for ID change:', entityId);
-      return;
-    }
-
-    // Get faction ID from context or character
-    const factionId = (activeTab || character?.factionId) as FactionId | undefined;
-    if (!factionId) {
-      console.error('Cannot determine faction for character ID change');
-      return;
-    }
-
-    handleCharacterIdChange(
-      path,
-      newContentStr,
-      factionId,
-      handleSelectCharacter,
-      true // Always navigate on ID change
-    );
-  } else {
-    // For any other field, update the property directly
-    const finalValue = typeof initialValue === 'number' ? parseFloat(newContentStr) : newContentStr;
-    setNestedProperty(characters, path, finalValue);
-  }
-}
 
 export function generateTypescriptCodeFromCharacter(character: DeepReadonly<CharacterWithFaction>) {
   return (

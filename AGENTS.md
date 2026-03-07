@@ -10,11 +10,20 @@ Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 4.
 
 # Commands
 
+<<<<<<< HEAD
 ```powershell
 # Dev
 npm run dev                        # Start dev server (localhost:3000)
 npm run build                      # Full build: generate-doc-pages → next build → image optimization
 npm run build:skip-images          # Build without post-build image optimization
+=======
+- Runtime: Node >= 20, npm >= 10.
+- UI: Tailwind CSS 4, Framer Motion (animation), Mobile-first.
+- State: Valtio (global), SWR (data).
+- Data: Static TS files (game data), Supabase (articles/users).
+- Build: Static-first (SSG), ISR for dynamic content. `scripts/generate-doc-pages.mjs` for docs index.
+- Tools: ESLint, Prettier, Husky, Jest, React Testing Library.
+>>>>>>> e1d44b67 (refactor(edit-mode): simplify edit mode logic)
 
 # Quality (run after every edit)
 npm run lint                       # ESLint (cached). Zero warnings required for push.
@@ -40,6 +49,7 @@ Test files live next to source: `src/lib/foo.test.ts`, `src/components/ui/Foo.te
 - **commit-msg**: Enforces conventional commits: `type(scope): description`. Types: `feat|fix|docs|style|refactor|perf|test|chore`. Merge/Revert commits exempt.
 - **pre-push**: Lint (zero warnings) → Prettier check → type-check + tests in parallel. Feature branches run `test:changed`; main/master run full `test:ci`.
 
+<<<<<<< HEAD
 # Project Structure
 
 ```
@@ -176,6 +186,12 @@ scripts/                    # Build scripts (generate-doc-pages.mjs, image optim
 - Mobile-first: Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`). `useMobile` hook for gesture behavior.
 - Dark mode: Tailwind `dark:` variant. `DarkModeProvider` context.
 - Animations: `motion` library (Framer Motion successor).
+=======
+- Style: Concise replies. No filler.
+- Code: TypeScript strict mode. Prefer named exports. Use `@/` alias.
+- Comments: Only for complex logic. Use meaningful names instead.
+- Shell: PowerShell for Windows.
+>>>>>>> e1d44b67 (refactor(edit-mode): simplify edit mode logic)
 
 # Post-Edit Checklist
 

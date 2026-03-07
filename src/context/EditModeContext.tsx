@@ -28,7 +28,9 @@ import {
   type Action,
   type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
+import { getPathSegmentFromEnd } from '@/lib/edit/editModeRouteUtils';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { isEditModeSearchParamEnabled } from '@/hooks/useSearchParamEditMode';
 import {
   achievements,
   achievementsEdit,
@@ -196,74 +198,49 @@ function clearActionHistoriesFromStorage(): void {
   });
 }
 
+function createEditableProxyValue(value: unknown): unknown {
+  if (typeof value === 'object' && value !== null) {
+    return proxy(structuredClone(value as Record<string, unknown>));
+  }
+  return value;
+}
+
+function replaceProxyRecord(
+  target: Record<string, unknown>,
+  source: Record<string, unknown> | Readonly<Record<string, unknown>>
+): void {
+  Object.keys(target).forEach((key) => {
+    delete target[key];
+  });
+
+  Object.entries(source).forEach(([key, value]) => {
+    target[key] = createEditableProxyValue(value);
+  });
+}
+
 /**
  * Restores all registered entities to their original canonical state.
  */
 function restoreEntitiesToCanonical(): void {
-  const original = {
-    characters: GameDataManager.getCharacters(),
-    cards: GameDataManager.getCards(),
+  GameDataManager.invalidate({ characters: true, cards: true });
+
+  const canonicalRecordSources: Partial<Record<PublishableEntityType, Record<string, unknown>>> = {
+    achievements: achievements as Record<string, unknown>,
+    buffs: buffs as Record<string, unknown>,
+    cards: GameDataManager.getCards() as Record<string, unknown>,
+    characters: GameDataManager.getCharacters() as Record<string, unknown>,
+    entities: {
+      ...entities.cat,
+      ...entities.mouse,
+    } as Record<string, unknown>,
+    fixtures: fixtures as Record<string, unknown>,
+    items: items as Record<string, unknown>,
+    maps: maps as Record<string, unknown>,
+    modes: modes as Record<string, unknown>,
   };
 
   Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-    if (entityType === 'characters' && original.characters) {
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(original.characters).forEach(([key, value]) => {
-        entity[key] = proxy(value);
-      });
-    } else if (entityType === 'cards' && original.cards) {
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(original.cards).forEach(([key, value]) => {
-        entity[key] = proxy(value);
-      });
-    } else if (entityType === 'entities') {
-      const canonical = { ...entities.cat, ...entities.mouse } as Record<string, unknown>;
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(canonical).forEach(([key, value]) => {
-        entity[key] = proxy(value as Record<string, unknown>);
-      });
-    } else if (entityType === 'buffs') {
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(buffs as Record<string, unknown>).forEach(([key, value]) => {
-        entity[key] = proxy(value as Record<string, unknown>);
-      });
-    } else if (entityType === 'items') {
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(items as Record<string, unknown>).forEach(([key, value]) => {
-        entity[key] = proxy(value as Record<string, unknown>);
-      });
-    } else if (entityType === 'fixtures') {
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(fixtures as Record<string, unknown>).forEach(([key, value]) => {
-        entity[key] = proxy(value as Record<string, unknown>);
-      });
-    } else if (entityType === 'maps') {
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(maps as Record<string, unknown>).forEach(([key, value]) => {
-        entity[key] = proxy(value as Record<string, unknown>);
-      });
-    } else if (entityType === 'modes') {
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(modes as Record<string, unknown>).forEach(([key, value]) => {
-        entity[key] = proxy(value as Record<string, unknown>);
-      });
-    } else if (entityType === 'specialSkills') {
+    if (entityType === 'specialSkills') {
       const root = entity as unknown as {
         cat?: Record<string, unknown>;
         mouse?: Record<string, unknown>;
@@ -272,26 +249,14 @@ function restoreEntitiesToCanonical(): void {
       if (!root.cat) root.cat = {};
       if (!root.mouse) root.mouse = {};
 
-      Object.keys(root.cat).forEach((key) => {
-        delete root.cat![key];
-      });
-      Object.keys(root.mouse).forEach((key) => {
-        delete root.mouse![key];
-      });
+      replaceProxyRecord(root.cat, specialSkills.cat as Record<string, unknown>);
+      replaceProxyRecord(root.mouse, specialSkills.mouse as Record<string, unknown>);
+      return;
+    }
 
-      Object.entries(specialSkills.cat as Record<string, unknown>).forEach(([key, value]) => {
-        root.cat![key] = proxy(value as Record<string, unknown>);
-      });
-      Object.entries(specialSkills.mouse as Record<string, unknown>).forEach(([key, value]) => {
-        root.mouse![key] = proxy(value as Record<string, unknown>);
-      });
-    } else if (entityType === 'achievements') {
-      Object.keys(entity).forEach((key) => {
-        delete entity[key];
-      });
-      Object.entries(achievements as Record<string, unknown>).forEach(([key, value]) => {
-        entity[key] = proxy(value as Record<string, unknown>);
-      });
+    const source = canonicalRecordSources[entityType as PublishableEntityType];
+    if (source) {
+      replaceProxyRecord(entity, source);
     }
   });
 
@@ -306,7 +271,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
 
   // Edit mode is now determined by URL param
   const isEditMode = useMemo(() => {
-    return searchParams.get('edit') === '1';
+    return isEditModeSearchParamEnabled(searchParams);
   }, [searchParams]);
 
   // Initialize on mount
@@ -329,8 +294,8 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
         if (isEditMode && !wasEditMode) {
           window.localStorage.setItem('editmode:enabledAt', String(Date.now()));
         }
-      } catch {
-        // ignore storage failures
+      } catch (error) {
+        console.error('Failed to persist edit mode state:', error);
       }
 
       window.dispatchEvent(new CustomEvent('editmode:changed', { detail: { isEditMode } }));
@@ -704,73 +669,58 @@ export function getEntityRegistry(): Map<string, Record<string, unknown>> {
 // Path-based entity ID extraction hooks
 // ============================================================================
 
+function useRouteParamFromEnd(indexFromEnd: number): string {
+  const pathname = usePathname();
+  return useMemo(() => getPathSegmentFromEnd(pathname, indexFromEnd), [pathname, indexFromEnd]);
+}
+
 export const useLocalCharacter = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const characterId = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const characterId = useRouteParamFromEnd(0);
   return { characterId };
 };
 
 export const useLocalCard = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const cardId = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const cardId = useRouteParamFromEnd(0);
   return { cardId };
 };
 
 export const useLocalEntity = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const entityName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const entityName = useRouteParamFromEnd(0);
   return { entityName };
 };
 
 export const useLocalBuff = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const buffName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const buffName = useRouteParamFromEnd(0);
   return { buffName };
 };
 
 export const useLocalItem = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const itemName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const itemName = useRouteParamFromEnd(0);
   return { itemName };
 };
 
 export const useLocalFixture = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const fixtureName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const fixtureName = useRouteParamFromEnd(0);
   return { fixtureName };
 };
 
 export const useLocalMap = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const mapName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const mapName = useRouteParamFromEnd(0);
   return { mapName };
 };
 
 export const useLocalMode = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const modeName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const modeName = useRouteParamFromEnd(0);
   return { modeName };
 };
 
 export const useLocalSpecialSkill = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const skillId = decodeURIComponent(pathParts[pathParts.length - 2] || '');
-  const factionId = decodeURIComponent(pathParts[pathParts.length - 3] || '');
+  const skillId = useRouteParamFromEnd(0);
+  const factionId = useRouteParamFromEnd(1);
   return { factionId, skillId };
 };
 
 export const useLocalAchievement = () => {
-  const path = usePathname();
-  const pathParts = path.split('/');
-  const achievementName = decodeURIComponent(pathParts[pathParts.length - 2] || '');
+  const achievementName = useRouteParamFromEnd(0);
   return { achievementName };
 };

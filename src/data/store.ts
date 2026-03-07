@@ -24,60 +24,53 @@ import type {
   SpecialSkill,
 } from './types';
 
-function proxyRecord<T extends Record<string, unknown>>(record: T): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(record).map(([key, value]) => [
-      key,
-      typeof value === 'object' && value !== null ? proxy(value as Record<string, unknown>) : value,
-    ])
-  );
+function createEditableStore<T extends Record<string, unknown>>(record: T): T {
+  return proxy(structuredClone(record)) as T;
 }
 
-export const characters: Record<string, CharacterWithFaction> = proxy(
-  GameDataManager.getCharacters()
+export const characters: Record<string, CharacterWithFaction> = createEditableStore(
+  GameDataManager.getCharacters() as Record<string, CharacterWithFaction>
 );
 
 // Knowledge cards are exported as a read-only static object in src/data/static.ts.
 // This proxy-backed store enables local-only edit mode, mirroring how characters are edited.
-export const cardsEdit: Record<string, KnowledgeCardWithFaction> = proxy(
-  GameDataManager.getCards()
+export const cardsEdit: Record<string, KnowledgeCardWithFaction> = createEditableStore(
+  GameDataManager.getCards() as Record<string, KnowledgeCardWithFaction>
 );
 
-export const itemsEdit: Record<string, Item> = proxy(
-  proxyRecord(itemsStatic) as Record<string, Item>
+export const itemsEdit: Record<string, Item> = createEditableStore(
+  itemsStatic as Record<string, Item>
 );
 
-export const buffsEdit: Record<string, Buff> = proxy(
-  proxyRecord(buffsStatic) as Record<string, Buff>
+export const buffsEdit: Record<string, Buff> = createEditableStore(
+  buffsStatic as Record<string, Buff>
 );
 
-export const mapsEdit: Record<string, MapType> = proxy(
-  proxyRecord(mapsStatic) as Record<string, MapType>
+export const mapsEdit: Record<string, MapType> = createEditableStore(
+  mapsStatic as Record<string, MapType>
 );
 
-export const fixturesEdit: Record<string, Fixture> = proxy(
-  proxyRecord(fixturesStatic) as Record<string, Fixture>
+export const fixturesEdit: Record<string, Fixture> = createEditableStore(
+  fixturesStatic as Record<string, Fixture>
 );
 
-export const modesEdit: Record<string, Mode> = proxy(
-  proxyRecord(modesStatic) as Record<string, Mode>
+export const modesEdit: Record<string, Mode> = createEditableStore(
+  modesStatic as Record<string, Mode>
 );
 
-export const entitiesEdit: Record<string, Entity> = proxy(
-  proxyRecord({
-    ...(catEntitiesStatic as Record<string, Entity>),
-    ...(mouseEntitiesStatic as Record<string, Entity>),
-  }) as Record<string, Entity>
-);
+export const entitiesEdit: Record<string, Entity> = createEditableStore({
+  ...(catEntitiesStatic as Record<string, Entity>),
+  ...(mouseEntitiesStatic as Record<string, Entity>),
+} as Record<string, Entity>);
 
 export const specialSkillsEdit: {
   cat: Record<string, SpecialSkill>;
   mouse: Record<string, SpecialSkill>;
 } = proxy({
-  cat: proxy(proxyRecord(catSpecialSkillsStatic) as Record<string, SpecialSkill>),
-  mouse: proxy(proxyRecord(mouseSpecialSkillsStatic) as Record<string, SpecialSkill>),
+  cat: createEditableStore(catSpecialSkillsStatic as Record<string, SpecialSkill>),
+  mouse: createEditableStore(mouseSpecialSkillsStatic as Record<string, SpecialSkill>),
 });
 
-export const achievementsEdit: Record<string, Achievement> = proxy(
-  proxyRecord(achievementsStatic) as Record<string, Achievement>
+export const achievementsEdit: Record<string, Achievement> = createEditableStore(
+  achievementsStatic as Record<string, Achievement>
 );

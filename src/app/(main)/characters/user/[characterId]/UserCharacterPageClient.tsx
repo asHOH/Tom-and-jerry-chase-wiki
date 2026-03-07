@@ -1,8 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import { CharacterWithFaction } from '@/lib/types';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
@@ -14,28 +11,20 @@ import { characters } from '@/data';
  */
 export default function UserCharacterPageClient() {
   const { isLoading, isEditMode } = useEditMode();
-  const [character, setCharacter] = useState<CharacterWithFaction | null>(null);
-  const [isCharacterLoading, setIsCharacterLoading] = useState(true);
   const { characterId } = useLocalCharacter();
+  const character = characterId ? (characters[characterId] ?? null) : null;
 
-  useEffect(() => {
-    if (isEditMode && !isLoading) {
-      const foundCharacter = characters[characterId];
-      if (foundCharacter) {
-        setCharacter(foundCharacter);
-        setIsCharacterLoading(false);
-      }
-    }
-  }, [characterId, isEditMode, isLoading]);
-
-  if (isLoading || isCharacterLoading) {
+  if (isLoading) {
     return <PageLoadingState type='character-detail' message='加载角色详情中...' />;
   }
 
-  // FIXME: i want to move the logic to another file
-  // if (!character) {
-  //   notFound();
-  // }
+  if (!isEditMode) {
+    return <PageLoadingState type='character-detail' message='请在编辑模式下查看角色草稿。' />;
+  }
 
-  return <CharacterDetailsClient character={character!} />;
+  if (!character) {
+    return <PageLoadingState type='character-detail' message='未找到角色草稿，可能已被清除。' />;
+  }
+
+  return <CharacterDetailsClient character={character} />;
 }

@@ -14,7 +14,6 @@ import { useEditMode, useLocalCharacter, usePageEditMode } from '@/context/EditM
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';
-import { PageLoadingState } from '@/components/ui/LoadingState';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 import { characters } from '@/data';
 
@@ -22,11 +21,17 @@ const syncCharacterStoreEntry = (
   characterId: string,
   value: CharacterDetailsProps['character']
 ) => {
+  const nextValue = structuredClone(value) as Record<string, unknown>;
   const existing = characters[characterId];
   if (existing) {
-    Object.assign(existing, value);
+    Object.keys(existing as Record<string, unknown>).forEach((key) => {
+      if (!(key in nextValue)) {
+        delete (existing as Record<string, unknown>)[key];
+      }
+    });
+    Object.assign(existing as Record<string, unknown>, nextValue);
   } else {
-    characters[characterId] = proxy(value);
+    characters[characterId] = proxy(nextValue as CharacterDetailsProps['character']);
   }
 };
 
@@ -35,6 +40,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const { characterId } = useLocalCharacter();
   const { exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
+  const currentCharacterId = characterId || props.character.id;
 
   // Page-level edit mode management
   const {
@@ -47,29 +53,21 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     getActionCount,
   } = usePageEditMode({
     entityType: 'characters',
-    entityId: characterId || props.character.id,
+    entityId: currentCharacterId,
     showToast: info,
   });
 
-  const [character, setCharacter] = useState(() => {
-    if (typeof window !== 'undefined' && !isEditMode) {
-      syncCharacterStoreEntry(props.character.id, props.character);
-    }
-    return props.character;
-  });
   useEffect(() => {
     if (isEditMode) {
       return;
     }
 
     syncCharacterStoreEntry(props.character.id, props.character);
-    setCharacter(props.character);
   }, [props.character, isEditMode]);
-
   const [showTutorial, setShowTutorial] = useState(false);
 
   // Keyboard navigation
-  useKeyboardNavigation(character.id, isEditMode);
+  useKeyboardNavigation(currentCharacterId, isEditMode);
 
   useEffect(() => {
     if (isEditMode && !hasUserSeenCharacterDetailsTutorial()) {
@@ -89,20 +87,14 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   }, []);
 
   const handlePublish = useCallback(
-    async (message?: string) => {
-      await publishChanges(message);
-    },
+    (message?: string) => publishChanges(message),
     [publishChanges]
   );
-
-  if (!character) {
-    return <PageLoadingState type='character-detail' message='加载角色详情中...' />;
-  }
 
   return (
     <>
       <div className='min-h-screen'>
-        <CharacterDetails character={character} onTutorialTrigger={handleTutorialTrigger}>
+        <CharacterDetails onTutorialTrigger={handleTutorialTrigger}>
           {props.children}
         </CharacterDetails>
       </div>
@@ -121,7 +113,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
             onDiscard={discardChanges}
             onPublish={handlePublish}
             onExitEditMode={exitEditMode}
-            entityName={character.id}
+            entityName={currentCharacterId}
             draftInfo={draftInfo}
             draftsSummary={draftsSummary}
           />

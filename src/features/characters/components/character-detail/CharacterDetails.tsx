@@ -7,7 +7,6 @@ import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import singleItemRreverse from '@/lib/singleItemReverse';
-import { CharacterDetailsProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { Skill } from '@/data/types';
@@ -41,12 +40,12 @@ import WinRatesDisplay from './WinRatesDisplay';
 
 const e = editable('characters');
 
-interface CharacterDetailsWithTutorialProps extends CharacterDetailsProps {
+interface CharacterDetailsWithTutorialProps {
+  children?: React.ReactNode;
   onTutorialTrigger?: () => void;
 }
 
 export default function CharacterDetails({
-  character,
   onTutorialTrigger,
   children,
 }: CharacterDetailsWithTutorialProps) {
@@ -93,7 +92,7 @@ export default function CharacterDetails({
                     <div className='flex h-full items-center justify-center p-3'>
                       <Image
                         src={localCharacter.imageUrl}
-                        alt={character.id}
+                        alt={localCharacter.id}
                         width={200}
                         height={200}
                         style={{
@@ -261,7 +260,7 @@ export default function CharacterDetails({
                   />
                   <WinRatesDisplay characterName={localCharacter.id} />
                   <SingleItemWikiHistoryDisplay
-                    singleItem={{ name: character.id, type: 'character' }}
+                    singleItem={{ name: localCharacter.id, type: 'character' }}
                   />
                 </>
               )}
@@ -277,7 +276,7 @@ export default function CharacterDetails({
                       <div className='flex h-full items-center justify-center'>
                         <Image
                           src={localCharacter.imageUrl}
-                          alt={character.id}
+                          alt={localCharacter.id}
                           width={200}
                           height={200}
                           style={{
@@ -289,12 +288,14 @@ export default function CharacterDetails({
                     <div className='-mt-2'>
                       <div className='flex items-start justify-between'>
                         <div>
-                          <h1 className='text-2xl font-bold dark:text-white'>{character.id} </h1>
+                          <h1 className='text-2xl font-bold dark:text-white'>
+                            {localCharacter.id}{' '}
+                          </h1>
                           <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
                             (
-                            {character.factionId === 'cat'
+                            {localCharacter.factionId === 'cat'
                               ? '猫阵营'
-                              : character.factionId === 'mouse'
+                              : localCharacter.factionId === 'mouse'
                                 ? '鼠阵营'
                                 : ''}
                             )
@@ -310,7 +311,7 @@ export default function CharacterDetails({
                       />
                       <WinRatesDisplay characterName={localCharacter.id} />
                       <SingleItemWikiHistoryDisplay
-                        singleItem={{ name: character.id, type: 'character' }}
+                        singleItem={{ name: localCharacter.id, type: 'character' }}
                       />
                     </div>
                   </div>
@@ -380,25 +381,31 @@ export default function CharacterDetails({
                 })()}
                 <div className='space-y-2'>
                   <CollapseCard
-                    title={`${character.id}角色自身的相关互动特性(${filterTraitsBySingleItem({ name: character.id, type: 'character' }).length})`}
+                    title={`${localCharacter.id}角色自身的相关互动特性(${filterTraitsBySingleItem({ name: localCharacter.id, type: 'character' }).length})`}
                     size='xs'
                     className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
                     titleClassName='pl-3'
                   >
-                    <SingleItemTraitsText singleItem={{ name: character.id, type: 'character' }} />
+                    <SingleItemTraitsText
+                      singleItem={{ name: localCharacter.id, type: 'character' }}
+                    />
                   </CollapseCard>
                   <CollapseCard
-                    title={`${character.id}角色自身的引用项(${singleItemRreverse({ name: character.id, type: 'character' }).length})`}
+                    title={`${localCharacter.id}角色自身的引用项(${singleItemRreverse({ name: localCharacter.id, type: 'character' }).length})`}
                     size='xs'
                     className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
                     titleClassName='pl-3'
                   >
-                    <SingleItemReverseCard singleItem={{ name: character.id, type: 'character' }} />
+                    <SingleItemReverseCard
+                      singleItem={{ name: localCharacter.id, type: 'character' }}
+                    />
                   </CollapseCard>
                 </div>
               </div>
             </CharacterSection>
-            <CharacterSection title={character.factionId == 'cat' ? '克制关系' : '克制/协作关系'}>
+            <CharacterSection
+              title={localCharacter.factionId == 'cat' ? '克制关系' : '克制/协作关系'}
+            >
               <CharacterRelationDisplay id={localCharacter.id} factionId={factionId} />
             </CharacterSection>
             {children}

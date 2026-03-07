@@ -3,7 +3,14 @@
 import { useCallback, useMemo } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-const EDIT_PARAM = 'edit';
+export const EDIT_MODE_SEARCH_PARAM = 'edit';
+export const EDIT_MODE_SEARCH_VALUE = '1';
+
+type SearchParamsReader = Pick<URLSearchParams, 'get'>;
+
+export function isEditModeSearchParamEnabled(searchParams: SearchParamsReader): boolean {
+  return searchParams.get(EDIT_MODE_SEARCH_PARAM) === EDIT_MODE_SEARCH_VALUE;
+}
 
 export interface UseSearchParamEditModeResult {
   /** Whether edit mode is active (URL has ?edit=1) */
@@ -24,18 +31,18 @@ export function useSearchParamEditMode(): UseSearchParamEditModeResult {
   const searchParams = useSearchParams();
 
   const isEditMode = useMemo(() => {
-    return searchParams.get(EDIT_PARAM) === '1';
+    return isEditModeSearchParamEnabled(searchParams);
   }, [searchParams]);
 
   const enterEditMode = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set(EDIT_PARAM, '1');
+    params.set(EDIT_MODE_SEARCH_PARAM, EDIT_MODE_SEARCH_VALUE);
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }, [router, pathname, searchParams]);
 
   const exitEditMode = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
-    params.delete(EDIT_PARAM);
+    params.delete(EDIT_MODE_SEARCH_PARAM);
     const queryString = params.toString();
     const newPath = queryString ? `${pathname}?${queryString}` : pathname;
     router.push(newPath, { scroll: false });
@@ -55,7 +62,7 @@ export function stripEditParam(url: string): string {
 
     if (hasProtocol) {
       const parsed = new URL(url);
-      parsed.searchParams.delete(EDIT_PARAM);
+      parsed.searchParams.delete(EDIT_MODE_SEARCH_PARAM);
       return parsed.toString();
     }
 
@@ -66,7 +73,7 @@ export function stripEditParam(url: string): string {
     const path = url.slice(0, questionIndex);
     const query = url.slice(questionIndex + 1);
     const params = new URLSearchParams(query);
-    params.delete(EDIT_PARAM);
+    params.delete(EDIT_MODE_SEARCH_PARAM);
 
     const newQuery = params.toString();
     return newQuery ? `${path}?${newQuery}` : path;
@@ -85,7 +92,7 @@ export function hasEditParam(url: string): boolean {
 
     const query = url.slice(questionIndex + 1);
     const params = new URLSearchParams(query);
-    return params.get(EDIT_PARAM) === '1';
+    return isEditModeSearchParamEnabled(params);
   } catch {
     return false;
   }

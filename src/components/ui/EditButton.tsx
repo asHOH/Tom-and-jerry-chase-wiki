@@ -1,11 +1,8 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import clsx from 'clsx';
-import { AnimatePresence } from 'motion/react';
 
-import LoginDialog from '@/components/LoginDialog';
+import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 
 export interface EditButtonProps {
   /** Additional CSS classes */
@@ -19,53 +16,35 @@ export interface EditButtonProps {
  * Adds ?edit=1 to the current URL.
  */
 export default function EditButton({ className, compact = false }: EditButtonProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
-
-  const handleClick = useCallback(() => {
-    // Add edit param to URL
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('edit', '1');
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  }, [router, pathname, searchParams]);
+  const { enterEditMode } = useSearchParamEditMode();
 
   return (
-    <>
-      <button
-        type='button'
-        onClick={handleClick}
-        className={clsx(
-          'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
-          'bg-amber-50 text-amber-700 hover:bg-amber-100',
-          'dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30',
-          'focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:outline-none dark:focus:ring-offset-slate-900',
-          className
-        )}
-        title='编辑此页面'
+    <button
+      type='button'
+      onClick={enterEditMode}
+      className={clsx(
+        'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
+        'bg-amber-50 text-amber-700 hover:bg-amber-100',
+        'dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30',
+        'focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:outline-none dark:focus:ring-offset-slate-900',
+        className
+      )}
+      title='编辑此页面'
+    >
+      <svg
+        className='h-4 w-4'
+        fill='none'
+        viewBox='0 0 24 24'
+        stroke='currentColor'
+        strokeWidth={2}
       >
-        <svg
-          className='h-4 w-4'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke='currentColor'
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
-          />
-        </svg>
-        {!compact && <span>编辑</span>}
-      </button>
-
-      <AnimatePresence>
-        {showLoginDialog && (
-          <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={false} />
-        )}
-      </AnimatePresence>
-    </>
+        <path
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
+        />
+      </svg>
+      {!compact && <span>编辑</span>}
+    </button>
   );
 }
