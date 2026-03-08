@@ -14,9 +14,8 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
+import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { characters as allCharacters, characters, FactionId, PositioningTagName } from '@/data';
@@ -209,20 +208,11 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
   }, [filteredCharacters, faction.id, isEditMode, originalCharacters]);
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
-      }
-    >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
-        <PageTitle>{faction.name}</PageTitle>
-        <PageDescription>{faction.description}</PageDescription>
-        {/* Filters wrapper */}
-        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
+    <CatalogPageShell
+      title={faction.name}
+      description={faction.description}
+      filters={
+        <>
           <FilterRow
             label='定位筛选:'
             options={uniquePositioningTags as readonly PositioningTagName[]}
@@ -252,7 +242,6 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
               );
               return isActive ? { ...tagColors } : undefined;
             }}
-            className='mt-4'
           />
 
           <FilterRow
@@ -267,19 +256,17 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
                 ? { backgroundColor: colors.backgroundColor, color: colors.color }
                 : undefined;
             }}
-            className='mt-0'
           />
-        </div>
-      </header>
-
+        </>
+      }
+    >
       <VirtualGrid
         items={cardNodes}
-        className='mt-8'
         rowClassName='auto-fit-grid grid-container grid'
         minItemWidth={isMobile ? 120 : 200}
         gapPx={isMobile ? 12 : 32}
         estimatedRowHeight={isMobile ? 270 : 340}
       />
-    </div>
+    </CatalogPageShell>
   );
 }

@@ -9,10 +9,9 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { specialSkillsEdit } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
+import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
 
 type Props = { description?: string };
 
@@ -27,40 +26,29 @@ export default function SpecialSkillClient({ description }: Props) {
     ...Object.values(specialSkillsSnapshot.mouse),
   ];
 
-  // Filter skills by faction if selected
   const filteredSkills = selectedFaction
     ? allSkills.filter((skill) => skill.factionId === selectedFaction)
     : allSkills;
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
+    <CatalogPageShell
+      title='特技'
+      description={description ?? ''}
+      filters={
+        <FilterRow<'cat' | 'mouse'>
+          label='阵营筛选:'
+          options={['cat', 'mouse']}
+          isActive={(f) => selectedFaction === f}
+          onToggle={(f) => setSelectedFaction(selectedFaction === f ? null : f)}
+          getOptionLabel={(f) => (f === 'cat' ? '猫阵营' : '鼠阵营')}
+          getButtonStyle={(f, active) =>
+            active ? getFactionButtonColors(f, isDarkMode) : undefined
+          }
+        />
       }
     >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
-        <PageTitle>特技</PageTitle>
-        <PageDescription>{description ?? ''}</PageDescription>
-        {/* Filters wrapper */}
-        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
-          <FilterRow<'cat' | 'mouse'>
-            label='阵营筛选:'
-            options={['cat', 'mouse']}
-            isActive={(f) => selectedFaction === f}
-            onToggle={(f) => setSelectedFaction(selectedFaction === f ? null : f)}
-            getOptionLabel={(f) => (f === 'cat' ? '猫阵营' : '鼠阵营')}
-            getButtonStyle={(f, active) =>
-              active ? getFactionButtonColors(f, isDarkMode) : undefined
-            }
-          />
-        </div>
-      </header>
       <div
-        className='auto-fit-grid grid-container mt-8 grid gap-4'
+        className='auto-fit-grid grid-container grid gap-4'
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
         }}
@@ -90,6 +78,6 @@ export default function SpecialSkillClient({ description }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </CatalogPageShell>
   );
 }

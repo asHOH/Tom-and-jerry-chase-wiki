@@ -7,9 +7,8 @@ import { getBuffTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Buff, buffTypelist } from '@/data/types';
+import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
 import Link from '@/components/Link';
 import { buffsEdit } from '@/data';
 
@@ -20,7 +19,6 @@ const INFLUENCE_OPTIONS = ['正面', '负面', '特殊'] as const;
 type Props = { description?: string };
 
 export default function BuffClient({ description }: Props) {
-  // Multi-select state for filters
   const [selectedInfluences, setSelectedInfluences] = useState<('正面' | '负面' | '特殊')[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
@@ -67,6 +65,7 @@ export default function BuffClient({ description }: Props) {
 
     return { nonClassBuffs: nonClass, classGroups: orderedGroups };
   }, [filteredBuffs]);
+
   const { nonClassEffects, effectClassGroups } = useMemo(() => {
     const nonClass: Buff[] = [];
     const groups = new Map<string, Buff[]>();
@@ -93,43 +92,31 @@ export default function BuffClient({ description }: Props) {
   }, [filteredEffects]);
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto w-full space-y-1 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
+    <CatalogPageShell
+      title='状态和效果'
+      description={description ?? ''}
+      filters={
+        <FilterRow<'正面' | '负面' | '特殊'>
+          label='影响类型:'
+          options={INFLUENCE_OPTIONS}
+          isActive={(f) => selectedInfluences.includes(f)}
+          onToggle={(f) =>
+            setSelectedInfluences((prev) =>
+              prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
+            )
+          }
+          getOptionLabel={(f) => f}
+          getButtonStyle={(f, active) =>
+            active
+              ? getBuffTypeColors(
+                  { 正面: '正面效果', 负面: '负面效果', 特殊: '特殊效果' }[f] as buffTypelist,
+                  isDarkMode
+                )
+              : undefined
+          }
+        />
       }
     >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
-        <PageTitle>状态和效果</PageTitle>
-        <PageDescription>{description ?? ''}</PageDescription>
-        {/* Filters wrapper */}
-        <div className='mx-auto w-full max-w-2xl md:px-2'>
-          {/* 影响类型 */}
-          <FilterRow<'正面' | '负面' | '特殊'>
-            label='影响类型:'
-            options={INFLUENCE_OPTIONS}
-            isActive={(f) => selectedInfluences.includes(f)}
-            onToggle={(f) =>
-              setSelectedInfluences((prev) =>
-                prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
-              )
-            }
-            getOptionLabel={(f) => f}
-            getButtonStyle={(f, active) =>
-              active
-                ? getBuffTypeColors(
-                    { 正面: '正面效果', 负面: '负面效果', 特殊: '特殊效果' }[f] as buffTypelist,
-                    isDarkMode
-                  )
-                : undefined
-            }
-          />
-        </div>
-      </header>
-
       {filteredBuffs.length > 0 && (
         <>
           <div className='relative py-4'>
@@ -154,7 +141,7 @@ export default function BuffClient({ description }: Props) {
                   </div>
                   <div
                     key={group.name}
-                    className={`auto-fit-grid grid-container grid w-full gap-1!`}
+                    className='auto-fit-grid grid-container grid w-full gap-1!'
                     style={{
                       gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
                     }}
@@ -219,7 +206,7 @@ export default function BuffClient({ description }: Props) {
                   </div>
                   <div
                     key={group.name}
-                    className={`auto-fit-grid grid-container grid w-full gap-1!`}
+                    className='auto-fit-grid grid-container grid w-full gap-1!'
                     style={{
                       gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
                     }}
@@ -260,6 +247,6 @@ export default function BuffClient({ description }: Props) {
           )}
         </>
       )}
-    </div>
+    </CatalogPageShell>
   );
 }

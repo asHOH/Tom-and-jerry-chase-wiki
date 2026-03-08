@@ -8,9 +8,8 @@ import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Entity, Entitytypelist } from '@/data/types';
+import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from '@/components/Link';
 import { entitiesEdit } from '@/data';
@@ -31,32 +30,27 @@ const ITEM_TYPE_OPTIONS: Entitytypelist[] = [
 type Props = { description?: string };
 
 export default function EntityClient({ description }: Props) {
-  // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<Entitytypelist[]>([]);
-  // Faction: 'cat', 'mouse', 'other'
   const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse' | 'other')[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  //search if selectedTypes includes any entitytype
   function searchTypeIn(entity: Entity): boolean {
     if (typeof entity.entitytype == 'string') {
       return selectedTypes.includes(entity.entitytype);
-    } else {
-      return entity.entitytype
-        .map((type) => {
-          return selectedTypes.includes(type);
-        })
-        .includes(true);
     }
+
+    return entity.entitytype
+      .map((type) => {
+        return selectedTypes.includes(type);
+      })
+      .includes(true);
   }
 
   const entitiesSnapshot = useSnapshot(entitiesEdit);
   const filteredEntities = Object.values(entitiesSnapshot as Record<string, Entity>).filter(
     (entity: Entity) => {
-      // 类型筛选
       const typeMatch = selectedTypes.length === 0 || searchTypeIn(entity);
-      // 阵营筛选
       let factionMatch = true;
       if (selectedFactions.length > 0) {
         const isCat = selectedFactions.includes('cat');
@@ -74,21 +68,11 @@ export default function EntityClient({ description }: Props) {
   );
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'max-w-1xl mx-auto space-y-1 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
-      }
-    >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
-        <PageTitle>衍生物</PageTitle>
-        <PageDescription>{description ?? ''}</PageDescription>
-        {/* Filters wrapper */}
-        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
-          {/* 类型筛选 */}
+    <CatalogPageShell
+      title='衍生物'
+      description={description ?? ''}
+      filters={
+        <>
           <FilterRow<Entitytypelist>
             label='类型筛选:'
             options={ITEM_TYPE_OPTIONS}
@@ -100,7 +84,6 @@ export default function EntityClient({ description }: Props) {
             }
             getOptionLabel={(opt) => opt}
             getButtonStyle={(name, active) => {
-              const isActive = active;
               const tagColors = getPositioningTagColors(
                 {
                   拾取物: '救援',
@@ -116,7 +99,7 @@ export default function EntityClient({ description }: Props) {
                 'mouse',
                 isDarkMode
               );
-              return isActive ? { ...tagColors } : undefined;
+              return active ? { ...tagColors } : undefined;
             }}
             renderOption={(tag, button) => (
               <Tooltip
@@ -129,7 +112,6 @@ export default function EntityClient({ description }: Props) {
             )}
           />
 
-          {/* 阵营筛选 */}
           <FilterRow<'cat' | 'mouse' | 'other'>
             label='阵营筛选:'
             options={['cat', 'mouse', 'other']}
@@ -157,10 +139,11 @@ export default function EntityClient({ description }: Props) {
                 : ''
             }
           />
-        </div>
-      </header>
+        </>
+      }
+    >
       <div
-        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-4'} mt-8`}
+        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-4'}`}
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '120px' : '150px'}, 1fr))`,
         }}
@@ -176,6 +159,6 @@ export default function EntityClient({ description }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </CatalogPageShell>
   );
 }

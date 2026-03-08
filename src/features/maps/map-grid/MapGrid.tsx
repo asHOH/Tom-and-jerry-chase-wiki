@@ -8,9 +8,8 @@ import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Map, mapTypes } from '@/data/types';
+import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from '@/components/Link';
 import { mapsEdit } from '@/data';
@@ -22,11 +21,8 @@ const MAP_TYPE_OPTIONS: mapTypes[] = ['常规地图', '娱乐地图', '广场地
 type Props = { description?: string };
 
 export default function MapClient({ description }: Props) {
-  // 多选筛选状态
   const [selectedTypes, setSelectedTypes] = useState<mapTypes[]>([]);
-  // 地图大小筛选 - 改为小、中、大的顺序
   const [selectedSizes, setSelectedSizes] = useState<('微型' | '小型' | '中型' | '大型')[]>([]);
-  // 解锁等级筛选 - 增加"其它"选项
   const [selectedLevels, setSelectedLevels] = useState<
     ('见习学业' | '高级学业' | '特级学业' | '大师学业' | '其它')[]
   >([]);
@@ -35,13 +31,8 @@ export default function MapClient({ description }: Props) {
 
   const mapsSnapshot = useSnapshot(mapsEdit);
   const filteredMaps = Object.values(mapsSnapshot as Record<string, Map>).filter((map: Map) => {
-    // 类型筛选
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(map.type);
-
-    // 大小筛选
     const sizeMatch = selectedSizes.length === 0 || (map.size && selectedSizes.includes(map.size));
-
-    // 等级筛选 - 增加对"其它"选项的处理
     const levelMatch =
       selectedLevels.length === 0 ||
       (map.studyLevelUnlock && selectedLevels.includes(map.studyLevelUnlock)) ||
@@ -51,21 +42,11 @@ export default function MapClient({ description }: Props) {
   });
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
-      }
-    >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
-        <PageTitle>地图</PageTitle>
-        <PageDescription>{description ?? ''}</PageDescription>
-        {/* 筛选器包装器 */}
-        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
-          {/* 类型筛选 */}
+    <CatalogPageShell
+      title='地图'
+      description={description ?? ''}
+      filters={
+        <>
           <FilterRow<mapTypes>
             label='地图类型:'
             options={MAP_TYPE_OPTIONS}
@@ -77,9 +58,7 @@ export default function MapClient({ description }: Props) {
             }
             getOptionLabel={(opt) => opt}
             getButtonStyle={(name, active) => {
-              {
-                return active ? getMapTypeColors(name, isDarkMode) : undefined;
-              }
+              return active ? getMapTypeColors(name, isDarkMode) : undefined;
             }}
             renderOption={(tag, button) => (
               <Tooltip
@@ -92,7 +71,6 @@ export default function MapClient({ description }: Props) {
             )}
           />
 
-          {/* 大小筛选 - 改为小、中、大的顺序 */}
           <FilterRow<'微型' | '小型' | '中型' | '大型'>
             label='地图规模:'
             options={['微型', '小型', '中型', '大型']}
@@ -108,7 +86,6 @@ export default function MapClient({ description }: Props) {
             }}
           />
 
-          {/* 解锁等级筛选 - 增加"其它"选项 */}
           <FilterRow<'见习学业' | '高级学业' | '特级学业' | '大师学业' | '其它'>
             label='解锁等级:'
             options={['见习学业', '高级学业', '特级学业', '大师学业', '其它']}
@@ -123,10 +100,11 @@ export default function MapClient({ description }: Props) {
               return active ? getMapLevelColors(level, isDarkMode) : undefined;
             }}
           />
-        </div>
-      </header>
+        </>
+      }
+    >
       <div
-        className='auto-fit-grid grid-container mt-8 grid gap-4'
+        className='auto-fit-grid grid-container grid gap-4'
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
         }}
@@ -142,6 +120,6 @@ export default function MapClient({ description }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </CatalogPageShell>
   );
 }

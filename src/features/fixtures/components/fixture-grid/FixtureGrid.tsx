@@ -6,9 +6,8 @@ import { useSnapshot } from 'valtio';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import type { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
+import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
 import Tooltip from '@/components/ui/Tooltip';
 import Link from '@/components/Link';
 import { fixturesEdit } from '@/data';
@@ -30,7 +29,6 @@ const FIXTURE_TYPE_OPTIONS: FixtureTypeList[] = [
 const FIXTURE_SOURCE_OPTIONS: FixtureSourceList[] = ['通用组件', '地图组件', '模式组件'];
 
 export default function FixtureClient({ description }: Props) {
-  // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<FixtureTypeList[]>([]);
   const [selectedSources, setSelectedSources] = useState<FixtureSourceList[]>([]);
   const isMobile = useMobile();
@@ -38,19 +36,15 @@ export default function FixtureClient({ description }: Props) {
   const fixturesSnapshot = useSnapshot(fixturesEdit);
   const filteredFixtures = Object.values(fixturesSnapshot as Record<string, Fixture>).filter(
     (fixture: Fixture) => {
-      // 类型筛选 - 处理数组类型
       let typeMatch = true;
       if (selectedTypes.length > 0) {
         if (Array.isArray(fixture.type)) {
-          // 如果fixture.type是数组，只要包含任一选中的类型就匹配
           typeMatch = fixture.type.some((type) => selectedTypes.includes(type));
         } else {
-          // 如果fixture.type是单个字符串，直接检查是否包含
           typeMatch = selectedTypes.includes(fixture.type);
         }
       }
 
-      // 来源筛选
       const sourceMatch =
         selectedSources.length === 0 ||
         (fixture.source && selectedSources.includes(fixture.source));
@@ -60,21 +54,11 @@ export default function FixtureClient({ description }: Props) {
   );
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
-      }
-    >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
-        <PageTitle>地图组件</PageTitle>
-        <PageDescription>{description}</PageDescription>
-        {/* Filters wrapper */}
-        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
-          {/* 类型筛选 */}
+    <CatalogPageShell
+      title='地图组件'
+      description={description}
+      filters={
+        <>
           <FilterRow<FixtureTypeList>
             label='类型筛选:'
             options={FIXTURE_TYPE_OPTIONS}
@@ -99,7 +83,6 @@ export default function FixtureClient({ description }: Props) {
             )}
           />
 
-          {/* 来源筛选 */}
           <FilterRow<FixtureSourceList>
             label='来源筛选:'
             options={FIXTURE_SOURCE_OPTIONS}
@@ -123,10 +106,11 @@ export default function FixtureClient({ description }: Props) {
               </Tooltip>
             )}
           />
-        </div>
-      </header>
+        </>
+      }
+    >
       <div
-        className='auto-fit-grid grid-container mt-8 grid gap-4'
+        className='auto-fit-grid grid-container grid gap-4'
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
         }}
@@ -142,6 +126,6 @@ export default function FixtureClient({ description }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </CatalogPageShell>
   );
 }

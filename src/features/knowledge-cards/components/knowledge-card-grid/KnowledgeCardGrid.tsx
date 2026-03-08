@@ -11,11 +11,10 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
+import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import CostRangeSlider from '@/components/ui/CostRangeSlider';
 import FilterLabel from '@/components/ui/FilterLabel';
 import FilterRow from '@/components/ui/FilterRow';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
 import { cards, cardsEdit } from '@/data';
 
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
@@ -25,7 +24,6 @@ type Props = { description?: string };
 export default function KnowledgeCardGrid({ description }: Props) {
   const { isEditMode } = useEditMode();
   const cardsEditSnapshot = useSnapshot(cardsEdit);
-  // Use centralized filter state management for ranks
   const {
     selectedFilters: selectedRanks,
     toggleFilter: toggleRankFilter,
@@ -33,17 +31,12 @@ export default function KnowledgeCardGrid({ description }: Props) {
   } = useFilterState<string>();
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
-
-  // Cost range state with faction-specific initial values
   const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const costLabelId = useId();
-
   const { handleSelectCard } = useAppContext();
 
   const sourceCards = isEditMode ? cardsEditSnapshot : cards;
-
-  // Filter and sort cards using centralized utilities
   const filteredAndSortedCards = sortCardsByRank(
     Object.values(sourceCards)
       .filter(createRankFilter(selectedRanks))
@@ -52,20 +45,11 @@ export default function KnowledgeCardGrid({ description }: Props) {
   );
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
-      }
-    >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
-        <PageTitle>知识卡</PageTitle>
-        <PageDescription>{description ?? ''}</PageDescription>
-        {/* Filters wrapper */}
-        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
+    <CatalogPageShell
+      title='知识卡'
+      description={description ?? ''}
+      filters={
+        <>
           <FilterRow<FactionId>
             label='阵营筛选:'
             options={['cat', 'mouse'] as const}
@@ -88,7 +72,6 @@ export default function KnowledgeCardGrid({ description }: Props) {
             }
           />
 
-          {/* Cost Filter Controls styled like FilterRow */}
           <div
             className='filter-section flex flex-col gap-2 md:flex-row md:items-center md:gap-4'
             role='group'
@@ -112,10 +95,11 @@ export default function KnowledgeCardGrid({ description }: Props) {
               </div>
             </div>
           </div>
-        </div>
-      </header>
+        </>
+      }
+    >
       <div
-        className='auto-fit-grid grid-container mt-8 grid gap-4'
+        className='auto-fit-grid grid-container grid gap-4'
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '160px'}, 1fr))`,
         }}
@@ -137,6 +121,6 @@ export default function KnowledgeCardGrid({ description }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </CatalogPageShell>
   );
 }

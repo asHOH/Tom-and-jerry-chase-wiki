@@ -5,9 +5,8 @@ import { useSnapshot } from 'valtio';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import type { Mode, ModeTypeList } from '@/data/types';
+import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
 import Link from '@/components/Link';
 import { modesEdit } from '@/data';
 
@@ -18,21 +17,17 @@ type Props = { description?: string };
 const MODE_TYPE_OPTIONS: ModeTypeList[] = ['经典模式', '休闲模式', '特殊模式'];
 
 export default function ModeClient({ description }: Props) {
-  // Multi-select state for filters
   const [selectedTypes, setSelectedTypes] = useState<ModeTypeList[]>([]);
   const isMobile = useMobile();
 
   const modesSnapshot = useSnapshot(modesEdit);
   const filteredModes = Object.values(modesSnapshot as Record<string, Mode>).filter(
     (mode: Mode) => {
-      // 类型筛选 - 处理数组类型
       let typeMatch = true;
       if (selectedTypes.length > 0) {
         if (Array.isArray(mode.type)) {
-          // 如果mode.type是数组，只要包含任一选中的类型就匹配
           typeMatch = mode.type.some((type) => selectedTypes.includes(type));
         } else {
-          // 如果mode.type是单个字符串，直接检查是否包含
           typeMatch = selectedTypes.includes(mode.type);
         }
       }
@@ -42,39 +37,29 @@ export default function ModeClient({ description }: Props) {
   );
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
+    <CatalogPageShell
+      title='游戏模式'
+      description={description}
+      descriptionVisibility='desktop'
+      filters={
+        <FilterRow<ModeTypeList>
+          label='类型筛选:'
+          options={MODE_TYPE_OPTIONS}
+          isActive={(type) => selectedTypes.includes(type)}
+          onToggle={(type) =>
+            setSelectedTypes((prev) =>
+              prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+            )
+          }
+          getOptionLabel={(opt) => opt}
+          getButtonStyle={(_, active) =>
+            active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
+          }
+        />
       }
     >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
-        <PageTitle>游戏模式</PageTitle>
-        {!isMobile && <PageDescription>{description}</PageDescription>}
-        {/* Filters wrapper */}
-        <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
-          {/* 类型筛选 */}
-          <FilterRow<ModeTypeList>
-            label='类型筛选:'
-            options={MODE_TYPE_OPTIONS}
-            isActive={(type) => selectedTypes.includes(type)}
-            onToggle={(type) =>
-              setSelectedTypes((prev) =>
-                prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-              )
-            }
-            getOptionLabel={(opt) => opt}
-            getButtonStyle={(_, active) =>
-              active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
-            }
-          />
-        </div>
-      </header>
       <div
-        className='auto-fit-grid grid-container mt-8 grid gap-4'
+        className='auto-fit-grid grid-container grid gap-4'
         style={{
           gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
         }}
@@ -90,6 +75,6 @@ export default function ModeClient({ description }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </CatalogPageShell>
   );
 }
