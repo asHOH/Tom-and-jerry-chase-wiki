@@ -1,5 +1,7 @@
-import Object from './Object';
+import { Exp, Hp, Object } from './ArticlesIndex';
 import TraitCollection from './TraitCollection';
+
+//维护说明：添加新模块时，先修改ArticlesIndex，随后在本文件添加新的导入，并修改mechanicsSections和NAV_ITEM_CONFIGS
 
 //与navigation.ts的格式相同，日后有需要可以合并
 type NavItem = {
@@ -14,6 +16,8 @@ type NavItem = {
 export const mechanicsSections = {
   object: Object,
   traitCollection: TraitCollection,
+  exp: Exp,
+  hp: Hp,
   // 在此处添加新的模块
   // newSection: NewSectionComponent,
 } as const;
@@ -32,6 +36,18 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
     label: '物体',
     iconSrc: '/images/mouseEntities/方块.png',
     iconAlt: '物体图标',
+  },
+  {
+    id: 'exp',
+    label: '经验',
+    iconSrc: '/images/items/经验蛋糕.png',
+    iconAlt: '经验图标',
+  },
+  {
+    id: 'hp',
+    label: '血量',
+    iconSrc: '/images/catSpecialSkills/应急治疗.png',
+    iconAlt: '血量图标',
   },
   {
     id: 'traitCollection',
