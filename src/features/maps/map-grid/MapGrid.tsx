@@ -7,7 +7,7 @@ import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/des
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
-import type { Map, mapTypes } from '@/data/types';
+import { type Map, type MapSize, type mapTypes, type studyLevel } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
@@ -17,15 +17,21 @@ import { mapsEdit } from '@/data';
 import MapCardDisplay from './MapCardDisplay';
 
 const MAP_TYPE_OPTIONS: mapTypes[] = ['常规地图', '娱乐地图', '广场地图'];
+const MAP_SIZE_OPTIONS: MapSize[] = ['微型', '小型', '中型', '大型'];
+const MAP_LEVEL_OPTIONS: (studyLevel | '其它')[] = [
+  '见习学业',
+  '高级学业',
+  '特级学业',
+  '大师学业',
+  '其它',
+];
 
 type Props = { description?: string };
 
 export default function MapClient({ description }: Props) {
   const [selectedTypes, setSelectedTypes] = useState<mapTypes[]>([]);
-  const [selectedSizes, setSelectedSizes] = useState<('微型' | '小型' | '中型' | '大型')[]>([]);
-  const [selectedLevels, setSelectedLevels] = useState<
-    ('见习学业' | '高级学业' | '特级学业' | '大师学业' | '其它')[]
-  >([]);
+  const [selectedSizes, setSelectedSizes] = useState<MapSize[]>([]);
+  const [selectedLevels, setSelectedLevels] = useState<(studyLevel | '其它')[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
@@ -71,9 +77,9 @@ export default function MapClient({ description }: Props) {
             )}
           />
 
-          <FilterRow<'微型' | '小型' | '中型' | '大型'>
+          <FilterRow<MapSize>
             label='地图规模:'
-            options={['微型', '小型', '中型', '大型']}
+            options={MAP_SIZE_OPTIONS}
             isActive={(size) => selectedSizes.includes(size)}
             onToggle={(size) =>
               setSelectedSizes((prev) =>
@@ -86,9 +92,9 @@ export default function MapClient({ description }: Props) {
             }}
           />
 
-          <FilterRow<'见习学业' | '高级学业' | '特级学业' | '大师学业' | '其它'>
+          <FilterRow<studyLevel | '其它'>
             label='解锁等级:'
-            options={['见习学业', '高级学业', '特级学业', '大师学业', '其它']}
+            options={MAP_LEVEL_OPTIONS}
             isActive={(level) => selectedLevels.includes(level)}
             onToggle={(level) =>
               setSelectedLevels((prev) =>
