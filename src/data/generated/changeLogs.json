@@ -5,14 +5,14 @@
       {
         "type": "docs",
         "scope": "地图组件",
-        "message": "修改了一些描述",
+        "message": "修改描述",
         "hashes": ["2ef77b91"],
         "author": "ConductorJerry"
       },
       {
         "type": "refactor",
         "scope": "地图组件",
-        "message": "修改了部分夹具的类型和组件",
+        "message": "修改了部分场景物的类型并优化显示",
         "hashes": ["35a27935"],
         "author": "ConductorJerry"
       }
@@ -23,8 +23,8 @@
     "changes": [
       {
         "type": "docs",
-        "scope": "modes",
-        "message": "新增了两种模式",
+        "scope": "模式",
+        "message": "新增两种模式",
         "hashes": ["7afa89c1"],
         "author": "ConductorJerry"
       }
@@ -35,7 +35,7 @@
     "changes": [
       {
         "type": "feat",
-        "scope": "register",
+        "scope": "注册",
         "message": "新增确认密码功能",
         "hashes": ["8d64f7af"],
         "author": "3swordman"
@@ -69,7 +69,7 @@
       {
         "type": "docs",
         "scope": "图片",
-        "message": "新增图片，包括衍生物技能和朝圣者泰菲衍生物相关图片",
+        "message": "新增衍生物技能和朝圣者泰菲衍生物相关图片",
         "hashes": ["2a27aa0b", "22197407", "167e93d6"],
         "author": "ConductorJerry"
       },
