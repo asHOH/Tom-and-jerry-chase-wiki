@@ -70,7 +70,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
           defaultOpenId='0'
         ></AccordionCard>
       );
-    } else if (!!effectiveBuff.source) {
+    } else if (effectiveBuff.source) {
       return (
         <ul
           className='-mt-4 w-full gap-2'
@@ -104,12 +104,12 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
             value: effectiveBuff.stack,
             detailedValue: effectiveBuff.detailedStack,
           },
-      !!effectiveBuff.source
+      effectiveBuff.source
         ? {
             key: 'source',
             title: '具体来源',
             value:
-              (!!effectiveBuff.sourceDescription
+              (effectiveBuff.sourceDescription
                 ? effectiveBuff.sourceDescription + '\n此外，'
                 : '') +
               `共收录 $${effectiveBuff.source.length}$text-indigo-700 dark:text-indigo-400# 个 $${effectiveBuff.name}$text-fuchsia-600 dark:text-fuchsia-400# 的相关来源，点击下方按钮即可跳转。`,

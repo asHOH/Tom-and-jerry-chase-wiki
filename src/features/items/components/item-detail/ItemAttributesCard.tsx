@@ -337,7 +337,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                       </span>
                     )}
                     <span className='text-sm whitespace-pre'>
-                      {!!effectiveItem.collsion ? (
+                      {effectiveItem.collsion ? (
                         <>
                           <span className='text-orange-600 dark:text-orange-400'>会</span>与
                           {effectiveItem.collsion.map((string, key, array) => {

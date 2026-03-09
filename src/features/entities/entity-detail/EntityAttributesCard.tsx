@@ -326,7 +326,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                       </span>
                     )}
                     <span className='text-sm whitespace-pre'>
-                      {!!effectiveEntity.collsion ? (
+                      {effectiveEntity.collsion ? (
                         <>
                           <span className='text-orange-600 dark:text-orange-400'>会</span>与
                           {effectiveEntity.collsion.map((string, key, array) => {

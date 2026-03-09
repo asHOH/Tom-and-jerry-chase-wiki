@@ -52,7 +52,7 @@ export default function AttributeDisplay({
   const linkHref = isLinkable ? `/ranks/${rankablePropertyKey}?faction=${factionId}` : '';
 
   const renderValue = (val: string | number, sfx: string | undefined, href?: string) =>
-    !!href ? (
+    href ? (
       <>
         {' '}
         <Link href={href} className='cursor-pointer hover:underline'>

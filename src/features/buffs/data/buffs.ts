@@ -1,7 +1,7 @@
 import { Buff, BuffDefinition } from '@/data/types';
 
 const getBuffImageUrl = (name: string, buff: BuffDefinition): string => {
-  if (!!buff.specialImageUrl) return buff.specialImageUrl;
+  if (buff.specialImageUrl) return buff.specialImageUrl;
   if (buff.unuseImage)
     return `/images/buffs/default-${buff.type.includes('负面') ? 'debuff' : 'buff'}.png`;
   return `/images/buffs/${encodeURIComponent(name)}.png`;

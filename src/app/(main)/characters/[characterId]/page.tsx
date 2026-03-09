@@ -106,7 +106,7 @@ export default async function CharacterPage({
     if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       return (
         <CharacterDetailsClient character={character}>
-          {!!docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
+          {docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
         </CharacterDetailsClient>
       );
     }
@@ -194,7 +194,7 @@ export default async function CharacterPage({
       <>
         <StructuredData data={generateStructuredData(characterId)} />
         <CharacterDetailsClient character={character}>
-          {!!docPage ? (
+          {docPage ? (
             <CharacterDocs docPage={docPage}></CharacterDocs>
           ) : (
             <Suspense fallback={null}>

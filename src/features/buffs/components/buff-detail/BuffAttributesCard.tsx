@@ -81,7 +81,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
     </div>
   ) : undefined;
 
-  const classFilter = !!buff.class
+  const classFilter = buff.class
     ? Object.values(buffsSnapshot)
         .filter((b) => b.class === buff.class)
         .map((buff) => buff.name)

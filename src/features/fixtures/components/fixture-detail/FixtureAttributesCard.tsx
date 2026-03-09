@@ -317,7 +317,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                       </span>
                     )}
                     <span className='text-sm whitespace-pre'>
-                      {!!effectiveFixture.collsion ? (
+                      {effectiveFixture.collsion ? (
                         <>
                           <span className='text-orange-600 dark:text-orange-400'>会</span>与
                           {effectiveFixture.collsion.map((string, key, array) => {

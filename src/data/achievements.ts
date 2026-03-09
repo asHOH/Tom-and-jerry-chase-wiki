@@ -1,7 +1,7 @@
 import { Achievement, AchievementDefinition } from './types';
 
 const getAchievementImageUrl = (name: string, specialImageUrl: string | undefined): string => {
-  if (!!specialImageUrl) return specialImageUrl;
+  if (specialImageUrl) return specialImageUrl;
   return `/images/achievements/${encodeURIComponent(name)}.png`;
 };
 
