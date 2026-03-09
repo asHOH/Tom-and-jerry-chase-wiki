@@ -1,13 +1,21 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import clsx from 'clsx';
 import useSWR from 'swr';
 
+import {
+  resolveEditFormState,
+  type ArticleEditInfoResponse,
+  type EditSourceKey,
+} from '@/lib/articles/editSources';
+import { formatArticleDate } from '@/lib/dateUtils';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
+import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
@@ -16,14 +24,6 @@ import Link from '@/components/Link';
 
 type Category = CategoryOption;
 
-interface ArticleInfo {
-  article: {
-    title: string;
-    category_id: string;
-    character_id: string | null;
-    article_versions: Array<{ content: string }>;
-  };
-}
 const fetcher = async (url: string) => {
   const res = await fetch(url);
   if (!res.ok) {
@@ -59,6 +59,7 @@ const EditArticleClient: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [placeholder, setPlaceholder] = useState('');
   const [isInitialized, setIsInitialized] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<EditSourceKey>('approved');
 
   const { data: categoriesData, error: categoriesError } = useSWR<{ categories: Category[] }>(
     userRole ? '/api/categories' : null,
@@ -76,24 +77,35 @@ const EditArticleClient: React.FC = () => {
 
   const showCharacterSelector = isGameStrategyCategory(category);
 
-  const { data: articleData, error: articleError } = useSWR<ArticleInfo>(
+  const { data: articleData, error: articleError } = useSWR<ArticleEditInfoResponse>(
     id && userRole ? `/api/articles/${id}/info` : null,
     fetcher
   );
 
-  useEffect(() => {
-    if (articleData && !isInitialized) {
-      const normalizedContent = normalizeHeadingLevels(
-        articleData.article.article_versions[0]?.content || ''
-      );
-      setTitle(articleData.article.title);
-      setCategory(articleData.article.category_id);
-      setCharacterId(articleData.article.character_id);
+  const applySourceToForm = useCallback(
+    (source: EditSourceKey) => {
+      if (!articleData) return;
+      const values = resolveEditFormState(articleData, source);
+      if (!values) return;
+
+      const normalizedContent = normalizeHeadingLevels(values.content || '');
+      setTitle(values.title);
+      setCategory(values.category);
+      setCharacterId(values.characterId);
       setPlaceholder(normalizedContent);
       setContent(normalizedContent);
+    },
+    [articleData]
+  );
+
+  useEffect(() => {
+    if (articleData && !isInitialized) {
+      const initialSource = articleData.policy.default_source;
+      setSelectedSource(initialSource);
+      applySourceToForm(initialSource);
       setIsInitialized(true);
     }
-  }, [articleData, isInitialized]);
+  }, [articleData, isInitialized, applySourceToForm]);
 
   useEffect(() => {
     if (!userRole && !isUserLoading && !isUserValidating) {
@@ -103,6 +115,11 @@ const EditArticleClient: React.FC = () => {
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
+  };
+
+  const handleSourceChange = (source: EditSourceKey) => {
+    setSelectedSource(source);
+    applySourceToForm(source);
   };
 
   const handleCategoryChange = (newCategory: string) => {
@@ -222,6 +239,19 @@ const EditArticleClient: React.FC = () => {
     return null;
   }
 
+  const showSourcePicker = Boolean(
+    articleData?.policy.show_source_picker &&
+    articleData.edit_sources.approved &&
+    articleData.edit_sources.pending_mine
+  );
+
+  const submitNoticeMessage = articleData?.policy.will_override_pending
+    ? '您当前已有待审核版本。本次提交将覆盖旧版本。'
+    : null;
+
+  const approvedSource = articleData?.edit_sources.approved;
+  const pendingSource = articleData?.edit_sources.pending_mine;
+
   return (
     <div className='space-y-8 dark:text-slate-200'>
       {/* Header */}
@@ -261,6 +291,62 @@ const EditArticleClient: React.FC = () => {
         </div>
       </header>
 
+      {showSourcePicker && approvedSource && pendingSource && (
+        <div className='mx-auto max-w-4xl px-4'>
+          <BaseCard className='space-y-4 border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/60 dark:bg-amber-900/10'>
+            <div>
+              <p className='text-sm font-semibold text-amber-900 dark:text-amber-200'>
+                检测到您有更新的待审核版本
+              </p>
+              <p className='mt-1 text-xs text-amber-800 dark:text-amber-300'>请选择编辑起点。</p>
+            </div>
+
+            <div className='grid gap-3 md:grid-cols-2'>
+              <button
+                type='button'
+                onClick={() => handleSourceChange('approved')}
+                className={clsx(
+                  'rounded-lg border p-3 text-left transition-colors',
+                  selectedSource === 'approved'
+                    ? 'border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30'
+                    : 'border-gray-200 bg-white hover:border-blue-400 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:border-blue-400'
+                )}
+              >
+                <div className='text-sm font-semibold text-gray-900 dark:text-gray-100'>
+                  公开版本
+                </div>
+                <div className='mt-1 text-xs text-gray-600 dark:text-gray-400'>
+                  更新时间: {formatArticleDate(approvedSource.created_at)}
+                </div>
+              </button>
+
+              <button
+                type='button'
+                onClick={() => handleSourceChange('pending_mine')}
+                className={clsx(
+                  'rounded-lg border p-3 text-left transition-colors',
+                  selectedSource === 'pending_mine'
+                    ? 'border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30'
+                    : 'border-gray-200 bg-white hover:border-blue-400 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:border-blue-400'
+                )}
+              >
+                <div className='text-sm font-semibold text-gray-900 dark:text-gray-100'>
+                  我的待审核版本
+                </div>
+                <div className='mt-1 text-xs text-gray-600 dark:text-gray-400'>
+                  提交时间: {formatArticleDate(pendingSource.created_at)}
+                </div>
+                {pendingSource.commit_message && (
+                  <div className='mt-1 line-clamp-1 text-xs text-gray-600 dark:text-gray-400'>
+                    提交说明: {pendingSource.commit_message}
+                  </div>
+                )}
+              </button>
+            </div>
+          </BaseCard>
+        </div>
+      )}
+
       {/* Main Content */}
       <ArticleForm
         title={title}
@@ -284,6 +370,7 @@ const EditArticleClient: React.FC = () => {
         commitMessage={commitMessage}
         onCommitMessageChange={setCommitMessage}
         showCommitMessage={true}
+        submitNoticeMessage={submitNoticeMessage}
       />
     </div>
   );

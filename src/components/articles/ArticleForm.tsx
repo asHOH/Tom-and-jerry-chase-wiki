@@ -43,6 +43,7 @@ interface ArticleFormProps {
   commitMessage?: string;
   onCommitMessageChange?: (value: string) => void;
   showCommitMessage?: boolean;
+  submitNoticeMessage?: string | null;
 }
 
 const ArticleForm: React.FC<ArticleFormProps> = ({
@@ -67,6 +68,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   commitMessage = '',
   onCommitMessageChange,
   showCommitMessage = false,
+  submitNoticeMessage = null,
 }) => {
   const isMobile = useMobile();
   const typoPrefix = '修正笔误';
@@ -261,6 +263,12 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 disabled={isSubmitting}
               />
             </div>
+          )}
+
+          {submitNoticeMessage && (
+            <BaseCard className='border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/60 dark:bg-amber-900/10'>
+              <p className='text-sm text-amber-900 dark:text-amber-200'>{submitNoticeMessage}</p>
+            </BaseCard>
           )}
 
           <div className='flex flex-col gap-4 border-t border-gray-200 pt-6 md:flex-row dark:border-gray-700'>
