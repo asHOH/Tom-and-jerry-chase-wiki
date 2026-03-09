@@ -31,7 +31,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const rawBuff = buffsEdit[buffName];
   const effectiveBuff = buffsSnapshot[buffName] ?? buff;
 
-  const avilableAliases = (buff.aliases ?? [])
+  const availableAliases = (effectiveBuff.aliases ?? buff.aliases ?? [])
     .filter((i) => i && i[0] !== '#')
     .map((i) => {
       return i[0] === '%' ? i.replace(/[%^$.*+?()[\]{}\\]/g, '') : i; //移除"%"和部分常用元字符
@@ -81,10 +81,10 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
     </div>
   ) : undefined;
 
-  const classFilter = buff.class
+  const classFilter = effectiveBuff.class
     ? Object.values(buffsSnapshot)
-        .filter((b) => b.class === buff.class)
-        .map((buff) => buff.name)
+        .filter((b) => b.class === effectiveBuff.class)
+        .map((entry) => entry.name)
     : [];
 
   return (
@@ -93,7 +93,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       alt={buff.name}
       title={buff.name}
       subtitle={buff.type.includes('状态') ? '(状态)' : '(效果)'}
-      aliases={isEditMode ? undefined : avilableAliases}
+      aliases={isEditMode ? undefined : availableAliases}
       aliasesContent={aliasesEditor}
       attributes={
         <>
