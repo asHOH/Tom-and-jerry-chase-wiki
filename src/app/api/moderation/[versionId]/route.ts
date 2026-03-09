@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import {
+  mapModerationActionError,
+  type ModerationAction,
+} from '@/lib/articles/moderationActionError';
 import { requireRole } from '@/lib/auth/requireRole';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 
@@ -54,19 +58,9 @@ export async function POST(
     if (actionError) {
       console.error(`Error executing ${action} action:`, actionError);
 
-      // Handle specific error cases
-      if (actionError.message.includes('Insufficient permissions')) {
-        return NextResponse.json(
-          { error: 'Insufficient permissions to perform this action' },
-          { status: 403 }
-        );
-      }
-
-      if (actionError.message.includes('not found') || actionError.message.includes('not in')) {
-        return NextResponse.json(
-          { error: `Article version not found or not in the correct status for ${action}` },
-          { status: 404 }
-        );
+      const mappedError = mapModerationActionError(action as ModerationAction, actionError.message);
+      if (mappedError) {
+        return NextResponse.json({ error: mappedError.error }, { status: mappedError.status });
       }
 
       return NextResponse.json({ error: `Failed to ${action} article version` }, { status: 500 });
