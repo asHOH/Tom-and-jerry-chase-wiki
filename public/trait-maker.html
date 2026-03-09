@@ -521,7 +521,7 @@
         border: 1px solid var(--border);
         border-radius: 12px;
         padding: 16px;
-        margin-bottom: 8px; /* 减小与下方显示框的距离 */
+        margin-bottom: 8px;
       }
 
       .special-case {
@@ -559,8 +559,8 @@
       .group-container {
         border: 1px solid var(--border);
         border-radius: 10px;
-        padding: 12px;
-        margin-bottom: 12px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
         background: rgba(0, 0, 0, 0.01);
       }
 
@@ -641,7 +641,6 @@
         flex: 0 0 auto;
       }
 
-      /* 新增样式 */
       .field-with-comment {
         display: flex;
         flex-direction: column;
@@ -658,7 +657,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-bottom: 4px; /* 从6px改为4px，缩短间距 */
+        margin-bottom: 4px;
       }
 
       .compact-item-group-badge {
@@ -674,7 +673,7 @@
       }
 
       .compact-item-controls .danger {
-        font-size: 1rem; /* 增大删除按钮的叉号 */
+        font-size: 1rem;
         font-weight: bold;
         width: 20px;
         height: 20px;
@@ -683,7 +682,6 @@
         justify-content: center;
       }
 
-      /* 响应式布局优化 */
       @media (max-width: 768px) {
         .form-row {
           flex-wrap: wrap;
@@ -739,14 +737,69 @@
         }
       }
 
-      /* 优化组容器间距 */
-      .group-container {
-        padding: 8px 10px; /* 减小内边距 */
-        margin-bottom: 8px; /* 减小底部边距 */
+      /* 预览区域样式 */
+      .preview-section {
+        margin-top: 20px;
+        padding: 16px;
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: 16px;
+        border-left: 4px solid var(--primary);
+      }
+      .preview-section .preview-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .preview-content {
+        white-space: pre-wrap;
+        font-family: inherit;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        background: rgba(0, 0, 0, 0.02);
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        color: var(--text);
       }
 
-      .compact-item-group-header {
-        margin-bottom: 2px; /* 进一步缩短组别标签与内容的间距 */
+      /* 高级内容折叠面板 */
+      .advanced-details {
+        margin-top: 12px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(0, 0, 0, 0.02);
+      }
+      .advanced-details summary {
+        padding: 14px 18px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--primary);
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .advanced-details summary::-webkit-details-marker {
+        display: none;
+      }
+      .advanced-details summary::before {
+        content: '▶';
+        display: inline-block;
+        transition: transform 0.2s;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .advanced-details[open] summary::before {
+        transform: rotate(90deg);
+      }
+      .advanced-content {
+        padding: 0 18px 18px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
       }
     </style>
   </head>
@@ -754,7 +807,7 @@
     <div class="container">
       <header>
         <h1>特性编辑器</h1>
-        <p>编写或修改特性定义。数据仅保存在本地浏览器。支持导入.txt和.ts格式文件。</p>
+        <p>编写特性数据，导出后可发送给网站管理员。数据仅保存在本地。</p>
         <div class="toolbar">
           <button id="addTrait" class="primary" type="button">新增特性</button>
           <button id="expandAll" type="button">全部展开</button>
@@ -829,9 +882,9 @@
         </div>
         <div class="card-body">
           <div class="stack">
+            <!-- 相关成员 (始终可见) -->
             <div class="optional-group">
               <h3>相关成员</h3>
-
               <div class="add-item-form">
                 <div class="form-row">
                   <div class="field">
@@ -848,7 +901,10 @@
                       <option value="item">道具</option>
                       <option value="entity">衍生物</option>
                       <option value="buff">状态</option>
-                      <option value="itemGroup">物件组</option>
+                      <option value="map">地图</option>
+                      <option value="fixture">地图组件</option>
+                      <option value="mode">模式</option>
+                      <option value="itemGroup">组合</option>
                     </select>
                   </div>
                   <div class="field">
@@ -869,57 +925,73 @@
                   </div>
                 </div>
                 <div class="field-comment">
-                  阵营用于区分同类型同名内容（例如猫/鼠方应急治疗特技），其余情况可不填写；组别用于描述成员之间的逻辑关系，同一组别内的内容会归类为同类内容，彼此为"或"关系
+                  阵营仅用于区分同类型同名内容（例如猫/鼠方应急治疗特技），通常无需填写，会自动识别；组别用于描述成员之间的逻辑关系，同一组别内彼此为"或"关系，组别间为“和”关系。
                 </div>
               </div>
-
               <div class="item-group" data-role="group-container">
                 <!-- 动态添加的物件会在这里 -->
               </div>
             </div>
+
+            <!-- 特性描述 (始终可见) -->
             <div class="field">
               <label>特性描述 *</label>
               <textarea
                 data-field="description"
-                placeholder="描述该特性的效果"
+                placeholder="填写该特性的具体内容"
                 style="min-height: 80px"
               ></textarea>
             </div>
-            <div class="two grid">
-              <div class="field">
-                <label for="name">特性名称 *</label>
-                <input
-                  data-field="name"
-                  type="text"
-                  inputmode="text"
-                  placeholder="仅作标识，可随意填写"
-                  autocomplete="off"
-                />
-              </div>
-              <div class="field">
-                <label>排除复合项目中的指定阵营元素</label>
-                <select data-field="excludeFactionId">
-                  <option value="">（无排除）</option>
-                  <option value="cat">猫阵营</option>
-                  <option value="mouse">鼠阵营</option>
-                </select>
-                <div class="field-comment">
-                  用于精准排除“物件组”或“状态”关联项中的某些内容。该项对单个物件无影响
+
+            <!-- 高级内容折叠面板 (默认折叠) -->
+            <details class="advanced-details">
+              <summary><span class="badge">高级内容</span></summary>
+              <div class="advanced-content">
+                <!-- 特性名称 -->
+                <div class="field">
+                  <label>特性名称 *</label>
+                  <input
+                    data-field="name"
+                    type="text"
+                    inputmode="text"
+                    placeholder="仅作标识，可随意填写"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <!-- 排除复合项目中的指定阵营元素 -->
+                <div class="field">
+                  <label>排除组合中的指定阵营元素</label>
+                  <select data-field="excludeFactionId">
+                    <option value="">（无排除）</option>
+                    <option value="cat">猫阵营</option>
+                    <option value="mouse">鼠阵营</option>
+                  </select>
+                  <div class="field-comment">
+                    用于精准排除“组合”中的所有从属于指定阵营的元素，对单个物件无影响
+                  </div>
+                </div>
+
+                <!-- 特殊情况区块 -->
+                <div class="optional-group" style="border-style: solid; border-width: 1px">
+                  <h3>特殊情况</h3>
+                  <div data-role="special-cases-container">
+                    <!-- 动态添加的特殊情况会在这里 -->
+                  </div>
+                  <div class="toolbar">
+                    <button type="button" class="success" data-action="add-special-case">
+                      添加特殊情况
+                    </button>
+                  </div>
+                  <div class="field-comment">“特殊情况”可以看做是附属于主特性的特性。</div>
                 </div>
               </div>
-            </div>
+            </details>
 
-            <div class="optional-group">
-              <h3>特殊情况</h3>
-
-              <div data-role="special-cases-container">
-                <!-- 动态添加的特殊情况会在这里 -->
-              </div>
-              <div class="toolbar">
-                <button type="button" class="success" data-action="add-special-case">
-                  添加特殊情况
-                </button>
-              </div>
+            <!-- 预览区块 (始终可见) -->
+            <div class="preview-section">
+              <div class="preview-title"><span class="badge">预览</span> 网站显示文本</div>
+              <div class="preview-content" data-role="preview"></div>
             </div>
           </div>
         </div>
@@ -960,7 +1032,6 @@
           <div class="stack">
             <div class="optional-group">
               <h3>相关成员</h3>
-
               <div class="add-item-form">
                 <div class="form-row">
                   <div class="field">
@@ -977,7 +1048,10 @@
                       <option value="item">道具</option>
                       <option value="entity">衍生物</option>
                       <option value="buff">状态</option>
-                      <option value="itemGroup">物件组</option>
+                      <option value="map">地图</option>
+                      <option value="fixture">地图组件</option>
+                      <option value="mode">模式</option>
+                      <option value="itemGroup">组合</option>
                     </select>
                   </div>
                   <div class="field">
@@ -1000,14 +1074,12 @@
                   </div>
                 </div>
               </div>
-
               <div class="item-group" data-role="special-group-container">
                 <!-- 动态添加的物件会在这里 -->
               </div>
             </div>
-
             <div class="field">
-              <label>特殊情况描述</label>
+              <label>特殊情况描述*</label>
               <textarea
                 data-field="description"
                 placeholder="描述该特殊情况的触发条件和效果"
@@ -1022,1225 +1094,1057 @@
     <div id="toast" class="toast"></div>
 
     <script>
-      const traits = [];
-      const traitsContainer = document.getElementById('traitsContainer');
-      const exportOutput = document.getElementById('exportOutput');
-      const exportStatus = document.getElementById('exportStatus');
-      const stats = document.getElementById('stats');
-      const toast = document.getElementById('toast');
-      const emptyState = document.getElementById('emptyState');
-      const importPasteBtn = document.getElementById('importPaste');
-      const importFileBtn = document.getElementById('importFile');
-      const importFileInput = document.getElementById('importFileInput');
-      const importDialog = document.getElementById('importDialog');
-      const importTextarea = document.getElementById('importTextarea');
-      const importConfirm = document.getElementById('importConfirm');
-      const importCancel = document.getElementById('importCancel');
-      let isBulkUpdating = false;
-      const STORAGE_KEY = 'tjwiki-trait-maker-v1';
+      (function () {
+        // ---------- 原有代码，仅修改预览函数中的连接符为 '/' ----------
+        const traits = [];
+        const traitsContainer = document.getElementById('traitsContainer');
+        const exportOutput = document.getElementById('exportOutput');
+        const exportStatus = document.getElementById('exportStatus');
+        const stats = document.getElementById('stats');
+        const toast = document.getElementById('toast');
+        const emptyState = document.getElementById('emptyState');
+        const importPasteBtn = document.getElementById('importPaste');
+        const importFileBtn = document.getElementById('importFile');
+        const importFileInput = document.getElementById('importFileInput');
+        const importDialog = document.getElementById('importDialog');
+        const importTextarea = document.getElementById('importTextarea');
+        const importConfirm = document.getElementById('importConfirm');
+        const importCancel = document.getElementById('importCancel');
+        let isBulkUpdating = false;
+        const STORAGE_KEY = 'tjwiki-trait-maker-v1';
 
-      const defaultValues = {
-        name: '',
-        description: '',
-        group: [],
-        spacialCase: [],
-        excludeFactionId: '',
-      };
-
-      // 物件类型中文名映射
-      const itemTypeNames = {
-        character: '角色',
-        skill: '技能',
-        knowledgeCard: '知识卡',
-        specialSkill: '特技',
-        item: '道具',
-        entity: '衍生物',
-        buff: '状态',
-        itemGroup: '物件组',
-      };
-
-      function generateId() {
-        if (window.crypto && crypto.randomUUID) {
-          return crypto.randomUUID();
-        }
-        return 'id-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-      }
-
-      function showToast(message) {
-        toast.textContent = message;
-        toast.classList.remove('show');
-        void toast.offsetWidth;
-        toast.classList.add('show');
-      }
-
-      function addTrait(initial = {}, locator) {
-        const trait = { id: generateId(), ...structuredClone(defaultValues), ...initial };
-        traits.push(trait);
-        renderTraitCard(trait, locator);
-        if (!isBulkUpdating) {
-          persistState();
-          updateUI();
-        }
-        return trait;
-      }
-
-      function renderTraitCard(trait, locator) {
-        const template = document.getElementById('traitTemplate');
-        const fragment = template.content.cloneNode(true);
-        const card = fragment.querySelector('.trait-card');
-        card.dataset.id = trait.id;
-
-        card.querySelector('[data-role="title"]').textContent = trait.name
-          ? trait.name
-          : '未命名特性';
-
-        // 设置基本字段
-        card.querySelectorAll('[data-field]').forEach((el) => {
-          const field = el.dataset.field;
-          const value = trait[field] ?? '';
-          el.value = value;
-        });
-
-        // 渲染主组
-        const groupContainer = card.querySelector('[data-role="group-container"]');
-        renderGroupItems(groupContainer, trait.group || [], trait.id);
-
-        // 渲染特殊情况
-        const specialCasesContainer = card.querySelector('[data-role="special-cases-container"]');
-        renderSpecialCases(specialCasesContainer, trait.spacialCase || [], trait.id);
-
-        updateToggleButtonLabel(card);
-
-        // 绑定事件
-        bindCardEvents(card, trait.id);
-
-        if (locator) {
-          traitsContainer.insertBefore(fragment, locator);
-        } else {
-          traitsContainer.appendChild(fragment);
-        }
-      }
-
-      function bindCardEvents(card, traitId) {
-        // 绑定添加物件按钮事件
-        const addItemBtn = card.querySelector('[data-action="add-item"]');
-        const addSpecialCaseBtn = card.querySelector('[data-action="add-special-case"]');
-
-        if (addItemBtn) {
-          addItemBtn.onclick = () => {
-            addItemFromForm(traitId, 'main');
-          };
-        }
-
-        if (addSpecialCaseBtn) {
-          addSpecialCaseBtn.onclick = () => {
-            addSpecialCase(traitId);
-          };
-        }
-      }
-
-      function addItemFromForm(traitId, groupType = 'main', caseIndex = null) {
-        const trait = getTraitById(traitId);
-        if (!trait) return;
-
-        let nameInput, typeSelect, factionSelect, groupIdInput;
-
-        if (groupType === 'main') {
-          nameInput = document.querySelector(
-            `.trait-card[data-id="${traitId}"] [data-role="item-name"]`
-          );
-          typeSelect = document.querySelector(
-            `.trait-card[data-id="${traitId}"] [data-role="item-type"]`
-          );
-          factionSelect = document.querySelector(
-            `.trait-card[data-id="${traitId}"] [data-role="item-faction"]`
-          );
-          groupIdInput = document.querySelector(
-            `.trait-card[data-id="${traitId}"] [data-role="item-group-id"]`
-          );
-        } else if (groupType === 'special' && caseIndex !== null) {
-          const specialCaseElement = document.querySelector(
-            `.trait-card[data-id="${traitId}"] .special-case[data-special-index="${caseIndex}"]`
-          );
-          if (!specialCaseElement) return;
-
-          nameInput = specialCaseElement.querySelector('[data-role="special-item-name"]');
-          typeSelect = specialCaseElement.querySelector('[data-role="special-item-type"]');
-          factionSelect = specialCaseElement.querySelector('[data-role="special-item-faction"]');
-          groupIdInput = specialCaseElement.querySelector('[data-role="special-item-group-id"]');
-        } else {
-          return;
-        }
-
-        if (!nameInput || !typeSelect || !groupIdInput) return;
-
-        const name = nameInput.value.trim();
-        const type = typeSelect.value;
-        const factionId = factionSelect ? factionSelect.value : '';
-        const groupId = parseInt(groupIdInput.value) || 1; // 改为从1开始
-
-        if (!name) {
-          showToast('请输入成员名称');
-          return;
-        }
-
-        const item = {
-          name,
-          type,
-          factionId: factionId || undefined,
-          groupId,
-        };
-
-        if (groupType === 'main') {
-          if (!trait.group) trait.group = [];
-          trait.group.push(item);
-        } else if (groupType === 'special' && caseIndex !== null) {
-          if (!trait.spacialCase[caseIndex]) return;
-          if (!trait.spacialCase[caseIndex].group) trait.spacialCase[caseIndex].group = [];
-          trait.spacialCase[caseIndex].group.push(item);
-        }
-
-        // 自动增加组别编号
-        groupIdInput.value = groupId + 1;
-
-        // 清空表单（保留组别编号）
-        nameInput.value = '';
-        if (factionSelect) factionSelect.value = '';
-
-        persistState();
-        updateTraitCard(traitId);
-        showToast('已添加成员');
-      }
-
-      function renderGroupItems(container, items, traitId, groupType = 'main', caseIndex = null) {
-        container.innerHTML = '';
-
-        if (!items || !items.length) {
-          const emptyMsg = document.createElement('div');
-          emptyMsg.textContent = '暂无成员';
-          emptyMsg.style.color = 'var(--muted)';
-          emptyMsg.style.fontStyle = 'italic';
-          emptyMsg.style.textAlign = 'center';
-          emptyMsg.style.padding = '20px';
-          container.appendChild(emptyMsg);
-          return;
-        }
-
-        // 按组别分组
-        const groups = {};
-        items.forEach((item, index) => {
-          const groupId = item.groupId || 1; // 改为从1开始
-          if (!groups[groupId]) {
-            groups[groupId] = [];
-          }
-          groups[groupId].push({ ...item, index });
-        });
-
-        // 按组别编号排序
-        const sortedGroupIds = Object.keys(groups)
-          .map(Number)
-          .sort((a, b) => a - b);
-
-        sortedGroupIds.forEach((groupId) => {
-          const groupItems = groups[groupId];
-
-          // 创建组容器
-          const groupContainer = document.createElement('div');
-          groupContainer.className = 'group-container';
-
-          // 创建紧凑网格容器
-          const compactGrid = document.createElement('div');
-          compactGrid.className = 'compact-grid';
-
-          // 添加组标题到网格中
-          const groupHeader = document.createElement('div');
-          groupHeader.className = 'compact-item-group-header';
-
-          const groupBadge = document.createElement('span');
-          groupBadge.className = 'compact-item-group-badge';
-          groupBadge.textContent = `组别 ${groupId}`;
-
-          groupHeader.appendChild(groupBadge);
-          compactGrid.appendChild(groupHeader);
-
-          groupItems.forEach(({ name, type, factionId, groupId, index }) => {
-            const itemTemplate = document.getElementById('compactItemTemplate');
-            const itemFragment = itemTemplate.content.cloneNode(true);
-            const itemElement = itemFragment.querySelector('.compact-item');
-            itemElement.dataset.itemIndex = index;
-
-            itemElement.querySelector('[data-role="item-name"]').textContent = name;
-            itemElement.querySelector('[data-role="item-type"]').textContent =
-              itemTypeNames[type] || type;
-
-            if (factionId) {
-              itemElement.querySelector('[data-role="item-faction"]').textContent =
-                factionId === 'cat' ? '猫' : '鼠';
-            } else {
-              itemElement.querySelector('[data-role="item-faction"]').textContent = '';
-            }
-
-            // 设置隐藏字段的值
-            itemElement.querySelector('[data-field="name"]').value = name;
-            itemElement.querySelector('[data-field="type"]').value = type;
-            itemElement.querySelector('[data-field="factionId"]').value = factionId || '';
-            itemElement.querySelector('[data-field="groupId"]').value = groupId;
-
-            const removeBtn = itemFragment.querySelector('[data-action="remove-item"]');
-            removeBtn.addEventListener('click', () => {
-              if (confirm('确认删除这个成员吗？')) {
-                removeGroupItem(traitId, index, groupType, caseIndex);
-              }
-            });
-
-            compactGrid.appendChild(itemFragment);
-          });
-
-          groupContainer.appendChild(compactGrid);
-          container.appendChild(groupContainer);
-        });
-      }
-
-      function renderSpecialCases(container, specialCases, traitId) {
-        container.innerHTML = '';
-        specialCases.forEach((specialCase, caseIndex) => {
-          const caseTemplate = document.getElementById('specialCaseTemplate');
-          const caseFragment = caseTemplate.content.cloneNode(true);
-          const caseElement = caseFragment.querySelector('.special-case');
-          caseElement.dataset.specialIndex = caseIndex;
-
-          // 设置特殊情况标题
-          const description = specialCase.description || '未描述的特殊情况';
-          caseElement.querySelector('[data-role="special-title"]').textContent =
-            description.length > 30 ? description.substring(0, 30) + '...' : description;
-
-          // 设置特殊情况描述
-          caseElement.querySelector('[data-field="description"]').value =
-            specialCase.description || '';
-
-          // 渲染特殊情况组
-          const groupContainer = caseElement.querySelector('[data-role="special-group-container"]');
-          renderGroupItems(groupContainer, specialCase.group || [], traitId, 'special', caseIndex);
-
-          // 绑定删除按钮事件
-          const removeBtn = caseFragment.querySelector('[data-action="remove-special-case"]');
-          removeBtn.addEventListener('click', () => {
-            if (confirm('确认删除这个特殊情况吗？')) {
-              removeSpecialCase(traitId, caseIndex);
-            }
-          });
-
-          // 绑定特殊情况内的添加按钮
-          const addSpecialItemBtn = caseElement.querySelector('[data-action="add-special-item"]');
-          if (addSpecialItemBtn) {
-            addSpecialItemBtn.onclick = () => {
-              addItemFromForm(traitId, 'special', caseIndex);
-            };
-          }
-
-          // 绑定特殊情况描述变化事件
-          const descriptionField = caseElement.querySelector('[data-field="description"]');
-          descriptionField.addEventListener('input', () => {
-            handleSpecialCaseFieldChange(traitId, caseIndex, 'description', descriptionField.value);
-          });
-
-          container.appendChild(caseFragment);
-        });
-      }
-
-      function handleSpecialCaseFieldChange(traitId, caseIndex, field, value) {
-        const trait = getTraitById(traitId);
-        if (!trait || !trait.spacialCase || !trait.spacialCase[caseIndex]) return;
-
-        trait.spacialCase[caseIndex][field] = value;
-
-        // 更新特殊情况标题
-        const caseElement = document.querySelector(
-          `.trait-card[data-id="${traitId}"] .special-case[data-special-index="${caseIndex}"]`
-        );
-        if (caseElement) {
-          const titleElement = caseElement.querySelector('[data-role="special-title"]');
-          const displayText =
-            value.length > 30 ? value.substring(0, 30) + '...' : value || '未描述的特殊情况';
-          titleElement.textContent = displayText;
-        }
-
-        persistState();
-      }
-
-      function removeGroupItem(traitId, index, groupType = 'main', caseIndex = null) {
-        const trait = getTraitById(traitId);
-        if (!trait) return;
-
-        let targetArray;
-        if (groupType === 'main') {
-          targetArray = trait.group;
-        } else if (groupType === 'special' && caseIndex !== null) {
-          if (!trait.spacialCase[caseIndex]) return;
-          targetArray = trait.spacialCase[caseIndex].group;
-        } else {
-          return;
-        }
-
-        targetArray.splice(index, 1);
-        persistState();
-        updateTraitCard(traitId);
-        showToast('已删除成员');
-      }
-
-      function addSpecialCase(traitId) {
-        const trait = getTraitById(traitId);
-        if (!trait) return;
-
-        if (!trait.spacialCase) {
-          trait.spacialCase = [];
-        }
-
-        const newSpecialCase = {
+        const defaultValues = {
+          name: '',
           description: '',
           group: [],
+          spacialCase: [],
+          excludeFactionId: '',
         };
 
-        trait.spacialCase.push(newSpecialCase);
-        persistState();
-        updateTraitCard(traitId);
-        showToast('已添加特殊情况');
-      }
+        const itemTypeNames = {
+          character: '角色',
+          skill: '技能',
+          knowledgeCard: '知识卡',
+          specialSkill: '特技',
+          item: '道具',
+          entity: '衍生物',
+          buff: '状态',
+          map: '地图',
+          fixture: '地图组件',
+          mode: '模式',
+          itemGroup: '组合',
+        };
 
-      function removeSpecialCase(traitId, caseIndex) {
-        const trait = getTraitById(traitId);
-        if (!trait || !trait.spacialCase) return;
-
-        trait.spacialCase.splice(caseIndex, 1);
-        persistState();
-        updateTraitCard(traitId);
-        showToast('已删除特殊情况');
-      }
-
-      function updateTraitCard(traitId) {
-        const card = traitsContainer.querySelector(`.trait-card[data-id="${traitId}"]`);
-        if (!card) return;
-
-        const trait = getTraitById(traitId);
-        if (!trait) return;
-
-        // 重新渲染组和特殊情况
-        const groupContainer = card.querySelector('[data-role="group-container"]');
-        const specialCasesContainer = card.querySelector('[data-role="special-cases-container"]');
-
-        if (groupContainer) {
-          renderGroupItems(groupContainer, trait.group || [], traitId);
+        function generateId() {
+          if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+          return 'id-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
         }
 
-        if (specialCasesContainer) {
-          renderSpecialCases(specialCasesContainer, trait.spacialCase || [], traitId);
+        function showToast(message) {
+          toast.textContent = message;
+          toast.classList.remove('show');
+          void toast.offsetWidth;
+          toast.classList.add('show');
         }
 
-        // 重新绑定事件
-        bindCardEvents(card, traitId);
-      }
+        // 自动生成特性名称：YYYYMMDD-序号（序号01~99）
+        function generateAutoName() {
+          const date = new Date();
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const dateStr = `${year}${month}${day}`;
 
-      function updateToggleButtonLabel(card) {
-        if (!card) {
-          return;
+          // 收集当前所有非空特性名称
+          const existingNames = new Set(traits.map((t) => t.name).filter(Boolean));
+
+          for (let i = 1; i <= 99; i++) {
+            const seq = String(i).padStart(2, '0');
+            const candidate = `${dateStr}-${seq}`;
+            if (!existingNames.has(candidate)) {
+              return candidate;
+            }
+          }
+          return ''; // 所有序号均被占用，返回空字符串（不自动命名）
         }
-        const toggleButton = card.querySelector('button[data-action="toggle"]');
-        if (!toggleButton) {
-          return;
+
+        function addTrait(initial = {}, locator) {
+          // 判断用户是否显式提供了 name 属性（包括空字符串）
+          const hasExplicitName = initial && initial.name !== undefined;
+
+          const trait = {
+            id: generateId(),
+            ...structuredClone(defaultValues),
+            ...initial,
+          };
+
+          // 只有未显式提供 name 时才自动生成
+          if (!hasExplicitName) {
+            const generatedName = generateAutoName();
+            if (generatedName) {
+              trait.name = generatedName;
+            }
+          }
+
+          traits.push(trait);
+          renderTraitCard(trait, locator);
+          if (!isBulkUpdating) {
+            persistState();
+            updateUI();
+          }
+          return trait;
         }
-        toggleButton.textContent = card.classList.contains('collapsed') ? '展开' : '折叠';
-      }
 
-      function getTraitById(id) {
-        return traits.find((trait) => trait.id === id);
-      }
+        // ---------- 预览核心函数 (修改连接符为 '/') ----------
+        function getPlainItemName(item) {
+          if (!item || !item.name || !item.type) return '';
+          return `${item.name}`;
+        }
 
-      function removeTrait(id) {
-        const index = traits.findIndex((trait) => trait.id === id);
-        if (index === -1) return;
-        traits.splice(index, 1);
-        const card = traitsContainer.querySelector(`.trait-card[data-id="${id}"]`);
-        card?.remove();
-        if (!isBulkUpdating) {
+        function buildGroupArray(items) {
+          if (!items || !items.length) return [];
+          const groups = new Map();
+          items.forEach((item) => {
+            const gid = item.groupId || 1;
+            if (!groups.has(gid)) groups.set(gid, []);
+            groups.get(gid).push(item);
+          });
+          const sortedGroupIds = Array.from(groups.keys()).sort((a, b) => a - b);
+          const result = [];
+          sortedGroupIds.forEach((gid) => {
+            const groupItems = groups.get(gid);
+            result.push(groupItems);
+          });
+          return result;
+        }
+
+        function formatWholeGroupPlain(groupArray, description, isMinor = false) {
+          if (!groupArray.length)
+            return description ? (isMinor ? ' └─' + description : ' • ' + description) : '';
+          const parts = [];
+          groupArray.forEach((item) => {
+            if (Array.isArray(item)) {
+              const subParts = item.map((sub) => getPlainItemName(sub));
+              parts.push(subParts.join('/')); // 子组内用 /
+            } else {
+              parts.push(getPlainItemName(item));
+            }
+          });
+          const namesString = parts.join('、');
+          const prefix = isMinor ? ' └─' : ' • ';
+          return `${prefix}${namesString}：${description}`;
+        }
+
+        function generatePlainPreview(trait) {
+          const lines = [];
+          const mainGroupArray = buildGroupArray(trait.group || []);
+          if (mainGroupArray.length > 0 && trait.description) {
+            lines.push(formatWholeGroupPlain(mainGroupArray, trait.description, false));
+          } else if (trait.description) {
+            lines.push(' • ' + trait.description);
+          }
+          if (trait.spacialCase && trait.spacialCase.length) {
+            trait.spacialCase.forEach((sc) => {
+              const scGroupArray = buildGroupArray(sc.group || []);
+              if (scGroupArray.length > 0 && sc.description) {
+                lines.push(formatWholeGroupPlain(scGroupArray, sc.description, true));
+              } else if (sc.description) {
+                lines.push(' └─' + sc.description);
+              }
+            });
+          }
+          return lines.join('\n');
+        }
+
+        function updatePreview(traitId) {
+          const card = traitsContainer.querySelector(`.trait-card[data-id="${traitId}"]`);
+          if (!card) return;
+          const previewDiv = card.querySelector('[data-role="preview"]');
+          if (!previewDiv) return;
+          const trait = getTraitById(traitId);
+          if (!trait) {
+            previewDiv.textContent = '';
+            return;
+          }
+          previewDiv.textContent = generatePlainPreview(trait) || '（无描述内容）';
+        }
+
+        // ---------- 原有渲染函数 (与之前相同，但确保每次更新后调用updatePreview) ----------
+        function renderTraitCard(trait, locator) {
+          const template = document.getElementById('traitTemplate');
+          const fragment = template.content.cloneNode(true);
+          const card = fragment.querySelector('.trait-card');
+          card.dataset.id = trait.id;
+          card.querySelector('[data-role="title"]').textContent = trait.name
+            ? trait.name
+            : '未命名特性';
+          card.querySelectorAll('[data-field]').forEach((el) => {
+            const field = el.dataset.field;
+            const value = trait[field] ?? '';
+            el.value = value;
+          });
+          const groupContainer = card.querySelector('[data-role="group-container"]');
+          renderGroupItems(groupContainer, trait.group || [], trait.id);
+          const specialCasesContainer = card.querySelector('[data-role="special-cases-container"]');
+          renderSpecialCases(specialCasesContainer, trait.spacialCase || [], trait.id);
+          updateToggleButtonLabel(card);
+          bindCardEvents(card, trait.id);
+          // 设置高级内容折叠状态
+          const details = card.querySelector('.advanced-details');
+          if (details && trait.spacialCase && trait.spacialCase.length > 0) {
+            details.open = true;
+          }
+          if (locator) traitsContainer.insertBefore(fragment, locator);
+          else traitsContainer.appendChild(fragment);
+          updatePreview(trait.id);
+        }
+
+        function bindCardEvents(card, traitId) {
+          const addItemBtn = card.querySelector('[data-action="add-item"]');
+          const addSpecialCaseBtn = card.querySelector('[data-action="add-special-case"]');
+          if (addItemBtn) addItemBtn.onclick = () => addItemFromForm(traitId, 'main');
+          if (addSpecialCaseBtn) addSpecialCaseBtn.onclick = () => addSpecialCase(traitId);
+        }
+
+        function addItemFromForm(traitId, groupType = 'main', caseIndex = null) {
+          const trait = getTraitById(traitId);
+          if (!trait) return;
+          let nameInput, typeSelect, factionSelect, groupIdInput;
+          if (groupType === 'main') {
+            nameInput = document.querySelector(
+              `.trait-card[data-id="${traitId}"] [data-role="item-name"]`
+            );
+            typeSelect = document.querySelector(
+              `.trait-card[data-id="${traitId}"] [data-role="item-type"]`
+            );
+            factionSelect = document.querySelector(
+              `.trait-card[data-id="${traitId}"] [data-role="item-faction"]`
+            );
+            groupIdInput = document.querySelector(
+              `.trait-card[data-id="${traitId}"] [data-role="item-group-id"]`
+            );
+          } else if (groupType === 'special' && caseIndex !== null) {
+            const specialCaseElement = document.querySelector(
+              `.trait-card[data-id="${traitId}"] .special-case[data-special-index="${caseIndex}"]`
+            );
+            if (!specialCaseElement) return;
+            nameInput = specialCaseElement.querySelector('[data-role="special-item-name"]');
+            typeSelect = specialCaseElement.querySelector('[data-role="special-item-type"]');
+            factionSelect = specialCaseElement.querySelector('[data-role="special-item-faction"]');
+            groupIdInput = specialCaseElement.querySelector('[data-role="special-item-group-id"]');
+          } else return;
+          if (!nameInput || !typeSelect || !groupIdInput) return;
+          const name = nameInput.value.trim();
+          const type = typeSelect.value;
+          const factionId = factionSelect ? factionSelect.value : '';
+          const groupId = parseInt(groupIdInput.value) || 1;
+          if (!name) {
+            showToast('请输入成员名称');
+            return;
+          }
+          const item = {
+            name,
+            type,
+            factionId: factionId || undefined,
+            groupId,
+          };
+          if (groupType === 'main') {
+            if (!trait.group) trait.group = [];
+            trait.group.push(item);
+          } else if (groupType === 'special' && caseIndex !== null) {
+            if (!trait.spacialCase[caseIndex]) return;
+            if (!trait.spacialCase[caseIndex].group) trait.spacialCase[caseIndex].group = [];
+            trait.spacialCase[caseIndex].group.push(item);
+          }
+          groupIdInput.value = groupId + 1;
+          nameInput.value = '';
+          if (factionSelect) factionSelect.value = '';
+          persistState();
+          updateTraitCard(traitId);
+          // 对于特殊情况，重新设置组别输入框的值并清空名称/阵营
+          if (groupType === 'special' && caseIndex !== null) {
+            const newSpecialCaseElement = document.querySelector(
+              `.trait-card[data-id="${traitId}"] .special-case[data-special-index="${caseIndex}"]`
+            );
+            if (newSpecialCaseElement) {
+              const newNameInput = newSpecialCaseElement.querySelector(
+                '[data-role="special-item-name"]'
+              );
+              const newFactionSelect = newSpecialCaseElement.querySelector(
+                '[data-role="special-item-faction"]'
+              );
+              const newGroupIdInput = newSpecialCaseElement.querySelector(
+                '[data-role="special-item-group-id"]'
+              );
+              if (newNameInput) newNameInput.value = '';
+              if (newFactionSelect) newFactionSelect.value = '';
+              if (newGroupIdInput) newGroupIdInput.value = groupId + 1;
+            }
+          }
+          updateUI();
+          showToast('已添加成员');
+        }
+
+        function renderGroupItems(container, items, traitId, groupType = 'main', caseIndex = null) {
+          container.innerHTML = '';
+          if (!items || !items.length) {
+            const emptyMsg = document.createElement('div');
+            emptyMsg.textContent = '暂无成员';
+            emptyMsg.style.color = 'var(--muted)';
+            emptyMsg.style.fontStyle = 'italic';
+            emptyMsg.style.textAlign = 'center';
+            emptyMsg.style.padding = '20px';
+            container.appendChild(emptyMsg);
+            return;
+          }
+          const groups = {};
+          items.forEach((item, index) => {
+            const groupId = item.groupId || 1;
+            if (!groups[groupId]) groups[groupId] = [];
+            groups[groupId].push({ ...item, index });
+          });
+          const sortedGroupIds = Object.keys(groups)
+            .map(Number)
+            .sort((a, b) => a - b);
+          sortedGroupIds.forEach((groupId) => {
+            const groupItems = groups[groupId];
+            const groupContainer = document.createElement('div');
+            groupContainer.className = 'group-container';
+            const compactGrid = document.createElement('div');
+            compactGrid.className = 'compact-grid';
+            const groupHeader = document.createElement('div');
+            groupHeader.className = 'compact-item-group-header';
+            const groupBadge = document.createElement('span');
+            groupBadge.className = 'compact-item-group-badge';
+            groupBadge.textContent = `组别 ${groupId}`;
+            groupHeader.appendChild(groupBadge);
+            compactGrid.appendChild(groupHeader);
+            groupItems.forEach(({ name, type, factionId, groupId, index }) => {
+              const itemTemplate = document.getElementById('compactItemTemplate');
+              const itemFragment = itemTemplate.content.cloneNode(true);
+              const itemElement = itemFragment.querySelector('.compact-item');
+              itemElement.dataset.itemIndex = index;
+              itemElement.querySelector('[data-role="item-name"]').textContent = name;
+              itemElement.querySelector('[data-role="item-type"]').textContent =
+                itemTypeNames[type] || type;
+              if (factionId) {
+                itemElement.querySelector('[data-role="item-faction"]').textContent =
+                  factionId === 'cat' ? '猫' : '鼠';
+              } else {
+                itemElement.querySelector('[data-role="item-faction"]').textContent = '';
+              }
+              itemElement.querySelector('[data-field="name"]').value = name;
+              itemElement.querySelector('[data-field="type"]').value = type;
+              itemElement.querySelector('[data-field="factionId"]').value = factionId || '';
+              itemElement.querySelector('[data-field="groupId"]').value = groupId;
+              const removeBtn = itemFragment.querySelector('[data-action="remove-item"]');
+              removeBtn.addEventListener('click', () => {
+                if (confirm('确认删除这个成员吗？'))
+                  removeGroupItem(traitId, index, groupType, caseIndex);
+              });
+              compactGrid.appendChild(itemFragment);
+            });
+            groupContainer.appendChild(compactGrid);
+            container.appendChild(groupContainer);
+          });
+        }
+
+        function renderSpecialCases(container, specialCases, traitId) {
+          container.innerHTML = '';
+          specialCases.forEach((specialCase, caseIndex) => {
+            const caseTemplate = document.getElementById('specialCaseTemplate');
+            const caseFragment = caseTemplate.content.cloneNode(true);
+            const caseElement = caseFragment.querySelector('.special-case');
+            caseElement.dataset.specialIndex = caseIndex;
+            const description = specialCase.description || '未描述的特殊情况';
+            caseElement.querySelector('[data-role="special-title"]').textContent =
+              description.length > 30 ? description.substring(0, 30) + '...' : description;
+            caseElement.querySelector('[data-field="description"]').value =
+              specialCase.description || '';
+            const groupContainer = caseElement.querySelector(
+              '[data-role="special-group-container"]'
+            );
+            renderGroupItems(
+              groupContainer,
+              specialCase.group || [],
+              traitId,
+              'special',
+              caseIndex
+            );
+            const removeBtn = caseFragment.querySelector('[data-action="remove-special-case"]');
+            removeBtn.addEventListener('click', () => {
+              if (confirm('确认删除这个特殊情况吗？')) removeSpecialCase(traitId, caseIndex);
+            });
+            const addSpecialItemBtn = caseElement.querySelector('[data-action="add-special-item"]');
+            if (addSpecialItemBtn)
+              addSpecialItemBtn.onclick = () => addItemFromForm(traitId, 'special', caseIndex);
+            const descriptionField = caseElement.querySelector('[data-field="description"]');
+            descriptionField.addEventListener('input', () =>
+              handleSpecialCaseFieldChange(
+                traitId,
+                caseIndex,
+                'description',
+                descriptionField.value
+              )
+            );
+            container.appendChild(caseFragment);
+          });
+        }
+
+        function handleSpecialCaseFieldChange(traitId, caseIndex, field, value) {
+          const trait = getTraitById(traitId);
+          if (!trait || !trait.spacialCase || !trait.spacialCase[caseIndex]) return;
+          trait.spacialCase[caseIndex][field] = value;
+          const caseElement = document.querySelector(
+            `.trait-card[data-id="${traitId}"] .special-case[data-special-index="${caseIndex}"]`
+          );
+          if (caseElement) {
+            const titleElement = caseElement.querySelector('[data-role="special-title"]');
+            titleElement.textContent =
+              value.length > 30 ? value.substring(0, 30) + '...' : value || '未描述的特殊情况';
+          }
+          persistState();
+          updatePreview(traitId);
+        }
+
+        function removeGroupItem(traitId, index, groupType = 'main', caseIndex = null) {
+          const trait = getTraitById(traitId);
+          if (!trait) return;
+          let targetArray;
+          if (groupType === 'main') targetArray = trait.group;
+          else if (groupType === 'special' && caseIndex !== null) {
+            if (!trait.spacialCase[caseIndex]) return;
+            targetArray = trait.spacialCase[caseIndex].group;
+          } else return;
+          targetArray.splice(index, 1);
+          persistState();
+          updateTraitCard(traitId);
+          updateUI();
+          showToast('已删除成员');
+        }
+
+        function addSpecialCase(traitId) {
+          const trait = getTraitById(traitId);
+          if (!trait) return;
+          if (!trait.spacialCase) trait.spacialCase = [];
+          trait.spacialCase.push({ description: '', group: [] });
+          persistState();
+          updateTraitCard(traitId);
+          updateUI();
+          showToast('已添加特殊情况');
+        }
+
+        function removeSpecialCase(traitId, caseIndex) {
+          const trait = getTraitById(traitId);
+          if (!trait || !trait.spacialCase) return;
+          trait.spacialCase.splice(caseIndex, 1);
+          persistState();
+          updateTraitCard(traitId);
+          updateUI();
+          showToast('已删除特殊情况');
+        }
+
+        function updateTraitCard(traitId) {
+          const card = traitsContainer.querySelector(`.trait-card[data-id="${traitId}"]`);
+          if (!card) return;
+          const trait = getTraitById(traitId);
+          if (!trait) return;
+          const groupContainer = card.querySelector('[data-role="group-container"]');
+          const specialCasesContainer = card.querySelector('[data-role="special-cases-container"]');
+          if (groupContainer) renderGroupItems(groupContainer, trait.group || [], traitId);
+          if (specialCasesContainer)
+            renderSpecialCases(specialCasesContainer, trait.spacialCase || [], traitId);
+          bindCardEvents(card, traitId);
+          // 动态更新高级内容折叠状态
+          const details = card.querySelector('.advanced-details');
+          if (details) {
+            details.open = !!(trait.spacialCase && trait.spacialCase.length > 0);
+          }
+          updatePreview(traitId);
+        }
+
+        function updateToggleButtonLabel(card) {
+          const toggleButton = card.querySelector('button[data-action="toggle"]');
+          if (toggleButton)
+            toggleButton.textContent = card.classList.contains('collapsed') ? '展开' : '折叠';
+        }
+
+        function getTraitById(id) {
+          return traits.find((t) => t.id === id);
+        }
+
+        function removeTrait(id) {
+          const index = traits.findIndex((t) => t.id === id);
+          if (index === -1) return;
+          traits.splice(index, 1);
+          const card = traitsContainer.querySelector(`.trait-card[data-id="${id}"]`);
+          card?.remove();
+          if (!isBulkUpdating) {
+            persistState();
+            updateUI();
+          }
+        }
+
+        function duplicateTrait(id) {
+          const source = getTraitById(id);
+          if (!source) return;
+          const clone = structuredClone(source);
+          clone.id = generateId();
+          if (clone.name) clone.name = `${clone.name} 副本`;
+          const anchor = traitsContainer.querySelector(`.trait-card[data-id="${id}"]`);
+          addTrait(clone, anchor?.nextSibling ?? null);
+          showToast('已复制特性');
+        }
+
+        function toggleCard(id) {
+          const card = traitsContainer.querySelector(`.trait-card[data-id="${id}"]`);
+          if (!card) return;
+          card.classList.toggle('collapsed');
+          updateToggleButtonLabel(card);
+        }
+
+        function collapseAll(state) {
+          traitsContainer.querySelectorAll('.trait-card').forEach((card) => {
+            card.classList.toggle('collapsed', state);
+            updateToggleButtonLabel(card);
+          });
+        }
+
+        function handleFieldChange(target) {
+          const card = target.closest('.trait-card');
+          if (!card) return;
+          const id = card.dataset.id;
+          const trait = getTraitById(id);
+          if (!trait) return;
+
+          const field = target.dataset.field;
+          const value = target.value;
+
+          // 检查是否在特殊情况内部
+          const specialCaseElement = target.closest('.special-case');
+          if (specialCaseElement) {
+            const caseIndex = parseInt(specialCaseElement.dataset.specialIndex, 10);
+            if (!isNaN(caseIndex) && trait.spacialCase && trait.spacialCase[caseIndex]) {
+              // 更新特殊情况的字段
+              trait.spacialCase[caseIndex][field] = value;
+              // 更新特殊情况标题（如果是描述字段）
+              if (field === 'description') {
+                const titleElement = specialCaseElement.querySelector(
+                  '[data-role="special-title"]'
+                );
+                if (titleElement) {
+                  titleElement.textContent =
+                    value.length > 30
+                      ? value.substring(0, 30) + '...'
+                      : value || '未描述的特殊情况';
+                }
+              }
+              persistState();
+              updatePreview(id);
+              return; // 已处理特殊情况，不再执行主特性更新
+            }
+          }
+
+          // 否则，更新主特性字段
+          trait[field] = value;
+          if (field === 'name') {
+            const title = card.querySelector('[data-role="title"]');
+            title.textContent = trait.name ? trait.name : '未命名特性';
+          }
           persistState();
           updateUI();
-        }
-      }
-
-      function duplicateTrait(id) {
-        const source = getTraitById(id);
-        if (!source) return;
-        const clone = structuredClone(source);
-        clone.id = generateId();
-        if (clone.name) {
-          clone.name = `${clone.name} 副本`;
-        }
-        const anchor = traitsContainer.querySelector(`.trait-card[data-id="${id}"]`);
-        addTrait(clone, anchor?.nextSibling ?? null);
-        showToast('已复制特性');
-      }
-
-      function toggleCard(id) {
-        const card = traitsContainer.querySelector(`.trait-card[data-id="${id}"]`);
-        if (!card) return;
-        card.classList.toggle('collapsed');
-        updateToggleButtonLabel(card);
-      }
-
-      function collapseAll(state) {
-        traitsContainer.querySelectorAll('.trait-card').forEach((card) => {
-          card.classList.toggle('collapsed', state);
-          updateToggleButtonLabel(card);
-        });
-      }
-
-      function handleFieldChange(target) {
-        const card = target.closest('.trait-card');
-        if (!card) return;
-        const id = card.dataset.id;
-        const trait = getTraitById(id);
-        if (!trait) return;
-        const field = target.dataset.field;
-
-        trait[field] = target.value;
-
-        if (field === 'name') {
-          const title = card.querySelector('[data-role="title"]');
-          title.textContent = trait.name ? trait.name : '未命名特性';
+          updatePreview(id);
         }
 
-        persistState();
-        updateUI();
-      }
-
-      function escapeString(value) {
-        return value
-          .replace(/\\/g, '\\\\')
-          .replace(/'/g, "\\'")
-          .replace(/\r\n|\r|\n/g, '\\n');
-      }
-
-      function formatString(value) {
-        return `'${escapeString(value)}'`;
-      }
-
-      function buildGroupStructure(items) {
-        if (!items || !items.length) return '[]';
-
-        // 按组别分组
-        const groups = {};
-        items.forEach((item) => {
-          const groupId = item.groupId || 1; // 改为从1开始
-          if (!groups[groupId]) {
-            groups[groupId] = [];
-          }
-          groups[groupId].push(item);
-        });
-
-        // 按组别编号排序
-        const sortedGroupIds = Object.keys(groups)
-          .map(Number)
-          .sort((a, b) => a - b);
-
-        // 构建嵌套结构
-        const result = [];
-        sortedGroupIds.forEach((groupId) => {
-          const groupItems = groups[groupId];
-          if (groupId === 1) {
-            // 组别1的物件直接平铺
-            groupItems.forEach((item) => {
-              result.push(buildSingleItem(item));
-            });
-          } else {
-            // 其他组别的物件放在子数组中
-            const subArray = groupItems.map((item) => buildSingleItem(item));
-            result.push(`[${subArray.join(',\n')}]`);
-          }
-        });
-
-        return `[\n${result.join(',\n')}\n]`;
-      }
-
-      function buildSingleItem(item) {
-        if (!item.name || !item.type) return null;
-
-        if (item.type === 'itemGroup') {
-          // 物件组
-          return `{ name: ${formatString(item.name)}, type: 'itemGroup' }`;
-        } else {
-          // 单个物件
-          const parts = [`name: ${formatString(item.name)}`, `type: '${item.type}'`];
-          if (item.factionId) {
-            parts.push(`factionId: '${item.factionId}'`);
-          }
-          return `{ ${parts.join(', ')} }`;
+        // 导出相关函数 (保持原样)
+        function escapeString(value) {
+          return value
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'")
+            .replace(/\r\n|\r|\n/g, '\\n');
         }
-      }
-
-      function buildTraitEntry(trait, options = {}) {
-        const { indent = 2, trailingComma = true } = options;
-        const name = (trait.name ?? '').trim();
-        if (!name) {
-          return null;
+        function formatString(value) {
+          return `'${escapeString(value)}'`;
         }
-        const indentStr = ' '.repeat(indent);
-        const innerIndent = ' '.repeat(indent + 2);
-        const key = /^[$A-Za-z_\p{Letter}][\w\p{Letter}]*$/u.test(name)
-          ? name
-          : `'${escapeString(name)}'`;
-        const lines = [];
-
-        // 描述
-        if (trait.description) {
-          lines.push(`${innerIndent}description: ${formatString(trait.description)},`);
-        }
-
-        // 主组
-        const groupStructure = buildGroupStructure(trait.group || []);
-        if (groupStructure !== '[]') {
-          lines.push(`${innerIndent}group: ${groupStructure},`);
-        }
-
-        // 特殊情况
-        const specialCases = (trait.spacialCase || [])
-          .map((specialCase) => {
-            const caseGroupStructure = buildGroupStructure(specialCase.group || []);
-            if (caseGroupStructure === '[]' && !specialCase.description) return null;
-
-            const caseLines = [];
-            if (specialCase.description) {
-              caseLines.push(`description: ${formatString(specialCase.description)}`);
-            }
-            if (caseGroupStructure !== '[]') {
-              caseLines.push(`group: ${caseGroupStructure}`);
-            }
-            return `{\n${caseLines.join(',\n')}\n${innerIndent}}`;
-          })
-          .filter(Boolean);
-
-        if (specialCases.length) {
-          lines.push(`${innerIndent}spacialCase: [\n${specialCases.join(',\n')}\n${innerIndent}],`);
-        }
-
-        // 排除阵营
-        if (trait.excludeFactionId) {
-          lines.push(`${innerIndent}excludeFactionId: '${trait.excludeFactionId}',`);
-        }
-
-        const body = lines.length ? `\n${lines.join('\n')}\n${indentStr}` : '';
-        const suffix = trailingComma ? ',' : '';
-        return `${indentStr}${key}: {${body}}${suffix}`;
-      }
-
-      function buildSnippet() {
-        if (!traits.length) return '';
-        return traits
-          .map((trait) => buildTraitEntry(trait, { indent: 2, trailingComma: true }))
-          .filter(Boolean)
-          .join('\n\n');
-      }
-
-      async function exportSingleTrait(trait) {
-        const snippet = buildTraitEntry(trait, { indent: 2, trailingComma: true });
-        if (!snippet) {
-          showToast('特性名称为空，无法导出');
-          return;
-        }
-        const payload = `${snippet}\n`;
-        const displayName = (trait.name ?? '').trim() || '特性';
-        let success = false;
-        try {
-          await navigator.clipboard.writeText(payload);
-          success = true;
-        } catch (_) {
-          let fallback = null;
-          try {
-            fallback = document.createElement('textarea');
-            fallback.value = payload;
-            fallback.style.position = 'fixed';
-            fallback.style.opacity = '0';
-            document.body.appendChild(fallback);
-            fallback.focus();
-            fallback.select();
-            success = document.execCommand('copy');
-          } catch (_) {
-            success = false;
-          } finally {
-            if (fallback && fallback.parentNode) {
-              fallback.parentNode.removeChild(fallback);
-            }
-          }
-        }
-        showToast(success ? `已导出 ${displayName}` : '导出失败，请重试');
-      }
-
-      // 导出单个特性为文件
-      function exportTraitToFile(trait) {
-        const snippet = buildTraitEntry(trait, { indent: 2, trailingComma: false });
-        if (!snippet) {
-          showToast('特性名称为空，无法导出');
-          return;
-        }
-
-        const blob = new Blob([snippet], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        const timestamp = new Date();
-        const pad = (n) => String(n).padStart(2, '0');
-        const displayName = (trait.name ?? '').trim() || '未命名特性';
-        const safeName = displayName.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_');
-        const filename = `特性_${safeName}_${timestamp.getFullYear()}${pad(timestamp.getMonth() + 1)}${pad(timestamp.getDate())}-${pad(timestamp.getHours())}${pad(timestamp.getMinutes())}.txt`;
-
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        showToast(`已导出 ${displayName} 为文件`);
-      }
-
-      function updateUI() {
-        const snippet = buildSnippet();
-        exportOutput.value = snippet;
-        const total = traits.length;
-        const missingName = traits.filter((trait) => !(trait.name ?? '').trim()).length;
-
-        if (!total) {
-          stats.textContent = '';
-        } else {
-          stats.textContent = `共 ${total} 个特性，其中 ${missingName} 个未命名`;
-        }
-
-        exportStatus.textContent = snippet
-          ? `已生成 ${snippet.split('\n').length} 行代码`
-          : '无可导出内容';
-        emptyState.hidden = total !== 0;
-
-        traitsContainer.querySelectorAll('.trait-card').forEach((card) => {
-          const trait = getTraitById(card.dataset.id);
-          if (!trait) return;
-          const nameMissing = !(trait.name ?? '').trim();
-          const descriptionMissing = !(trait.description ?? '').trim();
-          const groupEmpty = !trait.group || trait.group.length === 0;
-          card.classList.toggle('has-error', nameMissing || descriptionMissing || groupEmpty);
-        });
-      }
-
-      function persistState() {
-        const payload = traits.map(({ id, ...rest }) => ({ id, ...rest }));
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-        } catch (_) {
-          /* 忽略存储异常 */
-        }
-      }
-
-      function hydrateState() {
-        let restored = null;
-        try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if (raw) restored = JSON.parse(raw);
-        } catch (_) {
-          restored = null;
-        }
-        if (Array.isArray(restored) && restored.length) {
-          restored.forEach((trait) => addTrait(trait));
-        } else {
-          addTrait();
-        }
-      }
-
-      // 辅助函数：去除注释
-      function stripComments(source) {
-        let result = '';
-        let i = 0;
-        let inString = false;
-        let stringQuote = '';
-        let escaping = false;
-        while (i < source.length) {
-          const char = source[i];
-          if (inString) {
-            result += char;
-            if (escaping) {
-              escaping = false;
-            } else if (char === '\\') {
-              escaping = true;
-            } else if (char === stringQuote) {
-              inString = false;
-            }
-            i++;
-            continue;
-          }
-          if (char === "'" || char === '"' || char === '`') {
-            inString = true;
-            stringQuote = char;
-            result += char;
-            i++;
-            continue;
-          }
-          if (char === '/' && source[i + 1] === '/') {
-            i += 2;
-            while (i < source.length && source[i] !== '\n' && source[i] !== '\r') {
-              i++;
-            }
-            continue;
-          }
-          if (char === '/' && source[i + 1] === '*') {
-            i += 2;
-            while (i < source.length && !(source[i] === '*' && source[i + 1] === '/')) {
-              i++;
-            }
-            i += 2;
-            continue;
-          }
-          result += char;
-          i++;
-        }
-        return result;
-      }
-
-      // 辅助函数：提取对象字面量
-      function extractObjectLiteral(source) {
-        const eqIndex = source.indexOf('=');
-        let i = eqIndex !== -1 ? eqIndex + 1 : 0;
-        let start = -1;
-        let depth = 0;
-        let inString = false;
-        let stringQuote = '';
-        let escaping = false;
-        while (i < source.length) {
-          const char = source[i];
-          if (inString) {
-            if (escaping) {
-              escaping = false;
-            } else if (char === '\\') {
-              escaping = true;
-            } else if (char === stringQuote) {
-              inString = false;
-            }
-            i++;
-            continue;
-          }
-          if (char === "'" || char === '"' || char === '`') {
-            inString = true;
-            stringQuote = char;
-            i++;
-            continue;
-          }
-          if (char === '/' && source[i + 1] === '/') {
-            i += 2;
-            while (i < source.length && source[i] !== '\n' && source[i] !== '\r') {
-              i++;
-            }
-            continue;
-          }
-          if (char === '/' && source[i + 1] === '*') {
-            i += 2;
-            while (i < source.length && !(source[i] === '*' && source[i + 1] === '/')) {
-              i++;
-            }
-            i += 2;
-            continue;
-          }
-          if (char === '{') {
-            if (start === -1) start = i;
-            depth++;
-            i++;
-            continue;
-          }
-          if (char === '}') {
-            if (depth > 0) depth--;
-            i++;
-            if (depth === 0 && start !== -1) {
-              return source.slice(start, i);
-            }
-            continue;
-          }
-          i++;
-        }
-        return null;
-      }
-
-      // 解析特性定义
-      function parseTraitDefinitions(raw) {
-        let code = raw.trim();
-        if (!code) {
-          throw new Error('导入内容为空');
-        }
-
-        // 尝试直接解析为对象
-        try {
-          // 如果是完整的对象，直接返回
-          if (code.startsWith('{') && code.endsWith('}')) {
-            const cleaned = stripComments(code);
-            const codeToEval = '"use strict"; return (' + cleaned + ');';
-            return new Function(codeToEval)();
-          }
-
-          // 如果包含多个特性定义（如范例格式）
-          // 包裹在大括号中，使其成为有效的对象
-          if (!code.startsWith('{')) {
-            code = '{' + code + '}';
-          }
-
-          const cleaned = stripComments(code);
-          const codeToEval = '"use strict"; return (' + cleaned + ');';
-          const data = new Function(codeToEval)();
-
-          if (!data || typeof data !== 'object') {
-            throw new Error('对象解析结果无效');
-          }
-
-          return data;
-        } catch (error) {
-          console.error(error);
-          throw new Error('无法解析代码片段，请确认语法无误。');
-        }
-      }
-
-      // 判断是否为特性定义
-      function looksLikeTraitDefinition(obj) {
-        const knownKeys = ['description', 'group', 'spacialCase', 'excludeFactionId'];
-        return knownKeys.some((key) => Object.prototype.hasOwnProperty.call(obj, key));
-      }
-
-      // 转换导入数据为编辑器格式
-      function transformDefinitionToInitial(name, definition) {
-        const initial = {
-          name,
-          description: definition.description || '',
-          group: [],
-          spacialCase: [],
-          excludeFactionId: definition.excludeFactionId || '',
-        };
-
-        // 转换主组
-        if (definition.group && Array.isArray(definition.group)) {
-          definition.group.forEach((item) => {
-            if (Array.isArray(item)) {
-              // 嵌套组
-              const groupId =
-                initial.group.length > 0 ? Math.max(...initial.group.map((i) => i.groupId)) + 1 : 1;
-
-              item.forEach((subItem) => {
-                if (typeof subItem === 'object' && subItem !== null) {
-                  initial.group.push({
-                    name: subItem.name || '',
-                    type: subItem.type || 'character',
-                    factionId: subItem.factionId || '',
-                    groupId: groupId,
-                  });
-                }
-              });
-            } else if (typeof item === 'object' && item !== null) {
-              // 单个物件或物件组
-              initial.group.push({
-                name: item.name || '',
-                type: item.type || 'character',
-                factionId: item.factionId || '',
-                groupId: 1, // 改为从1开始
-              });
+        function buildGroupStructure(items) {
+          if (!items || !items.length) return '[]';
+          const groups = {};
+          items.forEach((item) => {
+            const gid = item.groupId || 1;
+            if (!groups[gid]) groups[gid] = [];
+            groups[gid].push(item);
+          });
+          const sortedGroupIds = Object.keys(groups)
+            .map(Number)
+            .sort((a, b) => a - b);
+          const result = [];
+          sortedGroupIds.forEach((gid) => {
+            const groupItems = groups[gid];
+            const itemStrings = groupItems.map((item) => buildSingleItem(item));
+            if (itemStrings.length > 1) {
+              // 多个元素时包装为数组
+              result.push(`[${itemStrings.join(',\n')}]`);
+            } else {
+              // 单个元素时直接输出对象字符串
+              result.push(itemStrings[0]);
             }
           });
+          return `[\n${result.join(',\n')}\n]`;
+        }
+        function buildSingleItem(item) {
+          if (!item.name || !item.type) return null;
+          if (item.type === 'itemGroup')
+            return `{ name: ${formatString(item.name)}, type: 'itemGroup' }`;
+          else {
+            const parts = [`name: ${formatString(item.name)}`, `type: '${item.type}'`];
+            if (item.factionId) parts.push(`factionId: '${item.factionId}'`);
+            return `{ ${parts.join(', ')} }`;
+          }
+        }
+        function buildTraitEntry(trait, options = {}) {
+          const { indent = 2, trailingComma = true } = options;
+          const name = (trait.name ?? '').trim();
+          if (!name) return null;
+          const indentStr = ' '.repeat(indent);
+          const innerIndent = ' '.repeat(indent + 2);
+          const key = /^[$A-Za-z_\p{Letter}][\w\p{Letter}]*$/u.test(name)
+            ? name
+            : `'${escapeString(name)}'`;
+          const lines = [];
+          if (trait.description)
+            lines.push(`${innerIndent}description: ${formatString(trait.description)},`);
+          const groupStructure = buildGroupStructure(trait.group || []);
+          if (groupStructure !== '[]') lines.push(`${innerIndent}group: ${groupStructure},`);
+          const specialCases = (trait.spacialCase || [])
+            .map((sc) => {
+              const caseGroupStructure = buildGroupStructure(sc.group || []);
+              if (caseGroupStructure === '[]' && !sc.description) return null;
+              const caseLines = [];
+              if (sc.description) caseLines.push(`description: ${formatString(sc.description)}`);
+              if (caseGroupStructure !== '[]') caseLines.push(`group: ${caseGroupStructure}`);
+              return `{\n${caseLines.join(',\n')}\n${innerIndent}}`;
+            })
+            .filter(Boolean);
+          if (specialCases.length)
+            lines.push(
+              `${innerIndent}spacialCase: [\n${specialCases.join(',\n')}\n${innerIndent}],`
+            );
+          if (trait.excludeFactionId)
+            lines.push(`${innerIndent}excludeFactionId: '${trait.excludeFactionId}',`);
+          const body = lines.length ? `\n${lines.join('\n')}\n${indentStr}` : '';
+          const suffix = trailingComma ? ',' : '';
+          return `${indentStr}${key}: {${body}}${suffix}`;
+        }
+        function buildSnippet() {
+          return traits
+            .map((t) => buildTraitEntry(t, { indent: 2, trailingComma: true }))
+            .filter(Boolean)
+            .join('\n\n');
+        }
+        async function exportSingleTrait(trait) {
+          const snippet = buildTraitEntry(trait, {
+            indent: 2,
+            trailingComma: true,
+          });
+          if (!snippet) {
+            showToast('特性名称为空，无法导出');
+            return;
+          }
+          const payload = `${snippet}\n`;
+          const displayName = (trait.name ?? '').trim() || '特性';
+          let success = false;
+          try {
+            await navigator.clipboard.writeText(payload);
+            success = true;
+          } catch (_) {
+            let fallback = null;
+            try {
+              fallback = document.createElement('textarea');
+              fallback.value = payload;
+              fallback.style.position = 'fixed';
+              fallback.style.opacity = '0';
+              document.body.appendChild(fallback);
+              fallback.focus();
+              fallback.select();
+              success = document.execCommand('copy');
+            } catch (_) {
+              success = false;
+            } finally {
+              if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+            }
+          }
+          showToast(success ? `已导出 ${displayName}` : '导出失败，请重试');
+        }
+        function exportTraitToFile(trait) {
+          const snippet = buildTraitEntry(trait, {
+            indent: 2,
+            trailingComma: false,
+          });
+          if (!snippet) {
+            showToast('特性名称为空，无法导出');
+            return;
+          }
+          const blob = new Blob([snippet], {
+            type: 'text/plain;charset=utf-8',
+          });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          const timestamp = new Date();
+          const pad = (n) => String(n).padStart(2, '0');
+          const displayName = (trait.name ?? '').trim() || '未命名特性';
+          const safeName = displayName.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_');
+          const filename = `特性_${safeName}_${timestamp.getFullYear()}${pad(timestamp.getMonth() + 1)}${pad(timestamp.getDate())}-${pad(timestamp.getHours())}${pad(timestamp.getMinutes())}.txt`;
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          showToast(`已导出 ${displayName} 为文件`);
+        }
+        function updateUI() {
+          const snippet = buildSnippet();
+          exportOutput.value = snippet;
+          const total = traits.length;
+          const missingName = traits.filter((t) => !(t.name ?? '').trim()).length;
+          stats.textContent = total ? `共 ${total} 个特性，其中 ${missingName} 个未命名` : '';
+          exportStatus.textContent = snippet
+            ? `已生成 ${snippet.split('\n').length} 行代码`
+            : '无可导出内容';
+          emptyState.hidden = total !== 0;
+          traitsContainer.querySelectorAll('.trait-card').forEach((card) => {
+            const trait = getTraitById(card.dataset.id);
+            if (!trait) return;
+            const nameMissing = !(trait.name ?? '').trim();
+            const descriptionMissing = !(trait.description ?? '').trim();
+            const groupEmpty = !trait.group || trait.group.length === 0;
+            card.classList.toggle('has-error', nameMissing || descriptionMissing || groupEmpty);
+          });
+        }
+        function persistState() {
+          const payload = traits.map(({ id, ...rest }) => ({ id, ...rest }));
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+          } catch (_) {}
+        }
+        function hydrateState() {
+          let restored = null;
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) restored = JSON.parse(raw);
+          } catch (_) {}
+          if (Array.isArray(restored) && restored.length) restored.forEach((t) => addTrait(t));
+          else addTrait();
         }
 
-        // 转换特殊情况
-        if (definition.spacialCase && Array.isArray(definition.spacialCase)) {
-          definition.spacialCase.forEach((specialCase) => {
-            if (typeof specialCase === 'object' && specialCase !== null) {
-              const transformedSpecialCase = {
-                description: specialCase.description || '',
-                group: [],
-              };
-
-              // 转换特殊情况中的组
-              if (specialCase.group && Array.isArray(specialCase.group)) {
-                specialCase.group.forEach((item) => {
-                  if (Array.isArray(item)) {
-                    // 嵌套组
-                    const groupId =
-                      transformedSpecialCase.group.length > 0
-                        ? Math.max(...transformedSpecialCase.group.map((i) => i.groupId)) + 1
-                        : 1;
-
-                    item.forEach((subItem) => {
-                      if (typeof subItem === 'object' && subItem !== null) {
-                        transformedSpecialCase.group.push({
-                          name: subItem.name || '',
-                          type: subItem.type || 'character',
-                          factionId: subItem.factionId || '',
-                          groupId: groupId,
-                        });
-                      }
+        // 导入相关函数 (保持原样)
+        function stripComments(source) {
+          /* 略，完整保留 */ let result = '',
+            i = 0,
+            inString = false,
+            stringQuote = '',
+            escaping = false;
+          while (i < source.length) {
+            const char = source[i];
+            if (inString) {
+              result += char;
+              if (escaping) escaping = false;
+              else if (char === '\\') escaping = true;
+              else if (char === stringQuote) inString = false;
+              i++;
+              continue;
+            }
+            if (char === "'" || char === '"' || char === '`') {
+              inString = true;
+              stringQuote = char;
+              result += char;
+              i++;
+              continue;
+            }
+            if (char === '/' && source[i + 1] === '/') {
+              i += 2;
+              while (i < source.length && source[i] !== '\n' && source[i] !== '\r') i++;
+              continue;
+            }
+            if (char === '/' && source[i + 1] === '*') {
+              i += 2;
+              while (i < source.length && !(source[i] === '*' && source[i + 1] === '/')) i++;
+              i += 2;
+              continue;
+            }
+            result += char;
+            i++;
+          }
+          return result;
+        }
+        function parseTraitDefinitions(raw) {
+          let code = raw.trim();
+          if (!code) throw new Error('导入内容为空');
+          try {
+            if (code.startsWith('{') && code.endsWith('}')) {
+              const cleaned = stripComments(code);
+              return new Function('"use strict"; return (' + cleaned + ');')();
+            }
+            if (!code.startsWith('{')) code = '{' + code + '}';
+            const cleaned = stripComments(code);
+            return new Function('"use strict"; return (' + cleaned + ');')();
+          } catch (e) {
+            console.error(e);
+            throw new Error('无法解析代码片段');
+          }
+        }
+        function looksLikeTraitDefinition(obj) {
+          const known = ['description', 'group', 'spacialCase', 'excludeFactionId'];
+          return known.some((key) => Object.prototype.hasOwnProperty.call(obj, key));
+        }
+        function transformDefinitionToInitial(name, definition) {
+          const initial = {
+            name,
+            description: definition.description || '',
+            group: [],
+            spacialCase: [],
+            excludeFactionId: definition.excludeFactionId || '',
+          };
+          if (definition.group && Array.isArray(definition.group)) {
+            definition.group.forEach((item) => {
+              if (Array.isArray(item)) {
+                const groupId =
+                  initial.group.length > 0
+                    ? Math.max(...initial.group.map((i) => i.groupId)) + 1
+                    : 1;
+                item.forEach((subItem) => {
+                  if (subItem && typeof subItem === 'object')
+                    initial.group.push({
+                      name: subItem.name || '',
+                      type: subItem.type || 'character',
+                      factionId: subItem.factionId || '',
+                      groupId,
                     });
-                  } else if (typeof item === 'object' && item !== null) {
-                    // 单个物件或物件组
-                    transformedSpecialCase.group.push({
-                      name: item.name || '',
-                      type: item.type || 'character',
-                      factionId: item.factionId || '',
-                      groupId: 1, // 改为从1开始
-                    });
-                  }
+                });
+              } else if (item && typeof item === 'object') {
+                initial.group.push({
+                  name: item.name || '',
+                  type: item.type || 'character',
+                  factionId: item.factionId || '',
+                  groupId: 1,
                 });
               }
-
-              initial.spacialCase.push(transformedSpecialCase);
-            }
-          });
+            });
+          }
+          if (definition.spacialCase && Array.isArray(definition.spacialCase)) {
+            definition.spacialCase.forEach((specialCase) => {
+              if (specialCase && typeof specialCase === 'object') {
+                const transformed = {
+                  description: specialCase.description || '',
+                  group: [],
+                };
+                if (specialCase.group && Array.isArray(specialCase.group)) {
+                  specialCase.group.forEach((item) => {
+                    if (Array.isArray(item)) {
+                      const groupId =
+                        transformed.group.length > 0
+                          ? Math.max(...transformed.group.map((i) => i.groupId)) + 1
+                          : 1;
+                      item.forEach((subItem) => {
+                        if (subItem && typeof subItem === 'object')
+                          transformed.group.push({
+                            name: subItem.name || '',
+                            type: subItem.type || 'character',
+                            factionId: subItem.factionId || '',
+                            groupId,
+                          });
+                      });
+                    } else if (item && typeof item === 'object') {
+                      transformed.group.push({
+                        name: item.name || '',
+                        type: item.type || 'character',
+                        factionId: item.factionId || '',
+                        groupId: 1,
+                      });
+                    }
+                  });
+                }
+                initial.spacialCase.push(transformed);
+              }
+            });
+          }
+          return initial;
         }
-
-        return initial;
-      }
-
-      // 导入特性函数
-      function importTraitsFromText(raw) {
-        let parsed;
-        try {
-          parsed = parseTraitDefinitions(raw);
-        } catch (error) {
-          console.error(error);
-          showToast((error && error.message) || '导入失败');
-          return;
-        }
-
-        // 检查是否需要确认覆盖
-        const hasExistingTraits = traits.length > 0;
-        if (hasExistingTraits && !confirm('导入将覆盖当前所有特性，是否继续？')) {
-          return;
-        }
-
-        const entries = Object.entries(parsed);
-        if (!entries.length) {
-          showToast('未找到任何特性定义');
-          return;
-        }
-
-        let count = 0;
-        isBulkUpdating = true;
-
-        // 清空现有特性
-        traits.length = 0;
-        traitsContainer.innerHTML = '';
-
-        try {
-          entries.forEach(([traitName, definition]) => {
-            if (!definition || typeof definition !== 'object') {
-              return;
-            }
-
-            // 检查是否为特性定义
-            if (!looksLikeTraitDefinition(definition)) {
-              return;
-            }
-
-            const normalizedName = String(traitName);
-            const initial = transformDefinitionToInitial(normalizedName, definition);
-            addTrait(initial);
-            count++;
-          });
-        } finally {
-          isBulkUpdating = false;
-        }
-
-        if (!count) {
+        function importTraitsFromText(raw) {
+          let parsed;
+          try {
+            parsed = parseTraitDefinitions(raw);
+          } catch (error) {
+            showToast((error && error.message) || '导入失败');
+            return;
+          }
+          if (traits.length > 0 && !confirm('导入将覆盖当前所有特性，是否继续？')) return;
+          const entries = Object.entries(parsed);
+          if (!entries.length) {
+            showToast('未找到任何特性定义');
+            return;
+          }
+          let count = 0;
+          isBulkUpdating = true;
+          traits.length = 0;
+          traitsContainer.innerHTML = '';
+          try {
+            entries.forEach(([traitName, definition]) => {
+              if (!definition || typeof definition !== 'object') return;
+              if (!looksLikeTraitDefinition(definition)) return;
+              const normalizedName = String(traitName);
+              const initial = transformDefinitionToInitial(normalizedName, definition);
+              addTrait(initial);
+              count++;
+            });
+          } finally {
+            isBulkUpdating = false;
+          }
+          if (!count) {
+            updateUI();
+            showToast('未找到可导入的特性定义');
+            return;
+          }
+          persistState();
           updateUI();
-          showToast('未找到可导入的特性定义');
-          return;
+          if (importTextarea) importTextarea.value = '';
+          showToast(`已导入 ${count} 个特性`);
         }
 
-        persistState();
+        // 事件绑定
+        traitsContainer.addEventListener('input', (e) => {
+          const t = e.target;
+          if (t.matches('[data-field]')) handleFieldChange(t);
+        });
+        traitsContainer.addEventListener('change', (e) => {
+          const t = e.target;
+          if (t.matches('[data-field]')) handleFieldChange(t);
+        });
+        traitsContainer.addEventListener('click', (e) => {
+          const btn = e.target.closest('button[data-action]');
+          if (!btn) return;
+          const card = btn.closest('.trait-card');
+          if (!card) return;
+          const id = card.dataset.id;
+          const action = btn.dataset.action;
+          if (action === 'delete') {
+            if (confirm('确认删除该特性吗？')) {
+              removeTrait(id);
+              showToast('已删除特性');
+            }
+          } else if (action === 'toggle') toggleCard(id);
+          else if (action === 'duplicate') duplicateTrait(id);
+          else if (action === 'export') {
+            const trait = getTraitById(id);
+            if (trait) exportSingleTrait(trait);
+          } else if (action === 'export-file') {
+            const trait = getTraitById(id);
+            if (trait) exportTraitToFile(trait);
+          }
+        });
+
+        document.getElementById('addTrait').addEventListener('click', () => {
+          addTrait();
+          showToast('已新增特性');
+        });
+        document.getElementById('emptyAdd').addEventListener('click', () => {
+          addTrait();
+          showToast('已新增特性');
+        });
+        document.getElementById('expandAll').addEventListener('click', () => collapseAll(false));
+        document.getElementById('collapseAll').addEventListener('click', () => collapseAll(true));
+        document.getElementById('resetAll').addEventListener('click', () => {
+          if (!traits.length) return;
+          if (!confirm('确认清空所有特性吗？此操作无法撤销。')) return;
+          traits.length = 0;
+          traitsContainer.innerHTML = '';
+          persistState();
+          updateUI();
+          showToast('已清空');
+        });
+        document.getElementById('copyBtn').addEventListener('click', async () => {
+          const s = exportOutput.value.trim();
+          if (!s) {
+            showToast('没有可复制的内容');
+            return;
+          }
+          try {
+            await navigator.clipboard.writeText(s);
+            showToast('已复制到剪贴板');
+          } catch (_) {
+            exportOutput.select();
+            document.execCommand('copy');
+            showToast('已复制（回退模式）');
+          }
+        });
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+          const s = exportOutput.value.trim();
+          if (!s) {
+            showToast('没有可导出的内容');
+            return;
+          }
+          const blob = new Blob([s], { type: 'text/plain;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          const d = new Date();
+          const pad = (n) => String(n).padStart(2, '0');
+          link.href = url;
+          link.download = `tjwiki-traits-${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.txt`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          showToast('已下载 TXT 文件');
+        });
+        function openPasteDialog() {
+          if (importDialog && typeof importDialog.showModal === 'function') {
+            if (importTextarea) importTextarea.value = '';
+            importDialog.showModal();
+            requestAnimationFrame(() => importTextarea?.focus());
+          } else {
+            const raw = window.prompt('请粘贴特性定义代码：');
+            if (raw) importTraitsFromText(raw);
+          }
+        }
+        importPasteBtn?.addEventListener('click', openPasteDialog);
+        importConfirm?.addEventListener('click', () => {
+          const raw = importTextarea?.value ?? '';
+          if (!raw.trim()) {
+            showToast('导入内容为空');
+            return;
+          }
+          if (importDialog?.open) importDialog.close();
+          importTraitsFromText(raw);
+        });
+        importCancel?.addEventListener('click', () => {
+          if (importDialog?.open) importDialog.close();
+        });
+        importDialog?.addEventListener('close', () => {
+          if (importTextarea) importTextarea.value = '';
+        });
+        importFileBtn?.addEventListener('click', () => importFileInput?.click());
+        importFileInput?.addEventListener('change', async (e) => {
+          const input = e.target;
+          if (!(input instanceof HTMLInputElement)) return;
+          const file = input.files && input.files[0];
+          if (!file) return;
+          if (traits.length > 0 && !confirm('导入将覆盖当前所有特性，是否继续？')) {
+            input.value = '';
+            return;
+          }
+          try {
+            const text = await file.text();
+            importTraitsFromText(text);
+          } catch (_) {
+            showToast('读取文件失败');
+          } finally {
+            input.value = '';
+          }
+        });
+
+        hydrateState();
         updateUI();
-        if (importTextarea) {
-          importTextarea.value = '';
-        }
-        showToast(`已导入 ${count} 个特性`);
-      }
-
-      // 事件监听
-      traitsContainer.addEventListener('input', (event) => {
-        const target = event.target;
-        if (target.matches('[data-field]')) {
-          handleFieldChange(target);
-        }
-      });
-
-      traitsContainer.addEventListener('change', (event) => {
-        const target = event.target;
-        if (target.matches('[data-field]')) {
-          handleFieldChange(target);
-        }
-      });
-
-      traitsContainer.addEventListener('click', (event) => {
-        const button = event.target.closest('button[data-action]');
-        if (!button) return;
-        const card = button.closest('.trait-card');
-        if (!card) return;
-        const id = card.dataset.id;
-        const action = button.dataset.action;
-        if (action === 'delete') {
-          if (confirm('确认删除该特性吗？')) {
-            removeTrait(id);
-            showToast('已删除特性');
-          }
-        } else if (action === 'toggle') {
-          toggleCard(id);
-        } else if (action === 'duplicate') {
-          duplicateTrait(id);
-        } else if (action === 'export') {
-          const trait = getTraitById(id);
-          if (!trait) return;
-          void exportSingleTrait(trait);
-        } else if (action === 'export-file') {
-          const trait = getTraitById(id);
-          if (!trait) return;
-          exportTraitToFile(trait);
-        }
-      });
-
-      document.getElementById('addTrait').addEventListener('click', () => {
-        addTrait();
-        showToast('已新增特性');
-      });
-
-      document.getElementById('emptyAdd').addEventListener('click', () => {
-        addTrait();
-        showToast('已新增特性');
-      });
-
-      document.getElementById('expandAll').addEventListener('click', () => {
-        collapseAll(false);
-      });
-
-      document.getElementById('collapseAll').addEventListener('click', () => {
-        collapseAll(true);
-      });
-
-      document.getElementById('resetAll').addEventListener('click', () => {
-        if (!traits.length) return;
-        if (!confirm('确认清空所有特性吗？此操作无法撤销。')) return;
-        traits.length = 0;
-        traitsContainer.innerHTML = '';
-        persistState();
-        updateUI();
-        showToast('已清空');
-      });
-
-      document.getElementById('copyBtn').addEventListener('click', async () => {
-        const snippet = exportOutput.value.trim();
-        if (!snippet) {
-          showToast('没有可复制的内容');
-          return;
-        }
-        try {
-          await navigator.clipboard.writeText(snippet);
-          showToast('已复制到剪贴板');
-        } catch (_) {
-          exportOutput.select();
-          document.execCommand('copy');
-          showToast('已复制（回退模式）');
-        }
-      });
-
-      document.getElementById('downloadBtn').addEventListener('click', () => {
-        const snippet = exportOutput.value.trim();
-        if (!snippet) {
-          showToast('没有可导出的内容');
-          return;
-        }
-        const blob = new Blob([snippet], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        const timestamp = new Date();
-        const pad = (n) => String(n).padStart(2, '0');
-        const filename = `tjwiki-traits-${timestamp.getFullYear()}${pad(timestamp.getMonth() + 1)}${pad(timestamp.getDate())}-${pad(timestamp.getHours())}${pad(timestamp.getMinutes())}.txt`;
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        showToast('已下载 TXT 文件');
-      });
-
-      function openPasteDialog() {
-        if (importDialog && typeof importDialog.showModal === 'function') {
-          if (importTextarea) {
-            importTextarea.value = '';
-          }
-          importDialog.showModal();
-          requestAnimationFrame(() => importTextarea?.focus());
-        } else {
-          const raw = window.prompt('请粘贴特性定义代码：');
-          if (raw) {
-            importTraitsFromText(raw);
-          }
-        }
-      }
-
-      importPasteBtn?.addEventListener('click', () => {
-        openPasteDialog();
-      });
-
-      importConfirm?.addEventListener('click', () => {
-        const raw = importTextarea?.value ?? '';
-        if (!raw.trim()) {
-          showToast('导入内容为空');
-          return;
-        }
-        if (importDialog?.open) {
-          importDialog.close();
-        }
-        importTraitsFromText(raw);
-      });
-
-      importCancel?.addEventListener('click', () => {
-        if (importDialog?.open) {
-          importDialog.close();
-        }
-      });
-
-      importDialog?.addEventListener('close', () => {
-        if (importTextarea) {
-          importTextarea.value = '';
-        }
-      });
-
-      importFileBtn?.addEventListener('click', () => {
-        importFileInput?.click();
-      });
-
-      importFileInput?.addEventListener('change', async (event) => {
-        const input = event.target;
-        if (!(input instanceof HTMLInputElement)) {
-          return;
-        }
-        const file = input.files && input.files[0];
-        if (!file) {
-          return;
-        }
-
-        // 检查是否需要确认覆盖
-        const hasExistingTraits = traits.length > 0;
-        if (hasExistingTraits && !confirm('导入将覆盖当前所有特性，是否继续？')) {
-          input.value = '';
-          return;
-        }
-
-        try {
-          const text = await file.text();
-          importTraitsFromText(text);
-        } catch (_) {
-          showToast('读取文件失败');
-        } finally {
-          input.value = '';
-        }
-      });
-
-      hydrateState();
-      updateUI();
+      })();
     </script>
   </body>
 </html>
