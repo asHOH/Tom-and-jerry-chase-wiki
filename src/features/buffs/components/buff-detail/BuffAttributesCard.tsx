@@ -83,7 +83,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
 
   const classFilter = effectiveBuff.class
     ? Object.values(buffsSnapshot)
-        .filter((b) => b.class === effectiveBuff.class)
+        .filter((b) => b.class === effectiveBuff.class && b.name !== effectiveBuff.name)
         .map((entry) => entry.name)
     : [];
 
@@ -138,13 +138,13 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
           {(isEditMode ||
             effectiveBuff.target !== undefined ||
             effectiveBuff.duration !== undefined ||
-            effectiveBuff.failure !== undefined) && (
+            effectiveBuff.failure !== undefined ||
+            effectiveBuff.class !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
-              <span className='text-lg font-bold whitespace-pre'>基础信息</span>
-              <div className='auto-fill-grid grid-container grid grid-cols-[repeat(1,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'>
+              <div className='flex flex-wrap items-center gap-1.5 text-sm font-normal'>
                 {(isEditMode || !!effectiveBuff.target) && (
-                  <span className='text-sm'>
-                    作用对象：
+                  <span className='inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs dark:bg-slate-700'>
+                    对象:
                     <span className='text-fuchsia-600 dark:text-fuchsia-400'>
                       <ed.span
                         path='target'
@@ -155,8 +155,8 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                   </span>
                 )}
                 {(isEditMode || effectiveBuff.duration !== undefined) && (
-                  <span className='text-sm whitespace-pre'>
-                    持续时间：
+                  <span className='inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs dark:bg-slate-700'>
+                    持续:
                     <span className='text-indigo-700 dark:text-indigo-400'>
                       <ed.span
                         path='duration'
@@ -165,12 +165,12 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                         isSingleLine
                       />
                     </span>
-                    {typeof effectiveBuff.duration === 'number' ? ' 秒' : ''}
+                    {typeof effectiveBuff.duration === 'number' ? '秒' : ''}
                   </span>
                 )}
                 {(isEditMode || effectiveBuff.failure !== undefined) && (
-                  <span className='text-sm'>
-                    中止条件：
+                  <span className='inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs dark:bg-slate-700'>
+                    中止:
                     <span className='text-orange-600 dark:text-orange-400'>
                       <ed.span
                         path='failure'
@@ -181,8 +181,8 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                   </span>
                 )}
                 {(isEditMode || !!effectiveBuff.class) && (
-                  <span className='text-sm'>
-                    所属分类：
+                  <span className='inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs dark:bg-slate-700'>
+                    分类:
                     <span className='text-fuchsia-600 dark:text-fuchsia-400'>
                       <ed.span
                         path='class'
@@ -197,7 +197,10 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
           )}
           {classFilter.length > 0 && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
-              <span className='text-lg font-bold whitespace-pre'>[{buff.class}]类状态/效果</span>
+              <span className='text-lg font-bold whitespace-pre'>
+                其他{effectiveBuff.class}
+                {effectiveBuff.type.includes('状态') ? '状态' : '效果'}
+              </span>
               <div className='mt-1'>
                 <SingleItemAccordionCard
                   items={classFilter.map((str) => {

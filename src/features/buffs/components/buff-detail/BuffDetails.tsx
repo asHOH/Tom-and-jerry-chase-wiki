@@ -96,11 +96,9 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
       key: 'source',
       render: () => (
         <DetailTextSection
-          title='具体来源'
-          value={
-            (effectiveBuff.sourceDescription ? effectiveBuff.sourceDescription + '\n此外，' : '') +
-            `共收录 $${sourceItems.length}$text-indigo-700 dark:text-indigo-400# 个 $${effectiveBuff.name}$text-fuchsia-600 dark:text-fuchsia-400# 的相关来源，点击下方按钮即可跳转。`
-          }
+          title={`具体来源（${sourceItems.length}个）`}
+          value={effectiveBuff.sourceDescription ?? ''}
+          fallbackText=''
           detailedValue={null}
           isDetailedView={isDetailedView}
         >
