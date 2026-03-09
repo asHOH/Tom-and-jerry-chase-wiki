@@ -99,7 +99,7 @@ export default function EntityClient({ description }: Props) {
                 'mouse',
                 isDarkMode
               );
-              return active ? { ...tagColors } : undefined;
+              return active ? tagColors : undefined;
             }}
             renderOption={(tag, button) => (
               <Tooltip

@@ -240,7 +240,7 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
                 faction.id as FactionId,
                 isDarkMode
               );
-              return isActive ? { ...tagColors } : undefined;
+              return isActive ? tagColors : undefined;
             }}
           />
 

@@ -70,10 +70,8 @@ export default function GameImage({
     <div
       className='relative mb-3 w-full overflow-hidden bg-gray-200 dark:bg-slate-700'
       style={{
-        ...{
-          height: containerHeight,
-          borderRadius: componentTokens.image.container.borderRadius,
-        },
+        height: containerHeight,
+        borderRadius: componentTokens.image.container.borderRadius,
         ...style,
       }}
     >

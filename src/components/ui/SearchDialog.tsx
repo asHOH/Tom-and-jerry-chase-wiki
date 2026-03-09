@@ -287,7 +287,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           // Only update if this is still the latest search query
           if (searchIdRef.current === currentId) {
             newResults = [...newResults, result];
-            setSearchResults([...newResults]); // Store all results (already sorted by searchUtils)
+            setSearchResults(newResults); // Store all results (already sorted by searchUtils)
             // Initialize highlighted index to first result if not set (accounting for chat result)
             if (newResults.length === 1) {
               setHighlightedIndex(searchQuery.length > 1 ? 1 : 0);

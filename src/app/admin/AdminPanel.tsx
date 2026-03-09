@@ -723,11 +723,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                           <button
                             type='button'
                             disabled={!!moderatingId}
-                            onClick={() =>
-                              void copyText(
-                                JSON.stringify({ ...submission, entry: submission.entry }, null, 2)
-                              )
-                            }
+                            onClick={() => void copyText(JSON.stringify(submission, null, 2))}
                             className={`rounded px-3 py-1 text-sm text-white ${
                               moderatingId
                                 ? 'bg-gray-400 opacity-60'
