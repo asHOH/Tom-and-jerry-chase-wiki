@@ -142,8 +142,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>基础信息</span>
               <div
-                className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-                style={{ gridTemplateColumns: `repeat(1, minmax(80px, 1fr))` }}
+                className='auto-fill-grid grid-container grid grid-cols-[repeat(1,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'
               >
                 {(isEditMode || !!effectiveBuff.target) && (
                   <span className='text-sm'>

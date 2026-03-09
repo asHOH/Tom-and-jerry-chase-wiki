@@ -146,8 +146,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
           <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
             <span className='text-lg font-bold whitespace-pre'>地图信息</span>
             <div
-              className='auto-fill-grid grid-container mt-1 grid items-center justify-center gap-1 text-sm font-normal'
-              style={{ gridTemplateColumns: `repeat(2, minmax(80px, 1fr))` }}
+              className='auto-fill-grid grid-container mt-1 grid grid-cols-[repeat(2,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'
             >
               {(isEditMode || map.roomCount !== undefined) && (
                 <span className='text-sm whitespace-pre'>
@@ -211,8 +210,7 @@ export default function MapAttributesCard({ map }: { map: Map }) {
               )}
             </div>
             <div
-              className='auto-fill-grid grid-container mt-1 grid items-center justify-center gap-1 text-sm font-normal'
-              style={{ gridTemplateColumns: `repeat(1, minmax(80px, 1fr))` }}
+              className='auto-fill-grid grid-container mt-1 grid grid-cols-[repeat(1,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'
             >
               {(isEditMode || (map.hiddenRoomCount !== undefined && map.hiddenRoomCount > 0)) && (
                 <span className='text-sm whitespace-pre'>

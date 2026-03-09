@@ -166,8 +166,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                 )}
               </span>
               <div
-                className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-                style={{ gridTemplateColumns: `repeat(2, minmax(80px, 1fr))` }}
+                className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'
               >
                 {[
                   effectiveFixture.fixtureAttributesAsCharacter.maxHp === undefined
@@ -228,11 +227,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>移动信息</span>
               <div
-                className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-                style={{
-                  gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
-                  gridTemplateRows: 'repeat(2,1fr)',
-                }}
+                className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'
               >
                 {isEditMode ? (
                   <>

@@ -113,8 +113,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             </Tag>
           </div>
           <div
-            className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-            style={{ gridTemplateColumns: `repeat(2, minmax(40px, 1fr))` }}
+            className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(40px,1fr))] items-center justify-center gap-1 text-sm font-normal'
           >
             {(isEditMode || effectiveItem?.damage !== undefined) && (
               <span className='text-sm whitespace-pre'>
@@ -189,8 +188,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                 )}
               </span>
               <div
-                className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-                style={{ gridTemplateColumns: `repeat(2, minmax(80px, 1fr))` }}
+                className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'
               >
                 {[
                   effectiveItem.itemAttributesAsCharacter.maxHp === undefined
@@ -249,11 +247,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>移动信息</span>
               <div
-                className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-                style={{
-                  gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
-                  gridTemplateRows: 'repeat(2,1fr)',
-                }}
+                className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'
               >
                 {isEditMode ? (
                   <>
@@ -410,11 +404,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
 
               {(isEditMode ? (effectiveItem.store ?? false) : effectiveItem.store === true) && (
                 <div
-                  className='auto-fill-grid grid-container grid items-center justify-center gap-1 text-sm font-normal'
-                  style={{
-                    gridTemplateColumns: `repeat(2, minmax(80px, 1fr))`,
-                    gridTemplateRows: 'repeat(2,1fr)',
-                  }}
+                  className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'
                 >
                   <span className='text-sm whitespace-pre'>
                     售价：
