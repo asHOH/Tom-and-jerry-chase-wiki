@@ -36,7 +36,7 @@ const resolveCharacterExpression = (
   if (!character) return undefined;
   const trimmed = expr.trim().replace(/^:/, '');
   // Only allow dotted/bracket paths with alphanumerics/underscore; no operators or calls
-  if (!/^[\w.$\[\]]+$/.test(trimmed)) return undefined;
+  if (!/^[\w.$[\]]+$/.test(trimmed)) return undefined;
 
   const tokens: Array<string | number> = [];
   const pathPattern = /([^.[\]]+)|(\[(\d+)\])/g;

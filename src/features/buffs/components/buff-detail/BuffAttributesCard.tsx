@@ -34,7 +34,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const avilableAliases = (buff.aliases ?? [])
     .filter((i) => i && i[0] !== '#')
     .map((i) => {
-      return i[0] === '%' ? i.replace(/[%\^\$\.\*\+\?\[\]\(\)\{\}\\]/g, '') : i; //移除"%"和部分常用元字符
+      return i[0] === '%' ? i.replace(/[%^$.*+?()[\]{}\\]/g, '') : i; //移除"%"和部分常用元字符
     });
 
   const aliasesEditor = isEditMode ? (
@@ -141,9 +141,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
             effectiveBuff.failure !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>基础信息</span>
-              <div
-                className='auto-fill-grid grid-container grid grid-cols-[repeat(1,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'
-              >
+              <div className='auto-fill-grid grid-container grid grid-cols-[repeat(1,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'>
                 {(isEditMode || !!effectiveBuff.target) && (
                   <span className='text-sm'>
                     作用对象：

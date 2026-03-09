@@ -27,7 +27,7 @@ export async function checkPasswordStrength(password: string): Promise<PasswordS
   const hasLowerCase = /[a-z]/.test(password);
   const hasUpperCase = /[A-Z]/.test(password);
   const hasNumbers = /\d/.test(password);
-  const hasSpecialChars = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+  const hasSpecialChars = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
 
   const varietyScore = [hasLowerCase, hasUpperCase, hasNumbers, hasSpecialChars].filter(
     Boolean

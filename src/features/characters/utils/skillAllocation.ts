@@ -36,9 +36,9 @@ export const validateSkillAllocationPattern = (pattern: string): ValidationResul
   }
 
   // Check for invalid characters
-  const validChars = /^[0-3\[\]\(\)\-]*$/;
+  const validChars = /^[0-3[\]()-]*$/;
   if (!validChars.test(pattern)) {
-    const invalidChars = pattern.match(/[^0-3\[\]\(\)\-]/g);
+    const invalidChars = pattern.match(/[^0-3[\]()-]/g);
     errors.push({
       message: `包含无效字符: ${invalidChars?.join(', ')}`,
       severity: 'error',
@@ -109,7 +109,7 @@ export const validateSkillAllocationPattern = (pattern: string): ValidationResul
   }
 
   // Check parentheses content
-  const parenMatches = pattern.match(/\(([^\)]+)\)/g);
+  const parenMatches = pattern.match(/\(([^)]+)\)/g);
   if (parenMatches) {
     parenMatches.forEach((match, index) => {
       const content = match.slice(1, -1); // Remove parentheses

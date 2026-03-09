@@ -81,7 +81,7 @@ export async function getGotoResult(
   };
   const compactName = (input: string): string =>
     normalizeName(input)
-      .replace(/[\s\-_:：·•—–/\\、,，.。()（）\[\]{}【】「」'"“”]+/g, '')
+      .replace(/[\s\-_:：·•—–/\\、,，.。()（）[\]{}【】「」'"“”]+/g, '')
       .trim();
 
   const parseOneTwo = (s: string): 1 | 2 | null => {
