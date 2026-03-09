@@ -20,7 +20,7 @@ const MapSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
   const mapsSnapshot = useSnapshot(mapsEdit);
 
   const availableMaps = Object.values(mapsSnapshot).filter(
-    ({ name }) => !selected.some((selection) => selection.id == name)
+    ({ name }) => !selected.some((selection) => selection.id === name)
   );
 
   const handleSelect = (mapName: string) => {

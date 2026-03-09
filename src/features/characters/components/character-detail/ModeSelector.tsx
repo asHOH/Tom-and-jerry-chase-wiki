@@ -20,7 +20,7 @@ const ModeSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
   const modesSnapshot = useSnapshot(modesEdit);
 
   const availableModes = Object.values(modesSnapshot).filter(
-    ({ name }) => !selected.some((selection) => selection.id == name)
+    ({ name }) => !selected.some((selection) => selection.id === name)
   );
 
   const handleSelect = (modeName: string) => {
