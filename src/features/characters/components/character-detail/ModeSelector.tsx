@@ -46,7 +46,7 @@ const ModeSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
 
       {isOpen && (
         <div className='absolute top-full right-0 z-50 mt-1 max-h-48 w-48 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800'>
-          {availableModes.map(({ name: name, imageUrl }) => (
+          {availableModes.map(({ name, imageUrl }) => (
             <button
               key={name}
               type='button'
