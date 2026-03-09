@@ -12,21 +12,12 @@ export default function TabNavigationWrapper({
   showDetailToggle = false,
 }: NavigationWrapperProps) {
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div className='min-h-screen'>
       {/* Fixed navigation bar */}
       <TabNavigation showDetailToggle={showDetailToggle} />
 
       {/* Content with padding for the fixed navbar */}
-      <div
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '24px',
-          paddingTop: '90px', // Adjust based on your navbar height
-        }}
-      >
-        {children}
-      </div>
+      <div className='mx-auto max-w-300 p-6 pt-[calc(var(--nav-height)+20px)]'>{children}</div>
     </div>
   );
 }
