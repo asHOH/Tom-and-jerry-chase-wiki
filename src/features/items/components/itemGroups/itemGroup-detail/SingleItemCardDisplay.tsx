@@ -1,4 +1,3 @@
-import { designTokens } from '@/lib/design';
 import { getSingleItemImageUrl } from '@/lib/singleItemTools';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { SingleItem } from '@/data/types';
@@ -18,8 +17,7 @@ export default function SingleItemCardDisplay({ singleItem }: { singleItem: Sing
       />
       <div className='w-full px-3 pt-1 pb-3 text-center'>
         <h3
-          className={`${isMobile && singleItem.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 font-bold text-gray-800 dark:text-white`}
-          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+          className={`${isMobile && singleItem.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
         >
           {singleItem.name}
         </h3>

@@ -1,8 +1,4 @@
-import {
-  designTokens,
-  getItemSourceColors /* , getCardCostColors */,
-  getItemTypeColors,
-} from '@/lib/design';
+import { getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
@@ -28,8 +24,7 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
       />
       <div className='w-full px-3 pt-1 pb-3 text-center'>
         <h3
-          className={`${isMobile && item.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 font-bold text-gray-800 dark:text-white`}
-          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+          className={`${isMobile && item.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
         >
           {item.name}
         </h3>

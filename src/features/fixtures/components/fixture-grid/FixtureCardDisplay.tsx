@@ -1,4 +1,4 @@
-import { designTokens, getFixtureTypeColors } from '@/lib/design';
+import { getFixtureTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Fixture } from '@/data/types';
@@ -51,8 +51,7 @@ export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
       />
       <div className={`${isMobile ? '' : 'px-3'} w-full pt-1 pb-3 text-center`}>
         <h3
-          className={`${isMobile && fixture.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} font-bold text-gray-800 dark:text-white`}
-          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+          className={`${isMobile && fixture.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
         >
           {fixture.name}
         </h3>

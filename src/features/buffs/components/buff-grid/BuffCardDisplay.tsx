@@ -1,4 +1,4 @@
-import { designTokens, getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
+import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
@@ -32,8 +32,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
         )}
         <div className={`ml-1.5 items-center justify-center text-center`}>
           <h3
-            className={`${buff.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 font-bold text-gray-800 dark:text-white`}
-            style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+            className={`${buff.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
           >
             {buff.name}
           </h3>

@@ -1,4 +1,3 @@
-import { designTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { ItemGroup } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
@@ -19,8 +18,7 @@ export default function ItemGroupCardDisplay({ itemGroup }: { itemGroup: ItemGro
       />
       <div className='w-full px-3 pt-1 pb-3 text-center'>
         <h3
-          className={`${isMobile && itemGroup.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 font-bold text-gray-800 dark:text-white`}
-          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+          className={`${isMobile && itemGroup.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
         >
           {itemGroup.name}
         </h3>

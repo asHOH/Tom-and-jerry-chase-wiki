@@ -197,10 +197,7 @@ export default function CharacterRankingGrid({
       </div>
 
       {/* Rankings Grid */}
-      <div
-        className='auto-fit-grid grid-container mt-8 grid gap-4'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}
-      >
+      <div className='auto-fit-grid grid-container mt-8 grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4'>
         {rankedCharacters.map((rankedCharacter, index) => (
           <div
             key={rankedCharacter.character.id}

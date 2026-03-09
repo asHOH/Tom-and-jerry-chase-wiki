@@ -292,10 +292,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
           <PageTitle>文章列表</PageTitle>
           {description && <PageDescription>{description}</PageDescription>}
         </header>
-        <div
-          className='mt-8 grid gap-6 px-4'
-          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}
-        >
+        <div className='mt-8 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6 px-4'>
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonArticleCard key={i} />
           ))}
@@ -418,8 +415,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
       ) : (
         <div
           ref={isMobile ? (swipeContainerRef as React.RefObject<HTMLDivElement>) : articlesGridRef}
-          className={`auto-fit-grid grid-container grid ${!isMobile && 'mt-8 gap-6 px-4'}`}
-          style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}
+          className={`auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] ${!isMobile && 'mt-8 gap-6 px-4'}`}
         >
           <AnimatePresence initial={false}>
             {visibleArticles.map((article) => {

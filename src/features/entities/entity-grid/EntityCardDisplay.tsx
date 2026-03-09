@@ -1,4 +1,4 @@
-import { designTokens, getEntityTypeColors /* , getCardCostColors */ } from '@/lib/design';
+import { getEntityTypeColors /* , getCardCostColors */ } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Entity } from '@/data/types';
@@ -48,8 +48,7 @@ export default function EntityCardDisplay({ entity }: { entity: Entity }) {
       />
       <div className={`${isMobile ? '' : 'px-3'} w-full pt-1 pb-3 text-center`}>
         <h3
-          className={`${isMobile && entity.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} font-bold text-gray-800 dark:text-white`}
-          style={{ whiteSpace: 'pre', height: designTokens.spacing.lg }}
+          className={`${isMobile && entity.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
         >
           {entity.name}
         </h3>

@@ -1,4 +1,4 @@
-import { designTokens, getMapSizeColors, getMapTypeColors } from '@/lib/design';
+import { getMapSizeColors, getMapTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Map } from '@/data/types';
@@ -20,8 +20,7 @@ export default function MapCardDisplay({ map }: { map: Map }) {
       />
       <div className={`${isMobile ? '' : 'px-3'} w-full pt-1 pb-3 text-center`}>
         <h3
-          className={`${isMobile && map.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} truncate overflow-hidden font-bold whitespace-nowrap text-gray-800 dark:text-white`}
-          style={{ height: designTokens.spacing.lg }}
+          className={`${isMobile && map.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} h-6 truncate overflow-hidden font-bold whitespace-nowrap text-gray-800 dark:text-white`}
           title={map.name}
         >
           {map.name}
