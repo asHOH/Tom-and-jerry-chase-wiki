@@ -14,9 +14,27 @@ export type VirtualGridProps = {
   rowClassName?: string;
 };
 
-function clampColumns(value: number) {
+export function clampColumns(value: number) {
   if (!Number.isFinite(value) || value <= 0) return 1;
   return Math.max(1, Math.floor(value));
+}
+
+export function getVirtualGridColumns({
+  containerWidth,
+  minItemWidth,
+  gapPx,
+  fixedColumns,
+}: {
+  containerWidth: number;
+  minItemWidth: number;
+  gapPx: number;
+  fixedColumns?: number;
+}) {
+  if (fixedColumns && fixedColumns > 0) return fixedColumns;
+  if (containerWidth <= 0) return 1;
+
+  const effective = (containerWidth + gapPx) / (minItemWidth + gapPx);
+  return clampColumns(effective);
 }
 
 export function VirtualGrid({
@@ -67,12 +85,12 @@ export function VirtualGrid({
   }, [containerWidth]);
 
   const columns = useMemo(() => {
-    if (fixedColumns && fixedColumns > 0) return fixedColumns;
-    if (containerWidth <= 0) return 1;
-
-    // Account for gaps when estimating how many columns fit.
-    const effective = (containerWidth + gapPx) / (minItemWidth + gapPx);
-    return clampColumns(effective);
+    return getVirtualGridColumns({
+      containerWidth,
+      minItemWidth,
+      gapPx,
+      ...(fixedColumns !== undefined ? { fixedColumns } : {}),
+    });
   }, [containerWidth, fixedColumns, gapPx, minItemWidth]);
 
   const rowCount = useMemo(() => {
@@ -90,13 +108,7 @@ export function VirtualGrid({
 
   return (
     <div ref={containerRef} className={className}>
-      <div
-        style={{
-          height: rowVirtualizer.getTotalSize(),
-          width: '100%',
-          position: 'relative',
-        }}
-      >
+      <div className='relative w-full' style={{ height: rowVirtualizer.getTotalSize() }}>
         {virtualRows.map((virtualRow) => {
           const startIndex = virtualRow.index * columns;
           const rowItems = items.slice(startIndex, startIndex + columns);
