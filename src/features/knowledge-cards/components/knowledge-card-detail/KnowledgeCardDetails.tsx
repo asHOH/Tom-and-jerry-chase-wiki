@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { useSnapshot } from 'valtio';
 
 import { renderTextWithHighlights } from '@/lib/textUtils';
-import { KnowledgeCardDetailsProps } from '@/lib/types';
+import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode, useLocalCard } from '@/context/EditModeContext';
@@ -26,10 +26,10 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   const { cardId } = useLocalCard();
   const ed = editable('cards');
 
-  const cardsEditSnapshot = useSnapshot(cardsEdit);
-
+  const rawLocalCard = cardsEdit[cardId];
+  const localCardSnapshot = useSnapshot(rawLocalCard ?? ({} as KnowledgeCardWithFaction));
   const effectiveCard =
-    isEditMode && cardId && cardsEditSnapshot[cardId] ? cardsEditSnapshot[cardId] : card;
+    isEditMode && rawLocalCard ? (localCardSnapshot as KnowledgeCardWithFaction) : card;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveCard.id, 'knowledgeCard');
