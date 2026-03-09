@@ -31,7 +31,6 @@
 /* Mobile-specific optimizations */
 @media (max-width: 768px) {
   .auto-fit-grid {
-    grid-template-columns: 1fr;
     gap: 0.75rem;
     /* Enhanced mobile scrolling */
     overscroll-behavior: contain;

@@ -1,7 +1,6 @@
 'use client';
 
 import { getSingleItemHref } from '@/lib/singleItemTools';
-import { useMobile } from '@/hooks/useMediaQuery';
 import type { ItemGroup } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import PageDescription from '@/components/ui/PageDescription';
@@ -11,31 +10,15 @@ import Link from '@/components/Link';
 import SingleItemCardDisplay from './SingleItemCardDisplay';
 
 export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup }) {
-  // Multi-select state for filters
-  const isMobile = useMobile();
-
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
-      }
-    >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
+    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
+      <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
         <PageTitle>{itemGroup.name}</PageTitle>
         <PageDescription>
           <TextWithHoverTooltips text={itemGroup.description || ''} />
         </PageDescription>
       </header>
-      <div
-        className='auto-fit-grid grid-container mt-8 grid gap-4'
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
-        }}
-      >
+      <div className='auto-fit-grid grid-container mt-8 grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
         {itemGroup.group.map((singleItem) => (
           <div
             key={singleItem.name}

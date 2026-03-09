@@ -47,12 +47,7 @@ export default function SpecialSkillClient({ description }: Props) {
         />
       }
     >
-      <div
-        className='auto-fit-grid grid-container grid gap-4'
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
-        }}
-      >
+      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
         {filteredSkills.map((skill) => (
           <div
             key={skill.factionId + skill.name}

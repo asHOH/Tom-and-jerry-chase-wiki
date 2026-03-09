@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { achievementsEdit } from '@/data/store';
 import type { Achievement } from '@/data/types';
@@ -16,7 +15,6 @@ import AchievementCardDisplay from './AchievementCardDisplay';
 
 export default function AchievementGridClient() {
   const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse')[]>([]);
-  const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
   const achievementsSnapshot = useSnapshot(achievementsEdit);
@@ -48,12 +46,7 @@ export default function AchievementGridClient() {
         />
       }
     >
-      <div
-        className={`auto-fit-grid grid-container grid ${isMobile ? '' : 'gap-4'}`}
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '120px' : '150px'}, 1fr))`,
-        }}
-      >
+      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))] md:gap-4'>
         {filteredAchievements.map((achievement) => (
           <div
             key={achievement.name}

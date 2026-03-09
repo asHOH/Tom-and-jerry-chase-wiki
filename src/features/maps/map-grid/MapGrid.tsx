@@ -5,7 +5,6 @@ import { useSnapshot } from 'valtio';
 
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { type Map, type MapSize, type mapTypes, type studyLevel } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -32,7 +31,6 @@ export default function MapClient({ description }: Props) {
   const [selectedTypes, setSelectedTypes] = useState<mapTypes[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<MapSize[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<(studyLevel | '其它')[]>([]);
-  const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
   const mapsSnapshot = useSnapshot(mapsEdit);
@@ -109,12 +107,7 @@ export default function MapClient({ description }: Props) {
         </>
       }
     >
-      <div
-        className='auto-fit-grid grid-container grid gap-4'
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '150px'}, 1fr))`,
-        }}
-      >
+      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
         {filteredMaps.map((map) => (
           <div
             key={map.name}

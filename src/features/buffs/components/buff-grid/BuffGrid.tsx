@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getBuffTypeColors } from '@/lib/design';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Buff, buffTypelist } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -20,7 +19,6 @@ type Props = { description?: string };
 
 export default function BuffClient({ description }: Props) {
   const [selectedInfluences, setSelectedInfluences] = useState<('正面' | '负面' | '特殊')[]>([]);
-  const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
   const buffsSnapshot = useSnapshot(buffsEdit);
@@ -130,7 +128,7 @@ export default function BuffClient({ description }: Props) {
             </div>
           </div>
           {classGroups.length > 0 && (
-            <div className={`${isMobile ? 'mt-2' : 'mt-8'} space-y-4`}>
+            <div className='mt-2 space-y-4 md:mt-8'>
               {classGroups.map((group) => (
                 <div
                   key={group.name + '-title'}
@@ -141,10 +139,7 @@ export default function BuffClient({ description }: Props) {
                   </div>
                   <div
                     key={group.name}
-                    className='auto-fit-grid grid-container grid w-full gap-1!'
-                    style={{
-                      gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
-                    }}
+                    className='auto-fit-grid grid-container grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-1! md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'
                   >
                     {group.buffs.map((buff) => (
                       <div
@@ -162,12 +157,7 @@ export default function BuffClient({ description }: Props) {
             </div>
           )}
           {nonClassBuffs.length > 0 && (
-            <div
-              className={`auto-fit-grid grid-container grid w-full gap-2! ${isMobile ? 'mt-2' : 'mt-8'}`}
-              style={{
-                gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
-              }}
-            >
+            <div className='auto-fit-grid grid-container mt-2 grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2! md:mt-8 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
               {nonClassBuffs.map((buff) => (
                 <div
                   key={buff.name}
@@ -195,7 +185,7 @@ export default function BuffClient({ description }: Props) {
             </div>
           </div>
           {effectClassGroups.length > 0 && (
-            <div className={`${isMobile ? 'mt-2' : 'mt-8'} space-y-4`}>
+            <div className='mt-2 space-y-4 md:mt-8'>
               {effectClassGroups.map((group) => (
                 <div
                   key={group.name + '-title'}
@@ -206,10 +196,7 @@ export default function BuffClient({ description }: Props) {
                   </div>
                   <div
                     key={group.name}
-                    className='auto-fit-grid grid-container grid w-full gap-1!'
-                    style={{
-                      gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
-                    }}
+                    className='auto-fit-grid grid-container grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-1! md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'
                   >
                     {group.buffs.map((buff) => (
                       <div
@@ -227,12 +214,7 @@ export default function BuffClient({ description }: Props) {
             </div>
           )}
           {nonClassEffects.length > 0 && (
-            <div
-              className={`auto-fit-grid grid-container grid w-full gap-2! ${isMobile ? 'mt-2' : 'mt-8'}`}
-              style={{
-                gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '150px' : '170px'}, 1fr))`,
-              }}
-            >
+            <div className='auto-fit-grid grid-container mt-2 grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2! md:mt-8 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
               {nonClassEffects.map((buff) => (
                 <div
                   key={buff.name}

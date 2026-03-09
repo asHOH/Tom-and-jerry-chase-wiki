@@ -6,7 +6,6 @@ import { useSnapshot } from 'valtio';
 import { getCardRankColors, getFactionButtonColors } from '@/lib/design';
 import { createRankFilter, RANK_OPTIONS, useFilterState } from '@/lib/filterUtils';
 import { sortCardsByRank } from '@/lib/sortingUtils';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -30,7 +29,6 @@ export default function KnowledgeCardGrid({ description }: Props) {
     hasFilter: hasRankFilter,
   } = useFilterState<string>();
   const [isDarkMode] = useDarkMode();
-  const isMobile = useMobile();
   const [costRange, setCostRange] = useState<[number, number]>([2, 7]);
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const costLabelId = useId();
@@ -98,12 +96,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
         </>
       }
     >
-      <div
-        className='auto-fit-grid grid-container grid gap-4'
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${isMobile ? '100px' : '160px'}, 1fr))`,
-        }}
-      >
+      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
         {filteredAndSortedCards.map((card, index) => (
           <div
             key={card.id}
