@@ -105,9 +105,10 @@ const traits: Record<string, Trait> = {
   托普斯3: {
     group: [
       { name: '托普斯分身', type: 'entity' },
-      { name: '猫虚弱', type: 'buff' },
+      { name: '托普斯', type: 'character' },
+      [{ name: '打开的老鼠夹', type: 'entity' }], //todo：修正buff的显示逻辑，然后在此处重新添加“虚弱”
     ],
-    description: '3级托普斯分身无法转移老鼠夹与虚弱导致的控制效果。',
+    description: '3级托普斯分身无法转移由老鼠夹或虚弱导致的控制效果。',
   },
   托普斯4: {
     group: [
@@ -982,6 +983,39 @@ const traits: Record<string, Trait> = {
         { name: '圆形', type: 'entity' },
         { name: '强化圆形', type: 'entity' },
       ],
+    ],
+  },
+
+  '20260309-01': {
+    description: '梦游在扔出毛线球后因其它效果变身为比利鼠/小星星等状态时，毛线不会消失。',
+    group: [
+      { name: '毛线球', type: 'skill' },
+      [
+        { name: '星星', type: 'entity' },
+        { name: '小星星', type: 'entity' },
+        { name: '小情绪', type: 'skill' },
+        { name: '变身饮料', type: 'item' },
+        { name: '比利鼠', type: 'entity' },
+      ],
+    ],
+  },
+
+  '20260309-02': {
+    description: '梦游杰瑞扔出毛线球后钻管道/进入乾坤袋会使毛线球消失。',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      [
+        { name: '乾坤袋', type: 'entity' },
+        { name: '管道', type: 'fixture' },
+      ],
+    ],
+  },
+
+  '20260309-03': {
+    description: '罗宾汉泰菲在圆球弹跳过程中，碰到小黄鸭也会反弹。',
+    group: [
+      { name: '罗宾汉泰菲', type: 'character' },
+      { name: '小黄鸭', type: 'fixture' },
     ],
   },
   ...characterRelations,
