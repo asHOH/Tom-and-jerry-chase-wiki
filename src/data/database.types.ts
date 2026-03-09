@@ -17,6 +17,9 @@ export type Database = {
           editor_id: string;
           id: string;
           preview_token: string;
+          proposed_category_id: string | null;
+          proposed_character_id: string | null;
+          proposed_title: string | null;
           status: Database['public']['Enums']['version_status'];
         };
         Insert: {
@@ -27,6 +30,9 @@ export type Database = {
           editor_id: string;
           id?: string;
           preview_token: string;
+          proposed_category_id?: string | null;
+          proposed_character_id?: string | null;
+          proposed_title?: string | null;
           status: Database['public']['Enums']['version_status'];
         };
         Update: {
@@ -37,6 +43,9 @@ export type Database = {
           editor_id?: string;
           id?: string;
           preview_token?: string;
+          proposed_category_id?: string | null;
+          proposed_character_id?: string | null;
+          proposed_title?: string | null;
           status?: Database['public']['Enums']['version_status'];
         };
         Relationships: [
@@ -59,6 +68,13 @@ export type Database = {
             columns: ['editor_id'];
             isOneToOne: false;
             referencedRelation: 'users_public_view';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'article_versions_proposed_category_id_fkey';
+            columns: ['proposed_category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
             referencedColumns: ['id'];
           },
         ];
@@ -588,12 +604,13 @@ export type Database = {
           article_id: string;
           article_title: string;
           category_name: string;
-          commit_message: string;
+          commit_message: string | null;
           content: string;
           created_at: string;
           editor_id: string;
           editor_nickname: string;
           preview_token: string;
+          proposed_character_id: string | null;
           status: Database['public']['Enums']['version_status'];
           version_id: string;
         }[];

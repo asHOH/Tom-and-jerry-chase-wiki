@@ -23,9 +23,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch pending versions' }, { status: 500 });
     }
 
+    const normalizedPending =
+      data?.map((item) => ({
+        ...item,
+        title: item.article_title,
+      })) || [];
+
     return NextResponse.json({
-      pending_versions: data || [],
-      total_count: data?.length || 0,
+      pending_versions: normalizedPending,
+      total_count: normalizedPending.length,
     });
   } catch (err) {
     console.error('API error:', err);

@@ -12,6 +12,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { CheckBadgeIcon, ClockIcon, CloseIcon, EyeIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
+import { characters } from '@/data';
 
 /**
  * Represents a unified article submission.
@@ -30,6 +31,7 @@ interface Submission {
   category_name?: string;
   preview_token?: string;
   commit_message?: string | null;
+  proposed_character_id?: string | null;
 }
 
 interface SubmissionsData {
@@ -46,7 +48,7 @@ interface ModerationApiResponse {
 // API response for regular users
 interface UserApiResponse {
   pending_versions: Array<
-    Omit<Submission, 'id' | 'version_id' | 'title'> & { title: string; preview_token: string }
+    Omit<Submission, 'id' | 'version_id'> & { title: string; preview_token: string }
   >;
   total_count: number;
 }
@@ -315,10 +317,17 @@ export default function PendingClient() {
                       <h3 className='mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100'>
                         {submission.title}
                       </h3>
-                      <div className='flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400'>
+                      <div className='flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400'>
                         <span>作者: {submission.author_nickname || '未知'}</span>
                         <span>编辑者: {submission.editor_nickname || '未知'}</span>
                         <span>分类: {submission.category_name || '未分类'}</span>
+                        {submission.proposed_character_id && (
+                          <span>
+                            关联角色:{' '}
+                            {characters[submission.proposed_character_id]?.id ||
+                              submission.proposed_character_id}
+                          </span>
+                        )}
                       </div>
                     </div>
                     {getStatusBadge(submission.status)}
