@@ -210,7 +210,7 @@ const mouseCharacterDefinitions = {
         description: '所有技能均可主动中断漂浮，灵活性高。',
       },
     ],
-    aliases: ['撅瑞，杰利鼠，吉瑞'],
+    aliases: ['撅瑞'],
   },
 
   /* ----------------------------------- 侦探杰瑞 ----------------------------------- */
@@ -1519,9 +1519,7 @@ const mouseCharacterDefinitions = {
       },
     ],
 
-    aliases: [
-      '塔菲'
-    ],
+    aliases: ['塔菲'],
   },
   /* ----------------------------------- 剑客泰菲 ----------------------------------- */
   剑客泰菲: {
@@ -1936,13 +1934,12 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '仙人掌和琴都可以主动取消漂浮，通用性强'
+        description: '仙人掌和琴都可以主动取消漂浮，通用性强',
       },
       {
         name: '干扰投掷',
-        description: '增强干扰能力'
+        description: '增强干扰能力',
       },
-      
     ],
   },
 
