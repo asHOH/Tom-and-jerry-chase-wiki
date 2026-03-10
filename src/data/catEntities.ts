@@ -330,7 +330,7 @@ export const catEntitiesDefinitions = {
     create: '由莱特宁-咸鱼召唤。',
   },
   '咸鱼-投射物': {
-    entitytype: '召唤物',
+    entitytype: '投射物',
     owner: { name: '咸鱼', type: 'skill' },
     move: true,
     gravity: true,
