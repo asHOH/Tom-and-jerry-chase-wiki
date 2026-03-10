@@ -3468,11 +3468,10 @@ const catCharacterDefinitions = {
         description: '森林牧场使用，对面高伤阵容则把皮糙换成越挫。',
         contributor: 'wudimaohudawang',
       },
-    ,
       {
         cards: [],
-        description: '待补充'
-      }
+        description: '待补充',
+      },
     ],
     specialSkills: [
       {
