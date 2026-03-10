@@ -1933,9 +1933,8 @@ const mouseCharacterDefinitions = {
     aliases: ['牛杰'],
     specialSkills: [
       {
-        name: '冰冻保鲜',
-        description:
-          '1级被动配合冰冻保鲜可以有一秒多的无敌，部分情况下可以挡致命伤害，同时可以强救，但不好走。',
+        name: '魔术漂浮',
+        description: '仙人掌和琴都可以主动取消漂浮，通用性强'
       },
       {
         name: '魔术漂浮',
