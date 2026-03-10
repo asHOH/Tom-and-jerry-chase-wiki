@@ -1940,10 +1940,7 @@ const mouseCharacterDefinitions = {
         name: '干扰投掷',
         description: '增强干扰能力'
       },
-      {
-        name: '干扰投掷',
-        description: '提高干扰能力。',
-      },
+      
     ],
   },
 
