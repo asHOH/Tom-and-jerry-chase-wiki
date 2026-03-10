@@ -303,6 +303,7 @@ export type Database = {
           id: string;
           is_public: boolean;
           message: string | null;
+          pr_url: string | null;
           rejection_reason: string | null;
           reviewed_at: string | null;
           reviewed_by: string | null;
@@ -316,6 +317,7 @@ export type Database = {
           id?: string;
           is_public?: boolean;
           message?: string | null;
+          pr_url?: string | null;
           rejection_reason?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
@@ -329,6 +331,7 @@ export type Database = {
           id?: string;
           is_public?: boolean;
           message?: string | null;
+          pr_url?: string | null;
           rejection_reason?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
@@ -685,7 +688,7 @@ export type Database = {
     Enums: {
       comment_scope: 'articles' | 'characters' | 'knowledge_cards';
       comment_status: 'visible' | 'hidden' | 'deleted';
-      game_data_action_status: 'pending' | 'approved' | 'rejected';
+      game_data_action_status: 'pending' | 'approved' | 'rejected' | 'synced';
       role_type: 'Contributor' | 'Reviewer' | 'Coordinator';
       version_status: 'pending' | 'approved' | 'rejected' | 'revoked';
     };
@@ -815,7 +818,7 @@ export const Constants = {
     Enums: {
       comment_scope: ['articles', 'characters', 'knowledge_cards'],
       comment_status: ['visible', 'hidden', 'deleted'],
-      game_data_action_status: ['pending', 'approved', 'rejected'],
+      game_data_action_status: ['pending', 'approved', 'rejected', 'synced'],
       role_type: ['Contributor', 'Reviewer', 'Coordinator'],
       version_status: ['pending', 'approved', 'rejected', 'revoked'],
     },

@@ -100,6 +100,12 @@ interface ActionRow {
   created_at: string;
 }
 
+interface ActionSyncStats {
+  expected: number;
+  succeeded: number;
+  failed: number;
+}
+
 function parseOwnerRepo(url: string): { owner: string; repo: string } {
   const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
   if (!match) throw new Error(`Invalid GitHub URL: ${url}`);
@@ -731,6 +737,8 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+    const orderedActions = actions as ActionRow[];
+    const approvedActionIds = Array.from(new Set(orderedActions.map((action) => action.id)));
 
     const { owner, repo } = parseOwnerRepo(PROJECT_INFO.url);
     const baseBranch = 'develop';
@@ -756,6 +764,7 @@ export async function POST(request: NextRequest) {
     let currentSha = baseSha;
     const commitResults: Array<{ actionId: string; commitSha: string; message: string }> = [];
     const failedActions: Array<{ actionId: string; reason: string }> = [];
+    const actionStats = new Map<string, ActionSyncStats>();
 
     // Get the base tree
     const baseCommit = await githubApi<GitHubCommitData>(
@@ -767,9 +776,16 @@ export async function POST(request: NextRequest) {
     // Cache fetched file contents to avoid redundant API calls
     const fileContentCache = new Map<string, string>();
 
-    for (const actionRow of actions as ActionRow[]) {
+    for (const actionRow of orderedActions) {
       const flatActions = flattenEntry(actionRow.entry);
+      actionStats.set(actionRow.id, {
+        expected: flatActions.length,
+        succeeded: 0,
+        failed: 0,
+      });
+      const stats = actionStats.get(actionRow.id)!;
       if (flatActions.length === 0) {
+        stats.failed += 1;
         failedActions.push({ actionId: actionRow.id, reason: 'No actions found in entry' });
         continue;
       }
@@ -780,6 +796,7 @@ export async function POST(request: NextRequest) {
         let committed = false;
         const configs = getCandidateFileConfigs(actionRow.entity_type, action.path);
         if (configs.length === 0) {
+          stats.failed += 1;
           failedActions.push({
             actionId: actionRow.id,
             reason: `Unknown entity type: ${actionRow.entity_type}`,
@@ -863,6 +880,7 @@ export async function POST(request: NextRequest) {
               commitSha: commitData.sha,
               message: commitMessage,
             });
+            stats.succeeded += 1;
             committed = true;
             break;
           } catch (err) {
@@ -873,6 +891,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (!committed) {
+          stats.failed += 1;
           failedActions.push({
             actionId: actionRow.id,
             reason: `Could not apply action path "${action.path}" to any data file`,
@@ -939,6 +958,41 @@ export async function POST(request: NextRequest) {
       token,
     });
 
+    const fullySyncedIds = approvedActionIds.filter((actionId) => {
+      const stats = actionStats.get(actionId);
+      return (
+        !!stats && stats.expected > 0 && stats.failed === 0 && stats.succeeded === stats.expected
+      );
+    });
+
+    let syncedActionIds: string[] = [];
+    let statusUpdateWarning: string | undefined;
+
+    if (fullySyncedIds.length > 0) {
+      const { data: syncedRows, error: syncStatusError } = await supabaseAdmin
+        .from('game_data_actions')
+        .update({ status: 'synced', pr_url: prData.html_url })
+        .in('id', fullySyncedIds)
+        .eq('status', 'approved')
+        .select('id');
+
+      if (syncStatusError) {
+        console.error('Failed to update action statuses to synced:', syncStatusError);
+        statusUpdateWarning = 'PR created, but failed to update action status to synced';
+      } else {
+        syncedActionIds = (syncedRows ?? []).map((row) => row.id);
+        if (syncedActionIds.length < fullySyncedIds.length) {
+          statusUpdateWarning =
+            'PR created, but some actions were not updated to synced (status changed concurrently)';
+        }
+      }
+    }
+
+    const syncedActionIdSet = new Set(syncedActionIds);
+    const unsyncedActionIds = approvedActionIds.filter(
+      (actionId) => !syncedActionIdSet.has(actionId)
+    );
+
     return NextResponse.json({
       success: true,
       prUrl: prData.html_url,
@@ -946,6 +1000,9 @@ export async function POST(request: NextRequest) {
       branch: newBranch,
       commits: commitResults,
       failedActions,
+      syncedActionIds,
+      unsyncedActionIds,
+      statusUpdateWarning,
     });
   } catch (err) {
     console.error('Sync PR API error:', err);

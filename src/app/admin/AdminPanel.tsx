@@ -9,9 +9,13 @@ import CategoryManagement from '@/features/admin/components/CategoryManagement';
 import UserManagement from '@/features/admin/components/UserManagement';
 
 type Category = Database['public']['Tables']['categories']['Row'];
+type ActionStatus = Database['public']['Enums']['game_data_action_status'];
+type ActionStatusFilter = 'all' | ActionStatus;
+
 type PendingGameDataAction =
   Database['public']['Functions']['get_pending_game_data_actions']['Returns'][number] & {
     message?: string | null;
+    pr_url?: string | null;
   };
 
 interface User {
@@ -27,8 +31,18 @@ interface SyncResult {
   branch?: string;
   commits?: Array<{ actionId: string; commitSha: string; message: string }>;
   failedActions?: Array<{ actionId: string; reason: string }>;
+  syncedActionIds?: string[];
+  unsyncedActionIds?: string[];
+  statusUpdateWarning?: string;
   error?: string;
 }
+
+const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: string }> = {
+  pending: { label: '待审核', className: 'text-orange-700 dark:text-orange-300' },
+  approved: { label: '已批准', className: 'text-green-700 dark:text-green-300' },
+  rejected: { label: '已拒绝', className: 'text-red-700 dark:text-red-300' },
+  synced: { label: '已同步', className: 'text-purple-700 dark:text-purple-300' },
+};
 
 // Fetcher functions for SWR
 const fetchUsers = async (): Promise<User[]> => {
@@ -67,9 +81,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
   const [moderatingId, setModeratingId] = useState<string | null>(null);
   const [actionQuery, setActionQuery] = useState('');
   const [actionEntityType, setActionEntityType] = useState<string>('all');
-  const [actionStatus, setActionStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>(
-    'pending'
-  );
+  const [actionStatus, setActionStatus] = useState<ActionStatusFilter>('pending');
   const [expandedActionIds, setExpandedActionIds] = useState<Set<string>>(() => new Set());
   const [syncSelectedIds, setSyncSelectedIds] = useState<Set<string>>(() => new Set());
   const [syncing, setSyncing] = useState(false);
@@ -327,6 +339,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
       setSyncResult(data);
       success(`PR 已创建：#${data.prNumber}`);
       setSyncSelectedIds(new Set());
+      await mutatePendingActions();
     } catch (e) {
       const msg = e instanceof Error ? e.message : '创建 PR 失败';
       error(msg);
@@ -401,14 +414,13 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
               <label className='text-sm text-gray-600 dark:text-slate-300'>状态</label>
               <select
                 value={actionStatus}
-                onChange={(e) =>
-                  setActionStatus(e.target.value as 'all' | 'pending' | 'approved' | 'rejected')
-                }
+                onChange={(e) => setActionStatus(e.target.value as ActionStatusFilter)}
                 className='rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
               >
                 <option value='pending'>待审核</option>
                 <option value='approved'>已批准</option>
                 <option value='rejected'>已拒绝</option>
+                <option value='synced'>已同步</option>
                 <option value='all'>全部</option>
               </select>
 
@@ -531,6 +543,15 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                   <div className='text-sm'>
                     分支：{syncResult.branch} | 提交数：{syncResult.commits?.length ?? 0}
                   </div>
+                  <div className='text-sm'>
+                    已同步改动：{syncResult.syncedActionIds?.length ?? 0} | 未同步改动：
+                    {syncResult.unsyncedActionIds?.length ?? 0}
+                  </div>
+                  {syncResult.statusUpdateWarning && (
+                    <div className='rounded border border-orange-200 bg-orange-50 p-2 text-xs text-orange-800 dark:border-orange-900/50 dark:bg-orange-900/20 dark:text-orange-200'>
+                      {syncResult.statusUpdateWarning}
+                    </div>
+                  )}
                   {syncResult.commits && syncResult.commits.length > 0 && (
                     <details className='mt-2'>
                       <summary className='cursor-pointer text-sm'>查看提交详情</summary>
@@ -583,6 +604,9 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
               {filteredActions.map((submission) => {
                 const isSyncable = submission.status === 'approved' && submission.is_public;
                 const isSyncChecked = syncSelectedIds.has(submission.action_id);
+                const statusMeta =
+                  ACTION_STATUS_META[submission.status as ActionStatus] ??
+                  ACTION_STATUS_META.pending;
 
                 return (
                   <div
@@ -607,21 +631,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                         )}
                         <span className='font-medium'>{submission.entity_type}</span>
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                        <span
-                          className={
-                            submission.status === 'pending'
-                              ? 'text-orange-700 dark:text-orange-300'
-                              : submission.status === 'approved'
-                                ? 'text-green-700 dark:text-green-300'
-                                : 'text-red-700 dark:text-red-300'
-                          }
-                        >
-                          {submission.status === 'pending'
-                            ? '待审核'
-                            : submission.status === 'approved'
-                              ? '已批准'
-                              : '已拒绝'}
-                        </span>
+                        <span className={statusMeta.className}>{statusMeta.label}</span>
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                         <span>
                           {submission.created_by_nickname
@@ -740,9 +750,14 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                           </div>
                         )}
 
-                        {submission.status === 'approved' && (
+                        {(submission.status === 'approved' || submission.status === 'synced') && (
                           <div className='rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-200'>
                             是否已公开：{submission.is_public ? '是' : '否'}
+                            {submission.status === 'synced' && submission.pr_url && (
+                              <div className='mt-2 break-all'>
+                                PR: <a href={submission.pr_url}>{submission.pr_url}</a>
+                              </div>
+                            )}
                           </div>
                         )}
 

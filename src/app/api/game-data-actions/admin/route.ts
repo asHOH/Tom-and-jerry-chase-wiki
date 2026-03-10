@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth/requireRole';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
-const ALLOWED_STATUSES = ['pending', 'approved', 'rejected', 'all'] as const;
+const ALLOWED_STATUSES = ['pending', 'approved', 'rejected', 'synced', 'all'] as const;
 
 type AllowedStatus = (typeof ALLOWED_STATUSES)[number];
 
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     let query = supabaseAdmin
       .from('game_data_actions')
       .select(
-        'id, created_at, created_by, entity_type, entry, is_public, message, rejection_reason, reviewed_at, reviewed_by, status'
+        'id, created_at, created_by, entity_type, entry, is_public, message, pr_url, rejection_reason, reviewed_at, reviewed_by, status'
       )
       .order('created_at', { ascending: false });
 
@@ -77,6 +77,7 @@ export async function GET(request: NextRequest) {
         entry: row.entry,
         is_public: row.is_public,
         message: row.message,
+        pr_url: row.pr_url,
         rejection_reason: row.rejection_reason ?? '',
         reviewed_at: row.reviewed_at ?? '',
         reviewed_by: row.reviewed_by ?? '',
