@@ -102,7 +102,16 @@ jobs:
       - name: Check if tests exist
         id: check-tests
         run: |
-          if [ -d "src/__tests__" ] || [ -d "tests" ] || [ -d "__tests__" ]; then
+          TEST_FILE_COUNT=0
+          for DIR in src tests __tests__; do
+            if [ -d "$DIR" ]; then
+              COUNT=$(find "$DIR" -type f \( -name "*.test.ts" -o -name "*.test.tsx" -o -name "*.spec.ts" -o -name "*.spec.tsx" \) | wc -l)
+              TEST_FILE_COUNT=$((TEST_FILE_COUNT + COUNT))
+            fi
+          done
+
+          echo "Detected test files: $TEST_FILE_COUNT"
+          if [ "$TEST_FILE_COUNT" -gt 0 ]; then
             echo "tests-exist=true" >> $GITHUB_OUTPUT
           else
             echo "tests-exist=false" >> $GITHUB_OUTPUT

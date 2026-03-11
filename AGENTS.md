@@ -194,6 +194,6 @@ GitHub Actions on push/PR to `main`/`develop`:
 1. **Code Quality** (parallel matrix): Prettier check, ESLint, TypeScript type-check
 2. **Tests & Coverage**: Jest with coverage report → Codecov
 
-**Caveat**: CI's test detection checks for `src/__tests__`, `tests`, or `__tests__` directories, but this repo co-locates tests next to source files. CI may skip tests silently. Always run tests locally before pushing.
+CI test detection scans `src/`, `tests/`, and `__tests__/` for `*.test.ts`, `*.test.tsx`, `*.spec.ts`, and `*.spec.tsx`. If matches exist, CI runs tests and coverage; otherwise it reports no tests found.
 
 Branches: `develop` (dev preview), `main` (production).
