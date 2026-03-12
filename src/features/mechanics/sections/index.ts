@@ -1,4 +1,4 @@
-import { Exp, Hp, Object } from './ArticlesIndex';
+import { Exp, Hp, Move, Object } from './ArticlesIndex';
 import TraitCollection from './TraitCollection';
 
 //维护说明：添加新模块时，先修改ArticlesIndex，随后在本文件添加新的导入，并修改mechanicsSections和NAV_ITEM_CONFIGS
@@ -18,6 +18,7 @@ export const mechanicsSections = {
   traitCollection: TraitCollection,
   exp: Exp,
   hp: Hp,
+  move: Move,
   // 在此处添加新的模块
   // newSection: NewSectionComponent,
 } as const;
@@ -36,6 +37,12 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
     label: '物体',
     iconSrc: '/images/mouseEntities/方块.png',
     iconAlt: '物体图标',
+  },
+  {
+    id: 'move',
+    label: '移动',
+    iconSrc: '/images/fixtures/侦查金丝雀.png',
+    iconAlt: '移动图标',
   },
   {
     id: 'exp',

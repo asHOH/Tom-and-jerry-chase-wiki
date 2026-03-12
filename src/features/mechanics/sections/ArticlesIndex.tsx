@@ -4,6 +4,7 @@ import StyledMDX from '@/components/ui/StyledMDX';
 
 import ExpMDX from '../articles/Exp.mdx';
 import HpMDX from '../articles/Hp.mdx';
+import MoveMDX from '../articles/Move.mdx';
 import ObjectMDX from '../articles/Object.mdx';
 
 export function Object() {
@@ -13,7 +14,13 @@ export function Object() {
     </StyledMDX>
   );
 }
-
+export function Move() {
+  return (
+    <StyledMDX className='article-content'>
+      <MoveMDX />
+    </StyledMDX>
+  );
+}
 export function Exp() {
   return (
     <StyledMDX className='article-content'>
