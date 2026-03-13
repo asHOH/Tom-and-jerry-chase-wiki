@@ -112,9 +112,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               />
             </Tag>
           </div>
-          <div
-            className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(40px,1fr))] items-center justify-center gap-1 text-sm font-normal'
-          >
+          <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(40px,1fr))] items-center justify-center gap-1 text-sm font-normal'>
             {(isEditMode || effectiveItem?.damage !== undefined) && (
               <span className='text-sm whitespace-pre'>
                 伤害：
@@ -187,9 +185,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   <span className='text-fuchsia-600 dark:text-fuchsia-400'>特殊角色</span>
                 )}
               </span>
-              <div
-                className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'
-              >
+              <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'>
                 {[
                   effectiveItem.itemAttributesAsCharacter.maxHp === undefined
                     ? { title: null, text: null }
@@ -246,9 +242,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             effectiveItem.collsion !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>移动信息</span>
-              <div
-                className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'
-              >
+              <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'>
                 {isEditMode ? (
                   <>
                     <div className='flex items-center gap-1 text-xs'>
@@ -403,9 +397,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               )}
 
               {(isEditMode ? (effectiveItem.store ?? false) : effectiveItem.store === true) && (
-                <div
-                  className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'
-                >
+                <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'>
                   <span className='text-sm whitespace-pre'>
                     售价：
                     <span className='text-orange-600 dark:text-orange-400'>
