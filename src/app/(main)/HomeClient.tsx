@@ -5,7 +5,7 @@ import { AnimatePresence } from 'motion/react';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
-import { isNavGroup, NAV_ITEMS } from '@/constants/navigation';
+import { isNavGroup, NAV_ITEMS, NavItem } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/NavSection';
@@ -39,48 +39,11 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
     }
   };
 
-  type SectionItem = {
-    id: string;
-    condition?: boolean;
-  };
-
-  const SECTIONS: { title?: string; items: SectionItem[] }[] = [
-    {
-      title: '角色',
-      items: [{ id: 'mouse' }, { id: 'cat' }],
-    },
-    {
-      title: '备战',
-      items: [{ id: 'cards' }, { id: 'special-skills' }],
-    },
-    {
-      title: '物品',
-      items: [{ id: 'items' }, { id: 'entities' }],
-    },
-    {
-      title: '资料',
-      items: [
-        { id: 'maps' },
-        { id: 'modes' },
-        // { id: 'achievements' },
-        { id: 'buffs' },
-        {
-          id: 'articles',
-          condition:
-            env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-        },
-        { id: 'mechanics' },
-        { id: 'tools' },
-      ],
-    },
-  ];
-
-  const getSectionButtons = (items: SectionItem[]) => {
+  const getSectionButtons = (items: readonly NavItem[]) => {
     const allNavItems = NAV_ITEMS.flatMap((entry) =>
       isNavGroup(entry) ? entry.children : [entry]
     );
     return items
-      .filter((item) => item.condition !== false)
       .map((item) => {
         const navItem = allNavItems.find((n) => n.id === item.id);
         if (!navItem) return null;
@@ -103,11 +66,10 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         <PageDescription>{description}</PageDescription>
       </header>
 
-      {SECTIONS.map((section, index) => {
-        const buttons = getSectionButtons(section.items);
+      {NAV_ITEMS.map((section, index) => {
+        const buttons = getSectionButtons(section.children);
         if (buttons.length === 0) return null;
-        const props = section.title ? { title: section.title } : {};
-        return <HomePageSection key={index} {...props} buttons={buttons} />;
+        return <HomePageSection key={index} title={section.label} buttons={buttons} />;
       })}
 
       {/* Division line before 网站说明 */}

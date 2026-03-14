@@ -14,7 +14,7 @@ import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
-import { isNavGroup } from '@/constants/navigation';
+import { isNavGroup, NavEntry } from '@/constants/navigation';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import { HomeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -51,12 +51,15 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const { nickname, role, clearData: clearUserData } = useUser();
-  const { items, isActive } = useNavigationTabs();
+  const { items: rawItems, isActive } = useNavigationTabs();
   const isMobile = useMobile();
   const isMd = useMediaQuery('(min-width: 768px)');
   const isLg = useMediaQuery('(min-width: 1024px)');
   const shouldReduceMotion = useReducedMotion();
   const { isNavigatingTo } = useNavigationProgress();
+  const items = rawItems.flatMap<NavEntry>((entry) =>
+    entry.shouldExpand ? entry.children : entry
+  );
   const { shouldPrompt: showToggleHint, dismiss: dismissToggleHint } =
     useFeatureDiscovery('detail_toggle');
 

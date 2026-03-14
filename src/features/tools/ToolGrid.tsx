@@ -32,7 +32,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
     },
     {
       title: '建设中界面',
-      items: ['mechanics', 'fixtures', 'achievements'],
+      items: ['fixtures', 'achievements'],
     },
     /*{
       title: '编辑工具',

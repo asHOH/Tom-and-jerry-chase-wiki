@@ -11,6 +11,7 @@ export type NavGroup = {
   id: string;
   label: string;
   children: readonly NavItem[];
+  shouldExpand?: boolean;
 };
 
 export type NavEntry = NavItem | NavGroup;
@@ -19,22 +20,29 @@ export function isNavGroup(entry: NavEntry): entry is NavGroup {
   return 'children' in entry;
 }
 
-export const NAV_ITEMS: readonly NavEntry[] = [
+export const NAV_ITEMS: readonly NavGroup[] = [
   {
-    id: 'mouse',
-    label: '鼠阵营',
-    description: '鼠阵营角色列表',
-    href: '/factions/mouse',
-    iconSrc: '/images/icons/mouse-faction.png',
-    iconAlt: '鼠阵营图标',
-  },
-  {
-    id: 'cat',
-    label: '猫阵营',
-    description: '猫阵营角色列表',
-    href: '/factions/cat',
-    iconSrc: '/images/icons/cat-faction.png',
-    iconAlt: '猫阵营图标',
+    id: 'characters',
+    label: '角色',
+    children: [
+      {
+        id: 'mouse',
+        label: '鼠阵营',
+        description: '鼠阵营角色列表',
+        href: '/factions/mouse',
+        iconSrc: '/images/icons/mouse-faction.png',
+        iconAlt: '鼠阵营图标',
+      },
+      {
+        id: 'cat',
+        label: '猫阵营',
+        description: '猫阵营角色列表',
+        href: '/factions/cat',
+        iconSrc: '/images/icons/cat-faction.png',
+        iconAlt: '猫阵营图标',
+      },
+    ],
+    shouldExpand: true,
   },
   {
     id: 'prepare',
@@ -90,16 +98,8 @@ export const NAV_ITEMS: readonly NavEntry[] = [
   },
   {
     id: 'inquiry',
-    label: '咨询',
+    label: '资料',
     children: [
-      {
-        id: 'buffs',
-        label: '状态',
-        description: '状态效果列表',
-        href: '/buffs',
-        iconSrc: '/images/icons/buff.png',
-        iconAlt: '状态图标',
-      },
       {
         id: 'articles',
         label: '文章',
@@ -107,6 +107,14 @@ export const NAV_ITEMS: readonly NavEntry[] = [
         href: '/articles',
         iconSrc: '/images/icons/article.png',
         iconAlt: '文章图标',
+      },
+      {
+        id: 'buffs',
+        label: '状态',
+        description: '状态效果列表',
+        href: '/buffs',
+        iconSrc: '/images/icons/buff.png',
+        iconAlt: '状态图标',
       },
       {
         id: 'modes',
@@ -124,6 +132,14 @@ export const NAV_ITEMS: readonly NavEntry[] = [
         iconSrc: '/images/mouseEntities/线条火箭.png',
         iconAlt: '机制图标',
       },
+      {
+        id: 'tools',
+        label: '工具',
+        description: '胜率、属性和特技查询',
+        href: '/tools',
+        iconSrc: '/images/entitySkills/%E7%A9%BA%E7%BD%AE%E9%81%93%E5%85%B7%E9%94%AE.png',
+        iconAlt: '工具图标',
+      },
     ],
   },
   // {
@@ -134,14 +150,6 @@ export const NAV_ITEMS: readonly NavEntry[] = [
   //   iconSrc: '/images/icons/mode.png', // Temporary icon
   //   iconAlt: '成就图标',
   // },
-  {
-    id: 'tools',
-    label: '工具',
-    description: '便捷工具栏',
-    href: '/tools',
-    iconSrc: '/images/entitySkills/%E7%A9%BA%E7%BD%AE%E9%81%93%E5%85%B7%E9%94%AE.png',
-    iconAlt: '工具图标',
-  },
 ];
 
 export const TOOL_NAV_ITEMS: readonly NavItem[] = [
