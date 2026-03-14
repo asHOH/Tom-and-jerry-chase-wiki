@@ -100,4 +100,43 @@ self.addEventListener('message', (event) => {
   }
 });
 
+self.addEventListener('push', (event) => {
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      event.waitUntil(
+        self.registration.showNotification(data.title || '通知', {
+          body: data.body,
+          icon: data.icon || '/icon-192x192.png',
+          badge: data.badge || '/icon-192x192.png',
+          data: data, // contains url to open
+        })
+      );
+    } catch (e) {
+      console.error('Error parsing push data', e);
+    }
+  }
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const urlToOpen = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      for (let i = 0; i < windowClients.length; i++) {
+        const client = windowClients[i];
+        if (client && client.url === urlToOpen && 'focus' in client) {
+          client.focus();
+          return;
+        }
+      }
+      if (self.clients.openWindow) {
+        self.clients.openWindow(urlToOpen);
+        return;
+      }
+    })
+  );
+});
+
 serwist.addEventListeners();

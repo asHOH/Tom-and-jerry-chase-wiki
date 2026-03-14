@@ -11,6 +11,7 @@ import {
   type EditSourceKey,
 } from '@/lib/articles/editSources';
 import { formatArticleDate } from '@/lib/dateUtils';
+import { isPushSubscribedLocally, subscribeToPushNotifications } from '@/lib/pushClient';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
@@ -48,7 +49,7 @@ const EditArticleClient: React.FC = () => {
   const id = params?.id as string;
   const router = useRouter();
   const { role: userRole, isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
-  const { success: showSuccess, error: showError } = useToast();
+  const { success: showSuccess, error: showError, successWithAction } = useToast();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -200,7 +201,23 @@ const EditArticleClient: React.FC = () => {
       });
 
       if (response.ok) {
-        showSuccess('文章更新成功！正在跳转...');
+        if (!isPushSubscribedLocally()) {
+          successWithAction(
+            '文章更新成功，已提交审核。是否需要接收审核结果通知？',
+            '订阅通知',
+            () => {
+              subscribeToPushNotifications().then((success) => {
+                if (success) {
+                  showSuccess('通知订阅成功！');
+                } else {
+                  showError('通知订阅失败或被拒绝。');
+                }
+              });
+            }
+          );
+        } else {
+          showSuccess('文章更新成功！正在跳转...');
+        }
         setTimeout(() => {
           router.push(`/articles/${id}`);
         }, 2000);

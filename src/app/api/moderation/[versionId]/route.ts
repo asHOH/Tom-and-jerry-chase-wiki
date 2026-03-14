@@ -6,6 +6,7 @@ import {
 } from '@/lib/articles/moderationActionError';
 import { requireRole } from '@/lib/auth/requireRole';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
+import { sendPushNotification } from '@/lib/push';
 
 export async function POST(
   request: NextRequest,
@@ -66,23 +67,45 @@ export async function POST(
       return NextResponse.json({ error: `Failed to ${action} article version` }, { status: 500 });
     }
 
-    // Best-effort: lookup article_id for targeted revalidation.
+    // Best-effort: lookup article_id and author for targeted revalidation and push notification.
     try {
       const { data: versionRow, error: lookupError } = await supabase
         .from('article_versions')
-        .select('article_id')
+        .select('article_id, editor_id, proposed_title')
         .eq('id', versionId)
         .single();
 
       if (lookupError) {
-        console.error('Failed to lookup article_id for revalidation:', lookupError);
-      }
+        console.error('Failed to lookup article for revalidation/push:', lookupError);
+      } else if (versionRow) {
+        const { article_id, editor_id, proposed_title } = versionRow;
+        if (article_id) {
+          // Nuke specific article versions to ensure fresh content
+          await invalidateCache(CACHE_TAGS.article(article_id), 'nuke');
+          await invalidateCache(CACHE_TAGS.articleVersions(article_id), 'nuke');
+        }
 
-      const articleId = (versionRow as { article_id?: string | null } | null)?.article_id ?? null;
-      if (articleId) {
-        // Nuke specific article versions to ensure fresh content
-        await invalidateCache(CACHE_TAGS.article(articleId), 'nuke');
-        await invalidateCache(CACHE_TAGS.articleVersions(articleId), 'nuke');
+        if (editor_id) {
+          let pushTitle = '审核结果';
+          let pushBody = `关于《${proposed_title || '文章'}》的审核已完成。`;
+
+          if (action === 'approve') {
+            pushTitle = '文章已发布';
+            pushBody = `您的文章《${proposed_title || '文章'}》已通过审核并发布！`;
+          } else if (action === 'reject') {
+            pushTitle = '文章已被驳回';
+            pushBody = `您的文章《${proposed_title || '文章'}》未通过审核，已被驳回。`;
+          } else if (action === 'revoke') {
+            pushTitle = '文章已被撤下';
+            pushBody = `您的文章《${proposed_title || '文章'}》已被撤下。`;
+          }
+
+          await sendPushNotification(editor_id, {
+            title: pushTitle,
+            body: pushBody,
+            url: article_id ? `/articles/${article_id}` : '/articles',
+          });
+        }
       }
     } catch (e) {
       console.error('Revalidation lookup error:', e);

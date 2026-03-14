@@ -34,6 +34,10 @@ export const env = createEnv({
     // Rich text editor
     SUPABASE_RTE_IMAGE_BUCKET: z.string().optional(),
 
+    // Web Push
+    VAPID_PRIVATE_KEY: z.string().optional(),
+    VAPID_SUBJECT: z.string().optional(),
+
     // Deployment metadata (optional)
     COMMIT_SHA: z.string().optional(),
     DEPLOY_COMMIT_SHA: z.string().optional(),
@@ -82,6 +86,9 @@ export const env = createEnv({
     // Build metadata
     NEXT_PUBLIC_BUILD_TIMESTAMP: z.string().optional(),
 
+    // Web Push
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().optional(),
+
     // Custom Site URL (for mirror deployments)
     NEXT_PUBLIC_SITE_URL: z.url().optional(),
   },
@@ -101,6 +108,7 @@ export const env = createEnv({
     NEXT_PUBLIC_CAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY,
     NEXT_PUBLIC_GEMINI_CHAT_MODEL: process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL,
     NEXT_PUBLIC_BUILD_TIMESTAMP: process.env.NEXT_PUBLIC_BUILD_TIMESTAMP,
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
 

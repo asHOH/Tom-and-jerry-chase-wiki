@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
+import { isPushSubscribedLocally, subscribeToPushNotifications } from '@/lib/pushClient';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
@@ -37,7 +38,7 @@ const fetcher = async (url: string) => {
 const NewArticleClient: React.FC = () => {
   const router = useRouter();
   const { role: userRole, isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
-  const { success: showSuccess, error: showError } = useToast();
+  const { success: showSuccess, error: showError, successWithAction } = useToast();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -145,7 +146,23 @@ const NewArticleClient: React.FC = () => {
       });
 
       if (response.ok) {
-        showSuccess('文章提交成功！正在跳转...');
+        if (!isPushSubscribedLocally()) {
+          successWithAction(
+            '文章提交成功，已进入审核流程。是否需要接收审核结果通知？',
+            '订阅通知',
+            () => {
+              subscribeToPushNotifications().then((success) => {
+                if (success) {
+                  showSuccess('通知订阅成功！');
+                } else {
+                  showError('通知订阅失败或被拒绝。');
+                }
+              });
+            }
+          );
+        } else {
+          showSuccess('文章提交成功！正在跳转...');
+        }
         setTimeout(() => {
           router.push('/articles');
         }, 2000);

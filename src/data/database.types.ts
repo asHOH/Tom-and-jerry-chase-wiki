@@ -6,6 +6,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '13.0.5';
   };
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   public: {
     Tables: {
       article_versions: {
@@ -368,6 +393,33 @@ export type Database = {
           },
         ];
       };
+      push_subscriptions: {
+        Row: {
+          created_at: string;
+          endpoint: string;
+          id: string;
+          keys_auth: string;
+          keys_p256dh: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          endpoint: string;
+          id?: string;
+          keys_auth: string;
+          keys_p256dh: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          endpoint?: string;
+          id?: string;
+          keys_auth?: string;
+          keys_p256dh?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       users: {
         Row: {
           id: string;
@@ -565,6 +617,9 @@ export type Database = {
           editor_id: string;
           id: string;
           preview_token: string;
+          proposed_category_id: string | null;
+          proposed_character_id: string | null;
+          proposed_title: string | null;
           status: Database['public']['Enums']['version_status'];
         }[];
         SetofOptions: {
@@ -607,13 +662,18 @@ export type Database = {
           article_id: string;
           article_title: string;
           category_name: string;
-          commit_message: string | null;
+          commit_message: string;
           content: string;
           created_at: string;
           editor_id: string;
           editor_nickname: string;
+          original_category_name: string;
+          original_character_id: string;
+          original_title: string;
           preview_token: string;
-          proposed_character_id: string | null;
+          proposed_category_name: string;
+          proposed_character_id: string;
+          proposed_title: string;
           status: Database['public']['Enums']['version_status'];
           version_id: string;
         }[];
@@ -814,6 +874,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       comment_scope: ['articles', 'characters', 'knowledge_cards'],

@@ -29,8 +29,10 @@ import {
   type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
 import { getPathSegmentFromEnd } from '@/lib/edit/editModeRouteUtils';
+import { isPushSubscribedLocally, subscribeToPushNotifications } from '@/lib/pushClient';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { isEditModeSearchParamEnabled } from '@/hooks/useSearchParamEditMode';
+import { useToast } from '@/context/ToastContext';
 import {
   achievements,
   achievementsEdit,
@@ -432,6 +434,7 @@ interface PageEditModeResult {
  */
 export function usePageEditMode(options: PageEditModeOptions): PageEditModeResult {
   const { entityType, entityId, showToast } = options;
+  const { successWithAction, success, error: showError } = useToast();
   const entityKey = entityId.trim();
   const { isEditMode } = useEditMode();
   const [isPublishing, setIsPublishing] = useState(false);
@@ -620,7 +623,20 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setDraftInfo(null);
         setActionCountTrigger((prev) => prev + 1);
 
-        if (showToast) showToast('改动已提交，等待审核');
+        if (!isPushSubscribedLocally()) {
+          successWithAction('改动已提交，等待审核。是否需要接收审核结果通知？', '订阅通知', () => {
+            subscribeToPushNotifications().then((isSuccess) => {
+              if (isSuccess) {
+                success('通知订阅成功！');
+              } else {
+                showError('通知订阅失败或被拒绝。');
+              }
+            });
+          });
+        } else if (showToast) {
+          showToast('改动已提交，等待审核');
+        }
+
         return true;
       } catch (e) {
         const errorMsg = e instanceof Error ? e.message : '发布失败';
@@ -630,7 +646,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setIsPublishing(false);
       }
     },
-    [entityType, entityKey, showToast]
+    [entityType, entityKey, showToast, successWithAction, success, showError]
   );
 
   return {

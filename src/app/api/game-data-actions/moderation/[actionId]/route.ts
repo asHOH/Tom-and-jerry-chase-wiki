@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { requireRole } from '../../../../../lib/auth/requireRole';
+import { requireRole } from '@/lib/auth/requireRole';
+import { sendPushNotification } from '@/lib/push';
 
 export async function POST(
   request: NextRequest,
@@ -26,12 +27,27 @@ export async function POST(
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
 
+    const { data: recordData } = await supabase
+      .from('game_data_actions')
+      .select('created_by, entity_type')
+      .eq('id', actionId)
+      .single();
+
     if (action === 'approve') {
       const { error } = await supabase.rpc('approve_game_data_action', { p_action_id: actionId });
       if (error) {
         console.error('Error approving game data action:', error);
         return NextResponse.json({ error: 'Failed to approve action' }, { status: 500 });
       }
+
+      if (recordData?.created_by) {
+        await sendPushNotification(recordData.created_by, {
+          title: '审核通过',
+          body: `您的 ${recordData.entity_type || '数据'} 修改已通过审核。`,
+          url: '/admin',
+        });
+      }
+
       return NextResponse.json({ message: 'Action approved', action, action_id: actionId });
     }
 
@@ -52,6 +68,14 @@ export async function POST(
     if (error) {
       console.error('Error rejecting game data action:', error);
       return NextResponse.json({ error: 'Failed to reject action' }, { status: 500 });
+    }
+
+    if (recordData?.created_by) {
+      await sendPushNotification(recordData.created_by, {
+        title: '修改被驳回',
+        body: `您的 ${recordData.entity_type || '数据'} 修改被驳回。`,
+        url: '/admin',
+      });
     }
 
     return NextResponse.json({ message: 'Action rejected', action, action_id: actionId });
